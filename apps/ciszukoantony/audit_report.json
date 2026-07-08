@@ -1,0 +1,335 @@
+﻿{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "brace-expansion": {
+      "name": "brace-expansion",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1119088,
+          "name": "brace-expansion",
+          "dependency": "brace-expansion",
+          "title": "brace-expansion: Large numeric range defeats documented `max` DoS protection",
+          "url": "https://github.com/advisories/GHSA-jxxr-4gwj-5jf2",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-400"
+          ],
+          "cvss": {
+            "score": 6.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=5.0.0 <5.0.6"
+        }
+      ],
+      "effects": [],
+      "range": "5.0.2 - 5.0.5",
+      "nodes": [
+        "node_modules/@typescript-eslint/typescript-estree/node_modules/brace-expansion",
+        "node_modules/nodemon/node_modules/brace-expansion"
+      ],
+      "fixAvailable": true
+    },
+    "next": {
+      "name": "next",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        {
+          "source": 1117931,
+          "name": "next",
+          "dependency": "next",
+          "title": "Next.js Vulnerable to Denial of Service with Server Components",
+          "url": "https://github.com/advisories/GHSA-8h8q-6873-q5fj",
+          "severity": "high",
+          "cwe": [
+            "CWE-770"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=13.0.0 <15.5.16"
+        },
+        {
+          "source": 1118939,
+          "name": "next",
+          "dependency": "next",
+          "title": "Next.js has a Middleware / Proxy bypass in App Router applications via segment-prefetch routes - Incomplete Fix Follow-Up",
+          "url": "https://github.com/advisories/GHSA-26hh-7cqf-hhc6",
+          "severity": "high",
+          "cwe": [
+            "CWE-288"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+          },
+          "range": ">=15.2.0 <15.5.18"
+        },
+        {
+          "source": 1118942,
+          "name": "next",
+          "dependency": "next",
+          "title": "Next.js's Middleware / Proxy redirects can be cache-poisoned",
+          "url": "https://github.com/advisories/GHSA-3g8h-86w9-wvmq",
+          "severity": "low",
+          "cwe": [
+            "CWE-349"
+          ],
+          "cvss": {
+            "score": 3.7,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": ">=12.2.0 <15.5.16"
+        },
+        {
+          "source": 1118944,
+          "name": "next",
+          "dependency": "next",
+          "title": "Next.js vulnerable to cross-site scripting in App Router applications using CSP nonces",
+          "url": "https://github.com/advisories/GHSA-ffhc-5mcf-pf4q",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-79"
+          ],
+          "cvss": {
+            "score": 4.7,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:C/C:L/I:L/A:N"
+          },
+          "range": ">=13.4.0 <15.5.16"
+        },
+        {
+          "source": 1118946,
+          "name": "next",
+          "dependency": "next",
+          "title": "Next.js vulnerable to cache poisoning via collisions in React Server Component cache-busting",
+          "url": "https://github.com/advisories/GHSA-vfv6-92ff-j949",
+          "severity": "low",
+          "cwe": [
+            "CWE-328"
+          ],
+          "cvss": {
+            "score": 3.7,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N"
+          },
+          "range": ">=13.4.6 <15.5.16"
+        },
+        {
+          "source": 1118948,
+          "name": "next",
+          "dependency": "next",
+          "title": "Next.js has cross-site scripting in beforeInteractive scripts with untrusted input",
+          "url": "https://github.com/advisories/GHSA-gx5p-jg67-6x7h",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-79"
+          ],
+          "cvss": {
+            "score": 6.1,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
+          },
+          "range": ">=13.0.0 <15.5.16"
+        },
+        {
+          "source": 1118950,
+          "name": "next",
+          "dependency": "next",
+          "title": "Next.js vulnerable to Denial of Service via connection exhaustion in applications using Cache Components",
+          "url": "https://github.com/advisories/GHSA-mg66-mrh9-m8jx",
+          "severity": "high",
+          "cwe": [
+            "CWE-770"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=15.0.0 <15.5.16"
+        },
+        {
+          "source": 1118952,
+          "name": "next",
+          "dependency": "next",
+          "title": "Next.js has a Denial of Service in the Image Optimization API",
+          "url": "https://github.com/advisories/GHSA-h64f-5h5j-jqjh",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-770"
+          ],
+          "cvss": {
+            "score": 5.9,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=10.0.0 <15.5.16"
+        },
+        {
+          "source": 1118954,
+          "name": "next",
+          "dependency": "next",
+          "title": "Next.js vulnerable to server-side request forgery in applications using WebSocket upgrades",
+          "url": "https://github.com/advisories/GHSA-c4j6-fc7j-m34r",
+          "severity": "high",
+          "cwe": [
+            "CWE-918"
+          ],
+          "cvss": {
+            "score": 8.6,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N"
+          },
+          "range": ">=13.4.13 <15.5.16"
+        },
+        {
+          "source": 1118956,
+          "name": "next",
+          "dependency": "next",
+          "title": "Next.js has a Middleware / Proxy bypass through dynamic route parameter injection",
+          "url": "https://github.com/advisories/GHSA-492v-c6pp-mqqv",
+          "severity": "high",
+          "cwe": [
+            "CWE-288"
+          ],
+          "cvss": {
+            "score": 8.1,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N"
+          },
+          "range": ">=15.4.0 <15.5.16"
+        },
+        {
+          "source": 1118958,
+          "name": "next",
+          "dependency": "next",
+          "title": "Next.js vulnerable to cache poisoning in React Server Component responses",
+          "url": "https://github.com/advisories/GHSA-wfc6-r584-vfw7",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-436"
+          ],
+          "cvss": {
+            "score": 5.4,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:N/I:L/A:L"
+          },
+          "range": ">=14.2.0 <15.5.16"
+        },
+        {
+          "source": 1118960,
+          "name": "next",
+          "dependency": "next",
+          "title": "Next.js has a Middleware / Proxy bypass in App Router applications via segment-prefetch routes",
+          "url": "https://github.com/advisories/GHSA-267c-6grr-h53f",
+          "severity": "high",
+          "cwe": [
+            "CWE-288"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+          },
+          "range": ">=15.2.0 <15.5.16"
+        },
+        {
+          "source": 1118962,
+          "name": "next",
+          "dependency": "next",
+          "title": "Next.js has a Middleware / Proxy bypass in Pages Router applications using i18n",
+          "url": "https://github.com/advisories/GHSA-36qx-fr4f-26g5",
+          "severity": "high",
+          "cwe": [
+            "CWE-863"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+          },
+          "range": ">=12.2.0 <15.5.16"
+        },
+        "postcss"
+      ],
+      "effects": [],
+      "range": "9.3.4-canary.0 - 16.3.0-canary.5",
+      "nodes": [
+        "node_modules/next"
+      ],
+      "fixAvailable": true
+    },
+    "postcss": {
+      "name": "postcss",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1117015,
+          "name": "postcss",
+          "dependency": "postcss",
+          "title": "PostCSS has XSS via Unescaped </style> in its CSS Stringify Output",
+          "url": "https://github.com/advisories/GHSA-qx2v-qp2m-jg93",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-79"
+          ],
+          "cvss": {
+            "score": 6.1,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
+          },
+          "range": "<8.5.10"
+        }
+      ],
+      "effects": [
+        "next"
+      ],
+      "range": "<8.5.10",
+      "nodes": [
+        "node_modules/next/node_modules/postcss"
+      ],
+      "fixAvailable": true
+    },
+    "ws": {
+      "name": "ws",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1119108,
+          "name": "ws",
+          "dependency": "ws",
+          "title": "ws: Uninitialized memory disclosure",
+          "url": "https://github.com/advisories/GHSA-58qx-3vcg-4xpx",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-908"
+          ],
+          "cvss": {
+            "score": 4.4,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:H/UI:N/S:U/C:H/I:N/A:N"
+          },
+          "range": ">=8.0.0 <8.20.1"
+        }
+      ],
+      "effects": [],
+      "range": "8.0.0 - 8.20.0",
+      "nodes": [
+        "node_modules/ws"
+      ],
+      "fixAvailable": true
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 3,
+      "high": 1,
+      "critical": 0,
+      "total": 4
+    },
+    "dependencies": {
+      "prod": 178,
+      "dev": 392,
+      "optional": 107,
+      "peer": 0,
+      "peerOptional": 0,
+      "total": 578
+    }
+  }
+}

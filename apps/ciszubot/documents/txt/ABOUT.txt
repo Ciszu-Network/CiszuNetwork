@@ -1,0 +1,38 @@
+MUZICMANIA - DOCUMENTACIÓN OFICIAL
+Nombre: ABOUT
+Versión: 1.0.0
+Actualización: 2026-02-07
+Identificador: ABOUT_V1.0.0_2026_02_08_muzicmania
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+SOBRE MUZICMANIA / ABOUT MUZICMANIA
+
+[ESPAÑOL]
+MuzicMania no es solo un simulador de ritmo; es una oda a la era digital, la estética neón y la precisión técnica. Nacido como un proyecto independiente, busca fusionar la fluidez de los juegos arcade clásicos con las capacidades modernas de la web.
+
+Nuestra misión es democratizar el acceso a la música y el arte visual cyberpunk, ofreciendo una plataforma donde la habilidad y el estilo se encuentran en cada nota.
+
+¿Qué nos hace diferentes?
+- Latencia Zero: Audio procesado por WebAudio API para respuestas instantáneas.
+- Visuales Reactivos: El fondo y las luces bailan al ritmo de la frecuencia real del track.
+- Cloud Sync: Tus récords se guardan y sincronizan en todos tus dispositivos.
+- Estética Futurista: Diseño moderno con neones vibrantes y efectos glow.
+
+Nuestra Filosofía:
+Creemos en el Open Experience. MuzicMania es gratuito porque creemos que el arte y el ritmo no deben tener barreras. Cada línea de código está optimizada para que puedas jugar desde una computadora de oficina hasta un ordenador de gama alta con la misma precisión.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+[ENGLISH]
+MuzicMania is more than just a rhythm simulator; it is an ode to the digital era, neon aesthetics, and technical precision. Born as an independent project, it seeks to merge the fluidity of classic arcade games with the modern capabilities of the web.
+
+Our mission is to democratize access to music and cyberpunk visual art, offering a platform where skill and style meet in every note.
+
+What makes us different?
+- Zero Latency: Audio processed by WebAudio API for instantaneous responses.
+- Reactive Visuals: Background and lights dance to the actual rhythm of the track's frequency.
+- Cloud Sync: Your records are saved and synchronized across all your devices.
+- Futuristic Aesthetics: Modern design with vibrant neons and glow effects.
+
+Our Philosophy:
+We believe in the Open Experience. MuzicMania is free because we believe that art and rhythm should have no barriers. Every line of code is optimized so you can play from an office computer to a high-end PC with the same precision.

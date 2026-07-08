@@ -1,0 +1,568 @@
+[2025-08-21T06:04:22.350Z] [INFO] Comando cargado: 8ball
+[2025-08-21T06:04:22.368Z] [INFO] Alias cargado: bola8 -> 8ball
+[2025-08-21T06:04:22.370Z] [INFO] Alias cargado: pregunta -> 8ball
+[2025-08-21T06:04:22.372Z] [INFO] Alias cargado: oraculo -> 8ball
+[2025-08-21T06:04:22.401Z] [INFO] Comando cargado: confess
+[2025-08-21T06:04:22.403Z] [INFO] Alias cargado: confesar -> confess
+[2025-08-21T06:04:22.404Z] [INFO] Alias cargado: anonimo -> confess
+[2025-08-21T06:04:22.408Z] [INFO] Alias cargado: secreto -> confess
+[2025-08-21T06:04:22.416Z] [INFO] Comando cargado: help
+[2025-08-21T06:04:22.419Z] [INFO] Alias cargado: ayuda -> help
+[2025-08-21T06:04:22.421Z] [INFO] Alias cargado: comandos -> help
+[2025-08-21T06:04:22.422Z] [INFO] Alias cargado: botinfo -> help
+[2025-08-21T06:04:22.426Z] [INFO] Alias cargado: comando -> help
+[2025-08-21T06:04:22.429Z] [INFO] Alias cargado: commands -> help
+[2025-08-21T06:04:22.431Z] [INFO] Alias cargado: botayuda -> help
+[2025-08-21T06:04:22.432Z] [INFO] Alias cargado: botcomandos -> help
+[2025-08-21T06:04:22.434Z] [INFO] Alias cargado: bothelp -> help
+[2025-08-21T06:04:22.437Z] [INFO] Comando cargado: ping
+[2025-08-21T06:04:22.439Z] [INFO] Alias cargado: latencia -> ping
+[2025-08-21T06:04:22.442Z] [INFO] Alias cargado: ms -> ping
+[2025-08-21T06:04:22.447Z] [INFO] Comando cargado: pong
+[2025-08-21T06:04:22.449Z] [INFO] Alias cargado: latencia2 -> pong
+[2025-08-21T06:04:22.451Z] [INFO] Alias cargado: ms2 -> pong
+[2025-08-21T06:04:22.454Z] [INFO] Comando cargado: profile
+[2025-08-21T06:04:22.466Z] [INFO] Alias cargado: perfil -> profile
+[2025-08-21T06:04:22.469Z] [INFO] Alias cargado: usuario -> profile
+[2025-08-21T06:04:22.471Z] [INFO] Alias cargado: info-usuario -> profile
+[2025-08-21T06:04:22.475Z] [INFO] Comando cargado: say
+[2025-08-21T06:04:22.484Z] [INFO] Alias cargado: decir -> say
+[2025-08-21T06:04:22.485Z] [INFO] Alias cargado: di -> say
+[2025-08-21T06:04:22.486Z] [INFO] Alias cargado: pronunciar -> say
+[2025-08-21T06:04:22.488Z] [INFO] Alias cargado: repetir -> say
+[2025-08-21T06:04:22.492Z] [INFO] Comando cargado: serverinfo
+[2025-08-21T06:04:22.493Z] [INFO] Alias cargado: servidor -> serverinfo
+[2025-08-21T06:04:22.498Z] [INFO] Alias cargado: infoserver -> serverinfo
+[2025-08-21T06:04:22.499Z] [INFO] Alias cargado: guild -> serverinfo
+[2025-08-21T06:04:22.502Z] [INFO] Comando cargado: test
+[2025-08-21T06:04:22.504Z] [INFO] Alias cargado: prueba -> test
+[2025-08-21T06:04:22.506Z] [INFO] Alias cargado: testear -> test
+[2025-08-21T06:04:22.512Z] [INFO] Alias cargado: verificar -> test
+[2025-08-21T06:04:23.304Z] [INFO] Ciszubot#5704 está en línea!
+[2025-08-21T06:04:23.307Z] [INFO] El bot está sirviendo a 1 servidor(es)
+[2025-08-21T06:05:29.066Z] [INFO] Recibido SIGINT, apagando de forma segura...
+[2025-08-21T06:49:14.897Z] [INFO] Comando cargado: 8ball
+[2025-08-21T06:49:14.901Z] [INFO] Alias cargado: bola8 -> 8ball
+[2025-08-21T06:49:14.903Z] [INFO] Alias cargado: pregunta -> 8ball
+[2025-08-21T06:49:14.905Z] [INFO] Alias cargado: oraculo -> 8ball
+[2025-08-21T06:49:14.906Z] [INFO] Alias cargado: 8b -> 8ball
+[2025-08-21T06:49:14.908Z] [INFO] Alias cargado: magicball -> 8ball
+[2025-08-21T06:49:14.913Z] [INFO] Comando cargado: bye
+[2025-08-21T06:49:14.916Z] [INFO] Alias cargado: adios -> bye
+[2025-08-21T06:49:14.919Z] [INFO] Alias cargado: despedir -> bye
+[2025-08-21T06:49:14.923Z] [INFO] Alias cargado: despedida -> bye
+[2025-08-21T06:49:14.925Z] [INFO] Alias cargado: chao -> bye
+[2025-08-21T06:49:14.926Z] [INFO] Alias cargado: hasta-luego -> bye
+[2025-08-21T06:49:14.929Z] [INFO] Alias cargado: byebye -> bye
+[2025-08-21T06:49:14.931Z] [INFO] Alias cargado: b -> bye
+[2025-08-21T06:49:14.939Z] [INFO] Comando cargado: confess
+[2025-08-21T06:49:14.940Z] [INFO] Alias cargado: confesar -> confess
+[2025-08-21T06:49:14.942Z] [INFO] Alias cargado: anonimo -> confess
+[2025-08-21T06:49:14.943Z] [INFO] Alias cargado: secreto -> confess
+[2025-08-21T06:49:14.945Z] [INFO] Alias cargado: c -> confess
+[2025-08-21T06:49:14.947Z] [INFO] Alias cargado: confession -> confess
+[2025-08-21T06:49:14.953Z] [INFO] Comando cargado: directsay
+[2025-08-21T06:49:14.958Z] [INFO] Alias cargado: decirdirecto -> directsay
+[2025-08-21T06:49:14.961Z] [INFO] Alias cargado: deds -> directsay
+[2025-08-21T06:49:14.962Z] [INFO] Alias cargado: dsay -> directsay
+[2025-08-21T06:49:14.964Z] [INFO] Alias cargado: ds -> directsay
+[2025-08-21T06:49:14.966Z] [INFO] Alias cargado: repeatdirect -> directsay
+[2025-08-21T06:49:14.972Z] [INFO] Comando cargado: help
+[2025-08-21T06:49:14.974Z] [INFO] Alias cargado: ayuda -> help
+[2025-08-21T06:49:14.977Z] [INFO] Alias cargado: comandos -> help
+[2025-08-21T06:49:14.979Z] [INFO] Alias cargado: botinfo -> help
+[2025-08-21T06:49:14.980Z] [INFO] Alias cargado: comando -> help
+[2025-08-21T06:49:14.983Z] [INFO] Alias cargado: commands -> help
+[2025-08-21T06:49:14.984Z] [INFO] Alias cargado: botayuda -> help
+[2025-08-21T06:49:14.987Z] [INFO] Alias cargado: botcomandos -> help
+[2025-08-21T06:49:14.990Z] [INFO] Alias cargado: bothelp -> help
+[2025-08-21T06:49:14.991Z] [INFO] Alias cargado: h -> help
+[2025-08-21T06:49:14.993Z] [INFO] Alias cargado: cmds -> help
+[2025-08-21T06:49:14.994Z] [INFO] Alias cargado: cmd -> help
+[2025-08-21T06:49:14.997Z] [INFO] Comando cargado: hi
+[2025-08-21T06:49:15.001Z] [INFO] Alias cargado: hola -> hi
+[2025-08-21T06:49:15.004Z] [INFO] Alias cargado: saludar -> hi
+[2025-08-21T06:49:15.007Z] [INFO] Alias cargado: saludo -> hi
+[2025-08-21T06:49:15.009Z] [INFO] Alias cargado: hello -> hi
+[2025-08-21T06:49:15.011Z] [INFO] Alias cargado: hey -> hi
+[2025-08-21T06:49:15.014Z] [INFO] Alias cargado: hihi -> hi
+[2025-08-21T06:49:15.018Z] [INFO] Alias cargado: h -> hi
+[2025-08-21T06:49:15.021Z] [INFO] Comando cargado: ping
+[2025-08-21T06:49:15.023Z] [INFO] Alias cargado: latencia -> ping
+[2025-08-21T06:49:15.026Z] [INFO] Alias cargado: ms -> ping
+[2025-08-21T06:49:15.027Z] [INFO] Alias cargado: pingpong -> ping
+[2025-08-21T06:49:15.029Z] [INFO] Alias cargado: p -> ping
+[2025-08-21T06:49:15.035Z] [INFO] Comando cargado: pong
+[2025-08-21T06:49:15.037Z] [INFO] Alias cargado: latencia2 -> pong
+[2025-08-21T06:49:15.040Z] [INFO] Alias cargado: ms2 -> pong
+[2025-08-21T06:49:15.042Z] [INFO] Alias cargado: pongping -> pong
+[2025-08-21T06:49:15.044Z] [INFO] Alias cargado: p2 -> pong
+[2025-08-21T06:49:15.048Z] [INFO] Comando cargado: profile
+[2025-08-21T06:49:15.053Z] [INFO] Alias cargado: perfil -> profile
+[2025-08-21T06:49:15.055Z] [INFO] Alias cargado: usuario -> profile
+[2025-08-21T06:49:15.061Z] [INFO] Alias cargado: info-usuario -> profile
+[2025-08-21T06:49:15.063Z] [INFO] Alias cargado: userinfo -> profile
+[2025-08-21T06:49:15.068Z] [INFO] Alias cargado: u -> profile
+[2025-08-21T06:49:15.073Z] [INFO] Alias cargado: perfil-usuario -> profile
+[2025-08-21T06:49:15.078Z] [INFO] Comando cargado: say
+[2025-08-21T06:49:15.080Z] [INFO] Alias cargado: decir -> say
+[2025-08-21T06:49:15.083Z] [INFO] Alias cargado: di -> say
+[2025-08-21T06:49:15.086Z] [INFO] Alias cargado: pronunciar -> say
+[2025-08-21T06:49:15.088Z] [INFO] Alias cargado: repetir -> say
+[2025-08-21T06:49:15.090Z] [INFO] Alias cargado: s -> say
+[2025-08-21T06:49:15.092Z] [INFO] Alias cargado: repeat -> say
+[2025-08-21T06:49:15.096Z] [INFO] Comando cargado: serverinfo
+[2025-08-21T06:49:15.101Z] [INFO] Alias cargado: servidor -> serverinfo
+[2025-08-21T06:49:15.104Z] [INFO] Alias cargado: infoserver -> serverinfo
+[2025-08-21T06:49:15.106Z] [INFO] Alias cargado: guild -> serverinfo
+[2025-08-21T06:49:15.108Z] [INFO] Alias cargado: server -> serverinfo
+[2025-08-21T06:49:15.110Z] [INFO] Alias cargado: guildinfo -> serverinfo
+[2025-08-21T06:49:15.114Z] [INFO] Comando cargado: test
+[2025-08-21T06:49:15.120Z] [INFO] Alias cargado: prueba -> test
+[2025-08-21T06:49:15.123Z] [INFO] Alias cargado: testear -> test
+[2025-08-21T06:49:15.125Z] [INFO] Alias cargado: verificar -> test
+[2025-08-21T06:49:15.128Z] [INFO] Alias cargado: t -> test
+[2025-08-21T06:49:15.129Z] [INFO] Alias cargado: check -> test
+[2025-08-21T06:49:15.905Z] [INFO] Ciszubot#5704 está en línea!
+[2025-08-21T06:49:15.913Z] [INFO] El bot está sirviendo a 1 servidor(es)
+[2025-08-21T06:49:37.460Z] [INFO] Comando 'hi' (hi) ejecutado por ciszukoantony_ en Ciszubot Server Official
+[2025-08-21T06:50:11.289Z] [INFO] Comando 'bye' (bye) ejecutado por ciszukoantony_ en Ciszubot Server Official
+[2025-08-21T06:50:17.204Z] [INFO] Comando 'directsay' (directsay) ejecutado por ciszukoantony_ en Ciszubot Server Official
+[2025-08-21T06:50:22.100Z] [INFO] Comando 'hi' (hi) ejecutado por ciszukoantony_ en Ciszubot Server Official
+[2025-08-21T06:50:38.842Z] [INFO] Comando 'hi' (hi) ejecutado por ciszukoantony_ en Ciszubot Server Official
+[2025-08-21T06:50:45.175Z] [INFO] Comando 'help' (help) ejecutado por ciszukoantony_ en Ciszubot Server Official
+[2025-08-21T06:51:01.383Z] [INFO] Comando 'test' (test) ejecutado por ciszukoantony_ en Ciszubot Server Official
+[2025-08-21T06:51:08.730Z] [WARN] Comando desconocido intentado: info por ciszukoantony_
+[2025-08-21T06:51:11.536Z] [WARN] Comando desconocido intentado:  por ciszukoantony_
+[2025-08-21T06:51:16.303Z] [WARN] Comando desconocido intentado:  por ciszukoantony_
+[2025-08-21T06:51:18.731Z] [WARN] Comando desconocido intentado: a por ciszukoantony_
+[2025-08-21T06:52:14.621Z] [INFO] Recibido SIGINT, apagando de forma segura...
+[2025-08-21T07:47:57.987Z] [INFO] Comando cargado: 8ball
+[2025-08-21T07:47:58.012Z] [INFO] Alias cargado: bola8 -> 8ball
+[2025-08-21T07:47:58.016Z] [INFO] Alias cargado: pregunta -> 8ball
+[2025-08-21T07:47:58.020Z] [INFO] Alias cargado: oraculo -> 8ball
+[2025-08-21T07:47:58.023Z] [INFO] Alias cargado: 8b -> 8ball
+[2025-08-21T07:47:58.031Z] [INFO] Alias cargado: magicball -> 8ball
+[2025-08-21T07:47:58.038Z] [INFO] Comando cargado: bye
+[2025-08-21T07:47:58.046Z] [INFO] Alias cargado: adios -> bye
+[2025-08-21T07:47:58.057Z] [INFO] Alias cargado: despedir -> bye
+[2025-08-21T07:47:58.069Z] [INFO] Alias cargado: despedida -> bye
+[2025-08-21T07:47:58.073Z] [INFO] Alias cargado: chao -> bye
+[2025-08-21T07:47:58.079Z] [INFO] Alias cargado: hasta-luego -> bye
+[2025-08-21T07:47:58.083Z] [INFO] Alias cargado: byebye -> bye
+[2025-08-21T07:47:58.086Z] [INFO] Alias cargado: b -> bye
+[2025-08-21T07:47:58.095Z] [INFO] Comando cargado: confess
+[2025-08-21T07:47:58.099Z] [INFO] Alias cargado: confesar -> confess
+[2025-08-21T07:47:58.101Z] [INFO] Alias cargado: anonimo -> confess
+[2025-08-21T07:47:58.103Z] [INFO] Alias cargado: secreto -> confess
+[2025-08-21T07:47:58.112Z] [INFO] Alias cargado: c -> confess
+[2025-08-21T07:47:58.118Z] [INFO] Alias cargado: confession -> confess
+[2025-08-21T07:47:58.122Z] [INFO] Comando cargado: directsay
+[2025-08-21T07:47:58.128Z] [INFO] Alias cargado: decirdirecto -> directsay
+[2025-08-21T07:47:58.131Z] [INFO] Alias cargado: deds -> directsay
+[2025-08-21T07:47:58.133Z] [INFO] Alias cargado: dsay -> directsay
+[2025-08-21T07:47:58.135Z] [INFO] Alias cargado: ds -> directsay
+[2025-08-21T07:47:58.137Z] [INFO] Alias cargado: repeatdirect -> directsay
+[2025-08-21T07:47:58.146Z] [INFO] Comando cargado: help
+[2025-08-21T07:47:58.150Z] [INFO] Alias cargado: ayuda -> help
+[2025-08-21T07:47:58.152Z] [INFO] Alias cargado: comandos -> help
+[2025-08-21T07:47:58.154Z] [INFO] Alias cargado: botinfo -> help
+[2025-08-21T07:47:58.156Z] [INFO] Alias cargado: comando -> help
+[2025-08-21T07:47:58.162Z] [INFO] Alias cargado: commands -> help
+[2025-08-21T07:47:58.165Z] [INFO] Alias cargado: botayuda -> help
+[2025-08-21T07:47:58.166Z] [INFO] Alias cargado: botcomandos -> help
+[2025-08-21T07:47:58.170Z] [INFO] Alias cargado: bothelp -> help
+[2025-08-21T07:47:58.172Z] [INFO] Alias cargado: h -> help
+[2025-08-21T07:47:58.173Z] [INFO] Alias cargado: cmds -> help
+[2025-08-21T07:47:58.181Z] [INFO] Alias cargado: cmd -> help
+[2025-08-21T07:47:58.185Z] [INFO] Comando cargado: hi
+[2025-08-21T07:47:58.187Z] [INFO] Alias cargado: hola -> hi
+[2025-08-21T07:47:58.190Z] [INFO] Alias cargado: saludar -> hi
+[2025-08-21T07:47:58.191Z] [INFO] Alias cargado: saludo -> hi
+[2025-08-21T07:47:58.195Z] [INFO] Alias cargado: hello -> hi
+[2025-08-21T07:47:58.197Z] [INFO] Alias cargado: hey -> hi
+[2025-08-21T07:47:58.200Z] [INFO] Alias cargado: hihi -> hi
+[2025-08-21T07:47:58.201Z] [INFO] Alias cargado: h -> hi
+[2025-08-21T07:47:58.205Z] [INFO] Comando cargado: ping
+[2025-08-21T07:47:58.208Z] [INFO] Alias cargado: latencia -> ping
+[2025-08-21T07:47:58.209Z] [INFO] Alias cargado: ms -> ping
+[2025-08-21T07:47:58.213Z] [INFO] Alias cargado: pingpong -> ping
+[2025-08-21T07:47:58.215Z] [INFO] Alias cargado: p -> ping
+[2025-08-21T07:47:58.219Z] [INFO] Comando cargado: pong
+[2025-08-21T07:47:58.220Z] [INFO] Alias cargado: latencia2 -> pong
+[2025-08-21T07:47:58.223Z] [INFO] Alias cargado: ms2 -> pong
+[2025-08-21T07:47:58.224Z] [INFO] Alias cargado: pongping -> pong
+[2025-08-21T07:47:58.226Z] [INFO] Alias cargado: p2 -> pong
+[2025-08-21T07:47:58.232Z] [INFO] Comando cargado: profile
+[2025-08-21T07:47:58.234Z] [INFO] Alias cargado: perfil -> profile
+[2025-08-21T07:47:58.238Z] [INFO] Alias cargado: usuario -> profile
+[2025-08-21T07:47:58.240Z] [INFO] Alias cargado: info-usuario -> profile
+[2025-08-21T07:47:58.241Z] [INFO] Alias cargado: userinfo -> profile
+[2025-08-21T07:47:58.242Z] [INFO] Alias cargado: u -> profile
+[2025-08-21T07:47:58.246Z] [INFO] Alias cargado: perfil-usuario -> profile
+[2025-08-21T07:47:58.250Z] [INFO] Comando cargado: say
+[2025-08-21T07:47:58.252Z] [INFO] Alias cargado: decir -> say
+[2025-08-21T07:47:58.254Z] [INFO] Alias cargado: di -> say
+[2025-08-21T07:47:58.255Z] [INFO] Alias cargado: pronunciar -> say
+[2025-08-21T07:47:58.256Z] [INFO] Alias cargado: repetir -> say
+[2025-08-21T07:47:58.257Z] [INFO] Alias cargado: s -> say
+[2025-08-21T07:47:58.259Z] [INFO] Alias cargado: repeat -> say
+[2025-08-21T07:47:58.265Z] [INFO] Comando cargado: serverinfo
+[2025-08-21T07:47:58.266Z] [INFO] Alias cargado: servidor -> serverinfo
+[2025-08-21T07:47:58.268Z] [INFO] Alias cargado: infoserver -> serverinfo
+[2025-08-21T07:47:58.269Z] [INFO] Alias cargado: guild -> serverinfo
+[2025-08-21T07:47:58.271Z] [INFO] Alias cargado: server -> serverinfo
+[2025-08-21T07:47:58.273Z] [INFO] Alias cargado: guildinfo -> serverinfo
+[2025-08-21T07:47:58.278Z] [INFO] Comando cargado: test
+[2025-08-21T07:47:58.281Z] [INFO] Alias cargado: prueba -> test
+[2025-08-21T07:47:58.283Z] [INFO] Alias cargado: testear -> test
+[2025-08-21T07:47:58.285Z] [INFO] Alias cargado: verificar -> test
+[2025-08-21T07:47:58.286Z] [INFO] Alias cargado: t -> test
+[2025-08-21T07:47:58.288Z] [INFO] Alias cargado: check -> test
+[2025-08-21T07:47:59.033Z] [INFO] Ciszubot#5704 está en línea!
+[2025-08-21T07:47:59.035Z] [INFO] El bot está sirviendo a 1 servidor(es)
+[2025-08-21T07:48:30.371Z] [INFO] Comando 'hi' (hi) ejecutado por ciszukoantony_ en Ciszubot Server Official
+[2025-08-21T07:50:06.374Z] [INFO] Comando 'ping' (ping) ejecutado por ciszukoantony_ en Ciszubot Server Official
+[2025-08-21T07:50:35.374Z] [INFO] Comando 'profile' (profile) ejecutado por ciszukoantony_ en Ciszubot Server Official
+[2025-08-21T07:51:59.885Z] [INFO] Recibido SIGINT, apagando de forma segura...
+[2025-08-21T08:02:23.783Z] [INFO] Comando cargado: 8ball
+[2025-08-21T08:02:23.786Z] [INFO] Alias cargado: bola8 -> 8ball
+[2025-08-21T08:02:23.787Z] [INFO] Alias cargado: pregunta -> 8ball
+[2025-08-21T08:02:23.789Z] [INFO] Alias cargado: oraculo -> 8ball
+[2025-08-21T08:02:23.790Z] [INFO] Alias cargado: 8b -> 8ball
+[2025-08-21T08:02:23.791Z] [INFO] Alias cargado: magicball -> 8ball
+[2025-08-21T08:02:23.794Z] [INFO] Comando cargado: bye
+[2025-08-21T08:02:23.795Z] [INFO] Alias cargado: adios -> bye
+[2025-08-21T08:02:23.797Z] [INFO] Alias cargado: despedir -> bye
+[2025-08-21T08:02:23.798Z] [INFO] Alias cargado: despedida -> bye
+[2025-08-21T08:02:23.800Z] [INFO] Alias cargado: chao -> bye
+[2025-08-21T08:02:23.802Z] [INFO] Alias cargado: hasta-luego -> bye
+[2025-08-21T08:02:23.804Z] [INFO] Alias cargado: byebye -> bye
+[2025-08-21T08:02:23.806Z] [INFO] Alias cargado: b -> bye
+[2025-08-21T08:02:23.809Z] [INFO] Comando cargado: confess
+[2025-08-21T08:02:23.810Z] [INFO] Alias cargado: confesar -> confess
+[2025-08-21T08:02:23.812Z] [INFO] Alias cargado: anonimo -> confess
+[2025-08-21T08:02:23.813Z] [INFO] Alias cargado: secreto -> confess
+[2025-08-21T08:02:23.814Z] [INFO] Alias cargado: c -> confess
+[2025-08-21T08:02:23.816Z] [INFO] Alias cargado: confession -> confess
+[2025-08-21T08:02:23.819Z] [INFO] Comando cargado: directsay
+[2025-08-21T08:02:23.825Z] [INFO] Alias cargado: decirdirecto -> directsay
+[2025-08-21T08:02:23.827Z] [INFO] Alias cargado: deds -> directsay
+[2025-08-21T08:02:23.828Z] [INFO] Alias cargado: dsay -> directsay
+[2025-08-21T08:02:23.830Z] [INFO] Alias cargado: ds -> directsay
+[2025-08-21T08:02:23.832Z] [INFO] Alias cargado: repeatdirect -> directsay
+[2025-08-21T08:02:23.835Z] [INFO] Comando cargado: help
+[2025-08-21T08:02:23.837Z] [INFO] Alias cargado: ayuda -> help
+[2025-08-21T08:02:23.841Z] [INFO] Alias cargado: comandos -> help
+[2025-08-21T08:02:23.842Z] [INFO] Alias cargado: botinfo -> help
+[2025-08-21T08:02:23.843Z] [INFO] Alias cargado: comando -> help
+[2025-08-21T08:02:23.844Z] [INFO] Alias cargado: commands -> help
+[2025-08-21T08:02:23.846Z] [INFO] Alias cargado: botayuda -> help
+[2025-08-21T08:02:23.847Z] [INFO] Alias cargado: botcomandos -> help
+[2025-08-21T08:02:23.848Z] [INFO] Alias cargado: bothelp -> help
+[2025-08-21T08:02:23.850Z] [INFO] Alias cargado: h -> help
+[2025-08-21T08:02:23.851Z] [INFO] Alias cargado: cmds -> help
+[2025-08-21T08:02:23.853Z] [INFO] Alias cargado: cmd -> help
+[2025-08-21T08:02:23.858Z] [INFO] Comando cargado: hi
+[2025-08-21T08:02:23.860Z] [INFO] Alias cargado: hola -> hi
+[2025-08-21T08:02:23.861Z] [INFO] Alias cargado: saludar -> hi
+[2025-08-21T08:02:23.863Z] [INFO] Alias cargado: saludo -> hi
+[2025-08-21T08:02:23.864Z] [INFO] Alias cargado: hello -> hi
+[2025-08-21T08:02:23.866Z] [INFO] Alias cargado: hey -> hi
+[2025-08-21T08:02:23.867Z] [INFO] Alias cargado: hihi -> hi
+[2025-08-21T08:02:23.868Z] [INFO] Alias cargado: h -> hi
+[2025-08-21T08:02:23.875Z] [INFO] Comando cargado: ping
+[2025-08-21T08:02:23.880Z] [INFO] Alias cargado: latencia -> ping
+[2025-08-21T08:02:23.881Z] [INFO] Alias cargado: ms -> ping
+[2025-08-21T08:02:23.883Z] [INFO] Alias cargado: pingpong -> ping
+[2025-08-21T08:02:23.884Z] [INFO] Alias cargado: p -> ping
+[2025-08-21T08:02:23.886Z] [INFO] Comando cargado: pong
+[2025-08-21T08:02:23.887Z] [INFO] Alias cargado: latencia2 -> pong
+[2025-08-21T08:02:23.890Z] [INFO] Alias cargado: ms2 -> pong
+[2025-08-21T08:02:23.891Z] [INFO] Alias cargado: pongping -> pong
+[2025-08-21T08:02:23.892Z] [INFO] Alias cargado: p2 -> pong
+[2025-08-21T08:02:23.896Z] [INFO] Comando cargado: profile
+[2025-08-21T08:02:23.897Z] [INFO] Alias cargado: perfil -> profile
+[2025-08-21T08:02:23.898Z] [INFO] Alias cargado: usuario -> profile
+[2025-08-21T08:02:23.899Z] [INFO] Alias cargado: info-usuario -> profile
+[2025-08-21T08:02:23.900Z] [INFO] Alias cargado: userinfo -> profile
+[2025-08-21T08:02:23.901Z] [INFO] Alias cargado: u -> profile
+[2025-08-21T08:02:23.903Z] [INFO] Alias cargado: perfil-usuario -> profile
+[2025-08-21T08:02:23.911Z] [INFO] Comando cargado: say
+[2025-08-21T08:02:23.912Z] [INFO] Alias cargado: decir -> say
+[2025-08-21T08:02:23.913Z] [INFO] Alias cargado: di -> say
+[2025-08-21T08:02:23.914Z] [INFO] Alias cargado: pronunciar -> say
+[2025-08-21T08:02:23.915Z] [INFO] Alias cargado: repetir -> say
+[2025-08-21T08:02:23.917Z] [INFO] Alias cargado: s -> say
+[2025-08-21T08:02:23.918Z] [INFO] Alias cargado: repeat -> say
+[2025-08-21T08:02:23.923Z] [INFO] Comando cargado: serverinfo
+[2025-08-21T08:02:23.925Z] [INFO] Alias cargado: servidor -> serverinfo
+[2025-08-21T08:02:23.926Z] [INFO] Alias cargado: infoserver -> serverinfo
+[2025-08-21T08:02:23.928Z] [INFO] Alias cargado: guild -> serverinfo
+[2025-08-21T08:02:23.929Z] [INFO] Alias cargado: server -> serverinfo
+[2025-08-21T08:02:23.930Z] [INFO] Alias cargado: guildinfo -> serverinfo
+[2025-08-21T08:02:23.933Z] [INFO] Comando cargado: test
+[2025-08-21T08:02:23.934Z] [INFO] Alias cargado: prueba -> test
+[2025-08-21T08:02:23.936Z] [INFO] Alias cargado: testear -> test
+[2025-08-21T08:02:23.937Z] [INFO] Alias cargado: verificar -> test
+[2025-08-21T08:02:23.940Z] [INFO] Alias cargado: t -> test
+[2025-08-21T08:02:23.941Z] [INFO] Alias cargado: check -> test
+[2025-08-21T08:02:24.670Z] [INFO] Ciszubot#5704 está en línea!
+[2025-08-21T08:02:24.671Z] [INFO] El bot está sirviendo a 1 servidor(es)
+[2025-08-21T08:11:35.310Z] [INFO] Recibido SIGINT, apagando de forma segura...
+[2025-08-21T08:52:28.520Z] [INFO] Comando cargado: 8ball
+[2025-08-21T08:52:28.522Z] [INFO] Alias cargado: bola8 -> 8ball
+[2025-08-21T08:52:28.523Z] [INFO] Alias cargado: pregunta -> 8ball
+[2025-08-21T08:52:28.523Z] [INFO] Alias cargado: oraculo -> 8ball
+[2025-08-21T08:52:28.524Z] [INFO] Alias cargado: 8b -> 8ball
+[2025-08-21T08:52:28.525Z] [INFO] Alias cargado: magicball -> 8ball
+[2025-08-21T08:52:28.527Z] [INFO] Comando cargado: bye
+[2025-08-21T08:52:28.528Z] [INFO] Alias cargado: adios -> bye
+[2025-08-21T08:52:28.529Z] [INFO] Alias cargado: despedir -> bye
+[2025-08-21T08:52:28.530Z] [INFO] Alias cargado: despedida -> bye
+[2025-08-21T08:52:28.531Z] [INFO] Alias cargado: chao -> bye
+[2025-08-21T08:52:28.532Z] [INFO] Alias cargado: hasta-luego -> bye
+[2025-08-21T08:52:28.532Z] [INFO] Alias cargado: byebye -> bye
+[2025-08-21T08:52:28.533Z] [INFO] Alias cargado: b -> bye
+[2025-08-21T08:52:28.535Z] [INFO] Comando cargado: confess
+[2025-08-21T08:52:28.536Z] [INFO] Alias cargado: confesar -> confess
+[2025-08-21T08:52:28.536Z] [INFO] Alias cargado: anonimo -> confess
+[2025-08-21T08:52:28.536Z] [INFO] Alias cargado: secreto -> confess
+[2025-08-21T08:52:28.537Z] [INFO] Alias cargado: c -> confess
+[2025-08-21T08:52:28.538Z] [INFO] Alias cargado: confession -> confess
+[2025-08-21T08:52:28.540Z] [INFO] Comando cargado: directsay
+[2025-08-21T08:52:28.540Z] [INFO] Alias cargado: decirdirecto -> directsay
+[2025-08-21T08:52:28.541Z] [INFO] Alias cargado: deds -> directsay
+[2025-08-21T08:52:28.541Z] [INFO] Alias cargado: dsay -> directsay
+[2025-08-21T08:52:28.541Z] [INFO] Alias cargado: ds -> directsay
+[2025-08-21T08:52:28.542Z] [INFO] Alias cargado: repeatdirect -> directsay
+[2025-08-21T08:52:28.545Z] [INFO] Comando cargado: help
+[2025-08-21T08:52:28.546Z] [INFO] Alias cargado: ayuda -> help
+[2025-08-21T08:52:28.546Z] [INFO] Alias cargado: comandos -> help
+[2025-08-21T08:52:28.546Z] [INFO] Alias cargado: botinfo -> help
+[2025-08-21T08:52:28.547Z] [INFO] Alias cargado: comando -> help
+[2025-08-21T08:52:28.547Z] [INFO] Alias cargado: commands -> help
+[2025-08-21T08:52:28.547Z] [INFO] Alias cargado: botayuda -> help
+[2025-08-21T08:52:28.548Z] [INFO] Alias cargado: botcomandos -> help
+[2025-08-21T08:52:28.549Z] [INFO] Alias cargado: bothelp -> help
+[2025-08-21T08:52:28.551Z] [INFO] Alias cargado: h -> help
+[2025-08-21T08:52:28.551Z] [INFO] Alias cargado: cmds -> help
+[2025-08-21T08:52:28.552Z] [INFO] Alias cargado: cmd -> help
+[2025-08-21T08:52:28.554Z] [INFO] Comando cargado: hi
+[2025-08-21T08:52:28.555Z] [INFO] Alias cargado: hola -> hi
+[2025-08-21T08:52:28.555Z] [INFO] Alias cargado: saludar -> hi
+[2025-08-21T08:52:28.556Z] [INFO] Alias cargado: saludo -> hi
+[2025-08-21T08:52:28.557Z] [INFO] Alias cargado: hello -> hi
+[2025-08-21T08:52:28.557Z] [INFO] Alias cargado: hey -> hi
+[2025-08-21T08:52:28.557Z] [INFO] Alias cargado: hihi -> hi
+[2025-08-21T08:52:28.558Z] [INFO] Alias cargado: h -> hi
+[2025-08-21T08:52:28.561Z] [INFO] Comando cargado: ping
+[2025-08-21T08:52:28.563Z] [INFO] Alias cargado: latencia -> ping
+[2025-08-21T08:52:28.563Z] [INFO] Alias cargado: ms -> ping
+[2025-08-21T08:52:28.564Z] [INFO] Alias cargado: pingpong -> ping
+[2025-08-21T08:52:28.565Z] [INFO] Alias cargado: p -> ping
+[2025-08-21T08:52:28.569Z] [INFO] Comando cargado: pong
+[2025-08-21T08:52:28.570Z] [INFO] Alias cargado: latencia2 -> pong
+[2025-08-21T08:52:28.570Z] [INFO] Alias cargado: ms2 -> pong
+[2025-08-21T08:52:28.571Z] [INFO] Alias cargado: pongping -> pong
+[2025-08-21T08:52:28.572Z] [INFO] Alias cargado: p2 -> pong
+[2025-08-21T08:52:28.575Z] [INFO] Comando cargado: profile
+[2025-08-21T08:52:28.576Z] [INFO] Alias cargado: perfil -> profile
+[2025-08-21T08:52:28.579Z] [INFO] Alias cargado: usuario -> profile
+[2025-08-21T08:52:28.579Z] [INFO] Alias cargado: info-usuario -> profile
+[2025-08-21T08:52:28.586Z] [INFO] Alias cargado: userinfo -> profile
+[2025-08-21T08:52:28.588Z] [INFO] Alias cargado: u -> profile
+[2025-08-21T08:52:28.590Z] [INFO] Alias cargado: perfil-usuario -> profile
+[2025-08-21T08:52:28.595Z] [INFO] Comando cargado: say
+[2025-08-21T08:52:28.596Z] [INFO] Alias cargado: decir -> say
+[2025-08-21T08:52:28.598Z] [INFO] Alias cargado: di -> say
+[2025-08-21T08:52:28.602Z] [INFO] Alias cargado: pronunciar -> say
+[2025-08-21T08:52:28.603Z] [INFO] Alias cargado: repetir -> say
+[2025-08-21T08:52:28.605Z] [INFO] Alias cargado: s -> say
+[2025-08-21T08:52:28.607Z] [INFO] Alias cargado: repeat -> say
+[2025-08-21T08:52:28.614Z] [INFO] Comando cargado: serverinfo
+[2025-08-21T08:52:28.616Z] [INFO] Alias cargado: servidor -> serverinfo
+[2025-08-21T08:52:28.619Z] [INFO] Alias cargado: infoserver -> serverinfo
+[2025-08-21T08:52:28.621Z] [INFO] Alias cargado: guild -> serverinfo
+[2025-08-21T08:52:28.622Z] [INFO] Alias cargado: server -> serverinfo
+[2025-08-21T08:52:28.624Z] [INFO] Alias cargado: guildinfo -> serverinfo
+[2025-08-21T08:52:28.628Z] [INFO] Comando cargado: test
+[2025-08-21T08:52:28.630Z] [INFO] Alias cargado: prueba -> test
+[2025-08-21T08:52:28.632Z] [INFO] Alias cargado: testear -> test
+[2025-08-21T08:52:28.633Z] [INFO] Alias cargado: verificar -> test
+[2025-08-21T08:52:28.635Z] [INFO] Alias cargado: t -> test
+[2025-08-21T08:52:28.637Z] [INFO] Alias cargado: check -> test
+[2025-08-21T08:52:29.404Z] [INFO] Ciszubot#5704 está en línea!
+[2025-08-21T08:52:29.405Z] [INFO] El bot está sirviendo a 1 servidor(es)
+[2025-08-21T08:52:42.299Z] [INFO] Comando cargado: 8ball
+[2025-08-21T08:52:42.302Z] [INFO] Alias cargado: bola8 -> 8ball
+[2025-08-21T08:52:42.303Z] [INFO] Alias cargado: pregunta -> 8ball
+[2025-08-21T08:52:42.304Z] [INFO] Alias cargado: oraculo -> 8ball
+[2025-08-21T08:52:42.305Z] [INFO] Alias cargado: 8b -> 8ball
+[2025-08-21T08:52:42.306Z] [INFO] Alias cargado: magicball -> 8ball
+[2025-08-21T08:52:42.308Z] [INFO] Comando cargado: bye
+[2025-08-21T08:52:42.309Z] [INFO] Alias cargado: adios -> bye
+[2025-08-21T08:52:42.310Z] [INFO] Alias cargado: despedir -> bye
+[2025-08-21T08:52:42.311Z] [INFO] Alias cargado: despedida -> bye
+[2025-08-21T08:52:42.312Z] [INFO] Alias cargado: chao -> bye
+[2025-08-21T08:52:42.313Z] [INFO] Alias cargado: hasta-luego -> bye
+[2025-08-21T08:52:42.314Z] [INFO] Alias cargado: byebye -> bye
+[2025-08-21T08:52:42.315Z] [INFO] Alias cargado: b -> bye
+[2025-08-21T08:52:42.318Z] [INFO] Comando cargado: confess
+[2025-08-21T08:52:42.319Z] [INFO] Alias cargado: confesar -> confess
+[2025-08-21T08:52:42.320Z] [INFO] Alias cargado: anonimo -> confess
+[2025-08-21T08:52:42.320Z] [INFO] Alias cargado: secreto -> confess
+[2025-08-21T08:52:42.321Z] [INFO] Alias cargado: c -> confess
+[2025-08-21T08:52:42.321Z] [INFO] Alias cargado: confession -> confess
+[2025-08-21T08:52:42.324Z] [INFO] Comando cargado: directsay
+[2025-08-21T08:52:42.325Z] [INFO] Alias cargado: decirdirecto -> directsay
+[2025-08-21T08:52:42.325Z] [INFO] Alias cargado: deds -> directsay
+[2025-08-21T08:52:42.326Z] [INFO] Alias cargado: dsay -> directsay
+[2025-08-21T08:52:42.326Z] [INFO] Alias cargado: ds -> directsay
+[2025-08-21T08:52:42.327Z] [INFO] Alias cargado: repeatdirect -> directsay
+[2025-08-21T08:52:42.330Z] [INFO] Comando cargado: help
+[2025-08-21T08:52:42.330Z] [INFO] Alias cargado: ayuda -> help
+[2025-08-21T08:52:42.331Z] [INFO] Alias cargado: comandos -> help
+[2025-08-21T08:52:42.333Z] [INFO] Alias cargado: botinfo -> help
+[2025-08-21T08:52:42.334Z] [INFO] Alias cargado: comando -> help
+[2025-08-21T08:52:42.335Z] [INFO] Alias cargado: commands -> help
+[2025-08-21T08:52:42.335Z] [INFO] Alias cargado: botayuda -> help
+[2025-08-21T08:52:42.336Z] [INFO] Alias cargado: botcomandos -> help
+[2025-08-21T08:52:42.337Z] [INFO] Alias cargado: bothelp -> help
+[2025-08-21T08:52:42.338Z] [INFO] Alias cargado: h -> help
+[2025-08-21T08:52:42.339Z] [INFO] Alias cargado: cmds -> help
+[2025-08-21T08:52:42.341Z] [INFO] Alias cargado: cmd -> help
+[2025-08-21T08:52:42.344Z] [INFO] Comando cargado: hi
+[2025-08-21T08:52:42.345Z] [INFO] Alias cargado: hola -> hi
+[2025-08-21T08:52:42.345Z] [INFO] Alias cargado: saludar -> hi
+[2025-08-21T08:52:42.346Z] [INFO] Alias cargado: saludo -> hi
+[2025-08-21T08:52:42.347Z] [INFO] Alias cargado: hello -> hi
+[2025-08-21T08:52:42.348Z] [INFO] Alias cargado: hey -> hi
+[2025-08-21T08:52:42.350Z] [INFO] Alias cargado: hihi -> hi
+[2025-08-21T08:52:42.351Z] [INFO] Alias cargado: h -> hi
+[2025-08-21T08:52:42.354Z] [INFO] Comando cargado: ping
+[2025-08-21T08:52:42.354Z] [INFO] Alias cargado: latencia -> ping
+[2025-08-21T08:52:42.355Z] [INFO] Alias cargado: ms -> ping
+[2025-08-21T08:52:42.356Z] [INFO] Alias cargado: pingpong -> ping
+[2025-08-21T08:52:42.357Z] [INFO] Alias cargado: p -> ping
+[2025-08-21T08:52:42.360Z] [INFO] Comando cargado: pong
+[2025-08-21T08:52:42.360Z] [INFO] Alias cargado: latencia2 -> pong
+[2025-08-21T08:52:42.361Z] [INFO] Alias cargado: ms2 -> pong
+[2025-08-21T08:52:42.362Z] [INFO] Alias cargado: pongping -> pong
+[2025-08-21T08:52:42.363Z] [INFO] Alias cargado: p2 -> pong
+[2025-08-21T08:52:42.367Z] [INFO] Comando cargado: profile
+[2025-08-21T08:52:42.370Z] [INFO] Alias cargado: perfil -> profile
+[2025-08-21T08:52:42.372Z] [INFO] Alias cargado: usuario -> profile
+[2025-08-21T08:52:42.373Z] [INFO] Alias cargado: info-usuario -> profile
+[2025-08-21T08:52:42.374Z] [INFO] Alias cargado: userinfo -> profile
+[2025-08-21T08:52:42.375Z] [INFO] Alias cargado: u -> profile
+[2025-08-21T08:52:42.376Z] [INFO] Alias cargado: perfil-usuario -> profile
+[2025-08-21T08:52:42.379Z] [INFO] Comando cargado: say
+[2025-08-21T08:52:42.380Z] [INFO] Alias cargado: decir -> say
+[2025-08-21T08:52:42.381Z] [INFO] Alias cargado: di -> say
+[2025-08-21T08:52:42.384Z] [INFO] Alias cargado: pronunciar -> say
+[2025-08-21T08:52:42.385Z] [INFO] Alias cargado: repetir -> say
+[2025-08-21T08:52:42.386Z] [INFO] Alias cargado: s -> say
+[2025-08-21T08:52:42.387Z] [INFO] Alias cargado: repeat -> say
+[2025-08-21T08:52:42.392Z] [INFO] Comando cargado: serverinfo
+[2025-08-21T08:52:42.393Z] [INFO] Alias cargado: servidor -> serverinfo
+[2025-08-21T08:52:42.394Z] [INFO] Alias cargado: infoserver -> serverinfo
+[2025-08-21T08:52:42.395Z] [INFO] Alias cargado: guild -> serverinfo
+[2025-08-21T08:52:42.396Z] [INFO] Alias cargado: server -> serverinfo
+[2025-08-21T08:52:42.397Z] [INFO] Alias cargado: guildinfo -> serverinfo
+[2025-08-21T08:52:42.402Z] [INFO] Comando cargado: test
+[2025-08-21T08:52:42.403Z] [INFO] Alias cargado: prueba -> test
+[2025-08-21T08:52:42.405Z] [INFO] Alias cargado: testear -> test
+[2025-08-21T08:52:42.405Z] [INFO] Alias cargado: verificar -> test
+[2025-08-21T08:52:42.406Z] [INFO] Alias cargado: t -> test
+[2025-08-21T08:52:42.407Z] [INFO] Alias cargado: check -> test
+[2025-08-21T08:52:43.166Z] [INFO] Ciszubot#5704 está en línea!
+[2025-08-21T08:52:43.166Z] [INFO] El bot está sirviendo a 1 servidor(es)
+[2025-08-21T08:54:20.156Z] [INFO] Comando 'hi' (hi) ejecutado por ciszukoantony_ en Ciszubot Server Official
+[2025-08-22T20:38:07.626Z] [INFO] Comando cargado: 8ball
+[2025-08-22T20:38:07.703Z] [INFO] Alias cargado: bola8 -> 8ball
+[2025-08-22T20:38:07.706Z] [INFO] Alias cargado: pregunta -> 8ball
+[2025-08-22T20:38:07.708Z] [INFO] Alias cargado: oraculo -> 8ball
+[2025-08-22T20:38:07.709Z] [INFO] Alias cargado: 8b -> 8ball
+[2025-08-22T20:38:07.710Z] [INFO] Alias cargado: magicball -> 8ball
+[2025-08-22T20:38:07.715Z] [INFO] Comando cargado: bye
+[2025-08-22T20:38:07.717Z] [INFO] Alias cargado: adios -> bye
+[2025-08-22T20:38:07.719Z] [INFO] Alias cargado: despedir -> bye
+[2025-08-22T20:38:07.721Z] [INFO] Alias cargado: despedida -> bye
+[2025-08-22T20:38:07.732Z] [INFO] Alias cargado: chao -> bye
+[2025-08-22T20:38:07.749Z] [INFO] Alias cargado: hasta-luego -> bye
+[2025-08-22T20:38:07.753Z] [INFO] Alias cargado: byebye -> bye
+[2025-08-22T20:38:07.758Z] [INFO] Alias cargado: b -> bye
+[2025-08-22T20:38:07.764Z] [INFO] Comando cargado: confess
+[2025-08-22T20:38:07.765Z] [INFO] Alias cargado: confesar -> confess
+[2025-08-22T20:38:07.766Z] [INFO] Alias cargado: anonimo -> confess
+[2025-08-22T20:38:07.768Z] [INFO] Alias cargado: secreto -> confess
+[2025-08-22T20:38:07.769Z] [INFO] Alias cargado: c -> confess
+[2025-08-22T20:38:07.774Z] [INFO] Alias cargado: confession -> confess
+[2025-08-22T20:38:07.777Z] [INFO] Comando cargado: directsay
+[2025-08-22T20:38:07.778Z] [INFO] Alias cargado: decirdirecto -> directsay
+[2025-08-22T20:38:07.780Z] [INFO] Alias cargado: deds -> directsay
+[2025-08-22T20:38:07.781Z] [INFO] Alias cargado: dsay -> directsay
+[2025-08-22T20:38:07.783Z] [INFO] Alias cargado: ds -> directsay
+[2025-08-22T20:38:07.787Z] [INFO] Alias cargado: repeatdirect -> directsay
+[2025-08-22T20:38:07.795Z] [INFO] Comando cargado: help
+[2025-08-22T20:38:07.797Z] [INFO] Alias cargado: ayuda -> help
+[2025-08-22T20:38:07.799Z] [INFO] Alias cargado: comandos -> help
+[2025-08-22T20:38:07.802Z] [INFO] Alias cargado: botinfo -> help
+[2025-08-22T20:38:07.805Z] [INFO] Alias cargado: comando -> help
+[2025-08-22T20:38:07.806Z] [INFO] Alias cargado: commands -> help
+[2025-08-22T20:38:07.811Z] [INFO] Alias cargado: botayuda -> help
+[2025-08-22T20:38:07.813Z] [INFO] Alias cargado: botcomandos -> help
+[2025-08-22T20:38:07.815Z] [INFO] Alias cargado: bothelp -> help
+[2025-08-22T20:38:07.820Z] [INFO] Alias cargado: h -> help
+[2025-08-22T20:38:07.823Z] [INFO] Alias cargado: cmds -> help
+[2025-08-22T20:38:07.826Z] [INFO] Alias cargado: cmd -> help
+[2025-08-22T20:38:07.829Z] [INFO] Comando cargado: hi
+[2025-08-22T20:38:07.830Z] [INFO] Alias cargado: hola -> hi
+[2025-08-22T20:38:07.836Z] [INFO] Alias cargado: saludar -> hi
+[2025-08-22T20:38:07.839Z] [INFO] Alias cargado: saludo -> hi
+[2025-08-22T20:38:07.840Z] [INFO] Alias cargado: hello -> hi
+[2025-08-22T20:38:07.843Z] [INFO] Alias cargado: hey -> hi
+[2025-08-22T20:38:07.844Z] [INFO] Alias cargado: hihi -> hi
+[2025-08-22T20:38:07.846Z] [INFO] Alias cargado: h -> hi
+[2025-08-22T20:38:07.854Z] [INFO] Comando cargado: ping
+[2025-08-22T20:38:07.861Z] [INFO] Alias cargado: latencia -> ping
+[2025-08-22T20:38:07.862Z] [INFO] Alias cargado: ms -> ping
+[2025-08-22T20:38:07.863Z] [INFO] Alias cargado: pingpong -> ping
+[2025-08-22T20:38:07.864Z] [INFO] Alias cargado: p -> ping
+[2025-08-22T20:38:07.870Z] [INFO] Comando cargado: pong
+[2025-08-22T20:38:07.872Z] [INFO] Alias cargado: latencia2 -> pong
+[2025-08-22T20:38:07.875Z] [INFO] Alias cargado: ms2 -> pong
+[2025-08-22T20:38:07.877Z] [INFO] Alias cargado: pongping -> pong
+[2025-08-22T20:38:07.878Z] [INFO] Alias cargado: p2 -> pong
+[2025-08-22T20:38:07.883Z] [INFO] Comando cargado: profile
+[2025-08-22T20:38:07.884Z] [INFO] Alias cargado: perfil -> profile
+[2025-08-22T20:38:07.887Z] [INFO] Alias cargado: usuario -> profile
+[2025-08-22T20:38:07.889Z] [INFO] Alias cargado: info-usuario -> profile
+[2025-08-22T20:38:07.891Z] [INFO] Alias cargado: userinfo -> profile
+[2025-08-22T20:38:07.894Z] [INFO] Alias cargado: u -> profile
+[2025-08-22T20:38:07.898Z] [INFO] Alias cargado: perfil-usuario -> profile
+[2025-08-22T20:38:07.901Z] [INFO] Comando cargado: say
+[2025-08-22T20:38:07.905Z] [INFO] Alias cargado: decir -> say
+[2025-08-22T20:38:07.908Z] [INFO] Alias cargado: di -> say
+[2025-08-22T20:38:07.909Z] [INFO] Alias cargado: pronunciar -> say
+[2025-08-22T20:38:07.911Z] [INFO] Alias cargado: repetir -> say
+[2025-08-22T20:38:07.914Z] [INFO] Alias cargado: s -> say
+[2025-08-22T20:38:07.915Z] [INFO] Alias cargado: repeat -> say
+[2025-08-22T20:38:07.921Z] [INFO] Comando cargado: serverinfo
+[2025-08-22T20:38:07.923Z] [INFO] Alias cargado: servidor -> serverinfo
+[2025-08-22T20:38:07.925Z] [INFO] Alias cargado: infoserver -> serverinfo
+[2025-08-22T20:38:07.927Z] [INFO] Alias cargado: guild -> serverinfo
+[2025-08-22T20:38:07.930Z] [INFO] Alias cargado: server -> serverinfo
+[2025-08-22T20:38:07.931Z] [INFO] Alias cargado: guildinfo -> serverinfo
+[2025-08-22T20:38:07.937Z] [INFO] Comando cargado: test
+[2025-08-22T20:38:07.939Z] [INFO] Alias cargado: prueba -> test
+[2025-08-22T20:38:07.944Z] [INFO] Alias cargado: testear -> test
+[2025-08-22T20:38:07.945Z] [INFO] Alias cargado: verificar -> test
+[2025-08-22T20:38:07.947Z] [INFO] Alias cargado: t -> test
+[2025-08-22T20:38:07.949Z] [INFO] Alias cargado: check -> test
+[2025-08-22T20:38:08.885Z] [INFO] Ciszubot#5704 está en línea!
+[2025-08-22T20:38:08.887Z] [INFO] El bot está sirviendo a 1 servidor(es)
+[2025-08-22T20:38:16.961Z] [INFO] Comando 'hi' (hi) ejecutado por ciszukoantony_ en Ciszubot Server Official
+[2025-08-22T20:38:33.987Z] [INFO] Comando 'test' (test) ejecutado por ciszukoantony_ en Ciszubot Server Official
+[2025-08-22T23:35:57.492Z] [INFO] Recibido SIGINT, apagando de forma segura...

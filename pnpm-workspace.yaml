@@ -1,0 +1,11 @@
+packages:
+  - apps/*
+  - apps/ciszubot/*
+  - apps/ciszukoantony/*
+  - apps/muzicmania/*
+  - packages/*
+
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+  - unrs-resolver

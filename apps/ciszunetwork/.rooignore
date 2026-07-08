@@ -1,0 +1,10 @@
+node_modules/
+.next/
+dist/
+build/
+.git/
+.vscode/
+*.png
+*.jpg
+*.mp3
+*.wav
