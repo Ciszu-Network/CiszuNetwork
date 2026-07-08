@@ -1,0 +1,56 @@
+# Next.js
+.next/
+out/
+build/
+
+# Roo Code
+node_modules/
+.next/
+dist/
+.git/
+build/
+
+# Production
+/.next/
+/-out/
+
+# Dependencies
+node_modules/
+dist/
+
+# Env
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.psd
+*.ai
+*.pdn
+supabase/debug/
+
+# System
+.DS_Store
+Thumbs.db
+
+# Vercel
+.vercel
+
+# Tauri
+src-tauri/target/
+
+# Supabase local data / downloads de prueba
+supabase/download/
+supabase/debug/*.exe
+supabase/debug/*.log
+
+# Typescript build info
+tsconfig.tsbuildinfo
+
+.vercel
+.env*

@@ -1,0 +1,639 @@
+{
+  "version": 7,
+  "backups": [
+    {
+      "name": "AlianzasCD",
+      "messages": [
+        {
+          "data": {
+            "content": "@alianzas",
+            "embeds": [
+              {
+                "title": "❥ ꒰໒ ˚˳¡𝙍𝙚𝙘𝙪𝙚𝙧𝙙𝙖!˳˚૭꒱ - Partnerships. $(invite.cooldown.partner)",
+                "description": "✦・ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇ ・✦\n✩₊˚⌒✧.⊹ **$(user.name)**.\n・✦ ***Recuerda tu Cooldown de Partner es de: $(invite.cooldown.partner)*** ✦・\n\n╭─✵₊・—✦₊・✰₊・ⵓ🌸ⵓ✵₊・✦₊・—✰₊・—─╮\n⊹ ‿︵‿୨ ⚜️ **Tus Puntos Partner son: $(user.partner.point)**┊Por Semana: $(user.partner.weeklypoint) ໒꒱・︵ ෆ ˚₊\n✦ ・—・✦  ₊・— ˚⊹・✦  ₊・—・˚⊹・✦  ₊・—  💮\n⊹ ‿︵‿୨ 💗 **El Rango Partner es: $(user.partner.rank.ordinal)**┊Por Semana: $(user.partner.weeklyrank.ordinal) ໒꒱・︵ ෆ ˚₊\n・—・✦・✦ ・— ˚⊹・✦・—・˚⊹・✦・— ˚ 🪷\n⊹ ‿︵‿୨ 🔆 **Tu XP Partner es: $(user.partner.xp)┊Nivel: $(user.partner.level) **\n✦・︶ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇  ︶・✦",
+                "color": 5812223,
+                "author": {
+                  "name": "$(invite.cooldown.partner) ⏱️ ¡ COOLDOWN ! ⏰ $(invite.cooldown.partner)",
+                  "url": "https://ugokawaii.com/wp-content/uploads/2022/12/clock.gif",
+                  "icon_url": "https://ugokawaii.com/wp-content/uploads/2022/12/clock.gif"
+                },
+                "footer": {
+                  "text": "ꮺ₊˚ ໒🌸꒱ ¡Para realizar más alianzas abre un ticket en la sección de \"Alianzas\" o contacta con un miembro del staff! 🌙 ✧˚₊",
+                  "icon_url": "https://66.media.tumblr.com/tumblr_macxij6ZBf1rfjowdo1_500.gif"
+                },
+                "timestamp": "2024-10-12T05:26:00.000Z",
+                "image": {
+                  "url": "https://i.pinimg.com/originals/f8/9e/63/f89e637ed753a390599555d8b4666e39.gif"
+                }
+              }
+            ],
+            "username": "Alianzas",
+            "avatar_url": "https://img.pikbest.com/origin/10/03/51/56bpIkbEsTwI2.png!sw800",
+            "attachments": []
+          },
+          "reference": ""
+        }
+      ],
+      "targets": [
+        {
+          "url": ""
+        }
+      ]
+    },
+    {
+      "name": "Alianzas",
+      "messages": [
+        {
+          "data": {
+            "content": "@alianzas",
+            "embeds": [
+              {
+                "title": "❥ ꒰໒ ˚˳𝙉𝙪𝙚𝙫𝙖 💮 𝘼𝙡𝙞𝙖𝙣𝙯𝙖˳˚૭꒱ - Partnerships ⊹・✦",
+                "description": "✦・ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇ ・✦\n✩₊˚⌒✧.⊹ **¡Muchas gracias $(user.nick) por tu alianza al servidor!**\n❥ Todo el server de $(guild.name) con un total de $(guild.members.ordinal) esta honrado y agredecido por **ti, $(user.name) ︶・✦**\n・—・✦ ₊・—・✦ ₊・— ˚⊹—・˚⊹・✦ ₊・— ˚ ☑️\n✧ **Te has aliado como partnership** con el servidor: **$(invite.guild.name) | $(invite.guild.member) | $(invite.guild.online) 💜**\n\n╭─✵₊・—✦₊・✰₊・ⵓ🌸ⵓ✵₊・✦₊・—✰₊・—─╮\n⊹ ‿︵‿୨ ⚜️ **Tus Puntos Partner son: $(user.partner.point)**┊Por Semana: $(user.partner.weeklypoint) ໒꒱・︵ ෆ ˚₊\n✦ ・—・✦  ₊・— ˚⊹・✦  ₊・—・˚⊹・✦  ₊・—  💮\n⊹ ‿︵‿୨ 💗 **El Rango Partner es: $(user.partner.rank.ordinal)**┊Por Semana: $(user.partner.weeklyrank.ordinal) ໒꒱・︵ ෆ ˚₊\n・—・✦・✦ ・— ˚⊹・✦・—・˚⊹・✦・— ˚ 🪷\n⊹ ‿︵‿୨ 🔆 **Tu XP Partner es: $(user.partner.xp)┊Nivel: $(user.partner.level) **\n✦・︶ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇  ︶・✦\n\n✦——————————————————————✦\n・✦ Recuerda tu Cooldown de Partner: $(invite.cooldown.partner) ✦・\n$(invite.blacklist.reason)\n✦——————————————————————✦",
+                "color": 7875839,
+                "author": {
+                  "name": "💜 ¡ ♡ Tenemos una nueva Alianza ♡ ! 🌸˚⊹・✦",
+                  "url": "https://ugokawaii.com/wp-content/uploads/2022/12/clock.gif",
+                  "icon_url": "https://images-ext-1.discordapp.net/external/aD-ddlwB3ByPO47JhCPpUGR7sy7YbnBQMPNi8nu_oZk/https/img.pikbest.com/origin/10/03/51/56bpIkbEsTwI2.png%21sw800"
+                },
+                "footer": {
+                  "text": "ꮺ₊˚ ໒🌸꒱ ¡Para realizar más alianzas abre un ticket en la sección de \"Alianzas\" o contacta con un miembro del staff! 🌙 ✧˚₊",
+                  "icon_url": "https://images-ext-1.discordapp.net/external/YNBtvR2PRTNn3ZE0bOThsClAtnm7RGPIPUXHz2n9W_E/https/i.pinimg.com/originals/6c/fd/d9/6cfdd9c375c5192ff94c0d7a8d8f7987.gif"
+                },
+                "timestamp": "2024-10-12T05:26:00.000Z",
+                "image": {
+                  "url": "https://i.pinimg.com/originals/50/35/0d/50350dabbb90e8c6ff00937ba17ea572.gif"
+                }
+              }
+            ],
+            "username": "Alianzas",
+            "avatar_url": "https://img.pikbest.com/origin/10/03/51/56bpIkbEsTwI2.png!sw800",
+            "attachments": []
+          },
+          "reference": ""
+        }
+      ],
+      "targets": [
+        {
+          "url": ""
+        }
+      ]
+    },
+    {
+      "name": "AlianzasError",
+      "messages": [
+        {
+          "data": {
+            "content": "@alianzas",
+            "embeds": [
+              {
+                "title": "❥ $(user.name), tu enlace de invitacion del servidor promocionado es invalido... 🔴",
+                "description": "✦・ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇ ・✦\n✩₊˚⌒✧.⊹ **$(user.name)**.\n・✦ ***Recuerda usar los parametros necesarios. $(user.proper)*** ✦・\n\n╭─✵₊・—✦₊・✰₊・ⵓ🌸ⵓ✵₊・✦₊・—✰₊・—─╮\n⊹ ‿︵‿୨ ⚜️ **Tus Puntos Partner son: $(user.partner.point)**┊Por Semana: $(user.partner.weeklypoint) ໒꒱・︵ ෆ ˚₊\n✦ ・—・✦  ₊・— ˚⊹・✦  ₊・—・˚⊹・✦  ₊・—  💮\n⊹ ‿︵‿୨ 💗 **El Rango Partner es: $(user.partner.rank.ordinal)**┊Por Semana: $(user.partner.weeklyrank.ordinal) ໒꒱・︵ ෆ ˚₊\n・—・✦・✦ ・— ˚⊹・✦・—・˚⊹・✦・— ˚ 🪷\n⊹ ‿︵‿୨ 🔆 **Tu XP Partner es: $(user.partner.xp)┊Nivel: $(user.partner.level) **\n✦・︶ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇  ︶・✦",
+                "color": 16734296,
+                "author": {
+                  "name": "✵ Oh. A ocurrido algo inesperado ✵",
+                  "url": "https://ugokawaii.com/wp-content/uploads/2022/12/clock.gif",
+                  "icon_url": "https://media.tenor.com/eDchk3srtycAAAAi/piffle-error.gif"
+                },
+                "footer": {
+                  "text": "ꮺ₊˚ ໒🌸꒱ ¡Para realizar bien una alianza abre un ticket en la sección de \"Alianzas\" o contacta con un miembro del staff! 🌙 ✧˚₊",
+                  "icon_url": "https://media.tenor.com/CN0GKFWvBTcAAAAM/error-windows.gif"
+                },
+                "timestamp": "2024-10-12T05:26:00.000Z",
+                "image": {
+                  "url": "https://i.pinimg.com/originals/f7/44/06/f744060231b6aaecd96b158c50b35a84.gif"
+                }
+              }
+            ],
+            "username": "Alianzas",
+            "avatar_url": "https://img.pikbest.com/origin/10/03/51/56bpIkbEsTwI2.png!sw800",
+            "attachments": []
+          },
+          "reference": ""
+        }
+      ],
+      "targets": [
+        {
+          "url": ""
+        }
+      ]
+    },
+    {
+      "name": "AlianzasErrorMem",
+      "messages": [
+        {
+          "data": {
+            "content": "@alianzas",
+            "embeds": [
+              {
+                "title": "❥ $(user.name), el servidor que quieres mandar. No cumple con las condiciones de miembros requeridos... 🔴",
+                "description": "✦・ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇ ・✦\n✩₊˚⌒✧.⊹ **$(user.name)**.\n・✦ ***Recuerda usar los parametros necesarios. $(user.proper)*** ✦・\n\n🛑 ✦— El minimo de miembros o usuarios para asociarse es: $(guild.memberreq.partner).\n\n🛑 ✦— El servidor $(invite.guild.name). Tiene $(invite.guild.member).\n\n╭─✵₊・—✦₊・✰₊・ⵓ🌸ⵓ✵₊・✦₊・—✰₊・—─╮\n⊹ ‿︵‿୨ ⚜️ **Tus Puntos Partner son: $(user.partner.point)**┊Por Semana: $(user.partner.weeklypoint) ໒꒱・︵ ෆ ˚₊\n✦ ・—・✦  ₊・— ˚⊹・✦  ₊・—・˚⊹・✦  ₊・—  💮\n⊹ ‿︵‿୨ 💗 **El Rango Partner es: $(user.partner.rank.ordinal)**┊Por Semana: $(user.partner.weeklyrank.ordinal) ໒꒱・︵ ෆ ˚₊\n・—・✦・✦ ・— ˚⊹・✦・—・˚⊹・✦・— ˚ 🪷\n⊹ ‿︵‿୨ 🔆 **Tu XP Partner es: $(user.partner.xp)┊Nivel: $(user.partner.level) **\n✦・︶ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇  ︶・✦",
+                "color": 16734296,
+                "author": {
+                  "name": "✵ Oh. A ocurrido algo inesperado ✵",
+                  "url": "https://ugokawaii.com/wp-content/uploads/2022/12/clock.gif",
+                  "icon_url": "https://media.tenor.com/eDchk3srtycAAAAi/piffle-error.gif"
+                },
+                "footer": {
+                  "text": "ꮺ₊˚ ໒🌸꒱ ¡Para realizar bien una alianza abre un ticket en la sección de \"Alianzas\" o contacta con un miembro del staff! 🌙 ✧˚₊",
+                  "icon_url": "https://media.tenor.com/CN0GKFWvBTcAAAAM/error-windows.gif"
+                },
+                "timestamp": "2024-10-12T05:26:00.000Z",
+                "image": {
+                  "url": "https://i.pinimg.com/originals/cd/bd/f0/cdbdf0b783e4f3c3bd3c4b8895c560f9.gif"
+                }
+              }
+            ],
+            "username": "Alianzas",
+            "avatar_url": "https://img.pikbest.com/origin/10/03/51/56bpIkbEsTwI2.png!sw800",
+            "attachments": []
+          },
+          "reference": ""
+        }
+      ],
+      "targets": [
+        {
+          "url": ""
+        }
+      ]
+    },
+    {
+      "name": "AlianzasErrorAge",
+      "messages": [
+        {
+          "data": {
+            "content": "@alianzas",
+            "embeds": [
+              {
+                "title": "❥ $(user.name), el servidor que quieres mandar. No cumple con las condiciones de edad requerido... 🔴",
+                "description": "✦・ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇ ・✦\n✩₊˚⌒✧.⊹ **$(user.name)**.\n・✦ ***Recuerda usar los parametros necesarios. $(user.proper)*** ✦・\n\n🛑 ✦— El minimo de edad de creacion del servidor para asociarse es: $(guild.agereq.partner).\n\n🛑 ✦— El servidor $(invite.guild.name). Tiene $(invite.guild.age) de edad.\n\n╭─✵₊・—✦₊・✰₊・ⵓ🌸ⵓ✵₊・✦₊・—✰₊・—─╮\n⊹ ‿︵‿୨ ⚜️ **Tus Puntos Partner son: $(user.partner.point)**┊Por Semana: $(user.partner.weeklypoint) ໒꒱・︵ ෆ ˚₊\n✦ ・—・✦  ₊・— ˚⊹・✦  ₊・—・˚⊹・✦  ₊・—  💮\n⊹ ‿︵‿୨ 💗 **El Rango Partner es: $(user.partner.rank.ordinal)**┊Por Semana: $(user.partner.weeklyrank.ordinal) ໒꒱・︵ ෆ ˚₊\n・—・✦・✦ ・— ˚⊹・✦・—・˚⊹・✦・— ˚ 🪷\n⊹ ‿︵‿୨ 🔆 **Tu XP Partner es: $(user.partner.xp)┊Nivel: $(user.partner.level) **\n✦・︶ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇  ︶・✦",
+                "color": 16734296,
+                "author": {
+                  "name": "✵ Oh. A ocurrido algo inesperado ✵",
+                  "url": "https://ugokawaii.com/wp-content/uploads/2022/12/clock.gif",
+                  "icon_url": "https://media.tenor.com/eDchk3srtycAAAAi/piffle-error.gif"
+                },
+                "footer": {
+                  "text": "ꮺ₊˚ ໒🌸꒱ ¡Para realizar bien una alianza abre un ticket en la sección de \"Alianzas\" o contacta con un miembro del staff! 🌙 ✧˚₊",
+                  "icon_url": "https://media.tenor.com/CN0GKFWvBTcAAAAM/error-windows.gif"
+                },
+                "timestamp": "2024-10-12T05:26:00.000Z",
+                "image": {
+                  "url": "https://i.pinimg.com/originals/98/11/4d/98114de2c17739166ede41e07bdda012.gif"
+                }
+              }
+            ],
+            "username": "Alianzas",
+            "avatar_url": "https://img.pikbest.com/origin/10/03/51/56bpIkbEsTwI2.png!sw800",
+            "attachments": []
+          },
+          "reference": ""
+        }
+      ],
+      "targets": [
+        {
+          "url": ""
+        }
+      ]
+    },
+    {
+      "name": "AlianzasRechazada",
+      "messages": [
+        {
+          "data": {
+            "content": "@alianzas",
+            "embeds": [
+              {
+                "title": "❥ $(user.name), el servidor promocionado esta prohibido en este servidor... Y esta en la blacklist por razones justificadas... 🔴 🔴 🔴",
+                "description": "✦・ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇ ・✦\n✩₊˚⌒✧.⊹ **$(user.name)**.\n・✦ ***Recuerda usar los parametros necesarios. $(user.proper)*** ✦・\n\n**Razon del rechazo. Esta en la blacklist por:**\n 📛 $(invite.blacklist.reason) 📛\n\nEsta accion puede ser penada con warn si es necesario. Intenta no volver a hacerlo. \n📛 🔴 🛑\n\n╭─✵₊・—✦₊・✰₊・ⵓ🌸ⵓ✵₊・✦₊・—✰₊・—─╮\n⊹ ‿︵‿୨ ⚜️ **Tus Puntos Partner son: $(user.partner.point)**┊Por Semana: $(user.partner.weeklypoint) ໒꒱・︵ ෆ ˚₊\n✦ ・—・✦  ₊・— ˚⊹・✦  ₊・—・˚⊹・✦  ₊・—  💮\n⊹ ‿︵‿୨ 💗 **El Rango Partner es: $(user.partner.rank.ordinal)**┊Por Semana: $(user.partner.weeklyrank.ordinal) ໒꒱・︵ ෆ ˚₊\n・—・✦・✦ ・— ˚⊹・✦・—・˚⊹・✦・— ˚ 🪷\n⊹ ‿︵‿୨ 🔆 **Tu XP Partner es: $(user.partner.xp)┊Nivel: $(user.partner.level) **\n✦・︶ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇  ︶・✦",
+                "color": 5767168,
+                "author": {
+                  "name": "✵ Solicitud Rechazada ✵",
+                  "url": "https://ugokawaii.com/wp-content/uploads/2022/12/clock.gif",
+                  "icon_url": "https://media.tenor.com/eDchk3srtycAAAAi/piffle-error.gif"
+                },
+                "footer": {
+                  "text": "ꮺ₊˚ ໒🌸꒱ ¡Para realizar bien una alianza abre un ticket en la sección de \"Alianzas\" o contacta con un miembro del staff! 🌙 ✧˚₊",
+                  "icon_url": "https://media.tenor.com/CN0GKFWvBTcAAAAM/error-windows.gif"
+                },
+                "timestamp": "2024-10-12T05:26:00.000Z",
+                "image": {
+                  "url": "https://i.pinimg.com/originals/11/78/6e/11786e04765a33c1cd99dd9aa4277ccb.gif"
+                }
+              }
+            ],
+            "username": "Alianzas",
+            "avatar_url": "https://img.pikbest.com/origin/10/03/51/56bpIkbEsTwI2.png!sw800",
+            "attachments": []
+          },
+          "reference": ""
+        }
+      ],
+      "targets": [
+        {
+          "url": ""
+        }
+      ]
+    },
+    {
+      "name": "Realianza",
+      "messages": [
+        {
+          "data": {
+            "content": "@alianzas",
+            "embeds": [
+              {
+                "title": "❥ Hey, $(user.name), ya estas aliado a este servidor. Con ese link.",
+                "description": "✦・ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇ ・✦\n✩₊˚⌒✧.⊹ **$(user.name)**.\n・✦ ***Recuerda usar el comando CD. De CoolDowns para saber si puedes volver a afiliar o aliarze a nuestro servidor.*** ✦・\n\n╭─✵₊・—✦₊・✰₊・ⵓ🌸ⵓ✵₊・✦₊・—✰₊・—─╮\n⊹ ‿︵‿୨ ⚜️ **Tus Puntos Partner son: $(user.partner.point)**┊Por Semana: $(user.partner.weeklypoint) ໒꒱・︵ ෆ ˚₊\n✦ ・—・✦  ₊・— ˚⊹・✦  ₊・—・˚⊹・✦  ₊・—  💮\n⊹ ‿︵‿୨ 💗 **El Rango Partner es: $(user.partner.rank.ordinal)**┊Por Semana: $(user.partner.weeklyrank.ordinal) ໒꒱・︵ ෆ ˚₊\n・—・✦・✦ ・— ˚⊹・✦・—・˚⊹・✦・— ˚ 🪷\n⊹ ‿︵‿୨ 🔆 **Tu XP Partner es: $(user.partner.xp)┊Nivel: $(user.partner.level) **\n✦・︶ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇  ︶・✦",
+                "color": 16759896,
+                "author": {
+                  "name": "✵ Ya estas aliado con este server ✵ Con ese link.",
+                  "url": "https://ugokawaii.com/wp-content/uploads/2022/12/clock.gif",
+                  "icon_url": "https://media.tenor.com/eDchk3srtycAAAAi/piffle-error.gif"
+                },
+                "footer": {
+                  "text": "ꮺ₊˚ ໒🌸꒱ ¡Para realizar bien una alianza abre un ticket en la sección de \"Alianzas\" o contacta con un miembro del staff! 🌙 ✧˚₊",
+                  "icon_url": "https://media.tenor.com/CN0GKFWvBTcAAAAM/error-windows.gif"
+                },
+                "timestamp": "2024-10-12T05:26:00.000Z",
+                "image": {
+                  "url": "https://i.pinimg.com/originals/1f/ed/54/1fed5471062f0927bbec470cb7dde59a.gif"
+                }
+              }
+            ],
+            "username": "Alianzas",
+            "avatar_url": "https://img.pikbest.com/origin/10/03/51/56bpIkbEsTwI2.png!sw800",
+            "attachments": []
+          },
+          "reference": ""
+        }
+      ],
+      "targets": [
+        {
+          "url": ""
+        }
+      ]
+    },
+    {
+      "name": "Afiliacion",
+      "messages": [
+        {
+          "data": {
+            "content": "@afiliaciones",
+            "embeds": [
+              {
+                "title": "❥ ꒰໒ ˚˳𝙉𝙪𝙚𝙫𝙖 🌺 𝘼𝙛𝙞𝙡𝙞𝙖𝙘𝙞𝙤𝙣˳˚૭꒱ - Affiliations ⊹・✦ 🪻",
+                "description": "✦・ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇ ・✦\n✩₊˚⌒✧.⊹ **¡Muchas gracias $(user.nick) por tu afiliacion al servidor!**\n❥ Todo el server de $(guild.name) con un total de $(guild.members.ordinal) esta honrado y agredecido por **ti, $(user.name) ︶・✦**\n・—・✦ ₊・—・✦ ₊・— ˚⊹—・˚⊹・✦ ₊・— ˚ ☑️\n✧ **Te has aliado como afiliado** con el servidor: **$(invite.guild.name) | $(invite.guild.member) | $(invite.guild.online) 💜**\n\n⊹・✦ 🌺 Una afiliacion es mucho mas importante que un partnership. Se te dara V.I.P del servidor al matener la afiliacion 🌺 ⊹・✦\n\n╭─✵₊・—✦₊・✰₊・ⵓ🌸ⵓ✵₊・✦₊・—✰₊・—─╮\n⊹ ‿︵‿୨ ⚜️ **Tus Puntos Partner son: $(user.partner.point)**┊Por Semana: $(user.partner.weeklypoint) ໒꒱・︵ ෆ ˚₊\n✦ ・—・✦  ₊・— ˚⊹・✦  ₊・—・˚⊹・✦  ₊・—  💮\n⊹ ‿︵‿୨ 💗 **El Rango Partner es: $(user.partner.rank.ordinal)**┊Por Semana: $(user.partner.weeklyrank.ordinal) ໒꒱・︵ ෆ ˚₊\n・—・✦・✦ ・— ˚⊹・✦・—・˚⊹・✦・— ˚ 🪷\n⊹ ‿︵‿୨ 🔆 **Tu XP Partner es: $(user.partner.xp)┊Nivel: $(user.partner.level) **\n✦・︶ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇  ︶・✦\n\n✦——————————————————————✦\n・✦ Recuerda tu Cooldown de Afiliado: $(invite.cooldown.affiliate) ✦・\n$(invite.blacklist.reason)\n✦——————————————————————✦",
+                "color": 2899455,
+                "author": {
+                  "name": "🏵️ ¡ ♡ WOW. Tenemos una nueva Afiliacion ♡ ! 🌸˚⊹・✦",
+                  "url": "https://ugokawaii.com/wp-content/uploads/2022/12/clock.gif",
+                  "icon_url": "https://i.pinimg.com/originals/fb/57/d9/fb57d970fb03971f1a212268f8cd1ee5.gif"
+                },
+                "footer": {
+                  "text": "ꮺ₊˚ ໒🌸꒱ ¡Contacta con un miembro del staff para realizar otro anuncio de esta afiliacion! 🌙 ✧˚₊",
+                  "icon_url": "https://i.pinimg.com/originals/b2/89/d7/b289d71dc7befaa5c5416f7244296208.gif"
+                },
+                "timestamp": "2024-10-12T05:26:00.000Z",
+                "image": {
+                  "url": "https://i.pinimg.com/originals/47/6d/9f/476d9f1fc9bbe0955cb36c507dac9495.gif"
+                }
+              }
+            ],
+            "username": "Alianzas",
+            "avatar_url": "https://img.pikbest.com/origin/10/03/51/56bpIkbEsTwI2.png!sw800",
+            "attachments": []
+          },
+          "reference": ""
+        }
+      ],
+      "targets": [
+        {
+          "url": ""
+        }
+      ]
+    },
+    {
+      "name": "AfiliacionCD",
+      "messages": [
+        {
+          "data": {
+            "content": "@afiliaciones",
+            "embeds": [
+              {
+                "title": "❥ ꒰໒ ˚˳¡𝙍𝙚𝙘𝙪𝙚𝙧𝙙𝙖!˳˚૭꒱ - Affiliations. $(invite.cooldown.affiliate)",
+                "description": "✦・ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇ ・✦\n✩₊˚⌒✧.⊹ **$(user.name)**.\n・✦ ***Recuerda tu Cooldown de Afiliado es de: $(invite.cooldown.affiliate)*** ✦・\n\n╭─✵₊・—✦₊・✰₊・ⵓ🌸ⵓ✵₊・✦₊・—✰₊・—─╮\n⊹ ‿︵‿୨ ⚜️ **Tus Puntos Partner son: $(user.partner.point)**┊Por Semana: $(user.partner.weeklypoint) ໒꒱・︵ ෆ ˚₊\n✦ ・—・✦  ₊・— ˚⊹・✦  ₊・—・˚⊹・✦  ₊・—  💮\n⊹ ‿︵‿୨ 💗 **El Rango Partner es: $(user.partner.rank.ordinal)**┊Por Semana: $(user.partner.weeklyrank.ordinal) ໒꒱・︵ ෆ ˚₊\n・—・✦・✦ ・— ˚⊹・✦・—・˚⊹・✦・— ˚ 🪷\n⊹ ‿︵‿୨ 🔆 **Tu XP Partner es: $(user.partner.xp)┊Nivel: $(user.partner.level) **\n✦・︶ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇  ︶・✦",
+                "color": 5812223,
+                "author": {
+                  "name": "$(invite.cooldown.affiliate) ⏱️ ¡ COOLDOWN ! ⏰ $(invite.cooldown.affiliate)",
+                  "url": "https://ugokawaii.com/wp-content/uploads/2022/12/clock.gif",
+                  "icon_url": "https://ugokawaii.com/wp-content/uploads/2022/12/clock.gif"
+                },
+                "footer": {
+                  "text": "ꮺ₊˚ ໒🌸꒱ ¡Contacta con un miembro del staff para realizar otro anuncio de una afiliacion! 🌙 ✧˚₊",
+                  "icon_url": "https://66.media.tumblr.com/tumblr_macxij6ZBf1rfjowdo1_500.gif"
+                },
+                "timestamp": "2024-10-12T05:26:00.000Z",
+                "image": {
+                  "url": "https://i.pinimg.com/originals/74/bb/17/74bb174f8cf1786e86de4c53577f4975.gif"
+                }
+              }
+            ],
+            "username": "Alianzas",
+            "avatar_url": "https://img.pikbest.com/origin/10/03/51/56bpIkbEsTwI2.png!sw800",
+            "attachments": []
+          },
+          "reference": ""
+        }
+      ],
+      "targets": [
+        {
+          "url": ""
+        }
+      ]
+    },
+    {
+      "name": "AfiliacionError",
+      "messages": [
+        {
+          "data": {
+            "content": "@afiliaciones",
+            "embeds": [
+              {
+                "title": "❥ $(user.name), tu enlace de invitacion del servidor afiliado es invalido... 🔴",
+                "description": "✦・ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇ ・✦\n✩₊˚⌒✧.⊹ **$(user.name)**.\n・✦ ***Recuerda usar los parametros necesarios. $(user.proper)*** ✦・\n\n╭─✵₊・—✦₊・✰₊・ⵓ🌸ⵓ✵₊・✦₊・—✰₊・—─╮\n⊹ ‿︵‿୨ ⚜️ **Tus Puntos Partner son: $(user.partner.point)**┊Por Semana: $(user.partner.weeklypoint) ໒꒱・︵ ෆ ˚₊\n✦ ・—・✦  ₊・— ˚⊹・✦  ₊・—・˚⊹・✦  ₊・—  💮\n⊹ ‿︵‿୨ 💗 **El Rango Partner es: $(user.partner.rank.ordinal)**┊Por Semana: $(user.partner.weeklyrank.ordinal) ໒꒱・︵ ෆ ˚₊\n・—・✦・✦ ・— ˚⊹・✦・—・˚⊹・✦・— ˚ 🪷\n⊹ ‿︵‿୨ 🔆 **Tu XP Partner es: $(user.partner.xp)┊Nivel: $(user.partner.level) **\n✦・︶ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇  ︶・✦",
+                "color": 10558749,
+                "author": {
+                  "name": "✵ Oh. A ocurrido algo inesperado ✵",
+                  "url": "https://ugokawaii.com/wp-content/uploads/2022/12/clock.gif",
+                  "icon_url": "https://media.tenor.com/eDchk3srtycAAAAi/piffle-error.gif"
+                },
+                "footer": {
+                  "text": "ꮺ₊˚ ໒🌸꒱ ¡Contacta con un miembro del staff para realizar bien un anuncio de una afiliacion! 🌙 ✧˚₊•",
+                  "icon_url": "https://media.tenor.com/CN0GKFWvBTcAAAAM/error-windows.gif"
+                },
+                "timestamp": "2024-10-12T05:26:00.000Z",
+                "image": {
+                  "url": "https://i.pinimg.com/originals/24/5d/e0/245de0f6762408d17b51f333f9a74c57.gif"
+                }
+              }
+            ],
+            "username": "Alianzas",
+            "avatar_url": "https://img.pikbest.com/origin/10/03/51/56bpIkbEsTwI2.png!sw800",
+            "attachments": []
+          },
+          "reference": ""
+        }
+      ],
+      "targets": [
+        {
+          "url": ""
+        }
+      ]
+    },
+    {
+      "name": "AfiliacionErrorMem",
+      "messages": [
+        {
+          "data": {
+            "content": "@afiliaciones",
+            "embeds": [
+              {
+                "title": "❥ $(user.name), el servidor que quieres mandar. No cumple con las condiciones de miembros requeridos... 🔴",
+                "description": "✦・ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇ ・✦\n✩₊˚⌒✧.⊹ **$(user.name)**.\n・✦ ***Recuerda usar los parametros necesarios. $(user.proper)*** ✦・\n\n🛑 ✦— El minimo de miembros o usuarios para afiliarnos es: $(guild.memberreq.affiliate).\n\n🛑 ✦— El servidor $(invite.guild.name). Tiene $(invite.guild.member).\n\n╭─✵₊・—✦₊・✰₊・ⵓ🌸ⵓ✵₊・✦₊・—✰₊・—─╮\n⊹ ‿︵‿୨ ⚜️ **Tus Puntos Partner son: $(user.partner.point)**┊Por Semana: $(user.partner.weeklypoint) ໒꒱・︵ ෆ ˚₊\n✦ ・—・✦  ₊・— ˚⊹・✦  ₊・—・˚⊹・✦  ₊・—  💮\n⊹ ‿︵‿୨ 💗 **El Rango Partner es: $(user.partner.rank.ordinal)**┊Por Semana: $(user.partner.weeklyrank.ordinal) ໒꒱・︵ ෆ ˚₊\n・—・✦・✦ ・— ˚⊹・✦・—・˚⊹・✦・— ˚ 🪷\n⊹ ‿︵‿୨ 🔆 **Tu XP Partner es: $(user.partner.xp)┊Nivel: $(user.partner.level) **\n✦・︶ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇  ︶・✦",
+                "color": 8327955,
+                "author": {
+                  "name": "✵ Oh. A ocurrido algo inesperado ✵",
+                  "url": "https://ugokawaii.com/wp-content/uploads/2022/12/clock.gif",
+                  "icon_url": "https://media.tenor.com/eDchk3srtycAAAAi/piffle-error.gif"
+                },
+                "footer": {
+                  "text": "ꮺ₊˚ ໒🌸꒱ ¡Contacta con un miembro del staff para realizar bien un anuncio de una afiliacion! 🌙 ✧˚₊•",
+                  "icon_url": "https://media.tenor.com/CN0GKFWvBTcAAAAM/error-windows.gif"
+                },
+                "timestamp": "2024-10-12T05:26:00.000Z",
+                "image": {
+                  "url": "https://steamuserimages-a.akamaihd.net/ugc/392173714790906271/7746DC800A3FE173F40AD4DF02AB28D23DFE9233/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false"
+                }
+              }
+            ],
+            "username": "Alianzas",
+            "avatar_url": "https://img.pikbest.com/origin/10/03/51/56bpIkbEsTwI2.png!sw800",
+            "attachments": []
+          },
+          "reference": ""
+        }
+      ],
+      "targets": [
+        {
+          "url": ""
+        }
+      ]
+    },
+    {
+      "name": "AfiliacionErrorAge",
+      "messages": [
+        {
+          "data": {
+            "content": "@afiliaciones",
+            "embeds": [
+              {
+                "title": "❥ $(user.name), el servidor que quieres mandar. No cumple con las condiciones de edad requerido... 🔴",
+                "description": "✦・ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇ ・✦\n✩₊˚⌒✧.⊹ **$(user.name)**.\n・✦ ***Recuerda usar los parametros necesarios. $(user.proper)*** ✦・\n\n🛑 ✦— El minimo de edad de creacion del servidor para afiliarse es: $(guild.agereq.affiliate).\n\n🛑 ✦— El servidor $(invite.guild.name). Tiene $(invite.guild.age) de edad.\n\n╭─✵₊・—✦₊・✰₊・ⵓ🌸ⵓ✵₊・✦₊・—✰₊・—─╮\n⊹ ‿︵‿୨ ⚜️ **Tus Puntos Partner son: $(user.partner.point)**┊Por Semana: $(user.partner.weeklypoint) ໒꒱・︵ ෆ ˚₊\n✦ ・—・✦  ₊・— ˚⊹・✦  ₊・—・˚⊹・✦  ₊・—  💮\n⊹ ‿︵‿୨ 💗 **El Rango Partner es: $(user.partner.rank.ordinal)**┊Por Semana: $(user.partner.weeklyrank.ordinal) ໒꒱・︵ ෆ ˚₊\n・—・✦・✦ ・— ˚⊹・✦・—・˚⊹・✦・— ˚ 🪷\n⊹ ‿︵‿୨ 🔆 **Tu XP Partner es: $(user.partner.xp)┊Nivel: $(user.partner.level) **\n✦・︶ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇  ︶・✦",
+                "color": 10559006,
+                "author": {
+                  "name": "✵ Oh. A ocurrido algo inesperado ✵",
+                  "url": "https://ugokawaii.com/wp-content/uploads/2022/12/clock.gif",
+                  "icon_url": "https://media.tenor.com/eDchk3srtycAAAAi/piffle-error.gif"
+                },
+                "footer": {
+                  "text": "ꮺ₊˚ ໒🌸꒱ ¡Contacta con un miembro del staff para realizar bien un anuncio de una afiliacion! 🌙 ✧˚₊•",
+                  "icon_url": "https://media.tenor.com/CN0GKFWvBTcAAAAM/error-windows.gif"
+                },
+                "timestamp": "2024-10-12T05:26:00.000Z",
+                "image": {
+                  "url": "https://i.pinimg.com/originals/d4/96/7f/d4967fd1672fecb50f7f7c400ddef92c.gif"
+                }
+              }
+            ],
+            "username": "Alianzas",
+            "avatar_url": "https://img.pikbest.com/origin/10/03/51/56bpIkbEsTwI2.png!sw800",
+            "attachments": []
+          },
+          "reference": ""
+        }
+      ],
+      "targets": [
+        {
+          "url": ""
+        }
+      ]
+    },
+    {
+      "name": "AfiliacionRechazada",
+      "messages": [
+        {
+          "data": {
+            "content": "@afiliaciones",
+            "embeds": [
+              {
+                "title": "📛 🔴 🛑 $(user.name), el servidor promocionado esta prohibido en este servidor... Y esta en la blacklist por razones justificadas... 📛 🔴 🛑",
+                "description": "✦・ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇ ・✦\n✩₊˚⌒✧.⊹ **$(user.name)**.\n・✦ ***Recuerda usar los parametros necesarios. $(user.proper)*** ✦・\n\n**Razon del rechazo. Esta en la blacklist por:**\n 📛 $(invite.blacklist.reason) 📛\n\nEsta accion puede ser penada con varios warns si es necesario. Intenta no volver a hacerlo. Nunca jamas.\n📛 🔴 🛑\n\n╭─✵₊・—✦₊・✰₊・ⵓ🌸ⵓ✵₊・✦₊・—✰₊・—─╮\n⊹ ‿︵‿୨ ⚜️ **Tus Puntos Partner son: $(user.partner.point)**┊Por Semana: $(user.partner.weeklypoint) ໒꒱・︵ ෆ ˚₊\n✦ ・—・✦  ₊・— ˚⊹・✦  ₊・—・˚⊹・✦  ₊・—  💮\n⊹ ‿︵‿୨ 💗 **El Rango Partner es: $(user.partner.rank.ordinal)**┊Por Semana: $(user.partner.weeklyrank.ordinal) ໒꒱・︵ ෆ ˚₊\n・—・✦・✦ ・— ˚⊹・✦・—・˚⊹・✦・— ˚ 🪷\n⊹ ‿︵‿୨ 🔆 **Tu XP Partner es: $(user.partner.xp)┊Nivel: $(user.partner.level) **\n✦・︶ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇  ︶・✦",
+                "color": 2097152,
+                "author": {
+                  "name": "✵ Solicitud Rechazada ✵",
+                  "url": "https://ugokawaii.com/wp-content/uploads/2022/12/clock.gif",
+                  "icon_url": "https://media.tenor.com/eDchk3srtycAAAAi/piffle-error.gif"
+                },
+                "footer": {
+                  "text": "ꮺ₊˚ ໒🌸꒱ ¡Contacta con un miembro del staff para realizar bien un anuncio de una afiliacion! 🌙 ✧˚₊•",
+                  "icon_url": "https://media.tenor.com/CN0GKFWvBTcAAAAM/error-windows.gif"
+                },
+                "timestamp": "2024-10-12T05:26:00.000Z",
+                "image": {
+                  "url": "https://steamuserimages-a.akamaihd.net/ugc/838085117288209031/411792DB8941950CD8FD72097782C846276BFCA6/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false"
+                }
+              }
+            ],
+            "username": "Alianzas",
+            "avatar_url": "https://img.pikbest.com/origin/10/03/51/56bpIkbEsTwI2.png!sw800",
+            "attachments": []
+          },
+          "reference": ""
+        }
+      ],
+      "targets": [
+        {
+          "url": ""
+        }
+      ]
+    },
+    {
+      "name": "Reafiliacion",
+      "messages": [
+        {
+          "data": {
+            "content": "@alianzas",
+            "embeds": [
+              {
+                "title": "❥ Hey, $(user.name), ya estas afiliado a ese servidor...",
+                "description": "✦・ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇ ・✦\n✩₊˚⌒✧.⊹ **$(user.name)**.\n・✦ ***Recuerda usar el comando CD. De CoolDowns para saber si puedes volver a afiliar o aliarze a nuestro servidor.*** ✦・\n\n╭─✵₊・—✦₊・✰₊・ⵓ🌸ⵓ✵₊・✦₊・—✰₊・—─╮\n⊹ ‿︵‿୨ ⚜️ **Tus Puntos Partner son: $(user.partner.point)**┊Por Semana: $(user.partner.weeklypoint) ໒꒱・︵ ෆ ˚₊\n✦ ・—・✦  ₊・— ˚⊹・✦  ₊・—・˚⊹・✦  ₊・—  💮\n⊹ ‿︵‿୨ 💗 **El Rango Partner es: $(user.partner.rank.ordinal)**┊Por Semana: $(user.partner.weeklyrank.ordinal) ໒꒱・︵ ෆ ˚₊\n・—・✦・✦ ・— ˚⊹・✦・—・˚⊹・✦・— ˚ 🪷\n⊹ ‿︵‿୨ 🔆 **Tu XP Partner es: $(user.partner.xp)┊Nivel: $(user.partner.level) **\n✦・︶ ⊹ ̇ ̟ ෆ✿‿︵‿୨🌸ෆ🌸୧‿︵‿✿ෆ ̟ ̇  ︶・✦",
+                "color": 16738392,
+                "author": {
+                  "name": "✵ Ya estas afiliado con ese servidor ✵ Con este mismo link.",
+                  "url": "https://ugokawaii.com/wp-content/uploads/2022/12/clock.gif",
+                  "icon_url": "https://media.tenor.com/eDchk3srtycAAAAi/piffle-error.gif"
+                },
+                "footer": {
+                  "text": "ꮺ₊˚ ໒🌸꒱ ¡Para realizar bien una alianza abre un ticket en la sección de \"Alianzas\" o contacta con un miembro del staff! 🌙 ✧˚₊",
+                  "icon_url": "https://media.tenor.com/CN0GKFWvBTcAAAAM/error-windows.gif"
+                },
+                "timestamp": "2024-10-12T05:26:00.000Z",
+                "image": {
+                  "url": "https://i.pinimg.com/originals/1f/ed/54/1fed5471062f0927bbec470cb7dde59a.gif"
+                }
+              }
+            ],
+            "username": "Alianzas",
+            "avatar_url": "https://img.pikbest.com/origin/10/03/51/56bpIkbEsTwI2.png!sw800",
+            "attachments": []
+          },
+          "reference": ""
+        }
+      ],
+      "targets": [
+        {
+          "url": ""
+        }
+      ]
+    },
+    {
+      "name": "Reglas",
+      "messages": [
+        {
+          "data": {
+            "content": "**📚 ✿ Reglas y normativas de ༺থৣ𝐒𝐡𝐢𝐠𝐚𝐦𝐞𝐧𝐬থৣ༻✩₊ ✿ 📜**",
+            "embeds": [
+              {
+                "title": "⭐ ・✦ Recuerda seguir con todas las reglas y normas para cumplir los requisitos del server.\n📘 ・✦ Antes de seguir debes seguir los Términos y condiciones de Discord:",
+                "description": "─ Lea con más detalle lo que no se permite en la aplicación:\nhttps://discord.com/guidelines | https://discord.com/terms",
+                "url": "https://discord.com/terms",
+                "color": 4735228,
+                "author": {
+                  "name": "⭐ ₊˚⌒✧. Gracias por unirte a nuestro servidor, a continuación, las reglas y normas a seguir en el servidor a seguir para un buen comportamiento. ૮꒰ ˶• ༝ •˶꒱ა 💜",
+                  "url": "https://discord.com/terms",
+                  "icon_url": "https://genesistoxical.com/wp-content/uploads/2021/05/Corazon_coloreado_png.png"
+                },
+                "footer": {
+                  "text": "✩₊˚🌸 ✦ Reglas de los terminos y condiciones de discord ✦✩₊˚💜",
+                  "icon_url": "https://cdn3.emoji.gg/emojis/4280-reglas.png"
+                },
+                "image": {
+                  "url": "https://cdn.prod.website-files.com/625fe439fb70a9d901e138ab/64af35636d4884f330a51057_Meta-Image-Safety-News.png"
+                },
+                "thumbnail": {
+                  "url": "https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/636e0b52aa9e99b832574a53_full_logo_blurple_RGB.png"
+                }
+              },
+              {
+                "title": "✩₊˚🌸 ✦ Reglas Generales de servidor ✦✩₊˚",
+                "description": "## ❥ 1️⃣ ⊹・✦ Regla: **Aceptación de normativas.**\n─ Al entrar al servidor, confirmas que te has leído las normativas del\nservidor y por lo tanto, estas de acuerdo con las mismas. Se te podrá\nsancionar en base a estas y no podrás oponerte a las mismas. Las\nnormativas son igual para todos los miembros. Cualquier duda,\nincomodidad, sugerencia o correción se puede hacer mediante nuestros\ntickets.\n\n## ❥ 2️⃣ ⊹・✦ Regla: **Respeto a los usuarios.**\n─ Prohibido la incitación al odio y el mal comportamiento como la toxicidad. Comentarios irrespetuosos hacia las creencias, vivencias y gustos de los\nusuarios, ya sea a través de canales de texto, como por canales de voz. Nada de contenido +18 o pornografia infantil, violencia, satanismo, gore o otros.\nTodo comportamiento racista, xenófobo, homofóbico/tránsfobo y\namenazante será sancionado según el juicio del Staff presente.\n\n## ❥ 3️⃣ ⊹・✦ Regla: **Exceso de menciones.**\n─ No está permitido mencionar constantemente de manera masiva, incomoda, repetitiva o molesta a los usuarios, como al\nStaff. Si usted menciona de forma innecesaria a algún miembro del Staff,\nserá sancionado según el juicio del mismo\n\n## ❥ 4️⃣ ⊹・✦ Regla: **Orden de los canales. Nada de Spam.**\n─ Cada canal tiene su función. Está prohibido realizar comandos o\nactividades fuera de canales permitidos. El Spam esta prohibido.\nSerás advertido o sancionado dependiendo de la gravedad de la situación. \n\n## ❥ 5️⃣ ⊹・✦ Regla: **Suplantación de identidad.**\n─ No se permitirá ni aceptará la suplantación de identidad de una figura\npública reconocida o no reconocida. Cualquier tipo de influencia que se\ncause a través de un usuario usando una imagen pública; diciendo que es\nél conllevará a una sanción grave. Está permitido usar personajes memes\no figuras públicas siempre y cuando sea por fanatismo, bromas. Siempre\nse tendrá que mantener en claro que no estás incentivando actos\ntomando la identidad de una persona y/o personaje.\n\n## ❥ 6️⃣ ⊹・✦ Regla: **Polémica, dramas o temas controversiales.**\n─  Influenciar, incentivar o realizar conversaciones las cuales tengan el fin de\ndebatir temas controversiales como; política, creencias propias, asuntos\ndel otro y variantes del mismo; no serán permitidas dentro del servidor.\nAsí como incentivar a una pelea entre usuarios. Todo será sancionado\nsegún el juicio del Staff presente. La confianza mutua puede solventar el problema.\n\n## ❥ 7️⃣ ⊹・✦ Regla: **Perfiles no apropiados o moderados.**\n─ Aún como miembro del servidor, tendrás que seguir esta regla. No se\npermiten fotos NSFW, o fotos que inciten a una controversia entre los\nusuarios. Esto incluye nombres inapropiados, descripciones inapropiadas.\nEl Staff está autorizado a moderar perfiles los cuales se consideren\ninapropiados. Y tú como usuario aceptas esta regla, y en caso de presentar\nproblemas se te baneará del servidor.\n\n## ❥ 8️⃣ ⊹・✦ Regla: **Tickets innecesarios.**\n─ En caso de abrir tickets innecesarios de forma seguida o con intenciones\nde molestar se te sancionará según las reglas establecidas en el canal de\nTickets. Si lo haces por error; Hazlo saber al Staff que te atienda el ticket. Y\nasí no podrás recibir una sanción.\n\n## ❥ 9️⃣ ⊹・✦ Regla: **Difusión de conversaciones como intentos de acoso público.**\n─ Se prohíbe rotundamente la difusión de conversaciones externas al servidor con el fin de exponer la privacidad de un tema tratado entre usuarios. Shigamens no se hace cargo de dramas o peleas las cuales iniciaron en un ámbito privado. Si rompes esta regla; serás sancionado con un baneo permanente del servidor. Si se da un caso el cuál presente variantes de esta regla, será sancionado a juicio del Staff encargado.\n\n## ❥ 1️⃣0️⃣ ⊹・✦ Regla:  **Comentarios inapropiados o intentos de acoso.**\n─ Todo comentario que cumpla con las características de burla hacia creencias propias, insultos hacia el físico de una persona, acoso directo o indirecto hacia una/un usuario en cualquier situación, u otra cosa que pueda llegar a afectar a la persona, se tomarán como comentarios inapropiados y se moderarán conforme a las directrices del servidor.",
+                "url": "https://support.discord.com/hc/es-419/articles/1500000466882-Preguntas-frecuentes-sobre-la-revisión-de-reglas#docs-internal-guid-e36c9708-7fff-8fb0-52da-f370f1306801",
+                "color": 13074943,
+                "author": {
+                  "name": "💙 🌸 ✩₊˚ REGLAS DE SHIGAMENS SERVER ✩₊˚ 🌸 💜",
+                  "url": "https://support.discord.com/hc/es-419/articles/1500000466882-Preguntas-frecuentes-sobre-la-revisión-de-reglas",
+                  "icon_url": "https://cdn.discordapp.com/attachments/1227144267051565108/1326141464677318676/shigamenslogoanimate-min.gif?ex=677e58fb&is=677d077b&hm=e3aea4434a33eef0e584b7bae6be440a40440a94330fe21c7baa74413cf9fbd2&"
+                },
+                "footer": {
+                  "text": "✩₊˚🌸 ✦ Reglas Generales de servidor Shigamens Server ✦✩₊˚",
+                  "icon_url": "https://cdn.discordapp.com/attachments/1227144267051565108/1326141407945162822/shigamenslogoestatic.PNG?ex=677e58ee&is=677d076e&hm=ca4155e4454e7e6491ae33eef47db10e196660580785bf30779490773f4249a8&"
+                },
+                "image": {
+                  "url": "https://i.ytimg.com/vi/Mv3lJwj4aNI/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLDDlrVjB8VjgnAMa-LgjQpoovPMJg"
+                }
+              },
+              {
+                "title": "**✿ 🎧 Canales de voz públicos y personalizados o privados 🎙️ ✿**",
+                "description": "## ❥ 1️⃣ ⊹・✦ Regla: **Restricciones generales.**\n─ Las reglas de sentido común; no se permite hablar de temas\ncontroversiales dentro de los canales de voz. Así como reproducir\ncontenido NSFW, contenido controversial o político esta totalmente\nprohibido. El acoso o incomodar a un usuario está totalmente prohibido.\n\n## ❥ 2️⃣ ⊹・✦ Regla: **Canales de voz personalizados.**\n─ No está permitido usar términos inapropiados para los nombres de los\ncanales. O realizar actividades ilícitas o prohibidas dentro de los mismos.\nLas reglas del servidor aplican a los canales de voz, tanto generales como\npersonalizados.\n\n## ❥ 3️⃣ ⊹・✦ Regla: **Sonidos.**\n─ Los sonidos molestos no están permitidos en los canales de voz. Acciones\ncomo gritar, saturar y soplar el micrófono, sonidos saturados, sonidos\nobscenos o NSFW, serán sancionados según a juicio del Staff presente.",
+                "url": "https://arg-rp-erlc.fandom.com/es/wiki/Reglas_del_servidor_de_Discord",
+                "color": 16728385,
+                "author": {
+                  "name": "✩₊˚🌸 ✦ Reglas de canales de voz o VC del servidor ✦✩₊˚",
+                  "url": "https://support.discord.com/hc/es-419/articles/19583625604887-Preguntas-frecuentes-sobre-los-canales-de-voz",
+                  "icon_url": "https://icon-library.com/images/voice-recorder-icon/voice-recorder-icon-29.jpg"
+                },
+                "footer": {
+                  "text": "✩₊˚🌸 ✦ Reglas de canales de voz ✦✩₊˚\n\n- Gracias por leer las reglas 💜",
+                  "icon_url": "https://cdn3.emoji.gg/emojis/6770-discord-voice-from-vega.png"
+                },
+                "image": {
+                  "url": "https://support.discord.com/hc/article_attachments/19102679763863"
+                }
+              }
+            ],
+            "username": "✦ Reglas y normativas ✦",
+            "avatar_url": "https://cdn3.emoji.gg/emojis/1842-discord-book.png",
+            "attachments": []
+          },
+          "reference": ""
+        },
+        {
+          "data": {
+            "content": null,
+            "embeds": null,
+            "username": "Descargar normativas",
+            "avatar_url": "https://cdn-icons-png.flaticon.com/512/1053/1053166.png",
+            "attachments": []
+          },
+          "reference": ""
+        }
+      ],
+      "targets": [
+        {
+          "url": ""
+        }
+      ]
+    }
+  ]
+}

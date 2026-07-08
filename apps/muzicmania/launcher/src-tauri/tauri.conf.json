@@ -1,0 +1,50 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "MuzicMania",
+  "version": "2.0.1",
+  "identifier": "com.ciszunetwork.muzicmania",
+  "build": {
+    "beforeBuildCommand": "",
+    "frontendDist": "splash"
+  },
+  "app": {
+    "withGlobalTauri": false,
+    "windows": [],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "category": "Game",
+    "shortDescription": "Ecosistema rítmico de alto rendimiento",
+    "longDescription": "MuzicMania es un juego rítmico de alto rendimiento desarrollado por Ciszu Network. Descarga la versión nativa para Windows y disfruta de la experiencia completa con la menor latencia posible.",
+    "publisher": "Ciszu Network",
+    "copyright": "© 2026 Ciszu Network. Todos los derechos reservados.",
+    "licenseFile": "LICENSE.txt",
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": "",
+      "nsis": {
+        "installMode": "currentUser",
+        "languages": ["English", "Spanish", "SimpChinese", "TradChinese", "Portuguese", "Russian", "Japanese", "Korean", "French", "German", "Italian", "Dutch", "Polish", "Arabic", "Turkish", "Czech", "Hungarian", "Swedish"],
+        "displayLanguageSelector": true,
+        "installerIcon": "icons/icon.ico",
+        "customLanguageFiles": {
+          "Polish": "nsis-lang/Polish.nsh",
+          "Czech": "nsis-lang/Czech.nsh",
+          "Hungarian": "nsis-lang/Hungarian.nsh"
+        }
+      }
+    }
+  }
+}

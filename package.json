@@ -1,0 +1,26 @@
+{
+  "name": "ciszunetwork-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "echo 'Usa: pnpm --filter <app> dev'",
+    "build": "echo 'Usa: pnpm --filter <app> build'",
+    "lint": "echo 'Usa: pnpm --filter <app> lint'",
+    "web:dev": "pnpm --filter ciszunetwork-page dev",
+    "web:build": "pnpm --filter ciszunetwork-page build",
+    "antony:dev": "pnpm --filter ciszuko-network dev",
+    "antony:build": "pnpm --filter ciszuko-network build",
+    "muzicmania:dev": "pnpm --filter muzicmania-next dev",
+    "muzicmania:build": "pnpm --filter muzicmania-next build",
+    "bot:start": "pnpm --filter ciszubot start",
+    "bot:dev": "pnpm --filter ciszubot dev",
+    "cdn:upload": "node scripts/upload-cdn.js"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.0"
+  },
+  "packageManager": "pnpm@10.8.1"
+}

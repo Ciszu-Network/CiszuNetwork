@@ -7,6 +7,7 @@ node_modules/
 out/
 dist/
 build/
+target/
 
 # Environment
 .env
@@ -18,11 +19,6 @@ build/
 Thumbs.db
 desktop.ini
 
-# IDE
-.vscode/
-.idea/
-*.sublime-*
-
 # Vercel
 .vercel
 
@@ -32,44 +28,55 @@ tsconfig.tsbuildinfo
 # Debug logs
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
 
-# --- Large binary files not needed in git ---
-
-# Adobe
+# Large binary files
 *.psd
 *.ai
-
-# Archives
+*.pdn
 *.7z
 *.rar
 *.zip
 *.wfp
 *.jar
 *.mcpack
-
-# Media
 *.mp4
 *.mp3
 *.ogg
 *.exe
 *.dll
 *.msi
-
-# Old MuzicMania icon sets (not used by CiszuNetworkPage)
-page/public/icons/
-page/public/fonts/
+*.mov
+*.gif
 
 # macOS metadata
 __MACOSX/
 ._*
 
-# Large video/GIF files (exceed GitHub 100MB limit)
-content/flayers/video/
+# Tauri
+apps/muzicmania/launcher/target/
 
-# Heavy build artifacts in sub-projects
-ciszu_proyects/muzic mania/.next/
-ciszu_proyects/muzic mania/node_modules/
-ciszu_proyects/friday night funkin/mods/engines/
-ciszu_proyects/friday night funkin/mods/FNF*/
-ciszu_proyects/ciszubot/main/.git/
+# ─── CDN assets ───────────────────────────────────────
+# Assets served from Supabase Storage CDN.
+# Run `pnpm cdn:upload` to push local assets.
+assets/gif/
+assets/video/
+assets/images/
+assets/docs/
+assets/icons/
+assets/fonts/
+assets/logos/gif/
+assets/logos/video/
+
+# ─── Legacy duplicate projects ───────────────────────
+CiszuGamens/
+
+# ─── Duplicate content (GIF/video) ───────────────────
+content/flayers/video/
+content/banners/video/
+content/logos/video/
+apps/ciszukoantony/content/flayers/video/
+apps/ciszukoantony/content/banners/video/
+apps/ciszukoantony/content/logos/video/
+apps/ciszubot/content/flayers/video/
+apps/ciszubot/content/banners/video/
+apps/ciszubot/content/logos/video/

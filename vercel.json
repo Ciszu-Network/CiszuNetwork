@@ -1,7 +1,0 @@
-{
-  "rootDirectory": "page",
-  "buildCommand": "npx next build",
-  "outputDirectory": ".next",
-  "framework": "nextjs",
-  "crons": []
-}

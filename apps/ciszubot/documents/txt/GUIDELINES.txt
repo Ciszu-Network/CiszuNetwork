@@ -1,0 +1,32 @@
+MUZICMANIA - DOCUMENTACIÓN OFICIAL
+Nombre: GUIDELINES
+Versión: 1.0.0
+Actualización: 2026-01-31
+Identificador: GUIDELINES_V1.0.0_2026_02_08_muzicmania
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+DIRECTRICES DE USO / USAGE GUIDELINES
+
+[ESPAÑOL]
+Última actualización: 31 de Enero, 2026
+
+1. Estándares Técnicos: Recomendamos navegadores basados en Chromium (Chrome, Edge). Habilita la aceleración por hardware.
+2. Estabilidad de Conexión: Se requiere conexión estable para sincronización de puntuaciones en tiempo real.
+3. Calibración de Audio: Usa el asistente de calibración para ajustar el "Offset".
+4. Mapeo de Teclas: Usa D-F-J-K o personalízalo. Recomendamos teclados de baja latencia.
+5. Configuración Visual: Reduce el neón si experimentas fatiga visual o lag.
+6. Reporte de Incidencias: Limpia la caché si detectas errores o reporta vía soporte.
+7. Contribución: Comparte tus charts y artes respetando la autoría original.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+[ENGLISH]
+Last updated: January 31, 2026
+
+1. Technical Standards: We recommend Chromium-based browsers (Chrome, Edge). Enable hardware acceleration.
+2. Connection Stability: A stable connection is required for real-time score synchronization.
+3. Audio Calibration: Use the calibration wizard to adjust the "Offset".
+4. Key Mapping: Use D-F-J-K or customize it. We recommend low-latency keyboards.
+5. Visual Settings: Reduce neon intensity if you experience eye fatigue or lag.
+6. Issue Reporting: Clear cache if you detect errors or report via support.
+7. Contribution: Share your charts and art while respecting original authorship.

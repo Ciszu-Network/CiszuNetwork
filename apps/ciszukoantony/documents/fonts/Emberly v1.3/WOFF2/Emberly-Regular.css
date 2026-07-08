@@ -1,0 +1,9 @@
+/* Webfont: Emberly-Regular */@font-face {
+    font-family: 'Emberly';
+    src: url('Emberly-Regular.woff2') format('woff2'), /* Modern Browsers */
+         url('Emberly-Regular.otf') format('opentype'); /* Safari, Android, iOS */
+             font-style: normal;
+    font-weight: normal;
+    text-rendering: optimizeLegibility;
+}
+
