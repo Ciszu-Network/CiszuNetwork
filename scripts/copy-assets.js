@@ -9,6 +9,20 @@ function findRoot(dir) {
   return findRoot(parent);
 }
 
+function copyDir(src, dst, label) {
+  if (!fs.existsSync(src)) {
+    console.log(`  [--] ${label}: no existe`);
+    return;
+  }
+  fs.mkdirSync(dst, { recursive: true });
+  try {
+    fs.cpSync(src, dst, { recursive: true, force: true });
+    console.log(`  [OK] ${label} -> public/`);
+  } catch (e) {
+    console.error(`  [ERR] ${label}: ${e.message}`);
+  }
+}
+
 const CWD = process.cwd();
 const ROOT = findRoot(CWD);
 if (!ROOT) {
@@ -19,13 +33,11 @@ if (!ROOT) {
 // Detect app name from CWD path relative to ROOT
 const rel = path.relative(ROOT, CWD).replace(/\\/g, '/');
 const parts = rel.split('/');
-// parts = ['apps', '<name>', 'website'] or ['apps', '<name>'] or ['apps', '<name>', ...]
 const appName = parts[1]; // 'muzicmania', 'website', 'ciszukoantony', 'ciszubot'
 
+// --- 1. Root-level critical assets ---
 const ASSETS = path.join(ROOT, 'assets');
 const CRITICAL_ONLY = ['logos/tagline_black.svg', 'logos/tagline_white.svg', 'logos/imagen'];
-
-// Copy root-level critical assets
 for (const relPath of CRITICAL_ONLY) {
   const src = path.join(ASSETS, relPath);
   const dst = path.join(CWD, 'public', relPath);
@@ -36,40 +48,38 @@ for (const relPath of CRITICAL_ONLY) {
   fs.mkdirSync(path.dirname(dst), { recursive: true });
   try {
     fs.cpSync(src, dst, { recursive: true, force: true });
-    console.log(`  [OK] ${relPath} copiado a public/ (offline)`);
+    console.log(`  [OK] ${relPath} copiado a public/`);
   } catch (e) {
     console.error(`  [ERR] ${relPath}: ${e.message}`);
   }
 }
 
-// Copy app-specific content directory (if exists) to public/apps/{name}/content/
+// --- 2. App content -> public/apps/{name}/content/ (for resolveAssetPath) ---
 if (appName) {
   const appContentSrc = path.join(ROOT, 'apps', appName, 'content');
   const appContentDst = path.join(CWD, 'public', 'apps', appName, 'content');
-  if (fs.existsSync(appContentSrc)) {
-    fs.mkdirSync(path.dirname(appContentDst), { recursive: true });
-    try {
-      fs.cpSync(appContentSrc, appContentDst, { recursive: true, force: true });
-      console.log(`  [OK] apps/${appName}/content copiado a public/ (offline)`);
-    } catch (e) {
-      console.error(`  [ERR] apps/${appName}/content: ${e.message}`);
-    }
-  } else {
-    console.log(`  [--] apps/${appName}/content no existe`);
+  copyDir(appContentSrc, appContentDst, `apps/${appName}/content`);
+
+  // --- 3. Legacy compatibility: copy content subdirs to public/ root ---
+  // Code references /music/..., /images/..., /particleskins/... directly
+  const legacyDirs = fs.existsSync(appContentSrc)
+    ? fs.readdirSync(appContentSrc, { withFileTypes: true })
+        .filter(d => d.isDirectory())
+        .map(d => d.name)
+    : [];
+
+  for (const subdir of legacyDirs) {
+    const src = path.join(appContentSrc, subdir);
+    const dst = path.join(CWD, 'public', subdir);
+    copyDir(src, dst, `${subdir}/`);
   }
 }
 
-// Copy shared icons for offline fallback
-const ICONS_SRC = path.join(ROOT, 'shared', 'icons');
-const ICONS_DST = path.join(CWD, 'public', 'shared', 'icons');
-if (fs.existsSync(ICONS_SRC)) {
-  fs.mkdirSync(path.dirname(ICONS_DST), { recursive: true });
-  try {
-    fs.cpSync(ICONS_SRC, ICONS_DST, { recursive: true, force: true });
-    console.log('  [OK] shared/icons copiado a public/ (offline)');
-  } catch (e) {
-    console.error(`  [ERR] shared/icons: ${e.message}`);
-  }
-}
+// --- 4. Shared icons for offline fallback ---
+copyDir(
+  path.join(ROOT, 'shared', 'icons'),
+  path.join(CWD, 'public', 'shared', 'icons'),
+  'shared/icons'
+);
 
 console.log('\nAssets sincronizados para fallback offline.');

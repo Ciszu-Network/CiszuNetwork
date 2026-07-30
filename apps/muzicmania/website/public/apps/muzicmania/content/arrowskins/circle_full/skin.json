@@ -1,0 +1,47 @@
+{
+    "id":  "circle_full",
+    "format":  [
+                   "svg"
+               ],
+    "files":  {
+                  "arrowUpFail":  "arrow-up-fail.svg",
+                  "arrowLeft":  "arrow-left.svg",
+                  "spriteJson":  null,
+                  "arrowRightPress":  "arrow-right-press.svg",
+                  "holdTail":  "hold-tail.svg",
+                  "arrowDownFail":  "arrow-down-fail.svg",
+                  "arrowDownPress":  "arrow-down-press.svg",
+                  "arrowUp":  "arrow-up.svg",
+                  "arrowUpPress":  "arrow-up-press.svg",
+                  "arrowLeftFail":  "arrow-left-fail.svg",
+                  "holdHead":  "hold-head.svg",
+                  "arrowDown":  "arrow-down.svg",
+                  "spriteSheet":  null,
+                  "arrowRight":  "arrow-right.svg",
+                  "arrowRightFail":  "arrow-right-fail.svg",
+                  "arrowLeftPress":  "arrow-left-press.svg",
+                  "holdTrail":  "hold-trail.svg"
+              },
+    "colorType":  "hsv_indirect",
+    "states":  {
+                   "holdTrail":  true,
+                   "fail":  true,
+                   "press":  true,
+                   "normal":  true
+               },
+    "name":  " circle full.Value.ToUpper() ircle  circle full.Value.ToUpper() ull",
+    "type":  "arrow",
+    "description":  "Skin  circle full.Value.ToUpper() ircle  circle full.Value.ToUpper() ull para MuzicMania",
+    "version":  "1.0",
+    "hasTrail":  true,
+    "author":  "MuzicMania",
+    "hold":  {
+                 "parts":  [
+                               "head",
+                               "body",
+                               "tail"
+                           ],
+                 "tileMode":  "stretch"
+             },
+    "animations":  false
+}
