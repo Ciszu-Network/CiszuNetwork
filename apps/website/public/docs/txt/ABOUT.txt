@@ -1,0 +1,190 @@
+CISZU NETWORK - DOCUMENTACIÓN OFICIAL
+Nombre: ABOUT
+Versión: 2.0.0
+Actualización: 2026-07-28
+Identificador: ABOUT_V2.0.0_2026_07_28_ciszunetwork
+----------------------------------------------------------------------------------------------------
+
+SOBRE CISZU NETWORK / ABOUT CISZU NETWORK
+
+[ESPAÑOL]
+
+Ciszu Network es una iniciativa independiente y multipropósito que reúne proyectos de software, entretenimiento y comunidad. Fundada y operada por Ciszuko Antony (Francisco Garcia) desde Caracas, Venezuela, la red abarca desde aplicaciones web modernas hasta bots de Discord, pasando por videojuegos rítmicos, herramientas de automatización, sistemas de gestión de assets y comunidades gaming.
+
+VISIÓN Y FILOSOFÍA
+Nuestra visión es crear un ecosistema digital cohesionado donde cada proyecto comparta estándares de calidad, diseño y documentación. No aspiramos a ser una empresa corporativa, sino un espacio de creación libre donde el código, el arte y la comunidad convergen bajo estándares profesionales.
+
+Principios fundamentales:
+- Código abierto y transparente
+- Documentación completa en múltiples formatos
+- Estética neón y cyberpunk como identidad visual
+- Experiencia de usuario pulida y profesional
+- Automatización de procesos de build y despliegue
+- Estándares de seguridad en todo el código
+
+PROYECTOS ACTIVOS
+
+1. CiszuNetwork Page (apps/website)
+   Portal principal de la red. Next.js 15 con App Router, TypeScript estricto y Tailwind CSS v4.
+   Sirve como centro de información sobre todos los proyectos de la red.
+   Estado: ✅ Activo
+
+2. Ciszuko Antony Portfolio (apps/ciszukoantony/website)
+   Portfolio personal de Francisco Garcia. Muestra proyectos, habilidades y experiencia.
+   Next.js 15 con diseño responsivo y paleta neon.
+   Estado: ✅ Activo
+
+3. MuzicMania (apps/muzicmania)
+   Juego musical con estética neón y cyberpunk. Plataforma de ritmo con modos web y escritorio.
+   - Versión web: Next.js 15 + Canvas API para el motor de juego
+   - Versión escritorio: Tauri 2 (Rust + WebView2) para Windows
+   - Instaladores NSIS para Windows 10/11
+   - Motor de juego con detección de ritmo, combos y puntuaciones
+   - Sistema de iconos profesional con 5,194 SVGs
+   Estado: ✅ Activo (en desarrollo continuo)
+
+4. CiszuBot (apps/ciszubot)
+   Bot de Discord multipropósito con landing page informativa.
+   - Website: Next.js 15 con información de comandos y características
+   - Bot: Discord.js v14 con comandos slash
+   - Documentación del servidor Shigamens incluida
+   Estado: ⚠️ Website activo, bot en desarrollo
+
+5. CiszuGamens (ciszugamens/)
+   Comunidad gaming oficial de Ciszu Network. Espacio para torneos, eventos y socialización.
+   - Servidor de Discord con canales temáticos por género
+   - Sistema de moderación y staff
+   - Torneos regulares de diversos videojuegos
+   Estado: ✅ Comunidad activa
+
+6. @ciszunetwork/cdn (packages/cdn)
+   Sistema compartido de resolución de assets e iconos.
+   - resolveIcon(name, style, format) para iconos SVG
+   - assetResolver.resolve(path) para assets multimedia
+   - Integración con Supabase Storage
+   Estado: ✅ Activo
+
+ECOSISTEMA TÉCNICO
+- Monorepo: pnpm workspaces + Turborepo
+- Frontend: Next.js 15 + React 19 + TypeScript 6 + Tailwind CSS v4
+- Backend: Supabase (PostgreSQL + Auth + Storage)
+- Desktop: Tauri 2 (Rust)
+- Bots: Discord.js v14
+- CI/CD: GitHub Actions + Vercel
+- Documentación: txt > md > docx > pdf (pipeline automatizado)
+- CDN: Supabase Storage (bucket ciszu-assets)
+
+ESTÁNDARES DE DOCUMENTACIÓN
+Cada proyecto mantiene documentación en 4 formatos:
+- TXT: Fuente de verdad en texto plano
+- MD: Markdown para visualización web
+- DOCX: Microsoft Word para edición
+- PDF: Documento portátil para distribución
+
+Además, cada proyecto tiene ia_docs/ con documentación técnica para agentes de IA,
+siguiendo una estructura estandarizada de 12-19 archivos.
+
+ESTADO GENERAL DEL MONOREPO
+- Documentación: ✅ Completa en todos los proyectos
+- ia_docs: ✅ Reestructurados siguiendo modelo estandarizado
+- Formatos: ✅ txt, md, docx, pdf generados automáticamente
+- public/docs/: ✅ Creado en todos los websites
+- CI/CD: ✅ GitHub Actions funcionando
+- Despliegue: ✅ Automático a Vercel
+
+CONTACTO
+- Email: ciszunetwork@outlook.com
+- Ubicación: Caracas, Venezuela
+- Creador: Francisco Garcia (Ciszuko Antony)
+
+----------------------------------------------------------------------------------------------------
+
+[ENGLISH]
+
+Ciszu Network is an independent, multi-purpose initiative that brings together software, entertainment, and community projects. Founded and operated by Ciszuko Antony (Francisco Garcia) from Caracas, Venezuela, the network ranges from modern web applications and Discord bots to rhythm games, automation tools, asset management systems, and gaming communities.
+
+VISION AND PHILOSOPHY
+Our vision is to create a cohesive digital ecosystem where every project shares quality standards, design, and documentation. We do not aspire to be a corporation, but rather a space for free creation where code, art, and community converge under professional standards.
+
+Core principles:
+- Open and transparent code
+- Complete documentation in multiple formats
+- Neon and cyberpunk aesthetic as visual identity
+- Polished and professional user experience
+- Build and deployment process automation
+- Security standards throughout all code
+
+ACTIVE PROJECTS
+
+1. CiszuNetwork Page (apps/website)
+   Main portal of the network. Next.js 15 with App Router, strict TypeScript, and Tailwind CSS v4.
+   Serves as an information hub about all network projects.
+   Status: ✅ Active
+
+2. Ciszuko Antony Portfolio (apps/ciszukoantony/website)
+   Personal portfolio of Francisco Garcia. Shows projects, skills, and experience.
+   Next.js 15 with responsive design and neon palette.
+   Status: ✅ Active
+
+3. MuzicMania (apps/muzicmania)
+   Rhythm game with neon and cyberpunk aesthetics. Rhythm platform with web and desktop modes.
+   - Web version: Next.js 15 + Canvas API for game engine
+   - Desktop version: Tauri 2 (Rust + WebView2) for Windows
+   - NSIS installers for Windows 10/11
+   - Game engine with beat detection, combos, and scoring
+   - Professional icon system with 5,194 SVGs
+   Status: ✅ Active (continuous development)
+
+4. CiszuBot (apps/ciszubot)
+   Multi-purpose Discord bot with informative landing page.
+   - Website: Next.js 15 with command info and features
+   - Bot: Discord.js v14 with slash commands
+   - Shigamens Server documentation included
+   Status: ⚠️ Website active, bot in development
+
+5. CiszuGamens (ciszugamens/)
+   Official gaming community of Ciszu Network. Space for tournaments, events, and socializing.
+   - Discord server with themed channels by genre
+   - Moderation and staff system
+   - Regular tournaments of various video games
+   Status: ✅ Active community
+
+6. @ciszunetwork/cdn (packages/cdn)
+   Shared asset and icon resolution system.
+   - resolveIcon(name, style, format) for SVG icons
+   - assetResolver.resolve(path) for multimedia assets
+   - Integration with Supabase Storage
+   Status: ✅ Active
+
+TECHNICAL ECOSYSTEM
+- Monorepo: pnpm workspaces + Turborepo
+- Frontend: Next.js 15 + React 19 + TypeScript 6 + Tailwind CSS v4
+- Backend: Supabase (PostgreSQL + Auth + Storage)
+- Desktop: Tauri 2 (Rust)
+- Bots: Discord.js v14
+- CI/CD: GitHub Actions + Vercel
+- Documentation: txt > md > docx > pdf (automated pipeline)
+- CDN: Supabase Storage (ciszu-assets bucket)
+
+DOCUMENTATION STANDARDS
+Each project maintains documentation in 4 formats:
+- TXT: Source of truth in plain text
+- MD: Markdown for web viewing
+- DOCX: Microsoft Word for editing
+- PDF: Portable document for distribution
+
+Additionally, each project has ia_docs/ with technical documentation for AI agents,
+following a standardized structure of 12-19 files.
+
+MONOREPO GENERAL STATUS
+- Documentation: ✅ Complete in all projects
+- ia_docs: ✅ Restructured following standardized model
+- Formats: ✅ txt, md, docx, pdf generated automatically
+- public/docs/: ✅ Created in all websites
+- CI/CD: ✅ GitHub Actions operational
+- Deployment: ✅ Automatic to Vercel
+
+CONTACT
+- Email: ciszunetwork@outlook.com
+- Location: Caracas, Venezuela
+- Creator: Francisco Garcia (Ciszuko Antony)

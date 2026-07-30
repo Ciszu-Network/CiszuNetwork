@@ -1,0 +1,40 @@
+CISZUKO ANTONY - DOCUMENTACIÓN OFICIAL
+Nombre: SUPPORT
+Versión: 2.0.0
+Actualización: 2026-07-28
+Identificador: SUPPORT_V2.0.0_2026_07_28_ciszukoantony
+
+---
+
+
+SOPORTE / SUPPORT
+
+[ESPAÑOL]
+
+INFORMACIÓN DE SOPORTE:
+- El portfolio es un sitio informativo, no requiere soporte técnico
+- Para consultas sobre proyectos: ciszunetwork@proton.me
+- Para reportes técnicos: GitHub Issues en el monorepo
+- Para temas de la comunidad: Discord de Ciszu Network
+
+REDES SOCIALES:
+- Instagram / Facebook: @itz.ciszukoant0nyz
+- TikTok: @ciszukoantony
+- YouTube: Cisco Antony Play
+
+
+---
+
+
+[ENGLISH]
+
+SUPPORT INFORMATION:
+- The portfolio is an informational site, no technical support required
+- For project inquiries: ciszunetwork@proton.me
+- For technical reports: GitHub Issues on the monorepo
+- For community matters: Ciszu Network Discord
+
+SOCIAL MEDIA:
+- Instagram / Facebook: @itz.ciszukoant0nyz
+- TikTok: @ciszukoantony
+- YouTube: Cisco Antony Play

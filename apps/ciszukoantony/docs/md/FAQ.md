@@ -1,0 +1,52 @@
+CISZUKO ANTONY - DOCUMENTACIÓN OFICIAL
+Nombre: FAQ
+Versión: 2.0.0
+Actualización: 2026-07-28
+Identificador: FAQ_V2.0.0_2026_07_28_ciszukoantony
+
+---
+
+
+PREGUNTAS FRECUENTES / FREQUENTLY ASKED QUESTIONS
+
+[ESPAÑOL]
+
+P: ¿Quién es Ciszuko Antony?
+R: Es el alias digital de Francisco Garcia, CEO y Fundador de Ciszu Network,
+   desarrollador full-stack y creador de contenido.
+
+P: ¿Qué proyectos ha creado?
+R: MuzicMania (juego musical), Ciszubot (Discord bot), Ciszuko CLI
+   (herramienta de automatización), entre otros.
+
+P: ¿Dónde puedo ver su trabajo?
+R: En ciszukoantony.vercel.app y github.com/Ciszu-Network.
+
+P: ¿Cómo puedo contactarlo?
+R: A través de ciszunetwork@proton.me o sus redes sociales.
+
+P: ¿Acepta colaboraciones?
+R: Sí, las contribuciones son bienvenidas vía GitHub.
+
+
+---
+
+
+[ENGLISH]
+
+Q: Who is Ciszuko Antony?
+A: It is the digital alias of Francisco Garcia, CEO and Founder of Ciszu
+   Network, full-stack developer, and content creator.
+
+Q: What projects has he created?
+A: MuzicMania (rhythm game), Ciszubot (Discord bot), Ciszuko CLI
+   (automation tool), among others.
+
+Q: Where can I see his work?
+A: At ciszukoantony.vercel.app and github.com/Ciszu-Network.
+
+Q: How can I contact him?
+A: Through ciszunetwork@proton.me or his social media.
+
+Q: Does he accept collaborations?
+A: Yes, contributions are welcome via GitHub.

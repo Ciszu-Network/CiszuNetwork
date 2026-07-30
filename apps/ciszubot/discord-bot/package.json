@@ -1,0 +1,25 @@
+{
+  "name": "ciszubot",
+  "version": "2.5.5",
+  "description": "Un bot de Discord en español con múltiples funcionalidades",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.22.0",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "discord.js"
+  ],
+  "author": "Ciszu",
+  "license": "MIT"
+}

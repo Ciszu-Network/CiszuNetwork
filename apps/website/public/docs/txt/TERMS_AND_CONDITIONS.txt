@@ -1,0 +1,64 @@
+CISZU NETWORK - DOCUMENTACIÓN OFICIAL
+Nombre: TERMS_AND_CONDITIONS
+Versión: 1.0.0
+Actualización: 2026-07-28
+Identificador: TERMS_AND_CONDITIONS_V1.0.0_2026_07_28_ciszunetwork
+-------------------------------------------------------------------------------
+
+TÉRMINOS Y CONDICIONES / TERMS AND CONDITIONS
+
+[ESPAÑOL]
+Última actualización: 28 de Julio, 2026
+
+ARTÍCULO 1: ACEPTACIÓN DE TÉRMINOS
+Al acceder o utilizar cualquier proyecto de Ciszu Network, usted acepta estos
+términos y condiciones. Si no está de acuerdo, no utilice los servicios.
+
+ARTÍCULO 2: USO DE LOS SERVICIOS
+Los proyectos se proporcionan "tal cual" para uso personal y educativo.
+No se garantiza disponibilidad continua ni ausencia de errores.
+
+ARTÍCULO 3: PROPIEDAD INTELECTUAL
+Todo el código, diseño y contenido original es propiedad de Ciszu Network y
+Ciszuko Antony, salvo donde se indique lo contrario.
+
+ARTÍCULO 4: PRIVACIDAD
+No recopilamos datos personales sin consentimiento explícito. Cada proyecto
+puede tener su propia política de privacidad.
+
+ARTÍCULO 5: LIMITACIÓN DE RESPONSABILIDAD
+Ciszu Network no será responsable por daños directos o indirectos derivados
+del uso de sus proyectos.
+
+ARTÍCULO 6: MODIFICACIONES
+Estos términos pueden ser modificados en cualquier momento. El uso continuado
+implica la aceptación de los cambios.
+
+-------------------------------------------------------------------------------
+
+[ENGLISH]
+Last updated: July 28, 2026
+
+ARTICLE 1: ACCEPTANCE OF TERMS
+By accessing or using any Ciszu Network project, you agree to these terms
+and conditions. If you do not agree, do not use the services.
+
+ARTICLE 2: USE OF SERVICES
+The projects are provided "as is" for personal and educational use.
+Continuous availability or absence of errors is not guaranteed.
+
+ARTICLE 3: INTELLECTUAL PROPERTY
+All code, design, and original content is property of Ciszu Network and
+Ciszuko Antony, except where otherwise noted.
+
+ARTICLE 4: PRIVACY
+We do not collect personal data without explicit consent. Each project may
+have its own privacy policy.
+
+ARTICLE 5: LIMITATION OF LIABILITY
+Ciszu Network shall not be liable for direct or indirect damages arising
+from the use of its projects.
+
+ARTICLE 6: MODIFICATIONS
+These terms may be modified at any time. Continued use implies acceptance
+of the changes.

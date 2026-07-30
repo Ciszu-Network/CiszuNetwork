@@ -1,0 +1,48 @@
+CISZUKO ANTONY - DOCUMENTACIÓN OFICIAL
+Nombre: CONTACT
+Versión: 2.0.0
+Actualización: 2026-07-28
+Identificador: CONTACT_V2.0.0_2026_07_28_ciszukoantony
+
+---
+
+
+CONTACTO Y REDES / CONTACT & SOCIAL MEDIA
+
+[ESPAÑOL]
+
+CONTACTO DIRECTO:
+- Email: ciszunetwork@proton.me
+- GitHub: github.com/Ciszu-Network
+
+REDES SOCIALES:
+- Instagram: @itz.ciszukoant0nyz
+- TikTok: @ciszukoantony
+- YouTube: Cisco Antony Play
+- Twitch: itz.ciszukoant0nyz
+- Facebook: @itz.ciszukoant0nyz
+
+WEB:
+- Portfolio: ciszukoantony.vercel.app
+- Ciszu Network: ciszunetwork.vercel.app
+
+
+---
+
+
+[ENGLISH]
+
+DIRECT CONTACT:
+- Email: ciszunetwork@proton.me
+- GitHub: github.com/Ciszu-Network
+
+SOCIAL MEDIA:
+- Instagram: @itz.ciszukoant0nyz
+- TikTok: @ciszukoantony
+- YouTube: Cisco Antony Play
+- Twitch: itz.ciszukoant0nyz
+- Facebook: @itz.ciszukoant0nyz
+
+WEB:
+- Portfolio: ciszukoantony.vercel.app
+- Ciszu Network: ciszunetwork.vercel.app

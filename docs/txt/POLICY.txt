@@ -1,0 +1,54 @@
+CISZU NETWORK - DOCUMENTACIÓN OFICIAL
+Nombre: POLICY
+Versión: 1.0.0
+Actualización: 2026-07-28
+Identificador: POLICY_V1.0.0_2026_07_28_ciszunetwork
+-------------------------------------------------------------------------------
+
+POLÍTICAS / POLICIES
+
+[ESPAÑOL]
+
+POLÍTICA DE PRIVACIDAD
+- Ciszu Network no recopila datos personales sin consentimiento explícito.
+- Los datos de registro (si existen) se almacenan de forma segura en Supabase.
+- No compartimos datos con terceros.
+
+POLÍTICA DE USO ACEPTABLE
+- Los proyectos deben usarse para fines legítimos y éticos.
+- Prohibido el uso para actividades maliciosas, spam o fraude.
+- Prohibida la ingeniería inversa con fines maliciosos.
+
+POLÍTICA DE CONTRIBUCIONES
+- Las contribuciones externas son bienvenidas bajo licencia MIT.
+- Todo código contribuido debe ser original o tener licencia compatible.
+- Los mantenedores se reservan el derecho de aceptar o rechazar contribuciones.
+
+POLÍTICA DE SOPORTE
+- El soporte se proporciona según disponibilidad del desarrollador.
+- No hay SLA (Service Level Agreement) garantizado.
+- Los reportes de seguridad tienen prioridad máxima.
+
+-------------------------------------------------------------------------------
+
+[ENGLISH]
+
+PRIVACY POLICY
+- Ciszu Network does not collect personal data without explicit consent.
+- Registration data (if any) is stored securely in Supabase.
+- We do not share data with third parties.
+
+ACCEPTABLE USE POLICY
+- Projects must be used for legitimate and ethical purposes.
+- Use for malicious activities, spam, or fraud is prohibited.
+- Reverse engineering for malicious purposes is prohibited.
+
+CONTRIBUTION POLICY
+- External contributions are welcome under the MIT license.
+- All contributed code must be original or have a compatible license.
+- Maintainers reserve the right to accept or reject contributions.
+
+SUPPORT POLICY
+- Support is provided based on developer availability.
+- No guaranteed SLA (Service Level Agreement).
+- Security reports have the highest priority.

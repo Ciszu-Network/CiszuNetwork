@@ -1,0 +1,43 @@
+CISZUKO ANTONY - DOCUMENTACIÓN OFICIAL
+Nombre: ABOUT
+Versión: 2.0.0
+Actualización: 2026-07-28
+Identificador: ABOUT_V2.0.0_2026_07_28_ciszukoantony
+-------------------------------------------------------------------------------
+
+SOBRE CISZUKO ANTONY / ABOUT CISZUKO ANTONY
+
+[ESPAÑOL]
+Ciszuko Antony es el portfolio personal y la marca digital de Francisco Garcia,
+CEO y Fundador de Ciszu Network. El sitio muestra sus proyectos, estadísticas
+y presencia en redes sociales.
+
+El portfolio está construido con Next.js 15, Tailwind CSS v4 y Framer Motion,
+ofreciendo una experiencia visual moderna con estética neón y animaciones
+fluidas.
+
+SECCIONES DEL SITIO:
+- Hero: Isotipo y logotipo animados con efecto float
+- Proyectos: MuzicMania, Ciszuko CLI, Open Source
+- Featured Projects: Minecraft Network, Discord Bot, WhatsApp Bot, Telegram Bot
+- Stats: 15+ proyectos, 1K+ usuarios, 20+ repos, 3+ años de experiencia
+- Redes sociales: Enlaces a todas las plataformas
+- Footer: Branding y enlaces
+
+-------------------------------------------------------------------------------
+
+[ENGLISH]
+Ciszuko Antony is the personal portfolio and digital brand of Francisco Garcia,
+CEO and Founder of Ciszu Network. The site showcases his projects, statistics,
+and social media presence.
+
+The portfolio is built with Next.js 15, Tailwind CSS v4, and Framer Motion,
+offering a modern visual experience with neon aesthetics and smooth animations.
+
+SITE SECTIONS:
+- Hero: Animated isotipo and logotipo with float effect
+- Projects: MuzicMania, Ciszuko CLI, Open Source
+- Featured Projects: Minecraft Network, Discord Bot, WhatsApp Bot, Telegram Bot
+- Stats: 15+ projects, 1K+ users, 20+ repos, 3+ years of experience
+- Social media: Links to all platforms
+- Footer: Branding and links

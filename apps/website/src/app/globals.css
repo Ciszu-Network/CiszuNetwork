@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-ibm-plex), ui-sans-serif, system-ui, sans-serif;
+  --font-header: var(--font-ibm-plex-condensed), ui-sans-serif, sans-serif;
+  --font-accent: var(--font-ibm-plex), ui-sans-serif, sans-serif;
+
+  --color-brand: #233f92;
+  --color-brand-light: #3a6bf0;
+  --color-brand-accent: #4a7dff;
+  --color-brand-dark: #1a2e6b;
+
+  --color-neon-blue: #59b4ff;
+  --color-neon-cyan: #68cfff;
+  --color-neon-green: #00ff88;
+  --color-neon-pink: #ff33cc;
+  --color-neon-purple: #4800ff;
+
+  --color-bg-dark: #000000;
+  --color-bg-card: #0a0a0f;
+  --color-bg-card-hover: #111118;
+
+  --shadow-brand: 0 0 10px rgba(35, 63, 146, 0.5), 0 0 25px rgba(35, 63, 146, 0.3);
+  --shadow-neon-blue: 0 0 10px rgba(89, 180, 255, 0.4), 0 0 25px rgba(89, 180, 255, 0.2);
+
+  --drop-shadow-brand: drop-shadow(0 0 8px rgba(35, 63, 146, 0.6));
+  --drop-shadow-neon-blue: drop-shadow(0 0 8px rgba(89, 180, 255, 0.5));
+}
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: #000000;
+    color: #fff;
+    min-height: 100vh;
+  }
+
+  a, button, [role="button"], label[for], summary {
+    cursor: pointer;
+  }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #000000; }
+  ::-webkit-scrollbar-thumb { background: rgba(35, 63, 146, 0.4); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(35, 63, 146, 0.7); }
+
+  ::selection {
+    background: rgba(35, 63, 146, 0.3);
+    color: #fff;
+  }
+}
+
+@layer utilities {
+  .drop-shadow-brand { filter: var(--drop-shadow-brand); }
+  .drop-shadow-neon-blue { filter: var(--drop-shadow-neon-blue); }
+  .text-gradient-brand { background: linear-gradient(135deg, #233f92, #4a7dff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .text-gradient-neon { background: linear-gradient(135deg, #3a6bf0, #68cfff, #00ff88); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .bg-brand-gradient { background: linear-gradient(135deg, #233f92, #3a6bf0); }
+  .bg-neon-gradient { background: linear-gradient(135deg, #233f92, #59b4ff, #00ff88); }
+  .bg-card-gradient { background: linear-gradient(180deg, rgba(35,63,146,0.1) 0%, rgba(10,10,15,1) 100%); }
+  .glass { background: rgba(10, 10, 15, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(35, 63, 146, 0.2); }
+  .glass-hover:hover { background: rgba(10, 10, 15, 0.8); border-color: rgba(58, 107, 240, 0.4); }
+}
+
+@keyframes blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -30px) scale(1.08); }
+  66% { transform: translate(-20px, 20px) scale(0.95); }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in-down {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 10px rgba(35, 63, 146, 0.3), 0 0 20px rgba(35, 63, 146, 0.1); }
+  50% { box-shadow: 0 0 20px rgba(35, 63, 146, 0.5), 0 0 40px rgba(35, 63, 146, 0.2); }
+}
+
+@keyframes slide-right-fade {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes grid-scroll {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
+@layer utilities {
+  .animate-blob { animation: blob 12s ease-in-out infinite; }
+  .animate-fade-in-up { animation: fade-in-up 0.3s ease forwards; }
+  .animate-fade-in-down { animation: fade-in-down 0.3s ease forwards; }
+  .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+  .animate-slide-right-fade { animation: slide-right-fade 0.25s ease forwards; }
+  .animate-grid-scroll { animation: grid-scroll 60s linear infinite; }
+  .animation-delay-2000 { animation-delay: 2s; }
+  .animation-delay-4000 { animation-delay: 4s; }
+}

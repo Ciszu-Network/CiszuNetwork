@@ -1,0 +1,44 @@
+CISZUKO ANTONY - DOCUMENTACIÓN OFICIAL
+Nombre: CREDITS
+Versión: 2.0.0
+Actualización: 2026-07-28
+Identificador: CREDITS_V2.0.0_2026_07_28_ciszukoantony
+-------------------------------------------------------------------------------
+
+CRÉDITOS / CREDITS
+
+[ESPAÑOL]
+
+AUTOR Y PROPIETARIO:
+- Ciszuko Antony (Francisco Garcia) — CEO & Fundador de Ciszu Network
+
+TECNOLOGÍAS:
+- Next.js 15 — Framework
+- React 19 + TypeScript 6 — Lenguaje y librería
+- Tailwind CSS v4 + PostCSS — Estilos
+- Framer Motion — Animaciones
+- @ciszunetwork/cdn — Assets compartidos
+
+PROYECTOS DESTACADOS:
+- MuzicMania — Juego musical
+- Ciszuko CLI — Herramienta de automatización
+- Open Source — Contribuciones comunitarias
+
+-------------------------------------------------------------------------------
+
+[ENGLISH]
+
+AUTHOR AND OWNER:
+- Ciszuko Antony (Francisco Garcia) — CEO & Founder of Ciszu Network
+
+TECHNOLOGIES:
+- Next.js 15 — Framework
+- React 19 + TypeScript 6 — Language and library
+- Tailwind CSS v4 + PostCSS — Styles
+- Framer Motion — Animations
+- @ciszunetwork/cdn — Shared assets
+
+FEATURED PROJECTS:
+- MuzicMania — Rhythm game
+- Ciszuko CLI — Automation tool
+- Open Source — Community contributions

@@ -1,0 +1,54 @@
+CISZU NETWORK - DOCUMENTACIÓN OFICIAL
+Nombre: SUPPORT
+Versión: 1.0.0
+Actualización: 2026-07-28
+Identificador: SUPPORT_V1.0.0_2026_07_28_ciszunetwork
+
+---
+
+
+SOPORTE / SUPPORT
+
+[ESPAÑOL]
+
+¿Cómo podemos ayudarte?
+
+CANALES DE SOPORTE:
+- Documentación: Consulta los documentos en docs/ de cada proyecto
+- GitHub Issues: Para reportes técnicos y bugs
+- Discord: Comunidad y soporte rápido
+- Email: ciszunetwork@proton.me (consultas generales)
+
+PROYECTOS Y SU ESTADO DE SOPORTE:
+- CiszuNetwork Page: Soporte vía GitHub Issues
+- MuzicMania: Soporte vía Discord + GitHub
+- Ciszubot: Soporte vía Discord (comandos de ayuda: cz!help)
+- Ciszuko Antony: Portfolio informativo, sin soporte técnico
+
+HORARIO DE SOPORTE:
+El soporte es gestionado por una sola persona. Los tiempos de respuesta pueden variar.
+Se recomienda usar Discord para consultas rápidas y GitHub Issues para bugs formales.
+
+
+---
+
+
+[ENGLISH]
+
+How can we help you?
+
+SUPPORT CHANNELS:
+- Documentation: See the docs/ folder of each project
+- GitHub Issues: For technical reports and bugs
+- Discord: Community and quick support
+- Email: ciszunetwork@proton.me (general inquiries)
+
+PROJECTS AND SUPPORT STATUS:
+- CiszuNetwork Page: Support via GitHub Issues
+- MuzicMania: Support via Discord + GitHub
+- Ciszubot: Support via Discord (help commands: cz!help)
+- Ciszuko Antony: Informational portfolio, no technical support
+
+SUPPORT HOURS:
+Support is managed by a single person. Response times may vary.
+Discord is recommended for quick inquiries, GitHub Issues for formal bug reports.

@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES2022"
+    ],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./*"
+      ],
+      "@shared/*": [
+        "./shared/*"
+      ],
+      "@icons/*": [
+        "./shared/icons/*"
+      ],
+      "@ciszubot/*": [
+        "./apps/ciszubot/*"
+      ],
+      "@ciszukoantony/*": [
+        "./apps/ciszukoantony/*"
+      ],
+      "@muzicmania/*": [
+        "./apps/muzicmania/*"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

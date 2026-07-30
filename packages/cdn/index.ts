@@ -1,31 +1,83 @@
-const CDN_BASE = 'https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public';
+import { assetUrl } from './src/cdn-client';
 
-type AssetType = 'logos' | 'icons' | 'fonts' | 'images' | 'docs' | 'banners' | 'thumbnails' | 'flayers';
+export type AssetType = 'logos' | 'icons' | 'fonts' | 'images' | 'docs' | 'banners' | 'thumbnails' | 'flayers';
+export type IconStyle = 'outline' | 'filled' | 'flag';
+export type IconFormat = 'svg' | 'png' | 'ai';
 
-const CRITICAL_ASSETS: Record<string, string[]> = {
-  logos: ['isotipo.svg', 'logotipo.svg', 'tagline_black.svg', 'tagline_white.svg'],
-  icons: ['favicon.ico'],
-};
-
-export function cdnUrl(type: AssetType, path: string): string {
-  return `${CDN_BASE}/ciszu-assets/${type}/${path}`;
+export interface ResolveOptions {
+  forceCdn?: boolean;
+  forceLocal?: boolean;
 }
 
-export function getCiszAsset(type: AssetType, filename: string): string {
-  const isCritical = CRITICAL_ASSETS[type]?.includes(filename);
+/**
+ * Construye una URL de CDN para un asset genérico.
+ * La ruta relativa del repo se refleja 1:1 en el CDN.
+ */
+export function cdnUrl(type: AssetType, path: string): string {
+  return assetUrl(`${type}/${path}`);
+}
 
-  if (isCritical && typeof window !== 'undefined') {
-    const localUrl = `/${type}/${filename}`;
-    const img = new Image();
-    img.src = localUrl;
-    return localUrl;
+/**
+ * Resuelve la URL de un icono con estrategia híbrida local/CDN.
+ *
+ * En producción usa CDN por defecto, en desarrollo usa rutas locales.
+ * Se puede forzar con forceCdn/forceLocal.
+ *
+ * @param name     Nombre del icono (ej: 'home', 'projects')
+ * @param style    Estilo: 'outline' | 'filled' | 'flag'
+ * @param format   Formato: 'svg' | 'png' | 'ai'
+ * @param opts     Opciones de resolución
+ */
+export function resolveIcon(
+  name: string,
+  style: IconStyle = 'outline',
+  format: IconFormat = 'svg',
+  opts?: ResolveOptions
+): string {
+  const isServer = typeof window === 'undefined';
+  const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
+  const cdnUrl = process.env.NEXT_PUBLIC_CDN_URL;
+  const useLocal = opts?.forceLocal || (!opts?.forceCdn && !isProduction);
+
+  const path = `shared/icons/${style}/${format}/${name}_${style}.${format}`;
+
+  if (useLocal || !cdnUrl || isServer) {
+    return `/${path}`;
   }
 
-  return cdnUrl(type, filename);
+  return `${cdnUrl}/${path}`;
 }
 
+/**
+ * Clase para resolución genérica de assets (no iconos).
+ * Usa la misma estrategia híbrida que resolveIcon.
+ */
+export class AssetResolver {
+  private cdnUrl: string | undefined;
+
+  constructor() {
+    this.cdnUrl = process.env.NEXT_PUBLIC_CDN_URL;
+  }
+
+  resolve(path: string, opts?: ResolveOptions): string {
+    const isServer = typeof window === 'undefined';
+    const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
+    const useLocal = opts?.forceLocal || (!opts?.forceCdn && !isProduction);
+
+    if (useLocal || !this.cdnUrl || isServer) {
+      return `/${path.replace(/^\//, '')}`;
+    }
+
+    return `${this.cdnUrl}/${path.replace(/^\//, '')}`;
+  }
+}
+
+export const assetResolver = new AssetResolver();
+
+export { assetUrl, getContentType } from './src/cdn-client';
+
 export const CDN_CONFIG = {
-  baseUrl: CDN_BASE,
-  bucket: 'ciszu-assets',
+  baseUrl: process.env.NEXT_PUBLIC_CDN_URL || 'https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public',
+  bucket: 'ciszu-cdn',
   projectRef: 'obwzzmbvkrcscqwptlqo',
 };

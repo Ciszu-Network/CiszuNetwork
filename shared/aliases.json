@@ -1,0 +1,53 @@
+{
+  "$schema": "./schema.json",
+  "aliases": {
+    "@icons": {
+      "path": "./shared/icons",
+      "description": "Sistema de iconos compartidos"
+    },
+    "@apps/ciszubot": {
+      "path": "./apps/ciszubot",
+      "description": "Bot de Discord CiszuBot"
+    },
+    "@apps/ciszukoantony": {
+      "path": "./apps/ciszukoantony",
+      "description": "Sitio web de Antony"
+    },
+    "@apps/muzicmania": {
+      "path": "./apps/muzicmania",
+      "description": "Juego webapp MuzicMania"
+    },
+    "@shared/utils": {
+      "path": "./shared/utils",
+      "description": "Utilidades compartidas entre proyectos"
+    },
+    "@shared/types": {
+      "path": "./shared/types",
+      "description": "Tipos TypeScript compartidos"
+    },
+    "@shared/hooks": {
+      "path": "./shared/hooks",
+      "description": "React hooks compartidos"
+    },
+    "@cdn": {
+      "url": "https://cdn.ciszu.net",
+      "description": "CDN para archivos dinámicos"
+    },
+    "hybrid": {
+      "local": {
+        "icons": "@icons",
+        "content": "./shared/content"
+      },
+      "cdn": {
+        "icons": "@cdn/icons",
+        "content": "@cdn/content"
+      },
+      "description": "Sistema híbrido local/CDN"
+    }
+  },
+  "config": {
+    "defaultMode": "hybrid",
+    "fallbackToLocal": true,
+    "cacheDuration": 3600
+  }
+}

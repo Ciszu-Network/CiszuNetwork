@@ -1,0 +1,12 @@
+{
+  "activity": {
+    "name": "cz!help | cz!comandos",
+    "type": "PLAYING"
+  },
+  "colors": {
+    "primary": "#4f46e5",
+    "secondary": "#8b5cf6"
+  },
+  "prefix": "cz!",
+  "version": "2.5.5"
+}
