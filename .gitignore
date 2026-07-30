@@ -67,6 +67,12 @@ assets/fonts/
 assets/logos/gif/
 assets/logos/video/
 
+# ─── Seguridad: archivos con credenciales ──────────
+# ⚠️ NUNCA subir credenciales a git. Si se filtran, rotar inmediatamente.
+# Si este repositorio se vuelve público, purgar el historial con filter-branch.
+documents/md/credentials.md
+docs/md/VERCEL_ENV_VARS.md
+
 # ─── Legacy duplicate projects ───────────────────────
 CiszuGamens/
 
