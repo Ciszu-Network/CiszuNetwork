@@ -146,6 +146,17 @@ async function listAuthUsers() {
 
 async function interactiveShell() {
   console.log(pc.magenta('\n--- SHELL INTERACTIVA MUZICMANIA ---'));
+  console.log(pc.red('⚠  ADVERTENCIA: Esta shell ejecuta código arbitrario con el Service Role Key.'));
+  console.log(pc.red('⚠  NO uses esto en producción o con datos sensibles.\n'));
+
+  const { confirmed } = await prompts({
+    type: 'confirm',
+    name: 'confirmed',
+    message: pc.red('¿Estás seguro de que quieres continuar?'),
+    initial: false
+  });
+  if (!confirmed) return;
+
   console.log(pc.dim('Puedes ejecutar comandos JS/TS usando el cliente "supabaseAdmin".'));
   console.log(pc.dim('Ejemplo: await supabaseAdmin.from("profiles").select("*")'));
   console.log(pc.dim('Escribe "exit" para salir.\n'));
@@ -164,8 +175,6 @@ async function interactiveShell() {
     }
 
     try {
-      // Intentar ejecutar el comando
-      // Usamos una función asíncrona autoejecutable para permitir 'await'
       const result = await eval(`(async () => { return ${command}; })()`);
       console.log(pc.green('\nResultado:'));
       if (Array.isArray(result)) console.table(result);
@@ -178,8 +187,19 @@ async function interactiveShell() {
 
 async function runManualSQL() {
   console.log(pc.red('\n--- EJECUCIÓN SQL MANUAL (AVANZADO/PELIGROSO) ---'));
+  console.log(pc.red('⚠  El Service Role Key bypassea RLS. Esto puede ELIMINAR o MODIFICAR datos.'));
+  console.log(pc.red('⚠  Solo para administración por personas autorizadas.\n'));
+
+  const { confirmed } = await prompts({
+    type: 'confirm',
+    name: 'confirmed',
+    message: pc.red('¿Confirmas que quieres ejecutar SQL manual?'),
+    initial: false
+  });
+  if (!confirmed) return;
+
   console.log(pc.dim('Nota: El Service Role Key permite bypass de RLS. Ten cuidado.\n'));
-  
+
   const { query } = await prompts({
     type: 'text',
     name: 'query',
@@ -187,6 +207,14 @@ async function runManualSQL() {
   });
 
   if (!query || query.toLowerCase() === 'exit') return;
+
+  const { confirm2 } = await prompts({
+    type: 'confirm',
+    name: 'confirm2',
+    message: pc.red(`¿Ejecutar esta consulta?\n${query}\n\nConfirma:`),
+    initial: false
+  });
+  if (!confirm2) return;
 
   try {
     const { data, error } = await supabaseAdmin.rpc('execute_sql_query', { sql_command: query });

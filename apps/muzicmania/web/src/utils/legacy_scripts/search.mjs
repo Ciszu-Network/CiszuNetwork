@@ -3,6 +3,12 @@
  * Features site-wide indexing and smart redirection.
  */
 
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+}
+
 export const SearchSystem = {
     // Database of searchable pages and keywords
     index: [
@@ -169,16 +175,16 @@ export const SearchSystem = {
         const bp = window.Layout && window.Layout.basePath ? window.Layout.basePath : '';
 
         if (results.length === 0) {
-            dropdown.innerHTML = `<div class="search-result-item" style="cursor: default;">
-                <span class="search-result-title">No hay resultados para "${query}"</span>
-            </div>`;
+            dropdown.innerHTML = '<div class="search-result-item" style="cursor: default;">' +
+                '<span class="search-result-title">No hay resultados para "' + escapeHtml(query) + '"</span>' +
+                '</div>';
         } else {
             results.forEach((item) => {
                 const div = document.createElement('div');
                 div.className = 'search-result-item';
                 div.innerHTML = `
-                    <div class="search-result-title">${item.title}</div>
-                    <div class="search-result-desc">${item.desc}</div>
+                    <div class="search-result-title">${escapeHtml(item.title)}</div>
+                    <div class="search-result-desc">${escapeHtml(item.desc)}</div>
                     <div class="search-result-count">${this.countMatches(item, query)} coincidencias</div>
                 `;
                 div.onclick = () => (window.location.href = bp + item.url);
