@@ -2,6 +2,7 @@
 
 import MainLayout from '@/components/templates/MainLayout';
 import { Info } from 'lucide-react';
+import { resolveAssetPath } from '@ciszunetwork/cdn';
 
 
 export default function AboutPage() {
@@ -35,7 +36,7 @@ export default function AboutPage() {
             </p>
           </div>
           <div className="w-48 h-48 bg-gradient-to-br from-neon-blue via-neon-purple to-neon-pink rounded-3xl flex items-center justify-center shadow-neon-blue/50 shadow-2xl animate-pulse">
-            <img src="/content/logos/isotipo.svg" alt="MuzicMania" className="w-24 h-24 drop-shadow-glow" />
+            <img src={resolveAssetPath('apps/muzicmania/content/logos/isotipo.svg')} alt="MuzicMania" className="w-24 h-24 drop-shadow-glow" />
           </div>
         </section>
 
