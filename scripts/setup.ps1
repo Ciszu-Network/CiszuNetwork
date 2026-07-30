@@ -16,7 +16,7 @@ if (-not $?) {
 # 2. Download CDN assets if not skipped
 if (-not $SkipCdn) {
   Write-Host "[2/3] Descargando assets desde CDN..." -ForegroundColor Yellow
-  $cdnBase = "https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-assets"
+  $cdnBase = "https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn"
   $criticalAssets = @(
     "logos/tagline_black.svg",
     "logos/tagline_white.svg",

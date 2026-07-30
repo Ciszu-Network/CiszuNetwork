@@ -1,0 +1,86 @@
+CISZU NETWORK - DOCUMENTACIÓN OFICIAL
+Nombre: CATALOGO
+Versión: 1.0.0
+Actualización: 2026-07-28
+Identificador: CATALOGO_V1.0.0_2026_07_28_ciszunetwork
+
+---
+
+
+CATÁLOGO DE PROYECTOS / PROJECT CATALOG
+
+[ESPAÑOL]
+
+1. CISZUNETWORK PAGE
+   Tipo: Portal web
+   URL: ciszunetwork.vercel.app
+   Stack: Next.js 15, Tailwind CSS v4
+   Estado: Activo
+
+2. CISZUKO ANTONY
+   Tipo: Portfolio personal
+   URL: ciszukoantony.vercel.app
+   Stack: Next.js 15, Tailwind CSS v4, Framer Motion
+   Estado: Activo
+
+3. MUZICMANIA
+   Tipo: Juego musical (Web + Desktop)
+   URL: muzicmania.vercel.app
+   Stack: Next.js 15, Tauri 2, Supabase
+   Estado: Activo (desarrollo)
+
+4. CISZUBOT
+   Tipo: Bot de Discord + Landing Page
+   Stack: Node.js, Discord.js v14, Express, Next.js 15
+   Comandos: 12 (help, ping, say, confess, 8ball, etc.)
+   Estado: Activo
+
+5. @CISZUNETWORK/CDN
+   Tipo: Paquete npm compartido
+   Stack: TypeScript
+   Función: Resolver de assets y sistema de iconos
+   Estado: Activo
+
+6. CISZUGAMENS
+   Tipo: Comunidad social / Discord server
+   Estado: En desarrollo
+
+
+---
+
+
+[ENGLISH]
+
+1. CISZUNETWORK PAGE
+   Type: Web portal
+   URL: ciszunetwork.vercel.app
+   Stack: Next.js 15, Tailwind CSS v4
+   Status: Active
+
+2. CISZUKO ANTONY
+   Type: Personal portfolio
+   URL: ciszukoantony.vercel.app
+   Stack: Next.js 15, Tailwind CSS v4, Framer Motion
+   Status: Active
+
+3. MUZICMANIA
+   Type: Rhythm game (Web + Desktop)
+   URL: muzicmania.vercel.app
+   Stack: Next.js 15, Tauri 2, Supabase
+   Status: Active (development)
+
+4. CISZUBOT
+   Type: Discord bot + Landing Page
+   Stack: Node.js, Discord.js v14, Express, Next.js 15
+   Commands: 12 (help, ping, say, confess, 8ball, etc.)
+   Status: Active
+
+5. @CISZUNETWORK/CDN
+   Type: Shared npm package
+   Stack: TypeScript
+   Function: Asset resolver and icon system
+   Status: Active
+
+6. CISZUGAMENS
+   Type: Social community / Discord server
+   Status: In development

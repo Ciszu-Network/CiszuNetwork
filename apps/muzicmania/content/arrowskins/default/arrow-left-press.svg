@@ -1,0 +1,20 @@
+<svg viewBox="-32 -32 64 64" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="burst">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.6"/></feComponentTransfer>
+    </filter>
+    <linearGradient id="pressGrad" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e0e0ff"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="0" cy="0" rx="24" ry="24" fill="#ffffff" filter="url(#burst)" opacity="0.3"/>
+  <g filter="url(#glow)">
+    <polygon points="-8,20 -4,8 -30,8 -30,-8 -4,-8 -8,-20 30,0" fill="url(#pressGrad)" stroke="#ffffff" stroke-width="2.5"/>
+  </g>
+</svg>

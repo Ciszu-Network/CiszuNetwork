@@ -1,0 +1,44 @@
+CISZUKO ANTONY - DOCUMENTACIÓN OFICIAL
+Nombre: HELP
+Versión: 2.0.0
+Actualización: 2026-07-28
+Identificador: HELP_V2.0.0_2026_07_28_ciszukoantony
+
+---
+
+
+CENTRO DE AYUDA / HELP CENTER
+
+[ESPAÑOL]
+¿Cómo podemos ayudarte?
+
+NAVEGACIÓN DEL SITIO:
+- Hero: Presentación principal con isotipo y logotipo
+- Proyectos: Cards con los proyectos principales de Ciszuko Antony
+- Featured Projects: Proyectos destacados con tags
+- Stats: Estadísticas de trayectoria
+- Redes Sociales: Enlaces a plataformas
+
+SI NECESITAS MÁS INFORMACIÓN:
+- Visita ciszunetwork.vercel.app para la red completa
+- Revisa la documentación en docs/ de cada proyecto
+- Contacta vía email o redes sociales
+
+
+---
+
+
+[ENGLISH]
+How can we help you?
+
+SITE NAVIGATION:
+- Hero: Main presentation with isotipo and logotipo
+- Projects: Cards with Ciszuko Antony's main projects
+- Featured Projects: Highlighted projects with tags
+- Stats: Career statistics
+- Social Media: Links to platforms
+
+IF YOU NEED MORE INFORMATION:
+- Visit ciszunetwork.vercel.app for the full network
+- Check the documentation in docs/ of each project
+- Contact via email or social media

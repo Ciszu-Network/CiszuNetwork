@@ -1,0 +1,48 @@
+CISZUKO ANTONY - DOCUMENTACIÓN OFICIAL
+Nombre: SECURITY
+Versión: 2.0.0
+Actualización: 2026-07-28
+Identificador: SECURITY_V2.0.0_2026_07_28_ciszukoantony
+
+---
+
+
+SEGURIDAD / SECURITY
+
+[ESPAÑOL]
+
+SEGURIDAD DEL PORTFOLIO
+
+SITIO WEB:
+- Portfolio estático — no procesa datos de usuario
+- No hay base de datos, autenticación ni formularios
+- Los enlaces externos usan HTTPS
+
+DEPENDENCIAS:
+- Mantener Next.js, React y dependencias actualizadas
+- Ejecutar npm audit regularmente
+
+ASSETS:
+- Los logos e imágenes están en public/ (estáticos)
+- Los assets compartidos vía @ciszunetwork/cdn son de solo lectura
+
+
+---
+
+
+[ENGLISH]
+
+PORTFOLIO SECURITY
+
+WEBSITE:
+- Static portfolio — does not process user data
+- No database, authentication, or forms
+- External links use HTTPS
+
+DEPENDENCIES:
+- Keep Next.js, React, and dependencies updated
+- Run npm audit regularly
+
+ASSETS:
+- Logos and images are in public/ (static)
+- Shared assets via @ciszunetwork/cdn are read-only

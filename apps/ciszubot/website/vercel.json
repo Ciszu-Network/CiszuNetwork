@@ -1,0 +1,9 @@
+{
+  "cleanUrls": true,
+  "framework": "nextjs",
+
+  "env": {
+    "NEXT_PUBLIC_CDN_URL": "https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn",
+    "NEXT_PUBLIC_APP_ENV": "production"
+  }
+}
