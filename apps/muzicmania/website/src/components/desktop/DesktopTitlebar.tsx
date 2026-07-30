@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { isTauri } from '@/lib/isTauri';
 import { DesktopSettings } from './DesktopSettings';
+import { resolveAssetPath } from '@ciszunetwork/cdn';
 
 export function DesktopTitlebar() {
   const [showSettings, setShowSettings] = useState(false);
@@ -52,7 +53,7 @@ export function DesktopTitlebar() {
       >
         <div data-tauri-drag-region className="flex items-center gap-3 px-4">
           <img
-            src="/logos/imagen/not outline/isotipo/degradado/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg"
+            src={resolveAssetPath('apps/muzicmania/content/logos/imagen/not outline/isotipo/degradado/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')}
             alt="M"
             className="w-5 h-5"
           />

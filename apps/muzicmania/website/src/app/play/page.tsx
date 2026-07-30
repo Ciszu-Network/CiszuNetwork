@@ -4,6 +4,7 @@ import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react'
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import NextImage from 'next/image';
+import { resolveAssetPath } from '@ciszunetwork/cdn';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameEngine, getComboColor, getKpsColor, getMistakesColor, getAccuracyColor, getScoreGradient, GameNote } from '@/hooks/useGameEngine';
 import { useAppStore } from '@/store/useAppStore';
@@ -1357,10 +1358,10 @@ function PlayPageContent() {
                         >
                           {Array.from({length:5}).map((_,ci)=>(
                             <span key={ci} className="flex items-center gap-3 mx-12 shrink-0 h-[85%]">
-                              <img src="/logos/imagen/not outline/isotipo/degradado/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg"
+                              <img src={resolveAssetPath('apps/muzicmania/content/logos/imagen/not outline/isotipo/degradado/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')}
                                 alt="" className="h-full w-auto brightness-0 invert"
                               />
-                              <img src="/logos/imagen/not outline/logotipo/degradado/color/muzicmania_logotipo_degradado_color.svg"
+                              <img src={resolveAssetPath('apps/muzicmania/content/logos/imagen/not outline/logotipo/degradado/color/muzicmania_logotipo_degradado_color.svg')}
                                 alt="" className="h-[55%] w-auto brightness-0 invert"
                               />
                             </span>
@@ -1490,7 +1491,7 @@ function PlayPageContent() {
                     className="w-16 h-16 md:w-24 md:h-24 relative drop-shadow-[0_0_50px_rgba(0,212,255,0.5)] shrink-0"
                   >
                     <NextImage 
-                      src="/logos/imagen/not outline/isotipo/degradado/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg" 
+                      src={resolveAssetPath('apps/muzicmania/content/logos/imagen/not outline/isotipo/degradado/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} 
                       alt="MuzicMania Isotipo" 
                       fill 
                       className="object-contain"
@@ -1504,7 +1505,7 @@ function PlayPageContent() {
                     className="w-48 h-8 md:w-64 md:h-10 relative shrink-0"
                   >
                     <NextImage 
-                      src="/logos/imagen/not outline/logotipo/degradado/color/muzicmania_logotipo_degradado_color.svg" 
+                      src={resolveAssetPath('apps/muzicmania/content/logos/imagen/not outline/logotipo/degradado/color/muzicmania_logotipo_degradado_color.svg')} 
                       alt="MuzicMania Logotipo" 
                       fill 
                       className="object-contain"
@@ -1973,7 +1974,7 @@ function PlayPageContent() {
                         transition={{ duration: 0.35, ease: 'easeOut' }}
                       >
                         <motion.img 
-                          src="/logos/imagen/not outline/isotipo/degradado/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg" 
+                          src={resolveAssetPath('apps/muzicmania/content/logos/imagen/not outline/isotipo/degradado/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} 
                           alt="" className="w-20 h-auto md:w-28"
                           whileHover={{ rotate: [0, -5, 5, -5, 0], transition: { duration: 0.5 } }}
                           onClick={() => {
@@ -1983,7 +1984,7 @@ function PlayPageContent() {
                           }}
                         />
                         <img 
-                          src="/logos/imagen/not outline/logotipo/degradado/color/muzicmania_logotipo_degradado_color.svg" 
+                          src={resolveAssetPath('apps/muzicmania/content/logos/imagen/not outline/logotipo/degradado/color/muzicmania_logotipo_degradado_color.svg')} 
                           alt="" className="w-44 h-auto md:w-56"
                         />
                       </motion.div>
@@ -3026,14 +3027,14 @@ function PlayPageContent() {
                             animate={{ y: [0, -6, 0] }}
                             transition={{ y: { duration: 3, repeat: Infinity, ease: 'easeInOut' }, scale: { type: 'spring', stiffness: 300 } }}
                           >
-                            <img src="/logos/imagen/not outline/isotipo/degradado/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg" alt="MuzicMania" className="w-full h-full object-contain" />
+                            <img src={resolveAssetPath('apps/muzicmania/content/logos/imagen/not outline/isotipo/degradado/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} alt="MuzicMania" className="w-full h-full object-contain" />
                           </motion.div>
                           <motion.div className="w-56 h-auto mb-6 drop-shadow-2xl"
                             whileHover={{ scale: 1.05, filter: 'drop-shadow(0 0 25px rgba(189,0,255,0.7))' }}
                             animate={{ opacity: [0.8, 1, 0.8] }}
                             transition={{ opacity: { duration: 3, repeat: Infinity, ease: 'easeInOut' }, scale: { type: 'spring', stiffness: 300 } }}
                           >
-                            <img src="/logos/imagen/not outline/logotipo/degradado/color/muzicmania_logotipo_degradado_color.svg" alt="MuzicMania" className="w-full h-full object-contain" />
+                            <img src={resolveAssetPath('apps/muzicmania/content/logos/imagen/not outline/logotipo/degradado/color/muzicmania_logotipo_degradado_color.svg')} alt="MuzicMania" className="w-full h-full object-contain" />
                           </motion.div>
                           <h1 className="text-2xl md:text-4xl font-header font-black uppercase tracking-tighter leading-none bg-gradient-to-r from-neon-blue via-white to-neon-purple bg-clip-text text-transparent">
                             SELECCIONA TU NIVEL PARA INICIAR
