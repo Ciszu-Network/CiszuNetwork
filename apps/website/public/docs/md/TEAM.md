@@ -1,0 +1,92 @@
+CISZU NETWORK - DOCUMENTACIÓN OFICIAL
+Nombre: TEAM
+Versión: 2.0.0
+Actualización: 2026-07-28
+Identificador: TEAM_V2.0.0_2026_07_28_ciszunetwork
+
+---
+
+
+TEAM / EQUIPO
+
+[ESPAÑOL]
+
+Ciszu Network es operada por un equipo pequeño pero dedicado de desarrolladores, creativos y community managers.
+
+FUNDADOR Y ARQUITECTO PRINCIPAL
+- Francisco Garcia (Ciszuko Antony) — Fundador, Arquitecto de Software y Desarrollador Principal.
+  Ubicación: Caracas, Venezuela.
+  Email: ciszunetwork@outlook.com
+
+ÁREAS DE TRABAJO
+
+Desarrollo de Software:
+- Arquitectura del monorepo y gestión de dependencias (pnpm/Turborepo)
+- Desarrollo frontend (Next.js 15, React 19, TypeScript, Tailwind)
+- Desarrollo backend (Supabase, Node.js, Discord.js)
+- Aplicaciones de escritorio (Tauri 2, Rust)
+- Automatización de builds y despliegues (GitHub Actions, Vercel)
+
+Diseño y Creatividad:
+- Identidad visual y paleta de colores neón
+- Sistema de iconos SVG (5,194 iconos)
+- Diseño de experiencia de usuario (UX/UI)
+- Estética cyberpunk y animaciones
+
+Documentación:
+- Sistema de documentación multi-formato
+- Documentación técnica para IA (ia_docs)
+- Estándares de documentación del monorepo
+
+Comunidad:
+- Gestión del servidor de Discord Ciszu Network
+- Organización de torneos y eventos gaming (CiszuGamens)
+- Moderación y soporte comunitario
+
+COLABORADORES Y SOPORTE
+- Antigravity AI: Soporte en codificación y arquitectura (IA)
+- Comunidad de CiszuGamens: Testing, feedback y participación en eventos
+- Beta testers de MuzicMania: Pruebas de jugabilidad y reporte de bugs
+
+CONTACTO
+- Email: ciszunetwork@outlook.com
+- Discord: Servidor oficial de Ciszu Network
+- GitHub: github.com/CiszukoAntony (organización Ciszu Network)
+
+
+---
+
+
+[ENGLISH]
+
+Ciszu Network is operated by a small but dedicated team of developers, creatives, and community managers.
+
+FOUNDER AND LEAD ARCHITECT
+- Francisco Garcia (Ciszuko Antony) — Founder, Software Architect, and Lead Developer.
+  Location: Caracas, Venezuela.
+  Email: ciszunetwork@outlook.com
+
+WORK AREAS
+
+Software Development:
+- Monorepo architecture and dependency management (pnpm/Turborepo)
+- Frontend development (Next.js 15, React 19, TypeScript, Tailwind)
+- Backend development (Supabase, Node.js, Discord.js)
+- Desktop applications (Tauri 2, Rust)
+- Build and deployment automation (GitHub Actions, Vercel)
+
+Design and Creativity:
+- Visual identity and neon color palette
+- SVG icon system (5,194 icons)
+- User experience design (UX/UI)
+- Cyberpunk aesthetics and animations
+
+Documentation:
+- Multi-format documentation system
+- Technical documentation for AI (ia_docs)
+- Monorepo documentation standards
+
+Community:
+- Ciszu Network Discord server management
+- Tournament and event organization (CiszuGamens)
+- Community moderation and support

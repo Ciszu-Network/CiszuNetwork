@@ -1,0 +1,11 @@
+/* Webfont: Emberly-Regular */@font-face {
+    font-family: 'Emberly';
+    src: url('Emberly-Regular.eot'); /* IE9 Compat Modes */
+    src: url('Emberly-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+         url('Emberly-Regular.woff') format('woff'), /* Modern Browsers */
+         url('Emberly-Regular.ttf') format('truetype'); /* Safari, Android, iOS */
+             font-style: normal;
+    font-weight: normal;
+    text-rendering: optimizeLegibility;
+}
+

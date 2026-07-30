@@ -1,0 +1,76 @@
+CISZUKO ANTONY - DOCUMENTACIÓN OFICIAL
+Nombre: LICENSE
+Versión: 2.0.0
+Actualización: 2026-07-28
+Identificador: LICENSE_V2.0.0_2026_07_28_ciszukoantony
+-------------------------------------------------------------------------------
+
+LICENCIA / LICENSE
+
+[ESPAÑOL]
+
+ARTÍCULO 1: PROPIEDAD INTELECTUAL
+El portfolio de Ciszuko Antony y su código fuente son propiedad de
+Ciszu Network y Ciszuko Antony (Francisco Garcia).
+
+ARTÍCULO 2: LICENCIA DE USO
+El código fuente está disponible bajo licencia MIT para uso personal,
+educativo y no comercial.
+
+ARTÍCULO 3: TEXTO DE LA LICENCIA MIT
+MIT License
+
+Copyright (c) 2026 Ciszu Network — Ciszuko Antony
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-------------------------------------------------------------------------------
+
+[ENGLISH]
+
+ARTICLE 1: INTELLECTUAL PROPERTY
+The Ciszuko Antony portfolio and its source code are owned by
+Ciszu Network and Ciszuko Antony (Francisco Garcia).
+
+ARTICLE 2: USE LICENSE
+Source code is available under the MIT license for personal, educational,
+and non-commercial use.
+
+ARTICLE 3: MIT LICENSE TEXT
+MIT License
+
+Copyright (c) 2026 Ciszu Network — Ciszuko Antony
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

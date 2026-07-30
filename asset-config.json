@@ -1,0 +1,101 @@
+{
+  "assetSystem": {
+    "version": "1.0.0",
+    "strategy": "hybrid",
+    "description": "Sistema híbrido de assets para Ciszu Network"
+  },
+  
+  "localAssets": {
+    "critical": [
+      "shared/icons/outline/svg/*.svg",
+      "shared/fonts/**/*.woff2",
+      "shared/fonts/**/*.woff",
+      "shared/fonts/**/*.ttf"
+    ],
+    "ignoreInGit": true,
+    "packageInTauri": true,
+    "packageInMobile": true
+  },
+  
+  "cdnAssets": {
+    "dynamic": [
+      "content/**/*.png",
+      "content/**/*.jpg",
+      "content/**/*.jpeg",
+      "content/**/*.gif",
+      "content/**/*.mp3",
+      "content/**/*.wav",
+      "content/**/*.ogg",
+      "apps/*/content/**/*"
+    ],
+    "providers": {
+      "development": "local",
+      "production": "supabase",
+      "fallback": "cloudflare-r2"
+    },
+    "cdnBaseUrl": "https://cdn.ciszunetwork.com"
+  },
+  
+  "environments": {
+    "development": {
+      "assetStrategy": "local",
+      "cache": false,
+      "logLevel": "debug"
+    },
+    "production": {
+      "assetStrategy": "cdn",
+      "cache": true,
+      "cacheTtl": 86400,
+      "logLevel": "error"
+    },
+    "tauri": {
+      "assetStrategy": "bundled",
+      "cache": false,
+      "offline": true
+    }
+  },
+  
+  "git": {
+    "ignorePatterns": [
+      "node_modules/",
+      ".next/",
+      "dist/",
+      "build/",
+      "*.log",
+      ".env.local",
+      ".DS_Store",
+      "content/**/*",
+      "apps/*/content/**/*",
+      "shared/icons/**/ai/*",
+      "shared/icons/**/png/*"
+    ],
+    "lfsPatterns": [
+      "*.mp3",
+      "*.wav",
+      "*.ogg",
+      "*.mp4",
+      "*.mov",
+      "*.avi",
+      "*.zip",
+      "*.rar",
+      "*.pdf"
+    ]
+  },
+  
+  "buildConfigs": {
+    "web": {
+      "optimizeImages": true,
+      "optimizeFonts": true,
+      "bundleAnalysis": true
+    },
+    "tauri": {
+      "bundleAssets": true,
+      "includeCriticalAssets": true,
+      "excludeCdnAssets": true
+    },
+    "mobile": {
+      "bundleAssets": true,
+      "assetPacking": "resources"
+    }
+  }
+}

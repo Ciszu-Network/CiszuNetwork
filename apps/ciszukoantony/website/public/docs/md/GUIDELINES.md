@@ -1,0 +1,58 @@
+CISZUKO ANTONY - DOCUMENTACIÓN OFICIAL
+Nombre: GUIDELINES
+Versión: 2.0.0
+Actualización: 2026-07-28
+Identificador: GUIDELINES_V2.0.0_2026_07_28_ciszukoantony
+
+---
+
+
+DIRECTRICES / GUIDELINES
+
+[ESPAÑOL]
+
+DIRECTRICES DEL PORTFOLIO
+
+DESARROLLO:
+- Next.js 15 con App Router y TypeScript estricto
+- Tailwind CSS v4 para todos los estilos
+- Framer Motion para animaciones (mínimo para rendimiento)
+- Página única — no agregar rutas innecesarias
+- Usar @ciszunetwork/cdn para iconos y assets
+
+DISEÑO:
+- Mantener estética neón con la paleta de Ciszu Network
+- Hero debe mostrar isotipo + logotipo con efecto float
+- Proyectos con gradientes de color únicos
+- Stats en cards con iconos semánticos
+
+CONTENIDO:
+- Todo contenido debe ser sobre Ciszuko Antony
+- Los proyectos listados deben ser reales
+- Los enlaces a proyectos deben ser correctos
+
+
+---
+
+
+[ENGLISH]
+
+PORTFOLIO GUIDELINES
+
+DEVELOPMENT:
+- Next.js 15 with App Router and strict TypeScript
+- Tailwind CSS v4 for all styles
+- Framer Motion for animations (minimal for performance)
+- Single page — do not add unnecessary routes
+- Use @ciszunetwork/cdn for icons and assets
+
+DESIGN:
+- Maintain neon aesthetics with Ciszu Network palette
+- Hero must show isotipo + logotipo with float effect
+- Projects with unique color gradients
+- Stats in cards with semantic icons
+
+CONTENT:
+- All content must be about Ciszuko Antony
+- Listed projects must be real
+- Project links must be correct

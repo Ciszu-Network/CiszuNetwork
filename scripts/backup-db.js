@@ -1,122 +1,169 @@
-// Add to root package.json scripts:
-// "db:backup": "node scripts/backup-db.js"
-// "db:backup:scheduled": "node scripts/backup-db.js --scheduled"
-
 const fs = require('fs');
 const path = require('path');
+const https = require('https');
 const { execSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..');
 const BACKUPS_DIR = path.join(ROOT, 'backups');
-const SUPABASE_DIR = path.join(ROOT, 'services', 'supabase');
 const RETENTION_DAYS = 30;
 
-const SCHEDULED = process.argv.includes('--scheduled');
 const DRY_RUN = process.argv.includes('--dry-run');
 
-function log(...args) {
-  if (SCHEDULED) return;
-  console.log(`[${new Date().toISOString()}]`, ...args);
-}
-
-function error(...args) {
-  console.error(`[${new Date().toISOString()}] [!]`, ...args);
-}
-
-function pad2(n) {
-  return String(n).padStart(2, '0');
-}
+function pad2(n) { return String(n).padStart(2, '0'); }
 
 function timestamp() {
   const d = new Date();
-  const y = d.getFullYear();
-  const mo = pad2(d.getMonth() + 1);
-  const da = pad2(d.getDate());
-  const h = pad2(d.getHours());
-  const mi = pad2(d.getMinutes());
-  const s = pad2(d.getSeconds());
-  return `${y}${mo}${da}-${h}${mi}${s}`;
+  return `${d.getFullYear()}${pad2(d.getMonth()+1)}${pad2(d.getDate())}-${pad2(d.getHours())}${pad2(d.getMinutes())}${pad2(d.getSeconds())}`;
 }
 
-function checkSupabaseCLI() {
-  try {
-    execSync('supabase --version', { stdio: 'ignore' });
-    return true;
-  } catch {
-    return false;
+function fetch(url, opts) {
+  return new Promise((resolve, reject) => {
+    const u = new URL(url);
+    const options = {
+      hostname: u.hostname, port: u.port, path: u.pathname + u.search,
+      method: opts.method || 'GET',
+      headers: opts.headers || {},
+    };
+    const req = https.request(options, res => {
+      let data = '';
+      res.on('data', c => data += c);
+      res.on('end', () => resolve({ ok: res.statusCode >= 200 && res.statusCode < 300, status: res.statusCode, text: () => Promise.resolve(data), json: () => { try { return JSON.parse(data); } catch { return data; } } }));
+    });
+    req.on('error', reject);
+    if (opts.body) req.write(opts.body);
+    req.end();
+  });
+}
+
+async function loadEnv() {
+  const envPath = path.join(ROOT, 'services', 'supabase', '.env.local');
+  if (!fs.existsSync(envPath)) {
+    console.error('  [!] .env.local no encontrado en services/supabase/');
+    return {};
   }
+  const content = fs.readFileSync(envPath, 'utf8');
+  const env = {};
+  for (const line of content.split('\n')) {
+    const m = line.match(/^\s*([^#=]+)=(.*)$/);
+    if (m) env[m[1].trim()] = m[2].trim().replace(/^["']|["']$/g, '');
+  }
+  return env;
 }
 
-function run() {
-  if (!checkSupabaseCLI()) {
-    error('supabase CLI no está disponible. Asegúrate de tenerlo instalado y en el PATH.');
+async function getConnectionString(env) {
+  const token = env.SUPABASE_ACCESS_TOKEN;
+  const ref = 'obwzzmbvkrcscqwptlqo';
+
+  if (!token) {
+    console.error('  [!] SUPABASE_ACCESS_TOKEN no encontrado en .env.local');
+    return null;
+  }
+
+  console.log('  [>>] Obteniendo connection string via Management API...');
+  const res = await fetch(`https://api.supabase.com/v1/projects/${ref}/database/connection`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!res.ok) {
+    console.error(`  [!] Error obteniendo connection string: HTTP ${res.status}`);
+    return null;
+  }
+
+  const data = await res.json();
+  // The API returns connection info with a uri field
+  const uri = data.connection_string || (data.uris && data.uris.length > 0 ? data.uris[0].connection_string : null);
+  if (!uri) {
+    console.error('  [!] No se pudo extraer connection string de la respuesta');
+    console.error('  ', JSON.stringify(data).slice(0, 500));
+    return null;
+  }
+  return uri;
+}
+
+async function findPgDump() {
+  const candidates = [
+    'C:\\Program Files\\PostgreSQL\\17\\bin\\pg_dump.exe',
+    'C:\\Program Files\\PostgreSQL\\16\\bin\\pg_dump.exe',
+    'C:\\Program Files\\PostgreSQL\\15\\bin\\pg_dump.exe',
+    'C:\\Program Files\\PostgreSQL\\14\\bin\\pg_dump.exe',
+    'pg_dump',
+  ];
+  for (const c of candidates) {
+    try {
+      execSync(`"${c}" --version 2>nul`, { stdio: 'ignore' });
+      return c;
+    } catch { continue; }
+  }
+  return null;
+}
+
+async function main() {
+  console.log('\n  === Backup de Base de Datos Supabase ===\n');
+
+  const env = await loadEnv();
+  const connStr = await getConnectionString(env);
+
+  if (!connStr) {
+    console.error('\n  [!] No se pudo obtener la connection string automáticamente.');
+    console.error('  Soluciones:');
+    console.error('  1. Asegúrate de que SUPABASE_ACCESS_TOKEN es válido en services/supabase/.env.local');
+    console.error('  2. O ejecuta manualmente:');
+    console.error('     pg_dump "postgresql://postgres:CONTRASEÑA@db.obwzzmbvkrcscqwptlqo.supabase.co:5432/postgres" -f backup.sql');
+    console.error('  3. O desde el Dashboard: Database → Database Settings → Connection string → URI');
     process.exit(1);
   }
 
-  if (!fs.existsSync(SUPABASE_DIR)) {
-    error(`El directorio del proyecto Supabase no existe: ${SUPABASE_DIR}`);
+  const pgDump = await findPgDump();
+  if (!pgDump) {
+    console.error('\n  [!] pg_dump no encontrado. Instala PostgreSQL (https://www.postgresql.org/download/windows/)');
+    console.error('  Asegúrate de marcar "pg_dump" durante la instalación.');
     process.exit(1);
   }
 
   if (!fs.existsSync(BACKUPS_DIR)) {
-    log('Creando directorio de backups:', BACKUPS_DIR);
-    if (!DRY_RUN) {
-      fs.mkdirSync(BACKUPS_DIR, { recursive: true });
-    }
+    if (!DRY_RUN) fs.mkdirSync(BACKUPS_DIR, { recursive: true });
+    console.log(`  [+] Directorio de backups creado: ${BACKUPS_DIR}`);
   }
 
-  const filename = `supabase-db-${timestamp()}.sql`;
+  const filename = `ciszu-db-${timestamp()}.sql`;
   const outputFile = path.join(BACKUPS_DIR, filename);
 
   if (DRY_RUN) {
-    console.log(`[DRY-RUN] Se ejecutaría: supabase db dump --linked -f "${outputFile}"`);
-  } else {
-    log('Iniciando dump de la base de datos...');
-    try {
-      execSync(`supabase db dump --linked -f "${outputFile}"`, {
-        cwd: SUPABASE_DIR,
-        stdio: SCHEDULED ? 'ignore' : 'inherit',
-      });
-      const stats = fs.statSync(outputFile);
-      log(`Backup completado: ${outputFile} (${(stats.size / 1024 / 1024).toFixed(2)} MB)`);
-    } catch (err) {
-      error('Error al hacer dump de la base de datos:', err.message);
-      process.exit(1);
-    }
-  }
-
-  // Cleanup backups older than RETENTION_DAYS
-  if (!fs.existsSync(BACKUPS_DIR)) {
-    if (!SCHEDULED) log('No hay directorio de backups que limpiar.');
+    console.log(`  [DRY-RUN] Se ejecutaría: ${pgDump} "${connStr.replace(/:[^:@]+@/, ':*****@')}" -f "${outputFile}"`);
     return;
   }
 
+  console.log('  [>>] Ejecutando pg_dump...');
+  try {
+    execSync(`"${pgDump}" "${connStr}" --no-owner --no-privileges -f "${outputFile}"`, { stdio: 'inherit', timeout: 300000 });
+  } catch (err) {
+    console.error(`  [!] Error en pg_dump: ${err.message}`);
+    process.exit(1);
+  }
+
+  const stats = fs.statSync(outputFile);
+  console.log(`  [OK] Backup guardado: ${outputFile} (${(stats.size / 1024 / 1024).toFixed(2)} MB)`);
+
+  // Cleanup old backups
   const cutoff = Date.now() - RETENTION_DAYS * 24 * 60 * 60 * 1000;
   let deleted = 0;
-
   try {
     const files = fs.readdirSync(BACKUPS_DIR);
     for (const file of files) {
-      if (!file.startsWith('supabase-db-') || !file.endsWith('.sql')) continue;
+      if (!file.startsWith('ciszu-db-') || !file.endsWith('.sql')) continue;
       const filePath = path.join(BACKUPS_DIR, file);
       const stat = fs.statSync(filePath);
       if (stat.mtimeMs < cutoff) {
-        if (DRY_RUN) {
-          console.log(`[DRY-RUN] Se eliminaría backup antiguo: ${file}`);
-        } else {
-          fs.unlinkSync(filePath);
-          log(`Backup antiguo eliminado: ${file}`);
-        }
+        fs.unlinkSync(filePath);
+        console.log(`  [--] Backup antiguo eliminado: ${file}`);
         deleted++;
       }
     }
   } catch (err) {
-    error('Error al limpiar backups antiguos:', err.message);
+    console.error(`  [!] Error limpiando backups: ${err.message}`);
   }
-
-  if (deleted === 0 && !DRY_RUN) {
-    log('No hay backups antiguos que eliminar.');
-  }
+  if (deleted === 0) console.log('  [--] No hay backups antiguos que eliminar');
+  console.log(`\n  === Backup completado ===`);
 }
 
-run();
+main().catch(console.error);

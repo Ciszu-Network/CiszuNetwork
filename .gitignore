@@ -76,6 +76,9 @@ docs/md/VERCEL_ENV_VARS.md
 # ─── Legacy duplicate projects ───────────────────────
 CiszuGamens/
 
+# ─── Client archives (NDS ROMs, large binaries) ────
+archives/
+
 # ─── Duplicate content (GIF/video) ───────────────────
 content/flayers/video/
 content/banners/video/

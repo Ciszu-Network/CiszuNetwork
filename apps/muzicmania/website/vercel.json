@@ -1,0 +1,29 @@
+{
+  "buildCommand": "cd ../../.. && pnpm turbo run build --filter=./apps/muzicmania/website",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "installCommand": "cd ../../.. && pnpm install",
+  "regions": ["iad1"],
+  "github": {
+    "silent": true,
+    "autoAlias": true
+  },
+  "env": {
+    "NEXT_PUBLIC_APP_ENV": "production",
+    "NEXT_PUBLIC_CDN_URL": "https://cdn.ciszunetwork.com",
+    "ASSET_STRATEGY": "cdn"
+  },
+  "functions": {
+    "app/api/**/*.ts": {
+      "maxDuration": 30,
+      "memory": 1024
+    }
+  },
+  "routes": [
+    {
+      "src": "/assets/(.*)",
+      "dest": "https://cdn.ciszunetwork.com/$1",
+      "status": 308
+    }
+  ]
+}

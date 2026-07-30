@@ -1,0 +1,66 @@
+CISZUKO ANTONY - DOCUMENTACIÓN OFICIAL
+Nombre: DOCUMENTATION
+Versión: 2.0.0
+Actualización: 2026-07-28
+Identificador: DOCUMENTATION_V2.0.0_2026_07_28_ciszukoantony
+-------------------------------------------------------------------------------
+
+DOCUMENTACIÓN TÉCNICA / TECHNICAL DOCUMENTATION
+
+[ESPAÑOL]
+
+ESTRUCTURA DEL SITIO
+
+El portfolio es una aplicación Next.js 15 con App Router, de página única
+(single-page) con las siguientes secciones:
+
+src/
+  app/
+    page.tsx          # Página principal (hero, proyectos, stats, sociales)
+    layout.tsx        # Layout raíz con metadatos
+  config/
+    navigation.tsx    # Configuración de navegación y enlaces sociales
+  hooks/
+    useIcon.ts        # Hook para sistema de iconos
+
+ASSETS:
+Los logos del portfolio están en public/logos/imagen/ con variantes:
+- outline/filled
+- degradado/monocroma
+- isotipo/logotipo
+- horizontal/vertical
+- con/sin tagline
+
+ICONOS:
+Usa el sistema compartido @ciszunetwork/cdn para los iconos de redes
+sociales y secciones.
+
+-------------------------------------------------------------------------------
+
+[ENGLISH]
+
+SITE STRUCTURE
+
+The portfolio is a Next.js 15 application with App Router, single-page
+with the following sections:
+
+src/
+  app/
+    page.tsx          # Main page (hero, projects, stats, socials)
+    layout.tsx        # Root layout with metadata
+  config/
+    navigation.tsx    # Navigation and social link configuration
+  hooks/
+    useIcon.ts        # Icon system hook
+
+ASSETS:
+Portfolio logos are in public/logos/imagen/ with variants:
+- outline/filled
+- degradado/monocroma
+- isotipo/logotipo
+- horizontal/vertical
+- with/without tagline
+
+ICONS:
+Uses the @ciszunetwork/cdn shared system for social media and
+section icons.

@@ -1,0 +1,50 @@
+CISZUBOT - DOCUMENTACIÓN OFICIAL
+Nombre: GUIDELINES
+Versión: 2.5.5
+Actualización: 2026-07-28
+Identificador: GUIDELINES_V2.5.5_2026_07_28_ciszubot
+-------------------------------------------------------------------------------
+
+DIRECTRICES / GUIDELINES
+
+[ESPAÑOL]
+
+USO DEL BOT
+- Los comandos deben usarse de forma responsable y respetuosa
+- No usar el bot para spam, acoso o actividades ilegales
+- Las confesiones (comando confess) son anónimas y no deben usarse
+  para difamar o acosar
+
+DESARROLLO
+- Usar Discord.js v14 (no migrar a v15 hasta estable)
+- Los comandos nuevos deben tener soporte dual: prefix y slash
+- Los embeds deben usar la paleta índigo #4f46e5 / violeta #8b5cf6
+- Los comandos deben tener alias en español
+- Mantener logger.js para todo registro de eventos
+
+ADMINISTRACIÓN
+- El panel Express corre en localhost:5000 (no exponer públicamente)
+- No agregar rutas sensibles sin autenticación
+- Las estadísticas del panel son informativas, no modificables
+
+-------------------------------------------------------------------------------
+
+[ENGLISH]
+
+BOT USAGE
+- Commands must be used responsibly and respectfully
+- Do not use the bot for spam, harassment, or illegal activities
+- Confessions (confess command) are anonymous and must not be used
+  to defame or harass
+
+DEVELOPMENT
+- Use Discord.js v14 (do not migrate to v15 until stable)
+- New commands must have dual support: prefix and slash
+- Embeds must use the indigo #4f46e5 / violet #8b5cf6 palette
+- Commands must have Spanish aliases
+- Maintain logger.js for all event logging
+
+ADMINISTRATION
+- The Express panel runs on localhost:5000 (do not expose publicly)
+- Do not add sensitive routes without authentication
+- Panel statistics are informational, not modifiable

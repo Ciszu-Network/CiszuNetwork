@@ -1,0 +1,27 @@
+{
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "terminal.integrated.defaultProfile.windows": "Command Prompt",
+    "files.associations": {
+        "*.css": "tailwindcss"
+    },
+    "eslint.validate": ["javascript", "typescript"],
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    },
+    "git.ignoreLimitWarning": true,
+    "sqltools.connections": [
+        {
+            "name": "CiszuNetwork-Supabase",
+            "driver": "PostgreSQL",
+            "previewLimit": 50,
+            "server": "db.YOUR_PROJECT_REF.supabase.co",
+            "port": 5432,
+            "database": "postgres",
+            "username": "postgres",
+            "askForPassword": true
+        }
+    ],
+    "cSpell.enabled": false,
+    "markdown.validate.enabled": true
+}

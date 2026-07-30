@@ -1,0 +1,106 @@
+# Configuración central de Supabase — Ciszu Network
+# Para documentación detallada: https://supabase.com/docs/guides/local-development/cli/config
+project_id = "ciszunetwork"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public", "muzicmania", "ciszubot", "ciszunetwork"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[api.tls]
+enabled = false
+
+[db]
+port = 54322
+shadow_port = 54320
+health_timeout = "2m"
+major_version = 17
+
+[db.pooler]
+enabled = false
+port = 54329
+pool_mode = "transaction"
+default_pool_size = 20
+max_client_conn = 100
+
+[db.migrations]
+enabled = true
+schema_paths = []
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[realtime]
+enabled = true
+
+[studio]
+enabled = true
+port = 54323
+api_url = "http://127.0.0.1"
+openai_api_key = "env(OPENAI_API_KEY)"
+
+[local_smtp]
+enabled = true
+port = 54324
+
+[storage]
+enabled = true
+file_size_limit = "50MiB"
+
+[storage.buckets.ciszu-cdn]
+public = true
+file_size_limit = "50MiB"
+allowed_mime_types = ["image/png", "image/jpeg", "image/gif", "image/svg+xml", "video/mp4", "audio/mpeg", "audio/ogg", "application/pdf"]
+
+[auth]
+enabled = true
+site_url = "https://ciszunetwork.vercel.app"
+additional_redirect_urls = [
+  "https://ciszunetwork.vercel.app",
+  "https://ciszunetwork.vercel.app/**",
+  "https://ciszukoantony.vercel.app",
+  "https://ciszukoantony.vercel.app/**",
+  "https://muzicmania.vercel.app",
+  "https://muzicmania.vercel.app/**",
+  "https://ciszubot.vercel.app",
+  "https://ciszubot.vercel.app/**",
+  "https://*-ciszunetwork.vercel.app",
+  "https://*-ciszunetwork.vercel.app/**",
+  "https://*-ciszukoantony-ciszunetwork.vercel.app",
+  "https://*-ciszukoantony-ciszunetwork.vercel.app/**",
+  "https://*-mania-ciszunetwork.vercel.app",
+  "https://*-mania-ciszunetwork.vercel.app/**",
+  "https://*-ciszubot-ciszunetwork.vercel.app",
+  "https://*-ciszubot-ciszunetwork.vercel.app/**",
+  "http://127.0.0.1:3000",
+]
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+refresh_token_reuse_interval = 10
+enable_signup = true
+enable_anonymous_sign_ins = false
+enable_manual_linking = false
+minimum_password_length = 6
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = true
+secure_password_change = false
+max_frequency = "1m0s"
+otp_length = 8
+otp_expiry = 3600
+
+[edge_runtime]
+enabled = true
+policy = "per_worker"
+inspector_port = 8083
+deno_version = 2
+
+[analytics]
+enabled = true
+port = 54327
+backend = "postgres"

@@ -28,10 +28,7 @@ All websites are Next.js 15 with Tailwind 4 + PostCSS. They use `eslint` (no Pre
 
 El CDN es un **espejo** del repositorio. Las rutas en Supabase Storage (`ciszu-cdn`, migrado desde `ciszu-assets`) reflejan 1:1 las rutas reales del repo. No hay carpeta `assets/` staging — el upload lee directamente de los directorios originales.
 
-- **Upload**: `pnpm cdn:upload` (`scripts/upload-cdn.js`) — escanea 21 fuentes (`shared/icons/svg/`, `content/`, `ciszukoantony/content/`, `apps/*/content/`, `docs/`, etc.) y sube con la misma ruta relativa.
-  - `--clear`: Vacía el bucket antes de subir
-  - `--dry-run`: Previsualiza qué se subiría
-  - `--diff`: Solo sube archivos nuevos o con tamaño distinto (compara con objetos existentes en CDN; ideal para re-ejecuciones rápidas)
+- **Upload**: `pnpm cdn:upload` (`scripts/upload-cdn.js`) — escanea 8 fuentes (`shared/icons/svg/`, `content/`, `docs/`, `ciszukoantony/content/`, `apps/*/content/`) y sube con la misma ruta relativa a `ciszu-cdn`.
 - **Offline fallback**: `scripts/copy-assets.js` se ejecuta como `prebuild` en cada website. Copia assets críticos a `public/` con las mismas rutas espejo. `--all` copia todo.
   - Path depth: `apps/website/` → `../../scripts/copy-assets.js`, `apps/*/website/` → `../../../scripts/copy-assets.js`
 - **Asset resolver**: `packages/cdn/index.ts` — `resolveIcon(name, style, format)` para icons, `assetResolver.resolve(path)` para assets arbitrarios. Usa `NEXT_PUBLIC_CDN_URL` como base.
@@ -141,9 +138,9 @@ Si el repo cambia a público:
 - `prebuild` relative paths differ by nesting depth (2 levels vs 3 levels deep)
 - Root `content/` holds master media; each app has a mirror `content/` + `documents/` + `documents/ia_docs/`
 - Vercel deployments do **not** preserve original TypeScript source — only build output + public/ static assets
-- `packages/cdn` is the only shared npm package; `packages/ui/`, `packages/config/`, `packages/utils/` are listed in docs but **do not exist** in the workspace yet
-- Icon system is in `shared/icons/` (outline/filled/flag); use `resolveIcon()` from `@ciszunetwork/cdn`
-- **Legacy files** (pre-date `packages/cdn/`): `shared/hybrid-system.js`, `shared/aliases.json`, per-app `src/utils/icons.ts` — they duplicate CDN resolution with hardcoded `cdn.ciszu.net` URL. The canonical resolver is `packages/cdn/index.ts` with `cdn.ciszunetwork.com`.
+- `packages/cdn`, `packages/ui`, `packages/config`, `packages/utils` are the shared npm packages
+- Icon system is in `shared/icons/` (outline/filled/flag); use `resolveIcon()` from `@ciszunetwork/cdn`. All 4 websites import this package.
+- **Legacy files** (pre-date `packages/cdn/`): `shared/hybrid-system.js`, `shared/aliases.json`, `scripts/setup-icons-system.js`, `scripts/setup-aliases.js` — no longer imported by any app. The canonical resolver is `packages/cdn/index.ts`.
 - **Content dirs**: `root/content/`, `apps/*/content/`, `ciszukoantony/content/`, `ciszugamens/content/` hold multimedia (banners, flayers, logos, thumbails). These are candidates for CDN but tracked in git for local builds.
 
 ## Supabase Advisors (Database Linter)
