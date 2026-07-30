@@ -2,6 +2,12 @@
 // MUZICMANIA - AUTHENTICATION SYSTEM
 // ================================
 
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+}
+
 export class AuthSystem {
     static init() {
         this.checkLoginStatus();
@@ -260,14 +266,14 @@ export class AuthSystem {
         authSections.forEach((section) => {
             if (user) {
                 // Vista Logueado
-                section.innerHTML = `
+section.innerHTML = `
                     <div class="user-profile-preview" style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="window.location.href='profile.html'">
                         <div class="profile-icon">
-                            <span class="user-initials">${user.displayName.substring(0, 2).toUpperCase()}</span>
+                            <span class="user-initials">${escapeHtml(user.displayName.substring(0, 2).toUpperCase())}</span>
                         </div>
                         <div style="display: flex; flex-direction: column; line-height: 1.1;">
-                            <span style="color: var(--neon-cyan); font-weight: bold; font-size: 1rem;">${user.displayName}</span>
-                            <span style="color: #666; font-size: 0.8rem;">${user.username}</span>
+                            <span style="color: var(--neon-cyan); font-weight: bold; font-size: 1rem;">${escapeHtml(user.displayName)}</span>
+                            <span style="color: #666; font-size: 0.8rem;">${escapeHtml(user.username)}</span>
                         </div>
                         <button onclick="event.stopPropagation(); AuthSystem.logout()" class="logout-btn" style="margin-left: 10px; font-size: 0.8rem;">
                             ${typeof window.ICONS_LIB !== 'undefined' ? window.ICONS_LIB.get(window.ICONS_LIB.logout, window.Layout?.basePath || '') : '<i class="fas fa-sign-out-alt"></i>'}
