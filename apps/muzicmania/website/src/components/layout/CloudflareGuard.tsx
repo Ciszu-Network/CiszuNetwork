@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Turnstile } from '@marsidev/react-turnstile';
 import { useAppStore } from '@/store/useAppStore';
+import { resolveAssetPath } from '@ciszunetwork/cdn';
 import { motion, AnimatePresence } from 'framer-motion';
 import { isTauri } from '@/lib/isTauri';
 
@@ -101,7 +102,7 @@ export function CloudflareGuard({ children }: { children: React.ReactNode }) {
       >
         <div className="w-24 h-24 relative drop-shadow-[0_0_30px_rgba(0,212,255,0.8)]">
           <img
-            src="/logos/imagen/not outline/isotipo/degradado/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg"
+            src={resolveAssetPath('apps/muzicmania/content/logos/imagen/not outline/isotipo/degradado/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')}
             alt="MuzicMania"
             className="w-full h-full object-contain"
           />

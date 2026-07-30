@@ -39,7 +39,7 @@ export function resolveIcon(
   const cdnUrl = process.env.NEXT_PUBLIC_CDN_URL;
   const useLocal = opts?.forceLocal || (!opts?.forceCdn && !isProduction);
 
-  const path = `shared/icons/${style}/${format}/${name}_${style}.${format}`;
+  const path = `shared/icons/${format}/${style}/${name}.${format}`;
 
   if (useLocal || !cdnUrl || isServer) {
     return `/${path}`;
@@ -73,6 +73,15 @@ export class AssetResolver {
 }
 
 export const assetResolver = new AssetResolver();
+
+/**
+ * Resuelve la URL de cualquier asset del repositorio con estrategia híbrida CDN/local.
+ * La ruta debe ser la ruta relativa del repo (ej: "apps/muzicmania/content/logos/...").
+ * En producción usa CDN, en desarrollo usa ruta local.
+ */
+export function resolveAssetPath(path: string, opts?: ResolveOptions): string {
+  return assetResolver.resolve(path, opts);
+}
 
 export { assetUrl, getContentType } from './src/cdn-client';
 

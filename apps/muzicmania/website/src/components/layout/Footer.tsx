@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { resolveAssetPath } from '@ciszunetwork/cdn';
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store';
 
@@ -62,12 +63,12 @@ export const Footer = () => {
           <div className="flex flex-col items-center text-center xl:w-2/5 border-b xl:border-b-0 xl:border-r border-white/10 pb-8 xl:pb-0 xl:pr-10">
             <Link href="/" className="flex flex-col items-center gap-4 cursor-pointer group hover:scale-105 active:scale-95 transition-all duration-300 mb-6">
               <Image
-                src="/logos/imagen/not outline/isotipo/degradado/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg"
+                src={resolveAssetPath('apps/muzicmania/content/logos/imagen/not outline/isotipo/degradado/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')}
                 alt="Isotipo" width={72} height={72}
                 className="drop-shadow-neon-blue group-hover:drop-shadow-[0_0_25px_rgba(0,212,255,0.9)] transition-all duration-300"
               />
               <Image
-                src="/logos/imagen/not outline/logotipo/degradado/color/muzicmania_logotipo_degradado_color.svg"
+                src={resolveAssetPath('apps/muzicmania/content/logos/imagen/not outline/logotipo/degradado/color/muzicmania_logotipo_degradado_color.svg')}
                 alt="MuzicMania" width={220} height={48}
                 className="group-hover:drop-shadow-[0_0_20px_rgba(0,255,255,0.6)] transition-all duration-300"
               />

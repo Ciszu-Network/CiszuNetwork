@@ -1,5 +1,6 @@
 "use client";
 import { supabase } from '@/config/supabase';
+import { resolveAssetPath } from '@ciszunetwork/cdn';
 
 import React, { useState, useEffect } from 'react';
 import { FloatingSymbols } from "@/components/molecules/FloatingSymbols";
@@ -110,14 +111,14 @@ export default function Home() {
         <div className="relative z-10 max-w-5xl mx-auto">
           <div className="flex items-center justify-center gap-6 mb-4 flex-wrap group cursor-pointer">
             <Image
-              src="/logos/imagen/not outline/logotipo/degradado/color/muzicmania_logotipo_degradado_color.svg"
+              src={resolveAssetPath('apps/muzicmania/content/logos/imagen/not outline/logotipo/degradado/color/muzicmania_logotipo_degradado_color.svg')}
               alt="MuzicMania"
               width={380}
               height={100}
               className="drop-shadow-[0_0_20px_rgba(0,128,255,0.4)] group-hover:drop-shadow-[0_0_40px_rgba(0,128,255,0.8)] group-hover:drop-shadow-[0_0_60px_rgba(145,70,255,0.6)] transition-all duration-500 animate-float"
             />
             <Image
-              src="/logos/imagen/not outline/isotipo/degradado/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg"
+              src={resolveAssetPath('apps/muzicmania/content/logos/imagen/not outline/isotipo/degradado/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')}
               alt="Logo"
               width={100}
               height={100}

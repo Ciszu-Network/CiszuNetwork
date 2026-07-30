@@ -1,5 +1,5 @@
 import React from 'react';
-import { resolveIcon } from '@ciszunetwork/cdn';
+import { resolveIcon, assetResolver } from '@ciszunetwork/cdn';
 
 export type IconStyle = 'outline' | 'filled' | 'flag';
 export type IconFormat = 'svg' | 'png';
@@ -21,6 +21,10 @@ export interface IconResult {
     format: IconFormat;
     size?: number;
   };
+}
+
+export function resolveContentAsset(path: string): string {
+  return assetResolver.resolve(`apps/ciszubot/${path}`);
 }
 
 class IconSystem {

@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { resolveAssetPath } from '@ciszunetwork/cdn';
 import { usePathname, useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import { useAppStore } from '@/store';
@@ -218,11 +219,11 @@ export const NavbarContent = () => {
 
              {/* Logo */}
              <Link href="/" className="flex items-center gap-2.5 group shrink-0 cursor-pointer hover:scale-110 active:scale-95 transition-all duration-300">
-               <Image src="/logos/imagen/not outline/isotipo/degradado/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg"
+               <Image src={resolveAssetPath('apps/muzicmania/content/logos/imagen/not outline/isotipo/degradado/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')}
                  alt="Logo" width={36} height={36}
                  className="group-hover:drop-shadow-[0_0_15px_rgba(0,128,255,0.8)] group-hover:drop-shadow-[0_0_30px_rgba(145,70,255,0.6)] transition-all duration-300"
                />
-               <Image src="/logos/imagen/not outline/logotipo/degradado/color/muzicmania_logotipo_degradado_color.svg"
+               <Image src={resolveAssetPath('apps/muzicmania/content/logos/imagen/not outline/logotipo/degradado/color/muzicmania_logotipo_degradado_color.svg')}
                  alt="MuzicMania" width={160} height={36}
                  className="hidden lg:block group-hover:drop-shadow-[0_0_15px_rgba(0,128,255,0.8)] group-hover:drop-shadow-[0_0_30px_rgba(145,70,255,0.6)] transition-all duration-300"
                />
