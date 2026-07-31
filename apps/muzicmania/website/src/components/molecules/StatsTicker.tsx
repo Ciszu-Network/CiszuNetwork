@@ -25,12 +25,12 @@ export function StatsTicker() {
         .gte('created_at', new Date(new Date().setHours(0,0,0,0)).toISOString());
 
       // Récord Global
-      const { data: topScore } = await supabase
+      const { data } = await supabase
         .from('scores')
         .select('score')
         .order('score', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+        .limit(1);
+      const topScore = data?.[0];
 
       // Usuarios Activos (últimas 24h)
       const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();

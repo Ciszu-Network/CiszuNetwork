@@ -195,22 +195,22 @@ function PlayPageContent() {
     if (!selectedTrack) return;
     const fetchStats = async () => {
       try {
-        const { data, error } = await supabase
+        const { data } = await supabase
           .from('scores')
           .select('score, user_id')
           .eq('track_id', selectedTrack.id)
           .order('score', { ascending: false })
-          .limit(1)
-          .maybeSingle();
-          
-        if (data && !error) {
+          .limit(1);
+        const topScore = data?.[0];
+
+        if (topScore) {
           const { data: profile } = await supabase
             .from('profiles')
             .select('username, display_name')
-            .eq('id', data.user_id)
+            .eq('id', topScore.user_id)
             .maybeSingle();
           setGlobalRecord({
-            score: data.score,
+            score: topScore.score,
             user: profile?.display_name || profile?.username || 'Leyenda'
           });
         } else {
