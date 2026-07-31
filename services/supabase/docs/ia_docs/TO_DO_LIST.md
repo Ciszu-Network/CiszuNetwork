@@ -24,8 +24,9 @@
 - [ ] En el futuro, la idea es seguir desarrollando los proyectos, en especial las apps, en donde pueda usar el cdn o local de manera libre. Y si necesito subir un asset o creo un asset por ejemplo un icono nuevo en shared icons, se debe actualizar el CDN siempre y opcionalmente el programador puede usar el CDN (link dinamico) o local si es compilado para offline. De esa manera tengo suficiente control para usar el sistema de CDN y programar mis apliaciones de manera profesional, sin necesidad de problemas como subir todos los assets manualmente o malfuncionamiento del cdn al linkearlo con el codigo.
 - [ ] Actualmente los workflows y deploy dieron error. Pero descuida, terminaremos esto mañana. Por ahora nos detendremos aqui.
 - [ ] Aun falta arreglar las conexiones del cdn con las builds reales.
-- [ ] Optimizar el jeugo de muzicmania.
+- [ ] Optimizar el juego de muzicmania.
 - [ ] Arreglar los errores de consola.
+- [ ] Arreglar vulnerabilidades de github.
 - [ ] Comprender arte de muzicmania con ART GUIDE.
 - [ ] Agregar AI APIS para diseños artisticos en los proyectos.
     - [ ] [app.leonardo.ai](https://app.leonardo.ai/)
