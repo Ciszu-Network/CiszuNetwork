@@ -29,9 +29,26 @@ All websites are Next.js 15 with Tailwind 4 + PostCSS. They use `eslint` (no Pre
 El CDN es un **espejo** del repositorio. Las rutas en Supabase Storage (`ciszu-cdn`, migrado desde `ciszu-assets`) reflejan 1:1 las rutas reales del repo. No hay carpeta `assets/` staging — el upload lee directamente de los directorios originales.
 
 - **Upload**: `pnpm cdn:upload` (`scripts/upload-cdn.js`) — escanea 8 fuentes (`shared/icons/svg/`, `content/`, `docs/`, `ciszukoantony/content/`, `apps/*/content/`) y sube con la misma ruta relativa a `ciszu-cdn`.
+  - ⚠️ **Upload manual de archivos sueltos**: las `sb_secret_*` keys NO funcionan para PUT directo al storage ("Invalid Compact JWS"). Usar el CLI: `supabase --experimental storage cp <archivo> ss:///ciszu-cdn/<ruta-repo>` con `SUPABASE_ACCESS_TOKEN` (vault) y proyecto ya linkeado (`supabase link --project-ref obwzzmbvkrcscqwptlqo`).
 - **Offline fallback**: `scripts/copy-assets.js` se ejecuta como `prebuild` en cada website. Copia assets críticos a `public/` con las mismas rutas espejo. `--all` copia todo.
   - Path depth: `apps/website/` → `../../scripts/copy-assets.js`, `apps/*/website/` → `../../../scripts/copy-assets.js`
-- **Asset resolver**: `packages/cdn/index.ts` — `resolveIcon(name, style, format)` para icons, `assetResolver.resolve(path)` para assets arbitrarios. Usa `NEXT_PUBLIC_CDN_URL` como base.
+  - **Mirrors**: `apps/<name>/content` → `public/apps/<name>/content/` y la media maestra `ciszukoantony/content` → `public/ciszukoantony/content/` (necesario para el resolver local de logos). Los outputs del prebuild en `public/` de las webs puras están en `.gitignore` (solo muzicmania/Tauri trackea sus mirrors).
+- **Asset resolver**: `packages/cdn/index.ts` — `resolveIcon(name, style, format)` para icons, `assetResolver.resolve(path)` para assets arbitrarios. Usa `NEXT_PUBLIC_CDN_URL` como base (ya incluye el bucket: `.../object/public/ciszu-cdn`).
+
+### Rutas de logos (fuente maestra)
+
+Los logos viven en `ciszukoantony/content/logos/` (raíz) y su mirror `apps/ciszukoantony/content/logos/`. **En el bucket SOLO existen bajo `ciszukoantony/content/...`** (200) — las rutas `apps/ciszukoantony/content/logos/...` devuelven 400. Usar siempre:
+
+```ts
+assetResolver.resolve('ciszukoantony/content/logos/imagen/outline/isotipo/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg')
+```
+
+### Sistema de iconos (inline-first + CDN fallback)
+
+- `packages/ui/src/Icon.tsx` — componente compartido `Icon`: renderiza SVG inline (coloreable, sin red) si el nombre está en el registro; si no, `<img>` al CDN dinámico con **recall local** en caso de error (onError → ruta local → oculto).
+- `packages/ui/src/generated/icon-registry.ts` — **archivo GENERADO** desde el catálogo canónico `shared/icons/svg/{outline,filled}/`. Regenerar con `node scripts/generate-icon-registry.js` (lista curada en el script; añadir nombres nuevos ahí).
+- Las 4 apps dependen de `@ciszu/ui` y sus `hooks/useIcon.tsx`/`utils/icons.ts` delegan en el componente compartido.
+- **Política**: iconos UI estáticos → inline en bundle (registry); iconos dinámicos/desconocidos → CDN con recall; medios (logos, música, covers) → `assetResolver.resolve()`.
 
 Supabase Storage (`ciszu-cdn` bucket, `avatars` bucket) es para CDN y user-generated content. `avatars` es bucket por defecto de Supabase para fotos de perfil (`auth.users`).
 
@@ -56,7 +73,7 @@ resolveIcon('home', 'outline', 'svg', { forceCdn: true })  // forzar CDN
 resolveIcon('home', 'outline', 'svg', { forceLocal: true }) // forzar local
 ```
 
-- No hay carpeta `assets/` — las fuentes originales son la verdad única (`shared/icons/svg/`, `content/`, etc.)
+- No hay carpeta `assets/` staging — las fuentes originales son la verdad única (`shared/icons/svg/`, `content/`, etc.)
 - `copy-assets.js` copia solo críticos por defecto, o todos con `--all`
 - Binarios grandes (`.mp4`, `.gif`, `.exe`, etc.) excluidos de git globalmente
 - **Cloudflare R2** configurado como alternativa futura pero **INACTIVO** (requiere tarjeta/paypal). Credenciales comentadas en el vault.
