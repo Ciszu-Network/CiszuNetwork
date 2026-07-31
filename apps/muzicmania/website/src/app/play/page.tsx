@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import NextImage from 'next/image';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
+import { trackBanner, trackCover, trackDisc } from '@/utils/musicAssets';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameEngine, getComboColor, getKpsColor, getMistakesColor, getAccuracyColor, getScoreGradient, GameNote } from '@/hooks/useGameEngine';
 import { useAppStore } from '@/store/useAppStore';
@@ -219,7 +220,7 @@ function PlayPageContent() {
   
   useEffect(() => {
     if (!selectedTrack || accentColors[selectedTrack.id]) return;
-    extractAccentColor(`/music/albums/genesis_neon/${selectedTrack.id}/cover.png`).then(color => {
+        extractAccentColor(trackCover(selectedTrack.id)).then(color => {
       setAccentColors(prev => ({ ...prev, [selectedTrack.id]: color }));
     });
   }, [selectedTrack?.id]);
@@ -1074,11 +1075,11 @@ function PlayPageContent() {
           style={isSelected && accentColors[track.id] ? { borderColor: accentColors[track.id], boxShadow: `0 0 20px ${accentColors[track.id]}44` } : undefined}
         >
           <div className="w-12 h-12 flex-shrink-0 relative group/tc">
-            <img src={`/music/albums/genesis_neon/${track.id}/disc.svg`} alt=""
+            <img src={trackDisc(track.id)} alt=""
               className={`absolute inset-0 w-full h-full -translate-y-1 z-0 transition-all duration-500 ease-out group-hover/tc:-translate-y-2 group-hover/tc:z-20 ${isSelected && isMusicPlaying ? 'animate-spin' : ''}`}
               style={{ animationDuration: '4s' }}
             />
-            <img src={`/music/albums/genesis_neon/${track.id}/cover.png`} alt=""
+            <img src={trackCover(track.id)} alt=""
               className="absolute inset-0 w-full h-full object-cover rounded-xl transition-all duration-500 ease-out z-10 shadow-lg group-hover/tc:opacity-15"
             />
             {isNew && (
@@ -1400,10 +1401,10 @@ function PlayPageContent() {
                   className="absolute top-8 left-8 z-[60] bg-black/60 backdrop-blur-xl border border-white/10 p-4 rounded-[2rem] shadow-xl flex items-center gap-3"
                 >
                   <div className="w-14 h-14 shrink-0 relative group/disc cursor-pointer" onClick={() => router.push(`/library?track=${selectedTrack?.id || titleTrack.id}`)}>
-                    <img src={`/music/albums/genesis_neon/${selectedTrack?.id || titleTrack.id}/disc.svg`} alt=""
+                    <img src={trackDisc(selectedTrack?.id || titleTrack.id)} alt=""
                       className="absolute inset-0 w-full h-full -translate-y-2 z-0 transition-all duration-500 ease-out group-hover/disc:-translate-y-4 group-hover/disc:z-20"
                     />
-                    <img src={`/music/albums/genesis_neon/${selectedTrack?.id || titleTrack.id}/cover.png`} alt=""
+                    <img src={trackCover(selectedTrack?.id || titleTrack.id)} alt=""
                       className="absolute inset-0 w-full h-full object-cover rounded-xl transition-all duration-500 ease-out z-10 shadow-lg group-hover/disc:opacity-15"
                     />
                   </div>
@@ -2136,11 +2137,11 @@ function PlayPageContent() {
                     {/* Now Playing - Full design, compact size */}
                     <div className="absolute bottom-6 left-4 flex items-center gap-3 bg-black/70 backdrop-blur-xl border border-white/10 px-3 py-2 rounded-[1.2rem] shadow-xl shadow-black/50">
                       <div className="w-10 h-10 shrink-0 relative group/disc cursor-pointer" onClick={() => router.push(`/library?track=${titleTrack.id}`)}>
-                        <img src={`/music/albums/genesis_neon/${titleTrack.id}/disc.svg`} alt=""
+                        <img src={trackDisc(titleTrack.id)} alt=""
                           className={`absolute inset-0 w-full h-full -translate-y-0.5 z-0 transition-all duration-500 ease-out group-hover/disc:-translate-y-3 group-hover/disc:z-20 ${isMusicPlaying ? 'animate-spin' : ''}`}
                           style={{animationDuration:'4s'}}
                         />
-                        <img src={`/music/albums/genesis_neon/${titleTrack.id}/cover.png`} alt=""
+                        <img src={trackCover(titleTrack.id)} alt=""
                           className="absolute inset-0 w-full h-full object-cover rounded-lg transition-all duration-500 ease-out z-10 shadow group-hover/disc:opacity-15"
                         />
                       </div>
@@ -2805,18 +2806,18 @@ function PlayPageContent() {
                          <div className="px-5 py-6">
                          {/* Banner estilo Discord - edge to edge */}
                         <div className="relative -mx-5 -mt-6 mb-4 rounded-t-[3rem] overflow-hidden" style={{ height: '200px' }}>
-                          <img src={`/music/albums/genesis_neon/${selectedTrack.id}/banner.png`} alt="" className="w-full h-full object-cover" />
+                          <img src={trackBanner(selectedTrack.id)} alt="" className="w-full h-full object-cover" />
                           <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/90" />
                         </div>
 
                         {/* Disc + Title overlapping banner */}
                         <div className="flex items-end gap-4 -mt-20 relative z-10 mb-6">
                           <div className="w-28 h-28 shrink-0 relative drop-shadow-2xl">
-                            <img src={`/music/albums/genesis_neon/${selectedTrack.id}/disc.svg`} alt=""
+                            <img src={trackDisc(selectedTrack.id)} alt=""
                               className={`w-full h-full ${isMusicPlaying ? 'animate-spin' : ''}`}
                               style={{ animationDuration: '4s' }}
                             />
-                            <img src={`/music/albums/genesis_neon/${selectedTrack.id}/cover.png`} alt=""
+                            <img src={trackCover(selectedTrack.id)} alt=""
                               className="absolute -bottom-1 -right-1 w-16 h-16 object-cover rounded-xl shadow-2xl border-2 border-white/10"
                             />
                           </div>
@@ -3194,11 +3195,11 @@ function PlayPageContent() {
                   <div className="bg-black/70 backdrop-blur-md border border-white/10 p-5 rounded-[2rem] space-y-4 shadow-xl">
                    <div className="flex items-center gap-3 pointer-events-auto">
                       <div className="w-14 h-14 shrink-0 relative group/disc cursor-pointer" onClick={() => router.push(`/library?track=${selectedTrack.id}`)}>
-                         <img src={`/music/albums/genesis_neon/${selectedTrack.id}/disc.svg`} alt=""
+                         <img src={trackDisc(selectedTrack.id)} alt=""
                            className={`absolute inset-0 w-full h-full -translate-y-2 z-0 transition-all duration-500 ease-out group-hover/disc:-translate-y-4 group-hover/disc:z-20 ${gameState.isPlaying && !gameState.isPaused ? 'animate-spin' : ''}`}
                            style={{ animationDuration: '4s' }}
                          />
-                         <img src={`/music/albums/genesis_neon/${selectedTrack.id}/cover.png`} alt=""
+                         <img src={trackCover(selectedTrack.id)} alt=""
                            className="absolute inset-0 w-full h-full object-cover rounded-xl transition-all duration-500 ease-out z-10 shadow-lg group-hover/disc:opacity-15"
                          />
                        </div>
@@ -3452,8 +3453,8 @@ function PlayPageContent() {
                       >
                         <div className="flex items-center gap-4 mb-4">
                           <div className="w-16 h-16 shrink-0 relative group/disc cursor-pointer" onClick={() => router.push(`/library?track=${selectedTrack.id}`)}>
-                            <img src={`/music/albums/genesis_neon/${selectedTrack.id}/disc.svg`} alt="" className="absolute inset-0 w-full h-full -translate-y-1 z-0 transition-all duration-500 ease-out group-hover/disc:-translate-y-2 group-hover/disc:z-20" />
-                            <img src={`/music/albums/genesis_neon/${selectedTrack.id}/cover.png`} alt="" className="absolute inset-0 w-full h-full object-cover rounded-xl transition-all duration-500 ease-out z-10 shadow-lg group-hover/disc:opacity-15" />
+                            <img src={trackDisc(selectedTrack.id)} alt="" className="absolute inset-0 w-full h-full -translate-y-1 z-0 transition-all duration-500 ease-out group-hover/disc:-translate-y-2 group-hover/disc:z-20" />
+                            <img src={trackCover(selectedTrack.id)} alt="" className="absolute inset-0 w-full h-full object-cover rounded-xl transition-all duration-500 ease-out z-10 shadow-lg group-hover/disc:opacity-15" />
                           </div>
                           <div className="min-w-0 flex-1">
                             <h2 className="text-lg font-header font-black text-white italic uppercase truncate flex items-center gap-2 cursor-pointer hover:text-neon-cyan transition-colors" onClick={() => router.push(`/library?track=${selectedTrack.id}`)}>

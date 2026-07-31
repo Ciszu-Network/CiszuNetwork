@@ -1,6 +1,7 @@
 "use client";
 import { supabase } from '@/config/supabase';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
+import { trackCover, trackDisc } from '@/utils/musicAssets';
 
 import React, { useState, useEffect } from 'react';
 import { FloatingSymbols } from "@/components/molecules/FloatingSymbols";
@@ -356,10 +357,10 @@ export default function Home() {
               {TRACKS_DATA.slice(0, 4).map((track, i) => (
                 <div key={i} className={`flex items-center gap-4 p-5 rounded-2xl bg-doc-dark border-2 border-white/5 transition-all group active-depth hover-glow-${track.colorKey} border-neon-${track.colorKey}/20 cursor-default`}>
                   <Link href={`/library?track=${track.id}`} className="w-12 h-12 shrink-0 relative block cursor-pointer">
-                    <img src={`/music/albums/genesis_neon/${track.id}/disc.svg`} alt=""
+                    <img src={trackDisc(track.id)} alt=""
                       className="absolute inset-0 w-full h-full -translate-y-1.5 z-0 transition-all duration-500 ease-out group-hover:-translate-y-3 group-hover:z-20"
                     />
-                    <img src={`/music/albums/genesis_neon/${track.id}/cover.png`} alt={track.name}
+                    <img src={trackCover(track.id)} alt={track.name}
                       className="absolute inset-0 w-full h-full object-cover rounded-xl transition-all duration-500 ease-out z-10 shadow-lg group-hover:opacity-15"
                     />
                   </Link>

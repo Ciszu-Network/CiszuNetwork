@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { assetResolver } from '@ciszunetwork/cdn';
 import { useAppStore } from '@/store';
 import { SocialIcon } from '@/components/ui/SocialIcon';
 import { CISZU_NETWORK, CISZUKO_ANTONY, EXTERNAL_LINKS, SOCIAL_COLORS } from '@/config/site';
@@ -61,7 +62,7 @@ export const Footer = () => {
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-3 mb-4">
               <Image
-                src="/logos/imagen/outline/isotipo/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg"
+                src={assetResolver.resolve('ciszukoantony/content/logos/imagen/outline/isotipo/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg')}
                 alt={CISZU_NETWORK.name}
                 width={32}
                 height={32}

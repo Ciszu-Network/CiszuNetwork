@@ -1,38 +1,38 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { resolveIcon } from '@ciszunetwork/cdn';
+import { resolveIcon, type IconStyle, type IconFormat } from '@ciszunetwork/cdn';
+import { Icon, iconUtils } from '@ciszu/ui';
 
-export function useIcon(config: { name: string; style?: 'outline' | 'filled' | 'flag'; format?: 'svg' | 'png'; size?: number }) {
-  const [iconUrl, setIconUrl] = useState('');
+export function useIcon(config: { name: string; style?: IconStyle; format?: IconFormat; size?: number }) {
+  const [iconUrl, setIconUrl] = useState<string>('');
 
   useEffect(() => {
     setIconUrl(resolveIcon(config.name, config.style || 'outline', config.format || 'svg'));
   }, [config]);
 
-  return { iconUrl, source: iconUrl.startsWith('http') ? ('cdn' as const) : ('local' as const) };
+  return { iconUrl, source: iconUrl.startsWith('http') ? 'cdn' as const : 'local' as const };
 }
 
 export function useIconList() {
-  return [];
+  return iconUtils.getAvailableIcons();
 }
 
 export function IconComponent({
-  name, style = 'outline', format = 'svg', size, className = '', alt = ''
+  name, style = 'outline', format = 'svg', size = 24, className = '', alt = '', inline = false
 }: {
-  name: string; style?: 'outline' | 'filled' | 'flag'; format?: 'svg' | 'png';
-  size?: number; className?: string; alt?: string;
+  name: string; style?: IconStyle; format?: IconFormat;
+  size?: number; className?: string; alt?: string; inline?: boolean;
 }) {
-  const { iconUrl, source } = useIcon({ name, style, format, size });
-
   return (
-    <img
-      src={iconUrl}
-      alt={alt || `${name} icon`}
+    <Icon
+      name={name}
+      style={style}
+      format={format}
+      size={size}
+      inline={inline}
       className={`icon icon-${style}${format === 'png' ? ' icon-png' : ''} ${className}`}
-      data-source={source}
-      width={format === 'png' ? size : undefined}
-      height={format === 'png' ? size : undefined}
+      aria-label={alt || `${name} icon`}
     />
   );
 }

@@ -54,13 +54,21 @@ for (const relPath of CRITICAL_ONLY) {
   }
 }
 
-// --- 2. App content -> public/apps/{name}/content/ (for resolveAssetPath) ---
+// --- 2. Master media (ciszukoantony/content) -> public/ciszukoantony/content/ ---
+// resolveAssetPath('ciszukoantony/content/...') mirror (fuente maestra de logos)
+copyDir(
+  path.join(ROOT, 'ciszukoantony', 'content'),
+  path.join(CWD, 'public', 'ciszukoantony', 'content'),
+  'ciszukoantony/content'
+);
+
+// --- 3. App content -> public/apps/{name}/content/ (for resolveAssetPath) ---
 if (appName) {
   const appContentSrc = path.join(ROOT, 'apps', appName, 'content');
   const appContentDst = path.join(CWD, 'public', 'apps', appName, 'content');
   copyDir(appContentSrc, appContentDst, `apps/${appName}/content`);
 
-  // --- 3. Legacy compatibility: copy content subdirs to public/ root ---
+  // --- 4. Legacy compatibility: copy content subdirs to public/ root ---
   // Code references /music/..., /images/..., /particleskins/... directly
   const legacyDirs = fs.existsSync(appContentSrc)
     ? fs.readdirSync(appContentSrc, { withFileTypes: true })
@@ -75,7 +83,7 @@ if (appName) {
   }
 }
 
-// --- 4. Shared icons for offline fallback ---
+// --- 5. Shared icons for offline fallback ---
 copyDir(
   path.join(ROOT, 'shared', 'icons'),
   path.join(CWD, 'public', 'shared', 'icons'),

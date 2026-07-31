@@ -2,9 +2,11 @@
   "name": "@ciszu/ui",
   "version": "1.0.0",
   "description": "Componentes de UI compartidos para Ciszu Network",
-  "main": "dist/index.js",
-  "module": "dist/index.esm.js",
-  "types": "dist/index.d.ts",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",

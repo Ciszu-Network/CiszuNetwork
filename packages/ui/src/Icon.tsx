@@ -1,47 +1,46 @@
-import React from 'react';
-import { resolveIcon, type IconName, ICON_NAMES } from '@ciszu/cdn';
+'use client';
 
-export interface IconProps extends React.HTMLAttributes<HTMLElement> {
+import React, { useState } from 'react';
+import { resolveIcon, type IconStyle, type IconFormat } from '@ciszunetwork/cdn';
+import { getIcon, iconRegistry } from './generated/icon-registry';
+
+export interface IconProps extends Omit<React.HTMLAttributes<HTMLElement>, 'style' | 'color' | 'className'> {
   /** Nombre del icono */
-  name: IconName | string;
-  
+  name: string;
+
   /** Estilo del icono */
-  style?: 'outline' | 'filled' | 'flag';
-  
+  style?: IconStyle;
+
   /** Formato del icono */
-  format?: 'svg' | 'png';
-  
+  format?: IconFormat;
+
   /** Tamaño del icono en píxeles */
   size?: number | string;
-  
-  /** Color del icono */
+
+  /** Color del icono (inline usa currentColor) */
   color?: string;
-  
+
   /** Clases CSS adicionales */
   className?: string;
-  
+
   /** Forzar uso de CDN incluso en desarrollo */
   forceCdn?: boolean;
-  
+
   /** Forzar uso local incluso en producción */
   forceLocal?: boolean;
-  
-  /** Cache busting */
-  cacheBust?: boolean;
-  
-  /** Mostrar como elemento inline (span) en lugar de img */
+
+  /** Mostrar como elemento inline (no bloque) */
   inline?: boolean;
 }
 
 /**
- * Componente Icon para Ciszu Network
- * 
- * Renderiza iconos del sistema unificado de Ciszu Network.
- * Soporta múltiples estilos (outline, filled, flag) y formatos (svg, png).
- * 
- * @example
- * <Icon name="home" size={24} color="#333" />
- * <Icon name={ICON_NAMES.SEARCH} style="filled" />
+ * Componente Icon para Ciszu Network.
+ *
+ * Estrategia híbrida:
+ * 1. INLINE-FIRST: si el icono está en el registro curado (generado desde
+ *    shared/icons/svg), se renderiza como SVG inline — sin red, coloreable.
+ * 2. FALLBACK CDN: nombres no registrados se sirven desde el CDN dinámico.
+ * 3. RECALL LOCAL: si el CDN falla, se reintenta con la ruta local.
  */
 export const Icon: React.FC<IconProps> = ({
   name,
@@ -52,87 +51,127 @@ export const Icon: React.FC<IconProps> = ({
   className = '',
   forceCdn = false,
   forceLocal = false,
-  cacheBust = false,
   inline = false,
   ...props
 }) => {
-  // Resolver la URL del icono
-  const iconUrl = resolveIcon(
-    name,
-    style,
-    format,
-    { forceCdn, forceLocal, cacheBust }
-  );
+  const entry = !forceLocal && format === 'svg' ? getIcon(style, name) : undefined;
 
-  // Estilos en línea
   const inlineStyles: React.CSSProperties = {
     width: typeof size === 'number' ? `${size}px` : size,
     height: typeof size === 'number' ? `${size}px` : size,
-    color,
     display: inline ? 'inline-block' : 'block',
-    ...props.style,
   };
 
-  // Clases CSS
   const iconClassName = `ciszu-icon ciszu-icon-${name} ${className}`.trim();
 
-  if (format === 'svg' && !inline) {
-    // Para SVG, usamos img si no es inline
+  if (entry) {
     return (
-      <img
-        src={iconUrl}
-        alt={`${name} icon`}
+      <svg
+        viewBox={entry.viewBox}
+        width={typeof size === 'number' ? size : size}
+        height={typeof size === 'number' ? size : size}
+        fill="currentColor"
+        role="img"
+        aria-label={`${name} icon`}
         className={iconClassName}
-        style={inlineStyles}
-        loading="lazy"
-        {...props}
+        style={{ color, ...inlineStyles }}
+        {...(props as React.SVGProps<SVGSVGElement>)}
+      >
+        <g dangerouslySetInnerHTML={{ __html: entry.inner }} />
+      </svg>
+    );
+  }
+
+  return (
+    <RemoteIcon
+      name={name}
+      iconStyle={style}
+      format={format}
+      size={size}
+      color={color}
+      className={iconClassName}
+      styleProp={inlineStyles}
+      forceCdn={forceCdn}
+      forceLocal={forceLocal}
+      {...(props as React.ImgHTMLAttributes<HTMLImageElement>)}
+    />
+  );
+};
+
+function RemoteIcon({
+  name,
+  iconStyle,
+  format,
+  size,
+  color,
+  className,
+  styleProp,
+  forceCdn,
+  forceLocal,
+  ...props
+}: {
+  name: string;
+  iconStyle: IconStyle;
+  format: IconFormat;
+  size: number | string;
+  color?: string;
+  className: string;
+  styleProp: React.CSSProperties;
+  forceCdn: boolean;
+  forceLocal: boolean;
+} & React.ImgHTMLAttributes<HTMLImageElement>) {
+  const [src, setSrc] = useState(() =>
+    resolveIcon(name, iconStyle, format, { forceCdn, forceLocal })
+  );
+  const [hidden, setHidden] = useState(false);
+
+  const handleError = () => {
+    if (src.startsWith('http') && !forceLocal) {
+      setSrc(resolveIcon(name, iconStyle, format, { forceLocal: true }));
+    } else {
+      setHidden(true);
+    }
+  };
+
+  if (hidden) {
+    return (
+      <span
+        className={className}
+        style={styleProp}
+        role="img"
+        aria-label={`${name} icon`}
+        {...(props as React.HTMLAttributes<HTMLSpanElement>)}
       />
     );
   }
 
-  if (inline) {
-    // Elemento inline (span) para iconos SVG inline o cuando se necesita más control
-    return (
-      <span
-        className={iconClassName}
-        style={inlineStyles}
-        aria-label={`${name} icon`}
-        role="img"
-        {...props}
-      >
-        {/* En un sistema real, aquí cargaríamos el SVG inline */}
-        {name}
-      </span>
-    );
-  }
-
-  // Para PNG o formato no SVG
   return (
     <img
-      src={iconUrl}
+      src={src}
       alt={`${name} icon`}
-      className={iconClassName}
-      style={inlineStyles}
+      className={className}
+      style={{ color, ...styleProp }}
       loading="lazy"
+      onError={handleError}
       {...props}
     />
   );
-};
+}
 
 // Componente IconButton que combina Icon con Button
 export interface IconButtonProps extends IconProps {
   /** Texto del botón */
   label?: string;
-  
+
   /** Posición del icono respecto al texto */
   iconPosition?: 'left' | 'right' | 'top' | 'bottom';
-  
+
   /** Click handler */
   onClick?: () => void;
-  
+
   /** Deshabilitado */
   disabled?: boolean;
-  
+
   /** Tipo de botón */
   type?: 'button' | 'submit' | 'reset';
 }
@@ -146,10 +185,10 @@ export const IconButton: React.FC<IconButtonProps> = ({
   ...iconProps
 }) => {
   const icon = <Icon {...iconProps} />;
-  
+
   const renderContent = () => {
     if (!label) return icon;
-    
+
     switch (iconPosition) {
       case 'left':
         return (
@@ -197,7 +236,6 @@ export const IconButton: React.FC<IconButtonProps> = ({
       className={`ciszu-icon-button ${
         disabled ? 'ciszu-icon-button--disabled' : ''
       } ${iconProps.className || ''}`}
-      style={iconProps.style}
     >
       {renderContent()}
     </button>
@@ -207,17 +245,17 @@ export const IconButton: React.FC<IconButtonProps> = ({
 // Componente IconList para mostrar múltiples iconos
 export interface IconListProps {
   /** Iconos a mostrar */
-  icons: Array<IconName | string>;
-  
+  icons: Array<string>;
+
   /** Estilo de los iconos */
-  style?: 'outline' | 'filled' | 'flag';
-  
+  style?: IconStyle;
+
   /** Tamaño de los iconos */
   size?: number | string;
-  
+
   /** Espacio entre iconos */
   spacing?: number | string;
-  
+
   /** Alineación */
   align?: 'left' | 'center' | 'right' | 'justify';
 }
@@ -233,9 +271,14 @@ export const IconList: React.FC<IconListProps> = ({
     display: 'flex',
     flexWrap: 'wrap',
     gap: typeof spacing === 'number' ? `${spacing}px` : spacing,
-    justifyContent: align === 'center' ? 'center' : 
-                   align === 'right' ? 'flex-end' : 
-                   align === 'justify' ? 'space-between' : 'flex-start',
+    justifyContent:
+      align === 'center'
+        ? 'center'
+        : align === 'right'
+          ? 'flex-end'
+          : align === 'justify'
+            ? 'space-between'
+            : 'flex-start',
     alignItems: 'center',
   };
 
@@ -256,16 +299,16 @@ export const IconList: React.FC<IconListProps> = ({
 // Helper para obtener información de iconos disponibles
 export const iconUtils = {
   /** Obtener todos los nombres de iconos disponibles */
-  getAvailableIcons: () => Object.values(ICON_NAMES),
-  
-  /** Verificar si un icono existe */
-  iconExists: (name: string): name is IconName => {
-    return Object.values(ICON_NAMES).includes(name as IconName);
+  getAvailableIcons: (style: 'outline' | 'filled' = 'outline') => Object.keys(iconRegistry[style] || {}),
+
+  /** Verificar si un icono existe en el registro inline */
+  iconExists: (name: string, style: 'outline' | 'filled' | 'flag' = 'outline'): boolean => {
+    return getIcon(style, name) !== undefined;
   },
-  
+
   /** Obtener URL de un icono específico */
   getIconUrl: resolveIcon,
-  
+
   /** Prefijos de clases CSS para iconos */
   classNames: {
     icon: 'ciszu-icon',

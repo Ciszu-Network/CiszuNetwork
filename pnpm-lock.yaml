@@ -46,6 +46,9 @@ importers:
 
   apps/ciszubot/website:
     dependencies:
+      '@ciszu/ui':
+        specifier: workspace:*
+        version: link:../../../packages/ui
       '@ciszunetwork/cdn':
         specifier: workspace:*
         version: link:../../../packages/cdn
@@ -86,6 +89,9 @@ importers:
 
   apps/ciszukoantony/website:
     dependencies:
+      '@ciszu/ui':
+        specifier: workspace:*
+        version: link:../../../packages/ui
       '@ciszunetwork/cdn':
         specifier: workspace:*
         version: link:../../../packages/cdn
@@ -147,6 +153,9 @@ importers:
 
   apps/muzicmania/website:
     dependencies:
+      '@ciszu/ui':
+        specifier: workspace:*
+        version: link:../../../packages/ui
       '@ciszunetwork/cdn':
         specifier: workspace:*
         version: link:../../../packages/cdn
@@ -262,6 +271,9 @@ importers:
 
   apps/website:
     dependencies:
+      '@ciszu/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@ciszunetwork/cdn':
         specifier: workspace:*
         version: link:../../packages/cdn
