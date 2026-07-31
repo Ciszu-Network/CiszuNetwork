@@ -19,7 +19,7 @@
     "@ciszunetwork/cdn": "workspace:*",
     "@ciszu/ui": "workspace:*",
     "framer-motion": "^12.38.0",
-    "next": "^15.5.18",
+    "next": "^15.5.21",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },
@@ -33,7 +33,7 @@
     "eslint": "^9.0.0",
     "eslint-config-next": "^15.1.7",
     "picocolors": "^1.1.1",
-    "postcss": "^8.5.13",
+    "postcss": "^8.5.18",
     "sharp": "^0.35.1",
     "tailwindcss": "^4.2.4",
     "tsx": "^4.22.4",
