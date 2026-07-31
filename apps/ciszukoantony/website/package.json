@@ -16,10 +16,10 @@
     "icons:setup": "node ../../scripts/setup-icons-system.js"
   },
   "dependencies": {
-    "@ciszunetwork/cdn": "workspace:*",
     "@ciszu/ui": "workspace:*",
+    "@ciszunetwork/cdn": "workspace:*",
     "framer-motion": "^12.38.0",
-    "next": "^15.5.18",
+    "next": "^15.5.22",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },
@@ -33,8 +33,8 @@
     "eslint": "^9.0.0",
     "eslint-config-next": "^15.1.7",
     "picocolors": "^1.1.1",
-    "postcss": "^8.5.13",
-    "sharp": "^0.35.1",
+    "postcss": "^8.5.25",
+    "sharp": "^0.35.3",
     "tailwindcss": "^4.2.4",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3"

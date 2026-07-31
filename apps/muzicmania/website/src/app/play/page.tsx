@@ -197,16 +197,21 @@ function PlayPageContent() {
       try {
         const { data, error } = await supabase
           .from('scores')
-          .select('score, profiles(username, display_name)')
-          .eq('song_id', selectedTrack.id)
+          .select('score, user_id')
+          .eq('track_id', selectedTrack.id)
           .order('score', { ascending: false })
           .limit(1)
           .single();
           
         if (data && !error) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('username, display_name')
+            .eq('id', data.user_id)
+            .single();
           setGlobalRecord({
             score: data.score,
-            user: (data.profiles as any)?.display_name || (data.profiles as any)?.username || 'Leyenda'
+            user: profile?.display_name || profile?.username || 'Leyenda'
           });
         } else {
           setGlobalRecord(null);
@@ -270,11 +275,11 @@ function PlayPageContent() {
   // Cargar plays reales desde Supabase
   useEffect(() => {
     const fetchRealPlays = async () => {
-      const { data } = await supabase.from('scores').select('song_id');
+      const { data } = await supabase.from('scores').select('track_id');
       if (data) {
         const counts: Record<string, number> = {};
-        data.forEach((row: { song_id: string }) => {
-          counts[row.song_id] = (counts[row.song_id] || 0) + 1;
+        data.forEach((row: { track_id: string }) => {
+          counts[row.track_id] = (counts[row.track_id] || 0) + 1;
         });
         setRealPlays(counts);
       }

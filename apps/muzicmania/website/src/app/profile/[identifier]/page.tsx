@@ -155,7 +155,7 @@ export default function DynamicProfilePage() {
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-6 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
                 <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/5">
                   <Calendar className="w-4 h-4 text-neon-blue" />
-                  MIEMBRO DESDE {new Date(profile.created_at).getFullYear()}
+                  MIEMBRO DESDE {profile.updated_at ? new Date(profile.updated_at).getFullYear() : '-'}
                 </div>
                 <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/5">
                   <ShieldCheck className="w-4 h-4 text-neon-green" />
