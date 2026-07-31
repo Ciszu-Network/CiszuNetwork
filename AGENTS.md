@@ -145,6 +145,7 @@ Vercel solo preserva build output + `public/`. Para recuperar source se necesita
 Archivos que NUNCA deben trackearse en git (ya en `.gitignore`):
 - `documents/md/credentials.md` — contenido sensible (fue purgado del historial vía filter-branch)
 - `docs/md/VERCEL_ENV_VARS.md` — documenta secrets en texto plano (eliminado del disco)
+- `services/supabase/docs/md/PRIVATE_DOCS.md` — **redactado** (jul 2026) tras alerta de secret scanning: contenía password del dashboard, PAT, service_role, anon key y JWT secret en texto plano. Las credenciales reales viven SOLO en `services/supabase/.env` (gitignored). No volver a pegar secrets en docs.
 
 Si el repo cambia a público:
 1. Rotar TODAS las credenciales (Supabase keys, Discord token, Vercel token, Cloudflare R2)
@@ -155,6 +156,8 @@ Si el repo cambia a público:
 
 - **`images.unoptimized: true` en las 4 apps** (jul 2026): el optimizador de imágenes de Vercel devolvía 400 (`INVALID_IMAGE_OPTIMIZE_REQUEST`) para TODO (local y remoto) por el límite mensual del plan Hobby. Con `unoptimized` next/image sirve el src directo (sin `/_next/image`).
 - **muzicmania REST**: las tablas viven en el schema `muzicmania` (`db: { schema: 'muzicmania' }` en `src/config/supabase.ts`). Columnas reales de `scores`: `id, user_id, score, created_at, track_id, accuracy` (NO `song_id` — el código usa `track_id`). `profiles` NO tiene `created_at` (usar `updated_at`) y no hay FK scores→profiles (el embed `profiles(...)` da 400 — consultar aparte por `user_id`).
+- **`.single()` con 0 filas → 406 PGRST116**: usar siempre `.maybeSingle()` cuando la fila puede no existir (StatsTicker, récord global). El 406 en consola de `select=score&order=score.desc&limit=1` era eso.
+- **Cargo advisories pendientes** (`apps/muzicmania/launcher`): `glib` 0.18.5 (GHSA-wrw7-89jp-8q8g, fix en ≥0.20.0) requiere gtk/tauri 3 — tauri 2.11.5 lo pincha en 0.18. `serde_with` 3.21.0 ya patcheado (cargo update jul 2026).
 - **Overrides de seguridad** en `pnpm-workspace.yaml`: `undici 6.27.0`, `body-parser 1.20.6`, `brace-expansion 5.0.8`, `postcss 8.5.25`, `minimatch@^9 9.0.7`, `sharp 0.35.3` (forzar versiones patcheadas para transitivas).
 - `muzicmania/website` has **Tauri + NSIS** commands (`pnpm tauri:build`, `pnpm tauri:build:nsis`); needs Rust toolchain
 - No test framework is configured — CI only runs `lint`
@@ -172,7 +175,7 @@ Si el repo cambia a público:
 
 | Advisor | Estado | Explicación |
 |---|---|---|
-| `authenticated_security_definer_function_executable` | 3 warnings restantes | **Falsos positivos** — `handle_review_like`, `handle_review_update`, `update_track_like_count` son `RETURNS TRIGGER`, no expuestas via REST. Necesitan SECURITY DEFINER para actualizar filas de otros usuarios. No se pueden cambiar. |
+| `authenticated_security_definer_function_executable` | 0 warnings | ✅ Migración 11 (REVOKE EXECUTE de anon/authenticated en `handle_review_like`, `handle_review_update`, `update_track_like_count` — son SOLO triggers, el motor no chequea EXECUTE al dispararlos). ⚠️ **Pendiente de aplicar**: requiere PAT válido vía Management API (el `sbp_` filtrado fue redactado y ya no funciona). |
 | `auth_leaked_password_protection` | 1 warning | **Free Tier limitation** — solo activable desde Dashboard con plan Pro. |
 
 **Funciones cambiadas a SECURITY INVOKER** (más seguro, RLS se respeta):
@@ -246,6 +249,7 @@ Si el repo cambia a público:
 | 08 | `20260729000008_fix_performance_advisors.sql` | Initplan wrapping + eliminar policies duplicadas |
 | 09 | `20260729000009_fix_remaining_advisors.sql` | Funciones públicas a INVOKER + merged policies |
 | 10 | `20260729000010_fix_submit_game_score_invoker.sql` | `muzicmania.submit_game_score` → INVOKER |
+| 11 | `20260729000011_revoke_execute_trigger_functions.sql` | REVOKE EXECUTE de anon/authenticated en las 3 funciones trigger SECURITY DEFINER restantes (cierra advisor). ⚠️ Aún sin aplicar — requiere PAT válido |
 
 ## Scripts útiles (en `scripts/`)
 
