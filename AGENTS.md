@@ -153,6 +153,9 @@ Si el repo cambia a público:
 
 ## Gotchas
 
+- **`images.unoptimized: true` en las 4 apps** (jul 2026): el optimizador de imágenes de Vercel devolvía 400 (`INVALID_IMAGE_OPTIMIZE_REQUEST`) para TODO (local y remoto) por el límite mensual del plan Hobby. Con `unoptimized` next/image sirve el src directo (sin `/_next/image`).
+- **muzicmania REST**: las tablas viven en el schema `muzicmania` (`db: { schema: 'muzicmania' }` en `src/config/supabase.ts`). Columnas reales de `scores`: `id, user_id, score, created_at, track_id, accuracy` (NO `song_id` — el código usa `track_id`). `profiles` NO tiene `created_at` (usar `updated_at`) y no hay FK scores→profiles (el embed `profiles(...)` da 400 — consultar aparte por `user_id`).
+- **Overrides de seguridad** en `pnpm-workspace.yaml`: `undici 6.27.0`, `body-parser 1.20.6`, `brace-expansion 5.0.8`, `postcss 8.5.25`, `minimatch@^9 9.0.7` (forzar versiones patcheadas para transitivas).
 - `muzicmania/website` has **Tauri + NSIS** commands (`pnpm tauri:build`, `pnpm tauri:build:nsis`); needs Rust toolchain
 - No test framework is configured — CI only runs `lint`
 - `prebuild` relative paths differ by nesting depth (2 levels vs 3 levels deep)

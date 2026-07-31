@@ -37,7 +37,7 @@ export function StatsTicker() {
       const { count: activeCount } = await supabase
         .from('profiles')
         .select('*', { count: 'exact', head: true })
-        .gte('created_at', yesterday); // Asumiendo actividad reciente o nuevos registros
+        .gte('updated_at', yesterday); // Asumiendo actividad reciente o nuevos registros
 
       setStats([
         { label: "JUGADORES ACTIVOS", value: (activeCount || 0).toString(), icon: Users },

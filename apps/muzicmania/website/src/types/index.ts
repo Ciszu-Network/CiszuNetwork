@@ -8,7 +8,7 @@ export interface UserProfile {
   accuracy: number;
   games_played: number;
   play_time: number;
-  created_at: string;
+  updated_at: string;
 }
 
 export interface ScoreEntry {
@@ -17,7 +17,7 @@ export interface ScoreEntry {
   score: number;
   accuracy: number;
   max_combo: number;
-  song_id: string;
+  track_id: string;
   created_at: string;
   profiles?: UserProfile;
 }
