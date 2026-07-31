@@ -1,4 +1,5 @@
 import { LevelConfig, LevelEvent } from '@/types/level';
+import { assetResolver } from '@ciszunetwork/cdn';
 
 export const config: LevelConfig = {
   formatVersion: '1.0',
@@ -25,9 +26,9 @@ export const config: LevelConfig = {
     gradient: 'from-neon-purple to-neon-pink',
   },
   files: {
-    audio: '/music/albums/genesis_neon/digital_soul/digital_soul.ogg',
-    banner: '/music/albums/genesis_neon/digital_soul/banner.png',
-    disc: '/music/albums/genesis_neon/digital_soul/disc.svg',
+    audio: assetResolver.resolve('apps/muzicmania/content/music/albums/genesis_neon/digital_soul/digital_soul.ogg'),
+    banner: assetResolver.resolve('apps/muzicmania/content/music/albums/genesis_neon/digital_soul/banner.png'),
+    disc: assetResolver.resolve('apps/muzicmania/content/music/albums/genesis_neon/digital_soul/disc.svg'),
   },
   stats: {
     plays: 980,

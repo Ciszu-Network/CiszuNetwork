@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { assetResolver } from "@ciszunetwork/cdn";
 import { SocialIcon } from "@/components/ui/SocialIcon";
 import { CISZU_NETWORK, CISZUKO_ANTONY, EXTERNAL_LINKS, SOCIAL_COLORS } from "@/config/site";
 import { ArrowRight, Code, Shield, Zap, ExternalLink, Star, Globe, Music, Users, ChevronRight, Pickaxe, MessageCircle, MessageSquare, Send, Building, User, Gamepad2, Smartphone } from "lucide-react";
@@ -108,7 +109,7 @@ export default function Home() {
         <div className="relative z-10 max-w-4xl mx-auto">
           <div className="flex items-center justify-center gap-6 mb-8">
             <Image
-              src="/logos/imagen/outline/logotipo/degradado/color/ciszuko_logotipo_outline_degradado_color_full.png"
+              src={assetResolver.resolve("ciszukoantony/content/logos/imagen/outline/logotipo/degradado/color/ciszuko_logotipo_outline_degradado_color_full.png")}
               alt={CISZU_NETWORK.name}
               width={320}
               height={80}
@@ -118,7 +119,7 @@ export default function Home() {
           </div>
           <div className="flex items-center justify-center mb-8">
             <Image
-              src="/logos/tagline_white.svg"
+              src={assetResolver.resolve("ciszukoantony/content/logos/tagline_white.svg")}
               alt={CISZU_NETWORK.tagline}
               width={280}
               height={24}

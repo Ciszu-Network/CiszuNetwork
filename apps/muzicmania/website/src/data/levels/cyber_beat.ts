@@ -1,4 +1,5 @@
 import { LevelConfig, LevelEvent } from '@/types/level';
+import { assetResolver } from '@ciszunetwork/cdn';
 
 export const config: LevelConfig = {
   formatVersion: '1.0',
@@ -25,9 +26,9 @@ export const config: LevelConfig = {
     gradient: 'from-neon-pink to-neon-blue',
   },
   files: {
-    audio: '/music/albums/genesis_neon/cyber_beat/cyber_beat.ogg',
-    banner: '/music/albums/genesis_neon/cyber_beat/banner.png',
-    disc: '/music/albums/genesis_neon/cyber_beat/disc.svg',
+    audio: assetResolver.resolve('apps/muzicmania/content/music/albums/genesis_neon/cyber_beat/cyber_beat.ogg'),
+    banner: assetResolver.resolve('apps/muzicmania/content/music/albums/genesis_neon/cyber_beat/banner.png'),
+    disc: assetResolver.resolve('apps/muzicmania/content/music/albums/genesis_neon/cyber_beat/disc.svg'),
   },
   stats: {
     plays: 2500,
