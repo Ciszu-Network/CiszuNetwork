@@ -8,6 +8,7 @@ import Image from 'next/image';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { TRACKS_DATA, Track } from '@/data/tracks';
+import { trackCover, trackDisc } from '@/utils/musicAssets';
 import { supabase } from '@/config/supabase';
 import { useAppStore } from '@/store/useAppStore';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
@@ -42,7 +43,7 @@ const I = {
 };
 
 function getCoverUrl(track: Track): string {
-  return `/music/albums/genesis_neon/${track.id}/cover.png`;
+  return trackCover(track.id);
 }
 
 function LibraryContent() {
@@ -70,7 +71,7 @@ function LibraryContent() {
   // Detect accent colors for all tracks from cover art
   useEffect(() => {
     TRACKS_DATA.forEach(track => {
-      extractAccentColor(`/music/albums/genesis_neon/${track.id}/cover.png`).then(color => {
+        extractAccentColor(trackCover(track.id)).then(color => {
         setAccentColors(prev => ({ ...prev, [track.id]: color }));
       });
     });
@@ -331,7 +332,7 @@ function LibraryContent() {
                     className={`group/track flex items-center gap-5 p-5 rounded-3xl border transition-all cursor-pointer ${selectedTrack.id === track.id ? (accentColors[track.id] ? 'border' : `bg-neon-${track.colorKey}/10 border-neon-${track.colorKey}`) : 'bg-black/40 border-white/5 hover:border-white/20'}`}
                     style={selectedTrack.id === track.id && accentColors[track.id] ? { backgroundColor: `${accentColors[track.id]}1A`, borderColor: accentColors[track.id] } : undefined}>
                      <div className="w-16 h-16 shrink-0 relative group/tc">
-                        <img src={`/music/albums/genesis_neon/${track.id}/disc.svg`} alt=""
+                        <img src={trackDisc(track.id)} alt=""
                           className={`absolute inset-0 w-full h-full -translate-y-1 z-0 transition-all duration-500 ease-out group-hover/tc:-translate-y-2 group-hover/tc:z-20 ${
                             selectedTrack.id === track.id && isPlaying ? 'animate-spin' : ''
                           }`}

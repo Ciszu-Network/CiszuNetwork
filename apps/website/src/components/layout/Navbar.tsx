@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { assetResolver } from '@ciszunetwork/cdn';
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store';
 import { CISZU_NETWORK, CISZUKO_ANTONY, SOCIAL_COLORS } from '@/config/site';
@@ -93,7 +94,7 @@ export const NavbarContent = () => {
           <div className="flex items-center justify-between h-[64px] gap-4">
             <Link href="/" className="flex items-center gap-3 group shrink-0">
               <Image
-                src="/logos/imagen/outline/isotipo/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg"
+                src={assetResolver.resolve('ciszukoantony/content/logos/imagen/outline/isotipo/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg')}
                 alt={CISZU_NETWORK.name}
                 width={32}
                 height={32}

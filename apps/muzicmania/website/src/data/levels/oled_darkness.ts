@@ -1,4 +1,5 @@
 import { LevelConfig, ChartData, EventsData, LevelEvent } from '@/types/level';
+import { assetResolver } from '@ciszunetwork/cdn';
 
 export const config: LevelConfig = {
   formatVersion: '1.0',
@@ -25,9 +26,9 @@ export const config: LevelConfig = {
     gradient: 'from-neon-blue to-neon-cyan',
   },
   files: {
-    audio: '/music/albums/genesis_neon/oled_darkness/oled_darkness.ogg',
-    banner: '/music/albums/genesis_neon/oled_darkness/banner.png',
-    disc: '/music/albums/genesis_neon/oled_darkness/disc.svg',
+    audio: assetResolver.resolve('apps/muzicmania/content/music/albums/genesis_neon/oled_darkness/oled_darkness.ogg'),
+    banner: assetResolver.resolve('apps/muzicmania/content/music/albums/genesis_neon/oled_darkness/banner.png'),
+    disc: assetResolver.resolve('apps/muzicmania/content/music/albums/genesis_neon/oled_darkness/disc.svg'),
   },
   stats: {
     plays: 750,

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { assetResolver } from '@ciszunetwork/cdn';
 
 type NavigationState = false | 'navigating' | 'refreshing';
 export type SidebarView = 'main' | 'lang';
@@ -107,7 +108,7 @@ export const useAppStore = create<AppState>((set: any, get: any) => ({
   initializeAudio: () => {
     if (get().isAudioInitialized || typeof window === 'undefined') return;
     
-    const audio = new Audio('/music/albums/genesis_neon/cyber_beat/cyber_beat.ogg');
+    const audio = new Audio(assetResolver.resolve('apps/muzicmania/content/music/albums/genesis_neon/cyber_beat/cyber_beat.ogg'));
     audio.loop = true;
     audio.volume = (get().musicVol || 100) / 100;
     

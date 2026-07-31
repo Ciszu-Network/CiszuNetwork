@@ -92,3 +92,24 @@ apps/ciszubot/content/logos/video/
 
 # turbo cache.turbo/
 .env*
+
+# ─── Mirrors de copy-assets (prebuild) — solo web, Vercel los regenera ───
+apps/website/public/ciszukoantony/
+apps/website/public/shared/
+apps/ciszukoantony/website/public/apps/
+apps/ciszukoantony/website/public/assets/
+apps/ciszukoantony/website/public/banners/
+apps/ciszukoantony/website/public/buttons/
+apps/ciszukoantony/website/public/ciszukoantony/
+apps/ciszukoantony/website/public/layaout/
+apps/ciszukoantony/website/public/logos/
+apps/ciszukoantony/website/public/mc_skin/
+apps/ciszukoantony/website/public/media/
+apps/ciszukoantony/website/public/persons/
+apps/ciszukoantony/website/public/shared/
+apps/ciszukoantony/website/public/stickers/
+apps/ciszukoantony/website/public/thumbails/
+apps/muzicmania/website/public/ciszukoantony/
+
+# Supabase CLI temp
+supabase/.temp/
