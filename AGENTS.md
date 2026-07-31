@@ -1,5 +1,20 @@
 # Ciszu Network Monorepo — AGENTS.md
 
+## Visión general del proyecto
+
+**Ciszu Network** es el ecosistema digital de **CiszukoAntony** (Ciszuko): un monorepo con 4 sitios web (Next.js 15 + Tailwind 4), un bot de Discord (Discord.js), un juego de música (MuzicMania — web + app Tauri), paquetes compartidos (`@ciszu/ui`, `@ciszunetwork/cdn`) y un CDN de assets sobre Supabase Storage.
+
+| Proyecto | URL (Vercel) | Descripción |
+|---|---|---|
+| **CiszuNetwork** | `ciszunetwork.vercel.app` | Web principal — presentación de la marca, redes y ecosistema |
+| **CiszukoAntony** | `ciszukoantony.vercel.app` | Portfolio personal (logos, medios, música) |
+| **MuzicMania** | `muzicmania.vercel.app` | Juego de ritmo/música — scores en Supabase (schema `muzicmania`), auth de Supabase, app de escritorio Tauri + NSIS |
+| **Ciszubot** | `ciszubot.vercel.app` | Landing page del bot de Discord (`apps/ciszubot/discord/`, vanilla JS) |
+
+Infraestructura: **Supabase** (un solo proyecto `obwzzmbvkrcscqwptlqo` — auth, Postgres, Storage CDN `ciszu-cdn`) + **Vercel** (4 proyectos, deploys vía GitHub Actions) + **GitHub** (repo privado `Ciszu-Network/CiszuNetwork`). Identidad visual: neon cyan/rosa, fuente Geomanist.
+
+**Estado actual (jul 2026)**: los 4 sitios despliegan desde `main` y funcionan en producción (imágenes directas CDN, `images.unoptimized`, REST de muzicmania corregido). La sesión de seguridad cerró: code scanning 31/31 fixed, dependabot 35/36 (resta glib), secret scanning 1 abierta (PAT sbp_ redactado del repo). Pendientes activos: aplicar migración 11 (requiere PAT nuevo del usuario), rotar tokens (lista abajo), escaneo semgrep completo, instalar ZAP. Detalles en la sección "Herramientas de seguridad instaladas".
+
 ## Quick start
 ```bash
 pnpm install              # install all workspaces
