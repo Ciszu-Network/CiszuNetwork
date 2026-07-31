@@ -113,3 +113,4 @@ apps/muzicmania/website/public/ciszukoantony/
 
 # Supabase CLI temp
 supabase/.temp/
+.turbo/
