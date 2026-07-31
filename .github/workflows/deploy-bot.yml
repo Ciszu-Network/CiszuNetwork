@@ -5,6 +5,9 @@ on:
     branches: [main, master]
     paths:
       - 'apps/ciszubot/**'
+      - 'packages/**'
+      - 'assets/**'
+      - 'scripts/copy-assets.js'
   workflow_dispatch:
 
 jobs:
