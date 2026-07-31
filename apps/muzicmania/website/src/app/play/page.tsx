@@ -201,14 +201,14 @@ function PlayPageContent() {
           .eq('track_id', selectedTrack.id)
           .order('score', { ascending: false })
           .limit(1)
-          .single();
+          .maybeSingle();
           
         if (data && !error) {
           const { data: profile } = await supabase
             .from('profiles')
             .select('username, display_name')
             .eq('id', data.user_id)
-            .single();
+            .maybeSingle();
           setGlobalRecord({
             score: data.score,
             user: profile?.display_name || profile?.username || 'Leyenda'
