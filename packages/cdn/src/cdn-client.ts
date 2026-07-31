@@ -4,7 +4,7 @@ export function assetUrl(path: string): string {
 }
 
 export function getContentType(filename: string): string {
-  const ext = filename.split('.').pop()?.toLowerCase();
+  const ext = filename.split('.').pop()?.toLowerCase() as string;
   const map: Record<string, string> = {
     svg: 'image/svg+xml',
     png: 'image/png',

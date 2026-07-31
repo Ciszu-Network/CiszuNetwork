@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { resolveIcon, assetResolver } from '@ciszunetwork/cdn';
 
 export type IconStyle = 'outline' | 'filled' | 'flag';
@@ -54,10 +54,10 @@ export function cdnIconUrl(style: IconStyle, name: string, format: IconFormat = 
 export const icons = new IconSystem();
 
 export function useIcon(config: IconConfig) {
-  const [iconUrl, setIconUrl] = React.useState<string>('');
-  const [source, setSource] = React.useState<'local' | 'cdn'>('local');
+  const [iconUrl, setIconUrl] = useState('');
+  const [source, setSource] = useState<'local' | 'cdn'>('local');
 
-  React.useEffect(() => {
+  useEffect(() => {
     icons.getIcon(config).then(result => {
       setIconUrl(result.url);
       setSource(result.source);
