@@ -6,6 +6,7 @@ on:
     paths:
       - 'apps/website/**'
       - 'assets/**'
+      - 'packages/**'
       - 'scripts/copy-assets.js'
   workflow_dispatch:
 

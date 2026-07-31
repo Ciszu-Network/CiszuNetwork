@@ -34,14 +34,13 @@ export function resolveIcon(
   format: IconFormat = 'svg',
   opts?: ResolveOptions
 ): string {
-  const isServer = typeof window === 'undefined';
   const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
   const cdnUrl = process.env.NEXT_PUBLIC_CDN_URL;
   const useLocal = opts?.forceLocal || (!opts?.forceCdn && !isProduction);
 
   const path = `shared/icons/${format}/${style}/${name}.${format}`;
 
-  if (useLocal || !cdnUrl || isServer) {
+  if (useLocal || !cdnUrl) {
     return `/${path}`;
   }
 
@@ -60,11 +59,10 @@ export class AssetResolver {
   }
 
   resolve(path: string, opts?: ResolveOptions): string {
-    const isServer = typeof window === 'undefined';
     const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
     const useLocal = opts?.forceLocal || (!opts?.forceCdn && !isProduction);
 
-    if (useLocal || !this.cdnUrl || isServer) {
+    if (useLocal || !this.cdnUrl) {
       return `/${path.replace(/^\//, '')}`;
     }
 
