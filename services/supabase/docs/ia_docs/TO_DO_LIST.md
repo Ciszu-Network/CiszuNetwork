@@ -26,6 +26,7 @@
 - [ ] Aun falta arreglar las conexiones del cdn con las builds reales.
 - [ ] Optimizar el jeugo de muzicmania.
 - [ ] Arreglar los errores de consola.
+- [ ] Comprender arte de muzicmania con ART GUIDE.
 - [ ] Agregar AI APIS para diseños artisticos en los proyectos.
     - [ ] [app.leonardo.ai](https://app.leonardo.ai/)
     - [ ] [www.recraft.ai](https://www.recraft.ai/project/da269349-6552-4a93-ac10-3cb0f9961fbb)
