@@ -84,10 +84,12 @@ All workflows run on `push: [main, master]`:
 
 - **CI** (`.github/workflows/ci.yml`) — lint only, matrix over `[website, ciszukoantony, muzicmania]`
 - **4 deploy workflows** — each triggers on matching `apps/<name>/**` + `content/**` + `scripts/copy-assets.js` changes
-  - Pattern: `vercel pull` → `vercel build --prod` → `vercel deploy --prebuilt --prod`
-  - Every deploy workflow uses `working-directory` pointing at the website subfolder (not the app root)
-  - Vercel tokens are GH secrets (`VERCEL_TOKEN`)
-- Discord bot (`deploy-bot.yml`) deploys its website, not the bot itself
+  - Pattern: `vercel link --yes --project <name>` → `vercel --prod --yes --archive=tgz`, ambos **desde la raíz del repo** (`working-directory: .`)
+  - ⚠️ NUNCA usar `vercel pull/build/deploy --prebuilt` dentro de `apps/*/website`: con `rootDirectory` fijado en el proyecto, el CLI duplica la ruta y produce deployments READY pero vacíos (404 en el alias)
+  - Deploy desde la raíz requiere el `.vercelignore` raíz (excluye node_modules, .next, content, binarios)
+  - Vercel tokens son GH secrets (`VERCEL_TOKEN`)
+  - Proyectos Vercel: `ciszunetworkpage` → `apps/website`, `ciszukoantonypage` → `apps/ciszukoantony/website`, `ciszubot` → `apps/ciszubot/website`, `muzicmania` → `apps/muzicmania/website`
+- Discord bot (`deploy-bot.yml`) deploys su website, no el bot en sí
 
 ## Git conventions
 

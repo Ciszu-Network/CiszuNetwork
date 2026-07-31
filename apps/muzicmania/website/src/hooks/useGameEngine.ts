@@ -153,10 +153,27 @@ export function getJudgmentFromTime(timeDistMs: number): JudgmentKey {
   return 'miss';
 }
 
+let sharedAudioCtx: AudioContext | null = null;
+function getSharedAudioCtx(): AudioContext | null {
+  try {
+    if (!sharedAudioCtx) {
+      const Ctor = window.AudioContext || (window as any).webkitAudioContext;
+      sharedAudioCtx = new Ctor();
+    }
+    if (sharedAudioCtx.state === 'suspended') {
+      sharedAudioCtx.resume().catch(() => {});
+    }
+    return sharedAudioCtx;
+  } catch {
+    return null;
+  }
+}
+
 function playHitSound(sfxVol: number = 100): void {
   try {
+    const ctx = getSharedAudioCtx();
+    if (!ctx) return;
     const vol = Math.max(0, Math.min(1, sfxVol / 100));
-    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = 'sine';
@@ -173,8 +190,9 @@ function playHitSound(sfxVol: number = 100): void {
 
 function createMissSound(sfxVol: number = 100): HTMLAudioElement | null {
   try {
+    const ctx = getSharedAudioCtx();
+    if (!ctx) return null;
     const vol = Math.max(0, Math.min(1, sfxVol / 100));
-    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = 'sawtooth';
@@ -231,6 +249,19 @@ export const useGameEngine = (
     hits: { perfect: 0, great: 0, good: 0, meh: 0, bad: 0, veryBad: 0, miss: 0 },
   });
 
+  const gameStateRef = useRef<GameState>({
+    isPlaying: false, isPaused: false, isGameOver: false,
+    score: 0, maxPotentialScore: 0,
+    combo: 0, maxCombo: 0, accuracy: 100,
+    kps: 0, mistakes: 0, progress: 0, notesHit: 0, totalNotes: 0,
+    timeRemaining: 0, trackDuration: 0,
+    life: 100, deaths: 0,
+    hits: { perfect: 0, great: 0, good: 0, meh: 0, bad: 0, veryBad: 0, miss: 0 },
+  });
+  useEffect(() => {
+    gameStateRef.current = gameState;
+  }, [gameState]);
+
   const notesRef = useRef<GameNote[]>([]);
   const animationFrameRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(0);
@@ -279,6 +310,13 @@ export const useGameEngine = (
   );
 
   const totalNotesRef = useRef(0);
+
+  const remainingNotesRef = useRef(0);
+  const nextScanIdxRef = useRef(0);
+  const scanStartIdxRef = useRef(0);
+  const drawStartIdxRef = useRef(0);
+  const notesByLaneRef = useRef<GameNote[][]>([[], [], [], []]);
+  const lanePtrRef = useRef<number[]>([0, 0, 0, 0]);
 
   useEffect(() => {
     if (!levelConfig || typeof window === 'undefined') return;
@@ -373,7 +411,7 @@ export const useGameEngine = (
       kpsWindowRef.current = kpsWindowRef.current.filter(t => now - t < 1000);
       const newKps = kpsWindowRef.current.length;
 
-      const allNotesPassed = notesRef.current.every(n => n.hit || n.missed);
+      const allNotesPassed = remainingNotesRef.current <= 0;
       const audioEnded = audioRef.current ? audioRef.current.ended : false;
       const isGameOver = (newLife <= 0) || (allNotesPassed && elapsed > 2) || (newTimeRemaining <= 0) || audioEnded;
 
@@ -414,17 +452,28 @@ export const useGameEngine = (
 
     // Detect misses BEFORE setGameState to avoid nested setState calls
     const elapsed = getElapsed();
+
+    // Activate notes entering the window (monotonic pointer; notes sorted by time)
+    const notes = notesRef.current;
+    const total = notes.length;
+    let nextScan = nextScanIdxRef.current;
+    while (nextScan < total && notes[nextScan].time <= elapsed + 2.5) {
+      notes[nextScan].active = true;
+      nextScan++;
+    }
+    nextScanIdxRef.current = nextScan;
+
+    // Miss detection: only scan the bounded window between the pointers
     let hasMiss = false;
-    notesRef.current.forEach(note => {
-      if (!note.active && note.time <= elapsed + 2.5) {
-        note.active = true;
-      }
-      if (!note.active || note.hit || note.missed) return;
+    for (let i = scanStartIdxRef.current; i < nextScan; i++) {
+      const note = notes[i];
+      if (note.hit || note.missed) continue;
       const timeToHit = note.time - elapsed;
       const missMs = timeToHit * 1000;
       if (timeToHit < 0 && Math.abs(missMs) > HIT_TOLERANCES.miss) {
         note.missed = true;
         note.hit = true;
+        remainingNotesRef.current--;
         const hitZone = GAME_CONFIG.hitZoneY;
         const effectiveScrollSpeed = scrollSpeedRef.current * (eventsStateRef.current?.currentSpeed ?? 1);
         note.y = hitZone - timeToHit * effectiveScrollSpeed;
@@ -432,7 +481,10 @@ export const useGameEngine = (
         hasMiss = true;
         pendingMissCountRef.current++;
       }
-    });
+    }
+    let scanStart = scanStartIdxRef.current;
+    while (scanStart < nextScan && (notes[scanStart].hit || notes[scanStart].missed)) scanStart++;
+    scanStartIdxRef.current = scanStart;
 
     if (hasMiss) {
       const count = pendingMissCountRef.current;
@@ -442,18 +494,15 @@ export const useGameEngine = (
       registerHitGroup(judgments, count);
     }
 
-    setGameState(state => {
-      if (state.isPaused) return state;
+    const W = canvas.width;
+    const H = canvas.height;
+    const playfieldWidth = 640;
+    const laneW = playfieldWidth / 4;
+    const startX = (W - playfieldWidth) / 2;
+    const hitZone = GAME_CONFIG.hitZoneY;
+    const now = Date.now();
 
-      const W = canvas.width;
-      const H = canvas.height;
-      const playfieldWidth = 640;
-      const laneW = playfieldWidth / 4;
-      const startX = (W - playfieldWidth) / 2;
-      const hitZone = GAME_CONFIG.hitZoneY;
-      const now = Date.now();
-
-      elapsedAtLastFrameRef.current = elapsed;
+    elapsedAtLastFrameRef.current = elapsed;
 
       processEvents(elapsed);
       const evState = eventsStateRef.current;
@@ -473,7 +522,7 @@ export const useGameEngine = (
         ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
       }
 
-      const comboColor = getComboColor(state.combo);
+      const comboColor = getComboColor(gameStateRef.current.combo);
 
       if (showHitZonesRef.current) {
         const zones = [
@@ -549,47 +598,58 @@ export const useGameEngine = (
         ctx.restore();
       });
 
-      notesRef.current.forEach(note => {
-        if (!note.active) return;
+      // Draw only notes in the bounded active window (monotonic pointers)
+      for (let ni = drawStartIdxRef.current; ni < nextScan; ni++) {
+        const note = notes[ni];
+        if (!note.active) continue;
 
         const isCurrentlyHolding = note.type === 'hold' && note.hit && !note.missed && note.endTime && elapsed < note.endTime;
 
-        if ((note.hit && !isCurrentlyHolding) || note.missed) return;
+        if ((note.hit && !isCurrentlyHolding) || note.missed) continue;
 
         const timeToHit = note.time - elapsed;
         note.y = hitZone - timeToHit * effectiveScrollSpeed;
 
-        if (note.y !== undefined) {
-          const color = GAME_CONFIG.laneColors[note.lane];
-          const cx = startX + note.lane * laneW + laneW / 2;
+        if (note.y === undefined) continue;
+        if (note.y > H + 120) continue;
 
-          if (note.type === 'hold' && note.endTime) {
-            const headY = isCurrentlyHolding ? hitZone : note.y;
-            const tailEndY = hitZone - (note.endTime - elapsed) * effectiveScrollSpeed;
-            
-            if (tailEndY < headY) {
-              ctx.save();
-              const grad = ctx.createLinearGradient(cx, tailEndY, cx, headY);
-              grad.addColorStop(0, `${color}22`);
-              grad.addColorStop(1, `${color}88`);
-              ctx.fillStyle = grad;
-              ctx.fillRect(cx - 18, tailEndY, 36, headY - tailEndY);
-              ctx.fillStyle = color;
-              ctx.fillRect(cx - 18, tailEndY - 4, 36, 8);
-              ctx.restore();
-            }
+        const color = GAME_CONFIG.laneColors[note.lane];
+        const cx = startX + note.lane * laneW + laneW / 2;
+
+        if (note.type === 'hold' && note.endTime) {
+          const headY = isCurrentlyHolding ? hitZone : note.y;
+          const tailEndY = hitZone - (note.endTime - elapsed) * effectiveScrollSpeed;
+
+          if (tailEndY < headY) {
+            ctx.save();
+            const grad = ctx.createLinearGradient(cx, tailEndY, cx, headY);
+            grad.addColorStop(0, `${color}22`);
+            grad.addColorStop(1, `${color}88`);
+            ctx.fillStyle = grad;
+            ctx.fillRect(cx - 18, tailEndY, 36, headY - tailEndY);
+            ctx.fillStyle = color;
+            ctx.fillRect(cx - 18, tailEndY - 4, 36, 8);
+            ctx.restore();
           }
-
-          if (note.hit) return;
-
-          const nearMiss = Math.abs(timeToHit * 1000) <= HIT_TOLERANCES.miss;
-          const fadeAlpha = !nearMiss && timeToHit < 0 ? 0.3 : 1;
-          ctx.save();
-          ctx.globalAlpha = fadeAlpha;
-          currentSkinRef.current.drawArrow(ctx, cx, note.y, 50, note.lane, color, 'normal');
-          ctx.restore();
         }
-      });
+
+        if (note.hit) continue;
+
+        const nearMiss = Math.abs(timeToHit * 1000) <= HIT_TOLERANCES.miss;
+        const fadeAlpha = !nearMiss && timeToHit < 0 ? 0.3 : 1;
+        ctx.save();
+        ctx.globalAlpha = fadeAlpha;
+        currentSkinRef.current.drawArrow(ctx, cx, note.y, 50, note.lane, color, 'normal');
+        ctx.restore();
+      }
+      let drawStart = drawStartIdxRef.current;
+      while (drawStart < nextScan) {
+        const n = notes[drawStart];
+        const isHolding = n.type === 'hold' && n.endTime && elapsed < n.endTime;
+        if (n.missed || (n.hit && !isHolding)) drawStart++;
+        else break;
+      }
+      drawStartIdxRef.current = drawStart;
 
       particlesRef.current = particlesRef.current.filter(p => p.life > 0).map(p =>
         particleSkinRef.current.updateParticle(p, 16)
@@ -705,9 +765,9 @@ export const useGameEngine = (
       // Comprobación dinámica de fin de juego y tiempo restante
       const duration = audioDurationRef.current > 0 ? audioDurationRef.current : (levelConfig?.durationSec ?? 240);
       const newTimeRemaining = Math.max(0, duration - elapsed);
-      const allNotesPassed = notesRef.current.every(n => n.hit || n.missed);
+      const allNotesPassed = remainingNotesRef.current <= 0;
       const audioEnded = audioRef.current ? audioRef.current.ended : false;
-      const isGameOver = (state.life <= 0) || (allNotesPassed && elapsed > 2) || (newTimeRemaining <= 0) || audioEnded;
+      const isGameOver = (gameStateRef.current.life <= 0) || (allNotesPassed && elapsed > 2) || (newTimeRemaining <= 0) || audioEnded;
 
       if (isGameOver) {
         isPlayingRef.current = false;
@@ -715,25 +775,22 @@ export const useGameEngine = (
         if (audioRef.current) {
           audioRef.current.pause();
         }
-        return {
+        setGameState(state => ({
           ...state,
           isGameOver: true,
           isPlaying: false,
           timeRemaining: 0, trackDuration: duration
-        };
+        }));
+      } else {
+        const roundedTimeRemaining = Math.round(newTimeRemaining * 10) / 10;
+        if (roundedTimeRemaining !== lastTimeRemainingRef.current) {
+          lastTimeRemainingRef.current = roundedTimeRemaining;
+          setGameState(state => ({
+            ...state,
+            timeRemaining: roundedTimeRemaining
+          }));
+        }
       }
-
-      const roundedTimeRemaining = Math.round(newTimeRemaining * 10) / 10;
-      if (roundedTimeRemaining !== lastTimeRemainingRef.current) {
-        lastTimeRemainingRef.current = roundedTimeRemaining;
-        return {
-          ...state,
-          timeRemaining: roundedTimeRemaining
-        };
-      }
-
-      return state;
-    });
 
     if (isPlayingRef.current && !isPausedRef.current && !isGameOverRef.current) {
       animationFrameRef.current = requestAnimationFrame(draw);
@@ -759,21 +816,32 @@ export const useGameEngine = (
       let closest: GameNote | null = null;
       let bestDist = Infinity;
 
-      notesRef.current.forEach(note => {
-        if (note.lane === input.lane && note.active && !note.hit && !note.missed) {
-          const diffMs = (note.time - elapsedAtPress) * 1000;
-          const absDist = Math.abs(diffMs);
-          if (absDist < bestDist && absDist <= HIT_TOLERANCES.veryBad) {
-            bestDist = absDist;
-            lastTimeDist = diffMs;
-            closest = note;
-          }
+      // Per-lane sorted scan, bounded to the tolerance window (±265ms + margin)
+      const laneNotes = notesByLaneRef.current[input.lane] ?? [];
+      const windowStart = elapsedAtPress - HIT_TOLERANCES.veryBad / 1000;
+      const windowEnd = elapsedAtPress + HIT_TOLERANCES.veryBad / 1000;
+      for (let i = lanePtrRef.current[input.lane]; i < laneNotes.length; i++) {
+        const note = laneNotes[i];
+        const t = note.time;
+        if (note.hit || note.missed || t < windowStart) {
+          lanePtrRef.current[input.lane] = i + 1;
+          continue;
         }
-      });
+        if (!note.active) continue;
+        if (t > windowEnd) break;
+        const diffMs = (note.time - elapsedAtPress) * 1000;
+        const absDist = Math.abs(diffMs);
+        if (absDist < bestDist) {
+          bestDist = absDist;
+          lastTimeDist = diffMs;
+          closest = note;
+        }
+      }
 
       if (closest && bestDist < Infinity) {
         const judg = getJudgmentFromTime(Math.abs(lastTimeDist));
         (closest as GameNote).hit = true;
+        remainingNotesRef.current--;
         laneFlashRef.current = [...laneFlashRef.current];
         laneFlashRef.current[input.lane] = Date.now();
 
@@ -874,8 +942,18 @@ export const useGameEngine = (
         audioRef.current.play().catch(e => console.error("Error playing audio:", e));
     }
 
-    notesRef.current = notes;
-    totalNotesRef.current = notes.length;
+    const sortedNotes = [...notes].sort((a, b) => a.time - b.time);
+    notesRef.current = sortedNotes;
+    totalNotesRef.current = sortedNotes.length;
+    remainingNotesRef.current = sortedNotes.length;
+    nextScanIdxRef.current = 0;
+    scanStartIdxRef.current = 0;
+    drawStartIdxRef.current = 0;
+    notesByLaneRef.current = [[], [], [], []];
+    for (const n of sortedNotes) {
+      if (n.lane >= 0 && n.lane < 4) notesByLaneRef.current[n.lane].push(n);
+    }
+    lanePtrRef.current = [0, 0, 0, 0];
     startTimeRef.current = Date.now();
     totalPausedRef.current = 0;
     inputBufferRef.current = [];

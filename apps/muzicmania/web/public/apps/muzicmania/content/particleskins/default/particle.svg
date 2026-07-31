@@ -1,9 +1,0 @@
-<svg viewBox="-8 -8 16 16" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <filter id="glow">
-      <feGaussianBlur stdDeviation="2" result="blur"/>
-      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-  </defs>
-  <circle cx="0" cy="0" r="4" fill="currentColor" filter="url(#glow)"/>
-</svg>
