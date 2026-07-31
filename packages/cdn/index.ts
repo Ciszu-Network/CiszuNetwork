@@ -9,6 +9,8 @@ export interface ResolveOptions {
   forceLocal?: boolean;
 }
 
+const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
+
 /**
  * Construye una URL de CDN para un asset genérico.
  * La ruta relativa del repo se refleja 1:1 en el CDN.
@@ -34,7 +36,6 @@ export function resolveIcon(
   format: IconFormat = 'svg',
   opts?: ResolveOptions
 ): string {
-  const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
   const cdnUrl = process.env.NEXT_PUBLIC_CDN_URL;
   const useLocal = opts?.forceLocal || (!opts?.forceCdn && !isProduction);
 
@@ -59,7 +60,6 @@ export class AssetResolver {
   }
 
   resolve(path: string, opts?: ResolveOptions): string {
-    const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
     const useLocal = opts?.forceLocal || (!opts?.forceCdn && !isProduction);
 
     if (useLocal || !this.cdnUrl) {
