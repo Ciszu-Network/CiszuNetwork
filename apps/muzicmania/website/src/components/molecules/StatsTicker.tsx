@@ -30,7 +30,7 @@ export function StatsTicker() {
         .select('score')
         .order('score', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       // Usuarios Activos (últimas 24h)
       const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
