@@ -1,0 +1,22 @@
+{
+  "id": "default",
+  "name": "Clásico",
+  "author": "MuzicMania",
+  "description": "Partículas circulares con brillo neón",
+  "type": "particle",
+  "version": "1.0",
+  "format": ["svg", "png"],
+  "colorType": "hsv_indirect",
+  "hasParticles": true,
+  "syncColorWithArrows": true,
+  "config": {
+    "perfect": { "count": 12, "sizeMin": 2, "sizeMax": 5, "speedMin": 2, "speedMax": 5, "lifeMs": 600, "colors": ["#68cfff", "#b400ff", "#ff33cc", "#00ff88"], "shape": "circle", "rotation": true, "gravity": 0.3 },
+    "great": { "count": 6, "sizeMin": 2, "sizeMax": 4, "speedMin": 1.5, "speedMax": 4, "lifeMs": 400, "colors": ["#b400ff", "#a020f0"], "shape": "circle", "rotation": true, "gravity": 0.3 },
+    "miss": { "count": 4, "sizeMin": 1, "sizeMax": 3, "speedMin": 1, "speedMax": 3, "lifeMs": 300, "colors": ["#ff4444", "#ff6666"], "shape": "circle", "rotation": false, "gravity": 0.4 },
+    "fail": { "count": 3, "sizeMin": 1, "sizeMax": 2, "speedMin": 0.5, "speedMax": 2, "lifeMs": 250, "colors": ["#ff444488", "#ff222266"], "shape": "circle", "rotation": false, "gravity": 0.4 }
+  },
+  "files": {
+    "sprites": "particle.svg",
+    "spritesPng": "particle.png"
+  }
+}

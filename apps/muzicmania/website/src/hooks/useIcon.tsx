@@ -1,14 +1,16 @@
-import React from 'react';
+'use client';
+
+import { useState, useEffect } from 'react';
 import { resolveIcon } from '@ciszunetwork/cdn';
 
 export function useIcon(config: { name: string; style?: 'outline' | 'filled' | 'flag'; format?: 'svg' | 'png'; size?: number }) {
-  const [iconUrl, setIconUrl] = React.useState<string>('');
+  const [iconUrl, setIconUrl] = useState('');
 
-  React.useEffect(() => {
+  useEffect(() => {
     setIconUrl(resolveIcon(config.name, config.style || 'outline', config.format || 'svg'));
   }, [config]);
 
-  return { iconUrl, source: iconUrl.startsWith('http') ? 'cdn' as const : 'local' as const };
+  return { iconUrl, source: iconUrl.startsWith('http') ? ('cdn' as const) : ('local' as const) };
 }
 
 export function useIconList() {

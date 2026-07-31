@@ -8,6 +8,7 @@ if (!supabaseUrl || !supabaseServiceKey) {
   // npx tsx --env-file=.env.local src/scripts/devConsole.ts
 }
 
+// @ts-expect-error - createClient accepts 3rd options param
 export const supabaseAdmin = createClient(supabaseUrl || '', supabaseServiceKey || '', {
   db: { schema: 'muzicmania' },
 });
