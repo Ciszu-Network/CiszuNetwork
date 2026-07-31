@@ -1,5 +1,6 @@
 param(
-  [string]$ApiKey = "d632b2f589b34ebba35a2a142490d80d",
+  [Parameter(Mandatory)]
+  [string]$ApiKey,
   [string]$OutputDir = "E:\Ciszu Network\ciszu_proyects\muzic mania\public\music\genesis_neon"
 )
 
