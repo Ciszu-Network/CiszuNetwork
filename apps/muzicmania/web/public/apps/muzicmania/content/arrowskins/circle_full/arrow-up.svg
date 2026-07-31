@@ -1,0 +1,15 @@
+<svg viewBox="-32 -32 64 64" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.5"/>
+    </linearGradient>
+  </defs>
+  <g filter="url(#glow)">
+    <polygon points="0,-28 18,6 7,3 7,28 -7,28 -7,3 -18,6" fill="url(#bodyGrad)" stroke="#ffffff" stroke-width="1.5"/>
+  </g>
+</svg>
