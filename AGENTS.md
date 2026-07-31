@@ -34,6 +34,7 @@ El CDN es un **espejo** del repositorio. Las rutas en Supabase Storage (`ciszu-c
   - Path depth: `apps/website/` → `../../scripts/copy-assets.js`, `apps/*/website/` → `../../../scripts/copy-assets.js`
   - **Mirrors**: `apps/<name>/content` → `public/apps/<name>/content/` y la media maestra `ciszukoantony/content` → `public/ciszukoantony/content/` (necesario para el resolver local de logos). Los outputs del prebuild en `public/` de las webs puras están en `.gitignore` (solo muzicmania/Tauri trackea sus mirrors).
 - **Asset resolver**: `packages/cdn/index.ts` — `resolveIcon(name, style, format)` para icons, `assetResolver.resolve(path)` para assets arbitrarios. Usa `NEXT_PUBLIC_CDN_URL` como base (ya incluye el bucket: `.../object/public/ciszu-cdn`).
+- ⚠️ **`NEXT_PUBLIC_CDN_URL` por proyecto Vercel**: en jul 2026 los proyectos `muzicmania`, `ciszunetworkpage` y `ciszukoantonypage` tenían el valor apuntando al bucket VIEJO `ciszu-assets` (renombrado → URLs 404). Fueron recreadas (DELETE+POST vía API, target production) apuntando a `ciszu-cdn`. Al cambiar env vars en Vercel hace falta un nuevo build/deploy (los redeploys vía API `POST /v16/deployments/{id}/redeploy` NO existen — disparar workflows con un push de `packages/**` o `apps/**`).
 
 ### Rutas de logos (fuente maestra)
 
