@@ -290,7 +290,7 @@ Si el repo cambia a público:
 
 **Pendientes sesión anterior (jul 2026):**
 - Aplicar migración 11 (REVOKE EXECUTE trigger functions) — requiere PAT nuevo del usuario
-- Rotar tokens (lista completa en el historial de la sesión): Supabase PAT/service_role/anon/JWT/password, Vercel `vcp_`, Discord bot (si está en historial), Cloudflare R2 si se activa
+- Rotar tokens — lista COMPLETA con valores en `C:\Users\fplay\AppData\Local\Temp\opencode\tokens_a_rotar.md` (9 ítems: PAT, service_role, JWT secret, password dashboard, anon, Vercel vcp_, Suno AI key, Cloudflare R2, Discord). Supabase: regenerar en Dashboard y actualizar `.env` con `scripts/update-env-keys.js`. Vercel: rotar `vcp_` y actualizar GH secret `VERCEL_TOKEN` (4 workflows lo usan)
 - Semgrep scan completo + ZAP install + secretlint full repo scan
 - `.turbo/runs/*.json` con env vars siguen en el historial git (git rm --cached hecho; purgar con filter-branch si el repo se hace público)
 
