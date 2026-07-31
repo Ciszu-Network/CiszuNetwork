@@ -91,3 +91,4 @@ apps/ciszubot/content/banners/video/
 apps/ciszubot/content/logos/video/
 
 # turbo cache.turbo/
+.env*
