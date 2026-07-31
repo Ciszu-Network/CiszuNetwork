@@ -261,6 +261,24 @@ Si el repo cambia a público:
 - `update-env-keys.js` — actualiza todos los `.env` con nuevas keys tras rotación manual
 - Aplicar migraciones: `node scripts/apply-migration-XX.js`
 
+## Herramientas de seguridad instaladas (jul 2026)
+
+| Herramienta | Cómo | Notas |
+|---|---|---|
+| **secretlint** (13.0.4) | `secretlint` (npm global) | Hook pre-commit activo (`.git/hooks/pre-commit`, ignora con `--no-verify`). Config: `.secretlintrc.json` (preset-recommend + patrones custom `sbp_`, `vcp_`, `sb_secret_`, JWT) |
+| **gitleaks** (8.30.1) | `C:\Users\fplay\AppData\Local\Programs\Gitleaks\gitleaks.exe` | Escaneo de historial: `--log-opts="--all"`. Reporte del escaneo jul 2026: `Temp\opencode\gitleaks_hist.json` (130 leaks, la mayoría de `.turbo/runs/*.json` ya destrackeados; restan `cloudflare-api-key` ×3 en `.turbo` del historial y 1 key en `generate-tracks.ps1` ya quitada) |
+| **semgrep** (1.172.0) | `semgrep scan --config p/security-audit` (pip) | Pendiente: escaneo completo (se colgó en la sesión — reintentar por targets pequeños: `apps/*/website/src` uno a uno) |
+| **trivy** (0.72.0) | PATH: `C:\Users\fplay\AppData\Local\Microsoft\WinGet\Links` | Usa `--db-repository mirror.gcr.io/aquasec/trivy-db` (con la red nueva resuelve). pnpm-lock: 0 vulns HIGH/CRITICAL |
+| **cargo-audit** (0.22.2) | `cargo audit` (en `apps/muzicmania/launcher/src-tauri`) | 17 warnings permitidos: glib (tauri 3) + unic-ucd-version (transitivo) |
+| **pnpm audit** | `pnpm audit --prod` | 0 vulns |
+| **ZAP** | NO instalado | choco falla por lock/permisos — instalar con shell admin: `choco install zaproxy -y` |
+
+**Pendientes sesión anterior (jul 2026):**
+- Aplicar migración 11 (REVOKE EXECUTE trigger functions) — requiere PAT nuevo del usuario
+- Rotar tokens (lista completa en el historial de la sesión): Supabase PAT/service_role/anon/JWT/password, Vercel `vcp_`, Discord bot (si está en historial), Cloudflare R2 si se activa
+- Semgrep scan completo + ZAP install + secretlint full repo scan
+- `.turbo/runs/*.json` con env vars siguen en el historial git (git rm --cached hecho; purgar con filter-branch si el repo se hace público)
+
 ## A ejecutar en toda implementación nueva
 
 1. **Advisors**: después de cualquier cambio en policies o funciones, verificar Security + Performance Advisors en Dashboard
