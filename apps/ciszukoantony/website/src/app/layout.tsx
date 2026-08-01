@@ -22,8 +22,8 @@ export const metadata: Metadata = {
   description: "Official portfolio of Ciszuko Antony (Francisco Garcia Antonio M. / y8) — CEO & Founder of Ciszuko Network. Innovation, development and technology.",
   keywords: ["Ciszuko Antony", "Ciszuko Network", "portfolio", "developer", "Venezuela", "CEO", "technology"],
   icons: {
-    icon: "/logos/favicon.svg",
-    apple: "/logos/imagen/outline/isotipo/degradado/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.svg",
+    icon: "/logos/imagen/outline/isotipo/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg",
+    apple: "/logos/imagen/outline/isotipo/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg",
   },
   openGraph: {
     title: "Ciszuko Antony | CEO & Founder of Ciszuko Network",

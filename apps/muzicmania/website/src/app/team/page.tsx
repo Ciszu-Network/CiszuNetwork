@@ -8,6 +8,7 @@ import { SOCIALS } from '@/config/navigation';
 import { useAppStore } from '@/store';
 import Link from 'next/link';
 import { FlagVE } from '@/components/atoms/FlagVE';
+import { resolveAssetPath } from '@ciszunetwork/cdn';
 
 const I = {
   supabase:    <svg viewBox="0 0 24 24" className="w-full h-full" fill="currentColor"><path d="M21.362 9.354H12V.5L2.638 10.646H12V19.5z"/></svg>,
@@ -133,7 +134,7 @@ export default function TeamPage() {
               
               <div className="relative z-10">
                 <div className="w-40 h-40 mx-auto rounded-[2rem] overflow-hidden transform group-hover:scale-110 transition-transform duration-700 shadow-[0_0_40px_rgba(0,240,255,0.4)] border-2 border-neon-blue/30">
-                    <img src="/images/francisco_selfie/cisco (1).png" alt="Ciszuko Antony" className="w-full h-full object-cover" />
+                    <img src="/images/francisco_selfie/cisco-1.jpg" alt="Ciszuko Antony" className="w-full h-full object-cover" />
                 </div>
                 
                 <div className="mt-8 space-y-4">
@@ -233,7 +234,7 @@ export default function TeamPage() {
               <div className="flex flex-col gap-8 w-full relative z-10">
                 <div className="flex flex-col md:flex-row items-center gap-6 justify-center md:justify-start">
                     <div className="w-20 h-20 rounded-3xl bg-black flex items-center justify-center border border-white/10 shrink-0 p-2 overflow-hidden">
-                        <img src="/images/ciszu_isotipo/degradado/color/ciszu_logo_isotipo_outline_degradado_zwhite_ccolor.svg" alt="Ciszu Network" className="w-full h-full object-contain" />
+                        <img src={resolveAssetPath('ciszukoantony/content/logos/imagen/outline/isotipo/degradado/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.svg')} alt="Ciszu Network" className="w-full h-full object-contain" />
                     </div>
                      <div className="space-y-1 text-center md:text-left">
                         <h3 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter flex items-center justify-center md:justify-start gap-3">

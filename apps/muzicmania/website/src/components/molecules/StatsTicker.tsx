@@ -15,36 +15,40 @@ export function StatsTicker() {
 
   useEffect(() => {
     async function fetchStats() {
-      // Usuarios Totales
-      const { count: userCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
-      
-      // Partidas Hoy (Simulado por ahora o desde tabla scores)
-      const { count: matchCount } = await supabase
-        .from('scores')
-        .select('*', { count: 'exact', head: true })
-        .gte('created_at', new Date(new Date().setHours(0,0,0,0)).toISOString());
+      try {
+        // Usuarios Totales
+        const { count: userCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
 
-      // Récord Global
-      const { data } = await supabase
-        .from('scores')
-        .select('score')
-        .order('score', { ascending: false })
-        .limit(1);
-      const topScore = data?.[0];
+        // Partidas Hoy (Simulado por ahora o desde tabla scores)
+        const { count: matchCount } = await supabase
+          .from('scores')
+          .select('*', { count: 'exact', head: true })
+          .gte('created_at', new Date(new Date().setHours(0,0,0,0)).toISOString());
 
-      // Usuarios Activos (últimas 24h)
-      const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-      const { count: activeCount } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true })
-        .gte('updated_at', yesterday); // Asumiendo actividad reciente o nuevos registros
+        // Récord Global
+        const { data } = await supabase
+          .from('scores')
+          .select('score')
+          .order('score', { ascending: false })
+          .limit(1);
+        const topScore = data?.[0];
 
-      setStats([
-        { label: "JUGADORES ACTIVOS", value: (activeCount || 0).toString(), icon: Users },
-        { label: "PARTIDAS HOY", value: (matchCount || 0).toString(), icon: Gamepad2 },
-        { label: "RÉCORD GLOBAL", value: (topScore?.score || 0).toLocaleString(), icon: Trophy },
-        { label: "USUARIOS TOTALES", value: (userCount || 0).toString(), icon: Star },
-      ]);
+        // Usuarios Activos (últimas 24h)
+        const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+        const { count: activeCount } = await supabase
+          .from('profiles')
+          .select('*', { count: 'exact', head: true })
+          .gte('updated_at', yesterday); // Asumiendo actividad reciente o nuevos registros
+
+        setStats([
+          { label: "JUGADORES ACTIVOS", value: (activeCount || 0).toString(), icon: Users },
+          { label: "PARTIDAS HOY", value: (matchCount || 0).toString(), icon: Gamepad2 },
+          { label: "RÉCORD GLOBAL", value: (topScore?.score || 0).toLocaleString(), icon: Trophy },
+          { label: "USUARIOS TOTALES", value: (userCount || 0).toString(), icon: Star },
+        ]);
+      } catch (err) {
+        console.error('[StatsTicker] Error cargando estadísticas:', err);
+      }
     }
     fetchStats();
   }, []);

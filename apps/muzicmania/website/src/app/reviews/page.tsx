@@ -43,8 +43,8 @@ const DEBUG_REVIEWS: Review[] = [
     likes_count: 99,
     is_edited: false,
     is_bot: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
+    created_at: '2026-07-20T12:00:00.000Z',
+    updated_at: '2026-07-20T12:00:00.000Z',
     user_profile: { display_name: 'Ciszuko Antony', username: 'ciszuko', avatar_url: '' }
   },
   {
@@ -57,8 +57,8 @@ const DEBUG_REVIEWS: Review[] = [
     likes_count: 42,
     is_edited: true,
     is_bot: true,
-    created_at: new Date(Date.now() - 86400000).toISOString(),
-    updated_at: new Date().toISOString(),
+    created_at: '2026-07-19T12:00:00.000Z',
+    updated_at: '2026-07-19T12:00:00.000Z',
     user_profile: { display_name: 'Neon Rider', username: 'neonrider', avatar_url: '' }
   }
 ];

@@ -36,7 +36,7 @@ const categories = [
     ],
   },
   {
-    name: 'MuzicMania', color: 'from-pink-500 to-rose-700', logo: '/images/muzicmania_outline/isotipo/color/ciszuko_logo_isotipo_outline_zcolor_ccolor.png',
+    name: 'MuzicMania', color: 'from-pink-500 to-rose-700', logo: '/logos/imagen/outline/isotipo/color/ciszuko_logo_isotipo_outline_zcolor_ccolor.png',
     projects: [
       { name: 'MuzicMania Web', desc: 'Juego de ritmo musical con estética neon futurista. Próximamente.', tech: ['Next.js', 'TypeScript', 'Web Audio'] },
     ],
@@ -50,7 +50,7 @@ const categories = [
     ],
   },
   {
-    name: 'Ciszuko Antony', color: 'from-brand-dark to-brand', logo: '/images/francisco_selfie/cisco (1).png',
+    name: 'Ciszuko Antony', color: 'from-brand-dark to-brand', logo: '/images/francisco_selfie/cisco-1.jpg',
     projects: [
       { name: 'Portfolio Web', desc: 'Portfolio personal con diseño tech y neón.', tech: ['Next.js', 'Framer Motion'] },
       { name: 'Sistema de Firmas', desc: 'Generador de firmas de correo corporativas.', tech: ['HTML', 'CSS'] },
