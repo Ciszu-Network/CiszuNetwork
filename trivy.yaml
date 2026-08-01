@@ -1,0 +1,18 @@
+# Trivy configuration for Ciszu Network
+# Usage: trivy fs . --config trivy.yaml
+
+db:
+  repository: mirror.gcr.io/aquasec/trivy-db
+
+scan:
+  skip-dirs:
+    - node_modules
+    - .next
+    - .turbo
+    - dist
+    - build
+    - muzicmania-source
+    - content
+  skip-files:
+    - "**/*.map"
+    - "**/*.min.js"

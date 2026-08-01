@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import DOMPurify from 'dompurify';
 import { resolveIcon, type IconStyle, type IconFormat } from '@ciszunetwork/cdn';
 import { getIcon, iconRegistry } from './generated/icon-registry';
 
@@ -77,7 +78,7 @@ export const Icon: React.FC<IconProps> = ({
         style={{ color, ...inlineStyles }}
         {...(props as React.SVGProps<SVGSVGElement>)}
       >
-        <g dangerouslySetInnerHTML={{ __html: entry.inner }} />
+        <g dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(entry.inner) }} />
       </svg>
     );
   }
