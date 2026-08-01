@@ -1,8 +1,8 @@
 CISZU NETWORK - DOCUMENTACIÓN OFICIAL
 Nombre: DOCUMENTATION
-Versión: 2.0.0
-Actualización: 2026-07-28
-Identificador: DOCUMENTATION_V2.0.0_2026_07_28_ciszunetwork
+Versión: 2.1.0
+Actualización: 2026-08-01
+Identificador: DOCUMENTATION_V2.1.0_2026_08_01_ciszunetwork
 
 ---
 
@@ -96,9 +96,12 @@ ESTÁNDARES DE FORMATEO (DOCX/PDF)
 IA_DOCS (Documentación para Agentes de IA)
 Cada proyecto tiene ia_docs/ con la siguiente estructura estándar:
   AGENT_INSTRUCTIONS.md, AGENT_SECURITY_PROTOCOLS.md, ARCHITECTURE.md,
-  INITIAL_PROMPT.md, MIGRATION_HANDOVER.md, PROJECT_HISTORY.md,
-  PROJECT_STATE.md, PROJECTS.md, STACK.md, STATUS.md, TO_DO_LIST.md,
-  WORKFLOW.md
+  CODE_PRINCIPLES.md, DEVSECOPS.md, INITIAL_PROMPT.md, MIGRATION_HANDOVER.md,
+  PROJECT_HISTORY.md, PROJECT_STATE.md, PROJECTS.md, STACK.md, STATUS.md,
+  TO_DO_LIST.md, WORKFLOW.md
+
+- DEVSECOPS.md: Marco de seguridad integrada (SAST/DAST, Shift-Left, auditorías)
+- CODE_PRINCIPLES.md: Principios de ingeniería (DRY, KISS, YAGNI, SOLID)
 
 El proyecto de referencia para ia_docs es MuzicMania (19 archivos).
 
@@ -184,8 +187,11 @@ via scripts:
 IA_DOCS (Documentation for AI Agents)
 Each project has ia_docs/ with the following standard structure:
   AGENT_INSTRUCTIONS.md, AGENT_SECURITY_PROTOCOLS.md, ARCHITECTURE.md,
-  INITIAL_PROMPT.md, MIGRATION_HANDOVER.md, PROJECT_HISTORY.md,
-  PROJECT_STATE.md, PROJECTS.md, STACK.md, STATUS.md, TO_DO_LIST.md,
-  WORKFLOW.md
+  CODE_PRINCIPLES.md, DEVSECOPS.md, INITIAL_PROMPT.md, MIGRATION_HANDOVER.md,
+  PROJECT_HISTORY.md, PROJECT_STATE.md, PROJECTS.md, STACK.md, STATUS.md,
+  TO_DO_LIST.md, WORKFLOW.md
+
+- DEVSECOPS.md: Integrated security framework (SAST/DAST, Shift-Left, audits)
+- CODE_PRINCIPLES.md: Engineering principles (DRY, KISS, YAGNI, SOLID)
 
 The reference project for ia_docs is MuzicMania (19 files).

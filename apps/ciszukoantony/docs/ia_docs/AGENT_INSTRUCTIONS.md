@@ -24,3 +24,8 @@ Este archivo contiene reglas y recordatorios para el mantenimiento del portfolio
 
 ## Archivos Especiales (NO automatizar DOCX/PDF)
 - GUIDELINES, RULES, ACTA — Composición manual
+
+## 📚 Estándares obligatorios (aplican a este proyecto)
+- **Código**: aplicar DRY, KISS, YAGNI, SOLID, Separation of Concerns y Least Astonishment — ver `CODE_PRINCIPLES.md`.
+- **Seguridad (DevSecOps)**: verificar SAST (semgrep/secretlint/gitleaks), XSS, SQLi, RLS y Advisors — ver `DEVSECOPS.md` y `AGENT_SECURITY_PROTOCOLS.md`.
+- Marco global: OWASP Top 10, NIST SP 800-218 (SSDF), ISO/IEC 27001, CVE/CWE.

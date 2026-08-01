@@ -2,6 +2,19 @@
 
 Este documento registra los hitos importantes, correcciones y evoluciones del monorepo.
 
+## 1 de Agosto, 2026
+
+### Cierre de Sesión de Seguridad y Estándares de Ingeniería
+- **Builds 4/4 corregidos**: El error `ReactNode` (doble identidad de tipos) era causado por `@types/react` añadido al ROOT — revertido; los types de react viven solo en `packages/ui` y cada app.
+- **DOMPurify aplicado**: `packages/ui/src/Icon.tsx` sanitiza HTML dinámico; `SocialIcon.tsx` reescrito sin `dangerouslySetInnerHTML` (semgrep 0 findings).
+- **Errores de consola eliminados**: 7 sitios con `.single()` → `.maybeSingle()` en muzicmania (406 PGRST116).
+- **Migración 11 aplicada** (REVOKE EXECUTE trigger functions) vía Management API con PAT nuevo.
+- **PAT viejo revocado** por el usuario (cierra alerta de secret scanning).
+- **Schemas expuestos**: `muzicmania, ciszubot, ciszunetwork` en Dashboard (aviso informativo de GRANT custom).
+- **Herramientas completas**: semgrep 0 findings reales, ZAP 2.17.0 instalado + DAST probado (0 High / 4 Medium en ciszunetwork), secretlint + gitleaks hooks activos.
+- **Configs de seguridad**: `.gitleaks.toml`, `.semgrepignore`, `trivy.yaml` añadidos.
+- **Documentación de estándares**: creados `DEVSECOPS.md` y `CODE_PRINCIPLES.md` en `docs/ia_docs/`; SECURITY.md oficial actualizado a v3.0.0 con marco DevSecOps (OWASP, NIST SSDF, ISO/IEC 27001).
+
 ## 29 de Julio, 2026
 
 ### CDN Unificado y Seguridad de Base de Datos

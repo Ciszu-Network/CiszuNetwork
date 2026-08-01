@@ -304,6 +304,7 @@ Si el repo cambia a público:
 
 ## A ejecutar en toda implementación nueva
 
+0. **Estándares de ingeniería**: leer y aplicar `docs/ia_docs/CODE_PRINCIPLES.md` (DRY, KISS, YAGNI, SOLID, Separation of Concerns, Least Astonishment) y `docs/ia_docs/DEVSECOPS.md` (DevSecOps: SAST/DAST, Shift-Left, herramientas) en toda implementación.
 1. **Advisors**: después de cualquier cambio en policies o funciones, verificar Security + Performance Advisors en Dashboard
 2. **XSS**: todo input de usuario renderizado debe pasar por `escapeHtml()` o `textContent`; nunca `innerHTML` directo
 3. **SQL Injection**: nunca concatenar strings en SQL; siempre ORM parametrizado o RPC con objetos
