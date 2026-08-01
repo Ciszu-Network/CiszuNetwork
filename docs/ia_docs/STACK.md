@@ -33,6 +33,17 @@
 - **Deployment:** Vercel (all websites)
 - **Checks:** ESLint only (no tests)
 
+## Security Stack (DevSecOps — SAST/DAST/Supply Chain)
+- **Secretlint 13.0.4** — pre-commit hook (`.secretlintrc.json`)
+- **Gitleaks 8.30.1** — pre-commit + history scan (`.gitleaks.toml`)
+- **Semgrep 1.172.0** — SAST `p/security-audit` (`.semgrepignore`)
+- **CodeQL (GitHub)** — SAST js + rust en cada push
+- **OWASP ZAP 2.17.0** — DAST (daemon + API) sobre webs desplegadas
+- **pnpm audit / cargo audit / trivy 0.72.0** — supply chain (CVE/RUSTSEC)
+- **Sentry** — observabilidad free tier (error monitoring + tracing)
+- **Configs**: `.gitleaks.toml`, `.semgrepignore`, `trivy.yaml`, `.secretlintrc.json`
+- **Doctrina**: `docs/ia_docs/DEVSECOPS.md`, `docs/ia_docs/CODE_PRINCIPLES.md`
+
 ## Shared Packages
 - **@ciszunetwork/cdn** — Asset resolver (icons, multimedia)
 

@@ -69,6 +69,11 @@ Este archivo contiene reglas y recordatorios para el mantenimiento del proyecto 
    - Se deben usar los sprites generados en `content/icons/sprites/` mediante la etiqueta `<use>`.
    - Consulte `content/documents/ia/ICON_SYSTEM.md` para más detalles técnicos.
 
+## 📚 Estándares obligatorios (aplican a este proyecto)
+1. **Código**: aplicar DRY, KISS, YAGNI, SOLID, Separation of Concerns y Least Astonishment — ver `CODE_PRINCIPLES.md`.
+2. **Seguridad (DevSecOps)**: verificar SAST (semgrep/secretlint/gitleaks), XSS, SQLi, RLS y Advisors de Supabase — ver `DEVSECOPS.md` y `AGENT_SECURITY_PROTOCOLS.md`.
+3. **Marco global**: OWASP Top 10, NIST SP 800-218 (SSDF), ISO/IEC 27001, CVE/CWE.
+
 ## 🛡️ Identidad y Propiedad
 1. **Atribución de Desarrollo**:
    > [!IMPORTANT]
