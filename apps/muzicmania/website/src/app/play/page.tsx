@@ -568,7 +568,7 @@ function PlayPageContent() {
         .select('*')
         .eq('user_id', user.id)
         .eq('track_id', trackId)
-        .single();
+        .maybeSingle();
 
       if (existing) {
         await supabase.from('track_likes').delete().eq('id', existing.id);

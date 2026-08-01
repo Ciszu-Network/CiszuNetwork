@@ -186,7 +186,7 @@ export default function ReviewsPage() {
   };
 
   const fetchUserReview = async (userId: string) => {
-    const { data } = await supabase.from('reviews').select('*').eq('user_id', userId).single();
+    const { data } = await supabase.from('reviews').select('*').eq('user_id', userId).maybeSingle();
     if (data) {
       setUserReview(data);
       setRating(data.rating);

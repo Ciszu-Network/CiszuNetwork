@@ -45,10 +45,10 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         .from('profiles')
         .select('id, username, display_name, avatar_url, role, is_admin')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') {
-        // PGRST116 = no rows found — el perfil aún no existe (race condition con el trigger)
+      if (error) {
+        // El perfil puede no existir aún (race condition con el trigger de registro)
         console.error('[AuthProvider] Error fetching profile:', error);
       }
 
