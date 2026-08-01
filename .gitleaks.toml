@@ -1,0 +1,56 @@
+# Gitleaks configuration for Ciszu Network
+# Usage: gitleaks protect --staged --config .gitleaks.toml (in pre-commit hook)
+# Docs: https://github.com/gitleaks/gitleaks
+
+title = "Ciszu Network gitleaks config"
+
+[extend]
+useDefault = true
+
+# Files that legitimately contain test/mock values or are generated artifacts
+[allowlist]
+description = "Known-safe files and test values"
+paths = [
+  "pnpm-lock\\.yaml$",
+  "package-lock\\.json$",
+  "muzicmania-source/",
+  "docs/",
+  "documents/",
+  "services/supabase/docs/",
+  "packages/.*/src/generated/",
+  "shared/.*/generated/",
+  "\\.github/workflows/.*\\.ya?ml$",
+  "scripts/.*\\.md$",
+  ".*\\.svg$",
+  ".*\\.html$",
+  ".*\\.min\\.js$",
+  ".*\\.map$",
+  ".*\\.css$",
+]
+regexes = [
+  # Example/test placeholder tokens used in documentation or fixtures
+  "(?i)(example|sample|test|placeholder|your-|xxx|dummy)[-_]?(token|key|secret|password)",
+  # Local .env.example files
+  "^(NEXT_PUBLIC_|VITE_|REACT_APP_).*=.*$",
+]
+
+[[rules]]
+id = "ciszu-supabase-pat"
+description = "Supabase Personal Access Token (sbp_)"
+regex = '''\bsbp_[A-Za-z0-9]{20,}\b'''
+entropy = 3.5
+secretGroup = 0
+
+[[rules]]
+id = "ciszu-vercel-token"
+description = "Vercel token (vcp_)"
+regex = '''\bvcp_[A-Za-z0-9]{20,}\b'''
+entropy = 3.5
+secretGroup = 0
+
+[[rules]]
+id = "ciszu-supabase-secret"
+description = "Supabase secret key (sb_secret_)"
+regex = '''\bsb_secret_[A-Za-z0-9]{20,}\b'''
+entropy = 3.5
+secretGroup = 0
