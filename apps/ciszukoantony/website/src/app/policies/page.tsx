@@ -2,23 +2,39 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { RichText, type RichPart } from '@/components/RichText';
+
+const NETWORK_LINK: RichPart = { link: 'Ciszuko Network', href: 'https://ciszunetwork.vercel.app' };
 
 const sections = [
   {
     id: 'terms', title: 'Terms & Conditions',
-    content: 'By accessing and using this website, you agree to comply with these terms. If you do not agree, do not use this site. <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" class="text-brand hover:text-brand-200 transition-colors">Ciszuko Network</a> reserves the right to modify these terms at any time. Continued use of the site constitutes acceptance of any changes.'
+    content: [
+      { text: 'By accessing and using this website, you agree to comply with these terms. If you do not agree, do not use this site. ' },
+      NETWORK_LINK,
+      { text: ' reserves the right to modify these terms at any time. Continued use of the site constitutes acceptance of any changes.' },
+    ] as RichPart[],
   },
   {
     id: 'privacy', title: 'Privacy Policy',
-    content: 'At <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" class="text-brand hover:text-brand-200 transition-colors">Ciszuko Network</a>, the privacy of our visitors is important. We do not collect personal information without explicit consent. Collected information is used only to improve the user experience and is not shared with third parties without authorization.'
+    content: [
+      { text: 'At ' },
+      NETWORK_LINK,
+      { text: ', the privacy of our visitors is important. We do not collect personal information without explicit consent. Collected information is used only to improve the user experience and is not shared with third parties without authorization.' },
+    ] as RichPart[],
   },
   {
     id: 'cookies', title: 'Cookie Policy',
-    content: 'This website may use cookies to enhance the user experience. Cookies are small text files stored on your device. You can configure your browser to reject all cookies or to indicate when a cookie is being sent.'
+    content: [
+      { text: 'This website may use cookies to enhance the user experience. Cookies are small text files stored on your device. You can configure your browser to reject all cookies or to indicate when a cookie is being sent.' },
+    ] as RichPart[],
   },
   {
     id: 'legal', title: 'Legal Notice',
-    content: '<a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" class="text-brand hover:text-brand-200 transition-colors">Ciszuko Network</a>&reg; is a registered trademark. All rights reserved. The content of this website may not be reproduced, distributed or used without prior written authorization. Product names, logos and brands mentioned are the property of their respective owners.'
+    content: [
+      NETWORK_LINK,
+      { text: '\u00AE is a registered trademark. All rights reserved. The content of this website may not be reproduced, distributed or used without prior written authorization. Product names, logos and brands mentioned are the property of their respective owners.' },
+    ] as RichPart[],
   },
 ];
 
@@ -42,7 +58,7 @@ export default function PoliciesPage() {
                 <span className="w-2 h-2 rounded-full bg-brand" />
                 {s.title}
               </h2>
-              <p className="text-gray-400 text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: s.content }} />
+              <RichText parts={s.content} className="text-gray-400 text-sm leading-relaxed" />
             </motion.div>
           ))}
         </div>

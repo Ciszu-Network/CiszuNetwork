@@ -1,0 +1,45 @@
+# ─── Docker Compose — Ciszu Network (dev local) ───
+# Levanta el bot de Discord y Supabase local (Postgres 17).
+# Requisitos: Docker Desktop + WSL2. Ver docs/ia_docs/DOCKER.md
+#
+# Uso:
+#   docker compose up -d            # bot + supabase local
+#   docker compose up -d ciszu-bot  # solo el bot
+#   docker compose down             # apagar todo
+
+version: "3.9"
+
+services:
+  ciszu-bot:
+    build:
+      context: ./apps/ciszubot
+      dockerfile: Dockerfile
+    container_name: ciszubot
+    restart: unless-stopped
+    environment:
+      # Secretos desde .env (nunca commitear). Copiar apps/ciszubot/.env.example
+      # a apps/ciszubot/.env y completar antes de levantar.
+      NODE_ENV: production
+    env_file:
+      - ./apps/ciszubot/.env
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./apps/ciszubot/logs:/app/logs
+
+  supabase-local:
+    # Supabase local corre via CLI (`supabase start`), que orquesta sus propios
+    # contenedores. Este servicio documenta los puertos del stack local para
+    # referencia: API 54321, DB 54322. Usar `supabase start` para el stack real.
+    image: supabase/postgres:17.3.1.068
+    container_name: supabase-local-db
+    profiles: ["supabase"]
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "54322:5432"
+    volumes:
+      - supabase-db:/var/lib/postgresql/data
+
+volumes:
+  supabase-db:

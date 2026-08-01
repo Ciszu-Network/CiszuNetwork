@@ -65,9 +65,13 @@ export const MusicVisualizer: React.FC<MusicVisualizerProps> = ({
         ctx.shadowBlur = 10;
         ctx.shadowColor = barColor;
         
-        // Draw rounded bars
+        // Draw rounded bars (roundRect no existe en navegadores antiguos)
         ctx.beginPath();
-        ctx.roundRect(x, y, barWidth, barHeight, [2, 2, 0, 0]);
+        if (typeof ctx.roundRect === 'function') {
+          ctx.roundRect(x, y, barWidth, barHeight, [2, 2, 0, 0]);
+        } else {
+          ctx.rect(x, y, barWidth, barHeight);
+        }
         ctx.fill();
       }
     };
