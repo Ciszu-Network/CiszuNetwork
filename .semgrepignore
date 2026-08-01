@@ -1,0 +1,40 @@
+# Semgrep ignore paths for Ciszu Network
+# Usage: semgrep scan --config p/security-audit --exclude-from .semgrepignore
+
+# Dependencies and build output
+node_modules/
+.next/
+.turbo/
+dist/
+build/
+out/
+
+# Git and env
+.git/
+.env
+.env.*
+!.env.example
+
+# Large vendored/recovered assets (not project source)
+muzicmania-source/
+content/
+apps/*/content/
+ciszukoantony/content/
+*.mp4
+*.mp3
+*.gif
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.pdf
+*.docx
+*.zip
+*.7z
+*.rar
+*.exe
+
+# Generated files
+packages/ui/src/generated/
+*.d.ts
+*.map
