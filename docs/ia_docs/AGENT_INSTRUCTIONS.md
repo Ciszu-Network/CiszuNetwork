@@ -43,6 +43,14 @@ Este archivo contiene reglas y recordatorios para el mantenimiento del monorepo 
 2. **Tailwind CSS** — Usar clases de utilidad. No hardcodear colores HEX fuera de `globals.css`.
 3. **Semántica HTML5** — No abusar de `div`.
 4. **Atomic Design** en componentes React.
+5. **Principios de ingeniería** — Aplicar obligatoriamente DRY, KISS, YAGNI, SOLID, Separation of Concerns y Least Astonishment (ver `CODE_PRINCIPLES.md`).
+6. **Seguridad integrada (DevSecOps)** — Aplicar SAST/DAST, Shift-Left y el checklist de seguridad en cada cambio (ver `DEVSECOPS.md`).
+
+## 📚 Documentación técnica obligatoria (ia_docs)
+- `CODE_PRINCIPLES.md` — Reglas de diseño de software (DRY, KISS, YAGNI, SOLID...).
+- `DEVSECOPS.md` — Marco de seguridad integrada: SAST/DAST, herramientas y métodos.
+- `AGENT_SECURITY_PROTOCOLS.md` — Reglas estrictas de seguridad para agentes.
+- `ARCHITECTURE.md`, `STACK.md`, `WORKFLOW.md` — Contexto técnico del proyecto.
 
 ## 📁 Carpetas Ignoradas en Git
 - `scripts/` de cada proyecto (scripts internos de build/reparación)
