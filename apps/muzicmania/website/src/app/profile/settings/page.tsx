@@ -44,7 +44,7 @@ export default function ProfileSettingsPage() {
   useEffect(() => {
     const fetchProfile = async () => {
       if (user?.id) {
-        const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+        const { data } = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
         if (data) {
           setProfileData(data);
           setBio(data.bio || '');

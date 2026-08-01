@@ -9,7 +9,7 @@ export const AuthService = {
       .from('profiles')
       .select('*')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
 
     return { ...user, profile };
   },

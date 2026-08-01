@@ -52,7 +52,7 @@ export default function DynamicProfilePage() {
           query = query.eq('id', idStr);
         }
 
-        const queryPromise = query.single();
+        const queryPromise = query.maybeSingle();
         const timeoutPromise = new Promise((_, reject) => 
           setTimeout(() => reject(new Error('Tiempo de espera agotado conectando con el servidor')), 8000)
         );
