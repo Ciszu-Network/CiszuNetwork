@@ -175,7 +175,7 @@ export default function LoginPage() {
           .from('profiles')
           .select('*')
           .eq('id', data.user.id)
-          .single();
+          .maybeSingle();
 
         if (profileError) {
           console.error('[PROFILE SYNC ERROR]:', profileError);
