@@ -55,6 +55,7 @@ Este archivo solo puede ser editado por Ciszuko Antony.
 - [ ] Crear mas opciones de leaderboard, y mostrar la posiciones de leaderboard pro categoria, filtros y orden en cada perfil y otorgarle un badge por nivel alcanzado del leaderboard y rango.
 - [ ] Crear sistemas de medallas por logros alcanzados, con notificaciones y estilos personalizados.
 - [ ] Agregar ilera de opciones del leaderboard por tiempo, desde diario hasta permanente o todo el tiempo.
+- [ ] Comprender arte de muzicmania con ART GUIDE. Y usar las APIS para regenerar contenidos de skins, backgrounds y characters.
 
 ## Arreglos globales
 
@@ -68,6 +69,7 @@ Este archivo solo puede ser editado por Ciszuko Antony.
 ## Arreglos de GAMEPLAY
 
 - [ ] Arreglar la configuracion del audio. Opciones de entrada de audio, salida de sonido. Funcionales realmente.
+- [ ] Optimizar el juego de MuzicMania. Va muy lageado.
 - [ ] Crear configuracion y entorno para dispositivos moviles con tactil, modo tactil y controles tactiles integrados permanentemente si es un dispositivo movil. En movil existiran diferentes preferencias a diferencias de los demas dispositivos, una de ellas en visuales es activar visuales de tactil activado de manera por defecto en moviles, mostrara 2 botones a la izquierda y 2 botones a la derecha que seran para las flechas arriba y abajo y a la izquierda y derecha. No son las flechas reales si no que son botones para simular las flechas reales. Tambien se podra personalizar la posicion y tamaño de estos botones en preferencias de modo tactil. Para colorear transparentemente y adaptar correctamente los botones al fondo se debe detectar el color de fondo del HUD de info en el gameplay y adaptar el color del boton para que tenga un buen contraste. Los colores de los botones varian segun el color del arrow y su skin. La posicion por defecto de los botones es horizontal, pero el de izquierda y abajo en el extremo izquierdo y los restantes al derecho. Con la diferencia que el izquierdo y el derecho debe nestar un poco mas arriba. Dando asi una forma de U dividida.
 - [ ] En tactil al estar dentro del modo de jugar o fullscreen se debe rotar permanentemente la pantalla siempre a horizontal. El modo vertical es para cuando no este en juego.
 - [ ] No existen flechas mantenibles apesar de que ya creamos el sistema de flechas. Se debe añadir a los niveles mas dificiles.
@@ -75,7 +77,7 @@ Este archivo solo puede ser editado por Ciszuko Antony.
 ## Arreglos en INSTALADORES
 
 - [ ] Terminar instalador custom, selector de idiomas funcional, bienvenida, informacion y identificacion (info de la instalacion, que se instalara y edicion con version), licencia, destino y ruta de instalacion, barra de instalacion inteligente con detalles a tiempo real, post-acciones como atajos de escritorio y taskbar, ir a changelog y abrir postinstalacion, despedidas y gracias. Con posibilidad de cancelamiento en cualquier momento con confirmacion.
-- [ ] Planificar compilado para android studio apk.
+- [ ] Planificar compilado para android studio apk y ios.
 
 ## Arreglos en LAUNCHER DESKTOP
 
