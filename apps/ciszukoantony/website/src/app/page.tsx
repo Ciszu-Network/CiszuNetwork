@@ -160,7 +160,7 @@ export default function Home() {
             className="flex flex-col md:flex-row items-center gap-8 p-8 rounded-2xl bg-white/5 border border-white/10"
           >
             <Image
-              src="/images/francisco_selfie/cisco (2).png"
+              src="/images/francisco_selfie/cisco-2.jpg"
               alt="Ciszuko Antony"
               width={140} height={140}
               className="rounded-full object-cover shrink-0 border-2 border-brand/30"

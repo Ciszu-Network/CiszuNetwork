@@ -145,9 +145,7 @@ import { eslintConfig, tailwindConfig } from '@config';
 
 - **Build caching**: Builds incrementales rápidos
 - **Task orchestration**: Ejecución paralela de tareas
-- **Dependency management**: Uso eficiente de dependencias
-
-### Workspaces con pnpm
+- **Dependency management**: Uso eficiente de dependencias### Workspaces con pnpm
 
 - **Symlinks**: Enlaces simbólicos para paquetes locales
 - **Hoisting**: Dependencias compartidas optimizadas
@@ -159,6 +157,14 @@ import { eslintConfig, tailwindConfig } from '@config';
 - **Producción Web**: CDN para performance global
 - **Tauri**: Assets empaquetados para offline
 - **React Native**: Bundle assets o CDN según conexión
+
+## 🛡️ Filosofía Oficial y DevSecOps
+
+Ciszu Network opera bajo una filosofía de ingeniería profesional y seguridad integrada (DevSecOps):
+
+- **Filosofía de código** — DRY, KISS, YAGNI, SOLID, Separation of Concerns y Least Astonishment aplicados a toda implementación. Documento oficial: [`docs/ia_docs/CODE_PRINCIPLES.md`](./docs/ia_docs/CODE_PRINCIPLES.md)
+- **Seguridad por diseño** — Shift-Left: SAST (Semgrep en CI), DAST (ZAP), escaneo de secretos (secretlint + gitleaks pre-commit), dependencias (pnpm audit, cargo audit, trivy) y advisors de Supabase verificados tras cada cambio. Documento oficial: [`docs/ia_docs/DEVSECOPS.md`](./docs/ia_docs/DEVSECOPS.md)
+- **Estándares obligatorios** — aplicables a IA y humanos: ver `AGENTS.md` (checklist "A ejecutar en toda implementación nueva") y los `SECURITY.md` de cada web.
 
 ## 🔧 Configuración
 

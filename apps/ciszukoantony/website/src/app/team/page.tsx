@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 
 const team = [
-  { name: 'Ciszuko Antony (Francisco Garcia Antonio M. / y8)', role: 'CEO & Founder', desc: 'Created Ciszuko Network. Full-stack developer and leader of innovative projects.', photo: '/images/francisco_selfie/cisco (2).png' },
+  { name: 'Ciszuko Antony (Francisco Garcia Antonio M. / y8)', role: 'CEO & Founder', desc: 'Created Ciszuko Network. Full-stack developer and leader of innovative projects.', photo: '/images/francisco_selfie/cisco-2.jpg' },
 ];
 
 export default function TeamPage() {

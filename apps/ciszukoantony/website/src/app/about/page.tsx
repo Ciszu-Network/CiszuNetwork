@@ -3,13 +3,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { RichText, type RichPart } from '@/components/RichText';
 
 const timeline = [
-  { year: '2022', event: 'Started software development and created personal projects.' },
-  { year: '2023', event: 'Founded <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" class="text-brand font-bold hover:text-brand-200 transition-colors">Ciszuko Network</a>. First bots and digital tools.' },
-  { year: '2024', event: 'Expanded across multiple platforms: Minecraft, Discord, Telegram, WhatsApp.' },
-  { year: '2025', event: 'Launched <a href="https://muzicmania.vercel.app" target="_blank" rel="noopener noreferrer" class="text-brand font-bold hover:text-brand-200 transition-colors">MuzicMania</a> and grew the community.' },
-  { year: '2026', event: 'Consolidated as CEO. New projects and a vision for the future.' },
+  { year: '2022', event: [{ text: 'Started software development and created personal projects.' }] as RichPart[] },
+  { year: '2023', event: [{ text: 'Founded ' }, { link: 'Ciszuko Network', href: 'https://ciszunetwork.vercel.app' }, { text: '. First bots and digital tools.' }] as RichPart[] },
+  { year: '2024', event: [{ text: 'Expanded across multiple platforms: Minecraft, Discord, Telegram, WhatsApp.' }] as RichPart[] },
+  { year: '2025', event: [{ text: 'Launched ' }, { link: 'MuzicMania', href: 'https://muzicmania.vercel.app' }, { text: ' and grew the community.' }] as RichPart[] },
+  { year: '2026', event: [{ text: 'Consolidated as CEO. New projects and a vision for the future.' }] as RichPart[] },
 ];
 
 const skills = [
@@ -39,7 +40,7 @@ export default function AboutPage() {
         >
           <div className="flex flex-col md:flex-row items-center gap-8">
             <Image
-              src="/images/francisco_selfie/cisco (1).png"
+              src="/images/francisco_selfie/cisco-1.jpg"
               alt="Ciszuko Antony"
               width={128} height={128}
               className="rounded-full object-cover shrink-0 border-2 border-brand/30"
@@ -101,7 +102,7 @@ export default function AboutPage() {
                 >
                   <div className="absolute left-2.5 top-1.5 w-3 h-3 rounded-full bg-brand border-2 border-black" />
                   <span className="text-sm font-bold text-brand">{t.year}</span>
-                  <p className="text-gray-400 text-sm mt-1" dangerouslySetInnerHTML={{ __html: t.event }} />
+                  <RichText parts={t.event} className="text-gray-400 text-sm mt-1" linkClassName="text-brand font-bold hover:text-brand-200 transition-colors" />
                 </motion.div>
               ))}
             </div>

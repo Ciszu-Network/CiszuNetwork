@@ -612,14 +612,14 @@ export default function InformationPage() {
               </div>
               <ul className="space-y-3">
                 {[
-                  'Lograr latencia de audio &lt;16ms mediante Web Audio API optimizada.',
+                  'Lograr latencia de audio <16ms mediante Web Audio API optimizada.',
                   'Implementar sistema de Supabase Auth con OAuth (Google, GitHub, Discord).',
                   'Lanzar leaderboard global con rankings en tiempo real antes de Q3 2025.',
                   'Desarrollar el editor de mapas de ritmo con exportación en formato JSON abierto.',
                 ].map((obj, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <code className="flex-shrink-0 px-1.5 py-0.5 rounded-lg bg-neon-cyan/10 border border-neon-cyan/20 text-neon-cyan text-[9px] font-black mt-0.5">0{i + 1}</code>
-                    <p className="text-xs text-gray-400 font-bold leading-relaxed" dangerouslySetInnerHTML={{ __html: obj }} />
+                    <p className="text-xs text-gray-400 font-bold leading-relaxed">{obj}</p>
                   </li>
                 ))}
               </ul>

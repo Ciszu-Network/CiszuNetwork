@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "icons:list": "node -e \"const { icons } = require('./src/utils/icons'); console.log(icons.listLocalIcons());\"",
-    "icons:setup": "node ../../scripts/setup-icons-system.js"
+    "icons:list": "node ../../../scripts/list-icons.js"
   },
   "dependencies": {
     "@ciszu/ui": "workspace:*",

@@ -20,8 +20,7 @@
     "tauri:icon": "tauri icon",
     "nsis:patch": "powershell -ExecutionPolicy Bypass -File scripts/patch-nsis-lang.ps1",
     "tauri:build:nsis": "tauri build && powershell -ExecutionPolicy Bypass -File scripts/patch-nsis-lang.ps1",
-    "icons:list": "node -e \"const { icons } = require('./src/utils/icons'); console.log(icons.listLocalIcons());\"",
-    "icons:setup": "node ../../scripts/setup-icons-system.js"
+    "icons:list": "node ../../../scripts/list-icons.js"
   },
   "dependencies": {
     "@ciszu/ui": "workspace:*",

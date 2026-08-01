@@ -299,6 +299,7 @@ function PlayPageContent() {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [recentTracks, setRecentTracks] = useState<string[]>([]);
   const [playlists, setPlaylists] = useState<{ name: string; tracks: string[] }[]>(() => {
+    if (typeof window === 'undefined') return [];
     const saved = localStorage.getItem('play_playlists');
     return saved ? JSON.parse(saved) : [];
   });
@@ -315,6 +316,8 @@ function PlayPageContent() {
   const [showLastMatchDetail, setShowLastMatchDetail] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [isHydrated, setIsHydrated] = useState(false);
+  useEffect(() => { setIsHydrated(true); }, []);
   const [realPlays, setRealPlays] = useState<Record<string, number>>({});
   const ITEMS_PER_PAGE = 50;
   const MAX_VISIBLE_PAGES = 7;
@@ -323,18 +326,22 @@ function PlayPageContent() {
   const [currentArrowSkin, setCurrentArrowSkin] = useState<ArrowSkinId>('default');
   const [currentParticleSkin, setCurrentParticleSkin] = useState<string>('default');
   const [scrollSpeed, setScrollSpeedState] = useState(() => {
+    if (typeof window === 'undefined') return 480;
     const saved = localStorage.getItem('display_scroll_speed');
     return saved ? Number(saved) : 480;
   });
   const [audioOffset, setAudioOffsetState] = useState(() => {
+    if (typeof window === 'undefined') return 0;
     const saved = localStorage.getItem('display_audio_offset');
     return saved ? Number(saved) : 0;
   });
   const [showEarlyLate, setShowEarlyLateState] = useState(() => {
+    if (typeof window === 'undefined') return true;
     const saved = localStorage.getItem('display_show_early_late');
     return saved ? saved === 'true' : true;
   });
   const [showPrecisionMS, setShowPrecisionMSState] = useState(() => {
+    if (typeof window === 'undefined') return false;
     const saved = localStorage.getItem('display_precision_ms');
     return saved ? saved === 'true' : false;
   });
@@ -343,6 +350,7 @@ function PlayPageContent() {
   const [calibrationOffsets, setCalibrationOffsets] = useState<number[]>([]);
   const [detectedOffset, setDetectedOffset] = useState<number | null>(null);
   const [audioOutput, setAudioOutput] = useState(() => {
+    if (typeof window === 'undefined') return 'stereo';
     const saved = localStorage.getItem('audio_output');
     return saved ? saved : 'stereo';
   });
@@ -387,12 +395,15 @@ function PlayPageContent() {
   const [graphicsAutoDetecting, setGraphicsAutoDetecting] = useState(false);
 
   const [colorblindMode, setColorblindMode] = useState(() => {
+    if (typeof window === 'undefined') return 'none';
     return localStorage.getItem('display_colorblind_mode') || 'none';
   });
   const [highContrast, setHighContrast] = useState(() => {
+    if (typeof window === 'undefined') return false;
     return localStorage.getItem('display_high_contrast') === 'true';
   });
   const [tactileControls, setTactileControls] = useState(() => {
+    if (typeof window === 'undefined') return false;
     return localStorage.getItem('display_tactile') === 'true';
   });
 
@@ -2935,7 +2946,7 @@ function PlayPageContent() {
                                 </div>
 
                                 {/* Última Partida inline */}
-                                {getLastMatch(selectedTrack.id) && (
+                                {isHydrated && getLastMatch(selectedTrack.id) && (
                                   <div onClick={() => setShowLastMatchDetail(selectedTrack.id)} className="cursor-pointer bg-gradient-to-r from-neon-purple/10 to-transparent border border-neon-purple/20 p-3 rounded-xl hover:bg-neon-purple/15 transition-all">
                                     <div className="flex items-center justify-between mb-2">
                                       <div className="flex items-center gap-3">
@@ -3987,8 +3998,8 @@ function PlayPageContent() {
                             {[
                               { id: 'none', label: 'Ninguno', icon: I.eye, color: 'border-white/30 bg-white/10' },
                               { id: 'protanopia', label: 'Protanop&iacute;a', icon: I.eyeOff, color: 'border-green-500/60 bg-green-500/20' },
-                              { id: 'deuteranopia', label: 'Deuteranop&iacute;a', icon: I.eyeOff, color: 'border-yellow-500/60 bg-yellow-500/20' },
-                              { id: 'tritanopia', label: 'Tritanop&iacute;a', icon: I.eyeOff, color: 'border-blue-500/60 bg-blue-500/20' },
+                              { id: 'deuteranopia', label: 'Deuteranopía', icon: I.eyeOff, color: 'border-yellow-500/60 bg-yellow-500/20' },
+                              { id: 'tritanopia', label: 'Tritanopía', icon: I.eyeOff, color: 'border-blue-500/60 bg-blue-500/20' },
                               { id: 'achromatopsia', label: 'Acromatopsia', icon: I.contrast, color: 'border-gray-400/60 bg-gray-400/20' },
                             ].map(m => (
                               <button key={m.id} onClick={() => { setColorblindMode(m.id); localStorage.setItem('display_colorblind_mode', m.id); }}
@@ -3998,7 +4009,7 @@ function PlayPageContent() {
                                     : 'bg-white/5 border-transparent text-gray-400 hover:bg-white/10'
                                 }`}>
                                 <div className="w-3.5 h-3.5">{m.icon}</div>
-                                <span dangerouslySetInnerHTML={{ __html: m.label }} />
+                                <span>{m.label}</span>
                               </button>
                             ))}
                           </div>
