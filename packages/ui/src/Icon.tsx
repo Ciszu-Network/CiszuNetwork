@@ -2,8 +2,23 @@
 
 import React, { useState } from 'react';
 import DOMPurify from 'dompurify';
+import type { Config as DOMPurifyConfig } from 'dompurify';
 import { resolveIcon, type IconStyle, type IconFormat } from '@ciszunetwork/cdn';
 import { getIcon, iconRegistry } from './generated/icon-registry';
+
+// Allowlist SVG: DOMPurify por defecto elimina xlink:href, clip-path, fill-rule,
+// defs/use/clipPath — los iconos con defs+use (banderas, varios outline) se
+// rompían tras navegación cliente. Se preserva todo el contenido SVG propio.
+const sanitizeConfig: DOMPurifyConfig = {
+  USE_PROFILES: { svg: true, svgFilters: true },
+  ADD_TAGS: ['use', 'clipPath', 'defs', 'symbol', 'marker', 'pattern', 'mask', 'filter', 'foreignObject'],
+  ADD_ATTR: [
+    'xlink:href', 'href', 'clip-path', 'fill-rule', 'fill-opacity',
+    'stroke-width', 'stroke-linecap', 'stroke-linejoin', 'stroke-opacity',
+    'stop-color', 'stop-opacity', 'gradientTransform', 'patternTransform',
+    'transform', 'd', 'points', 'viewBox', 'xmlns', 'x', 'y', 'x1', 'y1', 'x2', 'y2',
+  ],
+};
 
 export interface IconProps extends Omit<React.HTMLAttributes<HTMLElement>, 'style' | 'color' | 'className'> {
   /** Nombre del icono */
@@ -57,32 +72,6 @@ export const Icon: React.FC<IconProps> = ({
 }) => {
   const entry = !forceLocal && format === 'svg' ? getIcon(style, name) : undefined;
 
-  // Cache por contenido (sanitizar una sola vez por entrada)
-  const sanitizedCache = new Map<string, string>();
-
-  const sanitizeInner = (html: string): string => {
-    if (typeof window === 'undefined' || typeof DOMPurify.sanitize !== 'function') {
-      // SSR: el registro es generado desde shared/icons (fuente propia, sin input de usuario)
-      return html;
-    }
-    if (sanitizedCache.has(html)) return sanitizedCache.get(html)!;
-    // Allowlist SVG: DOMPurify por defecto elimina xlink:href, clip-path, fill-rule,
-    // defs/use/clipPath — los iconos con defs+use (banderas, varios outline) se
-    // rompían tras navegación cliente. Se preserva todo el contenido SVG propio.
-    const sanitized = DOMPurify.sanitize(html, {
-      USE_PROFILES: { svg: true, svgFilters: true },
-      ADD_TAGS: ['use', 'clipPath', 'defs', 'symbol', 'marker', 'pattern', 'mask', 'filter', 'foreignObject'],
-      ADD_ATTR: [
-        'xlink:href', 'href', 'clip-path', 'fill-rule', 'fill-opacity',
-        'stroke-width', 'stroke-linecap', 'stroke-linejoin', 'stroke-opacity',
-        'stop-color', 'stop-opacity', 'gradientTransform', 'patternTransform',
-        'transform', 'd', 'points', 'viewBox', 'xmlns', 'x', 'y', 'x1', 'y1', 'x2', 'y2',
-      ],
-    });
-    sanitizedCache.set(html, sanitized);
-    return sanitized;
-  };
-
   const inlineStyles: React.CSSProperties = {
     width: typeof size === 'number' ? `${size}px` : size,
     height: typeof size === 'number' ? `${size}px` : size,
@@ -104,7 +93,7 @@ export const Icon: React.FC<IconProps> = ({
         style={{ color, ...inlineStyles }}
         {...(props as React.SVGProps<SVGSVGElement>)}
       >
-        <g dangerouslySetInnerHTML={{ __html: sanitizeInner(entry.inner) }} />
+        <g dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(entry.inner, sanitizeConfig) }} />
       </svg>
     );
   }
