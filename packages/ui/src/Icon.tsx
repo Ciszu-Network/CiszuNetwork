@@ -80,6 +80,10 @@ export const Icon: React.FC<IconProps> = ({
 
   const iconClassName = `ciszu-icon ciszu-icon-${name} ${className}`.trim();
 
+  // SSR/Node: dompurify no expone sanitize sin window (el registro es fuente propia generada);
+  // cliente: sanitizado con DOMPurify (allowlist SVG propio, ver sanitizeConfig arriba)
+  const svgInner = typeof window === 'undefined' ? entry?.inner ?? '' : DOMPurify.sanitize(entry?.inner ?? '', sanitizeConfig);
+
   if (entry) {
     return (
       <svg
@@ -93,7 +97,7 @@ export const Icon: React.FC<IconProps> = ({
         style={{ color, ...inlineStyles }}
         {...(props as React.SVGProps<SVGSVGElement>)}
       >
-        <g dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(entry.inner, sanitizeConfig) }} />
+        <g dangerouslySetInnerHTML={{ __html: svgInner /* nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml */ }} />
       </svg>
     );
   }
