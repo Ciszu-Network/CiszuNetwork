@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 const crypto = require('crypto');
 const sharp = require('sharp');
 
@@ -454,40 +454,40 @@ function embedMetadata(track, srcMp3, srcOgg, coverPath) {
   const finalOgg = path.join(dir, `${track.id}.ogg`);
 
   // MP3 with embedded cover
-  const mp3Cmd = [
-    `"${FFMPEG_PATH}" -y -i "${srcMp3}" -i "${coverPath}"`,
-    '-map 0:a -map 1',
-    '-c copy -c:v mjpeg',
-    `-metadata title="${track.title}"`,
-    `-metadata artist="${track.artist}"`,
-    `-metadata album="${track.album}"`,
-    `-metadata date="${track.year}"`,
-    `-metadata genre="${track.genre}"`,
-    `-metadata track="${track.trackNumber}"`,
-    `-metadata TBPM="${track.bpm}"`,
-    `-metadata description="${track.description}"`,
-    `-metadata:s:v title="Album cover"`,
-    `-metadata:s:v comment="Cover (front)"`,
-    '-disposition:v attached_pic',
-    `"${finalMp3}"`,
-  ].join(' ');
-  execSync(mp3Cmd, { stdio: 'pipe', encoding: 'utf-8' });
+  const mp3Args = [
+    '-y', '-i', srcMp3, '-i', coverPath,
+    '-map', '0:a', '-map', '1',
+    '-c', 'copy', '-c:v', 'mjpeg',
+    '-metadata', `title=${track.title}`,
+    '-metadata', `artist=${track.artist}`,
+    '-metadata', `album=${track.album}`,
+    '-metadata', `date=${track.year}`,
+    '-metadata', `genre=${track.genre}`,
+    '-metadata', `track=${track.trackNumber}`,
+    '-metadata', `TBPM=${track.bpm}`,
+    '-metadata', `description=${track.description}`,
+    '-metadata:s:v', 'title=Album cover',
+    '-metadata:s:v', 'comment=Cover (front)',
+    '-disposition:v', 'attached_pic',
+    finalMp3,
+  ];
+  execFileSync(FFMPEG_PATH, mp3Args, { stdio: 'pipe', encoding: 'utf-8' });
   console.log(`  MP3: ${track.id}.mp3 (with embedded cover)`);
 
   // OGG with text metadata only (no cover support in OGG)
-  const oggCmd = [
-    `"${FFMPEG_PATH}" -y -i "${srcOgg}"`,
-    '-c copy',
-    `-metadata title="${track.title}"`,
-    `-metadata artist="${track.artist}"`,
-    `-metadata album="${track.album}"`,
-    `-metadata date="${track.year}"`,
-    `-metadata genre="${track.genre}"`,
-    `-metadata track="${track.trackNumber}"`,
-    `-metadata description="${track.description}"`,
-    `"${finalOgg}"`,
-  ].join(' ');
-  execSync(oggCmd, { stdio: 'pipe', encoding: 'utf-8' });
+  const oggArgs = [
+    '-y', '-i', srcOgg,
+    '-c', 'copy',
+    '-metadata', `title=${track.title}`,
+    '-metadata', `artist=${track.artist}`,
+    '-metadata', `album=${track.album}`,
+    '-metadata', `date=${track.year}`,
+    '-metadata', `genre=${track.genre}`,
+    '-metadata', `track=${track.trackNumber}`,
+    '-metadata', `description=${track.description}`,
+    finalOgg,
+  ];
+  execFileSync(FFMPEG_PATH, oggArgs, { stdio: 'pipe', encoding: 'utf-8' });
   console.log(`  OGG: ${track.id}.ogg`);
 
   // Clean old audio.mp3 and audio.ogg
@@ -528,7 +528,7 @@ async function main() {
     // Convert OGG from MP3 if OGG missing
     if (!fs.existsSync(srcOgg)) {
       console.log('  Converting MP3 to OGG...');
-      execSync(`"${FFMPEG_PATH}" -y -i "${srcMp3}" -c:a libvorbis -q:a 5 "${srcOgg}"`, { stdio: 'pipe' });
+      execFileSync(FFMPEG_PATH, ['-y', '-i', srcMp3, '-c:a', 'libvorbis', '-q:a', '5', srcOgg], { stdio: 'pipe' });
     }
 
     // Embed metadata and rename to track.id.ext

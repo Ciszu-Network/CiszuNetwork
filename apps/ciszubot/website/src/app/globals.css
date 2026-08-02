@@ -1,9 +1,199 @@
 @import "tailwindcss";
 
+/* ============================================================
+   CISZUBOT — GLOBAL STYLES
+   Neon/Synthwave/Futurista — Tailwind v4 (mismo tema que MuzicMania)
+   ============================================================ */
+
 @theme {
-  --color-primary: #4f46e5;
-  --color-secondary: #8b5cf6;
-  --color-accent: #06b6d4;
-  --color-dark: #0f172a;
-  --color-card: #1e293b;
+  /* Fonts */
+  --font-sans:   var(--font-exo2), ui-sans-serif, system-ui;
+  --font-header: var(--font-rajdhani), sans-serif;
+
+  /* Neon Colors */
+  --color-neon-blue:    #59b4ffff;
+  --color-neon-cyan:    #68cfffff;
+  --color-neon-pink:    #ff33cc;
+  --color-neon-purple:  #4800ffff;
+  --color-neon-green:   #00ff88;
+  --color-neon-sky:     #56d5ffff;
+  --color-neon-electric:#0099ff;
+  --color-neon-orange:  #ff6600;
+  --color-neon-yellow:  #ffd900;
+  --color-neon-red:     #ff0000;
+
+  /* Backgrounds */
+  --color-bg-dark:   #000000ff;
+  --color-bg-darker: #000617ffff;
+
+  /* Neon Box Shadows */
+  --shadow-neon-blue:   0 0 10px #55e3ffff, 0 0 25px rgba(0, 128, 255, 0.52), 0 0 50px rgba(0,212,255,.15);
+  --shadow-neon-cyan:   0 0 10px #00f0ff, 0 0 25px rgba(0, 157, 255, 0.57);
+  --shadow-neon-pink:   0 0 10px #ff33cc, 0 0 25px rgba(255, 80, 211, 0.35), 0 0 50px rgba(255,51,204,.15);
+  --shadow-neon-purple: 0 0 10px #8000ff, 0 0 25px hsla(270, 100%, 66%, 0.35), 0 0 50px rgba(128,0,255,.15);
+  --shadow-neon-green:  0 0 10px #00ff88, 0 0 25px rgba(51, 255, 160, 0.49);
+  --shadow-neon-orange: 0 0 10px #ff6600, 0 0 25px rgba(255, 102, 0, 0.49);
+  --shadow-neon-yellow: 0 0 10px #ffd900, 0 0 25px rgba(255, 217, 0, 0.49);
+  --shadow-neon-red:    0 0 10px #ff0000, 0 0 25px rgba(255, 0, 0, 0.49);
+
+  /* Neon Drop Shadows (filter) */
+  --drop-shadow-neon-blue:   drop-shadow(0 0 8px #0073ff9d) drop-shadow(0 0 20px rgba(0,212,255,.4));
+  --drop-shadow-neon-cyan:   drop-shadow(0 0 8px #009dff8c) drop-shadow(0 0 20px rgba(0,240,255,.4));
+  --drop-shadow-neon-pink:   drop-shadow(0 0 8px #ff33cc) drop-shadow(0 0 20px rgba(255,51,204,.4));
+  --drop-shadow-neon-purple: drop-shadow(0 0 8px #8000ff) drop-shadow(0 0 20px rgba(128,0,255,.4));
+}
+
+/* ── Base Layer ─────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: #000000;
+    color: #fff;
+    font-family: var(--font-sans);
+    min-height: 100vh;
+  }
+
+  a, button, [role="button"], label[for], summary {
+    cursor: pointer;
+  }
+
+  ::-webkit-scrollbar       { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #000000; }
+  ::-webkit-scrollbar-thumb { background: rgba(0,212,255,.3); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(0,212,255,.6); }
+
+  h1, h2, h3 { font-family: var(--font-header); }
+
+  ::selection {
+    background: rgba(0,212,255,.25);
+    color: #fff;
+  }
+}
+
+/* ── Utilities Layer ────────────────────────────────────── */
+@layer utilities {
+  /* Neon text glows */
+  .text-shadow-neon-blue   { text-shadow: 0 0 10px rgba(0,212,255,.8),   0 0 25px rgba(0,212,255,.4); }
+  .text-shadow-neon-cyan   { text-shadow: 0 0 10px rgba(0,240,255,.8),   0 0 25px rgba(0,240,255,.4); }
+  .text-shadow-neon-pink   { text-shadow: 0 0 10px rgba(255,51,204,.8),  0 0 25px rgba(255,51,204,.4); }
+  .text-shadow-neon-purple { text-shadow: 0 0 10px rgba(128,0,255,.8),   0 0 25px rgba(128,0,255,.4); }
+  .text-shadow-neon-green  { text-shadow: 0 0 10px rgba(0,255,136,.8),   0 0 25px rgba(0,255,136,.4); }
+
+  .drop-shadow-neon-blue   { filter: var(--drop-shadow-neon-blue); }
+  .drop-shadow-neon-cyan   { filter: var(--drop-shadow-neon-cyan); }
+  .drop-shadow-neon-pink   { filter: var(--drop-shadow-neon-pink); }
+  .drop-shadow-neon-purple { filter: var(--drop-shadow-neon-purple); }
+
+  /* Glassmorphism preset */
+  .glass {
+    background: rgba(0,0,0,.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,.08);
+  }
+
+  .hover-lift {
+    transition: transform .28s cubic-bezier(.175,.885,.32,1.275),
+                box-shadow .28s ease,
+                border-color .28s ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 12px 30px rgba(0,212,255,.2);
+  }
+
+  .hover-neon-blue:hover   { box-shadow: var(--shadow-neon-blue);   border-color: var(--color-neon-blue) !important; }
+  .hover-neon-pink:hover   { box-shadow: var(--shadow-neon-pink);   border-color: var(--color-neon-pink) !important; }
+  .hover-neon-purple:hover { box-shadow: var(--shadow-neon-purple); border-color: var(--color-neon-purple) !important; }
+
+  .btn-social-discord { background: #5865F2 !important; color: white !important; border: none !important; }
+  .btn-social-x { background: #000000 !important; color: white !important; border: 1px solid rgba(255,255,255,0.2) !important; }
+  .btn-social-github { background: #333333 !important; color: white !important; border: none !important; }
+  .btn-social-youtube { background: #FF0000 !important; color: white !important; border: none !important; }
+
+  .btn-social-discord:hover, .btn-social-x:hover, .btn-social-github:hover, .btn-social-youtube:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+
+  .bg-electric-blue {
+    background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%) !important;
+  }
+  .bg-electric-blue:hover {
+    background: linear-gradient(135deg, #3a7bd5 0%, #8e2de2 100%) !important;
+  }
+
+  .bg-electric-pink {
+    background: linear-gradient(135deg, #f953c6 0%, #b91d73 100%) !important;
+  }
+  .bg-electric-pink:hover {
+    background: linear-gradient(135deg, #b91d73 0%, #5d26c1 100%) !important;
+  }
+
+  .active-depth {
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .active-depth:active {
+    transform: scale(0.92) translateY(2px);
+    filter: brightness(0.9);
+  }
+
+  .border-neon-cyan   { border-color: var(--color-neon-cyan) !important; }
+  .border-neon-purple { border-color: var(--color-neon-purple) !important; }
+  .border-neon-pink   { border-color: var(--color-neon-pink) !important; }
+  .border-neon-blue   { border-color: var(--color-neon-blue) !important; }
+  .border-neon-red    { border-color: var(--color-neon-red) !important; }
+  .border-neon-green  { border-color: var(--color-neon-green) !important; }
+  .border-neon-orange { border-color: var(--color-neon-orange) !important; }
+  .border-neon-yellow { border-color: var(--color-neon-yellow) !important; }
+
+  .hover-glow-cyan:hover   { box-shadow: 0 0 20px rgba(0, 240, 255, 0.4); border-color: var(--color-neon-cyan) !important; }
+  .hover-glow-purple:hover { box-shadow: 0 0 20px rgba(128, 0, 255, 0.4); border-color: var(--color-neon-purple) !important; }
+  .hover-glow-pink:hover   { box-shadow: 0 0 20px rgba(255, 51, 204, 0.4); border-color: var(--color-neon-pink) !important; }
+  .hover-glow-blue:hover   { box-shadow: 0 0 20px rgba(0, 212, 255, 0.4); border-color: var(--color-neon-blue) !important; }
+  .hover-glow-green:hover  { box-shadow: 0 0 20px rgba(0, 255, 136, 0.4); border-color: var(--color-neon-green) !important; }
+  .hover-glow-discord:hover { box-shadow: 0 0 20px rgba(88, 101, 242, 0.6); }
+}
+
+/* ── Keyframe Animations ────────────────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+@keyframes pulse-neon {
+  0%, 100% { box-shadow: 0 0 5px  rgba(0,212,255,.3); }
+  50%       { box-shadow: 0 0 25px rgba(0,212,255,.7); }
+}
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in-down {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(20px, -20px) scale(1.05); }
+  66%       { transform: translate(-15px, 15px) scale(0.97); }
+}
+
+@layer utilities {
+  .animate-float       { animation: float 6s ease-in-out infinite; }
+  .animate-pulse-neon  { animation: pulse-neon 2s ease-in-out infinite; }
+  .animate-fade-in-up  { animation: fade-in-up .2s ease forwards; }
+  .animate-fade-in-down{ animation: fade-in-down .2s ease forwards; }
+  .animate-blob        { animation: blob 10s ease-in-out infinite; }
+  .animation-delay-2000 { animation-delay: 2s; }
+  .animation-delay-4000 { animation-delay: 4s; }
 }

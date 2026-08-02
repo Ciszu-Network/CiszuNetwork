@@ -7,7 +7,7 @@
  * Uso: node scripts/cdn-upload-cli.js [--diff]
  *   --diff:  Solo sube fuentes cuyos archivos locales existen y no están en CDN
  */
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -33,11 +33,11 @@ const SOURCES = [
 
 const DIFF = process.argv.includes('--diff');
 
-function run(cmd, label) {
+function run(args, label) {
   console.log(`\n  [UPLOAD] ${label}`);
-  console.log(`  > ${cmd.substring(0, 120)}...`);
+  console.log(`  > ${args.join(' ').substring(0, 120)}...`);
   try {
-    const out = execSync(cmd, {
+    const out = execFileSync('supabase', args, {
       cwd: SUPABASE_DIR,
       timeout: 600000,  // 10 min per source
       env: { ...process.env, SUPABASE_ACCESS_TOKEN: process.env.SUPABASE_ACCESS_TOKEN },
@@ -81,10 +81,10 @@ function main() {
     const cdnPath = src.replace(/\\/g, '/');
     const localPath = srcPath;
 
-    const cmd = `supabase storage cp -r --experimental --jobs 50 --linked "${localPath}" "ss:///${BUCKET}/${cdnPath}/"`;
+    const args = ['storage', 'cp', '-r', '--experimental', '--jobs', '50', '--linked', localPath, `ss:///${BUCKET}/${cdnPath}/`];
     const label = src;
     
-    if (run(cmd, label)) ok++;
+    if (run(args, label)) ok++;
     else err++;
   }
 

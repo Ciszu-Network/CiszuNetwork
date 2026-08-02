@@ -1,3 +1,0 @@
-# Fast Texts
-
-1. 

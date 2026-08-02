@@ -33,4 +33,4 @@ jobs:
       - uses: returntocorp/semgrep-action@v1
         with:
           config: p/security-audit
-          publish-token: ${{ secrets.SEMGREP_APP_TOKEN }}
+          publishToken: ${{ secrets.SEMGREP_APP_TOKEN }}
