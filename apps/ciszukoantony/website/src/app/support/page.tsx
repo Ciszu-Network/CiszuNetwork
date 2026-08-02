@@ -79,6 +79,36 @@ export default function SupportPage() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          className="p-6 rounded-2xl bg-white/5 border border-white/10 mb-12"
+        >
+          <h2 className="text-xl font-header font-bold text-white mb-4 flex items-center gap-3">
+            <span className="w-2 h-2 rounded-full bg-brand" />
+            Support the Project
+          </h2>
+          <p className="text-gray-400 text-sm leading-relaxed mb-6">
+            Your donations keep the ecosystem alive. Every contribution helps with hosting,
+            development and new features.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <a href="https://www.patreon.com/cw/ciszukoantony" target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-sm text-gray-300 hover:text-white hover:border-brand/50 transition-all">
+              <span className="w-2 h-2 rounded-full bg-[#FF424D]" />
+              Patreon
+            </a>
+            <a href="https://ko-fi.com/ciszukoantony" target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-sm text-gray-300 hover:text-white hover:border-brand/50 transition-all">
+              <span className="w-2 h-2 rounded-full bg-[#29ABE0]" />
+              Ko-fi
+            </a>
+            <a href="https://buymeacoffee.com/ciszukoantony" target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-sm text-gray-300 hover:text-white hover:border-brand/50 transition-all">
+              <span className="w-2 h-2 rounded-full bg-[#FFDD00]" />
+              Buy Me a Coffee
+            </a>
+          </div>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
           className="p-6 rounded-2xl bg-white/[0.02] border border-white/5"
         >
           <h2 className="text-lg font-header font-bold text-white mb-4">Quick Help</h2>

@@ -126,7 +126,7 @@ export default function Footer({ lang, dict }: FooterProps) {
               <span className="text-sm text-muted">
                 Slash: <code className="text-brand-600 dark:text-brand-300 bg-card border border-border px-1.5 py-0.5 rounded">/comandos</code>
               </span>
-              <span className="text-sm text-muted">12 comandos · 4 categorías</span>
+              <span className="text-sm text-muted">20 comandos · 4 categorías</span>
             </div>
 
             <div className="flex flex-col gap-2.5">

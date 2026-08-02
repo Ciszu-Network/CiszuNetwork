@@ -7,6 +7,7 @@
 - [ ] **CDN Migration**: Migrar assets multimedia del bot a Supabase Storage
 - [ ] **Desarrollar bot** (apps/ciszubot/discord-bot/ — ya existe el directorio)
     - [ ] Definir lista de comandos slash
+    - [ ] Crear aun mas comandos (50 mas)
     - [ ] Termianr de implementar comandos básicos (ping, info, help)
     - [ ] Implementar comandos de moderación
 

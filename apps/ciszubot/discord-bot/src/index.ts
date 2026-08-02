@@ -42,7 +42,7 @@ client.once(Events.ClientReady, async (readyClient) => {
         online: true,
         guilds: readyClient.guilds.cache.size,
         commandsTotal: getTotalCommands(),
-        version: 'v3.0.0',
+        version: 'v3.1.0',
         lastSeen: new Date(),
       });
     } catch (error) {
@@ -270,7 +270,7 @@ function gracefulShutdown(signal: string): void {
     online: false,
     guilds: client.guilds.cache.size,
     commandsTotal: getTotalCommands(),
-    version: 'v3.0.0',
+    version: 'v3.1.0',
     lastSeen: new Date(),
   }).catch(() => undefined);
   if (client.readyAt) client.destroy();

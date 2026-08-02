@@ -57,6 +57,13 @@ export const Icon: React.FC<IconProps> = ({
 }) => {
   const entry = !forceLocal && format === 'svg' ? getIcon(style, name) : undefined;
 
+  const sanitizeInner = (html: string): string => {
+    if (typeof window !== 'undefined' && typeof DOMPurify.sanitize === 'function') {
+      return DOMPurify.sanitize(html);
+    }
+    return html;
+  };
+
   const inlineStyles: React.CSSProperties = {
     width: typeof size === 'number' ? `${size}px` : size,
     height: typeof size === 'number' ? `${size}px` : size,
@@ -78,7 +85,7 @@ export const Icon: React.FC<IconProps> = ({
         style={{ color, ...inlineStyles }}
         {...(props as React.SVGProps<SVGSVGElement>)}
       >
-        <g dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(entry.inner) }} />
+        <g dangerouslySetInnerHTML={{ __html: sanitizeInner(entry.inner) }} />
       </svg>
     );
   }

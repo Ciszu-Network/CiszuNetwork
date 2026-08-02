@@ -1,10 +1,12 @@
 import { ActionRowBuilder, EmbedBuilder, SlashCommandBuilder, StringSelectMenuBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
+import { LINKS } from '../config/links';
 
 const emojiMap: Record<string, string> = {
   ping: '🏓', pong: '🏓', help: '📖', say: '💬', directsay: '💬', confess: '🤫',
   hi: '👋', bye: '👋', profile: '👤', test: '🧪', info: 'ℹ️', stats: '📊',
   server: '🏠', user: '👤', '8ball': '🎱', serverinfo: '🏠',
+  bump: '🚀', promo: '🌐', invite: '🤖', vote: '🗳️', donate: '💜', links: '🔗', status: '📊',
 };
 
 const command: BotCommand = {
@@ -94,6 +96,11 @@ const command: BotCommand = {
         name: '🌟 Consejos Rápidos',
         value: '• Usa `cz!help <comando>` para info detallada\n• Puedes mencionarme en lugar del prefijo\n• Los comandos no distinguen mayúsculas',
         inline: true,
+      },
+      {
+        name: '🌐 Web oficial',
+        value: `Estado en vivo, comandos, votación y soporte: ${LINKS.website}`,
+        inline: false,
       },
     );
 

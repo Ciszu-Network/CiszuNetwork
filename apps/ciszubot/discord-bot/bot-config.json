@@ -1,6 +1,6 @@
 {
   "activity": {
-    "name": "cz!help | cz!comandos",
+    "name": "cz!help | cz!links | cz!bump",
     "type": "PLAYING"
   },
   "colors": {
@@ -8,5 +8,5 @@
     "secondary": "#8b5cf6"
   },
   "prefix": "cz!",
-  "version": "2.5.5"
+  "version": "3.1.0"
 }
