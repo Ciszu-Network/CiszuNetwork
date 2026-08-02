@@ -104,16 +104,17 @@ const command: BotCommand = {
       },
     );
 
-    // Menú de selección (gestionado globalmente en index.ts → customId help_select)
+    // Menú de selección por categorías (máx. 25 opciones del API de Discord)
+    const catOptions = Array.from(new Set(allCommands.map((c) => c.category || 'General'))).sort();
     const selectMenu = new StringSelectMenuBuilder()
       .setCustomId('help_select')
-      .setPlaceholder('Selecciona un comando para más información')
+      .setPlaceholder('Selecciona una categoría de comandos')
       .addOptions(
-        allCommands.map((c) => ({
-          label: c.name,
-          description: c.description || 'Sin descripción',
-          value: c.name,
-          emoji: emojiMap[c.name] || '⚡',
+        catOptions.slice(0, 25).map((cat) => ({
+          label: cat,
+          description: `Comandos de la categoría ${cat}`,
+          value: `cat:${cat}`,
+          emoji: '📁',
         })),
       );
 
