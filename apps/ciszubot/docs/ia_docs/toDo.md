@@ -12,6 +12,7 @@
 
 ## Prioridad Media
 
+- [ ] **BUG iconos en navbar (documentado, sin arreglar)**: al inicio los iconos se muestran (SSR inline), pero al rato o al cambiar de página se pierden — consola: `shield.svg:1 404` y `gift.svg:1 404`. Datos: `gift` y `shield` SÍ están en `icon-registry.ts` (líneas ~137/142, SVGs Font Awesome) y los archivos `outline/*.svg` NO existen en `shared/icons/svg` (solo `filled`), pero el registry los tiene → la pérdida ocurre porque en navegación cliente `getIcon(style, name)` devuelve undefined (causa exacta por investigar: ¿style pedido distinto, hidratación del módulo client, o ICON_LIST con nombres sin archivo?) → cae al fallback CDN → el bucket `ciszu-cdn` tampoco tiene esos SVGs → 404. Ver `docs/ia_docs/ICON_SYSTEM.md` → sección "Bug conocido"
 - [ ] **Invalidar caché de config del bot** desde el dashboard (hoy los cambios requieren reinicio del bot)
 - [ ] **Más comandos**: eventos, sorteos avanzados, economías por guild
 - [ ] **Dependabot moderate pendiente**: revisar `https://github.com/Ciszu-Network/CiszuNetwork/security/dependabot/12` (1 moderate nueva)
