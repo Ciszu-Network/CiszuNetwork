@@ -4,7 +4,7 @@ export interface CommandInfo {
   aliases: string[];
   usage: string;
   category: 'Diversión' | 'Información' | 'Social' | 'Utilidad';
-  emoji: string;
+  icon: string;
 }
 
 export const COMMANDS: CommandInfo[] = [
@@ -14,7 +14,7 @@ export const COMMANDS: CommandInfo[] = [
     aliases: ['ayuda', 'comandos', 'botinfo', 'cmds', 'cmd'],
     usage: 'cz!help [comando]',
     category: 'Información',
-    emoji: '📖',
+    icon: 'help',
   },
   {
     name: 'ping',
@@ -22,7 +22,7 @@ export const COMMANDS: CommandInfo[] = [
     aliases: ['latencia', 'ms', 'pingpong', 'p'],
     usage: 'cz!ping',
     category: 'Utilidad',
-    emoji: '📨',
+    icon: 'wifi',
   },
   {
     name: 'pong',
@@ -30,7 +30,7 @@ export const COMMANDS: CommandInfo[] = [
     aliases: ['latencia2', 'ms2', 'pongping', 'p2'],
     usage: 'cz!pong',
     category: 'Utilidad',
-    emoji: '🏓',
+    icon: 'wifi',
   },
   {
     name: 'hi',
@@ -38,7 +38,7 @@ export const COMMANDS: CommandInfo[] = [
     aliases: ['hola', 'saludar', 'saludo', 'hello', 'hey', 'hihi', 'h'],
     usage: 'cz!hi',
     category: 'Social',
-    emoji: '👋',
+    icon: 'hand',
   },
   {
     name: 'bye',
@@ -46,7 +46,7 @@ export const COMMANDS: CommandInfo[] = [
     aliases: ['adios', 'despedir', 'despedida', 'chao', 'byebye', 'b'],
     usage: 'cz!bye',
     category: 'Social',
-    emoji: '👋',
+    icon: 'flag',
   },
   {
     name: 'say',
@@ -54,7 +54,7 @@ export const COMMANDS: CommandInfo[] = [
     aliases: ['decir', 'di', 'pronunciar', 'repetir', 's', 'repeat'],
     usage: 'cz!say <mensaje>',
     category: 'Diversión',
-    emoji: '🗣️',
+    icon: 'message',
   },
   {
     name: 'directsay',
@@ -62,7 +62,7 @@ export const COMMANDS: CommandInfo[] = [
     aliases: ['decirdirecto', 'deds', 'dsay', 'ds', 'repeatdirect'],
     usage: 'cz!directsay <mensaje>',
     category: 'Diversión',
-    emoji: '💬',
+    icon: 'comment',
   },
   {
     name: 'confess',
@@ -70,7 +70,7 @@ export const COMMANDS: CommandInfo[] = [
     aliases: ['confesar', 'anonimo', 'secreto', 'c', 'confession'],
     usage: 'cz!confess <mensaje>',
     category: 'Diversión',
-    emoji: '🤫',
+    icon: 'lock',
   },
   {
     name: '8ball',
@@ -78,7 +78,7 @@ export const COMMANDS: CommandInfo[] = [
     aliases: ['bola8', 'pregunta', 'oraculo', '8b', 'magicball'],
     usage: 'cz!8ball <pregunta>',
     category: 'Diversión',
-    emoji: '🎱',
+    icon: 'star',
   },
   {
     name: 'profile',
@@ -86,7 +86,7 @@ export const COMMANDS: CommandInfo[] = [
     aliases: ['perfil', 'usuario', 'userinfo', 'u'],
     usage: 'cz!profile [@usuario]',
     category: 'Información',
-    emoji: '📛',
+    icon: 'user',
   },
   {
     name: 'serverinfo',
@@ -94,7 +94,7 @@ export const COMMANDS: CommandInfo[] = [
     aliases: ['servidor', 'infoserver', 'guild', 'server', 'guildinfo'],
     usage: 'cz!serverinfo',
     category: 'Información',
-    emoji: '🛰️',
+    icon: 'server',
   },
   {
     name: 'test',
@@ -102,8 +102,15 @@ export const COMMANDS: CommandInfo[] = [
     aliases: ['prueba', 'testear', 'verificar', 't', 'check'],
     usage: 'cz!test',
     category: 'Utilidad',
-    emoji: '🧪',
+    icon: 'check',
   },
 ];
 
 export const CATEGORIES = ['Diversión', 'Información', 'Social', 'Utilidad'] as const;
+
+export const CATEGORY_ICONS: Record<(typeof CATEGORIES)[number], string> = {
+  Diversión: 'gamepad',
+  Información: 'info',
+  Social: 'people',
+  Utilidad: 'settings',
+};

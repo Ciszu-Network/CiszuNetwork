@@ -13,6 +13,18 @@ const ICON_LIST = [
   'check', 'download', 'delete', 'edit', 'add', 'remove', 'calendar', 'clock',
   'info', 'help', 'warning', 'error', 'refresh', 'share', 'mail', 'globe',
   'lock', 'eye', 'copy', 'pause',
+  // UI general (ciszubot web, status pages)
+  'moon', 'sun', 'discord', 'gamepad', 'hand', 'message', 'comment', 'support',
+  'terms', 'policies', 'faq', 'team', 'verified', 'wifi', 'id-card', 'headset',
+  'life-ring', 'key', 'external', 'security', 'favorite', 'flag', 'person',
+  'group', 'people', 'envelope', 'paper-plane', 'timer', 'watch-later',
+  'update', 'power', 'tv', 'credit-card', 'certificates', 'heart-pulse',
+  'language', 'play', 'gift',
+  // Solo disponibles en filled (se omiten en outline automáticamente)
+  'server', 'terminal', 'shield', 'users', 'signal', 'crown', 'dice', 'medal',
+  'trophy', 'robot', 'rocket', 'palette', 'arrow-right',
+  // Navegación / chevrons
+  'chevronRight', 'arrow-back',
 ];
 
 function parseSvg(filePath) {
@@ -58,7 +70,8 @@ function main() {
     lines.push(`  ${style}: {`);
     for (const name of names) {
       const entry = registry[style][name];
-      lines.push(`    ${name}: { viewBox: ${JSON.stringify(entry.viewBox)}, inner: ${JSON.stringify(entry.inner)} },`);
+      const key = /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(name) ? name : JSON.stringify(name);
+      lines.push(`    ${key}: { viewBox: ${JSON.stringify(entry.viewBox)}, inner: ${JSON.stringify(entry.inner)} },`);
     }
     lines.push('  },');
   }
