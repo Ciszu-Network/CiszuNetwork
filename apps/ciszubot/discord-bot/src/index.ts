@@ -168,6 +168,25 @@ client.on(Events.InteractionCreate, async (interaction) => {
   if (interaction.isStringSelectMenu() && interaction.customId === 'help_select') {
     await interaction.deferUpdate().catch(() => undefined);
     const selected = interaction.values[0];
+
+    // Categoría seleccionada → listar comandos de esa categoría
+    if (selected.startsWith('cat:')) {
+      const cat = selected.slice(4);
+      const cmds = Array.from(client.commands.commands.values()).filter((c) => (c.category || 'General') === cat);
+      if (cmds.length === 0) {
+        await interaction.followUp({ content: '❌ ¡Categoría no encontrada!', ephemeral: true }).catch(() => undefined);
+        return;
+      }
+      const catEmbed = new EmbedBuilder()
+        .setColor(config.colors.primary as `#${string}`)
+        .setTitle(`📁 ${cat} — ${cmds.length} comandos`)
+        .setDescription(cmds.map((c) => `\`${config.prefix}${c.name}\` - ${c.description || 'Sin descripción'}`).join('\n').slice(0, 4096))
+        .setFooter({ text: `CiszuBot • Solicitado por ${interaction.user.tag}`, iconURL: interaction.user.displayAvatarURL() })
+        .setTimestamp();
+      await interaction.followUp({ embeds: [catEmbed], ephemeral: true }).catch(() => undefined);
+      return;
+    }
+
     const command = client.commands.get(selected);
     if (!command) {
       await interaction.followUp({ content: '❌ ¡Comando no encontrado!', ephemeral: true }).catch(() => undefined);
