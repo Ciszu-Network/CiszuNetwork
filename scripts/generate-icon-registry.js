@@ -30,7 +30,7 @@ const ICON_LIST = [
   'life-ring', 'key', 'external', 'security', 'favorite', 'flag', 'person',
   'group', 'people', 'envelope', 'paper-plane', 'timer', 'watch-later',
   'update', 'power', 'tv', 'credit-card', 'certificates', 'heart-pulse',
-  'language', 'play', 'gift',
+  'language', 'play', 'gift', 'money', 'music',
   // Solo disponibles en filled (se omiten en outline automáticamente)
   'server', 'terminal', 'shield', 'users', 'signal', 'crown', 'dice', 'medal',
   'trophy', 'robot', 'rocket', 'palette', 'arrow-right',
