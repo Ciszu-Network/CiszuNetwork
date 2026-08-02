@@ -149,8 +149,13 @@ export default function DownloadPage() {
   const { showToast } = useAppStore();
   const [isDownloading, setIsDownloading] = useState<string | null>(null);
 
+  // Allowlist: valores válidos de SO y arquitectura (vienen de botones fijos)
+  const VALID_OS = new Set(['w10', 'w11']);
+  const VALID_ARCH = new Set(['x86', 'x64', 'arm']);
+
   const handleDownloadWindows = (e: React.MouseEvent, os: string, arch: string) => {
     e.preventDefault();
+    if (!VALID_OS.has(os) || !VALID_ARCH.has(arch)) return;
     if (!isArchAvailable(os, arch)) {
       const osName = os === 'w10' ? 'Windows 10' : 'Windows 11';
       const archName = arch === 'x86' ? '32 bits' : arch === 'x64' ? '64 bits' : 'ARM64';
@@ -158,8 +163,11 @@ export default function DownloadPage() {
       return;
     }
     setIsDownloading(`${os}-${arch}`);
+    const url = new URL('/api/download/windows', window.location.origin);
+    url.searchParams.set('os', os);
+    url.searchParams.set('arch', arch);
     setTimeout(() => {
-      window.location.href = `/api/download/windows?os=${os}&arch=${arch}`;
+      window.location.href = url.toString();
     }, 2000);
   };
 
