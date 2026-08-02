@@ -5,17 +5,139 @@
     "type": 1,
     "options": [
       {
+        "type": 3,
         "name": "pregunta",
         "description": "La pregunta que quieres hacerle a la bola 8",
-        "type": 3,
         "required": true
+      }
+    ]
+  },
+  {
+    "name": "afk",
+    "description": "Márquese como AFK con una razón",
+    "type": 1,
+    "options": [
+      {
+        "type": 3,
+        "name": "razon",
+        "description": "Razón del AFK",
+        "required": false
+      }
+    ]
+  },
+  {
+    "name": "alliance",
+    "description": "Forma una alianza con otro servidor",
+    "type": 1,
+    "options": [
+      {
+        "type": 3,
+        "name": "invite",
+        "description": "Invitación del servidor aliado",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "allies",
+    "description": "Muestra las alianzas del servidor",
+    "type": 1,
+    "options": []
+  },
+  {
+    "name": "animal",
+    "description": "Muestra una foto aleatoria de un animal (cat, dog, fox, duck)",
+    "type": 1,
+    "options": [
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "Gato",
+            "value": "cat"
+          },
+          {
+            "name": "Perro",
+            "value": "dog"
+          },
+          {
+            "name": "Zorro",
+            "value": "fox"
+          },
+          {
+            "name": "Pato",
+            "value": "duck"
+          }
+        ],
+        "name": "tipo",
+        "description": "Animal",
+        "required": false
+      }
+    ]
+  },
+  {
+    "name": "avatar",
+    "description": "Muestra el avatar de un usuario",
+    "type": 1,
+    "options": [
+      {
+        "name": "usuario",
+        "description": "Usuario",
+        "required": false,
+        "type": 6
+      }
+    ]
+  },
+  {
+    "name": "balance",
+    "description": "Muestra tu saldo (monedas y banco)",
+    "type": 1,
+    "options": [
+      {
+        "name": "usuario",
+        "description": "Usuario a consultar",
+        "required": false,
+        "type": 6
+      }
+    ]
+  },
+  {
+    "name": "ban",
+    "description": "Banea a un miembro del servidor",
+    "type": 1,
+    "options": [
+      {
+        "name": "usuario",
+        "description": "Usuario",
+        "required": true,
+        "type": 6
+      },
+      {
+        "type": 3,
+        "name": "razon",
+        "description": "Razón",
+        "required": false
       }
     ]
   },
   {
     "name": "bump",
     "description": "Bumpea y promociona el servidor en las listas de Discord",
-    "type": 1
+    "type": 1,
+    "options": []
+  },
+  {
+    "name": "buy",
+    "description": "Compra un ítem de la tienda",
+    "type": 1,
+    "options": [
+      {
+        "type": 3,
+        "name": "item",
+        "description": "Nombre del ítem",
+        "required": true
+      }
+    ]
   },
   {
     "name": "bye",
@@ -25,10 +147,22 @@
       {
         "name": "usuario",
         "description": "El usuario al que quieres despedir (opcional)",
-        "type": 6,
-        "required": false
+        "required": false,
+        "type": 6
       }
     ]
+  },
+  {
+    "name": "close",
+    "description": "Cierra el canal actual (tickets y canales gestionados)",
+    "type": 1,
+    "options": []
+  },
+  {
+    "name": "closeprivate",
+    "description": "Cierra tu canal privado",
+    "type": 1,
+    "options": []
   },
   {
     "name": "confess",
@@ -36,12 +170,37 @@
     "type": 1,
     "options": [
       {
+        "type": 3,
         "name": "mensaje",
         "description": "El mensaje que quieres confesar anónimamente",
-        "type": 3,
         "required": true
       }
     ]
+  },
+  {
+    "name": "daily",
+    "description": "Reclama tu recompensa diaria",
+    "type": 1,
+    "options": []
+  },
+  {
+    "name": "deposit",
+    "description": "Guarda monedas en el banco",
+    "type": 1,
+    "options": [
+      {
+        "type": 3,
+        "name": "cantidad",
+        "description": "Cantidad o \"all\"",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "dice",
+    "description": "Lanza un dado (1-6)",
+    "type": 1,
+    "options": []
   },
   {
     "name": "directsay",
@@ -49,9 +208,9 @@
     "type": 1,
     "options": [
       {
+        "type": 3,
         "name": "mensaje",
         "description": "El mensaje que quieres que repita el bot",
-        "type": 3,
         "required": true
       }
     ]
@@ -59,7 +218,96 @@
   {
     "name": "donate",
     "description": "Apoya el desarrollo del bot con una donación",
-    "type": 1
+    "type": 1,
+    "options": []
+  },
+  {
+    "name": "embed",
+    "description": "Crea un embed personalizado",
+    "type": 1,
+    "options": [
+      {
+        "type": 3,
+        "name": "titulo",
+        "description": "Título",
+        "required": true
+      },
+      {
+        "type": 3,
+        "name": "descripcion",
+        "description": "Descripción",
+        "required": true
+      },
+      {
+        "type": 3,
+        "name": "color",
+        "description": "Color hex (ej: #00d4ff)",
+        "required": false
+      }
+    ]
+  },
+  {
+    "name": "gamble",
+    "description": "Aposta monedas a cara o cruz",
+    "type": 1,
+    "options": [
+      {
+        "type": 4,
+        "name": "cantidad",
+        "description": "Cantidad a apostar",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "gend",
+    "description": "Fuerza el fin de un sorteo activo",
+    "type": 1,
+    "options": []
+  },
+  {
+    "name": "give",
+    "description": "Transfiere monedas a otro usuario",
+    "type": 1,
+    "options": [
+      {
+        "name": "usuario",
+        "description": "Receptor",
+        "required": true,
+        "type": 6
+      },
+      {
+        "type": 4,
+        "name": "cantidad",
+        "description": "Cantidad de monedas",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "giveaway",
+    "description": "Crea un sorteo (recompensa: 🎉)",
+    "type": 1,
+    "options": [
+      {
+        "type": 3,
+        "name": "premio",
+        "description": "El premio",
+        "required": true
+      },
+      {
+        "type": 4,
+        "name": "ganadores",
+        "description": "Número de ganadores",
+        "required": true
+      },
+      {
+        "type": 4,
+        "name": "duracion",
+        "description": "Duración en minutos",
+        "required": true
+      }
+    ]
   },
   {
     "name": "help",
@@ -67,9 +315,9 @@
     "type": 1,
     "options": [
       {
+        "type": 3,
         "name": "comando",
         "description": "Nombre del comando para obtener información detallada",
-        "type": 3,
         "required": false
       }
     ]
@@ -82,30 +330,109 @@
       {
         "name": "usuario",
         "description": "El usuario al que quieres saludar (opcional)",
-        "type": 6,
-        "required": false
+        "required": false,
+        "type": 6
       }
     ]
   },
   {
     "name": "invite",
     "description": "Obtén el enlace de invitación del bot",
-    "type": 1
+    "type": 1,
+    "options": []
+  },
+  {
+    "name": "kick",
+    "description": "Expulsa a un miembro del servidor",
+    "type": 1,
+    "options": [
+      {
+        "name": "usuario",
+        "description": "Usuario",
+        "required": true,
+        "type": 6
+      },
+      {
+        "type": 3,
+        "name": "razon",
+        "description": "Razón",
+        "required": false
+      }
+    ]
+  },
+  {
+    "name": "leaderboard",
+    "description": "Top 10 de monedas del servidor",
+    "type": 1,
+    "options": []
   },
   {
     "name": "links",
     "description": "Muestra todos los enlaces oficiales del ecosistema",
-    "type": 1
+    "type": 1,
+    "options": []
+  },
+  {
+    "name": "loop",
+    "description": "Activa/desactiva el bucle de la cola",
+    "type": 1,
+    "options": []
+  },
+  {
+    "name": "mute",
+    "description": "Silencia a un miembro (por defecto 10 min)",
+    "type": 1,
+    "options": [
+      {
+        "name": "usuario",
+        "description": "Usuario",
+        "required": true,
+        "type": 6
+      },
+      {
+        "type": 4,
+        "name": "minutos",
+        "description": "Duración en minutos",
+        "required": false
+      },
+      {
+        "type": 3,
+        "name": "razon",
+        "description": "Razón",
+        "required": false
+      }
+    ]
+  },
+  {
+    "name": "pause",
+    "description": "Pausa la reproducción",
+    "type": 1,
+    "options": []
   },
   {
     "name": "ping",
     "description": "Muestra el ping del bot con \"pong\"",
-    "type": 1
+    "type": 1,
+    "options": []
+  },
+  {
+    "name": "play",
+    "description": "Reproduce música de YouTube en un canal de voz",
+    "type": 1,
+    "options": [
+      {
+        "type": 3,
+        "name": "cancion",
+        "description": "Canción o URL de YouTube",
+        "required": true
+      }
+    ]
   },
   {
     "name": "pong",
     "description": "Muestra el ping del bot con \"ping\"",
-    "type": 1
+    "type": 1,
+    "options": []
   },
   {
     "name": "profile",
@@ -115,15 +442,87 @@
       {
         "name": "usuario",
         "description": "El usuario del que quieres obtener información (opcional)",
-        "type": 6,
-        "required": false
+        "required": false,
+        "type": 6
       }
     ]
   },
   {
     "name": "promo",
     "description": "Promociona las webs del ecosistema Ciszu Network",
-    "type": 1
+    "type": 1,
+    "options": []
+  },
+  {
+    "name": "purge",
+    "description": "Borra mensajes en masa (máx. 100)",
+    "type": 1,
+    "options": [
+      {
+        "type": 4,
+        "name": "cantidad",
+        "description": "1-100",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "queue",
+    "description": "Muestra la cola de reproducción",
+    "type": 1,
+    "options": []
+  },
+  {
+    "name": "rank",
+    "description": "Muestra tu nivel y XP",
+    "type": 1,
+    "options": [
+      {
+        "name": "usuario",
+        "description": "Usuario a consultar",
+        "required": false,
+        "type": 6
+      }
+    ]
+  },
+  {
+    "name": "rate",
+    "description": "Cuánto te quiere el bot (0-100%)",
+    "type": 1,
+    "options": []
+  },
+  {
+    "name": "resume",
+    "description": "Reanuda la reproducción",
+    "type": 1,
+    "options": []
+  },
+  {
+    "name": "rps",
+    "description": "Piedra, papel o tijeras contra el bot",
+    "type": 1,
+    "options": [
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "Piedra",
+            "value": "piedra"
+          },
+          {
+            "name": "Papel",
+            "value": "papel"
+          },
+          {
+            "name": "Tijeras",
+            "value": "tijeras"
+          }
+        ],
+        "name": "opcion",
+        "description": "Tu elección",
+        "required": true
+      }
+    ]
   },
   {
     "name": "say",
@@ -131,9 +530,22 @@
     "type": 1,
     "options": [
       {
+        "type": 3,
         "name": "mensaje",
         "description": "El mensaje que quieres que repita el bot",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "search",
+    "description": "Busca resultados en Google",
+    "type": 1,
+    "options": [
+      {
         "type": 3,
+        "name": "consulta",
+        "description": "Qué buscar",
         "required": true
       }
     ]
@@ -141,21 +553,404 @@
   {
     "name": "serverinfo",
     "description": "Muestra información detallada del servidor",
-    "type": 1
+    "type": 1,
+    "options": []
+  },
+  {
+    "name": "setlang",
+    "description": "Cambia el idioma del bot en este servidor (es/en)",
+    "type": 1,
+    "options": [
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "Español",
+            "value": "es"
+          },
+          {
+            "name": "English",
+            "value": "en"
+          }
+        ],
+        "name": "idioma",
+        "description": "Idioma",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "setprefix",
+    "description": "Cambia el prefijo del bot en este servidor",
+    "type": 1,
+    "options": [
+      {
+        "type": 3,
+        "name": "prefijo",
+        "description": "Nuevo prefijo",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "setupautorole",
+    "description": "Asigna roles automáticos a nuevos miembros",
+    "type": 1,
+    "options": [
+      {
+        "name": "rol",
+        "description": "Rol a asignar",
+        "required": true,
+        "type": 8
+      }
+    ]
+  },
+  {
+    "name": "setupcounters",
+    "description": "Crea canales contador (members, online, bots, channels)",
+    "type": 1,
+    "options": [
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "Miembros",
+            "value": "members"
+          },
+          {
+            "name": "En línea",
+            "value": "online"
+          },
+          {
+            "name": "Bots",
+            "value": "bots"
+          },
+          {
+            "name": "Humanos",
+            "value": "humans"
+          },
+          {
+            "name": "Canales",
+            "value": "channels"
+          },
+          {
+            "name": "Roles",
+            "value": "roles"
+          }
+        ],
+        "name": "tipo",
+        "description": "Tipo de contador",
+        "required": true
+      },
+      {
+        "type": 3,
+        "name": "nombre",
+        "description": "Nombre del canal con {n}",
+        "required": false
+      }
+    ]
+  },
+  {
+    "name": "setupgoodbye",
+    "description": "Configura el canal y mensaje de despedidas",
+    "type": 1,
+    "options": [
+      {
+        "name": "canal",
+        "description": "Canal de despedidas",
+        "required": true,
+        "type": 7
+      },
+      {
+        "type": 3,
+        "name": "mensaje",
+        "description": "Mensaje",
+        "required": false
+      }
+    ]
+  },
+  {
+    "name": "setupleveling",
+    "description": "Activa/desactiva el sistema de niveles (on/off [canal])",
+    "type": 1,
+    "options": [
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "Activar",
+            "value": "on"
+          },
+          {
+            "name": "Desactivar",
+            "value": "off"
+          }
+        ],
+        "name": "estado",
+        "description": "on/off",
+        "required": true
+      },
+      {
+        "name": "canal",
+        "description": "Canal de anuncios de nivel (opcional)",
+        "required": false,
+        "type": 7
+      }
+    ]
+  },
+  {
+    "name": "setuplogs",
+    "description": "Configura el canal de logs del servidor",
+    "type": 1,
+    "options": [
+      {
+        "name": "canal",
+        "description": "Canal de logs",
+        "required": true,
+        "type": 7
+      }
+    ]
+  },
+  {
+    "name": "setupprivate",
+    "description": "Activa canales privados por botón (on/off [categoría])",
+    "type": 1,
+    "options": [
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "Activar",
+            "value": "on"
+          },
+          {
+            "name": "Desactivar",
+            "value": "off"
+          }
+        ],
+        "name": "estado",
+        "description": "on/off",
+        "required": true
+      },
+      {
+        "name": "panel",
+        "description": "Canal donde poner el panel",
+        "required": false,
+        "type": 7
+      }
+    ]
+  },
+  {
+    "name": "setuptickets",
+    "description": "Configura el sistema de tickets (canal de soporte + categoría + rol)",
+    "type": 1,
+    "options": [
+      {
+        "name": "canal",
+        "description": "Canal donde crear el panel",
+        "required": true,
+        "type": 7
+      },
+      {
+        "name": "categoria",
+        "description": "Categoría para los tickets",
+        "required": false,
+        "type": 7
+      },
+      {
+        "name": "rol",
+        "description": "Rol de soporte",
+        "required": false,
+        "type": 8
+      }
+    ]
+  },
+  {
+    "name": "setupwelcome",
+    "description": "Configura el canal y mensaje de bienvenidas",
+    "type": 1,
+    "options": [
+      {
+        "name": "canal",
+        "description": "Canal de bienvenidas",
+        "required": true,
+        "type": 7
+      },
+      {
+        "type": 3,
+        "name": "mensaje",
+        "description": "Mensaje (variables: {user} {guild} {members})",
+        "required": false
+      }
+    ]
+  },
+  {
+    "name": "shop",
+    "description": "Tienda del servidor con ítems por rol",
+    "type": 1,
+    "options": []
+  },
+  {
+    "name": "skip",
+    "description": "Salta la canción actual",
+    "type": 1,
+    "options": []
+  },
+  {
+    "name": "slot",
+    "description": "Máquina tragaperras",
+    "type": 1,
+    "options": [
+      {
+        "type": 4,
+        "name": "cantidad",
+        "description": "Cantidad a apostar",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "snipe",
+    "description": "Recupera el último mensaje borrado del canal",
+    "type": 1,
+    "options": []
   },
   {
     "name": "status",
     "description": "Muestra el estado en vivo del bot y su web",
-    "type": 1
+    "type": 1,
+    "options": []
+  },
+  {
+    "name": "stop",
+    "description": "Detiene la música y sale del canal de voz",
+    "type": 1,
+    "options": []
   },
   {
     "name": "test",
     "description": "Comando de prueba para verificar el funcionamiento del bot",
-    "type": 1
+    "type": 1,
+    "options": []
+  },
+  {
+    "name": "text",
+    "description": "Convierte texto con estilos (reverse, uwu, clap, bubble)",
+    "type": 1,
+    "options": [
+      {
+        "type": 3,
+        "choices": [
+          {
+            "name": "reverse",
+            "value": "reverse"
+          },
+          {
+            "name": "uwu",
+            "value": "uwu"
+          },
+          {
+            "name": "clap",
+            "value": "clap"
+          },
+          {
+            "name": "bubble",
+            "value": "bubble"
+          }
+        ],
+        "name": "estilo",
+        "description": "Estilo a aplicar",
+        "required": true
+      },
+      {
+        "type": 3,
+        "name": "texto",
+        "description": "Texto a convertir",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "topxp",
+    "description": "Top 10 de niveles del servidor",
+    "type": 1,
+    "options": []
+  },
+  {
+    "name": "unban",
+    "description": "Desbanea a un usuario (ID)",
+    "type": 1,
+    "options": [
+      {
+        "type": 3,
+        "name": "id",
+        "description": "ID del usuario",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "unmute",
+    "description": "Quita el silencio a un miembro",
+    "type": 1,
+    "options": [
+      {
+        "name": "usuario",
+        "description": "Usuario",
+        "required": true,
+        "type": 6
+      }
+    ]
   },
   {
     "name": "vote",
     "description": "Vota por CiszuBot en las listas de bots",
-    "type": 1
+    "type": 1,
+    "options": []
+  },
+  {
+    "name": "warn",
+    "description": "Avisa (warn) a un miembro",
+    "type": 1,
+    "options": [
+      {
+        "name": "usuario",
+        "description": "Usuario",
+        "required": true,
+        "type": 6
+      },
+      {
+        "type": 3,
+        "name": "razon",
+        "description": "Razón",
+        "required": false
+      }
+    ]
+  },
+  {
+    "name": "warns",
+    "description": "Muestra los avisos de un miembro",
+    "type": 1,
+    "options": [
+      {
+        "name": "usuario",
+        "description": "Usuario",
+        "required": true,
+        "type": 6
+      }
+    ]
+  },
+  {
+    "name": "withdraw",
+    "description": "Retira monedas del banco",
+    "type": 1,
+    "options": [
+      {
+        "type": 3,
+        "name": "cantidad",
+        "description": "Cantidad o \"all\"",
+        "required": true
+      }
+    ]
   }
 ]

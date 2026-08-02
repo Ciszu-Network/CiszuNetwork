@@ -22,17 +22,33 @@ export class CommandRegistry {
 
     for (const file of files) {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const loaded = require(path.join(commandsPath, file)) as BotCommand & { default?: BotCommand };
-      const command = loaded.default ?? loaded;
-      if (command?.name && typeof command.execute === 'function') {
+      const loaded = require(path.join(commandsPath, file)) as
+        | BotCommand
+        | BotCommand[]
+        | (() => BotCommand)
+        | Array<() => BotCommand>
+        | { default?: BotCommand | BotCommand[] | (() => BotCommand) | Array<() => BotCommand> };
+      const raw = (loaded as { default?: BotCommand | BotCommand[] | (() => BotCommand) | Array<() => BotCommand> }).default ?? loaded;
+      const list = Array.isArray(raw) ? raw : [raw];
+      for (const entry of list) {
+        // Los comandos pueden ser fábricas: ejecutarlas para obtener el objeto
+        let command: BotCommand;
+        try {
+          command = typeof entry === 'function' ? (entry as () => BotCommand)() : (entry as BotCommand);
+        } catch (error) {
+          logger.warn(`La fábrica del comando en ${file} falló:`, error);
+          continue;
+        }
+        if (!command?.name || typeof command.execute !== 'function') {
+          logger.warn(`El comando en ${file} no tiene las propiedades requeridas`);
+          continue;
+        }
         this.commands.set(command.name, command);
         logger.info(`Comando cargado: ${command.name}`);
         for (const alias of command.aliases ?? []) {
           this.aliases.set(alias, command.name);
           logger.info(`Alias cargado: ${alias} -> ${command.name}`);
         }
-      } else {
-        logger.warn(`El comando en ${file} no tiene las propiedades requeridas`);
       }
     }
   }

@@ -41,15 +41,19 @@ All websites are Next.js 15 with Tailwind 4 + PostCSS. They use `eslint` (no Pre
 
 ## CiszuBot (bot de Discord) — estado (ago 2026)
 
-**v3.0.0 — migrado a TypeScript + pnpm + Node 24** (`apps/ciszubot/discord-bot/`):
+**v3.2.0 — TypeScript + pnpm + Node 24, expansión masiva de comandos** (`apps/ciszubot/discord-bot/`):
 
-- Stack: Node 24 (imagen `node:24-alpine`), TypeScript 5.9, pnpm 11 (workspace), Discord.js ^14.22, Express ^5, `@supabase/supabase-js` listo para conectar.
-- Estructura: `src/index.ts` (login, registro slash, interacciones, prefijo), `src/commands/*.ts` (12 comandos: 8ball, bye, confess, directsay, help, hi, ping, pong, profile, say, serverinfo, test), `src/types/command.ts` (declaration merging `Client.commands` + `SimulatedMessage`), `src/config/index.ts`, `src/utils/commandRegistry.ts`, `src/services/{logger,statsServer,supabase}.ts`.
-- **Slash commands globales** (`/`): registrados vía `Routes.applicationCommands`; el registro preserva el **Entry Point command** (`launch`, type 4) para evitar el error 50240 en bulk update. Si `GUILD_ID` está definido en `.env`, registra solo en ese guild (instantáneo; útil para testing).
-- **Supabase conectado (2 ago 2026)**: `src/services/supabase.ts` con service_role + schema `ciszubot`. Cada comando ejecutado (slash + prefijo) se inserta en `ciszubot.command_logs` y cada 60s se hace **heartbeat** a `ciszubot.bot_status` (upsert id=1: online, guilds, commands_total, version, last_seen). Shutdown marca online=false.
-- **Fixes clave (1 ago 2026)**: `Routes.applicationcommands` → `applicationCommands` (mayúscula — no registraba nada), botones/selects respondidos con `deferUpdate` (antes timeouts), registry con `loaded.default ?? loaded` (comandos ESM/CJS), `iconURL: string | null` en thumbnails.
-- **Docker**: multi-stage con pnpm (`corepack prepare pnpm@11.18.0`), usuario no-root, `EXPOSE 5000`, logs en `logs/` con chown. Contexto de build = **raíz del repo** (el `.dockerignore` raíz incluye solo `apps/ciszubot/discord-bot/**`, `pnpm-workspace.yaml`, `pnpm-lock.yaml`). Comando: `docker compose up -d --build ciszu-bot`.
-- **Panel web**: Express en `:5000` (`/api/stats` + estáticos desde `public/`). Compose mapea `5000:5000`.
+- Stack: Node 24 (imagen `node:24-alpine`), TypeScript 5.9, pnpm 11 (workspace), Discord.js ^14.22, Express ^5, `@supabase/supabase-js`, `@discordjs/voice` + `play-dl` (música), `@top-gg/sdk` + `discordbotlist` (bot lists).
+- **72 comandos en 9 categorías** (Configuración, Diversión, Economía, Información, Moderación, Música, Niveles, Social, Utilidad). Registry (`src/utils/commandRegistry.ts`) soporta arrays por archivo y **fábricas** (`typeof entry === 'function' ? entry() : entry`) — ver `commands/minigames.ts`, `setup.ts`, `music.ts`, `moderation.ts` como patrón.
+- **Servicios** (`src/services/`): `configService` (guild_configs con caché en memoria — ⚠️ el dashboard NO invalida la caché hasta reiniciar), `economy` (wallets/transactions), `levels` (XP), `giveaways` (timers + reanudación), `botlists` (AutoPoster top.gg + DBL cada 30 min + webhook), `music` (cola por guild), `statsServer` (acepta `client`, añade `POST /api/votes` — webhook top.gg que recompensa 500 monedas).
+- **Listeners** (`src/listeners/index.ts`): XP por mensaje (cooldown 60s), AFK (quitar al hablar), snipe (MessageDelete → upsert snipes), welcome/goodbye/autorole (PartialGuildMember), contadores (rename), tickets (botones con `deferUpdate`), canal privado, resume giveaways en ready/GuildCreate.
+- **Migración 14 aplicada** (2 ago 2026): 13 tablas en `ciszubot` — guild_configs, wallets, transactions, shop_items, inventory, levels, warns, tickets, giveaways, afk, alliances, discord_users, snipes.
+- **Slash commands globales** (`/`): registrados vía `Routes.applicationCommands`; preserva el **Entry Point command** (`launch`, type 4) para evitar el error 50240. Si `GUILD_ID` está en `.env`, registra solo en ese guild.
+- **Supabase conectado (2 ago 2026)**: `src/services/supabase.ts` con service_role + schema `ciszubot`. Cada comando se inserta en `ciszubot.command_logs` y cada 60s **heartbeat** a `ciszubot.bot_status` (upsert id=1, version v3.2.0). Shutdown marca online=false.
+- **Fixes clave**: `Routes.applicationcommands` → `applicationCommands` (mayúscula), botones/selects con `deferUpdate`, registry con `loaded.default ?? loaded` (ESM/CJS), `slashCommand` es `SlashCommandBuilder` **SIN `.toJSON()`** (patrón ping.ts).
+- **Docker**: multi-stage con pnpm (`corepack prepare pnpm@11.18.0`), usuario no-root, `EXPOSE 5000`, logs en `logs/` con chown. Stage 2 añade `ffmpeg python3 make g++` (música). Contexto = raíz del repo. Comando: `docker compose up -d --build ciszu-bot`.
+- **Panel web**: Express en `:5000` (`/api/stats` + `POST /api/votes` + estáticos desde `public/`). Compose mapea `5000:5000`.
+- **Env vars bot** (`.env`, gitignored): `TOP_GG_TOKEN` y `DISCORDBOTLIST_TOKEN` **pendientes del usuario** (código listo; sin ellos no postea a bot lists).
 - ⚠️ **24/7 pendiente**: el bot corre en el PC del usuario (Docker Desktop). Si el PC se apaga, el bot muere. Ver `docs/ia_docs/VPS_247.md` para la recomendación de hosting.
 
 ## Web de CiszuBot — estado (ago 2026)
@@ -58,8 +62,11 @@ All websites are Next.js 15 with Tailwind 4 + PostCSS. They use `eslint` (no Pre
 
 - **Single page** (`src/app/page.tsx`): hero con isotipo oficial (CDN), badge de estado en vivo, stats dinámicas reales, grid completo de 12 comandos con categorías (Diversión/Información/Social/Utilidad), sección estado en vivo, sección ecosistema (links a ciszunetwork/ciszukoantony/muzicmania) y CTA invitar.
 - **Datos dinámicos**: fetch server-side a `ciszubot.bot_status` vía PostgREST con anon key + `Accept-Profile: ciszubot` (policy SELECT anon). `revalidate = 60`. El badge "En línea" es **online && last_seen < 3 min** (si el PC se apaga sin shutdown, la web lo detecta por heartbeat viejo).
-- **Datos de comandos**: `src/data/commands.ts` — los 12 comandos con descripciones/aliases/usage/categorías reales del bot.
-- **Layout**: Navbar sticky con isotipo + links anchor + botón Invitar (URL oauth2 con scope `bot applications.commands`), Footer con socials + proyectos + copyright, favicon = isotipo PNG (metadata local en `public/` vía copy-assets).
+- **Datos de comandos**: `src/data/commands.ts` — 72 comandos con descripciones/aliases/usage/categorías reales del bot (9 categorías). Canonical: `scripts/generate-commands.js` (regenera `commands.json` + `docs/slash-commands.{json,md}` desde dist).
+- **Dashboard OAuth (2 ago 2026)**: `src/lib/auth.ts` (server-only) — cookie `ciszubot_session` HMAC sha256 (7 días), `oauthUrl`, `exchangeCode`, `refreshAccessToken`, `fetchDiscordUser`, `getGuildsForUser`, `isGuildAdmin` (ADMINISTRATOR|MANAGE_GUILD), `getBotGuildIds` (usa `DISCORD_BOT_TOKEN`), `supabaseAdmin` (usa `SUPABASE_SERVICE_ROLE_KEY`). Rutas `/api/auth/discord` + `/callback` + `/logout`; páginas `/dashboard` (servidores admin con bot presente) y `/dashboard/[guildId]` (+ `client.tsx` con formulario: prefix, idioma, toggles nivel/tickets/privados/automod, autorole, mensajes bienvenida/despedida → `POST /api/dashboard/[guildId]`).
+  - **Env vars Vercel `ciszubot` (production, añadidas 2 ago 2026)**: `DISCORD_BOT_TOKEN`, `DISCORD_CLIENT_ID`, `SUPABASE_SERVICE_ROLE_KEY`, `SESSION_SECRET`, `NEXT_PUBLIC_SITE_URL` (= `https://ciszubot.vercel.app`, build-time — define el redirect del OAuth). En local: `.env.local` con las mismas + anon key/URL.
+  - ⚠️ **Pendiente del usuario**: registrar `https://ciszubot.vercel.app/api/auth/discord/callback` en Discord Developer Portal (OAuth2 → Redirects) y guardar `DISCORD_CLIENT_SECRET` en Vercel + `.env.local`.
+- **Layout**: Navbar sticky con isotipo + links anchor + botón Invitar (URL oauth2 con scope `bot applications.commands`) + **cuenta** (avatar, link Panel, logout) cuando hay sesión. Footer con socials + proyectos + copyright, favicon = isotipo PNG.
 - **Env vars**: `vercel.json` solo CDN_URL + APP_ENV (patrón del repo); `NEXT_PUBLIC_SUPABASE_URL`/`NEXT_PUBLIC_SUPABASE_ANON_KEY` ya configuradas en el proyecto Vercel `ciszubot` (las 4 apps las tienen desde jul 2026).
 - **prebuild**: `copy-assets.js` (depth 3 → `../../../scripts/copy-assets.js`) copia `apps/ciszubot/content/...` a `public/` para dev/fallback local.
 
@@ -299,6 +306,7 @@ Si el repo cambia a público:
 | 11 | `20260729000011_revoke_execute_trigger_functions.sql` | REVOKE EXECUTE de anon/authenticated en las 3 funciones trigger SECURITY DEFINER restantes (cierra advisor). ✅ **APLICADA 31 jul 2026** vía Management API (PAT nuevo del usuario) — verificada: anon/auth_exec = false en las 3 |
 | 12 | `20260801000012_revoke_execute_security_definer.sql` | Red de seguridad: REVOKE EXECUTE idempotente de TODAS las funciones SECURITY DEFINER (muzicmania triggers + public auth/profiles triggers) |
 | 13 | `20260801000013_bot_status_heartbeat.sql` | ✅ **APLICADA 2 ago 2026** — tabla `ciszubot.bot_status` (single-row id=1: online, last_seen, started_at, version, guilds, commands_total, prefix). Policy SELECT para anon/authenticated + GRANT SELECT anon + **GRANT ALL service_role** (Management API no aplica grants default). La consume la web de ciszubot (estado en vivo) |
+| 14 | `20260802000014_bot_expansion.sql` | ✅ **APLICADA 2 ago 2026** — 13 tablas en `ciszubot`: guild_configs, wallets, transactions, shop_items, inventory, levels, warns, tickets, giveaways, afk, alliances, discord_users, snipes (+5 índices) |
 
 ## Scripts útiles (en `scripts/`)
 
