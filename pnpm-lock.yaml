@@ -73,13 +73,13 @@ importers:
         version: 2.110.1
       next:
         specifier: ^15.5.22
-        version: 15.5.22(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 15.5.22(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.8))(react@19.2.8)
       react:
-        specifier: ^19.2.7
-        version: 19.2.7
+        specifier: ^19.2.8
+        version: 19.2.8
       react-dom:
         specifier: ^19.2.7
-        version: 19.2.7(react@19.2.7)
+        version: 19.2.7(react@19.2.8)
       server-only:
         specifier: ^0.0.1
         version: 0.0.1
@@ -119,16 +119,16 @@ importers:
         version: link:../../../packages/cdn
       framer-motion:
         specifier: ^12.38.0
-        version: 12.42.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 12.42.2(react-dom@19.2.7(react@19.2.8))(react@19.2.8)
       next:
         specifier: ^15.5.22
-        version: 15.5.22(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 15.5.22(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.8))(react@19.2.8)
       react:
-        specifier: ^19.2.7
-        version: 19.2.7
+        specifier: ^19.2.8
+        version: 19.2.8
       react-dom:
         specifier: ^19.2.7
-        version: 19.2.7(react@19.2.7)
+        version: 19.2.7(react@19.2.8)
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3.3.5
@@ -183,7 +183,7 @@ importers:
         version: link:../../../packages/cdn
       '@marsidev/react-turnstile':
         specifier: ^1.5.3
-        version: 1.5.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 1.5.3(react-dom@19.2.7(react@19.2.8))(react@19.2.8)
       '@supabase/supabase-js':
         specifier: ^2.108.1
         version: 2.110.1
@@ -195,22 +195,22 @@ importers:
         version: 2.1.9
       '@vercel/speed-insights':
         specifier: ^2.0.0
-        version: 2.0.0(next@15.5.22(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
+        version: 2.0.0(next@15.5.22(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.8))(react@19.2.8))(react@19.2.8)
       basic-ftp:
         specifier: ^6.0.1
         version: 6.0.1
       framer-motion:
         specifier: ^12.38.0
-        version: 12.42.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 12.42.2(react-dom@19.2.7(react@19.2.8))(react@19.2.8)
       globals:
         specifier: ^17.6.0
         version: 17.7.0
       lucide-react:
         specifier: ^1.17.0
-        version: 1.23.0(react@19.2.7)
+        version: 1.23.0(react@19.2.8)
       next:
         specifier: ^15.5.22
-        version: 15.5.22(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 15.5.22(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.8))(react@19.2.8)
       nodemon:
         specifier: ^3.1.14
         version: 3.1.14
@@ -218,23 +218,23 @@ importers:
         specifier: ^9.4.0
         version: 9.4.1
       react:
-        specifier: ^19.2.7
-        version: 19.2.7
+        specifier: ^19.2.8
+        version: 19.2.8
       react-dom:
         specifier: ^19.2.7
-        version: 19.2.7(react@19.2.7)
+        version: 19.2.7(react@19.2.8)
       react-easy-crop:
         specifier: ^5.5.7
-        version: 5.5.7(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 5.5.7(react-dom@19.2.7(react@19.2.8))(react@19.2.8)
       react-google-recaptcha:
         specifier: ^3.1.0
-        version: 3.1.0(react@19.2.7)
+        version: 3.1.0(react@19.2.8)
       react-markdown:
         specifier: ^10.1.0
-        version: 10.1.0(@types/react@19.2.17)(react@19.2.7)
+        version: 10.1.0(@types/react@19.2.17)(react@19.2.8)
       zustand:
         specifier: ^5.0.14
-        version: 5.0.14(@types/react@19.2.17)(react@19.2.7)
+        version: 5.0.14(@types/react@19.2.17)(react@19.2.8)
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3.3.5
@@ -301,22 +301,22 @@ importers:
         version: link:../../packages/cdn
       framer-motion:
         specifier: ^12.38.0
-        version: 12.42.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 12.42.2(react-dom@19.2.7(react@19.2.8))(react@19.2.8)
       lucide-react:
         specifier: ^1.17.0
-        version: 1.23.0(react@19.2.7)
+        version: 1.23.0(react@19.2.8)
       next:
         specifier: ^15.5.22
-        version: 15.5.22(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 15.5.22(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.8))(react@19.2.8)
       react:
-        specifier: ^19.2.7
-        version: 19.2.7
+        specifier: ^19.2.8
+        version: 19.2.8
       react-dom:
         specifier: ^19.2.7
-        version: 19.2.7(react@19.2.7)
+        version: 19.2.7(react@19.2.8)
       zustand:
         specifier: ^5.0.14
-        version: 5.0.14(@types/react@19.2.17)(react@19.2.7)
+        version: 5.0.14(@types/react@19.2.17)(react@19.2.8)
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3.3.5
@@ -392,11 +392,11 @@ importers:
         specifier: ^8.0.0
         version: 8.57.1
       react:
-        specifier: ^19.2.7
-        version: 19.2.7
+        specifier: ^19.2.8
+        version: 19.2.8
       react-dom:
         specifier: ^19.2.7
-        version: 19.2.7(react@19.2.7)
+        version: 19.2.7(react@19.2.8)
       typescript:
         specifier: ^5.3.0
         version: 5.9.3
@@ -3219,8 +3219,8 @@ packages:
       '@types/react': '>=18'
       react: '>=18'
 
-  react@19.2.7:
-    resolution: {integrity: sha512-HNe9WslTbXmFK8o8cmwgAeJFSBvt1bPdHCVKtaaV+WlAN36mpT4hcRpwbf3fY56ar2oIXzsBpOAiIRHAdY0OlQ==}
+  react@19.2.8:
+    resolution: {integrity: sha512-PWaYA1L/q9u2u7xYQi+Y3L3Yfnie7XyLeaJICV1MGD6LprsBxcAqGjYyr0eY3p+QdsA+x/Irkt4Qif8D63+Sbw==}
     engines: {node: '>=0.10.0'}
 
   readdirp@3.6.0:
@@ -4105,10 +4105,10 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@marsidev/react-turnstile@1.5.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@marsidev/react-turnstile@1.5.3(react-dom@19.2.7(react@19.2.8))(react@19.2.8)':
     dependencies:
-      react: 19.2.7
-      react-dom: 19.2.7(react@19.2.7)
+      react: 19.2.8
+      react-dom: 19.2.7(react@19.2.8)
 
   '@napi-rs/wasm-runtime@1.1.6(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)':
     dependencies:
@@ -4816,10 +4816,10 @@ snapshots:
   '@unrs/resolver-binding-win32-x64-msvc@1.12.2':
     optional: true
 
-  '@vercel/speed-insights@2.0.0(next@15.5.22(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)':
+  '@vercel/speed-insights@2.0.0(next@15.5.22(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.8))(react@19.2.8))(react@19.2.8)':
     optionalDependencies:
-      next: 15.5.22(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      react: 19.2.7
+      next: 15.5.22(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.8))(react@19.2.8)
+      react: 19.2.8
 
   '@vladfrangu/async_event_emitter@2.4.7': {}
 
@@ -5729,14 +5729,14 @@ snapshots:
 
   fraction.js@5.3.4: {}
 
-  framer-motion@12.42.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
+  framer-motion@12.42.2(react-dom@19.2.7(react@19.2.8))(react@19.2.8):
     dependencies:
       motion-dom: 12.42.2
       motion-utils: 12.39.0
       tslib: 2.8.1
     optionalDependencies:
-      react: 19.2.7
-      react-dom: 19.2.7(react@19.2.7)
+      react: 19.2.8
+      react-dom: 19.2.7(react@19.2.8)
 
   fresh@0.5.2: {}
 
@@ -6202,9 +6202,9 @@ snapshots:
     dependencies:
       js-tokens: 4.0.0
 
-  lucide-react@1.23.0(react@19.2.7):
+  lucide-react@1.23.0(react@19.2.8):
     dependencies:
-      react: 19.2.7
+      react: 19.2.8
 
   magic-bytes.js@1.13.0: {}
 
@@ -6491,15 +6491,15 @@ snapshots:
 
   negotiator@0.6.3: {}
 
-  next@15.5.22(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
+  next@15.5.22(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.8))(react@19.2.8):
     dependencies:
       '@next/env': 15.5.22
       '@swc/helpers': 0.5.15
       caniuse-lite: 1.0.30001803
       postcss: 8.5.25
-      react: 19.2.7
-      react-dom: 19.2.7(react@19.2.7)
-      styled-jsx: 5.1.6(react@19.2.7)
+      react: 19.2.8
+      react-dom: 19.2.7(react@19.2.8)
+      styled-jsx: 5.1.6(react@19.2.8)
     optionalDependencies:
       '@next/swc-darwin-arm64': 15.5.22
       '@next/swc-darwin-x64': 15.5.22
@@ -6721,33 +6721,33 @@ snapshots:
       iconv-lite: 0.4.24
       unpipe: 1.0.0
 
-  react-async-script@1.2.0(react@19.2.7):
+  react-async-script@1.2.0(react@19.2.8):
     dependencies:
       hoist-non-react-statics: 3.3.2
       prop-types: 15.8.1
-      react: 19.2.7
+      react: 19.2.8
 
-  react-dom@19.2.7(react@19.2.7):
+  react-dom@19.2.7(react@19.2.8):
     dependencies:
-      react: 19.2.7
+      react: 19.2.8
       scheduler: 0.27.0
 
-  react-easy-crop@5.5.7(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
+  react-easy-crop@5.5.7(react-dom@19.2.7(react@19.2.8))(react@19.2.8):
     dependencies:
       normalize-wheel: 1.0.1
-      react: 19.2.7
-      react-dom: 19.2.7(react@19.2.7)
+      react: 19.2.8
+      react-dom: 19.2.7(react@19.2.8)
       tslib: 2.8.1
 
-  react-google-recaptcha@3.1.0(react@19.2.7):
+  react-google-recaptcha@3.1.0(react@19.2.8):
     dependencies:
       prop-types: 15.8.1
-      react: 19.2.7
-      react-async-script: 1.2.0(react@19.2.7)
+      react: 19.2.8
+      react-async-script: 1.2.0(react@19.2.8)
 
   react-is@16.13.1: {}
 
-  react-markdown@10.1.0(@types/react@19.2.17)(react@19.2.7):
+  react-markdown@10.1.0(@types/react@19.2.17)(react@19.2.8):
     dependencies:
       '@types/hast': 3.0.4
       '@types/mdast': 4.0.4
@@ -6756,7 +6756,7 @@ snapshots:
       hast-util-to-jsx-runtime: 2.3.6
       html-url-attributes: 3.0.1
       mdast-util-to-hast: 13.2.1
-      react: 19.2.7
+      react: 19.2.8
       remark-parse: 11.0.0
       remark-rehype: 11.1.2
       unified: 11.0.5
@@ -6765,7 +6765,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  react@19.2.7: {}
+  react@19.2.8: {}
 
   readdirp@3.6.0:
     dependencies:
@@ -7091,10 +7091,10 @@ snapshots:
     dependencies:
       inline-style-parser: 0.2.7
 
-  styled-jsx@5.1.6(react@19.2.7):
+  styled-jsx@5.1.6(react@19.2.8):
     dependencies:
       client-only: 0.0.1
-      react: 19.2.7
+      react: 19.2.8
 
   supabase@2.109.1:
     dependencies:
@@ -7383,9 +7383,9 @@ snapshots:
 
   yoctocolors@2.1.2: {}
 
-  zustand@5.0.14(@types/react@19.2.17)(react@19.2.7):
+  zustand@5.0.14(@types/react@19.2.17)(react@19.2.8):
     optionalDependencies:
       '@types/react': 19.2.17
-      react: 19.2.7
+      react: 19.2.8
 
   zwitch@2.0.4: {}
