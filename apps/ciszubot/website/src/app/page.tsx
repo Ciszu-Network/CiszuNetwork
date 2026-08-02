@@ -1,11 +1,20 @@
-import Image from "next/image";
-import { resolveAssetPath } from "@ciszunetwork/cdn";
-import { COMMANDS, CATEGORIES } from "@/data/commands";
+import Image from 'next/image';
+import Link from 'next/link';
+import { cookies } from 'next/headers';
+import { Icon } from '@ciszu/ui';
+import { resolveAssetPath } from '@ciszunetwork/cdn';
+import { COMMANDS, CATEGORIES, CATEGORY_ICONS } from '@/data/commands';
+import {
+  GITHUB_REPO,
+  INVITE_URL,
+  LOGO_ISOTIPO_CIRCLE,
+  LOGO_LOGOTIPO,
+  BOT_PREFIX,
+  getDict,
+  type Lang,
+} from '@/lib/i18n';
 
 export const revalidate = 60;
-
-const INVITE_URL =
-  "https://discord.com/oauth2/authorize?client_id=1395532235872141312&permissions=8&scope=bot%20applications.commands";
 
 interface BotStatus {
   online: boolean;
@@ -17,42 +26,14 @@ interface BotStatus {
   prefix: string;
 }
 
-const CATEGORY_STYLES: Record<string, { color: string; bg: string; shadow: string }> = {
-  Diversión: { color: "text-neon-pink", bg: "bg-neon-pink/10", shadow: "hover:shadow-[0_0_20px_rgba(255,51,204,0.4)]" },
-  Información: { color: "text-neon-blue", bg: "bg-neon-blue/10", shadow: "hover:shadow-[0_0_20px_rgba(0,212,255,0.4)]" },
-  Social: { color: "text-neon-green", bg: "bg-neon-green/10", shadow: "hover:shadow-[0_0_20px_rgba(0,255,136,0.4)]" },
-  Utilidad: { color: "text-neon-purple", bg: "bg-neon-purple/10", shadow: "hover:shadow-[0_0_20px_rgba(128,0,255,0.4)]" },
-};
-
-const ECOSYSTEM = [
-  {
-    name: "Ciszu Network",
-    desc: "El hub central de la marca: ecosistema digital, redes y proyectos.",
-    href: "https://ciszunetwork.vercel.app",
-    color: "hover:border-neon-blue hover:shadow-[0_0_25px_rgba(0,212,255,0.35)]",
-  },
-  {
-    name: "Ciszuko Antony",
-    desc: "Portfolio personal: logos, medios y música del creador.",
-    href: "https://ciszukoantony.vercel.app",
-    color: "hover:border-neon-pink hover:shadow-[0_0_25px_rgba(255,51,204,0.35)]",
-  },
-  {
-    name: "MuzicMania",
-    desc: "El juego de ritmo definitivo en la web con estética futurista.",
-    href: "https://muzicmania.vercel.app",
-    color: "hover:border-neon-green hover:shadow-[0_0_25px_rgba(0,255,136,0.35)]",
-  },
-];
-
 async function getBotStatus(): Promise<BotStatus | null> {
   try {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://obwzzmbvkrcscqwptlqo.supabase.co";
-    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'https://obwzzmbvkrcscqwptlqo.supabase.co';
+    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
     const res = await fetch(
       `${url}/rest/v1/bot_status?select=online,last_seen,started_at,version,guilds,commands_total,prefix&id=eq.1`,
       {
-        headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}`, "Accept-Profile": "ciszubot" },
+        headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}`, 'Accept-Profile': 'ciszubot' },
         next: { revalidate: 60 },
       }
     );
@@ -65,60 +46,93 @@ async function getBotStatus(): Promise<BotStatus | null> {
 }
 
 function formatUptime(startedAt: string | null, now: number): string {
-  if (!startedAt) return "—";
+  if (!startedAt) return '—';
   const diff = Math.max(0, Math.floor((now - Date.parse(startedAt)) / 1000));
   const h = Math.floor(diff / 3600);
   const m = Math.floor((diff % 3600) / 60);
-  const s = diff % 60;
   if (h > 0) return `${h}h ${m}m`;
-  if (m > 0) return `${m}m ${s}s`;
-  return `${s}s`;
+  if (m > 0) return `${m}m`;
+  return `${diff}s`;
 }
 
+const STAT_ICONS = ['server', 'terminal', 'clock', 'message'] as const;
+
 export default async function Home() {
+  const store = await cookies();
+  const lang = (store.get('ciszubot_lang')?.value ?? 'es') as Lang;
+  const t = getDict(lang);
+
   const status = await getBotStatus();
   const now = Date.now();
   const lastSeenMs = status?.last_seen ? Date.parse(status.last_seen) : 0;
   const heartbeatFresh = now - lastSeenMs < 3 * 60 * 1000;
   const isOnline = Boolean(status?.online) && heartbeatFresh;
 
+  const stats = [
+    { icon: STAT_ICONS[0], label: t.stats.servers, value: status ? String(status.guilds) : '—' },
+    { icon: STAT_ICONS[1], label: t.stats.commandsRun, value: status ? status.commands_total.toLocaleString(lang === 'es' ? 'es' : 'en') : '—' },
+    { icon: STAT_ICONS[2], label: t.stats.uptime, value: formatUptime(status?.started_at ?? null, now) },
+    { icon: STAT_ICONS[3], label: t.stats.commands, value: `${COMMANDS.length}` },
+  ];
+
   return (
-    <div className="bg-black">
+    <div className="bg-bg">
       {/* ═══ HERO ═══ */}
-      <section className="relative overflow-hidden py-24 md:py-32">
-        {/* Neon blobs de fondo */}
-        <div className="absolute -top-20 -left-20 w-96 h-96 rounded-full bg-neon-blue/20 blur-[120px] animate-blob" />
-        <div className="absolute top-40 -right-20 w-96 h-96 rounded-full bg-neon-purple/20 blur-[120px] animate-blob animation-delay-2000" />
-        <div className="absolute bottom-0 left-1/3 w-80 h-80 rounded-full bg-neon-pink/15 blur-[120px] animate-blob animation-delay-4000" />
+      <section className="relative overflow-hidden py-20 md:py-28">
+        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-brand-400/15 blur-[110px]" />
+        <div className="absolute top-32 -right-24 w-96 h-96 rounded-full bg-violet-400/15 blur-[110px]" />
+        <div className="absolute bottom-0 left-1/3 w-72 h-72 rounded-full bg-brand-300/10 blur-[100px]" />
 
         <div className="relative max-w-screen-xl mx-auto px-4 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass border border-white/10 mb-8 animate-fade-in-up">
-            <span className={`w-2.5 h-2.5 rounded-full ${isOnline ? "bg-neon-green animate-pulse shadow-[0_0_10px_rgba(0,255,136,0.8)]" : "bg-neon-red"}`} />
-            <span className="text-xs font-header font-bold tracking-widest uppercase text-white/80">
-              {isOnline ? "En línea" : "Desconectado"} {status?.version ? `· ${status.version}` : ""}
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full chip mb-8 animate-fade-in-up">
+            <span
+              className={`w-2.5 h-2.5 rounded-full ${
+                isOnline ? 'bg-success animate-pulse shadow-[0_0_10px_var(--success)]' : 'bg-danger'
+              }`}
+            />
+            <span className="text-xs font-semibold tracking-wide uppercase">
+              {isOnline ? t.hero.online : t.hero.offline}
+              {status?.version ? ` · ${status.version}` : ''}
             </span>
           </div>
 
-          <Image
-            src={resolveAssetPath("apps/ciszubot/content/logos/imagen/not outline/isotipo/color/ciszubot_logo_isotipo_color.png")}
-            alt="CiszuBot isotipo"
-            width={160}
-            height={160}
-            priority
-            className="mx-auto mb-8 drop-shadow-neon-blue animate-float"
-          />
+          <div className="flex flex-col items-center gap-7 mb-9">
+            <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-surface border border-border shadow-[0_10px_40px_-10px_rgba(35,63,146,0.35)] overflow-hidden animate-float">
+              <Image
+                src={resolveAssetPath(LOGO_ISOTIPO_CIRCLE)}
+                alt="CiszuBot isotipo"
+                width={144}
+                height={144}
+                priority
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <h1 className="sr-only">CiszuBot</h1>
+            <Image
+              src={resolveAssetPath(LOGO_LOGOTIPO)}
+              alt="CiszuBot logotipo"
+              width={420}
+              height={80}
+              priority
+              className="w-[280px] md:w-[420px] h-auto drop-shadow-sm animate-fade-in-up"
+            />
+          </div>
 
-          <h1 className="text-5xl md:text-7xl font-header font-black tracking-tight mb-6 text-shadow-neon-blue">
-            CISZUBOT
-          </h1>
-          <p className="mx-auto max-w-2xl text-lg md:text-xl text-white/80 mb-10 font-header font-bold">
-            El bot de Discord de{" "}
-            <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="text-neon-cyan hover:drop-shadow-[0_0_10px_rgba(0,240,255,0.8)] transition-all">
-              Ciszu Network
-            </a>
-            : comandos divertidos, de información y utilidad, en español.
-            Con prefijo <code className="text-neon-blue bg-white/5 px-2 py-0.5 rounded border border-white/10">cz!</code>{" "}
-            y slash commands <code className="text-neon-pink bg-white/5 px-2 py-0.5 rounded border border-white/10">/comandos</code>.
+          <p className="mx-auto max-w-2xl text-lg md:text-xl text-muted mb-10">
+            {t.hero.tagline}{' '}
+            <a
+              href={GITHUB_REPO}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-brand-600 dark:text-brand-300 font-semibold hover:underline"
+            >
+              {t.hero.description.split('.')[0]}.
+            </a>{' '}
+            <span className="text-muted">{t.hero.description.split('.').slice(1).join('.').trim()}</span>
+            {' '}
+            <code className="text-brand-600 dark:text-brand-300 bg-card border border-border px-2 py-0.5 rounded">{BOT_PREFIX}</code>
+            {' '}
+            <code className="text-violet-500 dark:text-violet-300 bg-card border border-border px-2 py-0.5 rounded">/comandos</code>
           </p>
 
           <div className="flex flex-wrap justify-center gap-4 mb-14">
@@ -126,32 +140,56 @@ export default async function Home() {
               href={INVITE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-8 py-3.5 rounded-xl font-header font-black uppercase tracking-widest text-sm bg-electric-blue text-white active-depth hover:shadow-[0_0_25px_rgba(0,212,255,0.6)]"
+              className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl text-sm font-bold tracking-wide btn-discord"
             >
-              Invitar a Discord
+              <Icon name="discord" size={20} className="[&>g]:fill-current" />
+              {t.hero.ctaInvite}
             </a>
             <a
-              href="https://github.com/Ciszu-Network/CiszuNetwork"
+              href={GITHUB_REPO}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-8 py-3.5 rounded-xl font-header font-black uppercase tracking-widest text-sm border border-white/20 text-white hover:border-neon-blue hover:text-neon-blue hover:shadow-[0_0_15px_rgba(0,212,255,0.3)] transition-all active:scale-95"
+              className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl text-sm font-bold tracking-wide btn-ghost"
             >
-              GitHub
+              <Icon name="favorite" size={18} />
+              {t.hero.ctaGithub}
             </a>
           </div>
 
-          {/* Stats dinámicas reales */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            {stats.map((s) => (
+              <div key={s.label} className="soft-card rounded-2xl p-5 hover-card">
+                <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-brand-400/12 text-brand-600 dark:text-brand-300 mb-3">
+                  <Icon name={s.icon} style={s.icon === 'server' || s.icon === 'terminal' ? 'filled' : 'outline'} size={20} />
+                </span>
+                <div className="text-2xl font-bold text-ink">{s.value}</div>
+                <div className="text-xs text-faint font-medium uppercase tracking-wider mt-1">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ FEATURES ═══ */}
+      <section className="relative py-16 border-t border-border">
+        <div className="max-w-screen-xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-ink">{t.features.title}</h2>
+            <p className="mt-3 text-muted">{t.features.subtitle}</p>
+          </div>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 max-w-5xl mx-auto">
             {[
-              { icon: "🖥️", label: "Servidores", value: status ? String(status.guilds) : "—", glow: "hover-glow-blue" },
-              { icon: "⚡", label: "Comandos ejecutados", value: status ? status.commands_total.toLocaleString("es") : "—", glow: "hover-glow-pink" },
-              { icon: "⏱️", label: "Uptime", value: formatUptime(status?.started_at ?? null, now), glow: "hover-glow-green" },
-              { icon: "🎯", label: "Comandos", value: `${COMMANDS.length}`, glow: "hover-glow-purple" },
-            ].map((s) => (
-              <div key={s.label} className={`glass rounded-2xl p-5 border border-white/10 hover-lift ${s.glow}`}>
-                <div className="text-2xl mb-2">{s.icon}</div>
-                <div className="text-2xl font-header font-black text-white">{s.value}</div>
-                <div className="text-xs text-white/60 font-header font-bold uppercase tracking-widest mt-1">{s.label}</div>
+              { icon: 'rocket', style: 'filled' },
+              { icon: 'globe', style: 'outline' },
+              { icon: 'gamepad', style: 'outline' },
+              { icon: 'shield', style: 'filled' },
+            ].map((f, i) => (
+              <div key={i} className="soft-card rounded-2xl p-6 hover-card">
+                <span className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-violet-400/12 text-violet-500 dark:text-violet-300 mb-4">
+                  <Icon name={f.icon} style={f.style as 'outline' | 'filled'} size={22} />
+                </span>
+                <h3 className="font-semibold text-ink mb-1.5">{t.features.items[i].title}</h3>
+                <p className="text-sm text-muted leading-relaxed">{t.features.items[i].desc}</p>
               </div>
             ))}
           </div>
@@ -159,53 +197,51 @@ export default async function Home() {
       </section>
 
       {/* ═══ COMANDOS ═══ */}
-      <section id="comandos" className="relative py-24">
-        <div className="absolute top-0 left-1/4 w-72 h-72 rounded-full bg-neon-blue/10 blur-[100px]" />
-        <div className="relative max-w-screen-xl mx-auto px-4">
-          <div className="text-center mb-14">
-            <p className="text-neon-cyan font-header font-black uppercase tracking-[0.3em] text-xs mb-3 text-shadow-neon-cyan">12 comandos · 4 categorías</p>
-            <h2 className="text-4xl md:text-5xl font-header font-black text-shadow-neon-blue">COMANDOS</h2>
-            <p className="mx-auto mt-4 max-w-xl text-white/70 font-header font-bold">
-              Usa <code className="text-neon-blue bg-white/5 px-2 py-0.5 rounded border border-white/10">cz!comando</code> en el chat
-              o <code className="text-neon-pink bg-white/5 px-2 py-0.5 rounded border border-white/10">/comando</code> con la barra de Discord.
+      <section id="comandos" className="relative py-16 border-t border-border">
+        <div className="max-w-screen-xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <p className="text-brand-600 dark:text-brand-300 font-semibold uppercase tracking-[0.25em] text-xs mb-3">
+              {t.commandsSection.kicker}
+            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-ink">{t.commandsSection.title}</h2>
+            <p className="mx-auto mt-3 max-w-xl text-muted">
+              {t.commandsSection.subtitle}
             </p>
           </div>
 
           {CATEGORIES.map((category) => {
             const cmds = COMMANDS.filter((c) => c.category === category);
-            const style = CATEGORY_STYLES[category];
             return (
               <div key={category} className="mb-10">
-                <h3 className={`font-header font-black uppercase tracking-widest text-sm mb-4 flex items-center gap-3 ${style.color}`}>
-                  <span className={`w-8 h-8 rounded-lg ${style.bg} flex items-center justify-center text-base`}>
-                    {category === "Diversión" ? "🎮" : category === "Información" ? "📊" : category === "Social" ? "💬" : "🛠️"}
+                <h3 className="font-semibold uppercase tracking-widest text-sm mb-4 flex items-center gap-3 text-ink">
+                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-brand-400/12 text-brand-600 dark:text-brand-300">
+                    <Icon name={CATEGORY_ICONS[category]} size={16} />
                   </span>
-                  {category}
-                  <span className="w-px h-4 bg-white/20" />
-                  <span className="text-white/40 text-xs">{cmds.length}</span>
+                  {t.commandsSection.categories[category]}
+                  <span className="w-px h-4 bg-border" />
+                  <span className="text-faint text-xs">{cmds.length}</span>
                 </h3>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {cmds.map((cmd) => (
-                    <div
-                      key={cmd.name}
-                      className={`glass rounded-2xl p-5 border border-white/10 hover-lift ${style.shadow}`}
-                    >
+                    <div key={cmd.name} className="soft-card rounded-2xl p-5 hover-card">
                       <div className="flex items-center justify-between mb-3">
-                        <code className="text-sm font-bold text-neon-blue bg-neon-blue/10 px-2.5 py-1 rounded-lg border border-neon-blue/30">
-                          {status?.prefix ?? "cz!"}{cmd.name}
+                        <code className="text-sm font-semibold text-brand-600 dark:text-brand-300 bg-brand-400/10 px-2.5 py-1 rounded-lg border border-brand-400/25">
+                          {status?.prefix ?? BOT_PREFIX}{cmd.name}
                         </code>
-                        <span className="text-xl">{cmd.emoji}</span>
+                        <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-violet-400/12 text-violet-500 dark:text-violet-300">
+                          <Icon name={cmd.icon} style={cmd.icon === 'server' ? 'filled' : 'outline'} size={16} />
+                        </span>
                       </div>
-                      <p className="text-sm text-white/75 mb-3">{cmd.description}</p>
-                      <p className="text-xs text-white/50 font-header font-bold">
-                        Uso: <code className="text-white/80 bg-white/5 px-1.5 py-0.5 rounded">{cmd.usage}</code>
+                      <p className="text-sm text-muted mb-3">{cmd.description}</p>
+                      <p className="text-xs text-faint font-medium">
+                        {t.commandsSection.usage}: <code className="text-ink bg-card border border-border px-1.5 py-0.5 rounded">{cmd.usage}</code>
                       </p>
                       {cmd.aliases.length > 0 && (
-                        <p className="text-xs text-white/40 mt-2">
-                          Aliases: {cmd.aliases.slice(0, 4).map((a) => (
-                            <code key={a} className="bg-white/5 px-1 py-0.5 rounded mr-1">{a}</code>
+                        <p className="text-xs text-faint mt-2">
+                          {t.commandsSection.aliases}: {cmd.aliases.slice(0, 4).map((a) => (
+                            <code key={a} className="bg-card border border-border px-1 py-0.5 rounded mr-1">{a}</code>
                           ))}
-                          {cmd.aliases.length > 4 && <span className="text-white/30">+{cmd.aliases.length - 4}</span>}
+                          {cmd.aliases.length > 4 && <span className="text-faint/60">+{cmd.aliases.length - 4}</span>}
                         </p>
                       )}
                     </div>
@@ -214,90 +250,112 @@ export default async function Home() {
               </div>
             );
           })}
+
+          <div className="text-center mt-12">
+            <Link href="/comandos" className="inline-flex items-center gap-2 px-7 py-3 rounded-xl text-sm font-semibold btn-ghost">
+              {t.commandsSection.viewAll}
+              <Icon name="arrow-right" style="filled" size={16} />
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* ═══ ESTADO DINÁMICO ═══ */}
-      <section id="estado" className="relative py-24 bg-[#02030a] border-y border-white/5">
+      {/* ═══ ESTADO EN VIVO ═══ */}
+      <section id="estado" className="relative py-16 bg-surface border-y border-border">
         <div className="max-w-screen-xl mx-auto px-4 text-center">
-          <h2 className="text-4xl md:text-5xl font-header font-black text-shadow-neon-blue mb-12">ESTADO EN VIVO</h2>
-          <div className="glass rounded-3xl p-8 border border-white/10 max-w-2xl mx-auto hover-glow-blue">
+          <h2 className="text-3xl md:text-4xl font-bold text-ink mb-3">{t.statusSection.title}</h2>
+          <p className="mx-auto mb-10 max-w-xl text-muted">{t.statusSection.subtitle}</p>
+
+          <div className="soft-card rounded-3xl p-8 max-w-2xl mx-auto border border-border">
             <div className="flex items-center justify-center gap-3 mb-6">
-              <span className={`w-4 h-4 rounded-full ${isOnline ? "bg-neon-green animate-pulse shadow-[0_0_15px_rgba(0,255,136,0.9)]" : "bg-neon-red shadow-[0_0_15px_rgba(255,0,0,0.9)]"}`} />
-              <span className="font-header font-black uppercase tracking-widest text-xl text-shadow-neon-green">
-                {isOnline ? "Bot en línea" : "Bot offline"}
+              <span
+                className={`w-4 h-4 rounded-full ${
+                  isOnline ? 'bg-success animate-pulse shadow-[0_0_12px_var(--success)]' : 'bg-danger shadow-[0_0_12px_var(--danger)]'
+                }`}
+              />
+              <span className={`font-semibold text-xl ${isOnline ? 'text-ink' : 'text-danger'}`}>
+                {isOnline ? t.statusSection.online : t.statusSection.offline}
               </span>
             </div>
+
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
               {[
-                { label: "Servidores", value: status ? String(status.guilds) : "—" },
-                { label: "Comandos", value: status ? status.commands_total.toLocaleString("es") : "—" },
-                { label: "Uptime", value: formatUptime(status?.started_at ?? null, now) },
-                { label: "Versión", value: status?.version ?? "—" },
+                { label: t.statusSection.servers, value: status ? String(status.guilds) : '—' },
+                { label: t.statusSection.commands, value: status ? status.commands_total.toLocaleString(lang === 'es' ? 'es' : 'en') : '—' },
+                { label: t.statusSection.uptime, value: formatUptime(status?.started_at ?? null, now) },
+                { label: t.statusSection.version, value: status?.version ?? '—' },
               ].map((s) => (
                 <div key={s.label}>
-                  <div className="text-2xl md:text-3xl font-header font-black text-white">{s.value}</div>
-                  <div className="text-[10px] text-white/50 font-header font-bold uppercase tracking-widest mt-1">{s.label}</div>
+                  <div className="text-2xl md:text-3xl font-bold text-ink">{s.value}</div>
+                  <div className="text-[10px] text-faint font-medium uppercase tracking-widest mt-1">{s.label}</div>
                 </div>
               ))}
             </div>
-            <p className="mt-6 text-xs text-white/40">
+
+            <p className="mt-6 text-xs text-faint">
               {status?.last_seen
-                ? `Última actualización: ${new Date(status.last_seen).toLocaleString("es")} · El bot envía heartbeat cada 60s y la web refresca cada 60s`
-                : "El bot no ha reportado estado aún. Si acaba de arrancar, espera un momento."}
+                ? `${t.statusSection.lastSeen}: ${new Date(status.last_seen).toLocaleString(lang === 'es' ? 'es' : 'en')} · ${t.statusSection.heartbeat}`
+                : t.statusSection.noStatus}
             </p>
+
+            <Link
+              href="/estado"
+              className="inline-flex items-center gap-2 mt-6 px-6 py-2.5 rounded-lg text-sm font-semibold btn-ghost"
+            >
+              {t.statusSection.viewPage}
+              <Icon name="arrow-right" style="filled" size={15} />
+            </Link>
           </div>
         </div>
       </section>
 
       {/* ═══ ECOSISTEMA ═══ */}
-      <section id="ecosistema" className="relative py-24">
-        <div className="absolute bottom-0 right-1/4 w-72 h-72 rounded-full bg-neon-purple/10 blur-[100px]" />
-        <div className="relative max-w-screen-xl mx-auto px-4">
-          <div className="text-center mb-14">
-            <h2 className="text-4xl md:text-5xl font-header font-black text-shadow-neon-purple">ECOSISTEMA</h2>
-            <p className="mx-auto mt-4 max-w-xl text-white/70 font-header font-bold">
-              CiszuBot es parte de Ciszu Network. Descubre todo el ecosistema.
-            </p>
+      <section id="ecosistema" className="relative py-16">
+        <div className="max-w-screen-xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-ink">{t.ecosystem.title}</h2>
+            <p className="mx-auto mt-3 max-w-xl text-muted">{t.ecosystem.subtitle}</p>
           </div>
-          <div className="grid gap-6 md:grid-cols-3 max-w-5xl mx-auto">
-            {ECOSYSTEM.map((eco) => (
-              <a
-                key={eco.name}
-                href={eco.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`glass rounded-2xl p-7 border border-white/10 hover-lift ${eco.color} text-left group`}
-              >
-                <h3 className="font-header font-black text-2xl mb-2 group-hover:text-neon-cyan transition-colors">{eco.name}</h3>
-                <p className="text-sm text-white/70">{eco.desc}</p>
-                <span className="inline-flex items-center gap-2 mt-5 text-xs font-header font-black uppercase tracking-widest text-neon-cyan">
-                  Visitar
-                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                    <path d="M7 17 17 7M7 7h10v10" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </span>
-              </a>
-            ))}
+          <div className="grid gap-6 md:grid-cols-2 max-w-3xl mx-auto">
+            {t.ecosystem.items.map((eco, i) => {
+              const href = i === 0 ? 'https://ciszunetwork.vercel.app' : 'https://ciszukoantony.vercel.app';
+              return (
+                <a
+                  key={eco.name}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="soft-card rounded-2xl p-7 hover-card text-left group"
+                >
+                  <h3 className="font-bold text-xl text-ink mb-2 group-hover:text-brand-600 dark:group-hover:text-brand-300 transition-colors">
+                    {eco.name}
+                  </h3>
+                  <p className="text-sm text-muted">{eco.desc}</p>
+                  <span className="inline-flex items-center gap-2 mt-5 text-xs font-semibold uppercase tracking-widest text-brand-600 dark:text-brand-300">
+                    {t.ecosystem.visit}
+                    <Icon name="arrow-right" style="filled" size={14} className="group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </a>
+              );
+            })}
           </div>
         </div>
       </section>
 
       {/* ═══ CTA FINAL ═══ */}
-      <section className="relative py-20 text-center border-t border-white/5">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-neon-blue/5 to-transparent" />
+      <section className="relative py-20 text-center border-t border-border">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-brand-400/5 to-transparent" />
         <div className="relative max-w-screen-xl mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-header font-black text-shadow-neon-blue mb-4">¿LISTO PARA PROBARLO?</h2>
-          <p className="mx-auto mb-8 max-w-lg text-white/70 font-header font-bold">
-            Invita a CiszuBot a tu servidor en menos de un minuto. Gratis, rápido y con estilo.
-          </p>
+          <h2 className="text-3xl md:text-4xl font-bold text-ink mb-4">{t.cta.title}</h2>
+          <p className="mx-auto mb-8 max-w-lg text-muted">{t.cta.description}</p>
           <a
             href={INVITE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block px-10 py-4 rounded-xl font-header font-black uppercase tracking-widest text-sm bg-electric-pink text-white active-depth hover:shadow-[0_0_30px_rgba(255,51,204,0.6)]"
+            className="inline-flex items-center gap-2.5 px-10 py-4 rounded-xl text-sm font-bold tracking-wide btn-discord"
           >
-            Invitar ahora
+            <Icon name="discord" size={20} className="[&>g]:fill-current" />
+            {t.cta.button}
           </a>
         </div>
       </section>
