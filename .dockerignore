@@ -1,31 +1,10 @@
-# ─── Docker: exclusión de artefactos y secretos ───
-# Nunca copiar node_modules ni builds dentro de la imagen
-node_modules/
-.pnpm-store/
-
-# Builds
-.next/
-out/
-dist/
-target/
-.tsbuildinfo
-
-# Secretos — NUNCA dentro de la imagen (se inyectan via env)
-.env
-.env.*
+*
+!apps/ciszubot/discord-bot/**
+!pnpm-workspace.yaml
+!pnpm-lock.yaml
+!apps/ciszubot/discord-bot/.env.example
 **/.env
-!**/.env.example
-
-# Git y caché
-.git/
-.turbo/
-*.log
-
-# Contenido pesado (binarios y media del repo)
-content/
-apps/*/content/
-ciszukoantony/content/
-**/*.mp4
-**/*.mp3
-**/*.gif
-**/*.exe
+**/logs
+**/node_modules
+**/dist
+**/.git

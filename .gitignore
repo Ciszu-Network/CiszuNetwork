@@ -116,3 +116,14 @@ apps/muzicmania/website/public/ciszukoantony/
 # Supabase CLI temp
 supabase/.temp/
 .turbo/
+
+# Carpeta temporal de opencode (trabajos en curso, nunca trackear)
+.opencode-tmp/
+
+# Discord bot logs
+apps/ciszubot/discord-bot/logs/
+
+# CiszuBot website prebuild mirrors (webs puras: no trackear)
+apps/ciszubot/website/public/apps/
+apps/ciszubot/website/public/ciszukoantony/
+apps/ciszubot/website/public/docs/

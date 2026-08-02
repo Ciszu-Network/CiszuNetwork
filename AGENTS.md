@@ -9,7 +9,7 @@
 | **CiszuNetwork** | `ciszunetwork.vercel.app` | Web principal — presentación de la marca, redes y ecosistema |
 | **CiszukoAntony** | `ciszukoantony.vercel.app` | Portfolio personal (logos, medios, música) |
 | **MuzicMania** | `muzicmania.vercel.app` | Juego de ritmo/música — scores en Supabase (schema `muzicmania`), auth de Supabase, app de escritorio Tauri + NSIS |
-| **Ciszubot** | `ciszubot.vercel.app` | Landing page del bot de Discord (`apps/ciszubot/discord/`, vanilla JS) |
+| **Ciszubot** | `ciszubot.vercel.app` | Landing del bot de Discord (`apps/ciszubot/website/`, Next.js) + **estado en vivo del bot** (heartbeat Supabase → `ciszubot.bot_status`) |
 
 Infraestructura: **Supabase** (un solo proyecto `obwzzmbvkrcscqwptlqo` — auth, Postgres, Storage CDN `ciszu-cdn`) + **Vercel** (4 proyectos, deploys vía GitHub Actions) + **GitHub** (repo privado `Ciszu-Network/CiszuNetwork`). Identidad visual: neon cyan/rosa, fuente Geomanist.
 
@@ -34,10 +34,34 @@ Package manager: **pnpm v10.8.1**, Node >=20.
 | `ciszuko-network` | `apps/ciszukoantony/website/` | Next.js — portfolio |
 | `muzicmania-next` | `apps/muzicmania/website/` | Next.js + Tauri — music game |
 | `ciszubot-web` | `apps/ciszubot/website/` | Next.js — bot landing page |
-| `ciszubot` | `apps/ciszubot/discord/` | Discord.js bot (vanilla JS, `node index.js`) |
+| `ciszubot` | `apps/ciszubot/discord-bot/` | Discord.js bot (TypeScript, pnpm workspace, Docker) |
 | `@ciszunetwork/cdn` | `packages/cdn/` | Asset resolver (see below) |
 
 All websites are Next.js 15 with Tailwind 4 + PostCSS. They use `eslint` (no Prettier config found).
+
+## CiszuBot (bot de Discord) — estado (ago 2026)
+
+**v3.0.0 — migrado a TypeScript + pnpm + Node 24** (`apps/ciszubot/discord-bot/`):
+
+- Stack: Node 24 (imagen `node:24-alpine`), TypeScript 5.9, pnpm 11 (workspace), Discord.js ^14.22, Express ^5, `@supabase/supabase-js` listo para conectar.
+- Estructura: `src/index.ts` (login, registro slash, interacciones, prefijo), `src/commands/*.ts` (12 comandos: 8ball, bye, confess, directsay, help, hi, ping, pong, profile, say, serverinfo, test), `src/types/command.ts` (declaration merging `Client.commands` + `SimulatedMessage`), `src/config/index.ts`, `src/utils/commandRegistry.ts`, `src/services/{logger,statsServer,supabase}.ts`.
+- **Slash commands globales** (`/`): registrados vía `Routes.applicationCommands`; el registro preserva el **Entry Point command** (`launch`, type 4) para evitar el error 50240 en bulk update. Si `GUILD_ID` está definido en `.env`, registra solo en ese guild (instantáneo; útil para testing).
+- **Supabase conectado (2 ago 2026)**: `src/services/supabase.ts` con service_role + schema `ciszubot`. Cada comando ejecutado (slash + prefijo) se inserta en `ciszubot.command_logs` y cada 60s se hace **heartbeat** a `ciszubot.bot_status` (upsert id=1: online, guilds, commands_total, version, last_seen). Shutdown marca online=false.
+- **Fixes clave (1 ago 2026)**: `Routes.applicationcommands` → `applicationCommands` (mayúscula — no registraba nada), botones/selects respondidos con `deferUpdate` (antes timeouts), registry con `loaded.default ?? loaded` (comandos ESM/CJS), `iconURL: string | null` en thumbnails.
+- **Docker**: multi-stage con pnpm (`corepack prepare pnpm@11.18.0`), usuario no-root, `EXPOSE 5000`, logs en `logs/` con chown. Contexto de build = **raíz del repo** (el `.dockerignore` raíz incluye solo `apps/ciszubot/discord-bot/**`, `pnpm-workspace.yaml`, `pnpm-lock.yaml`). Comando: `docker compose up -d --build ciszu-bot`.
+- **Panel web**: Express en `:5000` (`/api/stats` + estáticos desde `public/`). Compose mapea `5000:5000`.
+- ⚠️ **24/7 pendiente**: el bot corre en el PC del usuario (Docker Desktop). Si el PC se apaga, el bot muere. Ver `docs/ia_docs/VPS_247.md` para la recomendación de hosting.
+
+## Web de CiszuBot — estado (ago 2026)
+
+**`apps/ciszubot/website/` — reconstruida 2 ago 2026** con tema neon de MuzicMania (Tailwind v4, Exo_2 + Rajdhani):
+
+- **Single page** (`src/app/page.tsx`): hero con isotipo oficial (CDN), badge de estado en vivo, stats dinámicas reales, grid completo de 12 comandos con categorías (Diversión/Información/Social/Utilidad), sección estado en vivo, sección ecosistema (links a ciszunetwork/ciszukoantony/muzicmania) y CTA invitar.
+- **Datos dinámicos**: fetch server-side a `ciszubot.bot_status` vía PostgREST con anon key + `Accept-Profile: ciszubot` (policy SELECT anon). `revalidate = 60`. El badge "En línea" es **online && last_seen < 3 min** (si el PC se apaga sin shutdown, la web lo detecta por heartbeat viejo).
+- **Datos de comandos**: `src/data/commands.ts` — los 12 comandos con descripciones/aliases/usage/categorías reales del bot.
+- **Layout**: Navbar sticky con isotipo + links anchor + botón Invitar (URL oauth2 con scope `bot applications.commands`), Footer con socials + proyectos + copyright, favicon = isotipo PNG (metadata local en `public/` vía copy-assets).
+- **Env vars**: `vercel.json` solo CDN_URL + APP_ENV (patrón del repo); `NEXT_PUBLIC_SUPABASE_URL`/`NEXT_PUBLIC_SUPABASE_ANON_KEY` ya configuradas en el proyecto Vercel `ciszubot` (las 4 apps las tienen desde jul 2026).
+- **prebuild**: `copy-assets.js` (depth 3 → `../../../scripts/copy-assets.js`) copia `apps/ciszubot/content/...` a `public/` para dev/fallback local.
 
 ## CDN strategy (Ciszu CDN — mirror del repo)
 
@@ -185,6 +209,12 @@ Si el repo cambia a público:
 - Icon system is in `shared/icons/` (outline/filled/flag); use `resolveIcon()` from `@ciszunetwork/cdn`. All 4 websites import this package.
 - **Legacy files** (pre-date `packages/cdn/`): `shared/hybrid-system.js`, `shared/aliases.json`, `scripts/setup-icons-system.js`, `scripts/setup-aliases.js` — no longer imported by any app. The canonical resolver is `packages/cdn/index.ts`.
 - **Content dirs**: `root/content/`, `apps/*/content/`, `ciszukoantony/content/`, `ciszugamens/content/` hold multimedia (banners, flayers, logos, thumbails). These are candidates for CDN but tracked in git for local builds.
+- **Espacio en disco LIMITADO (crítico)**: el PC tiene poco espacio libre en C: (disco del sistema). Reglas OBLIGATORIAS para cualquier trabajo temporal:
+  - **NUNCA** escribir archivos temporales en `C:\Users\fplay\AppData\Local\Temp` ni otras rutas de C: — el espacio libre allí es mínimo
+  - Usar SIEMPRE `E:\Ciszu Network\.opencode-tmp/` (gitignored, dentro del repo en el disco E:) para logs, reportes, archivos de trabajo temporales
+  - Borrar los archivos temporales de `.opencode-tmp/` en cuanto dejen de usarse (fin de tarea), o como máximo limpiar los antiguos (>1 semana)
+  - Antes de descargar imágenes Docker/paquetes grandes, verificar espacio: `Get-PSDrive C,E` (C: no debe bajar de ~5 GB libres)
+  - La DB local de Supabase (`supabase start`) ocupa ~1.5 GB en Docker — verificar espacio antes de usarla
 
 ## Supabase Advisors (Database Linter)
 
@@ -267,6 +297,8 @@ Si el repo cambia a público:
 | 09 | `20260729000009_fix_remaining_advisors.sql` | Funciones públicas a INVOKER + merged policies |
 | 10 | `20260729000010_fix_submit_game_score_invoker.sql` | `muzicmania.submit_game_score` → INVOKER |
 | 11 | `20260729000011_revoke_execute_trigger_functions.sql` | REVOKE EXECUTE de anon/authenticated en las 3 funciones trigger SECURITY DEFINER restantes (cierra advisor). ✅ **APLICADA 31 jul 2026** vía Management API (PAT nuevo del usuario) — verificada: anon/auth_exec = false en las 3 |
+| 12 | `20260801000012_revoke_execute_security_definer.sql` | Red de seguridad: REVOKE EXECUTE idempotente de TODAS las funciones SECURITY DEFINER (muzicmania triggers + public auth/profiles triggers) |
+| 13 | `20260801000013_bot_status_heartbeat.sql` | ✅ **APLICADA 2 ago 2026** — tabla `ciszubot.bot_status` (single-row id=1: online, last_seen, started_at, version, guilds, commands_total, prefix). Policy SELECT para anon/authenticated + GRANT SELECT anon + **GRANT ALL service_role** (Management API no aplica grants default). La consume la web de ciszubot (estado en vivo) |
 
 ## Scripts útiles (en `scripts/`)
 
