@@ -36,14 +36,14 @@ function fetch(url, opts) {
 }
 
 async function loadEnv() {
-  const envPath = path.join(ROOT, 'services', 'supabase', '.env.local');
+  const envPath = path.join(ROOT, 'services', 'supabase', '.env');
   if (!fs.existsSync(envPath)) {
-    console.error('  [!] .env.local no encontrado en services/supabase/');
+    console.error('  [!] .env no encontrado en services/supabase/');
     return {};
   }
   const content = fs.readFileSync(envPath, 'utf8');
   const env = {};
-  for (const line of content.split('\n')) {
+  for (const line of content.replace(/\r\n/g, '\n').split('\n')) {
     const m = line.match(/^\s*([^#=]+)=(.*)$/);
     if (m) env[m[1].trim()] = m[2].trim().replace(/^["']|["']$/g, '');
   }
@@ -52,36 +52,42 @@ async function loadEnv() {
 
 async function getConnectionString(env) {
   const token = env.SUPABASE_ACCESS_TOKEN;
+  const password = env.SUPABASE_DB_PASSWORD;
   const ref = 'obwzzmbvkrcscqwptlqo';
 
   if (!token) {
-    console.error('  [!] SUPABASE_ACCESS_TOKEN no encontrado en .env.local');
+    console.error('  [!] SUPABASE_ACCESS_TOKEN no encontrado en services/supabase/.env');
+    return null;
+  }
+  if (!password) {
+    console.error('  [!] SUPABASE_DB_PASSWORD no encontrado en services/supabase/.env');
     return null;
   }
 
-  console.log('  [>>] Obteniendo connection string via Management API...');
-  const res = await fetch(`https://api.supabase.com/v1/projects/${ref}/database/connection`, {
+  console.log('  [>>] Obteniendo config del pooler via Management API...');
+  const res = await fetch(`https://api.supabase.com/v1/projects/${ref}/config/database/pooler`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
   if (!res.ok) {
-    console.error(`  [!] Error obteniendo connection string: HTTP ${res.status}`);
+    console.error(`  [!] Error obteniendo config del pooler: HTTP ${res.status}`);
     return null;
   }
 
   const data = await res.json();
-  // The API returns connection info with a uri field
-  const uri = data.connection_string || (data.uris && data.uris.length > 0 ? data.uris[0].connection_string : null);
-  if (!uri) {
-    console.error('  [!] No se pudo extraer connection string de la respuesta');
+  const pooler = Array.isArray(data) ? data[0] : data;
+  if (!pooler || !pooler.db_host || !pooler.db_port || !pooler.db_user || !pooler.db_name) {
+    console.error('  [!] No se pudo extraer la config del pooler de la respuesta');
     console.error('  ', JSON.stringify(data).slice(0, 500));
     return null;
   }
-  return uri;
+  const pw = encodeURIComponent(password);
+  return `postgresql://${pooler.db_user}:${pw}@${pooler.db_host}:${pooler.db_port}/${pooler.db_name}`;
 }
 
 async function findPgDump() {
   const candidates = [
+    'E:\\DaVinci\\PGTools\\pg_dump.exe',
     'C:\\Program Files\\PostgreSQL\\17\\bin\\pg_dump.exe',
     'C:\\Program Files\\PostgreSQL\\16\\bin\\pg_dump.exe',
     'C:\\Program Files\\PostgreSQL\\15\\bin\\pg_dump.exe',
@@ -106,10 +112,10 @@ async function main() {
   if (!connStr) {
     console.error('\n  [!] No se pudo obtener la connection string automáticamente.');
     console.error('  Soluciones:');
-    console.error('  1. Asegúrate de que SUPABASE_ACCESS_TOKEN es válido en services/supabase/.env.local');
-    console.error('  2. O ejecuta manualmente:');
-    console.error('     pg_dump "postgresql://postgres:CONTRASEÑA@db.obwzzmbvkrcscqwptlqo.supabase.co:5432/postgres" -f backup.sql');
-    console.error('  3. O desde el Dashboard: Database → Database Settings → Connection string → URI');
+    console.error('  1. Asegúrate de que SUPABASE_ACCESS_TOKEN y SUPABASE_DB_PASSWORD son válidos en services/supabase/.env');
+    console.error('  2. O ejecuta manualmente (datos en services/supabase/.env):');
+    console.error('     pg_dump "postgresql://postgres.obwzzmbvkrcscqwptlqo:PASSWORD@aws-1-us-east-1.pooler.supabase.com:6543/postgres" -f backup.sql');
+    console.error('  3. O desde el Dashboard: Connect → Session pooler → URI');
     process.exit(1);
   }
 
