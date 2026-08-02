@@ -1,0 +1,26 @@
+info:
+  name: Bot status (Supabase PostgREST)
+  type: http
+  seq: 5
+
+http:
+  method: GET
+  url: "{{SUPABASE_URL}}/rest/v1/bot_status?select=online,last_seen,version&limit=1"
+  headers:
+    - name: apikey
+      value: "{{SUPABASE_ANON_KEY}}"
+    - name: Authorization
+      value: "Bearer {{SUPABASE_ANON_KEY}}"
+    - name: Accept-Profile
+      value: ciszubot
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("returns 200", function() {
+          expect(res.status).to.equal(200);
+        });
+        test("has body", function() {
+          expect(res.body).to.not.be.undefined;
+        });

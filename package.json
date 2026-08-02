@@ -18,7 +18,10 @@
     "bot:start": "pnpm --filter ciszubot start",
     "bot:dev": "pnpm --filter ciszubot dev",
     "cdn:upload": "node scripts/upload-cdn.js",
-    "db:backup": "node scripts/backup-db.js"
+    "db:backup": "node scripts/backup-db.js",
+    "api:test": "node scripts/run-bru.js run . -r --env prod --exclude-tags local",
+    "api:test:report": "node scripts/run-bru.js run . -r --env prod --exclude-tags local --reporter-json ../.opencode-tmp/bru-report.json",
+    "api:test:local": "node scripts/run-bru.js run . -r --env prod"
   },
   "devDependencies": {
     "turbo": "^2.5.0"

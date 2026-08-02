@@ -1,0 +1,18 @@
+info:
+  name: Bot — panel stats local (:5000)
+  type: http
+  seq: 3
+  tags:
+    - local
+
+http:
+  method: GET
+  url: http://localhost:5000/api/stats
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("returns 200 (requiere bot local)", function() {
+          expect(res.status).to.equal(200);
+        });

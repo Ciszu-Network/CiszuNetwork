@@ -1,0 +1,26 @@
+info:
+  name: MuzicMania — leaderboard
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{SUPABASE_URL}}/rest/v1/scores?select=id,user_id,score,accuracy,track_id,created_at&order=score.desc&limit=10"
+  headers:
+    - name: apikey
+      value: "{{SUPABASE_ANON_KEY}}"
+    - name: Authorization
+      value: "Bearer {{SUPABASE_ANON_KEY}}"
+    - name: Accept-Profile
+      value: muzicmania
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("returns 200", function() {
+          expect(res.status).to.equal(200);
+        });
+        test("is an array", function() {
+          expect(Array.isArray(res.body)).to.be.true;
+        });

@@ -127,3 +127,9 @@ apps/ciszubot/discord-bot/logs/
 apps/ciszubot/website/public/apps/
 apps/ciszubot/website/public/ciszukoantony/
 apps/ciszubot/website/public/docs/
+
+# ─── Bruno API tests ───────────────────────────────
+# Entornos con secrets reales (copiar prod.example.yml → prod.yml)
+api-tests/environments/*.yml
+api-tests/*.html
+!api-tests/environments/*.example.yml

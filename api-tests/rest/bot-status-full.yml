@@ -1,0 +1,26 @@
+info:
+  name: Bot — estado completo (bot_status)
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{SUPABASE_URL}}/rest/v1/bot_status?select=online,last_seen,started_at,version,guilds,commands_total,prefix"
+  headers:
+    - name: apikey
+      value: "{{SUPABASE_ANON_KEY}}"
+    - name: Authorization
+      value: "Bearer {{SUPABASE_ANON_KEY}}"
+    - name: Accept-Profile
+      value: ciszubot
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("returns 200", function() {
+          expect(res.status).to.equal(200);
+        });
+        test("single row bot_status", function() {
+          expect(res.body).to.have.length(1);
+        });
