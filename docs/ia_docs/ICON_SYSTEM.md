@@ -31,6 +31,22 @@
 - Regresión conocida (2 ago 2026): quitar el guard SSR rompió TODOS los iconos inline de las webs
   que usan `@ciszu/ui` (TypeError en SSR). NO eliminar ese guard.
 
+### Bug conocido: iconos que se pierden en navegación (2 ago 2026, sin arreglar)
+
+- **Síntoma**: los iconos se muestran al cargar (SSR inline), pero al rato o al cambiar de página
+  (navbar) se pierden. Consola: `shield.svg:1 Failed to load resource: 404` y `gift.svg:1 404`.
+- **Datos verificados**:
+  - `gift` y `shield` SÍ existen en `packages/ui/src/generated/icon-registry.ts` (SVGs Font Awesome,
+    líneas ~137/142).
+  - Los archivos `shared/icons/svg/outline/gift.svg` y `outline/shield.svg` NO existen en disco
+    (solo `filled/`); el registro los contiene igualmente (ICON_LIST curada del script).
+  - El fallback CDN no puede servirlos: `ciszu-cdn` no tiene esos paths → 404.
+- **Hipótesis a investigar al arreglar**: en navegación cliente `getIcon(style, name)` devuelve
+  `undefined` para esos nombres (¿style pedido distinto al registrado? ¿hidratación del módulo
+  `'use client'`? ¿nombres sin archivo fuente en `shared/icons/svg`?) → el componente cae al
+  fallback CDN en vez de renderizar inline.
+- **Pendiente trackeado**: toDo de ciszubot (Prioridad Media).
+
 ### Cómo añadir un icono al sistema compartido
 
 1. Crear `shared/icons/svg/outline/<nombre>.svg` y/o `filled/<nombre>.svg` (path Material 24x24).
