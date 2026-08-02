@@ -1,7 +1,23 @@
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { Icon } from '@ciszu/ui';
-import { DISCORD_SERVER, getDict, type Lang } from '@/lib/i18n';
+import Image from 'next/image';
+import {
+  DISCORD_SERVER,
+  BUY_ME_A_COFFEE,
+  DISCORD_BOT_LIST_BOT,
+  DISCORD_BOT_LIST_SERVER,
+  DISBOARD_SERVER,
+  KO_FI,
+  PATREON,
+  TOP_GG_BOT,
+  TOP_GG_BOT_VOTE,
+  TOP_GG_SERVER,
+  TOP_GG_WIDGET_BOT,
+  TOP_GG_WIDGET_SERVER,
+  getDict,
+  type Lang,
+} from '@/lib/i18n';
 
 export const metadata: Metadata = {
   title: 'Soporte — CiszuBot',
@@ -9,11 +25,39 @@ export const metadata: Metadata = {
     'Soporte de CiszuBot: servidor de Discord, preguntas frecuentes, contacto y cómo apoyar el proyecto.',
 };
 
-const DONATE_PLACEHOLDERS = ['Patreon', 'Ko-fi', 'Buy Me a Coffee'];
 const BOT_LISTS = [
-  { name: 'Top.gg', href: 'https://top.gg' },
-  { name: 'Discord Bot List', href: 'https://discordbotlist.com' },
-  { name: 'Discord Boats', href: 'https://discord.boats' },
+  { name: 'Top.gg', href: TOP_GG_BOT, vote: TOP_GG_BOT_VOTE },
+  { name: 'Discord Bot List', href: DISCORD_BOT_LIST_BOT },
+];
+
+const SERVER_LISTS = [
+  { name: 'Top.gg', href: TOP_GG_SERVER },
+  { name: 'Discord Bot List', href: DISCORD_BOT_LIST_SERVER },
+  { name: 'Disboard', href: DISBOARD_SERVER },
+];
+
+const DONATIONS = [
+  {
+    name: 'Patreon',
+    href: PATREON,
+    desc: 'Suscripción mensual con recompensas exclusivas',
+    color: 'bg-[#FF424D]/12 text-[#FF424D]',
+    icon: 'heart' as const,
+  },
+  {
+    name: 'Ko-fi',
+    href: KO_FI,
+    desc: 'Compra un café a CiszukoAntony',
+    color: 'bg-[#29ABE0]/12 text-[#29ABE0]',
+    icon: 'gift' as const,
+  },
+  {
+    name: 'Buy Me a Coffee',
+    href: BUY_ME_A_COFFEE,
+    desc: 'Donación única, sin suscripción',
+    color: 'bg-[#FFDD00]/15 text-[#B8860B] dark:text-[#FFDD00]',
+    icon: 'star' as const,
+  },
 ];
 
 export default async function SupportPage() {
@@ -27,6 +71,35 @@ export default async function SupportPage() {
         <div className="text-center mb-12">
           <h1 className="text-3xl md:text-5xl font-bold text-ink">{t.supportPage.title}</h1>
           <p className="mx-auto mt-4 max-w-2xl text-muted">{t.supportPage.subtitle}</p>
+        </div>
+
+        {/* Widgets Top.gg */}
+        <div className="flex flex-wrap items-center justify-center gap-6 mb-14">
+          <a href={TOP_GG_BOT} target="_blank" rel="noopener noreferrer" className="soft-card rounded-2xl p-4 hover-card">
+            <Image
+              src={TOP_GG_WIDGET_BOT}
+              alt="CiszuBot en Top.gg"
+              width={140}
+              height={96}
+              className="h-auto w-auto max-w-[240px]"
+              unoptimized
+            />
+          </a>
+          <a
+            href={TOP_GG_SERVER}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="soft-card rounded-2xl p-4 hover-card"
+          >
+            <Image
+              src={TOP_GG_WIDGET_SERVER}
+              alt="Ciszu Gamens en Top.gg"
+              width={240}
+              height={96}
+              className="h-auto w-auto max-w-[360px]"
+              unoptimized
+            />
+          </a>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3 max-w-6xl mx-auto">
@@ -76,21 +149,44 @@ export default async function SupportPage() {
             </span>
             <h2 className="font-bold text-xl text-ink mb-2">{t.supportPage.donateTitle}</h2>
             <p className="text-sm text-muted mb-6 leading-relaxed">{t.supportPage.donateDesc}</p>
-            <div className="flex flex-wrap gap-2">
-              {DONATE_PLACEHOLDERS.map((name) => (
-                <span
-                  key={name}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-card border border-border text-faint"
-                  title={t.supportPage.comingSoon}
+            <div className="flex flex-col gap-2.5">
+              {DONATIONS.map((d) => (
+                <a
+                  key={d.name}
+                  href={d.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl bg-card border border-border hover:border-brand-400/40 transition-colors"
                 >
-                  <Icon name="gift" size={14} />
-                  {name}
-                  <span className="text-[10px] uppercase tracking-wide bg-violet-400/15 text-violet-500 dark:text-violet-300 px-1.5 py-0.5 rounded">
-                    {t.supportPage.comingSoon}
+                  <span className={`inline-flex items-center justify-center w-9 h-9 rounded-lg shrink-0 ${d.color}`}>
+                    <Icon name={d.icon} size={16} />
                   </span>
-                </span>
+                  <span className="flex flex-col min-w-0">
+                    <span className="text-sm font-semibold text-ink">{d.name}</span>
+                    <span className="text-xs text-muted truncate">{d.desc}</span>
+                  </span>
+                </a>
               ))}
             </div>
+          </div>
+        </div>
+
+        {/* Server lists */}
+        <div className="max-w-3xl mx-auto mt-14">
+          <h2 className="text-xl md:text-2xl font-bold text-ink text-center mb-6">{t.supportPage.serverListsTitle}</h2>
+          <div className="flex flex-wrap justify-center gap-3">
+            {SERVER_LISTS.map((list) => (
+              <a
+                key={list.name}
+                href={list.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold btn-ghost"
+              >
+                <Icon name="flag" size={15} />
+                {list.name} · {t.supportPage.server}
+              </a>
+            ))}
           </div>
         </div>
 

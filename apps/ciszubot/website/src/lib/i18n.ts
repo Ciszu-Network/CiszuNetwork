@@ -11,7 +11,21 @@ export const CISZU_NETWORK = 'https://ciszunetwork.vercel.app';
 export const CISZUKO_ANTONY = 'https://ciszukoantony.vercel.app';
 
 export const BOT_PREFIX = 'cz!';
-export const BOT_VERSION = 'v3.0.0';
+export const BOT_VERSION = 'v3.1.0';
+
+// === URLs oficiales (listas de bots, servidores, donaciones) ===
+export const WEBSITE = 'https://ciszubot.vercel.app';
+export const TOP_GG_BOT = 'https://top.gg/bot/1395532235872141312';
+export const TOP_GG_BOT_VOTE = 'https://top.gg/bot/1395532235872141312/vote';
+export const TOP_GG_SERVER = 'https://top.gg/es/discord/servers/871620279188504576';
+export const DISCORD_BOT_LIST_BOT = 'https://discordbotlist.com/bots/ciszubot';
+export const DISCORD_BOT_LIST_SERVER = 'https://discordbotlist.com/servers/ciszugamens';
+export const DISBOARD_SERVER = 'https://disboard.org/es/server/1215544133142450187';
+export const TOP_GG_WIDGET_BOT = 'https://top.gg/api/widget/1395532235872141312.svg';
+export const TOP_GG_WIDGET_SERVER = 'https://top.gg/api/v1/widgets/large/871620279188504576';
+export const PATREON = 'https://www.patreon.com/cw/ciszukoantony';
+export const KO_FI = 'https://ko-fi.com/ciszukoantony';
+export const BUY_ME_A_COFFEE = 'https://buymeacoffee.com/ciszukoantony';
 
 export const LOGO_ISOTIPO_CIRCLE =
   'apps/ciszubot/content/logos/imagen/muestras/circle/ciszubot_logo_isotipo_color_circle.png';
@@ -182,6 +196,8 @@ export const dict = {
       listsDesc:
         'CiszuBot está disponible en directorios de bots. Vótalo en las listas para ayudarnos a crecer:',
       vote: 'Votar',
+      serverListsTitle: 'Nuestro servidor en las listas',
+      server: 'Servidor',
     },
     legalPage: {
       updated: 'Última actualización: 2 de agosto de 2026',
@@ -405,8 +421,10 @@ export const dict = {
       comingSoon: 'Coming soon',
       listsTitle: 'Bot lists',
       listsDesc:
-        'CiszuBot is available on bot directories. Vote on the lists to help us grow:',
+        'CiszuBot is available in bot directories. Vote on the lists to help us grow:',
       vote: 'Vote',
+      serverListsTitle: 'Our server on the lists',
+      server: 'Server',
     },
     legalPage: {
       updated: 'Last updated: August 2, 2026',
@@ -479,7 +497,7 @@ export function getDict(lang: Lang): Dict {
   return lang === 'en' ? dict.en : dict.es;
 }
 
-export const LANGS: { code: Lang; label: string }[] = [
-  { code: 'es', label: 'ES' },
-  { code: 'en', label: 'EN' },
+export const LANGS: { code: Lang; label: string; flag: string }[] = [
+  { code: 'es', label: 'ES', flag: 'es' },
+  { code: 'en', label: 'EN', flag: 'gb' },
 ];

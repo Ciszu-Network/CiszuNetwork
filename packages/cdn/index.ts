@@ -39,7 +39,8 @@ export function resolveIcon(
   const cdnUrl = process.env.NEXT_PUBLIC_CDN_URL;
   const useLocal = opts?.forceLocal || (!opts?.forceCdn && !isProduction);
 
-  const path = `shared/icons/${format}/${style}/${name}.${format}`;
+  const dir = style === 'flag' ? 'flags' : style;
+  const path = `shared/icons/${format}/${dir}/${name}.${format}`;
 
   if (useLocal || !cdnUrl) {
     return `/${path}`;

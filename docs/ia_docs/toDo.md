@@ -4,7 +4,7 @@
 
 # Prioridad Alta
 
-- [ ] Terminar de integrar el ecosistema de Docker a Ciszu Network.
+- [ ] Modernizar CiszuBot (TODOLIST)
 - [ ] Instalar herramientras externas NO CLIS O IDES. Se encuentran en la carpeta downloads. Sirve para mas control y interfaz GUI. No utilizar si no es necesario o comparar cual es mejor.
 - [ ] Pensar si integrar el ecosistema de tuneles para la consola remota. Segun el siguiente texto de informacion:
 
