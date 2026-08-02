@@ -81,6 +81,29 @@ export function setupStatsServer(client?: Client): void {
     logger.info('Webhook de votos de top.gg activo en POST /api/votes');
   }
 
+  // Webhook de votos de DiscordBotList (POST /api/votes/dbl) — recompensa 500 monedas por voto
+  const dblSecret = process.env.DBL_WEBHOOK_SECRET || process.env.DISCORDBOTLIST_TOKEN;
+  if (dblSecret) {
+    app.post('/api/votes/dbl', express.json(), (req, res) => {
+      const auth = req.headers.authorization;
+      if (auth !== dblSecret) {
+        res.status(401).send('Unauthorized');
+        return;
+      }
+      const vote = req.body as { id?: string; username?: string; avatar?: string };
+      if (vote?.id) {
+        const userId = vote.id;
+        const guildId = activeClient?.guilds.cache.first()?.id;
+        if (guildId) {
+          void addMoney(userId, guildId, 500, 'dbl_vote', `Voto en DiscordBotList de ${vote.username ?? userId}`);
+          logger.info(`🎉 Voto recibido de ${vote.username ?? userId} en DiscordBotList — recompensa otorgada`);
+        }
+      }
+      res.status(200).send('OK');
+    });
+    logger.info('Webhook de votos de DiscordBotList activo en POST /api/votes/dbl');
+  }
+
   app.listen(port, () => {
     logger.info(`🌐 Servidor web iniciado en http://localhost:${port}`);
   });
