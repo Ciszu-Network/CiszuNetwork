@@ -2,15 +2,20 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { Icon } from '@ciszu/ui';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
 import {
   CISZUKO_ANTONY,
   CISZU_NETWORK,
   DISCORD_SERVER,
   GITHUB_ORG,
-  LOGO_ISOTIPO_CIRCLE,
+  INVITE_URL,
+  LOGO_LOGOTIPO,
   YOUTUBE,
   BOT_PREFIX,
+  TOP_GG_BOT,
+  DISCORD_BOT_LIST_BOT,
+  DISBOARD_SERVER,
   type Dict,
   type Lang,
 } from '@/lib/i18n';
@@ -34,9 +39,9 @@ const IcoYoutube = () => (
 );
 
 const SOCIALS = [
-  { Ico: IcoDiscord, href: DISCORD_SERVER, label: 'Discord', hover: 'hover:text-[#5865F2]' },
-  { Ico: IcoGithub, href: GITHUB_ORG, label: 'GitHub', hover: 'hover:text-ink' },
-  { Ico: IcoYoutube, href: YOUTUBE, label: 'YouTube', hover: 'hover:text-[#FF0000]' },
+  { Ico: IcoDiscord, href: DISCORD_SERVER, label: 'Discord', glow: 'hover:text-[#5865F2] hover:shadow-[0_0_15px_rgba(88,101,242,0.5)]' },
+  { Ico: IcoGithub, href: GITHUB_ORG, label: 'GitHub', glow: 'hover:text-white hover:shadow-[0_0_15px_rgba(255,255,255,0.4)]' },
+  { Ico: IcoYoutube, href: YOUTUBE, label: 'YouTube', glow: 'hover:text-[#FF0000] hover:shadow-[0_0_15px_rgba(255,0,0,0.5)]' },
 ];
 
 interface FooterProps {
@@ -46,35 +51,46 @@ interface FooterProps {
 
 export default function Footer({ lang, dict }: FooterProps) {
   return (
-    <footer className="bg-surface border-t border-border pt-10 pb-6 px-4 md:px-8">
-      <div className="max-w-screen-xl mx-auto">
+    <footer className="relative bg-[#0a0a14] border-t border-white/10 pt-12 pb-6 px-4 md:px-8 overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-[2px] bg-[length:200%_auto] animate-gradient-x bg-gradient-to-r from-neon-blue via-neon-purple to-neon-pink" />
+      <div className="max-w-screen-xl mx-auto relative">
         <div className="flex flex-col md:flex-row gap-10 pb-10">
-          <div className="md:w-72 shrink-0">
+          <div className="md:w-80 shrink-0">
             <Link href="/" className="flex flex-col items-start gap-4 group">
-              <span className="w-16 h-16 rounded-full border border-border bg-card flex items-center justify-center overflow-hidden">
-                <Image
-                  src={resolveAssetPath(LOGO_ISOTIPO_CIRCLE)}
-                  alt="CiszuBot"
-                  width={56}
-                  height={56}
-                  className="rounded-full"
-                />
-              </span>
-              <span className="text-lg font-bold text-ink">CiszuBot</span>
+              <Image
+                src={resolveAssetPath(LOGO_LOGOTIPO)}
+                alt="CiszuBot"
+                width={160}
+                height={32}
+                className="h-[32px] w-auto group-hover:drop-shadow-[0_0_15px_rgba(0,212,255,0.8)] transition-all duration-300"
+              />
             </Link>
             <p className="mt-4 text-sm text-muted">
-              {dict.nav.invite} · <code className="text-brand-600 dark:text-brand-300">{BOT_PREFIX}</code>
+              {dict.nav.invite} · <code className="text-neon-blue bg-neon-blue/10 border border-neon-blue/30 px-1.5 py-0.5 rounded font-bold">{BOT_PREFIX}</code>
             </p>
 
+            <a
+              href={INVITE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white shadow-[0_8px_22px_-8px_rgba(88,101,242,0.8)] transition-all hover:scale-105 hover:shadow-[0_10px_28px_-8px_rgba(0,212,255,0.8)] active:scale-95"
+            >
+              <IcoDiscord />
+              {dict.nav.invite}
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <path d="M7 17L17 7M8 7h9v9" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </a>
+
             <div className="flex gap-2.5 mt-6">
-              {SOCIALS.map(({ Ico, href, label, hover }, i) => (
+              {SOCIALS.map(({ Ico, href, label, glow }, i) => (
                 <a
                   key={i}
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
                   title={label}
-                  className={`w-9 h-9 rounded-lg bg-card border border-border flex items-center justify-center text-muted transition-all duration-200 hover:scale-105 ${hover}`}
+                  className={`w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-muted transition-all duration-200 hover:scale-105 ${glow}`}
                 >
                   <Ico />
                 </a>
@@ -87,31 +103,30 @@ export default function Footer({ lang, dict }: FooterProps) {
               <h4 className="text-xs font-semibold uppercase tracking-widest text-faint mb-1">
                 {dict.footer.explore}
               </h4>
-              <Link href="/" className="text-sm text-muted hover:text-brand-600 dark:hover:text-brand-300 transition-colors">
-                {dict.nav.home}
-              </Link>
-              <Link href="/comandos" className="text-sm text-muted hover:text-brand-600 dark:hover:text-brand-300 transition-colors">
-                {dict.nav.commands}
-              </Link>
-              <Link href="/estado" className="text-sm text-muted hover:text-brand-600 dark:hover:text-brand-300 transition-colors">
-                {dict.nav.status}
-              </Link>
-              <Link href="/soporte" className="text-sm text-muted hover:text-brand-600 dark:hover:text-brand-300 transition-colors">
-                {dict.nav.support}
-              </Link>
+              {[
+                { href: '/', label: dict.nav.home, icon: 'home' },
+                { href: '/comandos', label: dict.nav.commands, icon: 'gamepad' },
+                { href: '/estado', label: dict.nav.status, icon: 'clock' },
+                { href: '/soporte', label: dict.nav.support, icon: 'support' },
+              ].map((l) => (
+                <Link key={l.href} href={l.href} className="flex items-center gap-2 text-sm text-muted hover:text-neon-blue transition-colors">
+                  <Icon name={l.icon} size={14} className="opacity-60" />
+                  {l.label}
+                </Link>
+              ))}
             </div>
 
             <div className="flex flex-col gap-2.5">
               <h4 className="text-xs font-semibold uppercase tracking-widest text-faint mb-1">
                 {dict.footer.projects}
               </h4>
-              <a href={CISZU_NETWORK} target="_blank" rel="noopener noreferrer" className="text-sm text-muted hover:text-brand-600 dark:hover:text-brand-300 transition-colors">
+              <a href={CISZU_NETWORK} target="_blank" rel="noopener noreferrer" className="text-sm text-muted hover:text-neon-blue transition-colors">
                 Ciszu Network
               </a>
-              <a href={CISZUKO_ANTONY} target="_blank" rel="noopener noreferrer" className="text-sm text-muted hover:text-brand-600 dark:hover:text-brand-300 transition-colors">
+              <a href={CISZUKO_ANTONY} target="_blank" rel="noopener noreferrer" className="text-sm text-muted hover:text-neon-blue transition-colors">
                 Ciszuko Antony
               </a>
-              <a href={GITHUB_ORG} target="_blank" rel="noopener noreferrer" className="text-sm text-muted hover:text-brand-600 dark:hover:text-brand-300 transition-colors">
+              <a href={GITHUB_ORG} target="_blank" rel="noopener noreferrer" className="text-sm text-muted hover:text-neon-blue transition-colors">
                 GitHub
               </a>
             </div>
@@ -121,39 +136,52 @@ export default function Footer({ lang, dict }: FooterProps) {
                 {dict.footer.bot}
               </h4>
               <span className="text-sm text-muted">
-                {dict.footer.prefix}: <code className="text-brand-600 dark:text-brand-300 bg-card border border-border px-1.5 py-0.5 rounded">{BOT_PREFIX}</code>
+                {dict.footer.prefix}: <code className="text-neon-blue bg-neon-blue/10 border border-neon-blue/30 px-1.5 py-0.5 rounded">{BOT_PREFIX}</code>
               </span>
               <span className="text-sm text-muted">
-                Slash: <code className="text-brand-600 dark:text-brand-300 bg-card border border-border px-1.5 py-0.5 rounded">/comandos</code>
+                Slash: <code className="text-neon-blue bg-neon-blue/10 border border-neon-blue/30 px-1.5 py-0.5 rounded">/comandos</code>
               </span>
               <span className="text-sm text-muted">20 comandos · 4 categorías</span>
+              <span className="text-sm text-muted">7 listas de bots</span>
             </div>
 
             <div className="flex flex-col gap-2.5">
               <h4 className="text-xs font-semibold uppercase tracking-widest text-faint mb-1">
                 {dict.footer.legal}
               </h4>
-              <Link href="/terminos" className="text-sm text-muted hover:text-brand-600 dark:hover:text-brand-300 transition-colors">
+              <Link href="/terminos" className="text-sm text-muted hover:text-neon-blue transition-colors">
                 {dict.footer.terms}
               </Link>
-              <Link href="/privacidad" className="text-sm text-muted hover:text-brand-600 dark:hover:text-brand-300 transition-colors">
+              <Link href="/privacidad" className="text-sm text-muted hover:text-neon-blue transition-colors">
                 {dict.footer.privacy}
               </Link>
+              <div className="flex gap-2 mt-2">
+                {[
+                  { href: TOP_GG_BOT, label: 'Top.gg', glow: 'hover:border-[#FF3366] hover:text-[#FF3366]' },
+                  { href: DISCORD_BOT_LIST_BOT, label: 'DBL', glow: 'hover:border-neon-blue hover:text-neon-blue' },
+                  { href: DISBOARD_SERVER, label: 'Disboard', glow: 'hover:border-neon-purple hover:text-neon-purple' },
+                ].map((s) => (
+                  <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white/5 border border-white/10 text-muted transition-all ${s.glow}`}>
+                    {s.label}
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-border pt-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-faint">
+        <div className="border-t border-white/10 pt-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-faint">
           <p>
             © {new Date().getFullYear()}{' '}
-            <a href={CISZU_NETWORK} target="_blank" rel="noopener noreferrer" className="hover:text-brand-600 dark:hover:text-brand-300 transition-colors font-semibold">
+            <a href={CISZU_NETWORK} target="_blank" rel="noopener noreferrer" className="hover:text-neon-blue transition-colors font-semibold">
               CISZU NETWORK
             </a>{' '}
             &amp; CISZUBOT. {dict.footer.rights}
           </p>
           <p>
             {dict.footer.madeBy}{' '}
-            <a href={CISZUKO_ANTONY} target="_blank" rel="noopener noreferrer" className="text-brand-600 dark:text-brand-300 font-semibold transition-colors">
+            <a href={CISZUKO_ANTONY} target="_blank" rel="noopener noreferrer" className="text-neon-blue font-semibold transition-colors">
               Ciszuko Antony
             </a>
           </p>

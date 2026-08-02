@@ -1,0 +1,55 @@
+﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import type { BotCommand } from '../types/command';
+import { addMoney, formatMoney, randomBetween } from '../services/economy';
+import { getSupabase } from '../services/supabase';
+
+const create = (): BotCommand => ({
+  name: 'daily',
+  description: 'Reclama tu recompensa diaria',
+  aliases: ['recompensa', 'día'],
+  usage: 'cz!daily',
+  category: 'Economía',
+  slashCommand: new SlashCommandBuilder().setName('daily').setDescription('Reclama tu recompensa diaria'),
+  async execute(message) {
+    const guildId = message.guild?.id ?? 'DM';
+    const userId = message.author.id;
+
+    const db = getSupabase();
+    const { data: last } = await db
+      .from('transactions')
+      .select('created_at')
+      .eq('guild_id', guildId)
+      .eq('user_id', userId)
+      .eq('type', 'daily')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    const cooldown = 24 * 60 * 60 * 1000;
+    const lastTime = last?.created_at ? new Date(last.created_at).getTime() : 0;
+    const elapsed = Date.now() - lastTime;
+    if (elapsed < cooldown) {
+      const remaining = Math.ceil((cooldown - elapsed) / (60 * 1000));
+      const embed = new EmbedBuilder()
+        .setColor('#ff0000')
+        .setTitle('⏳ ¡Espera!')
+        .setDescription(`Ya reclamaste tu recompensa. Vuelve en **${remaining} minutos**.`)
+        .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
+        .setTimestamp();
+      await message.reply({ embeds: [embed] });
+      return;
+    }
+
+    const amount = randomBetween(50, 150);
+    const bal = await addMoney(userId, guildId, amount, 'daily', 'Recompensa diaria');
+    const embed = new EmbedBuilder()
+      .setColor('#00d4ff')
+      .setTitle('☀️ ¡Recompensa diaria reclamada!')
+      .setDescription(`Recibiste **${formatMoney(amount)}**.\nTu nuevo saldo es **${formatMoney(bal ?? 0)}**.`)
+      .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
+      .setTimestamp();
+    await message.reply({ embeds: [embed] });
+  },
+});
+
+export default create;

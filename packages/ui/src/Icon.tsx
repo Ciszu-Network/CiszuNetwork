@@ -57,11 +57,30 @@ export const Icon: React.FC<IconProps> = ({
 }) => {
   const entry = !forceLocal && format === 'svg' ? getIcon(style, name) : undefined;
 
+  // Cache por contenido (sanitizar una sola vez por entrada)
+  const sanitizedCache = new Map<string, string>();
+
   const sanitizeInner = (html: string): string => {
-    if (typeof window !== 'undefined' && typeof DOMPurify.sanitize === 'function') {
-      return DOMPurify.sanitize(html);
+    if (typeof window === 'undefined' || typeof DOMPurify.sanitize !== 'function') {
+      // SSR: el registro es generado desde shared/icons (fuente propia, sin input de usuario)
+      return html;
     }
-    return html;
+    if (sanitizedCache.has(html)) return sanitizedCache.get(html)!;
+    // Allowlist SVG: DOMPurify por defecto elimina xlink:href, clip-path, fill-rule,
+    // defs/use/clipPath — los iconos con defs+use (banderas, varios outline) se
+    // rompían tras navegación cliente. Se preserva todo el contenido SVG propio.
+    const sanitized = DOMPurify.sanitize(html, {
+      USE_PROFILES: { svg: true, svgFilters: true },
+      ADD_TAGS: ['use', 'clipPath', 'defs', 'symbol', 'marker', 'pattern', 'mask', 'filter', 'foreignObject'],
+      ADD_ATTR: [
+        'xlink:href', 'href', 'clip-path', 'fill-rule', 'fill-opacity',
+        'stroke-width', 'stroke-linecap', 'stroke-linejoin', 'stroke-opacity',
+        'stop-color', 'stop-opacity', 'gradientTransform', 'patternTransform',
+        'transform', 'd', 'points', 'viewBox', 'xmlns', 'x', 'y', 'x1', 'y1', 'x2', 'y2',
+      ],
+    });
+    sanitizedCache.set(html, sanitized);
+    return sanitized;
   };
 
   const inlineStyles: React.CSSProperties = {
