@@ -1,25 +1,35 @@
 {
-  "name": "ciszubot-discord-legacy",
-  "version": "2.5.5",
-  "description": "Un bot de Discord en español con múltiples funcionalidades",
-  "main": "index.js",
+  "name": "ciszubot",
+  "version": "3.0.0",
+  "description": "CiszuBot — bot de Discord en español con prefijo y slash commands (TypeScript)",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc -w & nodemon dist/index.js",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.60.0",
     "discord.js": "^14.22.0",
     "dotenv": "^16.6.1",
     "express": "^4.21.2"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.0.0",
+    "nodemon": "^3.0.1",
+    "typescript": "^5.9.0"
   },
   "keywords": [
     "discord",
     "bot",
-    "discord.js"
+    "discord.js",
+    "typescript"
   ],
   "author": "Ciszu",
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  }
 }

@@ -42,6 +42,9 @@ const isNextRunning = () => (nextProcess !== null && !nextProcess.killed) || por
 
 const runCommand = (command: string, args: string[], cwd = rootDir, captureOutput = false): Promise<number | null> => {
     return new Promise((resolve, reject) => {
+        // Consola de desarrollo local e interactiva: el operador escribe los comandos
+        // (dev server, herramientas del monorepo). No recibe input de usuario final.
+        // nosemgrep: javascript.lang.security.detect-child-process.detect-child-process
         const child = spawn(command, args, {
             cwd,
             stdio: captureOutput ? 'pipe' : 'inherit',

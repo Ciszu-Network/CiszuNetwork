@@ -5,5 +5,20 @@
   "env": {
     "NEXT_PUBLIC_CDN_URL": "https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn",
     "NEXT_PUBLIC_APP_ENV": "production"
-  }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    }
+  ]
 }
