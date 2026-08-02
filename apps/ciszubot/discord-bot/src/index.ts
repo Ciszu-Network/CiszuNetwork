@@ -13,6 +13,8 @@ import { logger } from './services/logger';
 import { CommandRegistry } from './utils/commandRegistry';
 import { incrementCommands, getTotalCommands, setupStatsServer, updateStats } from './services/statsServer';
 import { logCommand, updateBotStatus } from './services/supabase';
+import { registerListeners, handleButton } from './listeners';
+import { scheduleStatsPosting } from './services/botlists';
 
 const client = new Client({
   intents: [
@@ -25,6 +27,7 @@ const client = new Client({
 
 client.commands = new CommandRegistry();
 client.commands.load(path.join(__dirname));
+registerListeners(client);
 
 // ─── Ready (una sola vez, con Events.ClientReady) ───
 client.once(Events.ClientReady, async (readyClient) => {
@@ -42,7 +45,7 @@ client.once(Events.ClientReady, async (readyClient) => {
         online: true,
         guilds: readyClient.guilds.cache.size,
         commandsTotal: getTotalCommands(),
-        version: 'v3.1.0',
+        version: 'v3.2.0',
         lastSeen: new Date(),
       });
     } catch (error) {
@@ -51,6 +54,9 @@ client.once(Events.ClientReady, async (readyClient) => {
   };
   sendHeartbeat();
   setInterval(sendHeartbeat, 60000);
+
+  // Estadísticas a bot lists (top.gg auto + DiscordBotList cada 30 min)
+  scheduleStatsPosting(readyClient);
 
   // Registrar comandos de barra — CORREGIDO: applicationCommands con C mayúscula
   const slashCommands = Array.from(client.commands.commands.values())
@@ -92,10 +98,23 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
     try {
       const args: string[] = [];
+      const userOptions: Array<{ id: string; tag?: string; username?: string; displayAvatarURL?: (opts?: { size?: number }) => string }> = [];
+      const roleOptions: Array<{ id: string }> = [];
+      const channelOptions: Array<{ id: string; type: number; send?: (content: unknown) => Promise<unknown> }> = [];
       for (const opt of interaction.options.data) {
         if (opt.type === 3) args.push(opt.value as string);
-        else if (opt.type === 6) args.push(`<@${opt.value}>`);
-        else if (opt.value !== undefined) args.push(String(opt.value));
+        else if (opt.type === 6) {
+          const user = interaction.options.getUser(opt.name);
+          args.push(`<@${opt.value}>`);
+          userOptions.push(user as never);
+        } else if (opt.type === 8) {
+          args.push(`<@&${opt.value}>`);
+          roleOptions.push({ id: String(opt.value) });
+        } else if (opt.type === 7) {
+          const channel = interaction.options.getChannel(opt.name) as never as { id: string; type: number; send?: (c: unknown) => Promise<unknown> };
+          args.push(`<#${opt.value}>`);
+          channelOptions.push({ id: String(opt.value), type: channel?.type ?? 0, send: channel?.send });
+        } else if (opt.value !== undefined) args.push(String(opt.value));
       }
 
       // Enviar "pensando" para evitar el timeout de 3 segundos
@@ -107,7 +126,15 @@ client.on(Events.InteractionCreate, async (interaction) => {
         guild: interaction.guild,
         channel: interaction.channel as never,
         createdTimestamp: Date.now(),
-        mentions: { users: { first: () => undefined } },
+        member: interaction.member,
+        mentions: {
+          users: { first: () => userOptions[0] },
+          roles: { first: () => roleOptions[0] },
+          channels: {
+            first: () => channelOptions[0],
+            find: (predicate: (c: { id: string; type: number }) => boolean) => channelOptions.find(predicate),
+          },
+        },
         reply: async (content: unknown) => {
           if (interaction.replied || interaction.deferred) {
             return interaction.followUp(content as never);
@@ -167,6 +194,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
   if (interaction.isButton()) {
     await interaction.deferUpdate().catch(() => undefined);
+    await handleButton(interaction, client).catch((error) => logger.error('handleButton:', error));
   }
 });
 
@@ -270,7 +298,7 @@ function gracefulShutdown(signal: string): void {
     online: false,
     guilds: client.guilds.cache.size,
     commandsTotal: getTotalCommands(),
-    version: 'v3.1.0',
+    version: 'v3.2.0',
     lastSeen: new Date(),
   }).catch(() => undefined);
   if (client.readyAt) client.destroy();
@@ -285,7 +313,7 @@ process.on('uncaughtException', (error) => {
 });
 
 // ─── Panel Express (antes server.js separado) ───
-setupStatsServer();
+setupStatsServer(client);
 
 client.login(BOT_TOKEN).catch((err) => {
   logger.error('Error al iniciar sesión con el token del bot:', err);

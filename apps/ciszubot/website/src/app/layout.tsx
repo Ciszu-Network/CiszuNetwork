@@ -6,6 +6,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { getDict, type Lang } from "@/lib/i18n";
 import { LOGO_ISOTIPO_CIRCLE } from "@/lib/i18n";
+import { getSessionData } from "@/lib/auth";
 import "./globals.css";
 
 const inter = Inter({
@@ -44,6 +45,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const store = await cookies();
   const lang = (store.get("ciszubot_lang")?.value ?? "es") as Lang;
   const dict = getDict(lang);
+  const session = await getSessionData();
 
   return (
     <html lang={lang} className={`${inter.variable} ${spaceGrotesk.variable}`}>
@@ -51,7 +53,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className="bg-bg text-ink min-h-screen font-sans flex flex-col">
-        <Navbar lang={lang} dict={dict} />
+        <Navbar lang={lang} dict={dict} account={session} />
         <main className="flex-grow pt-[60px]">{children}</main>
         <Footer lang={lang} dict={dict} />
       </body>

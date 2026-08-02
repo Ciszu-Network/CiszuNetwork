@@ -18,6 +18,7 @@ RUN pnpm --filter ciszubot build
 FROM node:24-alpine
 
 RUN corepack enable; corepack prepare pnpm@11.18.0 --activate
+RUN apk add --no-cache ffmpeg python3 make g++
 
 WORKDIR /repo
 

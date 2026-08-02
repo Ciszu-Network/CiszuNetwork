@@ -1,4 +1,4 @@
-{
+﻿{
   "activity": {
     "name": "cz!help | cz!links | cz!bump",
     "type": "PLAYING"
@@ -8,5 +8,5 @@
     "secondary": "#8b5cf6"
   },
   "prefix": "cz!",
-  "version": "3.1.0"
+  "version": "3.2.0"
 }

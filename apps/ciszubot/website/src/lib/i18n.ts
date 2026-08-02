@@ -11,7 +11,7 @@ export const CISZU_NETWORK = 'https://ciszunetwork.vercel.app';
 export const CISZUKO_ANTONY = 'https://ciszukoantony.vercel.app';
 
 export const BOT_PREFIX = 'cz!';
-export const BOT_VERSION = 'v3.1.0';
+export const BOT_VERSION = 'v3.2.0';
 
 // === URLs oficiales (listas de bots, servidores, donaciones) ===
 export const WEBSITE = 'https://ciszubot.vercel.app';
@@ -27,6 +27,8 @@ export const PATREON = 'https://www.patreon.com/cw/ciszukoantony';
 export const KO_FI = 'https://ko-fi.com/ciszukoantony';
 export const BUY_ME_A_COFFEE = 'https://buymeacoffee.com/ciszukoantony';
 
+export const LOGO_ISOTIPO =
+  'apps/ciszubot/content/logos/imagen/muestras/circle/ciszubot_logo_isotipo_color_circle.png';
 export const LOGO_ISOTIPO_CIRCLE =
   'apps/ciszubot/content/logos/imagen/muestras/circle/ciszubot_logo_isotipo_color_circle.png';
 export const LOGO_LOGOTIPO =

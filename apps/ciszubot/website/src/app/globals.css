@@ -41,6 +41,12 @@
   --color-violet-500: var(--violet-500);
   --color-violet-600: var(--violet-600);
 
+  /* Neon accent (estilo MuzicMania — más brillante en dark) */
+  --color-neon-blue:   var(--neon-blue);
+  --color-neon-cyan:   var(--neon-cyan);
+  --color-neon-purple: var(--neon-purple);
+  --color-neon-pink:   var(--neon-pink);
+
   /* Status */
   --color-success: var(--success);
   --color-danger:  var(--danger);
@@ -76,6 +82,11 @@
   --success: #16a34a;
   --danger:  #dc2626;
   --warn:    #d97706;
+
+  --neon-blue:   #0284c7;
+  --neon-cyan:   #0891b2;
+  --neon-purple: #7c3aed;
+  --neon-pink:   #db2777;
 }
 
 .dark {
@@ -106,6 +117,11 @@
   --success: #34d399;
   --danger:  #f87171;
   --warn:    #fbbf24;
+
+  --neon-blue:   #00d4ff;
+  --neon-cyan:   #22d3ee;
+  --neon-purple: #a855f7;
+  --neon-pink:   #ff33cc;
 }
 
 /* ── Base Layer ─────────────────────────────────────────── */
@@ -237,6 +253,7 @@
   .animate-fade-in-up  { animation: fade-in-up .35s ease both; }
   .animate-fade-in-down{ animation: fade-in-down .25s ease both; }
   .animate-float       { animation: float 6s ease-in-out infinite; }
+  .animate-gradient-x  { animation: gradient-x 5s ease infinite; background-size: 200% auto; }
 }
 
 /* ── Keyframe Animations ────────────────────────────────── */
@@ -247,6 +264,10 @@
 @keyframes fade-in-down {
   from { opacity: 0; transform: translateY(-12px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes gradient-x {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
 }
 @keyframes float {
   0%, 100% { transform: translateY(0); }
