@@ -69,7 +69,7 @@ export const dict = {
       ],
     },
     commandsSection: {
-      kicker: '12 comandos · 4 categorías',
+      kicker: '72 comandos · 9 categorías',
       title: 'Comandos',
       subtitle: 'Usa cz!comando en el chat o /comando con la barra de Discord.',
       viewAll: 'Ver todos los comandos',
@@ -80,6 +80,11 @@ export const dict = {
         'Información': 'Información',
         'Social': 'Social',
         'Utilidad': 'Utilidad',
+        'Economía': 'Economía',
+        'Música': 'Música',
+        'Niveles': 'Niveles',
+        'Moderación': 'Moderación',
+        'Configuración': 'Configuración',
       },
     },
     statusSection: {
@@ -296,7 +301,7 @@ export const dict = {
       ],
     },
     commandsSection: {
-      kicker: '12 commands · 4 categories',
+      kicker: '72 commands · 9 categories',
       title: 'Commands',
       subtitle: 'Type cz!command in chat or /command with the Discord bar.',
       viewAll: 'View all commands',
@@ -307,6 +312,11 @@ export const dict = {
         'Información': 'Information',
         'Social': 'Social',
         'Utilidad': 'Utility',
+        'Economía': 'Economy',
+        'Música': 'Music',
+        'Niveles': 'Levels',
+        'Moderación': 'Moderation',
+        'Configuración': 'Configuration',
       },
     },
     statusSection: {
