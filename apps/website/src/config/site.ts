@@ -36,6 +36,31 @@ export const EXTERNAL_LINKS = {
   muzicmania: 'https://muzicmania.vercel.app/',
   ciszunetwork: 'https://ciszunetwork.vercel.app/',
   ciszukoantony: 'https://ciszukoantony.vercel.app/',
+  ciszubot: 'https://ciszubot.vercel.app/',
+};
+
+export const CISZUBOT_LINKS = {
+  website: 'https://ciszubot.vercel.app/',
+  invite: 'https://discord.com/oauth2/authorize?client_id=1395532235872141312&permissions=8&scope=bot%20applications.commands',
+  discordServer: 'https://discord.gg/W3kMtMMj6E',
+  topggBot: 'https://top.gg/bot/1395532235872141312',
+  topggBotVote: 'https://top.gg/bot/1395532235872141312/vote',
+  topggServer: 'https://top.gg/es/discord/servers/871620279188504576',
+  discordBotListBot: 'https://discordbotlist.com/bots/ciszubot',
+  discordBotListServer: 'https://discordbotlist.com/servers/ciszugamens',
+  disboardServer: 'https://disboard.org/es/server/1215544133142450187',
+};
+
+export const DONATION_LINKS = {
+  patreon: 'https://www.patreon.com/cw/ciszukoantony',
+  koFi: 'https://ko-fi.com/ciszukoantony',
+  buyMeACoffee: 'https://buymeacoffee.com/ciszukoantony',
+};
+
+export const WIDGETS = {
+  topggBot: 'https://top.gg/api/widget/1395532235872141312.svg',
+  topggServer: 'https://top.gg/api/v1/widgets/large/871620279188504576',
+  koFiButtonId: 'B0B81NQ9M4',
 };
 
 export type SocialPlatform = keyof typeof CISZU_NETWORK.social;

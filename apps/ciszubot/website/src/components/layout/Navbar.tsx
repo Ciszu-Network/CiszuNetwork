@@ -86,13 +86,15 @@ export default function Navbar({ lang, dict }: NavbarProps) {
                 <button
                   key={l.code}
                   onClick={() => setLang(l.code)}
-                  className={`px-2.5 py-1.5 text-xs font-bold tracking-wide transition-colors ${
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-bold tracking-wide transition-colors ${
                     lang === l.code
                       ? 'bg-brand-400/15 text-brand-600 dark:text-brand-300'
                       : 'text-muted hover:text-ink'
                   }`}
                   aria-pressed={lang === l.code}
+                  title={l.code === 'es' ? 'Español' : 'English'}
                 >
+                  <Icon name={l.flag} style="flag" size={14} />
                   {l.label}
                 </button>
               ))}
@@ -137,12 +139,13 @@ export default function Navbar({ lang, dict }: NavbarProps) {
                 <button
                   key={l.code}
                   onClick={() => setLang(l.code)}
-                  className={`px-3 py-1.5 text-xs font-bold ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold ${
                     lang === l.code
                       ? 'bg-brand-400/15 text-brand-600 dark:text-brand-300'
                       : 'text-muted'
                   }`}
                 >
+                  <Icon name={l.flag} style="flag" size={14} />
                   {l.label}
                 </button>
               ))}

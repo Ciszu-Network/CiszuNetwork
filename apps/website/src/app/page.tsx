@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { SocialIcon } from "@/components/ui/SocialIcon";
-import { CISZU_NETWORK, CISZUKO_ANTONY, EXTERNAL_LINKS, SOCIAL_COLORS } from "@/config/site";
+import { CISZU_NETWORK, CISZUKO_ANTONY, CISZUBOT_LINKS, DONATION_LINKS, EXTERNAL_LINKS, SOCIAL_COLORS } from "@/config/site";
 import { ArrowRight, Code, Shield, Zap, ExternalLink, Star, Globe, Music, Users, ChevronRight, Pickaxe, MessageCircle, MessageSquare, Send, Building, User, Gamepad2, Smartphone } from "lucide-react";
 
 const services = [
@@ -323,6 +323,54 @@ export default function Home() {
                 </a>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* Soporte y donaciones */}
+      <section className="py-24 border-t border-white/5">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-header font-black text-white mb-4 uppercase tracking-tighter">
+              Apoya el proyecto
+            </h2>
+            <p className="text-gray-400 text-sm max-w-xl mx-auto">
+              Mantén vivo el ecosistema Ciszu: vota por CiszuBot, bumpea el servidor o haz una donación.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            <a href={CISZUBOT_LINKS.website} target="_blank" rel="noopener noreferrer"
+              className="p-8 rounded-2xl border border-brand/30 bg-gradient-to-br from-brand/15 to-transparent hover:scale-[1.02] transition-all">
+              <h3 className="text-xl font-header font-black text-white mb-2 uppercase">CiszuBot</h3>
+              <p className="text-gray-400 text-sm mb-4">Web oficial del bot: estado en vivo, comandos y soporte.</p>
+              <span className="text-brand-light font-bold text-sm uppercase tracking-widest">Visitar →</span>
+            </a>
+            <a href={CISZUBOT_LINKS.topggBotVote} target="_blank" rel="noopener noreferrer"
+              className="p-8 rounded-2xl border border-brand/30 bg-gradient-to-br from-brand/15 to-transparent hover:scale-[1.02] transition-all">
+              <h3 className="text-xl font-header font-black text-white mb-2 uppercase">Vota en Top.gg</h3>
+              <p className="text-gray-400 text-sm mb-4">Cada voto ayuda a que CiszuBot llegue a más servidores.</p>
+              <span className="text-brand-light font-bold text-sm uppercase tracking-widest">Votar →</span>
+            </a>
+            <a href={CISZUBOT_LINKS.topggServer} target="_blank" rel="noopener noreferrer"
+              className="p-8 rounded-2xl border border-brand/30 bg-gradient-to-br from-brand/15 to-transparent hover:scale-[1.02] transition-all">
+              <h3 className="text-xl font-header font-black text-white mb-2 uppercase">Nuestro servidor</h3>
+              <p className="text-gray-400 text-sm mb-4">Encuentra el servidor en Top.gg y bumpea para darle visibilidad.</p>
+              <span className="text-brand-light font-bold text-sm uppercase tracking-widest">Bumpear →</span>
+            </a>
+          </div>
+          <div className="flex flex-wrap justify-center gap-4 mt-10">
+            <a href={DONATION_LINKS.patreon} target="_blank" rel="noopener noreferrer"
+              className="px-6 py-3 rounded-xl border border-white/10 text-white font-bold hover:border-brand/40 transition-all">
+              Patreon
+            </a>
+            <a href={DONATION_LINKS.koFi} target="_blank" rel="noopener noreferrer"
+              className="px-6 py-3 rounded-xl border border-white/10 text-white font-bold hover:border-brand/40 transition-all">
+              Ko-fi
+            </a>
+            <a href={DONATION_LINKS.buyMeACoffee} target="_blank" rel="noopener noreferrer"
+              className="px-6 py-3 rounded-xl border border-white/10 text-white font-bold hover:border-brand/40 transition-all">
+              Buy Me a Coffee
+            </a>
           </div>
         </div>
       </section>
