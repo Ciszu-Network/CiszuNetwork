@@ -1,0 +1,3 @@
+info:
+  name: Health
+  description: Health checks por servicio (webs + bot status)

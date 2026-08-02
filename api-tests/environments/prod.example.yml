@@ -1,0 +1,5 @@
+variables:
+  - name: SUPABASE_URL
+    value: https://TU-PROYECTO.supabase.co
+  - name: SUPABASE_ANON_KEY
+    value: "TU_ANON_KEY_AQUI"

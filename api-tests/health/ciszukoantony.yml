@@ -1,0 +1,16 @@
+info:
+  name: CiszukoAntony web
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: https://ciszukoantony.vercel.app
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("returns 200", function() {
+          expect(res.status).to.equal(200);
+        });
