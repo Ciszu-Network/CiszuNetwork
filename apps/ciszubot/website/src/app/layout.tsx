@@ -1,39 +1,59 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Exo_2, Rajdhani } from "next/font/google";
+import { Inter, Space_Grotesk } from "next/font/google";
+import { cookies } from "next/headers";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { getDict, type Lang } from "@/lib/i18n";
+import { LOGO_ISOTIPO_CIRCLE } from "@/lib/i18n";
 import "./globals.css";
 
-const exo2 = Exo_2({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-exo2",
+  variable: "--font-inter",
 });
 
-const rajdhani = Rajdhani({
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-rajdhani",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-space-grotesk",
 });
+
+const themeScript = `
+(function () {
+  try {
+    var t = document.cookie.match(/(?:^|; )ciszubot_theme=([^;]*)/);
+    var theme = t ? t[1] : 'dark';
+    if (theme === 'dark') document.documentElement.classList.add('dark');
+  } catch (e) {}
+})();
+`;
 
 export const metadata: Metadata = {
   title: "CiszuBot — Bot de Discord de Ciszu Network",
   description:
     "El bot de Discord de Ciszu Network. Comandos divertidos, de información y utilidad con prefijo cz! y slash commands. Moderno, rápido y en español.",
   icons: {
-    icon: "/apps/ciszubot/content/logos/imagen/not outline/isotipo/color/ciszubot_logo_isotipo_color.png",
-    shortcut: "/apps/ciszubot/content/logos/imagen/not outline/isotipo/color/ciszubot_logo_isotipo_color.png",
-    apple: "/apps/ciszubot/content/logos/imagen/not outline/isotipo/color/ciszubot_logo_isotipo_color.png",
+    icon: `/${LOGO_ISOTIPO_CIRCLE}`,
+    shortcut: `/${LOGO_ISOTIPO_CIRCLE}`,
+    apple: `/${LOGO_ISOTIPO_CIRCLE}`,
   },
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const store = await cookies();
+  const lang = (store.get("ciszubot_lang")?.value ?? "es") as Lang;
+  const dict = getDict(lang);
+
   return (
-    <html lang="es" className={`${exo2.variable} ${rajdhani.variable}`}>
-      <body className="bg-black text-white min-h-screen font-sans flex flex-col">
-        <Navbar />
+    <html lang={lang} className={`${inter.variable} ${spaceGrotesk.variable}`}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body className="bg-bg text-ink min-h-screen font-sans flex flex-col">
+        <Navbar lang={lang} dict={dict} />
         <main className="flex-grow pt-[60px]">{children}</main>
-        <Footer />
+        <Footer lang={lang} dict={dict} />
       </body>
     </html>
   );
