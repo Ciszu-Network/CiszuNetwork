@@ -3,13 +3,10 @@ const path = require('path');
 const https = require('https');
 
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL || 'https://obwzzmbvkrcscqwptlqo.supabase.co';
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const PROJECT_REF = process.env.SUPABASE_PROJECT_REF || 'obwzzmbvkrcscqwptlqo';
+const ACCESS_TOKEN = process.env.SUPABASE_ACCESS_TOKEN;
 const BUCKET = 'ciszu-cdn';
-
-if (!SERVICE_KEY) {
-  console.error('  [!] SUPABASE_SERVICE_ROLE_KEY no configurada');
-  process.exit(1);
-}
+const MAX_FILE_SIZE = 52428800;
 
 const SOURCES = [
   { dir: 'shared/icons/svg', prefix: 'shared/icons/svg' },
@@ -22,6 +19,30 @@ const SOURCES = [
 
 const ROOT = path.resolve(__dirname, '..');
 
+// Las keys del .env (sb_secret_*/sb_publishable_*) NO sirven para la Storage API
+// ("Invalid Compact JWS"). El CLI las obtiene via Management API (/v1/projects/{ref}/api-keys),
+// que devuelve las keys legacy reales en formato JWT (eyJ...). Hacemos lo mismo.
+async function getServiceRoleKey() {
+  if (!ACCESS_TOKEN) {
+    console.error('  [!] SUPABASE_ACCESS_TOKEN no configurada (Management API)');
+    process.exit(1);
+  }
+  const res = await fetch(`https://api.supabase.com/v1/projects/${PROJECT_REF}/api-keys`, {
+    headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+  });
+  if (!res.ok) {
+    console.error(`  [!] Management API /api-keys: HTTP ${res.status}`);
+    process.exit(1);
+  }
+  const keys = await res.json();
+  const srv = keys.find(k => k.name === 'service_role');
+  if (!srv) {
+    console.error('  [!] No se encontro service_role key via Management API');
+    process.exit(1);
+  }
+  return srv.api_key;
+}
+
 function getMime(ext) {
   const map = {
     '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg',
@@ -30,12 +51,13 @@ function getMime(ext) {
     '.txt': 'text/plain', '.md': 'text/markdown', '.json': 'application/json',
     '.ttf': 'font/ttf', '.otf': 'font/otf', '.woff': 'font/woff', '.woff2': 'font/woff2',
     '.mp4': 'video/mp4', '.mp3': 'audio/mpeg', '.ogg': 'audio/ogg', '.mov': 'video/quicktime',
-    '.zip': 'application/zip', '.rar': 'application/vnd.rar',
+    '.zip': 'application/zip', '.rar': 'application/vnd.rar', '.psd': 'image/vnd.adobe.photoshop',
+    '.ai': 'application/postscript',
   };
   return map[ext.toLowerCase()] || 'application/octet-stream';
 }
 
-function fetch(url, opts) {
+function fetch(url, opts, attempts = 4) {
   return new Promise((resolve, reject) => {
     const u = new URL(url);
     const options = {
@@ -47,13 +69,20 @@ function fetch(url, opts) {
       res.on('data', c => data += c);
       res.on('end', () => resolve({ ok: res.statusCode >= 200 && res.statusCode < 300, status: res.statusCode, text: () => Promise.resolve(data), json: () => JSON.parse(data) }));
     });
-    req.on('error', reject);
+    req.on('error', err => {
+      if (attempts > 1 && /getaddrinfo|ENOTFOUND|EAI_AGAIN|ECONNRESET|ETIMEDOUT|502|504/i.test(err.message + err.code)) {
+        setTimeout(() => fetch(url, opts, attempts - 1).then(resolve, reject), 1500);
+      } else {
+        reject(err);
+      }
+    });
+    req.setTimeout(60000, () => req.destroy(new Error('ETIMEDOUT')));
     if (opts.body) req.write(opts.body);
     req.end();
   });
 }
 
-async function ensureBucket() {
+async function ensureBucket(SERVICE_KEY) {
   const res = await fetch(`${SUPABASE_URL}/storage/v1/bucket/${BUCKET}`, {
     headers: { Authorization: `Bearer ${SERVICE_KEY}` },
   });
@@ -69,37 +98,48 @@ async function ensureBucket() {
   console.log(`  [+] Bucket "${BUCKET}" creado`);
 }
 
-async function listExistingFiles() {
+async function listExistingFiles(SERVICE_KEY) {
   const existing = {};
-  let offset = 0;
-  while (true) {
-    const res = await fetch(`${SUPABASE_URL}/storage/v1/object/list/${BUCKET}`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${SERVICE_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ limit: 1000, offset, sortBy: { column: 'name', order: 'asc' } }),
-    });
-    if (!res.ok) {
-      const text = await res.text();
-      console.error(`  [!] Error listando objetos existentes: HTTP ${res.status} ${text}`);
-      return {};
+
+  async function listLevel(prefix) {
+    let offset = 0;
+    while (true) {
+      const res = await fetch(`${SUPABASE_URL}/storage/v1/object/list/${BUCKET}`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${SERVICE_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ limit: 1000, offset, prefix, sortBy: { column: 'name', order: 'asc' } }),
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`List ${prefix} HTTP ${res.status}: ${text}`);
+      }
+      const data = await res.json();
+      if (!Array.isArray(data) || data.length === 0) break;
+      for (const obj of data) {
+        const name = obj.name ? obj.name.replace(/\/$/, '') : '';
+        if (!name) continue;
+        const full = `${prefix}${name}`;
+        if (!obj.metadata || !obj.id) {
+          await listLevel(`${full}/`);
+        } else {
+          existing[full] = obj.metadata ? obj.metadata.size : obj.size;
+        }
+      }
+      offset += data.length;
     }
-    const data = await res.json();
-    if (!Array.isArray(data) || data.length === 0) break;
-    for (const obj of data) {
-      existing[obj.name] = obj.metadata ? obj.metadata.size : obj.size;
-    }
-    offset += data.length;
   }
+
+  await listLevel('');
   console.log(`  [>>] ${Object.keys(existing).length} objetos ya existen en ciszu-cdn`);
   return existing;
 }
 
-async function uploadFile(filePath, storagePath) {
+async function uploadFile(filePath, storagePath, SERVICE_KEY) {
   const content = fs.readFileSync(filePath);
   const ext = path.extname(filePath);
   const mimeType = getMime(ext);
 
-  const url = `${SUPABASE_URL}/storage/v1/object/${BUCKET}/${storagePath}`;
+  const url = `${SUPABASE_URL}/storage/v1/object/${BUCKET}/${encodePath(storagePath)}`;
   const res = await fetch(url, {
     method: 'PUT',
     headers: {
@@ -116,6 +156,23 @@ async function uploadFile(filePath, storagePath) {
   }
 }
 
+async function deleteObject(storagePath, SERVICE_KEY) {
+  const url = `${SUPABASE_URL}/storage/v1/object/${BUCKET}/${encodePath(storagePath)}`;
+  const res = await fetch(url, { method: 'DELETE', headers: { Authorization: `Bearer ${SERVICE_KEY}` } });
+  if (!res.ok && res.status !== 404) {
+    const err = await res.text();
+    throw new Error(`HTTP ${res.status}: ${err}`);
+  }
+}
+
+function encodePath(p) {
+  return p.split('/').map(s => encodeURIComponent(s)).join('/');
+}
+
+function isLockFile(name) {
+  return /^~\$/.test(name);
+}
+
 async function walkDir(dir) {
   if (!fs.existsSync(dir)) return [];
   const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -128,12 +185,28 @@ async function walkDir(dir) {
   return files;
 }
 
+async function collectLocalPaths() {
+  const local = new Set();
+  for (const source of SOURCES) {
+    const sourceDir = path.join(ROOT, source.dir);
+    if (!fs.existsSync(sourceDir)) continue;
+    for (const f of await walkDir(sourceDir)) {
+      local.add(path.relative(ROOT, f).replace(/\\/g, '/'));
+    }
+  }
+  return local;
+}
+
 async function main() {
-  console.log('\n  === Subiendo assets al CDN (ciszu-cdn) — Diff mode ===\n');
-  await ensureBucket();
+  const prune = process.argv.includes('--prune');
+
+  console.log('\n  === Subiendo assets al CDN (ciszu-cdn) ===');
+  const SERVICE_KEY = await getServiceRoleKey();
+
+  await ensureBucket(SERVICE_KEY);
 
   console.log('  [>>] Consultando objetos existentes en el bucket...');
-  const existing = await listExistingFiles();
+  const existing = await listExistingFiles(SERVICE_KEY);
   const hasExisting = Object.keys(existing).length > 0;
 
   let totalOk = 0, totalErr = 0, totalSkipped = 0;
@@ -152,8 +225,15 @@ async function main() {
     let ok = 0, err = 0, skipped = 0;
 
     for (const f of files) {
+      if (isLockFile(path.basename(f))) { skipped++; continue; }
       const relative = path.relative(ROOT, f).replace(/\\/g, '/');
       const localSize = fs.statSync(f).size;
+
+      if (localSize > MAX_FILE_SIZE) {
+        console.log(`  [--] ${relative} (${(localSize / 1048576).toFixed(1)} MB > limite ${(MAX_FILE_SIZE / 1048576).toFixed(0)} MB)`);
+        skipped++;
+        continue;
+      }
 
       if (hasExisting && existing[relative] !== undefined && existing[relative] === localSize) {
         skipped++;
@@ -161,7 +241,7 @@ async function main() {
       }
 
       try {
-        await uploadFile(f, relative);
+        await uploadFile(f, relative, SERVICE_KEY);
         console.log(`  [OK] ${relative}`);
         ok++;
       } catch (e) {
@@ -174,8 +254,27 @@ async function main() {
     totalOk += ok; totalErr += err; totalSkipped += skipped;
   }
 
-  console.log(`\n  === Total: ${totalOk} subidos | ${totalSkipped} sin cambios | ${totalErr} errores ===`);
-  if (totalSkipped > 0 && totalOk === 0) console.log('  (Todo estaba sincronizado — nada que subir)');
+  console.log(`\n  === Upload: ${totalOk} subidos | ${totalSkipped} sin cambios | ${totalErr} errores ===`);
+
+  if (prune) {
+    console.log('\n  === Prune: borrando objetos del bucket que no existen localmente ===');
+    const local = await collectLocalPaths();
+    const remote = Object.keys(existing);
+    const orphans = remote.filter(name => !local.has(name));
+    console.log(`  [>>] ${remote.length} remotos | ${local.size} locales | ${orphans.length} huerfanos`);
+    let delOk = 0, delErr = 0;
+    for (const name of orphans) {
+      try {
+        await deleteObject(name, SERVICE_KEY);
+        console.log(`  [DEL] ${name}`);
+        delOk++;
+      } catch (e) {
+        console.error(`  [ERR] ${name}: ${e.message}`);
+        delErr++;
+      }
+    }
+    console.log(`\n  === Prune: ${delOk} borrados | ${delErr} errores ===`);
+  }
 }
 
 main().catch(console.error);
