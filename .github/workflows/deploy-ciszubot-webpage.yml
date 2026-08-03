@@ -1,4 +1,4 @@
-name: Deploy CiszuBot
+name: Deploy CiszuBot Webpage
 
 on:
   push:
