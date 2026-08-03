@@ -30,12 +30,14 @@ Package manager: **pnpm v10.8.1**, Node >=20.
 
 | pnpm filter name | Location | What |
 |---|---|---|
-| `ciszunetwork-page` | `projects/ciszu/website/` | Next.js — main CiszuNetwork page |
-| `ciszuko-network` | `projects/ciszukoantony/website/` | Next.js — portfolio |
-| `muzicmania-next` | `projects/muzicmania/website/` | Next.js + Tauri — music game |
-| `ciszubot-web` | `projects/ciszubot/website/` | Next.js — bot landing page |
+| `ciszunetwork-website` | `projects/ciszu/website/` | Next.js — main CiszuNetwork website |
+| `ciszukoantony-website` | `projects/ciszukoantony/website/` | Next.js — portfolio |
+| `muzicmania-website` | `projects/muzicmania/website/` | Next.js + Tauri — music game |
+| `ciszubot-website` | `projects/ciszubot/website/` | Next.js — bot landing website |
 | `ciszubot` | `projects/ciszubot/discord-bot/` | Discord.js bot (TypeScript, pnpm workspace, Docker) |
 | `@ciszunetwork/cdn` | `packages/cdn/` | Asset resolver (see below) |
+
+> **Terminología**: cada producto web es un **website** (cúmulo de webpages). Los pnpm filter names, workflows y carpetas usan `-website` (nunca `-webpage`). Los clientes API de Bruno viven en `apis/bruno/` (antes `apis-client/bruno/`).
 
 All websites are Next.js 15 with Tailwind 4 + PostCSS. They use `eslint` (no Prettier config found).
 
@@ -152,8 +154,8 @@ All workflows run on `push: [main, master]`:
   - ⚠️ NUNCA usar `vercel pull/build/deploy --prebuilt` dentro de `projects/*/website`: con `rootDirectory` fijado en el proyecto, el CLI duplica la ruta y produce deployments READY pero vacíos (404 en el alias)
   - Deploy desde la raíz requiere el `.vercelignore` raíz (excluye node_modules, .next, content, binarios)
   - Vercel tokens son GH secrets (`VERCEL_TOKEN`)
-- Proyectos Vercel: `ciszunetworkpage` -> `projects/ciszu/website`, `ciszukoantonypage` -> `projects/ciszukantony/website`, `ciszubot` -> `projects/ciszubot/website`, `muzicmania` -> `projects/muzicmania/website`
-- Discord bot (`deploy-ciszubot-webpage.yml`) deploys su website, no el bot en sí
+- Proyectos Vercel: `ciszunetworkpage` -> `projects/ciszu/website`, `ciszukoantonypage` -> `projects/ciszukoantony/website`, `ciszubot` -> `projects/ciszubot/website`, `muzicmania` -> `projects/muzicmania/website`
+- Discord bot (`deploy-ciszubot-website.yml`) deploys su website, no el bot en sí
 
 ## Git conventions
 
@@ -314,7 +316,7 @@ Pila decidida (análisis completo en `docs/ia_docs/TOOLS.md`): **DBeaver CE + db
 
 - **dbvr Community**: CLI BD headless (Apache-2.0, descarga SEPARADA de dbeaver.io/dbvr — NO viene con DBeaver). Instalado en `C:\Program Files\dbvr\dbvr.exe` 26.1.4 (bundle Java 21), PATH de usuario actualizado. **Datasource `supabase` CONFIGURADO y verificado** (2 ago 2026): pooler `aws-1-us-east-1.pooler.supabase.com:6543` (⚠️ SOLO transaction 6543 responde desde este PC; session 5432 y directa timeout), user `postgres.obwzzmbvkrcscqwptlqo`, db `postgres`, password = `SUPABASE_DB_PASSWORD` de `services/supabase/.env`. Uso: `dbvr sql -ds=supabase "SELECT ..."`, `-format=json`, `dbvr meta table list -ds=supabase --schema=ciszubot` (⚠️ el flag `--schema` va ANTES del subcomando), `dbvr datasource list/view`, y `dbvr mcp start -ds=supabase` (MCP server opcional).
 - **DBeaver CE**: GUI BD. dbvr y DBeaver **comparten workspace** (`C:\Users\fplay\AppData\Roaming\DBeaverData\workspace6`) → la conexión `supabase` de dbvr ya aparece en DBeaver (driver PostgreSQL 42.7.13 descargado). No crear conexión duplicada.
-- **Bruno**: cliente API git-native en `apis-client/bruno/` (**formato OpenCollection YAML** — `opencollection.yml` + `*.yml`, NUNCA `.bru` bajo ese root; el CLI 4.x no los detecta). GUI: File → Open Collection → `E:\Ciszu Network\apis-client\bruno`. CLI instalado (4.0.0, `pnpm add -g @usebruno/cli`; requiere `PNPM_HOME=C:\Users\fplay\AppData\Local\pnpm` en PATH vía `pnpm setup`). Ejecutar desde raíz: `pnpm api:test` / `pnpm api:test:report` (wrapper `scripts/run-bru.js` — Windows necesita `cmd /c bru`, no `bru.cmd` directo). Colección: `health/` (5 checks: 4 webs + bot_status) + `rest/` (leaderboard muzicmania, bot_status completo, stats local :5000 con tag `local` excluido por defecto). Env: `apis-client/bruno/environments/prod.yml` (gitignored, formato `variables: [{name, value}]`; plantilla `prod.example.yml`).
+- **Bruno**: cliente API git-native en `apis/bruno/` (**formato OpenCollection YAML** — `opencollection.yml` + `*.yml`, NUNCA `.bru` bajo ese root; el CLI 4.x no los detecta). GUI: File → Open Collection → `E:\Ciszu Network\apis\bruno`. CLI instalado (4.0.0, `pnpm add -g @usebruno/cli`; requiere `PNPM_HOME=C:\Users\fplay\AppData\Local\pnpm` en PATH vía `pnpm setup`). Ejecutar desde raíz: `pnpm api:test` / `pnpm api:test:report` (wrapper `scripts/run-bru.js` — Windows necesita `cmd /c bru`, no `bru.cmd` directo). Colección: `health/` (5 checks: 4 webs + bot_status) + `rest/` (leaderboard muzicmania, bot_status completo, stats local :5000 con tag `local` excluido por defecto). Env: `apis/bruno/environments/prod.yml` (gitignored, formato `variables: [{name, value}]`; plantilla `prod.example.yml`).
 - **Password BD**: la Management API NO devuelve el password (solo `[YOUR-PASSWORD]` placeholder en `/config/database/pooler`). Se resetea con `PATCH /v1/projects/{ref}/database/password` (solo requiere el nuevo, min 4 chars). Tras resetear, actualizar `SUPABASE_DB_PASSWORD` en `services/supabase/.env`.
 - **`backup-db.js`**: reparado 2 ago 2026 — endpoint `/config/database/pooler` (el viejo `/database/connection` da 404), password desde `.env`, fix CRLF. ⚠️ `pg_dump` del sistema es 13.4 (`E:\DaVinci\PGTools\pg_dump.exe`) — **incompatible con server 17.6** ("server version mismatch"); el backup real requiere pg_dump ≥17 (PostgreSQL 17 o Docker `postgres:17`).
 - **Descartadas** (incluso premium): Postman (free degradado, cloud), GitKraken (AI redundante con el agente, pesado), TablePlus (sin CLI, Windows rezagado), Beekeeper Personal (no aporta a IA).

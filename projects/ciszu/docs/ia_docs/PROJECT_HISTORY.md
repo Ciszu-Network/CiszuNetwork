@@ -19,7 +19,7 @@ Este documento registra los hitos importantes, correcciones y evoluciones del mo
 
 ### CDN Unificado y Seguridad de Base de Datos
 - **@ciszunetwork/cdn**: Paquete CDN completado con `resolveIcon()` y `AssetResolver` para resolución híbrida CDN/local.
-- **Integración en 4 websites**: Todos los websites (ciszunetwork-page, ciszukoantony, muzicmania-next, ciszubot-web) ahora importan `@ciszunetwork/cdn` y usan `resolveIcon()`.
+- **Integración en 4 websites**: Todos los websites (ciszunetwork-website, ciszukoantony, muzicmania-website, ciszubot-website) ahora importan `@ciszunetwork/cdn` y usan `resolveIcon()`.
 - **upload-cdn.js reescrito**: Subida inteligente al CDN con diff-check (compara tamaño local vs objeto existente, solo sube si cambió).
 - **backup-db.js reescrito**: Usa Management API de Supabase + pg_dump para backups automáticos. Script `pnpm db:backup` añadido.
 - **Seguridad DB**: 27 advertencias Security Advisor corregidas (funciones a SECURITY INVOKER, permisos anon revocados, initplan wrapping, policies mergeadas).

@@ -2,9 +2,9 @@
 
 ## Comandos
 ```bash
-pnpm --filter ciszubot-web dev    # Desarrollo del website
-pnpm --filter ciszubot-web build  # Build del website
-pnpm --filter ciszubot-web lint   # Lint del website
+pnpm --filter ciszubot-website dev    # Desarrollo del website
+pnpm --filter ciszubot-website build  # Build del website
+pnpm --filter ciszubot-website lint   # Lint del website
 node index.js                     # Iniciar bot de Discord (en discord/)
 ```
 

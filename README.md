@@ -4,24 +4,24 @@ Monorepo principal de **Ciszu Network** — el ecosistema digital de **CiszukoAn
 
 ```
 .
-├── projects/                 # Aplicaciones individuales (web + bot + contenido)
+├── projects/                 # Aplicaciones individuales (webs + bot + contenido)
 │   ├── ciszu/                # Web principal CiszuNetwork (ciszunetwork.vercel.app)
-│   │   ├── website/          #   Next.js — ciszunetwork-page
+│   │   ├── website/          #   Next.js — ciszunetwork-website
 │   │   ├── content/          #   Multimedia (banners, flayers, logos)
 │   │   └── docs/             #   Documentación (incl. ia_docs/)
-│   ├── ciszukantony/        # Portfolio personal (ciszukantony.vercel.app)
-│   │   ├── website/          #   Next.js — ciszuko-network
+│   ├── ciszukoantony/        # Portfolio personal (ciszukoantony.vercel.app)
+│   │   ├── website/          #   Next.js — ciszukoantony-website
 │   │   ├── content/          #   Multimedia + logos (fuente maestra)
 │   │   ├── musicboard/       #   (contenido musical)
 │   │   └── docs/
 │   ├── muzicmania/           # Juego musical (muzicmania.vercel.app)
-│   │   ├── website/          #   Next.js — muzicmania-next
+│   │   ├── website/          #   Next.js — muzicmania-website
 │   │   ├── launcher/         #   App de escritorio (Tauri + NSIS)
 │   │   ├── mobile/           #   App móvil
 │   │   ├── content/          #   Música, covers, arrows, particles
 │   │   └── docs/
 │   ├── ciszubot/             # Bot de Discord (ciszubot.vercel.app)
-│   │   ├── website/          #   Next.js — ciszubot-web (landing + dashboard)
+│   │   ├── website/          #   Next.js — ciszubot-website (landing + dashboard)
 │   │   ├── discord-bot/      #   Discord.js + Express (Docker)
 │   │   ├── content/
 │   │   └── docs/
@@ -38,12 +38,14 @@ Monorepo principal de **Ciszu Network** — el ecosistema digital de **CiszukoAn
 │   ├── supabase/              #   config.toml, migrations, seeds, .env
 │   └── vercel/                #   Configuración de despliegues
 ├── scripts/                   # Scripts de automatización (build, CDN, BD, docs)
-├── apis-client/bruno/         # Colecciones API de Bruno (OpenCollection YAML)
+├── apis/bruno/                # Colecciones API de Bruno (OpenCollection YAML)
 ├── archives/                  # Backups (bases de datos, envs, clientes)
 └── docs/                      # ⚠️ Movido dentro de projects/ciszu/docs/
 ```
 
-> **Migración ago 2026**: la estructura antigua (`apps/...`, `public/...`, `assets/`) fue restructurada a `projects/`. Cada producto vive bajo `projects/<nombre>/` con su `website/`, `content/` y `docs/` propios. La documentación general (`docs/ia_docs/`) vive en `projects/ciszu/docs/ia_docs/`.
+> **Estructura 2.5 (ago 2026)**: la estructura antigua (`apps/...`, `public/...`, `assets/`) fue restructurada a `projects/`. Cada producto vive bajo `projects/<nombre>/` con su `website/`, `content/` y `docs/` propios. La documentación general (`docs/ia_docs/`) vive en `projects/ciszu/docs/ia_docs/`. Los clientes API de Bruno viven en `apis/bruno/` (antes `apis-client/bruno/`).
+>
+> **Terminología**: cada producto web es un **website** (cúmulo de webpages). Los pnpm filter names, workflows y carpetas usan `-website` (nunca `-webpage`).
 
 ## Quick start
 
@@ -59,10 +61,10 @@ pnpm --filter <nombre> dev  # single app
 
 | Filtro | Producto | Comando útil |
 |---|---|---|
-| `ciszunetwork-page` | Web principal Ciszu Network | `web:dev` / `web:build` |
-| `ciszuko-network` | Portfolio CiszukoAntony | `antony:dev` / `antony:build` |
-| `muzicmania-next` | Juego de música | `muzicmania:dev` / `muzicmania:build` |
-| `ciszubot-web` | Landing del bot | `pnpm --filter ciszubot-web dev` |
+| `ciszunetwork-website` | Web principal Ciszu Network | `web:dev` / `web:build` |
+| `ciszukoantony-website` | Portfolio CiszukoAntony | `antony:dev` / `antony:build` |
+| `muzicmania-website` | Juego de música | `muzicmania:dev` / `muzicmania:build` |
+| `ciszubot-website` | Landing del bot | `pnpm --filter ciszubot-website dev` |
 | `ciszubot` | Bot de Discord (TS, Docker) | `bot:start` / `bot:dev` |
 
 ## CDN y assets
@@ -70,8 +72,8 @@ pnpm --filter <nombre> dev  # single app
 - **CDN**: bucket público `ciszu-cdn` en Supabase Storage (`NEXT_PUBLIC_CDN_URL = .../object/public/ciszu-cdn`). El bucket **espeja las rutas del repo** (misma ruta relativa bajo `projects/`).
 - **Resolver**: `@ciszunetwork/cdn` — `assetResolver.resolve(path)` y `resolveIcon(name, style, format)` con estrategia híbrida local/CDN según entorno (dev, Tauri, producción).
 - **Iconos**: sistema inline-first en `packages/ui` (`Icon.tsx`) con registry generado (`packages/ui/src/generated/icon-registry.ts`) y fallback al CDN. Regenerar: `node scripts/generate-icon-registry.js`.
-- **Upload**: `pnpm cdn:upload` sube 6 fuentes: `shared/icons/svg`, `projects/ciszu/content`, `projects/ciszu/docs`, `projects/ciszukantony/content`, `projects/ciszubot/content`, `projects/muzicmania/content`. Fallback offline en el prebuild: `node scripts/copy-assets.js`.
-- **Logos**: `projects/ciszukantony/content/logos/` es la fuente maestra; usa `assetResolver.resolve('projects/ciszukantony/content/logos/...')`.
+- **Upload**: `pnpm cdn:upload` sube 6 fuentes: `shared/icons/svg`, `projects/ciszu/content`, `projects/ciszu/docs`, `projects/ciszukoantony/content`, `projects/ciszubot/content`, `projects/muzicmania/content`. Fallback offline en el prebuild: `node scripts/copy-assets.js`.
+- **Logos**: `projects/ciszukoantony/content/logos/` es la fuente maestra; usa `assetResolver.resolve('projects/ciszukoantony/content/logos/...')`.
 
 ## Supabase
 
@@ -86,10 +88,10 @@ Seis flujos en `.github/workflows/` — CI + **CodeQL** + 4 deploys a Vercel, ca
 
 | Archivo | Proyecto Vercel | Raíz | Web |
 |---|---|---|---|
-| `deploy-ciszunetwork-webpage.yml` | `ciszunetworkpage` | `projects/ciszu/website` | ciszunetwork.vercel.app |
-| `deploy-ciszukantony-webpage.yml` | `ciszukoantonypage` | `projects/ciszukantony/website` | ciszukantony.vercel.app |
-| `deploy-muzicmania-webpage.yml` | `muzicmania` | `projects/muzicmania/website` | muzicmania.vercel.app |
-| `deploy-ciszubot-webpage.yml` | `ciszubot` | `projects/ciszubot/website` | ciszubot.vercel.app |
+| `deploy-ciszunetwork-website.yml` | `ciszunetworkpage` | `projects/ciszu/website` | ciszunetwork.vercel.app |
+| `deploy-ciszukoantony-website.yml` | `ciszukoantonypage` | `projects/ciszukoantony/website` | ciszukoantony.vercel.app |
+| `deploy-muzicmania-website.yml` | `muzicmania` | `projects/muzicmania/website` | muzicmania.vercel.app |
+| `deploy-ciszubot-website.yml` | `ciszubot` | `projects/ciszubot/website` | ciszubot.vercel.app |
 
 Cada deploy se dispara con cambios en el `projects/<proyecto>/**`, `packages/**` o `scripts/copy-assets.js`. ⚠️ Desplegar SIEMPRE desde la raíz (`vercel --prod` con `working-directory: .`); nunca `vercel pull/prebuilt` dentro de `projects/*/website` (ruta duplicada → deploy vacío).
 - ⚠️ Desplegar SIEMPRE desde la raíz (`vercel --prod` con `working-directory: .`); nunca `vercel pull/prebuilt` dentro de `projects/*/website` (ruta duplicada → deploy vacío).
@@ -126,7 +128,7 @@ node scripts/run-bru.js               # API testing con Bruno (gitignore: enviro
 
 ## APIs y testing
 
-- **Bruno**: colecciones OpenCollection YAML en `apis-client/bruno/` — `health/` (4 webs + bot status) y `rest/` (leaderboard, bot_status, stats local).
+- **Bruno**: colecciones OpenCollection YAML en `apis/bruno/` — `health/` (4 webs + bot status) y `rest/` (leaderboard, bot_status, stats local).
 - Uso: `pnpm api:test` (prod, excluye `local`), `pnpm api:test:report`, `pnpm api:test:local`.
 
 ## Contribución

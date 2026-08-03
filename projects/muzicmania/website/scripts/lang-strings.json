@@ -1,4 +1,4 @@
-﻿[
+[
   { "lang": "LANG_ENGLISH", "changelog": "View changelog", "thanks": "Thank you for installing ${PRODUCTNAME} ${VERSION}!", "uninstallQ": "The application has been uninstalled.$\\nWould you like to continue with the installation?", "versionInfo": "${PRODUCTNAME} ${VERSION} will be installed for Windows ${ARCH}." },
   { "lang": "LANG_SPANISH", "changelog": "Ver changelog", "thanks": "\u00a1Gracias por instalar ${PRODUCTNAME} ${VERSION}!", "uninstallQ": "La aplicaci\u00f3n ha sido desinstalada.$\\n\u00bfDesea continuar con la instalaci\u00f3n?", "versionInfo": "Se instalar\u00e1 ${PRODUCTNAME} ${VERSION} para Windows ${ARCH}." },
   { "lang": "LANG_SIMPCHINESE", "changelog": "\u67e5\u770b\u66f4\u65b0\u65e5\u5fd7", "thanks": "\u611f\u8c22\u60a8\u5b89\u88c5 ${PRODUCTNAME} ${VERSION}\uff01", "uninstallQ": "\u5e94\u7528\u7a0b\u5e8f\u5df2\u5378\u8f7d\u3002$\\n\u662f\u5426\u8981\u7ee7\u7eed\u5b89\u88c5\uff1f", "versionInfo": "\u5c06\u5b89\u88c5 ${PRODUCTNAME} ${VERSION} \uff08Windows ${ARCH}\uff09" },

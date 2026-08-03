@@ -1,7 +1,7 @@
 # Ciszuko Antony — Workflow
 
 ```bash
-pnpm --filter ciszuko-network dev    # Desarrollo
-pnpm --filter ciszuko-network build  # Build
-pnpm --filter ciszuko-network lint   # Lint
+pnpm --filter ciszukoantony-website dev    # Desarrollo
+pnpm --filter ciszukoantony-website build  # Build
+pnpm --filter ciszukoantony-website lint   # Lint
 ```

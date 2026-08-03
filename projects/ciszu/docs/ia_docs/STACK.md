@@ -1,4 +1,4 @@
-﻿# Ciszu Network — Technology Stack
+# Ciszu Network — Technology Stack
 
 ## Core
 - **Runtime:** Node.js 20+
@@ -55,7 +55,7 @@
 ## Dev Tools (GUI + CLI) — desde ago 2026
 - **DBeaver CE 26.1.3** — GUI BD (Supabase Postgres: schemas ciszubot, muzicmania, ciszunetwork)
 - **dbvr Community** — CLI BD headless (SQL, exports JSON/CSV, metadata, **MCP server**; Apache-2.0; descarga separada de dbeaver.io/dbvr)
-- **Bruno 4.0.0** — API client git-native (colecciones `.bru` en `apis-client/bruno/`; CLI `@usebruno/cli`)
+- **Bruno 4.0.0** — API client git-native (colecciones `.bru` en `apis/bruno/`; CLI `@usebruno/cli`)
 - **Fork 2.16.1** — Git GUI nativa (one-time $49.99, uso visual)
 - **API tests**: `pnpm api:test` / `pnpm api:test:report` (health checks de las 4 webs + bot status vía Bruno)
 - Detalle completo y análisis: `docs/ia_docs/TOOLS.md`
