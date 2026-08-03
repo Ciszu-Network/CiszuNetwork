@@ -20,8 +20,32 @@ on:
     - cron: '28 16 * * 5'
 
 jobs:
+  # Code scanning in private repositories requires GitHub Advanced Security.
+  # If GHAS is not enabled (not purchased), skip the analysis instead of failing.
+  check:
+    name: Check Advanced Security
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      enabled: ${{ steps.check.outputs.enabled }}
+    steps:
+      - name: Check if Advanced Security is enabled
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          status=$(gh api "repos/${GITHUB_REPOSITORY}" --jq '.security_and_analysis.advanced_security.status' 2>/dev/null || echo 'disabled')
+          if [ "$status" = "enabled" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          fi
+
   analyze:
     name: Analyze (${{ matrix.language }})
+    needs: check
+    if: needs.check.outputs.enabled == 'true'
     # Runner size impacts CodeQL analysis time. To learn more, please see:
     #   - https://gh.io/recommended-hardware-resources-for-running-codeql
     #   - https://gh.io/supported-runners-and-hardware-resources
