@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@discordjs/voice": "^0.19.2",
-    "@supabase/supabase-js": "^2.60.0",
+    "@supabase/supabase-js": "^2.111.0",
     "@top-gg/sdk": "^3.1.6",
     "discord.js": "^14.22.0",
     "discordbotlist": "^1.1.1",
