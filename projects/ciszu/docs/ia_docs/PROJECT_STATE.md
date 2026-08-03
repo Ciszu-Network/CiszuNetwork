@@ -8,7 +8,7 @@
 ## 🚀 Proyectos en Detalle
 
 ### 1. CiszuNetwork Page (projects/ciszu/website)
-**Filtro pnpm:** ciszunetwork-page
+**Filtro pnpm:** ciszunetwork-website
 **URL:** ciszunetwork.vercel.app
 **Framework:** Next.js 15 (App Router)
 **Estado:** ✅ Activo
@@ -16,7 +16,7 @@
 **public/docs/:** ✅ Creado
 
 ### 2. Ciszuko Antony Portfolio (projects/ciszukoantony/website)
-**Filtro pnpm:** ciszuko-network
+**Filtro pnpm:** ciszukoantony-website
 **URL:** ciszukoantony.vercel.app
 **Framework:** Next.js 15 (App Router)
 **Estado:** ✅ Activo
@@ -24,7 +24,7 @@
 **public/docs/:** ✅ Creado
 
 ### 3. MuzicMania (projects/muzicmania)
-**Filtro pnpm:** muzicmania-next
+**Filtro pnpm:** muzicmania-website
 **URL:** muzicmania.vercel.app
 **Framework:** Next.js 15 + Tauri 2 (Rust)
 **Versions:** website (web), launcher (desktop, Windows), mobile (placeholder)
@@ -34,7 +34,7 @@
 **Iconos:** 5,194 SVGs en 3 sets (outline, filled, flags)
 
 ### 4. CiszuBot (projects/ciszubot)
-**Filtro pnpm:** ciszubot-web (website), ciszubot (bot)
+**Filtro pnpm:** ciszubot-website (website), ciszubot (bot)
 **URL:** ciszubot.vercel.app
 **Framework:** Next.js 15 (website) + Discord.js v14 (bot)
 **Estado:** ⚠️ Website activo, bot en desarrollo en discord-bot/

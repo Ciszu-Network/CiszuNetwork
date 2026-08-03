@@ -1,5 +1,6 @@
 packages:
   - projects/*
+  - projects/ciszu/*
   - projects/ciszubot/*
   - projects/ciszukoantony/*
   - projects/muzicmania/*
@@ -17,3 +18,5 @@ overrides:
   postcss: 8.5.25
   minimatch@^9: 9.0.7
   sharp: 0.35.3
+  "@typescript-eslint/eslint-plugin": 8.63.0
+  "@typescript-eslint/parser": 8.63.0

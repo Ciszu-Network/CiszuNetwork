@@ -38,8 +38,8 @@ Commit: `ae692ca` (pusheado a `main`) — "Completa tareas TO_DO_LIST: fixes con
 - ⚠️ Pendiente del usuario: generar las claves si quiere automatizar.
 
 ## Verificación final
-- Builds: **4/4 OK** (ciszunetwork-page, ciszuko-network, muzicmania-next, ciszubot-web).
-- Lint: OK en las 3 apps con script (ciszubot-web no tiene).
+- Builds: **4/4 OK** (ciszunetwork-website, ciszukoantony-website, muzicmania-website, ciszubot-website).
+- Lint: OK en las 3 apps con script (ciszubot-website no tiene).
 - gitleaks protect: 0 leaks. secretlint: sin hallazgos en cambios nuevos.
 - Commit `ae692ca` + push a `main` OK (DNS de github.com ya resuelve — el push ya no falla).
 

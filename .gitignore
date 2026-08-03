@@ -47,6 +47,8 @@ yarn-debug.log*
 *.msi
 *.mov
 *.gif
+# Sidecars de CapCut/Clipchamp (paths absolutos del PC del usuario — rompen checkout en CI)
+*.pfl
 
 # macOS metadata
 __MACOSX/
@@ -122,9 +124,9 @@ projects/ciszubot/website/public/docs/
 
 # ─── Bruno API tests ───────────────────────────────
 # Entornos con secrets reales (copiar prod.example.yml → prod.yml)
-apis-client/bruno/environments/*.yml
-apis-client/bruno/*.html
-!apis-client/bruno/environments/*.example.yml
+apis/bruno/environments/*.yml
+apis/bruno/*.html
+!apis/bruno/environments/*.example.yml
 
 # public/ fantasma en la raiz (si copy-assets se ejecuta desde la raiz)
 /public/

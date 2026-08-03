@@ -1,4 +1,4 @@
-﻿# Herramientas de Desarrollo — Análisis Final e Integración (2 ago 2026)
+# Herramientas de Desarrollo — Análisis Final e Integración (2 ago 2026)
 
 Decisión tomada tras análisis comparativo de las **6 herramientas de `downloads/`** + 1 alternativa (Beekeeper Studio). Criterios dobles: **GUI** (control visual del usuario) + **acceso IA** (CLI/token/API/archivos para el agente).
 
@@ -123,15 +123,15 @@ Decisión tomada tras análisis comparativo de las **6 herramientas de `download
 
 ## 6. Integración real en el repo
 
-### 6.1 Bruno — `apis-client/bruno/` (ya configurado en el repo)
+### 6.1 Bruno — `apis/bruno/` (ya configurado en el repo)
 
 ```
-apis-client/bruno/
+apis/bruno/
 ├── opencollection.yml          # raíz de la colección (version 4)
 ├── README.md
 ├── health/
 │   ├── bot-status.bru          # POST /api/votes/dbl (health bot)
-│   ├── ciszubot-web.bru        # GET https://ciszubot.vercel.app
+│   ├── ciszubot-website.bru        # GET https://ciszubot.vercel.app
 │   ├── muzicmania.bru          # GET https://muzicmania.vercel.app
 │   ├── ciszunetwork.bru        # GET https://ciszunetwork.vercel.app
 │   └── ciszukoantony.bru       # GET https://ciszukoantony.vercel.app
@@ -140,7 +140,7 @@ apis-client/bruno/
     └── prod.yml                # ⚠️ gitignored — contiene secrets reales
 ```
 
-- **Ejecutar**: `pnpm api:test` (raíz) → `bru run apis-client/bruno --env prod`
+- **Ejecutar**: `pnpm api:test` (raíz) → `bru run apis/bruno --env prod`
 - **Secrets**: `--env-var SUPABASE_ANON_KEY=...` o en `environments/prod.yml` (gitignored). NUNCA en `.bru` ni en el repo.
 - **Reports**: `bru run --env prod --reporter-json .opencode-tmp/bru-report.json`
 
@@ -200,7 +200,7 @@ Permite que el agente consulte la BD directamente como herramienta MCP (en vez d
 | `api:test:local` | `node scripts/run-bru.js run . -r --env prod` | Incluye tests con tag `local` (ej. `:5000` del bot) |
 
 > **Colección Bruno en formato OpenCollection YAML** (`opencollection.yml` + `*.yml`, **NO `.bru`**): el CLI 4.x no mezcla formatos — los requests `.bru` bajo `opencollection.yml` dan "0 requests". Estructura: `health/` (5 webs + bot status) y `rest/` (leaderboard muzicmania, bot_status completo, stats local `:5000` con tag `local`). Env: `environments/prod.yml` con lista `variables: [{name, value}]` (gitignored; ejemplo en `prod.example.yml`).
-> **CLI**: `pnpm add -g @usebruno/cli` (instalado 4.0.0). Requiere `PNPM_HOME` en PATH (`pnpm setup`; `C:\Users\fplay\AppData\Local\pnpm\bin`). El wrapper `scripts/run-bru.js` ejecuta `bru` con cwd `apis-client/bruno/` y crea el dir de `--reporter-json`.
+> **CLI**: `pnpm add -g @usebruno/cli` (instalado 4.0.0). Requiere `PNPM_HOME` en PATH (`pnpm setup`; `C:\Users\fplay\AppData\Local\pnpm\bin`). El wrapper `scripts/run-bru.js` ejecuta `bru` con cwd `apis/bruno/` y crea el dir de `--reporter-json`.
 
 ---
 
