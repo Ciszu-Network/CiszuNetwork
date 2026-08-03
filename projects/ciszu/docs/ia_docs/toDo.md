@@ -109,6 +109,8 @@ Generar claves AI artísticas: Leonardo, Recraft, SiliconFlow (plan en docs/ia_d
 # Prioridad Media
 
 - [ ] Añadir framework de tests (Playwright, Vitest)
+- [ ] Investigar material icons y su estructura d eformatos/folders para integrar en la organizacion actual posible.
+- [ ] Preguntar por acceso individual o grupal dependiendo del proyecto, que ocurre si pierdo la carpeta local solamente hago clone de git y todo funciona? como doy acceso especifico a ciertas cosas?
 - [ ] Aun falta arreglar algunas de las conexiones del cdn con implicacion en las builds reales. Como websites, en especial ciszukoantony y ciszunetwork pages, debido a que los logos no se muestran correctamente
 
 ## Prioridad Baja

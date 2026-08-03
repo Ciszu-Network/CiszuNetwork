@@ -92,7 +92,7 @@ FASE 2: SUBIDA A SUPA BASE
 - [ ] Documentar las URLs públicas resultantes
 
 FASE 3: ACTUALIZACIÓN DE CÓDIGO
-- [ ] Modificar cada webpage para usar assetResolver.resolve() en lugar de rutas locales
+- [ ] Modificar cada website para usar assetResolver.resolve() en lugar de rutas locales
 - [ ] Actualizar componentes que referencian imágenes, videos, audio
 - [ ] Para MuzicMania: migrar referencias en el motor de juego, skins, música
 - [ ] Para el website principal: actualizar banners, logos, favicons
@@ -100,7 +100,7 @@ FASE 3: ACTUALIZACIÓN DE CÓDIGO
 - [ ] Para CiszuBot: actualizar imágenes del website
 
 FASE 4: VERIFICACIÓN Y TESTING
-- [ ] Probar cada webpage en desarrollo local
+- [ ] Probar cada website en desarrollo local
 - [ ] Verificar que assets se cargan desde CDN (no desde archivos locales)
 - [ ] Verificar fallback offline (copy-assets.js) para SVGs críticos
 - [ ] Probar en dispositivos y conexiones lentas

@@ -1,0 +1,31 @@
+name: Deploy CiszuBot Website
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'projects/ciszubot/**'
+      - 'packages/**'
+      - 'scripts/copy-assets.js'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          cache: pnpm
+      - name: Install Vercel CLI
+        run: pnpm add -g vercel
+      - name: Link Vercel Project
+        run: vercel link --yes --project ciszubot --token=${{ secrets.VERCEL_TOKEN }}
+        working-directory: .
+      - name: Deploy to Vercel
+        run: vercel --prod --yes --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}
+        working-directory: .
