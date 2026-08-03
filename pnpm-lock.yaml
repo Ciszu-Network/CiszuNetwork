@@ -41,8 +41,8 @@ importers:
         specifier: ^3.2.0
         version: 3.2.0
       '@types/node':
-        specifier: ^25.9.3
-        version: 25.9.4
+        specifier: ^26.1.2
+        version: 26.1.2
       '@types/react':
         specifier: ^19.2.17
         version: 19.2.17
@@ -84,7 +84,7 @@ importers:
         version: 1.23.0(react@19.2.7)
       next:
         specifier: ^15.5.22
-        version: 15.5.22(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 15.5.22(@types/node@26.1.2)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react:
         specifier: ^19.2.7
         version: 19.2.7
@@ -102,8 +102,8 @@ importers:
         specifier: ^4.2.4
         version: 4.3.2
       '@types/node':
-        specifier: ^25.9.3
-        version: 25.9.4
+        specifier: ^26.1.2
+        version: 26.1.2
       '@types/react':
         specifier: ^19.2.17
         version: 19.2.17
@@ -124,7 +124,7 @@ importers:
         version: 8.5.25
       sharp:
         specifier: 0.35.3
-        version: 0.35.3(@types/node@25.9.4)
+        version: 0.35.3(@types/node@26.1.2)
       tailwindcss:
         specifier: ^4.2.4
         version: 4.3.2
@@ -163,7 +163,7 @@ importers:
         specifier: ^5.0.6
         version: 5.0.6
       '@types/node':
-        specifier: ^26.0.0
+        specifier: ^26.1.2
         version: 26.1.2
       nodemon:
         specifier: ^3.0.1
@@ -185,7 +185,7 @@ importers:
         version: 2.110.1
       next:
         specifier: ^15.5.22
-        version: 15.5.22(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 15.5.22(@types/node@26.1.2)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react:
         specifier: ^19.2.7
         version: 19.2.7
@@ -200,8 +200,8 @@ importers:
         specifier: ^4.2.4
         version: 4.3.2
       '@types/node':
-        specifier: ^25.9.3
-        version: 25.9.4
+        specifier: ^26.1.2
+        version: 26.1.2
       '@types/react':
         specifier: ^19.2.17
         version: 19.2.17
@@ -234,7 +234,7 @@ importers:
         version: 12.42.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       next:
         specifier: ^15.5.22
-        version: 15.5.22(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 15.5.22(@types/node@26.1.2)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react:
         specifier: ^19.2.7
         version: 19.2.7
@@ -249,8 +249,8 @@ importers:
         specifier: ^4.2.4
         version: 4.3.2
       '@types/node':
-        specifier: ^25.9.3
-        version: 25.9.4
+        specifier: ^26.1.2
+        version: 26.1.2
       '@types/react':
         specifier: ^19.2.17
         version: 19.2.17
@@ -274,7 +274,7 @@ importers:
         version: 8.5.25
       sharp:
         specifier: 0.35.3
-        version: 0.35.3(@types/node@25.9.4)
+        version: 0.35.3(@types/node@26.1.2)
       tailwindcss:
         specifier: ^4.2.4
         version: 4.3.2
@@ -307,7 +307,7 @@ importers:
         version: 2.1.9
       '@vercel/speed-insights':
         specifier: ^2.0.0
-        version: 2.0.0(next@15.5.22(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
+        version: 2.0.0(next@15.5.22(@types/node@26.1.2)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
       basic-ftp:
         specifier: ^6.0.1
         version: 6.0.1
@@ -322,7 +322,7 @@ importers:
         version: 1.23.0(react@19.2.7)
       next:
         specifier: ^15.5.22
-        version: 15.5.22(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 15.5.22(@types/node@26.1.2)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       nodemon:
         specifier: ^3.1.14
         version: 3.1.14
@@ -358,8 +358,8 @@ importers:
         specifier: ^2.11.2
         version: 2.11.4
       '@types/node':
-        specifier: ^25.9.3
-        version: 25.9.4
+        specifier: ^26.1.2
+        version: 26.1.2
       '@types/prompts':
         specifier: ^2.4.9
         version: 2.4.9
@@ -389,7 +389,7 @@ importers:
         version: 2.4.2
       sharp:
         specifier: 0.35.3
-        version: 0.35.3(@types/node@25.9.4)
+        version: 0.35.3(@types/node@26.1.2)
       supabase:
         specifier: ^2.106.0
         version: 2.109.1
@@ -1365,9 +1365,6 @@ packages:
 
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
-
-  '@types/node@25.9.4':
-    resolution: {integrity: sha512-dszCsrKb5U7ZsVZBWiHFklTloVl0mSEnWH/iZXfZUlI4rzCUnsvGmgqfuVRHL54ugE7/wRuxEIXRa2iMZ+BG6g==}
 
   '@types/node@26.1.2':
     resolution: {integrity: sha512-Vu4a5UFA9rIIFJ7rB/Vaafh9lrCQszopTCx6KjFboXTGQbPNasehVR5TEiithSDGyd1DEiUByggTZsg8jukeIg==}
@@ -3497,9 +3494,6 @@ packages:
   undefsafe@2.0.5:
     resolution: {integrity: sha512-WxONCrssBM8TSPRqN5EmsjVrsv4A8X12J4ArBiiayv3DyyG3ZlIg6yysuuSYdZsVz3TKcTg2fd//Ujd4CHV1iA==}
 
-  undici-types@7.24.6:
-    resolution: {integrity: sha512-WRNW+sJgj5OBN4/0JpHFqtqzhpbnV0GuB+OozA9gCL7a993SmU+1JBZCzLNxYsbMfIeDL+lTsphD5jN5N+n0zg==}
-
   undici-types@8.3.0:
     resolution: {integrity: sha512-j375ScV60dom+YkPFIfTLcOiPxkN/buHz5GobjLhixFuANaNs3C9l4GmrWqejgXWJ7BbJcFYpTEUkS1Ge8bpZQ==}
 
@@ -4427,10 +4421,6 @@ snapshots:
 
   '@types/ms@2.1.0': {}
 
-  '@types/node@25.9.4':
-    dependencies:
-      undici-types: 7.24.6
-
   '@types/node@26.1.2':
     dependencies:
       undici-types: 8.3.0
@@ -4718,9 +4708,9 @@ snapshots:
   '@unrs/resolver-binding-win32-x64-msvc@1.12.2':
     optional: true
 
-  '@vercel/speed-insights@2.0.0(next@15.5.22(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)':
+  '@vercel/speed-insights@2.0.0(next@15.5.22(@types/node@26.1.2)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)':
     optionalDependencies:
-      next: 15.5.22(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      next: 15.5.22(@types/node@26.1.2)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react: 19.2.7
 
   '@vladfrangu/async_event_emitter@2.4.7': {}
@@ -6374,7 +6364,7 @@ snapshots:
 
   negotiator@0.6.3: {}
 
-  next@15.5.22(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
+  next@15.5.22(@types/node@26.1.2)(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
     dependencies:
       '@next/env': 15.5.22
       '@swc/helpers': 0.5.15
@@ -6392,7 +6382,7 @@ snapshots:
       '@next/swc-linux-x64-musl': 15.5.22
       '@next/swc-win32-arm64-msvc': 15.5.22
       '@next/swc-win32-x64-msvc': 15.5.22
-      sharp: 0.35.3(@types/node@25.9.4)
+      sharp: 0.35.3(@types/node@26.1.2)
     transitivePeerDependencies:
       - '@babel/core'
       - '@types/node'
@@ -6799,7 +6789,7 @@ snapshots:
 
   setprototypeof@1.2.0: {}
 
-  sharp@0.35.3(@types/node@25.9.4):
+  sharp@0.35.3(@types/node@26.1.2):
     dependencies:
       '@img/colour': 1.1.0
       detect-libc: 2.1.2
@@ -6830,7 +6820,7 @@ snapshots:
       '@img/sharp-win32-arm64': 0.35.3
       '@img/sharp-win32-ia32': 0.35.3
       '@img/sharp-win32-x64': 0.35.3
-      '@types/node': 25.9.4
+      '@types/node': 26.1.2
 
   shebang-command@2.0.0:
     dependencies:
@@ -7114,8 +7104,6 @@ snapshots:
       which-boxed-primitive: 1.1.1
 
   undefsafe@2.0.5: {}
-
-  undici-types@7.24.6: {}
 
   undici-types@8.3.0: {}
 
