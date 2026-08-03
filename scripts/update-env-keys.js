@@ -16,11 +16,11 @@ const ROOT = path.resolve(__dirname, '..');
 const ENV_FILES = [
   'services/supabase/.env.local',
   'services/supabase/.env',
-  'apps/website/.env.local',
-  'apps/ciszukoantony/website/.env.local',
-  'apps/muzicmania/website/.env.local',
-  'apps/ciszubot/website/.env.local',
-  'apps/ciszubot/discord-bot/.env',
+  'projects/ciszu/website/.env.local',
+  'projects/ciszukoantony/website/.env.local',
+  'projects/muzicmania/website/.env.local',
+  'projects/ciszubot/website/.env.local',
+  'projects/ciszubot/discord-bot/.env',
 ];
 
 const [newAnon, newSvc] = process.argv.slice(2);
@@ -31,6 +31,22 @@ if (!newAnon || !newSvc) {
   console.log('  https://supabase.com/dashboard/project/obwzzmbvkrcscqwptlqo/settings/api\n');
   process.exit(1);
 }
+
+// Backup de los .env actuales antes de rotar (regla: backups complejos -> archives/backups/envs/)
+function pad2(n) { return String(n).padStart(2, '0'); }
+const now = new Date();
+const stamp = `${now.getFullYear()}-${pad2(now.getMonth()+1)}-${pad2(now.getDate())}`;
+const backupDir = path.join(ROOT, 'archives', 'backups', 'envs', stamp);
+let backedUp = 0;
+for (const rel of ENV_FILES) {
+  const src = path.resolve(ROOT, rel);
+  if (!fs.existsSync(src)) continue;
+  const dst = path.join(backupDir, rel);
+  fs.mkdirSync(path.dirname(dst), { recursive: true });
+  fs.copyFileSync(src, dst);
+  backedUp++;
+}
+console.log(`\n  [BK] ${backedUp} .env respaldados en archives/backups/envs/${stamp}/`);
 
 let count = 0;
 for (const rel of ENV_FILES) {

@@ -53,19 +53,11 @@ __MACOSX/
 ._*
 
 # Tauri
-apps/muzicmania/launcher/target/
+projects/muzicmania/launcher/target/
 
 # ─── CDN assets ───────────────────────────────────────
 # Assets served from Supabase Storage CDN.
 # Run `pnpm cdn:upload` to push local assets.
-assets/gif/
-assets/video/
-assets/images/
-assets/docs/
-assets/icons/
-assets/fonts/
-assets/logos/gif/
-assets/logos/video/
 
 # ─── Seguridad: archivos con credenciales ──────────
 # ⚠️ NUNCA subir credenciales a git. Si se filtran, rotar inmediatamente.
@@ -82,36 +74,36 @@ CiszuGamens/
 archives/
 
 # ─── Duplicate content (GIF/video) ───────────────────
-content/flayers/video/
-content/banners/video/
-content/logos/video/
-apps/ciszukoantony/content/flayers/video/
-apps/ciszukoantony/content/banners/video/
-apps/ciszukoantony/content/logos/video/
-apps/ciszubot/content/flayers/video/
-apps/ciszubot/content/banners/video/
-apps/ciszubot/content/logos/video/
+projects/ciszu/content/flayers/video/
+projects/ciszu/content/banners/video/
+projects/ciszu/content/logos/video/
+projects/ciszukoantony/content/flayers/video/
+projects/ciszukoantony/content/banners/video/
+projects/ciszukoantony/content/logos/video/
+projects/ciszubot/content/flayers/video/
+projects/ciszubot/content/banners/video/
+projects/ciszubot/content/logos/video/
 
 # turbo cache.turbo/
 .env*
 
 # ─── Mirrors de copy-assets (prebuild) — solo web, Vercel los regenera ───
-apps/website/public/ciszukoantony/
-apps/website/public/shared/
-apps/ciszukoantony/website/public/apps/
-apps/ciszukoantony/website/public/assets/
-apps/ciszukoantony/website/public/banners/
-apps/ciszukoantony/website/public/buttons/
-apps/ciszukoantony/website/public/ciszukoantony/
-apps/ciszukoantony/website/public/layaout/
-apps/ciszukoantony/website/public/logos/
-apps/ciszukoantony/website/public/mc_skin/
-apps/ciszukoantony/website/public/media/
-apps/ciszukoantony/website/public/persons/
-apps/ciszukoantony/website/public/shared/
-apps/ciszukoantony/website/public/stickers/
-apps/ciszukoantony/website/public/thumbails/
-apps/muzicmania/website/public/ciszukoantony/
+projects/ciszu/website/public/projects/
+projects/ciszu/website/public/ciszukoantony/
+projects/ciszu/website/public/shared/
+projects/ciszukoantony/website/public/projects/
+projects/ciszukoantony/website/public/banners/
+projects/ciszukoantony/website/public/buttons/
+projects/ciszukoantony/website/public/ciszukoantony/
+projects/ciszukoantony/website/public/layaout/
+projects/ciszukoantony/website/public/logos/
+projects/ciszukoantony/website/public/mc_skin/
+projects/ciszukoantony/website/public/media/
+projects/ciszukoantony/website/public/persons/
+projects/ciszukoantony/website/public/shared/
+projects/ciszukoantony/website/public/stickers/
+projects/ciszukoantony/website/public/thumbails/
+projects/muzicmania/website/public/ciszukoantony/
 
 # Supabase CLI temp
 supabase/.temp/
@@ -121,15 +113,15 @@ supabase/.temp/
 .opencode-tmp/
 
 # Discord bot logs
-apps/ciszubot/discord-bot/logs/
+projects/ciszubot/discord-bot/logs/
 
 # CiszuBot website prebuild mirrors (webs puras: no trackear)
-apps/ciszubot/website/public/apps/
-apps/ciszubot/website/public/ciszukoantony/
-apps/ciszubot/website/public/docs/
+projects/ciszubot/website/public/projects/
+projects/ciszubot/website/public/ciszukoantony/
+projects/ciszubot/website/public/docs/
 
 # ─── Bruno API tests ───────────────────────────────
 # Entornos con secrets reales (copiar prod.example.yml → prod.yml)
-api-tests/environments/*.yml
-api-tests/*.html
-!api-tests/environments/*.example.yml
+apis-client/bruno/environments/*.yml
+apis-client/bruno/*.html
+!apis-client/bruno/environments/*.example.yml

@@ -4,7 +4,7 @@ const https = require('https');
 const { execSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..');
-const BACKUPS_DIR = path.join(ROOT, 'backups');
+const BACKUPS_DIR = path.join(ROOT, 'archives', 'backups', 'db');
 const RETENTION_DAYS = 30;
 
 const DRY_RUN = process.argv.includes('--dry-run');

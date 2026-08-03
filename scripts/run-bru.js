@@ -2,7 +2,7 @@ const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const cwd = path.resolve(__dirname, '..', 'api-tests');
+const cwd = path.resolve(__dirname, '..', 'apis-client', 'bruno');
 const args = process.argv.slice(2);
 
 const reportIdx = args.indexOf('--reporter-json');

@@ -13,18 +13,18 @@ services:
   ciszu-bot:
     build:
       context: .
-      dockerfile: apps/ciszubot/discord-bot/Dockerfile
+      dockerfile: projects/ciszubot/discord-bot/Dockerfile
     container_name: ciszubot
     restart: unless-stopped
     environment:
-      # Secretos desde .env (nunca commitear). Copiar apps/ciszubot/discord-bot/.env
+      # Secretos desde .env (nunca commitear). Copiar projects/ciszubot/discord-bot/.env
       NODE_ENV: production
     env_file:
-      - ./apps/ciszubot/discord-bot/.env
+      - ./projects/ciszubot/discord-bot/.env
     ports:
       - "5000:5000"
     volumes:
-      - ./apps/ciszubot/discord-bot/logs:/repo/apps/ciszubot/discord-bot/logs
+      - ./projects/ciszubot/discord-bot/logs:/repo/projects/ciszubot/discord-bot/logs
 
   supabase-local:
     # Supabase local corre via CLI (`supabase start`), que orquesta sus propios

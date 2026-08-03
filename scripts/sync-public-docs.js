@@ -8,14 +8,14 @@ const path = require('path');
 const ROOT = 'E:\\Ciszu Network';
 
 const targets = [
-  { src: 'apps/ciszubot/docs',       dest: 'apps/ciszubot/website/public/docs' },
-  { src: 'apps/ciszukoantony/docs',  dest: 'apps/ciszukoantony/website/public/docs' },
-  { src: 'apps/website/docs',        dest: 'apps/website/public/docs' },
-  { src: 'apps/muzicmania/docs',     dest: 'apps/muzicmania/website/public/docs' },
+  { src: 'projects/ciszubot/docs',       dest: 'projects/ciszubot/website/public/docs' },
+  { src: 'projects/ciszukoantony/docs',  dest: 'projects/ciszukoantony/website/public/docs' },
+  { src: 'projects/ciszu/docs',           dest: 'projects/ciszu/website/public/docs' },
+  { src: 'projects/muzicmania/docs',     dest: 'projects/muzicmania/website/public/docs' },
   // Launcher (desktop) version — has no public/ but we can put docs alongside
-  { src: 'apps/muzicmania/docs',     dest: 'apps/muzicmania/launcher/public/docs' },
+  { src: 'projects/muzicmania/docs',     dest: 'projects/muzicmania/launcher/public/docs' },
   // Mobile version — placeholder
-  { src: 'apps/muzicmania/docs',     dest: 'apps/muzicmania/mobile/public/docs' },
+  { src: 'projects/muzicmania/docs',     dest: 'projects/muzicmania/mobile/public/docs' },
 ];
 
 const FORMATS = ['txt', 'md', 'docx', 'pdf'];

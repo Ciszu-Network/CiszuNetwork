@@ -13,13 +13,11 @@ if (!SERVICE_KEY) {
 
 const SOURCES = [
   { dir: 'shared/icons/svg', prefix: 'shared/icons/svg' },
-  { dir: 'content', prefix: 'content' },
-  { dir: 'docs', prefix: 'docs' },
-  { dir: 'ciszukoantony/content', prefix: 'ciszukoantony/content' },
-  { dir: 'apps/ciszubot/content', prefix: 'apps/ciszubot/content' },
-  { dir: 'apps/ciszukoantony/content', prefix: 'apps/ciszukoantony/content' },
-  { dir: 'apps/muzicmania/content', prefix: 'apps/muzicmania/content' },
-  { dir: 'apps/website/content', prefix: 'apps/website/content' },
+  { dir: 'projects/ciszu/content', prefix: 'projects/ciszu/content' },
+  { dir: 'projects/ciszu/docs', prefix: 'projects/ciszu/docs' },
+  { dir: 'projects/ciszukoantony/content', prefix: 'projects/ciszukoantony/content' },
+  { dir: 'projects/ciszubot/content', prefix: 'projects/ciszubot/content' },
+  { dir: 'projects/muzicmania/content', prefix: 'projects/muzicmania/content' },
 ];
 
 const ROOT = path.resolve(__dirname, '..');
