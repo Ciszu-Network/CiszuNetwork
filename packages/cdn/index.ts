@@ -1,4 +1,4 @@
-import { assetUrl } from './src/cdn-client';
+import { assetUrl, encodePath } from './src/cdn-client';
 
 export type AssetType = 'logos' | 'icons' | 'fonts' | 'images' | 'docs' | 'banners' | 'thumbnails' | 'flayers';
 export type IconStyle = 'outline' | 'filled' | 'flag';
@@ -43,10 +43,10 @@ export function resolveIcon(
   const path = `shared/icons/${format}/${dir}/${name}.${format}`;
 
   if (useLocal || !cdnUrl) {
-    return `/${path}`;
+    return `/${encodePath(path)}`;
   }
 
-  return `${cdnUrl}/${path}`;
+  return `${cdnUrl}/${encodePath(path)}`;
 }
 
 /**
@@ -62,12 +62,13 @@ export class AssetResolver {
 
   resolve(path: string, opts?: ResolveOptions): string {
     const useLocal = opts?.forceLocal || (!opts?.forceCdn && !isProduction);
+    const clean = path.replace(/^\//, '');
 
     if (useLocal || !this.cdnUrl) {
-      return `/${path.replace(/^\//, '')}`;
+      return `/${encodePath(clean)}`;
     }
 
-    return `${this.cdnUrl}/${path.replace(/^\//, '')}`;
+    return `${this.cdnUrl}/${encodePath(clean)}`;
   }
 }
 

@@ -1,6 +1,17 @@
+// Codifica la ruta relativa (espacios, acentos) sin tocar separadores '/' ni
+// secuencias %XX ya codificadas. Las rutas del repo tienen espacios
+// (ej: 'logos/imagen/not outline/...') que rompen preload/img si no se
+// codifican: el navegador no coincidía el preload con el src final.
+export function encodePath(p: string): string {
+  return p
+    .split('/')
+    .map((seg) => encodeURI(seg))
+    .join('/');
+}
+
 export function assetUrl(path: string): string {
   const base = process.env.NEXT_PUBLIC_CDN_URL || 'https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn';
-  return `${base}/${path.replace(/^\//, '')}`;
+  return `${base}/${encodePath(path.replace(/^\//, ''))}`;
 }
 
 export function getContentType(filename: string): string {
