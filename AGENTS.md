@@ -94,7 +94,7 @@ assetResolver.resolve('projects/ciszukoantony/content/logos/imagen/outline/isoti
 
 ### Sistema de iconos (inline-first + CDN fallback)
 
-- `packages/ui/src/Icon.tsx` — componente compartido `Icon`: renderiza SVG inline (coloreable, sin red) si el nombre está en el registro; si no, `<img>` al CDN dinámico con **recall local** en caso de error (onError → ruta local → oculto).
+- `packages/ui/src/Icon.tsx` — componente compartido `Icon`: renderiza SVG inline (coloreable, sin red) si el nombre está en el registro; **fallback de estilo inline outline↔filled** (si el estilo pedido no existe pero el otro sí, usa ese antes de ir a red — soluciona ciszubot 404 `outline/shield` etc. que solo existen en `filled`); si no está en ninguno, `<img>` al CDN dinámico con **recall local** en caso de error (onError → ruta local → oculto).
 - `packages/ui/src/generated/icon-registry.ts` — **archivo GENERADO** desde el catálogo canónico `shared/icons/svg/{outline,filled}/`. Regenerar con `node scripts/generate-icon-registry.js` (lista curada en el script; añadir nombres nuevos ahí).
 - Las 4 apps dependen de `@ciszu/ui` y sus `hooks/useIcon.tsx`/`utils/icons.ts` delegan en el componente compartido.
 - **Política**: iconos UI estáticos → inline en bundle (registry); iconos dinámicos/desconocidos → CDN con recall; medios (logos, música, covers) → `assetResolver.resolve()`.
