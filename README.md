@@ -1,279 +1,141 @@
 # Ciszu Network Monorepo
 
-Monorepo principal de Ciszu Network conteniendo todas las aplicaciones y servicios.
-
-## 🏗️ Estructura del Proyecto
+Monorepo principal de **Ciszu Network** — el ecosistema digital de **CiszukoAntony**. Contiene 4 webs (Next.js 15 + Tailwind 4), un bot de Discord (Discord.js), un juego de música (web + app Tauri), paquetes compartidos y el CDN de assets sobre Supabase Storage.
 
 ```
 .
-├── projects/                    # Aplicaciones individuales
-│   ├── ciszubot/           # Bot de Discord
-│   ├── ciszukoantony/      # Sitio web personal
-│   └── muzicmania/         # Juego musical (web + desktop)
-├── shared/                 # Recursos compartidos
-│   ├── icons/             # Sistema de iconos (nuevo!)
-│   │   ├── outline/       # Iconos con contorno
-│   │   ├── filled/        # Iconos rellenos  
-│   │   └── flag/          # Banderas y especiales
-│   ├── fonts/             # Fuentes tipográficas
-│   └── images/            # Imágenes compartidas
-├── packages/              # Paquetes compartidos
-│   ├── cdn/              # Gestión de assets y CDN
-│   ├── ui/               # Componentes de UI
-│   ├── config/           # Configuraciones compartidas
-│   └── utils/            # Utilidades comunes
-├── content/              # Contenido multimedia
-├── documents/            # Documentación general
-├── scripts/              # Scripts de automatización
-└── docs/                 # Documentación técnica
+├── projects/                 # Aplicaciones individuales (web + bot + contenido)
+│   ├── ciszu/                # Web principal CiszuNetwork (ciszunetwork.vercel.app)
+│   │   ├── website/          #   Next.js — ciszunetwork-page
+│   │   ├── content/          #   Multimedia (banners, flayers, logos)
+│   │   └── docs/             #   Documentación (incl. ia_docs/)
+│   ├── ciszukantony/        # Portfolio personal (ciszukantony.vercel.app)
+│   │   ├── website/          #   Next.js — ciszuko-network
+│   │   ├── content/          #   Multimedia + logos (fuente maestra)
+│   │   ├── musicboard/       #   (contenido musical)
+│   │   └── docs/
+│   ├── muzicmania/           # Juego musical (muzicmania.vercel.app)
+│   │   ├── website/          #   Next.js — muzicmania-next
+│   │   ├── launcher/         #   App de escritorio (Tauri + NSIS)
+│   │   ├── mobile/           #   App móvil
+│   │   ├── content/          #   Música, covers, arrows, particles
+│   │   └── docs/
+│   ├── ciszubot/             # Bot de Discord (ciszubot.vercel.app)
+│   │   ├── website/          #   Next.js — ciszubot-web (landing + dashboard)
+│   │   ├── discord-bot/      #   Discord.js + Express (Docker)
+│   │   ├── content/
+│   │   └── docs/
+│   └── ciszugamens/          # Legacy (contenido antiguo — líneas de canales)
+├── packages/                 # Paquetes compartidos (pnpm workspace)
+│   ├── cdn/                  # @ciszunetwork/cdn — Asset resolver + CDN
+│   └── ui/                   # @ciszu/ui — Componentes compartidos (Icon, etc.)
+├── shared/                   # Recursos compartidos del monorepo
+│   ├── icons/svg/            #   Sistema de iconos (5.194 SVGs: outline/filled/flags)
+│   ├── fonts/                #   Fuentes tipográficas (Geomanist, etc.)
+│   ├── images/               #   Imágenes compartidas
+│   └── widgets/              #   Widgets HTML (Ko-fi, Top.gg)
+├── services/                 # Infraestructura
+│   ├── supabase/              #   config.toml, migrations, seeds, .env
+│   └── vercel/                #   Configuración de despliegues
+├── scripts/                   # Scripts de automatización (build, CDN, BD, docs)
+├── apis-client/bruno/         # Colecciones API de Bruno (OpenCollection YAML)
+├── archives/                  # Backups (bases de datos, envs, clientes)
+└── docs/                      # ⚠️ Movido dentro de projects/ciszu/docs/
 ```
 
-## 🎨 Nuevo Sistema de Iconos
+> **Migración ago 2026**: la estructura antigua (`apps/...`, `public/...`, `assets/`) fue restructurada a `projects/`. Cada producto vive bajo `projects/<nombre>/` con su `website/`, `content/` y `docs/` propios. La documentación general (`docs/ia_docs/`) vive en `projects/ciszu/docs/ia_docs/`.
 
-Hemos implementado un sistema profesional de iconos que reemplaza el antiguo sistema de sprites e iconos inline.
-
-### Características Principales
-
-- **Estructura organizada**: `outline/`, `filled/`, `flag/` con formatos SVG, PNG, AI
-- **Asset Resolver inteligente**: Decide automáticamente entre CDN y local según entorno
-- **Multiplataforma**: Soporta Web, Tauri (Desktop), y futuro React Native (Mobile)
-- **Tree-shaking**: Solo incluye los iconos realmente usados en el bundle
-- **CDN ready**: Configuración para Supabase Storage o Cloudflare R2
-
-### Uso Rápido
-
-```typescript
-// Importación directa (recomendado)
-import homeIcon from '@shared/icons/outline/svg/home_outline.svg';
-
-// Usando el Asset Resolver
-import { resolveIcon } from '@cdn';
-const iconUrl = resolveIcon('home', 'outline', 'svg');
-```
-
-### Sistema de Iconos (canónico)
-
-El sistema actual vive en `packages/cdn` + `packages/ui/src/generated/icon-registry.ts` (generado). Ver `docs/icons-system.md`.
+## Quick start
 
 ```bash
-# Regenerar el registry de iconos inline (packages/ui/src/generated/icon-registry.ts)
-node scripts/generate-icon-registry.js
-
-# Subir assets locales al CDN (Supabase Storage)
-pnpm cdn:upload
+pnpm install              # install all workspaces (pnpm v10.8.1, Node >=20)
+pnpm dev                  # turbo: all apps
+pnpm build                # turbo: all apps
+pnpm lint                 # turbo: lint all apps
+pnpm --filter <nombre> dev  # single app
 ```
 
-## 🚀 Comenzando
+### Filtros pnpm por app
 
-### Prerrequisitos
+| Filtro | Producto | Comando útil |
+|---|---|---|
+| `ciszunetwork-page` | Web principal Ciszu Network | `web:dev` / `web:build` |
+| `ciszuko-network` | Portfolio CiszukoAntony | `antony:dev` / `antony:build` |
+| `muzicmania-next` | Juego de música | `muzicmania:dev` / `muzicmania:build` |
+| `ciszubot-web` | Landing del bot | `pnpm --filter ciszubot-web dev` |
+| `ciszubot` | Bot de Discord (TS, Docker) | `bot:start` / `bot:dev` |
 
-- Node.js 18+
-- pnpm 8+ (recomendado) o npm/yarn
-- Git
+## CDN y assets
 
-### Instalación
+- **CDN**: bucket público `ciszu-cdn` en Supabase Storage (`NEXT_PUBLIC_CDN_URL = .../object/public/ciszu-cdn`). El bucket **espeja las rutas del repo** (misma ruta relativa bajo `projects/`).
+- **Resolver**: `@ciszunetwork/cdn` — `assetResolver.resolve(path)` y `resolveIcon(name, style, format)` con estrategia híbrida local/CDN según entorno (dev, Tauri, producción).
+- **Iconos**: sistema inline-first en `packages/ui` (`Icon.tsx`) con registry generado (`packages/ui/src/generated/icon-registry.ts`) y fallback al CDN. Regenerar: `node scripts/generate-icon-registry.js`.
+- **Upload**: `pnpm cdn:upload` sube 6 fuentes: `shared/icons/svg`, `projects/ciszu/content`, `projects/ciszu/docs`, `projects/ciszukantony/content`, `projects/ciszubot/content`, `projects/muzicmania/content`. Fallback offline en el prebuild: `node scripts/copy-assets.js`.
+- **Logos**: `projects/ciszukantony/content/logos/` es la fuente maestra; usa `assetResolver.resolve('projects/ciszukantony/content/logos/...')`.
+
+## Supabase
+
+- Proyecto único: `obwzzmbvkrcscqwptlqo` — auth, Postgres, Storage.
+- Schemas: `muzicmania` (scores, profiles con auth), `ciszubot` (guild_configs, wallets, levels, tickets…), `ciszunetwork`.
+- CDN en bucket público `ciszu-cdn`; bucket `avatars` para fotos de perfil.
+- Credenciales reales solo en `services/supabase/.env` (gitignored). Migraciones SQL en `services/supabase/migrations/`.
+
+## CI/CD (GitHub Actions)
+
+Seis flujos en `.github/workflows/` — CI + **CodeQL** + 4 deploys a Vercel, cada uno con nombre descriptivo completo:
+
+| Archivo | Proyecto Vercel | Raíz | Web |
+|---|---|---|---|
+| `deploy-ciszunetwork-webpage.yml` | `ciszunetworkpage` | `projects/ciszu/website` | ciszunetwork.vercel.app |
+| `deploy-ciszukantony-webpage.yml` | `ciszukoantonypage` | `projects/ciszukantony/website` | ciszukantony.vercel.app |
+| `deploy-muzicmania-webpage.yml` | `muzicmania` | `projects/muzicmania/website` | muzicmania.vercel.app |
+| `deploy-ciszubot-webpage.yml` | `ciszubot` | `projects/ciszubot/website` | ciszubot.vercel.app |
+
+Cada deploy se dispara con cambios en el `projects/<proyecto>/**`, `packages/**` o `scripts/copy-assets.js`. ⚠️ Desplegar SIEMPRE desde la raíz (`vercel --prod` con `working-directory: .`); nunca `vercel pull/prebuilt` dentro de `projects/*/website` (ruta duplicada → deploy vacío).
+- ⚠️ Desplegar SIEMPRE desde la raíz (`vercel --prod` con `working-directory: .`); nunca `vercel pull/prebuilt` dentro de `projects/*/website` (ruta duplicada → deploy vacío).
+
+## Seguridad y calidad
+
+- **XSS**: nunca `innerHTML`/`dangerouslySetInnerHTML` sin escapar; usa `escapeHtml()` o `textContent`; DOMPurify el entrante.
+- **SQL Injection**: siempre ORM parametrizado o RPC — nunca concatenar.
+- **Secrets**: `secretlint` + `gitleaks` en pre-commit (hook); rotar credenciales si el repo se hace público.
+- **DevSecOps**: SAST (Semgrep), DAST (ZAP), dependencias (pnpm audit, trivy, cargo audit), advisors de Supabase verificados tras cada cambio de policies/functions. Detalles: `projects/ciszu/docs/ia_docs/DEVSECOPS.md`.
+- **Advisors Supabase**: usar SECURITY INVOKER siempre que sea posible; envolver `auth.*()` en `(SELECT …)`; separar políticas RLS por comando (no ALL).
+
+## Documentación
+
+- Estándares de ingeniería: `projects/ciszu/docs/ia_docs/CODE_PRINCIPLES.md`
+- DevSecOps: `projects/ciszu/docs/ia_docs/DEVSECOPS.md`
+- Herramientas de desarrollo: `projects/ciszu/docs/ia_docs/TOOLS.md`
+- Estado de los proyectos y migraciones: `projects/ciszu/docs/ia_docs/PROJECT_STATE.md`
+- Docs de cada producto en `projects/<project>/docs/`.
+- AGENTS.md en la raíz: gestión de multiworkspace, gotchas y checklist de implementación.
+
+## Scripts de automatización (`scripts/`)
 
 ```bash
-# Instalar dependencias
-pnpm install
-
-# Iniciar todas las apps en desarrollo
-pnpm dev
-
-# Iniciar app específica
-pnpm dev --filter=@ciszu/muzicmania
+node scripts/copy-assets.js           # Prebuild: logs críticos + mirrors a public/
+node scripts/upload-cdn.js            # Subir assets al CDN ciszu-cdn (pnpm cdn:upload)
+node scripts/generate-icon-registry.js# Regenerar registry de iconos inline
+node scripts/sync-public-docs.js      # Sincronizar docs a public/docs
+node scripts/backup-db.js             # Backup BD con timestamp (archives/backups)
+node scripts/update-env-keys.js       # Actualizar keys Supabase en .env (con backup)
+node scripts/apply-migration-XX.js    # Aplicar migración SQL
+node scripts/run-bru.js               # API testing con Bruno (gitignore: environments/prod.yml)
 ```
 
-### Comandos Principales
+## APIs y testing
 
-```bash
-# Desarrollo
-pnpm dev                    # Todas las apps
-pnpm dev --filter=[app]     # App específica
+- **Bruno**: colecciones OpenCollection YAML en `apis-client/bruno/` — `health/` (4 webs + bot status) y `rest/` (leaderboard, bot_status, stats local).
+- Uso: `pnpm api:test` (prod, excluye `local`), `pnpm api:test:report`, `pnpm api:test:local`.
 
-# Build
-pnpm build                  # Todas las apps
-pnpm build --filter=[app]   # App específica
+## Contribución
 
-# Testing
-pnpm test                   # Todos los tests
-pnpm test --filter=[app]    # Tests de app específica
+1. Branch desde `main`: `git checkout -b feature/…`
+2. Desarrollar, verificar `pnpm lint` y build de tu app.
+3. Commit con mensaje descriptivo **en español**.
+4. Push (manualmente desde tu máquina; GitHub bloqued DNS de esta PC).
 
-# Linting
-pnpm lint                   # Todo el código
-pnpm lint:fix              # Con auto-fix
-```
+## Licencia
 
-## 📦 Paquetes Compartidos
-
-### `@ciszu/cdn` - Gestión de Assets
-
-```typescript
-import { assetResolver, resolveIcon } from '@cdn';
-
-// Resolver assets según entorno
-const iconUrl = resolveIcon('home', 'outline', 'svg');
-const imageUrl = assetResolver.resolve('images/logo.png');
-
-// Verificar disponibilidad
-const exists = await assetResolver.assetExists('icons/home.svg');
-```
-
-### `@ciszu/ui` - Componentes de UI
-
-```typescript
-import { Button, Card, Icon } from '@ui';
-
-// Componentes con soporte de iconos
-<Button icon={<Icon name="home" />}>
-  Inicio
-</Button>
-```
-
-### `@ciszu/config` - Configuraciones
-
-```typescript
-import { eslintConfig, tailwindConfig } from '@config';
-
-// Configuraciones compartidas para todas las apps
-```
-
-## 🏗️ Arquitectura
-
-### Monorepo con Turborepo
-
-- **Build caching**: Builds incrementales rápidos
-- **Task orchestration**: Ejecución paralela de tareas
-- **Dependency management**: Uso eficiente de dependencias### Workspaces con pnpm
-
-- **Symlinks**: Enlaces simbólicos para paquetes locales
-- **Hoisting**: Dependencias compartidas optimizadas
-- **Performance**: Instalación rápida de paquetes
-
-### CDN Strategy
-
-- **Desarrollo**: Assets locales para velocidad
-- **Producción Web**: CDN para performance global
-- **Tauri**: Assets empaquetados para offline
-- **React Native**: Bundle assets o CDN según conexión
-
-## 🛡️ Filosofía Oficial y DevSecOps
-
-Ciszu Network opera bajo una filosofía de ingeniería profesional y seguridad integrada (DevSecOps):
-
-- **Filosofía de código** — DRY, KISS, YAGNI, SOLID, Separation of Concerns y Least Astonishment aplicados a toda implementación. Documento oficial: [`docs/ia_docs/CODE_PRINCIPLES.md`](./docs/ia_docs/CODE_PRINCIPLES.md)
-- **Seguridad por diseño** — Shift-Left: SAST (Semgrep en CI), DAST (ZAP), escaneo de secretos (secretlint + gitleaks pre-commit), dependencias (pnpm audit, cargo audit, trivy) y advisors de Supabase verificados tras cada cambio. Documento oficial: [`docs/ia_docs/DEVSECOPS.md`](./docs/ia_docs/DEVSECOPS.md)
-- **Estándares obligatorios** — aplicables a IA y humanos: ver `AGENTS.md` (checklist "A ejecutar en toda implementación nueva") y los `SECURITY.md` de cada web.
-
-## 🔧 Configuración
-
-### Variables de Entorno
-
-```bash
-# .env.local
-NEXT_PUBLIC_CDN_URL=http://localhost:3000/assets
-SUPABASE_URL=your_supabase_url
-SUPABASE_ANON_KEY=your_supabase_key
-```
-
-### TypeScript
-
-```json
-// tsconfig.base.json
-{
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@shared/*": ["shared/*"],
-      "@cdn/*": ["packages/cdn/*"],
-      "@ui/*": ["packages/ui/*"]
-    }
-  }
-}
-```
-
-## 📚 Documentación
-
-- [Sistema de Iconos](./docs/icons-system.md) - Guía completa
-- [Configuración de Bundlers](./docs/bundler-config.md) - Vite/Next.js/Tauri
-- [Migración](./docs/migration-guide.md) - Desde sistema antiguo
-
-## 🛠️ Scripts de Automatización
-
-```bash
-# Assets / CDN
-node scripts/upload-cdn.js         # Subir assets a CDN (Supabase Storage)
-node scripts/copy-assets.js        # Sincronizar assets para fallback offline (prebuild)
-node scripts/generate-icon-registry.js  # Regenerar registry de iconos inline
-
-# Base de datos / Supabase
-node scripts/backup-db.js          # Backup de la BD con timestamp (archives/db/)
-node scripts/update-env-keys.js    # Actualizar keys Supabase en todos los .env (con backup)
-node scripts/apply-migration-XX.js # Aplicar migración (XX = número, ej. 14)
-
-# API testing (Bruno)
-node scripts/run-bru.js            # Ejecutar colección API (pnpm api:test)
-```
-
-Más scripts en `docs/ia_docs/TOOLS.md`.
-
-## 🤝 Contribución
-
-### Flujo de Trabajo
-
-1. Crear branch desde `main`: `git checkout -b feature/nueva-funcionalidad`
-2. Desarrollar cambios
-3. Ejecutar tests: `pnpm test`
-4. Verificar linting: `pnpm lint`
-5. Commit con mensaje descriptivo
-6. Pull Request a `main`
-
-### Convenciones
-
-- **Commits**: Mensajes en español, formato descriptivo
-- **Código**: TypeScript estricto, ESLint + Prettier
-- **Iconos**: Usar nuevo sistema en `shared/icons/`
-- **Assets**: CDN para producción, locales para desarrollo
-
-## 🚨 Solución de Problemas
-
-### Problemas Comunes
-
-```bash
-# Error: Cannot find module '@shared/...'
-# Solución: Verificar tsconfig.json y alias del bundler
-
-# Error: SVG no se muestra
-# Solución: Configurar @svgr en webpack/Vite
-
-# Error: Tauri no encuentra assets
-# Solución: Verificar importación y tauri.conf.json
-```
-
-### Debugging
-
-```bash
-# Ver estructura de iconos
-tree shared/icons/
-
-# Verificar configuración
-node scripts/verify-config.js
-
-# Analizar bundle
-pnpm analyze
-```
-
-## 📞 Soporte
-
-- **Documentación**: [docs/](./docs/)
-- **Issues**: GitHub Issues
-- **Discord**: [Ciszu Network Discord](https://discord.gg/ciszunetwork)
-
-## 📄 Licencia
-
-Propietario - Ciszu Network © 2024
-
----
-
-*Este README fue generado por CISZU AI - Sistema de Desarrollo Autónomo*
-*Última actualización: ${new Date().toLocaleDateString()}*
+Propietario — Ciszu Network © 2024-2026. El repositorio es **privado**.

@@ -1,4 +1,4 @@
-name: Deploy MuzicMania
+name: Deploy MuzicMania Webpage
 
 on:
   push:

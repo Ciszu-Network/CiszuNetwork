@@ -1,4 +1,4 @@
-name: Deploy Ciszuko Antony
+name: Deploy Ciszuko Antony Webpage
 
 on:
   push:

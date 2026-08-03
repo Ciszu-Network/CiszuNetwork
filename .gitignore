@@ -125,3 +125,6 @@ projects/ciszubot/website/public/docs/
 apis-client/bruno/environments/*.yml
 apis-client/bruno/*.html
 !apis-client/bruno/environments/*.example.yml
+
+# public/ fantasma en la raiz (si copy-assets se ejecuta desde la raiz)
+/public/

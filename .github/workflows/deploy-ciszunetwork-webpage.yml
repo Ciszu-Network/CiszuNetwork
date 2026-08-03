@@ -1,4 +1,4 @@
-name: Deploy CiszuNetwork Page
+name: Deploy CiszuNetwork Webpage
 
 on:
   push:
