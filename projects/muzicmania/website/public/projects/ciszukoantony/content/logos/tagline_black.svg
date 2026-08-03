@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="tagline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 949.71 74.27">
+  <defs>
+    <style>
+      .cls-1 {
+        font-family: FuturaBT-BoldItalic, 'Futura Md BT';
+        font-size: 66.57px;
+        font-style: italic;
+        font-weight: 700;
+        stroke: #fff;
+        stroke-miterlimit: 10;
+      }
+    </style>
+  </defs>
+  <text class="cls-1" transform="translate(.5 57.58) scale(1.05 1)"><tspan x="0" y="0">BRIGHT FUTURE PROMISED</tspan></text>
+</svg>

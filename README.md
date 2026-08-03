@@ -6,7 +6,7 @@ Monorepo principal de Ciszu Network conteniendo todas las aplicaciones y servici
 
 ```
 .
-├── apps/                    # Aplicaciones individuales
+├── projects/                    # Aplicaciones individuales
 │   ├── ciszubot/           # Bot de Discord
 │   ├── ciszukoantony/      # Sitio web personal
 │   └── muzicmania/         # Juego musical (web + desktop)
@@ -51,17 +51,16 @@ import { resolveIcon } from '@cdn';
 const iconUrl = resolveIcon('home', 'outline', 'svg');
 ```
 
-### Migración desde Sistema Antiguo
+### Sistema de Iconos (canónico)
+
+El sistema actual vive en `packages/cdn` + `packages/ui/src/generated/icon-registry.ts` (generado). Ver `docs/icons-system.md`.
 
 ```bash
-# 1. Extraer iconos inline del código existente
-node scripts/extract-icons.js
+# Regenerar el registry de iconos inline (packages/ui/src/generated/icon-registry.ts)
+node scripts/generate-icon-registry.js
 
-# 2. Migrar código a nuevo sistema  
-node scripts/migrate-icons.js
-
-# 3. Descargar iconos adicionales (opcional)
-node scripts/download-icons.js --category=navigation --count=20
+# Subir assets locales al CDN (Supabase Storage)
+pnpm cdn:upload
 ```
 
 ## 🚀 Comenzando
@@ -202,17 +201,21 @@ SUPABASE_ANON_KEY=your_supabase_key
 ## 🛠️ Scripts de Automatización
 
 ```bash
-# Sistema de iconos
-node scripts/extract-icons.js      # Extraer iconos inline
-node scripts/migrate-icons.js      # Migrar código antiguo
-node scripts/download-icons.js     # Descargar iconos de Iconify
-node scripts/upload-cdn.js         # Subir assets a CDN
+# Assets / CDN
+node scripts/upload-cdn.js         # Subir assets a CDN (Supabase Storage)
+node scripts/copy-assets.js        # Sincronizar assets para fallback offline (prebuild)
+node scripts/generate-icon-registry.js  # Regenerar registry de iconos inline
 
-# Utilidades
-node scripts/clean-node-modules.js # Limpiar node_modules
-node scripts/verify-structure.js   # Verificar estructura
-node scripts/generate-aliases.js   # Generar aliases TypeScript
+# Base de datos / Supabase
+node scripts/backup-db.js          # Backup de la BD con timestamp (archives/db/)
+node scripts/update-env-keys.js    # Actualizar keys Supabase en todos los .env (con backup)
+node scripts/apply-migration-XX.js # Aplicar migración (XX = número, ej. 14)
+
+# API testing (Bruno)
+node scripts/run-bru.js            # Ejecutar colección API (pnpm api:test)
 ```
+
+Más scripts en `docs/ia_docs/TOOLS.md`.
 
 ## 🤝 Contribución
 

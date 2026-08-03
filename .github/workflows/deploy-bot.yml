@@ -4,9 +4,8 @@ on:
   push:
     branches: [main, master]
     paths:
-      - 'apps/ciszubot/**'
+      - 'projects/ciszubot/**'
       - 'packages/**'
-      - 'assets/**'
       - 'scripts/copy-assets.js'
   workflow_dispatch:
 

@@ -1,0 +1,269 @@
+﻿Shigamens Server: Directrices de moderación y administración en el servidor.   
+
+
+Reglas de los términos y condiciones de Discord.
+✦ Recuerda seguir con todas las reglas y normas para cumplir los requisitos del server. Y las condiciones y términos de servicios de Discord. Para ser un staff completo.
+─ Lea con más detalle lo que no se permite en la aplicación:
+* https://discord.com/guidelines
+* https://discord.com/terms
+Dentro de las directrices para ser staff. Se debe cumplir con todos los requisitos y advertencias de las reglas y normativas del servidor.
+* Se recomienda leerlos antes de empezar
+
+
+Moderación dentro de la comunidad conjunto a protocolos en función a las sanciones.
+
+
+❥ Para haber llegado hasta aquí, tuvo que ser aceptado con un cargo del equipo del staff, de acuerdo a su formulario, experiencia, respuestas y autoridad.
+* Se le ha asignado un cargo especial y rol en nuestro equipo de moderación y administración.
+
+Los rangos se dividen en:  (Por importancia y jerarquía)
+   1. ❥ Supreme:
+   * Solo creadores y fundadores tienen este rango. Tiene como cargo principal todos los demás rangos y gestión del servidor completo.
+
+
+   2. ❥ Administrador|a:
+   * Moderador administrativo. Configuración, manejo en la organización, mentor de otros staff, publicaciones de eventos, anuncios o post de redes sociales. Es el cargo más versátil e importante del servidor.
+
+
+   3. ❥ Moderador|a:
+   * Miembro con acciones de moderación, comandos como kick, ban, un(x), list(s), temp(x), timeout, cooldown, mute y entre mas. Censura incumplimientos de reglas y normativas, supervisión de usuarios, orientador y helper. Penalizador y sancionador con advertencias.
+
+
+   4. ❥ Helper:
+   * Rango más bajo del staff, inicios de un moderador. Ayuda a los demás miembros del equipo del staff con llamadas para actuar y orienta a los miembros del servidor, resuelve dudas, da ideas, es activo y promueve la comunidad. Recuerda y recomienda acciones, guia pasos y ayuda a los de su mayor rango.
+
+
+Dependiendo de cuál sea tu cargo. Debes conocer ciertos estándares a la hora de ejercer tu rol como Staff. Todo este documento está basado en las normas de Shigamens Server.
+
+
+Estos rangos se dividen en 3 tipos de staff:
+❥  ⊹・✦ DC (Discord):
+   * Tipo staff que solo aplica en el servidor de discord.
+❥  ⊹・✦ MC (Minecraft):
+   * Tipo staff que solo aplica en el servidor de minecraft. (DC-MC significa que tiene cargos en Discord y en el servidor de minecraft)
+❥  ⊹・✦ TRIAL (STAFF DE PRUEBA):
+   * Tipo staff que está siendo a prueba por los administradores. Para cumplir con las expectativas de un postulante y integrante nuevo al staff.
+
+
+Cada miembro del staff tiene un cargo staff diferente en base a su rango y actividad:
+   * ❥ 1. Owner: Dueño|a del servidor.
+   * ❥ 2. Creator: Creador del servidor, quien tiene la opción de manipular todo el servidor.
+   * ❥ 3. Configurator: Configurador|a del servidor. Bots, canales y roles, editor de embeds o mensajes. Preferencias y características nuevas u otras funciones como webhooks o mejoras de boost.
+   * ❥ 4. Designerator: Diseñador|a del servidor. Animaciones, iconos, emojis, logos y entre más.
+   * ❥ 5. Manager: Manager de trial staff y repositorios y orientador de helpers del servidor. Resuelve dudas y corrige errores.
+   * ❥ 6. Counselors: Orientador de los miembros dentro de un servidor o torneo en el juego y en chat. Ayuda a los moderadores y administradores del evento. Explicando y coordinando.
+   * ❥ 7. Publisher: Publicador de anuncios, novedades y noticias de experiencias de roblox u otros juegos. También se encargan de las redes sociales.
+   * ❥ 8. Advertiser: Publicador de anuncios con respecto al servidor. Encuestas o eventos. Utilizando pings mentions.
+
+
+El deber de un staff es siempre guiarse de las directrices del server y las de discord:
+   * ❥  ⊹・✦ Las normas de comunidad de Discord.
+   * ❥  ⊹・✦ Condiciones del servicio de Discord.
+   * ❥  ⊹・✦ Política de privacidad de Discord.
+
+
+Al formar parte del staff aceptas qué;
+      1. Habrás leído todo este documento de principio a fin.
+      2. Emplearán el nuevo conocimiento aprendido a través de este documento. Siempre te redirigimos aquí.
+      3. No te dejarás llevar por momentos o emociones en contra de los usuarios. Ser profesional.
+      4. La administración puede remover tu cargo si existe una razón lógica.
+Si obtienes 3 strikes staff se te removerá de tu cargo inmediatamente.
+      5. Al no saber algo; preguntarás acerca del tema antes de actuar o afirmar. En el canal de dudas o debate
+      6. Si me hackean mi cuenta, debo cambiar mi contraseña y cerrar todas mis sesiones en caso de raid. Si no sere baneado.
+- Se deben seguir las pautas establecidas por Discord, a la hora de realizar acciones de moderación se debe seguir unos pasos, ademas de accionar en incumplientos de reglas o normas del servidor, las penalizaciones más resaltantes en general son:
+      * La pornografía infantil, crueldad animal, gore, NSFW | Not Safe For Work, y todo tipo de contenido relacionado a ello, está totalmente prohibido.
+      * Si a usted se le ve mandando este tipo de contenido al servidor, será baneado del servidor sin previo aviso.
+      * No se permite el doxxing o difusión de datos personales, acoso o amenazas. Todo tipo de comentarios y acciones relacionadas a lo antes dicho, está totalmente prohibido.
+      * No comentes ni compartas contenido que enaltezca o promueva el suicidio o la autolesión, como promover la xenofobia, racismo, pedofilia y la homofobia/transfobia.
+
+
+
+Reglas de los strikes 
+      *  Como staff no podrás entrar a canales privados de voz (VC PRIVS) sin permiso del creador del canal de manera como hablador o oyente, deberás estar silenciado y ensordecido. A menos que en ese momento te den permiso, en el caso de que tengas un reporte o denuncia si es aceptable, si no hay una razón que aplique tu cargo como staff sera penalizado con un strike.
+
+
+      *  Como staff no podrás faltar a respeto a un rango mayor que tu sin sentido o con amenazas mayores. Serás penalizado con un strike.
+
+
+      *  Como staff no podrás apoyar proyectos externos en contra del servidor. Aprovecharte o abusar de tu rango incluyendo los mismos supremes.
+
+
+      *  Como staff no podrás ser inactivo por meses. Esto significara un strike a medida que vaya subiendo se sumaran mas strikes. Excepto si tu ausencia esta marcada en alguna parte en el canal de ausencias.
+
+
+A los 1 strike, será como una advertencia. A los 2 strikes hay una degradación o destitución de rango staff, y a los 3 se te sacará completamente del staff.
+
+Protocolos: Los protocolos son las acciones que un staff debe ejercer en los momentos al actuar, y saber reconocer si realizar acciones preestablecidas o a su propia responsabilidad.
+      1. Protocolos preestablecidos:
+Los protocolos preestablecidos son los que se seguirán al pie de la letra. Debido a que ya están definidos en este documento. Son situaciones las cuales ya se dio una guía de cómo tratar en casos específicos, en la cual se adjuntaron posibles casos y acciones que puedes tomar como moderador del servidor. NO EXISTIRÁN CAMBIOS DENTRO DE CASOS PREESTABLECIDOS. Todo se seguirá conforme al formato del caso el cual se brindó anteriormente. Si el caso coincide, no cambiará absolutamente nada. No tendrás por qué actuar por tu propia cuenta ya que ya fueron establecidas tus acciones.
+
+
+      2. Protocolos no establecidos:
+En los protocolos no establecidos; son casos los cuales deriven en situaciones de las cuales no hayas tratado, o no estén escritas en este documento. Casos exclusivos en los cuales tendrás que actuar por tu propia cuenta como Staff. Pensaras en una solución en el momento y la emplearas. En casos así; tendrás permitido ejercer tu propio criterio de Staff conforme a la situación podrás dar la sanción que veas más conveniente o realizar la sanción que más creas que amerite el caso.
+
+
+      3. Incumplimiento de las reglas
+Como Staff; deberás estar pendiente a los usuarios en fin de que todos sigan las reglas al pie de la letra. Si notas a un usuario con intenciones de romper una regla lo advertirás en el momento. A continuación, presentaré varios casos de incumplimiento de reglas. 
+      * Casos de Flood / Wall-text: Mensajes con secuencia no serán tomados como flood. Si los mensajes con secuencia rebasan las 8 líneas se dará una advertencia textual por protocolo. Y se le dirá que no haga flood de mensajes. Mensajes sin secuencia o flood de caracteres sin sentido alguno. El límite para que sea considerado flood es de 5 mensajes, se procederá con una advertencia textual. Y si el usuario hace caso omiso se procederá con un mute de 10 minutos a 2 horas. La duración varía según lo grave que haya sido el flood. Wall-text se define por mensajes excesivamente largos que incluyan textos sin sentido. Como la descripción de un producto, juego o cualquier otro tema. O arte textual sin sentido, todo esto tendrá un límite de 8-12 líneas. Se identificada fácilmente lo que es un Wall-text. Mensajes largos con sentido no se consideran Wall-text ni Flood. Wall-text. Se borrará el mensaje y se procederá con una advertencia textual. Si el usuario hace caso omiso se le dará un Warn + Mute de 1h a 3h. Teniendo en cuenta la gravedad del Wall-text o cuantas veces lo envio.
+
+
+      * Peleas entre el Staff: Como staff, cualquier discusión que se te vaya de las manos con un usuario. O el simple hecho de querer mostrar superioridad realizando comentarios fuertes a los usuarios desencadenara en un Warn – Staff. Si ves a tu compañero realizando comentarios inapropiados o incentivando una pelea no dudes en reportarlo a Administración o C.M.
+
+
+      * Peleas o discusiones entre usuarios: Actuaras de forma neutral sin estar del bando de ninguno de los implicados. Advertirás a los dos usuarios sin importar si son conocidos, amigos o no. Si la discusión se torna toxica es cuando realizaras la advertencia. En caso de que los usuarios hagan caso omiso a la advertencia se procederá con un mute de 20 minutos a 3h. Teniendo en cuenta la gravedad de la discusión, pelea o discordia.
+
+
+      * Perfiles no apropiados: Perfiles NSFW o que muestren imágenes ilícitas están abiertos a moderación. Y tú tarea será moderarlo, diciendo que se remuevan la foto, descripción o nombre que tu consideres inapropiado. En caso de que no lo hagan, informa a administración con pruebas e ID del usuario y deja que Administración se encargue.
+
+
+      * Orden en los canales: Si ves a un usuario faltando el orden de los canales podrás advertirle textualmente. En caso de que siga faltando, procederás a un mute de 30 minutos a 2h. Teniendo en cuenta la gravedad de la situación. No adviertas de mala manera si el usuario envía un comando por error o realmente se nota que falto al orden de forma errónea.
+
+
+      * Acoso, doxxing o intenciones no apropiadas: Todo usuario que demuestre tener intenciones no apropiadas con el servidor o los usuarios del mismo debe ser informado con urgencias a administración. Nos encargaremos de estudiar al usuario y sus comportamientos de forma más detallada y en base a esto llegar a una conclusión o sanción del mismo. No dejes pasar ni el más mínimo detalle, ya que se puede tornar en un acoso virtual el cual no queremos que suceda en nuestra comunidad.
+
+
+      * Reglas en cuanto a Media: Se considerará contenido NSFW a todo aquel material audiovisual que demuestre escenarios inapropiados, ya sea pornografía, hentai, gore, dibujos no apropiados. Y todo contenido que incite al NSFW ya sea cuerpos semidesnudos, NSFW borroso o pixelado, y todas las variantes del mismo. Contenido NSFW resultara en un baneo instantáneo sin derecho a apelación. Contenido inapropiado o que incite al NSFW se sancionara según el propio Staff. Puede llevar un baneo, asi como puede llevar un mute, warn o kick. Queda a juicio del Staff presente. La media dentro de los canales generales no deberá de ser moderada por contexto, si no por cantidad. Si un usuario decide enviar una imagen o un video que no esté relacionada a la conversación, no deberá de ser moderado. Sin embargo, si el mismo usuario o grupo envían media de forma continua (4-5 archivos dentro de un minuto), deberán de ser advertidos, y en caso de hacer caso omiso, serán muteados. Cualquier información o caso que no se presente aquí podrás sugerir agregarlo. Y se ira actualizando esta parte conforme pase el tiempo
+
+
+      4. Protección al usuario:
+Como staff nuestra prioridad será mantener al usuario protegido y cómodo dentro de la comunidad. Esto incluye moderar los malos tratos que se dan a los usuarios. Los cuales son incentivados por los mismos. Nuestro objetivo es mantener al usuario protegido de estafas, malos tratos, acosos, y todo lo haremos en base a la moderación. Los datos de los usuarios también están protegidos. Y los datos almacenados en repositorios NO SE PUEDEN DIVULGAR NI EXPARSIR. Nos basamos en leyes de protecciones de datos a la hora de moderar, son leyes básicas que hay que tener en cuenta en ambientes cibernéticos. Normativas de Discord, todo conlleva en mantener al usuario seguro y protegido. 
+
+
+      5. Elaboración de sanciones:
+      * Siempre se utilizara el BOT: Nekotina.
+      * Si un usuario tiene 3 warns se baneara.
+      * No puedes actuar sobre un staff. A menos que seas supreme. Pero puedes quitarle su rango si eres admin.
+      *  Siempre se inicia con el sufijo "n!" o usando los comandos con / integrado.
+
+
+ Acortamientos y prefijos:
+      * Administrador: ADMIN.
+      * Robot de Discord: BOT.
+      * Moderador: MOD. (En sentido de discord)
+      * Server: SV. | Server de minecraft: MCSV.
+      * Nombre del server Shigamens: SG.
+      * Equipo del staff: STAFF.
+      * Usuario o miembro: USU.
+      * Tiempo: T.
+      * Comando de moderación especifico: X.
+      * Razón o Reason: R.
+      * Silenciar: mute.
+      * Sacar, eliminar o patear: kick.
+      * Quitar: un.
+      * Comandos: CM.
+
+
+ Listado de comandos de moderación 
+Para comandos temporales:
+Se usa temp(X)  agregando el parámetro de <T>
+Ejemplo: tempmute o tempban.
+
+
+Para comandos de quitar sanciones:
+Se usa un(X)  agregando el parámetro necesario.
+Ejemplo: unmute o untimeout.
+
+
+✦ La mayoría de CM lo puedes aplicar con la función APP.
+
+
+      * Comandos esenciales:
+✦ Advierte o wanea a un usuario:
+      * warn - <USU> <R>  Advierte a un usuario. Razón no obligatoria.
+      * warn list - <USU>  Lista de advertencias de un usuario. (Del 1 al 3 con razones)
+
+
+✦ Silencia o mutea a un usuario:
+      * mute - <USU> <R>
+      * Tambien puedes silenciarlo directamente sin comandos con la interfaz de discord.
+
+
+✦ Banea o saca a un usuario:
+      * ban - <USU> <R>
+      * Tambien puedes silenciarlo directamente sin comandos con la interfaz de discord.
+
+
+✦Timeout o aísla a un usuario:
+      * timeout - <USU> <R> <T>
+      * Tambien puedes silenciarlo directamente sin comandos con la interfaz de discord.
+
+
+✦ Utilidades:
+      * clear - <Cantidad de mensajes>  Borrar una cantidad de mensajes, tambien se puede usar con solo ! con MEE6.
+      * lock - Cierra el canal actual hasta volverlo abrir.
+      * help mod - Revisa mas comandos de moderación.
+      * cooldown o slowmode - <T>  Ralentiza la cantidad de mensajes enviados por miembros en un canal. Para moderar la toxicidad.
+
+
+✦ La mayoría de CM también se encuentran en español.
+      * Comandos expertos:
+      * cases - Lista todos los casos de moderación de un usuario específico.
+      * clear warns - Limpia los warns de un usuario.
+      * list - Existen muchos tipos de "listas"
+Ejemplo: mutelist, caseslist y entre mas. Que te demostraran una lista respectiva.
+      * hard(X) - Quita roles y acciona un comando.
+      * soft(X) - Elimina 7 días de mensajes de un usuario.
+      * update - Actualiza un caso.
+      * Otros comandos aqui: https://nekotina.com/commands
+
+
+      * Comandos administrativos:
+      * role - Da un rol.
+      * Add - Añadir.
+      * Remove - Quitar.
+      * purge - Borrar mensajes masivos.
+      * mass - Cambio masivo
+      * set - Establece una condición.
+      * change - Cambia una condición.
+      * test - Prueba una condición.
+      * reply - Reenvía un mensaje o condición.
+      * nick - Cambia un apodo.
+      * toggle - Activa o desactiva una condición.
+Ejemplo: togglensfw para activar NSFW en un canal.
+
+
+ Y muchos comandos más por explorar…
+
+
+      6. Repositorios y canales staff:
+Sección oculta exclusiva para la categoría STAFF.
+
+- Al portar un rango o rol de staff se te habilitará una sección categorizada como staff a lo último de los canales del servidor exclusivamente privado, creando automáticamente tu repositorio para ti. Se te eliminara tu ticket de postulamiento, anteriormente cerrado luego de varios días. Y se transcribira en un canal de registro llamado logs.
+
+
+- En caso de que seas un moderador o un rango mas arriba puedes pedir un COLOR STAFF para colorear tu nick apodo en el servidor con un color personalizable, debes pedirselo a un administrador de gestión o manager para habilitarlo y crear tu rol. El color puede repetirse si no es exactamente el mismo codigo hex de color. Y puede ser cualquier color.
+
+
+- Debes leer estas directrices, la información del staff y otros canales para mantenerte informado de tus sanciones o strikes como mailbox, el canal de configuración y logs son importantes y se deben usar con precaución mientras que los demás son su función respectiva.
+
+Más información sobre los Repositorios:
+
+Cada miembro del Staff tendrá su repositorio de sanciones. El cual llevará seguimiento de absolutamente todas las sanciones que dé en su periodo como Staff.Si das una sanción sin integrarla en tu repositorio se te dará un Warn-Staff. Tambien se te puede advertir o sancionar, resolver dudas o preguntas o avisos como ausencias. Además de una comunicación en coordinaciones u otros motivos administrativos dentro del servidor. Si necesidad de un MD. Es obligatorio tener un repositorio y no ignorar ningún canal de STAFF.
+
+
+         7. Mentalidad de moderadores:
+En todos los casos que se presenten en su camino de moderadores; siempre manténganse neutrales. Sin importar lazos de amistades o cercanías con usuarios. Son staffs y punto. Se premiará con promotes las buenas acciones y actividad como moderadores o administradores. Y se sancionara con demotes las faltas a las directrices de moderación. Sean divertidos, amables, amigables. Entre más denotes más probabilidades hay de tener un strike o warn staff. Estos se acumularán y a los 3 se te destituirá de tu cargo como staff. Son la cara de la comunidad y todo caso de toxicidad o burlas en las cuales estén involucrados ustedes serán tratados de forma diferente a un usuario normal. Serán sancionados y advertidos por la administración del servidor.
+
+
+En la sección de la categoría staff. Los miembros administradores y supreme son los encargados de tener los permisos necesarios para gestionarlo. También se llamará en conjunto para reuniones e historial de acciones, además de compromisos y felicitaciones.
+
+- Recuerda… Si tu rango no esta disponible para ejercer acciones que no mereces, debes o puedas realizar no te limites en ayudar pero no sobre pases la raya, mantente dentro de tu propósito y responsabilidad alcanzable, no tomes tareas de otros.
+
+
+Pero lo más importante es que lo pases bien dentro de nuestro equipo de staff. Mas información en el canal de información general y staff.
+- Ciszuko Antony.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+         * Equipo de dirección de staff oficial de Shigamens.

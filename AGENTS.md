@@ -9,7 +9,7 @@
 | **CiszuNetwork** | `ciszunetwork.vercel.app` | Web principal — presentación de la marca, redes y ecosistema |
 | **CiszukoAntony** | `ciszukoantony.vercel.app` | Portfolio personal (logos, medios, música) |
 | **MuzicMania** | `muzicmania.vercel.app` | Juego de ritmo/música — scores en Supabase (schema `muzicmania`), auth de Supabase, app de escritorio Tauri + NSIS |
-| **Ciszubot** | `ciszubot.vercel.app` | Landing del bot de Discord (`apps/ciszubot/website/`, Next.js) + **estado en vivo del bot** (heartbeat Supabase → `ciszubot.bot_status`) |
+| **Ciszubot** | `ciszubot.vercel.app` | Landing del bot de Discord (`projects/ciszubot/website/`, Next.js) + **estado en vivo del bot** (heartbeat Supabase → `ciszubot.bot_status`) |
 
 Infraestructura: **Supabase** (un solo proyecto `obwzzmbvkrcscqwptlqo` — auth, Postgres, Storage CDN `ciszu-cdn`) + **Vercel** (4 proyectos, deploys vía GitHub Actions) + **GitHub** (repo privado `Ciszu-Network/CiszuNetwork`). Identidad visual: neon cyan/rosa, fuente Geomanist.
 
@@ -30,18 +30,18 @@ Package manager: **pnpm v10.8.1**, Node >=20.
 
 | pnpm filter name | Location | What |
 |---|---|---|
-| `ciszunetwork-page` | `apps/website/` | Next.js — main CiszuNetwork page |
-| `ciszuko-network` | `apps/ciszukoantony/website/` | Next.js — portfolio |
-| `muzicmania-next` | `apps/muzicmania/website/` | Next.js + Tauri — music game |
-| `ciszubot-web` | `apps/ciszubot/website/` | Next.js — bot landing page |
-| `ciszubot` | `apps/ciszubot/discord-bot/` | Discord.js bot (TypeScript, pnpm workspace, Docker) |
+| `ciszunetwork-page` | `projects/ciszu/website/` | Next.js — main CiszuNetwork page |
+| `ciszuko-network` | `projects/ciszukoantony/website/` | Next.js — portfolio |
+| `muzicmania-next` | `projects/muzicmania/website/` | Next.js + Tauri — music game |
+| `ciszubot-web` | `projects/ciszubot/website/` | Next.js — bot landing page |
+| `ciszubot` | `projects/ciszubot/discord-bot/` | Discord.js bot (TypeScript, pnpm workspace, Docker) |
 | `@ciszunetwork/cdn` | `packages/cdn/` | Asset resolver (see below) |
 
 All websites are Next.js 15 with Tailwind 4 + PostCSS. They use `eslint` (no Prettier config found).
 
 ## CiszuBot (bot de Discord) — estado (ago 2026)
 
-**v3.2.0 — TypeScript + pnpm + Node 24, expansión masiva de comandos** (`apps/ciszubot/discord-bot/`):
+**v3.2.0 — TypeScript + pnpm + Node 24, expansión masiva de comandos** (`projects/ciszubot/discord-bot/`):
 
 - Stack: Node 24 (imagen `node:24-alpine`), TypeScript 5.9, pnpm 11 (workspace), Discord.js ^14.22, Express ^5, `@supabase/supabase-js`, `@discordjs/voice` + `play-dl` (música), `@top-gg/sdk` + `discordbotlist` (bot lists).
 - **72 comandos en 9 categorías** (Configuración, Diversión, Economía, Información, Moderación, Música, Niveles, Social, Utilidad). Registry (`src/utils/commandRegistry.ts`) soporta arrays por archivo y **fábricas** (`typeof entry === 'function' ? entry() : entry`) — ver `commands/minigames.ts`, `setup.ts`, `music.ts`, `moderation.ts` como patrón.
@@ -58,7 +58,7 @@ All websites are Next.js 15 with Tailwind 4 + PostCSS. They use `eslint` (no Pre
 
 ## Web de CiszuBot — estado (ago 2026)
 
-**`apps/ciszubot/website/` — reconstruida 2 ago 2026** con tema neon de MuzicMania (Tailwind v4, Exo_2 + Rajdhani):
+**`projects/ciszubot/website/` — reconstruida 2 ago 2026** con tema neon de MuzicMania (Tailwind v4, Exo_2 + Rajdhani):
 
 - **Single page** (`src/app/page.tsx`): hero con isotipo oficial (CDN), badge de estado en vivo, stats dinámicas reales, grid completo de 12 comandos con categorías (Diversión/Información/Social/Utilidad), sección estado en vivo, sección ecosistema (links a ciszunetwork/ciszukoantony/muzicmania) y CTA invitar.
 - **Datos dinámicos**: fetch server-side a `ciszubot.bot_status` vía PostgREST con anon key + `Accept-Profile: ciszubot` (policy SELECT anon). `revalidate = 60`. El badge "En línea" es **online && last_seen < 3 min** (si el PC se apaga sin shutdown, la web lo detecta por heartbeat viejo).
@@ -68,26 +68,26 @@ All websites are Next.js 15 with Tailwind 4 + PostCSS. They use `eslint` (no Pre
   - ⚠️ **Pendiente del usuario**: registrar `https://ciszubot.vercel.app/api/auth/discord/callback` en Discord Developer Portal (OAuth2 → Redirects) y guardar `DISCORD_CLIENT_SECRET` en Vercel + `.env.local`.
 - **Layout**: Navbar sticky con isotipo + links anchor + botón Invitar (URL oauth2 con scope `bot applications.commands`) + **cuenta** (avatar, link Panel, logout) cuando hay sesión. Footer con socials + proyectos + copyright, favicon = isotipo PNG.
 - **Env vars**: `vercel.json` solo CDN_URL + APP_ENV (patrón del repo); `NEXT_PUBLIC_SUPABASE_URL`/`NEXT_PUBLIC_SUPABASE_ANON_KEY` ya configuradas en el proyecto Vercel `ciszubot` (las 4 apps las tienen desde jul 2026).
-- **prebuild**: `copy-assets.js` (depth 3 → `../../../scripts/copy-assets.js`) copia `apps/ciszubot/content/...` a `public/` para dev/fallback local.
+- **prebuild**: `copy-assets.js` (depth 3 → `../../../scripts/copy-assets.js`) copia `projects/ciszubot/content/...` a `public/` para dev/fallback local.
 
 ## CDN strategy (Ciszu CDN — mirror del repo)
 
 El CDN es un **espejo** del repositorio. Las rutas en Supabase Storage (`ciszu-cdn`, migrado desde `ciszu-assets`) reflejan 1:1 las rutas reales del repo. No hay carpeta `assets/` staging — el upload lee directamente de los directorios originales.
 
-- **Upload**: `pnpm cdn:upload` (`scripts/upload-cdn.js`) — escanea 8 fuentes (`shared/icons/svg/`, `content/`, `docs/`, `ciszukoantony/content/`, `apps/*/content/`) y sube con la misma ruta relativa a `ciszu-cdn`.
+- **Upload**: `pnpm cdn:upload` (`scripts/upload-cdn.js`) — escanea 6 fuentes (`shared/icons/svg/`, `projects/ciszu/content/`, `projects/ciszu/docs/`, `projects/*/content/`) y sube con la misma ruta relativa a `ciszu-cdn`.
   - ⚠️ **Upload manual de archivos sueltos**: las `sb_secret_*` keys NO funcionan para PUT directo al storage ("Invalid Compact JWS"). Usar el CLI: `supabase --experimental storage cp <archivo> ss:///ciszu-cdn/<ruta-repo>` con `SUPABASE_ACCESS_TOKEN` (vault) y proyecto ya linkeado (`supabase link --project-ref obwzzmbvkrcscqwptlqo`).
 - **Offline fallback**: `scripts/copy-assets.js` se ejecuta como `prebuild` en cada website. Copia assets críticos a `public/` con las mismas rutas espejo. `--all` copia todo.
-  - Path depth: `apps/website/` → `../../scripts/copy-assets.js`, `apps/*/website/` → `../../../scripts/copy-assets.js`
-  - **Mirrors**: `apps/<name>/content` → `public/apps/<name>/content/` y la media maestra `ciszukoantony/content` → `public/ciszukoantony/content/` (necesario para el resolver local de logos). Los outputs del prebuild en `public/` de las webs puras están en `.gitignore` (solo muzicmania/Tauri trackea sus mirrors).
+  - Path depth: `projects/ciszu/website/` → `../../scripts/copy-assets.js`, `projects/*/website/` → `../../../scripts/copy-assets.js`
+  - **Mirrors**: `projects/<name>/content` → `public/projects/<name>/content/` y la media maestra `projects/ciszukoantony/content` → `public/projects/ciszukoantony/content/` (necesario para el resolver local de logos). Los outputs del prebuild en `public/` de las webs puras están en `.gitignore` (solo muzicmania/Tauri trackea sus mirrors).
 - **Asset resolver**: `packages/cdn/index.ts` — `resolveIcon(name, style, format)` para icons, `assetResolver.resolve(path)` para assets arbitrarios. Usa `NEXT_PUBLIC_CDN_URL` como base (ya incluye el bucket: `.../object/public/ciszu-cdn`).
-- ⚠️ **`NEXT_PUBLIC_CDN_URL` por proyecto Vercel**: en jul 2026 los proyectos `muzicmania`, `ciszunetworkpage` y `ciszukoantonypage` tenían el valor apuntando al bucket VIEJO `ciszu-assets` (renombrado → URLs 404). Fueron recreadas (DELETE+POST vía API, target production) apuntando a `ciszu-cdn`. Al cambiar env vars en Vercel hace falta un nuevo build/deploy (los redeploys vía API `POST /v16/deployments/{id}/redeploy` NO existen — disparar workflows con un push de `packages/**` o `apps/**`).
+- ⚠️ **`NEXT_PUBLIC_CDN_URL` por proyecto Vercel**: en jul 2026 los proyectos `muzicmania`, `ciszunetworkpage` y `ciszukoantonypage` tenían el valor apuntando al bucket VIEJO `ciszu-assets` (renombrado → URLs 404). Fueron recreadas (DELETE+POST vía API, target production) apuntando a `ciszu-cdn`. Al cambiar env vars en Vercel hace falta un nuevo build/deploy (los redeploys vía API `POST /v16/deployments/{id}/redeploy` NO existen — disparar workflows con un push de `packages/**` o `projects/**`).
 
 ### Rutas de logos (fuente maestra)
 
-Los logos viven en `ciszukoantony/content/logos/` (raíz) y su mirror `apps/ciszukoantony/content/logos/`. **En el bucket SOLO existen bajo `ciszukoantony/content/...`** (200) — las rutas `apps/ciszukoantony/content/logos/...` devuelven 400. Usar siempre:
+Los logos viven en `projects/ciszukoantony/content/logos/` (fuente maestra). **El bucket del CDN espeja las rutas del repo** — tras la reestructuración ago 2026 (paths `projects/...`) hay que re-subir con `pnpm cdn:upload` para que el bucket tenga las nuevas rutas. Usar siempre:
 
 ```ts
-assetResolver.resolve('ciszukoantony/content/logos/imagen/outline/isotipo/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg')
+assetResolver.resolve('projects/ciszukoantony/content/logos/imagen/outline/isotipo/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg')
 ```
 
 ### Sistema de iconos (inline-first + CDN fallback)
@@ -120,7 +120,7 @@ resolveIcon('home', 'outline', 'svg', { forceCdn: true })  // forzar CDN
 resolveIcon('home', 'outline', 'svg', { forceLocal: true }) // forzar local
 ```
 
-- No hay carpeta `assets/` staging — las fuentes originales son la verdad única (`shared/icons/svg/`, `content/`, etc.)
+- No hay carpeta `assets/` staging — las fuentes originales son la verdad única (`shared/icons/svg/`, `projects/*/content/`, etc.)
 - `copy-assets.js` copia solo críticos por defecto, o todos con `--all`
 - Binarios grandes (`.mp4`, `.gif`, `.exe`, etc.) excluidos de git globalmente
 - **Cloudflare R2** configurado como alternativa futura pero **INACTIVO** (requiere tarjeta/paypal). Credenciales comentadas en el vault.
@@ -147,17 +147,17 @@ Single project: `obwzzmbvkrcscqwptlqo.supabase.co`
 All workflows run on `push: [main, master]`:
 
 - **CI** (`.github/workflows/ci.yml`) — lint only, matrix over `[website, ciszukoantony, muzicmania]`
-- **4 deploy workflows** — each triggers on matching `apps/<name>/**` + `content/**` + `scripts/copy-assets.js` changes
+- **4 deploy workflows** — each triggers on matching `projects/<name>/**` + `packages/**` + `scripts/copy-assets.js` changes
   - Pattern: `vercel link --yes --project <name>` → `vercel --prod --yes --archive=tgz`, ambos **desde la raíz del repo** (`working-directory: .`)
-  - ⚠️ NUNCA usar `vercel pull/build/deploy --prebuilt` dentro de `apps/*/website`: con `rootDirectory` fijado en el proyecto, el CLI duplica la ruta y produce deployments READY pero vacíos (404 en el alias)
+  - ⚠️ NUNCA usar `vercel pull/build/deploy --prebuilt` dentro de `projects/*/website`: con `rootDirectory` fijado en el proyecto, el CLI duplica la ruta y produce deployments READY pero vacíos (404 en el alias)
   - Deploy desde la raíz requiere el `.vercelignore` raíz (excluye node_modules, .next, content, binarios)
   - Vercel tokens son GH secrets (`VERCEL_TOKEN`)
-  - Proyectos Vercel: `ciszunetworkpage` → `apps/website`, `ciszukoantonypage` → `apps/ciszukoantony/website`, `ciszubot` → `apps/ciszubot/website`, `muzicmania` → `apps/muzicmania/website`
+  - Proyectos Vercel: `ciszunetworkpage` → `projects/ciszu/website`, `ciszukoantonypage` → `projects/ciszukoantony/website`, `ciszubot` → `projects/ciszubot/website`, `muzicmania` → `projects/muzicmania/website`
 - Discord bot (`deploy-bot.yml`) deploys su website, no el bot en sí
 
 ## Git conventions
 
-- `.gitignore` excludes: all `*.gif`, large binaries (`*.exe`, `*.mp4`, `*.mp3`, etc.), `content/**/*`, CDN video subdirs, legacy `CiszuGamens/`
+- `.gitignore` excludes: all `*.gif`, large binaries (`*.exe`, `*.mp4`, `*.mp3`, etc.), `projects/ciszu/content/**/*`, CDN video subdirs, legacy `CiszuGamens/`
 - Commit messages are in Spanish (descriptive, one line)
 - No commit/push without explicit user request
 - Git push fails from this machine (DNS cannot resolve github.com) — user pushes manually
@@ -200,22 +200,22 @@ Si el repo cambia a público:
 
 ## Gotchas
 
-- **NUNCA añadir `@types/react`/`@types/react-dom` al `package.json` ROOT** (jul 2026): crea doble identidad de tipos — `ReactNode` importado (`.pnpm/@types+react@19.2.17`) no asignable a `React.ReactNode` global en `apps/website/src/app/layout.tsx`. Tampoco usar overrides en `pnpm-workspace.yaml` para types. Los types de react viven SOLO en `packages/ui/package.json` (devDeps 19.2.17 + react/react-dom 19.2.7 devDeps para su propio tsc) y cada app tiene los suyos.
+- **NUNCA añadir `@types/react`/`@types/react-dom` al `package.json` ROOT** (jul 2026): crea doble identidad de tipos — `ReactNode` importado (`.pnpm/@types+react@19.2.17`) no asignable a `React.ReactNode` global en `projects/ciszu/website/src/app/layout.tsx`. Tampoco usar overrides en `pnpm-workspace.yaml` para types. Los types de react viven SOLO en `packages/ui/package.json` (devDeps 19.2.17 + react/react-dom 19.2.7 devDeps para su propio tsc) y cada app tiene los suyos.
 - **`packages/ui` necesita `react`/`react-dom`/`@types/react` en devDependencies**: sin ellos, `tsc` del ui falla con "Could not find a declaration file for module 'react'" cuando las apps compilan `Icon.tsx`.
 - **`images.unoptimized: true` en las 4 apps** (jul 2026): el optimizador de imágenes de Vercel devolvía 400 (`INVALID_IMAGE_OPTIMIZE_REQUEST`) para TODO (local y remoto) por el límite mensual del plan Hobby. Con `unoptimized` next/image sirve el src directo (sin `/_next/image`).
 - **muzicmania REST**: las tablas viven en el schema `muzicmania` (`db: { schema: 'muzicmania' }` en `src/config/supabase.ts`). Columnas reales de `scores`: `id, user_id, score, created_at, track_id, accuracy` (NO `song_id` — el código usa `track_id`). `profiles` NO tiene `created_at` (usar `updated_at`) y no hay FK scores→profiles (el embed `profiles(...)` da 400 — consultar aparte por `user_id`).
 - **`.single()` con 0 filas → 406 PGRST116**: usar siempre `.maybeSingle()` cuando la fila puede no existir (StatsTicker, récord global). El 406 en consola de `select=score&order=score.desc&limit=1` era eso.
-- **Cargo advisories pendientes** (`apps/muzicmania/launcher`): `glib` 0.18.5 (GHSA-wrw7-89jp-8q8g, fix en ≥0.20.0) requiere gtk/tauri 3 — tauri 2.11.5 lo pincha en 0.18. `serde_with` 3.21.0 ya patcheado (cargo update jul 2026).
+- **Cargo advisories pendientes** (`projects/muzicmania/launcher`): `glib` 0.18.5 (GHSA-wrw7-89jp-8q8g, fix en ≥0.20.0) requiere gtk/tauri 3 — tauri 2.11.5 lo pincha en 0.18. `serde_with` 3.21.0 ya patcheado (cargo update jul 2026).
 - **Overrides de seguridad** en `pnpm-workspace.yaml`: `undici 6.27.0`, `body-parser 1.20.6`, `brace-expansion 5.0.8`, `postcss 8.5.25`, `minimatch@^9 9.0.7`, `sharp 0.35.3` (forzar versiones patcheadas para transitivas).
 - `muzicmania/website` has **Tauri + NSIS** commands (`pnpm tauri:build`, `pnpm tauri:build:nsis`); needs Rust toolchain
 - No test framework is configured — CI only runs `lint`
-- `prebuild` relative paths differ by nesting depth (2 levels vs 3 levels deep)
-- Root `content/` holds master media; each app has a mirror `content/` + `documents/` + `documents/ia_docs/`
+- `prebuild` relative paths: all 4 webs at depth 3 (`projects/*/website` → `../../../scripts/copy-assets.js`)
+- `projects/ciszu/content/` holds master media of la página Ciszu; each app has a mirror `content/` + `documents/` + `documents/ia_docs/`
 - Vercel deployments do **not** preserve original TypeScript source — only build output + public/ static assets
 - `packages/cdn`, `packages/ui`, `packages/config`, `packages/utils` are the shared npm packages
 - Icon system is in `shared/icons/` (outline/filled/flag); use `resolveIcon()` from `@ciszunetwork/cdn`. All 4 websites import this package.
 - **Legacy files** (pre-date `packages/cdn/`): `shared/hybrid-system.js`, `shared/aliases.json`, `scripts/setup-icons-system.js`, `scripts/setup-aliases.js` — no longer imported by any app. The canonical resolver is `packages/cdn/index.ts`.
-- **Content dirs**: `root/content/`, `apps/*/content/`, `ciszukoantony/content/`, `ciszugamens/content/` hold multimedia (banners, flayers, logos, thumbails). These are candidates for CDN but tracked in git for local builds.
+- **Content dirs**: `projects/ciszu/content/`, `projects/*/content/`, `projects/ciszukoantony/content/`, `projects/ciszugamens/content/` hold multimedia (banners, flayers, logos, thumbails). These are candidates for CDN but tracked in git for local builds.
 - **Espacio en disco LIMITADO (crítico)**: el PC tiene poco espacio libre en C: (disco del sistema). Reglas OBLIGATORIAS para cualquier trabajo temporal:
   - **NUNCA** escribir archivos temporales en `C:\Users\fplay\AppData\Local\Temp` ni otras rutas de C: — el espacio libre allí es mínimo
   - Usar SIEMPRE `E:\Ciszu Network\.opencode-tmp/` (gitignored, dentro del repo en el disco E:) para logs, reportes, archivos de trabajo temporales
@@ -273,9 +273,9 @@ Si el repo cambia a público:
 - TODO `dangerouslySetInnerHTML` debe usar DOMPurify.sanitize() si los datos pudieran volverse dinámicos en el futuro
 
 **Archivos legacy con XSS ya fixeados:**
-- `apps/muzicmania/web/src/utils/legacy_scripts/search.mjs` — `query` del search box escapado con `escapeHtml()`
-- `apps/muzicmania/web/src/utils/legacy_scripts/auth.mjs` — `displayName`/`username` escapados con `escapeHtml()`
-- Duplicados en `apps/muzicmania/website/` (untracked)
+- `projects/muzicmania/web/src/utils/legacy_scripts/search.mjs` — `query` del search box escapado con `escapeHtml()`
+- `projects/muzicmania/web/src/utils/legacy_scripts/auth.mjs` — `displayName`/`username` escapados con `escapeHtml()`
+- Duplicados en `projects/muzicmania/website/` (untracked)
 
 ### Prevención de SQL Injection
 
@@ -287,10 +287,10 @@ Si el repo cambia a público:
 
 **Archivos con patrones inseguros ya fixeados:**
 - `scripts/fix-migrations.js` — validación regex `/^\d{14}$/` sobre version strings antes de usarlas en SQL
-- `apps/muzicmania/web/src/scripts/dbManager.ts` — `eval()` + raw SQL: agregadas confirmaciones explícitas (dev tool, no se shippea)
+- `projects/muzicmania/web/src/scripts/dbManager.ts` — `eval()` + raw SQL: agregadas confirmaciones explícitas (dev tool, no se shippea)
 
 **Dev tools que requieren precaución:**
-- `apps/muzicmania/*/src/scripts/dbManager.ts` — tiene `eval()` (shell interactiva) y `execute_sql_query` RPC. Son herramientas de desarrollo solamente. Tienen doble confirmación de seguridad.
+- `projects/muzicmania/*/src/scripts/dbManager.ts` — tiene `eval()` (shell interactiva) y `execute_sql_query` RPC. Son herramientas de desarrollo solamente. Tienen doble confirmación de seguridad.
 
 ## Migraciones aplicadas (jul 2026)
 
@@ -314,20 +314,27 @@ Pila decidida (análisis completo en `docs/ia_docs/TOOLS.md`): **DBeaver CE + db
 
 - **dbvr Community**: CLI BD headless (Apache-2.0, descarga SEPARADA de dbeaver.io/dbvr — NO viene con DBeaver). Instalado en `C:\Program Files\dbvr\dbvr.exe` 26.1.4 (bundle Java 21), PATH de usuario actualizado. **Datasource `supabase` CONFIGURADO y verificado** (2 ago 2026): pooler `aws-1-us-east-1.pooler.supabase.com:6543` (⚠️ SOLO transaction 6543 responde desde este PC; session 5432 y directa timeout), user `postgres.obwzzmbvkrcscqwptlqo`, db `postgres`, password = `SUPABASE_DB_PASSWORD` de `services/supabase/.env`. Uso: `dbvr sql -ds=supabase "SELECT ..."`, `-format=json`, `dbvr meta table list -ds=supabase --schema=ciszubot` (⚠️ el flag `--schema` va ANTES del subcomando), `dbvr datasource list/view`, y `dbvr mcp start -ds=supabase` (MCP server opcional).
 - **DBeaver CE**: GUI BD. dbvr y DBeaver **comparten workspace** (`C:\Users\fplay\AppData\Roaming\DBeaverData\workspace6`) → la conexión `supabase` de dbvr ya aparece en DBeaver (driver PostgreSQL 42.7.13 descargado). No crear conexión duplicada.
-- **Bruno**: colecciones git-native en `api-tests/` (**formato OpenCollection YAML** — `opencollection.yml` + `*.yml`, NUNCA `.bru` bajo ese root; el CLI 4.x no los detecta). GUI: File → Open Collection → `E:\Ciszu Network\api-tests`. CLI instalado (4.0.0, `pnpm add -g @usebruno/cli`; requiere `PNPM_HOME=C:\Users\fplay\AppData\Local\pnpm` en PATH vía `pnpm setup`). Ejecutar desde raíz: `pnpm api:test` / `pnpm api:test:report` (wrapper `scripts/run-bru.js` — Windows necesita `cmd /c bru`, no `bru.cmd` directo). Colección: `health/` (5 checks: 4 webs + bot_status) + `rest/` (leaderboard muzicmania, bot_status completo, stats local :5000 con tag `local` excluido por defecto). Env: `api-tests/environments/prod.yml` (gitignored, formato `variables: [{name, value}]`; plantilla `prod.example.yml`).
+- **Bruno**: cliente API git-native en `apis-client/bruno/` (**formato OpenCollection YAML** — `opencollection.yml` + `*.yml`, NUNCA `.bru` bajo ese root; el CLI 4.x no los detecta). GUI: File → Open Collection → `E:\Ciszu Network\apis-client\bruno`. CLI instalado (4.0.0, `pnpm add -g @usebruno/cli`; requiere `PNPM_HOME=C:\Users\fplay\AppData\Local\pnpm` en PATH vía `pnpm setup`). Ejecutar desde raíz: `pnpm api:test` / `pnpm api:test:report` (wrapper `scripts/run-bru.js` — Windows necesita `cmd /c bru`, no `bru.cmd` directo). Colección: `health/` (5 checks: 4 webs + bot_status) + `rest/` (leaderboard muzicmania, bot_status completo, stats local :5000 con tag `local` excluido por defecto). Env: `apis-client/bruno/environments/prod.yml` (gitignored, formato `variables: [{name, value}]`; plantilla `prod.example.yml`).
 - **Password BD**: la Management API NO devuelve el password (solo `[YOUR-PASSWORD]` placeholder en `/config/database/pooler`). Se resetea con `PATCH /v1/projects/{ref}/database/password` (solo requiere el nuevo, min 4 chars). Tras resetear, actualizar `SUPABASE_DB_PASSWORD` en `services/supabase/.env`.
 - **`backup-db.js`**: reparado 2 ago 2026 — endpoint `/config/database/pooler` (el viejo `/database/connection` da 404), password desde `.env`, fix CRLF. ⚠️ `pg_dump` del sistema es 13.4 (`E:\DaVinci\PGTools\pg_dump.exe`) — **incompatible con server 17.6** ("server version mismatch"); el backup real requiere pg_dump ≥17 (PostgreSQL 17 o Docker `postgres:17`).
 - **Descartadas** (incluso premium): Postman (free degradado, cloud), GitKraken (AI redundante con el agente, pesado), TablePlus (sin CLI, Windows rezagado), Beekeeper Personal (no aporta a IA).
 
 ## Scripts útiles (en `scripts/`)
 
+> **Limpieza 2 ago 2026**: eliminados ~50 scripts one-shot (campañas de seguridad/icons/docs de jul 2026 y legacy pre-`packages/cdn`). Solo quedan los vivos. Los borrados siguen en el historial de git.
+
 - `check-func-perms.js` — verifica permisos EXECUTE por rol en funciones
 - `check-policies.js` — lista cantidad de policies por tabla
 - `check-auth-wrapper.js` — detecta `auth.*()` sin wrapper `(SELECT ...)` en policies
 - `analyze-policies.js` — detecta policies duplicadas y auth calls top-level
-- `backup-db.js` — backup con timestamp, limpia >30 días, flags `--scheduled`/`--dry-run`
-- `update-env-keys.js` — actualiza todos los `.env` con nuevas keys tras rotación manual
+- `backup-db.js` — backup con timestamp a `archives/backups/db/` (regla de backups: complejo → archives/backups), limpia >30 días, flags `--scheduled`/`--dry-run`
+- `update-env-keys.js` — backup automático de `.env` a `archives/backups/envs/<fecha>/` + actualiza todos los `.env` con nuevas keys tras rotación manual
+- `copy-assets.js` — prebuild de las 4 webs: copia logos críticos (desde `projects/ciszukoantony/content/logos`), mirrors y `shared/icons` a `public/`; root marker = `pnpm-workspace.yaml`
+- `upload-cdn.js` — `pnpm cdn:upload` (sube a `ciszu-cdn` desde SOURCES)
+- `generate-icon-registry.js` — regenera `packages/ui/src/generated/icon-registry.ts` desde `shared/icons/svg`
+- `generate-commands.js` — regenera `commands.json`/`docs/slash-commands.*` del bot desde dist
 - Aplicar migraciones: `node scripts/apply-migration-XX.js`
+- `backup-db.js` / `run-bru.js` / `fix-migrations.js` / `notify.js` / `md2office.js` / `txt2md.js` / `txt2pdf.py` / `docx2pdf.ps1` / `sync-public-docs.js` / `setup.ps1` — utilidades de backup, API testing, docs y setup
 
 ## Herramientas de seguridad instaladas (jul 2026)
 
@@ -337,7 +344,7 @@ Pila decidida (análisis completo en `docs/ia_docs/TOOLS.md`): **DBeaver CE + db
 | **gitleaks** (8.30.1) | `C:\Users\fplay\AppData\Local\Programs\Gitleaks\gitleaks.exe` | Escaneo de historial: `--log-opts="--all"`. Reporte del escaneo jul 2026: `Temp\opencode\gitleaks_hist.json` (130 leaks, la mayoría de `.turbo/runs/*.json` ya destrackeados; restan `cloudflare-api-key` ×3 en `.turbo` del historial y 1 key en `generate-tracks.ps1` ya quitada) |
 | **semgrep** (1.172.0) | `semgrep scan --config p/security-audit` (pip) | ✅ Escaneo completo (jul 2026): todas las apps + packages + discord + scripts → 0 findings reales. Solo falsos positivos aceptados: `SocialIcon.tsx` (reescrito, dangerouslySetInnerHTML eliminado), `packages/ui/src/Icon.tsx` (sanitizado con DOMPurify), `devConsole.ts` (execSync dev tool) |
 | **trivy** (0.72.0) | PATH: `C:\Users\fplay\AppData\Local\Microsoft\WinGet\Links` | Usa `--db-repository mirror.gcr.io/aquasec/trivy-db` (con la red nueva resuelve). pnpm-lock: 0 vulns HIGH/CRITICAL |
-| **cargo-audit** (0.22.2) | `cargo audit` (en `apps/muzicmania/launcher/src-tauri`) | 17 warnings permitidos: glib (tauri 3) + unic-ucd-version (transitivo) |
+| **cargo-audit** (0.22.2) | `cargo audit` (en `projects/muzicmania/launcher/src-tauri`) | 17 warnings permitidos: glib (tauri 3) + unic-ucd-version (transitivo) |
 | **pnpm audit** | `pnpm audit --prod` | 0 vulns |
 | **ZAP** (2.17.0) | `C:\Program Files\ZAP\Zed Attack Proxy\zap.bat` (o jar directo) | ✅ Instalado + probado (31 jul 2026): DAST completo sobre `ciszunetwork.vercel.app` → 0 High, 4 Medium (CSP no set, Cross-Domain `ACAO:*`, Anti-clickjacking, SRI missing), 3 Informational (cache-control, User-Agent Fuzzer). Reporte: `Temp\opencode\zap_ciszunetwork.html`. ⚠️ **Solo modo daemon + API** (el usuario no usa la GUI). CLI: `zap.bat` con rutas relativas al CWD (ejecutar desde su directorio o usar el jar con ruta absoluta). `-quickstart` NO existe en 2.17 (add-on GUI) — usar daemon + API: `java -jar zap-2.17.0.jar -daemon -host 127.0.0.1 -port 8080 -config api.disablekey=true`, luego spider (`/JSON/spider/action/scan/`) y ascan (`/JSON/ascan/action/scan/`). Requiere JAVA_HOME (set a nivel máquina: `C:\Program Files\Eclipse Adoptium\jdk-25.0.3.9-hotspot`) |
 

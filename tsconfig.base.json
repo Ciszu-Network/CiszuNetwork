@@ -30,13 +30,13 @@
         "./shared/icons/*"
       ],
       "@ciszubot/*": [
-        "./apps/ciszubot/*"
+        "./projects/ciszubot/*"
       ],
       "@ciszukoantony/*": [
-        "./apps/ciszukoantony/*"
+        "./projects/ciszukoantony/*"
       ],
       "@muzicmania/*": [
-        "./apps/muzicmania/*"
+        "./projects/muzicmania/*"
       ]
     }
   },

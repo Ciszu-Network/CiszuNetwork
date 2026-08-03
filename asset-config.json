@@ -26,7 +26,7 @@
       "content/**/*.mp3",
       "content/**/*.wav",
       "content/**/*.ogg",
-      "apps/*/content/**/*"
+      "projects/*/content/**/*"
     ],
     "providers": {
       "development": "local",
@@ -65,7 +65,7 @@
       ".env.local",
       ".DS_Store",
       "content/**/*",
-      "apps/*/content/**/*",
+      "projects/*/content/**/*",
       "shared/icons/**/ai/*",
       "shared/icons/**/png/*"
     ],
