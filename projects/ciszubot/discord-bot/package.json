@@ -23,7 +23,7 @@
     "@types/express": "^5.0.6",
     "@types/node": "^26.0.0",
     "nodemon": "^3.0.1",
-    "typescript": "^5.9.0"
+    "typescript": "^7.0.2"
   },
   "keywords": [
     "discord",
