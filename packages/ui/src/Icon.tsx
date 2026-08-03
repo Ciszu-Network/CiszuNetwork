@@ -1,24 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import DOMPurify from 'dompurify';
-import type { Config as DOMPurifyConfig } from 'dompurify';
 import { resolveIcon, type IconStyle, type IconFormat } from '@ciszunetwork/cdn';
 import { getIcon, iconRegistry } from './generated/icon-registry';
-
-// Allowlist SVG: DOMPurify por defecto elimina xlink:href, clip-path, fill-rule,
-// defs/use/clipPath — los iconos con defs+use (banderas, varios outline) se
-// rompían tras navegación cliente. Se preserva todo el contenido SVG propio.
-const sanitizeConfig: DOMPurifyConfig = {
-  USE_PROFILES: { svg: true, svgFilters: true },
-  ADD_TAGS: ['use', 'clipPath', 'defs', 'symbol', 'marker', 'pattern', 'mask', 'filter', 'foreignObject'],
-  ADD_ATTR: [
-    'xlink:href', 'href', 'clip-path', 'fill-rule', 'fill-opacity',
-    'stroke-width', 'stroke-linecap', 'stroke-linejoin', 'stroke-opacity',
-    'stop-color', 'stop-opacity', 'gradientTransform', 'patternTransform',
-    'transform', 'd', 'points', 'viewBox', 'xmlns', 'x', 'y', 'x1', 'y1', 'x2', 'y2',
-  ],
-};
 
 export interface IconProps extends Omit<React.HTMLAttributes<HTMLElement>, 'style' | 'color' | 'className'> {
   /** Nombre del icono */
@@ -91,9 +75,12 @@ export const Icon: React.FC<IconProps> = ({
 
   const iconClassName = `ciszu-icon ciszu-icon-${name} ${className}`.trim();
 
-  // SSR/Node: dompurify no expone sanitize sin window (el registro es fuente propia generada);
-  // cliente: sanitizado con DOMPurify (allowlist SVG propio, ver sanitizeConfig arriba)
-  const svgInner = typeof window === 'undefined' ? entry?.inner ?? '' : DOMPurify.sanitize(entry?.inner ?? '', sanitizeConfig);
+  // El registro es fuente PROPIA generada (scripts/generate-icon-registry.js desde
+  // shared/icons/svg del repo) — contenido confiable, no input de usuario.
+  // Se usa SIEMPRE el inner crudo (SSR y cliente) para que la hidratacion coincida:
+  // re-sanitizar en cliente con DOMPurify vaciaba los fragmentos <path> sueltos
+  // (sin raiz <svg>) y dejaba <g></g> tras navegar (fix iconos desaparecidos).
+  const svgInner = entry?.inner ?? '';
 
   if (entry) {
     return (
