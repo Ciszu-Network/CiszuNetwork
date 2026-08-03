@@ -32,7 +32,7 @@ export const LOGO_ISOTIPO =
 export const LOGO_ISOTIPO_CIRCLE =
   'projects/ciszubot/content/logos/imagen/muestras/circle/ciszubot_logo_isotipo_color_circle.png';
 export const LOGO_LOGOTIPO =
-  'projects/ciszubot/content/logos/imagen/not outline/logotipo/color/ciszubot_logotipo_outline_color.svg';
+  'projects/ciszubot/content/logos/imagen/outline/logotipo/color/ciszubot_logotipo_outline_color.svg';
 
 export const dict = {
   es: {
