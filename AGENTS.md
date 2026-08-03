@@ -152,8 +152,8 @@ All workflows run on `push: [main, master]`:
   - ⚠️ NUNCA usar `vercel pull/build/deploy --prebuilt` dentro de `projects/*/website`: con `rootDirectory` fijado en el proyecto, el CLI duplica la ruta y produce deployments READY pero vacíos (404 en el alias)
   - Deploy desde la raíz requiere el `.vercelignore` raíz (excluye node_modules, .next, content, binarios)
   - Vercel tokens son GH secrets (`VERCEL_TOKEN`)
-  - Proyectos Vercel: `ciszunetworkpage` → `projects/ciszu/website`, `ciszukoantonypage` → `projects/ciszukoantony/website`, `ciszubot` → `projects/ciszubot/website`, `muzicmania` → `projects/muzicmania/website`
-- Discord bot (`deploy-bot.yml`) deploys su website, no el bot en sí
+- Proyectos Vercel: `ciszunetworkpage` -> `projects/ciszu/website`, `ciszukoantonypage` -> `projects/ciszukantony/website`, `ciszubot` -> `projects/ciszubot/website`, `muzicmania` -> `projects/muzicmania/website`
+- Discord bot (`deploy-ciszubot-webpage.yml`) deploys su website, no el bot en sí
 
 ## Git conventions
 

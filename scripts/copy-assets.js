@@ -35,6 +35,13 @@ const rel = path.relative(ROOT, CWD).replace(/\\/g, '/');
 const parts = rel.split('/');
 const appName = parts[1]; // 'ciszu', 'ciszubot', 'ciszukoantony', 'muzicmania'
 
+// Guard: ejecutado desde la raiz del repo crea una carpeta public/ fantasma
+if (!appName) {
+  console.log('  [!] Ejecuta este script desde una app (pnpm --filter <app> build).');
+  console.log('      En la raiz del repo no se copia nada para no ensuciar la raiz.');
+  process.exit(0);
+}
+
 // --- 1. Root-level critical assets (logos from master source) ---
 const LOGOS_SRC = path.join(ROOT, 'projects', 'ciszukoantony', 'content', 'logos');
 const CRITICAL_ONLY = ['tagline_black.svg', 'tagline_white.svg', 'imagen'];
