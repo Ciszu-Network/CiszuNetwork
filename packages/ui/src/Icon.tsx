@@ -70,7 +70,18 @@ export const Icon: React.FC<IconProps> = ({
   inline = false,
   ...props
 }) => {
-  const entry = !forceLocal && format === 'svg' ? getIcon(style, name) : undefined;
+  // Inline-first con fallback de estilo: muchos iconos solo existen en filled
+  // (server, shield, terminal, gift, rocket...) y se pedian como outline en
+  // ciszubot - caian al <img> CDN/local y desaparecian al fallar. Si el estilo
+  // exacto no esta en el registry, se usa el otro (outline<->filled) antes de
+  // recurrir al fallback remoto.
+  const entry =
+    !forceLocal && format === 'svg'
+      ? getIcon(style, name) ??
+        (style === 'filled' || style === 'outline'
+          ? getIcon(style === 'filled' ? 'outline' : 'filled', name)
+          : undefined)
+      : undefined;
 
   const inlineStyles: React.CSSProperties = {
     width: typeof size === 'number' ? `${size}px` : size,
