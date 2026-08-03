@@ -39,6 +39,6 @@ packages/ui/src/generated/
 *.d.ts
 *.map
 
-# Falso positivo aceptado: Icon.tsx sanea con DOMPurify (allowlist SVG propio)
-# antes de dangerouslySetInnerHTML; el contenido viene del registry generado.
+# Falso positivo aceptado: Icon.tsx inyecta inner del registry generado
+# (fuente propia, no input de usuario); dangerouslySetInnerHTML con SVG propio.
 packages/ui/src/Icon.tsx
