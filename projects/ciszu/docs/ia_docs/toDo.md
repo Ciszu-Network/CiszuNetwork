@@ -2,7 +2,7 @@
 
 > Este archivo solo puede ser editado por Ciszuko Antony.
 
-# Prioridad Al
+# Prioridad Alta
 
 - [ ] Pensar si integrar el ecosistema de tuneles para la consola remota. Segun el siguiente texto de informacion:
 
