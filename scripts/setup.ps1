@@ -18,14 +18,14 @@ if (-not $SkipCdn) {
   Write-Host "[2/3] Descargando assets desde CDN..." -ForegroundColor Yellow
   $cdnBase = "https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn"
   $criticalAssets = @(
-    "logos/tagline_black.svg",
-    "logos/tagline_white.svg",
-    "logos/imagen/outline/isotipo/color/ciszuko_logo_isotipo_outline_zcolor_ccolor.svg"
+    "tagline_black.svg",
+    "tagline_white.svg",
+    "imagen/outline/isotipo/color/ciszuko_logo_isotipo_outline_zcolor_ccolor.svg"
   )
 
   foreach ($asset in $criticalAssets) {
-    $url = "$cdnBase/$asset"
-    $dest = Join-Path (Get-Location) "assets/$asset"
+    $url = "$cdnBase/projects/ciszukoantony/content/logos/$asset"
+    $dest = Join-Path (Get-Location) "projects/ciszukoantony/content/logos/$asset"
     $dir = Split-Path $dest -Parent
     if (-not (Test-Path $dir)) {
       New-Item -ItemType Directory -Path $dir -Force | Out-Null

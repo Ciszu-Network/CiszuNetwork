@@ -1,0 +1,61 @@
+import { LevelConfig, LevelEvent } from '@/types/level';
+import { assetResolver } from '@ciszunetwork/cdn';
+
+export const config: LevelConfig = {
+  formatVersion: '1.0',
+  id: 'cyber_beat',
+  title: 'Cyber Beat',
+  artist: 'CiszukoAntony',
+  album: 'Genesis Neon',
+  uploadedBy: 'MuzicMania',
+  uploadedById: 'muzicmania_official',
+  verified: true,
+  description: 'Energía rítmica de alta precisión para máxima concentración.',
+  copyright: '© 2026 CiszukoAntony Music',
+  releaseDate: '2026-01-15',
+  durationSec: 208,
+  bpm: 140,
+  offset: 0.0,
+  difficulty: 'Expert',
+  difficultyRating: 18,
+  safeForWork: true,
+  colors: {
+    primary: '#ff33cc',
+    secondary: '#59b4ff',
+    background: '#1a0010',
+    gradient: 'from-neon-pink to-neon-blue',
+  },
+  files: {
+    audio: assetResolver.resolve('projects/muzicmania/content/music/albums/genesis_neon/cyber_beat/cyber_beat.ogg'),
+    banner: assetResolver.resolve('projects/muzicmania/content/music/albums/genesis_neon/cyber_beat/banner.png'),
+    disc: assetResolver.resolve('projects/muzicmania/content/music/albums/genesis_neon/cyber_beat/disc.svg'),
+  },
+  stats: {
+    plays: 2500,
+    downloads: 890,
+    likes: 0,
+    globalRecordScore: 4500000,
+    globalRecordUser: 'CyberPhantom',
+  },
+};
+
+export const events: LevelEvent[] = [
+  { time: 0, type: 'scene_change', data: 'intro' },
+  { time: 2, type: 'scene_change', data: 'main' },
+  { time: 4, type: 'bump', data: 1.2 },
+  { time: 12, type: 'background_change', data: 'neon_velocity' },
+  { time: 28, type: 'bump', data: 1.8 },
+  { time: 44, type: 'background_change', data: 'cyber_grid' },
+  { time: 60, type: 'note_skin_change', data: 'minimal' },
+  { time: 68, type: 'bump', data: 2.2 },
+  { time: 84, type: 'background_change', data: 'digital_storm' },
+  { time: 100, type: 'bump', data: 2.5 },
+  { time: 116, type: 'background_change', data: 'neon_velocity' },
+  { time: 120, type: 'note_skin_change', data: 'shiny' },
+  { time: 132, type: 'bump', data: 3.0 },
+  { time: 148, type: 'background_change', data: 'cyber_grid' },
+  { time: 164, type: 'bump', data: 2.8 },
+  { time: 180, type: 'background_change', data: 'digital_storm' },
+  { time: 196, type: 'bump', data: 2.0 },
+  { time: 202, type: 'scene_change', data: 'outro' },
+];

@@ -1,8 +1,8 @@
 packages:
-  - apps/*
-  - apps/ciszubot/*
-  - apps/ciszukoantony/*
-  - apps/muzicmania/*
+  - projects/*
+  - projects/ciszubot/*
+  - projects/ciszukoantony/*
+  - projects/muzicmania/*
   - packages/*
 
 onlyBuiltDependencies:

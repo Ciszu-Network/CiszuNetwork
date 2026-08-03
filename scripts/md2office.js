@@ -4,7 +4,7 @@
  *
  * Uso: node scripts/md2office.js <ruta_docs>
  * Ejemplo: node scripts/md2office.js docs
- * Ejemplo: node scripts/md2office.js apps/ciszubot/docs
+ * Ejemplo: node scripts/md2office.js projects/ciszubot/docs
  */
 
 const { execSync } = require('child_process');

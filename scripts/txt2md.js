@@ -6,7 +6,7 @@
  *
  * Uso: node scripts/txt2md.js [ruta_docs]
  * Ejemplo: node scripts/txt2md.js docs
- * Ejemplo: node scripts/txt2md.js apps/ciszubot/docs
+ * Ejemplo: node scripts/txt2md.js projects/ciszubot/docs
  */
 
 const fs = require('fs');

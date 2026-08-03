@@ -1,8 +1,8 @@
 *
-!apps/ciszubot/discord-bot/**
+!projects/ciszubot/discord-bot/**
 !pnpm-workspace.yaml
 !pnpm-lock.yaml
-!apps/ciszubot/discord-bot/.env.example
+!projects/ciszubot/discord-bot/.env.example
 **/.env
 **/logs
 **/node_modules

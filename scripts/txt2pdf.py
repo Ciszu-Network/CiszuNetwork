@@ -1,7 +1,7 @@
 """Convierte documentos TXT/MD a PDF usando reportlab.
 Uso: python scripts/txt2pdf.py <ruta_docs>
 Ejemplo: python scripts/txt2pdf.py docs
-Ejemplo: python scripts/txt2pdf.py apps/ciszubot/docs
+Ejemplo: python scripts/txt2pdf.py projects/ciszubot/docs
 """
 
 import sys, os, re, glob

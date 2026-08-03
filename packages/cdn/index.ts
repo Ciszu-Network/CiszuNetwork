@@ -75,7 +75,7 @@ export const assetResolver = new AssetResolver();
 
 /**
  * Resuelve la URL de cualquier asset del repositorio con estrategia híbrida CDN/local.
- * La ruta debe ser la ruta relativa del repo (ej: "apps/muzicmania/content/logos/...").
+ * La ruta debe ser la ruta relativa del repo (ej: "projects/muzicmania/content/logos/...").
  * En producción usa CDN, en desarrollo usa ruta local.
  */
 export function resolveAssetPath(path: string, opts?: ResolveOptions): string {
