@@ -18,14 +18,14 @@
     "@ciszunetwork/cdn": "workspace:*",
     "framer-motion": "^12.38.0",
     "next": "^15.5.22",
-    "react": "^19.2.7",
+    "react": "^19.2.8",
     "react-dom": "^19.2.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
     "@tailwindcss/postcss": "^4.2.4",
     "@types/node": "^25.9.3",
-    "@types/react": "^19.2.17",
+    "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.0.0",
