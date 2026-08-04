@@ -15,7 +15,7 @@ Investigación solicitada (toDo.md → Prioridad Alta → "ecosistema de túnele
 
 ---
 
-## 1. Capa de avisos — ntfy.sh (implementada)
+## 1. Capa de avisos — ntfy.sh (implementada + política de ciclo)
 
 ntfy es un servicio de push sin registro: la app del móvil se suscribe a un "topic" (una cadena) y cualquier script hace un simple POST HTTP para notificar. Sin cuentas, sin tokens, sin pagos (aunque tener cuenta permite tokens y sync de suscripciones — en uso desde 4 ago 2026).
 
@@ -43,7 +43,51 @@ El móvil recibe la notificación al instante. El topic no requiere suscripción
 
 > ⚠️ Los mensajes borrados pueden seguir apareciendo en `--list` hasta que expire su TTL (~12 h): es el caché del servidor, no un fallo del borrado (el GET individual devuelve 404).
 
+### 1.2 Ciclo de notificaciones — cuándo avisar (política activa desde 4 ago 2026)
+
+El agente opencode **notifica al móvil del CEO en cada hito relevante** de una tarea. Es un ciclo integrado en el flujo normal de trabajo, no un extra opcional.
+
+**Reglas de uso (activadas por defecto en toda sesión):**
+
+| Momento | Ejemplo de mensaje | Prioridad | Tag |
+|---|---|---|---|
+| **Inicio de tarea** (investigación, refactor, deploy...) | "Tarea iniciada: <resumen>" | default | `robot` |
+| **Fin de tarea** | "Tarea terminada: <resumen> — OK/fallo" | default | `white_check_mark` / `warning` |
+| **Antes de pedir un acceso** (permiso/confirmación que bloquea) | "Te necesito: <qué acceso y para qué>" | high | `exclamation` |
+| **Advertencia** (riesgo, cambio irreversible, nota) | "Aviso: <detalle>" | high | `warning` |
+| **Error** (comando falló, deploy falló, script rompió) | "Error en <tarea>: <mensaje>" | urgent | `rotating_light` |
+| **Necesidad de credential** (token, id, cuenta, OTP) | "Necesito tu <token/id>: <para qué>" | high | `key` |
+| **Pregunta puntual** (decisión rápida del CEO) | "Pregunta: <decisión>" | default | `question` |
+
+**Reglas de la política:**
+1. **No spam**: un push por hito. No notificar cada herramienta/edición — solo transiciones de tarea, bloqueos y errores.
+2. **Inicio y fin se emparejan**: toda tarea iniciada con push debe cerrarse con su push de fin (OK o fallo), para que el móvil refleje siempre el estado real.
+3. **Antes de `question`/pedir acceso**: avisar siempre un instante antes con `high`, para que el CEO sepa que llega una petición.
+4. **Errores en segundo plano** (builds, migraciones, CDN): `urgent` si rompen algo; `high` si son recuperables.
+5. **Idioma de los mensajes**: español, título corto (`Ciszubot`, `Ciszu Network`, `<dominio>`) y cuerpo con el resumen accionable.
+6. Los pushes usan **`pnpm notify`** y, por tanto, heredan el reintento con backoff y el error detallado en consola (ver 1.3).
+
+### 1.3 Robustez del script (4 ago 2026)
+
+- **Reintentos con backoff** (`RETRY_DELAYS_MS = [1500, 4000, 10000]`): si ntfy.sh responde `429` o `5xx`, reintenta hasta 3 veces antes de fallar. Los errores del cliente (4xx distintos de 429) no se reintentan.
+- **Error detallado y capturable**: el error final se imprime completo en consola (`HTTP <status> <statusText> — <cuerpo/hasta 200 chars>` o `red: <mensaje>`), para que no se pierda en un parpadeo.
+
 > Complemento en la misma máquina: plugin del ecosistema opencode (`kdcokenny/opencode-notify`) muestra toasts nativos de Windows cuando el agente inicia/termina tareas. No llega al teléfono, pero da visibilidad inmediata sin mirar la consola.
+
+### 1.4 Solución de problemas en el móvil (4 ago 2026)
+
+Síntomas y causa raíz documentados tras el diagnóstico con el Tecno Spark Go:
+
+| Síntoma | Causa | Fix |
+|---|---|---|
+| Los mensajes solo aparecen al abrir la app | Instant delivery (WebSocket) caído en segundo plano | Activar **⚡ Instant delivery** en la suscripción + exención de batería |
+| Notificación "Subscription service" ausente | El servicio WebSocket no está vivo | Ver notificación permanente; no ocultarla/deslizarla |
+| `SocketTimeoutException` en el diálogo de error de ntfy | XOS (Tecno) mata el WebSocket al dormir el móvil | Gestor de teléfono → Batería → ntfy → **Sin restricciones** + permitir autorrestart |
+| Batería <10-15% | Modo ahorro extremo de XOS suspende el servicio | No probar con batería crítica; cargar el móvil |
+| Flechas rojas ↑ | Entrega OK por conexión activa (instant delivery) | Normal |
+| Flechas grises ↓ / sin icono | Push aplazado por FCM (búfer hasta abrir la app) | Habilitar instant delivery (ver arriba) |
+
+**Regla de oro operativa**: con el móvil cargado y ntfy exento de batería, los pushes urgentes llegan al instante con el teléfono minimizado.
 
 ---
 
@@ -175,6 +219,9 @@ opencode serve --port 4096 --hostname 127.0.0.1   ← proceso headless persisten
 ## 4. Estado actual (4 ago 2026)
 
 - [x] `scripts/ntfy-notif.js` creado y documentado (capa 1 — ntfy) + alias `pnpm notify` con envío/`--list`/`--clear`/pipe/flags
+- [x] **Retry/backoff + error capturable** en `ntfy-notif.js` (4 ago 2026, commit `4d46698`)
+- [x] **Ciclo de notificaciones activo (4 ago 2026)**: el agente avisa por push al iniciar/terminar tareas, antes de pedir accesos, en avisos, errores y necesidad de credenciales (sección 1.2)
+- [x] **Instant delivery operativo en el móvil** (4 ago 2026): exención de batería en el Gestor de teléfono (Tecno/XOS) resuelve el `SocketTimeoutException` del WebSocket — pushes urgentes llegan con el teléfono minimizado (sección 1.4)
 - [x] Topic + token privados configurados en `.env.local` y en `services/supabase/.env` (vault) — probado con push real (4 ago 2026)
 - [x] Suscripción "Ciszu-NTFY" vinculada en móvil y PC (login con access token) — recepción verificada
 - [x] **OpenSSH Server instalado y corriendo** (v10.0.0 MSI oficial, `Running` + `Automatic`, escucha en 22, `DefaultShell` = PowerShell)
