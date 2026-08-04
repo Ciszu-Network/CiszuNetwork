@@ -8,7 +8,7 @@ Investigación solicitada (toDo.md → Prioridad Alta → "ecosistema de túnele
 
 | Capa | Qué resuelve | Herramienta | Coste | Estado |
 |---|---|---|---|---|
-| **1. Avisos (push)** | Enterarte al instante de que una tarea terminó / la IA te necesita | **ntfy.sh** + `scripts/notify.js` | Gratis, sin registro | ✅ Implementado (jul 2026) |
+| **1. Avisos (push)** | Enterarte al instante de que una tarea terminó / la IA te necesita | **ntfy.sh** + `scripts/ntfy-notif.js` | Gratis, sin registro | ✅ Implementado (jul 2026) |
 | **2. Control (terminal real)** | Ver la CLI en vivo y escribir en ella desde el móvil | **Tailscale** + **OpenSSH Server** (Windows nativo) + **Termius** (app oficial) + **tmux en WSL** para sesiones persistentes | Gratis | ✅ Implementado y probado (ago 2026) |
 
 **Regla de oro**: ntfy es unidireccional (solo te llega el aviso); no es una terminal. Para enviar y leer comandos de verdad hace falta la capa 2. Las dos se complementan: el push te despierta, la terminal te deja actuar.
@@ -19,20 +19,21 @@ Investigación solicitada (toDo.md → Prioridad Alta → "ecosistema de túnele
 
 ntfy es un servicio de push sin registro: la app del móvil se suscribe a un "topic" (una cadena) y cualquier script hace un simple POST HTTP para notificar. Sin cuentas, sin tokens, sin pagos.
 
-**Script creado**: `scripts/notify.js`
+**Script creado**: `scripts/ntfy-notif.js`
 
 ```bash
-node scripts/notify.js "Título" "Mensaje"
+node scripts/ntfy-notif.js "Título" "Mensaje"
+```
+
+**Configuración (4 ago 2026)**: el topic definitivo está en `NOTIFY_TOPIC` de `.env.local` (raíz del repo, gitignored). El script lo lee automáticamente si la variable de entorno no está definida. Enviar a un topic distinto:
+
+```powershell
+$env:NOTIFY_TOPIC = "ciszu-tu-hash-unico"; node scripts/ntfy-notif.js "Build OK" "Las 4 apps compilan"
 ```
 
 **Puesta en marcha (1 minuto):**
 1. Instalar la app **ntfy** en el móvil (Play Store / App Store).
-2. En la app, suscribirse a un topic privado, p.ej. `ciszu-<hash-unico>` (cualquier cadena; usar una larga y aleatoria para privacidad).
-3. Ejecutar el script con ese topic:
-
-```powershell
-$env:NOTIFY_TOPIC = "ciszu-tu-hash-unico"; node scripts/notify.js "Build OK" "Las 4 apps compilan"
-```
+2. En la app, suscribirse al topic de `.env.local` (key `NOTIFY_TOPIC`, privado tipo `ciszu-<hash-unico>`).
 
 El móvil recibe la notificación al instante. El topic no requiere suscripción previa del script: ntfy permite publicar sin estar suscrito, así que cualquiera de las tareas del bot/agente puede llamar a este script al terminar (builds, deploys, migraciones, cargas CDN).
 
@@ -167,8 +168,9 @@ opencode serve --port 4096 --hostname 127.0.0.1   ← proceso headless persisten
 
 ## 4. Estado actual (4 ago 2026)
 
-- [x] `scripts/notify.js` creado y documentado (capa 1 — ntfy)
-- [ ] Instalar la app ntfy en el móvil y elegir topic definitivo (pendiente usuario — bajo prioridad)
+- [x] `scripts/ntfy-notif.js` creado y documentado (capa 1 — ntfy)
+- [x] Topic privado generado y configurado en `.env.local` (key `NOTIFY_TOPIC`) — probado (4 ago 2026)
+- [ ] Suscribirse al topic en la app ntfy del móvil (pendiente usuario)
 - [x] **OpenSSH Server instalado y corriendo** (v10.0.0 MSI oficial, `Running` + `Automatic`, escucha en 22, `DefaultShell` = PowerShell)
 - [x] **Bug host keys resuelto** (owner SYSTEM + Repair-SshdHostKeyPermission) — ver paso 1
 - [x] **Tailscale instalado y logueado en PC** (v1.98.10, IP `100.75.124.72`)

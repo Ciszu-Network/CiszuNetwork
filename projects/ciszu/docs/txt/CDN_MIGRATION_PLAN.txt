@@ -1,4 +1,4 @@
-CISZU NETWORK - DOCUMENTACIÓN OFICIAL
+﻿CISZU NETWORK - DOCUMENTACIÓN OFICIAL
 Nombre: CDN_MIGRATION_PLAN
 Versión: 2.0.0
 Actualización: 2026-07-29
@@ -93,7 +93,7 @@ El programador elige por llamada:
 5.2 Ciszuko Antony Portfolio (projects/ciszukoantony/website)
   - public/images/ — Imágenes de perfil, proyectos, galería
   - public/logos/ — Logos personales
-  - content/ — banners, buttons, intros, logos, mc_skin, media, stickers, thumbails
+  - content/ — banners, buttons, intros, logos, mc_skin, media, stickers, thumbnails
 
 5.3 MuzicMania (projects/muzicmania)
   - content/music/ — Álbum genesis_neon y subálbumes (pesado)
@@ -107,10 +107,10 @@ El programador elige por llamada:
 5.4 CiszuBot (projects/ciszubot)
   - website/public/images/ — Imágenes del bot, banners
   - website/public/icons/ — Iconos
-  - content/ — banners, flayers, logos, thumbails
+  - content/ — banners, flayers, logos, thumbnails
 
 5.5 CiszuGamens (ciszugamens/)
-  - content/ — banners, flayers, gifs, icons, logos, thumbails
+  - content/ — banners, flayers, gifs, icons, logos, thumbnails
 
 6. PLAN DE MIGRACIÓN — 5 FASES
 
