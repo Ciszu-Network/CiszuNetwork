@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Exo_2, Rajdhani } from "next/font/google";
 import Navbar from "@/components/layout/Navbar";
@@ -22,15 +22,15 @@ export const metadata: Metadata = {
   description: "Official portfolio of Ciszuko Antony (Francisco Garcia Antonio M. / y8) — CEO & Founder of Ciszuko Network. Innovation, development and technology.",
   keywords: ["Ciszuko Antony", "Ciszuko Network", "portfolio", "developer", "Venezuela", "CEO", "technology"],
   icons: {
-    icon: "/logos/imagen/outline/isotipo/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg",
-    apple: "/logos/imagen/outline/isotipo/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg",
+    icon: "/logos/images/outline/isotype/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg",
+    apple: "/logos/images/outline/isotype/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg",
   },
   openGraph: {
     title: "Ciszuko Antony | CEO & Founder of Ciszuko Network",
     description: "Official portfolio of Ciszuko Antony (Francisco Garcia Antonio M. / y8) — CEO & Founder of Ciszuko Network.",
     url: "https://ciszukoantony.vercel.app",
     siteName: "Ciszuko Antony",
-    images: [{ url: "/logos/imagen/outline/isotipo/degradado/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png", width: 132, height: 118 }],
+    images: [{ url: "/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png", width: 132, height: 118 }],
     locale: "en_US",
     type: "website",
   },

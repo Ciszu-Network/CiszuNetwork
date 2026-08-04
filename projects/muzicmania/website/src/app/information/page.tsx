@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -354,7 +354,7 @@ export default function InformationPage() {
               <div className="p-10 rounded-[3rem] bg-doc-dark border border-white/5 hover:border-white/20 transition-all duration-500 hover:scale-[1.03] group shadow-xl">
                  <div className="flex flex-col xl:flex-row gap-8 items-center xl:items-start text-center xl:text-left">
                     <div className="w-32 h-32 relative flex-shrink-0 animate-float">
-                       <Image src={resolveAssetPath('projects/muzicmania/content/logos/imagen/not outline/isotipo/degradado/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} alt="Isotipo" fill className="object-contain drop-shadow-neon-blue" />
+                       <Image src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} alt="Isotipo" fill className="object-contain drop-shadow-neon-blue" />
                     </div>
                     <div className="flex-1 space-y-4">
                        <h3 className="text-2xl font-header font-black text-white uppercase italic">Isotipo Maestro</h3>
@@ -376,7 +376,7 @@ export default function InformationPage() {
               <div className="p-10 rounded-[3rem] bg-doc-dark border border-white/5 hover:border-white/20 transition-all duration-500 hover:scale-[1.03] group shadow-xl">
                  <div className="flex flex-col gap-8 items-center text-center">
                     <div className="w-full max-w-[280px] h-32 relative flex-shrink-0">
-                       <Image src={resolveAssetPath('projects/muzicmania/content/logos/imagen/not outline/logotipo/degradado/color/muzicmania_logotipo_degradado_color.svg')} alt="Logotipo" fill className="object-contain" />
+                       <Image src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/logotype/gradient/color/muzicmania_logotipo_degradado_color.svg')} alt="Logotipo" fill className="object-contain" />
                     </div>
                     <div className="w-full space-y-4 text-left md:text-center">
                        <h3 className="text-2xl font-header font-black text-white uppercase italic">Logotipo</h3>
@@ -396,8 +396,8 @@ export default function InformationPage() {
                <div className="absolute top-0 right-0 p-8 opacity-5 text-white font-black text-9xl pointer-events-none select-none italic font-header uppercase tracking-tighter">IMAGOTIPO</div>
                <div className="flex flex-col lg:flex-row items-center gap-12 relative z-10">
                   <div className="flex flex-col items-center gap-4 group/img transition-transform duration-500 hover:-translate-y-2">
-                     <div className="w-24 h-24 relative animate-float"><Image src={resolveAssetPath('projects/muzicmania/content/logos/imagen/not outline/isotipo/degradado/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} alt="Isotipo" fill className="object-contain" /></div>
-                     <div className="w-72 h-14 relative"><Image src={resolveAssetPath('projects/muzicmania/content/logos/imagen/not outline/logotipo/degradado/color/muzicmania_logotipo_degradado_color.svg')} alt="Logotipo" fill className="object-contain" /></div>
+                     <div className="w-24 h-24 relative animate-float"><Image src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} alt="Isotipo" fill className="object-contain" /></div>
+                     <div className="w-72 h-14 relative"><Image src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/logotype/gradient/color/muzicmania_logotipo_degradado_color.svg')} alt="Logotipo" fill className="object-contain" /></div>
                   </div>
                   <div className="flex-1 space-y-8">
                      <div className="space-y-2 text-center lg:text-left">

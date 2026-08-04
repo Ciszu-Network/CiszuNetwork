@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import MainLayout from '@/components/templates/MainLayout';
@@ -234,7 +234,7 @@ export default function TeamPage() {
               <div className="flex flex-col gap-8 w-full relative z-10">
                 <div className="flex flex-col md:flex-row items-center gap-6 justify-center md:justify-start">
                     <div className="w-20 h-20 rounded-3xl bg-black flex items-center justify-center border border-white/10 shrink-0 p-2 overflow-hidden">
-                        <img src={resolveAssetPath('projects/ciszukoantony/content/logos/imagen/outline/isotipo/degradado/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.svg')} alt="Ciszu Network" className="w-full h-full object-contain" />
+                        <img src={resolveAssetPath('projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.svg')} alt="Ciszu Network" className="w-full h-full object-contain" />
                     </div>
                      <div className="space-y-1 text-center md:text-left">
                         <h3 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter flex items-center justify-center md:justify-start gap-3">

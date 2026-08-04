@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -67,12 +67,12 @@ export default function Footer() {
         <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
             <Image
-              src={assetResolver.resolve('projects/ciszukoantony/content/logos/imagen/outline/isotipo/degradado/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png')}
+              src={assetResolver.resolve('projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png')}
               alt="Ciszuko" width={28} height={25}
               className="drop-shadow-brand"
             />
             <Image
-              src={assetResolver.resolve('projects/ciszukoantony/content/logos/imagen/outline/logotipo/degradado/color/ciszuko_logotipo_outline_degradado_color_full.png')}
+              src={assetResolver.resolve('projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png')}
               alt="Ciszuko Antony" width={140} height={32}
               className="opacity-80"
             />

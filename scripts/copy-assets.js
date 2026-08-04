@@ -44,7 +44,7 @@ if (!appName) {
 
 // --- 1. Root-level critical assets (logos from master source) ---
 const LOGOS_SRC = path.join(ROOT, 'projects', 'ciszukoantony', 'content', 'logos');
-const CRITICAL_ONLY = ['tagline_black.svg', 'tagline_white.svg', 'imagen'];
+const CRITICAL_ONLY = ['tagline_black.svg', 'tagline_white.svg', 'images'];
 for (const relPath of CRITICAL_ONLY) {
   const src = path.join(LOGOS_SRC, relPath);
   const dst = path.join(CWD, 'public', 'logos', relPath);

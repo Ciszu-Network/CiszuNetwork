@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import Link from 'next/link';
@@ -99,7 +99,7 @@ const DownloadOverlay = ({ onClose }: { onClose: () => void }) => (
     >
       <div className="w-24 h-24 drop-shadow-[0_0_40px_rgba(0,212,255,0.6)]">
         <img
-          src={resolveAssetPath('projects/muzicmania/content/logos/imagen/not outline/isotipo/degradado/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')}
+          src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')}
           alt="MuzicMania"
           className="w-full h-full object-contain"
         />

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import { motion } from 'framer-motion';
@@ -36,7 +36,7 @@ const categories = [
     ],
   },
   {
-    name: 'MuzicMania', color: 'from-pink-500 to-rose-700', logo: '/logos/imagen/outline/isotipo/color/ciszuko_logo_isotipo_outline_zcolor_ccolor.png',
+    name: 'MuzicMania', color: 'from-pink-500 to-rose-700', logo: '/logos/images/outline/isotype/color/ciszuko_logo_isotipo_outline_zcolor_ccolor.png',
     projects: [
       { name: 'MuzicMania Web', desc: 'Juego de ritmo musical con estética neon futurista. Próximamente.', tech: ['Next.js', 'TypeScript', 'Web Audio'] },
     ],
