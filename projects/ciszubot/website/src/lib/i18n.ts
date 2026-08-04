@@ -1,4 +1,4 @@
-export type Lang = 'es' | 'en';
+﻿export type Lang = 'es' | 'en';
 
 export const INVITE_URL =
   'https://discord.com/oauth2/authorize?client_id=1395532235872141312&permissions=8&scope=bot%20applications.commands';
@@ -28,11 +28,11 @@ export const KO_FI = 'https://ko-fi.com/ciszukoantony';
 export const BUY_ME_A_COFFEE = 'https://buymeacoffee.com/ciszukoantony';
 
 export const LOGO_ISOTIPO =
-  'projects/ciszubot/content/logos/imagen/muestras/circle/ciszubot_logo_isotipo_color_circle.png';
+  'projects/ciszubot/content/logos/images/samples/circle/ciszubot_logo_isotipo_color_circle.png';
 export const LOGO_ISOTIPO_CIRCLE =
-  'projects/ciszubot/content/logos/imagen/muestras/circle/ciszubot_logo_isotipo_color_circle.png';
+  'projects/ciszubot/content/logos/images/samples/circle/ciszubot_logo_isotipo_color_circle.png';
 export const LOGO_LOGOTIPO =
-  'projects/ciszubot/content/logos/imagen/outline/logotipo/color/ciszubot_logotipo_outline_color.svg';
+  'projects/ciszubot/content/logos/images/outline/logotype/color/ciszubot_logotipo_outline_color.svg';
 
 export const dict = {
   es: {

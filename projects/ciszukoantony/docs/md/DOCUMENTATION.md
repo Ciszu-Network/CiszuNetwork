@@ -1,4 +1,4 @@
-CISZUKO ANTONY - DOCUMENTACIÓN OFICIAL
+﻿CISZUKO ANTONY - DOCUMENTACIÓN OFICIAL
 Nombre: DOCUMENTATION
 Versión: 2.0.0
 Actualización: 2026-07-28
@@ -26,7 +26,7 @@ src/
     useIcon.ts        # Hook para sistema de iconos
 
 ASSETS:
-Los logos del portfolio están en public/logos/imagen/ con variantes:
+Los logos del portfolio están en public/logos/images/ con variantes:
 - outline/filled
 - degradado/monocroma
 - isotipo/logotipo
@@ -58,7 +58,7 @@ src/
     useIcon.ts        # Icon system hook
 
 ASSETS:
-Portfolio logos are in public/logos/imagen/ with variants:
+Portfolio logos are in public/logos/images/ with variants:
 - outline/filled
 - degradado/monocroma
 - isotipo/logotipo

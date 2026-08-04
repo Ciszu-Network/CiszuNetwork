@@ -20,7 +20,7 @@ if (-not $SkipCdn) {
   $criticalAssets = @(
     "tagline_black.svg",
     "tagline_white.svg",
-    "imagen/outline/isotipo/color/ciszuko_logo_isotipo_outline_zcolor_ccolor.svg"
+    "images/outline/isotype/color/ciszuko_logo_isotipo_outline_zcolor_ccolor.svg"
   )
 
   foreach ($asset in $criticalAssets) {

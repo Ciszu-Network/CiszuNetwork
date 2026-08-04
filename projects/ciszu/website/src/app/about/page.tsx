@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import Image from "next/image";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { CISZU_NETWORK, CISZUKO_ANTONY } from "@/config/site";
@@ -23,7 +23,7 @@ export default function AboutPage() {
         <div className="space-y-12">
           <div className="p-8 md:p-10 rounded-[2rem] bg-gradient-to-br from-brand/10 via-brand-dark/5 to-transparent border border-brand/20">
             <Image
-              src={assetResolver.resolve("projects/ciszukoantony/content/logos/imagen/outline/isotipo/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg")}
+              src={assetResolver.resolve("projects/ciszukoantony/content/logos/images/outline/isotype/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg")}
               alt={CISZU_NETWORK.name}
               width={60}
               height={60}

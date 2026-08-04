@@ -1,6 +1,6 @@
 import { assetUrl, encodePath } from './src/cdn-client';
 
-export type AssetType = 'logos' | 'icons' | 'fonts' | 'images' | 'docs' | 'banners' | 'thumbnails' | 'flayers';
+export type AssetType = 'logos' | 'icons' | 'fonts' | 'images' | 'docs' | 'banners' | 'thumbnails' | 'flyers';
 export type IconStyle = 'outline' | 'filled' | 'flag';
 export type IconFormat = 'svg' | 'png' | 'ai';
 
