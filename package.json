@@ -20,6 +20,7 @@
     "cdn:upload": "node scripts/upload-cdn.js",
     "cdn:verify": "node scripts/check-cdn-mimes.js",
     "db:backup": "node scripts/backup-db.js",
+    "notify": "node scripts/ntfy-notif.js",
     "api:test": "node scripts/run-bru.js run . -r --env prod --exclude-tags local",
     "api:test:report": "node scripts/run-bru.js run . -r --env prod --exclude-tags local --reporter-json ../.opencode-tmp/bru-report.json",
     "api:test:local": "node scripts/run-bru.js run . -r --env prod"
