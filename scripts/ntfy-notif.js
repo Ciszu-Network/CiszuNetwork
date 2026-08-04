@@ -71,19 +71,38 @@ function parseArgs(argv) {
   return args;
 }
 
+const RETRY_DELAYS_MS = [1500, 4000, 10000];
+
 async function send({ title, message, priority, tag }) {
   const headers = {
     Title: title,
     Priority: String(PRIORITIES[priority] ?? 3),
     Tags: tag || 'robot',
   };
-  const res = await fetch(`${SERVER}/${TOPIC}`, {
-    method: 'POST',
-    body: message,
-    headers,
-  });
-  if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-  console.log(`Notificacion enviada a ${TOPIC}: ${title} (${message.slice(0, 60)}${message.length > 60 ? '…' : ''})`);
+  let lastError = null;
+  for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
+    try {
+      const res = await fetch(`${SERVER}/${TOPIC}`, {
+        method: 'POST',
+        body: message,
+        headers,
+      });
+      if (res.ok) {
+        console.log(`Notificacion enviada a ${TOPIC}: ${title} (${message.slice(0, 60)}${message.length > 60 ? '…' : ''})`);
+        return;
+      }
+      const body = await res.text().catch(() => '');
+      lastError = `HTTP ${res.status} ${res.statusText}${body ? ` — ${body.slice(0, 200)}` : ''}`;
+      if (res.status !== 429 && res.status < 500) break; // errores del cliente no se reintentan
+    } catch (e) {
+      lastError = `red: ${e.message}`;
+    }
+    if (attempt < RETRY_DELAYS_MS.length) {
+      console.warn(`  [retry ${attempt + 1}/${RETRY_DELAYS_MS.length}] ${lastError} → reintento en ${RETRY_DELAYS_MS[attempt]}ms`);
+      await new Promise((r) => setTimeout(r, RETRY_DELAYS_MS[attempt]));
+    }
+  }
+  throw new Error(`enviar a ${SERVER}/${TOPIC} fallo: ${lastError}`);
 }
 
 async function listMessages() {
