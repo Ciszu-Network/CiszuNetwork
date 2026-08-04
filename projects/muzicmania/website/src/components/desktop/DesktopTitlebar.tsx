@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useCallback } from 'react';
 import { isTauri } from '@/lib/isTauri';
@@ -53,7 +53,7 @@ export function DesktopTitlebar() {
       >
         <div data-tauri-drag-region className="flex items-center gap-3 px-4">
           <img
-            src={resolveAssetPath('projects/muzicmania/content/logos/imagen/not outline/isotipo/degradado/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')}
+            src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')}
             alt="M"
             className="w-5 h-5"
           />

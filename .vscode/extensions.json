@@ -10,6 +10,7 @@
     "ms-python.vscode-pylance",
     "ritwickdey.LiveServer",
     "christian-kohler.path-intellisense",
-    "github.vscode-github-actions"
+    "github.vscode-github-actions",
+    "PKief.material-icon-theme"
   ]
 }

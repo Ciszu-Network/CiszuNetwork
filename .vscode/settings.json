@@ -23,5 +23,26 @@
         }
     ],
     "cSpell.enabled": false,
-    "markdown.validate.enabled": true
+    "markdown.validate.enabled": true,
+    "material-icon-theme.folders.associations": {
+        "logos": "images",
+        "banners": "images",
+        "gifs": "images",
+        "thumbnails": "images",
+        "flyers": "images",
+        "samples": "examples",
+        "isotype": "images",
+        "logotype": "images",
+        "imagotype": "images",
+        "gradient": "theme",
+        "monochrome": "theme",
+        "holidays": "images",
+        "persons": "images",
+        "albums": "audio",
+        "mc_skin": "theme",
+        "arrowskins": "animation",
+        "particleskins": "animation",
+        "long-videos": "video",
+        "not-outline": "images"
+    }
 }

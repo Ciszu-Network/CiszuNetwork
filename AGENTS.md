@@ -1,4 +1,4 @@
-# Ciszu Network Monorepo — AGENTS.md
+﻿# Ciszu Network Monorepo — AGENTS.md
 
 ## Visión general del proyecto
 
@@ -93,7 +93,7 @@ El CDN es un **espejo** del repositorio. Las rutas en Supabase Storage (`ciszu-c
 Los logos viven en `projects/ciszukoantony/content/logos/` (fuente maestra). **El bucket del CDN espeja las rutas del repo** — tras la reestructuración ago 2026 (paths `projects/...`) hay que re-subir con `pnpm cdn:upload` para que el bucket tenga las nuevas rutas. Usar siempre:
 
 ```ts
-assetResolver.resolve('projects/ciszukoantony/content/logos/imagen/outline/isotipo/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg')
+assetResolver.resolve('projects/ciszukoantony/content/logos/images/outline/isotype/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg')
 ```
 
 ### Sistema de iconos (inline-first + CDN fallback)
@@ -127,7 +127,7 @@ resolveIcon('home', 'outline', 'svg', { forceLocal: true }) // forzar local
 ```
 
 - No hay carpeta `assets/` staging — las fuentes originales son la verdad única (`shared/icons/svg/`, `projects/*/content/`, etc.)
-- ⚠️ **`encodePath()` en `packages/cdn`** (`src/cdn-client.ts`): `assetUrl`/`resolveIcon`/`assetResolver.resolve` codifican la ruta relativa (espacios, acentos → `%20` etc.) antes de devolver URL. Rutas con espacios como `logos/imagen/not outline/...` rompían el `<img>` y el preload (mismatch src↔preload → warning y logo no resuelto). No usar rutas crudas al construir URLs.
+- ⚠️ **`encodePath()` en `packages/cdn`** (`src/cdn-client.ts`): `assetUrl`/`resolveIcon`/`assetResolver.resolve` codifican la ruta relativa (espacios, acentos → `%20` etc.) antes de devolver URL. Rutas con espacios como `logos/images/not-outline/...` rompían el `<img>` y el preload (mismatch src↔preload → warning y logo no resuelto). No usar rutas crudas al construir URLs.
 - `copy-assets.js` copia solo críticos por defecto, o todos con `--all`
 - Binarios grandes (`.mp4`, `.gif`, `.exe`, etc.) excluidos de git globalmente
 - **Cloudflare R2** configurado como alternativa futura pero **INACTIVO** (requiere tarjeta/paypal). Credenciales comentadas en el vault.

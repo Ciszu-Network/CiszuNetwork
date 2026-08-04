@@ -1,6 +1,6 @@
-// Codifica la ruta relativa (espacios, acentos) sin tocar separadores '/' ni
+﻿// Codifica la ruta relativa (espacios, acentos) sin tocar separadores '/' ni
 // secuencias %XX ya codificadas. Las rutas del repo tienen espacios
-// (ej: 'logos/imagen/not outline/...') que rompen preload/img si no se
+// (ej: 'logos/images/not-outline/...') que rompen preload/img si no se
 // codifican: el navegador no coincidía el preload con el src final.
 export function encodePath(p: string): string {
   return p

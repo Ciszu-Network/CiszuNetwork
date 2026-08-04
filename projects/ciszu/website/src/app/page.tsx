@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import Image from "next/image";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { SocialIcon } from "@/components/ui/SocialIcon";
@@ -109,7 +109,7 @@ export default function Home() {
         <div className="relative z-10 max-w-4xl mx-auto">
           <div className="flex items-center justify-center gap-6 mb-8">
             <Image
-              src={assetResolver.resolve("projects/ciszukoantony/content/logos/imagen/outline/logotipo/degradado/color/ciszuko_logotipo_outline_degradado_color_full.png")}
+              src={assetResolver.resolve("projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png")}
               alt={CISZU_NETWORK.name}
               width={320}
               height={80}
