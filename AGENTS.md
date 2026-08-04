@@ -222,7 +222,7 @@ Si el repo cambia a público:
 - `packages/cdn`, `packages/ui`, `packages/config`, `packages/utils` are the shared npm packages
 - Icon system is in `shared/icons/` (outline/filled/flag); use `resolveIcon()` from `@ciszunetwork/cdn`. All 4 websites import this package.
 - **Legacy files** (pre-date `packages/cdn/`): `shared/hybrid-system.js`, `shared/aliases.json`, `scripts/setup-icons-system.js`, `scripts/setup-aliases.js` — no longer imported by any app. The canonical resolver is `packages/cdn/index.ts`.
-- **Content dirs**: `projects/ciszu/content/`, `projects/*/content/`, `projects/ciszukoantony/content/`, `projects/ciszugamens/content/` hold multimedia (banners, flayers, logos, thumbails). These are candidates for CDN but tracked in git for local builds.
+- **Content dirs**: `projects/ciszu/content/`, `projects/*/content/`, `projects/ciszukoantony/content/`, `projects/ciszugamens/content/` hold multimedia (banners, flyers, logos, thumbnails). These are candidates for CDN but tracked in git for local builds.
 - **Espacio en disco LIMITADO (crítico)**: el PC tiene poco espacio libre en C: (disco del sistema). Reglas OBLIGATORIAS para cualquier trabajo temporal:
   - **NUNCA** escribir archivos temporales en `C:\Users\fplay\AppData\Local\Temp` ni otras rutas de C: — el espacio libre allí es mínimo
   - Usar SIEMPRE `E:\Ciszu Network\.opencode-tmp/` (gitignored, dentro del repo en el disco E:) para logs, reportes, archivos de trabajo temporales
@@ -343,7 +343,7 @@ Pila decidida (análisis completo en `docs/ia_docs/TOOLS.md`): **DBeaver CE + db
 - `generate-commands.js` — regenera `commands.json`/`docs/slash-commands.*` del bot desde dist
 - Aplicar migraciones: `node scripts/apply-migration-XX.js`
 - `setup-remote-control.ps1` — activa el control remoto de la terminal (OpenSSH Server + Tailscale; re-ejecutable, PowerShell admin). Ver `projects/ciszu/docs/ia_docs/CONTROL_REMOTO.md`
-- `backup-db.js` / `run-bru.js` / `fix-migrations.js` / `notify.js` / `md2office.js` / `txt2md.js` / `txt2pdf.py` / `docx2pdf.ps1` / `sync-public-docs.js` / `setup.ps1` — utilidades de backup, API testing, docs y setup
+- `backup-db.js` / `run-bru.js` / `fix-migrations.js` / `ntfy-notif.js` / `md2office.js` / `txt2md.js` / `txt2pdf.py` / `docx2pdf.ps1` / `sync-public-docs.js` / `setup.ps1` — utilidades de backup, API testing, docs y setup
 
 ## Control remoto de la terminal (ago 2026)
 
