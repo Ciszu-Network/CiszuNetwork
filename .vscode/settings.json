@@ -27,7 +27,8 @@
     "material-icon-theme.folders.associations": {
         "logos": "images",
         "banners": "images",
-        "gifs": "images",
+        "gif": "video",
+        "gifs": "video",
         "thumbnails": "images",
         "flyers": "images",
         "samples": "examples",
@@ -43,6 +44,13 @@
         "arrowskins": "animation",
         "particleskins": "animation",
         "long-videos": "video",
-        "not-outline": "images"
+        "not-outline": "images",
+        "outline": "images",
+        "background": "images",
+        "contour": "images",
+        "horizontal": "images",
+        "vertical": "images",
+        "tagline": "images",
+        "no-tagline": "images"
     }
 }
