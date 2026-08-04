@@ -341,9 +341,11 @@ Pila decidida (análisis completo en `docs/ia_docs/TOOLS.md`): **DBeaver CE + db
 - `check-cdn-mimes.js` — `pnpm cdn:verify` (lista el bucket y reporta objetos con mimetype incorrecto para su extensión)
 - `generate-icon-registry.js` — regenera `packages/ui/src/generated/icon-registry.ts` desde `shared/icons/svg`
 - `generate-commands.js` — regenera `commands.json`/`docs/slash-commands.*` del bot desde dist
+- `generate-material-icons-doc.js` — regenera `projects/ciszu/docs/ia_docs/MATERIAL_ICONS.md` con el catálogo COMPLETO de Material Icon Theme (descarga los fuentes oficiales a `.opencode-tmp/material-icons-theme/`; `--force` re-descarga). Parsea `folderIcons.ts` + `fileIcons.ts` (~290 folder icons + ~610 file icons)
+- `ntfy-notif.js` — `pnpm notify` — notificaciones push vía ntfy.sh. Enviar/listar/limpiar: `pnpm notify "Titulo" "Mensaje"`, `--priority urgent --tag warning`, `--list`, `--clear` (requiere token), pipe desde stdin. Topic/token desde `NOTIFY_TOPIC`/`NOTIFY_TOKEN` en `.env.local` (raíz) o `services/supabase/.env` (vault)
 - Aplicar migraciones: `node scripts/apply-migration-XX.js`
 - `setup-remote-control.ps1` — activa el control remoto de la terminal (OpenSSH Server + Tailscale; re-ejecutable, PowerShell admin). Ver `projects/ciszu/docs/ia_docs/CONTROL_REMOTO.md`
-- `backup-db.js` / `run-bru.js` / `fix-migrations.js` / `ntfy-notif.js` / `md2office.js` / `txt2md.js` / `txt2pdf.py` / `docx2pdf.ps1` / `sync-public-docs.js` / `setup.ps1` — utilidades de backup, API testing, docs y setup
+- `backup-db.js` / `run-bru.js` / `fix-migrations.js` / `md2office.js` / `txt2md.js` / `txt2pdf.py` / `docx2pdf.ps1` / `sync-public-docs.js` / `setup.ps1` — utilidades de backup, API testing, docs y setup
 
 ## Control remoto de la terminal (ago 2026)
 

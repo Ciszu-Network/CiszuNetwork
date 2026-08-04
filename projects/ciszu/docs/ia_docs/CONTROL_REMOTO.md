@@ -17,25 +17,31 @@ Investigación solicitada (toDo.md → Prioridad Alta → "ecosistema de túnele
 
 ## 1. Capa de avisos — ntfy.sh (implementada)
 
-ntfy es un servicio de push sin registro: la app del móvil se suscribe a un "topic" (una cadena) y cualquier script hace un simple POST HTTP para notificar. Sin cuentas, sin tokens, sin pagos.
+ntfy es un servicio de push sin registro: la app del móvil se suscribe a un "topic" (una cadena) y cualquier script hace un simple POST HTTP para notificar. Sin cuentas, sin tokens, sin pagos (aunque tener cuenta permite tokens y sync de suscripciones — en uso desde 4 ago 2026).
 
-**Script creado**: `scripts/ntfy-notif.js`
+**Script**: `scripts/ntfy-notif.js` — alias `pnpm notify`
 
 ```bash
-node scripts/ntfy-notif.js "Título" "Mensaje"
+pnpm notify "Título" "Mensaje"
+pnpm notify "Mensaje" --priority urgent --tag warning   # flags
+echo "texto" | pnpm notify "Título"                     # pipe desde stdin
+pnpm notify --list                                      # lista mensajes recientes
+pnpm notify --clear                                     # borra todos (requiere token)
 ```
 
-**Configuración (4 ago 2026)**: el topic definitivo está en `NOTIFY_TOPIC` de `.env.local` (raíz del repo, gitignored). El script lo lee automáticamente si la variable de entorno no está definida. Enviar a un topic distinto:
+**Configuración (4 ago 2026)**: topic y token privados en `NOTIFY_TOPIC` / `NOTIFY_TOKEN`:
+1. `.env.local` (raíz del repo, gitignored) — leído automáticamente por el script
+2. `services/supabase/.env` (vault de credenciales, gitignored + backup con `update-env-keys.js`) — misma key para respaldo
+3. Sobrescritura puntual: `$env:NOTIFY_TOPIC = "otro-topic"; pnpm notify "Mensaje"`
 
-```powershell
-$env:NOTIFY_TOPIC = "ciszu-tu-hash-unico"; node scripts/ntfy-notif.js "Build OK" "Las 4 apps compilan"
-```
+**Puesta en marcha:**
+1. Instalar la app **ntfy** en el móvil (Play Store / App Store) y en PC.
+2. Iniciar sesión con el token (Settings → cuenta → Access token → pegar `NOTIFY_TOKEN`).
+3. Suscribirse al topic de `NOTIFY_TOPIC` (privado tipo `ciszu-<hash-unico>`; suscripción renombrada a "Ciszu-NTFY").
 
-**Puesta en marcha (1 minuto):**
-1. Instalar la app **ntfy** en el móvil (Play Store / App Store).
-2. En la app, suscribirse al topic de `.env.local` (key `NOTIFY_TOPIC`, privado tipo `ciszu-<hash-unico>`).
+El móvil recibe la notificación al instante. El topic no requiere suscripción previa del script: ntfy permite publicar sin estar suscrito, así que cualquiera de las tareas del bot/agente puede llamar a este script al terminar (builds, deploys, migraciones, cargas CDN). Para borrar un mensaje basta `DELETE /<topic>/<id>` con el token (el `--clear` lo hace en lote).
 
-El móvil recibe la notificación al instante. El topic no requiere suscripción previa del script: ntfy permite publicar sin estar suscrito, así que cualquiera de las tareas del bot/agente puede llamar a este script al terminar (builds, deploys, migraciones, cargas CDN).
+> ⚠️ Los mensajes borrados pueden seguir apareciendo en `--list` hasta que expire su TTL (~12 h): es el caché del servidor, no un fallo del borrado (el GET individual devuelve 404).
 
 > Complemento en la misma máquina: plugin del ecosistema opencode (`kdcokenny/opencode-notify`) muestra toasts nativos de Windows cuando el agente inicia/termina tareas. No llega al teléfono, pero da visibilidad inmediata sin mirar la consola.
 
@@ -168,9 +174,9 @@ opencode serve --port 4096 --hostname 127.0.0.1   ← proceso headless persisten
 
 ## 4. Estado actual (4 ago 2026)
 
-- [x] `scripts/ntfy-notif.js` creado y documentado (capa 1 — ntfy)
-- [x] Topic privado generado y configurado en `.env.local` (key `NOTIFY_TOPIC`) — probado (4 ago 2026)
-- [ ] Suscribirse al topic en la app ntfy del móvil (pendiente usuario)
+- [x] `scripts/ntfy-notif.js` creado y documentado (capa 1 — ntfy) + alias `pnpm notify` con envío/`--list`/`--clear`/pipe/flags
+- [x] Topic + token privados configurados en `.env.local` y en `services/supabase/.env` (vault) — probado con push real (4 ago 2026)
+- [x] Suscripción "Ciszu-NTFY" vinculada en móvil y PC (login con access token) — recepción verificada
 - [x] **OpenSSH Server instalado y corriendo** (v10.0.0 MSI oficial, `Running` + `Automatic`, escucha en 22, `DefaultShell` = PowerShell)
 - [x] **Bug host keys resuelto** (owner SYSTEM + Repair-SshdHostKeyPermission) — ver paso 1
 - [x] **Tailscale instalado y logueado en PC** (v1.98.10, IP `100.75.124.72`)
