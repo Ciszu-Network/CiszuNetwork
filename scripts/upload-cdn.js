@@ -122,7 +122,10 @@ async function listExistingFiles(SERVICE_KEY) {
         if (!obj.metadata || !obj.id) {
           await listLevel(`${full}/`);
         } else {
-          existing[full] = obj.metadata ? obj.metadata.size : obj.size;
+          existing[full] = {
+            size: obj.metadata.size || obj.size,
+            mime: obj.metadata.mimetype || undefined,
+          };
         }
       }
       offset += data.length;
@@ -199,6 +202,7 @@ async function collectLocalPaths() {
 
 async function main() {
   const prune = process.argv.includes('--prune');
+  const force = process.argv.includes('--force');
 
   console.log('\n  === Subiendo assets al CDN (ciszu-cdn) ===');
   const SERVICE_KEY = await getServiceRoleKey();
@@ -235,9 +239,15 @@ async function main() {
         continue;
       }
 
-      if (hasExisting && existing[relative] !== undefined && existing[relative] === localSize) {
-        skipped++;
-        continue;
+      if (hasExisting && existing[relative] !== undefined) {
+        const remote = existing[relative];
+        if (!force && remote.size === localSize && getMime(path.extname(f)) === remote.mime) {
+          skipped++;
+          continue;
+        }
+        if (!force && remote.size === localSize && remote.mime && remote.mime !== getMime(path.extname(f))) {
+          console.log(`  [!!] ${relative} — mimetype remoto '${remote.mime}' != esperado '${getMime(path.extname(f))}'. Re-subiendo.`);
+        }
       }
 
       try {
@@ -255,6 +265,7 @@ async function main() {
   }
 
   console.log(`\n  === Upload: ${totalOk} subidos | ${totalSkipped} sin cambios | ${totalErr} errores ===`);
+  if (force) console.log('  (--force: se han re-subido TODOS los archivos, ignorando tamaño/mimetype)');
 
   if (prune) {
     console.log('\n  === Prune: borrando objetos del bucket que no existen localmente ===');
