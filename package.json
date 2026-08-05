@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@huggingface/inference": "4.13.24",
+    "pngjs": "^7.0.0",
     "turbo": "^2.5.0"
   },
   "packageManager": "pnpm@10.8.1"

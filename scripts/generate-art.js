@@ -17,8 +17,17 @@
 //   --height <px>                        alto (default: 576, ratio 16:9)
 //   --count <n>                          cuántas imágenes (default: 1)
 //   --out <dir>                          carpeta de salida (default: downloads/test)
-//   --name <base>                        prefijo de nombre de archivo (default: art)
-//   --model <id>                         override del modelo (solo hf/siliconflow)
+//   --name <base>                        descriptor del sujeto para el nombre (default: art)
+//                                        (el nombre final es <service>_<modelo>_<name>_<fecha>_<rand>)
+//   --model <id>                         override del modelo
+//
+// Nomenclatura de salida:
+//   <service>_<modelo_corto>_<name>_<YYYYMMDDHHMMSS>_<hex4>.png
+//   Ej.: hf_fluxschnell_hacker_20260805012529_3ba8.png
+//   Service values: hf (Hugging Face), gemini (Google), siliconflow (SiliconFlow).
+//
+// Logs: junto a cada PNG se escribe <nombre>.json con prompt, negative, subject, outfit,
+// expression, servicio, modelo completo, dimensiones y timestamp.
 //
 // Claves (vault services/supabase/.env o .env.local): HF_TOKEN, GEMINI_API_KEY, SILICONFLOW_API_KEY.
 // Nota de red: HF Inference Providers requiere DNS estable (si falla, activar VPN).
@@ -48,6 +57,31 @@ const DEFAULTS = {
   outfit: 'wearing a fitted high-collar techwear jacket',
   expression: 'dynamic standing pose with confident smirk',
 };
+
+const PROVIDERS = {
+  hf: {
+    label: 'Hugging Face Inference',
+    defaultModel: 'black-forest-labs/FLUX.1-schnell',
+    modelShort: 'fluxschnell',
+  },
+  gemini: {
+    label: 'Google Gemini',
+    defaultModel: 'gemini-2.5-flash-preview-image',
+    modelShort: 'gem25flash',
+  },
+  siliconflow: {
+    label: 'SiliconFlow',
+    defaultModel: 'black-forest-labs/FLUX.1-schnell',
+    modelShort: 'fluxschnell',
+  },
+};
+
+function slugifyModel(model) {
+  return model
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '')
+    .slice(0, 20) || 'model';
+}
 
 function readEnvFiles() {
   const files = [
@@ -121,10 +155,10 @@ async function generateHf(token, prompt, negative, width, height, model) {
   return Buffer.from(await out.arrayBuffer());
 }
 
-async function generateGemini(token, prompt, negative, width, height) {
+async function generateGemini(token, prompt, negative, width, height, model) {
   if (!token) throw new Error('GEMINI_API_KEY no configurada en el vault');
-  const model = 'gemini-2.5-flash-preview-image';
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${token}`;
+  const resolved = model || 'gemini-2.5-flash-preview-image';
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${resolved}:generateContent?key=${token}`;
   const body = {
     contents: [{ parts: [{ text: `${prompt}\nNegative: ${negative}` }] }],
     generationConfig: { imageConfig: { aspectRatio: `${width}:${height}` } },
@@ -210,6 +244,10 @@ async function main() {
     siliconflow: process.env.SILICONFLOW_API_KEY || env.SILICONFLOW_API_KEY,
   };
 
+  const providerInfo = PROVIDERS[provider];
+  const model = args.model || providerInfo.defaultModel;
+  const modelShort = args.model ? slugifyModel(args.model) : providerInfo.modelShort;
+
   const prompt = PROMPT_TEMPLATE
     .replace('[SUBJECT]', subject)
     .replace('[OUTFIT_AND_ACCESSORIES]', outfit)
@@ -222,17 +260,40 @@ async function main() {
   for (let i = 0; i < count; i++) {
     const stamp = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
     const rand = crypto.randomBytes(2).toString('hex');
-    const filename = `${nameBase}_${stamp}_${rand}.png`;
+    const filename = `${provider}_${modelShort}_${nameBase}_${stamp}_${rand}.png`;
     let buf;
     if (provider === 'hf') {
-      buf = await generateHf(tokens.hf, prompt, negative, width, height, args.model);
+      buf = await generateHf(tokens.hf, prompt, negative, width, height, model);
     } else if (provider === 'gemini') {
-      buf = await generateGemini(tokens.gemini, prompt, negative, width, height);
+      buf = await generateGemini(tokens.gemini, prompt, negative, width, height, model);
     } else {
-      buf = await generateSiliconflow(tokens.siliconflow, prompt, negative, width, height, args.model);
+      buf = await generateSiliconflow(tokens.siliconflow, prompt, negative, width, height, model);
     }
     fs.writeFileSync(path.join(outDir, filename), buf);
-    console.log(`  ✓ ${filename} (${(buf.length / 1024).toFixed(0)} KB)`);
+    const logFile = filename.replace(/\.png$/, '.json');
+    fs.writeFileSync(
+      path.join(outDir, logFile),
+      JSON.stringify(
+        {
+          image: filename,
+          created_at: new Date().toISOString(),
+          service: providerInfo.label,
+          provider,
+          model,
+          width,
+          height,
+          prompt,
+          negative_prompt: negative,
+          subject,
+          outfit,
+          expression,
+          size_bytes: buf.length,
+        },
+        null,
+        2
+      )
+    );
+    console.log(`  ✓ ${filename} (${(buf.length / 1024).toFixed(0)} KB) + ${logFile}`);
   }
   console.log('Listo.');
 }
