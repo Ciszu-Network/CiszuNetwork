@@ -260,7 +260,7 @@ async function main() {
     process.exit(1);
   }
   if (provider === 'suno' && !tokens.suno) {
-    console.error('SUNO_API_KEY no configurada (suno.com → Account → API keys).');
+    console.error('SUNO_API_KEY no configurada (suno API: https://platform.suno.com — login con la cuenta Google ligada).');
     process.exit(1);
   }
   if (provider === 'ace' && !tokens.ace) {
