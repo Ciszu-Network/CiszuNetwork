@@ -26,6 +26,7 @@
     "api:test:local": "node scripts/run-bru.js run . -r --env prod"
   },
   "devDependencies": {
+    "@huggingface/inference": "4.13.24",
     "turbo": "^2.5.0"
   },
   "packageManager": "pnpm@10.8.1"
