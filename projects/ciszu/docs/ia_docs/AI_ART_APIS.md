@@ -64,3 +64,16 @@ node scripts/generate-art.js --provider hf --subject "a cute cyberpunk female ha
 ## Pendiente del usuario
 
 - **Rotar tokens**: los tokens se pegaron en el chat de opencode. Aunque el repo es privado y el vault está gitignored, conviene rotar `HF_TOKEN`, `GEMINI_API_KEY`, `SILICONFLOW_API_KEY` en sus paneles y actualizar `services/supabase/.env` con `scripts/update-env-keys.js`.
+
+## ⚠️ PENDIENTE PRÓXIMA SESIÓN (5 ago 2026 — cambio de sesión por umbral 120k)
+
+El usuario pidió (en este orden) — decír "continúa" a la nueva sesión:
+
+1. **Limpiar `downloads/test/`** (borrar las 8 imágenes + logs + transparent de las pruebas anteriores).
+2. **Generar 3 personajes MUY diferentes entre sí con distintas personalidades** (usar `scripts/generate-art.js`, provider hf).
+3. **CAMBIAR NOMENCLATURA** (decisión nueva del usuario): el archivo PNG debe llevar **SOLO el nombre** (ej. `ciszuko_volcan.png`), SIN servicio/modelo/datos técnicos (los renombraría a mano para uso comercial/CDN). El archivo JSON **sí** conserva la nomenclatura técnica completa tanto en el nombre como por dentro (ej. `hf_fluxschnell_ciszuko_volcan_20260805...json`).
+4. **Sistema de transparencia SEPARADO del de generación**: NO todas las imágenes son PNG con transparencia. El usuario pedirá a veces imagen sin transparencia (ej. fondo anime completo). Detectarlo por la petición: si pide "personaje sin fondo/para recortar/transparente" → generar + `remove-bg.js`; si pide "con fondo de X" → NO quitar fondo (formato PNG o JPEG normal).
+5. **Generar 1 imagen extra**: uno de los 3 personajes regenerado con **fondo anime de volcán en erupción** (sin transparencia; PNG o JPEG da igual).
+6. **Documentar todo esto** (actualizar `AI_ART_APIS.md` + AGENTS.md si aplica) y **commitear**.
+   - Cambio en `generate-art.js`: flag `--name <solo-nombre-png>` y que el JSON siga con nomenclatura técnica; flag tipo `--no-log`/`--format png|jpeg` si conviene.
+   - Considerar flag `--transparent` en `generate-art.js` que encadene `remove-bg.js` cuando aplique.
