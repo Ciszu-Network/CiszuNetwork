@@ -8,17 +8,25 @@
 //   echo "texto" | node scripts/ntfy-notif.js "Titulo"      (lee el mensaje de stdin)
 //   node scripts/ntfy-notif.js --list                        (lista mensajes recientes)
 //   node scripts/ntfy-notif.js --clear                       (borra TODOS los mensajes, requiere token)
+//   node scripts/ntfy-notif.js "Titulo" "Mensaje" --voice     (adjunta AUDIO del mensaje sintetizado con Piper)
+//   node scripts/ntfy-notif.js "Mensaje" --voice sharvard     (voz femenina ES; voces: amy, ryan, bryce, sharvard, davefx)
 //
 // Flags:
 //   --priority <min|low|default|high|urgent>   prioridad (default: default)
 //   --tag <tag>                                tag (emoji/categoría, p.ej. robot, warning, check)
 //   --title <texto>                            título explícito (alternativo a argv[2])
+//   --voice [voz]                              sintetiza el mensaje a audio (Piper) y lo adjunta al push.
+//                                              Sin valor usa la voz por defecto (sharvard — femenina ES).
+//                                              Un solo push con texto + audio: la app ntfy del móvil lo reproduce.
 //
 // Configuración (en orden de prioridad):
 //   1. Variables de entorno NOTIFY_TOPIC / NOTIFY_TOKEN
 //   2. Key NOTIFY_TOPIC / NOTIFY_TOKEN del fichero .env.local de la raíz del repo
 //   3. Key NOTIFY_TOPIC / NOTIFY_TOKEN del fichero services/supabase/.env (vault)
 //   4. Defaults: topic 'ciszu-network-tasks', sin token
+//
+// Voz por audio: requiere los binarios del sistema de voz (tools/opencode-voice/runtime/
+// — piper + ffmpeg + voces). Sharvard (es_ES) es femenina; amy (en_US) también.
 
 const fs = require('fs');
 const path = require('path');
@@ -51,6 +59,39 @@ const TOKEN = process.env.NOTIFY_TOKEN || env.NOTIFY_TOKEN || '';
 
 const PRIORITIES = { min: 1, low: 2, default: 3, high: 4, urgent: 5 };
 
+// ---- Voz (Piper) para notificaciones con audio ----
+const VOICE_ROOT = path.join(ROOT, 'tools', 'opencode-voice', 'runtime');
+const NOTIFY_VOICES = {
+  amy: { label: 'Amy (EN, femenina)', file: 'en_US-amy-medium.onnx' },
+  ryan: { label: 'Ryan (EN)', file: 'en_US-ryan-high.onnx' },
+  bryce: { label: 'Bryce (EN)', file: 'en_US-bryce-medium.onnx' },
+  sharvard: { label: 'Sharvard (ES, femenina)', file: 'es_ES-sharvard-medium.onnx' },
+  davefx: { label: 'Davefx (ES)', file: 'es_ES-davefx-medium.onnx' },
+};
+const DEFAULT_NOTIFY_VOICE = 'sharvard';
+
+function synthesizeVoice(text, voiceKey) {
+  const voice = NOTIFY_VOICES[voiceKey] || NOTIFY_VOICES[DEFAULT_NOTIFY_VOICE];
+  const piper = path.join(VOICE_ROOT, 'piper', 'piper', 'piper.exe');
+  const ffmpeg = path.join(VOICE_ROOT, 'ffmpeg-9.0-essentials_build', 'bin', 'ffmpeg.exe');
+  const model = path.join(VOICE_ROOT, 'piper-voices', voice.file);
+  const wav = path.join(ROOT, '.opencode-tmp', `notif_voice_${Date.now()}.wav`);
+  const mp3 = wav.replace(/\.wav$/, '.mp3');
+  if (!fs.existsSync(piper) || !fs.existsSync(ffmpeg) || !fs.existsSync(model)) return null;
+
+  const { spawnSync } = require('child_process');
+  const synth = spawnSync(piper, ['-m', model, '-f', wav], {
+    input: text.replace(/\n/g, ' ').trim() + '\n',
+    encoding: 'utf8',
+    timeout: 60000,
+  });
+  if (synth.status !== 0 || !fs.existsSync(wav)) return null;
+  const conv = spawnSync(ffmpeg, ['-y', '-hide_banner', '-loglevel', 'error', '-i', wav, '-codec:a', 'libmp3lame', '-q:a', '6', mp3], { timeout: 60000 });
+  try { fs.unlinkSync(wav); } catch {}
+  if (conv.status !== 0 || !fs.existsSync(mp3)) return null;
+  return mp3;
+}
+
 function parseArgs(argv) {
   const args = { positionals: [], flags: {} };
   for (let i = 0; i < argv.length; i++) {
@@ -61,6 +102,9 @@ function parseArgs(argv) {
       if (key === 'priority' || key === 'tag' || key === 'title') {
         args.flags[key] = next;
         i++;
+      } else if (key === 'voice') {
+        args.flags[key] = next && !next.startsWith('--') ? next : true;
+        if (args.flags[key] !== true) i++;
       } else {
         args.flags[key] = true;
       }
@@ -73,26 +117,39 @@ function parseArgs(argv) {
 
 const RETRY_DELAYS_MS = [1500, 4000, 10000];
 
-async function send({ title, message, priority, tag }) {
-  const headers = {
+async function send({ title, message, priority, tag, audioPath }) {
+  const baseHeaders = {
     Title: title,
     Priority: String(PRIORITIES[priority] ?? 3),
     Tags: tag || 'robot',
   };
+  let body = message;
+  let isMultipart = false;
+  if (audioPath) {
+    const buf = fs.readFileSync(audioPath);
+    const form = new FormData();
+    form.append('message', message);
+    form.append('title', title);
+    form.append('file', new Blob([buf], { type: 'audio/mpeg' }), 'opencode-voz.mp3');
+    body = form;
+    isMultipart = true;
+  }
   let lastError = null;
   for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
     try {
+      const headers = isMultipart ? { ...baseHeaders } : baseHeaders;
+      if (isMultipart && TOKEN) headers.Authorization = `Bearer ${TOKEN}`;
       const res = await fetch(`${SERVER}/${TOPIC}`, {
         method: 'POST',
-        body: message,
+        body,
         headers,
       });
       if (res.ok) {
-        console.log(`Notificacion enviada a ${TOPIC}: ${title} (${message.slice(0, 60)}${message.length > 60 ? '…' : ''})`);
+        console.log(`Notificacion enviada a ${TOPIC}: ${title} (${message.slice(0, 60)}${message.length > 60 ? '…' : ''})${audioPath ? ' + audio' : ''}`);
         return;
       }
-      const body = await res.text().catch(() => '');
-      lastError = `HTTP ${res.status} ${res.statusText}${body ? ` — ${body.slice(0, 200)}` : ''}`;
+      const bodyText = await res.text().catch(() => '');
+      lastError = `HTTP ${res.status} ${res.statusText}${bodyText ? ` — ${bodyText.slice(0, 200)}` : ''}`;
       if (res.status !== 429 && res.status < 500) break; // errores del cliente no se reintentan
     } catch (e) {
       lastError = `red: ${e.message}`;
@@ -187,7 +244,19 @@ async function main() {
     process.exit(1);
   }
 
-  await send({ title, message, priority: flags.priority, tag: flags.tag });
+  let audioPath = null;
+  if (flags.voice) {
+    const voiceKey = flags.voice === true ? DEFAULT_NOTIFY_VOICE : flags.voice;
+    audioPath = synthesizeVoice(message, voiceKey);
+    if (!audioPath) {
+      console.warn(`  [!] No se pudo sintetizar la voz (${NOTIFY_VOICES[voiceKey]?.label || voiceKey}) — se envia solo texto.`);
+    }
+  }
+
+  await send({ title, message, priority: flags.priority, tag: flags.tag, audioPath });
+  if (audioPath) {
+    try { fs.unlinkSync(audioPath); } catch {}
+  }
 }
 
 main().catch((e) => { console.error(`Error: ${e.message}`); process.exit(1); });

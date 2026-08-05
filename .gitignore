@@ -114,6 +114,10 @@ supabase/.temp/
 # Carpeta temporal de opencode (trabajos en curso, nunca trackear)
 .opencode-tmp/
 
+# Sistema de voz opencode — binarios/modelos/voces y temporales (el codigo del plugin SI se trackea)
+tools/opencode-voice/runtime/
+tools/opencode-voice/tmp/
+
 # Discord bot logs
 projects/ciszubot/discord-bot/logs/
 
