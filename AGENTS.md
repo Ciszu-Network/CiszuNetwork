@@ -392,3 +392,39 @@ Pila decidida (análisis completo en `docs/ia_docs/TOOLS.md`): **DBeaver CE + db
 3. **SQL Injection**: nunca concatenar strings en SQL; siempre ORM parametrizado o RPC con objetos
 4. **SECURITY DEFINER**: solo cuando sea estrictamente necesario (triggers que modifican datos de otros usuarios); preferir INVOKER siempre que RLS lo permita
 5. **RLS policies**: siempre separar por comando (no ALL), evitar USING(true) sin restricción de rol, envolver auth.*() en subconsultas
+
+## Límite de contexto de sesión (opencode) — OBLIGATORIO
+
+**PARA AGENTES DE OPENCODE**: cuando la conversación supere los **120k tokens** de contexto, el modelo se vuelve MUY lento (respuestas tardan minutos y degradan la calidad). Reglas:
+
+1. **Al acercarse al umbral (~110-120k)**: avisar al usuario por push (`pnpm notify`) y proponer **cambiar de sesión**.
+2. **Antes de cambiar de sesión**: (a) commitear todo el trabajo pendiente, (b) actualizar este AGENTS.md con el estado actual y los pendientes, (c) guardar el estado del to-do (todo completado), (d) dejar un resumen claro del próximo paso.
+3. La nueva sesión debe empezar diciendo "continúa" con el resumen del estado guardado.
+4. No escribir código nuevo tras pasar el umbral salvo que sea trivial — priorizar guardar estado.
+
+**Tamaños típicos**: una sesión normal de trabajo rinde ~60-90k tokens antes de tocar el umbral. Sesiones con muchos outputs de tools (logs, listados) llegan antes.
+
+## Errores comunes de opencode y solución
+
+### 500s / errores de servidor (API)
+- **Síntoma**: respuestas del asistente fallan con errores 500/502/503, o el agente reporta "Error interno".
+- **Causa**: saturación temporal del proveedor del modelo o inestabilidad de red del PC.
+- **Solución**: (1) esperar 1-2 min y reintentar el mismo prompt (el estado del chat no se pierde), (2) si persiste, verificar red (VPN/DNS), (3) cambiar a un modelo alternativo si está disponible.
+
+### Errores de red/DNS del PC (frecuente)
+- **Síntoma**: `fetch failed`, `ENOTFOUND`, `getaddrinfo`, resolución DNS intermitente (github.com, huggingface.co, api-inference.huggingface.co, etc.).
+- **Causa**: el proveedor DNS del PC falla intermitentemente; no es un problema del código.
+- **Solución**: (1) comprobar con `Resolve-DnsName <dominio> -Server 8.8.8.8` si el DNS externo resuelve (si sí → es el DNS local), (2) **activar la VPN** del usuario (Proton VPN) — suele arreglarlo, (3) reintentar la operación. **No buscar vías alternativas de red**: la instrucción del usuario es usar la VPN directamente.
+
+### Errores 401/403/429/402 en APIs de arte (contexto IA)
+- **401**: key inválida/revocada → rotar token y actualizar vault (`services/supabase/.env`).
+- **403**: geo-bloqueo (SiliconFlow sin VPN) → activar VPN.
+- **429**: quota agotada (Gemini imagen `limit: 0`) → no reparable sin plan de pago; usar HF.
+- **402**: balance insuficiente (SiliconFlow) → recargar o usar otro proveedor.
+- **503**: sobrecarga del provider (nscale/HF) → el script `generate-art.js` ya hace retry; reintentar manualmente.
+
+### Errores de herramientas/scripts
+- **gitleaks/secretlint**: hooks pre-commit que fallan → corregir el secret o usar `--no-verify` si es falso positivo.
+- **`pnpm install` lento/roto**: borrar `node_modules` y re-ejecutar; verificar disco en E:.
+- **Git push falla**: el DNS del PC no resuelve github.com → el usuario hace push manualmente (ver Git conventions).
+- **ZAP/semgrep/trivy**: ver "Herramientas de seguridad instaladas" para comandos exactos y rutas.
