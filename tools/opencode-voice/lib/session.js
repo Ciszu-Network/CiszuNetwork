@@ -28,3 +28,22 @@ export async function getActiveSessionTitle(client) {
     return "";
   }
 }
+
+/**
+ * Call `complete` with automatic retries for transient failures (429/5xx/network).
+ * Returns the same shape as `complete` ({ text } or { error }).
+ */
+export async function completeWithRetry(complete, { system, prompt, config }, logger, label, attempts = 3) {
+  let lastError = null;
+  for (let i = 1; i <= attempts; i++) {
+    const result = await complete({ system, prompt, config });
+    if (!result.error) return result;
+    lastError = result.error;
+    logger?.log?.(label, `LLM attempt ${i}/${attempts} failed: ${result.error}`, "warn");
+    if (i < attempts) {
+      const waitMs = 1500 * i;
+      await new Promise((r) => setTimeout(r, waitMs));
+    }
+  }
+  return { error: lastError };
+}
