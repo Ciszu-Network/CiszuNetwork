@@ -39,15 +39,21 @@ node scripts/generate-art.js --provider hf --subject "a cute cyberpunk female ha
 ```
 
 - Usa la plantilla §§8.1/8.3 de ART_GUIDE por defecto (placeholders `[SUBJECT]`, `[OUTFIT_AND_ACCESSORIES]`, `[EXPRESSION_AND_POSE]` + prompt negativo oficial).
-- Default: 1024x576 (16:9), salida a `downloads/test/`, nombres `art_<YYYYMMDDHHMMSS>_<hex4>.png`.
+- Default: 1024x576 (16:9) pedido, pero **FLUX.1-schnell responde 1024x1024** (ignora el height; verificar en el log JSON).
 - Flags: `--provider hf|gemini|siliconflow`, `--subject/--outfit/--expression/--negative/--width/--height/--count/--out/--name/--model`.
-- `--provider gemini` requiere GEMINI_API_KEY y modelo de imagen con quota activa; `--provider siliconflow` requiere red sin geo-bloqueo.
-- Smoke test ejecutado 4 ago 2026: 6 imágenes FLUX válidas (PNG, ~600 KB-1 MB) en `downloads/test/` con nombres identificativos (`hf_hacker_*` ×2, `hf_android_cyber_*`, `hf_adventurer_red_*`, `hf_mecha_robot_*`, `hf_dj_musician_*`).
-- Estado de herramientas no-HF en este PC: SiliconFlow → 402 balance insuficiente (recargar para activarla); Gemini → 429 quota free imagen `limit: 0` (sin billing no se desbloquea).
+- `--provider gemini` requiere GEMINI_API_KEY y modelo de imagen con quota activa; `--provider siliconflow` requiere saldo (402 si no).
+- **Nomenclatura de salida**: `<service>_<modelo_corto>_<name>_<YYYYMMDDHHMMSS>_<hex4>.png` — ej. `hf_fluxschnell_hacker_20260805012529_3ba8.png`. Service: `hf`/`gemini`/`siliconflow`; modelo corto: `fluxschnell`, `gem25flash` (o slug del `--model`).
+- **Log por imagen**: junto a cada PNG se escribe `<nombre>.json` con prompt, negative_prompt, subject, outfit, expression, service, provider, modelo completo, dimensiones, tamaño y timestamp (formato legible por máquina).
+- Prueba de alto nivel (5 ago 2026): imagen del personaje Ciszuko replicado desde análisis de Gemini con visión → `hf_fluxschnell_ciszuko_char_*.png` + log.
 
-## Nota de red
+## Remoción de fondo → PNG transparente: `scripts/remove-bg.js`
 
-El PC tiene DNS inestable para dominios HF (intermitente: `huggingface.co`, `router.huggingface.co`, `api-inference.huggingface.co`). Con la VPN activa funcionó. Si falla mucho, es preferible activar VPN y no buscar vías alternativas (decisión del usuario).
+`node scripts/remove-bg.js --input <png> [--output <png>] [--tolerance 35] [--method chroma|birefnet]`
+
+- **Método `chroma` (default, 100% gratis, comercial OK)**: flood-fill desde los bordes detectando el color de fondo dominante (las imágenes ART_GUIDE llevan franja de color sólido → corte limpio). Librería `pngjs` (MIT).
+- **Método `birefnet` (calidad Photoshop, gratis, comercial OK)**: BiRefNet (MIT, pesos libres) vía `rembg` local (Python: `pip install "rembg[cpu]" onnxruntime`, 1ª descarga ~1GB). Mejor en bordes finos/cabello.
+- **Descartado**: RMBG-2.0 de BRIA (CC BY-NC → sin uso comercial gratis) y todas las APIs hosted (remove.bg, Photoroom, PixelAPI, etc. — free tier limitado o licencia de pago). BiRefNet ganó por ser MIT (código+pesos) en el benchmark del cutout.
+- Prueba real (5 ago 2026): `hf_fluxschnell_ciszuko_char_*_transparent.png` → 50.8% transparente, esquinas alpha=0, centro del personaje alpha=255, fondo detectado rgb(248,248,248). ⚠️ Bug corregido: `Number(undefined)` daba NaN y borraba toda la imagen — ahora default 40 (35 recomendado).
 
 ## Cierre de la tarea
 
