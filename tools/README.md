@@ -17,6 +17,7 @@ arte de marca...). Organizadas por modalidad en carpetas desacopladas y generali
 | `music-ai/` | `generate-music.js` | Música | **ACE-Step** (AceMusic, default), HF MusicGen, Suno | ⚠️ ace requiere `ACE_API_KEY` (el mismo modelo que generó Genesis Neon) |
 | `video-ai/` | `generate-video.js` | Vídeo | **fal.ai** (Wan 2.5) o HF router (Wan 2.1 / LTX) | ⚠️ fal configurado con `FAL_KEY` pero **cuenta sin saldo → sin usar** |
 | `shared/` | `lib.js` | Shared | helpers (env/argv/retry/ffmpeg) | ✅ |
+| `ascii-ai/` | `textart.js` | ASCII art | fuente bloque propia (FIGlet-like, offline), ANSI | ✅ |
 | `tts-stt-ai/` | plugin de voz | STT/TTS para opencode | whisper.cpp + Piper + Gemini (LLM) | ✅ local (offline) |
 
 Cada `*-ai/` es independiente; solo `music-ai/` y `video-ai/` comparten `shared/lib.js`.
@@ -50,6 +51,10 @@ node tools/video-ai/generate-video.js --provider fal --prompt "a cyberpunk city 
 
 # Quitar fondo a un PNG existente
 node tools/removebg-ai/remove-bg.js --input imagen.png --output tras.png
+
+# Cabecera ASCII para terminal (neón) y guardarla en un archivo
+node tools/ascii-ai/textart.js --text "CISZU" --scale 2 --ansi --frame
+node tools/ascii-ai/textart.js --text "CISZU NETWORK" --scale 2 --ansi --out banner.txt
 ```
 
 ## Música (`music-ai/generate-music.js`) — estructura estándar
@@ -74,7 +79,7 @@ downloads/<carpeta>/
   Endpoint `https://api.acemusic.ai/v1/chat/completions`, prompt estilo "Generate a N second instrumental
   track at BPM". Devuelve MP3 → se normaliza a WAV PCM con ffmpeg local. Requiere `ACE_API_KEY`.
 - Proveedor `hf`: MusicGen (requiere router HF con provider habilitado; hoy **sin provider gratis**).
-- Proveedor `suno`: pide `SUNO_API_KEY` — **pendiente del usuario** (link: `https://suno.com/account/api-keys`).
+- Proveedor `suno`: pide `SUNO_API_KEY` — **pendiente del usuario** (API oficial en `https://platform.suno.com`, login con la cuenta Google ligada a Suno).
 - `--offline ruta.wav` empaqueta un WAV sin llamar a ninguna API (DEBUG/productivo).
 - Covers/banners: **GDI+ local vía PowerShell** (`System.Drawing`) — sin red, sin ffmpeg drawtext
   (ffmpeg en Windows falla parsing `fontfile=C:\...`; GDI+ es robusto).
@@ -88,6 +93,14 @@ Claves de arte: `--title --artist --album --genres --year --track --duration --p
   (frame 0 vía ffmpeg), log `<slug>.json` con modelo usado.
 - Provider `hf`: `Wan-AI/Wan2.1-T2V` y `Lightricks/LTX-Video` vía router HF.
   ⚠️ Ambos devolvieron 404 (router sin provider habilitado) — retomar cuando se active uno.
+
+## ASCII art (`ascii-ai/textart.js`)
+
+Generador de cabeceras grandes para terminal **sin dependencias ni red**: fuente bloque
+propia (A-Z, 0-9, básica) que escala con `--scale`/`--vscale`, color neón (ciánico→rosa)
+con `--ansi` y marco `--frame`. Sirve para cabeceras estáticas embebidas en perfiles
+(el perfil de PowerShell imprime `CISZU` al arrancar vía la función `Show-CisZHeader`).
+Las webs tipo patorjk/asciiart.eu no exponen API; este motor es la versión propia local.
 
 ## Nomenclatura y metadatos
 
