@@ -5,8 +5,8 @@
 # Prioridad Media
 
 - [ ] Añadir framework de tests (Playwright, Vitest)
+- [ ] Implementar plan de comandos personalizados de varias categorias de opencode.
 - [ ] PWA para websites.
-- [ ] Puedo crear comandos en opencode? Asi como hicimos para el tts y el stt, hasta que punto podemos personalizar el opencode?
 
 ## Prioridad Baja
 

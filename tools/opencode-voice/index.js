@@ -15,16 +15,21 @@
 //
 // Runtime state (model, mic, voice, tts mode) persisted via api.kv.
 //
-// Commands:
-//   /stt-record (ctrl+r)  - start/stop recording + transcribe
-//   /stt-submit (leader+r)- stop recording + transcribe + submit
-//   /stt-stop             - cancel recording
-//   /stt-model            - select whisper model
-//   /stt-mic              - select microphone
-//   /tts-speak (leader+s)- read last response aloud
-//   /tts-mode (leader+v) - toggle auto TTS on/off
-//   /tts-stop (escape)   - stop playback
-//   /tts-voice           - select TTS voice
+// Commands (PC = -pc, móvil = -cel):
+//   /stt-record-pc (ctrl+r)   - start/stop recording + transcribe (PC)
+//   /stt-submit-pc (leader+r) - stop recording + transcribe + submit (PC)
+//   /stt-stop-pc              - cancel recording
+//   /stt-model-pc             - select whisper model
+//   /stt-mic-pc               - select microphone
+//   /stt-file-cel             - transcribe latest audio from SFTP inbox (mobile)
+//   /stt-file-submit-cel      - transcribe latest inbox audio + submit (mobile)
+//   /stt-record-cel           - transcribe latest audio pushed via ntfy (mobile)
+//   /stt-submit-cel           - transcribe latest ntfy audio + submit (mobile)
+//   /tts-speak-pc (leader+s)  - read last response aloud (PC)
+//   /tts-mode-pc (leader+v)   - toggle auto TTS on/off
+//   /tts-stop-pc (escape)     - stop playback
+//   /tts-voice-pc             - select TTS voice
+//   /tts-speak-cel            - send last response audio via ntfy push (mobile)
 
 import fs from "node:fs";
 import os from "node:os";
@@ -67,6 +72,8 @@ export default {
     const sttCommands = registerSTT(api, kv, complete, prompts, options, logger);
     const ttsCommands = registerTTS(api, kv, complete, prompts, logger);
 
-    api.command.register(() => [...sttCommands, ...ttsCommands]);
+    api.command.register(() => {
+      return [...sttCommands, ...ttsCommands];
+    });
   },
 };
