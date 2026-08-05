@@ -14,7 +14,7 @@ Conjunto único de herramientas de generación IA para TODO el ecosistema
 |---|---|---|---|
 | `generate-art.js` | Imagen | HF (FLUX.1-schnell), Gemini, SiliconFlow | ✅ HF gratis (HF_TOKEN) |
 | `remove-bg.js` | Post-proceso | chroma / BiRefNet | ✅ gratis |
-| `generate-music.js` | Música | HF MusicGen (wav), Suno (SUNO_API_KEY) | ⚠️ HF router sin provider; Suno pendiente de key |
+| `generate-music.js` | Música | **ACE-Step** (AceMusic, default), HF MusicGen, Suno | ⚠️ ace requiere `ACE_API_KEY` (el mismo modelo que generó Genesis Neon) |
 | `generate-video.js` | Vídeo | **fal.ai** (Wan 2.5) o HF router (Wan 2.1 / LTX) | ⚠️ fal configurado con `FAL_KEY` pero **cuenta sin saldo → sin usar** |
 | `lib.js` | Shared | env/argv/retry/ffmpeg helpers | ✅ |
 
@@ -31,7 +31,10 @@ node tools/opencode-ai/generate-art.js --provider gemini --subject "logotipo Cis
 
 # Música de catálogo (crea carpeta slug con wav/mp3/ogg + cover + banner + fichas)
 node tools/opencode-ai/generate-music.js --genres "synthwave" --title "Neon Runner" \
-    --artist "CiszukoAntony" --album "Neon Vol.1" --duration 30
+    --artist "CiszukoAntony" --album "Neon Vol.1" --bpm 124 --duration 30
+
+# Misma pista pero vía ACE-Step explícito (el default)
+node tools/opencode-ai/generate-music.js --provider ace --genres "synthwave" --title "Neon Runner" --duration 30
 
 # Empaquetar un wav local (sin generación) — DEBUG
 node tools/opencode-ai/generate-music.js --title "Prueba" --offline ruta.wav
@@ -61,9 +64,13 @@ downloads/<carpeta>/
     <slug>.json            → LOG (proveedor, modelo, prompt, metadatos, archivos)
 ```
 
-- Proveedor `hf`: MusicGen (requiere router HF con provider habilitado; hoy **sin provider gratis → usar Suno o package.).
-  - `--offline ruta.wav` empaqueta un WAV sin llamar a ninguna API (DEBUG/productivo).
+- Proveedor `ace` (**DEFAULT**): AceMusic ACE-Step (`acemusic/acestep-v1.5-turbo`) — mismo servicio/modelo
+  que generó el álbum Genesis Neon de MuzicMania (ver `projects/muzicmania/website/scripts/generate-tracks.ps1`).
+  Endpoint `https://api.acemusic.ai/v1/chat/completions`, prompt estilo "Generate a N second instrumental
+  track at BPM". Devuelve MP3 → se normaliza a WAV PCM con ffmpeg local. Requiere `ACE_API_KEY`.
+- Proveedor `hf`: MusicGen (requiere router HF con provider habilitado; hoy **sin provider gratis**).
 - Proveedor `suno`: encola y escribe `.json` placeholder (async; requiere `SUNO_API_KEY` — **pendiente del usuario**).
+- `--offline ruta.wav` empaqueta un WAV sin llamar a ninguna API (DEBUG/productivo).
 - Covers/banners: **GDI+ local vía PowerShell** (`System.Drawing`) — sin red, sin ffmpeg drawtext
   (ffmpeg en Windows falla parsing `fontfile=C:\...`; GDI+ es robusto).
 
@@ -87,8 +94,8 @@ Claves de arte: `--title --artist --album --genres --year --track --duration --p
 
 ## Claves (solo vault)
 
-`services/supabase/.env` (o `.env.local`): `HF_TOKEN`, `GEMINI_API_KEY`, `SILICONFLOW_API_KEY`,
-`SUNO_API_KEY` (pendiente), `FAL_KEY` (configurada). Red: HF requiere DNS estable.
+`services/supabase/.env` (o `.env.local`): `ACE_API_KEY`, `HF_TOKEN`, `GEMINI_API_KEY`,
+`SILICONFLOW_API_KEY`, `SUNO_API_KEY` (pendiente), `FAL_KEY` (configurada). Red: HF requiere DNS estable.
 
 ## Reglas DRY / seguridad
 
