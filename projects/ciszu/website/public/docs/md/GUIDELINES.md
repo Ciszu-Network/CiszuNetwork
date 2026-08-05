@@ -20,7 +20,7 @@ DIRECTRICES DE DESARROLLO
 
 DIRECTRICES DE DOCUMENTACIÓN
 - Los docs/ de cada proyecto deben mantener la estructura estándar
-- Los ia_docs/ son para consumo de IA, no para usuarios finales
+- Los documentation/ son para consumo de IA, no para usuarios finales
 - Los documentos públicos (md, txt, docx, pdf) deben ser bilingües (ES/EN)
 - MuzicMania es el proyecto referencia para la estructura
 
@@ -43,7 +43,7 @@ DEVELOPMENT GUIDELINES
 
 DOCUMENTATION GUIDELINES
 - Each project's docs/ must maintain the standard structure
-- ia_docs/ are for AI consumption, not for end users
+- documentation/ are for AI consumption, not for end users
 - Public documents (md, txt, docx, pdf) must be bilingual (ES/EN)
 - MuzicMania is the reference project for the structure
 

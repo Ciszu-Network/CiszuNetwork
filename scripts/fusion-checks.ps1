@@ -27,7 +27,7 @@ $diff | Select-Object -First 10 | ForEach-Object { Write-Output "  DIFF: $_" }
 Write-Output ""
 Write-Output "=== 2. docs duplicados (STATUS, TO_DO_LIST) fecha/hash ==="
 foreach($n in @("STATUS.md","TO_DO_LIST.md")){
-  $a = "ciszukoantony\docs\ia_docs\$n"; $b = "apps\ciszukoantony\docs\ia_docs\$n"
+  $a = "ciszukoantony\docs\documentation\$n"; $b = "apps\ciszukoantony\docs\documentation\$n"
   if ((Test-Path $a) -and (Test-Path $b)) {
     $da = (Get-Item $a).LastWriteTime; $db = (Get-Item $b).LastWriteTime
     $ha = (Get-FileHash $a).Hash; $hb = (Get-FileHash $b).Hash

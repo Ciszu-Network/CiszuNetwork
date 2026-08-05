@@ -8,7 +8,7 @@
 // y los parsea. Si ya están descargados en el dir cache, los reutiliza.
 //   node scripts/generate-material-icons-doc.js --force   # re-descarga los fuentes
 //
-// Salida: sobrescribe projects/ciszu/docs/ia_docs/MATERIAL_ICONS.md
+// Salida: sobrescribe projects/ciszu/docs/documentation/MATERIAL_ICONS.md
 
 const fs = require('fs');
 const path = require('path');
@@ -16,7 +16,7 @@ const https = require('https');
 
 const ROOT = path.resolve(__dirname, '..');
 const CACHE_DIR = path.join(ROOT, '.opencode-tmp', 'material-icons-theme');
-const OUT_FILE = path.join(ROOT, 'projects', 'ciszu', 'docs', 'ia_docs', 'MATERIAL_ICONS.md');
+const OUT_FILE = path.join(ROOT, 'projects', 'ciszu', 'docs', 'documentation', 'MATERIAL_ICONS.md');
 
 const THEME_REPO = 'PKief/vscode-material-icon-theme';
 const THEME_BRANCH = 'main';
