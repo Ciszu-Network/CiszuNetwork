@@ -1,38 +1,59 @@
-# AI APIs artísticas — investigación y plan de integración (1 ago 2026)
+# AI APIs artísticas — plan definitivo (4 ago 2026)
 
-Tarea del TO_DO_LIST: integrar herramientas de diseño artístico con IA en el ecosistema (banners, assets de MuzicMania, logos, iconos).
+Tarea del TO_DO_LIST (alta prioridad): integrar generación de arte IA en el ecosistema (banners, assets de MuzicMania, logos, iconos) siguiendo la biblia `projects/muzicmania/docs/ia_docs/ART_GUIDE.md` (§8 plantillas).
 
-## Resultado: NO existen claves API en el proyecto
+## Decisión final (usuario, 4 ago 2026)
 
-Verificado: ninguna variable tipo `LEONARDO_*`, `RECRAFT_*`, `SILICONFLOW_*`, `CREEN_*` ni `AI_API_*` existe en ningún `.env`/`.env.local` del repo (incluidos backups). **Ninguna de las 4 plataformas tiene key configurada.** La integración real queda pendiente de que el usuario genere las claves; este documento deja el plan y los precios verificados (jul/ago 2026).
+**100% gratis al inicio + derechos comerciales.** Combinación elegida:
 
-## Comparativa de proveedores
+| Prioridad | Proveedor | Modelo | Estado real en este PC | Licencia comercial |
+|---|---|---|---|---|
+| **1 — PRIMARIO** | **Hugging Face Inference** | `black-forest-labs/FLUX.1-schnell` | **FUNCIONA** (vía `router.huggingface.co`, provider auto=nscale). Requiere VPN si el DNS del PC falla | Apache 2.0 |
+| 2 | **SiliconFlow** | `FLUX.1-schnell` (misma familia) | Geo-bloqueo 403 desde IP del PC sin VPN (endpoint `.cn` 401) | Apache 2.0 |
+| 3 | **Gemini** | `gemini-2.5-flash-image` | `limit: 0` (quota free imagen no activa en proyecto/región). Texto OK con `gemini-3.5-flash` | Uso comercial permitido en los términos |
 
-| Proveedor | API | Free tier | Coste mínimo pagado | Fuerte en | Uso propuesto en el ecosistema |
-|---|---|---|---|---|---|
-| **Leonardo AI** | Sí (pay-as-you-go, $5 de crédito inicial) | 150 tokens/día (sin derechos comerciales) | $12/mes Essential | Assets de juego, texturas 3D, personajes consistentes, entrenar modelo propio | Covers/art de **MuzicMania**, banners de flayers |
-| **Recraft** | Sí (API por imagen, $1 = 1000 unidades) | Sí (imágenes públicas, sin derechos comerciales) | Raster V4.1 $0.035, vector $0.08 | **SVG vector nativo**, tipografía precisa, brand styles | Generar iconos/logo SVG nativo para el sistema `packages/ui/src/Icon.tsx` y `shared/icons/` |
-| **SiliconFlow** | Sí (compatible OpenAI, `https://api.siliconflow.cn/v1` o `.com` internacional) | ~$1 crédito + varios modelos $0 | Pay-as-you-go | FLUX.1, Kolors, Z-Image (6B); muy barato | Ruta económica para generación por lotes (FLUX) |
-| **Creen** | **NO tiene API** | Web gratuita sin login (40+ modelos: Sora 2, VEO 3.1, Nano Banana Pro, Seedream) | $10/mes paquete de créditos | 40+ modelos en un solo sitio, video e imagen | Exploración manual de ideas y moodboards, no programática |
+### Descartados (no cumplen el criterio free+comercial)
 
-## Recomendación por caso de uso
+| Proveedor | Motivo del descarte |
+|---|---|
+| **Leonardo AI** | Free = 150 tokens/día, imágenes públicas sin licencia comercial, API solo de pago |
+| **Recraft** | Free = imágenes públicas sin licencia comercial; SVG nativo solo en API de pago |
+| **Creen** | No tiene API (solo web, útil para moodboards manuales) |
 
-1. **Iconos SVG del proyecto** → **Recraft** (único con SVG nativo real). El sistema de iconos de Ciszu es inline-first (`shared/icons/svg/outline` → registry): Recraft puede generar SVGs vectoriales listos para añadir al catálogo. Ejemplo API:
-   ```
-   POST https://external.api.recraft.ai/v1/images/generations
-   Authorization: Bearer <RECRAFT_API_KEY>
-   {"model": "recraftv4.1", "prompt": "...", "image_size": "1024x1024", "response_format": "svg"}
-   ```
-2. **Assets de juego MuzicMania** (covers de álbumes, skins de flechas, fondos) → **Leonardo** (consistencia de personajes, entrenar modelo con el estilo neon cyan/rosa de la marca) o **SiliconFlow** (FLUX barato para lotes).
-3. **Ideación rápida manual** → **Creen** (gratis, sin login, sin API).
+## Claves (vault `services/supabase/.env`, gitignored)
 
-## Plan de integración cuando existan claves
+- `HF_TOKEN` = token HF (cuenta nueva, type Read). Credenciales S3 de HF también guardadas (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `HF_S3_ENDPOINT=https://s3.hf.co`).
+- `GEMINI_API_KEY` = key Gemini nueva (proyecto 539098412240).
+- `SILICONFLOW_API_KEY` = key SiliconFlow (balance $1 de bienvenida).
+- **Endpoints HF probados**: `api-inference.huggingface.co` y `router.huggingface.co` fallan DNS en este PC (sin VPN); el SDK `@huggingface/inference` usa el router correctamente con la VPN activa. Las rutas raw antiguas (`/hf-internal/models/...`) dieron 404.
+- Verificación secretlint: correr `secretlint` sobre el repo tras estos cambios no muestra keys nuevas en archivos trackeados.
 
-- Crear `scripts/generate-art.js` (CLI): `node scripts/generate-art.js <proveedor> <prompt> <output>` que suba el resultado directo a `ciszu-cdn` vía CLI supabase (las `sb_secret_*` no valen para PUT, usar `supabase storage cp`).
-- Guardar claves en `services/supabase/.env` (gitignored) como `LEONARDO_API_KEY`, `RECRAFT_API_KEY`, `SILICONFLOW_API_KEY` — NUNCA en el repo ni en docs.
-- Antes de commit: rotar/revisar con secretlint si algún día se añaden keys.
+## Script de generación: `scripts/generate-art.js`
+
+CLI multi-provider con retry (503/hot aplicar backoff):
+
+```bash
+node scripts/generate-art.js --provider hf --subject "a cute cyberpunk female hacker" \
+  --outfit "wearing a fitted high-collar techwear jacket" \
+  --expression "dynamic standing pose with confident smirk" --count 2
+```
+
+- Usa la plantilla §§8.1/8.3 de ART_GUIDE por defecto (placeholders `[SUBJECT]`, `[OUTFIT_AND_ACCESSORIES]`, `[EXPRESSION_AND_POSE]` + prompt negativo oficial).
+- Default: 1024x576 (16:9), salida a `downloads/test/`, nombres `art_<YYYYMMDDHHMMSS>_<hex4>.png`.
+- Flags: `--provider hf|gemini|siliconflow`, `--subject/--outfit/--expression/--negative/--width/--height/--count/--out/--name/--model`.
+- `--provider gemini` requiere GEMINI_API_KEY y modelo de imagen con quota activa; `--provider siliconflow` requiere red sin geo-bloqueo.
+- Smoke test ejecutado 4 ago 2026: 2 imágenes FLUX válidas (PNG, ~780-890 KB) en `downloads/test/`.
+
+## Nota de red
+
+El PC tiene DNS inestable para dominios HF (intermitente: `huggingface.co`, `router.huggingface.co`, `api-inference.huggingface.co`). Con la VPN activa funcionó. Si falla mucho, es preferible activar VPN y no buscar vías alternativas (decisión del usuario).
+
+## Cierre de la tarea
+
+- Script listo y probado (`scripts/generate-art.js`).
+- `downloads/test/` es la carpeta de pruebas de salida (gitignored).
+- Subida final a `ciszu-cdn` pendiente de decisión: subir solo los assets aprobados con `pnpm cdn:upload` (los archivos en `downloads/` se subirían con la ruta del repo correspondiente).
 
 ## Pendiente del usuario
 
-- Crear cuentas y generar las 3 claves (Leonardo, Recraft, SiliconFlow) si se quiere automatizar. Creen no requiere nada.
-- Decidir presupuesto: free tier sirve para pruebas; producción real de assets cuesta ~$0.04-0.12/imagen.
+- **Rotar tokens**: los tokens se pegaron en el chat de opencode. Aunque el repo es privado y el vault está gitignored, conviene rotar `HF_TOKEN`, `GEMINI_API_KEY`, `SILICONFLOW_API_KEY` en sus paneles y actualizar `services/supabase/.env` con `scripts/update-env-keys.js`.
