@@ -10,14 +10,20 @@
 //   node scripts/ntfy-notif.js --clear                       (borra TODOS los mensajes, requiere token)
 //   node scripts/ntfy-notif.js "Titulo" "Mensaje" --voice     (adjunta AUDIO del mensaje sintetizado con Piper)
 //   node scripts/ntfy-notif.js "Mensaje" --voice sharvard     (voz femenina ES; voces: amy, ryan, bryce, sharvard, davefx)
+//   node scripts/ntfy-notif.js "Titulo" "Mensaje" --markdown  (mensaje con formato Markdown: **negritas**, links, code)
+//   node scripts/ntfy-notif.js "Titulo" "Mensaje" --delay 30m (entrega programada: 30m, 3h, "2 days", "tomorrow, 3pm", timestamp)
 //
 // Flags:
 //   --priority <min|low|default|high|urgent>   prioridad (default: default)
 //   --tag <tag>                                tag (emoji/categoría, p.ej. robot, warning, check)
 //   --title <texto>                            título explícito (alternativo a argv[2])
+//   --markdown                                 marca el mensaje como Markdown (se renderiza en la web app)
+//   --delay <duracion|"fecha natural">         entrega programada (X-Delay: 30m, 3h, "tomorrow, 3pm", Unix ts)
 //   --voice [voz]                              sintetiza el mensaje a audio (Piper) y lo adjunta al push.
 //                                              Sin valor usa la voz por defecto (sharvard — femenina ES).
-//                                              Un solo push con texto + audio: la app ntfy del móvil lo reproduce.
+//                                              Un solo push con texto + audio (el audio llega con nombre
+//                                              identificable, p.ej. ciszu-notif-20260805-...-aviso-....mp3).
+//                                              La app ntfy del móvil lo reproduce.
 //
 // Configuración (en orden de prioridad):
 //   1. Variables de entorno NOTIFY_TOPIC / NOTIFY_TOKEN
@@ -33,6 +39,10 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
 const SERVER = process.env.NOTIFY_SERVER || 'https://ntfy.sh';
+
+const { buildAudioName } = require(path.join(
+  ROOT, 'tools', 'opencode-voice', 'lib', 'ntfy-meta.js',
+));
 
 function readEnvFiles() {
   const files = [
@@ -75,7 +85,8 @@ function synthesizeVoice(text, voiceKey) {
   const piper = path.join(VOICE_ROOT, 'piper', 'piper', 'piper.exe');
   const ffmpeg = path.join(VOICE_ROOT, 'ffmpeg-9.0-essentials_build', 'bin', 'ffmpeg.exe');
   const model = path.join(VOICE_ROOT, 'piper-voices', voice.file);
-  const wav = path.join(ROOT, '.opencode-tmp', `notif_voice_${Date.now()}.wav`);
+  const mp3Name = buildAudioName({ tipo: 'notif', motivo: 'aviso', texto: text });
+  const wav = path.join(ROOT, '.opencode-tmp', mp3Name.replace(/\.mp3$/, '.wav'));
   const mp3 = wav.replace(/\.wav$/, '.mp3');
   if (!fs.existsSync(piper) || !fs.existsSync(ffmpeg) || !fs.existsSync(model)) return null;
 
@@ -99,7 +110,7 @@ function parseArgs(argv) {
     if (a.startsWith('--')) {
       const key = a.slice(2);
       const next = argv[i + 1];
-      if (key === 'priority' || key === 'tag' || key === 'title') {
+      if (key === 'priority' || key === 'tag' || key === 'title' || key === 'delay') {
         args.flags[key] = next;
         i++;
       } else if (key === 'voice') {
@@ -117,37 +128,15 @@ function parseArgs(argv) {
 
 const RETRY_DELAYS_MS = [1500, 4000, 10000];
 
-async function send({ title, message, priority, tag, audioPath }) {
-  const baseHeaders = {
-    Title: title,
-    Priority: String(PRIORITIES[priority] ?? 3),
-    Tags: tag || 'robot',
-  };
-  let body = message;
-  let isMultipart = false;
-  if (audioPath) {
-    const buf = fs.readFileSync(audioPath);
-    const form = new FormData();
-    form.append('message', message);
-    form.append('title', title);
-    form.append('file', new Blob([buf], { type: 'audio/mpeg' }), 'opencode-voz.mp3');
-    body = form;
-    isMultipart = true;
-  }
+// ntfy.sh IGNORA el filename del multipart (siempre "attachment.mp3") y decodifica
+// headers como latin1 (rompe tildes). Por eso TODO va como query params (UTF-8):
+// title/message/tags/priority + `f` = filename del adjunto.
+async function requestWithRetry(makeRequest) {
   let lastError = null;
   for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
     try {
-      const headers = isMultipart ? { ...baseHeaders } : baseHeaders;
-      if (isMultipart && TOKEN) headers.Authorization = `Bearer ${TOKEN}`;
-      const res = await fetch(`${SERVER}/${TOPIC}`, {
-        method: 'POST',
-        body,
-        headers,
-      });
-      if (res.ok) {
-        console.log(`Notificacion enviada a ${TOPIC}: ${title} (${message.slice(0, 60)}${message.length > 60 ? '…' : ''})${audioPath ? ' + audio' : ''}`);
-        return;
-      }
+      const res = await makeRequest();
+      if (res.ok) return res;
       const bodyText = await res.text().catch(() => '');
       lastError = `HTTP ${res.status} ${res.statusText}${bodyText ? ` — ${bodyText.slice(0, 200)}` : ''}`;
       if (res.status !== 429 && res.status < 500) break; // errores del cliente no se reintentan
@@ -160,6 +149,32 @@ async function send({ title, message, priority, tag, audioPath }) {
     }
   }
   throw new Error(`enviar a ${SERVER}/${TOPIC} fallo: ${lastError}`);
+}
+
+async function send({ title, message, priority, tag, audioPath, markdown, delay }) {
+  const params = new URLSearchParams({
+    title: title || '',
+    message,
+    tags: tag || 'robot',
+    priority: String(PRIORITIES[priority] ?? 3),
+  });
+  if (markdown) params.set('markdown', 'yes');
+  if (delay) params.set('delay', delay);
+  const headers = {};
+  if (TOKEN) headers.Authorization = `Bearer ${TOKEN}`;
+  if (audioPath) {
+    const buf = fs.readFileSync(audioPath);
+    params.set('f', path.basename(audioPath));
+    headers['Content-Type'] = 'audio/mpeg';
+    await requestWithRetry(() =>
+      fetch(`${SERVER}/${TOPIC}?${params}`, { method: 'PUT', body: buf, headers }),
+    );
+  } else {
+    await requestWithRetry(() =>
+      fetch(`${SERVER}/${TOPIC}?${params}`, { method: 'POST', body: '', headers }),
+    );
+  }
+  console.log(`Notificacion enviada a ${TOPIC}: ${title} (${message.slice(0, 60)}${message.length > 60 ? '…' : ''})${audioPath ? ' + audio' : ''}`);
 }
 
 async function listMessages() {
@@ -253,7 +268,7 @@ async function main() {
     }
   }
 
-  await send({ title, message, priority: flags.priority, tag: flags.tag, audioPath });
+  await send({ title, message, priority: flags.priority, tag: flags.tag, audioPath, markdown: flags.markdown, delay: flags.delay });
   if (audioPath) {
     try { fs.unlinkSync(audioPath); } catch {}
   }

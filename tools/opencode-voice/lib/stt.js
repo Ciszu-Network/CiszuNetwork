@@ -1,4 +1,4 @@
-// Speech-to-text: sox recording, whisper-cpp or API transcription, LLM normalization.
+﻿// Speech-to-text: sox recording, whisper-cpp or API transcription, LLM normalization.
 
 import fs from "node:fs";
 import path from "node:path";
@@ -683,6 +683,88 @@ async function doFilePipeline(kv, complete, client, toast, systemPrompt, submit,
   }
 }
 
+// ---- Ntfy audio (mobile publishes audio to the topic, PC transcribes) ----
+
+async function fetchLatestNtfyAudio(kv, logger) {
+  const topic = process.env.NOTIFY_TOPIC || "";
+  if (!topic) {
+    logger?.log("STT", "NOTIFY_TOPIC not set", "warn");
+    return { error: "NOTIFY_TOPIC not set" };
+  }
+  const headers = {};
+  const token = process.env.NOTIFY_TOKEN || "";
+  if (token) headers["Authorization"] = "Bearer " + token;
+
+  let resp;
+  try {
+    resp = await fetch(`https://ntfy.sh/${topic}/json?poll=1&since=all`, {
+      headers,
+      signal: AbortSignal.timeout(30000),
+    });
+  } catch (err) {
+    return { error: `ntfy fetch failed: ${err.message}` };
+  }
+  if (!resp.ok) return { error: `ntfy HTTP ${resp.status}` };
+
+  const text = await resp.text();
+  const msgs = text
+    .trim()
+    .split(/\n/)
+    .filter(Boolean)
+    .map((l) => {
+      try {
+        return JSON.parse(l);
+      } catch {
+        return null;
+      }
+    })
+    .filter((m) => m && m.event === "message" && m.attachment);
+
+  const audioMsgs = msgs.filter((m) => {
+    const name = m.attachment?.name || "";
+    const type = m.attachment?.type || "";
+    return type.startsWith("audio/") || AUDIO_EXTS.test(name) || AUDIO_EXTS.test(m.attachment?.url || "");
+  });
+  if (!audioMsgs.length) return { error: "No hay audio en el topic" };
+
+  const newest = audioMsgs[audioMsgs.length - 1];
+  const lastId = kv.get("stt.ntfyLastId", "");
+  if (lastId && newest.id === lastId) {
+    return { error: "No hay audio nuevo en ntfy (ya transcrito)" };
+  }
+
+  let fileResp;
+  try {
+    fileResp = await fetch(newest.attachment.url, { headers, signal: AbortSignal.timeout(60000) });
+  } catch (err) {
+    return { error: `descarga fallo: ${err.message}` };
+  }
+  if (!fileResp.ok) return { error: `descarga HTTP ${fileResp.status}` };
+
+  const buf = Buffer.from(await fileResp.arrayBuffer());
+  fs.mkdirSync(INBOX_DIR, { recursive: true });
+  const ext = (newest.attachment.name.match(/\.(\w+)$/)?.[1] || "wav").toLowerCase();
+  const target = path.join(INBOX_DIR, `ntfy-${newest.id}.${ext}`);
+  fs.writeFileSync(target, buf);
+  kv.set("stt.ntfyLastId", newest.id);
+  logger?.log(
+    "STT",
+    `ntfy audio downloaded: ${newest.attachment.name} (${buf.length} bytes) → ${target}`,
+    "debug",
+  );
+  return { file: target, meta: newest };
+}
+
+async function doNtfyPipeline(kv, complete, client, toast, systemPrompt, submit, logger) {
+  const res = await fetchLatestNtfyAudio(kv, logger);
+  if (res.error) {
+    toast(res.error, "warning");
+    return;
+  }
+  toast(`Audio recibido de ntfy: ${res.meta.attachment.name || "?"}`);
+  await doFilePipeline(kv, complete, client, toast, systemPrompt, submit, logger);
+}
+
 // ---- Public API for TUI plugin ----
 
 export function registerSTT(api, kv, complete, prompts, opts, logger) {
@@ -711,7 +793,7 @@ export function registerSTT(api, kv, complete, prompts, opts, logger) {
         ? "Toggle recording; press again to stop and transcribe via API"
         : "Toggle recording; press again to stop and transcribe",
       keybind: "ctrl+r",
-      slash: { name: "stt-record" },
+      slash: { name: "stt-record-pc" },
       onSelect() {
         if (processing) {
           toast("STT busy, please wait...");
@@ -733,7 +815,7 @@ export function registerSTT(api, kv, complete, prompts, opts, logger) {
         ? "Stop recording, transcribe via API, and submit prompt"
         : "Stop recording, transcribe, and submit prompt",
       keybind: "<leader>r",
-      slash: { name: "stt-submit" },
+      slash: { name: "stt-submit-pc" },
       onSelect() {
         if (processing) {
           toast("STT busy, please wait...");
@@ -751,7 +833,7 @@ export function registerSTT(api, kv, complete, prompts, opts, logger) {
       title: "STT: cancel recording",
       value: "stt.stop",
       description: "Cancel current recording",
-      slash: { name: "stt-stop" },
+      slash: { name: "stt-stop-pc" },
       onSelect() {
         if (recording) {
           recording = false;
@@ -765,7 +847,7 @@ export function registerSTT(api, kv, complete, prompts, opts, logger) {
       title: sttApiEndpoint ? "STT: select model (API)" : "STT: select model",
       value: "stt.model",
       description: sttApiEndpoint ? "Choose whisper model via API" : "Choose whisper model",
-      slash: { name: "stt-model" },
+      slash: { name: "stt-model-pc" },
       async onSelect() {
         if (sttApiEndpoint) {
           const current = kv.get("stt.api.model") || sttApiModel;
@@ -810,7 +892,7 @@ export function registerSTT(api, kv, complete, prompts, opts, logger) {
       title: "STT: select microphone",
       value: "stt.mic",
       description: "Choose audio input device",
-      slash: { name: "stt-mic" },
+      slash: { name: "stt-mic-pc" },
       onSelect() {
         const current = kv.get("stt.mic", "");
         const devices = listInputDevices();
@@ -851,7 +933,7 @@ export function registerSTT(api, kv, complete, prompts, opts, logger) {
       value: "stt.file",
       description:
         "Transcribe the newest audio file in E:/opencode-voice/tmp/inbox (phone upload) and append to prompt",
-      slash: { name: "stt-file" },
+      slash: { name: "stt-file-cel" },
       onSelect() {
         if (processing) {
           toast("STT busy, please wait...");
@@ -865,13 +947,41 @@ export function registerSTT(api, kv, complete, prompts, opts, logger) {
       value: "stt.file-submit",
       description:
         "Transcribe the newest inbox file and submit the prompt",
-      slash: { name: "stt-file-submit" },
+      slash: { name: "stt-file-submit-cel" },
       onSelect() {
         if (processing) {
           toast("STT busy, please wait...");
           return;
         }
         doFilePipeline(kv, complete, client, toast, systemPrompt, true, logger);
+      },
+    },
+    {
+      title: "STT: transcribe audio from ntfy topic",
+      value: "stt.ntfy",
+      description:
+        "Download the newest audio attachment from the ntfy topic (published from your phone) and append to prompt",
+      slash: { name: "stt-record-cel" },
+      onSelect() {
+        if (processing) {
+          toast("STT busy, please wait...");
+          return;
+        }
+        doNtfyPipeline(kv, complete, client, toast, systemPrompt, false, logger);
+      },
+    },
+    {
+      title: "STT: transcribe + submit audio from ntfy topic",
+      value: "stt.ntfy-submit",
+      description:
+        "Download the newest ntfy audio attachment and submit the prompt",
+      slash: { name: "stt-submit-cel" },
+      onSelect() {
+        if (processing) {
+          toast("STT busy, please wait...");
+          return;
+        }
+        doNtfyPipeline(kv, complete, client, toast, systemPrompt, true, logger);
       },
     },
   ];
