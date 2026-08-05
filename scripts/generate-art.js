@@ -123,7 +123,7 @@ async function generateHf(token, prompt, negative, width, height, model) {
 
 async function generateGemini(token, prompt, negative, width, height) {
   if (!token) throw new Error('GEMINI_API_KEY no configurada en el vault');
-  const model = 'gemini-2.5-flash-image';
+  const model = 'gemini-2.5-flash-preview-image';
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${token}`;
   const body = {
     contents: [{ parts: [{ text: `${prompt}\nNegative: ${negative}` }] }],
@@ -149,7 +149,7 @@ async function generateGemini(token, prompt, negative, width, height) {
 
 async function generateSiliconflow(token, prompt, negative, width, height, model) {
   if (!token) throw new Error('SILICONFLOW_API_KEY no configurada en el vault');
-  const url = 'https://api.siliconflow.cn/v1/images/generations';
+  const url = 'https://api.siliconflow.com/v1/images/generations';
   const body = {
     model: model || 'black-forest-labs/FLUX.1-schnell',
     prompt,
