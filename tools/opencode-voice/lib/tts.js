@@ -1,4 +1,4 @@
-// Text-to-speech: LLM normalization, Piper synthesis, sox playback.
+﻿// Text-to-speech: LLM normalization, Piper synthesis, sox playback.
 
 import fs from "node:fs";
 import path from "node:path";
@@ -6,6 +6,7 @@ import os from "node:os";
 import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
 import { getSessionTitle, completeWithRetry } from "./session.js";
+import { buildAudioName, buildNtfyMeta } from "./ntfy-meta.js";
 
 const VOICE_BASE = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 
@@ -384,19 +385,35 @@ export function registerTTS(api, kv, complete, prompts, logger) {
 
   // ---- Phone delivery (ntfy audio attachment) ----
 
-  async function sendToNtfy(mp3, topic, logger) {
+  const MOTIVO_TITLES = {
+    respuesta: "Ciszu · Respuesta por voz",
+    auto: "Ciszu · Tarea terminada",
+    notificar: "Ciszu · Aviso",
+    deploy: "Ciszu · Deploy",
+    check: "Ciszu · Check",
+    alerta: "Ciszu · Alerta",
+  };
+
+  async function sendToNtfy(mp3, topic, logger, meta = {}) {
     try {
       const buf = fs.readFileSync(mp3);
-      const form = new FormData();
-      form.append("file", new Blob([buf], { type: "audio/mpeg" }), "opencode-voz.mp3");
-      form.append("title", "opencode · respuesta por voz");
-      const headers = {};
+      // PUT + query params: el server ntfy.sh IGNORA el filename del multipart
+      // (siempre "attachment.mp3") y decodifica los headers como latin1 (tildes rotas).
+      // Con query params (UTF-8) conserva metadata Y nombre via parámetro `f`.
+      const params = new URLSearchParams();
+      for (const [key, value] of Object.entries(meta)) {
+        if (key !== "filename" && value !== undefined && value !== null && value !== "") {
+          params.set(key, String(value));
+        }
+      }
+      if (meta.filename) params.set("f", meta.filename);
+      const headers = { "Content-Type": "audio/mpeg" };
       const token = process.env.NOTIFY_TOKEN || "";
       if (token) headers["Authorization"] = "Bearer " + token;
-      const resp = await fetch(`https://ntfy.sh/${topic}`, {
-        method: "POST",
+      const resp = await fetch(`https://ntfy.sh/${topic}?${params}`, {
+        method: "PUT",
         headers,
-        body: form,
+        body: buf,
       });
       logger?.log?.("TTS", `ntfy audio send status=${resp.status}`, resp.ok ? "debug" : "error");
       return resp.ok;
@@ -411,7 +428,7 @@ export function registerTTS(api, kv, complete, prompts, logger) {
     }
   }
 
-  function synthToNtfy(text, logger) {
+  function synthToNtfy(text, logger, ctx = {}) {
     const topic = process.env.NOTIFY_TOPIC || "";
     if (!topic) {
       logger?.log?.("TTS", "NOTIFY_TOPIC not set, cannot send to phone", "warn");
@@ -423,7 +440,25 @@ export function registerTTS(api, kv, complete, prompts, logger) {
       toast(`Voice model not found: ${voiceModel.file}`, "warning");
       return Promise.resolve(false);
     }
-    const wav = path.join(AUDIO_DIR, `tts_phone_${Date.now()}.wav`);
+
+    const motivo = ctx.motivo || "respuesta";
+    const filename = buildAudioName({
+      tipo: "tts",
+      motivo,
+      sesion: ctx.sesion || "",
+      texto: text,
+    });
+    const meta = buildNtfyMeta({
+      filename,
+      title: ctx.title || MOTIVO_TITLES[motivo] || `Ciszu · ${motivo}`,
+      message: ctx.message || text.slice(0, 300),
+      tags: ctx.tags,
+      priority: ctx.priority,
+      click: ctx.click,
+      icon: ctx.icon,
+      actions: ctx.actions,
+    });
+    const wav = path.join(AUDIO_DIR, filename.replace(/\.mp3$/, ".wav"));
     const mp3 = wav.replace(/\.wav$/, ".mp3");
 
     return new Promise((resolve) => {
@@ -455,7 +490,7 @@ export function registerTTS(api, kv, complete, prompts, logger) {
             finish(false);
             return;
           }
-          sendToNtfy(mp3, topic, logger).then(finish);
+          sendToNtfy(mp3, topic, logger, meta).then(finish);
         });
       });
       if (piper.stdin) {
@@ -473,7 +508,7 @@ export function registerTTS(api, kv, complete, prompts, logger) {
       value: "tts.speak-last",
       description: "Read the last assistant response aloud (detailed)",
       keybind: "<leader>s",
-      slash: { name: "tts-speak" },
+      slash: { name: "tts-speak-pc" },
       onSelect() {
         speakLastResponse();
       },
@@ -483,7 +518,7 @@ export function registerTTS(api, kv, complete, prompts, logger) {
       value: "tts.mode",
       description: "Toggle auto text-to-speech on/off",
       keybind: "<leader>v",
-      slash: { name: "tts-mode" },
+      slash: { name: "tts-mode-pc" },
       onSelect() {
         const current = kv.get("tts.mode", "off");
         const next = current === "on" ? "off" : "on";
@@ -499,7 +534,7 @@ export function registerTTS(api, kv, complete, prompts, logger) {
       value: "tts.stop",
       description: "Stop current TTS playback",
       keybind: "escape",
-      slash: { name: "tts-stop" },
+      slash: { name: "tts-stop-pc" },
       onSelect() {
         if (stopSpeech()) toast("TTS stopped");
       },
@@ -508,7 +543,7 @@ export function registerTTS(api, kv, complete, prompts, logger) {
       title: "TTS: select voice",
       value: "tts.voice",
       description: "Choose TTS voice",
-      slash: { name: "tts-voice" },
+      slash: { name: "tts-voice-pc" },
       onSelect() {
         const current = kv.get("tts.voice", DEFAULT_TTS_VOICE);
         api.ui.dialog.replace(() =>
@@ -532,7 +567,7 @@ export function registerTTS(api, kv, complete, prompts, logger) {
       title: "TTS: send last response to phone (ntfy)",
       value: "tts.phone",
       description: "Synthesize last response and push the audio to your phone via ntfy",
-      slash: { name: "tts-phone" },
+      slash: { name: "tts-speak-cel" },
       async onSelect() {
         const result = await getTurnAssistantText(client, api);
         if (!result || !result.text) {
@@ -546,7 +581,14 @@ export function registerTTS(api, kv, complete, prompts, logger) {
           return;
         }
         toast("Synthesizing and sending...");
-        const ok = await synthToNtfy(llmResult.text, logger);
+        const sessionID = api.route.current?.params?.sessionID;
+        const sesion = (await getSessionTitle(client, sessionID)) || "";
+        const ok = await synthToNtfy(llmResult.text, logger, {
+          motivo: "respuesta",
+          sesion,
+          tags: ["robot"],
+          priority: 3,
+        });
         toast(ok ? "Audio enviado a tu móvil" : "Error enviando el audio", ok ? "success" : "error");
       },
     },

@@ -1,4 +1,4 @@
-[![CI](https://github.com/renjfk/opencode-voice/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/renjfk/opencode-voice/actions/workflows/ci.yml)
+﻿[![CI](https://github.com/renjfk/opencode-voice/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/renjfk/opencode-voice/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![npm](https://img.shields.io/npm/v/@renjfk/opencode-voice)](https://www.npmjs.com/package/@renjfk/opencode-voice)
 [![Downloads](https://img.shields.io/npm/dm/@renjfk/opencode-voice)](https://www.npmjs.com/package/@renjfk/opencode-voice)
@@ -173,7 +173,7 @@ plugin on a machine without whisper-cpp installed.
 ```
 
 - `sttEndpoint` _(optional)_ - OpenAI-compatible base URL with `/audio/transcriptions` support
-- `sttModel` _(optional)_ - whisper model name to pass to the API (default: `whisper-large-v3-turbo`). Can be changed at runtime via `/stt-model`, which fetches available whisper models from the endpoint's `/models` listing
+- `sttModel` _(optional)_ - whisper model name to pass to the API (default: `whisper-large-v3-turbo`). Can be changed at runtime via `/stt-model-pc`, which fetches available whisper models from the endpoint's `/models` listing
 - `sttApiKeyEnv` _(optional)_ - environment variable containing the API key
 
 OpenRouter note: when `sttEndpoint` points at `https://openrouter.ai/api/v1`, the plugin automatically uses OpenRouter's JSON/base64 transcription request format instead of multipart upload.
@@ -207,27 +207,42 @@ If a path is not set, the built-in default prompt is used.
 
 ## Commands
 
-### Speech-to-text
+Naming convention: PC commands end in `-pc`, mobile commands end in `-cel`.
+Mobile recording means downloading the latest audio pushed to the ntfy topic
+(`/stt-record-cel`); mobile listening means sending the last response audio
+to the phone via ntfy push (`/tts-speak-cel`).
 
-| Command       | Keybind    | Description                            |
-| ------------- | ---------- | -------------------------------------- |
-| `/stt-record` | `ctrl+r`   | Start/stop recording + transcribe      |
-| `/stt-submit` | `leader+r` | Stop recording, transcribe, and submit |
-| `/stt-stop`   |            | Cancel recording                       |
-| `/stt-model`  |            | Select whisper model                   |
-| `/stt-mic`    |            | Select microphone                      |
+### Speech-to-text (PC)
+
+| Command          | Keybind    | Description                            |
+| ---------------- | ---------- | -------------------------------------- |
+| `/stt-record-pc` | `ctrl+r`   | Start/stop recording + transcribe      |
+| `/stt-submit-pc` | `leader+r` | Stop recording, transcribe, and submit |
+| `/stt-stop-pc`   |            | Cancel recording                       |
+| `/stt-model-pc`  |            | Select whisper model                   |
+| `/stt-mic-pc`    |            | Select microphone                      |
+
+### Speech-to-text (mobile)
+
+| Command                | Keybind | Description                                             |
+| ---------------------- | ------- | ------------------------------------------------------- |
+| `/stt-record-cel`      |         | Transcribe latest audio pushed via ntfy                 |
+| `/stt-submit-cel`      |         | Transcribe latest ntfy audio and submit as prompt       |
+| `/stt-file-cel`        |         | Transcribe latest audio from SFTP inbox (mobile)        |
+| `/stt-file-submit-cel` |         | Transcribe latest inbox audio and submit as prompt      |
 
 ### Text-to-speech
 
 The `leader` key in OpenCode is `ctrl+x`. So `leader+s` means press `ctrl+x`
 then `s`.
 
-| Command      | Keybind    | Description              |
-| ------------ | ---------- | ------------------------ |
-| `/tts-speak` | `leader+s` | Read last response aloud |
-| `/tts-mode`  | `leader+v` | Toggle auto TTS on/off   |
-| `/tts-stop`  | `escape`   | Stop playback            |
-| `/tts-voice` |            | Select TTS voice         |
+| Command          | Keybind    | Description                                     |
+| ---------------- | ---------- | ----------------------------------------------- |
+| `/tts-speak-pc`  | `leader+s` | Read last response aloud                        |
+| `/tts-mode-pc`   | `leader+v` | Toggle auto TTS on/off                          |
+| `/tts-stop-pc`   | `escape`   | Stop playback                                   |
+| `/tts-voice-pc`  |            | Select TTS voice                                |
+| `/tts-speak-cel` |            | Send last response audio via ntfy push (mobile) |
 
 ## How it works
 
@@ -240,7 +255,7 @@ then `s`.
    corrects software engineering homophones ("Jason" to "JSON", "bullion" to
    "boolean", etc.)
 4. Cleaned text is appended to the OpenCode prompt, or submitted immediately
-   when `/stt-submit` is used. If normalization fails (e.g. LLM endpoint
+   when `/stt-submit-pc` is used. If normalization fails (e.g. LLM endpoint
    unreachable), the raw transcription is used as a fallback so you never lose
    your input
 
@@ -254,7 +269,7 @@ then `s`.
 
 ### Auto TTS
 
-When enabled (`/tts-mode`), the plugin automatically speaks:
+When enabled (`/tts-mode-pc`), the plugin automatically speaks:
 
 - Assistant responses when a session goes idle after work
 - Permission requests
