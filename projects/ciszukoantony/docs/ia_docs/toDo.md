@@ -1,24 +1,15 @@
-# To Do List — Ciszuko Antony Portfolio
+# To Do List — Ciszuko Antony
 
 > Este archivo solo puede ser editado por Ciszuko Antony.
 
-## Prioridad Alta
-- [ ] **CDN Migration**: Migrar assets multimedia del portfolio a Supabase Storage
-- [ ] **Push + deploy** del website después de CDN
-- [ ] Mejorar sección de proyectos
-- [ ] Añadir galería de trabajos (imágenes desde CDN)
-
 ## Prioridad Media
-- [ ] Integrar blog personal
-- [ ] Conectar redes sociales
+
+- [ ] Integrar blog personal en CIszukoAntony Website como Portafolio.
+- [ ] Conectar redes sociales en CIszukoAntony.
 - [ ] Integrar formulario de contacto funcional (Supabase)
+- [ ] Subir ultimos videos guardados en Davinci Resolve a youtube.o
 
 ## Prioridad Baja
-- [ ] Modo oscuro / tema personalizable
-- [ ] PWA para mobile
-- [ ] Analytics de visitas
 
-## Completado
-- [x] Documentación completa (txt, md, docx, pdf)
-- [x] ia_docs reestructurados (10 archivos)
-- [x] public/docs/ creado en website/
+- [ ] Modo oscuro / tema personalizable.
+- [ ] PWA para mobile.
