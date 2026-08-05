@@ -27,4 +27,4 @@ Este es el repositorio privado del juego, migrado a una arquitectura Full-Stack 
    npx supabase db push
    ```
 
-*Nota: La documentación interna y de agentes IA se encuentra en la carpeta `/supabase/ia/ia_docs/`.*
+*Nota: La documentación interna y de agentes IA se encuentra en la carpeta `/supabase/ia/documentation/`.*

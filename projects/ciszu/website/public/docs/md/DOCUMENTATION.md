@@ -51,7 +51,7 @@ ESTRUCTURA DE DOCUMENTACIÓN POR PROYECTO
 
 [proyecto]/
 └── docs/
-    ├── ia_docs/    # Documentación técnica para IA (Markdown)
+    ├── documentation/    # Documentación técnica para IA (Markdown)
     ├── txt/        # Documentos fuente en texto plano
     ├── md/         # Documentos en formato Markdown
     ├── docx/       # Documentos de Microsoft Word
@@ -94,13 +94,13 @@ ESTÁNDARES DE FORMATEO (DOCX/PDF)
 - Numeración de páginas en PDF
 
 IA_DOCS (Documentación para Agentes de IA)
-Cada proyecto tiene ia_docs/ con la siguiente estructura estándar:
+Cada proyecto tiene documentation/ con la siguiente estructura estándar:
   AGENT_INSTRUCTIONS.md, AGENT_SECURITY_PROTOCOLS.md, ARCHITECTURE.md,
   INITIAL_PROMPT.md, MIGRATION_HANDOVER.md, PROJECT_HISTORY.md,
   PROJECT_STATE.md, PROJECTS.md, STACK.md, STATUS.md, TO_DO_LIST.md,
   WORKFLOW.md
 
-El proyecto de referencia para ia_docs es MuzicMania (19 archivos).
+El proyecto de referencia para documentation es MuzicMania (19 archivos).
 
 CDN Y ASSETS
 - Los assets multimedia se sirven desde Supabase Storage (bucket ciszu-assets)
@@ -182,10 +182,10 @@ via scripts:
   - ACTA.docx, ACTA.pdf
 
 IA_DOCS (Documentation for AI Agents)
-Each project has ia_docs/ with the following standard structure:
+Each project has documentation/ with the following standard structure:
   AGENT_INSTRUCTIONS.md, AGENT_SECURITY_PROTOCOLS.md, ARCHITECTURE.md,
   INITIAL_PROMPT.md, MIGRATION_HANDOVER.md, PROJECT_HISTORY.md,
   PROJECT_STATE.md, PROJECTS.md, STACK.md, STATUS.md, TO_DO_LIST.md,
   WORKFLOW.md
 
-The reference project for ia_docs is MuzicMania (19 files).
+The reference project for documentation is MuzicMania (19 files).

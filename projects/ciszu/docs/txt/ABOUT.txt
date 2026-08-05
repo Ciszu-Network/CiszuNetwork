@@ -81,12 +81,12 @@ Cada proyecto mantiene documentación en 4 formatos:
 - DOCX: Microsoft Word para edición
 - PDF: Documento portátil para distribución
 
-Además, cada proyecto tiene ia_docs/ con documentación técnica para agentes de IA,
+Además, cada proyecto tiene documentation/ con documentación técnica para agentes de IA,
 siguiendo una estructura estandarizada de 12-19 archivos.
 
 ESTADO GENERAL DEL MONOREPO
 - Documentación: ✅ Completa en todos los proyectos
-- ia_docs: ✅ Reestructurados siguiendo modelo estandarizado
+- documentation: ✅ Reestructurados siguiendo modelo estandarizado
 - Formatos: ✅ txt, md, docx, pdf generados automáticamente
 - public/docs/: ✅ Creado en todos los websites
 - CI/CD: ✅ GitHub Actions funcionando
@@ -173,12 +173,12 @@ Each project maintains documentation in 4 formats:
 - DOCX: Microsoft Word for editing
 - PDF: Portable document for distribution
 
-Additionally, each project has ia_docs/ with technical documentation for AI agents,
+Additionally, each project has documentation/ with technical documentation for AI agents,
 following a standardized structure of 12-19 files.
 
 MONOREPO GENERAL STATUS
 - Documentation: ✅ Complete in all projects
-- ia_docs: ✅ Restructured following standardized model
+- documentation: ✅ Restructured following standardized model
 - Formats: ✅ txt, md, docx, pdf generated automatically
 - public/docs/: ✅ Created in all websites
 - CI/CD: ✅ GitHub Actions operational
