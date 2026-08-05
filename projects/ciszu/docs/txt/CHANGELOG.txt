@@ -12,12 +12,12 @@ REGISTRO DE CAMBIOS / CHANGELOG
 v2.0.0 (2026-07-28) — Documentación Completa del Monorepo
 - Reestructuración completa de documentación en todos los proyectos
 - Pipeline automatizado txt → md → docx → pdf implementado
-- ia_docs reescritos en todos los proyectos siguiendo modelo MuzicMania
+- documentation reescritos en todos los proyectos siguiendo modelo MuzicMania
 - public/docs/ creado en todos los websites del monorepo
 - Scripts de automatización: txt2md.js, md2office.js, txt2pdf.py, docx2pdf.ps1, sync-public-docs.js
 - Instalación de Pandoc 3.10 y Reportlab para generación de documentos
 - Contenido real escrito para todos los proyectos (reemplazando placeholders de MuzicMania)
-- Estructura de ia_docs estandarizada con 12-19 archivos por proyecto
+- Estructura de documentation estandarizada con 12-19 archivos por proyecto
 - Corrección de junctions rotas en projects/ciszu/website/public/
 
 v1.0.0 (2026-07-14) — Estructura Inicial del Monorepo
@@ -35,12 +35,12 @@ v1.0.0 (2026-07-14) — Estructura Inicial del Monorepo
 v2.0.0 (2026-07-28) — Complete Monorepo Documentation
 - Complete documentation restructuring in all projects
 - Automated pipeline txt → md → docx → pdf implemented
-- ia_docs rewritten in all projects following MuzicMania model
+- documentation rewritten in all projects following MuzicMania model
 - public/docs/ created in all monorepo websites
 - Automation scripts: txt2md.js, md2office.js, txt2pdf.py, docx2pdf.ps1, sync-public-docs.js
 - Pandoc 3.10 and Reportlab installed for document generation
 - Real content written for all projects (replacing MuzicMania placeholders)
-- Standardized ia_docs structure with 12-19 files per project
+- Standardized documentation structure with 12-19 files per project
 - Fixed broken junctions in projects/ciszu/website/public/
 
 v1.0.0 (2026-07-14) — Initial Monorepo Structure

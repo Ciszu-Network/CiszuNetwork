@@ -90,8 +90,8 @@ pnpm --filter <nombre> dev # probar tu app individualmente
 
 - `README.md` — estructura, quick start, CDN, Supabase, CI/CD.
 - `AGENTS.md` — gestión del multiworkspace, gotchas y checklist de implementación.
-- `projects/ciszu/docs/ia_docs/CODE_PRINCIPLES.md` — estándares de ingeniería (DRY, KISS, SOLID…).
-- `projects/ciszu/docs/ia_docs/DEVSECOPS.md` — SAST/DAST, shift-left y herramientas.
+- `projects/ciszu/docs/documentation/CODE_PRINCIPLES.md` — estándares de ingeniería (DRY, KISS, SOLID…).
+- `projects/ciszu/docs/documentation/DEVSECOPS.md` — SAST/DAST, shift-left y herramientas.
 - `apis/bruno/` — colecciones API (OpenCollection YAML): `pnpm api:test`.
 
 ---

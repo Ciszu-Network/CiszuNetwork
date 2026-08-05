@@ -11,7 +11,7 @@ muzicmania/
 │   ├── docx/               # Documentos en formato Word
 │   ├── md/                 # Documentos en Markdown
 │   ├── pdf/                # Documentos en PDF
-│   └── ia_docs/            # Documentación para IAs
+│   └── documentation/            # Documentación para IAs
 ├── website/                # Sitio web (si aplica)
 └── README.md               # Este archivo
 ```

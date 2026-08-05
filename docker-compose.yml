@@ -1,6 +1,6 @@
 # ─── Docker Compose — Ciszu Network (dev local) ───
 # Levanta el bot de Discord y Supabase local (Postgres 17).
-# Requisitos: Docker Desktop + WSL2. Ver docs/ia_docs/DOCKER.md
+# Requisitos: Docker Desktop + WSL2. Ver docs/documentation/DOCKER.md
 #
 # Uso:
 #   docker compose up -d            # bot + supabase local

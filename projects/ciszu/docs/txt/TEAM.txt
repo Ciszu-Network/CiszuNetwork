@@ -33,7 +33,7 @@ Diseño y Creatividad:
 
 Documentación:
 - Sistema de documentación multi-formato
-- Documentación técnica para IA (ia_docs)
+- Documentación técnica para IA (documentation)
 - Estándares de documentación del monorepo
 
 Comunidad:
@@ -79,7 +79,7 @@ Design and Creativity:
 
 Documentation:
 - Multi-format documentation system
-- Technical documentation for AI (ia_docs)
+- Technical documentation for AI (documentation)
 - Monorepo documentation standards
 
 Community:

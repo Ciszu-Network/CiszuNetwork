@@ -8,7 +8,7 @@ Monorepo principal de **Ciszu Network** — el ecosistema digital de **CiszukoAn
 │   ├── ciszu/                # Web principal CiszuNetwork (ciszunetwork.vercel.app)
 │   │   ├── website/          #   Next.js — ciszunetwork-website
 │   │   ├── content/          #   Multimedia (banners, flayers, logos)
-│   │   └── docs/             #   Documentación (incl. ia_docs/)
+│   │   └── docs/             #   Documentación (incl. documentation/)
 │   ├── ciszukoantony/        # Portfolio personal (ciszukoantony.vercel.app)
 │   │   ├── website/          #   Next.js — ciszukoantony-website
 │   │   ├── content/          #   Multimedia + logos (fuente maestra)
@@ -43,7 +43,7 @@ Monorepo principal de **Ciszu Network** — el ecosistema digital de **CiszukoAn
 └── docs/                      # ⚠️ Movido dentro de projects/ciszu/docs/
 ```
 
-> **Estructura 2.5 (ago 2026)**: la estructura antigua (`apps/...`, `public/...`, `assets/`) fue restructurada a `projects/`. Cada producto vive bajo `projects/<nombre>/` con su `website/`, `content/` y `docs/` propios. La documentación general (`docs/ia_docs/`) vive en `projects/ciszu/docs/ia_docs/`. Los clientes API de Bruno viven en `apis/bruno/` (antes `apis-client/bruno/`).
+> **Estructura 2.5 (ago 2026)**: la estructura antigua (`apps/...`, `public/...`, `assets/`) fue restructurada a `projects/`. Cada producto vive bajo `projects/<nombre>/` con su `website/`, `content/` y `docs/` propios. La documentación general (`docs/documentation/`) vive en `projects/ciszu/docs/documentation/`. Los clientes API de Bruno viven en `apis/bruno/` (antes `apis-client/bruno/`).
 >
 > **Terminología**: cada producto web es un **website** (cúmulo de webpages). Los pnpm filter names, workflows y carpetas usan `-website` (nunca `-webpage`).
 
@@ -101,15 +101,15 @@ Cada deploy se dispara con cambios en el `projects/<proyecto>/**`, `packages/**`
 - **XSS**: nunca `innerHTML`/`dangerouslySetInnerHTML` sin escapar; usa `escapeHtml()` o `textContent`; DOMPurify el entrante.
 - **SQL Injection**: siempre ORM parametrizado o RPC — nunca concatenar.
 - **Secrets**: `secretlint` + `gitleaks` en pre-commit (hook); rotar credenciales si el repo se hace público.
-- **DevSecOps**: SAST (Semgrep), DAST (ZAP), dependencias (pnpm audit, trivy, cargo audit), advisors de Supabase verificados tras cada cambio de policies/functions. Detalles: `projects/ciszu/docs/ia_docs/DEVSECOPS.md`.
+- **DevSecOps**: SAST (Semgrep), DAST (ZAP), dependencias (pnpm audit, trivy, cargo audit), advisors de Supabase verificados tras cada cambio de policies/functions. Detalles: `projects/ciszu/docs/documentation/DEVSECOPS.md`.
 - **Advisors Supabase**: usar SECURITY INVOKER siempre que sea posible; envolver `auth.*()` en `(SELECT …)`; separar políticas RLS por comando (no ALL).
 
 ## Documentación
 
-- Estándares de ingeniería: `projects/ciszu/docs/ia_docs/CODE_PRINCIPLES.md`
-- DevSecOps: `projects/ciszu/docs/ia_docs/DEVSECOPS.md`
-- Herramientas de desarrollo: `projects/ciszu/docs/ia_docs/TOOLS.md`
-- Estado de los proyectos y migraciones: `projects/ciszu/docs/ia_docs/PROJECT_STATE.md`
+- Estándares de ingeniería: `projects/ciszu/docs/documentation/CODE_PRINCIPLES.md`
+- DevSecOps: `projects/ciszu/docs/documentation/DEVSECOPS.md`
+- Herramientas de desarrollo: `projects/ciszu/docs/documentation/TOOLS.md`
+- Estado de los proyectos y migraciones: `projects/ciszu/docs/documentation/PROJECT_STATE.md`
 - Docs de cada producto en `projects/<project>/docs/`.
 - AGENTS.md en la raíz: gestión de multiworkspace, gotchas y checklist de implementación.
 
