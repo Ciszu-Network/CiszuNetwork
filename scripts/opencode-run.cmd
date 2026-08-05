@@ -22,14 +22,14 @@ if errorlevel 1 goto not_admin
 rem Admin + consola local. Si NO estamos en Windows Terminal, abrir ahí una pestaña nueva.
 if defined WT_SESSION goto reload
 echo [opencode] Abriendo en Windows Terminal...
-powershell -NoProfile -Command "Start-Process wt.exe -WorkingDirectory '%~dp0' -ArgumentList 'cmd','/c','%~f0'"
+powershell -NoProfile -Command "Start-Process wt.exe -WorkingDirectory '%~sdp0' -ArgumentList 'cmd','/c','%~s0'"
 ping -n 4 127.0.0.1 >nul
 exit /b 0
 
 :not_admin
 rem Consola local sin admin: relanzar elevado dentro de Windows Terminal (UAC).
 echo [opencode] Elevando a administrador en Windows Terminal...
-powershell -NoProfile -Command "Start-Process wt.exe -Verb RunAs -WorkingDirectory '%~dp0' -ArgumentList 'cmd','/c','%~f0'"
+powershell -NoProfile -Command "Start-Process wt.exe -Verb RunAs -WorkingDirectory '%~sdp0' -ArgumentList 'cmd','/c','%~s0'"
 ping -n 4 127.0.0.1 >nul
 exit /b 0
 
