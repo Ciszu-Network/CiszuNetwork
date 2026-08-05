@@ -5,13 +5,16 @@ import path from "node:path";
 import os from "node:os";
 import { fileURLToPath } from "node:url";
 import { spawn, execSync } from "node:child_process";
-import { getActiveSessionTitle } from "./session.js";
+import { getActiveSessionTitle, completeWithRetry } from "./session.js";
 
 const VOICE_BASE = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 
 let sttApiEndpoint = null;
 let sttApiModel = null;
 let sttApiKeyEnv = null;
+
+const DEVICE_CACHE_TTL = 30000;
+let deviceCache = { at: 0, devices: null };
 
 const WAV_FILE =
   process.platform === "win32"
@@ -89,31 +92,53 @@ function getModelsDir() {
 }
 
 function listInputDevices() {
-  if (process.platform === "win32") {
+  if (process.platform !== "win32") {
     try {
-      const out = execSync("ffmpeg -hide_banner -list_devices true -f dshow -i dummy", {
+      const json = execSync("system_profiler SPAudioDataType -json 2>/dev/null", {
+        encoding: "utf-8",
+        timeout: 5000,
+      });
+      const data = JSON.parse(json);
+      return (data.SPAudioDataType?.[0]?._items || [])
+        .filter((d) => d.coreaudio_input_source != null)
+        .map((d) => d.coreaudio_device_name || d._name);
+    } catch {
+      return [];
+    }
+  }
+
+  const now = Date.now();
+  if (deviceCache.devices && now - deviceCache.at < DEVICE_CACHE_TTL) {
+    return deviceCache.devices;
+  }
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const out = execSync("ffmpeg -hide_banner -list_devices true -f dshow -i dummy 2>&1", {
         encoding: "utf-8",
         timeout: 10000,
       });
       const devices = [];
       for (const m of out.matchAll(/"([^"]+)"\s+\(audio\)/g)) devices.push(m[1]);
-      return devices;
+      if (devices.length > 0) {
+        deviceCache = { at: Date.now(), devices };
+        return devices;
+      }
+      if (attempt < 3) {
+        execSync("powershell -NoProfile -Command \"Start-Sleep -Milliseconds 500\"", {
+          stdio: "ignore",
+          timeout: 3000,
+        });
+      }
     } catch {
-      return [];
+      if (attempt < 3) {
+        execSync("powershell -NoProfile -Command \"Start-Sleep -Milliseconds 500\"", {
+          stdio: "ignore",
+          timeout: 3000,
+        });
+      }
     }
   }
-  try {
-    const json = execSync("system_profiler SPAudioDataType -json 2>/dev/null", {
-      encoding: "utf-8",
-      timeout: 5000,
-    });
-    const data = JSON.parse(json);
-    return (data.SPAudioDataType?.[0]?._items || [])
-      .filter((d) => d.coreaudio_input_source != null)
-      .map((d) => d.coreaudio_device_name || d._name);
-  } catch {
-    return [];
-  }
+  return [];
 }
 
 // ---- Recording state and control ----
@@ -154,13 +179,18 @@ function startRecording(kv, toast, logger) {
   logger?.log("STT", `Starting recording mic=${mic || "system default"}`, "debug");
 
   if (process.platform === "win32") {
-    const devices = listInputDevices();
-    const device = mic || devices[0] || "";
+    const device = mic || listInputDevices()[0] || "";
     if (!device) {
       logger?.log("STT", "No microphone found", "error");
       recording = false;
       toast("No microphone found", "error");
       return;
+    }
+    if (!mic) {
+      try {
+        kv.set("stt.mic", device);
+        logger?.log("STT", `Saved default mic to kv: ${device}`, "debug");
+      } catch {}
     }
     soxProc = spawn(
       "ffmpeg",
@@ -278,13 +308,29 @@ function transcribe(kv, logger, filePath = WAV_FILE) {
     return Promise.resolve({ error: "Recording is empty - no audio captured" });
   }
 
+  const cpus = os.cpus().length || 4;
+  const threads = Math.min(cpus, 16);
+  const args = ["-m", mp, "-f", filePath, "-np", "-nt", "-t", String(threads), "-p", String(cpus)];
+  const lang = kv.get("stt.lang", "es");
+  if (lang) args.push("-l", lang);
+  logger?.log("STT", `whisper-cli threads=${threads} processors=${cpus} lang=${lang || "auto"}`, "debug");
+
   return new Promise((resolve) => {
     let stdout = "";
     let stderr = "";
-    const proc = spawn("whisper-cli", ["-m", mp, "-f", filePath, "-np", "-nt"], {
+    const proc = spawn("whisper-cli", args, {
       stdio: ["ignore", "pipe", "pipe"],
+      windowsHide: true,
     });
     logger?.log("STT", `Started whisper-cli pid=${proc.pid}`, "debug");
+
+    try {
+      os.setPriority(proc.pid, os.constants.priority.PRIORITY_ABOVE_NORMAL);
+    } catch {
+      try {
+        os.setPriority(proc.pid, os.constants.priority.PRIORITY_NORMAL);
+      } catch {}
+    }
 
     proc.stdout.on("data", (chunk) => {
       stdout += chunk.toString();
@@ -293,20 +339,12 @@ function transcribe(kv, logger, filePath = WAV_FILE) {
       stderr += chunk.toString();
     });
 
-    const timer = setTimeout(() => {
-      proc.kill("SIGKILL");
-      logger?.log("STT", "whisper-cli timed out after 60s", "error");
-      resolve({ error: "Transcription timed out (60s)" });
-    }, 60000);
-
     proc.on("error", (err) => {
-      clearTimeout(timer);
       logger?.log("STT", `whisper-cli error: ${err.message}`, "error");
       resolve({ error: `Transcription failed: ${err.message}` });
     });
 
     proc.on("exit", (code) => {
-      clearTimeout(timer);
       if (code !== 0) {
         logger?.log("STT", `whisper-cli exited code=${code} stderr=${stderr.trim()}`, "error");
         resolve({ error: stderr.trim().split("\n").pop() || `whisper-cli exited (code=${code})` });
@@ -361,11 +399,15 @@ async function normalizeTranscription(complete, rawText, sessionTitle, systemPro
   const system = `${systemPrompt}${contextLine}`;
 
   logger?.log("STT", `Normalizing transcription chars=${rawText.length}`, "debug");
-  const result = await complete({
-    system,
-    prompt: `Clean up this speech-to-text transcription:\n\n${rawText}`,
-  });
-  return result;
+  return completeWithRetry(
+    complete,
+    {
+      system,
+      prompt: `Clean up this speech-to-text transcription:\n\n${rawText}`,
+    },
+    logger,
+    "STT",
+  );
 }
 
 async function getApiModels(logger) {

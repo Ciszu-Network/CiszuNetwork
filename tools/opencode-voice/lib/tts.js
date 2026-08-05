@@ -5,7 +5,7 @@ import path from "node:path";
 import os from "node:os";
 import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
-import { getSessionTitle } from "./session.js";
+import { getSessionTitle, completeWithRetry } from "./session.js";
 
 const VOICE_BASE = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 
@@ -15,11 +15,12 @@ const VOICES_DIR =
     : path.join(os.homedir(), ".local", "share", "piper-voices");
 
 const TTS_VOICES = {
+  daniela: { label: "Daniela (high, ES-AR - female)", file: "es_AR-daniela-high.onnx" },
+  sharvard: { label: "Sharvard (medium, ES - female)", file: "es_ES-sharvard-medium.onnx", speaker: 1 },
   amy: { label: "Amy (medium, EN - female)", file: "en_US-amy-medium.onnx" },
   ryan: { label: "Ryan (high, EN)", file: "en_US-ryan-high.onnx" },
   bryce: { label: "Bryce (medium, EN)", file: "en_US-bryce-medium.onnx" },
-  sharvard: { label: "Sharvard (medium, ES - female)", file: "es_ES-sharvard-medium.onnx" },
-  davefx: { label: "Davefx (medium, ES)", file: "es_ES-davefx-medium.onnx" },
+  davefx: { label: "Davefx (medium, ES - male)", file: "es_ES-davefx-medium.onnx" },
 };
 const DEFAULT_TTS_VOICE = "sharvard";
 
@@ -127,7 +128,13 @@ export function registerTTS(api, kv, complete, prompts, logger) {
   function getVoiceModel() {
     const voice = kv.get("tts.voice", DEFAULT_TTS_VOICE);
     const entry = TTS_VOICES[voice] || TTS_VOICES[DEFAULT_TTS_VOICE];
-    return path.join(VOICES_DIR, entry.file);
+    return { file: path.join(VOICES_DIR, entry.file), speaker: entry.speaker };
+  }
+
+  function piperArgs(voiceModel) {
+    const args = ["-m", voiceModel.file, "--output_raw"];
+    if (voiceModel.speaker !== undefined) args.push("-s", String(voiceModel.speaker));
+    return args;
   }
 
   function piperOnPath() {
@@ -142,11 +149,16 @@ export function registerTTS(api, kv, complete, prompts, logger) {
 
   async function normalizeForSpeech(text, systemPrompt) {
     logger?.log?.("TTS", `Normalizing speech chars=${text.length}`, "debug");
-    return complete({
-      system: systemPrompt,
-      prompt: `Convert for text-to-speech:\n\n${text}`,
-      config: { maxTokens: 4096 },
-    });
+    return completeWithRetry(
+      complete,
+      {
+        system: systemPrompt,
+        prompt: `Convert for text-to-speech:\n\n${text}`,
+        config: { maxTokens: 4096 },
+      },
+      logger,
+      "TTS",
+    );
   }
 
   // ---- Audio pipeline ----
@@ -177,15 +189,15 @@ export function registerTTS(api, kv, complete, prompts, logger) {
     killProcs();
 
     const voiceModel = getVoiceModel();
-    logger?.log?.("TTS", `Speak requested chars=${line.length} voice=${voiceModel}`, "debug");
+    logger?.log?.("TTS", `Speak requested chars=${line.length} voice=${voiceModel.file}`, "debug");
     if (!piperOnPath()) {
       logger?.log?.("TTS", `Piper binary not found on PATH`, "warn");
       toast(`Piper binary not found on PATH`, "warning");
       return Promise.resolve();
     }
-    if (!fs.existsSync(voiceModel)) {
-      logger?.log?.("TTS", `Voice model not found: ${voiceModel}`, "warn");
-      toast(`Voice model not found: ${voiceModel}`, "warning");
+    if (!fs.existsSync(voiceModel.file)) {
+      logger?.log?.("TTS", `Voice model not found: ${voiceModel.file}`, "warn");
+      toast(`Voice model not found: ${voiceModel.file}`, "warning");
       return Promise.resolve();
     }
 
@@ -225,7 +237,7 @@ export function registerTTS(api, kv, complete, prompts, logger) {
               { stdio: ["pipe", "ignore", "pipe"] },
             );
 
-      piperProc = spawn("piper", ["-m", voiceModel, "--output_raw"], {
+      piperProc = spawn("piper", piperArgs(voiceModel), {
         stdio: ["pipe", "pipe", "pipe"],
       });
 
@@ -283,9 +295,11 @@ export function registerTTS(api, kv, complete, prompts, logger) {
   // ---- Session-prefixed announcements ----
 
   async function speakWithSessionPrefix(sessionID, message, suffix) {
-    const sessionTitle = await getSessionTitle(client, sessionID);
     const parts = [];
-    if (sessionTitle) parts.push(`Session: ${sessionTitle}.`);
+    if (kv.get("tts.announceSession", false)) {
+      const sessionTitle = await getSessionTitle(client, sessionID);
+      if (sessionTitle) parts.push(`Session: ${sessionTitle}.`);
+    }
     parts.push(message);
     if (suffix) parts.push(suffix);
     await speak(parts.join(" "));
@@ -327,14 +341,14 @@ export function registerTTS(api, kv, complete, prompts, logger) {
     }
 
     logger?.log?.("TTS", `Auto normalization succeeded chars=${llmResult.text.length}`, "debug");
-    await speakWithSessionPrefix(sessionID, llmResult.text, "Ready for your input.");
+    await speakWithSessionPrefix(sessionID, llmResult.text, "Listo, esperando tu entrada.");
   });
 
   api.event.on("permission.asked", async (event) => {
     if (kv.get("tts.mode", "off") !== "on") return;
     await speakWithSessionPrefix(
       event.properties?.sessionID,
-      "Permission requested. Please check your screen.",
+      "Permiso solicitado. Revisa tu pantalla.",
     );
   });
 
@@ -342,7 +356,7 @@ export function registerTTS(api, kv, complete, prompts, logger) {
     if (kv.get("tts.mode", "off") !== "on") return;
     await speakWithSessionPrefix(
       event.properties?.sessionID,
-      "A question needs your answer. Please check your screen.",
+      "Tienes una pregunta pendiente. Revisa tu pantalla.",
     );
   });
 
@@ -405,8 +419,8 @@ export function registerTTS(api, kv, complete, prompts, logger) {
       return Promise.resolve(false);
     }
     const voiceModel = getVoiceModel();
-    if (!fs.existsSync(voiceModel)) {
-      toast(`Voice model not found: ${voiceModel}`, "warning");
+    if (!fs.existsSync(voiceModel.file)) {
+      toast(`Voice model not found: ${voiceModel.file}`, "warning");
       return Promise.resolve(false);
     }
     const wav = path.join(AUDIO_DIR, `tts_phone_${Date.now()}.wav`);
@@ -420,7 +434,7 @@ export function registerTTS(api, kv, complete, prompts, logger) {
         resolve(ok);
       }
 
-      const piper = spawn("piper", ["-m", voiceModel, "-f", wav], {
+      const piper = spawn("piper", [...piperArgs(voiceModel), "-f", wav], {
         stdio: ["pipe", "ignore", "pipe"],
       });
       piper.stderr.on("data", () => {});
