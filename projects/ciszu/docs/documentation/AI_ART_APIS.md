@@ -28,12 +28,12 @@ Tarea del TO_DO_LIST (alta prioridad): integrar generación de arte IA en el eco
 - **Endpoints HF probados**: `api-inference.huggingface.co` y `router.huggingface.co` fallan DNS en este PC (sin VPN); el SDK `@huggingface/inference` usa el router correctamente con la VPN activa. Las rutas raw antiguas (`/hf-internal/models/...`) dieron 404.
 - Verificación secretlint: correr `secretlint` sobre el repo tras estos cambios no muestra keys nuevas en archivos trackeados.
 
-## Script de generación: `tools/opencode-ai/generate-art.js`
+## Script de generación: `tools/image-ai/generate-art.js`
 
 CLI multi-provider con retry (503/hot aplicar backoff):
 
 ```bash
-node tools/opencode-ai/generate-art.js --provider hf --subject "a cute cyberpunk female hacker" \
+node tools/image-ai/generate-art.js --provider hf --subject "a cute cyberpunk female hacker" \
   --outfit "wearing a fitted high-collar techwear jacket" \
   --expression "dynamic standing pose with confident smirk" --count 2
 ```
@@ -47,12 +47,12 @@ node tools/opencode-ai/generate-art.js --provider hf --subject "a cute cyberpunk
   - Sin `--name`: comportamiento legacy `<service>_<modelo_corto>_<name>_<YYYYMMDDHHMMSS>_<hex4>.png`. Service: `hf`/`gemini`/`siliconflow`; modelo corto: `fluxschnell`, `gem25flash` (o slug del `--model`).
 - **Log por imagen**: junto a cada PNG se escribe `<nombre>.json` con prompt, negative_prompt, subject, outfit, expression, service, provider, modelo completo, dimensiones, tamaño, timestamp y `transparent`. `--no-log` omite el JSON.
 - **`--format png|jpeg`**: formato de salida (default png). `jpeg` requiere `sharp` instalado (si no, avisa y guarda PNG).
-- **`--transparent` (encadenado, separado de la generación)**: tras generar el PNG llama a `tools/opencode-ai/remove-bg.js` (método `--bg-method chroma|birefnet`, default chroma) → `<nombre>_transparent.png`. **El sistema de transparencia es OPT-IN, NO automático**: solo se usa cuando se pide imagen "sin fondo/para recortar/transparente". Si se pide "con fondo de X" (escena completa) se genera PNG/JPEG normal sin quitar fondo.
+- **`--transparent` (encadenado, separado de la generación)**: tras generar el PNG llama a `tools/removebg-ai/remove-bg.js` (método `--bg-method chroma|birefnet`, default chroma) → `<nombre>_transparent.png`. **El sistema de transparencia es OPT-IN, NO automático**: solo se usa cuando se pide imagen "sin fondo/para recortar/transparente". Si se pide "con fondo de X" (escena completa) se genera PNG/JPEG normal sin quitar fondo.
 - Validado (5 ago 2026): **4 imágenes — 3 personajes CON transparencia** (aventurera roja, hechicera plata, androide cian → `ciszuko_*_transparent.png`) **y 1 SIN transparencia** (aventurera con fondo anime de volcán en erupción, escena completa). Confirma que el sistema divide correctamente: con transparencia por defecto para personajes sueltos, sin transparencia para escenas con fondo. La aventurera se regeneró (mano voladora del primer intento) manteniendo el diseño: prompt correctivo (`both hands firmly planted on her hips`, negative con `floating limbs, detached hand, extra hand`). Test adicional del flag `--transparent` (bunny → PNG transparente).
 
-## Remoción de fondo → PNG transparente: `tools/opencode-ai/remove-bg.js`
+## Remoción de fondo → PNG transparente: `tools/removebg-ai/remove-bg.js`
 
-`node tools/opencode-ai/remove-bg.js --input <png> [--output <png>] [--tolerance 35] [--method chroma|birefnet]`
+`node tools/removebg-ai/remove-bg.js --input <png> [--output <png>] [--tolerance 35] [--method chroma|birefnet]`
 
 - **Método `chroma` (default, 100% gratis, comercial OK)**: flood-fill desde los bordes detectando el color de fondo dominante (las imágenes ART_GUIDE llevan franja de color sólido → corte limpio). Librería `pngjs` (MIT).
 - **Método `birefnet` (calidad Photoshop, gratis, comercial OK)**: BiRefNet (MIT, pesos libres) vía `rembg` local (Python: `pip install "rembg[cpu]" onnxruntime`, 1ª descarga ~1GB). Mejor en bordes finos/cabello. **✅ INSTALADO y VERIFICADO (5 ago 2026)**: rembg 2.0.77 + onnxruntime 1.28 en Python 3.14. Modelo `birefnet-general.onnx` (927 MB) descargado manualmente con curl reanudable a `C:\Users\fplay\.u2net\` (el downloader de rembg cae con red lenta — usar curl: `curl.exe -L -C - -o C:\Users\fplay\.u2net\birefnet-general.onnx https://github.com/danielgatis/rembg/releases/download/v0.0.0/BiRefNet-general-epoch_244.onnx`).
@@ -62,7 +62,7 @@ node tools/opencode-ai/generate-art.js --provider hf --subject "a cute cyberpunk
 
 ## Cierre de la tarea (5 ago 2026 — actualizado)
 
-- Script ampliado y probado (`tools/opencode-ai/generate-art.js`): nomenclatura separada PNG/JSON, `--transparent` encadenado opt-in (corregido `--bg-method` con guión), `--format`, `--prompt`, `--no-log`. Plantilla con **full body** por defecto (`full body shot, whole character visible from head to toe, not cropped`) — FLUX recortaba a la cintura sin esa directriz.
+- Script ampliado y probado (`tools/image-ai/generate-art.js`): nomenclatura separada PNG/JSON, `--transparent` encadenado opt-in (corregido `--bg-method` con guión), `--format`, `--prompt`, `--no-log`. Plantilla con **full body** por defecto (`full body shot, whole character visible from head to toe, not cropped`) — FLUX recortaba a la cintura sin esa directriz.
 - `downloads/test/` regenerado: 3 personajes full body con transparencia BiRefNet (aventurera, hechicera, androide) + volcán con escena completa sin transparencia (gitignored).
 - **Biblia de prompts añadida** en `ART_GUIDE.md` §9: 10 bancos modulares (sujetos fem/masc/no-humano, ropa, expresiones, poses, cámaras con full body, fondos con/sin, estilos, negativos extra, personalidades) + 10 prompts completos listos para copiar (A-J).
 - El sistema de transparencia queda **desacoplado y opt-in**: solo `--transparent` cuando se pide personaje sin fondo/para recortar; escenas con fondo no se recortan. **Método recomendado: `birefnet`** (chroma solo para fondos planos sin huecos).
