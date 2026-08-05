@@ -932,7 +932,7 @@ export function registerSTT(api, kv, complete, prompts, opts, logger) {
       title: "STT: transcribe inbox file",
       value: "stt.file",
       description:
-        "Transcribe the newest audio file in E:/opencode-voice/tmp/inbox (phone upload) and append to prompt",
+        "Transcribe the newest audio file in E:/Ciszu Network/tools/tts-stt-ai/tmp/inbox (phone upload) and append to prompt",
       slash: { name: "stt-file-cel" },
       onSelect() {
         if (processing) {

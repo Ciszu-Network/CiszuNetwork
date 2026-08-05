@@ -31,7 +31,7 @@
 //   3. Key NOTIFY_TOPIC / NOTIFY_TOKEN del fichero services/supabase/.env (vault)
 //   4. Defaults: topic 'ciszu-network-tasks', sin token
 //
-// Voz por audio: requiere los binarios del sistema de voz (tools/opencode-voice/runtime/
+// Voz por audio: requiere los binarios del sistema de voz (tools/tts-stt-ai/runtime/
 // — piper + ffmpeg + voces). Sharvard (es_ES) es femenina; amy (en_US) también.
 
 const fs = require('fs');
@@ -41,7 +41,7 @@ const ROOT = path.resolve(__dirname, '..');
 const SERVER = process.env.NOTIFY_SERVER || 'https://ntfy.sh';
 
 const { buildAudioName } = require(path.join(
-  ROOT, 'tools', 'opencode-voice', 'lib', 'ntfy-meta.js',
+  ROOT, 'tools', 'tts-stt-ai', 'lib', 'ntfy-meta.js',
 ));
 
 function readEnvFiles() {
@@ -70,7 +70,7 @@ const TOKEN = process.env.NOTIFY_TOKEN || env.NOTIFY_TOKEN || '';
 const PRIORITIES = { min: 1, low: 2, default: 3, high: 4, urgent: 5 };
 
 // ---- Voz (Piper) para notificaciones con audio ----
-const VOICE_ROOT = path.join(ROOT, 'tools', 'opencode-voice', 'runtime');
+const VOICE_ROOT = path.join(ROOT, 'tools', 'tts-stt-ai', 'runtime');
 const NOTIFY_VOICES = {
   amy: { label: 'Amy (EN, femenina)', file: 'en_US-amy-medium.onnx' },
   ryan: { label: 'Ryan (EN)', file: 'en_US-ryan-high.onnx' },

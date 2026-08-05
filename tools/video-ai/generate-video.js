@@ -1,7 +1,7 @@
 // generate-video.js — generación de vídeo IA (plan fase 1: HF serverless, gratis).
 //
 // Uso:
-//   node tools/opencode-ai/generate-video.js --prompt "neon city rain, cyberpunk" \
+//   node tools/video-ai/generate-video.js --prompt "neon city rain, cyberpunk" \
 //       --title "Neon Rain" --out downloads/test
 //
 // Flags:
@@ -31,7 +31,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { execFileSync } = require('child_process');
-const { ROOT, readEnvFiles, parseArgs, slugify, slugifyModel, withRetry, findFfmpeg } = require('./lib');
+const { ROOT, readEnvFiles, parseArgs, slugify, slugifyModel, withRetry, findFfmpeg } = require('../shared/lib');
 
 const DEFAULT_OUT = path.join(ROOT, 'downloads', 'test');
 const VIDEO_MODELS = [
@@ -149,7 +149,7 @@ async function main() {
 
   if (!prompt) {
     console.error('Falta --prompt (descripción del vídeo).');
-    console.error('  node tools/opencode-ai/generate-video.js --prompt "un gato en la ciudad de noche, anime"');
+    console.error('  node tools/video-ai/generate-video.js --prompt "un gato en la ciudad de noche, anime"');
     process.exit(1);
   }
   if (provider !== 'hf' && provider !== 'fal') {
