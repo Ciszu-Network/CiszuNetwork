@@ -77,7 +77,7 @@ Política (ago 2026): los avisos push del proyecto pueden llevar **audio** adem�
 
 ## Notas y gotchas
 
-- El plugin se carga **al arrancar el servidor opencode** (`opencode serve` / tarea `opencode-server-ciszu`). Para activarlo o recargar cambios hay que **reiniciar**: `opencode-restart.cmd` (en `scripts/` y copiado en PATH: mata el listener de 4096, relanza vía ensure y hace attach). ⚠️ Reiniciar corta la sesión en vivo (PC y móvil).
+- El plugin se carga **al arrancar el servidor opencode** (`opencode serve` / tarea `opencode-server-ciszu`). Para activarlo o recargar cambios hay que **reiniciar**: `opencode-run` (en `scripts/` y copiado en PATH; mata el listener de 4096 si escucha, relanza vía ensure y hace attach) — **es el lanzador por defecto para iniciar sesiones**. ⚠️ Reiniciar corta la sesión en vivo (PC y móvil).
 - `ctrl+r` pisa `session_rename` (renombrado de sesión) — ya desactivado en `tui.json` (`"session_rename": "none"`); sigue accesible por `/rename`.
 - El keybind `escape` (tts-stop) puede pisar cierres de diálogo: si molesta, usar `/tts-stop`.
 - En Windows **sox NO puede grabar** (`-d` da "no default audio device") — por eso el patch usa ffmpeg. sox solo sirve para conversión manual raw→wav.
