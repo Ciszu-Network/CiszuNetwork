@@ -115,8 +115,8 @@ supabase/.temp/
 .opencode-tmp/
 
 # Sistema de voz opencode — binarios/modelos/voces y temporales (el codigo del plugin SI se trackea)
-tools/opencode-voice/runtime/
-tools/opencode-voice/tmp/
+tools/tts-stt-ai/runtime/
+tools/tts-stt-ai/tmp/
 
 # Discord bot logs
 projects/ciszubot/discord-bot/logs/

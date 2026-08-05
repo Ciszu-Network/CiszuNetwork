@@ -6,7 +6,7 @@ Objetivo: definir el sistema de **comandos personalizados para la terminal openc
 
 ## Contexto: cómo funcionan los comandos hoy
 
-El plugin de voz (`tools/opencode-voice/index.js`) registra comandos con:
+El plugin de voz (`tools/tts-stt-ai/index.js`) registra comandos con:
 
 ```js
 api.command.register(() => [...sttCommands, ...ttsCommands]);
@@ -34,7 +34,7 @@ Los plugins se cargan desde `C:\Users\fplay\.config\opencode\tui.json` (config T
 
 ## Nivel 1 — Plugin de comandos en código (`tools/opencode-commands-ciszu/`)
 
-Paquete nuevo en el repo, mismo patrón que `tools/opencode-voice/`:
+Paquete nuevo en el repo, mismo patrón que `tools/tts-stt-ai/`:
 
 ```
 tools/opencode-commands-ciszu/
@@ -217,6 +217,6 @@ Ejemplos planificados:
 ## Referencias
 
 - Skill oficial `customize-opencode` (schema completo: https://opencode.ai/config.json)
-- Plugin de voz: `tools/opencode-voice/` (patrón de registro de comandos)
+- Plugin de voz: `tools/tts-stt-ai/` (patrón de registro de comandos)
 - ntfy: `scripts/ntfy-notif.js` + doc VOZ_OPENCODE.md
 - MCP: `opencode.json` global (`C:\Users\fplay\.config\opencode\opencode.json`)

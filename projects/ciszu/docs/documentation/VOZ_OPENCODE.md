@@ -1,6 +1,6 @@
 # Voz para opencode (STT + TTS) — ago 2026
 
-Sistema bidireccional de voz para opencode en Windows, basado en el plugin **`@renjfk/opencode-voice` v0.6.0** (MIT, GitHub `renjfk/opencode-voice`) con un **fork local parcheado para Windows integrado en el repo** (`tools/opencode-voice/`).
+Sistema bidireccional de voz para opencode en Windows, basado en el plugin **`@renjfk/opencode-voice` v0.6.0** (MIT, GitHub `renjfk/opencode-voice`) con un **fork local parcheado para Windows integrado en el repo** (`tools/tts-stt-ai/`).
 
 - **STT**: grabación con `ffmpeg` (DirectShow) → transcripción local con `whisper-cli` (whisper.cpp) → normalización LLM.
 - **TTS**: normalización LLM → síntesis con `piper` → reproducción con `ffplay` (PC) o push de audio por ntfy (móvil).
@@ -11,13 +11,13 @@ Todo el sistema vive **dentro del repo** (`E:\Ciszu Network`): el código del pl
 
 | Componente | Ruta | Notas |
 |---|---|---|
-| Plugin parcheado (código) | `tools/opencode-voice/` (trackeado) | `index.js` + `lib/` (stt, tts, session, llm-client, logger) + package.json |
-| whisper.cpp v1.9.2 | `tools/opencode-voice/runtime/whisper/Release/` (`whisper-cli.exe` + dlls ggml) | Descargado `whisper-bin-x64.zip` de GitHub releases |
-| Modelo whisper | `tools/opencode-voice/runtime/models/ggml-large-v3-turbo-q5_0.bin` (574 MB) | Default del plugin |
-| Piper (Windows) | `tools/opencode-voice/runtime/piper/piper/piper.exe` (+ espeak-ng-data con español) | `piper_windows_amd64.zip` release 2023.11.14-2 |
-| Voces Piper | `tools/opencode-voice/runtime/piper-voices/` | **`sharvard` (ES, femenina — DEFAULT)**, `amy` (EN, femenina), `ryan` (EN), `bryce` (EN), `davefx` (ES) |
-| ffmpeg 9.0 essentials | `tools/opencode-voice/runtime/ffmpeg-9.0-essentials_build/bin/` | Grabación dshow + reproducción ffplay + conversión mp3 |
-| sox 14.4.2 (win32) | `tools/opencode-voice/runtime/sox/sox-14.4.2/` | Solo utilidad manual (raw↔wav); el plugin NO lo usa en Windows |
+| Plugin parcheado (código) | `tools/tts-stt-ai/` (trackeado) | `index.js` + `lib/` (stt, tts, session, llm-client, logger) + package.json |
+| whisper.cpp v1.9.2 | `tools/tts-stt-ai/runtime/whisper/Release/` (`whisper-cli.exe` + dlls ggml) | Descargado `whisper-bin-x64.zip` de GitHub releases |
+| Modelo whisper | `tools/tts-stt-ai/runtime/models/ggml-large-v3-turbo-q5_0.bin` (574 MB) | Default del plugin |
+| Piper (Windows) | `tools/tts-stt-ai/runtime/piper/piper/piper.exe` (+ espeak-ng-data con español) | `piper_windows_amd64.zip` release 2023.11.14-2 |
+| Voces Piper | `tools/tts-stt-ai/runtime/piper-voices/` | **`sharvard` (ES, femenina — DEFAULT)**, `amy` (EN, femenina), `ryan` (EN), `bryce` (EN), `davefx` (ES) |
+| ffmpeg 9.0 essentials | `tools/tts-stt-ai/runtime/ffmpeg-9.0-essentials_build/bin/` | Grabación dshow + reproducción ffplay + conversión mp3 |
+| sox 14.4.2 (win32) | `tools/tts-stt-ai/runtime/sox/sox-14.4.2/` | Solo utilidad manual (raw↔wav); el plugin NO lo usa en Windows |
 | Config | `C:\Users\fplay\.config\opencode\tui.json` | Plugin por ruta local + keybinds + endpoint LLM |
 | Env vars (user) | `GEMINI_API_KEY`, `NOTIFY_TOPIC`, `NOTIFY_TOKEN` + PATH | PATH: `runtime\whisper\Release`, `runtime\piper\piper`, `runtime\ffmpeg...\bin` |
 
@@ -75,7 +75,7 @@ El TUI corre en el PC, así que el móvil no puede hablar por micrófono. Flujo 
 
 Los audios que llegan al móvil tienen **nombre de archivo descriptivo + metadatos ricos**, aprovechando todo lo que ntfy soporta. Aplicado a `/tts-speak-cel`, `ntfy-notif.js --voice` y reutilizable por los futuros comandos de `opencode-commands-ciszu` (categoría A — ver `COMANDOS_OPENCODE.md`).
 
-### Helper compartido: `tools/opencode-voice/lib/ntfy-meta.js`
+### Helper compartido: `tools/tts-stt-ai/lib/ntfy-meta.js`
 
 **ESM puro** (5 ago 2026, migrado desde `ntfy-meta.cjs`): el binario Bun de opencode NO soporta named imports desde módulos CJS en plugins TUI (`Export named 'buildNtfyMeta' not found` / `Missing 'default' export` / `require() async module` — el plugin fallaba en silencio). Como ESM lo importan igual el plugin y el script CLI (Node 24 usa `require(ESM)` nativo):
 
@@ -119,7 +119,7 @@ Política (ago 2026): los avisos push del proyecto pueden llevar **audio** adem�
 
 - `node scripts/ntfy-notif.js "Titulo" "Mensaje" --voice` → adjunta el audio del mensaje sintetizado con Piper (voz **sharvard** por defecto; `--voice amy|ryan|bryce|sharvard|davefx`).
 - `--markdown` → el mensaje se marca como Markdown (negritas, links, code — se renderiza en la web app). `--delay 30m|"tomorrow, 3pm"|ts` → entrega programada (mín 10 s, máx 3 días; el id del programado sale en la respuesta del publish, se cancela con DELETE `/<topic>/<id>`).
-- Sintetiza con piper (stdin → wav) + ffmpeg (wav → mp3) usando los binarios de `tools/opencode-voice/runtime/`; el mp3 se borra tras enviar.
+- Sintetiza con piper (stdin → wav) + ffmpeg (wav → mp3) usando los binarios de `tools/tts-stt-ai/runtime/`; el mp3 se borra tras enviar.
 - Si la síntesis falla, el aviso se envía solo en texto (con warning).
 - El topic/token se leen de `NOTIFY_TOPIC`/`NOTIFY_TOKEN` (env → `.env.local` → `services/supabase/.env` → defaults).
 - **Botones de acción**: `ntfy-meta.js` exporta `buildViewAction({label, url})` y `buildHttpAction({label, url, method, headers, body})` (p.ej. header `Authorization` para llamar a la API del bot) — ambos aceptan `clear: true`. Se pasan como JSON en `actions` (query param, igual que la web app).
@@ -132,11 +132,11 @@ Política (ago 2026): los avisos push del proyecto pueden llevar **audio** adem�
 - En Windows **sox NO puede grabar** (`-d` da "no default audio device") — por eso el patch usa ffmpeg. sox solo sirve para conversión manual raw→wav.
 - La parada de grabación por silencio usa ffmpeg `silenceremove`; el `q` de parada manual finaliza el WAV correctamente.
 - Si se re-instala opencode y el plugin no carga: borrar caché `~/.cache/opencode/packages/` (solo aplica a plugins npm; el fork local no se cachea).
-- Verificar pipeline sin abrir opencode: `node tools/opencode-voice/tmp/test-plugin.js` (grabación + whisper + TTS completo).
+- Verificar pipeline sin abrir opencode: `node tools/tts-stt-ai/tmp/test-plugin.js` (grabación + whisper + TTS completo).
 - `whisper-cli`/`piper`/`ffmpeg` se ejecutan por nombre → dependen del PATH de usuario (3 entradas `runtime\...`). En el plugin, los spawn usan arrays de argumentos (sin shell), así que los espacios en `E:\Ciszu Network` no rompen nada.
 
 ## Revertir
 
 1. Borrar la entrada del plugin de `C:\Users\fplay\.config\opencode\tui.json`.
 2. Quitar `GEMINI_API_KEY`/`NOTIFY_TOPIC`/`NOTIFY_TOKEN` y las 3 entradas PATH de usuario.
-3. Borrar `tools/opencode-voice/` del repo (~900 MB con modelos y voces) y el commit del plugin si no se quiere conservar.
+3. Borrar `tools/tts-stt-ai/` del repo (~900 MB con modelos y voces) y el commit del plugin si no se quiere conservar.

@@ -1,7 +1,7 @@
 ﻿// ntfy-meta.cjs — metadatos y nombres de archivo para pushes ntfy.
 //
 // Helper COMPARTIDO entre:
-//   - tools/opencode-voice/lib/tts.js        (plugin opencode, ESM → import default)
+//   - tools/tts-stt-ai/lib/tts.js             (plugin opencode, ESM → import default)
 //   - scripts/ntfy-notif.js                  (CLI, CJS → require)
 //   - futuros comandos de opencode-commands-ciszu (categoría A: notificaciones)
 //

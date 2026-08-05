@@ -2,11 +2,11 @@
 description: Genera arte IA con estilo Ciszu (FLUX/Gemini/SiliconFlow). Uso: /art <descripción>
 ---
 
-Genera arte de IA al estilo Ciszu usando `tools/opencode-ai/generate-art.js`.
+Genera arte de IA al estilo Ciszu usando `tools/image-ai/generate-art.js`.
 
 Entrada del usuario: `$ARGUMENTS`
 
-1. Lee `tools/opencode-ai/generate-art.js` y, si es necesario, `projects/ciszu/docs/documentation/ART_GUIDE.md` (§8/§9) para la plantilla default.
+1. Lee `tools/image-ai/generate-art.js` y, si es necesario, `projects/ciszu/docs/documentation/ART_GUIDE.md` (§8/§9) para la plantilla default.
 2. Interpreta lo descrito:
    - **Personaje suelto / para recortar / transparente** → añade `--transparent` (por defecto `--bg-method birefnet`).
    - **Escena completa con fondo** → sin `--transparent` (PNG/JPEG normal).
@@ -17,7 +17,7 @@ Entrada del usuario: `$ARGUMENTS`
 
 Formato:
 ```
-node tools/opencode-ai/generate-art.js --provider hf --subject "..." --outfit "..." --expression "..." [--transparent] --name <base> --out downloads/art
+node tools/image-ai/generate-art.js --provider hf --subject "..." --outfit "..." --expression "..." [--transparent] --name <base> --out downloads/art
 ```
 
 Claves del vault: HF_TOKEN, GEMINI_API_KEY, SILICONFLOW_API_KEY. Si hay error de red o cuota, avisa (puede requerir activar VPN). Nunca pegues claves en el chat.

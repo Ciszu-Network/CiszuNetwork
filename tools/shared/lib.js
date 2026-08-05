@@ -75,7 +75,7 @@ async function withRetry(fn, label, attempts = 4) {
 let _ffmpeg = null;
 function findFfmpeg() {
   if (_ffmpeg) return { ..._ffmpeg };
-  const base = path.join(ROOT, 'tools', 'opencode-voice', 'runtime');
+  const base = path.join(ROOT, 'tools', 'tts-stt-ai', 'runtime');
   if (fs.existsSync(base)) {
     for (const dir of fs.readdirSync(base)) {
       if (!/^ffmpeg-/.test(dir)) continue;

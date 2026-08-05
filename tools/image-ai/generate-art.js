@@ -330,7 +330,7 @@ async function main() {
       execFileSync(
         process.execPath,
         [
-          path.join(ROOT, 'tools', 'opencode-ai', 'remove-bg.js'),
+          path.join(ROOT, 'tools', 'removebg-ai', 'remove-bg.js'),
           '--input',
           imagePath,
           '--output',

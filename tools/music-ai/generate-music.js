@@ -12,7 +12,7 @@
 //     <slug>.json           LOG de generación (proveedor, modelo, prompt, etc.)
 //
 // Uso:
-//   node tools/opencode-ai/generate-music.js --genres "synthwave" --title "Neon Runner" \
+//   node tools/music-ai/generate-music.js --genres "synthwave" --title "Neon Runner" \
 //       --album "Genesis Zero" --duration 30 --cover cover.png
 //
 // Flags:
@@ -35,13 +35,13 @@
 //   --no-log               no escribir el JSON.
 //   --offline <wav>        empaquetar un wav local sin API.
 //
-// Claves (vault): ACE_API_KEY, HF_TOKEN, SUNO_API_KEY. ffmpeg → tools/opencode-voice/runtime.
+// Claves (vault): ACE_API_KEY, HF_TOKEN, SUNO_API_KEY. ffmpeg → tools/tts-stt-ai/runtime.
 
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { execFileSync } = require('child_process');
-const { ROOT, readEnvFiles, parseArgs, slugify, slugifyModel, withRetry, findFfmpeg } = require('./lib');
+const { ROOT, readEnvFiles, parseArgs, slugify, slugifyModel, withRetry, findFfmpeg } = require('../shared/lib');
 
 const DEFAULT_OUT = path.join(ROOT, 'downloads', 'test');
 const NEON_BG = '0x000230';
@@ -188,7 +188,7 @@ function escMeta(s) {
 
 function writeTextFiles(dir, slug, meta) {
   const { title, artist, album, genre, year, track, provider } = meta;
-  const md = `# ${title}\n\n- **Artista**: ${artist}\n- **Álbum**: ${album}\n- **Género**: ${genre}\n- **Año**: ${year}\n- **Pista**: ${track}\n- **Proveedor**: ${provider}\n\n---\nGenerado con Ciszu Network AI (tools/opencode-ai).\n`;
+  const md = `# ${title}\n\n- **Artista**: ${artist}\n- **Álbum**: ${album}\n- **Género**: ${genre}\n- **Año**: ${year}\n- **Pista**: ${track}\n- **Proveedor**: ${provider}\n\n---\nGenerado con Ciszu Network AI (tools/music-ai).\n`;
   fs.writeFileSync(path.join(dir, 'about_readme.md'), md);
   fs.writeFileSync(path.join(dir, 'about_readme.txt'), md);
   const lic = 'CC BY-NC 4.0 — CiszukoAntony (Ciszu Network).\n';
