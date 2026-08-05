@@ -16,8 +16,8 @@
 //       --album "Genesis Zero" --duration 30 --cover cover.png
 //
 // Flags:
-//   --provider <hf|suno>   (default: hf = MusicGen gratis; suno requiere SUNO_API_KEY)
-//   --model <id>           override del modelo.
+//   --provider <hf|suno|ace>  (default: ace = AceMusic ACE-Step; hf MusicGen; suno requiere SUNO_API_KEY)
+//   --model <id>           override del modelo (ace default: acemusic/acestep-v1.5-turbo).
 //   --title <texto>        título (default: untitled).
 //   --album <texto>        álbum (default: singles).
 //   --artist <texto>       artista (default: CiszukoAntony).
@@ -26,14 +26,16 @@
 //   --year <yyyy>          año (default: actual).
 //   --track <n>            número de pista (metadatos).
 //   --lyrics <texto>       (suno) letras opcionales.
-//   --duration <sec>       duración aprox (hf max ~30s).
+//   --duration <sec>       duración aprox (ace soporta minutos, hf max ~30s).
+//   --bpm <n>              tempo (metadatos TBPM).
 //   --count <n>            cuántas pistas.
 //   --out <dir>            base de salida (default downloads/test).
-//   --cover <path>         portada existente (si no, generada con ffmpeg procedural).
+//   --cover <path>         portada existente (si no, generada con GDI+).
 //   --no-cover             no generar cover (solo audio).
 //   --no-log               no escribir el JSON.
+//   --offline <wav>        empaquetar un wav local sin API.
 //
-// Claves (vault): HF_TOKEN, SUNO_API_KEY. ffmpeg → tools/opencode-voice/runtime.
+// Claves (vault): ACE_API_KEY, HF_TOKEN, SUNO_API_KEY. ffmpeg → tools/opencode-voice/runtime.
 
 const fs = require('fs');
 const path = require('path');
@@ -117,6 +119,56 @@ async function generateHfMusic(token, prompt, model) {
   return Buffer.from(await blob.arrayBuffer());
 }
 
+const ACE_STEP_MODEL = 'acemusic/acestep-v1.5-turbo';
+
+async function generateAceStep(key, prompt, model) {
+  // AceMusic/ACE-Step — mismo endpoint que projects/muzicmania/website/scripts/generate-tracks.ps1.
+  // Devuelve audio en base64 data URI o URL.
+  const body = JSON.stringify({
+    model: model || ACE_STEP_MODEL,
+    messages: [
+      {
+        role: 'user',
+        content: [{ type: 'text', text: prompt }],
+      },
+    ],
+    max_tokens: -1,
+  });
+  const out = await withRetry(
+    async () => {
+      const r = await fetch('https://api.acemusic.ai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${key}`,
+          'Content-Type': 'application/json',
+        },
+        body,
+        signal: AbortSignal.timeout(600000),
+      });
+      const data = await r.json().catch(() => null);
+      if (!r.ok) throw Object.assign(new Error(`HTTP ${r.status} ${data?.error || ''}`.trim().slice(0, 200)), { status: r.status });
+      if (!data?.choices?.[0]?.message?.audio?.[0]?.audio_url?.url) throw new Error('AceMusic sin audio en la respuesta');
+      return data;
+    },
+    `AceMusic (${model || ACE_STEP_MODEL})`
+  );
+  const audioUrl = String(out.choices[0].message.audio[0].audio_url.url);
+  if (audioUrl.startsWith('data:')) {
+    const m = audioUrl.match(/^data:audio\/[^;]+;base64,(.+)$/);
+    if (!m) throw new Error('AceMusic data URI inesperado');
+    return Buffer.from(m[1], 'base64');
+  }
+  const bin = await withRetry(
+    async () => {
+      const r = await fetch(audioUrl);
+      if (!r.ok) throw new Error(`descarga audio HTTP ${r.status}`);
+      return Buffer.from(await r.arrayBuffer());
+    },
+    'descarga audio AceMusic'
+  );
+  return bin;
+}
+
 function powershellPath() {
   const p = path.join(process.env.SystemRoot || 'C:\\Windows', 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe');
   return fs.existsSync(p) ? p : 'powershell';
@@ -180,7 +232,7 @@ async function main() {
   const title = args.title || 'untitled';
   const album = args.album || 'singles';
   const artist = args.artist || 'CiszukoAntony';
-  const musicModel = args.model || (provider === 'hf' ? 'facebook/musicgen-small' : 'suno');
+  const musicModel = args.model || (provider === 'ace' ? ACE_STEP_MODEL : provider === 'hf' ? 'facebook/musicgen-small' : 'suno');
   const genres = (args.genres || args.genre || '').split(',').map((s) => s.trim()).filter(Boolean);
   const genre = args.genre || genres[0] || 'Electronic';
   const year = args.year || new Date().getFullYear();
@@ -196,10 +248,11 @@ async function main() {
   const tokens = {
     hf: process.env.HF_TOKEN || env.HF_TOKEN,
     suno: process.env.SUNO_API_KEY || env.SUNO_API_KEY,
+    ace: process.env.ACE_API_KEY || env.ACE_API_KEY,
   };
 
-  if (!['hf', 'suno'].includes(provider)) {
-    console.error(`Proveedor desconocido: ${provider} (hf|suno)`);
+  if (!['hf', 'suno', 'ace'].includes(provider)) {
+    console.error(`Proveedor desconocido: ${provider} (hf|suno|ace)`);
     process.exit(1);
   }
   if (provider === 'hf' && !tokens.hf) {
@@ -210,10 +263,17 @@ async function main() {
     console.error('SUNO_API_KEY no configurada (suno.com → Account → API keys).');
     process.exit(1);
   }
+  if (provider === 'ace' && !tokens.ace) {
+    console.error('ACE_API_KEY no configurada (apanel de AceMusic → API keys).');
+    process.exit(1);
+  }
 
   const { ffmpeg } = findFfmpeg();
   fs.mkdirSync(outDir, { recursive: true });
-  const musicalPrompt = genres.length ? `${title}, ${genres.join(', ')}, immersive electronic` : `${title}, instrumental track`;
+  const basePrompt = genres.length ? `${title}, ${genres.join(', ')}, immersive electronic` : `${title}, instrumental electronic track`;
+  const musicalPrompt = provider === 'ace'
+    ? `Generate a ${duration} second instrumental track at ${args.bpm || 120} BPM: ${basePrompt}`
+    : basePrompt;
   console.log(`[${provider}] música → ${outDir}`);
 
   for (let i = 0; i < count; i++) {
@@ -233,6 +293,22 @@ async function main() {
     if (args.offline && fs.existsSync(args.offline)) {
       console.log(`  [offline] empaquetando ${path.basename(args.offline)}`);
       wavBuf = fs.readFileSync(args.offline);
+    } else if (provider === 'ace') {
+      const raw = await generateAceStep(tokens.ace, musicalPrompt, args.model);
+      // ACE-Step devuelve MP3; normalizar a WAV PCM con ffmpeg local para el pipeline
+      const rawPath = path.join(dir, '.ace_raw.bin');
+      fs.writeFileSync(rawPath, raw);
+      const wavPath = path.join(dir, '__ace.wav');
+      try {
+        execFileSync(ffmpeg, ['-v', 'error', '-i', rawPath, '-ar', '44100', '-ac', '2', '-c:a', 'pcm_s16le', '-y', wavPath], { stdio: 'ignore' });
+        wavBuf = fs.readFileSync(wavPath);
+      } catch {
+        console.warn('  [warn] falló normalización wav; usando raw');
+        wavBuf = raw;
+      } finally {
+        try { fs.unlinkSync(rawPath); } catch { }
+        try { fs.unlinkSync(wavPath); } catch { }
+      }
     } else if (provider === 'hf') {
       wavBuf = await generateHfMusic(tokens.hf, musicalPrompt, args.model);
     } else {
