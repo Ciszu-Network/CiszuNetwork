@@ -18,9 +18,18 @@ importers:
 
   .:
     devDependencies:
+      '@huggingface/inference':
+        specifier: 4.13.24
+        version: 4.13.24
       turbo:
         specifier: ^2.5.0
         version: 2.10.4
+
+  .opencode-tmp/hf-test:
+    dependencies:
+      '@huggingface/inference':
+        specifier: ^4.13.24
+        version: 4.13.24
 
   packages/cdn:
     dependencies:
@@ -654,6 +663,17 @@ packages:
   '@eslint/plugin-kit@0.4.1':
     resolution: {integrity: sha512-43/qtrDUokr7LJqoF2c3+RInu/t4zfrpYdoSDfYyhg52rwLV6TnOvdG4fXm7IkSB3wErkcmJS9iEhjVtOSEjjA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@huggingface/inference@4.13.24':
+    resolution: {integrity: sha512-OIzmaX0TW3JkfZyV7mbiZLK9uv5xj0smo06l2BUM6zrXoeELP8CE3LPZ37ln4URsOnhnHJxWQHEexknlHJqyyA==}
+    engines: {node: '>=18'}
+
+  '@huggingface/jinja@0.5.9':
+    resolution: {integrity: sha512-uWTG+l3VJRsl7EXxYizuL3P+cCPoc3cRqbWWRcQN0FhejRfbdq0RNhCmbY/YDtnTcz9icdLYuLDjsnz4d8JMuw==}
+    engines: {node: '>=18'}
+
+  '@huggingface/tasks@0.21.33':
+    resolution: {integrity: sha512-efQa8g+WjPwzlwk7Wl4eDgbM1Jq+WooUw/b1+eKl2LVUdPMhnbwsFNMJJxhEywaLJvJBy93+jjna6855U9GePw==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -3848,6 +3868,15 @@ snapshots:
     dependencies:
       '@eslint/core': 0.17.0
       levn: 0.4.1
+
+  '@huggingface/inference@4.13.24':
+    dependencies:
+      '@huggingface/jinja': 0.5.9
+      '@huggingface/tasks': 0.21.33
+
+  '@huggingface/jinja@0.5.9': {}
+
+  '@huggingface/tasks@0.21.33': {}
 
   '@humanfs/core@0.19.2':
     dependencies:
