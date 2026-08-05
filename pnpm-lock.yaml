@@ -21,6 +21,9 @@ importers:
       '@huggingface/inference':
         specifier: 4.13.24
         version: 4.13.24
+      pngjs:
+        specifier: ^7.0.0
+        version: 7.0.0
       turbo:
         specifier: ^2.5.0
         version: 2.10.4
@@ -3045,6 +3048,10 @@ packages:
   play-dl@1.9.7:
     resolution: {integrity: sha512-KpgerWxUCY4s9Mhze2qdqPhiqd8Ve6HufpH9mBH3FN+vux55qSh6WJKDabfie8IBHN7lnrAlYcT/UdGax58c2A==}
     engines: {node: '>=16.0.0'}
+
+  pngjs@7.0.0:
+    resolution: {integrity: sha512-LKWqWJRhstyYo9pGvgor/ivk2w94eSjE3RGVuzLGlr3NmD8bf7RcYGze1mNdEHRP6TRP6rMuDHk5t44hnTRyow==}
+    engines: {node: '>=14.19.0'}
 
   possible-typed-array-names@1.1.0:
     resolution: {integrity: sha512-/+5VFTchJDoVj3bhoqi6UeymcD00DAwb1nJwamzPvHEszJ4FpF6SNNbUbOS8yI56qHzdV8eK0qEfOSiodkTdxg==}
@@ -6551,6 +6558,8 @@ snapshots:
   play-dl@1.9.7:
     dependencies:
       play-audio: 0.5.2
+
+  pngjs@7.0.0: {}
 
   possible-typed-array-names@1.1.0: {}
 
