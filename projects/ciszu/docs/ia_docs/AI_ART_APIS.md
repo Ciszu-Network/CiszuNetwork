@@ -8,9 +8,9 @@ Tarea del TO_DO_LIST (alta prioridad): integrar generación de arte IA en el eco
 
 | Prioridad | Proveedor | Modelo | Estado real en este PC | Licencia comercial |
 |---|---|---|---|---|
-| **1 — PRIMARIO** | **Hugging Face Inference** | `black-forest-labs/FLUX.1-schnell` | **FUNCIONA** (vía `router.huggingface.co`, provider auto=nscale). Requiere VPN si el DNS del PC falla | Apache 2.0 |
-| 2 | **SiliconFlow** | `FLUX.1-schnell` (misma familia) | Geo-bloqueo 403 desde IP del PC sin VPN (endpoint `.cn` 401) | Apache 2.0 |
-| 3 | **Gemini** | `gemini-2.5-flash-image` | `limit: 0` (quota free imagen no activa en proyecto/región). Texto OK con `gemini-3.5-flash` | Uso comercial permitido en los términos |
+| **1 — PRIMARIO** | **Hugging Face Inference** | `black-forest-labs/FLUX.1-schnell` | **FUNCIONA** (vía `router.huggingface.co`, provider auto=nscale). Requiere VPN si el DNS del PC falla. 503 intermitentes del provider (retry en el script) | Apache 2.0 |
+| 2 | **SiliconFlow** | `black-forest-labs/FLUX.1-schnell` | **402 "account balance is insufficient"** — el crédito $1 de bienvenida se agotó/expiró. Endpoint real: `api.siliconflow.com` (`.cn` da 401). La key es válida (GET /v1/models → 200). Requiere recargar saldo | Apache 2.0 |
+| 3 | **Gemini** | `gemini-2.5-flash-preview-image` | **429 quota `limit: 0`** (free tier imagen deshabilitada en el proyecto/región). Texto OK con `gemini-3.5-flash`. Nombre del modelo de imagen: `gemini-2.5-flash-preview-image` (no `-image`) | Uso comercial permitido en los términos |
 
 ### Descartados (no cumplen el criterio free+comercial)
 
@@ -42,7 +42,8 @@ node scripts/generate-art.js --provider hf --subject "a cute cyberpunk female ha
 - Default: 1024x576 (16:9), salida a `downloads/test/`, nombres `art_<YYYYMMDDHHMMSS>_<hex4>.png`.
 - Flags: `--provider hf|gemini|siliconflow`, `--subject/--outfit/--expression/--negative/--width/--height/--count/--out/--name/--model`.
 - `--provider gemini` requiere GEMINI_API_KEY y modelo de imagen con quota activa; `--provider siliconflow` requiere red sin geo-bloqueo.
-- Smoke test ejecutado 4 ago 2026: 2 imágenes FLUX válidas (PNG, ~780-890 KB) en `downloads/test/`.
+- Smoke test ejecutado 4 ago 2026: 6 imágenes FLUX válidas (PNG, ~600 KB-1 MB) en `downloads/test/` con nombres identificativos (`hf_hacker_*` ×2, `hf_android_cyber_*`, `hf_adventurer_red_*`, `hf_mecha_robot_*`, `hf_dj_musician_*`).
+- Estado de herramientas no-HF en este PC: SiliconFlow → 402 balance insuficiente (recargar para activarla); Gemini → 429 quota free imagen `limit: 0` (sin billing no se desbloquea).
 
 ## Nota de red
 
