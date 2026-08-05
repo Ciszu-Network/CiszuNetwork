@@ -1,6 +1,6 @@
 # AI APIs artísticas — plan definitivo (4 ago 2026)
 
-Tarea del TO_DO_LIST (alta prioridad): integrar generación de arte IA en el ecosistema (banners, assets de MuzicMania, logos, iconos) siguiendo la biblia `projects/muzicmania/docs/ia_docs/ART_GUIDE.md` (§8 plantillas).
+Tarea del TO_DO_LIST (alta prioridad): integrar generación de arte IA en el ecosistema (banners, assets de MuzicMania, logos, iconos) siguiendo la biblia `projects/ciszu/docs/ia_docs/ART_GUIDE.md` (§8 plantillas). **Completado (5 ago 2026)** — ver "Cierre de la tarea".
 
 ## Decisión final (usuario, 4 ago 2026)
 
@@ -38,42 +38,36 @@ node scripts/generate-art.js --provider hf --subject "a cute cyberpunk female ha
   --expression "dynamic standing pose with confident smirk" --count 2
 ```
 
-- Usa la plantilla §§8.1/8.3 de ART_GUIDE por defecto (placeholders `[SUBJECT]`, `[OUTFIT_AND_ACCESSORIES]`, `[EXPRESSION_AND_POSE]` + prompt negativo oficial).
+- Usa la plantilla §§8.1/8.3 de ART_GUIDE por defecto (placeholders `[SUBJECT]`, `[OUTFIT_AND_ACCESSORIES]`, `[EXPRESSION_AND_POSE]` + prompt negativo oficial). `--prompt <texto>` sobreescribe la plantilla (para fondos de escena custom, ej. volcán).
 - Default: 1024x576 (16:9) pedido, pero **FLUX.1-schnell responde 1024x1024** (ignora el height; verificar en el log JSON).
-- Flags: `--provider hf|gemini|siliconflow`, `--subject/--outfit/--expression/--negative/--width/--height/--count/--out/--name/--model`.
+- Flags: `--provider hf|gemini|siliconflow`, `--subject/--outfit/--expression/--negative/--width/--height/--count/--out/--name/--model/--prompt/--format/--transparent/--bg-method/--no-log`.
 - `--provider gemini` requiere GEMINI_API_KEY y modelo de imagen con quota activa; `--provider siliconflow` requiere saldo (402 si no).
-- **Nomenclatura de salida**: `<service>_<modelo_corto>_<name>_<YYYYMMDDHHMMSS>_<hex4>.png` — ej. `hf_fluxschnell_hacker_20260805012529_3ba8.png`. Service: `hf`/`gemini`/`siliconflow`; modelo corto: `fluxschnell`, `gem25flash` (o slug del `--model`).
-- **Log por imagen**: junto a cada PNG se escribe `<nombre>.json` con prompt, negative_prompt, subject, outfit, expression, service, provider, modelo completo, dimensiones, tamaño y timestamp (formato legible por máquina).
-- Prueba de alto nivel (5 ago 2026): imagen del personaje Ciszuko replicado desde análisis de Gemini con visión → `hf_fluxschnell_ciszuko_char_*.png` + log.
+- **Nomenclatura (5 ago 2026 — decisión del usuario: SEPARAR nomenclatura PNG vs JSON)**:
+  - Con `--name <nombre>`: el **PNG se llama SOLO `nombre.png`** (ej. `ciszuko_volcan.png`) — SIN servicio/modelo/datos técnicos, listo para uso comercial o CDN sin renombrar. El **JSON sí conserva la nomenclatura técnica** en nombre y contenido (ej. `hf_fluxschnell_ciszuko_volcan_20260805...json`).
+  - Sin `--name`: comportamiento legacy `<service>_<modelo_corto>_<name>_<YYYYMMDDHHMMSS>_<hex4>.png`. Service: `hf`/`gemini`/`siliconflow`; modelo corto: `fluxschnell`, `gem25flash` (o slug del `--model`).
+- **Log por imagen**: junto a cada PNG se escribe `<nombre>.json` con prompt, negative_prompt, subject, outfit, expression, service, provider, modelo completo, dimensiones, tamaño, timestamp y `transparent`. `--no-log` omite el JSON.
+- **`--format png|jpeg`**: formato de salida (default png). `jpeg` requiere `sharp` instalado (si no, avisa y guarda PNG).
+- **`--transparent` (encadenado, separado de la generación)**: tras generar el PNG llama a `scripts/remove-bg.js` (método `--bg-method chroma|birefnet`, default chroma) → `<nombre>_transparent.png`. **El sistema de transparencia es OPT-IN, NO automático**: solo se usa cuando se pide imagen "sin fondo/para recortar/transparente". Si se pide "con fondo de X" (escena completa) se genera PNG/JPEG normal sin quitar fondo.
+- Validado (5 ago 2026): **4 imágenes — 3 personajes CON transparencia** (aventurera roja, hechicera plata, androide cian → `ciszuko_*_transparent.png`) **y 1 SIN transparencia** (aventurera con fondo anime de volcán en erupción, escena completa). Confirma que el sistema divide correctamente: con transparencia por defecto para personajes sueltos, sin transparencia para escenas con fondo. La aventurera se regeneró (mano voladora del primer intento) manteniendo el diseño: prompt correctivo (`both hands firmly planted on her hips`, negative con `floating limbs, detached hand, extra hand`). Test adicional del flag `--transparent` (bunny → PNG transparente).
 
 ## Remoción de fondo → PNG transparente: `scripts/remove-bg.js`
 
 `node scripts/remove-bg.js --input <png> [--output <png>] [--tolerance 35] [--method chroma|birefnet]`
 
 - **Método `chroma` (default, 100% gratis, comercial OK)**: flood-fill desde los bordes detectando el color de fondo dominante (las imágenes ART_GUIDE llevan franja de color sólido → corte limpio). Librería `pngjs` (MIT).
-- **Método `birefnet` (calidad Photoshop, gratis, comercial OK)**: BiRefNet (MIT, pesos libres) vía `rembg` local (Python: `pip install "rembg[cpu]" onnxruntime`, 1ª descarga ~1GB). Mejor en bordes finos/cabello.
+- **Método `birefnet` (calidad Photoshop, gratis, comercial OK)**: BiRefNet (MIT, pesos libres) vía `rembg` local (Python: `pip install "rembg[cpu]" onnxruntime`, 1ª descarga ~1GB). Mejor en bordes finos/cabello. **✅ INSTALADO y VERIFICADO (5 ago 2026)**: rembg 2.0.77 + onnxruntime 1.28 en Python 3.14. Modelo `birefnet-general.onnx` (927 MB) descargado manualmente con curl reanudable a `C:\Users\fplay\.u2net\` (el downloader de rembg cae con red lenta — usar curl: `curl.exe -L -C - -o C:\Users\fplay\.u2net\birefnet-general.onnx https://github.com/danielgatis/rembg/releases/download/v0.0.0/BiRefNet-general-epoch_244.onnx`).
 - **Descartado**: RMBG-2.0 de BRIA (CC BY-NC → sin uso comercial gratis) y todas las APIs hosted (remove.bg, Photoroom, PixelAPI, etc. — free tier limitado o licencia de pago). BiRefNet ganó por ser MIT (código+pesos) en el benchmark del cutout.
-- Prueba real (5 ago 2026): `hf_fluxschnell_ciszuko_char_*_transparent.png` → 50.8% transparente, esquinas alpha=0, centro del personaje alpha=255, fondo detectado rgb(248,248,248). ⚠️ Bug corregido: `Number(undefined)` daba NaN y borraba toda la imagen — ahora default 40 (35 recomendado).
+- **⚠️ `chroma` (flood-fill) tiene 3 fallos conocidos** (5 ago 2026): (1) come cabello si su color se acerca al fondo, (2) deja franjas/fondo como bolsas aisladas sin conectar a los bordes, (3) no limpia huecos cerrados (p.ej. espacio brazo-torso en pose de manos en cadera). **`birefnet` resuelve los 3** (segmentación semántica del personaje completo, no flood-fill). Recomendado: `birefnet` como método por defecto.
+- Prueba real (5 ago 2026): `ciszuko_{aventurera,hechicera,androide}_transparent.png` con BiRefNet → 61.9-79.7% transparente, esquinas alpha=0, fondo eliminado por completo (incluidos huecos y cabello intacto).
 
-## Cierre de la tarea
+## Cierre de la tarea (5 ago 2026 — actualizado)
 
-- Script listo y probado (`scripts/generate-art.js`).
-- `downloads/test/` es la carpeta de pruebas de salida (gitignored).
+- Script ampliado y probado (`scripts/generate-art.js`): nomenclatura separada PNG/JSON, `--transparent` encadenado opt-in (corregido `--bg-method` con guión), `--format`, `--prompt`, `--no-log`. Plantilla con **full body** por defecto (`full body shot, whole character visible from head to toe, not cropped`) — FLUX recortaba a la cintura sin esa directriz.
+- `downloads/test/` regenerado: 3 personajes full body con transparencia BiRefNet (aventurera, hechicera, androide) + volcán con escena completa sin transparencia (gitignored).
+- **Biblia de prompts añadida** en `ART_GUIDE.md` §9: 10 bancos modulares (sujetos fem/masc/no-humano, ropa, expresiones, poses, cámaras con full body, fondos con/sin, estilos, negativos extra, personalidades) + 10 prompts completos listos para copiar (A-J).
+- El sistema de transparencia queda **desacoplado y opt-in**: solo `--transparent` cuando se pide personaje sin fondo/para recortar; escenas con fondo no se recortan. **Método recomendado: `birefnet`** (chroma solo para fondos planos sin huecos).
 - Subida final a `ciszu-cdn` pendiente de decisión: subir solo los assets aprobados con `pnpm cdn:upload` (los archivos en `downloads/` se subirían con la ruta del repo correspondiente).
 
 ## Pendiente del usuario
 
 - **Rotar tokens**: los tokens se pegaron en el chat de opencode. Aunque el repo es privado y el vault está gitignored, conviene rotar `HF_TOKEN`, `GEMINI_API_KEY`, `SILICONFLOW_API_KEY` en sus paneles y actualizar `services/supabase/.env` con `scripts/update-env-keys.js`.
-
-## ⚠️ PENDIENTE PRÓXIMA SESIÓN (5 ago 2026 — cambio de sesión por umbral 120k)
-
-El usuario pidió (en este orden) — decír "continúa" a la nueva sesión:
-
-1. **Limpiar `downloads/test/`** (borrar las 8 imágenes + logs + transparent de las pruebas anteriores).
-2. **Generar 3 personajes MUY diferentes entre sí con distintas personalidades** (usar `scripts/generate-art.js`, provider hf).
-3. **CAMBIAR NOMENCLATURA** (decisión nueva del usuario): el archivo PNG debe llevar **SOLO el nombre** (ej. `ciszuko_volcan.png`), SIN servicio/modelo/datos técnicos (los renombraría a mano para uso comercial/CDN). El archivo JSON **sí** conserva la nomenclatura técnica completa tanto en el nombre como por dentro (ej. `hf_fluxschnell_ciszuko_volcan_20260805...json`).
-4. **Sistema de transparencia SEPARADO del de generación**: NO todas las imágenes son PNG con transparencia. El usuario pedirá a veces imagen sin transparencia (ej. fondo anime completo). Detectarlo por la petición: si pide "personaje sin fondo/para recortar/transparente" → generar + `remove-bg.js`; si pide "con fondo de X" → NO quitar fondo (formato PNG o JPEG normal).
-5. **Generar 1 imagen extra**: uno de los 3 personajes regenerado con **fondo anime de volcán en erupción** (sin transparencia; PNG o JPEG da igual).
-6. **Documentar todo esto** (actualizar `AI_ART_APIS.md` + AGENTS.md si aplica) y **commitear**.
-   - Cambio en `generate-art.js`: flag `--name <solo-nombre-png>` y que el JSON siga con nomenclatura técnica; flag tipo `--no-log`/`--format png|jpeg` si conviene.
-   - Considerar flag `--transparent` en `generate-art.js` que encadene `remove-bg.js` cuando aplique.

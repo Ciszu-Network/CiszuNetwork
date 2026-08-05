@@ -17,11 +17,18 @@
 //   --height <px>                        alto (default: 576, ratio 16:9)
 //   --count <n>                          cuántas imágenes (default: 1)
 //   --out <dir>                          carpeta de salida (default: downloads/test)
-//   --name <base>                        descriptor del sujeto para el nombre (default: art)
-//                                        (el nombre final es <service>_<modelo>_<name>_<fecha>_<rand>)
+//   --name <base>                        nombre SOLO del PNG (default: nomenclatura técnica).
+//                                        Con --name el PNG sale como <name>.png (p.ej. ciszuko_volcan.png)
+//                                        y el JSON conserva la nomenclatura técnica completa:
+//                                        <service>_<modelo_corto>_<name>_<fecha>_<hex4>.json
 //   --model <id>                         override del modelo
+//   --prompt <texto>                     prompt completo (overrides la plantilla §8.1 con placeholders)
+//   --format <png|jpeg>                  formato de salida (default: png; jpeg requiere sharp instalado)
+//   --transparent                        tras generar, encadena scripts/remove-bg.js (chroma) → <name>_transparent.png
+//   --bg-method <chroma|birefnet>        método de remove-bg para --transparent (default: chroma)
+//   --no-log                             no escribir el JSON de log por imagen
 //
-// Nomenclatura de salida:
+// Nomenclatura de salida (sin --name):
 //   <service>_<modelo_corto>_<name>_<YYYYMMDDHHMMSS>_<hex4>.png
 //   Ej.: hf_fluxschnell_hacker_20260805012529_3ba8.png
 //   Service values: hf (Hugging Face), gemini (Google), siliconflow (SiliconFlow).
@@ -35,6 +42,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { execFileSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..');
 const DEFAULT_OUT = path.join(ROOT, 'downloads', 'test');
@@ -47,7 +55,7 @@ try {
 }
 
 const PROMPT_TEMPLATE =
-  '[SUBJECT], [OUTFIT_AND_ACCESSORIES], [EXPRESSION_AND_POSE], style of clean anime illustration, Ghelber aesthetic, bold clean lineart with varied line weight, T-junction emphasis, flat cel-shading with hard shadow edges, vibrant solid color blocks, expressive oversized anime eyes with vivid highlights, chunky hair style with sharp ends, professional character concept art, solid color horizontal background stripe';
+  '[SUBJECT], [OUTFIT_AND_ACCESSORIES], [EXPRESSION_AND_POSE], full body shot, whole character visible from head to toe, not cropped, style of clean anime illustration, Ghelber aesthetic, bold clean lineart with varied line weight, T-junction emphasis, flat cel-shading with hard shadow edges, vibrant solid color blocks, expressive oversized anime eyes with vivid highlights, chunky hair style with sharp ends, professional character concept art, solid color horizontal background stripe';
 
 const NEGATIVE_STANDARD =
   'photograph, 3d render, painterly, textured brushstrokes, soft shading, gradients, lowres, blurry, bad anatomy, deformed, extra limbs, watermark, sketchy lines, soft edges, realistic skin texture';
@@ -231,6 +239,20 @@ async function main() {
   const count = Number(args.count) || 1;
   const outDir = path.resolve(ROOT, args.out || DEFAULT_OUT);
   const nameBase = args.name || 'art';
+  const cleanName = args.name || null;
+  const format = (args.format || 'png').toLowerCase();
+  const wantTransparent = !!args.transparent;
+  const bgMethod = (args['bg-method'] || 'chroma').toLowerCase();
+  const noLog = !!args.noLog;
+
+  if (!['png', 'jpeg'].includes(format)) {
+    console.error(`Formato desconocido: ${format} (png|jpeg)`);
+    process.exit(1);
+  }
+  if (wantTransparent && format === 'jpeg') {
+    console.error('--transparent solo aplica a PNG (el JPEG no soporta alpha)');
+    process.exit(1);
+  }
 
   if (!['hf', 'gemini', 'siliconflow'].includes(provider)) {
     console.error(`Proveedor desconocido: ${provider} (hf|gemini|siliconflow)`);
@@ -248,7 +270,7 @@ async function main() {
   const model = args.model || providerInfo.defaultModel;
   const modelShort = args.model ? slugifyModel(args.model) : providerInfo.modelShort;
 
-  const prompt = PROMPT_TEMPLATE
+  const prompt = args.prompt || PROMPT_TEMPLATE
     .replace('[SUBJECT]', subject)
     .replace('[OUTFIT_AND_ACCESSORIES]', outfit)
     .replace('[EXPRESSION_AND_POSE]', expression);
@@ -260,7 +282,10 @@ async function main() {
   for (let i = 0; i < count; i++) {
     const stamp = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
     const rand = crypto.randomBytes(2).toString('hex');
-    const filename = `${provider}_${modelShort}_${nameBase}_${stamp}_${rand}.png`;
+    const ext = format === 'jpeg' ? 'jpg' : 'png';
+    const technicalBase = `${provider}_${modelShort}_${nameBase}_${stamp}_${rand}`;
+    const imageFile = cleanName ? `${cleanName}.${ext}` : `${technicalBase}.${ext}`;
+    const logFile = `${technicalBase}.json`;
     let buf;
     if (provider === 'hf') {
       buf = await generateHf(tokens.hf, prompt, negative, width, height, model);
@@ -269,33 +294,66 @@ async function main() {
     } else {
       buf = await generateSiliconflow(tokens.siliconflow, prompt, negative, width, height, model);
     }
-    fs.writeFileSync(path.join(outDir, filename), buf);
-    const logFile = filename.replace(/\.png$/, '.json');
-    fs.writeFileSync(
-      path.join(outDir, logFile),
-      JSON.stringify(
-        {
-          image: filename,
-          created_at: new Date().toISOString(),
-          service: providerInfo.label,
-          provider,
-          model,
-          width,
-          height,
-          prompt,
-          negative_prompt: negative,
-          subject,
-          outfit,
-          expression,
-          size_bytes: buf.length,
-        },
-        null,
-        2
-      )
-    );
-    console.log(`  ✓ ${filename} (${(buf.length / 1024).toFixed(0)} KB) + ${logFile}`);
+    if (format === 'jpeg') {
+      buf = await toJpeg(buf);
+    }
+    const imagePath = path.join(outDir, imageFile);
+    fs.writeFileSync(imagePath, buf);
+    if (!noLog) {
+      fs.writeFileSync(
+        path.join(outDir, logFile),
+        JSON.stringify(
+          {
+            image: imageFile,
+            created_at: new Date().toISOString(),
+            service: providerInfo.label,
+            provider,
+            model,
+            width,
+            height,
+            prompt,
+            negative_prompt: negative,
+            subject,
+            outfit,
+            expression,
+            size_bytes: buf.length,
+            transparent: wantTransparent,
+          },
+          null,
+          2
+        )
+      );
+    }
+    console.log(`  ✓ ${imageFile} (${(buf.length / 1024).toFixed(0)} KB)` + (noLog ? ' (sin log)' : ` + ${logFile}`));
+    if (wantTransparent) {
+      const transparentFile = `${cleanName || technicalBase}_transparent.png`;
+      execFileSync(
+        process.execPath,
+        [
+          path.join(ROOT, 'scripts', 'remove-bg.js'),
+          '--input',
+          imagePath,
+          '--output',
+          path.join(outDir, transparentFile),
+          '--method',
+          bgMethod,
+        ],
+        { stdio: 'inherit' }
+      );
+    }
   }
   console.log('Listo.');
+}
+
+async function toJpeg(buf) {
+  let sharp;
+  try {
+    sharp = require('sharp');
+  } catch {
+    console.warn('  [warn] sharp no instalado → se guarda como PNG (--format jpeg requiere: pnpm add -w sharp)');
+    return buf;
+  }
+  return await sharp(buf).jpeg({ quality: 92 }).toBuffer();
 }
 
 main().catch((e) => {
