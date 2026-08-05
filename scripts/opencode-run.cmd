@@ -1,23 +1,36 @@
 @echo off
 rem opencode-run.cmd - Lanzador por defecto de opencode (sesion con reload del server).
 rem Flujo:
-rem   1. Consola local (PC): se auto-eleva a administrador UAC -> opencode corre elevado.
-rem      Sesion remota SSH/Termius: NO eleva (detecta SESSIONNAME).
-rem   2. Mata el listener de 4096 si escucha (recarga plugin/entorno/config).
-rem   3. Delega en opencode-ciszu-pc (ensure server + attach al puerto 4096) para
-rem      reutilizar su logica de attach y no dejar ventanas huerfanas.
+rem   1. Consola local (PC): abre la sesion DENTRO de Windows Terminal (WT) para
+rem      fuente correcta, UTF-8 (tildes) y Ctrl+Enter como salto de linea.
+rem      - Si no eres admin -> abre WT elevado (UAC).
+rem      - Si ya estás en WT sin admin -> abre WT elevado (UAC).
+rem   2. Sesion remota SSH/Termius: NO toca WT (usa su propio terminal), NO eleva.
+rem   3. Mata el listener de 4096 si escucha (recarga plugin/entorno/config).
+rem   4. Delega en opencode-ciszu-pc (ensure server + attach al puerto 4096).
 rem Uso: opencode-run  (en PATH, visible tambien desde el servidor remoto SSH)
 setlocal EnableExtensions
+chcp 65001 >nul
 
-rem Auto-elevacion solo en consola local (PC), nunca en sesiones remotas SSH/RDP
+rem Sesion remota SSH/RDP: sin WT, sin elevacion. Directo al reload.
 if /i not "%SESSIONNAME%"=="Console" goto reload
-net session >nul 2>&1
-if not errorlevel 1 goto reload
 
-echo [opencode] Elevando a administrador UAC...
-powershell -NoProfile -Command "Start-Process -FilePath '%~f0' -Verb RunAs"
-echo [opencode] La sesion se abre en la nueva ventana elevada.
-ping -n 3 127.0.0.1 >nul
+rem Comprueba si ya somos administrador
+net session >nul 2>&1
+if errorlevel 1 goto not_admin
+
+rem Admin + consola local. Si NO estamos en Windows Terminal, abrir ahí una pestaña nueva.
+if defined WT_SESSION goto reload
+echo [opencode] Abriendo en Windows Terminal...
+powershell -NoProfile -Command "Start-Process wt.exe -WorkingDirectory '%~dp0' -ArgumentList 'cmd','/c','%~f0'"
+ping -n 4 127.0.0.1 >nul
+exit /b 0
+
+:not_admin
+rem Consola local sin admin: relanzar elevado dentro de Windows Terminal (UAC).
+echo [opencode] Elevando a administrador en Windows Terminal...
+powershell -NoProfile -Command "Start-Process wt.exe -Verb RunAs -WorkingDirectory '%~dp0' -ArgumentList 'cmd','/c','%~f0'"
+ping -n 4 127.0.0.1 >nul
 exit /b 0
 
 :reload
