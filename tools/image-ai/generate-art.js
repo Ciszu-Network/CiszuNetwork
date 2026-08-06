@@ -44,7 +44,7 @@ const path = require('path');
 const crypto = require('crypto');
 const { execFileSync } = require('child_process');
 
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '..', '..');
 const DEFAULT_OUT = path.join(ROOT, 'downloads', 'test');
 
 let InferenceClient = null;
