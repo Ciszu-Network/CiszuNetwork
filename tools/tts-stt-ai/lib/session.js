@@ -1,5 +1,7 @@
 // Shared session helpers for OpenCode TUI plugin.
 
+import { isBreakerOpen } from "./llm-client.js";
+
 /**
  * Get the title of a specific session by ID. Returns "" if unknown or on error.
  */
@@ -36,6 +38,10 @@ export async function getActiveSessionTitle(client) {
 export async function completeWithRetry(complete, { system, prompt, config }, logger, label, attempts = 3) {
   let lastError = null;
   for (let i = 1; i <= attempts; i++) {
+    if (isBreakerOpen()) {
+      logger?.log?.(label, "Circuito LLM abierto — saltando intento", "debug");
+      return { error: "LLM degradado por cuota — usando procesamiento local" };
+    }
     const result = await complete({ system, prompt, config });
     if (!result.error) return result;
     lastError = result.error;

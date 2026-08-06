@@ -56,8 +56,12 @@ try {
   InferenceClient = null;
 }
 
-function makeCoverPng(powershell, outPath, title, subtitle, w, h) {
+function makeCoverPng(outPath, title, subtitle, w, h) {
   // Portada/banner vía GDI+ (PowerShell) — sin dependencias ni red
+  title = String(title ?? '').slice(0, 200);
+  subtitle = String(subtitle ?? '').slice(0, 200);
+  if (!/^[\x20-\x7E\u00A0-\u024F]+$/.test(title)) title = 'CISZU NETWORK';
+  if (!/^[\x20-\x7E\u00A0-\u024F]+$/.test(subtitle)) subtitle = '';
   const script = `
 param([string]$Title, [string]$Subtitle, [string]$Out, [int]$W, [int]$H)
 $ErrorActionPreference = 'Stop'
@@ -92,9 +96,10 @@ $g.Dispose(); $bmp.Dispose()
   const tmp = path.join(require('os').tmpdir ? path.resolve(ROOT, '.opencode-tmp') : '', 'cover-gen.ps1');
   fs.mkdirSync(path.dirname(tmp), { recursive: true });
   fs.writeFileSync(tmp, script, 'utf8');
+  const ps = powershellPath();
   try {
     const { spawnSync } = require('child_process');
-    const r = spawnSync(powershell, ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', tmp, '-Title', title, '-Subtitle', subtitle || '', '-Out', outPath, '-W', String(w), '-H', String(h)], { encoding: 'utf8', timeout: 60000 });
+    const r = spawnSync(ps, ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', tmp, '-Title', title, '-Subtitle', subtitle || '', '-Out', outPath, '-W', String(w), '-H', String(h)], { encoding: 'utf8', timeout: 60000 });
     if (r.status !== 0) throw new Error((r.stderr || r.stdout || 'ps fail').slice(0, 200));
   } finally {
     try { fs.unlinkSync(tmp); } catch {}
@@ -175,11 +180,11 @@ function powershellPath() {
 }
 
 function makeCover(ffmpeg, dir, title, artist) {
-  return makeCoverPng(powershellPath(), path.join(dir, 'cover.png'), title, artist, 1024, 1024);
+  return makeCoverPng(path.join(dir, 'cover.png'), title, artist, 1024, 1024);
 }
 
 function makeBanner(ffmpeg, dir, title) {
-  return makeCoverPng(powershellPath(), path.join(dir, 'banner.png'), title, 'CISZU NETWORK', 1600, 900);
+  return makeCoverPng(path.join(dir, 'banner.png'), title, 'CISZU NETWORK', 1600, 900);
 }
 
 function escMeta(s) {

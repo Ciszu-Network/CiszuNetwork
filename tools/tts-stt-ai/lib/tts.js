@@ -148,9 +148,17 @@ export function registerTTS(api, kv, complete, prompts, logger) {
     );
   }
 
+  function cleanFallback(text) {
+    return text
+      .replace(/```[\s\S]*?```/g, " code block. ")
+      .replace(/`([^`]+)`/g, "$1")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
   async function normalizeForSpeech(text, systemPrompt) {
     logger?.log?.("TTS", `Normalizing speech chars=${text.length}`, "debug");
-    return completeWithRetry(
+    const result = await completeWithRetry(
       complete,
       {
         system: systemPrompt,
@@ -160,6 +168,9 @@ export function registerTTS(api, kv, complete, prompts, logger) {
       logger,
       "TTS",
     );
+    if (result.text) return result;
+    logger?.log?.("TTS", `LLM normalization failed (${result.error}), using local fallback`, "warn");
+    return { text: cleanFallback(text), fallback: true };
   }
 
   // ---- Audio pipeline ----
