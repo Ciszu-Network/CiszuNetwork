@@ -7,6 +7,12 @@ import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
 import { getSessionTitle, completeWithRetry } from "./session.js";
 import { buildAudioName, buildNtfyMeta } from "./ntfy-meta.js";
+import {
+  usedAIAlias,
+  personalizedGreeting,
+  isBlockedCall,
+  blockedRefusalText,
+} from "./policy.js";
 
 const VOICE_BASE = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const REPO_ROOT = path.resolve(VOICE_BASE, "..", "..");
@@ -58,21 +64,10 @@ const TTS_VOICES = {
 };
 const DEFAULT_TTS_VOICE = "sharvard";
 
-// ---- Politica de identidad (6 ago 2026) ----
-// Si el prompt del usuario EMPIEZA con un nombre/alias de la IA (CiszuAi,
-// Yarbis, Intelligence, Krypta u otros genericos), la respuesta debe ir en audio
-// y nombrar siempre al usuario: Francisco García, alias Ciszuko Antony.
-// Abreviaciones validas: Cisco/Fran → Francisco; Ciszu/Ciszuko → Ciszuko.
-const IA_ALIASES_RE =
-  /^(?:ciszuai|ciszu ai|yarbis|intelligence|krypta|ai\b|asistente|bot\b|maquina|computadora)/i;
-const USER_GREETINGS = [
-  "Francisco",
-  "Cisco",
-  "Fran",
-  "Francisco García",
-  "Ciszuko",
-  "Cisco Francisco",
-];
+// ---- Politicas de voz (identidad + bloqueo) ----
+// Ver `policy.js`: al llamar a la IA por un alias (CiszuAi/Yarbis/...)
+// se saluda por nombre; al llamarla por Usciz/Notresponding/Norbis se
+// deniega la interacción. Importado al inicio de este archivo.
 
 const PIPER_RATE = 22050;
 const PIPER_BITS = 16;
@@ -189,19 +184,6 @@ async function getTurnUserText(client, api) {
     }
   }
   return "";
-}
-
-// ¿El prompt usa un alias/nombre de la IA? (política de identidad)
-function usedAIAlias(userText) {
-  if (!userText || typeof userText !== "string") return false;
-  const firstLine = userText.trim().slice(0, 60);
-  return IA_ALIASES_RE.test(firstLine);
-}
-
-// Saludo de audio dirigido al usuario (Francisco García / Ciszuko Antony).
-function personalizedGreeting(index) {
-  const name = USER_GREETINGS[index % USER_GREETINGS.length];
-  return `Hola ${name}.`;
 }
 
 // ---- Public API for TUI plugin ----
@@ -458,6 +440,13 @@ export function registerTTS(api, kv, complete, prompts, logger) {
     if (result.lastMessageID === lastSpokenMessageID) return;
     lastSpokenMessageID = result.lastMessageID;
 
+    const userText = await getTurnUserText(client, api);
+    if (isBlockedCall(userText)) {
+      logger?.log?.("TTS", "Auto: palabra de bloqueo detectada, interaccion denegada", "warn");
+      await speakWithSessionPrefix(sessionID, blockedRefusalText(userText), "Llama sin la palabra de bloqueo.");
+      return;
+    }
+
     toast("Normalizing response...");
     const llmResult = await normalizeForSpeech(result.text, systemAuto);
     if (!llmResult.text) {
@@ -494,6 +483,14 @@ export function registerTTS(api, kv, complete, prompts, logger) {
     const result = await getTurnAssistantText(client, api);
     if (!result || !result.text) {
       toast("No assistant response to speak", "warning");
+      return;
+    }
+
+    const userText = await getTurnUserText(client, api);
+    if (isBlockedCall(userText)) {
+      logger?.log?.("TTS", "Manual: palabra de bloqueo detectada, interaccion denegada", "warn");
+      toast("Palabra de bloqueo detectada - interacción denegada", "warning");
+      await speak(blockedRefusalText(userText));
       return;
     }
 
@@ -699,6 +696,21 @@ export function registerTTS(api, kv, complete, prompts, logger) {
         const result = await getTurnAssistantText(client, api);
         if (!result || !result.text) {
           toast("No assistant response to speak", "warning");
+          return;
+        }
+        const userText = await getTurnUserText(client, api);
+        if (isBlockedCall(userText)) {
+          logger?.log?.("TTS", "Phone: palabra de bloqueo detectada, interaccion denegada", "warn");
+          toast("Palabra de bloqueo detectada - interacción denegada", "warning");
+          const sessionID = api.route.current?.params?.sessionID;
+          const sesion = (await getSessionTitle(client, sessionID)) || "";
+          const ok = await synthToNtfy(blockedRefusalText(userText), logger, {
+            motivo: "alerta",
+            sesion,
+            tags: ["rotating_light", "no_entry"],
+            priority: 4,
+          });
+          toast(ok ? "Rechazo enviado a tu móvil" : "Error enviando el audio", ok ? "success" : "error");
           return;
         }
         toast("Normalizing response...");
