@@ -9,6 +9,39 @@ import { getSessionTitle, completeWithRetry } from "./session.js";
 import { buildAudioName, buildNtfyMeta } from "./ntfy-meta.js";
 
 const VOICE_BASE = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+const REPO_ROOT = path.resolve(VOICE_BASE, "..", "..");
+
+const RUNTIME = path.join(VOICE_BASE, "runtime");
+const BIN_PIPER = path.join(RUNTIME, "piper", "piper", process.platform === "win32" ? "piper.exe" : "piper");
+const BIN_FFMPEG = path.join(RUNTIME, "ffmpeg-9.0-essentials_build", "bin", process.platform === "win32" ? "ffmpeg.exe" : "ffmpeg");
+const BIN_FFPLAY = path.join(RUNTIME, "ffmpeg-9.0-essentials_build", "bin", process.platform === "win32" ? "ffplay.exe" : "ffplay");
+
+// Lee NOTIFY_*/GEMINI_API_KEY de .env.local + services/supabase/.env porque el
+// server de opencode arranca sin esas variables en su entorno.
+const ENV_FILES = [
+  path.join(REPO_ROOT, ".env.local"),
+  path.join(REPO_ROOT, "services", "supabase", ".env"),
+];
+
+function readRepoEnv() {
+  const vars = {};
+  for (const file of ENV_FILES) {
+    if (!fs.existsSync(file)) continue;
+    for (const line of fs.readFileSync(file, "utf8").split(/\r?\n/)) {
+      if (!line || line.trim().startsWith("#") || !line.includes("=")) continue;
+      const idx = line.indexOf("=");
+      const key = line.slice(0, idx).trim();
+      const value = line.slice(idx + 1).trim().replace(/^["']|["']$/g, "");
+      if (!(key in vars)) vars[key] = value;
+    }
+  }
+  return vars;
+}
+
+const REPO_ENV = readRepoEnv();
+const NOTIFY_TOPIC = process.env.NOTIFY_TOPIC || REPO_ENV.NOTIFY_TOPIC || "";
+const NOTIFY_TOKEN = process.env.NOTIFY_TOKEN || REPO_ENV.NOTIFY_TOKEN || "";
+const NOTIFY_SERVER = process.env.NOTIFY_SERVER || REPO_ENV.NOTIFY_SERVER || "https://ntfy.sh";
 
 const VOICES_DIR =
   process.platform === "win32"
@@ -139,13 +172,22 @@ export function registerTTS(api, kv, complete, prompts, logger) {
   }
 
   function piperOnPath() {
-    const pathDirs = (process.env.PATH || "").split(path.delimiter).filter(Boolean);
-    const isWin = process.platform === "win32";
-    return pathDirs.some(
-      (dir) =>
-        fs.existsSync(path.join(dir, "piper")) ||
-        (isWin && fs.existsSync(path.join(dir, "piper.exe"))),
-    );
+    return fs.existsSync(BIN_PIPER) || (() => {
+      const pathDirs = (process.env.PATH || "").split(path.delimiter).filter(Boolean);
+      const isWin = process.platform === "win32";
+      return pathDirs.some(
+        (dir) =>
+          fs.existsSync(path.join(dir, "piper")) ||
+          (isWin && fs.existsSync(path.join(dir, "piper.exe"))),
+      );
+    })();
+  }
+
+  function binFor(name) {
+    if (name === "piper" && fs.existsSync(BIN_PIPER)) return BIN_PIPER;
+    if (name === "ffplay" && fs.existsSync(BIN_FFPLAY)) return BIN_FFPLAY;
+    if (name === "ffmpeg" && fs.existsSync(BIN_FFMPEG)) return BIN_FFMPEG;
+    return name;
   }
 
   function cleanFallback(text) {
@@ -219,7 +261,7 @@ export function registerTTS(api, kv, complete, prompts, logger) {
       playProc =
         process.platform === "win32"
           ? spawn(
-              "ffplay",
+              binFor("ffplay"),
               [
                 "-f", "s16le",
                 "-ar", String(PIPER_RATE),
@@ -249,7 +291,7 @@ export function registerTTS(api, kv, complete, prompts, logger) {
               { stdio: ["pipe", "ignore", "pipe"] },
             );
 
-      piperProc = spawn("piper", piperArgs(voiceModel), {
+      piperProc = spawn(binFor("piper"), piperArgs(voiceModel), {
         stdio: ["pipe", "pipe", "pipe"],
       });
 
@@ -419,9 +461,8 @@ export function registerTTS(api, kv, complete, prompts, logger) {
       }
       if (meta.filename) params.set("f", meta.filename);
       const headers = { "Content-Type": "audio/mpeg" };
-      const token = process.env.NOTIFY_TOKEN || "";
-      if (token) headers["Authorization"] = "Bearer " + token;
-      const resp = await fetch(`https://ntfy.sh/${topic}?${params}`, {
+      if (NOTIFY_TOKEN) headers["Authorization"] = "Bearer " + NOTIFY_TOKEN;
+      const resp = await fetch(`${NOTIFY_SERVER}/${topic}?${params}`, {
         method: "PUT",
         headers,
         body: buf,
@@ -440,7 +481,7 @@ export function registerTTS(api, kv, complete, prompts, logger) {
   }
 
   function synthToNtfy(text, logger, ctx = {}) {
-    const topic = process.env.NOTIFY_TOPIC || "";
+    const topic = NOTIFY_TOPIC;
     if (!topic) {
       logger?.log?.("TTS", "NOTIFY_TOPIC not set, cannot send to phone", "warn");
       toast("NOTIFY_TOPIC not set", "warning");
@@ -480,7 +521,7 @@ export function registerTTS(api, kv, complete, prompts, logger) {
         resolve(ok);
       }
 
-      const piper = spawn("piper", [...piperArgs(voiceModel), "-f", wav], {
+      const piper = spawn(binFor("piper"), [...piperArgs(voiceModel), "-f", wav], {
         stdio: ["pipe", "ignore", "pipe"],
       });
       piper.stderr.on("data", () => {});
@@ -491,7 +532,7 @@ export function registerTTS(api, kv, complete, prompts, logger) {
           return;
         }
         const conv = spawn(
-          "ffmpeg",
+          binFor("ffmpeg"),
           ["-y", "-hide_banner", "-loglevel", "error", "-i", wav, "-codec:a", "libmp3lame", "-q:a", "6", mp3],
           { stdio: "ignore" },
         );

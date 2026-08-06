@@ -135,6 +135,7 @@ apis/bruno/*.html
 # public/ fantasma en la raiz (si copy-assets se ejecuta desde la raiz)
 /public/
 
-# Salida de pruebas de generacion de arte IA
+# Salida de pruebas de generacion de arte IA (estructura por categoria:
+# downloads/test/{art,video,music,etc}/<nombre>-<categoria>/ — SIEMPRE ignorada)
 downloads/
 
