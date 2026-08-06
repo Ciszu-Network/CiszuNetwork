@@ -63,6 +63,28 @@ function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+// Fallback al vault del repo (.env.local / services/supabase/.env) porque el
+// server de opencode no expone esas variables en su entorno.
+const REPO_ROOT = new URL("../../..", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1");
+import fs from "node:fs";
+import path from "node:path";
+function readRepoEnv() {
+  const vars = {};
+  const files = [path.join(REPO_ROOT, ".env.local"), path.join(REPO_ROOT, "services", "supabase", ".env")];
+  for (const file of files) {
+    if (!fs.existsSync(file)) continue;
+    for (const line of fs.readFileSync(file, "utf8").split(/\r?\n/)) {
+      if (!line || line.trim().startsWith("#") || !line.includes("=")) continue;
+      const idx = line.indexOf("=");
+      const key = line.slice(0, idx).trim();
+      const value = line.slice(idx + 1).trim().replace(/^["']|["']$/g, "");
+      if (!(key in vars)) vars[key] = value;
+    }
+  }
+  return vars;
+}
+const REPO_ENV = readRepoEnv();
+
 /**
  * Create an LLM completion function.
  *
@@ -114,7 +136,7 @@ export function createClient(pluginOptions, logger) {
       return { text: null, error: "LLM degradado por cuota — usando procesamiento local" };
     }
 
-    const apiKey = cfg.apiKeyEnv ? process.env[cfg.apiKeyEnv] : null;
+    const apiKey = cfg.apiKeyEnv ? process.env[cfg.apiKeyEnv] || REPO_ENV[cfg.apiKeyEnv] : null;
 
     const endpoint = cfg.endpoint.replace(/\/+$/, "") + "/chat/completions";
 
