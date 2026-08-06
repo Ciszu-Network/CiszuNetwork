@@ -58,6 +58,22 @@ const TTS_VOICES = {
 };
 const DEFAULT_TTS_VOICE = "sharvard";
 
+// ---- Politica de identidad (6 ago 2026) ----
+// Si el prompt del usuario EMPIEZA con un nombre/alias de la IA (CiszuAi,
+// Yarbis, Intelligence, Krypta u otros genericos), la respuesta debe ir en audio
+// y nombrar siempre al usuario: Francisco García, alias Ciszuko Antony.
+// Abreviaciones validas: Cisco/Fran → Francisco; Ciszu/Ciszuko → Ciszuko.
+const IA_ALIASES_RE =
+  /^(?:ciszuai|ciszu ai|yarbis|intelligence|krypta|ai\b|asistente|bot\b|maquina|computadora)/i;
+const USER_GREETINGS = [
+  "Francisco",
+  "Cisco",
+  "Fran",
+  "Francisco García",
+  "Ciszuko",
+  "Cisco Francisco",
+];
+
 const PIPER_RATE = 22050;
 const PIPER_BITS = 16;
 const PIPER_CHANNELS = 1;
@@ -148,6 +164,46 @@ async function getTurnAssistantText(client, api) {
   };
 }
 
+// Palíndromo informativo del usuario: devuelve el texto del último mensaje del
+// usuario para aplicar la política de identidad (alias → audio + saludo).
+async function getTurnUserText(client, api) {
+  const route = api.route.current;
+  if (route.name !== "session") return "";
+
+  const sessionID = route.params.sessionID;
+  const stateMessages = api.state.session.messages(sessionID);
+  if (!stateMessages || stateMessages.length === 0) return "";
+
+  for (let i = stateMessages.length - 1; i >= 0; i--) {
+    const m = stateMessages[i];
+    if (m.role !== "user") continue;
+    try {
+      const fullMsg = await client.session
+        .message({ sessionID, messageID: m.id }, { throwOnError: true })
+        .then((r) => r.data);
+      const textParts = (fullMsg?.parts || []).filter((p) => p.type === "text");
+      const text = textParts.map((p) => p.text || "").join("\n").trim();
+      if (text) return text;
+    } catch {
+      continue;
+    }
+  }
+  return "";
+}
+
+// ¿El prompt usa un alias/nombre de la IA? (política de identidad)
+function usedAIAlias(userText) {
+  if (!userText || typeof userText !== "string") return false;
+  const firstLine = userText.trim().slice(0, 60);
+  return IA_ALIASES_RE.test(firstLine);
+}
+
+// Saludo de audio dirigido al usuario (Francisco García / Ciszuko Antony).
+function personalizedGreeting(index) {
+  const name = USER_GREETINGS[index % USER_GREETINGS.length];
+  return `Hola ${name}.`;
+}
+
 // ---- Public API for TUI plugin ----
 
 export function registerTTS(api, kv, complete, prompts, logger) {
@@ -163,6 +219,22 @@ export function registerTTS(api, kv, complete, prompts, logger) {
     const voice = kv.get("tts.voice", DEFAULT_TTS_VOICE);
     const entry = TTS_VOICES[voice] || TTS_VOICES[DEFAULT_TTS_VOICE];
     return { file: path.join(VOICES_DIR, entry.file), speaker: entry.speaker };
+  }
+
+  // Politica de identidad: si el ultimo prompt del usuario comienza con un
+  // alias/nombre de la IA (CiszuAi, Yarbis, Intelligence, Krypta...), el audio
+  // de la respuesta debe saludar siempre a Francisco García (alias Ciszuko
+  // Antony) por su nombre, rotando entre variantes (Francisco, Cisco, Fran...).
+  async function buildPolicyGreeting(api, kv) {
+    try {
+      const userText = await getTurnUserText(client, api);
+      if (!usedAIAlias(userText)) return "";
+      const idx = Number(kv.get("tts.greetIdx", 0)) || 0;
+      kv.set("tts.greetIdx", idx + 1);
+      return personalizedGreeting(idx);
+    } catch {
+      return "";
+    }
   }
 
   function piperArgs(voiceModel) {
@@ -395,7 +467,9 @@ export function registerTTS(api, kv, complete, prompts, logger) {
     }
 
     logger?.log?.("TTS", `Auto normalization succeeded chars=${llmResult.text.length}`, "debug");
-    await speakWithSessionPrefix(sessionID, llmResult.text, "Listo, esperando tu entrada.");
+    const greeting = await buildPolicyGreeting(api, kv);
+    const textToSpeak = greeting ? `${greeting} ${llmResult.text}` : llmResult.text;
+    await speakWithSessionPrefix(sessionID, textToSpeak, "Listo, esperando tu entrada.");
   });
 
   api.event.on("permission.asked", async (event) => {
@@ -425,15 +499,16 @@ export function registerTTS(api, kv, complete, prompts, logger) {
 
     toast("Normalizing response...");
     const llmResult = await normalizeForSpeech(result.text, systemManual);
-    if (!llmResult.text) {
-      logger?.log?.("TTS", `Manual normalization failed: ${llmResult.error}`, "warn");
+    if (!llmResult.text) {      logger?.log?.("TTS", `Manual normalization failed: ${llmResult.error}`, "warn");
       toast(`TTS normalization failed: ${llmResult.error}`, "warning");
       return;
     }
 
     logger?.log?.("TTS", `Manual normalization succeeded chars=${llmResult.text.length}`, "debug");
+    const greeting = buildPolicyGreeting(api, kv);
+    const textToSpeak = greeting ? `${greeting} ${llmResult.text}` : llmResult.text;
     toast("Speaking last response");
-    await speak(llmResult.text);
+    await speak(textToSpeak);
   }
 
   // ---- Phone delivery (ntfy audio attachment) ----
@@ -632,10 +707,12 @@ export function registerTTS(api, kv, complete, prompts, logger) {
           toast(`TTS normalization failed: ${llmResult.error}`, "warning");
           return;
         }
+        const greeting = await buildPolicyGreeting(api, kv);
+        const textToSend = greeting ? `${greeting} ${llmResult.text}` : llmResult.text;
         toast("Synthesizing and sending...");
         const sessionID = api.route.current?.params?.sessionID;
         const sesion = (await getSessionTitle(client, sessionID)) || "";
-        const ok = await synthToNtfy(llmResult.text, logger, {
+        const ok = await synthToNtfy(textToSend, logger, {
           motivo: "respuesta",
           sesion,
           tags: ["robot"],

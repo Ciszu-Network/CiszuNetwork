@@ -377,6 +377,8 @@ Pila decidida (análisis completo en `docs/documentation/TOOLS.md`): **DBeaver C
 
 **Avisos ntfy con audio** (política 6 ago 2026): `pnpm notify "Título" "Mensaje"` adjunta **SIEMPRE audio** al push (solo texto con `--no-voice`). Dos reglas obligatorias: **(1) voz SIEMPRE femenina** — sharvard ES se sintetiza con `-s 1` (speaker femenino; sin él suena masculina) y las voces masculinas (ryan/bryce/davefx) se ignoran automáticamente; **(2) texto del audio separado del mensaje** — el audio se genera con `--text "texto limpio"` (o limpieza automática `cleanTextForAudio`: quita rutas, urls, extensiones de archivo, markdown y traduce siglas) porque la voz ES no pronuncia bien rutas/siglas/tecnicismos. El mensaje visible conserva el texto técnico completo. El `pnpm notify` corresponde al `ntfy-notif.js` de `scripts/`.
 
+**Política de identidad (6 ago 2026)**: el usuario es **Francisco García, alias Ciszuko Antony** (abreviaciones: Francisco→Cisco/Franco/Fran; Ciszuko→Ciszu/Ciszko). Cuando un prompt **empieza con un alias/nombre de la IA** (CiszuAi, Yarbis, Intelligence, Krypta, u otros genéricos como "AI", "asistente", "bot"), las respuestas de voz (PC, auto-mode y móvil `/tts-speak-cel`) deben **saludar siempre al usuario por su nombre** rotando entre variantes (Francisco, Cisco, Fran, Francisco García, Ciszuko, Cisco Francisco). Implementado en `tools/tts-stt-ai/lib/tts.js`: `IA_ALIASES_RE`, `USER_GREETINGS`, `buildPolicyGreeting()`, con índice rotativo en kv `tts.greetIdx`.
+
 ## Herramientas de seguridad instaladas (jul 2026)
 
 | Herramienta | Cómo | Notas |
