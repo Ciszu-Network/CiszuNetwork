@@ -6,6 +6,7 @@ import os from "node:os";
 import { fileURLToPath } from "node:url";
 import { spawn, execSync } from "node:child_process";
 import { getActiveSessionTitle, completeWithRetry } from "./session.js";
+import { isBlockedCall, blockedRefusalText } from "./policy.js";
 
 const VOICE_BASE = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 
@@ -500,6 +501,11 @@ async function transcribeApi(kv, logger) {
 }
 
 async function appendTranscription(client, text, submit) {
+  if (isBlockedCall(text)) {
+    throw new Error(
+      `Palabra de bloqueo detectada ("${text.trim().slice(0, 60)}"). Interacción denegada: ${blockedRefusalText(text)}`,
+    );
+  }
   let appendResult = await client.tui.appendPrompt({ body: { text } });
 
   if (appendResult?.error?.data?.message === "Expected object, got undefined") {
