@@ -8,21 +8,27 @@
 //   echo "texto" | node scripts/ntfy-notif.js "Titulo"      (lee el mensaje de stdin)
 //   node scripts/ntfy-notif.js --list                        (lista mensajes recientes)
 //   node scripts/ntfy-notif.js --clear                       (borra TODOS los mensajes, requiere token)
-//   node scripts/ntfy-notif.js "Titulo" "Mensaje" --voice     (adjunta AUDIO del mensaje sintetizado con Piper)
-//   node scripts/ntfy-notif.js "Mensaje" --voice sharvard     (voz femenina ES; voces: amy, ryan, bryce, sharvard, davefx)
+//   node scripts/ntfy-notif.js "Titulo" "Mensaje"            (SIEMPRE adjunta audio, voz femenina)
+//   node scripts/ntfy-notif.js "Titulo" "Mensaje" --no-voice (solo texto, sin audio)
+//   node scripts/ntfy-notif.js "Titulo" "Mensaje" --voice amy (voz femenina especifica; masculinas se ignoran)
+//   node scripts/ntfy-notif.js "Titulo" "Mensaje" --text "texto limpio para el audio"
 //   node scripts/ntfy-notif.js "Titulo" "Mensaje" --markdown  (mensaje con formato Markdown: **negritas**, links, code)
 //   node scripts/ntfy-notif.js "Titulo" "Mensaje" --delay 30m (entrega programada: 30m, 3h, "2 days", "tomorrow, 3pm", timestamp)
 //
 // Flags:
-//   --priority <min|low|default|high|urgent>   prioridad (default: default)
+//   --priority <int|low|default|high|urgent>   prioridad (default: default)
 //   --tag <tag>                                tag (emoji/categoría, p.ej. robot, warning, check)
 //   --title <texto>                            título explícito (alternativo a argv[2])
 //   --markdown                                 marca el mensaje como Markdown (se renderiza en la web app)
 //   --delay <duracion|"fecha natural">         entrega programada (X-Delay: 30m, 3h, "tomorrow, 3pm", Unix ts)
-//   --voice [voz]                              sintetiza el mensaje a audio (Piper) y lo adjunta al push.
-//                                              Sin valor usa la voz por defecto (sharvard — femenina ES).
-//                                              Un solo push con texto + audio (el audio llega con nombre
-//                                              identificable, p.ej. ciszu-notif-20260805-...-aviso-....mp3).
+//   --text <texto>                             texto del AUDIO (Piper) separado del mensaje de la notificación.
+//                                              Recomendado: el audio en español natural SIN rutas, siglas en
+//                                              inglés ni tecnicismos (la voz los pronuncia mal). Si no se pasa,
+//                                              se usa el mensaje con una limpieza automática.
+//   --no-voice                                 sin audio (solo texto). Por defecto SIEMPRE se adjunta audio.
+//   --voice [voz]                              voz del audio. Política: SIEMPRE femenina (sharvard ES = speaker
+//                                              femenino). Las voces masculinas (ryan, bryce, davefx) se ignoran
+//                                              y se usa sharvard.
 //                                              La app ntfy del móvil lo reproduce.
 //
 // Configuración (en orden de prioridad):
@@ -70,18 +76,31 @@ const TOKEN = process.env.NOTIFY_TOKEN || env.NOTIFY_TOKEN || '';
 const PRIORITIES = { min: 1, low: 2, default: 3, high: 4, urgent: 5 };
 
 // ---- Voz (Piper) para notificaciones con audio ----
+// POLITICA (6 ago 2026): el audio SIEMPRE usa voz femenina. Sharvard (es_ES) es
+// multi-speaker (M=0, F=1) → forzar `-s 1` para el speaker femenino (sin él suena
+// masculina). Las voces masculinas se aceptan en el mapa pero nunca se usan.
 const VOICE_ROOT = path.join(ROOT, 'tools', 'tts-stt-ai', 'runtime');
 const NOTIFY_VOICES = {
-  amy: { label: 'Amy (EN, femenina)', file: 'en_US-amy-medium.onnx' },
-  ryan: { label: 'Ryan (EN)', file: 'en_US-ryan-high.onnx' },
-  bryce: { label: 'Bryce (EN)', file: 'en_US-bryce-medium.onnx' },
-  sharvard: { label: 'Sharvard (ES, femenina)', file: 'es_ES-sharvard-medium.onnx' },
-  davefx: { label: 'Davefx (ES)', file: 'es_ES-davefx-medium.onnx' },
+  amy: { label: 'Amy (EN, femenina)', file: 'en_US-amy-medium.onnx', female: true },
+  sharvard: { label: 'Sharvard (ES, femenina)', file: 'es_ES-sharvard-medium.onnx', speaker: 1, female: true },
+  daniela: { label: 'Daniela (ES-AR, femenina)', file: 'es_AR-daniela-high.onnx', female: true },
+  ryan: { label: 'Ryan (EN, masculina)', file: 'en_US-ryan-high.onnx', female: false },
+  bryce: { label: 'Bryce (EN, masculina)', file: 'en_US-bryce-medium.onnx', female: false },
+  davefx: { label: 'Davefx (ES, masculina)', file: 'es_ES-davefx-medium.onnx', female: false },
 };
 const DEFAULT_NOTIFY_VOICE = 'sharvard';
 
+function resolveVoice(voiceKey) {
+  let voice = NOTIFY_VOICES[voiceKey] || NOTIFY_VOICES[DEFAULT_NOTIFY_VOICE];
+  if (!voice.female) {
+    console.warn(`  [!] Voz '${voiceKey}' es masculina — politica: SIEMPRE femenina. Usando ${NOTIFY_VOICES[DEFAULT_NOTIFY_VOICE].label}.`);
+    voice = NOTIFY_VOICES[DEFAULT_NOTIFY_VOICE];
+  }
+  return voice;
+}
+
 function synthesizeVoice(text, voiceKey) {
-  const voice = NOTIFY_VOICES[voiceKey] || NOTIFY_VOICES[DEFAULT_NOTIFY_VOICE];
+  const voice = resolveVoice(voiceKey);
   const piper = path.join(VOICE_ROOT, 'piper', 'piper', 'piper.exe');
   const ffmpeg = path.join(VOICE_ROOT, 'ffmpeg-9.0-essentials_build', 'bin', 'ffmpeg.exe');
   const model = path.join(VOICE_ROOT, 'piper-voices', voice.file);
@@ -91,7 +110,9 @@ function synthesizeVoice(text, voiceKey) {
   if (!fs.existsSync(piper) || !fs.existsSync(ffmpeg) || !fs.existsSync(model)) return null;
 
   const { spawnSync } = require('child_process');
-  const synth = spawnSync(piper, ['-m', model, '-f', wav], {
+  const piperArgs = ['-m', model, '-f', wav];
+  if (voice.speaker !== undefined) piperArgs.push('-s', String(voice.speaker));
+  const synth = spawnSync(piper, piperArgs, {
     input: text.replace(/\n/g, ' ').trim() + '\n',
     encoding: 'utf8',
     timeout: 60000,
@@ -103,6 +124,32 @@ function synthesizeVoice(text, voiceKey) {
   return mp3;
 }
 
+// Limpieza del texto que se sintetiza a AUDIO: la voz ES no pronuncia bien rutas,
+// siglas en ingles ni tecnicismos → se separa del mensaje de la notificacion.
+// El mensaje visible conserva el texto tecnico completo; el audio usa este limpio.
+function cleanTextForAudio(text) {
+  let t = String(text || '')
+    .replace(/https?:\/\/\S+/gi, '')                       // urls
+    .replace(/(?:[A-Za-z]:[\\/]|\/|\.\.\/)[\w\-.\\/ ]+/g, ' ') // rutas de archivo
+    .replace(/\S+\.(?:mp4|mp3|wav|ogg|png|jpg|jpeg|json|js|ts|tsx|jsx|md|txt|exe|cmd|ps1|log)\b/gi, ' ') // ficheros con extension
+    .replace(/`[^`]*`/g, ' ')                              // codigo inline
+    .replace(/[_\*#\|]/g, ' ');                            // markdown
+  const dict = {
+    opencode: 'open code',
+    'opencode-ai': 'open code',
+    ntfy: 'n t f y',
+    piper: 'paiper',
+    sharvard: 'sharvard',
+    terminal: 'terminal',
+    urls: 'enlaces',
+    cdn: 'c d n',
+  };
+  for (const [k, v] of Object.entries(dict)) {
+    t = t.replace(new RegExp(`\\b${k}\\b`, 'gi'), v);
+  }
+  return t.replace(/\s+/g, ' ').trim();
+}
+
 function parseArgs(argv) {
   const args = { positionals: [], flags: {} };
   for (let i = 0; i < argv.length; i++) {
@@ -110,7 +157,7 @@ function parseArgs(argv) {
     if (a.startsWith('--')) {
       const key = a.slice(2);
       const next = argv[i + 1];
-      if (key === 'priority' || key === 'tag' || key === 'title' || key === 'delay') {
+      if (key === 'priority' || key === 'tag' || key === 'title' || key === 'delay' || key === 'text') {
         args.flags[key] = next;
         i++;
       } else if (key === 'voice') {
@@ -259,10 +306,13 @@ async function main() {
     process.exit(1);
   }
 
+  // POLITICA (6 ago 2026): las notificaciones SIEMPRE llevan audio (voz femenina).
+  // Solo se omite con --no-voice explicito o si falla la sintesis (cae a texto).
   let audioPath = null;
-  if (flags.voice) {
-    const voiceKey = flags.voice === true ? DEFAULT_NOTIFY_VOICE : flags.voice;
-    audioPath = synthesizeVoice(message, voiceKey);
+  if (!flags['no-voice']) {
+    const voiceKey = flags.voice === true || flags.voice === undefined ? DEFAULT_NOTIFY_VOICE : flags.voice;
+    const audioText = flags.text !== undefined ? String(flags.text) : cleanTextForAudio(message);
+    audioPath = synthesizeVoice(audioText, voiceKey);
     if (!audioPath) {
       console.warn(`  [!] No se pudo sintetizar la voz (${NOTIFY_VOICES[voiceKey]?.label || voiceKey}) — se envia solo texto.`);
     }
