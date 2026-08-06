@@ -379,6 +379,8 @@ Pila decidida (análisis completo en `docs/documentation/TOOLS.md`): **DBeaver C
 
 **Política de identidad (6 ago 2026)**: el usuario es **Francisco García, alias Ciszuko Antony** (abreviaciones: Francisco→Cisco/Franco/Fran; Ciszuko→Ciszu/Ciszko). Cuando un prompt **empieza con un alias/nombre de la IA** (CiszuAi, Yarbis, Intelligence, Krypta, u otros genéricos como "AI", "asistente", "bot"), las respuestas de voz (PC, auto-mode y móvil `/tts-speak-cel`) deben **saludar siempre al usuario por su nombre** rotando entre variantes (Francisco, Cisco, Fran, Francisco García, Ciszuko, Cisco Francisco). Implementado en `tools/tts-stt-ai/lib/tts.js`: `IA_ALIASES_RE`, `USER_GREETINGS`, `buildPolicyGreeting()`, con índice rotativo en kv `tts.greetIdx`.
 
+**Palabras de bloqueo (6 ago 2026)**: si el prompt del usuario contiene en **cualquier posición** una palabra clave — **`Usciz`, `Notresponding`, `Norbis`** — la interacción queda **DENEGADA**: (1) en STT (`stt.js` `appendTranscription`) el prompt NO se apendea ni se envía (throw → pipeline aborta con el motivo); (2) en TTS (auto-mode, `/tts-speak-pc` y `/tts-speak-cel`) NO se relaya la respuesta del asistente y se reproduce/envía un **audio de rechazo** (`blockedRefusalText()`) explicando que la solicitud se deniega y que no se ejecutará ninguna tarea. Política centralizada en `tools/tts-stt-ai/lib/policy.js` (compartido por STT y TTS): `BLOCKED_ALIASES_RE`, `isBlockedCall()` (regex con `\b`), `blockedRefusalText()`. Los alias de identidad (CiszuAi/etc.) NO bloquean — solo cambian el saludo.
+
 ## Herramientas de seguridad instaladas (jul 2026)
 
 | Herramienta | Cómo | Notas |
