@@ -558,7 +558,6 @@ async function doTranscribePipeline(
 
     if (!llmResult.text) {
       logger?.log("STT", `Normalization failed, using raw input: ${llmResult.error}`, "warn");
-      toast(`Normalization failed, using raw input: ${llmResult.error}`, "warning");
       await appendTranscription(client, result.text, submit);
       return;
     }

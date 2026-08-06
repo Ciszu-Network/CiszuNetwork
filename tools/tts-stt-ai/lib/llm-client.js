@@ -23,6 +23,21 @@ const DEFAULTS = {
   retries: 2,
 };
 
+// Circuit breaker: cuánto tiempo (ms) nos quedamos sin llamar a la API tras
+// errores de cuota/persistentes (429/401/403/400). TTS/STT caen a fallback local.
+const BREAKER_TRIPS = new Set([400, 401, 403, 429]);
+const DEGRADE_MS = 30 * 60 * 1000;
+
+let breakerUntil = 0;
+
+export function resetBreaker() {
+  breakerUntil = 0;
+}
+
+export function isBreakerOpen() {
+  return Date.now() < breakerUntil;
+}
+
 function normalizeRetries(value) {
   const parsed = Number(value);
   if (!Number.isFinite(parsed) || parsed < 0) return DEFAULTS.retries;
@@ -89,6 +104,16 @@ export function createClient(pluginOptions, logger) {
       logger?.log?.("LLM", "completion skipped: model not configured", "warn");
       return { text: null, error: "LLM model not configured" };
     }
+
+    // Circuit breaker: si la API responde con cuota/errores persistentes,
+    // degradamos durante DEGRADE_MS y usamos el fallback local (TTS/STT) sin
+    // volver a golpear la API en cada llamada.
+    const now = Date.now();
+    if (now < breakerUntil) {
+      logger?.log?.("LLM", `Circuito abierto (${Math.ceil((breakerUntil - now) / 1000)}s restantes), usando fallback local`, "debug");
+      return { text: null, error: "LLM degradado por cuota — usando procesamiento local" };
+    }
+
     const apiKey = cfg.apiKeyEnv ? process.env[cfg.apiKeyEnv] : null;
 
     const endpoint = cfg.endpoint.replace(/\/+$/, "") + "/chat/completions";
@@ -106,6 +131,10 @@ export function createClient(pluginOptions, logger) {
     if (cfg.chatTemplateKwargs) body.chat_template_kwargs = cfg.chatTemplateKwargs;
 
     for (let attempt = 0; attempt <= cfg.retries; attempt++) {
+      if (Date.now() < breakerUntil) {
+        logger?.log?.("LLM", "Circuito abierto durante reintentos — abortando", "debug");
+        return { text: null, error: "LLM degradado por cuota — usando procesamiento local" };
+      }
       try {
         logger?.log?.(
           "LLM",
@@ -122,16 +151,28 @@ export function createClient(pluginOptions, logger) {
         });
 
         if (!response.ok) {
+          let detail = "";
+          try {
+            detail = await response.text();
+          } catch {}
+          const short = detail.slice(0, 400);
           logger?.log?.(
             "LLM",
-            `Completion response status=${response.status}`,
+            `Completion response status=${response.status} body=${short}`,
             shouldRetry(response.status) ? "warn" : "error",
           );
+          if (BREAKER_TRIPS.has(response.status)) {
+            breakerUntil = Date.now() + DEGRADE_MS;
+            logger?.log?.("LLM", `Circuito abierto ${DEGRADE_MS / 60000}min por status=${response.status}`, "warn");
+          }
           if (attempt < cfg.retries && shouldRetry(response.status)) {
             await wait(250 * 2 ** attempt);
             continue;
           }
-          return { text: null, error: `LLM request failed (${response.status})` };
+          return {
+            text: null,
+            error: `LLM request failed (${response.status}) ${short}`,
+          };
         }
 
         const data = await response.json();
