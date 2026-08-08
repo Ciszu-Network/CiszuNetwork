@@ -394,6 +394,8 @@ Pila decidida (análisis completo en `docs/documentation/TOOLS.md`): **DBeaver C
 
 ⚠️ **Gotchas reportados**:
 
+- **Timeout SSH desde el móvil (8 ago 2026)**: las reglas de firewall `OpenSSH SSH Server (sshd)` vienen por defecto con `Profile: Private`; el tráfico entrante por el adaptador Tailscale puede clasificarse en otro perfil y Windows lo bloquea en silencio (síntoma: Termius se queda en "conectando…" y timeout, aunque `tailscale ping` y el escaneo local del puerto 22 funcionen). Fix: `Set-NetFirewallRule -DisplayName "OpenSSH SSH Server (sshd)" -Profile Any`. Además, tras reinicios/crash-leaf del sshd, `Restart-Service sshd -Force` limpia listeners zombis.
+
 - **OpenSSH Windows + host keys**: si el servicio sshd entra en crash-loop (evento 7031 `service terminated unexpectedly`) con `WARNING: UNPROTECTED PRIVATE KEY FILE`, la causa es owner/permisos de las host keys → NUNCA crear con `ssh-keygen -A` en ruta `C:\ProgramData\ssh` sin reparar. Fix: `Import-Module 'C:\Program Files\OpenSSH\OpenSSHUtils.psm1'` → `Repair-SshdHostKeyPermission` para cada `ssh_host_*_key` + `Repair-SshdConfigPermission` (owner SYSTEM, solo SYSTEM+Admins con acceso).
 - **Instalación legacy de OpenSSH**: si service sshd existe pero la capability `OpenSSH.Server` = NotPresent, borrarlo (`sc.exe delete sshd`) y reinstalar con winget (el MSI crea el servicio correctamente).
 - **Tailscale login headless**: `tailscale up` abre el navegador y caduca la URL si no se completa pronto; para rotar, ver `https://login.tailscale.com/a/<hash>` en stdout.
