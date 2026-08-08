@@ -1,11 +1,15 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { IBM_Plex_Sans, IBM_Plex_Sans_Condensed } from "next/font/google";
+import { assetResolver } from "@ciszunetwork/cdn";
+import { PwaRegister } from "@ciszu/ui";
 import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ZoomWarning } from "@/components/layout/ZoomWarning";
 import { CISZU_NETWORK } from "@/config/site";
 import "./globals.css";
+
+const ICON_SVG = assetResolver.resolve("projects/ciszukoantony/content/logos/images/outline/isotype/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg");
 
 const ibmPlex = IBM_Plex_Sans({
   subsets: ["latin"],
@@ -19,15 +23,20 @@ const ibmPlexCondensed = IBM_Plex_Sans_Condensed({
   variable: "--font-ibm-plex-condensed",
 });
 
+export const viewport = {
+  themeColor: "#000000",
+};
 export const metadata: Metadata = {
   title: "Ciszu Network — Innovación Digital",
   description: "Ciszu Network desarrolla soluciones digitales de alto rendimiento. Liderados por Ciszuko Antony, CEO. Proyectos: MuzicMania, Minecraft, Discord, WhatsApp, Telegram y más.",
   keywords: ["Ciszu Network", "Ciszuko Antony", "MuzicMania", "desarrollo web", "Next.js", "Venezuela"],
   icons: {
-    icon: "/logos/images/outline/isotype/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg",
-    shortcut: "/logos/images/outline/isotype/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg",
-    apple: "/logos/images/outline/isotype/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg",
+    icon: ICON_SVG,
+    shortcut: ICON_SVG,
+    apple: ICON_SVG,
   },
+  appleWebApp: { capable: true, title: "Ciszu Network", statusBarStyle: "black-translucent" },
+  manifest: "/manifest.webmanifest",
   openGraph: {
     title: "Ciszu Network — Innovación Digital",
     description: "Bright Future Promised. Desarrollo web, infraestructura cloud y experiencias digitales.",
@@ -45,6 +54,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
         <Navbar />
         <main className="flex-grow">{children}</main>
         <Footer />
+        <PwaRegister />
       </body>
     </html>
   );

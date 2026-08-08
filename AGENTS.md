@@ -4,18 +4,19 @@
 
 **Ciszu Network** es el ecosistema digital de **CiszukoAntony** (Ciszuko): un monorepo con 4 sitios web (Next.js 15 + Tailwind 4), un bot de Discord (Discord.js), un juego de música (MuzicMania — web + app Tauri), paquetes compartidos (`@ciszu/ui`, `@ciszunetwork/cdn`) y un CDN de assets sobre Supabase Storage.
 
-| Proyecto | URL (Vercel) | Descripción |
-|---|---|---|
-| **CiszuNetwork** | `ciszunetwork.vercel.app` | Web principal — presentación de la marca, redes y ecosistema |
-| **CiszukoAntony** | `ciszukoantony.vercel.app` | Portfolio personal (logos, medios, música) |
-| **MuzicMania** | `muzicmania.vercel.app` | Juego de ritmo/música — scores en Supabase (schema `muzicmania`), auth de Supabase, app de escritorio Tauri + NSIS |
-| **Ciszubot** | `ciszubot.vercel.app` | Landing del bot de Discord (`projects/ciszubot/website/`, Next.js) + **estado en vivo del bot** (heartbeat Supabase → `ciszubot.bot_status`) |
+| Proyecto                | URL (Vercel)                 | Descripción                                                                                                                                            |
+| ----------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **CiszuNetwork**  | `ciszunetwork.vercel.app`  | Web principal — presentación de la marca, redes y ecosistema                                                                                          |
+| **CiszukoAntony** | `ciszukoantony.vercel.app` | Portfolio personal (logos, medios, música)                                                                                                             |
+| **MuzicMania**    | `muzicmania.vercel.app`    | Juego de ritmo/música — scores en Supabase (schema`muzicmania`), auth de Supabase, app de escritorio Tauri + NSIS                                   |
+| **Ciszubot**      | `ciszubot.vercel.app`      | Landing del bot de Discord (`projects/ciszubot/website/`, Next.js) + **estado en vivo del bot** (heartbeat Supabase → `ciszubot.bot_status`) |
 
 Infraestructura: **Supabase** (un solo proyecto `obwzzmbvkrcscqwptlqo` — auth, Postgres, Storage CDN `ciszu-cdn`) + **Vercel** (4 proyectos, deploys vía GitHub Actions) + **GitHub** (repo privado `Ciszu-Network/CiszuNetwork`). Identidad visual: neon cyan/rosa, fuente Geomanist.
 
-**Estado actual (jul 2026)**: los 4 sitios despliegan desde `main` y funcionan en producción (imágenes directas CDN, `images.unoptimized`, REST de muzicmania corregido). La sesión de seguridad cerró: code scanning 31/31 fixed, dependabot 35/36 (resta glib), secret scanning 1 abierta (PAT sbp_ redactado del repo). **Migración 11 APLICADA (31 jul 2026)** con PAT nuevo del usuario (`SUPABASE_ACCESS_TOKEN` en `services/supabase/.env` + CLI supabase). **Herramientas completas**: semgrep 0 findings reales, ZAP 2.17.0 instalado + DAST probado (0 High/4 Medium), DOMPurify aplicado, builds 4/4 OK. Pendientes activos: revocar el PAT viejo filtrado (cierra alerta secret scanning), rotar tokens restantes (lista abajo), secretlint full repo scan (timeout — subtargets), exponer schemas en Dashboard. Detalles en la sección "Herramientas de seguridad instaladas".
+**Estado actual (jul 2026)**: los 4 sitios despliegan desde `main` y funcionan en producción (imágenes directas CDN, `images.unoptimized`, REST de muzicmania corregido). La sesión de seguridad cerró: code scanning 31/31 fixed, dependabot 35/36 (resta glib), secret scanning 1 abierta (PAT sbp\_ redactado del repo). **Migración 11 APLICADA (31 jul 2026)** con PAT nuevo del usuario (`SUPABASE_ACCESS_TOKEN` en `services/supabase/.env` + CLI supabase). **Herramientas completas**: semgrep 0 findings reales, ZAP 2.17.0 instalado + DAST probado (0 High/4 Medium), DOMPurify aplicado, builds 4/4 OK. Pendientes activos: revocar el PAT viejo filtrado (cierra alerta secret scanning), rotar tokens restantes (lista abajo), secretlint full repo scan (timeout — subtargets), exponer schemas en Dashboard. Detalles en la sección "Herramientas de seguridad instaladas".
 
 ## Quick start
+
 ```bash
 pnpm install              # install all workspaces
 pnpm dev                  # turbo: all apps
@@ -28,14 +29,14 @@ Package manager: **pnpm v10.8.1**, Node >=20.
 
 ## Workspaces & entry points
 
-| pnpm filter name | Location | What |
-|---|---|---|
-| `ciszunetwork-website` | `projects/ciszu/website/` | Next.js — main CiszuNetwork website |
-| `ciszukoantony-website` | `projects/ciszukoantony/website/` | Next.js — portfolio |
-| `muzicmania-website` | `projects/muzicmania/website/` | Next.js + Tauri — music game |
-| `ciszubot-website` | `projects/ciszubot/website/` | Next.js — bot landing website |
-| `ciszubot` | `projects/ciszubot/discord-bot/` | Discord.js bot (TypeScript, pnpm workspace, Docker) |
-| `@ciszunetwork/cdn` | `packages/cdn/` | Asset resolver (see below) |
+| pnpm filter name          | Location                            | What                                                |
+| ------------------------- | ----------------------------------- | --------------------------------------------------- |
+| `ciszunetwork-website`  | `projects/ciszu/website/`         | Next.js — main CiszuNetwork website                |
+| `ciszukoantony-website` | `projects/ciszukoantony/website/` | Next.js — portfolio                                |
+| `muzicmania-website`    | `projects/muzicmania/website/`    | Next.js + Tauri — music game                       |
+| `ciszubot-website`      | `projects/ciszubot/website/`      | Next.js — bot landing website                      |
+| `ciszubot`              | `projects/ciszubot/discord-bot/`  | Discord.js bot (TypeScript, pnpm workspace, Docker) |
+| `@ciszunetwork/cdn`     | `packages/cdn/`                   | Asset resolver (see below)                          |
 
 > **Terminología**: cada producto web es un **website** (cúmulo de webpages). Los pnpm filter names, workflows y carpetas usan `-website` (nunca `-webpage`). Los clientes API de Bruno viven en `apis/bruno/` (antes `apis-client/bruno/`).
 
@@ -93,7 +94,9 @@ El CDN es un **espejo** del repositorio. Las rutas en Supabase Storage (`ciszu-c
 Los logos viven en `projects/ciszukoantony/content/logos/` (fuente maestra). **El bucket del CDN espeja las rutas del repo** — tras la reestructuración ago 2026 (paths `projects/...`) hay que re-subir con `pnpm cdn:upload` para que el bucket tenga las nuevas rutas. Usar siempre:
 
 ```ts
-assetResolver.resolve('projects/ciszukoantony/content/logos/images/outline/isotype/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg')
+assetResolver.resolve(
+    'projects/ciszukoantony/content/logos/images/outline/isotype/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg'
+);
 ```
 
 ### Sistema de iconos (inline-first + CDN fallback)
@@ -109,21 +112,22 @@ Supabase Storage (`ciszu-cdn` bucket, `avatars` bucket) es para CDN y user-gener
 
 El `AssetResolver` (`packages/cdn/index.ts`) usa estrategia híbrida vía `forceCdn`/`forceLocal`:
 
-| Entorno | forceCdn | forceLocal | Resultado |
-|---|---|---|---|
-| Tauri | — | — | `tauri://localhost/...` (local) |
-| Tauri | ✓ | — | CDN |
-| Desarrollo | — | — | Ruta relativa `/...` (local) |
-| Desarrollo | — | ✓ | Ruta relativa `/...` |
-| Producción | — | — | CDN |
-| Producción | ✓ | — | CDN |
-| Producción | — | ✓ | Ruta relativa `/...` (desde public/) |
+| Entorno     | forceCdn | forceLocal | Resultado                             |
+| ----------- | -------- | ---------- | ------------------------------------- |
+| Tauri       | —       | —         | `tauri://localhost/...` (local)     |
+| Tauri       | ✓       | —         | CDN                                   |
+| Desarrollo  | —       | —         | Ruta relativa`/...` (local)         |
+| Desarrollo  | —       | ✓         | Ruta relativa`/...`                 |
+| Producción | —       | —         | CDN                                   |
+| Producción | ✓       | —         | CDN                                   |
+| Producción | —       | ✓         | Ruta relativa`/...` (desde public/) |
 
 Uso:
+
 ```ts
-resolveIcon('home')                                   // CDN en prod, local en dev
-resolveIcon('home', 'outline', 'svg', { forceCdn: true })  // forzar CDN
-resolveIcon('home', 'outline', 'svg', { forceLocal: true }) // forzar local
+resolveIcon('home'); // CDN en prod, local en dev
+resolveIcon('home', 'outline', 'svg', { forceCdn: true }); // forzar CDN
+resolveIcon('home', 'outline', 'svg', { forceLocal: true }); // forzar local
 ```
 
 - No hay carpeta `assets/` staging — las fuentes originales son la verdad única (`shared/icons/svg/`, `projects/*/content/`, etc.)
@@ -132,9 +136,24 @@ resolveIcon('home', 'outline', 'svg', { forceLocal: true }) // forzar local
 - Binarios grandes (`.mp4`, `.gif`, `.exe`, etc.) excluidos de git globalmente
 - **Cloudflare R2** configurado como alternativa futura pero **INACTIVO** (requiere tarjeta/paypal). Credenciales comentadas en el vault.
 
+## PWA para websites (8 ago 2026)
+
+**Implementado en las 4 webs** (cierra los pendientes `PWA para websites.` y `PWA para mobile.` en los toDos): manifest + service worker + iconos + registro, sin dependencias nuevas.
+
+- **Iconos**: `scripts/generate-pwa-icons.ps1` (GDI+ System.Drawing, sin red) genera `public/pwa/icon-192.png`, `icon-512.png` y `icon-maskable-512.png` en las 4 webs desde sus masters:
+  - de la marca master `projects/ciszukoantony/content/logos/...` (masters 617x636, 553x491, 796x796, 389x390)
+  - Masters via `assetResolver.resolve()` en `app/layout.tsx` (ICON_SVG) — los `public/pwa/*.png` son generados, trackeados en git
+- **Manifest**: `src/app/manifest.ts` (`MetadataRoute.Manifest`) en cada web → Next lo sirve en `/manifest.webmanifest` (estático, listado en el build como `○ /manifest.webmanifest`). Sin rootPage/application-name duplicados
+- **Service worker**: canónico `scripts/pwa/sw.js` (cache `ciszu-pwa-1.0.0.js`: precache `['/']`, network-first para navegación con fallback offline, SWR para `/_next/static/*`, esclude `/api/`). Copiado a `public/sw.js` de cada web (NO `public/pwa/sw.js` — scope raíz imprescindible). Sincronizar: `pnpm sw` (`scripts/sync-pwa-assets.js`) / `node scripts/sync-pwa-assets.js`
+- **Registro**: `packages/ui/src/PwaRegister.tsx` (client component, registra `/sw.js` solo en producción `NODE_ENV !== 'production'` guard) — exportado desde `packages/ui/src/index.ts`, incluido en los 4 layouts antes de `</body>`
+- **Metadata en layouts** (×4): `export const viewport = { themeColor: ... }` (Next 15: `themeColor` NO va en metadata, va en `viewport` export — sin anotación `Viewport` para evitar lookups, `export const viewport: Viewport` falla en MuzicMania: `Module '"next"' has no exported member 'Viewport'` cuando el tsconfig resolía, usar `export const viewport = {...}` + `export const metadata: Metadata = {...}`) + `appleWebApp: { capable: true, title, statusBarStyle: "black-translucent" }` + `manifest: "/manifest.webmanifest"`. Themes: ciszu/ciszukontony/muzicmania `#000000`, ciszubot `#12141a` (acorde dark/light)
+- **Verificación**: builds 4 webs OK (8 ago 2026), manifest+theme-color+sw.js+iconos 200 en `next start` local. Tests 81/81, lint OK (ciszubot web no tiene script lint propio)
+- ⚠️ **Error hardcode `Type error: Module '"next"' has no exported member 'MetadataRoute'`** (MuzicMania, 8 ago): metadata.route manifest en `app/manifest.ts` importado de "next" falla si NEXT_PUBLIC_SITE_URL etc. están mal — si ocurre, revisar el `next-env.d.ts`/types; el fix estándar: `import type { MetadataRoute } from 'next'` + `export default function manifest(): MetadataRoute.Manifest` (sin `.tsx`), eliminar imports de `next/server` no usados
+
 ## Supabase
 
 Single project: `obwzzmbvkrcscqwptlqo.supabase.co`
+
 - Credentials in `services/supabase/.env`
 - Muzicmania uses `@supabase/supabase-js` for auth + DB
 - Storage buckets: `ciszu-cdn` (public, 50 MB limit, renamed from ciszu-assets) for CDN + user content, `avatars` for profile pics
@@ -174,6 +193,7 @@ All workflows run on `push: [main, master]`:
 `muzicmania-source/` contiene ~14,852 archivos (201 MB) extraídos del deployment de Vercel.
 
 ### Qué se recuperó (solo `public/`)
+
 - **`icons/png/` y `icons/svg-src/`** — Sistema completo de iconos
 - **`arrowskins/`** — 384 SVGs en 24 variantes
 - **`logos/`** — gif/imagen/video (logotipos, isotipos, taglines)
@@ -183,6 +203,7 @@ All workflows run on `push: [main, master]`:
 - **`fonts/`**, **`images/`**, **`particleskins/`** — Varios assets menores
 
 ### Qué NO se recuperó (solo existía en GitHub)
+
 - **`src/`** — Código fuente TypeScript/React (componentes, hooks, stores, servicios, páginas)
 - **Configs** — `next.config.ts`, `tsconfig.json`, `tailwind.config.mjs`, `postcss.config.mjs`, `eslint.config.mjs`
 - **`scripts/`** — Scripts de build Tauri, patch NSIS, download flags
@@ -196,11 +217,13 @@ Vercel solo preserva build output + `public/`. Para recuperar source se necesita
 **Este repositorio es PRIVADO.** Si alguna vez se vuelve público, hay credenciales comprometidas en el historial de git que deben ser rotadas inmediatamente.
 
 Archivos que NUNCA deben trackearse en git (ya en `.gitignore`):
+
 - `documents/md/credentials.md` — contenido sensible (fue purgado del historial vía filter-branch)
 - `docs/md/VERCEL_ENV_VARS.md` — documenta secrets en texto plano (eliminado del disco)
 - `services/supabase/docs/md/PRIVATE_DOCS.md` — **redactado** (jul 2026) tras alerta de secret scanning: contenía password del dashboard, PAT, service_role, anon key y JWT secret en texto plano. Las credenciales reales viven SOLO en `services/supabase/.env` (gitignored). No volver a pegar secrets en docs.
 
 Si el repo cambia a público:
+
 1. Rotar TODAS las credenciales (Supabase keys, Discord token, Vercel token, Cloudflare R2)
 2. Purgar historial con `git filter-branch` o BFG Repo-Cleaner
 3. Verificar que no queden secrets en `git log --all -p | grep -i "sb_\|vcp_\|ghp_\|token\|secret\|key"`
@@ -234,12 +257,13 @@ Si el repo cambia a público:
 
 ### Security advisors — estado actual (jul 2026)
 
-| Advisor | Estado | Explicación |
-|---|---|---|
-| `authenticated_security_definer_function_executable` | 0 warnings | ✅ Migración 11 (REVOKE EXECUTE de anon/authenticated en `handle_review_like`, `handle_review_update`, `update_track_like_count` — son SOLO triggers, el motor no chequea EXECUTE al dispararlos). ⚠️ **Pendiente de aplicar**: requiere PAT válido vía Management API (el `sbp_` filtrado fue redactado y ya no funciona). |
-| `auth_leaked_password_protection` | 1 warning | **Free Tier limitation** — solo activable desde Dashboard con plan Pro. |
+| Advisor                                                | Estado     | Explicación                                                                                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `authenticated_security_definer_function_executable` | 0 warnings | ✅ Migración 11 (REVOKE EXECUTE de anon/authenticated en`handle_review_like`, `handle_review_update`, `update_track_like_count` — son SOLO triggers, el motor no chequea EXECUTE al dispararlos). ⚠️ **Pendiente de aplicar**: requiere PAT válido vía Management API (el `sbp_` filtrado fue redactado y ya no funciona). |
+| `auth_leaked_password_protection`                    | 1 warning  | **Free Tier limitation** — solo activable desde Dashboard con plan Pro.                                                                                                                                                                                                                                                                 |
 
 **Funciones cambiadas a SECURITY INVOKER** (más seguro, RLS se respeta):
+
 - `public.get_email_by_username(text)` → INVOKER (migration 09)
 - `public.is_account_recoverable(uuid)` → INVOKER (migration 09)
 - `public.is_account_recoverable(text)` → INVOKER (migration 09)
@@ -248,16 +272,18 @@ Si el repo cambia a público:
 
 ### Performance advisors — estado actual (jul 2026)
 
-| Advisor | Estado | Explicación |
-|---|---|---|
-| `auth_rls_initplan` | 0 warnings | ✅ Todas las `auth.uid()`/`auth.role()`/`auth.jwt()` envueltas en `(SELECT auth.X())` |
-| `multiple_permissive_policies` | 0 warnings | ✅ Policies duplicadas mergeadas, ALL separado en comandos individuales |
+| Advisor                          | Estado     | Explicación                                                                                 |
+| -------------------------------- | ---------- | -------------------------------------------------------------------------------------------- |
+| `auth_rls_initplan`            | 0 warnings | ✅ Todas las`auth.uid()`/`auth.role()`/`auth.jwt()` envueltas en `(SELECT auth.X())` |
+| `multiple_permissive_policies` | 0 warnings | ✅ Policies duplicadas mergeadas, ALL separado en comandos individuales                      |
 
 **Reglas para evitar `auth_rls_initplan`:**
+
 - Toda llamada a `auth.uid()`, `auth.role()`, `auth.jwt()` en USING/CHECK de RLS policies debe ir envuelta en `(SELECT auth.X())`
 - Si ya está dentro de una subconsulta EXISTS, envolver igualmente: `profiles.id = (SELECT auth.uid())`
 
 **Reglas para evitar `multiple_permissive_policies`:**
+
 - No usar `FOR ALL` — separar en policies individuales por comando (SELECT/INSERT/UPDATE/DELETE)
 - Si un mismo rol+acción tiene dos policies con distintos USING, mergearlas con OR
 - Para `muzicmania.likes`: "Likes are viewable by everyone" (SELECT) + "Users can manage their own likes" (ALL) → la ALL cubre SELECT, causando duplicado. Solución: ALL → INSERT+UPDATE+DELETE separados.
@@ -270,9 +296,9 @@ Si el repo cambia a público:
 - Usar `escapeHtml()` helper (crea textNode via DOM y extrae innerHTML):
   ```js
   function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.appendChild(document.createTextNode(str));
-    return div.innerHTML;
+      const div = document.createElement('div');
+      div.appendChild(document.createTextNode(str));
+      return div.innerHTML;
   }
   ```
 - Preferir `textContent` sobre `innerHTML` cuando no se necesita HTML
@@ -280,6 +306,7 @@ Si el repo cambia a público:
 - TODO `dangerouslySetInnerHTML` debe usar DOMPurify.sanitize() si los datos pudieran volverse dinámicos en el futuro
 
 **Archivos legacy con XSS ya fixeados:**
+
 - `projects/muzicmania/web/src/utils/legacy_scripts/search.mjs` — `query` del search box escapado con `escapeHtml()`
 - `projects/muzicmania/web/src/utils/legacy_scripts/auth.mjs` — `displayName`/`username` escapados con `escapeHtml()`
 - Duplicados en `projects/muzicmania/website/` (untracked)
@@ -293,27 +320,29 @@ Si el repo cambia a público:
 - Discord bot usa Discord API segura — no construye SQL directamente
 
 **Archivos con patrones inseguros ya fixeados:**
+
 - `scripts/fix-migrations.js` — validación regex `/^\d{14}$/` sobre version strings antes de usarlas en SQL
 - `projects/muzicmania/web/src/scripts/dbManager.ts` — `eval()` + raw SQL: agregadas confirmaciones explícitas (dev tool, no se shippea)
 
 **Dev tools que requieren precaución:**
+
 - `projects/muzicmania/*/src/scripts/dbManager.ts` — tiene `eval()` (shell interactiva) y `execute_sql_query` RPC. Son herramientas de desarrollo solamente. Tienen doble confirmación de seguridad.
 
 ## Migraciones aplicadas (jul 2026)
 
-| Migration | Archivo | Qué hace |
-|---|---|---|
-| 04 | `20260729000004_fix_excessive_grants.sql` | Revocó ALL de anon, solo SELECT |
-| 05 | `20260729000005_fix_advisors_security_definer.sql` | Fix 27 warnings: search_path + REVOKE anon |
-| 06 | `20260729000006_fix_remaining_anon.sql` | REVOKE preciso por signature exacta |
-| 07 | `20260729000007_fix_public_inherit.sql` | REVOKE FROM PUBLIC + GRANT a authenticated |
-| 08 | `20260729000008_fix_performance_advisors.sql` | Initplan wrapping + eliminar policies duplicadas |
-| 09 | `20260729000009_fix_remaining_advisors.sql` | Funciones públicas a INVOKER + merged policies |
-| 10 | `20260729000010_fix_submit_game_score_invoker.sql` | `muzicmania.submit_game_score` → INVOKER |
-| 11 | `20260729000011_revoke_execute_trigger_functions.sql` | REVOKE EXECUTE de anon/authenticated en las 3 funciones trigger SECURITY DEFINER restantes (cierra advisor). ✅ **APLICADA 31 jul 2026** vía Management API (PAT nuevo del usuario) — verificada: anon/auth_exec = false en las 3 |
-| 12 | `20260801000012_revoke_execute_security_definer.sql` | Red de seguridad: REVOKE EXECUTE idempotente de TODAS las funciones SECURITY DEFINER (muzicmania triggers + public auth/profiles triggers) |
-| 13 | `20260801000013_bot_status_heartbeat.sql` | ✅ **APLICADA 2 ago 2026** — tabla `ciszubot.bot_status` (single-row id=1: online, last_seen, started_at, version, guilds, commands_total, prefix). Policy SELECT para anon/authenticated + GRANT SELECT anon + **GRANT ALL service_role** (Management API no aplica grants default). La consume la web de ciszubot (estado en vivo) |
-| 14 | `20260802000014_bot_expansion.sql` | ✅ **APLICADA 2 ago 2026** — 13 tablas en `ciszubot`: guild_configs, wallets, transactions, shop_items, inventory, levels, warns, tickets, giveaways, afk, alliances, discord_users, snipes (+5 índices) |
+| Migration | Archivo                                                 | Qué hace                                                                                                                                                                                                                                                                                                                                          |
+| --------- | ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 04        | `20260729000004_fix_excessive_grants.sql`             | Revocó ALL de anon, solo SELECT                                                                                                                                                                                                                                                                                                                   |
+| 05        | `20260729000005_fix_advisors_security_definer.sql`    | Fix 27 warnings: search_path + REVOKE anon                                                                                                                                                                                                                                                                                                         |
+| 06        | `20260729000006_fix_remaining_anon.sql`               | REVOKE preciso por signature exacta                                                                                                                                                                                                                                                                                                                |
+| 07        | `20260729000007_fix_public_inherit.sql`               | REVOKE FROM PUBLIC + GRANT a authenticated                                                                                                                                                                                                                                                                                                         |
+| 08        | `20260729000008_fix_performance_advisors.sql`         | Initplan wrapping + eliminar policies duplicadas                                                                                                                                                                                                                                                                                                   |
+| 09        | `20260729000009_fix_remaining_advisors.sql`           | Funciones públicas a INVOKER + merged policies                                                                                                                                                                                                                                                                                                    |
+| 10        | `20260729000010_fix_submit_game_score_invoker.sql`    | `muzicmania.submit_game_score` → INVOKER                                                                                                                                                                                                                                                                                                        |
+| 11        | `20260729000011_revoke_execute_trigger_functions.sql` | REVOKE EXECUTE de anon/authenticated en las 3 funciones trigger SECURITY DEFINER restantes (cierra advisor). ✅**APLICADA 31 jul 2026** vía Management API (PAT nuevo del usuario) — verificada: anon/auth_exec = false en las 3                                                                                                           |
+| 12        | `20260801000012_revoke_execute_security_definer.sql`  | Red de seguridad: REVOKE EXECUTE idempotente de TODAS las funciones SECURITY DEFINER (muzicmania triggers + public auth/profiles triggers)                                                                                                                                                                                                         |
+| 13        | `20260801000013_bot_status_heartbeat.sql`             | ✅**APLICADA 2 ago 2026** — tabla `ciszubot.bot_status` (single-row id=1: online, last_seen, started_at, version, guilds, commands_total, prefix). Policy SELECT para anon/authenticated + GRANT SELECT anon + **GRANT ALL service_role** (Management API no aplica grants default). La consume la web de ciszubot (estado en vivo) |
+| 14        | `20260802000014_bot_expansion.sql`                    | ✅**APLICADA 2 ago 2026** — 13 tablas en `ciszubot`: guild_configs, wallets, transactions, shop_items, inventory, levels, warns, tickets, giveaways, afk, alliances, discord_users, snipes (+5 índices)                                                                                                                                  |
 
 ## Herramientas de desarrollo (GUI + CLI) — ago 2026
 
@@ -356,6 +385,7 @@ Pila decidida (análisis completo en `docs/documentation/TOOLS.md`): **DBeaver C
 **Implementado en el PC**: OpenSSH Server v10.0.0 (MSI oficial `winget install Microsoft.OpenSSH.Preview`, servicio `sshd` Running + Automatic, puerto 22, DefaultShell = PowerShell) + Tailscale v1.98.10 logueado (IP tailnet `100.75.124.72`, hostname `ciszu-pc`) + clave ed25519 `ciszu_pc_ed25519` autorizada en `C:\ProgramData\ssh\administrators_authorized_keys`. En el móvil: Tailscale + Termius (misma cuenta Google, key `CISZU SSH Key`, host `Ciszu-PC` funcional). **Enfoque final = opencode NATIVO de Windows con `serve` + `attach`** (4 ago 2026): un servidor headless `opencode serve --port 4096 --hostname 127.0.0.1` corre en el PC (tarea programada `opencode-server-ciszu` AtLogOn oculta + ensure idempotente). **Tool canónica (actualizada 7 ago 2026): `tools/ciszu-ai/`** — `ciszu-ai.cmd` (lanzador oficial, subcomandos `server`/`stop`/`reset`; **default = ensure + attach SIN matar el listener**) + `ensure-server.ps1` (rutas derivadas del repo, params `-Port/-Exe`, valida binario PE y repara postinstall). TODOS los nombres de PATH (`ciszu-ai`, `ciszu-ai-pc`, `ciszu-ai-cel`, `ciszu-ai-start`, `ciszu-ai-stop`, `ciszu-ai-reset`, `opencode-run`, `opencode-ciszu-pc`, `opencode-ciszu-cel`, `opencode-ciszu-start`, `opencode-ciszu-stop`, `opencode-ciszu-reset` — en `.cmd` y `.bat`, en `AppData\Roaming\npm` y `C:\Users\fplay`) son **stubs delegantes** → llaman al **espejo sin espacios** `C:\Users\fplay\ciszu-ai\ciszu-ai.cmd` (el path `E:\Ciszu Network` con espacios rompe cmd); `tools/ciszu-ai/opencode-run.cmd` es alias de compatibilidad. PC y móvil (Termius → SSH `fplay@100.75.124.72:22` → PowerShell → `opencode-ciszu-cel`) se conectan al mismo servidor: **misma sesión en vivo** en ambos (SSH), historial/theme/carpeta de Windows. Servidor ligado a loopback (seguro sin password; el móvil entra vía SSH local). Logs: `E:\Ciszu Network\.opencode-tmp\opencode-server{,-err}.log`. `opencode` a secas sigue siendo instancia local independiente (sin live-sync). ⚠️ La caja de texto del chat en el móvil NO es configurable (schema TUI solo expone `prompt.max_height`/`max_width` de la pantalla de inicio; `--mini` cambia toda la interfaz — probado y descartado). **WSL/tmux DESCARTADO** (duplicaba db de opencode sin historial, paths `/mnt`, TUI deformada con 2 clientes). Recordar: **Proton VPN puede estar activa en el PC** — el tráfico a `100.x.x.x` (tailnet) no se ve afectado por el adaptador `10.2.0.2` de la VPN. Doc completa: `projects/ciszu/docs/documentation/CONTROL_REMOTO.md` + guía práctica `GUIA_ACCESO_REMOTO_CEO.md`. **Plan de escalabilidad organizacional** (cómo repartir permisos por rol cuando el equipo crezca: creativos, devs, auditores, etc.): `projects/ciszu/docs/documentation/PLAN_ESCALABILIDAD_ORGANIZACIONAL.md` — la cuenta ya es GitHub **Organization** `Ciszu-Network` (ADMIN: CEO), con decisiones pendientes marcadas en el doc.
 
 ⚠️ **Gotchas reportados**:
+
 - **OpenSSH Windows + host keys**: si el servicio sshd entra en crash-loop (evento 7031 `service terminated unexpectedly`) con `WARNING: UNPROTECTED PRIVATE KEY FILE`, la causa es owner/permisos de las host keys → NUNCA crear con `ssh-keygen -A` en ruta `C:\ProgramData\ssh` sin reparar. Fix: `Import-Module 'C:\Program Files\OpenSSH\OpenSSHUtils.psm1'` → `Repair-SshdHostKeyPermission` para cada `ssh_host_*_key` + `Repair-SshdConfigPermission` (owner SYSTEM, solo SYSTEM+Admins con acceso).
 - **Instalación legacy de OpenSSH**: si service sshd existe pero la capability `OpenSSH.Server` = NotPresent, borrarlo (`sc.exe delete sshd`) y reinstalar con winget (el MSI crea el servicio correctamente).
 - **Tailscale login headless**: `tailscale up` abre el navegador y caduca la URL si no se completa pronto; para rotar, ver `https://login.tailscale.com/a/<hash>` en stdout.
@@ -384,20 +414,21 @@ Pila decidida (análisis completo en `docs/documentation/TOOLS.md`): **DBeaver C
 
 ## Herramientas de seguridad instaladas (jul 2026)
 
-| Herramienta | Cómo | Notas |
-|---|---|---|
-| **secretlint** (13.0.4) | `secretlint` (npm global) | Hook pre-commit activo (`.git/hooks/pre-commit`, ignora con `--no-verify`). Config: `.secretlintrc.json` (preset-recommend + patrones custom `sbp_`, `vcp_`, `sb_secret_`, JWT) |
-| **gitleaks** (8.30.1) | `C:\Users\fplay\AppData\Local\Programs\Gitleaks\gitleaks.exe` | Escaneo de historial: `--log-opts="--all"`. Reporte del escaneo jul 2026: `Temp\opencode\gitleaks_hist.json` (130 leaks, la mayoría de `.turbo/runs/*.json` ya destrackeados; restan `cloudflare-api-key` ×3 en `.turbo` del historial y 1 key en `generate-tracks.ps1` ya quitada) |
-| **semgrep** (1.172.0) | `semgrep scan --config p/security-audit` (pip) | ✅ Escaneo completo (jul 2026): todas las apps + packages + discord + scripts → 0 findings reales. Solo falsos positivos aceptados: `SocialIcon.tsx` (reescrito, dangerouslySetInnerHTML eliminado), `packages/ui/src/Icon.tsx` (sanitizado con DOMPurify), `devConsole.ts` (execSync dev tool) |
-| **trivy** (0.72.0) | PATH: `C:\Users\fplay\AppData\Local\Microsoft\WinGet\Links` | Usa `--db-repository mirror.gcr.io/aquasec/trivy-db` (con la red nueva resuelve). pnpm-lock: 0 vulns HIGH/CRITICAL |
-| **cargo-audit** (0.22.2) | `cargo audit` (en `projects/muzicmania/launcher/src-tauri`) | 17 warnings permitidos: glib (tauri 3) + unic-ucd-version (transitivo) |
-| **pnpm audit** | `pnpm audit --prod` | 0 vulns |
-| **ZAP** (2.17.0) | `C:\Program Files\ZAP\Zed Attack Proxy\zap.bat` (o jar directo) | ✅ Instalado + probado (31 jul 2026): DAST completo sobre `ciszunetwork.vercel.app` → 0 High, 4 Medium (CSP no set, Cross-Domain `ACAO:*`, Anti-clickjacking, SRI missing), 3 Informational (cache-control, User-Agent Fuzzer). Reporte: `Temp\opencode\zap_ciszunetwork.html`. ⚠️ **Solo modo daemon + API** (el usuario no usa la GUI). CLI: `zap.bat` con rutas relativas al CWD (ejecutar desde su directorio o usar el jar con ruta absoluta). `-quickstart` NO existe en 2.17 (add-on GUI) — usar daemon + API: `java -jar zap-2.17.0.jar -daemon -host 127.0.0.1 -port 8080 -config api.disablekey=true`, luego spider (`/JSON/spider/action/scan/`) y ascan (`/JSON/ascan/action/scan/`). Requiere JAVA_HOME (set a nivel máquina: `C:\Program Files\Eclipse Adoptium\jdk-25.0.3.9-hotspot`) |
+| Herramienta                    | Cómo                                                             | Notas                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ------------------------------ | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **secretlint** (13.0.4)  | `secretlint` (npm global)                                       | Hook pre-commit activo (`.git/hooks/pre-commit`, ignora con `--no-verify`). Config: `.secretlintrc.json` (preset-recommend + patrones custom `sbp_`, `vcp_`, `sb_secret_`, JWT)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| **gitleaks** (8.30.1)    | `C:\Users\fplay\AppData\Local\Programs\Gitleaks\gitleaks.exe`   | Escaneo de historial:`--log-opts="--all"`. Reporte del escaneo jul 2026: `Temp\opencode\gitleaks_hist.json` (130 leaks, la mayoría de `.turbo/runs/*.json` ya destrackeados; restan `cloudflare-api-key` ×3 en `.turbo` del historial y 1 key en `generate-tracks.ps1` ya quitada)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| **semgrep** (1.172.0)    | `semgrep scan --config p/security-audit` (pip)                  | ✅ Escaneo completo (jul 2026): todas las apps + packages + discord + scripts → 0 findings reales. Solo falsos positivos aceptados:`SocialIcon.tsx` (reescrito, dangerouslySetInnerHTML eliminado), `packages/ui/src/Icon.tsx` (sanitizado con DOMPurify), `devConsole.ts` (execSync dev tool)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| **trivy** (0.72.0)       | PATH:`C:\Users\fplay\AppData\Local\Microsoft\WinGet\Links`      | Usa`--db-repository mirror.gcr.io/aquasec/trivy-db` (con la red nueva resuelve). pnpm-lock: 0 vulns HIGH/CRITICAL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| **cargo-audit** (0.22.2) | `cargo audit` (en `projects/muzicmania/launcher/src-tauri`)   | 17 warnings permitidos: glib (tauri 3) + unic-ucd-version (transitivo)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| **pnpm audit**           | `pnpm audit --prod`                                             | 0 vulns                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| **ZAP** (2.17.0)         | `C:\Program Files\ZAP\Zed Attack Proxy\zap.bat` (o jar directo) | ✅ Instalado + probado (31 jul 2026): DAST completo sobre`ciszunetwork.vercel.app` → 0 High, 4 Medium (CSP no set, Cross-Domain `ACAO:*`, Anti-clickjacking, SRI missing), 3 Informational (cache-control, User-Agent Fuzzer). Reporte: `Temp\opencode\zap_ciszunetwork.html`. ⚠️ **Solo modo daemon + API** (el usuario no usa la GUI). CLI: `zap.bat` con rutas relativas al CWD (ejecutar desde su directorio o usar el jar con ruta absoluta). `-quickstart` NO existe en 2.17 (add-on GUI) — usar daemon + API: `java -jar zap-2.17.0.jar -daemon -host 127.0.0.1 -port 8080 -config api.disablekey=true`, luego spider (`/JSON/spider/action/scan/`) y ascan (`/JSON/ascan/action/scan/`). Requiere JAVA_HOME (set a nivel máquina: `C:\Program Files\Eclipse Adoptium\jdk-25.0.3.9-hotspot`) |
 
 **Pendientes sesión anterior (jul 2026):**
+
 - ✅ Migración 11 APLICADA (REVOKE EXECUTE trigger functions) — vía Management API con PAT nuevo
 - ✅ Schemas expuestos en Dashboard (Settings → API → Exposed schemas: `muzicmania, ciszubot, ciszunetwork` — 1 ago 2026)
-- Rotar tokens — lista COMPLETA con valores en `C:\Users\fplay\AppData\Local\Temp\opencode\tokens_a_rotar.md` (8 ítems restantes: service_role, JWT secret, password dashboard, anon, Vercel vcp_, Suno AI key, Cloudflare R2, Discord). PAT nuevo del usuario ya rotado. Supabase: regenerar en Dashboard y actualizar `.env` con `scripts/update-env-keys.js`. Vercel: rotar `vcp_` y actualizar GH secret `VERCEL_TOKEN` (4 workflows lo usan)
+- Rotar tokens — lista COMPLETA con valores en `C:\Users\fplay\AppData\Local\Temp\opencode\tokens_a_rotar.md` (8 ítems restantes: service*role, JWT secret, password dashboard, anon, Vercel vcp*, Suno AI key, Cloudflare R2, Discord). PAT nuevo del usuario ya rotado. Supabase: regenerar en Dashboard y actualizar `.env` con `scripts/update-env-keys.js`. Vercel: rotar `vcp_` y actualizar GH secret `VERCEL_TOKEN` (4 workflows lo usan)
 - ✅ Semgrep scan completo + ✅ ZAP instalado + probado (DAST 0 High/4 Medium en ciszunetwork) + secretlint full repo scan (CORRIÓ pero expiró timeout 10 min por tamaño del repo — correr por subtargets o con `--exclude-dir node_modules,.next,.turbo`)
 - ✅ Build de las 4 apps corregido: la causa del error `ReactNode` era `@types/react` añadido al ROOT — revertido (ver Gotchas)
 - ✅ DOMPurify aplicado en `packages/ui/src/Icon.tsx` (semgrep packages 0 findings)
@@ -413,7 +444,7 @@ Pila decidida (análisis completo en `docs/documentation/TOOLS.md`): **DBeaver C
 2. **XSS**: todo input de usuario renderizado debe pasar por `escapeHtml()` o `textContent`; nunca `innerHTML` directo
 3. **SQL Injection**: nunca concatenar strings en SQL; siempre ORM parametrizado o RPC con objetos
 4. **SECURITY DEFINER**: solo cuando sea estrictamente necesario (triggers que modifican datos de otros usuarios); preferir INVOKER siempre que RLS lo permita
-5. **RLS policies**: siempre separar por comando (no ALL), evitar USING(true) sin restricción de rol, envolver auth.*() en subconsultas
+5. **RLS policies**: siempre separar por comando (no ALL), evitar USING(true) sin restricción de rol, envolver auth.\*() en subconsultas
 
 ## Límite de contexto de sesión (opencode) — OBLIGATORIO
 
@@ -429,16 +460,19 @@ Pila decidida (análisis completo en `docs/documentation/TOOLS.md`): **DBeaver C
 ## Errores comunes de opencode y solución
 
 ### 500s / errores de servidor (API)
+
 - **Síntoma**: respuestas del asistente fallan con errores 500/502/503, o el agente reporta "Error interno".
 - **Causa**: saturación temporal del proveedor del modelo o inestabilidad de red del PC.
 - **Solución**: (1) esperar 1-2 min y reintentar el mismo prompt (el estado del chat no se pierde), (2) si persiste, verificar red (VPN/DNS), (3) cambiar a un modelo alternativo si está disponible.
 
 ### Errores de red/DNS del PC (frecuente)
+
 - **Síntoma**: `fetch failed`, `ENOTFOUND`, `getaddrinfo`, resolución DNS intermitente (github.com, huggingface.co, api-inference.huggingface.co, etc.).
 - **Causa**: el proveedor DNS del PC falla intermitentemente; no es un problema del código.
 - **Solución**: (1) comprobar con `Resolve-DnsName <dominio> -Server 8.8.8.8` si el DNS externo resuelve (si sí → es el DNS local), (2) **activar la VPN** del usuario (Proton VPN) — suele arreglarlo, (3) reintentar la operación. **No buscar vías alternativas de red**: la instrucción del usuario es usar la VPN directamente.
 
 ### Errores 401/403/429/402 en APIs de arte (contexto IA)
+
 - **401**: key inválida/revocada → rotar token y actualizar vault (`services/supabase/.env`).
 - **403**: geo-bloqueo (SiliconFlow sin VPN) → activar VPN.
 - **429**: quota agotada (Gemini imagen `limit: 0`) → no reparable sin plan de pago; usar HF.
@@ -446,6 +480,7 @@ Pila decidida (análisis completo en `docs/documentation/TOOLS.md`): **DBeaver C
 - **503**: sobrecarga del provider (nscale/HF) → el script `generate-art.js` ya hace retry; reintentar manualmente.
 
 ### Errores de herramientas/scripts
+
 - **gitleaks/secretlint**: hooks pre-commit que fallan → corregir el secret o usar `--no-verify` si es falso positivo.
 - **`opencode.exe` "no compatible con Windows" (6 ago 2026)**: el binario global de npm (`C:\Users\fplay\AppData\Roaming\npm\node_modules\opencode-ai\bin\opencode.exe`) se degradó a un **shim de error de 479 bytes** cuando una re-instalación de `opencode-ai` no corrió su postinstall → Windows rechaza ejecutarlo (también rompe `opencode attach` desde Termius). Los procesos ya en memoria (server 4096) siguen vivos. Fix: `cd <npm>\node_modules\opencode-ai && node postinstall.mjs` (re-descarga el binario real ~175 MB) o reinstalar `npm i -g opencode-ai`. **Guardia auto**: `tools/ciszu-ai/ensure-server.ps1` (y su stub legacy `C:\Users\fplay\opencode-server-ensure.ps1`) ahora valida que `opencode.exe` sea un PE real (>1 KB, sig `MZ/PE`) antes de arrancar el server y repara solo con el postinstall si está corrupto.
 - **`pnpm install` lento/roto**: borrar `node_modules` y re-ejecutar; verificar disco en E:.

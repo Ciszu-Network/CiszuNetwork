@@ -5,7 +5,8 @@ import { cookies } from "next/headers";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { getDict, type Lang } from "@/lib/i18n";
-import { LOGO_ISOTIPO_CIRCLE } from "@/lib/i18n";
+import { assetResolver } from "@ciszunetwork/cdn";
+import { PwaRegister } from "@ciszu/ui";
 import { getSessionData } from "@/lib/auth";
 import "./globals.css";
 
@@ -30,14 +31,21 @@ const themeScript = `
 })();
 `;
 
+const LOGO_ISOTIPO_CIRCLE = assetResolver.resolve('projects/ciszubot/content/logos/images/samples/circle/ciszubot_logo_isotipo_color_circle.png');
+
+export const viewport = {
+  themeColor: "#12141a",
+};
 export const metadata: Metadata = {
   title: "CiszuBot — Bot de Discord de Ciszu Network",
   description:
     "El bot de Discord de Ciszu Network. Comandos divertidos, de información y utilidad con prefijo cz! y slash commands. Moderno, rápido y en español.",
+  appleWebApp: { capable: true, title: "CiszuBot", statusBarStyle: "black-translucent" },
+  manifest: "/manifest.webmanifest",
   icons: {
-    icon: `/${LOGO_ISOTIPO_CIRCLE}`,
-    shortcut: `/${LOGO_ISOTIPO_CIRCLE}`,
-    apple: `/${LOGO_ISOTIPO_CIRCLE}`,
+    icon: LOGO_ISOTIPO_CIRCLE,
+    shortcut: LOGO_ISOTIPO_CIRCLE,
+    apple: LOGO_ISOTIPO_CIRCLE,
   },
 };
 
@@ -56,6 +64,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <Navbar lang={lang} dict={dict} account={session} />
         <main className="flex-grow pt-[60px]">{children}</main>
         <Footer lang={lang} dict={dict} />
+        <PwaRegister />
       </body>
     </html>
   );

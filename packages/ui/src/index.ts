@@ -8,6 +8,9 @@
 export { Icon, IconButton, IconList, iconUtils } from './Icon';
 export type { IconProps, IconButtonProps, IconListProps } from './Icon';
 
+
+// PWA: registrador de service worker (usar en los layouts de las 4 webs)
+export { default as PwaRegister } from './PwaRegister';
 // Re-exportar desde @ciszunetwork/cdn para conveniencia
 export {
   resolveIcon,

@@ -12,4 +12,4 @@
 ## Prioridad Baja
 
 - [ ] Modo oscuro / tema personalizable.
-- [ ] PWA para mobile.
+- [x] PWA para mobile.
