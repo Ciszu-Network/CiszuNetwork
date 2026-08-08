@@ -24,11 +24,15 @@ describe('detectPdwaBrowser', () => {
 
 describe('InstallPdwaButton', () => {
   it('se muestra en esquina inferior izquierda con aria-label PDWA (sin dismiss)', () => {
-    const { getByRole } = render(<InstallPdwaButton site="MuzicMania" />);
+const { getByRole } = render(<InstallPdwaButton site="MuzicMania" />);
     const btn = getByRole('button', { name: /instalar muzicmania como pdwa/i });
     expect(btn).toBeTruthy();
-    expect(btn.closest('[data-pdwa-host]')?.className ?? '').toContain('left-4');
-    expect(btn.closest('[data-pdwa-host]')?.className ?? '').toContain('bottom-4');
+    const host = btn.closest('[data-pdwa-host]') as HTMLElement | null;
+    expect(host?.style.position).toBe('fixed');
+    expect(host?.style.borderRadius ?? '').toBe('');
+    expect(host?.style.left).toContain('16');
+    expect(host?.style.bottom).toContain('16');
+    expect(btn.style.backdropFilter).toContain('blur');
   });
 
   it('si está descartado en localStorage no se renderiza nunca', () => {

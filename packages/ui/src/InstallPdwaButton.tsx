@@ -1,17 +1,20 @@
-﻿/**
- * InstallPdwaButton — botón inteligente "PDWA" (Desktop Web App Progresiva).
+/**
+ * InstallPdwaButton — botón inteligente "PDWA" (App de Escritorio Progresiva).
  *
- * Reemplaza a InstallPwaButton (ago 2026). PDWA = Aplicación Web de Escritorio
- * Progresiva (terminología propia de Ciszu Network).
- *
- * - Esquina INFERIOR IZQUIERDA siempre: fab pequeño; icono + en hover expande texto.
- * - ✕ permanente: guarda "ciszu-pdwa-dismissed" en localStorage → no vuelve a salir.
- * - Detección de navegador: Chrome/Edge/Opera (Chromium desktop) con
- *   `beforeinstallprompt` lanzan el prompt nativo; incompatibles (Opera GX,
- *   Firefox, Safari desktop, iOS, otros) muestran disclaimer con POR QUÉ y
- *   alternativa según contexto (acceso directo con --app, Edge, Añadir al Dock,
- *   pantalla de inicio o app nativa vía `desktopAppHref`).
- * - El panel "cómo instalar" se muestra SIEMPRE (también en compatibles).
+ * - CSS 100% autocontenido (inline styles + <style> con prefijo pdwa-): NO
+ *   depende del scanner de Tailwind de cada web (lección 8 ago 2026: las
+ *   utilidades del paquete packages/ui no se generan en todas las apps → el
+ *   botón se rompía en ciszukoa/ciszubot/muzicmania; solo ciszunetwork
+ *   coincidía por casualidad).
+ * - Esquina INFERIOR-IZQUIERDA de la página (position:fixed + left/bottom).
+ * - Fab pequeño (36px) circular; en hover expande el texto "Instalar PDWA"
+ *   con max-width transicionada (animación fluida).
+ * - ✕ separada: guarda "ciszu-pdwa-dismissed" en localStorage → no vuelve a
+ *   salir; si no se pulsa, sigue apareciendo.
+ * - Detecta navegador: Chrome/Edge/Opera (Chromium) con beforeinstallprompt
+ *   lanzan el prompt nativo; Opera GX, Firefox, Safari, iOS y otros muestran
+ *   disclaimer explicando POR QUÉ no pueden instalar + alternativa adaptada.
+ * - El panel "cómo instalar" se muestra también en compatibles.
  * - Oculto si ya instalada (standalone / appinstalled) o descartada.
  */
 'use client';
@@ -52,19 +55,12 @@ function getBrowser(): PdwaBrowserInfo {
 }
 
 export interface InstallPdwaButtonProps {
-  /** Nombre del sitio para los textos (p.ej. "MuzicMania") */
   site: string;
-  /** Color acento principal (hex) según tema de cada web */
   accent?: string;
-  /** Color acento secundario (halo) */
   accentAlt?: string;
-  /** Enlace a la PDWA de escritorio nativa (solo páginas que la ofrecen, p.ej. MuzicMania .exe) */
   desktopAppHref?: string;
-  /** Texto CTA app nativa */
   desktopAppLabel?: string;
-  /** Override user-agent (solo tests) */
   uaOverride?: string;
-  /** Key localStorage del dismiss */
   storageKey?: string;
 }
 
@@ -142,6 +138,11 @@ export default function InstallPdwaButton({
     setPanel((v) => !v);
   }, [deferred]);
 
+  const vars = {
+    '--pdwa-accent': accent,
+    '--pdwa-accent-alt': accentAlt,
+  } as CSSProperties;
+
   const hasNative = browser.nativa || deferred !== null;
 
   const panelData = useMemo(() => {
@@ -204,54 +205,30 @@ export default function InstallPdwaButton({
           ],
         };
     }
-}, [browser, hasNative, site]);
+  }, [browser, hasNative, site]);
 
   if (installed || dismissed) return null;
 
-  const accentStyle = {
-    '--pdwa-accent': accent,
-    '--pdwa-accent-alt': accentAlt,
-  } as CSSProperties;
-
-return (
-    <div
-      className="fixed left-4 bottom-4 z-50"
-      style={accentStyle}
-      data-pdwa-host="true"
-    >
-      <style>{`@keyframes pdwa-pop{0%{opacity:0;transform:translateY(10px) scale(0.96)}100%{opacity:1;transform:translateY(0) scale(1)}}`}</style>
-{panel && (
-        <div
-          className="mb-3 w-72 max-w-[calc(100vw-2rem)] animate-[pdwa-pop_0.35s_ease-out] rounded-2xl border border-[rgba(255,255,255,0.14)] bg-zinc-950/70 p-4 text-sm text-zinc-200 shadow-[0_0_28px_var(--pdwa-accent)] backdrop-blur-xl backdrop-saturate-150"
-          role="dialog"
-          aria-label="Información de instalación PDWA"
-        >
-          <div className="mb-2.5 flex items-start justify-between gap-2">
-            <p className="font-semibold leading-snug" style={{ color: 'var(--pdwa-accent)' }}>
-              {panelData.title}
-            </p>
-            <button
-              type="button"
-              aria-label="Cerrar panel"
-              className="shrink-0 rounded-full px-1.5 text-zinc-400 hover:bg-white/10 hover:text-white"
-              onClick={() => setPanel(false)}
-            >
+  return (
+    <div style={{ ...vars, ...containerStyle }} data-pdwa-host="true">
+      <style>{PDWA_CSS}</style>
+      {panel && (
+        <div style={panelStyle} role="dialog" aria-label="Información de instalación PDWA">
+          <div style={panelHeadStyle}>
+            <p style={panelTitleStyle}>{panelData.title}</p>
+            <button type="button" aria-label="Cerrar panel" onClick={() => setPanel(false)} style={panelCloseStyle}>
               ✕
             </button>
           </div>
-          <p className="mb-2 text-xs leading-relaxed text-zinc-400">{panelData.sub}</p>
-          <ol className="mb-3 list-decimal space-y-1.5 pl-4 text-xs leading-relaxed">
+          <p style={panelSubStyle}>{panelData.sub}</p>
+          <ol style={panelOlStyle}>
             {panelData.steps.map((s) => (
-              <li key={s}>{s}</li>
+              <li key={s} style={panelLiStyle}>{s}</li>
             ))}
           </ol>
           {desktopAppHref && (
-            <a
-              href={desktopAppHref}
-              className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-semibold text-black transition hover:opacity-85"
-              style={{ background: 'var(--pdwa-accent)' }}
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5">
+            <a href={desktopAppHref} style={appLinkStyle}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 14, height: 14 }}>
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                 <path d="m7 10 5 5 5-5" />
                 <path d="M12 15V3" />
@@ -259,13 +236,13 @@ return (
               {desktopAppLabel}
             </a>
           )}
-          <p className="mt-3 text-[10px] leading-relaxed text-zinc-500">
+          <p style={panelFootnoteStyle}>
             PDWA = App de Escritorio Progresiva: tu web sin pestañas ni barra de dirección.
           </p>
         </div>
       )}
 
-<div className="flex items-center gap-1.5">
+      <div style={fabRowStyle}>
         <button
           type="button"
           onClick={handleInstall}
@@ -275,16 +252,10 @@ return (
           onMouseLeave={() => setExpanded(false)}
           onFocus={() => setExpanded(true)}
           onBlur={() => setExpanded(false)}
-          className="group relative flex h-9 items-center overflow-hidden rounded-full border border-[rgba(255,255,255,0.16)] bg-zinc-950/35 text-white shadow-[0_0_10px_rgba(0,0,0,0.4)] backdrop-blur-xl backdrop-saturate-150 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-[var(--pdwa-accent)] hover:shadow-[0_0_18px_var(--pdwa-accent)]"
-          style={{ width: expanded ? '9.5rem' : '2.25rem' }}
+          style={expanded ? { ...fabStyle, ...fabExpandedStyle } : fabStyle}
         >
-          <span className="relative flex h-9 w-9 shrink-0 items-center justify-center">
-            {!expanded && (
-              <span
-                className="absolute inset-2 rounded-full opacity-30 blur-md transition-opacity duration-500"
-                style={{ background: 'var(--pdwa-accent)' }}
-              />
-            )}
+          <span style={fabIconWrapStyle}>
+            {!expanded && <span style={fabGlowStyle} />}
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -292,7 +263,7 @@ return (
               strokeWidth="2.4"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="relative h-4 w-4 transition-transform duration-500 ease-out group-hover:-translate-y-0.5"
+              style={fabIconStyle}
             >
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <path d="m7 10 5 5 5-5" />
@@ -300,10 +271,12 @@ return (
             </svg>
           </span>
           <span
-            className={`whitespace-nowrap pr-3 text-[11px] font-bold tracking-wide transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-              expanded ? 'translate-x-0 opacity-100' : 'pointer-events-none -translate-x-2 opacity-0'
-            }`}
-            style={{ color: 'var(--pdwa-accent)' }}
+            style={{
+              ...fabTextStyle,
+              ...(expanded
+                ? { opacity: 1, transform: 'translateX(0)' }
+                : { opacity: 0, transform: 'translateX(-8px)', pointerEvents: 'none' }),
+            }}
           >
             {hasNative ? 'Instalar PDWA' : browser.id === 'opera-gx' ? 'Alternativa PDWA (GX)' : 'Instalar PDWA'}
           </span>
@@ -313,7 +286,7 @@ return (
           type="button"
           aria-label="No volver a mostrar"
           onClick={handleDismiss}
-          className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-white/15 bg-zinc-950/35 text-[10px] text-zinc-400 shadow-[0_0_8px_rgba(0,0,0,0.4)] backdrop-blur-xl backdrop-saturate-150 transition-all duration-300 ease-out hover:scale-110 hover:border-red-400/70 hover:text-red-400"
+          style={dismissStyle}
           title="No volver a mostrar"
         >
           ✕
@@ -323,3 +296,193 @@ return (
   );
 }
 
+/* ------------------------------------------------------------------ *
+ * CSS autocontenido (no depende del scanner de Tailwind de las apps) *
+ * ------------------------------------------------------------------ */
+
+const containerStyle: CSSProperties = {
+  position: 'fixed',
+  left: 16,
+  bottom: 16,
+  zIndex: 50,
+  fontFamily: 'inherit',
+};
+
+const PDWA_CSS = `
+@keyframes pdwa-pop {
+  0% { opacity: 0; transform: translateY(10px) scale(0.96); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+`;
+
+const panelStyle: CSSProperties = {
+  marginBottom: 12,
+  width: 288,
+  maxWidth: 'calc(100vw - 32px)',
+  borderRadius: 16,
+  border: '1px solid rgba(255,255,255,0.14)',
+  background: 'rgba(9,9,14,0.72)',
+  padding: 16,
+  color: '#e4e4e7',
+  fontSize: 13,
+  lineHeight: 1.5,
+  boxShadow: '0 0 28px var(--pdwa-accent)',
+  backdropFilter: 'blur(20px) saturate(150%)',
+  WebkitBackdropFilter: 'blur(20px) saturate(150%)',
+  animation: 'pdwa-pop 0.35s ease-out',
+};
+
+const panelHeadStyle: CSSProperties = {
+  display: 'flex',
+  alignItems: 'flex-start',
+  justifyContent: 'space-between',
+  gap: 8,
+  marginBottom: 10,
+};
+
+const panelTitleStyle: CSSProperties = {
+  fontWeight: 600,
+  margin: 0,
+  lineHeight: 1.3,
+  color: 'var(--pdwa-accent)',
+};
+
+const panelCloseStyle: CSSProperties = {
+  flexShrink: 0,
+  border: 'none',
+  background: 'transparent',
+  color: '#a1a1aa',
+  fontSize: 13,
+  cursor: 'pointer',
+  borderRadius: 999,
+  padding: '0 6px',
+};
+
+const panelSubStyle: CSSProperties = {
+  margin: '0 0 8px',
+  fontSize: 12,
+  lineHeight: 1.5,
+  color: '#a1a1aa',
+};
+
+const panelOlStyle: CSSProperties = {
+  margin: '0 0 12px',
+  paddingLeft: 16,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 6,
+};
+
+const panelLiStyle: CSSProperties = {
+  fontSize: 12,
+  lineHeight: 1.5,
+  color: '#d4d4d8',
+};
+
+const appLinkStyle: CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 6,
+  borderRadius: 999,
+  padding: '6px 14px',
+  fontSize: 12,
+  fontWeight: 600,
+  color: '#000',
+  background: 'var(--pdwa-accent)',
+  textDecoration: 'none',
+  transition: 'opacity 0.2s',
+};
+
+const panelFootnoteStyle: CSSProperties = {
+  marginTop: 12,
+  fontSize: 10,
+  lineHeight: 1.4,
+  color: '#71717a',
+};
+
+const fabRowStyle: CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: 6,
+};
+
+const fabStyle: CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  height: 36,
+  borderRadius: 999,
+  border: '1px solid rgba(255,255,255,0.16)',
+  background: 'rgba(9,9,14,0.35)',
+  color: '#fff',
+  cursor: 'pointer',
+  overflow: 'hidden',
+  width: 36,
+  padding: 0,
+  backdropFilter: 'blur(20px) saturate(150%)',
+  WebkitBackdropFilter: 'blur(20px) saturate(150%)',
+  boxShadow: '0 0 10px rgba(0,0,0,0.4)',
+  transition:
+    'width 0.5s cubic-bezier(0.22,1,0.36,1), border-color 0.3s, box-shadow 0.3s',
+};
+
+const fabExpandedStyle: CSSProperties = {
+  width: 152,
+  borderColor: 'var(--pdwa-accent)',
+  boxShadow: '0 0 18px var(--pdwa-accent)',
+};
+
+const fabIconWrapStyle: CSSProperties = {
+  position: 'relative',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: 36,
+  height: 36,
+  flexShrink: 0,
+};
+
+const fabGlowStyle: CSSProperties = {
+  position: 'absolute',
+  inset: 8,
+  borderRadius: 999,
+  opacity: 0.3,
+  background: 'var(--pdwa-accent)',
+  filter: 'blur(6px)',
+  transition: 'opacity 0.5s',
+};
+
+const fabIconStyle: CSSProperties = {
+  position: 'relative',
+  width: 16,
+  height: 16,
+  transition: 'transform 0.5s ease-out',
+};
+
+const fabTextStyle: CSSProperties = {
+  whiteSpace: 'nowrap',
+  paddingRight: 12,
+  fontSize: 11,
+  fontWeight: 700,
+  letterSpacing: '0.02em',
+  color: 'var(--pdwa-accent)',
+  transition: 'opacity 0.5s cubic-bezier(0.22,1,0.36,1), transform 0.5s cubic-bezier(0.22,1,0.36,1)',
+};
+
+const dismissStyle: CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: 20,
+  height: 20,
+  flexShrink: 0,
+  borderRadius: 999,
+  border: '1px solid rgba(255,255,255,0.15)',
+  background: 'rgba(9,9,14,0.35)',
+  color: '#a1a1aa',
+  fontSize: 10,
+  cursor: 'pointer',
+  backdropFilter: 'blur(20px) saturate(150%)',
+  WebkitBackdropFilter: 'blur(20px) saturate(150%)',
+  boxShadow: '0 0 8px rgba(0,0,0,0.4)',
+  transition: 'transform 0.3s ease-out, border-color 0.2s, color 0.2s',
+};
