@@ -46,53 +46,6 @@ declare module 'next/navigation' {
   export function useSearchParams(): any;
 }
 
-declare module 'lucide-react' {
-  export const Play: any;
-  export const Square: any;
-  export const Menu: any;
-  export const User: any;
-  export const ChevronDown: any;
-  export const Info: any;
-  export const Trophy: any;
-  export const BarChart3: any;
-  export const History: any;
-  export const Users: any;
-  export const HelpCircle: any;
-  export const FileText: any;
-  export const Mail: any;
-  export const Headphones: any;
-  export const Zap: any;
-  export const ChevronUp: any;
-  export const ArrowRight: any;
-  export const WaveSquare: any;
-  export const Keyboard: any;
-  export const Earth: any;
-  export const Bullseye: any;
-  export const MessageSquare: any;
-  export const Twitter: any;
-  export const Github: any;
-  export const Youtube: any;
-  export const Instagram: any;
-  export const Facebook: any;
-  export const ArrowUp: any;
-  export const ArrowDown: any;
-  export const Phone: any;
-  export const Bolt: any;
-  export const Medal: any;
-  export const Music: any;
-  export const Target: any;
-  export const LifeBuoy: any;
-  export const MousePointer2: any;
-  export const Monitor: any;
-  export const Wifi: any;
-  export const LogOut: any;
-  export const Star: any;
-  export const Calendar: any;
-  export const Gamepad2: any;
-  export const Fire: any;
-  export const Flame: any;
-}
-
 declare module 'framer-motion' {
   export const motion: any;
   export const AnimatePresence: any;

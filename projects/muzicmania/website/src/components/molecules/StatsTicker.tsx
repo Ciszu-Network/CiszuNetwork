@@ -1,16 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Users, Gamepad2, Trophy, Star } from "lucide-react";
+import { Icon } from "@ciszu/ui";
 import { useState, useEffect } from "react";
 import { supabase } from "@/config/supabase";
 
 export function StatsTicker() {
   const [stats, setStats] = useState([
-    { label: "JUGADORES ACTIVOS", value: "0", icon: Users },
-    { label: "PARTIDAS HOY", value: "0", icon: Gamepad2 },
-    { label: "RÉCORD GLOBAL", value: "0", icon: Trophy },
-    { label: "USUARIOS TOTALES", value: "0", icon: Star },
+    { label: "JUGADORES ACTIVOS", value: "0", icon: 'users' },
+    { label: "PARTIDAS HOY", value: "0", icon: 'gamepad' },
+    { label: "RÉCORD GLOBAL", value: "0", icon: 'trophy' },
+    { label: "USUARIOS TOTALES", value: "0", icon: 'star' },
   ]);
 
   useEffect(() => {
@@ -41,10 +41,10 @@ export function StatsTicker() {
           .gte('updated_at', yesterday); // Asumiendo actividad reciente o nuevos registros
 
         setStats([
-          { label: "JUGADORES ACTIVOS", value: (activeCount || 0).toString(), icon: Users },
-          { label: "PARTIDAS HOY", value: (matchCount || 0).toString(), icon: Gamepad2 },
-          { label: "RÉCORD GLOBAL", value: (topScore?.score || 0).toLocaleString(), icon: Trophy },
-          { label: "USUARIOS TOTALES", value: (userCount || 0).toString(), icon: Star },
+          { label: "JUGADORES ACTIVOS", value: (activeCount || 0).toString(), icon: 'users' },
+          { label: "PARTIDAS HOY", value: (matchCount || 0).toString(), icon: 'gamepad' },
+          { label: "RÉCORD GLOBAL", value: (topScore?.score || 0).toLocaleString(), icon: 'trophy' },
+          { label: "USUARIOS TOTALES", value: (userCount || 0).toString(), icon: 'star' },
         ]);
       } catch (err) {
         console.error('[StatsTicker] Error cargando estadísticas:', err);
@@ -66,7 +66,7 @@ export function StatsTicker() {
       >
         {[...stats, ...stats, ...stats].map((stat, i) => (
           <div key={i} className="flex items-center gap-4 px-12 text-white font-header font-bold text-lg">
-            <stat.icon className="text-neon-blue w-6 h-6" />
+            <Icon name={stat.icon} className="text-neon-blue w-6 h-6" />
             <span>
               {stat.label}: <span className="text-neon-pink drop-shadow-neon-pink">{stat.value}</span>
             </span>

@@ -2,11 +2,10 @@
 import { supabase } from '@/config/supabase';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
 import { trackCover, trackDisc } from '@/utils/musicAssets';
-
 import React, { useState, useEffect } from 'react';
 import { FloatingSymbols } from "@/components/molecules/FloatingSymbols";
 import { StatsTicker } from "@/components/molecules/StatsTicker";
-import { Music, Star, MessageSquare, ArrowRight, Keyboard, Target, Users, FileText, History, Play } from 'lucide-react';
+import { Icon } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import Image from "next/image";
 import Link from "next/link";
@@ -180,7 +179,7 @@ export default function Home() {
       <section id="ecosystem" className="pt-24 pb-12 container mx-auto px-4">
         <div className="text-center mb-16 space-y-4">
           <div className="inline-flex items-center justify-center gap-6 mb-2">
-            <Star className="w-16 h-16 text-neon-blue drop-shadow-neon-blue shrink-0" />
+            <Icon name="star" size={64} className="text-neon-blue drop-shadow-neon-blue shrink-0" />
             <h2 className="text-4xl md:text-5xl font-header font-black tracking-tighter bg-gradient-to-r from-neon-blue via-neon-purple to-neon-pink bg-clip-text text-transparent py-2 uppercase leading-none whitespace-nowrap flex items-center justify-center gap-4">
               El Ecosistema Rítmico
             </h2>
@@ -196,7 +195,7 @@ export default function Home() {
               desc: 'Cada beat se traduce en espectrogramas y ondas de neón que reaccionan en tiempo real a la música.'
             },
             {
-              icon: Keyboard,
+              icon: () => <Icon name="keyboard" size={64} />,
               title: 'Mecánica Mania', color: 'purple',
               desc: 'Un sistema de 4 teclas diseñado para desafiar tu precisión y velocidad al máximo nivel.'
             },
@@ -205,7 +204,7 @@ export default function Home() {
               title: 'Sincronía Global', color: 'pink',
               desc: 'Sube en el ranking mundial y demuestra quién es el verdadero maestro del ritmo.'
             },
-          ] as { icon: React.FC<{className?:string}>|typeof Keyboard; title: string; color: string; desc: string }[]).map((f, i) => (
+          ] as { icon: React.FC<{className?:string}>; title: string; color: string; desc: string }[]).map((f, i) => (
             <div key={i} className={`p-10 rounded-3xl bg-doc-dark border-2 border-white/5 backdrop-blur-xl transition-all group active-depth hover:-translate-y-2 hover-glow-${f.color} border-neon-${f.color}/20`}>
               <div className={`mb-6 flex justify-center text-neon-${f.color} drop-shadow-neon-${f.color}`}>
                 <f.icon className="w-16 h-16" />
@@ -223,7 +222,7 @@ export default function Home() {
           <div className="p-10 rounded-3xl bg-doc-dark border-2 border-neon-blue/30 backdrop-blur-xl hover:hover-glow-blue transition-all group active-depth">
             <h2 className="text-4xl font-header font-bold mb-8 flex items-center justify-center gap-6 text-neon-blue uppercase tracking-tight text-center italic">
               <div className="p-4 bg-neon-blue/10 rounded-2xl drop-shadow-neon-blue">
-                <Target className="w-10 h-10" />
+                <Icon name="target" size={40} />
               </div>
               Nuestra Misión
             </h2>
@@ -240,7 +239,7 @@ export default function Home() {
           <div className="p-10 rounded-3xl bg-doc-dark border-2 border-neon-pink/30 backdrop-blur-xl hover:hover-glow-pink transition-all group active-depth">
             <h2 className="text-4xl font-header font-bold mb-8 flex items-center justify-center gap-6 text-neon-pink uppercase tracking-tight text-center italic">
               <div className="p-4 bg-neon-pink/10 rounded-2xl drop-shadow-neon-pink">
-                <Users className="w-10 h-10" />
+                <Icon name="users" size={40} />
               </div>
               Nexo de la Comunidad
             </h2>
@@ -263,7 +262,7 @@ export default function Home() {
               <div className="pt-8 border-t border-white/5 mt-8 flex justify-center">
                 <Link href="/about" className="block w-full text-center py-4 bg-electric-blue text-white font-black rounded-xl shadow-lg hover-glow-blue hover:scale-105 active:scale-95 transition-all uppercase tracking-[0.2em] text-xs max-w-sm mx-auto flex items-center justify-center gap-3">
                   VER MÁS INFORMACIÓN
-                  <ArrowRight className="w-5 h-5" />
+                  <Icon name="arrow-right" size={20} />
                 </Link>
               </div>
             </div>
@@ -278,7 +277,7 @@ export default function Home() {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-3xl font-header font-black flex items-center gap-4 text-white uppercase tracking-tighter italic">
                 <div className="p-2 bg-neon-purple/10 rounded-lg text-neon-purple drop-shadow-neon-purple">
-                  <History className="w-8 h-8" />
+                  <Icon name="history" size={32} />
                 </div>
                 Nuevas Innovaciones
               </h2>
@@ -332,7 +331,7 @@ export default function Home() {
                     </div>
 
                     <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-white/20 group-hover:bg-neon-purple group-hover:text-white transition-all shrink-0 self-end md:self-center">
-                       <ArrowRight className="w-5 h-5" />
+                       <Icon name="arrow-right" size={20} />
                     </div>
                   </div>
                 </div>
@@ -342,14 +341,14 @@ export default function Home() {
             <Link href="/changelog" className="group relative flex items-center justify-center gap-4 w-full py-6 bg-doc-dark border-2 border-neon-blue/30 rounded-[2rem] text-white font-header font-black uppercase tracking-[0.3em] text-[10px] overflow-hidden hover:border-neon-blue hover:shadow-neon-blue/20 transition-all">
               <div className="absolute inset-0 bg-neon-blue/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
               <span className="relative z-10">EXPLORAR REGISTRO COMPLETO</span>
-              <ArrowRight className="relative z-10 w-4 h-4 group-hover:translate-x-2 transition-transform" />
+              <Icon name="arrow-right" size={16} className="relative z-10 group-hover:translate-x-2 transition-transform" />
             </Link>
           </div>
 
           <div className="space-y-6 flex flex-col">
             <h2 className="text-3xl font-header font-black mb-4 flex items-center gap-4 text-white uppercase tracking-tighter italic">
               <div className="p-2 bg-neon-cyan/10 rounded-lg text-neon-cyan drop-shadow-neon-cyan">
-                <Music className="w-8 h-8" />
+                <Icon name="music" size={32} />
               </div>
               Trending Tracks
             </h2>
@@ -385,7 +384,7 @@ export default function Home() {
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-1">
-                        <Play className="w-2.5 h-2.5 text-gray-500 fill-current" />
+                        <Icon name="play" size={10} className="text-gray-500 fill-current" />
                         <span className="text-[8px] font-black text-gray-400 tabular-nums">{(realStats[track.id]?.plays || 0).toLocaleString()}</span>
                       </div>
                       <button onClick={handleLike} className="flex items-center gap-1 text-gray-400 hover:text-neon-pink transition-colors cursor-pointer">
@@ -400,7 +399,7 @@ export default function Home() {
             <Link href="/library" className="group relative inline-flex items-center justify-center gap-3 w-full py-5 bg-neon-pink rounded-xl text-white font-black uppercase text-sm tracking-[0.2em] shadow-[0_0_30px_rgba(255,0,128,0.3)] hover:shadow-[0_0_50px_rgba(255,0,128,0.6)] transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shine" />
               <span className="relative z-10">VER TODAS LAS CANCIONES</span>
-              <ArrowRight className="relative z-10 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              <Icon name="arrow-right" size={20} className="relative z-10 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
         </div>
@@ -414,13 +413,13 @@ export default function Home() {
             MuzicMania no solo evoluciona por nuestro código, sino por vuestra visión. Si tienes una propuesta de mecánica o un reto para el motor rítmico, queremos escucharte.
           </p>
           <div className="flex items-center justify-center gap-6">
-            <Star className="w-6 h-6 text-neon-cyan animate-spin-slow opacity-40" />
-            <Star className="w-4 h-4 text-neon-cyan animate-pulse opacity-20" />
+            <Icon name="star" size={24} className="text-neon-cyan animate-spin-slow opacity-40" />
+            <Icon name="star" size={16} className="text-neon-cyan animate-pulse opacity-20" />
             <Link href="/reviews" className="inline-block px-12 py-5 bg-white text-black font-black rounded-2xl hover:bg-neon-cyan hover:scale-105 transition-all active-depth uppercase tracking-[0.3em] text-sm shadow-xl">
               DEJAR UNA RESEÑA
             </Link>
-            <Star className="w-4 h-4 text-neon-cyan animate-pulse opacity-20" />
-            <Star className="w-6 h-6 text-neon-cyan animate-spin-slow opacity-40" />
+            <Icon name="star" size={16} className="text-neon-cyan animate-pulse opacity-20" />
+            <Icon name="star" size={24} className="text-neon-cyan animate-spin-slow opacity-40" />
           </div>
         </div>
 
@@ -437,7 +436,7 @@ export default function Home() {
             <div className="flex flex-wrap gap-6 justify-center lg:justify-start">
               <Link href="/play" className="inline-flex items-center gap-3 px-10 py-5 bg-neon-purple text-white font-black rounded-2xl shadow-neon-purple hover:scale-105 active-depth transition-all uppercase tracking-widest border-2 border-white/20">
                 EMPEZAR AHORA
-                <ArrowRight className="w-6 h-6 animate-bounce-x" />
+                <Icon name="arrow-right" size={24} className="animate-bounce-x" />
               </Link>
             </div>
           </div>

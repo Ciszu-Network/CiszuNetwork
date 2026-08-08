@@ -17,6 +17,10 @@ export interface IconProps extends Omit<React.HTMLAttributes<HTMLElement>, 'styl
   /** Tamaño del icono en píxeles */
   size?: number | string;
 
+  /** Altura del icono (opcional; por defecto igual que size). Útil para
+   *  elementos con ratio fijo como banderas (640x480 -> height = size * 0.75) */
+  height?: number | string;
+
   /** Color del icono (inline usa currentColor) */
   color?: string;
 
@@ -47,6 +51,7 @@ export const Icon: React.FC<IconProps> = ({
   style = 'outline',
   format = 'svg',
   size = 24,
+  height,
   color,
   className = '',
   forceCdn = false,
@@ -54,6 +59,9 @@ export const Icon: React.FC<IconProps> = ({
   inline = false,
   ...props
 }) => {
+
+  const h = height ?? size;
+
   // Inline-first con fallback de estilo: muchos iconos solo existen en filled
   // (server, shield, terminal, gift, rocket...) y se pedian como outline en
   // ciszubot - caian al <img> CDN/local y desaparecian al fallar. Si el estilo
@@ -69,7 +77,7 @@ export const Icon: React.FC<IconProps> = ({
 
   const inlineStyles: React.CSSProperties = {
     width: typeof size === 'number' ? `${size}px` : size,
-    height: typeof size === 'number' ? `${size}px` : size,
+    height: typeof h === 'number' ? `${h}px` : h,
     display: inline ? 'inline-block' : 'block',
   };
 
@@ -82,13 +90,21 @@ export const Icon: React.FC<IconProps> = ({
   // (sin raiz <svg>) y dejaba <g></g> tras navegar (fix iconos desaparecidos).
   const svgInner = entry?.inner ?? '';
 
+  // Iconos stroke-based (lucide/feather style, stroke-width en paths) vs
+  // fill-based (material/fontawesome/remix). Los primeros necesitan
+  // fill="none" + stroke="currentColor" en el <svg> raiz; si se renderizan
+  // con fill, el contorno se rellena y se ven deformes.
+  const usesStroke = entry?.stroke ?? /stroke[\s=]/i.test(svgInner);
+
   if (entry) {
     return (
       <svg
         viewBox={entry.viewBox}
         width={typeof size === 'number' ? size : size}
-        height={typeof size === 'number' ? size : size}
-        fill="currentColor"
+        height={typeof h === 'number' ? h : h}
+        fill={usesStroke ? 'none' : 'currentColor'}
+        stroke={usesStroke ? 'currentColor' : undefined}
+        strokeWidth={usesStroke ? 2 : undefined}
         role="img"
         aria-label={`${name} icon`}
         className={iconClassName}

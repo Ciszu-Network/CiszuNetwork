@@ -6,25 +6,17 @@ import { motion } from 'framer-motion';
 import { supabase } from '@/config/supabase';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
-import { 
-  Medal, Trophy, Gamepad2, Target, LogOut, Star, Calendar, Music, User, Flame, MessageSquare
-} from 'lucide-react';
+import { Icon } from '@ciszu/ui';
 import { useAppStore } from '@/store/useAppStore';
 import Image from 'next/image';
 
-// SVG reemplazos para iconos que no existen en esta versión de lucide-react
-const Settings   = ({ className = 'w-4 h-4' }) => <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>;
-const Share2     = ({ className = 'w-4 h-4' }) => <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>;
-const ShieldCheck = ({ className = 'w-4 h-4' }) => <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>;
-const Heart      = ({ className = 'w-4 h-4' }) => <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>;
-const Ticket     = ({ className = 'w-5 h-5' }) => <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><path d="M15 5v2M15 11v2M15 17v2M5 5h14a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4V7a2 2 0 0 1 2-2z"/></svg>;
 
 const ACHIEVEMENTS = [
-  { id: 1, name: 'Primera Partida', icon: <Medal />, unlocked: true, color: 'text-yellow-500' },
-  { id: 2, name: 'Amante de la Música', icon: <Music />, unlocked: true, color: 'text-neon-blue' },
-  { id: 3, name: 'Top 10', icon: <Trophy />, unlocked: false, color: 'text-gray-600' },
-  { id: 4, name: 'Perfección', icon: <Target />, unlocked: false, color: 'text-gray-600' },
-  { id: 5, name: 'En Racha', icon: <Flame className="w-4 h-4" />, unlocked: false, color: 'text-gray-600' },
+  { id: 1, name: 'Primera Partida', icon: <Icon name="medal" />, unlocked: true, color: 'text-yellow-500' },
+  { id: 2, name: 'Amante de la Música', icon: <Icon name="music" />, unlocked: true, color: 'text-neon-blue' },
+  { id: 3, name: 'Top 10', icon: <Icon name="trophy" />, unlocked: false, color: 'text-gray-600' },
+  { id: 4, name: 'Perfección', icon: <Icon name="target" />, unlocked: false, color: 'text-gray-600' },
+  { id: 5, name: 'En Racha', icon: <Icon name="flame" size={16} />, unlocked: false, color: 'text-gray-600' },
 ];
 
 export default function DynamicProfilePage() {
@@ -132,7 +124,7 @@ export default function DynamicProfilePage() {
               </div>
               {isOwnProfile && (
                 <button className="absolute bottom-2 right-2 w-10 h-10 bg-neon-blue text-black rounded-full border-4 border-black flex items-center justify-center hover:scale-110 transition-all shadow-lg">
-                  <Settings className="w-5 h-5" />
+                  <Icon name="settings" size={20} />
                 </button>
               )}
             </div>
@@ -154,15 +146,15 @@ export default function DynamicProfilePage() {
 
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-6 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
                 <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/5">
-                  <Calendar className="w-4 h-4 text-neon-blue" />
+                  <Icon name="calendar" size={16} className="text-neon-blue" />
                   MIEMBRO DESDE {profile.updated_at ? new Date(profile.updated_at).getFullYear() : '-'}
                 </div>
                 <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/5">
-                  <ShieldCheck className="w-4 h-4 text-neon-green" />
+                  <Icon name="shield-check" size={16} className="text-neon-green" />
                   RANGO: {profile.role || 'USUARIO'}
                 </div>
                 <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/5">
-                  <Star className="w-4 h-4 text-neon-pink" />
+                  <Icon name="star" size={16} className="text-neon-pink" />
                   VIP ACCESS
                 </div>
               </div>
@@ -174,7 +166,7 @@ export default function DynamicProfilePage() {
                       onClick={() => router.push('/profile/settings')}
                       className="flex items-center gap-3 px-8 py-3 bg-neon-purple/20 border border-neon-purple/40 rounded-2xl text-xs font-black tracking-widest text-white hover:bg-neon-purple hover:text-white transition-all shadow-lg active:scale-95"
                     >
-                      <Settings className="w-4 h-4" />
+                      <Icon name="settings" size={16} />
                       CONFIGURAR CUENTA
                     </button>
                   </>
@@ -186,10 +178,10 @@ export default function DynamicProfilePage() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-          <StatCard label="Puntuación Máxima" value={(profile.high_score || 0).toLocaleString()} color="text-neon-blue" icon={<Trophy className="w-4 h-4" />} />
-          <StatCard label="Partidas" value={profile.games_played || 0} color="text-neon-purple" icon={<Gamepad2 className="w-4 h-4" />} />
-          <StatCard label="Precisión Promedio" value={`${profile.accuracy || 0}%`} color="text-neon-cyan" icon={<Target className="w-4 h-4" />} />
-          <StatCard label="Posición Global" value={`#${profile.rank || '--'}`} color="text-neon-pink" icon={<Star className="w-4 h-4" />} />
+          <StatCard label="Puntuación Máxima" value={(profile.high_score || 0).toLocaleString()} color="text-neon-blue" icon={<Icon name="trophy" size={16} />} />
+          <StatCard label="Partidas" value={profile.games_played || 0} color="text-neon-purple" icon={<Icon name="gamepad" size={16} />} />
+          <StatCard label="Precisión Promedio" value={`${profile.accuracy || 0}%`} color="text-neon-cyan" icon={<Icon name="target" size={16} />} />
+          <StatCard label="Posición Global" value={`#${profile.rank || '--'}`} color="text-neon-pink" icon={<Icon name="star" size={16} />} />
         </div>
 
         {/* Achievements & Activity */}
@@ -197,7 +189,7 @@ export default function DynamicProfilePage() {
           <div className="lg:col-span-2 space-y-12">
             <section className="space-y-8">
               <h2 className="text-3xl font-header font-black italic tracking-tighter text-neon-blue flex items-center gap-3 uppercase">
-                <Medal className="w-8 h-8" />
+                <Icon name="medal" size={32} />
                 LOGROS DESBLOQUEADOS
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
@@ -222,7 +214,7 @@ export default function DynamicProfilePage() {
             <section className="space-y-8">
               <div className="flex items-center justify-between">
                 <h2 className="text-3xl font-header font-black italic tracking-tighter text-neon-purple flex items-center gap-3 uppercase">
-                  <MessageSquare className="w-8 h-8" />
+                  <Icon name="message-square" size={32} />
                   REVIEWS Y FEEDBACK
                 </h2>
                 <div className="h-px flex-1 bg-white/5 mx-6 hidden md:block" />
