@@ -139,3 +139,8 @@ apis/bruno/*.html
 # downloads/test/{art,video,music,etc}/<nombre>-<categoria>/ — SIEMPRE ignorada)
 downloads/
 
+
+# Testing
+test-results/
+playwright-report/
+blob-report/

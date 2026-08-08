@@ -1,5 +1,6 @@
 import express from 'express';
 import path from 'path';
+import type { Server } from 'http';
 import type { Client } from 'discord.js';
 import { logger } from './logger';
 import { addMoney } from './economy';
@@ -45,7 +46,7 @@ export function getTotalCommands(): number {
 
 let activeClient: Client | null = null;
 
-export function setupStatsServer(client?: Client): void {
+export function setupStatsServer(client?: Client): Server {
   activeClient = client ?? null;
   const app = express();
   const port = Number(process.env.PORT || 5000);
@@ -104,7 +105,8 @@ export function setupStatsServer(client?: Client): void {
     logger.info('Webhook de votos de DiscordBotList activo en POST /api/votes/dbl');
   }
 
-  app.listen(port, () => {
+  // Devolvemos el server para poder gestionarlo (y cerrarlo en tests).
+  return app.listen(port, () => {
     logger.info(`🌐 Servidor web iniciado en http://localhost:${port}`);
   });
 }
