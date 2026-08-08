@@ -5,7 +5,6 @@
 # Prioridad Media
 
 - [ ] Añadir framework de tests (Playwright, Vitest)
-- [ ] Implementar plan de comandos personalizados de varias categorias de opencode.
 - [ ] PWA para websites.
 
 ## Prioridad Baja

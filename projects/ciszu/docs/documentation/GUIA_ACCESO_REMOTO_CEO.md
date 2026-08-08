@@ -100,9 +100,12 @@ opencode                    # alternativa: instancia local independiente
 
 - Implementación técnica completa y troubleshooting: `projects/ciszu/docs/documentation/CONTROL_REMOTO.md`
 - Script reproducible de la infraestructura: `scripts/setup-remote-control.ps1`
-- Lanzadores (todos arrancan el servidor si falta + `opencode attach http://127.0.0.1:4096`):
-  - **Oficial**: `ciszu-ai` → `E:\Ciszu Network\tools\ciszu-ai\ciszu-ai.cmd`
-  - **PC**: `opencode-ciszu-pc` (alias → `ciszu-ai`) en `C:\Users\fplay\opencode-ciszu-pc.cmd`
-  - **Móvil**: `opencode-ciszu-cel` (alias → `ciszu-ai`) en `C:\Users\fplay\opencode-ciszu-cel.cmd`
-- Tool del servidor headless: `E:\Ciszu Network\tools\ciszu-ai\ensure-server.ps1` (`C:\Users\fplay\opencode-server-ensure.ps1` es un stub que delega; tarea programada `opencode-server-ciszu` al iniciar sesión)
+- Lanzadores (ninguno reinicia por defecto: solo ensure si falta + `opencode attach http://127.0.0.1:4096`; para reiniciar usar los `-reset`):
+  - **Entrar (PC)**: `ciszu-ai-pc` o `opencode-ciszu-pc` (alias → tool oficial `C:\Users\fplay\ciszu-ai\ciszu-ai.cmd`, espejo sin espacios)
+  - **Entrar (móvil)**: `ciszu-ai-cel` o `opencode-ciszu-cel` (mismo attach; Termius → SSH → estos comandos)
+  - **Arrancar/garantizar**: `ciszu-ai-start`, `opencode-ciszu-start`
+  - **Detener**: `ciszu-ai-stop`, `opencode-ciszu-stop`
+  - **Reiniciar (explícito)**: `ciszu-ai-reset`, `opencode-ciszu-reset` (stop + ensure + attach)
+  - Todos existen en `.cmd` y `.bat`, en `C:\Users\fplay\` y `AppData\Roaming\npm\`; tool oficial en `E:\Ciszu Network\tools\ciszu-ai\ciszu-ai.cmd` (subcomandos `server`/`stop`/`reset`)
+- Tool del servidor headless: `E:\Ciszu Network\tools\ciszu-ai\ensure-server.ps1` (espejo `C:\Users\fplay\ciszu-ai\ensure-server.ps1` con `-RepoRoot`; tarea programada `opencode-server-ciszu` al iniciar sesión)
 - Host del PC en la tailnet: `100.75.124.72` (hostname `ciszu-pc`)

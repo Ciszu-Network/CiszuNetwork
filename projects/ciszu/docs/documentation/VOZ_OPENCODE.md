@@ -126,7 +126,7 @@ Política (ago 2026): los avisos push del proyecto pueden llevar **audio** adem�
 
 ## Notas y gotchas
 
-- El plugin se carga **al arrancar el servidor opencode** (`opencode serve` / tarea `opencode-server-ciszu`). Para activarlo o recargar cambios hay que **reiniciar**: `ciszu-ai` (`tools/ciszu-ai/ciszu-ai.cmd`, stub en PATH; mata el listener de 4096 si escucha, relanza vía ensure y hace attach) — **es el lanzador oficial para iniciar sesiones** (7 ago 2026). ⚠️ Reiniciar corta la sesión en vivo (PC y móvil).
+- El plugin se carga **al arrancar el servidor opencode** (`opencode serve` / tarea `opencode-server-ciszu`). Para activarlo o recargar cambios hay que **reiniciar el server**: `ciszu-ai-reset` o `opencode-ciszu-reset` (o `ciszu-ai reset`; la tool `tools/ciszu-ai/ciszu-ai.cmd` es el lanzador oficial — **los lanzadores normales `ciszu-ai`/`-pc`/`-cel` NO reinician**, solo adjuntan). ⚠️ Reiniciar corta la sesión en vivo (PC y móvil).
 - `ctrl+r` pisa `session_rename` (renombrado de sesión) — ya desactivado en `tui.json` (`"session_rename": "none"`); sigue accesible por `/rename`.
 - El keybind `escape` (`tts-stop-pc`) puede pisar cierres de diálogo: si molesta, usar `/tts-stop-pc`.
 - En Windows **sox NO puede grabar** (`-d` da "no default audio device") — por eso el patch usa ffmpeg. sox solo sirve para conversión manual raw→wav.
