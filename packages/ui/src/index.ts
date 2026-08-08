@@ -11,6 +11,8 @@ export type { IconProps, IconButtonProps, IconListProps } from './Icon';
 
 // PWA: registrador de service worker (usar en los layouts de las 4 webs)
 export { default as PwaRegister } from './PwaRegister';
+// PWA: botón "Instalar app" con beforeinstallprompt + fallback por navegador
+export { default as InstallPwaButton } from './InstallPwaButton';
 // Re-exportar desde @ciszunetwork/cdn para conveniencia
 export {
   resolveIcon,
