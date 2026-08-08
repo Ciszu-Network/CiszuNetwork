@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { COUNTRIES } from "@/utils/countries";
 import { motion, AnimatePresence } from "framer-motion";
+import { Icon } from '@ciszu/ui';
 
 interface CountrySelectProps {
   value: string;
@@ -41,9 +42,7 @@ export default function CountrySelect({ value, onChange, error }: CountrySelectP
       >
         {selectedCountry ? (
           <div className="flex items-center gap-3">
-            <svg className="w-6 h-4 rounded-[2px] overflow-hidden" preserveAspectRatio="none">
-              <use href={`/icons/sprites/sprite-flags.svg#flag-${selectedCountry.code}`} />
-            </svg>
+            <Icon name={selectedCountry.code} style="flag" size={28} height={20} className="rounded-[2px] overflow-hidden w-auto shrink-0" />
             <span className="truncate">{selectedCountry.name}</span>
           </div>
         ) : (
@@ -85,9 +84,7 @@ export default function CountrySelect({ value, onChange, error }: CountrySelectP
                   }}
                   className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors text-left group"
                 >
-                  <svg className="w-6 h-4 rounded-[2px] overflow-hidden opacity-80 group-hover:opacity-100 transition-opacity" preserveAspectRatio="none">
-                    <use href={`/icons/sprites/sprite-flags.svg#flag-${country.code}`} />
-                  </svg>
+                  <Icon name={country.code} style="flag" size={28} height={20} className="rounded-[2px] overflow-hidden w-auto shrink-0 opacity-80 group-hover:opacity-100 transition-opacity" />
                   <span className="text-gray-400 group-hover:text-white font-bold text-[11px] truncate">
                     <span className="text-gray-600 mr-2 uppercase">{country.code}</span>
                     {country.name}

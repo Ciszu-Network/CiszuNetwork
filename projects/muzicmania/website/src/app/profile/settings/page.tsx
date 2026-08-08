@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -7,23 +7,10 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 import { useAppStore } from '@/store/useAppStore';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/config/supabase';
-import { User, LogOut, Info, Monitor, HelpCircle } from 'lucide-react';
+import { Icon } from '@ciszu/ui';
 import AvatarUploadModal from '@/components/profile/AvatarUploadModal';
 import Image from 'next/image';
 
-// SVG fallbacks para iconos extra
-const Settings = ({ className = 'w-4 h-4' }) => <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>;
-const Lock = ({ className = 'w-4 h-4' }) => <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>;
-const Shield = ({ className = 'w-4 h-4' }) => <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>;
-const Bell = ({ className = 'w-4 h-4' }) => <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>;
-const AlertTriangle = ({ className = 'w-4 h-4' }) => <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>;
-const Smartphone = ({ className = 'w-4 h-4' }) => <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>;
-const Camera = ({ className = 'w-4 h-4' }) => <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>;
-const Check = ({ className = 'w-4 h-4' }) => <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>;
-const Key = ({ className = 'w-4 h-4' }) => <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/><path d="m21 2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/></svg>;
-const Download = ({ className = 'w-4 h-4' }) => <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>;
-const Eye = ({ className = 'w-4 h-4' }) => <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>;
-const EyeOff = ({ className = 'w-4 h-4' }) => <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>;
 
 export default function ProfileSettingsPage() {
   const { user, setUser, showToast, isHydrated } = useAppStore();
@@ -57,13 +44,13 @@ export default function ProfileSettingsPage() {
   if (!isHydrated || !user || !profileData) return null;
 
   const tabs = [
-    { id: 'account', label: 'Cuenta', icon: <User className="w-4 h-4" /> },
-    { id: 'security', label: 'Seguridad', icon: <Shield className="w-4 h-4" /> },
-    { id: 'privacy', label: 'Privacidad', icon: <Lock className="w-4 h-4" /> },
-    { id: 'notifications', label: 'Notificaciones', icon: <Bell className="w-4 h-4" /> },
-    { id: 'info', label: 'Información', icon: <Info className="w-4 h-4" /> },
-    { id: 'danger', label: 'Zona de Peligro', icon: <AlertTriangle className="w-4 h-4" />, color: 'text-red-400' },
-    { id: 'help', label: 'Ayuda / FAQ', icon: <HelpCircle className="w-4 h-4" /> },
+    { id: 'account', label: 'Cuenta', icon: <Icon name="user" size={16} /> },
+    { id: 'security', label: 'Seguridad', icon: <Icon name="shield" size={16} /> },
+    { id: 'privacy', label: 'Privacidad', icon: <Icon name="lock" size={16} /> },
+    { id: 'notifications', label: 'Notificaciones', icon: <Icon name="bell" size={16} /> },
+    { id: 'info', label: 'Información', icon: <Icon name="info" size={16} /> },
+    { id: 'danger', label: 'Zona de Peligro', icon: <Icon name="warning" size={16} />, color: 'text-red-400' },
+    { id: 'help', label: 'Ayuda / FAQ', icon: <Icon name="help" size={16} /> },
   ];
 
   const handleLogout = async () => {
@@ -100,7 +87,7 @@ export default function ProfileSettingsPage() {
                       onClick={() => setIsAvatarModalOpen(true)}
                       className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                     >
-                      <Camera className="w-6 h-6 text-white" />
+                      <Icon name="camera" size={24} className="text-white" />
                     </button>
                   </div>
                   <div className="space-y-2">
@@ -149,7 +136,7 @@ export default function ProfileSettingsPage() {
                     }}
                     className="px-6 py-2 bg-neon-blue/20 text-neon-blue font-bold text-xs uppercase rounded-lg border border-neon-blue/30 hover:bg-neon-blue hover:text-black transition-all disabled:opacity-50 flex items-center gap-2"
                   >
-                    <Check className="w-4 h-4" /> {isSavingBio ? 'Guardando' : 'Guardar Biografía'}
+                    <Icon name="check" size={16} /> {isSavingBio ? 'Guardando' : 'Guardar Biografía'}
                   </button>
                 </div>
               </div>
@@ -193,7 +180,7 @@ export default function ProfileSettingsPage() {
             <div className="space-y-6">
               <div className="bg-white/5 p-6 rounded-2xl border border-white/10 space-y-4">
                 <div className="flex items-center gap-3 text-white mb-2">
-                  <Key className="w-5 h-5 text-neon-cyan" />
+                  <Icon name="key" size={20} className="text-neon-cyan" />
                   <h3 className="font-header font-black uppercase text-sm">Cambiar Contraseña</h3>
                 </div>
                 <div className="space-y-3">
@@ -230,7 +217,7 @@ export default function ProfileSettingsPage() {
                 <div className="flex items-center justify-between p-4 bg-neon-cyan/10 border border-neon-cyan/20 rounded-xl relative overflow-hidden group">
                   <div className="absolute top-0 right-0 w-20 h-20 bg-neon-cyan/20 blur-2xl group-hover:bg-neon-cyan/30 transition-all" />
                   <div className="flex items-center gap-4 relative z-10">
-                    <Monitor className="w-8 h-8 text-neon-cyan drop-shadow-sm" />
+                    <Icon name="monitor" size={32} className="text-neon-cyan drop-shadow-sm" />
                     <div>
                       <div className="text-white font-black text-sm uppercase">Este Dispositivo</div>
                       <div className="text-neon-cyan text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 mt-1">
@@ -244,7 +231,7 @@ export default function ProfileSettingsPage() {
                 {/* Otros dispositivos (Simulado visualmente hasta tener tracking en BD) */}
                 <div className="flex items-center justify-between p-4 bg-black/50 border border-white/5 rounded-xl group hover:border-white/20 transition-all">
                   <div className="flex items-center gap-4 opacity-50 group-hover:opacity-100 transition-opacity">
-                    <Smartphone className="w-8 h-8 text-gray-500 group-hover:text-white transition-colors" />
+                    <Icon name="smartphone" size={32} className="text-gray-500 group-hover:text-white transition-colors" />
                     <div>
                       <div className="text-gray-300 font-black text-sm uppercase">Dispositivo Móvil</div>
                       <div className="text-gray-600 text-[10px] font-bold uppercase tracking-widest">Requiere configuración backend para listar historiales</div>
@@ -354,14 +341,14 @@ export default function ProfileSettingsPage() {
                     {showUUID ? user.id : '••••••••-••••-••••-••••-••••••••••••'}
                   </div>
                   <button onClick={() => setShowUUID(!showUUID)} className="p-3 bg-white/10 rounded-xl hover:bg-white/20 transition-all text-white">
-                    {showUUID ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showUUID ? <Icon name="eye-off" size={20} /> : <Icon name="eye" size={20} />}
                   </button>
                 </div>
               </div>
             </div>
 
             <button className="w-full flex items-center justify-center gap-3 p-6 rounded-2xl border-2 border-dashed border-white/20 text-white hover:border-white/50 hover:bg-white/5 transition-all">
-              <Download className="w-6 h-6" />
+              <Icon name="download" size={24} />
               <div>
                 <div className="font-header font-black uppercase tracking-widest">Solicitar Descarga de Datos</div>
                 <div className="text-[10px] text-gray-400">Recibe un archivo con todo tu historial, scores y configuraciones.</div>
@@ -443,7 +430,7 @@ export default function ProfileSettingsPage() {
         >
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-white shadow-lg">
-              <Settings className="w-6 h-6" />
+              <Icon name="settings" size={24} />
             </div>
             <div>
               <h1 className="text-3xl md:text-5xl font-header font-black uppercase tracking-tighter text-white">
@@ -482,7 +469,7 @@ export default function ProfileSettingsPage() {
                 onClick={handleLogout}
                 className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-header font-black uppercase tracking-widest text-xs bg-red-500/5 text-red-400 hover:bg-red-500 hover:text-white transition-all shadow-lg active:scale-95 border border-red-500/20"
               >
-                <LogOut className="w-4 h-4" />
+                <Icon name="logout" size={16} />
                 CERRAR SESIÓN
               </button>
             </div>

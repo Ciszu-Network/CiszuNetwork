@@ -34,15 +34,31 @@ const ICON_LIST = [
   // Solo disponibles en filled (se omiten en outline automáticamente)
   'server', 'terminal', 'shield', 'users', 'signal', 'crown', 'dice', 'medal',
   'trophy', 'robot', 'rocket', 'palette', 'arrow-right',
+  // Iconos añadidos para MuzicMania (migración lucide → @ciszu/ui, ago 2026)
+  'logout', 'monitor', 'keyboard', 'target', 'file-text', 'history',
+  'message-square', 'flame', 'ticket', 'phone', 'bell', 'eye-off', 'camera',
+  'smartphone',
   // Navegación / chevrons
   'chevronRight', 'arrow-back',
 ];
 
 function parseSvg(filePath) {
   const content = fs.readFileSync(filePath, 'utf8');
-  const match = content.match(/<svg[^>]*viewBox="([^"]+)"[^>]*>([\s\S]*?)<\/svg>/);
-  if (!match) return null;
-  return { viewBox: match[1], inner: match[2].trim() };
+  const root = content.match(/<svg[^>]*>/);
+  const stroke = hasStroke(root);
+  let match = content.match(/<svg[^>]*viewBox="([^"]+)"[^>]*>([\s\S]*?)<\/svg>/);
+  if (match) return { viewBox: match[1], inner: match[2].trim(), stroke };
+  // SVG sin viewBox (p.ej. flags 1000x600 de la vieja descarga): derivar de width/height
+  const w = content.match(/<svg[^>]*\swidth="([\d.]+)"/);
+  const h = content.match(/<svg[^>]*\sheight="([\d.]+)"/);
+  const inner = content.match(/<svg[^>]*>([\s\S]*?)<\/svg>/);
+  if (w && h && inner) return { viewBox: `0 0 ${w[1]} ${h[1]}`, inner: inner[1].trim(), stroke };
+  return null;
+}
+
+function hasStroke(root) {
+  if (!root) return false;
+  return /stroke="currentColor"|stroke='currentColor'|stroke=currentColor/.test(root[0]);
 }
 
 function main() {
@@ -76,6 +92,7 @@ function main() {
   lines.push('export interface IconEntry {');
   lines.push('  viewBox: string;');
   lines.push('  inner: string;');
+  lines.push('  stroke: boolean;');
   lines.push('}');
   lines.push('');
   lines.push('export const iconRegistry: Record<string, Record<string, IconEntry>> = {');
@@ -85,7 +102,7 @@ function main() {
     for (const name of names) {
       const entry = registry[style.key][name];
       const key = /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(name) ? name : JSON.stringify(name);
-      lines.push(`    ${key}: { viewBox: ${JSON.stringify(entry.viewBox)}, inner: ${JSON.stringify(entry.inner)} },`);
+      lines.push(`    ${key}: { viewBox: ${JSON.stringify(entry.viewBox)}, inner: ${JSON.stringify(entry.inner)}, stroke: ${entry.stroke} },`);
     }
     lines.push('  },');
   }
