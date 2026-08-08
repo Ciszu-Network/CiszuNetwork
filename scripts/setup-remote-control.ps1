@@ -62,10 +62,17 @@ Set-Service -Name sshd -StartupType Automatic
 Start-Sleep -Seconds 3
 Get-Service sshd | Select-Object Name, Status, StartType | Format-Table
 
-# Firewall (solo tailnet de Tailscale no necesita puerto abierto, pero la regla local es inofensiva)
-if (-not (Get-NetFirewallRule -DisplayName 'OpenSSH SSH Server (sshd)' -ErrorAction SilentlyContinue)) {
+# Firewall (solo tailnet de Tailscale no necesita puerto, pero la regla local es inofensiva)
+# ⚠️ 8 ago 2026: FORZAR Profile Any — con Profile Private el tráfico entrante por el
+# adaptador Tailscale podía clasificarse en otro perfil y Windows lo bloqueaba en
+# silencio (timeout SSH desde el móvil). Ver scripts/ensure-ssh.ps1.
+$fwRule = Get-NetFirewallRule -DisplayName 'OpenSSH SSH Server (sshd)' -ErrorAction SilentlyContinue
+if (-not $fwRule) {
     New-NetFirewallRule -Name 'OpenSSH-Server-Inbound-TCP' -DisplayName 'OpenSSH SSH Server (sshd)' `
-        -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22 | Out-Null
+        -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22 -Profile Any | Out-Null
+} elseif ($fwRule.Profile -ne 'Any') {
+    Set-NetFirewallRule -DisplayName 'OpenSSH SSH Server (sshd)' -Profile Any
+    Write-Host '   [fix] regla firewall OpenSSH movida a Profile=Any' -ForegroundColor Yellow
 }
 
 # ---------- 4. Tailscale ----------
