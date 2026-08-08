@@ -1,7 +1,7 @@
 'use client';
 
 import MainLayout from '@/components/templates/MainLayout';
-import { Info } from 'lucide-react';
+import { Icon } from '@ciszu/ui';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
 
 
@@ -14,7 +14,7 @@ export default function AboutPage() {
           <div className="flex flex-col items-center gap-1">
              <div className="flex items-center gap-6 group">
                 <div className="w-12 h-12 text-neon-blue flex items-center justify-center">
-                   <Info className="w-12 h-12" />
+                   <Icon name="info" size={48} />
                 </div>
                 <h1 className="text-4xl md:text-8xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-neon-blue via-neon-purple to-neon-pink bg-clip-text text-transparent [-webkit-text-stroke:1px_black]">
                   SOBRE NOSOTROS

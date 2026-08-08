@@ -69,7 +69,7 @@ Análisis por proyecto (monorepo):
 | **MuzicMania website** | Next + Supabase REST + auth + juego | ✅ ALTO (unit lógica) ⚠️ E2E sensible (auth) | `track_id` vs `song_id`, scores REST, `maybeSingle` (406) — lógica de fetch aislada con MSW; E2E solo si se automatiza login |
 | **Ciszubot (bot Discord)** | Discord.js + economía + niveles + giveaways | ✅ ALTO (unit lógica) | `economy`, `levels`, `configService` (caché), `giveaways` (timers), `statsServer` (`/api/stats`, `/api/votes`) — funciones puras de servicios con payloads mock de Discord.js |
 | **Ciszubot dashboard** | Next.js + OAuth + Supabase | ⚠️ MEDIO (E2E opcional) | login OAuth real es difícil en CI — dejar para E2E con Playwright + cookies de juego, o omitir |
-| **ciszunetwork / ciszukantony websites** | Landing informativos con fetch server-side | ❌ BAJO | puramente estáticos (`images.unoptimized`) sin lógica de negocio — tests aquí serían cobertura sin valor real |
+| **ciszunetwork / ciszukoantony websites** | Landing informativos con fetch server-side | ❌ BAJO | puramente estáticos (`images.unoptimized`) sin lógica de negocio — tests aquí serían cobertura sin valor real |
 | **Supabase SQL (funciones PL/pgSQL)** | RPC/triggers | ⚠️ (ya cubierto) | Ya se validan con Bruno (`pnpm api:test`) contra prod + Advisors en Dashboard — no duplicar |
 
 ---
