@@ -14,6 +14,8 @@
 //   node scripts/ntfy-notif.js "Titulo" "Mensaje" --text "texto limpio para el audio"
 //   node scripts/ntfy-notif.js "Titulo" "Mensaje" --markdown  (mensaje con formato Markdown: **negritas**, links, code)
 //   node scripts/ntfy-notif.js "Titulo" "Mensaje" --delay 30m (entrega programada: 30m, 3h, "2 days", "tomorrow, 3pm", timestamp)
+//   node scripts/ntfy-notif.js "Titulo" "Mensaje" --image C:\ruta\foto.png
+//                                                       (adjunta una IMAGEN; el audio se envia en un 2º push aparte)
 //
 // Flags:
 //   --priority <int|low|default|high|urgent>   prioridad (default: default)
@@ -26,6 +28,9 @@
 //                                              inglés ni tecnicismos (la voz los pronuncia mal). Si no se pasa,
 //                                              se usa el mensaje con una limpieza automática.
 //   --no-voice                                 sin audio (solo texto). Por defecto SIEMPRE se adjunta audio.
+//   --image <ruta>                             adjunta una imagen al push. Se envia como attach del PRIMER
+//                                              mensaje (Content-Type según extensión) y el audio se manda
+//                                              en un segundo push con el mismo título.
 //   --voice [voz]                              voz del audio. Política: SIEMPRE femenina (sharvard ES = speaker
 //                                              femenino). Las voces masculinas (ryan, bryce, davefx) se ignoran
 //                                              y se usa sharvard.
@@ -157,7 +162,7 @@ function parseArgs(argv) {
     if (a.startsWith('--')) {
       const key = a.slice(2);
       const next = argv[i + 1];
-      if (key === 'priority' || key === 'tag' || key === 'title' || key === 'delay' || key === 'text') {
+      if (key === 'priority' || key === 'tag' || key === 'title' || key === 'delay' || key === 'text' || key === 'image') {
         args.flags[key] = next;
         i++;
       } else if (key === 'voice') {
@@ -222,6 +227,34 @@ async function send({ title, message, priority, tag, audioPath, markdown, delay 
     );
   }
   console.log(`Notificacion enviada a ${TOPIC}: ${title} (${message.slice(0, 60)}${message.length > 60 ? '…' : ''})${audioPath ? ' + audio' : ''}`);
+}
+
+function imageContentType(filePath) {
+  const ext = path.extname(filePath).toLowerCase();
+  const map = {
+    '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
+    '.gif': 'image/gif', '.webp': 'image/webp', '.bmp': 'image/bmp', '.svg': 'image/svg+xml',
+  };
+  return map[ext] || 'application/octet-stream';
+}
+
+async function sendWithImage({ title, message, priority, tag, markdown, delay, imagePath }) {
+  const params = new URLSearchParams({
+    title: title || '',
+    message,
+    tags: tag || 'robot',
+    priority: String(PRIORITIES[priority] ?? 3),
+  });
+  if (markdown) params.set('markdown', 'yes');
+  if (delay) params.set('delay', delay);
+  const buf = fs.readFileSync(imagePath);
+  params.set('f', path.basename(imagePath));
+  const headers = { 'Content-Type': imageContentType(imagePath) };
+  if (TOKEN) headers.Authorization = `Bearer ${TOKEN}`;
+  await requestWithRetry(() =>
+    fetch(`${SERVER}/${TOPIC}?${params}`, { method: 'PUT', body: buf, headers }),
+  );
+  console.log(`Imagen enviada a ${TOPIC}: ${title} → ${path.basename(imagePath)} (${(buf.length / 1024).toFixed(0)} KB)`);
 }
 
 async function listMessages() {
@@ -318,7 +351,20 @@ async function main() {
     }
   }
 
-  await send({ title, message, priority: flags.priority, tag: flags.tag, audioPath, markdown: flags.markdown, delay: flags.delay });
+  if (flags.image !== undefined) {
+    const imagePath = String(flags.image);
+    if (!fs.existsSync(imagePath)) {
+      console.error(`  [!] Imagen no encontrada: ${imagePath}`);
+      process.exit(1);
+    }
+    await sendWithImage({ title, message, priority: flags.priority, tag: flags.tag || 'fetch', markdown: flags.markdown, delay: flags.delay, imagePath });
+    // El audio va en un 2º push aparte (un attach por mensaje en ntfy.sh)
+    if (audioPath) {
+      await send({ title: `${title} (audio)`, message: 'Audio de la notificacion.', tag: flags.tag || 'robot', priority: flags.priority, audioPath, markdown: flags.markdown, delay: flags.delay });
+    }
+  } else {
+    await send({ title, message, priority: flags.priority, tag: flags.tag, audioPath, markdown: flags.markdown, delay: flags.delay });
+  }
   if (audioPath) {
     try { fs.unlinkSync(audioPath); } catch {}
   }
