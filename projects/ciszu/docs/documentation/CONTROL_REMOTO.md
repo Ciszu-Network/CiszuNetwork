@@ -193,11 +193,12 @@ opencode serve --port 4096 --hostname 127.0.0.1   ← proceso headless persisten
 
 **Piezas configuradas:**
 1. `DefaultShell` del sshd = `powershell.exe` (valor estándar; **NO** cargar el perfil del usuario en sesiones SSH — los perfiles no se ejecutan por defecto en OpenSSH).
-2. `C:\Users\fplay\opencode-server-ensure.ps1` — script idempotente: si 127.0.0.1:4096 no responde, arranca `opencode serve` oculto (logs en `E:\Ciszu Network\.opencode-tmp\opencode-server{,-err}.log`). Lo usa el lanzador y la tarea programada.
+2. `tools/ciszu-ai/ensure-server.ps1` (tool canónica 7 ago 2026; en `C:\Users\fplay\opencode-server-ensure.ps1` hay un stub que delega) — script idempotente: si 127.0.0.1:4096 no responde, arranca `opencode serve` oculto (logs en `E:\Ciszu Network\.opencode-tmp\opencode-server{,-err}.log`). Lo usa el lanzador y la tarea programada.
 3. Tarea programada **`opencode-server-ciszu`** (AtLogOn, oculto, Limited): arranca el servidor headless al iniciar sesión → el móvil siempre lo encuentra.
-4. Lanzadores (PATH de usuario + stub en `AppData\Roaming\npm` para resolver en cualquier terminal): ejecutan el ensure y luego `opencode attach http://127.0.0.1:4096`.
-   - PC: `C:\Users\fplay\opencode-ciszu-pc.cmd`
-   - Móvil: `C:\Users\fplay\opencode-ciszu-cel.cmd`
+4. Lanzadores (PATH de usuario + stubs en `AppData\Roaming\npm` que delegan en `E:\Ciszu Network\tools\ciszu-ai\ciszu-ai.cmd`): ejecutan el ensure y luego `opencode attach http://127.0.0.1:4096`.
+   - Oficial: `ciszu-ai` (subcomandos `server`/`stop`; default = reload + ensure + attach)
+   - PC: `opencode-ciszu-pc.cmd` (alias → `ciszu-ai`) en `C:\Users\fplay\opencode-ciszu-pc.cmd`
+   - Móvil: `opencode-ciszu-cel.cmd` (alias → `ciszu-ai`) en `C:\Users\fplay\opencode-ciszu-cel.cmd`
 5. Las conversaciones se guardan en la db de opencode del PC (persisten entre reinicios del servidor).
 
 **Notas**:
