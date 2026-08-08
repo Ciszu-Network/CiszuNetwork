@@ -213,15 +213,16 @@ export default function InstallPdwaButton({
     '--pdwa-accent-alt': accentAlt,
   } as CSSProperties;
 
-  return (
+return (
     <div
       className="fixed left-4 bottom-4 z-50"
       style={accentStyle}
       data-pdwa-host="true"
     >
-      {panel && (
+      <style>{`@keyframes pdwa-pop{0%{opacity:0;transform:translateY(10px) scale(0.96)}100%{opacity:1;transform:translateY(0) scale(1)}}`}</style>
+{panel && (
         <div
-          className="mb-3 w-72 max-w-[calc(100vw-2rem)] rounded-2xl border border-[rgba(255,255,255,0.14)] bg-zinc-950/95 p-4 text-sm text-zinc-200 shadow-[0_0_28px_var(--pdwa-accent)] backdrop-blur-md"
+          className="mb-3 w-72 max-w-[calc(100vw-2rem)] animate-[pdwa-pop_0.35s_ease-out] rounded-2xl border border-[rgba(255,255,255,0.14)] bg-zinc-950/70 p-4 text-sm text-zinc-200 shadow-[0_0_28px_var(--pdwa-accent)] backdrop-blur-xl backdrop-saturate-150"
           role="dialog"
           aria-label="Información de instalación PDWA"
         >
@@ -264,7 +265,7 @@ export default function InstallPdwaButton({
         </div>
       )}
 
-      <div className="flex items-center gap-1.5">
+<div className="flex items-center gap-1.5">
         <button
           type="button"
           onClick={handleInstall}
@@ -274,18 +275,24 @@ export default function InstallPdwaButton({
           onMouseLeave={() => setExpanded(false)}
           onFocus={() => setExpanded(true)}
           onBlur={() => setExpanded(false)}
-          className="group relative flex h-10 items-center overflow-hidden rounded-full border border-[rgba(255,255,255,0.2)] bg-black/80 text-white backdrop-blur-md transition-all duration-300 hover:border-[var(--pdwa-accent)] hover:shadow-[0_0_18px_var(--pdwa-accent)]"
-          style={{ width: expanded ? 'auto' : '2.5rem' }}
+          className="group relative flex h-9 items-center overflow-hidden rounded-full border border-[rgba(255,255,255,0.16)] bg-zinc-950/35 text-white shadow-[0_0_10px_rgba(0,0,0,0.4)] backdrop-blur-xl backdrop-saturate-150 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-[var(--pdwa-accent)] hover:shadow-[0_0_18px_var(--pdwa-accent)]"
+          style={{ width: expanded ? '9.5rem' : '2.25rem' }}
         >
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center">
+          <span className="relative flex h-9 w-9 shrink-0 items-center justify-center">
+            {!expanded && (
+              <span
+                className="absolute inset-2 rounded-full opacity-30 blur-md transition-opacity duration-500"
+                style={{ background: 'var(--pdwa-accent)' }}
+              />
+            )}
             <svg
               viewBox="0 0 24 24"
               fill="none"
               stroke="var(--pdwa-accent)"
-              strokeWidth="2.2"
+              strokeWidth="2.4"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="h-[18px] w-[18px] transition-transform duration-300 group-hover:-translate-y-0.5"
+              className="relative h-4 w-4 transition-transform duration-500 ease-out group-hover:-translate-y-0.5"
             >
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <path d="m7 10 5 5 5-5" />
@@ -293,8 +300,8 @@ export default function InstallPdwaButton({
             </svg>
           </span>
           <span
-            className={`whitespace-nowrap pr-3 text-xs font-bold transition-opacity duration-300 ${
-              expanded ? 'opacity-100' : 'opacity-0'
+            className={`whitespace-nowrap pr-3 text-[11px] font-bold tracking-wide transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+              expanded ? 'translate-x-0 opacity-100' : 'pointer-events-none -translate-x-2 opacity-0'
             }`}
             style={{ color: 'var(--pdwa-accent)' }}
           >
@@ -306,7 +313,7 @@ export default function InstallPdwaButton({
           type="button"
           aria-label="No volver a mostrar"
           onClick={handleDismiss}
-          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-white/15 bg-black/70 text-xs text-zinc-400 transition hover:border-red-400/70 hover:text-red-400"
+          className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-white/15 bg-zinc-950/35 text-[10px] text-zinc-400 shadow-[0_0_8px_rgba(0,0,0,0.4)] backdrop-blur-xl backdrop-saturate-150 transition-all duration-300 ease-out hover:scale-110 hover:border-red-400/70 hover:text-red-400"
           title="No volver a mostrar"
         >
           ✕
