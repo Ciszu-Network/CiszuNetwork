@@ -26,7 +26,10 @@ export default defineConfig({
   fullyParallel: true,
   workers: 2,
   retries: 1,
-  reporter: [['list']],
+  reporter: [
+    ['list'],
+    ['html', { open: 'never', outputFolder: 'playwright-report' }],
+  ],
   use: {
     screenshot: 'only-on-failure',
     trace: 'retain-on-failure',
