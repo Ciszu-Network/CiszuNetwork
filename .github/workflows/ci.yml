@@ -25,6 +25,18 @@ jobs:
       - run: pnpm install
       - run: pnpm --filter ${{ matrix.app }} lint
 
+  unit-tests:
+    name: Tests unitarios (Vitest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          cache: pnpm
+      - run: pnpm install
+      - run: pnpm test
+
   semgrep:
     name: Semgrep (SAST)
     runs-on: ubuntu-latest

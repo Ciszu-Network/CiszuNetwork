@@ -4,7 +4,6 @@
 
 # Prioridad Media
 
-- [ ] Añadir framework de tests (Playwright, Vitest)
 - [ ] PWA para websites.
 
 ## Prioridad Baja
