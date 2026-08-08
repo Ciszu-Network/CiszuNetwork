@@ -534,11 +534,21 @@ export function registerTTS(api, kv, complete, prompts, logger) {
       if (meta.filename) params.set("f", meta.filename);
       const headers = { "Content-Type": "audio/mpeg" };
       if (NOTIFY_TOKEN) headers["Authorization"] = "Bearer " + NOTIFY_TOKEN;
-      const resp = await fetch(`${NOTIFY_SERVER}/${topic}?${params}`, {
+      let resp = await fetch(`${NOTIFY_SERVER}/${topic}?${params}`, {
         method: "PUT",
         headers,
         body: buf,
       });
+      // FIX (8 ago 2026): token revocado/inválido → 401; el topic es público,
+      // reenviar sin token para no bloquear el audio al móvil.
+      if (resp.status === 401 && NOTIFY_TOKEN) {
+        logger?.log?.("TTS", "ntfy token 401 -> reenvio sin token (topic publico)", "warn");
+        resp = await fetch(`${NOTIFY_SERVER}/${topic}?${params}`, {
+          method: "PUT",
+          headers: { "Content-Type": "audio/mpeg" },
+          body: buf,
+        });
+      }
       logger?.log?.("TTS", `ntfy audio send status=${resp.status}`, resp.ok ? "debug" : "error");
       return resp.ok;
     } catch (err) {
