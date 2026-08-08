@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -571,7 +571,7 @@ export default function ChangelogIndex() {
                          { text: 'Lanzamiento de Sistema de Juego Interactivo (/play)', done: false },
                          { text: 'Integración de Cloudflare y Protección Avanzada', done: false },
                          { text: 'Sistema de Niveles y Leaderboards', done: false },
-                         { text: 'Soporte Nativo para Instalación PWA', done: false },
+                         { text: 'Soporte Nativo para Instalación PDWA', done: false },
                        ].map((task, i) => (
                           <div key={i} className="flex items-start gap-3 group/task">
                              <div className="mt-0.5 w-5 h-5 rounded-md flex items-center justify-center shrink-0 border bg-white/5 border-white/10 text-white/20 group-hover/task:border-white/30 transition-all">
@@ -644,3 +644,4 @@ export default function ChangelogIndex() {
     </MainLayout>
   );
 }
+
