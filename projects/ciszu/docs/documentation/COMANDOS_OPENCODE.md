@@ -30,7 +30,7 @@ El comando tiene acceso a:
 - `api.client` — sesión y mensajes
 - Node.js completo: `fetch`, `child_process`, `fs` — cualquier integración externa
 
-Los plugins se cargan desde `C:\Users\fplay\.config\opencode\tui.json` (config TUI). El plugin nuevo se añadiría ahí, junto al de voz. Los cambios requieren **relanzar con `opencode-run`**.
+Los plugins se cargan desde `C:\Users\fplay\.config\opencode\tui.json` (config TUI). El plugin nuevo se añadiría ahí, junto al de voz. Los cambios requieren **relanzar con `ciszu-ai`**.
 
 ## Nivel 1 — Plugin de comandos en código (`tools/opencode-commands-ciszu/`)
 
@@ -201,13 +201,13 @@ Ejemplos planificados:
 
 1. **Permisos Docker**: el server opencode corre sin elevar (tarea AtLogOn). `docker compose` puede fallar → cada comando de servidor debe capturar el error y mostrarlo con toast.
 2. **Keybinds ocupados**: `ctrl+r` (STT), `<leader>r` (STT submit), `<leader>s` (TTS), `<leader>v` (TTS mode), `escape` (TTS stop). Los nuevos usan `<leader>n`, `<leader>c`, `<leader>d` — verificar colisiones antes de registrar.
-3. **Recarga**: cualquier cambio de plugin/MCP/comando requiere `opencode-run` (el plugin se carga al arrancar el server).
+3. **Recarga**: cualquier cambio de plugin/MCP/comando requiere `ciszu-ai` (el plugin se carga al arrancar el server).
 4. **Contexto de sesión**: los comandos de código NO gastan tokens del modelo (son JS directo); los markdown y MCP sí. Preferir Nivel 1 para lo frecuente.
 5. **Seguridad**: los comandos con `child_process` deben validar argumentos (p.ej. nombre de servicio por lista blanca) para no permitir inyección.
 
 ## Plan de implementación (cuando se apruebe)
 
-- **Fase 1**: esqueleto `tools/opencode-commands-ciszu/` + categoría A (ntfy) + categoría C (checks) — registro en `tui.json`, relanzar con `opencode-run`
+- **Fase 1**: esqueleto `tools/opencode-commands-ciszu/` + categoría A (ntfy) + categoría C (checks) — registro en `tui.json`, relanzar con `ciszu-ai`
 - **Fase 2**: categoría B (docker) + categoría D (supabase) + E (sistema)
 - **Fase 3**: comandos markdown (`.opencode/command/`) para backup/deploy/cdn
 - **Fase 4**: MCP servers (docker, dbvr supabase) en config global
