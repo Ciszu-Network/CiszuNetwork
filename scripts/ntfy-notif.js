@@ -203,6 +203,28 @@ async function requestWithRetry(makeRequest) {
   throw new Error(`enviar a ${SERVER}/${TOPIC} fallo: ${lastError}`);
 }
 
+// FIX (8 ago 2026): si el token configurado da 401 (revocado/inválido) y el topic es
+// público, se reenvía SIN token automáticamente. El topic ciszu-* es público — el
+// token NUNCA debe bloquear la entrega.
+async function publishWithFallback({ params, method, body, headers }) {
+  try {
+    await requestWithRetry(() =>
+      fetch(`${SERVER}/${TOPIC}?${params}`, { method, body, headers }),
+    );
+  } catch (e) {
+    if (headers.Authorization && /401/.test(e.message)) {
+      console.warn('  [!] Token 401 (revocado/inválido) — topic público: se reenvía SIN token.');
+      const anon = { ...headers };
+      delete anon.Authorization;
+      await requestWithRetry(() =>
+        fetch(`${SERVER}/${TOPIC}?${params}`, { method, body, headers: anon }),
+      );
+      return;
+    }
+    throw e;
+  }
+}
+
 async function send({ title, message, priority, tag, audioPath, markdown, delay }) {
   const params = new URLSearchParams({
     title: title || '',
@@ -218,13 +240,9 @@ async function send({ title, message, priority, tag, audioPath, markdown, delay 
     const buf = fs.readFileSync(audioPath);
     params.set('f', path.basename(audioPath));
     headers['Content-Type'] = 'audio/mpeg';
-    await requestWithRetry(() =>
-      fetch(`${SERVER}/${TOPIC}?${params}`, { method: 'PUT', body: buf, headers }),
-    );
+    await publishWithFallback({ params, method: 'PUT', body: buf, headers });
   } else {
-    await requestWithRetry(() =>
-      fetch(`${SERVER}/${TOPIC}?${params}`, { method: 'POST', body: '', headers }),
-    );
+    await publishWithFallback({ params, method: 'POST', body: '', headers });
   }
   console.log(`Notificacion enviada a ${TOPIC}: ${title} (${message.slice(0, 60)}${message.length > 60 ? '…' : ''})${audioPath ? ' + audio' : ''}`);
 }
@@ -251,16 +269,18 @@ async function sendWithImage({ title, message, priority, tag, markdown, delay, i
   params.set('f', path.basename(imagePath));
   const headers = { 'Content-Type': imageContentType(imagePath) };
   if (TOKEN) headers.Authorization = `Bearer ${TOKEN}`;
-  await requestWithRetry(() =>
-    fetch(`${SERVER}/${TOPIC}?${params}`, { method: 'PUT', body: buf, headers }),
-  );
+  await publishWithFallback({ params, method: 'PUT', body: buf, headers });
   console.log(`Imagen enviada a ${TOPIC}: ${title} → ${path.basename(imagePath)} (${(buf.length / 1024).toFixed(0)} KB)`);
 }
 
 async function listMessages() {
   const headers = {};
   if (TOKEN) headers.Authorization = `Bearer ${TOKEN}`;
-  const res = await fetch(`${SERVER}/${TOPIC}/json?poll=1&since=all`, { headers });
+  let res = await fetch(`${SERVER}/${TOPIC}/json?poll=1&since=all`, { headers });
+  if (res.status === 401 && TOKEN) {
+    // FIX (8 ago 2026): token revocado — leer sin token (topic público)
+    res = await fetch(`${SERVER}/${TOPIC}/json?poll=1&since=all`);
+  }
   if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
   const text = await res.text();
   const messages = text

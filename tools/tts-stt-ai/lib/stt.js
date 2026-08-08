@@ -706,6 +706,14 @@ async function fetchLatestNtfyAudio(kv, logger) {
       headers,
       signal: AbortSignal.timeout(30000),
     });
+    // FIX (8 ago 2026): token revierto/inválido → 401; el topic es público,
+    // reintentar sin token para no bloquear el STT del móvil.
+    if (resp.status === 401 && token) {
+      logger?.log("STT", "ntfy token 401 -> refetch sin token (topic publico)", "warn");
+      resp = await fetch(`https://ntfy.sh/${topic}/json?poll=1&since=all`, {
+        signal: AbortSignal.timeout(30000),
+      });
+    }
   } catch (err) {
     return { error: `ntfy fetch failed: ${err.message}` };
   }
