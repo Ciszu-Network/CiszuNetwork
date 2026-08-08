@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { IBM_Plex_Sans, IBM_Plex_Sans_Condensed } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister } from "@ciszu/ui";
+import { PwaRegister, InstallPwaButton } from "@ciszu/ui";
 import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ZoomWarning } from "@/components/layout/ZoomWarning";
@@ -55,6 +55,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
         <main className="flex-grow">{children}</main>
         <Footer />
         <PwaRegister />
+        <InstallPwaButton />
       </body>
     </html>
   );

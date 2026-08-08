@@ -7,7 +7,7 @@ import "./globals.css";
 import AuthProvider from "@/components/providers/AuthProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister } from "@ciszu/ui";
+import { PwaRegister, InstallPwaButton } from "@ciszu/ui";
 
 const exo2 = Exo_2({
   subsets: ["latin"],
@@ -65,6 +65,7 @@ export default function RootLayout({
           </CloudflareGuard>
         </AuthProvider>
         <PwaRegister />
+        <InstallPwaButton />
       </body>
     </html>
   );

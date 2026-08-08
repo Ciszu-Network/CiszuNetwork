@@ -6,7 +6,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { getDict, type Lang } from "@/lib/i18n";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister } from "@ciszu/ui";
+import { PwaRegister, InstallPwaButton } from "@ciszu/ui";
 import { getSessionData } from "@/lib/auth";
 import "./globals.css";
 
@@ -65,6 +65,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <main className="flex-grow pt-[60px]">{children}</main>
         <Footer lang={lang} dict={dict} />
         <PwaRegister />
+        <InstallPwaButton />
       </body>
     </html>
   );
