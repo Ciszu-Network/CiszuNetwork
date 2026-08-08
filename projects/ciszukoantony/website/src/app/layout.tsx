@@ -1,9 +1,13 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Exo_2, Rajdhani } from "next/font/google";
+import { assetResolver } from "@ciszunetwork/cdn";
+import { PwaRegister } from "@ciszu/ui";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import "./globals.css";
+const ICON_SVG = assetResolver.resolve("projects/ciszukoantony/content/logos/images/outline/isotype/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg");
+const OG_IMAGE = assetResolver.resolve("projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png");
 
 const exo2 = Exo_2({
   subsets: ["latin"],
@@ -16,21 +20,26 @@ const rajdhani = Rajdhani({
   variable: "--font-rajdhani",
 });
 
+export const viewport = {
+  themeColor: "#000000",
+};
 export const metadata: Metadata = {
   metadataBase: new URL("https://ciszukoantony.vercel.app"),
   title: "Ciszuko Antony | CEO & Founder of Ciszuko Network",
   description: "Official portfolio of Ciszuko Antony (Francisco Garcia Antonio M. / y8) — CEO & Founder of Ciszuko Network. Innovation, development and technology.",
   keywords: ["Ciszuko Antony", "Ciszuko Network", "portfolio", "developer", "Venezuela", "CEO", "technology"],
   icons: {
-    icon: "/logos/images/outline/isotype/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg",
-    apple: "/logos/images/outline/isotype/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg",
+    icon: ICON_SVG,
+    apple: ICON_SVG,
   },
+  appleWebApp: { capable: true, title: "Ciszuko Antony", statusBarStyle: "black-translucent" },
+  manifest: "/manifest.webmanifest",
   openGraph: {
     title: "Ciszuko Antony | CEO & Founder of Ciszuko Network",
     description: "Official portfolio of Ciszuko Antony (Francisco Garcia Antonio M. / y8) — CEO & Founder of Ciszuko Network.",
     url: "https://ciszukoantony.vercel.app",
     siteName: "Ciszuko Antony",
-    images: [{ url: "/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png", width: 132, height: 118 }],
+    images: [{ url: OG_IMAGE, width: 132, height: 118 }],
     locale: "en_US",
     type: "website",
   },
@@ -43,6 +52,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Navbar />
         <main className="flex-grow">{children}</main>
         <Footer />
+        <PwaRegister />
       </body>
     </html>
   );

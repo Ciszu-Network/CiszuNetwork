@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Exo_2, Rajdhani } from "next/font/google";
 import Navbar from "@/components/layout/Navbar";
@@ -6,6 +6,8 @@ import { Footer } from "@/components/layout/Footer";
 import "./globals.css";
 import AuthProvider from "@/components/providers/AuthProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { assetResolver } from "@ciszunetwork/cdn";
+import { PwaRegister } from "@ciszu/ui";
 
 const exo2 = Exo_2({
   subsets: ["latin"],
@@ -18,14 +20,22 @@ const rajdhani = Rajdhani({
   variable: "--font-rajdhani",
 });
 
+const ICON_SVG = assetResolver.resolve("projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg");
+
+export const viewport = {
+  themeColor: "#000000",
+};
+
 /** @type {import('next').Metadata} */
 export const metadata = {
   title: "MuzicMania",
   description: "El Juego de Ritmo Definitivo en la Web. Domina el beat en una dimensión online con estética futurista.",
+  appleWebApp: { capable: true, title: "MuzicMania", statusBarStyle: "black-translucent" },
+  manifest: "/manifest.webmanifest",
   icons: {
-    icon: "/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg",
-    shortcut: "/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg",
-    apple: "/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg",
+    icon: ICON_SVG,
+    shortcut: ICON_SVG,
+    apple: ICON_SVG,
   },
 };
 
@@ -54,6 +64,7 @@ export default function RootLayout({
             <SpeedInsights />
           </CloudflareGuard>
         </AuthProvider>
+        <PwaRegister />
       </body>
     </html>
   );
