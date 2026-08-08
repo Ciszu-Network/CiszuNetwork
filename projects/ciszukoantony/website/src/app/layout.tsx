@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Exo_2, Rajdhani } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPwaButton } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton } from "@ciszu/ui";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import "./globals.css";
@@ -53,7 +53,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <main className="flex-grow">{children}</main>
         <Footer />
         <PwaRegister />
-        <InstallPwaButton />
+        <InstallPdwaButton site="Ciszuko Antony" accent="#f472b6" accentAlt="#22d3ee" />
       </body>
     </html>
   );

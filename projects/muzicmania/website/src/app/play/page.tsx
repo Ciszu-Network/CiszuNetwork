@@ -4932,7 +4932,7 @@ function PlayPageContent() {
                       </div>
                       <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-tighter">
                         <span className="text-gray-500">Plataforma</span>
-                        <span className="text-white">Web / PWA</span>
+                        <span className="text-white">Web / PDWA</span>
                       </div>
                       <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-tighter">
                         <span className="text-gray-500">Motor</span>
@@ -5453,3 +5453,4 @@ export default function PlayPage() {
     </React.Suspense>
   );
 }
+

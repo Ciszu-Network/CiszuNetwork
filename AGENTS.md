@@ -1,4 +1,4 @@
-# Ciszu Network Monorepo — AGENTS.md
+﻿# Ciszu Network Monorepo — AGENTS.md
 
 ## Visión general del proyecto
 
@@ -136,9 +136,9 @@ resolveIcon('home', 'outline', 'svg', { forceLocal: true }); // forzar local
 - Binarios grandes (`.mp4`, `.gif`, `.exe`, etc.) excluidos de git globalmente
 - **Cloudflare R2** configurado como alternativa futura pero **INACTIVO** (requiere tarjeta/paypal). Credenciales comentadas en el vault.
 
-## PWA para websites (8 ago 2026)
+## PDWA para websites (8 ago 2026)
 
-**Implementado en las 4 webs** (cierra los pendientes `PWA para websites.` en los toDos): manifest + service worker + iconos + registro, sin dependencias nuevas.
+**Implementado en las 4 webs** (cierra los pendientes `PWA para websites.` en los toDos): manifest + service worker + iconos + registro, sin dependencias nuevas. **Terminología de marca: PDWA = App de Escritorio Progresiva** (Desktop Web App); PWA queda como término técnico interno (manifest + sw).
 
 - **Iconos**: `scripts/generate-pwa-icons.ps1` (GDI+ System.Drawing, sin red) genera `public/pwa/icon-192.png`, `icon-512.png` y `icon-maskable-512.png` en las 4 webs desde sus masters:
   - de la marca master `projects/ciszukoant Antony/content/logos/...` (masters 617x636, 553x491, 796x796, 389x390)
@@ -146,13 +146,14 @@ resolveIcon('home', 'outline', 'svg', { forceLocal: true }); // forzar local
 - **Manifest**: `src/app/manifest.ts` (`MetadataRoute.Manifest`) en cada web → Next lo sirve en `/manifest.webmanifest` (estático, listado en el build como `○ /manifest.webmanifest`). Sin rootPage/application-name duplicados
 - **Service worker**: canónico `scripts/pwa/sw.js` (cache `ciszu-pwa-1.0.0.js`: precache `['/']`, network-first para navegación con fallback offline, SWR para `/_next/static/*`, excluye `/api/`). Copiado a `public/sw.js` de cada web (NO `public/pwa/sw.js` — scope raíz imprescindible). Sincronizar: `pnpm sw` / `node scripts/sync-pwa-assets.js`
 - **Registro**: `packages/ui/src/PwaRegister.tsx` (client component, registra `/sw.js` solo en producción `NODE_ENV !== 'production'` guard) — exportado desde `packages/ui/src/index.ts`, incluido en los 4 layouts antes de `</body>`
-- **Botón "Instalar app"** (8 ago 2026, paquete `packages/ui/src/InstallPwaButton.tsx`, exportado como `InstallPwaButton`): botón flotante bottom-derecha en los 4 layouts.
-  - Con `beforeinstallprompt` (Chrome/Edge desktop/Android) → lanza el prompt nativo al pulsar.
-  - Sin evento (Opera GX, Firefox, Safari desktop) → abre panel con instrucciones por navegador (icono en barra de direcciones, "Añadir a pantalla de inicio" en iOS, aviso Opera GX no instala PWAs).
-  - Oculto si ya instalada (`display-mode: standalone`, `appinstalled`).
-  - ⚠️ **Opera GX NO soporta instalación de PWA** (ni prompt nativo ni beforeinstallprompt); probar en Edge/Chrome. El navegador por defecto del sistema es Edge (`MSEdgeHTM`).
+- **Botón "Instalar PDWA"** (8 ago 2026, v2 con terminología propia **PDWA = App de Escritorio Progresiva**, paquete `packages/ui/src/InstallPdwaButton.tsx`, exportado como `InstallPdwaButton` — alias retro `InstallPwaButton` deprecado): botón flotante **esquina INFERIOR-IZQUIERDA** en los 4 layouts. Props por sitio: `site`, `accent`, `accentAlt`, `desktopAppHref` (solo MuzicMania → `/download` .exe Tauri), `storageKey` (por defecto `ciszu-pdwa-dismissed` por sitio vía prop en tests).
+  - **Detecta el navegador** (`detectPdwaBrowser`, exportado desde ui): Chrome/Edge/Opera nativos (prompt real `beforeinstallprompt`); Opera GX, Firefox, Safari, iOS, otros → **disclaimer personalizado** explicando POR QUÉ no instalan y alternativa según contexto (Opera GX: acceso directo + `--app="url"` en Propiedades; Firefox: usar Edge/Chrome; Safari: Añadir al Dock; iOS: pantalla de inicio; otros: Edge/Chrome).
+  - **Minimalista y responsivo**: fab pequeño (icono 10x10) que en hover expande el texto "Instalar PDWA"; ✕ separado (siempre visible) → guarda `localStorage` y no vuelve a salir **nunca**; si no se picha la ✕ continúa apareciendo.
+  - Panel ("cómo instalar") se muestra SIEMPRE en click no-nativo, también en compatibles (disclaimer). Estilo neón con accent por web (cian ciszu/muzicmania, rosa ciszukoantony, violeta ciszubot).
+  - Oculto si ya instalada (`display-mode: standalone`, `appinstalled`). Aria accesible.
+  - ⚠️ Opera GX no instala PDWA nativamente (ni beforeinstallprompt usable) — el panel explica el truco de acceso directo con `--app=`. El navegador por defecto del sistema es Edge (`MSEdgeHTM`).
 - **Metadata en layouts** (×4): `export const viewport = { themeColor: ... }` (Next 15: `themeColor` NO va en metadata, va en `viewport` export — sin anotación `Viewport` para evitar lookups, `export const viewport: Viewport` falla en MuzicMania: `Module '"next"' has no exported member 'Viewport'` cuando el tsconfig resolvía, usar `export const viewport = {...}` + `export const metadata: Metadata = {...}`) + `appleWebApp: { capable: true, title, statusBarStyle: "black-translucent" }` + `manifest: "/manifest.webmanifest"`. Themes: ciszu/ciszukoAntony/muzicmania `#000000`, ciszubot `#0a0a0f` (acorde dark/light)
-- **Verificación**: builds 4 webs OK (8 ago **y 8 ago**), manifest+theme-color+sw.js+iconos 200 en `next start` local. Tests 83/83 (incl. `packages/ui/tests/InstallPwaButton.test.tsx`), lint OK (ciszubot web no tiene script lint propio)
+- **Verificación**: builds 4 webs OK (8 ago **y 8 ago**), manifest+theme-color+sw.js+iconos 200 en `next start` local. Tests 91/91 (incl. `packages/ui/tests/InstallPdwaButton.test.tsx` — detección de navegador, dismiss localStorage, prompt nativo, disclaimers y app nativa), lint OK (ciszubot web no tiene script lint propio)
 - ⚠️ **Error hardcode `Type error: Module '"next"' has no exported member 'MetadataRoute'`** (MuzicMania, 8 ago): metadata.route manifest en `app/manifest.ts` importado de "next" falla si NEXT_PUBLIC_SITE_URL etc. están mal — si ocurre, revisar el `next-env.d.ts`/types; el fix estándar: `import type { MetadataRoute } from 'next'` + `export default function manifest(): MetadataRoute.Manifest` (sin `.tsx`), eliminar imports de `next/server` no usados
 - ⚠️ **Build local puede fallar con "Failed to fetch ... from Google Fonts"** (DNS del PC intermitente, 8 ago): no es error de código — reintentar el build o activar VPN.
 
@@ -360,7 +361,7 @@ Pila decidida (análisis completo en `docs/documentation/TOOLS.md`): **DBeaver C
 - **Password BD**: la Management API NO devuelve el password (solo `[YOUR-PASSWORD]` placeholder en `/config/database/pooler`). Se resetea con `PATCH /v1/projects/{ref}/database/password` (solo requiere el nuevo, min 4 chars). Tras resetear, actualizar `SUPABASE_DB_PASSWORD` en `services/supabase/.env`.
 - **`backup-db.js`**: reparado 2 ago 2026 — endpoint `/config/database/pooler` (el viejo `/database/connection` da 404), password desde `.env`, fix CRLF. ⚠️ `pg_dump` del sistema es 13.4 (`E:\DaVinci\PGTools\pg_dump.exe`) — **incompatible con server 17.6** ("server version mismatch"); el backup real requiere pg_dump ≥17 (PostgreSQL 17 o Docker `postgres:17`).
 - **Descartadas** (incluso premium): Postman (free degradado, cloud), GitKraken (AI redundante con el agente, pesado), TablePlus (sin CLI, Windows rezagado), Beekeeper Personal (no aporta a IA).
-- **Testing (8 ago 2026)**: ✅ **IMPLEMENTADO** — decisión y estado en `projects/ciszu/docs/documentation/TESTING.md` (§8). Stack: **Vitest** (unit/integration, `vitest.config.mts` raíz) + **Testing Library** (`happy-dom`) + **Playwright** (E2E smoke). **83 tests** en 10 archivos: `packages/cdn` (20, resolver local/CDN), `packages/ui` (14, registry + `Icon` inline/recall + **`InstallPwaButton`** beforeinstallprompt/fallback), bot Ciszubot (49: levels, economy, configService, giveaways, statsServer con Supabase mockeado). **4 E2E** (`e2e/smoke.spec.ts`) contra las webs en producción. Comandos: `pnpm test`, `pnpm test:watch`, `pnpm test:ui` (panel visual `@vitest/ui` en `http://localhost:51204/__vitest__/`; abrir navegador con `--open`), `pnpm e2e`, reporte HTML con `pnpm exec playwright show-report` (reporter `html` añadido al config → `playwright-report/`, gitignored).
+- **Testing (8 ago 2026)**: ✅ **IMPLEMENTADO** — decisión y estado en `projects/ciszu/docs/documentation/TESTING.md` (§8). Stack: **Vitest** (unit/integration, `vitest.config.mts` raíz) + **Testing Library** (`happy-dom`) + **Playwright** (E2E smoke). **91 tests** en 10 archivos: `packages/cdn` (20, resolver local/CDN), `packages/ui` (23, registry + `Icon` inline/recall + `InstallPdwaButton` navegador/dismiss/disclaimers), bot Ciszubot (49: levels, economy, configService, giveaways, statsServer con Supabase mockeado). **4 E2E** (`e2e/smoke.spec.ts`) contra las webs en producción. Comandos: `pnpm test`, `pnpm test:watch`, `pnpm test:ui` (panel visual `@vitest/ui` en `http://localhost:51204/__vitest__/`; abrir navegador con `--open`), `pnpm e2e`, reporte HTML con `pnpm exec playwright show-report` (reporter `html` añadido al config → `playwright-report/`, gitignored).
   - **Comandos cortos (PowerShell $PROFILE)**: `test` (vitest run), `testui` (vitest ui --open), `testwatch`, `e2e` (playwright), `e2egui` (e2e + show-report en navegador). **Comandos opencode**: `/test`... NO — `/test-ui` y `/e2e` en `.opencode/command/` (+ copia global `~/.config/opencode/command/`).
   - **Config Playwright (8 ago 2026, `playwright.config.ts`)**: fuerza `PLAYWRIGHT_BROWSERS_PATH` a `E:\Ciszu Network\.opencode-tmp\playwright-browsers` (no C:), navegador = **Opera GX** (`C:\Users\fplay\AppData\Local\Programs\Opera GX\opera.exe`, con fallback a chromium si no existe — CI/otra máquina), `retries: 1` (mitiga EAI_AGAIN del DNS del PC). ⚠️ E2E local: `$env:PLAYWRIGHT_BROWSERS_PATH='E:\Ciszu Network\.opencode-tmp\playwright-browsers'` (chromium instalado ahí, no en C:). CI: nuevo job `unit-tests` en `ci.yml`. ⚠️ MuzicMania E2E reducido a status+title: la web está tras challenge Cloudflare que no pasa en headless/Opera GX. El tsconfig raíz es VACÍO (tooling vitest); apps usan los suyos. `setupFiles`: `LOG_LEVEL=error` en tests del bot (logger), jest-dom en ui. Legal de bot `tests/helpers/db.ts` (mock encadenable). El bot `statsServer` ahora devuelve el server (`setupStatsServer(): Server`).
 
@@ -496,3 +497,5 @@ Pila decidida (análisis completo en `docs/documentation/TOOLS.md`): **DBeaver C
 - **`pnpm install` lento/roto**: borrar `node_modules` y re-ejecutar; verificar disco en E:.
 - **Git push falla**: el DNS del PC no resuelve github.com → el usuario hace push manualmente (ver Git conventions).
 - **ZAP/semgrep/trivy**: ver "Herramientas de seguridad instaladas" para comandos exactos y rutas.
+
+

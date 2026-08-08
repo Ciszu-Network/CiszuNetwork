@@ -7,7 +7,7 @@ import "./globals.css";
 import AuthProvider from "@/components/providers/AuthProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPwaButton } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton } from "@ciszu/ui";
 
 const exo2 = Exo_2({
   subsets: ["latin"],
@@ -65,7 +65,7 @@ export default function RootLayout({
           </CloudflareGuard>
         </AuthProvider>
         <PwaRegister />
-        <InstallPwaButton />
+        <InstallPdwaButton site="MuzicMania" accent="#00f0ff" accentAlt="#ff33cc" desktopAppHref="/download" />
       </body>
     </html>
   );
