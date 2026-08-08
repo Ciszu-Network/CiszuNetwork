@@ -93,6 +93,10 @@ projects/ciszubot/content/logos/video/
 projects/ciszu/website/public/projects/
 projects/ciszu/website/public/ciszukoantony/
 projects/ciszu/website/public/shared/
+projects/ciszu/website/public/thumbnails/
+projects/ciszu/website/public/logos/
+projects/ciszu/website/public/flyers/
+projects/ciszu/website/public/banners/
 projects/ciszukoantony/website/public/projects/
 projects/ciszukoantony/website/public/banners/
 projects/ciszukoantony/website/public/buttons/
@@ -105,7 +109,12 @@ projects/ciszukoantony/website/public/persons/
 projects/ciszukoantony/website/public/shared/
 projects/ciszukoantony/website/public/stickers/
 projects/ciszukoantony/website/public/thumbnails/
+projects/ciszukoantony/website/public/videos/
+projects/ciszukoantony/website/public/layout/
+projects/ciszukoantony/website/public/layaout/
 projects/muzicmania/website/public/ciszukoantony/
+projects/muzicmania/website/public/shared/
+projects/muzicmania/website/public/projects/
 
 # Supabase CLI temp
 supabase/.temp/
@@ -125,6 +134,10 @@ projects/ciszubot/discord-bot/logs/
 projects/ciszubot/website/public/projects/
 projects/ciszubot/website/public/ciszukoantony/
 projects/ciszubot/website/public/docs/
+projects/ciszubot/website/public/flyers/
+projects/ciszubot/website/public/logos/
+projects/ciszubot/website/public/shared/
+projects/ciszubot/website/public/thumbnails/
 
 # ─── Bruno API tests ───────────────────────────────
 # Entornos con secrets reales (copiar prod.example.yml → prod.yml)
