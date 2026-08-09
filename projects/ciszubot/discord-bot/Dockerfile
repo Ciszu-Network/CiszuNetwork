@@ -8,10 +8,13 @@ WORKDIR /repo
 
 COPY pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY projects/ciszubot/discord-bot/package.json ./projects/ciszubot/discord-bot/package.json
+COPY packages/utils/package.json ./packages/utils/package.json
 RUN pnpm install --frozen-lockfile --filter ciszubot
 
 COPY projects/ciszubot/discord-bot/tsconfig.json ./projects/ciszubot/discord-bot/tsconfig.json
 COPY projects/ciszubot/discord-bot/src ./projects/ciszubot/discord-bot/src
+COPY packages/utils/index.ts ./packages/utils/index.ts
+COPY packages/utils/src ./packages/utils/src
 RUN pnpm --filter ciszubot build
 
 # ── Stage 2: runtime (solo producción, mínimo) ──
@@ -26,6 +29,7 @@ ENV NODE_ENV=production
 
 COPY pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY projects/ciszubot/discord-bot/package.json ./projects/ciszubot/discord-bot/package.json
+COPY packages/utils/package.json ./packages/utils/package.json
 RUN pnpm install --frozen-lockfile --filter ciszubot --prod
 
 COPY --from=builder /repo/projects/ciszubot/discord-bot/dist ./projects/ciszubot/discord-bot/dist
@@ -41,4 +45,4 @@ USER node
 
 EXPOSE 5000
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "dist/src/index.js"]
