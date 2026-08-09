@@ -187,6 +187,16 @@ Single project: `obwzzmbvkrcscqwptlqo.supabase.co`
   - (Pendiente: leaked password + MFA — dashboard settings, no SQL)
   - ✅ Schemas expuestos (1 ago 2026): Dashboard → Settings → API → Exposed schemas: `muzicmania, ciszubot, ciszunetwork` — al exponerlos, Supabase muestra aviso de "custom grant"/GRANT custom en schemas (advertencia informativa, no es error)
 
+## Sistema de caché (9 ago 2026) — esquema:
+
+**Nunca Redis: caché multi-tienda en `packages/utils` (nuevo, 0 deps)**: memoria LRU (siempre) → **Vercel KV REST** (auto-activo si `KV_REST_API_URL`+`KV_REST_API_TOKEN` existen — pendiente usuario crear store en Vercel) → **Postgres `ciszu.cache`** (schema `ciszu`, migración 15 aplicada). Doc: `projects/ciszu/docs/documentation/CACHING_SISTEMA.md`.
+
+- **Core**: `CacheStore` (cache-aside, TTL default 60s) + `bumpCounter` (INCR atómico vía RPC) + `createRateLimiter` (ventana fija) en `packages/utils/src/{cache,rateLimit}.ts`. Cliente BD se inyecta (interfaz estructural `CacheDbLike`, no importa supabase-js).
+- **Aplicado**: (1) MuzicMania `api/leaderboard` — la página ya no consulta Supabase desde el navegador; vía `/api/leaderboard` cacheado 60s (fallback: query directa). (2) Ciszubot dashboard: `getGuildsForUser`/`getBotGuildIds` cacheados TTL 60s **por `userId`** (import dinámico de `lib/cacheStore` para evitar ciclo auth↔cache). (3) Bot `statsServer`: rate-limit 10/h por IP en `/api/votes` y `/api/votes/dbl` (429) + `bumpCounter('topgg_votes'|'dbl_votes')` (INCR atómico persistente en `ciszu.counters`).
+- **BD**: migración `20260809000015_cache_system.sql` — schema `ciszu` (no expuesto en Dashboard, intencional), RLS OFF + REVOKE anon/auth (solo service_role). `bump_counter` SECURITY INVOKER con `search_path=''`.
+- **Bot tsc**: el bot consume `@ciszunetwork/utils` (TS fuente CJS): tsconfig `rootDir: "."` → dist ahora es `dist/src/*.js` (main/start/dev/Dockerfile CMD actualizados a `dist/src/index.js`; Dockerfile copia `packages/utils` en stage 1 y 2).
+- ⚠️ **gotcha**: `createClient` de supabase-js con 3º arg (schema) en muzicmania requiere `// @ts-expect-error` (patrón de `src/config/supabase.ts` ya existente).
+
 ## CI/CD (GitHub Actions)
 
 All workflows run on `push: [main, master]`:

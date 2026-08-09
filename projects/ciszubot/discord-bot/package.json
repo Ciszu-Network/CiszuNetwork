@@ -2,14 +2,15 @@
   "name": "ciszubot",
   "version": "3.2.0",
   "description": "CiszuBot — bot de Discord en español con prefijo y slash commands (TypeScript)",
-  "main": "dist/index.js",
+  "main": "dist/src/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "tsc -w & nodemon dist/index.js",
+    "start": "node dist/src/index.js",
+    "dev": "tsc -w & nodemon dist/src/index.js",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@ciszunetwork/utils": "workspace:*",
     "@discordjs/voice": "^0.19.2",
     "@supabase/supabase-js": "^2.60.0",
     "@top-gg/sdk": "^3.1.6",

@@ -4,7 +4,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
-import { supabase } from '@/config/supabase';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -49,22 +48,23 @@ export default function LeaderboardPage() {
 
   const fetchLeaderboard = async () => {
     setLoading(true);
-    let query = supabase
-      .from('profiles')
-      .select('*', { count: 'exact' });
-
-    if (search) {
-      const cleanSearch = search.replace('@', '').replace(/\s/g, '');
-      query = query.ilike('username', `%${cleanSearch}%`);
-    }
-
-    const { data, count, error } = await query
-      .order(sortBy, { ascending: sortDir === 'asc' })
-      .range((page - 1) * pageSize, page * pageSize - 1);
-
-    if (data) {
-      setEntries(data as any);
-      if (count) setTotalPages(Math.ceil(count / pageSize));
+    try {
+      const params = new URLSearchParams({
+        page: String(page),
+        pageSize: String(pageSize),
+        sortBy,
+        sortDir,
+        search,
+      });
+      const res = await fetch(`/api/leaderboard?${params}`, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`Leaderboard ${res.status}`);
+      const { data, count } = await res.json();
+      if (data) {
+        setEntries(data as any);
+        if (count) setTotalPages(Math.ceil(count / pageSize));
+      }
+    } catch {
+      // el endpoint cacheado ya hace fallback a BD; aquí solo limpiar estado
     }
     setLoading(false);
   };

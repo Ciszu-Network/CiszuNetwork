@@ -2,14 +2,9 @@
 
 > Este archivo solo puede ser editado por Ciszuko Antony.
 
-- [ ] Replantear si utilizar WebP o AVIF en vez de PNG, JPEG (JPE, JPG), TIFF, BMP Y GIF.
 - [ ] Sistema de caché con Redis — evaluado 8 ago 2026, diferido hasta métricas (ver plan abajo).
 
-## Sistema futuro de caché (Redis y alternativas) — EVALUADO 8 ago 2026
-
-> **Estado**: diferido. No es necesario hoy. Este es el plan de acción por fases,
-> activado solo por métricas reales, con alternativas gratis (sin tarjeta) y sin
-> romper los sistemas existentes.
+## (Redis y alternativas) — EVALUADO 8 ago 2026
 
 ### ¿Para qué sirve una caché como Redis?
 
@@ -62,8 +57,3 @@ seguridad y pago de tarjeta → sobreingeniería total para el volumen actual.
    Postgres (verdad única). Nunca mezclar.
 5. Medir antes de invertir: no se toca la Fase 1; sin métricas
    no se toca nada.
-
-**Conclusión**: hoy no hay nada que hacer (ISR + CDN + Service Worker de la
-PDWA ya cachean lo necesario). El plan queda activado por métricas: si el
-tráfico sube y aparece p95 > 200 ms, rate-limiting en Supabase o pico en
-leaderboard → aplicar Fase 1 y evaluar Fase 2.

@@ -1,7 +1,9 @@
 import 'server-only';
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { cookies } from 'next/headers';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from './supabaseAdmin';
+
+export { supabaseAdmin };
 
 export const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID ?? '1395532235872141312';
 const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET ?? '';
@@ -15,12 +17,6 @@ export const API_BASE = 'https://discord.com/api/v10';
 
 const COOKIE_NAME = 'ciszubot_session';
 const SESSION_MAX_AGE = 7 * 24 * 60 * 60; // 7 días
-
-function supabaseAdmin() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'https://obwzzmbvkrcscqwptlqo.supabase.co';
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
-  return createClient(url, serviceKey, { db: { schema: 'ciszubot' }, auth: { persistSession: false } });
-}
 
 // ─── Sesión (cookie firmada HMAC) ───
 
@@ -193,15 +189,18 @@ export async function getValidUserToken(userId: string): Promise<string | null> 
 }
 
 export async function getGuildsForUser(userId: string): Promise<DiscordGuild[]> {
-  const token = await getValidUserToken(userId);
-  if (!token) return [];
-  try {
-    const res = await fetch(`${API_BASE}/users/@me/guilds`, { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' });
-    if (!res.ok) return [];
-    return (await res.json()) as DiscordGuild[];
-  } catch {
-    return [];
-  }
+  const { cacheStore } = await import('./cacheStore');
+  return cacheStore.getOrSet(`discord:guilds:${userId}`, 60_000, async () => {
+    const token = await getValidUserToken(userId);
+    if (!token) return [];
+    try {
+      const res = await fetch(`${API_BASE}/users/@me/guilds`, { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' });
+      if (!res.ok) return [];
+      return (await res.json()) as DiscordGuild[];
+    } catch {
+      return [];
+    }
+  });
 }
 
 // ADMINISTRATOR (8) | MANAGE_GUILD (32)
@@ -219,19 +218,21 @@ export function isGuildAdmin(guild: DiscordGuild): boolean {
 
 /** Guilds donde el bot está presente (usando el token del bot) */
 export async function getBotGuildIds(): Promise<Set<string>> {
-  const botToken = process.env.DISCORD_BOT_TOKEN;
-  if (!botToken) return new Set();
-  try {
-    const res = await fetch(`${API_BASE}/applications/@me/guilds`, {
-      headers: { Authorization: `Bot ${botToken}` },
-      cache: 'no-store',
-    });
-    if (!res.ok) return new Set();
-    const guilds = (await res.json()) as Array<{ id: string }>;
-    return new Set(guilds.map((g) => g.id));
-  } catch {
-    return new Set();
-  }
+  const { cacheStore } = await import('./cacheStore');
+  const ids = await cacheStore.getOrSet<string[]>('discord:bot-guilds', 60_000, async () => {
+    const botToken = process.env.DISCORD_BOT_TOKEN;
+    if (!botToken) return [];
+    try {
+      const res = await fetch(`${API_BASE}/applications/@me/guilds`, {
+        headers: { Authorization: `Bot ${botToken}` },
+        cache: 'no-store',
+      });
+      if (!res.ok) return [];
+      const guilds = (await res.json()) as Array<{ id: string }>;
+      return guilds.map((g) => g.id);
+    } catch {
+      return [];
+    }
+  });
+  return new Set(ids);
 }
-
-export { supabaseAdmin };

@@ -2,9 +2,11 @@ import express from 'express';
 import path from 'path';
 import type { Server } from 'http';
 import type { Client } from 'discord.js';
+import { createRateLimiter } from '@ciszunetwork/utils';
 import { logger } from './logger';
 import { addMoney } from './economy';
 import { createTopGgWebhookHandler } from './botlists';
+import { bumpCounter } from './cacheService';
 
 interface BotStats {
   online: boolean;
@@ -51,6 +53,10 @@ export function setupStatsServer(client?: Client): Server {
   const app = express();
   const port = Number(process.env.PORT || 5000);
   const publicDir = path.join(__dirname, '..', '..', 'public');
+  // Anti-abuso: máx. 10 votos por IP y hora (webhooks sin auth del lado top.gg)
+  const voteLimiter = createRateLimiter({ windowMs: 60 * 60 * 1000, max: 10 });
+  const clientIp = (req: express.Request): string =>
+    (req.headers['x-forwarded-for']?.toString().split(',')[0] ?? req.ip ?? req.socket.remoteAddress ?? 'unknown').trim();
 
   app.use(express.static(publicDir));
   app.use(express.json());
@@ -68,7 +74,13 @@ export function setupStatsServer(client?: Client): Server {
   const webhook = createTopGgWebhookHandler();
   if (webhook) {
     app.post('/api/votes', express.json(), (req, res) => {
+      const rl = voteLimiter.allow(clientIp(req));
+      if (!rl.allowed) {
+        res.status(429).json({ error: 'rate_limited', retryAfterMs: rl.resetInMs });
+        return;
+      }
       const vote = req.body as { user?: string; type?: string };
+      void bumpCounter('topgg_votes').catch(() => undefined);
       if (vote?.user) {
         const userId = vote.user;
         const guildId = activeClient?.guilds.cache.first()?.id;
@@ -91,7 +103,13 @@ export function setupStatsServer(client?: Client): Server {
         res.status(401).send('Unauthorized');
         return;
       }
+      const rl = voteLimiter.allow(`dbl:${clientIp(req)}`);
+      if (!rl.allowed) {
+        res.status(429).json({ error: 'rate_limited', retryAfterMs: rl.resetInMs });
+        return;
+      }
       const vote = req.body as { id?: string; username?: string; avatar?: string };
+      void bumpCounter('dbl_votes').catch(() => undefined);
       if (vote?.id) {
         const userId = vote.id;
         const guildId = activeClient?.guilds.cache.first()?.id;
