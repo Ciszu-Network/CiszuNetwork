@@ -1,8 +1,6 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
-import { Icon } from '@ciszu/ui';
-import { resolveAssetPath } from '@ciszunetwork/cdn';
+import { Icon, SmartImage } from '@ciszu/ui';
 import { COMMANDS, CATEGORIES, CATEGORY_ICONS } from '@/data/commands';
 import {
   GITHUB_REPO,
@@ -98,22 +96,22 @@ export default async function Home() {
 
           <div className="flex flex-col items-center gap-7 mb-9">
             <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-surface border border-border shadow-[0_10px_40px_-10px_rgba(35,63,146,0.35)] overflow-hidden animate-float">
-              <Image
-                src={resolveAssetPath(LOGO_ISOTIPO_CIRCLE)}
+              <SmartImage
+                src={LOGO_ISOTIPO_CIRCLE}
                 alt="CiszuBot isotipo"
                 width={144}
                 height={144}
-                priority
+                fetchPriority="high"
                 className="w-full h-full object-contain"
               />
             </div>
             <h1 className="sr-only">CiszuBot</h1>
-            <Image
-              src={resolveAssetPath(LOGO_LOGOTIPO)}
+            <SmartImage
+              src={LOGO_LOGOTIPO}
               alt="CiszuBot logotipo"
               width={420}
               height={80}
-              priority
+              fetchPriority="high"
               className="w-[280px] md:w-[420px] h-auto drop-shadow-sm animate-fade-in-up"
             />
           </div>

@@ -13,11 +13,11 @@ Entrada del usuario: `$ARGUMENTS`
    - **Banner 16:9** → 1024x576 por defecto.
 3. Traduce la petición a los placeholders en inglés `--subject`, `--outfit`, `--expression` (o usa `--prompt <texto>` si el usuario pide algo custom).
 4. Ejecuta por defecto `--provider hf` (FLUX.1-schnell). Si HF falla (503/DNS), prueba `--provider gemini` (si la quota está activa) o `--provider siliconflow` (si hay saldo).
-5. Salida en `downloads/art` por defecto; para nombres legibles para CDN usa `--name <base>`.
+5. Salida en `test/art` por defecto (raíz `test/`, categorías `art|music|video|website`); para nombres legibles para CDN usa `--name <base>`.
 
 Formato:
 ```
-node tools/image-ai/generate-art.js --provider hf --subject "..." --outfit "..." --expression "..." [--transparent] --name <base> --out downloads/art
+node tools/image-ai/generate-art.js --provider hf --subject "..." --outfit "..." --expression "..." [--transparent] --name <base> --out test/art
 ```
 
 Claves del vault: HF_TOKEN, GEMINI_API_KEY, SILICONFLOW_API_KEY. Si hay error de red o cuota, avisa (puede requerir activar VPN). Nunca pegues claves en el chat.

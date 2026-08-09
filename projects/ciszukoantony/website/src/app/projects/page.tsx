@@ -1,9 +1,8 @@
 'use client';
 
 import React from 'react';
-import { assetResolver } from '@ciszunetwork/cdn';
+import { SmartImage } from '@ciszu/ui';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 
 const categories = [
   {
@@ -37,7 +36,7 @@ const categories = [
     ],
   },
   {
-    name: 'MuzicMania', color: 'from-pink-500 to-rose-700', logo: assetResolver.resolve('projects/ciszukoantony/content/logos/images/outline/isotype/color/ciszuko_logo_isotipo_outline_zcolor_ccolor.png'),
+    name: 'MuzicMania', color: 'from-pink-500 to-rose-700', logo: 'projects/ciszukoantony/content/logos/images/outline/isotype/color/ciszuko_logo_isotipo_outline_zcolor_ccolor.png',
     projects: [
       { name: 'MuzicMania Web', desc: 'Juego de ritmo musical con estética neon futurista. Próximamente.', tech: ['Next.js', 'TypeScript', 'Web Audio'] },
     ],
@@ -80,8 +79,8 @@ export default function ProjectsPage() {
         {categories.map((cat, ci) => (
           <motion.section key={cat.name} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="mb-16">
             <div className="flex items-center gap-4 mb-8">
-              {cat.logo ? (
-                <Image src={cat.logo} alt={cat.name} width={36} height={36} className="rounded-lg object-cover" />
+{cat.logo ? (
+                <SmartImage src={cat.logo} alt={cat.name} width={36} height={36} className="rounded-lg object-cover" />
               ) : (
                 <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${cat.color}`} />
               )}
@@ -95,8 +94,8 @@ export default function ProjectsPage() {
                   initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
                   className="group p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-brand/50 transition-all hover:-translate-y-1"
                 >
-                  {cat.logo ? (
-                    <Image src={cat.logo} alt={p.name} width={40} height={40} className="rounded-xl object-cover mb-4" />
+{cat.logo ? (
+                    <SmartImage src={cat.logo} alt={p.name} width={40} height={40} className="rounded-xl object-cover mb-4" />
                   ) : (
                     <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${cat.color} mb-4`} />
                   )}

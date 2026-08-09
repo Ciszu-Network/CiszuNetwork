@@ -1,9 +1,8 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect } from 'react';
+import { SmartImage } from '@ciszu/ui';
 import Link from 'next/link';
-import Image from 'next/image';
-import { assetResolver } from '@ciszunetwork/cdn';
 import { ALL_PAGES, SOCIALS, I, FOOTER_SECTIONS } from '@/config/navigation';
 
 export default function Footer() {
@@ -66,13 +65,13 @@ export default function Footer() {
 
         <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
-            <Image
-              src={assetResolver.resolve('projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png')}
+            <SmartImage
+              src="projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png"
               alt="Ciszuko" width={28} height={25}
               className="drop-shadow-brand"
             />
-            <Image
-              src={assetResolver.resolve('projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png')}
+            <SmartImage
+              src="projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png"
               alt="Ciszuko Antony" width={140} height={32}
               className="opacity-80"
             />

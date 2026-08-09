@@ -16,7 +16,7 @@ Flujo:
 2. Ejecuta:
 
 ```
-node tools/video-ai/generate-video.js --provider fal --prompt "<descripción>" --title "<título>" [--out downloads/video]
+node tools/video-ai/generate-video.js --provider fal --prompt "<descripción>" --title "<título>" [--out test/video]
 ```
 
 3. Si fal falla por saldo (error "User is locked / Exhausted balance"): avisar al usuario por

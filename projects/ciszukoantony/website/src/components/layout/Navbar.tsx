@@ -2,9 +2,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { assetResolver } from '@ciszunetwork/cdn';
 import { usePathname } from 'next/navigation';
+import { Icon, SmartImage } from '@ciszu/ui';
 import { NAV_MAIN, SOCIALS, I, ALL_PAGES, SEARCH_INDEX, type NavGroup, type NavItem } from '@/config/navigation';
 
 function Toast({ message, onClose }: { message: string; onClose: () => void }) {
@@ -94,13 +93,13 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center gap-2 group shrink-0">
-              <Image
-                src={assetResolver.resolve('projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png')}
+              <SmartImage
+                src="projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png"
                 alt="Ciszuko" width={28} height={25}
                 className="drop-shadow-brand"
               />
-              <Image
-                src={assetResolver.resolve('projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png')}
+              <SmartImage
+                src="projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png"
                 alt="Ciszuko Antony" width={120} height={28}
                 className="hidden sm:block group-hover:opacity-80 transition-opacity"
               />
@@ -214,8 +213,8 @@ export default function Navbar() {
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
           <div className="absolute left-0 top-0 bottom-0 w-72 max-w-[85vw] bg-black/95 backdrop-blur-xl border-r border-white/10 overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b border-white/10">
-              <Image
-                src={assetResolver.resolve('projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png')}
+              <SmartImage
+                src="projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png"
                 alt="Ciszuko" width={24} height={22}
                 className="drop-shadow-brand"
               />

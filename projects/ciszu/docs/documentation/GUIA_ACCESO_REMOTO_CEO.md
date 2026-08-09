@@ -89,7 +89,7 @@ opencode                    # alternativa: instancia local independiente
 
 - 🔑 **La clave privada `ciszu_pc_ed25519` NO debe copiarse en este documento ni en ningún chat/doc.** Vive solo en:
     - **Termius (móvil)** — protegida con huella/PIN de la app.
-    - **Copia local del PC** en `E:\Ciszu Network\.opencode-tmp\termius-key\` (carpeta gitignored, fuera de git).
+    - **Copia local del PC** en `E:\Ciszu Network\.opencode\temp\termius-key\` (carpeta gitignored, fuera de git).
 - Opcional recomendado: subir esa copia local a un gestor de contraseñas (vault) y borrarla del disco.
 - El acceso es solo por **clave SSH** (sin contraseña), solo alcanzable desde la **red privada Tailscale** (no expuesto a internet).
 - Si el móvil se pierde: revocar el dispositivo desde la consola admin de Tailscale (`https://login.tailscale.com/admin`) — hecho.

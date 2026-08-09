@@ -16,7 +16,7 @@
 //   --width <px>                         ancho (default: 1024)
 //   --height <px>                        alto (default: 576, ratio 16:9)
 //   --count <n>                          cuántas imágenes (default: 1)
-//   --out <dir>                          carpeta de salida (default: downloads/test)
+//   --out <dir>                          carpeta de salida (default: test/art)
 //   --name <base>                        nombre SOLO del PNG (default: nomenclatura técnica).
 //                                        Con --name el PNG sale como <name>.png (p.ej. ciszuko_volcan.png)
 //                                        y el JSON conserva la nomenclatura técnica completa:
@@ -45,7 +45,7 @@ const crypto = require('crypto');
 const { execFileSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..', '..');
-const DEFAULT_OUT = path.join(ROOT, 'downloads', 'test');
+const DEFAULT_OUT = path.join(ROOT, 'test', 'art');
 
 let InferenceClient = null;
 try {

@@ -142,7 +142,7 @@ apis/bruno/
 
 - **Ejecutar**: `pnpm api:test` (raíz) → `bru run apis/bruno --env prod`
 - **Secrets**: `--env-var SUPABASE_ANON_KEY=...` o en `environments/prod.yml` (gitignored). NUNCA en `.bru` ni en el repo.
-- **Reports**: `bru run --env prod --reporter-json .opencode-tmp/bru-report.json`
+- **Reports**: `bru run --env prod --reporter-json .opencode/temp/bru-report.json`
 
 ### 6.2 dbvr — acceso headless a Supabase (Postgres)
 
@@ -164,7 +164,7 @@ dbvr datasource create \
 dbvr sql -ds=supabase "select current_date;"
 
 # 4. Export a JSON/CSV
-dbvr sql -ds=supabase -format=json -out=.opencode-tmp/bot_status.json \
+dbvr sql -ds=supabase -format=json -out=.opencode/temp/bot_status.json \
   "select * from ciszubot.bot_status;"
 
 # 5. Metadata (tablas/schemas/DDL)
@@ -196,7 +196,7 @@ Permite que el agente consulte la BD directamente como herramienta MCP (en vez d
 | Script | Comando | Descripción |
 |---|---|---|
 | `api:test` | `node scripts/run-bru.js run . -r --env prod --exclude-tags local` | Health checks + REST del ecosistema (7 requests, 10 tests) |
-| `api:test:report` | ídem + `--reporter-json ../.opencode-tmp/bru-report.json` | Ídem con report JSON |
+| `api:test:report` | ídem + `--reporter-json ../.opencode/temp/bru-report.json` | Ídem con report JSON |
 | `api:test:local` | `node scripts/run-bru.js run . -r --env prod` | Incluye tests con tag `local` (ej. `:5000` del bot) |
 
 > **Colección Bruno en formato OpenCollection YAML** (`opencollection.yml` + `*.yml`, **NO `.bru`**): el CLI 4.x no mezcla formatos — los requests `.bru` bajo `opencollection.yml` dan "0 requests". Estructura: `health/` (5 webs + bot status) y `rest/` (leaderboard muzicmania, bot_status completo, stats local `:5000` con tag `local`). Env: `environments/prod.yml` con lista `variables: [{name, value}]` (gitignored; ejemplo en `prod.example.yml`).

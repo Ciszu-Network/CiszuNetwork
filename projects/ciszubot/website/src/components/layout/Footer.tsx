@@ -1,9 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
-import { Icon } from '@ciszu/ui';
-import { resolveAssetPath } from '@ciszunetwork/cdn';
+import { Icon, SmartImage } from '@ciszu/ui';
 import {
   CISZUKO_ANTONY,
   CISZU_NETWORK,
@@ -57,8 +55,8 @@ export default function Footer({ lang, dict }: FooterProps) {
         <div className="flex flex-col md:flex-row gap-10 pb-10">
           <div className="md:w-80 shrink-0">
             <Link href="/" className="flex flex-col items-start gap-4 group">
-              <Image
-                src={resolveAssetPath(LOGO_LOGOTIPO)}
+              <SmartImage
+                src={LOGO_LOGOTIPO}
                 alt="CiszuBot"
                 width={160}
                 height={32}

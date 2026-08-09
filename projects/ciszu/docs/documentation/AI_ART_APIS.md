@@ -63,10 +63,10 @@ node tools/image-ai/generate-art.js --provider hf --subject "a cute cyberpunk fe
 ## Cierre de la tarea (5 ago 2026 — actualizado)
 
 - Script ampliado y probado (`tools/image-ai/generate-art.js`): nomenclatura separada PNG/JSON, `--transparent` encadenado opt-in (corregido `--bg-method` con guión), `--format`, `--prompt`, `--no-log`. Plantilla con **full body** por defecto (`full body shot, whole character visible from head to toe, not cropped`) — FLUX recortaba a la cintura sin esa directriz.
-- `downloads/test/` regenerado: 3 personajes full body con transparencia BiRefNet (aventurera, hechicera, androide) + volcán con escena completa sin transparencia (gitignored).
+- `test/art/` regenerado (antes `downloads/test/art/`): 3 personajes full body con transparencia BiRefNet (aventurera, hechicera, androide) + volcán con escena completa sin transparencia (gitignored).
 - **Biblia de prompts añadida** en `ART_GUIDE.md` §9: 10 bancos modulares (sujetos fem/masc/no-humano, ropa, expresiones, poses, cámaras con full body, fondos con/sin, estilos, negativos extra, personalidades) + 10 prompts completos listos para copiar (A-J).
 - El sistema de transparencia queda **desacoplado y opt-in**: solo `--transparent` cuando se pide personaje sin fondo/para recortar; escenas con fondo no se recortan. **Método recomendado: `birefnet`** (chroma solo para fondos planos sin huecos).
-- Subida final a `ciszu-cdn` pendiente de decisión: subir solo los assets aprobados con `pnpm cdn:upload` (los archivos en `downloads/` se subirían con la ruta del repo correspondiente).
+- Subida final a `ciszu-cdn` pendiente de decisión: subir solo los assets aprobados con `pnpm cdn:upload` (los archivos en `test/` se subirían con la ruta del repo correspondiente).
 
 ## Pendiente del usuario
 

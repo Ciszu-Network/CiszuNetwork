@@ -6,4 +6,4 @@ Reinicia el server headless de Ciszu-AI (`127.0.0.1:4096`): lo detiene si está 
 
 1. Ejecuta: `ciszu-ai-reset` — o si necesitas menos fricción: directamente el flujo `call "C:\Users\fplay\ciszu-ai\ciszu-ai.cmd" reset` (este adjunta sesión al final; usa `server-start`/`server-stop` para control seco).
 2. Verifica que responde: `Invoke-WebRequest http://127.0.0.1:4096 -UseBasicParsing`.
-3. Reporta el nuevo PID y errores de `.opencode-tmp/opencode-server-err.log`.
+3. Reporta el nuevo PID y errores de `.opencode/temp/opencode-server-err.log`.

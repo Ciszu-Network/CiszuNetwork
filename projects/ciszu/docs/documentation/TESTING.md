@@ -130,7 +130,7 @@ Análisis por proyecto (monorepo):
 
 1. `pnpm add -D -w @playwright/test` + `npx playwright install chromium`.
 2. `playwright.config.ts` con `webServer` (Next start en :3000) o solo contra Vercel prod (los IDs de prod).
-3. **Un solo suite E2E**: `e2e/smoke.spec.ts` que recorra:
+3. **Un solo suite E2E**: `test/website/e2e/smoke.spec.ts` que recorra:
    - `ciszunetwork.vercel.app` → título + hero + logos CDN (arregla el caso de logos 404)
    - `ciszubot.vercel.app` → badge de estado en vivo + redirecciones a Dashboard → login Discord (solo assert de redireccion)
    - `muzicmania.vercel.app` → home + leaderboard
@@ -174,7 +174,7 @@ Implementado por el agente en una sesión, validando con Ciszuko Antony:
 | **0 — Vitest para packages** | `vitest` + `vitest.config.mts` raíz. Tests de **`@ciszunetwork/cdn`** (20): `encodePath` (espacios/acentos/`%`), `assetUrl`, `getContentType`, `resolveIcon` (local/CDN/forceLocal/forceCdn), `AssetResolver`/`resolveAssetPath`, `cdnUrl`, `CDN_CONFIG`. Modos local (NODE_ENV=test) y remoto (`vi.stubEnv + VERCEL=1` + dynamic import) en archivos separados. | ✅ |
 | **1 — Testing Library para `@ciszu/ui`** | 12 tests `happy-dom`: registry generado (estructura viewBox/inner, `getIcon`, `iconUtils`) + `Icon` (inline-first, fallback de estilo outline↔filled, `<img>` remoto, **recall local** al fallar el CDN, ocultación con span, `IconButton`, `IconList`). `setup.ts` con jest-dom. | ✅ |
 | **2 — Lógica del bot Ciszubot** | 49 tests `node`: `levels` (xpForLevel/levelFromXp/addXp/getLevel/getTopLevels), `economy` (wallets, clamps, transacciones, formatMoney), `configService` (defaults, cache singleton, serialización JSON de arrays, invalidate, getPrefix), `giveaways` (end: excluye al bot, sin canal → solo marca ended; schedule con fake timers; start + insert), `statsServer` (HTTP real con puerto efímero: `/api/stats`, `/api/update-stats`, auth 401 del webhook DBL). Supabase mockeado con un **query-builder encadenable** (`tests/helpers/db.ts` — métodos intermedios devuelven thenable+builder; terminales resuelven `{data, error}`). | ✅ |
-| **3 — Playwright E2E smoke** | `@playwright/test` + `playwright.config.ts` + `e2e/smoke.spec.ts` (4 tests contra producción): 200 de las 4 webs, héroes visibles, **0 imágenes rotas** en ciszunetwork (scrollear para lazy-load), badge de estado en vivo de ciszubot. Chromium en `E:\Ciszu Network\.opencode-tmp\playwright-browsers` (no C:). | ✅ |
+| **3 — Playwright E2E smoke** | `@playwright/test` + `playwright.config.ts` + `test/website/e2e/smoke.spec.ts` (4 tests contra producción): 200 de las 4 webs, héroes visibles, **0 imágenes rotas** en ciszunetwork (scrollear para lazy-load), badge de estado en vivo de ciszubot. Chromium en `.opencode/temp/playwright-browsers` (no C:, fijado en el config). | ✅ |
 | **4 — (opcional) node:test para scripts** | No ejecutado — se dejó para una sesión futura si los scripts críticos cambian. | ⏸️ diferido |
 
 **Comandos**:
@@ -184,7 +184,7 @@ pnpm test:watch   # modo watch
 pnpm test:ui      # panel VISUAL en el navegador (http://localhost:51204/__vitest__/)
 pnpm e2e          # Playwright: 4 smoke tests contra producción
 ```
-> ⚠️ `pnpm e2e` local necesita `$env:PLAYWRIGHT_BROWSERS_PATH='E:\Ciszu Network\.opencode-tmp\playwright-browsers'`.
+> ⚠️ `pnpm e2e` local usa `PLAYWRIGHT_BROWSERS_PATH` fijado en el config a `E:\Ciszu Network\.opencode\temp\playwright-browsers` (ya no hace falta exportarlo).
 
 **CI** (`.github/workflows/ci.yml`): nuevo job `unit-tests` (pnpm install + `pnpm test`) en ubuntu-latest. El E2E se queda local para no depender de producción desde CI.
 
