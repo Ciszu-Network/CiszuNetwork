@@ -373,6 +373,20 @@ Si el repo cambia a público:
 | 13        | `20260801000013_bot_status_heartbeat.sql`             | ✅**APLICADA 2 ago 2026** — tabla `ciszubot.bot_status` (single-row id=1: online, last_seen, started_at, version, guilds, commands_total, prefix). Policy SELECT para anon/authenticated + GRANT SELECT anon + **GRANT ALL service_role** (Management API no aplica grants default). La consume la web de ciszubot (estado en vivo) |
 | 14        | `20260802000014_bot_expansion.sql`                    | ✅**APLICADA 2 ago 2026** — 13 tablas en `ciszubot`: guild_configs, wallets, transactions, shop_items, inventory, levels, warns, tickets, giveaways, afk, alliances, discord_users, snipes (+5 índices)                                                                                                                                  |
 
+## Plan legal de Ciszu Network + herramientas de conversión (ago 2026)
+
+**Documentación legal/empresarial** (`projects/ciszu/docs/documentation/`):
+
+- `PLAN_REGISTRO_EMPRESA.md` (+ PDF) — plan maestro por fases (0→4) para formalizar Ciszu Network en Venezuela: Fase 0 fundación ($0, sin tarjeta, todo en línea: RIF persona natural gratis en SENIAT, WhatsApp), Fase 1 identidad fiscal, Fase 2 marca (~$410–420 efectivo en SAPI, clases Niza 41/42/9/35/38, 15 años), Fase 3 registro mercantil (S.R.L./E.I.R.L. vía SAREN), Fase 4 operación.
+- Guías: `GUIA_RIF_PERSONA_NATURAL.md`, `GUIA_MARCA_SAPI.md` (depósito en efectivo — sin tarjeta), `GUIA_REGISTRO_MERCANTIL.md`, `GUIA_FISCALIDAD_FREELANCER.md` (ISLR/IVA/IGTF/facturación digital), `GUIA_INTERNACIONAL_LLC.md` (Fase 3 opcional, Delaware; Mercury NO acepta VE).
+- Plantillas oficiales en `projects/ciszu/docs/plantillas/` (+ PDFs en `plantillas/pdf/`): acta constitutiva S.R.L., solicitud FM-02, declaración jurada de uso de marca, reserva de nombre SAREN, checklist por fases.
+- ⚠️ **Regla de edad**: trámites oficiales (RIF, SAPI, Registro Mercantil) exigen **18 años** — hasta entonces la Fase 0 es 100% preparatoria (documentos, evidencias, contabilidad, ahorro). Reflejado en vencimientos de `tools/legal-ai` (campos pendientes hasta el año de mayoría de edad).
+- **Archivo local privado** `archives/legal/` (gitignored): contabilidad (CSV + XLSX con fórmulas y sumas automáticas por mes/año), evidencia de marca, documentos oficiales, seguimiento de trámites. NUNCA subir a git.
+
+**`tools/legal-ai/`** — generador de la estructura legal/contable: `python tools/legal-ai/generate-legal-structure.py [--year AAAA]` (regenera CSVs del año, XLSX con fórmulas `SUM` por mes/trimestre/año, registro de evidencias, vencimientos con edad 18+). Requiere openpyxl. Ver `tools/legal-ai/README.md`.
+
+**`tools/convert/`** — kit universal de conversión (JS CLI + motores Python/pandoc/Word): `node tools/convert/convert.js <conversion> <input> [--out <archivo|directorio>]`. Conversiones: `md2txt` (puro JS), `txt2md`, `md2docx` (pandoc), `md2pdf` (pandoc+weasyprint si existe, fallback reportlab), `docx2pdf` (Word COM, Windows), `pdf2txt` (pypdf), `csv2xlsx`, `xlsx2csv` (openpyxl). Soporta directorios (batch recursivo preservando estructura, salida a `--out`/subcarpeta `<ext>`). Probado 10 ago 2026: 7/7 conversiones + batch OK (incl. roundtrip xlsx→csv→xlsx). Ver `tools/convert/README.md`.
+
 ## Herramientas de desarrollo (GUI + CLI) — ago 2026
 
 Pila decidida (análisis completo en `docs/documentation/TOOLS.md`): **DBeaver CE + dbvr Community** (BD), **Bruno** (API client), **Fork** (Git GUI).
