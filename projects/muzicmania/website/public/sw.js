@@ -6,10 +6,11 @@
  *   - estáticos CDN/_next/iconos: stale-while-revalidate
  *   - /api/ y POST/PUT/DELETE: solo red
  */
-const VERSION = '1.0.0';
+const VERSION = '1.1.0';
 const CACHE = `ciszu-pwa-${VERSION}`;
 const PRECACHE = ['/', '/pwa/icon-192.png', '/pwa/icon-512.png', '/pwa/icon-maskable-512.png'];
 const SWR_PREFIXES = ['/_next/static', '/pwa/'];
+const CDN_PREFIX = '/storage/v1/object/public/ciszu-cdn/';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -36,6 +37,27 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
+
+  // Assets del CDN (Supabase Storage): stale-while-revalidate
+  // Evita que cada recarga/navegacion vuelva a pedir al origin (avif/webp lentos
+  // con DNS del PC + quota): primera vez fetch, despues sirve de cache y revalida.
+  if (url.hostname.endsWith('supabase.co') && url.pathname.startsWith(CDN_PREFIX)) {
+    event.respondWith(
+      (async () => {
+        const cache = await caches.open(CACHE);
+        const hit = await cache.match(request);
+        const refresh = fetch(request)
+          .then((res) => {
+            if (res && res.ok) cache.put(request, res.clone());
+            return res;
+          })
+          .catch(() => hit);
+        return hit || refresh;
+      })()
+    );
+    return;
+  }
+
   if (url.origin !== self.location.origin) return;
   if (url.pathname.startsWith('/api/')) return;
 
