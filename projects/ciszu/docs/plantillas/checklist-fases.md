@@ -8,10 +8,12 @@
 - [ ] RIF de persona natural creado en línea (declaraciones.seniat.gob.ve → Inscripción de RIF)
 - [ ] RIF formalizado presencialmente en la Gerencia Regional (dentro de 30 días)
 - [ ] Usuario y clave creados en el Portal SENIAT
+- [ ] **Certificado de Registro Nacional de Emprendimientos — "Emprender Juntos"** sacado
+      (gratis, en línea, reconocimiento legal provisional por 3 años)
+- [ ] RIF de emprendedor inscrito en SENIAT (portal/app móvil — sin papeles impresos, circular 4610)
 - [ ] Carpeta "evidencia de uso de la marca" iniciada (capturas con fecha de las 4 webs,
       bot, redes)
 - [ ] Nombre "Ciszu Network"/"CiszukoAntony" asegurado en las redes y plataformas principales
-- [ ] Certificado de Emprendedor tramitado (Viceministerio de Economía Productiva) — opcional
 - [ ] (Si hay $2–12 vía PayPal) dominios reservados — ver `DOMINIOS_SISTEMA.md`
 - [ ] Registro de ingresos/gastos iniciado (hoja de cálculo) — base fiscal
 
@@ -43,7 +45,7 @@
 - [ ] Cuenta bancaria corporativa abierta
 - [ ] (Cuando haya empleados) IVSS/INCES/BANAVIH/INPSASEL + inamovilidad aplicada
 
-## FASE 3 — Internacional (con capital real + tarjeta o ayuda con tarjeta)
+## FASE 3 — Internacional (CON capital real + tarjeta; SOLO cuando haya clientes/cobros internacionales)
 
 - [ ] Verificado que el banco objetivo acepta pasaportes venezolanos (⚠️ Mercury NO)
 - [ ] Estado elegido: New Mexico ($50/$0) o Wyoming ($100/$60)
