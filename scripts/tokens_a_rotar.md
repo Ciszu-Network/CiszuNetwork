@@ -8,7 +8,7 @@
 2. **Supabase JWT secret** — Dashboard → Settings → API (regenerar)
 3. **Supabase password del dashboard** — Settings → Account
 4. **Supabase anon key** — Dashboard → Settings → API (regenerar)
-5. **Vercel token `vcp_`** — vercel.com → Settings → Tokens (regenerar y actualizar GH secret `VERCEL_TOKEN` usado por los 4 workflows)
+5. **Vercel token `vcp_`** — ✅ **ROTADO 10 ago 2026**: nuevo token en `.env.local` (raíz, key `VERCEL_TOKEN`) y GH secret `VERCEL_TOKEN` actualizado con el mismo valor. No hace falta volver a rotarlo.
 6. **Suno AI key** — suno.com → Account → API keys
 7. **Cloudflare R2** — dashboard.cloudflare.com → R2 → API tokens (credenciales comentadas en vault, R2 INACTIVO)
 8. **Discord token** — Discord Developer Portal → Bot → Reset Token (el token actual es el nuevo del team; revocar/rotar si se filtra)
@@ -16,5 +16,6 @@
 ## Estado conocido
 - ✅ PAT viejo `sbp_` (filtrado): REVOCADO por el usuario (cierra alerta secret scanning)
 - ✅ PAT nuevo `SUPABASE_ACCESS_TOKEN`: activo (vault `services/supabase/.env`)
-- ⏳ Migración 11: APLICADA (31 jul 2026) con el PAT nuevo
-- ⏳ El resto de ítems (1-8): PENDIENTES — rotar y actualizar `.env` con `scripts/update-env-keys.js`
+- ✅ Migración 11: APLICADA (31 jul 2026) con el PAT nuevo
+- ✅ Token Vercel `vcp_`: ROTADO (10 ago 2026) — nuevo valor en `.env.local` + GH secret `VERCEL_TOKEN`
+- ⏳ Resto de ítems (1-4, 6-8): PENDIENTES — rotar y actualizar `.env` con `scripts/update-env-keys.js`

@@ -77,13 +77,28 @@ Dashboard solo evalúa tablas **expuestas vía PostgREST** (schemas expuestos:
 - CiszuBot web: `src/lib/supabaseAdmin.ts` (factory con schema parametrizado) + `src/lib/cacheStore.ts`.
 - Bot: `src/services/cacheService.ts` (cliente schema `ciszu` + `cacheStore` + `bumpCounter`).
 
-## 5. Fase 2 — Vercel KV (lista para activar)
+## 5. Fase 2 — Vercel KV (ACTIVA — 10 ago 2026)
 
 El código está preparado: si existen `KV_REST_API_URL` / `KV_REST_API_TOKEN` en las env vars de
 Vercel (o `.env.local`), la capa KV se intercala entre memoria y Postgres **automáticamente**
 (`createVercelKvStore()` en `createCacheStore()`).
 
-### Checklist de activación (pendiente del usuario — ~10 min)
+### Estado (10 ago 2026): ✅ ACTIVA
+
+- Store **`upstash-kv-ciszunetwork`** (`store_uQn3aF9kaFanqfMc`) conectado a **todos** los
+  proyectos Vercel (creado por el usuario desde el dashboard de Vercel → Storage).
+- Env vars `KV_REST_API_URL` + `KV_REST_API_TOKEN` presentes en `muzicmania` y `ciszubot`
+  con targets `preview,production` (verificado vía API y con `scripts/vercel-kv-setup.js`:
+  "ya existe — ok" en los 2).
+- Redespliegues hechos (10 ago 2026) con `vercel redeploy` - sin push:
+  `https://muzicmania-qak852w9q-ciszunetwork.vercel.app` - alias `muzicmania.vercel.app` 
+  `https://ciszubot-b0naagztl-ciszunetwork.vercel.app` - alias `ciszubot.vercel.app`
+- **Token API Vercel rotado (10 ago 2026)** por el usuario — `VERCEL_TOKEN` en `.env.local` (raíz)
+  y GH secret `VERCEL_TOKEN` actualizado con el mismo valor. **No volver a rotar este token** (ya
+  está documentado; solo tiene scope de deploys/env, guardado solo en `.env.local` gitignored).
+- Opcional: bot Docker → mismo par en su `.env` (para que el webhook de votos cuente en KV).
+
+### Checklist de activación (referencia histórica)
 
 **Alternativa automatizada (script):** `node scripts/vercel-kv-setup.js` (requiere
 `$env:VERCEL_TOKEN="vcp_..."`; flags `--store <nombre>`, `--dry-run`, `--show-values`).
@@ -137,9 +152,8 @@ pnpm --filter muzicmania-website build   # y ciszubot-website
 ## 8. Estado y próximos pasos
 
 - ✅ Fase 1 (caché en la app / server): leaderboard MuzicMania + dashboard CiszuBot.
-- ✅ Fase 2 (KV REST): código listo, **conectada cuando se creen las env vars** (pendiente usuario).
+- ✅ Fase 2 (KV REST): **ACTIVA desde 10 ago 2026** (store upstash-kv-ciszunetwork + env vars verificadas + redespliegues - ver seccion 5).
 - ✅ Fase 3 (tabla Postgres): migración 15 aplicada + verificada.
 - ✅ Case 3 (rate limit) + case 4 (contadores votos).
 - ❌ Fase 4 (Redis self-host): descartada por el plan (no aporta vs. KV/Postgres).
-- Pendiente usuario: (a) crear KV Store en Vercel si se quiere, (b) tras meter las env vars,
-  revisar Advisor/expuestos en el Dashboard: el schema `ciszu` no está expuesto y es intencional.
+- Pendiente usuario: opcional anadir el par KV al `.env` del bot Docker (webhook de votos tambien contaria en KV).
