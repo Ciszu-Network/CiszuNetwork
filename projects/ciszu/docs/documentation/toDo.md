@@ -3,7 +3,7 @@
 > Este archivo solo puede ser editado por Ciszuko Antony.
 
 - [ ] Replantear si utilizar WebP o AVIF en vez de PNG, JPEG (JPE, JPG), TIFF, BMP Y GIF.
-- [x] Sistema de caché con Redis — evaluado 8 ago 2026, diferido hasta métricas (ver plan abajo).
+- [ ] Sistema de caché con Redis — evaluado 8 ago 2026, diferido hasta métricas (ver plan abajo).
 
 ## Sistema futuro de caché (Redis y alternativas) — EVALUADO 8 ago 2026
 

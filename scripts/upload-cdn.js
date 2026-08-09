@@ -8,6 +8,13 @@ const ACCESS_TOKEN = process.env.SUPABASE_ACCESS_TOKEN;
 const BUCKET = 'ciszu-cdn';
 const MAX_FILE_SIZE = 52428800;
 
+// Extensiones que NUNCA se suben al CDN: fuentes de diseno (.ai/.psd), caches de
+// edicion (.pfl), archivos comprimidos (.zip/.rar), videos (.mp4/.mov) y audio
+// maestro (.wav) — las webs solo usan png/svg/webp/avif/mp3/ogg/opus. El storage
+// del plan Free es 1 GB y estas extensiones lo agotaban (jul 2026: 103% quota).
+// Mantener tambien el bucket sincronizado con scripts/delete-cdn-by-ext.js.
+const EXCLUDED_EXT = new Set(['.ai', '.psd', '.pfl', '.zip', '.rar', '.drp', '.wfp', '.wav', '.raw', '.exe', '.mp4', '.mov']);
+
 const SOURCES = [
   { dir: 'shared/icons/svg', prefix: 'shared/icons/svg' },
   { dir: 'projects/ciszu/content', prefix: 'projects/ciszu/content' },
@@ -235,6 +242,13 @@ async function main() {
       if (isLockFile(path.basename(f))) { skipped++; continue; }
       const relative = path.relative(ROOT, f).replace(/\\/g, '/');
       const localSize = fs.statSync(f).size;
+
+      const ext = path.extname(f).toLowerCase();
+      if (EXCLUDED_EXT.has(ext)) {
+        console.log(`  [--] ${relative} (extension ${ext} excluida del CDN)`);
+        skipped++;
+        continue;
+      }
 
       if (localSize > MAX_FILE_SIZE) {
         console.log(`  [--] ${relative} (${(localSize / 1048576).toFixed(1)} MB > limite ${(MAX_FILE_SIZE / 1048576).toFixed(0)} MB)`);

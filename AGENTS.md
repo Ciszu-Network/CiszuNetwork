@@ -97,6 +97,11 @@ El CDN es un **espejo** del repositorio. Las rutas en Supabase Storage (`ciszu-c
 
 ### Rutas de logos (fuente maestra)
 
+**⚠️ Límite de storage del plan Free = 1 GB** (lección 9 ago 2026): el bucket superó la cuota (1.032/1 GB, 103%) → Supabase **bloquea/degrada el proyecto**: 403 intermitentes en objetos públicos (imágenes "rotas"), re-uploads rechazados (por eso los .avif/.webp generados el 8 ago nunca se vieron en las webs) y lentitud general. La cuota se ve en Dashboard (Reports & Usage); BD y egress apenas cuentan.
+
+- **Fix aplicado 9 ago 2026**: (1) `scripts/delete-cdn-by-ext.js` (tool permanente) borró del bucket ~1.600 objetos de extensiones no-web — `.ai` 441 MB + `.psd` 184 MB + `.pfl` 64 MB (caches de edición de vídeo en `ciszukoantony/content/videos/.../CacheClip/`) + `.zip` 19 MB + `.mp4` 30 MB + `.wav/.drp/.wfp` → **906 MB → 162 MB (16%)**. Los fuentes `.ai/.psd` se **mantienen en el disco** (trabajo del usuario) pero `upload-cdn.js` ahora tiene **`EXCLUDED_EXT`** (`.ai .psd .pfl .zip .rar .drp .wfp .wav .raw .exe .mp4 .mov`) → el próximo `pnpm cdn:upload` no los repone. Las webs solo usan png/svg/webp/avif/mp3/ogg/opus.
+- **Service worker cachea el CDN** (sw.js v1.1.0, sync a las 4 webs): stale-while-revalidate para `*.supabase.co/storage/v1/object/public/ciszu-cdn/` → recargas/navegaciones ya no vuelven al origin (arregla el "atraso" de avif/webp al actualizar).
+
 Los logos viven en `projects/ciszukoantony/content/logos/` (fuente maestra). **El bucket del CDN espeja las rutas del repo** — tras la reestructuración ago 2026 (paths `projects/...`) hay que re-subir con `pnpm cdn:upload` para que el bucket tenga las nuevas rutas. Usar siempre:
 
 ```ts
@@ -385,6 +390,7 @@ Pila decidida (análisis completo en `docs/documentation/TOOLS.md`): **DBeaver C
 - `copy-assets.js` — prebuild de las 4 webs: copia logos críticos (desde `projects/ciszukoantony/content/logos`), mirrors y `shared/icons` a `public/`; root marker = `pnpm-workspace.yaml`
 - `upload-cdn.js` — `pnpm cdn:upload` (sube a `ciszu-cdn` desde SOURCES; `--force` re-sube todo ignorando tamaño/mimetype)
 - `check-cdn-mimes.js` — `pnpm cdn:verify` (lista el bucket y reporta objetos con mimetype incorrecto para su extensión)
+- `delete-cdn-by-ext.js` — borra del bucket todos los objetos con las extensiones pasadas por CLI (mantenimiento de cuota: `node scripts/delete-cdn-by-ext.js .ai .psd`)
 - `generate-icon-registry.js` — regenera `packages/ui/src/generated/icon-registry.ts` desde `shared/icons/svg`
 - `generate-commands.js` — regenera `commands.json`/`docs/slash-commands.*` del bot desde dist
 - `generate-material-icons-doc.js` — regenera `projects/ciszu/docs/documentation/MATERIAL_ICONS.md` con el catálogo COMPLETO de Material Icon Theme (descarga los fuentes oficiales a `.opencode/temp/material-icons-theme/`; `--force` re-descarga). Parsea `folderIcons.ts` + `fileIcons.ts` (~290 folder icons + ~610 file icons)
