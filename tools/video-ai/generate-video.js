@@ -2,7 +2,7 @@
 //
 // Uso:
 //   node tools/video-ai/generate-video.js --prompt "neon city rain, cyberpunk" \
-//       --title "Neon Rain" --out downloads/test
+//       --title "Neon Rain" --out test
 //
 // Flags:
 //   --provider <hf>       solo HF por ahora (fase 1). API HTTP de HF Inference.
@@ -13,7 +13,7 @@
 //   --artist <texto>      artista (default: CiszukoAntony).
 //   --description <texto> descripción extra (metadatos).
 //   --count <n>           cuántos vídeos (default 1).
-//   --out <dir>           carpeta de salida (default downloads/test).
+//   --out <dir>           carpeta de salida (default test/video).
 //   --no-poster           no extraer poster.png del vídeo.
 //   --no-log              no escribir JSON de log.
 //
@@ -33,7 +33,7 @@ const crypto = require('crypto');
 const { execFileSync } = require('child_process');
 const { ROOT, readEnvFiles, parseArgs, slugify, slugifyModel, withRetry, findFfmpeg } = require('../shared/lib');
 
-const DEFAULT_OUT = path.join(ROOT, 'downloads', 'test');
+const DEFAULT_OUT = path.join(ROOT, 'test', 'video');
 const VIDEO_MODELS = [
   { id: 'Wan-AI/Wan2.1-T2V-1.3B', short: 'wan21' },
   { id: 'Lightricks/LTX-Video', short: 'ltx' },

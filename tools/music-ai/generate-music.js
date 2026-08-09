@@ -29,7 +29,7 @@
 //   --duration <sec>       duración aprox (ace soporta minutos, hf max ~30s).
 //   --bpm <n>              tempo (metadatos TBPM).
 //   --count <n>            cuántas pistas.
-//   --out <dir>            base de salida (default downloads/test).
+//   --out <dir>            base de salida (default test/music).
 //   --cover <path>         portada existente (si no, generada con GDI+).
 //   --no-cover             no generar cover (solo audio).
 //   --no-log               no escribir el JSON.
@@ -43,7 +43,7 @@ const crypto = require('crypto');
 const { execFileSync } = require('child_process');
 const { ROOT, readEnvFiles, parseArgs, slugify, slugifyModel, withRetry, findFfmpeg } = require('../shared/lib');
 
-const DEFAULT_OUT = path.join(ROOT, 'downloads', 'test');
+const DEFAULT_OUT = path.join(ROOT, 'test', 'music');
 const NEON_BG = '0x000230';
 const NEON_CYAN = '0x34E2E2';
 const NEON_PINK = '0xFF5C90';
@@ -93,7 +93,7 @@ $g.DrawLine($pen, [int]($W*0.2), $y, [int]($W*0.8), $y)
 $bmp.Save($Out, [System.Drawing.Imaging.ImageFormat]::Png)
 $g.Dispose(); $bmp.Dispose()
 `;
-  const tmp = path.join(require('os').tmpdir ? path.resolve(ROOT, '.opencode-tmp') : '', 'cover-gen.ps1');
+  const tmp = path.join(ROOT, '.opencode', 'temp', 'cover-gen.ps1');
   fs.mkdirSync(path.dirname(tmp), { recursive: true });
   fs.writeFileSync(tmp, script, 'utf8');
   const ps = powershellPath();

@@ -15,7 +15,7 @@ const path = require('path');
 const https = require('https');
 
 const ROOT = path.resolve(__dirname, '..');
-const CACHE_DIR = path.join(ROOT, '.opencode-tmp', 'material-icons-theme');
+const CACHE_DIR = path.join(ROOT, '.opencode', 'temp', 'material-icons-theme');
 const OUT_FILE = path.join(ROOT, 'projects', 'ciszu', 'docs', 'documentation', 'MATERIAL_ICONS.md');
 
 const THEME_REPO = 'PKief/vscode-material-icon-theme';
@@ -222,7 +222,7 @@ async function main() {
 
 > Documento GENERADO por \`scripts/generate-material-icons-doc.js\` — no editar a mano.
 > Fuente oficial: [PKief/vscode-material-icon-theme](https://github.com/PKief/vscode-material-icon-theme) (branch \`main\`).
-> Regenerar con: \`node scripts/generate-material-icons-doc.js\` (usa cache en \`.opencode-tmp/material-icons-theme/\`; \`--force\` re-descarga).
+> Regenerar con: \`node scripts/generate-material-icons-doc.js\` (usa cache en \`.opencode/temp/material-icons-theme/\`; \`--force\` re-descarga).
 
 ## 1. Cómo funciona el tema
 

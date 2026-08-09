@@ -7,7 +7,8 @@ import path from 'node:path';
 // %USERPROFILE%\AppData\Local\ms-playwright (C:) — lo forzamos aquí.
 process.env.PLAYWRIGHT_BROWSERS_PATH ||= path.join(
   __dirname,
-  '.opencode-tmp',
+  '.opencode',
+  'temp',
   'playwright-browsers'
 );
 
@@ -21,14 +22,18 @@ const launchOptions = existsSync(OPERA_GX) ? { executablePath: OPERA_GX } : {};
 // E2E (Fase 3 del plan TESTING.md): smoke tests contra los sitios en producción.
 // Ejecutar con: pnpm e2e
 export default defineConfig({
-  testDir: './e2e',
+  testDir: './test/website/e2e',
   timeout: 90_000,
   fullyParallel: true,
   workers: 2,
   retries: 1,
+  outputDir: './test/website/e2e/reports/test-results',
   reporter: [
     ['list'],
-    ['html', { open: 'never', outputFolder: 'playwright-report' }],
+    [
+      'html',
+      { open: 'never', outputFolder: './test/website/e2e/reports/playwright' },
+    ],
   ],
   use: {
     screenshot: 'only-on-failure',

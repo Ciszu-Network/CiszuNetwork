@@ -110,7 +110,7 @@ function synthesizeVoice(text, voiceKey) {
   const ffmpeg = path.join(VOICE_ROOT, 'ffmpeg-9.0-essentials_build', 'bin', 'ffmpeg.exe');
   const model = path.join(VOICE_ROOT, 'piper-voices', voice.file);
   const mp3Name = buildAudioName({ tipo: 'notif', motivo: 'aviso', texto: text });
-  const wav = path.join(ROOT, '.opencode-tmp', mp3Name.replace(/\.mp3$/, '.wav'));
+  const wav = path.join(ROOT, '.opencode', 'temp', mp3Name.replace(/\.mp3$/, '.wav'));
   const mp3 = wav.replace(/\.wav$/, '.mp3');
   if (!fs.existsSync(piper) || !fs.existsSync(ffmpeg) || !fs.existsSync(model)) return null;
 

@@ -29,11 +29,11 @@ vía `findFfmpeg()` de `shared/lib`.
 ```bash
 # Arte 16:9 al estilo de marca
 node tools/image-ai/generate-art.js --provider hf --subject "a cute cyberpunk female hacker" \
-    --outfit "techwear jacket" --expression "confident smirk" --out downloads/art
+    --outfit "techwear jacket" --expression "confident smirk" --out test/art
 
 # Arte transparente (recortar personaje)
 node tools/image-ai/generate-art.js --provider gemini --subject "logotipo Ciszuko" \
-    --transparent --out downloads/art
+    --transparent --out test/art
 
 # Música de catálogo (crea carpeta slug con wav/mp3/ogg + cover + banner + fichas)
 node tools/music-ai/generate-music.js --genres "synthwave" --title "Neon Runner" \
@@ -47,7 +47,7 @@ node tools/music-ai/generate-music.js --title "Prueba" --offline ruta.wav
 
 # Vídeo (fal — requiere saldo en https://fal.ai/dashboard/billing)
 node tools/video-ai/generate-video.js --provider fal --prompt "a cyberpunk city at night" \
-    --title "Neon City" --out downloads/video
+    --title "Neon City" --out test/video
 
 # Quitar fondo a un PNG existente
 node tools/removebg-ai/remove-bg.js --input imagen.png --output tras.png

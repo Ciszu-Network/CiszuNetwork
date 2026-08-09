@@ -2,7 +2,7 @@
 
 > Documento GENERADO por `scripts/generate-material-icons-doc.js` — no editar a mano.
 > Fuente oficial: [PKief/vscode-material-icon-theme](https://github.com/PKief/vscode-material-icon-theme) (branch `main`).
-> Regenerar con: `node scripts/generate-material-icons-doc.js` (usa cache en `.opencode-tmp/material-icons-theme/`; `--force` re-descarga).
+> Regenerar con: `node scripts/generate-material-icons-doc.js` (usa cache en `.opencode/temp/material-icons-theme/`; `--force` re-descarga).
 
 ## 1. Cómo funciona el tema
 

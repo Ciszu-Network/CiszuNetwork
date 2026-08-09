@@ -85,6 +85,38 @@ export function resolveAssetPath(path: string, opts?: ResolveOptions): string {
 
 export { assetUrl, getContentType } from './src/cdn-client';
 
+/**
+ * Devuelve la lista ordenada de candidatos de ENTREGA (Capa 4) para una ruta
+ * de Capa 3 (Sistema de Formatos): por orden de preferencia
+ *   [avif, webp, original]  (imagen)  o  [opus, original] (audible)
+ * Solo incluye derivadas que existen en el repo (o en CDN en producción).
+ *
+ * @example
+ *   resolveDelivery('projects/muzicmania/content/music/albums/genesis_neon/cover.png')
+ *   // -> ['...cover.avif', '...cover.webp', '...cover.png']  (si existen)
+ */
+export function deliveryVariants(path: string): string[] {
+  const clean = path.replace(/^\//, '');
+  const ext = clean.split('.').pop()?.toLowerCase() ?? '';
+  const base = clean.slice(0, clean.length - ext.length - 1);
+  const RASTER = ['png', 'jpg', 'jpeg', 'jpe', 'gif'];
+  const candidates = !RASTER.includes(ext) && !['mp3', 'ogg', 'm4a', 'aac'].includes(ext)
+    ? []
+    : ext === 'gif'
+      ? [`${base}.webp`]
+      : ext === 'mp3' || ext === 'ogg' || ext === 'm4a' || ext === 'aac'
+        ? [`${base}.opus`]
+        : [`${base}.avif`, `${base}.webp`];
+  return [...candidates, clean];
+}
+
+/** Resuelve la mejor URL de entrega (Capa 4) o el original como fallback.
+ *   Opcional: pasa un set de nombres de archivo existentes (del CDN) para
+ *   filtrar; por defecto devuelve todos los candidatos en orden. */
+export function resolveDelivery(path: string, opts?: ResolveOptions): string[] {
+  return deliveryVariants(path).map((p) => assetResolver.resolve(p, opts));
+}
+
 export const CDN_CONFIG = {
   baseUrl: process.env.NEXT_PUBLIC_CDN_URL || 'https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public',
   bucket: 'ciszu-cdn',

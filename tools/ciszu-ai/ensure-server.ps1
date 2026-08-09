@@ -18,8 +18,10 @@ $ErrorActionPreference = 'SilentlyContinue'
 $toolDir = $PSScriptRoot
 $repoRoot = Split-Path (Split-Path $toolDir -Parent) -Parent   # tools/ciszu-ai -> tools -> repo
 $url = "http://127.0.0.1:$Port"
-$log = Join-Path $repoRoot '.opencode-tmp\opencode-server.log'
-$err = Join-Path $repoRoot '.opencode-tmp\opencode-server-err.log'
+$logDir = Join-Path $repoRoot '.opencode\temp'
+if (-not (Test-Path $logDir)) { New-Item -ItemType Directory -Path $logDir -Force | Out-Null }
+$log = Join-Path $logDir 'opencode-server.log'
+$err = Join-Path $logDir 'opencode-server-err.log'
 
 if (-not (Test-Path $exe)) {
     Write-Output "Ciszu-AI: no existe $exe — instala opencode-ai (npm i -g opencode-ai)"

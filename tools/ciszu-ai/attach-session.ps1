@@ -34,7 +34,7 @@ Write-Host "[ciszu-ai] Garantizando server en 127.0.0.1:$Port ..." -ForegroundCo
 & $ensure -Port $Port -RepoRoot $RepoRoot
 
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "[ciszu-ai] No se pudo preparar el server. Revisa .opencode-tmp\opencode-server-err.log" -ForegroundColor Red
+    Write-Host "[ciszu-ai] No se pudo preparar el server. Revisa .opencode\temp\opencode-server-err.log" -ForegroundColor Red
     exit 1
 }
 

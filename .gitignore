@@ -122,6 +122,7 @@ supabase/.temp/
 
 # Carpeta temporal de opencode (trabajos en curso, nunca trackear)
 .opencode-tmp/
+.opencode/temp/
 
 # Sistema de voz opencode — binarios/modelos/voces y temporales (el codigo del plugin SI se trackea)
 tools/tts-stt-ai/runtime/
@@ -149,11 +150,19 @@ apis/bruno/*.html
 /public/
 
 # Salida de pruebas de generacion de arte IA (estructura por categoria:
-# downloads/test/{art,video,music,etc}/<nombre>-<categoria>/ — SIEMPRE ignorada)
+# test/{art,video,music,etc}/<nombre>-<categoria>/ — SIEMPRE ignorada)
 downloads/
+test/art/
+test/music/
+test/video/
+test/website/testing/
 
+# Reportes y estado de test (vitest + e2e) — outputs generados, nunca trackear
+test/website/vitest/
+test/website/e2e/reports/
 
-# Testing
-test-results/
-playwright-report/
-blob-report/
+# Caches de Python (scripts)
+__pycache__/
+
+# Prebuild mirrors ciszubot web
+projects/ciszubot/website/public/banners/

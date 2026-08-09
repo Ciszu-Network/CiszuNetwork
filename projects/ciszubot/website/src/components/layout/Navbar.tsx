@@ -2,10 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Icon } from '@ciszu/ui';
-import { resolveAssetPath } from '@ciszunetwork/cdn';
+import { Icon, SmartImage } from '@ciszu/ui';
 import { INVITE_URL, LANGS, LOGO_ISOTIPO, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
 
 const NAV_LINKS: { href: string; key: 'home' | 'commands' | 'status' | 'support'; icon: string }[] = [
@@ -61,21 +59,21 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="flex items-center h-[64px] gap-3">
           <Link href="/" className="flex items-center gap-2.5 shrink-0 group cursor-pointer">
-            <Image
-              src={resolveAssetPath(LOGO_ISOTIPO)}
+            <SmartImage
+              src={LOGO_ISOTIPO}
               alt="CiszuBot"
               width={36}
               height={36}
               className="group-hover:drop-shadow-[0_0_15px_rgba(0,212,255,0.8)] transition-all duration-300"
-              priority
+              fetchPriority="high"
             />
-            <Image
-              src={resolveAssetPath(LOGO_LOGOTIPO)}
+            <SmartImage
+              src={LOGO_LOGOTIPO}
               alt="CiszuBot"
               width={150}
               height={30}
               className="hidden lg:block h-[30px] w-auto group-hover:drop-shadow-[0_0_15px_rgba(0,212,255,0.8)] transition-all duration-300"
-              priority
+              fetchPriority="high"
             />
           </Link>
 
