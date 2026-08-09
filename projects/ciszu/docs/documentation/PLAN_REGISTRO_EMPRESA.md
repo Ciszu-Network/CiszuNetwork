@@ -27,7 +27,7 @@ haya usado antes. Esperar puede costar la marca.
 
 | Fase | Qué se logra | Coste total | Cómo se paga | ¿Tarjeta? |
 | --- | --- | --- | --- | --- |
-| **0. Fundación (hoy)** | RIF persona natural + evidencia de uso de la marca + identidad digital | **$0** | — | No |
+| **0. Fundación (hoy)** | RIF persona natural + Registro Nacional de Emprendimientos ("Emprender Juntos") + evidencia de uso de la marca + identidad digital | **$0** | — | No |
 | **1. Protección de marca** | Marca "CISZU NETWORK" registrada en SAPI (15 años) | **~$410 USD** | Depósito bancario / efectivo | **No** |
 | **2. Empresa local** | S.R.L./E.I.R.L. inscrita en Registro Mercantil + RIF jurídico | **~$50–300 USD** (aranceles + abogado + diario + libros) | Depósito bancario / efectivo / PayPal | **No** |
 | **3. Internacional (con capital real)** | LLC en EEUU para cobrar en USD + banco US | **$150–700/año** (DIY) o más (plataformas) | Tarjeta (plataformas) o DIY + PayPal | **Sí** (por eso es Fase 3) |
@@ -48,8 +48,16 @@ haya usado antes. Esperar puede costar la marca.
 3. **Identidad digital**: asegurar el nombre "Ciszu Network" / "CiszukoAntony" en todas las
    plataformas (X, Instagram, TikTok, YouTube, GitHub, itch.io, etc.) con la misma foto de
    perfil. El uso consistente fortalece la marca.
-4. **(Opcional, sin coste)** Certificado de **Emprendedor** (Viceministerio de Economía
-   Productiva): es un requisito del SAPI para emprendedores y da beneficios tributarios.
+4. **Registro Nacional de Emprendimientos — "Emprender Juntos" (GRATIS, 100% en línea)**:
+   plataforma de SENIAT que otorga el **Certificado de Registro Nacional de Emprendimientos
+   sin costo alguno**, con **reconocimiento legal provisional por 3 años** para proyectos en
+   inicio con poco capital. Da marco legal para permisos comerciales, licencias municipales,
+   apertura de locales y acceso a financiamiento en banca pública y privada. Pasos: 1) sacar
+   el certificado en la plataforma web; 2) inscribir el **RIF de emprendedor** en SENIAT
+   (portal o app móvil 2026 — el SENIAT ya no exige exhibir documentos impresos, circular
+   SNAT/2026/4610). Al terminar los 3 años, la actividad debe pasar al marco ordinario
+   (firma personal o compañía). Es la vía más directa de "registrar el negocio gratis y sin
+   ir a ningún lado". ⚠️ Confirmar en el portal los requisitos de cédula/edad al ejecutar.
 5. Cuando haya ~$2–12 USD disponibles vía PayPal: reservar los dominios
    (ver `DOMINIOS_SISTEMA.md` — Porkbun acepta PayPal, no necesita tarjeta).
 
@@ -113,6 +121,12 @@ en diario + sellado de libros. Todo pagable en **efectivo/Bs. — sin tarjeta**.
 
 ## 6. Fase 3 — Internacionalización (CON capital real; aquí sí entra la tarjeta)
 
+> 🎯 **Cuándo se activa**: SOLO cuando haya necesidad real de operar internacionalmente
+> (clientes o cobros en USD, contratos extranjeros, pagos desde plataformas que no aceptan
+> Venezuela). Mientras la operación sea local (Venezuela), las fases 0–2 cubren todo con
+> **$0–300 sin tarjeta**. La LLC no es un paso obligatorio de la ruta local — es una
+> **herramienta bajo demanda** para el día en que el negocio cruce fronteras.
+
 Para cobrar en USD y operar con clientes internacionales, la vía estándar desde Venezuela es
 una **LLC en EEUU** (Stripe/PayPal/Wise no soportan cuentas venezolanas directamente).
 Detalle completo y costes reales: `GUIA_INTERNACIONAL_LLC.md`.
@@ -169,7 +183,9 @@ Detalle completo y costes reales: `GUIA_INTERNACIONAL_LLC.md`.
   Actas); sociedades mercantiles. Gestión: **SAREN / Registro Mercantil** (saren.gob.ve,
   tramites.saren.gob.ve; Providencia 525 — biometría).
 - **SENIAT** — RIF (declaraciones.seniat.gob.ve), facturación digital (**Providencias 102 y 121**,
-  desde mar 2025).
+  desde mar 2025), **Registro Nacional de Emprendimientos "Emprender Juntos"** (certificado
+  gratis en línea, reconocimiento provisional 3 años; circular SNAT/2026/4610 — sin papeles
+  impresos, ago 2026).
 - **KPMG — Guía de Inversiones 2026 (Venezuela)** — proceso de constitución, capital, comisario.
 - Guías verificadas (10 ago 2026): odremanyasociados.com, negociosgestionados.com,
   conoconsultores.com, sapi.gob.ve, harris-sliwoski.com, globalsolo.global, llcstarters.com.
