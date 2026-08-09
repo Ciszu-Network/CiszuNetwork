@@ -139,3 +139,42 @@ curl -s https://ciszunetwork.vercel.app/robots.txt  # debe listar disallow /api/
 - Pendientes relacionados (NO incluidos por decisión del usuario): rotación de keys de
   Turnstile de MuzicMania (secret en git como fallback — se rotará cuando el repo sea
   público) y tokens de Supabase (lista en `scripts/tokens_a_rotar.md`).
+
+---
+
+## Prevención — checklist para agentes en TODA implementación nueva
+
+> Este checklist está internalizado en AGENTS.md ("A ejecutar en toda implementación nueva",
+> §7 puntos). Copia operativa para el agente: **completar cada punto EN LA MISMA sesión que
+> se escribe el código**, no en una campaña posterior (así se evitó la auditoría de 10 ago).
+
+**Si la tarea crea una tabla Supabase / migración:**
+- [ ] `ENABLE ROW LEVEL SECURITY` + policy explícita en la MISMA migración (recordar: Supabase
+      da `GRANT ALL` a anon/authenticated por defecto en tablas nuevas → sin RLS = BD abierta).
+- [ ] `dbvr sql -ds=supabase` con los 3 checks de la sección 1 tras aplicar (no confiar en el
+      advisor del Dashboard: no avisa de tablas sin RLS ni de EXECUTE anon en funciones normales).
+
+**Si la tarea crea/modifica una RPC o endpoint con datos de usuario:**
+- [ ] `has_function_privilege('anon', ...)` para cada función RPC tocada.
+- [ ] Datos personales (email, etc.): NUNCA vía RPC pública/PostgREST con anon → API route
+      server-only (service_role) + rate limit.
+
+**Si la tarea crea un endpoint POST (muta o consume servicio externo):**
+- [ ] Rate limit con `createRateLimiter` de `@ciszunetwork/utils` (memoria → KV → Postgres).
+      Referencias: verify-turnstile 30/min, callbacks OAuth 20/min, mutaciones 10/min,
+      resolvers de datos personales 10/min.
+
+**Si la tarea toca secrets/envs:**
+- [ ] NUNCA fallbacks con valores reales en código (quedan en git). Secrets solo
+      `process.env.X` en server-only. `NEXT_PUBLIC_` solo para lo público por diseño.
+- [ ] En Vercel: secrets con target SOLO `production`; previews sin datos reales.
+
+**Si la tarea crea una web/landing nueva (o despliega en Vercel):**
+- [ ] `robots.ts` desde el día 1 (allow `/`, disallow `/api/` y rutas autenticadas).
+- [ ] Verificar `/robots.txt` en el output del build + `X-Robots-Tag: noindex` en previews.
+
+**Siempre (regla de oro):**
+- [ ] Verificar con fuentes EXTERNAS (dbvr, curl, grep del bundle, output del build) — el
+      estado que la IA "confirma" es la misma fuente que ella escribió. Si se cambia
+      RLS/grants, comprobar que no se rompió lo que ya funcionaba (p.ej. `bot_status`
+      SELECT anon lo consume la web de ciszubot).
