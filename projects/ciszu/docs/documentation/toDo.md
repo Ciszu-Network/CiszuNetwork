@@ -7,5 +7,5 @@
 - [ ] Sistema de analiticas con Posthog o alternativas mejores.
 - [ ] Sistema de manejo de errores con Sentry o alternativas mejores.
 - [ ] Sistema de monitoreo extra con UptimeRobot (usado antes para ciszubot)
-- [ ] Considerar Clerk para autentificacion.
+- [x] Considerar Clerk para autentificacion. → **DECIDIDO 10 ago 2026**: plan `AUTH_PLAN.md` — Supabase-first por niveles (N2 OAuth terceros → N3 centralizado → N4 CISZU AUTH propio); Clerk solo si criterios del §7.
 - [ ] Considerar Pinecone como base de deato de vectores.
