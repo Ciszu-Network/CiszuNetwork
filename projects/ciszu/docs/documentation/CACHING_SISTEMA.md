@@ -77,12 +77,35 @@ El código está preparado: si existen `KV_REST_API_URL` / `KV_REST_API_TOKEN` e
 Vercel (o `.env.local`), la capa KV se intercala entre memoria y Postgres **automáticamente**
 (`createVercelKvStore()` en `createCacheStore()`).
 
-Para activarla en el futuro (gratis sin tarjeta, ~10k ops/día):
-1. Vercel → proyecto → Storage → crear KV store.
-2. Copiar `KV_REST_API_URL` y `KV_REST_API_TOKEN` a las env vars de los 3 proyectos
-   (`muzicmania`, `ciszubot`, ...) y al `.env.local` local.
-3. Redesploy (los redeploys requieren push a `main` de `packages/**` — dispara los workflows).
-4. Sin esos secrets, todo sigue funcionando con memoria + Postgres (sin cambios de comportamiento).
+### Checklist de activación (pendiente del usuario — ~10 min)
+
+**1. Crear el KV Store**
+
+1. Vercel → proyecto (p.ej. `muzicmania`) → pestaña **Storage** → **Create Database** →
+   **KV** → nombre `ciszu-kv` → Create. (Free tier de Upstash, sin tarjeta, ~10k ops/día.)
+2. En el panel del store → **Settings** → copiar **`KV_REST_API_URL`** (típico
+   `https://…-kv.upstash.io/…)`) y **`KV_REST_API_TOKEN`**.
+
+**2. Añadir las env vars** — Vercel → **Settings → Environment Variables** (Production, y
+Development si quieres probar local):
+
+- Proyecto `muzicmania` → `KV_REST_API_URL` + `KV_REST_API_TOKEN`
+- Proyecto `ciszubot` (web del dashboard) → iguales
+- Opcional: bot Docker → mismo par en su `.env` (para que el webhook de votos cuente también
+  en KV)
+
+**3. Redesplegar** — Vercel → Deployments → **Redeploy** del último deploy (botón, sin push).
+
+**4. Verificar que la capa KV entró en juego:**
+
+```sql
+select key, updated_at from ciszu.cache order by updated_at desc limit 5;
+```
+
+Si hay filas recientes (leaderboard/dashboard), fluye. `statsSnapshot()` de CacheStore
+reporta `kv: true` para logs de diagnóstico si se desea.
+
+> Sin esos secrets nada se rompe: memoria + Postgres siguen cubriendo (comportamiento actual).
 
 ## 6. Cómo se prueba
 
