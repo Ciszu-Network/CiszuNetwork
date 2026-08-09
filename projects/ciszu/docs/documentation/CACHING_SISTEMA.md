@@ -53,6 +53,12 @@ ciszu.bump_counter(p_key text) → bigint   -- INCR atómico (upsert con retorno
 
 - **RLS desactivado** (infra de servidor, no datos de usuario) + `REVOKE ALL` a anon/authenticated:
   solo `service_role` (bypass RLS) puede tocar estas tablas.
+- **¿Por qué RLS off y no genera Advisory warnings?** El advisor `table_rls_disabled` del
+Dashboard solo evalúa tablas **expuestas vía PostgREST** (schemas expuestos:
+  `muzicmania, ciszubot, ciszunetwork`). El schema `ciszu` **no está expuesto** y los
+  grants están revocados a anon/authenticated: nadie llega a esas tablas por REST. El
+  RLS sería fricción sin beneficio (service_role lo bypasea igualmente). Si algún día
+  se expone `ciszu` en el Dashboard, habría que habilitar RLS antes.
 - La función `bump_counter` es **SECURITY INVOKER con `search_path=''`** (reglas anti-advisor del repo).
 - Aplicada con `dbvr` — verified en vivo (smoke test 3→4).
 
@@ -78,6 +84,12 @@ Vercel (o `.env.local`), la capa KV se intercala entre memoria y Postgres **auto
 (`createVercelKvStore()` en `createCacheStore()`).
 
 ### Checklist de activación (pendiente del usuario — ~10 min)
+
+**Alternativa automatizada (script):** `node scripts/vercel-kv-setup.js` (requiere
+`$env:VERCEL_TOKEN="vcp_..."`; flags `--store <nombre>`, `--dry-run`, `--show-values`).
+El script busca el store, salta proyectos ya configurados y **replica los valores** del
+proyecto que los tenga a los demás (la API no devuelve los secrets de un store recién
+creado: la PRIMERA conexión es en el dashboard, el resto la hace el script).
 
 **1. Crear el KV Store**
 

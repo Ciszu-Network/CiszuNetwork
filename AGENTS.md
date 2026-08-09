@@ -401,6 +401,7 @@ Pila decidida (análisis completo en `docs/documentation/TOOLS.md`): **DBeaver C
 - `upload-cdn.js` — `pnpm cdn:upload` (sube a `ciszu-cdn` desde SOURCES; `--force` re-sube todo ignorando tamaño/mimetype)
 - `check-cdn-mimes.js` — `pnpm cdn:verify` (lista el bucket y reporta objetos con mimetype incorrecto para su extensión)
 - `delete-cdn-by-ext.js` — borra del bucket todos los objetos con las extensiones pasadas por CLI (mantenimiento de cuota: `node scripts/delete-cdn-by-ext.js .ai .psd`)
+- `vercel-kv-setup.js` — automatiza la Fase 2 del caché: busca el KV store, salta proyectos ya configurados y replica `KV_REST_API_URL`/`KV_REST_API_TOKEN` del proyecto que los tenga al resto (`node scripts/vercel-kv-setup.js`, requiere `VERCEL_TOKEN`; flags `--store`, `--dry-run`, `--show-values`; la PRIMERA conexión del store es manual en el dashboard)
 - `generate-icon-registry.js` — regenera `packages/ui/src/generated/icon-registry.ts` desde `shared/icons/svg`
 - `generate-commands.js` — regenera `commands.json`/`docs/slash-commands.*` del bot desde dist
 - `generate-material-icons-doc.js` — regenera `projects/ciszu/docs/documentation/MATERIAL_ICONS.md` con el catálogo COMPLETO de Material Icon Theme (descarga los fuentes oficiales a `.opencode/temp/material-icons-theme/`; `--force` re-descarga). Parsea `folderIcons.ts` + `fileIcons.ts` (~290 folder icons + ~610 file icons)
