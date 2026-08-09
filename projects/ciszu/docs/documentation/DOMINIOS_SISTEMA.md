@@ -134,7 +134,8 @@ guarda historial de búsquedas).
 5. **Verificar**: `nslookup dominio.com`, HTTPS en navegador, `curl -I` en las redirecciones.
 6. **Email @dominio**: Cloudflare Email Routing (gratis) si el DNS está en CF; alternativa:
    Resend.com para emails transaccionales (ver ítem #2 del toDo — emails). Configurar
-   **SPF + DKIM + DMARC** (Vercel no da email).
+   **SPF + DKIM + DMARC** (Vercel no da email). ➜ Sistema completo de servicios Cloudflare
+   (gratis/pago/descartados): **`CLOUDFLARE_SISTEMA.md`**.
 7. **Seguridad final**: auto-renew ON, registrar lock ON, DNSSEC ON (CF/Porkbun/NC lo soportan),
    WHOIS privacy ON, 2FA en la cuenta del registrador, anotar fechas de renovación en el
    calendario y exportar/backup de la zona DNS.

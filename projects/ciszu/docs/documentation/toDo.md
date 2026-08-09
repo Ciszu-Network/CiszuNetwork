@@ -12,5 +12,10 @@
 - [ ] No indexar "staging" publico en buscadores como Google. Autentificar sin datos reales.
 - [ ] Sistema de monitoreo extra con UptimeRobot (usado antes para ciszubot)
 - [ ] Considerar clerk para autentificacion.
-- [ ] Considerar otras herramientas de cloudflare.
+- [x] Considerar otras herramientas de cloudflare. → **Sistema documentado**: `CLOUDFLARE_SISTEMA.md`
+- [ ] Cloudflare Fase A: Web Analytics (beacon) en las 4 webs
+- [ ] Cloudflare Fase A: Turnstile en ciszunetwork, ciszukoantony y ciszubot (por app)
+- [ ] Cloudflare Fase A: rotar widget Turnstile de MuzicMania (secret en git) + quitar fallbacks hardcodeados
+- [ ] Cloudflare Fase A: R2 bucket de prueba (sin migrar producción)
+- [ ] Cloudflare Fase B (con dominio): DNS proxy + WAF/DDoS + Email Routing + Uptime — ver CLOUDFLARE_SISTEMA.md
 - [ ] Considerar Pinecone como base de deato de vectores.

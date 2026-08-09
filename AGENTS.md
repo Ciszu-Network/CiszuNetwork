@@ -210,6 +210,29 @@ All workflows run on `push: [main, master]`:
 - Proyectos Vercel: `ciszunetworkpage` -> `projects/ciszu/website`, `ciszukoantonypage` -> `projects/ciszukoantony/website`, `ciszubot` -> `projects/ciszubot/website`, `muzicmania` -> `projects/muzicmania/website`
 - Discord bot (`deploy-ciszubot-website.yml`) deploys su website, no el bot en sí
 
+## Sistema Cloudflare (10 ago 2026) — estado y plan
+
+**Doc maestro: `projects/ciszu/docs/documentation/CLOUDFLARE_SISTEMA.md`** (inventario completo
+gratis/pago/descartados + fases A/B/C + límites verificados jul-ago 2026). Política: **gratis
+primero, pago a futuro; las capas extras no son opcionales salvo que pisen con un sistema
+activo** (p.ej. rate limiting ya en `packages/utils`).
+
+- **2 capas**: DNS/proxy (WAF/DDoS/SSL/Email Routing/Uptime — requieren dominio propio,
+  hoy NO) y standalone (Turnstile, Web Analytics, R2, Workers — funcionan en `*.vercel.app`).
+- **Implementado hoy**: Turnstile SOLO en MuzicMania (`CloudflareGuard.tsx` + `/api/verify-turnstile`,
+  keys en `.env.local`), challenge web de CF en muzicmania, R2 configurado como *fallback*
+  del CDN pero **INACTIVO** (`asset-config.json`, credenciales en vault).
+- ⚠️ **Secret de Turnstile hardcodeado en git** (`route.ts:11` fallback) — pendiente rotar
+  widget en dashboard y eliminar fallbacks (lanzar error sin env var).
+- **Fase A (hoy, gratis, sin dominio)**: Web Analytics (beacon) en 4 webs + Turnstile en las
+  3 webs restantes (por app) + fix del secret + R2 bucket de prueba.
+- **Fase B (con dominio)**: DNS proxy → DDoS/WAF/SSL automáticos + Email Routing ilimitado
+  gratis + Uptime (ver `DOMINIOS_SISTEMA.md`).
+- **Fase C (pago futuro)**: R2 >10 GB ($0.015/GB), Workers Paid ($5), email sending (Resend
+  gratis 100/día primero), Pro $20/mes solo si WAF custom. Descartados por sobreingeniería:
+  Pages, D1, Queues, Durable Objects, Vectorize, Workers AI, Access, Tunnel (Tailscale ya
+  activo), Imágenes/Stream, Argo/Load Balancing.
+
 ## Git conventions
 
 - `.gitignore` excludes: all `*.gif`, large binaries (`*.exe`, `*.mp4`, `*.mp3`, etc.), `projects/ciszu/content/**/*`, CDN video subdirs, legacy `CiszuGamens/`
