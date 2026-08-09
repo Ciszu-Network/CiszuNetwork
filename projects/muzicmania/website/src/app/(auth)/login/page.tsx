@@ -147,12 +147,15 @@ export default function LoginPage() {
         }
 
         if (isUsername) {
-          const { data: emailData, error: emailError } = await supabase.rpc('get_email_by_username', { 
-            p_username: cleanIdentifier 
+          const res = await fetch('/api/auth/resolve-username', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: cleanIdentifier }),
           });
-          
-          if (!emailError && emailData) {
-            emailToUse = emailData;
+          const data = await res.json();
+
+          if (res.ok && data.email) {
+            emailToUse = data.email;
           } else {
             throw new Error(`El usuario @${cleanIdentifier} no fue encontrado.`);
           }
