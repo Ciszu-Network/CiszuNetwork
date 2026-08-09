@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { exchangeCode, fetchDiscordUser, setSession, supabaseAdmin } from '@/lib/auth';
+import { createRateLimiter } from '@ciszunetwork/utils';
 
 export const runtime = 'nodejs';
 
+const limiter = createRateLimiter({ windowMs: 60_000, max: 20 });
+
 export async function GET(req: NextRequest) {
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  const rl = limiter.allow(ip);
+  if (!rl.allowed) {
+    return NextResponse.redirect(new URL('/?auth=rate_limited', req.url));
+  }
   const url = new URL(req.url);
   const code = url.searchParams.get('code');
   const error = url.searchParams.get('error');

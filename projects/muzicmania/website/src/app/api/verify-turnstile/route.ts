@@ -1,6 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createRateLimiter } from '@ciszunetwork/utils';
+
+const limiter = createRateLimiter({ windowMs: 60_000, max: 30 });
 
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  const rl = limiter.allow(ip);
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { success: false, error: 'Demasiados intentos. Espera un minuto.' },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil(rl.resetInMs / 1000)) } }
+    );
+  }
   try {
     const { token } = await request.json();
 

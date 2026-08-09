@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSessionUserId, isGuildAdmin, getGuildsForUser, supabaseAdmin } from '@/lib/auth';
+import { createRateLimiter } from '@ciszunetwork/utils';
 
 export const runtime = 'nodejs';
+
+const postLimiter = createRateLimiter({ windowMs: 60_000, max: 10 });
 
 interface GuildConfig {
   prefix: string;
@@ -43,6 +46,14 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ gui
 }
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ guildId: string }> }) {
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  const rl = postLimiter.allow(ip);
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: 'rate_limited' },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil(rl.resetInMs / 1000)) } }
+    );
+  }
   const { guildId } = await params;
   const userId = await getSessionUserId();
   if (!userId) return NextResponse.json({ error: 'no_auth' }, { status: 401 });
