@@ -173,6 +173,7 @@ resolveIcon('home', 'outline', 'svg', { forceLocal: true }); // forzar local
 
 Single project: `obwzzmbvkrcscqwptlqo.supabase.co`
 
+- **Auth roadmap (10 ago 2026)**: `projects/ciszu/docs/documentation/AUTH_PLAN.md` — plan a futuro por niveles (N2 OAuth terceros → N3 centralizado una cuenta en las 4 apps → N4 "CISZU AUTH" propio). **Decisión: Supabase-first, NUNCA Clerk hoy** (migrar muzicmania a Clerk = reescribir RPC/RLS/user_ids); Clerk solo si criterios del §7 del plan.
 - Credentials in `services/supabase/.env`
 - Muzicmania uses `@supabase/supabase-js` for auth + DB
 - Storage buckets: `ciszu-cdn` (public, 50 MB limit, renamed from ciszu-assets) for CDN + user content, `avatars` for profile pics
