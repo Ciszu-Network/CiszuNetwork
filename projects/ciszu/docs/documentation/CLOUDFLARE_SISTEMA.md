@@ -88,7 +88,11 @@ Límites verificados (jul-ago 2026, docs oficiales):
    gratis. El usuario no tiene tarjeta → descartado (mantener Supabase Storage como CDN
    activo; `asset-config.json` fallback R2 se queda tal cual).
 5. **Uptime**: evaluar UptimeRobot (gratis, sin dominio) para las 4 webs + bot — solo si
-   aporta algo al heartbeat de `ciszubot.bot_status` que ya tenemos.
+   aporta algo al heartbeat de `ciszubot.bot_status` que ya tenemos. **DECIDIDO (10 ago
+   2026): NO proceder por ahora** — las webs viven en Vercel (CDN global, sin punto único de
+   fallo real) y el bot ya tiene heartbeat en vivo; UptimeRobot requiere cuenta nueva del
+   usuario y aporta poco hoy. Se revisa si hay caídas reales o al pasar a Fase B (Uptime de
+   Cloudflare con dominio).
 
 ### Fase B — Con dominio propio (todo gratis, desbloqueado por el proxy)
 
