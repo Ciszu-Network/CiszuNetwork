@@ -219,13 +219,28 @@ activo** (p.ej. rate limiting ya en `packages/utils`).
 
 - **2 capas**: DNS/proxy (WAF/DDoS/SSL/Email Routing/Uptime — requieren dominio propio,
   hoy NO) y standalone (Turnstile, Web Analytics, R2, Workers — funcionan en `*.vercel.app`).
-- **Implementado hoy**: Turnstile SOLO en MuzicMania (`CloudflareGuard.tsx` + `/api/verify-turnstile`,
-  keys en `.env.local`), challenge web de CF en muzicmania, R2 configurado como *fallback*
-  del CDN pero **INACTIVO** (`asset-config.json`, credenciales en vault).
-- ⚠️ **Secret de Turnstile hardcodeado en git** (`route.ts:11` fallback) — pendiente rotar
-  widget en dashboard y eliminar fallbacks (lanzar error sin env var).
-- **Fase A (hoy, gratis, sin dominio)**: Web Analytics (beacon) en 4 webs + Turnstile en las
-  3 webs restantes (por app) + fix del secret + R2 bucket de prueba.
+- **Fase A COMPLETADA (10 ago 2026)**:
+  - **Web Analytics**: beacon (`https://static.cloudflareinsights.com/beacon.min.js` con
+    `defer type="module"` — requerido por `@next/next/no-sync-scripts`; token `2fcf0eab...`,
+    1 solo site cubre las 4 webs) en los 4 layouts.
+  - **Turnstile en las 4 webs**: widget **GLOBAL único** (el de MuzicMania renombrado, 4
+    hostnames permitidos, 1 par de keys — site+secret en `.env.local` de las 4 apps y en
+    Vercel, NO repetir los valores aquí). MuzicMania conserva su componente propio;
+    las otras 3 usan **`CloudflareGuard` compartido** (`packages/ui/src/CloudflareGuard.tsx`,
+    exportado desde `packages/ui/src/index.ts`): sin deps npm (script global
+    `challenges.cloudflare.com/turnstile/v0/api.js` + `window.turnstile.render`), CSS inline
+    (lección v3 PDWA — el scanner de Tailwind no genera utilidades solo de packages/ui),
+    sessionStorage por app (`cf_verified_*`), degradación segura si falta la env (no
+    bloquea), props: siteKey/logo/title/subtitle/accent/storageKey/verifyPath. Las 3 webs
+    tienen su `/api/verify-turnstile/route.ts` **SIN fallback hardcodeado** (500 claro si
+    falta la env). Envs en `.env.local` (×4) y Vercel (production+preview+development, 3
+    proyectos vía API con `VERCEL_TOKEN`).
+- ⚠️ **Secret de Turnstile de MuzicMania hardcodeado en git** (`route.ts:11` + siteKey en
+  `CloudflareGuard.tsx:149` fallbacks) — **rotación APLAZADA por decisión del usuario**
+  (repo privado; al rotar: regenerar secret en dashboard, actualizar `.env.local`+Vercel ×4
+  y eliminar los fallbacks). Las 3 webs nuevas ya están limpias.
+- **R2**: **BLOQUEADO** — Cloudflare exige tarjeta de crédito para activar R2 aunque sea
+  gratis → descartado hasta tener tarjeta (`asset-config.json` fallback, credenciales en vault).
 - **Fase B (con dominio)**: DNS proxy → DDoS/WAF/SSL automáticos + Email Routing ilimitado
   gratis + Uptime (ver `DOMINIOS_SISTEMA.md`).
 - **Fase C (pago futuro)**: R2 >10 GB ($0.015/GB), Workers Paid ($5), email sending (Resend

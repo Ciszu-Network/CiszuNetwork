@@ -18,6 +18,9 @@ export { detectPdwaBrowser } from './InstallPdwaButton';
 export type { InstallPdwaButtonProps, PdwaBrowserInfo, BrowserId } from './InstallPdwaButton';
 // Alias retro-compat (deprecated, usar InstallPdwaButton)
 export { default as InstallPwaButton } from './InstallPdwaButton';
+// CloudflareGuard: guard de acceso con Turnstile (compartido entre las webs)
+export { default as CloudflareGuard } from './CloudflareGuard';
+export type { CloudflareGuardProps } from './CloudflareGuard';
 // Sistema de Formatos: imagen Capa 4 -> Capa 3 con fallback en cadena
 export { default as SmartImage } from './SmartImage';
 export type { SmartImageProps } from './SmartImage';

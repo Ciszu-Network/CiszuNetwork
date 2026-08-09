@@ -6,7 +6,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { getDict, type Lang } from "@/lib/i18n";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, CloudflareGuard } from "@ciszu/ui";
 import { getSessionData } from "@/lib/auth";
 import "./globals.css";
 
@@ -59,11 +59,14 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <html lang={lang} className={`${inter.variable} ${spaceGrotesk.variable}`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script defer type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
       </head>
       <body className="bg-bg text-ink min-h-screen font-sans flex flex-col">
-        <Navbar lang={lang} dict={dict} account={session} />
-        <main className="flex-grow pt-[60px]">{children}</main>
-        <Footer lang={lang} dict={dict} />
+        <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={LOGO_ISOTIPO_CIRCLE} title="CiszuBot" subtitle="CiszuBot Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszubot">
+          <Navbar lang={lang} dict={dict} account={session} />
+          <main className="flex-grow pt-[60px]">{children}</main>
+          <Footer lang={lang} dict={dict} />
+        </CloudflareGuard>
         <PwaRegister />
         <InstallPdwaButton site="CiszuBot" accent="#22d3ee" accentAlt="#a78bfa" />
       </body>

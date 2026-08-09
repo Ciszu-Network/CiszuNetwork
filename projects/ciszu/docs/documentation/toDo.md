@@ -13,9 +13,9 @@
 - [ ] Sistema de monitoreo extra con UptimeRobot (usado antes para ciszubot)
 - [ ] Considerar clerk para autentificacion.
 - [x] Considerar otras herramientas de cloudflare. → **Sistema documentado**: `CLOUDFLARE_SISTEMA.md`
-- [ ] Cloudflare Fase A: Web Analytics (beacon) en las 4 webs
-- [ ] Cloudflare Fase A: Turnstile en ciszunetwork, ciszukoantony y ciszubot (por app)
-- [ ] Cloudflare Fase A: rotar widget Turnstile de MuzicMania (secret en git) + quitar fallbacks hardcodeados
-- [ ] Cloudflare Fase A: R2 bucket de prueba (sin migrar producción)
+- [x] Cloudflare Fase A: Web Analytics (beacon) en las 4 webs → **HECHO 10 ago 2026** (token `2fcf0eab...` en los 4 layouts)
+- [x] Cloudflare Fase A: Turnstile en ciszunetwork, ciszukoantony y ciszubot → **HECHO 10 ago 2026** (widget global, `CloudflareGuard` compartido en `packages/ui`, envs Vercel OK)
+- [ ] Cloudflare Fase A: rotar widget Turnstile de MuzicMania (secret en git) + quitar fallbacks hardcodeados → **APLAZADO por decisión del usuario** (repo privado; al rotar: regenerar secret, actualizar `.env.local`+Vercel ×4, quitar fallbacks)
+- [ ] Cloudflare Fase A: R2 bucket de prueba → **BLOQUEADO** (Cloudflare exige tarjeta de crédito para activar R2)
 - [ ] Cloudflare Fase B (con dominio): DNS proxy + WAF/DDoS + Email Routing + Uptime — ver CLOUDFLARE_SISTEMA.md
 - [ ] Considerar Pinecone como base de deato de vectores.

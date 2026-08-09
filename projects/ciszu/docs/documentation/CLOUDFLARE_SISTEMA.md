@@ -29,18 +29,19 @@ se desbloquea de golpe la capa de protección completa.
 
 | Servicio | MuzicMania | CiszuNetwork | CiszukoAntony | CiszuBot web | Bot Discord | Estado |
 | --- | --- | --- | --- | --- | --- | --- |
-| **Turnstile** (guard de acceso) | ✅ `CloudflareGuard.tsx` + `/api/verify-turnstile` | ❌ | ❌ | ❌ | — | **Solo en MuzicMania** — pendiente por app individual |
+| **Turnstile** (guard de acceso) | ✅ `CloudflareGuard.tsx` + `/api/verify-turnstile` | ✅ | ✅ | ✅ | — | **IMPLEMENTADO 10 ago 2026 en las 4 webs** — MuzicMania con su componente propio; las otras 3 usan `CloudflareGuard` compartido de `packages/ui` (widget **GLOBAL** único, 1 par de keys para los 4 dominios) |
 | **Challenge web** (proxy CF a nivel red) | ✅ (blocking challenge en el dominio) | ❌ | ❌ | ❌ | — | Solo MuzicMania (activado en dashboard CF sobre muzicmania.vercel.app) |
-| **R2** | ⚠️ configurado como *fallback* del CDN | idem | idem | idem | — | **INACTIVO** — credenciales en vault (`asset-config.json` → `providers.fallback: cloudflare-r2`), bucket sin crear |
-| **Web Analytics** | ❌ | ❌ | ❌ | ❌ | — | No implementado |
+| **R2** | ⚠️ configurado como *fallback* del CDN | idem | idem | idem | — | **INACTIVO — BLOQUEADO**: Cloudflare exige **tarjeta** para activar R2 aunque sea gratis → descartado hasta tener tarjeta (`asset-config.json` → `providers.fallback: cloudflare-r2`) |
+| **Web Analytics** | ✅ | ✅ | ✅ | ✅ | — | **IMPLEMENTADO 10 ago 2026**: beacon en los 4 layouts (token `2fcf0eab...`, 1 solo site cubre las 4 webs) |
 | **Email Routing** | — | — | — | — | — | No aplica aún (requiere dominio) |
 | **Rate limiting** | ✅ propio en `packages/utils` (`createRateLimiter`) + bot `statsServer` | — | — | — | ✅ `/api/votes` 10/h | En código, no de Cloudflare |
 | **Uptime** | ⚠️ vía web del bot (heartbeat Supabase) | — | — | — | ✅ heartbeat 60s → `ciszubot.bot_status` | Sistema propio, funciona |
 
-**⚠️ Hallazgo de seguridad (Turnstile)**: las claves están **hardcodeadas como fallback** en el
-código (`CloudflareGuard.tsx` siteKey y `route.ts` secretKey) además de en `.env.local`:
+**⚠️ Hallazgo de seguridad (Turnstile)**: las claves de **MuzicMania** están **hardcodeadas como
+fallback** en el código además de en `.env.local`:
 - `projects/muzicmania/website/src/components/layout/CloudflareGuard.tsx:149` — siteKey (pública, poco riesgo)
-- `projects/muzicmania/website/src/app/api/verify-turnstile/route.ts:11` — **secretKey (¡está en git!)** — rotar el widget en el dashboard y quitar el fallback (lanzar error si falta la env var).
+- `projects/muzicmania/website/src/app/api/verify-turnstile/route.ts:11` — **secretKey (¡está en git!)** — pendiente: rotar el widget en el dashboard y quitar el fallback (lanzar error si falta la env var).
+- Las 3 webs nuevas **NO tienen fallback** (error 500 claro si falta la env var) — solo queda sanear MuzicMania.
 
 ## 3. Inventario de servicios Cloudflare — gratis, necesidad y prioridad
 
@@ -71,19 +72,21 @@ Límites verificados (jul-ago 2026, docs oficiales):
 
 ### Fase A — HOY (sin dominio, todo gratis, standalone)
 
-1. **Web Analytics en las 4 webs** — crear site en dashboard CF (cuenta gratis), pegar el
-   beacon script en los 4 layouts (o usar el SDK). Reemplaza la necesidad de PostHog para
-   lo básico (pageviews, referrers, países — sin cookies, sin consentimiento).
-2. **Turnstile en las 3 webs restantes** — por app individual (decidir: widget nuevo por
-   hostname o un widget compartido con dominios permitidos). Reusar el patrón
-   `CloudflareGuard.tsx` + `route.ts` de MuzicMania (refactorizar a componente/API
-   compartidos en `packages/ui` o por app).
-3. **Fix seguridad Turnstile**: rotar el widget (nuevas keys en dashboard) y **eliminar los
-   fallbacks hardcodeados** del código (error si falta env var). Actualizar envs Vercel de
-   MuzicMania (production).
-4. **R2**: crear bucket de prueba (10 GB gratis) y validar el upload del CDN con
-   `NEXT_PUBLIC_CDN_URL` apuntando a R2 como experimento (sin migrar producción). Mantener
-   Supabase como provider activo.
+1. ✅ **Web Analytics en las 4 webs** — site creado en dashboard CF, beacon script en los 4
+   layouts (token `2fcf0eab...`, un solo site cubre las 4 webs). **HECHO 10 ago 2026**.
+2. ✅ **Turnstile en las 4 webs** — decidido: **widget GLOBAL único** (1 par de keys, 4
+   hostnames permitidos). MuzicMania con su componente propio; las otras 3 usan
+   `CloudflareGuard` compartido (`packages/ui/src/CloudflareGuard.tsx`, sin deps npm, CSS
+   inline, sessionStorage por app) + `/api/verify-turnstile` por app **sin fallbacks**.
+   Envs en `.env.local` (×4) y Vercel (production+preview+development vía API) — **HECHO 10 ago 2026**.
+3. ⚠️ **Fix seguridad Turnstile (pendiente)**: rotar el widget de MuzicMania (nuevas keys en
+   dashboard) y **eliminar los fallbacks hardcodeados** de `CloudflareGuard.tsx:149` y
+   `route.ts:11` (error si falta env var). Actualizar envs Vercel de MuzicMania (production).
+   Decisión usuario: las keys **NO se rotan aún** (se mantienen mientras el repo sea privado;
+   se rotarán cuando GitHub sea público).
+4. ❌ **R2**: **BLOQUEADO — Cloudflare exige tarjeta de crédito** para activar R2 aunque sea
+   gratis. El usuario no tiene tarjeta → descartado (mantener Supabase Storage como CDN
+   activo; `asset-config.json` fallback R2 se queda tal cual).
 5. **Uptime**: evaluar UptimeRobot (gratis, sin dominio) para las 4 webs + bot — solo si
    aporta algo al heartbeat de `ciszubot.bot_status` que ya tenemos.
 
@@ -109,42 +112,34 @@ Límites verificados (jul-ago 2026, docs oficiales):
 
 ## 5. Decisiones pendientes (blockers)
 
-- [ ] ¿Turnstile: widget por app (4) o uno compartido con 4 hostnames permitidos? → Recomendado: **uno por app** (más limpio, cada web tiene su own key en su `.env`).
-- [ ] ¿Web Analytics: beacon script clásico o `@cloudflare/web-analytics` SDK? → Recomendado: **beacon script** (1 línea, sin deps npm).
-- [ ] ¿Mantener Supabase como CDN activo y R2 solo fallback? → **Sí por ahora** (cero migración).
-- [ ] ¿Rotar el widget de Turnstile de MuzicMania? → **Sí, obligatorio** (secret en git).
+- [x] ¿Turnstile: widget por app (4) o uno compartido con 4 hostnames permitidos? → **DECIDIDO (10 ago 2026): widget GLOBAL único** (el de MuzicMania renombrado, 4 hostnames permitidos, 1 par de keys). El usuario lo creó/editó en el dashboard.
+- [x] ¿Web Analytics: beacon script clásico o `@cloudflare/web-analytics` SDK? → **beacon script** (1 línea, sin deps npm) — HECHO.
+- [x] ¿Mantener Supabase como CDN activo y R2 solo fallback? → **Sí por ahora** (R2 bloqueado sin tarjeta).
+- [ ] ¿Rotar el widget de Turnstile de MuzicMania? → **DECIDIDO: NO rotar aún** (repo privado; se rotará cuando GitHub sea público). Queda pendiente eliminar el fallback del secret de `route.ts:11` al rotar.
 
 ## 6. Lo que necesito del usuario (dashboard, no automatizable sin tokens)
 
-Para implementar la Fase A necesito que **tú** crees en dashboard.cloudflare.com (todo gratis,
-sin tarjeta):
+**Estado 10 ago 2026 — casi todo entregado por el usuario:**
 
-1. **Cuenta Cloudflare** (si no existe) → añadir site para **Web Analytics** → copiarme el
-   **código beacon** (o el token del site). Un solo site de Web Analytics cubre las 4 webs
-   (el beacon mide cualquier dominio).
-2. **Widgets de Turnstile** (en el mismo dashboard): 3 nuevos widgets (ciszunetwork,
-   ciszukoantony, ciszubot) o decidir el compartido. Copiarme **site key + secret key** de
-   cada uno (para `.env.local` y Vercel).
-3. **Rotar el widget de MuzicMania**: en el widget existente, regenerar el secret (o crear
-   widget nuevo) → pasarme las keys nuevas (la vieja está en git).
-4. **(Opcional, para R2)** si quieres que pruebe R2 automáticamente: crear **API token** de
-   R2 con permiso de lectura/escritura en un bucket nuevo `ciszu-cdn-r2` → pasármelo (o
-   hacerlo tú a mano con el CLI `supabase storage cp`-equivalente → `rclone`/`wrangler`).
-5. **(Opcional)** si quieres automatizar todo vía API: **API token de Cloudflare** (rol
-   Admin) → lo guardo en `services/supabase/.env` (vault) y en `.env.local`.
+1. ✅ **Web Analytics** — site creado, token del beacon entregado (`2fcf0eab...`), beacon en los 4 layouts.
+2. ✅ **Widget de Turnstile GLOBAL** — el usuario renombró el de MuzicMania y añadió los 4 dominios (`ciszunetwork.vercel.app`, `ciszukoantony.vercel.app`, `muzicmania.vercel.app`, `ciszubot.vercel.app`). Un solo par de keys (site + secret) compartido por las 4 webs — **valores solo en `.env.local` de cada app + Vercel (no repetir aquí)**.
+3. ⏳ **Rotar el widget de MuzicMania**: **aplazado por decisión del usuario** (repo privado por ahora). Al rotar: regenerar el secret en el dashboard → actualizar `.env.local` + Vercel de las 4 apps → **eliminar los fallbacks hardcodeados** de `CloudflareGuard.tsx:149` y `route.ts:11` de MuzicMania.
+4. ❌ **R2**: descartado — Cloudflare pide tarjeta para activarlo (incluso gratis). Cuando haya tarjeta: crear API token R2 y bucket `ciszu-cdn-r2`.
+5. ✅ **API token de Cloudflare** — el usuario ya lo editó/renombró con permisos ampliados (para automatización futura; guardar en `services/supabase/.env` cuando se use).
 
 > Sin dominio propio NO se puede automatizar nada más vía API que afecte DNS/WAF — esa capa
 > espera a la Fase B (comprar dominios).
 
 ## 7. Checklist de activación (Fase A)
 
-- [ ] Cuenta Cloudflare creada (gratis, sin tarjeta)
-- [ ] Web Analytics: site creado + beacon en los 4 layouts
-- [ ] Turnstile: keys de 3 apps nuevas + rotadas las de MuzicMania
-- [ ] Fallbacks hardcodeados eliminados del código (error sin env var)
-- [ ] Envs Vercel actualizadas (production) + `.env.local`
-- [ ] R2: bucket de prueba + validación CDN (sin migrar)
-- [ ] Actualizar AGENTS.md y este documento con fechas reales
+- [x] Cuenta Cloudflare creada (gratis, sin tarjeta)
+- [x] Web Analytics: site creado + beacon en los 4 layouts
+- [x] Turnstile: widget global + keys en `.env.local` (×4) + Vercel (3 proyectos vía API)
+- [x] CloudflareGuard compartido (`packages/ui`) en las 3 webs + `/api/verify-turnstile` por app (sin fallbacks)
+- [ ] Fallbacks hardcodeados eliminados de MuzicMania (al rotar las keys — aplazado, repo privado)
+- [x] Envs Vercel actualizadas (production + preview + development) + `.env.local`
+- [ ] R2: BLOQUEADO (requiere tarjeta) — bucket de prueba cuando haya tarjeta
+- [x] Actualizar AGENTS.md y este documento con fechas reales
 
 ## 8. Referencias y fuentes (verificadas 10 ago 2026)
 

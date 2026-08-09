@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { IBM_Plex_Sans, IBM_Plex_Sans_Condensed } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, CloudflareGuard } from "@ciszu/ui";
 import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ZoomWarning } from "@/components/layout/ZoomWarning";
@@ -50,12 +50,15 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html lang="es" className={`${ibmPlex.variable} ${ibmPlexCondensed.variable}`}>
       <body className="bg-black text-white min-h-screen font-sans flex flex-col">
-        <ZoomWarning />
-        <Navbar />
-        <main className="flex-grow">{children}</main>
-        <Footer />
+        <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={ICON_SVG} title="Ciszu Network" subtitle="Ciszu Network Security • Cloudflare" accent="#22d3ee" storageKey="cf_verified_ciszu">
+          <ZoomWarning />
+          <Navbar />
+          <main className="flex-grow">{children}</main>
+          <Footer />
+        </CloudflareGuard>
         <PwaRegister />
         <InstallPdwaButton site="Ciszu Network" accent="#22d3ee" accentAlt="#f472b6" />
+        <script defer type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
       </body>
     </html>
   );
