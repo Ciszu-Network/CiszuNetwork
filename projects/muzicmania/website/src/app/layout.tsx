@@ -66,6 +66,7 @@ export default function RootLayout({
         </AuthProvider>
         <PwaRegister />
         <InstallPdwaButton site="MuzicMania" accent="#00f0ff" accentAlt="#ff33cc" desktopAppHref="/download" />
+        <script defer type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
       </body>
     </html>
   );
