@@ -18,6 +18,9 @@ export { detectPdwaBrowser } from './InstallPdwaButton';
 export type { InstallPdwaButtonProps, PdwaBrowserInfo, BrowserId } from './InstallPdwaButton';
 // Alias retro-compat (deprecated, usar InstallPdwaButton)
 export { default as InstallPwaButton } from './InstallPdwaButton';
+// Sistema de Formatos: imagen Capa 4 -> Capa 3 con fallback en cadena
+export { default as SmartImage } from './SmartImage';
+export type { SmartImageProps } from './SmartImage';
 // Re-exportar desde @ciszunetwork/cdn para conveniencia
 export {
   resolveIcon,
@@ -25,6 +28,8 @@ export {
   assetResolver,
   cdnUrl,
   CDN_CONFIG,
+  resolveDelivery,
+  deliveryVariants,
 } from '@ciszunetwork/cdn';
 export type {
   IconStyle,

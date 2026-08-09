@@ -7,4 +7,4 @@ Garantiza que el servidor headless de Ciszu-AI este corriendo en `127.0.0.1:4096
 
 1. Ejecuta: `ciszu-ai-start` (o `call "C:\Users\fplay\ciszu-ai\ciszu-ai.cmd" server` si falla el PATH).
 2. Verifica que responde: `Invoke-WebRequest http://127.0.0.1:4096 -UseBasicParsing`.
-3. Reporta el PID y el contenido de `.opencode-tmp/opencode-server.log` si algo falla.
+3. Reporta el PID y el contenido de `.opencode/temp/opencode-server.log` si algo falla.

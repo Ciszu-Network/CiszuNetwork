@@ -11,8 +11,6 @@
 
 ## Prioridad Media
 
-- [ ] **Push + deploy** del website (v3.2.0: dashboard + 72 comandos)
-- [ ] **Invalidar caché de config del bot** desde el dashboard (hoy los cambios requieren reinicio del bot)
 - [ ] Más comandos: eventos, sorteos avanzados, economías por guild
 
 ## Pendientes de la sesión (2 ago 2026)

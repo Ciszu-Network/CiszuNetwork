@@ -156,7 +156,7 @@ res = remove(img, session=session)
 res.save(out)
 print("ok")
 `;
-  const tmp = path.join(ROOT, '.opencode-tmp', `rembg_${Date.now()}.py`);
+  const tmp = path.join(ROOT, '.opencode', 'temp', `rembg_${Date.now()}.py`);
   fs.writeFileSync(tmp, script);
   try {
     const out = execFileSync('python', [tmp, inputFile, outputFile], { encoding: 'utf8', timeout: 300000 });

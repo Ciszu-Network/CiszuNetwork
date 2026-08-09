@@ -35,7 +35,7 @@ conecta desde el código.
 
 - `unstable_cache` de Next.js (React Server Components) cachea las respuestas de
   fetch/Supabase en memoria del server; TTL configurable.
-- ISR (ya usado en ciszubot con `revalidate = 60`) prerenderiza sin CDN extra.
+- ISR (ya usado en ciszubot con `revalidate = 60`) prerederiza sin CDN extra.
 - Quién lo necesita para los casos 1 y 2. Cubre el 90% del plan con cero infra.
 
 **Fase 2 — Vercel KV (Upstash):** si la Fase 1 se queda corta (picos,
@@ -51,7 +51,7 @@ conecta con el SDK de Vercel y se integra con `unstable_cache`.
 **Fase 4 — Redis self-host (DESCARTADA por ahora):** exige VPS, mantenimiento,
 seguridad y pago de tarjeta → sobreingeniería total para el volumen actual.
 
-**Reglas de seguridad (para no dañar nada existente):**
+**Reglas de vitrina (para no dañar nada existente):**
 
 1. La caché **siempre** regenerable desde la fuente (si falla, volver a leer de
    la BD sin error visible).
@@ -60,7 +60,8 @@ seguridad y pago de tarjeta → sobreingeniería total para el volumen actual.
 3. Invalidación manual: al escribir (nuevo score, config de guild) borrar la clave.
 4. Separación de responsabilidades: CDN (assets), caché (lecturas dinámicas),
    Postgres (verdad única). Nunca mezclar.
-5. Medir antes de invertir: sin métricas que lo justifiquen, no se toca nada.
+5. Medir antes de invertir: no se toca la Fase 1; sin métricas
+   no se toca nada.
 
 **Conclusión**: hoy no hay nada que hacer (ISR + CDN + Service Worker de la
 PDWA ya cachean lo necesario). El plan queda activado por métricas: si el

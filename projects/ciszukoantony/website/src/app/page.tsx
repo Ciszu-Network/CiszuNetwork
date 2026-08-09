@@ -4,7 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import { assetResolver } from '@ciszunetwork/cdn';
+import { SmartImage } from '@ciszu/ui';
 import { SOCIALS, I } from '@/config/navigation';
 
 const projects = [
@@ -39,17 +39,17 @@ export default function Home() {
 
         <div className="relative z-10 max-w-4xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <Image
-              src={assetResolver.resolve('projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png')}
+            <SmartImage
+              src="projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png"
               alt="Ciszuko Antony" width={140} height={125}
               className="mx-auto drop-shadow-brand animate-float mb-4"
-              priority
+              fetchPriority="high"
             />
-            <Image
-              src={assetResolver.resolve('projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png')}
+            <SmartImage
+              src="projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png"
               alt="Ciszuko Antony" width={400} height={100}
               className="mx-auto drop-shadow-brand max-w-[80vw] mb-6"
-              priority
+              fetchPriority="high"
             />
 
             <p className="text-xl md:text-2xl text-gray-300 mb-2">
