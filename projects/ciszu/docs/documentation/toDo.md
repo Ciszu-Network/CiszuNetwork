@@ -9,7 +9,6 @@
 - [ ] Verificar que supabase no este abierto a todo el mundo, con row level securiy
 - [ ] Verificar APIS Keys en el frontend global para quitarlas de alli.
 - [ ] Agregar rate limiits para endpoints
-- [ ] Como registrar Ciszu Network como empresa gratis.
 - [ ] No indexar "staging" publico en buscadores como Google. Autentificar sin datos reales.
 - [ ] Sistema de monitoreo extra con UptimeRobot (usado antes para ciszubot)
 - [ ] Considerar clerk para autentificacion.
