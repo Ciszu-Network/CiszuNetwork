@@ -156,4 +156,4 @@ pnpm --filter muzicmania-website build   # y ciszubot-website
 - ✅ Fase 3 (tabla Postgres): migración 15 aplicada + verificada.
 - ✅ Case 3 (rate limit) + case 4 (contadores votos).
 - ❌ Fase 4 (Redis self-host): descartada por el plan (no aporta vs. KV/Postgres).
-- Pendiente usuario: opcional anadir el par KV al `.env` del bot Docker (webhook de votos tambien contaria en KV).
+- ✅ Par KV añadido al `.env` del bot Docker (10 ago 2026) — el webhook de votos también cuenta en KV.
