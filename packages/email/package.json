@@ -1,0 +1,28 @@
+{
+  "name": "@ciszunetwork/email",
+  "version": "1.0.0",
+  "description": "Sistema de emails de Ciszu Network: abstracción de proveedor (Brevo hoy, Resend con dominio) con failover",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "scripts": {
+    "lint": "tsc --noEmit",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^25.9.3",
+    "typescript": "^5.3.0"
+  },
+  "keywords": [
+    "email",
+    "brevo",
+    "resend",
+    "ciszu"
+  ],
+  "author": "Ciszu Network",
+  "license": "UNLICENSED",
+  "private": true
+}

@@ -12,6 +12,7 @@
   "dependencies": {
     "@ciszunetwork/utils": "workspace:*",
     "@discordjs/voice": "^0.19.2",
+    "@sentry/node": "^10.69.0",
     "@supabase/supabase-js": "^2.60.0",
     "@top-gg/sdk": "^3.1.6",
     "discord.js": "^14.22.0",

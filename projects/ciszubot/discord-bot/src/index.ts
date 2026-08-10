@@ -15,6 +15,9 @@ import { incrementCommands, getTotalCommands, setupStatsServer, updateStats } fr
 import { logCommand, updateBotStatus } from './services/supabase';
 import { registerListeners, handleButton } from './listeners';
 import { scheduleStatsPosting } from './services/botlists';
+import { initErrorTracking, captureError } from './services/sentry';
+
+initErrorTracking();
 
 const client = new Client({
   intents: [
@@ -155,6 +158,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
       );
     } catch (error) {
       logger.error(`Error en slash '/${interaction.commandName}':`, error);
+      captureError(error, { context: 'slash_command', command: interaction.commandName, user: interaction.user.id });
       const content = '❌ Hubo un error al ejecutar este comando.';
       if (interaction.deferred || interaction.replied) {
         await interaction.followUp({ content, ephemeral: true }).catch(() => undefined);
@@ -289,6 +293,7 @@ client.on('messageCreate', async (message) => {
       logCommand(message.guild?.id ?? 'DM', message.author.id, commandName, args);
     } catch (error) {
       logger.error(`Error al ejecutar '${commandName}':`, error);
+      captureError(error, { context: 'prefix_command', command: commandName, user: message.author.id });
       await message.reply('❌ Ocurrió un error al ejecutar este comando.').catch(() => undefined);
     }
   }
@@ -325,9 +330,13 @@ function gracefulShutdown(signal: string): void {
 }
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
-process.on('unhandledRejection', (error) => logger.error('Rechazo de promesa no manejado:', error));
+process.on('unhandledRejection', (error) => {
+  logger.error('Rechazo de promesa no manejado:', error);
+  captureError(error);
+});
 process.on('uncaughtException', (error) => {
   logger.error('Excepción no capturada:', error);
+  captureError(error);
   process.exit(1);
 });
 

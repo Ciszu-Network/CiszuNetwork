@@ -26,6 +26,7 @@
     "@ciszunetwork/cdn": "workspace:*",
     "@ciszunetwork/utils": "workspace:*",
     "@marsidev/react-turnstile": "^1.5.3",
+    "@sentry/nextjs": "^10.69.0",
     "@supabase/supabase-js": "^2.108.1",
     "@tauri-apps/api": "^2.11.0",
     "@types/react-google-recaptcha": "^2.1.9",
