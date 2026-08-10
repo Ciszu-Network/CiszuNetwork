@@ -17,7 +17,7 @@
  *   docx2pdf → Word (COM, Windows) · pdf2txt → pypdf · csv2xlsx/xlsx2csv → openpyxl
  *   md2txt/txt2md → JS puro (sin dependencias)
  */
-const { execSync } = require('child_process');
+const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -37,12 +37,17 @@ const CONVERSIONS = {
 
 const log = (...a) => console.log(...a);
 
-function run(cmd) {
-  execSync(cmd, { stdio: 'inherit', shell: 'cmd.exe' });
+// SIN shell (spawnSync con args array): las rutas del usuario no se interpretan
+// nunca como comandos (fix semgrep detect-child-process, ago 2026).
+function run(exe, args) {
+  const r = spawnSync(exe, args, { stdio: 'inherit' });
+  if (r.error) throw r.error;
+  if (r.status !== 0) throw new Error(`${path.basename(exe)} terminó con código ${r.status}`);
 }
 
 function weasyprintAvailable() {
-  try { execSync('weasyprint --version', { stdio: 'pipe' }); return true; } catch { return false; }
+  const r = spawnSync('weasyprint', ['--version'], { stdio: 'pipe' });
+  return r.error ? false : r.status === 0;
 }
 
 function convertFile(pair, input, out) {
@@ -77,28 +82,28 @@ function convertFile(pair, input, out) {
       break;
     }
     case 'md2docx':
-      run(`"${PANDOC}" "${input}" -o "${out}"`);
+      run(PANDOC, [input, '-o', out]);
       break;
     case 'md2pdf': {
       if (weasyprintAvailable()) {
-        run(`"${PANDOC}" "${input}" -o "${out}" --pdf-engine=weasyprint`);
+        run(PANDOC, [input, '-o', out, '--pdf-engine=weasyprint']);
       } else {
-        run(`python "${path.join(ENGINES, 'md2pdf.py')}" "${input}" --out "${out}"`);
+        run('python', [path.join(ENGINES, 'md2pdf.py'), input, '--out', out]);
       }
       break;
     }
     case 'docx2pdf':
-      run(`powershell -NoProfile -ExecutionPolicy Bypass -File "${path.join(ENGINES, 'docx2pdf.ps1')}" -File "${input}" -Out "${out}"`);
+      run('powershell', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', path.join(ENGINES, 'docx2pdf.ps1'), '-File', input, '-Out', out]);
       break;
     case 'pdf2txt':
-      run(`python "${path.join(ENGINES, 'pdf2txt.py')}" "${input}" --out "${out}"`);
+      run('python', [path.join(ENGINES, 'pdf2txt.py'), input, '--out', out]);
       break;
     case 'csv2xlsx':
-      run(`python "${path.join(ENGINES, 'csv2xlsx.py')}" "${input}" --out "${out}"`);
+      run('python', [path.join(ENGINES, 'csv2xlsx.py'), input, '--out', out]);
       break;
     case 'xlsx2csv': {
       const outDir = fs.existsSync(out) && fs.statSync(out).isDirectory() ? out : path.dirname(out);
-      run(`python "${path.join(ENGINES, 'xlsx2csv.py')}" "${input}" --out-dir "${outDir}"`);
+      run('python', [path.join(ENGINES, 'xlsx2csv.py'), input, '--out-dir', outDir]);
       break;
     }
     default:
