@@ -337,6 +337,14 @@ producto/errores.
   Project API Key `phc_` verificada + envs local ×4 + Vercel ×4 + Authorized URLs (4
   dominios) vía PATCH `app_urls`. Solo falta el push → deploy → Live events (ver §8 de la doc).
 
+## Sistemas monetización/errores (11 ago 2026) — 3 tareas del toDo
+
+Docs maestros: `ERRORES_SISTEMA.md`, `EMAILS_SISTEMA.md`, `PAGOS_SISTEMA.md` (pendientes del usuario → `toDo.md`).
+
+- **Errores = Sentry** (Developer free 5k/mes, sin tarjeta). `@sentry/nextjs@10.69` en las 4 webs (configs en `src/`: client/server/edge + `instrumentation.ts` con `register()` + `onRequestError`/`captureRequestError` + `global-error.tsx`; `next.config.ts` con `withSentryConfig({org:'ciszu-network', project:<app>, silent:true, sourcemaps:{disable:true}})`; muzicmania usa global-error HTML propio — su shim legacy rompe `next/error`) y `@sentry/node@10.69` en el bot (`src/services/sentry.ts`, solo con `SENTRY_DSN`). Guardrails: tracing/replays OFF (no pisar Vercel Speed Insights ni PostHog); PostHog queda analítica pura. `pnpm-workspace.yaml` aprobó `@sentry/cli`. Builds 4/4 OK. Sin DSNs el SDK es no-op.
+- **Emails = `@ciszunetwork/email`** (nuevo paquete): abstracción `EmailProvider` (send) + Brevo REST v3 (primario HOY, 300/día free sin dominio, sender verificado por email) + Resend (primario con dominio Fase B; bloqueado por defecto salvo `RESEND_ALLOW_UNVERIFIED`) + `sendEmail()` con failover (`EMAIL_FAILOVER=1`). Envs: `EMAIL_PROVIDER`, `BREVO_API_KEY`, `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_FROM_RESEND`. 7 tests. SMTP de Supabase Auth → Dashboard (acción usuario).
+- **Pagos = `@ciszunetwork/payments`** (nuevo paquete): `PaymentProvider` (createInvoice/verifyWebhook) + **NOWPayments** (invoice `x-api-key`, IPN HMAC-SHA512 timing-safe con `x-nowpayments-sig`, mapeo de estados) + **Lemon Squeezy stub** (a los 18, HMAC-SHA256) + `getDonationMethods()` (direcciones desde env, nunca hardcodeadas: `DONATE_*`). Envs: `NOWPAYMENTS_API_KEY`, `NOWPAYMENTS_IPN_SECRET`. 8 tests. Rieles VE: Binance P2P, Zinli, MetaMask; PayPal/Payoneer/Stripe a los 18/LLC (roadmap en la doc).
+
 ## Git conventions
 
 - `.gitignore` excludes: all `*.gif`, large binaries (`*.exe`, `*.mp4`, `*.mp3`, etc.), `projects/ciszu/content/**/*`, CDN video subdirs, legacy `CiszuGamens/`
