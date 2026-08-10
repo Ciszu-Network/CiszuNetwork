@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
+import { fileURLToPath, URL } from 'node:url';
 
 // Tests del monorepo (plan TESTING.md):
 //   - packages/cdn   : lógica pura (node)
@@ -7,6 +8,13 @@ import react from '@vitejs/plugin-react';
 //   - discord-bot    : servicios (node, supabase mockeado; LOG_LEVEL=error vía setup)
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: {
+      // next no está instalado en la raíz del monorepo (solo dentro de cada app):
+      // los tests de packages/ui resuelven next/navigation contra un stub local.
+      'next/navigation': fileURLToPath(new URL('./packages/ui/tests/mocks/next-navigation.ts', import.meta.url)),
+    },
+  },
   test: {
     environment: 'node',
     include: [

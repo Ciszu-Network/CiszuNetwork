@@ -12,10 +12,12 @@
 6. **Suno AI key** — suno.com → Account → API keys
 7. **Cloudflare R2** — dashboard.cloudflare.com → R2 → API tokens (credenciales comentadas en vault, R2 INACTIVO)
 8. **Discord token** — Discord Developer Portal → Bot → Reset Token (el token actual es el nuevo del team; revocar/rotar si se filtra)
+9. **PostHog Secret API Key `phs_`** — ✅ **ROTADA 10 ago 2026 por el usuario**; valor nuevo en vault `services/supabase/.env` (`POSTHOG_SECRET_API_KEY`). ⚠️ Es una **Project Secret API Key (PSAK)**: solo se usa en endpoints específicos que la aceptan (p.ej. `endpoint:run`); NO funciona en `/api/projects/*` (401 "invalid personal API key" es el comportamiento esperado — esos endpoints solo aceptan `phx_`). No es necesaria para el tracking web.
 
 ## Estado conocido
 - ✅ PAT viejo `sbp_` (filtrado): REVOCADO por el usuario (cierra alerta secret scanning)
 - ✅ PAT nuevo `SUPABASE_ACCESS_TOKEN`: activo (vault `services/supabase/.env`)
 - ✅ Migración 11: APLICADA (31 jul 2026) con el PAT nuevo
 - ✅ Token Vercel `vcp_`: ROTADO (10 ago 2026) — nuevo valor en `.env.local` + GH secret `VERCEL_TOKEN`
+- ✅ PostHog (10 ago 2026): Personal `phx_` y Project `phc_` VERIFICADAS contra la API (proyecto "Ciszu Network" 550383); envs locales ×4 + Vercel ×4 configuradas; **Authorized URLs (4 dominios) configurados vía PATCH `app_urls`**; Secret `phs_` rotada (PSAK — solo endpoints que la aceptan)
 - ⏳ Resto de ítems (1-4, 6-8): PENDIENTES — rotar y actualizar `.env` con `scripts/update-env-keys.js`
