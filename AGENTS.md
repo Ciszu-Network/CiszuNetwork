@@ -249,6 +249,53 @@ activo** (p.ej. rate limiting ya en `packages/utils`).
   Pages, D1, Queues, Durable Objects, Vectorize, Workers AI, Access, Tunnel (Tailscale ya
   activo), Imágenes/Stream, Argo/Load Balancing.
 
+## UptimeRobot (10 ago 2026) — monitorización 5 endpoints
+
+**Cuenta**: `fplayersoffcial@gmail.com` (CiszukoAntony, user_id 3030052), plan **Free** (50
+monitores, intervalo mínimo 5 min, región na). API key `u3030052-...` (v2).
+
+- **⚠️ API v2 (`/v2/newMonitor`) BLOQUEADA en free**: devuelve `access_denied "You are not
+  allowed to use some settings with your current plan"` para CUALQUIER tipo de monitor
+  (HTTP/TCP/ping, incluso sin parámetros extra). **La v2 solo sirve para get*/delete**.
+  La alternativa oficial en free es **API v3** (`https://api.uptimerobot.com/v3/monitors`,
+  auth `Authorization: Bearer <key>`, campos camelCase, `type` como string enum
+  `HTTP|KEYWORD|PORT|PING|...`). Con v3 se crean monitores KEYWORD con custom headers
+  incluso en free. La v2 en free da el mismo access_denied que el endpoint agentic.
+- **5 monitores creados y UP (10 ago 2026, ids 803701231–236)**:
+  `ciszunetwork` (kw "Ciszu Network"), `ciszukoantony` (kw "Ciszuko Antony"),
+  `muzicmania` (kw "MuzicMania"), `ciszubot` (kw "CiszuBot") y
+  `supabase-bot-status` (PostgREST `bot_status?select=*&limit=1` con headers
+  apikey/Authorization/Accept-Profile, kw `"online":true` — monitoriza el heartbeat del bot
+  directamente, no solo la web). Todos: tipo KEYWORD, interval 300, timeout 30, región na.
+- ⚠️ **`keywordType` en v3 va AL REVÉS que v2**: `ALERT_EXISTS` = DOWN cuando el keyword
+  EXISTE; para "DOWN solo si desaparece" usar **`ALERT_NOT_EXISTS`** (lección: los 5 nacieron
+  DOWN y se corrigieron con `PATCH /v3/monitors/{id}`).
+- **Gestión desde el PC**: `node` + fetch a v3 (curl/Invoke-WebRequest de PS 5.1 dan
+  problemas de quoting/JSON en este PC). Scripts temporales en `.opencode/temp/ur-*.mjs`
+  (eliminados tras configurar; recrear si hace falta). Listado: `GET /v3/monitors` con
+  Bearer. Verificar estado: `m.status` (UP/DOWN) + `m.currentStateDuration`.
+- **Alertas (10 ago 2026)**: ⚠️ **el plan free NO permite alert contacts Webhook ni
+  Telegram** (los tipos creables por API en free son solo Email=2, Push=12/13 y
+  ProSms/Voice=8/14 bloqueados por API — códigos v3 distintos de v2). Estado:
+  - ✅ **Email**: contact `7626433` (fplayersoffcial@gmail.com, Active) **asignado a los 5
+    monitores** (`assignedAlertContacts: [{alertContactId: "7626433", threshold: 0,
+    recurrence: 0}]` — en v3 cada elemento es OBJETO, no id plano).
+  - ✅ **ntfy (watcher propio)**: como UptimeRobot no puede hacer webhooks en free, existe
+    `scripts/uptime-watch.js` (cron GH Actions cada 5 min, `.github/workflows/uptime-watch.yml`):
+    consulta `GET /v3/monitors` y publica en ntfy SOLO los cambios (DOWN: urgente +
+    rotating_light; UP: low + green_circle; PAUSED). Estado previo en
+    `.opencode/temp/uptime-state.json` (cache GH `uptime-state-v1`; primer run inicializa
+    sin publicar). Secrets GH: `UPTIMEROBOT_API_KEY` + `NOTIFY_TOPIC` (también en vault
+    `services/supabase/.env` y `.env.local`). Test local: `node scripts/uptime-watch.js
+    --dry-run` (no publica, escribe nada; sin `--dry-run` SÍ publica).
+  - ⏳ **Push app móvil**: contact Push (OneSignal) NO creable por API — el usuario debe
+    descargar la app UptimeRobot en Android e iniciar sesión; el contact push aparece
+    solo y hay que asignarlo a los 5 monitores (mismo formato que el email).
+  - ❌ SMS/Voice (contactos 8706086/8706087): son de pago y NO activados → descartados.
+- **Pendiente**: (1) cuando el usuario active el push de la app, asignarlo a los 5
+  monitores; (2) decidir si los incidentes "Keyword has been found" del historial importan
+  (son falsos positivos del tipo corregido, quedan como history).
+
 ## Git conventions
 
 - `.gitignore` excludes: all `*.gif`, large binaries (`*.exe`, `*.mp4`, `*.mp3`, etc.), `projects/ciszu/content/**/*`, CDN video subdirs, legacy `CiszuGamens/`
