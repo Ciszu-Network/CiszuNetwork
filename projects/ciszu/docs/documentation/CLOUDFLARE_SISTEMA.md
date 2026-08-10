@@ -87,12 +87,11 @@ Límites verificados (jul-ago 2026, docs oficiales):
 4. ❌ **R2**: **BLOQUEADO — Cloudflare exige tarjeta de crédito** para activar R2 aunque sea
    gratis. El usuario no tiene tarjeta → descartado (mantener Supabase Storage como CDN
    activo; `asset-config.json` fallback R2 se queda tal cual).
-5. **Uptime**: evaluar UptimeRobot (gratis, sin dominio) para las 4 webs + bot — solo si
-   aporta algo al heartbeat de `ciszubot.bot_status` que ya tenemos. **DECIDIDO (10 ago
-   2026): NO proceder por ahora** — las webs viven en Vercel (CDN global, sin punto único de
-   fallo real) y el bot ya tiene heartbeat en vivo; UptimeRobot requiere cuenta nueva del
-   usuario y aporta poco hoy. Se revisa si hay caídas reales o al pasar a Fase B (Uptime de
-   Cloudflare con dominio).
+5. **Uptime**: evaluar UptimeRobot (gratis, sin dominio) para las 4 webs + bot. **DECIDIDO
+   (10 ago 2026, decisión REVISADA): ACTIVAR con UptimeRobot** — el monitoreo externo aporta
+   alertas proactivas al móvil que el heartbeat local no da (el bot_reporta pero nadie se
+   entera sin abrir la web). Checks exactos y configuración: `MONITOREO_SISTEMA.md`.
+   Cloudflare Uptime sigue en Fase B (con dominio) como capa adicional gratuita.
 
 ### Fase B — Con dominio propio (todo gratis, desbloqueado por el proxy)
 
