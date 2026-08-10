@@ -1,0 +1,41 @@
+name: uptime-watch
+
+# Vigía de UptimeRobot → ntfy (ver scripts/uptime-watch.js).
+# El plan free de UptimeRobot no permite webhook contacts, así que este cron
+# consulta la API v3 cada 5 min y publica en ntfy SOLO los cambios de estado.
+# El estado previo se conserva entre runs con el cache de GitHub Actions.
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: uptime-watch
+  cancel-in-progress: true
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Restaurar estado previo
+        uses: actions/cache@v4
+        with:
+          path: .opencode/temp/uptime-state.json
+          key: uptime-state-v1
+
+      - name: Comprobar estado de los monitores
+        env:
+          UPTIMEROBOT_API_KEY: ${{ secrets.UPTIMEROBOT_API_KEY }}
+          NOTIFY_TOPIC: ${{ secrets.NOTIFY_TOPIC }}
+        run: node scripts/uptime-watch.js

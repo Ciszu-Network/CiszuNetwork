@@ -14,23 +14,23 @@ con login social (Google, Discord, GitHub...) y, al final, un **OAuth oficial de
 Network ("CISZU AUTH")** que delegue en terceros. La escalada es **incremental** — cada
 nivel es un paso pequeño, no un salto:
 
-| Nivel | Descripción | Estado |
-|---|---|---|
-| **N1** | Auth propia, NO centralizada (cada app su cuenta) | ✅ HOY |
-| **N2** | Auth propia + OAuth de terceros (Google, etc.) | Próximo paso |
-| **N3** | OAuth centralizado (una cuenta en todas las apps) | A futuro |
-| **N4** | OAuth centralizado PROPIO + terceros — **"CISZU AUTH"** | Largo plazo |
+| Nivel  | Descripción                                            | Estado       |
+| ------ | ------------------------------------------------------ | ------------ |
+| **N1** | Auth propia, NO centralizada (cada app su cuenta)      | ✅ HOY       |
+| **N2** | Auth propia + OAuth de terceros (Google, etc.)         | Próximo paso |
+| **N3** | OAuth centralizado (una cuenta en todas las apps)      | A futuro     |
+| **N4** | OAuth centralizado PROPIO + terceros —**"CISZU AUTH"** | Largo plazo  |
 
 ---
 
 ## 2. Estado actual (mapa por app)
 
-| App | Auth hoy | Nivel |
-|---|---|---|
-| **MuzicMania** | Supabase Auth (email/password, login por `@username`, reCAPTCHA, RLS `auth.uid()`) | N1 |
-| **Ciszubot web** | OAuth Discord manual + sesión HMAC casera (`lib/auth.ts`) | N1 |
-| **CiszuNetwork** | Sin auth | — |
-| **CiszukoAntony** | Sin auth | — |
+| App               | Auth hoy                                                                          | Nivel |
+| ----------------- | --------------------------------------------------------------------------------- | ----- |
+| **MuzicMania**    | Supabase Auth (email/password, login por`@username`, reCAPTCHA, RLS `auth.uid()`) | N1    |
+| **Ciszubot web**  | OAuth Discord manual + sesión HMAC casera (`lib/auth.ts`)                         | N1    |
+| **CiszuNetwork**  | Sin auth                                                                          | —     |
+| **CiszukoAntony** | Sin auth                                                                          | —     |
 
 Dato clave: **MuzicMania ya usa Supabase Auth** (proyecto `obwzzmbvkrcscqwptlqo`). La
 infraestructura de identidad del ecosistema ya existe y es gratis.
@@ -41,38 +41,38 @@ infraestructura de identidad del ecosistema ya existe y es gratis.
 
 ### 3.1. Coste a distintas escalas (US$/mes)
 
-| Proveedor | Tipo | Free tier | 50K MAU | 100K MAU | 500K MAU |
-|---|---|---|---|---|---|
-| **Supabase Auth** | BaaS (Postgres) | **50K MAU** | $0 | **~$162** | ~$1,487 |
-| **Clerk** | Servicio | 50K MRU* | $0 | **~$1,000-1,825** | ~$9,800 |
-| **Auth0 (Okta)** | Servicio enterprise | 25K MAU | ~$175-240 | ~$525+ | $20K-40K |
-| **Firebase Auth** | BaaS (Google) | 50K MAU | $0 | ~$275 | ~$1,500+ |
-| **WorkOS AuthKit** | Servicio | **1M MAU** | $0 | $0 | $0 (SSO de pago) |
-| **Kinde** | Servicio | 10.5K MAU | ~$1,383 | ~$2,758 | más |
-| **SuperTokens** | OSS auto-hospedado | $0 (self-host) / 5K (managed) | $0+hosting | $0+hosting | $0+hosting |
-| **Better Auth** | OSS librería (MIT) | **$0 para siempre** | $0+hosting | $0+hosting | $0+hosting |
-| **Auth.js (NextAuth)** | OSS librería | $0 para siempre | $0+hosting | $0+hosting | $0+hosting |
+| Proveedor              | Tipo                | Free tier                     | 50K MAU    | 100K MAU          | 500K MAU         |
+| ---------------------- | ------------------- | ----------------------------- | ---------- | ----------------- | ---------------- | --- | --- |
+| **Supabase Auth**      | BaaS (Postgres)     | **50K MAU**                   | $0         | **~$162**         | ~$1,487          |     |
+| **Clerk**              | Servicio            | 50K MRU\*                     | $0         | **~$1,000-1,825** | ~$9,800          |     |
+| **Auth0 (Okta)**       | Servicio enterprise | 25K MAU                       | ~$175-240  | ~$525+            | $20K-40K         |     |
+| **Firebase Auth**      | BaaS (Google)       | 50K MAU                       | $0         | ~$275             | ~$1,500+         |     |
+| **WorkOS AuthKit**     | Servicio            | **1M MAU**                    | $0         | $0                | $0 (SSO de pago) |     |
+| **Kinde**              | Servicio            | 10.5K MAU                     | ~$1,383    | ~$2,758           | más              |     |
+| **SuperTokens**        | OSS auto-hospedado  | $0 (self-host) / 5K (managed) | $0+hosting | $0+hosting        | $0+hosting       |     |     |
+| **Better Auth**        | OSS librería (MIT)  | **$0 para siempre**           | $0+hosting | $0+hosting        | $0+hosting       |     |     |
+| **Auth.js (NextAuth)** | OSS librería        | $0 para siempre               | $0+hosting | $0+hosting        | $0+hosting       |     |     |
 
-\* **MRU ≠ MAU**: Clerk cobra por *Monthly Returning Users* (usuarios que vuelven en el mes).
+\* **MRU ≠ MAU**: Clerk cobra por _Monthly Returning Users_ (usuarios que vuelven en el mes).
 Con apps de alta retención, MRU ≈ MAU — el free de 50K no es más generoso de lo que parece.
 
 ### 3.2. Características (verificado 2026)
 
-| Feature | Supabase Auth | Clerk | Auth0 | Firebase | Better Auth | WorkOS | SuperTokens |
-|---|---|---|---|---|---|---|---|
-| Email/password | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| OAuth social (Google/Discord/GitHub/Apple...) | ✅ 20+ | ✅ (solo 3 en Free) | ✅ 70+ | ✅ 10+ | ✅ 34+ | ✅ | ✅ |
-| Magic link | ✅ | ✅ | ✅ | parcial | plugin | ✅ | ✅ |
-| MFA (TOTP) | ✅ (TOTP) | ⚠️ solo Pro | ✅ | ✅ | plugin | ✅ | ✅ |
-| Passkeys | beta | ⚠️ solo Pro | ✅ | beta | plugin | ✅ | ✅ |
-| UI prebuilt | ❌ (comunidad) | ✅ excelente | ✅ | FirebaseUI | plugin (better-auth-ui) | AuthKit | ✅ |
-| Organizations/B2B | ❌ (manual) | ✅ | ✅ (pago) | ❌ | plugin | ✅ fuerte | ⚠️ pago |
-| SAML/SSO enterprise | ❌ | pago | ✅ | ❌ | plugin | ✅ (core) | pago |
-| **RLS nativa (auth.uid)** | ✅ **único** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| OAuth provider propio (ser IdP) | ✅ OAuth Server | ❌ | ✅ (enterprise) | ❌ | plugin OIDC | ❌ | ❌ |
-| Self-hosted / open source | ✅ (GoTrue) | ❌ | ❌ | ❌ | ✅ MIT | ❌ | ✅ |
-| Una cuenta en varias apps | ✅ mismo proyecto | satellite (Pro) | ✅ | ✅ | manual | ✅ | ✅ |
-| Coste por usuario extra | **$0.00325/MAU** | $0.02/MRU | ~$0.07/MAU | $0.0055 | $0 | $0 (1M) | $0 (self) |
+| Feature                                       | Supabase Auth     | Clerk               | Auth0           | Firebase   | Better Auth             | WorkOS    | SuperTokens |
+| --------------------------------------------- | ----------------- | ------------------- | --------------- | ---------- | ----------------------- | --------- | ----------- | --- | --- | --- |
+| Email/password                                | ✅                | ✅                  | ✅              | ✅         | ✅                      | ✅        | ✅          |
+| OAuth social (Google/Discord/GitHub/Apple...) | ✅ 20+            | ✅ (solo 3 en Free) | ✅ 70+          | ✅ 10+     | ✅ 34+                  | ✅        | ✅          |
+| Magic link                                    | ✅                | ✅                  | ✅              | parcial    | plugin                  | ✅        | ✅          |
+| MFA (TOTP)                                    | ✅ (TOTP)         | ⚠️ solo Pro         | ✅              | ✅         | plugin                  | ✅        | ✅          |
+| Passkeys                                      | beta              | ⚠️ solo Pro         | ✅              | beta       | plugin                  | ✅        | ✅          |
+| UI prebuilt                                   | ❌ (comunidad)    | ✅ excelente        | ✅              | FirebaseUI | plugin (better-auth-ui) | AuthKit   | ✅          |
+| Organizations/B2B                             | ❌ (manual)       | ✅                  | ✅ (pago)       | ❌         | plugin                  | ✅ fuerte | ⚠️ pago     |
+| SAML/SSO enterprise                           | ❌                | pago                | ✅              | ❌         | plugin                  | ✅ (core) | pago        |
+| **RLS nativa (auth.uid)**                     | ✅**único**       | ❌                  | ❌              | ❌         | ❌                      | ❌        | ❌          |
+| OAuth provider propio (ser IdP)               | ✅ OAuth Server   | ❌                  | ✅ (enterprise) | ❌         | plugin OIDC             | ❌        | ❌          |
+| Self-hosted / open source                     | ✅ (GoTrue)       | ❌                  | ❌              | ❌         | ✅ MIT                  | ❌        | ✅          |
+| Una cuenta en varias apps                     | ✅ mismo proyecto | satellite (Pro)     | ✅              | ✅         | manual                  | ✅        | ✅          |
+| Coste por usuario extra                       | **$0.00325/MAU**  | $0.02/MRU           | ~$0.07/MAU      | $0.0055    | $0                      | $0 (1M)   | $0 (self)   |     |     |     |
 
 ### 3.3. Los muros de Clerk (Free tier, 2026)
 
@@ -101,15 +101,15 @@ Supabase a escala, para features que Supabase ya cubre o se construyen en códig
 **¿Clerk tiene algún beneficio que NO pise Supabase?** Sí, pero todos son "conveniencia
 administrada", no capacidades imposibles en Supabase:
 
-| Beneficio de Clerk | ¿Cubre Supabase? | Esfuerzo de cubrirlo en Supabase |
-|---|---|---|
-| UI prebuilt (SignIn/UserButton/UserProfile) | No tiene UI oficial | Construir ~3 páginas de login + avatar (una vez, reutilizables en las 4 webs) |
-| MFA/passkeys de primera | TOTP 2FA básico sí; passkeys beta | Aceptable hoy; activar TOTP es 1 línea |
-| Organizations B2B | No | No lo necesitamos (B2C) |
-| Satellite domains (sesión compartida multi-dominio) | Sesión por dominio (misma cuenta) | Con N4 + dominio propio se logra SSO real |
-| Audit logs / device tracking | Parcial | Para usuarios de verdad, no para hoy |
-| Entorno Dev/Prod + impersonación | No | Menor |
-| Tooling de migración | No aplica | No lo necesitamos |
+| Beneficio de Clerk                                  | ¿Cubre Supabase?                  | Esfuerzo de cubrirlo en Supabase                                              |
+| --------------------------------------------------- | --------------------------------- | ----------------------------------------------------------------------------- |
+| UI prebuilt (SignIn/UserButton/UserProfile)         | No tiene UI oficial               | Construir ~3 páginas de login + avatar (una vez, reutilizables en las 4 webs) |
+| MFA/passkeys de primera                             | TOTP 2FA básico sí; passkeys beta | Aceptable hoy; activar TOTP es 1 línea                                        |
+| Organizations B2B                                   | No                                | No lo necesitamos (B2C)                                                       |
+| Satellite domains (sesión compartida multi-dominio) | Sesión por dominio (misma cuenta) | Con N4 + dominio propio se logra SSO real                                     |
+| Audit logs / device tracking                        | Parcial                           | Para usuarios de verdad, no para hoy                                          |
+| Entorno Dev/Prod + impersonación                    | No                                | Menor                                                                         |
+| Tooling de migración                                | No aplica                         | No lo necesitamos                                                             |
 
 **Regla**: no cambiar de tren; subir escalones. Un IdP nuevo se re-evalúa SOLO si se
 cumplen los criterios de §8.
@@ -118,17 +118,17 @@ cumplen los criterios de §8.
 
 ## 5. Alternativas evaluadas (y por qué no)
 
-| Alternativa | Veredicto | Motivo |
-|---|---|---|
-| **Better Auth** (OSS, MIT, 30K⭐, mejor DX TS del mercado 2025-26) | ⚠️ Vigilar | Gratis para siempre + plugins (2FA, orgs, OIDC, passkeys). **Pero**: pisa RLS (su sesión no entra en `auth.jwt()` de Supabase → habría que migrar muzicmania igual que con Clerk) y hay que operarlo. Opción de emergencia si Supabase encarece; no hoy. |
-| **WorkOS AuthKit** (1M MAU gratis) | ❌ | 1M gratis es el mejor free del mercado, pero es otro IdP administrado (migración) y SSO enterprise de pago; no aporta sobre Supabase en B2C. |
-| **Auth0** | ❌ | El más caro (enterprise), fechas de precio anuales; "poco motivo para empezar en Auth0 en 2026" (consenso del mercado). |
-| **Firebase Auth** | ❌ | 50K MAU gratis pero lock-in Google + BD nuestra es Supabase; B2B pobre. |
-| **SuperTokens** | ❌ | OSS self-hosted gratis pero hay que operarlo; DX peor que Better Auth; orgs/SAML de pago. |
-| **Kinde** | ❌ | Caro a escala (~$2,758/100K); no aporta sobre Supabase. |
-| **Auth.js / NextAuth v5** | ❌ | Gratis y maduro, pero tipado manual, config compleja y sin RLS; no aporta sobre Supabase. |
-| **AWS Cognito** | ❌ | Solo si se viviera en AWS. |
-| **Keycloak/Logto/Ory (self-hosted)** | ❌ | Operación pesada; overkill para el ecosistema. |
+| Alternativa                                                        | Veredicto  | Motivo                                                                                                                                                                                                                                                  |
+| ------------------------------------------------------------------ | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Better Auth** (OSS, MIT, 30K⭐, mejor DX TS del mercado 2025-26) | ⚠️ Vigilar | Gratis para siempre + plugins (2FA, orgs, OIDC, passkeys).**Pero**: pisa RLS (su sesión no entra en `auth.jwt()` de Supabase → habría que migrar muzicmania igual que con Clerk) y hay que operarlo. Opción de emergencia si Supabase encarece; no hoy. |
+| **WorkOS AuthKit** (1M MAU gratis)                                 | ❌         | 1M gratis es el mejor free del mercado, pero es otro IdP administrado (migración) y SSO enterprise de pago; no aporta sobre Supabase en B2C.                                                                                                            |
+| **Auth0**                                                          | ❌         | El más caro (enterprise), fechas de precio anuales; "poco motivo para empezar en Auth0 en 2026" (consenso del mercado).                                                                                                                                 |
+| **Firebase Auth**                                                  | ❌         | 50K MAU gratis pero lock-in Google + BD nuestra es Supabase; B2B pobre.                                                                                                                                                                                 |
+| **SuperTokens**                                                    | ❌         | OSS self-hosted gratis pero hay que operarlo; DX peor que Better Auth; orgs/SAML de pago.                                                                                                                                                               |
+| **Kinde**                                                          | ❌         | Caro a escala (~$2,758/100K); no aporta sobre Supabase.                                                                                                                                                                                                 |
+| **Auth.js / NextAuth v5**                                          | ❌         | Gratis y maduro, pero tipado manual, config compleja y sin RLS; no aporta sobre Supabase.                                                                                                                                                               |
+| **AWS Cognito**                                                    | ❌         | Solo si se viviera en AWS.                                                                                                                                                                                                                              |
+| **Keycloak/Logto/Ory (self-hosted)**                               | ❌         | Operación pesada; overkill para el ecosistema.                                                                                                                                                                                                          |
 
 **Ninguna alternativa da una ventaja sobre "Supabase Auth + RLS ya funcionando" en las
 fases N1-N4.** Supabase es, además, el **más barato a escala** de los servicios administrados
@@ -138,15 +138,16 @@ fases N1-N4.** Supabase es, además, el **más barato a escala** de los servicio
 
 ## 6. Roadmap incremental
 
-| Fase | Disparador | Acción | Coste |
-|---|---|---|---|
-| A | — (ya decidido) | Nada: documento aprobado | $0 |
-| B | Alguien pide "login con Google" en MuzicMania | **N2**: providers en Supabase Auth + botón `signInWithOAuth` | ~1h |
-| C | Una 2ª web necesita cuentas | **N3**: `@supabase/ssr` + UI login en 3 webs; unificar ciszubot web a Supabase | días |
-| D | Dominio propio activo (Fase B Cloudflare) | **N4**: CISZU AUTH con Supabase OAuth Server | semanas |
-| E | N3 se vuelve cuello de botella (UI/MFA/orgs) | Re-evaluar con criterios de §8 | decisión |
+| Fase | Disparador                                    | Acción                                                                         | Coste    |
+| ---- | --------------------------------------------- | ------------------------------------------------------------------------------ | -------- |
+| A    | — (ya decidido)                               | Nada: documento aprobado                                                       | $0       |
+| B    | Alguien pide "login con Google" en MuzicMania | **N2**: providers en Supabase Auth + botón `signInWithOAuth`                   | ~1h      |
+| C    | Una 2ª web necesita cuentas                   | **N3**: `@supabase/ssr` + UI login en 3 webs; unificar ciszubot web a Supabase | días     |
+| D    | Dominio propio activo (Fase B Cloudflare)     | **N4**: CISZU AUTH con Supabase OAuth Server                                   | semanas  |
+| E    | N3 se vuelve cuello de botella (UI/MFA/orgs)  | Re-evaluar con criterios de §8                                                 | decisión |
 
 **Reglas anti-sobreingeniería**:
+
 - Una cuenta = un `auth.users`. **Nunca dos IdPs por app** (el híbrido es lo peor: dos
   identidades por usuario, sincronización, migración doble).
 - No añadir un IdP nuevo sin evaluar el mapeo de `user_id` (UUID ↔ texto).
