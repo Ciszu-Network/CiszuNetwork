@@ -88,18 +88,21 @@ leyendo (corre con privilegios de SYSTEM/fplay).
 
 Ver §2 "Eliminados". Menos copias en claro = menos superficie de ataque.
 
-### 3.4 RESPONSABILIDAD DEL USUARIO — BitLocker (cifrado de disco) ⏳
+### 3.4 IMPLEMENTADA — BitLocker (cifrado de disco) ✅
 
-**La capa más importante que falta.** El HDD E: (WDC 1TB) y el SSD C: están sin cifrado
-verificado (10 ago: `Get-BitLockerVolume` denegado sin admin). Con BitLocker activado, el
-robo físico del disco no expone nada (ni siquiera los `.env` en claro).
+**Habilitado y verificado 11 ago 2026**. E: (HDD, donde vive el repo y el `.env` en claro)
+está cifrado al **100% (FullyEncrypted) con Protection Status: ON** y protectores
+**Password** (fplay) + **RecoveryPassword**. La recovery key está guardada en:
+Bitwarden (vault personal, item "BitLocker - E: (PC Ciszuko)") y en el vault local
+(`BITLOCKER_PASSWORD` / `BITLOCKER_RECOVERY_KEY` en `services/supabase/.env`, cifrado con age).
 
-Pasos (PowerShell como admin):
-```powershell
-Get-BitLockerVolume            # verificar estado actual
-Enable-BitLocker -MountPoint E: -EncryptionMethod XtsAes128 -UsedSpaceOnly
-# Guardar la clave de recuperación en el Microsoft Account / Bitwarden (NUNCA en E:)
-```
+Cifrado (11 ago, PowerShell admin): `Enable-BitLocker -MountPoint E: -EncryptionMethod XtsAes128 -UsedSpaceOnly`.
+
+> ⚠️ **Restante (opcional, futuro)**: C: (SSD del sistema, 222 GB) y D: (931 GB) siguen
+> `FullyDecrypted`. En C: vive la identity de age (`C:\Users\fplay\.ciszu\...`) — si se
+> quiere protección completa del sistema, habilitar BitLocker también en C: (requiere
+> reinicio y nueva recovery key). No es urgente: los secrets principales están en E:,
+> ya cifrado, y las copias están cifradas con age.
 
 ### 3.5 IMPLEMENTADA — Vault maestro en la nube (Bitwarden) ✅
 
@@ -191,3 +194,4 @@ powershell -File scripts\vault.ps1 backup
 | 10 ago 2026 | age v1.2.1 instalado + identity + `.env.age` + bundle cifrado + ACLs + limpieza + `vault.ps1` + `update-env-keys.js` cifra backups |
 | 10 ago 2026 | Doc creada; pendientes del usuario: BitLocker (3.4), vault nube (3.5), pago futuro (3.6) |
 | 10 ago 2026 | **Vault Bitwarden implementado (3.5 ✅)**: cuenta creada, org Ciszu Network + colección, 7 items de empresa (Supabase/Vercel/PostHog/IA/Infra/machine account/age identity), auth keys y recovery codes personales en el vault personal (fuera de la org), `BW_CLIENT_ID`/`BW_CLIENT_SECRET` en vault local. Pendiente del usuario: activar BitLocker en C:/E: (3.4) |
+| 11 ago 2026 | **BitLocker E: completado (3.4 ✅)**: cifrado 100% verificado (Protection ON, Password + RecoveryPassword), recovery key en Bitwarden y vault local. C: y D: siguen sin cifrar (opcional futuro) |
