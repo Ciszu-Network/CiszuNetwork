@@ -11,6 +11,7 @@ declare module 'react' {
   export function useRef<T>(initialValue: T): { current: T };
   export function useMemo<T>(factory: () => T, deps: readonly any[] | undefined): T;
   export function useContext<T>(context: any): T;
+  export const Suspense: any;
   const React: any;
   export default React;
 }

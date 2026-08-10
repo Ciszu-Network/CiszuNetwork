@@ -24,6 +24,9 @@ export type { CloudflareGuardProps } from './CloudflareGuard';
 // Sistema de Formatos: imagen Capa 4 -> Capa 3 con fallback en cadena
 export { default as SmartImage } from './SmartImage';
 export type { SmartImageProps } from './SmartImage';
+// Analíticas: PostHog (product analytics compartido; NO pisa Cloudflare Web Analytics)
+export { default as PostHogAnalytics, captureEvent } from './PostHogAnalytics';
+export type { PostHogAnalyticsProps } from './PostHogAnalytics';
 // Re-exportar desde @ciszunetwork/cdn para conveniencia
 export {
   resolveIcon,

@@ -296,6 +296,47 @@ monitores, intervalo mínimo 5 min, región na). API key `u3030052-...` (v2).
 - Los incidentes "Keyword has been found" del historial son falsos positivos del tipo
   corregido (`ALERT_NOT_EXISTS`) — quedan como history, no requieren acción.
 
+## Sistema de analíticas (PostHog) — 10 ago 2026
+
+**Doc maestro: `projects/ciszu/docs/documentation/ANALYTICS_POSTHOG.md`** (qué/cómo/costos
+verificados/eventos/activación). **Híbrido sin solapamientos** con el resto del ecosistema de
+monitoreo: Cloudflare Web Analytics (tráfico, ya activo), Vercel Speed Insights (Core Web
+Vitals, muzicmania), UptimeRobot (disponibilidad), ntfy (notificaciones) — PostHog mide SOLO
+producto/errores.
+
+- **Free tier sin tarjeta** (verificado 10 ago 2026): 1M eventos/mes + 5k replays + 100k
+  errores + 1M flags; pago solo tras superar límites ($0.00005/evento; ⚠️ props custom
+  $0.000248 ≈5x — limitar props). Retención 1 año, 1 proyecto → las 4 webs se separan con la
+  propiedad `app`.
+- **Componente compartido `packages/ui/src/PostHogAnalytics.tsx`** (sin deps npm, patrón
+  CloudflareGuard): carga `array.js`, init `capture_pageview:false` (NO activar el Web
+  Analytics de PostHog — duplicaría Cloudflare), `$pageview` manual con usePathname +
+  Suspense, **degradación segura** si falta `NEXT_PUBLIC_POSTHOG_KEY`, exporta `captureEvent`
+  (eventos custom fase 2). Integrado en los 4 layouts (`app="ciszunetwork|ciszukoantony|
+  muzicmania|ciszubot"`).
+- **Envs**: `NEXT_PUBLIC_POSTHOG_KEY` + `NEXT_PUBLIC_POSTHOG_HOST` (default
+  `https://us.i.posthog.com`) en `.env.local` ×4 + Vercel production ×4. Sin fallbacks en
+  código. **Configuradas 10 ago 2026** (local ×4 + Vercel ×4 via API, targets
+  production+preview+development). **Authorized URLs** (4 dominios vercel) configurados vía
+  `PATCH /api/projects/550383/` con el campo `app_urls` (el update NO acepta `phs_`, solo
+  `phx_`). Credenciales en vault: `POSTHOG_ORG_ID`, `POSTHOG_PROJECT_ID=550383`,
+  `POSTHOG_PERSONAL_API_KEY` (phx_ — gestión API), `POSTHOG_SECRET_API_KEY` (phs_ — PSAK,
+  SOLO endpoints que la aceptan, 401 esperado en `/api/projects/*`), `NEXT_PUBLIC_POSTHOG_KEY`
+  (phc_ — pública por diseño).
+- **Sentry queda DESCARTADO por ahora**: PostHog Error Tracking (100k/mes free) cubre la
+  tarea de errores del toDo sin segunda cuenta; re-evaluar solo si se necesitan source maps
+  avanzados.
+- **Testing**: 7 tests nuevos (`packages/ui/tests/PostHogAnalytics.test.tsx`), suite 121/121.
+  `next/navigation` resuelto en tests via alias en `vitest.config.mts` → `packages/ui/tests/
+  mocks/next-navigation.ts` (next NO está en la raíz del monorepo) y `next` añadido como
+  devDependency de `@ciszu/ui` (patrón react/react-dom) para el tsc de las apps.
+- ⚠️ **MuzicMania**: su shim legacy `src/types/declarations.d.ts` re-declara `module 'react'`
+  — añadir ahí CUALQUIER export nuevo que se importe de react en packages/ui (lección:
+  `Suspense` añadido 10 ago 2026).
+- **Activación COMPLETADA (10 ago 2026)**: cuenta + proyecto "Ciszu Network" (550383) +
+  Project API Key `phc_` verificada + envs local ×4 + Vercel ×4 + Authorized URLs (4
+  dominios) vía PATCH `app_urls`. Solo falta el push → deploy → Live events (ver §8 de la doc).
+
 ## Git conventions
 
 - `.gitignore` excludes: all `*.gif`, large binaries (`*.exe`, `*.mp4`, `*.mp3`, etc.), `projects/ciszu/content/**/*`, CDN video subdirs, legacy `CiszuGamens/`
