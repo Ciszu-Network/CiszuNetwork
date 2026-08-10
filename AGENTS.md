@@ -344,6 +344,26 @@ producto/errores.
 - No commit/push without explicit user request
 - Git push fails from this machine (DNS cannot resolve github.com) — user pushes manually
 
+## 🔐 Vault de credenciales — DECISIÓN PENDIENTE del usuario (10 ago 2026)
+
+**El vault `services/supabase/.env` (26 secrets en texto plano) NO es 100% seguro.** Protección
+actual: gitignore + historial git limpio + un solo usuario Windows (fplay) + gitleaks/secretlint.
+Debilidades: sin cifrado en reposo (disco E: HDD 1TB, BitLocker sin verificar — `Get-BitLockerVolume`
+denegado sin admin), backups en texto plano en `archives/backups/envs/2025-08-21/` (9 copias;
+fecha de carpeta 2025-08-21 ≠ contenido jul 2026 → posible bug de `update-env-keys.js`), duplicados
+(`services/supabase/.env.local` vieja, `.env.local` raíz con `VERCEL_TOKEN`, 4 webs, bot `.env`)
+y sin copia maestra de recuperación fuera del PC.
+
+**Opciones presentadas al usuario (esperando su elección, todas compatibles):**
+1. **BitLocker en disco E:** — cifrado de disco completo vs robo físico; gratis (Win Pro); sin fricción; requiere admin.
+2. **age/agebox** — cifrar el `.env` en disco; descifrar en memoria en los scripts; gratis; fricción baja.
+3. **Bitwarden o Proton Pass** — vault maestro en la nube (gratis) como copia de recuperación/sharing futuro.
+4. **Limpieza + ACLs NTFS** — borrar duplicados y backups viejos en texto plano, arreglar fecha del backup, ACL restrictiva al vault.
+5. **Infisical/1Password** — secret manager con UI (pago); overkill hoy para 1 persona.
+
+> NO ejecutar ninguna capa hasta que el usuario confirme cuál(es). Retomar con "sigue con la tarea del vault".
+> Diagnóstico detallado verificado 10 ago 2026: historial git limpio (solo `.env.r2.example` plantilla), `archives/` ignorado por git.
+
 ## muzicmania-source (recovery from Vercel)
 
 `muzicmania-source/` contiene ~14,852 archivos (201 MB) extraídos del deployment de Vercel.
