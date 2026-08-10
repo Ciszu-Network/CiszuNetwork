@@ -37,6 +37,7 @@ y el vault de la nube asegura la **recuperación**.
 | `archives/backups/envs/vault-*.env.age` | **Bundle cifrado** de TODOS los `.env` (zip + age) | ACL fplay/SYSTEM |
 | `C:\Users\fplay\.ciszu\ciszu-vault-key.txt` | **Identity age** (clave privada) | ACL fplay/SYSTEM + copia en Bitwarden (usuario) |
 | `C:\Users\fplay\Tools\age\` | Binario age v1.2.1 | — |
+| Bitwarden (nube) | Copia maestra de secrets + identity age (org Ciszu + vault personal) | Org "Ciszu Network" + cuenta Francisco Garcia (Free) |
 
 ### Eliminados en la limpieza (10 ago 2026)
 
@@ -79,9 +80,9 @@ en claro; lo cifrado son las **copias maestras y backups**.
 - `archives/backups/envs/vault-*.env.age`
 
 Re-aplicar tras cambios con: `.\scripts\vault.ps1 lock-acl`.
-⚠️ Fallaron por propietario distinto (no bloqueante): `projects/ciszubot/discord-bot/.env`
-(lo crea Docker) y la carpeta `archives/backups/envs/` — los archivos críticos dentro sí
-tienen ACL.
+✅ `projects/ciszubot/discord-bot/.env` — ACL aplicada 10 ago 2026 (takeown + icacls
+elevado, UAC aceptado): propiedad fplay, permisos solo fplay + SYSTEM. Docker lo sigue
+leyendo (corre con privilegios de SYSTEM/fplay).
 
 ### 3.3 IMPLEMENTADA — Limpieza de superficie ✅
 
@@ -100,10 +101,31 @@ Enable-BitLocker -MountPoint E: -EncryptionMethod XtsAes128 -UsedSpaceOnly
 # Guardar la clave de recuperación en el Microsoft Account / Bitwarden (NUNCA en E:)
 ```
 
-### 3.5 RESPONSABILIDAD DEL USUARIO — Vault maestro en la nube (Bitwarden/Proton Pass) ⏳
+### 3.5 IMPLEMENTADA — Vault maestro en la nube (Bitwarden) ✅
 
-Copia de recuperación de los 26 secrets + la identity age. Gratis. Garantiza que la pérdida
-del PC no destruya el acceso a Supabase/Vercel/Discord/PostHog.
+**Cuenta**: `fplayersoffcial@gmail.com` (Francisco Garcia, plan Free, creada 10 ago 2026).
+Copia de recuperación de los secrets + la identity age. Garantiza que la pérdida del PC no
+destruya el acceso a Supabase/Vercel/Discord/PostHog. Estructura (10 ago 2026):
+
+- **Org "Ciszu Network"** (id `daea0e3b-…`) — SOLO lo de la empresa:
+  - Colección **"Ciszu Network"** (id `9ec56b0a-…`, owner con manage) — 7 items:
+    Supabase, Vercel, PostHog, IA, Infra, Bitwarden machine account y age identity.
+    Cada item: Custom Fields `nombre=valor` por variable, carpeta "Ciszu Network".
+- **Vault personal (Francisco Garcia, fuera de la org)** — sus carpetas:
+  - Carpeta **"Francisco Garcia"** — auth keys y recovery: Cloudflare API key,
+    Discord 2FA backup codes, Recovery codes, cert `prod-ca-2021.crt`, item PDF recovery
+    de Bitwarden (nota con ruta local; adjuntos requieren Premium).
+  - Carpeta **"Ciszu Network"** (vault personal) — vista del usuario de los items de org.
+- **Machine account** (client_id `user.09b89e6b-…`) — token API `api` para automatizar
+  (`BW_CLIENT_ID`/`BW_CLIENT_SECRET` añadidos al vault local `.env`, item en la org).
+  ⚠️ El secret fue pegado en el chat de opencode (10 ago) — rotar desde
+  web vault → Settings → API → Rotate cuando se considere oportuno.
+
+Flujo de carga (lección): `bw login --apikey` + `bw unlock` + `bw import bitwardenjson
+<file>` (el CLI v2026.6.0 pide el formato POSICIONAL, no `--format`). Mover items a la org
+se hace borrando y recreando con `organizationId`+`collectionIds` en el payload (el edit
+de items importados falla con "decryption operation failed"). Scripts one-shot en
+`.opencode/temp/bw-setup.mjs` / `bw-import.json` (gitignored, borrados al cierre).
 
 ### 3.6 EN PENDIENTE — Secret manager de pago (Infisical / 1Password) ⏳
 
@@ -168,3 +190,4 @@ powershell -File scripts\vault.ps1 backup
 | 10 ago 2026 | Diagnóstico (26 secrets, texto plano, backups sin cifrar, sin BitLocker verificado) |
 | 10 ago 2026 | age v1.2.1 instalado + identity + `.env.age` + bundle cifrado + ACLs + limpieza + `vault.ps1` + `update-env-keys.js` cifra backups |
 | 10 ago 2026 | Doc creada; pendientes del usuario: BitLocker (3.4), vault nube (3.5), pago futuro (3.6) |
+| 10 ago 2026 | **Vault Bitwarden implementado (3.5 ✅)**: cuenta creada, org Ciszu Network + colección, 7 items de empresa (Supabase/Vercel/PostHog/IA/Infra/machine account/age identity), auth keys y recovery codes personales en el vault personal (fuera de la org), `BW_CLIENT_ID`/`BW_CLIENT_SECRET` en vault local. Pendiente del usuario: activar BitLocker en C:/E: (3.4) |

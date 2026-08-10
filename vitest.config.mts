@@ -21,6 +21,8 @@ export default defineConfig({
       'packages/cdn/tests/**/*.test.ts',
       'packages/ui/tests/**/*.test.{ts,tsx}',
       'packages/utils/tests/**/*.test.ts',
+      'packages/email/tests/**/*.test.ts',
+      'packages/payments/tests/**/*.test.ts',
       'projects/ciszubot/discord-bot/tests/**/*.test.ts',
     ],
     setupFiles: [
