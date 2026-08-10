@@ -344,25 +344,25 @@ producto/errores.
 - No commit/push without explicit user request
 - Git push fails from this machine (DNS cannot resolve github.com) — user pushes manually
 
-## 🔐 Vault de credenciales — DECISIÓN PENDIENTE del usuario (10 ago 2026)
+## 🔐 Vault de credenciales — protección implementada (10 ago 2026)
 
-**El vault `services/supabase/.env` (26 secrets en texto plano) NO es 100% seguro.** Protección
-actual: gitignore + historial git limpio + un solo usuario Windows (fplay) + gitleaks/secretlint.
-Debilidades: sin cifrado en reposo (disco E: HDD 1TB, BitLocker sin verificar — `Get-BitLockerVolume`
-denegado sin admin), backups en texto plano en `archives/backups/envs/2025-08-21/` (9 copias;
-fecha de carpeta 2025-08-21 ≠ contenido jul 2026 → posible bug de `update-env-keys.js`), duplicados
-(`services/supabase/.env.local` vieja, `.env.local` raíz con `VERCEL_TOKEN`, 4 webs, bot `.env`)
-y sin copia maestra de recuperación fuera del PC.
+**El vault `services/supabase/.env` (26 secrets) queda protegido por capas.** Doc maestro:
+`projects/ciszu/docs/documentation/VAULT_SEGURIDAD.md` (amenazas, inventario, procedimientos,
+checklist). Estado real:
 
-**Opciones presentadas al usuario (esperando su elección, todas compatibles):**
-1. **BitLocker en disco E:** — cifrado de disco completo vs robo físico; gratis (Win Pro); sin fricción; requiere admin.
-2. **age/agebox** — cifrar el `.env` en disco; descifrar en memoria en los scripts; gratis; fricción baja.
-3. **Bitwarden o Proton Pass** — vault maestro en la nube (gratis) como copia de recuperación/sharing futuro.
-4. **Limpieza + ACLs NTFS** — borrar duplicados y backups viejos en texto plano, arreglar fecha del backup, ACL restrictiva al vault.
-5. **Infisical/1Password** — secret manager con UI (pago); overkill hoy para 1 persona.
-
-> NO ejecutar ninguna capa hasta que el usuario confirme cuál(es). Retomar con "sigue con la tarea del vault".
-> Diagnóstico detallado verificado 10 ago 2026: historial git limpio (solo `.env.r2.example` plantilla), `archives/` ignorado por git.
+- **age v1.2.1** (`C:\Users\fplay\Tools\age\`): copia maestra cifrada
+  `services/supabase/.env.age` + bundle cifrado `archives/backups/envs/vault-*.env.age`
+  (todos los `.env` del repo). Identity: `C:\Users\fplay\.ciszu\ciszu-vault-key.txt`
+  (public key `age1jut59wen44w4r7e92c9faxqxk7wdlkpyhdutf9p8980xvg359utqj4xl32`).
+  Gestión: `scripts/vault.ps1` (`crypt|decrypt|verify|backup|keygen|lock-acl`).
+- **ACLs NTFS** (fplay+SYSTEM): identity, `.env`, `.env.age`, `.env.local` raíz y bundles.
+- **Limpieza**: eliminados backups texto plano (`2025-08-21/`, 9 copias), duplicada
+  `services/supabase/.env.local` (referencia quitada de `update-env-keys.js`) y `.env` raíz
+  vacío.
+- **`update-env-keys.js`** cifra con age los backups que genera antes de cada rotación.
+- BitLocker y vault maestro en la nube quedan a cargo del usuario (requieren admin/cuenta);
+  secret manager de pago (Infisical/1Password) en evaluación futura en el doc, no en AGENTS.
+- Verificación periódica: `vault.ps1 verify` + checklist §5 del doc.
 
 ## muzicmania-source (recovery from Vercel)
 

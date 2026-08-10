@@ -14,7 +14,6 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
 const ENV_FILES = [
-  'services/supabase/.env.local',
   'services/supabase/.env',
   'projects/ciszu/website/.env.local',
   'projects/ciszukoantony/website/.env.local',
@@ -33,6 +32,9 @@ if (!newAnon || !newSvc) {
 }
 
 // Backup de los .env actuales antes de rotar (regla: backups complejos -> archives/backups/envs/)
+// ⚠️ Seguridad del vault (10 ago 2026): el backup se hace en texto plano temporal y
+// se CIFRA con age (`age -e`) usando la identity de `C:\Users\fplay\.ciszu\ciszu-vault-key.txt`.
+// Si age o la identity no existen, el backup se mantiene en texto plano con warning.
 function pad2(n) { return String(n).padStart(2, '0'); }
 const now = new Date();
 const stamp = `${now.getFullYear()}-${pad2(now.getMonth()+1)}-${pad2(now.getDate())}`;
@@ -46,7 +48,33 @@ for (const rel of ENV_FILES) {
   fs.copyFileSync(src, dst);
   backedUp++;
 }
-console.log(`\n  [BK] ${backedUp} .env respaldados en archives/backups/envs/${stamp}/`);
+if (backedUp > 0) {
+  const { execFileSync } = require('child_process');
+  const ageExe = 'C:\\Users\\fplay\\Tools\\age\\age.exe';
+  const keyFile = 'C:\\Users\\fplay\\.ciszu\\ciszu-vault-key.txt';
+  let encrypted = 0;
+  if (fs.existsSync(ageExe) && fs.existsSync(keyFile)) {
+    const walk = (dir) => {
+      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, entry.name);
+        if (entry.isDirectory()) walk(full);
+        else if (!entry.name.endsWith('.age')) {
+          try {
+            execFileSync(ageExe, ['-e', '-i', keyFile, '-o', full + '.age', full], { stdio: 'ignore' });
+            fs.rmSync(full);
+            encrypted++;
+          } catch { /* deja el archivo en claro si falla */ }
+        }
+      }
+    };
+    walk(backupDir);
+  }
+  if (encrypted > 0 && encrypted === backedUp) {
+    console.log(`\n  [BK] ${backedUp} .env respaldados y CIFRADOS en archives/backups/envs/${stamp}/ (age)`);
+  } else {
+    console.log(`\n  [BK] ${backedUp} .env respaldados en archives/backups/envs/${stamp}/ (${encrypted}/${backedUp} cifrados con age — revisar)`);
+  }
+}
 
 let count = 0;
 for (const rel of ENV_FILES) {
