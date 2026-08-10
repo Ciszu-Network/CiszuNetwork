@@ -87,7 +87,7 @@ async function getConnectionString(env) {
 
 async function findPgDump() {
   const candidates = [
-    'E:\\DaVinci\\PGTools\\pg_dump.exe',
+    'C:\\Program Files\\PostgreSQL\\18\\bin\\pg_dump.exe',
     'C:\\Program Files\\PostgreSQL\\17\\bin\\pg_dump.exe',
     'C:\\Program Files\\PostgreSQL\\16\\bin\\pg_dump.exe',
     'C:\\Program Files\\PostgreSQL\\15\\bin\\pg_dump.exe',
