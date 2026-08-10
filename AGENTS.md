@@ -368,7 +368,7 @@ checklist). Estado real:
   `services/supabase/.env.local` (referencia quitada de `update-env-keys.js`) y `.env` raíz
   vacío.
 - **`update-env-keys.js`** cifra con age los backups que genera antes de cada rotación.
-- BitLocker y vault maestro en la nube quedan a cargo del usuario (requieren admin/cuenta);
+- **BitLocker E: COMPLETADO (11 ago 2026)**: cifrado 100% verificado (Protection ON, Password + RecoveryPassword en Bitwarden + vault). ⚠️ C: (donde vive la identity age) y D: siguen sin cifrar (opcional futuro). Vault maestro en la nube a cargo del usuario (requiere cuenta);
   secret manager de pago (Infisical/1Password) en evaluación futura en el doc, no en AGENTS.
 - Verificación periódica: `vault.ps1 verify` + checklist §5 del doc.
 
