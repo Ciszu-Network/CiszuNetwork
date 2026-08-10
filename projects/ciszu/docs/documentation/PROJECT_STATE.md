@@ -1,6 +1,6 @@
 # Estado Completo del Proyecto Ciszu Network
 
-**Última actualización:** 28 Julio, 2026
+**Última actualización:** 10 Agosto, 2026
 **Propietario:** Ciszuko Antony (Francisco Garcia) — Caracas, Venezuela
 **Stack Principal:** Next.js 15 + TypeScript + Tailwind CSS v4 + Supabase + Tauri 2 + pnpm + Turborepo + Vercel
 **Monorepo:** pnpm workspaces (root: E:\Ciszu Network)
@@ -11,48 +11,43 @@
 **Filtro pnpm:** ciszunetwork-website
 **URL:** ciszunetwork.vercel.app
 **Framework:** Next.js 15 (App Router)
-**Estado:** ✅ Activo
-**Docs:** docs/ (root) — 17 txt, 17 md, 17 docx, 17 pdf, 12 documentation
-**public/docs/:** ✅ Creado
+**Estado:** ✅ Activo — despliega desde `main` (GitHub Actions → Vercel)
+**Docs:** docs/ (root) multi-formato + documentation/ completa
 
 ### 2. Ciszuko Antony Portfolio (projects/ciszukoantony/website)
 **Filtro pnpm:** ciszukoantony-website
 **URL:** ciszukoantony.vercel.app
 **Framework:** Next.js 15 (App Router)
 **Estado:** ✅ Activo
-**Docs:** projects/ciszukoantony/docs/ — 16 txt, 16 md, 15 docx, 16 pdf, 11 documentation
-**public/docs/:** ✅ Creado
+**Docs:** projects/ciszukoantony/docs/ multi-formato
+**Media:** content/ (fuente maestra de logos en content/logos)
 
 ### 3. MuzicMania (projects/muzicmania)
 **Filtro pnpm:** muzicmania-website
 **URL:** muzicmania.vercel.app
 **Framework:** Next.js 15 + Tauri 2 (Rust)
 **Versions:** website (web), launcher (desktop, Windows), mobile (placeholder)
-**Estado:** ✅ Activo (desarrollo continuo)
-**Docs:** projects/muzicmania/docs/ — 22 txt, 22 md, 16 docx, 16 pdf, 19 documentation (referencia)
-**public/docs/:** ✅ Creado en website/, launcher/, mobile/
-**Iconos:** 5,194 SVGs en 3 sets (outline, filled, flags)
+**Estado:** ✅ Activo — REST corregido (schema muzicmania), auth Supabase, scoreboard cacheado
+**Docs:** projects/muzicmania/docs/ multi-formato
+**Iconos:** sistema de iconos inline-first + CDN fallback
 
 ### 4. CiszuBot (projects/ciszubot)
 **Filtro pnpm:** ciszubot-website (website), ciszubot (bot)
 **URL:** ciszubot.vercel.app
 **Framework:** Next.js 15 (website) + Discord.js v14 (bot)
-**Estado:** ⚠️ Website activo, bot en desarrollo en discord-bot/
-**Docs:** projects/ciszubot/docs/ — 18 txt, 18 md, 17 docx, 17 pdf, 11 documentation
-**public/docs/:** ✅ Creado en website/
-**Shigamens Server:** Documentación especial incluida (2 docs)
+**Estado:** ✅ Activo — bot v3.2.0 (72 comandos, 9 categorías), Supabase conectado (schema ciszubot, heartbeat bot_status), dashboard OAuth, Docker (node:24-alpine)
+**Docs:** projects/ciszubot/docs/ multi-formato
+**Panel:** Express :5000 (stats + /api/votes)
 
 ### 5. CiszuGamens (ciszugamens/)
-**Tipo:** Comunidad gaming / Discord server
+**Tipo:** Comunidad gaming / Discord server (legacy)
 **Estado:** ✅ Comunidad activa
-**Docs:** ciszugamens/docs/ — 17 txt, 18 md, 16 docx, 16 pdf, 4 documentation
-**Archivos especiales:** MOD_GUIDELINES, STAFF_GUIDELINES, ASCII_ICONS, FAST_TEXT, xlsx template
+**Docs:** ciszugamens/docs/ multi-formato
 
 ### 6. @ciszunetwork/cdn (packages/cdn)
 **Tipo:** Paquete npm compartido
-**Función:** Resolver de assets e iconos
-**Métodos:** resolveIcon(name, style, format), assetResolver.resolve(path)
-**Integración:** Supabase Storage (bucket: ciszu-assets)
+**Función:** Resolver de assets e iconos + sistema de formatos (deliveryVariants)
+**Integración:** Supabase Storage (bucket: ciszu-cdn)
 **Estado:** ✅ Activo
 
 ## 📊 Documentación — Estado Global
@@ -65,11 +60,11 @@ txt (source of truth) → md (markdown) → docx (Word) → pdf (distribution)
 ### Scripts de Conversión
 | Script | Tecnología | Función | Estado |
 |---|---|---|---|
-| scripts/txt2md.js | Node.js | TXT → MD (convierte formato plano a markdown con headers) | ✅ |
+| scripts/txt2md.js | Node.js | TXT → MD | ✅ |
 | scripts/md2office.js | Node.js + Pandoc | MD → DOCX | ✅ |
-| scripts/txt2pdf.py | Python + Reportlab | MD → PDF (con Arial, estilo profesional, bilingüe) | ✅ |
+| scripts/txt2pdf.py | Python + Reportlab | MD → PDF | ✅ |
 | scripts/docx2pdf.ps1 | PowerShell + Word COM | DOCX → PDF | ⚠️ Word COM hangs |
-| scripts/sync-public-docs.js | Node.js | Copia docs/ → public/docs/ en websites | ✅ |
+| scripts/sync-public-docs.js | Node.js | docs/ → public/docs/ | ✅ |
 
 ### Documentos Estándar (22 tipos)
 - ABOUT, ACTA, CATALOGO, CHANGELOG, CONTACT, CREDITS, DOCUMENTATION
@@ -82,15 +77,6 @@ txt (source of truth) → md (markdown) → docx (Word) → pdf (distribution)
 - RULES.docx/pdf — Composición manual
 - ACTA.docx/pdf — Composición manual
 
-### documentation — Estructura Estándar (12 archivos base)
-Archivos comunes a todos los proyectos:
-AGENT_INSTRUCTIONS.md, AGENT_SECURITY_PROTOCOLS.md, ARCHITECTURE.md,
-INITIAL_PROMPT.md, MIGRATION_HANDOVER.md, PROJECT_HISTORY.md,
-PROJECT_STATE.md, PROJECTS.md*, STACK.md, STATUS.md, TO_DO_LIST.md, WORKFLOW.md
-(*PROJECTS.md solo en root)
-
-MuzicMania tiene 19 archivos (es el proyecto de referencia).
-
 ## 🔧 Herramientas Instaladas
 
 ### Sistema
@@ -99,33 +85,41 @@ MuzicMania tiene 19 archivos (es el proyecto de referencia).
 - **Python:** 3.14
 - **pnpm:** 10.8.1
 
+### BD / API / Git
+- **dbvr Community** 26.1.4 + **DBeaver CE** (datasource `supabase` verificado)
+- **Bruno** 4.0.0 (colecciones en apis/bruno/, `pnpm api:test`)
+- **Fork** 2.16.1 (Git GUI)
+
 ### Documentación
-- **Pandoc:** 3.10 (en C:\Users\fplay\AppData\Local\Microsoft\WinGet\Packages\...)
+- **Pandoc:** 3.10
 - **Reportlab:** 5.0.0 (Python)
-- **WeasyPrint:** 69.0 (Python, requiere GTK DLLs)
+
+### Seguridad / QA
+- ZAP 2.17.0 (DAST), semgrep, trivy, gitleaks, secretlint, Vitest + Playwright
 
 ### Git
-- **Repos:** GitHub (CiszukoAntony organization)
+- **Repo:** GitHub Org `Ciszu-Network/CiszuNetwork` (privado)
 - **Push:** No funciona desde esta máquina (DNS bloquea github.com) — usuario push manual
 - **Commits:** Solo cuando el usuario lo solicita explícitamente
 - **Mensajes:** En español, descriptivos, sin emojis
 
-## 🚧 Pendientes
-1. **PDF engine**: WeasyPrint requiere GTK DLLs; wkhtmltopdf no se pudo instalar
-2. **Bot Discord**: projects/ciszubot/discord/ no existe aún
-3. **CDN upload**: Ejecutar pnpm cdn:upload con SUPABASE_SERVICE_ROLE_KEY
-4. **MuzicMania mobile**: Placeholder vacío
-5. **Tests**: Ningún framework configurado
-6. **GUIDELINES/RULES/ACTA DOCX/PDF**: Edición manual pendiente
-7. **DNS**: No se puede hacer push a GitHub desde esta máquina
+## 🚧 Pendientes (vigentes — viven en su documentación de origen)
 
-## ✅ Completado (v2.0.0)
-- [x] Documentación multi-formato completa en todos los proyectos
-- [x] documentation reestructurados siguiendo modelo MuzicMania
-- [x] public/docs/ creado en todos los websites
-- [x] Scripts de automatización de documentación (5 scripts)
-- [x] Contenido real escrito (sin placeholders de MuzicMania)
-- [x] Pandoc 3.10 instalado
-- [x] Reportlab (Python) instalado
-- [x] Pipeline CI/CD (GitHub Actions)
-- [x] Despliegue Vercel automatizado
+1. **Ciszubot OAuth**: registrar callback en Discord Developer Portal + `DISCORD_CLIENT_SECRET` en Vercel (ver AGENTS.md sección Ciszubot web)
+2. **Tokens bot lists**: `TOP_GG_TOKEN` / `DISCORDBOTLIST_TOKEN` (código listo, sin ellos no postea)
+3. **GUIDELINES/RULES/ACTA DOCX/PDF**: composición manual
+4. **DNS**: push a GitHub desde esta máquina (usuario push manual)
+
+## ✅ Completado (desde v2.0.0 → v3.0.0, ago 2026)
+- [x] CDN migrado y operativo: bucket `ciszu-cdn` (7.353 objetos / 160.6 MB), bucket legacy `ciszu-assets` ELIMINADO (10 ago 2026), sistema de formatos (avif/webp/opus) + SmartImage
+- [x] PDWA en las 4 webs (manifest + sw + botón instalar)
+- [x] Bot Discord v3.2.0 completo (72 comandos) + migración 14 (13 tablas ciszubot) + migración 16 (endurecimiento RLS)
+- [x] Dashboard OAuth de ciszubot (cookies HMAC, rate limits)
+- [x] Caché multi-tienda implementado (memoria → KV Upstash `upstash-kv-ciszunetwork` → Postgres `ciszu.cache`)
+- [x] Monitoreo externo: UptimeRobot (5 monitores + email + push) + watcher ntfy (cron GH Actions)
+- [x] Cloudflare standalone: Web Analytics + Turnstile en las 4 webs
+- [x] Seguridad: RLS 28/28 tablas, rate limits en endpoints, robots.ts ×4, secretlint/gitleaks hooks
+- [x] Testing: Vitest 96 tests + Playwright E2E (4 webs)
+- [x] Backups de `.env` automatizados (update-env-keys.js)
+- [x] **Backup BD real funcionando**: PostgreSQL 18.4 instalado + primer backup OK (10 ago 2026)
+- [x] Documentación multi-formato + documentation reestructurados
