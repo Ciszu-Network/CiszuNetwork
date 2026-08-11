@@ -59,6 +59,7 @@ export class AssetResolver {
   }
 
   resolve(path: string, opts?: ResolveOptions): string {
+    if (isAbsoluteUrl(path)) return path;
     const clean = path.replace(/^\//, '');
     const useLocal = opts?.forceLocal || !this.cdnUrl;
 
@@ -82,6 +83,11 @@ export function resolveAssetPath(path: string, opts?: ResolveOptions): string {
 }
 
 export { assetUrl, getContentType } from './src/cdn-client';
+
+/** True si la ruta ya es una URL absoluta (http/https) — no re-resolverla. */
+export function isAbsoluteUrl(p: string): boolean {
+  return /^https?:\/\//i.test(p);
+}
 
 /**
  * Devuelve la lista ordenada de candidatos de ENTREGA (Capa 4) para una ruta

@@ -49,13 +49,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${exo2.variable} ${rajdhani.variable}`}>
       <body className="bg-black text-white min-h-screen font-sans flex flex-col">
-        <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={ICON_SVG} title="Ciszuko Antony" subtitle="Ciszuko Antony Security • Cloudflare" accent="#f472b6" storageKey="cf_verified_ciszukoantony">
+        <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={ICON_SVG} title="Ciszuko Antony" subtitle="Ciszuko Antony Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszukoantony">
           <Navbar />
           <main className="flex-grow">{children}</main>
           <Footer />
         </CloudflareGuard>
         <PwaRegister />
-        <InstallPdwaButton site="Ciszuko Antony" accent="#f472b6" accentAlt="#22d3ee" />
+        <InstallPdwaButton site="Ciszuko Antony" accent="#a78bfa" accentAlt="#22d3ee" />
         <PostHogAnalytics app="ciszukoantony" />
         <script defer type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
       </body>
