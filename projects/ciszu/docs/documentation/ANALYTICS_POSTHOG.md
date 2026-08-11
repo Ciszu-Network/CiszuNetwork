@@ -145,8 +145,8 @@ Tarifas públicas por uso (tras el free tier mensual de cada producto):
 - ✅ `$pageleave` — **fix 11 ago 2026**: con `capture_pageview:false` el SDK silencia los pageleaves (default `'if_capture_pageview'`) → ahora `capture_pageleave: true` explícito en el init.
 - ✅ `Scroll depth` — OK por defecto del SDK.
 - ✅ `$web_vitals` (LCP/CLS/FCP/INP) — **fix 11 ago 2026**: `capture_performance: { web_vitals: true, network_timing: false }` (sin el flag cae al remote config, desactivado).
-- ⚠️ **Reverse proxy** — recomendación pendiente: requiere dominio propio (Fase B Cloudflare, `CLOUDFLARE_SISTEMA.md`) para enrutar `us.i.posthog.com` por dominio propio y evitar ad blockers. No arreglable desde `*.vercel.app`.
 - ✅ **Authorized URLs** — resuelto (paso 6).
+- ⚠️ **Reverse proxy** — NO es un fallo: mejora la precisión con usuarios que usan ad-blockers (bloquean `us.i.posthog.com`). Sin dominio propio NO se puede configurar en el dashboard; **solución gratis sin dominio: Cloudflare Worker en `*.workers.dev`** (worker listo en `tools/posthog-proxy/worker.js`): pegar en Workers & Pages → Create → Deploy → usar la URL como `NEXT_PUBLIC_POSTHOG_HOST` (Vercel ×4 + `.env.local` ×4) → marcar Reverse proxy en Project Settings → Web Analytics. El check se resuelve tras marcar el toggle.
 - **Secret API Key (`phs_`)**: NO se usa para el tracking. Es una **Project Secret API Key (PSAK)** (server-to-server, con scopes) válida SOLO para endpoints que la aceptan (`endpoint:run`, etc.); en `/api/projects/*` devuelve 401 ("invalid personal API key" — esperado, esos endpoints solo aceptan `phx_`). Rotada por el usuario 10 ago 2026; guardada en vault `POSTHOG_SECRET_API_KEY`. Para gestión de keys se usa la `phx_` (`GET/POST/PATCH/DELETE /api/projects/550383/project_secret_api_keys/`).
 
 ## 9. Eventos a capturar
