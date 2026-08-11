@@ -2,8 +2,6 @@
 
 > Este archivo solo puede ser editado por Ciszuko Antony.
 
-- [ ] Corregir error de duplicacion de proyectos en cada proyecto, usar la CDN o ruta directa de su contenido por proyecto. No redondear inncesariamiente o reduplicar contenidos. E implementar wiztree como herramientra para medir pesos y estructura visual de carpetas.
-
 ## Pagos (metodología + NOWPayments) — EN IMPLEMENTACIÓN
 
 - [x] Decisión: NOWPayments HOY (crypto sin KYC) → Lemon Squeezy a los 18 → Stripe con LLC. Metodología completa en `PAGOS_SISTEMA.md`.
