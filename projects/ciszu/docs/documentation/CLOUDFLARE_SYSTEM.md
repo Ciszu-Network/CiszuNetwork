@@ -22,7 +22,7 @@ implementaremos (gratis primero, pago a futuro) y cuáles descartamos por sobrei
 | **Standalone** (Turnstile, Web Analytics, R2, Workers, Pages) | API/script/SDK independientes, no necesitan proxy | ✅ **SÍ** — funcionan en `*.vercel.app` |
 
 **Consecuencia práctica**: hoy (todo en `*.vercel.app`) podemos usar Turnstile, Web Analytics
-y R2. Cuando compremos dominios (ver `DOMINIOS_SISTEMA.md`) y los proxeemos por Cloudflare,
+y R2. Cuando compremos dominios (ver `DOMAINS_SYSTEM.md`) y los proxeemos por Cloudflare,
 se desbloquea de golpe la capa de protección completa.
 
 ## 2. Estado actual — qué está implementado y dónde (10 ago 2026)
@@ -91,12 +91,12 @@ Límites verificados (jul-ago 2026, docs oficiales):
 5. **Uptime**: evaluar UptimeRobot (gratis, sin dominio) para las 4 webs + bot. **DECIDIDO
    (10 ago 2026, decisión REVISADA): ACTIVAR con UptimeRobot** — el monitoreo externo aporta
    alertas proactivas al móvil que el heartbeat local no da (el bot_reporta pero nadie se
-   entera sin abrir la web). Checks exactos y configuración: `MONITOREO_SISTEMA.md`.
+   entera sin abrir la web). Checks exactos y configuración: `MONITORING_SYSTEM.md`.
    Cloudflare Uptime sigue en Fase B (con dominio) como capa adicional gratuita.
 
 ### Fase B — Con dominio propio (todo gratis, desbloqueado por el proxy)
 
-1. Dominios en **Porkbun (PayPal)** o Cloudflare Registrar (tarjeta) — ver `DOMINIOS_SISTEMA.md`.
+1. Dominios en **Porkbun (PayPal)** o Cloudflare Registrar (tarjeta) — ver `DOMAINS_SYSTEM.md`.
 2. Mover nameservers a **Cloudflare** (gratis) y proxear (naranja) los 4 dominios:
    - DDoS ilimitado + WAF gestionado + SSL universal automáticos.
    - **Email Routing**: `hola@ciszunetwork.com` → Gmail (gratis, ilimitado).
@@ -153,12 +153,12 @@ Límites verificados (jul-ago 2026, docs oficiales):
   (5 cron triggers free) · Email Routing: developers.cloudflare.com/email-routing/limits
   (inbound ilimitado, 200 reglas/dominio) · Email Service: developers.cloudflare.com/email-service/platform/pricing
   (sending solo Workers Paid 3k/mes) · Pages free: 500 builds/mes (dev.to, ago 2026).
-- Internas: `DOMINIOS_SISTEMA.md` (dominios), `asset-config.json` (fallback R2),
-  `AGENTS.md` (CDN strategy, caché multi-tienda), `toDo.md` (emails/analítica/uptime).
+- Internas: `DOMAINS_SYSTEM.md` (dominios), `asset-config.json` (fallback R2),
+  `AGENTS.md` (CDN strategy, caché multi-tienda), `TODO.md` (emails/analítica/uptime).
 
 ## 9. Archivos relacionados
 
-- `DOMINIOS_SISTEMA.md` — cuándo y dónde comprar los dominios (Porkbun/Cloudflare).
+- `DOMAINS_SYSTEM.md` — cuándo y dónde comprar los dominios (Porkbun/Cloudflare).
 - `projects/muzicmania/website/src/components/layout/CloudflareGuard.tsx` — wrapper fino del guard compartido (Tauri skip + store sync).
 - `projects/muzicmania/website/src/app/api/verify-turnstile/route.ts` — patrón de verificación.
 - `asset-config.json` — `providers.fallback: cloudflare-r2` (R2 como fallback del CDN).

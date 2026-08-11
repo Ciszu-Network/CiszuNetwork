@@ -2,7 +2,7 @@
 
 > ⚠️ Datos a preparar antes de entrar a `saren.gob.ve` → Trámites en Línea → Reserva de
 > nombre. La reserva verifica que no exista una denominación igual o confundible registrada.
-> Ver `GUIA_REGISTRO_MERCANTIL.md`.
+> Ver `COMMERCIAL_REGISTRATION_GUIDE.md`.
 
 ---
 

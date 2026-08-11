@@ -1,6 +1,6 @@
 # Sistema de monitoreo externo (UptimeRobot) — Ciszu Network
 
-> **Estado**: ACTIVADO (10 ago 2026). Decisión revisada — ver `CLOUDFLARE_SISTEMA.md`
+> **Estado**: ACTIVADO (10 ago 2026). Decisión revisada — ver `CLOUDFLARE_SYSTEM.md`
 > (antes: "NO proceder por ahora", reabierta porque el monitoreo externo aporta alertas
 > proactivas que el heartbeat local no da).
 > Cuenta del usuario: UptimeRobot (login Google) — ver §4 para los checks exactos.
@@ -90,6 +90,6 @@ sin tarjeta, login Google, alertas múltiples y status page.
 
 ## Referencias
 
-- `CLOUDFLARE_SISTEMA.md` — tabla de capas + Fase B (Uptime de Cloudflare con dominio).
-- `VECTORES_RAG_PLAN.md` — la otra tarea del toDo evaluada (Pinecone → pgvector).
+- `CLOUDFLARE_SYSTEM.md` — tabla de capas + Fase B (Uptime de Cloudflare con dominio).
+- `RAG_VECTORS_PLAN.md` — la otra tarea del toDo evaluada (Pinecone → pgvector).
 - Heartbeat del bot: `AGENTS.md` → sección CiszuBot (bot_status cada 60s).

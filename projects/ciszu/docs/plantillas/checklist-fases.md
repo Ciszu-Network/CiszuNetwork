@@ -1,7 +1,7 @@
 # CHECKLIST — Formalización de Ciszu Network por Fases
 
 > Lista de control global (marca cada ítem cuando esté hecho). Documentos principales:
-> `PLAN_REGISTRO_EMPRESA.md` y las guías de este mismo directorio.
+> `COMPANY_REGISTRATION_PLAN.md` y las guías de este mismo directorio.
 
 ## FASE 0 — Fundación ($0, sin tarjeta) — HOY
 
@@ -14,7 +14,7 @@
 - [ ] Carpeta "evidencia de uso de la marca" iniciada (capturas con fecha de las 4 webs,
       bot, redes)
 - [ ] Nombre "Ciszu Network"/"CiszukoAntony" asegurado en las redes y plataformas principales
-- [ ] (Si hay $2–12 vía PayPal) dominios reservados — ver `DOMINIOS_SISTEMA.md`
+- [ ] (Si hay $2–12 vía PayPal) dominios reservados — ver `DOMAINS_SYSTEM.md`
 - [ ] Registro de ingresos/gastos iniciado (hoja de cálculo) — base fiscal
 
 ## FASE 1 — Marca en SAPI (~$410 USD en efectivo, sin tarjeta)

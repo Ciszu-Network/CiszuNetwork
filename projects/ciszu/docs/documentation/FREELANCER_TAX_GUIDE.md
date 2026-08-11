@@ -59,9 +59,9 @@ Todo pagable en **efectivo/Bs./divisas — sin tarjeta de crédito**.
 
 ## 6. Recomendación práctica
 
-1. Obtener el RIF YA (gratis) — ver `GUIA_RIF_PERSONA_NATURAL.md`.
+1. Obtener el RIF YA (gratis) — ver `RIF_PERSON_GUIDE.md`.
 2. Llevar un registro sencillo (hoja de cálculo) de cada ingreso/gasto desde el primer día.
 3. Al formalizar clientes recurrentes: consultar a un **contador** (honorarios en efectivo)
    para el cálculo exacto de ISLR/IVA/IGTF del caso.
 4. Cuando exista empresa (Fase 2): el régimen pasa a persona jurídica (RIF J-..., vigencia
-   1 año, declaraciones especiales) — ver `GUIA_REGISTRO_MERCANTIL.md`.
+   1 año, declaraciones especiales) — ver `COMMERCIAL_REGISTRATION_GUIDE.md`.

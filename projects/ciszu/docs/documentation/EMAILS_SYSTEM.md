@@ -1,4 +1,4 @@
-# EMAILS_SISTEMA — Emails transaccionales (Brevo hoy → Resend con dominio)
+# EMAILS_SYSTEM — Emails transaccionales (Brevo hoy → Resend con dominio)
 
 **Estado (11 ago 2026)**: paquete `@ciszunetwork/email` listo y probado (16 tests). Pendiente del usuario: cuenta Brevo + API key y verificación de sender (ver §5).
 
@@ -9,7 +9,7 @@ Comparación verificada (ago 2026), priorizando **free sin tarjeta**:
 | Proveedor | Free tier (verificado) | Dominio | Notas |
 | --- | --- | --- | --- |
 | **Brevo** ✅ (HOY) | 300 emails/**día** (~9k/mes) **permanente**, sin tarjeta | **No obligatorio**: sender verificado por email (código 6 dígitos) | SMTP `smtp-relay.brevo.com:587/465` + API v3 + plantillas + estadísticas. Deliverability menor sin dominio (SPF/DKIM del remitente son de Brevo) |
-| **Resend** ✅ (CON DOMINIO) | 3.000/mes (100/día), 30 días de logs | **Sí**: 1 dominio verificado (SPF/DKIM automáticos) | API moderna, 100% fiable en entregabilidad, ideal cuando exista el dominio (Fase B Cloudflare, `CLOUDFLARE_SISTEMA.md`) |
+| **Resend** ✅ (CON DOMINIO) | 3.000/mes (100/día), 30 días de logs | **Sí**: 1 dominio verificado (SPF/DKIM automáticos) | API moderna, 100% fiable en entregabilidad, ideal cuando exista el dominio (Fase B Cloudflare, `CLOUDFLARE_SYSTEM.md`) |
 | SendGrid | **DESCARTADO**: free nuevo = trial 60 días (100/día), luego se detiene; API/SMTP exigen dominio autenticado (single sender solo marketing → 403) | Sí | Era el candidato obvio hasta verificar el trial |
 | MailerSend | 12k/mes | Sí (obligatorio) | Requiere dominio desde el día 1 |
 | Mailgun / SES | trial/12 meses limitado | Sí | Requieren tarjeta |

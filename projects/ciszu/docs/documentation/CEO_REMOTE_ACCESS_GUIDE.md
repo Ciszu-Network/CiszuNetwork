@@ -98,7 +98,7 @@ opencode                    # alternativa: instancia local independiente
 
 ## Referencias
 
-- Implementación técnica completa y troubleshooting: `projects/ciszu/docs/documentation/CONTROL_REMOTO.md`
+- Implementación técnica completa y troubleshooting: `projects/ciszu/docs/documentation/REMOTE_CONTROL.md`
 - Script reproducible de la infraestructura: `scripts/setup-remote-control.ps1`
 - Lanzadores (ninguno reinicia por defecto: solo ensure si falta + `opencode attach http://127.0.0.1:4096`; para reiniciar usar los `-reset`):
   - **Entrar (PC)**: `ciszu-ai-pc` o `opencode-ciszu-pc` (alias → tool oficial `C:\Users\fplay\ciszu-ai\ciszu-ai.cmd`, espejo sin espacios)

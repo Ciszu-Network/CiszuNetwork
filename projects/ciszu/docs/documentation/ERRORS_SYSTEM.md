@@ -1,4 +1,4 @@
-# ERRORES_SISTEMA — Manejo de errores con Sentry
+# ERRORS_SYSTEM — Manejo de errores con Sentry
 
 **Estado (11 ago 2026)**: SDK integrado en las 4 webs + bot de Discord. Pendiente del usuario: crear cuenta, 5 proyectos y las DSNs (ver §6). Doc plan: `ANALYTICS_POSTHOG.md` para analítica; este doc es SOLO errores.
 

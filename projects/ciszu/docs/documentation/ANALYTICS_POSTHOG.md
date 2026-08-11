@@ -1,7 +1,7 @@
 # Sistema de Analíticas — PostHog (Ciszu Network)
 
 > **Estado**: implementado en código (10 ago 2026). Pendiente de activación: cuenta + key + envs (ver §8).
-> Relacionado: `CLOUDFLARE_SISTEMA.md`, `CACHING_SISTEMA.md`, `UPTIMEROBOT` (AGENTS.md).
+> Relacionado: `CLOUDFLARE_SYSTEM.md`, `CACHING_SYSTEM.md`, `UPTIMEROBOT` (AGENTS.md).
 
 ## 1. Decisión
 

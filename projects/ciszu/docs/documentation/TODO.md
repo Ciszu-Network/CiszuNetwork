@@ -1,15 +1,30 @@
-﻿# To Do List — Ciszu Network
+# To Do List — Ciszu Network
 
 > Este archivo solo puede ser editado por Ciszuko Antony.
 
-## Documentacion — FALTA DE IMPLEMENTACIÓN
+## Documentacion — IMPLEMENTADA (11 ago 2026)
 
-- [ ] Agregar documentacion no implicativa de codigo, si no externa como sanidad, salud (recomendaciones para la persona que trabaja en la empresa y su salud), educacion (estrategias de investigacion, busquedas, cursos, fuentes de informacion oficiales), rangos empresariales (estructura empresarial, esquemas, visuales), horario, agenda, estadisticas reales, lenguajes de progrmaacion usados, sistemas operativos usados, herrameintras instalables usados (GUI, no cli), contacto masivo (redes sociales, numeros, correos, nombres), sitio webs o servicios en line usados (agregas enlaces de dashboards, apis, servicios), contexto geografico de la empresa (falcon, venezuela), contexto historico o entendimiento de los tiempos actuales, publico objetivo, estrategis diversas (mercadeo, marketings, empresarial, relaciones), tipo de modelos a seguir oficiales bussiness, frameworks usados, entre muchas otras documentaciones que no estan pero son necesarias. Que no implican directamente al codigo.
-- [ ] Renombrar los docs de documentation al ingles puro, nada de español (pero el contenido seguira siendo español), es solo el nombre. Incluso de los nuevos que se crearan. Los que ya estan en ingles dejar.
+- [x] **Docs externos/no-código agregados** (en `projects/ciszu/docs/documentation/`, nombres en inglés):
+  | Doc | Contenido |
+  | --- | --------- |
+  | `HEALTH.md` | Salud y bienestar laboral (pausas, postura, sueño, checklist) |
+  | `EDUCATION.md` | Estrategias de aprendizaje/investigación, cursos, fuentes oficiales VE y tech |
+  | `BUSINESS_STRUCTURE.md` | Rangos/esquemas empresariales y visuales (neón por rol) |
+  | `SCHEDULE.md` | Horario, agenda diaria/semanal/trimestral |
+  | `STATISTICS.md` | Estadísticas reales del ecosistema (repo, BD, CDN, monitoreo, seguridad) |
+  | `TECH_STACK.md` | Lenguajes, frameworks, OS usados y herramientas (CLI+GUI) |
+  | `CONTACTS.md` | Redes sociales, números, correos y nombres (fuente de las webs) |
+  | `ONLINE_SERVICES.md` | Dashboards, APIs y servicios en línea usados |
+  | `GEOGRAPHIC_CONTEXT.md` | Contexto geográfico (Falcón, Venezuela), huso, implicaciones |
+  | `HISTORICAL_CONTEXT.md` | Contexto histórico y de los tiempos actuales (2026) |
+  | `TARGET_AUDIENCE.md` | Público objetivo por producto |
+  | `BUSINESS_STRATEGY.md` | Estrategias de marketing, empresa y relaciones |
+  | `BUSINESS_MODELS.md` | Modelos de negocio de referencia y cómo se aplican |
+- [x] **Docs de `documentation/` renombrados a inglés puro** (solo nombres; contenido sigue en español) en los 5 proyectos (ciszu 23 renombres + `toDo.md`→`TODO.md` en ciszu/ciszubot/ciszukoantony/muzicmania/ciszugamens). Referencias internas y de `AGENTS.md` actualizadas (globs `GUIA_*`→`*_GUIDE.md` corregidos).
 
 ## Pagos (metodología + NOWPayments) — EN IMPLEMENTACIÓN
 
-- [x] Decisión: NOWPayments HOY (crypto sin KYC) → Lemon Squeezy a los 18 → Stripe con LLC. Metodología completa en `PAGOS_SISTEMA.md`.
+- [x] Decisión: NOWPayments HOY (crypto sin KYC) → Lemon Squeezy a los 18 → Stripe con LLC. Metodología completa en `PAYMENTS_SYSTEM.md`.
 - [x] Paquete `@ciszunetwork/payments` (NOWPayments client + IPN HMAC + Lemon Squeezy stub + donaciones por env) con 8 tests.
 - [ ] **USUARIO**: cuenta NOWPayments + API key + IPN secret → vault.
 - [ ] **USUARIO**: wallets MetaMask/TrustWallet (seeds a Bitwarden), Binance (P2P), Zinli.
@@ -19,7 +34,7 @@
 
 ## Emails (Brevo hoy → Resend con dominio) — EN IMPLEMENTACIÓN
 
-- [x] Decisión: Brevo 300/día gratis sin dominio → Resend 3k/mes con dominio (Fase B). SendGrid descartado (trial 60 días). Detalle en `EMAILS_SISTEMA.md`.
+- [x] Decisión: Brevo 300/día gratis sin dominio → Resend 3k/mes con dominio (Fase B). SendGrid descartado (trial 60 días). Detalle en `EMAILS_SYSTEM.md`.
 - [x] Paquete `@ciszunetwork/email` (Brevo + Resend + failover) con 7 tests.
 - [ ] **USUARIO**: cuenta Brevo (fplayersoffcial@gmail.com) + API key → vault + verificar sender (código 6 dígitos) + `EMAIL_FROM`.
 - [ ] **USUARIO**: activar SMTP custom en Supabase Auth (Dashboard → Authentication → SMTP) con `smtp-relay.brevo.com:587`.
@@ -27,7 +42,7 @@
 
 ## Errores (Sentry) — EN IMPLEMENTACIÓN
 
-- [x] Decisión: Sentry (Developer free 5k errores, sin tarjeta). PostHog queda solo analítica. Detalle en `ERRORES_SISTEMA.md`.
+- [x] Decisión: Sentry (Developer free 5k errores, sin tarjeta). PostHog queda solo analítica. Detalle en `ERRORS_SYSTEM.md`.
 - [x] SDK integrado: `@sentry/nextjs` en las 4 webs (client/server/edge configs + instrumentation + global-error + withSentryConfig) y `@sentry/node` en el bot (`services/sentry.ts`).
 - [ ] **USUARIO**: cuenta sentry.io + org `ciszu-network` + 5 proyectos (ciszunetwork, ciszukoantony, muzicmania, ciszubot, ciszubot-bot) + DSNs en env ×4 + bot.
 - [ ] **USUARIO**: `SENTRY_AUTH_TOKEN` en Vercel production ×4 (source maps) + verificar un error de prueba llega al dashboard.

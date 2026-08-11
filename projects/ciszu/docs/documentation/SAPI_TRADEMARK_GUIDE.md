@@ -35,7 +35,7 @@ tarjeta de crédito**. Vigencia: **15 años** renovables.
 ## 3. Documentos necesarios (persona natural — Fase 1 recomendada)
 
 - [ ] Fotocopia de la cédula de identidad vigente
-- [ ] RIF personal (ver `GUIA_RIF_PERSONA_NATURAL.md`)
+- [ ] RIF personal (ver `RIF_PERSON_GUIDE.md`)
 - [ ] **Declaración Jurada Simple** de uso previo de la marca (si ya se usa) →
       plantilla en `plantillas/declaracion-jurada-uso-marca.md`
 - [ ] Búsqueda de antecedentes (recibo + copia del reporte)
@@ -76,5 +76,5 @@ Cada clase = una solicitud aparte. Prioridad sugerida para Ciszu Network:
 
 Venezuela **no es miembro del Protocolo de Madrid** (OMPI). Para proteger fuera: registrar
 por país (USPTO en EEUU, EUIPO en UE, etc.) o a través de la LLC estadounidense cuando
-exista (ver `GUIA_INTERNACIONAL_LLC.md`). La marca venezolana SAPI sirve como base de
+exista (ver `INTERNATIONAL_LLC_GUIDE.md`). La marca venezolana SAPI sirve como base de
 prueba de uso y prioridad en algunos casos.
