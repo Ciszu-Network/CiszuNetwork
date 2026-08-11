@@ -2,8 +2,12 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { createIast, buildCsp } from '@ciszunetwork/utils';
 
-const iast = createIast('ciszukoantony');
+const iast = createIast('ciszunetwork');
 
+/**
+ * Middleware de Next.js (CiszuNetwork Security Layer).
+ * Cabeceras de seguridad HTTP + sensor IAST runtime (edge-safe, solo observa).
+ */
 export function middleware(request: NextRequest) {
   const response = NextResponse.next();
   response.headers.set('X-Content-Type-Options', 'nosniff');
@@ -11,7 +15,8 @@ export function middleware(request: NextRequest) {
   response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   response.headers.set('Content-Security-Policy', buildCsp());
 
-  // ── Sensor IAST (runtime, edge-safe): solo observa y loguea payloads ──────
+  // ── Sensor IAST (runtime): detecta payloads maliciosos, solo observa ──────
+  // Emite [IAST] a logs de Vercel con dedupe 5 min. Doc: SECURITY_TASKS.md
   const params: Record<string, string> = {};
   request.nextUrl.searchParams.forEach((v, k) => {
     params[k] = v;
@@ -22,5 +27,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next|static|favicon.ico|sitemap.xml|robots.txt|images|icons|audio|logos|fonts).*)'],
+  matcher: ['/((?!_next|static|favicon.ico|sitemap.xml|robots.txt|images|icons|audio|logos|fonts).*)'],
 };
