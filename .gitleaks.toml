@@ -32,6 +32,10 @@ regexes = [
   "(?i)(example|sample|test|placeholder|your-|xxx|dummy)[-_]?(token|key|secret|password)",
   # Local .env.example files
   "^(NEXT_PUBLIC_|VITE_|REACT_APP_).*=.*$",
+  # Token público del beacon de Cloudflare Web Analytics (viaja en el HTML de
+  # las 4 webs por diseño — no es un secreto). Con allowline + este allowlist
+  # no aparece en el CI ni en el historial scan.
+  "2fcf0eab8bf94fe7ad6495160673ab3d",
 ]
 
 [[rules]]

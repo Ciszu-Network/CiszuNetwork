@@ -13,6 +13,17 @@ import { expect, test } from '@playwright/test';
  * externa (DAST); en producción el middleware emite [IAST] con los mismos.
  */
 
+/**
+ * El flight data de Next.js (App Router) serializa en `self.__next_f.push(...)`
+ * el estado del router de la petición, incluida la URL con su query DECODICADO.
+ * Eso hace que un payload de prueba aparezca literal en el HTML aunque el server
+ * NO lo refleje como contenido renderizado (falso positivo de DAST). Estos
+ * bloques se eliminan antes de chequear reflejo.
+ */
+function stripFlightData(html: string): string {
+  return html.replace(/<script[^>]*>self\.__next_f[\s\S]*?<\/script>/gi, '');
+}
+
 const SITES = {
   ciszunetwork: 'https://ciszunetwork.vercel.app',
   ciszukoantony: 'https://ciszukoantony.vercel.app',
@@ -28,12 +39,14 @@ const REQUIRED_HEADERS: Record<string, string> = {
 };
 
 test('cabeceras de seguridad HTTP presentes en las 4 webs', async ({ request }) => {
+  // El middleware se despliega con el push; en CI puede tardar hasta 180s.
+  test.setTimeout(240_000);
   for (const [name, url] of Object.entries(SITES)) {
     // El edge de Vercel responde 403/429 transitorios con ráfagas de requests:
-    // reintentar antes de declarar fallo.
+    // reintentar con backoff creciente antes de declarar fallo.
     let res = await request.get(url);
-    for (let i = 0; i < 3 && res.status() === 403; i++) {
-      await new Promise((r) => setTimeout(r, 2000));
+    for (let i = 0; i < 5 && res.status() === 403; i++) {
+      await new Promise((r) => setTimeout(r, 2000 * (i + 1)));
       res = await request.get(url);
     }
     expect(res.status() < 500, `${name}: ${url} → HTTP ${res.status()}`).toBeTruthy();
@@ -93,7 +106,7 @@ test('payloads XSS no se reflejan en la respuesta', async ({ request }) => {
   for (const [name, url] of Object.entries(SITES)) {
     for (const payload of XSS_PAYLOADS) {
       const res = await request.get(`${url}/?q=${encodeURIComponent(payload)}`);
-      const body = await res.text();
+      const body = stripFlightData(await res.text());
       expect(
         body.includes(payload),
         `${name}: payload XSS reflejado (${payload})`
@@ -110,7 +123,7 @@ test('payloads SQLi no producen errores ni reflejo', async ({ request }) => {
         res.status() < 500,
         `${name}: SQLi causó 5xx (${res.status()})`
       ).toBeTruthy();
-      const body = await res.text();
+      const body = stripFlightData(await res.text());
       expect(
         body.includes(payload),
         `${name}: payload SQLi reflejado (${payload})`
