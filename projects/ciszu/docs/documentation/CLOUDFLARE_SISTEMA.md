@@ -29,7 +29,7 @@ se desbloquea de golpe la capa de protección completa.
 
 | Servicio | MuzicMania | CiszuNetwork | CiszukoAntony | CiszuBot web | Bot Discord | Estado |
 | --- | --- | --- | --- | --- | --- | --- |
-| **Turnstile** (guard de acceso) | ✅ `CloudflareGuard.tsx` + `/api/verify-turnstile` | ✅ | ✅ | ✅ | — | **IMPLEMENTADO 10 ago 2026 en las 4 webs** — MuzicMania con su componente propio; las otras 3 usan `CloudflareGuard` compartido de `packages/ui` (widget **GLOBAL** único, 1 par de keys para los 4 dominios) |
+| **Turnstile** (guard de acceso) | ✅ wrapper `CloudflareGuard.tsx` + `/api/verify-turnstile` | ✅ | ✅ | ✅ | — | **IMPLEMENTADO 10 ago 2026 en las 4 webs** — las **4** usan el `CloudflareGuard` compartido de `packages/ui` (widget **GLOBAL** único, 1 par de keys para los 4 dominios). MuzicMania es un wrapper fino (Tauri skip + store sync) — migrado 11 ago 2026 desde `@marsidev/react-turnstile` |
 | **Challenge web** (proxy CF a nivel red) | ✅ (blocking challenge en el dominio) | ❌ | ❌ | ❌ | — | Solo MuzicMania (activado en dashboard CF sobre muzicmania.vercel.app) |
 | **R2** | ⚠️ configurado como *fallback* del CDN | idem | idem | idem | — | **INACTIVO — BLOQUEADO**: Cloudflare exige **tarjeta** para activar R2 aunque sea gratis → descartado hasta tener tarjeta (`asset-config.json` → `providers.fallback: cloudflare-r2`) |
 | **Web Analytics** | ✅ | ✅ | ✅ | ✅ | — | **IMPLEMENTADO 10 ago 2026**: beacon en los 4 layouts (token `2fcf0eab...`, 1 solo site cubre las 4 webs) |
@@ -39,7 +39,7 @@ se desbloquea de golpe la capa de protección completa.
 
 **⚠️ Hallazgo de seguridad (Turnstile)**: las claves de **MuzicMania** están **hardcodeadas como
 fallback** en el código además de en `.env.local`:
-- `projects/muzicmania/website/src/components/layout/CloudflareGuard.tsx:149` — siteKey (pública, poco riesgo)
+- `projects/muzicmania/website/src/components/layout/CloudflareGuard.tsx:22` — siteKey fallback en el wrapper (pública, poco riesgo)
 - `projects/muzicmania/website/src/app/api/verify-turnstile/route.ts:11` — **secretKey (¡está en git!)** — pendiente: rotar el widget en el dashboard y quitar el fallback (lanzar error si falta la env var).
 - Las 3 webs nuevas **NO tienen fallback** (error 500 claro si falta la env var) — solo queda sanear MuzicMania.
 
@@ -75,10 +75,11 @@ Límites verificados (jul-ago 2026, docs oficiales):
 1. ✅ **Web Analytics en las 4 webs** — site creado en dashboard CF, beacon script en los 4
    layouts (token `2fcf0eab...`, un solo site cubre las 4 webs). **HECHO 10 ago 2026**.
 2. ✅ **Turnstile en las 4 webs** — decidido: **widget GLOBAL único** (1 par de keys, 4
-   hostnames permitidos). MuzicMania con su componente propio; las otras 3 usan
-   `CloudflareGuard` compartido (`packages/ui/src/CloudflareGuard.tsx`, sin deps npm, CSS
-   inline, sessionStorage por app) + `/api/verify-turnstile` por app **sin fallbacks**.
-   Envs en `.env.local` (×4) y Vercel (production+preview+development vía API) — **HECHO 10 ago 2026**.
+   hostnames permitidos). Las **4 webs** usan `CloudflareGuard` compartido
+   (`packages/ui/src/CloudflareGuard.tsx`, sin deps npm, CSS inline, sessionStorage por app);
+   MuzicMania usa un **wrapper fino** (skip Tauri + sync del store) — desde 11 ago 2026,
+   migrado desde `@marsidev/react-turnstile` (eliminado). + `/api/verify-turnstile` por
+   app. Envs en `.env.local` (×4) y Vercel (production+preview+development vía API) — **HECHO 10 ago 2026**.
 3. ⚠️ **Fix seguridad Turnstile (pendiente)**: rotar el widget de MuzicMania (nuevas keys en
    dashboard) y **eliminar los fallbacks hardcodeados** de `CloudflareGuard.tsx:149` y
    `route.ts:11` (error si falta env var). Actualizar envs Vercel de MuzicMania (production).
@@ -158,6 +159,6 @@ Límites verificados (jul-ago 2026, docs oficiales):
 ## 9. Archivos relacionados
 
 - `DOMINIOS_SISTEMA.md` — cuándo y dónde comprar los dominios (Porkbun/Cloudflare).
-- `projects/muzicmania/website/src/components/layout/CloudflareGuard.tsx` — patrón Turnstile actual.
+- `projects/muzicmania/website/src/components/layout/CloudflareGuard.tsx` — wrapper fino del guard compartido (Tauri skip + store sync).
 - `projects/muzicmania/website/src/app/api/verify-turnstile/route.ts` — patrón de verificación.
 - `asset-config.json` — `providers.fallback: cloudflare-r2` (R2 como fallback del CDN).
