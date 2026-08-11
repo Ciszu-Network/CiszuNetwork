@@ -249,7 +249,7 @@ export default function Home() {
             <div className="relative z-10">
               <div className="w-28 h-28 rounded-full bg-gradient-to-br from-brand via-brand-light to-brand-accent mx-auto mb-6 flex items-center justify-center shadow-[0_0_30px_rgba(35,63,146,0.4)] p-1">
                 <Image
-                  src="/images/francisco_selfie/cisco-1.jpg"
+                  src={assetResolver.resolve("shared/images/francisco_selfie/IMG_20251207_001627@869886661.jpg")}
                   alt={CISZUKO_ANTONY.name}
                   width={108}
                   height={108}

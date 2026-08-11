@@ -17,6 +17,7 @@ const EXCLUDED_EXT = new Set(['.ai', '.psd', '.pfl', '.zip', '.rar', '.drp', '.w
 
 const SOURCES = [
   { dir: 'shared/icons/svg', prefix: 'shared/icons/svg' },
+  { dir: 'shared/images', prefix: 'shared/images' },
   { dir: 'projects/ciszu/content', prefix: 'projects/ciszu/content' },
   { dir: 'projects/ciszu/docs', prefix: 'projects/ciszu/docs' },
   { dir: 'projects/ciszukoantony/content', prefix: 'projects/ciszukoantony/content' },

@@ -138,7 +138,7 @@ Análisis por proyecto (monorepo):
 
 ### Fase 4 — (Opción) `node:test` para scripts heredados (≈ 30 min)
 
-Si aún así se quiere algo YAGNI-max minimalista: tests con `node:test` (0 deps) para los 3-4 scripts más críticos: `copy-assets`, `upload-cdn` (lógica de mimetypes). Sin deps nuevas, sin configuración.
+Si aún así se quiere algo YAGNI-max minimalista: tests con `node:test` (0 deps) para los scripts más críticos: `upload-cdn` (lógica de mimetypes). Sin deps nuevas, sin configuración.
 
 ---
 

@@ -172,7 +172,7 @@ export const PARTICLE_SKINS: Record<string, ParticleSkin> = {
         miss: { count: 4, sizeMin: 1, sizeMax: 3, speedMin: 1, speedMax: 3, lifeMs: 300, colors: ['#ff4444', '#ff6666'], shape: 'circle', rotation: false, gravity: 0.4 },
         fail: { count: 3, sizeMin: 1, sizeMax: 2, speedMin: 0.5, speedMax: 2, lifeMs: 250, colors: ['#ff444488', '#ff222266'], shape: 'circle', rotation: false, gravity: 0.4 },
       },
-      files: { sprites: '/particleskins/default/particle.svg', spritesPng: '/particleskins/default/particle.png' },
+      files: { sprites: '/projects/muzicmania/content/particleskins/default/particle.svg', spritesPng: '/projects/muzicmania/content/particleskins/default/particle.png' },
     },
   },
 };
