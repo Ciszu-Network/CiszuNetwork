@@ -1,8 +1,8 @@
-﻿# Control remoto de la terminal + notificaciones al móvil (ago 2026)
+# Control remoto de la terminal + notificaciones al móvil (ago 2026)
 
-> **Guía práctica rápida (uso CEO)**: ver `GUIA_ACCESO_REMOTO_CEO.md` — pasos de acceso al día, FAQ y seguridad. Este documento es la referencia técnica completa.
+> **Guía práctica rápida (uso CEO)**: ver `CEO_REMOTE_ACCESS_GUIDE.md` — pasos de acceso al día, FAQ y seguridad. Este documento es la referencia técnica completa.
 
-Investigación solicitada (toDo.md → Prioridad Alta → "ecosistema de túneles para la consola remota"): poder **ver y accionar la terminal de este PC desde el móvil** (o cualquier dispositivo externo) con una app oficial, sin sobreingeniería. Este documento reemplaza al viejo `NOTIFICACIONES.md` (que solo cubría el push de avisos) con la solución completa en dos capas.
+Investigación solicitada (TODO.md → Prioridad Alta → "ecosistema de túneles para la consola remota"): poder **ver y accionar la terminal de este PC desde el móvil** (o cualquier dispositivo externo) con una app oficial, sin sobreingeniería. Este documento reemplaza al viejo `NOTIFICACIONES.md` (que solo cubría el push de avisos) con la solución completa en dos capas.
 
 ## Resumen — solución en dos capas complementarias
 

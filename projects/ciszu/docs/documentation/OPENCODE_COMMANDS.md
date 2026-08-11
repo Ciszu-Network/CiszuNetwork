@@ -218,5 +218,5 @@ Ejemplos planificados:
 
 - Skill oficial `customize-opencode` (schema completo: https://opencode.ai/config.json)
 - Plugin de voz: `tools/tts-stt-ai/` (patrón de registro de comandos)
-- ntfy: `scripts/ntfy-notif.js` + doc VOZ_OPENCODE.md
+- ntfy: `scripts/ntfy-notif.js` + doc OPENCODE_VOICE.md
 - MCP: `opencode.json` global (`C:\Users\fplay\.config\opencode\opencode.json`)

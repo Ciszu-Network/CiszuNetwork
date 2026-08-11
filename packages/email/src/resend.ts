@@ -37,7 +37,7 @@ export function createResendProvider(opts: ResendOptions = {}): EmailProvider {
       if (!opts.allowUnverified && !process.env.RESEND_ALLOW_UNVERIFIED) {
         throw new EmailProviderUnavailableError(
           'resend',
-          'requiere dominio verificado en Resend (ver EMAILS_SISTEMA.md). Activa RESEND_ALLOW_UNVERIFIED solo en desarrollo.'
+          'requiere dominio verificado en Resend (ver EMAILS_SYSTEM.md). Activa RESEND_ALLOW_UNVERIFIED solo en desarrollo.'
         );
       }
       const to = normalizeTo(message.to);

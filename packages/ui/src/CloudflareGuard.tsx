@@ -37,7 +37,7 @@
  * ⚠️ El rate lining entre webs (verificar en ciszunetwork y luego fallar en
  * ciszubot) es un límite del plan free de Turnstile por IP — no se elimina con
  * código; el auto-retry + backoff lo mitiga (espera y reintenta). Documentado
- * en CLOUDFLARE_SISTEMA.md.
+ * en CLOUDFLARE_SYSTEM.md.
  */
 
 import { useEffect, useState, useCallback, useRef, type ReactNode } from 'react';

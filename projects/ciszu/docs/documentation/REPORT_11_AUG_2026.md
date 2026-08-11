@@ -7,23 +7,23 @@
 
 ## 1. Qué quedó implementado (listo para producción)
 
-### A) Errores → Sentry (doc: `ERRORES_SISTEMA.md`)
+### A) Errores → Sentry (doc: `ERRORS_SYSTEM.md`)
 - `@sentry/nextjs@10.69.0` en las 4 webs: `src/sentry.{client,server,edge}.config.ts`, `src/instrumentation.ts` (`register()` + `onRequestError`/`captureRequestError`), `src/app/global-error.tsx`, `next.config.ts` con `withSentryConfig({ org: 'ciszu-network', project: <app>, silent: true, sourcemaps: { disable: true } })`.
 - `@sentry/node@10.69.0` en el bot: `src/services/sentry.ts` (se activa solo con `SENTRY_DSN`) + captura de errores de comandos y procesos.
 - Guardrails: tracing OFF, replays OFF, PostHog sigue solo analítica.
 - **Sin DSN el SDK es no-op** → los builds actuales y producción funcionan sin la cuenta.
 
-### B) Emails → Brevo hoy, Resend con dominio (doc: `EMAILS_SISTEMA.md`)
+### B) Emails → Brevo hoy, Resend con dominio (doc: `EMAILS_SYSTEM.md`)
 - Paquete `@ciszunetwork/email`: `EmailProvider` (send) + Brevo REST v3 (primario por defecto) + Resend (bloqueado hasta dominio, salvo `RESEND_ALLOW_UNVERIFIED` en dev) + `sendEmail()` con failover (`EMAIL_FAILOVER=1`) + errores claros (`EmailNotConfiguredError`).
 - 7 tests. Sin API keys reales no rompe nada.
 
-### C) Pagos → metodología + NOWPayments (doc: `PAGOS_SISTEMA.md`)
+### C) Pagos → metodología + NOWPayments (doc: `PAYMENTS_SYSTEM.md`)
 - Paquete `@ciszunetwork/payments`: `PaymentProvider` (createInvoice/verifyWebhook) + **NOWPayments** completo (invoice con `x-api-key`, IPN con HMAC-SHA512 timing-safe vía `x-nowpayments-sig`, mapeo de estados) + **Lemon Squeezy stub** (HMAC-SHA256, listo a los 18) + `getDonationMethods()` (direcciones `DONATE_*` desde env, nunca hardcodeadas).
 - 8 tests. Roadmap por edad y matriz producto×método con TODOS los métodos del toDo (PayPal, Payoneer, Zinli, Stripe, Revolut, Coinbase, MetaMask, Binance + ahora: NOWPayments, Lemon Squeezy, Keygen).
 - Sin API key real, `createInvoice` lanza `PaymentNotConfiguredError` (no rompe).
 
 ### Documentación y repo
-- 3 docs maestros (ERRORES/EMAILS/PAGOS_SISTEMA.md) + `toDo.md` actualizado con los pendientes marcados como `[ ] USUARIO`.
+- 3 docs maestros (ERRORES/EMAILS/PAYMENTS_SYSTEM.md) + `TODO.md` actualizado con los pendientes marcados como `[ ] USUARIO`.
 - `AGENTS.md` actualizado con el estado de los 3 sistemas (sin pendientes nuevos).
 - `vitest.config.mts` incluye los 2 paquetes nuevos; `pnpm-workspace.yaml` aprobó build de `@sentry/cli`.
 
@@ -31,14 +31,14 @@
 
 | Sistema | Pendiente | Dónde |
 | --- | --- | --- |
-| Sentry | Cuenta sentry.io (fplayersoffcial@gmail.com, free sin tarjeta) + org `ciszu-network` + 5 proyectos (ciszunetwork, ciszukoantony, muzicmania, ciszubot, ciszubot-bot) + DSNs en `.env.local` ×4 y Vercel + `SENTRY_DSN` del bot | ERRORES_SISTEMA.md §6 |
-| Sentry | `SENTRY_AUTH_TOKEN` (Vercel production ×4) para subir source maps — hoy `sourcemaps.disable` | ERRORES_SISTEMA.md §3 |
-| Emails | Cuenta Brevo + API key (`BREVO_API_KEY` vault+Vercel) + sender verificado (código 6 dígitos) + `EMAIL_FROM` | EMAILS_SISTEMA.md §5 |
-| Emails | SMTP custom de Supabase Auth (Dashboard → Authentication → SMTP; `smtp-relay.brevo.com:587`) | EMAILS_SISTEMA.md §3 |
-| Pagos | Cuenta NOWPayments + `NOWPAYMENTS_API_KEY` + `NOWPAYMENTS_IPN_SECRET` (vault) | PAGOS_SISTEMA.md §7 |
-| Pagos | Wallets MetaMask/TrustWallet (seeds → Bitwarden), Binance (P2P), Zinli; direcciones `DONATE_*` en vault + sección "Apoyar" web | PAGOS_SISTEMA.md §7 |
-| Pagos | Schema `pagos` (orders con RLS — regla SECURITY_TASKS #1) + rutas `/api/payments/invoice` y `/api/webhooks/nowpayments` (rate limit) — pedir al agente cuando haya keys | PAGOS_SISTEMA.md §5 |
-| Pagos (18 años) | PayPal, Payoneer, Lemon Squeezy, Keygen | PAGOS_SISTEMA.md §3-4 |
+| Sentry | Cuenta sentry.io (fplayersoffcial@gmail.com, free sin tarjeta) + org `ciszu-network` + 5 proyectos (ciszunetwork, ciszukoantony, muzicmania, ciszubot, ciszubot-bot) + DSNs en `.env.local` ×4 y Vercel + `SENTRY_DSN` del bot | ERRORS_SYSTEM.md §6 |
+| Sentry | `SENTRY_AUTH_TOKEN` (Vercel production ×4) para subir source maps — hoy `sourcemaps.disable` | ERRORS_SYSTEM.md §3 |
+| Emails | Cuenta Brevo + API key (`BREVO_API_KEY` vault+Vercel) + sender verificado (código 6 dígitos) + `EMAIL_FROM` | EMAILS_SYSTEM.md §5 |
+| Emails | SMTP custom de Supabase Auth (Dashboard → Authentication → SMTP; `smtp-relay.brevo.com:587`) | EMAILS_SYSTEM.md §3 |
+| Pagos | Cuenta NOWPayments + `NOWPAYMENTS_API_KEY` + `NOWPAYMENTS_IPN_SECRET` (vault) | PAYMENTS_SYSTEM.md §7 |
+| Pagos | Wallets MetaMask/TrustWallet (seeds → Bitwarden), Binance (P2P), Zinli; direcciones `DONATE_*` en vault + sección "Apoyar" web | PAYMENTS_SYSTEM.md §7 |
+| Pagos | Schema `pagos` (orders con RLS — regla SECURITY_TASKS #1) + rutas `/api/payments/invoice` y `/api/webhooks/nowpayments` (rate limit) — pedir al agente cuando haya keys | PAYMENTS_SYSTEM.md §5 |
+| Pagos (18 años) | PayPal, Payoneer, Lemon Squeezy, Keygen | PAYMENTS_SYSTEM.md §3-4 |
 
 ## 3. Próximo paso (cuando regreses)
 

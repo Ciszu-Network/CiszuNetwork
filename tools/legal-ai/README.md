@@ -36,6 +36,6 @@ Requiere `openpyxl` (solo para el Excel): `pip install openpyxl`
 
 ## Documentación relacionada
 
-- `projects/ciszu/docs/documentation/PLAN_REGISTRO_EMPRESA.md` — plan maestro por fases
-- `projects/ciszu/docs/documentation/GUIA_*` — guías de trámites (RIF, SAPI, mercantil, fiscalidad, LLC)
+- `projects/ciszu/docs/documentation/COMPANY_REGISTRATION_PLAN.md` — plan maestro por fases
+- `projects/ciszu/docs/documentation/*_GUIDE.md` — guías de trámites (RIF_PERSON, SAPI_TRADEMARK, COMMERCIAL_REGISTRATION, FREELANCER_TAX, INTERNATIONAL_LLC)
 - `projects/ciszu/docs/plantillas/` — acta constitutiva, FM-02, declaración jurada, reserva de nombre, checklist

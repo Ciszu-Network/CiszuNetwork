@@ -209,4 +209,4 @@ Hasta entonces: **decisión cerrada — Supabase-only.**
 - Supabase OAuth Server: supabase.com/docs/guides/auth/oauth-server.
 - Better Auth: better-auth.com (MIT, plugins, better-auth-ui).
 - WorkOS AuthKit: 1M MAU gratis (2026).
-- Dominios/Fase B: `CLOUDFLARE_SISTEMA.md`.
+- Dominios/Fase B: `CLOUDFLARE_SYSTEM.md`.

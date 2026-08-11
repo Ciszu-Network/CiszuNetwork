@@ -2,7 +2,7 @@
 
 > ⚠️ Borrador con los campos de la Planilla FM-02 del SAPI para "CISZU NETWORK".
 > Completar los corchetes `[ ... ]` y validar en el sistema **WEBPI** (sapi.gob.ve) antes de
-> presentar. Costes y requisitos vigentes: ver `GUIA_MARCA_SAPI.md`.
+> presentar. Costes y requisitos vigentes: ver `SAPI_TRADEMARK_GUIDE.md`.
 
 ---
 

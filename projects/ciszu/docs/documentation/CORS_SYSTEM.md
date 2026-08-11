@@ -1,6 +1,6 @@
 # CORS — Sistema, verificación y plan de implementación futura (11 ago 2026)
 
-> **Doc maestro del matiz "CORS" del toDo de BD** (`services/supabase/docs/documentation/toDo.md`).
+> **Doc maestro del matiz "CORS" del toDo de BD** (`services/supabase/docs/documentation/TODO.md`).
 > Conclusión verificada: **CORS NO es aplicable en la API REST de Supabase** (ni hoy ni en
 > ningún plan). Este documento explica por qué, qué protección real sustituye al CORS, dónde
 > SÍ sería aplicable y **el plan para implementarlo cuando sea necesario** (Cloudflare Fase B
@@ -57,7 +57,7 @@ rechaza. El origen del navegador es irrelevante.
 | **Supabase Auth (OAuth)** | Parcial — `Site URL` + `Allowed redirect URLs` controlan los redirects de terceros | Ya configurado (Discord OAuth dashboard) |
 | **Supabase Storage** | Config CORS por bucket (uploads desde navegador) | Buckets públicos por diseño (sin acción) |
 | **API routes propias (Vercel)** | **SÍ — validar `Origin`/`Referer` en rutas mutantes** | Opcional hoy; rate limits + auth ya cubren |
-| **Cloudflare Fase B (dominio propio)** | **SÍ — WAF rules + rate limiting edge** (filtrado a nivel de red) | Pendiente de dominio (Fase B CLOUDFLARE_SISTEMA.md) |
+| **Cloudflare Fase B (dominio propio)** | **SÍ — WAF rules + rate limiting edge** (filtrado a nivel de red) | Pendiente de dominio (Fase B CLOUDFLARE_SYSTEM.md) |
 
 ## 4. Plan de implementación futura (CUÁNDO y CÓMO)
 
@@ -80,7 +80,7 @@ if (origin && !allowed.has(origin)) return new Response('Forbidden', { status: 4
   las rutas `/api/*` de cada web (solo los dominios de Ciszu Network permitidos).
 - **Rate limiting edge** de Cloudflare (gratis hasta 10k req/mes) como capa global antes de
   llegar a Vercel — complementa al rate limit en memoria de `@ciszunetwork/utils`.
-- Ver `CLOUDFLARE_SISTEMA.md` (Fase B requiere dominio propio, pendiente).
+- Ver `CLOUDFLARE_SYSTEM.md` (Fase B requiere dominio propio, pendiente).
 
 ### Criterios de activación (¿cuándo hacer Fase 1 o 2?)
 - [ ] Se abre una API pública consumible por terceros (p.ej. stats del bot vía REST).

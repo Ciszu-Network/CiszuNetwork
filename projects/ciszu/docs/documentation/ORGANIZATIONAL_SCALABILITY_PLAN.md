@@ -1,4 +1,4 @@
-# PLAN_ESCALABILIDAD_ORGANIZACIONAL — Ciszu Network
+# ORGANIZATIONAL_SCALABILITY_PLAN — Ciszu Network
 
 > **Estado**: Documento de estrategia (plan a futuro, NO implementado).
 > **Autor**: Ciszuko (CEO) · **Última revisión**: ago 2026.
@@ -203,7 +203,7 @@ Nunca se comparte `service_role`. Patrón de acceso:
 ## 9. Referencias relacionadas
 
 - `AGENTS.md` — mapa completo del monorepo, credenciales y seguridad
-- `docs/documentation/CONTROL_REMOTO.md` — infraestructura Tailscale+SSH actual (base para multi-persona)
+- `docs/documentation/REMOTE_CONTROL.md` — infraestructura Tailscale+SSH actual (base para multi-persona)
 - `docs/documentation/VPS_247.md` — hosting del bot (punto de partida para entornos de equipo)
 - `docs/documentation/TOOLS.md` — decisión de herramientas de desarrollo
 - `docs/documentation/DEVSECOPS.md` — políticas de seguridad (XSS, SQLi, RLS)
