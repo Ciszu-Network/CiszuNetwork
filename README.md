@@ -72,7 +72,7 @@ pnpm --filter <nombre> dev  # single app
 - **CDN**: bucket público `ciszu-cdn` en Supabase Storage (`NEXT_PUBLIC_CDN_URL = .../object/public/ciszu-cdn`). El bucket **espeja las rutas del repo** (misma ruta relativa bajo `projects/`).
 - **Resolver**: `@ciszunetwork/cdn` — `assetResolver.resolve(path)` y `resolveIcon(name, style, format)` con estrategia híbrida local/CDN según entorno (dev, Tauri, producción).
 - **Iconos**: sistema inline-first en `packages/ui` (`Icon.tsx`) con registry generado (`packages/ui/src/generated/icon-registry.ts`) y fallback al CDN. Regenerar: `node scripts/generate-icon-registry.js`.
-- **Upload**: `pnpm cdn:upload` sube 6 fuentes: `shared/icons/svg`, `projects/ciszu/content`, `projects/ciszu/docs`, `projects/ciszukoantony/content`, `projects/ciszubot/content`, `projects/muzicmania/content`. Fallback offline en el prebuild: `node scripts/copy-assets.js`.
+- **Upload**: `pnpm cdn:upload` sube 6 fuentes: `shared/icons/svg`, `projects/ciszu/content`, `projects/ciszu/docs`, `projects/ciszukoantony/content`, `projects/ciszubot/content`, `projects/muzicmania/content`. No hay prebuild ni mirrors locales: cada web sirve sus assets vía resolver/CDN (`NEXT_PUBLIC_CDN_URL`).
 - **Logos**: `projects/ciszukoantony/content/logos/` es la fuente maestra; usa `assetResolver.resolve('projects/ciszukoantony/content/logos/...')`.
 
 ## Supabase
@@ -93,7 +93,7 @@ Seis flujos en `.github/workflows/` — CI + **CodeQL** + 4 deploys a Vercel, ca
 | `deploy-muzicmania-website.yml` | `muzicmania` | `projects/muzicmania/website` | muzicmania.vercel.app |
 | `deploy-ciszubot-website.yml` | `ciszubot` | `projects/ciszubot/website` | ciszubot.vercel.app |
 
-Cada deploy se dispara con cambios en el `projects/<proyecto>/**`, `packages/**` o `scripts/copy-assets.js`. ⚠️ Desplegar SIEMPRE desde la raíz (`vercel --prod` con `working-directory: .`); nunca `vercel pull/prebuilt` dentro de `projects/*/website` (ruta duplicada → deploy vacío).
+Cada deploy se dispara con cambios en el `projects/<proyecto>/**` o `packages/**`. ⚠️ Desplegar SIEMPRE desde la raíz (`vercel --prod` con `working-directory: .`); nunca `vercel pull/prebuilt` dentro de `projects/*/website` (ruta duplicada → deploy vacío).
 - ⚠️ Desplegar SIEMPRE desde la raíz (`vercel --prod` con `working-directory: .`); nunca `vercel pull/prebuilt` dentro de `projects/*/website` (ruta duplicada → deploy vacío).
 
 ## Seguridad y calidad
@@ -116,7 +116,6 @@ Cada deploy se dispara con cambios en el `projects/<proyecto>/**`, `packages/**`
 ## Scripts de automatización (`scripts/`)
 
 ```bash
-node scripts/copy-assets.js           # Prebuild: logs críticos + mirrors a public/
 node scripts/upload-cdn.js            # Subir assets al CDN ciszu-cdn (pnpm cdn:upload)
 node scripts/generate-icon-registry.js# Regenerar registry de iconos inline
 node scripts/sync-public-docs.js      # Sincronizar docs a public/docs

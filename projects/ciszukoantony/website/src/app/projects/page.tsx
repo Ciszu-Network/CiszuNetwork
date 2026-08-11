@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { SmartImage } from '@ciszu/ui';
+import { assetResolver } from '@ciszunetwork/cdn';
 import { motion } from 'framer-motion';
 
 const categories = [
@@ -50,7 +51,7 @@ const categories = [
     ],
   },
   {
-    name: 'Ciszuko Antony', color: 'from-brand-dark to-brand', logo: '/images/francisco_selfie/cisco-1.jpg',
+    name: 'Ciszuko Antony', color: 'from-brand-dark to-brand', logo: assetResolver.resolve('shared/images/francisco_selfie/IMG_20251207_001627@869886661.jpg'),
     projects: [
       { name: 'Portfolio Web', desc: 'Portfolio personal con diseño tech y neón.', tech: ['Next.js', 'Framer Motion'] },
       { name: 'Sistema de Firmas', desc: 'Generador de firmas de correo corporativas.', tech: ['HTML', 'CSS'] },

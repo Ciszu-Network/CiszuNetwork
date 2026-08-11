@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { assetResolver } from "@ciszunetwork/cdn";
 import { SocialIcon } from "@/components/ui/SocialIcon";
 import { CISZUKO_ANTONY, CISZU_NETWORK, SOCIAL_COLORS } from "@/config/site";
 import { User, ArrowRight, ExternalLink, Music, Gamepad2, Mic, Video } from "lucide-react";
@@ -30,7 +31,7 @@ export default function CiszukoAntonyPage() {
           <div className="p-8 rounded-[2rem] bg-gradient-to-br from-brand/10 via-brand-dark/5 to-transparent border border-brand/20 text-center">
             <div className="w-28 h-28 rounded-full bg-gradient-to-br from-neon-blue via-brand-accent to-neon-pink mx-auto mb-6 flex items-center justify-center p-1">
               <Image
-                src="/images/francisco_selfie/cisco-1.jpg"
+                src={assetResolver.resolve("shared/images/francisco_selfie/IMG_20251207_001627@869886661.jpg")}
                 alt={CISZUKO_ANTONY.name}
                 width={108}
                 height={108}

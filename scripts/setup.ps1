@@ -41,10 +41,6 @@ if (-not $SkipCdn) {
   Write-Host "[2/3] CDN skip (usa --SkipCdn)" -ForegroundColor DarkYellow
 }
 
-# 3. Copy critical assets to apps
-Write-Host "[3/3] Copiando assets criticos a las apps..." -ForegroundColor Yellow
-node scripts/copy-assets.js
-
 Write-Host ""
 Write-Host "=== Setup completo ===" -ForegroundColor Green
 Write-Host "Comandos utiles:" -ForegroundColor Cyan

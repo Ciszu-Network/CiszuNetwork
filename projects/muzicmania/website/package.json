@@ -6,7 +6,6 @@
     "node": ">=20"
   },
   "scripts": {
-    "prebuild": "node ../../../scripts/copy-assets.js",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
