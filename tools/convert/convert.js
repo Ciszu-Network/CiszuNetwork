@@ -46,7 +46,6 @@ function run(exe, args) {
   const bin = path.basename(exe).replace(/\.exe$/i, '');
   if (!ALLOWED_BINS.has(bin)) throw new Error(`Binario no permitido: ${exe}`);
   // nosemgrep: javascript.lang.security.detect-child-process.detect-child-process
-  // (allowlist de binarios fijos + args array sin shell; los llamadores usan constantes)
   const r = spawnSync(exe, args, { stdio: 'inherit' });
   if (r.error) throw r.error;
   if (r.status !== 0) throw new Error(`${path.basename(exe)} terminó con código ${r.status}`);
