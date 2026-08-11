@@ -20,7 +20,8 @@ Identificador: DEVSECOPS_V1.0.0_2026_08_01_ciszunetwork
 | Pilar | Descripción | Herramientas Ciszu Network |
 |---|---|---|
 | **SAST** (Static Application Security Testing) | Análisis estático del código fuente sin ejecutarlo: detecta malas prácticas, inyecciones, XSS y secretos antes de correr | **Semgrep**, **Secretlint**, **Gitleaks**, ESLint, TypeScript strict |
-| **DAST** (Dynamic Application Security Testing) | Análisis dinámico desde el exterior contra la app desplegada, simulando ataques reales (SQLi, XSS) | **OWASP ZAP** |
+| **DAST** (Dynamic Application Security Testing) | Análisis dinámico desde el exterior contra la app desplegada, simulando ataques reales (SQLi, XSS) | **OWASP ZAP** (semanal en CI), **Playwright security-e2e** (diario en CI) |
+| **IAST** (Interactive Application Security Testing) | Sensor DENTRO de la aplicación que observa el tráfico real en runtime y detecta payloads (SQLi/XSS/traversal/command injection/secrets) | **`createIast`** en `@ciszunetwork/utils` — middleware de las 4 webs (edge-safe, solo observa, log `[IAST]`) |
 | **Auditoría de dependencias** | Consulta de bases de datos de vulnerabilidades públicas (CVE/CWE) para cada paquete instalado | **pnpm audit**, **cargo audit**, **trivy**, Dependabot, CodeQL |
 
 ## 2. Shift-Left (Desplazamiento a la Izquierda)
@@ -31,8 +32,8 @@ Filosofía de mover las pruebas de calidad y seguridad **lo más temprano posibl
 [1] Pre-commit (local) → [2] Push → [3] PR → [4] CI → [5] Deploy → [6] Producción
         ▲                          ▲         ▲       ▲          ▲          ▲
    Secretlint       Gitleaks/   CodeQL  Semgrep   Vercel     ZAP (DAST
-   Gitleaks         Semgrep     Review  lint      deploy     mensual)
-   (hook local)     (CI)
+   Gitleaks         Semgrep     Review  lint      deploy     semanal CI)
+   (hook local)     (CI)                        + IAST (sensor runtime en prod)
 ```
 
 - **Ideal**: detectar el error en la computadora del programador **antes del commit**.
@@ -43,13 +44,15 @@ Filosofía de mover las pruebas de calidad y seguridad **lo más temprano posibl
 | Herramienta | Tipo | Fase | Cómo se ejecuta |
 |---|---|---|---|
 | **secretlint** | Secret scanning (SAST) | Pre-commit | Hook `pre-commit` global (`node .../secretlint.js --secretlintrc .secretlintrc.json`) |
-| **gitleaks** | Secret scanning | Pre-commit + historial | `gitleaks protect --staged --config .gitleaks.toml`; historial: `--log-opts="--all"` |
+| **gitleaks** | Secret scanning (DACP) | Pre-commit + historial + **CI (cada push/PR/diario)** | `gitleaks protect --staged --config .gitleaks.toml`; historial: `--log-opts="--all"`; en CI: job `gitleaks` de `ci.yml` (binary v8.30.1 oficial, `gitleaks detect --all --exit-code 1`) |
 | **semgrep** | SAST (reglas p/security-audit) | CI / manual | `semgrep scan --config p/security-audit` (con `.semgrepignore`) |
 | **CodeQL** | SAST (GitHub Advanced Security) | CI (cada push) | Workflow `codeql.yml` (javascript + rust) |
-| **pnpm audit** | Auditoría de dependencias | Manual / CI | `pnpm audit --prod` (0 vulns) |
+| **pnpm audit** | Auditoría de dependencias | CI (cada push/PR/diario) | Job `audit` en `ci.yml`: `pnpm audit --prod --audit-level high` (0 vulns) |
 | **cargo audit** | Auditoría Rust (Tauri) | Manual / CI | `cargo audit` (17 warnings permitidos: glib/unic-ucd-version) |
 | **trivy** | Escaneo de imágenes/lockfiles | Manual | `trivy fs --config trivy.yaml pnpm-lock.yaml` |
-| **ZAP** (OWASP) | DAST | Periódico (producción) | Daemon + API REST (`spider` + `ascan`), reporte HTML |
+| **IAST** (`createIast`) | IAST runtime | **Producción (siempre activo)** | Middleware de las 4 webs → `console.warn('[IAST] {json}')`; Vercel Logs filtrando "IAST" |
+| **Playwright security-e2e** | DAST interactivo | CI (cada push/PR/diario) | Job `security-e2e` en `ci.yml`: `test/website/e2e/security.spec.ts` contra las 4 webs en prod |
+| **ZAP** (OWASP) | DAST full | Semanal (lunes 06:30 UTC) + manual local | Workflow `dast.yml` (matrix 4 webs, `zaproxy/action-baseline@v0.15.0`); local: daemon + API REST (`spider` + `ascan`), reporte HTML |
 | **Sentry** | Observabilidad (errores en runtime) | Producción | Free tier: error monitoring + tracing (5k errores/mes) |
 
 ### Contexto: secretos y control de versiones

@@ -1,0 +1,41 @@
+name: DAST (ZAP)
+
+on:
+  schedule:
+    # Lunes 06:30 UTC — escaneo pasivo completo de las 4 webs en producción
+    - cron: '30 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  zap-scan:
+    name: ZAP ${{ matrix.site }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - site: ciszunetwork
+            url: https://ciszunetwork.vercel.app
+          - site: ciszukoantony
+            url: https://ciszukoantony.vercel.app
+          - site: ciszubot
+            url: https://ciszubot.vercel.app
+          - site: muzicmania
+            url: https://muzicmania.vercel.app
+    steps:
+      - name: Escaneo ZAP baseline
+        id: zap
+        uses: zaproxy/action-baseline@v0.15.0
+        with:
+          target: ${{ matrix.url }}
+          cmd_options: '-j -t 20'
+      - name: Subir reporte HTML
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-${{ matrix.site }}
+          path: report_html.html
+          retention-days: 30

@@ -132,6 +132,101 @@ curl -s https://ciszunetwork.vercel.app/robots.txt  # debe listar disallow /api/
 
 ---
 
+## 5. IAST — sensor runtime en las 4 webs (11 ago 2026)
+
+**Qué es**: IAST (Interactive Application Security Testing) coloca un sensor DENTRO de la app
+que observa el tráfico real. Implementado sin dependencias npm en
+`packages/utils/src/iast.ts` (`createIast`, edge-safe: solo regex puras → corre en el
+middleware de Next.js y en cualquier runtime). Los findings salen por `console.warn` con
+prefijo `[IAST]` (JSON estructurado: `app, method, path, findings[{type,severity,rule,evidence,source}], detectedAt`)
+→ consumibles en Vercel Logs/Sentry.
+
+**Reglas de detección** (RULES en iast.ts): sql-injection (critical), command-injection
+(critical), xss (high), path-traversal (high), secret-in-request (high — **DACP runtime**:
+exfiltración de secrets en params/headers; la evidencia se **redacta** `[REDACTED]` para no
+re-exponer el valor), ssrf-localhost (high), scanner-probe (medium — .env/.git/wp-admin...).
+
+**Características**: dedupe en memoria por fingerprint (payload+ruta+método, TTL 5 min, evita
+spam del log) + dedupe interno por tipo+fuente+regla (colapsa el par `k=v` y el valor);
+**NO bloquea tráfico** (solo observa — el bloqueo lo hacen Turnstile/rate limit); `observeBody()`
+para cuerpos fuera del middleware; `stats()` para tests; `resetIastDedupe()` para tests.
+
+**Integración**: middleware de las 4 webs (`src/middleware.ts`; ciszunetwork y ciszubot NO
+tenían middleware — se crearon con el mismo patrón + cabeceras de seguridad:
+`X-Content-Type-Options`, `Referrer-Policy`, `Strict-Transport-Security`; sin
+`X-Frame-Options` para permitir previews de Vercel). El middleware corre en edge → coste
+~0 y sin round-trip extra.
+
+**Tests**: `packages/utils/tests/iast.test.ts` (11 tests — SQLi, XSS, traversal, command
+injection, secrets redactados, probes de escáneres, no-findings, dedupe, formato del log).
+
+**Cómo re-verificar**:
+```bash
+# 1. Unit tests del sensor
+pnpm exec vitest run packages/utils/tests/iast.test.ts
+# 2. Runtime local (next start de cualquier web + payload)
+curl "http://localhost:3210/buscar?q=1'%20OR%201=1%20--"   # el log muestra [IAST] {...sql-injection...}
+curl "http://localhost:3210/?q=<script>alert(1)</script>"
+curl "http://localhost:3210/.env"                           # scanner-probe
+# 3. Producción (tras deploy): Vercel Logs → filtrar "IAST"
+```
+
+---
+
+## 6. Seguridad en CI — tareas concurrentes y cotidianizadas (11 ago 2026)
+
+El pipeline de seguridad corre en GitHub Actions **concurrentemente** (cada job es
+independiente) y está **cotidianizado** (cron diario en `ci.yml` + DAST semanal):
+
+| Job | Workflow | Cuándo | Qué verifica |
+| --- | --- | --- | --- |
+| `lint` | ci.yml | push/PR/diario | eslint de las webs |
+| `unit-tests` | ci.yml | push/PR/diario | Vitest 157 tests (incl. IAST 11) |
+| `semgrep` (SAST) | ci.yml | push/PR/diario | semgrep p/security-audit |
+| `audit` (SCA) | ci.yml | push/PR/diario | `pnpm audit --prod --audit-level high` (fail si HIGH/CRITICAL) |
+| `gitleaks` (DACP) | ci.yml | push/PR/diario | **secret scanning en historial completo** (`--all`), v8.30.1 binary oficial |
+| `security-e2e` (DAST) | ci.yml | push/PR/diario | Playwright `security.spec.ts` contra las 4 webs en prod: cabeceras HTTP, no-reflejo XSS/SQLi, sin 5xx, paths de escáneres, POST mutante a `/api/votes` |
+| `zap-scan` (DAST full) | dast.yml | **lunes 06:30 UTC** + dispatch manual | ZAP baseline scan (zaproxy/action-baseline v0.15.0) sobre las 4 webs (matrix), reportes HTML como artefacto 30 días |
+
+**Notas**:
+- `security-e2e` espera hasta 180s en CI a que terminen los deploys de Vercel del mismo push
+  (el middleware nuevo de una web puede tardar ~1-2 min en llegar a prod); en local falla
+  rápido con mensaje claro.
+- El spec de cabeceras tolera 403 transitorios del edge de Vercel (reintentos por sitio).
+- El DAST semanal con ZAP es el "escaneo profundo" programado; el `security-e2e` es el
+  control diario rápido.
+- GitHub Secret Scanning nativo (DAA) NO está disponible en repos privados del plan Free
+  (respuesta API 403) → la detección de secretos en CI la hace **gitleaks** (DACP) + el hook
+  pre-commit local (secretlint). Documentado en `TOOLS.md`.
+
+**Cómo re-verificar**: `gh run list --workflow=ci.yml` / `gh run list --workflow=dast.yml`;
+abrir un job y ver los checks. Ejecutar manualmente el DAST: `gh workflow run dast.yml`.
+
+---
+
+## 7. Estado verificado del toDo de BD — Supabase (11 ago 2026)
+
+> Análisis completo del `services/supabase/docs/documentation/toDo.md`, **verificado con
+> fuentes externas** (dbvr, OPTIONS HTTP, grep del código). Objetivo: que las IA no
+> re-abran ítems ya resueltos ni marquen como "pendiente" lo que es inaplicable.
+> ⚠️ El toDo.md solo lo edita Ciszuko Antony — este doc es la evidencia de cada ítem.
+
+| # | Ítem del toDo | Estado | Evidencia / Acción |
+|---|---|---|---|
+| 1 | Contraseñas 100% cifradas | ✅ **Cubierto** | `auth.users.encrypted_password` = **bcrypt** (`$2a$10$` confirmado por query). Cero columnas password en schemas app. NO inventar cifrado propio — Supabase Auth ya lo hace. |
+| 2 | CORS restringido | ⚠️ **Inaplicable en Supabase** | PostgREST responde `ACAO: *` fijo (verificado con OPTIONS); sin opción en ningún plan. La protección equivalente (JWT + RLS deny-all + rate limits + API routes) ya está. → Doc maestro: **`CORS_SISTEMA.md`** (con plan de implementación futura en API routes/Cloudflare). |
+| 3 | Validar datos en backend | ✅ **Cubierto** | `muzicmania.submit_game_score` valida en BD: `auth.uid()` obligatorio + rangos (score 0–9.999.999, accuracy 0–100) con RAISE EXCEPTION. Dashboard bot valida en route.ts. Turnstile ×4 webs. Gap menor (mensajes de contacto sin límite de longitud) aceptado: nadie renderiza esos datos. |
+| 4 | Sanitizar inputs antes de guardar | ✅ **Cubierto (modelo correcto)** | En Supabase el modelo correcto NO es "sanitizar al guardar" (anti-patrón: destruye datos legítimos p.ej. `a<b`): queries parametrizadas (sin SQLi), escape en render (JSX escapa, DOMPurify solo HTML dinámico), + IAST runtime desde 11 ago. |
+| 5 | CSP (Content Security Policy) | ✅ **Cubierto (11 ago 2026)** | `buildCsp()` en `packages/utils/src/csp.ts` (allowlist: self + Google Fonts self-hosted, Turnstile `challenges.cloudflare.com`, PostHog `us*.i.posthog.com`, Web Analytics `static.cloudflareinsights.com`, Supabase). Aplicada en el middleware de las 4 webs; ciszubot añade `cdn.discordapp.com` (avatares), muzicmania `wss://` (realtime). `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`. `'unsafe-inline'` en script/style (bootstrap inline de Next, estilos inline v3 PDWA — documentado). E2E `security.spec.ts` ahora exige la cabecera. ZAP: "CSP not set" resuelto. |
+| 6 (opc) | Logs de auditoría | ✅ **Cubierto (11 ago 2026)** | Migración 17: `ciszubot.audit_log` (RLS ON deny-all, grants SOLO service_role, cero anon/authenticated — verificado con dbvr). `src/lib/audit.ts` (best-effort, nunca bloquea) en el dashboard: login/login_failed/logout (OAuth Discord) + config_update por guild con campos. Se unió a `command_logs` del bot como fuente de auditoría. |
+| 7 (opc) | Headers de seguridad | ✅ **Cubierto** | `X-Content-Type-Options: nosniff` + `Strict-Transport-Security` + `Referrer-Policy` + **CSP** en middleware de las 4 webs (11 ago). `X-Frame-Options` descartado deliberadamente (rompe previews de Vercel). |
+
+**Regla para agentes futuros**: si un requerimiento pide "configurar CORS" → consultar
+`CORS_SISTEMA.md` antes de tocar nada (respuesta estándar: inaplicable en REST de Supabase,
+la seguridad real es RLS/JWT; opción futura en API routes o Cloudflare).
+
+---
+
 ## Conclusión / política
 
 - Estas 4 categorías **no las cubre el flujo normal de generación de código**: verificar

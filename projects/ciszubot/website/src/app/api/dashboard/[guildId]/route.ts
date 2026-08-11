@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSessionUserId, isGuildAdmin, getGuildsForUser, supabaseAdmin } from '@/lib/auth';
+import { logAudit } from '@/lib/audit';
 import { createRateLimiter } from '@ciszunetwork/utils';
 
 export const runtime = 'nodejs';
@@ -92,5 +93,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ gui
   }
   const { error } = await db.from('guild_configs').upsert(patch);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  await logAudit({
+    event: 'config_update',
+    actorId: userId,
+    target: guildId,
+    ip,
+    detail: { fields: Object.keys(allowed) },
+  });
   return NextResponse.json({ ok: true });
 }
