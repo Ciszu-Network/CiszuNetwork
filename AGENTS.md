@@ -71,21 +71,20 @@ All websites are Next.js 15 with Tailwind 4 + PostCSS. They use `eslint` (no Pre
   - ⚠️ **OAuth**: el redirect `https://ciszubot.vercel.app/api/auth/discord/callback` debe estar registrado en Discord Developer Portal (OAuth2 → Redirects) y `DISCORD_CLIENT_SECRET` en Vercel + `.env.local` para que el login funcione.
 - **Layout**: Navbar sticky con isotipo + links anchor + botón Invitar (URL oauth2 con scope `bot applications.commands`) + **cuenta** (avatar, link Panel, logout) cuando hay sesión. Footer con socials + proyectos + copyright, favicon = isotipo PNG.
 - **Env vars**: `vercel.json` solo CDN_URL + APP_ENV (patrón del repo); `NEXT_PUBLIC_SUPABASE_URL`/`NEXT_PUBLIC_SUPABASE_ANON_KEY` ya configuradas en el proyecto Vercel `ciszubot` (las 4 apps las tienen desde jul 2026).
-- **prebuild**: `copy-assets.js` (depth 3 → `../../../scripts/copy-assets.js`) copia `projects/ciszubot/content/...` a `public/` para dev/fallback local.
+- **Sin prebuild**: los assets viven en `content/` y se sirven vía resolver/CDN (`assetResolver.resolve`); `public/` solo tiene contenido propio (docs/pwa/shared/sw.js).
 
 ## CDN strategy (Ciszu CDN — mirror del repo)
 
 El CDN es un **espejo** del repositorio. Las rutas en Supabase Storage (`ciszu-cdn`, migrado desde `ciszu-assets`) reflejan 1:1 las rutas reales del repo. No hay carpeta `assets/` staging — el upload lee directamente de los directorios originales.
 
-- **Upload**: `pnpm cdn:upload` (`scripts/upload-cdn.js`) — escanea 6 fuentes (`shared/icons/svg/`, `projects/ciszu/content/`, `projects/ciszu/docs/`, `projects/*/content/`) y sube con la misma ruta relativa a `ciszu-cdn`.
+- **Upload**: `pnpm cdn:upload` (`scripts/upload-cdn.js`) — escanea 7 fuentes (`shared/icons/svg/`, `shared/images/`, `projects/ciszu/content/`, `projects/ciszu/docs/`, `projects/*/content/`) y sube con la misma ruta relativa a `ciszu-cdn`. ⚠️ `shared/images/` (p.ej. `francisco_selfie`) vive SOLO en el CDN (no hay mirror en `public/`): `AssetResolver.resolve()` devuelve URL de CDN siempre que haya `NEXT_PUBLIC_CDN_URL`.
   - **Re-upload inteligente por tamaño + mimetype** (desde 4 ago 2026): el script salta un archivo SOLO si el tamaño remoto coincide **y** el mimetype remoto coincide con el esperado por extensión. Antes saltaba solo por tamaño → si un objeto se subió con `text/plain` (p.ej. un SVG) y tenía el mismo tamaño que el local, el script NUNCA lo re-subía (causa raíz del bug del logotipo ciszubot). Ahora detecta el mismatch y re-subirá con `[!!]` warning.
   - **`--force`**: re-sube TODOS los archivos ignorando tamaño/mimetype. **`--prune`**: borra objetos del bucket que no existen localmente.
   - **Verificación de mimetypes**: `pnpm cdn:verify` (`scripts/check-cdn-mimes.js`) — lista todos los objetos del bucket y reporta los que tienen mimetype incorrecto para su extensión (detecta los `text/plain` rotos antes de que rompan un site). ⚠️ Para cargar el ACCESS_TOKEN hace falta meter `SUPABASE_ACCESS_TOKEN` del `.env` en la variable de entorno (el script no lee `.env`). Lista recursiva puede tardar ~minuto (bucket grande).
   - ⚠️ **Upload manual de archivos sueltos**: las `sb_secret_*` keys NO funcionan para PUT directo al storage ("Invalid Compact JWS"). Usar el CLI: `supabase --experimental storage cp <archivo> ss:///ciszu-cdn/<ruta-repo>` con `SUPABASE_ACCESS_TOKEN` (vault) y proyecto ya linkeado (`supabase link --project-ref obwzzmbvkrcscqwptlqo`). ⚠️ Clave: el CLI **no sobreescribe un objeto existente** (error `409 KeyAlreadyExists`) — para actualizar: DELETE previo con la API de Storage (service_role) y luego subir.
   - ⚠️ **El CDN NO refresca la caché aunque re-subas el mismo contenido** (lección 4 ago 2026): el ETag de Cloudflare es un hash del CONTENIDO, no de los metadatos. Si un SVG subido con `text/plain` se vuelve a subir con el mimetype correcto pero **bytes idénticos**, el ETag no cambia, la revalidación devuelve `304 Not Modified`, y Cloudflare sigue sirviendo la entrada vieja `text/plain` (+ `nosniff` → navegador bloquea el render del SVG) **para siempre**. La purga no se dispara. Fix probado: **cambia el contenido** (aunque sea 1 byte, p.ej. newline final) → ETag nuevo → CDN hace refetch con el mimetype correcto. Ejemplo real: este bug en `ciszubot_logotipo_outline_color.svg`.
-- **Offline fallback**: `scripts/copy-assets.js` se ejecuta como `prebuild` en cada website. Copia assets críticos a `public/` con las mismas rutas espejo. `--all` copia todo.
-  - Path depth: `projects/ciszu/website/` → `../../scripts/copy-assets.js`, `projects/*/website/` → `../../../scripts/copy-assets.js`
-  - **Mirrors**: `projects/<name>/content` → `public/projects/<name>/content/` y la media maestra `projects/ciszukoantony/content` → `public/projects/ciszukoantony/content/` (necesario para el resolver local de logos). Los outputs del prebuild en `public/` de las webs puras están en `.gitignore` (solo muzicmania/Tauri trackea sus mirrors).
+- **Política public/ (11 ago 2026)**: `public/` NO es espejo de `content/` — `copy-assets.js` fue ELIMINADO y solo se copia contenido propio (docs/pwa/shared/sw.js). Cada web sirve sus assets vía resolver/CDN (`NEXT_PUBLIC_CDN_URL`). En dev sin CDN_URL el resolver devuelve rutas locales relativas (el `prebuild` de Next copia `public/` al server), en prod con CDN_URL devuelve URLs del CDN.
+  - **Mirrors**: `projects/<name>/content` → `public/projects/<name>/content/` es cosa del PASADO (11 ago 2026: se borraron ~8 GB de mirrors en las 4 webs). Los `public/` de las webs puras están en `.gitignore` (solo muzicmania/Tauri trackea sus mirrors propios de la app, no los de content).
 - **Asset resolver**: `packages/cdn/index.ts` — `resolveIcon(name, style, format)` para icons, `assetResolver.resolve(path)` para assets arbitrarios. Usa `NEXT_PUBLIC_CDN_URL` como base (ya incluye el bucket: `.../object/public/ciszu-cdn`).
 - **Sistema de Formatos (implementado 8 ago 2026)** — capas Trabajo→Archivo→Demostración→Entrega (doc: `projects/ciszu/docs/documentation/MEDIA_FORMATS.md`):
   - `deliveryVariants(path)` / `resolveDelivery(path)` en `packages/cdn/index.ts`: cadena de candidatos Capa 4 `[avif, webp, original]` (imagen), `[opus, original]` (mp3/ogg/m4a/aac), gif→webp animado; SVG/docs → solo el original (nunca derivadas).
@@ -94,6 +93,14 @@ El CDN es un **espejo** del repositorio. Las rutas en Supabase Storage (`ciszu-c
   - **CDN**: `.avif/.webm/.opus/.flac/.wav/.m4a/.aac/.mov` añadidos a `upload-cdn.js` getMime, `check-cdn-mimes.js` MIME_MAP y `getContentType()`. ⚠️ El `--force` global tarda >1h (9k objetos) — para corregir pocos mimetypes usar `node scripts/fix-cdn-mimes.js` (re-subir solo los `bad`, lee `SUPABASE_ACCESS_TOKEN` env). `cdn:verify` 8 ago: 0 malos en 9.055 objetos.
   - ⚠️ Límite Supabase pre-existente: claves storage con caracteres no-ASCII (`ñ`, doble espacio) dan `400 InvalidKey` (ej. `ciszu_flayer_vertical_diseñografico.*`, `ANIMACIÓN DE LIKE...mp4`) — no re-subir, no es del sistema de formatos.
 - ⚠️ **`NEXT_PUBLIC_CDN_URL` por proyecto Vercel**: en jul 2026 los proyectos `muzicmania`, `ciszunetworkpage` y `ciszukoantonypage` tenían el valor apuntando al bucket VIEJO `ciszu-assets` (renombrado → URLs 404). Fueron recreadas (DELETE+POST vía API, target production) apuntando a `ciszu-cdn`. Al cambiar env vars en Vercel hace falta un nuevo build/deploy (los redeploys vía API `POST /v16/deployments/{id}/redeploy` NO existen — disparar workflows con un push de `packages/**` o `projects/**`).
+
+### Regla anti-duplicación (11 ago 2026)
+
+**Cada archivo de contenido vive UNA sola vez** en `shared/` (contenido compartido entre webs) o en el `content/` del proyecto dueño. NUNCA duplicar en otro proyecto ni en `public/` (a excepción de los png PWA generados).
+
+- **Auditoría 11 ago 2026 (MD5)**: borrados 384 archivos duplicados (−149.5 MB) que eran hashes idénticos de ciszukoantony/shared repartidos en `ciszu/content/logos` (222), `ciszubot/content/logos` (160) y `muzicmania/content/logos` (2×`title.psd`), + `ciszukoantony/content/images/francisco_selfie/` (copias renombradas de `shared/images`). El CDN quedó sincronizado con `pnpm cdn:upload --prune` (221 objetos huérfanos borrados del bucket). Comprobación de duplicados: hash MD5 cruzado con `shared/` + `projects/ciszukoantony/content` como maestros.
+- **Contenido compartido = `shared/` + CDN**: las fotos de perfil viven en `shared/images/francisco_selfie/` (fuente canónica, nombres `IMG_*.jpg` — los `cisco-N.jpg` eran copias renombradas, eliminados). El código las referencia vía `assetResolver.resolve('shared/images/francisco_selfie/<nombre>.jpg')` (8 refs migradas: ciszu team/projects/page, muzicmania team, ciszukoantony team/projects/page/about).
+- **Código de verificación**: si un proyecto necesita un asset de otro proyecto o de shared, usar `assetResolver.resolve()` / `resolveAssetPath()` (nunca rutas `/images/...` locales). Antes de añadir un archivo nuevo, comprobar que no exista ya por hash en shared/ciszukoantony. El bucket del CDN espeja el repo — `--prune` mantiene el espejo al borrar del repo.
 
 ### Rutas de logos (fuente maestra)
 
@@ -144,7 +151,6 @@ resolveIcon('home', 'outline', 'svg', { forceLocal: true }); // forzar local
 
 - No hay carpeta `assets/` staging — las fuentes originales son la verdad única (`shared/icons/svg/`, `projects/*/content/`, etc.)
 - ⚠️ **`encodePath()` en `packages/cdn`** (`src/cdn-client.ts`): `assetUrl`/`resolveIcon`/`assetResolver.resolve` codifican la ruta relativa (espacios, acentos → `%20` etc.) antes de devolver URL. Rutas con espacios como `logos/images/not-outline/...` rompían el `<img>` y el preload (mismatch src↔preload → warning y logo no resuelto). No usar rutas crudas al construir URLs.
-- `copy-assets.js` copia solo críticos por defecto, o todos con `--all`
 - Binarios grandes (`.mp4`, `.gif`, `.exe`, etc.) excluidos de git globalmente
 - **Cloudflare R2** configurado como alternativa futura pero **INACTIVO** (requiere tarjeta/paypal). Credenciales comentadas en el vault.
 
@@ -204,7 +210,7 @@ Single project: `obwzzmbvkrcscqwptlqo.supabase.co`
 All workflows run on `push: [main, master]`:
 
 - **CI** (`.github/workflows/ci.yml`) — lint only, matrix over `[website, ciszukoantony, muzicmania]`
-- **4 deploy workflows** — each triggers on matching `projects/<name>/**` + `packages/**` + `scripts/copy-assets.js` changes
+- **4 deploy workflows** — each triggers on matching `projects/<name>/**` + `packages/**` changes
   - Pattern: `vercel link --yes --project <name>` → `vercel --prod --yes --archive=tgz`, ambos **desde la raíz del repo** (`working-directory: .`)
   - ⚠️ NUNCA usar `vercel pull/build/deploy --prebuilt` dentro de `projects/*/website`: con `rootDirectory` fijado en el proyecto, el CLI duplica la ruta y produce deployments READY pero vacíos (404 en el alias)
   - Deploy desde la raíz requiere el `.vercelignore` raíz (excluye node_modules, .next, content, binarios)
@@ -425,7 +431,7 @@ Si el repo cambia a público:
 - **Overrides de seguridad** en `pnpm-workspace.yaml`: `undici 6.28.0`, `body-parser 1.20.6`, `brace-expansion 5.0.9`, `postcss 8.5.25`, `minimatch@^9 9.0.7`, `sharp 0.35.3`, **`js-yaml 4.3.1`** (CVE-2026-59870 — O(n²) en `!!omap` de js-yaml 3.x/4.x; fix no backported → override; 8 ago 2026), **`nanoid@^3 3.3.17`** (GHSA-2v37-7h3g-55p8: custom generators loop infinito con size 0; fix ≥3.3.17; 8 ago 2026), `@typescript-eslint/* 8.63.0`.
 - `muzicmania/website` has **Tauri + NSIS** commands (`pnpm tauri:build`, `pnpm tauri:build:nsis`); needs Rust toolchain
 - No test framework is configured — CI only runs `lint`
-- `prebuild` relative paths: all 4 webs at depth 3 (`projects/*/website` → `../../../scripts/copy-assets.js`)
+- No hay `prebuild` de assets en las webs: los assets se sirven vía resolver/CDN (`public/` solo docs/pwa/shared/sw.js, ver "Política public/")
 - `projects/ciszu/content/` holds master media of la página Ciszu; each app has a mirror `content/` + `documents/` + `documents/documentation/`
 - Vercel deployments do **not** preserve original TypeScript source — only build output + public/ static assets
 - `packages/cdn`, `packages/ui`, `packages/config`, `packages/utils` are the shared npm packages
@@ -569,8 +575,7 @@ Pila decidida (análisis completo en `docs/documentation/TOOLS.md`): **DBeaver C
 - `analyze-policies.js` — detecta policies duplicadas y auth calls top-level
 - `backup-db.js` — backup con timestamp a `archives/backups/db/` (regla de backups: complejo → archives/backups), limpia >30 días, flags `--scheduled`/`--dry-run`
 - `update-env-keys.js` — backup automático de `.env` a `archives/backups/envs/<fecha>/` + actualiza todos los `.env` con nuevas keys tras rotación manual
-- `copy-assets.js` — prebuild de las 4 webs: copia logos críticos (desde `projects/ciszukoantony/content/logos`), mirrors y `shared/icons` a `public/`; root marker = `pnpm-workspace.yaml`
-- `upload-cdn.js` — `pnpm cdn:upload` (sube a `ciszu-cdn` desde SOURCES; `--force` re-sube todo ignorando tamaño/mimetype)
+- `upload-cdn.js` — `pnpm cdn:upload` (sube a `ciszu-cdn` desde SOURCES; `--force` re-sube todo ignorando tamaño/mimetype; `--prune` borra del bucket lo que no existe localmente)
 - `check-cdn-mimes.js` — `pnpm cdn:verify` (lista el bucket y reporta objetos con mimetype incorrecto para su extensión)
 - `delete-cdn-by-ext.js` — borra del bucket todos los objetos con las extensiones pasadas por CLI (mantenimiento de cuota: `node scripts/delete-cdn-by-ext.js .ai .psd`)
 - `delete-storage-bucket.js` — **borrado masivo de bucket completo** (herramienta DESTRUCTIVA protegida, ver "Protocolo de borrados destructivos" abajo): `node scripts/delete-storage-bucket.js <bucket> --yes --confirm <bucket> [--prefix ruta] [--concurrency N] [--delete-bucket] [--dry-run]`. Requiere `--yes` + `--confirm <bucket>` (nombre exacto) + `--force-cdn` si es `ciszu-cdn` + espera 10s de countdown. `--dry-run` lista sin borrar. Nunca usarlo sin dry-run previo.

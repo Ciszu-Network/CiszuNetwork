@@ -110,7 +110,7 @@ CDN Y ASSETS
 - Los SVGs críticos están en shared/icons/svg/ (outline, filled, flags)
 - El resolver de assets está en packages/cdn/index.ts
 - Subida de assets: pnpm cdn:upload (requiere SUPABASE_SERVICE_ROLE_KEY)
-- Fallback offline: scripts/copy-assets.js (se ejecuta como prebuild)
+- Sin fallback offline: los assets se sirven vía resolver/CDN (NEXT_PUBLIC_CDN_URL); copy-assets.js ELIMINADO (11 ago 2026)
 
 CI/CD
 - CI: .github/workflows/ci.yml — Lint only (matrix sobre proyectos)

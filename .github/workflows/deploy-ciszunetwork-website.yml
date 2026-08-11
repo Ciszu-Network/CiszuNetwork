@@ -6,7 +6,6 @@ on:
     paths:
       - 'projects/ciszu/**'
       - 'packages/**'
-      - 'scripts/copy-assets.js'
   workflow_dispatch:
 
 permissions:

@@ -50,7 +50,7 @@ scripts/upload-cdn.js:
   Comando: pnpm cdn:upload
 
 scripts/copy-assets.js:
-  Fallback offline: copia SVGs críticos a public/ durante prebuild
+  ELIMINADO (11 ago 2026): los assets se sirven vía resolver/CDN (NEXT_PUBLIC_CDN_URL), sin mirrors en public/
 
 4. INVENTARIO DE ASSETS POR PROYECTO
 
@@ -102,7 +102,7 @@ FASE 3: ACTUALIZACIÓN DE CÓDIGO
 FASE 4: VERIFICACIÓN Y TESTING
 - [ ] Probar cada website en desarrollo local
 - [ ] Verificar que assets se cargan desde CDN (no desde archivos locales)
-- [ ] Verificar fallback offline (copy-assets.js) para SVGs críticos
+- [x] Fallback offline ELIMINADO (11 ago 2026) — resolver/CDN en todas las webs, sin prebuild
 - [ ] Probar en dispositivos y conexiones lentas
 
 FASE 5: LIMPIEZA DEL REPOSITORIO
@@ -149,7 +149,7 @@ Después de CDN:
 9. RIESGOS Y MITIGACIONES
 
 Riesgo: Supabase Storage caído
-Mitigación: Fallback offline (copy-assets.js) mantiene SVGs críticos locales
+Mitigación: no hay fallback offline desde 11 ago 2026 (copy-assets.js eliminado); en dev sin CDN_URL el resolver devuelve rutas locales relativas
 
 Riesgo: Cambio de URLs de CDN en el futuro
 Mitigación: assetResolver.resolve() abstrae la URL — solo cambiar en un lugar
@@ -202,7 +202,7 @@ scripts/upload-cdn.js:
   Command: pnpm cdn:upload
 
 scripts/copy-assets.js:
-  Offline fallback: copies critical SVGs to public/ during prebuild
+  DELETED (11 ago 2026): assets are served via resolver/CDN (NEXT_PUBLIC_CDN_URL), no public/ mirrors
 
 4. ASSET INVENTORY BY PROJECT
 

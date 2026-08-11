@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { SmartImage } from '@ciszu/ui';
+import { assetResolver } from '@ciszunetwork/cdn';
 import { SOCIALS, I } from '@/config/navigation';
 
 const projects = [
@@ -40,13 +41,13 @@ export default function Home() {
         <div className="relative z-10 max-w-4xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
             <SmartImage
-              src="projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png"
+              src={assetResolver.resolve("projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png")}
               alt="Ciszuko Antony" width={140} height={125}
               className="mx-auto drop-shadow-brand animate-float mb-4"
               fetchPriority="high"
             />
             <SmartImage
-              src="projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png"
+              src={assetResolver.resolve("projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png")}
               alt="Ciszuko Antony" width={400} height={100}
               className="mx-auto drop-shadow-brand max-w-[80vw] mb-6"
               fetchPriority="high"
@@ -160,7 +161,7 @@ export default function Home() {
             className="flex flex-col md:flex-row items-center gap-8 p-8 rounded-2xl bg-white/5 border border-white/10"
           >
             <Image
-              src="/images/francisco_selfie/cisco-2.jpg"
+              src={assetResolver.resolve('shared/images/francisco_selfie/IMG_20251207_001632@893898207.jpg')}
               alt="Ciszuko Antony"
               width={140} height={140}
               className="rounded-full object-cover shrink-0 border-2 border-brand/30"

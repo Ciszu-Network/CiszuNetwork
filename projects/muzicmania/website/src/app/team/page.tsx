@@ -134,7 +134,7 @@ export default function TeamPage() {
               
               <div className="relative z-10">
                 <div className="w-40 h-40 mx-auto rounded-[2rem] overflow-hidden transform group-hover:scale-110 transition-transform duration-700 shadow-[0_0_40px_rgba(0,240,255,0.4)] border-2 border-neon-blue/30">
-                    <img src="/images/francisco_selfie/cisco-1.jpg" alt="Ciszuko Antony" className="w-full h-full object-cover" />
+                    <img src={resolveAssetPath('shared/images/francisco_selfie/IMG_20251207_001627@869886661.jpg')} alt="Ciszuko Antony" className="w-full h-full object-cover" />
                 </div>
                 
                 <div className="mt-8 space-y-4">

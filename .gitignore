@@ -74,6 +74,8 @@ CiszuGamens/
 
 # ─── Client archives (NDS ROMs, large binaries) ────
 archives/
+# Trabajo de clientes (pesado): NUNCA al repo ni al CDN
+archives/clientes/
 
 # ─── Duplicate content (GIF/video) ───────────────────
 projects/ciszu/content/flayers/video/
@@ -89,7 +91,9 @@ projects/ciszubot/content/logos/video/
 # turbo cache.turbo/
 .env*
 
-# ─── Mirrors de copy-assets (prebuild) — solo web, Vercel los regenera ───
+# ─── Proteccion anti-mirrors: public/ solo debe contener docs, pwa, shared e iconos del proyecto ───
+# Si un asset se copia a public/, git lo ignora — el contenido master vive en content/ o shared/
+# y las webs lo resuelven por CDN (packages/cdn, NEXT_PUBLIC_CDN_URL).
 projects/ciszu/website/public/projects/
 projects/ciszu/website/public/ciszukoantony/
 projects/ciszu/website/public/shared/
@@ -131,7 +135,7 @@ tools/tts-stt-ai/tmp/
 # Discord bot logs
 projects/ciszubot/discord-bot/logs/
 
-# CiszuBot website prebuild mirrors (webs puras: no trackear)
+# ─── CiszuBot website: proteccion anti-mirrors (ver arriba) ───
 projects/ciszubot/website/public/projects/
 projects/ciszubot/website/public/ciszukoantony/
 projects/ciszubot/website/public/docs/
@@ -146,7 +150,7 @@ apis/bruno/environments/*.yml
 apis/bruno/*.html
 !apis/bruno/environments/*.example.yml
 
-# public/ fantasma en la raiz (si copy-assets se ejecuta desde la raiz)
+# public/ fantasma en la raiz (si algun script se ejecuta desde la raiz)
 /public/
 
 # Salida de pruebas de generacion de arte IA (estructura por categoria:
@@ -164,5 +168,5 @@ test/website/e2e/reports/
 # Caches de Python (scripts)
 __pycache__/
 
-# Prebuild mirrors ciszubot web
+# Proteccion anti-mirrors ciszubot web (ver arriba)
 projects/ciszubot/website/public/banners/

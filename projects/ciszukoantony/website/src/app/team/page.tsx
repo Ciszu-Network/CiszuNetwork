@@ -3,9 +3,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { assetResolver } from '@ciszunetwork/cdn';
 
 const team = [
-  { name: 'Ciszuko Antony (Francisco Garcia Antonio M. / y8)', role: 'CEO & Founder', desc: 'Created Ciszuko Network. Full-stack developer and leader of innovative projects.', photo: '/images/francisco_selfie/cisco-2.jpg' },
+  { name: 'Ciszuko Antony (Francisco Garcia Antonio M. / y8)', role: 'CEO & Founder', desc: 'Created Ciszuko Network. Full-stack developer and leader of innovative projects.', photo: assetResolver.resolve('shared/images/francisco_selfie/IMG_20251207_001632@893898207.jpg') },
 ];
 
 export default function TeamPage() {

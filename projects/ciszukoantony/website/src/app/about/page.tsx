@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { assetResolver } from '@ciszunetwork/cdn';
 import { RichText, type RichPart } from '@/components/RichText';
 
 const timeline = [
@@ -40,7 +41,7 @@ export default function AboutPage() {
         >
           <div className="flex flex-col md:flex-row items-center gap-8">
             <Image
-              src="/images/francisco_selfie/cisco-1.jpg"
+              src={assetResolver.resolve('shared/images/francisco_selfie/IMG_20251207_001627@869886661.jpg')}
               alt="Ciszuko Antony"
               width={128} height={128}
               className="rounded-full object-cover shrink-0 border-2 border-brand/30"

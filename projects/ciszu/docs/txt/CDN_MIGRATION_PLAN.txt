@@ -56,7 +56,7 @@ scripts/upload-cdn.js:
   Opción: --dry-run para vista previa
 
 scripts/copy-assets.js:
-  Fallback offline: copia SVGs críticos a public/ durante prebuild
+  ELIMINADO (11 ago 2026): los assets se sirven vía resolver/CDN (NEXT_PUBLIC_CDN_URL), sin mirrors en public/
   Modo normal: solo críticos | --all: todos los assets
 
 assets/:
@@ -136,7 +136,7 @@ FASE 3: ACTUALIZACIÓN DE CÓDIGO
 FASE 4: VERIFICACIÓN Y TESTING
 - [ ] Probar cada website en desarrollo local
 - [ ] Verificar que assets se cargan desde CDN (R2) en producción
-- [ ] Verificar fallback offline (copy-assets.js) para SVGs críticos
+- [x] Fallback offline ELIMINADO (11 ago 2026) — resolver/CDN en todas las webs, sin prebuild
 - [ ] Probar modo forceLocal y forceCdn en diferentes entornos
 
 FASE 5: LIMPIEZA DEL REPOSITORIO
@@ -154,7 +154,7 @@ NEXT_PUBLIC_CDN_URL=     # URL pública (ej: https://cdn.ciszunetwork.com)
 8. RIESGOS Y MITIGACIONES
 
 Riesgo: R2 caído o sin conexión
-Mitigación: Fallback offline (copy-assets.js) mantiene SVGs críticos locales
+Mitigación: no hay fallback offline desde 11 ago 2026 (copy-assets.js eliminado); en dev sin CDN_URL el resolver devuelve rutas locales relativas
 
 Riesgo: Cambio de URLs de CDN en el futuro
 Mitigación: assetResolver.resolve() abstrae la URL — solo cambiar en un lugar
