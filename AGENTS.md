@@ -233,18 +233,21 @@ activo** (p.ej. rate limiting ya en `packages/utils`).
     1 solo site cubre las 4 webs) en los 4 layouts.
   - **Turnstile en las 4 webs**: widget **GLOBAL único** (el de MuzicMania renombrado, 4
     hostnames permitidos, 1 par de keys — site+secret en `.env.local` de las 4 apps y en
-    Vercel, NO repetir los valores aquí). MuzicMania conserva su componente propio;
-    las otras 3 usan **`CloudflareGuard` compartido** (`packages/ui/src/CloudflareGuard.tsx`,
-    exportado desde `packages/ui/src/index.ts`): sin deps npm (script global
+    Vercel, NO repetir los valores aquí). Las **4 webs** usan el **`CloudflareGuard`
+    compartido** (`packages/ui/src/CloudflareGuard.tsx`, exportado desde
+    `packages/ui/src/index.ts`): sin deps npm (script global
     `challenges.cloudflare.com/turnstile/v0/api.js` + `window.turnstile.render`), CSS inline
     (lección v3 PDWA — el scanner de Tailwind no genera utilidades solo de packages/ui),
     sessionStorage por app (`cf_verified_*`), degradación segura si falta la env (no
-    bloquea), props: siteKey/logo/title/subtitle/accent/storageKey/verifyPath. Las 3 webs
-    tienen su `/api/verify-turnstile/route.ts` **SIN fallback hardcodeado** (500 claro si
-    falta la env). Envs en `.env.local` (×4) y Vercel (production+preview+development, 3
-    proyectos vía API con `VERCEL_TOKEN`).
+    bloquea), props: siteKey/logo/title/subtitle/accent/storageKey/verifyPath/retryDelays/
+    onVerified. MuzicMania usa un **wrapper fino** (`src/components/layout/CloudflareGuard.tsx`:
+    Tauri skip + sync del store `isCloudflareVerified` vía `onVerified`) — migrado 11 ago 2026
+    desde `@marsidev/react-turnstile` (dependencia eliminada). Las 4 webs
+    tienen su `/api/verify-turnstile/route.ts` (3 sin fallback hardcodeado — 500 claro si
+    falta la env; muzicmania conserva el suyo, ver nota abajo). Envs en `.env.local` (×4) y
+    Vercel (production+preview+development, 3 proyectos vía API con `VERCEL_TOKEN`).
 - ⚠️ **Secret de Turnstile de MuzicMania hardcodeado en git** (`route.ts:11` + siteKey en
-  `CloudflareGuard.tsx:149` fallbacks) — **rotación APLAZADA por decisión del usuario**
+  `CloudflareGuard.tsx:22` fallbacks) — **rotación APLAZADA por decisión del usuario**
   (repo privado; al rotar: regenerar secret en dashboard, actualizar `.env.local`+Vercel ×4
   y eliminar los fallbacks). Las 3 webs nuevas ya están limpias.
 - **R2**: **BLOQUEADO** — Cloudflare exige tarjeta de crédito para activar R2 aunque sea
