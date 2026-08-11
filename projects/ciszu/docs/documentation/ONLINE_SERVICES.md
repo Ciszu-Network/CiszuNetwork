@@ -31,7 +31,7 @@ Inventario de las plataformas online y servicios usados por Ciszu Network (ago 2
 - **NOWPayments** — invoices/donaciones crypto (IPN HMAC).
 - **Lemon Squeezy** — stub a futuro (18 años).
 - **Binance P2P / Zinli / MetaMask** — rieles VE.
-- **Brevo / Resend** — emails transaccionales (`@ciszunetwork/email`, ver `EMAILS_SYSTEM.md`).
+- **Resend** — emails transaccionales (`@ciszunetwork/email`, ver `EMAILS_SYSTEM.md`; requiere dominio Fase B). Brevo descartado (cuenta suspendida + teléfono no VE).
 
 ## Otros en línea
 
