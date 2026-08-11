@@ -1,7 +1,7 @@
 {
   "name": "@ciszunetwork/email",
   "version": "1.0.0",
-  "description": "Sistema de emails de Ciszu Network: abstracción de proveedor (Brevo hoy, Resend con dominio) con failover",
+  "description": "Sistema de emails de Ciszu Network: abstracción de proveedor (Resend con dominio — Fase B) con errores claros",
   "main": "./index.ts",
   "types": "./index.ts",
   "exports": {
@@ -18,7 +18,6 @@
   },
   "keywords": [
     "email",
-    "brevo",
     "resend",
     "ciszu"
   ],

@@ -2,7 +2,8 @@
  * Implementación Resend del EmailProvider.
  * Free plan: 3.000 emails/mes (100/día), 1 dominio verificado. Requiere dominio propio
  * para producción (el dominio de prueba resend.dev solo envía a tu propia dirección).
- * Estrategia: primario cuando exista el dominio (Fase B Cloudflare).
+ * Estrategia: primario (y único) cuando exista el dominio (Fase B Cloudflare). Brevo fue
+ * DESCARTADO (11 ago 2026: cuenta suspendida permanentemente + exige teléfono no venezolano).
  * Endpoint: POST https://api.resend.com/emails (Bearer token)
  */
 

@@ -72,7 +72,7 @@ packages/payments/
 3. Redirige al `checkoutUrl` de NOWPayments (hosted invoice).
 4. NOWPayments llama al webhook `POST /api/webhooks/nowpayments` con el cuerpo crudo firmado: `verifyWebhook(rawBody, headers)` valida HMAC-SHA512 (timing-safe) y mapea estados (`finished/confirmed/sending → confirmed`, `failed/refunded/expired → …`).
 5. Solo con estado `confirmed` se marca la orden pagada y se entrega el producto/beneficio (p. ej. rol de Discord, código de licencia).
-6. Emails de confirmación por `@ciszunetwork/email` (Brevo).
+6. Emails de confirmación por `@ciszunetwork/email` (Resend, con dominio — Fase B).
 
 ### Mapeo de estados (IPN de NOWPayments)
 

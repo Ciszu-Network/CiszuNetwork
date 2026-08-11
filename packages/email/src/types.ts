@@ -1,9 +1,11 @@
 /**
  * Tipos base del sistema de emails de Ciszu Network.
  * Estrategia (11 ago 2026, ver projects/ciszu/docs/documentation/EMAILS_SYSTEM.md):
- *   - HOY (sin dominio propio): Brevo como proveedor activo (free 300/día, sender verificado por email).
- *   - CON DOMINIO (Fase B Cloudflare): Resend como primario (3.000/mes free, SPF/DKIM automáticos).
- *   - Failover opcional: si el primario falla, se reenvía por el secundario.
+ *   - HOY (sin dominio propio): los emails de AUTH usan el SMTP nativo de Supabase.
+ *     El paquete @ciszunetwork/email NO tiene proveedor transaccional activo todavía
+ *     (Resend exige dominio verificado — Fase B Cloudflare). Brevo fue DESCARTADO.
+ *   - CON DOMINIO (Fase B Cloudflare): Resend como único proveedor (3.000/mes free,
+ *     SPF/DKIM automáticos).
  */
 
 export interface EmailAddress {

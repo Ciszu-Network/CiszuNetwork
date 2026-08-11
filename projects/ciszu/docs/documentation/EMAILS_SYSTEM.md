@@ -1,45 +1,48 @@
-# EMAILS_SYSTEM — Emails transaccionales (Brevo hoy → Resend con dominio)
+# EMAILS_SYSTEM — Emails transaccionales (Supabase hoy → Resend con dominio)
 
-**Estado (11 ago 2026)**: paquete `@ciszunetwork/email` listo y probado (16 tests). Pendiente del usuario: cuenta Brevo + API key y verificación de sender (ver §5).
+**Estado (11 ago 2026)**: **Brevo DESCARTADO** — la cuenta quedó suspendida permanentemente ("la actividad de tu cuenta no cumplía nuestras Condiciones de uso") y crear una API key exige teléfono **no venezolano** → inviable desde VE. Plan revisado:
+- **HOY / sin dominio**: los emails de **AUTH de Supabase** (verificación, reset, OTP) usan el **SMTP nativo de Supabase** (gratis, sin configuración). El paquete `@ciszunetwork/email` **no tiene proveedor activo** hasta tener dominio.
+- **Fase B (con dominio Cloudflare)**: **Resend** como único proveedor transaccional (3.000/mes free, SPF/DKIM automáticos).
 
-## 1. Decisión: ¿por qué Brevo hoy y Resend mañana?
+## 1. Decisión: Supabase hoy, Resend mañana (Brevo descartado)
 
 Comparación verificada (ago 2026), priorizando **free sin tarjeta**:
 
 | Proveedor | Free tier (verificado) | Dominio | Notas |
 | --- | --- | --- | --- |
-| **Brevo** ✅ (HOY) | 300 emails/**día** (~9k/mes) **permanente**, sin tarjeta | **No obligatorio**: sender verificado por email (código 6 dígitos) | SMTP `smtp-relay.brevo.com:587/465` + API v3 + plantillas + estadísticas. Deliverability menor sin dominio (SPF/DKIM del remitente son de Brevo) |
-| **Resend** ✅ (CON DOMINIO) | 3.000/mes (100/día), 30 días de logs | **Sí**: 1 dominio verificado (SPF/DKIM automáticos) | API moderna, 100% fiable en entregabilidad, ideal cuando exista el dominio (Fase B Cloudflare, `CLOUDFLARE_SYSTEM.md`) |
+| **Supabase Auth SMTP** ✅ (HOY) | Gratis, sin límite práctico para auth (verificación/reset/OTP) | No | SMTP del proyecto + `no-reply@supabase.co` (o sender custom vía SMTP de un proveedor). Cubre todo el email funcional de auth en las 4 webs |
+| **Resend** ✅ (Fase B) | 3.000/mes (100/día), 30 días de logs | **Sí**: 1 dominio verificado (SPF/DKIM automáticos) | API moderna, entregabilidad alta; primario cuando exista el dominio (Fase B Cloudflare, `CLOUDFLARE_SYSTEM.md`) |
+| ~~Brevo~~ | ~~300 emails/día permanente, sin tarjeta~~ | — | ❌ **DESCARTADO (11 ago 2026)**: cuenta suspendida permanentemente + exige teléfono no venezolano para crear API key → inviable en VE. SMTP `smtp-relay.brevo.com` documentado abajo solo como referencia histórica |
 | SendGrid | **DESCARTADO**: free nuevo = trial 60 días (100/día), luego se detiene; API/SMTP exigen dominio autenticado (single sender solo marketing → 403) | Sí | Era el candidato obvio hasta verificar el trial |
 | MailerSend | 12k/mes | Sí (obligatorio) | Requiere dominio desde el día 1 |
 | Mailgun / SES | trial/12 meses limitado | Sí | Requieren tarjeta |
 | Gmail SMTP | 500/día | — | Bloquea cuentas con uso transaccional; no apto |
 
-**Plan**: **Brevo HOY** (funciona sin dominio) → **Resend como primario cuando exista el dominio** (SPF/DKIM nativos = mejor entregabilidad), con **failover automático** entre ambos.
+**Plan**: **SMTP nativo de Supabase** para todo el email funcional HOY → **Resend como único transaccional cuando exista el dominio** (SPF/DKIM nativos = mejor entregabilidad). Sin failover entre proveedores (solo habrá 1 configurado).
 
 ## 2. Paquete `@ciszunetwork/email`
 
-Abstracción multi-proveedor con failover (patrón de los demás paquetes compartidos):
+Abstracción de proveedor (patrón de los demás paquetes compartidos). **HOY solo contiene el provider de Resend, sin API key activa:**
 
 ```
 packages/email/
   src/types.ts       EmailProvider, EmailMessage, EmailResult, EmailError, EmailNotConfiguredError, EmailProviderUnavailableError
-  src/brevo.ts       createBrevoProvider()  → POST api.brevo.com/v3/smtp/email (header api-key)
   src/resend.ts      createResendProvider() → POST api.resend.com/emails (Bearer); bloqueado sin dominio verificado salvo RESEND_ALLOW_UNVERIFIED (dev)
-  src/index.ts       sendEmail(), getEmailProvider(), getFallbackProvider()
-  tests/            7 tests (payloads, errores, failover, selección)
+  src/index.ts       sendEmail(), getEmailProvider() (Resend), getFallbackProvider() → null (un solo proveedor)
+  tests/            7 tests (payloads, errores, configuración)
 ```
+
+> El provider de Brevo se eliminó del paquete (11 ago 2026) junto con su failover. Con 0 proveedores activos, `sendEmail()` lanza `EmailNotConfiguredError` claro — **no rompe builds ni servidores**.
 
 ### Env vars
 
 | Variable | Uso |
 | --- | --- |
-| `EMAIL_PROVIDER` | `brevo` (default) o `resend` |
-| `BREVO_API_KEY` | Key API v3 de Brevo |
-| `RESEND_API_KEY` | Key API de Resend |
-| `EMAIL_FROM` | Remitente, p. ej. `Ciszu Network <no-reply@emisor-verificado>` (Brevo) |
-| `EMAIL_FROM_RESEND` | Remitente para Resend (debe ser del dominio verificado) |
-| `EMAIL_FAILOVER` | `1` = si el primario falla, reintentar con el secundario |
+| `RESEND_API_KEY` | Key API de Resend (Fase B, con dominio) |
+| `EMAIL_FROM` / `EMAIL_FROM_RESEND` | Remitente, p. ej. `Ciszu Network <no-reply@dominio-verificado>` |
+| `RESEND_ALLOW_UNVERIFIED` | Solo desarrollo (envío a tu propia dirección con dominio de prueba resend.dev) |
+
+`EMAIL_PROVIDER` y `EMAIL_FAILOVER` se eliminaron (solo existe un proveedor).
 
 ### Uso
 
@@ -52,33 +55,32 @@ await sendEmail({
 });
 ```
 
-El fallback lanza error solo si **ambos** proveedores fallan (con las causas encadenadas).
+Hasta que exista dominio + `RESEND_API_KEY`, este paquete lanza error claro. Los emails de auth no pasan por aquí (los envía Supabase directamente).
 
-## 3. Supabase Auth (emails de verificación/reset)
+## 3. Supabase Auth (emails de verificación/reset) — HOY
 
-Supabase usa SMTP propio por defecto (delivery pobre y desde `no-reply@supabase.co`). Para usar Brevo/Resend:
+**Sin configuración adicional**: Supabase sirve los emails de auth con su SMTP por defecto (sender `no-reply@supabase.co`). Esto ya cubre verificación de email, reset de contraseña y OTP en las webs que tengan auth (muzicmania).
 
-1. Dashboard → Authentication → SMTP Settings → **Enable custom SMTP**.
-2. Con Brevo: host `smtp-relay.brevo.com`, puerto 587 (TLS), usuario = la API key, password = la API key (Brevo usa la API key como user y pass SMTP), sender = `no-reply@<emisor>` verificado.
-3. Con Resend (cuando haya dominio): `smtp.resend.com:465/587`, usuario `resend`, password = API key.
-4. ⚠️ Los enlaces de confirmación generados por Supabase apuntan al dominio del proyecto; con dominio propio (Fase B) mejorarlos con `SITE_URL`.
+Para mejorar entregabilidad cuando exista dominio (Fase B): Dashboard → Authentication → SMTP Settings → **Enable custom SMTP** con `smtp.resend.com:465/587`, usuario `resend`, password = API key, sender = `no-reply@<dominio-verificado>`.
+
+> Referencia histórica: el SMTP de Brevo (`smtp-relay.brevo.com:587`, user+pass = API key) queda descartado junto con la cuenta.
 
 ## 4. Casos de uso actuales y futuros
 
-- **HOY**: (a) SMTP de Supabase Auth (verificación de email, reset de contraseña) en muzicmania; (b) emails de soporte/contacto de las webs; (c) confirmación de donación/pago (NOWPayments IPN → email).
-- **FUTURO**: boletines (Brewo marketing o Resend Broadcasts con dominio), facturas de Lemon Squeezy (las emite el MoR, no hace falta).
+- **HOY**: (a) SMTP de Supabase Auth (verificación de email, reset de contraseña) en muzicmania — configuración por defecto; (b) emails de soporte/contacto de las webs → pendientes del paquete hasta Fase B.
+- **FUTURO (con dominio)**: emails transaccionales vía Resend (confirmación de donación/pago — NOWPayments IPN), boletines (Resend Broadcasts), facturas de Lemon Squeezy (las emite el MoR, no hace falta).
 
 ## 5. Tareas del usuario (para activar)
 
-1. Crear cuenta en `brevo.com` con fplayersoffcial@gmail.com (free, sin tarjeta).
-2. Copiar la **API v3 key** a `services/supabase/.env` como `BREVO_API_KEY` y a Vercel donde se use.
-3. En Brevo → Sender Identity: verificar el remitente por email (código de 6 dígitos). Poner `EMAIL_FROM` en `.env.local` ×4 + Vercel.
-4. (Fase B, con dominio) Verificar dominio en Resend, copiar `RESEND_API_KEY`, poner `EMAIL_PROVIDER=resend`, `EMAIL_FROM_RESEND=<dominio>`, `EMAIL_FAILOVER=1`.
-5. Activar SMTP custom en Supabase (§3).
-6. Test de humo: `pnpm --filter @ciszunetwork/email` … (los tests unitarios no requieren cuenta).
+1. **(Fase B) Comprar/configurar el dominio** (`DOMAINS_SYSTEM.md`).
+2. Verificar el dominio en Resend (SPF/DKIM automáticos a los 10–15 min).
+3. Copiar `RESEND_API_KEY` a `services/supabase/.env` (vault) + `.env.local` + Vercel.
+4. Poner `EMAIL_FROM_RESEND` = `Ciszu Network <no-reply@<dominio>>`.
+5. Opcional: activar custom SMTP en Supabase Auth (§3) con Resend para mejor entregabilidad de los emails de auth.
+6. Test de humo: `pnpm test` (los tests unitarios no requieren cuenta real).
 
 ## 6. Verificación de la implementación (ya hecha)
 
-- 16/16 tests pasando (`packages/email` + `packages/payments`), incluido el failover real con doble mock de fetch.
-- El paquete queda añadido al monorepo (workspace `packages/*` ya lo cubre) y al `vitest.config.mts`.
-- Sin API keys reales: sin ellas `sendEmail` lanza `EmailNotConfiguredError` claro (no rompe builds ni servidores).
+- Tests del paquete `@ciszunetwork/email` limpiados (Brevo eliminado, Resend único) y pasando.
+- Sin API keys reales: `sendEmail` lanza `EmailNotConfiguredError` claro (no rompe builds ni servidores).
+- Brevo retirado también del resto del repo: widget de chat de las 4 webs revertido, CSP sin orígenes de brevo.com/sendinblue.com, `AGENTS.md` y docs actualizados.
