@@ -1,6 +1,6 @@
 /**
  * Tipos base del sistema de emails de Ciszu Network.
- * Estrategia (11 ago 2026, ver projects/ciszu/docs/documentation/EMAILS_SISTEMA.md):
+ * Estrategia (11 ago 2026, ver projects/ciszu/docs/documentation/EMAILS_SYSTEM.md):
  *   - HOY (sin dominio propio): Brevo como proveedor activo (free 300/día, sender verificado por email).
  *   - CON DOMINIO (Fase B Cloudflare): Resend como primario (3.000/mes free, SPF/DKIM automáticos).
  *   - Failover opcional: si el primario falla, se reenvía por el secundario.

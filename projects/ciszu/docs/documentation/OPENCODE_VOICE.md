@@ -73,7 +73,7 @@ El TUI corre en el PC, así que el móvil no puede hablar por micrófono. Flujo 
 
 ## Push ntfy: metadatos y nombres identificables (IMPLEMENTADO — 5 ago 2026)
 
-Los audios que llegan al móvil tienen **nombre de archivo descriptivo + metadatos ricos**, aprovechando todo lo que ntfy soporta. Aplicado a `/tts-speak-cel`, `ntfy-notif.js --voice` y reutilizable por los futuros comandos de `opencode-commands-ciszu` (categoría A — ver `COMANDOS_OPENCODE.md`).
+Los audios que llegan al móvil tienen **nombre de archivo descriptivo + metadatos ricos**, aprovechando todo lo que ntfy soporta. Aplicado a `/tts-speak-cel`, `ntfy-notif.js --voice` y reutilizable por los futuros comandos de `opencode-commands-ciszu` (categoría A — ver `OPENCODE_COMMANDS.md`).
 
 ### Helper compartido: `tools/tts-stt-ai/lib/ntfy-meta.js`
 

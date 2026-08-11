@@ -2,7 +2,7 @@
 
 > **Documento maestro de formatos** — imagen, vídeo, audio y no-multimedia.
 > **Estado**: diseño completo (8 ago 2026). Habilita el plan final de implementación.
-> **Tarea origen**: `toDo.md` → _"Replantear si utilizar WebP o AVIF en vez de PNG, JPEG (JPE, JPG), TIFF, BMP y GIF."_
+> **Tarea origen**: `TODO.md` → _"Replantear si utilizar WebP o AVIF en vez de PNG, JPEG (JPE, JPG), TIFF, BMP y GIF."_
 > Este documento define: **qué formato vive en qué capa**, **para qué se usa**, **cuál es el de entrega**, y **cómo el sistema elige automáticamente el mejor formato** para cada navegador/dispositivo.
 
 ---

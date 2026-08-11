@@ -2,7 +2,7 @@
 #
 # Protege los .env locales con age (v1.2.1, C:\Users\fplay\Tools\age\).
 # Identity: C:\Users\fplay\.ciszu\ciszu-vault-key.txt (ACL fplay+SYSTEM; copia en Bitwarden).
-# Doc: projects/ciszu/docs/documentation/VAULT_SEGURIDAD.md
+# Doc: projects/ciszu/docs/documentation/VAULT_SECURITY.md
 #
 # Uso:
 #   .\scripts\vault.ps1 crypt          # .env -> .env.age (copia maestra cifrada)

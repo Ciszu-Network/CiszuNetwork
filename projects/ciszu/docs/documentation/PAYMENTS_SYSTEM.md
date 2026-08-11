@@ -1,6 +1,6 @@
-# PAGOS_SISTEMA — Metodología de pagos y donaciones de Ciszu Network
+# PAYMENTS_SYSTEM — Metodología de pagos y donaciones de Ciszu Network
 
-**Estado (11 ago 2026)**: metodología completa + paquete `@ciszunetwork/payments` (NOWPayments listo, Lemon Squeezy cableado) + 8 tests. Pendiente del usuario: crear wallets y cuentas (ver §7). Complementa a `PLAN_REGISTRO_EMPRESA.md` (legal).
+**Estado (11 ago 2026)**: metodología completa + paquete `@ciszunetwork/payments` (NOWPayments listo, Lemon Squeezy cableado) + 8 tests. Pendiente del usuario: crear wallets y cuentas (ver §7). Complementa a `COMPANY_REGISTRATION_PLAN.md` (legal).
 
 ## 1. Contexto y reglas de la financiación
 
@@ -17,7 +17,7 @@
 | Licencias de software | — | Keygen API (license keys, free tier) + Lemon Squeezy | Stripe Billing |
 | Suscripciones | NOWPayments recurring (no recomendado sin KYC) | Lemon Squeezy subscriptions | Stripe |
 | Venta de música/arte | NOWPayments + Binance P2P (VE) | PayPal + Payoneer (pagos internacionales de clientes) | Stripe + distribuidores |
-| Servicios (discord, comisiones) | Zinli (rieles VE, tarjeta virtual) + Binance P2P | PayPal/Zinli + facturación digital (GUIA_FISCALIDAD_FREELANCER) | Facturación formal SAPI |
+| Servicios (discord, comisiones) | Zinli (rieles VE, tarjeta virtual) + Binance P2P | PayPal/Zinli + facturación digital (FREELANCER_TAX_GUIDE) | Facturación formal SAPI |
 
 ## 3. Riele de pago por país (Venezuela)
 
@@ -39,7 +39,7 @@
 - **Fase 0 (HOY, <18)**: wallets propias (MetaMask, Binance) + cuenta NOWPayments + Zinli. Cobrar donaciones y ventas digitales en USDT/BTC/ETH. Contabilidad manual en `archives/legal` (herramienta `tools/legal-ai`).
 - **Fase 1 (18 años)**: PayPal + Payoneer + Lemon Squeezy (MoR) → cobrar tarjetas/PayPal con facturas e impuestos gestionados. Keygen API para licencias.
 - **Fase 2 (con dominio propio, Fase B Cloudflare)**: Resend para emails transaccionales, verificación de marca, mejor entregabilidad.
-- **Fase 3 (LLC o SAPI — `PLAN_REGISTRO_EMPRESA.md` y `GUIA_INTERNACIONAL_LLC.md`)**: Stripe directo + cuenta bancaria corporativa + distribuidores de música/arte.
+- **Fase 3 (LLC o SAPI — `COMPANY_REGISTRATION_PLAN.md` y `INTERNATIONAL_LLC_GUIDE.md`)**: Stripe directo + cuenta bancaria corporativa + distribuidores de música/arte.
 
 ## 5. NOWPayments — integración técnica
 
@@ -67,7 +67,7 @@ packages/payments/
 
 ### Flujo de pago (cuando se active)
 
-1. Front pide `POST /api/payments/invoice` (con rate limit de `createRateLimiter` — ver `CACHING_SISTEMA.md`).
+1. Front pide `POST /api/payments/invoice` (con rate limit de `createRateLimiter` — ver `CACHING_SYSTEM.md`).
 2. Server: crea `pagos.orders` (schema nuevo: id uuid, product, amount_usd, status, provider, created_at) → `provider.createInvoice(order)`.
 3. Redirige al `checkoutUrl` de NOWPayments (hosted invoice).
 4. NOWPayments llama al webhook `POST /api/webhooks/nowpayments` con el cuerpo crudo firmado: `verifyWebhook(rawBody, headers)` valida HMAC-SHA512 (timing-safe) y mapea estados (`finished/confirmed/sending → confirmed`, `failed/refunded/expired → …`).

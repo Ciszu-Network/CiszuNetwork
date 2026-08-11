@@ -95,4 +95,4 @@ cubra**; pgvector es el stack actual.
 - Benchmarks y comparativa 2026: supabase.com/blog/pgvector-vs-pinecone ·
   selfhost.dev/blog/pgvector-vs-pinecone/ · apicalculators.com/blog/vector-database-cost-comparison-2026.
 - Precios Pinecone: pinecone.io/pricing (Starter 2GB gratis; Standard $50/mes mínimo).
-- `MONITOREO_SISTEMA.md` — la otra tarea del toDo evaluada (monitoreo externo).
+- `MONITORING_SYSTEM.md` — la otra tarea del toDo evaluada (monitoreo externo).

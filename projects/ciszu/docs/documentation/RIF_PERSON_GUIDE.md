@@ -60,6 +60,6 @@ Si todo está en orden, el RIF se emite el mismo día. **Coste: $0.**
 
 ## 6. Qué viene después
 
-- Con el RIF activo: **facturar** servicios digitales (ver `GUIA_FISCALIDAD_FREELANCER.md`).
-- Registrar la **marca** en el SAPI como persona natural (ver `GUIA_MARCA_SAPI.md`).
-- Cuando haya ingresos recurrentes: constituir la **empresa** (ver `GUIA_REGISTRO_MERCANTIL.md`).
+- Con el RIF activo: **facturar** servicios digitales (ver `FREELANCER_TAX_GUIDE.md`).
+- Registrar la **marca** en el SAPI como persona natural (ver `SAPI_TRADEMARK_GUIDE.md`).
+- Cuando haya ingresos recurrentes: constituir la **empresa** (ver `COMMERCIAL_REGISTRATION_GUIDE.md`).

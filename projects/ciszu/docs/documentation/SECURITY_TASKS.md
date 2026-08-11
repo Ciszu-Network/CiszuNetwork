@@ -98,7 +98,7 @@ las 4 webs; añadido a ciszu y ciszukoantony):
 
 Nota: es rate limit **en memoria por instancia** (suficiente contra abuso trivial de scripts;
 para defensa edge real está planificado el rate limiting de Cloudflare en la Fase B con
-dominio — ver `CLOUDFLARE_SISTEMA.md`).
+dominio — ver `CLOUDFLARE_SYSTEM.md`).
 
 **Cómo re-verificar**: las rutas devuelven `429` + `Retry-After` al superar el límite
 (`curl -X POST .../api/verify-turnstile` repetido 31 veces).
@@ -209,15 +209,15 @@ abrir un job y ver los checks. Ejecutar manualmente el DAST: `gh workflow run da
 
 ## 7. Estado verificado del toDo de BD — Supabase (11 ago 2026)
 
-> Análisis completo del `services/supabase/docs/documentation/toDo.md`, **verificado con
+> Análisis completo del `services/supabase/docs/documentation/TODO.md`, **verificado con
 > fuentes externas** (dbvr, OPTIONS HTTP, grep del código). Objetivo: que las IA no
 > re-abran ítems ya resueltos ni marquen como "pendiente" lo que es inaplicable.
-> ⚠️ El toDo.md solo lo edita Ciszuko Antony — este doc es la evidencia de cada ítem.
+> ⚠️ El TODO.md solo lo edita Ciszuko Antony — este doc es la evidencia de cada ítem.
 
 | # | Ítem del toDo | Estado | Evidencia / Acción |
 |---|---|---|---|
 | 1 | Contraseñas 100% cifradas | ✅ **Cubierto** | `auth.users.encrypted_password` = **bcrypt** (`$2a$10$` confirmado por query). Cero columnas password en schemas app. NO inventar cifrado propio — Supabase Auth ya lo hace. |
-| 2 | CORS restringido | ⚠️ **Inaplicable en Supabase** | PostgREST responde `ACAO: *` fijo (verificado con OPTIONS); sin opción en ningún plan. La protección equivalente (JWT + RLS deny-all + rate limits + API routes) ya está. → Doc maestro: **`CORS_SISTEMA.md`** (con plan de implementación futura en API routes/Cloudflare). |
+| 2 | CORS restringido | ⚠️ **Inaplicable en Supabase** | PostgREST responde `ACAO: *` fijo (verificado con OPTIONS); sin opción en ningún plan. La protección equivalente (JWT + RLS deny-all + rate limits + API routes) ya está. → Doc maestro: **`CORS_SYSTEM.md`** (con plan de implementación futura en API routes/Cloudflare). |
 | 3 | Validar datos en backend | ✅ **Cubierto** | `muzicmania.submit_game_score` valida en BD: `auth.uid()` obligatorio + rangos (score 0–9.999.999, accuracy 0–100) con RAISE EXCEPTION. Dashboard bot valida en route.ts. Turnstile ×4 webs. Gap menor (mensajes de contacto sin límite de longitud) aceptado: nadie renderiza esos datos. |
 | 4 | Sanitizar inputs antes de guardar | ✅ **Cubierto (modelo correcto)** | En Supabase el modelo correcto NO es "sanitizar al guardar" (anti-patrón: destruye datos legítimos p.ej. `a<b`): queries parametrizadas (sin SQLi), escape en render (JSX escapa, DOMPurify solo HTML dinámico), + IAST runtime desde 11 ago. |
 | 5 | CSP (Content Security Policy) | ✅ **Cubierto (11 ago 2026)** | `buildCsp()` en `packages/utils/src/csp.ts` (allowlist: self + Google Fonts self-hosted, Turnstile `challenges.cloudflare.com`, PostHog `us*.i.posthog.com`, Web Analytics `static.cloudflareinsights.com`, Supabase). Aplicada en el middleware de las 4 webs; ciszubot añade `cdn.discordapp.com` (avatares), muzicmania `wss://` (realtime). `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`. `'unsafe-inline'` en script/style (bootstrap inline de Next, estilos inline v3 PDWA — documentado). E2E `security.spec.ts` ahora exige la cabecera. ZAP: "CSP not set" resuelto. |
@@ -225,7 +225,7 @@ abrir un job y ver los checks. Ejecutar manualmente el DAST: `gh workflow run da
 | 7 (opc) | Headers de seguridad | ✅ **Cubierto** | `X-Content-Type-Options: nosniff` + `Strict-Transport-Security` + `Referrer-Policy` + **CSP** en middleware de las 4 webs (11 ago). `X-Frame-Options` descartado deliberadamente (rompe previews de Vercel). |
 
 **Regla para agentes futuros**: si un requerimiento pide "configurar CORS" → consultar
-`CORS_SISTEMA.md` antes de tocar nada (respuesta estándar: inaplicable en REST de Supabase,
+`CORS_SYSTEM.md` antes de tocar nada (respuesta estándar: inaplicable en REST de Supabase,
 la seguridad real es RLS/JWT; opción futura en API routes o Cloudflare).
 
 ---

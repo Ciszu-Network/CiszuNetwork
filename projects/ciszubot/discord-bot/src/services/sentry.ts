@@ -3,7 +3,7 @@
  *
  * Se inicializa SOLO si existe SENTRY_DSN en el entorno (vault). Sin DSN el bot
  * funciona igual (no-op). Guardrails: traces off (tracing no aporta al bot),
- * solo errores. Ver projects/ciszu/docs/documentation/ERRORES_SISTEMA.md.
+ * solo errores. Ver projects/ciszu/docs/documentation/ERRORS_SYSTEM.md.
  */
 import * as Sentry from '@sentry/node';
 import { logger } from './logger';
