@@ -38,8 +38,15 @@ const CONVERSIONS = {
 const log = (...a) => console.log(...a);
 
 // SIN shell (spawnSync con args array): las rutas del usuario no se interpretan
-// nunca como comandos (fix semgrep detect-child-process, ago 2026).
+// nunca como comandos. Allowlist de binarios: solo se ejecutan exe de esta lista
+// (fix semgrep detect-child-process, ago 2026).
+const ALLOWED_BINS = new Set(['pandoc', 'python', 'powershell', 'weasyprint']);
+
 function run(exe, args) {
+  const bin = path.basename(exe).replace(/\.exe$/i, '');
+  if (!ALLOWED_BINS.has(bin)) throw new Error(`Binario no permitido: ${exe}`);
+  // nosemgrep: javascript.lang.security.detect-child-process.detect-child-process
+  // (allowlist de binarios fijos + args array sin shell; los llamadores usan constantes)
   const r = spawnSync(exe, args, { stdio: 'inherit' });
   if (r.error) throw r.error;
   if (r.status !== 0) throw new Error(`${path.basename(exe)} terminó con código ${r.status}`);
