@@ -184,7 +184,7 @@ independiente) y está **cotidianizado** (cron diario en `ci.yml` + DAST semanal
 | `unit-tests` | ci.yml | push/PR/diario | Vitest 157 tests (incl. IAST 11) |
 | `semgrep` (SAST) | ci.yml | push/PR/diario | semgrep p/security-audit |
 | `audit` (SCA) | ci.yml | push/PR/diario | `pnpm audit --prod --audit-level high` (fail si HIGH/CRITICAL) |
-| `gitleaks` (DACP) | ci.yml | push/PR/diario | **secret scanning en historial completo** (`--all`), v8.30.1 binary oficial |
+| `gitleaks` (DACP) | ci.yml | push/PR/diario | **secret scanning del diff del push/PR** (NO historial: ~135 leaks históricos conocidos lo bloquearían siempre — se purgan con filter-branch si el repo se hace público), v8.30.1 binary oficial, allowlist `.gitleaks.toml` cubre el token público del beacon de Cloudflare Web Analytics |
 | `security-e2e` (DAST) | ci.yml | push/PR/diario | Playwright `security.spec.ts` contra las 4 webs en prod: cabeceras HTTP, no-reflejo XSS/SQLi, sin 5xx, paths de escáneres, POST mutante a `/api/votes` |
 | `zap-scan` (DAST full) | dast.yml | **lunes 06:30 UTC** + dispatch manual | ZAP baseline scan (zaproxy/action-baseline v0.15.0) sobre las 4 webs (matrix), reportes HTML como artefacto 30 días |
 
@@ -192,7 +192,10 @@ independiente) y está **cotidianizado** (cron diario en `ci.yml` + DAST semanal
 - `security-e2e` espera hasta 180s en CI a que terminen los deploys de Vercel del mismo push
   (el middleware nuevo de una web puede tardar ~1-2 min en llegar a prod); en local falla
   rápido con mensaje claro.
-- El spec de cabeceras tolera 403 transitorios del edge de Vercel (reintentos por sitio).
+- El spec de cabeceras tolera 403 transitorios del edge de Vercel (reintentos con backoff por sitio).
+- El chequeo de no-reflejo XSS/SQLi elimina el **flight data** de Next.js
+  (`self.__next_f.push(...)`) del body antes de comparar: el router serializa la URL con su
+  query decodificado en esos bloques, lo que producía falsos positivos de "payload reflejado".
 - El DAST semanal con ZAP es el "escaneo profundo" programado; el `security-e2e` es el
   control diario rápido.
 - GitHub Secret Scanning nativo (DAA) NO está disponible en repos privados del plan Free

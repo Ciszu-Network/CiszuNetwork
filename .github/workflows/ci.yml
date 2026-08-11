@@ -81,8 +81,27 @@ jobs:
           curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz -o /tmp/gitleaks.tgz
           tar -xzf /tmp/gitleaks.tgz -C /usr/local/bin gitleaks
           gitleaks version
-      - name: Escaneo de secrets (historial completo)
-        run: gitleaks detect --log-opts="--all" --exit-code 1 --redact
+      - name: Escaneo de secrets (diff del push/PR)
+        # NO escanear el historial completo: contiene ~135 leaks históricos
+        # conocidos (`.turbo/runs/*.json` destrackeados, cloudflare-api-key ×3,
+        # beacon de Cloudflare Web Analytics) documentados en AGENTS.md — el
+        # `gitleaks detect --all` los bloquearía SIEMPRE. Este paso escanea
+        # solo los commits nuevos del evento (push/PR), que es donde entran
+        # secrets NUEVOS. Los leaks del historial se purgan con filter-branch
+        # si el repo se hace público.
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            LOG_OPTS="${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
+          elif [ "${{ github.event_name }}" = "push" ] && [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+            LOG_OPTS="HEAD~5..HEAD"
+          elif [ "${{ github.event_name }}" = "push" ]; then
+            LOG_OPTS="${{ github.event.before }}..${{ github.sha }}"
+          else
+            # schedule/workflow_dispatch no tienen `github.event.before`
+            LOG_OPTS="HEAD~5..HEAD"
+          fi
+          echo "Escaneando git log -p ${LOG_OPTS}"
+          gitleaks detect --redact --log-opts="${LOG_OPTS}"
 
   security-e2e:
     name: Security E2E (DAST interactivo)

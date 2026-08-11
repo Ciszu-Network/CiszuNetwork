@@ -44,7 +44,7 @@ Filosofía de mover las pruebas de calidad y seguridad **lo más temprano posibl
 | Herramienta | Tipo | Fase | Cómo se ejecuta |
 |---|---|---|---|
 | **secretlint** | Secret scanning (SAST) | Pre-commit | Hook `pre-commit` global (`node .../secretlint.js --secretlintrc .secretlintrc.json`) |
-| **gitleaks** | Secret scanning (DACP) | Pre-commit + historial + **CI (cada push/PR/diario)** | `gitleaks protect --staged --config .gitleaks.toml`; historial: `--log-opts="--all"`; en CI: job `gitleaks` de `ci.yml` (binary v8.30.1 oficial, `gitleaks detect --all --exit-code 1`) |
+| **gitleaks** | Secret scanning (DACP) | Pre-commit + **CI (cada push/PR/diario)** | `gitleaks protect --staged --config .gitleaks.toml`; en CI: job `gitleaks` de `ci.yml` (binary v8.30.1 oficial, escanea **solo el diff del push/PR**, no el historial completo) |
 | **semgrep** | SAST (reglas p/security-audit) | CI / manual | `semgrep scan --config p/security-audit` (con `.semgrepignore`) |
 | **CodeQL** | SAST (GitHub Advanced Security) | CI (cada push) | Workflow `codeql.yml` (javascript + rust) |
 | **pnpm audit** | Auditoría de dependencias | CI (cada push/PR/diario) | Job `audit` en `ci.yml`: `pnpm audit --prod --audit-level high` (0 vulns) |
