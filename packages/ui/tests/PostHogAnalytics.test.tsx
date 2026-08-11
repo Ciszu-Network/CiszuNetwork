@@ -41,13 +41,21 @@ describe('PostHogAnalytics', () => {
     expect(srcs.some((src) => src === 'https://eu.i.posthog.com/static/array.js')).toBe(true);
   });
 
-  it('inicializa PostHog con capture_pageview:false una vez disponible', async () => {
+  it('inicializa PostHog con capture_pageview:false + pageleave y web vitals', async () => {
     vi.stubEnv('NEXT_PUBLIC_POSTHOG_KEY', 'phc_test');
     const init = vi.fn();
     window.posthog = { init, capture: vi.fn() };
     render(<PostHogAnalytics app="ciszunetwork" />);
     await waitFor(
-      () => expect(init).toHaveBeenCalledWith('phc_test', expect.objectContaining({ capture_pageview: false })),
+      () =>
+        expect(init).toHaveBeenCalledWith(
+          'phc_test',
+          expect.objectContaining({
+            capture_pageview: false,
+            capture_pageleave: true,
+            capture_performance: { web_vitals: true, network_timing: false },
+          })
+        ),
       { timeout: 2000 }
     );
   });
