@@ -84,6 +84,12 @@ function PostHogTracker({ app }: PostHogAnalyticsProps) {
       window.posthog.init(key, {
         api_host: host,
         capture_pageview: false,
+        // Con capture_pageview:false el default 'if_capture_pageview' silenciaría
+        // $pageleave (bounce rate/session duration). Forzarlo ON.
+        capture_pageleave: true,
+        // $web_vitals (LCP/CLS/FCP/INP). network_timing: false (solo lo usa
+        // session replay, que está desactivado por política del ecosistema).
+        capture_performance: { web_vitals: true, network_timing: false },
         persistence: 'localStorage+cookie',
       });
     };

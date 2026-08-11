@@ -101,7 +101,7 @@ Tarifas públicas por uso (tras el free tier mensual de cada producto):
 
 - Client component, **sin dependencias npm** (patrón CloudflareGuard): carga `array.js` de PostHog y usa la API global `window.posthog`.
 - **Degradación segura**: sin `NEXT_PUBLIC_POSTHOG_KEY` no carga nada (no rompe producción).
-- Init con `capture_pageview: false` + trackeo manual de `$pageview` (usePathname + useSearchParams) porque App Router no recarga en navegación SPA.
+- Init con `capture_pageview: false` + trackeo manual de `$pageview` (usePathname + useSearchParams) porque App Router no recarga en navegación SPA. **Fix 11 ago 2026 (recomendaciones del dashboard)**: `capture_pageleave: true` (con pageview:false el default `'if_capture_pageview'` silencia los pageleaves → bounce rate/session duration inexactos) + `capture_performance: { web_vitals: true, network_timing: false }` (`$web_vitals` LCP/CLS/FCP/INP; network_timing solo lo usa session replay, OFF por política).
 - Prop `app` (nombre corto de la web) → se envía como propiedad en cada evento para separar las 4 webs en el único proyecto free.
 - Exporta `captureEvent(event, properties)` para eventos custom desde cualquier componente client (fase 2).
 - Envuelto en `<Suspense>` (requisito de Next 15 para `useSearchParams` en prerender estático).
@@ -141,8 +141,11 @@ Tarifas públicas por uso (tras el free tier mensual de cada producto):
 
 ### Installation Health (10 ago 2026)
 
-- ✅ `$pageleave`, `Scroll depth`, `$web_vitals` (LCP/INP/CLS), `Reverse proxy` — OK por defecto del SDK (posthog-js v1: autocapture, scroll, web vitals activos).
-- ⚠️ `$pageview` — "Complete the PostHog installation": significa que **aún no han llegado eventos** (las webs no se han desplegado con la key). Desaparece solo con los primeros eventos reales tras el deploy. No es un fallo de configuración.
+- ✅ `$pageview` — eventos fluyendo correctamente tras el deploy 11 ago 2026.
+- ✅ `$pageleave` — **fix 11 ago 2026**: con `capture_pageview:false` el SDK silencia los pageleaves (default `'if_capture_pageview'`) → ahora `capture_pageleave: true` explícito en el init.
+- ✅ `Scroll depth` — OK por defecto del SDK.
+- ✅ `$web_vitals` (LCP/CLS/FCP/INP) — **fix 11 ago 2026**: `capture_performance: { web_vitals: true, network_timing: false }` (sin el flag cae al remote config, desactivado).
+- ⚠️ **Reverse proxy** — recomendación pendiente: requiere dominio propio (Fase B Cloudflare, `CLOUDFLARE_SISTEMA.md`) para enrutar `us.i.posthog.com` por dominio propio y evitar ad blockers. No arreglable desde `*.vercel.app`.
 - ✅ **Authorized URLs** — resuelto (paso 6).
 - **Secret API Key (`phs_`)**: NO se usa para el tracking. Es una **Project Secret API Key (PSAK)** (server-to-server, con scopes) válida SOLO para endpoints que la aceptan (`endpoint:run`, etc.); en `/api/projects/*` devuelve 401 ("invalid personal API key" — esperado, esos endpoints solo aceptan `phx_`). Rotada por el usuario 10 ago 2026; guardada en vault `POSTHOG_SECRET_API_KEY`. Para gestión de keys se usa la `phx_` (`GET/POST/PATCH/DELETE /api/projects/550383/project_secret_api_keys/`).
 
