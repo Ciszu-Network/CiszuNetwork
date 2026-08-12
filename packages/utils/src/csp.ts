@@ -21,6 +21,8 @@ export interface CspOptions {
   connectSrc?: string[];
   /** Fuentes extra de fuentes. */
   fontSrc?: string[];
+  /** Fuentes extra para iframes (frame-src). */
+  frameSrc?: string[];
 }
 
 const SUPABASE_ORIGIN = 'https://obwzzmbvkrcscqwptlqo.supabase.co';
@@ -40,7 +42,7 @@ export function buildCsp(opts: CspOptions = {}): string {
     ['img-src', ["'self'", 'data:', 'blob:', SUPABASE_ORIGIN, ...(opts.imgSrc ?? [])]],
     ['font-src', ["'self'", 'data:', ...(opts.fontSrc ?? [])]],
     ['connect-src', ["'self'", SUPABASE_ORIGIN, 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://static.cloudflareinsights.com', 'https://cloudflareinsights.com', 'https://challenges.cloudflare.com', 'https://*.ingest.us.sentry.io', ...(opts.connectSrc ?? [])]],
-    ['frame-src', ["'self'", 'https://challenges.cloudflare.com']],
+    ['frame-src', ["'self'", 'https://challenges.cloudflare.com', ...(opts.frameSrc ?? [])]],
     ['object-src', ["'none'"]],
     ['base-uri', ["'self'"]],
     ['form-action', ["'self'"]],

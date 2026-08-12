@@ -2,15 +2,17 @@
 
 > Este archivo solo puede ser editado por Ciszuko Antony.
 
-## Pagos (metodología + NOWPayments) — EN IMPLEMENTACIÓN
+## Pagos (metodología + NOWPayments) — ACTIVO
 
 - [x] Decisión: NOWPayments HOY (crypto sin KYC) → Lemon Squeezy a los 18 → Stripe con LLC. Metodología completa en `PAYMENTS_SYSTEM.md`.
-- [x] Paquete `@ciszunetwork/payments` (NOWPayments client + IPN HMAC + Lemon Squeezy stub + donaciones por env) con 8 tests.
-- [ ] **USUARIO**: cuenta NOWPayments + API key + IPN secret → vault.
+- [x] Paquete `@ciszunetwork/payments` (NOWPayments client + IPN HMAC + Lemon Squeezy stub + donaciones por env) con 9 tests.
+- [x] **USUARIO**: cuenta NOWPayments creada (`ciszunetwork`) + API key + IPN secret + public key → vault y Vercel (11 ago 2026).
+- [x] Rutas API desplegadas en ciszunetwork: `POST /api/payments/invoice` (rate limit 10/min) + `POST /api/webhooks/nowpayments` (firma HMAC, rate limit 30/min).
+- [ ] **USUARIO**: configurar **wallet de retiro** en NOWPayments (Settings → Payouts) — sin esto los pagos quedan retenidos.
 - [ ] **USUARIO**: wallets MetaMask/TrustWallet (seeds a Bitwarden), Binance (P2P), Zinli.
 - [ ] **USUARIO**: poner direcciones públicas en `DONATE_*` (vault) y sección "Apoyar" en las webs.
 - [ ] **USUARIO (18 años)**: PayPal, Payoneer, Lemon Squeezy, Keygen API para licencias.
-- [ ] **USUARIO (Futuro)**: migración schema `pagos` (orders/transactions con RLS) + rutas API `/api/payments/invoice` + `/api/webhooks/nowpayments`.
+- [ ] **USUARIO (Futuro)**: migración schema `pagos` (orders/transactions con RLS) + entrega de producto en el webhook.
 
 ## Reseñas / reputación (Trustpilot y otras) — EN IMPLEMENTACIÓN
 

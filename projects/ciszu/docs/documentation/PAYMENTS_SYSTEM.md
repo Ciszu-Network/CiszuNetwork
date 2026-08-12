@@ -1,6 +1,6 @@
 # PAYMENTS_SYSTEM — Metodología de pagos y donaciones de Ciszu Network
 
-**Estado (11 ago 2026)**: metodología completa + paquete `@ciszunetwork/payments` (NOWPayments listo, Lemon Squeezy cableado) + 8 tests. Pendiente del usuario: crear wallets y cuentas (ver §7). Complementa a `COMPANY_REGISTRATION_PLAN.md` (legal).
+**Estado (12 ago 2026)**: **NOWPayments ACTIVO** — cuenta del usuario creada (11 ago 2026), credenciales en vault, env vars en Vercel (ciszunetworkpage), rutas API de invoice + webhook IPN desplegadas y verificadas con firma real. Paquete `@ciszunetwork/payments` completo (NOWPayments + Lemon Squeezy stub) + 9 tests. Pendiente del usuario: wallets propias y activar cuenta NOWPayments (ver §7). Complementa a `COMPANY_REGISTRATION_PLAN.md` (legal).
 
 ## 1. Contexto y reglas de la financiación
 
@@ -55,23 +55,28 @@ packages/payments/
   tests/              8 tests (invoice, HMAC válido/inválido, errores, donaciones por env)
 ```
 
-### Env vars (vault `services/supabase/.env`)
+### Env vars (vault `services/supabase/.env` — CONFIGURADAS 11 ago 2026)
 
-| Variable | Uso |
-| --- | --- |
-| `NOWPAYMENTS_API_KEY` | Key API de la cuenta |
-| `NOWPAYMENTS_IPN_SECRET` | Secret del IPN (Settings → IPN) para firmar/verificar webhooks |
-| `NOWPAYMENTS_API` | (opcional) override de la base URL, p. ej. `https://api-sandbox.nowpayments.io` en pruebas |
-| `LEMONSQUEEZY_API_KEY` / `_STORE_ID` / `_PRODUCT_ID` / `_WEBHOOK_SECRET` | A los 18 |
-| `DONATE_USDT_TRC20` / `DONATE_USDT_ERC20` / `DONATE_BTC` / `DONATE_ETH` / `DONATE_PAYPAL` / `DONATE_ZINLI` / `DONATE_PAYONEER` | Direcciones públicas de donación (por env) |
+| Variable | Uso | Estado |
+| --- | --- | --- |
+| `NOWPAYMENTS_API_KEY` | Key API de la cuenta | ✅ En vault + Vercel |
+| `NOWPAYMENTS_IPN_SECRET` | Secret del IPN (Settings → IPN) para firmar/verificar webhooks | ✅ En vault + Vercel |
+| `NOWPAYMENTS_PUBLIC_KEY` | Clave pública (embeds: botón/widget de donación) | ✅ En vault + Vercel |
+| `NOWPAYMENTS_DONATE_URL` | Página de donación: `https://nowpayments.io/donation/ciszunetwork` | ✅ |
+| `NOWPAYMENTS_POS_URL` | POS Terminal: `https://nowpayments.io/pos-terminal/ciszunetwork` | ✅ |
+| `NOWPAYMENTS_API` | (opcional) override de la base URL, p. ej. `https://api-sandbox.nowpayments.io` en pruebas | — |
+| `LEMONSQUEEZY_API_KEY` / `_STORE_ID` / `_PRODUCT_ID` / `_WEBHOOK_SECRET` | A los 18 | — |
+| `DONATE_USDT_TRC20` / `DONATE_USDT_ERC20` / `DONATE_BTC` / `DONATE_ETH` / `DONATE_PAYPAL` / `DONATE_ZINLI` / `DONATE_PAYONEER` | Direcciones públicas de donación (por env) | ⏳ Pendiente (wallets) |
 
-### Flujo de pago (cuando se active)
+> ⚠️ Todas las credenciales NOWPayments también se configuraron como **env vars en Vercel** para `ciszunetworkpage` (targets production+preview+development) el 11 ago 2026 vía API.
 
-1. Front pide `POST /api/payments/invoice` (con rate limit de `createRateLimiter` — ver `CACHING_SYSTEM.md`).
-2. Server: crea `pagos.orders` (schema nuevo: id uuid, product, amount_usd, status, provider, created_at) → `provider.createInvoice(order)`.
-3. Redirige al `checkoutUrl` de NOWPayments (hosted invoice).
-4. NOWPayments llama al webhook `POST /api/webhooks/nowpayments` con el cuerpo crudo firmado: `verifyWebhook(rawBody, headers)` valida HMAC-SHA512 (timing-safe) y mapea estados (`finished/confirmed/sending → confirmed`, `failed/refunded/expired → …`).
-5. Solo con estado `confirmed` se marca la orden pagada y se entrega el producto/beneficio (p. ej. rol de Discord, código de licencia).
+### Flujo de pago (ACTIVO — rutas desplegadas en ciszunetwork)
+
+1. Front pide `POST /api/payments/invoice` (rate limit 10/min por IP con `createRateLimiter` — ver `CACHING_SYSTEM.md`). Body: `{ amount: number USD, email?: string }`. Valida monto $1–$10k.
+2. Server: `createNowPaymentsProvider().createInvoice({...})` → `POST /v1/invoice` con `x-api-key`. Incluye `ipn_callback_url` = `https://ciszunetwork.vercel.app/api/webhooks/nowpayments`.
+3. Redirige al `checkoutUrl` (hosted invoice de NOWPayments, ej. `https://nowpayments.io/payment/?iid=...`).
+4. NOWPayments llama al webhook `POST /api/webhooks/nowpayments` (rate limit 30/min por IP) con el cuerpo crudo firmado: `verifyWebhook(rawBody, headers)` valida HMAC-SHA512 (timing-safe) y mapea estados.
+5. Solo con estado `confirmed` se registra el pago (log + futuro upsert en `pagos.orders` para entregar producto/beneficio).
 6. Emails de confirmación por `@ciszunetwork/email` (Resend, con dominio — Fase B).
 
 ### Mapeo de estados (IPN de NOWPayments)
@@ -102,16 +107,21 @@ packages/payments/
 
 ## 7. Tareas del usuario (para activar)
 
-1. Crear cuenta **NOWPayments** (email) → API key + IPN secret → vault + env.
-2. Crear **MetaMask** y/o **TrustWallet** → guardar seeds en Bitwarden (vault personal).
-3. Crear cuenta **Binance** (KYC básico) → método P2P.
-4. Crear cuenta **Zinli** (cédula).
-5. Poner las direcciones públicas en `DONATE_*` del vault y en las webs (sección Apoyar).
-6. A los 18: PayPal, Payoneer, Lemon Squeezy, Keygen (con la lista de §3).
-7. Cuando se quiera vender: crear la migración del schema `pagos` (orders/transactions con RLS — regla `SECURITY_TASKS.md` #1) y las rutas API de §5.
+1. ✅ **Cuenta NOWPayments creada** (11 ago 2026, `ciszunetwork`) → API key + IPN secret + public key en vault y Vercel.
+2. ⏳ **Configurar wallet de retiro en NOWPayments** (Settings → Payouts): dirección USDT-TRC20/BTC de la wallet propia — sin esto los pagos quedan retenidos en la cuenta de NOWPayments.
+3. Crear **MetaMask** y/o **TrustWallet** → guardar seeds en Bitwarden (vault personal).
+4. Crear cuenta **Binance** (KYC básico) → método P2P.
+5. Crear cuenta **Zinli** (cédula).
+6. Poner las direcciones públicas en `DONATE_*` del vault y en las webs (sección Apoyar).
+7. Verificar el **dominio de la web en Trustpilot** (ver `REVIEWS_SYSTEM.md`).
+8. A los 18: PayPal, Payoneer, Lemon Squeezy, Keygen (con la lista de §3).
+9. Cuando se quiera vender: crear la migración del schema `pagos` (orders/transactions con RLS — regla `SECURITY_TASKS.md` #1) y rutas de entrega de producto.
 
-## 8. Verificación de la implementación (ya hecha)
+## 8. Verificación de la implementación (11-12 ago 2026)
 
-- 8/8 tests pasando: invoice correcta, HMAC válido/inválido, errores HTTP del proveedor, Lemon Squeezy bloqueado sin producto, donaciones solo con env.
-- El paquete está en el workspace y en `vitest.config.mts`.
-- Sin API keys reales: `createInvoice` lanza `PaymentNotConfiguredError` claro (no rompe builds).
+- ✅ 9/9 tests pasando (se añadió el de monto validado en la ruta invoice): invoice correcta, HMAC válido/inválido, errores HTTP, Lemon Squeezy bloqueado sin producto, donaciones solo con env.
+- ✅ API key real verificada: `POST /v1/invoice` devolvió invoice `4395972544` con checkout URL (11 ago 2026).
+- ✅ Rutas desplegadas en `ciszunetworkpage` (commit `c51d82f`): `POST /api/payments/invoice` + `POST /api/webhooks/nowpayments`.
+- ✅ Webhook probado con firma HMAC-SHA512 real generada localmente con el IPN secret → respuesta esperada tras deploy.
+- ✅ Env vars en Vercel: `NOWPAYMENTS_*` ×5 (production+preview+development).
+- El paquete lanza `PaymentNotConfiguredError` claro si faltan keys (no rompe builds).
