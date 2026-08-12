@@ -50,7 +50,7 @@ Comparación verificada (ago 2026), priorizando **free sin tarjeta** (regla de f
 
 | Capa | Archivo | Qué captura |
 | --- | --- | --- |
-| Client | `src/sentry.client.config.ts` (en `src/` de cada web) | Errores de navegador (componentes cliente). DSN: `NEXT_PUBLIC_SENTRY_DSN` |
+| Client | `src/instrumentation-client.ts` (en `src/` de cada web) | Errores de navegador (componentes cliente) + **widget feedback** + replays. DSN: `NEXT_PUBLIC_SENTRY_DSN`. Añade `export const onRouterTransitionStart = Sentry.captureRouterTransitionStart` (instrumenta navegaciones del App Router) |
 | Server (Node) | `src/sentry.server.config.ts` + `src/instrumentation.ts` (`register()`) | Route handlers, server components, fetch a Supabase. DSN: `SENTRY_DSN` |
 | Edge | `src/sentry.edge.config.ts` | Middleware / edge runtime |
 | Error boundary raíz | `src/app/global-error.tsx` | Errores de render que rompen el layout raíz (`Sentry.captureException`) |
@@ -59,6 +59,8 @@ Comparación verificada (ago 2026), priorizando **free sin tarjeta** (regla de f
 | Bot Discord | `projects/ciszubot/discord-bot/src/services/sentry.ts` (`initErrorTracking`, `captureError`) | `unhandledRejection`, `uncaughtException` y errores de comandos (slash + prefijo); se activa solo con `SENTRY_DSN` |
 
 > **Lección de implementación**: con `src/` los configs deben vivir en `src/` (el `instrumentation.ts` resuelve `./sentry.server.config` relativo a sí mismo), NO en la raíz del proyecto. En SDK v10: `hideSourceMaps` ya no existe (usar `sourcemaps.disable`), `disableLogger` está deprecado y `captureRequestError` espera `{path, method, headers}` + contexto `{routerKind, routePath, routeType}`. MuzicMania no puede usar `NextError` de `next/error` (shim legacy `types/declarations.d.ts`) → su `global-error.tsx` es HTML mínimo.
+>
+> **⚠️ Client SDK en v10 (lección 11 ago 2026)**: el plugin webpack de `@sentry/nextjs` **solo auto-detecta `sentry.client.config.ts` en la RAÍZ del proyecto** — si viven en `src/`, el SDK client **nunca se inyecta** (no widget, no replays, no trazas client; el server sí porque `instrumentation.ts` lo importa explícito). La convención soportada en `src/` es `instrumentation-client.ts`, que además permite `onRouterTransitionStart`. Verificado con Playwright: sin él `window.__SENTRY__ === false` y 0 requests al ingest; con él el widget "Reportar un problema" aparece en el DOM. Nombre del archivo client: `src/instrumentation-client.ts` (no confundir con `src/instrumentation.ts` del server).
 
 Apps y proyectos Sentry (nombrar así en sentry.io):
 - `projects/ciszu/website` → proyecto **ciszunetwork**

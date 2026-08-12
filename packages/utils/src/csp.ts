@@ -39,7 +39,7 @@ export function buildCsp(opts: CspOptions = {}): string {
     ['style-src', ["'self'", "'unsafe-inline'"]],
     ['img-src', ["'self'", 'data:', 'blob:', SUPABASE_ORIGIN, ...(opts.imgSrc ?? [])]],
     ['font-src', ["'self'", 'data:', ...(opts.fontSrc ?? [])]],
-    ['connect-src', ["'self'", SUPABASE_ORIGIN, 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://static.cloudflareinsights.com', 'https://challenges.cloudflare.com', ...(opts.connectSrc ?? [])]],
+    ['connect-src', ["'self'", SUPABASE_ORIGIN, 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://static.cloudflareinsights.com', 'https://cloudflareinsights.com', 'https://challenges.cloudflare.com', 'https://*.ingest.us.sentry.io', ...(opts.connectSrc ?? [])]],
     ['frame-src', ["'self'", 'https://challenges.cloudflare.com']],
     ['object-src', ["'none'"]],
     ['base-uri', ["'self'"]],
