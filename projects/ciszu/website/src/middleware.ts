@@ -17,9 +17,9 @@ export function middleware(request: NextRequest) {
     'Content-Security-Policy',
     buildCsp({
       scriptSrc: ['https://widget.trustpilot.com', 'https://www.trustpilot.com'],
-      imgSrc: ['https://nowpayments.io', 'https://www.trustpilot.com'],
-      frameSrc: ['https://nowpayments.io', 'https://www.trustpilot.com'],
-      connectSrc: ['https://widget.trustpilot.com'],
+      imgSrc: ['https://nowpayments.io', 'https://www.trustpilot.com', 'https://widget.trustpilot.com', 'https://images.trustpilot.com'],
+      frameSrc: ['https://nowpayments.io', 'https://www.trustpilot.com', 'https://widget.trustpilot.com'],
+      connectSrc: ['https://widget.trustpilot.com', 'https://images.trustpilot.com'],
     })
   );
 
