@@ -80,15 +80,36 @@ Límites verificados (jul-ago 2026, docs oficiales):
    MuzicMania usa un **wrapper fino** (skip Tauri + sync del store) — desde 11 ago 2026,
    migrado desde `@marsidev/react-turnstile` (eliminado). + `/api/verify-turnstile` por
    app. Envs en `.env.local` (×4) y Vercel (production+preview+development vía API) — **HECHO 10 ago 2026**.
-   - ⚡ **Fix rendimiento SSR (12 ago 2026)**: antes el guard devolvía `null` durante SSR
-     (`!mounted`), así que el HTML inicial no contenía la página → FCP/LCP de muzicmania
-     esperaban a la verificación Turnstile completa (LCP 10.5s, RES 52). Ahora el guard
-     **renderiza siempre `{children}` DETRÁS del overlay fijo** (z-index 9999, fondo negro,
-     `inert`+`aria-hidden` sobre el contenido para no filtrar foco/lectura): el gate sigue
-     cubriendo la pantalla y bloqueando el acceso hasta la verificación, pero el navegador
-     pinta la página desde el primer byte. El wrapper de MuzicMania ya no devuelve `null`
-     en `!mounted`. Cambios: `packages/ui/src/CloudflareGuard.tsx`,
-     `projects/muzicmania/website/src/components/layout/CloudflareGuard.tsx`.
+- ⚡ **Fix rendimiento SSR (12 ago 2026)**: antes el guard devolvía `null` durante SSR
+      (`!mounted`), así que el HTML inicial no contenía la página → FCP/LCP de muzicmania
+      esperaban a la verificación Turnstile completa (LCP 10.5s, RES 52). Ahora el guard
+      **renderiza siempre `{children}` DETRÁS del overlay fijo** (z-index 9999, fondo negro,
+      `inert`+`aria-hidden` sobre el contenido para no filtrar foco/lectura): el gate sigue
+      cubriendo la pantalla y bloqueando el acceso hasta la verificación, pero el navegador
+      pinta la página desde el primer byte. El wrapper de MuzicMania ya no devuelve `null`
+      en `!mounted`. Cambios: `packages/ui/src/CloudflareGuard.tsx`,
+      `projects/muzicmania/website/src/components/layout/CloudflareGuard.tsx`.
+    - ⚡ **Rediseño visual del gate (12 ago 2026, 2º fix)** — pedido del usuario:
+      - **Fondo = la página desenfocada** (blur real `backdrop-filter: blur(14px)` +
+        humo `rgba(2,4,12,0.55)`), NO negro sólido. Los children se pintan en flujo normal
+        detrás del overlay desde el primer HTML → **FCP/LCP reales** (los logos/hero cargan
+        de verdad, visibles borrosos, no solo phantom paint).
+      - **Bloqueo total mientras está activo**: `inert` sobre el wrapper de children (React 19,
+        sin foco/clic/selección/atajos), `pointer-events:none`, `overflow:hidden` en el root
+        (sin scroll) + listeners que cancelan `Ctrl+C/X/P/S/F/U/A`, `contextmenu`, `copy`,
+        `cut` y `selectstart` (capture phase, `preventDefault`+`stopPropagation`).
+      - **Salida animada**: al verificar (`leaving`) el overlay hace fundido `opacity→0`
+        (0.6s ease) y los bloqueos se sueltan; luego se desmonta y queda la página ya
+        cargada. No hay recarga ni cambio de escena.
+      - **El gate SIEMPRE por encima de todo** (z-index 9999, `position:fixed inset:0`):
+        tapa header/footer/botones y cualquier elemento de la UI.
+      - **Una vez verificado**, sessionStorage + estado interno permiten navegar páginas
+        sin re-preguntar hasta cerrar el navegador. Cada web configura su propia escena
+        (logo/título/accent) vía props.
+      - El wrapper de MuzicMania **ya no hace gate rápido por store** (lo cortaba en negro):
+        `onVerified` solo sincroniza `setIsCloudflareVerified(true)`; la salida animada la
+        gestiona el guard compartido. Tests: 11 en `packages/ui/tests/CloudflareGuard.test.tsx`
+        (blur, z-index, inert, bloqueo de atajos, leaving). Suite 164/164 OK.
 3. ⚠️ **Fix seguridad Turnstile (pendiente)**: rotar el widget de MuzicMania (nuevas keys en
    dashboard) y **eliminar los fallbacks hardcodeados** de `CloudflareGuard.tsx:149` y
    `route.ts:11` (error si falta env var). Actualizar envs Vercel de MuzicMania (production).
