@@ -4,7 +4,8 @@ Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
   // Todas las características activas: traces, replays y feedback (widget en la web).
   tracesSampleRate: 1,
-  replaysSessionSampleRate: 0.1,
+  // Replays al 100% temporalmente (pruebas). Bajar a 0.1 en producción tras validar.
+  replaysSessionSampleRate: 1,
   replaysOnErrorSampleRate: 1,
   integrations: [
     Sentry.replayIntegration(),
@@ -17,3 +18,6 @@ Sentry.init({
     }),
   ],
 });
+
+// Instrumenta las navegaciones del App Router en Sentry (transacciones de cliente).
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
