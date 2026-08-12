@@ -2,22 +2,80 @@
 
 > Este archivo solo puede ser editado por Ciszuko Antony.
 
-## Pagos (metodología + NOWPayments) — ACTIVO
+Investigar y arreglar errorr de Speed Insights de Vercel en muzicmania:
 
-- [x] Decisión: NOWPayments HOY (crypto sin KYC) → Lemon Squeezy a los 18 → Stripe con LLC. Metodología completa en `PAYMENTS_SYSTEM.md`.
-- [x] Paquete `@ciszunetwork/payments` (NOWPayments client + IPN HMAC + Lemon Squeezy stub + donaciones por env) con 9 tests.
-- [x] **USUARIO**: cuenta NOWPayments creada (`ciszunetwork`) + API key + IPN secret + public key → vault y Vercel (11 ago 2026).
-- [x] Rutas API desplegadas en ciszunetwork: `POST /api/payments/invoice` (rate limit 10/min) + `POST /api/webhooks/nowpayments` (firma HMAC, rate limit 30/min).
-- [ ] **USUARIO**: configurar **wallet de retiro** en NOWPayments (Settings → Payouts) — sin esto los pagos quedan retenidos.
-- [ ] **USUARIO**: wallets MetaMask/TrustWallet (seeds a Bitwarden), Binance (P2P), Zinli.
-- [ ] **USUARIO**: poner direcciones públicas en `DONATE_*` (vault) y sección "Apoyar" en las webs.
-- [ ] **USUARIO (18 años)**: PayPal, Payoneer, Lemon Squeezy, Keygen API para licencias.
-- [ ] **USUARIO (Futuro)**: migración schema `pagos` (orders/transactions con RLS) + entrega de producto en el webhook.
+Desktop
 
-## Reseñas / reputación (Trustpilot y otras) — EN IMPLEMENTACIÓN
+Real Experience Score
 
-- [x] Decisión: plataformas de valoración por producto. Metodología completa en `REVIEWS_SYSTEM.md` (independiente de pagos).
-- [x] **USUARIO**: descargar el archivo HTML de verificación de Trustpilot (`c2b7fd59-...html`) y darle el nombre al agente (11 ago 2026 — archivo desplegado y respondiendo 200).
-- [ ] **USUARIO**: pulsar **Verify domain** en Trustpilot para `ciszunetwork.vercel.app`.
-- [ ] **USUARIO**: subir Ciszubot a Top.gg y DiscordBotList + tokens (`TOP_GG_TOKEN`, `DISCORDBOTLIST_TOKEN`) → vault.
-- [ ] **USUARIO**: perfil itch.io + publicar MuzicMania; Google Business Profile; (futuro) Microsoft Store/Steam/Product Hunt.
+No data available. Make sure you are using the latest @vercel/speed-insights package.[Learn more](https://vercel.com/docs/speed-insights/quickstart#add-@vercel/speed-insights-to-your-project)
+
+---
+
+Measures the overall user experience. To provide a good user experience, pages should have a RES of more than 90.
+
+[Learn more about RES](https://vercel.com/docs/speed-insights/metrics?device=desktop#how-the-scores-are-determined)
+
+P75 P90 P95 P99
+
+RoutesPaths
+
+**RES**
+
+**Poor**
+
+<50
+
+No poor scores
+
+**Needs Improvement**
+
+50 - 90
+
+/
+
+**54**
+
+**52**
+
+/download
+
+**11**
+
+**85**
+
+**Great**
+
+> 90
+
+No good scores
+
+Countries
+
+**Poor**
+
+<50
+
+United Kingdom
+
+**9**
+
+**33**
+
+**Needs Improvement**
+
+50 - 90
+
+**Great**
+
+> 90
+
+This report is based on **64** data points
+
+---
+
+## Speed Insights (muzicmania) — RESUELTO 12 ago 2026
+
+- [x] Causa: `<SpeedInsights />` estaba DENTRO del `CloudflareGuard` (muzicmania), que no renderiza hijos hasta pasar Turnstile → el sensor perdía las mediciones del primer render → "No data available".
+- [x] Fix: movido `<SpeedInsights />` fuera del guard, directo en `<body>` en `projects/muzicmania/website/src/app/layout.tsx` (misma posición que PwaRegister/PostHogAnalytics).
+- [ ] Verificar en Vercel (Speed Insights) tras el deploy que el RES empieza a recolectar datos.
