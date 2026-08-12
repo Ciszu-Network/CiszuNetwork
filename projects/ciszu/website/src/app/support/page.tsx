@@ -1,8 +1,9 @@
 import Link from "next/link";
+import Script from "next/script";
 import { CISZU_NETWORK, CISZUKO_ANTONY } from "@/config/site";
 import { SocialIcon } from "@/components/ui/SocialIcon";
 import { SOCIAL_COLORS } from "@/config/site";
-import { LifeBuoy, Mail, MessageCircle, ArrowRight, ExternalLink } from "lucide-react";
+import { LifeBuoy, Mail, MessageCircle, ArrowRight, ExternalLink, Heart, Star } from "lucide-react";
 
 const supportChannels = [
   { icon: Mail, label: "Email", value: CISZU_NETWORK.email, href: `mailto:${CISZU_NETWORK.email}`, color: "from-brand to-brand-light" },
@@ -38,6 +39,63 @@ export default function SupportPage() {
               <p className="text-brand-light text-xs">{ch.value}</p>
             </a>
           ))}
+        </div>
+
+        <div className="p-8 rounded-[2rem] bg-gradient-to-br from-brand/20 via-brand-dark/5 to-transparent border border-brand/30 text-center mb-12">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-pink-700 mb-4">
+            <Heart className="w-6 h-6 text-white" />
+          </div>
+          <h2 className="text-2xl font-header font-bold text-white mb-2">Apoyar el proyecto</h2>
+          <p className="text-gray-400 text-sm mb-6 max-w-md mx-auto">
+            Si Ciszu Network te ha sido útil, puedes apoyar el desarrollo con una donación
+            en criptomonedas. El proyecto es independiente y crece con tu respaldo.
+          </p>
+          <div className="flex flex-wrap justify-center items-center gap-4">
+            <a
+              href={process.env.NOWPAYMENTS_DONATE_URL ?? "https://nowpayments.io/donation/ciszunetwork"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-600 to-pink-500 text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all"
+            >
+              <Heart className="w-4 h-4" /> Donar con cripto
+            </a>
+            <a
+              href={process.env.NOWPAYMENTS_POS_URL ?? "https://nowpayments.io/pos-terminal/ciszunetwork"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 hover:border-pink-400/40 text-white rounded-xl font-bold text-sm transition-all"
+            >
+              Terminal de pago <ExternalLink className="w-4 h-4" />
+            </a>
+          </div>
+        </div>
+
+        <div className="p-8 rounded-[2rem] bg-gradient-to-br from-[#04da8d]/10 via-transparent to-transparent border border-[#04da8d]/25 text-center mb-12">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-[#04da8d] to-emerald-700 mb-4">
+            <Star className="w-6 h-6 text-white" />
+          </div>
+          <h2 className="text-2xl font-header font-bold text-white mb-2">Reseñas</h2>
+          <p className="text-gray-400 text-sm mb-6 max-w-md mx-auto">
+            ¿Usas Ciszu Network o alguno de nuestros productos? Deja tu reseña en Trustpilot
+            y ayúdanos a crecer con confianza.
+          </p>
+          <Script
+            src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js"
+            strategy="lazyOnload"
+          />
+          <div
+            className="trustpilot-widget"
+            data-locale="en-US"
+            data-template-id="56278e9abfbbba0bdcd568bc"
+            data-businessunit-id="6a7be8beb27b048803166c8f"
+            data-style-height="52px"
+            data-style-width="100%"
+            data-token="62a9715c-b305-4cb7-a9cf-629a5cc67f63"
+          >
+            <a href="https://www.trustpilot.com/review/ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer">
+              Trustpilot
+            </a>
+          </div>
         </div>
 
         <div className="p-8 rounded-[2rem] bg-gradient-to-br from-brand/20 via-brand-dark/5 to-transparent border border-brand/30 text-center">
