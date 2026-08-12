@@ -4,6 +4,7 @@ import { CISZU_NETWORK, CISZUKO_ANTONY } from "@/config/site";
 import { SocialIcon } from "@/components/ui/SocialIcon";
 import { SOCIAL_COLORS } from "@/config/site";
 import { LifeBuoy, Mail, MessageCircle, ArrowRight, ExternalLink, Heart, Star } from "lucide-react";
+import { getDonationMethods } from "@ciszunetwork/payments";
 
 const supportChannels = [
   { icon: Mail, label: "Email", value: CISZU_NETWORK.email, href: `mailto:${CISZU_NETWORK.email}`, color: "from-brand to-brand-light" },
@@ -12,6 +13,7 @@ const supportChannels = [
 ];
 
 export default function SupportPage() {
+  const methods = getDonationMethods();
   return (
     <div className="min-h-screen pt-24 pb-20">
       <div className="max-w-4xl mx-auto px-4">
@@ -68,6 +70,31 @@ export default function SupportPage() {
               Terminal de pago <ExternalLink className="w-4 h-4" />
             </a>
           </div>
+          {methods.filter((m) => m.enabled).length > 0 && (
+            <div className="mt-8">
+              <p className="text-gray-500 text-xs uppercase tracking-widest mb-3">
+                Donación directa (red blockchain)
+              </p>
+              <div className="flex flex-col gap-2 max-w-md mx-auto">
+                {methods.filter((m) => m.enabled).map((m) => (
+                  <div key={m.id} className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-left">
+                    <span className="text-gray-300 text-xs font-medium">
+                      {m.label} {m.network ? `· ${m.network}` : ""}
+                    </span>
+                    <a
+                      href={`https://etherscan.io/address/${m.address}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-brand-light text-xs font-mono truncate max-w-[16rem] hover:underline"
+                      title={m.address}
+                    >
+                      {m.address} <ExternalLink className="w-3 h-3 shrink-0" />
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="p-8 rounded-[2rem] bg-gradient-to-br from-[#04da8d]/10 via-transparent to-transparent border border-[#04da8d]/25 text-center mb-12">

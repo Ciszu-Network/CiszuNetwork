@@ -4,17 +4,17 @@
 
 ## 0. Estado de la integración (11 ago 2026)
 
-| ítem | Estado |
-| --- | --- |
-| Organización `ciszu-network` | ✅ creada (id `4511894887989248`) |
-| 5 proyectos Sentry | ✅ `ciszunetwork`, `ciszukoantony`, `muzicmania`, `ciszubot`, `ciszubot-bot` (team `ciszu-network`) |
-| DSNs en `.env.local` ×4 | ✅ `SENTRY_DSN` + `NEXT_PUBLIC_SENTRY_DSN` |
-| DSN bot | ✅ `projects/ciszubot/discord-bot/.env` → `SENTRY_DSN` |
-| Vault `services/supabase/.env` | ✅ `SENTRY_ORG`, `SENTRY_ORG_TOKEN`, `SENTRY_PERSONAL_TOKEN`, `SENTRY_DSN_*` (cifrado con age) |
-| Vercel ×4 | ✅ `SENTRY_DSN`+`NEXT_PUBLIC_SENTRY_DSN` (production+preview+development) + `SENTRY_AUTH_TOKEN` (solo production) |
-| Source maps | ✅ habilitados (`sourcemaps: { disable: !process.env.SENTRY_AUTH_TOKEN }`) — se suben en los builds de Vercel production |
-| SDK configs | ✅ client: tracing 1.0 + replays (0.1 / onerror 1.0) + `feedbackIntegration` (widget "Reportar un problema"); server/edge: tracing 1.0; bot: tracing 0.1 |
-| Builds | ✅ 5/5 OK (4 webs + bot) con todo activo |
+| ítem                          | Estado                                                                                                                                                  |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Organización`ciszu-network`   | ✅ creada (id`4511894887989248`)                                                                                                                        |
+| 5 proyectos Sentry            | ✅`ciszunetwork`, `ciszukoantony`, `muzicmania`, `ciszubot`, `ciszubot-bot` (team `ciszu-network`)                                                      |
+| DSNs en`.env.local` ×4        | ✅`SENTRY_DSN` + `NEXT_PUBLIC_SENTRY_DSN`                                                                                                               |
+| DSN bot                       | ✅`projects/ciszubot/discord-bot/.env` → `SENTRY_DSN`                                                                                                   |
+| Vault`services/supabase/.env` | ✅`SENTRY_ORG`, `SENTRY_ORG_TOKEN`, `SENTRY_PERSONAL_TOKEN`, `SENTRY_DSN_*` (cifrado con age)                                                           |
+| Vercel ×4                     | ✅`SENTRY_DSN`+`NEXT_PUBLIC_SENTRY_DSN` (production+preview+development) + `SENTRY_AUTH_TOKEN` (solo production)                                        |
+| Source maps                   | ✅ habilitados (`sourcemaps: { disable: !process.env.SENTRY_AUTH_TOKEN }`) — se suben en los builds de Vercel production                                |
+| SDK configs                   | ✅ client: tracing 1.0 + replays (0.1 / onerror 1.0) +`feedbackIntegration` (widget "Reportar un problema"); server/edge: tracing 1.0; bot: tracing 0.1 |
+| Builds                        | ✅ 5/5 OK (4 webs + bot) con todo activo                                                                                                                |
 
 **Tokens** (solo en vault cifrado, nunca en git): `SENTRY_ORG_TOKEN` (`sntrys_…`, se usa como `SENTRY_AUTH_TOKEN` en Vercel) y `SENTRY_PERSONAL_TOKEN` (`sntryu_…`, gestión vía API `/api/0/`).
 
@@ -24,14 +24,14 @@
 
 Comparación verificada (ago 2026), priorizando **free sin tarjeta** (regla de financiación de Ciszu Network):
 
-| Herramienta | Free tier (verificado ago 2026) | Retención | Notas |
-| --- | --- | --- | --- |
-| **Sentry** ✅ | Developer: 5.000 errores + 10.000 transacciones + 50 replays/mes, 1 usuario | 30 días | SDK Next.js 15 App Router completo (client/server/edge), 1-click en Vercel, source maps |
-| Rollbar | 5.000 eventos + 1.000 replays/mes, usuarios ilimitados | 30 días | SDK más simple pero menos integrado con Next |
-| Bugsnag | 7.500 eventos/mes, 1 usuario | **7 días** (muy corto) | Caro al crecer |
-| Airbrake | Sin free (trial 30 días) | — | $19/mes |
-| GlitchTip | Hosted: 1.000/mes free; self-hosted: gratis ilimitado | la tuya | SDKs de Sentry (compatible); requiere VPS 24/7 |
-| PostHog Error Tracking | 100k errores/mes gratis | 7 días | **DESCARTADO para errores**: PostHog queda SOLO como analítica de producto (§3) |
+| Herramienta            | Free tier (verificado ago 2026)                                             | Retención              | Notas                                                                                   |
+| ---------------------- | --------------------------------------------------------------------------- | ---------------------- | --------------------------------------------------------------------------------------- |
+| **Sentry** ✅          | Developer: 5.000 errores + 10.000 transacciones + 50 replays/mes, 1 usuario | 30 días                | SDK Next.js 15 App Router completo (client/server/edge), 1-click en Vercel, source maps |
+| Rollbar                | 5.000 eventos + 1.000 replays/mes, usuarios ilimitados                      | 30 días                | SDK más simple pero menos integrado con Next                                            |
+| Bugsnag                | 7.500 eventos/mes, 1 usuario                                                | **7 días** (muy corto) | Caro al crecer                                                                          |
+| Airbrake               | Sin free (trial 30 días)                                                    | —                      | $19/mes                                                                                 |
+| GlitchTip              | Hosted: 1.000/mes free; self-hosted: gratis ilimitado                       | la tuya                | SDKs de Sentry (compatible); requiere VPS 24/7                                          |
+| PostHog Error Tracking | 100k errores/mes gratis                                                     | 7 días                 | **DESCARTADO para errores**: PostHog queda SOLO como analítica de producto (§3)         |
 
 **Sentry gana por**: integración nativa con Next.js 15 App Router y Vercel (source maps automáticos), ecosistema y roadmap. Migración futura: Sentry Team ($26/mes, 50k errores) o GlitchTip self-hosted en el VPS del plan `VPS_247.md` si se supera el free.
 
@@ -48,21 +48,22 @@ Comparación verificada (ago 2026), priorizando **free sin tarjeta** (regla de f
 
 ## 3. Arquitectura (App Router + bot)
 
-| Capa | Archivo | Qué captura |
-| --- | --- | --- |
-| Client | `src/instrumentation-client.ts` (en `src/` de cada web) | Errores de navegador (componentes cliente) + **widget feedback** + replays. DSN: `NEXT_PUBLIC_SENTRY_DSN`. Añade `export const onRouterTransitionStart = Sentry.captureRouterTransitionStart` (instrumenta navegaciones del App Router) |
-| Server (Node) | `src/sentry.server.config.ts` + `src/instrumentation.ts` (`register()`) | Route handlers, server components, fetch a Supabase. DSN: `SENTRY_DSN` |
-| Edge | `src/sentry.edge.config.ts` | Middleware / edge runtime |
-| Error boundary raíz | `src/app/global-error.tsx` | Errores de render que rompen el layout raíz (`Sentry.captureException`) |
-| Request errors | `src/instrumentation.ts` → `onRequestError` + `Sentry.captureRequestError(err, request, context)` | Errores de request (API routes) — requerido por el SDK v10 |
-| Build | `next.config.ts` → `withSentryConfig({ org: 'ciszu-network', project: <app>, silent: true, sourcemaps: { disable: !process.env.SENTRY_AUTH_TOKEN, filesToDeleteAfterUpload: ['.next/static/**/*.map'] } })` | Inyección automática; source maps se suben en Vercel production (tiene `SENTRY_AUTH_TOKEN`) y se borran los `.map` del artefacto tras el upload |
-| Bot Discord | `projects/ciszubot/discord-bot/src/services/sentry.ts` (`initErrorTracking`, `captureError`) | `unhandledRejection`, `uncaughtException` y errores de comandos (slash + prefijo); se activa solo con `SENTRY_DSN` |
+| Capa                | Archivo                                                                                                                                                                                                     | Qué captura                                                                                                                                                                                                                            |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Client              | `src/instrumentation-client.ts` (en `src/` de cada web)                                                                                                                                                     | Errores de navegador (componentes cliente) +**widget feedback** + replays. DSN: `NEXT_PUBLIC_SENTRY_DSN`. Añade `export const onRouterTransitionStart = Sentry.captureRouterTransitionStart` (instrumenta navegaciones del App Router) |
+| Server (Node)       | `src/sentry.server.config.ts` + `src/instrumentation.ts` (`register()`)                                                                                                                                     | Route handlers, server components, fetch a Supabase. DSN:`SENTRY_DSN`                                                                                                                                                                  |
+| Edge                | `src/sentry.edge.config.ts`                                                                                                                                                                                 | Middleware / edge runtime                                                                                                                                                                                                              |
+| Error boundary raíz | `src/app/global-error.tsx`                                                                                                                                                                                  | Errores de render que rompen el layout raíz (`Sentry.captureException`)                                                                                                                                                                |
+| Request errors      | `src/instrumentation.ts` → `onRequestError` + `Sentry.captureRequestError(err, request, context)`                                                                                                           | Errores de request (API routes) — requerido por el SDK v10                                                                                                                                                                             |
+| Build               | `next.config.ts` → `withSentryConfig({ org: 'ciszu-network', project: <app>, silent: true, sourcemaps: { disable: !process.env.SENTRY_AUTH_TOKEN, filesToDeleteAfterUpload: ['.next/static/**/*.map'] } })` | Inyección automática; source maps se suben en Vercel production (tiene`SENTRY_AUTH_TOKEN`) y se borran los `.map` del artefacto tras el upload                                                                                         |
+| Bot Discord         | `projects/ciszubot/discord-bot/src/services/sentry.ts` (`initErrorTracking`, `captureError`)                                                                                                                | `unhandledRejection`, `uncaughtException` y errores de comandos (slash + prefijo); se activa solo con `SENTRY_DSN`                                                                                                                     |
 
 > **Lección de implementación**: con `src/` los configs deben vivir en `src/` (el `instrumentation.ts` resuelve `./sentry.server.config` relativo a sí mismo), NO en la raíz del proyecto. En SDK v10: `hideSourceMaps` ya no existe (usar `sourcemaps.disable`), `disableLogger` está deprecado y `captureRequestError` espera `{path, method, headers}` + contexto `{routerKind, routePath, routeType}`. MuzicMania no puede usar `NextError` de `next/error` (shim legacy `types/declarations.d.ts`) → su `global-error.tsx` es HTML mínimo.
 >
 > **⚠️ Client SDK en v10 (lección 11 ago 2026)**: el plugin webpack de `@sentry/nextjs` **solo auto-detecta `sentry.client.config.ts` en la RAÍZ del proyecto** — si viven en `src/`, el SDK client **nunca se inyecta** (no widget, no replays, no trazas client; el server sí porque `instrumentation.ts` lo importa explícito). La convención soportada en `src/` es `instrumentation-client.ts`, que además permite `onRouterTransitionStart`. Verificado con Playwright: sin él `window.__SENTRY__ === false` y 0 requests al ingest; con él el widget "Reportar un problema" aparece en el DOM. Nombre del archivo client: `src/instrumentation-client.ts` (no confundir con `src/instrumentation.ts` del server).
 
 Apps y proyectos Sentry (nombrar así en sentry.io):
+
 - `projects/ciszu/website` → proyecto **ciszunetwork**
 - `projects/ciszukoantony/website` → proyecto **ciszukoantony**
 - `projects/muzicmania/website` → proyecto **muzicmania**
@@ -71,11 +72,11 @@ Apps y proyectos Sentry (nombrar así en sentry.io):
 
 ## 4. Env vars (por app Vercel + `.env.local`)
 
-| Variable | Dónde | Obligatoria |
-| --- | --- | --- |
-| `SENTRY_DSN` | server/edge + bot | Cuando exista la cuenta (server-only) |
-| `NEXT_PUBLIC_SENTRY_DSN` | client (build-time) | Idem |
-| `SENTRY_AUTH_TOKEN` | **SOLO Vercel production** (nunca previews; secret sin prefijo) | Solo para subir source maps en build |
+| Variable                 | Dónde                                                           | Obligatoria                           |
+| ------------------------ | --------------------------------------------------------------- | ------------------------------------- |
+| `SENTRY_DSN`             | server/edge + bot                                               | Cuando exista la cuenta (server-only) |
+| `NEXT_PUBLIC_SENTRY_DSN` | client (build-time)                                             | Idem                                  |
+| `SENTRY_AUTH_TOKEN`      | **SOLO Vercel production** (nunca previews; secret sin prefijo) | Solo para subir source maps en build  |
 
 Sin DSN el SDK es **no-op seguro** (warn en consola, builds OK) — el código ya está en producción sin romper nada.
 
@@ -127,3 +128,9 @@ Todo esto quedó aplicado vía API de Sentry + Vercel por el agente (los tokens 
 - **Sin datos personales**: mantener la regla §2.5 (ids/categorías, nunca emails/contraseñas en scope extras).
 
 **Relacionado (mismo ciclo futuro)**: mover el botón "Instalar PDWA" (fab flotante) a una página dedicada — ver PDWA en AGENTS.md. Ambos widgets flotantes migrarán juntos a páginas de "Instalar/Ayuda" por web cuando se decida.
+
+## Errores (Sentry) — MEJORA FUTURA (página dedicada)
+
+- [ ] **Mover el widget de feedback de Sentry a una página dedicada por sitio** (hoy es botón flotante "Reportar un problema"). Razón: a veces tapa elementos de la UI. La página debe tener estética propia por sitio (neon por web, ya configurables los textos/tema en `feedbackIntegration`) y soportar **traducciones** (hoy textos configurables sin i18n automático). Ver `ERRORS_SYSTEM.md` §8.
+- [ ] **Mover el botón "Instalar PDWA" a una página dedicada** (hoy es fab flotante inferior-izquierda en los 4 layouts). Depende: decidir por sitio. Se combina con el futuro de los widgets (Sentry feedback + PDWA en una página de "Instalar/Ayuda" por web).
+- [ ] Evaluar bajada de `replaysSessionSampleRate` de 1.0 (temporal para pruebas) a 0.1 en los 4 `src/instrumentation-client.ts` cuando se termine de probar. Y verificar el checklist "Beyond the Basics" de sentry.io (Unminify + notifications) tras un deploy con eventos frescos.
