@@ -2,8 +2,8 @@
  * Error tracking del bot con Sentry (@sentry/node).
  *
  * Se inicializa SOLO si existe SENTRY_DSN en el entorno (vault). Sin DSN el bot
- * funciona igual (no-op). Guardrails: traces off (tracing no aporta al bot),
- * solo errores. Ver projects/ciszu/docs/documentation/ERRORS_SYSTEM.md.
+ * funciona igual (no-op). Traces activos a 10% (transacciones de fetch/http del bot).
+ * Ver projects/ciszu/docs/documentation/ERRORS_SYSTEM.md.
  */
 import * as Sentry from '@sentry/node';
 import { logger } from './logger';
@@ -16,7 +16,7 @@ export function initErrorTracking(): void {
   }
   Sentry.init({
     dsn,
-    tracesSampleRate: 0,
+    tracesSampleRate: 0.1,
     environment: process.env.NODE_ENV ?? 'production',
   });
   Sentry.setTag('service', 'ciszubot');
