@@ -112,3 +112,18 @@ Todo esto quedó aplicado vía API de Sentry + Vercel por el agente (los tokens 
 - Bot: `pnpm --filter ciszubot build` OK (incluye `services/sentry.ts`).
 - Tests unitarios 137/137 (121 previos + 16 nuevos de email/payments).
 - Sin DSNs el SDK es no-op: los builds y el runtime no dependen de la cuenta Sentry.
+
+## 8. Mejora futura — widget feedback a página dedicada (12 ago 2026)
+
+**Pendiente documentado en `projects/ciszu/docs/documentation/TODO.md` (sección "Errores (Sentry) — MEJORA FUTURA") y en los TODO de las 4 webs.** En el futuro el widget de feedback **dejará de ser botón flotante** y pasará a una **página dedicada por sitio**.
+
+**Motivo**: el botón flotante "Reportar un problema" a veces tapa elementos de la UI en ciertas páginas/secciones.
+
+**Requisitos de la mejora**:
+
+- **Página dedicada por sitio** (p.ej. `/feedback` o sección en la página de ayuda/instalación), con **estética propia por sitio** (neon cian/rosa por web — ya es configurable vía `FeedbackTextConfiguration` + `FeedbackThemeConfiguration` en `feedbackIntegration` de cada `src/instrumentation-client.ts`).
+- **Traducciones**: hoy los ~34 textos del widget son configurables (`triggerLabel`, `formTitle`, `messagePlaceholder`, botones, errores…) pero **sin i18n automático** — los internos de marca (logo Sentry, screen-shot tools) quedan en inglés salvo override. La página dedicada debe plantear soporte multi-idioma.
+- **`autoInject: false`**: para quitar el botón flotante se desactiva la auto-inyección del widget y se abre el diálogo programáticamente desde la página (`Sentry.getFeedback().openDialog()`); opcionalmente `attachTo` en el contenedor de la página. Callbacks disponibles: `onFormOpen`, `onSubmitSuccess`, `onSubmitError`, `onFormSubmitted`.
+- **Sin datos personales**: mantener la regla §2.5 (ids/categorías, nunca emails/contraseñas en scope extras).
+
+**Relacionado (mismo ciclo futuro)**: mover el botón "Instalar PDWA" (fab flotante) a una página dedicada — ver PDWA en AGENTS.md. Ambos widgets flotantes migrarán juntos a páginas de "Instalar/Ayuda" por web cuando se decida.
