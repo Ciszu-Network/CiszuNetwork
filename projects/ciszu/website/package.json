@@ -15,6 +15,7 @@
   "dependencies": {
     "@ciszu/ui": "workspace:*",
     "@ciszunetwork/cdn": "workspace:*",
+    "@ciszunetwork/payments": "workspace:*",
     "@ciszunetwork/utils": "workspace:*",
     "@sentry/nextjs": "^10.69.0",
     "framer-motion": "^12.38.0",
