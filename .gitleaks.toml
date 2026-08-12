@@ -36,6 +36,13 @@ regexes = [
   # las 4 webs por diseño — no es un secreto). Con allowline + este allowlist
   # no aparece en el CI ni en el historial scan.
   "2fcf0eab8bf94fe7ad6495160673ab3d",
+  # Token público del widget TrustBox de Trustpilot (data-token, viaja en el
+  # HTML de la página /support por diseño — no es un secreto). Idéntico al de
+  # cualquier web que use Trustpilot widgets.
+  "62a9715c-b305-4cb7-a9cf-629a5cc67f63",
+  # Clave pública de NOWPayments (api_key del embed de donación, viaja en el
+  # HTML del widget por diseño — NO es la NOWPAYMENTS_API_KEY server-side).
+  "739f2096-6c64-40d6-a2a1-635784185dfb",
 ]
 
 [[rules]]

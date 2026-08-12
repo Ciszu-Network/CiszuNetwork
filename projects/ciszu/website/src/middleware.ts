@@ -13,7 +13,15 @@ export function middleware(request: NextRequest) {
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
-  response.headers.set('Content-Security-Policy', buildCsp());
+  response.headers.set(
+    'Content-Security-Policy',
+    buildCsp({
+      scriptSrc: ['https://widget.trustpilot.com', 'https://www.trustpilot.com'],
+      imgSrc: ['https://nowpayments.io', 'https://www.trustpilot.com'],
+      frameSrc: ['https://nowpayments.io', 'https://www.trustpilot.com'],
+      connectSrc: ['https://widget.trustpilot.com'],
+    })
+  );
 
   // ── Sensor IAST (runtime): detecta payloads maliciosos, solo observa ──────
   // Emite [IAST] a logs de Vercel con dedupe 5 min. Doc: SECURITY_TASKS.md
