@@ -55,11 +55,11 @@ describe('CloudflareGuard', () => {
     expect(getByText('contenido')).toBeTruthy();
   });
 
-  it('con siteKey y sin verificar muestra la pantalla de verificación con el widget', async () => {
+  it('con siteKey y sin verificar muestra la pantalla de verificación (contenido detrás, no bloqueado)', async () => {
     render(<CloudflareGuard {...props} />);
     await waitFor(() => expect(turnstileMock.render).toHaveBeenCalled(), { timeout: 3000 });
     expect(screen.getByText('Verificando Conexión Segura')).toBeTruthy();
-    expect(screen.queryByText('contenido')).toBeNull();
+    expect(screen.getByText('contenido')).toBeTruthy();
     expect(lastRenderOpts().sitekey).toBe('0xTEST');
     expect(lastRenderOpts().theme).toBe('dark');
   });

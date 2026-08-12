@@ -78,4 +78,5 @@ This report is based on **64** data points
 
 - [x] Causa: `<SpeedInsights />` estaba DENTRO del `CloudflareGuard` (muzicmania), que no renderiza hijos hasta pasar Turnstile → el sensor perdía las mediciones del primer render → "No data available".
 - [x] Fix: movido `<SpeedInsights />` fuera del guard, directo en `<body>` en `projects/muzicmania/website/src/app/layout.tsx` (misma posición que PwaRegister/PostHogAnalytics).
-- [ ] Verificar en Vercel (Speed Insights) tras el deploy que el RES empieza a recolectar datos.
+- [x] El sensor YA recolecta (70 data points, métricas reales: FCP 5.66s, LCP 10.57s, INP 264ms). El RES 52 era el score REAL, no el error.
+- [x] **Fix LCP (12 ago 2026, manteniendo el gate Turnstile íntegro)**: el guard devolvía `null` en SSR → el HTML inicial no tenía la página → FCP/LCP esperaban la verificación completa. Ahora `packages/ui/src/CloudflareGuard.tsx` renderiza SIEMPRE `{children}` detrás del overlay fijo (gate intacto: pantalla negra + widget hasta verificar; `inert`+`aria-hidden` en el contenido). El wrapper de MuzicMania ya no devuelve `null` en `!mounted`. Hero de `/` con `priority` (logotipos SVG eager). Verificar en Vercel que el LCP baja a ~1-3s en el siguiente reporte.

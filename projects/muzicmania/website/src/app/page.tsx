@@ -115,6 +115,7 @@ export default function Home() {
               alt="MuzicMania"
               width={380}
               height={100}
+              priority
               className="drop-shadow-[0_0_20px_rgba(0,128,255,0.4)] group-hover:drop-shadow-[0_0_40px_rgba(0,128,255,0.8)] group-hover:drop-shadow-[0_0_60px_rgba(145,70,255,0.6)] transition-all duration-500 animate-float"
             />
             <Image
@@ -122,6 +123,7 @@ export default function Home() {
               alt="Logo"
               width={100}
               height={100}
+              priority
               className="drop-shadow-[0_0_20px_rgba(145,70,255,0.5)] group-hover:drop-shadow-[0_0_40px_rgba(145,70,255,0.8)] group-hover:drop-shadow-[0_0_60px_rgba(0,128,255,0.6)] transition-all duration-500 animate-float-delayed"
             />
           </div>
