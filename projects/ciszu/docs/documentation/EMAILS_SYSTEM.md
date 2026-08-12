@@ -70,7 +70,9 @@ Para mejorar entregabilidad cuando exista dominio (Fase B): Dashboard → Authen
 - **HOY**: (a) SMTP de Supabase Auth (verificación de email, reset de contraseña) en muzicmania — configuración por defecto; (b) emails de soporte/contacto de las webs → pendientes del paquete hasta Fase B.
 - **FUTURO (con dominio)**: emails transaccionales vía Resend (confirmación de donación/pago — NOWPayments IPN), boletines (Resend Broadcasts), facturas de Lemon Squeezy (las emite el MoR, no hace falta).
 
-## 5. Tareas del usuario (para activar)
+## 5. Tareas del usuario (para activar en Fase B — tarea cerrada HOY)
+
+> **Estado**: sistema de emails **CERRADO (11 ago 2026)**. El email funcional (auth de Supabase) ya trabaja sin configuración. Los pendientes de abajo solo se activan cuando exista dominio (Fase B); quedan registrados aquí, no en el TODO global.
 
 1. **(Fase B) Comprar/configurar el dominio** (`DOMAINS_SYSTEM.md`).
 2. Verificar el dominio en Resend (SPF/DKIM automáticos a los 10–15 min).
