@@ -80,6 +80,15 @@ Límites verificados (jul-ago 2026, docs oficiales):
    MuzicMania usa un **wrapper fino** (skip Tauri + sync del store) — desde 11 ago 2026,
    migrado desde `@marsidev/react-turnstile` (eliminado). + `/api/verify-turnstile` por
    app. Envs en `.env.local` (×4) y Vercel (production+preview+development vía API) — **HECHO 10 ago 2026**.
+   - ⚡ **Fix rendimiento SSR (12 ago 2026)**: antes el guard devolvía `null` durante SSR
+     (`!mounted`), así que el HTML inicial no contenía la página → FCP/LCP de muzicmania
+     esperaban a la verificación Turnstile completa (LCP 10.5s, RES 52). Ahora el guard
+     **renderiza siempre `{children}` DETRÁS del overlay fijo** (z-index 9999, fondo negro,
+     `inert`+`aria-hidden` sobre el contenido para no filtrar foco/lectura): el gate sigue
+     cubriendo la pantalla y bloqueando el acceso hasta la verificación, pero el navegador
+     pinta la página desde el primer byte. El wrapper de MuzicMania ya no devuelve `null`
+     en `!mounted`. Cambios: `packages/ui/src/CloudflareGuard.tsx`,
+     `projects/muzicmania/website/src/components/layout/CloudflareGuard.tsx`.
 3. ⚠️ **Fix seguridad Turnstile (pendiente)**: rotar el widget de MuzicMania (nuevas keys en
    dashboard) y **eliminar los fallbacks hardcodeados** de `CloudflareGuard.tsx:149` y
    `route.ts:11` (error si falta env var). Actualizar envs Vercel de MuzicMania (production).

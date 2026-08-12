@@ -246,7 +246,6 @@ export default function CloudflareGuard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mounted, enabled, state, regen]);
 
-  if (!mounted) return null;
   if (!enabled || state === ('verified' as GuardState)) return <>{children}</>;
 
   const iconError = (
@@ -378,6 +377,13 @@ export default function CloudflareGuard({
         </div>
       </div>
       <style>{`@keyframes cfspin { to { transform: rotate(360deg); } }`}</style>
+      {/* El contenido se renderiza DETRÁS del overlay: el gate sigue cubriendo la
+          pantalla hasta la verificación, pero el navegador ya pinta la página desde
+          el primer HTML (mejora FCP/LCP sin tocar la seguridad del guard).
+          inert + aria-hidden evitan foco/lectura del contenido detrás del gate. */}
+      <div aria-hidden="true" inert>
+        {children}
+      </div>
     </div>
   );
 }

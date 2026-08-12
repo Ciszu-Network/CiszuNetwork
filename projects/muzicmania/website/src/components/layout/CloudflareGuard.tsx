@@ -20,20 +20,16 @@ import { isTauri } from '@/lib/isTauri';
  */
 export function CloudflareGuard({ children }: { children: React.ReactNode }) {
   const { isCloudflareVerified, setIsCloudflareVerified } = useAppStore();
-  const [mounted, setMounted] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
 
   useEffect(() => {
     setIsDesktop(isTauri());
-    setMounted(true);
   }, []);
 
   // En Tauri (desktop), saltar verificación Cloudflare
   if (isDesktop) {
     return <>{children}</>;
   }
-
-  if (!mounted) return null;
 
   if (isCloudflareVerified) {
     return <>{children}</>;
