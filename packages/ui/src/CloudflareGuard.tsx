@@ -34,6 +34,23 @@
  *      pegado, que es lo que daba sensación de "se cancela solo").
  *   4. El estado 'verifying' mantiene el contenedor vacío (sin iframe fantasma).
  *
+ * Fix 12 ago 2026 (rediseño visual — pedido del usuario):
+ *   5. Fondo = la PÁGINA real desenfocada (blur), NO negro sólido. Los children
+ *      se renderizan en flujo normal DETRÁS del overlay (el navegador los pinta
+ *      desde el primer HTML → FCP/LCP reales, logos y hero visibles borrosos).
+ *   6. Interacción 100% bloqueada mientras el gate está activo: `inert` sobre el
+ *      wrapper de children (sin foco/clic/selección/atajos), pointer-events
+ *      none, blur del body (sin scroll), y listeners que cancelan atajos de
+ *      copia/impresión/selección y el menú contextual.
+ *   7. Salida con animación simple: al verificar (leaving) el overlay hace un
+ *      fundido de 0.6s (opacity → 0) y los bloqueos se sueltan; luego se desmonta
+ *      y queda la página ya cargada. No hay recarga ni cambio de escena.
+ *   8. El overlay SIEMPRE por encima del layout (z-index 9999, position fixed,
+ *      inset 0): tapa header/footer/botones y cualquier elemento de la UI.
+ *   9. Una vez verificado, la sesión es suficiente: sessionStorage + estado
+ *      interno permite navegar entre páginas sin re-preguntar (hasta cerrar el
+ *      navegador). Cada web/app configura su propia "escena" (logo/título/accent).
+ *
  * ⚠️ El rate lining entre webs (verificar en ciszunetwork y luego fallar en
  * ciszubot) es un límite del plan free de Turnstile por IP — no se elimina con
  * código; el auto-retry + backoff lo mitiga (espera y reintenta). Documentado
@@ -104,6 +121,7 @@ export default function CloudflareGuard({
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const renderSeqRef = useRef(0);
   const [regen, setRegen] = useState(0);
+  const [leaving, setLeaving] = useState(false);
 
   // Si no hay siteKey configurada, el guard nunca bloquea (degradación segura)
   const enabled = Boolean(siteKey);
@@ -170,7 +188,9 @@ export default function CloudflareGuard({
           setStatusText('Verificación exitosa');
           sessionStorage.setItem(storageKey, 'true');
           if (onVerified) onVerified();
-          setTimeout(() => setState('verified' as GuardState), 600);
+          // Animación de salida: fundido del overlay y luego desmontar (children detrás)
+          setLeaving(true);
+          timeoutRef.current = setTimeout(() => setState('verified' as GuardState), 600);
         } else {
           removeWidget();
           setState('error');
@@ -246,6 +266,45 @@ export default function CloudflareGuard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mounted, enabled, state, regen]);
 
+  // Mientras el guard está visible (antes de verificar): bloquear TODA interacción
+  // con lo que hay detrás — scroll del body, atajos de copia/impresión/navegación
+  // y el menú contextual. Al completarse (leaving) se sueltan los bloqueos.
+  useEffect(() => {
+    if (!enabled || !mounted || state === ('verified' as GuardState) || leaving) return;
+
+    const prevOverflow = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = 'hidden';
+
+    const blockKeys = (e: KeyboardEvent) => {
+      const ctrl = e.ctrlKey || e.metaKey;
+      const key = e.key.toLowerCase();
+      if (
+        ctrl && ['c', 'x', 'p', 's', 'f', 'u', 'a'].includes(key) ||
+        e.key === 'ContextMenu'
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+    const blockContext = (e: Event) => e.preventDefault();
+    const blockCopy = (e: ClipboardEvent) => e.preventDefault();
+
+    document.addEventListener('keydown', blockKeys, true);
+    document.addEventListener('contextmenu', blockContext, true);
+    document.addEventListener('copy', blockCopy, true);
+    document.addEventListener('cut', blockCopy, true);
+    document.addEventListener('selectstart', blockContext, true);
+
+    return () => {
+      document.documentElement.style.overflow = prevOverflow;
+      document.removeEventListener('keydown', blockKeys, true);
+      document.removeEventListener('contextmenu', blockContext, true);
+      document.removeEventListener('copy', blockCopy, true);
+      document.removeEventListener('cut', blockCopy, true);
+      document.removeEventListener('selectstart', blockContext, true);
+    };
+  }, [enabled, mounted, state, leaving]);
+
   if (!enabled || state === ('verified' as GuardState)) return <>{children}</>;
 
   const iconError = (
@@ -257,133 +316,144 @@ export default function CloudflareGuard({
   );
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 9999,
-        background: '#000',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontFamily: 'inherit',
-      }}
-    >
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2rem', maxWidth: '100vw', padding: '0 1rem' }}>
-        {logo && (
-          <img
-            src={logo}
-            alt={title}
-            style={{
-              width: '6rem',
-              height: '6rem',
-              objectFit: 'contain',
-              filter: `drop-shadow(0 0 30px ${accent}cc)`,
-            }}
-          />
-        )}
-        <div style={{ textAlign: 'center' }}>
-          <h2
-            style={{
-              color: accent,
-              fontWeight: 900,
-              letterSpacing: '0.2em',
-              textTransform: 'uppercase',
-              fontSize: '1.25rem',
-              margin: 0,
-              textShadow: `0 0 10px ${accent}cc`,
-            }}
-          >
-            {state === 'error' ? 'Error de Verificación' : 'Verificando Conexión Segura'}
-          </h2>
-          <p style={{ color: '#9ca3af', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', margin: '0.5rem 0 0' }}>
-            {subtitle}
-          </p>
-        </div>
-        <div
-          style={{
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            padding: '1rem',
-            borderRadius: '1rem',
-            minHeight: '100px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          {state === 'error' ? (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-              <div style={{ width: '3rem', height: '3rem', color: '#f87171' }}>{iconError}</div>
-              <p style={{ color: '#f87171', fontSize: '0.625rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2em', maxWidth: '240px', textAlign: 'center', margin: 0 }}>
-                {statusText}
-              </p>
-              <button
-                onClick={handleRetry}
-                style={{
-                  padding: '0.75rem 1.5rem',
-                  background: accent,
-                  color: '#000',
-                  fontWeight: 900,
-                  borderRadius: '0.75rem',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '0.625rem',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.2em',
-                }}
-              >
-                REINTENTAR
-              </button>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div
-                id="cf-guard-widget"
-                style={{
-                  width: WIDGET_WIDTH,
-                  maxWidth: `min(${WIDGET_WIDTH}px, calc(100vw - 3rem))`,
-                  minHeight: '65px',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  overflow: 'hidden',
-                }}
-              />
-              {state === 'verifying' && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '1rem' }}>
-                  <div
-                    style={{
-                      width: '1rem',
-                      height: '1rem',
-                      border: `2px solid ${accent}`,
-                      borderTopColor: 'transparent',
-                      borderRadius: '50%',
-                      animation: 'cfspin 1s linear infinite',
-                    }}
-                  />
-                  <span style={{ color: '#9ca3af', fontSize: '0.5625rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2em' }}>
-                    {statusText}
-                  </span>
-                </div>
-              )}
-              {state === 'loading' && statusText && (
-                <p style={{ color: '#9ca3af', fontSize: '0.5625rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2em', marginTop: '0.75rem', textAlign: 'center' }}>
-                  {statusText}
-                </p>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-      <style>{`@keyframes cfspin { to { transform: rotate(360deg); } }`}</style>
-      {/* El contenido se renderiza DETRÁS del overlay: el gate sigue cubriendo la
-          pantalla hasta la verificación, pero el navegador ya pinta la página desde
-          el primer HTML (mejora FCP/LCP sin tocar la seguridad del guard).
-          inert + aria-hidden evitan foco/lectura del contenido detrás del gate. */}
-      <div aria-hidden="true" inert>
+    <>
+      {/* El contenido de la página se renderiza en flujo normal, DETRÁS del gate:
+          el navegador lo pinta desde el primer HTML (FCP/LCP reales; logos, hero y
+          layout cargan y se ven desenfocados bajo el blur). inline-block no: queda en
+          su layout real y solo se bloquea su interacción con inert + pointer-events.
+          inert (React 19 lo soporta como prop) elimina foco/clic/selección/atajo. */}
+      <div aria-hidden={!leaving} inert={!leaving} style={{ pointerEvents: 'none', userSelect: 'none' }}>
         {children}
       </div>
-    </div>
+      {/* Overlay del gate: SIEMPRE encima (z-index 9999), cubre viewport completo
+          con blur del contenido detrás + humo oscuro translúcido. Al verificar
+          (leaving) hace fundido y se desmonta, dejando ver la página ya cargada. */}
+      <div
+        style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 9999,
+          background: 'rgba(2, 4, 12, 0.55)',
+          backdropFilter: 'blur(14px)',
+          WebkitBackdropFilter: 'blur(14px)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontFamily: 'inherit',
+          opacity: leaving ? 0 : 1,
+          pointerEvents: leaving ? 'none' : 'auto',
+          transition: 'opacity 0.6s ease',
+        }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2rem', maxWidth: '100vw', padding: '0 1rem' }}>
+          {logo && (
+            <img
+              src={logo}
+              alt={title}
+              style={{
+                width: '6rem',
+                height: '6rem',
+                objectFit: 'contain',
+                filter: `drop-shadow(0 0 30px ${accent}cc)`,
+              }}
+            />
+          )}
+          <div style={{ textAlign: 'center' }}>
+            <h2
+              style={{
+                color: accent,
+                fontWeight: 900,
+                letterSpacing: '0.2em',
+                textTransform: 'uppercase',
+                fontSize: '1.25rem',
+                margin: 0,
+                textShadow: `0 0 10px ${accent}cc`,
+              }}
+            >
+              {state === 'error' ? 'Error de Verificación' : 'Verificando Conexión Segura'}
+            </h2>
+            <p style={{ color: '#9ca3af', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', margin: '0.5rem 0 0' }}>
+              {subtitle}
+            </p>
+          </div>
+          <div
+            style={{
+              background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              padding: '1rem',
+              borderRadius: '1rem',
+              minHeight: '100px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            {state === 'error' ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ width: '3rem', height: '3rem', color: '#f87171' }}>{iconError}</div>
+                <p style={{ color: '#f87171', fontSize: '0.625rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2em', maxWidth: '240px', textAlign: 'center', margin: 0 }}>
+                  {statusText}
+                </p>
+                <button
+                  onClick={handleRetry}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    background: accent,
+                    color: '#000',
+                    fontWeight: 900,
+                    borderRadius: '0.75rem',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: '0.625rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.2em',
+                  }}
+                >
+                  REINTENTAR
+                </button>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <div
+                  id="cf-guard-widget"
+                  style={{
+                    width: WIDGET_WIDTH,
+                    maxWidth: `min(${WIDGET_WIDTH}px, calc(100vw - 3rem))`,
+                    minHeight: '65px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    overflow: 'hidden',
+                  }}
+                />
+                {state === 'verifying' && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '1rem' }}>
+                    <div
+                      style={{
+                        width: '1rem',
+                        height: '1rem',
+                        border: `2px solid ${accent}`,
+                        borderTopColor: 'transparent',
+                        borderRadius: '50%',
+                        animation: 'cfspin 1s linear infinite',
+                      }}
+                    />
+                    <span style={{ color: '#9ca3af', fontSize: '0.5625rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2em' }}>
+                      {statusText}
+                    </span>
+                  </div>
+                )}
+                {state === 'loading' && statusText && (
+                  <p style={{ color: '#9ca3af', fontSize: '0.5625rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2em', marginTop: '0.75rem', textAlign: 'center' }}>
+                    {statusText}
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+        <style>{`@keyframes cfspin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    </>
   );
 }
