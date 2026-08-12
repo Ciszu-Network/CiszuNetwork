@@ -61,9 +61,9 @@ export default function RootLayout({
             </main>
             <Footer />
             <CookiesBanner />
-            <SpeedInsights />
           </CloudflareGuard>
         </AuthProvider>
+        <SpeedInsights />
         <PwaRegister />
         <InstallPdwaButton site="MuzicMania" accent="#00f0ff" accentAlt="#ff33cc" desktopAppHref="/download" />
         <PostHogAnalytics app="muzicmania" />

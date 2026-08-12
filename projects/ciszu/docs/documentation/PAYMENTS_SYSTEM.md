@@ -1,6 +1,6 @@
 # PAYMENTS_SYSTEM — Metodología de pagos y donaciones de Ciszu Network
 
-**Estado (12 ago 2026)**: **NOWPayments ACTIVO** — cuenta del usuario creada (11 ago 2026), credenciales en vault, env vars en Vercel (ciszunetworkpage), rutas API de invoice + webhook IPN desplegadas y verificadas con firma real. Paquete `@ciszunetwork/payments` completo (NOWPayments + Lemon Squeezy stub) + 9 tests. Pendiente del usuario: wallets propias y activar cuenta NOWPayments (ver §7). Complementa a `COMPANY_REGISTRATION_PLAN.md` (legal).
+**Estado (12 ago 2026)**: **NOWPayments ACTIVO** — cuenta del usuario creada (11 ago 2026), credenciales en vault, env vars en Vercel (ciszunetworkpage), rutas API de invoice + webhook IPN desplegadas y verificadas con firma real. Paquete `@ciszunetwork/payments` completo (NOWPayments + Lemon Squeezy stub) + 9 tests. **Plan de monetización PENDIENTE hasta los 18** (decisión del usuario 12 ago 2026: problemas de verificación de identidad en PayPal/Zinli/TrustWallet; las apps móviles de Zinli y TrustWallet no funcionan en su teléfono). La infraestructura de recepción (wallets + DONATE_*) ya está lista y configurada, solo falta activarla. Complementa a `COMPANY_REGISTRATION_PLAN.md` (legal).
 
 ## 1. Contexto y reglas de la financiación
 
@@ -23,16 +23,18 @@
 
 | Riel | Sirve para | KYC/edad | Estado |
 | --- | --- | --- | --- |
-| **Binance** (P2P + Pay) | Comprar/vender USDT a Bs y $, pagar con crypto | Cuenta sí, Pay KYC | ✅ Crear cuenta |
-| **MetaMask** | Billetera ETH/BTC auto-custodia para recibir pagos | Ninguno | ✅ Crear billetera |
-| **Zinli** | Tarjeta virtual $ (compras online, pagos de servicios VE) | Cédula | ✅ Crear cuenta |
-| **NOWPayments** | Pasarela crypto sin KYC merchant | Email | ✅ Crear cuenta |
-| PayPal | Pagos internacionales | **18 años** | ⏳ A los 18 |
+| **Binance** (P2P + Pay) | Comprar/vender USDT a Bs y $, pagar con crypto | Cuenta sí, Pay KYC | ⏳ Cuenta en preparación (ref `CPA_00WYSQTUZX` en vault) |
+| **MetaMask** | Billetera ETH/BTC auto-custodia para recibir pagos | Ninguno | ✅ Cuenta creada (12 ago) — `WALLET_METAMASK_ETH` en vault |
+| **Coinbase Wallet** | Alterna auto-custodia (ETH) | Ninguno | ✅ Cuenta creada (12 ago) — `WALLET_COINBASE_ETH` en vault |
+| **TrustWallet** | Wallet multi-cadena (USDT-TRC20/TRON) | Ninguno | ⚠️ App en teléfono con errores — pospuesta |
+| **Zinli** | Tarjeta virtual $ (compras online, pagos de servicios VE) | Cédula | ⚠️ No carga en web/teléfono — pospuesta |
+| **NOWPayments** | Pasarela crypto sin KYC merchant | Email | ✅ Activo |
+| PayPal | Pagos internacionales | **18 años** | ❌ **Cuenta desactivada permanentemente** (ago 2026) — no crear hasta los 18 |
 | Payoneer | Recibir pagos de freelancing (clientes US/EU) | **18 años** | ⏳ A los 18 |
-| Lemon Squeezy | MoR: cobrar tarjetas/PayPal global sin LLC | **18 años** (payout PayPal) | ⏳ A los 18 |
-| Stripe | Procesador directo | País soportado/LLC (VE no soporta) | ⏳ Fase LLC |
+| Lemon Squeezy | MoR: cobrar tarjetas/PayPal global sin LLC | **18 años** (payout PayPal) | ⏳ Cuenta creada, bloqueada por edad |
+| Stripe | Procesador directo | País soportado/LLC (VE no soporta) | ⏳ Solo modo test (12 ago) |
 | Coinbase | Exchange/billetera | KYC (edad 18 en VE) | ⏳ 18 |
-| Revolut | Cuenta multi-divisa europea | VE no soportado (solo con residencia EU) | ⏳ Futuro |
+| Revolut | Cuenta multi-divisa europea | VE no soportado (solo con residencia EU) | ❌ Descartado hasta residencia EU |
 
 ## 4. Fases (roadmap por edad)
 
@@ -107,15 +109,18 @@ packages/payments/
 
 ## 7. Tareas del usuario (para activar)
 
+**⚠️ Decisión 12 ago 2026**: el plan de monetización queda **PENDIENTE hasta los 18** por problemas de verificación de identidad y apps móviles que no funcionan (Zinli, TrustWallet). La infraestructura ya está lista; solo falta activarla cuando toque.
+
 1. ✅ **Cuenta NOWPayments creada** (11 ago 2026, `ciszunetwork`) → API key + IPN secret + public key en vault y Vercel.
 2. ⏳ **Configurar wallet de retiro en NOWPayments** (Settings → Payouts): dirección USDT-TRC20/BTC de la wallet propia — sin esto los pagos quedan retenidos en la cuenta de NOWPayments.
-3. Crear **MetaMask** y/o **TrustWallet** → guardar seeds en Bitwarden (vault personal).
-4. Crear cuenta **Binance** (KYC básico) → método P2P.
-5. Crear cuenta **Zinli** (cédula).
-6. Poner las direcciones públicas en `DONATE_*` del vault y en las webs (sección Apoyar).
-7. Verificar el **dominio de la web en Trustpilot** (ver `REVIEWS_SYSTEM.md`).
-8. A los 18: PayPal, Payoneer, Lemon Squeezy, Keygen (con la lista de §3).
-9. Cuando se quiera vender: crear la migración del schema `pagos` (orders/transactions con RLS — regla `SECURITY_TASKS.md` #1) y rutas de entrega de producto.
+3. ✅ **MetaMask + Coinbase Wallet creadas** (12 ago 2026) → direcciones en vault (`WALLET_METAMASK_ETH`, `WALLET_COINBASE_ETH`).
+4. ⏳ **Crear cuenta Binance** (KYC básico) → método P2P. Ref en vault (`WALLET_BINANCE_REF`/`_URL`).
+5. ⏳ **Crear cuenta Zinli** (cédula) — **pospuesta** (la web/app no carga en su teléfono).
+6. ⏳ **TrustWallet** (USDT-TRC20/TRON) — **pospuesta** (extensión con errores en su PC).
+7. ⏳ Poner las direcciones públicas en `DONATE_*` del vault y en las webs (sección Apoyar). — **ETH/ERC-20 YA configurados** (12 ago): `DONATE_USDT_ERC20` + `DONATE_ETH` en vault y Vercel, mostrados en `/support`.
+8. ✅ **Dominio verificado en Trustpilot** (11 ago 2026) — ver `REVIEWS_SYSTEM.md`.
+9. A los 18: PayPal, Payoneer, Lemon Squeezy, Keygen (con la lista de §3). — **Nota PayPal**: la cuenta antigua fue desactivada permanentemente (ago 2026); abrir una limpia a los 18 con datos reales.
+10. Cuando se quiera vender: crear la migración del schema `pagos` (orders/transactions con RLS — regla `SECURITY_TASKS.md` #1) y rutas de entrega de producto.
 
 ## 8. Verificación de la implementación (11-12 ago 2026)
 
@@ -124,4 +129,5 @@ packages/payments/
 - ✅ Rutas desplegadas en `ciszunetworkpage` (commit `c51d82f`): `POST /api/payments/invoice` + `POST /api/webhooks/nowpayments`.
 - ✅ Webhook probado con firma HMAC-SHA512 real generada localmente con el IPN secret → respuesta esperada tras deploy.
 - ✅ Env vars en Vercel: `NOWPAYMENTS_*` ×5 (production+preview+development).
+- ✅ **Donación directa (12 ago 2026)**: `DONATE_USDT_ERC20` + `DONATE_ETH` configurados en vault + Vercel; sección "Donación directa" en `/support` muestra las direcciones habilitadas vía `getDonationMethods()` (también `WALLET_BINANCE_URL` en Vercel).
 - El paquete lanza `PaymentNotConfiguredError` claro si faltan keys (no rompe builds).
