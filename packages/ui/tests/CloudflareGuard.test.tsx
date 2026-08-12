@@ -55,13 +55,61 @@ describe('CloudflareGuard', () => {
     expect(getByText('contenido')).toBeTruthy();
   });
 
-  it('con siteKey y sin verificar muestra la pantalla de verificación (contenido detrás, no bloqueado)', async () => {
+  it('con siteKey y sin verificar muestra la pantalla de verificación con la página DETRÁS (pintada para FCP/LCP pero sin interacción)', async () => {
     render(<CloudflareGuard {...props} />);
     await waitFor(() => expect(turnstileMock.render).toHaveBeenCalled(), { timeout: 3000 });
     expect(screen.getByText('Verificando Conexión Segura')).toBeTruthy();
     expect(screen.getByText('contenido')).toBeTruthy();
     expect(lastRenderOpts().sitekey).toBe('0xTEST');
     expect(lastRenderOpts().theme).toBe('dark');
+
+    // El contenido se renderiza DETRÁS del gate, en un wrapper no interactivo
+    const wrapper = screen.getByText('contenido').parentElement;
+    expect(wrapper).toBeTruthy();
+    expect(wrapper.getAttribute('aria-hidden')).toBe('true');
+    expect(wrapper.hasAttribute('inert')).toBe(true);
+    expect(wrapper.style.pointerEvents).toBe('none');
+    expect(wrapper.style.userSelect).toBe('none');
+  });
+
+  it('el overlay del gate: fixed, z-index 9999 (encima de todo) y blur del contenido detrás', async () => {
+    render(<CloudflareGuard {...props} />);
+    await waitFor(() => expect(turnstileMock.render).toHaveBeenCalled(), { timeout: 3000 });
+    // h2 → div(textAlign) → div(flex column) → div(fixed overlay)
+    const overlay = screen
+      .getByText('Verificando Conexión Segura')
+      .closest('div').parentElement.parentElement;
+    expect(overlay.style.position).toBe('fixed');
+    expect(overlay.style.zIndex).toBe('9999');
+    // React omite -webkit-backdrop-filter si el entorno reporta soporte nativo
+    expect(overlay.style.backdropFilter).toContain('blur');
+    const attr = overlay.getAttribute('style');
+    expect(attr).toMatch(/backdrop-filter:\s*blur\(/);
+    expect(overlay.style.background).not.toBe('rgb(0, 0, 0)');
+  });
+
+  it('mientras el gate está activo, bloquea el scroll del body y los atajos de copia/impresión (Ctrl+C/Ctrl+P)', async () => {
+    render(<CloudflareGuard {...props} />);
+    await waitFor(() => expect(turnstileMock.render).toHaveBeenCalled(), { timeout: 3000 });
+    expect(document.documentElement.style.overflow).toBe('hidden');
+
+    const copy = new KeyboardEvent('keydown', { key: 'c', ctrlKey: true, bubbles: true, cancelable: true });
+    const copyEvt = new Event('copy', { bubbles: true, cancelable: true });
+    const preventedCopy = !document.dispatchEvent(copy);
+    const preventedEvt = !document.dispatchEvent(copyEvt);
+    expect(preventedCopy).toBe(true);
+    expect(preventedEvt).toBe(true);
+
+    // Al confirmar la verificación se sueltan los bloqueos y funde el overlay (leaving)
+    global.fetch = vi.fn().mockResolvedValue({ json: async () => ({ success: true }) }) as unknown as typeof fetch;
+    await act(async () => {
+      lastRenderOpts().callback('token');
+    });
+    const overlay = screen
+      .getByText('Verificando Conexión Segura')
+      .closest('div').parentElement.parentElement;
+    expect(overlay.style.opacity).toBe('0');
+    expect(overlay.style.transition).toContain('opacity');
   });
 
   it('widget con ancho fijo 300px (no desborda la UI de error de Cloudflare)', async () => {

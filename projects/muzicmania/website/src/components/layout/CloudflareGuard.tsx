@@ -19,7 +19,7 @@ import { isTauri } from '@/lib/isTauri';
  *    La URL del logo y el accent neon-cyan (#00f0ff) de la marca.
  */
 export function CloudflareGuard({ children }: { children: React.ReactNode }) {
-  const { isCloudflareVerified, setIsCloudflareVerified } = useAppStore();
+  const { setIsCloudflareVerified } = useAppStore();
   const [isDesktop, setIsDesktop] = useState(false);
 
   useEffect(() => {
@@ -31,10 +31,11 @@ export function CloudflareGuard({ children }: { children: React.ReactNode }) {
     return <>{children}</>;
   }
 
-  if (isCloudflareVerified) {
-    return <>{children}</>;
-  }
-
+  // El guard compartido gestiona la verificación por sesión (sessionStorage) y por
+  // su propio estado interno; por eso NO hacemos un gate rápido aquí: si devolviéramos
+  // children en cuanto onVerified dispara el store, desmontaríamos el guard justo al
+  // empezar su animación de salida (fundido) y se cortaría a negro. El store se
+  // sincroniza igualmente por si algún otro código consulta isCloudflareVerified.
   return (
     <SharedCloudflareGuard
       siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '0x4AAAAAADm0pqu349Um-eH8'}
