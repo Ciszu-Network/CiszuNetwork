@@ -7,7 +7,7 @@ import "./globals.css";
 import AuthProvider from "@/components/providers/AuthProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, PostHogAnalytics } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, PostHogAnalytics, FabStackProvider } from "@ciszu/ui";
 
 const exo2 = Exo_2({
   subsets: ["latin"],
@@ -66,8 +66,10 @@ export default function RootLayout({
         </AuthProvider>
         <SpeedInsights />
         <PwaRegister />
-        <InstallPdwaButton site="MuzicMania" accent="#00f0ff" accentAlt="#ff33cc" desktopAppHref="/download" />
-        <FeedbackFab />
+        <FabStackProvider>
+          <InstallPdwaButton site="MuzicMania" accent="#00f0ff" accentAlt="#ff33cc" desktopAppHref="/download" />
+          <FeedbackFab />
+        </FabStackProvider>
         <PostHogAnalytics app="muzicmania" />
         <script defer type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
       </body>

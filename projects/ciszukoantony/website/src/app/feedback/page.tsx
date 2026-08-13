@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { attachFeedback } from '@/lib/feedback';
+import { FabRestore } from '@ciszu/ui';
 
 const FEEDBACK_EMAIL = 'fplayersoffcial@gmail.com';
 
@@ -195,6 +196,19 @@ export default function FeedbackPage() {
               Ver cómo instalar Ciszuko Antony como app (PDWA) →
             </Link>
           </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4"
+        >
+          <div>
+            <p className="text-white font-header font-bold text-sm mb-1">¿Cerraste el botón flotante?</p>
+            <p className="text-gray-500 text-xs">Los botones de instalación y feedback de abajo a la izquierda se pueden volver a mostrar cuando quieras.</p>
+          </div>
+          <FabRestore accent="#a78bfa" />
         </motion.div>
       </div>
     </div>

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import MainLayout from '@/components/templates/MainLayout';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
+import { FabRestore } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '@/store';
@@ -673,7 +674,7 @@ export default function DownloadPage() {
             <div className="h-[1px] flex-grow bg-white/5 hidden md:block" />
             <div className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-neon-cyan/10 border border-neon-cyan/30 rounded-full text-neon-cyan text-[9px] font-black uppercase tracking-widest">
               <span className="w-2 h-2 bg-neon-cyan rounded-full animate-pulse" />
-              Compatible con Chrome · Edge · Opera
+              Nativa en Chrome · Edge · alternativa en Opera
             </div>
           </div>
 
@@ -716,7 +717,7 @@ export default function DownloadPage() {
                     <span className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-neon-pink/10 border border-neon-pink/30 text-neon-pink font-header font-black text-xs">2</span>
                     <div className="space-y-1">
                       <p className="text-gray-300 text-xs font-black uppercase tracking-widest">Confirma la instalación del navegador</p>
-                      <p className="text-gray-500 text-[10px] font-bold leading-relaxed">Chrome/Edge/Opera muestran un diálogo <span className="text-neon-cyan">Instalar</span>: acéptalo. En Opera GX, sigue las instrucciones del propio panel (acceso directo + <span className="text-white">--app=</span>).</p>
+                      <p className="text-gray-500 text-[10px] font-bold leading-relaxed">Chrome/Edge muestran un diálogo <span className="text-neon-cyan">Instalar</span>: acéptalo. En Opera, el propio botón te explica el método alternativo (acceso directo + <span className="text-white">--app=</span>), porque Opera no instala PDWA de forma nativa.</p>
                     </div>
                   </li>
                   <li className="flex gap-4 items-start">
@@ -762,6 +763,22 @@ export default function DownloadPage() {
         </motion.section>
 
         <QuickDocks />
+
+        {/* Restaurar botones flotantes */}
+        <motion.section
+          initial="hidden"
+          animate="visible"
+          variants={sectionVariants}
+          className="flex flex-col md:flex-row items-center justify-between gap-6 p-8 bg-black/40 border border-white/5 rounded-[2.5rem]"
+        >
+          <div className="space-y-1 text-center md:text-left">
+            <h4 className="text-sm font-header font-black text-white uppercase italic tracking-tight">¿Cerraste el botón flotante?</h4>
+            <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest max-w-xl">
+              Los botones de instalación (PDWA) y feedback de abajo a la izquierda se pueden volver a mostrar cuando quieras.
+            </p>
+          </div>
+          <FabRestore accent="#00f0ff" />
+        </motion.section>
       </div>
     </MainLayout>
   );

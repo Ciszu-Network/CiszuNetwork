@@ -82,9 +82,9 @@ export function InstallPdwaCta({ site }: InstallPdwaCtaProps) {
               <li>Pulsa de nuevo el botón y confirma el diálogo del navegador.</li>
               <li>La PDWA queda en Inicio / Escritorio con tu logo.</li>
             </ul>
-          ) : browser?.id === 'opera-gx' ? (
+          ) : browser?.id === 'opera-gx' || browser?.id === 'opera' ? (
             <ul className="list-disc pl-5 text-gray-400 space-y-1.5 text-sm">
-              <li>Menú Opera GX → "Guardar y compartir" → "Crear acceso directo".</li>
+              <li>Menú Opera → "Guardar y compartir" → "Crear acceso directo".</li>
               <li>
                 En Propiedades añade al final: <code className="text-brand-light">--app=&quot;{typeof window !== 'undefined' ? window.location.origin : ''}&quot;</code>
               </li>

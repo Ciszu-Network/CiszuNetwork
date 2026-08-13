@@ -13,7 +13,7 @@ El repositorio y el CDN guardan **UNA única verdad por archivo** (la fuente), p
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│  CAPA 1 · TRABAJO (fuente original)                                      │
+│  CAPA 1 · TRABAJO (fuente original)                                     │
 │  Única verdad. Lo que editas: .psd, .ai, .pdn, .wav, .mov, .png, .docx  │
 │  Viene de DaVinci/OBS/Paint.NET/Photoshop/Grabación. JAMÁS se toca.     │
 ├─────────────────────────────────────────────────────────────────────────┤
@@ -25,7 +25,7 @@ El repositorio y el CDN guardan **UNA única verdad por archivo** (la fuente), p
 │  CAPA 3 · DEMOSTRACIÓN (exportados compatibles = el repo actual)        │
 │  Formatos universales que sirven a todo el mundo y se muestran directo: │
 │  .png, .jpg, .gif, .mp4 (H.264), .mp3, .ogg, .wav. Es lo que hoy vive   │
-│  en `projects/*/content` y se sube al CDN. Este es el QUE HOY SE VE.      │
+│  en `projects/*/content` y se sube al CDN. Este es el QUE HOY SE VE.    │
 ├─────────────────────────────────────────────────────────────────────────┤
 │  CAPA 4 · ENTREGA (web/CDN — eficiencia)                                │
 │  Derivadas optimizadas, generadas automáticamente, para los navegador   │

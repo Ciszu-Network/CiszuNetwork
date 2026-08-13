@@ -7,7 +7,7 @@ import Footer from "@/components/layout/Footer";
 import FeedbackFab from "@/components/layout/FeedbackFab";
 import { getDict, type Lang } from "@/lib/i18n";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, FabStackProvider } from "@ciszu/ui";
 import { getSessionData } from "@/lib/auth";
 import "./globals.css";
 
@@ -69,8 +69,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           <Footer lang={lang} dict={dict} />
         </CloudflareGuard>
         <PwaRegister />
-        <InstallPdwaButton site="CiszuBot" accent="#22d3ee" accentAlt="#a78bfa" />
-        <FeedbackFab accent="#22d3ee" accentAlt="#a78bfa" />
+        <FabStackProvider>
+          <InstallPdwaButton site="CiszuBot" accent="#22d3ee" accentAlt="#a78bfa" />
+          <FeedbackFab accent="#22d3ee" accentAlt="#a78bfa" />
+        </FabStackProvider>
         <PostHogAnalytics app="ciszubot" />
       </body>
     </html>

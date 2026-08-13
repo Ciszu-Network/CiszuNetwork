@@ -33,11 +33,6 @@ export const Footer = () => {
     }
   }, [toastMessage, hideToast]);
 
-  const handleCiszuClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    showToast(`[SISTEMA]: Hub Central de Ciszu Network en desarrollo. Acceso denegado temporalmente.`);
-  };
-
   return (
     <footer className="relative bg-black border-t-2 border-white/10 pt-10 pb-6 px-4 md:px-8 overflow-hidden z-30">
       {/* Animated separator line Top of Footer */}
@@ -198,9 +193,9 @@ export const Footer = () => {
           </div>
 
           {/* RIGHT: Epic Copyright Copy */}
-          <div className="text-center md:text-right space-y-1">
+          <div className="text-center space-y-1">
             <p className="text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-widest leading-loose">
-              &copy; {new Date().getFullYear()} <button onClick={handleCiszuClick} title="Futuro hub de Ciszu Network" className="hover:text-neon-cyan transition-colors cursor-pointer uppercase font-black">CISZU NETWORK</button> & MUZICMANIA. ALL RIGHTS RESERVED.<br className="hidden sm:block" />
+              &copy; {new Date().getFullYear()} <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="hover:text-neon-cyan transition-colors cursor-pointer uppercase font-black">CISZU NETWORK</a> & MUZICMANIA. ALL RIGHTS RESERVED.<br className="hidden sm:block" />
               ARCHITECTED CON ❤️ POR <a href="https://ciszukoantony.vercel.app" target="_blank" rel="noopener noreferrer" className="text-neon-cyan font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(0,240,255,0.8)]">CISZUKO ANTONY</a>.
             </p>
           </div>

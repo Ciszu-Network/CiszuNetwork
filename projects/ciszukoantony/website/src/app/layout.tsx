@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Exo_2, Rajdhani } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, FabStackProvider } from "@ciszu/ui";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import FeedbackFab from "@/components/layout/FeedbackFab";
@@ -57,8 +57,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <Footer />
         </CloudflareGuard>
         <PwaRegister />
-        <InstallPdwaButton site="Ciszuko Antony" accent="#a78bfa" accentAlt="#22d3ee" />
-        <FeedbackFab />
+        <FabStackProvider>
+          <InstallPdwaButton site="Ciszuko Antony" accent="#a78bfa" accentAlt="#22d3ee" />
+          <FeedbackFab />
+        </FabStackProvider>
         <PostHogAnalytics app="ciszukoantony" />
         <script defer type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
       </body>
