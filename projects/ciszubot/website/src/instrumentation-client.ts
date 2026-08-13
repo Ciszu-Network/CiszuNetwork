@@ -12,6 +12,7 @@ Sentry.init({
     Sentry.feedbackIntegration({
       colorScheme: 'system',
       showBranding: false,
+      autoInject: false,
       triggerLabel: 'Reportar un problema',
       formTitle: '¿Algo no funciona?',
       messagePlaceholder: 'Cuéntanos qué ocurrió…',

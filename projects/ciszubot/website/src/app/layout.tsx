@@ -4,6 +4,7 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import { cookies } from "next/headers";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import FeedbackFab from "@/components/layout/FeedbackFab";
 import { getDict, type Lang } from "@/lib/i18n";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics } from "@ciszu/ui";
@@ -69,6 +70,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         </CloudflareGuard>
         <PwaRegister />
         <InstallPdwaButton site="CiszuBot" accent="#22d3ee" accentAlt="#a78bfa" />
+        <FeedbackFab accent="#22d3ee" accentAlt="#a78bfa" />
         <PostHogAnalytics app="ciszubot" />
       </body>
     </html>

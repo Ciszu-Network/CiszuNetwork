@@ -31,6 +31,8 @@ import {
   Send,
   Music,
   Building,
+  MessageSquareWarning,
+  Download,
 } from 'lucide-react';
 
 const IcoUser = () => (
@@ -60,13 +62,15 @@ const NAV_ITEMS: NavEntry[] = [
   {
     name: 'Información',
     icon: <Shield className="w-4 h-4" />,
-    keywords: ['sobre nosotros', 'faq', 'políticas', 'guías', 'soporte', 'info'],
+    keywords: ['sobre nosotros', 'faq', 'políticas', 'guías', 'soporte', 'info', 'feedback', 'descargas'],
     links: [
       { name: 'Sobre Nosotros', href: '/about' },
       { name: 'FAQ', href: '/faq' },
       { name: 'Políticas', href: '/policies' },
       { name: 'Guías', href: '/guidelines' },
       { name: 'Soporte', href: '/support' },
+      { name: 'Feedback', href: '/feedback' },
+      { name: 'Descargas', href: '/descargas' },
     ],
   },
   {
@@ -95,6 +99,8 @@ const ALL_PAGES: { name: string; href: string; icon: React.ReactNode; keywords: 
   { name: 'Políticas', href: '/policies', icon: <FileText className="w-4 h-4" />, keywords: ['politicas', 'politica', 'privacidad', 'privacy', 'policy'] },
   { name: 'Guías', href: '/guidelines', icon: <Sparkles className="w-4 h-4" />, keywords: ['guias', 'guia', 'normas', 'lineamientos', 'guide'] },
   { name: 'Soporte', href: '/support', icon: <LifeBuoy className="w-4 h-4" />, keywords: ['soporte', 'ayuda', 'support', 'asistencia'] },
+  { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" />, keywords: ['feedback', 'reportar', 'reporte', 'problema', 'opinion', 'bug'] },
+  { name: 'Descargas', href: '/descargas', icon: <Download className="w-4 h-4" />, keywords: ['descargas', 'descargar', 'instalar', 'pdwa', 'download'] },
   { name: 'Minecraft', href: '/projects/minecraft', icon: <Pickaxe className="w-4 h-4" />, keywords: ['minecraft', 'texture', 'mods', 'servidor'] },
   { name: 'Discord', href: '/projects/discord', icon: <MessageCircle className="w-4 h-4" />, keywords: ['discord', 'comunidad', 'servidores', 'bots'] },
   { name: 'WhatsApp', href: '/projects/whatsapp', icon: <MessageSquare className="w-4 h-4" />, keywords: ['whatsapp', 'comunidad', 'bots', 'grupos'] },

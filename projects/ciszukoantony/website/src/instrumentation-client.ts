@@ -11,6 +11,8 @@ Sentry.init({
     Sentry.replayIntegration(),
     Sentry.feedbackIntegration({
       colorScheme: 'system',
+      // Sin trigger automático: el botón se abre desde FeedbackFab / Feedback (attachTo).
+      autoInject: false,
       showBranding: false,
       triggerLabel: 'Reportar un problema',
       formTitle: '¿Algo no funciona?',

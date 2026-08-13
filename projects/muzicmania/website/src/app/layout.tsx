@@ -42,6 +42,7 @@ export const metadata = {
 import { CookiesBanner } from "@/components/atoms/CookiesBanner";
 import { CloudflareGuard } from "@/components/layout/CloudflareGuard";
 import { ConnectivityBanner } from "@/components/layout/ConnectivityBanner";
+import FeedbackFab from "@/components/layout/FeedbackFab";
 
 export default function RootLayout({
   children,
@@ -66,6 +67,7 @@ export default function RootLayout({
         <SpeedInsights />
         <PwaRegister />
         <InstallPdwaButton site="MuzicMania" accent="#00f0ff" accentAlt="#ff33cc" desktopAppHref="/download" />
+        <FeedbackFab />
         <PostHogAnalytics app="muzicmania" />
         <script defer type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
       </body>

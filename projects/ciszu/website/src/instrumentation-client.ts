@@ -11,6 +11,9 @@ Sentry.init({
     Sentry.replayIntegration(),
     Sentry.feedbackIntegration({
       colorScheme: 'system',
+      // Sin trigger automático de Sentry: el botón "Reportar un problema" lo
+      // maneja FeedbackFab (esquina inferior-izquierda) vía Sentry.getFeedback().
+      autoInject: false,
       showBranding: false,
       triggerLabel: 'Reportar un problema',
       formTitle: '¿Algo no funciona?',

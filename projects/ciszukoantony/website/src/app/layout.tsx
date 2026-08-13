@@ -5,6 +5,7 @@ import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics } from "@ciszu/ui";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import FeedbackFab from "@/components/layout/FeedbackFab";
 import "./globals.css";
 const ICON_SVG = assetResolver.resolve("projects/ciszukoantony/content/logos/images/outline/isotype/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg");
 const OG_IMAGE = assetResolver.resolve("projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png");
@@ -56,6 +57,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </CloudflareGuard>
         <PwaRegister />
         <InstallPdwaButton site="Ciszuko Antony" accent="#a78bfa" accentAlt="#22d3ee" />
+        <FeedbackFab />
         <PostHogAnalytics app="ciszukoantony" />
         <script defer type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
       </body>
