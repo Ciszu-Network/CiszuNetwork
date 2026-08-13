@@ -17,7 +17,10 @@ export function middleware(request: NextRequest) {
   response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   response.headers.set(
     'Content-Security-Policy',
-    buildCsp({ imgSrc: ['https://cdn.discordapp.com'], connectSrc: ['https://cdn.discordapp.com'] })
+    buildCsp({
+      imgSrc: ['https://cdn.discordapp.com', 'https://top.gg'],
+      connectSrc: ['https://cdn.discordapp.com'],
+    })
   );
 
   // ── Sensor IAST (runtime): detecta payloads maliciosos, solo observa ──────
