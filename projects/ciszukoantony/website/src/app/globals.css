@@ -110,9 +110,27 @@
   100% { background-position: 48px 48px; }
 }
 
+@keyframes fade-in-down {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes gradient-x {
+  0% { background-position: 0% 50%; }
+  100% { background-position: -200% 50%; }
+}
+
 @layer utilities {
   .animate-float { animation: float 6s ease-in-out infinite; }
   .animate-fade-in-up { animation: fade-in-up 0.3s ease forwards; }
+  .animate-fade-in-down { animation: fade-in-down 0.2s ease forwards; }
+  .animate-slide-in-right { animation: slide-in-right 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+  .animate-gradient-x { animation: gradient-x 6s linear infinite; background-size: 200% auto; }
   .animate-blob { animation: blob 10s ease-in-out infinite; }
   .animate-grid-shift { animation: grid-shift 8s linear infinite; }
   .animation-delay-2000 { animation-delay: 2s; }

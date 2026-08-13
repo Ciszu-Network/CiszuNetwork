@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icon, SmartImage } from '@ciszu/ui';
@@ -24,10 +24,41 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [isDark, setIsDark] = useState(true);
+  const [isNavigating, setIsNavigating] = useState(false);
+  const firstRender = useRef(true);
 
   useEffect(() => {
     setIsDark(document.documentElement.classList.contains('dark'));
   }, []);
+
+  // Clear navigation loader once the route change completed
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    setIsNavigating(false);
+  }, [pathname]);
+
+  // Global click interceptor: show loader when navigating between internal pages
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      const target = (e.target as HTMLElement).closest('a');
+      if (
+        target?.href &&
+        target.href.startsWith(window.location.origin) &&
+        !target.href.includes('#') &&
+        target.target !== '_blank'
+      ) {
+        const targetUrl = new URL(target.href);
+        if (targetUrl.pathname !== pathname) {
+          setIsNavigating(true);
+        }
+      }
+    };
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, [pathname]);
 
   const setTheme = () => {
     const root = document.documentElement;
@@ -47,15 +78,44 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
     href === '/' ? pathname === '/' : pathname.startsWith(href);
 
   const linkCls = (href: string) =>
-    `relative group flex items-center gap-2 px-3 py-1.5 rounded-lg font-header font-bold text-sm transition-all duration-300 border ${
+    `relative group flex items-center gap-0 hover:gap-1.5 px-3 py-1.5 rounded-lg font-header font-bold text-sm transition-all duration-300 border cursor-pointer hover:-translate-y-0.5 active:scale-95 ${
       isActive(href)
-        ? 'border-neon-blue bg-neon-blue/15 shadow-[0_0_15px_rgba(0,212,255,0.25)] text-neon-blue'
-        : 'border-transparent text-muted hover:text-neon-blue hover:border-neon-blue/40 hover:bg-neon-blue/10'
+        ? 'border-neon-blue bg-neon-blue/15 shadow-[0_0_15px_rgba(0,212,255,0.3)] text-neon-blue gap-1.5 -translate-y-0.5 hover:text-white'
+        : 'border-transparent text-muted hover:text-neon-blue hover:border-neon-blue/40 hover:bg-neon-blue/10 hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]'
     }`;
 
+  const linkLabelCls = (href: string) =>
+    `max-w-0 overflow-hidden transition-all duration-300 group-hover:max-w-[100px] ${isActive(href) ? 'max-w-[100px]' : ''}`;
+
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 bg-[#0a0a14]/85 backdrop-blur-2xl border-b border-white/10">
-      <div className="absolute bottom-0 left-0 w-full h-[2px] bg-[length:200%_auto] animate-gradient-x bg-gradient-to-r from-neon-blue via-neon-purple to-neon-blue shadow-[0_0_10px_rgba(0,212,255,0.3)]" />
+    <>
+      {/* Loader de navegación global — aparece al navegar entre páginas */}
+      <div
+        className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] flex items-center justify-center p-4 rounded-full bg-[#0a0a14]/90 border backdrop-blur-md shadow-[0_0_20px_rgba(0,212,255,0.3)] transition-all duration-300 ${
+          isNavigating
+            ? 'translate-y-0 opacity-100 border-emerald-400/60 text-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.4)]'
+            : 'translate-y-10 opacity-0 pointer-events-none border-neon-blue/50 text-neon-blue'
+        }`}
+      >
+        <svg
+          className="w-8 h-8 animate-pulse text-emerald-400 drop-shadow-[0_0_10px_rgba(52,211,153,0.8)]"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path d="M13 5l7 7-7 7M5 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+
+      <nav className="fixed top-0 left-0 w-full z-50 bg-[#0a0a14]/85 backdrop-blur-2xl border-b border-white/10">
+        <div
+          className={`absolute bottom-0 left-0 w-full h-[2px] bg-[length:200%_auto] animate-gradient-x transition-colors duration-500 ${
+            isNavigating
+              ? 'bg-gradient-to-r from-emerald-400 via-green-500 to-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.5)]'
+              : 'bg-gradient-to-r from-neon-blue via-neon-purple to-neon-blue shadow-[0_0_10px_rgba(0,212,255,0.3)]'
+          }`}
+        />
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="flex items-center h-[64px] gap-3">
           <Link href="/" className="flex items-center gap-2.5 shrink-0 group cursor-pointer">
@@ -83,7 +143,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
             {NAV_LINKS.map((link) => (
               <Link key={link.href} href={link.href} className={linkCls(link.href)}>
                 <Icon name={link.icon} size={16} className="shrink-0" />
-                <span>{dict.nav[link.key]}</span>
+                <span className={linkLabelCls(link.href)}>{dict.nav[link.key]}</span>
               </Link>
             ))}
           </div>
@@ -275,5 +335,6 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
         </div>
       )}
     </nav>
+    </>
   );
 }
