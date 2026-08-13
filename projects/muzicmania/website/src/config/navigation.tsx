@@ -30,6 +30,7 @@ export const I = {
   user:        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
   handshake:   <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08v0c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"/><path d="m18 15-2-2"/><path d="m15 18-2-2"/></svg>,
   download:    <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>,
+  feedback:    <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/></svg>,
 };
 
 // ── Shared Routing Definitions ─────────────────────────────────────────────
@@ -44,6 +45,7 @@ export const MAIN_NAV_LINKS = [
   { name: 'Changelog',   href: '/changelog',    icon: I.changelog,   hideCls: 'hidden min-[600px]:flex', keywords: ['cambios', 'updates', 'actualizaciones', 'historial', 'news', 'noticias'] },
   { name: 'Reviews',     href: '/reviews',      icon: I.reviews,     hideCls: 'hidden min-[650px]:flex', keywords: ['reseñas', 'criticas', 'opiniones', 'feedback', 'estrellas'] },
   { name: 'Download',    href: '/download',     icon: I.download,    hideCls: 'hidden min-[700px]:flex', keywords: ['descargas', 'download', 'pc', 'windows', 'ejecutable', 'tauri', 'app'] },
+  { name: 'Feedback',    href: '/feedback',     icon: I.feedback,    hideCls: 'hidden min-[780px]:flex', keywords: ['feedback', 'opiniones', 'sugerencias', 'reporte', 'bug', 'quejas'] },
 ];
 
 export const COMMUNITY_LINKS = [

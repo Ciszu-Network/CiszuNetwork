@@ -33,6 +33,8 @@ export const FOOTER_NAV = [
       { name: 'Políticas', href: '/policies', icon: I.info },
       { name: 'Guías', href: '/guidelines', icon: I.info },
       { name: 'Soporte', href: '/support', icon: I.contact },
+      { name: 'Feedback', href: '/feedback', icon: I.info },
+      { name: 'Descargas', href: '/descargas', icon: I.info },
     ],
   },
 ];

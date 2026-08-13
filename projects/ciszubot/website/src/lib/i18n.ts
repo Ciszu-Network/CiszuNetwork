@@ -1,4 +1,4 @@
-﻿export type Lang = 'es' | 'en';
+export type Lang = 'es' | 'en';
 
 export const INVITE_URL =
   'https://discord.com/oauth2/authorize?client_id=1395532235872141312&permissions=8&scope=bot%20applications.commands';
@@ -12,6 +12,9 @@ export const CISZUKO_ANTONY = 'https://ciszukoantony.vercel.app';
 
 export const BOT_PREFIX = 'cz!';
 export const BOT_VERSION = 'v3.2.0';
+
+// === Email de feedback ===
+export const FEEDBACK_EMAIL = 'ciszunetowork@gmail.com';
 
 // === URLs oficiales (listas de bots, servidores, donaciones) ===
 export const WEBSITE = 'https://ciszubot.vercel.app';
@@ -41,6 +44,8 @@ export const dict = {
       commands: 'Comandos',
       status: 'Estado',
       support: 'Soporte',
+      downloads: 'Descargas',
+      feedback: 'Feedback',
       invite: 'Invitar',
     },
     hero: {
@@ -206,6 +211,64 @@ export const dict = {
       serverListsTitle: 'Nuestro servidor en las listas',
       server: 'Servidor',
     },
+    feedbackPage: {
+      title: 'Feedback',
+      subtitle:
+        'Tu opinión es importante. Reporta errores, pide comandos o comparte tus ideas para mejorar CiszuBot.',
+      sections: {
+        form: 'Formulario',
+        formDesc:
+          'Escríbenos directamente por correo. Los campos de nombre y email son opcionales.',
+        report: 'Reporte de problemas',
+        reportDesc:
+          'El widget de Sentry captura un reporte con detalles técnicos (página, versión del navegador) y opcionalmente una captura de pantalla.',
+      },
+      name: 'Nombre',
+      namePlaceholder: 'Tu nombre (opcional)',
+      email: 'Email',
+      emailPlaceholder: 'tu@email.com (opcional)',
+      message: 'Mensaje',
+      messagePlaceholder: 'Cuéntanos qué ocurrió o qué te gustaría que añadamos…',
+      messageRequired: 'El mensaje es obligatorio.',
+      emailInvalid: 'Introduce un email válido.',
+      submit: 'Enviar feedback',
+      submitted: 'Correo listo. Revisa tu cliente de correo y pulsa enviar para completar.',
+      alternative: 'Prefieres email clásico',
+      openReport: 'Abrir el reporte de problemas',
+      openReportDesc: 'Usa el widget de Sentry para reportar un problema con captura de pantalla.',
+      noSentry: 'El reporte no está disponible ahora. Usa el formulario o el servidor de soporte.',
+      back: 'Volver al inicio',
+    },
+    descargasPage: {
+      title: 'Descargas',
+      subtitle:
+        'Lleva CiszuBot a tu escritorio con la PDWA (App de Escritorio Progresiva): sin pestañas, sin barra de direcciones y con tu logo.',
+      whatTitle: '¿Qué es la PDWA?',
+      whatDesc:
+        'Una PDWA (App de Escritorio Progresiva) es la web de CiszuBot instalada como una aplicación de escritorio real: se abre en su propia ventana, aparece en Inicio y en la barra de tareas, y funciona sin barra de navegación.',
+      howTitle: 'Cómo instalarla',
+      steps: [
+        'Abre esta web en un navegador compatible (Chrome, Edge u Opera).',
+        'Pulsa el botón «Instalar PDWA» que flota en la esquina inferior izquierda.',
+        'Confirma el diálogo del navegador (Instalar / Instalar aplicación).',
+        '¡Listo! CiszuBot queda como app en tu escritorio. Desde el menú podrás ocultar el botón.',
+      ],
+      installTitle: 'Instalar la PDWA',
+      installDesc:
+        'Pulsa el botón flotante inferior para instalar la app. Si tu navegador no lo permite, la web te guiará con una alternativa.',
+      advantagesTitle: 'Ventajas',
+      advantages: [
+        'Abrir sin pestañas ni barra de direcciones.',
+        'Icono propio en el escritorio y barra de tareas.',
+        'Se actualiza sola, siempre la última versión.',
+        'Funciona incluso en equipos de bajo rendimiento.',
+      ],
+      feedbackTitle: '¿Encontraste un problema?',
+      feedbackDesc:
+        'Tras instalar, si algo no funciona, cuéntanoslo desde Feedback o el botón flotante de reportes.',
+      feedbackCta: 'Ir a Feedback',
+      back: 'Volver al inicio',
+    },
     legalPage: {
       updated: 'Última actualización: 2 de agosto de 2026',
       back: 'Volver',
@@ -273,6 +336,8 @@ export const dict = {
       commands: 'Commands',
       status: 'Status',
       support: 'Support',
+      downloads: 'Downloads',
+      feedback: 'Feedback',
       invite: 'Invite',
     },
     hero: {
@@ -437,6 +502,63 @@ export const dict = {
       vote: 'Vote',
       serverListsTitle: 'Our server on the lists',
       server: 'Server',
+    },
+    feedbackPage: {
+      title: 'Feedback',
+      subtitle:
+        'Your opinion matters. Report bugs, request commands or share your ideas to improve CiszuBot.',
+      sections: {
+        form: 'Form',
+        formDesc: 'Write to us directly by email. Name and email fields are optional.',
+        report: 'Problem report',
+        reportDesc:
+          'The Sentry widget captures a report with technical details (page, browser version) and optionally a screenshot.',
+      },
+      name: 'Name',
+      namePlaceholder: 'Your name (optional)',
+      email: 'Email',
+      emailPlaceholder: 'you@email.com (optional)',
+      message: 'Message',
+      messagePlaceholder: 'Tell us what happened or what you would like us to add…',
+      messageRequired: 'The message is required.',
+      emailInvalid: 'Please enter a valid email.',
+      submit: 'Send feedback',
+      submitted: 'Email ready. Check your mail client and hit send to finish.',
+      alternative: 'Prefer classic email',
+      openReport: 'Open problem report',
+      openReportDesc: 'Use the Sentry widget to report a problem with a screenshot.',
+      noSentry: 'The report is unavailable right now. Use the form or the support server.',
+      back: 'Back to home',
+    },
+    descargasPage: {
+      title: 'Downloads',
+      subtitle:
+        'Bring CiszuBot to your desktop with the PDWA (Progressive Desktop Web App): no tabs, no address bar and with your logo.',
+      whatTitle: 'What is the PDWA?',
+      whatDesc:
+        'A PDWA (Progressive Desktop Web App) is the CiszuBot website installed as a real desktop application: it opens in its own window, appears in Start and the taskbar, and works without a navigation bar.',
+      howTitle: 'How to install it',
+      steps: [
+        'Open this website in a supported browser (Chrome, Edge or Opera).',
+        'Click the “Install PDWA” button floating in the bottom-left corner.',
+        'Confirm the browser dialog (Install / Install application).',
+        'Done! CiszuBot becomes a desktop app. From its menu you can hide the button.',
+      ],
+      installTitle: 'Install the PDWA',
+      installDesc:
+        'Click the floating bottom button to install the app. If your browser does not allow it, the website will guide you with an alternative.',
+      advantagesTitle: 'Advantages',
+      advantages: [
+        'Opens without tabs or an address bar.',
+        'Its own icon on the desktop and taskbar.',
+        'Updates by itself, always the latest version.',
+        'Works even on low-end devices.',
+      ],
+      feedbackTitle: 'Found a problem?',
+      feedbackDesc:
+        'After installing, if something does not work, tell us from Feedback or the floating report button.',
+      feedbackCta: 'Go to Feedback',
+      back: 'Back to home',
     },
     legalPage: {
       updated: 'Last updated: August 2, 2026',
