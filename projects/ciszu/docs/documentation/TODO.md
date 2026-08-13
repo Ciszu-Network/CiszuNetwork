@@ -57,3 +57,7 @@
 
 **Fase 13 — Secciones de páginas fuera de los navbars**
 - En ciszunetwork y ciszukoantony, las páginas de secciones (downloads, descargas, soporte, etc.) deben estar **fuera/visibles en los navbars** (ambos), y lo mismo aplica en los **menús hamburguesa**.
+
+**Fase 14 — Hipervínculos de marca (copyright y menciones de proyectos)**
+- En los footers que usan la página de X (Twitter) como hipervínculo del copyright, corregirlo: el copyright debe llevar a la **página propia del proyecto** (no a X).
+- **Regla general**: siempre que se mencione uno de nuestros proyectos (Ciszu Network, Ciszuko Antony, MuzicMania, CiszuBot) en cualquier footer/página, debe llevar un **hipervínculo a la página del proyecto** (p. ej. `ciszunetwork.vercel.app`, `ciszukoantony.vercel.app`, etc.).
