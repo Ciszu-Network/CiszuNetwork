@@ -115,28 +115,22 @@ export default function Home() {
         <div className="relative z-10 max-w-4xl mx-auto">
           <div className="flex items-center justify-center gap-6 mb-8">
             <Image
-              src={assetResolver.resolve("projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png")}
+              src={assetResolver.resolve("projects/ciszu/content/logos/images/outline/logotype/color/ciszu_logotipo_outline_zcolor_cwhite_full.png")}
               alt={CISZU_NETWORK.name}
-              width={320}
-              height={80}
-              className="drop-shadow-brand"
+              width={420}
+              height={227}
+              className="drop-shadow-brand h-auto w-[min(420px,80vw)]"
               priority
             />
           </div>
-          <div className="flex items-center justify-center mb-8">
-            <Image
-              src={assetResolver.resolve("projects/ciszukoantony/content/logos/tagline_white.svg")}
-              alt={CISZU_NETWORK.tagline}
-              width={280}
-              height={24}
-              className="opacity-80"
-            />
-          </div>
-          <h1 className="text-5xl md:text-7xl font-header font-black tracking-tighter mb-6">
-            <span className="bg-gradient-to-r from-brand-light via-brand-accent to-neon-blue bg-clip-text text-transparent">
-              {CISZU_NETWORK.name}
-            </span>
+          <h1 className="sr-only">
+            {CISZU_NETWORK.name}
           </h1>
+          <div className="flex items-center justify-center mb-8">
+            <p className="text-2xl md:text-4xl font-header font-bold uppercase tracking-[0.3em] text-brand-light opacity-90">
+              {CISZU_NETWORK.tagline}
+            </p>
+          </div>
           <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10 font-accent">
             Innovación digital con propósito. Desarrollamos soluciones de alto rendimiento 
             que combinan tecnología de punta con una estética inconfundible.

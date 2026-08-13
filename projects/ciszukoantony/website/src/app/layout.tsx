@@ -9,6 +9,7 @@ import FeedbackFab from "@/components/layout/FeedbackFab";
 import "./globals.css";
 const ICON_SVG = assetResolver.resolve("projects/ciszukoantony/content/logos/images/outline/isotype/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg");
 const OG_IMAGE = assetResolver.resolve("projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png");
+const CHANNEL_ICON = assetResolver.resolve("projects/ciszukoantony/content/assets/youtube_canal.png");
 
 const exo2 = Exo_2({
   subsets: ["latin"],
@@ -30,8 +31,8 @@ export const metadata: Metadata = {
   description: "Official portfolio of Ciszuko Antony (Francisco Garcia Antonio M. / y8) — CEO & Founder of Ciszuko Network. Innovation, development and technology.",
   keywords: ["Ciszuko Antony", "Ciszuko Network", "portfolio", "developer", "Venezuela", "CEO", "technology"],
   icons: {
-    icon: ICON_SVG,
-    apple: ICON_SVG,
+    icon: CHANNEL_ICON,
+    apple: CHANNEL_ICON,
   },
   appleWebApp: { capable: true, title: "Ciszuko Antony", statusBarStyle: "black-translucent" },
   manifest: "/manifest.webmanifest",

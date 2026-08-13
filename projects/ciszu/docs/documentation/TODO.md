@@ -16,6 +16,6 @@
 - Cambiar el estilo de los botones "reportar un problema" para que se integren con el botón flotante del PDWA, colocándolo debajo/al lado y con su X de cerrar.
 - Al cerrar con la X, mostrar una advertencia que recuerde que se puede navegar a las páginas (descarga/feedback) para reactivar el botón flotante.
 
-**Fase 4 — Logos y errores visuales (PENDIENTE)**
-- ciszukoantony home: el isotipo del hero debe ir a la IZQUIERDA del título (no arriba), imagen del canal de YouTube a la derecha, y favicon = icono del canal.
-- ciszunetwork: usa el isotipo/logotipo de ciszukoantony (incorrecto → debe ser el de Ciszu Network), quitar el título HTML de ciszu network y agrandar/acomodar su tagline para hacerlo más visible.
+**Fase 4 — Logos y errores visuales** ✅ HECHA (13 ago 2026)
+- ciszukoantony home: el isotipo del hero ahora va a la IZQUIERDA del título, la imagen del canal de YouTube a la derecha (`content/assets/youtube_canal.png`, avatar real del canal `@CiszukoAntony`), y el favicon = icono del canal.
+- ciszunetwork: reemplazadas las 6 referencias al isotipo/logotipo de ciszukoantony por los de Ciszu Network (`ciszu_logo_isotipo_outline_zcolor_ccolor.svg` en layout/Navbar/Footer/about + `ciszu_logotipo_outline_zcolor_cwhite_full.png` en el hero), título HTML de ciszu network convertido a `sr-only` (lo muestra el logotipo) y tagline "Bright Future Promised" ampliado y más visible.
