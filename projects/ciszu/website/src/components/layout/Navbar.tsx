@@ -300,7 +300,7 @@ export const NavbarContent = () => {
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2.5 group shrink-0 cursor-pointer hover:scale-110 active:scale-95 transition-all duration-300">
               <Image
-                src={assetResolver.resolve('projects/ciszukoantony/content/logos/images/outline/isotype/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg')}
+                src={assetResolver.resolve('projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zcolor_ccolor.svg')}
                 alt="Logo"
                 width={34}
                 height={34}
