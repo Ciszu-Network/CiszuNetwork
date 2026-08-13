@@ -9,6 +9,7 @@ import { useAppStore } from '@/store';
 import Link from 'next/link';
 import { FlagVE } from '@/components/atoms/FlagVE';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 const I = {
   supabase:    <svg viewBox="0 0 24 24" className="w-full h-full" fill="currentColor"><path d="M21.362 9.354H12V.5L2.638 10.646H12V19.5z"/></svg>,
@@ -78,6 +79,7 @@ function CopyField({ value, label, subValue, icon, theme = 'blue', showWhatsApp 
 }
 
 export default function TeamPage() {
+  usePageTitle('TEAM');
   const { showToast } = useAppStore();
   const [copied, setCopied] = useState(false);
   const [showDiscordPopup, setShowDiscordPopup] = useState(false);

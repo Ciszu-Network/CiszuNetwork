@@ -3,9 +3,11 @@
 import MainLayout from '@/components/templates/MainLayout';
 import { Icon } from '@ciszu/ui';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 
 export default function AboutPage() {
+  usePageTitle('ABOUT');
   return (
     <MainLayout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

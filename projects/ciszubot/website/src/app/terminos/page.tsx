@@ -4,7 +4,7 @@ import LegalPage from '@/components/LegalPage';
 import { getDict, type Lang } from '@/lib/i18n';
 
 export const metadata: Metadata = {
-  title: 'Términos de servicio — CiszuBot',
+  title: 'CiszuBot | TERMS',
   description: 'Términos de servicio de CiszuBot, el bot de Discord de Ciszu Network.',
 };
 

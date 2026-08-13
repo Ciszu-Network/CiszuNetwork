@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 const certificates = [
   { name: 'JavaScript Algorithms and Data Structures', issuer: 'freeCodeCamp', year: '2024', color: 'from-green-500 to-green-700' },
@@ -15,6 +16,7 @@ const certificates = [
 ];
 
 export default function CertificatesPage() {
+  usePageTitle('CERTIFICATES');
   return (
     <div className="min-h-screen pt-24 pb-16 px-4">
       <div className="max-w-5xl mx-auto">

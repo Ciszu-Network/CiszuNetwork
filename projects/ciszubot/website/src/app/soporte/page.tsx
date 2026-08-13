@@ -20,7 +20,7 @@ import {
 } from '@/lib/i18n';
 
 export const metadata: Metadata = {
-  title: 'Soporte — CiszuBot',
+  title: 'CiszuBot | SUPPORT',
   description:
     'Soporte de CiszuBot: servidor de Discord, preguntas frecuentes, contacto y cómo apoyar el proyecto.',
 };

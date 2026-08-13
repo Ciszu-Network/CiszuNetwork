@@ -19,8 +19,10 @@ import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { isTauri } from '@/lib/isTauri';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 export default function Home() {
+  usePageTitle('HOME');
   const router = useRouter();
   const { showToast, isMusicPlaying, playGlobalMusic } = useAppStore();
   const [realStats, setRealStats] = useState<Record<string, { plays: number, likes: number }>>({});

@@ -10,9 +10,11 @@ import { supabase } from '@/config/supabase';
 import { Icon } from '@ciszu/ui';
 import AvatarUploadModal from '@/components/profile/AvatarUploadModal';
 import Image from 'next/image';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 
 export default function ProfileSettingsPage() {
+  usePageTitle('SETTINGS');
   const { user, setUser, showToast, isHydrated } = useAppStore();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('account');

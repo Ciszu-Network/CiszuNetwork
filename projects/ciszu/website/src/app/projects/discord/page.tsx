@@ -1,6 +1,12 @@
 import Link from "next/link";
 import { CISZU_NETWORK } from "@/config/site";
 import { MessageCircle, ArrowRight, Bot, Users, Settings } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Ciszu Network | PROJECTS — DISCORD',
+  description: 'Soluciones Discord: bots inteligentes, servidores comunitarios y automatización.',
+};
 
 const features = [
   { icon: Bot, title: "Bots Inteligentes", desc: "Bots personalizados con moderación, música, juegos, economía y más. Totalmente configurables." },

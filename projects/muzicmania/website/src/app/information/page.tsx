@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import ScrollSpy from '@/components/molecules/ScrollSpy';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 // --- Icons Library ---
 const I = {
@@ -191,6 +192,7 @@ const Keycap = ({ label, color, isPressed }: { label: string; color: string; isP
 };
 
 export default function InformationPage() {
+  usePageTitle('INFORMATION');
   const [fontWeight, setFontWeight] = useState('font-normal');
   const [fontStyle, setFontStyle] = useState('not-italic');
   const [selectedIconKey, setSelectedIconKey] = useState<keyof typeof I>('home');
