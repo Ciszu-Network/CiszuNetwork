@@ -42,6 +42,18 @@ const SOCIALS = [
   { Ico: IcoYoutube, href: YOUTUBE, label: 'YouTube', glow: 'hover:text-[#FF0000] hover:shadow-[0_0_15px_rgba(255,0,0,0.5)]' },
 ];
 
+const IcoUp = () => (
+  <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2}>
+    <path d="m18 15-6-6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const IcoDown = () => (
+  <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2}>
+    <path d="m6 9 6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
 interface FooterProps {
   lang: Lang;
   dict: Dict;
@@ -50,6 +62,23 @@ interface FooterProps {
 export default function Footer({ lang, dict }: FooterProps) {
   return (
     <footer className="relative bg-[#0a0a14] border-t border-white/10 pt-12 pb-6 px-4 md:px-8 overflow-hidden">
+      {/* Scroll arrows flotantes (arriba / abajo) */}
+      <div className="fixed bottom-8 right-8 z-40 flex flex-col gap-3">
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          aria-label="Ir arriba"
+          className="p-3 bg-black/60 backdrop-blur-md border-2 border-neon-blue rounded-full text-neon-blue shadow-[0_0_15px_rgba(0,212,255,0.3)] hover:text-neon-pink hover:border-neon-pink hover:shadow-[0_0_15px_rgba(255,51,204,0.4)] transition-all active:scale-95"
+        >
+          <IcoUp />
+        </button>
+        <button
+          onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}
+          aria-label="Ir abajo"
+          className="p-3 bg-black/60 backdrop-blur-md border-2 border-neon-blue rounded-full text-neon-blue shadow-[0_0_15px_rgba(0,212,255,0.3)] hover:text-neon-pink hover:border-neon-pink hover:shadow-[0_0_15px_rgba(255,51,204,0.4)] transition-all active:scale-95"
+        >
+          <IcoDown />
+        </button>
+      </div>
       <div className="absolute top-0 left-0 w-full h-[2px] bg-[length:200%_auto] animate-gradient-x bg-gradient-to-r from-neon-blue via-neon-purple to-neon-pink" />
       <div className="max-w-screen-xl mx-auto relative">
         <div className="flex flex-col md:flex-row gap-10 pb-10">
@@ -88,7 +117,7 @@ export default function Footer({ lang, dict }: FooterProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   title={label}
-                  className={`w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-muted transition-all duration-200 hover:scale-105 ${glow}`}
+                  className={`w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-muted transition-all duration-200 hover:scale-105 hover:-translate-y-0.5 active:scale-95 ${glow}`}
                 >
                   <Ico />
                 </a>
@@ -107,7 +136,7 @@ export default function Footer({ lang, dict }: FooterProps) {
                 { href: '/estado', label: dict.nav.status, icon: 'clock' },
                 { href: '/soporte', label: dict.nav.support, icon: 'support' },
               ].map((l) => (
-                <Link key={l.href} href={l.href} className="flex items-center gap-2 text-sm text-muted hover:text-neon-blue transition-colors">
+                <Link key={l.href} href={l.href} className="flex items-center gap-2 text-sm text-muted hover:text-neon-blue transition-all duration-300 hover:-translate-y-0.5 active:scale-95 w-fit">
                   <Icon name={l.icon} size={14} className="opacity-60" />
                   {l.label}
                 </Link>
@@ -118,13 +147,13 @@ export default function Footer({ lang, dict }: FooterProps) {
               <h4 className="text-xs font-semibold uppercase tracking-widest text-faint mb-1">
                 {dict.footer.projects}
               </h4>
-              <a href={CISZU_NETWORK} target="_blank" rel="noopener noreferrer" className="text-sm text-muted hover:text-neon-blue transition-colors">
+              <a href={CISZU_NETWORK} target="_blank" rel="noopener noreferrer" className="text-sm text-muted hover:text-neon-blue transition-all duration-300 hover:-translate-y-0.5 active:scale-95 w-fit">
                 Ciszu Network
               </a>
-              <a href={CISZUKO_ANTONY} target="_blank" rel="noopener noreferrer" className="text-sm text-muted hover:text-neon-blue transition-colors">
+              <a href={CISZUKO_ANTONY} target="_blank" rel="noopener noreferrer" className="text-sm text-muted hover:text-neon-blue transition-all duration-300 hover:-translate-y-0.5 active:scale-95 w-fit">
                 Ciszuko Antony
               </a>
-              <a href={GITHUB_ORG} target="_blank" rel="noopener noreferrer" className="text-sm text-muted hover:text-neon-blue transition-colors">
+              <a href={GITHUB_ORG} target="_blank" rel="noopener noreferrer" className="text-sm text-muted hover:text-neon-blue transition-all duration-300 hover:-translate-y-0.5 active:scale-95 w-fit">
                 GitHub
               </a>
             </div>
@@ -147,10 +176,10 @@ export default function Footer({ lang, dict }: FooterProps) {
               <h4 className="text-xs font-semibold uppercase tracking-widest text-faint mb-1">
                 {dict.footer.legal}
               </h4>
-              <Link href="/terminos" className="text-sm text-muted hover:text-neon-blue transition-colors">
+              <Link href="/terminos" className="text-sm text-muted hover:text-neon-blue transition-all duration-300 hover:-translate-y-0.5 active:scale-95 w-fit">
                 {dict.footer.terms}
               </Link>
-              <Link href="/privacidad" className="text-sm text-muted hover:text-neon-blue transition-colors">
+              <Link href="/privacidad" className="text-sm text-muted hover:text-neon-blue transition-all duration-300 hover:-translate-y-0.5 active:scale-95 w-fit">
                 {dict.footer.privacy}
               </Link>
               <div className="flex gap-2 mt-2">
