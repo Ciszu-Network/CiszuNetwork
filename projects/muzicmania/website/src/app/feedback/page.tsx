@@ -7,6 +7,7 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 import Link from 'next/link';
 import { usePageTitle } from '@/lib/usePageTitle';
 import * as Sentry from '@sentry/nextjs';
+import { FabRestore } from '@ciszu/ui';
 
 // --- Icons Library (MuzicMania Style) ---
 const I = {
@@ -297,6 +298,22 @@ export default function FeedbackPage() {
         </motion.section>
 
         <QuickDocks />
+
+        {/* Restaurar botones flotantes */}
+        <motion.section
+          initial="hidden"
+          animate="visible"
+          variants={sectionVariants}
+          className="flex flex-col md:flex-row items-center justify-between gap-6 p-8 bg-black/40 border border-white/5 rounded-[2.5rem]"
+        >
+          <div className="space-y-1 text-center md:text-left">
+            <h4 className="text-sm font-header font-black text-white uppercase italic tracking-tight">¿Cerraste el botón flotante?</h4>
+            <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest max-w-xl">
+              El botón de reporte rápido de abajo a la izquierda se puede volver a mostrar cuando quieras.
+            </p>
+          </div>
+          <FabRestore accent="#ff33cc" />
+        </motion.section>
       </div>
     </MainLayout>
   );

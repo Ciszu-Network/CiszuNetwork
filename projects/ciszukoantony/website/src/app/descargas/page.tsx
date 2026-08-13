@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import InstallPdwaInline from '@/components/layout/InstallPdwaInline';
+import { FabRestore } from '@ciszu/ui';
 
 export const metadata: Metadata = {
   title: 'Ciszuko Antony | DESCARGAS',
@@ -23,12 +24,12 @@ const whatIs = [
 
 const steps = [
   {
-    title: 'Microsoft Edge / Chrome / Opera',
-    body: 'Pulsa el botón "Instalar PDWA" de abajo y confirma el diálogo del navegador (o usa el icono de instalación de la barra de direcciones). La app queda en Inicio/Escritorio.',
+    title: 'Microsoft Edge / Chrome',
+    body: 'La instalación PDWA es nativa en Chrome/Chromium y Microsoft Edge. Pulsa el botón "Instalar PDWA" de abajo y confirma el diálogo del navegador (o usa el icono de instalación de la barra de direcciones). La app queda en Inicio/Escritorio.',
   },
   {
-    title: 'Opera GX',
-    body: 'Opera GX no muestra el instalador nativo: Menú (logo rojo) → "Guardar y compartir" → "Crear acceso directo" → con clic derecho en el acceso → Propiedades → añade al final de la ruta: --app="https://ciszukoantony.vercel.app". Se abre como ventana de app independiente.',
+    title: 'Opera',
+    body: 'Opera no instala PDWA de forma nativa. Método alternativo (no-PDWA): Menú (logo rojo) → "Guardar y compartir" → "Crear acceso directo" → con clic derecho en el acceso → Propiedades → añade al final de la ruta: --app="https://ciszukoantony.vercel.app". Se abre como ventana de app independiente, igual que una PDWA.',
   },
   {
     title: 'Firefox',
@@ -135,6 +136,16 @@ export default function DescargasPage() {
             >
               Deja tu feedback
             </a>
+          </div>
+        </section>
+
+        <section className="mt-6">
+          <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+              <p className="text-white font-header font-bold text-sm mb-1">¿Cerraste el botón flotante?</p>
+              <p className="text-gray-500 text-xs">Los botones de instalación y feedback de abajo a la izquierda se pueden volver a mostrar cuando quieras.</p>
+            </div>
+            <FabRestore accent="#a78bfa" />
           </div>
         </section>
       </div>

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
-import { Icon } from '@ciszu/ui';
+import { Icon, FabRestore } from '@ciszu/ui';
 import FeedbackForm, { OpenReportButton } from '@/components/FeedbackForm';
 import { DISCORD_SERVER, FEEDBACK_EMAIL, getDict, type Lang } from '@/lib/i18n';
 
@@ -108,6 +108,15 @@ export default async function FeedbackPage() {
               </Link>
             </div>
           </div>
+        </div>
+
+        {/* Restaurar botones flotantes */}
+        <div className="max-w-3xl mx-auto mt-12 soft-card rounded-2xl p-7 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+          <div>
+            <p className="font-bold text-sm text-ink mb-1">¿Cerraste el botón flotante?</p>
+            <p className="text-xs text-muted">El botón de reporte rápido de abajo a la izquierda se puede volver a mostrar cuando quieras.</p>
+          </div>
+          <FabRestore accent="#22d3ee" />
         </div>
       </div>
     </div>

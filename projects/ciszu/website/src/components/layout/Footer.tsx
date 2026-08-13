@@ -143,15 +143,19 @@ export const Footer = () => {
           <div className="flex flex-col items-center text-center xl:w-2/5 border-b xl:border-b-0 xl:border-r border-white/10 pb-8 xl:pb-0 xl:pr-10">
             <Link href="/" className="flex flex-col items-center gap-4 cursor-pointer group hover:scale-105 active:scale-95 transition-all duration-300 mb-6">
               <Image
-                src={assetResolver.resolve('projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zcolor_ccolor.svg')}
+                src={assetResolver.resolve('projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg')}
                 alt={CISZU_NETWORK.name}
                 width={72}
                 height={72}
                 className="drop-shadow-brand group-hover:drop-shadow-[0_0_25px_rgba(58,107,240,0.9)] transition-all duration-300"
               />
-              <span className="font-header font-black text-xl text-white group-hover:text-brand-light group-hover:drop-shadow-[0_0_20px_rgba(58,107,240,0.7)] transition-all duration-300">
-                {CISZU_NETWORK.name}
-              </span>
+              <Image
+                src={assetResolver.resolve('projects/ciszu/content/logos/images/outline/logotype/monochrome/ciszu_logotipo_outline_zwhite_cwhite_simple.svg')}
+                alt={CISZU_NETWORK.name}
+                width={200}
+                height={68}
+                className="group-hover:drop-shadow-[0_0_20px_rgba(58,107,240,0.7)] transition-all duration-300"
+              />
               <span className="text-xs text-gray-500 font-bold uppercase tracking-[0.25em]">
                 &ldquo;{CISZU_NETWORK.tagline}&rdquo;
               </span>
@@ -286,10 +290,10 @@ export const Footer = () => {
           </div>
 
           {/* RIGHT: Copyright */}
-          <div className="text-center md:text-right space-y-1">
+          <div className="text-center space-y-1">
             <p className="text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-widest leading-loose">
               &copy; {new Date().getFullYear()}{' '}
-              <a href={CISZU_NETWORK.social.x} target="_blank" rel="noopener noreferrer"
+              <a href={EXTERNAL_LINKS.ciszunetwork} target="_blank" rel="noopener noreferrer"
                 className="text-brand-light font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(58,107,240,0.8)]">
                 CISZU NETWORK
               </a>{' '}

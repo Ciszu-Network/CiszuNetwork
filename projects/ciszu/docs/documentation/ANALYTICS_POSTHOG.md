@@ -14,15 +14,15 @@
 
 Plataforma open-source (MIT, $1.4B valoración, 2025) de **product analytics** todo-en-uno:
 
-| Producto | Free tier mensual |
-|---|---|
-| Product Analytics (eventos, embudos, retención, cohortes, paths, SQL) | 1.000.000 eventos |
-| Session Replay (grabaciones de sesión con masking) | 5.000 grabaciones |
-| Feature Flags (rollouts, segmentos) | 1.000.000 requests |
-| Error Tracking (captura de errores cliente/servidor) | 100.000 excepciones |
-| Surveys (encuestas in-producto) | 1.500 respuestas |
-| Logs | 10 GB |
-| PostHog AI | 500 créditos |
+| Producto                                                              | Free tier mensual   |
+| --------------------------------------------------------------------- | ------------------- |
+| Product Analytics (eventos, embudos, retención, cohortes, paths, SQL) | 1.000.000 eventos   |
+| Session Replay (grabaciones de sesión con masking)                    | 5.000 grabaciones   |
+| Feature Flags (rollouts, segmentos)                                   | 1.000.000 requests  |
+| Error Tracking (captura de errores cliente/servidor)                  | 100.000 excepciones |
+| Surveys (encuestas in-producto)                                       | 1.500 respuestas    |
+| Logs                                                                  | 10 GB               |
+| PostHog AI                                                            | 500 créditos        |
 
 Un solo proyecto, miembros del equipo ilimitados, retención 1 año, sin límite de proyectos extra en free (1 proyecto).
 
@@ -37,15 +37,14 @@ Un solo proyecto, miembros del equipo ilimitados, retención 1 año, sin límite
 
 ## 4. Ecosistema híbrido de monitoreo — quién mide qué (no se pisan)
 
-| Herramienta | Responsabilidad (ÚNICA) | Estado |
-|---|---|---|
-| **Cloudflare Web Analytics** | Tráfico/marketing: pageviews, referrers, países. Beacon ~1KB, sin impacto Core Web Vitals | ✅ Activo (4 webs, token `2fcf0eab...`) |
-| **Vercel Speed Insights** | Core Web Vitals reales (LCP/CLS/INP) en producción | ✅ Activo (solo MuzicMania) |
-| **UptimeRobot** | Disponibilidad 24/7 (5 monitores) + alertas email/push + watcher ntfy | ✅ Activo |
-| **PostHog — Product Analytics** | **ESTE SISTEMA**: eventos de producto, embudos, retención, session replay, feature flags | 🆕 Implementado (activación pendiente) |
-| **PostHog — Error Tracking** | Errores de cliente/servidor (sustituye la tarea Sentry del toDo) | 🆕 Fase 2 |
-| **ntfy** | Notificaciones push (alarmas UptimeRobot, avisos de tareas/errores) | ✅ Activo |
-| **Sentry** | ❌ **Descartado por ahora**: PostHog Error Tracking lo cubre gratis y sin segunda cuenta. Se re-evaluaría SOLO si se necesitan source maps avanzados/alertas finas/rate de errores por release | ⏸ Futuro opcional |
+| Herramienta                     | Responsabilidad (ÚNICA)                                                                   | Estado                                 |
+| ------------------------------- | ----------------------------------------------------------------------------------------- | -------------------------------------- |
+| **Cloudflare Web Analytics**    | Tráfico/marketing: pageviews, referrers, países. Beacon ~1KB, sin impacto Core Web Vitals | ✅ Activo (4 webs, token`2fcf0eab...`) |
+| **Vercel Speed Insights**       | Core Web Vitals reales (LCP/CLS/INP) en producción                                        | ✅ Activo (solo MuzicMania)            |
+| **UptimeRobot**                 | Disponibilidad 24/7 (5 monitores) + alertas email/push + watcher ntfy                     | ✅ Activo                              |
+| **PostHog — Product Analytics** | **ESTE SISTEMA**: eventos de producto, embudos, retención, session replay, feature flags  | 🆕 Implementado (activación pendiente) |
+| **PostHog — Error Tracking**    | Errores de cliente/servidor (sustituye la tarea Sentry del toDo)                          | 🆕 Fase 2                              |
+| **ntfy**                        | Notificaciones push (alarmas UptimeRobot, avisos de tareas/errores)                       | ✅ Activo                              |
 
 ### Reglas anti-solapamiento (obligatorias)
 
@@ -69,13 +68,13 @@ Un solo proyecto, miembros del equipo ilimitados, retención 1 año, sin límite
 
 Tarifas públicas por uso (tras el free tier mensual de cada producto):
 
-| Producto | Tarifa tras free tier |
-|---|---|
-| Product Analytics (eventos sin props custom) | $0.00005/evento |
-| **Eventos CON propiedades custom** ⚠️ | **$0.000248/evento (~5x)** — gotcha: limitar props custom por evento |
-| Session Replay | ~$0.0001/min grabado (aprox.) |
-| Error Tracking | $0.00035/evento tras 100k |
-| AI Observability | $0.00035/evento tras 100k |
+| Producto                                     | Tarifa tras free tier                                                |
+| -------------------------------------------- | -------------------------------------------------------------------- |
+| Product Analytics (eventos sin props custom) | $0.00005/evento                                                      |
+| **Eventos CON propiedades custom** ⚠️        | **$0.000248/evento (~5x)** — gotcha: limitar props custom por evento |
+| Session Replay                               | ~$0.0001/min grabado (aprox.)                                        |
+| Error Tracking                               | $0.00035/evento tras 100k                                            |
+| AI Observability                             | $0.00035/evento tras 100k                                            |
 
 - **Billing limits configurables por producto** (nunca factura de sorpresa; al llegar al límite, deja de ingestar).
 - Con tarjeta: 6 proyectos + retención 7 años + soporte email.
@@ -83,15 +82,15 @@ Tarifas públicas por uso (tras el free tier mensual de cada producto):
 
 ## 6. Comparativa de alternativas (2026)
 
-| | PostHog | Plausible | Umami | Fathom | Matomo | Mixpanel | Clarity (MS) |
-|---|---|---|---|---|---|---|---|
-| Free tier | ✅ 1M ev/mes, sin tarjeta | ❌ $9/mo | ✅ 100k cloud / self-host | ❌ $15/mo | ✅ self-host | ✅ 1M ev/mes | ✅ ilimitado |
-| Session replay | ✅ | ❌ | ❌ | ❌ | plugin pago | ❌ | ✅ |
-| Feature flags | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| Error tracking | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Embudos/retención | ✅ | solo goals | básico | ❌ | ✅ | ✅ | ❌ |
-| Script | ~68KB | 2.5KB | ~2KB | 2.1KB | pesado | pesado | ~50KB |
-| Self-host | pesado (4vCPU/16GB) | ligero | ligero | abandonado | ligero | ❌ | ❌ |
+|                   | PostHog                   | Plausible  | Umami                     | Fathom     | Matomo       | Mixpanel     | Clarity (MS) |
+| ----------------- | ------------------------- | ---------- | ------------------------- | ---------- | ------------ | ------------ | ------------ | --- | --- |
+| Free tier         | ✅ 1M ev/mes, sin tarjeta | ❌ $9/mo   | ✅ 100k cloud / self-host | ❌ $15/mo  | ✅ self-host | ✅ 1M ev/mes | ✅ ilimitado |     |     |
+| Session replay    | ✅                        | ❌         | ❌                        | ❌         | plugin pago  | ❌           | ✅           |
+| Feature flags     | ✅                        | ❌         | ❌                        | ❌         | ❌           | ✅           | ❌           |
+| Error tracking    | ✅                        | ❌         | ❌                        | ❌         | ❌           | ❌           | ❌           |
+| Embudos/retención | ✅                        | solo goals | básico                    | ❌         | ✅           | ✅           | ❌           |
+| Script            | ~68KB                     | 2.5KB      | ~2KB                      | 2.1KB      | pesado       | pesado       | ~50KB        |
+| Self-host         | pesado (4vCPU/16GB)       | ligero     | ligero                    | abandonado | ligero       | ❌           | ❌           |
 
 **Conclusión**: PostHog es el único gratis-sin-tarjeta que cubre analítica + errores + replay + flags en una herramienta. Plausible/Umami/Fathom son solo tráfico (y Plausible/Fathom cuestan); Matomo self-host requiere VPS (el VPS es tarea futura del bot, no del analytics); Mixpanel no tiene replay gratis; Clarity no tiene flags ni errores. **Híbrido final: Cloudflare (tráfico) + PostHog (producto/errores) — sin VPS, sin tarjeta, $0.**
 
@@ -132,7 +131,7 @@ Tarifas públicas por uso (tras el free tier mensual de cada producto):
 
 1. ✅ **Cuenta creada** por el usuario en https://app.posthog.com (gratis, sin tarjeta) — US Cloud.
 2. ✅ **Proyecto "Ciszu Network"** (id `550383`, org `019fe9e4-ca36-0000-c909-958aa3caa3cd`).
-3. ✅ **Project API Key** `phc_rSAcA8jCP68APVdcZ5FLEc5sayYj7JVqJ2SKgHNySLuT` verificada con un `capture` de prueba aceptado ("event submitted without a distinct_id"). La **Personal API Key** (`phx_`) verificada contra la API de proyectos.
+3. ✅ **Project API Key** `phc_rSAcA8jCP68APVdcZ5FLEc5sayYj7JVqJ2SKgHNySLuT` verificada con un `capture` de prueba aceptado ("event submitted without a distinct*id"). La **Personal API Key** (`phx*`) verificada contra la API de proyectos.
 4. ✅ **Envs locales**: `NEXT_PUBLIC_POSTHOG_KEY` + `NEXT_PUBLIC_POSTHOG_HOST` añadidas a `.env.local` de las 4 apps (gitignored).
 5. ✅ **Vercel**: las 2 vars (production+preview+development) creadas vía API en los 4 proyectos (`ciszunetworkpage`, `ciszukoantonypage`, `muzicmania`, `ciszubot`).
 6. ✅ **Authorized URLs** (Installation Health): 4 dominios (`https://ciszunetwork.vercel.app`, `https://ciszukoantony.vercel.app`, `https://muzicmania.vercel.app`, `https://ciszubot.vercel.app`) configurados vía `PATCH /api/projects/550383/` con el campo **`app_urls`** (⚠️ el campo `authorized_uris` NO existe en la API; el update de proyecto NO acepta `phs_`, solo `phx_`).
@@ -157,12 +156,12 @@ Tarifas públicas por uso (tras el free tier mensual de cada producto):
 
 ### Fase 2 (eventos custom con `captureEvent` de `@ciszu/ui`)
 
-| App | Eventos propuestos |
-|---|---|
-| **muzicmania** | `sign_up`, `login`, `logout`, `submit_score` (con score/track_id), `play_session_start/end`, `download_launcher`, `like_track`, `create_level` |
-| **ciszubot** | `invite_click`, `dashboard_login`, `guild_config_save`, `vote` |
-| **ciszukoantony** | `contact_form_submit`, `social_click`, `download_media` |
-| **ciszunetwork** | `ecosystem_click`, `contact_submit`, `nav_click` |
+| App               | Eventos propuestos                                                                                                                             |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **muzicmania**    | `sign_up`, `login`, `logout`, `submit_score` (con score/track_id), `play_session_start/end`, `download_launcher`, `like_track`, `create_level` |
+| **ciszubot**      | `invite_click`, `dashboard_login`, `guild_config_save`, `vote`                                                                                 |
+| **ciszukoantony** | `contact_form_submit`, `social_click`, `download_media`                                                                                        |
+| **ciszunetwork**  | `ecosystem_click`, `contact_submit`, `nav_click`                                                                                               |
 
 ### Fase 3 (features PostHog)
 

@@ -124,10 +124,6 @@ export default function SupportPage() {
     setTimeout(() => setToast(null), 4000);
   };
 
-  const handleNoLink = (name: string) => {
-    showToast(`Dominio ${name} inactivo. Vinculación suspendida hasta despliegue estable.`);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
@@ -595,7 +591,7 @@ export default function SupportPage() {
                     if (s.name === 'Discord') { actualHref = 'https://discord.gg/W3kMtMMj6E'; btnText = 'Comunidad Oficial'; }
                    
                    return (
-                     <button key={s.name} onClick={() => actualHref !== '#' ? window.open(actualHref, '_blank') : handleNoLink(s.name)}
+                     <button key={s.name} onClick={() => window.open(actualHref, '_blank')}
                        className={`flex items-center gap-4 px-8 py-4 rounded-3xl border transition-all hover:scale-105 shadow-xl ${s.borderCol} ${s.bgCol} ${s.textCol} hover:text-white hover:bg-opacity-40 group/btn`}
                      >
                         <div className="w-6 h-6 group-hover/btn:scale-110 transition-transform">{s.icon}</div>

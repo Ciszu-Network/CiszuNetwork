@@ -16,6 +16,16 @@ export { default as PwaRegister } from './PwaRegister';
 export { default as InstallPdwaButton } from './InstallPdwaButton';
 export { detectPdwaBrowser } from './InstallPdwaButton';
 export type { InstallPdwaButtonProps, PdwaBrowserInfo, BrowserId } from './InstallPdwaButton';
+// FabStack: sistema de botones flotantes apilados (coordina PDWA + FeedbackFab)
+export {
+  FabStackProvider,
+  useFabStack,
+  useFabRestore,
+  restoreFabButtons,
+  FabRestore,
+  FAB_BASE_BOTTOM,
+  FAB_GAP,
+} from './FabStack';
 // Alias retro-compat (deprecated, usar InstallPdwaButton)
 export { default as InstallPwaButton } from './InstallPdwaButton';
 // CloudflareGuard: guard de acceso con Turnstile (compartido entre las webs)

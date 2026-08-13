@@ -6,13 +6,25 @@ import { usePathname } from 'next/navigation';
 import { Icon, SmartImage } from '@ciszu/ui';
 import { INVITE_URL, LANGS, LOGO_ISOTIPO, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
 
-const NAV_LINKS: { href: string; key: 'home' | 'commands' | 'status' | 'support' | 'downloads' | 'feedback'; icon: string }[] = [
+const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'status' | 'support' | 'downloads' | 'feedback'; icon: string }[] = [
   { href: '/', key: 'home', icon: 'home' },
   { href: '/comandos', key: 'commands', icon: 'gamepad' },
   { href: '/estado', key: 'status', icon: 'clock' },
   { href: '/soporte', key: 'support', icon: 'support' },
   { href: '/descargas', key: 'downloads', icon: 'download' },
   { href: '/feedback', key: 'feedback', icon: 'message' },
+];
+
+const SEARCH_PAGES: { href: string; labelKey: string; icon: string; keywords: string[] }[] = [
+  { href: '/', labelKey: 'home', icon: 'home', keywords: ['inicio', 'home', 'main'] },
+  { href: '/comandos', labelKey: 'commands', icon: 'gamepad', keywords: ['comandos', 'commands', 'bot', 'slash'] },
+  { href: '/estado', labelKey: 'status', icon: 'clock', keywords: ['estado', 'status', 'uptime', 'online'] },
+  { href: '/soporte', labelKey: 'support', icon: 'support', keywords: ['soporte', 'support', 'ayuda', 'help'] },
+  { href: '/descargas', labelKey: 'downloads', icon: 'download', keywords: ['descargas', 'downloads', 'app', 'exe'] },
+  { href: '/feedback', labelKey: 'feedback', icon: 'message', keywords: ['feedback', 'reporte', 'report', 'problema'] },
+  { href: '/dashboard', labelKey: 'dashboard', icon: 'server', keywords: ['panel', 'dashboard', 'config', 'admin'] },
+  { href: '/privacidad', labelKey: 'privacidad', icon: 'lock', keywords: ['privacidad', 'privacy'] },
+  { href: '/terminos', labelKey: 'terminos', icon: 'external', keywords: ['terminos', 'terms', 'legal'] },
 ];
 
 interface NavbarProps {
@@ -24,10 +36,29 @@ interface NavbarProps {
 export default function Navbar({ lang, dict, account }: NavbarProps) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const [authOpen, setAuthOpen] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [isDark, setIsDark] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
   const firstRender = useRef(true);
+  const searchRef = useRef<HTMLDivElement | null>(null);
+  const searchToggleRef = useRef<HTMLButtonElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const authRef = useRef<HTMLDivElement | null>(null);
+  const inviteRef = useRef<HTMLDivElement | null>(null);
+  const accountRef = useRef<HTMLDivElement | null>(null);
+
+  const suggestions = query.trim().length > 0
+    ? SEARCH_PAGES.filter(
+        (p) =>
+          dict.nav[p.labelKey as keyof typeof dict.nav].toLowerCase().includes(query.toLowerCase()) ||
+          p.href.toLowerCase().includes(query.toLowerCase()) ||
+          p.keywords.some((k) => k.includes(query.toLowerCase()))
+      )
+    : [];
 
   useEffect(() => {
     setIsDark(document.documentElement.classList.contains('dark'));
@@ -41,6 +72,39 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
     }
     setIsNavigating(false);
   }, [pathname]);
+
+  // Close search/menu on route change
+  useEffect(() => {
+    setSearchOpen(false);
+    setQuery('');
+    setAuthOpen(false);
+    setInviteOpen(false);
+    setAccountOpen(false);
+    setMenuOpen(false);
+  }, [pathname]);
+
+  // Focus the search input when opening
+  useEffect(() => {
+    if (searchOpen) setTimeout(() => inputRef.current?.focus(), 50);
+  }, [searchOpen]);
+
+  // Close dropdowns on outside click
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        if (searchToggleRef.current && searchToggleRef.current.contains(e.target as Node)) {
+          return;
+        }
+        setSearchOpen(false);
+      }
+      const target = e.target as Node;
+      if (authRef.current && !authRef.current.contains(target)) setAuthOpen(false);
+      if (inviteRef.current && !inviteRef.current.contains(target)) setInviteOpen(false);
+      if (accountRef.current && !accountRef.current.contains(target)) setAccountOpen(false);
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
 
   // Global click interceptor: show loader when navigating between internal pages
   useEffect(() => {
@@ -142,7 +206,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
           <div className="w-px h-7 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-1 shrink-0" />
 
           <div className="hidden md:flex items-center gap-1">
-            {NAV_LINKS.map((link) => (
+            {NAV_PAGES.map((link) => (
               <Link key={link.href} href={link.href} className={linkCls(link.href)}>
                 <Icon name={link.icon} size={16} className="shrink-0" />
                 <span className={linkLabelCls(link.href)}>{dict.nav[link.key]}</span>
@@ -172,6 +236,73 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
               )}
             </button>
 
+            {/* Buscador — toggle + panel flotante */}
+            <div className="relative" ref={searchRef}>
+              <button
+                ref={searchToggleRef}
+                onClick={() => { setSearchOpen(v => !v); setMenuOpen(false); setAccountOpen(false); setAuthOpen(false); setInviteOpen(false); }}
+                className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 cursor-pointer border group ${
+                  searchOpen
+                    ? 'bg-neon-blue border-neon-blue text-black'
+                    : 'bg-white/5 border-white/20 text-white hover:border-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.25)]'
+                }`}
+                aria-label={dict.nav.search}
+                title={dict.nav.search}
+              >
+                <Icon name="search" size={18} />
+              </button>
+
+              {searchOpen && (
+                <div className="absolute right-0 top-12 w-[min(90vw,24rem)] overflow-hidden rounded-2xl border border-white/10 bg-[#0f0f1c]/95 backdrop-blur-2xl shadow-2xl animate-fade-in-down">
+                  <div className="flex items-center gap-2 border-b border-white/10 px-3">
+                    <Icon name="search" size={16} className="shrink-0 text-white/50" />
+                    <input
+                      ref={inputRef}
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Escape') setSearchOpen(false);
+                        if (e.key === 'Enter' && suggestions.length > 0) {
+                          window.location.href = suggestions[0].href;
+                        }
+                      }}
+                      placeholder={dict.nav.search}
+                      className="w-full bg-transparent py-3 text-sm text-white outline-none placeholder:text-white/40"
+                    />
+                    {query && (
+                      <button
+                        onClick={() => setQuery('')}
+                        className="p-1 rounded-full text-white/50 hover:text-white hover:bg-white/10 cursor-pointer"
+                        aria-label="clear"
+                      >
+                        <Icon name="close" size={14} />
+                      </button>
+                    )}
+                  </div>
+                  <div className="max-h-72 overflow-y-auto p-1.5">
+                    {suggestions.length === 0 && query.trim().length > 0 ? (
+                      <p className="px-3 py-4 text-center text-xs text-white/50">{dict.nav.searchHint}</p>
+                    ) : (
+                      suggestions.map((p) => (
+                        <Link
+                          key={p.href}
+                          href={p.href}
+                          onClick={() => { setSearchOpen(false); setQuery(''); }}
+                          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-white/85 transition hover:bg-white/5 hover:text-neon-blue"
+                        >
+                          <span className="w-7 h-7 rounded-lg flex items-center justify-center bg-black/40 text-white/70 shrink-0">
+                            <Icon name={p.icon} size={14} />
+                          </span>
+                          {dict.nav[p.labelKey as keyof typeof dict.nav]}
+                          <span className="ml-auto text-[11px] text-white/35">{p.href}</span>
+                        </Link>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Selector de idioma — estilo muzicmania */}
             <div className="hidden sm:flex items-center rounded-full border border-white/10 bg-white/5 overflow-hidden shadow-lg">
               {LANGS.map((l) => (
@@ -192,21 +323,43 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
               ))}
             </div>
 
-            <a
-              href={INVITE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white shadow-[0_8px_22px_-8px_rgba(88,101,242,0.8)] transition-all hover:scale-105 hover:shadow-[0_10px_28px_-8px_rgba(0,212,255,0.8)] active:scale-95"
-            >
-              <Icon name="discord" size={16} className="[&>g]:fill-current" />
-              <span>{dict.nav.invite}</span>
-            </a>
+            {/* Invitar — icono desplegable */}
+            <div className="relative hidden sm:block" ref={inviteRef}>
+              <button
+                onClick={() => { setInviteOpen(!inviteOpen); setAuthOpen(false); setAccountOpen(false); setSearchOpen(false); }}
+                className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 cursor-pointer shadow-md border group ${
+                  inviteOpen
+                    ? 'bg-neon-blue border-neon-blue text-black'
+                    : 'bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white hover:scale-110 hover:shadow-[0_10px_28px_-8px_rgba(0,212,255,0.8)]'
+                } active:scale-95`}
+                aria-label={dict.nav.invite}
+                title={dict.nav.invite}
+                aria-expanded={inviteOpen}
+              >
+                <Icon name="discord" size={17} className="[&>g]:fill-current" />
+              </button>
+              {inviteOpen && (
+                <div className="absolute right-0 top-12 w-56 overflow-hidden rounded-xl border border-white/10 bg-[#12121f] shadow-2xl animate-fade-in-down">
+                <a
+                  href={INVITE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-white transition hover:bg-white/5 hover:text-neon-blue"
+                >
+                  <Icon name="external" size={15} /> {dict.nav.invite}
+                </a>
+                <p className="border-t border-white/10 px-4 py-2.5 text-[11px] text-white/45">
+                  Añade a CiszuBot a tu servidor de Discord
+                </p>
+                </div>
+              )}
+            </div>
 
             {/* Cuenta / Login */}
             {account ? (
-              <div className="relative">
+              <div className="relative" ref={accountRef}>
                 <button
-                  onClick={() => setAccountOpen(!accountOpen)}
+                  onClick={() => { setAccountOpen(!accountOpen); setAuthOpen(false); setSearchOpen(false); setInviteOpen(false); }}
                   className="flex items-center gap-2 rounded-full border border-white/15 bg-white/5 p-1 pr-2.5 transition hover:border-[#5865F2] hover:bg-white/10 cursor-pointer"
                   aria-label="Cuenta"
                 >
@@ -244,17 +397,49 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                 )}
               </div>
             ) : (
-              <a
-                href="/api/auth/discord"
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold bg-[#5865F2] text-white shadow-[0_8px_22px_-8px_rgba(88,101,242,0.8)] transition-all hover:scale-105 hover:shadow-[0_10px_28px_-8px_rgba(88,101,242,1)] active:scale-95"
-              >
-                <Icon name="discord" size={15} className="[&>g]:fill-current" />
-                <span className="hidden sm:inline">Iniciar sesión</span>
-              </a>
+              <div className="relative" ref={authRef}>
+                <button
+                  onClick={() => { setAuthOpen(!authOpen); setAccountOpen(false); setSearchOpen(false); setInviteOpen(false); }}
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 cursor-pointer border ${
+                    authOpen
+                      ? 'bg-[#5865F2] border-[#5865F2] text-white shadow-[0_0_12px_rgba(88,101,242,0.6)]'
+                      : 'bg-white/5 border-white/20 text-white hover:border-[#5865F2] hover:shadow-[0_0_10px_rgba(88,101,242,0.4)]'
+                  }`}
+                  aria-label="Iniciar sesión"
+                  title="Iniciar sesión"
+                >
+                  <Icon name="user" size={17} />
+                </button>
+                {authOpen && (
+                  <div className="absolute right-0 top-12 w-60 overflow-hidden rounded-xl border border-white/10 bg-[#12121f] shadow-2xl animate-fade-in-down">
+                    <a
+                      href="/api/auth/discord"
+                      className="flex items-center gap-3 px-4 py-3 text-sm font-bold bg-[#5865F2] text-white transition hover:bg-[#4752c4]"
+                    >
+                      <Icon name="discord" size={16} className="[&>g]:fill-current" />
+                      <span>Iniciar sesión con Discord</span>
+                    </a>
+                    <Link
+                      href="/dashboard"
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 transition hover:bg-white/5 hover:text-neon-blue"
+                    >
+                      <Icon name="server" size={15} /> Panel de control
+                    </Link>
+                    <a
+                      href={INVITE_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 transition hover:bg-white/5 hover:text-neon-blue"
+                    >
+                      <Icon name="external" size={15} /> {dict.nav.invite}
+                    </a>
+                  </div>
+                )}
+              </div>
             )}
 
             <button
-              onClick={() => setMenuOpen(!menuOpen)}
+              onClick={() => { setMenuOpen(!menuOpen); setSearchOpen(false); setAuthOpen(false); setInviteOpen(false); setAccountOpen(false); }}
               className={`md:hidden p-2 rounded-full border transition-all cursor-pointer active:scale-95 ${
                 menuOpen
                   ? 'bg-neon-blue border-neon-blue text-black'
@@ -270,7 +455,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
 
       {menuOpen && (
         <div className="md:hidden border-t border-white/10 bg-[#0a0a14]/95 backdrop-blur-2xl px-4 py-3 animate-fade-in-down">
-          {NAV_LINKS.map((link) => (
+          {NAV_PAGES.map((link) => (
             <Link
               key={link.href}
               href={link.href}

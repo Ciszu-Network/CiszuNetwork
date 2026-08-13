@@ -16,6 +16,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { useRouter } from 'next/navigation';
+import { useFabStack, useFabRestore } from '@ciszu/ui';
 import { attachFeedback } from '@/lib/feedback';
 
 const STORAGE_KEY = 'ciszu-feedback-dismissed';
@@ -64,10 +65,21 @@ export default function FeedbackFab() {
     }
   };
 
+  const stackBottom = useFabStack('feedback', !dismissed ? { order: 1, height: 36 } : null);
+  useFabRestore(() => {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* noop */
+    }
+    setDismissed(false);
+    setPanel(false);
+  });
+
   if (dismissed && !panel) return null;
 
   return (
-    <div style={containerStyle} data-feedback-host="true">
+    <div style={{ ...containerStyle, bottom: stackBottom }} data-feedback-host="true">
       <style>{FEEDBACK_CSS}</style>
 
       {panel && (
@@ -162,6 +174,7 @@ const containerStyle: CSSProperties = {
   bottom: 62,
   zIndex: 50,
   fontFamily: 'inherit',
+  transition: 'bottom 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
   '--fb-accent': '#a78bfa',
   '--fb-accent-alt': '#22d3ee',
 } as CSSProperties;

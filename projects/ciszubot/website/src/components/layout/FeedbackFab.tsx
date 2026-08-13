@@ -16,6 +16,7 @@ import { useCallback, useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
 import * as Sentry from '@sentry/nextjs';
 import Link from 'next/link';
+import { useFabStack, useFabRestore } from '@ciszu/ui';
 
 interface FeedbackFabProps {
   storageKey?: string;
@@ -69,6 +70,17 @@ export default function FeedbackFab({
     void openFeedback();
   }, []);
 
+  const stackBottom = useFabStack('feedback', !dismissed ? { order: 1, height: 36 } : null);
+  useFabRestore(() => {
+    try {
+      localStorage.removeItem(storageKey);
+    } catch {
+      /* noop */
+    }
+    setDismissed(false);
+    setDismissHint(false);
+  });
+
   if (dismissed && !dismissHint) return null;
 
   const vars = {
@@ -77,7 +89,7 @@ export default function FeedbackFab({
   } as CSSProperties;
 
   return (
-    <div style={{ ...vars, ...containerStyle }} data-fb-host="true">
+    <div style={{ ...vars, ...containerStyle, bottom: stackBottom }} data-fb-host="true">
       {dismissed && dismissHint && (
         <div style={panelStyle} role="dialog" aria-label="Feedback">
           <div style={panelHeadStyle}>
@@ -165,6 +177,7 @@ const containerStyle: CSSProperties = {
   bottom: 62,
   zIndex: 49,
   fontFamily: 'inherit',
+  transition: 'bottom 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
 };
 
 const panelStyle: CSSProperties = {

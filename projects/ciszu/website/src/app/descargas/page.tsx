@@ -2,6 +2,7 @@ import { Download, MonitorDown, Smartphone, ShieldCheck } from 'lucide-react';
 import { CISZU_NETWORK } from '@/config/site';
 import type { Metadata } from 'next';
 import { InstallPdwaCta } from '@/components/descargas/InstallPdwaCta';
+import { FabRestore } from '@ciszu/ui';
 
 export const metadata: Metadata = {
   title: 'Ciszu Network | DESCARGAS',
@@ -12,7 +13,7 @@ const steps = [
   {
     icon: MonitorDown,
     title: 'Abrir en un navegador compatible',
-    content: 'Microsoft Edge, Chrome u Opera (en PC). La PDWA se instala desde el icono de la barra de direcciones o desde el botón "Instalar PDWA" que encontrarás aquí abajo.',
+    content: 'Microsoft Edge y Chrome instalan la PDWA de forma nativa desde el icono de la barra de direcciones o desde el botón "Instalar PDWA" que encontrarás aquí abajo. Opera usa un método alternativo (acceso directo con --app=URL), explicado en el propio botón.',
   },
   {
     icon: Smartphone,
@@ -64,6 +65,14 @@ export default function DescargasPage() {
             Tu web favorita sin pestañas, con tu logo y acceso directo desde el escritorio o el menú de inicio.
           </p>
           <InstallPdwaCta site={CISZU_NETWORK.name} />
+        </div>
+
+        <div className="mt-10 p-6 rounded-2xl bg-brand/5 border border-brand/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <p className="text-white font-header font-bold text-sm mb-1">¿Cerraste el botón flotante?</p>
+            <p className="text-gray-400 text-xs">El botón "Instalar PDWA" de abajo a la izquierda se puede volver a mostrar cuando quieras.</p>
+          </div>
+          <FabRestore accent="#22d3ee" />
         </div>
       </div>
     </div>

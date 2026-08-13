@@ -21,6 +21,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
+import { useFabStack, useFabRestore } from './FabStack';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -41,7 +42,7 @@ export function detectPdwaBrowser(ua: string): PdwaBrowserInfo {
   if (/Edg\//i.test(ua)) return { id: 'edge', label: 'Microsoft Edge', nativa: true };
   if (/OPR\//i.test(ua) || /Opera/i.test(ua)) {
     if (/GX/i.test(ua)) return { id: 'opera-gx', label: 'Opera GX', nativa: false };
-    return { id: 'opera', label: 'Opera', nativa: true };
+    return { id: 'opera', label: 'Opera', nativa: false };
   }
   if (/Firefox\//i.test(ua)) return { id: 'firefox', label: 'Firefox', nativa: false };
   if (/Chromium|Chrome\//i.test(ua)) return { id: 'chrome', label: 'Chrome', nativa: true };
@@ -143,6 +144,10 @@ export default function InstallPdwaButton({
     '--pdwa-accent-alt': accentAlt,
   } as CSSProperties;
 
+  const visible = !installed && !dismissed;
+  const stackBottom = useFabStack('pdwa', visible ? { order: 0, height: 36 } : null);
+  useFabRestore(() => setDismissed(false));
+
   const hasNative = browser.nativa || deferred !== null;
 
   const panelData = useMemo(() => {
@@ -158,11 +163,12 @@ export default function InstallPdwaButton({
     }
     switch (browser.id) {
       case 'opera-gx':
+      case 'opera':
         return {
-          title: 'Opera GX no instala PDWA directamente',
-          sub: 'Aunque es Chromium, Opera GX no muestra el instalador nativo de apps web. Alternativa sin extensiones:',
+          title: 'Opera no instala PDWA directamente',
+          sub: 'Aunque es Chromium, Opera no muestra el instalador nativo de apps web. Alternativa sin extensiones:',
           steps: [
-            `Abre la web de ${site}. Menú Opera GX (logo rojo ═) → "Guardar y compartir" → "Crear acceso directo".`,
+            `Abre la web de ${site}. Menú Opera (logo rojo ═) → "Guardar y compartir" → "Crear acceso directo".`,
             'Clic derecho en el acceso directo → Propiedades.',
             `Añade al final de la ruta:  --app=\"${typeof window !== 'undefined' ? window.location.origin : ''}\"`,
             'Al abrirlo se ve como una ventana de app independiente, igual que una PDWA. Si ofrece app nativa (ver abajo), mejor aún.',
@@ -210,7 +216,7 @@ export default function InstallPdwaButton({
   if (installed || dismissed) return null;
 
   return (
-    <div style={{ ...vars, ...containerStyle }} data-pdwa-host="true">
+    <div style={{ ...vars, ...containerStyle, bottom: stackBottom }} data-pdwa-host="true">
       <style>{PDWA_CSS}</style>
       {panel && (
         <div style={panelStyle} role="dialog" aria-label="Información de instalación PDWA">
@@ -278,7 +284,7 @@ export default function InstallPdwaButton({
                 : { opacity: 0, transform: 'translateX(-8px)', pointerEvents: 'none' }),
             }}
           >
-            {hasNative ? 'Instalar PDWA' : browser.id === 'opera-gx' ? 'Alternativa PDWA (GX)' : 'Instalar PDWA'}
+            {hasNative ? 'Instalar PDWA' : browser.id === 'opera-gx' || browser.id === 'opera' ? 'Alternativa PDWA (Opera)' : 'Instalar PDWA'}
           </span>
         </button>
 
@@ -306,6 +312,7 @@ const containerStyle: CSSProperties = {
   bottom: 16,
   zIndex: 50,
   fontFamily: 'inherit',
+  transition: 'bottom 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
 };
 
 const PDWA_CSS = `
