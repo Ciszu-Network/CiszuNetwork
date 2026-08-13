@@ -10,7 +10,7 @@ import FeedbackFab from "@/components/layout/FeedbackFab";
 import { CISZU_NETWORK } from "@/config/site";
 import "./globals.css";
 
-const ICON_SVG = assetResolver.resolve("projects/ciszukoantony/content/logos/images/outline/isotype/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg");
+const ICON_SVG = assetResolver.resolve("projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zcolor_ccolor.svg");
 
 const ibmPlex = IBM_Plex_Sans({
   subsets: ["latin"],

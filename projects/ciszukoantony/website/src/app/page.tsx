@@ -42,18 +42,26 @@ export default function Home() {
 
         <div className="relative z-10 max-w-4xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <SmartImage
-              src="projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png"
-              alt="Ciszuko Antony" width={140} height={125}
-              className="mx-auto drop-shadow-brand animate-float mb-4"
-              fetchPriority="high"
-            />
-            <SmartImage
-              src="projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png"
-              alt="Ciszuko Antony" width={400} height={100}
-              className="mx-auto drop-shadow-brand max-w-[80vw] mb-6"
-              fetchPriority="high"
-            />
+            <div className="flex items-center justify-center gap-4 md:gap-6 mb-6 flex-wrap">
+              <SmartImage
+                src="projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png"
+                alt="Ciszuko Antony" width={110} height={98}
+                className="drop-shadow-brand animate-float shrink-0"
+                fetchPriority="high"
+              />
+              <SmartImage
+                src="projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png"
+                alt="Ciszuko Antony" width={340} height={85}
+                className="drop-shadow-brand max-w-[60vw] shrink-0"
+                fetchPriority="high"
+              />
+              <SmartImage
+                src="projects/ciszukoantony/content/assets/youtube_canal.png"
+                alt="Ciszuko Antony — Canal de YouTube" width={100} height={100}
+                className="rounded-full ring-2 ring-brand/40 shadow-[0_0_25px_rgba(167,139,250,0.35)] shrink-0"
+                fetchPriority="high"
+              />
+            </div>
 
             <p className="text-xl md:text-2xl text-gray-300 mb-2">
               CEO & Founder of{' '}
