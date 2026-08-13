@@ -645,6 +645,122 @@ export default function DownloadPage() {
           </div>
         </motion.section>
 
+        {/* PDWA — APP DE ESCRITORIO PROGRESIVA */}
+        <motion.section
+          initial="hidden"
+          animate="visible"
+          variants={sectionVariants}
+          className="space-y-10"
+        >
+          <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-10">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 text-neon-cyan flex items-center justify-center p-2.5 bg-neon-cyan/10 border border-neon-cyan/20 rounded-2xl">
+                <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                  <line x1="8" y1="21" x2="16" y2="21" />
+                  <line x1="12" y1="17" x2="12" y2="21" />
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-2xl md:text-3xl font-header font-black text-white italic uppercase tracking-tight leading-none">
+                  PDWA · APP DE ESCRITORIO PROGRESIVA
+                </h2>
+                <p className="text-neon-cyan font-black tracking-[0.4em] uppercase text-[9px] mt-2">
+                  SIN DESCARGAR NADA · DESDE EL NAVEGADOR
+                </p>
+              </div>
+            </div>
+            <div className="h-[1px] flex-grow bg-white/5 hidden md:block" />
+            <div className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-neon-cyan/10 border border-neon-cyan/30 rounded-full text-neon-cyan text-[9px] font-black uppercase tracking-widest">
+              <span className="w-2 h-2 bg-neon-cyan rounded-full animate-pulse" />
+              Compatible con Chrome · Edge · Opera
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-stretch">
+            <div className="bg-[#05050a]/90 border border-neon-cyan/20 rounded-[3rem] p-10 shadow-2xl relative overflow-hidden group space-y-6">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-neon-cyan/5 blur-3xl group-hover:bg-neon-cyan/10 transition-all pointer-events-none" />
+              <h3 className="font-header font-black tracking-tighter text-xl text-neon-cyan italic uppercase border-b border-white/5 pb-4 flex items-center gap-3">
+                <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>
+                ¿QUÉ ES LA PDWA?
+              </h3>
+              <p className="text-gray-400 text-xs font-bold leading-relaxed">
+                La <span className="text-white">PDWA (App de Escritorio Progresiva)</span> es MuzicMania instalada como una <span className="text-white">ventana de aplicación independiente</span>: sin pestañas, sin barra de direcciones, con tu propio icono en el escritorio y la barra de tareas.
+              </p>
+              <p className="text-gray-400 text-xs font-bold leading-relaxed">
+                Usa el mismo motor del navegador (Chromium/WebView2), por lo que <span className="text-white">no ocupa espacio extra</span> ni requiere instalar nada: se descarga al instante y se actualiza sola.
+              </p>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-gray-300 text-[10px] font-black uppercase tracking-widest pt-2">
+                <li className="flex items-center gap-2"><span className="text-neon-cyan">◆</span> Funciona sin Internet tras cachear</li>
+                <li className="flex items-center gap-2"><span className="text-neon-cyan">◆</span> Icono propio en Escritorio</li>
+                <li className="flex items-center gap-2"><span className="text-neon-cyan">◆</span> Cero espacio en disco adicional</li>
+                <li className="flex items-center gap-2"><span className="text-neon-cyan">◆</span> Actualización automática</li>
+              </ul>
+            </div>
+
+            <div className="bg-[#05050a]/90 border border-neon-pink/20 rounded-[3rem] p-10 shadow-2xl relative overflow-hidden group space-y-6">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-neon-pink/5 blur-3xl group-hover:bg-neon-pink/10 transition-all pointer-events-none" />
+              <h3 className="font-header font-black tracking-tighter text-xl text-neon-pink italic uppercase border-b border-white/5 pb-4 flex items-center gap-3">
+                <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                ¿CÓMO SE INSTALA?
+              </h3>
+              <ol className="space-y-4">
+                  <li className="flex gap-4 items-start">
+                    <span className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-neon-pink/10 border border-neon-pink/30 text-neon-pink font-header font-black text-xs">1</span>
+                    <div className="space-y-1">
+                      <p className="text-gray-300 text-xs font-black uppercase tracking-widest">Abre la web en el botón inferior izquierdo</p>
+                      <p className="text-gray-500 text-[10px] font-bold leading-relaxed">Pulsa el botón flotante <span className="text-neon-cyan">&quot;Instalar PDWA&quot;</span> que aparece en la esquina inferior izquierda de la página.</p>
+                    </div>
+                  </li>
+                  <li className="flex gap-4 items-start">
+                    <span className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-neon-pink/10 border border-neon-pink/30 text-neon-pink font-header font-black text-xs">2</span>
+                    <div className="space-y-1">
+                      <p className="text-gray-300 text-xs font-black uppercase tracking-widest">Confirma la instalación del navegador</p>
+                      <p className="text-gray-500 text-[10px] font-bold leading-relaxed">Chrome/Edge/Opera muestran un diálogo <span className="text-neon-cyan">Instalar</span>: acéptalo. En Opera GX, sigue las instrucciones del propio panel (acceso directo + <span className="text-white">--app=</span>).</p>
+                    </div>
+                  </li>
+                  <li className="flex gap-4 items-start">
+                    <span className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-neon-pink/10 border border-neon-pink/30 text-neon-pink font-header font-black text-xs">3</span>
+                    <div className="space-y-1">
+                      <p className="text-gray-300 text-xs font-black uppercase tracking-widest">Usa MuzicMania como app de escritorio</p>
+                      <p className="text-gray-500 text-[10px] font-bold leading-relaxed">Se crea un icono en Inicio/Escritorio. Al abrirlo verás MuzicMania en una ventana independiente, sin pestañas.</p>
+                    </div>
+                  </li>
+                </ol>
+            </div>
+          </div>
+
+          <div className="flex flex-col md:flex-row items-center justify-center gap-6 p-8 bg-black/40 border border-white/5 rounded-[2.5rem]">
+            <div className="flex items-center gap-4 text-center md:text-left">
+              <div className="w-10 h-10 text-neon-blue shrink-0">
+                <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div className="space-y-1">
+                <h4 className="text-sm font-header font-black text-white uppercase italic tracking-tight">¿PDWA O APP NATIVA?</h4>
+                <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest max-w-lg">
+                  La PDWA es para uso general de navegador. La <a href="#hero" className="text-neon-blue hover:text-neon-cyan transition-colors">app nativa (Tauri/.exe)</a> de arriba es para máxima latencia, tasa de refresco 144Hz+ y aislamiento de teclado.
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link
+                href="#hero"
+                className="inline-flex items-center gap-3 px-6 py-3.5 bg-neon-cyan/15 border border-neon-cyan/30 text-neon-cyan font-header font-black uppercase tracking-widest text-[10px] rounded-2xl hover:bg-neon-cyan hover:text-black hover:scale-105 transition-all"
+              >
+                <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 6 6 12l7 6"/></svg>
+                VOLVER AL BOTÓN PDWA
+              </Link>
+              <Link
+                href="/feedback"
+                className="inline-flex items-center gap-3 px-6 py-3.5 bg-white/5 border border-white/10 text-gray-300 font-header font-black uppercase tracking-widest text-[10px] rounded-2xl hover:bg-white hover:text-black hover:scale-105 transition-all"
+              >
+                <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/></svg>
+                ¿ALGÚN COMENTARIO? → FEEDBACK
+              </Link>
+            </div>
+          </div>
+        </motion.section>
+
         <QuickDocks />
       </div>
     </MainLayout>

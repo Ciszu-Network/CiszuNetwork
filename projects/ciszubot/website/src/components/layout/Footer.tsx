@@ -135,6 +135,8 @@ export default function Footer({ lang, dict }: FooterProps) {
                 { href: '/comandos', label: dict.nav.commands, icon: 'gamepad' },
                 { href: '/estado', label: dict.nav.status, icon: 'clock' },
                 { href: '/soporte', label: dict.nav.support, icon: 'support' },
+                { href: '/descargas', label: dict.nav.downloads, icon: 'download' },
+                { href: '/feedback', label: dict.nav.feedback, icon: 'message' },
               ].map((l) => (
                 <Link key={l.href} href={l.href} className="flex items-center gap-2 text-sm text-muted hover:text-neon-blue transition-all duration-300 hover:-translate-y-0.5 active:scale-95 w-fit">
                   <Icon name={l.icon} size={14} className="opacity-60" />

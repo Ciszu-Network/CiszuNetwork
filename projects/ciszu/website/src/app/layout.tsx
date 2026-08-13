@@ -6,6 +6,7 @@ import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics } fro
 import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ZoomWarning } from "@/components/layout/ZoomWarning";
+import FeedbackFab from "@/components/layout/FeedbackFab";
 import { CISZU_NETWORK } from "@/config/site";
 import "./globals.css";
 
@@ -58,6 +59,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
         </CloudflareGuard>
         <PwaRegister />
         <InstallPdwaButton site="Ciszu Network" accent="#22d3ee" accentAlt="#f472b6" />
+        <FeedbackFab />
         <PostHogAnalytics app="ciszunetwork" />
         <script defer type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
       </body>

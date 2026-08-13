@@ -6,11 +6,13 @@ import { usePathname } from 'next/navigation';
 import { Icon, SmartImage } from '@ciszu/ui';
 import { INVITE_URL, LANGS, LOGO_ISOTIPO, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
 
-const NAV_LINKS: { href: string; key: 'home' | 'commands' | 'status' | 'support'; icon: string }[] = [
+const NAV_LINKS: { href: string; key: 'home' | 'commands' | 'status' | 'support' | 'downloads' | 'feedback'; icon: string }[] = [
   { href: '/', key: 'home', icon: 'home' },
   { href: '/comandos', key: 'commands', icon: 'gamepad' },
   { href: '/estado', key: 'status', icon: 'clock' },
   { href: '/soporte', key: 'support', icon: 'support' },
+  { href: '/descargas', key: 'downloads', icon: 'download' },
+  { href: '/feedback', key: 'feedback', icon: 'message' },
 ];
 
 interface NavbarProps {

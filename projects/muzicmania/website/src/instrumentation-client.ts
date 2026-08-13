@@ -12,6 +12,9 @@ Sentry.init({
     Sentry.feedbackIntegration({
       colorScheme: 'system',
       showBranding: false,
+      // Sin autoinjección del trigger flotante de Sentry: lo maneja FeedbackFab
+      // (botón propio en esquina inferior-izquierda) vía Sentry.getFeedback().
+      autoInject: false,
       triggerLabel: 'Reportar un problema',
       formTitle: '¿Algo no funciona?',
       messagePlaceholder: 'Cuéntanos qué ocurrió…',
