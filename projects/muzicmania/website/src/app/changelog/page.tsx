@@ -10,6 +10,7 @@ import { useAppStore } from '@/store/useAppStore';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
  
 import { I, TAG_CONFIG } from '@/config/changelogIcons';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 const TypeTag = ({ type, active = false, onClick }: { type: ChangelogType, active?: boolean, onClick?: () => void }) => {
   const config = TAG_CONFIG[type];
@@ -30,6 +31,7 @@ const TypeLabel = ({ type }: { type: ChangelogType }) => {
 };
 
 export default function ChangelogIndex() {
+  usePageTitle('CHANGELOG');
   const [filters, setFilters] = useState<ChangelogType[]>([]);
   const [sortBy, setSortBy] = useState<'date' | 'likes'>('date');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');

@@ -1,5 +1,11 @@
 import { FileText } from "lucide-react";
 import { CISZU_NETWORK } from "@/config/site";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Ciszu Network | POLICIES',
+  description: 'Políticas de privacidad, uso de datos, cookies y propiedad intelectual de Ciszu Network.',
+};
 
 const sections = [
   { title: "Privacidad", content: "Ciszu Network respeta tu privacidad. No recopilamos información personal sin tu consentimiento explícito. Los datos proporcionados a través de formularios de contacto se utilizan únicamente para responder a tus consultas y nunca se comparten con terceros sin autorización." },

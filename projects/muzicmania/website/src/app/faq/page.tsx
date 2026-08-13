@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 // --- Icons Library ---
 const I = {
@@ -112,6 +113,7 @@ const faqData = [
 ];
 
 export default function FAQPage() {
+  usePageTitle('FAQ');
   const [searchTerm, setSearchTerm] = useState('');
   const [openId, setOpenId] = useState<number | null>(null);
 

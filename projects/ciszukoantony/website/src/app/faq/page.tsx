@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { RichText, type RichPart } from '@/components/RichText';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 const faqs = [
   {
@@ -59,6 +60,7 @@ const faqs = [
 ];
 
 export default function FAQPage() {
+  usePageTitle('FAQ');
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (

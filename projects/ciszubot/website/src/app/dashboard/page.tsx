@@ -1,8 +1,14 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import type { Metadata } from 'next';
 import { Icon } from '@ciszu/ui';
 import { getSessionUserId, getGuildsForUser, getBotGuildIds, isGuildAdmin, supabaseAdmin, type DiscordGuild } from '@/lib/auth';
 import { INVITE_URL } from '@/lib/i18n';
+
+export const metadata: Metadata = {
+  title: 'CiszuBot | DASHBOARD',
+  description: 'Panel de control de CiszuBot: configura el bot en tus servidores de Discord.',
+};
 
 export const dynamic = 'force-dynamic';
 

@@ -4,6 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 // --- Icons Library ---
 const I = {
@@ -37,6 +38,7 @@ const RULES_ARTICLES = [
   };
 
 export default function RulesPage() {
+  usePageTitle('RULES');
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { staggerChildren: 0.1 } }

@@ -8,6 +8,7 @@ import { SOCIALS } from '@/config/navigation';
 import { useAppStore } from '@/store';
 import Link from 'next/link';
 import { FlagVE } from '@/components/atoms/FlagVE';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 // --- Shared Icon Library ---
 const I = {
@@ -81,6 +82,7 @@ function CopyField({ value, label, subValue, icon, theme = 'blue', showWhatsApp 
 }
 
 export default function ContactPage() {
+  usePageTitle('CONTACT');
   const { showToast } = useAppStore();
   const [selectedDiscord, setSelectedDiscord] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);

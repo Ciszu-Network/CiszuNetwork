@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 // --- Pure SVG Icon Library ---
 const I = {
@@ -19,6 +20,7 @@ const I = {
 };
 
 export default function ForumPage() {
+  usePageTitle('FORUM');
   const categories = [
     { title: 'General', desc: 'Discusión general sobre MuzicMania.', count: 124, icon: I.messageSquare, color: 'blue' },
     { title: 'Música & Charts', desc: 'Comparte tus canciones y mapeos.', count: 85, icon: I.zap, color: 'purple' },

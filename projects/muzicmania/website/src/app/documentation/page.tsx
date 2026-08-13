@@ -7,6 +7,7 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 import { DOCS_METADATA, DocMetadata } from '@/config/docs';
 import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 // --- Icons Library (Pure SVG) ---
 const I = {
@@ -69,6 +70,7 @@ const PKG_COLOR: Record<string, { bg: string; border: string; hover: string; tex
 };
 
 export default function DocumentationPortal() {
+  usePageTitle('DOCUMENTATION');
   const [selectedDoc, setSelectedDoc] = useState('DOCUMENTATION');
   const [searchQuery, setSearchQuery] = useState('');
   const [content, setContent] = useState('');

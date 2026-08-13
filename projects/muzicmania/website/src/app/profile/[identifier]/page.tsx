@@ -9,6 +9,7 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 import { Icon } from '@ciszu/ui';
 import { useAppStore } from '@/store/useAppStore';
 import Image from 'next/image';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 
 const ACHIEVEMENTS = [
@@ -20,6 +21,7 @@ const ACHIEVEMENTS = [
 ];
 
 export default function DynamicProfilePage() {
+  usePageTitle('PROFILE');
   const { identifier } = useParams();
   const router = useRouter();
   const { user: currentUser, setUser, showToast } = useAppStore();

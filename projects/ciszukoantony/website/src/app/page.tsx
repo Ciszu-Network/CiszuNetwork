@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { SmartImage } from '@ciszu/ui';
 import { assetResolver } from '@ciszunetwork/cdn';
 import { SOCIALS, I } from '@/config/navigation';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 const projects = [
   { name: 'MuzicMania', desc: 'Web-based rhythm game with neon futuristic aesthetic.', href: 'https://muzicmania.vercel.app', color: 'from-pink-500 to-rose-700' },
@@ -29,6 +30,7 @@ const stats = [
 ];
 
 export default function Home() {
+  usePageTitle('HOME');
   return (
     <div className="min-h-screen">
       <section className="relative min-h-[90vh] flex items-center justify-center text-center px-4 overflow-hidden">

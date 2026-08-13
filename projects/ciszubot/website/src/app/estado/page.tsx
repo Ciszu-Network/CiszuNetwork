@@ -7,7 +7,7 @@ import { getDict, type Lang } from '@/lib/i18n';
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: 'Estado — CiszuBot',
+  title: 'CiszuBot | STATUS',
   description:
     'Estado en vivo de CiszuBot: servidores conectados, comandos ejecutados, uptime y versión.',
 };

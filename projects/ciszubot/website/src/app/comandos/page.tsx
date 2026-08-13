@@ -4,7 +4,7 @@ import CommandExplorer from '@/components/CommandExplorer';
 import { BOT_PREFIX, getDict, type Lang } from '@/lib/i18n';
 
 export const metadata: Metadata = {
-  title: 'Comandos — CiszuBot',
+  title: 'CiszuBot | COMMANDS',
   description:
     'Todos los comandos de CiszuBot con descripción, uso y aliases. Diversión, información, social y utilidad.',
 };

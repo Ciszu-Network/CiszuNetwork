@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { RichText, type RichPart } from '@/components/RichText';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 const NETWORK_LINK: RichPart = { link: 'Ciszuko Network', href: 'https://ciszunetwork.vercel.app' };
 
@@ -39,6 +40,7 @@ const sections = [
 ];
 
 export default function PoliciesPage() {
+  usePageTitle('POLICIES');
   return (
     <div className="min-h-screen pt-24 pb-16 px-4">
       <div className="max-w-3xl mx-auto">

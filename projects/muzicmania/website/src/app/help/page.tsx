@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 // --- Pure SVG Icon Library ---
 const I = {
@@ -146,6 +147,7 @@ const HELP_DOCKS = [
 ];
 
 export default function HelpCenterPage() {
+  usePageTitle('HELP');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDock, setSelectedDock] = useState<typeof HELP_DOCKS[0] | null>(null);
 

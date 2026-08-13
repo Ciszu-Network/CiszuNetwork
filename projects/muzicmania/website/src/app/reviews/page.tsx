@@ -11,6 +11,7 @@ import { Session, AuthChangeEvent } from '@supabase/supabase-js';
 import Link from 'next/link';
 import Image from 'next/image';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 // --- Types ---
 interface Review {
@@ -118,6 +119,7 @@ const I = {
 };
 
 export default function ReviewsPage() {
+  usePageTitle('REVIEWS');
   // State
   const [reviews, setReviews] = useState<Review[]>([]);
   const [userReview, setUserReview] = useState<Review | null>(null);

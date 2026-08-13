@@ -1,6 +1,12 @@
 import Link from "next/link";
 import { CISZU_NETWORK, CISZUKO_ANTONY } from "@/config/site";
 import { Building, ArrowRight, Code, Cloud, Palette } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Ciszu Network | PROJECTS — CISZU NETWORK',
+  description: 'Ciszu Network: compañía de innovación digital con desarrollo web, cloud y UI/UX.',
+};
 
 const areas = [
   { icon: Code, title: "Desarrollo Web", desc: "Aplicaciones con Next.js, React, TypeScript y Tailwind." },

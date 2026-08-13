@@ -4,6 +4,12 @@ import { assetResolver } from "@ciszunetwork/cdn";
 import { SocialIcon } from "@/components/ui/SocialIcon";
 import { CISZU_NETWORK, CISZUKO_ANTONY, CISZUBOT_LINKS, DONATION_LINKS, EXTERNAL_LINKS, SOCIAL_COLORS } from "@/config/site";
 import { ArrowRight, Code, Shield, Zap, ExternalLink, Star, Globe, Music, Users, ChevronRight, Pickaxe, MessageCircle, MessageSquare, Send, Building, User, Gamepad2, Smartphone } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Ciszu Network | HOME',
+  description: 'Página principal de Ciszu Network: servicios, proyectos y el ecosistema digital.',
+};
 
 const services = [
   { icon: Code, title: "Desarrollo Web", desc: "Aplicaciones web modernas con Next.js, React y TypeScript. Rendimiento, escalabilidad y diseño de alto nivel.", color: "#3a6bf0" },

@@ -1,6 +1,12 @@
 import { redirect } from 'next/navigation';
+import type { Metadata } from 'next';
 import { getSessionUserId, getGuildsForUser, isGuildAdmin } from '@/lib/auth';
 import DashboardGuildClient from './client';
+
+export const metadata: Metadata = {
+  title: 'CiszuBot | DASHBOARD',
+  description: 'Configura CiszuBot en tu servidor de Discord.',
+};
 
 export const dynamic = 'force-dynamic';
 

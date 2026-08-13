@@ -37,7 +37,7 @@ export const viewport = {
   themeColor: "#12141a",
 };
 export const metadata: Metadata = {
-  title: "CiszuBot — Bot de Discord de Ciszu Network",
+  title: "CiszuBot | HOME",
   description:
     "El bot de Discord de Ciszu Network. Comandos divertidos, de información y utilidad con prefijo cz! y slash commands. Moderno, rápido y en español.",
   appleWebApp: { capable: true, title: "CiszuBot", statusBarStyle: "black-translucent" },

@@ -9,6 +9,7 @@ import { FlagIcon } from '@/components/atoms/FlagIcon';
 import { supabase } from '@/config/supabase';
 import { SOCIALS } from '@/config/navigation';
 import Link from 'next/link';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 // --- Icons Library ---
 const I = {
@@ -73,6 +74,7 @@ const CATEGORIES = {
 } as const;
 
 export default function SupportPage() {
+  usePageTitle('SUPPORT');
   const [user, setUser] = useState<any>(null);
   const [tickets, setTickets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

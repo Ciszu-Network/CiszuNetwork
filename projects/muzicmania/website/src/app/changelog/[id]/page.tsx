@@ -10,8 +10,10 @@ import { CHANGELOG_DATA } from '@/data/changelog';
 import { I, TAG_CONFIG } from '@/config/changelogIcons';
 import { useAppStore } from '@/store/useAppStore';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
+import { usePageTitle } from '@/lib/usePageTitle';
  
 export default function ChangelogDetail() {
+  usePageTitle('CHANGELOG');
   const { id } = useParams();
   const { showToast } = useAppStore();
   const [isAuthWarningOpen, setIsAuthWarningOpen] = useState(false);

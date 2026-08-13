@@ -8,6 +8,7 @@ import { Button } from '@/components/atoms/Button';
 import { supabase } from '@/config/supabase';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 // --- Icons ---
 const I = {
@@ -27,6 +28,7 @@ const I = {
 };
 
 export default function StatsPage() {
+  usePageTitle('STATS');
   const [search, setSearch] = useState('');
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [searchResults, setSearchResults] = useState<any[]>([]);

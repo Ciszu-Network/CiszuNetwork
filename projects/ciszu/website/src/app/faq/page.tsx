@@ -1,4 +1,10 @@
 import { HelpCircle, ChevronDown } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Ciszu Network | FAQ',
+  description: 'Preguntas frecuentes sobre Ciszu Network, sus servicios y proyectos.',
+};
 
 const faqs = [
   { q: "¿Qué es Ciszu Network?", a: "Ciszu Network es una compañía de innovación digital fundada por Ciszuko Antony. Desarrollamos soluciones web, infraestructura cloud, bots, servidores de juego y experiencias digitales." },

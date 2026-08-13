@@ -4,6 +4,12 @@ import { assetResolver } from "@ciszunetwork/cdn";
 import { SocialIcon } from "@/components/ui/SocialIcon";
 import { CISZU_NETWORK, CISZUKO_ANTONY, SOCIAL_COLORS } from "@/config/site";
 import { Users, Mail, Phone, MapPin, ArrowRight, ExternalLink } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Ciszu Network | TEAM',
+  description: 'Conoce al equipo de Ciszu Network y la visión de su fundador, Ciszuko Antony.',
+};
 
 export default function TeamPage() {
   const socialEntries = Object.entries(CISZUKO_ANTONY.social).filter(([k]) => k !== 'discordTag');

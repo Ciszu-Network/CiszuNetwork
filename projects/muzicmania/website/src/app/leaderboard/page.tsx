@@ -6,6 +6,7 @@ import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 // --- Icons ---
 const I = {
@@ -32,6 +33,7 @@ interface LeaderboardEntry {
 }
 
 export default function LeaderboardPage() {
+  usePageTitle('LEADERBOARD');
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);

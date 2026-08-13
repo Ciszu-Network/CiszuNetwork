@@ -3,6 +3,12 @@ import Image from "next/image";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { CISZU_NETWORK, CISZUKO_ANTONY } from "@/config/site";
 import { Shield, ArrowRight, ExternalLink } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Ciszu Network | ABOUT',
+  description: 'Conoce a Ciszu Network: nuestra misión, visión y compañía de innovación digital.',
+};
 
 export default function AboutPage() {
   return (

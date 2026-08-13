@@ -4,8 +4,10 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
 import MainLayout from '@/components/templates/MainLayout';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 export default function ProfileRedirect() {
+  usePageTitle('PROFILE');
   const router = useRouter();
   const { user, showToast } = useAppStore();
 

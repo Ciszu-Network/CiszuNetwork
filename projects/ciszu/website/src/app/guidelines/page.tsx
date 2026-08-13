@@ -1,5 +1,11 @@
 import { BookOpen } from "lucide-react";
 import { CISZU_NETWORK } from "@/config/site";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Ciszu Network | GUIDELINES',
+  description: 'Guías y lineamientos de comunidad, contribuciones, uso de marca y reportes.',
+};
 
 const guidelines = [
   { title: "Comunidad", content: "Mantén un trato respetuoso en todos nuestros espacios. No toleramos discriminación, acoso o spam. La comunidad Ciszu Network es un lugar para compartir, aprender y crear." },

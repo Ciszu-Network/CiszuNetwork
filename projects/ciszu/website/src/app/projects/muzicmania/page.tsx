@@ -1,5 +1,11 @@
 import { EXTERNAL_LINKS, CISZU_NETWORK } from "@/config/site";
 import { Music, ArrowRight, ExternalLink, Gamepad2, Star, Sparkles } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Ciszu Network | PROJECTS — MUZICMANIA',
+  description: 'MuzicMania, el juego de ritmo definitivo desarrollado por Ciszu Network.',
+};
 
 const features = [
   { icon: Gamepad2, title: "Juego Rítmico", desc: "Mecánicas de juego fluidas y adictivas. Compones mientras juegas." },

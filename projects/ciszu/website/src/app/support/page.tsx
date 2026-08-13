@@ -5,6 +5,12 @@ import { SocialIcon } from "@/components/ui/SocialIcon";
 import { SOCIAL_COLORS } from "@/config/site";
 import { LifeBuoy, Mail, MessageCircle, ArrowRight, ExternalLink, Heart, Star } from "lucide-react";
 import { getDonationMethods } from "@ciszunetwork/payments";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Ciszu Network | SUPPORT',
+  description: 'Soporte de Ciszu Network: canales de ayuda, donaciones y canales oficiales.',
+};
 
 const supportChannels = [
   { icon: Mail, label: "Email", value: CISZU_NETWORK.email, href: `mailto:${CISZU_NETWORK.email}`, color: "from-brand to-brand-light" },

@@ -1,6 +1,12 @@
 import Link from "next/link";
 import { CISZU_NETWORK } from "@/config/site";
 import { MessageSquare, ArrowRight, Bot, Users, MessageCircle } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Ciszu Network | PROJECTS — WHATSAPP',
+  description: 'Automatización WhatsApp: bots inteligentes, comunidades y marketing.',
+};
 
 const features = [
   { icon: Bot, title: "Bots WhatsApp", desc: "Automatización de respuestas, menús interactivos, envío de mensajes programados y más." },

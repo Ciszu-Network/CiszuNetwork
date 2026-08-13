@@ -4,6 +4,12 @@ import { assetResolver } from "@ciszunetwork/cdn";
 import { SocialIcon } from "@/components/ui/SocialIcon";
 import { CISZUKO_ANTONY, CISZU_NETWORK, SOCIAL_COLORS } from "@/config/site";
 import { User, ArrowRight, ExternalLink, Music, Gamepad2, Mic, Video } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Ciszu Network | PROJECTS — CISZUKO ANTONY',
+  description: 'Proyecto artístico de Ciszuko Antony: contenido gaming, música y tecnología.',
+};
 
 const contentTypes = [
   { icon: Gamepad2, title: "Gaming", desc: "Gameplays, streams y contenido de videojuegos variado." },
