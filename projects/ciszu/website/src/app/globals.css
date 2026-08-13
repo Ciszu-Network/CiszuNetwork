@@ -102,6 +102,11 @@
   100% { transform: translateY(-50%); }
 }
 
+@keyframes gradient-x {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: -200% 50%; }
+}
+
 @layer utilities {
   .animate-blob { animation: blob 12s ease-in-out infinite; }
   .animate-fade-in-up { animation: fade-in-up 0.3s ease forwards; }
@@ -109,6 +114,7 @@
   .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
   .animate-slide-right-fade { animation: slide-right-fade 0.25s ease forwards; }
   .animate-grid-scroll { animation: grid-scroll 60s linear infinite; }
+  .animate-gradient-x { animation: gradient-x 5s ease infinite; background-size: 200% auto; }
   .animation-delay-2000 { animation-delay: 2s; }
   .animation-delay-4000 { animation-delay: 4s; }
 }
