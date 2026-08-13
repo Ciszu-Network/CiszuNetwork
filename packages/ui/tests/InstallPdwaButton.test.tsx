@@ -65,7 +65,7 @@ const { getByRole } = render(<InstallPdwaButton site="MuzicMania" />);
       <InstallPdwaButton site="MuzicMania" uaOverride="Mozilla/5.0 ... OPR/26.0.0.0 GX/2.5" />
     );
     fireEvent.click(getByRole('button', { name: /instalar muzicmania como pdwa/i }));
-    const title = await findByText('Opera GX no instala PDWA directamente');
+    const title = await findByText('Opera no instala PDWA directamente');
     expect(title).toBeTruthy();
   });
 
