@@ -4,7 +4,7 @@ import LegalPage from '@/components/LegalPage';
 import { getDict, type Lang } from '@/lib/i18n';
 
 export const metadata: Metadata = {
-  title: 'Política de privacidad — CiszuBot',
+  title: 'CiszuBot | PRIVACY',
   description: 'Política de privacidad de CiszuBot, el bot de Discord de Ciszu Network.',
 };
 

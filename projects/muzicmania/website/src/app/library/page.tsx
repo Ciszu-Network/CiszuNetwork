@@ -13,6 +13,7 @@ import { supabase } from '@/config/supabase';
 import { useAppStore } from '@/store/useAppStore';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
 import { extractAccentColor } from '@/lib/colorUtils';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 // --- Icons Library ---
 const I = {
@@ -574,6 +575,7 @@ function LibraryContent() {
 }
 
 export default function Library() {
+  usePageTitle('LIBRARY');
   return (
     <React.Suspense fallback={<div className="min-h-screen bg-black" />}>
       <LibraryContent />

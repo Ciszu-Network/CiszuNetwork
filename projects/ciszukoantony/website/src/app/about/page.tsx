@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { assetResolver } from '@ciszunetwork/cdn';
 import { RichText, type RichPart } from '@/components/RichText';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 const timeline = [
   { year: '2022', event: [{ text: 'Started software development and created personal projects.' }] as RichPart[] },
@@ -26,6 +27,7 @@ const skills = [
 ];
 
 export default function AboutPage() {
+  usePageTitle('ABOUT');
   return (
     <div className="min-h-screen pt-24 pb-16 px-4">
       <div className="max-w-5xl mx-auto">

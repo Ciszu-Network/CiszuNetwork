@@ -26,6 +26,7 @@ import { supabase } from '@/config/supabase';
 import { LANGS } from '@/config/navigation';
 import { CHANGELOG_DATA } from '@/data/changelog';
 import { TAG_CONFIG as CHANGELOG_TAGS, I as CHANGELOG_I } from '@/config/changelogIcons';
+import { usePageTitle } from '@/lib/usePageTitle';
 // --- Icons Library ---
 const I = {
   play: <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>,
@@ -5447,6 +5448,7 @@ function PlayPageContent() {
 }
 
 export default function PlayPage() {
+  usePageTitle('PLAY');
   return (
     <React.Suspense fallback={<div className="min-h-screen bg-black" />}>
       <PlayPageContent />

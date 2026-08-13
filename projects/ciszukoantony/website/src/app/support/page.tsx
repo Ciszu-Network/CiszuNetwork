@@ -4,6 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { SOCIALS } from '@/config/navigation';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 const supportChannels = [
   {
@@ -32,6 +33,7 @@ const faqLinks = [
 ];
 
 export default function SupportPage() {
+  usePageTitle('SUPPORT');
   return (
     <div className="min-h-screen pt-24 pb-16 px-4">
       <div className="max-w-4xl mx-auto">

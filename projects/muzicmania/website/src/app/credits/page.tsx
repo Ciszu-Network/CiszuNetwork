@@ -3,6 +3,7 @@
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { motion } from 'framer-motion';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 const CreditSection = ({ title, credits }: { title: string, credits: { role: string, name: string, link?: string }[] }) => (
   <div className="space-y-8 mb-24">
@@ -36,6 +37,7 @@ const CreditSection = ({ title, credits }: { title: string, credits: { role: str
 );
 
 export default function CreditsPage() {
+  usePageTitle('CREDITS');
   const devCredits = [
     { role: 'Fundador & Director General', name: 'Ciszuko Antony (Francisco Garcia)' },
     { role: 'Arquitecto de Software & Lead Developer', name: 'Ciszuko Antony (Francisco Garcia)' },

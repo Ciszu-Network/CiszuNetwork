@@ -2,6 +2,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { CISZU_NETWORK } from "@/config/site";
 import { Pickaxe, ArrowRight, ExternalLink, Server, Package, Wrench } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Ciszu Network | PROJECTS — MINECRAFT',
+  description: 'Contenido Minecraft de Ciszu Network: texture packs, mods y servidores.',
+};
 
 const features = [
   { icon: Package, title: "Texture Packs", desc: "Packs de texturas personalizados con la identidad visual Ciszu. Estilo único para tu experiencia Minecraft." },

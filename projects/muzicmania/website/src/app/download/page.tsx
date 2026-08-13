@@ -7,6 +7,7 @@ import { resolveAssetPath } from '@ciszunetwork/cdn';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '@/store';
+import { usePageTitle } from '@/lib/usePageTitle';
 // Iconos personalizados SVGs de Sistemas Operativos
 const WindowsIcon = () => (
   <svg viewBox="0 0 24 24" className="w-full h-full" fill="currentColor">
@@ -146,6 +147,7 @@ const InfoCard = ({ title, desc, icon, color }: { title: string; desc: string; i
 );
 
 export default function DownloadPage() {
+  usePageTitle('DOWNLOAD');
   const { showToast } = useAppStore();
   const [isDownloading, setIsDownloading] = useState<string | null>(null);
 

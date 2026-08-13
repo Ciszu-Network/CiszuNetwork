@@ -1,6 +1,12 @@
 import Link from "next/link";
 import { CISZU_NETWORK } from "@/config/site";
 import { Send, ArrowRight, Bot, Users, Radio } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Ciszu Network | PROJECTS — TELEGRAM',
+  description: 'Soluciones Telegram: bots, canales, grupos y sistemas de difusión.',
+};
 
 const features = [
   { icon: Bot, title: "Bots Telegram", desc: "Bots con menús, comandos personalizados, integración con APIs y notificaciones." },

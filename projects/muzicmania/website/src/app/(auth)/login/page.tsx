@@ -11,6 +11,7 @@ import { supabase } from '@/config/supabase';
 import { useAppStore } from '@/store/useAppStore';
 import { useRouter } from 'next/navigation';
 import AuthFeedback from '@/components/molecules/AuthFeedback';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 // --- Icons Library ---
 const I = {
@@ -60,6 +61,7 @@ const InputField = ({ label, name, icon, type = "text", placeholder, maxLength, 
 };
 
 export default function LoginPage() {
+  usePageTitle('LOGIN');
   const [form, setForm] = useState({
     identifier: '',
     password: '',

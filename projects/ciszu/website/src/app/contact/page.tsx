@@ -1,6 +1,12 @@
 import { SocialIcon } from "@/components/ui/SocialIcon";
 import { CISZU_NETWORK, CISZUKO_ANTONY, SOCIAL_COLORS } from "@/config/site";
 import { Mail, Phone, MapPin, Clock, Send, ArrowRight, MessageCircle } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Ciszu Network | CONTACT',
+  description: 'Contacta con Ciszu Network por email, WhatsApp y redes sociales. Disponibles 24/7.',
+};
 
 export default function ContactPage() {
   return (

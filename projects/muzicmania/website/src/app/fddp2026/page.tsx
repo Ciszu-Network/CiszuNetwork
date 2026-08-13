@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 function Star({ x, y, size, delay, duration }: { x: number; y: number; size: number; delay: number; duration: number }) {
   return (
@@ -36,6 +37,7 @@ function FloatingIcon({ x, delay, duration, opacity, children }: { x: number; de
 }
 
 export default function FddpPage() {
+  usePageTitle('FDDP 2026');
   const [stars, setStars] = useState<{ id: number; x: number; y: number; size: number; delay: number; duration: number }[]>([]);
   const [floatIcons, setFloatIcons] = useState<{ id: number; x: number; size: number; delay: number; duration: number; opacity: number; icon: 'star' | 'trophy' | 'zap' }[]>([]);
 
