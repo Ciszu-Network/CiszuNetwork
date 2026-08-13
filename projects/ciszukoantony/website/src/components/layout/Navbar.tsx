@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
@@ -51,6 +51,8 @@ export default function Navbar() {
   const [toast, setToast] = useState<string | null>(null);
   const [infoOpen, setInfoOpen] = useState(false);
   const [accOpen, setAccOpen] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
+  const firstRender = useRef(true);
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const searchToggleRef = useRef<HTMLButtonElement>(null);
@@ -63,7 +65,35 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  useEffect(() => { setSidebarOpen(false); setSearchOpen(false); setInfoOpen(false); setAccOpen(false); }, [pathname]);
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      setSidebarOpen(false); setSearchOpen(false); setInfoOpen(false); setAccOpen(false);
+      return;
+    }
+    setSidebarOpen(false); setSearchOpen(false); setInfoOpen(false); setAccOpen(false);
+    setIsNavigating(false);
+  }, [pathname]);
+
+  // Global click interceptor: show green loader when navigating between internal pages
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      const target = (e.target as HTMLElement).closest('a');
+      if (
+        target?.href &&
+        target.href.startsWith(window.location.origin) &&
+        !target.href.includes('#') &&
+        target.target !== '_blank'
+      ) {
+        const targetUrl = new URL(target.href);
+        if (targetUrl.pathname !== pathname) {
+          setIsNavigating(true);
+        }
+      }
+    };
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, [pathname]);
 
   useEffect(() => {
     if (searchOpen && inputRef.current) inputRef.current.focus();
@@ -142,6 +172,25 @@ export default function Navbar() {
 
   return (
     <>
+      {/* Global navigation loader — green when navigating between pages */}
+      <div
+        className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] flex items-center justify-center p-4 rounded-full bg-black/90 border backdrop-blur-md shadow-[0_0_20px_rgba(52,211,153,0.3)] transition-all duration-300 ${
+          isNavigating
+            ? 'translate-y-0 opacity-100 border-emerald-400/60 text-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.4)]'
+            : 'translate-y-10 opacity-0 pointer-events-none border-neon-blue/50 text-neon-blue'
+        }`}
+      >
+        <svg
+          className="w-8 h-8 animate-pulse text-emerald-400 drop-shadow-[0_0_10px_rgba(52,211,153,0.8)]"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path d="M13 5l7 7-7 7M5 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+
       <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-black/92 backdrop-blur-2xl border-b border-white/10' : 'bg-transparent'}`}>
 
         {/* Animated gradient separator under the header */}
@@ -149,18 +198,25 @@ export default function Navbar() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 gap-3">
-            <Link href="/" className="flex items-center gap-2 group shrink-0 hover:opacity-90 active:scale-95 transition-all duration-300">
+            <Link href="/" className="flex items-center gap-2 group shrink-0 active:scale-95 transition-all duration-300">
               <SmartImage
                 src="projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png"
                 alt="Ciszuko" width={28} height={25}
-                className="drop-shadow-brand"
+                className="drop-shadow-brand group-hover:drop-shadow-[0_0_15px_rgba(61,106,223,0.8)] transition-all duration-300"
               />
               <SmartImage
                 src="projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png"
                 alt="Ciszuko Antony" width={120} height={28}
-                className="hidden sm:block group-hover:opacity-80 transition-opacity"
+                className="hidden sm:block group-hover:drop-shadow-[0_0_15px_rgba(61,106,223,0.8)] transition-all duration-300"
+              />
+              <SmartImage
+                src="projects/ciszukoantony/content/assets/youtube_canal.png"
+                alt="Ciszuko Antony — Canal de YouTube" width={34} height={34}
+                className="hidden sm:block rounded-full ring-2 ring-brand/40 shadow-[0_0_15px_rgba(167,139,250,0.35)] shrink-0"
               />
             </Link>
+
+            <div className="w-px h-7 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-1 shrink-0 hidden md:block" />
 
             <div className="hidden md:flex items-center gap-1">
               {NAV_MAIN.map((item) => {

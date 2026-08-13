@@ -91,10 +91,6 @@ export default function ContactPage() {
     setMounted(true);
   }, []);
 
-  const handleNoLink = (name: string) => {
-    showToast(`Dominio ${name} inactivo. Vinculación suspendida hasta despliegue de la versión estable (V1).`);
-  };
-
   const sectionVariants = {
     hidden: { opacity: 0, y: 30 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: 'easeOut' } }
@@ -303,7 +299,7 @@ export default function ContactPage() {
                       else if (s.name === 'Facebook') actualHref = 'https://facebook.com/ciszukoantony';
                       const isDiscord = s.name === 'Discord';
                       return (
-                        <button key={s.name} onClick={() => isDiscord ? setSelectedDiscord('ciszukoantony_') : (actualHref !== '#' ? window.open(actualHref, '_blank') : handleNoLink(s.name))}
+                        <button key={s.name} onClick={() => isDiscord ? setSelectedDiscord('ciszukoantony_') : window.open(actualHref, '_blank')}
                           className={`flex items-center gap-3 px-5 py-2.5 rounded-2xl border transition-all hover:scale-105 ${s.borderCol} ${s.bgCol} ${s.textCol} hover:text-white hover:bg-opacity-40`}
                         >
                            <div className="w-5 h-5">{s.icon}</div>

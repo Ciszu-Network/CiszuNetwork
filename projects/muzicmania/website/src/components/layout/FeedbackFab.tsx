@@ -17,6 +17,7 @@
 
 import { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
+import { useFabStack, useFabRestore } from '@ciszu/ui';
 import { isTauri } from '@/lib/isTauri';
 
 const STORAGE_KEY = 'muzicmania-feedback-dismissed';
@@ -64,6 +65,20 @@ export default function FeedbackFab() {
     }
   };
 
+  const stackBottom = useFabStack(
+    'feedback',
+    !isDesktop && !dismissed ? { order: 1, height: 36 } : null
+  );
+  useFabRestore(() => {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* noop */
+    }
+    setDismissed(false);
+    setNotice(false);
+  });
+
   if (isDesktop || dismissed) return null;
 
   return (
@@ -104,7 +119,7 @@ export default function FeedbackFab() {
         </div>
       )}
 
-      <div style={containerStyle}>
+      <div style={{ ...containerStyle, bottom: stackBottom }}>
         <div style={fabRowStyle}>
           <button
             type="button"
@@ -170,6 +185,7 @@ const containerStyle: CSSProperties = {
   bottom: 62,
   zIndex: 49,
   fontFamily: 'inherit',
+  transition: 'bottom 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
 };
 
 const FAB_CSS = `

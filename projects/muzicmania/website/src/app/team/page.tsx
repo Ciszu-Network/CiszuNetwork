@@ -206,7 +206,7 @@ export default function TeamPage() {
                            }
                            
                            return (
-                             <button type="button" key={s.name} onClick={() => actualHref !== '#' ? window.open(actualHref, '_blank') : showToast(`Dominio ${s.name} inactivo. Vinculación suspendida.`)} className={`w-14 h-14 rounded-2xl border flex items-center justify-center transition-all duration-300 cursor-pointer shadow-lg hover:scale-110 active:scale-95 ${s.bgCol} ${s.borderCol} ${s.textCol} hover:text-white hover:shadow-[0_0_20px_currentColor]`}>
+                             <button type="button" key={s.name} onClick={() => window.open(actualHref, '_blank')} className={`w-14 h-14 rounded-2xl border flex items-center justify-center transition-all duration-300 cursor-pointer shadow-lg hover:scale-110 active:scale-95 ${s.bgCol} ${s.borderCol} ${s.textCol} hover:text-white hover:shadow-[0_0_20px_currentColor]`}>
                                {s.icon}
                              </button>
                            );
@@ -263,7 +263,7 @@ export default function TeamPage() {
                      let actualHref = s.href;
                      if (s.name === 'Instagram') actualHref = 'https://www.instagram.com/ciszunetwork/';
                      return (
-                       <button type="button" key={s.name} onClick={() => actualHref !== '#' ? window.open(actualHref, '_blank') : showToast(`Dominio ${s.name} inactivo. Vinculación suspendida.`)} className={`w-12 h-12 rounded-2xl border flex items-center justify-center transition-all duration-300 shadow-lg hover:scale-110 ${s.bgCol} ${s.borderCol} ${s.textCol} hover:text-white hover:shadow-[0_0_15px_currentColor]`}>
+                       <button type="button" key={s.name} onClick={() => window.open(actualHref, '_blank')} className={`w-12 h-12 rounded-2xl border flex items-center justify-center transition-all duration-300 shadow-lg hover:scale-110 ${s.bgCol} ${s.borderCol} ${s.textCol} hover:text-white hover:shadow-[0_0_15px_currentColor]`}>
                          {s.icon}
                        </button>
                     );

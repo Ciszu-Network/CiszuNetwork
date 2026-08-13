@@ -48,7 +48,7 @@ const IcoDiscord = () => (
   </svg>
 );
 
-interface NavSubLink { name: string; href: string; }
+interface NavSubLink { name: string; href: string; icon: React.ReactNode; }
 interface NavEntry {
   name: string;
   href?: string;
@@ -64,13 +64,13 @@ const NAV_ITEMS: NavEntry[] = [
     icon: <Shield className="w-4 h-4" />,
     keywords: ['sobre nosotros', 'faq', 'políticas', 'guías', 'soporte', 'info', 'feedback', 'descargas'],
     links: [
-      { name: 'Sobre Nosotros', href: '/about' },
-      { name: 'FAQ', href: '/faq' },
-      { name: 'Políticas', href: '/policies' },
-      { name: 'Guías', href: '/guidelines' },
-      { name: 'Soporte', href: '/support' },
-      { name: 'Feedback', href: '/feedback' },
-      { name: 'Descargas', href: '/descargas' },
+      { name: 'Sobre Nosotros', href: '/about', icon: <Info className="w-4 h-4" /> },
+      { name: 'FAQ', href: '/faq', icon: <HelpCircle className="w-4 h-4" /> },
+      { name: 'Políticas', href: '/policies', icon: <FileText className="w-4 h-4" /> },
+      { name: 'Guías', href: '/guidelines', icon: <Sparkles className="w-4 h-4" /> },
+      { name: 'Soporte', href: '/support', icon: <LifeBuoy className="w-4 h-4" /> },
+      { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" /> },
+      { name: 'Descargas', href: '/descargas', icon: <Download className="w-4 h-4" /> },
     ],
   },
   {
@@ -78,13 +78,13 @@ const NAV_ITEMS: NavEntry[] = [
     icon: <Zap className="w-4 h-4" />,
     keywords: ['minecraft', 'discord', 'whatsapp', 'telegram', 'muzicmania', 'ciszu network', 'ciszuko antony'],
     links: [
-      { name: 'Minecraft', href: '/projects/minecraft' },
-      { name: 'Discord', href: '/projects/discord' },
-      { name: 'WhatsApp', href: '/projects/whatsapp' },
-      { name: 'Telegram', href: '/projects/telegram' },
-      { name: 'MuzicMania', href: '/projects/muzicmania' },
-      { name: 'Ciszu Network', href: '/projects/ciszunetwork' },
-      { name: 'Ciszuko Antony', href: '/projects/ciszukoantony' },
+      { name: 'Minecraft', href: '/projects/minecraft', icon: <Pickaxe className="w-4 h-4" /> },
+      { name: 'Discord', href: '/projects/discord', icon: <MessageCircle className="w-4 h-4" /> },
+      { name: 'WhatsApp', href: '/projects/whatsapp', icon: <MessageSquare className="w-4 h-4" /> },
+      { name: 'Telegram', href: '/projects/telegram', icon: <Send className="w-4 h-4" /> },
+      { name: 'MuzicMania', href: '/projects/muzicmania', icon: <Music className="w-4 h-4" /> },
+      { name: 'Ciszu Network', href: '/projects/ciszunetwork', icon: <Building className="w-4 h-4" /> },
+      { name: 'Ciszuko Antony', href: '/projects/ciszukoantony', icon: <User className="w-4 h-4" /> },
     ],
   },
   { name: 'Equipo', href: '/team', icon: <Users className="w-4 h-4" /> },
@@ -158,6 +158,8 @@ export const NavbarContent = () => {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [sidebarView, setSidebarView] = useState<'main' | 'lang'>('main');
+  const [isNavigating, setIsNavigating] = useState(false);
+  const firstRender = useRef(true);
 
   const searchRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -181,7 +183,32 @@ export const NavbarContent = () => {
     setIsAccountOpen(false);
     setOpenDropdown(null);
     setSearchQuery('');
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    setIsNavigating(false);
   }, [pathname, setIsMenuOpen, setSearchQuery]);
+
+  // Global click interceptor: show green loader when navigating between internal pages
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      const target = (e.target as HTMLElement).closest('a');
+      if (
+        target?.href &&
+        target.href.startsWith(window.location.origin) &&
+        !target.href.includes('#') &&
+        target.target !== '_blank'
+      ) {
+        const targetUrl = new URL(target.href);
+        if (targetUrl.pathname !== pathname) {
+          setIsNavigating(true);
+        }
+      }
+    };
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, [pathname]);
 
   // Focus the search input when opening
   useEffect(() => {
@@ -289,6 +316,25 @@ export const NavbarContent = () => {
 
   return (
     <>
+      {/* Global navigation loader — green when navigating between pages */}
+      <div
+        className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] flex items-center justify-center p-4 rounded-full bg-black/90 border backdrop-blur-md shadow-[0_0_20px_rgba(52,211,153,0.3)] transition-all duration-300 ${
+          isNavigating
+            ? 'translate-y-0 opacity-100 border-emerald-400/60 text-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.4)]'
+            : 'translate-y-10 opacity-0 pointer-events-none border-brand-light/50 text-brand-light'
+        }`}
+      >
+        <svg
+          className="w-8 h-8 animate-pulse text-emerald-400 drop-shadow-[0_0_10px_rgba(52,211,153,0.8)]"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path d="M13 5l7 7-7 7M5 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+
       <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled || isMenuOpen ? 'bg-black/92 backdrop-blur-2xl border-b border-white/10' : 'bg-black/80 backdrop-blur-xl border-b border-white/5'}`}>
 
         {/* Animated Line Separator Bottom */}
@@ -300,15 +346,19 @@ export const NavbarContent = () => {
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2.5 group shrink-0 cursor-pointer hover:scale-110 active:scale-95 transition-all duration-300">
               <Image
-                src={assetResolver.resolve('projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zcolor_ccolor.svg')}
-                alt="Logo"
+                src={assetResolver.resolve('projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg')}
+                alt={CISZU_NETWORK.name}
                 width={34}
                 height={34}
                 className="group-hover:drop-shadow-[0_0_15px_rgba(58,107,240,0.8)] transition-all duration-300"
               />
-              <span className="hidden lg:block font-header font-bold text-base tracking-tight text-white/90 group-hover:text-brand-light group-hover:drop-shadow-[0_0_10px_rgba(58,107,240,0.6)] transition-all duration-300">
-                {CISZU_NETWORK.name}
-              </span>
+              <Image
+                src={assetResolver.resolve('projects/ciszu/content/logos/images/outline/logotype/monochrome/ciszu_logotipo_outline_zwhite_cwhite_simple.svg')}
+                alt={CISZU_NETWORK.name}
+                width={100}
+                height={34}
+                className="hidden lg:block group-hover:drop-shadow-[0_0_10px_rgba(58,107,240,0.6)] transition-all duration-300"
+              />
             </Link>
 
             {/* Separator */}
@@ -346,7 +396,7 @@ export const NavbarContent = () => {
                                   isActive(sub.href) ? 'text-brand-light bg-brand-light/5 hover:text-white' : 'text-white hover:text-brand-light hover:bg-white/5'
                                 }`}
                               >
-                                <ChevronRight className="w-3 h-3 text-brand-light shrink-0" />
+                                <span className="shrink-0 text-brand-light/80">{sub.icon}</span>
                                 {sub.name}
                               </Link>
                             ))}
@@ -444,10 +494,10 @@ export const NavbarContent = () => {
                 )}
               </div>
 
-              {/* Hamburger (mobile) */}
+              {/* Hamburger contextual toggle (siempre visible) */}
               <button
                 onClick={toggleMenu}
-                className={`lg:hidden p-2 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 ${
+                className={`p-2 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 ${
                   isMenuOpen
                     ? 'bg-brand-light border-brand-light text-black'
                     : 'bg-white/5 border-white/20 text-white hover:border-brand-light hover:shadow-[0_0_10px_rgba(58,107,240,0.2)]'
@@ -517,7 +567,7 @@ export const NavbarContent = () => {
 
       {/* Slide-Right Contextual Menu (Sidebar) */}
       {isMenuOpen && (
-        <div className="fixed inset-0 z-[100] pointer-events-none lg:hidden">
+        <div className="fixed inset-0 z-[100] pointer-events-none">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm pointer-events-auto" onClick={() => setIsMenuOpen(false)} />
           <div className="absolute top-[64px] right-0 w-[320px] max-w-[85vw] h-[calc(100vh-64px)] bg-[#05050a]/95 backdrop-blur-3xl shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col pointer-events-auto animate-slide-right-fade">
             {/* Animated left divider to match header */}
@@ -586,7 +636,7 @@ export const NavbarContent = () => {
                                   isActive(sub.href) ? 'bg-brand-light/15 text-brand-light border border-brand-light/30' : 'text-white/70 hover:text-brand-light hover:bg-white/5 border border-transparent'
                                 }`}
                               >
-                                <ChevronRight className="w-3 h-3 text-brand-light shrink-0" />
+                                <span className="shrink-0 text-brand-light/80">{sub.icon}</span>
                                 {sub.name}
                               </Link>
                             ))}

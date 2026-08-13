@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { MessageSquareWarning } from 'lucide-react';
+import { useFabStack, useFabRestore } from '@ciszu/ui';
 import { openSentryFeedback } from '@/lib/sentry';
 
 const STORAGE_KEY = 'ciszu-feedback-dismissed';
@@ -55,10 +56,13 @@ export default function FeedbackFab() {
     setShowWarning(false);
   }, []);
 
+  const stackBottom = useFabStack('feedback', !dismissed ? { order: 1, height: 36 } : null);
+  useFabRestore(handleReenable);
+
   if (dismissed && !showWarning) return null;
 
   return (
-    <div className="fixed left-[16px] bottom-[64px] z-[60]">
+    <div className="fixed left-[16px] z-[60]" style={{ bottom: stackBottom, transition: 'bottom 0.45s cubic-bezier(0.22, 1, 0.36, 1)' }}>
       {showWarning && (
         <div className="mb-3 w-72 max-w-[calc(100vw-32px)] p-4 rounded-2xl border border-white/15 bg-[#0a0a12]/95 text-[#e4e4e7] text-xs leading-relaxed shadow-[0_0_28px_rgba(250,204,21,0.35)] backdrop-blur-xl animate-fade-in-up">
           <p className="font-bold mb-1" style={{ color: '#fbbf24' }}>
