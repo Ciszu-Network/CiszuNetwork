@@ -19,3 +19,6 @@ ciszugamens
 *.pdn
 .turbo
 **/.turbo
+.opencode
+tools/tts-stt-ai
+downloads
