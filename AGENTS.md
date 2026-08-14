@@ -23,16 +23,15 @@ Ecosistema digital y masivo de **Ciszuko Antony** (Francisco García, alias **Ci
 
 Monorepo pnpm con 4 webs Next.js, un bot de Discord, un juego de música y paquetes compartidos.
 
-| Proyecto | URL (Vercel) | Carpeta | Descripción |
-| --- | --- | --- | --- |
-| **CiszuNetwork** | `ciszunetwork.vercel.app` | `projects/ciszu/` | Web principal — marca, redes, ecosistema. **Centro de documentación**. |
-| **CiszukoAntony** | `ciszukoantony.vercel.app` | `projects/ciszukoantony/` | Portfolio personal (logos, medios, música) |
-| **MuzicMania** | `muzicmania.vercel.app` | `projects/muzicmania/` | Juego de ritmo — scores en schema `muzicmania`, auth, app Tauri + NSIS |
-| **CiszuBot** | `ciszubot.vercel.app` | `projects/ciszubot/` | Landing del bot + estado en vivo (`ciszubot.bot_status`) |
+| Proyecto          | URL (Vercel)               | Carpeta                   | Descripción                                                           |
+| ----------------- | -------------------------- | ------------------------- | --------------------------------------------------------------------- |
+| **CiszuNetwork**  | `ciszunetwork.vercel.app`  | `projects/ciszu/`         | Web principal — marca, redes, ecosistema.**Centro de documentación**. |
+| **CiszukoAntony** | `ciszukoantony.vercel.app` | `projects/ciszukoantony/` | Portfolio personal (logos, medios, música)                            |
+| **MuzicMania**    | `muzicmania.vercel.app`    | `projects/muzicmania/`    | Juego de ritmo — scores en schema`muzicmania`, auth, app Tauri + NSIS |
+| **CiszuBot**      | `ciszubot.vercel.app`      | `projects/ciszubot/`      | Landing del bot + estado en vivo (`ciszubot.bot_status`)              |
 
 > **Nota de nombre**: la carpeta del portfolio se transcribe mal desde la terminal (nombre
-> ambiguo). Resuélvela SIEMPRE en runtime: `Get-ChildItem projects -Directory | Where-Object
-> { $_.Name -match 'antony' }`. No la escribas a mano.
+> ambiguo). Resuélvela SIEMPRE en runtime: `Get-ChildItem projects -Directory | Where-Object { $_.Name -match 'antony' }`. No la escribas a mano.
 
 ## 3. La documentación es la fuente de verdad
 
@@ -45,33 +44,32 @@ duplica**. Las reglas del propio sistema de docs viven en `DOCUMENTATION_SYSTEM.
 
 `<NOMBRE>_<SUFIJO>.md` — inglés, MAYÚSCULAS, `_` como separador (sin `-`, sin espacios).
 
-| Sufijo | Significado | Ejemplo |
-|---|---|---|
-| `_SYSTEM` | Sistema que ya funciona (mantener) | `DB_SYSTEM.md` |
-| `_PLAN` | Plan/roadmap/guía a implementar | `BRAND_PLAN.md` |
-| `_PROTOCOLS` | Normas obligatorias | `SECURITY_PROTOCOLS.md` |
-| (especial) | Docs de estado vivos | `PROJECT_STATE.md`, `PROJECT_HISTORY.md`, `TODO.md` |
+| Sufijo       | Significado                        | Ejemplo                                             |
+| ------------ | ---------------------------------- | --------------------------------------------------- |
+| `_SYSTEM`    | Sistema que ya funciona (mantener) | `DB_SYSTEM.md`                                      |
+| `_PLAN`      | Plan/roadmap/guía a implementar    | `BRAND_PLAN.md`                                     |
+| `_PROTOCOLS` | Normas obligatorias                | `SECURITY_PROTOCOLS.md`                             |
+| (especial)   | Docs de estado vivos               | `PROJECT_STATE.md`, `PROJECT_HISTORY.md`, `TODO.md` |
 
-Reglas: no `_GUIDE` (las guías son `_PLAN`); no docs `AGENT_*` (la documentación es oficial);
-cabecera estándar (Versión / Actualización / Identificador / Definición); ≥200 líneas salvo
+Reglas: ; Cabecera estándar (Versión / Actualización / Identificador / Definición); ≥200 líneas salvo
 estado e índices; cierre `_Última revisión: ..._` con relacionados.
 
 ### 3.2 Dónde investigar por tarea
 
 Antes de codificar, lee el doc del área que tocas. Mapa por tipo de tarea:
 
-| Tipo de tarea | Docs a leer primero |
-|---|---|
-| Frontend (webs) | `FRONTEND_SYSTEM` · `STYLES_SYSTEM` · `FRAMEWORKS_SYSTEM` · `ICON_SYSTEM` · `COLOR_SYSTEM` |
-| Backend/API | `BACKEND_SYSTEM` · `FULL_STACK_SYSTEM` · `ERRORS_SYSTEM` |
-| Paquetes compartidos | `PACKAGES_SYSTEM` · `FRONTEND_SYSTEM` · `FULL_STACK_SYSTEM` |
-| Base de datos | `DB_SYSTEM` · `SECURITY_PROTOCOLS` (RLS) |
-| Seguridad | `SECURITY_PROTOCOLS` · `DEVSECOPS_SYSTEM` · `VAULT_SYSTEM` |
-| Bot Discord | `DOCKER_SYSTEM` · `MONITORING_SYSTEM` · `TOOLS_SYSTEM` |
-| Assets/CDN | `CDN_SYSTEM` · `MEDIA_FORMATS_SYSTEM` · `ICON_SYSTEM` |
-| Legal/fiscal | `COMPANY_REGISTRATION_PLAN` · `TAX_PLAN` · `RIF_PERSON_PLAN` |
-| Imagen/multimedia | `BRAND_PLAN` · `AI_ART_PLAN` · `ART_PROTOCOLS` |
-| Operación diaria | `WORKFLOW_SYSTEM` · `TOOLS_SYSTEM` |
+| Tipo de tarea        | Docs a leer primero                                                                        |
+| -------------------- | ------------------------------------------------------------------------------------------ |
+| Frontend (webs)      | `FRONTEND_SYSTEM` · `STYLES_SYSTEM` · `FRAMEWORKS_SYSTEM` · `ICON_SYSTEM` · `COLOR_SYSTEM` |
+| Backend/API          | `BACKEND_SYSTEM` · `FULL_STACK_SYSTEM` · `ERRORS_SYSTEM`                                   |
+| Paquetes compartidos | `PACKAGES_SYSTEM` · `FRONTEND_SYSTEM` · `FULL_STACK_SYSTEM`                                |
+| Base de datos        | `DB_SYSTEM` · `SECURITY_PROTOCOLS` (RLS)                                                   |
+| Seguridad            | `SECURITY_PROTOCOLS` · `DEVSECOPS_SYSTEM` · `VAULT_SYSTEM`                                 |
+| Bot Discord          | `DOCKER_SYSTEM` · `MONITORING_SYSTEM` · `TOOLS_SYSTEM`                                     |
+| Assets/CDN           | `CDN_SYSTEM` · `MEDIA_FORMATS_SYSTEM` · `ICON_SYSTEM`                                      |
+| Legal/fiscal         | `COMPANY_REGISTRATION_PLAN` · `TAX_PLAN` · `RIF_PERSON_PLAN`                               |
+| Imagen/multimedia    | `BRAND_PLAN` · `AI_ART_PLAN` · `ART_PROTOCOLS`                                             |
+| Operación diaria     | `WORKFLOW_SYSTEM` · `TOOLS_SYSTEM`                                                         |
 
 ### 3.3 Índice de la documentación de ciszu
 
@@ -106,7 +104,7 @@ matriz completa de qué se replica a qué proyecto está en `DOCUMENTATION_SYSTE
 ```
 E:\Ciszu Network\
 ├── projects/            # Aplicaciones: ciszu, ciszukoantony, muzicmania, ciszubot, ciszugamens
-├── packages/            # Paquetes compartidos: cdn, config, email, payments, ui, utils
+├── packages/            # Paquetes compartidos: cdn, config, db, email, payments, ui, utils
 ├── services/            # Infraestructura: supabase (migraciones), vercel
 ├── shared/              # Assets compartidos: fonts, icons, etc.
 ├── scripts/             # Scripts de automatización (txt2md, upload-cdn, vault, ...)
@@ -120,28 +118,29 @@ E:\Ciszu Network\
 
 ### 4.1 Workspaces pnpm y entry points
 
-| pnpm filter | Location | What |
-| --- | --- | --- |
-| `ciszunetwork-website` | `projects/ciszu/website/` | Next.js — web principal |
-| `ciszukantony-website` | `projects/ciszukoantony/website/` | Next.js — portfolio |
-| `muzicmania-website` | `projects/muzicmania/website/` | Next.js + Tauri — juego |
-| `ciszubot-website` | `projects/ciszubot/website/` | Next.js — landing del bot |
-| `ciszubot` | `projects/ciszubot/discord-bot/` | Discord.js bot (TS, pnpm workspace, Docker) |
-| `@ciszunetwork/cdn` | `packages/cdn/` | Asset resolver |
+| pnpm filter            | Location                          | What                                        |
+| ---------------------- | --------------------------------- | ------------------------------------------- |
+| `ciszunetwork-website` | `projects/ciszu/website/`         | Next.js — web principal                     |
+| `ciszukantony-website` | `projects/ciszukoantony/website/` | Next.js — portfolio                         |
+| `muzicmania-website`   | `projects/muzicmania/website/`    | Next.js + Tauri — juego                     |
+| `ciszubot-website`     | `projects/ciszubot/website/`      | Next.js — landing del bot                   |
+| `ciszubot`             | `projects/ciszubot/discord-bot/`  | Discord.js bot (TS, pnpm workspace, Docker) |
+| `@ciszunetwork/cdn`    | `packages/cdn/`                   | Asset resolver                              |
 
 Package manager: **pnpm v10.8.1**, Node >=20. Todas las webs: Next.js 15 (App Router) +
 Tailwind 4 + PostCSS + ESLint. Assets vía resolver/CDN (`public/` solo docs/pwa/sw.js).
 
 ### 4.2 Paquetes compartidos (`packages/`)
 
-| Paquete | Qué hace |
-| --- | --- |
-| `@ciszu/ui` | Componentes UI compartidos (iconos, tokens) |
-| `@ciszunetwork/cdn` | Resolver de assets vía CDN |
-| `@ciszunetwork/utils` | Utilidades: `createRateLimiter`, `buildCsp`, `createIast`, `escapeHtml` |
-| `@ciszunetwork/email` | Envío de emails |
-| `@ciszunetwork/payments` | Pasarela de pagos |
-| `@ciszunetwork/config` | Configuración compartida |
+| Paquete                  | Qué hace                                                               |
+| ------------------------ | ---------------------------------------------------------------------- |
+| `@ciszu/ui`              | Componentes UI compartidos (iconos, tokens)                            |
+| `@ciszunetwork/cdn`      | Resolver de assets vía CDN                                             |
+| `@ciszunetwork/utils`    | Utilidades:`createRateLimiter`, `buildCsp`, `createIast`, `escapeHtml` |
+| `@ciszunetwork/email`    | Envío de emails                                                        |
+| `@ciszunetwork/payments` | Pasarela de pagos                                                      |
+| `@ciszunetwork/config`   | Configuración compartida                                               |
+| `@ciszunetwork/db`       | Capa de datos server-only: schemas Drizzle (ciszubot/muzicmania/ciszunetwork/ciszu) + cliente pg |
 
 Detalle, contratos y reglas de publicación: `PACKAGES_SYSTEM.md`. Un cambio en `packages/**`
 re-despliega las 4 webs (los workflows escuchan ese path).
@@ -186,12 +185,14 @@ Pipeline de documentación: `node scripts/txt2md.js` (txt→md) · `node scripts
 ## 6. Reglas del agente
 
 ### 6.1 Comunicación
+
 - Tono profesional y directo, sin introducciones ni cortesías.
 - **No preguntes por defecto**: ejecuta scripts y comandos automáticamente si son seguros.
   Solo informa si hay bloqueo o ambigüedad real.
 - Responde conciso. Identidad del creador: Ciszuko Antony (nunca IAs).
 
 ### 6.2 Git
+
 - Commits en español, descriptivos, una línea, **sin emojis**. Trabajo directo en `main`.
 - **No commitear ni pushear sin solicitud explícita.** El push desde este PC falla por DNS
   (github.com no resuelve) → el usuario hace push manualmente.
@@ -201,6 +202,7 @@ Pipeline de documentación: `node scripts/txt2md.js` (txt→md) · `node scripts
   positivo justificado.
 
 ### 6.3 Sesiones (handover)
+
 - **Iniciar**: leer `PROJECT_STATE.md`, `PROJECT_HISTORY.md` y `TODO.md`
   (`projects/ciszu/docs/documentation/`) + este AGENTS.md. Después el `_SYSTEM` del área a tocar.
   Confirmar disponibilidad en 1 línea: "CISZU AI listo. [proveedor/modelo]."
@@ -210,6 +212,7 @@ Pipeline de documentación: `node scripts/txt2md.js` (txt→md) · `node scripts
   No cargues el contexto con docs de áreas que no se tocan.
 
 ### 6.4 Disco y temporales
+
 - Disco C limitado. Temporales SIEMPRE en `E:\Ciszu Network\.opencode\temp/` (gitignored);
   borrarlos al terminar o limpiar los >1 semana. Nunca usar `C:\Users\fplay\AppData\Local\Temp`.
   Verificar espacio (`Get-PSDrive C,E`) antes de descargas grandes.
@@ -240,6 +243,7 @@ Checklist completo: `SECURITY_PROTOCOLS.md`. Reglas no negociables:
 10. Tras cambios en policies/funciones, verificar Security + Performance Advisors en Dashboard.
 
 ### 7.1 Dependencias y secretos
+
 - NUNCA instalar una librería sin confirmar: proponer y esperar aprobación humana.
 - pnpm con `ignore-scripts=true`. Auditorías: `pnpm audit --prod`, `cargo audit`, `trivy`.
 - NUNCA imprimir `.env`/tokens en logs o resúmenes; referirse genéricamente. Si un secreto se

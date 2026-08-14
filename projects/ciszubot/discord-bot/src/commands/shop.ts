@@ -1,7 +1,7 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { getWallet, setWallet, formatMoney, getTopWallets } from '../services/economy';
-import { getSupabase } from '../services/supabase';
+import { db, ciszubotSchema, eq, asc } from '../services/supabase';
 
 const create = (): BotCommand => ({
   name: 'shop',
@@ -15,9 +15,20 @@ const create = (): BotCommand => ({
       await message.reply('❌ Este comando solo funciona en un servidor.');
       return;
     }
-    const db = getSupabase();
-    const { data } = await db.from('shop_items').select('*').eq('guild_id', message.guild.id).order('price', { ascending: true });
-    const items = (data ?? []) as Array<{ id: string; name: string; price: number; description: string | null; role_id: string | null; emoji: string }>;
+    const shopItems = ciszubotSchema.shopItems;
+    const rows = await db
+      .select()
+      .from(shopItems)
+      .where(eq(shopItems.guildId, message.guild.id))
+      .orderBy(asc(shopItems.price));
+    const items = rows.map((it) => ({
+      id: it.id,
+      name: it.name,
+      price: Number(it.price),
+      description: it.description,
+      role_id: it.roleId,
+      emoji: it.emoji,
+    }));
 
     const embed = new EmbedBuilder()
       .setColor('#00d4ff')

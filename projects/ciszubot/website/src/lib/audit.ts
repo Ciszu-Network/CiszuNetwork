@@ -1,9 +1,9 @@
 import 'server-only';
-import { supabaseAdmin } from './supabaseAdmin';
+import { db, ciszubotSchema } from '@ciszunetwork/db';
 
 /**
  * Log de auditoría del dashboard de CiszuBot (tabla ciszubot.audit_log).
- * Deny-all: SOLO service_role escribe/lee (server-side).
+ * Deny-all: SOLO service_role escribe/lee (server-side vía Drizzle/pooler).
  * Nunca lanza: un fallo de auditoría no debe romper el flujo del usuario.
  */
 export interface AuditEntry {
@@ -17,14 +17,13 @@ export interface AuditEntry {
 
 export async function logAudit(entry: AuditEntry): Promise<void> {
   try {
-    const db = supabaseAdmin();
-    await db.from('audit_log').insert({
+    await db.insert(ciszubotSchema.auditLog).values({
       event: entry.event,
-      actor_id: entry.actorId ?? null,
-      actor_name: entry.actorName ?? null,
+      actorId: entry.actorId ?? null,
+      actorName: entry.actorName ?? null,
       target: entry.target ?? null,
       ip: entry.ip ?? null,
-      detail: entry.detail ?? null,
+      detail: (entry.detail as never) ?? null,
     });
   } catch {
     // Auditoría best-effort: nunca bloquear la operación principal.

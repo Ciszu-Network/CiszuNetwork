@@ -1,6 +1,6 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
 import type { BotCommand } from '../types/command';
-import { getSupabase } from '../services/supabase';
+import { db, ciszubotSchema, eq, and } from '../services/supabase';
 
 const closePrivate = (): BotCommand => ({
   name: 'closeprivate',
@@ -41,10 +41,15 @@ const closeChannel = (): BotCommand => ({
       return;
     }
     const channelId = (message.channel as never as { id: string }).id;
-    const db = getSupabase();
-    const { data: ticket } = await db.from('tickets').select('id').eq('channel_id', channelId).eq('open', true).maybeSingle();
+    const tickets = ciszubotSchema.botTickets;
+    const ticketRows = await db
+      .select({ id: tickets.id })
+      .from(tickets)
+      .where(and(eq(tickets.channelId, channelId), eq(tickets.open, true)))
+      .limit(1);
+    const ticket = ticketRows[0];
     if (ticket) {
-      await db.from('tickets').update({ open: false }).eq('id', ticket.id);
+      await db.update(tickets).set({ open: false }).where(eq(tickets.id, ticket.id));
     }
     await message.reply('🔒 Cerrando canal...').catch(() => undefined);
     setTimeout(() => {

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { SmartImage } from '@ciszu/ui';
 import { NAV_MAIN, SOCIALS, I, ALL_PAGES, SEARCH_INDEX, type NavGroup, type NavItem } from '@/config/navigation';
+import { useAppStore } from '@/store';
 
 const UserIcon = () => (
   <svg viewBox="0 0 24 24" className="w-[20px] h-[20px]" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -43,15 +44,12 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [lang, setLang] = useState('EN');
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [toast, setToast] = useState<string | null>(null);
   const [infoOpen, setInfoOpen] = useState(false);
   const [accOpen, setAccOpen] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
+  const { isMenuOpen, setIsMenuOpen, theme, setTheme, language, setLanguage, searchQuery, setSearchQuery } = useAppStore();
   const firstRender = useRef(true);
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -68,10 +66,10 @@ export default function Navbar() {
   useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
-      setSidebarOpen(false); setSearchOpen(false); setInfoOpen(false); setAccOpen(false);
+      setIsMenuOpen(false); setSearchOpen(false); setInfoOpen(false); setAccOpen(false);
       return;
     }
-    setSidebarOpen(false); setSearchOpen(false); setInfoOpen(false); setAccOpen(false);
+    setIsMenuOpen(false); setSearchOpen(false); setInfoOpen(false); setAccOpen(false);
     setIsNavigating(false);
   }, [pathname]);
 
@@ -116,12 +114,12 @@ export default function Navbar() {
   }, []);
 
   const toggleTheme = () => {
-    setTheme(t => (t === 'dark' ? 'light' : 'dark') as 'dark' | 'light');
+    setTheme(theme === 'dark' ? 'light' : 'dark');
     setToast('[SISTEMA]: Theme changer is in beta — some styles may not apply correctly yet.');
   };
 
   const toggleLang = () => {
-    setLang(l => (l === 'EN' ? 'ES' : 'EN'));
+    setLanguage(language === 'EN' ? 'ES' : 'EN');
     setToast('[SISTEMA]: Language changer is in beta — translations are incomplete.');
   };
 
@@ -155,13 +153,13 @@ export default function Navbar() {
 
   const toggleSearch = (e?: React.MouseEvent) => {
     if (e) { e.preventDefault(); e.stopPropagation(); }
-    if (!searchOpen) { setSidebarOpen(false); setAccOpen(false); }
+    if (!searchOpen) { setIsMenuOpen(false); setAccOpen(false); }
     setSearchOpen(v => !v);
   };
 
   const toggleAcceder = (e?: React.MouseEvent) => {
     if (e) { e.preventDefault(); e.stopPropagation(); }
-    if (!accOpen) { setSearchOpen(false); setSidebarOpen(false); }
+    if (!accOpen) { setSearchOpen(false); setIsMenuOpen(false); }
     setAccOpen(v => !v);
   };
 
@@ -269,12 +267,12 @@ export default function Navbar() {
               </button>
 
               {/* Hamburger contextual toggle (always visible) */}
-              <button onClick={() => { setSearchOpen(false); setAccOpen(false); setSidebarOpen(true); }}
+              <button onClick={() => { setSearchOpen(false); setAccOpen(false); setIsMenuOpen(true); }}
                 className={`p-2 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_10px_rgba(61,106,223,0.25)] ${
-                  sidebarOpen ? 'bg-neon-blue border-neon-blue text-white' : 'bg-white/5 border-white/20 text-white hover:border-neon-blue'
+                  isMenuOpen ? 'bg-neon-blue border-neon-blue text-white' : 'bg-white/5 border-white/20 text-white hover:border-neon-blue'
                 }`}
                 title="Menu">
-                {sidebarOpen ? I.close : I.menu}
+                {isMenuOpen ? I.close : I.menu}
               </button>
 
               {/* Account button + dropdown (non-functional, toast) */}
@@ -353,9 +351,9 @@ export default function Navbar() {
       </nav>
 
       {/* Slide-right contextual menu (sidebar) */}
-      {sidebarOpen && (
+      {isMenuOpen && (
         <div className="fixed inset-0 z-[100] pointer-events-none">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm pointer-events-auto" onClick={() => setSidebarOpen(false)} />
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm pointer-events-auto" onClick={() => setIsMenuOpen(false)} />
           <div className="absolute top-0 right-0 w-[320px] max-w-[85vw] h-full bg-[#05050a]/95 backdrop-blur-3xl shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col pointer-events-auto animate-slide-in-right">
             {/* Animated left divider to match the header */}
             <div className="absolute left-0 top-0 w-[1px] h-full bg-gradient-to-b from-transparent via-neon-blue/60 to-transparent shadow-[0_0_15px_rgba(61,106,223,0.5)] z-10" />
@@ -376,10 +374,10 @@ export default function Navbar() {
                 className="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all duration-300 shadow-lg"
                 title="Language">
                 {I.globe}
-                <span className="text-gray-400 hover:text-white uppercase tracking-widest text-xs font-bold">{lang}</span>
+                <span className="text-gray-400 hover:text-white uppercase tracking-widest text-xs font-bold">{language}</span>
               </button>
 
-              <button onClick={() => setSidebarOpen(false)}
+              <button onClick={() => setIsMenuOpen(false)}
                 className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-white/5 transition-all" title="Close">
                 {I.close}
               </button>
@@ -390,7 +388,7 @@ export default function Navbar() {
               <div className="mb-4">
                 <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">Navigation</p>
                 {ALL_PAGES.map((link) => (
-                  <Link key={link.href} href={link.href} onClick={() => setSidebarOpen(false)}
+                  <Link key={link.href} href={link.href} onClick={() => setIsMenuOpen(false)}
                     className={`flex justify-start items-center px-4 py-3 rounded-2xl transition-all font-header font-bold text-[15px] group mb-1 active:scale-95 border ${
                       isActive(link.href)
                         ? 'border-neon-blue bg-neon-blue/20 shadow-[0_0_15px_rgba(61,106,223,0.3)] text-neon-blue hover:text-white'

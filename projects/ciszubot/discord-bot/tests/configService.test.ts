@@ -1,27 +1,29 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { createDb } from './helpers/db';
-import { getSupabase } from '../src/services/supabase';
+import { createDb, createDbProxy, dbState } from './helpers/db';
+
+vi.mock('@ciszunetwork/db', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@ciszunetwork/db')>();
+  const { createDbProxy } = await import('./helpers/db');
+  return { ...actual, db: createDbProxy() };
+});
+
 import {
   getGuildConfig,
   getPrefix,
   invalidateGuildConfig,
   updateGuildConfig,
 } from '../src/services/configService';
-
-vi.mock('../src/services/supabase', () => ({ getSupabase: vi.fn() }));
-
-const supabaseMock = vi.mocked(getSupabase);
+import { ciszubotSchema } from '@ciszunetwork/db';
 
 // La caché de configService es un singleton del módulo: cada test usa un
 // guild_id distinto para no estar contaminado por los anteriores.
 beforeEach(() => {
-  supabaseMock.mockReset();
+  dbState.set(null);
 });
 
 describe('getGuildConfig', () => {
   it('sin fila devuelve los defaults con el guild_id', async () => {
-    const { db } = createDb(null);
-    supabaseMock.mockReturnValue(db);
+    dbState.set(createDb(null).db);
 
     const cfg = await getGuildConfig('g-sin-fila');
     expect(cfg.guild_id).toBe('g-sin-fila');
@@ -32,8 +34,7 @@ describe('getGuildConfig', () => {
   });
 
   it('mezcla la fila parcial con los defaults', async () => {
-    const { db } = createDb({ prefix: '!', lang: 'en' });
-    supabaseMock.mockReturnValue(db);
+    dbState.set(createDb({ prefix: '!', lang: 'en' }).db);
 
     const cfg = await getGuildConfig('g-parcial');
     expect(cfg.prefix).toBe('!');
@@ -43,39 +44,38 @@ describe('getGuildConfig', () => {
 
   it('usa la caché: la segunda llamada no consulta la BD', async () => {
     const { db } = createDb(null);
-    supabaseMock.mockReturnValue(db);
+    dbState.set(db);
 
     await getGuildConfig('g-cache');
     await getGuildConfig('g-cache');
-    expect(db.from).toHaveBeenCalledTimes(1);
+    expect(db.select).toHaveBeenCalledTimes(1);
   });
 });
 
 describe('updateGuildConfig', () => {
-  it('aplica el patch y serializa arrays antes del upsert', async () => {
-    const { db, builder } = createDb(null);
-    supabaseMock.mockReturnValue(db);
+  it('aplica el patch y hace upsert con arrays como jsonb', async () => {
+    const { db } = createDb(null);
+    dbState.set(db);
 
     const updated = await updateGuildConfig('g-upd', { prefix: 'x!', autorole_ids: ['r1', 'r2'] });
 
     expect(updated.prefix).toBe('x!');
-    expect(builder.upsert).toHaveBeenCalledWith(
-      expect.objectContaining({
-        guild_id: 'g-upd',
-        prefix: 'x!',
-        autorole_ids: JSON.stringify(['r1', 'r2']),
-      })
+    expect(db.insert).toHaveBeenCalledWith(ciszubotSchema.guildConfigs);
+    const valuesBuilder = db.insert.mock.results[0].value;
+    expect(valuesBuilder.values).toHaveBeenCalledWith(
+      expect.objectContaining({ guildId: 'g-upd', prefix: 'x!', autoroleIds: ['r1', 'r2'] })
     );
     // la caché queda actualizada: el GET posterior no vuelve a la BD
-    // (updateGuildConfig = select + upsert → 2 llamadas a from)
     await getGuildConfig('g-upd');
-    expect(db.from).toHaveBeenCalledTimes(2);
+    expect(db.select).toHaveBeenCalledTimes(1);
   });
 
   it('sigue devolviendo la config aunque el upsert falle', async () => {
-    const { db, builder } = createDb(null);
-    builder.upsert.mockRejectedValueOnce(new Error('boom'));
-    supabaseMock.mockReturnValue(db);
+    const { db } = createDb(null);
+    dbState.set(db);
+    vi.spyOn(db, 'insert').mockImplementationOnce(() => {
+      throw new Error('boom');
+    });
 
     const updated = await updateGuildConfig('g-upd-fail', { prefix: 'x!' });
     expect(updated.prefix).toBe('x!');
@@ -85,12 +85,12 @@ describe('updateGuildConfig', () => {
 describe('invalidateGuildConfig / getPrefix', () => {
   it('invalidateGuildConfig elimina la caché', async () => {
     const { db } = createDb(null);
-    supabaseMock.mockReturnValue(db);
+    dbState.set(db);
 
     await getGuildConfig('g-inv');
     invalidateGuildConfig('g-inv');
     await getGuildConfig('g-inv');
-    expect(db.from).toHaveBeenCalledTimes(2);
+    expect(db.select).toHaveBeenCalledTimes(2);
   });
 
   it('getPrefix devuelve el prefijo por defecto sin guild', async () => {
@@ -99,8 +99,7 @@ describe('invalidateGuildConfig / getPrefix', () => {
   });
 
   it('getPrefix usa la config del guild', async () => {
-    const { db } = createDb({ prefix: '!' });
-    supabaseMock.mockReturnValue(db);
+    dbState.set(createDb({ prefix: '!' }).db);
     await expect(getPrefix('g-prefix')).resolves.toBe('!');
   });
 });

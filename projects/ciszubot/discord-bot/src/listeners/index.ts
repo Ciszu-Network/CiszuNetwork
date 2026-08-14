@@ -12,7 +12,7 @@ import {
 } from 'discord.js';
 import { getGuildConfig, getPrefix } from '../services/configService';
 import { addXp } from '../services/levels';
-import { getSupabase } from '../services/supabase';
+import { db, ciszubotSchema, eq, and, sql } from '../services/supabase';
 import { logger } from '../services/logger';
 import { resumeActiveGiveaways } from '../services/giveaways';
 
@@ -62,12 +62,16 @@ async function handleXp(message: Message): Promise<void> {
 
 async function handleAfk(message: Message): Promise<void> {
   if (!message.guild) return;
-  const db = getSupabase();
+  const afk = ciszubotSchema.afk;
   try {
     // Quitar AFK propio si habla
-    const { data: own } = await db.from('afk').select('reason, since').eq('user_id', message.author.id).eq('guild_id', message.guild.id).maybeSingle();
-    if (own) {
-      await db.from('afk').delete().eq('user_id', message.author.id).eq('guild_id', message.guild.id);
+    const own = await db
+      .select({ reason: afk.reason, since: afk.since })
+      .from(afk)
+      .where(and(eq(afk.userId, message.author.id), eq(afk.guildId, message.guild.id)))
+      .limit(1);
+    if (own[0]) {
+      await db.delete(afk).where(and(eq(afk.userId, message.author.id), eq(afk.guildId, message.guild.id)));
       await message
         .reply(`👋 ¡Bienvenido de vuelta, <@${message.author.id}>! Te quité tu AFK.`).catch(() => undefined);
     }
@@ -77,17 +81,16 @@ async function handleAfk(message: Message): Promise<void> {
     if (mentions.size > 0) {
       for (const [userId] of mentions) {
         if (userId === message.author.id) continue;
-        const { data: target } = await db
-          .from('afk')
-          .select('reason, since')
-          .eq('user_id', userId)
-          .eq('guild_id', message.guild.id)
-          .maybeSingle();
-        if (target) {
-          const since = target.since ? new Date(target.since) : new Date();
+        const target = await db
+          .select({ reason: afk.reason, since: afk.since })
+          .from(afk)
+          .where(and(eq(afk.userId, userId), eq(afk.guildId, message.guild.id)))
+          .limit(1);
+        if (target[0]) {
+          const since = target[0].since ? new Date(target[0].since) : new Date();
           await message
             .reply({
-              content: `💤 **<@${userId}>** está AFK desde <t:${Math.floor(since.getTime() / 1000)}:R>:\n> ${target.reason ?? 'Sin razón especificada'}`,
+              content: `💤 **<@${userId}>** está AFK desde <t:${Math.floor(since.getTime() / 1000)}:R>:\n> ${target[0].reason ?? 'Sin razón especificada'}`,
             })
             .catch(() => undefined);
         }
@@ -185,14 +188,13 @@ export function registerListeners(client: Client): void {
   client.on(Events.MessageDelete, async (message) => {
     if (!message.guild || !message.author || message.author.bot) return;
     try {
-      const db = getSupabase();
-      await db.from('snipes').upsert({
-        guild_id: message.guild.id,
-        channel_id: message.channel.id,
-        user_id: message.author.id,
+      const snipes = ciszubotSchema.snipes;
+      await db.insert(snipes).values({
+        guildId: message.guild.id,
+        channelId: message.channel.id,
+        userId: message.author.id,
         content: message.content ?? null,
         attachment: message.attachments.first()?.url ?? null,
-        deleted_at: new Date().toISOString(),
       });
     } catch (error) {
       logger.warn('snipes upsert:', error);
@@ -234,9 +236,13 @@ export async function handleButton(interaction: ButtonInteraction, client: Clien
       return;
     }
     try {
-      const db = getSupabase();
-      const { data: open } = await db.from('tickets').select('id').eq('guild_id', guild.id).eq('user_id', interaction.user.id).eq('open', true).maybeSingle();
-      if (open) {
+      const tickets = ciszubotSchema.botTickets;
+      const openTickets = await db
+        .select({ id: tickets.id })
+        .from(tickets)
+        .where(and(eq(tickets.guildId, guild.id), eq(tickets.userId, interaction.user.id), eq(tickets.open, true)))
+        .limit(1);
+      if (openTickets[0]) {
         await interaction.followUp({ content: '❌ Ya tienes un ticket abierto.', ephemeral: true }).catch(() => undefined);
         return;
       }
@@ -254,10 +260,11 @@ export async function handleButton(interaction: ButtonInteraction, client: Clien
         ],
       });
 
-      await db.from('tickets').insert({
-        guild_id: guild.id,
-        channel_id: channel.id,
-        user_id: interaction.user.id,
+      await db.insert(ciszubotSchema.botTickets).values({
+        id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+        guildId: guild.id,
+        channelId: channel.id,
+        userId: interaction.user.id,
         topic: `Ticket de ${interaction.user.tag}`,
         open: true,
       });
@@ -295,10 +302,15 @@ export async function handleButton(interaction: ButtonInteraction, client: Clien
 
   if (customId === 'ticket_close') {
     try {
-      const db = getSupabase();
-      const { data: ticket } = await db.from('tickets').select('*').eq('channel_id', interaction.channelId).eq('open', true).maybeSingle();
+      const tickets = ciszubotSchema.botTickets;
+      const ticketRows = await db
+        .select()
+        .from(tickets)
+        .where(and(eq(tickets.channelId, interaction.channelId), eq(tickets.open, true)))
+        .limit(1);
+      const ticket = ticketRows[0];
       if (ticket) {
-        await db.from('tickets').update({ open: false }).eq('id', ticket.id);
+        await db.update(tickets).set({ open: false }).where(eq(tickets.id, ticket.id));
       }
       await interaction.followUp({ content: '🔒 Cerrando ticket...' }).catch(() => undefined);
       setTimeout(() => {

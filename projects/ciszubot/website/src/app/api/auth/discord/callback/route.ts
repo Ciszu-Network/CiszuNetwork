@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { exchangeCode, fetchDiscordUser, setSession, supabaseAdmin } from '@/lib/auth';
+import { exchangeCode, fetchDiscordUser, setSession } from '@/lib/auth';
+import { db, ciszubotSchema } from '@/lib/db';
 import { logAudit } from '@/lib/audit';
 import { createRateLimiter } from '@ciszunetwork/utils';
 
@@ -34,19 +35,34 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL('/?auth=error', req.url));
   }
 
-  const db = supabaseAdmin();
   const avatarUrl = user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : null;
-  await db.from('discord_users').upsert({
-    id: user.id,
-    username: user.username,
-    display_name: user.global_name ?? null,
-    avatar_url: avatarUrl,
-    email: user.email ?? null,
-    access_token: tokens.access_token,
-    refresh_token: tokens.refresh_token,
-    token_expires: new Date(Date.now() + tokens.expires_in * 1000).toISOString(),
-    updated_at: new Date().toISOString(),
-  });
+  const discordUsers = ciszubotSchema.discordUsers;
+  await db
+    .insert(discordUsers)
+    .values({
+      id: user.id,
+      username: user.username,
+      displayName: user.global_name ?? null,
+      avatarUrl,
+      email: user.email ?? null,
+      accessToken: tokens.access_token,
+      refreshToken: tokens.refresh_token,
+      tokenExpires: new Date(Date.now() + tokens.expires_in * 1000),
+      updatedAt: new Date(),
+    })
+    .onConflictDoUpdate({
+      target: discordUsers.id,
+      set: {
+        username: user.username,
+        displayName: user.global_name ?? null,
+        avatarUrl,
+        email: user.email ?? null,
+        accessToken: tokens.access_token,
+        refreshToken: tokens.refresh_token,
+        tokenExpires: new Date(Date.now() + tokens.expires_in * 1000),
+        updatedAt: new Date(),
+      },
+    });
 
   await setSession(user.id, { name: user.global_name ?? user.username, avatar: avatarUrl });
   await logAudit({

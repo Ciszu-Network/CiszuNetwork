@@ -340,8 +340,8 @@ process.on('uncaughtException', (error) => {
   process.exit(1);
 });
 
-// ─── Panel Express (antes server.js separado) ───
-setupStatsServer(client);
+// ─── Microservicio HTTP NestJS+Fastify (antes Express `statsServer`) ───
+void setupStatsServer(client);
 
 client.login(BOT_TOKEN).catch((err) => {
   logger.error('Error al iniciar sesión con el token del bot:', err);

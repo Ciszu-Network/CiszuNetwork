@@ -146,15 +146,15 @@ describe('CacheStore', () => {
 
   describe('capa BD (CacheDbLike)', () => {
     it('en frío: loader → set → BD; segunda llamada hit por BD', async () => {
-      const rows = new Map<string, { v: object; exp: string }>();
+      const rows = new Map<string, { v: object; expires: string | null }>();
       const db: CacheDbLike = {
         from: () => {
           return {
             select: () => ({
-              eq: (col, val) => ({
+              eq: (col: string, val: string) => ({
                 maybeSingle: async () => {
                   if (col !== 'key') throw new Error('col rara');
-                  const row = rows.get(val as string);
+                  const row = rows.get(val);
                   return { data: row ?? null, error: null };
                 },
               }),
@@ -186,7 +186,7 @@ describe('CacheStore', () => {
 
     it('bumpCounter usa la RPC de BD devolviendo valor atómico', async () => {
       const db: CacheDbLike = {
-        rpc: vi.fn(async (fn: string, args: { p_key: string }) => {
+        rpc: vi.fn(async (_fn: string, _args: { p_key: string }) => {
           return { data: 7, error: null };
         }),
       } as unknown as CacheDbLike;

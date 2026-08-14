@@ -1,9 +1,9 @@
 import 'server-only';
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { cookies } from 'next/headers';
-import { supabaseAdmin } from './supabaseAdmin';
+import { db, ciszubotSchema, eq } from '@ciszunetwork/db';
 
-export { supabaseAdmin };
+export { db, ciszubotSchema };
 
 export const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID ?? '1395532235872141312';
 const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET ?? '';
@@ -164,27 +164,34 @@ export async function fetchDiscordUser(accessToken: string): Promise<DiscordUser
 
 /** Devuelve el access_token vigente del usuario (refresca si hace falta) */
 export async function getValidUserToken(userId: string): Promise<string | null> {
-  const db = supabaseAdmin();
-  const { data } = await db
-    .from('discord_users')
-    .select('access_token, refresh_token, token_expires')
-    .eq('id', userId)
-    .maybeSingle();
+  const discordUsers = ciszubotSchema.discordUsers;
+  const rows = await db
+    .select({
+      accessToken: discordUsers.accessToken,
+      refreshToken: discordUsers.refreshToken,
+      tokenExpires: discordUsers.tokenExpires,
+    })
+    .from(discordUsers)
+    .where(eq(discordUsers.id, userId))
+    .limit(1);
 
-  if (!data?.access_token) return null;
+  const data = rows[0];
+  if (!data?.accessToken) return null;
 
-  const expires = data.token_expires ? new Date(data.token_expires).getTime() : 0;
-  if (expires > Date.now() + 60_000) return data.access_token as string;
+  const expires = data.tokenExpires ? new Date(data.tokenExpires).getTime() : 0;
+  if (expires > Date.now() + 60_000) return data.accessToken;
 
-  const refreshed = await refreshAccessToken(data.refresh_token as string);
+  const refreshed = await refreshAccessToken(data.refreshToken ?? '');
   if (!refreshed) return null;
-  await db.from('discord_users').upsert({
-    id: userId,
-    access_token: refreshed.access_token,
-    refresh_token: refreshed.refresh_token,
-    token_expires: new Date(Date.now() + refreshed.expires_in * 1000).toISOString(),
-    updated_at: new Date().toISOString(),
-  });
+  await db
+    .update(discordUsers)
+    .set({
+      accessToken: refreshed.access_token,
+      refreshToken: refreshed.refresh_token,
+      tokenExpires: new Date(Date.now() + refreshed.expires_in * 1000),
+      updatedAt: new Date(),
+    })
+    .where(eq(discordUsers.id, userId));
   return refreshed.access_token;
 }
 

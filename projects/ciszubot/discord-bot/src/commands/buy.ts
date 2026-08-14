@@ -1,7 +1,7 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { getWallet, setWallet, formatMoney } from '../services/economy';
-import { getSupabase } from '../services/supabase';
+import { db, ciszubotSchema, eq, and, ilike, sql } from '../services/supabase';
 
 interface ShopItem {
   id: string;
@@ -34,14 +34,23 @@ const create = (): BotCommand => ({
       return;
     }
 
-    const db = getSupabase();
-    const { data } = await db
-      .from('shop_items')
-      .select('*')
-      .eq('guild_id', message.guild.id)
-      .ilike('name', name)
-      .maybeSingle();
-    const item = data as ShopItem | null;
+    const shopItems = ciszubotSchema.shopItems;
+    const found = await db
+      .select()
+      .from(shopItems)
+      .where(and(eq(shopItems.guildId, message.guild.id), ilike(shopItems.name, name)))
+      .limit(1);
+    const item = (found[0]
+      ? {
+          id: String(found[0].id),
+          guild_id: found[0].guildId,
+          name: found[0].name,
+          price: Number(found[0].price),
+          description: found[0].description,
+          role_id: found[0].roleId,
+          emoji: found[0].emoji,
+        }
+      : null) as ShopItem | null;
     if (!item) {
       await message.reply('❌ Ese ítem no existe en la tienda.');
       return;
@@ -64,12 +73,19 @@ const create = (): BotCommand => ({
       }
     }
 
-    await db.from('inventory').upsert({
-      user_id: message.author.id,
-      guild_id: message.guild.id,
-      item_id: item.id,
-      quantity: 1,
-    });
+    const inventory = ciszubotSchema.inventory;
+    await db
+      .insert(inventory)
+      .values({
+        userId: message.author.id,
+        guildId: message.guild.id,
+        itemId: Number(item.id),
+        quantity: 1,
+      })
+      .onConflictDoUpdate({
+        target: [inventory.userId, inventory.guildId, inventory.itemId],
+        set: { quantity: sql`${inventory.quantity} + 1` },
+      });
 
     const embed = new EmbedBuilder()
       .setColor('#00d4ff')

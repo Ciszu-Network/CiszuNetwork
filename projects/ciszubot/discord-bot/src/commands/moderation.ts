@@ -6,7 +6,7 @@
   GuildMember,
 } from 'discord.js';
 import type { BotCommand } from '../types/command';
-import { getSupabase } from '../services/supabase';
+import { db, ciszubotSchema, eq, and, desc } from '../services/supabase';
 
 const kick = (): BotCommand => ({
   name: 'kick',
@@ -208,10 +208,9 @@ const warn = (): BotCommand => ({
       return;
     }
     const reason = args.slice(1).join(' ') || 'Sin razón';
-    const db = getSupabase();
-    await db.from('warns').insert({
-      guild_id: message.guild.id,
-      user_id: target.id,
+    await db.insert(ciszubotSchema.warns).values({
+      guildId: message.guild.id,
+      userId: target.id,
       moderator: message.author.id,
       reason,
     });
@@ -244,15 +243,24 @@ const warns = (): BotCommand => ({
       await message.reply('❌ Uso: `cz!warns @usuario`');
       return;
     }
-    const db = getSupabase();
-    const { data } = await db.from('warns').select('*').eq('guild_id', message.guild.id).eq('user_id', target.id).order('created_at', { ascending: false });
-    const warns = (data ?? []) as Array<{ id: string; reason: string; moderator: string; created_at: string }>;
+    const warns = ciszubotSchema.warns;
+    const warnRows = await db
+      .select()
+      .from(warns)
+      .where(and(eq(warns.guildId, message.guild.id), eq(warns.userId, target.id)))
+      .orderBy(desc(warns.createdAt));
+    const warnList = warnRows.map((w) => ({
+      id: w.id,
+      reason: w.reason,
+      moderator: w.moderator,
+      created_at: w.createdAt.toISOString(),
+    }));
     const embed = new EmbedBuilder()
       .setColor('#ff9900')
-      .setTitle(`⚠️ Avisos de ${target.tag} (${warns.length})`)
+      .setTitle(`⚠️ Avisos de ${target.tag} (${warnList.length})`)
       .setDescription(
-        warns.length > 0
-          ? warns.map((w) => `\`#${w.id}\` — ${w.reason} (por <@${w.moderator}> • <t:${Math.floor(new Date(w.created_at).getTime() / 1000)}:R>)`).join('\n')
+        warnList.length > 0
+          ? warnList.map((w) => `\`#${w.id}\` — ${w.reason} (por <@${w.moderator}> • <t:${Math.floor(new Date(w.created_at).getTime() / 1000)}:R>)`).join('\n')
           : 'Sin avisos. 🎉'
       )
       .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })

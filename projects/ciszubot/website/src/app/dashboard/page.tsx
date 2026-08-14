@@ -2,7 +2,8 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import { Icon } from '@ciszu/ui';
-import { getSessionUserId, getGuildsForUser, getBotGuildIds, isGuildAdmin, supabaseAdmin, type DiscordGuild } from '@/lib/auth';
+import { getSessionUserId, getGuildsForUser, getBotGuildIds, isGuildAdmin, type DiscordGuild } from '@/lib/auth';
+import { db, ciszubotSchema, eq } from '@/lib/db';
 import { INVITE_URL } from '@/lib/i18n';
 
 export const metadata: Metadata = {
@@ -18,8 +19,17 @@ export default async function DashboardPage() {
     redirect('/?auth=login');
   }
 
-  const db = supabaseAdmin();
-  const { data: me } = await db.from('discord_users').select('username, display_name, avatar_url').eq('id', userId).maybeSingle();
+  const discordUsers = ciszubotSchema.discordUsers;
+  const meRows = await db
+    .select({
+      username: discordUsers.username,
+      displayName: discordUsers.displayName,
+      avatarUrl: discordUsers.avatarUrl,
+    })
+    .from(discordUsers)
+    .where(eq(discordUsers.id, userId))
+    .limit(1);
+  const me = meRows[0];
 
   const [guilds, botGuilds] = await Promise.all([getGuildsForUser(userId), getBotGuildIds()]);
 
@@ -37,14 +47,14 @@ export default async function DashboardPage() {
           <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full border-2 border-[#5865F2]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={me?.avatar_url ?? `https://cdn.discordapp.com/embed/avatars/${Number(userId) % 5}.png`}
+              src={me?.avatarUrl ?? `https://cdn.discordapp.com/embed/avatars/${Number(userId) % 5}.png`}
               alt=""
               className="h-full w-full object-cover"
             />
           </div>
           <div className="min-w-0 flex-1">
             <h1 className="truncate text-xl font-bold text-white">
-              {me?.display_name ?? me?.username ?? 'Cuenta'}
+              {me?.displayName ?? me?.username ?? 'Cuenta'}
             </h1>
             <p className="text-sm text-white/60">Elige un servidor para configurar a CiszuBot</p>
           </div>

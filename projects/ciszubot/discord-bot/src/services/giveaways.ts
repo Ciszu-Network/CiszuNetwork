@@ -1,5 +1,5 @@
 import { EmbedBuilder, Guild, TextChannel, User } from 'discord.js';
-import { getSupabase } from './supabase';
+import { db, ciszubotSchema, eq, and } from '@ciszunetwork/db';
 import { logger } from './logger';
 
 interface GiveawayData {
@@ -31,8 +31,8 @@ export function scheduleGiveaway(guild: Guild, data: GiveawayData): void {
 export async function endGiveaway(guild: Guild, data: GiveawayData): Promise<void> {
   timers.delete(data.id);
   try {
-    const db = getSupabase();
-    await db.from('giveaways').update({ ended: true }).eq('id', data.id);
+    const giveaways = ciszubotSchema.giveaways;
+    await db.update(giveaways).set({ ended: true }).where(eq(giveaways.id, data.id));
 
     const channel = guild.channels.cache.get(data.channel_id) as TextChannel | undefined;
     if (!channel) return;
@@ -95,6 +95,7 @@ export async function startGiveaway(
   await msg.react('🎉');
 
   const id = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  const endsAt = new Date(Date.now() + durationMs);
   const data: GiveawayData = {
     id,
     guild_id: guild.id,
@@ -102,13 +103,22 @@ export async function startGiveaway(
     message_id: msg.id,
     prize,
     winners,
-    ends_at: new Date(Date.now() + durationMs).toISOString(),
+    ends_at: endsAt.toISOString(),
     hosted_by: host.id,
   };
 
   try {
-    const db = getSupabase();
-    await db.from('giveaways').insert(data);
+    const giveaways = ciszubotSchema.giveaways;
+    await db.insert(giveaways).values({
+      id: data.id,
+      guildId: data.guild_id,
+      channelId: data.channel_id,
+      messageId: data.message_id,
+      prize: data.prize,
+      winners: data.winners,
+      endsAt,
+      hostedBy: data.hosted_by,
+    });
   } catch (error) {
     logger.warn('startGiveaway insert:', error);
   }
@@ -118,18 +128,26 @@ export async function startGiveaway(
 
 export async function resumeActiveGiveaways(guild: Guild): Promise<void> {
   try {
-    const db = getSupabase();
-    const { data } = await db
-      .from('giveaways')
-      .select('*')
-      .eq('guild_id', guild.id)
-      .eq('ended', false)
-      .order('ends_at', { ascending: true });
-    for (const gw of (data ?? []) as GiveawayData[]) {
-      if (new Date(gw.ends_at).getTime() > Date.now()) {
-        scheduleGiveaway(guild, gw);
+    const giveaways = ciszubotSchema.giveaways;
+    const rows = await db
+      .select()
+      .from(giveaways)
+      .where(and(eq(giveaways.guildId, guild.id), eq(giveaways.ended, false)));
+    for (const gw of rows) {
+      const data: GiveawayData = {
+        id: gw.id,
+        guild_id: gw.guildId,
+        channel_id: gw.channelId,
+        message_id: gw.messageId,
+        prize: gw.prize,
+        winners: gw.winners,
+        ends_at: gw.endsAt.toISOString(),
+        hosted_by: gw.hostedBy,
+      };
+      if (new Date(gw.endsAt).getTime() > Date.now()) {
+        scheduleGiveaway(guild, data);
       } else {
-        void endGiveaway(guild, gw);
+        void endGiveaway(guild, data);
       }
     }
   } catch (error) {

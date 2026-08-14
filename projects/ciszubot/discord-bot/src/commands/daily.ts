@@ -1,7 +1,7 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { addMoney, formatMoney, randomBetween } from '../services/economy';
-import { getSupabase } from '../services/supabase';
+import { db, ciszubotSchema, eq, and, desc } from '../services/supabase';
 
 const create = (): BotCommand => ({
   name: 'daily',
@@ -14,19 +14,17 @@ const create = (): BotCommand => ({
     const guildId = message.guild?.id ?? 'DM';
     const userId = message.author.id;
 
-    const db = getSupabase();
-    const { data: last } = await db
-      .from('transactions')
-      .select('created_at')
-      .eq('guild_id', guildId)
-      .eq('user_id', userId)
-      .eq('type', 'daily')
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    const transactions = ciszubotSchema.transactions;
+    const rows = await db
+      .select({ createdAt: transactions.createdAt })
+      .from(transactions)
+      .where(and(eq(transactions.guildId, guildId), eq(transactions.userId, userId), eq(transactions.type, 'daily')))
+      .orderBy(desc(transactions.createdAt))
+      .limit(1);
+    const last = rows[0];
 
     const cooldown = 24 * 60 * 60 * 1000;
-    const lastTime = last?.created_at ? new Date(last.created_at).getTime() : 0;
+    const lastTime = last?.createdAt ? new Date(last.createdAt).getTime() : 0;
     const elapsed = Date.now() - lastTime;
     if (elapsed < cooldown) {
       const remaining = Math.ceil((cooldown - elapsed) / (60 * 1000));

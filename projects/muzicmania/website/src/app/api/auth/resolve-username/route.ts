@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { db, muzicmaniaSchema, eq, sql } from '@ciszunetwork/db';
 import { createRateLimiter } from '@ciszunetwork/utils';
 
 /**
@@ -8,7 +8,8 @@ import { createRateLimiter } from '@ciszunetwork/utils';
  * Antes esta resolución se hacía con la RPC pública `get_email_by_username`
  * usando la anon key desde el navegador — cualquier persona podía extraer los
  * emails de todos los usuarios (migración 16 la revocó de anon/authenticated).
- * Ahora se resuelve en el servidor con service_role + rate limit por IP.
+ * Ahora se resuelve en el servidor con Drizzle (service role vía pooler) +
+ * rate limit por IP.
  */
 
 const USERNAME_RE = /^[a-zA-Z0-9_]{1,20}$/;
@@ -36,22 +37,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Usuario inválido' }, { status: 400 });
   }
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) {
-    return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
-  }
+  const profiles = muzicmaniaSchema.profiles;
+  const rows = await db
+    .select({ email: profiles.email })
+    .from(profiles)
+    .where(eq(sql`lower(${profiles.username})`, username.toLowerCase()))
+    .limit(1);
 
-  // @ts-expect-error - createClient accepts 3rd options param, but TS version is strict
-  const admin = createClient(url, key, {
-    db: { schema: 'public' } as const,
-    auth: { persistSession: false },
-  });
-
-  const { data, error } = await admin.rpc('get_email_by_username', { p_username: username });
-
-  if (error || !data) {
+  const row = rows[0];
+  if (!row?.email) {
     return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 });
   }
-  return NextResponse.json({ email: data });
+  return NextResponse.json({ email: row.email });
 }

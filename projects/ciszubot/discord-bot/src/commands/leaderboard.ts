@@ -1,7 +1,6 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { getTopWallets, formatMoney } from '../services/economy';
-import { getSupabase } from '../services/supabase';
 
 const create = (): BotCommand => ({
   name: 'leaderboard',
@@ -16,7 +15,6 @@ const create = (): BotCommand => ({
       return;
     }
     const top = await getTopWallets(message.guild.id, 10);
-    const db = getSupabase();
     const members = message.guild.members;
 
     const lines: string[] = [];

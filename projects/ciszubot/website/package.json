@@ -10,6 +10,7 @@
   "dependencies": {
     "@ciszu/ui": "workspace:*",
     "@ciszunetwork/cdn": "workspace:*",
+    "@ciszunetwork/db": "workspace:^",
     "@ciszunetwork/utils": "workspace:*",
     "@sentry/nextjs": "^10.69.0",
     "@supabase/supabase-js": "^2.60.0",

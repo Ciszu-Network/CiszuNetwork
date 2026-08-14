@@ -1,14 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { createDb } from './helpers/db';
-import { getSupabase } from '../src/services/supabase';
+import { createDb, createDbProxy, dbState } from './helpers/db';
+
+vi.mock('@ciszunetwork/db', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@ciszunetwork/db')>();
+  const { createDbProxy } = await import('./helpers/db');
+  return { ...actual, db: createDbProxy() };
+});
+
 import { addXp, getLevel, getTopLevels, levelFromXp, xpForLevel } from '../src/services/levels';
-
-vi.mock('../src/services/supabase', () => ({ getSupabase: vi.fn() }));
-
-const supabaseMock = vi.mocked(getSupabase);
+import { ciszubotSchema } from '@ciszunetwork/db';
 
 beforeEach(() => {
-  supabaseMock.mockReset();
+  dbState.set(null);
 });
 
 describe('lógica pura de XP', () => {
@@ -32,21 +35,22 @@ describe('lógica pura de XP', () => {
 
 describe('addXp', () => {
   it('usuario nuevo: inserta XP y no sube de nivel', async () => {
-    const { db, builder } = createDb(null);
-    supabaseMock.mockReturnValue(db);
+    const { db } = createDb(null);
+    dbState.set(db);
 
     const result = await addXp('u1', 'g1', 10);
 
     expect(result).toEqual({ level: 1, leveledUp: false });
-    expect(db.from).toHaveBeenCalledWith('levels');
-    expect(builder.upsert).toHaveBeenCalledWith(
-      expect.objectContaining({ user_id: 'u1', guild_id: 'g1', xp: 10 })
+    expect(db.insert).toHaveBeenCalledWith(ciszubotSchema.levels);
+    const valuesBuilder = db.insert.mock.results[0].value;
+    const valuesResult = valuesBuilder.values.mock.results[0].value;
+    expect(valuesResult.onConflictDoUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ set: expect.objectContaining({ xp: 10 }) })
     );
   });
 
   it('sube de nivel al cruzar el umbral', async () => {
-    const { db } = createDb({ xp: '450' });
-    supabaseMock.mockReturnValue(db);
+    dbState.set(createDb({ xp: '450' }).db);
 
     const result = await addXp('u1', 'g1', 100); // 550 → nivel 2
 
@@ -54,9 +58,11 @@ describe('addXp', () => {
   });
 
   it('devuelve null si la BD falla', async () => {
-    const { db, builder } = createDb();
-    builder.maybeSingle.mockRejectedValueOnce(new Error('boom'));
-    supabaseMock.mockReturnValue(db);
+    const { db } = createDb();
+    dbState.set(db);
+    vi.spyOn(db, 'select').mockImplementationOnce(() => {
+      throw new Error('boom');
+    });
 
     await expect(addXp('u1', 'g1', 10)).resolves.toBeNull();
   });
@@ -64,8 +70,7 @@ describe('addXp', () => {
 
 describe('getLevel', () => {
   it('sin datos devuelve nivel 1 con 0 XP', async () => {
-    const { db } = createDb(null);
-    supabaseMock.mockReturnValue(db);
+    dbState.set(createDb(null).db);
 
     await expect(getLevel('u1', 'g1')).resolves.toEqual({
       xp: 0,
@@ -77,8 +82,7 @@ describe('getLevel', () => {
   });
 
   it('usa la XP almacenada', async () => {
-    const { db } = createDb({ xp: '123' });
-    supabaseMock.mockReturnValue(db);
+    dbState.set(createDb({ xp: '123' }).db);
 
     await expect(getLevel('u1', 'g1')).resolves.toMatchObject({ xp: 123, level: 1, current: 123 });
   });
@@ -86,8 +90,7 @@ describe('getLevel', () => {
 
 describe('getTopLevels', () => {
   it('normaliza las filas y las ordena', async () => {
-    const { db } = createDb([{ user_id: 'a', xp: '5' }, { user_id: 'b', xp: '900' }]);
-    supabaseMock.mockReturnValue(db);
+    dbState.set(createDb([{ userId: 'a', xp: '5' }, { userId: 'b', xp: '900' }]).db);
 
     const top = await getTopLevels('g1', 10);
     expect(top).toEqual([
@@ -97,9 +100,11 @@ describe('getTopLevels', () => {
   });
 
   it('devuelve [] si la BD falla', async () => {
-    const { db, builder } = createDb();
-    builder.limit.mockImplementationOnce(() => Promise.reject(new Error('boom')));
-    supabaseMock.mockReturnValue(db);
+    const { db } = createDb();
+    dbState.set(db);
+    vi.spyOn(db, 'select').mockImplementationOnce(() => {
+      throw new Error('boom');
+    });
 
     await expect(getTopLevels('g1')).resolves.toEqual([]);
   });

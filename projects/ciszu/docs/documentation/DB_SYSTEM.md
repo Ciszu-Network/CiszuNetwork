@@ -1,12 +1,12 @@
 # DB_SYSTEM — Base de datos Supabase (consultas y administración)
 
-Versión: 2.0.0
-Actualización: 2026-08-13
-Identificador: DB_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
+Versión: 2.1.0
+Actualización: 2026-08-14
+Identificador: DB_SYSTEM_V2.1.0_2026_08_14_ciszunetwork
 
 > **Definición**: guía de la base de datos de Ciszu Network: esquemas, consultas de
-> operación por schema, infraestructura a no tocar y buenas prácticas. Solo SELECT si no
-> estás seguro.
+> operación por schema, infraestructura a no tocar, buenas prácticas y la decisión ORM.
+> Solo SELECT si no estás seguro.
 
 Guía de la base de datos de Ciszu Network: esquemas, consultas de operación por schema, infraestructura a no tocar y buenas prácticas. **Siempre con datos reales de producción — solo SELECT si no estás seguro.**
 
@@ -195,6 +195,17 @@ const cache = createClient(URL, KEY, { db: { schema: 'ciszu' } })
   elegido ocupa espacio y ralentiza las escrituras.
 - El orden de columnas importa: filtrar primero por la columna de mayor cardinalidad.
 - No indexar columnas de baja cardinalidad (booleans) salvo que combine con otra.
+
+## Capa de datos y ORM (decisión: Drizzle)
+
+- Hoy las apps consultan con `@supabase/supabase-js` (REST/PostgREST + RPC), sin ORM.
+- **Decisión (14 ago 2026): Drizzle ORM** como capa **server-side** (API routes, bot, scripts).
+  Motivo: respeta el **RLS de Supabase** (se ejecuta sobre el pool estándar y las policies /
+  `request.jwt.claims` funcionan), es SQL tipado sin binarios y encaja en monorepo pnpm.
+- **El navegador no usa el ORM**: mantiene anon key + PostgREST + RLS. Prisma quedó descartado
+  (fricción con RLS/`auth.uid()` y generación de cliente).
+- Implementación pendiente (TODO): schema en `packages/db/`, crear `ORM_SYSTEM.md`.
+- Detalle: `BACKEND_SYSTEM.md` §18 (ORM) y §19 (frameworks).
 
 ## Relación con otros sistemas
 

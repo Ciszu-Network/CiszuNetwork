@@ -19,6 +19,7 @@ Identificador: PACKAGES_SYSTEM_V1.0.0_2026_08_13_ciszunetwork
 | `@ciszunetwork/email` | 1.0.0 | Envío de correos | Emails transaccionales (Resend) |
 | `@ciszunetwork/payments` | 1.0.0 | Pagos | Rieles de pago (NOWPayments/Binance) |
 | `@ciszunetwork/utils` | 1.0.0 | Utilidades | Rate limit, escapeHtml, IAST, csp |
+| `@ciszunetwork/db` | 1.0.0 | Capa de datos | Schemas Drizzle (ciszubot, muzicmania, ciszunetwork, ciszu) + cliente Postgres (server-only) |
 
 - Los paquetes viven en `packages/<nombre>/` dentro del monorepo pnpm.
 - Se referencian por su nombre de workspace (`@ciszu/*`, `@ciszunetwork/*`).
@@ -33,6 +34,7 @@ Identificador: PACKAGES_SYSTEM_V1.0.0_2026_08_13_ciszunetwork
 | `@ciszunetwork/email` | `packages/email/` | Webs/API |
 | `@ciszunetwork/payments` | `packages/payments/` | APIs de pago |
 | `@ciszunetwork/utils` | `packages/utils/` | Todos los anteriores + webs |
+| `@ciszunetwork/db` | `packages/db/` | Server-only (webs, bot, scripts) — NUNCA importar en el navegador |
 
 ## 3. Reglas de paquetes compartidos
 
@@ -89,6 +91,14 @@ Componentes React reutilizados por las webs:
 - Rieles de pago (NOWPayments/Binance) para donaciones/suscripciones.
 - Verificación server-side (IPN/webhooks) + rate limit.
 - Detalle: `PAYMENTS_SYSTEM.md`.
+
+## 8.1 `@ciszunetwork/db` (capa de datos)
+
+- Schemas Drizzle ORM fieles a los esquemas reales `ciszubot`, `muzicmania`,
+  `ciszunetwork` y `ciszu` (verificados contra la BD por `dbvr`).
+- Cliente Postgres server-only vía `pg` (`src/client.ts`): `db`, `createDb()`.
+- Regla de oro: **el navegador NUNCA importa este paquete**. El cliente usa
+  `@supabase/supabase-js` + PostgREST + RLS; Drizzle es exclusivo de server.
 
 ## 9. Cómo añadir código compartido
 
@@ -200,10 +210,13 @@ packages/
 ├── cdn       → resolver de assets (ciszu-cdn / Supabase Storage)
 ├── utils     → rate limit, csp, iast, escapeHtml  (sin dependencias internas)
 ├── email     → Resend (server-only)               usa: @ciszunetwork/utils
-└── payments  → NOWPayments/Binance (server-only)  usa: @ciszunetwork/utils
+├── payments  → NOWPayments/Binance (server-only)  usa: @ciszunetwork/utils
+└── db        → Drizzle + pg (server-only)         usa: (sin deps internas)
 
 Webs (ciszunetwork, ciszukoantony, muzicmania, ciszubot)
   → @ciszu/ui, @ciszunetwork/{cdn,utils,email,payments}
+Bot, webs y scripts (server)
+  → @ciszunetwork/db
 ```
 
 ## 19. Política de dependencias externas

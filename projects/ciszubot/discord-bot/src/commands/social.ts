@@ -1,7 +1,7 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { startGiveaway } from '../services/giveaways';
-import { getSupabase } from '../services/supabase';
+import { db, ciszubotSchema, eq, and, desc } from '../services/supabase';
 
 const giveaways = (): BotCommand => ({
   name: 'giveaway',
@@ -56,21 +56,30 @@ const gend = (): BotCommand => ({
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
   async execute(message) {
     if (!message.guild) return;
-    const db = getSupabase();
-    const { data } = await db
-      .from('giveaways')
-      .select('*')
-      .eq('guild_id', message.guild.id)
-      .eq('ended', false)
-      .order('ends_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    const giveawaysT = ciszubotSchema.giveaways;
+    const gwRows = await db
+      .select()
+      .from(giveawaysT)
+      .where(and(eq(giveawaysT.guildId, message.guild.id), eq(giveawaysT.ended, false)))
+      .orderBy(desc(giveawaysT.endsAt))
+      .limit(1);
+    const data = gwRows[0];
     if (!data) {
       await message.reply('❌ No hay sorteos activos en este servidor.');
       return;
     }
+    const giveawayData = {
+      id: data.id,
+      guild_id: data.guildId,
+      channel_id: data.channelId,
+      message_id: data.messageId,
+      prize: data.prize,
+      winners: data.winners,
+      ends_at: data.endsAt.toISOString(),
+      hosted_by: data.hostedBy,
+    };
     const { endGiveaway } = await import('../services/giveaways');
-    await endGiveaway(message.guild, data as never);
+    await endGiveaway(message.guild, giveawayData as never);
     await message.reply('✅ Sorteo finalizado.');
   },
 });
@@ -143,22 +152,21 @@ const alliance = (): BotCommand => ({
       return;
     }
     const partnerGuildId = fetched.guild.id;
-    const db = getSupabase();
-    const { data: existing } = await db
-      .from('alliances')
-      .select('id')
-      .eq('guild_id', message.guild.id)
-      .eq('partner_id', partnerGuildId)
-      .maybeSingle();
-    if (existing) {
+    const alliancesT = ciszubotSchema.alliances;
+    const existingRows = await db
+      .select({ id: alliancesT.id })
+      .from(alliancesT)
+      .where(and(eq(alliancesT.guildId, message.guild.id), eq(alliancesT.partnerId, partnerGuildId)))
+      .limit(1);
+    if (existingRows[0]) {
       await message.reply('⚠️ Ya existe una alianza con ese servidor.');
       return;
     }
-    await db.from('alliances').insert({
-      guild_id: message.guild.id,
-      partner_id: partnerGuildId,
-      partner_name: fetched.guild.name,
-      partner_invite: invite,
+    await db.insert(alliancesT).values({
+      guildId: message.guild.id,
+      partnerId: partnerGuildId,
+      partnerName: fetched.guild.name,
+      partnerInvite: invite,
     });
     const embed = new EmbedBuilder()
       .setColor('#00d4ff')
@@ -185,15 +193,24 @@ const allies = (): BotCommand => ({
       await message.reply('❌ Este comando solo funciona en un servidor.');
       return;
     }
-    const db = getSupabase();
-    const { data } = await db.from('alliances').select('*').eq('guild_id', message.guild.id).order('created_at', { ascending: false });
-    const alliances = (data ?? []) as Array<{ id: string; partner_name: string; partner_invite: string; created_at: string }>;
+    const alliancesT = ciszubotSchema.alliances;
+    const allianceRows = await db
+      .select()
+      .from(alliancesT)
+      .where(eq(alliancesT.guildId, message.guild.id))
+      .orderBy(desc(alliancesT.createdAt));
+    const allianceList = allianceRows.map((a) => ({
+      id: a.id,
+      partner_name: a.partnerName,
+      partner_invite: a.partnerInvite,
+      created_at: a.createdAt.toISOString(),
+    }));
     const embed = new EmbedBuilder()
       .setColor('#00d4ff')
       .setTitle(`🤝 Alianzas de ${message.guild.name}`)
       .setDescription(
-        alliances.length > 0
-          ? alliances.map((a) => `**${a.partner_name}** — [invitar](${a.partner_invite}) (<t:${Math.floor(new Date(a.created_at).getTime() / 1000)}:R>)`).join('\n')
+        allianceList.length > 0
+          ? allianceList.map((a) => `**${a.partner_name}** — [invitar](${a.partner_invite}) (<t:${Math.floor(new Date(a.created_at).getTime() / 1000)}:R>)`).join('\n')
           : 'Este servidor no tiene alianzas aún. Usa `cz!alliance <invite>` para crear una.'
       )
       .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })

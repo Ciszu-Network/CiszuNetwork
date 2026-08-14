@@ -20,8 +20,7 @@ let base = '';
 beforeAll(async () => {
   process.env.PORT = '0'; // puerto efímero para no chocar con el bot en :5000
   process.env.DBL_WEBHOOK_SECRET = 'test-secret';
-  server = setupStatsServer();
-  await new Promise<void>((resolve) => server!.on('listening', () => resolve()));
+  server = await setupStatsServer();
   const addr = server!.address();
   base = `http://127.0.0.1:${(addr as { port: number }).port}`;
 });

@@ -1,4 +1,4 @@
-import { getSupabase } from './supabase';
+import { db, ciszubotSchema, eq, and, desc, sql } from '@ciszunetwork/db';
 import { logger } from './logger';
 
 /** Sistema de niveles / XP */
@@ -22,22 +22,22 @@ export function levelFromXp(xp: number): { level: number; current: number; neede
 
 export async function addXp(userId: string, guildId: string, amount: number): Promise<{ level: number; leveledUp: boolean } | null> {
   try {
-    const db = getSupabase();
-    const { data } = await db
-      .from('levels')
-      .select('xp')
-      .eq('user_id', userId)
-      .eq('guild_id', guildId)
-      .maybeSingle();
-    const oldXp = data ? Number(data.xp) : 0;
+    const levels = ciszubotSchema.levels;
+    const rows = await db
+      .select({ xp: levels.xp })
+      .from(levels)
+      .where(and(eq(levels.userId, userId), eq(levels.guildId, guildId)))
+      .limit(1);
+    const oldXp = rows[0] ? Number(rows[0].xp) : 0;
     const before = levelFromXp(oldXp);
     const newXp = oldXp + amount;
-    await db.from('levels').upsert({
-      user_id: userId,
-      guild_id: guildId,
-      xp: newXp,
-      updated_at: new Date().toISOString(),
-    });
+    await db
+      .insert(levels)
+      .values({ userId, guildId, xp: newXp })
+      .onConflictDoUpdate({
+        target: [levels.userId, levels.guildId],
+        set: { xp: newXp, updatedAt: sql`now()` },
+      });
     const after = levelFromXp(newXp);
     return { level: after.level, leveledUp: after.level > before.level };
   } catch (error) {
@@ -48,9 +48,13 @@ export async function addXp(userId: string, guildId: string, amount: number): Pr
 
 export async function getLevel(userId: string, guildId: string): Promise<{ xp: number; level: number; current: number; needed: number; progress: number }> {
   try {
-    const db = getSupabase();
-    const { data } = await db.from('levels').select('xp').eq('user_id', userId).eq('guild_id', guildId).maybeSingle();
-    const xp = data ? Number(data.xp) : 0;
+    const levels = ciszubotSchema.levels;
+    const rows = await db
+      .select({ xp: levels.xp })
+      .from(levels)
+      .where(and(eq(levels.userId, userId), eq(levels.guildId, guildId)))
+      .limit(1);
+    const xp = rows[0] ? Number(rows[0].xp) : 0;
     return { xp, ...levelFromXp(xp) };
   } catch (error) {
     logger.warn('getLevel:', error);
@@ -60,9 +64,14 @@ export async function getLevel(userId: string, guildId: string): Promise<{ xp: n
 
 export async function getTopLevels(guildId: string, limit = 10): Promise<Array<{ user_id: string; xp: number }>> {
   try {
-    const db = getSupabase();
-    const { data } = await db.from('levels').select('user_id, xp').eq('guild_id', guildId).order('xp', { ascending: false }).limit(limit);
-    return (data ?? []).map((r: { user_id: string; xp: number }) => ({ user_id: r.user_id, xp: Number(r.xp) }));
+    const levels = ciszubotSchema.levels;
+    const rows = await db
+      .select({ userId: levels.userId, xp: levels.xp })
+      .from(levels)
+      .where(eq(levels.guildId, guildId))
+      .orderBy(desc(levels.xp))
+      .limit(limit);
+    return rows.map((r) => ({ user_id: r.userId, xp: Number(r.xp) }));
   } catch (error) {
     logger.warn('getTopLevels:', error);
     return [];
