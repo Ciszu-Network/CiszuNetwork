@@ -195,7 +195,7 @@ export const config = {
 | **RSC (Server Components)** | Ya en uso | Render + lecturas de datos en servidor (async, directo a Drizzle/Supabase). Sin red en el cliente. |
 | **Server Actions** | **Decidido (14 ago 2026) — YAGNI por ahora** | Evaluado en F3: formularios actuales son `mailto:` cliente (feedback/soporte) o ya validan vía API route (dashboard). No hay vacío real para `'use server'` hoy. Adoptar en formularios nuevos que reporten a servidor, con rate limit + Turnstile server-side. |
 | **Storybook** | **Añadido (F3, dev-only)** en `@ciszu/ui` v10.5.8 | Documenta los componentes compartidos (Icon, SmartImage) con visual regression. Scripts `storybook`/`build-storybook`; sin runtime en prod. |
-| **Chromatic** | **Añadido (F4, dev-only)** en `@ciszu/ui` (CLI 18.2) | Visual testing alojado de las stories. Build 1 publicado (14 ago 2026, 5 stories/2 componentes). Token `CHROMATIC_PROJECT_TOKEN` en vault; script `chromatic`. |
+| **Chromatic** | **Añadido (F4, dev-only)** en `@ciszu/ui` (CLI 18.2) | Visual + a11y testing alojado de las stories. Builds 1–3 publicados (14 ago 2026; 5 stories/2 componentes). Addon `@storybook/addon-a11y` + tags `a11y`. Token `CHROMATIC_PROJECT_TOKEN` en vault; script `chromatic`; CI en `.github/workflows/chromatic.yml` (action v18, TurboSnap, autoAccept en main). |
 | **TanStack Query** | **Añadido (F3)** en `ciszubot-website` | Caché/refetch de datos client dinámicos. `QueryProvider` en el layout raíz; dashboard guild usa `useQuery`/`useMutation`. Extender a las demás webs cuando exista feature. |
 | **tRPC / GraphQL** | **No instalar** | Solapan con RSC + Server Actions + PostgREST. Quedan como opción con disparador (API pública / multi-cliente / servicio standalone grande). Ver `BACKEND_SYSTEM.md` §20. |
 

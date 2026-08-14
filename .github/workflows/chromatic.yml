@@ -1,0 +1,52 @@
+name: Chromatic
+
+# Publica Storybook de @ciszu/ui en Chromatic (visual + interaction + a11y testing)
+# en cada push, y deja el PR status check con el resultado del build.
+#
+# Doc: https://www.chromatic.com/docs/github-actions
+# Token: secret del repo CHROMATIC_PROJECT_TOKEN (proyecto `6a7f722e2641a24bc6249782`).
+# Monorepo: `workingDir` apunta al subproyecto que tiene su propio `build-storybook`.
+
+on:
+  push:
+    paths:
+      - 'packages/ui/**'
+      - '.github/workflows/chromatic.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: chromatic-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  chromatic:
+    name: Chromatic (Storybook @ciszu/ui)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (historia completa para baselines)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          cache: pnpm
+      - name: Instalar dependencias
+        run: pnpm install
+      - name: Publicar en Chromatic
+        uses: chromaui/action@v18
+        with:
+          # Token del proyecto (secret del repo; solo visible en CI)
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          # Monorepo: el build de Storybook vive en packages/ui
+          workingDir: packages/ui
+          # Baselines limpios en main (squash/rebase merge preserva baselines)
+          autoAcceptChanges: main
+          # TurboSnap: solo re-captura stories afectadas por el diff
+          onlyChanged: true
+          # Especifica el script que buildea Storybook (default: build-storybook)
+          buildScriptName: build-storybook
