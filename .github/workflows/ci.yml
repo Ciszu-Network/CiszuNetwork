@@ -44,6 +44,21 @@ jobs:
       - run: pnpm install
       - run: pnpm test
 
+  storybook-tests:
+    name: Tests de componente Storybook (Vitest + Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          cache: pnpm
+      - run: pnpm install
+      - name: Instalar browsers de Playwright (chromium, para @vitest/browser)
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Tests de interacción de stories (addon-vitest)
+        run: pnpm --filter @ciszu/ui test:storybook
+
   # ── Seguridad (SAST/SCA/DACP/DAST) — tareas concurrentes ───────────────────
 
   semgrep:

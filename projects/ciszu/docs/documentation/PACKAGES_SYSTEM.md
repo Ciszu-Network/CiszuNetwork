@@ -66,10 +66,29 @@ Componentes React reutilizados por las webs:
 - **Storybook (dev-only, F3)**: `@storybook/react-vite` v10.5.8 con `storybook` y `build-storybook`.
   Stories en `src/**/*.stories.tsx` (Icon, SmartImage). Sin runtime en prod. Documenta el
   componente compartido por las 4 webs con visual regression.
+  Addons: core (controls/actions/interactions/viewport vienen integrados en Storybook 9+,
+  NO se instalan) + `@storybook/addon-a11y` 10.5.8 (accesibilidad en dev). Tags `['autodocs','a11y']`
+  en las stories para activar docs y chequeos de accesibilidad.
+- **Interaction/local testing (F4)**: `@storybook/addon-vitest` 10.5.8 + `@vitest/browser-playwright`
+  convierten las stories en tests de componente que corren en un navegador real (chromium) **sin**
+  depender de Chromatic. Play functions con `storybook/test` (`expect`, `userEvent`, `fn`) en
+  `Icon.stories.tsx` (click) y `SmartImage.stories.tsx` (alt). Tag `'test'` en las stories para
+  incluirlas (default del plugin). Config: `packages/ui/vitest.config.mts` (project `storybook`).
+  Script local: `pnpm --filter @ciszu/ui test:storybook`. **CI**: job `storybook-tests` en
+  `.github/workflows/ci.yml` instala chromium y los ejecuta.
 - **Chromatic (dev-only, F4)**: CLI `chromatic` 18.2 + token `CHROMATIC_PROJECT_TOKEN` (vault) para
-  visual testing alojado. Build 1 publicado (14 ago 2026; 5 stories/2 componentes).
-  appId `6a7f722e2641a24bc6249782`, URL de ejemplo:
-  `https://<appId>-<buildid>.chromatic.com`. Script: `pnpm --filter @ciszu/ui chromatic`.
+  visual + accessibility testing alojado. Builds 1–3 publicados (14 ago 2026; 5 stories/2
+  componentes). appId `6a7f722e2641a24bc6249782`.
+  Script local: `pnpm --filter @ciszu/ui chromatic` (usa `--exit-zero-on-changes`: no falla en
+  CI por cambios detectados; el review se hace en la web de Chromatic).
+  **CI**: `.github/workflows/chromatic.yml` — GitHub Action `chromaui/action@v18`, se ejecuta en
+  cada push que toque `packages/ui/**`, monorepo (`workingDir: packages/ui`), `autoAcceptChanges:
+  main` (baselines limpios con squash/rebase) y TurboSnap (`onlyChanged`) para solo re-capturar
+  stories afectadas.
+- **Ecosistema documentado (futuro, no instalado)**: integración de diseño con **Zeroheight /
+  Notion** (documentar stories a equipos) como evolución posterior; alternativas evaluadas y
+  descartadas: **Histoire / Ladle** (menor ecosistema y menor integración con Chromatic/testing que
+  Storybook).
 
 ## 5. `@ciszunetwork/cdn` (assets)
 

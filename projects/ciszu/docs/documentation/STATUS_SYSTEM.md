@@ -34,7 +34,8 @@ Identificador: STATUS_SYSTEM_V2.1.0_2026_08_14_ciszunetwork
 | Monitoreo externo | ✅ UptimeRobot 5 monitores + watcher ntfy (10 ago 2026) |
 | Cloudflare (standalone) | ✅ Web Analytics + Turnstile en las 4 webs |
 | Seguridad | ✅ RLS 28/28 tablas, migración 16 aplicada, rate limits, robots.ts ×4 |
-| Testing | ✅ Vitest (96 tests) + Playwright E2E |
+| Storybook `@ciszu/ui` | ✅ Chromatic (build 1, visual) + addon a11y + addon-vitest (interacción local con Playwright) |
+| Testing | ✅ Vitest (171 unit) + Playwright E2E + Storybook (component + a11y + visual) |
 | Backups BD | ⏳ Requiere PostgreSQL 17 (pg_dump ≥17) instalado |
 | Ciszubot OAuth dashboard | ⏳ Pendiente registrar callback en Discord Developer Portal |
 
@@ -192,7 +193,7 @@ Este doc es una **foto del estado** del ecosistema; al cerrar sesión:
 
 | Fecha | Cambio relevante |
 |---|---|
-| 2026-08-14 | F1 Drizzle, F2 NestJS+Fastify, F3 Zod/Storybook/TanStack Query, F4 Chromatic (build 1) + decisión runtime Node 24; vault +2 secrets (TanStack, Chromatic); tests 171; lint/builds verdes |
+| 2026-08-14 | F1 Drizzle, F2 NestJS+Fastify, F3 Zod/Storybook/TanStack Query, F4 Chromatic (build 1) + decisión runtime Node 24; vault +2 secrets (TanStack, Chromatic); tests 171; lint/builds verdes. Storybook: addon-vitest (interacción/regresión local con Playwright) + a11y, play functions en stories, job `storybook-tests` en CI; piloto Bun: CJS/TS nativo OK, descartado para Next/Vercel (ver FULL_STACK §Runtime) |
 | 2026-08-13 | Docs ampliados a estándar; frontend fases 1–11 completas; CDN 7.353 objetos; tests 157 |
 | 2026-08-12 | Pagos: infra NOWPayments lista, monetización pendiente hasta 18 |
 | 2026-08-11 | Cuenta NOWPayments creada; suite Vitest a 157 |
