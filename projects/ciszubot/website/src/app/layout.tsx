@@ -44,9 +44,9 @@ export const metadata: Metadata = {
   appleWebApp: { capable: true, title: "CiszuBot", statusBarStyle: "black-translucent" },
   manifest: "/manifest.webmanifest",
   icons: {
-    icon: LOGO_ISOTIPO_CIRCLE,
-    shortcut: LOGO_ISOTIPO_CIRCLE,
-    apple: LOGO_ISOTIPO_CIRCLE,
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/pwa/icon-192.png",
   },
 };
 
