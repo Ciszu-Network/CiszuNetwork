@@ -95,12 +95,10 @@ ESTÁNDARES DE FORMATEO (DOCX/PDF)
 
 IA_DOCS (Documentación para Agentes de IA)
 Cada proyecto tiene documentation/ con la siguiente estructura estándar:
-  AGENT_INSTRUCTIONS.md, AGENT_SECURITY_PROTOCOLS.md, ARCHITECTURE.md,
-  INITIAL_PROMPT.md, MIGRATION_HANDOVER.md, PROJECT_HISTORY.md,
-  PROJECT_STATE.md, PROJECTS.md, STACK.md, STATUS.md, TO_DO_LIST.md,
-  WORKFLOW.md
+  ARCHITECTURE.md, STACK_SYSTEM.md, WORKFLOW_SYSTEM.md, PROJECT_STATE.md,
+  PROJECT_HISTORY.md, TODO.md, BRAND_PLAN.md, README.md
 
-El proyecto de referencia para documentation es MuzicMania (19 archivos).
+El proyecto de referencia para la documentación es ciszu (62 archivos).
 
 CDN Y ASSETS
 - Los assets multimedia se sirven desde Supabase Storage (bucket ciszu-assets)
@@ -183,9 +181,7 @@ via scripts:
 
 IA_DOCS (Documentation for AI Agents)
 Each project has documentation/ with the following standard structure:
-  AGENT_INSTRUCTIONS.md, AGENT_SECURITY_PROTOCOLS.md, ARCHITECTURE.md,
-  INITIAL_PROMPT.md, MIGRATION_HANDOVER.md, PROJECT_HISTORY.md,
-  PROJECT_STATE.md, PROJECTS.md, STACK.md, STATUS.md, TO_DO_LIST.md,
-  WORKFLOW.md
+  ARCHITECTURE.md, STACK_SYSTEM.md, WORKFLOW_SYSTEM.md, PROJECT_STATE.md,
+  PROJECT_HISTORY.md, TODO.md, BRAND_PLAN.md, README.md
 
-The reference project for documentation is MuzicMania (19 files).
+The reference project for documentation is ciszu (62 files).

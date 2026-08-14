@@ -1,5 +1,12 @@
 # REVIEWS_SYSTEM — Plataformas de valoración y reputación de Ciszu Network
 
+Versión: 2.0.0
+Actualización: 2026-08-13
+Identificador: REVIEWS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
+
+> **Definición**: plataformas de valoración y reputación de los productos públicos del
+> ecosistema (Trustpilot, top.gg, DBL, itch.io, etc.). Complementa a `PAYMENTS_SYSTEM.md`.
+
 **Estado (11 ago 2026)**: verificación de dominio en **Trustpilot** iniciada (archivo HTML `c2b7fd59-74ac-4584-a00d-c3aacd0f931f.html` desplegado y respondiendo 200 en producción). Documenta Trustpilot y el resto de plataformas de valoración/reseñas de los productos públicos del ecosistema. Complementa a `PAYMENTS_SYSTEM.md` (pagos) — **son sistemas independientes**; la verificación de dominio de Trustpilot NO depende de NowPayments ni de ningún proveedor de pago.
 
 ## 1. Objetivo
@@ -91,3 +98,103 @@ Crear y mantener reputación pública verificada para los productos de Ciszu Net
 - `curl -sS -L https://ciszunetwork.vercel.app/c2b7fd59-74ac-4584-a00d-c3aacd0f931f.html` → **200** con el código en el body (verificado 11 ago 2026).
 - Deploy READY en Vercel (`ciszunetworkpage`, deployment `dpl_2aP6...`).
 - La verificación final la hace Trustpilot al pulsar "Verify domain" (fetch server-side desde Trustpilot, no desde el navegador del usuario).
+
+## Conceptos de reputación (contexto informático)
+
+| Término | Definición |
+|---|---|
+| **Reseña/Review** | Valoración pública de un producto |
+| **Rating** | Puntuación (estrellas, upvotes) |
+| **Verificación de dominio** | Probar que controlas la web (archivo HTML/DNS TXT) |
+| **Badge/Insignia** | Sello de confianza mostrado en la web |
+| **Reputación social** | Confianza derivada de reseñas externas |
+| **SEO off-page** | Enlaces/backlinks de sitios externos |
+| **AutoPoster** | Script que actualiza stats del bot automáticamente |
+| **Voto (bot)** | Recompensa social del bot (top.gg/DBL) |
+
+## Checklist de reputación por producto
+
+| Producto | Plataforma | Estado | Acción |
+|---|---|---|---|
+| CiszuNetwork | Trustpilot | ⏳ Verificando | Pulsar Verify domain |
+| CiszukoAntony | Trustpilot | ⏳ Futuro | Seguir patrón archivo HTML |
+| MuzicMania | Trustpilot/itch.io | ⏳ Futuro | Publicar build en itch.io |
+| CiszuBot | Top.gg + DBL | ✅ Integrado | Subir bot + tokens |
+| Apps desktop | Microsoft Store | ⏳ Futuro | Cuenta partner |
+
+## Buenas prácticas de reputación
+
+1. Responder reseñas (positivas y negativas) con cortesía.
+2. No pagar por reseñas falsas (prohibido y dañino).
+3. Mantener la verificación de dominio al día (Trustpilot 1 mes de validez del archivo).
+4. Enlazar badges en las webs cuando estén disponibles.
+5. Monitorear menciones en redes y Discord (ver `MONITORING_SYSTEM.md`).
+
+## Flujo para verificar una web nueva en Trustpilot
+
+1. En Trustpilot Business: perfil → Verify your domain → file upload.
+2. Descargar el HTML generado (código de un solo uso, válido ~1 mes).
+3. Colocarlo en `public/` de la web correspondiente (ver tabla §3.3).
+4. Hacer deploy (commit + push a `main` → Vercel).
+5. Comprobar con `curl -L` que la URL devuelve el código (seguir redirects de cleanUrls).
+6. Pulsar Verify domain en Trustpilot y confirmar el estado.
+7. Borrar el archivo del repo y del deploy (el verificador ya no lo necesita).
+
+## Métricas de reputación a seguir
+
+| Métrica | Fuente | Nota |
+|---|---|---|
+| Rating promedio | Trustpilot / top.gg / DBL | Mantener ≥ 4.5 estrellas |
+| Número de reseñas | Cada plataforma | Crecimiento mensual |
+| Votos del bot | top.gg / DBL webhooks | Recompensan economía (500 monedas) |
+| Tasa de respuesta | Reseñas respondidas | Responder en < 48 h |
+| Menciones | Redes + Discord | Ver `MONITORING_SYSTEM.md` |
+
+## Política de respuestas a reseñas
+
+- **Positivas**: agradecer, citar el producto, invitar al Discord.
+- **Negativas**: disculparse, ofrecer solución concreta, pedir contacto privado.
+- **Nunca**: pagar por reseñas, inventar reseñas, atacar al usuario públicamente.
+- Las respuestas se coordinan desde el canal de soporte (Discord/WhatsApp).
+
+## Reviews y SEO off-page
+
+- Los perfiles con reviews generan backlinks y entidades en buscadores (E-E-A-T).
+- Enlazar el perfil de Trustpilot desde la web y las redes (nofollow recomendado).
+- Mantener nombre, categoría y URL consistentes en todas las plataformas.
+
+## Preguntas frecuentes
+
+**¿Es obligatorio Trustpilot?** No; es una opción de confianza social. top.gg/DBL son los
+críticos para el bot; las reviews de Google, para el negocio local.
+
+**¿El archivo de verificación se puede borrar tras verificar?** Sí; Trustpilot solo lo
+comprueba en el momento de la verificación.
+
+**¿Puedo publicar MuzicMania en itch.io sin tarjeta?** Sí, el perfil y la publicación
+gratuita no requieren tarjeta (13+).
+
+**¿Los votos del bot afectan a la reputación en webs?** No directamente; son reputación del
+bot en top.gg/DBL y alimentan la economía interna del servidor.
+
+## Checklist de lanzamiento de reseñas por producto
+
+- [ ] Trustpilot: archivo de verificación desplegado y respondiendo 200.
+- [ ] Top.gg/DBL: bot subido, tokens en vault y `.env`, AutoPoster activo.
+- [ ] itch.io: perfil creado y build de MuzicMania publicado.
+- [ ] Google Business Profile: ficha creada y vinculada a la web.
+- [ ] Badges/links de reviews visibles en cada web.
+- [ ] Respuestas a reseñas monitoreadas semanalmente.
+
+## Relación con otros sistemas
+
+| Sistema | Relación |
+|---|---|
+| `PAYMENTS_SYSTEM.md` | Reviews son independientes de pagos; votos del bot alimentan economía |
+| `MONITORING_SYSTEM.md` | Alertas de menciones y reputación |
+| `BUSINESS_SYSTEM.md` | La reputación alimenta la estrategia de marca |
+| `ANALYTICS_SYSTEM.md` | Medir el impacto de reviews en conversión |
+| `ONLINE_SERVICES_SYSTEM.md` | Plataformas y cuentas asociadas |
+
+_Última revisión: 13 ago 2026._ Relacionado: `PAYMENTS_SYSTEM.md`, `MONITORING_SYSTEM.md`,
+`ONLINE_SERVICES_SYSTEM.md`, `BUSINESS_SYSTEM.md`.

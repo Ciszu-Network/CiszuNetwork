@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+﻿import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { createIast, buildCsp } from '@ciszunetwork/utils';
 
@@ -26,7 +26,7 @@ export function middleware(request: NextRequest) {
 
   // ── 1b. Sensor IAST (runtime): detecta payloads maliciosos, solo observa ────
   // Edge-safe (regex puras). Emite [IAST] a logs de Vercel con dedupe 5 min.
-  // Doc: packages/utils/src/iast.ts + SECURITY_TASKS.md
+  // Doc: packages/utils/src/iast.ts + SECURITY_PROTOCOLS.md
   const params: Record<string, string> = {};
   request.nextUrl.searchParams.forEach((v, k) => {
     params[k] = v;

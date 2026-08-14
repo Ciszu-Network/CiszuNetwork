@@ -1,0 +1,213 @@
+﻿# FULL_STACK_SYSTEM — Stack tecnológico de Ciszu Network
+
+Versión: 2.0.0
+Actualización: 2026-08-13
+Identificador: FULL_STACK_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
+
+> **Definición**: inventario actual (ago 2026) de lenguajes, frameworks, sistemas operativos,
+> herramientas y servicios del ecosistema completo. Fuente única del stack; detalles de
+> herramientas en `TOOLS_SYSTEM.md`.
+
+Inventario actual (ago 2026) de lenguajes, frameworks, sistemas operativos, herramientas y servicios del ecosistema completo. Fuente única del stack; detalles de herramientas en `TOOLS_SYSTEM.md`.
+
+## Core
+
+- **Runtime:** Node.js 20+ (PC local: Node v24.18.0; bot en Docker: Node 24 `node:24-alpine`)
+- **Package Manager:** pnpm 10.8.1 (workspaces/Turbo monorepo)
+- **Language:** TypeScript (strict)
+- **BD:** PostgreSQL (Supabase, server 17.6 remote; PostgreSQL 18.4 local para tooling)
+
+## Lenguajes de programación
+
+| Lenguaje | Uso |
+| -------- | --- |
+| **TypeScript** | 4 webs Next.js, bot Discord.js, bot website, packages (`@ciszu/ui`, `@ciszunetwork/cdn`, `@ciszunetwork/utils`, `email`, `payments`) |
+| **JavaScript** (Node) | Scripts de automatización (`scripts/`), generadores IA (`tools/`), play-dl música |
+| **Rust** | Launcher/desktop app de MuzicMania (Tauri + NSIS) |
+| **Python** | `convert-media.py` (derivadas AVIF/WebP/Opus), `tools/legal-ai` (openpyxl), semgrep wrapper, generadores música/video |
+| **SQL (PostgreSQL)** | Migraciones, RLS, funciones RPC (schemas `muzicmania`, `ciszubot`, `ciszu`, `public`) |
+| **PowerShell / cmd** | Scripts Windows (`vault.ps1`, `ciszu-ai.cmd`, `generate-pwa-icons.ps1`, `docx2pdf.ps1`) |
+| **Bash** | CI/CD GitHub Actions, Docker (bot) |
+
+## Frameworks y librerías principales
+
+- **Next.js 15** (App Router) + **Tailwind CSS 4** + PostCSS — las 4 webs. Fonts: Geist vía next/font.
+- **React 19** + TypeScript. Paquete UI propio `@ciszu/ui` (Icon, SmartImage, PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics).
+- **Discord.js ^14.22** + `@discordjs/voice` + play-dl (bot, 72 comandos, 9 categorías).
+- **Express ^5** — panel web del bot (`:5000`, `/api/stats`, `/api/votes`).
+- **Supabase** (`@supabase/supabase-js`) — auth + Postgres + Storage CDN + PostgREST.
+- **Tauri 2** + Rust — app de escritorio MuzicMania (NSIS), splash HTML/CSS/JS.
+- **Vitest + Testing Library (happy-dom)** — tests unitarios; **Playwright** — E2E (ver `TESTING_SYSTEM.md`).
+- **Sentry** (`@sentry/nextjs` ×4 webs, `@sentry/node` en bot) — errores (ver `ERRORS_SYSTEM.md`).
+- **Turbo (pnpm workspaces)** — monorepo builds.
+- **Docker** (bot multi-stage pnpm, usuario no-root).
+
+## Sistemas operativos usados
+
+| OS | Dónde |
+| -- | ----- |
+| **Windows 11 Pro** (64-bit, build 10.0.26200) | PC de desarrollo principal (Ciszuko) |
+| **Windows 10/11** | Instaladores del juego Tauri en `muzicmania-source/downloads/` |
+| **Linux (Alpine)** | Imagen del bot (`node:24-alpine`) en Docker |
+| **Linux (Ubuntu)** | GitHub Actions runners, ZAP/semgrep por container |
+
+## Herramientas (CLI y GUI)
+
+- **CLI/IDE**: VS Code, opencode (agente in-terminal), git 2.55, bash, `dbvr` (BD), `supabase` CLI, `zap`, `semgrep`, `trivy`, `gitleaks`, `secretlint`, `cargo-audit`, `ffmpeg`, `rg` (ripgrep 15.2.0), `fzf` 0.74.2, `agen` (age cryptography).
+- **GUI**: DBeaver CE (BD), Bruno (API), Fork (Git GUI), ZAP (daemon+API), Docker Desktop, Windows Terminal, Opera GX (navegador/predeterminado + E2E), GIMP/photopea + Illustrator/Photoshop locales (diseño).
+
+## Backend / Servicios
+
+- **Auth & DB:** Supabase (PostgreSQL, un solo proyecto `obwzzmbvkrcscqwptlqo`)
+- **Storage:** Supabase Storage (bucket CDN `ciszu-cdn`, `avatars` para perfiles)
+- **Client:** `@supabase/supabase-js`
+- **Hosting:** Vercel (4 proyectos) + GitHub Actions (deploys y CI)
+- **CDN:** Supabase Storage (`ciszu-cdn`) con edge resolver Cloudflare
+
+## CI/CD y Seguridad (DevSecOps)
+
+- **Platform:** GitHub Actions (workflows CI + 4 deploys + DAST semanal + uptime-watch)
+- **Deployment:** Vercel (todas las webs)
+- **SAST:** semgrep `p/security-audit`, CodeQL (js + rust en cada push)
+- **DAST:** OWASP ZAP 2.17.0 (baseline semanal sobre las 4 webs)
+- **Secrets:** gitleaks 8.30.1 (pre-commit + diff CI), secretlint 13.0.4 (pre-commit)
+- **Supply chain:** `pnpm audit --prod`, `cargo audit`, trivy 0.72.0
+- **Configs:** `.gitleaks.toml`, `.semgrepignore`, `trivy.yaml`, `.secretlintrc.json`
+- **Doctrina:** `DEVSECOPS.md`, `CODE_PRINCIPLES.md`, `SECURITY_PROTOCOLS.md`
+
+## Shared Packages
+
+- **@ciszunetwork/cdn** — Asset resolver (icons, multimedia, sistema de formatos)
+- **@ciszu/ui** — Componentes UI compartidos
+- **@ciszunetwork/utils** — Caché, rate limiting, IAST, CSP
+- **@ciszunetwork/email** — Emails (Resend)
+- **@ciszunetwork/payments** — Pagos (NOWPayments)
+
+## Tooling
+
+- **Pandoc 3.10** — conversión de documentos (md → docx)
+- **Python/pip** — PDF (reportlab), weasyprint (GTK), openpyxl
+- **Windows** — plataforma principal de desarrollo
+- **Runtimes:** Node 24 (bot) / Node >=20 (webs), pnpm 10.8.1, PostgreSQL 18.4 local / 17.6 remote, Rust toolchain (Tauri)
+
+## Mapa de stack por proyecto (resumen)
+
+| Proyecto | Stack |
+|---|---|
+| ciszunetwork-website | Next 15 + Tailwind 4 + Supabase + Sentry + Turnstile |
+| ciszukoantony-website | Next 15 + Tailwind 4 + Supabase + Sentry + Turnstile |
+| muzicmania-website | Next 15 + Tailwind 4 + Supabase + Sentry + Tauri 2 + PWA |
+| ciszubot-website | Next 15 + Tailwind 4 + Supabase + Sentry + Turnstile |
+| ciszubot (bot) | Node 24 + Discord.js 14 + Express 5 + Supabase + Docker |
+| packages/* | TS + Vitest (ui, cdn, utils, email, payments, config) |
+
+## Versiones clave (pinning)
+
+| Componente | Versión |
+|---|---|
+| Node.js (PC local) | 24.18.0 |
+| Node.js (bot Docker) | 24 alpine |
+| pnpm | 10.8.1 |
+| Next.js | 15.x |
+| React | 19 |
+| Tailwind CSS | 4 |
+| Discord.js | ^14.22 |
+| Express | ^5 |
+| Tauri | 2 |
+| @sentry/nextjs / @sentry/node | 10.69.0 |
+| PostgreSQL (Supabase) | 17.6 |
+| PostgreSQL (local tooling) | 18.4 |
+
+## ¿Qué NO está en el stack?
+
+| Tecnología | Motivo |
+|---|---|
+| **Redis (self-hosted)** | Sustituido por caché multi-tienda (KV + Postgres) |
+| **Electron** | Sustituido por Tauri (peso/RAM) |
+| **Brevo/SendGrid** | Email → Supabase hoy, Resend en Fase B |
+| **PostHog para errores** | Solo analítica de producto; errores → Sentry |
+| **Clerk (auth)** | Supabase Auth decidido (ver `AUTH_SYSTEM.md`) |
+| **Sass/SCSS** | Tailwind 4 lo cubre |
+
+## Criterios de elección de tecnología
+
+| Decisión | Alternativa descartada | Por qué esta |
+|---|---|---|
+| Next.js 15 + App Router | Pages Router / Vite SSR | RSC, layouts, deploys optimizados en Vercel |
+| React 19 | React 18 | Versión por defecto de Next 15 |
+| Tailwind 4 | Sass/SCSS, CSS Modules | Utilities `@theme`, sin usar `tailwind.config.ts` |
+| Supabase | Backend propio | BaaS con auth + BD + Storage en un solo proyecto |
+| pnpm + Turbo | npm/yarn | Workspaces + build cache de Turbo |
+| Tauri (Rust) | Electron | Menor RAM, menor tamaño de binario (NSIS) |
+| Vitest | Jest | Nativo ESM, integrado con happy-dom para UI |
+
+## Gestión de versiones y actualizaciones
+
+- Enfoque **pinning intencional**: las versiones clave están en la tabla "Versiones clave"; actualizar con
+  criterio, nunca a ciegas (un `pnpm up -i` descontrolado rompe el monorepo).
+- Antes de subir una dependencia: leer el changelog, revisar breaking changes y verificar que
+  `pnpm lint`, `pnpm test` y `pnpm build` pasan en local y en CI.
+- Node: mínimo 20 en webs (requisito de Next 15), 24 en el bot (Docker `node:24-alpine`).
+- pnpm: v10 mantiene el `pnpm-lock.yaml` estable; cambios de lockfile se revisan en PR.
+- Ruta de actualización segura: actualizar primero `packages/*` (contratos TS), luego las apps que los consumen.
+
+## Soporte de navegadores y dispositivos
+
+- Objetivo: **navegadores modernos evergreen** (últimos 2 años de Chrome/Edge/Firefox/Safari), sin IE.
+- PWA instalable en Android y Windows; hereda el manifest + service worker de las 4 webs.
+- Escritorio MuzicMania: Windows 10/11 x64 (instalador NSIS vía Tauri), WebView2.
+- Dev local y E2E en Opera GX (navegador predeterminado del PC).
+
+## Entornos y variables de entorno
+
+| Entorno | Variables | Señal |
+|---|---|---|
+| Development | `.env.local` local | `NODE_ENV=development` |
+| Preview | Vercel preview | env vars por proyecto (target preview) |
+| Production | Vercel production + vault | env vars (target production) |
+
+- Secretos solo `process.env.X` server-side; `NEXT_PUBLIC_` solo para URLs y datos públicos por diseño
+  (ver `SECURITY_PROTOCOLS.md`).
+- Las credenciales viven en el vault (`VAULT_SYSTEM.md`), nunca en código ni en fallbacks.
+
+## FAQ de stack
+
+| Pregunta | Respuesta |
+|---|---|
+| ¿Node 24 local afecta a las webs? | No: las webs corren en Vercel con Node ≥20; el 24 local es tooling |
+| ¿Por qué PostgreSQL 18 local y 17 remoto? | Tooling (dbvr) más nuevo; Supabase Free usa 17.6 |
+| ¿Puedo usar otra librería CSS? | No: Tailwind 4 es el estándar; CSS modules puntual si hace falta |
+| ¿Cuándo usar `@ciszu/ui` vs un paquete lógico? | UI compartida → `@ciszu/ui`; lógica/negocio → el paquete que toque |
+| ¿Dónde ver errores en runtime? | Sentry (org `ciszu-network`), logs de Vercel filtrando `[IAST]` |
+
+## Checklist para introducir tecnología nueva
+
+- [ ] ¿Resuelve un problema real? (YAGNI/KISS — ver `CODE_PRINCIPLES.md`).
+- [ ] ¿Existe alternativa en el stack actual? Documentar la diferencia antes de instalarla.
+- [ ] Instalar solo tras aprobación y ejecutar `pnpm audit --prod`.
+- [ ] Si reemplaza algo existente, mover la fila a "¿Qué NO está en el stack?" con el motivo.
+- [ ] Verificar build, lint, tests, y actualizar este documento con la nueva versión.
+
+## Mantenimiento del stack (tareas periódicas)
+
+- **Dependencias**: correr `pnpm audit --prod` y revisar Dependabot al inicio de cada semana; actualizar
+  solo lo roto o con CVE crítica salvo petición expresa (ver `DEVSECOPS_SYSTEM.md`).
+- **Runtime**: revisar versiones de Node/pnpm anunciadas (LTS) y planear saltos con criterio.
+- **Docs**: mantener al día la tabla "Versiones clave" al cambiar cualquier componente.
+- **Debas**: cuando se sustituye una tecnología (ej. Redis → caché multi-tienda), mover la fila a
+  "¿Qué NO está en el stack?" y registrar el motivo.
+
+## Stack por capa de responsabilidad
+
+| Capa | Tecnología |
+|---|---|
+| UI / presentación | React 19, Tailwind 4, `@ciszu/ui`, PWA |
+| Lógica de servidor | Next.js App Router (rutas API), middleware |
+| Datos | PostgreSQL 17.6 (Supabase), RLS, PostgREST |
+| Caché | Memoria → Upstash KV → Postgres `ciszu.cache` |
+| Autenticación | Supabase Auth (ver `AUTH_SYSTEM.md`) |
+| Errores / analítica | Sentry, PostHog, Cloudflare Web Analytics |
+| Entrega | Vercel + GitHub Actions + Docker (bot) |
+
+_Última revisión: 13 ago 2026._
+

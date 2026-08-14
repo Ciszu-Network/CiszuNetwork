@@ -1,4 +1,11 @@
-# Sistema de Caché de Ciszu Network
+# CACHING_SYSTEM — Sistema de Caché de Ciszu Network
+
+Versión: 2.0.0
+Actualización: 2026-08-13
+Identificador: CACHING_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
+
+> **Definición**: sistema de caché del ecosistema. Caché multi-tienda (memoria LRU →
+> Vercel KV/Upstash → Postgres `ciszu.cache`) y rate limiting. Implementado el 9 ago 2026.
 
 **Implementado: 9 ago 2026** — cierra la última tarea pendiente del toDo de ciszunetwork
 ("Sistema de caché con Redis — evaluado, diferido hasta métricas"). No se usa Redis:
@@ -157,3 +164,61 @@ pnpm --filter muzicmania-website build   # y ciszubot-website
 - ✅ Case 3 (rate limit) + case 4 (contadores votos).
 - ❌ Fase 4 (Redis self-host): descartada por el plan (no aporta vs. KV/Postgres).
 - ✅ Par KV añadido al `.env` del bot Docker (10 ago 2026) — el webhook de votos también cuenta en KV.
+
+## Conceptos de caché (contexto informático)
+
+| Término | Definición |
+|---|---|
+| **Cache-aside** | La app consulta caché; si es miss, consulta fuente y escribe caché |
+| **TTL** (Time To Live) | Tiempo de validez de una entrada |
+| **LRU** (Least Recently Used) | Evicción de la entrada menos usada |
+| **Hit / Miss** | Encontrado / no encontrado en caché |
+| **Invalidación** | Borrar una entrada por cambio de datos |
+| **Multi-tier cache** | Varias capas de almacenamiento |
+| **Key** | Identificador de la entrada (clave) |
+| **Retry / backoff** | Reintento con espera progresiva |
+| **Rate limit / window** | Máximo de peticiones por ventana de tiempo |
+| **Stale** | Dato que ya caducó pero aún disponible |
+
+## Estrategia por tipo de dato
+
+| Tipo de dato | Clave | TTL | Capa |
+|---|---|---|---|
+| Leaderboard MuzicMania | `leaderboard:v1:page:...` | 60s | memoria→KV→PG |
+| Guilds del dashboard | `discord:guilds:<userId>` | 60s | memoria→KV→PG |
+| Bot guilds | `discord:bot-guilds` | 60s | memoria→KV→PG |
+| Contadores de votos | `ciszu.counters` | persistente | BD + bump |
+
+## Cómo añadir un dato nuevo a caché
+
+1. Decidir la **clave** (prefijo + identificador, versionada con `:v1:`).
+2. Elegir el **TTL** (corto recomendado).
+3. Usar `cacheStore.getOrSet(key, ttl, loader)`.
+4. Si el dato se escribe, invalidar con `store.del(key)`.
+5. Documentar aquí la nueva entrada + tests en `packages/utils`.
+
+## Troubleshooting
+
+| Problema | Causa | Solución |
+|---|---|---|
+| Dashboard/leaderboard lentos | Cache miss repetido | Comprobar KV + PG conectados; TTL corto |
+| KV no se usa | Faltan `KV_REST_API_URL`/`KV_REST_API_TOKEN` | Añadir env vars y redeploy |
+| `ciszu.cache` vacía | Sin datos cacheados aún | Ejecutar consultas reales (miss→write) |
+| 429 en webhook de votos | Rate limiter activo (10/h) | Esperar ventana; no falsear votos |
+| Contador no sube | Sin BD en el bot | Revisar `bumpCounter` fallback + logs |
+
+## Comandos de verificación
+
+```bash
+# estado de la caché en BD
+dbvr sql -ds=supabase "select * from ciszu.cache order by updated_at desc limit 20;"
+
+# contadores
+dbvr sql -ds=supabase "select * from ciszu.counters;"
+
+# tests del paquete
+pnpm test
+```
+
+_Última revisión: 13 ago 2026._ Relacionado: `DB_SYSTEM.md`, `BACKEND_SYSTEM.md`,
+`SECURITY_PROTOCOLS.md`, `TOOLS_SYSTEM.md`, `STATUS_SYSTEM.md`.

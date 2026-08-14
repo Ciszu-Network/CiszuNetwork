@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """Convert media — Sistema de Formatos Ciszu Network (Fase A).
 
 Genera derivadas de ENTREGA (Capa 4) AL LADO de los originales (Capa 3):
@@ -7,7 +7,7 @@ Genera derivadas de ENTREGA (Capa 4) AL LADO de los originales (Capa 3):
   - GIF                                   -> .webp  (animado via Pillow save_all)
   - MP3/OGG (si --audio y hay ffmpeg)     -> .opus  (96k VBR)
 
-Reglas (MEDIA_FORMATS.md cap 3):
+Reglas (MEDIA_FORMATS_SYSTEM.md cap 3):
   1. Nunca toca el original.
   2. Solo guarda si la derivada pesa MENOS (regla 3 del pipeline).
   3. Masters (PSD/AI/PDN/PFL/MOV/WAV) y SVG: nunca se convierten.
