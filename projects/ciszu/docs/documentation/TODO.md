@@ -49,34 +49,40 @@ Ciszubot Website:
 
 > Plan aprobado 14 ago 2026. Alcance: TODOS los proyectos (webs, bot, packages). Ejecución en
 > fases: F1 Drizzle → F2 Ciszubot (exclusivo bot) → F3 herramienta client + cierre.
+>
+> Estado: F1, F2 y F3 **completados**. Queda la verificación final + commit (paso "Cierre").
 
 ## F1 — Drizzle ORM (ORM oficial, server-side)
 
-- [ ] Crear `packages/db/` con `drizzle-orm` + driver `pg` (server-only, sin binarios).
-- [ ] Definir schemas TS de los 4 esquemas: `ciszubot`, `muzicmania`, `ciszunetwork`, `ciszu`.
-- [ ] Migrar consumo server-side (API routes, RSC de server components, bot, scripts) a Drizzle.
-- [ ] Mantener `@supabase/supabase-js` + PostgREST + RLS para el navegador (anon key). El ORM
+- [x] Crear `packages/db/` con `drizzle-orm` + driver `pg` (server-only, sin binarios).
+- [x] Definir schemas TS de los 4 esquemas: `ciszubot`, `muzicmania`, `ciszunetwork`, `ciszu`.
+- [x] Migrar consumo server-side (API routes, RSC de server components, bot, scripts) a Drizzle.
+- [x] Mantener `@supabase/supabase-js` + PostgREST + RLS para el navegador (anon key). El ORM
       nunca se expone al cliente.
-- [ ] Crear `ORM_SYSTEM.md` + actualizar `DB_SYSTEM.md`, `BACKEND_SYSTEM.md`, `FULL_STACK_SYSTEM.md`.
+- [x] Crear `ORM_SYSTEM.md` + actualizar `DB_SYSTEM.md`, `BACKEND_SYSTEM.md`, `FULL_STACK_SYSTEM.md`.
 
 ## F2 — Ciszubot: Express → NestJS+Fastify (exclusivo del bot)
 
-- [ ] Mantener el proceso Discord.js en Docker (larga duración; no es una web).
-- [ ] Reemplazar `statsServer.ts` (Express ^4) por microservicio **NestJS + adaptador Fastify**:
+- [x] Mantener el proceso Discord.js en Docker (larga duración; no es una web).
+- [x] Reemplazar `statsServer.ts` (Express ^4) por microservicio **NestJS + adaptador Fastify**:
       `GET /api/stats`, `POST /api/update-stats`, `POST /api/votes`, `POST /api/votes/dbl`.
-- [ ] Lo no-Discord (panel/estado/webhooks) → `ciszubot-website` (Next.js) con API routes +
+- [x] Lo no-Discord (panel/estado/webhooks) → `ciszubot-website` (Next.js) con API routes +
       lectura de `ciszubot.bot_status` en Supabase.
-- [ ] Eliminar dependencia `express` del bot.
+- [x] Eliminar dependencia `express` del bot.
 
 ## F3 — Herramientas client/validación (todos los proyectos)
 
-- [ ] **Zod**: validar todos los bodies de API routes que mutan sin validar (usa
-      `@ciszunetwork/utils` `parseJsonBody`/`firstZodMessage`).
-- [ ] **Server Actions**: adoptar patrón de escritura en formularios nuevos (feedback, contacto,
+- [x] **Zod**: validar todos los bodies de API routes que mutan sin validar (usa
+      `@ciszunetwork/utils` `parseJsonBody`/`firstZodMessage`). Aplicado a `dashboard`,
+      `resolve-username`, `invoice` (además de `verify-turnstile` ya cubierto).
+- [x] **Server Actions**: adoptar patrón de escritura en formularios nuevos (feedback, contacto,
       soporte); API routes solo para webhooks/3rd-party.
-- [ ] **Storybook**: setup dev-only para documentar `@ciszu/ui`.
-- [ ] **TanStack Query**: incremental — instalar cuando exista feature de datos client dinámico.
-- [ ] **tRPC / GraphQL**: NO instalar (decisión final). Documentados como opción con disparador
+      _Decisión 14 ago 2026 (YAGNI): los formularios actuales son `mailto:` cliente y el dashboard
+      ya valida con Zod. No hay vacío real hoy; documentado para adoptar en formularios nuevos._
+- [x] **Storybook**: setup dev-only para documentar `@ciszu/ui` (v10.5.8, stories de Icon/SmartImage).
+- [x] **TanStack Query**: incremental — instalar cuando exista feature de datos client dinámico.
+      Instalado en `ciszubot-website` (`QueryProvider` + dashboard con `useQuery`/`useMutation`).
+- [x] **tRPC / GraphQL**: NO instalar (decisión final). Documentados como opción con disparador
       futuro (API público/multi-cliente/servicio grande). Ver `BACKEND_SYSTEM.md` §19-§20.
 
 ## Cierre / pruebas / publicación
@@ -88,3 +94,5 @@ Ciszubot Website:
 # #2 Implementaciones en la infraestructura masiva desde el backend y database (Futuro)
 
 - [ ] Investigar si implementar estos servicios sin importar el tiempo que tome, investigar si son grauitos y no se solapan actualmente, teniendo en cuenta que la lista es extensa y muy diversa sin verificar: Logtail / Better Stack o Datadog, Turbopack / Rolldown, TypeBox, PocketHost o Coolify, Miniflare, ArkType, tku / Larvitar / Toolkits de Compilación Nativos (SWC / Rolldown), Temporal, Effect TS, Husky + Lint-Staged, Changesets, Release Please o Auto, Nuqs, Mock Service Worker, SeaQL / SeaORM, Directus, Joy UI / Radix UI (MSW)en los proyectos.
+- [ ] Investigar mas sobre el ecosistema de storybook, uso para mi con GUI, addons, que es chomatic.
+- [ ] Investigar y analizar si debemos de dejar de usar node.js vanilla y pasarnos a bun o deno.

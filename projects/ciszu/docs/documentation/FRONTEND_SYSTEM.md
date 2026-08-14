@@ -191,11 +191,12 @@ export const config = {
 
 | Herramienta | Estado | Rol / decisión |
 |---|---|---|
-| **Zod** | Integrado en `@ciszunetwork/utils` | Validación de inputs en el borde (API routes, formularios). Esquemas reutilizables (`turnstileTokenSchema`, `contactMessageSchema`, ...). Se amplía con `drizzle-zod`. |
+| **Zod** | Integrado en `@ciszunetwork/utils` | Validación de inputs en el borde (API routes, formularios). Esquemas reutilizables (`turnstileTokenSchema`, `contactMessageSchema`, ...). Aplicado con `parseJsonBody` a todas las mutantes (`dashboard`, `resolve-username`, `invoice`). Se amplía con `drizzle-zod`. |
 | **RSC (Server Components)** | Ya en uso | Render + lecturas de datos en servidor (async, directo a Drizzle/Supabase). Sin red en el cliente. |
-| **Server Actions** | A adoptar (F3) | `'use server'` para escrituras de formularios (feedback, contacto, soporte); tipos nativos; con rate limit + Turnstile server-side. API routes quedan para webhooks/3rd-party. |
-| **Storybook** | A añadir (F3, dev-only) | Documenta `@ciszu/ui` (Icon, SmartImage, FabStack, ...) con visual regression. Sin runtime. |
-| **TanStack Query** | Incremental (F3) | Caché/refetch de datos client dinámicos (leaderboard realtime, dashboard v2). No preventivo: se instala cuando exista el feature. |
+| **Server Actions** | **Decidido (14 ago 2026) — YAGNI por ahora** | Evaluado en F3: formularios actuales son `mailto:` cliente (feedback/soporte) o ya validan vía API route (dashboard). No hay vacío real para `'use server'` hoy. Adoptar en formularios nuevos que reporten a servidor, con rate limit + Turnstile server-side. |
+| **Storybook** | **Añadido (F3, dev-only)** en `@ciszu/ui` v10.5.8 | Documenta los componentes compartidos (Icon, SmartImage) con visual regression. Scripts `storybook`/`build-storybook`; sin runtime en prod. |
+| **TanStack Query** | **Añadido (F3)** en `ciszubot-website` | Caché/refetch de datos client dinámicos. `QueryProvider` en el layout raíz; dashboard guild usa `useQuery`/`useMutation`. Extender a las demás webs cuando exista feature. |
+| **tRPC / GraphQL** | **No instalar** | Solapan con RSC + Server Actions + PostgREST. Quedan como opción con disparador (API pública / multi-cliente / servicio standalone grande). Ver `BACKEND_SYSTEM.md` §20. |
 | **tRPC / GraphQL** | **No instalar** | Solapan con RSC + Server Actions + PostgREST. Quedan como opción con disparador (API pública / multi-cliente / servicio standalone grande). Ver `BACKEND_SYSTEM.md` §20. |
 
 - **Regla general**: nada se instala "de base sin uso" (deuda). Se instala cuando el problema

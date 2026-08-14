@@ -56,9 +56,9 @@ Identificador: PROJECTS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 - **Filtro pnpm:** `ciszubot-website` (website), `ciszubot` (bot)
 - **URL:** ciszubot.vercel.app
 - **Framework:** Next.js 15 (website) + Discord.js v14 (bot, TS)
-- **Estado:** ✅ Activo — bot v3.2.0 (72 comandos, 9 categorías), Supabase conectado
+- **Estado:** ✅ Activo — bot v3.2.0 (72 comandos, 9 categorías), Drizzle ORM + Supabase conectado
   (schema ciszubot, heartbeat `bot_status`), dashboard OAuth, Docker (node:24-alpine)
-- **Panel:** Express :5000 (stats + /api/votes)
+- **Panel:** NestJS + Fastify :5000 (stats + /api/votes; Express eliminado en F2)
 - **Docs:** projects/ciszubot/docs/ multi-formato
 
 ### 1.5 CiszuGamens

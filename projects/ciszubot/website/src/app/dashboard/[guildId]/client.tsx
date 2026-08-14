@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Icon } from '@ciszu/ui';
 
 interface GuildConfig {
@@ -57,70 +58,63 @@ function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void 
 }
 
 export default function DashboardGuildClient({ guildId, guildName, guildIcon }: Props) {
-  const [config, setConfig] = useState<GuildConfig | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const queryClient = useQueryClient();
   const [error, setError] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
+  const [config, setConfig] = useState<GuildConfig | null>(null);
+
+  const { data: serverConfig, isPending } = useQuery({
+    queryKey: ['guild-config', guildId],
+    queryFn: async () => {
+      const res = await fetch(`/api/dashboard/${guildId}`, { cache: 'no-store' });
+      if (res.status === 403 || res.status === 401) {
+        window.location.href = '/dashboard';
+        return null;
+      }
+      const json = (await res.json()) as { config?: GuildConfig | null };
+      const cfg = json.config;
+      return {
+        prefix: cfg?.prefix ?? 'cz!',
+        lang: cfg?.lang ?? 'es',
+        leveling_enabled: cfg?.leveling_enabled ?? false,
+        level_channel_id: cfg?.level_channel_id ?? null,
+        xp_rate: cfg?.xp_rate ?? 1,
+        welcome_channel_id: cfg?.welcome_channel_id ?? null,
+        welcome_message: cfg?.welcome_message ?? 'Bienvenido/a {user} a {guild}!',
+        goodbye_channel_id: cfg?.goodbye_channel_id ?? null,
+        goodbye_message: cfg?.goodbye_message ?? 'Adiós {user}, que te vaya bien!',
+        autorole_ids: Array.isArray(cfg?.autorole_ids) ? cfg.autorole_ids : [],
+        logs_channel_id: cfg?.logs_channel_id ?? null,
+        tickets_enabled: cfg?.tickets_enabled ?? false,
+        private_channels: cfg?.private_channels ?? false,
+        automod_enabled: cfg?.automod_enabled ?? false,
+      } as GuildConfig;
+    },
+  });
 
   useEffect(() => {
-    void (async () => {
-      try {
-        const res = await fetch(`/api/dashboard/${guildId}`, { cache: 'no-store' });
-        if (res.status === 403 || res.status === 401) {
-          window.location.href = '/dashboard';
-          return;
-        }
-        const json = (await res.json()) as { config?: GuildConfig | null };
-        const cfg = json.config;
-        setConfig({
-          prefix: cfg?.prefix ?? 'cz!',
-          lang: cfg?.lang ?? 'es',
-          leveling_enabled: cfg?.leveling_enabled ?? false,
-          level_channel_id: cfg?.level_channel_id ?? null,
-          xp_rate: cfg?.xp_rate ?? 1,
-          welcome_channel_id: cfg?.welcome_channel_id ?? null,
-          welcome_message: cfg?.welcome_message ?? 'Bienvenido/a {user} a {guild}!',
-          goodbye_channel_id: cfg?.goodbye_channel_id ?? null,
-          goodbye_message: cfg?.goodbye_message ?? 'Adiós {user}, que te vaya bien!',
-          autorole_ids: Array.isArray(cfg?.autorole_ids) ? cfg.autorole_ids : [],
-          logs_channel_id: cfg?.logs_channel_id ?? null,
-          tickets_enabled: cfg?.tickets_enabled ?? false,
-          private_channels: cfg?.private_channels ?? false,
-          automod_enabled: cfg?.automod_enabled ?? false,
-        });
-      } catch {
-        setError('No se pudo cargar la configuración.');
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [guildId]);
+    if (serverConfig && !config) setConfig(serverConfig);
+  }, [serverConfig, config]);
 
-  async function save() {
-    if (!config) return;
-    setSaving(true);
-    setSaved(false);
-    try {
+  const saveMutation = useMutation({
+    mutationFn: async (patch: GuildConfig) => {
       const res = await fetch(`/api/dashboard/${guildId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(config),
+        body: JSON.stringify(patch),
       });
-      if (!res.ok) {
-        setError('No se pudo guardar la configuración.');
-      } else {
-        setSaved(true);
-        setTimeout(() => setSaved(false), 3000);
-      }
-    } catch {
-      setError('Error de red al guardar.');
-    } finally {
-      setSaving(false);
-    }
-  }
+      if (!res.ok) throw new Error('save_failed');
+      return res.json();
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['guild-config', guildId] });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    },
+    onError: () => setError('No se pudo guardar la configuración.'),
+  });
 
-  if (loading) {
+  if (isPending) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center bg-bg">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-neon-blue" />
@@ -317,11 +311,11 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon }: 
           {error && <p className="text-sm text-red-400">{error}</p>}
 
           <button
-            onClick={() => void save()}
-            disabled={saving}
+            onClick={() => config && saveMutation.mutate(config)}
+            disabled={saveMutation.isPending}
             className="w-full rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink px-5 py-3 font-bold text-white transition hover:scale-[1.01] disabled:opacity-60"
           >
-            {saving ? 'Guardando...' : saved ? '✅ ¡Guardado!' : 'Guardar configuración'}
+            {saveMutation.isPending ? 'Guardando...' : saved ? '✅ ¡Guardado!' : 'Guardar configuración'}
           </button>
         </div>
       </div>

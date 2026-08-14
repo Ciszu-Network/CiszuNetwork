@@ -73,8 +73,8 @@ Antes de codificar, lee el doc del área que tocas. Mapa por tipo de tarea:
 
 ### 3.3 Índice de la documentación de ciszu
 
-- **Sistemas**: `ARCHITECTURE.md` · `FULL_STACK_SYSTEM` (stack) · `DB_SYSTEM` · `AUTH_SYSTEM` ·
-  `CACHING_SYSTEM` · `CDN_SYSTEM` · `ICON_SYSTEM` · `MEDIA_FORMATS_SYSTEM` · `DOCKER_SYSTEM` ·
+- **Sistemas**: `ARCHITECTURE.md` · `FULL_STACK_SYSTEM` (stack) · `DB_SYSTEM` · `ORM_SYSTEM` (Drizzle) ·
+  `AUTH_SYSTEM` · `CACHING_SYSTEM` · `CDN_SYSTEM` · `ICON_SYSTEM` · `MEDIA_FORMATS_SYSTEM` · `DOCKER_SYSTEM` ·
   `TESTING_SYSTEM` · `TOOLS_SYSTEM` · `WORKFLOW_SYSTEM` · `VAULT_SYSTEM` (credenciales) ·
   `DOMAINS_SYSTEM` · `MONITORING_SYSTEM` (UptimeRobot + ntfy) · `ANALYTICS_SYSTEM` ·
   `ERRORS_SYSTEM` (Sentry) · `EMAILS_SYSTEM` · `PAYMENTS_SYSTEM` · `REVIEWS_SYSTEM` ·

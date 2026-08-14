@@ -1,5 +1,6 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
-import { createRateLimiter } from '@ciszunetwork/utils';
+import { z } from 'zod';
+import { createRateLimiter, parseJsonBody, firstZodMessage } from '@ciszunetwork/utils';
 import { createNowPaymentsProvider, PaymentError } from '@ciszunetwork/payments';
 
 /**
@@ -14,6 +15,11 @@ const limiter = createRateLimiter({ windowMs: 60_000, max: 10 });
 const MIN_AMOUNT = 1;
 const MAX_AMOUNT = 10_000;
 
+const invoiceSchema = z.object({
+  amount: z.number().min(MIN_AMOUNT).max(MAX_AMOUNT),
+  email: z.string().email().max(254).optional(),
+});
+
 export async function POST(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
   const rl = limiter.allow(ip);
@@ -25,24 +31,16 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const body = (await request.json().catch(() => null)) as {
-      amount?: unknown;
-      email?: unknown;
-    } | null;
-    if (!body) {
-      return NextResponse.json({ success: false, error: 'Body inválido' }, { status: 400 });
-    }
-
-    const amount = Number(body.amount);
-    if (!Number.isFinite(amount) || amount < MIN_AMOUNT || amount > MAX_AMOUNT) {
+    const parsed = await parseJsonBody(request, invoiceSchema);
+    if (!parsed.success) {
       return NextResponse.json(
-        { success: false, error: `El monto debe estar entre $${MIN_AMOUNT} y $${MAX_AMOUNT} USD` },
+        { success: false, error: firstZodMessage(parsed.error) },
         { status: 400 }
       );
     }
+    const { amount, email } = parsed.data;
 
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ciszunetwork.vercel.app';
-    const email = typeof body.email === 'string' && body.email ? body.email : undefined;
     const provider = createNowPaymentsProvider();
     const result = await provider.createInvoice({
       id: `donacion-${Date.now()}`,

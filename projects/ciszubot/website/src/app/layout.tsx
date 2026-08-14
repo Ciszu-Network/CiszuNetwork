@@ -9,6 +9,7 @@ import { getDict, type Lang } from "@/lib/i18n";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, FabStackProvider } from "@ciszu/ui";
 import { getSessionData } from "@/lib/auth";
+import QueryProvider from "@/components/layout/QueryProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -63,17 +64,19 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <script defer type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
       </head>
       <body className="bg-bg text-ink min-h-screen font-sans flex flex-col">
-        <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={LOGO_ISOTIPO_CIRCLE} title="CiszuBot" subtitle="CiszuBot Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszubot">
-          <Navbar lang={lang} dict={dict} account={session} />
-          <main className="flex-grow pt-[60px]">{children}</main>
-          <Footer lang={lang} dict={dict} />
-        </CloudflareGuard>
-        <PwaRegister />
-        <FabStackProvider>
-          <InstallPdwaButton site="CiszuBot" accent="#22d3ee" accentAlt="#a78bfa" />
-          <FeedbackFab accent="#22d3ee" accentAlt="#a78bfa" />
-        </FabStackProvider>
-        <PostHogAnalytics app="ciszubot" />
+        <QueryProvider>
+           <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={LOGO_ISOTIPO_CIRCLE} title="CiszuBot" subtitle="CiszuBot Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszubot">
+            <Navbar lang={lang} dict={dict} account={session} />
+            <main className="flex-grow pt-[60px]">{children}</main>
+            <Footer lang={lang} dict={dict} />
+          </CloudflareGuard>
+          <PwaRegister />
+          <FabStackProvider>
+            <InstallPdwaButton site="CiszuBot" accent="#22d3ee" accentAlt="#a78bfa" />
+            <FeedbackFab accent="#22d3ee" accentAlt="#a78bfa" />
+          </FabStackProvider>
+          <PostHogAnalytics app="ciszubot" />
+        </QueryProvider>
       </body>
     </html>
   );
