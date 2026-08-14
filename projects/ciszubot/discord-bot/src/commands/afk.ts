@@ -1,6 +1,6 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
-import { getSupabase } from '../services/supabase';
+import { db, ciszubotSchema, eq, and, sql } from '../services/supabase';
 
 const create = (): BotCommand => ({
   name: 'afk',
@@ -18,13 +18,14 @@ const create = (): BotCommand => ({
       return;
     }
     const reason = args.join(' ') || 'Sin razón especificada';
-    const db = getSupabase();
-    await db.from('afk').upsert({
-      user_id: message.author.id,
-      guild_id: message.guild.id,
-      reason,
-      since: new Date().toISOString(),
-    });
+    const afk = ciszubotSchema.afk;
+    await db
+      .insert(afk)
+      .values({ userId: message.author.id, guildId: message.guild.id, reason, since: new Date() })
+      .onConflictDoUpdate({
+        target: [afk.userId, afk.guildId],
+        set: { reason, since: new Date() },
+      });
 
     const embed = new EmbedBuilder()
       .setColor('#00d4ff')

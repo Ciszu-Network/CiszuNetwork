@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createRateLimiter } from '@ciszunetwork/utils';
+import { createRateLimiter, parseJsonBody, firstZodMessage, turnstileTokenSchema } from '@ciszunetwork/utils';
 
 const limiter = createRateLimiter({ windowMs: 60_000, max: 30 });
 
@@ -13,11 +13,14 @@ export async function POST(request: NextRequest) {
     );
   }
   try {
-    const { token } = await request.json();
-
-    if (!token) {
-      return NextResponse.json({ success: false, error: 'Token required' }, { status: 400 });
+    const parsed = await parseJsonBody(request, turnstileTokenSchema);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: firstZodMessage(parsed.error) },
+        { status: 400 }
+      );
     }
+    const { token } = parsed.data;
 
     const secretKey = process.env.TURNSTILE_SECRET_KEY;
     if (!secretKey) {
