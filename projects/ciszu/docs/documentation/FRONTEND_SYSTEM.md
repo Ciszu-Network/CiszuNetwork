@@ -95,6 +95,114 @@ src/app/
 - Buscador (`SEARCH_PAGES`) en ciszunetwork/ciszubot/muzicmania/ciszukoantony.
 - Zona de cuentas: icono de autenticación (Discord OAuth, futuro otros).
 
+### 7.1 Estado global con Zustand
+
+- **Zustand v5** (`^5.0.14`) es el gestor de estado global en **ciszunetwork y muzicmania**
+  (`package.json` de ambas webs); ciszukoantony/ciszubot aún no lo instalan.
+- Los stores viven en `src/store/useAppStore.ts` (un solo hook por web).
+- Forma canónica: `create<AppState>((set, get) => ({ ... }))`; acciones con `set({})`,
+  lectura de estado compuesto con `get()`.
+
+```ts
+// ciszunetwork — src/store/useAppStore.ts
+import { create } from 'zustand';
+interface AppState {
+  isMenuOpen: boolean;
+  setIsMenuOpen: (val: boolean) => void;
+  theme: 'dark' | 'light';
+  setTheme: (val: 'dark' | 'light') => void;
+  language: 'es' | 'en';
+  setLanguage: (val: 'es' | 'en') => void;
+  searchQuery: string;
+  setSearchQuery: (val: string) => void;
+}
+export const useAppStore = create<AppState>((set) => ({
+  isMenuOpen: false,
+  setIsMenuOpen: (val: boolean) => set({ isMenuOpen: val }),
+  theme: 'dark',
+  setTheme: (val) => set({ theme: val }),
+  language: 'es',
+  setLanguage: (val) => set({ language: val }),
+  searchQuery: '',
+  setSearchQuery: (val) => set({ searchQuery: val }),
+}));
+```
+
+- Uso en componentes: `const { theme, setTheme } = useAppStore();` — selección por
+  propiedad evita re-renderizados por estado ajeno.
+- Estado global típico: menú, tema, idioma, búsqueda, session/UI de audio (muzicmania),
+  cookies aceptadas.
+- **Reglas**:
+  - Zustand es solo **estado de UI/usuarios**, no cache de datos (eso es `@ciszunetwork/cdn`
+    + caché del servidor en `ciszu.cache`). Ver `CACHING_SYSTEM.md`.
+  - No duplicar estado que ya vive en URL (`useSearchParams`) o servidor (RSC).
+  - Persistencia a `localStorage` (p.ej. volúmenes, idioma): se puede hacer a mano con
+    `set` + `localStorage.setItem`, o con `persist` middleware si se estandariza.
+  - Un store por dominio de UI; si un store crece mucho, dividir (KISS — ver
+    `CODE_PRINCIPLES_PROTOCOLS.md`).
+
+### 7.2 Middleware de Next.js (capa de seguridad Edge)
+
+- **Las 4 webs** tienen `src/middleware.ts` implementando la capa de seguridad de borde.
+- Se ejecuta antes de cada request (según `matcher`) en el runtime Edge de Vercel.
+- Funciones del paquete `@ciszunetwork/utils`: `buildCsp()` genera CSP por web con
+  fuentes extra; `createIast('<nombre-web>')` crea el sensor IAST runtime.
+
+```ts
+// ciszunetwork — src/middleware.ts
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { createIast, buildCsp } from '@ciszunetwork/utils';
+
+const iast = createIast('ciszunetwork');
+
+export function middleware(request: NextRequest) {
+  const response = NextResponse.next();
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+  response.headers.set('Content-Security-Policy', buildCsp({ /* fuentes extra por web */ }));
+
+  const params: Record<string, string> = {};
+  request.nextUrl.searchParams.forEach((v, k) => { params[k] = v; });
+  iast.observe(request.method, request.nextUrl.pathname, params);
+
+  return response;
+}
+
+export const config = {
+  matcher: ['/((?!_next|static|favicon.ico|sitemap.xml|robots.txt|images|icons|audio|logos|fonts).*)'],
+};
+```
+
+- **Qué hace**: cabeceras de seguridad HTTP (nosniff, referrer, HSTS, CSP) + sensor IAST
+  (detecta payloads maliciosos en query, solo observa — emite `[IAST]` a logs Vercel con
+  dedupe 5 min, ver `SECURITY_PROTOCOLS.md`).
+- `matcher` excluye `_next`, static assets y fuentes para no parchear respuestas de assets.
+- CSP debe listar las fuentes externas que usa cada web (widgets Trustpilot, NOWPayments,
+  `wss://<proyecto>.supabase.co` para realtime).
+- `X-Frame-Options` **no** se pone en muzicmania (permite preview de Vercel Dashboard);
+  el CSP `frame-ancestors` puede cubrirlo si hace falta.
+- **Limite**: el middleware **no** gestiona sesiones ni protege rutas (las webs usan
+  `localStorage` en client; la autenticación se maneja en el cliente con Zustand + AuthProvider).
+  No añadir redirects de auth al middleware salvo migrar a cookies SSR de Supabase.
+
+### 7.3 Herramientas client/validación (decisiones 14 ago 2026)
+
+| Herramienta | Estado | Rol / decisión |
+|---|---|---|
+| **Zod** | Integrado en `@ciszunetwork/utils` | Validación de inputs en el borde (API routes, formularios). Esquemas reutilizables (`turnstileTokenSchema`, `contactMessageSchema`, ...). Se amplía con `drizzle-zod`. |
+| **RSC (Server Components)** | Ya en uso | Render + lecturas de datos en servidor (async, directo a Drizzle/Supabase). Sin red en el cliente. |
+| **Server Actions** | A adoptar (F3) | `'use server'` para escrituras de formularios (feedback, contacto, soporte); tipos nativos; con rate limit + Turnstile server-side. API routes quedan para webhooks/3rd-party. |
+| **Storybook** | A añadir (F3, dev-only) | Documenta `@ciszu/ui` (Icon, SmartImage, FabStack, ...) con visual regression. Sin runtime. |
+| **TanStack Query** | Incremental (F3) | Caché/refetch de datos client dinámicos (leaderboard realtime, dashboard v2). No preventivo: se instala cuando exista el feature. |
+| **tRPC / GraphQL** | **No instalar** | Solapan con RSC + Server Actions + PostgREST. Quedan como opción con disparador (API pública / multi-cliente / servicio standalone grande). Ver `BACKEND_SYSTEM.md` §20. |
+
+- **Regla general**: nada se instala "de base sin uso" (deuda). Se instala cuando el problema
+  existe; los descartados no bloquean el futuro.
+- Validación Server Actions: todo formulario nuevo valida con Zod en `@ciszunetwork/utils`
+  antes de mutar (ver `SECURITY_PROTOCOLS.md`).
+
 ## 8. Seguridad en el frontend
 
 - **Nunca** `dangerouslySetInnerHTML`/`innerHTML` con datos de usuario (XSS).

@@ -1,13 +1,17 @@
-import { getSupabase } from './supabase';
+import { db, ciszubotSchema, eq, and, desc, sql } from '@ciszunetwork/db';
 import { logger } from './logger';
 
 /** Economía por servidor (estilo UnbelievaBoat) */
 
 export async function getWallet(userId: string, guildId: string): Promise<{ balance: number; bank: number }> {
   try {
-    const db = getSupabase();
-    const { data } = await db.from('wallets').select('balance, bank').eq('user_id', userId).eq('guild_id', guildId).maybeSingle();
-    if (data) return { balance: Number(data.balance), bank: Number(data.bank) };
+    const wallets = ciszubotSchema.wallets;
+    const rows = await db
+      .select({ balance: wallets.balance, bank: wallets.bank })
+      .from(wallets)
+      .where(and(eq(wallets.userId, userId), eq(wallets.guildId, guildId)))
+      .limit(1);
+    if (rows[0]) return { balance: Number(rows[0].balance), bank: Number(rows[0].bank) };
   } catch (error) {
     logger.warn('getWallet:', error);
   }
@@ -23,17 +27,17 @@ export async function setWallet(
   note?: string
 ): Promise<void> {
   try {
-    const db = getSupabase();
-    await db.from('wallets').upsert({
-      user_id: userId,
-      guild_id: guildId,
-      balance,
-      bank,
-      updated_at: new Date().toISOString(),
-    });
-    await db.from('transactions').insert({
-      guild_id: guildId,
-      user_id: userId,
+    const wallets = ciszubotSchema.wallets;
+    await db
+      .insert(wallets)
+      .values({ userId, guildId, balance, bank })
+      .onConflictDoUpdate({
+        target: [wallets.userId, wallets.guildId],
+        set: { balance, bank, updatedAt: sql`now()` },
+      });
+    await db.insert(ciszubotSchema.transactions).values({
+      guildId,
+      userId,
       amount: balance,
       type,
       note: note ?? null,
@@ -59,14 +63,14 @@ export async function addBank(userId: string, guildId: string, amount: number, t
 
 export async function getTopWallets(guildId: string, limit = 10): Promise<Array<{ user_id: string; balance: number }>> {
   try {
-    const db = getSupabase();
-    const { data } = await db
-      .from('wallets')
-      .select('user_id, balance')
-      .eq('guild_id', guildId)
-      .order('balance', { ascending: false })
+    const wallets = ciszubotSchema.wallets;
+    const rows = await db
+      .select({ userId: wallets.userId, balance: wallets.balance })
+      .from(wallets)
+      .where(eq(wallets.guildId, guildId))
+      .orderBy(desc(wallets.balance))
       .limit(limit);
-    return (data ?? []).map((r: { user_id: string; balance: number }) => ({ user_id: r.user_id, balance: Number(r.balance) }));
+    return rows.map((r) => ({ user_id: r.userId, balance: Number(r.balance) }));
   } catch (error) {
     logger.warn('getTopWallets:', error);
     return [];

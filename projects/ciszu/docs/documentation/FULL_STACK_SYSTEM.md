@@ -34,7 +34,13 @@ Inventario actual (ago 2026) de lenguajes, frameworks, sistemas operativos, herr
 - **Next.js 15** (App Router) + **Tailwind CSS 4** + PostCSS — las 4 webs. Fonts: Geist vía next/font.
 - **React 19** + TypeScript. Paquete UI propio `@ciszu/ui` (Icon, SmartImage, PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics).
 - **Discord.js ^14.22** + `@discordjs/voice` + play-dl (bot, 72 comandos, 9 categorías).
-- **Express ^5** — panel web del bot (`:5000`, `/api/stats`, `/api/votes`).
+- **Express ^4.21.2** — `statsServer.ts` del bot (panel/stats + webhooks top.gg/DBL). **En
+  migración a NestJS+Fastify (F2)**: el microservicio HTTP del bot pasará a NestJS con
+  adaptador Fastify y lo no-Discord.js a `ciszubot-website` (Next.js). Ver `BACKEND_SYSTEM.md` §19.
+- **Zod** — validación de inputs en el borde, centralizada en `@ciszunetwork/utils`
+  (`validation.ts`). Ver `FRONTEND_SYSTEM.md` §7.3.
+- **Zustand ^5.0.14** — estado global en client (ciszunetwork y muzicmania,
+  `src/store/useAppStore.ts`). Ver `FRONTEND_SYSTEM.md` §7.1.
 - **Supabase** (`@supabase/supabase-js`) — auth + Postgres + Storage CDN + PostgREST.
 - **Tauri 2** + Rust — app de escritorio MuzicMania (NSIS), splash HTML/CSS/JS.
 - **Vitest + Testing Library (happy-dom)** — tests unitarios; **Playwright** — E2E (ver `TESTING_SYSTEM.md`).
@@ -94,11 +100,11 @@ Inventario actual (ago 2026) de lenguajes, frameworks, sistemas operativos, herr
 
 | Proyecto | Stack |
 |---|---|
-| ciszunetwork-website | Next 15 + Tailwind 4 + Supabase + Sentry + Turnstile |
+| ciszunetwork-website | Next 15 + Tailwind 4 + Zustand + Supabase + Sentry + Turnstile |
 | ciszukoantony-website | Next 15 + Tailwind 4 + Supabase + Sentry + Turnstile |
-| muzicmania-website | Next 15 + Tailwind 4 + Supabase + Sentry + Tauri 2 + PWA |
+| muzicmania-website | Next 15 + Tailwind 4 + Zustand + Supabase + Sentry + Tauri 2 + PWA |
 | ciszubot-website | Next 15 + Tailwind 4 + Supabase + Sentry + Turnstile |
-| ciszubot (bot) | Node 24 + Discord.js 14 + Express 5 + Supabase + Docker |
+| ciszubot (bot) | Node 24 + Discord.js 14 + Express 4 (statsServer, F2→NestJS+Fastify) + Supabase + Docker |
 | packages/* | TS + Vitest (ui, cdn, utils, email, payments, config) |
 
 ## Versiones clave (pinning)
@@ -111,8 +117,10 @@ Inventario actual (ago 2026) de lenguajes, frameworks, sistemas operativos, herr
 | Next.js | 15.x |
 | React | 19 |
 | Tailwind CSS | 4 |
+| Zustand | ^5.0.14 |
+| Zod | ^3 (en `@ciszunetwork/utils`) |
 | Discord.js | ^14.22 |
-| Express | ^5 |
+| Express | ^4.21.2 (bot, `statsServer` — F2: migración a NestJS+Fastify) |
 | Tauri | 2 |
 | @sentry/nextjs / @sentry/node | 10.69.0 |
 | PostgreSQL (Supabase) | 17.6 |
@@ -128,6 +136,10 @@ Inventario actual (ago 2026) de lenguajes, frameworks, sistemas operativos, herr
 | **PostHog para errores** | Solo analítica de producto; errores → Sentry |
 | **Clerk (auth)** | Supabase Auth decidido (ver `AUTH_SYSTEM.md`) |
 | **Sass/SCSS** | Tailwind 4 lo cubre |
+| **ORM (Prisma/Drizzle)** | **Drizzle decidido** como capa server-side (`packages/db/`); navegador sigue con Supabase/RLS (ver `BACKEND_SYSTEM.md` §18) |
+| **tRPC / GraphQL** | No instalados: solapan con RSC + Server Actions + PostgREST. Opción futura con disparador (API pública/multi-cliente/servicio standalone) |
+| **Storybook** | Dev-only, se añadirá para documentar `@ciszu/ui` (no runtime) |
+| **TanStack Query** | Incremental: solo cuando exista feature de datos client dinámico |
 
 ## Criterios de elección de tecnología
 
@@ -135,6 +147,7 @@ Inventario actual (ago 2026) de lenguajes, frameworks, sistemas operativos, herr
 |---|---|---|
 | Next.js 15 + App Router | Pages Router / Vite SSR | RSC, layouts, deploys optimizados en Vercel |
 | React 19 | React 18 | Versión por defecto de Next 15 |
+| Zustand | Context API / Redux | Estado global ligero, selectores minimizan renders |
 | Tailwind 4 | Sass/SCSS, CSS Modules | Utilities `@theme`, sin usar `tailwind.config.ts` |
 | Supabase | Backend propio | BaaS con auth + BD + Storage en un solo proyecto |
 | pnpm + Turbo | npm/yarn | Workspaces + build cache de Turbo |
@@ -202,7 +215,8 @@ Inventario actual (ago 2026) de lenguajes, frameworks, sistemas operativos, herr
 | Capa | Tecnología |
 |---|---|
 | UI / presentación | React 19, Tailwind 4, `@ciszu/ui`, PWA |
-| Lógica de servidor | Next.js App Router (rutas API), middleware |
+| Estado client (UI) | Zustand v5 (`src/store/useAppStore.ts`) |
+| Lógica de servidor | Next.js App Router (rutas API), middleware (cabeceras + CSP + IAST) |
 | Datos | PostgreSQL 17.6 (Supabase), RLS, PostgREST |
 | Caché | Memoria → Upstash KV → Postgres `ciszu.cache` |
 | Autenticación | Supabase Auth (ver `AUTH_SYSTEM.md`) |

@@ -1,6 +1,6 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
-import { getSupabase } from '../services/supabase';
+import { db, ciszubotSchema, eq, and, desc } from '../services/supabase';
 
 const create = (): BotCommand => ({
   name: 'snipe',
@@ -18,15 +18,14 @@ const create = (): BotCommand => ({
       await message.reply('❌ Este comando necesita un canal de texto.');
       return;
     }
-    const db = getSupabase();
-    const { data } = await db
-      .from('snipes')
-      .select('*')
-      .eq('guild_id', message.guild.id)
-      .eq('channel_id', message.channel.id)
-      .order('deleted_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    const snipes = ciszubotSchema.snipes;
+    const rows = await db
+      .select()
+      .from(snipes)
+      .where(and(eq(snipes.guildId, message.guild.id), eq(snipes.channelId, message.channel.id)))
+      .orderBy(desc(snipes.deletedAt))
+      .limit(1);
+    const data = rows[0];
 
     if (!data) {
       await message.reply('📭 No hay mensajes borrados para snipar en este canal.');
@@ -35,9 +34,9 @@ const create = (): BotCommand => ({
 
     const embed = new EmbedBuilder()
       .setColor('#ff33cc')
-      .setAuthor({ name: `Mensaje borrado de <@${data.user_id}>`, iconURL: (await message.client.users.fetch(data.user_id).catch(() => null))?.displayAvatarURL() ?? undefined })
+      .setAuthor({ name: `Mensaje borrado de <@${data.userId}>`, iconURL: (await message.client.users.fetch(data.userId).catch(() => null))?.displayAvatarURL() ?? undefined })
       .setDescription(data.content || '*Sin contenido de texto*')
-      .setFooter({ text: `Borrado ${new Date(data.deleted_at).toLocaleString('es-ES')}` })
+      .setFooter({ text: `Borrado ${new Date(data.deletedAt).toLocaleString('es-ES')}` })
       .setTimestamp();
     if (data.attachment) {
       embed.setImage(data.attachment);

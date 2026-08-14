@@ -1,12 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createDb } from './helpers/db';
-import { getSupabase } from '../src/services/supabase';
+import { createDb, createDbProxy, dbState } from './helpers/db';
+
+vi.mock('@ciszunetwork/db', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@ciszunetwork/db')>();
+  const { createDbProxy } = await import('./helpers/db');
+  return { ...actual, db: createDbProxy() };
+});
+
 import { endGiveaway, scheduleGiveaway, startGiveaway } from '../src/services/giveaways';
 import type { Guild, TextChannel, User } from 'discord.js';
-
-vi.mock('../src/services/supabase', () => ({ getSupabase: vi.fn() }));
-
-const supabaseMock = vi.mocked(getSupabase);
 
 function makeGuild(channel: any = undefined): Guild {
   const cache = new Map<string, any>();
@@ -53,7 +55,7 @@ const sampleData = {
 };
 
 beforeEach(() => {
-  supabaseMock.mockReset();
+  dbState.set(null);
 });
 
 afterEach(() => {
@@ -62,16 +64,16 @@ afterEach(() => {
 
 describe('endGiveaway', () => {
   it('marca ended y anuncia al ganador (sin el bot)', async () => {
-    const { db, builder } = createDb(null);
-    supabaseMock.mockReturnValue(db);
+    const { db } = createDb(null);
+    dbState.set(db);
     const channel = makeChannel();
     const guild = makeGuild(channel);
     sampleData.ends_at = new Date(Date.now() + 1000).toISOString();
 
     await endGiveaway(guild, sampleData);
 
-    expect(db.from).toHaveBeenCalledWith('giveaways');
-    expect(builder.update).toHaveBeenCalledWith({ ended: true });
+    const updateBuilder = db.update.mock.results[0].value;
+    expect(updateBuilder.set).toHaveBeenCalledWith({ ended: true });
     expect(channel.send).toHaveBeenCalledTimes(1);
     const description = channel.send.mock.calls[0][0].embeds[0].data.description as string;
     expect(description).toContain('Ganadores:');
@@ -81,18 +83,17 @@ describe('endGiveaway', () => {
 
   it('sin canal solo marca ended y no envía', async () => {
     const { db } = createDb(null);
-    supabaseMock.mockReturnValue(db);
+    dbState.set(db);
     const guild = makeGuild(); // sin canales
 
     await endGiveaway(guild, sampleData);
 
-    expect(db.from).toHaveBeenCalledWith('giveaways');
-    expect(db.from().update).toHaveBeenCalled(); // builder.update indirecto
+    const updateBuilder = db.update.mock.results[0].value;
+    expect(updateBuilder.set).toHaveBeenCalledWith({ ended: true });
   });
 
   it('sin participantes anuncia que no hubo', async () => {
-    const { db } = createDb(null);
-    supabaseMock.mockReturnValue(db);
+    dbState.set(createDb(null).db);
     const reactionsCacheGet = vi.fn(() => undefined); // sin reacción 🎉
     const channel = makeChannel({
       messages: { fetch: vi.fn().mockResolvedValue({ reactions: { cache: { get: reactionsCacheGet } } }) },
@@ -110,7 +111,7 @@ describe('scheduleGiveaway', () => {
   it('programa el fin y lo ejecuta al vencimiento', async () => {
     vi.useFakeTimers();
     const { db } = createDb(null);
-    supabaseMock.mockReturnValue(db);
+    dbState.set(db);
     const guild = makeGuild(); // sin canal → endGiveaway solo marca ended
 
     const data = { ...sampleData, ends_at: new Date(Date.now() + 2000).toISOString() };
@@ -119,15 +120,15 @@ describe('scheduleGiveaway', () => {
     vi.advanceTimersByTime(2100);
     await vi.runAllTimersAsync();
 
-    expect(db.from().update).toHaveBeenCalled();
+    expect(db.update).toHaveBeenCalled();
   });
 });
 
 describe('startGiveaway', () => {
   it('envía el embed, reacciona e inserta en la BD', async () => {
     vi.useFakeTimers();
-    const { db, builder } = createDb(null);
-    supabaseMock.mockReturnValue(db);
+    const { db } = createDb(null);
+    dbState.set(db);
     const channel = makeChannel() as unknown as TextChannel;
     const guild = makeGuild(channel);
     const host = { id: 'u-owner', tag: 'Owner#1', displayAvatarURL: () => 'https://x/avatar.png' } as User;
@@ -136,19 +137,20 @@ describe('startGiveaway', () => {
 
     expect(result.ok).toBe(true);
     expect(channel.send).toHaveBeenCalledTimes(1);
-    expect(builder.insert).toHaveBeenCalledWith(
+    const insertBuilder = db.insert.mock.results[0].value;
+    expect(insertBuilder.values).toHaveBeenCalledWith(
       expect.objectContaining({
-        guild_id: 'g1',
-        channel_id: 'c1',
+        guildId: 'g1',
+        channelId: 'c1',
         prize: 'Nitro',
         winners: 1,
-        hosted_by: 'u-owner',
+        hostedBy: 'u-owner',
       })
     );
 
     // limpia el timer programado (ends_at ≈ +60s)
     vi.advanceTimersByTime(61_000);
     await vi.runAllTimersAsync();
-    expect(db.from().update).toHaveBeenCalled();
+    expect(db.update).toHaveBeenCalled();
   });
 });

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSessionUserId, isGuildAdmin, getGuildsForUser, supabaseAdmin } from '@/lib/auth';
+import { getSessionUserId, isGuildAdmin, getGuildsForUser } from '@/lib/auth';
+import { db, ciszubotSchema, eq } from '@/lib/db';
 import { logAudit } from '@/lib/audit';
 import { createRateLimiter } from '@ciszunetwork/utils';
 
@@ -41,9 +42,13 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ gui
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
   }
 
-  const db = supabaseAdmin();
-  const { data } = await db.from('guild_configs').select('*').eq('guild_id', guildId).maybeSingle();
-  return NextResponse.json({ guild: { id: guild.id, name: guild.name, icon: guild.icon }, config: data ?? null });
+  const guildConfigs = ciszubotSchema.guildConfigs;
+  const rows = await db
+    .select()
+    .from(guildConfigs)
+    .where(eq(guildConfigs.guildId, guildId))
+    .limit(1);
+  return NextResponse.json({ guild: { id: guild.id, name: guild.name, icon: guild.icon }, config: rows[0] ?? null });
 }
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ guildId: string }> }) {
@@ -65,7 +70,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ gui
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
   }
 
-  const body = (await req.json()) as Partial<GuildConfig>;
+const body = (await req.json()) as Partial<GuildConfig>;
   const allowed: Record<string, string | boolean | number | string[]> = {};
   const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id'];
   const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled'];
@@ -86,13 +91,44 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ gui
       : String(body.autorole_ids).split(',').map((s) => s.trim()).filter(Boolean);
   }
 
-  const db = supabaseAdmin();
-  const patch: Record<string, string | boolean | number | string[]> = { ...allowed, guild_id: guildId, updated_at: new Date().toISOString() };
-  if (allowed.autorole_ids !== undefined) {
-    patch.autorole_ids = JSON.stringify(allowed.autorole_ids);
+  const snakeToCamel: Record<string, string> = {
+    level_channel_id: 'levelChannelId',
+    welcome_channel_id: 'welcomeChannelId',
+    welcome_message: 'welcomeMessage',
+    goodbye_channel_id: 'goodbyeChannelId',
+    goodbye_message: 'goodbyeMessage',
+    logs_channel_id: 'logsChannelId',
+    tickets_category_id: 'ticketsCategoryId',
+    tickets_role_id: 'ticketsRoleId',
+    private_category_id: 'privateCategoryId',
+    music_channel_id: 'musicChannelId',
+    mute_role_id: 'muteRoleId',
+    leveling_enabled: 'levelingEnabled',
+    tickets_enabled: 'ticketsEnabled',
+    private_channels: 'privateChannels',
+    automod_enabled: 'automodEnabled',
+    xp_rate: 'xpRate',
+    autorole_ids: 'autoroleIds',
+  };
+  const values: Record<string, unknown> = { guildId };
+  for (const [key, value] of Object.entries(allowed)) {
+    const camel = snakeToCamel[key] ?? key;
+    values[camel] = key === 'autorole_ids' && Array.isArray(value) ? value : value;
   }
-  const { error } = await db.from('guild_configs').upsert(patch);
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  values.updatedAt = new Date();
+
+  const guildConfigs = ciszubotSchema.guildConfigs;
+  try {
+    await db
+      .insert(guildConfigs)
+      .values(values as never)
+      .onConflictDoUpdate({
+        target: guildConfigs.guildId,
+        set: { ...values, guildId: undefined } as never,
+      });
+  } catch (err) {
+    return NextResponse.json({ error: err instanceof Error ? err.message : 'db_error' }, { status: 500 });
+  }
   await logAudit({
     event: 'config_update',
     actorId: userId,
