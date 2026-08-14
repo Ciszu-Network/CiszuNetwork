@@ -397,7 +397,6 @@ export default function RegisterPage() {
               </div>
 
               <div className="pt-2 flex flex-col items-center gap-2">
-                {/* @ts-expect-error react-google-recaptcha typings error */}
                 <ReCAPTCHA
                   sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ""}
                   theme="dark"
