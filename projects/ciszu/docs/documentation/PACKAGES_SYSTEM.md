@@ -89,6 +89,13 @@ Componentes React reutilizados por las webs:
   Notion** (documentar stories a equipos) como evolución posterior; alternativas evaluadas y
   descartadas: **Histoire / Ladle** (menor ecosistema y menor integración con Chromatic/testing que
   Storybook).
+- **Figma (F4)**: addon `@storybook/addon-designs` 11.1.4 (dev-only, oficial) incrusta diseños de
+  Figma en la pestaña **Design** de cada story (`parameters.design = { type: 'figma', url }`).
+  Declarado en `packages/ui/.storybook/main.ts` → `addons` y ejemplificado en `Icon.stories.tsx`
+  (Button) y `SmartImage.stories.tsx` (meta). URLs con `FILE_ID`/`node-id` de Figma
+  (`https://www.figma.com/file/<FILE_ID>?node-id=<FRAME>`). Ver `PACKAGES_SYSTEM` §4 para requisito
+  de publicación en Chromatic (el embed no la necesita; el enlace bidireccional del plugin "Storybook
+  Connect" en Figma sí).
 
 ## 5. `@ciszunetwork/cdn` (assets)
 

@@ -27,6 +27,12 @@ export const Colored: Story = {
 };
 
 export const Button: StoryObj<typeof IconButton> = {
+  parameters: {
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/file/FILE_ID?node-id=0', 
+    },
+  },
   render: (args: IconButtonProps) => <IconButton {...args} />,
   args: {
     name: 'search',

@@ -176,6 +176,16 @@ pnpm cdn:upload           # sube assets a Supabase Storage (ciszu-cdn)
 pnpm api:test             # tests de API con Bruno (prod)
 ```
 
+Comandos de Storybook/fert (wrapper `scripts/storybook.ps1` y funciones del perfil PowerShell:
+`sb`/`sbtest`/`sbwatch`/`sbbuild`/`sbchrom`/`checkall`):
+
+| Comando          | Acción                                                                 |
+| ---------------- | ---------------------------------------------------------------------- |
+| `pnpm --filter @ciszu/ui storybook` | Arranca Storybook dev            |
+| `pnpm --filter @ciszu/ui test:storybook` | Ejecuta los tests de interacción de stories (Vitest browser + Playwright) |
+| `sb` / `sbtest` etc. | Atajos PowerShell (ver `scripts/storybook.ps1` y perfil)            |
+| `checkall`       | lint + type-check + tests + build de todas las apps                    |
+
 Pipeline de documentación: `node scripts/txt2md.js` (txt→md) · `node scripts/md2office.js`
 (md→docx) · `python scripts/txt2pdf.py` (txt→pdf) · `node scripts/sync-public-docs.js`
 (docs/ → public/docs/ de cada web). Formato canónico `txt → md → docx → pdf`.

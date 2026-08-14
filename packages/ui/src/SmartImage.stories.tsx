@@ -6,6 +6,12 @@ const meta = {
   title: 'SmartImage',
   component: SmartImage,
   tags: ['autodocs', 'a11y', 'test'],
+  parameters: {
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/file/FILE_ID?node-id=0',
+    },
+  },
 } satisfies Meta<typeof SmartImage>;
 
 export default meta;
