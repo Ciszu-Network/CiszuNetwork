@@ -20,7 +20,6 @@ const rajdhani = Rajdhani({
   variable: "--font-rajdhani",
 });
 
-const ICON_SVG = assetResolver.resolve("projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg");
 
 export const viewport = {
   themeColor: "#000000",
@@ -33,9 +32,9 @@ export const metadata = {
   appleWebApp: { capable: true, title: "MuzicMania", statusBarStyle: "black-translucent" },
   manifest: "/manifest.webmanifest",
   icons: {
-    icon: ICON_SVG,
-    shortcut: ICON_SVG,
-    apple: ICON_SVG,
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/pwa/icon-192.png",
   },
 };
 
