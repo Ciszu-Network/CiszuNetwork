@@ -46,10 +46,14 @@ Inventario actual (ago 2026) de lenguajes, frameworks, sistemas operativos, herr
   Ver `ORM_SYSTEM.md`.
 - **Tauri 2** + Rust — app de escritorio MuzicMania (NSIS), splash HTML/CSS/JS.
 - **Vitest + Testing Library (happy-dom)** — tests unitarios; **Playwright** — E2E (ver `TESTING_SYSTEM.md`).
+  Subárea **Storybook** (`@ciszu/ui`): `pnpm --filter @ciszu/ui test:storybook` corre las stories como tests de
+  componente en un navegador real (Vitest browser mode + `@vitest/browser-playwright`); addon `@storybook/addon-vitest`
+  + play functions cubren interacción y a11y sin Chromatic; en CI el job `storybook-tests` instala chromium y los
+  ejecuta. Chromatic sigue para regresión visual en la nube. Ver `PACKAGES_SYSTEM.md` §4.
 - **Sentry** (`@sentry/nextjs` ×4 webs, `@sentry/node` en bot) — errores (ver `ERRORS_SYSTEM.md`).
 - **TanStack Query** (`@tanstack/react-query`) — datos client dinámicos (dashboard de ciszubot).
 - **Storybook** (dev-only) — documenta `@ciszu/ui`. Ver `PACKAGES_SYSTEM.md` §4.
-- **Chromatic** — visual testing de Storybook (build 1 publicado, 14 ago 2026). Ver `PACKAGES_SYSTEM.md` §4.
+- **Chromatic** — visual testing de Storybook (build 1 publicado, 14 ago 2026) + addon a11y (Axe). Ver `PACKAGES_SYSTEM.md` §4.
 - **Turbo (pnpm workspaces)** — monorepo builds.
 - **Docker** (bot multi-stage pnpm, usuario no-root).
 
@@ -177,6 +181,20 @@ Evaluación con criterio AGENTS: **mantener Node.js en todo el ecosistema.** Nad
 Bun/Deno descartados para producción (soporte Next/Vercel inmaduro). No se introducen nuevos
 runtimes salvo que un problema real lo exija (YAGNI). Gotcha conocido: el binario Bun de opencode
 no importa CJS desde plugins TUI → usar ESM puro (ver `OPENCODE_SYSTEM.md`).
+
+### Piloto Bun (14 ago 2026, verificado)
+
+Bun 1.3.14 instalado en `C:\Users\fplay\.bun\bin\bun.exe` como **herramienta local opcional**,
+NO como runtime de producción. Resultado del piloto:
+
+- Script CJS con builtins de Node (`scripts/txt2md.js`): salida idéntica a `node` ✅.
+- Ejecución directa de `.ts` (type-stripping nativo, sin ts-node): OK ✅.
+- Env vars y `bun run`: funcionan igual que Node.
+
+**Conclusión**: válido como *runner* ocasional de scripts/tooling local (arranque rápido), pero
+**no sustituye a Node** en webs/bot (divergencia con Vercel/Docker) ni se promueve a ningún
+flujo de producción. Si se usa en `scripts/`, primero verificar el script; no añadir al PATH
+global por defecto. Ver también `TOOLS_SYSTEM.md`.
 
 ## Gestión de versiones y actualizaciones
 

@@ -243,6 +243,7 @@ Permite que el agente consulte la BD directamente como herramienta MCP (en vez d
 | Bruno | 4.0.0 | API client (git-native `.bru`/YAML) |
 | Fork | 2.16.1 | Git GUI (visual) |
 | PostgreSQL | 18.4 | Tooling local (pg_dump) |
+| **Bun** | 1.3.14 | **Runner local opcional de scripts** (`C:\Users\fplay\.bun\bin\bun.exe`) — piloto 14 ago 2026: CJS y TS nativo OK; NO sustituye a Node en producción. Ver `FULL_STACK_SYSTEM.md` §Runtime |
 
 ## Reglas de la pila
 
