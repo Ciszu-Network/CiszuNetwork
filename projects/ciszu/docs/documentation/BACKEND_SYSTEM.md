@@ -323,11 +323,11 @@ Cada web tiene `src/app/api/*` para lógica serverless:
 
 | Herramienta | Estado | Decisión / motivo |
 |---|---|---|
-| **Zod** | **Integrado** (`@ciszunetwork/utils` `validation.ts`) | Valida el borde de entrada (reglas de seguridad). Se completa en todo API route que mute. |
+| **Zod** | **Integrado** (`@ciszunetwork/utils` `validation.ts`) | Valida el borde de entrada (reglas de seguridad). Completado en todo API route que mute (`dashboard`, `resolve-username`, `invoice`, `verify-turnstile`). |
 | **RSC (React Server Components)** | Ya en uso | Base de lecturas en servidor; sin capa API intermedia. |
-| **Server Actions** | A adoptar (F3) | Patrón de escritura de formularios nuevos (feedback/contacto/soporte). API routes solo webhooks/3rd-party. |
-| **Storybook** | A añadir (F3, dev-only) | Documenta `@ciszu/ui`; visual regression del componente compartido por 4 webs. Sin runtime. |
-| **TanStack Query** | Incremental (F3) | Cuando exista feature de datos client dinámico (realtime/dashboard v2). No preventivo. |
+| **Server Actions** | **Decidido (14 ago 2026) — YAGNI por ahora** | Evaluado en F3: los formularios actuales (feedback/soporte) son `mailto:` cliente sin servidor y el dashboard ya valida con Zod en su API route. No hay vacío real que requiera `'use server'` hoy. Adoptar sólo en formularios nuevos que reporten a servidor. |
+| **Storybook** | **Añadido (F3, dev-only)** en `@ciszu/ui` (v10.5.8, `storybook` + `@storybook/react-vite`) | Documenta los componentes compartidos (Icon, SmartImage) con visual regression. Scripts `storybook`/`build-storybook`. Sin runtime en prod. |
+| **TanStack Query** | **Añadido (F3)** en `ciszubot-website` (`@tanstack/react-query`) | Caché/refetch de datos client dinámicos. `QueryProvider` en el layout; dashboard usa `useQuery`/`useMutation`. Se extiende a las demás webs cuando lo requieran. |
 | **tRPC** | **No instalar** | Solapa con RSC + Server Actions; añadir es una tercera capa sobre PostgREST/RPC de Supabase. Tiene disparador: servicio standalone grande consumido por varios clientes. |
 | **GraphQL** | **No instalar** | PostgREST ya da selectividad de campos; `pg_graphql` nativo si algún día se necesita. Tiene disparador: API pública para devs/partners o multi-cliente. |
 

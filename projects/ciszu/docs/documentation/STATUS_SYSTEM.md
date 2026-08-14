@@ -1,7 +1,7 @@
 # STATUS_SYSTEM — Estado del Ecosistema CISZU NETWORK
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-08-14
 Identificador: STATUS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: documento operativo de estado del monorepo. Se actualiza al cerrar cada
@@ -66,9 +66,10 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 ### Stack Tecnológico
 - **Monorepo**: pnpm 10.8.1 + Turborepo
 - **Web**: Next.js 15 + TypeScript + Tailwind CSS v4
-- **Backend**: Supabase (PostgreSQL + Auth + Storage)
+- **Backend**: Supabase (PostgreSQL + Auth + Storage) + **Drizzle ORM** (`@ciszunetwork/db`, server-only) + Zod (borde de entrada)
+- **CLientes dinámicos**: TanStack Query (ciszubot dashboard) + Storybook (dev-only, `@ciszu/ui`)
 - **Desktop**: Tauri 2 (Rust + WebView2)
-- **Bot**: Discord.js v14 (projects/ciszubot/discord-bot/)
+- **Bot**: Discord.js v14 + NestJS + Fastify (microservicio HTTP; Express eliminado)
 - **CI/CD**: GitHub Actions + Vercel
 - **Docs**: Pandoc 3.10 + Reportlab (Python)
 
@@ -126,11 +127,16 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 | Monitorización | Operativo | `MONITORING_SYSTEM.md` |
 | Seguridad | Operativo | `SECURITY_PROTOCOLS.md` |
 
-## Últimas acciones verificadas (13 ago 2026)
+## Últimas acciones verificadas (14 ago 2026)
 
-- Docs de `documentation/` revisados y ampliados (cabecera + ≥200 líneas) — este proceso.
+- **F1** Drizzle ORM: `packages/db` (4 schemas + cliente pg lazy), migrado en webs (`muzicmania`,
+  `ciszubot`) y bot; eliminado `@supabase/supabase-js` del bot. `ORM_SYSTEM.md` creado.
+- **F2** Bot: `statsServer` Express migrado a **NestJS + Fastify**; dependencia `express` eliminada.
+- **F3** Herramientas client: Zod (`parseJsonBody`) en todas las API routes que mutan; Storybook
+  dev-only en `@ciszu/ui` (v10.5.8); TanStack Query en `ciszubot-website` (dashboard).
+- Verificación: lint global ✅, 171 tests ✅, builds webs+bot ✅, build-storybook ✅.
 - Frontend: fases 1–11 del to-do frontend completadas y verificadas (ver `TODO.md`).
-- CDN limpio (7.353 objetos) y tests en 157.
+- CDN limpio (7.353 objetos) y tests en 171.
 
 ## Leyenda de estados
 
@@ -182,6 +188,7 @@ Este doc es una **foto del estado** del ecosistema; al cerrar sesión:
 
 | Fecha | Cambio relevante |
 |---|---|
+| 2026-08-14 | F1 Drizzle (packages/db + webs + bot), F2 NestJS+Fastify, F3 Zod/Storybook/TanStack Query; tests 171; lint/builds verdes |
 | 2026-08-13 | Docs ampliados a estándar; frontend fases 1–11 completas; CDN 7.353 objetos; tests 157 |
 | 2026-08-12 | Pagos: infra NOWPayments lista, monetización pendiente hasta 18 |
 | 2026-08-11 | Cuenta NOWPayments creada; suite Vitest a 157 |
