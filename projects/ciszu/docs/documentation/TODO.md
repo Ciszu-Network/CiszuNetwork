@@ -48,9 +48,9 @@ Ciszubot Website:
 # #1 Implementaciones en la infraestructura masiva desde el backend y database
 
 > Plan aprobado 14 ago 2026. Alcance: TODOS los proyectos (webs, bot, packages). Ejecución en
-> fases: F1 Drizzle → F2 Ciszubot (exclusivo bot) → F3 herramienta client + cierre.
+> fases: F1 Drizzle → F2 Ciszubot (exclusivo bot) → F3 herramienta client → F4 Chromatic/runtime → cierre.
 >
-> Estado: F1, F2 y F3 **completados**. Queda la verificación final + commit (paso "Cierre").
+> Estado: F1, F2, F3 y F4 **completados**. Queda la verificación final + commit (paso "Cierre").
 
 ## F1 — Drizzle ORM (ORM oficial, server-side)
 
@@ -85,6 +85,15 @@ Ciszubot Website:
 - [x] **tRPC / GraphQL**: NO instalar (decisión final). Documentados como opción con disparador
       futuro (API público/multi-cliente/servicio grande). Ver `BACKEND_SYSTEM.md` §19-§20.
 
+## F4 — Chromatic + decisión de runtime (14 ago 2026)
+
+- [x] **Chromatic (Storybook visual testing)**: `chromatic` CLI 18.2 en `@ciszu/ui`; storybook publicado
+      (build 1, 5 stories/2 componentes, 5 snapshots). appId `6a7f722e2641a24bc6249782`.
+- [x] **Runtime Node vs Bun vs Deno**: documentada decisión en `FULL_STACK_SYSTEM.md` §Runtime —
+      se mantiene Node 24 (LTS, soporte oficial Next/Vercel); Bun/Deno descartados para producción.
+- [x] **Vault**: `TANSTACK_API_KEY` (submissions TanStack, pendiente revisión) y
+      `CHROMATIC_PROJECT_TOKEN` guardados, re-cifrados (crypt+backup+verify OK, 14 ago).
+
 ## Cierre / pruebas / publicación
 
 - [ ] `pnpm lint` + `pnpm build` + `pnpm test` (+ `pnpm e2e`) sobre el monorepo completo.
@@ -94,5 +103,10 @@ Ciszubot Website:
 # #2 Implementaciones en la infraestructura masiva desde el backend y database (Futuro)
 
 - [ ] Investigar si implementar estos servicios sin importar el tiempo que tome, investigar si son grauitos y no se solapan actualmente, teniendo en cuenta que la lista es extensa y muy diversa sin verificar: Logtail / Better Stack o Datadog, Turbopack / Rolldown, TypeBox, PocketHost o Coolify, Miniflare, ArkType, tku / Larvitar / Toolkits de Compilación Nativos (SWC / Rolldown), Temporal, Effect TS, Husky + Lint-Staged, Changesets, Release Please o Auto, Nuqs, Mock Service Worker, SeaQL / SeaORM, Directus, Joy UI / Radix UI (MSW)en los proyectos.
-- [ ] Investigar mas sobre el ecosistema de storybook, uso para mi con GUI, addons, que es chomatic.
-- [ ] Investigar y analizar si debemos de dejar de usar node.js vanilla y pasarnos a bun o deno.
+- [x] Investigar mas sobre el ecosistema de storybook, uso para mi con GUI, addons, que es chomatic.
+      _Hecho 14 ago 2026: Storybook 10.5.8 instalado en `@ciszu/ui` (GUI en localhost:6006, Controls,
+      autodocs, play functions). Chromatic conectado (build 1 publicado, visual testing alojado,
+      token en vault). Ver F4._
+- [x] Investigar y analizar si debemos de dejar de usar node.js vanilla y pasarnos a bun o deno.
+      _Hecho 14 ago 2026: decisión documentada en `FULL_STACK_SYSTEM.md` §Runtime — mantener
+      Node 24 (LTS hasta abr 2028, soporte oficial Next/Vercel); Bun/Deno descartados para prod._
