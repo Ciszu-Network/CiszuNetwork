@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db, muzicmaniaSchema, eq, sql } from '@ciszunetwork/db';
-import { createRateLimiter } from '@ciszunetwork/utils';
+import { createRateLimiter, parseJsonBody, firstZodMessage } from '@ciszunetwork/utils';
 
 /**
  * Resuelve un @username al email de la cuenta (flujo de login de MuzicMania).
@@ -12,7 +13,9 @@ import { createRateLimiter } from '@ciszunetwork/utils';
  * rate limit por IP.
  */
 
-const USERNAME_RE = /^[a-zA-Z0-9_]{1,20}$/;
+const resolveUsernameSchema = z.object({
+  username: z.string().regex(/^[a-zA-Z0-9_]{1,20}$/, 'Usuario inválido'),
+});
 
 const limiter = createRateLimiter({ windowMs: 60_000, max: 10 });
 
@@ -26,16 +29,11 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  let username: unknown;
-  try {
-    ({ username } = await request.json());
-  } catch {
-    return NextResponse.json({ error: 'JSON inválido' }, { status: 400 });
+  const parsed = await parseJsonBody(request, resolveUsernameSchema);
+  if (!parsed.success) {
+    return NextResponse.json({ error: firstZodMessage(parsed.error) }, { status: 400 });
   }
-
-  if (typeof username !== 'string' || !USERNAME_RE.test(username)) {
-    return NextResponse.json({ error: 'Usuario inválido' }, { status: 400 });
-  }
+  const { username } = parsed.data;
 
   const profiles = muzicmaniaSchema.profiles;
   const rows = await db

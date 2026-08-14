@@ -63,6 +63,9 @@ Componentes React reutilizados por las webs:
 
 - Estilos con Tailwind v4 (tokens vía `@theme` de cada web).
 - Tests en `packages/ui/tests` (Vitest); integración con Playwright security-e2e.
+- **Storybook (dev-only, F3)**: `@storybook/react-vite` v10.5.8 con `storybook` y `build-storybook`.
+  Stories en `src/**/*.stories.tsx` (Icon, SmartImage). Sin runtime en prod. Documenta el
+  componente compartido por las 4 webs con visual regression.
 
 ## 5. `@ciszunetwork/cdn` (assets)
 
@@ -78,8 +81,11 @@ Componentes React reutilizados por las webs:
 | `createIast` | Sensor IAST (seguridad runtime) |
 | `buildCsp` | Cabecera CSP |
 | `escapeHtml` | Escape para prevenir XSS |
+| `z` (re-export), `parseJsonBody`, `firstZodMessage` | Validación Zod del borde entrada (mutantes) |
 
 - Usada por webs, bot y el resto de paquetes.
+- **Regla F3**: todo API route que mute o consuma un servicio externo valida su body con
+  `parseJsonBody(request, schema)` + `firstZodMessage`, devolviendo 400 en error.
 
 ## 7. `@ciszunetwork/email` (correos)
 

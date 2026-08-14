@@ -353,6 +353,7 @@ Ejemplos concretos:
 | `CODE_PRINCIPLES`, `DEVSECOPS`, `SECURITY_PROTOCOLS` (copias idénticas) | ✅ | ❌ (referencia) | ❌ (referencia) | ❌ (referencia) |
 | `FRONTEND/BACKEND/FRAMEWORKS/STYLES/COLOR/ICON/FULL_STACK` genéricos | ✅ | ❌ si idéntico | ❌ si idéntico | ❌ si idéntico |
 | `PACKAGES_SYSTEM`, `DB_SYSTEM` | ✅ | ❌ (consumen los de ciszu) | ❌ (solo si BD propia relevante) | ❌ (solo si BD propia relevante) |
+| `ORM_SYSTEM` (Drizzle) | ✅ | ❌ (consumen el de ciszu) | ❌ (si usan `@ciszunetwork/db`) | ❌ (si usan `@ciszunetwork/db`) |
 | `DOCUMENTATION_SYSTEM` | ✅ | ❌ | ❌ | ❌ |
 | `TAX_PLAN` y planes corporativos | ✅ | ❌ | ❌ | ❌ |
 | `VAULT_SYSTEM`, `BUSINESS_SYSTEM`, `PAYMENTS_SYSTEM` | ✅ | ❌ | ❌ | ❌ |

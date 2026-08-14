@@ -1,10 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { getSessionUserId, isGuildAdmin, getGuildsForUser } from '@/lib/auth';
 import { db, ciszubotSchema, eq } from '@/lib/db';
 import { logAudit } from '@/lib/audit';
-import { createRateLimiter } from '@ciszunetwork/utils';
+import { createRateLimiter, parseJsonBody, firstZodMessage } from '@ciszunetwork/utils';
 
 export const runtime = 'nodejs';
+
+const guildConfigPatchSchema = z.object({
+  prefix: z.string().min(1).max(10).optional(),
+  lang: z.enum(['es', 'en']).optional(),
+  leveling_enabled: z.boolean().optional(),
+  level_channel_id: z.string().min(1).nullable().optional(),
+  xp_rate: z.number().min(0.1).max(10).optional(),
+  welcome_channel_id: z.string().min(1).nullable().optional(),
+  welcome_message: z.string().max(500).optional(),
+  goodbye_channel_id: z.string().min(1).nullable().optional(),
+  goodbye_message: z.string().max(500).optional(),
+  autorole_ids: z.array(z.string().min(1)).optional(),
+  logs_channel_id: z.string().min(1).nullable().optional(),
+  tickets_enabled: z.boolean().optional(),
+  tickets_category_id: z.string().min(1).nullable().optional(),
+  tickets_role_id: z.string().min(1).nullable().optional(),
+  private_channels: z.boolean().optional(),
+  private_category_id: z.string().min(1).nullable().optional(),
+  music_channel_id: z.string().min(1).nullable().optional(),
+  automod_enabled: z.boolean().optional(),
+  mute_role_id: z.string().min(1).nullable().optional(),
+});
 
 const postLimiter = createRateLimiter({ windowMs: 60_000, max: 10 });
 
@@ -70,7 +93,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ gui
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
   }
 
-const body = (await req.json()) as Partial<GuildConfig>;
+const parsed = await parseJsonBody(req, guildConfigPatchSchema);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: 'invalid_body', issue: firstZodMessage(parsed.error) },
+      { status: 400 }
+    );
+  }
+  const body = parsed.data as Partial<GuildConfig>;
   const allowed: Record<string, string | boolean | number | string[]> = {};
   const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id'];
   const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled'];
