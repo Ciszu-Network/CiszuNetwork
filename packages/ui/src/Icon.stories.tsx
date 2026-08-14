@@ -22,7 +22,7 @@ export const Large: Story = {
 };
 
 export const Colored: Story = {
-  args: { size: 32, name: 'search', color: '#22d3ee' },
+  args: { size: 32, name: 'search', color: '#e879f9' },
 };
 
 export const Button: StoryObj<typeof IconButton> = {
