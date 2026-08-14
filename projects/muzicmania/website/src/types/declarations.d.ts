@@ -1,30 +1,3 @@
-declare module 'react' {
-  export type ReactNode = any;
-  export type FC<P = Record<string, unknown>> = (props: P) => any;
-  export type ReactElement = any;
-  export type CSSProperties = any;
-  export type RefObject<T> = any;
-  export type ButtonHTMLAttributes<T> = any;
-  export function useState<T>(initialState: T | (() => T)): [T, (newState: T | ((prev: T) => T)) => void];
-  export function useEffect(effect: () => void | (() => void), deps?: readonly any[]): void;
-  export function useCallback<T extends (...args: any[]) => any>(callback: T, deps: readonly any[]): T;
-  export function useRef<T>(initialValue: T): { current: T };
-  export function useMemo<T>(factory: () => T, deps: readonly any[] | undefined): T;
-  export function useContext<T>(context: any): T;
-  export const Suspense: any;
-  const React: any;
-  export default React;
-}
-
-declare module 'react-dom' {
-  const ReactDom: any;
-  export default ReactDom;
-}
-
-declare module 'react-dom/client' {
-  export const createRoot: any;
-}
-
 declare module 'next' {
   export type Metadata = any;
   export type NextConfig = any;
