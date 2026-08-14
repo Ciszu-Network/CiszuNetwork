@@ -32,9 +32,9 @@ export const metadata: Metadata = {
   description: "Ciszu Network desarrolla soluciones digitales de alto rendimiento. Liderados por Ciszuko Antony, CEO. Proyectos: MuzicMania, Minecraft, Discord, WhatsApp, Telegram y más.",
   keywords: ["Ciszu Network", "Ciszuko Antony", "MuzicMania", "desarrollo web", "Next.js", "Venezuela"],
   icons: {
-    icon: ICON_SVG,
-    shortcut: ICON_SVG,
-    apple: ICON_SVG,
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/pwa/icon-192.png",
   },
   appleWebApp: { capable: true, title: "Ciszu Network", statusBarStyle: "black-translucent" },
   manifest: "/manifest.webmanifest",
