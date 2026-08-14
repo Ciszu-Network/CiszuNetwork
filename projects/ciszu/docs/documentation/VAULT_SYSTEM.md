@@ -1,8 +1,8 @@
 # VAULT_SYSTEM — Protección del vault de credenciales — plan y estado (10 ago 2026)
 
-Versión: 2.0.0
-Actualización: 2026-08-13
-Identificador: VAULT_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
+Versión: 2.1.0
+Actualización: 2026-08-14
+Identificador: VAULT_SYSTEM_V2.1.0_2026_08_14_ciszunetwork
 
 > **Definición**: protección de los archivos locales de credenciales (`.env`/vault) de Ciszu
 > Network contra robo físico, acceso no autorizado, filtraciones y pérdida. Plan maestro con
@@ -23,7 +23,7 @@ Identificador: VAULT_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 | Malware/proceso que corre con el usuario del PC | Lee los `.env` | ACLs NTFS + minimizar superficie |
 | Otros usuarios de Windows | Idem | ACLs NTFS (solo fplay + SYSTEM) |
 | Subida accidental a git/nube de una copia | Fuga | `.gitignore` + historial limpio + gitleaks + copias cifradas con age |
-| Pérdida del disco / corrupción del `.env` | Pérdida de los 26 secrets | Copia maestra **cifrada** (age) + vault en la nube (usuario) |
+| Pérdida del disco / corrupción del `.env` | Pérdida de los 28 secrets | Copia maestra **cifrada** (age) + vault en la nube (usuario) |
 | Exposición si el repo se hace público | Secrets en historial | Rotación (`scripts/tokens_a_rotar.md`) |
 
 **Estado honesto**: hoy (10 ago 2026) el archivo `.env` en claro sigue existiendo en disco
@@ -37,12 +37,13 @@ y el vault de la nube asegura la **recuperación**.
 
 | Archivo | Qué contiene | Protección actual |
 |---|---|---|
-| `services/supabase/.env` | **Vault principal** (26 vars: Supabase, Discord, Vercel, PostHog, IA…) | gitignored + ACL fplay/SYSTEM + copia `.env.age` cifrada |
+| `services/supabase/.env` | **Vault principal** (28 vars: Supabase, Discord, Vercel, PostHog, IA, TanStack, Chromatic…) | gitignored + ACL fplay/SYSTEM + copia `.env.age` cifrada |
 | `services/supabase/.env.age` | Copia maestra cifrada (age) del vault | ACL fplay/SYSTEM; solo descifrable con identity |
 | `.env.local` (raíz) | `VERCEL_TOKEN` | gitignored + ACL + incluido en bundle cifrado |
 | `projects/*/website/.env.local` (×4) | `NEXT_PUBLIC_*`, Turnstile, PostHog | gitignored + incluidos en bundle cifrado |
 | `projects/ciszubot/discord-bot/.env` | Token bot Discord, TOP_GG, DBL | gitignored + incluido en bundle cifrado |
 | `archives/backups/envs/vault-*.env.age` | **Bundle cifrado** de TODOS los `.env` (zip + age) | ACL fplay/SYSTEM |
+| `services/supabase/.env` (14 ago 2026) | +2 vars: **`TANSTACK_API_KEY`** (ts_, cuenta /account/submissions, proyecto "Ciszu Network", en revisión) y **`CHROMATIC_PROJECT_TOKEN`** (chpt_, Storybook visual testing) | Incluidas en re-cifrado age (`crypt` 14 ago) y bundle |
 | `C:\Users\fplay\.ciszu\ciszu-vault-key.txt` | **Identity age** (clave privada) | ACL fplay/SYSTEM + copia en Bitwarden (usuario) |
 | `C:\Users\fplay\Tools\age\` | Binario age v1.2.1 | — |
 | Bitwarden (nube) | Copia maestra de secrets + identity age (org Ciszu + vault personal) | Org "Ciszu Network" + cuenta Francisco Garcia (Free) |
@@ -203,3 +204,4 @@ powershell -File scripts\vault.ps1 backup
 | 10 ago 2026 | Doc creada; pendientes del usuario: BitLocker (3.4), vault nube (3.5), pago futuro (3.6) |
 | 10 ago 2026 | **Vault Bitwarden implementado (3.5 ✅)**: cuenta creada, org Ciszu Network + colección, 7 items de empresa (Supabase/Vercel/PostHog/IA/Infra/machine account/age identity), auth keys y recovery codes personales en el vault personal (fuera de la org), `BW_CLIENT_ID`/`BW_CLIENT_SECRET` en vault local. Pendiente del usuario: activar BitLocker en C:/E: (3.4) |
 | 11 ago 2026 | **BitLocker E: completado (3.4 ✅)**: cifrado 100% verificado (Protection ON, Password + RecoveryPassword), recovery key en Bitwarden y vault local. C: y D: siguen sin cifrar (opcional futuro) |
+| 14 ago 2026 | **+2 secrets en vault**: `TANSTACK_API_KEY` (submissions de TanStack, pendiente de revisión; sin uso activo) y `CHROMATIC_PROJECT_TOKEN` (build 1 de Chromatic publicado). `crypt` + `backup` + `verify` OK |

@@ -29,6 +29,8 @@ tsconfig.tsbuildinfo
 # Debug logs
 npm-debug.log*
 yarn-debug.log*
+# Storybook/Chromatic logs (generados por build-storybook y chromatic)
+packages/ui/*.log
 
 # Large binary files
 *.psd

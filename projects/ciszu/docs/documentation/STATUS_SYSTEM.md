@@ -1,8 +1,8 @@
 # STATUS_SYSTEM — Estado del Ecosistema CISZU NETWORK
 
-Versión: 2.0.0
+Versión: 2.1.0
 Actualización: 2026-08-14
-Identificador: STATUS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
+Identificador: STATUS_SYSTEM_V2.1.0_2026_08_14_ciszunetwork
 
 > **Definición**: documento operativo de estado del monorepo. Se actualiza al cerrar cada
 > sesión de trabajo. Refleja la foto actual de proyectos, sistemas y scripts.
@@ -67,7 +67,8 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 - **Monorepo**: pnpm 10.8.1 + Turborepo
 - **Web**: Next.js 15 + TypeScript + Tailwind CSS v4
 - **Backend**: Supabase (PostgreSQL + Auth + Storage) + **Drizzle ORM** (`@ciszunetwork/db`, server-only) + Zod (borde de entrada)
-- **CLientes dinámicos**: TanStack Query (ciszubot dashboard) + Storybook (dev-only, `@ciszu/ui`)
+- **CLientes dinámicos**: TanStack Query (ciszubot dashboard) + Storybook + Chromatic (dev-only, `@ciszu/ui`)
+- **Runtime**: Node.js 24 confirmado (decisión 14 ago: Bun/Deno descartados para prod, ver `FULL_STACK_SYSTEM.md` §Runtime)
 - **Desktop**: Tauri 2 (Rust + WebView2)
 - **Bot**: Discord.js v14 + NestJS + Fastify (microservicio HTTP; Express eliminado)
 - **CI/CD**: GitHub Actions + Vercel
@@ -134,6 +135,9 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 - **F2** Bot: `statsServer` Express migrado a **NestJS + Fastify**; dependencia `express` eliminada.
 - **F3** Herramientas client: Zod (`parseJsonBody`) en todas las API routes que mutan; Storybook
   dev-only en `@ciszu/ui` (v10.5.8); TanStack Query en `ciszubot-website` (dashboard).
+- **F4 (14 ago)** Chromatic: Storybook de `@ciszu/ui` publicado (build 1, 5 stories/2 componentes);
+  `CHROMATIC_PROJECT_TOKEN` en vault. Decisión runtime documentada (Node 24; Bun/Deno descartados).
+  Vault +2 secrets (`TANSTACK_API_KEY`, `CHROMATIC_PROJECT_TOKEN`) re-cifrado y verificado.
 - Verificación: lint global ✅, 171 tests ✅, builds webs+bot ✅, build-storybook ✅.
 - Frontend: fases 1–11 del to-do frontend completadas y verificadas (ver `TODO.md`).
 - CDN limpio (7.353 objetos) y tests en 171.
@@ -188,7 +192,7 @@ Este doc es una **foto del estado** del ecosistema; al cerrar sesión:
 
 | Fecha | Cambio relevante |
 |---|---|
-| 2026-08-14 | F1 Drizzle (packages/db + webs + bot), F2 NestJS+Fastify, F3 Zod/Storybook/TanStack Query; tests 171; lint/builds verdes |
+| 2026-08-14 | F1 Drizzle, F2 NestJS+Fastify, F3 Zod/Storybook/TanStack Query, F4 Chromatic (build 1) + decisión runtime Node 24; vault +2 secrets (TanStack, Chromatic); tests 171; lint/builds verdes |
 | 2026-08-13 | Docs ampliados a estándar; frontend fases 1–11 completas; CDN 7.353 objetos; tests 157 |
 | 2026-08-12 | Pagos: infra NOWPayments lista, monetización pendiente hasta 18 |
 | 2026-08-11 | Cuenta NOWPayments creada; suite Vitest a 157 |
@@ -214,7 +218,7 @@ Este doc es una **foto del estado** del ecosistema; al cerrar sesión:
 - [ ] Nuevas incidencias registradas en su `*_SYSTEM.md`.
 - [ ] `ÚLTIMA ACTUALIZACIÓN` fechada y `PROJECTS_SYSTEM.md` con historia.
 
-_Última revisión: 13 ago 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
-`WORKFLOW_SYSTEM.md`, `ARCHITECTURE.md`.
+_Última revisión: 14 ago 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
+`WORKFLOW_SYSTEM.md`, `ARCHITECTURE.md`, `FULL_STACK_SYSTEM.md`.
 
-ÚLTIMA ACTUALIZACIÓN: 2026-08-13
+ÚLTIMA ACTUALIZACIÓN: 2026-08-14

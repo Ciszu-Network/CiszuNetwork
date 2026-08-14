@@ -66,6 +66,10 @@ Componentes React reutilizados por las webs:
 - **Storybook (dev-only, F3)**: `@storybook/react-vite` v10.5.8 con `storybook` y `build-storybook`.
   Stories en `src/**/*.stories.tsx` (Icon, SmartImage). Sin runtime en prod. Documenta el
   componente compartido por las 4 webs con visual regression.
+- **Chromatic (dev-only, F4)**: CLI `chromatic` 18.2 + token `CHROMATIC_PROJECT_TOKEN` (vault) para
+  visual testing alojado. Build 1 publicado (14 ago 2026; 5 stories/2 componentes).
+  appId `6a7f722e2641a24bc6249782`, URL de ejemplo:
+  `https://<appId>-<buildid>.chromatic.com`. Script: `pnpm --filter @ciszu/ui chromatic`.
 
 ## 5. `@ciszunetwork/cdn` (assets)
 

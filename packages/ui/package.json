@@ -11,7 +11,8 @@
     "lint": "tsc --noEmit",
     "type-check": "tsc --noEmit",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "chromatic": "chromatic"
   },
   "dependencies": {
     "@ciszunetwork/cdn": "workspace:*"
@@ -25,6 +26,7 @@
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "@vitejs/plugin-react": "^5.2.0",
+    "chromatic": "^18.2.0",
     "eslint": "^8.0.0",
     "next": "^15.5.22",
     "react": "^19.2.7",
