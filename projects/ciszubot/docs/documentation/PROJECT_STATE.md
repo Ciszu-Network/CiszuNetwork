@@ -1,21 +1,46 @@
-# Estado del Proyecto CiszuBot
+﻿# PROJECT_STATE — Estado de CiszuBot
 
-**Última actualización:** 28 Julio, 2026
-**Propietario:** Ciszuko Antony (Francisco Garcia)
+Versión: 1.0.0
+Actualización: 2026-08-14
+Identificador: PROJECT_STATE_V1.0.0_2026_08_14_ciszunetwork
 
-## ✅ Completado
-- ✅ **Landing Page**: Next.js 15 con configuración lista.
-- ✅ **Documentación**: Todos los formatos (txt, md, docx, pdf) completos.
-- ✅ **documentation**: 11 archivos con estructura completa.
-- ✅ **public/docs/**: Documentación pública en website.
-- ✅ **Shigamens Server Docs**: Documentación especial del servidor incluida.
+> **Definición**: estado actual del proyecto **CiszuBot** (bot de Discord + landing web +
+> base de datos Supabase): componente, estado y notas. Documento vivo: se actualiza en cada
+> sesión. Solo lo edita Ciszuko Antony.
 
-## ⚠️ Pendiente
-- ⚠️ **Bot de Discord** (`discord/`): No implementado aún. Pendiente crear el directorio y desarrollar el bot con Discord.js.
-- ⚠️ **Comandos**: Definir lista de comandos slash.
-- ⚠️ **Hosting**: Definir hosting del bot (VPS, siempre encendido).
+## Estado actual
+
+| Componente | Estado | Notas |
+|---|---|---|
+| Website (Next.js) | ✅ Listo | Landing neon + dashboard OAuth (config por servidor) — 12 rutas, build OK 2 ago 2026 |
+| Bot (Discord.js) | ✅ Listo | v3.2.0 — TypeScript, 72 comandos (slash + prefijo `cz!`), heartbeat Supabase |
+| Comandos | ✅ 72 | 9 categorías: Configuración, Diversión, Economía, Información, Moderación, Música, Niveles, Social, Utilidad |
+| Slash commands JSON | ✅ Listo | `commands.json` (canónico) + `docs/slash-commands.json`/`.md` — regenerables con `scripts/generate-commands.js` |
+| Migración 14 | ✅ Aplicada | 13 tablas en `ciszubot` (guild_configs, wallets, transactions, shop_items, inventory, levels, warns, tickets, giveaways, afk, alliances, discord_users, snipes) |
+| Economía | ✅ | balance/daily/give/gamble/slot/deposit/withdraw/leaderboard/shop/buy (wallets + transactions) |
+| Niveles | ✅ | rank/topxp — XP por mensaje (cooldown 60s), canal de nivel configurable |
+| Música | ✅ | play/skip/queue/stop/loop/pause/resume — @discordjs/voice + play-dl (requiere ffmpeg, ya en Dockerfile) |
+| Tickets | ✅ | setup tickets, botones ticket_create/ticket_close |
+| Bot lists API | ⏳ Pendiente | Código listo (`botlists.ts`, webhook `POST /api/votes` recompensa 500 monedas). Subir a top.gg/DiscordBotList requiere tokens del usuario (`TOP_GG_TOKEN`, `DISCORDBOTLIST_TOKEN`) |
+| Dashboard web | ✅ Build OK | OAuth Discord (cookie HMAC), `/dashboard` + `/dashboard/[guildId]` + API `/api/dashboard/[guildId]`. Requiere registrar callback `https://ciszubot.vercel.app/api/auth/discord/callback` en el Developer Portal |
+| Env vars Vercel | ✅ Añadidas | DISCORD_BOT_TOKEN, DISCORD_CLIENT_ID, SUPABASE_SERVICE_ROLE_KEY, SESSION_SECRET, NEXT_PUBLIC_SITE_URL (producción) |
+| 24/7 hosting | ❌ Pendiente | Ver `VPS_PLAN.md` (ciszu) — recomendación Oracle Free Tier |
+| Documentación | ✅ Completa | Todos los formatos |
+| documentation | ✅ Completo | Archivos con estructura completa |
+| public/docs/ | ✅ Creado | En website/public/docs/ |
+| Shigamens Server Docs | ✅ Incluidas | Reglas y directrices |
+
+## Notas técnicas (2 ago 2026)
+
+- Registry soporta arrays y fábricas por archivo (`utils/commandRegistry.ts`).
+- SimulatedMessage ampliado (mentions con users/roles/channels, member con permissions/roles/voice).
+- Limitación conocida: `configService.ts` cachea guild_configs en memoria del bot; cambios desde el dashboard no invalidan la caché hasta reiniciar el bot.
 
 ## Stack
+
 - **Website**: Next.js 15 + TypeScript + Tailwind 4
-- **Bot**: Discord.js (vanilla JS)
+- **Bot**: Discord.js v14 + TypeScript
 - **Package Manager**: pnpm
+- **Backend**: Supabase (PostgreSQL + Auth + Storage)
+
+ÚLTIMA ACTUALIZACIÓN: 2026-08-14

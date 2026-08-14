@@ -1,763 +1,287 @@
-# Ciszu Network Monorepo — AGENTS.md
+﻿# Ciszu Network — AGENTS.md
 
-## Visión general del proyecto
+Este archivo es la **primera lectura de toda sesión** y se relee en cada compactación. Es un
+**mapa + reglas**, no una enciclopedia: la documentación técnica completa vive en
+`projects/ciszu/docs/documentation/` (fuente de verdad de cada sistema). Cuando una tarea toque
+un sistema, **lee su doc** antes de codificar; no guardes el detalle aquí.
 
-**Ciszu Network** es el ecosistema digital de **CiszukoAntony** (Ciszuko): un monorepo con 4 sitios web (Next.js 15 + Tailwind 4), un bot de Discord (Discord.js), un juego de música (MuzicMania — web + app Tauri), paquetes compartidos (`@ciszu/ui`, `@ciszunetwork/cdn`) y un CDN de assets sobre Supabase Storage.
+Regla de oro de este archivo: **contexto suficiente para saber qué leer, no para saberlo todo**.
 
-| Proyecto                | URL (Vercel)                 | Descripción                                                                                                                                            |
-| ----------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **CiszuNetwork**  | `ciszunetwork.vercel.app`  | Web principal — presentación de la marca, redes y ecosistema                                                                                          |
-| **CiszukoAntony** | `ciszukoantony.vercel.app` | Portfolio personal (logos, medios, música)                                                                                                             |
-| **MuzicMania**    | `muzicmania.vercel.app`    | Juego de ritmo/música — scores en Supabase (schema`muzicmania`), auth de Supabase, app de escritorio Tauri + NSIS                                   |
-| **Ciszubot**      | `ciszubot.vercel.app`      | Landing del bot de Discord (`projects/ciszubot/website/`, Next.js) + **estado en vivo del bot** (heartbeat Supabase → `ciszubot.bot_status`) |
+---
 
-Infraestructura: **Supabase** (un solo proyecto `obwzzmbvkrcscqwptlqo` — auth, Postgres, Storage CDN `ciszu-cdn`) + **Vercel** (4 proyectos, deploys vía GitHub Actions) + **GitHub** (repo privado `Ciszu-Network/CiszuNetwork`). Identidad visual: neon cyan/rosa, fuente Geomanist.
+## 1. Identidad
 
-**Estado actual (jul 2026)**: los 4 sitios despliegan desde `main` y funcionan en producción (imágenes directas CDN, `images.unoptimized`, REST de muzicmania corregido). La sesión de seguridad cerró: code scanning 31/31 fixed, dependabot 35/36 (resta glib), secret scanning 1 abierta (PAT sbp\_ redactado del repo). **Migración 11 APLICADA (31 jul 2026)** con PAT nuevo del usuario (`SUPABASE_ACCESS_TOKEN` en `services/supabase/.env` + CLI supabase). **Herramientas completas**: semgrep 0 findings reales, ZAP 2.17.0 instalado + DAST probado (0 High/4 Medium), DOMPurify aplicado, builds 4/4 OK. Cerrado: PAT viejo filtrado revocado, lista de rotación de tokens en `scripts/tokens_a_rotar.md`, secretlint full scan con timeout por tamaño (correr por subtargets), schemas expuestos en Dashboard. Detalles en la sección "Herramientas de seguridad instaladas".
+Ecosistema digital y masivo de **Ciszuko Antony** (Francisco García, alias **Ciszuko**) — CEO y
+único creador legítimo del proyecto. NUNCA atribuir el desarrollo a IAs en público ni en código.
 
-## Quick start
+- Contacto: `ciszunetwork@outlook.com`. Base: Caracas, Venezuela.
+- Idioma de trabajo y documentación: **español**. Nombres de archivos docs: inglés.
+- Identidad visual: neon cyan/rosa sobre negro, fuente Geomanist.
+- Repo GitHub: Organization `Ciszu-Network`, rama `main`. Deploys desde `main`.
+
+## 2. Visión general
+
+Monorepo pnpm con 4 webs Next.js, un bot de Discord, un juego de música y paquetes compartidos.
+
+| Proyecto | URL (Vercel) | Carpeta | Descripción |
+| --- | --- | --- | --- |
+| **CiszuNetwork** | `ciszunetwork.vercel.app` | `projects/ciszu/` | Web principal — marca, redes, ecosistema. **Centro de documentación**. |
+| **CiszukoAntony** | `ciszukoantony.vercel.app` | `projects/ciszukoantony/` | Portfolio personal (logos, medios, música) |
+| **MuzicMania** | `muzicmania.vercel.app` | `projects/muzicmania/` | Juego de ritmo — scores en schema `muzicmania`, auth, app Tauri + NSIS |
+| **CiszuBot** | `ciszubot.vercel.app` | `projects/ciszubot/` | Landing del bot + estado en vivo (`ciszubot.bot_status`) |
+
+> **Nota de nombre**: la carpeta del portfolio se transcribe mal desde la terminal (nombre
+> ambiguo). Resuélvela SIEMPRE en runtime: `Get-ChildItem projects -Directory | Where-Object
+> { $_.Name -match 'antony' }`. No la escribas a mano.
+
+## 3. La documentación es la fuente de verdad
+
+La documentación oficial vive en `projects/ciszu/docs/documentation/` (62 docs, estándar
+`<NOMBRE>_<SUFIJO>.md`). Cada proyecto puede tener su propia copia adaptada
+(`projects/<name>/docs/documentation/`), pero **lo genérico se referencia a ciszu, no se
+duplica**. Las reglas del propio sistema de docs viven en `DOCUMENTATION_SYSTEM.md`.
+
+### 3.1 Convención de nombres
+
+`<NOMBRE>_<SUFIJO>.md` — inglés, MAYÚSCULAS, `_` como separador (sin `-`, sin espacios).
+
+| Sufijo | Significado | Ejemplo |
+|---|---|---|
+| `_SYSTEM` | Sistema que ya funciona (mantener) | `DB_SYSTEM.md` |
+| `_PLAN` | Plan/roadmap/guía a implementar | `BRAND_PLAN.md` |
+| `_PROTOCOLS` | Normas obligatorias | `SECURITY_PROTOCOLS.md` |
+| (especial) | Docs de estado vivos | `PROJECT_STATE.md`, `PROJECT_HISTORY.md`, `TODO.md` |
+
+Reglas: no `_GUIDE` (las guías son `_PLAN`); no docs `AGENT_*` (la documentación es oficial);
+cabecera estándar (Versión / Actualización / Identificador / Definición); ≥200 líneas salvo
+estado e índices; cierre `_Última revisión: ..._` con relacionados.
+
+### 3.2 Dónde investigar por tarea
+
+Antes de codificar, lee el doc del área que tocas. Mapa por tipo de tarea:
+
+| Tipo de tarea | Docs a leer primero |
+|---|---|
+| Frontend (webs) | `FRONTEND_SYSTEM` · `STYLES_SYSTEM` · `FRAMEWORKS_SYSTEM` · `ICON_SYSTEM` · `COLOR_SYSTEM` |
+| Backend/API | `BACKEND_SYSTEM` · `FULL_STACK_SYSTEM` · `ERRORS_SYSTEM` |
+| Paquetes compartidos | `PACKAGES_SYSTEM` · `FRONTEND_SYSTEM` · `FULL_STACK_SYSTEM` |
+| Base de datos | `DB_SYSTEM` · `SECURITY_PROTOCOLS` (RLS) |
+| Seguridad | `SECURITY_PROTOCOLS` · `DEVSECOPS_SYSTEM` · `VAULT_SYSTEM` |
+| Bot Discord | `DOCKER_SYSTEM` · `MONITORING_SYSTEM` · `TOOLS_SYSTEM` |
+| Assets/CDN | `CDN_SYSTEM` · `MEDIA_FORMATS_SYSTEM` · `ICON_SYSTEM` |
+| Legal/fiscal | `COMPANY_REGISTRATION_PLAN` · `TAX_PLAN` · `RIF_PERSON_PLAN` |
+| Imagen/multimedia | `BRAND_PLAN` · `AI_ART_PLAN` · `ART_PROTOCOLS` |
+| Operación diaria | `WORKFLOW_SYSTEM` · `TOOLS_SYSTEM` |
+
+### 3.3 Índice de la documentación de ciszu
+
+- **Sistemas**: `ARCHITECTURE.md` · `FULL_STACK_SYSTEM` (stack) · `DB_SYSTEM` · `AUTH_SYSTEM` ·
+  `CACHING_SYSTEM` · `CDN_SYSTEM` · `ICON_SYSTEM` · `MEDIA_FORMATS_SYSTEM` · `DOCKER_SYSTEM` ·
+  `TESTING_SYSTEM` · `TOOLS_SYSTEM` · `WORKFLOW_SYSTEM` · `VAULT_SYSTEM` (credenciales) ·
+  `DOMAINS_SYSTEM` · `MONITORING_SYSTEM` (UptimeRobot + ntfy) · `ANALYTICS_SYSTEM` ·
+  `ERRORS_SYSTEM` (Sentry) · `EMAILS_SYSTEM` · `PAYMENTS_SYSTEM` · `REVIEWS_SYSTEM` ·
+  `CORS_SYSTEM` · `BUSINESS_SYSTEM` · `OPENCODE_SYSTEM` (voz + comandos) ·
+  `REMOTE_CONTROL_SYSTEM` (SSH/Tailscale/ciszu-ai) · `KNOWLEDGE_SYSTEM` (educación) ·
+  `INSTALLERS_SYSTEM` · `ONLINE_SERVICES_SYSTEM` · `STATISTICS_SYSTEM` ·
+  `PROJECTS_SYSTEM` · `STATUS_SYSTEM`
+- **Arquitectura por capas**: `FRONTEND_SYSTEM` · `BACKEND_SYSTEM` · `PACKAGES_SYSTEM` ·
+  `FRAMEWORKS_SYSTEM` · `STYLES_SYSTEM` · `COLOR_SYSTEM`
+- **Planes**: `COMPANY_REGISTRATION_PLAN` (+ `RIF_PERSON_PLAN` · `TRADEMARK_PLAN` ·
+  `COMMERCIAL_REGISTRATION_PLAN` · `TAX_PLAN` · `INTERNATIONAL_LLC_PLAN`) ·
+  `ORGANIZATIONAL_SCALABILITY_PLAN` · `RAG_VECTORS_PLAN` · `AI_ART_PLAN` · `BRAND_PLAN` · `VPS_PLAN`
+- **Protocolos de contexto**: `GEOGRAPHIC_CONTEXT_PROTOCOLS` · `HISTORICAL_CONTEXT_PROTOCOLS` ·
+  `TARGET_AUDIENCE_PROTOCOLS` · `HEALTH_AND_SAFETY_PROTOCOLS` · `SCHEDULE_PROTOCOLS` ·
+  `SECURITY_PROTOCOLS` · `CONTACTS_PROTOCOLS` · `IT_GLOSSARY_PROTOCOLS` · `MATERIAL_ICONS_PROTOCOLS`
+- **Estado (vivo)**: `PROJECT_STATE.md` · `PROJECT_HISTORY.md` · `TODO.md`
+- **Estándares**: `CODE_PRINCIPLES_PROTOCOLS` (DRY/KISS/YAGNI/SOLID) · `DEVSECOPS_SYSTEM`
+  (SAST/DAST, shift-left) · `DOCUMENTATION_SYSTEM` (reglas de docs)
+
+Cada proyecto replica solo lo propio (estado, stack/architecture/workflow adaptados). La
+matriz completa de qué se replica a qué proyecto está en `DOCUMENTATION_SYSTEM.md` §12.5.
+
+---
+
+## 4. Estructura del monorepo
+
+```
+E:\Ciszu Network\
+├── projects/            # Aplicaciones: ciszu, ciszukoantony, muzicmania, ciszubot, ciszugamens
+├── packages/            # Paquetes compartidos: cdn, config, email, payments, ui, utils
+├── services/            # Infraestructura: supabase (migraciones), vercel
+├── shared/              # Assets compartidos: fonts, icons, etc.
+├── scripts/             # Scripts de automatización (txt2md, upload-cdn, vault, ...)
+├── tools/               # Herramientas locales IA/ops (ascii-ai, ciszou-ai, convert, ...)
+├── apis/                # Colecciones Bruno (health/, rest/)
+├── archives/            # Backups y archivos grandes (gitignored parcialmente)
+├── test/                # Tests E2E Playwright
+├── .github/workflows/   # CI/CD: ci.yml, codeql, dast, deploys ×4, uptime-watch
+└── AGENTS.md            # Este archivo
+```
+
+### 4.1 Workspaces pnpm y entry points
+
+| pnpm filter | Location | What |
+| --- | --- | --- |
+| `ciszunetwork-website` | `projects/ciszu/website/` | Next.js — web principal |
+| `ciszukantony-website` | `projects/ciszukoantony/website/` | Next.js — portfolio |
+| `muzicmania-website` | `projects/muzicmania/website/` | Next.js + Tauri — juego |
+| `ciszubot-website` | `projects/ciszubot/website/` | Next.js — landing del bot |
+| `ciszubot` | `projects/ciszubot/discord-bot/` | Discord.js bot (TS, pnpm workspace, Docker) |
+| `@ciszunetwork/cdn` | `packages/cdn/` | Asset resolver |
+
+Package manager: **pnpm v10.8.1**, Node >=20. Todas las webs: Next.js 15 (App Router) +
+Tailwind 4 + PostCSS + ESLint. Assets vía resolver/CDN (`public/` solo docs/pwa/sw.js).
+
+### 4.2 Paquetes compartidos (`packages/`)
+
+| Paquete | Qué hace |
+| --- | --- |
+| `@ciszu/ui` | Componentes UI compartidos (iconos, tokens) |
+| `@ciszunetwork/cdn` | Resolver de assets vía CDN |
+| `@ciszunetwork/utils` | Utilidades: `createRateLimiter`, `buildCsp`, `createIast`, `escapeHtml` |
+| `@ciszunetwork/email` | Envío de emails |
+| `@ciszunetwork/payments` | Pasarela de pagos |
+| `@ciszunetwork/config` | Configuración compartida |
+
+Detalle, contratos y reglas de publicación: `PACKAGES_SYSTEM.md`. Un cambio en `packages/**`
+re-despliega las 4 webs (los workflows escuchan ese path).
+
+### 4.3 Servicios e infraestructura
+
+- **Supabase** (`services/supabase/`) — proyecto `obwzzmbvkrcscqwptlqo`: auth, Postgres,
+  Storage CDN `ciszu-cdn`. Las migraciones SQL viven ahí (`migrations/`) y se aplican con
+  `scripts/apply-migration-XX.js`. Consultas: `dbvr sql -ds=supabase "..."`. **RLS obligatorio
+  en toda tabla nueva.**
+- **Vercel** — 4 proyectos, deploys vía GitHub Actions desde la raíz
+  (`vercel --prod --yes --archive=tgz`; nunca `vercel pull/prebuilt` dentro de `projects/*/website`).
+- **GitHub Actions** (`.github/workflows/`) — CI (lint/test/semgrep/audit/gitleaks),
+  CodeQL, DAST semanal ZAP, deploys ×4, uptime-watch cada 5 min.
+- **ntfy** — notificaciones push (`pnpm notify "Mensaje"`).
+- **UptimeRobot** — monitorización de las webs.
+- **Sentry** — errores. **PostHog** — analytics. **Bruno** — colecciones de API.
+
+---
+
+## 5. Quick start
 
 ```bash
-pnpm install              # install all workspaces
-pnpm dev                  # turbo: all apps
-pnpm build                # turbo: all apps
-pnpm lint                 # turbo: lint all apps
-pnpm --filter <name> dev  # single app
+pnpm install              # instala todos los workspaces
+pnpm dev                  # turbo: todas las apps en dev
+pnpm build                # turbo: build de todas las apps
+pnpm lint                 # turbo: lint de todas las apps
+pnpm test                 # unit tests (Vitest)
+pnpm e2e                  # Playwright E2E
+pnpm --filter <name> dev  # una app individual
+pnpm notify "Mensaje"     # push ntfy
+pnpm cdn:upload           # sube assets a Supabase Storage (ciszu-cdn)
+pnpm api:test             # tests de API con Bruno (prod)
 ```
 
-Package manager: **pnpm v10.8.1**, Node >=20.
+Pipeline de documentación: `node scripts/txt2md.js` (txt→md) · `node scripts/md2office.js`
+(md→docx) · `python scripts/txt2pdf.py` (txt→pdf) · `node scripts/sync-public-docs.js`
+(docs/ → public/docs/ de cada web). Formato canónico `txt → md → docx → pdf`.
+
+---
+
+## 6. Reglas del agente
+
+### 6.1 Comunicación
+- Tono profesional y directo, sin introducciones ni cortesías.
+- **No preguntes por defecto**: ejecuta scripts y comandos automáticamente si son seguros.
+  Solo informa si hay bloqueo o ambigüedad real.
+- Responde conciso. Identidad del creador: Ciszuko Antony (nunca IAs).
+
+### 6.2 Git
+- Commits en español, descriptivos, una línea, **sin emojis**. Trabajo directo en `main`.
+- **No commitear ni pushear sin solicitud explícita.** El push desde este PC falla por DNS
+  (github.com no resuelve) → el usuario hace push manualmente.
+- `.gitignore` excluye binarios grandes (`.mp4`, `.gif`, `.exe`, `.mp3`), `content/` de
+  proyectos y secrets. Al añadir un patrón nuevo: `git rm -r --cached <ruta>`.
+- Pre-commit hooks: secretlint + gitleaks sobre `--staged`. `--no-verify` solo con falso
+  positivo justificado.
+
+### 6.3 Sesiones (handover)
+- **Iniciar**: leer `PROJECT_STATE.md`, `PROJECT_HISTORY.md` y `TODO.md`
+  (`projects/ciszu/docs/documentation/`) + este AGENTS.md. Después el `_SYSTEM` del área a tocar.
+  Confirmar disponibilidad en 1 línea: "CISZU AI listo. [proveedor/modelo]."
+- **Cerrar**: actualizar `PROJECTS_SYSTEM.md` (historial + estado) y `STATUS_SYSTEM.md` con los
+  cambios; dejar el siguiente paso claro. No commitear sin permiso.
+- **Pensar por tarea, no "saberlo todo"**: cada sesión lee lo necesario para la tarea actual.
+  No cargues el contexto con docs de áreas que no se tocan.
+
+### 6.4 Disco y temporales
+- Disco C limitado. Temporales SIEMPRE en `E:\Ciszu Network\.opencode\temp/` (gitignored);
+  borrarlos al terminar o limpiar los >1 semana. Nunca usar `C:\Users\fplay\AppData\Local\Temp`.
+  Verificar espacio (`Get-PSDrive C,E`) antes de descargas grandes.
+
+---
+
+## 7. Seguridad — obligatorio en toda implementación
+
+Checklist completo: `SECURITY_PROTOCOLS.md`. Reglas no negociables:
+
+1. **RLS en toda tabla nueva** en la misma migración (`ENABLE ROW LEVEL SECURITY` + policy
+   explícita; Supabase da `GRANT ALL` a anon/authenticated por defecto). Verificar con dbvr.
+2. **Rate limit en todo endpoint POST** que muta o consume un servicio externo
+   (`createRateLimiter` de `@ciszunetwork/utils`).
+3. **Secretos nunca en fallbacks de código** ni hardcodeados. Secrets solo `process.env.X`
+   (sin prefijo) en server-only. `NEXT_PUBLIC_` solo para lo público por diseño.
+4. **XSS**: nunca `dangerouslySetInnerHTML`/`innerHTML` con datos de usuario; usar
+   `escapeHtml()`/`textContent`; DOMPurify si es imprescindible.
+5. **SQL injection**: nunca concatenar strings; ORM parametrizado o RPC con objetos.
+6. **SECURITY DEFINER** solo cuando sea estrictamente necesario (triggers); preferir INVOKER
+   con `search_path` explícito.
+7. **RLS policies**: separar por comando (nunca `FOR ALL`), envolver `auth.*()` en
+   `(SELECT auth.X())`.
+8. **Webs nuevas**: `robots.ts` (allow `/`, disallow `/api/`), middleware con cabeceras de
+   seguridad + CSP (`buildCsp()`) + sensor IAST (`createIast()`).
+9. **Verificar con fuentes externas** (dbvr, curl a producción, output de build) — no confiar
+   en el propio estado.
+10. Tras cambios en policies/funciones, verificar Security + Performance Advisors en Dashboard.
+
+### 7.1 Dependencias y secretos
+- NUNCA instalar una librería sin confirmar: proponer y esperar aprobación humana.
+- pnpm con `ignore-scripts=true`. Auditorías: `pnpm audit --prod`, `cargo audit`, `trivy`.
+- NUNCA imprimir `.env`/tokens en logs o resúmenes; referirse genéricamente. Si un secreto se
+  filtra: rotarlo y registrarlo en `scripts/tokens_a_rotar.md`.
+
+---
+
+## 8. Cómo escribir este AGENTS.md (reglas horizontales)
+
+Este archivo es **retroalimentación automática**: cuando el ecosistema cambie, actualízalo.
+Normas para mantenerlo correcto:
+
+1. **Es un mapa, no una enciclopedia.** Todo concepto técnico = línea de "qué es + dónde se
+   documenta", y el detalle vive en el doc de ciszu. Nunca dupliques contenido de un doc aquí.
+2. **YAGNI sobre tokens**: al inicio de sesión se relee por completo; lo que no sirva a esa
+   lectura, bórralo de AGENTS y capéralo en su doc `_SYSTEM`. Mantenlo ≤1000 líneas.
+3. **No to-do's aquí**: tareas → `TODO.md` (solo edita Ciszuko Antony). Estado → `PROJECT_STATE.md`.
+4. **Verifica las rutas**: cada `projects/<nombre>/`, URL y filtro pnpm debe ser real
+   (comprueba con `Get-ChildItem`/`git ls-files`). No inventes carpetas ni nombres.
+5. **Sesión vs tarea**: actualiza este archivo solo cuando cambie. Estructura (catálogo de
+   rutas/servicios/mapas) o reglas; no por cada entregable.
+6. **Convenciones que deben vivir aquí**: nombres de carpeta ambiguos (como la del portfolio),
+   URLs de despliegue, filtros pnpm, y las 10 reglas de seguridad no negociables.
+7. Respetar el formato de tabla/código; contenido en español; sin emojis.
+8. Al cambiar un doc en `documentation/`: actualizar sus refs cruzadas y, si toca, el índice
+   del §3.3 y el `README.md` de la carpeta.
+
+---
+
+## 9. Límite de contexto de sesión (opencode)
+
+Cerca de **120k tokens** el modelo se vuelve muy lento. Reglas:
+
+1. Al llegar al umbral (~110-120k): avisar por push (`pnpm notify`) y proponer cambiar de sesión.
+2. Antes de cambiar: commitear el trabajo, actualizar AGENTS.md, guardar estado del to-do,
+   dejar resumen del próximo paso.
+3. La nueva sesión empieza con "continúa" + resumen guardado.
+4. No escribir código nuevo tras el umbral salvo trivial — priorizar guardar estado.
 
-## Workspaces & entry points
+Una sesión normal rinde ~60-90k tokens; con muchos outputs de tools llega antes.
 
-| pnpm filter name          | Location                            | What                                                |
-| ------------------------- | ----------------------------------- | --------------------------------------------------- |
-| `ciszunetwork-website`  | `projects/ciszu/website/`         | Next.js — main CiszuNetwork website                |
-| `ciszukoantony-website` | `projects/ciszukoantony/website/` | Next.js — portfolio                                |
-| `muzicmania-website`    | `projects/muzicmania/website/`    | Next.js + Tauri — music game                       |
-| `ciszubot-website`      | `projects/ciszubot/website/`      | Next.js — bot landing website                      |
-| `ciszubot`              | `projects/ciszubot/discord-bot/`  | Discord.js bot (TypeScript, pnpm workspace, Docker) |
-| `@ciszunetwork/cdn`     | `packages/cdn/`                   | Asset resolver (see below)                          |
+---
 
-> **Terminología**: cada producto web es un **website** (cúmulo de webpages). Los pnpm filter names, workflows y carpetas usan `-website` (nunca `-webpage`). Los clientes API de Bruno viven en `apis/bruno/` (antes `apis-client/bruno/`).
-
-All websites are Next.js 15 with Tailwind 4 + PostCSS. They use `eslint` (no Prettier config found).
-
-## CiszuBot (bot de Discord) — estado (ago 2026)
-
-**v3.2.0 — TypeScript + pnpm + Node 24, expansión masiva de comandos** (`projects/ciszubot/discord-bot/`):
-
-- Stack: Node 24 (imagen `node:24-alpine`), TypeScript 5.9, pnpm 11 (workspace), Discord.js ^14.22, Express ^5, `@supabase/supabase-js`, `@discordjs/voice` + `play-dl` (música), `@top-gg/sdk` + `discordbotlist` (bot lists).
-- **72 comandos en 9 categorías** (Configuración, Diversión, Economía, Información, Moderación, Música, Niveles, Social, Utilidad). Registry (`src/utils/commandRegistry.ts`) soporta arrays por archivo y **fábricas** (`typeof entry === 'function' ? entry() : entry`) — ver `commands/minigames.ts`, `setup.ts`, `music.ts`, `moderation.ts` como patrón.
-- **Servicios** (`src/services/`): `configService` (guild_configs con caché en memoria — ⚠️ el dashboard NO invalida la caché hasta reiniciar), `economy` (wallets/transactions), `levels` (XP), `giveaways` (timers + reanudación), `botlists` (AutoPoster top.gg + DBL cada 30 min + webhook), `music` (cola por guild), `statsServer` (acepta `client`, añade `POST /api/votes` — webhook top.gg que recompensa 500 monedas).
-- **Listeners** (`src/listeners/index.ts`): XP por mensaje (cooldown 60s), AFK (quitar al hablar), snipe (MessageDelete → upsert snipes), welcome/goodbye/autorole (PartialGuildMember), contadores (rename), tickets (botones con `deferUpdate`), canal privado, resume giveaways en ready/GuildCreate.
-- **Migración 14 aplicada** (2 ago 2026): 13 tablas en `ciszubot` — guild_configs, wallets, transactions, shop_items, inventory, levels, warns, tickets, giveaways, afk, alliances, discord_users, snipes.
-- **Slash commands globales** (`/`): registrados vía `Routes.applicationCommands`; preserva el **Entry Point command** (`launch`, type 4) para evitar el error 50240. Si `GUILD_ID` está en `.env`, registra solo en ese guild.
-- **Supabase conectado (2 ago 2026)**: `src/services/supabase.ts` con service_role + schema `ciszubot`. Cada comando se inserta en `ciszubot.command_logs` y cada 60s **heartbeat** a `ciszubot.bot_status` (upsert id=1, version v3.2.0). Shutdown marca online=false.
-- **Fixes clave**: `Routes.applicationcommands` → `applicationCommands` (mayúscula), botones/selects con `deferUpdate`, registry con `loaded.default ?? loaded` (ESM/CJS), `slashCommand` es `SlashCommandBuilder` **SIN `.toJSON()`** (patrón ping.ts).
-- **Docker**: multi-stage con pnpm (`corepack prepare pnpm@11.18.0`), usuario no-root, `EXPOSE 5000`, logs en `logs/` con chown. Stage 2 añade `ffmpeg python3 make g++` (música). Contexto = raíz del repo. Comando: `docker compose up -d --build ciszu-bot`.
-- **Panel web**: Express en `:5000` (`/api/stats` + `POST /api/votes` + estáticos desde `public/`). Compose mapea `5000:5000`.
-- **Env vars bot** (`.env`, gitignored): `TOP_GG_TOKEN` y `DISCORDBOTLIST_TOKEN` sin valores en el vault (código listo; sin ellos no postea a bot lists). Lista completa en `scripts/tokens_a_rotar.md`.
-- ⚠️ **24/7**: el bot corre en el PC del usuario (Docker Desktop). Si el PC se apaga, el bot muere. Ver `docs/documentation/VPS_247.md` para la recomendación de hosting.
-
-## Web de CiszuBot — estado (ago 2026)
-
-**`projects/ciszubot/website/` — reconstruida 2 ago 2026** con tema neon de MuzicMania (Tailwind v4, Exo_2 + Rajdhani):
-
-- **Single page** (`src/app/page.tsx`): hero con isotipo oficial (CDN), badge de estado en vivo, stats dinámicas reales, grid completo de 12 comandos con categorías (Diversión/Información/Social/Utilidad), sección estado en vivo, sección ecosistema (links a ciszunetwork/ciszukoantony/muzicmania) y CTA invitar.
-- **Datos dinámicos**: fetch server-side a `ciszubot.bot_status` vía PostgREST con anon key + `Accept-Profile: ciszubot` (policy SELECT anon). `revalidate = 60`. El badge "En línea" es **online && last_seen < 3 min** (si el PC se apaga sin shutdown, la web lo detecta por heartbeat viejo).
-- **Datos de comandos**: `src/data/commands.ts` — 72 comandos con descripciones/aliases/usage/categorías reales del bot (9 categorías). Canonical: `scripts/generate-commands.js` (regenera `commands.json` + `docs/slash-commands.{json,md}` desde dist).
-- **Dashboard OAuth (2 ago 2026)**: `src/lib/auth.ts` (server-only) — cookie `ciszubot_session` HMAC sha256 (7 días), `oauthUrl`, `exchangeCode`, `refreshAccessToken`, `fetchDiscordUser`, `getGuildsForUser`, `isGuildAdmin` (ADMINISTRATOR|MANAGE_GUILD), `getBotGuildIds` (usa `DISCORD_BOT_TOKEN`), `supabaseAdmin` (usa `SUPABASE_SERVICE_ROLE_KEY`). Rutas `/api/auth/discord` + `/callback` + `/logout`; páginas `/dashboard` (servidores admin con bot presente) y `/dashboard/[guildId]` (+ `client.tsx` con formulario: prefix, idioma, toggles nivel/tickets/privados/automod, autorole, mensajes bienvenida/despedida → `POST /api/dashboard/[guildId]`).
-  - **Env vars Vercel `ciszubot` (production, añadidas 2 ago 2026)**: `DISCORD_BOT_TOKEN`, `DISCORD_CLIENT_ID`, `SUPABASE_SERVICE_ROLE_KEY`, `SESSION_SECRET`, `NEXT_PUBLIC_SITE_URL` (= `https://ciszubot.vercel.app`, build-time — define el redirect del OAuth). En local: `.env.local` con las mismas + anon key/URL.
-  - ⚠️ **OAuth**: el redirect `https://ciszubot.vercel.app/api/auth/discord/callback` debe estar registrado en Discord Developer Portal (OAuth2 → Redirects) y `DISCORD_CLIENT_SECRET` en Vercel + `.env.local` para que el login funcione.
-- **Layout**: Navbar sticky con isotipo + links anchor + botón Invitar (URL oauth2 con scope `bot applications.commands`) + **cuenta** (avatar, link Panel, logout) cuando hay sesión. Footer con socials + proyectos + copyright, favicon = isotipo PNG.
-- **Env vars**: `vercel.json` solo CDN_URL + APP_ENV (patrón del repo); `NEXT_PUBLIC_SUPABASE_URL`/`NEXT_PUBLIC_SUPABASE_ANON_KEY` ya configuradas en el proyecto Vercel `ciszubot` (las 4 apps las tienen desde jul 2026).
-- **Sin prebuild**: los assets viven en `content/` y se sirven vía resolver/CDN (`assetResolver.resolve`); `public/` solo tiene contenido propio (docs/pwa/shared/sw.js).
-
-## CDN strategy (Ciszu CDN — mirror del repo)
-
-El CDN es un **espejo** del repositorio. Las rutas en Supabase Storage (`ciszu-cdn`, migrado desde `ciszu-assets`) reflejan 1:1 las rutas reales del repo. No hay carpeta `assets/` staging — el upload lee directamente de los directorios originales.
-
-- **Upload**: `pnpm cdn:upload` (`scripts/upload-cdn.js`) — escanea 7 fuentes (`shared/icons/svg/`, `shared/images/`, `projects/ciszu/content/`, `projects/ciszu/docs/`, `projects/*/content/`) y sube con la misma ruta relativa a `ciszu-cdn`. ⚠️ `shared/images/` (p.ej. `francisco_selfie`) vive SOLO en el CDN (no hay mirror en `public/`): `AssetResolver.resolve()` devuelve URL de CDN siempre que haya `NEXT_PUBLIC_CDN_URL`.
-  - **Re-upload inteligente por tamaño + mimetype** (desde 4 ago 2026): el script salta un archivo SOLO si el tamaño remoto coincide **y** el mimetype remoto coincide con el esperado por extensión. Antes saltaba solo por tamaño → si un objeto se subió con `text/plain` (p.ej. un SVG) y tenía el mismo tamaño que el local, el script NUNCA lo re-subía (causa raíz del bug del logotipo ciszubot). Ahora detecta el mismatch y re-subirá con `[!!]` warning.
-  - **`--force`**: re-sube TODOS los archivos ignorando tamaño/mimetype. **`--prune`**: borra objetos del bucket que no existen localmente.
-  - **Verificación de mimetypes**: `pnpm cdn:verify` (`scripts/check-cdn-mimes.js`) — lista todos los objetos del bucket y reporta los que tienen mimetype incorrecto para su extensión (detecta los `text/plain` rotos antes de que rompan un site). ⚠️ Para cargar el ACCESS_TOKEN hace falta meter `SUPABASE_ACCESS_TOKEN` del `.env` en la variable de entorno (el script no lee `.env`). Lista recursiva puede tardar ~minuto (bucket grande).
-  - ⚠️ **Upload manual de archivos sueltos**: las `sb_secret_*` keys NO funcionan para PUT directo al storage ("Invalid Compact JWS"). Usar el CLI: `supabase --experimental storage cp <archivo> ss:///ciszu-cdn/<ruta-repo>` con `SUPABASE_ACCESS_TOKEN` (vault) y proyecto ya linkeado (`supabase link --project-ref obwzzmbvkrcscqwptlqo`). ⚠️ Clave: el CLI **no sobreescribe un objeto existente** (error `409 KeyAlreadyExists`) — para actualizar: DELETE previo con la API de Storage (service_role) y luego subir.
-  - ⚠️ **El CDN NO refresca la caché aunque re-subas el mismo contenido** (lección 4 ago 2026): el ETag de Cloudflare es un hash del CONTENIDO, no de los metadatos. Si un SVG subido con `text/plain` se vuelve a subir con el mimetype correcto pero **bytes idénticos**, el ETag no cambia, la revalidación devuelve `304 Not Modified`, y Cloudflare sigue sirviendo la entrada vieja `text/plain` (+ `nosniff` → navegador bloquea el render del SVG) **para siempre**. La purga no se dispara. Fix probado: **cambia el contenido** (aunque sea 1 byte, p.ej. newline final) → ETag nuevo → CDN hace refetch con el mimetype correcto. Ejemplo real: este bug en `ciszubot_logotipo_outline_color.svg`.
-- **Política public/ (11 ago 2026)**: `public/` NO es espejo de `content/` — `copy-assets.js` fue ELIMINADO y solo se copia contenido propio (docs/pwa/shared/sw.js). Cada web sirve sus assets vía resolver/CDN (`NEXT_PUBLIC_CDN_URL`). En dev sin CDN_URL el resolver devuelve rutas locales relativas (el `prebuild` de Next copia `public/` al server), en prod con CDN_URL devuelve URLs del CDN.
-  - **Mirrors**: `projects/<name>/content` → `public/projects/<name>/content/` es cosa del PASADO (11 ago 2026: se borraron ~8 GB de mirrors en las 4 webs). Los `public/` de las webs puras están en `.gitignore` (solo muzicmania/Tauri trackea sus mirrors propios de la app, no los de content).
-- **Asset resolver**: `packages/cdn/index.ts` — `resolveIcon(name, style, format)` para icons, `assetResolver.resolve(path)` para assets arbitrarios. Usa `NEXT_PUBLIC_CDN_URL` como base (ya incluye el bucket: `.../object/public/ciszu-cdn`).
-- **Sistema de Formatos (implementado 8 ago 2026)** — capas Trabajo→Archivo→Demostración→Entrega (doc: `projects/ciszu/docs/documentation/MEDIA_FORMATS.md`):
-  - `deliveryVariants(path)` / `resolveDelivery(path)` en `packages/cdn/index.ts`: cadena de candidatos Capa 4 `[avif, webp, original]` (imagen), `[opus, original]` (mp3/ogg/m4a/aac), gif→webp animado; SVG/docs → solo el original (nunca derivadas).
-  - `SmartImage` en `packages/ui/src/SmartImage.tsx` (exportado): fallback en cadena vía `onError` (avif→webp→png), SSR = 1ª variante; props `src` (ruta Capa 3), `variants`, `fallback`, + props `<img>` (ya migrado en cisco (brand/Footer/Home/Projects) y ciszubot (Navbar/Footer/Home)).
-  - `scripts/convert-media.py` (Fase A): derivadas al lado con Pillow/ffmpeg, solo si gana bytes (reporte `.opencode/temp/convert-media/report.json`); `--critical|--all|--audio|--dry-run|--limit N`. Real: 34 imágenes −36.32 MB + 4 pistas Muz `.opus` nuevas. GIFs con duration int ya se manejan (list de un solo valor).
-  - **CDN**: `.avif/.webm/.opus/.flac/.wav/.m4a/.aac/.mov` añadidos a `upload-cdn.js` getMime, `check-cdn-mimes.js` MIME_MAP y `getContentType()`. ⚠️ El `--force` global tarda >1h (9k objetos) — para corregir pocos mimetypes usar `node scripts/fix-cdn-mimes.js` (re-subir solo los `bad`, lee `SUPABASE_ACCESS_TOKEN` env). `cdn:verify` 8 ago: 0 malos en 9.055 objetos.
-  - ⚠️ Límite Supabase pre-existente: claves storage con caracteres no-ASCII (`ñ`, doble espacio) dan `400 InvalidKey` (ej. `ciszu_flayer_vertical_diseñografico.*`, `ANIMACIÓN DE LIKE...mp4`) — no re-subir, no es del sistema de formatos.
-- ⚠️ **`NEXT_PUBLIC_CDN_URL` por proyecto Vercel**: en jul 2026 los proyectos `muzicmania`, `ciszunetworkpage` y `ciszukoantonypage` tenían el valor apuntando al bucket VIEJO `ciszu-assets` (renombrado → URLs 404). Fueron recreadas (DELETE+POST vía API, target production) apuntando a `ciszu-cdn`. Al cambiar env vars en Vercel hace falta un nuevo build/deploy (los redeploys vía API `POST /v16/deployments/{id}/redeploy` NO existen — disparar workflows con un push de `packages/**` o `projects/**`).
-
-### Regla anti-duplicación (11 ago 2026)
-
-**Cada archivo de contenido vive UNA sola vez** en `shared/` (contenido compartido entre webs) o en el `content/` del proyecto dueño. NUNCA duplicar en otro proyecto ni en `public/` (a excepción de los png PWA generados).
-
-- **Auditoría 11 ago 2026 (MD5)**: borrados 384 archivos duplicados (−149.5 MB) que eran hashes idénticos de ciszukoantony/shared repartidos en `ciszu/content/logos` (222), `ciszubot/content/logos` (160) y `muzicmania/content/logos` (2×`title.psd`), + `ciszukoantony/content/images/francisco_selfie/` (copias renombradas de `shared/images`). El CDN quedó sincronizado con `pnpm cdn:upload --prune` (221 objetos huérfanos borrados del bucket). Comprobación de duplicados: hash MD5 cruzado con `shared/` + `projects/ciszukoantony/content` como maestros.
-- **Contenido compartido = `shared/` + CDN**: las fotos de perfil viven en `shared/images/francisco_selfie/` (fuente canónica, nombres `IMG_*.jpg` — los `cisco-N.jpg` eran copias renombradas, eliminados). El código las referencia vía `assetResolver.resolve('shared/images/francisco_selfie/<nombre>.jpg')` (8 refs migradas: ciszu team/projects/page, muzicmania team, ciszukoantony team/projects/page/about).
-- **Código de verificación**: si un proyecto necesita un asset de otro proyecto o de shared, usar `assetResolver.resolve()` / `resolveAssetPath()` (nunca rutas `/images/...` locales). Antes de añadir un archivo nuevo, comprobar que no exista ya por hash en shared/ciszukoantony. El bucket del CDN espeja el repo — `--prune` mantiene el espejo al borrar del repo.
-
-### Rutas de logos (fuente maestra)
-
-**⚠️ Límite de storage del plan Free = 1 GB** (lección 9 ago 2026): el bucket superó la cuota (1.032/1 GB, 103%) → Supabase **bloquea/degrada el proyecto**: 403 intermitentes en objetos públicos (imágenes "rotas"), re-uploads rechazados (por eso los .avif/.webp generados el 8 ago nunca se vieron en las webs) y lentitud general. La cuota se ve en Dashboard (Reports & Usage); BD y egress apenas cuentan.
-
-- **Fix aplicado 9 ago 2026**: (1) `scripts/delete-cdn-by-ext.js` (tool permanente) borró del bucket ~1.600 objetos de extensiones no-web — `.ai` 441 MB + `.psd` 184 MB + `.pfl` 64 MB (caches de edición de vídeo en `ciszukoantony/content/videos/.../CacheClip/`) + `.zip` 19 MB + `.mp4` 30 MB + `.wav/.drp/.wfp` → **906 MB → 162 MB (16%)**. Los fuentes `.ai/.psd` se **mantienen en el disco** (trabajo del usuario) pero `upload-cdn.js` ahora tiene **`EXCLUDED_EXT`** (`.ai .psd .pfl .zip .rar .drp .wfp .wav .raw .exe .mp4 .mov`) → el próximo `pnpm cdn:upload` no los repone. Las webs solo usan png/svg/webp/avif/mp3/ogg/opus.
-- **⚠️ El overage REAL era `ciszu-assets`, no `ciszu-cdn` (10 ago 2026)**: el bucket legacy `ciszu-assets` (creado 8-jul, renombrado a ciszu-cdn el 29-jul) **NUNCA se vació**: 16.891 objetos / 1.444.9 MB (ciszukoantony/content 346.8 MB, content/logos 294.7 MB, ciszugamens/content 175.1 MB, ciszukoantony-music 102.8 MB, shared/fonts 74.8 MB...). El ciszu-cdn real era solo 170 MB. **ELIMINADO 10 ago 2026**: borrado masivo vía API Storage con DELETE individual (`DELETE /storage/v1/object/{bucket}/{key}` con service_role, 16.890 objetos en ~10 min con concurrencia 16) + `DELETE /storage/v1/bucket/ciszu-assets` → quedan solo `ciszu-cdn` (7.353 objetos / **160.6 MB**) y `avatars` (vacío). ⚠️ Lecciones: (a) el **bulk** `POST /object/delete/{bucket}` da `NoSuchBucket` en este proyecto (endpoint roto) — el individual funciona; (b) el CLI `supabase storage rm -r` se cuelga con el bucket grande (pide confirmación/lenitud) — usar la API con service_role; (c) los `tests/*` del bucket (~26 objetos / 9.3 MB) NO se reponen con `pnpm cdn:upload` (la carpeta `test/` no está en SOURCES) → borrados del bucket; (d) el `upload-cdn.js` obtiene la service_role vía Management API (`/v1/projects/{ref}/api-keys`) porque las keys del vault (`sb_secret_*`) dan "Invalid Compact JWS" en la Storage API HTTP.
-- **Service worker cachea el CDN** (sw.js v1.1.0, sync a las 4 webs): stale-while-revalidate para `*.supabase.co/storage/v1/object/public/ciszu-cdn/` → recargas/navegaciones ya no vuelven al origin (arregla el "atraso" de avif/webp al actualizar).
-
-Los logos viven en `projects/ciszukoantony/content/logos/` (fuente maestra). **El bucket del CDN espeja las rutas del repo** — tras la reestructuración ago 2026 (paths `projects/...`) hay que re-subir con `pnpm cdn:upload` para que el bucket tenga las nuevas rutas. Usar siempre:
-
-```ts
-assetResolver.resolve(
-    'projects/ciszukoantony/content/logos/images/outline/isotype/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg'
-);
-```
-
-### Sistema de iconos (inline-first + CDN fallback)
-
-- `packages/ui/src/Icon.tsx` — componente compartido `Icon`: renderiza SVG inline (coloreable, sin red) si el nombre está en el registro; **fallback de estilo inline outline↔filled** (si el estilo pedido no existe pero el otro sí, usa ese antes de ir a red — soluciona ciszubot 404 `outline/shield` etc. que solo existen en `filled`); si no está en ninguno, `<img>` al CDN dinámico con **recall local** en caso de error (onError → ruta local → oculto). ⚠️ El `inner` del registry se inyecta **CRUDO** (SSR y cliente) — el registry es fuente propia generada, no input de usuario. NUNCA reintroducir DOMPurify en el render cliente: al sanitizar fragmentos `<path>` sueltos (sin raíz `<svg>`) los vacía y los iconos desaparecen tras navegar (`<g></g>`).
-- `packages/ui/src/generated/icon-registry.ts` — **archivo GENERADO** desde el catálogo canónico `shared/icons/svg/{outline,filled}/`. Regenerar con `node scripts/generate-icon-registry.js` (lista curada en el script; añadir nombres nuevos ahí).
-- Las 4 apps dependen de `@ciszu/ui` y sus `hooks/useIcon.tsx`/`utils/icons.ts` delegan en el componente compartido.
-- **Política**: iconos UI estáticos → inline en bundle (registry); iconos dinámicos/desconocidos → CDN con recall; medios (logos, música, covers) → `assetResolver.resolve()`.
-
-Supabase Storage (`ciszu-cdn` bucket, `avatars` bucket) es para CDN y user-generated content. `avatars` es bucket por defecto de Supabase para fotos de perfil (`auth.users`).
-
-### Sistema mixto local + CDN
-
-El `AssetResolver` (`packages/cdn/index.ts`) usa estrategia híbrida vía `forceCdn`/`forceLocal`:
-
-| Entorno     | forceCdn | forceLocal | Resultado                             |
-| ----------- | -------- | ---------- | ------------------------------------- |
-| Tauri       | —       | —         | `tauri://localhost/...` (local)     |
-| Tauri       | ✓       | —         | CDN                                   |
-| Desarrollo  | —       | —         | Ruta relativa`/...` (local)         |
-| Desarrollo  | —       | ✓         | Ruta relativa`/...`                 |
-| Producción | —       | —         | CDN                                   |
-| Producción | ✓       | —         | CDN                                   |
-| Producción | —       | ✓         | Ruta relativa`/...` (desde public/) |
-
-Uso:
-
-```ts
-resolveIcon('home'); // CDN en prod, local en dev
-resolveIcon('home', 'outline', 'svg', { forceCdn: true }); // forzar CDN
-resolveIcon('home', 'outline', 'svg', { forceLocal: true }); // forzar local
-```
-
-- No hay carpeta `assets/` staging — las fuentes originales son la verdad única (`shared/icons/svg/`, `projects/*/content/`, etc.)
-- ⚠️ **`encodePath()` en `packages/cdn`** (`src/cdn-client.ts`): `assetUrl`/`resolveIcon`/`assetResolver.resolve` codifican la ruta relativa (espacios, acentos → `%20` etc.) antes de devolver URL. Rutas con espacios como `logos/images/not-outline/...` rompían el `<img>` y el preload (mismatch src↔preload → warning y logo no resuelto). No usar rutas crudas al construir URLs.
-- Binarios grandes (`.mp4`, `.gif`, `.exe`, etc.) excluidos de git globalmente
-- **Cloudflare R2** configurado como alternativa futura pero **INACTIVO** (requiere tarjeta/paypal). Credenciales comentadas en el vault.
-
-## PDWA para websites (8 ago 2026)
-
-**Implementado en las 4 webs** (cierra los pendientes `PWA para websites.` en los toDos): manifest + service worker + iconos + registro, sin dependencias nuevas. **Terminología de marca: PDWA = App de Escritorio Progresiva** (Desktop Web App); PWA queda como término técnico interno (manifest + sw).
-
-- **Iconos**: `scripts/generate-pwa-icons.ps1` (GDI+ System.Drawing, sin red) genera `public/pwa/icon-192.png`, `icon-512.png` y `icon-maskable-512.png` en las 4 webs desde sus masters:
-  - de la marca master `projects/ciszukoant Antony/content/logos/...` (masters 617x636, 553x491, 796x796, 389x390)
-  - Masters via `assetResolver.resolve()` en `app/layout.tsx` (ICON_SVG) — los `public/pwa/*.png` son generados, trackeados en git
-- **Manifest**: `src/app/manifest.ts` (`MetadataRoute.Manifest`) en cada web → Next lo sirve en `/manifest.webmanifest` (estático, listado en el build como `○ /manifest.webmanifest`). Sin rootPage/application-name duplicados
-- **Service worker**: canónico `scripts/pwa/sw.js` (cache `ciszu-pwa-1.0.0.js`: precache `['/']`, network-first para navegación con fallback offline, SWR para `/_next/static/*`, excluye `/api/`). Copiado a `public/sw.js` de cada web (NO `public/pwa/sw.js` — scope raíz imprescindible). Sincronizar: `pnpm sw` / `node scripts/sync-pwa-assets.js`
-- **Registro**: `packages/ui/src/PwaRegister.tsx` (client component, registra `/sw.js` solo en producción `NODE_ENV !== 'production'` guard) — exportado desde `packages/ui/src/index.ts`, incluido en los 4 layouts antes de `</body>`
-- **Botón "Instalar PDWA"** (8 ago 2026, **v3 CSS autocontenido**, botón flotante **esquina INFERIOR-IZQUIERDA** en los 4 layouts): ⚠️ **V3 (8 ago, 3er fix del día) — CSS 100% INLINE/autocontenido, CERO clases Tailwind**: el scanner de Tailwind de cada app **NO genera las utilidades usadas solo dentro de `packages/ui`** → el botón se rompía distinto en cada web (sin `position:fixed`/`left`/`bottom` → aparecía flotando mal; sin `whitespace-nowrap` → el texto cortaba "Ins/P"; sin `backdrop-filter` → sin blur; solo ciszunetwork coincidía por casualidad con clases generadas en su propio CSS). Fix: `position:fixed` + `backdropFilter` + TODOS los estilos (panel, glow, transition, keyframes `pdwa-pop` vía `<style>` scoped) van en inline styles del componente — el CSS se embeñe en el HTML SSR (`data-pdwa-host` en cada página), idéntico en las 4 webs. No volver a usar Tailwind en este componente.
-  - Props por sitio: `site`, `accent`, `accentAlt`, `desktopAppHref` (solo MuzicMania → `/download` .exe Tauri), `storageKey` (por defecto `ciszu-pdwa-dismissed` por sitio vía prop en tests).
-  - **Detecta el navegador** (`detectPdwaBrowser`, exportado desde ui): Chrome/Edge/Opera nativos (prompt real `beforeinstallprompt`); Opera GX, Firefox, Safari, iOS, otros → **disclaimer personalizado** explicando POR QUÉ no instalan y alternativa según contexto (Opera GX: acceso directo + `--app="url"` en Propiedades; Firefox: usar Edge/Chrome; Safari: Añadir al Dock; iOS: pantalla de inicio; otros: Edge/Chrome).
-  - **Minimalista y responsivo**: fab pequeño (icono 10x10) que en hover expande el texto "Instalar PDWA"; ✕ separado (siempre visible) → guarda `localStorage` y no vuelve a salir **nunca**; si no se picha la ✕ continúa apareciendo.
-  - Panel ("cómo instalar") se muestra SIEMPRE en click no-nativo, también en compatibles (disclaimer). Estilo neón con accent por web (cian ciszu/muzicmania, rosa ciszukoantony, violeta ciszubot).
-  - Oculto si ya instalada (`display-mode: standalone`, `appinstalled`). Aria accesible.
-  - ⚠️ Opera GX no instala PDWA nativamente (ni beforeinstallprompt usable) — el panel explica el truco de acceso directo con `--app=`. El navegador por defecto del sistema es Edge (`MSEdgeHTM`).
-- **Metadata en layouts** (×4): `export const viewport = { themeColor: ... }` (Next 15: `themeColor` NO va en metadata, va en `viewport` export — sin anotación `Viewport` para evitar lookups, `export const viewport: Viewport` falla en MuzicMania: `Module '"next"' has no exported member 'Viewport'` cuando el tsconfig resolvía, usar `export const viewport = {...}` + `export const metadata: Metadata = {...}`) + `appleWebApp: { capable: true, title, statusBarStyle: "black-translucent" }` + `manifest: "/manifest.webmanifest"`. Themes: ciszu/ciszukoAntony/muzicmania `#000000`, ciszubot `#0a0a0f` (acorde dark/light)
-- **Verificación**: builds 4 webs OK (8 ago 2026, 3er fix: CSS autocontenido + tests actualizados a estilo inline), manifest+theme-color+sw.js+iconos 200 en `next start` local. Tests 96/96 (incl. `packages/ui/tests/InstallPdwaButton.test.tsx` — navegador, dismiss, prompt nativo, disclaimers, app nativa y posicionamiento inline `fixed`/`blur`; `packages/cdn/tests/cdn-delivery.test.ts` — cadena Capa 4 avif/webp/opus de `deliveryVariants`), lint OK (ciszubot web no tiene script lint propio)
-- ⚠️ **Error hardcode `Type error: Module '"next"' has no exported member 'MetadataRoute'`** (MuzicMania, 8-10 ago): metadata.route manifest en `app/manifest.ts` importado de "next" falla si NEXT_PUBLIC_SITE_URL etc. están mal — si ocurre, revisar el `next-env.d.ts`/types; el fix estándar: `import type { MetadataRoute } from 'next'` + `export default function manifest(): MetadataRoute.Manifest` (sin `.tsx`), eliminar imports de `next/server` no usados. **Aplica IGUAL a `robots.ts`** (10 ago: el robots.ts nuevo reventó el build con el mismo error — fix definitivo en MuzicMania: **funciones de metadatos SIN anotación de tipo** `export default function robots()` como su manifest.ts).
-- ⚠️ **Build local puede fallar con "Failed to fetch ... from Google Fonts"** (DNS del PC intermitente, 8 ago): no es error de código — reintentar el build o activar VPN.
-
-## Supabase
-
-Single project: `obwzzmbvkrcscqwptlqo.supabase.co`
-
-- **Auth roadmap (10 ago 2026)**: `projects/ciszu/docs/documentation/AUTH_PLAN.md` — plan a futuro por niveles (N2 OAuth terceros → N3 centralizado una cuenta en las 4 apps → N4 "CISZU AUTH" propio). **Decisión: Supabase-first, NUNCA Clerk hoy** (migrar muzicmania a Clerk = reescribir RPC/RLS/user_ids); Clerk solo si criterios del §7 del plan.
-- Credentials in `services/supabase/.env`
-- Muzicmania uses `@supabase/supabase-js` for auth + DB
-- Storage buckets: `ciszu-cdn` (public, 50 MB limit, renamed from ciszu-assets) for CDN + user content, `avatars` for profile pics
-- Old `services/supabase/supabase/` (config.toml, migrations, documentation) was **permanently deleted** — re-run `supabase pull` against the remote project to recover
-- CDN: `ciszu-cdn` bucket via Supabase Storage (`NEXT_PUBLIC_CDN_URL`)
-- **DB bugfixes** (aplicados vía Management API SQL, jul 2026):
-  - `check_username_available` → SECURITY INVOKER + explícito `muzicmania.profiles` (antes: SECDEF sin search_path)
-  - `get_email_by_username` → search_path + `muzicmania.profiles` + REVOKE anon (devuelve 401)
-  - `handle_account_deletion`, `is_account_recoverable(TEXT)` → search_path + `muzicmania.profiles`
-  - `handle_new_user` → eliminada referencia a `public.profiles` (tabla movida a muzicmania — bug crítico que rompía registro)
-  - `muzicmania.submit_game_score` → eliminada referencia a `public.profiles` (bug crítico que rompía envío de scores)
-  - (Leaked password + MFA: dashboard settings, no SQL — limitación del plan Free, ver advisors)
-  - ✅ Schemas expuestos (1 ago 2026): Dashboard → Settings → API → Exposed schemas: `muzicmania, ciszubot, ciszunetwork` — al exponerlos, Supabase muestra aviso de "custom grant"/GRANT custom en schemas (advertencia informativa, no es error)
-
-## Sistema de caché (9 ago 2026) — esquema:
-
-**Nunca Redis: caché multi-tienda en `packages/utils` (nuevo, 0 deps)**: memoria LRU (siempre) → **Vercel KV REST** (activo — store `upstash-kv-ciszunetwork` conectado a muzicmania y ciszubot, verificado 10 ago 2026) → **Postgres `ciszu.cache`** (schema `ciszu`, migración 15 aplicada). Doc: `projects/ciszu/docs/documentation/CACHING_SYSTEM.md`.
-
-- **Core**: `CacheStore` (cache-aside, TTL default 60s) + `bumpCounter` (INCR atómico vía RPC) + `createRateLimiter` (ventana fija) en `packages/utils/src/{cache,rateLimit}.ts`. Cliente BD se inyecta (interfaz estructural `CacheDbLike`, no importa supabase-js).
-- **Aplicado**: (1) MuzicMania `api/leaderboard` — la página ya no consulta Supabase desde el navegador; vía `/api/leaderboard` cacheado 60s (fallback: query directa). (2) Ciszubot dashboard: `getGuildsForUser`/`getBotGuildIds` cacheados TTL 60s **por `userId`** (import dinámico de `lib/cacheStore` para evitar ciclo auth↔cache). (3) Bot `statsServer`: rate-limit 10/h por IP en `/api/votes` y `/api/votes/dbl` (429) + `bumpCounter('topgg_votes'|'dbl_votes')` (INCR atómico persistente en `ciszu.counters`).
-- **BD**: migración `20260809000015_cache_system.sql` — schema `ciszu` (no expuesto en Dashboard, intencional), RLS OFF + REVOKE anon/auth (solo service_role). `bump_counter` SECURITY INVOKER con `search_path=''`.
-- **Bot tsc**: el bot consume `@ciszunetwork/utils` (TS fuente CJS): tsconfig `rootDir: "."` → dist ahora es `dist/src/*.js` (main/start/dev/Dockerfile CMD actualizados a `dist/src/index.js`; Dockerfile copia `packages/utils` en stage 1 y 2).
-- ⚠️ **gotcha**: `createClient` de supabase-js con 3º arg (schema) en muzicmania requiere `// @ts-expect-error` (patrón de `src/config/supabase.ts` ya existente).
-
-## CI/CD (GitHub Actions)
-
-All workflows run on `push: [main, master]` (+ PR y **cron diario 06:00 UTC** para el pipeline de seguridad):
-
-- **CI** (`.github/workflows/ci.yml`) — lint, unit tests (Vitest 157), **seguridad concurrente**: semgrep (SAST), `pnpm audit --prod` (SCA), **gitleaks** (secret scanning **del diff del push/PR** — el historial tiene ~135 leaks históricos conocidos que lo bloquearían siempre; `.gitleaks.toml` allowliste el token público del beacon de Cloudflare Web Analytics), **security-e2e** (Playwright DAST interactivo contra las 4 webs en prod: cabeceras, no-reflejo XSS/SQLi — el spec quita el flight-data de Next `self.__next_f.push` que causaba falsos positivos —, paths de escáneres; espera hasta 180s a los deploys en CI). Spec: `test/website/e2e/security.spec.ts`
-- **DAST semanal** (`.github/workflows/dast.yml`): lunes 06:30 UTC + `workflow_dispatch` — ZAP baseline scan (`zaproxy/action-baseline@v0.15.0`) matrix sobre las 4 webs, reportes HTML como artefacto 30 días
-- **4 deploy workflows** — each triggers on matching `projects/<name>/**` + `packages/**` changes
-  - Pattern: `vercel link --yes --project <name>` → `vercel --prod --yes --archive=tgz`, ambos **desde la raíz del repo** (`working-directory: .`)
-  - ⚠️ NUNCA usar `vercel pull/build/deploy --prebuilt` dentro de `projects/*/website`: con `rootDirectory` fijado en el proyecto, el CLI duplica la ruta y produce deployments READY pero vacíos (404 en el alias)
-  - Deploy desde la raíz requiere el `.vercelignore` raíz (excluye node_modules, .next, content, binarios)
-  - Vercel tokens son GH secrets (`VERCEL_TOKEN`)
-- Proyectos Vercel: `ciszunetworkpage` -> `projects/ciszu/website`, `ciszukoantonypage` -> `projects/ciszukoantony/website`, `ciszubot` -> `projects/ciszubot/website`, `muzicmania` -> `projects/muzicmania/website`
-- Discord bot (`deploy-ciszubot-website.yml`) deploys su website, no el bot en sí
-
-## Sistema Cloudflare (10 ago 2026) — estado y plan
-
-**Doc maestro: `projects/ciszu/docs/documentation/CLOUDFLARE_SYSTEM.md`** (inventario completo
-gratis/pago/descartados + fases A/B/C + límites verificados jul-ago 2026). Política: **gratis
-primero, pago a futuro; las capas extras no son opcionales salvo que pisen con un sistema
-activo** (p.ej. rate limiting ya en `packages/utils`).
-
-- **2 capas**: DNS/proxy (WAF/DDoS/SSL/Email Routing/Uptime — requieren dominio propio,
-  hoy NO) y standalone (Turnstile, Web Analytics, R2, Workers — funcionan en `*.vercel.app`).
-- **Fase A COMPLETADA (10 ago 2026)**:
-  - **Web Analytics**: beacon (`https://static.cloudflareinsights.com/beacon.min.js` con
-    `defer type="module"` — requerido por `@next/next/no-sync-scripts`; token `2fcf0eab...`,
-    1 solo site cubre las 4 webs) en los 4 layouts.
-  - **Turnstile en las 4 webs**: widget **GLOBAL único** (el de MuzicMania renombrado, 4
-    hostnames permitidos, 1 par de keys — site+secret en `.env.local` de las 4 apps y en
-    Vercel, NO repetir los valores aquí). Las **4 webs** usan el **`CloudflareGuard`
-    compartido** (`packages/ui/src/CloudflareGuard.tsx`, exportado desde
-    `packages/ui/src/index.ts`): sin deps npm (script global
-    `challenges.cloudflare.com/turnstile/v0/api.js` + `window.turnstile.render`), CSS inline
-    (lección v3 PDWA — el scanner de Tailwind no genera utilidades solo de packages/ui),
-    sessionStorage por app (`cf_verified_*`), degradación segura si falta la env (no
-    bloquea), props: siteKey/logo/title/subtitle/accent/storageKey/verifyPath/retryDelays/
-    onVerified. MuzicMania usa un **wrapper fino** (`src/components/layout/CloudflareGuard.tsx`:
-    Tauri skip + sync del store `isCloudflareVerified` vía `onVerified`) — migrado 11 ago 2026
-    desde `@marsidev/react-turnstile` (dependencia eliminada). Las 4 webs
-    tienen su `/api/verify-turnstile/route.ts` (3 sin fallback hardcodeado — 500 claro si
-    falta la env; muzicmania conserva el suyo, ver nota abajo). Envs en `.env.local` (×4) y
-    Vercel (production+preview+development, 3 proyectos vía API con `VERCEL_TOKEN`).
-- ⚠️ **Secret de Turnstile de MuzicMania hardcodeado en git** (`route.ts:11` + siteKey en
-  `CloudflareGuard.tsx:22` fallbacks) — **rotación APLAZADA por decisión del usuario**
-  (repo privado; al rotar: regenerar secret en dashboard, actualizar `.env.local`+Vercel ×4
-  y eliminar los fallbacks). Las 3 webs nuevas ya están limpias.
-- **R2**: **BLOQUEADO** — Cloudflare exige tarjeta de crédito para activar R2 aunque sea
-  gratis → descartado hasta tener tarjeta (`asset-config.json` fallback, credenciales en vault).
-- **Fase B (con dominio)**: DNS proxy → DDoS/WAF/SSL automáticos + Email Routing ilimitado
-  gratis + Uptime (ver `DOMAINS_SYSTEM.md`).
-- **Fase C (pago futuro)**: R2 >10 GB ($0.015/GB), Workers Paid ($5), email sending (Resend
-  gratis 100/día primero), Pro $20/mes solo si WAF custom. Descartados por sobreingeniería:
-  Pages, D1, Queues, Durable Objects, Vectorize, Workers AI, Access, Tunnel (Tailscale ya
-  activo), Imágenes/Stream, Argo/Load Balancing.
-
-## UptimeRobot (10 ago 2026) — monitorización 5 endpoints
-
-**Cuenta**: `fplayersoffcial@gmail.com` (CiszukoAntony, user_id 3030052), plan **Free** (50
-monitores, intervalo mínimo 5 min, región na). API key `u3030052-...` (v2).
-
-- **⚠️ API v2 (`/v2/newMonitor`) BLOQUEADA en free**: devuelve `access_denied "You are not
-  allowed to use some settings with your current plan"` para CUALQUIER tipo de monitor
-  (HTTP/TCP/ping, incluso sin parámetros extra). **La v2 solo sirve para get*/delete**.
-  La alternativa oficial en free es **API v3** (`https://api.uptimerobot.com/v3/monitors`,
-  auth `Authorization: Bearer <key>`, campos camelCase, `type` como string enum
-  `HTTP|KEYWORD|PORT|PING|...`). Con v3 se crean monitores KEYWORD con custom headers
-  incluso en free. La v2 en free da el mismo access_denied que el endpoint agentic.
-- **5 monitores creados y UP (10 ago 2026, ids 803701231–236)**:
-  `ciszunetwork` (kw "Ciszu Network"), `ciszukoantony` (kw "Ciszuko Antony"),
-  `muzicmania` (kw "MuzicMania"), `ciszubot` (kw "CiszuBot") y
-  `supabase-bot-status` (PostgREST `bot_status?select=*&limit=1` con headers
-  apikey/Authorization/Accept-Profile, kw `"online":true` — monitoriza el heartbeat del bot
-  directamente, no solo la web). Todos: tipo KEYWORD, interval 300, timeout 30, región na.
-- ⚠️ **`keywordType` en v3 va AL REVÉS que v2**: `ALERT_EXISTS` = DOWN cuando el keyword
-  EXISTE; para "DOWN solo si desaparece" usar **`ALERT_NOT_EXISTS`** (lección: los 5 nacieron
-  DOWN y se corrigieron con `PATCH /v3/monitors/{id}`).
-- **Gestión desde el PC**: `node` + fetch a v3 (curl/Invoke-WebRequest de PS 5.1 dan
-  problemas de quoting/JSON en este PC). Scripts temporales en `.opencode/temp/ur-*.mjs`
-  (eliminados tras configurar; recrear si hace falta). Listado: `GET /v3/monitors` con
-  Bearer. Verificar estado: `m.status` (UP/DOWN) + `m.currentStateDuration`.
-- **Alertas (10 ago 2026)**: ⚠️ **el plan free NO permite alert contacts Webhook ni
-  Telegram** (los tipos creables por API en free son solo Email=2, Push=12/13 y
-  ProSms/Voice=8/14 bloqueados por API — códigos v3 distintos de v2). Estado:
-  - ✅ **Email**: contact `7626433` (fplayersoffcial@gmail.com, Active) **asignado a los 5
-    monitores** (`assignedAlertContacts: [{alertContactId: "7626433", threshold: 0,
-    recurrence: 0}]` — en v3 cada elemento es OBJETO, no id plano).
-  - ✅ **ntfy (watcher propio)**: como UptimeRobot no puede hacer webhooks en free, existe
-    `scripts/uptime-watch.js` (cron GH Actions cada 5 min, `.github/workflows/uptime-watch.yml`):
-    consulta `GET /v3/monitors` y publica en ntfy SOLO los cambios (DOWN: urgente +
-    rotating_light; UP: low + green_circle; PAUSED). Estado previo en
-    `.opencode/temp/uptime-state.json` (cache GH `uptime-state-v1`; primer run inicializa
-    sin publicar). Secrets GH: `UPTIMEROBOT_API_KEY` + `NOTIFY_TOPIC` (también en vault
-    `services/supabase/.env` y `.env.local`). Test local: `node scripts/uptime-watch.js
-    --dry-run` (no publica, escribe nada; sin `--dry-run` SÍ publica).
-  - ✅ **Push app móvil**: contact `8706127` (app UptimeRobot en Android, TECNO SPARK Go 2024,
-    Active) — **asignado a los 5 monitores** (verificado vía API 10 ago 2026; el contact Push
-    no es creable por API — apareció al iniciar sesión en la app).
-  - ❌ SMS/Voice (contactos 8706086/8706087): son de pago y NO activados → descartados.
-- Los incidentes "Keyword has been found" del historial son falsos positivos del tipo
-  corregido (`ALERT_NOT_EXISTS`) — quedan como history, no requieren acción.
-
-## Sistema de analíticas (PostHog) — 10 ago 2026
-
-**Doc maestro: `projects/ciszu/docs/documentation/ANALYTICS_POSTHOG.md`** (qué/cómo/costos
-verificados/eventos/activación). **Híbrido sin solapamientos** con el resto del ecosistema de
-monitoreo: Cloudflare Web Analytics (tráfico, ya activo), Vercel Speed Insights (Core Web
-Vitals, muzicmania), UptimeRobot (disponibilidad), ntfy (notificaciones) — PostHog mide SOLO
-producto/errores.
-
-- **Free tier sin tarjeta** (verificado 10 ago 2026): 1M eventos/mes + 5k replays + 100k
-  errores + 1M flags; pago solo tras superar límites ($0.00005/evento; ⚠️ props custom
-  $0.000248 ≈5x — limitar props). Retención 1 año, 1 proyecto → las 4 webs se separan con la
-  propiedad `app`.
-- **Componente compartido `packages/ui/src/PostHogAnalytics.tsx`** (sin deps npm, patrón
-  CloudflareGuard): carga `array.js`, init `capture_pageview:false` (NO activar el Web
-  Analytics de PostHog — duplicaría Cloudflare), `$pageview` manual con usePathname +
-  Suspense, **degradación segura** si falta `NEXT_PUBLIC_POSTHOG_KEY`, exporta `captureEvent`
-  (eventos custom fase 2). Integrado en los 4 layouts (`app="ciszunetwork|ciszukoantony|
-  muzicmania|ciszubot"`).
-- **Envs**: `NEXT_PUBLIC_POSTHOG_KEY` + `NEXT_PUBLIC_POSTHOG_HOST` (default
-  `https://us.i.posthog.com`) en `.env.local` ×4 + Vercel production ×4. Sin fallbacks en
-  código. **Configuradas 10 ago 2026** (local ×4 + Vercel ×4 via API, targets
-  production+preview+development). **Authorized URLs** (4 dominios vercel) configurados vía
-  `PATCH /api/projects/550383/` con el campo `app_urls` (el update NO acepta `phs_`, solo
-  `phx_`). Credenciales en vault: `POSTHOG_ORG_ID`, `POSTHOG_PROJECT_ID=550383`,
-  `POSTHOG_PERSONAL_API_KEY` (phx_ — gestión API), `POSTHOG_SECRET_API_KEY` (phs_ — PSAK,
-  SOLO endpoints que la aceptan, 401 esperado en `/api/projects/*`), `NEXT_PUBLIC_POSTHOG_KEY`
-  (phc_ — pública por diseño).
-- **Sentry queda DESCARTADO por ahora**: PostHog Error Tracking (100k/mes free) cubre la
-  tarea de errores del toDo sin segunda cuenta; re-evaluar solo si se necesitan source maps
-  avanzados.
-- **Testing**: 7 tests nuevos (`packages/ui/tests/PostHogAnalytics.test.tsx`), suite 121/121.
-  `next/navigation` resuelto en tests via alias en `vitest.config.mts` → `packages/ui/tests/
-  mocks/next-navigation.ts` (next NO está en la raíz del monorepo) y `next` añadido como
-  devDependency de `@ciszu/ui` (patrón react/react-dom) para el tsc de las apps.
-- ⚠️ **MuzicMania**: su shim legacy `src/types/declarations.d.ts` re-declara `module 'react'`
-  — añadir ahí CUALQUIER export nuevo que se importe de react en packages/ui (lección:
-  `Suspense` añadido 10 ago 2026).
-- **Activación COMPLETADA (10 ago 2026)**: cuenta + proyecto "Ciszu Network" (550383) +
-  Project API Key `phc_` verificada + envs local ×4 + Vercel ×4 + Authorized URLs (4
-  dominios) vía PATCH `app_urls`. Solo falta el push → deploy → Live events (ver §8 de la doc).
-
-## Sistemas monetización/errores (11 ago 2026) — 4 tareas del toDo
-
-Docs maestros: `ERRORS_SYSTEM.md`, `EMAILS_SYSTEM.md`, `PAYMENTS_SYSTEM.md` (pendientes del usuario → `TODO.md`).
-
-- **Errores = Sentry** (Developer free 5k/mes, sin tarjeta). `@sentry/nextjs@10.69` en las 4 webs (configs en `src/`: **client = `src/instrumentation-client.ts`** ⚠️ el plugin v10 SOLO auto-detecta `sentry.client.config.ts` en la RAÍZ (si está en `src/` el SDK client no se inyecta — verificado 11 ago: sin el fix `window.__SENTRY__===false`, sin widget) + `onRouterTransitionStart`; server/edge `sentry.server/edge.config.ts` + `instrumentation.ts` con `register()` + `onRequestError`/`captureRequestError` + `global-error.tsx`; `next.config.ts` con `withSentryConfig({org:'ciszu-network', project:<app>, silent:true, sourcemaps:{disable:!process.env.SENTRY_AUTH_TOKEN, filesToDeleteAfterUpload:['.next/static/**/*.map']}})`; muzicmania usa global-error HTML propio — su shim legacy rompe `next/error`) y `@sentry/node@10.69` en el bot (`src/services/sentry.ts`, solo con `SENTRY_DSN`, traces 0.1). **✅ ACTIVADO (11 ago 2026)**: org `ciszu-network` + 5 proyectos (ciszunetwork, ciszukoantony, muzicmania, ciszubot, ciszubot-bot), DSNs en `.env.local` ×4 + `.env` bot + Vercel ×4 (production+preview+dev) + `SENTRY_AUTH_TOKEN` (solo production), source maps subiéndose en builds. **Todas las features ON por decisión del usuario**: tracing 1.0 (server/edge/client), replays (client 0.1 / onerror 1.0) + `feedbackIntegration` (widget "Reportar un problema"), bot traces 0.1. Tokens en vault cifrado (`SENTRY_ORG_TOKEN` `sntrys_…`, `SENTRY_PERSONAL_TOKEN` `sntryu_…`). PostHog queda analítica pura. `pnpm-workspace.yaml` aprobó `@sentry/cli`. Builds 5/5 OK. Sin DSNs el SDK es no-op. CSP: `connect-src` incluye `https://*.ingest.us.sentry.io` + `https://cloudflareinsights.com` (Web Analytics reporta a `/cdn-cgi/rum`).
-- **Emails = `@ciszunetwork/email`** (nuevo paquete): abstracción `EmailProvider` (send) + **Resend** (único proveedor, exige dominio verificado Fase B; bloqueado por defecto salvo `RESEND_ALLOW_UNVERIFIED`). Envs: `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_FROM_RESEND`. 7 tests. **⚠️ Brevo DESCARTADO (11 ago 2026)**: cuenta suspendida permanentemente + API key exige teléfono no venezolano (inviable en VE) → sin dominio, los emails de **auth de Supabase** (verificación/reset/OTP) funcionan con el SMTP nativo del proyecto (sin configurar nada); `sendEmail()` del paquete lanza `EmailNotConfiguredError` hasta que exista dominio. El widget de chat Brevo Conversations se instaló y se retiró el mismo día (cuenta suspendida) — no está en las 4 webs ni en el CSP.
-- **Pagos = `@ciszunetwork/payments`** (nuevo paquete): `PaymentProvider` (createInvoice/verifyWebhook) + **NOWPayments** (invoice `x-api-key`, IPN HMAC-SHA512 timing-safe con `x-nowpayments-sig`, mapeo de estados) + **Lemon Squeezy stub** (a los 18, HMAC-SHA256) + `getDonationMethods()` (direcciones desde env, nunca hardcodeadas: `DONATE_*`). Envs: `NOWPAYMENTS_API_KEY`, `NOWPAYMENTS_IPN_SECRET`. 8 tests. Rieles VE: Binance P2P, Zinli, MetaMask; PayPal/Payoneer/Stripe a los 18/LLC (roadmap en la doc). **✅ NOWPAYMENTS ACTIVO (11 ago 2026)**: cuenta `ciszunetwork` del usuario + credenciales en vault (`NOWPAYMENTS_API_KEY`, `_IPN_SECRET`, `_PUBLIC_KEY`, `_DONATE_URL`, `_POS_URL`) y en Vercel `ciszunetworkpage` (production+preview+dev). Rutas API desplegadas: `POST /api/payments/invoice` (10/min por IP, valida monto $1–10k) y `POST /api/webhooks/nowpayments` (firma HMAC real probada, 30/min). API key verificada: invoice real `4395972544`. **Donación directa (12 ago 2026)**: `DONATE_USDT_ERC20` + `DONATE_ETH` (MetaMask) en vault + Vercel, sección en `/support` vía `getDonationMethods()`; wallets en vault (`WALLET_METAMASK_ETH`, `WALLET_COINBASE_ETH`, `WALLET_BINANCE_URL/REF`). **⚠️ Plan de monetización PENDIENTE hasta los 18** (decisión usuario 12 ago): PayPal desactivado permanentemente, Zinli/TrustWallet apps rotas en su teléfono → solo infra lista. Pendiente usuario: **wallet de retiro en NOWPayments** (Settings → Payouts) + TrustWallet (TRON) + Zinli.
-- **Reseñas/reputación = `REVIEWS_SYSTEM.md`** (11 ago 2026): plataformas de valoración por producto. **Trustpilot**: verificación de dominio iniciada (archivo `c2b7fd59-74ac-4584-a00d-c3aacd0f931f.html` en `projects/ciszu/website/public/`, commit `deab5f2`, responde 200 en prod; ⚠️ `cleanUrls:true` redirige `.html`→sin-ext, Trustpilot verifica el contenido final igualmente). Bot Discord: Top.gg + DiscordBotList ya integrados (AutoPoster + votos→500 monedas), faltan tokens. itch.io/Microsoft Store/Google Business/Product Hunt futuros. Independiente de pagos (NO depende de NowPayments).
-
-## Git conventions
-
-- `.gitignore` excludes: all `*.gif`, large binaries (`*.exe`, `*.mp4`, `*.mp3`, etc.), `projects/ciszu/content/**/*`, CDN video subdirs, legacy `CiszuGamens/`
-- Commit messages are in Spanish (descriptive, one line)
-- No commit/push without explicit user request
-- Git push fails from this machine (DNS cannot resolve github.com) — user pushes manually
-
-## 🔐 Vault de credenciales — protección implementada (10 ago 2026)
-
-**El vault `services/supabase/.env` (26 secrets) queda protegido por capas.** Doc maestro:
-`projects/ciszu/docs/documentation/VAULT_SECURITY.md` (amenazas, inventario, procedimientos,
-checklist). Estado real:
-
-- **age v1.2.1** (`C:\Users\fplay\Tools\age\`): copia maestra cifrada
-  `services/supabase/.env.age` + bundle cifrado `archives/backups/envs/vault-*.env.age`
-  (todos los `.env` del repo). Identity: `C:\Users\fplay\.ciszu\ciszu-vault-key.txt`
-  (public key `age1jut59wen44w4r7e92c9faxqxk7wdlkpyhdutf9p8980xvg359utqj4xl32`).
-  Gestión: `scripts/vault.ps1` (`crypt|decrypt|verify|backup|keygen|lock-acl`).
-- **ACLs NTFS** (fplay+SYSTEM): identity, `.env`, `.env.age`, `.env.local` raíz y bundles.
-- **Limpieza**: eliminados backups texto plano (`2025-08-21/`, 9 copias), duplicada
-  `services/supabase/.env.local` (referencia quitada de `update-env-keys.js`) y `.env` raíz
-  vacío.
-- **`update-env-keys.js`** cifra con age los backups que genera antes de cada rotación.
-- **BitLocker E: COMPLETADO (11 ago 2026)**: cifrado 100% verificado (Protection ON, Password + RecoveryPassword en Bitwarden + vault). ⚠️ C: (donde vive la identity age) y D: siguen sin cifrar (opcional futuro). Vault maestro en la nube a cargo del usuario (requiere cuenta);
-  secret manager de pago (Infisical/1Password) en evaluación futura en el doc, no en AGENTS.
-- Verificación periódica: `vault.ps1 verify` + checklist §5 del doc.
-
-## muzicmania-source (recovery from Vercel)
-
-`muzicmania-source/` contiene ~14,852 archivos (201 MB) extraídos del deployment de Vercel.
-
-### Qué se recuperó (solo `public/`)
-
-- **`icons/png/` y `icons/svg-src/`** — Sistema completo de iconos
-- **`arrowskins/`** — 384 SVGs en 24 variantes
-- **`logos/`** — gif/imagen/video (logotipos, isotipos, taglines)
-- **`music/`** — Álbum genesis_neon con sus subálbumes
-- **`downloads/`** — 2 instaladores EXE (Windows 10/11, v2.0.1)
-- **`docs/`** — Documentación en MD/PDF/DOCX/7z/RAR/ZIP
-- **`fonts/`**, **`images/`**, **`particleskins/`** — Varios assets menores
-
-### Qué NO se recuperó (solo existía en GitHub)
-
-- **`src/`** — Código fuente TypeScript/React (componentes, hooks, stores, servicios, páginas)
-- **Configs** — `next.config.ts`, `tsconfig.json`, `tailwind.config.mjs`, `postcss.config.mjs`, `eslint.config.mjs`
-- **`scripts/`** — Scripts de build Tauri, patch NSIS, download flags
-- **`supabase/`** — Consola de debug, migraciones
-- **`components/`**, **`hooks/`**, **`lib/`**, **`utils/`**, **`config/`**, **`data/`**, **`types/`**, **`services/`**, **`store/`**
-
-Vercel solo preserva build output + `public/`. Para recuperar source se necesita el repo de GitHub original.
-
-## ⚠️ Seguridad — Credenciales
-
-**Este repositorio es PRIVADO.** Si alguna vez se vuelve público, hay credenciales comprometidas en el historial de git que deben ser rotadas inmediatamente.
-
-Archivos que NUNCA deben trackearse en git (ya en `.gitignore`):
-
-- `documents/md/credentials.md` — contenido sensible (fue purgado del historial vía filter-branch)
-- `docs/md/VERCEL_ENV_VARS.md` — documenta secrets en texto plano (eliminado del disco)
-- `services/supabase/docs/md/PRIVATE_DOCS.md` — **redactado** (jul 2026) tras alerta de secret scanning: contenía password del dashboard, PAT, service_role, anon key y JWT secret en texto plano. Las credenciales reales viven SOLO en `services/supabase/.env` (gitignored). No volver a pegar secrets en docs.
-
-Si el repo cambia a público:
-
-1. Rotar TODAS las credenciales (Supabase keys, Discord token, Vercel token, Cloudflare R2)
-2. Purgar historial con `git filter-branch` o BFG Repo-Cleaner
-3. Verificar que no queden secrets en `git log --all -p | grep -i "sb_\|vcp_\|ghp_\|token\|secret\|key"`
-
-## Gotchas
-
-- **NUNCA añadir `@types/react`/`@types/react-dom` al `package.json` ROOT** (jul 2026): crea doble identidad de tipos — `ReactNode` importado (`.pnpm/@types+react@19.2.17`) no asignable a `React.ReactNode` global en `projects/ciszu/website/src/app/layout.tsx`. Tampoco usar overrides en `pnpm-workspace.yaml` para types. Los types de react viven SOLO en `packages/ui/package.json` (devDeps 19.2.17 + react/react-dom 19.2.7 devDeps para su propio tsc) y cada app tiene los suyos.
-- **`packages/ui` necesita `react`/`react-dom`/`@types/react` en devDependencies**: sin ellos, `tsc` del ui falla con "Could not find a declaration file for module 'react'" cuando las apps compilan `Icon.tsx`.
-- **`images.unoptimized: true` en las 4 apps** (jul 2026): el optimizador de imágenes de Vercel devolvía 400 (`INVALID_IMAGE_OPTIMIZE_REQUEST`) para TODO (local y remoto) por el límite mensual del plan Hobby. Con `unoptimized` next/image sirve el src directo (sin `/_next/image`).
-- **muzicmania REST**: las tablas viven en el schema `muzicmania` (`db: { schema: 'muzicmania' }` en `src/config/supabase.ts`). Columnas reales de `scores`: `id, user_id, score, created_at, track_id, accuracy` (NO `song_id` — el código usa `track_id`). `profiles` NO tiene `created_at` (usar `updated_at`) y no hay FK scores→profiles (el embed `profiles(...)` da 400 — consultar aparte por `user_id`).
-- **`.single()` con 0 filas → 406 PGRST116**: usar siempre `.maybeSingle()` cuando la fila puede no existir (StatsTicker, récord global). El 406 en consola de `select=score&order=score.desc&limit=1` era eso.
-- **Supabase otorga permisos por defecto en tablas nuevas** (10 ago 2026): toda tabla creada vía migración/dashboard recibe `GRANT ALL` para anon/authenticated automáticamente. Sin `ENABLE RLS` = BD abierta. La migración que crea la tabla DEBE incluir `ALTER TABLE ... ENABLE ROW LEVEL SECURITY` + policy explícita. El advisor de Dashboard NO avisa de tablas sin RLS ni de funciones con EXECUTE anon → verificar con SQL real (dbvr) tras cada migración.
-- **`NEXT_PUBLIC_` viaja al bundle del navegador**: cualquier secret con ese prefijo es público (lección tarea 2, 10 ago). Secrets solo como `process.env.X` sin prefijo en server-only. Los fallbacks hardcodeados de secrets en código quedan en git para siempre (decisión: rotar el secret de Turnstile de muzicmania cuando el repo se haga público — ver `CLOUDFLARE_SYSTEM.md`).
-- **Cargo advisories aceptados** (`projects/muzicmania/launcher`): `glib` 0.18.5 (GHSA-wrw7-89jp-8q8g, fix en ≥0.20.0) requiere gtk/tauri 3 — tauri 2.11.5 lo pincha en 0.18. `serde_with` 3.21.0 ya patcheado (cargo update jul 2026).
-- **Overrides de seguridad** en `pnpm-workspace.yaml`: `undici 6.28.0`, `body-parser 1.20.6`, `brace-expansion 5.0.9`, `postcss 8.5.25`, `minimatch@^9 9.0.7`, `sharp 0.35.3`, **`js-yaml 4.3.1`** (CVE-2026-59870 — O(n²) en `!!omap` de js-yaml 3.x/4.x; fix no backported → override; 8 ago 2026), **`nanoid@^3 3.3.17`** (GHSA-2v37-7h3g-55p8: custom generators loop infinito con size 0; fix ≥3.3.17; 8 ago 2026), `@typescript-eslint/* 8.63.0`.
-- `muzicmania/website` has **Tauri + NSIS** commands (`pnpm tauri:build`, `pnpm tauri:build:nsis`); needs Rust toolchain
-- No test framework is configured — CI only runs `lint`
-- No hay `prebuild` de assets en las webs: los assets se sirven vía resolver/CDN (`public/` solo docs/pwa/shared/sw.js, ver "Política public/")
-- `projects/ciszu/content/` holds master media of la página Ciszu; each app has a mirror `content/` + `documents/` + `documents/documentation/`
-- Vercel deployments do **not** preserve original TypeScript source — only build output + public/ static assets
-- `packages/cdn`, `packages/ui`, `packages/config`, `packages/utils` are the shared npm packages
-- Icon system is in `shared/icons/` (outline/filled/flag); use `resolveIcon()` from `@ciszunetwork/cdn`. All 4 websites import this package.
-- **Legacy files** (pre-date `packages/cdn/`): `shared/hybrid-system.js`, `shared/aliases.json`, `scripts/setup-icons-system.js`, `scripts/setup-aliases.js` — no longer imported by any app. The canonical resolver is `packages/cdn/index.ts`.
-- **Content dirs**: `projects/ciszu/content/`, `projects/*/content/`, `projects/ciszukoantony/content/`, `projects/ciszugamens/content/` hold multimedia (banners, flyers, logos, thumbnails). These are candidates for CDN but tracked in git for local builds.
-- **Espacio en disco LIMITADO (crítico)**: el PC tiene poco espacio libre en C: (disco del sistema). Reglas OBLIGATORIAS para cualquier trabajo temporal:
-  - **NUNCA** escribir archivos temporales en `C:\Users\fplay\AppData\Local\Temp` ni otras rutas de C: — el espacio libre allí es mínimo
-  - Usar SIEMPRE `E:\Ciszu Network\.opencode\temp/` (gitignored, dentro del repo en el disco E:) para logs, reportes, archivos de trabajo temporales
-  - Borrar los archivos temporales de `.opencode/temp/` en cuanto dejen de usarse (fin de tarea), o como máximo limpiar los antiguos (>1 semana)
-  - Antes de descargar imágenes Docker/paquetes grandes, verificar espacio: `Get-PSDrive C,E` (C: no debe bajar de ~5 GB libres)
-  - La DB local de Supabase (`supabase start`) ocupa ~1.5 GB en Docker — verificar espacio antes de usarla
-
-## Supabase Advisors (Database Linter)
-
-### Security advisors — estado actual (jul 2026)
-
-| Advisor                                                | Estado     | Explicación                                                                                                                                                                                                                                                                                                                                   |
-| ------------------------------------------------------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `authenticated_security_definer_function_executable` | 0 warnings | ✅ Migración 11 APLICADA (REVOKE EXECUTE de anon/authenticated en`handle_review_like`, `handle_review_update`, `update_track_like_count` — son SOLO triggers, el motor no chequea EXECUTE al dispararlos), verificada 31 jul 2026: anon/auth_exec = false en las 3 |
-| `auth_leaked_password_protection`                    | 1 warning  | **Free Tier limitation** — solo activable desde Dashboard con plan Pro.                                                                                                                                                                                                                                                                 |
-
-**Funciones cambiadas a SECURITY INVOKER** (más seguro, RLS se respeta):
-
-- `public.get_email_by_username(text)` → INVOKER (migration 09)
-- `public.is_account_recoverable(uuid)` → INVOKER (migration 09)
-- `public.is_account_recoverable(text)` → INVOKER (migration 09)
-- `public.submit_game_score(...)` → INVOKER (migration 09)
-- `muzicmania.submit_game_score(...)` → INVOKER (migration 10)
-
-### Performance advisors — estado actual (jul 2026)
-
-| Advisor                          | Estado     | Explicación                                                                                 |
-| -------------------------------- | ---------- | -------------------------------------------------------------------------------------------- |
-| `auth_rls_initplan`            | 0 warnings | ✅ Todas las`auth.uid()`/`auth.role()`/`auth.jwt()` envueltas en `(SELECT auth.X())` |
-| `multiple_permissive_policies` | 0 warnings | ✅ Policies duplicadas mergeadas, ALL separado en comandos individuales                      |
-
-**Reglas para evitar `auth_rls_initplan`:**
-
-- Toda llamada a `auth.uid()`, `auth.role()`, `auth.jwt()` en USING/CHECK de RLS policies debe ir envuelta en `(SELECT auth.X())`
-- Si ya está dentro de una subconsulta EXISTS, envolver igualmente: `profiles.id = (SELECT auth.uid())`
-
-**Reglas para evitar `multiple_permissive_policies`:**
-
-- No usar `FOR ALL` — separar en policies individuales por comando (SELECT/INSERT/UPDATE/DELETE)
-- Si un mismo rol+acción tiene dos policies con distintos USING, mergearlas con OR
-- Para `muzicmania.likes`: "Likes are viewable by everyone" (SELECT) + "Users can manage their own likes" (ALL) → la ALL cubre SELECT, causando duplicado. Solución: ALL → INSERT+UPDATE+DELETE separados.
-
-## Seguridad — XSS y SQL Injection
-
-### Prevención de XSS
-
-- **NUNCA** usar `innerHTML` o `dangerouslySetInnerHTML` con datos de usuario sin escapar
-- Usar `escapeHtml()` helper (crea textNode via DOM y extrae innerHTML):
-  ```js
-  function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.appendChild(document.createTextNode(str));
-      return div.innerHTML;
-  }
-  ```
-- Preferir `textContent` sobre `innerHTML` cuando no se necesita HTML
-- En Next.js, JSX escapa automáticamente — solo preocuparse por `dangerouslySetInnerHTML`
-- TODO `dangerouslySetInnerHTML` debe usar DOMPurify.sanitize() si los datos pudieran volverse dinámicos en el futuro
-
-**Archivos legacy con XSS ya fixeados:**
-
-- `projects/muzicmania/web/src/utils/legacy_scripts/search.mjs` — `query` del search box escapado con `escapeHtml()`
-- `projects/muzicmania/web/src/utils/legacy_scripts/auth.mjs` — `displayName`/`username` escapados con `escapeHtml()`
-- Duplicados en `projects/muzicmania/website/` (untracked)
-
-### Prevención de SQL Injection
-
-- **NUNCA** concatenar strings en queries SQL: `` `SELECT * FROM t WHERE id = '${val}'` ``
-- Usar siempre el ORM de Supabase (parametrizado): `.eq('id', val)`, `.rpc('func', { param: val })`
-- En scripts que construyen SQL dinámico, validar entrada con regex antes de interpolarla
-- Las 52 funciones PL/pgSQL del proyecto están **limpias** (sin `EXECUTE` dinámico)
-- Discord bot usa Discord API segura — no construye SQL directamente
-
-**Archivos con patrones inseguros ya fixeados:**
-
-- `scripts/fix-migrations.js` — validación regex `/^\d{14}$/` sobre version strings antes de usarlas en SQL
-- `projects/muzicmania/web/src/scripts/dbManager.ts` — `eval()` + raw SQL: agregadas confirmaciones explícitas (dev tool, no se shippea)
-
-**Dev tools que requieren precaución:**
-
-- `projects/muzicmania/*/src/scripts/dbManager.ts` — tiene `eval()` (shell interactiva) y `execute_sql_query` RPC. Son herramientas de desarrollo solamente. Tienen doble confirmación de seguridad.
-
-## Migraciones aplicadas (jul 2026)
-
-| Migration | Archivo                                                 | Qué hace                                                                                                                                                                                                                                                                                                                                          |
-| --------- | ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 04        | `20260729000004_fix_excessive_grants.sql`             | Revocó ALL de anon, solo SELECT                                                                                                                                                                                                                                                                                                                   |
-| 05        | `20260729000005_fix_advisors_security_definer.sql`    | Fix 27 warnings: search_path + REVOKE anon                                                                                                                                                                                                                                                                                                         |
-| 06        | `20260729000006_fix_remaining_anon.sql`               | REVOKE preciso por signature exacta                                                                                                                                                                                                                                                                                                                |
-| 07        | `20260729000007_fix_public_inherit.sql`               | REVOKE FROM PUBLIC + GRANT a authenticated                                                                                                                                                                                                                                                                                                         |
-| 08        | `20260729000008_fix_performance_advisors.sql`         | Initplan wrapping + eliminar policies duplicadas                                                                                                                                                                                                                                                                                                   |
-| 09        | `20260729000009_fix_remaining_advisors.sql`           | Funciones públicas a INVOKER + merged policies                                                                                                                                                                                                                                                                                                    |
-| 10        | `20260729000010_fix_submit_game_score_invoker.sql`    | `muzicmania.submit_game_score` → INVOKER                                                                                                                                                                                                                                                                                                        |
-| 11        | `20260729000011_revoke_execute_trigger_functions.sql` | REVOKE EXECUTE de anon/authenticated en las 3 funciones trigger SECURITY DEFINER restantes (cierra advisor). ✅**APLICADA 31 jul 2026** vía Management API (PAT nuevo del usuario) — verificada: anon/auth_exec = false en las 3                                                                                                           |
-| 12        | `20260801000012_revoke_execute_security_definer.sql`  | Red de seguridad: REVOKE EXECUTE idempotente de TODAS las funciones SECURITY DEFINER (muzicmania triggers + public auth/profiles triggers)                                                                                                                                                                                                         |
-| 13        | `20260801000013_bot_status_heartbeat.sql`             | ✅**APLICADA 2 ago 2026** — tabla `ciszubot.bot_status` (single-row id=1: online, last_seen, started_at, version, guilds, commands_total, prefix). Policy SELECT para anon/authenticated + GRANT SELECT anon + **GRANT ALL service_role** (Management API no aplica grants default). La consume la web de ciszubot (estado en vivo) |
-| 14        | `20260802000014_bot_expansion.sql`                    | ✅**APLICADA 2 ago 2026** — 13 tablas en `ciszubot`: guild_configs, wallets, transactions, shop_items, inventory, levels, warns, tickets, giveaways, afk, alliances, discord_users, snipes (+5 índices)                                                                                                                                  |
-| 16        | `20260810000016_security_hardening.sql`                | ✅**APLICADA 10 ago 2026** — endurecimiento RLS: REVOKE EXECUTE anon de `get_email_by_username` (movida a `/api/auth/resolve-username` con service_role + rate limit), limpieza grants anon en ciszubot (command_logs/guild_config) y messages UPDATE/DELETE, **ENABLE RLS en las 13 tablas de ciszubot sin RLS** (deny-all; el bot usa service_role = bypass). Ver `SECURITY_TASKS.md` (4 tareas de seguridad que las IAs no hacen por defecto) |
-| 17        | `20260811000017_audit_log.sql`                          | ✅**APLICADA 11 ago 2026** — tabla `ciszubot.audit_log` (log de auditoría del dashboard: login/login_failed/logout/config_update, índices created_at+event). RLS ON deny-all + REVOKE anon/authenticated + GRANT solo service_role (verificado con dbvr). Consumida por `projects/ciszubot/website/src/lib/audit.ts` (best-effort, nunca bloquea) |
-
-## Plan legal de Ciszu Network + herramientas de conversión (ago 2026)
-
-**Convención de nombres de documentación (11 ago 2026)**: todos los `.md` de `docs/documentation/` de los 5 proyectos usan **nombres de archivo en inglés puro** (contenido en español). Nunca crear un doc con nombre español; si aparece alguno, renombrarlo con `git mv` y actualizar referencias. Los docs de estrategia/contexto de la empresa viven en `projects/ciszu/docs/documentation/` (ver `TODO.md` §Documentacion): `HEALTH.md`, `EDUCATION.md`, `BUSINESS_STRUCTURE.md`, `SCHEDULE.md`, `STATISTICS.md`, `TECH_STACK.md`, `CONTACTS.md`, `ONLINE_SERVICES.md`, `GEOGRAPHIC_CONTEXT.md`, `HISTORICAL_CONTEXT.md`, `TARGET_AUDIENCE.md`, `BUSINESS_STRATEGY.md`, `BUSINESS_MODELS.md`.
-
-**Documentación legal/empresarial** (`projects/ciszu/docs/documentation/`):
-
-- `COMPANY_REGISTRATION_PLAN.md` (+ PDF) — plan maestro por fases (0→4) para formalizar Ciszu Network en Venezuela: Fase 0 fundación ($0, sin tarjeta, todo en línea: RIF persona natural gratis en SENIAT, WhatsApp), Fase 1 identidad fiscal, Fase 2 marca (~$410–420 efectivo en SAPI, clases Niza 41/42/9/35/38, 15 años), Fase 3 registro mercantil (S.R.L./E.I.R.L. vía SAREN), Fase 4 operación.
-- Guías: `RIF_PERSON_GUIDE.md`, `SAPI_TRADEMARK_GUIDE.md` (depósito en efectivo — sin tarjeta), `COMMERCIAL_REGISTRATION_GUIDE.md`, `FREELANCER_TAX_GUIDE.md` (ISLR/IVA/IGTF/facturación digital), `INTERNATIONAL_LLC_GUIDE.md` (Fase 3 opcional, Delaware; Mercury NO acepta VE).
-- Plantillas oficiales en `projects/ciszu/docs/plantillas/` (+ PDFs en `plantillas/pdf/`): acta constitutiva S.R.L., solicitud FM-02, declaración jurada de uso de marca, reserva de nombre SAREN, checklist por fases.
-- ⚠️ **Regla de edad**: trámites oficiales (RIF, SAPI, Registro Mercantil) exigen **18 años** — hasta entonces la Fase 0 es 100% preparatoria (documentos, evidencias, contabilidad, ahorro). Reflejado en vencimientos de `tools/legal-ai` (campos futuros hasta el año de mayoría de edad).
-- **Archivo local privado** `archives/legal/` (gitignored): contabilidad (CSV + XLSX con fórmulas y sumas automáticas por mes/año), evidencia de marca, documentos oficiales, seguimiento de trámites. NUNCA subir a git.
-
-**`tools/legal-ai/`** — generador de la estructura legal/contable: `python tools/legal-ai/generate-legal-structure.py [--year AAAA]` (regenera CSVs del año, XLSX con fórmulas `SUM` por mes/trimestre/año, registro de evidencias, vencimientos con edad 18+). Requiere openpyxl. Ver `tools/legal-ai/README.md`.
-
-**`tools/convert/`** — kit universal de conversión (JS CLI + motores Python/pandoc/Word): `node tools/convert/convert.js <conversion> <input> [--out <archivo|directorio>]`. Conversiones: `md2txt` (puro JS), `txt2md`, `md2docx` (pandoc), `md2pdf` (pandoc+weasyprint si existe, fallback reportlab), `docx2pdf` (Word COM, Windows), `pdf2txt` (pypdf), `csv2xlsx`, `xlsx2csv` (openpyxl). Soporta directorios (batch recursivo preservando estructura, salida a `--out`/subcarpeta `<ext>`). Probado 10 ago 2026: 7/7 conversiones + batch OK (incl. roundtrip xlsx→csv→xlsx). Ver `tools/convert/README.md`.
-
-## Herramientas de desarrollo (GUI + CLI) — ago 2026
-
-Pila decidida (análisis completo en `docs/documentation/TOOLS.md`): **DBeaver CE + dbvr Community** (BD), **Bruno** (API client), **Fork** (Git GUI).
-
-- **dbvr Community**: CLI BD headless (Apache-2.0, descarga SEPARADA de dbeaver.io/dbvr — NO viene con DBeaver). Instalado en `C:\Program Files\dbvr\dbvr.exe` 26.1.4 (bundle Java 21), PATH de usuario actualizado. **Datasource `supabase` CONFIGURADO y verificado** (2 ago 2026): pooler `aws-1-us-east-1.pooler.supabase.com:6543` (⚠️ SOLO transaction 6543 responde desde este PC; session 5432 y directa timeout), user `postgres.obwzzmbvkrcscqwptlqo`, db `postgres`, password = `SUPABASE_DB_PASSWORD` de `services/supabase/.env`. Uso: `dbvr sql -ds=supabase "SELECT ..."`, `-format=json`, `dbvr meta table list -ds=supabase --schema=ciszubot` (⚠️ el flag `--schema` va ANTES del subcomando), `dbvr datasource list/view`, y `dbvr mcp start -ds=supabase` (MCP server opcional).
-- **DBeaver CE**: GUI BD. dbvr y DBeaver **comparten workspace** (`C:\Users\fplay\AppData\Roaming\DBeaverData\workspace6`) → la conexión `supabase` de dbvr ya aparece en DBeaver (driver PostgreSQL 42.7.13 descargado). No crear conexión duplicada.
-- **Bruno**: cliente API git-native en `apis/bruno/` (**formato OpenCollection YAML** — `opencollection.yml` + `*.yml`, NUNCA `.bru` bajo ese root; el CLI 4.x no los detecta). GUI: File → Open Collection → `E:\Ciszu Network\apis\bruno`. CLI instalado (4.0.0, `pnpm add -g @usebruno/cli`; requiere `PNPM_HOME=C:\Users\fplay\AppData\Local\pnpm` en PATH vía `pnpm setup`). Ejecutar desde raíz: `pnpm api:test` / `pnpm api:test:report` (wrapper `scripts/run-bru.js` — Windows necesita `cmd /c bru`, no `bru.cmd` directo). Colección: `health/` (5 checks: 4 webs + bot_status) + `rest/` (leaderboard muzicmania, bot_status completo, stats local :5000 con tag `local` excluido por defecto). Env: `apis/bruno/environments/prod.yml` (gitignored, formato `variables: [{name, value}]`; plantilla `prod.example.yml`).
-- **Password BD**: la Management API NO devuelve el password (solo `[YOUR-PASSWORD]` placeholder en `/config/database/pooler`). Se resetea con `PATCH /v1/projects/{ref}/database/password` (solo requiere el nuevo, min 4 chars). Tras resetear, actualizar `SUPABASE_DB_PASSWORD` en `services/supabase/.env`.
-- **`backup-db.js`**: reparado 2 ago 2026 — endpoint `/config/database/pooler` (el viejo `/database/connection` da 404), password desde `.env`, fix CRLF. El script busca `pg_dump` en `C:\Program Files\PostgreSQL\18\bin\pg_dump.exe` (y 17/16/15/14/`pg_dump`) — **requiere pg_dump ≥17** (compatibilidad con server 17.6; un pg_dump 13.x da "server version mismatch"). **PostgreSQL 18.4 instalado (10 ago 2026)** + primer backup real OK.
-- **Descartadas** (incluso premium): Postman (free degradado, cloud), GitKraken (AI redundante con el agente, pesado), TablePlus (sin CLI, Windows rezagado), Beekeeper Personal (no aporta a IA).
-- **Testing (8 ago 2026)**: ✅ **IMPLEMENTADO** — decisión y estado en `projects/ciszu/docs/documentation/TESTING.md` (§8). Stack: **Vitest** (unit/integration, `vitest.config.mts` raíz) + **Testing Library** (`happy-dom`) + **Playwright** (E2E smoke). **96 tests** en 11 archivos: `packages/cdn` (25, resolver local/CDN + `deliveryVariants` del sistema de formatos), `packages/ui` (23, registry + `Icon` inline/recall + `InstallPdwaButton` navegador/dismiss/disclaimers), bot Ciszubot (49: levels, economy, configService, giveaways, statsServer con Supabase mockeado). **4 E2E** (`test/website/e2e/smoke.spec.ts`) contra las webs en producción. **5 E2E de seguridad** (`test/website/e2e/security.spec.ts`, 11 ago 2026): cabeceras HTTP, no-reflejo XSS/SQLi, sin 5xx, paths de escáneres, POST mutante a `/api/votes` — corre en CI (`security-e2e` job) y en local `pnpm e2e -- security.spec.ts`. Comandos: `pnpm test`, `pnpm test:watch`, `pnpm test:ui` (panel visual `@vitest/ui` en `http://localhost:51204/__vitest__/`; abrir navegador con `--open`), `pnpm e2e`, reporte HTML con `pnpm exec playwright show-report test/website/e2e/reports/playwright` (reporter `html` en el config → `test/website/e2e/reports/playwright/`, gitignored; artefactos en `test/website/e2e/reports/test-results/`).
-  - **Comandos cortos (PowerShell $PROFILE)**: `test` (vitest run), `testui` (vitest ui --open), `testwatch`, `e2e` (playwright), `e2egui` (e2e + show-report en navegador). **Comandos opencode**: `/test`... NO — `/test-ui` y `/e2e` en `.opencode/command/` (+ copia global `~/.config/opencode/command/`).
-  - **Config Playwright (8 ago 2026, `playwright.config.ts`)**: fuerza `PLAYWRIGHT_BROWSERS_PATH` a `E:\Ciszu Network\.opencode\temp\playwright-browsers` (no C:), navegador = **Opera GX** (`C:\Users\fplay\AppData\Local\Programs\Opera GX\opera.exe`, con fallback a chromium si no existe — CI/otra máquina), `retries: 1` (mitiga EAI_AGAIN del DNS del PC), `testDir: ./test/website/e2e` (specs), outputs en `test/website/e2e/reports/{playwright,test-results}` (gitignored). CI: nuevo job `unit-tests` en `ci.yml`. ⚠️ MuzicMania E2E reducido a status+title: la web está tras challenge Cloudflare que no pasa en headless/Opera GX. El tsconfig raíz es VACÍO (tooling vitest); apps usan los suyos. `setupFiles`: `LOG_LEVEL=error` en tests del bot (logger), jest-dom en ui. Legal de bot `tests/helpers/db.ts` (mock encadenable). El bot `statsServer` ahora devuelve el server (`setupStatsServer(): Server`).
-
-## Scripts útiles (en `scripts/`)
-
-> **Limpieza 2 ago 2026**: eliminados ~50 scripts one-shot (campañas de seguridad/icons/docs de jul 2026 y legacy pre-`packages/cdn`). Solo quedan los vivos. Los borrados siguen en el historial de git.
-
-- `check-func-perms.js` — verifica permisos EXECUTE por rol en funciones
-- `check-policies.js` — lista cantidad de policies por tabla
-- `check-auth-wrapper.js` — detecta `auth.*()` sin wrapper `(SELECT ...)` en policies
-- `analyze-policies.js` — detecta policies duplicadas y auth calls top-level
-- `backup-db.js` — backup con timestamp a `archives/backups/db/` (regla de backups: complejo → archives/backups), limpia >30 días, flags `--scheduled`/`--dry-run`
-- `update-env-keys.js` — backup automático de `.env` a `archives/backups/envs/<fecha>/` + actualiza todos los `.env` con nuevas keys tras rotación manual
-- `upload-cdn.js` — `pnpm cdn:upload` (sube a `ciszu-cdn` desde SOURCES; `--force` re-sube todo ignorando tamaño/mimetype; `--prune` borra del bucket lo que no existe localmente)
-- `check-cdn-mimes.js` — `pnpm cdn:verify` (lista el bucket y reporta objetos con mimetype incorrecto para su extensión)
-- `delete-cdn-by-ext.js` — borra del bucket todos los objetos con las extensiones pasadas por CLI (mantenimiento de cuota: `node scripts/delete-cdn-by-ext.js .ai .psd`)
-- `delete-storage-bucket.js` — **borrado masivo de bucket completo** (herramienta DESTRUCTIVA protegida, ver "Protocolo de borrados destructivos" abajo): `node scripts/delete-storage-bucket.js <bucket> --yes --confirm <bucket> [--prefix ruta] [--concurrency N] [--delete-bucket] [--dry-run]`. Requiere `--yes` + `--confirm <bucket>` (nombre exacto) + `--force-cdn` si es `ciszu-cdn` + espera 10s de countdown. `--dry-run` lista sin borrar. Nunca usarlo sin dry-run previo.
-- `vercel-kv-setup.js` — automatiza la Fase 2 del caché: busca el KV store, salta proyectos ya configurados y replica `KV_REST_API_URL`/`KV_REST_API_TOKEN` del proyecto que los tenga al resto (`node scripts/vercel-kv-setup.js`, requiere `VERCEL_TOKEN`; flags `--store`, `--dry-run`, `--show-values`; la PRIMERA conexión del store es manual en el dashboard)
-- `generate-icon-registry.js` — regenera `packages/ui/src/generated/icon-registry.ts` desde `shared/icons/svg`
-- `generate-commands.js` — regenera `commands.json`/`docs/slash-commands.*` del bot desde dist
-- `generate-material-icons-doc.js` — regenera `projects/ciszu/docs/documentation/MATERIAL_ICONS.md` con el catálogo COMPLETO de Material Icon Theme (descarga los fuentes oficiales a `.opencode/temp/material-icons-theme/`; `--force` re-descarga). Parsea `folderIcons.ts` + `fileIcons.ts` (~290 folder icons + ~610 file icons)
-- **`tools/`** (5 ago 2026, reorganizado desde `opencode-ai` + `opencode-voice`): generadores IA multi-modal globales por modalidad (`image-ai/`, `music-ai/`, `video-ai/`, `removebg-ai/`, `shared/lib.js`, `ascii-ai/textart.js`) + sistema de voz `tools/tts-stt-ai/`. `music-ai/generate-music.js` (estructura completa MuzicMania/CDN: wav + mp3 192k+ID3 + ogg + cover.png/banner.png **vía GDI+ PowerShell** sin red + readmes/licencias + `<slug>.json`; provider **ace DEFAULT** = AceMusic ACE-Step `acemusic/acestep-v1.5-turbo` — el mismo modelo que generó Genesis Neon (`projects/muzicmania/website/scripts/generate-tracks.ps1`), requiere `ACE_API_KEY`; alternativas hf MusicGen / suno `SUNO_API_KEY`; `--offline` empaqueta un wav local sin API), `video-ai/generate-video.js` (**fal.ai directo** con `FAL_KEY` — `fal-ai/wan-25-preview/text-to-video`, cuenta **sin saldo → sin usar**; alternativas HF router Wan2.1/LTX dan 404 sin provider; emite mp4 + poster.png + `<slug>.json`), `image-ai/generate-art.js` (FLUX/Gemini/SiliconFlow), `removebg-ai/remove-bg.js` (chroma/biRefNet). `shared/lib.js` (helpers env/argv/retry/ffmpeg). Claves del vault (`HF_TOKEN`, `GEMINI_API_KEY`, `SILICONFLOW_API_KEY`, `SUNO_API_KEY` sin añadir, `FAL_KEY`). Comandos opencode: `.opencode/command/` (+ copia global `~/.config/opencode/command/`) → `/art`, `/music`, `/video`. Snippets $PROFILE: `art`, `music`, `removebg`, `video`. Export Termius: `archives/backups/termius/20260805/snippets.json`.
-  - **Carpeta de pruebas `test/`** (convención 6 ago 2026, reorganizada 9 ago: antes `downloads/test/`): SIEMPRE ignorada por git. Organizada **por categoría** (`test/art/`, `test/video/`, `test/music/`, `test/website/`, etc.) y cada test en su propia carpeta con nomenclatura **`<nombre>-<categoria>`** (ej. `test/art/ciszu-girl-art/`, `test/video/neon-girl-video/`, `test/music/neon-girl-music/`). Assets generados automáticamente dentro (png/mp4/mp3/json/poster/readme). El CDN espeja la misma estructura bajo `tests/...` (ej. `tests/video/neon-girl-video/neon-girl.mp4`). `test/website/`: `e2e/` (specs Playwright + reports), `vitest/` (reports + `.last-run.json`), `testing/` (webs directas creadas ad-hoc, p.ej. `venezuela-viva`).
-  - **Music-video (6 ago 2026)**: técnica demostrada para generar **vídeo con música** sin IA: Ken Burns con ffmpeg (`zoompan`) sobre arte estático + pista de audio de un test de música (`-i art.png -i song.mp3` + `-shortest`), fades de entrada/salida, h264+aac, metadatos title/artist/album. Ejemplo: `video/neon-girl-video/neon-girl.mp4` (35s, arte `art/ciszu-girl-art/` + pista `music/neon-girl-music/neon-girl.mp3`).
-- `ntfy-notif.js` — `pnpm notify` — notificaciones push vía ntfy.sh. Enviar/listar/limpiar: `pnpm notify "Titulo" "Mensaje"`, `--priority urgent --tag warning`, `--list`, `--clear` (requiere token), pipe desde stdin. Topic/token desde `NOTIFY_TOPIC`/`NOTIFY_TOKEN` en `.env.local` (raíz) o `services/supabase/.env` (vault). ⚠️ **8 ago 2026**: `NOTIFY_TOKEN` retirado — el token `tk_txog...` daba 401 en TODOS los endpoints (revocado/borrado en ntfy.sh) y estaba además exportado como variable de entorno de usuario de Windows (borrada). El topic `ciszu-1a41fa89...` es **PÚBLICO** (publish sin token = 200) → ya no se usa token. Los 3 scripts (`ntfy-notif.js`, `tools/tts-stt-ai/lib/tts.js`, `stt.js`) tienen **fallback automático**: si el token configurado da 401, reintentan sin él. Si se vuelve a usar token, generar uno nuevo en https://ntfy.sh/settings. **Ciclo de notificaciones activo (política — ver REMOTE_CONTROL.md §1.2)**: avisar por push al móvil en inicio/fin de tarea, antes de pedir accesos, en advertencias, errores (urgent) y cuando se necesite un token/credential del usuario. No spam: un push por hito, emparejar inicio/fin.
-- Aplicar migraciones: `node scripts/apply-migration-XX.js`
-- `setup-remote-control.ps1` — activa el control remoto de la terminal (OpenSSH Server + Tailscale; re-ejecutable, PowerShell admin). Ver `projects/ciszu/docs/documentation/REMOTE_CONTROL.md`
-- `backup-db.js` / `run-bru.js` / `fix-migrations.js` / `md2office.js` / `txt2md.js` / `txt2pdf.py` / `docx2pdf.ps1` / `sync-public-docs.js` / `setup.ps1` — utilidades de backup, API testing, docs y setup
-
-## Protocolo de borrados destructivos (CDN / Storage) — OBLIGATORIO
-
-**Lección 10 ago 2026**: el overage de 1 GB lo causó el bucket legacy `ciszu-assets` (16.891 objetos / 1.44 GB) que "se renombró" a `ciszu-cdn` pero **nunca se vació** (Supabase NO renombra buckets — se crea otro y el viejo queda). Para que no vuelva a pasar:
-
-1. **Todo borrado masivo de Storage se hace SOLO con `scripts/delete-storage-bucket.js`** (o `delete-cdn-by-ext.js` para extensiones). NUNCA scripts ad-hoc en `.opencode/temp/` ni loops sueltos en bash/PS: se pierden las protecciones y las lecciones (bulk roto, CLI colgado).
-2. **Verificación previa obligatoria**: (a) `--dry-run` primero y revisar el conteo/bytes en pantalla; (b) confirmar que el bucket a borrar NO es el que consumen las webs (`ciszu-cdn` está DENEGADO sin `--force-cdn`); (c) `git grep`/`ripgrep` del repo para verificar que ningún código referencia el bucket/objetos a borrar.
-3. **El bucket del CDN es un espejo del repo**: borrar un objeto del bucket NO lo elimina del repo; el próximo `pnpm cdn:upload` lo REPONE si sigue en las SOURCES. Para borrar de verdad: borrar del repo Y del bucket, o `upload-cdn.js --prune` (borra lo que no existe localmente).
-4. **Si se "migra" un bucket (nunca más)**: el ciclo completo es crear el nuevo → actualizar `NEXT_PUBLIC_CDN_URL` en Vercel ×4 → verificar URLs 200 → **vaciar y borrar el viejo el mismo día** con la tool. Un bucket legacy con datos es una bomba de tiempo de cuota.
-5. **Tras el borrado**: verificar con inventario real (listar el bucket; el listado colapsa carpetas → usar paginación recursiva con `prefix`) y avisar por push (`pnpm notify`). La cuota se ve en Dashboard (Reports & Usage) o sumando los tamaños del inventario.
-6. **Limpiar temporales**: los scripts/inventarios de diagnóstico viven en `.opencode/temp/` (gitignored) y se borran al terminar la tarea.
-
-## Control remoto de la terminal (ago 2026)
-
-**Implementado en el PC**: OpenSSH Server v10.0.0 (MSI oficial `winget install Microsoft.OpenSSH.Preview`, servicio `sshd` Running + Automatic, puerto 22, DefaultShell = PowerShell) + Tailscale v1.98.10 logueado (IP tailnet `100.75.124.72`, hostname `ciszu-pc`) + clave ed25519 `ciszu_pc_ed25519` autorizada en `C:\ProgramData\ssh\administrators_authorized_keys`. En el móvil: Tailscale + Termius (misma cuenta Google, key `CISZU SSH Key`, host `Ciszu-PC` funcional). **Enfoque final = opencode NATIVO de Windows con `serve` + `attach`** (4 ago 2026): un servidor headless `opencode serve --port 4096 --hostname 127.0.0.1` corre en el PC (tarea programada `opencode-server-ciszu` AtLogOn oculta + ensure idempotente). **Tool canónica (actualizada 7 ago 2026): `tools/ciszu-ai/`** — `ciszu-ai.cmd` (lanzador oficial, subcomandos `server`/`stop`/`reset`; **default = ensure + attach SIN matar el listener**) + `ensure-server.ps1` (rutas derivadas del repo, params `-Port/-Exe`, valida binario PE y repara postinstall). TODOS los nombres de PATH (`ciszu-ai`, `ciszu-ai-pc`, `ciszu-ai-cel`, `ciszu-ai-start`, `ciszu-ai-stop`, `ciszu-ai-reset`, `opencode-run`, `opencode-ciszu-pc`, `opencode-ciszu-cel`, `opencode-ciszu-start`, `opencode-ciszu-stop`, `opencode-ciszu-reset` — en `.cmd` y `.bat`, en `AppData\Roaming\npm` y `C:\Users\fplay`) son **stubs delegantes** → llaman al **espejo sin espacios** `C:\Users\fplay\ciszu-ai\ciszu-ai.cmd` (el path `E:\Ciszu Network` con espacios rompe cmd); `tools/ciszu-ai/opencode-run.cmd` es alias de compatibilidad. PC y móvil (Termius → SSH `fplay@100.75.124.72:22` → PowerShell → `opencode-ciszu-cel`) se conectan al mismo servidor: **misma sesión en vivo** en ambos (SSH), historial/theme/carpeta de Windows. Servidor ligado a loopback (seguro sin password; el móvil entra vía SSH local). Logs: `E:\Ciszu Network\.opencode\temp\opencode-server{,-err}.log`. `opencode` a secas sigue siendo instancia local independiente (sin live-sync). ⚠️ La caja de texto del chat en el móvil NO es configurable (schema TUI solo expone `prompt.max_height`/`max_width` de la pantalla de inicio; `--mini` cambia toda la interfaz — probado y descartado). **WSL/tmux DESCARTADO** (duplicaba db de opencode sin historial, paths `/mnt`, TUI deformada con 2 clientes). Recordar: **Proton VPN puede estar activa en el PC** — el tráfico a `100.x.x.x` (tailnet) no se ve afectado por el adaptador `10.2.0.2` de la VPN. Doc completa: `projects/ciszu/docs/documentation/REMOTE_CONTROL.md` + guía práctica `CEO_REMOTE_ACCESS_GUIDE.md`. **Plan de escalabilidad organizacional** (cómo repartir permisos por rol cuando el equipo crezca: creativos, devs, auditores, etc.): `projects/ciszu/docs/documentation/ORGANIZATIONAL_SCALABILITY_PLAN.md` — la cuenta ya es GitHub **Organization** `Ciszu-Network` (ADMIN: CEO), con decisiones pendientes marcadas en el doc.
-
-⚠️ **Gotchas reportados**:
-
-- **Timeout SSH desde el móvil (8 ago 2026)**: las reglas de firewall `OpenSSH SSH Server (sshd)` vienen por defecto con `Profile: Private`; el tráfico entrante por el adaptador Tailscale puede clasificarse en otro perfil y Windows lo bloquea en silencio (síntoma: Termius se queda en "conectando…" y timeout, aunque `tailscale ping` y el escaneo local del puerto 22 funcionen). Fix: `Set-NetFirewallRule -DisplayName "OpenSSH SSH Server (sshd)" -Profile Any`. Además, tras reinicios/crash-leaf del sshd, `Restart-Service sshd -Force` limpia listeners zombis.
-
-- **OpenSSH Windows + host keys**: si el servicio sshd entra en crash-loop (evento 7031 `service terminated unexpectedly`) con `WARNING: UNPROTECTED PRIVATE KEY FILE`, la causa es owner/permisos de las host keys → NUNCA crear con `ssh-keygen -A` en ruta `C:\ProgramData\ssh` sin reparar. Fix: `Import-Module 'C:\Program Files\OpenSSH\OpenSSHUtils.psm1'` → `Repair-SshdHostKeyPermission` para cada `ssh_host_*_key` + `Repair-SshdConfigPermission` (owner SYSTEM, solo SYSTEM+Admins con acceso).
-- **Instalación legacy de OpenSSH**: si service sshd existe pero la capability `OpenSSH.Server` = NotPresent, borrarlo (`sc.exe delete sshd`) y reinstalar con winget (el MSI crea el servicio correctamente).
-- **Tailscale login headless**: `tailscale up` abre el navegador y caduca la URL si no se completa pronto; para rotar, ver `https://login.tailscale.com/a/<hash>` en stdout.
-- **OpenSSH Windows no carga el perfil de PowerShell del usuario** en sesiones SSH: los aliases/funciones del perfil NO existen al conectar — usar scripts `.cmd` con ruta absoluta en su lugar. `C:\Users\fplay` está en el PATH de usuario → los lanzadores `.cmd` ahí (p.ej. `opencode-ciszu-pc`, `opencode-ciszu-cel`) se ejecutan escribiendo solo su nombre, sin `.\`.
-- **Probar SSH interactivo con `ssh -tt` directo**: los `Start-Job` de PowerShell no preservan el pty y dan falsos negativos del attach.
-- **`ciszu-ai` es el lanzador oficial de sesiones** (7 ago 2026, `tools/ciszu-ai/ciszu-ai.cmd`; en PATH hay stubs `AppData\Roaming\npm\` **y** `C:\Users\fplay`, en `.cmd` y `.bat`): **por defecto NO reinicia el server** — abre **`attach-session.ps1`** (nuevo: ensure-server.ps1 idempotente + `opencode attach http://127.0.0.1:4096`) **en PowerShell dentro de Windows Terminal** (`wt.exe` con `-Verb RunAs` si no eres admin). La sesión SIEMPRE corre en PowerShell (ya no usa `cmd /c` — las rutas 8.3 `%~sdp0` evitan que los espacios en `E:\Ciszu Network\tools\ciszu-ai\` rompan `wt.exe`). **El reinicio es SIEMPRE explícito**: `ciszu-ai reset` (detener + ensure + attach). Lista de comandos: **entrar** `ciszu-ai`/`ciszu-ai-pc`/`ciszu-ai-cel`/`opencode-ciszu-pc`/`opencode-ciszu-cel`/`opencode-run` (attach, sin matar); **arrancar/garantizar** `ciszu-ai-start`/`opencode-ciszu-start`...**stop** `ciszu-ai-stop`/`opencode-ciszu-stop` (detiene sin attach); **reset** `ciszu-ai-reset`/`opencode-ciszu-reset` (detener+ensure+attach). Hay **espejo sin espacios** `C:\Users\fplay\ciszu-ai\` (cerdc solo el espejo — `E:\Ciszu Network` con espacios rompe cmd con "E:\Ciszu no se reconoce") y stubs en PATH apuntan a él. **Autocompletado PowerShell** en `$PROFILE` (Register-ArgumentCompleter para subcomandos start/server/stop/reset) y **comandos opencode**: `/server-start`, `/server-stop`, `/server-reset` (`.opencode/command/` + copia global; **Requieren reinicio del server si los cambias**). Snippets móvil (Termius) actualizados en `archives/backups/termius/2026**08**07/snippets.json`. **Siempre abre la sesión local DENTRO de Windows Terminal con PowerShell** (fuente correcta, UTF-8 y `Ctrl+Enter` como salto de línea): si no eres admin relanza `wt.exe -Verb RunAs` (UAC); si ya eres admin abre `wt.exe` directo; la consola remota SSH/Termius NO toca WT y NO eleva (detecta `SESSIONNAME` no `Console`). `chcp 65001` al inicio. El server `opencode serve :4096` corre sin elevar (tarea `opencode-server-ciszu` InteractiveToken) → matarlo no requiere admin. `opencode-run` es **alias de compatibilidad** que delega en `ciszu-ai` (el viejo lanzador standalone se eliminó; la lógica vive solo en `tools/ciszu-ai/`).
-  - ⚠️ **Bug de parseo cmd.exe resuelto (5 ago 2026)**: los `.cmd` requieren **finales de línea CRLF** (Git avisa "LF will be replaced by CRLF"; si se guardan con LF, `cmd` falla con "No se esperaba ... en este momento" y la ventana se cierra al instante). Además, **NUNCA usar paréntesis dentro de `echo ...` en un bloque `if (...) ( ... )`** — `echo (UAC)...` dentro de un bloque rompe el parser. El script usa `goto`/etiquetas en lugar de bloques anidados para evitarlo.
-  - ⚠️ **Terminal por defecto del sistema = conhost** (con `HKCU\Console\%%Startup\DelegationConsole|DelegationTerminal` = GUID Windows Terminal `{2acc1779-b6d4-4626-89c0-91c615f2dbca}` configurado 5 ago 2026): si no se usa el lanzador, las ventanas elevadas UAC abren en la consola clásica (fuente distinta, tildes rotas por code page OEM 437, `Ctrl+Enter` no llega como salto de línea). Por eso `ciszu-ai` abre `wt.exe` explícitamente y ejecuta `chcp 65001`. En WT hay keybind `ctrl+enter` → `sendInput \u001b[13;5u` (CSI-u) en `settings.json` para que opencode lo interprete como `input_newline`.
-- **Permisos de opencode sin prompts** (5 ago 2026): config global `~/.config/opencode/opencode.json` = `"permission": { "*": "allow", "doom_loop": "ask", "question": "ask" }` → nunca pregunta "allow" para acceder o editar nada (incluido fuera del workspace y lectura/escritura de `.env`). Aplica al reiniciar con `ciszu-ai`.
-- **WSL/tmux descartado para esto** (4 ago 2026): opencode en WSL tiene db/theme separados de Windows, paths `/mnt/e` confusos y la TUI se deforma con 2 clientes de distinto tamaño. Si se reintenta algún día, NUNCA usar `bash.exe` como DefaultShell (apunta a docker-desktop, no a Ubuntu: `execvpe(/bin/bash) failed`) y los perfiles de shell no cargan por SSH.
-- Los scripts de diagnóstico temporal de esta implementación viven en `E:\Ciszu Network\.opencode\temp/` (gitignored) — limpiar cuando dejen de usarse.
-
-## Voz para opencode (STT/TTS) — ago 2026
-
-**Integrado EN EL REPO (5 ago 2026)**: voz bidireccional en opencode basada en `@renjfk/opencode-voice` v0.6.0 con **fork local parcheado para Windows trackeado en el repo** (`tools/tts-stt-ai/`), registrado como plugin por ruta local en `C:\Users\fplay\.config\opencode\tui.json`. **Binarios, modelos y voces gitignored** en `tools/tts-stt-ai/runtime/` (whisper-cpp 1.9.2, `ggml-large-v3-turbo-q5_0` 574MB, piper + espeak-ng-data, ffmpeg 9.0, sox 14.4.2 win32 solo utilidad) y temporales en `tmp/` (inbox del móvil, processed, wavs). No quedan carpetas de voz fuera del repo. Pipeline: **STT** = ffmpeg DirectShow (grabación) → `whisper-cli` local → normalización LLM; **TTS** = normalización LLM → `piper` → `ffplay` (PC) o **push ntfy con audio al móvil**. Voces: **`sharvard` (ES, femenina — DEFAULT)** + `amy` (EN, femenina) + ryan/bryce EN + davefx ES. Endpoint LLM: **Gemini OpenAI-compatible** (`generativelanguage.googleapis.com/v1beta/openai/`, `gemini-3.6-flash`, `apiKeyEnv: GEMINI_API_KEY`). Env vars de usuario: `GEMINI_API_KEY` + **`NOTIFY_TOPIC`** (para `/tts-speak-cel` y avisos de voz; sin token — topic público, ver script `ntfy-notif.js`). PATH: `runtime\whisper\Release`, `runtime\piper\piper`, `runtime\ffmpeg...\bin`.
-
-**Patches Windows** (vs upstream): `stt.js` — rutas repo-relativas vía `VOICE_BASE` (derivadas de `fileURLToPath(import.meta.url)`), `transcribe(kv, logger, filePath)` acepta audio arbitrario, grabación con **ffmpeg dshow** (`-f dshow -i audio=<mic>` + `silenceremove`), parada limpia escribiendo `q` por stdin, mics parseando `ffmpeg -list_devices`; **fix mic intermitente (5 ago 2026)**: `listInputDevices()` con caché 30s + 3 reintentos (ffmpeg dshow falla a veces a la primera), `startRecording` usa el mic de kv directamente si existe (sin listar) y **guarda el mic detectado en kv** la primera vez → nunca más depende del listado; **whisper sin timeout** (antes 60s mataba transcripciones largas — eliminado), **aceleración**: `-t` threads = nº CPUs + `-p` processors + `-l es` por defecto (kv `stt.lang`, evita auto-detección) + `os.setPriority` ABOVE_NORMAL. `pkill` solo no-win32; `tts.js` — playback con **ffplay**, `piperOnPath` acepta `piper.exe`. **Voces ES femeninas (5 ago 2026)**: `es_ES-sharvard-medium` es multi-speaker (M=0, F=1) — `piperArgs()` añade `-s 1` para usar la voz F (antes sonaba masculina); añadida **`daniela`** (`es_AR-daniela-high.onnx`, 109MB, calidad high, femenina, acento argentino, descargada en `runtime/piper-voices/`). `/tts-voice-pc` lista ambas + amy/ryan/davefx. En Windows **sox NO graba** (`-d` → "no default audio device") — por eso ffmpeg; sox solo conversión manual raw↔wav.
-
-**Uso** (naming: PC = `-pc`, móvil = `-cel`): **PC** — `/stt-record-pc` (ctrl+r, toggle grabar/transcribir), `/stt-submit-pc` (leader+r, transcribe+envía), `/stt-mic-pc`, `/stt-model-pc`, `/stt-stop-pc`, `/tts-speak-pc` (leader+s), `/tts-mode-pc` (leader+v, auto-TTS), `/tts-voice-pc` (sharvard/amy ♀ default), `/tts-stop-pc` (escape). **Móvil** — `/stt-record-cel` (transcribe el último audio push a ntfy — grabado en el móvil desde `ntfy.sh/app`; wav/mp3/flac/ogg/m4a/aac/opus/webm, convierte a wav si hace falta; id guardado en kv `stt.ntfyLastId`), `/stt-submit-cel` (transcribe + envía como prompt), `/stt-file-cel` + `/stt-file-submit-cel` (SFTP Termius → `tmp/inbox/` → transcribe el audio más reciente, mueve a `tmp/processed/`), `/tts-speak-cel` (**IA habla al móvil**: push ntfy con el audio de la respuesta). ⚠️ El plugin se carga al arrancar el servidor opencode — **iniciar/recargar sesiones con `ciszu-ai`** (`tools/ciszu-ai/ciszu-ai.cmd`; mata 4096 si escucha → ensure → attach; corta la sesión en vivo). **Gotcha Bun (5 ago 2026)**: el binario de opencode (Bun) NO importa módulos CJS desde plugins TUI (`Export named ... not found` / `Missing 'default' export` / `require() async module`) — el plugin fallaba en silencio sin log; si un plugin deja de cargar de repente, revisar imports a `.cjs` → convertir a ESM puro (`ntfy-meta.js`). Mics PC: `Micrófono Ciszuko (Realtek(R) Audio)` + `Micrófono de escritorio (3- Microsoft® LifeCam HD-3000)`. Smoke test sin TUI: `node tools/tts-stt-ai/tmp/test-plugin.js`. Doc completa: `projects/ciszu/docs/documentation/OPENCODE_VOICE.md`.
-
-**Avisos ntfy con audio** (política 6 ago 2026): `pnpm notify "Título" "Mensaje"` adjunta **SIEMPRE audio** al push (solo texto con `--no-voice`). Dos reglas obligatorias: **(1) voz SIEMPRE femenina** — sharvard ES se sintetiza con `-s 1` (speaker femenino; sin él suena masculina) y las voces masculinas (ryan/bryce/davefx) se ignoran automáticamente; **(2) texto del audio separado del mensaje** — el audio se genera con `--text "texto limpio"` (o limpieza automática `cleanTextForAudio`: quita rutas, urls, extensiones de archivo, markdown y traduce siglas) porque la voz ES no pronuncia bien rutas/siglas/tecnicismos. El mensaje visible conserva el texto técnico completo. El `pnpm notify` corresponde al `ntfy-notif.js` de `scripts/`.
-
-**Política de identidad (6 ago 2026)**: el usuario es **Francisco García, alias Ciszuko Antony** (abreviaciones: Francisco→Cisco/Franco/Fran; Ciszuko→Ciszu/Ciszko). Cuando un prompt **empieza con un alias/nombre de la IA** (CiszuAi, Yarbis, Intelligence, Krypta, u otros genéricos como "AI", "asistente", "bot"), las respuestas de voz (PC, auto-mode y móvil `/tts-speak-cel`) deben **saludar siempre al usuario por su nombre** rotando entre variantes (Francisco, Cisco, Fran, Francisco García, Ciszuko, Cisco Francisco). Implementado en `tools/tts-stt-ai/lib/tts.js`: `IA_ALIASES_RE`, `USER_GREETINGS`, `buildPolicyGreeting()`, con índice rotativo en kv `tts.greetIdx`.
-
-**Palabras de bloqueo (6 ago 2026)**: si el prompt del usuario contiene en **cualquier posición** una palabra clave — **`Usciz`, `Notresponding`, `Norbis`** — la interacción queda **DENEGADA**: (1) en STT (`stt.js` `appendTranscription`) el prompt NO se apendea ni se envía (throw → pipeline aborta con el motivo); (2) en TTS (auto-mode, `/tts-speak-pc` y `/tts-speak-cel`) NO se relaya la respuesta del asistente y se reproduce/envía un **audio de rechazo** (`blockedRefusalText()`) explicando que la solicitud se deniega y que no se ejecutará ninguna tarea. Política centralizada en `tools/tts-stt-ai/lib/policy.js` (compartido por STT y TTS): `BLOCKED_ALIASES_RE`, `isBlockedCall()` (regex con `\b`), `blockedRefusalText()`. Los alias de identidad (CiszuAi/etc.) NO bloquean — solo cambian el saludo.
-
-## Herramientas de seguridad instaladas (jul 2026)
-
-| Herramienta                    | Cómo                                                             | Notas                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| ------------------------------ | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **secretlint** (13.0.4)  | `secretlint` (npm global)                                       | Hook pre-commit activo (`.git/hooks/pre-commit`, ignora con `--no-verify`). Config: `.secretlintrc.json` (preset-recommend + patrones custom `sbp_`, `vcp_`, `sb_secret_`, JWT)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| **gitleaks** (8.30.1)    | `C:\Users\fplay\AppData\Local\Programs\Gitleaks\gitleaks.exe`   | Pre-commit + CI (escanea el diff del push/PR — no el historial, que tiene ~135 leaks conocidos). Reporte historial jul 2026: `Temp\opencode\gitleaks_hist.json` (130 leaks, la mayoría de `.turbo/runs/*.json` ya destrackeados; restan `cloudflare-api-key` ×3 en `.turbo` del historial y 1 key en `generate-tracks.ps1` ya quitada) |
-| **semgrep** (1.172.0)    | `semgrep scan --config p/security-audit` (pip)                  | ✅ Escaneo completo (jul 2026): todas las apps + packages + discord + scripts → 0 findings reales. Solo falsos positivos aceptados:`SocialIcon.tsx` (reescrito, dangerouslySetInnerHTML eliminado), `packages/ui/src/Icon.tsx` (sanitizado con DOMPurify), `devConsole.ts` (execSync dev tool)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| **trivy** (0.72.0)       | PATH:`C:\Users\fplay\AppData\Local\Microsoft\WinGet\Links`      | Usa`--db-repository mirror.gcr.io/aquasec/trivy-db` (con la red nueva resuelve). pnpm-lock: 0 vulns HIGH/CRITICAL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| **cargo-audit** (0.22.2) | `cargo audit` (en `projects/muzicmania/launcher/src-tauri`)   | 17 warnings permitidos: glib (tauri 3) + unic-ucd-version (transitivo)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| **pnpm audit**           | `pnpm audit --prod`                                             | 0 vulns                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| **ZAP** (2.17.0)         | `C:\Program Files\ZAP\Zed Attack Proxy\zap.bat` (o jar directo) | ✅ Instalado + probado (31 jul 2026): DAST completo sobre`ciszunetwork.vercel.app` → 0 High, 4 Medium (CSP no set, Cross-Domain `ACAO:*`, Anti-clickjacking, SRI missing), 3 Informational (cache-control, User-Agent Fuzzer). Reporte: `Temp\opencode\zap_ciszunetwork.html`. ⚠️ **Solo modo daemon + API** (el usuario no usa la GUI). CLI: `zap.bat` con rutas relativas al CWD (ejecutar desde su directorio o usar el jar con ruta absoluta). `-quickstart` NO existe en 2.17 (add-on GUI) — usar daemon + API: `java -jar zap-2.17.0.jar -daemon -host 127.0.0.1 -port 8080 -config api.disablekey=true`, luego spider (`/JSON/spider/action/scan/`) y ascan (`/JSON/ascan/action/scan/`). Requiere JAVA_HOME (set a nivel máquina: `C:\Program Files\Eclipse Adoptium\jdk-25.0.3.9-hotspot`) |
-| **ripgrep (rg)** (15.2.0) | `rg` (WinGet, en PATH) | ⚠️ **AHORA DISPONIBLE (11 ago 2026)**: el usuario instaló `ripgrep` vía WinGet (`C:\Users\fplay\AppData\Local\Microsoft\WinGet\Links\rg.exe`, ya en PATH). Usarlo para busquedas rápidas por contenido/glob en el repo (incluido `.md`, excluye `node_modules`/`.git`). Antes `rg` no estaba en PATH y fallaba — el agente usaba la tool `grep` de opencode. Con `+pcre2` habilitado. |
-| **fzf** (0.74.2)          | `fzf` (WinGet, en PATH) | ⚠️ **AHORA DISPONIBLE (11 ago 2026)**: el usuario instaló `fzf` vía WinGet (`C:\Users\fplay\AppData\Local\Microsoft\WinGet\Links\fzf.exe`, ya en PATH). Fuzzer interactivo de archivos/comando — útil en scripts de selección y para inspección manual. |
-
-## 🔧 Política de instalación de herramientas (11 ago 2026)
-
-**Autorización permanente del usuario**: si un comando falla porque la herramienta **no existe o no está instalada**, el agente tiene permiso para **instalarla** (`winget install`, `npm i -g`, `pip install`, etc.) **y documentarla en esta sección** (herramienta, comando de instalación, ubicación, notas de uso). NO detenerse a pensar alternativas por el error — instalar, probar y seguir. Reglas:
-
-- **Instalar en cuanto falle**: `'rg' no se reconoce` / `command not found` / `EAI_AGAIN` de DNS no cuenta (es red, no herramienta). Si es una herramienta bin solo si es triviable por `winget` o un package manager existente.
-- **Preferir WinGet** para bins de Windows (`winget install BurntSushi.ripgrep.MSVC` → `rg`); npm global para CLI de Node (`pnpm add -g`); pip/uv para Python.
-- **Mapa de herramientas ya autorizadas** (instalar + documentar cuando falten):
-  | Herramienta | Instalación | Ubicación en PATH/notas |
-  | ----------- | ----------- | ----------------------- |
-  | **rg** (ripgrep 15.2.0, `+pcre2`) | `winget install BurntSushi.ripgrep.MSVC` | `C:\Users\fplay\AppData\Local\Microsoft\WinGet\Links\rg.exe`. Búsqueda rápida por contenido/glob, excluye `node_modules`/`.git`/`.next`/`.turbo`/`muzicmania-source`. |
-  | **fzf** (0.74.2) | `winget install junegunn.fzf` | `C:\Users\fplay\AppData\Local\Microsoft\WinGet\Links\fzf.exe`. Fuzzer interactivo de archivos/comando. |
-  | **gitleaks** (8.30.1) | `winget install gitleaks.gitleaks` | `C:\Users\fplay\AppData\Local\Programs\Gitleaks\gitleaks.exe`. Scan del diff push/PR. |
-  | **vitest/playwright** (npm) | `pnpm i -D` en root (ya parte del repo) | `pnpm test` / `pnpm e2e`. |
-- **Documentar tras instalar**: añadir la fila a la tabla `Herramientas de seguridad instaladas` (si es de seguridad) o al mapa de arriba, con la fecha. Si es el propio opencode (`opencode.exe` shim roto): `node postinstall.mjs` en `node_modules\opencode-ai` (ver errores de herramientas).
-- **Instalaciones revisables**: preferir lo que tenga versionado estable y checkstyle; anotar la versión instalada en la doc para reproducibilidad.
-
-**IAST — sensor runtime en las 4 webs (11 ago 2026)**:
-- `packages/utils/src/iast.ts` — `createIast(app)` edge-safe (regex puras, sin deps npm): detecta SQLi (critical), command-injection (critical), XSS (high), path-traversal (high), **secrets en requests (DACP runtime, evidencia REDACTED)**, ssrf-localhost (high), scanner-probe (medium — `.env`/`.git`/`wp-admin`...). Dedupe en memoria (fingerprint payload+ruta+método, TTL 5 min) + dedupe interno tipo+fuente+regla. **Solo observa, no bloquea** — findings vía `console.warn('[IAST] {...json}')` → Vercel Logs/Sentry.
-- Integrado en el **middleware de las 4 webs** (`src/middleware.ts`; ciszunetwork y ciszubot NO tenían middleware — creados con cabeceras `nosniff`/`Referrer-Policy`/`HSTS` + sensor). Exportado en `packages/utils/index.ts`.
-- Tests: `packages/utils/tests/iast.test.ts` (11 tests, suite total 157/157). Verificación runtime local: `next start` + `curl "http://localhost:3210/?q=1'%20OR%201=1%20--"` → log `[IAST]`.
-- **DAA/DACP en CI**: GitHub Secret Scanning nativo NO está disponible en repos privados Free (API 403) → la detección de secretos en CI la hace el job `gitleaks` (historial completo, binary v8.30.1) + hook pre-commit secretlint local. Docs: `SECURITY_TASKS.md` (§5 IAST, §6 CI).
-- **Estado del toDo de BD (11 ago 2026, `SECURITY_TASKS.md` §7)**: passwords = bcrypt nativo de Supabase Auth (0 columnas password propias) ✅ · CORS = **inaplicable en REST de Supabase** (`ACAO:*` fijo, sin opción en ningún plan; la protección real es JWT+RLS+rate limits; plan futuro en `CORS_SYSTEM.md`) ⚠️ · validación backend ✅ (submit_game_score valida rangos+uid en BD) · "sanitizar al guardar" es **anti-patrón** en Supabase (el modelo correcto: parametrización + escape al render + IAST) ✅ · headers de seguridad ✅ en middleware ×4 · **CSP ✅ (11 ago 2026)**: `buildCsp()` en `packages/utils/src/csp.ts` (allowlist self + Turnstile + PostHog + Cloudflare Web Analytics + Supabase; ciszubot añade `cdn.discordapp.com`, muzicmania `wss://`) aplicada en los 4 middleware; `object-src 'none'`/`base-uri`/`form-action`; `'unsafe-inline'` en script/style documentado (bootstrap inline de Next + estilos inline PDWA v3); E2E `security.spec.ts` exige la cabecera. **Audit logs ✅ (11 ago 2026)**: migración 17 `ciszubot.audit_log` (deny-all service_role-only) + `src/lib/audit.ts` instrumentando login/login_failed/logout/config_update del dashboard (se une a `command_logs` del bot).
-
-**Sesión anterior (jul 2026) — todo completado:**
-- ✅ Schemas expuestos en Dashboard (Settings → API → Exposed schemas: `muzicmania, ciszubot, ciszunetwork` — 1 ago 2026)
-- ✅ **Vercel token `vcp_` ROTADO** (10 ago 2026) — nuevo token guardado como `VERCEL_TOKEN` en `.env.local` (raíz) **y** GH secret `VERCEL_TOKEN` del repo actualizado con el mismo valor (verificado `gh secret list`). **NO volver a rotar este token** (ya está documentado y activo). Restos de rotación (fuera del repo): lista `scripts/tokens_a_rotar.md` (sin valores)
-- ✅ Semgrep scan completo + ✅ ZAP instalado + probado (DAST 0 High/4 Medium en ciszunetwork) + secretlint full repo scan (CORRIÓ pero expiró timeout 10 min por tamaño del repo — correr por subtargets o con `--exclude-dir node_modules,.next,.turbo`)
-- ✅ Build de las 4 apps corregido: la causa del error `ReactNode` era `@types/react` añadido al ROOT — revertido (ver Gotchas)
-- ✅ DOMPurify aplicado en `packages/ui/src/Icon.tsx` (semgrep packages 0 findings)
-- ✅ PAT viejo filtrado REVOCADO por el usuario en Supabase Dashboard (cierra alerta secret scanning)
-- ✅ Schemas expuestos en Dashboard → Settings → API → Exposed schemas: `muzicmania, ciszubot, ciszunetwork` (1 ago 2026 — con aviso informativo de GRANT custom)
-- ⚠️ `auth_leaked_password_protection` advisor — requiere plan Pro (Free tier limitación, intencional)
-- `.turbo/runs/*.json` con env vars siguen en el historial git (git rm --cached hecho; purgar con filter-branch si el repo se hace público)
-
-## A ejecutar en toda implementación nueva
-
-0. **Estándares de ingeniería**: leer y aplicar `docs/documentation/CODE_PRINCIPLES.md` (DRY, KISS, YAGNI, SOLID, Separation of Concerns, Least Astonishment) y `docs/documentation/DEVSECOPS.md` (DevSecOps: SAST/DAST, Shift-Left, herramientas) en toda implementación.
-1. **Advisors**: después de cualquier cambio en policies o funciones, verificar Security + Performance Advisors en Dashboard
-2. **XSS**: todo input de usuario renderizado debe pasar por `escapeHtml()` o `textContent`; nunca `innerHTML` directo
-3. **SQL Injection**: nunca concatenar strings en SQL; siempre ORM parametrizado o RPC con objetos
-4. **SECURITY DEFINER**: solo cuando sea estrictamente necesario (triggers que modifican datos de otros usuarios); preferir INVOKER siempre que RLS lo permita
-5. **RLS policies**: siempre separar por comando (no ALL), evitar USING(true) sin restricción de rol, envolver auth.\*() en subconsultas
-
-### 🔐 Checklist de seguridad OBLIGATORIO al implementar (lecciones 10 ago 2026 — ver `SECURITY_TASKS.md`)
-
-**Estas 4 categorías NO las cubre el flujo normal de generación de código. Aplicarlas SIEMPRE en toda implementación nueva (nueva app, nuevo endpoint, nueva tabla, nuevo proyecto Vercel).**
-
-1. **Toda tabla nueva en Supabase → `ALTER TABLE ... ENABLE ROW LEVEL SECURITY` en la MISMA migración** (deny-all + policy explícita). ⚠️ Supabase da `GRANT ALL` a anon/authenticated por defecto en tablas nuevas: sin RLS = BD abierta a todo el mundo. **El advisor del Dashboard NO avisa de tablas sin RLS ni de EXECUTE anon en funciones normales** — "0 warnings" NO significa seguro. Verificar SIEMPRE con SQL real:
-   ```bash
-   dbvr sql -ds=supabase "SELECT schemaname, tablename, rowsecurity FROM pg_tables WHERE schemaname IN ('muzicmania','ciszubot','ciszunetwork','public') ORDER BY 1,2"
-   dbvr sql -ds=supabase "SELECT grantee, table_schema, table_name, privilege_type FROM information_schema.role_table_grants WHERE grantee='anon' ORDER BY 1,2"
-   dbvr sql -ds=supabase "SELECT has_function_privilege('anon','<schema>.<fn>(<signature>)'::regprocedure,'EXECUTE')"
-   ```
-2. **Funciones RPC que devuelven datos de usuario**: comprobar `has_function_privilege('anon', ...)` antes de exponerlas. Si una ruta/endpoint necesita datos que la RPC protegía, crear API route con service_role + **rate limit** (lección: `get_email_by_username` era oráculo de emails vía PostgREST).
-3. **Todo endpoint POST que muta o consume un servicio externo lleva rate limit** (`createRateLimiter` de `@ciszunetwork/utils`, 0 deps — NO inventar implementaciones por app): verify-turnstile 30/min, auth callbacks 20/min, mutaciones de dashboard 10/min, resolvers de datos personales 10/min.
-4. **Secretos NUNCA en fallbacks de código ni en valores hardcodeados** — los fallbacks "para dev" quedan en git. En Next.js, `NEXT_PUBLIC_` viaja al bundle del navegador: solo poner ahí lo público por diseño (anon key publishable, site keys de CAPTCHA). Secrets solo en `process.env.X` (sin prefijo) en server-only. Previews de Vercel NO deben tener secrets (target solo production).
-5. **Staging/indexación**: toda web nueva lleva `robots.ts` (allow `/`, disallow `/api/` y rutas autenticadas) desde el día 1. Verificar en el build output que `/robots.txt` aparezca, y que los previews respondan `X-Robots-Tag: noindex`.
-6. **Verificar con fuentes EXTERNAS, nunca confiar en el propio estado**: el código que la IA escribe es la misma fuente que ella consulta para "confirmar" que funciona. La verificación real = queries SQL directas (dbvr), grep del bundle compilado, curl a producción, output del build. Si se cambia RLS/grants, comprobar que NO se rompió lo que ya funcionaba (p.ej. la web de ciszubot lee `bot_status` con anon — conservar ese grant).
-7. **Bot de Discord / service_role**: el bot usa service_role (BYPASSRLS) → el RLS deny-all no le afecta; el dashboard y las rutas server-side idem. Antes de revocar grants anon, verificar quién consume cada tabla (policy SELECT pública intencional vs fuga).
-8. **Middleware/IAST**: toda web nueva lleva `src/middleware.ts` con las cabeceras de seguridad (nosniff/Referrer-Policy/HSTS + **CSP vía `buildCsp()` de `@ciszunetwork/utils`**) + sensor IAST (`createIast('<app>')` de `@ciszunetwork/utils`, edge-safe) desde el día 1. Verificar en build output `ƒ Middleware` y con `curl` un payload (`/?q=1' OR 1=1 --` → `[IAST]` en logs).
-
-## Límite de contexto de sesión (opencode) — OBLIGATORIO
-
-**PARA AGENTES DE OPENCODE**: cuando la conversación supere los **120k tokens** de contexto, el modelo se vuelve MUY lento (respuestas tardan minutos y degradan la calidad). Reglas:
-
-1. **Al acercarse al umbral (~110-120k)**: avisar al usuario por push (`pnpm notify`) y proponer **cambiar de sesión**.
-2. **Antes de cambiar de sesión**: (a) commitear todo el trabajo sin commitear, (b) actualizar este AGENTS.md con el estado actual, (c) guardar el estado del to-do (todo completado), (d) dejar un resumen claro del próximo paso.
-3. La nueva sesión debe empezar diciendo "continúa" con el resumen del estado guardado.
-4. No escribir código nuevo tras pasar el umbral salvo que sea trivial — priorizar guardar estado.
-
-**Tamaños típicos**: una sesión normal de trabajo rinde ~60-90k tokens antes de tocar el umbral. Sesiones con muchos outputs de tools (logs, listados) llegan antes.
-
-## Errores comunes de opencode y solución
-
-### 500s / errores de servidor (API)
-
-- **Síntoma**: respuestas del asistente fallan con errores 500/502/503, o el agente reporta "Error interno".
-- **Causa**: saturación temporal del proveedor del modelo o inestabilidad de red del PC.
-- **Solución**: (1) esperar 1-2 min y reintentar el mismo prompt (el estado del chat no se pierde), (2) si persiste, verificar red (VPN/DNS), (3) cambiar a un modelo alternativo si está disponible.
-
-### Errores de red/DNS del PC (frecuente)
-
-- **Síntoma**: `fetch failed`, `ENOTFOUND`, `getaddrinfo`, resolución DNS intermitente (github.com, huggingface.co, api-inference.huggingface.co, etc.).
-- **Causa**: el proveedor DNS del PC falla intermitentemente; no es un problema del código.
-- **Solución**: (1) comprobar con `Resolve-DnsName <dominio> -Server 8.8.8.8` si el DNS externo resuelve (si sí → es el DNS local), (2) **activar la VPN** del usuario (Proton VPN) — suele arreglarlo, (3) reintentar la operación. **No buscar vías alternativas de red**: la instrucción del usuario es usar la VPN directamente.
-
-### Errores 401/403/429/402 en APIs de arte (contexto IA)
-
-- **401**: key inválida/revocada → rotar token y actualizar vault (`services/supabase/.env`).
-- **403**: geo-bloqueo (SiliconFlow sin VPN) → activar VPN.
-- **429**: quota agotada (Gemini imagen `limit: 0`) → no reparable sin plan de pago; usar HF.
-- **402**: balance insuficiente (SiliconFlow) → recargar o usar otro proveedor.
-- **503**: sobrecarga del provider (nscale/HF) → el script `generate-art.js` ya hace retry; reintentar manualmente.
-
-### Errores de herramientas/scripts
-
-- **gitleaks/secretlint**: hooks pre-commit que fallan → corregir el secret o usar `--no-verify` si es falso positivo.
-- **`opencode.exe` "no compatible con Windows" (6 ago 2026)**: el binario global de npm (`C:\Users\fplay\AppData\Roaming\npm\node_modules\opencode-ai\bin\opencode.exe`) se degradó a un **shim de error de 479 bytes** cuando una re-instalación de `opencode-ai` no corrió su postinstall → Windows rechaza ejecutarlo (también rompe `opencode attach` desde Termius). Los procesos ya en memoria (server 4096) siguen vivos. Fix: `cd <npm>\node_modules\opencode-ai && node postinstall.mjs` (re-descarga el binario real ~175 MB) o reinstalar `npm i -g opencode-ai`. **Guardia auto**: `tools/ciszu-ai/ensure-server.ps1` (y su stub legacy `C:\Users\fplay\opencode-server-ensure.ps1`) ahora valida que `opencode.exe` sea un PE real (>1 KB, sig `MZ/PE`) antes de arrancar el server y repara solo con el postinstall si está corrupto.
-- **`pnpm install` lento/roto**: borrar `node_modules` y re-ejecutar; verificar disco en E:.
-- **Git push falla**: el DNS del PC no resuelve github.com → el usuario hace push manualmente (ver Git conventions).
-- **ZAP/semgrep/trivy**: ver "Herramientas de seguridad instaladas" para comandos exactos y rutas.
-
-
+_Última revisión: 14 ago 2026._ Fuente de verdad: `projects/ciszu/docs/documentation/`.
+Estándar de docs: `DOCUMENTATION_SYSTEM.md`. Operación diaria: `WORKFLOW_SYSTEM.md`.

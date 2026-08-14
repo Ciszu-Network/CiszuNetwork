@@ -121,7 +121,7 @@ projects/muzicmania/website/public/shared/
 projects/muzicmania/website/public/projects/
 
 # Supabase CLI temp
-supabase/.temp/
+services/supabase/.temp/
 .turbo/
 
 # Carpeta temporal de opencode (trabajos en curso, nunca trackear)

@@ -1,4 +1,8 @@
-# Sistema de Iconos — Ciszu Network
+# ICON_SYSTEM — Sistema de Iconos (Ciszu Network)
+
+Versión: 2.0.0
+Actualización: 2026-08-13
+Identificador: ICON_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 
 > Documenta los dos sistemas de iconos en uso, sus diferencias, ventajas/desventajas
 > y el plan de migración hacia el sistema unificado.
@@ -86,3 +90,113 @@ Los iconos son componentes React pre-compilados de un vendor confiable → JSX r
 - [ ] Evaluar si el sistema `Icon` de `@ciszu/ui` necesita una variante sin DOMPurify para SSR puro
   (o mantener el guard documentado arriba).
 - Beneficios: CDN + fallback + catálogo propio unificado en las 4 apps.
+
+## Catálogo canónico de iconos (`shared/icons/svg`)
+
+| Estilo | Carpeta | Ejemplos |
+|---|---|---|
+| **Outline** | `shared/icons/svg/outline/` | Iconos Material 24x24 de trazo fino |
+| **Filled** | `shared/icons/svg/filled/` | Iconos Material 24x24 rellenos |
+| **Flags** | `shared/icons/svg/flags/` | Banderas (ve, us, co...) |
+
+- El registro (`icon-registry.ts`) se genera con `node scripts/generate-icon-registry.js`
+  (lista curada `ICON_LIST`; añadir nombres nuevos ahí).
+- **Nunca duplicar SVGs en las apps**: los iconos viven solo en `shared/icons/svg`.
+
+## Cómo añadir un icono (protocolo actualizado)
+
+1. Crear `shared/icons/svg/outline/<nombre>.svg` y/o `filled/<nombre>.svg` (path Material 24x24).
+2. Añadir `<nombre>` a la `ICON_LIST` de `scripts/generate-icon-registry.js` si no está.
+3. `node scripts/generate-icon-registry.js` → regenera `icon-registry.ts`.
+4. Verificar: el nombre debe aparecer en `outline`/`filled` del registro.
+5. Build + deploy (los cambios de `packages/**` disparan los deploys de las 4 apps).
+6. Test: comprobar que el icono se renderiza inline (SSR + navegación SPA).
+
+## Buenas prácticas de uso
+
+- **Siempre** `<Icon name="..." />` de `@ciszu/ui` en páginas nuevas.
+- No mezclar lucide-react con `@ciszu/ui` en el mismo componente (coherencia visual).
+- Iconos decorativos con `aria-hidden="true"`; iconos funcionales con `aria-label`/`title`.
+- Mantener `currentColor` para heredar el color del contexto (tema claro/oscuro).
+- Para banderas de países usar `style="flags"` del registry (o sprites si aún no migrado).
+
+## Estado y métricas
+
+- **Iconos en el registro**: ~5.194 SVGs en `shared/icons/` (contador del repo).
+- **Apps usando el sistema compartido**: ciszubot, ciszunetwork, ciszukoantony (3/4).
+- **Pendiente**: muzicmania (migración lucide → `@ciszu/ui`), sprites de banderas.
+
+## Arquitectura del registro de iconos
+
+- **Fuente**: `packages/cdn/src/shared/icons/**` (SVG) — el directorio espejo del CDN.
+- **Registro generado**: `icon-registry.ts` (generado por `scripts/generate-icon-registry.js`).
+- **Componente público**: `<Icon name={...} />` de `@ciszu/ui` → importa el SVG correcto,
+  renderiza inline (sin petición HTTP extra) y respeta `currentColor`.
+- **Nombres**: kebab-case basado en el path relativo (ej. `music-note`, `brand-discord`).
+- **Familias**: `style="outline|fill|flags"` para agrupar variantes de un mismo icono.
+
+## Cómo añadir un icono nuevo
+
+1. Colocar el `.svg` en el subdirectorio correcto de `shared/icons/`.
+2. Ejecutar `node scripts/generate-icon-registry.js` (regenera `icon-registry.ts`).
+3. Build/typecheck: `pnpm --filter ciszunetwork-website build` (o la app afectada).
+4. Usar `<Icon name="nuevo-icono" />` y verificar inline en SSR + navegación SPA.
+5. Actualizar `STATISTICS_SYSTEM.md` (contador) y este doc si cambia el total.
+
+## Convenciones de naming
+
+- Minúsculas + guiones (kebab-case), sin espacios ni acentos.
+- Prefijo opcional de marca para variantes: `brand-*` (Discord, YouTube, TikTok…).
+- Sufijo de estilo solo cuando hay variantes: `-fill`, `-outline` (o carpeta por familia).
+- Evitar nombres ambiguos (ej. `save` vs `disk`) — elegir el más descriptivo.
+
+## Troubleshooting
+
+| Problema | Solución |
+|---|---|
+| Icono no aparece tras añadirlo | Regenerar registry + reiniciar dev (cache de types) |
+| `name` desconocido en build | El type del `name` se deriva del registry → typecheck lo marca |
+| Icono se ve gigante | Comprobar `viewBox` del SVG (debe ser 24x24) |
+| Icono no hereda color | Falta `fill="currentColor"`/`stroke="currentColor"` en el SVG |
+| Icono roto en PWA | El SVG debe estar en `shared/icons` (fuente única) |
+
+## Estándar técnico del SVG (formato del catálogo)
+
+- **Canvas**: 24x24 px con `viewBox="0 0 24 24"` (escala correcta al render inline).
+- **Estilo**: trazo fino para `outline/` (stroke, `stroke-width` 1.5–2, redondo) y relleno plano para `filled/`.
+- **Color**: usar `fill="currentColor"` y/o `stroke="currentColor"` para heredar el tema (claro/oscuro).
+- **Optimización**: eliminar metadatos, comentarios y grupos innecesarios; un solo path cuando sea posible;
+  idealmente <1 KB por icono. Validar con un validador de SVGs antes de subirlo.
+- **Accesibilidad**: el componente añade `aria-hidden="true"` en iconos decorativos y `aria-label`/`title`
+  en los funcionales; el catálogo no embebe `title`/`desc` (lo pone el consumidor).
+
+## Rendimiento y bundle
+
+- El registro se importa por demanda: solo trae los SVGs que existen en él; lucide-react (legado)
+  soporta tree-shaking por importación nombrada.
+- El fallback CDN evita incluir en el bundle los nombres desconocidos; por eso conviene mantener la
+  `ICON_LIST` curada y no añadir SVGs sin necesidad.
+- Un icono inline cuesta 0 peticiones HTTP extra frente a un `<img>`, a cambio de unos cientos de bytes
+  en el bundle.
+- Criterio: iconos de uso puntual y pesados → CDN fallback; iconos repetidos en la UI → inline.
+
+## FAQ del sistema de iconos
+
+| Pregunta | Respuesta |
+|---|---|
+| ¿Puedo añadir un icono solo para una web? | Sí mientras exista en `shared/icons/svg`; el registro es global |
+| ¿Por qué no usar lucide en todas? | `@ciszu/ui` ya cubre CDN + fallback; lucide queda como legado de muzicmania |
+| ¿Un SVG de otra fuente? | Normalizarlo a 24x24 y `currentColor` antes de entrar al catálogo |
+| ¿Los sprites de banderas? | Se mantienen hasta migrarlos a `style="flags"` del registry |
+| ¿Se pierden iconos en navegación? | Bug conocido documentado arriba: revisar guard SSR y fallback CDN |
+
+## Relación con otros sistemas
+
+- `MEDIA_FORMATS_SYSTEM.md` — formatos de los assets multimedia del CDN.
+- `CDN_SYSTEM.md` — resolución de assets dinámicos cuando no hay registro inline.
+- `STATISTICS_SYSTEM.md` — contador de SVGs del catálogo (~5.194).
+- `TOOLS_SYSTEM.md` — script `generate-icon-registry.js` y demás generadores.
+- `SECURITY_PROTOCOLS.md` — regla `dangerouslySetInnerHTML` + DOMPurify / guard SSR.
+
+_Última revisión: 13 ago 2026._ Relacionado: `MATERIAL_ICONS_PROTOCOLS.md`, `MEDIA_FORMATS_SYSTEM.md`,
+`CDN_SYSTEM.md`, `TOOLS_SYSTEM.md`.

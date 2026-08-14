@@ -1,4 +1,8 @@
-# Plan de Registro Legal — Ciszu Network (Venezuela)
+﻿# Plan de Registro Legal — Ciszu Network (Venezuela)
+
+Versión: 2.0.0
+Actualización: 2026-08-13
+Identificador: COMPANY_REGISTRATION_PLAN_V2.0.0_2026_08_13_ciszunetwork
 
 **Documento maestro — 10 ago 2026**. Plan por fases para formalizar **Ciszu Network** como
 negocio real en Venezuela, escalando desde $0 (hoy) hasta empresa formal y con proyección
@@ -40,7 +44,7 @@ haya usado antes. Esperar puede costar la marca.
    Requisitos: cédula vigente, correo activo, comprobante de domicilio (recibo de servicio o
    constancia de residencia). Plazo: 30 días para formalizar presencialmente en la Gerencia
    Regional de tu domicilio fiscal. Vigencia: **3 años** (renovar antes del vencimiento).
-   Detalle completo: `RIF_PERSON_GUIDE.md`.
+   Detalle completo: `RIF_PERSON_PLAN.md`.
 2. **Empezar a documentar el USO de la marca desde hoy**: capturas de pantalla con fecha de
    las webs, publicaciones en redes, el bot de Discord, contratos, facturas, correos. Es
    **evidencia de uso previo** — puede servir en Fase 1 ante el SAPI (declaración jurada) y
@@ -63,7 +67,7 @@ haya usado antes. Esperar puede costar la marca.
 
 ## 4. Fase 1 — Protección de marca en SAPI (~$410 USD, sin tarjeta)
 
-Pasos (detalle en `SAPI_TRADEMARK_GUIDE.md`):
+Pasos (detalle en `SAPI_TRADEMARK_PLAN.md`):
 
 1. **Búsqueda de antecedentes** (obligatoria, se inicia antes de la solicitud): fonética para
    "CISZU NETWORK" vía **WEBPI** (sistema en línea del SAPI). Coste **~$100 USD** (depósito
@@ -88,7 +92,7 @@ Pasos (detalle en `SAPI_TRADEMARK_GUIDE.md`):
 
 ## 5. Fase 2 — Empresa formal en Venezuela (S.R.L./E.I.R.L., sin tarjeta)
 
-Detalle en `COMMERCIAL_REGISTRATION_GUIDE.md` y plantillas en `plantillas/`.
+Detalle en `COMMERCIAL_REGISTRATION_PLAN.md` y plantillas en `plantillas/`.
 
 1. **Elegir figura jurídica**:
    - **E.I.R.L.** (Empresa Individual de Responsabilidad Limitada) — 1 solo dueño, responsabilidad
@@ -129,7 +133,7 @@ en diario + sellado de libros. Todo pagable en **efectivo/Bs. — sin tarjeta**.
 
 Para cobrar en USD y operar con clientes internacionales, la vía estándar desde Venezuela es
 una **LLC en EEUU** (Stripe/PayPal/Wise no soportan cuentas venezolanas directamente).
-Detalle completo y costes reales: `INTERNATIONAL_LLC_GUIDE.md`.
+Detalle completo y costes reales: `INTERNATIONAL_LLC_PLAN.md`.
 
 - **Estados**: Wyoming (popular, privacidad, $100 filing + ~$60/año) o **New Mexico** (más
   barato: $50 filing, $0 anual). Delaware solo si algún día se busca capital VC ($300/año).
@@ -192,11 +196,11 @@ Detalle completo y costes reales: `INTERNATIONAL_LLC_GUIDE.md`.
 
 ## 11. Archivos relacionados
 
-- `RIF_PERSON_GUIDE.md` — trámite del RIF gratis, paso a paso.
-- `COMMERCIAL_REGISTRATION_GUIDE.md` — constitución de la empresa (SAREN).
-- `SAPI_TRADEMARK_GUIDE.md` — registro de la marca + clases de Niza.
-- `FREELANCER_TAX_GUIDE.md` — impuestos y facturación de persona natural.
-- `INTERNATIONAL_LLC_GUIDE.md` — fase internacional (con capital real).
+- `RIF_PERSON_PLAN.md` — trámite del RIF gratis, paso a paso.
+- `COMMERCIAL_REGISTRATION_PLAN.md` — constitución de la empresa (SAREN).
+- `SAPI_TRADEMARK_PLAN.md` — registro de la marca + clases de Niza.
+- `FREELANCER_TAX_PLAN.md` — impuestos y facturación de persona natural.
+- `INTERNATIONAL_LLC_PLAN.md` — fase internacional (con capital real).
 - `plantillas/` — acta constitutiva S.R.L., solicitud FM-02, declaración jurada de uso,
   reserva de nombre y checklist por fases (formato MD + PDF).
 - `DOMAINS_SYSTEM.md` — plan de dominios propios (complementario).

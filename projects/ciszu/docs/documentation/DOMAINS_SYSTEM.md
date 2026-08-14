@@ -1,4 +1,12 @@
-# Sistema de Dominios de Ciszu Network
+# DOMAINS_SYSTEM — Sistema de Dominios de Ciszu Network
+
+Versión: 2.0.0
+Actualización: 2026-08-13
+Identificador: DOMAINS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
+
+> **Definición**: plan maestro de dominios del ecosistema: estado actual (vercel.app gratis),
+> conceptos (registrar/DNS/hosting), comparativa de registradores, precios, recomendación y
+> checklist de activación.
 
 **Documento de plan maestro — investigado: 10 ago 2026**. Se aplica cuando el proyecto sea
 sustentable. Aplica a **TODAS las páginas actuales y futuras** de Ciszu Network (las 4 webs
@@ -151,3 +159,47 @@ guarda historial de búsquedas).
 - [ ] Email routing + SPF/DKIM/DMARC
 - [ ] DNSSEC + lock + 2FA + calendario de renovaciones
 - [ ] Actualizar AGENTS.md y este documento con fecha real de compra y costes
+
+## Conceptos de dominios (contexto informático)
+
+| Término | Definición |
+|---|---|
+| **Dominio** | Nombre legible de un recurso en internet |
+| **TLD** (Top-Level Domain) | Extensión (`.com`, `.net`, `.xyz`) |
+| **ccTLD** | TLD de país (`.com.ve`) |
+| **Registrar** | Vende el alquiler anual del nombre |
+| **DNS** | Resuelve nombres → IP |
+| **Nameservers** | Servidores autoritativos del dominio |
+| **A record** | Dirección IPv4 del servidor |
+| **CNAME** | Alias hacia otro dominio |
+| **WHOIS** | Registro público del dueño del dominio |
+| **DNSSEC** | Firma criptográfica del DNS |
+| **SSL/TLS** | Cifrado de conexión (Let's Encrypt) |
+| **Redirect 301** | Redirección permanente (SEO) |
+| **Registrant** | Titular legal del dominio |
+| **Auto-renew** | Renovación automática anual |
+
+## Flujo de activación (resumen)
+
+```
+Comprar dominio (registrar) → Configurar DNS (Vercel/CF) → Añadir a proyecto Vercel
+→ SSL automático → Redirecciones 301 → Email @dominio (SPF/DKIM/DMARC) → Seguridad (DNSSEC/lock/2FA)
+```
+
+## Presupuesto anual (resumen rápido)
+
+| Escenario | Año 1 | Renovación |
+|---|---|---|
+| Fase 0 (vercel.app) | $0 | $0 |
+| 1 dominio `.com` (CF/Porkbun) | ~$10.5–11.3 | ~$10.5–11.3 |
+| 4 dominios `.com` | ~$42–44 | ~$42–44 |
+| Respaldo `.xyz` (4×) | +~$8–12 | +~$52 |
+
+## Decisión de registrador (TL;DR)
+
+- **Con tarjeta** → Cloudflare Registrar (at-cost, renovación igual siempre, DNS+CDN+SSL+DNSSEC gratis).
+- **Sin tarjeta (PayPal)** → Porkbun ($11.08/.com estable, WHOIS + email forwarding gratis).
+- **Evitar**: Namecheap (renovación +64% → $18.48), GoDaddy/IONOS (upsells), Vercel Domains (sin email).
+
+_Última revisión: 13 ago 2026._ Relacionado: `CLOUDFLARE_SYSTEM.md`, `EMAILS_SYSTEM.md`,
+`ONLINE_SERVICES_SYSTEM.md`, `ARCHITECTURE.md`.

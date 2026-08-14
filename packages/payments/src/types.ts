@@ -1,9 +1,9 @@
-/**
+﻿/**
  * Tipos base del sistema de pagos de Ciszu Network.
  * Estrategia (11 ago 2026, ver projects/ciszu/docs/documentation/PAYMENTS_SYSTEM.md):
  *   - HOY: NOWPayments (crypto, sin KYC de merchant, fee 0.5-1%, IPN webhook con HMAC-SHA512).
  *   - A LOS 18: Lemon Squeezy (MoR: tarjetas/PayPal globales, IVA/impuestos y facturas por su cuenta, payout vía PayPal).
- *   - FUTURO: Stripe directo (con LLC / INTERNATIONAL_LLC_GUIDE) y Binance Pay (KYC).
+ *   - FUTURO: Stripe directo (con LLC / INTERNATIONAL_LLC_PLAN) y Binance Pay (KYC).
  */
 
 export type PaymentStatus =

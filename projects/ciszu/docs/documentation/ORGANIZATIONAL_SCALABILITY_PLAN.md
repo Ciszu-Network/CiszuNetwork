@@ -1,4 +1,8 @@
-# ORGANIZATIONAL_SCALABILITY_PLAN — Ciszu Network
+﻿# ORGANIZATIONAL_SCALABILITY_PLAN — Ciszu Network
+
+Versión: 2.0.0
+Actualización: 2026-08-13
+Identificador: ORGANIZATIONAL_SCALABILITY_PLAN_V2.0.0_2026_08_13_ciszunetwork
 
 > **Estado**: Documento de estrategia (plan a futuro, NO implementado).
 > **Autor**: Ciszuko (CEO) · **Última revisión**: ago 2026.
@@ -113,7 +117,7 @@ Nunca se comparte `service_role`. Patrón de acceso:
 
 ### 4.5 Terminal remota / IA (opencode)
 
-- **El PC del CEO no es una oficina compartida.** Cada trabajador debe tener su **propio entorno** (VPS o máquina con clone) — los servicios (bot, builds) deberían migrar a un VPS (ver `docs/documentation/VPS_247.md`).
+- **El PC del CEO no es una oficina compartida.** Cada trabajador debe tener su **propio entorno** (VPS o máquina con clone) — los servicios (bot, builds) deberían migrar a un VPS (ver `docs/documentation/VPS_PLAN.md`).
 - Para **supervisión** (que YO vea lo que hacen, o que un dev senior supervise): replicar el patrón Tailscale+SSH del móvil — con One-off **Tailscale node sharing** o **Tailscale Business** (multi-usuario, 2FA).
 
 ---
@@ -192,7 +196,7 @@ Nunca se comparte `service_role`. Patrón de acceso:
 ## 8. Decisiones pendientes del CEO
 
 - [ ] ¿Repo de assets separado cuando entre el primer creativo, o confiar en teams Read del monorepo? _(recomendado: separado)_
-- [ ] ¿VPS para servicios cuando crezca el equipo? — ver `docs/documentation/VPS_247.md`
+- [ ] ¿VPS para servicios cuando crezca el equipo? — ver `docs/documentation/VPS_PLAN.md`
 - [ ] ¿Tailscale personal compartiendo nodo (gratis) o Business (multi-usuario) cuando haya >1 persona remota?
 - [ ] ¿Contactar con un desarrollador → GitHub team `core` con protección de `main`?
 - [ ] ¿Cuándo rotar las credenciales antes de invitar a nadie?
@@ -203,8 +207,8 @@ Nunca se comparte `service_role`. Patrón de acceso:
 ## 9. Referencias relacionadas
 
 - `AGENTS.md` — mapa completo del monorepo, credenciales y seguridad
-- `docs/documentation/REMOTE_CONTROL.md` — infraestructura Tailscale+SSH actual (base para multi-persona)
-- `docs/documentation/VPS_247.md` — hosting del bot (punto de partida para entornos de equipo)
-- `docs/documentation/TOOLS.md` — decisión de herramientas de desarrollo
+- `docs/documentation/REMOTE_CONTROL_SYSTEM.md` — infraestructura Tailscale+SSH actual (base para multi-persona)
+- `docs/documentation/VPS_PLAN.md` — hosting del bot (punto de partida para entornos de equipo)
+- `docs/documentation/TOOLS_SYSTEM.md` — decisión de herramientas de desarrollo
 - `docs/documentation/DEVSECOPS.md` — políticas de seguridad (XSS, SQLi, RLS)
 - `GH org` → `Ciszu-Network` (ya creada, ADMIN: yo)
