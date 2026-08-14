@@ -134,7 +134,7 @@ Tailwind 4 + PostCSS + ESLint. Assets vía resolver/CDN (`public/` solo docs/pwa
 
 | Paquete                  | Qué hace                                                               |
 | ------------------------ | ---------------------------------------------------------------------- |
-| `@ciszu/ui`              | Componentes UI compartidos (iconos, tokens)                            |
+| `@ciszu/ui`              | Componentes UI compartidos (iconos, tokens) + Storybook/Chromatic (dev-only) |
 | `@ciszunetwork/cdn`      | Resolver de assets vía CDN                                             |
 | `@ciszunetwork/utils`    | Utilidades:`createRateLimiter`, `buildCsp`, `createIast`, `escapeHtml` |
 | `@ciszunetwork/email`    | Envío de emails                                                        |

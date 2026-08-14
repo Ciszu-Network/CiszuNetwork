@@ -1,8 +1,8 @@
 ﻿# FULL_STACK_SYSTEM — Stack tecnológico de Ciszu Network
 
-Versión: 2.0.0
-Actualización: 2026-08-13
-Identificador: FULL_STACK_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
+Versión: 2.1.0
+Actualización: 2026-08-14
+Identificador: FULL_STACK_SYSTEM_V2.1.0_2026_08_14_ciszunetwork
 
 > **Definición**: inventario actual (ago 2026) de lenguajes, frameworks, sistemas operativos,
 > herramientas y servicios del ecosistema completo. Fuente única del stack; detalles de
@@ -49,6 +49,7 @@ Inventario actual (ago 2026) de lenguajes, frameworks, sistemas operativos, herr
 - **Sentry** (`@sentry/nextjs` ×4 webs, `@sentry/node` en bot) — errores (ver `ERRORS_SYSTEM.md`).
 - **TanStack Query** (`@tanstack/react-query`) — datos client dinámicos (dashboard de ciszubot).
 - **Storybook** (dev-only) — documenta `@ciszu/ui`. Ver `PACKAGES_SYSTEM.md` §4.
+- **Chromatic** — visual testing de Storybook (build 1 publicado, 14 ago 2026). Ver `PACKAGES_SYSTEM.md` §4.
 - **Turbo (pnpm workspaces)** — monorepo builds.
 - **Docker** (bot multi-stage pnpm, usuario no-root).
 
@@ -144,6 +145,7 @@ Inventario actual (ago 2026) de lenguajes, frameworks, sistemas operativos, herr
 | **tRPC / GraphQL** | No instalados: solapan con RSC + Server Actions + PostgREST. Opción futura con disparador (API pública/multi-cliente/servicio standalone) |
 | **Storybook** | Dev-only, se añadirá para documentar `@ciszu/ui` (no runtime) |
 | **TanStack Query** | Incremental: solo cuando exista feature de datos client dinámico |
+| **Bun / Deno** | Ver decisión de runtime §Runtime (Node 24 confirmado; no aptos para Next/Vercel) |
 
 ## Criterios de elección de tecnología
 
@@ -157,6 +159,24 @@ Inventario actual (ago 2026) de lenguajes, frameworks, sistemas operativos, herr
 | pnpm + Turbo | npm/yarn | Workspaces + build cache de Turbo |
 | Tauri (Rust) | Electron | Menor RAM, menor tamaño de binario (NSIS) |
 | Vitest | Jest | Nativo ESM, integrado con happy-dom para UI |
+
+## Decisión de runtime: Node.js vs Bun vs Deno (14 ago 2026)
+
+Evaluación con criterio AGENTS: **mantener Node.js en todo el ecosistema.** Nada se migra.
+
+| Criterio | **Node.js (elegido)** | Bun | Deno |
+|---|---|---|---|
+| **Soporte Next.js 15 en Vercel** | Oficial (Node 24) | Beta (`bunVersion` en vercel.json) | No recomendado |
+| **LTS / ciclo** | Node 24 "Krypton" (LTS hasta abr 2028), type-stripping estable desde 24.12 | Sin LTS formal | 2.8/2.9, compat objetivo Node 26 |
+| **Compatibilidad npm** | 100 % | ~95-98 %; addons `.node` no funcionan | `npm:` imports, pnpm workspaces desde 2.9 |
+| **Motores webs (Vercel)** | Node runtime de Vercel | JavaScriptCore (V8 distinto) | V8 |
+| **Windows** | Soportado | Estable desde 1.3 | Soportado |
+| **Agrega valor aquí** | — | Posible en scripts/tooling local (no requerido) | Posible en scripts (no requerido) |
+
+**Decisión**: Node 24 queda como runtime único (local, bot Docker `node:24-alpine`, webs Vercel).
+Bun/Deno descartados para producción (soporte Next/Vercel inmaduro). No se introducen nuevos
+runtimes salvo que un problema real lo exija (YAGNI). Gotcha conocido: el binario Bun de opencode
+no importa CJS desde plugins TUI → usar ESM puro (ver `OPENCODE_SYSTEM.md`).
 
 ## Gestión de versiones y actualizaciones
 
@@ -227,5 +247,6 @@ Inventario actual (ago 2026) de lenguajes, frameworks, sistemas operativos, herr
 | Errores / analítica | Sentry, PostHog, Cloudflare Web Analytics |
 | Entrega | Vercel + GitHub Actions + Docker (bot) |
 
-_Última revisión: 13 ago 2026._
+_Última revisión: 14 ago 2026._ Relacionados: `BACKEND_SYSTEM.md` · `FRONTEND_SYSTEM.md` ·
+`PACKAGES_SYSTEM.md` · `ORM_SYSTEM.md` · `VAULT_SYSTEM.md`.
 
