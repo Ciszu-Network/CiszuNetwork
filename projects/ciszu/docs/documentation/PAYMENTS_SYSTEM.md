@@ -1,4 +1,12 @@
-# PAYMENTS_SYSTEM — Metodología de pagos y donaciones de Ciszu Network
+﻿# PAYMENTS_SYSTEM — Metodología de pagos y donaciones de Ciszu Network
+
+Versión: 2.0.0
+Actualización: 2026-08-13
+Identificador: PAYMENTS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
+
+> **Definición**: metodología de pagos y donaciones del ecosistema: matriz producto×método,
+> rieles por país (VE), roadmap por edad, integración NOWPayments (paquete `@ciszunetwork/
+> payments`), retiros y seguridad.
 
 **Estado (12 ago 2026)**: **NOWPayments ACTIVO** — cuenta del usuario creada (11 ago 2026), credenciales en vault, env vars en Vercel (ciszunetworkpage), rutas API de invoice + webhook IPN desplegadas y verificadas con firma real. Paquete `@ciszunetwork/payments` completo (NOWPayments + Lemon Squeezy stub) + 9 tests. **Plan de monetización PENDIENTE hasta los 18** (decisión del usuario 12 ago 2026: problemas de verificación de identidad en PayPal/Zinli/TrustWallet; las apps móviles de Zinli y TrustWallet no funcionan en su teléfono). La infraestructura de recepción (wallets + DONATE_*) ya está lista y configurada, solo falta activarla. Complementa a `COMPANY_REGISTRATION_PLAN.md` (legal).
 
@@ -17,7 +25,7 @@
 | Licencias de software | — | Keygen API (license keys, free tier) + Lemon Squeezy | Stripe Billing |
 | Suscripciones | NOWPayments recurring (no recomendado sin KYC) | Lemon Squeezy subscriptions | Stripe |
 | Venta de música/arte | NOWPayments + Binance P2P (VE) | PayPal + Payoneer (pagos internacionales de clientes) | Stripe + distribuidores |
-| Servicios (discord, comisiones) | Zinli (rieles VE, tarjeta virtual) + Binance P2P | PayPal/Zinli + facturación digital (FREELANCER_TAX_GUIDE) | Facturación formal SAPI |
+| Servicios (discord, comisiones) | Zinli (rieles VE, tarjeta virtual) + Binance P2P | PayPal/Zinli + facturación digital (FREELANCER_TAX_PLAN) | Facturación formal SAPI |
 
 ## 3. Riele de pago por país (Venezuela)
 
@@ -41,7 +49,7 @@
 - **Fase 0 (HOY, <18)**: wallets propias (MetaMask, Binance) + cuenta NOWPayments + Zinli. Cobrar donaciones y ventas digitales en USDT/BTC/ETH. Contabilidad manual en `archives/legal` (herramienta `tools/legal-ai`).
 - **Fase 1 (18 años)**: PayPal + Payoneer + Lemon Squeezy (MoR) → cobrar tarjetas/PayPal con facturas e impuestos gestionados. Keygen API para licencias.
 - **Fase 2 (con dominio propio, Fase B Cloudflare)**: Resend para emails transaccionales, verificación de marca, mejor entregabilidad.
-- **Fase 3 (LLC o SAPI — `COMPANY_REGISTRATION_PLAN.md` y `INTERNATIONAL_LLC_GUIDE.md`)**: Stripe directo + cuenta bancaria corporativa + distribuidores de música/arte.
+- **Fase 3 (LLC o SAPI — `COMPANY_REGISTRATION_PLAN.md` y `INTERNATIONAL_LLC_PLAN.md`)**: Stripe directo + cuenta bancaria corporativa + distribuidores de música/arte.
 
 ## 5. NOWPayments — integración técnica
 
@@ -92,7 +100,7 @@ packages/payments/
 
 ### Reglas de seguridad (obligatorias)
 
-1. **Todo endpoint que muta lleva rate limit** (regla `SECURITY_TASKS.md`): invoice 10/min, webhooks de pago 30/min por IP.
+1. **Todo endpoint que muta lleva rate limit** (regla `SECURITY_PROTOCOLS.md`): invoice 10/min, webhooks de pago 30/min por IP.
 2. **NUNCA confiar en el estado del front**: el webhook firmado es la única fuente de verdad para marcar pagos.
 3. **Verificar la firma ANTES de parsear** el cuerpo (HMAC sobre el body crudo, comparación timing-safe).
 4. **Idempotencia**: `providerOrderId` + estado `confirmed` debe procesarse una sola vez (check `pagos.orders.status`).
@@ -120,7 +128,7 @@ packages/payments/
 7. ⏳ Poner las direcciones públicas en `DONATE_*` del vault y en las webs (sección Apoyar). — **ETH/ERC-20 YA configurados** (12 ago): `DONATE_USDT_ERC20` + `DONATE_ETH` en vault y Vercel, mostrados en `/support`.
 8. ✅ **Dominio verificado en Trustpilot** (11 ago 2026) — ver `REVIEWS_SYSTEM.md`.
 9. A los 18: PayPal, Payoneer, Lemon Squeezy, Keygen (con la lista de §3). — **Nota PayPal**: la cuenta antigua fue desactivada permanentemente (ago 2026); abrir una limpia a los 18 con datos reales.
-10. Cuando se quiera vender: crear la migración del schema `pagos` (orders/transactions con RLS — regla `SECURITY_TASKS.md` #1) y rutas de entrega de producto.
+10. Cuando se quiera vender: crear la migración del schema `pagos` (orders/transactions con RLS — regla `SECURITY_PROTOCOLS.md` #1) y rutas de entrega de producto.
 
 ## 8. Verificación de la implementación (11-12 ago 2026)
 
@@ -131,3 +139,87 @@ packages/payments/
 - ✅ Env vars en Vercel: `NOWPAYMENTS_*` ×5 (production+preview+development).
 - ✅ **Donación directa (12 ago 2026)**: `DONATE_USDT_ERC20` + `DONATE_ETH` configurados en vault + Vercel; sección "Donación directa" en `/support` muestra las direcciones habilitadas vía `getDonationMethods()` (también `WALLET_BINANCE_URL` en Vercel).
 - El paquete lanza `PaymentNotConfiguredError` claro si faltan keys (no rompe builds).
+
+## Conceptos de pagos (contexto informático)
+
+| Término | Definición |
+|---|---|
+| **Pasarela de pago** | Servicio que procesa pagos |
+| **Invoice** | Factura/pago solicitado |
+| **IPN** (Instant Payment Notification) | Webhook de notificación de pago |
+| **HMAC** | Firma del mensaje (integridad) |
+| **MoR** (Merchant of Record) | Factura y asume impuestos |
+| **KYC** | Verificación de identidad |
+| **Wallet auto-custodia** | Billetera que controlas tú |
+| **P2P** | Intercambio persona a persona |
+| **TRC20 / ERC20** | Estándares de token (TRON / Ethereum) |
+| **Idempotencia** | Procesar un pago una sola vez |
+
+## Resumen de rieles por edad
+
+| Edad | Rieles OK | Rieles NO |
+|---|---|---|
+| <18 (hoy) | NOWPayments, MetaMask, Binance, Coinbase Wallet | PayPal, Payoneer, Lemon Squeezy, Stripe |
+| 18 | + PayPal, Payoneer, Lemon Squeezy, Keygen | Stripe directo (hasta LLC) |
+| LLC | + Stripe, cuenta bancaria corporativa | — |
+
+## Seguridad en pagos (checklist)
+
+- [ ] Rate limit en todo endpoint mutante (invoice 10/min, webhook 30/min).
+- [ ] Verificar HMAC del IPN antes de parsear (timing-safe).
+- [ ] Idempotencia por `providerOrderId` + estado.
+- [ ] Direcciones de donación por env (nunca hardcodeadas).
+- [ ] Futuro: schema `pagos` con RLS + entrega de producto.
+
+## Env vars de donación
+
+| Variable | Estado |
+|---|---|
+| `DONATE_USDT_ERC20` / `DONATE_ETH` | ✅ Configurados (12 ago) |
+| `DONATE_USDT_TRC20` / `DONATE_BTC` | ⏳ Pendiente wallet |
+| `DONATE_PAYPAL` / `DONATE_ZINLI` / `DONATE_PAYONEER` | ⏳ A los 18 |
+
+## Pendientes de activación
+
+- [ ] Configurar wallet de retiro en NOWPayments (Settings → Payouts).
+- [ ] Crear cuenta Binance (KYC básico) para P2P.
+- [ ] Crear schema `pagos` + entrega de producto cuando se venda.
+- [ ] A los 18: PayPal/Payoneer/Lemon Squeezy/Keygen.
+
+## FAQ de pagos
+
+| Pregunta | Respuesta |
+|---|---|
+| ¿Puedo cobrar hoy? | Donaciones directas (ETH/USDT-ERC20) activadas; invoice NOWPayments desplegado |
+| ¿Por qué no PayPal? | Cuenta desactivada y minoría de edad: abrir una limpia a los 18 |
+| ¿Cómo se entrega un producto? | Futuro schema `pagos` con RLS + entrega cuando se venda |
+| ¿Los webhooks son fiables? | Sí: HMAC-SHA512 (timing-safe) verificado ANTES de parsear |
+| ¿Dónde viven las keys? | Vault (`services/supabase/.env`) + Vercel para `ciszunetworkpage` |
+
+## Reglas fiscales y de registro (resumen)
+
+- Sin ingresos reales todavía → sin obligación de facturación inmediata; contabilidad manual en `archives/legal`.
+- A partir de ingresos se aplica el criterio de `FREELANCER_TAX_PLAN.md` y `COMPANY_REGISTRATION_PLAN.md`.
+- Toda donación/venta se registra en `archives/legal` (privado, gitignored) para conciliar después.
+- Cuando se active la venta, activar también el schema `pagos` (orders/transactions con RLS).
+
+## Riesgos y mitigaciones
+
+| Riesgo | Mitigación |
+|---|---|
+| Pagos retenidos sin wallet de retiro | Configurar Payouts en NOWPayments (pendiente) |
+| Replay del webhook | Idempotencia por `providerOrderId` + estado |
+| Claves filtradas | Vault cifrado + rotación; ver `VAULT_SYSTEM.md` |
+| Riel bloqueado por edad | Roadmap por fases (§4) con fechas objetivo |
+
+## Relación con otros sistemas
+
+- `COMPANY_REGISTRATION_PLAN.md` / `INTERNATIONAL_LLC_PLAN.md` — fase legal y LLC.
+- `EMAILS_SYSTEM.md` — confirmaciones transaccionales (Resend).
+- `REVIEWS_SYSTEM.md` — dominio verificado en Trustpilot.
+- `SECURITY_PROTOCOLS.md` — rate limit y RLS obligatorios.
+- `STATUS_SYSTEM.md` / `STATISTICS_SYSTEM.md` — estado y cifras de pagos cuando haya ingresos.
+
+_Última revisión: 13 ago 2026._ Relacionado: `COMPANY_REGISTRATION_PLAN.md`,
+`INTERNATIONAL_LLC_PLAN.md`, `EMAILS_SYSTEM.md`, `REVIEWS_SYSTEM.md`,
+`SECURITY_PROTOCOLS.md`.

@@ -1,4 +1,4 @@
-# Ciszu Network Monorepo
+﻿# Ciszu Network Monorepo
 
 Monorepo principal de **Ciszu Network** — el ecosistema digital de **CiszukoAntony**. Contiene 4 webs (Next.js 15 + Tailwind 4), un bot de Discord (Discord.js), un juego de música (web + app Tauri), paquetes compartidos y el CDN de assets sobre Supabase Storage.
 
@@ -101,14 +101,14 @@ Cada deploy se dispara con cambios en el `projects/<proyecto>/**` o `packages/**
 - **XSS**: nunca `innerHTML`/`dangerouslySetInnerHTML` sin escapar; usa `escapeHtml()` o `textContent`; DOMPurify el entrante.
 - **SQL Injection**: siempre ORM parametrizado o RPC — nunca concatenar.
 - **Secrets**: `secretlint` + `gitleaks` en pre-commit (hook); rotar credenciales si el repo se hace público.
-- **DevSecOps**: SAST (Semgrep), DAST (ZAP), dependencias (pnpm audit, trivy, cargo audit), advisors de Supabase verificados tras cada cambio de policies/functions. Detalles: `projects/ciszu/docs/documentation/DEVSECOPS.md`.
+- **DevSecOps**: SAST (Semgrep), DAST (ZAP), dependencias (pnpm audit, trivy, cargo audit), advisors de Supabase verificados tras cada cambio de policies/functions. Detalles: `projects/ciszu/docs/documentation/DEVSECOPS_SYSTEM.md`.
 - **Advisors Supabase**: usar SECURITY INVOKER siempre que sea posible; envolver `auth.*()` en `(SELECT …)`; separar políticas RLS por comando (no ALL).
 
 ## Documentación
 
-- Estándares de ingeniería: `projects/ciszu/docs/documentation/CODE_PRINCIPLES.md`
-- DevSecOps: `projects/ciszu/docs/documentation/DEVSECOPS.md`
-- Herramientas de desarrollo: `projects/ciszu/docs/documentation/TOOLS.md`
+- Estándares de ingeniería: `projects/ciszu/docs/documentation/CODE_PRINCIPLES_PROTOCOLS.md`
+- DevSecOps: `projects/ciszu/docs/documentation/DEVSECOPS_SYSTEM.md`
+- Herramientas de desarrollo: `projects/ciszu/docs/documentation/TOOLS_SYSTEM.md`
 - Estado de los proyectos y migraciones: `projects/ciszu/docs/documentation/PROJECT_STATE.md`
 - Docs de cada producto en `projects/<project>/docs/`.
 - AGENTS.md en la raíz: gestión de multiworkspace, gotchas y checklist de implementación.

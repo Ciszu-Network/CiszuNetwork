@@ -1,8 +1,8 @@
-# vault.ps1 — Gestión del vault de credenciales de Ciszu Network (age)
+﻿# vault.ps1 — Gestión del vault de credenciales de Ciszu Network (age)
 #
 # Protege los .env locales con age (v1.2.1, C:\Users\fplay\Tools\age\).
 # Identity: C:\Users\fplay\.ciszu\ciszu-vault-key.txt (ACL fplay+SYSTEM; copia en Bitwarden).
-# Doc: projects/ciszu/docs/documentation/VAULT_SECURITY.md
+# Doc: projects/ciszu/docs/documentation/VAULT_SYSTEM.md
 #
 # Uso:
 #   .\scripts\vault.ps1 crypt          # .env -> .env.age (copia maestra cifrada)

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { createRateLimiter } from '@ciszunetwork/utils';
 import { createNowPaymentsProvider, PaymentError } from '@ciszunetwork/payments';
 
@@ -7,7 +7,7 @@ import { createNowPaymentsProvider, PaymentError } from '@ciszunetwork/payments'
  * Crea una factura de donación en NOWPayments (crypto, sin KYC).
  * Body: { amount: number (USD), email?: string }
  * Devuelve: { checkoutUrl } para redirigir al checkout de NOWPayments.
- * Rate limit: 10/min por IP (regla SECURITY_TASKS.md #3).
+ * Rate limit: 10/min por IP (regla SECURITY_PROTOCOLS.md #3).
  */
 const limiter = createRateLimiter({ windowMs: 60_000, max: 10 });
 

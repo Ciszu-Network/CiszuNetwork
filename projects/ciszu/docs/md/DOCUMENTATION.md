@@ -95,15 +95,14 @@ ESTÁNDARES DE FORMATEO (DOCX/PDF)
 
 IA_DOCS (Documentación para Agentes de IA)
 Cada proyecto tiene documentation/ con la siguiente estructura estándar:
-  AGENT_INSTRUCTIONS.md, AGENT_SECURITY_PROTOCOLS.md, ARCHITECTURE.md,
-  CODE_PRINCIPLES.md, DEVSECOPS.md, INITIAL_PROMPT.md, MIGRATION_HANDOVER.md,
-  PROJECT_HISTORY.md, PROJECT_STATE.md, PROJECTS.md, STACK.md, STATUS.md,
-  TO_DO_LIST.md, WORKFLOW.md
+  ARCHITECTURE.md, STACK_SYSTEM.md, WORKFLOW_SYSTEM.md, PROJECT_STATE.md,
+  PROJECT_HISTORY.md, TODO.md, BRAND_PLAN.md, README.md
 
-- DEVSECOPS.md: Marco de seguridad integrada (SAST/DAST, Shift-Left, auditorías)
-- CODE_PRINCIPLES.md: Principios de ingeniería (DRY, KISS, YAGNI, SOLID)
+- SECURITY_PROTOCOLS.md: Protocolos de seguridad (RLS, secretos, rate limit, CSP)
+- CODE_PRINCIPLES_PROTOCOLS.md: Principios de ingeniería (DRY, KISS, YAGNI, SOLID)
+- DOCUMENTATION_SYSTEM.md: Reglas del sistema de documentación (estándar)
 
-El proyecto de referencia para documentation es MuzicMania (19 archivos).
+El proyecto de referencia para la documentación es ciszu (62 archivos).
 
 CDN Y ASSETS
 - Los assets multimedia se sirven desde Supabase Storage (bucket ciszu-assets)
@@ -186,12 +185,11 @@ via scripts:
 
 IA_DOCS (Documentation for AI Agents)
 Each project has documentation/ with the following standard structure:
-  AGENT_INSTRUCTIONS.md, AGENT_SECURITY_PROTOCOLS.md, ARCHITECTURE.md,
-  CODE_PRINCIPLES.md, DEVSECOPS.md, INITIAL_PROMPT.md, MIGRATION_HANDOVER.md,
-  PROJECT_HISTORY.md, PROJECT_STATE.md, PROJECTS.md, STACK.md, STATUS.md,
-  TO_DO_LIST.md, WORKFLOW.md
+  ARCHITECTURE.md, STACK_SYSTEM.md, WORKFLOW_SYSTEM.md, PROJECT_STATE.md,
+  PROJECT_HISTORY.md, TODO.md, BRAND_PLAN.md, README.md
 
-- DEVSECOPS.md: Integrated security framework (SAST/DAST, Shift-Left, audits)
-- CODE_PRINCIPLES.md: Engineering principles (DRY, KISS, YAGNI, SOLID)
+- SECURITY_PROTOCOLS.md: Security protocols (RLS, secrets, rate limit, CSP)
+- CODE_PRINCIPLES_PROTOCOLS.md: Engineering principles (DRY, KISS, YAGNI, SOLID)
+- DOCUMENTATION_SYSTEM.md: Documentation system rules (standard)
 
-The reference project for documentation is MuzicMania (19 files).
+The reference project for documentation is ciszu (62 files).

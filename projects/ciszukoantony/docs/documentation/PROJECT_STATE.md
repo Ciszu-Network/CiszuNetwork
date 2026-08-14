@@ -1,13 +1,25 @@
-# Estado — Ciszuko Antony Portfolio
+﻿# PROJECT_STATE — Estado de Ciszuko Antony Portfolio
 
-**Última actualización:** 28 Julio, 2026
+Versión: 1.0.0
+Actualización: 2026-08-14
+Identificador: PROJECT_STATE_V1.0.0_2026_08_14_ciszunetwork
 
-## ✅ Completado
-- Website Next.js 15 configurado
-- Documentación completa en todos los formatos
-- documentation: 11 archivos
-- public/docs/ creado
+> **Definición**: estado actual del proyecto **Ciszuko Antony Portfolio** (portfolio personal
+> de Ciszuko Antony): website, documentación y estructura. Documento vivo: se actualiza en
+> cada sesión. Solo lo edita Ciszuko Antony.
+
+## Estado actual
+
+| Componente | Estado | Notas |
+|---|---|---|
+| Website | ✅ Listo | Portfolio personal |
+| Documentación | ✅ Completa | Todos los formatos |
+| documentation | ✅ Completo | 11 archivos |
+| public/docs/ | ✅ Creado | En website/public/docs/ |
 
 ## Stack
+
 - Next.js 15 + TypeScript + Tailwind 4
 - pnpm + Vercel
+
+ÚLTIMA ACTUALIZACIÓN: 2026-08-14

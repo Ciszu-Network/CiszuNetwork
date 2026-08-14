@@ -1,4 +1,11 @@
-# Plan de base de datos vectorial (RAG / búsqueda semántica) — Ciszu Network
+# RAG_VECTORS_PLAN — Plan de base de datos vectorial (RAG / búsqueda semántica) — Ciszu Network
+
+Versión: 2.0.0
+Actualización: 2026-08-13
+Identificador: RAG_VECTORS_PLAN_V2.0.0_2026_08_13_ciszunetwork
+
+> **Definición**: plan de base de datos vectorial para RAG/búsqueda semántica. Estado: plan
+> a futuro (aprobado 10 ago 2026). Decisión: **pgvector en Supabase**, NO Pinecone.
 
 > **Estado**: PLAN A FUTURO (aprobado 10 ago 2026). Sin implementación por ahora.
 > Decisión: **pgvector en Supabase** (nuestra BD actual), NO Pinecone.
@@ -96,3 +103,106 @@ cubra**; pgvector es el stack actual.
   selfhost.dev/blog/pgvector-vs-pinecone/ · apicalculators.com/blog/vector-database-cost-comparison-2026.
 - Precios Pinecone: pinecone.io/pricing (Starter 2GB gratis; Standard $50/mes mínimo).
 - `MONITORING_SYSTEM.md` — la otra tarea del toDo evaluada (monitoreo externo).
+
+## Glosario de vectores (contexto informático)
+
+| Término | Definición |
+|---|---|
+| **Embedding** | Vector numérico del significado de un texto |
+| **Vector** | Lista de números (dimensión 768/1536/3072) |
+| **Similitud coseno** | Métrica de cercanía entre vectores |
+| **HNSW** | Índice de grafos para búsqueda rápida |
+| **RAG** | Generación aumentada por recuperación |
+| **pgvector** | Extensión de vectores para Postgres |
+| **Query vector** | Embedding de la consulta |
+| **Top-K** | N resultados más cercanos |
+
+## Comparativa rápida de motores
+
+| Motor | Coste | SQL/RLS | Veredicto |
+|---|---|---|---|
+| **pgvector (Supabase)** | $0 | ✅ | **ELEGIDO** |
+| Pinecone | $50/mes | ❌ | Escape hatch a escala masiva |
+| Qdrant/Weaviate/Milvus | $150-300/mes | Parcial | Sin ventaja en nuestro volumen |
+| Cloudflare Vectorize | Requiere tarjeta | ❌ | Descartado |
+| Chroma | Gratis | — | Solo prototipado local |
+
+## Cuándo NO implementar
+
+- No hay caso de uso solicitado (búsqueda semántica no pedida todavía).
+- Sin disparador de §3 (búsqueda de canciones o RAG del bot).
+- El stack actual (Postgres) cubre sin servicio extra.
+
+## Fases de implementación (cuando haya disparador)
+
+| Fase | Acción |
+|---|---|
+| 1 | `create extension vector;` (migración) |
+| 2 | Tabla con embedding + RLS + policy |
+| 3 | Índice HNSW (`vector_cosine_ops`) |
+| 4 | Función `match_*` (INVOKER, search_path fijo) |
+| 5 | Job de embeddings + endpoint con rate limit + caché |
+
+## Diseño técnico de la tabla de embeddings (referencia)
+
+```sql
+create table if not exists muzicmania.track_embeddings (
+  id uuid primary key default gen_random_uuid(),
+  track_id uuid references tracks(id),
+  embedding vector(768),          -- según el modelo elegido
+  content text,                    -- texto/fragmento indexado
+  metadata jsonb,                  -- título, artista, estilo, fechas
+  created_at timestamptz default now()
+);
+alter table muzicmania.track_embeddings enable row level security;
+```
+
+> La dimensión (768/1536/3072) depende del modelo de embeddings elegido; definir antes de
+> crear el índice. Seguridad: aplicar RLS y políticas por comando (ver `SECURITY_PROTOCOLS.md`).
+
+## Elección del modelo de embeddings
+
+| Modelo | Dimensión | Coste | Nota |
+|---|---|---|---|
+| Gemini `text-embedding-004` | 768 | Gratis (key existente) | Primera opción |
+| Modelos HF (embeddings) | Varía | Gratis | Alternativa open source |
+| Modelos de pago (OpenAI/Cohere) | 1536/3072 | De pago | No necesario en esta escala |
+
+Regla: empezar con el modelo gratis y el mismo para todo el corpus; cambiar de modelo
+invalida los embeddings existentes (requiere reindexar).
+
+## Preguntas frecuentes
+
+**¿Cuánto cuesta indexar la música de MuzicMania?** Con el modelo gratis, ≈ $0 en nuestra
+escala (decenas-cientos de vectores).
+
+**¿El RAG del bot necesita credenciales nuevas?** No necesariamente: usa la BD Supabase
+existente y un LLM ya disponible; el pipeline lo define el caso 2 (§3).
+
+**¿Pinecone puede reemplazar a pgvector luego?** Sí, como escape hatch; el cambio es de
+cliente/URL, no reescritura (ver §2).
+
+**¿Qué es Top-K?** El número de resultados más cercanos que devuelve la búsqueda (p.ej.
+5-10 fragmentos para el contexto del bot).
+
+## Criterios de aceptación (cuando se implemente)
+
+- [ ] Extensión activada y migración aplicada.
+- [ ] Tabla con RLS habilitado y policy por comando.
+- [ ] Índice HNSW creado y usado por el planner (EXPLAIN).
+- [ ] Función de búsqueda INVOKER con search_path fijo.
+- [ ] Endpoint con `createRateLimiter` y caché.
+- [ ] Prueba de búsqueda semántica con resultados relevantes.
+- [ ] Coste de embeddings ≈ $0 verificado.
+
+## Relación con otros sistemas
+
+| Sistema | Relación |
+|---|---|
+| `DB_SYSTEM.md` | Postgres/pgvector sobre la BD Supabase actual |
+| `SECURITY_PROTOCOLS.md` | RLS y policies obligatorias en cada tabla |
+| `MONITORING_SYSTEM.md` | Monitoreo del pipeline (misma tarea del toDo) |
+| `CACHING_SYSTEM.md` | Caché del endpoint de búsqueda |
+
+_Última revisión: 13 ago 2026._ Relacionado: `MONITORING_SYSTEM.md`, `DB_SYSTEM.md`,
+`BACKEND_SYSTEM.md`, `SECURITY_PROTOCOLS.md`.

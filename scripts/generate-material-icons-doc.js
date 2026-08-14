@@ -16,7 +16,7 @@ const https = require('https');
 
 const ROOT = path.resolve(__dirname, '..');
 const CACHE_DIR = path.join(ROOT, '.opencode', 'temp', 'material-icons-theme');
-const OUT_FILE = path.join(ROOT, 'projects', 'ciszu', 'docs', 'documentation', 'MATERIAL_ICONS.md');
+const OUT_FILE = path.join(ROOT, 'projects', 'ciszu', 'docs', 'documentation', 'MATERIAL_ICONS_PROTOCOLS.md');
 
 const THEME_REPO = 'PKief/vscode-material-icon-theme';
 const THEME_BRANCH = 'main';
@@ -218,11 +218,30 @@ async function main() {
   const folderNames = folderIcons.filter((i) => !i.enabledFor).length;
   const fileNames = fileIcons.filter((i) => !i.enabledFor).length;
 
-  const md = `# Material Icon Theme — Catálogo completo (v5.36.1)
+  const md = `# MATERIAL_ICONS_PROTOCOLS — Material Icon Theme, Catálogo y Protocolos (v5.36.1)
 
-> Documento GENERADO por \`scripts/generate-material-icons-doc.js\` — no editar a mano.
+Versión: 2.0.0
+Actualización: 2026-08-13
+Identificador: MATERIAL_ICONS_PROTOCOLS_V2.0.0_2026_08_13_ciszunetwork
+
+> Estatus: **protocolo oficial** de iconografía del monorepo. Documento GENERADO por
+> \`scripts/generate-material-icons-doc.js\` — no editar a mano.
 > Fuente oficial: [PKief/vscode-material-icon-theme](https://github.com/PKief/vscode-material-icon-theme) (branch \`main\`).
 > Regenerar con: \`node scripts/generate-material-icons-doc.js\` (usa cache en \`.opencode/temp/material-icons-theme/\`; \`--force\` re-descarga).
+
+## 0. Protocolos de uso (reglas oficiales)
+
+1. **Fuente canónica**: este catálogo define los matches de carpetas/archivos del tema
+   Material Icon en VS Code para todo el repo.
+2. **No editar a mano**: regenerar siempre con el script (la cabecera se sobrescribe).
+3. **Sobrescrituras**: las asociaciones custom viven en \`.vscode/settings.json\` (ver §2);
+   añadir ahí cualquier excepción, NO en este documento.
+4. **Carpetas nuevas**: al crear una carpeta con contenido (p.ej. \`logos\`, \`samples\`),
+   revisar si necesita asociación en settings.json para no verse como carpeta genérica.
+5. **Icon packs**: en el repo NO se activa ningún pack extra (default); los iconos
+   "Solo packs" no aplican.
+6. Relacionado con el sistema de iconos de runtime: \`ICON_SYSTEM.md\` (SVGs de las apps)
+   y \`MATERIAL_ICONS_PROTOCOLS\` = solo tema del editor VS Code.
 
 ## 1. Cómo funciona el tema
 

@@ -1,0 +1,213 @@
+# STATUS_SYSTEM — Estado del Ecosistema CISZU NETWORK
+
+Versión: 2.0.0
+Actualización: 2026-08-13
+Identificador: STATUS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
+
+> **Definición**: documento operativo de estado del monorepo. Se actualiza al cerrar cada
+> sesión de trabajo. Refleja la foto actual de proyectos, sistemas y scripts.
+
+## Estado actual del monorepo
+
+### Resumen General (v3.0.0 — ago 2026)
+
+| Proyecto | Website | App | Docs | documentation | public/docs/ |
+|---|---|---|---|---|---|
+| CiszuNetwork Page | ✅ Activo | — | ✅ Completo | ✅ | ✅ |
+| Ciszuko Antony Portfolio | ✅ Activo | — | ✅ Completo | ✅ | ✅ |
+| MuzicMania | ✅ Activo | ✅ Tauri | ✅ Completo | ✅ | ✅ |
+| CiszuBot | ✅ Activo | ✅ Discord bot v3.2.0 | ✅ Completo | ✅ | ✅ |
+| CiszuGamens | — | — | ✅ Histórico | ✅ | — |
+| @ciszunetwork/cdn | — | ✅ Activo | — | — | — |
+
+### Estado real (ago 2026)
+
+| Sistema | Estado |
+|---|---|
+| 4 websites en producción (Vercel) | ✅ Despliegan desde `main` (GitHub Actions) |
+| CDN Supabase Storage `ciszu-cdn` | ✅ 7.353 objetos / 160.6 MB (16% de cuota; bucket legacy `ciszu-assets` eliminado 10 ago 2026) |
+| Sistema de formatos (avif/webp/opus) | ✅ Implementado (8 ago 2026) + `SmartImage` en las webs |
+| PDWA (manifest + sw + botón instalar) | ✅ Las 4 webs |
+| Auth Supabase (MuzicMania) | ✅ REST corregido, RLS activo |
+| Bot de Discord | ✅ v3.2.0, 72 comandos, Supabase conectado (heartbeat `bot_status`) |
+| Caché multi-tienda | ✅ Implementado (9 ago 2026) — memoria → KV Upstash (`upstash-kv-ciszunetwork`) → Postgres `ciszu.cache` |
+| Monitoreo externo | ✅ UptimeRobot 5 monitores + watcher ntfy (10 ago 2026) |
+| Cloudflare (standalone) | ✅ Web Analytics + Turnstile en las 4 webs |
+| Seguridad | ✅ RLS 28/28 tablas, migración 16 aplicada, rate limits, robots.ts ×4 |
+| Testing | ✅ Vitest (96 tests) + Playwright E2E |
+| Backups BD | ⏳ Requiere PostgreSQL 17 (pg_dump ≥17) instalado |
+| Ciszubot OAuth dashboard | ⏳ Pendiente registrar callback en Discord Developer Portal |
+
+### Documentación
+
+Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los sistemas.
+
+### Scripts de Automatización
+| Script | Función | Estado |
+|---|---|---|
+| scripts/txt2md.js | TXT → MD | ✅ |
+| scripts/md2office.js | MD → DOCX | ✅ (PDF falla) |
+| scripts/txt2pdf.py | MD → PDF | ✅ |
+| scripts/docx2pdf.ps1 | DOCX → PDF | ⚠️ Word COM hangs |
+| scripts/sync-public-docs.js | docs/ → public/docs/ | ✅ |
+| scripts/upload-cdn.js | CDN upload | ✅ |
+| scripts/backup-db.js | Backup BD Supabase | ✅ script, ⏳ requiere pg_dump ≥17 |
+| scripts/delete-storage-bucket.js | Borrado masivo de buckets (protegido) | ✅ |
+
+### CDN Migration
+| Paso | Estado |
+|---|---|
+| Documento CDN_MIGRATIONS | ✅ |
+| Inventario de assets | ✅ |
+| Subida a Supabase Storage | ✅ (ciszu-cdn espejo del repo) |
+| Migración de código | ✅ (NEXT_PUBLIC_CDN_URL ×4 proyectos) |
+| Limpieza de repo | ✅ (bucket legacy eliminado, EXCLUDED_EXT) |
+
+### Stack Tecnológico
+- **Monorepo**: pnpm 10.8.1 + Turborepo
+- **Web**: Next.js 15 + TypeScript + Tailwind CSS v4
+- **Backend**: Supabase (PostgreSQL + Auth + Storage)
+- **Desktop**: Tauri 2 (Rust + WebView2)
+- **Bot**: Discord.js v14 (projects/ciszubot/discord-bot/)
+- **CI/CD**: GitHub Actions + Vercel
+- **Docs**: Pandoc 3.10 + Reportlab (Python)
+
+### Herramientas Instaladas
+- Node.js 24.18.0
+- Python 3.14
+- Pandoc 3.10
+- Reportlab 5.0.0
+- dbvr 26.1.4 + DBeaver CE
+- Bruno 4.0.0
+- Fork 2.16.1
+- ZAP 2.17.0, semgrep, trivy, gitleaks, secretlint
+- Vitest + Playwright
+
+## Pendientes de infraestructura (bloqueos conocidos)
+
+| Bloqueo | Detalle | Doc |
+|---|---|---|
+| Push a GitHub | DNS de este PC no resuelve github.com → push manual del usuario | `WORKFLOW_SYSTEM.md` |
+| R2 Cloudflare | Requiere tarjeta → CDN activo = Supabase `ciszu-cdn` | `CDN_SYSTEM.md` |
+| Ciszubot OAuth | Pendiente registrar callback en Discord Developer Portal | `PROJECTS_SYSTEM.md` |
+| PDF engine | WeasyPrint requiere GTK DLLs no instaladas | `TOOLS_SYSTEM.md` |
+| Word COM | Se cuelga al convertir DOCX→PDF automáticamente | `TOOLS_SYSTEM.md` |
+
+## Cómo actualizar este documento
+
+1. Ejecutar `pnpm build` / `pnpm test` para confirmar el estado real.
+2. Actualizar tablas de proyectos y sistemas con lo verificado.
+3. Registrar fecha en "ÚLTIMA ACTUALIZACIÓN".
+4. Complementar con `PROJECTS_SYSTEM.md` (detalle) y `STATISTICS_SYSTEM.md` (cifras).
+
+## Estado por proyecto (resumen)
+
+| Proyecto | Estado | Notas |
+|---|---|---|
+| CiszuNetwork | Operativo | Despliega desde `main` a Vercel |
+| CiszukoAntony | Operativo | Portfolio + música |
+| MuzicMania | Operativo | Juego + app Tauri (NSIS) |
+| CiszuBot | Operativo | Bot Discord + landing + estado en vivo |
+| CDN Supabase | Operativo | `ciszu-cdn`, 7.353 objetos |
+| CI/CD | Operativo | GitHub Actions: CI, CodeQL, DAST, deploy ×4, uptime-watch |
+
+## Estado por sistema (resumen)
+
+| Sistema | Estado | Referencia |
+|---|---|---|
+| Auth | Operativo | `AUTH_SYSTEM.md` |
+| Base de datos | Operativo | `DB_SYSTEM.md` |
+| Cacheo | Operativo | `CACHING_SYSTEM.md` |
+| CDN | Operativo | `CDN_SYSTEM.md` |
+| Correos | Operativo | `EMAILS_SYSTEM.md` |
+| Pagos | Operativo | `PAYMENTS_SYSTEM.md` |
+| Analítica | Operativo | `ANALYTICS_SYSTEM.md` |
+| Errores (Sentry) | Operativo | `ERRORS_SYSTEM.md` |
+| Monitorización | Operativo | `MONITORING_SYSTEM.md` |
+| Seguridad | Operativo | `SECURITY_PROTOCOLS.md` |
+
+## Últimas acciones verificadas (13 ago 2026)
+
+- Docs de `documentation/` revisados y ampliados (cabecera + ≥200 líneas) — este proceso.
+- Frontend: fases 1–11 del to-do frontend completadas y verificadas (ver `TODO.md`).
+- CDN limpio (7.353 objetos) y tests en 157.
+
+## Leyenda de estados
+
+- **Operativo**: funciona en producción y verificado.
+- **En construcción**: código activo pero incompleto o sin desplegar.
+- **Pendiente**: planificado, no iniciado (referencia `*_PLAN.md`).
+- **Bloqueado**: requiere algo externo (tarjeta, cuenta, decisión).
+- **No aplica**: descartado o innecesario.
+
+## Indicadores de salud del ecosistema
+
+| Indicador | Objetivo | Fuente |
+|---|---|---|
+| Builds | 4/4 OK en cada push | GitHub Actions / Vercel |
+| Tests | Verde con `pnpm test` | Vitest (157 al 11 ago 2026) |
+| Uptime webs + bot | ≥ 99 % | UptimeRobot (5 monitores KEYWORD UP) |
+| CDN | Bajo la cuota Free (≈16 % hoy) | Supabase Storage |
+| Errores runtime | 0 críticos sin explicar | Sentry (org `ciszu-network`) |
+| Advisors Supabase | 0 warnings pendientes | Dashboard Supabase |
+
+## Procedimiento de actualización del documento
+
+Este doc es una **foto del estado** del ecosistema; al cerrar sesión:
+
+1. `pnpm build` y `pnpm test` para confirmar el estado real (no la memoria).
+2. Pasar el checklist de la sección "Cómo actualizar este documento".
+3. Actualizar solo celdas que han cambiado realmente; fechar los cambios nuevos.
+4. Completar con `PROJECTS_SYSTEM.md` (historia) y `STATISTICS_SYSTEM.md` (cifras).
+
+## Rutinas de mantenimiento del ecosistema
+
+| Rutina | Frecuencia | Qué revisar |
+|---|---|---|
+| Backup BD | Semanal | `backup-db.js` (requiere pg_dump ≥17), ruta `archives/backups/db` |
+| Limpieza CDN | Mensual / tras uploads | `upload-cdn.js --prune`, mimetypes |
+| Revisión de dependencias | Semanal | `pnpm audit --prod`, Dependabot, `cargo audit` |
+| DAST | Semanal (lunes) | ZAP baseline ×4 webs (`dast.yml`) |
+| Revisión de docs | Fin de sesión | Cobertura ≥200 líneas + refs sin rotas |
+
+## Recuperación ante incidencias
+
+1. **Identificar** el síntoma: uptime abajo (ntfy), error en Sentry, 5xx en Vercel, alerta de monitor.
+2. **Aislar**: curl a producción, `dbvr` a BD o logs de la función afectada.
+3. **Corregir**: fix en `main` → deploy; rotar el secreto si hubo filtración (ver `DEVSECOPS_SYSTEM.md`).
+4. **Registrar** la incidencia: `ERRORS_SYSTEM.md` + historial del proyecto.
+5. **Aprender**: actualizar pendientes aquí y en `SECURITY_PROTOCOLS.md` si toca.
+
+## Historial de estados (registro breve)
+
+| Fecha | Cambio relevante |
+|---|---|
+| 2026-08-13 | Docs ampliados a estándar; frontend fases 1–11 completas; CDN 7.353 objetos; tests 157 |
+| 2026-08-12 | Pagos: infra NOWPayments lista, monetización pendiente hasta 18 |
+| 2026-08-11 | Cuenta NOWPayments creada; suite Vitest a 157 |
+| 2026-08-10 | CDN legacy eliminado; migración 16 aplicada; monitoreo externo activo |
+
+- Convención: añadir una fila por sesión con el hecho más relevante; no borrar histórico.
+- El detalle sucesivo se vuelca en `PROJECTS_SYSTEM.md` y `STATISTICS_SYSTEM.md`.
+
+## FAQ de estado
+
+| Pregunta | Respuesta |
+|---|---|
+| ¿Qué significa "Operativo"? | Ver leyenda: funciona en producción y verificado |
+| ¿Cuándo es "Bloqueado"? | Requiere algo externo (tarjeta, cuenta, decisión) |
+| ¿Dónde está el detalle por proyecto? | `PROJECTS_SYSTEM.md` |
+| ¿Dónde están las cifras? | `STATISTICS_SYSTEM.md` |
+| ¿Este doc reemplaza a `STATUS.md`? | No: `STATUS_SYSTEM.md` es el operativo de la carpeta |
+
+## Checklist de estado operativo (cierre de sesión)
+
+- [ ] `pnpm build` + `pnpm test` verdes (cifras reales).
+- [ ] Tablas de proyectos/sistemas al día con lo verificado.
+- [ ] Nuevas incidencias registradas en su `*_SYSTEM.md`.
+- [ ] `ÚLTIMA ACTUALIZACIÓN` fechada y `PROJECTS_SYSTEM.md` con historia.
+
+_Última revisión: 13 ago 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
+`WORKFLOW_SYSTEM.md`, `ARCHITECTURE.md`.
+
+ÚLTIMA ACTUALIZACIÓN: 2026-08-13
