@@ -17,12 +17,11 @@
 
 import { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
-import { useFabStack, useFabRestore } from '@ciszu/ui';
+import { useFabStack, useFabRestore, FabDismissHint } from '@ciszu/ui';
 import { isTauri } from '@/lib/isTauri';
 
 const STORAGE_KEY = 'muzicmania-feedback-dismissed';
 const ACCENT = '#ff33cc';
-const ACCENT_ALT = '#00f0ff';
 
 export default function FeedbackFab() {
   const [isDesktop, setIsDesktop] = useState(false);
@@ -65,11 +64,7 @@ export default function FeedbackFab() {
     }
   };
 
-  const stackBottom = useFabStack(
-    'feedback',
-    !isDesktop && !dismissed ? { order: 1, height: 36 } : null
-  );
-  useFabRestore(() => {
+  const handleReenable = () => {
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch {
@@ -77,100 +72,87 @@ export default function FeedbackFab() {
     }
     setDismissed(false);
     setNotice(false);
-  });
+  };
 
-  if (isDesktop || dismissed) return null;
+  const stackBottom = useFabStack(
+    'feedback',
+    !isDesktop && !dismissed ? { order: 1, height: 36 } : null
+  );
+  useFabRestore(handleReenable);
+
+  if (isDesktop || (dismissed && !notice)) return null;
 
   return (
     <>
       <style>{FAB_CSS}</style>
 
-      {notice && (
-        <div style={noticeStyle} role="dialog" aria-label="Descargas y Feedback">
-          <div style={noticeHeadStyle}>
-            <p style={noticeTitleStyle}>RECURSOS DISPONIBLES</p>
+      {!isDesktop && dismissed && notice && (
+        <FabDismissHint
+          slotId="feedback"
+          accent={ACCENT}
+          title="Feedback ocultado"
+          message="Has ocultado el botón de reporte. Puedes reactivarlo desde la página de Feedback."
+          href="/feedback"
+          linkLabel="Reactivar en Feedback"
+          onReactivate={handleReenable}
+          onClose={() => setNotice(false)}
+        />
+      )}
+
+      {!isDesktop && !dismissed && (
+        <div style={{ ...containerStyle, bottom: stackBottom }}>
+          <div style={fabRowStyle}>
             <button
               type="button"
-              aria-label="Cerrar aviso"
-              onClick={() => setNotice(false)}
-              style={noticeCloseStyle}
+              onClick={handleOpen}
+              aria-label="Reportar un problema"
+              aria-expanded={false}
+              onMouseEnter={() => setExpanded(true)}
+              onMouseLeave={() => setExpanded(false)}
+              onFocus={() => setExpanded(true)}
+              onBlur={() => setExpanded(false)}
+              style={expanded ? { ...fabStyle, ...fabExpandedStyle } : fabStyle}
+            >
+              <span style={fabIconWrapStyle}>
+                {!expanded && <span style={fabGlowStyle} />}
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke={ACCENT}
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={fabIconStyle}
+                >
+                  <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" />
+                  <path d="M12 9v4" />
+                  <path d="M12 17h.01" />
+                </svg>
+              </span>
+              <span
+                style={{
+                  ...fabTextStyle,
+                  ...(expanded
+                    ? { opacity: 1, transform: 'translateX(0)' }
+                    : { opacity: 0, transform: 'translateX(-8px)', pointerEvents: 'none' }),
+                }}
+              >
+                Reportar un problema
+              </span>
+            </button>
+
+            <button
+              type="button"
+              aria-label="No volver a mostrar"
+              onClick={handleDismiss}
+              style={dismissStyle}
+              title="No volver a mostrar"
             >
               ✕
             </button>
           </div>
-          <div style={noticeBodyStyle}>
-            <a href="/download" style={noticeLinkStyle}>
-              <svg viewBox="0 0 24 24" style={{ width: 13, height: 13 }} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <path d="m7 10 5 5 5-5" />
-                <path d="M12 15V3" />
-              </svg>
-              Descargas (app nativa · PDWA)
-            </a>
-            <a href="/feedback" style={noticeLinkStyle}>
-              <svg viewBox="0 0 24 24" style={{ width: 13, height: 13 }} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                <path d="m7 8 5 3V8" />
-                <path d="M16 8h.01" />
-              </svg>
-              Página de Feedback
-            </a>
-          </div>
         </div>
       )}
-
-      <div style={{ ...containerStyle, bottom: stackBottom }}>
-        <div style={fabRowStyle}>
-          <button
-            type="button"
-            onClick={handleOpen}
-            aria-label="Reportar un problema"
-            aria-expanded={false}
-            onMouseEnter={() => setExpanded(true)}
-            onMouseLeave={() => setExpanded(false)}
-            onFocus={() => setExpanded(true)}
-            onBlur={() => setExpanded(false)}
-            style={expanded ? { ...fabStyle, ...fabExpandedStyle } : fabStyle}
-          >
-            <span style={fabIconWrapStyle}>
-              {!expanded && <span style={fabGlowStyle} />}
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke={ACCENT}
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                style={fabIconStyle}
-              >
-                <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" />
-                <path d="M12 9v4" />
-                <path d="M12 17h.01" />
-              </svg>
-            </span>
-            <span
-              style={{
-                ...fabTextStyle,
-                ...(expanded
-                  ? { opacity: 1, transform: 'translateX(0)' }
-                  : { opacity: 0, transform: 'translateX(-8px)', pointerEvents: 'none' }),
-              }}
-            >
-              Reportar un problema
-            </span>
-          </button>
-
-          <button
-            type="button"
-            aria-label="No volver a mostrar"
-            onClick={handleDismiss}
-            style={dismissStyle}
-            title="No volver a mostrar"
-          >
-            ✕
-          </button>
-        </div>
-      </div>
     </>
   );
 }
@@ -194,74 +176,6 @@ const FAB_CSS = `
   100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 `;
-
-const noticeStyle: CSSProperties = {
-  position: 'fixed',
-  left: 16,
-  bottom: 128,
-  zIndex: 49,
-  width: 232,
-  maxWidth: 'calc(100vw - 32px)',
-  borderRadius: 14,
-  border: `1px solid ${ACCENT}44`,
-  background: 'rgba(9,9,14,0.78)',
-  padding: 14,
-  color: '#e4e4e7',
-  fontSize: 12,
-  lineHeight: 1.5,
-  boxShadow: `0 0 24px ${ACCENT}55`,
-  backdropFilter: 'blur(20px) saturate(150%)',
-  WebkitBackdropFilter: 'blur(20px) saturate(150%)',
-  animation: 'fbx-pop 0.35s ease-out',
-};
-
-const noticeHeadStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  gap: 8,
-  marginBottom: 8,
-};
-
-const noticeTitleStyle: CSSProperties = {
-  fontWeight: 700,
-  margin: 0,
-  fontSize: 10,
-  letterSpacing: '0.12em',
-  color: ACCENT_ALT,
-};
-
-const noticeCloseStyle: CSSProperties = {
-  flexShrink: 0,
-  border: 'none',
-  background: 'transparent',
-  color: '#a1a1aa',
-  fontSize: 12,
-  cursor: 'pointer',
-  borderRadius: 999,
-  padding: '0 5px',
-};
-
-const noticeBodyStyle: CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 6,
-};
-
-const noticeLinkStyle: CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: 7,
-  borderRadius: 10,
-  padding: '7px 10px',
-  fontSize: 11,
-  fontWeight: 600,
-  color: '#d4d4d8',
-  background: 'rgba(255,255,255,0.06)',
-  border: `1px solid ${ACCENT}33`,
-  textDecoration: 'none',
-  transition: 'border-color 0.2s, color 0.2s, background 0.2s',
-};
 
 const fabRowStyle: CSSProperties = {
   display: 'flex',

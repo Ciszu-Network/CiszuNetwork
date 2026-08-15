@@ -26,6 +26,9 @@ export {
   FAB_BASE_BOTTOM,
   FAB_GAP,
 } from './FabStack';
+// FabDismissHint: aviso al cerrar un FAB con contador de 3s y reactivación
+export { default as FabDismissHint } from './FabDismissHint';
+export type { FabDismissHintProps } from './FabDismissHint';
 // Alias retro-compat (deprecated, usar InstallPdwaButton)
 export { default as InstallPwaButton } from './InstallPdwaButton';
 // CloudflareGuard: guard de acceso con Turnstile (compartido entre las webs)

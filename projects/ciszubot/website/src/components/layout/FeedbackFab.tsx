@@ -15,8 +15,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
 import * as Sentry from '@sentry/nextjs';
-import Link from 'next/link';
-import { useFabStack, useFabRestore } from '@ciszu/ui';
+import { useFabStack, useFabRestore, FabDismissHint } from '@ciszu/ui';
 
 interface FeedbackFabProps {
   storageKey?: string;
@@ -91,25 +90,24 @@ export default function FeedbackFab({
   return (
     <div style={{ ...vars, ...containerStyle, bottom: stackBottom }} data-fb-host="true">
       {dismissed && dismissHint && (
-        <div style={panelStyle} role="dialog" aria-label="Feedback">
-          <div style={panelHeadStyle}>
-            <p style={panelTitleStyle}>¿Tienes un problema con CiszuBot?</p>
-            <button type="button" aria-label="Cerrar aviso" onClick={() => setDismissHint(false)} style={panelCloseStyle}>
-              ✕
-            </button>
-          </div>
-          <p style={panelSubStyle}>
-            Puedes reportarlo desde la página de Feedback o consultar la PDWA en Descargas.
-          </p>
-          <div style={panelLinksStyle}>
-            <Link href="/feedback" onClick={() => setDismissHint(false)} style={panelLinkStyle}>
-              Feedback
-            </Link>
-            <Link href="/descargas" onClick={() => setDismissHint(false)} style={panelLinkStyle}>
-              Descargas
-            </Link>
-          </div>
-        </div>
+        <FabDismissHint
+          slotId="feedback"
+          accent={accent}
+          title="Feedback ocultado"
+          message="Has ocultado el botón de reporte. Puedes reactivarlo desde la página de Feedback."
+          href="/feedback"
+          linkLabel="Reactivar en Feedback"
+          onReactivate={() => {
+            try {
+              localStorage.removeItem(storageKey);
+            } catch {
+              /* noop */
+            }
+            setDismissed(false);
+            setDismissHint(false);
+          }}
+          onClose={() => setDismissHint(false)}
+        />
       )}
 
       {!dismissed && (
@@ -178,70 +176,6 @@ const containerStyle: CSSProperties = {
   zIndex: 49,
   fontFamily: 'inherit',
   transition: 'bottom 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
-};
-
-const panelStyle: CSSProperties = {
-  marginBottom: 10,
-  width: 264,
-  maxWidth: 'calc(100vw - 32px)',
-  borderRadius: 14,
-  border: '1px solid rgba(255,255,255,0.14)',
-  background: 'rgba(9,9,14,0.72)',
-  padding: 14,
-  color: '#e4e4e7',
-  fontSize: 12,
-  lineHeight: 1.5,
-  boxShadow: '0 0 24px rgba(0,0,0,0.5)',
-  backdropFilter: 'blur(20px) saturate(150%)',
-  WebkitBackdropFilter: 'blur(20px) saturate(150%)',
-};
-
-const panelHeadStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'flex-start',
-  justifyContent: 'space-between',
-  gap: 8,
-  marginBottom: 6,
-};
-
-const panelTitleStyle: CSSProperties = {
-  fontWeight: 700,
-  margin: 0,
-  lineHeight: 1.3,
-  color: 'var(--fb-accent)',
-};
-
-const panelCloseStyle: CSSProperties = {
-  flexShrink: 0,
-  border: 'none',
-  background: 'transparent',
-  color: '#a1a1aa',
-  fontSize: 12,
-  cursor: 'pointer',
-  borderRadius: 999,
-  padding: '0 6px',
-};
-
-const panelSubStyle: CSSProperties = {
-  margin: '0 0 10px',
-  fontSize: 11,
-  lineHeight: 1.5,
-  color: '#a1a1aa',
-};
-
-const panelLinksStyle: CSSProperties = {
-  display: 'flex',
-  gap: 8,
-};
-
-const panelLinkStyle: CSSProperties = {
-  borderRadius: 999,
-  padding: '5px 12px',
-  fontSize: 11,
-  fontWeight: 600,
-  color: '#000',
-  background: 'var(--fb-accent-alt)',
-  textDecoration: 'none',
 };
 
 const fabRowStyle: CSSProperties = {

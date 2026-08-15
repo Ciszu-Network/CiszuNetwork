@@ -21,7 +21,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
-import { useFabStack, useFabRestore } from './FabStack';
+import { useFabStack, useFabRestore, restoreFabButtons } from './FabStack';
+import FabDismissHint from './FabDismissHint';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -80,6 +81,7 @@ export default function InstallPdwaButton({
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
   const [installed, setInstalled] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  const [dismissHint, setDismissHint] = useState(false);
   const [panel, setPanel] = useState(false);
   const [expanded, setExpanded] = useState(false);
 
@@ -120,11 +122,21 @@ export default function InstallPdwaButton({
 
   const handleDismiss = () => {
     setDismissed(true);
+    setDismissHint(true);
     try {
       localStorage.setItem(storageKey, '1');
     } catch {
       /* noop */
     }
+  };
+
+  const handleReactivate = () => {
+    try {
+      localStorage.removeItem(storageKey);
+    } catch {
+      /* noop */
+    }
+    restoreFabButtons();
   };
 
   const handleInstall = useCallback(async () => {
@@ -146,7 +158,10 @@ export default function InstallPdwaButton({
 
   const visible = !installed && !dismissed;
   const stackBottom = useFabStack('pdwa', visible ? { order: 0, height: 36 } : null);
-  useFabRestore(() => setDismissed(false));
+  useFabRestore(() => {
+    setDismissed(false);
+    setDismissHint(false);
+  });
 
   const hasNative = browser.nativa || deferred !== null;
 
@@ -213,12 +228,25 @@ export default function InstallPdwaButton({
     }
   }, [browser, hasNative, site]);
 
-  if (installed || dismissed) return null;
+  if (installed) return null;
+  if (dismissed && !dismissHint) return null;
 
   return (
     <div style={{ ...vars, ...containerStyle, bottom: stackBottom }} data-pdwa-host="true">
       <style>{PDWA_CSS}</style>
-      {panel && (
+      {dismissed && dismissHint && (
+        <FabDismissHint
+          slotId="pdwa"
+          accent={accent}
+          title="Botón ocultado"
+          message="Has ocultado el botón de instalar. Puedes reactivarlo desde la página de Descargas."
+          href="/descargas"
+          linkLabel="Reactivar en Descargas"
+          onReactivate={handleReactivate}
+          onClose={() => setDismissHint(false)}
+        />
+      )}
+      {!dismissed && panel && (
         <div style={panelStyle} role="dialog" aria-label="Información de instalación PDWA">
           <div style={panelHeadStyle}>
             <p style={panelTitleStyle}>{panelData.title}</p>
@@ -248,56 +276,58 @@ export default function InstallPdwaButton({
         </div>
       )}
 
-      <div style={fabRowStyle}>
-        <button
-          type="button"
-          onClick={handleInstall}
-          aria-label={`Instalar ${site} como PDWA`}
-          aria-expanded={panel}
-          onMouseEnter={() => setExpanded(true)}
-          onMouseLeave={() => setExpanded(false)}
-          onFocus={() => setExpanded(true)}
-          onBlur={() => setExpanded(false)}
-          style={expanded ? { ...fabStyle, ...fabExpandedStyle } : fabStyle}
-        >
-          <span style={fabIconWrapStyle}>
-            {!expanded && <span style={fabGlowStyle} />}
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="var(--pdwa-accent)"
-              strokeWidth="2.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              style={fabIconStyle}
-            >
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <path d="m7 10 5 5 5-5" />
-              <path d="M12 15V3" />
-            </svg>
-          </span>
-          <span
-            style={{
-              ...fabTextStyle,
-              ...(expanded
-                ? { opacity: 1, transform: 'translateX(0)' }
-                : { opacity: 0, transform: 'translateX(-8px)', pointerEvents: 'none' }),
-            }}
+      {!dismissed && (
+        <div style={fabRowStyle}>
+          <button
+            type="button"
+            onClick={handleInstall}
+            aria-label={`Instalar ${site} como PDWA`}
+            aria-expanded={panel}
+            onMouseEnter={() => setExpanded(true)}
+            onMouseLeave={() => setExpanded(false)}
+            onFocus={() => setExpanded(true)}
+            onBlur={() => setExpanded(false)}
+            style={expanded ? { ...fabStyle, ...fabExpandedStyle } : fabStyle}
           >
-            {hasNative ? 'Instalar PDWA' : browser.id === 'opera-gx' || browser.id === 'opera' ? 'Alternativa PDWA (Opera)' : 'Instalar PDWA'}
-          </span>
-        </button>
+            <span style={fabIconWrapStyle}>
+              {!expanded && <span style={fabGlowStyle} />}
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="var(--pdwa-accent)"
+                strokeWidth="2.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={fabIconStyle}
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <path d="m7 10 5 5 5-5" />
+                <path d="M12 15V3" />
+              </svg>
+            </span>
+            <span
+              style={{
+                ...fabTextStyle,
+                ...(expanded
+                  ? { opacity: 1, transform: 'translateX(0)' }
+                  : { opacity: 0, transform: 'translateX(-8px)', pointerEvents: 'none' }),
+              }}
+            >
+              {hasNative ? 'Instalar PDWA' : browser.id === 'opera-gx' || browser.id === 'opera' ? 'Alternativa PDWA (Opera)' : 'Instalar PDWA'}
+            </span>
+          </button>
 
-        <button
-          type="button"
-          aria-label="No volver a mostrar"
-          onClick={handleDismiss}
-          style={dismissStyle}
-          title="No volver a mostrar"
-        >
-          ✕
-        </button>
-      </div>
+          <button
+            type="button"
+            aria-label="No volver a mostrar"
+            onClick={handleDismiss}
+            style={dismissStyle}
+            title="No volver a mostrar"
+          >
+            ✕
+          </button>
+        </div>
+      )}
     </div>
   );
 }

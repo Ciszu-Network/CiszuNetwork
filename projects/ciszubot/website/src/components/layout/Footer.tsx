@@ -1,14 +1,19 @@
-'use client';
+﻿'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Icon, SmartImage } from '@ciszu/ui';
 import {
   CISZUKO_ANTONY,
   CISZU_NETWORK,
   DISCORD_SERVER,
+  FACEBOOK,
   GITHUB_ORG,
+  INSTAGRAM,
   INVITE_URL,
+  LANGS,
   LOGO_LOGOTIPO,
+  X_SOCIAL,
   YOUTUBE,
   BOT_PREFIX,
   TOP_GG_BOT,
@@ -36,10 +41,31 @@ const IcoYoutube = () => (
   </svg>
 );
 
+const IcoFacebook = () => (
+  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
+    <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047v-2.66c0-3.026 1.792-4.697 4.533-4.697 1.312 0 2.686.235 2.686.235v2.971H15.83c-1.491 0-1.956.93-1.956 1.886v2.265h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z" />
+  </svg>
+);
+
+const IcoInstagram = () => (
+  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" />
+  </svg>
+);
+
+const IcoX = () => (
+  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+);
+
 const SOCIALS = [
   { Ico: IcoDiscord, href: DISCORD_SERVER, label: 'Discord', glow: 'hover:border-[#5865F2] hover:text-[#5865F2] hover:shadow-[0_0_15px_rgba(88,101,242,0.5)]' },
-  { Ico: IcoGithub, href: GITHUB_ORG, label: 'GitHub', glow: 'hover:border-white hover:text-white hover:shadow-[0_0_15px_rgba(255,255,255,0.4)]' },
+  { Ico: IcoGithub, href: GITHUB_ORG, label: 'GitHub', glow: 'hover:border-ink hover:text-ink hover:shadow-[0_0_15px_rgba(0,0,0,0.3)]' },
   { Ico: IcoYoutube, href: YOUTUBE, label: 'YouTube', glow: 'hover:border-[#FF0000] hover:text-[#FF0000] hover:shadow-[0_0_15px_rgba(255,0,0,0.5)]' },
+  { Ico: IcoFacebook, href: FACEBOOK, label: 'Facebook', glow: 'hover:border-[#1877F2] hover:text-[#1877F2] hover:shadow-[0_0_15px_rgba(24,119,242,0.5)]' },
+  { Ico: IcoInstagram, href: INSTAGRAM, label: 'Instagram', glow: 'hover:border-[#E4405F] hover:text-[#E4405F] hover:shadow-[0_0_15px_rgba(228,64,95,0.5)]' },
+  { Ico: IcoX, href: X_SOCIAL, label: 'X', glow: 'hover:border-ink hover:text-ink hover:shadow-[0_0_15px_rgba(0,0,0,0.3)]' },
 ];
 
 const IcoUp = () => (
@@ -61,22 +87,41 @@ interface FooterProps {
 
 export default function Footer({ lang, dict }: FooterProps) {
   const isActive = (href: string) => typeof window !== 'undefined' && window.location.pathname === href;
+  const [isDark, setIsDark] = useState(true);
+
+  useEffect(() => {
+    setIsDark(document.documentElement.classList.contains('dark'));
+  }, []);
+
+  const setTheme = () => {
+    const root = document.documentElement;
+    const isDarkNow = root.classList.contains('dark');
+    const next = isDarkNow ? 'light' : 'dark';
+    root.classList.toggle('dark', next === 'dark');
+    setIsDark(next === 'dark');
+    document.cookie = `ciszubot_theme=${next}; path=/; max-age=31536000`;
+  };
+
+  const setLang = (code: Lang) => {
+    document.cookie = `ciszubot_lang=${code}; path=/; max-age=31536000`;
+    window.location.reload();
+  };
 
   return (
-    <footer className="relative bg-[#0a0a14] border-t border-white/10 pt-12 pb-6 px-4 md:px-8 overflow-hidden">
+    <footer className="relative bg-bg border-t border-border pt-12 pb-6 px-4 md:px-8 overflow-hidden">
       {/* Scroll arrows flotantes (arriba / abajo) */}
       <div className="fixed bottom-8 right-8 z-40 flex flex-col gap-3">
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           aria-label="Ir arriba"
-          className="p-3 bg-black/60 backdrop-blur-md border-2 border-neon-blue rounded-full text-neon-blue shadow-[0_0_15px_rgba(0,212,255,0.3)] hover:text-neon-pink hover:border-neon-pink hover:shadow-[0_0_15px_rgba(255,51,204,0.4)] transition-all active:scale-95"
+          className="p-3 bg-surface/90 backdrop-blur-md border-2 border-neon-blue rounded-full text-neon-blue shadow-[0_0_15px_rgba(0,212,255,0.3)] hover:text-neon-pink hover:border-neon-pink hover:shadow-[0_0_15px_rgba(255,51,204,0.4)] transition-all active:scale-95"
         >
           <IcoUp />
         </button>
         <button
           onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}
           aria-label="Ir abajo"
-          className="p-3 bg-black/60 backdrop-blur-md border-2 border-neon-blue rounded-full text-neon-blue shadow-[0_0_15px_rgba(0,212,255,0.3)] hover:text-neon-pink hover:border-neon-pink hover:shadow-[0_0_15px_rgba(255,51,204,0.4)] transition-all active:scale-95"
+          className="p-3 bg-surface/90 backdrop-blur-md border-2 border-neon-blue rounded-full text-neon-blue shadow-[0_0_15px_rgba(0,212,255,0.3)] hover:text-neon-pink hover:border-neon-pink hover:shadow-[0_0_15px_rgba(255,51,204,0.4)] transition-all active:scale-95"
         >
           <IcoDown />
         </button>
@@ -86,10 +131,10 @@ export default function Footer({ lang, dict }: FooterProps) {
 
       <div className="max-w-screen-xl mx-auto">
         {/* Main Footer Layout Container (estilo MuzicMania) */}
-        <div className="flex flex-col xl:flex-row gap-6 mb-8 bg-[#05050a] border border-white/5 p-6 lg:p-8 rounded-[2rem] shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+        <div className="flex flex-col xl:flex-row gap-6 mb-8 bg-card border border-border p-6 lg:p-8 rounded-[2rem] shadow-[0_0_50px_rgba(0,0,0,0.5)]">
 
           {/* LEFT: Brand & Community */}
-          <div className="flex flex-col items-center text-center xl:w-2/5 border-b xl:border-b-0 xl:border-r border-white/10 pb-8 xl:pb-0 xl:pr-10">
+          <div className="flex flex-col items-center text-center xl:w-2/5 border-b xl:border-b-0 xl:border-r border-border pb-8 xl:pb-0 xl:pr-10">
             <Link href="/" className="flex flex-col items-center gap-4 cursor-pointer group hover:scale-105 active:scale-95 transition-all duration-300 mb-6">
               <SmartImage
                 src={LOGO_LOGOTIPO}
@@ -98,7 +143,7 @@ export default function Footer({ lang, dict }: FooterProps) {
                 height={32}
                 className="h-[32px] w-auto group-hover:drop-shadow-[0_0_20px_rgba(0,212,255,0.8)] transition-all duration-300"
               />
-              <span className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.25em]">
+              <span className="text-[10px] text-faint font-bold uppercase tracking-[0.25em]">
                 {dict.nav.invite} · <code className="text-neon-blue bg-neon-blue/10 border border-neon-blue/30 px-1.5 py-0.5 rounded font-bold">{BOT_PREFIX}</code>
               </span>
             </Link>
@@ -127,7 +172,7 @@ export default function Footer({ lang, dict }: FooterProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   title={label}
-                  className={`w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-muted transition-all duration-300 hover:scale-110 ${glow}`}
+                  className={`w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center text-muted transition-all duration-300 hover:scale-110 ${glow}`}
                 >
                   <Ico />
                 </a>
@@ -157,8 +202,8 @@ export default function Footer({ lang, dict }: FooterProps) {
                       href={l.href}
                       className={`flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 group ${
                         active
-                          ? 'border-neon-blue bg-neon-blue/20 shadow-[0_0_15px_rgba(0,212,255,0.3)] text-neon-blue hover:text-white'
-                          : 'border-transparent text-white hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]'
+                          ? 'border-neon-blue bg-neon-blue/20 shadow-[0_0_15px_rgba(0,212,255,0.3)] text-neon-blue hover:text-ink'
+                          : 'border-transparent text-ink hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]'
                       }`}
                     >
                       <span className="transition-colors duration-300 shrink-0">
@@ -177,15 +222,15 @@ export default function Footer({ lang, dict }: FooterProps) {
               </h4>
               <div className="flex flex-col gap-1.5 w-full">
                 <a href={CISZU_NETWORK} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border border-transparent text-white font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]">
+                  className="flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border border-transparent text-ink font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]">
                   <span className="tracking-wide">Ciszu Network</span>
                 </a>
                 <a href={CISZUKO_ANTONY} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border border-transparent text-white font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]">
+                  className="flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border border-transparent text-ink font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]">
                   <span className="tracking-wide">Ciszuko Antony</span>
                 </a>
                 <a href={GITHUB_ORG} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border border-transparent text-white font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]">
+                  className="flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border border-transparent text-ink font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]">
                   <span className="tracking-wide">GitHub</span>
                 </a>
               </div>
@@ -213,11 +258,11 @@ export default function Footer({ lang, dict }: FooterProps) {
               </h4>
               <div className="flex flex-col gap-1.5 w-full">
                 <Link href="/terminos"
-                  className="flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border border-transparent text-white font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]">
+                  className="flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border border-transparent text-ink font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]">
                   <span className="tracking-wide">{dict.footer.terms}</span>
                 </Link>
                 <Link href="/privacidad"
-                  className="flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border border-transparent text-white font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]">
+                  className="flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border border-transparent text-ink font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]">
                   <span className="tracking-wide">{dict.footer.privacy}</span>
                 </Link>
                 <div className="flex flex-wrap justify-center sm:justify-start gap-2 mt-2">
@@ -227,7 +272,7 @@ export default function Footer({ lang, dict }: FooterProps) {
                     { href: DISBOARD_SERVER, label: 'Disboard', glow: 'hover:border-neon-purple hover:text-neon-purple' },
                   ].map((s) => (
                     <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
-                      className={`px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white/5 border border-white/10 text-muted transition-all ${s.glow}`}>
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-bold bg-card border border-border text-muted transition-all ${s.glow}`}>
                       {s.label}
                     </a>
                   ))}
@@ -240,7 +285,7 @@ export default function Footer({ lang, dict }: FooterProps) {
         {/* Bottom Bar */}
         <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent my-8" />
 
-        <div className="flex flex-col items-center justify-between gap-2 text-xs text-faint pb-2 text-center">
+        <div className="flex flex-col items-center justify-between gap-3 text-xs text-faint pb-2 text-center">
           <p>
             © {new Date().getFullYear()}{' '}
             <a href={CISZU_NETWORK} target="_blank" rel="noopener noreferrer" className="hover:text-neon-blue transition-colors font-semibold">
@@ -254,6 +299,48 @@ export default function Footer({ lang, dict }: FooterProps) {
               Ciszuko Antony
             </a>
           </p>
+
+          {/* Toggles de tema e idioma */}
+          <div className="flex flex-wrap items-center justify-center gap-2 pb-4">
+            <button
+              onClick={setTheme}
+              className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group ${
+                isDark ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
+              }`}
+              aria-label="Toggle theme"
+              title="Toggle theme"
+            >
+              {isDark ? (
+                <svg className="w-5 h-5 text-black transition-transform duration-500 group-hover:rotate-12" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+              ) : (
+                <svg className="w-6 h-6 text-black transition-transform duration-500 group-hover:rotate-90" viewBox="0 0 24 24" fill="currentColor" stroke="black" strokeWidth={1}>
+                  <circle cx="12" cy="12" r="4" />
+                  <path d="M12 1v3m0 16v3M4.22 4.22l2.12 2.12m11.32 11.32l2.12 2.12M1 12h3m16 0h3M4.22 19.78l2.12-2.12M19.78 4.22l-2.12 2.12" strokeLinecap="round" />
+                </svg>
+              )}
+            </button>
+
+            <div className="flex items-center rounded-full border border-border bg-card overflow-hidden shadow-lg">
+              {LANGS.map((l) => (
+                <button
+                  key={l.code}
+                  onClick={() => setLang(l.code)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold tracking-wide transition-all cursor-pointer ${
+                    lang === l.code
+                      ? 'bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white shadow-[0_0_12px_rgba(0,212,255,0.4)]'
+                      : 'text-muted hover:text-ink hover:bg-card'
+                  }`}
+                  aria-pressed={lang === l.code}
+                  title={l.code === 'es' ? 'Español' : 'English'}
+                >
+                  <Icon name={l.flag} style="flag" size={14} />
+                  {l.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </footer>

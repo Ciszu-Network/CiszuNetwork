@@ -1,7 +1,7 @@
 # PROJECTS_SYSTEM — Sistema de Proyectos del Ecosistema (Ciszu Network)
 
 Versión: 2.0.0
-Actualización: 2026-08-14
+Actualización: 2026-08-15
 Identificador: PROJECTS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: documento maestro de los proyectos de Ciszu Network. Fusiona la vista
@@ -141,6 +141,40 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 
 > Este historial absorbe `PROJECT_HISTORY.md` (eliminado 13 ago 2026). Añadir aquí los
 > nuevos hitos al cierre de sesión.
+
+### 15 de Agosto, 2026 — Pulido de frontend: footers, favicons y FAB dismiss (TODO global)
+
+- **FAB dismiss unificado (`FabDismissHint`)**: nuevo componente compartido en `@ciszu/ui`
+  (aviso al cerrar un FAB con contador de 3 s, texto de reactivación desde la página y
+  botón reactivar con `restoreFabButtons`). Migrados a él `InstallPdwaButton` (PDWA) y los
+  `FeedbackFab` de las 4 webs (ciszu, ciszukoa, muzicmania, ciszubot). Resuelve el TODO
+  "advertencias al cerrar con X" (antes solo uno de los 2 mostraba aviso y se superponía).
+- **Footers ×4**: copyrights centrados con espacio inferior, créditos "hecho con amor por
+  Ciszuko Antony · respaldado por Ciszu Network" con enlaces en color, rango 2024–2026 y
+  icono de copyright; enlaces nav del footer en tonos adaptados al tema (ciszubot) y
+  perfil de YouTube circular en el header del footer de ciszukoa.
+- **Favicon error corregido (ciszu y ciszukoa)**: el `<link rel="icon">` ya no usa el
+  `/favicon.ico` cacheado con el logo antiguo.
+  - ciszunetwork → isotipo con fondo transparente (`ciszu_logo_isotipo_outline_zwhite_ccolor.svg`).
+  - ciszukoa → perfil circular de YouTube (`youtube_canal.png`), mismo asset que el turnstile
+    (el `CloudflareGuard` ahora recibe `PROFILE_PIC` en lugar del isotipo).
+  - Verificado en el HTML `.next`: los icon link apuntan al CDN en ambas webs.
+- **Navbar ciszu**: hamburguesa movida antes del botón Account; toggles de tema/idioma
+  fuera del header (solo en la sidebar/menú); `NAV_ITEMS` con Descargas y Feedback fuera
+  de la sección "Información".
+- **Navbar ciszubot**: toggles de tema/idioma al header estilo muzicmania + hamburguesa en
+  móvil (con las mismas opciones dentro); botón "Invitar" con texto; nav con
+  `transform-gpu will-change-transform [backface-visibility:hidden]` (fix del blur bug en
+  modo claro); tema oscuro por defecto (script en `layout.tsx`, cookie `ciszubot_theme`).
+- **Tema claro ciszubot**: navbar y footer migrados a tokens del tema (`bg-bg`, `bg-card`,
+  `bg-surface`, `text-ink`, `text-muted`, `text-faint`, `border-border`, `bg-muted/15`);
+  `text-white` solo sobre gradientes vivos (neon y `#5865F2`); footers con fondo claro
+  consistente (no negro). Footer con 6 redes (Discord, GitHub, YouTube, Facebook,
+  Instagram, X) + toggles theme/idioma.
+- **Assets**: `FACEBOOK`, `INSTAGRAM`, `X_SOCIAL` añadidas a `src/lib/i18n.ts` de ciszubot
+  (URLs canónicas de `site.ts` de ciszu).
+- **Verificado**: tsc ×4, lint (ciszu, ciszukoa, muzicmania — ciszubot no tiene script lint
+  en CI), builds ×4 OK.
 
 ### 15 de Agosto, 2026 — Directus endurecido + errores de compilación local documentados
 
@@ -300,5 +334,5 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 3. **Pendientes (§3)**: mover a historial cuando se resuelva, añadir nuevos bloqueos.
 4. Marcar "Última actualización" y actualizar `STATUS_SYSTEM.md` y `STATISTICS_SYSTEM.md`.
 
-_Última revisión: 13 ago 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
+_Última revisión: 15 ago 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
 `ARCHITECTURE.md`, `WORKFLOW_SYSTEM.md`, `AGENTS.md`.

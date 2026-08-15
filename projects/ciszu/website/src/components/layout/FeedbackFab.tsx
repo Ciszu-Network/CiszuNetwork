@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { MessageSquareWarning } from 'lucide-react';
-import { useFabStack, useFabRestore } from '@ciszu/ui';
+import { useFabStack, useFabRestore, FabDismissHint } from '@ciszu/ui';
 import { openSentryFeedback } from '@/lib/sentry';
 
 const STORAGE_KEY = 'ciszu-feedback-dismissed';
@@ -15,8 +15,8 @@ const STORAGE_KEY = 'ciszu-feedback-dismissed';
  * - Al pulsar el botón principal abre el widget de Sentry (openSentryFeedback).
  * - Tiene su propio ✕: guarda "ciszu-feedback-dismissed" en localStorage y no
  *   vuelve a salir.
- * - Al pulsar ✕ muestra un mini-panel de advertencia con links a Feedback y
- *   Descargas para reactivarlo (quita el flag de localStorage).
+ * - Al pulsar ✕ muestra un aviso compartido (FabDismissHint) con contador de 3s
+ *   indicando que puede reactivarlo desde la página de Feedback.
  */
 export default function FeedbackFab() {
   const [dismissed, setDismissed] = useState(false);
@@ -63,39 +63,17 @@ export default function FeedbackFab() {
 
   return (
     <div className="fixed left-[16px] z-[60]" style={{ bottom: stackBottom, transition: 'bottom 0.45s cubic-bezier(0.22, 1, 0.36, 1)' }}>
-      {showWarning && (
-        <div className="mb-3 w-72 max-w-[calc(100vw-32px)] p-4 rounded-2xl border border-white/15 bg-[#0a0a12]/95 text-[#e4e4e7] text-xs leading-relaxed shadow-[0_0_28px_rgba(250,204,21,0.35)] backdrop-blur-xl animate-fade-in-up">
-          <p className="font-bold mb-1" style={{ color: '#fbbf24' }}>
-            Feedback ocultado
-          </p>
-          <p className="text-[#a1a1aa] mb-3">
-            Has ocultado el botón de reporte. Siempre puedes reactivarlo o escribirnos
-            directamente.
-          </p>
-          <div className="flex flex-wrap gap-2">
-            <Link
-              href="/feedback"
-              onClick={handleReenable}
-              className="px-3 py-1.5 rounded-full bg-[#22d3ee] text-black font-bold text-[10px] uppercase tracking-widest hover:brightness-110 cursor-pointer"
-            >
-              Feedback
-            </Link>
-            <Link
-              href="/descargas"
-              onClick={handleReenable}
-              className="px-3 py-1.5 rounded-full border border-white/25 text-[#e4e4e7] font-bold text-[10px] uppercase tracking-widest hover:bg-white/10 cursor-pointer"
-            >
-              Descargas
-            </Link>
-            <button
-              type="button"
-              onClick={() => setShowWarning(false)}
-              className="px-3 py-1.5 rounded-full border border-white/15 text-[#a1a1aa] font-bold text-[10px] uppercase tracking-widest hover:bg-white/10 cursor-pointer"
-            >
-              Cerrar
-            </button>
-          </div>
-        </div>
+      {dismissed && showWarning && (
+        <FabDismissHint
+          slotId="feedback"
+          accent="#22d3ee"
+          title="Feedback ocultado"
+          message="Has ocultado el botón de reporte. Puedes reactivarlo desde la página de Feedback."
+          href="/feedback"
+          linkLabel="Reactivar en Feedback"
+          onReactivate={handleReenable}
+          onClose={() => setShowWarning(false)}
+        />
       )}
 
       {!dismissed && (
