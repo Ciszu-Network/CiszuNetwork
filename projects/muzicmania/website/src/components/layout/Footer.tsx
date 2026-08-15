@@ -158,7 +158,7 @@ export const Footer = () => {
         {/* Global Controls & Bottom Bar */}
         <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent my-8" />
 
-        <div className="flex flex-col md:flex-row items-center justify-between gap-8 pb-4">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-8 pb-6">
 
           {/* LEFT: Navbar-style trigger buttons */}
           <div className="flex items-center gap-4">
@@ -192,11 +192,17 @@ export const Footer = () => {
             </button>
           </div>
 
-          {/* RIGHT: Epic Copyright Copy */}
-          <div className="text-center space-y-1">
+          {/* RIGHT: Copyright */}
+          <div className="text-center space-y-2">
             <p className="text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-widest leading-loose">
-              &copy; {new Date().getFullYear()} <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="hover:text-neon-cyan transition-colors cursor-pointer uppercase font-black">CISZU NETWORK</a> & MUZICMANIA. ALL RIGHTS RESERVED.<br className="hidden sm:block" />
-              ARCHITECTED CON ❤️ POR <a href="https://ciszukoantony.vercel.app" target="_blank" rel="noopener noreferrer" className="text-neon-cyan font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(0,240,255,0.8)]">CISZUKO ANTONY</a>.
+              <span className="text-neon-cyan">&copy;</span> 2024-{new Date().getFullYear()}{' '}
+              <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="hover:text-neon-cyan transition-colors cursor-pointer uppercase font-black">CISZU NETWORK</a> &amp; MUZICMANIA. ALL RIGHTS RESERVED.
+            </p>
+            <p className="text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-widest leading-loose">
+              HECHO CON AMOR POR{' '}
+              <a href="https://ciszukoantony.vercel.app" target="_blank" rel="noopener noreferrer" className="text-neon-cyan font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(0,240,255,0.8)]">CISZUKO ANTONY</a>{' '}
+              · RESPALDADO POR{' '}
+              <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="text-neon-cyan font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(0,240,255,0.8)]">CISZU NETWORK</a>
             </p>
           </div>
         </div>

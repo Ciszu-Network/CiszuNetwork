@@ -115,7 +115,7 @@ export default function Home() {
         <div className="relative z-10 max-w-4xl mx-auto">
           <div className="flex items-center justify-center gap-6 mb-8">
             <Image
-              src={assetResolver.resolve("projects/ciszu/content/logos/images/outline/logotype/color/ciszu_logotipo_outline_zcolor_cwhite_full.png")}
+              src={assetResolver.resolve("projects/ciszu/content/logos/images/outline/logotype/gradient/color/ciszu_logotipo_outline_zcolor_cwhite_full.svg")}
               alt={CISZU_NETWORK.name}
               width={420}
               height={227}
@@ -127,9 +127,13 @@ export default function Home() {
             {CISZU_NETWORK.name}
           </h1>
           <div className="flex items-center justify-center mb-8">
-            <p className="text-2xl md:text-4xl font-header font-bold uppercase tracking-[0.3em] text-brand-light opacity-90">
-              {CISZU_NETWORK.tagline}
-            </p>
+            <Image
+              src={assetResolver.resolve("projects/ciszu/content/logos/images/outline/tagline/tagline_white.svg")}
+              alt={CISZU_NETWORK.tagline}
+              width={400}
+              height={30}
+              priority
+            />
           </div>
           <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10 font-accent">
             Innovación digital con propósito. Desarrollamos soluciones de alto rendimiento 

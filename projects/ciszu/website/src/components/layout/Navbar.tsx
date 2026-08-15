@@ -62,17 +62,17 @@ const NAV_ITEMS: NavEntry[] = [
   {
     name: 'Información',
     icon: <Shield className="w-4 h-4" />,
-    keywords: ['sobre nosotros', 'faq', 'políticas', 'guías', 'soporte', 'info', 'feedback', 'descargas'],
+    keywords: ['sobre nosotros', 'faq', 'políticas', 'guías', 'soporte', 'info'],
     links: [
       { name: 'Sobre Nosotros', href: '/about', icon: <Info className="w-4 h-4" /> },
       { name: 'FAQ', href: '/faq', icon: <HelpCircle className="w-4 h-4" /> },
       { name: 'Políticas', href: '/policies', icon: <FileText className="w-4 h-4" /> },
       { name: 'Guías', href: '/guidelines', icon: <Sparkles className="w-4 h-4" /> },
       { name: 'Soporte', href: '/support', icon: <LifeBuoy className="w-4 h-4" /> },
-      { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" /> },
-      { name: 'Descargas', href: '/descargas', icon: <Download className="w-4 h-4" /> },
     ],
   },
+  { name: 'Descargas', href: '/descargas', icon: <Download className="w-4 h-4" /> },
+  { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" /> },
   {
     name: 'Proyectos',
     icon: <Zap className="w-4 h-4" />,
@@ -433,34 +433,17 @@ export const NavbarContent = () => {
                 {isSearchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
               </button>
 
-              {/* Theme toggle — yellow sun / moon (muzicmania style) */}
+              {/* Hamburger contextual toggle (siempre visible) */}
               <button
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className={`hidden sm:flex w-10 h-10 rounded-xl items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group ${
-                  theme === 'dark' ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
+                onClick={toggleMenu}
+                className={`p-2 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 ${
+                  isMenuOpen
+                    ? 'bg-brand-light border-brand-light text-black'
+                    : 'bg-white/5 border-white/20 text-white hover:border-brand-light hover:shadow-[0_0_10px_rgba(58,107,240,0.2)]'
                 }`}
-                title={theme === 'dark' ? 'Modo Claro' : 'Modo Oscuro'}
+                title="Menú"
               >
-                {theme === 'dark' ? (
-                  <svg className="w-5 h-5 text-black transition-transform duration-500 group-hover:rotate-12" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                  </svg>
-                ) : (
-                  <svg className="w-6 h-6 text-black transition-transform duration-500 group-hover:rotate-90" viewBox="0 0 24 24" fill="currentColor" stroke="black" strokeWidth={1}>
-                    <circle cx="12" cy="12" r="4" />
-                    <path d="M12 1v3m0 16v3M4.22 4.22l2.12 2.12m11.32 11.32l2.12 2.12M1 12h3m16 0h3M4.22 19.78l2.12-2.12M19.78 4.22l-2.12 2.12" strokeLinecap="round" />
-                  </svg>
-                )}
-              </button>
-
-              {/* Language pill — flag + code */}
-              <button
-                onClick={() => setLanguage(language === 'es' ? 'en' : 'es')}
-                className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 text-white/80 hover:text-white hover:border-brand-light/50 transition-all cursor-pointer active:scale-95"
-                title={language === 'es' ? 'English' : 'Español'}
-              >
-                <span className="w-5 h-5 rounded-full overflow-hidden border border-white/20 shrink-0 [&>svg]:w-5 [&>svg]:h-5">{currentFlag}</span>
-                <span className="text-xs font-bold uppercase tracking-widest">{language === 'es' ? 'ES' : 'EN'}</span>
+                {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
 
               {/* Account / User Button */}
@@ -493,19 +476,6 @@ export const NavbarContent = () => {
                   </div>
                 )}
               </div>
-
-              {/* Hamburger contextual toggle (siempre visible) */}
-              <button
-                onClick={toggleMenu}
-                className={`p-2 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 ${
-                  isMenuOpen
-                    ? 'bg-brand-light border-brand-light text-black'
-                    : 'bg-white/5 border-white/20 text-white hover:border-brand-light hover:shadow-[0_0_10px_rgba(58,107,240,0.2)]'
-                }`}
-                title="Menú"
-              >
-                {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-              </button>
             </div>
           </div>
         </div>

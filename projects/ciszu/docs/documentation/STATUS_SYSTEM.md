@@ -203,6 +203,7 @@ Este doc es una **foto del estado** del ecosistema; al cerrar sesión:
 
 | Fecha | Cambio relevante |
 |---|---|
+| 2026-08-15 | Pulido frontend TODO global: `FabDismissHint` compartido (`@ciszu/ui`) con contador de 3 s + reactivación, migrados `InstallPdwaButton` y `FeedbackFab` ×4. Footers ×4 con copyright centrado (2024–2026), créditos "hecho con amor por Ciszuko Antony · respaldado por Ciszu Network" en color y perfil YouTube circular (ciszukoa). Favicon error corregido: ciszunetwork usa isotipo transparente y ciszukoa el perfil circular de YouTube (igual en el turnstile `CloudflareGuard`). Navbar ciszu: hamburguesa antes de Account, toggles fuera del header, Descargas/Feedback fuera de "Información". Navbar ciszubot: toggles tema/idioma al header + hamburguesa móvil, botón "Invitar" con texto, fix blur modo claro, dark default, 6 redes en footer. Tema claro ciszubot a tokens (`bg-bg/bg-card/bg-surface/text-ink/text-muted/text-faint/border-border`). tsc/lint/builds ×4 verdes |
 | 2026-08-14 | F6 Evaluación de 12 herramientas documentada en `TOOLS_EVALUATION_PLAN.md` (zod gana sobre ArkType/TypeBox; Coolify ⏸️ hasta VPS_PLAN). Implementado: Husky + Lint-Staged versionados (pre-commit extiende secretlint/gitleaks) y **Nuqs** en muzicmania (`play`/`library` → `useQueryState('track')`, `NuqsAdapter` en layout). Fix `'use client'` en `ZoomWarning` y `ScrollSpy` de `@ciszu/ui` (rompía build). TODO #investigación completada |
 | 2026-08-14 | F5 Storybook completo: addon-docs + `Introduction.mdx`, coverage v8, viewports, agrupación; +7 componentes portados a `@ciszu/ui` (Button, RichText, VinylDisc, ScrollSpy, FlagIcon, SocialIcon, ZoomWarning) → 34 stories/9 componentes, test:storybook 34/34; `CHROMATIC_PROJECT_TOKEN` como secret del repo; commit `c1e9f8d` pusheado |
 | 2026-08-14 | F1 Drizzle, F2 NestJS+Fastify, F3 Zod/Storybook/TanStack Query, F4 Chromatic (build 1) + decisión runtime Node 24; vault +2 secrets (TanStack, Chromatic); tests 171; lint/builds verdes. Storybook: addon-vitest (interacción/regresión local con Playwright) + a11y, play functions en stories, job `storybook-tests` en CI; piloto Bun: CJS/TS nativo OK, descartado para Next/Vercel (ver FULL_STACK §Runtime). Figma: `@storybook/addon-designs` 11.1.4 (integración Storybook↔Figma vía pestaña Design + plugin "Storybook Connect"); comandos opencode (storybook/vitest/playwright/test/ciszu) + perfil PowerShell (`sb*`/`pw*`/`checkall`/`ciszuh`) probados sin colisiones. Storybook: +themes, dark-mode, tag-badges, Visual Tests (`@chromatic-com/storybook`) y MSW (`msw-storybook-addon` + worker); fix `process` en Vite (define de NEXT_PUBLIC_CDN_URL en main.ts); Chromatic builds 4–5 publicados localmente (billing suspendido); doc `UI_COMPONENTS_SYSTEM.md` creada |
@@ -231,7 +232,7 @@ Este doc es una **foto del estado** del ecosistema; al cerrar sesión:
 - [ ] Nuevas incidencias registradas en su `*_SYSTEM.md`.
 - [ ] `ÚLTIMA ACTUALIZACIÓN` fechada y `PROJECTS_SYSTEM.md` con historia.
 
-_Última revisión: 14 ago 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
+_Última revisión: 15 ago 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
 `WORKFLOW_SYSTEM.md`, `ARCHITECTURE.md`, `FULL_STACK_SYSTEM.md`.
 
-ÚLTIMA ACTUALIZACIÓN: 2026-08-14
+ÚLTIMA ACTUALIZACIÓN: 2026-08-15

@@ -156,9 +156,13 @@ export const Footer = () => {
                 height={68}
                 className="group-hover:drop-shadow-[0_0_20px_rgba(58,107,240,0.7)] transition-all duration-300"
               />
-              <span className="text-xs text-gray-500 font-bold uppercase tracking-[0.25em]">
-                &ldquo;{CISZU_NETWORK.tagline}&rdquo;
-              </span>
+              <Image
+                src={assetResolver.resolve('projects/ciszu/content/logos/images/outline/tagline/tagline_white.svg')}
+                alt={CISZU_NETWORK.tagline}
+                width={220}
+                height={17}
+                className="opacity-80 group-hover:opacity-100 transition-opacity duration-300"
+              />
             </Link>
 
             {/* Social icons with hover glow */}
@@ -254,7 +258,7 @@ export const Footer = () => {
         {/* Global Controls & Bottom Bar */}
         <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent my-8" />
 
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-4">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-6">
 
           {/* LEFT: Theme + Language triggers (muzicmania style) */}
           <div className="flex items-center gap-4">
@@ -290,21 +294,42 @@ export const Footer = () => {
           </div>
 
           {/* RIGHT: Copyright */}
-          <div className="text-center space-y-1">
+          <div className="text-center space-y-2">
             <p className="text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-widest leading-loose">
-              &copy; {new Date().getFullYear()}{' '}
+              <span className="text-brand-light">&copy;</span>{' '}
+              2024-{new Date().getFullYear()}{' '}
               <a href={EXTERNAL_LINKS.ciszunetwork} target="_blank" rel="noopener noreferrer"
                 className="text-brand-light font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(58,107,240,0.8)]">
                 CISZU NETWORK
               </a>{' '}
-              &amp; TODOS LOS DERECHOS RESERVADOS.<br className="hidden sm:block" />
-              {language === 'es' ? 'Hecho por' : 'Made by'}{' '}
-              <a href={CISZUKO_ANTONY.portfolio} target="_blank" rel="noopener noreferrer"
-                className="text-brand-light font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(58,107,240,0.8)]">
-                {CISZUKO_ANTONY.name.toUpperCase()}
-              </a>{' '}
-              {language === 'es' ? 'y el equipo de' : '& the Ciszu Network team'}{' '}
-              <span className="text-brand-light font-black">{CISZU_NETWORK.name.toUpperCase()}</span>.
+              &amp; TODOS LOS DERECHOS RESERVADOS.
+            </p>
+            <p className="text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-widest leading-loose">
+              {language === 'es' ? (
+                <>Hecho con amor por{' '}
+                  <a href={CISZUKO_ANTONY.portfolio} target="_blank" rel="noopener noreferrer"
+                    className="text-brand-accent font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(14,185,220,0.8)]">
+                    {CISZUKO_ANTONY.name.toUpperCase()}
+                  </a>
+                  {' '}&middot; respaldado por{' '}
+                  <a href={EXTERNAL_LINKS.ciszunetwork} target="_blank" rel="noopener noreferrer"
+                    className="text-brand-light font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(58,107,240,0.8)]">
+                    {CISZU_NETWORK.name.toUpperCase()}
+                  </a>
+                </>
+              ) : (
+                <>Made with love by{' '}
+                  <a href={CISZUKO_ANTONY.portfolio} target="_blank" rel="noopener noreferrer"
+                    className="text-brand-accent font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(14,185,220,0.8)]">
+                    {CISZUKO_ANTONY.name.toUpperCase()}
+                  </a>
+                  {' '}&middot; backed by{' '}
+                  <a href={EXTERNAL_LINKS.ciszunetwork} target="_blank" rel="noopener noreferrer"
+                    className="text-brand-light font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(58,107,240,0.8)]">
+                    {CISZU_NETWORK.name.toUpperCase()}
+                  </a>
+                </>
+              )}
             </p>
           </div>
         </div>
