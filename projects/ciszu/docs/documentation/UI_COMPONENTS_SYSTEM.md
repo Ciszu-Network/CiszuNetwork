@@ -31,8 +31,11 @@ Identificador: UI_COMPONENTS_SYSTEM_V1.0.0_2026_08_14_ciszunetwork
 - Filtro pnpm: `@ciszu/ui`. Ubicación: `packages/ui/`.
 - Consume `@ciszunetwork/cdn` (resolución de assets) y `storybook` (dev-only).
 - **Peer deps**: `react`/`react-dom` ≥17 (el bundler de la app resuelve). Sin bundle propio.
-- Componentes actuales: `Icon`, `IconButton`, `SmartImage` (+ utilidades de PWA/analytics en
-  `src/`). Detalle de componentes: `PACKAGES_SYSTEM.md` §2.
+- Componentes actuales: `Icon`, `IconButton`, `SmartImage`, `Button`, `RichText`, `VinylDisc`,
+  `ScrollSpy`, `FlagIcon`, `SocialIcon` (con `SOCIAL_COLORS`), `ZoomWarning` (+ utilidades de
+  PWA/analytics en `src/`). Los atoms `Button`, `RichText`, `VinylDisc`, `ScrollSpy`, `FlagIcon`,
+  `SocialIcon` y `ZoomWarning` fueron **portados desde los proyectos** (ciszu/muzicmania/
+  ciszukoantony) a `@ciszu/ui` sin dependencias nuevas. Detalle: `PACKAGES_SYSTEM.md` §2.
 
 ## 3. Storybook — el entorno de desarrollo de componentes
 
@@ -108,7 +111,8 @@ Las stories usan `tags: ['autodocs', 'a11y', 'test']`:
   chromium headless).
 - Script: `pnpm --filter @ciszu/ui test:storybook`.
 - Play functions con `storybook/test` (`expect`, `userEvent`, `within`, `fn`).
-- Cobertura actual: 5 stories en 2 componentes (Icon, SmartImage). Suites en CI: job
+- Cobertura actual: **34 stories en 9 componentes** (Icon, SmartImage, Button, RichText,
+  VinylDisc, ScrollSpy, FlagIcon, SocialIcon, ZoomWarning). Suites en CI: job
   `storybook-tests` de `ci.yml` instala chromium y ejecuta.
 - Verificación del fix de `process`: el bundle del build de Storybook ya NO referencia
   `process.env.NEXT_PUBLIC_CDN_URL` (reemplazado por define en build-time).
@@ -119,7 +123,8 @@ Las stories usan `tags: ['autodocs', 'a11y', 'test']`:
 - Token: `CHROMATIC_PROJECT_TOKEN` (env; en vault `services/supabase/.env`). appId
   `6a7f722e2641a24bc6249782`.
 - **CI**: `.github/workflows/chromatic.yml` — Action `chromaui/action@v18`, `workingDir:
-  packages/ui`, `autoAcceptChanges: main`, TurboSnap (`onlyChanged`). Documentado en
+  packages/ui`, `autoAcceptChanges: main`, TurboSnap (`onlyChanged`). El secret
+  `CHROMATIC_PROJECT_TOKEN` ya está configurado en el repo (14 ago 2026). Documentado en
   `PACKAGES_SYSTEM.md` §4.
 - **Publicación local**: con los workflows parados por billing, la publicación también puede
   ejecutarse desde este PC inyectando el token al entorno:
@@ -210,9 +215,14 @@ Ver `AGENTS.md` §Quick start y `scripts/storybook.ps1`:
 ## 13. Estado y próximos pasos
 
 - **Logrado (14 ago 2026)**: a11y, vitest, designs (Figma), themes, dark-mode, tag-badges,
-  Visual Tests (addon), MSW/worker, Chromatic (builds 4–5 publicados), fix `process` en Vite.
+  Visual Tests (addon), MSW/worker, Chromatic (builds 4–5 publicados, secret del repo
+  configurado), fix `process` en Vite, docs (addon-docs), **página MDX `Introduction`**,
+  **coverage de vitest activado**, viewports globales (mobile/tablet/laptop/desktop),
+  **agrupación** de stories (`Atoms`/`Molecules`), y **port de 7 components reales desde los
+  proyectos** con 34 stories que pasan (interacción + accesibilidad).
 - **Pendiente**: pestañas theming con `@storybook/addon-themes` aplicando a las stories
-  existentes; handlers MSW de ejemplo; historia de regresión con Visual Tests.
+  existentes; handlers MSW de ejemplo; historia de regresión con Visual Tests; primer push de
+  `packages/ui/**` disparando el workflow Chromatic en CI.
 
 ---
 
