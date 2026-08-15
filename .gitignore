@@ -173,3 +173,6 @@ __pycache__/
 
 # Proteccion anti-mirrors ciszubot web (ver arriba)
 projects/ciszubot/website/public/banners/
+
+# Estado local de Miniflare/Wrangler (workers/.wrangler)
+workers/.wrangler/

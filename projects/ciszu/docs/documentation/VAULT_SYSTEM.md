@@ -44,6 +44,7 @@ y el vault de la nube asegura la **recuperación**.
 | `projects/ciszubot/discord-bot/.env` | Token bot Discord, TOP_GG, DBL | gitignored + incluido en bundle cifrado |
 | `archives/backups/envs/vault-*.env.age` | **Bundle cifrado** de TODOS los `.env` (zip + age) | ACL fplay/SYSTEM |
 | `services/supabase/.env` (14 ago 2026) | +2 vars: **`TANSTACK_API_KEY`** (ts_, cuenta /account/submissions, proyecto "Ciszu Network", en revisión) y **`CHROMATIC_PROJECT_TOKEN`** (chpt_, Storybook visual testing) | Incluidas en re-cifrado age (`crypt` 14 ago) y bundle |
+| `services/supabase/.env` (15 ago 2026) | +13 vars **Better Stack**: `BETTERSTACK_API_TOKEN` (API Telemetry/Uptime), `BETTERSTACK_TELEMETRY_TOKEN` (source token de logs, usado por `@logtail/pino` en `@ciszunetwork/utils/logger`), `BETTERSTACK_UPTIME_TOKEN` (Uptime) y `BETTERSTACK_BACKUP_1..10` (cupos reservados para tokens de respaldo) | Incluidas en re-cifrado age (`crypt` 15 ago) — bundle pendiente |
 | `C:\Users\fplay\.ciszu\ciszu-vault-key.txt` | **Identity age** (clave privada) | ACL fplay/SYSTEM + copia en Bitwarden (usuario) |
 | `C:\Users\fplay\Tools\age\` | Binario age v1.2.1 | — |
 | Bitwarden (nube) | Copia maestra de secrets + identity age (org Ciszu + vault personal) | Org "Ciszu Network" + cuenta Francisco Garcia (Free) |

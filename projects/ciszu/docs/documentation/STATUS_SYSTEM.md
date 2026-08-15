@@ -32,6 +32,7 @@ Identificador: STATUS_SYSTEM_V2.1.0_2026_08_14_ciszunetwork
 | Bot de Discord | ✅ v3.2.0, 72 comandos, Supabase conectado (heartbeat `bot_status`) |
 | Caché multi-tienda | ✅ Implementado (9 ago 2026) — memoria → KV Upstash (`upstash-kv-ciszunetwork`) → Postgres `ciszu.cache` |
 | Monitoreo externo | ✅ UptimeRobot 5 monitores + watcher ntfy (10 ago 2026) |
+| Logging centralizado | ✅ Better Stack Telemetry conectado (15 ago 2026) — `@logtail/pino` en `@ciszunetwork/utils/logger`, envía en producción con `BETTERSTACK_TELEMETRY_TOKEN` |
 | Cloudflare (standalone) | ✅ Web Analytics + Turnstile en las 4 webs |
 | Seguridad | ✅ RLS 28/28 tablas, migración 16 aplicada, rate limits, robots.ts ×4 |
 | Storybook `@ciszu/ui` | ✅ Chromatic (builds 1–5, visual) + a11y + addon-vitest + addon-designs (Figma) + themes/dark-mode/tag-badges/Visual Tests/MSW |

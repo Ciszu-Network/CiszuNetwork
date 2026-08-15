@@ -142,6 +142,23 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 > Este historial absorbe `PROJECT_HISTORY.md` (eliminado 13 ago 2026). Añadir aquí los
 > nuevos hitos al cierre de sesión.
 
+### 15 de Agosto, 2026 — Better Stack logging conectado + worker Miniflare corregido
+
+- **Cuenta Better Stack (Telemetry/Uptime) creada** y credenciales guardadas en el vault
+  (`services/supabase/.env` → `.env.age`, re-cifrado age 15 ago): `BETTERSTACK_API_TOKEN`,
+  `BETTERSTACK_TELEMETRY_TOKEN`, `BETTERSTACK_UPTIME_TOKEN` y `BETTERSTACK_BACKUP_1..10`
+  (cupos de respaldo).
+- **Logging a Better Stack implementado**: `@logtail/pino` instalado en
+  `@ciszunetwork/utils` y `logger.ts` ahora añade el transporte a Telemetry en producción
+  cuando existe `BETTERSTACK_TELEMETRY_TOKEN` (en dev se mantiene pino-pretty sin envío,
+  para no gastar el cupo free). `TOOLS_EVALUATION_PLAN` actualizado: Better Stack pasa de
+  "⚠️ Condicional" a "✅ Usar (logs)".
+- **Worker Miniflare corregido**: `workers/src/index.ts` respondía 404 en `/` y
+  `/favicon.ico` (solo `/health`); ahora `/` y `/favicon.ico` devuelven 200 JSON informativo.
+  Verificado con `pnpm mf:dev` (200 en ambas rutas) y `mf:test` (dry-run OK).
+- **`workers/.wrangler/` añadido a `.gitignore`** (estado local de Miniflare).
+- **Docs**: `MONITORING_SYSTEM`, `VAULT_SYSTEM` y `TODO.md` actualizados.
+
 ### 14 de Agosto, 2026 — Evaluación de herramientas + Husky/Lint-staged + Nuqs
 
 - **`TOOLS_EVALUATION_PLAN.md` creado** (12 candidatos, 11 secciones): veredictos sobre
