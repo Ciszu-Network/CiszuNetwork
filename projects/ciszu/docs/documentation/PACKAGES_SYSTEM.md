@@ -57,6 +57,13 @@ Componentes React reutilizados por las webs:
 |---|---|
 | `<Icon name="..." />` | Icono SVG inline desde el registry |
 | `<SmartImage ... />` | Imagen optimizada (CDN, lazy, webp) |
+| `<Button variant=... />` | Botón de acción (primary/secondary/outline/neon, portado de muzicmania) |
+| `<RichText parts=... />` | Párrafo con partes de texto/enlaces seguros (portado de ciszukoantony) |
+| `<VinylDisc color=... />` | Vinilo decorativo SVG (portado de muzicmania) |
+| `<ScrollSpy items=... />` | Navegación lateral con IntersectionObserver (portado de muzicmania) |
+| `<FlagIcon code=... />` | Bandera ISO 3166-1 vía sistema de iconos (portado de muzicmania) |
+| `<SocialIcon platform=... />` | Icono de red social con color de marca (portado de ciszu) |
+| `<ZoomWarning />` | Aviso de zoom alto del navegador (portado de ciszu) |
 | `<FabStack ... />` | Botones flotantes apilados (PDWA + reportar) |
 | `<InstallPdwaButton />` | Instalación PWA por navegador |
 | Guard / IAST | Protección por página (seguridad) |
@@ -64,8 +71,9 @@ Componentes React reutilizados por las webs:
 - Estilos con Tailwind v4 (tokens vía `@theme` de cada web).
 - Tests en `packages/ui/tests` (Vitest); integración con Playwright security-e2e.
 - **Storybook (dev-only, F3)**: `@storybook/react-vite` v10.5.8 con `storybook` y `build-storybook`.
-  Stories en `src/**/*.stories.tsx` (Icon, SmartImage). Sin runtime en prod. Documenta el
-  componente compartido por las 4 webs con visual regression.
+  Stories en `src/**/*.stories.tsx` (34 stories en 9 componentes: Icon, SmartImage, Button,
+  RichText, VinylDisc, ScrollSpy, FlagIcon, SocialIcon, ZoomWarning). Sin runtime en prod.
+  Documenta el componente compartido por las 4 webs con visual regression.
   Addons: core (controls/actions/interactions/viewport vienen integrados en Storybook 9+,
   NO se instalan) + accesibilidad `@storybook/addon-a11y` 10.5.8 (WCAG/Axe) + Figma
   `@storybook/addon-designs` 11.1.4 (pestaña Design) + temas `@storybook/addon-themes` 10.5.8 +
@@ -76,7 +84,8 @@ Componentes React reutilizados por las webs:
 - **Interaction/local testing (F4)**: `@storybook/addon-vitest` 10.5.8 + `@vitest/browser-playwright`
   convierten las stories en tests de componente que corren en un navegador real (chromium) **sin**
   depender de Chromatic. Play functions con `storybook/test` (`expect`, `userEvent`, `fn`) en
-  `Icon.stories.tsx` (click) y `SmartImage.stories.tsx` (alt). Tag `'test'` en las stories para
+  las stories de los 9 componentes (Icon, SmartImage, Button, RichText, VinylDisc, ScrollSpy,
+  FlagIcon, SocialIcon, ZoomWarning). Tag `'test'` en las stories para
   incluirlas (default del plugin). Config: `packages/ui/vitest.config.mts` (project `storybook`).
   Script local: `pnpm --filter @ciszu/ui test:storybook`. **CI**: job `storybook-tests` en
   `.github/workflows/ci.yml` instala chromium y los ejecuta.

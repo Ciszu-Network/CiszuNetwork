@@ -1,0 +1,30 @@
+import { Meta, Title, Subtitle, Description, Controls, Stories } from '@storybook/blocks';
+
+<Meta title="Introduction" />
+
+<Title>Ciszu UI</Title>
+
+<Subtitle>Librería de componentes compartidos de Ciszu Network</Subtitle>
+
+<Description>
+  Paquete `@ciszu/ui` con los componentes reutilizables del ecosistema Ciszu Network
+  (4 webs Next.js). Cada componente incluye documentación automática (`autodocs`),
+  tests de interacción (`play` functions) y checks de accesibilidad (Axe).
+</Description>
+
+### Documentación
+
+Cada story con `tags: ['autodocs', 'a11y', 'test']` genera:
+
+- **Docs**: página de documentación automática con controles interactivos (addon-docs).
+- **A11y**: panel de accesibilidad con resultados de Axe.
+- **Tests**: validaciones de interacción ejecutadas por Vitest + Playwright (addon-vitest).
+
+### Convenciones
+
+- Los átomos viven en `Atoms/*` y las agrupaciones en `Molecules/*`.
+- Toda story que representa un estado real de la UI lleva un `play` con aserciones.
+- Los componentes siguen los estándares de seguridad de Ciszu Network (sin secretos,
+  escape de HTML de usuario, sin `dangerouslySetInnerHTML`).
+
+<Stories />

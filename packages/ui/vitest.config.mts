@@ -55,6 +55,12 @@ export default defineConfig({
             instances: [{ browser: 'chromium' }],
           },
           setupFiles: ['./.storybook/vitest.setup.ts'],
+          coverage: {
+            enabled: true,
+            provider: 'v8',
+            reportsDirectory: './coverage-storybook',
+            include: ['src/**'],
+          },
         },
       },
     ],
