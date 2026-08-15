@@ -42,6 +42,7 @@ import { CookiesBanner } from "@/components/atoms/CookiesBanner";
 import { CloudflareGuard } from "@/components/layout/CloudflareGuard";
 import { ConnectivityBanner } from "@/components/layout/ConnectivityBanner";
 import FeedbackFab from "@/components/layout/FeedbackFab";
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 export default function RootLayout({
   children,
@@ -57,7 +58,9 @@ export default function RootLayout({
             <Navbar />
             <ConnectivityBanner />
             <main className="flex-grow pt-20">
-              {children}
+              <NuqsAdapter>
+                {children}
+              </NuqsAdapter>
             </main>
             <Footer />
             <CookiesBanner />

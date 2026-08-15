@@ -86,7 +86,8 @@ Antes de codificar, lee el doc del área que tocas. Mapa por tipo de tarea:
   `UI_COMPONENTS_SYSTEM` (Storybook/Chromatic/Figma/Tailwind/React) · `FRAMEWORKS_SYSTEM` · `STYLES_SYSTEM` · `COLOR_SYSTEM`
 - **Planes**: `COMPANY_REGISTRATION_PLAN` (+ `RIF_PERSON_PLAN` · `TRADEMARK_PLAN` ·
   `COMMERCIAL_REGISTRATION_PLAN` · `TAX_PLAN` · `INTERNATIONAL_LLC_PLAN`) ·
-  `ORGANIZATIONAL_SCALABILITY_PLAN` · `RAG_VECTORS_PLAN` · `AI_ART_PLAN` · `BRAND_PLAN` · `VPS_PLAN`
+  `ORGANIZATIONAL_SCALABILITY_PLAN` · `RAG_VECTORS_PLAN` · `AI_ART_PLAN` · `BRAND_PLAN` · `VPS_PLAN` ·
+  `TOOLS_EVALUATION_PLAN` (investigación de servicios/herramientas candidatas)
 - **Protocolos de contexto**: `GEOGRAPHIC_CONTEXT_PROTOCOLS` · `HISTORICAL_CONTEXT_PROTOCOLS` ·
   `TARGET_AUDIENCE_PROTOCOLS` · `HEALTH_AND_SAFETY_PROTOCOLS` · `SCHEDULE_PROTOCOLS` ·
   `SECURITY_PROTOCOLS` · `CONTACTS_PROTOCOLS` · `IT_GLOSSARY_PROTOCOLS` · `MATERIAL_ICONS_PROTOCOLS`
@@ -134,9 +135,9 @@ Tailwind 4 + PostCSS + ESLint. Assets vía resolver/CDN (`public/` solo docs/pwa
 
 | Paquete                  | Qué hace                                                               |
 | ------------------------ | ---------------------------------------------------------------------- |
-| `@ciszu/ui`              | Componentes UI compartidos (iconos, tokens) + Storybook/Chromatic (dev-only) |
+| `@ciszu/ui`              | Componentes UI compartidos (iconos, tokens, **Modal Radix accesible**) + Storybook/Chromatic (dev-only) |
 | `@ciszunetwork/cdn`      | Resolver de assets vía CDN                                             |
-| `@ciszunetwork/utils`    | Utilidades:`createRateLimiter`, `buildCsp`, `createIast`, `escapeHtml` |
+| `@ciszunetwork/utils`    | Utilidades:`createRateLimiter`, `buildCsp`, `createIast`, `escapeHtml`. Subpaths server-only: `logger` (pino), `schema` (TypeBox), `effect` (retries) — NUNCA en client/edge |
 | `@ciszunetwork/email`    | Envío de emails                                                        |
 | `@ciszunetwork/payments` | Pasarela de pagos                                                      |
 | `@ciszunetwork/config`   | Configuración compartida                                               |

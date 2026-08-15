@@ -22,3 +22,12 @@ tauri-build = { version = "2", features = [] }
 tauri = { version = "2", features = [] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+
+# Capa de datos local (⚠️ condicional, ver TOOLS_EVALUATION_PLAN §7/§11):
+# SeaORM para persistencia local Tauri. `--features local-db` habilita sqlite.
+sea-orm = { version = "1", features = ["sqlx-sqlite", "runtime-tokio-rustls"], optional = true }
+tokio = { version = "1", features = ["macros", "rt-multi-thread"], optional = true }
+
+[features]
+default = []
+local-db = ["dep:sea-orm", "dep:tokio"]

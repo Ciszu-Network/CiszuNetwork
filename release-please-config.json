@@ -1,0 +1,38 @@
+{
+  "bootstrap-sha": "main",
+  "release-type": "node",
+  "separate-pull-requests": true,
+  "packages": {
+    "packages/ui": {
+      "package-name": "@ciszu/ui",
+      "changelog-path": "CHANGELOG.md",
+      "release-type": "node"
+    },
+    "packages/cdn": {
+      "package-name": "@ciszunetwork/cdn",
+      "changelog-path": "CHANGELOG.md",
+      "release-type": "node"
+    },
+    "packages/db": {
+      "package-name": "@ciszunetwork/db",
+      "changelog-path": "CHANGELOG.md",
+      "release-type": "node"
+    },
+    "packages/email": {
+      "package-name": "@ciszunetwork/email",
+      "changelog-path": "CHANGELOG.md",
+      "release-type": "node"
+    },
+    "packages/payments": {
+      "package-name": "@ciszunetwork/payments",
+      "changelog-path": "CHANGELOG.md",
+      "release-type": "node"
+    },
+    "packages/utils": {
+      "package-name": "@ciszunetwork/utils",
+      "changelog-path": "CHANGELOG.md",
+      "release-type": "node"
+    }
+  },
+  "plugins": ["node-workspace"]
+}

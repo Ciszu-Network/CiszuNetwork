@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useQueryState } from 'nuqs';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -48,8 +48,8 @@ function getCoverUrl(track: Track): string {
 }
 
 function LibraryContent() {
-  const searchParams = useSearchParams();
-  const initialTrackId = searchParams.get('track');
+  const [trackId] = useQueryState('track');
+  const initialTrackId = trackId;
   
   const [tracks, setTracks] = useState<Track[]>(TRACKS_DATA);
   const [selectedTrack, setSelectedTrack] = useState(TRACKS_DATA.find(t => t.id === initialTrackId) || TRACKS_DATA[0]);
@@ -95,12 +95,11 @@ function LibraryContent() {
   }, []);
 
   useEffect(() => {
-    const trackId = searchParams.get('track');
     if (trackId) {
       const track = TRACKS_DATA.find(t => t.id === trackId);
       if (track) setSelectedTrack(track);
     }
-  }, [searchParams]);
+  }, [trackId]);
 
   useEffect(() => {
     if (audioRef.current) {

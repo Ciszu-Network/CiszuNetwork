@@ -49,6 +49,9 @@ export { default as FlagIcon } from './FlagIcon';
 export { default as SocialIcon, SOCIAL_COLORS } from './SocialIcon';
 export type { SocialPlatform } from './SocialIcon';
 export { default as ZoomWarning } from './ZoomWarning';
+// Radix UI primitives: Modal accesible (Dialog con focus trap + teclado)
+export { default as Modal } from './Modal';
+export type { ModalProps } from './Modal';
 export type { PostHogAnalyticsProps } from './PostHogAnalytics';
 // Re-exportar desde @ciszunetwork/cdn para conveniencia
 export {

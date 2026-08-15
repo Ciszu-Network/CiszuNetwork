@@ -1,0 +1,31 @@
+#!/bin/sh
+# Pre-commit (Husky): Lint-Staged (eslint) + detección de secretos (secretlint + gitleaks)
+# Ignora el hook con: git commit --no-verify
+
+# 1. Lint-Staged: ejecuta ESLint sobre los archivos staged de los paquetes CON eslint
+npx lint-staged
+rc=$?
+if [ $rc -ne 0 ]; then
+  echo "Lint-Staged encontro errores de lint. Abortando commit."
+  exit 1
+fi
+
+# 2. Secretlint (scripts staged no versionados como global)
+secretlint="C:/Users/fplay/AppData/Roaming/npm/node_modules/secretlint/bin/secretlint.js"
+if git diff --cached --name-only --diff-filter=ACM | grep -q .; then
+  git diff --cached --name-only --diff-filter=ACM -z | xargs -0 -n 200 node "$secretlint" --secretlintrc .secretlintrc.json
+  rc=$?
+  if [ $rc -ne 0 ]; then
+    echo "Secretlint detecto posibles secretos. Abortando commit."
+    exit 1
+  fi
+
+  # 3. Gitleaks (protect --staged)
+  "C:/Users/fplay/AppData/Local/Programs/Gitleaks/gitleaks.exe" protect --staged --redact --config .gitleaks.toml
+  rc=$?
+  if [ $rc -ne 0 ]; then
+    echo "Gitleaks detecto posibles secretos. Abortando commit."
+    exit 1
+  fi
+fi
+exit 0
