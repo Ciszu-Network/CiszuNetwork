@@ -93,6 +93,12 @@ es un secret; vive en `.env.local` de las 4 webs (`NEXT_PUBLIC_SUPABASE_ANON_KEY
 Pingdom (caro), Cloudflare Uptime (Fase B). UptimeRobot elegido por: gratis (50 checks),
 sin tarjeta, login Google, alertas múltiples y status page.
 
+> **Nota 2026-08-15**: Better Stack entró al stack por su **logging** (no por uptime).
+> Los logs de server del ecosistema viajan con `@logtail/pino` desde
+> `@ciszunetwork/utils/logger` (token `BETTERSTACK_TELEMETRY_TOKEN` en vault). El uptime
+> sigue en UptimeRobot; las 10 monitores starter de Better Stack y su status page quedan
+> como opción si UptimeRobot se queda corto.
+
 ---
 
 ## Referencias

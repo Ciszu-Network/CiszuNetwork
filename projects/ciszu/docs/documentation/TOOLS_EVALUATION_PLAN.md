@@ -83,6 +83,10 @@ según requisitos futuros).
 - **Veredicto**: ⚠️ **Útil pero con duplicación masiva**. Como "logging dedicado" es la vía más barata ($0, sin
   tarjeta) a logs buscables. Como suite intenta reemplazar a todo lo que ya usamos; si se adoptara solo para logs,
   no hay conflicto: Sentry/PostHog/UptimeRobot/ntfy siguen igual.
+- **Estado 2026-08-15**: ✅ **Implementado como logging dedicado**. Cuenta Better Stack creada con tokens en el vault
+  (`BETTERSTACK_API_TOKEN`, `BETTERSTACK_TELEMETRY_TOKEN`, `BETTERSTACK_UPTIME_TOKEN` + backups). Transporte
+  `@logtail/pino` añadido a `@ciszunetwork/utils/logger` (activo en producción con source token; en dev pino-pretty
+  sin envío). El resto de la suite (Uptime/status page) queda opcional tras la verificación del logging.
 
 ### 1.3 Datadog
 
@@ -469,7 +473,7 @@ Estado resueltos: ArkType retirado del cuadro (zod gana por ecosistema, ver §3.
 | 2 | Lint-Staged | ✅ Usar | Lint/tsc solo sobre staged en pre-commit | Requiere Husky | Instalar con Husky |
 | 3 | Nuqs | ✅ Usar | Search params tipados; muzicmania ya lo hace a mano | Ninguno relevante | Instalar en páginas con estado de URL |
 | 4 | Radix UI | ✅ Usar | Primitives accesibles bajo demanda, tokens intactos | Fijar versiones recientes (bugs React 19.2) | Adoptar por pieza nueva |
-| 5 | Better Stack | ⚠️ Condicional | Logs SQL buscables, free sin tarjeta | Duplica Sentry/PostHog/Uptime/ntfy; Vercel Pro | Preparar emisión de logs (pino/bunyan) |
+| 5 | Better Stack | ✅ Usar (logs) | Logs SQL buscables, free sin tarjeta | Duplica Sentry/PostHog/Uptime/ntfy; Vercel Pro | Emisión de logs con `@logtail/pino` en `@ciszunetwork/utils/logger` (token en vault) |
 | 6 | TypeBox | ⚠️ Condicional | JSON Schema nativo (OpenAPI/AI tools) | Verboso, sin transforms, 1.x pide TS6+ | Preparar al generar OpenAPI/schemas |
 | 7 | Miniflare | ⚠️ Condicional | Simular Workers localmente (runtime workerd) | Requiere Node>=22 | Preparar workers (wrangler/edge) |
 | 8 | Effect TS | ⚠️ Condicional | Errores tipados + retry en módulos complejos | Curva alta, bus-factor, v4 en transición | Preparar módulos con reintentos complejos |
@@ -483,7 +487,7 @@ Estado resueltos: ArkType retirado del cuadro (zod gana por ecosistema, ver §3.
 | Acción | Herramientas |
 |---|---|
 | ✅ **Adoptar ya (cero coste)** | Turbopack (`--turbopack` build/planificar Next 16) · MSW en tests Vitest (`msw/node` + handlers compartidos) · Husky + Lint-Staged (versionar hooks de secretlint/gitleaks) |
-| ✅ **Adoptar cuando haya requisito** | Nuqs (donde haya estado de URL) · Radix UI (primitives interactivas nuevas) · Better Stack logs (si falta trazabilidad de logs) · Changesets (publicar paquetes) |
+| ✅ **Adoptar cuando haya requisito** | Nuqs (donde haya estado de URL) · Radix UI (primitives interactivas nuevas) · Changesets (publicar paquetes) |
 | ⏸️ **Skipped por hoy** | **Coolify** (solo al ejecutar `VPS_PLAN`) |
 | ⚠️ **Bajo demanda / condicional** | ArkType o TypeBox (política de validación — hoy **zod gana** por ecosistema, ver §3.2/§3.3) · Effect TS (módulo complejo) · Directus (editores de contenido) · SeaORM (Tauri con SQL local/directo) · Miniflare (si se usan Workers) · Release Please (si se adopta conventional commits) |
 | ⚪ **Innecesario hoy** | Rolldown, SWC |
