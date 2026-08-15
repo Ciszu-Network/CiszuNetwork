@@ -3,7 +3,7 @@ import { expect, within } from 'storybook/test';
 import SmartImage from '../src/SmartImage';
 
 const meta = {
-  title: 'SmartImage',
+  title: 'Atoms/SmartImage',
   component: SmartImage,
   tags: ['autodocs', 'a11y', 'test'],
   parameters: {

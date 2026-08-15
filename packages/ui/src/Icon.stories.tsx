@@ -4,7 +4,7 @@ import { Icon, IconButton } from './index';
 import type { IconButtonProps } from './index';
 
 const meta = {
-  title: 'Icon',
+  title: 'Atoms/Icon',
   component: Icon,
   tags: ['autodocs', 'a11y', 'test'],
   args: {

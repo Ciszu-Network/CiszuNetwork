@@ -36,6 +36,19 @@ export { default as SmartImage } from './SmartImage';
 export type { SmartImageProps } from './SmartImage';
 // Analíticas: PostHog (product analytics compartido; NO pisa Cloudflare Web Analytics)
 export { default as PostHogAnalytics, captureEvent } from './PostHogAnalytics';
+// Atoms portados desde los proyectos (librería de componentes reales)
+export { default as Button } from './Button';
+export type { ButtonProps } from './Button';
+export { default as RichText } from './RichText';
+export type { RichPart, RichTextProps } from './RichText';
+export { default as VinylDisc } from './VinylDisc';
+export type { VinylDiscProps } from './VinylDisc';
+export { default as ScrollSpy } from './ScrollSpy';
+export type { ScrollSpyItem } from './ScrollSpy';
+export { default as FlagIcon } from './FlagIcon';
+export { default as SocialIcon, SOCIAL_COLORS } from './SocialIcon';
+export type { SocialPlatform } from './SocialIcon';
+export { default as ZoomWarning } from './ZoomWarning';
 export type { PostHogAnalyticsProps } from './PostHogAnalytics';
 // Re-exportar desde @ciszunetwork/cdn para conveniencia
 export {
