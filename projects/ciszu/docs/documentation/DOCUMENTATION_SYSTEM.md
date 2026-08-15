@@ -59,6 +59,7 @@ carpeta `docs/documentation/` de los proyectos de Ciszu Network (hoy: el monorep
 |---|---|
 | `FRONTEND_SYSTEM.md` | Sistema de frontend |
 | `BACKEND_SYSTEM.md` | Sistema de backend |
+| `UI_COMPONENTS_SYSTEM.md` | Sistema de componentes UI (Storybook, Chromatic, Figma, Tailwind, React) |
 | `SECURITY_PROTOCOLS.md` | Protocolos de seguridad |
 | `COMPANY_REGISTRATION_PLAN.md` | Plan de registro de empresa |
 | `DOCUMENTATION_SYSTEM.md` | Reglas de la documentación (este doc) |
@@ -353,6 +354,7 @@ Ejemplos concretos:
 | `CODE_PRINCIPLES`, `DEVSECOPS`, `SECURITY_PROTOCOLS` (copias idénticas) | ✅ | ❌ (referencia) | ❌ (referencia) | ❌ (referencia) |
 | `FRONTEND/BACKEND/FRAMEWORKS/STYLES/COLOR/ICON/FULL_STACK` genéricos | ✅ | ❌ si idéntico | ❌ si idéntico | ❌ si idéntico |
 | `PACKAGES_SYSTEM`, `DB_SYSTEM` | ✅ | ❌ (consumen los de ciszu) | ❌ (solo si BD propia relevante) | ❌ (solo si BD propia relevante) |
+| `UI_COMPONENTS_SYSTEM` | ✅ | ❌ (consumen el de ciszu) | ❌ (consumen el de ciszu) | ❌ (consumen el de ciszu) |
 | `ORM_SYSTEM` (Drizzle) | ✅ | ❌ (consumen el de ciszu) | ❌ (si usan `@ciszunetwork/db`) | ❌ (si usan `@ciszunetwork/db`) |
 | `DOCUMENTATION_SYSTEM` | ✅ | ❌ | ❌ | ❌ |
 | `TAX_PLAN` y planes corporativos | ✅ | ❌ | ❌ | ❌ |
