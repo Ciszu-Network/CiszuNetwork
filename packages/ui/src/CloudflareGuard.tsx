@@ -123,8 +123,15 @@ export default function CloudflareGuard({
   const [regen, setRegen] = useState(0);
   const [leaving, setLeaving] = useState(false);
 
-  // Si no hay siteKey configurada, el guard nunca bloquea (degradación segura)
-  const enabled = Boolean(siteKey);
+  // El guard solo se activa en producción y con siteKey real configurada:
+  // - sin siteKey → degradación segura (nunca bloquea).
+  // - en desarrollo local (pnpm <app>:dev, NODE_ENV=development) → no bloquea,
+  //   porque Turnstile en localhost tarda/no carga y dejaría la pantalla
+  //   bloqueada para siempre (overlay). Para probar el guard localmente de forma
+  //   puntual, arrancar con NEXT_PUBLIC_TURNSTILE_FORCE=1.
+  const isDev = process.env.NODE_ENV === 'development';
+  const forceInDev = process.env.NEXT_PUBLIC_TURNSTILE_FORCE === '1';
+  const enabled = Boolean(siteKey) && (!isDev || forceInDev);
 
   useEffect(() => {
     setMounted(true);
