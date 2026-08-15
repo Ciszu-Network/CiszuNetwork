@@ -33,7 +33,8 @@ Identificador: STATUS_SYSTEM_V2.1.0_2026_08_14_ciszunetwork
 | Caché multi-tienda | ✅ Implementado (9 ago 2026) — memoria → KV Upstash (`upstash-kv-ciszunetwork`) → Postgres `ciszu.cache` |
 | Monitoreo externo | ✅ UptimeRobot 5 monitores + watcher ntfy (10 ago 2026) |
 | Logging centralizado | ✅ Better Stack Telemetry conectado (15 ago 2026) — `@logtail/pino` en `@ciszunetwork/utils/logger`, envía en producción con `BETTERSTACK_TELEMETRY_TOKEN` |
-| Cloudflare (standalone) | ✅ Web Analytics + Turnstile en las 4 webs |
+| Docker Desktop | ✅ Operativo (15 ago 2026, engine 29.6.2) tras reparar WSL2 (vhdx engine y de datos corruptos) |
+| Cloudflare (standalone) | ✅ Web Analytics + Turnstile en las 4 webs (guard solo en prod; en dev local no bloquea) |
 | Seguridad | ✅ RLS 28/28 tablas, migración 16 aplicada, rate limits, robots.ts ×4 |
 | Storybook `@ciszu/ui` | ✅ Chromatic (builds 1–5, visual) + a11y + addon-vitest + addon-designs (Figma) + themes/dark-mode/tag-badges/Visual Tests/MSW |
 | Testing | ✅ Vitest (171 unit) + Playwright E2E + Storybook (component + a11y + visual) |

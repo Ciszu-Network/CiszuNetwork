@@ -142,6 +142,26 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 > Este historial absorbe `PROJECT_HISTORY.md` (eliminado 13 ago 2026). Añadir aquí los
 > nuevos hitos al cierre de sesión.
 
+### 15 de Agosto, 2026 — Docker/WSL reparado + Directus GUI local + Turnstile dev fix
+
+- **Docker Desktop/WSL2 reparado** (corrupción del engine y del disco de datos):
+  - `main/ext4.vhdx` (system del engine) no montaba con `E_ACCESSDENIED` de HCS —
+    regenerado (respaldado a `.bak`).
+  - `docker_data.vhdx` (21 GB, contenedores) dañado y con ACLs corruptas; ACLs
+    reseteadas con `icacls /reset` (elevado) y disco regenerado (backup en
+    `docker_data.vhdx.old`). Los contenedores/imágenes del bot son reconstruibles
+    (Dockerfile + Supabase). Docker 29.6.2 operativo verificado con `hello-world`.
+  - Nota: `wsl --unregister docker-desktop` + relanzar regen el raíz limpio.
+- **Directus GUI local instalado**: `tools/directus/docker-compose.yml` con la imagen
+  `directus/directus` + SQLite (volumen `./data`). Operativo en
+  `http://localhost:8055` (admin@example.com / admin, primeras credenciales locales).
+  `tools/directus/data/` gitignored. Directus pasa de "solo con editores" a probado
+  localmente (TOOLS_EVALUATION_PLAN §4.4).
+- **Turnstile ya no bloquea en dev local**: `CloudflareGuard` (`packages/ui`) solo se
+  activa en producción; en `NODE_ENV=development` renderiza children directo (antes el
+  overlay de verificación se quedaba para siempre en `localhost`). Override para probarlo
+  puntualmente: `NEXT_PUBLIC_TURNSTILE_FORCE=1`. Tests 11/11 verdes.
+
 ### 15 de Agosto, 2026 — Better Stack logging conectado + worker Miniflare corregido
 
 - **Cuenta Better Stack (Telemetry/Uptime) creada** y credenciales guardadas en el vault
