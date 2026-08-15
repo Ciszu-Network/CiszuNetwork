@@ -142,6 +142,21 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 > Este historial absorbe `PROJECT_HISTORY.md` (eliminado 13 ago 2026). Añadir aquí los
 > nuevos hitos al cierre de sesión.
 
+### 14 de Agosto, 2026 — Storybook completo + componentes portados a @ciszu/ui
+
+- **Guion de Storybook completado**: addon-docs (`Introduction.mdx`), coverage de vitest
+  (`@vitest/coverage-v8`, `coverage-storybook/`), viewports globales (mobile/tablet/laptop/
+  desktop) en `preview.ts`, agrupación de stories (`Atoms/` y `Molecules/`).
+- **7 componentes reales portados de los proyectos a `@ciszu/ui`**: `Button`, `RichText`,
+  `VinylDisc`, `ScrollSpy`, `FlagIcon`, `SocialIcon` (+ `SOCIAL_COLORS`) y `ZoomWarning` — sin
+  dependencias nuevas (iconos de `ZoomWarning` inline, sin `lucide-react`). Ya exportados en
+  `packages/ui/src/index.ts`.
+- **34 stories en 9 componentes** (antes 5 en 2): todas pasan con `pnpm --filter @ciszu/ui
+  test:storybook` (34/34, 9 archivos).
+- **Secret `CHROMATIC_PROJECT_TOKEN` configurado en el repo** (Ciszu-Network/CiszuNetwork)
+  desde el vault (`services/supabase/.env`); el workflow `chromatic.yml` ya está listo.
+- **Push realizado**: commit `c1e9f8d` a `main`.
+
 ### 1 de Agosto, 2026 — Cierre de Sesión de Seguridad y Estándares de Ingeniería
 
 - **Builds 4/4 corregidos**: el error `ReactNode` (doble identidad de tipos) era causado por
