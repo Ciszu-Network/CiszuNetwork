@@ -67,8 +67,12 @@ Componentes React reutilizados por las webs:
   Stories en `src/**/*.stories.tsx` (Icon, SmartImage). Sin runtime en prod. Documenta el
   componente compartido por las 4 webs con visual regression.
   Addons: core (controls/actions/interactions/viewport vienen integrados en Storybook 9+,
-  NO se instalan) + `@storybook/addon-a11y` 10.5.8 (accesibilidad en dev). Tags `['autodocs','a11y']`
-  en las stories para activar docs y chequeos de accesibilidad.
+  NO se instalan) + accesibilidad `@storybook/addon-a11y` 10.5.8 (WCAG/Axe) + Figma
+  `@storybook/addon-designs` 11.1.4 (pestaña Design) + temas `@storybook/addon-themes` 10.5.8 +
+  `storybook-dark-mode` 5.0.0 + badges de tags `storybook-addon-tag-badges` 3.1.0 +
+  Visual Tests `@chromatic-com/storybook` 5.3.0 + `msw-storybook-addon` 3.0.0/msw 2.15
+  (mock de APIs). Tags `['autodocs','a11y','test']` en las stories. Catálogo y detalle de cada
+  addon en `UI_COMPONENTS_SYSTEM.md §3`.
 - **Interaction/local testing (F4)**: `@storybook/addon-vitest` 10.5.8 + `@vitest/browser-playwright`
   convierten las stories en tests de componente que corren en un navegador real (chromium) **sin**
   depender de Chromatic. Play functions con `storybook/test` (`expect`, `userEvent`, `fn`) en
@@ -77,7 +81,7 @@ Componentes React reutilizados por las webs:
   Script local: `pnpm --filter @ciszu/ui test:storybook`. **CI**: job `storybook-tests` en
   `.github/workflows/ci.yml` instala chromium y los ejecuta.
 - **Chromatic (dev-only, F4)**: CLI `chromatic` 18.2 + token `CHROMATIC_PROJECT_TOKEN` (vault) para
-  visual + accessibility testing alojado. Builds 1–3 publicados (14 ago 2026; 5 stories/2
+  visual + accessibility testing alojado. Builds 1–5 publicados (14 ago 2026; 5 stories/2
   componentes). appId `6a7f722e2641a24bc6249782`.
   Script local: `pnpm --filter @ciszu/ui chromatic` (usa `--exit-zero-on-changes`: no falla en
   CI por cambios detectados; el review se hace en la web de Chromatic).

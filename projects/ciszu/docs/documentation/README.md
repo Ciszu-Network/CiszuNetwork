@@ -14,7 +14,7 @@ commits como el resto del repo.
 `ARCHITECTURE.md` · `FULL_STACK_SYSTEM.md` (stack) · `DB_SYSTEM.md` (BD/consultas) · `AUTH_SYSTEM.md` (auth) · `CACHING_SYSTEM.md` · `CDN_SYSTEM.md` · `ICON_SYSTEM.md` · `MEDIA_FORMATS_SYSTEM.md` · `DOCKER_SYSTEM.md` · `TESTING_SYSTEM.md` · `TOOLS_SYSTEM.md` · `WORKFLOW_SYSTEM.md` · `VAULT_SYSTEM.md` (credenciales) · `DOMAINS_SYSTEM.md` · `MONITORING_SYSTEM.md` (UptimeRobot + ntfy) · `ANALYTICS_SYSTEM.md` · `ERRORS_SYSTEM.md` (Sentry) · `EMAILS_SYSTEM.md` · `PAYMENTS_SYSTEM.md` · `REVIEWS_SYSTEM.md` · `CORS_SYSTEM.md` · `BUSINESS_SYSTEM.md` · `OPENCODE_SYSTEM.md` (voz + comandos) · `REMOTE_CONTROL_SYSTEM.md` (SSH/Tailscale/ciszu-ai) · `KNOWLEDGE_SYSTEM.md` (educación) · `DOCUMENTATION_SYSTEM.md` (reglas de docs) · `STATISTICS_SYSTEM.md` · `STATUS_SYSTEM.md` · `PROJECTS_SYSTEM.md`
 
 ### Arquitectura por capas
-`FRONTEND_SYSTEM.md` (frontend) · `BACKEND_SYSTEM.md` (backend) · `PACKAGES_SYSTEM.md` (paquetes compartidos) · `FRAMEWORKS_SYSTEM.md` (frameworks) · `STYLES_SYSTEM.md` (estilos) · `COLOR_SYSTEM.md` (color)
+`FRONTEND_SYSTEM.md` (frontend) · `BACKEND_SYSTEM.md` (backend) · `PACKAGES_SYSTEM.md` (paquetes compartidos) · `UI_COMPONENTS_SYSTEM.md` (componentes UI + Storybook/Chromatic/Figma) · `FRAMEWORKS_SYSTEM.md` (frameworks) · `STYLES_SYSTEM.md` (estilos) · `COLOR_SYSTEM.md` (color)
 
 ### Planes
 `COMPANY_REGISTRATION_PLAN.md` · `RIF_PERSON_PLAN.md` · `COMMERCIAL_REGISTRATION_PLAN.md` · `INTERNATIONAL_LLC_PLAN.md` · `TAX_PLAN.md` · `TRADEMARK_PLAN.md` · `ORGANIZATIONAL_SCALABILITY_PLAN.md` · `RAG_VECTORS_PLAN.md` · `AI_ART_PLAN.md` · `VPS_PLAN.md` · `INSTALLERS_SYSTEM.md`
