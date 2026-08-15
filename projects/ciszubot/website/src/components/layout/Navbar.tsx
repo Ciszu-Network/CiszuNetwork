@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
@@ -146,7 +146,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
   const linkCls = (href: string) =>
     `relative group flex items-center gap-0 hover:gap-1.5 px-3 py-1.5 rounded-lg font-header font-bold text-sm transition-all duration-300 border cursor-pointer hover:-translate-y-0.5 active:scale-95 ${
       isActive(href)
-        ? 'border-neon-blue bg-neon-blue/15 shadow-[0_0_15px_rgba(0,212,255,0.3)] text-neon-blue gap-1.5 -translate-y-0.5 hover:text-white'
+        ? 'border-neon-blue bg-neon-blue/15 shadow-[0_0_15px_rgba(0,212,255,0.3)] text-neon-blue gap-1.5 -translate-y-0.5 hover:text-ink'
         : 'border-transparent text-muted hover:text-neon-blue hover:border-neon-blue/40 hover:bg-neon-blue/10 hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]'
     }`;
 
@@ -157,7 +157,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
     <>
       {/* Loader de navegación global — aparece al navegar entre páginas */}
       <div
-        className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] flex items-center justify-center p-4 rounded-full bg-[#0a0a14]/90 border backdrop-blur-md shadow-[0_0_20px_rgba(0,212,255,0.3)] transition-all duration-300 ${
+        className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] flex items-center justify-center p-4 rounded-full bg-bg/90 border backdrop-blur-md shadow-[0_0_20px_rgba(0,212,255,0.3)] transition-all duration-300 ${
           isNavigating
             ? 'translate-y-0 opacity-100 border-emerald-400/60 text-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.4)]'
             : 'translate-y-10 opacity-0 pointer-events-none border-neon-blue/50 text-neon-blue'
@@ -174,7 +174,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
         </svg>
       </div>
 
-      <nav className="fixed top-0 left-0 w-full z-50 bg-[#0a0a14]/85 backdrop-blur-2xl border-b border-white/10">
+      <nav className="fixed top-0 left-0 w-full z-50 bg-bg/85 backdrop-blur-2xl border-b border-border transform-gpu will-change-transform [backface-visibility:hidden]">
         <div
           className={`absolute bottom-0 left-0 w-full h-[2px] bg-[length:200%_auto] animate-gradient-x transition-colors duration-500 ${
             isNavigating
@@ -244,7 +244,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                 className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 cursor-pointer border group ${
                   searchOpen
                     ? 'bg-neon-blue border-neon-blue text-black'
-                    : 'bg-white/5 border-white/20 text-white hover:border-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.25)]'
+                    : 'bg-card border-border text-ink hover:border-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.25)]'
                 }`}
                 aria-label={dict.nav.search}
                 title={dict.nav.search}
@@ -253,9 +253,9 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
               </button>
 
               {searchOpen && (
-                <div className="absolute right-0 top-12 w-[min(90vw,24rem)] overflow-hidden rounded-2xl border border-white/10 bg-[#0f0f1c]/95 backdrop-blur-2xl shadow-2xl animate-fade-in-down">
-                  <div className="flex items-center gap-2 border-b border-white/10 px-3">
-                    <Icon name="search" size={16} className="shrink-0 text-white/50" />
+                <div className="absolute right-0 top-12 w-[min(90vw,24rem)] overflow-hidden rounded-2xl border border-border bg-surface/95 backdrop-blur-2xl shadow-2xl animate-fade-in-down">
+                  <div className="flex items-center gap-2 border-b border-border px-3">
+                    <Icon name="search" size={16} className="shrink-0 text-muted" />
                     <input
                       ref={inputRef}
                       value={query}
@@ -267,12 +267,12 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                         }
                       }}
                       placeholder={dict.nav.search}
-                      className="w-full bg-transparent py-3 text-sm text-white outline-none placeholder:text-white/40"
+                      className="w-full bg-transparent py-3 text-sm text-ink outline-none placeholder:text-muted"
                     />
                     {query && (
                       <button
                         onClick={() => setQuery('')}
-                        className="p-1 rounded-full text-white/50 hover:text-white hover:bg-white/10 cursor-pointer"
+                        className="p-1 rounded-full text-muted hover:text-ink hover:bg-muted/15 cursor-pointer"
                         aria-label="clear"
                       >
                         <Icon name="close" size={14} />
@@ -281,20 +281,20 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                   </div>
                   <div className="max-h-72 overflow-y-auto p-1.5">
                     {suggestions.length === 0 && query.trim().length > 0 ? (
-                      <p className="px-3 py-4 text-center text-xs text-white/50">{dict.nav.searchHint}</p>
+                      <p className="px-3 py-4 text-center text-xs text-muted">{dict.nav.searchHint}</p>
                     ) : (
                       suggestions.map((p) => (
                         <Link
                           key={p.href}
                           href={p.href}
                           onClick={() => { setSearchOpen(false); setQuery(''); }}
-                          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-white/85 transition hover:bg-white/5 hover:text-neon-blue"
+                          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-ink/85 transition hover:bg-muted/15 hover:text-neon-blue"
                         >
-                          <span className="w-7 h-7 rounded-lg flex items-center justify-center bg-black/40 text-white/70 shrink-0">
+                          <span className="w-7 h-7 rounded-lg flex items-center justify-center bg-muted/25 text-muted shrink-0">
                             <Icon name={p.icon} size={14} />
                           </span>
                           {dict.nav[p.labelKey as keyof typeof dict.nav]}
-                          <span className="ml-auto text-[11px] text-white/35">{p.href}</span>
+                          <span className="ml-auto text-[11px] text-faint">{p.href}</span>
                         </Link>
                       ))
                     )}
@@ -304,7 +304,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
             </div>
 
             {/* Selector de idioma — estilo muzicmania */}
-            <div className="hidden sm:flex items-center rounded-full border border-white/10 bg-white/5 overflow-hidden shadow-lg">
+            <div className="hidden sm:flex items-center rounded-full border border-border bg-card overflow-hidden shadow-lg">
               {LANGS.map((l) => (
                 <button
                   key={l.code}
@@ -312,7 +312,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                   className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold tracking-wide transition-all cursor-pointer ${
                     lang === l.code
                       ? 'bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white shadow-[0_0_12px_rgba(0,212,255,0.4)]'
-                      : 'text-muted hover:text-white hover:bg-white/10'
+                      : 'text-muted hover:text-neon-blue hover:bg-muted/15'
                   }`}
                   aria-pressed={lang === l.code}
                   title={l.code === 'es' ? 'Español' : 'English'}
@@ -323,32 +323,33 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
               ))}
             </div>
 
-            {/* Invitar — icono desplegable */}
+            {/* Invitar — botón con texto */}
             <div className="relative hidden sm:block" ref={inviteRef}>
               <button
                 onClick={() => { setInviteOpen(!inviteOpen); setAuthOpen(false); setAccountOpen(false); setSearchOpen(false); }}
-                className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 cursor-pointer shadow-md border group ${
+                className={`flex items-center gap-2 rounded-xl px-3 py-2 transition-all duration-300 cursor-pointer shadow-md border group font-header font-bold text-sm ${
                   inviteOpen
                     ? 'bg-neon-blue border-neon-blue text-black'
-                    : 'bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white hover:scale-110 hover:shadow-[0_10px_28px_-8px_rgba(0,212,255,0.8)]'
+                    : 'bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white hover:scale-105 hover:shadow-[0_10px_28px_-8px_rgba(0,212,255,0.8)]'
                 } active:scale-95`}
                 aria-label={dict.nav.invite}
                 title={dict.nav.invite}
                 aria-expanded={inviteOpen}
               >
-                <Icon name="discord" size={17} className="[&>g]:fill-current" />
+                <Icon name="discord" size={16} className="[&>g]:fill-current" />
+                <span>{dict.nav.invite}</span>
               </button>
               {inviteOpen && (
-                <div className="absolute right-0 top-12 w-56 overflow-hidden rounded-xl border border-white/10 bg-[#12121f] shadow-2xl animate-fade-in-down">
+                <div className="absolute right-0 top-12 w-56 overflow-hidden rounded-xl border border-border bg-surface shadow-2xl animate-fade-in-down">
                 <a
                   href={INVITE_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-white transition hover:bg-white/5 hover:text-neon-blue"
+                  className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-ink transition hover:bg-muted/15 hover:text-neon-blue"
                 >
                   <Icon name="external" size={15} /> {dict.nav.invite}
                 </a>
-                <p className="border-t border-white/10 px-4 py-2.5 text-[11px] text-white/45">
+                <p className="border-t border-border px-4 py-2.5 text-[11px] text-muted">
                   Añade a CiszuBot a tu servidor de Discord
                 </p>
                 </div>
@@ -360,7 +361,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
               <div className="relative" ref={accountRef}>
                 <button
                   onClick={() => { setAccountOpen(!accountOpen); setAuthOpen(false); setSearchOpen(false); setInviteOpen(false); }}
-                  className="flex items-center gap-2 rounded-full border border-white/15 bg-white/5 p-1 pr-2.5 transition hover:border-[#5865F2] hover:bg-white/10 cursor-pointer"
+                  className="flex items-center gap-2 rounded-full border border-border bg-card p-1 pr-2.5 transition hover:border-[#5865F2] hover:bg-muted/15 cursor-pointer"
                   aria-label="Cuenta"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -369,27 +370,27 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                     alt=""
                     className="h-7 w-7 rounded-full object-cover"
                   />
-                  <span className="hidden lg:block max-w-[90px] truncate text-xs font-bold text-white/85">
+                  <span className="hidden lg:block max-w-[90px] truncate text-xs font-bold text-ink/85">
                     {account.name ?? 'Cuenta'}
                   </span>
-                  <Icon name="arrow-right" size={12} className={`text-white/60 transition-transform ${accountOpen ? 'rotate-90' : '-rotate-90'}`} />
+                  <Icon name="arrow-right" size={12} className={`text-muted transition-transform ${accountOpen ? 'rotate-90' : '-rotate-90'}`} />
                 </button>
                 {accountOpen && (
-                  <div className="absolute right-0 top-12 w-52 overflow-hidden rounded-xl border border-white/10 bg-[#12121f] shadow-2xl animate-fade-in-down">
-                    <div className="border-b border-white/10 px-4 py-3">
-                      <p className="truncate text-sm font-bold text-white">{account.name ?? 'Cuenta'}</p>
-                      <p className="truncate text-[11px] text-white/50">{account.id}</p>
+                  <div className="absolute right-0 top-12 w-52 overflow-hidden rounded-xl border border-border bg-surface shadow-2xl animate-fade-in-down">
+                    <div className="border-b border-border px-4 py-3">
+                      <p className="truncate text-sm font-bold text-ink">{account.name ?? 'Cuenta'}</p>
+                      <p className="truncate text-[11px] text-muted">{account.id}</p>
                     </div>
                     <Link
                       href="/dashboard"
                       onClick={() => setAccountOpen(false)}
-                      className="flex items-center gap-2 px-4 py-2.5 text-sm text-white/85 transition hover:bg-white/5 hover:text-neon-blue"
+                      className="flex items-center gap-2 px-4 py-2.5 text-sm text-ink/85 transition hover:bg-muted/15 hover:text-neon-blue"
                     >
                       <Icon name="server" size={15} /> Panel de control
                     </Link>
                     <a
                       href="/api/auth/logout"
-                      className="flex items-center gap-2 px-4 py-2.5 text-sm text-red-400 transition hover:bg-white/5"
+                      className="flex items-center gap-2 px-4 py-2.5 text-sm text-red-400 transition hover:bg-muted/15"
                     >
                       <Icon name="close" size={15} /> Cerrar sesión
                     </a>
@@ -403,7 +404,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                   className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 cursor-pointer border ${
                     authOpen
                       ? 'bg-[#5865F2] border-[#5865F2] text-white shadow-[0_0_12px_rgba(88,101,242,0.6)]'
-                      : 'bg-white/5 border-white/20 text-white hover:border-[#5865F2] hover:shadow-[0_0_10px_rgba(88,101,242,0.4)]'
+                      : 'bg-card border-border text-ink hover:border-[#5865F2] hover:shadow-[0_0_10px_rgba(88,101,242,0.4)]'
                   }`}
                   aria-label="Iniciar sesión"
                   title="Iniciar sesión"
@@ -411,7 +412,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                   <Icon name="user" size={17} />
                 </button>
                 {authOpen && (
-                  <div className="absolute right-0 top-12 w-60 overflow-hidden rounded-xl border border-white/10 bg-[#12121f] shadow-2xl animate-fade-in-down">
+                  <div className="absolute right-0 top-12 w-60 overflow-hidden rounded-xl border border-border bg-surface shadow-2xl animate-fade-in-down">
                     <a
                       href="/api/auth/discord"
                       className="flex items-center gap-3 px-4 py-3 text-sm font-bold bg-[#5865F2] text-white transition hover:bg-[#4752c4]"
@@ -421,7 +422,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                     </a>
                     <Link
                       href="/dashboard"
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 transition hover:bg-white/5 hover:text-neon-blue"
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-muted transition hover:bg-muted/15 hover:text-neon-blue"
                     >
                       <Icon name="server" size={15} /> Panel de control
                     </Link>
@@ -429,7 +430,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                       href={INVITE_URL}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 transition hover:bg-white/5 hover:text-neon-blue"
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-muted transition hover:bg-muted/15 hover:text-neon-blue"
                     >
                       <Icon name="external" size={15} /> {dict.nav.invite}
                     </a>
@@ -443,7 +444,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
               className={`md:hidden p-2 rounded-full border transition-all cursor-pointer active:scale-95 ${
                 menuOpen
                   ? 'bg-neon-blue border-neon-blue text-black'
-                  : 'bg-white/5 border-white/20 text-white hover:border-neon-blue'
+                  : 'bg-card border-border text-ink hover:border-neon-blue'
               }`}
               aria-label="Menu"
             >
@@ -454,7 +455,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
       </div>
 
       {menuOpen && (
-        <div className="md:hidden border-t border-white/10 bg-[#0a0a14]/95 backdrop-blur-2xl px-4 py-3 animate-fade-in-down">
+        <div className="md:hidden border-t border-border bg-bg/95 backdrop-blur-2xl px-4 py-3 animate-fade-in-down">
           {NAV_PAGES.map((link) => (
             <Link
               key={link.href}
@@ -463,19 +464,19 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
               className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-header font-bold transition-all ${
                 isActive(link.href)
                   ? 'bg-neon-blue/15 border border-neon-blue/40 text-neon-blue'
-                  : 'text-muted hover:text-white hover:bg-white/5 border border-transparent'
+                  : 'text-muted hover:text-neon-blue hover:bg-muted/15 border border-transparent'
               }`}
             >
               <span className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-                isActive(link.href) ? 'bg-neon-blue/20 text-neon-blue shadow-[0_0_10px_rgba(0,212,255,0.3)]' : 'bg-black/40 text-white/60'
+                isActive(link.href) ? 'bg-neon-blue/20 text-neon-blue shadow-[0_0_10px_rgba(0,212,255,0.3)]' : 'bg-muted/25 text-muted'
               }`}>
                 <Icon name={link.icon} size={16} />
               </span>
               {dict.nav[link.key]}
             </Link>
           ))}
-          <div className="flex items-center justify-between pt-3 mt-2 border-t border-white/10">
-            <div className="flex items-center rounded-full border border-white/10 bg-white/5 overflow-hidden">
+          <div className="flex items-center justify-between pt-3 mt-2 border-t border-border">
+            <div className="flex items-center rounded-full border border-border bg-card overflow-hidden">
               {LANGS.map((l) => (
                 <button
                   key={l.code}
@@ -513,7 +514,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
               href={INVITE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold bg-white/10 text-white/85 border border-white/15"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold bg-card text-ink/85 border border-border"
             >
               <Icon name="external" size={14} />
               <span>Invitar</span>

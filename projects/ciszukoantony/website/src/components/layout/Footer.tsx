@@ -88,8 +88,8 @@ export default function Footer() {
         <div className="flex flex-col lg:flex-row gap-8 mb-10 rounded-[2rem] bg-[#050505] border border-white/5 p-6 lg:p-8 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
 
           {/* LEFT: Brand + socials with glow */}
-          <div className="flex flex-col items-center text-center lg:items-start lg:text-left lg:w-[38%] gap-7 border-b lg:border-b-0 lg:border-r border-white/10 pb-8 lg:pb-0 lg:pr-8">
-            <Link href="/" className="flex items-center gap-3 group active:scale-95 transition-all duration-300">
+          <div className="flex flex-col items-center text-center lg:w-[38%] gap-7 border-b lg:border-b-0 lg:border-r border-white/10 pb-8 lg:pb-0 lg:pr-8">
+            <Link href="/" className="flex items-center justify-center gap-3 group active:scale-95 transition-all duration-300">
               <SmartImage
                 src="projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png"
                 alt="Ciszuko" width={28} height={25}
@@ -100,9 +100,15 @@ export default function Footer() {
                 alt="Ciszuko Antony" width={140} height={32}
                 className="opacity-80 group-hover:opacity-100 group-hover:drop-shadow-[0_0_15px_rgba(61,106,223,0.8)] transition-all duration-300"
               />
+              <SmartImage
+                src="projects/ciszukoantony/content/assets/youtube_canal.png"
+                alt="Ciszuko Antony YouTube"
+                width={34} height={34}
+                className="rounded-full ring-2 ring-brand/40 group-hover:ring-neon-pink group-hover:shadow-[0_0_15px_rgba(255,0,131,0.8)] transition-all duration-300"
+              />
             </Link>
 
-            <div className="flex flex-wrap justify-center lg:justify-start gap-3">
+            <div className="flex flex-wrap justify-center gap-3">
               {SOCIALS.map((s) => (
                 <a key={s.name} href={s.href} target="_blank" rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 transition-all duration-300 hover:scale-110 hover:text-neon-blue hover:border-neon-blue/60 hover:shadow-[0_0_15px_rgba(61,106,223,0.5)] hover:bg-gradient-to-tr hover:from-neon-blue/30 hover:to-transparent"
@@ -200,11 +206,12 @@ export default function Footer() {
 
           {/* Copyright */}
           <p className="text-gray-600 text-xs text-center leading-relaxed">
-            &copy; {new Date().getFullYear()}{' '}
-            <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="text-neon-blue hover:text-neon-cyan transition-colors">Ciszu Network</a>. All rights reserved.
+            <span className="text-neon-blue">&copy;</span> 2024-{new Date().getFullYear()}{' '}
+            <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="text-neon-blue hover:text-neon-cyan transition-colors">Ciszu Network</a> &amp; Ciszuko Antony. All rights reserved.
             <br />
-            Designed & built by{' '}
-            <Link href="/" className="text-neon-blue hover:text-neon-cyan transition-colors">Ciszuko Antony</Link>.
+            Hecho con amor por{' '}
+            <Link href="/" className="text-neon-blue hover:text-neon-cyan transition-colors">Ciszuko Antony</Link> · respaldado por{' '}
+            <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="text-neon-blue hover:text-neon-cyan transition-colors">Ciszu Network</a>.
             <br />
             Ciszu Network&reg; is a registered trademark.
           </p>

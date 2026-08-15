@@ -16,7 +16,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { useRouter } from 'next/navigation';
-import { useFabStack, useFabRestore } from '@ciszu/ui';
+import { useFabStack, useFabRestore, FabDismissHint } from '@ciszu/ui';
 import { attachFeedback } from '@/lib/feedback';
 
 const STORAGE_KEY = 'ciszu-feedback-dismissed';
@@ -65,8 +65,7 @@ export default function FeedbackFab() {
     }
   };
 
-  const stackBottom = useFabStack('feedback', !dismissed ? { order: 1, height: 36 } : null);
-  useFabRestore(() => {
+  const handleReenable = () => {
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch {
@@ -74,7 +73,10 @@ export default function FeedbackFab() {
     }
     setDismissed(false);
     setPanel(false);
-  });
+  };
+
+  const stackBottom = useFabStack('feedback', !dismissed ? { order: 1, height: 36 } : null);
+  useFabRestore(handleReenable);
 
   if (dismissed && !panel) return null;
 
@@ -82,36 +84,17 @@ export default function FeedbackFab() {
     <div style={{ ...containerStyle, bottom: stackBottom }} data-feedback-host="true">
       <style>{FEEDBACK_CSS}</style>
 
-      {panel && (
-        <div style={panelStyle} role="dialog" aria-label="Feedback y descargas">
-          <div style={panelHeadStyle}>
-            <p style={panelTitleStyle}>¿Quieres reportar un problema o probar la app?</p>
-            <button type="button" aria-label="Cerrar aviso" onClick={() => setPanel(false)} style={panelCloseStyle}>
-              ✕
-            </button>
-          </div>
-          <p style={panelSubStyle}>
-            Recuerda que siempre puedes dejar tu feedback o instalar Ciszuko Antony como app de escritorio:
-          </p>
-          <div style={panelLinksStyle}>
-            <a href="/feedback" style={linkStyle}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={linkIconStyle}>
-                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
-                <rect x="8" y="2" width="8" height="4" rx="1" />
-                <path d="m9 14 2 2 4-4" />
-              </svg>
-              Feedback
-            </a>
-            <a href="/descargas" style={linkStyle}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={linkIconStyle}>
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="7 10 12 15 17 10" />
-                <line x1="12" y1="15" x2="12" y2="3" />
-              </svg>
-              Descargas
-            </a>
-          </div>
-        </div>
+      {dismissed && panel && (
+        <FabDismissHint
+          slotId="feedback"
+          accent="#a78bfa"
+          title="Feedback ocultado"
+          message="Has ocultado el botón de reporte. Puedes reactivarlo desde la página de Feedback."
+          href="/feedback"
+          linkLabel="Reactivar en Feedback"
+          onReactivate={handleReenable}
+          onClose={() => setPanel(false)}
+        />
       )}
 
       {!dismissed && (
@@ -185,82 +168,6 @@ const FEEDBACK_CSS = `
   100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 `;
-
-const panelStyle: CSSProperties = {
-  marginBottom: 12,
-  width: 288,
-  maxWidth: 'calc(100vw - 32px)',
-  borderRadius: 16,
-  border: '1px solid rgba(255,255,255,0.14)',
-  background: 'rgba(9,9,14,0.72)',
-  padding: 16,
-  color: '#e4e4e7',
-  fontSize: 13,
-  lineHeight: 1.5,
-  boxShadow: '0 0 28px var(--fb-accent)',
-  backdropFilter: 'blur(20px) saturate(150%)',
-  WebkitBackdropFilter: 'blur(20px) saturate(150%)',
-  animation: 'fb-pop 0.35s ease-out',
-};
-
-const panelHeadStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'flex-start',
-  justifyContent: 'space-between',
-  gap: 8,
-  marginBottom: 10,
-};
-
-const panelTitleStyle: CSSProperties = {
-  fontWeight: 600,
-  margin: 0,
-  lineHeight: 1.3,
-  color: 'var(--fb-accent)',
-};
-
-const panelCloseStyle: CSSProperties = {
-  flexShrink: 0,
-  border: 'none',
-  background: 'transparent',
-  color: '#a1a1aa',
-  fontSize: 13,
-  cursor: 'pointer',
-  borderRadius: 999,
-  padding: '0 6px',
-};
-
-const panelSubStyle: CSSProperties = {
-  margin: '0 0 12px',
-  fontSize: 12,
-  lineHeight: 1.5,
-  color: '#a1a1aa',
-};
-
-const panelLinksStyle: CSSProperties = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: 8,
-};
-
-const linkStyle: CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: 6,
-  borderRadius: 999,
-  padding: '6px 12px',
-  fontSize: 12,
-  fontWeight: 600,
-  color: 'var(--fb-accent-alt)',
-  border: '1px solid rgba(34,211,238,0.35)',
-  background: 'rgba(34,211,238,0.08)',
-  textDecoration: 'none',
-  transition: 'opacity 0.2s, transform 0.2s',
-};
-
-const linkIconStyle: CSSProperties = {
-  width: 13,
-  height: 13,
-};
 
 const fabRowStyle: CSSProperties = {
   display: 'flex',

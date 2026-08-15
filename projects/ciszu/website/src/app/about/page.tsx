@@ -15,21 +15,31 @@ export default function AboutPage() {
     <div className="min-h-screen pt-24 pb-20">
       <div className="max-w-4xl mx-auto px-4">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand/10 text-brand-light mb-6">
-            <Shield className="w-8 h-8" />
+          <div className="inline-flex items-center justify-center mb-6">
+            <Image
+              src={assetResolver.resolve("projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg")}
+              alt=""
+              width={60}
+              height={60}
+              className="drop-shadow-brand"
+            />
           </div>
           <h1 className="text-4xl md:text-6xl font-header font-black bg-gradient-to-r from-brand-light to-brand-accent bg-clip-text text-transparent uppercase tracking-tighter mb-4">
             Sobre Nosotros
           </h1>
-          <p className="text-gray-400 max-w-xl mx-auto text-sm uppercase tracking-widest">
-            {CISZU_NETWORK.tagline}
-          </p>
+          <Image
+            src={assetResolver.resolve("projects/ciszu/content/logos/images/outline/tagline/tagline_white.svg")}
+            alt={CISZU_NETWORK.tagline}
+            width={260}
+            height={20}
+            className="opacity-90"
+          />
         </div>
 
         <div className="space-y-12">
           <div className="p-8 md:p-10 rounded-[2rem] bg-gradient-to-br from-brand/10 via-brand-dark/5 to-transparent border border-brand/20">
             <Image
-              src={assetResolver.resolve("projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zcolor_ccolor.svg")}
+              src={assetResolver.resolve("projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg")}
               alt={CISZU_NETWORK.name}
               width={60}
               height={60}

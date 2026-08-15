@@ -7,7 +7,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import FeedbackFab from "@/components/layout/FeedbackFab";
 import "./globals.css";
-const ICON_SVG = assetResolver.resolve("projects/ciszukoantony/content/logos/images/outline/isotype/color/ciszuko_logo_isotipo_outline_zcolor_cwhite.svg");
+const PROFILE_PIC = assetResolver.resolve("projects/ciszukoantony/content/assets/youtube_canal.png");
 const OG_IMAGE = assetResolver.resolve("projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png");
 
 const exo2 = Exo_2({
@@ -30,8 +30,8 @@ export const metadata: Metadata = {
   description: "Official portfolio of Ciszuko Antony (Francisco Garcia Antonio M. / y8) — CEO & Founder of Ciszuko Network. Innovation, development and technology.",
   keywords: ["Ciszuko Antony", "Ciszuko Network", "portfolio", "developer", "Venezuela", "CEO", "technology"],
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
+    icon: PROFILE_PIC,
+    shortcut: PROFILE_PIC,
     apple: "/pwa/icon-192.png",
   },
   appleWebApp: { capable: true, title: "Ciszuko Antony", statusBarStyle: "black-translucent" },
@@ -51,7 +51,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${exo2.variable} ${rajdhani.variable}`}>
       <body className="bg-black text-white min-h-screen font-sans flex flex-col">
-        <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={ICON_SVG} title="Ciszuko Antony" subtitle="Ciszuko Antony Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszukoantony">
+        <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={PROFILE_PIC} title="Ciszuko Antony" subtitle="Ciszuko Antony Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszukoantony">
           <Navbar />
           <main className="flex-grow">{children}</main>
           <Footer />

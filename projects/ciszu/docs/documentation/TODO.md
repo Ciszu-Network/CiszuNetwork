@@ -38,6 +38,7 @@ Ciszuko Antony Website:
 Ciszubot Website:
 
 - [ ] Los iconos del header son muy diferentes a todos los demas paginas, le falta el menu hamburguesa, y mete alli dentro los botones de togle idioma y theme estilo muzicmania o cualquier otra website.
+- [ ] Como ciszubot website usa un header y footer diferente a los de las demas websites, existen momento que con el togle theme en modo claro, al usar la rueda del mouse para subir y bajar en el body, la transparencia del header y su blur se bugean visualmente, dando un efecto raro en el centro, como solapamiento o glitch cortado.
 - [ ] El tema de oscuridad debe ser el por defecto al inicio.
 - [ ] El boton de invitar debe decir invitar
 - [ ] Ciszubot es la unica web con un diseño un poco mas diferente en especial la gui y botones, deben ser mas parecidos al estilo de las demas 3 paginas o usar el mismo.
