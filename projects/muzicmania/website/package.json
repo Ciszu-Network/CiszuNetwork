@@ -35,14 +35,15 @@
     "globals": "^17.6.0",
     "next": "^15.5.22",
     "nodemon": "^3.1.14",
+    "nuqs": "^2.9.5",
     "ora": "^9.4.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-easy-crop": "^5.5.7",
     "react-google-recaptcha": "^3.1.0",
     "react-markdown": "^10.1.0",
-    "zustand": "^5.0.14",
-    "zod": "^4.4.3"
+    "zod": "^4.4.3",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
