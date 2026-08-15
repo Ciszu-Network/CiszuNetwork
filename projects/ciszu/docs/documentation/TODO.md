@@ -44,8 +44,3 @@ Ciszubot Website:
 - [ ] El footer debe agregar el boton de togle theme y idioma parecido a las demas apps.
 - [ ] El footer le falta muchas redes sociales (replicar desde ciszunetwork si no existen)
 - [ ] Debemos cambiar como funciona los clores del tema, el modo oscuro debe ser mas omoled como muzicmania, y el modo claro es el que mas fallas, el color del fondo del footer y header son diferentes en modo claro, deben ser iguales. Ademas, principalmente no deberia ser oscuros. Cuando cambiamos a modo claro realmente no quiero fondos negros, usa fondo grises o claros y el texto debe ser negro.
-
-# Implementaciones en la infraestructura masiva desde el backend y database (Futuro)
-
-- [x] Investigar si implementar estos servicios sin importar el tiempo que tome, investigar si son grauitos y no se solapan actualmente, teniendo en cuenta que la lista es extensa y muy diversa sin verificar: Logtail / Better Stack o Datadog, Turbopack / Rolldown, TypeBox, PocketHost o Coolify, Miniflare, ArkType, tku / Larvitar / Toolkits de Compilación Nativos (SWC / Rolldown), Temporal, Effect TS, Husky + Lint-Staged, Changesets, Release Please o Auto, Nuqs, Mock Service Worker, SeaQL / SeaORM, Directus, Joy UI / Radix UI (MSW) en los proyectos.
-  - Veredicto completo en `TOOLS_EVALUATION_PLAN.md`. Implementado: **Husky + Lint-Staged** (hooks versionados) y **Nuqs** (estado de URL tipado en muzicmania `play`/`library`). Condicionales/skipped documentados (Coolify ⏸️ hasta `VPS_PLAN`, zod gana sobre ArkType/TypeBox, etc.).
