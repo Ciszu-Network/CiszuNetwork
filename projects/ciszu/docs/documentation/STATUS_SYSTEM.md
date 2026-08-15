@@ -139,7 +139,13 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 - **F4 (14 ago)** Chromatic: Storybook de `@ciszu/ui` publicado (build 1, 5 stories/2 componentes);
   `CHROMATIC_PROJECT_TOKEN` en vault. Decisión runtime documentada (Node 24; Bun/Deno descartados).
   Vault +2 secrets (`TANSTACK_API_KEY`, `CHROMATIC_PROJECT_TOKEN`) re-cifrado y verificado.
-- Verificación: lint global ✅, 171 tests ✅, builds webs+bot ✅, build-storybook ✅.
+- **F5 (14 ago)** Guion de Storybook completado: addon-docs (`Introduction.mdx`), coverage v8,
+  viewports, agrupación `Atoms`/`Molecules`. **7 componentes portados** de los proyectos a
+  `@ciszu/ui` (Button, RichText, VinylDisc, ScrollSpy, FlagIcon, SocialIcon, ZoomWarning) →
+  **34 stories en 9 componentes**. `CHROMATIC_PROJECT_TOKEN` fijado como secret del repo.
+  Commit `c1e9f8d` pusheado a `main`.
+- Verificación: lint global ✅, 171 tests ✅, builds webs+bot ✅, build-storybook ✅, test:storybook
+  (34/34) ✅.
 - Frontend: fases 1–11 del to-do frontend completadas y verificadas (ver `TODO.md`).
 - CDN limpio (7.353 objetos) y tests en 171.
 
@@ -193,6 +199,7 @@ Este doc es una **foto del estado** del ecosistema; al cerrar sesión:
 
 | Fecha | Cambio relevante |
 |---|---|
+| 2026-08-14 | F5 Storybook completo: addon-docs + `Introduction.mdx`, coverage v8, viewports, agrupación; +7 componentes portados a `@ciszu/ui` (Button, RichText, VinylDisc, ScrollSpy, FlagIcon, SocialIcon, ZoomWarning) → 34 stories/9 componentes, test:storybook 34/34; `CHROMATIC_PROJECT_TOKEN` como secret del repo; commit `c1e9f8d` pusheado |
 | 2026-08-14 | F1 Drizzle, F2 NestJS+Fastify, F3 Zod/Storybook/TanStack Query, F4 Chromatic (build 1) + decisión runtime Node 24; vault +2 secrets (TanStack, Chromatic); tests 171; lint/builds verdes. Storybook: addon-vitest (interacción/regresión local con Playwright) + a11y, play functions en stories, job `storybook-tests` en CI; piloto Bun: CJS/TS nativo OK, descartado para Next/Vercel (ver FULL_STACK §Runtime). Figma: `@storybook/addon-designs` 11.1.4 (integración Storybook↔Figma vía pestaña Design + plugin "Storybook Connect"); comandos opencode (storybook/vitest/playwright/test/ciszu) + perfil PowerShell (`sb*`/`pw*`/`checkall`/`ciszuh`) probados sin colisiones. Storybook: +themes, dark-mode, tag-badges, Visual Tests (`@chromatic-com/storybook`) y MSW (`msw-storybook-addon` + worker); fix `process` en Vite (define de NEXT_PUBLIC_CDN_URL en main.ts); Chromatic builds 4–5 publicados localmente (billing suspendido); doc `UI_COMPONENTS_SYSTEM.md` creada |
 | 2026-08-13 | Docs ampliados a estándar; frontend fases 1–11 completas; CDN 7.353 objetos; tests 157 |
 | 2026-08-12 | Pagos: infra NOWPayments lista, monetización pendiente hasta 18 |
