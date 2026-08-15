@@ -176,3 +176,6 @@ projects/ciszubot/website/public/banners/
 
 # Estado local de Miniflare/Wrangler (workers/.wrangler)
 workers/.wrangler/
+
+# Directus local (tools/directus) — base de datos SQLite del contenedor
+tools/directus/data/
