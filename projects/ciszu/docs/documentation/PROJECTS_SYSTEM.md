@@ -1,7 +1,7 @@
 # PROJECTS_SYSTEM — Sistema de Proyectos del Ecosistema (Ciszu Network)
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-08-14
 Identificador: PROJECTS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: documento maestro de los proyectos de Ciszu Network. Fusiona la vista
@@ -141,6 +141,22 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 
 > Este historial absorbe `PROJECT_HISTORY.md` (eliminado 13 ago 2026). Añadir aquí los
 > nuevos hitos al cierre de sesión.
+
+### 14 de Agosto, 2026 — Evaluación de herramientas + Husky/Lint-staged + Nuqs
+
+- **`TOOLS_EVALUATION_PLAN.md` creado** (12 candidatos, 11 secciones): veredictos sobre
+  logging (Better Stack gana), bundlers (Turbopack default), validación (**zod gana** sobre
+  ArkType/TypeBox), hosting (Coolify ⏸️ hasta `VPS_PLAN`), workflows (ninguno hoy), versionado
+  (**Changesets** cuando toque), UI (**Radix bajo demanda**). Tabla final §10 y referencias §11.
+- **Husky + Lint-Staged versionados**: pre-commit migrado de local a `.husky/pre-commit`
+  (lint-staged + secretlint + gitleaks, con `core.hooksPath`), `.lintstagedrc.mjs` con ESLint
+  sobre `ts/tsx` de 3 webs y `@ciszu/ui`.
+- **Nuqs adoptado en MuzicMania**: `nuqs` instalado, `NuqsAdapter` en el root layout, y
+  `play/page.tsx` + `library/page.tsx` migrados de `useSearchParams().get('track')` a
+  `useQueryState('track')`. Build verificado OK.
+- **Fix de build en `@ciszu/ui`**: `ZoomWarning.tsx` y `ScrollSpy.tsx` sin directiva
+  `'use client'` usando hooks — añadida (rompía `next build` de muzicmania).
+- **TODO.md**: tarea de investigación marcada como completada con resumen del veredicto.
 
 ### 14 de Agosto, 2026 — Storybook completo + componentes portados a @ciszu/ui
 

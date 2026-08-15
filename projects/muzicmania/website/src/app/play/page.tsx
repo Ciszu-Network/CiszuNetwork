@@ -2,7 +2,8 @@
 
 import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useQueryState } from 'nuqs';
 import NextImage from 'next/image';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
 import { trackBanner, trackCover, trackDisc } from '@/utils/musicAssets';
@@ -128,8 +129,8 @@ const formatTime = (time: number) => {
 
 function PlayPageContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const initialTrackParam = searchParams.get('track');
+  const [trackParam] = useQueryState('track');
+  const initialTrackParam = trackParam;
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const gameContainerRef = useRef<HTMLDivElement | null>(null);
   const filtersRef = useRef<HTMLDivElement | null>(null);
@@ -490,7 +491,7 @@ function PlayPageContent() {
 
   // Handle track selection from URL param (e.g., from library "JUGAR AHORA")
   useEffect(() => {
-    const param = searchParams.get('track');
+    const param = trackParam;
     if (param) {
       const track = TRACKS_DATA.find(t => t.id === param);
       if (track) setSelectedTrack(track);

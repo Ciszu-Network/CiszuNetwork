@@ -5,6 +5,9 @@ use std::sync::Mutex;
 use std::time::Duration;
 use tauri::{Emitter, Manager, WebviewUrl, WebviewWindowBuilder};
 
+#[cfg(feature = "local-db")]
+mod db;
+
 static FORCE_CLOSE: AtomicBool = AtomicBool::new(false);
 static LAUNCHER_FORCE_CLOSE: AtomicBool = AtomicBool::new(false);
 static INSTALLER_FORCE_CLOSE: AtomicBool = AtomicBool::new(false);

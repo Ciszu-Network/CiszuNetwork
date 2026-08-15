@@ -1,0 +1,8 @@
+{
+  "packages/cdn": "1.0.0",
+  "packages/db": "1.0.0",
+  "packages/email": "1.0.0",
+  "packages/payments": "1.0.0",
+  "packages/ui": "1.0.0",
+  "packages/utils": "1.0.0"
+}

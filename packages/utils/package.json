@@ -5,13 +5,19 @@
   "main": "./index.ts",
   "types": "./index.ts",
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./logger": "./src/logger.ts",
+    "./schema": "./src/schema.ts",
+    "./effect": "./src/effect.ts"
   },
   "scripts": {
     "lint": "tsc --noEmit",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@sinclair/typebox": "^0.34.0",
+    "pino": "^9.7.0",
+    "pino-pretty": "^13.0.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
