@@ -23,9 +23,28 @@ Set-Location $root
 
 function Write-Banner { Write-Host "Storybook @ciszu/ui - $Action" -ForegroundColor Cyan }
 
+# Libera el puerto 6006 si un proceso anterior quedó huérfano (Storybook a veces
+# no cierra todos sus hijos al terminar, bloqueando el bind del puerto y
+# provocando el UniversalStoreFollowerTimeoutError en el arranque siguiente).
+function Clear-StorybookPort {
+    param([int]$Port = 6006)
+    $conn = Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue
+    if ($conn) {
+        $pids = $conn.OwningProcess | Select-Object -Unique
+        foreach ($pid in $pids) {
+            $proc = Get-Process -Id $pid -ErrorAction SilentlyContinue
+            if ($proc -and ($proc.ProcessName -eq 'node' -or $proc.ProcessName -eq 'esbuild')) {
+                Write-Host "Puerto $Port ocupado por $($proc.ProcessName) (PID $pid). Finalizado." -ForegroundColor Yellow
+                Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
+            }
+        }
+        Start-Sleep -Seconds 1
+    }
+}
+
 switch ($Action) {
-    'run'       { Write-Banner; pnpm --filter @ciszu/ui storybook }
-    'serve'     { Write-Banner; pnpm --filter @ciszu/ui storybook }
+    'run'       { Clear-StorybookPort 6006; Write-Banner; pnpm --filter @ciszu/ui storybook }
+    'serve'     { Clear-StorybookPort 6006; Write-Banner; pnpm --filter @ciszu/ui storybook }
     'test'      { Write-Banner; pnpm --filter @ciszu/ui test:storybook }
     'watch'     { Write-Banner; pnpm --filter @ciszu/ui exec vitest --config vitest.config.mts }
     'build'     { Write-Banner; pnpm --filter @ciszu/ui build-storybook }
