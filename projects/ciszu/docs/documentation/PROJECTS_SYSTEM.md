@@ -142,6 +142,32 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 > Este historial absorbe `PROJECT_HISTORY.md` (eliminado 13 ago 2026). Añadir aquí los
 > nuevos hitos al cierre de sesión.
 
+### 15 de Agosto, 2026 — Directus endurecido + errores de compilación local documentados
+
+- **Credenciales Directus actualizadas**: el admin se cambió a `ciszunetwork@gmail.com` /
+  `admin0012` con 2FA activado y proyecto renombrado a `ciszunetwork`. Token de admin
+  regenerado. Todo guardado en el vault (`DIRECTUS_*` en `services/supabase/.env` →
+  `.env.age` re-cifrado, bundle cifrado renew). Los seats `ADMIN_EMAIL/ADMIN_PASSWORD` del
+  compose arrancan con defaults locales; las credenciales reales viven solo en el vault.
+- **Errores de compilación local documentados (sin arreglar a propósito)**: al compilar
+  las webs localmente hay fallos visuales/de runtime que se dejan registrados para
+  referencia posterior (ver §4.2 «Problemática local conocida»). No se tocan de momento.
+
+### 4.1 Problemática local conocida (compilación / dev local)
+
+> Estado: **registrado, NO corregido** (decisión tomada el 15 ago 2026). Si una tarea futura
+> toca estos componentes, revisar aquí antes. No es bloqueante para producción (los deploys
+> funcionan), solo afecta al entorno local.
+
+| Síntoma | Dónde | Estado | Notas |
+| --- | --- | --- | --- |
+| **Logos que no se resuelven** (imagen rota / 404) en varias vistas | Webs (frontend, componente de imágenes/logos) | Sin arreglar | Probable relación con resolver CDN/`@ciszunetwork/cdn` y assets locales; revisar `CDN_SYSTEM` y `SmartImage` cuando se ataque |
+| **Interacciones que no responden** (botones/click sin efecto visible) | Varias páginas | Sin arreglar | Posible evento no enlazado o hydration; revisar por página al abordarse |
+| **Body que no carga** en páginas enteras (solo cabecera/fondo, contenido vacío) | Páginas completas | Sin arreglar | Coincide con el patrón de rutas que dependen de assets/interacciones rotas; revisar por ruta |
+
+> Nota de operación: no bloquear tareas productivas por esto; valoración económica de
+> arreglo queda para cuando el CEO lo priorice en `TODO.md`.
+
 ### 15 de Agosto, 2026 — Docker/WSL reparado + Directus GUI local + Turnstile dev fix
 
 - **Docker Desktop/WSL2 reparado** (corrupción del engine y del disco de datos):

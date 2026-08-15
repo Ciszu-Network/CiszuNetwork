@@ -1,8 +1,8 @@
 # STATUS_SYSTEM — Estado del Ecosistema CISZU NETWORK
 
-Versión: 2.1.0
-Actualización: 2026-08-14
-Identificador: STATUS_SYSTEM_V2.1.0_2026_08_14_ciszunetwork
+Versión: 2.1.1
+Actualización: 2026-08-15
+Identificador: STATUS_SYSTEM_V2.1.1_2026_08_15_ciszunetwork
 
 > **Definición**: documento operativo de estado del monorepo. Se actualiza al cerrar cada
 > sesión de trabajo. Refleja la foto actual de proyectos, sistemas y scripts.
@@ -34,6 +34,8 @@ Identificador: STATUS_SYSTEM_V2.1.0_2026_08_14_ciszunetwork
 | Monitoreo externo | ✅ UptimeRobot 5 monitores + watcher ntfy (10 ago 2026) |
 | Logging centralizado | ✅ Better Stack Telemetry conectado (15 ago 2026) — `@logtail/pino` en `@ciszunetwork/utils/logger`, envía en producción con `BETTERSTACK_TELEMETRY_TOKEN` |
 | Docker Desktop | ✅ Operativo (15 ago 2026, engine 29.6.2) tras reparar WSL2 (vhdx engine y de datos corruptos) |
+| Directus GUI local | ✅ `tools/directus/docker-compose.yml`, `http://localhost:8055` (admin ciszunetwork@gmail.com, 2FA, proyecto `ciszunetwork`) — credenciales en vault |
+| Compilación local de webs | ⚠️ Errores conocidos sin arreglar (logos sin resolver, interacciones y body de páginas que no cargan) — ver `PROJECTS_SYSTEM` §4.1 |
 | Cloudflare (standalone) | ✅ Web Analytics + Turnstile en las 4 webs (guard solo en prod; en dev local no bloquea) |
 | Seguridad | ✅ RLS 28/28 tablas, migración 16 aplicada, rate limits, robots.ts ×4 |
 | Storybook `@ciszu/ui` | ✅ Chromatic (builds 1–5, visual) + a11y + addon-vitest + addon-designs (Figma) + themes/dark-mode/tag-badges/Visual Tests/MSW |
