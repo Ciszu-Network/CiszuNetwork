@@ -70,18 +70,27 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
-      # El runner corre como NETWORK SERVICE: el `py` del usuario no existe en
-      # su context. Se instala un Python portable con setup-python.
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-          cache: 'pip'
+      # El runner corre como NETWORK SERVICE: no existe `py` de usuario ni se
+      # pueden instalar MSIs (`actions/setup-python` usa un runtime MSI y falla).
+      # Se usa el paquete NuGet portable de Python (trae pip, sin instalación).
+      - name: Instalar Python portable (NuGet, sin MSI)
+        shell: powershell
+        run: |
+          $zip = Join-Path $env:RUNNER_TEMP 'python-nuget.zip'
+          $nugetUrl = 'https://www.nuget.org/api/v2/package/python/3.12.10'
+          Invoke-WebRequest $nugetUrl -OutFile $zip
+          $pyDir = Join-Path $env:RUNNER_TEMP 'pynuget\d'
+          New-Item -ItemType Directory -Path $pyDir -Force | Out-Null
+          Expand-Archive -Path $zip -DestinationPath $pyDir -Force
+          Add-Content -Path $env:GITHUB_PATH -Value (Join-Path $pyDir 'tools')
+          Add-Content -Path $env:GITHUB_PATH -Value (Join-Path $pyDir 'tools\Scripts')
       - name: Instalar Semgrep
-        run: python -m pip install --quiet semgrep==1.172.0
+        shell: powershell
+        run: python -m pip install --quiet --disable-pip-version-check semgrep==1.172.0
       - name: Escaneo Semgrep (p/security-audit)
         env:
           SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
-        run: python -m semgrep scan --config p/security-audit --metrics=off --oss-only --exclude node_modules --exclude .next --exclude .turbo --exclude lockfile
+        run: semgrep scan --config p/security-audit --metrics=off --oss-only --exclude node_modules --exclude .next --exclude .turbo --exclude lockfile
 
   audit:
     name: pnpm audit (SCA)
