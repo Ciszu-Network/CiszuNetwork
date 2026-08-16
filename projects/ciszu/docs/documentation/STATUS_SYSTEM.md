@@ -116,7 +116,7 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 | MuzicMania | Operativo | Juego + app Tauri (NSIS) |
 | CiszuBot | Operativo | Bot Discord + landing + estado en vivo |
 | CDN Supabase | Operativo | `ciszu-cdn`, 7.353 objetos |
-| CI/CD | Operativo | GitHub Actions: CI, CodeQL, DAST, deploy ×4, uptime-watch |
+| CI/CD | Operativo | GitHub Actions: CI, CodeQL, DAST, deploy ×4, uptime-watch. **Runner self-hosted CISZU-PC online** (servicio Windows `E:\actions-runner`) desde 15 ago 2026: jobs portables del CI y deploys ×4 en `self-hosted`, sin consumir minutos de la org |
 
 ## Estado por sistema (resumen)
 
