@@ -23,7 +23,7 @@ concurrency:
 jobs:
   chromatic:
     name: Chromatic (Storybook @ciszu/ui)
-    runs-on: self-hosted
+    runs-on: ${{ vars.PREFERRED_RUNNER || 'self-hosted' }}
     steps:
       - name: Checkout (historia completa para baselines)
         uses: actions/checkout@v4

@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   release-please:
-    runs-on: self-hosted
+    runs-on: ${{ vars.PREFERRED_RUNNER || 'self-hosted' }}
     permissions:
       contents: write
       pull-requests: write
