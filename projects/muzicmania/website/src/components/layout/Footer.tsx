@@ -158,7 +158,7 @@ export const Footer = () => {
         {/* Global Controls & Bottom Bar */}
         <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent my-8" />
 
-        <div className="flex flex-col md:flex-row items-center justify-between gap-8 pb-6">
+        <div className="flex flex-col items-center justify-center gap-8 pb-6 text-center">
 
           {/* LEFT: Navbar-style trigger buttons */}
           <div className="flex items-center gap-4">
@@ -181,7 +181,7 @@ export const Footer = () => {
             </button>
 
             <button
-              onClick={() => showToast('Esta función no está desarrollada para la beta aún')}
+              onClick={() => { setIsMenuOpen(true); setSidebarView('lang'); }}
               className="group flex items-center gap-3 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all duration-300 shadow-lg"
               title="Cambiar Idioma"
             >

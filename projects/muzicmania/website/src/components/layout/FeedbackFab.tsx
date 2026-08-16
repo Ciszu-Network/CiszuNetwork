@@ -78,7 +78,7 @@ export default function FeedbackFab() {
     'feedback',
     !isDesktop && !dismissed ? { order: 1, height: 36 } : null
   );
-  useFabRestore(handleReenable);
+  useFabRestore(handleReenable, [STORAGE_KEY]);
 
   if (isDesktop || (dismissed && !notice)) return null;
 

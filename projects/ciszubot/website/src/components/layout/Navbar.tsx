@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icon, SmartImage } from '@ciszu/ui';
-import { INVITE_URL, LANGS, LOGO_ISOTIPO, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
+import { INVITE_URL, LOGO_ISOTIPO, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
 
 const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'status' | 'support' | 'downloads' | 'feedback'; icon: string }[] = [
   { href: '/', key: 'home', icon: 'home' },
@@ -27,6 +27,44 @@ const SEARCH_PAGES: { href: string; labelKey: string; icon: string; keywords: st
   { href: '/terminos', labelKey: 'terminos', icon: 'external', keywords: ['terminos', 'terms', 'legal'] },
 ];
 
+const LANGS = [
+  {
+    code: 'es' as const,
+    label: 'Español',
+    flag: (
+      <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner">
+        <rect width="512" height="512" fill="#aa151b" />
+        <rect width="512" height="300" y="106" fill="#f1bf00" />
+        <circle cx="150" cy="256" r="50" fill="#aa151b" />
+      </svg>
+    ),
+  },
+  {
+    code: 'en' as const,
+    label: 'English',
+    flag: (
+      <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner">
+        <rect width="512" height="512" fill="#bd3d44" />
+        <rect width="512" height="36" y="36.5" fill="#fff" />
+        <rect width="512" height="36" y="109.5" fill="#fff" />
+        <rect width="512" height="36" y="182.5" fill="#fff" />
+        <rect width="512" height="36" y="255.5" fill="#fff" />
+        <rect width="512" height="36" y="328.5" fill="#fff" />
+        <rect width="512" height="36" y="401.5" fill="#fff" />
+        <rect width="512" height="36" y="474.5" fill="#fff" />
+        <rect width="240" height="260" fill="#192f5d" />
+        <g fill="#fff">
+          <circle cx="30" cy="35" r="5" /><circle cx="70" cy="35" r="5" /><circle cx="110" cy="35" r="5" /><circle cx="150" cy="35" r="5" /><circle cx="190" cy="35" r="5" />
+          <circle cx="50" cy="65" r="5" /><circle cx="90" cy="65" r="5" /><circle cx="130" cy="65" r="5" /><circle cx="170" cy="65" r="5" /><circle cx="210" cy="65" r="5" />
+          <circle cx="30" cy="95" r="5" /><circle cx="70" cy="95" r="5" /><circle cx="110" cy="95" r="5" /><circle cx="150" cy="95" r="5" /><circle cx="190" cy="95" r="5" />
+          <circle cx="50" cy="125" r="5" /><circle cx="90" cy="125" r="5" /><circle cx="130" cy="125" r="5" /><circle cx="170" cy="125" r="5" /><circle cx="210" cy="125" r="5" />
+          <circle cx="30" cy="155" r="5" /><circle cx="70" cy="155" r="5" /><circle cx="110" cy="155" r="5" /><circle cx="150" cy="155" r="5" /><circle cx="190" cy="155" r="5" />
+        </g>
+      </svg>
+    ),
+  },
+];
+
 interface NavbarProps {
   lang: Lang;
   dict: Dict;
@@ -43,6 +81,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
   const [accountOpen, setAccountOpen] = useState(false);
   const [isDark, setIsDark] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [sidebarView, setSidebarView] = useState<'main' | 'lang'>('main');
   const firstRender = useRef(true);
   const searchRef = useRef<HTMLDivElement | null>(null);
   const searchToggleRef = useRef<HTMLButtonElement | null>(null);
@@ -236,92 +275,36 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
               )}
             </button>
 
-            {/* Buscador — toggle + panel flotante */}
-            <div className="relative" ref={searchRef}>
+            {/* Buscador — toggle (panel full-width bajo el nav) */}
+            <div className="relative">
               <button
                 ref={searchToggleRef}
                 onClick={() => { setSearchOpen(v => !v); setMenuOpen(false); setAccountOpen(false); setAuthOpen(false); setInviteOpen(false); }}
-                className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 cursor-pointer border group ${
+                className={`p-2 rounded-full border transition-all duration-300 cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_10px_rgba(0,212,255,0.25)] ${
                   searchOpen
                     ? 'bg-neon-blue border-neon-blue text-black'
-                    : 'bg-card border-border text-ink hover:border-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.25)]'
+                    : 'bg-card border-border text-ink hover:border-neon-blue'
                 }`}
                 aria-label={dict.nav.search}
                 title={dict.nav.search}
               >
                 <Icon name="search" size={18} />
               </button>
-
-              {searchOpen && (
-                <div className="absolute right-0 top-12 w-[min(90vw,24rem)] overflow-hidden rounded-2xl border border-border bg-surface/95 backdrop-blur-2xl shadow-2xl animate-fade-in-down">
-                  <div className="flex items-center gap-2 border-b border-border px-3">
-                    <Icon name="search" size={16} className="shrink-0 text-muted" />
-                    <input
-                      ref={inputRef}
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Escape') setSearchOpen(false);
-                        if (e.key === 'Enter' && suggestions.length > 0) {
-                          window.location.href = suggestions[0].href;
-                        }
-                      }}
-                      placeholder={dict.nav.search}
-                      className="w-full bg-transparent py-3 text-sm text-ink outline-none placeholder:text-muted"
-                    />
-                    {query && (
-                      <button
-                        onClick={() => setQuery('')}
-                        className="p-1 rounded-full text-muted hover:text-ink hover:bg-muted/15 cursor-pointer"
-                        aria-label="clear"
-                      >
-                        <Icon name="close" size={14} />
-                      </button>
-                    )}
-                  </div>
-                  <div className="max-h-72 overflow-y-auto p-1.5">
-                    {suggestions.length === 0 && query.trim().length > 0 ? (
-                      <p className="px-3 py-4 text-center text-xs text-muted">{dict.nav.searchHint}</p>
-                    ) : (
-                      suggestions.map((p) => (
-                        <Link
-                          key={p.href}
-                          href={p.href}
-                          onClick={() => { setSearchOpen(false); setQuery(''); }}
-                          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-ink/85 transition hover:bg-muted/15 hover:text-neon-blue"
-                        >
-                          <span className="w-7 h-7 rounded-lg flex items-center justify-center bg-muted/25 text-muted shrink-0">
-                            <Icon name={p.icon} size={14} />
-                          </span>
-                          {dict.nav[p.labelKey as keyof typeof dict.nav]}
-                          <span className="ml-auto text-[11px] text-faint">{p.href}</span>
-                        </Link>
-                      ))
-                    )}
-                  </div>
-                </div>
-              )}
             </div>
 
-            {/* Selector de idioma — estilo muzicmania */}
-            <div className="hidden sm:flex items-center rounded-full border border-border bg-card overflow-hidden shadow-lg">
-              {LANGS.map((l) => (
-                <button
-                  key={l.code}
-                  onClick={() => setLang(l.code)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold tracking-wide transition-all cursor-pointer ${
-                    lang === l.code
-                      ? 'bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white shadow-[0_0_12px_rgba(0,212,255,0.4)]'
-                      : 'text-muted hover:text-neon-blue hover:bg-muted/15'
-                  }`}
-                  aria-pressed={lang === l.code}
-                  title={l.code === 'es' ? 'Español' : 'English'}
-                >
-                  <Icon name={l.flag} style="flag" size={14} />
-                  {l.label}
-                </button>
-              ))}
-            </div>
+            {/* Selector de idioma — botón pill único con globo (estilo de las otras 3 webs) */}
+            <button
+              onClick={() => setLang(lang === 'es' ? 'en' : 'es')}
+              className="group flex items-center gap-3 px-4 py-2 bg-card hover:bg-muted/15 border border-border hover:border-neon-blue rounded-full transition-all duration-300 shadow-lg cursor-pointer"
+              title={lang === 'es' ? 'English' : 'Español'}
+            >
+              <svg className="w-5 h-5 transition-transform duration-500 group-hover:rotate-12 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+              </svg>
+              <span className="text-muted group-hover:text-neon-blue uppercase tracking-widest text-xs font-bold">
+                {lang === 'es' ? 'ESPAÑOL' : 'ENGLISH'}
+              </span>
+            </button>
 
             {/* Invitar — botón con texto */}
             <div className="relative hidden sm:block" ref={inviteRef}>
@@ -400,10 +383,10 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
               <div className="relative" ref={authRef}>
                 <button
                   onClick={() => { setAuthOpen(!authOpen); setAccountOpen(false); setSearchOpen(false); setInviteOpen(false); }}
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 cursor-pointer border ${
+                  className={`p-2 rounded-full border transition-all duration-300 cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_10px_rgba(88,101,242,0.4)] ${
                     authOpen
                       ? 'bg-[#5865F2] border-[#5865F2] text-white shadow-[0_0_12px_rgba(88,101,242,0.6)]'
-                      : 'bg-card border-border text-ink hover:border-[#5865F2] hover:shadow-[0_0_10px_rgba(88,101,242,0.4)]'
+                      : 'bg-card border-border text-ink hover:border-[#5865F2]'
                   }`}
                   aria-label="Iniciar sesión"
                   title="Iniciar sesión"
@@ -439,8 +422,8 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
             )}
 
             <button
-              onClick={() => { setMenuOpen(!menuOpen); setSearchOpen(false); setAuthOpen(false); setInviteOpen(false); setAccountOpen(false); }}
-              className={`md:hidden p-2 rounded-full border transition-all cursor-pointer active:scale-95 ${
+              onClick={() => { setMenuOpen(!menuOpen); setSearchOpen(false); setAuthOpen(false); setInviteOpen(false); setAccountOpen(false); if (!menuOpen) setSidebarView('main'); }}
+              className={`p-2 rounded-full border transition-all duration-300 cursor-pointer shadow-sm active:scale-95 ${
                 menuOpen
                   ? 'bg-neon-blue border-neon-blue text-black'
                   : 'bg-card border-border text-ink hover:border-neon-blue'
@@ -453,75 +436,204 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
         </div>
       </div>
 
-      {menuOpen && (
-        <div className="md:hidden border-t border-border bg-bg/95 backdrop-blur-2xl px-4 py-3 animate-fade-in-down">
-          {NAV_PAGES.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setMenuOpen(false)}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-header font-bold transition-all ${
-                isActive(link.href)
-                  ? 'bg-neon-blue/15 border border-neon-blue/40 text-neon-blue'
-                  : 'text-muted hover:text-neon-blue hover:bg-muted/15 border border-transparent'
-              }`}
-            >
-              <span className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-                isActive(link.href) ? 'bg-neon-blue/20 text-neon-blue shadow-[0_0_10px_rgba(0,212,255,0.3)]' : 'bg-muted/25 text-muted'
-              }`}>
-                <Icon name={link.icon} size={16} />
+      {searchOpen && (
+        <div ref={searchRef} className="absolute left-0 right-0 top-[64px] border-b border-border bg-[#0a0a14]/95 backdrop-blur-2xl shadow-2xl animate-fade-in-down">
+          <div className="max-w-screen-xl mx-auto px-4 py-4">
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 flex items-center">
+                <Icon name="search" size={18} />
               </span>
-              {dict.nav[link.key]}
-            </Link>
-          ))}
-          <div className="flex items-center justify-between pt-3 mt-2 border-t border-border">
-            <div className="flex items-center rounded-full border border-border bg-card overflow-hidden">
-              {LANGS.map((l) => (
-                <button
-                  key={l.code}
-                  onClick={() => setLang(l.code)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold ${
-                    lang === l.code
-                      ? 'bg-gradient-to-r from-neon-blue to-neon-pink text-white'
-                      : 'text-muted'
-                  }`}
-                >
-                  <Icon name={l.flag} style="flag" size={14} />
-                  {l.label}
-                </button>
-              ))}
+              <input
+                ref={inputRef}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') setSearchOpen(false);
+                  if (e.key === 'Enter' && suggestions.length > 0) {
+                    window.location.href = suggestions[0].href;
+                  }
+                }}
+                placeholder={dict.nav.search}
+                className="w-full bg-white/5 border border-white/10 focus:border-neon-blue placeholder:text-gray-600 text-white rounded-xl py-3 pl-12 pr-4 text-sm outline-none transition-all font-header font-bold"
+              />
             </div>
-            {account ? (
-              <Link
-                href="/dashboard"
-                onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white"
-              >
-                <Icon name="server" size={16} className="[&>g]:fill-current" />
-                <span>Panel</span>
-              </Link>
-            ) : (
-              <a
-                href="/api/auth/discord"
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold bg-[#5865F2] text-white"
-              >
-                <Icon name="discord" size={16} className="[&>g]:fill-current" />
-                <span>Iniciar sesión</span>
-              </a>
+            {query.trim().length > 0 && suggestions.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mt-3">
+                {suggestions.map((p) => (
+                  <Link
+                    key={p.href}
+                    href={p.href}
+                    onClick={() => { setSearchOpen(false); setQuery(''); }}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/5 text-white text-xs font-header font-bold hover:border-neon-blue/50 hover:text-neon-blue hover:shadow-[0_0_12px_rgba(0,212,255,0.2)] transition-all"
+                  >
+                    <span className="w-4 h-4 shrink-0 opacity-70 flex items-center justify-center">
+                      <Icon name={p.icon} size={14} />
+                    </span>
+                    <span className="truncate">{dict.nav[p.labelKey as keyof typeof dict.nav]}</span>
+                  </Link>
+                ))}
+              </div>
             )}
-            <a
-              href={INVITE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold bg-card text-ink/85 border border-border"
-            >
-              <Icon name="external" size={14} />
-              <span>Invitar</span>
-            </a>
+            {query.trim().length > 0 && suggestions.length === 0 && (
+              <div className="flex flex-col items-center justify-center py-8 animate-fade-in-down">
+                <p className="text-gray-500 font-header font-black uppercase text-xs tracking-widest italic animate-pulse">{dict.nav.searchHint}</p>
+                <button
+                  onClick={() => setQuery('')}
+                  className="mt-3 px-6 py-2 rounded-full text-[10px] uppercase tracking-widest font-header font-bold bg-neon-blue/20 border border-neon-blue/40 text-neon-blue hover:bg-neon-blue hover:text-black transition-all active:scale-95 cursor-pointer"
+                >
+                  {lang === 'es' ? 'Reiniciar búsqueda' : 'Reset search'}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
-    </nav>
+
+      </nav>
+
+    {menuOpen && (
+      <div className="fixed inset-0 z-[100] pointer-events-none">
+        <div className="absolute inset-0 bg-black/60 pointer-events-auto" onClick={() => { setMenuOpen(false); setSidebarView('main'); }} />
+        <div className="absolute top-0 right-0 w-[320px] max-w-[85vw] h-full bg-[#05050a]/95 backdrop-blur-3xl shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col pointer-events-auto animate-slide-right-fade">
+          <div className="absolute left-0 top-0 w-[1px] h-full bg-gradient-to-b from-transparent via-neon-blue/50 to-transparent shadow-[0_0_15px_rgba(0,212,255,0.4)] z-10" />
+
+          <div className="flex items-center justify-between px-5 pt-8 pb-6 border-b border-white/5 shrink-0 gap-3">
+            <button
+              onClick={setTheme}
+              className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transition-all duration-500 cursor-pointer border group ${
+                isDark ? 'bg-white border-gray-100 hover:rotate-12' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
+              }`}
+              aria-label="Toggle theme"
+              title="Toggle theme"
+            >
+              {isDark ? (
+                <svg className="w-5 h-5 text-black transition-transform duration-500 group-hover:rotate-12" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+              ) : (
+                <svg className="w-6 h-6 text-black transition-transform duration-500 group-hover:rotate-90" viewBox="0 0 24 24" fill="currentColor" stroke="black" strokeWidth={1}>
+                  <circle cx="12" cy="12" r="4" />
+                  <path d="M12 1v3m0 16v3M4.22 4.22l2.12 2.12m11.32 11.32l2.12 2.12M1 12h3m16 0h3M4.22 19.78l2.12-2.12M19.78 4.22l-2.12 2.12" strokeLinecap="round" />
+                </svg>
+              )}
+            </button>
+
+            <h2 className="text-neon-blue text-base font-header font-black tracking-widest drop-shadow-[0_0_8px_rgba(0,212,255,0.5)]">
+              {sidebarView === 'main' ? (lang === 'es' ? 'MENÚ' : 'MENU') : 'IDIOMAS'}
+            </h2>
+
+            <button
+              onClick={() => setSidebarView(sidebarView === 'main' ? 'lang' : 'main')}
+              className="group flex items-center gap-3 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all duration-300 shadow-lg cursor-pointer"
+              title="Idioma"
+            >
+              <svg className={`w-5 h-5 transition-transform duration-500 ${sidebarView === 'lang' ? 'rotate-90 text-neon-blue' : 'group-hover:rotate-12 text-white/70'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <circle cx="12" cy="12" r="10" />
+                <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+              </svg>
+              <div className="w-6 h-6 rounded-full overflow-hidden border border-white/20 shadow-[0_0_10px_rgba(255,255,255,0.1)] shrink-0 transition-transform duration-300 group-hover:scale-110 [&>svg]:w-6 [&>svg]:h-6">
+                {(LANGS.find(l => l.code === lang) || LANGS[0]).flag}
+              </div>
+            </button>
+
+            <button
+              onClick={() => { setMenuOpen(false); setSidebarView('main'); }}
+              className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
+              aria-label="Cerrar"
+              title="Cerrar"
+            >
+              <Icon name="close" size={18} />
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto px-5 py-5 space-y-1">
+            {sidebarView === 'main' ? (
+              <>
+                <div className="mb-4">
+                  <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">{lang === 'es' ? 'NAVEGACIÓN' : 'NAVIGATION'}</p>
+                  {NAV_PAGES.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => { setMenuOpen(false); setSidebarView('main'); }}
+                      className={`flex justify-start items-center px-4 py-3 rounded-2xl transition-all font-header font-bold text-[15px] group mb-1 active:scale-95 border ${
+                        isActive(link.href)
+                          ? 'border-neon-blue bg-neon-blue/20 shadow-[0_0_15px_rgba(0,212,255,0.3)] text-neon-blue hover:text-white'
+                          : 'border-transparent text-gray-300 hover:text-neon-blue hover:bg-white/5 hover:border-white/10'
+                      }`}
+                    >
+                      <div className="flex items-center gap-4">
+                        <span className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                          isActive(link.href) ? 'bg-neon-blue/20 text-neon-blue shadow-[0_0_10px_rgba(0,212,255,0.3)]' : 'bg-black/40 text-gray-500 group-hover:text-neon-blue group-hover:bg-neon-blue/10'
+                        }`}>
+                          <Icon name={link.icon} size={16} />
+                        </span>
+                        <span>{dict.nav[link.key]}</span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+
+                <div className="h-px bg-white/10 my-4" />
+                <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">{lang === 'es' ? 'CUENTA' : 'ACCOUNT'}</p>
+                {account ? (
+                  <Link
+                    href="/dashboard"
+                    onClick={() => { setMenuOpen(false); setSidebarView('main'); }}
+                    className="w-full flex items-center justify-center gap-2 py-3 bg-neon-blue/10 border border-neon-blue/30 text-neon-blue rounded-xl font-header font-bold hover:bg-neon-blue/20 hover:text-white text-xs shadow-[0_4px_15px_rgba(0,212,255,0.1)] transition-all"
+                  >
+                    <Icon name="server" size={16} className="[&>g]:fill-current" />
+                    <span>Panel</span>
+                  </Link>
+                ) : (
+                  <a
+                    href="/api/auth/discord"
+                    className="w-full flex items-center justify-center gap-2 py-3 bg-[#5865F2] text-white rounded-xl font-header font-bold hover:bg-[#4752c4] text-xs transition-all"
+                  >
+                    <Icon name="discord" size={16} className="[&>g]:fill-current" />
+                    <span>{lang === 'es' ? 'Iniciar sesión con Discord' : 'Sign in with Discord'}</span>
+                  </a>
+                )}
+
+                <div className="h-px bg-white/10 my-4" />
+                <a
+                  href={INVITE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => { setMenuOpen(false); setSidebarView('main'); }}
+                  className="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white rounded-xl font-header font-bold text-sm shadow-[0_4px_15px_rgba(0,212,255,0.2)] hover:shadow-[0_4px_25px_rgba(0,212,255,0.5)] transition-all"
+                >
+                  <Icon name="discord" size={16} className="[&>g]:fill-current" />
+                  <span>{dict.nav.invite}</span>
+                </a>
+              </>
+            ) : (
+              <div className="grid grid-cols-1 gap-1 animate-fade-in-up pb-10">
+                {LANGS.map((l) => (
+                  <button
+                    key={l.code}
+                    onClick={() => setLang(l.code)}
+                    className={`flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-header font-bold transition-all cursor-pointer group ${
+                      lang === l.code ? 'bg-neon-blue/20 text-neon-blue border border-neon-blue/30' : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'
+                    }`}
+                  >
+                    <span className="w-6 h-6 rounded-full overflow-hidden ring-1 ring-white/10 shrink-0 transition-transform duration-300 group-hover:scale-110 [&>svg]:w-6 [&>svg]:h-6">
+                      {l.flag}
+                    </span>
+                    <span className="flex-1 text-left">{l.label}</span>
+                    {lang === l.code && (
+                      <svg className="w-4 h-4 text-neon-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
+                        <path d="M20 6L9 17l-5-5" />
+                      </svg>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    )}
     </>
   );
 }

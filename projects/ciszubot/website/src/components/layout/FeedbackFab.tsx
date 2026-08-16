@@ -70,15 +70,18 @@ export default function FeedbackFab({
   }, []);
 
   const stackBottom = useFabStack('feedback', !dismissed ? { order: 1, height: 36 } : null);
-  useFabRestore(() => {
-    try {
-      localStorage.removeItem(storageKey);
-    } catch {
-      /* noop */
-    }
-    setDismissed(false);
-    setDismissHint(false);
-  });
+  useFabRestore(
+    () => {
+      try {
+        localStorage.removeItem(storageKey);
+      } catch {
+        /* noop */
+      }
+      setDismissed(false);
+      setDismissHint(false);
+    },
+    [storageKey]
+  );
 
   if (dismissed && !dismissHint) return null;
 

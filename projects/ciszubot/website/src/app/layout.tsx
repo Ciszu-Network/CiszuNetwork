@@ -56,9 +56,11 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const lang = (store.get("ciszubot_lang")?.value ?? "es") as Lang;
   const dict = getDict(lang);
   const session = await getSessionData();
+  const theme = store.get("ciszubot_theme")?.value ?? "dark";
+  const isDark = theme !== "light";
 
   return (
-    <html lang={lang} className={`${inter.variable} ${spaceGrotesk.variable}`}>
+    <html lang={lang} className={`${inter.variable} ${spaceGrotesk.variable}${isDark ? " dark" : ""}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <script defer type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />

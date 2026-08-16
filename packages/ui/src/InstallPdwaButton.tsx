@@ -136,7 +136,7 @@ export default function InstallPdwaButton({
     } catch {
       /* noop */
     }
-    restoreFabButtons();
+    restoreFabButtons([storageKey]);
   };
 
   const handleInstall = useCallback(async () => {
@@ -158,10 +158,13 @@ export default function InstallPdwaButton({
 
   const visible = !installed && !dismissed;
   const stackBottom = useFabStack('pdwa', visible ? { order: 0, height: 36 } : null);
-  useFabRestore(() => {
-    setDismissed(false);
-    setDismissHint(false);
-  });
+  useFabRestore(
+    () => {
+      setDismissed(false);
+      setDismissHint(false);
+    },
+    [storageKey]
+  );
 
   const hasNative = browser.nativa || deferred !== null;
 

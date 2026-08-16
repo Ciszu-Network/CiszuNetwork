@@ -17,7 +17,8 @@
 #   - $RUNNER_VERSION : versión del paquete (default 2.336.0)
 #   - $REPO_URL       : https://github.com/Ciszu-Network/CiszuNetwork
 #   - $TOKEN          : RUNNER_REGISTRATION_TOKEN (del vault, ver abajo)
-#   - $RUNNER_DIR     : E:\actions-runner (rutas sin espacios: RunnerService.exe falla
+#   - $RUNNER_DIR     : E:\actions-runners\CISZU-PC (carpeta raíz de runners en
+#     E:\actions-runners\<runner>; rutas sin espacios: RunnerService.exe falla
 #     si el binPath contiene espacios)
 #
 # El token de registro es de UN SOLO uso y expira. Se lee de .env.local (vault),
@@ -34,7 +35,7 @@ $repo = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 
 $RunnerVersion = '2.336.0'
 $RepoUrl = 'https://github.com/Ciszu-Network/CiszuNetwork'
-$RunnerDir = 'E:\actions-runner'
+$RunnerDir = 'E:\actions-runners\CISZU-PC'
 $Sha256Zip = 'd59123a43003e357b0805b5d0f611d0bd2f65ab67d51bd070dd4e7a0f685c162'
 $ZipUrl = "https://github.com/actions/runner/releases/download/v$RunnerVersion/actions-runner-win-x64-$RunnerVersion.zip"
 $ZipPath = Join-Path $RunnerDir "actions-runner-win-x64-$RunnerVersion.zip"

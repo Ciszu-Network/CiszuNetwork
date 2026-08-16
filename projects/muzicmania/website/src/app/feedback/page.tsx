@@ -312,7 +312,7 @@ export default function FeedbackPage() {
               El botón de reporte rápido de abajo a la izquierda se puede volver a mostrar cuando quieras.
             </p>
           </div>
-          <FabRestore accent="#ff33cc" />
+          <FabRestore accent="#ff33cc" keys={['muzicmania-feedback-dismissed']} />
         </motion.section>
       </div>
     </MainLayout>

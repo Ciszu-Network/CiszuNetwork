@@ -40,6 +40,44 @@ function Toast({ message, onClose }: { message: string; onClose: () => void }) {
   );
 }
 
+const LANGS = [
+  {
+    code: 'ES' as const,
+    label: 'Español',
+    flag: (
+      <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner">
+        <rect width="512" height="512" fill="#aa151b" />
+        <rect width="512" height="300" y="106" fill="#f1bf00" />
+        <circle cx="150" cy="256" r="50" fill="#aa151b" />
+      </svg>
+    ),
+  },
+  {
+    code: 'EN' as const,
+    label: 'English',
+    flag: (
+      <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner">
+        <rect width="512" height="512" fill="#bd3d44" />
+        <rect width="512" height="36" y="36.5" fill="#fff" />
+        <rect width="512" height="36" y="109.5" fill="#fff" />
+        <rect width="512" height="36" y="182.5" fill="#fff" />
+        <rect width="512" height="36" y="255.5" fill="#fff" />
+        <rect width="512" height="36" y="328.5" fill="#fff" />
+        <rect width="512" height="36" y="401.5" fill="#fff" />
+        <rect width="512" height="36" y="474.5" fill="#fff" />
+        <rect width="240" height="260" fill="#192f5d" />
+        <g fill="#fff">
+          <circle cx="30" cy="35" r="5" /><circle cx="70" cy="35" r="5" /><circle cx="110" cy="35" r="5" /><circle cx="150" cy="35" r="5" /><circle cx="190" cy="35" r="5" />
+          <circle cx="50" cy="65" r="5" /><circle cx="90" cy="65" r="5" /><circle cx="130" cy="65" r="5" /><circle cx="170" cy="65" r="5" /><circle cx="210" cy="65" r="5" />
+          <circle cx="30" cy="95" r="5" /><circle cx="70" cy="95" r="5" /><circle cx="110" cy="95" r="5" /><circle cx="150" cy="95" r="5" /><circle cx="190" cy="95" r="5" />
+          <circle cx="50" cy="125" r="5" /><circle cx="90" cy="125" r="5" /><circle cx="130" cy="125" r="5" /><circle cx="170" cy="125" r="5" /><circle cx="210" cy="125" r="5" />
+          <circle cx="30" cy="155" r="5" /><circle cx="70" cy="155" r="5" /><circle cx="110" cy="155" r="5" /><circle cx="150" cy="155" r="5" /><circle cx="190" cy="155" r="5" />
+        </g>
+      </svg>
+    ),
+  },
+];
+
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
@@ -49,6 +87,7 @@ export default function Navbar() {
   const [infoOpen, setInfoOpen] = useState(false);
   const [accOpen, setAccOpen] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [sidebarView, setSidebarView] = useState<'main' | 'lang'>('main');
   const { isMenuOpen, setIsMenuOpen, theme, setTheme, language, setLanguage, searchQuery, setSearchQuery } = useAppStore();
   const firstRender = useRef(true);
   const searchRef = useRef<HTMLDivElement>(null);
@@ -69,7 +108,7 @@ export default function Navbar() {
       setIsMenuOpen(false); setSearchOpen(false); setInfoOpen(false); setAccOpen(false);
       return;
     }
-    setIsMenuOpen(false); setSearchOpen(false); setInfoOpen(false); setAccOpen(false);
+    setIsMenuOpen(false); setSearchOpen(false); setInfoOpen(false); setAccOpen(false); setSidebarView('main');
     setIsNavigating(false);
   }, [pathname]);
 
@@ -116,11 +155,6 @@ export default function Navbar() {
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
     setToast('[SISTEMA]: Theme changer is in beta — some styles may not apply correctly yet.');
-  };
-
-  const toggleLang = () => {
-    setLanguage(language === 'EN' ? 'ES' : 'EN');
-    setToast('[SISTEMA]: Language changer is in beta — translations are incomplete.');
   };
 
   const closeSearch = () => { setSearchOpen(false); setSearchQuery(''); };
@@ -353,7 +387,7 @@ export default function Navbar() {
       {/* Slide-right contextual menu (sidebar) */}
       {isMenuOpen && (
         <div className="fixed inset-0 z-[100] pointer-events-none">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm pointer-events-auto" onClick={() => setIsMenuOpen(false)} />
+          <div className="absolute inset-0 bg-black/60 pointer-events-auto" onClick={() => setIsMenuOpen(false)} />
           <div className="absolute top-0 right-0 w-[320px] max-w-[85vw] h-full bg-[#05050a]/95 backdrop-blur-3xl shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col pointer-events-auto animate-slide-in-right">
             {/* Animated left divider to match the header */}
             <div className="absolute left-0 top-0 w-[1px] h-full bg-gradient-to-b from-transparent via-neon-blue/60 to-transparent shadow-[0_0_15px_rgba(61,106,223,0.5)] z-10" />
@@ -368,13 +402,22 @@ export default function Navbar() {
                 {theme === 'dark' ? <MoonIcon /> : <SunIcon />}
               </button>
 
-              <h2 className="text-neon-blue text-base font-header font-black tracking-widest drop-shadow-[0_0_8px_rgba(61,106,223,0.8)]">MENU</h2>
+              <h2 className="text-neon-blue text-base font-header font-black tracking-widest drop-shadow-[0_0_8px_rgba(61,106,223,0.8)]">
+                {sidebarView === 'main' ? 'MENU' : 'LANGUAGES'}
+              </h2>
 
-              <button onClick={toggleLang}
-                className="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all duration-300 shadow-lg"
-                title="Language">
-                {I.globe}
-                <span className="text-gray-400 hover:text-white uppercase tracking-widest text-xs font-bold">{language}</span>
+              <button
+                onClick={() => setSidebarView(sidebarView === 'main' ? 'lang' : 'main')}
+                className="group flex items-center gap-3 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all duration-300 shadow-lg cursor-pointer"
+                title="Language"
+              >
+                <svg className={`w-5 h-5 transition-transform duration-500 ${sidebarView === 'lang' ? 'rotate-90 text-neon-blue' : 'group-hover:rotate-12 text-white/70'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                </svg>
+                <div className="w-6 h-6 rounded-full overflow-hidden border border-white/20 shadow-[0_0_10px_rgba(255,255,255,0.1)] shrink-0 transition-transform duration-300 group-hover:scale-110 [&>svg]:w-6 [&>svg]:h-6">
+                  {(LANGS.find(l => l.code === language) || LANGS[0]).flag}
+                </div>
               </button>
 
               <button onClick={() => setIsMenuOpen(false)}
@@ -385,6 +428,8 @@ export default function Navbar() {
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto px-5 py-5 space-y-1">
+              {sidebarView === 'main' ? (
+                <>
               <div className="mb-4">
                 <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">Navigation</p>
                 {ALL_PAGES.map((link) => (
@@ -422,6 +467,30 @@ export default function Navbar() {
                   </a>
                 ))}
               </div>
+              </>
+              ) : (
+                <div className="grid grid-cols-1 gap-1 animate-fade-in-up pb-10">
+                  {LANGS.map((l) => (
+                    <button
+                      key={l.code}
+                      onClick={() => setLanguage(l.code)}
+                      className={`flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-header font-bold transition-all cursor-pointer group ${
+                        language === l.code ? 'bg-neon-blue/20 text-neon-blue border border-neon-blue/30' : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'
+                      }`}
+                    >
+                      <span className="w-6 h-6 rounded-full overflow-hidden ring-1 ring-white/10 shrink-0 transition-transform duration-300 group-hover:scale-110 [&>svg]:w-6 [&>svg]:h-6">
+                        {l.flag}
+                      </span>
+                      <span className="flex-1 text-left">{l.label}</span>
+                      {language === l.code && (
+                        <svg className="w-4 h-4 text-neon-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
+                          <path d="M20 6L9 17l-5-5" />
+                        </svg>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

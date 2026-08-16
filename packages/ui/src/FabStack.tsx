@@ -138,30 +138,44 @@ export function useFabStack(id: string, slot: FabSlot | null): number {
  * Hook para escuchar el evento de restauración de botones flotantes.
  * Al dispararse, el botón que lo usa debe limpiar su estado de dismiss y
  * re-aparecer (con su animación de entrada).
+ *
+ * Si se pasa `keys`, el callback solo se invoca cuando entre las claves
+ * restauradas hay alguna de las suyas (reactivación acotada por página).
+ * Sin `keys`, el callback responde a cualquier restauración (comportamiento
+ * original de restauración global).
  */
-export function useFabRestore(onRestore: () => void): void {
+export function useFabRestore(onRestore: () => void, keys?: string[]): void {
   const cbRef = useRef(onRestore);
   cbRef.current = onRestore;
+  const keysRef = useRef(keys);
+  keysRef.current = keys;
 
   useEffect(() => {
-    const handler = () => cbRef.current();
+    const handler = (e: Event) => {
+      const cleared = (e as CustomEvent<{ keys?: string[] }>).detail?.keys ?? DISMISS_KEYS;
+      const mine = keysRef.current;
+      if (mine && !mine.some((k) => cleared.includes(k))) return;
+      cbRef.current();
+    };
     window.addEventListener(FAB_RESTORE_EVENT, handler);
     return () => window.removeEventListener(FAB_RESTORE_EVENT, handler);
   }, []);
 }
 
 /**
- * Restaura todos los botones flotantes: limpia los flags de dismiss del
- * localStorage y emite el evento para que reaparezcan sin recargar.
+ * Restaura botones flotantes: limpia los flags de dismiss de las claves
+ * indicadas (o todas si no se pasan) del localStorage y emite el evento para
+ * que reaparezcan sin recargar. Pasar `keys` permite reactivar SOLO el botón
+ * de una página concreta.
  */
-export function restoreFabButtons(): void {
+export function restoreFabButtons(keys: string[] = [...DISMISS_KEYS]): void {
   if (typeof window !== 'undefined') {
     try {
-      for (const k of DISMISS_KEYS) localStorage.removeItem(k);
+      for (const k of keys) localStorage.removeItem(k);
     } catch {
       /* noop */
     }
-    window.dispatchEvent(new Event(FAB_RESTORE_EVENT));
+    window.dispatchEvent(new CustomEvent(FAB_RESTORE_EVENT, { detail: { keys } }));
   }
 }
 
@@ -186,12 +200,15 @@ const fabRestoreBtnStyle: CSSProperties = {
  * Botón compartido "Restaurar botón flotante". Se coloca en páginas
  * (Descargas / Feedback / Soporte) para que el usuario pueda volver a mostrar
  * los botones flotantes que cerró con la X. Estilo autocontenido (inline).
+ *
+ * `keys` acota la reactivación a un botón concreto (p. ej. `['ciszu-pdwa-dismissed']`);
+ * sin él se restauran todos (comportamiento original).
  */
-export function FabRestore({ accent = '#00e5ff' }: { accent?: string }) {
+export function FabRestore({ accent = '#00e5ff', keys }: { accent?: string; keys?: string[] }) {
   const [done, setDone] = useState(false);
 
   const handle = () => {
-    restoreFabButtons();
+    restoreFabButtons(keys);
     setDone(true);
     setTimeout(() => setDone(false), 2600);
   };

@@ -116,7 +116,7 @@ export default async function FeedbackPage() {
             <p className="font-bold text-sm text-ink mb-1">¿Cerraste el botón flotante?</p>
             <p className="text-xs text-muted">El botón de reporte rápido de abajo a la izquierda se puede volver a mostrar cuando quieras.</p>
           </div>
-          <FabRestore accent="#22d3ee" />
+          <FabRestore accent="#22d3ee" keys={['ciszu-feedback-dismissed']} />
         </div>
       </div>
     </div>

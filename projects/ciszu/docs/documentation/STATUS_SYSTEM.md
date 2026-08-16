@@ -116,7 +116,7 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 | MuzicMania | Operativo | Juego + app Tauri (NSIS) |
 | CiszuBot | Operativo | Bot Discord + landing + estado en vivo |
 | CDN Supabase | Operativo | `ciszu-cdn`, 7.353 objetos |
-| CI/CD | Operativo | GitHub Actions: CI, CodeQL, DAST, deploy ×4, uptime-watch. **Runner self-hosted CISZU-PC online** (servicio Windows `E:\actions-runner`) desde 15 ago 2026: jobs portables del CI y deploys ×4 en `self-hosted`, sin consumir minutos de la org |
+| CI/CD | Operativo | GitHub Actions: CI, CodeQL, DAST, deploy ×4, uptime-watch. **3 runners self-hosted online** (servicios Windows en `E:\actions-runners\CISZU-PC`, `CISZU-PC-2`, `CISZU-PC-3`) desde 15 ago 2026: jobs portables del CI y deploys ×4 en `self-hosted`, sin consumir minutos de la org |
 
 ## Estado por sistema (resumen)
 
@@ -203,6 +203,9 @@ Este doc es una **foto del estado** del ecosistema; al cerrar sesión:
 
 | Fecha | Cambio relevante |
 |---|---|
+| 2026-08-16 | Navbar ciszubot con paridad total de diseño: búsqueda full-width bajo el nav (reemplaza el panel flotante), hamburguesa siempre visible con sidebar slide-right (vistas MENÚ/IDIOMAS, overlay sin blur) y lista de idiomas es/en con banderas. `tsc` + `lint` ×4 webs en verde |
+| 2026-08-16 | Runners consolidados: las 3 instalaciones dispersas (`E:\actions-runner`, `-2`, `-3`) se movieron a `E:\actions-runners\CISZU-PC`, `E:\actions-runners\CISZU-PC-2` y `E:\actions-runners\CISZU-PC-3`; binPath de los 3 servicios reconfigurados (`sc.exe config`), `workFolder` en `.runner` de -2/-3 actualizado a la nueva ruta. Los 3 runners quedaron online e idle desde la nueva ubicación (uptime-watch scheduled OK). Referencias actualizadas: `scripts/runner-install.ps1` (`$RUNNER_DIR`), `ACTIONS_RUNNERS_SYSTEM`, `PROJECTS_SYSTEM`, `STATUS_SYSTEM`. |
+| 2026-08-16 | TODO frontend pulido y verificado: footers copyright centrado ×3 (ciszu, antony, muzicmania — patrón ciszubot); tagline ciszu con 400 en CDN resuelto (objeto `tagline_white.svg` subido a `ciszu-cdn`, verificado 200/`image/svg+xml`); Navbar Antony con Feedback y Descargas directos en `NAV_MAIN` (antes solo en menú/footer); ciszubot: dark default confirmado (`themeScript` `'dark'`), botones search/auth/hamburguesa a estilo circular `p-2 rounded-full` (como las 3 webs), selector de idioma segmentado ES\|EN reemplazado por botón pill único con globo (header + menú móvil + footer), isotipo circular añadido al footer (encima del logotipo). CI completo 10/10 en verde en runners self-hosted (migración confirmada, 3 runners online, 0 minutos de org consumidos). Deploys 4/4 en producción vía Vercel CLI (Ready ~9-10 min c/u). lint + tsc ×4 webs + build turbo 5/5 verdes. |
 | 2026-08-15 | Pulido frontend TODO global: `FabDismissHint` compartido (`@ciszu/ui`) con contador de 3 s + reactivación, migrados `InstallPdwaButton` y `FeedbackFab` ×4. Footers ×4 con copyright centrado (2024–2026), créditos "hecho con amor por Ciszuko Antony · respaldado por Ciszu Network" en color y perfil YouTube circular (ciszukoa). Favicon error corregido: ciszunetwork usa isotipo transparente y ciszukoa el perfil circular de YouTube (igual en el turnstile `CloudflareGuard`). Navbar ciszu: hamburguesa antes de Account, toggles fuera del header, Descargas/Feedback fuera de "Información". Navbar ciszubot: toggles tema/idioma al header + hamburguesa móvil, botón "Invitar" con texto, fix blur modo claro, dark default, 6 redes en footer. Tema claro ciszubot a tokens (`bg-bg/bg-card/bg-surface/text-ink/text-muted/text-faint/border-border`). tsc/lint/builds ×4 verdes |
 | 2026-08-14 | F6 Evaluación de 12 herramientas documentada en `TOOLS_EVALUATION_PLAN.md` (zod gana sobre ArkType/TypeBox; Coolify ⏸️ hasta VPS_PLAN). Implementado: Husky + Lint-Staged versionados (pre-commit extiende secretlint/gitleaks) y **Nuqs** en muzicmania (`play`/`library` → `useQueryState('track')`, `NuqsAdapter` en layout). Fix `'use client'` en `ZoomWarning` y `ScrollSpy` de `@ciszu/ui` (rompía build). TODO #investigación completada |
 | 2026-08-14 | F5 Storybook completo: addon-docs + `Introduction.mdx`, coverage v8, viewports, agrupación; +7 componentes portados a `@ciszu/ui` (Button, RichText, VinylDisc, ScrollSpy, FlagIcon, SocialIcon, ZoomWarning) → 34 stories/9 componentes, test:storybook 34/34; `CHROMATIC_PROJECT_TOKEN` como secret del repo; commit `c1e9f8d` pusheado |
@@ -232,7 +235,7 @@ Este doc es una **foto del estado** del ecosistema; al cerrar sesión:
 - [ ] Nuevas incidencias registradas en su `*_SYSTEM.md`.
 - [ ] `ÚLTIMA ACTUALIZACIÓN` fechada y `PROJECTS_SYSTEM.md` con historia.
 
-_Última revisión: 15 ago 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
+_Última revisión: 16 ago 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
 `WORKFLOW_SYSTEM.md`, `ARCHITECTURE.md`, `FULL_STACK_SYSTEM.md`.
 
-ÚLTIMA ACTUALIZACIÓN: 2026-08-15
+ÚLTIMA ACTUALIZACIÓN: 2026-08-16

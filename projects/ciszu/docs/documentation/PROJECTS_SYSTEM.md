@@ -1,7 +1,7 @@
 # PROJECTS_SYSTEM — Sistema de Proyectos del Ecosistema (Ciszu Network)
 
 Versión: 2.0.0
-Actualización: 2026-08-15
+Actualización: 2026-08-16
 Identificador: PROJECTS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: documento maestro de los proyectos de Ciszu Network. Fusiona la vista
@@ -142,6 +142,21 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 > Este historial absorbe `PROJECT_HISTORY.md` (eliminado 13 ago 2026). Añadir aquí los
 > nuevos hitos al cierre de sesión.
 
+### 16 de Agosto, 2026 — Navbar ciszubot con paridad total de diseño (búsqueda full-width + sidebar MENÚ/IDIOMAS)
+
+- **Buscador full-width bajo el nav**: el panel flotante de búsqueda se reemplazó por un
+  panel a ancho completo que se despliega bajo la navbar (mismo sistema que ciszu y
+  muzicmania): input con icono, resultados en grilla por categorías, estado vacío con
+  aviso + botón "Reiniciar búsqueda" y cierre con Escape.
+- **Hamburguesa siempre visible + sidebar slide-right**: el menú móvil en el nav se
+  sustituyó por un panel lateral fijo con vistas `MENÚ`/`IDIOMAS` (estilo muzicmania):
+  navegación con iconos, sección de cuenta (Panel / Login con Discord) e invitación con
+  el degradado neon; overlay oscuro **sin blur**.
+- **Selector de idioma completo**: lista `LANGS` (es/en) con banderas SVG e indicador de
+  selección, accesible desde la vista `IDIOMAS` de la sidebar; el botón pill del header
+  se conserva en desktop.
+- **Verificado**: `tsc --noEmit` + `next lint` en verde en las 4 webs.
+
 ### 15 de Agosto, 2026 — Self-hosted runner operativo (CISZU-PC) + CI híbrido
 
 - **Runner instalado como servicio de Windows**: `scripts/runner-install.ps1` automatiza
@@ -150,9 +165,9 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
   `actions.runner.Ciszu-Network-CiszuNetwork.CISZU-PC` arrancado (auto retardado + reinicio
   en fallo).
 - **Lección clave**: `RunnerService.exe init` falla si el binPath del servicio contiene
-  espacios (error -532462766). El runner vive en `E:\actions-runner\` (sin espacios), no en
-  `.opencode\runner`. El token de registro es de un solo uso y expira: se regenera con
-  `gh api repos/Ciszu-Network/CiszuNetwork/actions/runners/registration-token --method POST`.
+  espacios (error -532462766). Los runners viven en `E:\actions-runners\<runner>` (sin
+  espacios), no en `.opencode\runner`. El token de registro es de un solo uso y expira: se
+  regenera con `gh api repos/Ciszu-Network/CiszuNetwork/actions/runners/registration-token --method POST`.
 - **CI híbrido activado**: los jobs portables de `ci.yml` y los 4 deploys corren en
   `runs-on: self-hosted` local (sin consumir minutos de la organización); semgrep, gitleaks,
   security-e2e, CodeQL, DAST y uptime-watch quedan en runners hospedados de GitHub.
@@ -348,5 +363,5 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 3. **Pendientes (§3)**: mover a historial cuando se resuelva, añadir nuevos bloqueos.
 4. Marcar "Última actualización" y actualizar `STATUS_SYSTEM.md` y `STATISTICS_SYSTEM.md`.
 
-_Última revisión: 15 ago 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
+_Última revisión: 16 ago 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
 `ARCHITECTURE.md`, `WORKFLOW_SYSTEM.md`, `AGENTS.md`.
