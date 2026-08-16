@@ -31,6 +31,8 @@ jobs:
           fetch-depth: 0
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          dest: ~/setup-pnpm-${{ runner.name }}
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
