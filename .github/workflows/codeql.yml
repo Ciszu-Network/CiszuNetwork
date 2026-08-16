@@ -35,7 +35,7 @@ jobs:
         id: check
         env:
           GH_TOKEN: ${{ github.token }}
-        shell: pwsh
+        shell: powershell
         run: |
           $status = gh api "repos/$env:GITHUB_REPOSITORY" --jq '.security_and_analysis.advanced_security.status' 2>$null
           if (-not $status) { $status = 'disabled' }
