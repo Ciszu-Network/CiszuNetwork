@@ -139,7 +139,6 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon }: 
 
         <div className="mt-4 flex items-center gap-3">
           {guildIcon ? (
-            // eslint-disable-next-line @next/next/no-img-element
             <img src={`https://cdn.discordapp.com/icons/${guildId}/${guildIcon}.png`} alt="" className="h-11 w-11 rounded-full" />
           ) : (
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-neon-blue to-neon-purple font-bold text-white">

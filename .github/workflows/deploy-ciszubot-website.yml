@@ -3,9 +3,6 @@ name: Deploy CiszuBot Website
 on:
   push:
     branches: [main, master]
-    paths:
-      - 'projects/ciszubot/**'
-      - 'packages/**'
   workflow_dispatch:
 
 permissions:

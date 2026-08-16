@@ -3,9 +3,6 @@ name: Deploy CiszuNetwork Website
 on:
   push:
     branches: [main, master]
-    paths:
-      - 'projects/ciszu/**'
-      - 'packages/**'
   workflow_dispatch:
 
 permissions:
