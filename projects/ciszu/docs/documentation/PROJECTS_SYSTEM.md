@@ -142,6 +142,21 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 > Este historial absorbe `PROJECT_HISTORY.md` (eliminado 13 ago 2026). Añadir aquí los
 > nuevos hitos al cierre de sesión.
 
+### 15 de Agosto, 2026 — Self-hosted runner operativo (CISZU-PC) + CI híbrido
+
+- **Runner instalado como servicio de Windows**: `scripts/runner-install.ps1` automatiza
+  descarga, checksum (SHA256), configuración con token del vault y registro de servicio con
+  `config.cmd --runasservice`. Runner **online** en GitHub (licencia/cromatics) y servicio
+  `actions.runner.Ciszu-Network-CiszuNetwork.CISZU-PC` arrancado (auto retardado + reinicio
+  en fallo).
+- **Lección clave**: `RunnerService.exe init` falla si el binPath del servicio contiene
+  espacios (error -532462766). El runner vive en `E:\actions-runner\` (sin espacios), no en
+  `.opencode\runner`. El token de registro es de un solo uso y expira: se regenera con
+  `gh api repos/Ciszu-Network/CiszuNetwork/actions/runners/registration-token --method POST`.
+- **CI híbrido activado**: los jobs portables de `ci.yml` y los 4 deploys corren en
+  `runs-on: self-hosted` local (sin consumir minutos de la organización); semgrep, gitleaks,
+  security-e2e, CodeQL, DAST y uptime-watch quedan en runners hospedados de GitHub.
+
 ### 15 de Agosto, 2026 — Pulido de frontend: footers, favicons y FAB dismiss (TODO global)
 
 - **FAB dismiss unificado (`FabDismissHint`)**: nuevo componente compartido en `@ciszu/ui`

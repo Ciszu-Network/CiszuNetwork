@@ -19,7 +19,7 @@ concurrency:
 jobs:
   lint:
     name: Lint
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       matrix:
         app: [ciszunetwork-website, ciszukoantony-website, muzicmania-website]
@@ -34,7 +34,7 @@ jobs:
 
   unit-tests:
     name: Tests unitarios (Vitest)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -46,7 +46,7 @@ jobs:
 
   storybook-tests:
     name: Tests de componente Storybook (Vitest + Playwright)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -55,11 +55,15 @@ jobs:
           cache: pnpm
       - run: pnpm install
       - name: Instalar browsers de Playwright (chromium, para @vitest/browser)
-        run: pnpm exec playwright install --with-deps chromium
+        run: pnpm exec playwright install chromium
       - name: Tests de interacción de stories (addon-vitest)
         run: pnpm --filter @ciszu/ui test:storybook
 
   # ── Seguridad (SAST/SCA/DACP/DAST) — tareas concurrentes ───────────────────
+  # NOTA (sistema híbrido): los jobs de abajo usan contenedores Linux/acciones
+  # oficiales y NO son portables al runner self-hosted de Windows. Corren en
+  # ubuntu-latest; si el billing sigue bloqueado, replicarlos localmente con los
+  # comandos documentados en ACTIONS_RUNNERS_SYSTEM.md §5.4.
 
   semgrep:
     name: Semgrep (SAST)
@@ -73,7 +77,7 @@ jobs:
 
   audit:
     name: pnpm audit (SCA)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
