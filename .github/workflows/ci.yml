@@ -70,12 +70,18 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
+      # El runner corre como NETWORK SERVICE: el `py` del usuario no existe en
+      # su context. Se instala un Python portable con setup-python.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
       - name: Instalar Semgrep
-        run: py -m pip install --quiet semgrep==1.172.0
+        run: python -m pip install --quiet semgrep==1.172.0
       - name: Escaneo Semgrep (p/security-audit)
         env:
           SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
-        run: py -m semgrep scan --config p/security-audit --metrics=off --oss-only --exclude node_modules --exclude .next --exclude .turbo --exclude lockfile
+        run: python -m semgrep scan --config p/security-audit --metrics=off --oss-only --exclude node_modules --exclude .next --exclude .turbo --exclude lockfile
 
   audit:
     name: pnpm audit (SCA)
@@ -118,7 +124,7 @@ jobs:
         run: |
           if ($env:GITHUB_EVENT_NAME -eq 'pull_request') {
             $LOG_OPTS = "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
-          } elseif ($env:GITHUB_EVENT_NAME -eq 'push' -and ${{ github.event.before }} -eq '0000000000000000000000000000000000000000') {
+          } elseif ($env:GITHUB_EVENT_NAME -eq 'push' -and "${{ github.event.before }}" -eq '0000000000000000000000000000000000000000') {
             $LOG_OPTS = 'HEAD~5..HEAD'
           } elseif ($env:GITHUB_EVENT_NAME -eq 'push') {
             $LOG_OPTS = "${{ github.event.before }}..${{ github.sha }}"
