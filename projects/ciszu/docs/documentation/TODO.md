@@ -6,22 +6,26 @@
 
 **PDWA (Descargas) + Feedback botones flotantes.**
 
-- [ ] Arreglar las advertencias al cerrar con X. Actualmente al cerrar las advertencias esta fuera de la pantalla por debajo, no se pueden leer, debe aparecer mas arriba o la derecha. Como no se ve no puedo verificar la siguiente informacion: Debe indicar que puede reactivar el boton cierta pagina. Solamente eso. Ademas debe tener un contador para indicar que se quitara en 3 segundos. Visualmente. Ya se ha intentado arreglar 2 veces pero sigue ocurriendo el problema, la advertencia aparece debajo de la pantall y no se logra ver, intenta colocarlo en un lugar de la pantalla se que vea correctamente puede ser en el centro. No solo eso, anteriormene funcionaba pero con 1 y el otro no. TODAS las advertencias deberian aparecer en el mismo lugar al cerrar con X.
-- [ ] En las paginas de reactivacion de algun boton flotante, como feedback o download. SOLO debe reactivar el boton de esa pagina, no todos. Ya que actualmente reactiva todos los botones incluyendo los que no son de la pagina, por ejemplo, deberia reactivar el boto nde download la pagina de downloads.
-- [ ]
+- [ ] Ahora existen 2 problemas. El primero es simple, basicamente cuando se se cierra varios botones flotantes al mismo tiempo las advertencias se sobre ponen, no es un error critico, pero para que sea visualmente mejor, las advertencias tambien se deberian "stackear" o guardar como pilas uno encima de otra, con el fin de que no se sobrepongan entre si, parecido a los botones flotantes. Pero ojo, siempre las advertencias no deben tampoco sobreponerse ne botones flotantes.
+- [ ] Actualmente el contador esta bien visualmente, pero a la hora de probar y debuggear, existe un problema claro, el contador aveces se congela o no termina de llegar a 0. Se queda trabado entre el 1 o 3 por segundos, no es fluido. Al final si llega a su cometido de autocerrarse pero se ve trabado o cargado lento.
 
 # Cambios por cada website para pulir errores de frontend (adema de las generales)
 
 Ciszu Network Website:
 
-- [ ] Se debe replicar el menu de idiomas del menu hamburguesa de muzicmania completamente sin decir error de beta, con sus paises y banderas.
-- [ ] No difumuninar al entrar dentro del menu hamburguesa.
-- [ ]
+- [ ] El menu de idiomas deben tener todos los idiomas que muzicmania tambien tiene (pero ojo no como implementacion, al seleccionar un idioma que no este terminado debe salir un error estilo muzicmania)
+- [ ] El menu de idiomas del footer debe ser igual al que esta adentro del hamburguer menu, no otro diferente. Parecido al footer de muzicmania.
+- [ ] Quitar el efecto de oscuridad o fundido negro a la hora de estar dentro del menu de hamburguesa, es decir igual a muzicmania, sin ningun efecto.
+- [ ] El menu de idiomas del footer debe ser como el footer de muzicmania, es decir, decir LANG. Y al darle entrar al menu de idiomas desde el menu de hamburguesa.
 
 Ciszubot Website:
 
-- [ ] El tema de oscuridad debe ser el por defecto al inicio. A pesar del cambio sigue sin ser default el dark.
-- [ ] Ciszubot es la unica web con un diseño un poco mas diferente en especial la gui y botones, deben ser mas parecidos al estilo de las demas 3 paginas o usar el mismo. Aun siguen siendo diferentes, el icono e auth es diferente a que las 3 paginas,el boton de cambiar idioma esta bien, pero deberia ser una lista completa y su menu en el menu hamburguesa como las demas, el boton de search y su sistema que despliega tambien es diferente a las demas, y aun le falta el menu hamburguesa, debes centrate en replicar el diseño de las otras 3 webs (su header y navbar estilo y sistema) a ciszubot, manteniendo el boton de invitar.
+- [ ] Quitar el efecto de oscuridad o fundido negro a la hora de estar dentro del menu de hamburguesa, es decir igual a muzicmania, sin ningun efecto.
+- [ ] En el header quita los botones del theme y lenguaje en el navbar, debido a que este estare en el menu hamburguesa ya.
+- [ ] Actualmente al abrir el menu hamburguesa cubre todo el lateral de la pagina. Eso esta mal. Deberia ser como ciszunetwork o muzicmania, aparecer debajo del header en el sentido que no lo sobreponga por arriba. Recuerda que el boton de meu hamburguesa es un togle, al darle lo abbre y al darle de nuevo se convierte en una X y si le das denuevo se quita. Fijate en la pagina de ciszunetwork y muzicmania. Eso significa que actualmente la x que esta incrustada adentro del menu hamburguesa quitala, es redundante.
+- [ ] Ciszubot es la unica web con un diseño un poco mas diferente en especial la gui y botones, deben ser mas parecidos al estilo de las demas 3 paginas o usar el mismo. Aun siguen siendo diferentes, el icono de autentificacion (icion de humano) es diferente (con una linea debajo), el de menu hamburguesa las lineas son menos gruesas, deberian ser mas gruesas, el icono de lupa es diferente, basicamente existen muchas inconsistencias de iconos con respecto a las demas websites.
+- [ ] El menu de idiomas deben tener todos los idiomas que muzicmania tambien tiene (pero ojo no como implementacion, al seleccionar un idioma que no este terminado debe salir un error estilo muzicmania)
+- [ ] El menu de idiomas del footer debe ser como el footer de muzicmania, es decir, decir LANG. Y al darle entrar al menu de idiomas desde el menu de hamburguesa.
 - [ ] El boton de invitar del header debe verse igual o ser igual al del footer, el del footer no tiene el degradado y el contenido interno es muy pequeño. Debemos aocmodar eso.
 - [ ] El copyright aunque si esta centrado es muy diferente a los de los demas y no siguen el mismo estilo , nomenclatura ordenada. Arregla esto. Ejemplo: "
 
@@ -33,11 +37,7 @@ Ademas el copyright siempre va de ultimo, incluso despues de los botones de acci
 
 Ciszuko Antony Website:
 
-- [ ] Se debe replicar el menu de idiomas del menu hamburguesa de muzicmania completamente sin decir error de beta, con sus paises y banderas.
-- [ ] No difumuninar al entrar dentro del menu hamburguesa.
-- [ ] El copyright deberia y los textos no hipervinculados deberia ser blanco no gris. No tiene mucha llamatividida ycasi no se persiven.
-- [ ] En el footer al hacer hover en el logo, si aparece el glow o destello azul pero el isotipo canal de youtube de ciszukoantony se enmarca con un borde rosa. No tiene ningun sentido deberia ser igual al del header, sin remarcar esa linea rosa.
-
-MuzicMania:
-
-- [ ] En muzicmania, al darle al boton de accion del idioma en el footer, deberia abrirse el menu de idiomas, y no decir un error de beta.
+- [ ] Quitar el efecto de oscuridad o fundido negro a la hora de estar dentro del menu de hamburguesa, es decir igual a muzicmania, sin ningun efecto.
+- [ ] El menu de idiomas deben tener todos los idiomas que muzicmania tambien tiene (pero ojo no como implementacion, al seleccionar un idioma que no este terminado debe salir un error estilo muzicmania)
+- [ ] El menu de idiomas del footer debe ser como el footer de muzicmania, es decir, decir LANG. Y al darle entrar al menu de idiomas desde el menu de hamburguesa.
+- [ ] En el footer al hacer hover en el logo, si aparece el glow o destello azul pero el isotipo canal de youtube de ciszukoantony se enmarca con un borde azul ahora. NO deberia haber ningun borde. Fijate en el header. No tiene ningun contorno, simplemente es un glow o destello.

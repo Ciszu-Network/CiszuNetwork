@@ -20,11 +20,13 @@
     "@sentry/nextjs": "^10.69.0",
     "@supabase/supabase-js": "^2.60.0",
     "@tanstack/react-query": "^5.101.4",
+    "lucide-react": "^1.17.0",
     "next": "^15.5.22",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "server-only": "^0.0.1",
-    "zod": "^4.4.3"
+    "zod": "^4.4.3",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",

@@ -70,6 +70,7 @@ Antes de codificar, lee el doc del área que tocas. Mapa por tipo de tarea:
 | Legal/fiscal         | `COMPANY_REGISTRATION_PLAN` · `TAX_PLAN` · `RIF_PERSON_PLAN`                               |
 | Imagen/multimedia    | `BRAND_PLAN` · `AI_ART_PLAN` · `ART_PROTOCOLS`                                             |
 | Operación diaria     | `WORKFLOW_SYSTEM` · `TOOLS_SYSTEM`                                                         |
+| Testing/Dev local    | `LOCAL_TESTING_PROTOCOLS` · `DEBUGGING_SYSTEM` · `DEV_CONSOLE_SYSTEM` · `TESTING_SYSTEM`   |
 
 ### 3.3 Índice de la documentación de ciszu
 
@@ -81,7 +82,8 @@ Antes de codificar, lee el doc del área que tocas. Mapa por tipo de tarea:
   `CORS_SYSTEM` · `BUSINESS_SYSTEM` · `OPENCODE_SYSTEM` (voz + comandos) ·
   `REMOTE_CONTROL_SYSTEM` (SSH/Tailscale/ciszu-ai) · `KNOWLEDGE_SYSTEM` (educación) ·
   `INSTALLERS_SYSTEM` · `ONLINE_SERVICES_SYSTEM` · `STATISTICS_SYSTEM` ·
-  `PROJECTS_SYSTEM` · `STATUS_SYSTEM` · `ACTIONS_RUNNERS_SYSTEM` (CI/deploys locales sin GH Actions)
+  `PROJECTS_SYSTEM` · `STATUS_SYSTEM` · `ACTIONS_RUNNERS_SYSTEM` (CI/deploys locales sin GH Actions) ·
+  `DEV_CONSOLE_SYSTEM` (TUI/CLI dev local) · `DEBUGGING_SYSTEM` (depuración local)
 - **Arquitectura por capas**: `FRONTEND_SYSTEM` · `BACKEND_SYSTEM` · `PACKAGES_SYSTEM` ·
   `UI_COMPONENTS_SYSTEM` (Storybook/Chromatic/Figma/Tailwind/React) · `FRAMEWORKS_SYSTEM` · `STYLES_SYSTEM` · `COLOR_SYSTEM`
 - **Planes**: `COMPANY_REGISTRATION_PLAN` (+ `RIF_PERSON_PLAN` · `TRADEMARK_PLAN` ·
@@ -91,6 +93,7 @@ Antes de codificar, lee el doc del área que tocas. Mapa por tipo de tarea:
 - **Protocolos de contexto**: `GEOGRAPHIC_CONTEXT_PROTOCOLS` · `HISTORICAL_CONTEXT_PROTOCOLS` ·
   `TARGET_AUDIENCE_PROTOCOLS` · `HEALTH_AND_SAFETY_PROTOCOLS` · `SCHEDULE_PROTOCOLS` ·
   `SECURITY_PROTOCOLS` · `CONTACTS_PROTOCOLS` · `IT_GLOSSARY_PROTOCOLS` · `MATERIAL_ICONS_PROTOCOLS`
+- **Protocolos (testing/operación)**: `LOCAL_TESTING_PROTOCOLS` (pruebas locales obligatorias)
 - **Estado (vivo)**: `PROJECT_STATE.md` · `PROJECT_HISTORY.md` · `TODO.md`
 - **Estándares**: `CODE_PRINCIPLES_PROTOCOLS` (DRY/KISS/YAGNI/SOLID) · `DEVSECOPS_SYSTEM`
   (SAST/DAST, shift-left) · `DOCUMENTATION_SYSTEM` (reglas de docs)
@@ -116,6 +119,10 @@ E:\Ciszu Network\
 ├── .github/workflows/   # CI/CD: ci.yml, codeql, dast, deploys ×4, uptime-watch
 └── AGENTS.md            # Este archivo
 ```
+
+La consola de dev local vive en `test/website/debug/` (TUI `dev_console.ps1` + guías
+`dev_console.{md,txt}`); los logs de dev en `.opencode/temp/dev-logs/`. Detalle:
+`DEV_CONSOLE_SYSTEM.md`.
 
 ### 4.1 Workspaces pnpm y entry points
 
@@ -177,6 +184,11 @@ pnpm cdn:upload           # sube assets a Supabase Storage (ciszu-cdn)
 pnpm api:test             # tests de API con Bruno (prod)
 ```
 
+**Dev local de las webs** (consola `test/website/debug/dev_console.ps1`, puertos fijos):
+`devcon` (TUI) · `pnpm dev:all` / `dev:stop` · `pnpm dev:status` · `devlog <web>`.
+Por web: `pnpm web:dev` (3000) · `antony:dev` (3001) · `ciszubot:web:dev` (3002) ·
+`muzicmania:dev` (3003). Detalle en `LOCAL_TESTING_PROTOCOLS` y `DEV_CONSOLE_SYSTEM`.
+
 Comandos de Storybook/fert (wrapper `scripts/storybook.ps1` y funciones del perfil PowerShell:
 `sb`/`sbtest`/`sbwatch`/`sbbuild`/`sbchrom`/`checkall`):
 
@@ -205,8 +217,8 @@ Pipeline de documentación: `node scripts/txt2md.js` (txt→md) · `node scripts
 ### 6.2 Git
 
 - Commits en español, descriptivos, una línea, **sin emojis**. Trabajo directo en `main`.
-- **No commitear ni pushear sin solicitud explícita.** El push desde este PC falla por DNS
-  (github.com no resuelve) → el usuario hace push manualmente.
+- **No commitear ni pushear sin solicitud explícita.** Trabajo directo en `main`; el push
+  puede hacerse desde este PC.
 - `.gitignore` excluye binarios grandes (`.mp4`, `.gif`, `.exe`, `.mp3`), `content/` de
   proyectos y secrets. Al añadir un patrón nuevo: `git rm -r --cached <ruta>`.
 - Pre-commit hooks: secretlint + gitleaks sobre `--staged`. `--no-verify` solo con falso
@@ -221,6 +233,11 @@ Pipeline de documentación: `node scripts/txt2md.js` (txt→md) · `node scripts
   cambios; dejar el siguiente paso claro. No commitear sin permiso.
 - **Pensar por tarea, no "saberlo todo"**: cada sesión lee lo necesario para la tarea actual.
   No cargues el contexto con docs de áreas que no se tocan.
+- **TODO.md es sagrado**: solo puede editarse/actualizarse con permiso explícito de Ciszuko
+  Antony. El agente NUNCA lo edita, borra ni marca casillas. Una tarea NO marcada en el
+  TODO.md = NO terminada, por definición, sin importar el estado del código. No asumir que
+  una tarea está hecha solo porque el código parezca implementarla; verificar contra el
+  TODO.md y ejecutarla si sigue sin marcar.
 
 ### 6.4 Disco y temporales
 
@@ -298,5 +315,5 @@ Una sesión normal rinde ~60-90k tokens; con muchos outputs de tools llega antes
 
 ---
 
-_Última revisión: 14 ago 2026._ Fuente de verdad: `projects/ciszu/docs/documentation/`.
+_Última revisión: 16 ago 2026._ Fuente de verdad: `projects/ciszu/docs/documentation/`.
 Estándar de docs: `DOCUMENTATION_SYSTEM.md`. Operación diaria: `WORKFLOW_SYSTEM.md`.

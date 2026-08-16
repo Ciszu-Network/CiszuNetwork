@@ -1,0 +1,93 @@
+=====================================================================
+ CISZU NETWORK - CONSOLE DEV DEBUGGING (GUI) DE USO
+ test/website/debug/dev_console.ps1  -  v1.0.0
+=====================================================================
+
+QUE HACE
+--------
+- Encender / reiniciar / detener cada webapp (Next.js next dev con puerto fijo).
+- Encender o detener TODAS las webs a la vez.
+- Estado de puertos y apertura de cada web en el navegador.
+- Logs a tiempo real (Get-Content -Tail -Wait) en ventana separada.
+- Herramientas extra (limpiar logs, procesos node, ocupacion de puertos).
+- Ayuda, creditos y version integrados.
+
+PUERTOS FIJOS (nomenclatura del monorepo)
+-----------------------------------------
+  Ciszu Network   ciszunetwork-website   3000  projects/ciszu/website
+  Ciszuko Antony  ciszukantony-website   3001  projects/ciszukoantony/website
+  CiszuBot        ciszubot-website       3002  projects/ciszubot/website
+  MuzicMania      muzicmania-website     3003  projects/muzicmania/website
+
+COMO ABRIRLA
+------------
+  1) Desde cualquier PowerShell (comando del perfil):
+        devcon
+
+  2) Directo desde el repositorio (raiz E:\Ciszu Network):
+        powershell -NoProfile -ExecutionPolicy Bypass -File test\website\debug\dev_console.ps1
+
+  3) Desde la raiz del monorepo:
+        pnpm dev:console
+
+USO DEL MENU
+------------
+  Flecha arriba (Up)    = moverse hacia arriba
+  Flecha abajo (Down)   = moverse hacia abajo
+  Enter                 = elegir la opcion resaltada
+  Q o Esc               = volver al menu anterior (o salir en el principal)
+
+FLUJO TIPICO
+------------
+  1. Abrir la consola (devcon).
+  2. Elegir "Encender TODAS las webs" o una web concreta.
+  3. Esperar unos segundos y revisar "Estado de puertos".
+  4. Abrir http://localhost:3000 ... 3003 en el navegador.
+  5. Si falla, ver el log en vivo desde la gestion de la web.
+  6. Al terminar: "Detener TODAS las webs" y salir.
+
+MODO CLI (sin menu, para automatizacion)
+---------------------------------------
+  Estado de todas las webs:
+      powershell -File test\website\debug\dev_console.ps1 -Action status
+
+  Encender / reiniciar / detener una web (network | antony | ciszubot | muzic):
+      dev_console.ps1 -Action start   -Web network
+      dev_console.ps1 -Action restart -Web ciszubot
+      dev_console.ps1 -Action stop    -Web muzic
+
+  Ver log en vivo de una web (ventana separada):
+      dev_console.ps1 -Action log -Web network
+
+  Comandos cortos del perfil PowerShell:
+      devweb / devantony / devbotweb / devmuzic   encender cada web
+      devall  encender todas | devstop detener todas
+      devstatus  estado rapido de puertos
+      devlog <web>  log en vivo
+
+LOGS
+----
+  Ubicacion: .opencode/temp/dev-logs/<key>.log  (gitignored)
+  Claves: network, antony, ciszubot, muzic  (errores en <key>.log.err)
+  En vivo: ventana PowerShell separada con Get-Content -Tail 80 -Wait.
+  Cerrar la ventana del log no afecta al TUI ni a los procesos Next dev.
+
+RESOLUCION DE PROBLEMAS
+-----------------------
+  - Puerto ocupado: revisar con devstatus, detener la web o usar
+    Herramientas > "Ver que puertos 3000-3003 estan ocupados".
+  - Web no responde a los 5s: el compilador de Next sigue trabajando;
+    esperar y verificar de nuevo en Estado de puertos o ver el log.
+  - Logs acumulados: Herramientas > "Limpiar logs".
+  - pnpm no encontrado: la consola hereda el entorno de la PowerShell;
+    abrirla desde una sesion con pnpm configurado.
+
+CREDITOS
+--------
+  Proyecto:  Ciszu Network - ecosistema digital de Ciszuko Antony.
+  Consola:   Console Dev Debugging (TUI) - test/website/debug/dev_console.ps1
+  Docs:      DEV_CONSOLE_SYSTEM.md, DEBUGGING_SYSTEM.md, LOCAL_TESTING_PROTOCOLS.md
+             (en projects/ciszu/docs/documentation/)
+
+=====================================================================
+_Ultima revision: 16 ago 2026._ Relacionado: dev_console.md, DEV_CONSOLE_SYSTEM.md.

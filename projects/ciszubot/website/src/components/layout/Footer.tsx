@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Icon, SmartImage } from '@ciszu/ui';
+import { useAppStore } from '@/store';
 import {
   CISZUKO_ANTONY,
   CISZU_NETWORK,
@@ -86,6 +87,7 @@ interface FooterProps {
 }
 
 export default function Footer({ lang, dict }: FooterProps) {
+  const { setIsMenuOpen, setSidebarView } = useAppStore();
   const isActive = (href: string) => typeof window !== 'undefined' && window.location.pathname === href;
   const [isDark, setIsDark] = useState(true);
 
@@ -100,11 +102,6 @@ export default function Footer({ lang, dict }: FooterProps) {
     root.classList.toggle('dark', next === 'dark');
     setIsDark(next === 'dark');
     document.cookie = `ciszubot_theme=${next}; path=/; max-age=31536000`;
-  };
-
-  const setLang = (code: Lang) => {
-    document.cookie = `ciszubot_lang=${code}; path=/; max-age=31536000`;
-    window.location.reload();
   };
 
   return (
@@ -155,19 +152,15 @@ export default function Footer({ lang, dict }: FooterProps) {
               </span>
             </Link>
 
-            {/* Community Connector (Discord invite) */}
+            {/* Community Connector (Discord invite) — mismo estilo que el botón del header */}
             <a
               href={INVITE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full group flex items-center justify-center gap-4 bg-[#5865F2]/10 border border-[#5865F2]/40 text-[#5865F2] hover:bg-gradient-to-tr hover:from-[#5865F2] hover:to-[#7289da] hover:text-white px-8 py-4 rounded-2xl transition-all shadow-lg active:scale-95 mb-8"
+              className="w-full group flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white px-8 py-3.5 font-header font-bold text-sm transition-all duration-300 shadow-[0_4px_15px_rgba(0,212,255,0.2)] hover:scale-[1.02] hover:shadow-[0_10px_28px_-8px_rgba(0,212,255,0.8)] active:scale-95 mb-8"
             >
-              <div className="w-6 h-6 transform group-hover:scale-110 transition-transform">
-                <IcoDiscord />
-              </div>
-              <div className="flex flex-col items-start leading-none">
-                <span className="font-header font-black tracking-tighter text-lg uppercase italic">{dict.nav.invite}</span>
-              </div>
+              <Icon name="discord" size={16} className="[&>g]:fill-current" />
+              <span>{dict.nav.invite}</span>
             </a>
 
             {/* Social icons */}
@@ -292,23 +285,10 @@ export default function Footer({ lang, dict }: FooterProps) {
         {/* Bottom Bar */}
         <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent my-8" />
 
-        <div className="flex flex-col items-center justify-between gap-3 text-xs text-faint pb-2 text-center">
-          <p>
-            © {new Date().getFullYear()}{' '}
-            <a href={CISZU_NETWORK} target="_blank" rel="noopener noreferrer" className="hover:text-neon-blue transition-colors font-semibold">
-              CISZU NETWORK
-            </a>{' '}
-            &amp; CISZUBOT. {dict.footer.rights}
-          </p>
-          <p>
-            {dict.footer.madeBy}{' '}
-            <a href={CISZUKO_ANTONY} target="_blank" rel="noopener noreferrer" className="text-neon-blue font-semibold transition-colors">
-              Ciszuko Antony
-            </a>
-          </p>
+        <div className="flex flex-col items-center justify-center gap-8 pb-2 text-center">
 
-          {/* Toggles de tema e idioma */}
-          <div className="flex flex-wrap items-center justify-center gap-2 pb-4">
+          {/* Toggles de tema e idioma — pill LANG abre el sidebar en vista idiomas */}
+          <div className="flex flex-wrap items-center justify-center gap-4">
             <button
               onClick={setTheme}
               className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group ${
@@ -330,17 +310,40 @@ export default function Footer({ lang, dict }: FooterProps) {
             </button>
 
             <button
-              onClick={() => setLang(lang === 'es' ? 'en' : 'es')}
+              onClick={() => { setIsMenuOpen(true); setSidebarView('lang'); }}
               className="group flex items-center gap-3 px-4 py-2 bg-card hover:bg-muted/15 border border-border hover:border-neon-blue rounded-full transition-all duration-300 shadow-lg cursor-pointer"
-              title={lang === 'es' ? 'English' : 'Español'}
+              title={lang === 'es' ? 'Cambiar idioma' : 'Change language'}
             >
               <svg className="w-5 h-5 transition-transform duration-500 group-hover:rotate-12 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                 <circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
               </svg>
-              <span className="text-muted group-hover:text-neon-blue uppercase tracking-widest text-xs font-bold">
-                {lang === 'es' ? 'ESPAÑOL' : 'ENGLISH'}
-              </span>
+              <span className="text-muted group-hover:text-neon-blue uppercase tracking-widest text-xs font-bold">LANG</span>
             </button>
+          </div>
+
+          {/* Copyright — siempre al final */}
+          <div className="text-center space-y-2">
+            <p className="text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-widest leading-loose">
+              <span className="text-neon-blue">&copy;</span>{' '}
+              2024-{new Date().getFullYear()}{' '}
+              <a href={CISZU_NETWORK} target="_blank" rel="noopener noreferrer"
+                className="text-neon-blue font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(0,212,255,0.8)]">
+                CISZU NETWORK
+              </a>{' '}
+              &amp; CISZUBOT. {dict.footer.rights}
+            </p>
+            <p className="text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-widest leading-loose">
+              {dict.footer.madeBy}{' '}
+              <a href={CISZUKO_ANTONY} target="_blank" rel="noopener noreferrer"
+                className="text-neon-blue font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(0,212,255,0.8)]">
+                Ciszuko Antony
+              </a>{' '}
+              &middot; respaldado por{' '}
+              <a href={CISZU_NETWORK} target="_blank" rel="noopener noreferrer"
+                className="text-neon-blue font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(0,212,255,0.8)]">
+                CISZU NETWORK
+              </a>
+            </p>
           </div>
         </div>
       </div>

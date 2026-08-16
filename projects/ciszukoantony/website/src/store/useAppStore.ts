@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 type Theme = 'dark' | 'light';
 type Language = 'EN' | 'ES';
+type SidebarView = 'main' | 'lang';
 
 interface AppState {
   isMenuOpen: boolean;
@@ -10,6 +11,8 @@ interface AppState {
   setTheme: (val: Theme) => void;
   language: Language;
   setLanguage: (val: Language) => void;
+  sidebarView: SidebarView;
+  setSidebarView: (val: SidebarView) => void;
   searchQuery: string;
   setSearchQuery: (val: string) => void;
 }
@@ -21,6 +24,8 @@ export const useAppStore = create<AppState>((set) => ({
   setTheme: (val: Theme) => set({ theme: val }),
   language: 'EN',
   setLanguage: (val: Language) => set({ language: val }),
+  sidebarView: 'main',
+  setSidebarView: (val: SidebarView) => set({ sidebarView: val }),
   searchQuery: '',
   setSearchQuery: (val: string) => set({ searchQuery: val }),
 }));

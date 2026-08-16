@@ -1,8 +1,8 @@
 # STATUS_SYSTEM — Estado del Ecosistema CISZU NETWORK
 
-Versión: 2.1.1
-Actualización: 2026-08-15
-Identificador: STATUS_SYSTEM_V2.1.1_2026_08_15_ciszunetwork
+Versión: 2.1.2
+Actualización: 2026-08-16
+Identificador: STATUS_SYSTEM_V2.1.2_2026_08_16_ciszunetwork
 
 > **Definición**: documento operativo de estado del monorepo. Se actualiza al cerrar cada
 > sesión de trabajo. Refleja la foto actual de proyectos, sistemas y scripts.
@@ -24,6 +24,7 @@ Identificador: STATUS_SYSTEM_V2.1.1_2026_08_15_ciszunetwork
 
 | Sistema | Estado |
 |---|---|
+| Consola dev local | ✅ `test/website/debug/dev_console.ps1` (TUI + CLI, puertos fijos 3000-3003) — 16 ago 2026 |
 | 4 websites en producción (Vercel) | ✅ Despliegan desde `main` (GitHub Actions) |
 | CDN Supabase Storage `ciszu-cdn` | ✅ 7.353 objetos / 160.6 MB (16% de cuota; bucket legacy `ciszu-assets` eliminado 10 ago 2026) |
 | Sistema de formatos (avif/webp/opus) | ✅ Implementado (8 ago 2026) + `SmartImage` en las webs |

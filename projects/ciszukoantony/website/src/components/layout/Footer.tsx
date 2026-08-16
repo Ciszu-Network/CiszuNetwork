@@ -5,6 +5,7 @@ import { SmartImage } from '@ciszu/ui';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { SOCIALS, I, FOOTER_SECTIONS } from '@/config/navigation';
+import { useAppStore } from '@/store';
 
 const MoonIcon = () => (
   <svg className="w-5 h-5 text-black transition-transform duration-500 group-hover:rotate-12" viewBox="0 0 24 24" fill="currentColor">
@@ -41,8 +42,8 @@ const IcoDown = () => (
 
 export default function Footer() {
   const pathname = usePathname();
+  const { setIsMenuOpen, setSidebarView } = useAppStore();
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-  const [lang, setLang] = useState('EN');
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
@@ -54,9 +55,9 @@ export default function Footer() {
     setToast('[SISTEMA]: Theme changer is in beta — some styles may not apply correctly yet.');
   };
 
-  const toggleLang = () => {
-    setLang(l => (l === 'EN' ? 'ES' : 'EN'));
-    setToast('[SISTEMA]: Language changer is in beta — translations are incomplete.');
+  const openLangMenu = () => {
+    setIsMenuOpen(true);
+    setSidebarView('lang');
   };
 
   useEffect(() => {
@@ -104,7 +105,7 @@ export default function Footer() {
                 src="projects/ciszukoantony/content/assets/youtube_canal.png"
                 alt="Ciszuko Antony YouTube"
                 width={34} height={34}
-                className="rounded-full ring-2 ring-brand/40 group-hover:ring-neon-blue group-hover:shadow-[0_0_15px_rgba(61,106,223,0.8)] transition-all duration-300"
+                className="rounded-full ring-2 ring-brand/40 shadow-[0_0_15px_rgba(167,139,250,0.35)] group-hover:shadow-[0_0_15px_rgba(61,106,223,0.8)] transition-all duration-300"
               />
             </Link>
 
@@ -196,11 +197,11 @@ export default function Footer() {
               {theme === 'dark' ? <MoonIcon /> : <SunIcon />}
             </button>
 
-            <button onClick={toggleLang}
+            <button onClick={openLangMenu}
               className="group flex items-center gap-3 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all duration-300 shadow-lg"
               title="Language">
               {I.globe}
-              <span className="text-gray-400 group-hover:text-white uppercase tracking-widest text-xs font-bold">{lang}</span>
+              <span className="text-gray-400 group-hover:text-white uppercase tracking-widest text-xs font-bold">LANG</span>
             </button>
           </div>
 

@@ -14,9 +14,15 @@
  */
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
-import { useFabStack } from './FabStack';
+import {
+  FAB_HINT_ORDER_BASE,
+  useFabStack,
+} from './FabStack';
+
+/** Contador de módulo: cada hint montado ocupa un order único creciente. */
+let hintSeq = 0;
 
 export interface FabDismissHintProps {
   /** Id único del aviso para el slot del FabStack. */
@@ -47,27 +53,55 @@ export default function FabDismissHint({
   duration = HINT_DURATION,
   onClose,
 }: FabDismissHintProps) {
-  const [seconds, setSeconds] = useState(Math.round(duration / 1000));
   const [paused, setPaused] = useState(false);
-  const bottom = useFabStack(`dismiss-hint-${slotId}`, { order: 50, height: 92 });
+  // Order único por hint: los avisos se apilan entre sí y siempre por encima de
+  // los botones flotantes (FAB_HINT_ORDER_BASE).
+  const [order] = useState(() => FAB_HINT_ORDER_BASE + hintSeq++);
+  const bottom = useFabStack(`dismiss-hint-${slotId}`, { order, height: 92 });
+
+  // Cuenta atrás fluida por timestamp (requestAnimationFrame), no por
+  // setInterval: evita que el contador se trabe. Cada frame calcula el tiempo
+  // restante real y cierra cuando llega a 0. Al pausar (hover) se conserva el
+  // tiempo restante y la cuenta se reanuda desde ahí.
+  const endRef = useRef<number>(0);
+  const remainingRef = useRef(duration);
+  const [remaining, setRemaining] = useState(duration);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   useEffect(() => {
-    const tick = setInterval(() => {
-      if (paused) return;
-      setSeconds((s) => (s > 0 ? s - 1 : 0));
-    }, 1000);
-    return () => clearInterval(tick);
+    const advance = (left: number) => {
+      remainingRef.current = left;
+      setRemaining(left);
+    };
+    if (paused) {
+      // Congela el tiempo restante actual (lo que quede cuando se pausa).
+      const left = Math.max(0, endRef.current - Date.now());
+      advance(left || remainingRef.current);
+      return;
+    }
+    endRef.current = Date.now() + remainingRef.current;
+    let raf = 0;
+    const tick = () => {
+      const left = Math.max(0, endRef.current - Date.now());
+      advance(left);
+      if (left <= 0) {
+        onCloseRef.current();
+        return;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
   }, [paused]);
 
-  useEffect(() => {
-    if (seconds === 0) onClose();
-  }, [seconds, onClose]);
+  const seconds = Math.ceil(remaining / 1000);
 
   const handleReactivate = () => {
     onReactivate();
   };
 
-  const width = ((seconds * 1000) / duration) * 100;
+  const width = (remaining / duration) * 100;
 
   return (
     <div

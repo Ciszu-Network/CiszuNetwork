@@ -33,6 +33,12 @@ import type { CSSProperties, ReactNode } from 'react';
 export const FAB_BASE_BOTTOM = 16;
 export const FAB_GAP = 8;
 export const FAB_RESTORE_EVENT = 'ciszu:fabs-restore';
+/**
+ * Orden base para los avisos FabDismissHint: SIEMPRE por encima de cualquier
+ * botón flotante. Los hints se apilan entre sí usando orders crecientes a
+ * partir de esta base (nunca se sobreponen a los botones).
+ */
+export const FAB_HINT_ORDER_BASE = 100;
 
 export const DISMISS_KEYS = [
   'ciszu-pdwa-dismissed',

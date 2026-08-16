@@ -146,7 +146,7 @@ export const dict = {
       slash: 'Slash',
       discordServer: 'Servidor de Discord',
       rights: 'Todos los derechos reservados.',
-      madeBy: 'Creado por',
+      madeBy: 'Hecho con amor por',
     },
     commandsPage: {
       title: 'Comandos',
@@ -443,7 +443,7 @@ export const dict = {
       slash: 'Slash',
       discordServer: 'Discord server',
       rights: 'All rights reserved.',
-      madeBy: 'Made by',
+      madeBy: 'Made with love by',
     },
     commandsPage: {
       title: 'Commands',
