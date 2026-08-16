@@ -66,13 +66,13 @@ sistema para **independizarse del billing**: correr las mismas tareas localmente
 
 | Workflow | Qué hace | Frecuencia | Dependencia |
 |---|---|---|---|
-| `ci.yml` | Lint (3 webs: ciszunetwork, ciszukoa, muzicmania), tests Vitest, tests Storybook (`@ciszu/ui`), Semgrep (SAST), `pnpm audit` (SCA), Gitleaks, Security E2E | push/PR/diario 06:00 UTC | GH Actions |
+| `ci.yml` | Lint (4 webs: ciszunetwork, ciszukoa, muzicmania, ciszubot), tests Vitest, tests Storybook (`@ciszu/ui`), Semgrep (SAST), `pnpm audit` (SCA), Gitleaks, Security E2E | push/PR/diario 06:00 UTC | GH Actions |
 | `codeql.yml` | CodeQL por lenguaje (actions, JS/TS, python, rust) | push/PR/viernes 16:28 UTC | GHAS habilitado |
 | `dast.yml` | ZAP baseline sobre las 4 webs de producción | Lunes 06:30 UTC | GH Actions |
-| `deploy-ciszunetwork-website.yml` | Deploy Vercel `ciszunetworkpage` | push en `projects/ciszu/**` o `packages/**` | GH Actions + token |
-| `deploy-ciszukoantony-website.yml` | Deploy Vercel `ciszukoantonypage` | push en `projects/ciszukoantony/**` o `packages/**` | GH Actions + token |
-| `deploy-ciszubot-website.yml` | Deploy Vercel `ciszubot` | push en `projects/ciszubot/**` o `packages/**` | GH Actions + token |
-| `deploy-muzicmania-website.yml` | Deploy Vercel `muzicmania` | push en `projects/muzicmania/**` o `packages/**` | GH Actions + token |
+| `deploy-ciszunetwork-website.yml` | Deploy Vercel `ciszunetworkpage` | push a main (sin path filter, redespliega en cada push) | GH Actions + token |
+| `deploy-ciszukoantony-website.yml` | Deploy Vercel `ciszukoantonypage` | push a main (sin path filter) | GH Actions + token |
+| `deploy-ciszubot-website.yml` | Deploy Vercel `ciszubot` | push a main (sin path filter) | GH Actions + token |
+| `deploy-muzicmania-website.yml` | Deploy Vercel `muzicmania` | push a main (sin path filter) | GH Actions + token |
 | `chromatic.yml` | Publica Storybook de `@ciszu/ui` en Chromatic (visual/a11y) | push en `packages/ui/**` | GH Actions + token |
 | `release-please.yml` | Release Please (versionado Changesets) | push en `main` | GH Actions |
 | `uptime-watch.yml` | Consulta UptimeRobot API y publica en ntfy solo cambios de estado | cada 5 min | GH Actions + secrets |
@@ -87,8 +87,7 @@ sistema para **independizarse del billing**: correr las mismas tareas localmente
 | `muzicmania-website` | `muzicmania` | `projects/muzicmania/website` |
 
 > `packages/**` está escuchado por los 4 workflows de deploy: un cambio en `@ciszu/ui` o
-> `@ciszunetwork/*` re-despliega las 4 webs. `ciszubot-website` **no** tiene script `lint`
-> (el CI solo lint-a 3 webs).
+> `@ciszunetwork/*` re-despliega las 4 webs. Las 4 webs tienen script `lint` (`eslint .`).
 
 ### 3.3 Scripts de la raíz (implementados en `package.json` el 15 ago 2026)
 
@@ -194,8 +193,7 @@ run(`vercel --prod --yes --archive=tgz --token=${token}`);
 1. `ship:prod` para las 4 webs es secuencial: los 4 proyectos comparten `.vercel/` en la raíz,
    y `vercel link` sobrescribe el enlace actual (no se pueden lanzar en paralelo).
 2. Los deploys tardan ~9-11 min en Vercel (build remoto); el comando local espera al "Ready".
-3. `ciszubot-website` no tiene lint: **no** añadir `pnpm --filter ciszubot-website lint` a
-   `lint:all` o fallará por script inexistente.
+3. Las 4 webs tienen script `lint` (`eslint .`): el monoturbo `lint:all` cubre las 4.
 4. El tipo-check con `tsc --noEmit` es local y no existe en CI: es un extra de calidad, no una
    restricción de GH.
 
@@ -250,10 +248,11 @@ Detalles del script (versión 2.336.0, `E:\actions-runner\`):
 
 ### 5.3 Adaptación de los workflows (hecha el 15 ago 2026, ampliada el 16 ago 2026)
 
-Ya se cambió `runs-on` a `self-hosted` en los jobs **portables** (revisión del 16 ago: el
-billing de runners hosted está bloqueado — los jobs en `ubuntu-latest` fallan a los pocos
-segundos sin provisionar runner, log `BlobNotFound`), así que el runner Windows ejecuta ahora
-**todos** los jobs de los workflows que se disparan por push:
+Todos los jobs usan el **switch de runner centralizado** `${{ vars.PREFERRED_RUNNER || 'self-hosted' }}`
+(repo → Settings → Secrets and variables → Actions → Variables). El valor actual es `self-hosted`
+(billing hosted bloqueado). Cuando se restauren los minutos, basta cambiar la variable a
+`ubuntu-latest` y los jobs corren en la nube sin tocar los `.yml` (los pasos son multiplataforma:
+semgrep usa `setup-python` en Linux, gitleaks descarga el binario de cada OS).
 
 | Workflow | Jobs en `self-hosted` |
 |---|---|
@@ -336,7 +335,7 @@ segundos sin provisionar runner, log `BlobNotFound`), así que el runner Windows
 2. `ship:prod` corre CI local **antes** de desplegar; si falla un paso, no se despliega.
 3. Los deploys locales son **secuenciales** (comparten `.vercel/` en la raíz). No paralelizar.
 4. Un cambio en `packages/**` implica re-desplegar las 4 webs (igual que los workflows).
-5. `ciszubot-website` no tiene lint: excluirla de `lint:all`.
+5. Las 4 webs tienen lint (`eslint .`); `lint:all` y la matriz del CI las cubren a las 4.
 6. Toda nueva automatización del ecosistema debe documentarse aquí o en `WORKFLOW_SYSTEM.md`,
    no quedarse solo en GH Actions.
 7. Si el billing de GitHub se regulariza, los workflows de GH **siguen existiendo**; el sistema

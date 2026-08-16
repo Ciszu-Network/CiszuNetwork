@@ -188,8 +188,7 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
   Instagram, X) + toggles theme/idioma.
 - **Assets**: `FACEBOOK`, `INSTAGRAM`, `X_SOCIAL` añadidas a `src/lib/i18n.ts` de ciszubot
   (URLs canónicas de `site.ts` de ciszu).
-- **Verificado**: tsc ×4, lint (ciszu, ciszukoa, muzicmania — ciszubot no tiene script lint
-  en CI), builds ×4 OK.
+- **Verificado**: tsc ×4, lint ×4 (ciszu, ciszukoa, muzicmania, ciszubot), builds ×4 OK.
 
 ### 15 de Agosto, 2026 — Directus endurecido + errores de compilación local documentados
 

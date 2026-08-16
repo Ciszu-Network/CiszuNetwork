@@ -22,7 +22,7 @@ jobs:
     runs-on: ${{ vars.PREFERRED_RUNNER || 'self-hosted' }}
     strategy:
       matrix:
-        app: [ciszunetwork-website, ciszukoantony-website, muzicmania-website]
+        app: [ciszunetwork-website, ciszukoantony-website, muzicmania-website, ciszubot-website]
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
