@@ -142,6 +142,56 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 > Este historial absorbe `PROJECT_HISTORY.md` (eliminado 13 ago 2026). Añadir aquí los
 > nuevos hitos al cierre de sesión.
 
+### 16 de Agosto, 2026 — Consola dev local (TUI/CLI) + docs de testing local
+
+- **`test/website/debug/dev_console.ps1`**: nueva consola interactiva (TUI navegable por
+  flechas) y modo CLI para encender/reiniciar/detener las 4 webs en local con **puertos
+  fijos** (ciszu 3000, antony 3001, ciszubot 3002, muzicmania 3003), estado de puertos,
+  apertura en navegador, logs en vivo (ventana PowerShell separada, `Get-Content -Wait`),
+  herramientas extra (limpiar logs, procesos node, ocupación de puertos) y ayuda/créditos.
+  Guías `dev_console.{md,txt}` en la misma carpeta.
+- **Modo CLI no interactivo**: `-Action start|stop|restart|status|log -Web <key>` para
+  automatización (opencode, scripts). Comandos del perfil PowerShell: `devcon`, `devall`,
+  `devstop`, `devstatus`, `devlog`, `devweb`, `devantony`, `devbotweb`, `devmuzic`.
+  Comandos opencode: `/dev` (CLI) y `/devcon` (TUI). Scripts pnpm raíz: `dev:console`,
+  `dev:all`, `dev:stop`, `dev:status`, `dev:log`; los scripts por web fijan puerto
+  (`web:dev` 3000, `antony:dev` 3001, `ciszubot:web:dev` 3002, `muzicmania:dev` 3003).
+- **Docs nuevas**: `DEV_CONSOLE_SYSTEM.md`, `DEBUGGING_SYSTEM.md`, `LOCAL_TESTING_PROTOCOLS.md`
+  (estándar de cabecera, ≥200 líneas) + apartado "Pruebas en local de las webs" en
+  `TESTING_SYSTEM.md` (§9). AGENTS.md actualizado (índice docs, mapa de investigación,
+  estructura, quick start).
+- **Verificado**: sintaxis del parser PS ok; `dev_console.ps1 -Demo` y `-Action status`
+  muestran los 4 puertos `[OFF]`; lint/typecheck de las webs siguen en verde.
+- TODO pendiente de Ciszuko: marcar en el TODO.md las tareas de frontend ya resueltas.
+
+### 16 de Agosto, 2026 — Frontend pulido en las 4 webs (paridad con muzicmania) + FAB hints apilables y contador fluido
+
+- **FAB hints apilables (`FabDismissHint`)**: cada aviso ahora se registra en el `FabStack`
+  con un `order` único creciente desde `FAB_HINT_ORDER_BASE` (100), de modo que varios
+  avisos abiertos a la vez se apilan entre sí sin superponerse y SIEMPRE quedan por encima
+  de los botones flotantes. Resuelve el TODO "las advertencias se sobreponen".
+- **Contador fluido**: la cuenta atrás pasó de `setInterval` (1 s, se trababa en 1–3) a
+  `requestAnimationFrame` con timestamps reales; conserva el tiempo restante al pausar
+  (hover) y auto-cierra al llegar a 0. Resuelve el TODO "el contador se congela".
+- **Menú de idiomas completo ×3 webs (ciszu, ciszubot, ciszukoa)**: `LANGS` ahora replica
+  los 11 idiomas de muzicmania (ES-LA, ES-ES, EN-US, EN-UK, PT, FR, IT, DE, RU, JA, KO) con
+  sus banderas SVG. Solo los idiomas implementados cambian el idioma (es/en, EN/ES); el
+  resto dispara un toast "Esta función no está desarrollada para la beta aún" (estilo
+  muzicmania). Se añadió `sidebarView: 'main' | 'lang'` al store de ciszu y ciszukoa.
+- **Sidebar sin overlay oscuro ×3 webs**: se eliminó el fundido `bg-black/60` del menú
+  hamburguesa en ciszu, ciszubot y ciszukoa (paridad con muzicmania, solo panel lateral).
+- **Footer con pill LANG ×3 webs**: el pill de idioma del footer ahora muestra **LANG** y
+  abre el sidebar del navbar en la vista de idiomas (`setIsMenuOpen(true)` +
+  `setSidebarView('lang')`), igual que muzicmania.
+- **Ciszubot**: panel del sidebar ahora `top-[64px]` (debajo del header, sin sobreponerlo);
+  hamburguesa tipo toggle (Menu ↔ X) eliminando la X incrustada del panel; iconos migrados
+  a lucide-react idénticos a ciszu (usuario con línea, menú más grueso, lupa); botón invitar
+  del footer con el degradado neon del header; copyright con el formato unificado de las
+  demás webs (© 2024-{año}, mayúsculas, enlaces) y colocado SIEMPRE al final del footer.
+- **Ciszukoa**: el isotipo YouTube del footer ya no se enmarca con borde azul en hover
+  (paridad con el header: solo glow).
+- **Verificado**: `lint` ×4 webs + `typecheck` global en verde.
+
 ### 16 de Agosto, 2026 — Navbar ciszubot con paridad total de diseño (búsqueda full-width + sidebar MENÚ/IDIOMAS)
 
 - **Buscador full-width bajo el nav**: el panel flotante de búsqueda se reemplazó por un

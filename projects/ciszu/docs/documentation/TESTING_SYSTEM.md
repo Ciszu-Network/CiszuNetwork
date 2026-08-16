@@ -1,8 +1,8 @@
 # TESTING_SYSTEM — Framework de tests en Ciszu Network (2026)
 
-Versión: 2.0.0
-Actualización: 2026-08-13
-Identificador: TESTING_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
+Versión: 2.1.0
+Actualización: 2026-08-16
+Identificador: TESTING_SYSTEM_V2.1.0_2026_08_16_ciszunetwork
 
 > Documento de decisión: qué framework usar, por qué, dónde aplicarlo y si es **sobreingeniería** para este monorepo.
 > Estado: **IMPLEMENTADO (8 ago 2026)** — Fases 0-3 completadas (Vitest 81 tests + Playwright E2E smoke). Ver §8 "Estado de implementación".
@@ -195,6 +195,57 @@ pnpm e2e          # Playwright: 4 smoke tests contra producción
 **Notas de implementación**:
 - `vitest.config.mts` (raíz): `configLoader` nativo exige `.mts`; si se usa `vitest.config.ts` aparece un warning (ESM en CJS). `setupFiles` globales: `packages/ui/tests/setup.ts` (jest-dom/vitest) y `projects/ciszubot/discord-bot/tests/setup.ts` (`LOG_LEVEL=error` para silenciar el logger).
 - El **tsconfig raíz** (`tsconfig.json`) se creó VACÍO (`include: []`) como base para vitest/esbuild del monorepo — las apps/paquetes siguen usando sus propios tsconfig. NO añadir rutas ahí.
+
+---
+
+## 9. Pruebas en local de las webs (dev console)
+
+Una parte del "testing" es la **prueba visual y funcional en local** de las 4 webs sin
+desplegar. Se resuelve con la consola de desarrollo (`test/website/debug/dev_console.ps1`)
+que encuadra `next dev` por web con puerto fijo:
+
+| Web | Puerto | Filtro pnpm |
+| --- | --- | --- |
+| Ciszu Network | 3000 | `ciszunetwork-website` |
+| Ciszuko Antony | 3001 | `ciszukantony-website` |
+| CiszuBot | 3002 | `ciszubot-website` |
+| MuzicMania | 3003 | `muzicmania-website` |
+
+**Comandos rápidos**:
+
+```bash
+pnpm dev:console       # TUI interactiva (flechas) de la consola
+pnpm dev:all           # encender las 4 webs (puertos 3000-3003)
+pnpm dev:stop          # detener las 4 webs
+pnpm dev:status        # estado de puertos ([ON]/[OFF])
+pnpm dev:log -- <web>  # log en vivo de una web (network|antony|ciszubot|muzic)
+```
+
+**Equivalentes PowerShell**: `devcon`, `devall`, `devstop`, `devstatus`, `devlog <web>`.
+
+**Modo CLI directo** (para el agente/automatización):
+
+```bash
+powershell -NoProfile -ExecutionPolicy Bypass -File test/website/debug/dev_console.ps1 -Action start -Web network
+powershell -NoProfile -ExecutionPolicy Bypass -File test/website/debug/dev_console.ps1 -Action status
+powershell -NoProfile -ExecutionPolicy Bypass -File test/website/debug/dev_console.ps1 -Action log -Web ciszubot
+```
+
+**Relación con el resto del sistema de tests**:
+
+| Necesidad | Herramienta |
+| --- | --- |
+| Prueba visual/funcional local (frontend) | Consola dev (`devcon`/`pnpm dev:all`) |
+| Unit / integración de lógica | `pnpm test` (Vitest) |
+| Componentes `@ciszu/ui` aislados | Storybook (`sb`) + `test:storybook` |
+| Smoke E2E contra producción | `pnpm e2e` (Playwright) |
+
+**Guardas de producción**: Cloudflare Guard y Turnstile solo bloquean en producción; en
+dev local no interfieren, así que la prueba local de seguridad (CSP/turnstile) se hace de
+forma básica y la validación final contra la web desplegada.
+
+Detalle operativo completo en `DEV_CONSOLE_SYSTEM.md`, diagnóstico en `DEBUGGING_SYSTEM.md`
+y reglas obligatorias en `LOCAL_TESTING_PROTOCOLS.md`.
 
 ---
 

@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icon, SmartImage } from '@ciszu/ui';
+import { Menu, X, Search } from 'lucide-react';
+import { useAppStore } from '@/store';
 import { INVITE_URL, LOGO_ISOTIPO, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
 
 const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'status' | 'support' | 'downloads' | 'feedback'; icon: string }[] = [
@@ -28,42 +30,53 @@ const SEARCH_PAGES: { href: string; labelKey: string; icon: string; keywords: st
 ];
 
 const LANGS = [
-  {
-    code: 'es' as const,
-    label: 'Español',
-    flag: (
-      <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner">
-        <rect width="512" height="512" fill="#aa151b" />
-        <rect width="512" height="300" y="106" fill="#f1bf00" />
-        <circle cx="150" cy="256" r="50" fill="#aa151b" />
-      </svg>
-    ),
-  },
-  {
-    code: 'en' as const,
-    label: 'English',
-    flag: (
-      <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner">
-        <rect width="512" height="512" fill="#bd3d44" />
-        <rect width="512" height="36" y="36.5" fill="#fff" />
-        <rect width="512" height="36" y="109.5" fill="#fff" />
-        <rect width="512" height="36" y="182.5" fill="#fff" />
-        <rect width="512" height="36" y="255.5" fill="#fff" />
-        <rect width="512" height="36" y="328.5" fill="#fff" />
-        <rect width="512" height="36" y="401.5" fill="#fff" />
-        <rect width="512" height="36" y="474.5" fill="#fff" />
-        <rect width="240" height="260" fill="#192f5d" />
-        <g fill="#fff">
-          <circle cx="30" cy="35" r="5" /><circle cx="70" cy="35" r="5" /><circle cx="110" cy="35" r="5" /><circle cx="150" cy="35" r="5" /><circle cx="190" cy="35" r="5" />
-          <circle cx="50" cy="65" r="5" /><circle cx="90" cy="65" r="5" /><circle cx="130" cy="65" r="5" /><circle cx="170" cy="65" r="5" /><circle cx="210" cy="65" r="5" />
-          <circle cx="30" cy="95" r="5" /><circle cx="70" cy="95" r="5" /><circle cx="110" cy="95" r="5" /><circle cx="150" cy="95" r="5" /><circle cx="190" cy="95" r="5" />
-          <circle cx="50" cy="125" r="5" /><circle cx="90" cy="125" r="5" /><circle cx="130" cy="125" r="5" /><circle cx="170" cy="125" r="5" /><circle cx="210" cy="125" r="5" />
-          <circle cx="30" cy="155" r="5" /><circle cx="70" cy="155" r="5" /><circle cx="110" cy="155" r="5" /><circle cx="150" cy="155" r="5" /><circle cx="190" cy="155" r="5" />
-        </g>
-      </svg>
-    ),
-  },
-];
+  { code: 'ES-LA', label: 'Español (Latam)', flag: (
+    <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner">
+      <rect width="512" height="170.6" fill="#ffcc00"/>
+      <rect width="512" height="170.6" y="170.6" fill="#003399"/>
+      <rect width="512" height="170.6" y="341.2" fill="#cf142b"/>
+      <g fill="#fff" transform="translate(256,230) scale(4)">
+        <circle cx="0" cy="0" r="18" fill="none" stroke="#fff" strokeWidth="1" strokeDasharray="2,2"/>
+        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(-45) translate(0,-18) scale(0.4)"/>
+        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(-22.5) translate(0,-18) scale(0.4)"/>
+        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="translate(0,-18) scale(0.4)"/>
+        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(22.5) translate(0,-18) scale(0.4)"/>
+        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(45) translate(0,-18) scale(0.4)"/>
+        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(-67.5) translate(0,-18) scale(0.4)"/>
+        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(67.5) translate(0,-18) scale(0.4)"/>
+      </g>
+    </svg>
+  ) },
+  { code: 'ES-ES', label: 'Español (España)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#ad1519"/><rect width="512" height="300" y="106" fill="#fabd00"/><circle cx="150" cy="256" r="50" fill="#ad1519"/></svg> },
+  { code: 'EN-US', label: 'English (US)', flag: (
+    <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner font-sans">
+      <rect width="512" height="512" fill="#bd3d44"/>
+      <rect width="512" height="36" y="36.5" fill="#fff"/><rect width="512" height="36" y="109.5" fill="#fff"/><rect width="512" height="36" y="182.5" fill="#fff"/><rect width="512" height="36" y="255.5" fill="#fff"/><rect width="512" height="36" y="328.5" fill="#fff"/><rect width="512" height="36" y="401.5" fill="#fff"/><rect width="512" height="36" y="474.5" fill="#fff"/>
+      <rect width="240" height="260" fill="#192f5d"/>
+      <g fill="#fff">
+        <circle cx="30" cy="35" r="5"/><circle cx="70" cy="35" r="5"/><circle cx="110" cy="35" r="5"/><circle cx="150" cy="35" r="5"/><circle cx="190" cy="35" r="5"/>
+        <circle cx="50" cy="65" r="5"/><circle cx="90" cy="65" r="5"/><circle cx="130" cy="65" r="5"/><circle cx="170" cy="65" r="5"/><circle cx="210" cy="65" r="5"/>
+        <circle cx="30" cy="95" r="5"/><circle cx="70" cy="95" r="5"/><circle cx="110" cy="95" r="5"/><circle cx="150" cy="95" r="5"/><circle cx="190" cy="95" r="5"/>
+        <circle cx="50" cy="125" r="5"/><circle cx="90" cy="125" r="5"/><circle cx="130" cy="125" r="5"/><circle cx="170" cy="125" r="5"/><circle cx="210" cy="125" r="5"/>
+        <circle cx="30" cy="155" r="5"/><circle cx="70" cy="155" r="5"/><circle cx="110" cy="155" r="5"/><circle cx="150" cy="155" r="5"/><circle cx="190" cy="155" r="5"/>
+      </g>
+    </svg>
+  ) },
+  { code: 'EN-UK', label: 'English (UK)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#012169"/><path d="M0 0l512 512M512 0L0 512" stroke="#fff" strokeWidth="60"/><path d="M0 0l512 512M512 0L0 512" stroke="#cf142b" strokeWidth="30"/><rect width="512" height="100" y="206" fill="#fff"/><rect width="100" height="512" x="206" fill="#fff"/><rect width="512" height="60" y="226" fill="#cf142b"/><rect width="60" height="512" x="226" fill="#cf142b"/></svg> },
+  { code: 'PT', label: 'Português (Brasil)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#009c3b"/><path d="M256 70l186 186-186 186L70 256z" fill="#ffdf00"/><circle cx="256" cy="256" r="100" fill="#002776"/></svg> },
+  { code: 'FR', label: 'Français', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="170" height="512" fill="#002395"/><rect width="170" height="512" x="171" fill="#fff"/><rect width="171" height="512" x="341" fill="#ed2939"/></svg> },
+  { code: 'IT', label: 'Italiano', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="170" height="512" fill="#009246"/><rect width="170" height="512" x="171" fill="#fff"/><rect width="171" height="512" x="341" fill="#ce2b37"/></svg> },
+  { code: 'DE', label: 'Deutsch', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="170" fill="#000"/><rect width="512" height="170" y="171" fill="#d00"/><rect width="512" height="171" y="341" fill="#ffce00"/></svg> },
+  { code: 'RU', label: 'Русский', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="170" fill="#fff"/><rect width="512" height="170" y="171" fill="#0039a6"/><rect width="512" height="171" y="341" fill="#d52b1e"/></svg> },
+  { code: 'JA', label: '日本語 (Japanese)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#fff"/><circle cx="256" cy="256" r="120" fill="#bc002d"/></svg> },
+  { code: 'KO', label: '한국어 (Korean)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#fff"/><circle cx="256" cy="256" r="80" fill="#cd2e3a"/><path d="M256 176a80 80 0 0 0 0 160c44 0 44-80 80-80s36 80 80 80" fill="#0047a0"/></svg> }];
+
+const IcoUser = () => (
+  <svg viewBox="0 0 24 24" className="w-[20px] h-[20px]" fill="none" stroke="currentColor" strokeWidth={2}>
+    <circle cx="12" cy="8" r="4" />
+    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+  </svg>
+);
 
 interface NavbarProps {
   lang: Lang;
@@ -73,7 +86,8 @@ interface NavbarProps {
 
 export default function Navbar({ lang, dict, account }: NavbarProps) {
   const pathname = usePathname();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const { isMenuOpen, setIsMenuOpen, sidebarView, setSidebarView } = useAppStore();
+  const [toast, setToast] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [authOpen, setAuthOpen] = useState(false);
@@ -81,7 +95,6 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
   const [accountOpen, setAccountOpen] = useState(false);
   const [isDark, setIsDark] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
-  const [sidebarView, setSidebarView] = useState<'main' | 'lang'>('main');
   const firstRender = useRef(true);
   const searchRef = useRef<HTMLDivElement | null>(null);
   const searchToggleRef = useRef<HTMLButtonElement | null>(null);
@@ -119,8 +132,17 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
     setAuthOpen(false);
     setInviteOpen(false);
     setAccountOpen(false);
-    setMenuOpen(false);
+    setIsMenuOpen(false);
+    setSidebarView('main');
+    setToast(null);
   }, [pathname]);
+
+  // Auto-hide the language-unavailable toast after ~4s
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 4000);
+    return () => clearTimeout(t);
+  }, [toast]);
 
   // Focus the search input when opening
   useEffect(() => {
@@ -177,6 +199,18 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
   const setLang = (code: Lang) => {
     document.cookie = `ciszubot_lang=${code}; path=/; max-age=31536000`;
     window.location.reload();
+  };
+
+  const currentLangCode = lang === 'es' ? 'ES-LA' : 'EN-US';
+
+  const handleLangSelect = (code: string) => {
+    if (code === 'ES-LA') {
+      if (lang !== 'es') setLang('es');
+    } else if (code === 'EN-US') {
+      if (lang !== 'en') setLang('en');
+    } else {
+      setToast('Esta función no está desarrollada para la beta aún');
+    }
   };
 
   const isActive = (href: string) =>
@@ -279,7 +313,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
             <div className="relative">
               <button
                 ref={searchToggleRef}
-                onClick={() => { setSearchOpen(v => !v); setMenuOpen(false); setAccountOpen(false); setAuthOpen(false); setInviteOpen(false); }}
+                onClick={() => { setSearchOpen(v => !v); setIsMenuOpen(false); setAccountOpen(false); setAuthOpen(false); setInviteOpen(false); }}
                 className={`p-2 rounded-full border transition-all duration-300 cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_10px_rgba(0,212,255,0.25)] ${
                   searchOpen
                     ? 'bg-neon-blue border-neon-blue text-black'
@@ -288,7 +322,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                 aria-label={dict.nav.search}
                 title={dict.nav.search}
               >
-                <Icon name="search" size={18} />
+                {searchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
               </button>
             </div>
 
@@ -391,7 +425,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                   aria-label="Iniciar sesión"
                   title="Iniciar sesión"
                 >
-                  <Icon name="user" size={17} />
+                  <IcoUser />
                 </button>
                 {authOpen && (
                   <div className="absolute right-0 top-12 w-60 overflow-hidden rounded-xl border border-border bg-surface shadow-2xl animate-fade-in-down">
@@ -422,15 +456,15 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
             )}
 
             <button
-              onClick={() => { setMenuOpen(!menuOpen); setSearchOpen(false); setAuthOpen(false); setInviteOpen(false); setAccountOpen(false); if (!menuOpen) setSidebarView('main'); }}
+              onClick={() => { setIsMenuOpen(!isMenuOpen); setSearchOpen(false); setAuthOpen(false); setInviteOpen(false); setAccountOpen(false); if (!isMenuOpen) setSidebarView('main'); }}
               className={`p-2 rounded-full border transition-all duration-300 cursor-pointer shadow-sm active:scale-95 ${
-                menuOpen
+                isMenuOpen
                   ? 'bg-neon-blue border-neon-blue text-black'
                   : 'bg-card border-border text-ink hover:border-neon-blue'
               }`}
               aria-label="Menu"
             >
-              {menuOpen ? <Icon name="close" size={20} /> : <Icon name="menu" size={20} />}
+              {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
@@ -441,7 +475,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
           <div className="max-w-screen-xl mx-auto px-4 py-4">
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 flex items-center">
-                <Icon name="search" size={18} />
+                <Search className="w-5 h-5" />
               </span>
               <input
                 ref={inputRef}
@@ -491,10 +525,9 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
 
       </nav>
 
-    {menuOpen && (
+    {isMenuOpen && (
       <div className="fixed inset-0 z-[100] pointer-events-none">
-        <div className="absolute inset-0 bg-black/60 pointer-events-auto" onClick={() => { setMenuOpen(false); setSidebarView('main'); }} />
-        <div className="absolute top-0 right-0 w-[320px] max-w-[85vw] h-full bg-[#05050a]/95 backdrop-blur-3xl shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col pointer-events-auto animate-slide-right-fade">
+        <div className="absolute top-[64px] right-0 w-[320px] max-w-[85vw] h-[calc(100vh-64px)] bg-[#05050a]/95 backdrop-blur-3xl shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col pointer-events-auto animate-slide-right-fade">
           <div className="absolute left-0 top-0 w-[1px] h-full bg-gradient-to-b from-transparent via-neon-blue/50 to-transparent shadow-[0_0_15px_rgba(0,212,255,0.4)] z-10" />
 
           <div className="flex items-center justify-between px-5 pt-8 pb-6 border-b border-white/5 shrink-0 gap-3">
@@ -532,17 +565,8 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                 <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
               </svg>
               <div className="w-6 h-6 rounded-full overflow-hidden border border-white/20 shadow-[0_0_10px_rgba(255,255,255,0.1)] shrink-0 transition-transform duration-300 group-hover:scale-110 [&>svg]:w-6 [&>svg]:h-6">
-                {(LANGS.find(l => l.code === lang) || LANGS[0]).flag}
+                {(LANGS.find(l => l.code === currentLangCode) || LANGS[0]).flag}
               </div>
-            </button>
-
-            <button
-              onClick={() => { setMenuOpen(false); setSidebarView('main'); }}
-              className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
-              aria-label="Cerrar"
-              title="Cerrar"
-            >
-              <Icon name="close" size={18} />
             </button>
           </div>
 
@@ -555,7 +579,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                     <Link
                       key={link.href}
                       href={link.href}
-                      onClick={() => { setMenuOpen(false); setSidebarView('main'); }}
+                      onClick={() => { setIsMenuOpen(false); setSidebarView('main'); }}
                       className={`flex justify-start items-center px-4 py-3 rounded-2xl transition-all font-header font-bold text-[15px] group mb-1 active:scale-95 border ${
                         isActive(link.href)
                           ? 'border-neon-blue bg-neon-blue/20 shadow-[0_0_15px_rgba(0,212,255,0.3)] text-neon-blue hover:text-white'
@@ -579,7 +603,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                 {account ? (
                   <Link
                     href="/dashboard"
-                    onClick={() => { setMenuOpen(false); setSidebarView('main'); }}
+                    onClick={() => { setIsMenuOpen(false); setSidebarView('main'); }}
                     className="w-full flex items-center justify-center gap-2 py-3 bg-neon-blue/10 border border-neon-blue/30 text-neon-blue rounded-xl font-header font-bold hover:bg-neon-blue/20 hover:text-white text-xs shadow-[0_4px_15px_rgba(0,212,255,0.1)] transition-all"
                   >
                     <Icon name="server" size={16} className="[&>g]:fill-current" />
@@ -600,7 +624,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                   href={INVITE_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => { setMenuOpen(false); setSidebarView('main'); }}
+                  onClick={() => { setIsMenuOpen(false); setSidebarView('main'); }}
                   className="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white rounded-xl font-header font-bold text-sm shadow-[0_4px_15px_rgba(0,212,255,0.2)] hover:shadow-[0_4px_25px_rgba(0,212,255,0.5)] transition-all"
                 >
                   <Icon name="discord" size={16} className="[&>g]:fill-current" />
@@ -609,28 +633,51 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
               </>
             ) : (
               <div className="grid grid-cols-1 gap-1 animate-fade-in-up pb-10">
-                {LANGS.map((l) => (
-                  <button
-                    key={l.code}
-                    onClick={() => setLang(l.code)}
-                    className={`flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-header font-bold transition-all cursor-pointer group ${
-                      lang === l.code ? 'bg-neon-blue/20 text-neon-blue border border-neon-blue/30' : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'
-                    }`}
-                  >
-                    <span className="w-6 h-6 rounded-full overflow-hidden ring-1 ring-white/10 shrink-0 transition-transform duration-300 group-hover:scale-110 [&>svg]:w-6 [&>svg]:h-6">
-                      {l.flag}
-                    </span>
-                    <span className="flex-1 text-left">{l.label}</span>
-                    {lang === l.code && (
-                      <svg className="w-4 h-4 text-neon-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
-                        <path d="M20 6L9 17l-5-5" />
-                      </svg>
-                    )}
-                  </button>
-                ))}
+                {LANGS.map((l) => {
+                  const available = l.code === 'ES-LA' || l.code === 'EN-US';
+                  const active = currentLangCode === l.code;
+                  return (
+                    <button
+                      key={l.code}
+                      onClick={() => handleLangSelect(l.code)}
+                      className={`flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-header font-bold transition-all group ${
+                        active
+                          ? 'bg-neon-blue/20 text-neon-blue border border-neon-blue/30'
+                          : available
+                            ? 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent cursor-pointer'
+                            : 'text-gray-600 opacity-60 hover:opacity-90 hover:text-white/70 hover:bg-white/5 border border-transparent cursor-pointer'
+                      }`}
+                    >
+                      <span className="w-6 h-6 rounded-full overflow-hidden ring-1 ring-white/10 shrink-0 transition-transform duration-300 group-hover:scale-110 [&>svg]:w-6 [&>svg]:h-6">
+                        {l.flag}
+                      </span>
+                      <span className="flex-1 text-left">{l.label}</span>
+                      {!available && (
+                        <span className="text-[9px] font-black uppercase tracking-widest text-white/30 bg-white/5 border border-white/10 rounded-full px-2 py-0.5 shrink-0">
+                          Beta
+                        </span>
+                      )}
+                      {active && (
+                        <svg className="w-4 h-4 text-neon-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
+                          <path d="M20 6L9 17l-5-5" />
+                        </svg>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
+        </div>
+      </div>
+    )}
+
+    {/* Toast de aviso para idiomas no disponibles */}
+    {toast && (
+      <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[1000] animate-fade-in-up pointer-events-none">
+        <div className="bg-[#05050a]/95 border border-neon-blue/40 px-6 py-3 rounded-full shadow-[0_4px_30px_rgba(0,212,255,0.4)] backdrop-blur-md flex items-center gap-3">
+          <span className="w-2 h-2 rounded-full bg-neon-blue animate-pulse shrink-0" />
+          <span className="text-neon-blue font-bold uppercase tracking-widest text-[10px] sm:text-xs">{toast}</span>
         </div>
       </div>
     )}
