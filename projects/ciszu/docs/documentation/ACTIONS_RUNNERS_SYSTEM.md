@@ -248,9 +248,12 @@ Detalles del script (versión 2.336.0, `E:\actions-runner\`):
 > GitHub → Settings → Actions → Runners y actualizarlo en `.env.local` + volver a cifrar el
 > vault (`scripts/vault.ps1 backup`).
 
-### 5.3 Adaptación de los workflows (hecha el 15 ago 2026)
+### 5.3 Adaptación de los workflows (hecha el 15 ago 2026, ampliada el 16 ago 2026)
 
-Ya se cambió `runs-on` a `self-hosted` en los jobs **portables**:
+Ya se cambió `runs-on` a `self-hosted` en los jobs **portables** (revisión del 16 ago: el
+billing de runners hosted está bloqueado — los jobs en `ubuntu-latest` fallan a los pocos
+segundos sin provisionar runner, log `BlobNotFound`), así que el runner Windows ejecuta ahora
+**todos** los jobs de los workflows que se disparan por push:
 
 | Workflow | Jobs en `self-hosted` |
 |---|---|
@@ -258,26 +261,37 @@ Ya se cambió `runs-on` a `self-hosted` en los jobs **portables**:
 | `deploy-ciszukoantony-website.yml` | `deploy` |
 | `deploy-ciszubot-website.yml` | `deploy` |
 | `deploy-muzicmania-website.yml` | `deploy` |
-| `ci.yml` | `lint`, `unit-tests`, `storybook-tests`, `audit` |
+| `ci.yml` | `lint`, `unit-tests`, `storybook-tests`, `audit`, `semgrep`, `gitleaks`, `security-e2e` |
+| `codeql.yml` | `check` (+ `analyze` cuando GHAS esté habilitado) |
+| `chromatic.yml` | `chromatic` |
+| `release-please.yml` | `release-please` |
+| `uptime-watch.yml` | `watch` |
+| `dast.yml` | ⚠️ schedule-only, aún en `ubuntu-latest` (necesita Docker Linux; ver §5.4) |
 
 - Los steps que usan `actions/*`, `pnpm/*`, `cache` siguen funcionando: el runner los descarga
   y ejecuta igual.
 - En `ci.yml`, el job `storybook-tests` usa `pnpm exec playwright install chromium` (sin
   `--with-deps`, que es apt/Linux y fallaría en Windows).
+- `semgrep` reemplazó `returntocorp/semgrep-action` (contenedor) por el CLI nativo vía pip:
+  `py -m pip install semgrep==1.172.0` + `py -m semgrep scan --config p/security-audit --oss-only`.
+- `gitleaks` reemplazó el tar.xz Linux por el binario Windows (`gitleaks_8.30.1_windows_x64.zip`),
+  ejecutándose con `shell: pwsh` en vez de bash.
+- `codeql.yml` ejecuta `shell: pwsh` en el check (bash no está por defecto en el runner Windows).
+- **Execution policy obligatoria**: el servicio corre como `NT AUTHORITY\NETWORK SERVICE`; sin
+  `Set-ExecutionPolicy RemoteSigned -Scope LocalMachine` los pasos PowerShell fallan con
+  `PSSecurityException` (fijado el 16 ago 2026, `Get-ExecutionPolicy -List` debe mostrar
+  `LocalMachine: RemoteSigned`).
 
 ### 5.4 Jobs NO portables a Windows (alternativas)
 
 | Job | Motivo | Alternativa |
 |---|---|---|
-| `codeql.yml` (analyze) | Requiere GHAS y contenedores por lenguaje | Mantener GHAS, o correr el runner como **Linux** (WSL2/Docker con label `self-hosted` + `linux`) |
 | `dast.yml` (ZAP) | `zaproxy/action-baseline` necesita Docker Linux | Docker Desktop en WSL2, o ejecutar ZAP manualmente en `pnpm dast:zap` |
-| `semgrep` | `returntocorp/semgrep-action` en contenedor | Semgrep CLI local (`pip install semgrep`) como script `pnpm semgrep:local` |
-| `uptime-watch.yml` | Cron de 5 min | Windows Task Scheduler corriendo `node scripts/uptime-watch.js` |
-| `chromatic.yml` | Acción oficial en contenedor | Chromatic CLI local (`pnpm chromatic --project-token=...`) |
 
-> Recomendación: en Windows nativo, correr el runner **solo para CI y deploys portables**, y
-> delegar los jobs de seguridad (CodeQL, DAST, Semgrep) al script maestro local o a un runner
-> Linux vía WSL2/Docker más adelante.
+> El default-setup de CodeQL de GitHub ("Code Quality", `dynamic/github-code-scanning/codeql`)
+> NO está en los archivos del repo y corre en runners hosted con GHAS. Como GHAS está
+> deshabilitado en el repo y el billing hosted bloqueado, ese check siempre falla: hay que
+> desactivarlo en GitHub → Settings → Code security → Code scanning (default setup).
 
 ---
 
