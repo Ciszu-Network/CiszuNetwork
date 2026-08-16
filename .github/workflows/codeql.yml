@@ -25,13 +25,14 @@ jobs:
   # NOTA (16 ago 2026): billing de runners hosted bloqueado → corren en el runner self-hosted Windows.
   check:
     name: Check Advanced Security
-    runs-on: self-hosted
+    runs-on: ${{ vars.PREFERRED_RUNNER || 'self-hosted' }}
     permissions:
       contents: read
     outputs:
       enabled: ${{ steps.check.outputs.enabled }}
     steps:
-      - name: Check if Advanced Security is enabled
+      - name: Check if Advanced Security is enabled [Windows]
+        if: runner.os == 'Windows'
         id: check
         env:
           GH_TOKEN: ${{ github.token }}
@@ -44,13 +45,27 @@ jobs:
           } else {
             Add-Content -Path $env:GITHUB_OUTPUT -Value 'enabled=false'
           }
+      - name: Check if Advanced Security is enabled [Linux]
+        if: runner.os != 'Windows'
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          status=$(gh api "repos/$GITHUB_REPOSITORY" --jq '.security_and_analysis.advanced_security.status' 2>/dev/null || true)
+          if [ -z "$status" ]; then status='disabled'; fi
+          if [ "$status" = "enabled" ]; then
+            echo 'enabled=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'enabled=false' >> "$GITHUB_OUTPUT"
+          fi
 
   analyze:
     name: Analyze (${{ matrix.language }})
     needs: check
     if: needs.check.outputs.enabled == 'true'
     # Runner size impacts CodeQL analysis time. Ver gh.io/recommended-hardware-resources.
-    runs-on: self-hosted
+    runs-on: ${{ vars.PREFERRED_RUNNER || 'self-hosted' }}
     permissions:
       # required for all workflows
       security-events: write
