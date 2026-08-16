@@ -13,7 +13,7 @@ permissions:
 
 jobs:
     deploy:
-        runs-on: self-hosted
+        runs-on: ${{ vars.PREFERRED_RUNNER || 'self-hosted' }}
         steps:
             - uses: actions/checkout@v4
             - uses: pnpm/action-setup@v4

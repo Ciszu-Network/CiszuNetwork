@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   watch:
-    runs-on: self-hosted
+    runs-on: ${{ vars.PREFERRED_RUNNER || 'self-hosted' }}
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
