@@ -29,11 +29,11 @@ jobs:
     permissions:
       contents: read
     outputs:
-      enabled: ${{ steps.check.outputs.enabled }}
+      enabled: ${{ steps.check-win.outputs.enabled || steps.check-lin.outputs.enabled }}
     steps:
       - name: Check if Advanced Security is enabled [Windows]
         if: runner.os == 'Windows'
-        id: check
+        id: check-win
         env:
           GH_TOKEN: ${{ github.token }}
         shell: powershell
@@ -47,7 +47,7 @@ jobs:
           }
       - name: Check if Advanced Security is enabled [Linux]
         if: runner.os != 'Windows'
-        id: check
+        id: check-lin
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
