@@ -3,9 +3,6 @@ name: Deploy MuzicMania Website
 on:
   push:
     branches: [main, master]
-    paths:
-      - 'projects/muzicmania/**'
-      - 'packages/**'
   workflow_dispatch:
 
 permissions:

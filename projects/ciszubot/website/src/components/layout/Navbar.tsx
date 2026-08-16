@@ -364,7 +364,6 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                   className="flex items-center gap-2 rounded-full border border-border bg-card p-1 pr-2.5 transition hover:border-[#5865F2] hover:bg-muted/15 cursor-pointer"
                   aria-label="Cuenta"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={account.avatar ?? `https://cdn.discordapp.com/embed/avatars/${Number(account.id) % 5}.png`}
                     alt=""

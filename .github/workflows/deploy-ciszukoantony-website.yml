@@ -3,9 +3,6 @@ name: Deploy Ciszuko Antony Website
 on:
     push:
         branches: [main, master]
-        paths:
-            - 'projects/ciszukoantony/**'
-            - 'packages/**'
     workflow_dispatch:
 
 permissions:

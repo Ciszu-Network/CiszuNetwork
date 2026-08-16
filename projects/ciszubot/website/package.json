@@ -2,10 +2,15 @@
   "name": "ciszubot-website",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "eslint .",
+    "verify": "pnpm run lint && next build"
   },
   "dependencies": {
     "@ciszu/ui": "workspace:*",
@@ -22,11 +27,14 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.5",
     "@tailwindcss/postcss": "^4.2.4",
     "@types/node": "^25.9.3",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.4.20",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^15.1.7",
     "postcss": "^8.5.25",
     "tailwindcss": "^4.2.4",
     "typescript": "^6.0.3"

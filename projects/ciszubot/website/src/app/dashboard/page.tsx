@@ -45,7 +45,6 @@ export default async function DashboardPage() {
         {/* Header de cuenta */}
         <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
           <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full border-2 border-[#5865F2]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={me?.avatarUrl ?? `https://cdn.discordapp.com/embed/avatars/${Number(userId) % 5}.png`}
               alt=""
@@ -106,7 +105,6 @@ export default async function DashboardPage() {
                     <div className="flex items-center gap-3">
                       {iconUrl ? (
                         <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img src={iconUrl} alt="" className="h-full w-full object-cover" />
                         </div>
                       ) : (
