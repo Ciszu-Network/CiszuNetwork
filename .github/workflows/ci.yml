@@ -26,6 +26,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
+        with:
+          dest: ~/setup-pnpm-${{ runner.name }}
       - uses: actions/setup-node@v4
         with:
           cache: pnpm
@@ -38,6 +40,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
+        with:
+          dest: ~/setup-pnpm-${{ runner.name }}
       - uses: actions/setup-node@v4
         with:
           cache: pnpm
@@ -50,6 +54,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
+        with:
+          dest: ~/setup-pnpm-${{ runner.name }}
       - uses: actions/setup-node@v4
         with:
           cache: pnpm
@@ -98,6 +104,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
+        with:
+          dest: ~/setup-pnpm-${{ runner.name }}
       - uses: actions/setup-node@v4
         with:
           cache: pnpm
@@ -154,6 +162,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
+        with:
+          dest: ~/setup-pnpm-${{ runner.name }}
       - uses: actions/setup-node@v4
         with:
           cache: pnpm
