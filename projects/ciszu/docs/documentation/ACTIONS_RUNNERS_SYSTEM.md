@@ -275,8 +275,9 @@ segundos sin provisionar runner, log `BlobNotFound`), así que el runner Windows
 - `semgrep` reemplazó `returntocorp/semgrep-action` (contenedor) por el CLI nativo vía pip:
   `py -m pip install semgrep==1.172.0` + `py -m semgrep scan --config p/security-audit --oss-only`.
 - `gitleaks` reemplazó el tar.xz Linux por el binario Windows (`gitleaks_8.30.1_windows_x64.zip`),
-  ejecutándose con `shell: pwsh` en vez de bash.
-- `codeql.yml` ejecuta `shell: pwsh` en el check (bash no está por defecto en el runner Windows).
+  ejecutándose con `shell: powershell` en vez de bash (el runner solo tiene Windows PowerShell 5.1,
+  NO `pwsh` — los steps con `shell: pwsh` fallan con `ScriptHandler` error).
+- `codeql.yml` ejecuta `shell: powershell` en el check (bash no está por defecto en el runner Windows).
 - **Execution policy obligatoria**: el servicio corre como `NT AUTHORITY\NETWORK SERVICE`; sin
   `Set-ExecutionPolicy RemoteSigned -Scope LocalMachine` los pasos PowerShell fallan con
   `PSSecurityException` (fijado el 16 ago 2026, `Get-ExecutionPolicy -List` debe mostrar
