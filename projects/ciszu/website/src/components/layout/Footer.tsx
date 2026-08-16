@@ -258,7 +258,7 @@ export const Footer = () => {
         {/* Global Controls & Bottom Bar */}
         <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent my-8" />
 
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-6">
+        <div className="flex flex-col items-center justify-center gap-6 pb-6 text-center">
 
           {/* LEFT: Theme + Language triggers (muzicmania style) */}
           <div className="flex items-center gap-4">

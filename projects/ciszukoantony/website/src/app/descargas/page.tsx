@@ -145,7 +145,7 @@ export default function DescargasPage() {
               <p className="text-white font-header font-bold text-sm mb-1">¿Cerraste el botón flotante?</p>
               <p className="text-gray-500 text-xs">Los botones de instalación y feedback de abajo a la izquierda se pueden volver a mostrar cuando quieras.</p>
             </div>
-            <FabRestore accent="#a78bfa" />
+            <FabRestore accent="#a78bfa" keys={['ciszu-pdwa-dismissed']} />
           </div>
         </section>
       </div>

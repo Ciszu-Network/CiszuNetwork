@@ -57,7 +57,7 @@ export default function FeedbackFab() {
   }, []);
 
   const stackBottom = useFabStack('feedback', !dismissed ? { order: 1, height: 36 } : null);
-  useFabRestore(handleReenable);
+  useFabRestore(handleReenable, [STORAGE_KEY]);
 
   if (dismissed && !showWarning) return null;
 

@@ -11,7 +11,7 @@ import {
   GITHUB_ORG,
   INSTAGRAM,
   INVITE_URL,
-  LANGS,
+  LOGO_ISOTIPO,
   LOGO_LOGOTIPO,
   X_SOCIAL,
   YOUTUBE,
@@ -136,6 +136,13 @@ export default function Footer({ lang, dict }: FooterProps) {
           {/* LEFT: Brand & Community */}
           <div className="flex flex-col items-center text-center xl:w-2/5 border-b xl:border-b-0 xl:border-r border-border pb-8 xl:pb-0 xl:pr-10">
             <Link href="/" className="flex flex-col items-center gap-4 cursor-pointer group hover:scale-105 active:scale-95 transition-all duration-300 mb-6">
+              <SmartImage
+                src={LOGO_ISOTIPO}
+                alt="CiszuBot"
+                width={64}
+                height={64}
+                className="h-16 w-16 rounded-full ring-2 ring-neon-blue/40 shadow-[0_0_20px_rgba(0,212,255,0.4)] group-hover:drop-shadow-[0_0_20px_rgba(0,212,255,0.8)] transition-all duration-300"
+              />
               <SmartImage
                 src={LOGO_LOGOTIPO}
                 alt="CiszuBot"
@@ -322,24 +329,18 @@ export default function Footer({ lang, dict }: FooterProps) {
               )}
             </button>
 
-            <div className="flex items-center rounded-full border border-border bg-card overflow-hidden shadow-lg">
-              {LANGS.map((l) => (
-                <button
-                  key={l.code}
-                  onClick={() => setLang(l.code)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold tracking-wide transition-all cursor-pointer ${
-                    lang === l.code
-                      ? 'bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white shadow-[0_0_12px_rgba(0,212,255,0.4)]'
-                      : 'text-muted hover:text-ink hover:bg-card'
-                  }`}
-                  aria-pressed={lang === l.code}
-                  title={l.code === 'es' ? 'Español' : 'English'}
-                >
-                  <Icon name={l.flag} style="flag" size={14} />
-                  {l.label}
-                </button>
-              ))}
-            </div>
+            <button
+              onClick={() => setLang(lang === 'es' ? 'en' : 'es')}
+              className="group flex items-center gap-3 px-4 py-2 bg-card hover:bg-muted/15 border border-border hover:border-neon-blue rounded-full transition-all duration-300 shadow-lg cursor-pointer"
+              title={lang === 'es' ? 'English' : 'Español'}
+            >
+              <svg className="w-5 h-5 transition-transform duration-500 group-hover:rotate-12 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+              </svg>
+              <span className="text-muted group-hover:text-neon-blue uppercase tracking-widest text-xs font-bold">
+                {lang === 'es' ? 'ESPAÑOL' : 'ENGLISH'}
+              </span>
+            </button>
           </div>
         </div>
       </div>

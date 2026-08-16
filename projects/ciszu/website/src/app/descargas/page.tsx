@@ -72,7 +72,7 @@ export default function DescargasPage() {
             <p className="text-white font-header font-bold text-sm mb-1">¿Cerraste el botón flotante?</p>
             <p className="text-gray-400 text-xs">El botón "Instalar PDWA" de abajo a la izquierda se puede volver a mostrar cuando quieras.</p>
           </div>
-          <FabRestore accent="#22d3ee" />
+          <FabRestore accent="#22d3ee" keys={['ciszu-pdwa-dismissed']} />
         </div>
       </div>
     </div>

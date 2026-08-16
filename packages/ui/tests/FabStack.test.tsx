@@ -86,6 +86,25 @@ describe('restoreFabButtons', () => {
     expect(handler).toHaveBeenCalledTimes(1);
     window.removeEventListener(FAB_RESTORE_EVENT, handler);
   });
+
+  it('con keys solo limpia y notifica esas claves (reactivación acotada)', () => {
+    localStorage.setItem('ciszu-pdwa-dismissed', '1');
+    localStorage.setItem('muzicmania-feedback-dismissed', '1');
+
+    const handler = vi.fn((e: Event) => {
+      result = (e as CustomEvent<{ keys?: string[] }>).detail?.keys ?? [];
+    });
+    let result: string[] = [];
+    window.addEventListener(FAB_RESTORE_EVENT, handler);
+
+    restoreFabButtons(['ciszu-pdwa-dismissed']);
+
+    expect(localStorage.getItem('ciszu-pdwa-dismissed')).toBeNull();
+    expect(localStorage.getItem('muzicmania-feedback-dismissed')).toBe('1');
+    expect(handler).toHaveBeenCalledTimes(1);
+    expect(result).toEqual(['ciszu-pdwa-dismissed']);
+    window.removeEventListener(FAB_RESTORE_EVENT, handler);
+  });
 });
 
 describe('useFabRestore', () => {
@@ -98,6 +117,29 @@ describe('useFabRestore', () => {
     render(<Listener />);
     act(() => {
       window.dispatchEvent(new Event(FAB_RESTORE_EVENT));
+    });
+    expect(onRestore).toHaveBeenCalledTimes(1);
+  });
+
+  it('con keys ignora restauraciones que no tocan sus claves', () => {
+    const onRestore = vi.fn();
+    function Scoped() {
+      useFabRestore(onRestore, ['ciszu-pdwa-dismissed']);
+      return <div data-testid="l" />;
+    }
+    render(<Scoped />);
+
+    act(() => {
+      window.dispatchEvent(
+        new CustomEvent(FAB_RESTORE_EVENT, { detail: { keys: ['ciszu-feedback-dismissed'] } })
+      );
+    });
+    expect(onRestore).not.toHaveBeenCalled();
+
+    act(() => {
+      window.dispatchEvent(
+        new CustomEvent(FAB_RESTORE_EVENT, { detail: { keys: ['ciszu-pdwa-dismissed'] } })
+      );
     });
     expect(onRestore).toHaveBeenCalledTimes(1);
   });
@@ -115,5 +157,16 @@ describe('FabRestore', () => {
     expect(localStorage.getItem('ciszu-feedback-dismissed')).toBeNull();
     expect(handler).toHaveBeenCalledTimes(1);
     window.removeEventListener(FAB_RESTORE_EVENT, handler);
+  });
+
+  it('con keys solo restaura las claves indicadas', () => {
+    localStorage.setItem('ciszu-pdwa-dismissed', '1');
+    localStorage.setItem('muzicmania-feedback-dismissed', '1');
+
+    const { getByRole } = render(<FabRestore keys={['ciszu-pdwa-dismissed']} />);
+    fireEvent.click(getByRole('button', { name: /restaurar bot/i }));
+
+    expect(localStorage.getItem('ciszu-pdwa-dismissed')).toBeNull();
+    expect(localStorage.getItem('muzicmania-feedback-dismissed')).toBe('1');
   });
 });

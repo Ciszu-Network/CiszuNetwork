@@ -777,7 +777,7 @@ export default function DownloadPage() {
               Los botones de instalación (PDWA) y feedback de abajo a la izquierda se pueden volver a mostrar cuando quieras.
             </p>
           </div>
-          <FabRestore accent="#00f0ff" />
+          <FabRestore accent="#00f0ff" keys={['ciszu-pdwa-dismissed']} />
         </motion.section>
       </div>
     </MainLayout>

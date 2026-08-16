@@ -538,7 +538,7 @@ export const NavbarContent = () => {
       {/* Slide-Right Contextual Menu (Sidebar) */}
       {isMenuOpen && (
         <div className="fixed inset-0 z-[100] pointer-events-none">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm pointer-events-auto" onClick={() => setIsMenuOpen(false)} />
+          <div className="absolute inset-0 bg-black/60 pointer-events-auto" onClick={() => setIsMenuOpen(false)} />
           <div className="absolute top-[64px] right-0 w-[320px] max-w-[85vw] h-[calc(100vh-64px)] bg-[#05050a]/95 backdrop-blur-3xl shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col pointer-events-auto animate-slide-right-fade">
             {/* Animated left divider to match header */}
             <div className="absolute left-0 top-0 w-[1px] h-full bg-gradient-to-b from-transparent via-brand-light/50 to-transparent shadow-[0_0_15px_rgba(58,107,240,0.4)] z-10" />

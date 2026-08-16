@@ -104,7 +104,7 @@ export default function Footer() {
                 src="projects/ciszukoantony/content/assets/youtube_canal.png"
                 alt="Ciszuko Antony YouTube"
                 width={34} height={34}
-                className="rounded-full ring-2 ring-brand/40 group-hover:ring-neon-pink group-hover:shadow-[0_0_15px_rgba(255,0,131,0.8)] transition-all duration-300"
+                className="rounded-full ring-2 ring-brand/40 group-hover:ring-neon-blue group-hover:shadow-[0_0_15px_rgba(61,106,223,0.8)] transition-all duration-300"
               />
             </Link>
 
@@ -185,7 +185,7 @@ export default function Footer() {
 
         <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent my-8" />
 
-        <div className="flex flex-col md:flex-row items-center justify-between gap-8 pb-4">
+        <div className="flex flex-col items-center justify-center gap-8 pb-4 text-center">
           {/* Theme + Language controls */}
           <div className="flex items-center gap-4">
             <button onClick={toggleTheme}
@@ -205,7 +205,7 @@ export default function Footer() {
           </div>
 
           {/* Copyright */}
-          <p className="text-gray-600 text-xs text-center leading-relaxed">
+          <p className="text-white text-xs text-center leading-relaxed">
             <span className="text-neon-blue">&copy;</span> 2024-{new Date().getFullYear()}{' '}
             <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="text-neon-blue hover:text-neon-cyan transition-colors">Ciszu Network</a> &amp; Ciszuko Antony. All rights reserved.
             <br />

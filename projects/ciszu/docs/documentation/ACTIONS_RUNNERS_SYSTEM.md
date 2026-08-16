@@ -89,6 +89,13 @@ sistema para **independizarse del billing**: correr las mismas tareas localmente
 > `packages/**` está escuchado por los 4 workflows de deploy: un cambio en `@ciszu/ui` o
 > `@ciszunetwork/*` re-despliega las 4 webs. Las 4 webs tienen script `lint` (`eslint .`).
 
+> **Runners físicos (16 ago 2026)**: 3 runner self-hosted registrados con nombre `CISZU-PC`,
+> `CISZU-PC-2` y `CISZU-PC-3`, consolidados bajo `E:\actions-runners\` (cada uno en su
+> subcarpeta: `E:\actions-runners\CISZU-PC`, `E:\actions-runners\CISZU-PC-2`,
+> `E:\actions-runners\CISZU-PC-3`). Los 3 corren como servicios Windows con arranque
+> automático retardado. Al desinstalar o reinstalar, usar `--unattended` con el mismo nombre
+> para no dejar runners huérfanos en GitHub.
+
 ### 3.3 Scripts de la raíz (implementados en `package.json` el 15 ago 2026)
 
 ```jsonc
@@ -215,13 +222,15 @@ este runner; el resto (semgrep, gitleaks, security-e2e, DAST, CodeQL) queda docu
 | Node ≥ 20 + pnpm 10.8.1 | ✅ instalado |
 | Git + SSH/https operativo | ✅ con VPN activa (requisito para que el runner se registre y hable con GitHub) |
 | WSL2 + Docker Desktop (opcional, para jobs con contenedores) | ✅ operativo (15 ago 2026, engine 29.6.2) |
-| Espacio en disco | ⚠️ limitado (C:); runner vive en `E:\actions-runner\` (fuera del repo; rutas sin espacios obligatorias) |
+| Espacio en disco | ⚠️ limitado (C:); runners viven en `E:\actions-runners\` (fuera del repo; rutas sin espacios obligatorias) |
 
 ### 5.2 Instalación (Windows nativo, automatizada)
 
 El script `scripts/runner-install.ps1` orquesta todo (descarga, checksum, configuración con el
 token del vault y registro como servicio). El token de registro se lee de `RUNNER_REGISTRATION_TOKEN`
-en `.env.local` (vault cifrado) y **nunca** se hardcodea ni se commitea.
+en `.env.local` (vault cifrado) y **nunca** se hardcodea ni se commitea. Cada runner ocupa su
+subcarpeta dentro de `E:\actions-runners\` (estructura consolidada; la instalación por defecto
+del script usa `E:\actions-runners\CISZU-PC`):
 
 | Acción | Comando |
 |---|---|
@@ -232,11 +241,11 @@ en `.env.local` (vault cifrado) y **nunca** se hardcodea ni se commitea.
 | Estado del servicio | `.\scripts\runner-install.ps1 status` |
 | Desinstalar | `.\scripts\runner-install.ps1 uninstall` |
 
-Detalles del script (versión 2.336.0, `E:\actions-runner\`):
+Detalles del script (versión 2.336.0, `E:\actions-runners\CISZU-PC`):
 1. Descarga `actions-runner-win-x64-2.336.0.zip` y valida SHA256 (`d59123a4…`).
-2. Extrae con `System.IO.Compression` en `E:\actions-runner\` — **la ruta NO puede contener
-   espacios**: `RunnerService.exe init` falla si el binPath del servicio los tiene (error
-   -532462766 que se vio al instalar en `E:\Ciszu Network\.opencode\runner`).
+2. Extrae con `System.IO.Compression` en `E:\actions-runners\<runner>` — **la ruta NO puede
+   contener espacios**: `RunnerService.exe init` falla si el binPath del servicio los tiene
+   (error -532462766 que se vio al instalar en `E:\Ciszu Network\.opencode\runner`).
 3. Configura con `config.cmd --unattended --url https://github.com/Ciszu-Network/CiszuNetwork --token <vault>`.
 4. `--runasservice` (sin sufijo `svc.cmd`, eliminado en runner 2.33x): `config.cmd` instala y
    arranca el servicio `actions.runner.Ciszu-Network-CiszuNetwork.CISZU-PC` con arranque
@@ -372,6 +381,6 @@ semgrep usa `setup-python` en Linux, gitleaks descarga el binario de cada OS).
 - [ ] (Futuro) Decidir runner Windows nativo vs Linux/WSL2 para los jobs de seguridad
       (CodeQL, DAST, Semgrep) — ver §5.4.
 
-_Última revisión: 15 ago 2026._ Relacionado: `WORKFLOW_SYSTEM.md`, `DOCKER_SYSTEM.md`,
+_Última revisión: 16 ago 2026._ Relacionado: `WORKFLOW_SYSTEM.md`, `DOCKER_SYSTEM.md`,
 `MONITORING_SYSTEM.md`, `SECURITY_PROTOCOLS.md`, `VAULT_SYSTEM.md`, `VPS_PLAN.md`,
 `DEVSECOPS_SYSTEM.md`, `PROJECTS_SYSTEM.md`, `STATUS_SYSTEM.md`.
