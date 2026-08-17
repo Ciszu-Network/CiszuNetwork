@@ -115,7 +115,7 @@ export const NavbarContent = () => {
       }
     };
     document.addEventListener('mousedown', handler);
-    return () => document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
   const isActive = (href: string) => pathname === href;

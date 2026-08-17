@@ -1,15 +1,16 @@
 =====================================================================
  CISZU NETWORK - CONSOLE DEV DEBUGGING (GUI) DE USO
- test/website/debug/dev_console.ps1  -  v1.0.0
+ test/website/debug/dev_console.ps1  -  v2.1.0
 =====================================================================
 
 QUE HACE
 --------
 - Encender / reiniciar / detener cada webapp (Next.js next dev con puerto fijo).
-- Encender o detener TODAS las webs a la vez.
+- Operativas con menu de seleccion MULTIPLE y webs marcadas por defecto.
 - Estado de puertos y apertura de cada web en el navegador.
-- Logs a tiempo real (Get-Content -Tail -Wait) en ventana separada.
-- Herramientas extra (limpiar logs, procesos node, ocupacion de puertos).
+- Logs a tiempo real (Get-Content -Tail -Wait) SOLO de webs encendidas.
+- Herramientas extra (limpiar logs, procesos, puertos, navegador, git,
+  versiones, disco, etc).
 - Ayuda, creditos y version integrados.
 
 PUERTOS FIJOS (nomenclatura del monorepo)
@@ -30,21 +31,34 @@ COMO ABRIRLA
   3) Desde la raiz del monorepo:
         pnpm dev:console
 
-USO DEL MENU
-------------
-  Flecha arriba (Up)    = moverse hacia arriba
-  Flecha abajo (Down)   = moverse hacia abajo
-  Enter                 = elegir la opcion resaltada
-  Q o Esc               = volver al menu anterior (o salir en el principal)
+USO DEL MENU DE SELECCION MULTIPLE
+----------------------------------
+  Flecha arriba (Up)       = moverse hacia arriba
+  Flecha abajo (Down)      = moverse hacia abajo
+  Espacio                  = marcar / desmarcar la web resaltada
+  A                        = marcar TODAS las webs
+  NUMEROS 1-9 (0 = 10)     = saltar directo al indice de la opcion
+  Enter                    = PROCEDER (ejecutar la operacion en las webs marcadas)
+  N                        = NO PROCEDER (cancelar, vuelve al menu sin aplicar)
+  Q o Esc                  = ABORTAR (detiene las webs y cierra la consola, Ctrl+C)
+
+  Las webs vienen MARCADAS POR DEFECTO en cada operativa.
+  Opciones y webs usan EMOJIS (estilo neon del perfil):
+    "▸ [1] 🚀 Encender webs"   "  [☑] 🎨 Ciszuko Antony port 3001"
+  El selector se resalta en amarillo; los rojos son solo para errores.
+  Estados: 🟢 ENCENDIDA / 🟡 ENCENDIENDO... / ⚫ DETENIDA
 
 FLUJO TIPICO
 ------------
   1. Abrir la consola (devcon).
-  2. Elegir "Encender TODAS las webs" o una web concreta.
-  3. Esperar unos segundos y revisar "Estado de puertos".
-  4. Abrir http://localhost:3000 ... 3003 en el navegador.
-  5. Si falla, ver el log en vivo desde la gestion de la web.
-  6. Al terminar: "Detener TODAS las webs" y salir.
+  2. Menu principal: Elige una OPERATIVA (Encender / Reiniciar / Detener).
+  3. Se abre el menu de seleccion con TODAS marcadas; desmarca con Espacio.
+  4. Enter para PROCEDER (o N para cancelar, Q/Esc para abortar).
+  5. La consola ESPERA a que cada web compila (mostrando spinner) y avisa
+     cuando queda lista en http://localhost:3000 ... 3003.
+  6. "Estado" permite consultar las webs que elijas (una, varias o todas).
+  7. "Logs en tiempo real" abre el log (next dev) de UNA web ENCENDIDA por vez.
+  8. "Salir (Ctrl+C)" detiene las webs en ejecucion y cierra la consola.
 
 MODO CLI (sin menu, para automatizacion)
 ---------------------------------------
@@ -65,12 +79,22 @@ MODO CLI (sin menu, para automatizacion)
       devstatus  estado rapido de puertos
       devlog <web>  log en vivo
 
+PRUEBAS (sin Pester)
+--------------------
+  SelfTest interno (determinista, sin interactividad):
+      powershell -File test\website\debug\dev_console.ps1 -SelfTest
+
+  Runner completo (sintaxis + BOM + SelfTest + Demo + CLI status):
+      powershell -File test\website\debug\dev_console.tests.ps1
+
 LOGS
 ----
   Ubicacion: .opencode/temp/dev-logs/<key>.log  (gitignored)
   Claves: network, antony, ciszubot, muzic  (errores en <key>.log.err)
   En vivo: ventana PowerShell separada con Get-Content -Tail 80 -Wait.
   Cerrar la ventana del log no afecta al TUI ni a los procesos Next dev.
+  OJO: solo las webs ENCENDIDAS tienen log en tiempo real; si una web
+  esta detenida, el log no se ofrece (evita logs viejos sin sentido).
 
 RESOLUCION DE PROBLEMAS
 -----------------------
@@ -81,6 +105,9 @@ RESOLUCION DE PROBLEMAS
   - Logs acumulados: Herramientas > "Limpiar logs".
   - pnpm no encontrado: la consola hereda el entorno de la PowerShell;
     abrirla desde una sesion con pnpm configurado.
+  - "Salir" no cierra: en v2.1.0 Salir detiene las webs y sale (equivale
+    a Ctrl+C); si aun asi no cierra, abre la consola con -SelfTest para
+    verificar el estado del script.
 
 CREDITOS
 --------
@@ -90,4 +117,4 @@ CREDITOS
              (en projects/ciszu/docs/documentation/)
 
 =====================================================================
-_Ultima revision: 16 ago 2026._ Relacionado: dev_console.md, DEV_CONSOLE_SYSTEM.md.
+_Ultima revision: 17 ago 2026._ Relacionado: dev_console.md, DEV_CONSOLE_SYSTEM.md.

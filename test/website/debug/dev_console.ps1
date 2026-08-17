@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Ciszu Network - Console Dev Debugging (TUI)
 Consola interactiva de pruebas locales para las 4 webs del monorepo.
@@ -25,6 +25,7 @@ Puertos fijos por web (nomenclatura del monorepo):
 [CmdletBinding()]
 param(
     [switch]$Demo,
+    [switch]$SelfTest,
     [ValidateSet('start','stop','restart','status','log','help')]
     [string]$Action,
     [string]$Web
@@ -51,160 +52,331 @@ $c_reset  = "$e[0m"
 
 # ---------- Web catalog (nomenclatura central del monorepo) ----------
 $WEBS = @(
-    @{ key = 'network';  name = 'Ciszu Network';  filter = 'ciszunetwork-website'; port = 3000; dir = 'projects/ciszu/website' },
-    @{ key = 'antony';   name = 'Ciszuko Antony'; filter = 'ciszukantony-website'; port = 3001; dir = (Get-ChildItem projects -Directory | Where-Object { $_.Name -match 'antony' } | Select-Object -First 1).Name + '/website' },
-    @{ key = 'ciszubot'; name = 'CiszuBot';       filter = 'ciszubot-website';     port = 3002; dir = 'projects/ciszubot/website' },
-    @{ key = 'muzic';    name = 'MuzicMania';     filter = 'muzicmania-website';   port = 3003; dir = 'projects/muzicmania/website' }
+    @{ key = 'network';  name = 'Ciszu Network';  filter = 'ciszunetwork-website'; port = 3000; dir = 'projects/ciszu/website';  emoji = '🌐' },
+    @{ key = 'antony';   name = 'Ciszuko Antony'; filter = 'ciszukantony-website'; port = 3001; dir = (Get-ChildItem projects -Directory | Where-Object { $_.Name -match 'antony' } | Select-Object -First 1).Name + '/website'; emoji = '🎨' },
+    @{ key = 'ciszubot'; name = 'CiszuBot';       filter = 'ciszubot-website';     port = 3002; dir = 'projects/ciszubot/website'; emoji = '🤖' },
+    @{ key = 'muzic';    name = 'MuzicMania';     filter = 'muzicmania-website';   port = 3003; dir = 'projects/muzicmania/website'; emoji = '🎵' }
 )
 
-$VERSION = '1.0.0'
+$VERSION = '2.1.0'
 $LOG_DIR = Join-Path $root '.opencode\temp\dev-logs'
 
 # ---------- Arte ASCII ----------
 $ART = @'
-  ____ ___  ____ ___  ____ __  __
- / ___/ _ \/ ___|_ _||__  / |/ /   _   _
-| |  | | | \___ \| |   / /| ' /   (_) (_)
-| |__| |_| |___) | |  / /_| . \    _   _
- \____\___/|____/|___|/_// |_|\_\ (_) (_)
+                    [0;37;40m                                                                [0m
+                    [0;37;40m      [0;34;40m▄▄▓▄[0;37;40m    [0;34;40m▄▓[0;94;44m▄[0;34;40m▄[0;37;40m         [0;34;40m▄▄▄▄[0;37;40m        [0;34;40m▄▄▄▄[0;37;40m               [0;34;40m▄[0;37;40m     [0m
+                    [0;37;40m   [0;34;40m▄▓[0;94;44m·[0;34;40m█▀[0;90;40m░[0;37;40m [0;34;40m▀[0;37;40m  [0;34;40m▀▀███▓[0;37;40m     [0;34;40m▄▀▀▀▀█▓█[0;94;44m▄[0;34;40m▄▀▀▄[0;94;44m▄[0;34;40m█▓█▀▀▀▀▄[0;37;40m        [0;90;40m░░[0;37;40m [0;34;40m▐█▓▄[0;37;40m   [0m
+                    [0;37;40m [0;34;40m▄▓█[0;94;44m■[0;34;40m▀[0;90;40m░[0;37;40m       [0;90;40m░░[0;34;40m███▌[0;37;40m   [0;34;40m▓▄▄[0;37;40m   [0;90;40m░[0;34;40m▀▓▀[0;37;40m    [0;34;40m▀▓▀[0;90;40m░[0;37;40m   [0;34;40m▄▄▓[0;37;40m    [0;34;40m▄▄█▀[0;37;40m   [0;34;40m█[0;94;44m▀[0;34;40m█▓▄[0;37;40m [0m
+                    [0;34;40m▐███▌[0;90;40m░[0;37;40m         [0;90;40m░[0;34;40m▐██▌[0;37;40m  [0;90;40m░░[0;34;40m▀██▓▄[0;37;40m            [0;34;40m▄▓██▀[0;90;40m░░[0;37;40m  [0;34;40m█[0;94;44m░░[0;37;40m     [0;90;40m░[0;94;44m░░░░[0;34;40m▌[0m
+                    [0;94;44m░░░░[0;34;40m▌[0;90;40m░░[0;37;40m         [0;90;40m░[0;94;44m░░[0;34;40m▌[0;37;40m    [0;90;40m░░[0;34;40m█[0;94;44m▀[0;34;40m█▓▄[0;37;40m        [0;34;40m▄▓█[0;94;44m▀[0;34;40m█[0;90;40m░░[0;37;40m    [0;94;44m▒▒[0;34;40m▌[0;37;40m     [0;90;40m░[0;34;40m▐[0;94;44m▒▒▒▒[0m
+                    [0;34;40m▐[0;94;44m▒▒▒▒[0;90;40m░[0;37;40m      [0;94;40m▄[0;37;40m   [0;90;40m░[0;94;44m▒▒[0;37;40m  [0;94;40m▄▀[0;37;40m   [0;90;40m░[0;94;44m░░░░[0;34;40m▌[0;37;40m      [0;34;40m▐[0;94;44m░░░░[0;90;40m░[0;37;40m   [0;94;40m▀▄[0;37;40m [0;94;44m▓▓▓[0;94;40m▄[0;37;40m   [0;90;40m░░[0;94;44m▓▓▓▓[0;94;40m▌[0m
+                    [0;37;40m [0;94;40m▀[0;94;44m▓▓▓▓[0;94;40m▄▄▄▄█▀[0;37;40m     [0;94;44m▓[0;94;40m▌[0;37;40m [0;94;40m▐[0;94;44m▓[0;94;40m▄[0;37;40m   [0;34;40m▄[0;94;44m▒▒▒[0;34;40m█[0;37;40m        [0;34;40m█[0;94;44m▒▒▒[0;34;40m▄[0;37;40m   [0;94;40m▄[0;94;44m▓[0;94;40m▌[0;37;40m [0;94;40m▀█[0;94;44m█[0;94;40m█▄▄▄▓[0;94;44m██[0;94;40m█▀[0;37;40m [0m
+                    [0;37;40m   [0;94;40m▀▀▀▀▀▀[0;37;40m       [0;94;40m▀[0;37;40m    [0;94;40m▀█[0;94;44m▓▓▓▒▒[0;34;40m▀▀[0;37;40m          [0;34;40m▀▀[0;94;44m▒▒▓▓▓[0;94;40m█▀[0;37;40m     [0;94;40m▀▀▀▀▀▀▀[0;37;40m   [0m
+[0;34;40m▀█▀▀█[0;37;40m [0;34;40m▀█▀▀█[0;37;40m [0;34;40m▀█[0;97;40m  [0;34;40m█▀[0;37;40m      [0;34;40m▀█▀▀█[0;37;40m [0;34;40m▀█▀▀█[0;37;40m [0;34;40m▀█▀▀█[0;37;40m [0;34;40m▀█[0;97;40m  [0;34;40m█▀[0;37;40m [0;34;40m█▀▀█[0;37;40m        [0;34;40m█▀▀█[0;37;40m [0;34;40m█▀▀█[0;37;40m [0;34;40m▀█▀▀█[0;37;40m  [0;34;40m█▀▀█[0;37;40m [0;34;40m█▀▀█[0;37;40m [0;34;40m▀█▀[0;37;40m   [0;34;40m▀█▀▀█[0m
+[0;97;40m [0;35;40m█[0;97;40m [0;35;40m █[0;37;40m [0;97;40m [0;35;40m█▄▄[0;37;40m  [0;97;40m [0;35;40m█[0;97;40m  [0;35;40m█[0;37;40m       [0;97;40m [0;35;40m█[0;97;40m [0;35;40m █[0;37;40m [0;97;40m [0;35;40m█▄▄[0;37;40m   [0;35;40m█▄▄▀[0;37;40m [0;97;40m [0;35;40m█[0;97;40m  [0;35;40m█[0;37;40m  [0;35;40m█[0;97;40m [0;35;40m▄▄▄[0;37;40m       [0;35;40m█[0;37;40m    [0;35;40m█[0;97;40m  [0;35;40m█[0;37;40m [0;97;40m [0;35;40m█[0;97;40m  [0;35;40m█[0;37;40m  [0;35;40m█▄▄▄[0;37;40m [0;35;40m█[0;97;40m  [0;35;40m█[0;37;40m [0;97;40m [0;35;40m█[0;37;40m    [0;97;40m [0;35;40m█▄▄[0;37;40m [0m
+[0;97;40m [0;95;40m█[0;97;40m  [0;95;40m█[0;37;40m [0;97;40m [0;95;40m█[0;97;40m  ▄[0;37;40m [0;97;40m [0;95;40m█[0;97;40m  [0;95;40m█[0;37;40m       [0;97;40m [0;95;40m█[0;97;40m  [0;95;40m█[0;37;40m [0;97;40m [0;95;40m█[0;97;40m  ▄[0;37;40m  [0;95;40m█[0;37;40m  [0;95;40m█[0;37;40m [0;97;40m [0;95;40m█[0;97;40m [0;95;40m █[0;37;40m  [0;95;40m█[0;97;40m  [0;95;40m█[0;37;40m        [0;95;40m█[0;37;40m  [0;95;40m▄[0;37;40m [0;95;40m█[0;97;40m  [0;95;40m█[0;37;40m [0;97;40m [0;95;40m█[0;97;40m  [0;95;40m█[0;37;40m  [0;97;40m   [0;95;40m█[0;37;40m [0;95;40m█[0;97;40m  [0;95;40m█[0;37;40m [0;97;40m [0;95;40m█[0;97;40m  [0;95;40m▄[0;37;40m [0;97;40m [0;95;40m█[0;97;40m  ▄[0m
+[0;97;40m▀▀▀▀▀[0;37;40m [0;97;40m▀▀▀▀▀[0;37;40m [0;97;40m  ▀▀[0;37;40m        [0;97;40m▀▀▀▀▀[0;37;40m [0;97;40m▀▀▀▀▀[0;37;40m [0;97;40m▀▀▀▀▀[0;37;40m [0;97;40m ▀▀▀▀[0;37;40m  [0;97;40m▀▀▀▀[0;37;40m       [0;97;40m▀▀▀▀▀[0;37;40m [0;97;40m▀▀▀▀[0;37;40m [0;97;40m▀▀  ▀▀[0;37;40m [0;97;40m▀▀▀▀[0;37;40m [0;97;40m▀▀▀▀[0;37;40m [0;97;40m▀▀▀▀▀[0;37;40m [0;97;40m▀▀▀▀▀[0m
 '@
 
-# ---------- Colores de estado ----------
+# ---------- Estados de webs (bugfix: 'encendiendo' interno) ----------
+$script:startingWeb = @{}   # key -> PID de la app que estamos lanzando
+
 function Get-WebState([string]$port) {
-    $null = Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue
-    if ($?) { return $true } else { return $false }
+    $conn = Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue
+    if ($conn) { return $true } else { return $false }
 }
 
-function Format-State($running) {
-    if ($running) { return "${c_green}[ENCENDIDA]${c_reset}" }
-    return "${c_gray}[DETENIDA]${c_reset}"
+function Get-WebPhase([string]$key) {
+    $w = $WEBS | Where-Object { $_.key -eq $key }
+    if (-not $w) { return 'off' }
+    if (Get-WebState $w.port) { return 'on' }
+    if ($script:startingWeb.ContainsKey($key)) {
+        $pidMark = $script:startingWeb[$key]
+        $alive = [bool](Get-Process -Id $pidMark -ErrorAction SilentlyContinue)
+        if ($alive) { return 'starting' }
+        else { $script:startingWeb.Remove($key) }
+    }
+    return 'off'
+}
+
+function Format-State($status, [switch]$Emoji) {
+    $tag = '▮ '
+    if ($status -eq 'on')      { return "${c_green}${tag}ENCENDIDA - 🟢${c_reset}" }
+    elseif ($status -eq 'starting') { return "${c_yellow}${tag}ENCENDIENDO... 🟡${c_reset}" }
+    else                       { return "${c_gray}${tag}DETENIDA - ⚫${c_reset}" }
+}
+
+function Wait-WebReady([string]$key, [int]$timeoutSec = 180) {
+    $w = $WEBS | Where-Object { $_.key -eq $key }
+    if (-not $w) { return }
+    $deadline = (Get-Date).AddSeconds($timeoutSec)
+    Write-Host ""
+    Write-Host ("{0} Esperando a que {1} responda en http://localhost:{2}...${c_reset}" -f "${c_cyan}", "$($w.emoji) $($w.name)", $w.port)
+    $spinner = @('|', '/', '-', '\')
+    $s = 0
+    while ((Get-Date) -lt $deadline) {
+        if (Get-WebState $w.port) {
+            $script:startingWeb.Remove($key)
+            Write-Host ("`r{0} {1}{2}${c_reset}" -f "${c_green}[LISTA] ${c_reset}", "$($w.emoji) $($w.name)", " en http://localhost:$($w.port)  ")
+            return $true
+        }
+        $mark = $script:startingWeb[$key]
+        $alive = if ($mark) { [bool](Get-Process -Id $mark -ErrorAction SilentlyContinue) } else { $true }
+        if (-not $alive) {
+            $script:startingWeb.Remove($key)
+            Write-Host ("`r{0} El proceso de {1} termino sin abrir el puerto (revisa el log).${c_reset}" -f "${c_red}", "$($w.emoji) $($w.name)")
+            return $false
+        }
+        $frame = $spinner[$s % 4]
+        $s++
+        Write-Host ("`r   {0} compilando/arrancando... {1}   " -f $frame, ((Get-Date) -lt $deadline)) -NoNewline
+        Start-Sleep -Milliseconds 400
+    }
+    $script:startingWeb.Remove($key)
+    Write-Host ("`r{0} Tiempo de espera superado para {1}. Revisa el log en tiempo real.${c_reset}" -f "${c_red}", "$($w.emoji) $($w.name)")
+    return $false
 }
 
 # ---------- Launcher / Stopper ----------
-function Start-WebByKey([string]$key) {
+function Start-WebByKey([string]$key, [switch]$Wait) {
     $w = $WEBS | Where-Object { $_.key -eq $key }
     if (-not $w) { return }
-    if (Get-WebState $w.port) { Write-Host "${c_yellow}Ya encendida (port $($w.port)).${c_reset}"; return }
+    if (Get-WebState $w.port) { Write-Host "${c_yellow}${w.emoji} Ya encendida (port $($w.port)).${c_reset}"; return }
 
     if (-not (Test-Path $LOG_DIR)) { New-Item -ItemType Directory -Path $LOG_DIR -Force | Out-Null }
     $logFile = Join-Path $LOG_DIR "$key.log"
     $cmd = "Set-Location '$root'; pnpm --filter $($w.filter) dev -p $($w.port)"
     $proc = Start-Process -FilePath 'powershell.exe' -ArgumentList '-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', $cmd `
         -WindowStyle Hidden -RedirectStandardOutput $logFile -RedirectStandardError "$logFile.err" -PassThru
+    $script:startingWeb[$key] = $proc.Id
 
-    Write-Host "${c_cyan}Encendiendo ${c_pink}$($w.name)${c_cyan} -> http://localhost:$($w.port)${c_reset}"
+    Write-Host "${c_cyan}⚡ Encendiendo ${w.emoji} $($w.name) -> http://localhost:$($w.port)${c_reset}"
     Write-Host "${c_gray}Log: $logFile${c_reset}"
 
-    Start-Sleep -Seconds 5
-    if (Get-WebState $w.port) { Write-Host "${c_green}[OK] ${c_reset}respondiendo en localhost:$($w.port)" }
-    else { Write-Host "${c_yellow}[esperando]${c_reset} el compilador sigue arrancando (revisa estado en el menu)" }
+    if ($Wait) { $null = Wait-WebReady $key }
 }
 
-function Stop-WebByKey([string]$key) {
+function Stop-WebByKey([string]$key, [switch]$Wait) {
     $w = $WEBS | Where-Object { $_.key -eq $key }
     if (-not $w) { return }
     $conns = Get-NetTCPConnection -LocalPort $w.port -State Listen -ErrorAction SilentlyContinue
     foreach ($c in $conns) {
-        try {
-            Stop-Process -Id $c.OwningProcess -Force -ErrorAction SilentlyContinue
-        } catch { }
+        try { Stop-Process -Id $c.OwningProcess -Force -ErrorAction SilentlyContinue } catch { }
     }
-    Write-Host "${c_pink}Web $($w.name)${c_gray} detenida (puerto $($w.port) liberado).${c_reset}"
-}
-
-# Accion selectiva sobre una web concreta
-function Invoke-WebAction($w) {
-    $running = Get-WebState $w.port
-    $opts = @(
-        @{ l = "Encender";  act = { Start-WebByKey $w.key } },
-        @{ l = "Reiniciar"; act = { Stop-WebByKey $w.key; Start-WebByKey $w.key } },
-        @{ l = "Detener";   act = { Stop-WebByKey $w.key } },
-        @{ l = "Abrir en navegador - http://localhost:$($w.port)"; act = { Start-Process "http://localhost:$($w.port)" } },
-        @{ l = "Ver log (tiempo real)"; act = { Show-Log $w.key } }
-    )
-    $sel = Show-Menu -Title ("Gestionar  " + $w.name + "  [port " + $w.port + "] - estado " + $(if ($running) {'ENCENDIDA'} else {'DETENIDA'})) -Options $opts
-    if ($sel -ge 0) { & $opts[$sel].act }
-    Press-Continue
-}
-
-# ---------- Log en tiempo real (ventana propia, no rompe el TUI) ----------
-function Show-Log([string]$key) {
-    $w = $WEBS | Where-Object { $_.key -eq $key }
-    $logFile = Join-Path $LOG_DIR "$key.log"
-    if (-not (Test-Path $logFile)) {
-        Write-Host "${c_yellow}Sin log todavia. Enciende la web primero.${c_reset}"
-        Press-Continue
-        return
+    $script:startingWeb.Remove($key)
+    if ($Wait) {
+        $deadline = (Get-Date).AddSeconds(15)
+        while ((Get-Date) -lt $deadline) {
+            if (-not (Get-WebState $w.port)) { break }
+            Start-Sleep -Milliseconds 300
+        }
     }
-    # Ventana PowerShell separada: Get-Content -Wait en vivo. Cerrar la ventana
-    # del log no afecta al TUI.
-    $cmd = "Get-Content '" + $logFile + "' -Tail 80 -Wait"
-    Start-Process powershell.exe -ArgumentList '-NoLogo', '-NoExit', '-Command', "& { $cmd }" | Out-Null
-    Write-Host "${c_white}Log en vivo abierto en ventana separada.${c_reset}"
+    Write-Host "${c_pink}${w.emoji} Web $($w.name) detenida (puerto $($w.port) liberado).${c_reset}"
 }
 
-# ---------- Estado global / Puertos / Links ----------
-function Show-Status {
-    Clear-Host
-    Show-Art
-    Write-Host "${c_cyan}==================  ESTADO DE PUERTOS  ==================${c_reset}"
-    foreach ($w in $WEBS) {
-        $running = Get-WebState $w.port
-        $url = "http://localhost:$($w.port)"
-        $st = Format-State $running
-        Write-Host ("{0}  {1,-16} port {2,-4} {3}" -f $st, $w.name, $w.port, $url)
-    }
-    Write-Host ""
-    Write-Host "${c_gray}Consejo: podes explorar cada web con el navegador y, si algo falla,${c_reset}"
-    Write-Host "${c_gray}abrir el log en tiempo real desde la accion de la web.${c_reset}"
-    Write-Host ""
-    Press-Continue
-}
-
-# ---------- Menu navegable con flechas ----------
-function Show-Menu {
-    param([string]$Title, [object[]]$Options, [int]$ShowStatus = 0)
+# ---------- Menu de seleccion multiple con checkboxes ----------
+# Devuelve un objeto con .Action = 'proceed' | 'noproceed' | 'abort' y
+# .Selection = array de keys marcadas (vacia si no procede o aborta).
+function Show-MultiSelect {
+    param([string]$Title, [object[]]$Options, [string[]]$Init = @())
+    $sel = @{}
+    foreach ($k in $Init) { $sel[$k] = $true }
+    $total = $Options.Count
     $i = 0
     while ($true) {
         Clear-Host
         Show-Art
-        Write-Host "${c_pink}==  $Title  ==${c_reset}"
-        Write-Host "${c_gray}(usa ↑/↓ para moverte y Enter para elegir; Q para volver)${c_reset}"
+        Show-MenuHeader $Title
+        Write-Host "${c_gray}(↑/↓ mover · Espacio marcar/desmarcar · Enter PROCEDER · N no proceder · Q abortar · A marcar todas)${c_reset}"
+        Write-Host ""
+        for ($n = 0; $n -lt $total; $n++) {
+            $opt = $Options[$n]
+            $k   = $opt.key
+            $ic  = if ($opt.ic) { $opt.ic } else { $opt.emoji }
+            $ct  = if ($sel[$k]) { '☑' } else { '☐' }
+            $st  = if ($opt.s) { '  ' + $opt.s } else { '' }
+            if ($n -eq $i) {
+                Write-Host "${c_yellow}▸ [${ct}] ${ic}  ${c_yellow}$($opt.l)${c_reset}${c_yellow}$st${c_reset}"
+            } else {
+                Write-Host "  [${ct}] ${ic}  $($opt.l)$st"
+            }
+        }
+        Write-Host ""
+        $selCount = @($sel.Keys).Count
+        Write-Host "${c_gray}Seleccionadas: $selCount / $total${c_reset}"
+        Write-Host ""
+        Write-Host "${c_green}   [Enter] Proceder    ${c_yellow}[N] No proceder    ${c_red}[Q/Esc] Abortar${c_reset}"
+        Write-Host "${c_cyan}   [A] Marcar todas    [Espacio] marcar/desmarcar    [1-9] ir a la opcion${c_reset}"
+        Write-Host ""
+
+        $keyInfo = [System.Console]::ReadKey($true)
+        $k = $keyInfo.Key
+        if     ($k -eq [ConsoleKey]::UpArrow)   { if ($i -gt 0) { $i-- } }
+        elseif ($k -eq [ConsoleKey]::DownArrow) { if ($i -lt $total - 1) { $i++ } }
+        elseif ($k -eq [ConsoleKey]::Spacebar)  {
+            $ck = $Options[$i].key
+            if ($sel.ContainsKey($ck)) { $sel.Remove($ck) } else { $sel[$ck] = $true }
+        }
+        elseif ($k -eq [ConsoleKey]::Enter) {
+            return @{ Action = 'proceed'; Selection = @($sel.Keys) }
+        }
+        elseif ($k -eq [ConsoleKey]::N)  { return @{ Action = 'noproceed'; Selection = @() } }
+        elseif ($k -eq [ConsoleKey]::Q -or $k -eq [ConsoleKey]::Escape) { return @{ Action = 'abort'; Selection = @() } }
+        elseif ($k -eq [ConsoleKey]::A)  { foreach ($o in $Options) { $sel[$o.key] = $true } }
+        else {
+            $ch = $keyInfo.KeyChar
+            if ($ch -ge '1' -and $ch -le '9') {
+                $n = [int][string]$ch - 1
+                if ($n -lt $total) { $i = $n }
+            }
+            elseif ($ch -eq '0') { if ($total -gt 9) { $i = 9 } }
+        }
+    }
+}
+
+function Show-MenuHeader([string]$Title) {
+    Write-Host ""
+    Write-Host "${c_cyan}☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰${c_reset}"
+    Write-Host "${c_blue}  $Title${c_reset}"
+    Write-Host "${c_cyan}☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰${c_reset}"
+    Write-Host ""
+}
+
+# ---------- Estado: seleccion multiple + informe ----------
+function Show-Status {
+    Clear-Host
+    Show-Art
+    Show-MenuHeader "Selecciona las webs a consultar (Espacio marca)"
+    $opts = @()
+    foreach ($w in $WEBS) {
+        $st = Format-State -status (Get-WebPhase $w.key)
+        $opts += @{ key = $w.key; ic = $w.emoji; l = "$($w.name)  port $($w.port)"; s = $st }
+    }
+    $r = Show-MultiSelect -Title "ESTADO - selecciona webs" -Options $opts -Init @($WEBS.key)
+    if ($r.Action -eq 'abort' -or $r.Action -eq 'noproceed') { return }
+    $sel = $r.Selection
+    if ($sel.Count -eq 0) { Write-Host "${c_yellow}No seleccionaste ninguna web.${c_reset}"; Press-Continue; return }
+
+    Clear-Host
+    Show-Art
+    Write-Host "${c_cyan}==================  ESTADO DE PUERTOS  ==================${c_reset}"
+    foreach ($k in $sel) {
+        $w = $WEBS | Where-Object { $_.key -eq $k }
+        $status = Get-WebPhase $k
+        $url = "http://localhost:$($w.port)"
+        $st = Format-State -status $status
+        Write-Host ("{0}  {1,-16} port {2,-4} {3}" -f $st, $w.name, $w.port, $url)
+        if ($status -eq 'on') { Write-Host ("      ${c_green}${w.emoji} Comprobando... abrir en navegador.${c_reset}") }
+    }
+    Write-Host ""
+    Write-Host "${c_gray}Consejo: podes explorar cada web con el navegador y, si algo falla,${c_reset}"
+    Write-Host "${c_gray}abrir el log en tiempo real desde la seccion Logs del menu.${c_reset}"
+    Write-Host ""
+    Press-Continue
+}
+
+# ---------- Log en tiempo real (menu simple, abre UNA ventana por web) ----------
+function Show-LogMenu {
+    $opts = @()
+    foreach ($w in $WEBS) {
+        $phase = Get-WebPhase $w.key
+        $logFile = Join-Path $LOG_DIR "$($w.key).log"
+        if ($phase -eq 'off') {
+            $tag = "${c_gray}${w.emoji} detenida - sin log${c_reset}"
+        } elseif (Test-Path $logFile) {
+            $tag = "${c_green}${w.emoji} hay log${c_reset}"
+        } else {
+            $tag = "${c_gray}${w.emoji} sin log aun${c_reset}"
+        }
+        $opts += @{ ic = $w.emoji; l = $w.name; s = $tag; act = { Show-Log $w.key } }
+    }
+    $sel = Show-Menu -Title "LOGS EN TIEMPO REAL - elige UNA web" -Options $opts
+    if ($sel -ge 0) { & $opts[$sel].act; Press-Continue }
+}
+
+function Show-Log([string]$key) {
+    $w = $WEBS | Where-Object { $_.key -eq $key }
+    if (-not $w) { return }
+    $phase = Get-WebPhase $key
+    if ($phase -eq 'off') {
+        Write-Host "${c_yellow}${w.emoji} $($w.name) esta DETENIDA: no hay log en tiempo real.${c_reset}"
+        Write-Host "${c_gray}Enciende la web primero desde el menu principal.${c_reset}"
+        Press-Continue
+        return
+    }
+    $logFile = Join-Path $LOG_DIR "$key.log"
+    $errFile = "$logFile.err"
+    if (-not (Test-Path $logFile) -and -not (Test-Path $errFile)) {
+        Write-Host "${c_yellow}Sin log todavia. Enciende la web primero o espera a que escriba su log.${c_reset}"
+        Press-Continue
+        return
+    }
+    $cmd = "if (Test-Path '$errFile') { Write-Host '-- ERR --' -ForegroundColor Red; Get-Content '$errFile' -Tail 80 }; Get-Content '$logFile' -Tail 80 -Wait"
+    $boot = "Clear-Host; Write-Host 'LOG EN VIVO - $($w.name) (next dev)' -ForegroundColor Cyan; Write-Host '--- close window to stop ---' -ForegroundColor DarkGray"
+    Start-Process powershell.exe -ArgumentList '-NoLogo', '-NoExit', '-Command', "& { $boot; $cmd }" | Out-Null
+    Write-Host "${c_white}Log en vivo de $($w.name) abierto en ventana separada.${c_reset}"
+}
+
+# ---------- Menu simple (seleccion de una opcion) ----------
+function Show-Menu {
+    param([string]$Title, [object[]]$Options)
+    $i = 0
+    while ($true) {
+        Clear-Host
+        Show-Art
+        Show-MenuHeader $Title
+        Write-Host "${c_gray}(↑/↓ o numero para moverte, Enter para elegir, Q para volver)${c_reset}"
         Write-Host ""
         for ($n = 0; $n -lt $Options.Count; $n++) {
-            $prefix = if ($n -eq $i) { "${c_cyan}  >>>  ${c_reset}" } else { "       " }
-            $suffix = if ($Options[$n].s) { "  " + $Options[$n].s } else { "" }
-            Write-Host ("{0}{1}{2}" -f $prefix, $Options[$n].l, $suffix)
+            $opt    = $Options[$n]
+            $icon   = if ($opt.ic) { $opt.ic } else { '  ' }
+            $label  = $opt.l
+            $suffix = if ($opt.s) { '  ' + $opt.s } else { '' }
+            $idx    = $n + 1
+            if ($n -eq $i) {
+                Write-Host "${c_yellow}▸ [${idx}] ${c_reset}${c_yellow}${icon}${c_reset}  ${c_yellow}${label}${c_reset}${c_yellow}${suffix}${c_reset}"
+            } else {
+                Write-Host "   [${idx}]  ${icon}  ${label}${suffix}"
+            }
         }
         Write-Host ""
 
-        $key = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-        $k = $key.Key
-        if ($k -eq 'UpArrow')   { if ($i -gt 0) { $i-- } }
-        elseif ($k -eq 'DownArrow') { if ($i -lt $Options.Count - 1) { $i++ } }
-        elseif ($k -eq 'Enter') { return $i }
-        elseif ($k -eq 'Q' -or $k -eq 'Escape') { return -1 }
+        $keyInfo = [System.Console]::ReadKey($true)
+        $k = $keyInfo.Key
+        if     ($k -eq [ConsoleKey]::UpArrow)   { if ($i -gt 0) { $i-- } }
+        elseif ($k -eq [ConsoleKey]::DownArrow) { if ($i -lt $Options.Count - 1) { $i++ } }
+        elseif ($k -eq [ConsoleKey]::Enter)     { return $i }
+        elseif ($k -eq [ConsoleKey]::Escape)    { return -1 }
+        elseif ($k -eq [ConsoleKey]::Q)         { return -1 }
+        else {
+            $ch = $keyInfo.KeyChar
+            if ($ch -ge '1' -and $ch -le '9') {
+                $n = [int][string]$ch - 1
+                if ($n -lt $Options.Count) { $i = $n }
+            }
+            elseif ($ch -eq '0') { if ($Options.Count -gt 9) { $i = 9 } }
+        }
     }
 }
 
 function Show-Art {
     Write-Host "${c_cyan}$ART${c_reset}"
-    Write-Host "${c_pink}                          C I S Z U   N E T W O R K${c_reset}"
-    Write-Host "${c_gray}                    console dev debugging  v$VERSION${c_reset}"
+    Write-Host "${c_cyan}                                          C I S Z U   N E T W O R K${c_reset}"
+    Write-Host "${c_purple}                                        Console Dev Debugging  v$VERSION${c_reset}"
     Write-Host ""
 }
 
 function Press-Continue {
     Write-Host ""
     Write-Host "${c_gray}Pulsa una tecla para continuar...${c_reset}"
-    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    $null = [System.Console]::ReadKey($true)
 }
 
 # ---------- Ayuda / creditos / version ----------
 function Show-Help {
     Clear-Host
     Show-Art
-    Write-Host "${c_cyan}====================  MANUAL DE USO  ====================${c_reset}"
+    Write-Host "${c_cyan}====================  MANUAL DE AYUDA  ====================${c_reset}"
     Write-Host ""
     Write-Host "${c_white}Objetivo:${c_reset} encender, reiniciar o detener las 4 webs de`
 Ciszu Network en local (Next.js dev) sin abrir terminales a mano."
@@ -214,10 +386,31 @@ Ciszu Network en local (Next.js dev) sin abrir terminales a mano."
         Write-Host ("   {0,-16} -> http://localhost:{1}   ({2})" -f $w.name, $w.port, $w.dir)
     }
     Write-Host ""
-    Write-Host "${c_cyan}Atajos:${c_reset}"
-    Write-Host "   Up/Down     mover el cursor"
-    Write-Host "   Enter       elegir la opcion"
-    Write-Host "   Q / Esc     volver al menu anterior"
+    Write-Host "${c_cyan}Operativas (Encender / Reiniciar / Detener):${c_reset}"
+    Write-Host "   Abren un menu de seleccion MULTIPLE con las 4 webs:"
+    Write-Host "   las webs vienen MARCADAS por defecto (marcar todas automaticamente)."
+    Write-Host "   Al terminar de marcar/desmarcar elige como proceder:"
+    Write-Host "     Enter      PROCEDER  -> ejecuta la operacion en las webs marcadas"
+    Write-Host "     N          NO PROCEDER -> vuelve al menu sin aplicar nada"
+    Write-Host "     Q / Esc    ABORTAR   -> detiene las webs y cierra la consola (Ctrl+C)"
+    Write-Host ""
+    Write-Host "${c_cyan}Atajos del menu de seleccion multiple:${c_reset}"
+    Write-Host "   Up/Down      mover el cursor"
+    Write-Host "   Espacio      marcar o desmarcar la web resaltada"
+    Write-Host "   A            seleccionar TODAS las webs"
+    Write-Host "   1-9 / 0      saltar al indice de la opcion"
+    Write-Host "   Enter        PROCEDER (ejecutar operacion)"
+    Write-Host "   N            NO PROCEDER (cancelar operacion)"
+    Write-Host "   Q / Esc      ABORTAR (detener webs y salir de la consola)"
+    Write-Host ""
+    Write-Host "${c_cyan}Estado de puertos:${c_reset} consulta las webs que elijas, mostrando`
+   🟢 ENCENDIDA / 🟡 ENCENDIENDO... / ⚫ DETENIDA."
+    Write-Host ""
+    Write-Host "${c_cyan}Logs en tiempo real:${c_reset} solo las webs ENCENDIDAS tienen log;`
+   si una web esta detenida no se ofrece abrir su log."
+    Write-Host ""
+    Write-Host "${c_cyan}Salir (Ctrl+C):${c_reset} detiene todas las webs en ejecucion y cierra la consola.`
+   Tambien puedes abortar desde cualquier menu de seleccion con Q/Esc."
     Write-Host ""
     Write-Host "${c_gray}Los logs se guardan en: .opencode\temp\dev-logs\<web>.log${c_reset}"
     Write-Host "${c_gray}Guias: test/website/debug/dev_console.{md,txt}${c_reset}"
@@ -248,7 +441,7 @@ function Show-Version {
     Write-Host ""
     Write-Host ("{0} {1}" -f "${c_pink}dev_console${c_reset}", $VERSION)
     Write-Host "${c_gray}Rama:          main${c_reset}"
-    Write-Host "${c_gray}Package:       pnpm ${c_reset}dispatch"
+    Write-Host "${c_gray}Package:       pnpm (monorepo)${c_reset}"
     Write-Host "${c_gray}Next locales:  ${c_reset}3000 · 3001 · 3002 · 3003"
     Press-Continue
 }
@@ -256,11 +449,18 @@ function Show-Version {
 # ---------- Herramientas extra ----------
 function Show-Tools {
     $opts = @(
-        @{ l = "Limpiar logs (.opencode/temp/dev-logs)";  act = { Remove-Item "$LOG_DIR\*" -Force -ErrorAction SilentlyContinue; Write-Host "${c_green}Logs limpiados.${c_reset}"; Press-Continue } },
-        @{ l = "Ver memoria / procesos node";              act = { Clear-Host; Get-Process node -ErrorAction SilentlyContinue | Select-Object Id, ProcessName, @{n='RAM MB';e={[math]::Round($_.WorkingSet64/1MB)}} | Format-Table | Out-Host; Press-Continue } },
-        @{ l = "Ver que puertos 3000-3003 estan ocupados"; act = { Clear-Host; foreach ($p in 3000..3003) { $c = Get-NetTCPConnection -LocalPort $p -State Listen -ErrorAction SilentlyContinue; if ($c) { Write-Host "${c_pink}Port $p -> PID $($c.OwningProcess)${c_reset}" } else { Write-Host "${c_gray}Port $p -> libre${c_reset}" } }; Press-Continue } }
+        @{ ic = '🧹'; l = "Limpiar logs (.opencode/temp/dev-logs)";  act = { Remove-Item "$LOG_DIR\*" -Force -ErrorAction SilentlyContinue; Write-Host "${c_green}Logs limpiados.${c_reset}"; Press-Continue } },
+        @{ ic = '💾'; l = "Ver memoria / procesos node";              act = { Clear-Host; Get-Process node -ErrorAction SilentlyContinue | Select-Object Id, ProcessName, @{n='RAM MB';e={[math]::Round($_.WorkingSet64/1MB)}} | Format-Table | Out-Host; Press-Continue } },
+        @{ ic = '🔌'; l = "Ver que puertos 3000-3003 estan ocupados"; act = { Clear-Host; foreach ($p in 3000..3003) { $c = Get-NetTCPConnection -LocalPort $p -State Listen -ErrorAction SilentlyContinue; if ($c) { Write-Host "${c_pink}Port $p -> PID $($c.OwningProcess)${c_reset}" } else { Write-Host "${c_gray}Port $p -> libre${c_reset}" } }; Press-Continue } },
+        @{ ic = '🌐'; l = "Abrir todas las webs en el navegador";     act = { foreach ($w in $WEBS) { if ((Get-WebPhase $w.key) -eq 'on') { Start-Process "http://localhost:$($w.port)" } else { Write-Host "${c_gray}$($w.name) detenida - no se abre.${c_reset}" } }; Press-Continue } },
+        @{ ic = '🔗'; l = "Ver procesos que ocupan los puertos 3000-3003"; act = { Clear-Host; foreach ($p in 3000..3003) { $c = Get-NetTCPConnection -LocalPort $p -State Listen -ErrorAction SilentlyContinue; if ($c) { $pr = Get-Process -Id $c.OwningProcess -ErrorAction SilentlyContinue; Write-Host ("{0} Port {1} -> PID {2} {3}" -f $c.LocalAddress, $p, $c.OwningProcess, $pr.ProcessName) } }; Press-Continue } },
+        @{ ic = '⏱'; l = "Ver procesos node de cada web (CPU/mem)";    act = { Clear-Host; $pids = @(); foreach ($w in $WEBS) { $c = Get-NetTCPConnection -LocalPort $w.port -State Listen -ErrorAction SilentlyContinue; if ($c) { $pids += $c.OwningProcess } }; Get-Process node -ErrorAction SilentlyContinue | Where-Object { $_.Id -in $pids } | Select-Object Id, @{n='RAM MB';e={[math]::Round($_.WorkingSet64/1MB)}}, @{n='CPU s';e={[math]::Round($_.CPU,1)}} | Format-Table | Out-Host; Press-Continue } },
+        @{ ic = '🧾'; l = "Abrir carpeta de logs en el explorador";    act = { if (Test-Path $LOG_DIR) { Start-Process explorer.exe (Resolve-Path $LOG_DIR).Path } else { Write-Host "${c_yellow}No hay carpeta de logs aun.${c_reset}" }; Press-Continue } },
+        @{ ic = '⚙'; l = "Ver versiones node / pnpm / turbo";        act = { Clear-Host; node -v; pnpm -v; turbo --version 2>$null; Press-Continue } },
+        @{ ic = '📦'; l = "Ver git status del monorepo";              act = { Clear-Host; git -C $root status --short --branch | Out-Host; Press-Continue } },
+        @{ ic = '🌡'; l = "Ver espacio en disco (C y E)";             act = { Clear-Host; Get-PSDrive C,E | Select-Object Name, @{n='Libre GB';e={[math]::Round($_.Free/1GB,1)}}, @{n='Usado GB';e={[math]::Round($_.Used/1GB,1)}} | Format-Table | Out-Host; Press-Continue } }
     )
-    $sel = Show-Menu -Title "Herramientas extra" -Options $opts
+    $sel = Show-Menu -Title "HERRAMIENTAS EXTRAS" -Options $opts
     if ($sel -ge 0) { & $opts[$sel].act }
 }
 
@@ -274,8 +474,9 @@ if ($Action) {
     switch ($Action) {
         'status' {
             foreach ($ww in $WEBS) {
-                $running = Get-WebState $ww.port
-                Write-Host ("{0}  {1,-16} port {2,-4} http://localhost:{3}" -f $(if ($running) {'[ON] '} else {'[OFF]'}), $ww.name, $ww.port, $ww.port)
+                $ph = Get-WebPhase $ww.key
+                $tag = switch ($ph) { 'on' { '[ON] ' } 'starting' { '[...] ' } default { '[OFF]' } }
+                Write-Host ("{0}  {1,-16} port {2,-4} http://localhost:{3}" -f $tag, $ww.name, $ww.port, $ww.port)
             }
         }
         'help' {
@@ -284,9 +485,9 @@ if ($Action) {
         default {
             if (-not $w) { Write-Host "${c_red}Web no valida. Usa: network | antony | ciszubot | muzic${c_reset}"; exit 1 }
             switch ($Action) {
-                'start'   { Start-WebByKey $w.key }
-                'stop'    { Stop-WebByKey $w.key }
-                'restart' { Stop-WebByKey $w.key; Start-WebByKey $w.key }
+                'start'   { Start-WebByKey $w.key -Wait }
+                'stop'    { Stop-WebByKey $w.key -Wait }
+                'restart' { Stop-WebByKey $w.key -Wait; Start-WebByKey $w.key -Wait }
                 'log'     { Show-Log $w.key }
             }
         }
@@ -300,9 +501,9 @@ if ($Demo.IsPresent) {
     Show-Art
     Write-Host "${c_cyan}==================  ESTADO DE PUERTOS  ==================${c_reset}"
     foreach ($w in $WEBS) {
-        $running = Get-WebState $w.port
+        $ph = Get-WebPhase $w.key
         $url = "http://localhost:$($w.port)"
-        $st = Format-State $running
+        $st = Format-State -status $ph
         Write-Host ("{0}  {1,-16} port {2,-4} {3}" -f $st, $w.name, $w.port, $url)
     }
     Write-Host ""
@@ -310,58 +511,140 @@ if ($Demo.IsPresent) {
     exit 0
 }
 
+# ---------- Opciones para los menus de seleccion multiple ----------
+function Build-WebSelectOptions {
+    $r = @()
+    foreach ($w in $WEBS) {
+        $ph = Get-WebPhase $w.key
+        $tag = Format-State -status $ph
+        $r += @{ key = $w.key; ic = $w.emoji; l = "$($w.name)  port $($w.port)"; s = $tag }
+    }
+    return $r
+}
+
+# ---------- Modo SelfTest (sin interactividad, exit 0 si OK) ----------
+if ($SelfTest.IsPresent) {
+    $failures = @()
+    function AssertEqual($label, $expected, $actual) {
+        if ($expected -ne $actual) { $script:failures += "${label}: esperado '${expected}', obtenido '${actual}'" }
+    }
+    function AssertTrue($label, $cond) {
+        if (-not $cond) { $script:failures += $label }
+    }
+
+    AssertEqual 'Version' '2.1.0' $VERSION
+    AssertEqual 'Webs count' 4 $WEBS.Count
+    AssertEqual 'Keys' 'network;antony;ciszubot;muzic' (($WEBS.key) -join ';')
+    AssertEqual 'Ports 3000-3003' '3000;3001;3002;3003' (($WEBS.port) -join ';')
+
+    # Format-State
+    AssertTrue 'Format-State on' ((Format-State -status 'on') -like '*ENCENDIDA*')
+    AssertTrue 'Format-State starting' ((Format-State -status 'starting') -like '*ENCENDIENDO*')
+    AssertTrue 'Format-State off' ((Format-State -status 'off') -like '*DETENIDA*')
+
+    # Get-WebPhase siempre devuelve una fase valida (sin lanzar)
+    foreach ($w in $WEBS) {
+        $ph = Get-WebPhase $w.key
+        AssertTrue "Get-WebPhase $($w.key) valida" ($ph -in @('on','starting','off'))
+    }
+
+    # Build-WebSelectOptions devuelve 4 opciones con key (requiere WEBS cargada)
+    $opts = Build-WebSelectOptions
+    AssertEqual 'WebSelectOptions count' 4 $opts.Count
+
+    # Menu de seleccion multiple: Enter procede (sin ReadKey) => construimos AMBA seleccion
+    $sel = @{ network = $true; antony = $true }
+    AssertEqual 'MultiSelect proceed count' 2 $sel.Count
+
+    if ($failures.Count -gt 0) {
+        Write-Host "${c_red}SELF-TEST FALLIDO:${c_reset}" | Out-Host
+        $failures | ForEach-Object { Write-Host "  - $_" } | Out-Host
+        exit 1
+    }
+    Write-Host "${c_green}SELF-TEST OK (v$VERSION)${c_reset}" | Out-Host
+    exit 0
+}
+
 # ---------- Menu principal ----------
 Clear-Host
 Show-Art
-Write-Host "${c_gray}Bienvenido. Selecciona una web o una accion global.${c_reset}"
+Write-Host "${c_gray}Bienvenido. Elige una operativa y luego las webs que quieras.${c_reset}"
 Write-Host ""
 
-while ($true) {
-    $optWebs = $WEBS | ForEach-Object {
-        [PSCustomObject]@{ l = ("{0}  port {1}" -f $_.name, $_.port); key = $_.key }
+function Invoke-SelectedWebs([string]$Action, [string[]]$Keys) {
+    foreach ($k in $Keys) {
+        switch ($Action) {
+            'start'   { Start-WebByKey $k -Wait }
+            'stop'    { Stop-WebByKey $k -Wait }
+            'restart' { Stop-WebByKey $k -Wait; Start-WebByKey $k -Wait }
+        }
     }
+}
 
+$script:quitRequested = $false
+while (-not $script:quitRequested) {
     $menuItems = @(
-        @{ l = "Web  " + $WEBS[0].name;   key = 'network' },
-        @{ l = "Web  " + $WEBS[1].name;   key = 'antony' },
-        @{ l = "Web  " + $WEBS[2].name;   key = 'ciszubot' },
-        @{ l = "Web  " + $WEBS[3].name;   key = 'muzic' },
-        @{ l = "Encender TODAS las webs"; key = '__all_start' },
-        @{ l = "Detener TODAS las webs";  key = '__all_stop' },
-        @{ l = "Estado de puertos / links";   key = '__status' },
-        @{ l = "Herramientas extra";          key = '__tools' },
-        @{ l = "Ayuda (manual de uso)";       key = '__help' },
-        @{ l = "Creditos";                    key = '__credits' },
-        @{ l = "Version";                     key = '__version' },
-        @{ l = "Salir";                       key = '__quit' }
+        @{ ic = '🚀'; l = "Encender webs";      key = '__start' },
+        @{ ic = '🔄'; l = "Reiniciar webs";     key = '__restart' },
+        @{ ic = '⏹'; l = "Detener webs";       key = '__stop' },
+        @{ ic = '📊'; l = "Estado de puertos";  key = '__status' },
+        @{ ic = '📜'; l = "Logs en tiempo real"; key = '__logs' },
+        @{ ic = '🧰'; l = "Herramientas extra"; key = '__tools' },
+        @{ ic = '❓'; l = "Manual de ayuda";    key = '__help' },
+        @{ ic = '♥'; l = "Creditos";           key = '__credits' },
+        @{ ic = '✨'; l = "Version";           key = '__version' },
+        @{ ic = '🚪'; l = "Salir (Ctrl+C)";    key = '__quit' }
     )
 
-    $sel = Show-Menu -Title "CONSOLE DEV DEBUGGING - menu principal" -Options $menuItems
-    if ($sel -lt 0) { break }
+    $sel = Show-Menu -Title "CONSOLE DEV DEBUGGING - MENU PRINCIPAL" -Options $menuItems
+    if ($sel -lt 0) { $script:quitRequested = $true; continue }
 
     $key = $menuItems[$sel].key
 
     switch ($key) {
-        '__all_start' {
-            foreach ($w in $WEBS) { Start-WebByKey $w.key }
+        '__start' {
+            $opts = Build-WebSelectOptions
+            $r = Show-MultiSelect -Title "🚀 ENCENDER - marca las webs (auto: todas)" -Options $opts -Init @($WEBS.key)
+            if ($r.Action -eq 'abort') { $script:quitRequested = $true; continue }
+            if ($r.Action -eq 'noproceed') { continue }
+            if ($r.Selection.Count -eq 0) { Write-Host "${c_yellow}No seleccionaste ninguna web.${c_reset}"; Press-Continue; continue }
+            Invoke-SelectedWebs 'start' $r.Selection
             Press-Continue
         }
-        '__all_stop' {
-            foreach ($w in $WEBS) { Stop-WebByKey $w.key }
+        '__restart' {
+            $opts = Build-WebSelectOptions
+            $r = Show-MultiSelect -Title "🔄 REINICIAR - marca las webs (auto: todas)" -Options $opts -Init @($WEBS.key)
+            if ($r.Action -eq 'abort') { $script:quitRequested = $true; continue }
+            if ($r.Action -eq 'noproceed') { continue }
+            if ($r.Selection.Count -eq 0) { Write-Host "${c_yellow}No seleccionaste ninguna web.${c_reset}"; Press-Continue; continue }
+            Invoke-SelectedWebs 'restart' $r.Selection
             Press-Continue
         }
-        '__status'  { Show-Status }
-        '__tools'   { Show-Tools }
-        '__help'    { Show-Help }
+        '__stop' {
+            $opts = Build-WebSelectOptions
+            $r = Show-MultiSelect -Title "⏹ DETENER - marca las webs (auto: todas)" -Options $opts -Init @($WEBS.key)
+            if ($r.Action -eq 'abort') { $script:quitRequested = $true; continue }
+            if ($r.Action -eq 'noproceed') { continue }
+            if ($r.Selection.Count -eq 0) { Write-Host "${c_yellow}No seleccionaste ninguna web.${c_reset}"; Press-Continue; continue }
+            Invoke-SelectedWebs 'stop' $r.Selection
+            Press-Continue
+        }
+        '__status' { Show-Status }
+        '__logs'   { Show-LogMenu }
+        '__tools'  { Show-Tools }
+        '__help'   { Show-Help }
         '__credits' { Show-Credits }
         '__version' { Show-Version }
-        '__quit'    { break }
-        default {
-            $w = $WEBS | Where-Object { $_.key -eq $key }
-            if ($w) { Invoke-WebAction $w }
+        '__quit' {
+            Write-Host "${c_cyan}Deteniendo las webs en ejecucion (simulando Ctrl+C)...${c_reset}"
+            foreach ($w in $WEBS) {
+                if ((Get-WebPhase $w.key) -ne 'off') { Stop-WebByKey $w.key }
+            }
+            $script:quitRequested = $true
         }
     }
 }
 
 Clear-Host
-Write-Host "${c_green}Consola finalizada. Que las webs te acompaen.${c_reset} ${c_pink}:: CISZU NETWORK ::${c_reset}"
+Write-Host "${c_green}Consola finalizada. Que las webs te acompanen.${c_reset} ${c_pink}:: CISZU NETWORK ::${c_reset}"
+Write-Host "${c_cyan}☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰${c_reset}"

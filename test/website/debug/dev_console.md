@@ -3,17 +3,20 @@
 > Consola interactiva (TUI) para probar las 4 webs del monorepo en local,
 > sin abrir terminales a mano. Con navegación por flechas y acciones por web.
 
-Versión: 1.0.0
+Versión: 2.1.0
 Ubicación: `test/website/debug/dev_console.ps1`
 
 ## Qué hace
 
-- **Encender / Reiniciar / Detener** cada webapp (Next.js `next dev` con puerto fijo).
-- **Encender / Detener TODAS** las webs a la vez.
-- **Estado de puertos**: revisa qué puertos están escuchando y abrir la web en el navegador.
-- **Logs a tiempo real**: abre el log de la web en una ventana PowerShell separada (`Get-Content -Tail -Wait`).
-- **Herramientas extra**: limpiar logs, ver procesos node, ver ocupación de puertos 3000-3003.
+- **Operativas** (Encender / Reiniciar / Detener): abren un menú de **selección múltiple** con las 4 webs **marcadas por defecto** (auto-marcado). Al terminar de marcar/desmarcar decides cómo proceder: **Proceder**, **No proceder** o **Abortar**.
+- **Proceder (Enter)**: ejecuta la operación en las webs marcadas. **No proceder (N)**: vuelve al menú sin aplicar nada. **Abortar (Q/Esc)**: detiene las webs y cierra la consola (equivale a Ctrl+C).
+- **Espera real**: la consola espera a que cada web compila y queda lista (spinner) antes de volver al menú.
+- **Estado**: consulta las webs que elijas (una, varias o todas), mostrando `ENCENDIDA / ENCENDIENDO... / DETENIDA`.
+- **Logs a tiempo real**: menú **simple** — elige UNA web y abre su log (next dev) en ventana separada. **Solo las webs encendidas tienen log**: si una web está detenida no se ofrece abrir su log.
+- **Herramientas extra**: limpiar logs, procesos node, puertos 3000-3003, abrir webs en el navegador, procesos por puerto, CPU/mem de cada web, abrir carpeta de logs, versiones (node/pnpm/turbo), git status, espacio en disco.
 - **Ayuda, créditos y versión** integrados en el mismo menú.
+
+Opciones con **emojis** y selector amarillo; rojo solo para errores.
 
 ## Puertos fijos (nomenclatura del monorepo)
 
@@ -52,17 +55,25 @@ pnpm dev:console
 | Tecla | Acción |
 | --- | --- |
 | `↑` / `↓` | Moverse entre opciones |
-| `Enter` | Elegir la opción resaltada |
-| `Q` o `Esc` | Volver al menú anterior (o salir en el principal) |
+| `Enter` | **Proceder** (ejecutar la operación en las webs marcadas) |
+| `Espacio` | Marcar o desmarcar la web resaltada |
+| `A` | Marcar **todas** las webs |
+| `1`…`9` / `0` | Saltar al índice de la opción (0 = 10.ª) |
+| `N` | **No proceder** (cancelar la operación, vuelve al menú) |
+| `Q` o `Esc` | **Abortar** (detiene las webs en ejecución y cierra la consola, como Ctrl+C) |
+
+Las webs aparecen **marcadas por defecto** en cada operativa (pulsar `A` las re-marca todas). Cada opción se muestra con **índice numérico, emoji e icono** de estado; la selección se resalta en **amarillo**; los **rojos quedan solo para errores**. Estados: `🟢 ENCENDIDA` / `🟡 ENCENDIENDO...` / `⚫ DETENIDA`.
 
 ### Flujo típico
 
 1. Abrir la consola (`devcon`).
-2. Elegir **Encender TODAS las webs** (o una web concreta).
-3. Esperar unos segundos y elegir **Estado de puertos** para ver si responden.
-4. Abrir `http://localhost:3000` … `http://localhost:3003` en el navegador.
-5. Si una web falla, desde su gestión elegir **Ver log (tiempo real)**.
-6. Al terminar, **Detener TODAS las webs** y **Salir**.
+2. Menú principal → **Encender webs** (o Reiniciar / Detener).
+3. Las webs vienen marcadas; desmarca con **Espacio** las que no quieras.
+4. **Enter** para **Proceder** (o `N` para cancelar, `Q/Esc` para abortar todo).
+5. La consola espera a que compile cada web y avisa cuando está lista.
+6. **Estado** para consultar una, varias o todas.
+7. **Logs en tiempo real** para ver el log (next dev) de una web **encendida**.
+8. **Salir (Ctrl+C)** detiene las webs y cierra la consola.
 
 ## Modo CLI (sin menú, para automatización)
 
@@ -94,6 +105,22 @@ devstop     # detener todas
 devstatus   # estado de puertos rápidos
 devlog network   # log en vivo de una web
 ```
+
+## Pruebas automáticas (sin Pester)
+
+La consola incluye un **SelfTest interno** determinista (`-SelfTest`) que valida versión, catálogo de webs, `Format-State`, fases posibles y opciones de selección, sin interactividad:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File test\website\debug\dev_console.ps1 -SelfTest
+```
+
+Y un **runner de pruebas** que verifica sintaxis, BOM UTF-8, SelfTest, modo Demo y CLI status:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File test\website\debug\dev_console.tests.ps1
+```
+
+El runner termina con `exit 0` solo si todo pasa (ideal para el CI local).
 
 ## Logs
 
