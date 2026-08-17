@@ -313,7 +313,7 @@ export default function Navbar() {
               </button>
 
               {/* Hamburger contextual toggle (always visible) */}
-              <button onClick={() => { setSearchOpen(false); setAccOpen(false); setSidebarView('main'); setIsMenuOpen(true); }}
+              <button onClick={() => { setSearchOpen(false); setAccOpen(false); setSidebarView('main'); setIsMenuOpen(!isMenuOpen); }}
                 className={`p-2 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_10px_rgba(61,106,223,0.25)] ${
                   isMenuOpen ? 'bg-neon-blue border-neon-blue text-white' : 'bg-white/5 border-white/20 text-white hover:border-neon-blue'
                 }`}
@@ -399,7 +399,7 @@ export default function Navbar() {
       {/* Slide-right contextual menu (sidebar) */}
       {isMenuOpen && (
         <div className="fixed inset-0 z-[100] pointer-events-none">
-          <div className="absolute top-0 right-0 w-[320px] max-w-[85vw] h-full bg-[#05050a]/95 backdrop-blur-3xl shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col pointer-events-auto animate-slide-in-right">
+          <div className="absolute top-[64px] right-0 w-[320px] max-w-[85vw] h-[calc(100vh-64px)] bg-[#05050a]/95 backdrop-blur-3xl shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col pointer-events-auto animate-slide-in-right">
             {/* Animated left divider to match the header */}
             <div className="absolute left-0 top-0 w-[1px] h-full bg-gradient-to-b from-transparent via-neon-blue/60 to-transparent shadow-[0_0_15px_rgba(61,106,223,0.5)] z-10" />
 
@@ -429,11 +429,6 @@ export default function Navbar() {
                 <div className="w-6 h-6 rounded-full overflow-hidden border border-white/20 shadow-[0_0_10px_rgba(255,255,255,0.1)] shrink-0 transition-transform duration-300 group-hover:scale-110 [&>svg]:w-6 [&>svg]:h-6">
                   {(LANGS.find(l => l.code === currentLangCode) || LANGS[0]).flag}
                 </div>
-              </button>
-
-              <button onClick={() => setIsMenuOpen(false)}
-                className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-white/5 transition-all" title="Close">
-                {I.close}
               </button>
             </div>
 

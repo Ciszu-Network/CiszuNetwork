@@ -94,6 +94,7 @@ const SOCIAL_ITEMS = [
   { platform: 'x' as const, url: CISZU_NETWORK.social.x },
   { platform: 'github' as const, url: CISZU_NETWORK.social.github },
   { platform: 'discord' as const, url: CISZU_NETWORK.social.discord },
+  { platform: 'tiktok' as const, url: CISZU_NETWORK.social.tiktok },
 ];
 
 // Literal Tailwind hover glow classes per platform (source-present so they get generated).
@@ -104,6 +105,7 @@ const SOCIAL_GLOWS: Record<string, string> = {
   x: 'hover:border-white hover:shadow-[0_0_15px_rgba(255,255,255,0.4)]',
   github: 'hover:border-white hover:shadow-[0_0_15px_rgba(255,255,255,0.4)]',
   discord: 'hover:border-[#5865F2] hover:shadow-[0_0_15px_rgba(88,101,242,0.5)]',
+  tiktok: 'hover:border-white hover:shadow-[0_0_15px_rgba(255,255,255,0.4)]',
 };
 
 const TECH_LINKS = [

@@ -62,15 +62,15 @@ const NAV_ITEMS: NavEntry[] = [
   {
     name: 'Información',
     icon: <Shield className="w-4 h-4" />,
-    keywords: ['sobre nosotros', 'faq', 'políticas', 'guías', 'soporte', 'info'],
+    keywords: ['sobre nosotros', 'faq', 'políticas', 'guías', 'info'],
     links: [
       { name: 'Sobre Nosotros', href: '/about', icon: <Info className="w-4 h-4" /> },
       { name: 'FAQ', href: '/faq', icon: <HelpCircle className="w-4 h-4" /> },
       { name: 'Políticas', href: '/policies', icon: <FileText className="w-4 h-4" /> },
       { name: 'Guías', href: '/guidelines', icon: <Sparkles className="w-4 h-4" /> },
-      { name: 'Soporte', href: '/support', icon: <LifeBuoy className="w-4 h-4" /> },
     ],
   },
+  { name: 'Soporte', href: '/support', icon: <LifeBuoy className="w-4 h-4" /> },
   { name: 'Descargas', href: '/descargas', icon: <Download className="w-4 h-4" /> },
   { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" /> },
   {

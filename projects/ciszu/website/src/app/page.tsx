@@ -113,28 +113,31 @@ export default function Home() {
         <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-neon-blue/5 rounded-full blur-[80px] animate-blob animation-delay-4000" />
 
         <div className="relative z-10 max-w-4xl mx-auto">
-          <div className="flex items-center justify-center gap-6 mb-8">
-            <Image
-              src={assetResolver.resolve("projects/ciszu/content/logos/images/outline/logotype/gradient/color/ciszu_logotipo_outline_zcolor_cwhite_full.svg")}
-              alt={CISZU_NETWORK.name}
-              width={420}
-              height={227}
-              className="drop-shadow-brand h-auto w-[min(420px,80vw)]"
-              priority
-            />
-          </div>
-          <h1 className="sr-only">
-            {CISZU_NETWORK.name}
-          </h1>
-          <div className="flex items-center justify-center mb-8">
-            <Image
-              src={assetResolver.resolve("projects/ciszu/content/logos/images/outline/tagline/tagline_white.svg")}
-              alt={CISZU_NETWORK.tagline}
-              width={400}
-              height={30}
-              priority
-            />
-          </div>
+          <Link href="/" className="flex flex-col items-center group cursor-pointer" aria-label={CISZU_NETWORK.name}>
+            <div className="flex items-center justify-center mb-6">
+              <Image
+                src={assetResolver.resolve("projects/ciszu/content/logos/images/outline/logotype/gradient/color/ciszu_logotipo_outline_zcolor_cwhite_full.svg")}
+                alt={CISZU_NETWORK.name}
+                width={420}
+                height={227}
+                className="drop-shadow-brand group-hover:drop-shadow-[0_0_40px_rgba(35,63,146,0.9)] h-auto w-[min(420px,80vw)] transition-all duration-500 animate-float"
+                priority
+              />
+            </div>
+            <h1 className="sr-only">
+              {CISZU_NETWORK.name}
+            </h1>
+            <div className="flex items-center justify-center mb-8">
+              <Image
+                src={assetResolver.resolve("projects/ciszu/content/logos/images/outline/tagline/tagline_white.svg")}
+                alt={CISZU_NETWORK.tagline}
+                width={400}
+                height={30}
+                className="drop-shadow-brand group-hover:drop-shadow-[0_0_30px_rgba(35,63,146,0.8)] transition-all duration-500 animate-float-delayed"
+                priority
+              />
+            </div>
+          </Link>
           <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10 font-accent">
             Innovación digital con propósito. Desarrollamos soluciones de alto rendimiento 
             que combinan tecnología de punta con una estética inconfundible.

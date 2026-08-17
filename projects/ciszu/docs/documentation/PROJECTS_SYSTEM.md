@@ -1,8 +1,8 @@
 # PROJECTS_SYSTEM — Sistema de Proyectos del Ecosistema (Ciszu Network)
 
-Versión: 2.0.0
-Actualización: 2026-08-16
-Identificador: PROJECTS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
+Versión: 2.0.1
+Actualización: 2026-08-17
+Identificador: PROJECTS_SYSTEM_V2.0.1_2026_08_17_ciszunetwork
 
 > **Definición**: documento maestro de los proyectos de Ciszu Network. Fusiona la vista
 > general (Projects), el estado detallado (Project State) y el historial cronológico
@@ -141,6 +141,40 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 
 > Este historial absorbe `PROJECT_HISTORY.md` (eliminado 13 ago 2026). Añadir aquí los
 > nuevos hitos al cierre de sesión.
+
+### 17 de Agosto, 2026 — TODO global de frontend completado (cookies, hero titles, navbars)
+
+- **Cookies banner ×3 webs (ciszu, ciszubot, ciszukoa)** siguiendo el patrón de muzicmania:
+  localStorage `cookies_accepted`, store `hasAcceptedCookies`/`setHasAcceptedCookies`,
+  `fixed bottom-0 left-0 w-full z-[100]` con `bg-black/90 backdrop-blur-xl border-t` y glow
+  del color neon de cada web. ciszu y ciszukoa usan framer-motion y enlazan a `/policies`;
+  ciszubot (sin framer-motion) usa la animación CSS `animate-fade-in-up` y es bilingüe
+  (props `lang`/`dict`, enlaces `/privacidad` + `/terminos`, sección `cookiesBanner` nueva
+  en su `i18n.ts` es/en). Montado dentro de `CloudflareGuard`, tras el `Footer`, en los 3
+  layouts. `tsc` OK en las 3 webs.
+- **Hero titles interactivos ×3 homes** con el patrón de muzicmania: logotipos como `Link`
+  al propio sitio (`href="/"`), `animate-float`/`animate-float-delayed`, glow `drop-shadow`
+  intensificado en hover (`group-hover:drop-shadow-[...]`) y `transition-all duration-500`.
+  ciszu necesitó añadir los keyframes `float`/`float-delayed` y sus utilidades `.animate-*`
+  a su `globals.css`; ciszukoa también (`float-delayed`). ciszubot conserva su isotipo
+  circular con `animate-float` y añade glow al logotipo.
+- **Navbar ciszu — Soporte independiente**: la página `/support` se sacó del dropdown
+  "Información" (`NAV_ITEMS`) y ahora es un ítem de navegación propio + link directo, igual
+  que muzicmania. El catálogo de búsqueda (`ALL_PAGES`) ya lo listaba aparte.
+- **Navbar ciszubot — botón Invitar antes del search**: reordenados los botones del header
+  para el equilibrio visual pedido (3 redondos + 1 largo): Invitar → Search → Cuenta →
+  Hamburguesa.
+- **Sidebar ciszukoa — bajo el header + toggle**: el panel hamburguesa bajó de `top-0 h-full`
+  a `top-[64px] h-[calc(100vh-64px)]` (no cubre el header, paridad ciszu/muzicmania); el
+  botón hamburguesa es ahora un toggle real (`setIsMenuOpen(!isMenuOpen)`), se eliminó la X
+  incrustada dentro del panel (redundante) porque el toggle ya alterna Menu ↔ X.
+- **Iconos oficiales next.js/typescript en muzicmania**: sustituidos los dos SVGs de la
+  sección "stack" de `information/page.tsx` (íconos alucinados por IA) por los SVGs oficiales
+  descargados, subidos al CDN híbrido (`ciszu-cdn`, ruta
+  `projects/muzicmania/content/logos/images/tech/nextjs.svg|typescript.svg`, verificado
+  HTTP 200) y resueltos con `resolveAssetPath` + `SmartImage`-compatible. `team/page.tsx`
+  también corregido (definía los mismos íconos inline sin usarlos).
+- **Verificado**: `tsc --noEmit` + `eslint` en verde en ciszu, ciszubot y ciszukoa.
 
 ### 16 de Agosto, 2026 — Consola dev local (TUI/CLI) + docs de testing local
 

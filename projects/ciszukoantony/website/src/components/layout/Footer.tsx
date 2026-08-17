@@ -105,7 +105,7 @@ export default function Footer() {
                 src="projects/ciszukoantony/content/assets/youtube_canal.png"
                 alt="Ciszuko Antony YouTube"
                 width={34} height={34}
-                className="rounded-full ring-2 ring-brand/40 shadow-[0_0_15px_rgba(167,139,250,0.35)] group-hover:shadow-[0_0_15px_rgba(61,106,223,0.8)] transition-all duration-300"
+                className="rounded-full shadow-[0_0_15px_rgba(167,139,250,0.35)] group-hover:shadow-[0_0_15px_rgba(61,106,223,0.8)] transition-all duration-300"
               />
             </Link>
 

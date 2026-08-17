@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import FeedbackFab from "@/components/layout/FeedbackFab";
+import { CookiesBanner } from "@/components/layout/CookiesBanner";
 import { getDict, type Lang } from "@/lib/i18n";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, FabStackProvider } from "@ciszu/ui";
@@ -71,6 +72,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             <Navbar lang={lang} dict={dict} account={session} />
             <main className="flex-grow pt-[60px]">{children}</main>
             <Footer lang={lang} dict={dict} />
+            <CookiesBanner lang={lang} dict={dict} />
           </CloudflareGuard>
           <PwaRegister />
           <FabStackProvider>

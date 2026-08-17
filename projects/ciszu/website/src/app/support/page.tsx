@@ -18,6 +18,15 @@ const supportChannels = [
   { icon: ExternalLink, label: "GitHub Issues", value: "Reportar Problemas", href: CISZU_NETWORK.social.github, color: "from-gray-600 to-gray-800" },
 ];
 
+const GOOGLE_BUSINESS = {
+  reviewsUrl: "https://g.page/r/CTGLyn7UrVHPEAE/review",
+  link: "https://share.google/i2XMvOrh6y3ap0sBq",
+  id: "12451554180623658502",
+  storeCode: "15916715880116624592",
+  connection: "om-4449155801906919160",
+  address: "98J5+WQ Coro, Falcón",
+};
+
 export default function SupportPage() {
   const methods = getDonationMethods();
   return (
@@ -109,7 +118,7 @@ export default function SupportPage() {
           </div>
           <h2 className="text-2xl font-header font-bold text-white mb-2">Reseñas</h2>
           <p className="text-gray-400 text-sm mb-6 max-w-md mx-auto">
-            ¿Usas Ciszu Network o alguno de nuestros productos? Deja tu reseña en Trustpilot
+            ¿Usas Ciszu Network o alguno de nuestros productos? Deja tu reseña en Trustpilot o Google
             y ayúdanos a crecer con confianza.
           </p>
           <Script
@@ -128,6 +137,36 @@ export default function SupportPage() {
             <a href="https://www.trustpilot.com/review/ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer">
               Trustpilot
             </a>
+          </div>
+          <a
+            href={GOOGLE_BUSINESS.reviewsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 mt-6 px-8 py-3.5 rounded-xl bg-white text-black font-header font-bold text-sm transition-all hover:scale-[1.02] hover:shadow-[0_0_25px_rgba(255,255,255,0.35)] active:scale-95"
+          >
+            <Star className="w-4 h-4 text-[#4285F4]" />
+            Opiniones en Google
+            <ExternalLink className="w-3.5 h-3.5 opacity-60" />
+          </a>
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto text-left">
+            <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+              <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-1">Dirección</p>
+              <a href={GOOGLE_BUSINESS.link} target="_blank" rel="noopener noreferrer" className="text-sm text-brand-light hover:underline flex items-center gap-1">
+                {GOOGLE_BUSINESS.address} <ExternalLink className="w-3 h-3 shrink-0" />
+              </a>
+            </div>
+            <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+              <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-1">Código de tienda</p>
+              <p className="text-sm text-white font-mono">{GOOGLE_BUSINESS.storeCode}</p>
+            </div>
+            <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+              <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-1">ID de negocio</p>
+              <p className="text-sm text-white font-mono">{GOOGLE_BUSINESS.id}</p>
+            </div>
+            <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+              <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-1">Conexión</p>
+              <p className="text-sm text-white font-mono">{GOOGLE_BUSINESS.connection}</p>
+            </div>
           </div>
         </div>
 

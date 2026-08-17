@@ -19,10 +19,12 @@ interface BeforeInstallPromptEvent extends Event {
 export default function InstallPdwaInline() {
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
   const [installed, setInstalled] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const browser = useMemo(() => (typeof window === 'undefined' ? null : detectPdwaBrowser(navigator.userAgent)), []);
 
   useEffect(() => {
+    setMounted(true);
     if (typeof window === 'undefined') return;
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setInstalled(true);
@@ -66,14 +68,15 @@ export default function InstallPdwaInline() {
     );
   }
 
-  const hasNative = browser !== null && (browser.nativa || deferred !== null);
-  const label = hasNative ? 'Instalar PDWA' : browser?.id === 'opera-gx' ? 'Alternativa PDWA (GX)' : 'Instalar PDWA';
+  const b = mounted ? browser : null;
+  const hasNative = b !== null && (b.nativa || deferred !== null);
+  const label = hasNative ? 'Instalar PDWA' : b?.id === 'opera-gx' ? 'Alternativa PDWA (GX)' : 'Instalar PDWA';
 
   return (
     <div className="p-8 rounded-2xl bg-gradient-to-r from-neon-blue/10 via-[#6600ff]/10 to-neon-pink/10 border border-neon-blue/30 text-center">
       <p className="text-gray-300 text-sm leading-relaxed mb-2">
-        {browser?.nativa || deferred
-          ? `Tu navegador (${browser?.label ?? 'compatible'}) permite instalarla directamente.`
+        {b?.nativa || deferred
+          ? `Tu navegador (${b?.label ?? 'compatible'}) permite instalarla directamente.`
           : 'Pulsa el botón y sigue los pasos de la sección de arriba para instalarla según tu navegador.'}
       </p>
       <button

@@ -1,8 +1,8 @@
 # STATUS_SYSTEM — Estado del Ecosistema CISZU NETWORK
 
-Versión: 2.1.2
-Actualización: 2026-08-16
-Identificador: STATUS_SYSTEM_V2.1.2_2026_08_16_ciszunetwork
+Versión: 2.1.3
+Actualización: 2026-08-17
+Identificador: STATUS_SYSTEM_V2.1.3_2026_08_17_ciszunetwork
 
 > **Definición**: documento operativo de estado del monorepo. Se actualiza al cerrar cada
 > sesión de trabajo. Refleja la foto actual de proyectos, sistemas y scripts.
@@ -204,6 +204,7 @@ Este doc es una **foto del estado** del ecosistema; al cerrar sesión:
 
 | Fecha | Cambio relevante |
 |---|---|
+| 2026-08-17 | TODO global de frontend cerrado: cookies banner ×3 webs (patrón muzicmania, entrada en store + `/policies` o `/privacidad`+`/terminos`), hero titles interactivos ×3 homes (`Link` a sí mismo + `animate-float` + glow hover), Soporte como ítem independiente en navbar ciszu, botón Invitar antes del search en navbar ciszubot, sidebar ciszukoa bajo el header (`top-[64px]`) con hamburguesa-toggle (X interna redundante eliminada), e iconos oficiales next.js/typescript en muzicmania subidos al CDN híbrido (`tech/{nextjs,typescript}.svg`). `tsc` + `eslint` ×3 webs en verde |
 | 2026-08-16 | Navbar ciszubot con paridad total de diseño: búsqueda full-width bajo el nav (reemplaza el panel flotante), hamburguesa siempre visible con sidebar slide-right (vistas MENÚ/IDIOMAS, overlay sin blur) y lista de idiomas es/en con banderas. `tsc` + `lint` ×4 webs en verde |
 | 2026-08-16 | Runners consolidados: las 3 instalaciones dispersas (`E:\actions-runner`, `-2`, `-3`) se movieron a `E:\actions-runners\CISZU-PC`, `E:\actions-runners\CISZU-PC-2` y `E:\actions-runners\CISZU-PC-3`; binPath de los 3 servicios reconfigurados (`sc.exe config`), `workFolder` en `.runner` de -2/-3 actualizado a la nueva ruta. Los 3 runners quedaron online e idle desde la nueva ubicación (uptime-watch scheduled OK). Referencias actualizadas: `scripts/runner-install.ps1` (`$RUNNER_DIR`), `ACTIONS_RUNNERS_SYSTEM`, `PROJECTS_SYSTEM`, `STATUS_SYSTEM`. |
 | 2026-08-16 | TODO frontend pulido y verificado: footers copyright centrado ×3 (ciszu, antony, muzicmania — patrón ciszubot); tagline ciszu con 400 en CDN resuelto (objeto `tagline_white.svg` subido a `ciszu-cdn`, verificado 200/`image/svg+xml`); Navbar Antony con Feedback y Descargas directos en `NAV_MAIN` (antes solo en menú/footer); ciszubot: dark default confirmado (`themeScript` `'dark'`), botones search/auth/hamburguesa a estilo circular `p-2 rounded-full` (como las 3 webs), selector de idioma segmentado ES\|EN reemplazado por botón pill único con globo (header + menú móvil + footer), isotipo circular añadido al footer (encima del logotipo). CI completo 10/10 en verde en runners self-hosted (migración confirmada, 3 runners online, 0 minutos de org consumidos). Deploys 4/4 en producción vía Vercel CLI (Ready ~9-10 min c/u). lint + tsc ×4 webs + build turbo 5/5 verdes. |
