@@ -132,6 +132,8 @@ services/supabase/.temp/
 # Carpeta temporal de opencode (trabajos en curso, nunca trackear)
 .opencode-tmp/
 .opencode/temp/
+# Data dir global de opencode (db de sesiones + snapshots, junction E:)
+.opencode/data/
 
 # Sistema de voz opencode — binarios/modelos/voces y temporales (el codigo del plugin SI se trackea)
 tools/tts-stt-ai/runtime/
