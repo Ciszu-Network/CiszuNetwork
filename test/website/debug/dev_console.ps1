@@ -12,10 +12,10 @@ Menu navegable con flechas (up/down + Enter) para:
   - Manual de uso, creditos y version.
 
 Puertos fijos por web (nomenclatura del monorepo):
-  ciszunetwork-website  -> 3000   (Ciszu Network)
-  ciszukantony-website  -> 3001   (Ciszuko Antony)
-  ciszubot-website      -> 3002   (CiszuBot)
-  muzicmania-website    -> 3003   (MuzicMania)
+  ciszunetwork-website   -> 3000   (Ciszu Network)
+  ciszukoantony-website  -> 3001   (Ciszuko Antony)
+  ciszubot-website       -> 3002   (CiszuBot)
+  muzicmania-website     -> 3003   (MuzicMania)
 
 .EXAMPLE
   .\test\website\debug\dev_console.ps1           # modo TUI interactivo
@@ -53,13 +53,16 @@ $c_reset  = "$e[0m"
 # ---------- Web catalog (nomenclatura central del monorepo) ----------
 $WEBS = @(
     @{ key = 'network';  name = 'Ciszu Network';  filter = 'ciszunetwork-website'; port = 3000; dir = 'projects/ciszu/website';  emoji = '🌐' },
-    @{ key = 'antony';   name = 'Ciszuko Antony'; filter = 'ciszukantony-website'; port = 3001; dir = (Get-ChildItem projects -Directory | Where-Object { $_.Name -match 'antony' } | Select-Object -First 1).Name + '/website'; emoji = '🎨' },
+    @{ key = 'antony';   name = 'Ciszuko Antony'; filter = 'ciszukoantony-website'; port = 3001; dir = (Get-ChildItem projects -Directory | Where-Object { $_.Name -match 'antony' } | Select-Object -First 1).Name + '/website'; emoji = '🎨' },
     @{ key = 'ciszubot'; name = 'CiszuBot';       filter = 'ciszubot-website';     port = 3002; dir = 'projects/ciszubot/website'; emoji = '🤖' },
     @{ key = 'muzic';    name = 'MuzicMania';     filter = 'muzicmania-website';   port = 3003; dir = 'projects/muzicmania/website'; emoji = '🎵' }
 )
 
-$VERSION = '2.1.0'
-$LOG_DIR = Join-Path $root '.opencode\temp\dev-logs'
+$VERSION = '2.2.0'
+# Logs locales visibles para Ciszuko, dentro de la carpeta de debug
+# (gitignored; use la herramienta "Abrir carpeta de logs" para verlos).
+$LOG_DIR = Join-Path $PSScriptRoot 'local-logs'
+if (-not (Test-Path $LOG_DIR)) { New-Item -ItemType Directory -Path $LOG_DIR -Force | Out-Null }
 
 # ---------- Arte ASCII ----------
 $ART = @'
@@ -288,7 +291,8 @@ function Show-LogMenu {
         } else {
             $tag = "${c_gray}${w.emoji} sin log aun${c_reset}"
         }
-        $opts += @{ ic = $w.emoji; l = $w.name; s = $tag; act = { Show-Log $w.key } }
+        $act = { Show-Log $w.key }.GetNewClosure()
+        $opts += @{ ic = $w.emoji; l = $w.name; s = $tag; act = $act }
     }
     $sel = Show-Menu -Title "LOGS EN TIEMPO REAL - elige UNA web" -Options $opts
     if ($sel -ge 0) { & $opts[$sel].act; Press-Continue }
@@ -412,7 +416,7 @@ Ciszu Network en local (Next.js dev) sin abrir terminales a mano."
     Write-Host "${c_cyan}Salir (Ctrl+C):${c_reset} detiene todas las webs en ejecucion y cierra la consola.`
    Tambien puedes abortar desde cualquier menu de seleccion con Q/Esc."
     Write-Host ""
-    Write-Host "${c_gray}Los logs se guardan en: .opencode\temp\dev-logs\<web>.log${c_reset}"
+    Write-Host "${c_gray}Los logs se guardan en: $LOG_DIR\<web>.log (visible en test/website/debug/local-logs)${c_reset}"
     Write-Host "${c_gray}Guias: test/website/debug/dev_console.{md,txt}${c_reset}"
     Press-Continue
 }
@@ -449,7 +453,7 @@ function Show-Version {
 # ---------- Herramientas extra ----------
 function Show-Tools {
     $opts = @(
-        @{ ic = '🧹'; l = "Limpiar logs (.opencode/temp/dev-logs)";  act = { Remove-Item "$LOG_DIR\*" -Force -ErrorAction SilentlyContinue; Write-Host "${c_green}Logs limpiados.${c_reset}"; Press-Continue } },
+        @{ ic = '🧹'; l = "Limpiar logs (test/website/debug/local-logs)";  act = { Remove-Item "$LOG_DIR\*" -Force -ErrorAction SilentlyContinue; Write-Host "${c_green}Logs limpiados.${c_reset}"; Press-Continue } },
         @{ ic = '💾'; l = "Ver memoria / procesos node";              act = { Clear-Host; Get-Process node -ErrorAction SilentlyContinue | Select-Object Id, ProcessName, @{n='RAM MB';e={[math]::Round($_.WorkingSet64/1MB)}} | Format-Table | Out-Host; Press-Continue } },
         @{ ic = '🔌'; l = "Ver que puertos 3000-3003 estan ocupados"; act = { Clear-Host; foreach ($p in 3000..3003) { $c = Get-NetTCPConnection -LocalPort $p -State Listen -ErrorAction SilentlyContinue; if ($c) { Write-Host "${c_pink}Port $p -> PID $($c.OwningProcess)${c_reset}" } else { Write-Host "${c_gray}Port $p -> libre${c_reset}" } }; Press-Continue } },
         @{ ic = '🌐'; l = "Abrir todas las webs en el navegador";     act = { foreach ($w in $WEBS) { if ((Get-WebPhase $w.key) -eq 'on') { Start-Process "http://localhost:$($w.port)" } else { Write-Host "${c_gray}$($w.name) detenida - no se abre.${c_reset}" } }; Press-Continue } },
@@ -532,10 +536,11 @@ if ($SelfTest.IsPresent) {
         if (-not $cond) { $script:failures += $label }
     }
 
-    AssertEqual 'Version' '2.1.0' $VERSION
+    AssertEqual 'Version' '2.2.0' $VERSION
     AssertEqual 'Webs count' 4 $WEBS.Count
     AssertEqual 'Keys' 'network;antony;ciszubot;muzic' (($WEBS.key) -join ';')
     AssertEqual 'Ports 3000-3003' '3000;3001;3002;3003' (($WEBS.port) -join ';')
+    AssertEqual 'Filter antony' 'ciszukoantony-website' (($WEBS | Where-Object { $_.key -eq 'antony' }).filter)
 
     # Format-State
     AssertTrue 'Format-State on' ((Format-State -status 'on') -like '*ENCENDIDA*')

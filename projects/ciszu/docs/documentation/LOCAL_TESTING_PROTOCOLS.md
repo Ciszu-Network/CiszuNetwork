@@ -89,10 +89,10 @@ En el resumen de cierre (AGENTS / PROJECTS_SYSTEM) incluir:
 
 ## 5. Logs y temporales (reglas de disco)
 
-1. Los logs de dev viven SIEMPRE en `.opencode/temp/dev-logs/` (gitignored).
+1. Los logs de dev viven SIEMPRE en `test/website/debug/local-logs/` (gitignored).
 2. Prohibido abrir procesos/logs en `C:\Users\fplay\AppData\Local\Temp` (regla global del
    repo): disco C limitado.
-3. Limpiar `.opencode/temp/dev-logs/` con la opción de la consola al cerrar sesiones largas.
+3. Limpiar `test/website/debug/local-logs/` con la opción de la consola al cerrar sesiones largas.
 4. Comprobar espacio antes de tareas que generen artefactos grandes
    (`Get-PSDrive C,E`), especialmente si se corre Storybook, e2e o media junto a dev.
 

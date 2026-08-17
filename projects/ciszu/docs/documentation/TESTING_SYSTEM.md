@@ -207,7 +207,7 @@ que encuadra `next dev` por web con puerto fijo:
 | Web | Puerto | Filtro pnpm |
 | --- | --- | --- |
 | Ciszu Network | 3000 | `ciszunetwork-website` |
-| Ciszuko Antony | 3001 | `ciszukantony-website` |
+| Ciszuko Antony | 3001 | `ciszukoantony-website` |
 | CiszuBot | 3002 | `ciszubot-website` |
 | MuzicMania | 3003 | `muzicmania-website` |
 

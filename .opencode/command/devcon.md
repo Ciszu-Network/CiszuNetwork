@@ -20,6 +20,6 @@ Qué permite:
 Reglas:
 - Este comando abre una sesión interactiva que requiere teclado (flechas + Enter).
   Para automatización usar el comando `/dev` (modo CLI) en su lugar.
-- Los logs de las webs viven en `.opencode/temp/dev-logs/`.
+- Los logs de las webs viven en `test/website/debug/local-logs/`.
 - Guía completa: `test/website/debug/dev_console.md`; doc del sistema:
   `DEV_CONSOLE_SYSTEM.md`.

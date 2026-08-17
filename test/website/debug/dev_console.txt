@@ -1,6 +1,6 @@
 =====================================================================
  CISZU NETWORK - CONSOLE DEV DEBUGGING (GUI) DE USO
- test/website/debug/dev_console.ps1  -  v2.1.0
+ test/website/debug/dev_console.ps1  -  v2.2.0
 =====================================================================
 
 QUE HACE
@@ -16,7 +16,7 @@ QUE HACE
 PUERTOS FIJOS (nomenclatura del monorepo)
 -----------------------------------------
   Ciszu Network   ciszunetwork-website   3000  projects/ciszu/website
-  Ciszuko Antony  ciszukantony-website   3001  projects/ciszukoantony/website
+  Ciszuko Antony  ciszukoantony-website   3001  projects/ciszukoantony/website
   CiszuBot        ciszubot-website       3002  projects/ciszubot/website
   MuzicMania      muzicmania-website     3003  projects/muzicmania/website
 
@@ -89,7 +89,7 @@ PRUEBAS (sin Pester)
 
 LOGS
 ----
-  Ubicacion: .opencode/temp/dev-logs/<key>.log  (gitignored)
+  Ubicacion: test/website/debug/local-logs/<key>.log  (gitignored)
   Claves: network, antony, ciszubot, muzic  (errores en <key>.log.err)
   En vivo: ventana PowerShell separada con Get-Content -Tail 80 -Wait.
   Cerrar la ventana del log no afecta al TUI ni a los procesos Next dev.

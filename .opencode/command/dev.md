@@ -8,7 +8,7 @@ Gestiona el arranque local de las 4 webs del monorepo (Next.js dev) usando la co
 | Web | Filtro pnpm | Puerto local |
 | --- | --- | --- |
 | Ciszu Network | `ciszunetwork-website` | 3000 |
-| Ciszuko Antony | `ciszukantony-website` | 3001 |
+| Ciszuko Antony | `ciszukoantony-website` | 3001 |
 | CiszuBot | `ciszubot-website` | 3002 |
 | MuzicMania | `muzicmania-website` | 3003 |
 
@@ -27,7 +27,7 @@ Sin argumentos → equivale a `status`.
 
 Reglas:
 - Los procesos Next dev corren en segundo plano (ventana oculta); el log es la única salida
-  en `.opencode/temp/dev-logs/<key>.log` (gitignored). Para verlos usar `log`.
+  en `test/website/debug/local-logs/<key>.log` (gitignored). Para verlos usar `log`.
 - No dejar webs encendidas al terminar una sesión de tests local: cerrar con
   `stop` (o `devstop` en PowerShell) para liberar los puertos 3000-3003.
 - Si una web no responde a los 5 s del arranque, el compilador sigue trabajando:

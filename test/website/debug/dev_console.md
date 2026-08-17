@@ -3,7 +3,7 @@
 > Consola interactiva (TUI) para probar las 4 webs del monorepo en local,
 > sin abrir terminales a mano. Con navegación por flechas y acciones por web.
 
-Versión: 2.1.0
+Versión: 2.2.0
 Ubicación: `test/website/debug/dev_console.ps1`
 
 ## Qué hace
@@ -23,7 +23,7 @@ Opciones con **emojis** y selector amarillo; rojo solo para errores.
 | Web | Filtro pnpm | Puerto | Carpeta |
 | --- | --- | --- | --- |
 | **Ciszu Network** | `ciszunetwork-website` | 3000 | `projects/ciszu/website` |
-| **Ciszuko Antony** | `ciszukantony-website` | 3001 | `projects/ciszukoantony/website` |
+| **Ciszuko Antony** | `ciszukoantony-website` | 3001 | `projects/ciszukoantony/website` |
 | **CiszuBot** | `ciszubot-website` | 3002 | `projects/ciszubot/website` |
 | **MuzicMania** | `muzicmania-website` | 3003 | `projects/muzicmania/website` |
 
@@ -124,7 +124,7 @@ El runner termina con `exit 0` solo si todo pasa (ideal para el CI local).
 
 ## Logs
 
-- **Ubicación**: `.opencode/temp/dev-logs/<key>.log` (gitignored).
+- **Ubicación**: `test/website/debug/local-logs/<key>.log` (gitignored).
   - `network.log`, `antony.log`, `ciszubot.log`, `muzic.log`.
   - Errores en `<key>.log.err`.
 - **En vivo**: se abre una ventana PowerShell separada con `Get-Content -Tail 80 -Wait`.
@@ -136,7 +136,7 @@ El runner termina con `exit 0` solo si todo pasa (ideal para el CI local).
 | --- | --- |
 | "Puerto ocupado" al encender | El puerto está en uso por `next dev`, otro proceso o una web ya encendida. Revisar con `devstatus`, detener la web o usar `Ver que puertos están ocupados` en Herramientas. |
 | La web no responde a los 5 s | El compilador de Next sigue trabajando. Esperar y verificar de nuevo en **Estado de puertos** o ver el log en vivo. |
-| Los logs acumulan mucho | **Herramientas → Limpiar logs** (borra `.opencode/temp/dev-logs/*`). |
+| Los logs acumulan mucho | **Herramientas → Limpiar logs** (borra `test/website/debug/local-logs/*`). |
 | `pnpm` no se encuentra desde la consola | La consola llama a `pnpm` del PATH. Si no está, ejecutar desde una PowerShell con pnpm configurado (la consola hereda el entorno). |
 | Ventana oculta inesperada | Los procesos Next dev se lanzan con `cmd.exe /c` en ventana oculta; el log es la única salida. Usar `-Action log` para verlos. |
 

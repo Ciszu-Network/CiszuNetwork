@@ -82,7 +82,7 @@ sistema para **independizarse del billing**: correr las mismas tareas localmente
 | pnpm filter | Proyecto Vercel | rootDirectory |
 |---|---|---|
 | `ciszunetwork-website` | `ciszunetworkpage` | `projects/ciszu/website` |
-| `ciszukantony-website` | `ciszukoantonypage` | `projects/ciszukoantony/website` |
+| `ciszukoantony-website` | `ciszukoantonypage` | `projects/ciszukoantony/website` |
 | `ciszubot-website` | `ciszubot` | `projects/ciszubot/website` |
 | `muzicmania-website` | `muzicmania` | `projects/muzicmania/website` |
 

@@ -59,10 +59,10 @@ la consola lo detecta en el siguiente chequeo. Ver también `DEV_CONSOLE_SYSTEM.
 
 | Web | Log | Errores |
 | --- | --- | --- |
-| Ciszu Network | `.opencode/temp/dev-logs/network.log` | `network.log.err` |
-| Ciszuko Antony | `.opencode/temp/dev-logs/antony.log` | `antony.log.err` |
-| CiszuBot | `.opencode/temp/dev-logs/ciszubot.log` | `ciszubot.log.err` |
-| MuzicMania | `.opencode/temp/dev-logs/muzic.log` | `muzic.log.err` |
+| Ciszu Network | `test/website/debug/local-logs/network.log` | `network.log.err` |
+| Ciszuko Antony | `test/website/debug/local-logs/antony.log` | `antony.log.err` |
+| CiszuBot | `test/website/debug/local-logs/ciszubot.log` | `ciszubot.log.err` |
+| MuzicMania | `test/website/debug/local-logs/muzic.log` | `muzic.log.err` |
 
 ### 4.2 Leerlos a tiempo real
 
@@ -71,7 +71,7 @@ la consola lo detecta en el siguiente chequeo. Ver también `DEV_CONSOLE_SYSTEM.
 devlog network
 
 # Manual
-Get-Content .opencode\temp\dev-logs\network.log -Tail 80 -Wait
+Get-Content test\website\debug\local-logs\network.log -Tail 80 -Wait
 ```
 
 El `-Tail -Wait` se ejecuta en una ventana PowerShell separada para que Ctrl+C no mate el
@@ -115,7 +115,7 @@ TUI ni los procesos Next dev.
 
 | Herramienta | Comando/opción | Descripción |
 | --- | --- | --- |
-| Limpiar logs | TUI → Herramientas | Borra `.opencode/temp/dev-logs/*` |
+| Limpiar logs | TUI → Herramientas | Borra `test/website/debug/local-logs/*` |
 | Procesos node | TUI → Herramientas | Tabla PID/RAM de procesos node |
 | Ocupación de puertos | TUI → Herramientas | Qué proceso escucha en 3000-3003 |
 
@@ -185,7 +185,7 @@ O no está encendida la web, o el puerto está tomado por otro proceso. Ver
 `devstatus` y Herramientas → ocupación.
 
 **¿Los logs persisten?**
-Sí, en `.opencode/temp/dev-logs/` hasta limpiarlos (gitignored, no se suben).
+Sí, en `test/website/debug/local-logs/` hasta limpiarlos (gitignored, no se suben).
 
 **¿Y los E2E?**
 Apuntan a producción por defecto; para probar contra local habría que configurar baseURL

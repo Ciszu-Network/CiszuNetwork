@@ -33,7 +33,7 @@ replica en la guía, en el AGENTS.md y en los scripts del perfil PowerShell.
 | Web | Filtro pnpm | Puerto | Carpeta | URL local |
 | --- | --- | --- | --- | --- |
 | **Ciszu Network** | `ciszunetwork-website` | 3000 | `projects/ciszu/website` | `http://localhost:3000` |
-| **Ciszuko Antony** | `ciszukantony-website` | 3001 | `projects/ciszukoantony/website` | `http://localhost:3001` |
+| **Ciszuko Antony** | `ciszukoantony-website` | 3001 | `projects/ciszukoantony/website` | `http://localhost:3001` |
 | **CiszuBot** | `ciszubot-website` | 3002 | `projects/ciszubot/website` | `http://localhost:3002` |
 | **MuzicMania** | `muzicmania-website` | 3003 | `projects/muzicmania/website` | `http://localhost:3003` |
 
@@ -70,11 +70,12 @@ La consola lanza el comando real `pnpm --filter <filter> dev -p <port>` a travé
 `cmd.exe /c` con ventana oculta. `stdout` y `stderr` van a:
 
 ```
-.opencode/temp/dev-logs/<key>.log        # salida normal
-.opencode/temp/dev-logs/<key>.log.err    # errores
+test/website/debug/local-logs/<key>.log        # salida normal
+test/website/debug/local-logs/<key>.log.err    # errores
 ```
 
-Ese directorio es **gitignored** (vive bajo `.opencode/`). No se toca en producción.
+Ese directorio es **gitignored** y vive junto a la consola (visible para el usuario en
+`test/website/debug/`). No se toca en producción.
 
 ### 3.4 Detección de estado
 
@@ -201,24 +202,26 @@ automático de Next.
 
 ### 8.1 Ubicación
 
-- `.opencode/temp/dev-logs/network.log`
-- `.opencode/temp/dev-logs/antony.log`
-- `.opencode/temp/dev-logs/ciszubot.log`
-- `.opencode/temp/dev-logs/muzic.log`
+- `test/website/debug/local-logs/network.log`
+- `test/website/debug/local-logs/antony.log`
+- `test/website/debug/local-logs/ciszubot.log`
+- `test/website/debug/local-logs/muzic.log`
 - Errores en la misma carpeta con sufijo `.err`
 
 ### 8.2 Log en tiempo real
 
 `Show-Log` abre una ventana PowerShell separada ejecutando
-`Get-Content <log> -Tail 80 -Wait`. Ventajas de una ventana dedicada:
+`Get-Content <log> -Tail 80 -Wait`. Solo las webs **encendidas** tienen log en vivo:
+si una web está detenida el menú lo muestra como `detenida - sin log` y `Show-Log` se
+niega a abrir un log obsoleto. Ventajas de una ventana dedicada:
 
 - Ctrl+C o cerrar la ventana **no afecta al TUI** ni a los procesos Next dev.
 - Permitir abrir varios logs a la vez (una ventana por web).
 
 ### 8.3 Limpieza
 
-La opción Herramientas → Limpiar logs borra `*` de `.opencode/temp/dev-logs/`. Es seguro:
-es carpeta temporal, gitignored y regenerable.
+La opción Herramientas → Limpiar logs borra `*` de `test/website/debug/local-logs/`. Es
+seguro: es carpeta temporal, gitignored y regenerable.
 
 ## 9. Identidad visual
 
