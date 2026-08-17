@@ -85,10 +85,16 @@ export default function InstallPdwaButton({
   const [panel, setPanel] = useState(false);
   const [expanded, setExpanded] = useState(false);
 
+  const [mounted, setMounted] = useState(false);
+
   const browser = useMemo<PdwaBrowserInfo>(
     () => (uaOverride ? detectPdwaBrowser(uaOverride) : getBrowser()),
     [uaOverride]
   );
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -166,6 +172,16 @@ export default function InstallPdwaButton({
   const hasNative = browser.nativa || deferred !== null;
 
   const panelData = useMemo(() => {
+    if (!mounted) {
+      return {
+        title: `Instala ${site} como PDWA`,
+        sub: 'Este navegador puede no ofrecer instalación nativa. La vía más fiable:',
+        steps: [
+          'Abre la web en Microsoft Edge o Chrome (gratis) e instala desde el icono de la barra de direcciones.',
+          'Se crea una app de escritorio con la misma experiencia que la PDWA.',
+        ],
+      };
+    }
     if (hasNative) {
       return {
         title: 'Instala esta PDWA',
@@ -226,7 +242,7 @@ export default function InstallPdwaButton({
           ],
         };
     }
-  }, [browser, hasNative, site]);
+  }, [browser, hasNative, mounted, site]);
 
   if (installed) return null;
   if (dismissed && !dismissHint) return null;
@@ -313,7 +329,7 @@ export default function InstallPdwaButton({
                   : { opacity: 0, transform: 'translateX(-8px)', pointerEvents: 'none' }),
               }}
             >
-              {hasNative ? 'Instalar PDWA' : browser.id === 'opera-gx' || browser.id === 'opera' ? 'Alternativa PDWA (Opera)' : 'Instalar PDWA'}
+              {!mounted ? 'Instalar PDWA' : hasNative ? 'Instalar PDWA' : browser.id === 'opera-gx' || browser.id === 'opera' ? 'Alternativa PDWA (Opera)' : 'Instalar PDWA'}
             </span>
           </button>
 
