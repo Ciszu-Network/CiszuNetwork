@@ -253,6 +253,11 @@ Doc maestro de errores: **`ERRORS_SYSTEM.md`**. Capas de observabilidad:
   `static.cloudflareinsights.com` + Supabase; ciszubot añade `cdn.discordapp.com`, muzicmania
   `wss://`). `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`. `'unsafe-inline'`
   en script/style documentado (bootstrap inline de Next + estilos inline v3 PDWA).
+  **En desarrollo (`NODE_ENV !== 'production'`)** `buildCsp()` añade `'unsafe-eval'` a
+  `script-src` (lo exige el cliente de Next.js dev, sin él no hidrata → menú móvil y
+  navegación muertas) y los orígenes del CDN local `http://localhost:8788`/`127.0.0.1` a
+  `img-src`, `media-src`, `font-src` y `connect-src` (assets servidos por
+  `scripts/serve-cdn.js` sin internet). En producción NO se incluyen.
 
 ---
 

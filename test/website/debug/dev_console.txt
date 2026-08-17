@@ -1,6 +1,6 @@
 =====================================================================
  CISZU NETWORK - CONSOLE DEV DEBUGGING (GUI) DE USO
- test/website/debug/dev_console.ps1  -  v2.2.0
+ test/website/debug/dev_console.ps1  -  v2.4.0
 =====================================================================
 
 QUE HACE
@@ -9,8 +9,10 @@ QUE HACE
 - Operativas con menu de seleccion MULTIPLE y webs marcadas por defecto.
 - Estado de puertos y apertura de cada web en el navegador.
 - Logs a tiempo real (Get-Content -Tail -Wait) SOLO de webs encendidas.
+- CDN local (offline :8788): server estatico del monorepo como
+  NEXT_PUBLIC_CDN_URL, arranca al encender webs y se MANTIENE activo al salir.
 - Herramientas extra (limpiar logs, procesos, puertos, navegador, git,
-  versiones, disco, etc).
+  versiones, disco, estado/reinicio del CDN local, etc).
 - Ayuda, creditos y version integrados.
 
 PUERTOS FIJOS (nomenclatura del monorepo)
@@ -40,7 +42,7 @@ USO DEL MENU DE SELECCION MULTIPLE
   NUMEROS 1-9 (0 = 10)     = saltar directo al indice de la opcion
   Enter                    = PROCEDER (ejecutar la operacion en las webs marcadas)
   N                        = NO PROCEDER (cancelar, vuelve al menu sin aplicar)
-  Q o Esc                  = ABORTAR (detiene las webs y cierra la consola, Ctrl+C)
+  Q o Esc                  = ABORTAR (cierra la consola; las webs siguen activas)
 
   Las webs vienen MARCADAS POR DEFECTO en cada operativa.
   Opciones y webs usan EMOJIS (estilo neon del perfil):
@@ -58,7 +60,22 @@ FLUJO TIPICO
      cuando queda lista en http://localhost:3000 ... 3003.
   6. "Estado" permite consultar las webs que elijas (una, varias o todas).
   7. "Logs en tiempo real" abre el log (next dev) de UNA web ENCENDIDA por vez.
-  8. "Salir (Ctrl+C)" detiene las webs en ejecucion y cierra la consola.
+  8. "Salir (Ctrl+C)" cierra SOLO la consola; las webs Y el CDN local
+     siguen activos en sus puertos (usa pnpm dev:stop para detenerlas).
+
+CDN LOCAL (OFFLINE)
+-------------------
+  Las webs resuelven assets con @ciszunetwork/cdn. En local,
+  NEXT_PUBLIC_CDN_URL = http://localhost:8788 (server estatico, scripts/
+  serve-cdn.js) que sirve el monorepo 1:1 como Supabase Storage, asi los
+  logos (projects/*/content/logos), fotos (shared/images) y medios cargan
+  desde el disco SIN INTERNET.
+  - Arranca solo al encender la primera web (Ensure-CdnServe).
+  - PID/log: test/website/debug/local-logs/cdn-serve.pid / cdn-serve.log.
+  - No se detiene al Salir (los servidores se mantienen activos a proposito).
+    Reinicio manual: Herramientas > "Reiniciar CDN local".
+  - Manual: pnpm cdn:serve.
+  - Si logos no cargan: Herramientas > "Estado CDN local" (8788).
 
 MODO CLI (sin menu, para automatizacion)
 ---------------------------------------
@@ -105,9 +122,10 @@ RESOLUCION DE PROBLEMAS
   - Logs acumulados: Herramientas > "Limpiar logs".
   - pnpm no encontrado: la consola hereda el entorno de la PowerShell;
     abrirla desde una sesion con pnpm configurado.
-  - "Salir" no cierra: en v2.1.0 Salir detiene las webs y sale (equivale
-    a Ctrl+C); si aun asi no cierra, abre la consola con -SelfTest para
-    verificar el estado del script.
+  - "Salir" no cierra la consola: desde v2.4.0 Salir/Ctrl+C cierran SOLO la
+    consola y las webs siguen activas (por diseno). Para detener las webs:
+    menu "Detener webs" o `pnpm dev:stop`. Si la consola aun no cierra, abre
+    con -SelfTest para verificar el estado del script.
 
 CREDITOS
 --------

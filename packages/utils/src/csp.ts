@@ -23,25 +23,38 @@ export interface CspOptions {
   fontSrc?: string[];
   /** Fuentes extra para iframes (frame-src). */
   frameSrc?: string[];
+  /**
+   * Modo desarrollo forzado (por defecto: NODE_ENV !== 'production').
+   * En dev se añade 'unsafe-eval' (lo necesita el cliente de Next.js dev) y
+   * el origen local del CDN (http://localhost:8788).
+   */
+  dev?: boolean;
 }
 
 const SUPABASE_ORIGIN = 'https://obwzzmbvkrcscqwptlqo.supabase.co';
 
+// CDN local del ecosistema (scripts/serve-cdn.js) solo en desarrollo.
+const LOCAL_CDN_ORIGINS = ['http://localhost:8788', 'http://127.0.0.1:8788'];
+
 export function buildCsp(opts: CspOptions = {}): string {
+  const dev = opts.dev ?? process.env.NODE_ENV !== 'production';
+  const local = dev ? LOCAL_CDN_ORIGINS : [];
   const directives: Array<[string, string[]]> = [
     // default-src 'self': todo lo no listado cae a self.
     ['default-src', ["'self'"]],
     // 'unsafe-inline' en script: Next.js App Router inyecta bootstrap inline
     // (self.__next_f.push) sin nonce; los dominios externos siguen acotados.
+    // 'unsafe-eval' SOLO en desarrollo: el cliente de Next.js dev lo exige.
     [
       'script-src',
-      ["'self'", "'unsafe-inline'", 'https://challenges.cloudflare.com', 'https://static.cloudflareinsights.com', 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', ...(opts.scriptSrc ?? [])],
+      ["'self'", "'unsafe-inline'", ...(dev ? ["'unsafe-eval'"] : []), 'https://challenges.cloudflare.com', 'https://static.cloudflareinsights.com', 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', ...(opts.scriptSrc ?? [])],
     ],
     // Estilos inline de la v3 PDWA y utilidades CSS en línea del ecosistema.
     ['style-src', ["'self'", "'unsafe-inline'"]],
-    ['img-src', ["'self'", 'data:', 'blob:', SUPABASE_ORIGIN, ...(opts.imgSrc ?? [])]],
-    ['font-src', ["'self'", 'data:', ...(opts.fontSrc ?? [])]],
-    ['connect-src', ["'self'", SUPABASE_ORIGIN, 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://static.cloudflareinsights.com', 'https://cloudflareinsights.com', 'https://challenges.cloudflare.com', 'https://*.ingest.us.sentry.io', ...(opts.connectSrc ?? [])]],
+    ['img-src', ["'self'", 'data:', 'blob:', SUPABASE_ORIGIN, ...local, ...(opts.imgSrc ?? [])]],
+    ['media-src', ["'self'", ...local]],
+    ['font-src', ["'self'", 'data:', ...local, ...(opts.fontSrc ?? [])]],
+    ['connect-src', ["'self'", SUPABASE_ORIGIN, 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://static.cloudflareinsights.com', 'https://cloudflareinsights.com', 'https://challenges.cloudflare.com', 'https://*.ingest.us.sentry.io', ...local, ...(opts.connectSrc ?? [])]],
     ['frame-src', ["'self'", 'https://challenges.cloudflare.com', ...(opts.frameSrc ?? [])]],
     ['object-src', ["'none'"]],
     ['base-uri', ["'self'"]],

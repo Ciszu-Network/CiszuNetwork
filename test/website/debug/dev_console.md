@@ -3,17 +3,18 @@
 > Consola interactiva (TUI) para probar las 4 webs del monorepo en local,
 > sin abrir terminales a mano. Con navegación por flechas y acciones por web.
 
-Versión: 2.2.0
+Versión: 2.4.0
 Ubicación: `test/website/debug/dev_console.ps1`
 
 ## Qué hace
 
 - **Operativas** (Encender / Reiniciar / Detener): abren un menú de **selección múltiple** con las 4 webs **marcadas por defecto** (auto-marcado). Al terminar de marcar/desmarcar decides cómo proceder: **Proceder**, **No proceder** o **Abortar**.
-- **Proceder (Enter)**: ejecuta la operación en las webs marcadas. **No proceder (N)**: vuelve al menú sin aplicar nada. **Abortar (Q/Esc)**: detiene las webs y cierra la consola (equivale a Ctrl+C).
+- **Proceder (Enter)**: ejecuta la operación en las webs marcadas. **No proceder (N)**: vuelve al menú sin aplicar nada. **Abortar (Q/Esc)**: cierra la consola sin tocar las webs (siguen activas).
 - **Espera real**: la consola espera a que cada web compila y queda lista (spinner) antes de volver al menú.
 - **Estado**: consulta las webs que elijas (una, varias o todas), mostrando `ENCENDIDA / ENCENDIENDO... / DETENIDA`.
 - **Logs a tiempo real**: menú **simple** — elige UNA web y abre su log (next dev) en ventana separada. **Solo las webs encendidas tienen log**: si una web está detenida no se ofrece abrir su log.
-- **Herramientas extra**: limpiar logs, procesos node, puertos 3000-3003, abrir webs en el navegador, procesos por puerto, CPU/mem de cada web, abrir carpeta de logs, versiones (node/pnpm/turbo), git status, espacio en disco.
+- **Herramientas extra**: limpiar logs, procesos node, puertos 3000-3003, abrir webs en el navegador, procesos por puerto, CPU/mem de cada web, abrir carpeta de logs, versiones (node/pnpm/turbo), git status, espacio en disco, **estado/reinicio del CDN local**.
+- **CDN local (offline)**: al encender cualquier web se arranca automáticamente un servidor estático (`scripts/serve-cdn.js`) en el puerto **8788** que sirve el monorepo (`NEXT_PUBLIC_CDN_URL=http://localhost:8788`), para que logos, audios y `content/` se vean **sin internet**. Se mantiene activo al salir de la consola.
 - **Ayuda, créditos y versión** integrados en el mismo menú.
 
 Opciones con **emojis** y selector amarillo; rojo solo para errores.
@@ -60,7 +61,7 @@ pnpm dev:console
 | `A` | Marcar **todas** las webs |
 | `1`…`9` / `0` | Saltar al índice de la opción (0 = 10.ª) |
 | `N` | **No proceder** (cancelar la operación, vuelve al menú) |
-| `Q` o `Esc` | **Abortar** (detiene las webs en ejecución y cierra la consola, como Ctrl+C) |
+| `Q` o `Esc` | **Abortar** (cierra la consola; las webs siguen activas) |
 
 Las webs aparecen **marcadas por defecto** en cada operativa (pulsar `A` las re-marca todas). Cada opción se muestra con **índice numérico, emoji e icono** de estado; la selección se resalta en **amarillo**; los **rojos quedan solo para errores**. Estados: `🟢 ENCENDIDA` / `🟡 ENCENDIENDO...` / `⚫ DETENIDA`.
 
@@ -73,7 +74,7 @@ Las webs aparecen **marcadas por defecto** en cada operativa (pulsar `A` las re-
 5. La consola espera a que compile cada web y avisa cuando está lista.
 6. **Estado** para consultar una, varias o todas.
 7. **Logs en tiempo real** para ver el log (next dev) de una web **encendida**.
-8. **Salir (Ctrl+C)** detiene las webs y cierra la consola.
+8. **Salir (Ctrl+C)** cierra solo la consola: las webs **y el CDN local** siguen activos.
 
 ## Modo CLI (sin menú, para automatización)
 
@@ -122,6 +123,22 @@ powershell -NoProfile -ExecutionPolicy Bypass -File test\website\debug\dev_conso
 
 El runner termina con `exit 0` solo si todo pasa (ideal para el CI local).
 
+## CDN local (offline)
+
+Las webs resuelven los assets con `@ciszunetwork/cdn`. En local, `NEXT_PUBLIC_CDN_URL`
+apunta a `http://localhost:8788`, un **servidor estático que sirve el monorepo** de forma
+idéntica a Supabase Storage (rutas 1:1). Así los logos (`projects/*/content/logos`),
+fotos (`shared/images`) y medios se cargan **desde el disco, sin internet**.
+
+- Se arranca automáticamente al encender la **primera** web (`Ensure-CdnServe`).
+- PID y log: `test/website/debug/local-logs/cdn-serve.pid` y `cdn-serve.log`.
+- No se detiene al **Salir** (los servidores se mantienen activos a propósito). Reinicio manual: **Herramientas → Reiniciar CDN local**.
+- Arranque manual: `pnpm cdn:serve` (o `node scripts/serve-cdn.js`).
+
+| Problema | Solución |
+| --- | --- |
+| Logos/medios no cargan en local | `Herramientas → Estado CDN local`; si está detenido, `Reiniciar CDN local` o encender una web. |
+
 ## Logs
 
 - **Ubicación**: `test/website/debug/local-logs/<key>.log` (gitignored).
@@ -139,6 +156,7 @@ El runner termina con `exit 0` solo si todo pasa (ideal para el CI local).
 | Los logs acumulan mucho | **Herramientas → Limpiar logs** (borra `test/website/debug/local-logs/*`). |
 | `pnpm` no se encuentra desde la consola | La consola llama a `pnpm` del PATH. Si no está, ejecutar desde una PowerShell con pnpm configurado (la consola hereda el entorno). |
 | Ventana oculta inesperada | Los procesos Next dev se lanzan con `cmd.exe /c` en ventana oculta; el log es la única salida. Usar `-Action log` para verlos. |
+| Logos/medios no cargan (sin internet) | Revisar **Herramientas → Estado CDN local** (8788). Arranca solo: encender una web o `pnpm cdn:serve`. |
 
 ## Créditos
 
@@ -151,4 +169,4 @@ El runner termina con `exit 0` solo si todo pasa (ideal para el CI local).
 - `/dev` — encender / detener webs locales desde opencode.
 - `/devcon` — abre la consola TUI (no recomendado desde opencode; usar modo CLI).
 
-_Última revisión: 16 ago 2026._ Relacionado: `dev_console.txt`, `DEV_CONSOLE_SYSTEM.md`.
+_Última revisión: 17 ago 2026._ Relacionado: `dev_console.txt`, `DEV_CONSOLE_SYSTEM.md`.

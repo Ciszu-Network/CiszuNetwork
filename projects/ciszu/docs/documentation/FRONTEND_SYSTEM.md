@@ -181,6 +181,10 @@ export const config = {
 - `matcher` excluye `_next`, static assets y fuentes para no parchear respuestas de assets.
 - CSP debe listar las fuentes externas que usa cada web (widgets Trustpilot, NOWPayments,
   `wss://<proyecto>.supabase.co` para realtime).
+- **CSP en desarrollo**: `buildCsp()` añade automáticamente `'unsafe-eval'` a `script-src`
+  (el cliente de Next.js dev lo necesita; sin él la hidratación falla y pierde toda la
+  interactividad: hamburguesa, navegación) y `http://localhost:8788` a `img/media/font/connect-src`
+  para el CDN local offline. En producción nada de esto se incluye.
 - `X-Frame-Options` **no** se pone en muzicmania (permite preview de Vercel Dashboard);
   el CSP `frame-ancestors` puede cubrirlo si hace falta.
 - **Limite**: el middleware **no** gestiona sesiones ni protege rutas (las webs usan

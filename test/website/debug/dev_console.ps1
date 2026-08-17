@@ -58,11 +58,17 @@ $WEBS = @(
     @{ key = 'muzic';    name = 'MuzicMania';     filter = 'muzicmania-website';   port = 3003; dir = 'projects/muzicmania/website'; emoji = '🎵' }
 )
 
-$VERSION = '2.2.0'
+$VERSION = '2.4.0'
 # Logs locales visibles para Ciszuko, dentro de la carpeta de debug
 # (gitignored; use la herramienta "Abrir carpeta de logs" para verlos).
 $LOG_DIR = Join-Path $PSScriptRoot 'local-logs'
 if (-not (Test-Path $LOG_DIR)) { New-Item -ItemType Directory -Path $LOG_DIR -Force | Out-Null }
+
+# CDN local (offline): sirve el monorepo en el puerto 8788 como NEXT_PUBLIC_CDN_URL
+# para que las webs muestren logos/audios/content sin internet. scripts/serve-cdn.js.
+$CDN_PORT = 8788
+$CDN_PID_FILE = Join-Path $LOG_DIR 'cdn-serve.pid'
+$CDN_LOG = Join-Path $LOG_DIR 'cdn-serve.log'
 
 # ---------- Arte ASCII ----------
 $ART = @'
@@ -140,11 +146,43 @@ function Wait-WebReady([string]$key, [int]$timeoutSec = 180) {
     return $false
 }
 
+# ---------- CDN local (offline) ----------
+function Ensure-CdnServe {
+    $serving = Get-NetTCPConnection -LocalPort $CDN_PORT -State Listen -ErrorAction SilentlyContinue
+    if ($serving) {
+        if (Test-Path $CDN_PID_FILE) { $p = Get-Content $CDN_PID_FILE; if ([bool](Get-Process -Id $p -ErrorAction SilentlyContinue)) { return } }
+        return
+    }
+    $node = (Get-Command node).Source
+    $job = 'scripts/serve-cdn.js'
+    try {
+        $proc = Start-Process -FilePath $node -ArgumentList $job, '--port', "$CDN_PORT" -WorkingDirectory $root `
+            -WindowStyle Hidden -RedirectStandardOutput $CDN_LOG -RedirectStandardError "$CDN_LOG.err" -PassThru
+        $proc.Id | Out-File $CDN_PID_FILE
+        Write-Host "${c_cyan}🖥 CDN local (offline) en http://localhost:$CDN_PORT ${c_reset}${c_gray}(sirve el monorepo, sin internet)${c_reset}"
+    } catch {
+        Write-Host "${c_yellow}No pude arrancar el CDN local (8788): $($_.Exception.Message)${c_reset}"
+    }
+}
+
+function Stop-CdnServe {
+    if (Test-Path $CDN_PID_FILE) {
+        $p = Get-Content $CDN_PID_FILE
+        Stop-Process -Id $p -Force -ErrorAction SilentlyContinue
+        Remove-Item $CDN_PID_FILE -Force -ErrorAction SilentlyContinue
+        Write-Host "${c_gray}🖥 CDN local (8788) detenido.${c_reset}"
+    }
+    $serving = Get-NetTCPConnection -LocalPort $CDN_PORT -State Listen -ErrorAction SilentlyContinue
+    if ($serving) { try { Stop-Process -Id $serving.OwningProcess -Force -ErrorAction SilentlyContinue } catch { } }
+}
+
 # ---------- Launcher / Stopper ----------
 function Start-WebByKey([string]$key, [switch]$Wait) {
     $w = $WEBS | Where-Object { $_.key -eq $key }
     if (-not $w) { return }
     if (Get-WebState $w.port) { Write-Host "${c_yellow}${w.emoji} Ya encendida (port $($w.port)).${c_reset}"; return }
+
+    Ensure-CdnServe
 
     if (-not (Test-Path $LOG_DIR)) { New-Item -ItemType Directory -Path $LOG_DIR -Force | Out-Null }
     $logFile = Join-Path $LOG_DIR "$key.log"
@@ -396,7 +434,7 @@ Ciszu Network en local (Next.js dev) sin abrir terminales a mano."
     Write-Host "   Al terminar de marcar/desmarcar elige como proceder:"
     Write-Host "     Enter      PROCEDER  -> ejecuta la operacion en las webs marcadas"
     Write-Host "     N          NO PROCEDER -> vuelve al menu sin aplicar nada"
-    Write-Host "     Q / Esc    ABORTAR   -> detiene las webs y cierra la consola (Ctrl+C)"
+    Write-Host "     Q / Esc    ABORTAR   -> cierra la consola sin tocar las webs (siguen activas)"
     Write-Host ""
     Write-Host "${c_cyan}Atajos del menu de seleccion multiple:${c_reset}"
     Write-Host "   Up/Down      mover el cursor"
@@ -405,7 +443,7 @@ Ciszu Network en local (Next.js dev) sin abrir terminales a mano."
     Write-Host "   1-9 / 0      saltar al indice de la opcion"
     Write-Host "   Enter        PROCEDER (ejecutar operacion)"
     Write-Host "   N            NO PROCEDER (cancelar operacion)"
-    Write-Host "   Q / Esc      ABORTAR (detener webs y salir de la consola)"
+    Write-Host "   Q / Esc      ABORTAR (cerrar consola, las webs siguen activas)"
     Write-Host ""
     Write-Host "${c_cyan}Estado de puertos:${c_reset} consulta las webs que elijas, mostrando`
    🟢 ENCENDIDA / 🟡 ENCENDIENDO... / ⚫ DETENIDA."
@@ -413,8 +451,9 @@ Ciszu Network en local (Next.js dev) sin abrir terminales a mano."
     Write-Host "${c_cyan}Logs en tiempo real:${c_reset} solo las webs ENCENDIDAS tienen log;`
    si una web esta detenida no se ofrece abrir su log."
     Write-Host ""
-    Write-Host "${c_cyan}Salir (Ctrl+C):${c_reset} detiene todas las webs en ejecucion y cierra la consola.`
-   Tambien puedes abortar desde cualquier menu de seleccion con Q/Esc."
+    Write-Host "${c_cyan}Salir (Ctrl+C o 'Salir'):${c_reset} cierra solo la consola. Las webs y el CDN`
+   local SIGUEN ejecutandose y respondiendo en sus puertos (3000-3003 y 8788);`
+   puedes usar pnpm dev:stop o el menu 'Detener webs' cuando quieras pararlas."
     Write-Host ""
     Write-Host "${c_gray}Los logs se guardan en: $LOG_DIR\<web>.log (visible en test/website/debug/local-logs)${c_reset}"
     Write-Host "${c_gray}Guias: test/website/debug/dev_console.{md,txt}${c_reset}"
@@ -462,7 +501,9 @@ function Show-Tools {
         @{ ic = '🧾'; l = "Abrir carpeta de logs en el explorador";    act = { if (Test-Path $LOG_DIR) { Start-Process explorer.exe (Resolve-Path $LOG_DIR).Path } else { Write-Host "${c_yellow}No hay carpeta de logs aun.${c_reset}" }; Press-Continue } },
         @{ ic = '⚙'; l = "Ver versiones node / pnpm / turbo";        act = { Clear-Host; node -v; pnpm -v; turbo --version 2>$null; Press-Continue } },
         @{ ic = '📦'; l = "Ver git status del monorepo";              act = { Clear-Host; git -C $root status --short --branch | Out-Host; Press-Continue } },
-        @{ ic = '🌡'; l = "Ver espacio en disco (C y E)";             act = { Clear-Host; Get-PSDrive C,E | Select-Object Name, @{n='Libre GB';e={[math]::Round($_.Free/1GB,1)}}, @{n='Usado GB';e={[math]::Round($_.Used/1GB,1)}} | Format-Table | Out-Host; Press-Continue } }
+        @{ ic = '🌡'; l = "Ver espacio en disco (C y E)";             act = { Clear-Host; Get-PSDrive C,E | Select-Object Name, @{n='Libre GB';e={[math]::Round($_.Free/1GB,1)}}, @{n='Usado GB';e={[math]::Round($_.Used/1GB,1)}} | Format-Table | Out-Host; Press-Continue } },
+        @{ ic = '🖥'; l = "Estado CDN local (offline :8788)";         act = { $s = Get-NetTCPConnection -LocalPort $CDN_PORT -State Listen -ErrorAction SilentlyContinue; if ($s) { Write-Host "${c_green}CDN local activo (pid $($s.OwningProcess)) -> http://localhost:$CDN_PORT${c_reset}" } else { Write-Host "${c_yellow}CDN local DETENIDO. Arranca una web para encenderlo.${c_reset}" }; Press-Continue } },
+        @{ ic = '♻'; l = "Reiniciar CDN local (offline :8788)";      act = { Stop-CdnServe; Ensure-CdnServe; Start-Sleep -Milliseconds 800; Press-Continue } }
     )
     $sel = Show-Menu -Title "HERRAMIENTAS EXTRAS" -Options $opts
     if ($sel -ge 0) { & $opts[$sel].act }
@@ -536,8 +577,9 @@ if ($SelfTest.IsPresent) {
         if (-not $cond) { $script:failures += $label }
     }
 
-    AssertEqual 'Version' '2.2.0' $VERSION
+    AssertEqual 'Version' '2.4.0' $VERSION
     AssertEqual 'Webs count' 4 $WEBS.Count
+    AssertEqual 'CDN port' 8788 $CDN_PORT
     AssertEqual 'Keys' 'network;antony;ciszubot;muzic' (($WEBS.key) -join ';')
     AssertEqual 'Ports 3000-3003' '3000;3001;3002;3003' (($WEBS.port) -join ';')
     AssertEqual 'Filter antony' 'ciszukoantony-website' (($WEBS | Where-Object { $_.key -eq 'antony' }).filter)
@@ -641,10 +683,13 @@ while (-not $script:quitRequested) {
         '__credits' { Show-Credits }
         '__version' { Show-Version }
         '__quit' {
-            Write-Host "${c_cyan}Deteniendo las webs en ejecucion (simulando Ctrl+C)...${c_reset}"
+            Write-Host "${c_cyan}Cerrando la consola SIN detener las webs (los servidores siguen activos).${c_reset}"
             foreach ($w in $WEBS) {
-                if ((Get-WebPhase $w.key) -ne 'off') { Stop-WebByKey $w.key }
+                if ((Get-WebPhase $w.key) -eq 'on') {
+                    Write-Host ("{0} quedara activa en http://localhost:{1}" -f $w.name, $w.port)
+                }
             }
+            Write-Host "${c_gray}Para detenerlas usa el menu 'Detener webs' o: pnpm dev:stop${c_reset}"
             $script:quitRequested = $true
         }
     }
