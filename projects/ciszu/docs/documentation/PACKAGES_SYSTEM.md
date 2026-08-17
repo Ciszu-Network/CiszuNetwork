@@ -122,7 +122,7 @@ Componentes React reutilizados por las webs:
 |---|---|
 | `createRateLimiter` | Rate limit en endpoints POST |
 | `createIast` | Sensor IAST (seguridad runtime) |
-| `buildCsp` | Cabecera CSP |
+| `buildCsp` | Cabecera CSP (en dev añade `unsafe-eval` + CDN local `localhost:8788`) |
 | `escapeHtml` | Escape para prevenir XSS |
 | `z` (re-export), `parseJsonBody`, `firstZodMessage` | Validación Zod del borde entrada (mutantes) |
 

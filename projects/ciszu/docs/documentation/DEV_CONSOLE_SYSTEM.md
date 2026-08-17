@@ -1,8 +1,8 @@
 # DEV_CONSOLE_SYSTEM — Consola de Desarrollo y Debugging Local (Ciszu Network)
 
-Versión: 1.1.0
+Versión: 1.3.0
 Actualización: 2026-08-17
-Identificador: DEV_CONSOLE_SYSTEM_V1.0.0_2026_08_16_ciszunetwork
+Identificador: DEV_CONSOLE_SYSTEM_V1.3.0_2026_08_17_ciszunetwork
 
 > **Definición**: sistema que documenta la consola interactiva (TUI) y el modo CLI
 > (`test/website/debug/dev_console.ps1`) para probar las 4 webs del monorepo en local:
@@ -118,7 +118,7 @@ Windows sin firma).
 | Herramientas extra | Limpiar logs, procesos node, puertos 3000-3003, abrir webs en navegador, procesos por puerto, CPU/mem por web, carpeta de logs, versiones (node/pnpm/turbo), git status, espacio en disco |
 | Manual de ayuda | Muestra la guía rápida integrada |
 | Créditos / Versión | Identidad y versión de la consola |
-| Salir (Ctrl+C) | Detiene las webs en ejecución y cierra la consola |
+| Salir (Ctrl+C) | Cierra SOLO la consola; las webs y el CDN local siguen activos |
 
 ### 4.3 Selección múltiple (operativas)
 
@@ -130,7 +130,7 @@ elige cómo proceder:
 | --- | --- | --- |
 | **Proceder** | `Enter` | Ejecuta la operación en las webs marcadas |
 | **No proceder** | `N` | Cancela la operación y vuelve al menú (no aplica nada) |
-| **Abortar** | `Q` / `Esc` | Detiene las webs en ejecución y cierra la consola (equivale a Ctrl+C) |
+| **Abortar** | `Q` / `Esc` | Cierra la consola sin tocar las webs (siguen activas) |
 
 Las webs marcadas se procesan con `Invoke-SelectedWebs` (`Start-WebByKey`/`Stop-WebByKey` con `-Wait`);
 la consola espera (spinner + `Wait-WebReady`) a que cada web responda en su puerto.
@@ -145,7 +145,7 @@ la consola espera (spinner + `Wait-WebReady`) a que cada web responda en su puer
 | `1`…`9` / `0` | Saltar al índice de la opción (0 = 10.ª) |
 | `Enter` | Proceder (ejecutar en las webs marcadas) |
 | `N` | No proceder (cancelar) |
-| `Q` / `Esc` | Abortar (detener webs y salir de la consola) |
+| `Q` / `Esc` | Abortar (cerrar consola; las webs siguen activas) |
 
 ## 5. Modo CLI no interactivo
 
@@ -223,7 +223,24 @@ niega a abrir un log obsoleto. Ventajas de una ventana dedicada:
 La opción Herramientas → Limpiar logs borra `*` de `test/website/debug/local-logs/`. Es
 seguro: es carpeta temporal, gitignored y regenerable.
 
-## 9. Identidad visual
+## 9. CDN local (offline :8788)
+
+Las webs resuelven assets con `@ciszunetwork/cdn`. En local, `NEXT_PUBLIC_CDN_URL` apunta
+a un servidor estático (`scripts/serve-cdn.js`) que sirve la **raíz del monorepo** en
+`http://localhost:8788` con rutas 1:1 (igual que Supabase Storage en producción). Así
+logos (`projects/*/content/logos`), fotos (`shared/images`) y medios cargan desde disco,
+**sin internet**. Es el mismo mecanismo que en producción pero con origen local.
+
+- **Arranque** (`Ensure-CdnServe`): al encender la primera web. PID en
+  `test/website/debug/local-logs/cdn-serve.pid`, log `cdn-serve.log(.err)`.
+- **Parada** (`Stop-CdnServe`): ya **no** se detiene al **Salir** de la TUI (los servidores se
+  mantienen activos a propósito). Para reiniciarlo: Herramientas → Reiniciar CDN.
+- **Manual**: `pnpm cdn:serve` (port `--port <N>`).
+- Se sirven archivos correctos con su MIME (`getContentType`); `GET`/`HEAD`, sin
+  `index.html`, `Cache-Control: no-cache`, y rechazo de rutas fuera del repo (traversal).
+- Si los logos no cargan: Herramientas → Estado CDN local (revise que 8788 escuche).
+
+## 10. Identidad visual
 
 La consola sigue la identidad del ecosistema (neon cyan/rosa sobre negro):
 
@@ -232,7 +249,7 @@ La consola sigue la identidad del ecosistema (neon cyan/rosa sobre negro):
 - Estados en color: `[ENCENDIDA]` verde, `[DETENIDA]` gris, avisos amarillo.
 - ASCII puro (sin tildes en el código fuente) para una codificación segura en PS 5.1.
 
-## 10. Resolución de problemas
+## 11. Resolución de problemas
 
 | Problema | Causa | Solución |
 | --- | --- | --- |
@@ -244,7 +261,7 @@ La consola sigue la identidad del ecosistema (neon cyan/rosa sobre negro):
 | `$root` mal calculado | Movida la carpeta `test/website/debug` | Verificar que `dev_console.ps1` viva en `test/website/debug/` (3 niveles bajo la raíz) |
 | Consola no arranca por política | ExecutionPolicy | Usar `-ExecutionPolicy Bypass` o `devcon` del perfil |
 
-## 11. Reglas y mantenimiento
+## 12. Reglas y mantenimiento
 
 1. **Una sola fuente de verdad**: `dev_console.ps1` es el único lugar que define puertos y
    lanzamiento de webs. Las guías y docs referencian sus valores; ante un cambio (nueva web
@@ -253,11 +270,12 @@ La consola sigue la identidad del ecosistema (neon cyan/rosa sobre negro):
 3. **Toda web nueva** debe añadirse a `$WEBS` con su puerto fijo y su comando pnpm.
 4. **Cerrar las webs al terminar**: liberar los puertos 3000-3003 con `devstop` o desde el
    TUI; evita colisiones en sesiones siguientes.
-5. **Logs siempre bajo `.opencode/temp/`**: nunca dentro de `projects/` ni `test/`.
+5. **Logs siempre bajo `test/website/debug/local-logs/`**: nunca dentro de `projects/` ni
+   `public/`, ni en `.opencode/temp/` (región transpuesta de la migración de 17 ago 2026).
 6. La consola es **dev-only**; no interfiere con los deploys de producción ni con los jobs
    de CI. Los e2e (Playwright) contra producción son otro sistema (`TESTING_SYSTEM.md`).
 
-## 10. Pruebas de la consola (sin Pester)
+## 13. Pruebas de la consola (sin Pester)
 
 La consola no depende de un framework externo; se prueba con dos mecanismos:
 

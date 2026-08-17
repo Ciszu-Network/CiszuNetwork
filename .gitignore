@@ -132,6 +132,8 @@ services/supabase/.temp/
 # Carpeta temporal de opencode (trabajos en curso, nunca trackear)
 .opencode-tmp/
 .opencode/temp/
+# Browsers de Playwright descargados para pruebas locales (grande, regenerable)
+.opencode/pw-browsers/
 # Data dir global de opencode (db de sesiones + snapshots, junction E:)
 .opencode/data/
 

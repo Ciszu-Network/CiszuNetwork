@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { buildCsp } from '../src/csp';
 
 describe('buildCsp', () => {
@@ -20,8 +20,21 @@ describe('buildCsp', () => {
     expect(csp).toContain('https://obwzzmbvkrcscqwptlqo.supabase.co');
   });
 
-  it('no usa unsafe-eval en script-src', () => {
-    expect(buildCsp()).not.toContain("'unsafe-eval'");
+  it('en producción no usa unsafe-eval ni el CDN local', () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    const csp = buildCsp();
+    expect(csp).not.toContain("'unsafe-eval'");
+    expect(csp).not.toContain('http://localhost:8788');
+    vi.unstubAllEnvs();
+  });
+
+  it('en desarrollo permite unsafe-eval y el CDN local (localhost:8788)', () => {
+    vi.stubEnv('NODE_ENV', 'development');
+    const csp = buildCsp();
+    expect(csp).toContain("'unsafe-eval'");
+    expect(csp).toContain('http://localhost:8788');
+    expect(csp).toContain('http://127.0.0.1:8788');
+    vi.unstubAllEnvs();
   });
 
   it('acepta fuentes extra por directiva', () => {

@@ -154,8 +154,10 @@ Documentado en `UI_COMPONENTS_SYSTEM.md` y `scripts/storybook.ps1`.
    módulo no reflejan código sino instalación.
 6. **HMR vs full reload**: la mayoría de cambios de React se aplican con HMR; cambios en
    config (next.config, env, middleware) requieren reiniciar la web (`Restart` en la consola).
-7. **IAST/CSP en local**: el middleware de seguridad y CSP los aplica Next también en local;
-   un request bloqueado por CSP en dev es legítimo (no silenciar el error en el reporter).
+7. **IAST/CSP en local**: el middleware de seguridad y CSP los aplica Next también en local.
+   En dev, `buildCsp()` ya permite `unsafe-eval` (cliente Next dev) y el CDN local `:8788`,
+   así que un bloqueo CSP en dev apunta a una fuente nueva real (no silenciar el error en el
+   reporter).
 8. **Reportar al agente**: al encontrarse un error en local, anotar: web, puerto, paso para
    reproducir, y si persiste tras reiniciar. Esto alimenta `PROJECTS_SYSTEM.md` §Pendientes.
 

@@ -35,6 +35,7 @@
     "bot:dev": "pnpm --filter ciszubot dev",
     "cdn:upload": "node scripts/upload-cdn.js",
     "cdn:verify": "node scripts/check-cdn-mimes.js",
+    "cdn:serve": "node scripts/serve-cdn.js",
     "db:backup": "node scripts/backup-db.js",
     "notify": "node scripts/ntfy-notif.js",
     "api:test": "node scripts/run-bru.js run . -r --env prod --exclude-tags local",

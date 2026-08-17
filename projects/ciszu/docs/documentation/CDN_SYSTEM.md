@@ -1,8 +1,8 @@
 # CDN_SYSTEM — Sistema de CDN y Cloudflare (Ciszu Network)
 
-Versión: 2.0.0
-Actualización: 2026-08-13
-Identificador: CDN_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
+Versión: 2.0.1
+Actualización: 2026-08-17
+Identificador: CDN_SYSTEM_V2.0.1_2026_08_17_ciszunetwork
 
 > **Definición**: este documento define el **sistema completo de distribución de contenido**
 > de Ciszu Network: nuestro CDN propio (Supabase Storage `ciszu-cdn` + resolver
@@ -75,8 +75,14 @@ deliveryVariants(asset)               // → variantes avif/webp/opus
 ```
 
 - **Estrategia de resolución**: CDN → local → oculto (con fallbacks en cascada).
-- **Fallback offline ELIMINADO (11 ago 2026)**: `copy-assets.js` borrado; en dev sin
-  `NEXT_PUBLIC_CDN_URL` el resolver devuelve rutas locales relativas.
+- **Dev local offline (17 ago 2026)**: cada web tiene `NEXT_PUBLIC_CDN_URL=http://localhost:8788`
+  en `.env.local` (gitignored); el puerto 8788 lo sirve `scripts/serve-cdn.js`, un servidor
+  estático sin deps que **espeja la raíz del monorepo** (rutas 1:1 como Supabase Storage).
+  Así logos/medios se cargan del disco sin internet. La consola dev lo arranca al encender
+  webs y lo detiene al salir (`pnpm cdn:serve` para manual). Sin servidor, los assets 404.
+- **Fallback offline histórico ELIMINADO (11 ago 2026)**: `copy-assets.js` borrado; en dev sin
+  `NEXT_PUBLIC_CDN_URL` el resolver devuelve rutas locales relativas (que solo sirven si existen
+  en `public/`, p. ej. `shared/icons` copiados).
 - Los assets se sirven vía resolver/CDN sin mirrors en `public/`.
 
 ### 2.4 Inventario de assets por proyecto
@@ -299,5 +305,5 @@ conjunto de credenciales.
 - `packages/cdn/index.ts` — resolver de assets (`resolveIcon`, `assetResolver`, `deliveryVariants`).
 - `scripts/upload-cdn.js` — subida a Supabase Storage.
 
-_Última revisión: 13 ago 2026._ Relacionado: `MEDIA_FORMATS_SYSTEM.md`, `CACHING_SYSTEM.md`,
+_Última revisión: 17 ago 2026._ Relacionado: `MEDIA_FORMATS_SYSTEM.md`, `CACHING_SYSTEM.md`,
 `MONITORING_SYSTEM.md`, `DOMAINS_SYSTEM.md`, `ANALYTICS_SYSTEM.md`.
