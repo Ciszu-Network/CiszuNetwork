@@ -703,14 +703,14 @@ export default function InformationPage() {
              <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                {(Object.keys(I) as Array<keyof typeof I>).map((key) => (
                  <button key={key} onClick={() => setSelectedIconKey(key)} className={`aspect-square bg-black/40 border transition-all flex items-center justify-center group relative overflow-hidden rounded-2xl ${selectedIconKey === key ? 'border-neon-blue bg-neon-blue/10 scale-95' : 'border-white/5 hover:border-white/20'}`}>
-                    <div className={`w-8 h-8 transition-all ${selectedIconKey === key ? 'text-neon-blue' : 'text-white'}`}>{I[key]}</div>
+                    <div className={`w-8 h-8 transition-all text-white [&_img]:brightness-0 [&_img]:invert`}>{I[key]}</div>
                     {selectedIconKey === key && <div className="absolute inset-0 bg-neon-blue/5 animate-pulse-neon pointer-events-none" />}
                  </button>
                ))}
              </div>
           </div>
           <div className="p-12 rounded-[4rem] bg-doc-dark border-2 border-white/10 flex flex-col items-center gap-8 relative overflow-hidden group/viewer shadow-2xl">
-             <div className="w-48 h-48 text-white drop-shadow-[0_0_30px_rgba(39,158,255,0.4)] transition-all duration-500 transform group-hover/viewer:scale-110">{I[selectedIconKey]}</div>
+             <div className="w-48 h-48 text-white drop-shadow-[0_0_30px_rgba(39,158,255,0.4)] transition-all duration-500 transform group-hover/viewer:scale-110 [&_img]:brightness-0 [&_img]:invert">{I[selectedIconKey]}</div>
              <div className="text-center space-y-2">
                 <h4 className="text-4xl font-header font-black text-white uppercase italic tracking-tighter">Icon_{selectedIconKey}</h4>
                 <div className="px-6 py-2 bg-black/60 rounded-xl border border-white/5 flex items-center gap-4 mt-4">
@@ -763,7 +763,7 @@ export default function InformationPage() {
                  { name: 'Vercel', icon: I.vercel, color: 'white', link: 'https://vercel.com/', use: 'Despliegue en el Edge y optimización de tráfico.', tech: 'Edge Runtime • CI/CD • Analytics' }
                ].map(tech => (
                  <Link key={tech.name} href={tech.link} target="_blank" className={`group p-8 bg-doc-dark border border-white/5 rounded-[2rem] hover:bg-white/5 hover:border-neon-${tech.color} hover:shadow-[0_0_30px_rgba(var(--neon-${tech.color}-rgb,0,0,0),0.1)] transition-all duration-500 flex flex-col items-start gap-6 cursor-pointer`}>
-                    <div className={`w-12 h-12 text-neon-${tech.color} group-hover:scale-110 transition-transform duration-500 drop-shadow-[0_0_10px_currentColor]`}>{tech.icon}</div>
+                    <div className={`w-12 h-12 text-neon-${tech.color} group-hover:scale-110 transition-transform duration-500 drop-shadow-[0_0_4px_currentColor]`}>{tech.icon}</div>
                     <div className="space-y-4">
                        <div className="space-y-1">
                           <h4 className="text-xl font-header font-black text-white uppercase italic tracking-tight">{tech.name}</h4>

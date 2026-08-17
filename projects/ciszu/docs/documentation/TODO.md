@@ -2,30 +2,24 @@
 
 > Este archivo solo puede ser editado por Ciszuko Antony.
 
-## Frontend General — estructura y diseño de páginas
+### Cambios a todas las Websites
 
-**Cookies banner.**
+- [ ] Esta es una nueva implementacion que ningun website tiene, debemos aplicarselo a las 4. Actualmente existe una tendencia sobre los headers de las websites, cuando el usuario esta en el tope de la pagina en cuestion, se mantiene como esta actualmente (cubre los extremos de arriba de izquierda a derecha), pero la tendencia ahora es que ademas de eso, si el usuario hace un scroll hacia abajo. Para que el header sea mas dinamico y no estatico. Reducen su tamaño y esconden algunas opciones por zoom adaptativo, con el fin de trasformar el header en un header flotante estilo boton blotante. Dando margen al fondo de la pagina por los lados, contorno redondeado, fondo traslucido. Y cambiante, debido a que si el usuario vuelve al tope de la pagina vuelve a ser un header completo y normal. La transicion debe tener una animacion fluida y la interactividad debe ser igual al header normal. Esto da mas lujosidad al UI/UX y demostrar tecnologias impresionantes. No se como lo vas a hacer, pero haslo. En las 4 websites.
 
-- [ ] Agregar banner de Cookies a todas las websites existen exeptuando muzicmania por que ya lo tiene, guiate como esta hecho desde alli.
-
-**Hero title interactivo.**
-
-- [ ] Cambiar los herotitles del main o home index de cada website expeptuando muzicmania por que ya lo tiene, guiate como esta hecho desde alli. Agregar animaciones, glow, interaccion con link al mismo sitio. Etc.
-
-# Cambios por Website
+### Cambios por Website
 
 **Ciszu Network Website:**
 
-- [ ] Sacar la pagina de soprote de la seccion de informacion en los navbars para que sea independiente paraecido a muzicmania.
+- [ ] Nada
 
 **Ciszubot Website:**
 
-- [ ] El boton de invitar del navbar del header debe estar antes del boton de search esto con el vfin de armonia visual entre los 3 botones redondos y el boton largo.
+- [ ] Nada
 
 **Ciszuko Antony Website:**
 
-- [ ] Actualmente al abrir el menu hamburguesa cubre todo el lateral de la pagina. Eso esta mal. Deberia ser como ciszunetwork o muzicmania, aparecer debajo del header en el sentido que no lo sobreponga por arriba. Recuerda que el boton de meu hamburguesa es un togle, al darle lo abbre y al darle de nuevo se convierte en una X y si le das denuevo se quita. Fijate en la pagina de ciszunetwork y muzicmania. Eso significa que actualmente la x que esta incrustada adentro del menu hamburguesa quitala, es redundante.
+- [ ] Nada
 
 **MuzicMania Website:**
 
-- [ ] Existe 2 iconos de muzicmania que si cargan pero son alusinaciones por ia gneerada, debes descargarlos oficialmente y subirlos al cdn hibridamente y inteligentemente para que funcione como svg en local o no, en especial en la seccion de informacion se ve mas claramente. Los iconos son los de next.js y typescript.
+- [ ] En la seccion de librerias de iconos en information todos los iconos deberian ser blancos, el de TS es azul sin ningun motivo. Ademas, en ecosistema tecnologico varios iconos no se ven bien por el glow masico, como el de next..js, TS por sus formas internas. Bajale el glow.

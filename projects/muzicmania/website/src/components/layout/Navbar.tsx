@@ -61,6 +61,8 @@ export const NavbarContent = () => {
     };
   }, []);
 
+  const floating = scrolled && !isSearchOpen && !isMenuOpen && !isAccederOpen && !isZoomWarning;
+
   const searchParams = useSearchParams();
 
   const isFirstRender = useRef(true);
@@ -142,7 +144,7 @@ export const NavbarContent = () => {
 
   const navLabelCls = (href: string) => {
     const active = isActive(href);
-    return `max-w-0 overflow-hidden transition-all duration-300 group-hover:max-w-[100px] ${active ? 'max-w-[100px]' : ''}`;
+    return `max-w-0 overflow-hidden transition-all duration-300 ${floating ? '' : 'group-hover:max-w-[100px]'} ${!floating && active ? 'max-w-[100px]' : ''}`;
   };
 
   const toggleSearch = (e?: React.MouseEvent) => {
@@ -205,17 +207,21 @@ export const NavbarContent = () => {
         </div>
       )}
 
-      <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-black/92 backdrop-blur-2xl border-b border-white/10' : 'bg-[#0a0a14]/80 backdrop-blur-xl border-b border-white/5'} ${isZoomWarning ? 'mt-8' : 'mt-0'}`}>
-        
+<nav className={`fixed z-50 transition-all duration-500 ease-out ${
+          floating
+            ? 'top-3 inset-x-3 rounded-full bg-[#0a0a14]/92 backdrop-blur-2xl border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.6)]'
+            : `top-0 left-0 w-full ${scrolled ? 'bg-black/92 backdrop-blur-2xl border-b border-white/10' : 'bg-[#0a0a14]/80 backdrop-blur-xl border-b border-white/5'} ${isZoomWarning ? 'mt-8' : 'mt-0'}`
+        }`}>
+
         {/* Animated Line Separator Bottom */}
-        <div className={`absolute bottom-0 left-0 w-full h-[2px] transition-colors duration-500 animate-gradient-x ${
+        <div className={`${floating ? 'hidden' : ''} absolute bottom-0 left-0 w-full h-[2px] transition-colors duration-500 animate-gradient-x ${
           isNavigating
             ? 'bg-[length:200%_auto] bg-gradient-to-r from-emerald-400 via-green-500 to-emerald-400'
             : 'bg-[length:200%_auto] bg-gradient-to-r from-neon-blue via-neon-purple to-neon-blue shadow-[0_0_10px_rgba(0,212,255,0.3)]'
         }`} />
 
         <div className="max-w-screen-xl mx-auto px-4">
-          <div className="flex items-center h-[60px] gap-3">
+          <div className={`flex items-center ${floating ? 'h-12' : 'h-[60px]'} gap-3`}>
 
              {/* Logo */}
              <Link href="/" className="flex items-center gap-2.5 group shrink-0 cursor-pointer hover:scale-110 active:scale-95 transition-all duration-300">
@@ -223,9 +229,10 @@ export const NavbarContent = () => {
                  alt="Logo" width={36} height={36}
                  className="group-hover:drop-shadow-[0_0_15px_rgba(0,128,255,0.8)] group-hover:drop-shadow-[0_0_30px_rgba(145,70,255,0.6)] transition-all duration-300"
                />
-               <Image src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/logotype/gradient/color/muzicmania_logotipo_degradado_color.svg')}
-                 alt="MuzicMania" width={160} height={36}
-                 className="hidden lg:block group-hover:drop-shadow-[0_0_15px_rgba(0,128,255,0.8)] group-hover:drop-shadow-[0_0_30px_rgba(145,70,255,0.6)] transition-all duration-300"
+<Image src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/logotype/gradient/color/muzicmania_logotipo_degradado_color.svg')}
+                  alt="MuzicMania" width={160} height={36}
+                  className={`${floating ? 'hidden' : 'hidden lg:block'} group-hover:drop-shadow-[0_0_15px_rgba(0,128,255,0.8)] group-hover:drop-shadow-[0_0_30px_rgba(145,70,255,0.6)] transition-all duration-300`
+                }
                />
              </Link>
 
