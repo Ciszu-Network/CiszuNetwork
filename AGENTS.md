@@ -121,7 +121,7 @@ E:\Ciszu Network\
 ```
 
 La consola de dev local vive en `test/website/debug/` (TUI `dev_console.ps1` + guías
-`dev_console.{md,txt}`); los logs de dev en `.opencode/temp/dev-logs/`. Detalle:
+`dev_console.{md,txt}`); los logs de dev en `test/website/debug/local-logs/`. Detalle:
 `DEV_CONSOLE_SYSTEM.md`.
 
 ### 4.1 Workspaces pnpm y entry points
@@ -129,7 +129,7 @@ La consola de dev local vive en `test/website/debug/` (TUI `dev_console.ps1` + g
 | pnpm filter            | Location                          | What                                        |
 | ---------------------- | --------------------------------- | ------------------------------------------- |
 | `ciszunetwork-website` | `projects/ciszu/website/`         | Next.js — web principal                     |
-| `ciszukantony-website` | `projects/ciszukoantony/website/` | Next.js — portfolio                         |
+| `ciszukoantony-website` | `projects/ciszukoantony/website/` | Next.js — portfolio                         |
 | `muzicmania-website`   | `projects/muzicmania/website/`    | Next.js + Tauri — juego                     |
 | `ciszubot-website`     | `projects/ciszubot/website/`      | Next.js — landing del bot                   |
 | `ciszubot`             | `projects/ciszubot/discord-bot/`  | Discord.js bot (TS, pnpm workspace, Docker) |

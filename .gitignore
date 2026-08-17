@@ -29,6 +29,8 @@ tsconfig.tsbuildinfo
 # Debug logs
 npm-debug.log*
 yarn-debug.log*
+# Logs locales de la consola dev (test/website/debug/local-logs)
+test/website/debug/local-logs/
 # Storybook/Chromatic logs (generados por build-storybook y chromatic)
 packages/ui/*.log
 
