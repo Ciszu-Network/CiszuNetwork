@@ -244,6 +244,10 @@ Pipeline de documentación: `node scripts/txt2md.js` (txt→md) · `node scripts
 - Disco C limitado. Temporales SIEMPRE en `E:\Ciszu Network\.opencode\temp/` (gitignored);
   borrarlos al terminar o limpiar los >1 semana. Nunca usar `C:\Users\fplay\AppData\Local\Temp`.
   Verificar espacio (`Get-PSDrive C,E`) antes de descargas grandes.
+- El data dir global de opencode (`C:\Users\fplay\.local\share\opencode`, db de sesiones + snapshots)
+  se migró a `E:\Ciszu Network\.opencode\data/` con un junction en la ruta original (historia intacta,
+  sin env vars). Script de migración: `.opencode/temp/migrate-opencode-data.ps1` (correr con opencode
+  cerrado). Nunca mover/borrar ese junction ni el data dir directamente.
 
 ---
 
