@@ -1,7 +1,7 @@
 # DEV_CONSOLE_SYSTEM — Consola de Desarrollo y Debugging Local (Ciszu Network)
 
-Versión: 1.0.0
-Actualización: 2026-08-16
+Versión: 1.1.0
+Actualización: 2026-08-17
 Identificador: DEV_CONSOLE_SYSTEM_V1.0.0_2026_08_16_ciszunetwork
 
 > **Definición**: sistema que documenta la consola interactiva (TUI) y el modo CLI
@@ -109,32 +109,42 @@ Windows sin firma).
 
 | Opción | Acción |
 | --- | --- |
-| 4 opciones de web | Abre el submenú de gestión de esa web concreta |
-| Encender TODAS las webs | `Start-WebByKey` sobre las 4 |
-| Detener TODAS las webs | `Stop-WebByKey` sobre las 4 |
-| Estado de puertos / links | Tabla de estado + URLs |
-| Herramientas extra | Limpiar logs, procesos node, ocupación de puertos 3000-3003 |
-| Ayuda (manual de uso) | Muestra la guía rápida integrada |
+| Encender webs | Abre selección múltiple → `Start-WebByKey` sobre las marcadas |
+| Reiniciar webs | `Stop-WebByKey` + `Start-WebByKey` sobre las marcadas |
+| Detener webs | `Stop-WebByKey` sobre las marcadas |
+| Estado de puertos | Tabla de estado + URLs (🔢 selección múltiple) |
+| Logs en tiempo real | Menú simple → log de UNA web encendida por vez |
+| Herramientas extra | Limpiar logs, procesos node, puertos 3000-3003, abrir webs en navegador, procesos por puerto, CPU/mem por web, carpeta de logs, versiones (node/pnpm/turbo), git status, espacio en disco |
+| Manual de ayuda | Muestra la guía rápida integrada |
 | Créditos / Versión | Identidad y versión de la consola |
-| Salir | Termina la sesión, deja los procesos corriendo si estaban encendidos |
+| Salir (Ctrl+C) | Detiene las webs en ejecución y cierra la consola |
 
-### 4.3 Submenú de gestión por web
+### 4.3 Selección múltiple (operativas)
 
-| Opción | Comportamiento |
-| --- | --- |
-| Encender | Lanza `next dev` en el puerto fijo (ignora si ya está encendida) |
-| Reiniciar | `Stop-WebByKey` + `Start-WebByKey` |
-| Detener | Mata el proceso que escucha en el puerto |
-| Abrir en navegador | `Start-Process http://localhost:<port>` |
-| Ver log (tiempo real) | Abre ventana PowerShell con `Get-Content -Tail 80 -Wait` |
+Las operativas (Encender / Reiniciar / Detener) abren un menú de selección con las
+4 webs **marcadas por defecto** (auto-marcado). Al terminar de marcar/desmarcar se
+elige cómo proceder:
+
+| Decisión | Tecla | Comportamiento |
+| --- | --- | --- |
+| **Proceder** | `Enter` | Ejecuta la operación en las webs marcadas |
+| **No proceder** | `N` | Cancela la operación y vuelve al menú (no aplica nada) |
+| **Abortar** | `Q` / `Esc` | Detiene las webs en ejecución y cierra la consola (equivale a Ctrl+C) |
+
+Las webs marcadas se procesan con `Invoke-SelectedWebs` (`Start-WebByKey`/`Stop-WebByKey` con `-Wait`);
+la consola espera (spinner + `Wait-WebReady`) a que cada web responda en su puerto.
 
 ### 4.4 Teclas
 
 | Tecla | Efecto |
 | --- | --- |
 | `↑` / `↓` | Moverse entre opciones |
-| `Enter` | Elegir |
-| `Q` / `Esc` | Volver (o salir en el principal) |
+| `Espacio` | Marcar / desmarcar la web resaltada |
+| `A` | Marcar todas las webs |
+| `1`…`9` / `0` | Saltar al índice de la opción (0 = 10.ª) |
+| `Enter` | Proceder (ejecutar en las webs marcadas) |
+| `N` | No proceder (cancelar) |
+| `Q` / `Esc` | Abortar (detener webs y salir de la consola) |
 
 ## 5. Modo CLI no interactivo
 
@@ -244,12 +254,31 @@ La consola sigue la identidad del ecosistema (neon cyan/rosa sobre negro):
 6. La consola es **dev-only**; no interfiere con los deploys de producción ni con los jobs
    de CI. Los e2e (Playwright) contra producción son otro sistema (`TESTING_SYSTEM.md`).
 
+## 10. Pruebas de la consola (sin Pester)
+
+La consola no depende de un framework externo; se prueba con dos mecanismos:
+
+- **SelfTest interno** (`-SelfTest`): determinista y sin interactividad. Valida versión,
+  catálogo de webs (4 keys/ports fijos), `Format-State`, que `Get-WebPhase` devuelve una fase
+  válida por web y que `Build-WebSelectOptions` genera las 4 opciones. Termina con `exit 0/1`.
+- **Runner** `test/website/debug/dev_console.tests.ps1`: verifica sintaxis, BOM UTF-8
+  (obligatorio para los emojis en PS 5.1), SelfTest, modo Demo y CLI `-Action status`.
+  Termina con `exit 0` solo si todo pasa.
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File test\website\debug\dev_console.ps1 -SelfTest
+powershell -NoProfile -ExecutionPolicy Bypass -File test\website\debug\dev_console.tests.ps1
+```
+
+Al tocar lógica del TUI, ejecutar siempre el runner antes de commitear.
+
 ## Referencias
 
 - Guía de usuario: `test/website/debug/dev_console.md` y `test/website/debug/dev_console.txt`.
+- Pruebas de la consola: `test/website/debug/dev_console.tests.ps1`.
 - Debugging: `DEBUGGING_SYSTEM.md`.
 - Protocolos locales: `LOCAL_TESTING_PROTOCOLS.md`.
 - Framework de tests global: `TESTING_SYSTEM.md`.
 - Comandos del agente: `OPENCODE_SYSTEM.md`.
 
-_Última revisión: 16 ago 2026._ Relacionado: `DEBUGGING_SYSTEM.md`, `LOCAL_TESTING_PROTOCOLS.md`, `TESTING_SYSTEM.md`.
+_Última revisión: 17 ago 2026._ Relacionado: `DEBUGGING_SYSTEM.md`, `LOCAL_TESTING_PROTOCOLS.md`, `TESTING_SYSTEM.md`.

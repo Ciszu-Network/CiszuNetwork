@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { assetResolver } from '@ciszunetwork/cdn';
 import { useAppStore } from '@/store';
@@ -117,8 +118,9 @@ const TECH_LINKS = [
 export const Footer = () => {
   const { theme, setTheme, language, setIsMenuOpen, setSidebarView } = useAppStore();
   const [toast, setToast] = useState<string | null>(null);
+  const pathname = usePathname();
 
-  const isActive = (href: string) => typeof window !== 'undefined' && window.location.pathname === href;
+  const isActive = (href: string) => pathname === href;
 
   return (
     <footer className="relative bg-black border-t-2 border-brand/20 pt-12 pb-6 px-4 md:px-8 overflow-hidden z-30">

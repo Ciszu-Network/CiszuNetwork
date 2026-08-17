@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Icon, SmartImage } from '@ciszu/ui';
 import { useAppStore } from '@/store';
 import {
@@ -88,7 +89,8 @@ interface FooterProps {
 
 export default function Footer({ lang, dict }: FooterProps) {
   const { setIsMenuOpen, setSidebarView } = useAppStore();
-  const isActive = (href: string) => typeof window !== 'undefined' && window.location.pathname === href;
+  const pathname = usePathname();
+  const isActive = (href: string) => pathname === href;
   const [isDark, setIsDark] = useState(true);
 
   useEffect(() => {
