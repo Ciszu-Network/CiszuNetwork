@@ -6,6 +6,7 @@ import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, FabS
 import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ZoomWarning } from "@/components/layout/ZoomWarning";
+import { CookiesBanner } from "@/components/layout/CookiesBanner";
 import FeedbackFab from "@/components/layout/FeedbackFab";
 import { CISZU_NETWORK } from "@/config/site";
 import "./globals.css";
@@ -56,6 +57,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
           <Navbar />
           <main className="flex-grow">{children}</main>
           <Footer />
+          <CookiesBanner />
         </CloudflareGuard>
         <PwaRegister />
         <FabStackProvider>

@@ -22,7 +22,7 @@ Crear y mantener reputación pública verificada para los productos de Ciszu Net
 | **MuzicMania** (juego web) | Trustpilot, Google Play/App Store (si publica), itch.io | Reseñas del juego | ⏳ Futuro |
 | **Ciszubot** (bot Discord) | **Top.gg**, **DiscordBotList** (discordbotlist.com) | Rating y reseñas del bot | ✅ **Integrado** (AutoPoster cada 30 min + votos recompensan 500 monedas en `statsServer`) |
 | **MuzicMania** (app Tauri/Windows) | Microsoft Store (si publica), trustpilot | Reseñas de la app de escritorio | ⏳ Futuro |
-| Webs en general | Google Business Profile / Google Reviews | Reputación local (negocio) | ⏳ Futuro (requiere cuenta Google + dirección) |
+| Webs en general | Google Business Profile / Google Reviews | Reputación local (negocio) | ✅ **Ciszu Network configurado** (17 ago 2026) — perfil enlazado, link de reseñas + datos en `/support`. Detalle: `GOOGLE_SYSTEM.md` |
 
 ## 3. Trustpilot — integración técnica
 

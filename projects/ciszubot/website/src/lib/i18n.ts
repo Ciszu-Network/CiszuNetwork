@@ -148,6 +148,13 @@ export const dict = {
       rights: 'Todos los derechos reservados.',
       madeBy: 'Hecho con amor por',
     },
+    cookiesBanner: {
+      title: 'Uso de Cookies y Privacidad',
+      text: 'Utilizamos cookies propias y de terceros (incluyendo servicios de Google y Cloudflare) para mantener tu sesión activa, proteger el bot de bots y mejorar tu experiencia. Al continuar navegando, aceptas nuestra ',
+      privacyLink: 'Política de Privacidad',
+      termsLink: 'Términos de Servicio',
+      accept: 'ENTENDIDO',
+    },
     commandsPage: {
       title: 'Comandos',
       subtitle:
@@ -444,6 +451,13 @@ export const dict = {
       discordServer: 'Discord server',
       rights: 'All rights reserved.',
       madeBy: 'Made with love by',
+    },
+    cookiesBanner: {
+      title: 'Cookies & Privacy',
+      text: 'We use first and third-party cookies (including Google and Cloudflare services) to keep your session active, protect the bot from bots and improve your experience. By continuing to browse, you accept our ',
+      privacyLink: 'Privacy Policy',
+      termsLink: 'Terms of Service',
+      accept: 'GOT IT',
     },
     commandsPage: {
       title: 'Commands',

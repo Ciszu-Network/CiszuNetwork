@@ -6,6 +6,7 @@ import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, FabS
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import FeedbackFab from "@/components/layout/FeedbackFab";
+import { CookiesBanner } from "@/components/layout/CookiesBanner";
 import "./globals.css";
 const PROFILE_PIC = assetResolver.resolve("projects/ciszukoantony/content/assets/youtube_canal.png");
 const OG_IMAGE = assetResolver.resolve("projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png");
@@ -55,6 +56,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <Navbar />
           <main className="flex-grow">{children}</main>
           <Footer />
+          <CookiesBanner />
         </CloudflareGuard>
         <PwaRegister />
         <FabStackProvider>

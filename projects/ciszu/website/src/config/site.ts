@@ -12,6 +12,7 @@ export const CISZU_NETWORK = {
     x: 'https://x.com/CiszukoAntony',
     github: 'https://github.com/Ciszu-Network',
     discord: 'https://discord.com/invite/W3kMtMMj6E',
+    tiktok: 'https://www.tiktok.com/@ciszunetwork',
   },
 };
 
@@ -72,6 +73,7 @@ export const SOCIAL_ICONS: Record<SocialPlatform, string> = {
   x: '#x-twitter',
   github: '#github',
   discord: '#discord',
+  tiktok: '#tiktok',
 };
 
 export const SOCIAL_COLORS: Record<SocialPlatform, string> = {
@@ -81,6 +83,7 @@ export const SOCIAL_COLORS: Record<SocialPlatform, string> = {
   x: '#000000',
   github: '#333333',
   discord: '#5865F2',
+  tiktok: '#000000',
 };
 
 export const PROJECT_SECTIONS = [

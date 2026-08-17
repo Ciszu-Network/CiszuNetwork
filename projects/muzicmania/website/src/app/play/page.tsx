@@ -255,6 +255,7 @@ function PlayPageContent() {
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const [leaderboardData, setLeaderboardData] = useState<{ score: number; user: string; date: string }[]>([]);
   const [following, setFollowing] = useState<string[]>(() => {
+    if (typeof window === 'undefined') return [];
     const saved = localStorage.getItem('play_following');
     return saved ? JSON.parse(saved) : [];
   });

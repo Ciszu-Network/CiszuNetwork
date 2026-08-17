@@ -94,8 +94,8 @@ export default async function Home() {
             </span>
           </div>
 
-          <div className="flex flex-col items-center gap-7 mb-9">
-            <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-surface border border-border shadow-[0_10px_40px_-10px_rgba(35,63,146,0.35)] overflow-hidden animate-float">
+          <Link href="/" className="flex flex-col items-center gap-7 mb-9 group cursor-pointer" aria-label="CiszuBot">
+            <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-surface border border-border shadow-[0_10px_40px_-10px_rgba(35,63,146,0.35)] group-hover:shadow-[0_0_45px_rgba(35,63,146,0.6)] overflow-hidden animate-float transition-all duration-500">
               <SmartImage
                 src={LOGO_ISOTIPO_CIRCLE}
                 alt="CiszuBot isotipo"
@@ -112,9 +112,9 @@ export default async function Home() {
               width={420}
               height={80}
               fetchPriority="high"
-              className="w-[280px] md:w-[420px] h-auto drop-shadow-sm animate-fade-in-up"
+              className="w-[280px] md:w-[420px] h-auto drop-shadow-sm group-hover:drop-shadow-[0_0_30px_rgba(59,180,255,0.7)] transition-all duration-500 animate-fade-in-up"
             />
-          </div>
+          </Link>
 
           <p className="mx-auto max-w-2xl text-lg md:text-xl text-muted mb-10">
             {t.hero.tagline}{' '}

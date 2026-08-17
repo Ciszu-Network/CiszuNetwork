@@ -15,6 +15,8 @@ interface AppState {
   setLanguage: (val: Language) => void;
   searchQuery: string;
   setSearchQuery: (val: string) => void;
+  hasAcceptedCookies: boolean;
+  setHasAcceptedCookies: (val: boolean) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -28,4 +30,6 @@ export const useAppStore = create<AppState>((set) => ({
   setLanguage: (val: Language) => set({ language: val }),
   searchQuery: '',
   setSearchQuery: (val: string) => set({ searchQuery: val }),
+  hasAcceptedCookies: false,
+  setHasAcceptedCookies: (val: boolean) => set({ hasAcceptedCookies: val }),
 }));

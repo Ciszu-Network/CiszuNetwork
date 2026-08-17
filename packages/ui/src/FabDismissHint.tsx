@@ -41,6 +41,8 @@ export interface FabDismissHintProps {
 }
 
 const HINT_DURATION = 3000;
+/** Altura mínima del slot (fallback mientras no se mide la real). */
+const HINT_MIN_HEIGHT = 92;
 
 export default function FabDismissHint({
   slotId,
@@ -57,7 +59,27 @@ export default function FabDismissHint({
   // Order único por hint: los avisos se apilan entre sí y siempre por encima de
   // los botones flotantes (FAB_HINT_ORDER_BASE).
   const [order] = useState(() => FAB_HINT_ORDER_BASE + hintSeq++);
-  const bottom = useFabStack(`dismiss-hint-${slotId}`, { order, height: 92 });
+  // Altura REAL medida del aviso (ResizeObserver). Si el mensaje ocupa más que
+  // el mínimo, se registra esa altura para que los hints NUNCA se sobrepongan.
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState(HINT_MIN_HEIGHT);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const measure = () => {
+      setHeight((h) => {
+        const real = Math.max(HINT_MIN_HEIGHT, Math.ceil(el.getBoundingClientRect().height));
+        return real === h ? h : real;
+      });
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const bottom = useFabStack(`dismiss-hint-${slotId}`, { order, height });
 
   // Cuenta atrás fluida por timestamp (requestAnimationFrame), no por
   // setInterval: evita que el contador se trabe. Cada frame calcula el tiempo
@@ -105,6 +127,7 @@ export default function FabDismissHint({
 
   return (
     <div
+      ref={containerRef}
       style={{ ...containerStyle, bottom }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
@@ -231,5 +254,7 @@ const countTrackStyle: CSSProperties = {
 const countFillStyle: CSSProperties = {
   height: '100%',
   borderRadius: 999,
-  transition: 'width 1s linear',
+  // Sin transition: el ancho se actualiza por frame (requestAnimationFrame) y
+  // la barra se vacía fluida. Una transition fija de `width` se reinicia en
+  // cada frame y hace que la barra parezca congelada/trabada.
 };

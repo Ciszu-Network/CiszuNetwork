@@ -15,6 +15,8 @@ interface AppState {
   setSidebarView: (val: SidebarView) => void;
   searchQuery: string;
   setSearchQuery: (val: string) => void;
+  hasAcceptedCookies: boolean;
+  setHasAcceptedCookies: (val: boolean) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -28,4 +30,6 @@ export const useAppStore = create<AppState>((set) => ({
   setSidebarView: (val: SidebarView) => set({ sidebarView: val }),
   searchQuery: '',
   setSearchQuery: (val: string) => set({ searchQuery: val }),
+  hasAcceptedCookies: false,
+  setHasAcceptedCookies: (val: boolean) => set({ hasAcceptedCookies: val }),
 }));

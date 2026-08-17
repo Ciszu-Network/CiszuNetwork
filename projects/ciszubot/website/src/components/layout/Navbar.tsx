@@ -288,58 +288,6 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
           </div>
 
           <div className="flex items-center gap-2 ml-auto shrink-0">
-            {/* Toggle de tema — estilo muzicmania */}
-            <button
-              onClick={setTheme}
-              className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group ${
-                isDark ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
-              }`}
-              aria-label="Toggle theme"
-              title="Toggle theme"
-            >
-              {isDark ? (
-                <svg className="w-5 h-5 text-black transition-transform duration-500 group-hover:rotate-12" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                </svg>
-              ) : (
-                <svg className="w-6 h-6 text-black transition-transform duration-500 group-hover:rotate-90" viewBox="0 0 24 24" fill="currentColor" stroke="black" strokeWidth={1}>
-                  <circle cx="12" cy="12" r="4" />
-                  <path d="M12 1v3m0 16v3M4.22 4.22l2.12 2.12m11.32 11.32l2.12 2.12M1 12h3m16 0h3M4.22 19.78l2.12-2.12M19.78 4.22l-2.12 2.12" strokeLinecap="round" />
-                </svg>
-              )}
-            </button>
-
-            {/* Buscador — toggle (panel full-width bajo el nav) */}
-            <div className="relative">
-              <button
-                ref={searchToggleRef}
-                onClick={() => { setSearchOpen(v => !v); setIsMenuOpen(false); setAccountOpen(false); setAuthOpen(false); setInviteOpen(false); }}
-                className={`p-2 rounded-full border transition-all duration-300 cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_10px_rgba(0,212,255,0.25)] ${
-                  searchOpen
-                    ? 'bg-neon-blue border-neon-blue text-black'
-                    : 'bg-card border-border text-ink hover:border-neon-blue'
-                }`}
-                aria-label={dict.nav.search}
-                title={dict.nav.search}
-              >
-                {searchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
-              </button>
-            </div>
-
-            {/* Selector de idioma — botón pill único con globo (estilo de las otras 3 webs) */}
-            <button
-              onClick={() => setLang(lang === 'es' ? 'en' : 'es')}
-              className="group flex items-center gap-3 px-4 py-2 bg-card hover:bg-muted/15 border border-border hover:border-neon-blue rounded-full transition-all duration-300 shadow-lg cursor-pointer"
-              title={lang === 'es' ? 'English' : 'Español'}
-            >
-              <svg className="w-5 h-5 transition-transform duration-500 group-hover:rotate-12 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                <circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-              </svg>
-              <span className="text-muted group-hover:text-neon-blue uppercase tracking-widest text-xs font-bold">
-                {lang === 'es' ? 'ESPAÑOL' : 'ENGLISH'}
-              </span>
-            </button>
-
             {/* Invitar — botón con texto */}
             <div className="relative hidden sm:block" ref={inviteRef}>
               <button
@@ -371,6 +319,23 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                 </p>
                 </div>
               )}
+            </div>
+
+            {/* Buscador — toggle (panel full-width bajo el nav) */}
+            <div className="relative">
+              <button
+                ref={searchToggleRef}
+                onClick={() => { setSearchOpen(v => !v); setIsMenuOpen(false); setAccountOpen(false); setAuthOpen(false); setInviteOpen(false); }}
+                className={`p-2 rounded-full border transition-all duration-300 cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_10px_rgba(0,212,255,0.25)] ${
+                  searchOpen
+                    ? 'bg-neon-blue border-neon-blue text-black'
+                    : 'bg-card border-border text-ink hover:border-neon-blue'
+                }`}
+                aria-label={dict.nav.search}
+                title={dict.nav.search}
+              >
+                {searchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
+              </button>
             </div>
 
             {/* Cuenta / Login */}
@@ -464,7 +429,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
               }`}
               aria-label="Menu"
             >
-              {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5 stroke-[2.5]" />}
             </button>
           </div>
         </div>

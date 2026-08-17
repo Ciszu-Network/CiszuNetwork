@@ -47,15 +47,18 @@ export function buildCsp(opts: CspOptions = {}): string {
     // 'unsafe-eval' SOLO en desarrollo: el cliente de Next.js dev lo exige.
     [
       'script-src',
-      ["'self'", "'unsafe-inline'", ...(dev ? ["'unsafe-eval'"] : []), 'https://challenges.cloudflare.com', 'https://static.cloudflareinsights.com', 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', ...(opts.scriptSrc ?? [])],
+      ["'self'", "'unsafe-inline'", ...(dev ? ["'unsafe-eval'"] : []), 'https://challenges.cloudflare.com', 'https://static.cloudflareinsights.com', 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://va.vercel-scripts.com', ...(opts.scriptSrc ?? [])],
     ],
     // Estilos inline de la v3 PDWA y utilidades CSS en línea del ecosistema.
     ['style-src', ["'self'", "'unsafe-inline'"]],
     ['img-src', ["'self'", 'data:', 'blob:', SUPABASE_ORIGIN, ...local, ...(opts.imgSrc ?? [])]],
     ['media-src', ["'self'", ...local]],
     ['font-src', ["'self'", 'data:', ...local, ...(opts.fontSrc ?? [])]],
-    ['connect-src', ["'self'", SUPABASE_ORIGIN, 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://static.cloudflareinsights.com', 'https://cloudflareinsights.com', 'https://challenges.cloudflare.com', 'https://*.ingest.us.sentry.io', ...local, ...(opts.connectSrc ?? [])]],
+    ['connect-src', ["'self'", SUPABASE_ORIGIN, 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://static.cloudflareinsights.com', 'https://cloudflareinsights.com', 'https://challenges.cloudflare.com', 'https://va.vercel-scripts.com', 'https://*.ingest.us.sentry.io', ...local, ...(opts.connectSrc ?? [])]],
     ['frame-src', ["'self'", 'https://challenges.cloudflare.com', ...(opts.frameSrc ?? [])]],
+    // worker-src explícito: PostHog recording crea workers desde blob: URLs;
+    // sin esta directiva cae a script-src y se bloquea (paridad en las 4 webs).
+    ['worker-src', ["'self'", 'blob:']],
     ['object-src', ["'none'"]],
     ['base-uri', ["'self'"]],
     ['form-action', ["'self'"]],
