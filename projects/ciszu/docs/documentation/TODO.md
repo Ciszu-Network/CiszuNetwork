@@ -32,7 +32,7 @@ SpiderFoot: Automatiza la búsqueda de información sobre un objetivo en cientos
 
 Google Dorking (Búsqueda avanzada): Nunca subestimes el poder de los operadores de búsqueda. Combinar búsquedas entre comillas "correo@ejemplo.com" o usar comandos como site:linkedin.com "nombre de la persona" suele dar mejores resultados que muchas herramientas automatizadas.
 
-- [ ] IMPLEMENTACION DE EDITOR VISUAL UI/UX (no realizar aun):
+- [ ] IMPLEMENTACION DE EDITOR VISUAL UI/UX, documentar en VISUAL_BUILDERS_SYSTEM.md. Comparar cual seria el mejor para el proyecto o usar hibrido.
 
 Para desarrolladores que trabajan con **React, Next.js y Tailwind**, existen herramientas modernas espectaculares que hacen exactamente lo que necesitas. Aquí tienes las mejores opciones reales que trabajan directo con tu código local:
 
@@ -186,7 +186,7 @@ Análisis técnico y comparativo detallado de las 4 opciones finalistas (**Onloo
 - Si lo que buscas es **crear un sistema interno donde tú u otras personas armen páginas mediante bloques visuales dentro de tu propio código de Next.js**, la mejor opción es **Puck** (por ser una librería open-source 100% gratuita que vive en tus dependencias).
 - **Subframe** y **Plasmic** quedan un paso atrás si buscas una experiencia puramente local y sin fricciones de nube, ya que ambas dependen fuertemente de plataformas web externas antes de llevar el código a tu máquina.
 
-> Credenciales de las herramientas de editor visual (PLASMIC*\*, PUCK*_, SUBFRAME\__) movidas a
+> Credenciales de las herramientas de editor visual (PLASMIC*\*, PUCK*\_, SUBFRAME\_\_) movidas a
 > `SECRET_TEMP.env` — nunca en este MD. Referencias: `PLASMIC_TOKEN`, `PLASMIC_CMS_ID`,
 > `PLASMIC_PUBLIC_TOKEN`, `PLASMIC_SECRET_TOKEN`, `PUCK_KEY`, `PUCK_ORG_KEY`, `SUBFRAME_KEY`.
 > CMS Plasmic: studio.plasmic.app/cms/<PLASMIC_CMS_ID> · Subframe: app.subframe.com/<SUBFRAME_FLOW>.

@@ -5,8 +5,8 @@
 # Documentado en: projects/ciszu/docs/documentation/CIBERSECURITY_SYSTEM.md y OSINT_PROTOCOLS.md
 #
 # Uso:
-#   .\tools\osint\maigret.ps1 -Usernames iconage,iconagenator,DRAWDRAW          # preset full (como el ejemplo original)
-#   .\tools\osint\maigret.ps1 -Usernames prueba -Preset quick -Test             # test rapido en test/osint/maigret
+#   .\tools\osint\maigret.ps1 -Usernames none_xisty_zzz_999                     # preset full
+#   .\tools\osint\maigret.ps1 -Usernames foo -Preset quick -Test             # test rapido en test/osint/maigret
 #   .\tools\osint\maigret.ps1 -Usernames foo -Out "E:\ruta\custom"              # carpeta de salida explicita
 #
 # Presets:

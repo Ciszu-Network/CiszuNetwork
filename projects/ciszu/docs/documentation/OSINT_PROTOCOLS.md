@@ -110,7 +110,7 @@ sin `-Test` (envía a `tools/osint/output/`).
 **Ejemplo oficial Ciszuko** (equivalente exacto al manual):
 
 ```powershell
-.\tools\osint\maigret.ps1 -Usernames iconage,iconagenator,DRAWDRAW   # preset full
+.\tools\osint\maigret.ps1 -Usernames none_xisty_zzz_999             # preset full
 ```
 
 ### 3.3 SimpleLogin (API v2, vinculada 18 ago 2026)
@@ -206,7 +206,7 @@ SpiderFoot (vía `helpers.targetTypeFromString`) detecta el tipo por el **format
 | **Email** | `foo@example.com` | `osint-sfx foo@example.com` | `/spiderfoot foo@example.com` |
 | **Dominio** | `example.com` | `osint-sfx example.com -Preset quick -Test` | `/spiderfoot example.com` |
 | **Teléfono** | `+584165551234` (con `+`) | `osint-sfx +584165551234` | `/spiderfoot +584165551234` |
-| **Username** | `iconage` | `osint-sfx iconage` | `/spiderfoot iconage` |
+| **Username** | `none_xisty_zzz_999` | `osint-sfx none_xisty_zzz_999` | `/spiderfoot none_xisty_zzz_999` |
 
 Reglas:
 - El teléfono debe pasar **con `+` y solo dígitos** (`+584165551234`); sin `+` se trataría como
@@ -326,7 +326,7 @@ Detalle: `CIBERSECURITY_SYSTEM.md` §5 y `VAULT_SYSTEM.md` §3.7.
 |---|---|
 | Presencia social de un username | `osint-sher foo,bar` |
 | Idem rápido (test) | `osint-sher foo -Preset quick -Test` |
-| Profundizar con datos extraídos | `osint-mai foo,DRAWDRAW` |
+| Profundizar con datos extraídos | `osint-mai none_xisty_zzz_999` |
 | Validar pipeline Maigret | `osint-mai none_xxx_zzz999 -Preset quick -Test` |
 | Validar cuenta SimpleLogin | `osint-slo info` |
 | Ver dominios disponibles | `osint-slo options` |

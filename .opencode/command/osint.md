@@ -26,11 +26,11 @@ herramientas OSINT con los presets oficiales. Salidas:
 ## Ejemplos
 
 ```powershell
-# Maigret full (equivalent exacto al comando manual de Ciszuko)
-& "E:\Ciszu Network\tools\osint\maigret.ps1" -Usernames iconage,iconagenator,DRAWDRAW
+# Maigret full
+& "E:\Ciszu Network\tools\osint\maigret.ps1" -Usernames none_xisty_zzz_999
 
 # Sherlock test rapido
-& "E:\Ciszu Network\tools\osint\sherlock.ps1" -Usernames prueba -Preset quick -Test
+& "E:\Ciszu Network\tools\osint\sherlock.ps1" -Usernames none_xisty_zzz_999 -Preset quick -Test
 
 # SimpleLogin: validar key + lista de alias
 & "E:\Ciszu Network\tools\osint\simplelogin.ps1" info
