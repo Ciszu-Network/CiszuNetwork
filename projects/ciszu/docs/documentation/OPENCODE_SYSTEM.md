@@ -263,5 +263,6 @@ hacia el agente**. Activado en este ecosistema vía `"lsp": true` en `opencode.j
 - ntfy: `scripts/ntfy-notif.js` + doc `MONITORING_SYSTEM.md` / `REMOTE_CONTROL_SYSTEM.md`
 - MCP: `opencode.json` global (`C:\Users\fplay\.config\opencode\opencode.json`)
 
-_Última revisión: 19 ago 2026._ Relacionado: `FRAMEWORKS_SYSTEM.md`, `TESTING_SYSTEM.md`,
-`LOCAL_TESTING_PROTOCOLS.md`, `AGENTS.md` (§6.7), `REMOTE_CONTROL_SYSTEM.md`, `MONITORING_SYSTEM.md`.
+_Última revisión: 19 ago 2026._ Relacionado: `LSP_PROTOCOLS.md`, `MCP_PROTOCOLS.md`,
+`FRAMEWORKS_SYSTEM.md`, `TESTING_SYSTEM.md`, `LOCAL_TESTING_PROTOCOLS.md`, `AGENTS.md` (§6.7),
+`REMOTE_CONTROL_SYSTEM.md`, `MONITORING_SYSTEM.md`.
