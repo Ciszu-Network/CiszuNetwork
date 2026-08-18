@@ -84,11 +84,19 @@ export default function InstallPdwaButton({
   const [dismissHint, setDismissHint] = useState(false);
   const [panel, setPanel] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const browser = useMemo<PdwaBrowserInfo>(
-    () => (uaOverride ? detectPdwaBrowser(uaOverride) : getBrowser()),
-    [uaOverride]
+    () => {
+      if (!mounted) return { id: 'other', label: 'este navegador', nativa: false };
+      return uaOverride ? detectPdwaBrowser(uaOverride) : getBrowser();
+    },
+    [mounted, uaOverride]
   );
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;

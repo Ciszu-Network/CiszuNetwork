@@ -7,6 +7,12 @@ Sentry.init({
   // Replays al 100% temporalmente (pruebas). Bajar a 0.1 en producción tras validar.
   replaysSessionSampleRate: 1,
   replaysOnErrorSampleRate: 1,
+  ignoreErrors: [
+    // Extensiones del navegador que se inyectan en cada página y lanzan errores
+    // ajenos a la web (MetaMask, wallets, etc.). No son de la app.
+    /Failed to connect to MetaMask/i,
+    /chrome-extension:\/\//i,
+  ],
   integrations: [
     Sentry.replayIntegration(),
     Sentry.feedbackIntegration({

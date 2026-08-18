@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Icon, SmartImage } from '@ciszu/ui';
+import { Icon, SmartImage, useZoomStatus } from '@ciszu/ui';
 import { Menu, X, Search } from 'lucide-react';
 import { useAppStore } from '@/store';
 import { INVITE_URL, LOGO_ISOTIPO, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
@@ -124,7 +124,10 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const floating = scrolled && !searchOpen && !isMenuOpen;
+  const zoom = useZoomStatus();
+  const isZoomWarning = !zoom.dismissed && zoom.status !== 'normal';
+
+  const floating = scrolled && !searchOpen && !isMenuOpen && !isZoomWarning;
 
   // Clear navigation loader once the route change completed
   useEffect(() => {
@@ -234,7 +237,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
     }`;
 
   const linkLabelCls = (href: string) =>
-    `max-w-0 overflow-hidden transition-all duration-300 ${floating ? '' : 'group-hover:max-w-[100px]'} ${!floating && isActive(href) ? 'max-w-[100px]' : ''}`;
+    `max-w-0 overflow-hidden transition-all duration-300 group-hover:max-w-[100px] ${isActive(href) ? 'max-w-[100px]' : ''}`;
 
   return (
     <>
@@ -259,8 +262,8 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
 
       <nav className={`fixed z-50 transform-gpu will-change-transform [backface-visibility:hidden] transition-all duration-500 ease-out ${
           floating
-            ? 'top-3 inset-x-3 rounded-full bg-bg/90 backdrop-blur-2xl border border-border/80 shadow-[0_10px_40px_rgba(0,0,0,0.55)]'
-            : 'top-0 left-0 w-full bg-bg/85 backdrop-blur-2xl border-b border-border'
+            ? 'top-3 inset-x-3 rounded-2xl bg-bg/60 backdrop-blur-2xl border border-border/80 shadow-[0_10px_40px_rgba(0,0,0,0.55)]'
+            : `top-0 left-0 w-full bg-bg/85 backdrop-blur-2xl border-b border-border ${isZoomWarning ? 'mt-8' : 'mt-0'}`
         }`}>
         <div
           className={`${floating ? 'hidden' : ''} absolute bottom-0 left-0 w-full h-[2px] bg-[length:200%_auto] animate-gradient-x transition-colors duration-500 ${
@@ -270,7 +273,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
           }`}
         />
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className={`flex items-center ${floating ? 'h-12' : 'h-[64px]'} gap-3`}>
+        <div className={`flex items-center ${floating ? 'h-14' : 'h-[64px]'} gap-3`}>
           <Link href="/" className="flex items-center gap-2.5 shrink-0 group cursor-pointer">
             <SmartImage
               src={LOGO_ISOTIPO}
@@ -285,7 +288,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
               alt="CiszuBot"
               width={150}
               height={30}
-              className={`${floating ? 'hidden' : 'hidden lg:block'} h-[30px] w-auto group-hover:drop-shadow-[0_0_15px_rgba(0,212,255,0.8)] transition-all duration-300`}
+              className="hidden lg:block h-[30px] w-auto group-hover:drop-shadow-[0_0_15px_rgba(0,212,255,0.8)] transition-all duration-300"
               fetchPriority="high"
             />
           </Link>

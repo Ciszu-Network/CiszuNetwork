@@ -4,22 +4,23 @@
 
 ### Cambios a todas las Websites
 
-- [ ] Esta es una nueva implementacion que ningun website tiene, debemos aplicarselo a las 4. Actualmente existe una tendencia sobre los headers de las websites, cuando el usuario esta en el tope de la pagina en cuestion, se mantiene como esta actualmente (cubre los extremos de arriba de izquierda a derecha), pero la tendencia ahora es que ademas de eso, si el usuario hace un scroll hacia abajo. Para que el header sea mas dinamico y no estatico. Reducen su tamaño y esconden algunas opciones por zoom adaptativo, con el fin de trasformar el header en un header flotante estilo boton blotante. Dando margen al fondo de la pagina por los lados, contorno redondeado, fondo traslucido. Y cambiante, debido a que si el usuario vuelve al tope de la pagina vuelve a ser un header completo y normal. La transicion debe tener una animacion fluida y la interactividad debe ser igual al header normal. Esto da mas lujosidad al UI/UX y demostrar tecnologias impresionantes. No se como lo vas a hacer, pero haslo. En las 4 websites.
+- [x] Readaptar mejor el island inteligentemente. Actualmente tenemos el problema de que al hacer hover en una opcion pagina o seccion, no muestra el titulo. Por que actualmente esta optimizado de manera que lo quita.El island debe ser mas inteligente no solo adaptarse al zoom del usuario si no tambien al contenido del header, ademas que le falta el efecto traslucido de fondo. Los logos tambien se le quitan elementos. El problema es que actualmente sobra mucho espacio, por lo tanto no es inteligente realmente. Si fuera inteligente no reduciria elementos, por que existe y sobre espacio. Ya el zoom se encarga de ocultar ciertos elementos. Basicamente cada elemento debe tener su titulo respectivo independientemente del contenido del header, se debe adaptar. No importa si se esconde, por que es relativo al zoom del usuario y el menu hamburguesa sirve para mostrar todo pas inagas y secciones. Ojo, la animacion del hover y que aparece el titulo si se mantiene y mi queja es que actualmente la animacion no tiene sentido por que no aparece el titulo.
+- [ ] FUTURO: Sincronizar AUTH y PREFERENCIAS LOCALES (no realizar aun)
 
 ### Cambios por Website
 
 **Ciszu Network Website:**
 
-- [ ] Nada
+- [x] Agregar sistema de advertencia de zoom maximo o minimo de muzimania, discleimer ,y avisos. Acomodados para PC y movil.
 
 **Ciszubot Website:**
 
-- [ ] Nada
+- [x] Agregar sistema de advertencia de zoom maximo o minimo de muzimania, discleimer ,y avisos. Acomodados para PC y movil.
 
 **Ciszuko Antony Website:**
 
-- [ ] Nada
+- [x] Agregar sistema de advertencia de zoom maximo o minimo de muzimania, discleimer ,y avisos. Acomodados para PC y movil.
 
 **MuzicMania Website:**
 
-- [ ] En la seccion de librerias de iconos en information todos los iconos deberian ser blancos, el de TS es azul sin ningun motivo. Ademas, en ecosistema tecnologico varios iconos no se ven bien por el glow masico, como el de next..js, TS por sus formas internas. Bajale el glow.
+- [ ] Nada
