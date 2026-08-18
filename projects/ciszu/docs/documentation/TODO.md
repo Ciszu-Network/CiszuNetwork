@@ -23,15 +23,6 @@ Hunter.io: Muy efectiva si estás investigando correos corporativos. Te permite 
 
 Thatsthem: Permite realizar búsquedas inversas de correos intentando vincularlos con registros públicos para obtener nombre, ubicación o teléfonos asociados.
 
-3. Herramientas de investigación integral (Frameworks)
-   Si buscas realizar una investigación más profunda que conecte varios puntos (nombres, alias, correos, IPs):
-
-Maltego: Es una herramienta profesional de minería de datos y visualización de vínculos. Permite "conectar los puntos" entre diferentes tipos de información. Tiene una versión comunitaria gratuita que es muy potente.
-
-SpiderFoot: Automatiza la búsqueda de información sobre un objetivo en cientos de fuentes públicas. Es ideal para recopilar datos de forma masiva (correos, números, nombres, dominios) y organizarlos.
-
-Google Dorking (Búsqueda avanzada): Nunca subestimes el poder de los operadores de búsqueda. Combinar búsquedas entre comillas "correo@ejemplo.com" o usar comandos como site:linkedin.com "nombre de la persona" suele dar mejores resultados que muchas herramientas automatizadas.
-
 - [ ] IMPLEMENTACION DE EDITOR VISUAL UI/UX, documentar en VISUAL_BUILDERS_SYSTEM.md. Comparar cual seria el mejor para el proyecto o usar hibrido.
 
 Para desarrolladores que trabajan con **React, Next.js y Tailwind**, existen herramientas modernas espectaculares que hacen exactamente lo que necesitas. Aquí tienes las mejores opciones reales que trabajan directo con tu código local:

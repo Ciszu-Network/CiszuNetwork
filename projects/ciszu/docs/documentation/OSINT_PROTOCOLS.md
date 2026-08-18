@@ -23,7 +23,7 @@ Identificador: OSINT_PROTOCOLS_V1.0.0_2026_08_18_ciszunetwork
 2. **Mínimo necesario.** Se pide el dato mínimo que responde la pregunta. Un username, un
    correo o un alias; nada de barridos masivos de terceros sin motivo.
 3. **Datos personales en cuarentena.** Cualquier hallazgo con datos de terceros se guarda
-   SOLO en `test/osint/<herramienta>/` o `tools/osint/output/<herramienta>/` (gitignored).
+   SOLO en `test/osint/<herramienta>/` o `tools/cibersecurity/osint/output/<herramienta>/` (gitignored).
    Jamás se committea ni se copia a `docs/` o `projects/`.
 4. **No confiar en el propio estado.** Cada afirmación se verifica con la herramienta real
    (curl a la API, salida del binario, salida del wrapper).
@@ -41,11 +41,11 @@ Identificador: OSINT_PROTOCOLS_V1.0.0_2026_08_18_ciszunetwork
 | `test/osint/maigret/` | Pruebas rápidas con Maigret (reportes CSVs/HTML) | ignorada |
 | `test/osint/sherlock/` | Pruebas rápidas con Sherlock | ignorada |
 | `test/osint/simplelogin/` | Pruebas/registros con SimpleLogin | ignorada |
-| `tools/osint/` | Wrappers oficiales + README + `output/` | ✅ versionada (scripts) |
-| `tools/osint/output/<tool>/` | Salida OFICIAL de las herramientas | ignorada |
+| `tools/cibersecurity/osint/` | Wrappers oficiales + README + `output/` | ✅ versionada (scripts) |
+| `tools/cibersecurity/osint/output/<tool>/` | Salida OFICIAL de las herramientas | ignorada |
 
 Regla: en **modo test** se usa `-Test` (envía a `test/osint/`); en **modo oficial** se usa
-sin `-Test` (envía a `tools/osint/output/`).
+sin `-Test` (envía a `tools/cibersecurity/osint/output/`).
 
 ### 2.2 Flujo estándar de una búsqueda de usernames
 
@@ -110,7 +110,7 @@ sin `-Test` (envía a `tools/osint/output/`).
 **Ejemplo oficial Ciszuko** (equivalente exacto al manual):
 
 ```powershell
-.\tools\osint\maigret.ps1 -Usernames none_xisty_zzz_999             # preset full
+.\tools\cibersecurity\osint\maigret.ps1 -Usernames none_xisty_zzz_999             # preset full
 ```
 
 ### 3.3 SimpleLogin (API v2, vinculada 18 ago 2026)
@@ -122,7 +122,7 @@ sin `-Test` (envía a `tools/osint/output/`).
 - API key: vive en `services/supabase/.env` (`SIMPLELOGIN_API_KEY`) y en Bitwarden
   (item "SimpleLogin - fplayersoffcial (Ciszu Network)"). El wrapper la lee del vault.
 - Recovery codes: `SIMPLELOGIN_RECOVERY_CODES` en vault + notes del item de Bitwarden.
-- Regla de acceso: SIEMPRE a través de `tools/osint/simplelogin.ps1`; nunca teclear la key
+- Regla de acceso: SIEMPRE a través de `tools/cibersecurity/osint/simplelogin.ps1`; nunca teclear la key
   en línea de comandos ni loguearla.
 
 **Pautas de creación de alias**:
@@ -184,7 +184,7 @@ cd "clones\spiderfoot" && pip install -r requirements.txt
 python ./sf.py -l 127.0.0.1:5001   # web UI (opcional)
 ```
 
-**Wrapper oficial**: `tools/osint/spiderfoot.ps1` (busca el clon en `clones\spiderfoot\sf.py`).
+**Wrapper oficial**: `tools/cibersecurity/osint/spiderfoot.ps1` (busca el clon en `clones\spiderfoot\sf.py`).
 Presets:
 - `full` (default): `-u passive` — todos los módulos pasivos sin API keys (lento, exhaustivo).
 - `quick`: módulos gratuitos seleccionados automáticamente según el **tipo de target**:
@@ -192,7 +192,7 @@ Presets:
   sfp_emailrep`), teléfono (`sfp_phone,sfp_intelx`), dominio (`sfp_whois,sfp_crt,sfp_viewdns,
   sfp_hunter`) o username (`sfp_gravatar,sfp_keybase,sfp_social,sfp_accounts`).
 
-Salida CSV por target a `test/osint/spiderfoot/` (test) y `tools/osint/output/spiderfoot/`
+Salida CSV por target a `test/osint/spiderfoot/` (test) y `tools/cibersecurity/osint/output/spiderfoot/`
 (oficial).
 
 **Comandos**: PowerShell `osint-sfx` · opencode `/spiderfoot <target>`.
@@ -365,7 +365,7 @@ cabecera (la cuenta no existe). Preset `quick` tarda ~10-15 s por target.
 
 ### 6.4 Reglas
 
-- Si el usuario no indica lo contrario, la salida oficial va a `tools/osint/output/<tool>/`;
+- Si el usuario no indica lo contrario, la salida oficial va a `tools/cibersecurity/osint/output/<tool>/`;
   `-Test` envía a `test/osint/<tool>/` (gitignored).
 - Nunca imprimir API keys ni recovery codes; los wrappers leen del vault.
 - Nunca usar usernames/emails/teléfonos reales en pruebas; usar el sintético
@@ -379,7 +379,7 @@ cabecera (la cuenta no existe). Preset `quick` tarda ~10-15 s por target.
 1. Objetivo claro y legítimo definido.
 2. Pipeline validado en `-Test` antes de producción.
 3. Herramienta adecuada (Sherlock barrido / Maigret profundidad / SimpleLogin alias).
-4. Salida en carpeta gitignored correcta (`test/osint/` o `tools/osint/output/`).
+4. Salida en carpeta gitignored correcta (`test/osint/` o `tools/cibersecurity/osint/output/`).
 5. Resultados verificados contra la fuente externa (URL responde, alias reenvía).
 6. Ningún secreto ni dato personal de terceros en commits, docs ni resúmenes.
 7. Tarea documentada en el doc relevante (`CIBERSECURITY_SYSTEM.md` / este doc) y, si

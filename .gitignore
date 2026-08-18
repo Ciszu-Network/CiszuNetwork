@@ -169,8 +169,8 @@ test/art/
 test/music/
 test/video/
 test/osint/
-# tools/osint/output — reportes OSINT oficiales (datos personales de terceros, no trackear)
-tools/osint/output/
+# tools/cibersecurity/osint/output — reportes OSINT oficiales (datos personales de terceros, no trackear)
+tools/cibersecurity/osint/output/
 test/website/testing/
 
 # Reportes y estado de test (vitest + e2e) — outputs generados, nunca trackear

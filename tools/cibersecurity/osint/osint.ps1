@@ -4,10 +4,10 @@
 #   maigret, sherlock, simplelogin, spiderfoot
 #
 # Uso:
-#   .\tools\osint\osint.ps1 maigret -Usernames foo,bar
-#   .\tools\osint\osint.ps1 sherlock -Usernames foo -Preset quick -Test
-#   .\tools\osint\osint.ps1 simplelogin info
-#   .\tools\osint\osint.ps1 spiderfoot -Targets foo@example.com
+#   .\tools\cibersecurity\osint\osint.ps1 maigret -Usernames foo,bar
+#   .\tools\cibersecurity\osint\osint.ps1 sherlock -Usernames foo -Preset quick -Test
+#   .\tools\cibersecurity\osint\osint.ps1 simplelogin info
+#   .\tools\cibersecurity\osint\osint.ps1 spiderfoot -Targets foo@example.com
 #
 # Atajos PowerShell (perfil): osint-mai, osint-sher, osint-slo, osint-sfx
 
