@@ -299,25 +299,23 @@ Pipeline de documentación: `node scripts/txt2md.js` (txt→md) · `node scripts
 
 ### 6.7 LSP (Language Server Protocol) del agente — estado actual
 
-**El agente NO usa LSP** (verificado 19 ago 2026 contra la doc oficial de opencode y la
-config real). Motivos:
+**El agente usa LSP** (activado 19 ago 2026). Cómo está configurado:
 
-- opencode trae los LSP servers **desactivados por defecto**; se habilitan solo con la clave
-  `lsp` en `opencode.json` (`"lsp": true` o `"lsp": { ... }`). Ni la configuración global
-  (`~/.config/opencode/opencode.json`) ni el proyecto tienen `lsp` definido.
-- Sin esa clave, no se arranca ningún Language Server (typescript, eslint, etc.), así que **no
-  hay diagnósticos LSP alimentando al agente**: el feedback de tipos/errores llega solo cuando
-  el agente ejecuta comandos.
-- Compensación obligatoria (es la vía recomendada por la propia doc de opencode): ejecutar por
-  comando las herramientas de diagnóstico del repo — `tsc --noEmit` / `pnpm --filter <web> exec
-  tsc --noEmit`, `eslint`, `next build` y `pnpm test` — y documentarlas aquí y en
-  `LOCAL_TESTING_PROTOCOLS.md` §3.3. No asumir que el código "tipo bien": verificar.
-
-Si Ciszuko quieres activarlo, la vía es añadir en `opencode.json` (raíz) `"lsp": true` y
-**reiniciar opencode** (la config se carga al arranque; ver `OPENCODE_SYSTEM.md`). Activar el
-LSP da diagnósticos proactivos (tipos/errores del proyecto vía typescript/eslint), pero consume
-memoria y puede ralentizar sesiones grandes; en este PC conviene evaluarlo antes de activar por
-defecto.
+- `opencode.json` (raíz del monorepo) define `"lsp": true`, que habilita los LSP servers
+  built-in de opencode (typescript, eslint, yaml, bash, etc.).
+- La activación exige que las deps estén resueltas **desde la raíz del workspace**:
+  opencode arranca el server `typescript` solo si `typescript` es resoluble en el proyecto, y
+  `eslint` solo con `eslint` resoluble. Por eso `package.json` (raíz) tiene `typescript
+  ^6.0.3` y `eslint ^9.0.0` en `devDependencies` (los workspaces de las webs traen TS, pero
+  pnpm no hoista sus deps al root).
+- La config se carga **al arranque**: cualquier cambio en `opencode.json` o nuevo server
+  requiere reiniciar opencode. Si la UI muestra el LSP "disabled", verificar primero que
+  `node -e "require.resolve('typescript')"` resuelve desde la raíz.
+- Los diagnósticos LSP (tipos/errores vía typescript y eslint) alimentan al agente de forma
+  proactiva, pero **no sustituyen** la verificación de compilación por comando:
+  ejecutar `tsc --noEmit` / `pnpm --filter <web> exec tsc --noEmit`, `eslint`, `next build`
+  y `pnpm test` documentadas aquí y en `LOCAL_TESTING_PROTOCOLS.md` §3.3. No asumir que el
+  código "tipo bien" solo por no ver errores LSP: verificar con build real.
 
 ---
 
