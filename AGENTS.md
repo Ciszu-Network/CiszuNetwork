@@ -310,7 +310,13 @@ Pipeline de documentación: `node scripts/txt2md.js` (txt→md) · `node scripts
   pnpm no hoista sus deps al root).
 - La config se carga **al arranque**: cualquier cambio en `opencode.json` o nuevo server
   requiere reiniciar opencode. Si la UI muestra el LSP "disabled", verificar primero que
-  `node -e "require.resolve('typescript')"` resuelve desde la raíz.
+  `node -e "require.resolve('typescript')"` resuelve desde la raíz y que opencode se reinició
+  **después** de la instalación de deps.
+- `permission.lsp: allow` en `opencode.json` habilita al agente las **tools LSP
+  experimentales** (queries de definitions, hover, references). Para activarlas por completo
+  hace falta además la env var `OPENCODE_EXPERIMENTAL_LSP_TOOL=true` **antes** de arrancar la
+  sesión (p. ej. en el perfil PowerShell o con `$env:` en la terminal de lanzamiento);
+  `OPENCODE_DISABLE_LSP_DOWNLOAD=true` evita descargas de servers en redes restringidas.
 - Los diagnósticos LSP (tipos/errores vía typescript y eslint) alimentan al agente de forma
   proactiva, pero **no sustituyen** la verificación de compilación por comando:
   ejecutar `tsc --noEmit` / `pnpm --filter <web> exec tsc --noEmit`, `eslint`, `next build`
