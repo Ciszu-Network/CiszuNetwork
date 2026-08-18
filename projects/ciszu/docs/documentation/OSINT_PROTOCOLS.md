@@ -150,16 +150,17 @@ conclusiones para la integración.
 | email | HaveIBeenPwned | API free con rate limit (vía SpiderFoot) | vía SpiderFoot |
 | email | Epieos / Thatsthem | Servicios web/manuales | manual |
 | email | Hunter.io | Freemium con cupo | vía SpiderFoot (tiered) |
-| framework | Maltego | Community gratuita pero escritorio/GUI | opcional (manual) |
+| framework | Maltego | Community gratuita (GUI desktop) | ✅ **INSTALADA (Ciszuko)** — en configuración |
 | técnica | Google Dorking | Gratuito, operadores de búsqueda | protocolo (no herramienta) |
 
 **Integrado (18 ago 2026)**: SpiderFoot instalado en `clones/spiderfoot` (§4.1).
 
 **Decisión (18 ago 2026, Ciszuko)**: toda API o herramienta de pago queda **DESCARTADA**
-hasta que haya capital. SEON, Hunter.io, HIBP (uso con key), Maltego (GUI opcional manual,
-no es pago) y similares **no se integran ni se compran** por ahora. Si un día hay capital y
-se revisa de nuevo, el criterio será: se evalúa si el módulo/función aporta algo que
-SpiderFoot free no cubra ya.
+hasta que haya capital. SEON, Hunter.io, HIBP (uso con key) y similares **no se integran ni se
+compran** por ahora. Si un día hay capital y se revisa de nuevo, el criterio será: se evalúa si
+el módulo/función aporta algo que SpiderFoot free no cubra ya. Excepción: **Maltego** fue
+instalada por Ciszuko (Community, gratuita) y está en configuración — su uso será manual/GUI
+(no hay CLI para CI).
 
 ### 4.1 SpiderFoot (framework integral) — integración oficial
 
@@ -243,7 +244,7 @@ también por estar unmaintained y requerir scanners externos (API) para ser úti
 
 | Herramienta | Para qué | Modelo/licencia | Estado |
 |---|---|---|---|
-| **Maltego** | Minería de datos + visualización de vínculos (entidades) | Community gratuita | Opcional manual (GUI desktop); no CLI para CI |
+| **Maltego** | Minería de datos + visualización de vínculos (entidades) | Community gratuita (GUI) | ✅ **Instalada** (18 ago 2026, Ciszuko); en configuración. Uso manual/GUI; sin CLI para CI |
 | **SpiderFoot** | Automatizar búsqueda en cientos de fuentes (correos, números, dominios, IPs) | Open source (MIT), CLI/web | **Integrado oficial** (§4.1) |
 | **Google Dorking** | Operadores de búsqueda avanzada | Gratuito | **Protocolo** (no herramienta): ver §4.5 |
 
@@ -278,7 +279,7 @@ usar para datos no públicos de terceros.
 | **Hunter.io** | email corporativo | ❌ **DESCARTADA** | Freemium con cupo; módulo tiered de SpiderFoot — no se paga hasta tener capital |
 | **Epieos** | email Google | ⏸️ **SIN INTEGRAR** | Servicio web manual; requiere auth de Google del objetivo (uso manual cuidado, sin wrapper) |
 | **Thatsthem** | email inverso | ⏸️ **SIN INTEGRAR** | Web con límites; solo uso manual |
-| **Maltego** | framework GUI | ⏸️ **OPCIONAL** | Community gratuita pero GUI desktop, sin CLI para CI; no aporta algo que SpiderFoot no haga |
+| **Maltego** | framework GUI | ✅ **INSTALADA** | Community gratuita (GUI desktop); instalada por Ciszuko 18 ago 2026, en configuración. Uso manual; sin CLI para CI (la complementa SpiderFoot) |
 | **AbstractAPI/numverify/Twilio/CallerName/TextMagic** | teléfono | ❌ **DESCARTADAS** | Módulos de SpiderFoot que requieren API key de pago (abstractapi, numverify, Twilio, CallerName…) — sin capital |
 | **SEON/Epieos/Thatsthem** | email | ❌ **DESCARTADAS/SIN INTEGRAR** | Ver filas individuales |
 
@@ -392,6 +393,7 @@ cabecera (la cuenta no existe). Preset `quick` tarda ~10-15 s por target.
 |---|---|
 | 18 ago 2026 | Doc creada (v1.0.0). Protocolos Sherlock/Maigret/SimpleLogin; sección POST-OSINT candidatas |
 | 18 ago 2026 | Sección §6 ampliada con comandos SpiderFoot por tipo (email/dominio/teléfono/username) y ejemplos verificados; regla de usernames sintéticos |
+| 18 ago 2026 | **Maltego Community instalada por Ciszuko** (en configuración); estado actualizado en §4.0/§4.4/§4.6 de candidata/opcional a INSTALADA |
 
 ---
 
