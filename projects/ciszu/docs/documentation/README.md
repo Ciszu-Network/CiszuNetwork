@@ -11,7 +11,7 @@ commits como el resto del repo.
 ## Índice por categoría
 
 ### Sistemas
-`ARCHITECTURE.md` · `FULL_STACK_SYSTEM.md` (stack) · `DB_SYSTEM.md` (BD/consultas) · `AUTH_SYSTEM.md` (auth) · `CACHING_SYSTEM.md` · `CDN_SYSTEM.md` · `ICON_SYSTEM.md` · `MEDIA_FORMATS_SYSTEM.md` · `DOCKER_SYSTEM.md` · `TESTING_SYSTEM.md` · `TOOLS_SYSTEM.md` · `WORKFLOW_SYSTEM.md` · `VAULT_SYSTEM.md` (credenciales) · `DOMAINS_SYSTEM.md` · `MONITORING_SYSTEM.md` (UptimeRobot + ntfy) · `ANALYTICS_SYSTEM.md` · `ERRORS_SYSTEM.md` (Sentry) · `EMAILS_SYSTEM.md` · `PAYMENTS_SYSTEM.md` · `REVIEWS_SYSTEM.md` · `GOOGLE_SYSTEM.md` · `CORS_SYSTEM.md` · `BUSINESS_SYSTEM.md` · `OPENCODE_SYSTEM.md` (voz + comandos) · `REMOTE_CONTROL_SYSTEM.md` (SSH/Tailscale/ciszu-ai) · `KNOWLEDGE_SYSTEM.md` (educación) · `DOCUMENTATION_SYSTEM.md` (reglas de docs) · `STATISTICS_SYSTEM.md` · `STATUS_SYSTEM.md` · `PROJECTS_SYSTEM.md` · `ACTIONS_RUNNERS_SYSTEM.md` (CI/deploys locales sin GH Actions)
+`ARCHITECTURE.md` · `FULL_STACK_SYSTEM.md` (stack) · `DB_SYSTEM.md` (BD/consultas) · `AUTH_SYSTEM.md` (auth) · `CACHING_SYSTEM.md` · `CDN_SYSTEM.md` · `ICON_SYSTEM.md` · `MEDIA_FORMATS_SYSTEM.md` · `DOCKER_SYSTEM.md` · `TESTING_SYSTEM.md` · `TOOLS_SYSTEM.md` · `WORKFLOW_SYSTEM.md` · `VAULT_SYSTEM.md` (credenciales) · `DOMAINS_SYSTEM.md` · `MONITORING_SYSTEM.md` (UptimeRobot + ntfy) · `ANALYTICS_SYSTEM.md` · `ERRORS_SYSTEM.md` (Sentry) · `EMAILS_SYSTEM.md` · `PAYMENTS_SYSTEM.md` · `REVIEWS_SYSTEM.md` · `GOOGLE_SYSTEM.md` · `CORS_SYSTEM.md` · `BUSINESS_SYSTEM.md` · `OPENCODE_SYSTEM.md` (voz + comandos) · `REMOTE_CONTROL_SYSTEM.md` (SSH/Tailscale/ciszu-ai) · `KNOWLEDGE_SYSTEM.md` (educación) · `DOCUMENTATION_SYSTEM.md` (reglas de docs) · `VISUAL_BUILDERS_SYSTEM.md` (editores visuales UI/UX) · `STATISTICS_SYSTEM.md` · `STATUS_SYSTEM.md` · `PROJECTS_SYSTEM.md` · `ACTIONS_RUNNERS_SYSTEM.md` (CI/deploys locales sin GH Actions)
 
 ### Arquitectura por capas
 `FRONTEND_SYSTEM.md` (frontend) · `BACKEND_SYSTEM.md` (backend) · `PACKAGES_SYSTEM.md` (paquetes compartidos) · `UI_COMPONENTS_SYSTEM.md` (componentes UI + Storybook/Chromatic/Figma) · `FRAMEWORKS_SYSTEM.md` (frameworks) · `STYLES_SYSTEM.md` (estilos) · `COLOR_SYSTEM.md` (color)
@@ -36,4 +36,4 @@ commits como el resto del repo.
 - Los docs de estado quedan exentos del límite de líneas; `TODO.md` solo lo edita Ciszuko
   Antony.
 
-_Última revisión: 13 ago 2026._ Relacionado: `DOCUMENTATION_SYSTEM.md`, `AGENTS.md`.
+_Última revisión: 18 ago 2026._ Relacionado: `DOCUMENTATION_SYSTEM.md`, `AGENTS.md`.
