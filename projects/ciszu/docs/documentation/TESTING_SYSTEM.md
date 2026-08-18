@@ -9,11 +9,16 @@ Identificador: TESTING_SYSTEM_V2.1.0_2026_08_16_ciszunetwork
 
 ## Resumen ejecutivo (TL;DR)
 
-- **Recomendación**: **Vitest** (unit/integration) + **Playwright** (E2E) + **Testing Library** para componentes React. Es el stack estándar del ecosistema JS en 2026.
+- **Recomendación**: **Next.js (build local)** como primera capa de verificación + **Vitest** (unit/integration) + **Playwright** (E2E) + **Testing Library** para componentes React. Es el stack estándar del ecosistema JS en 2026.
 - **Costo**: 100% gratis y open source (MIT/Apache-2.0). **Sin tarjeta de crédito ni cuenta** — todo corre local con npm/pnpm y en GitHub Actions (free tier).
 - **¿Sobreingeniería?**: hoy SÍ para las webs puramente informativas (ciszunetwork, ciszukoantony); NO para lógica compartida (`@ciszu/ui`, `@ciszunetwork/cdn`), el bot y el backend de muzicmania.
 - **Estrategia correcta**: no instalar "por instalar", sino testear **lo que tiene lógica y riesgo**, dejando las páginas estáticas sin tests E2E.
 - **Alternativa mínima sin dependencias**: `node:test` built-in (ya viene con Node, cero deps).
+
+> **Next.js como framework de testeo local**: `next build` / `next dev` compilan y tipan las 4
+> webs y **fallan en errores de bundling/SSR/tipos**. Es la capa 0 de verificación de todo
+> cambio de frontend (gratis, ya instalada, validada en CI por Vercel) ANTES de Vitest/E2E.
+> Obligatoria por `LOCAL_TESTING_PROTOCOLS.md` §3.3. Ver §9A.
 
 ---
 
@@ -236,6 +241,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File test/website/debug/dev_conso
 | Necesidad | Herramienta |
 | --- | --- |
 | Prueba visual/funcional local (frontend) | Consola dev (`devcon`/`pnpm dev:all`) |
+| **Verificación de compilación/bundling local** | **`next build` / `pnpm <web>:build`** — capa 0, la compilación ES un test |
 | Unit / integración de lógica | `pnpm test` (Vitest) |
 | Componentes `@ciszu/ui` aislados | Storybook (`sb`) + `test:storybook` |
 | Smoke E2E contra producción | `pnpm e2e` (Playwright) |
@@ -246,6 +252,38 @@ forma básica y la validación final contra la web desplegada.
 
 Detalle operativo completo en `DEV_CONSOLE_SYSTEM.md`, diagnóstico en `DEBUGGING_SYSTEM.md`
 y reglas obligatorias en `LOCAL_TESTING_PROTOCOLS.md`.
+
+---
+
+## 9A. Next.js como framework de testeo local (la capa 0)
+
+Como usamos Next.js para compilar en local, `next build` **es también un framework de
+testeo**: valida que la aplicación compila, tipa en runtime de páginas y no rompe rutas.
+Los workflows de Vercel corren `next build` al desplegar, pero verificar antes del push
+evita deploys rotos (y fallos en cadena porque `packages/**` re-despliega las 4 webs).
+
+**Dónde encaja en la pirámide de tests:**
+
+```
+Línea de verificación local (por capa, barata → cara):
+1. next build / next dev   ← compilación + tipos (sin navegador)  [capa 0]
+2. pnpm test (Vitest)      ← lógica unit/integration              [capa 1]
+3. Storybook territories   ← componentes @ciszu/ui aislados        [capa 1.5]
+4. pnpm e2e (Playwright)   ← navegador real contra producción      [capa 2]
+```
+
+- **Qué atrapa**: imports inexistentes, tipos erróneos en páginas/componentes server,
+  mezcla client/server mal declarada, rutas dinámicas inválidas, errores de build de
+  Turbowrap/Tailwind.
+- **Qué NO atrapa**: comportamiento lógico (eso es Vitest), interacción visual real (eso es
+  Playwright / dev local en el navegador).
+- **Cuándo correrlo**:
+  - Siempre que la tarea toque frontend o `packages/**` (un cambio ahí re-despliega las 4 webs).
+  - Antes del push de cualquier feature: `pnpm build` (turbo, todas las apps) o
+    `pnpm --filter <web> build` para una sola web.
+- **Comando**: `pnpm --filter <web> build` (p. ej. `ciszunetwork-website`) o `pnpm build` (todas).
+- **Regla**: no reportar una tarea de frontend como terminada sin que la web compile en local
+  (`next build` OK o `[ON]` en la consola dev). Ver `LOCAL_TESTING_PROTOCOLS.md` §3.3.
 
 ---
 
