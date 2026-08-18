@@ -1,8 +1,8 @@
 # OPENCODE_SYSTEM — Comandos y Voz para OpenCode
 
-Versión: 2.0.0
-Actualización: 2026-08-13
-Identificador: OPENCODE_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
+Versión: 2.1.0
+Actualización: 2026-08-19
+Identificador: OPENCODE_SYSTEM_V2.1.0_2026_08_19_ciszunetwork
 
 Sistema de comandos personalizados y voz bidireccional (STT/TTS) para la terminal opencode en Windows.
 
@@ -200,6 +200,45 @@ Decisión de diseño: para acciones **manuales e inmediatas** el Nivel 1 es mejo
 4. **Contexto de sesión**: los comandos de código NO gastan tokens; markdown y MCP sí.
 5. **Seguridad**: comandos con `child_process` deben validar argumentos (lista blanca) para evitar inyección.
 
+## LSP (Language Server Protocol) — activado 2026-08-19
+
+OpenCode integra servidores LSP para usar los diagnósticos del lenguaje como **feedback proactivo
+hacia el agente**. Activado en este ecosistema vía `"lsp": true` en `opencode.json` (raíz del repo).
+
+### Beneficios para el agente
+
+- **Diagnósticos en vivo**: al abrir/editar un archivo, el server (typescript, eslint) entrega al
+  agente errores de tipos, imports rotos y lint **sin ejecutar comandos**, antes de que el agente
+  decida la siguiente acción.
+- **Menos ciclos de verificación**: evita lanzar `tsc`/`eslint` a ciegas: el agente ya sabe qué está
+  roto y puede corregir o pedir lo preciso.
+- **Precisión en refactorings**: las queries LSP del agente (definitions, references, hover) dan
+  navegación semántica sobre el código real, no por texto plano.
+- **Cobertura multi-lenguaje**: servers built-in para ~35 lenguajes; en este monorepo los que
+  realmente aplican son `typescript` y `eslint` (deps ya presentes en la raíz).
+
+### Configuración aplicada
+
+- `opencode.json` (raíz): `"lsp": true` (habilita todos los built-in) + `"permission": { "lsp": "allow" }`
+  (permite al agente usar las tools LSP experimentales: definitions/hover/references).
+- `package.json` (raíz): `typescript ^6.0.3` en `devDependencies` — el server `typescript` solo se
+  activa si esa dep es resoluble **desde la raíz del workspace** (pnpm no hoista deps de los
+  workspaces al root). `eslint ^9.0.0` ya existía.
+- Env vars de usuario (persistentes en el entorno Windows): `OPENCODE_EXPERIMENTAL_LSP_TOOL=true`
+  y `OPENCODE_DISABLE_LSP_DOWNLOAD=true`.
+- Detalle y troubleshooting: `AGENTS.md` §6.7.
+
+### Operación y límites
+
+- La config se carga **al arrancar el server de opencode** (no la TUI): cualquier cambio en
+  `opencode.json` o en las deps requiere **cerrar del todo opencode y relanzarlo** (el server es
+  persistente entre sesiones TUI; un server viejo conserva el estado anterior).
+- Los servers se arrancan **bajo demanda, al leer un archivo** de una extensión soportada
+  (`typescript`: `.ts/.tsx/.js/...`) y cumplir los requisitos locales.
+- Los diagnósticos LSP **no sustituyen** la verificación de compilación por comando
+  (`tsc --noEmit`, `next build`, `pnpm test`): el LSP puede desincronizarse del estado real; el
+  build por comando es la garantía (ver `LOCAL_TESTING_PROTOCOLS.md` §3.3 y `TESTING_SYSTEM.md` §9A).
+
 ## Notas y gotchas
 
 - El plugin se carga **al arrancar el servidor opencode**. Para activar/recargar: **reiniciar el server** (`ciszu-ai-reset` / `ciszu-ai reset`). ⚠️ Reiniciar corta la sesión en vivo (PC y móvil). Ver `REMOTE_CONTROL_SYSTEM.md`.
@@ -223,3 +262,6 @@ Decisión de diseño: para acciones **manuales e inmediatas** el Nivel 1 es mejo
 - Plugin de voz: `tools/tts-stt-ai/` (patrón de registro de comandos)
 - ntfy: `scripts/ntfy-notif.js` + doc `MONITORING_SYSTEM.md` / `REMOTE_CONTROL_SYSTEM.md`
 - MCP: `opencode.json` global (`C:\Users\fplay\.config\opencode\opencode.json`)
+
+_Última revisión: 19 ago 2026._ Relacionado: `FRAMEWORKS_SYSTEM.md`, `TESTING_SYSTEM.md`,
+`LOCAL_TESTING_PROTOCOLS.md`, `AGENTS.md` (§6.7), `REMOTE_CONTROL_SYSTEM.md`, `MONITORING_SYSTEM.md`.
