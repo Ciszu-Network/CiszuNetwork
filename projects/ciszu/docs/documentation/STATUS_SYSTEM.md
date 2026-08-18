@@ -1,8 +1,8 @@
 # STATUS_SYSTEM — Estado del Ecosistema CISZU NETWORK
 
-Versión: 2.1.4
+Versión: 2.1.5
 Actualización: 2026-08-19
-Identificador: STATUS_SYSTEM_V2.1.4_2026_08_19_ciszunetwork
+Identificador: STATUS_SYSTEM_V2.1.5_2026_08_19_ciszunetwork
 
 > **Definición**: documento operativo de estado del monorepo. Se actualiza al cerrar cada
 > sesión de trabajo. Refleja la foto actual de proyectos, sistemas y scripts.
@@ -206,6 +206,7 @@ Este doc es una **foto del estado** del ecosistema; al cerrar sesión:
 | Fecha | Cambio relevante |
 |---|---|
 | 2026-08-19 | **LSP del agente activado** en opencode: `opencode.json` (raíz) con `"lsp": true` + `permission.lsp: allow`; `typescript ^6.0.3` añadido a `devDependencies` de la raíz (requisito: dep resoluble en el root del workspace, pnpm no hoista) + `pnpm install`; env vars de usuario `OPENCODE_EXPERIMENTAL_LSP_TOOL=true` y `OPENCODE_DISABLE_LSP_DOWNLOAD=true`. Verificado: server del log emite `enabled LSP servers` (typescript, eslint, …). Documentado en `OPENCODE_SYSTEM.md` (nueva sección LSP, v2.1.0) y `AGENTS.md` §6.7 |
+| 2026-08-19 | **Puck AI completado + cierre de acceso del editor** (`VISUAL_BUILDERS_SYSTEM.md`): integrado `@puckeditor/plugin-ai@0.8.2` + `@puckeditor/cloud-client@0.8.2` (handler `/api/puck/[...all]`, `ai.context`, `PUCK_API_KEY`=`PUCK_ORG_KEY` del vault en `.env.local`). Cierre de la exposición por token (§6.5): middleware 403 en Vercel (sin `EDIT_TOKEN`), `/edit/login` + `/api/edit/login` (rate limit 10/min, cookie httpOnly), `src/lib/edit-auth.ts`. Fix dev server (`.next` corrupto). Verificado local: login→cookie→`/edit/home` 200, `/api/puck/chat` conecta con Puck Cloud (key aceptada + versiones 0.8.2). Deploys del push con el editor abierto cancelados a tiempo → producción nunca expuso `/edit` (404 verificado). Runners 3/3 arrancados manualmente (servicios estaban Stopped a pesar de arranque automático) |
 | 2026-08-18 | **ERD Editor integrado** (`scripts/generate-erd.js`, diagramas `*.erd.json` versionados: schema/migrations/seeds) + **editor visual UI/UX Puck** implementado en ciszunetwork (`@puckeditor/core@0.23.0`, bloque/hero/stats/cta/wrapper, `/edit` + `/pages` + `POST /api/puck/save`, tabla `ciszu.puck_pages` con RLS, migración 18 aplicada). Lint/tsc/build y smoke test OK. Ver `VISUAL_BUILDERS_SYSTEM.md` + `PROJECTS_SYSTEM` §4. Commits `c645aae`..`6ac7611` (ERD) + pendiente commit Puck |
 | 2026-08-18 | **Tarea OSINT/ciberseguridad completada** (TODO): stack integrado y verificado — Sherlock 0.16.0, Maigret 0.6.4 (+extra `pdf`, genera csv/json/html/graph/pdf), SimpleLogin (API, cuenta proton), SpiderFoot 4.0.0 (`clones/spiderfoot`), Maltego 4.12.1 Community (instalada por Ciszuko, en configuración). `tools/osint/` → `tools/cibersecurity/osint/`; wrappers corregidos (ruta raíz `..\..\..`, arregla `tools\tools` duplicado y SimpleLogin) + `--pdf`/`--xlsx` en presets full. Epieos y Thatsthem documentadas como manuales (sin CLI, webs anti-bot, §4.7 OSINT_PROTOCOLS). Descartadas por capital: SEON, Hunter.io, Sherlockeye, PhoneInfoga, API de pago SpiderFoot. Protocolo `clones/` + flujo SECRET_TEMP.env formalizados. Commits: `3de46ce`..`49486c0` |
 | 2026-08-17 | TODO global de frontend cerrado: cookies banner ×3 webs (patrón muzicmania, entrada en store + `/policies` o `/privacidad`+`/terminos`), hero titles interactivos ×3 homes (`Link` a sí mismo + `animate-float` + glow hover), Soporte como ítem independiente en navbar ciszu, botón Invitar antes del search en navbar ciszubot, sidebar ciszukoa bajo el header (`top-[64px]`) con hamburguesa-toggle (X interna redundante eliminada), e iconos oficiales next.js/typescript en muzicmania subidos al CDN híbrido (`tech/{nextjs,typescript}.svg`). `tsc` + `eslint` ×3 webs en verde |
@@ -241,7 +242,7 @@ Este doc es una **foto del estado** del ecosistema; al cerrar sesión:
 - [ ] Nuevas incidencias registradas en su `*_SYSTEM.md`.
 - [ ] `ÚLTIMA ACTUALIZACIÓN` fechada y `PROJECTS_SYSTEM.md` con historia.
 
-_Última revisión: 18 ago 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
+_Última revisión: 19 ago 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
 `WORKFLOW_SYSTEM.md`, `ARCHITECTURE.md`, `FULL_STACK_SYSTEM.md`.
 
 ÚLTIMA ACTUALIZACIÓN: 2026-08-16
