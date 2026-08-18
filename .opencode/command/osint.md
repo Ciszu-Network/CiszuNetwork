@@ -17,10 +17,11 @@ herramientas OSINT con los presets oficiales. Salidas:
 | maigret | `osint-maigret <usernames> [-Preset full\|quick] [-Test] [-Out ruta]` | `full` (graph+tags social,tech+csv+json ndjson+html) |
 | sherlock | `osint-sherlock <usernames> [-Preset full\|quick] [-Test] [-Out ruta]` | `full` (csv+timeout 30) |
 | simplelogin | `osint-slo info\|aliases\|options\|create <prefijo>\|random` | — (API SimpleLogin) |
-| spiderfoot | `osint-sfx <targets> [-Preset full\|quick] [-Test] [-Out ruta]` | `full` (`-u passive`, sin API keys) |
+| spiderfoot | `osint-sfx <targets> [-Preset full\|quick] [-Test] [-Out ruta]` | detecta tipo: email/phone/dominio/username (`quick` gratis) |
 
-> **spiderfoot**: instalado en `clones/spiderfoot` (v4.0.0). `quick` = gravatar/keybase/social
-> (~10 s) · `full` = `-u passive`. El wrapper detecta `clones\spiderfoot\sf.py`.
+> **spiderfoot**: instalado en `clones/spiderfoot` (v4.0.0). Detecta tipo por formato
+> (`@`=email · `+`sólo dígitos=teléfono · DNS=dominio · resto=username). `quick` = módulos
+> gratuitos por tipo (~10-15 s) · `full` = `-u passive`. El wrapper detecta `clones\spiderfoot\sf.py`.
 
 ## Ejemplos
 
