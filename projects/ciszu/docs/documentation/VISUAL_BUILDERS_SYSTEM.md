@@ -433,9 +433,11 @@ chat que genera/ensambla páginas con los componentes del config. Él usa la key
 - **Verificación local**: tsc OK, lint OK, `pnpm build` OK (routes `/api/puck/[...all]` y
   `/api/puck/save` coexisten, ambos `ƒ` dynamic).
 
-> ⚠️ **Deuda de auth**: el handler `/api/puck/*` es una superficie **medible** (gasta crédito de
-> Puck Cloud) y está tan abierto como `/edit` hoy — requiere poner la auth del proyecto delante
-> antes de producción abierta (ver §7 y `SECURITY_PROTOCOLS.md`).
+> ⚠️ **Deuda de auth (hoja de ruta)**: el editor se cierra con token privado `EDIT_TOKEN`
+> via middleware: `/edit/*` y `/api/puck/*` sin cookie de sesión → redirect a `/edit/login`.
+> En Vercel NO existe `EDIT_TOKEN` → las rutas devuelven **403** (nunca expuestas). La
+> deuda real pendiente es reemplazar el token por Supabase Auth (N2) cuando llegue el
+> roadmap (`AUTH_SYSTEM.md`). Detalle del cierre por token: sección §6.5.
 
 ### 6.4 Fase 3 — Onlook como herramienta de prototipado (opcional, no integrado)
 
@@ -443,6 +445,25 @@ chat que genera/ensambla páginas con los componentes del config. Él usa la key
   (waitlist) o self-host (Docker + CodeSandbox + OpenRouter + fast-apply) en un entorno separado.
 - El código generado se traería a mano al repo (copy/paste de componentes) y se limpiaría para
   cumplir estándares del proyecto.
+
+### 6.5 Cierre de acceso del editor (token privado, 19 ago 2026)
+
+Ante la exposición real de `/edit/*` y `/api/puck/*` en producción potencial, se cerró el
+acceso con un token privado. Diseño:
+
+- **`src/middleware.ts`**: si `EDIT_TOKEN` no está definido (caso Vercel) → **403 en firme**
+  de `/edit/*` y `/api/puck/*`. Si está definido (local) → exige cookie de sesión válida;
+  sin ella, redirect a `/edit/login?from=…`.
+- **`src/lib/edit-auth.ts`**: `verifyEditToken` (hash SHA-256, comparación en tiempo
+  constante, Edge-safe) y `editSessionCookie` (hash de la sesión).
+- **`/api/edit/login`** (POST, rate limit 10/min `createRateLimiter` + Zod): valida el token
+  y setea cookie `edit_session` (**httpOnly, sameSite=lax, secure en prod, maxAge 24h**).
+- **`/edit/login`** → `admin-login-form.tsx` (form client; la ruta estática tiene prioridad
+  sobre el catch-all `edit/[[...path]]`).
+- `EDIT_TOKEN` vive solo en `projects/ciszu/website/.env.local` (gitignored). **NUNCA** en
+  Vercel: por diseño el editor no existe en producción.
+- Verificado: tsc OK, lint OK, `pnpm build` OK; en local el flujo login→cookie→`/edit/home`
+  devuelve 200 y `/api/puck/chat` conecta con Puck Cloud (key aceptada, versiones 0.8.2 match).
 
 ### 6.5 Criterios de aceptación (estado 18 ago 2026)
 
@@ -468,8 +489,9 @@ chat que genera/ensambla páginas con los componentes del config. Él usa la key
 - **Si se integra Puck AI**: la `PUCK_API_KEY` va en server-only (env del server), nunca expuesta
   al cliente.
 - **Puck AI (19 ago 2026)**: `PUCK_API_KEY` (valor de `PUCK_ORG_KEY`) vive solo en
-  `.env.local` gitignored + env de Vercel; la de usuario `PUCK_KEY` queda en el vault. El handler
-  `/api/puck/*` gasta crédito: **auth obligatoria delante antes de exponerlo**.
+  `.env.local` gitignored + env de Vercel; la de usuario `PUCK_KEY` queda en el vault. El
+  handler `/api/puck/*` gasta crédito: **cerrado con token** (§6.5) y, además, el dev server
+  local exige cookie de sesión para todo `/api/puck/*`.
 - **No instalar** ninguna de estas librerías sin aprobación explícita (regla 7.1).
 
 ---
@@ -481,6 +503,7 @@ chat que genera/ensambla páginas con los componentes del config. Él usa la key
 | 2026-08-18 | Creación. Investigación verificada de las 4 candidatas (repos/registry npm/docs), decisión híbrido Puck-first, plan en fases. |
 | 2026-08-18 | Implementación Fase 0-1 en `ciszunetwork-website` (6 archivos + migración 18 + schema Drizzle), verificación lint/tsc/build/smoke. |
 | 2026-08-19 | Fase 2 Puck AI: onboarding "Create your Puck App" completado (plugin-ai@0.8.2 + cloud-client@0.8.2, handler `/api/puck/[...all]`, `PUCK_API_KEY` desde `PUCK_ORG_KEY` del vault). tsc/lint/build OK. Deuda: auth delante del handler. |
+| 2026-08-19 | Cierre de acceso del editor por token (§6.5): middleware 403 en Vercel (sin EDIT_TOKEN), login `/edit/login` + `/api/edit/login` (rate limit + cookie httpOnly), `edit-auth.ts`. Verificado el vínculo con Puck Cloud (key + versiones 0.8.2). Build OK. |
 
 ---
 
@@ -496,6 +519,6 @@ chat que genera/ensambla páginas con los componentes del config. Él usa la key
 - `VAULT_SYSTEM.md` — secretos de Plasmic/Puck/Subframe.
 - `TODO.md` — tarea origen (solo lo edita Ciszuko Antony).
 
-_Última revisión: 18 ago 2026._ Relacionado: `FRONTEND_SYSTEM.md`, `UI_COMPONENTS_SYSTEM.md`,
+_Última revisión: 19 ago 2026._ Relacionado: `FRONTEND_SYSTEM.md`, `UI_COMPONENTS_SYSTEM.md`,
 `STYLES_SYSTEM.md`, `PACKAGES_SYSTEM.md`, `CDN_SYSTEM.md`, `SECURITY_PROTOCOLS.md`,
 `TOOLS_EVALUATION_PLAN.md`, `VAULT_SYSTEM.md`.
