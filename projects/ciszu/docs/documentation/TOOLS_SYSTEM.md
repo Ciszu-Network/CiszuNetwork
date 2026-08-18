@@ -209,6 +209,22 @@ Permite que el agente consulte la BD directamente como herramienta MCP (en vez d
 > **Colección Bruno en formato OpenCollection YAML** (`opencollection.yml` + `*.yml`, **NO `.bru`**): el CLI 4.x no mezcla formatos — los requests `.bru` bajo `opencollection.yml` dan "0 requests". Estructura: `health/` (5 webs + bot status) y `rest/` (leaderboard muzicmania, bot_status completo, stats local `:5000` con tag `local`). Env: `environments/prod.yml` con lista `variables: [{name, value}]` (gitignored; ejemplo en `prod.example.yml`).
 > **CLI**: `pnpm add -g @usebruno/cli` (instalado 4.0.0). Requiere `PNPM_HOME` en PATH (`pnpm setup`; `C:\Users\fplay\AppData\Local\pnpm\bin`). El wrapper `scripts/run-bru.js` ejecuta `bru` con cwd `apis/bruno/` y crea el dir de `--reporter-json`.
 
+### 6.6 Clones de repositorios externos (`clones/`) — protocolo
+
+**Regla (18 ago 2026)**: todo repositorio de terceros que se clone y deba **persistir en disco**
+(herramientas, fuentes, dependencias de trabajo) vive en **`E:\Ciszu Network\clones\<nombre>/`**,
+**gitignored** (`clones/` en `.gitignore`). No quedarse en `C:\Users\...` (disco C limitado,
+AGENTS §6.4) ni en `downloads/`.
+
+- Separación: un clon por carpeta (`clones/spiderfoot`, `clones/myskull`, …). NO bajo
+  `tools/` — `tools/` es solo código propio del repo.
+- Instalación de dependencias: dentro del clon, vía su propio gestor (pip/npm/pnpm/…).
+- **NUNCA** commitear el clon; reportes/artefactos generados van a `test/` o `tools/osint/output/`
+  según su naturreza (ver `OSINT_PROTOCOLS.md`, `CIBERSECURITY_SYSTEM.md`).
+- El wrapper/conector debe buscar el clon en `clones/` (p. ej. `tools/osint/spiderfoot.ps1`
+  resuelve `clones\spiderfoot\sf.py`).
+- Registro del clon: ver §8 Estado.
+
 ---
 
 ## 7. Documentación oficial de referencia
@@ -233,6 +249,7 @@ Permite que el agente consulte la BD directamente como herramienta MCP (en vez d
 - ✅ **Bruno CLI 4.0.0 instalado** globalmente (`pnpm setup` corrió el PATH); wrapper `scripts/run-bru.js` para ejecutar desde la raíz del repo.
 - ✅ **DBeaver GUI**: la conexión `supabase` ya aparece en DBeaver (dbvr y DBeaver comparten el workspace `DBeaverData\workspace6`); driver PostgreSQL 42.7.13 descargado. DBeaver estaba abierto durante la sesión — refrescar si no se ve la conexión.
 - ✅ **PostgreSQL 18.4 instalado (10 ago 2026, instalación manual desde postgresql.org)**: `C:\Program Files\PostgreSQL\18\bin\pg_dump.exe` 18.4 (queda también el 17.10 que vino con winget — `backup-db.js` prioriza el 18). **Primer backup real ejecutado y OK** (ciszu-db-20260809.sql, 3.43 MB → `archives/backups/db/`). ⏳ Opcional (ya no bloquea): configurar MCP server de dbvr (§6.3) para acceso IA directo a la BD
+- ✅ **Protocolo `clones/` creado (18 ago 2026, §6.6)**: carpeta gitignored para repositorios de terceros persistidos en disco. Primer clon: **SpiderFoot 4.0.0** en `clones\spiderfoot` (instalado, aprobación AGENTS §7.1). Dependencias con pip (nota: `lxml<5` sin rueda para Python 3.14 — se instaló lxml 6.1.1 que es compatible; quitar `--only-binary` para ipaddr/otras pure-python). Verificado: `python sf.py -V` → 4.0.0.
 
 ## Resumen de la pila instalada
 
@@ -272,5 +289,5 @@ node scripts/backup-db.js
 | Bruno CLI no encontrado | `pnpm setup` + `PNPM_HOME` en PATH |
 | DBeaver no ve la conexión | Refrescar; comparte workspace con dbvr |
 
-_Última revisión: 13 ago 2026._ Relacionado: `DB_SYSTEM.md`, `WORKFLOW_SYSTEM.md`,
-`FULL_STACK_SYSTEM.md`, `KNOWLEDGE_SYSTEM.md`, `STATUS_SYSTEM.md`.
+_Última revisión: 18 ago 2026._ Relacionado: `DB_SYSTEM.md`, `WORKFLOW_SYSTEM.md`,
+`FULL_STACK_SYSTEM.md`, `KNOWLEDGE_SYSTEM.md`, `STATUS_SYSTEM.md`, `CIBERSECURITY_SYSTEM.md`.

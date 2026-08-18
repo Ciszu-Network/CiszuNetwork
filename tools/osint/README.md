@@ -46,10 +46,9 @@ instalados (`sherlock.exe`, `maigret.exe` en `Python314\Scripts`).
 .\tools\osint\spiderfoot.ps1 -Targets foo -Preset quick -Test
 ```
 
-> **SpiderFoot**: aún no instalado. Para instalarlo pedir aprobación (AGENTS §7.1):
-> `git clone https://github.com/smicallef/spiderfoot "$env:USERPROFILE\spiderfoot"` y
-> `cd "$env:USERPROFILE\spiderfoot"; pip install -r requirements.txt`. El wrapper detecta
-> el clon en `~\spiderfoot\sf.py`.
+> **SpiderFoot**: instalado en `clones/spiderfoot` (v4.0.0, 18 ago 2026). El wrapper resuelve
+> el clon en `clones\spiderfoot\sf.py`. `quick` = Gravatar/Keybase/Social (~10 s) ·
+> `full` = `-u passive` (todos los módulos sin API key, lento).
 
 ## Atajos PowerShell (perfil)
 

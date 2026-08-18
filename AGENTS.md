@@ -249,6 +249,10 @@ Pipeline de documentación: `node scripts/txt2md.js` (txt→md) · `node scripts
   se migró a `E:\Ciszu Network\.opencode\data/` con un junction en la ruta original (historia intacta,
   sin env vars). Script de migración: `.opencode/temp/migrate-opencode-data.ps1` (correr con opencode
   cerrado). Nunca mover/borrar ese junction ni el data dir directamente.
+- **Clones de repositorios externos**: todo repo de terceros que se clone y deba persistir vive en
+  `E:\Ciszu Network\clones/<nombre>/`, **gitignored** (`clones/`). Uno por carpeta, nunca en
+  `tools/`. Protocolo y estado: `TOOLS_SYSTEM.md` §6.6. Primer clon: `clones/spiderfoot` (SpiderFoot
+  4.0.0, 18 ago 2026).
 
 ### 6.5 Puente de secretos de documentación (SECRET_TEMP.env)
 
