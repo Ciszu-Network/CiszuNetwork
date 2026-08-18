@@ -64,7 +64,9 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
           <FeedbackFab />
         </FabStackProvider>
         <PostHogAnalytics app="ciszunetwork" />
-        <script defer type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
+        {process.env.NODE_ENV === 'production' && (
+          <script defer type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
+        )}
       </body>
     </html>
   );

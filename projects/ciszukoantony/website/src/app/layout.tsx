@@ -27,7 +27,7 @@ export const viewport = {
 };
 export const metadata: Metadata = {
   metadataBase: new URL("https://ciszukoantony.vercel.app"),
-  title: "Ciszuko Antony | CEO & Founder of Ciszuko Network",
+  title: "Ciszuko Antony",
   description: "Official portfolio of Ciszuko Antony (Francisco Garcia Antonio M. / y8) — CEO & Founder of Ciszuko Network. Innovation, development and technology.",
   keywords: ["Ciszuko Antony", "Ciszuko Network", "portfolio", "developer", "Venezuela", "CEO", "technology"],
   icons: {
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   appleWebApp: { capable: true, title: "Ciszuko Antony", statusBarStyle: "black-translucent" },
   manifest: "/manifest.webmanifest",
   openGraph: {
-    title: "Ciszuko Antony | CEO & Founder of Ciszuko Network",
+    title: "Ciszuko Antony",
     description: "Official portfolio of Ciszuko Antony (Francisco Garcia Antonio M. / y8) — CEO & Founder of Ciszuko Network.",
     url: "https://ciszukoantony.vercel.app",
     siteName: "Ciszuko Antony",
@@ -65,7 +65,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <FeedbackFab />
         </FabStackProvider>
         <PostHogAnalytics app="ciszukoantony" />
-        <script defer type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
+        {process.env.NODE_ENV === 'production' && (
+          <script defer type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
+        )}
       </body>
     </html>
   );

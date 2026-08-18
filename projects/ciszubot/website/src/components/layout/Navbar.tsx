@@ -17,6 +17,16 @@ const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'status' | 'support'
   { href: '/feedback', key: 'feedback', icon: 'message' },
 ];
 
+// Clases responsive por índice de NAV_PAGES: el link activo siempre visible; el resto aparece según espacio.
+const NAV_HIDE_CLS: string[] = [
+  'hidden min-[330px]:flex',
+  'hidden min-[420px]:flex',
+  'hidden min-[510px]:flex',
+  'hidden min-[600px]:flex',
+  'hidden min-[690px]:flex',
+  'hidden min-[780px]:flex',
+];
+
 const SEARCH_PAGES: { href: string; labelKey: string; icon: string; keywords: string[] }[] = [
   { href: '/', labelKey: 'home', icon: 'home', keywords: ['inicio', 'home', 'main'] },
   { href: '/comandos', labelKey: 'commands', icon: 'gamepad', keywords: ['comandos', 'commands', 'bot', 'slash'] },
@@ -295,13 +305,17 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
 
           <div className="w-px h-7 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-1 shrink-0" />
 
-          <div className="hidden md:flex items-center gap-1">
-            {NAV_PAGES.map((link) => (
-              <Link key={link.href} href={link.href} className={linkCls(link.href)}>
-                <Icon name={link.icon} size={16} className="shrink-0" />
-                <span className={linkLabelCls(link.href)}>{dict.nav[link.key]}</span>
-              </Link>
-            ))}
+          <div className="flex items-center gap-1 flex-1 overflow-visible min-w-0">
+            {NAV_PAGES.map((link, idx) => {
+              const active = isActive(link.href);
+              const responsiveClass = active ? 'flex' : (NAV_HIDE_CLS[idx] ?? 'hidden min-[780px]:flex');
+              return (
+                <Link key={link.href} href={link.href} className={`${linkCls(link.href)} ${responsiveClass}`}>
+                  <Icon name={link.icon} size={16} className="shrink-0" />
+                  <span className={linkLabelCls(link.href)}>{dict.nav[link.key]}</span>
+                </Link>
+              );
+            })}
           </div>
 
           <div className="flex items-center gap-2 ml-auto shrink-0">
