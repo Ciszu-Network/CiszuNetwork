@@ -297,6 +297,28 @@ Pipeline de documentación: `node scripts/txt2md.js` (txt→md) · `node scripts
   replicar el contenido del SECRET_TEMP (lo que esté destinado a persistir) porque es la copia
   cifrada de la que se alimenta Bitwarden.
 
+### 6.7 LSP (Language Server Protocol) del agente — estado actual
+
+**El agente NO usa LSP** (verificado 19 ago 2026 contra la doc oficial de opencode y la
+config real). Motivos:
+
+- opencode trae los LSP servers **desactivados por defecto**; se habilitan solo con la clave
+  `lsp` en `opencode.json` (`"lsp": true` o `"lsp": { ... }`). Ni la configuración global
+  (`~/.config/opencode/opencode.json`) ni el proyecto tienen `lsp` definido.
+- Sin esa clave, no se arranca ningún Language Server (typescript, eslint, etc.), así que **no
+  hay diagnósticos LSP alimentando al agente**: el feedback de tipos/errores llega solo cuando
+  el agente ejecuta comandos.
+- Compensación obligatoria (es la vía recomendada por la propia doc de opencode): ejecutar por
+  comando las herramientas de diagnóstico del repo — `tsc --noEmit` / `pnpm --filter <web> exec
+  tsc --noEmit`, `eslint`, `next build` y `pnpm test` — y documentarlas aquí y en
+  `LOCAL_TESTING_PROTOCOLS.md` §3.3. No asumir que el código "tipo bien": verificar.
+
+Si Ciszuko quieres activarlo, la vía es añadir en `opencode.json` (raíz) `"lsp": true` y
+**reiniciar opencode** (la config se carga al arranque; ver `OPENCODE_SYSTEM.md`). Activar el
+LSP da diagnósticos proactivos (tipos/errores del proyecto vía typescript/eslint), pero consume
+memoria y puede ralentizar sesiones grandes; en este PC conviene evaluarlo antes de activar por
+defecto.
+
 ---
 
 ## 7. Seguridad — obligatorio en toda implementación
@@ -367,5 +389,5 @@ Una sesión normal rinde ~60-90k tokens; con muchos outputs de tools llega antes
 
 ---
 
-_Última revisión: 16 ago 2026._ Fuente de verdad: `projects/ciszu/docs/documentation/`.
+_Última revisión: 19 ago 2026._ Fuente de verdad: `projects/ciszu/docs/documentation/`.
 Estándar de docs: `DOCUMENTATION_SYSTEM.md`. Operación diaria: `WORKFLOW_SYSTEM.md`.

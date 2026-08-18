@@ -1,8 +1,8 @@
 ﻿# FRAMEWORKS_SYSTEM — Sistema de Frameworks (Ciszu Network)
 
-Versión: 1.0.0
-Actualización: 2026-08-13
-Identificador: FRAMEWORKS_SYSTEM_V1.0.0_2026_08_13_ciszunetwork
+Versión: 1.1.0
+Actualización: 2026-08-19
+Identificador: FRAMEWORKS_SYSTEM_V1.1.0_2026_08_19_ciszunetwork
 
 > **Definición**: sistema que documenta los **frameworks** (concepto de informática:
 > conjunto de código/abstracciones para desarrollar aplicaciones) usados en el monorepo:
@@ -13,15 +13,19 @@ Identificador: FRAMEWORKS_SYSTEM_V1.0.0_2026_08_13_ciszunetwork
 
 ## 1. Frameworks por capa
 
-| Capa | Framework | Versión | Dónde |
+| Capa | Framework | Versión (verificada) | Dónde |
 |---|---|---|---|
-| **Web (frontend)** | Next.js (React) | 15.x | Las 4 webs |
-| **Estilos** | Tailwind CSS | v4 | Todas las webs |
-| **Desktop** | Tauri | 2.x | MuzicMania (desktop) |
-| **Bot** | Discord.js | v14 | CiszuBot |
+| **Web (frontend)** | Next.js (React) | 15.5.22 | Las 4 webs |
+| **Testeo local (compilación)** | Next.js (`next build` / `next dev`) | 15.5.22 | Las 4 webs — build valida el código |
+| **Estilos** | Tailwind CSS | 4.2.4 | Todas las webs |
+| **Desktop** | Tauri | 2.x (api 2.11.0) | MuzicMania (desktop) |
+| **Bot** | Discord.js | 14.22.0 | CiszuBot |
+| **Editor visual UI** | Puck (`@puckeditor/core`) | 0.23.0 | ciszunetwork (editor de páginas) |
+| **ORM/DB** | Drizzle ORM | (monorepo `packages/db`) | Todas las webs (server-only) |
 | **Backend** | Supabase (PostgreSQL + PostgREST) | — | Todos los proyectos |
-| **Monorepo** | Turborepo | 2.x | Raíz |
-| **Testing** | Vitest, Playwright | — | Paquetes y webs |
+| **Monorepo** | Turborepo | 2.5.0 | Raíz |
+| **Testing** | Vitest | 4.1.10 | Paquetes y webs |
+| **Testing E2E** | Playwright | 1.62.1 | `test/` (E2E) |
 
 ## 2. Definición y propósito (contexto informático)
 
@@ -32,9 +36,12 @@ llamas tú), el framework llama a tu código (inversión de control).
 | Framework | Tipo | Qué aporta |
 |---|---|---|
 | Next.js | Full-stack React framework | Routing, SSR/SSG, API routes, optimización de assets |
+| Next.js (testeo local) | Compilación local como verificación | `next build`/`next dev` atrapan errores de bundling/TS antes de desplegar |
 | Tailwind | CSS framework (utility-first) | Clases atómicas (`bg-brand`, `text-neon-pink`) |
 | Tauri | Desktop framework (Rust + WebView) | Shell de escritorio liviano |
 | Discord.js | Librería/framework de bot | Interfaz sobre la API de Discord |
+| Puck | Editor visual de páginas (React) | `<Puck>` editor + `<Render>` difusión, bloques propios |
+| Drizzle | ORM TypeScript (SQL-first) | Queries tipadas + migraciones SQL versionadas |
 | Supabase | BaaS | BD, auth, storage listos |
 | Turborepo | Build orchestration | Caché y pipeline de tareas |
 
@@ -64,6 +71,22 @@ src/app/
 - `metadata` export en layouts/pages para SEO.
 - Assets: resolver/CDN (`@ciszunetwork/cdn`), nunca duplicados en `public/`.
 - SW: `public/sw.js` + register en client.
+
+### 3.4 Next.js como framework de testeo local (compilación)
+
+`next build` (y `next dev`) actúa **también como framework de testeo local**: compila las 4
+webs, tipa con el tsconfig de cada app y falla en errores de bundling/import/SSR. Reglas:
+
+- **Antes de dar por terminada cualquier tarea de frontend**: correr `pnpm --filter <web> build`
+  (o al menos que compile en `next dev` con `[ON]` en la consola). La compilación local es
+  verificación obligatoria, nunca asumir que "compila porque tipo bien".
+- El build local detecta: imports inexistentes, errores de tipos en runtime de pages,
+  componentes client/server mal mezclados, rutas dinámicas inválidas.
+- No sustituye a Vitest (lógica) ni Playwright (navegador): es la primera capa de verificación
+  (barata, sin navegador) antes de las demás. Ver `TESTING_SYSTEM.md` y `LOCAL_TESTING_PROTOCOLS.md`.
+- Los deploys automáticos de Vercel corren `build` en CI, pero verificar localmente antes del
+  push evita despliegues rotos y fallos en cadena (los workflows re-despliegan las 4 webs si
+  cambia `packages/**`).
 
 ## 4. Tailwind CSS (estilos)
 
@@ -101,6 +124,29 @@ src/app/
 - Librería para bots de Discord, v14.
 - CiszuBot: bot con slash commands + context menu (ver `PROJECTS_SYSTEM.md`).
 - Corre en Node 24-alpine (Docker) con Dockerfile.
+
+## 6.5 Puck (`@puckeditor/core`) — editor visual (18 ago 2026)
+
+- Librería React, MIT, para construir **editores visuales drag-and-drop** con tus propios
+  componentes. No es una plataforma externa: vive en el monorepo, 100% offline.
+- Instalada en `ciszunetwork-website` (`0.23.0`, peer `react ^18 || ^19`). Config en
+  `src/puck.config.tsx` con los bloques Hero/SectionTitle/Stats/Cta/Wrapper; rutas
+  `/edit/[[...path]]` (editor) y `/pages/[[...path]]` (render público); guardado vía
+  `POST /api/puck/save` (rate limit) hacia `ciszu.puck_pages` (RLS). Ver
+  `VISUAL_BUILDERS_SYSTEM.md` §6 para el detalle de la implementación.
+- **Regla**: solo instalar en las webs que tengan editor; el `config` de bloques puede
+  compartirse vía un paquete compartido si se reutiliza. Franquicia opcional (Puck AI)
+  documentada en `VISUAL_BUILDERS_SYSTEM.md` §6.3.
+
+## 6.6 Drizzle (ORM)
+
+- ORM TypeScript SQL-first usado por `@ciszunetwork/db` (capa de datos server-only del
+  monorepo). Schemas en `packages/db/src/schemas/{ciszubot,muzicmania,ciszunetwork,ciszu}.ts`;
+  cliente `pg` + `NodePgDatabase`, helpers de query re-exportados (`eq`, `and`, `sql`, …).
+- Migraciones: SQL versionado en `services/supabase/migrations/` (aplicadas a Supabase vía
+  `scripts/apply-migration-XX.js` o dbvr). Detalle: `ORM_SYSTEM.md` y `DB_SYSTEM.md`.
+- **Regla**: NUNCA usar en client/edge (solo server, `import "server-only"`); queries
+  parametrizadas (sin concatenación SQL).
 
 ## 7. Supabase (backend)
 
@@ -168,15 +214,17 @@ supabase db push   # aplicar migraciones locales a prod (o via apply-migration-*
 
 ```
 Next.js (web) ── Tailwind v4 (estilos)
-    │
+    │            └─ next build/dev = testeo local (compilación)
     ├── @ciszu/ui (React 19, componentes compartidos)
     ├── @ciszunetwork/cdn (assets: imágenes, skins)
+    ├── @ciszunetwork/db (Drizzle ORM, server-only) ── Supabase (Postgres/Auth/Storage)
     ├── @ciszu/utils (rate limit, IAST, escapeHtml)
+    ├── @puckeditor/core (editor visual /edit de ciszunetwork) ── ciszu.puck_pages
     └── Supabase-js ── Supabase (Postgres/Auth/Storage)
 
 Tauri (desktop) ── Rust + WebView2 ── sirve la web de MuzicMania
-
 Discord.js (bot) ── Node 24 ── Supabase (heartbeat, comandos)
+Testing: Vitest (unit) + Playwright (E2E) + next build (verificación local) + Storybook (@ciszu/ui)
 ```
 
 ## 13. Buenas prácticas por framework
@@ -187,6 +235,8 @@ Discord.js (bot) ── Node 24 ── Supabase (heartbeat, comandos)
 | Tailwind | Tokens en `@theme`; sin CSS inline |
 | Tauri | `bundle.targets` mínimo necesario; versionar instaladores |
 | Discord.js | Slash commands; guardar datos en Supabase no en memoria |
+| Puck | Bloques = componentes propios de marca; estado editado en BD (RLS), no en archivos |
+| Drizzle | Solo server-side; `onConflictDoUpdate` para upserts; RLS siempre |
 | Supabase | RLS siempre; anon key solo en cliente |
 | Turborepo | Definir `turbo.json` con tareas tipadas |
 
@@ -204,13 +254,17 @@ Discord.js (bot) ── Node 24 ── Supabase (heartbeat, comandos)
 
 | Framework | Versión |
 |---|---|
-| Next.js | 15.x |
-| React | 19.x |
-| Tailwind CSS | 4.x |
-| Tauri | 2.x |
-| Discord.js | 14.x |
-| Turborepo | 2.x |
+| Next.js | 15.5.22 |
+| React | 19.2.7 |
+| Tailwind CSS | 4.2.4 |
+| Tauri | 2.x (api 2.11.0) |
+| Discord.js | 14.22.0 |
+| Puck (`@puckeditor/core`) | 0.23.0 |
+| Turborepo | 2.5.0 |
+| Vitest | 4.1.10 |
+| Playwright | 1.62.1 |
 | supabase-js | v2.x |
 
-_Última revisión: 13 ago 2026._ Relacionado: `FULL_STACK_SYSTEM.md`, `INSTALLERS_SYSTEM.md`,
-`BACKEND_SYSTEM.md`, `IT_GLOSSARY_PROTOCOLS.md`, `COLOR_SYSTEM.md`.
+_Última revisión: 19 ago 2026._ Relacionado: `FULL_STACK_SYSTEM.md`, `INSTALLERS_SYSTEM.md`,
+`BACKEND_SYSTEM.md`, `IT_GLOSSARY_PROTOCOLS.md`, `COLOR_SYSTEM.md`, `VISUAL_BUILDERS_SYSTEM.md`,
+`ORM_SYSTEM.md`.
