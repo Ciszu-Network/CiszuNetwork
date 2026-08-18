@@ -324,7 +324,7 @@ Tras tocar las herramientas, ejecutar:
 | Puente SECRET_TEMP.env | ✅ creado y gitignored; secretos fuera de MDs |
 | Regla de vault solo-Ciszuko | ✅ AGENTS.md §6.6 |
 | Command opencode / PowerShell | ✅ `/osint`, `/maigret`, `/sherlock`, `/simplelogin`, `/spiderfoot` + funciones |
-| POST-OSINT (PhoneInfoga, HIBP…) | ✅ investigación hecha; SpiderFoot integrado como framework oficial (§4.1) — PhoneInfoga/SEON/Hunter/etc. evaluados |
+| POST-OSINT (PhoneInfoga, HIBP…) | ✅ investigación hecha; SpiderFoot integrado como framework oficial (§4.1). APIs/herramientas de pago **descartadas hasta tener capital** (decision Ciszuko, `OSINT_PROTOCOLS.md` §4.0) |
 
 ---
 

@@ -153,8 +153,13 @@ conclusiones para la integración.
 | framework | Maltego | Community gratuita pero escritorio/GUI | opcional (manual) |
 | técnica | Google Dorking | Gratuito, operadores de búsqueda | protocolo (no herramienta) |
 
-**Integrado (18 ago 2026)**: SpiderFoot instalado en `clones/spiderfoot` (§4.1). El resto de
-candidatas de pago queda marcado **sin usar** hasta decisión de Ciszuko.
+**Integrado (18 ago 2026)**: SpiderFoot instalado en `clones/spiderfoot` (§4.1).
+
+**Decisión (18 ago 2026, Ciszuko)**: toda API o herramienta de pago queda **DESCARTADA**
+hasta que haya capital. SEON, Hunter.io, HIBP (uso con key), Maltego (GUI opcional manual,
+no es pago) y similares **no se integran ni se compran** por ahora. Si un día hay capital y
+se revisa de nuevo, el criterio será: se evalúa si el módulo/función aporta algo que
+SpiderFoot free no cubra ya.
 
 ### 4.1 SpiderFoot (framework integral) — integración oficial
 
@@ -193,20 +198,20 @@ Salida CSV por target a `test/osint/spiderfoot/` (test) y `tools/osint/output/sp
 | Herramienta | Para qué | Modelo/licencia | Estado |
 |---|---|---|---|
 | **PhoneInfoga** | Dato técnico del número: país, carrier, tipo de línea + rastros web | GPL-3.0, Go | ⚠️ **unmaintained** (repositorio `sundowndev/phoneinfoga`, 17.5k★, "stable but unmaintained, podría archivarse"). Requiere compilar en Go y configurar scanners externos (Twilio API, etc.) para ser útil. |
-| **SEON** | "Digital footprint": en qué servicios está registrado un número | Comercial (API de pago) | Marcada sin usar (política tools: nada de pago sin decisión del usuario). SpiderFoot la integra como módulo tiered. |
+| **SEON** | "Digital footprint": en qué servicios está registrado un número | Comercial (API de pago) | **DESCARTADA (sin capital)**. SpiderFoot la integra como módulo tiered (requiere key/seuro, cosa que no se paga hoy). |
 | **Sherlockeye** | Búsqueda inversa profunda con IA | Plátaforma comercial | **Descartada**: sube datos del objetivo a un tercero con IA; riesgo de privacidad injustificado. |
 
 Conclusión teléfonos: para el ecosistema, **usar los módulos de teléfono de SpiderFoot**
-(no requiere herramienta aparte). PhoneInfoga queda como candidato si en el futuro se
-quiere indicización local sin mantenimiento (no recomendado por su estado).
+(no requiere herramienta aparte; los de pago quedan descartados). PhoneInfoga se descarta
+también por estar unmaintained y requerir scanners externos (API) para ser útil.
 
 ### 4.3 Búsqueda de correos electrónicos
 
 | Herramienta | Para qué | Modelo/licencia | Notas |
 |---|---|---|---|
-| **Have I Been Pwned?** | Saber si un correo/teléfono apareció en brechas | API free con rate limit / vía SpiderFoot | Integrar **vía SpiderFoot** (módulo `sfp_haveibeenpwned`); el endpoint público tiene límites estrictos |
+| **Have I Been Pwned?** | Saber si un correo/teléfono apareció en brechas | API free con rate limit / vía SpiderFoot | **SÍ** vía SpiderFoot (módulo `sfp_haveibeenpwned`); el endpoint público es free con límites estrictos — sin pagar |
 | **Epieos** | Info de cuenta de Google (Maps/Calendar/Photos) | Servicio web | Uso manual cuidado; líder a servicios con auth |
-| **Hunter.io** | Correos corporativos por dominio | Freemium (cupo) | Integrar **vía SpiderFoot** (módulo tiered) cuando haya cupo |
+| **Hunter.io** | Correos corporativos por dominio | Freemium (cupo) | **DESCARTADA (sin capital)**: solo vía SpiderFoot tiered cuando haya cupo pagado — no hoy |
 | **Thatsthem** | Búsqueda inversa de correo con registros públicos | Web con límites | Manual |
 
 ### 4.4 Frameworks de investigación integral / técnicas
