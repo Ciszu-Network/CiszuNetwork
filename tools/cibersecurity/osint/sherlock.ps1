@@ -10,7 +10,7 @@
 #   .\tools\cibersecurity\osint\sherlock.ps1 -Usernames foo -Out "E:\ruta\custom"
 #
 # Presets:
-#   full  (default) -> --csv --timeout 30
+#   full  (default) -> --csv --xlsx --timeout 30
 #   quick           -> --csv --timeout 15
 #
 # Salida:
@@ -27,14 +27,14 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$repo = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
+$repo = (Resolve-Path (Join-Path $PSScriptRoot '..\..\..')).Path
 
 if ($Out) { $outDir = $Out }
 elseif ($Test) { $outDir = Join-Path $repo 'test\osint\sherlock' }
 else { $outDir = Join-Path $repo 'tools\cibersecurity\osint\output\sherlock' }
 New-Item -ItemType Directory -Force -Path $outDir | Out-Null
 
-$flags = @('--csv', '--timeout', '30', '--folderoutput', $outDir)
+$flags = @('--csv', '--xlsx', '--timeout', '30', '--folderoutput', $outDir)
 switch ($Preset) {
   'full'  { }
   'quick' { $flags = @('--csv', '--timeout', '15', '--folderoutput', $outDir) }
