@@ -322,18 +322,54 @@ Detalle: `CIBERSECURITY_SYSTEM.md` §5 y `VAULT_SYSTEM.md` §3.7.
 
 ## 6. Comandos de referencia rápida
 
+### 6.1 Comandos PowerShell (funciones del perfil)
+
 | Necesidad | Comando |
 |---|---|
-| Presencia social de un username | `osint-sher foo,bar` |
-| Idem rápido (test) | `osint-sher foo -Preset quick -Test` |
+| Presencia social de un username | `osint-sher none_xisty_zzz_999` |
+| Idem rápido (test) | `osint-sher none_xisty_zzz_999 -Preset quick -Test` |
 | Profundizar con datos extraídos | `osint-mai none_xisty_zzz_999` |
-| Validar pipeline Maigret | `osint-mai none_xxx_zzz999 -Preset quick -Test` |
+| Validar pipeline Maigret | `osint-mai none_xisty_zzz_999 -Preset quick -Test` |
 | Validar cuenta SimpleLogin | `osint-slo info` |
 | Ver dominios disponibles | `osint-slo options` |
 | Crear alias `figma-ciszu` | `osint-slo create figma-ciszu` |
-| Dispatcher genérico | `osint maigret -Usernames foo` |
+| **SpiderFoot: email** | `osint-sfx foo@example.com` |
+| **SpiderFoot: dominio** | `osint-sfx example.com` |
+| **SpiderFoot: teléfono** | `osint-sfx +584165551234` |
+| **SpiderFoot: username** | `osint-sfx none_xisty_zzz_999` |
+| Dispatcher genérico | `osint maigret -Usernames none_xisty_zzz_999` |
 
-opencode (IA): `/osint`, `/maigret`, `/sherlock`, `/simplelogin` (ver CIBERSECURITY §4.1).
+### 6.2 Comandos opencode (IA, comando `/`)
+
+| Comando | Acción | Ejemplo |
+|---|---|---|
+| `/osint <herramienta> [args]` | Dispatcher genérico | `/osint spiderfoot example.com` |
+| `/sherlock <usernames>` | Sherlock (usernames) | `/sherlock none_xisty_zzz_999` |
+| `/maigret <usernames>` | Maigret (usernames, recursión) | `/maigret none_xisty_zzz_999` |
+| `/simplelogin <acción>` | SimpleLogin (alias email) | `/simplelogin info` |
+| `/spiderfoot <target>` | SpiderFoot (email/dominio/teléfono/username) | `/spiderfoot example.com` |
+
+### 6.3 Ejemplos SpiderFoot por tipo (formato del target = tipo)
+
+| Tipo | Formato | Ejemplo con `osint-sfx` | Salida típica |
+|---|---|---|---|
+| **Email** | contiene `@` | `osint-sfx foo@example.com` | brechas (HIBP), PGP, reputación |
+| **Dominio** | formato DNS | `osint-sfx example.com` | WHOIS, certificados (crt.sh), subdominios |
+| **Teléfono** | `+` + solo dígitos | `osint-sfx +584165551234` | proveedor/línea (sfp_phone) |
+| **Username** | resto | `osint-sfx none_xisty_zzz_999` | Gravatar, Keybase, redes sociales |
+
+Verificado 18 ago 2026 en modo `-Test`: teléfono `+584165551234` → proveedor **Movilnet**;
+dominio `example.com` → WHOIS real de IANA; email sintético `nonexiste@example.com` → solo
+cabecera (la cuenta no existe). Preset `quick` tarda ~10-15 s por target.
+
+### 6.4 Reglas
+
+- Si el usuario no indica lo contrario, la salida oficial va a `tools/osint/output/<tool>/`;
+  `-Test` envía a `test/osint/<tool>/` (gitignored).
+- Nunca imprimir API keys ni recovery codes; los wrappers leen del vault.
+- Nunca usar usernames/emails/teléfonos reales en pruebas; usar el sintético
+  `none_xisty_zzz_999` o variantes (`nonexiste@example.com`, `+584165551234`).
+- Reportar resumen: targets consultados, nº de hallazgos y carpeta de salida.
 
 ---
 
@@ -355,6 +391,7 @@ opencode (IA): `/osint`, `/maigret`, `/sherlock`, `/simplelogin` (ver CIBERSECUR
 | Fecha | Cambio |
 |---|---|
 | 18 ago 2026 | Doc creada (v1.0.0). Protocolos Sherlock/Maigret/SimpleLogin; sección POST-OSINT candidatas |
+| 18 ago 2026 | Sección §6 ampliada con comandos SpiderFoot por tipo (email/dominio/teléfono/username) y ejemplos verificados; regla de usernames sintéticos |
 
 ---
 
