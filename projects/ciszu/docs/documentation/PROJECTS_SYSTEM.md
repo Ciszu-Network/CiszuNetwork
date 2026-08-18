@@ -162,8 +162,28 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
   y todas las API de pago de SpiderFoot, hasta tener capital.
 - **Flujo de secretos SECRET_TEMP.env** formalizado en `OSINT_PROTOCOLS.md` §5.1 y
   `AGENTS.md` §6.5; SimpleLogin verificada con Bitwarden + vault cifrado.
-- **Protocolo `clones/`**: repos de terceros clonados viven en `E:\Ciszu Network\clones/`
-  (gitignored), documentado en `TOOLS_SYSTEM.md` §6.6 y `AGENTS.md` §6.4.
+### 18 de Agosto, 2026 — ERD Editor integrado + editor visual UI/UX (Puck) implementado
+
+- **ERD Editor (`dineug.vuerd-vscode`) integrado como herramienta oficial de diagramas de BD
+  versionables**:
+  - `scripts/generate-erd.js` — generador SQL → `*.erd.json` (formato v3.0.0, dedupe por schema,
+    soporte de dollar-quotes, tabla sintética `users` para FK a `auth.users`, relaciones desde
+    `REFERENCES` inline a diferencia del importador oficial).
+  - Diagramas versionados: `services/supabase/schema.erd.json` (schema.sql),
+    `services/supabase/migrations/migrations.erd.json` (32 tablas consolidadas) y
+    `services/supabase/seeds/seeds.erd.json`. Extension `.erd.json` obligatoria en el generador.
+- **Editor visual UI/UX (tarea TODO) implementado — híbrido Puck-first** (ver
+  `VISUAL_BUILDERS_SYSTEM.md`):
+  - `@puckeditor/core@0.23.0` + skill oficial en `.opencode/skills/puck/` (local, gitignored).
+  - `ciszunetwork-website`: `puck.config.tsx` (bloques Hero/SectionTitle/Stats/Cta/Wrapper),
+    `src/puck/blocks.tsx`, `PuckEditor.tsx`, rutas `/edit/[[...path]]` y `/pages/[[...path]]`,
+    endpoint `POST /api/puck/save` (rate limit 20/min + Zod), `src/lib/puck.ts` (Drizzle).
+  - BD: migración `20260818000018_puck_pages.sql` (tabla `ciszu.puck_pages` con RLS, SELECT
+    público, write solo service_role vía `ciszu.save_puck_page`) aplicada a producción; schema
+    Drizzle `packages/db/src/schemas/ciszu.ts` (`puckPages`).
+  - Verificación: lint + tsc + `next build` OK (rutas dinámicas) y smoke test local
+    (`/edit/home` 200, `/pages/home` 404, POST /api/puck/save 400 sin payload).
+- **Pendiente**: validar guardado real en despliegue (requiere `DATABASE_URL`) y E2E de editor.
 
 
 - **Cookies banner ×3 webs (ciszu, ciszubot, ciszukoa)** siguiendo el patrón de muzicmania:
@@ -469,5 +489,5 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 3. **Pendientes (§3)**: mover a historial cuando se resuelva, añadir nuevos bloqueos.
 4. Marcar "Última actualización" y actualizar `STATUS_SYSTEM.md` y `STATISTICS_SYSTEM.md`.
 
-_Última revisión: 16 ago 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
+_Última revisión: 18 ago 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
 `ARCHITECTURE.md`, `WORKFLOW_SYSTEM.md`, `AGENTS.md`.

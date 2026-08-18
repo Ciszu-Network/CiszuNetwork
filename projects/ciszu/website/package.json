@@ -15,16 +15,18 @@
   "dependencies": {
     "@ciszu/ui": "workspace:*",
     "@ciszunetwork/cdn": "workspace:*",
+    "@ciszunetwork/db": "workspace:^",
     "@ciszunetwork/payments": "workspace:*",
     "@ciszunetwork/utils": "workspace:*",
+    "@puckeditor/core": "^0.23.0",
     "@sentry/nextjs": "^10.69.0",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.17.0",
     "next": "^15.5.22",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "zustand": "^5.0.14",
-    "zod": "^4.4.3"
+    "zod": "^4.4.3",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",

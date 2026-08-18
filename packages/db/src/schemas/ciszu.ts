@@ -32,3 +32,12 @@ export const counters = ciszu.table(
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   }
 );
+
+export const puckPages = ciszu.table(
+  'puck_pages',
+  {
+    path: text('path').primaryKey(),
+    data: jsonb('data').notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  }
+);
