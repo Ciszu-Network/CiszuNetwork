@@ -129,9 +129,24 @@ export default function CloudflareGuard({
   //   porque Turnstile en localhost tarda/no carga y dejaría la pantalla
   //   bloqueada para siempre (overlay). Para probar el guard localmente de forma
   //   puntual, arrancar con NEXT_PUBLIC_TURNSTILE_FORCE=1.
+  // - con host local (localhost / 127.0.0.1) → tampoco bloquea, cubriendo
+  //   también un build de producción servido localmente (pnpm start, next start),
+  //   donde NODE_ENV es 'production' pero el target es un dev box local.
+  // - salida de emergencia: añadir ?cf_bypass=1 a la URL fuerza el skip (debug).
   const isDev = process.env.NODE_ENV === 'development';
   const forceInDev = process.env.NEXT_PUBLIC_TURNSTILE_FORCE === '1';
-  const enabled = Boolean(siteKey) && (!isDev || forceInDev);
+  // Host local (localhost/127.0.0.1/::1): nunca bloquear, sea NODE_ENV dev, start o un
+  // túnel de debug. En tests (happy-dom) el hostname es 'localhost' pero es un entorno
+  // simulado, no un dev-box real: ahí NO aplicamos el check para que los tests sigan
+  // ejerciendo el flujo completo de verificación.
+  const isLocalHost =
+    process.env.NODE_ENV !== 'test' &&
+    typeof window !== 'undefined' &&
+    ['localhost', '127.0.0.1', '::1', '[::1]'].includes(window.location.hostname);
+  // Salida de emergencia de debug: ?cf_bypass=1 fuerza el skip (sessionStorage no
+  // se toca; solo dura en esa URL). Útil si Turnstile falla en un entorno controlado.
+  const urlBypass = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('cf_bypass') === '1';
+  const enabled = Boolean(siteKey) && !urlBypass && !isLocalHost && (!isDev || forceInDev);
 
   useEffect(() => {
     setMounted(true);
@@ -312,7 +327,7 @@ export default function CloudflareGuard({
     };
   }, [enabled, mounted, state, leaving]);
 
-  if (!enabled || state === ('verified' as GuardState)) return <>{children}</>;
+  if (!mounted || !enabled || state === ('verified' as GuardState)) return <>{children}</>;
 
   const iconError = (
     <svg viewBox="0 0 24 24" style={{ width: '100%', height: '100%' }} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
