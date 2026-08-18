@@ -59,8 +59,7 @@ interface NavEntry {
 }
 
 const NAV_ITEMS: NavEntry[] = [
-  { name: 'Inicio', href: '/', icon: <Home className="w-4 h-4" /> },
-  {
+  { name: 'Inicio', href: '/', icon: <Home className="w-4 h-4" /> },  {
     name: 'Información',
     icon: <Shield className="w-4 h-4" />,
     keywords: ['sobre nosotros', 'faq', 'políticas', 'guías', 'info'],
@@ -90,6 +89,18 @@ const NAV_ITEMS: NavEntry[] = [
   },
   { name: 'Equipo', href: '/team', icon: <Users className="w-4 h-4" /> },
   { name: 'Contacto', href: '/contact', icon: <Mail className="w-4 h-4" /> },
+];
+
+// Clases responsive por índice de NAV_ITEMS: el link activo siempre visible; el resto aparece según espacio.
+const NAV_HIDE_CLS: string[] = [
+  'hidden min-[420px]:flex',
+  'hidden min-[520px]:flex',
+  'hidden min-[620px]:flex',
+  'hidden min-[720px]:flex',
+  'hidden min-[820px]:flex',
+  'hidden min-[920px]:flex',
+  'hidden min-[1020px]:flex',
+  'hidden min-[1120px]:flex',
 ];
 
 // Massive page catalog for the global search (references the same routes as the nav).
@@ -432,23 +443,25 @@ export const NavbarContent = () => {
             <div className="w-px h-7 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-1 shrink-0" />
 
             {/* Desktop Nav */}
-            <div className="hidden lg:flex items-center gap-1 flex-1 overflow-visible">
-              {NAV_ITEMS.map((item) => {
+            <div className="flex items-center gap-1 flex-1 overflow-visible min-w-0">
+              {NAV_ITEMS.map((item, idx) => {
                 if (item.links) {
                   const isOpen = openDropdown === item.name;
+                  const groupActive = item.links.some((sub) => isActive(sub.href));
+                  const responsiveClass = groupActive ? 'flex' : (NAV_HIDE_CLS[idx] ?? 'hidden min-[1120px]:flex');
                   return (
                     <div
                       key={item.name}
-                      className="relative z-40 shrink-0"
+                      className={`relative z-40 shrink-0 ${responsiveClass}`}
                       onMouseEnter={() => hoverOpen(setOpenDropdown, dropdownTimer, item.name)}
                       onMouseLeave={() => hoverClose(setOpenDropdown, dropdownTimer)}
                     >
                       <button
                         onClick={() => setOpenDropdown(isOpen ? null : item.name)}
-                        className={navLinkCls(item.links[0].href)}
+                        className={navLinkCls(groupActive ? item.links.find((s) => isActive(s.href))?.href ?? item.links[0].href : item.links[0].href)}
                       >
                         <span className="flex items-center justify-center shrink-0">{item.icon}</span>
-                        <span className={navLabelCls(item.links[0].href)}>{item.name}</span>
+                        <span className={navLabelCls(groupActive ? item.links.find((s) => isActive(s.href))?.href ?? item.links[0].href : item.links[0].href)}>{item.name}</span>
                         <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
                       </button>
                       {isOpen && (
@@ -475,8 +488,9 @@ export const NavbarContent = () => {
                 }
                 const href = item.href!;
                 const active = isActive(href);
+                const responsiveClass = active ? 'flex' : (NAV_HIDE_CLS[idx] ?? 'hidden min-[1120px]:flex');
                 return (
-                  <Link key={item.name} href={href} className={`${navLinkCls(href)} ${active ? 'flex' : 'flex'}`}>
+                  <Link key={item.name} href={href} className={`${navLinkCls(href)} ${responsiveClass}`}>
                     <span className="flex items-center justify-center shrink-0">{item.icon}</span>
                     <span className={navLabelCls(href)}>{item.name}</span>
                   </Link>

@@ -64,7 +64,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <html lang={lang} className={`${inter.variable} ${spaceGrotesk.variable}${isDark ? " dark" : ""}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-        <script defer type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
+        {process.env.NODE_ENV === 'production' && (
+          <script defer type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
+        )}
       </head>
       <body className="bg-bg text-ink min-h-screen font-sans flex flex-col">
         <QueryProvider>

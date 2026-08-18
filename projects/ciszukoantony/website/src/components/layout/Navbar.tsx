@@ -271,12 +271,13 @@ export default function Navbar() {
 
             <div className="w-px h-7 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-1 shrink-0 hidden md:block" />
 
-            <div className="hidden md:flex items-center gap-1">
+            <div className="flex items-center gap-1 flex-1 overflow-visible min-w-0">
               {NAV_MAIN.map((item) => {
                 if ('items' in item) {
                   const group = item as NavGroup;
+                  const responsiveClass = infoActive ? 'flex' : 'hidden min-[440px]:flex';
                   return (
-                    <div key={group.name} className="relative" ref={infoRef}
+                    <div key={group.name} className={`relative ${responsiveClass}`} ref={infoRef}
                       onMouseEnter={() => setInfoOpen(true)}>
                       <button onClick={() => setInfoOpen(!infoOpen)} className={navLinkCls(infoActive)}>
                         <span className="opacity-80 shrink-0">{group.icon}</span>
@@ -302,10 +303,14 @@ export default function Navbar() {
                 }
                 const link = item as NavItem;
                 const active = isActive(link.href);
+                const { name } = link;
+                const hideCls =
+                  { '/': 'hidden min-[300px]:flex', '/projects': 'hidden min-[540px]:flex', '/feedback': 'hidden min-[640px]:flex', '/descargas': 'hidden min-[740px]:flex' }[link.href] ?? 'hidden min-[850px]:flex';
+                const responsiveClass = active ? 'flex' : hideCls;
                 return (
-                  <Link key={link.href} href={link.href} className={navLinkCls(active)}>
+                  <Link key={link.href} href={link.href} className={`${navLinkCls(active)} ${responsiveClass}`}>
                     <span className="opacity-80 shrink-0">{link.icon}</span>
-                    <span className={navLabelCls(active)}>{link.name}</span>
+                    <span className={navLabelCls(active)}>{name}</span>
                   </Link>
                 );
               })}
