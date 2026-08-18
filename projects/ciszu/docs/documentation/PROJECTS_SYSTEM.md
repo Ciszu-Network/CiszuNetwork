@@ -142,7 +142,29 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 > Este historial absorbe `PROJECT_HISTORY.md` (eliminado 13 ago 2026). Añadir aquí los
 > nuevos hitos al cierre de sesión.
 
-### 17 de Agosto, 2026 — TODO global de frontend completado (cookies, hero titles, navbars)
+### 18 de Agosto, 2026 — Tarea OSINT y ciberseguridad completada
+
+- **Stack OSINT integrado y verificado** (TODO cerrado): Sherlock 0.16.0, Maigret 0.6.4,
+  SimpleLogin (API, cuenta `fplayersoffcial@proton.me`), SpiderFoot 4.0.0 (clon en
+  `clones/spiderfoot`) y Maltego 4.12.1 Community (instalada por Ciszuko, en configuración).
+  Wrappers PowerShell en `tools/cibersecurity/osint/`, comandos opencode `/osint`,
+  `/sherlock`, `/maigret`, `/simplelogin`, `/spiderfoot`, `/maltego`, funciones en el perfil
+  PowerShell (`osint`, `osint-mai`, `osint-sher`, `osint-slo`, `osint-sfx`, `maltego`).
+- **`tools/osint/` movida a `tools/cibersecurity/osint/`** por decisión de Ciszuko; todas las
+  rutas (wrappers, comandos, docs, perfil, `.gitignore`) actualizadas.
+- **Correcciones**: ruta de raíz en wrappers (`$PSScriptRoot/../..` → `..\..\..` tras el
+  move) que duplicaba `tools\tools` y rompía SimpleLogin; `maigret[pdf]` instalado
+  (extra opcional, actualiza `cryptography` a 50.0.0) y `--pdf`/`--xlsx` añadidos a los
+  presets `full` de maigret/sherlock (verificado: csv/json/html/graph/pdf).
+- **Herramientas manuales aplicadas** (sin CLI, webs protegidas contra bots): Epieos y
+  Thatsthem documentadas en `OSINT_PROTOCOLS.md` §4.7; Maltego como GUI manual.
+- **Descartadas** (decisión Ciszuko, 18 ago 2026): SEON, Hunter.io, Sherlockeye, PhoneInfoga
+  y todas las API de pago de SpiderFoot, hasta tener capital.
+- **Flujo de secretos SECRET_TEMP.env** formalizado en `OSINT_PROTOCOLS.md` §5.1 y
+  `AGENTS.md` §6.5; SimpleLogin verificada con Bitwarden + vault cifrado.
+- **Protocolo `clones/`**: repos de terceros clonados viven en `E:\Ciszu Network\clones/`
+  (gitignored), documentado en `TOOLS_SYSTEM.md` §6.6 y `AGENTS.md` §6.4.
+
 
 - **Cookies banner ×3 webs (ciszu, ciszubot, ciszukoa)** siguiendo el patrón de muzicmania:
   localStorage `cookies_accepted`, store `hasAcceptedCookies`/`setHasAcceptedCookies`,
