@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { Puck, type Data } from "@puckeditor/core";
+import { createAiPlugin } from "@puckeditor/plugin-ai";
 import { puckConfig } from "@/puck.config";
+
+const aiPlugin = createAiPlugin();
 
 export function PuckEditor({ initialData, path }: { initialData: Data; path: string }) {
   const [saving, setSaving] = useState(false);
@@ -12,6 +15,7 @@ export function PuckEditor({ initialData, path }: { initialData: Data; path: str
     <Puck
       config={puckConfig}
       data={initialData}
+      plugins={[aiPlugin]}
       headerTitle={path}
       headerPath={path}
       onPublish={async (data) => {

@@ -1,4 +1,5 @@
 import "@puckeditor/core/puck.css";
+import "@puckeditor/plugin-ai/styles.css";
 import type { Data } from "@puckeditor/core";
 import { getPuckPage } from "@/lib/puck";
 import PuckEditor from "@/puck/PuckEditor";

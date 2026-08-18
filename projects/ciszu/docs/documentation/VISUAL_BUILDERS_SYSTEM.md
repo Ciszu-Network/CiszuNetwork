@@ -1,8 +1,8 @@
 # VISUAL_BUILDERS_SYSTEM — Editores visuales de UI/UX (Ciszu Network)
 
-Versión: 1.0.0
-Actualización: 2026-08-18
-Identificador: VISUAL_BUILDERS_SYSTEM_V1.0.0_2026_08_18_ciszunetwork
+Versión: 1.1.0
+Actualización: 2026-08-19
+Identificador: VISUAL_BUILDERS_SYSTEM_V1.1.0_2026_08_19_ciszunetwork
 
 > **Definición**: sistema que documenta la decisión de qué editor visual de UI/UX usar en el
 > ecosistema: comparativa Onlook vs Plasmic vs Puck vs Subframe (estado verificado 18 ago 2026),
@@ -414,12 +414,28 @@ Notas de integración:
   guardada), `POST /api/puck/save` payload vacío → 400 (rate limit + Zod OK).
 - Guardado real requiere `DATABASE_URL` (env de Vercel); se valida en despliegue.
 
-### 6.3 Fase 2 — Puck AI (opcional)
+### 6.3 Fase 2 — Puck AI implementado ✅ (19 ago 2026)
 
-- Requiere **cuenta Puck Cloud con crédito** + `PUCK_API_KEY`. En el vault existen `PUCK_KEY` y
-  `PUCK_ORG_KEY` (referenciadas en `TODO.md`); verificar si corresponden a la API key de Puck
-  Cloud antes de usarlas (`SECRET_TEMP.env` → vault → usar al vuelo).
-- El skill `puckeditor/skills` incluye la guía "Set up Puck AI".
+El onboarding "Create your Puck App" de Puck Cloud corresponde a la integración del **plugin AI**:
+chat que genera/ensambla páginas con los componentes del config. Él usa la key de la organización.
+
+- **Pendiente resuelto**: `PUCK_KEY` = key de usuario, `PUCK_ORG_KEY` = key de organización (ambas
+  en el vault). Se usa la de la **organización** como `PUCK_API_KEY` en server-only.
+- **Paquetes** (aprobado 19 ago): `@puckeditor/plugin-ai@0.8.2` (client) +
+  `@puckeditor/cloud-client@0.8.2` (server handler).
+- **Handler** `src/app/api/puck/[...all]/route.ts` — `puckHandler` (Next.js), `runtime = "nodejs"`,
+  `dynamic = "force-dynamic"`, exporta `GET/POST/DELETE`. `ai.context` con el posicionamiento real
+  del ecosistema para mejor generación.
+- **Plugin client**: `createAiPlugin()` añadido a `PuckEditor.tsx` (`plugins={[aiPlugin]}`) +
+  `@puckeditor/plugin-ai/styles.css` importado junto al `puck.css`.
+- **Env**: `PUCK_API_KEY` en `projects/ciszu/website/.env.local` (gitignored; valor de
+  `PUCK_ORG_KEY` del vault) → añadirla también en las env vars de Vercel.
+- **Verificación local**: tsc OK, lint OK, `pnpm build` OK (routes `/api/puck/[...all]` y
+  `/api/puck/save` coexisten, ambos `ƒ` dynamic).
+
+> ⚠️ **Deuda de auth**: el handler `/api/puck/*` es una superficie **medible** (gasta crédito de
+> Puck Cloud) y está tan abierto como `/edit` hoy — requiere poner la auth del proyecto delante
+> antes de producción abierta (ver §7 y `SECURITY_PROTOCOLS.md`).
 
 ### 6.4 Fase 3 — Onlook como herramienta de prototipado (opcional, no integrado)
 
@@ -451,6 +467,9 @@ Notas de integración:
 - **Endpoints POST** (guardar página): `createRateLimiter` obligatorio.
 - **Si se integra Puck AI**: la `PUCK_API_KEY` va en server-only (env del server), nunca expuesta
   al cliente.
+- **Puck AI (19 ago 2026)**: `PUCK_API_KEY` (valor de `PUCK_ORG_KEY`) vive solo en
+  `.env.local` gitignored + env de Vercel; la de usuario `PUCK_KEY` queda en el vault. El handler
+  `/api/puck/*` gasta crédito: **auth obligatoria delante antes de exponerlo**.
 - **No instalar** ninguna de estas librerías sin aprobación explícita (regla 7.1).
 
 ---
@@ -461,6 +480,7 @@ Notas de integración:
 | ---------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | 2026-08-18 | Creación. Investigación verificada de las 4 candidatas (repos/registry npm/docs), decisión híbrido Puck-first, plan en fases. |
 | 2026-08-18 | Implementación Fase 0-1 en `ciszunetwork-website` (6 archivos + migración 18 + schema Drizzle), verificación lint/tsc/build/smoke. |
+| 2026-08-19 | Fase 2 Puck AI: onboarding "Create your Puck App" completado (plugin-ai@0.8.2 + cloud-client@0.8.2, handler `/api/puck/[...all]`, `PUCK_API_KEY` desde `PUCK_ORG_KEY` del vault). tsc/lint/build OK. Deuda: auth delante del handler. |
 
 ---
 
