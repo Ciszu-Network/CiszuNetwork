@@ -186,12 +186,37 @@ python ./sf.py -l 127.0.0.1:5001   # web UI (opcional)
 **Wrapper oficial**: `tools/osint/spiderfoot.ps1` (busca el clon en `clones\spiderfoot\sf.py`).
 Presets:
 - `full` (default): `-u passive` — todos los módulos pasivos sin API keys (lento, exhaustivo).
-- `quick`: `-m sfp_gravatar,sfp_keybase,sfp_social` — módulos rápidos para pruebas/CI (~10 s).
+- `quick`: módulos gratuitos seleccionados automáticamente según el **tipo de target**:
+  email (`sfp_email,sfp_haveibeenpwned,sfp_pgp,sfp_botscout,sfp_psbdmp,sfp_threatcrowd,
+  sfp_emailrep`), teléfono (`sfp_phone,sfp_intelx`), dominio (`sfp_whois,sfp_crt,sfp_viewdns,
+  sfp_hunter`) o username (`sfp_gravatar,sfp_keybase,sfp_social,sfp_accounts`).
 
 Salida CSV por target a `test/osint/spiderfoot/` (test) y `tools/osint/output/spiderfoot/`
 (oficial).
 
 **Comandos**: PowerShell `osint-sfx` · opencode `/spiderfoot <target>`.
+
+### 4.1.1 Uso por tipo de target (email / dominio / teléfono)
+
+SpiderFoot (vía `helpers.targetTypeFromString`) detecta el tipo por el **formato** del target:
+`@` → email · `+` solo dígitos → teléfono · formato DNS → dominio · resto → username.
+
+| Tipo | Ejemplo | Comando PowerShell | Comando opencode |
+|---|---|---|---|
+| **Email** | `foo@example.com` | `osint-sfx foo@example.com` | `/spiderfoot foo@example.com` |
+| **Dominio** | `example.com` | `osint-sfx example.com -Preset quick -Test` | `/spiderfoot example.com` |
+| **Teléfono** | `+584165551234` (con `+`) | `osint-sfx +584165551234` | `/spiderfoot +584165551234` |
+| **Username** | `iconage` | `osint-sfx iconage` | `/spiderfoot iconage` |
+
+Reglas:
+- El teléfono debe pasar **con `+` y solo dígitos** (`+584165551234`); sin `+` se trataría como
+  username.
+- `quick` tarda ~10-15 s por target y usa solo módulos gratuitos. `full` (`-u passive`) cubre
+  todo (brechas, social, DNS, PGP, etc.) pero es lento.
+- Verificado 18 ago 2026: dominio → WHOIS real de example.com; teléfono de prueba → proveedor
+  (Movilnet) retornado por `sfp_phone`; email sintético → solo cabecera (no existe).
+- El CSV puede contener `sfp_whois` con saltos de línea embebidos en la celda (normal al
+  volcar whois multilínea; leerlo con parser CSV, no con `Get-Content` por líneas).
 
 ### 4.2 Búsqueda de números de teléfono
 
