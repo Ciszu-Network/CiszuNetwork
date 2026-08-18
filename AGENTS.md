@@ -71,6 +71,7 @@ Antes de codificar, lee el doc del área que tocas. Mapa por tipo de tarea:
 | Imagen/multimedia    | `BRAND_PLAN` · `AI_ART_PLAN` · `ART_PROTOCOLS`                                             |
 | Operación diaria     | `WORKFLOW_SYSTEM` · `TOOLS_SYSTEM`                                                         |
 | Testing/Dev local    | `LOCAL_TESTING_PROTOCOLS` · `DEBUGGING_SYSTEM` · `DEV_CONSOLE_SYSTEM` · `TESTING_SYSTEM`   |
+| Editor visual UI     | `VISUAL_BUILDERS_SYSTEM` · `UI_COMPONENTS_SYSTEM` · `STYLES_SYSTEM` · `COLOR_SYSTEM`        |
 
 ### 3.3 Índice de la documentación de ciszu
 
@@ -83,6 +84,7 @@ Antes de codificar, lee el doc del área que tocas. Mapa por tipo de tarea:
   `CORS_SYSTEM` · `BUSINESS_SYSTEM` · `OPENCODE_SYSTEM` (voz + comandos) ·
   `REMOTE_CONTROL_SYSTEM` (SSH/Tailscale/ciszu-ai) · `KNOWLEDGE_SYSTEM` (educación) ·
   `INSTALLERS_SYSTEM` · `ONLINE_SERVICES_SYSTEM` · `STATISTICS_SYSTEM` ·
+  `VISUAL_BUILDERS_SYSTEM` (editores visuales UI/UX: Puck-first) ·
   `PROJECTS_SYSTEM` · `STATUS_SYSTEM` · `ACTIONS_RUNNERS_SYSTEM` (CI/deploys locales sin GH Actions) ·
   `DEV_CONSOLE_SYSTEM` (TUI/CLI dev local) · `DEBUGGING_SYSTEM` (depuración local)
 - **Arquitectura por capas**: `FRONTEND_SYSTEM` · `BACKEND_SYSTEM` · `PACKAGES_SYSTEM` ·
