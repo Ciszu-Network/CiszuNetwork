@@ -250,6 +250,7 @@ AGENTS §6.4) ni en `downloads/`.
 - ✅ **DBeaver GUI**: la conexión `supabase` ya aparece en DBeaver (dbvr y DBeaver comparten el workspace `DBeaverData\workspace6`); driver PostgreSQL 42.7.13 descargado. DBeaver estaba abierto durante la sesión — refrescar si no se ve la conexión.
 - ✅ **PostgreSQL 18.4 instalado (10 ago 2026, instalación manual desde postgresql.org)**: `C:\Program Files\PostgreSQL\18\bin\pg_dump.exe` 18.4 (queda también el 17.10 que vino con winget — `backup-db.js` prioriza el 18). **Primer backup real ejecutado y OK** (ciszu-db-20260809.sql, 3.43 MB → `archives/backups/db/`). ⏳ Opcional (ya no bloquea): configurar MCP server de dbvr (§6.3) para acceso IA directo a la BD
 - ✅ **Protocolo `clones/` creado (18 ago 2026, §6.6)**: carpeta gitignored para repositorios de terceros persistidos en disco. Primer clon: **SpiderFoot 4.0.0** en `clones\spiderfoot` (instalado, aprobación AGENTS §7.1). Dependencias con pip (nota: `lxml<5` sin rueda para Python 3.14 — se instaló lxml 6.1.1 que es compatible; quitar `--only-binary` para ipaddr/otras pure-python). Verificado: `python sf.py -V` → 4.0.0.
+- ✅ **ERD Editor + generador (18 ago 2026, §9)**: extensión `dineug.vuerd-vscode` (formato vuerd v3.0.0) y `scripts/generate-erd.js` que convierte SQL → `erd.json` (3 diagramas versionados en `services/supabase/{,migrations/,seeds/}erd.json`; 33 tablas + 10 relaciones + 11 índices en migraciones). Formato v3.0.0 estudiado desde el source del editor (bitmasks, nanoid, defaults).
 
 ## Resumen de la pila instalada
 
@@ -260,6 +261,7 @@ AGENTS §6.4) ni en `downloads/`.
 | Bruno | 4.0.0 | API client (git-native `.bru`/YAML) |
 | Fork | 2.16.1 | Git GUI (visual) |
 | PostgreSQL | 18.4 | Tooling local (pg_dump) |
+| **ERD Editor** | `dineug.vuerd-vscode` | **Diagramas ERD versionables (`erd.json`)** + generador `scripts/generate-erd.js` (§9) |
 | **Bun** | 1.3.14 | **Runner local opcional de scripts** (`C:\Users\fplay\.bun\bin\bun.exe`) — piloto 14 ago 2026: CJS y TS nativo OK; NO sustituye a Node en producción. Ver `FULL_STACK_SYSTEM.md` §Runtime |
 
 ## Reglas de la pila
@@ -278,6 +280,59 @@ dbvr sql -ds=supabase "select current_date;"
 pnpm api:test
 node scripts/backup-db.js
 ```
+
+## 9. ERD Editor — diagramas de BD versionables (`erd.json`)
+
+### 9.1 Herramienta y formato
+
+- **Editor**: extensión de VSCode **ERD Editor** (`dineug.vuerd-vscode`). Abre/edita/exporta
+  diagramas en formato **vuerd v3.0.0** (JSON): `$schema`, `version`, `settings`, `doc`,
+  `collections` (`tableEntities`, `tableColumnEntities`, `relationshipEntities`,
+  `indexEntities`, `indexColumnEntities`, `memoEntities`).
+- **Regla del repo**: el formato canónico de los diagramas es **SQL → generador → `erd.json`**.
+  El `erd.json` se versiona y se abre con el editor para inspección/ajuste; **no** se edita a
+  mano salvo retoques puntuales (el editor regenera IDs nanoid y meta en cada guardado).
+- **Limitación del importador oficial**: no crea relaciones desde `REFERENCES` inline (solo
+  `FOREIGN KEY` de tabla). El generador del repo **sí** las crea (ver §9.3).
+
+### 9.2 Dónde vive cada diagrama
+
+| Archivo | SQL fuente | Contenido |
+|---|---|---|
+| `services/supabase/erd.json` | `services/supabase/schema.sql` | BD `ciszunetwork` (3 tablas) |
+| `services/supabase/migrations/erd.json` | `services/supabase/migrations/*.sql` (38) | BD consolidada `migrations` (33 tablas, incl. `ciszubot.tickets` y `public.tickets`, tabla sintética `users` de `auth.users`) |
+| `services/supabase/seeds/erd.json` | `services/supabase/seeds/seed.sql` | BD `seeds` (0 tablas — seed vacío) |
+
+### 9.3 Generador (`scripts/generate-erd.js`)
+
+Node, sin dependencias externas. CLI:
+
+```bash
+node scripts/generate-erd.js <sqlFile|dir>... -o <salida.json> [--dbname <nombre>]
+```
+
+- **Parsing**: `CREATE TABLE`, `CREATE INDEX`/`UNIQUE INDEX`, `ALTER TABLE ... ADD COLUMN`
+  (con `PRIMARY KEY`/`UNIQUE`/`REFERENCES`/`SET SCHEMA`), `REFERENCES` inline → relaciones,
+  tabla sintética `users` cuando hay FK a `auth.users`.
+- **Robustez**: `splitStatements` respeta dollar-quotes `$$...$$` y strings; comentarios
+  `--`/`/* */` se descartan sin tocar `$...$`; nombres duplicados entre schemas se califican
+  (`ciszubot.tickets` vs `public.tickets`).
+- **Formato v3**: `database: 16` (PostgreSQL), `ColumnOption` (autoIncrement=1, primaryKey=2,
+  unique=4, notNull=8), `ColumnUIKey` (primaryKey=1, foreignKey=2), `RelationshipType.ZeroN`=4,
+  `StartRelationshipType.dash`=2, `Direction.bottom`=8, `OrderType` (ASC=1/DESC=2),
+  `Show` 687, `language` 1, IDs **nanoid 21 chars** (deterministas, ver abajo).
+- **Determinismo**: los IDs (nanoid 21 chars) y `meta` se derivan del contenido (nombre de
+  tabla/columna/index/FK), no del azar → regenerar con el mismo SQL produce el **mismo archivo**
+  (diff git limpio al añadir/modificar una tabla).
+- **Uso con git**: regenerar los 3 `erd.json` tras cambiar migraciones:
+
+```bash
+node scripts/generate-erd.js services/supabase/schema.sql -o services/supabase/erd.json --dbname ciszunetwork
+node scripts/generate-erd.js services/supabase/migrations -o services/supabase/migrations/erd.json --dbname migrations
+node scripts/generate-erd.js services/supabase/seeds/seed.sql -o services/supabase/seeds/erd.json --dbname seeds
+```
+
+- Depuración: `node -e "const {buildSchema, toErdJson, splitStatements, parseCreateTable, parseColumnGroup} = require('./scripts/generate-erd.js'); ..."`
 
 ## Troubleshooting
 
