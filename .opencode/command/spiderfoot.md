@@ -14,7 +14,7 @@ de target por formato** (`@`=email, `+`+dígitos=teléfono, DNS=dominio, resto=u
 | Email | contiene `@` | `foo@example.com` |
 | Teléfono | `+` + solo dígitos | `+584165551234` |
 | Dominio | formato DNS | `example.com` |
-| Username | resto | `iconage` |
+| Username | resto | `none_xisty_zzz_999` |
 
 - **full** (default): `-u passive` — todos los módulos pasivos sin API keys (HIBP, social, dominios, IPs, usernames). Lento.
 - **quick**: módulos gratuitos según tipo (email → HIBP/PGP/botscout/psbdmp/threatcrowd/emailrep; teléfono → phone/intelx; dominio → whois/crt/viewdns/hunter; username → gravatar/keybase/social/accounts). ~10-15 s.

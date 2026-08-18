@@ -5,8 +5,8 @@
 # Documentado en: projects/ciszu/docs/documentation/CIBERSECURITY_SYSTEM.md y OSINT_PROTOCOLS.md
 #
 # Uso:
-#   .\tools\osint\sherlock.ps1 -Usernames iconage,iconagenator    # preset full
-#   .\tools\osint\sherlock.ps1 -Usernames prueba -Preset quick -Test
+#   .\tools\osint\sherlock.ps1 -Usernames none_xisty_zzz_999    # preset full
+#   .\tools\osint\sherlock.ps1 -Usernames none_xisty_zzz_999 -Preset quick -Test
 #   .\tools\osint\sherlock.ps1 -Usernames foo -Out "E:\ruta\custom"
 #
 # Presets:

@@ -24,8 +24,8 @@ instalados (`sherlock.exe`, `maigret.exe` en `Python314\Scripts`).
 
 ```powershell
 # Dispatcher único
-.\tools\osint\osint.ps1 maigret -Usernames iconage,DRAWDRAW
-.\tools\osint\osint.ps1 sherlock -Usernames iconage -Preset quick -Test
+.\tools\osint\osint.ps1 maigret -Usernames none_xisty_zzz_999
+.\tools\osint\osint.ps1 sherlock -Usernames none_xisty_zzz_999 -Preset quick -Test
 .\tools\osint\osint.ps1 simplelogin info
 .\tools\osint\osint.ps1 spiderfoot -Targets ejemplo@correo.com
 

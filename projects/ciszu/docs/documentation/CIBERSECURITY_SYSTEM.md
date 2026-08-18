@@ -106,7 +106,7 @@ otros datos extraídos. Soporta `--graph` (HTML), `--tags` por categoría, y var
 
 ```powershell
 # Full (por defecto): graph + tags social,tech + CSV + JSON(ndjson) + HTML
-.\tools\osint\maigret.ps1 -Usernames foo,DRAWDRAW
+.\tools\osint\maigret.ps1 -Usernames none_xisty_zzz_999
 
 # Rápido (pruebas): solo CSV en test/osint/maigret
 .\tools\osint\maigret.ps1 -Usernames foo -Preset quick -Test
