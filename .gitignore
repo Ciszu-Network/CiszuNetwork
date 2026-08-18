@@ -183,6 +183,10 @@ __pycache__/
 # Puente de secretos de documentacion (SECRET_TEMP.env) — NUNCA trackear
 projects/ciszu/docs/documentation/SECRET_TEMP.env
 
+# Clones de repositorios externos (clones/) — herramientas de terceros clonadas
+# para uso local ofrecen desde el monorepo. Ver protocolo en TOOLS_SYSTEM.md.
+clones/
+
 # Proteccion anti-mirrors ciszubot web (ver arriba)
 projects/ciszubot/website/public/banners/
 

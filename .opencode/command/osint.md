@@ -19,9 +19,8 @@ herramientas OSINT con los presets oficiales. Salidas:
 | simplelogin | `osint-slo info\|aliases\|options\|create <prefijo>\|random` | — (API SimpleLogin) |
 | spiderfoot | `osint-sfx <targets> [-Preset full\|quick] [-Test] [-Out ruta]` | `full` (`-u passive`, sin API keys) |
 
-> **spiderfoot**: no instalado aún. Si se requiere, proponer instalación (AGENTS §7.1):
-> `git clone https://github.com/smicallef/spiderfoot "~/spiderfoot"` + `pip install -r requirements.txt`.
-> El wrapper detecta `~\spiderfoot\sf.py`.
+> **spiderfoot**: instalado en `clones/spiderfoot` (v4.0.0). `quick` = gravatar/keybase/social
+> (~10 s) · `full` = `-u passive`. El wrapper detecta `clones\spiderfoot\sf.py`.
 
 ## Ejemplos
 

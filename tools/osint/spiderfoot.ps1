@@ -16,10 +16,9 @@
 #   oficial -> tools/osint/output/spiderfoot/
 #   -Test   -> test/osint/spiderfoot/   (pruebas rapidas, gitignored)
 #
-# Importante: SpiderFoot escanea UN target por scan; el wrapper itera sobre los targets.
-# La instalacion NO esta disponible de serie; requiere aprobacion (AGENTS 7.1):
-#   git clone https://github.com/smicallef/spiderfoot "$env:USERPROFILE\spiderfoot"
-#   cd "$env:USERPROFILE\spiderfoot"; pip install -r requirements.txt
+# Nota instalacion (aprobada 18 ago 2026): clon vive en clones/spiderfoot
+#   git clone https://github.com/smicallef/spiderfoot "clones\spiderfoot"
+#   cd "clones\spiderfoot"; pip install -r requirements.txt
 
 param(
   [Parameter(Mandatory = $true, Position = 0)]
@@ -40,25 +39,26 @@ New-Item -ItemType Directory -Force -Path $outDir | Out-Null
 
 # Detectar sf.py (clon local de SpiderFoot >= 4.0)
 $candidates = @(
+  (Join-Path $repo 'clones\spiderfoot\sf.py'),
   (Join-Path $env:USERPROFILE 'spiderfoot\sf.py'),
-  (Join-Path $repo 'tools\spiderfoot\sf.py'),
   (Get-Command sf.py -ErrorAction SilentlyContinue).Source
 )
 $sf = $candidates | Where-Object { $_ -and (Test-Path $_) } | Select-Object -First 1
 
 if (-not $sf) {
   Write-Host "[osint:spiderfoot] SpiderFoot NO instalado." -ForegroundColor Yellow
-  Write-Host "Instalacion (requiere aprobacion de Ciszuko, AGENTS 7.1):" -ForegroundColor Yellow
-  Write-Host "  git clone https://github.com/smicallef/spiderfoot `"$env:USERPROFILE\spiderfoot`"" -ForegroundColor Yellow
-  Write-Host "  cd `"$env:USERPROFILE\spiderfoot`"; pip install -r requirements.txt" -ForegroundColor Yellow
+  Write-Host "Instalacion (clon en clones/spiderfoot):" -ForegroundColor Yellow
+  Write-Host "  git clone https://github.com/smicallef/spiderfoot `"$repo\clones\spiderfoot`"" -ForegroundColor Yellow
+  Write-Host "  cd `"$repo\clones\spiderfoot`"; pip install -r requirements.txt" -ForegroundColor Yellow
   exit 2
 }
 
 # Modulos segun preset.
-# 'passive' (use-case) selecciona automaticamente los modulos pasivos sin API key.
+# full: -u passive selecciona todos los modulos pasivos (lento, sin API keys).
+# quick: solo modulos rapidos (Gravatar + Keybase), idoneo para pruebas y CI.
 switch ($Preset) {
-  'full'  { $usecase = 'passive' }
-  'quick' { $usecase = 'passive' }   # reservado para acotar a sfp_gravatar/sfp_username mas adelante
+  'full'  { $sfArgs = @('-u', 'passive') }
+  'quick' { $sfArgs = @('-m', 'sfp_gravatar,sfp_keybase,sfp_social') }
 }
 
 Write-Host "[osint:spiderfoot] preset=$Preset targets=$($Targets -join ',')"
@@ -67,7 +67,7 @@ foreach ($t in $Targets) {
   $sfOut = ($t -replace '[^a-zA-Z0-9_.@-]', '_')
   $file = Join-Path $outDir "$sfOut.csv"
   Write-Host "[osint:spiderfoot] scan: $t -> $file"
-  & python $sf -s $t -u $usecase -o csv -q | Out-File -FilePath $file -Encoding utf8
+  & python $sf -s $t @sfArgs -o csv -q | Out-File -FilePath $file -Encoding utf8
   if ($LASTEXITCODE -ne 0) { $exitCode = $LASTEXITCODE }
 }
 exit $exitCode

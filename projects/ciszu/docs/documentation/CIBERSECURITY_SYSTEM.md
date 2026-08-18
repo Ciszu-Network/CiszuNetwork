@@ -52,7 +52,7 @@ wrapper están operativas desde PowerShell, opencode (comandos) o CI.
 | **Sherlock** | 0.16.0 | Username → presencia en ~400 redes | ✅ operativa | `tools/osint/sherlock.ps1` | §3.1 |
 | **Maigret** | 0.6.4 | Username → URLs + datos extraídos (recursión) | ✅ operativa | `tools/osint/maigret.ps1` | §3.2 |
 | **SimpleLogin** | API v2 | Alias de email temporales (privacidad) | ✅ vinculada | `tools/osint/simplelogin.ps1` | §3.3 |
-| **SpiderFoot** | v4 | Framework integral OSINT (correos, teléfonos, dominios, IPs) | ⏳ wrapper listo, instalación pendiente aprobación | `tools/osint/spiderfoot.ps1` | `OSINT_PROTOCOLS.md` §4.1 |
+| **SpiderFoot** | v4 | Framework integral OSINT (correos, teléfonos, dominios, IPs) | ✅ instalada (clon `clones/spiderfoot`) | `tools/osint/spiderfoot.ps1` | `OSINT_PROTOCOLS.md` §4.1 |
 | age | 1.2.1 | Cifrado de copias de secretos | ✅ | `scripts/vault.ps1` | `VAULT_SYSTEM.md` |
 | Bitwarden | CLI 2026.6.0 | Vault maestro en la nube | ✅ | `bw` + vault `.env` | `VAULT_SYSTEM.md` §3.5 |
 
@@ -324,7 +324,7 @@ Tras tocar las herramientas, ejecutar:
 | Puente SECRET_TEMP.env | ✅ creado y gitignored; secretos fuera de MDs |
 | Regla de vault solo-Ciszuko | ✅ AGENTS.md §6.6 |
 | Command opencode / PowerShell | ✅ `/osint`, `/maigret`, `/sherlock`, `/simplelogin`, `/spiderfoot` + funciones |
-| POST-OSINT (PhoneInfoga, HIBP…) | ⏳ investigación hecha; SpiderFoot como integración oficial (instalación pendiente aprobación; `OSINT_PROTOCOLS.md` §4) |
+| POST-OSINT (PhoneInfoga, HIBP…) | ✅ investigación hecha; SpiderFoot integrado como framework oficial (§4.1) — PhoneInfoga/SEON/Hunter/etc. evaluados |
 
 ---
 
@@ -333,7 +333,7 @@ Tras tocar las herramientas, ejecutar:
 | Fecha | Cambio |
 |---|---|
 | 18 ago 2026 | Doc creada (v1.0.0). Sherlock+Maigret+SimpleLogin integrados; puente SECRET_TEMP creado; vault y Bitwarden actualizados |
-| 18 ago 2026 | POST-OSINT investigado; SpiderFoot elegido como framework integral (wrapper `spiderfoot.ps1` + `/spiderfoot` + `osint-sfx`); PhoneInfoga/SEON/HIBP/Hunter/etc. evaluados en `OSINT_PROTOCOLS.md` §4 |
+| 18 ago 2026 | POST-OSINT investigado; SpiderFoot elegido como framework integral e **instalado** (clon `clones/spiderfoot`, lxml 6.1.1 para Python 3.14); wrapper `spiderfoot.ps1` + `/spiderfoot` + `osint-sfx` (quick = gravatar/keybase/social, full = passive); PhoneInfoga/SEON/HIBP/Hunter/etc. evaluados en `OSINT_PROTOCOLS.md` §4 |
 
 ---
 

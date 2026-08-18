@@ -153,6 +153,9 @@ conclusiones para la integración.
 | framework | Maltego | Community gratuita pero escritorio/GUI | opcional (manual) |
 | técnica | Google Dorking | Gratuito, operadores de búsqueda | protocolo (no herramienta) |
 
+**Integrado (18 ago 2026)**: SpiderFoot instalado en `clones/spiderfoot` (§4.1). El resto de
+candidatas de pago queda marcado **sin usar** hasta decisión de Ciszuko.
+
 ### 4.1 SpiderFoot (framework integral) — integración oficial
 
 **Veredicto**: integrar como herramienta oficial de framework de investigación (cubre
@@ -164,20 +167,24 @@ correos, teléfonos, dominios, IPs, usernames y analítica). Motivos:
 - **CLI** (`sf.py`) + web UI local opcional.
 - Escanea **un target por scan**; exporta tab/csv/json a stdout y persiste a SQLite.
 
-**Estado**: **wrapper listo pero herramienta SIN instalar** (pendiente aprobación de Ciszuko,
-AGENTS §7.1). Instalación propuesta (Python):
+**Estado**: **instalado** (18 ago 2026, clon en `clones/spiderfoot`; aprobación AGENTS §7.1).
+Nota de instalación: `lxml<5` no tiene rueda para Python 3.14 (solo 6.x). Se instaló
+`lxml 6.1.1` (compatible) y el resto de dependencias sin `--only-binary` (ipaddr y otras
+son pure-python). Verificar: `python sf.py -V` → `SpiderFoot 4.0.0`.
 
 ```bash
-git clone https://github.com/smicallef/spiderfoot "$env:USERPROFILE\spiderfoot"
-cd "$env:USERPROFILE\spiderfoot" && pip install -r requirements.txt
+git clone https://github.com/smicallef/spiderfoot "clones\spiderfoot"   # dentro del repo
+cd "clones\spiderfoot" && pip install -r requirements.txt
 python ./sf.py -l 127.0.0.1:5001   # web UI (opcional)
 ```
 
-**Wrapper oficial**: `tools/osint/spiderfoot.ps1` (mismo patrón que maigret/sherlock);
-presets `full` (`-u passive`: selecciona automáticamente módulos pasivos sin API keys) y
-`quick` (reducido); salida CSV a `test/osint/spiderfoot/` (test) y
-`tools/osint/output/spiderfoot/` (oficial). El wrapper detecta el clon en `~\spiderfoot\sf.py`
-y, si falta, avisa y sale con código 2.
+**Wrapper oficial**: `tools/osint/spiderfoot.ps1` (busca el clon en `clones\spiderfoot\sf.py`).
+Presets:
+- `full` (default): `-u passive` — todos los módulos pasivos sin API keys (lento, exhaustivo).
+- `quick`: `-m sfp_gravatar,sfp_keybase,sfp_social` — módulos rápidos para pruebas/CI (~10 s).
+
+Salida CSV por target a `test/osint/spiderfoot/` (test) y `tools/osint/output/spiderfoot/`
+(oficial).
 
 **Comandos**: PowerShell `osint-sfx` · opencode `/spiderfoot <target>`.
 
