@@ -148,7 +148,7 @@ conclusiones para la integración.
 | teléfono | SEON | Comercial (API de pago) | marcada sin usar |
 | teléfono | Sherlockeye | Comercial (IA, sube datos a terceros) | descartada |
 | email | HaveIBeenPwned | API free con rate limit (vía SpiderFoot) | vía SpiderFoot |
-| email | Epieos / Thatsthem | Servicios web/manuales | manual |
+| email | Epieos / Thatsthem | Servicios web/manuales | ✅ **APLICADA** (manual, sin CLI) |
 | email | Hunter.io | Freemium con cupo | vía SpiderFoot (tiered) |
 | framework | Maltego | Community gratuita (GUI desktop) | ✅ **INSTALADA (Ciszuko)** — en configuración |
 | técnica | Google Dorking | Gratuito, operadores de búsqueda | protocolo (no herramienta) |
@@ -236,9 +236,9 @@ también por estar unmaintained y requerir scanners externos (API) para ser úti
 | Herramienta | Para qué | Modelo/licencia | Notas |
 |---|---|---|---|
 | **Have I Been Pwned?** | Saber si un correo/teléfono apareció en brechas | API free con rate limit / vía SpiderFoot | **SÍ** vía SpiderFoot (módulo `sfp_haveibeenpwned`); el endpoint público es free con límites estrictos — sin pagar |
-| **Epieos** | Info de cuenta de Google (Maps/Calendar/Photos) | Servicio web | Uso manual cuidado; líder a servicios con auth |
+| **Epieos** | Info de cuenta de Google (Maps/Calendar/Photos) | Servicio web (manual) | **APLICADA (manual)** — sin API/CLI; la web está protegida contra bots (DataDome/captcha). Uso exclusivo manual en navegador; no automatizar. Ver §4.7 |
 | **Hunter.io** | Correos corporativos por dominio | Freemium (cupo) | **DESCARTADA (sin capital)**: solo vía SpiderFoot tiered cuando haya cupo pagado — no hoy |
-| **Thatsthem** | Búsqueda inversa de correo con registros públicos | Web con límites | Manual |
+| **Thatsthem** | Búsqueda inversa de correo con registros públicos | Web con límites (manual) | **APLICADA (manual)** — sin API/CLI; requiere login y tiene límites por IP. Uso exclusivo manual en navegador. Ver §4.7 |
 
 ### 4.4 Frameworks de investigación integral / técnicas
 
@@ -277,15 +277,47 @@ usar para datos no públicos de terceros.
 | **SEON** | teléfono/email | ❌ **DESCARTADA** | API de **pago**; descartada hasta tener capital |
 | **Sherlockeye** | teléfono | ❌ **DESCARTADA** | Sube datos del objetivo a un tercero con IA (riesgo de privacidad); servicio comercial |
 | **Hunter.io** | email corporativo | ❌ **DESCARTADA** | Freemium con cupo; módulo tiered de SpiderFoot — no se paga hasta tener capital |
-| **Epieos** | email Google | ⏸️ **SIN INTEGRAR** | Servicio web manual; requiere auth de Google del objetivo (uso manual cuidado, sin wrapper) |
-| **Thatsthem** | email inverso | ⏸️ **SIN INTEGRAR** | Web con límites; solo uso manual |
+| **Epieos** | email Google | ✅ **APLICADA (manual)** | Servicio web sin API/CLI; protegido contra bots. Uso manual en navegador; no automatizar (ver §4.7) |
+| **Thatsthem** | email inverso | ✅ **APLICADA (manual)** | Web sin API/CLI; requiere login y tiene límites. Uso manual en navegador; no automatizar (ver §4.7) |
 | **Maltego** | framework GUI | ✅ **INSTALADA** | Community gratuita (GUI desktop); instalada por Ciszuko 18 ago 2026, en configuración. Uso manual; sin CLI para CI (la complementa SpiderFoot) |
 | **AbstractAPI/numverify/Twilio/CallerName/TextMagic** | teléfono | ❌ **DESCARTADAS** | Módulos de SpiderFoot que requieren API key de pago (abstractapi, numverify, Twilio, CallerName…) — sin capital |
-| **SEON/Epieos/Thatsthem** | email | ❌ **DESCARTADAS/SIN INTEGRAR** | Ver filas individuales |
+| **SEON/Epieos/Thatsthem** | email | ❌ SEON / ✅ manuales | SEON descartada (pago); Epieos/Thatsthem aplicadas como manuales (ver filas individuales) |
 
 **Resumen**: el stack OSINT hoy cubre **username** (Sherlock/Maigret), **email y teléfono**
 (SpiderFoot, gratis sin API keys) y **alias** (SimpleLogin). Todo lo de pago queda descartado
-hasta haber capital (ver §4.0).
+hasta haber capital (ver §4.0). **Epieos y Thatsthem** quedan **aplicadas como manuales** (sin
+CLI): se usan a mano en el navegador cuando un caso lo requiera (ver §4.7).
+
+---
+
+## 4.7 Herramientas manuales aplicadas — Epieos y Thatsthem
+
+**Estado (18 ago 2026)**: aplicadas al stack como **uso manual**. No tienen API ni CLI
+pública; ambas webs están protegidas contra automatización (Epieos con DataDome/hCaptcha;
+Thatsthem con challenge + login). **No automatizar con scripts/curl** — 403 o captcha.
+
+### Epieos — info de cuenta de Google por email
+
+- **URL**: `https://epieos.com/` (el buscador vive en `tools.epieos.com`, redirige a la web).
+- **Qué da**: si un email de Google está asociado a perfiles públicos (Maps, Calendar,
+  Photos, etc.), según la privacidad del objetivo.
+- **Cómo se usa**: abrir en el navegador → introducir el email → resolver el captcha →
+  revisar los resultados en pantalla.
+- **Límites/reglas**: sin notificar al objetivo (técnica pasiva); requiere captcha; no
+  expone URL directa con el email. Guardar evidencias en `test/osint/epieos/` (gitignored).
+
+### Thatsthem — búsqueda inversa de correo
+
+- **URL**: `https://thatsthem.com/reverse-email-lookup` (formulario web).
+- **Qué da**: vincula un correo con registros públicos (nombre, ubicación, teléfonos) con
+  límites por IP y login para ver los resultados completos.
+- **Cómo se usa**: abrir en el navegador → buscar por email → consultar resultados (puede
+  pedir cuenta/verificación).
+- **Límites/reglas**: límites por IP; datos de terceros sensibles → `test/osint/thatsthem/`.
+
+> Regla de oro para ambas: **solo manual**, con emails sintéticos en pruebas
+> (`nonexiste@example.com`), nunca datos reales de terceros en el repo. Lo real se captura
+> a `test/osint/<herramienta>/` (gitignored).
 
 ---
 
@@ -394,6 +426,7 @@ cabecera (la cuenta no existe). Preset `quick` tarda ~10-15 s por target.
 | 18 ago 2026 | Doc creada (v1.0.0). Protocolos Sherlock/Maigret/SimpleLogin; sección POST-OSINT candidatas |
 | 18 ago 2026 | Sección §6 ampliada con comandos SpiderFoot por tipo (email/dominio/teléfono/username) y ejemplos verificados; regla de usernames sintéticos |
 | 18 ago 2026 | **Maltego Community instalada por Ciszuko** (en configuración); estado actualizado en §4.0/§4.4/§4.6 de candidata/opcional a INSTALADA |
+| 18 ago 2026 | **Epieos y Thatsthem aplicadas como manuales** (sin API/CLI, webs protegidas contra bots); nueva §4.7 con su uso; estado en §4.3/§4.6 y CIBERSECURITY_SYSTEM actualizados |
 
 ---
 

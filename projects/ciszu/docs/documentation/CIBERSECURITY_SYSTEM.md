@@ -54,6 +54,8 @@ wrapper están operativas desde PowerShell, opencode (comandos) o CI.
 | **SimpleLogin** | API v2 | Alias de email temporales (privacidad) | ✅ vinculada | `tools/cibersecurity/osint/simplelogin.ps1` | §3.3 |
 | **SpiderFoot** | v4 | Framework integral OSINT (correos, teléfonos, dominios, IPs) | ✅ instalada (clon `clones/spiderfoot`) | `tools/cibersecurity/osint/spiderfoot.ps1` | `OSINT_PROTOCOLS.md` §4.1 |
 | **Maltego** | 4.12.1 | Minería de datos + visualización de vínculos (GUI) | ✅ instalada (Ciszuko, 18 ago 2026) — en configuración | `tools/cibersecurity/maltego/maltego.ps1` | `OSINT_PROTOCOLS.md` §4.4 |
+| **Epieos** | web | Info de cuenta de Google por email | ✅ aplicada (manual, sin CLI) | — | `OSINT_PROTOCOLS.md` §4.7 |
+| **Thatsthem** | web | Búsqueda inversa de correo | ✅ aplicada (manual, sin CLI) | — | `OSINT_PROTOCOLS.md` §4.7 |
 | age | 1.2.1 | Cifrado de copias de secretos | ✅ | `scripts/vault.ps1` | `VAULT_SYSTEM.md` |
 | Bitwarden | CLI 2026.6.0 | Vault maestro en la nube | ✅ | `bw` + vault `.env` | `VAULT_SYSTEM.md` §3.5 |
 
