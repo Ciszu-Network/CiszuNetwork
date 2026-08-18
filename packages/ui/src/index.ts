@@ -51,7 +51,8 @@ export type { ScrollSpyItem } from './ScrollSpy';
 export { default as FlagIcon } from './FlagIcon';
 export { default as SocialIcon, SOCIAL_COLORS } from './SocialIcon';
 export type { SocialPlatform } from './SocialIcon';
-export { default as ZoomWarning } from './ZoomWarning';
+export { default as ZoomWarning, useZoomStatus, dismissZoomWarning, isZoomWarningActive } from './ZoomWarning';
+export type { ZoomState, ZoomStatus } from './ZoomWarning';
 // Radix UI primitives: Modal accesible (Dialog con focus trap + teclado)
 export { default as Modal } from './Modal';
 export type { ModalProps } from './Modal';

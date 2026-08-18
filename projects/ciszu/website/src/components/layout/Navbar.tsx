@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { assetResolver } from '@ciszunetwork/cdn';
+import { useZoomStatus } from '@ciszu/ui';
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store';
 import { CISZU_NETWORK } from '@/config/site';
@@ -224,7 +225,10 @@ export const NavbarContent = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const floating = scrolled && !isSearchOpen && !isMenuOpen;
+  const zoom = useZoomStatus();
+  const isZoomWarning = !zoom.dismissed && zoom.status !== 'normal';
+
+  const floating = scrolled && !isSearchOpen && !isMenuOpen && !isZoomWarning;
 
   // Reset UI state on route change
   useEffect(() => {
@@ -312,7 +316,7 @@ export const NavbarContent = () => {
 
   const navLabelCls = (href: string) => {
     const active = isActive(href);
-    return `max-w-0 overflow-hidden transition-all duration-300 ${floating ? '' : 'group-hover:max-w-[110px]'} ${!floating && active ? 'max-w-[110px]' : ''}`;
+    return `max-w-0 overflow-hidden transition-all duration-300 group-hover:max-w-[110px] ${active ? 'max-w-[110px]' : ''}`;
   };
 
   const toggleSearch = (e?: React.MouseEvent) => {
@@ -396,15 +400,15 @@ export const NavbarContent = () => {
 
       <nav className={`fixed z-50 transition-all duration-500 ease-out ${
           floating
-            ? 'top-3 inset-x-3 rounded-full bg-black/92 backdrop-blur-2xl border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.6)]'
-            : `top-0 left-0 w-full ${scrolled || isMenuOpen ? 'bg-black/92 backdrop-blur-2xl border-b border-white/10' : 'bg-black/80 backdrop-blur-xl border-b border-white/5'}`
+            ? 'top-3 inset-x-3 rounded-2xl bg-black/60 backdrop-blur-2xl border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.6)]'
+            : `top-0 left-0 w-full ${scrolled || isMenuOpen ? 'bg-black/92 backdrop-blur-2xl border-b border-white/10' : 'bg-black/80 backdrop-blur-xl border-b border-white/5'} ${isZoomWarning ? 'mt-8' : 'mt-0'}`
         }`}>
 
         {/* Animated Line Separator Bottom */}
         <div className={`${floating ? 'hidden' : ''} absolute bottom-0 left-0 w-full h-[2px] animate-gradient-x bg-[length:200%_auto] bg-gradient-to-r from-brand-light via-brand-accent to-brand-light shadow-[0_0_10px_rgba(58,107,240,0.35)]`} />
 
         <div className="max-w-screen-xl mx-auto px-4">
-          <div className={`flex items-center ${floating ? 'h-12' : 'h-[64px]'} gap-3`}>
+          <div className={`flex items-center ${floating ? 'h-14' : 'h-[64px]'} gap-3`}>
 
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2.5 group shrink-0 cursor-pointer hover:scale-110 active:scale-95 transition-all duration-300">
@@ -420,7 +424,7 @@ export const NavbarContent = () => {
                 alt={CISZU_NETWORK.name}
                 width={100}
                 height={34}
-                className={`${floating ? 'hidden' : 'hidden lg:block'} group-hover:drop-shadow-[0_0_10px_rgba(58,107,240,0.6)] transition-all duration-300`}
+                className="hidden lg:block group-hover:drop-shadow-[0_0_10px_rgba(58,107,240,0.6)] transition-all duration-300"
               />
             </Link>
 

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
+import { useZoomStatus } from '@ciszu/ui';
 import { usePathname, useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import { useAppStore } from '@/store';
@@ -24,8 +25,10 @@ export const NavbarContent = () => {
   const [isSearchOpen,  setIsSearchOpen]  = useState(false);
   const [scrolled,      setScrolled]      = useState(false);
   const [query,         setQuery]         = useState('');
-  const [isZoomWarning, setIsZoomWarning] = useState(false);
   const [isDesktopApp, setIsDesktopApp] = useState(false);
+
+  const zoom = useZoomStatus();
+  const isZoomWarning = !zoom.dismissed && zoom.status !== 'normal';
 
   const infoTimer    = useRef<ReturnType<typeof setTimeout> | null>(null);
   const accederTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -42,22 +45,15 @@ export const NavbarContent = () => {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
-    const onResize = () => {
-      const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-      setIsZoomWarning(!isMobile && window.innerWidth < 450);
-    };
     
     // Initial checks
     onScroll();
-    onResize();
     setIsDesktopApp(isTauri());
 
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onResize, { passive: true });
     
     return () => {
       window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onResize);
     };
   }, []);
 
@@ -144,7 +140,7 @@ export const NavbarContent = () => {
 
   const navLabelCls = (href: string) => {
     const active = isActive(href);
-    return `max-w-0 overflow-hidden transition-all duration-300 ${floating ? '' : 'group-hover:max-w-[100px]'} ${!floating && active ? 'max-w-[100px]' : ''}`;
+    return `max-w-0 overflow-hidden transition-all duration-300 group-hover:max-w-[100px] ${active ? 'max-w-[100px]' : ''}`;
   };
 
   const toggleSearch = (e?: React.MouseEvent) => {
@@ -199,17 +195,11 @@ export const NavbarContent = () => {
         )}
       </div>
 
-      {/* Global Warning Banner for Zoom */}
-      {isZoomWarning && (
-        <div className="fixed top-0 left-0 w-full bg-rose-500/90 text-white font-header font-bold text-[10px] sm:text-xs py-1.5 px-4 text-center z-[70] animate-fade-in-down shadow-[0_4px_15px_rgba(244,63,94,0.5)] flex justify-between items-center backdrop-blur-md border-b border-rose-400">
-          <span>⚠️ SISTEMA: Zoom Crítico Detectado. Reduce el zoom para una experiencia óptima.</span>
-          <button onClick={() => setIsZoomWarning(false)} className="ml-4 opacity-70 hover:opacity-100 bg-white/10 rounded-full p-1 active:scale-90 transition-all">{I.close}</button>
-        </div>
-      )}
+      {/* Global Warning Banner for Zoom — ver <ZoomWarning /> (layout, @ciszu/ui) */}
 
 <nav className={`fixed z-50 transition-all duration-500 ease-out ${
           floating
-            ? 'top-3 inset-x-3 rounded-full bg-[#0a0a14]/92 backdrop-blur-2xl border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.6)]'
+            ? 'top-3 inset-x-3 rounded-2xl bg-[#0a0a14]/60 backdrop-blur-2xl border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.6)]'
             : `top-0 left-0 w-full ${scrolled ? 'bg-black/92 backdrop-blur-2xl border-b border-white/10' : 'bg-[#0a0a14]/80 backdrop-blur-xl border-b border-white/5'} ${isZoomWarning ? 'mt-8' : 'mt-0'}`
         }`}>
 
@@ -221,7 +211,7 @@ export const NavbarContent = () => {
         }`} />
 
         <div className="max-w-screen-xl mx-auto px-4">
-          <div className={`flex items-center ${floating ? 'h-12' : 'h-[60px]'} gap-3`}>
+          <div className={`flex items-center ${floating ? 'h-14' : 'h-[60px]'} gap-3`}>
 
              {/* Logo */}
              <Link href="/" className="flex items-center gap-2.5 group shrink-0 cursor-pointer hover:scale-110 active:scale-95 transition-all duration-300">
@@ -231,8 +221,7 @@ export const NavbarContent = () => {
                />
 <Image src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/logotype/gradient/color/muzicmania_logotipo_degradado_color.svg')}
                   alt="MuzicMania" width={160} height={36}
-                  className={`${floating ? 'hidden' : 'hidden lg:block'} group-hover:drop-shadow-[0_0_15px_rgba(0,128,255,0.8)] group-hover:drop-shadow-[0_0_30px_rgba(145,70,255,0.6)] transition-all duration-300`
-                }
+                  className="hidden lg:block group-hover:drop-shadow-[0_0_15px_rgba(0,128,255,0.8)] group-hover:drop-shadow-[0_0_30px_rgba(145,70,255,0.6)] transition-all duration-300"
                />
              </Link>
 
