@@ -168,6 +168,9 @@ downloads/
 test/art/
 test/music/
 test/video/
+test/osint/
+# tools/osint/output — reportes OSINT oficiales (datos personales de terceros, no trackear)
+tools/osint/output/
 test/website/testing/
 
 # Reportes y estado de test (vitest + e2e) — outputs generados, nunca trackear
@@ -176,6 +179,9 @@ test/website/e2e/reports/
 
 # Caches de Python (scripts)
 __pycache__/
+
+# Puente de secretos de documentacion (SECRET_TEMP.env) — NUNCA trackear
+projects/ciszu/docs/documentation/SECRET_TEMP.env
 
 # Proteccion anti-mirrors ciszubot web (ver arriba)
 projects/ciszubot/website/public/banners/

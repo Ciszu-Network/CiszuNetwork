@@ -1,8 +1,8 @@
 # VAULT_SYSTEM — Protección del vault de credenciales — plan y estado (10 ago 2026)
 
-Versión: 2.1.0
-Actualización: 2026-08-14
-Identificador: VAULT_SYSTEM_V2.1.0_2026_08_14_ciszunetwork
+Versión: 2.2.0
+Actualización: 2026-08-18
+Identificador: VAULT_SYSTEM_V2.2.0_2026_08_18_ciszunetwork
 
 > **Definición**: protección de los archivos locales de credenciales (`.env`/vault) de Ciszu
 > Network contra robo físico, acceso no autorizado, filtraciones y pérdida. Plan maestro con
@@ -148,6 +148,22 @@ inyección de secrets en scripts sin `.env` en claro. Criterio de activación: c
 equipo crezca (>1 persona) o se manejen credenciales de terceros/clientes. Mientras tanto
 las capas 3.1–3.5 cubren el caso de 1 persona.
 
+### 3.7 IMPLEMENTADA — Puente de secretos de documentación (SECRET_TEMP.env) ✅
+
+**`projects/ciszu/docs/documentation/SECRET_TEMP.env`** (gitignored) es el **puente** entre los
+secretos **referenciados** en `TODO.md`/docs y su uso real, para que ningún valor en claro viva
+en un `.md`. Los MD solo contienen **referencias por nombre de variable**
+(`ver SECRET_TEMP.env → <VAR>`).
+
+- **Formato**: `.env` simple (`VAR="valor"`), comentarios `#`. No admitido en git (gitignored).
+- **Contenido actual** (18 ago 2026): `SIMPLELOGIN_API_KEY`, `SIMPLELOGIN_RECOVERY_CODES`,
+  `PLASMIC_*`, `PUCK_*`, `SUBFRAME_*` (editor visual).
+- **Flujo**: al resolver una tarea que use un secreto, el agente lee la variable desde aquí;
+  al terminar, si el valor es definitivo y operable se mueve al vault real
+  (`services/supabase/.env` + `vault.ps1 crypt`/`backup`/`verify`) y se documenta en este doc.
+- **Reglas**: nunca imprimir los valores en logs/resúmenes; al cerrar tarea, verificar que
+  ningún `.md` quedó con valores en claro. `gitleaks`/`secretlint` bloquean en pre-commit.
+
 ---
 
 ## 4. Procedimientos
@@ -206,3 +222,5 @@ powershell -File scripts\vault.ps1 backup
 | 10 ago 2026 | **Vault Bitwarden implementado (3.5 ✅)**: cuenta creada, org Ciszu Network + colección, 7 items de empresa (Supabase/Vercel/PostHog/IA/Infra/machine account/age identity), auth keys y recovery codes personales en el vault personal (fuera de la org), `BW_CLIENT_ID`/`BW_CLIENT_SECRET` en vault local. Pendiente del usuario: activar BitLocker en C:/E: (3.4) |
 | 11 ago 2026 | **BitLocker E: completado (3.4 ✅)**: cifrado 100% verificado (Protection ON, Password + RecoveryPassword), recovery key en Bitwarden y vault local. C: y D: siguen sin cifrar (opcional futuro) |
 | 14 ago 2026 | **+2 secrets en vault**: `TANSTACK_API_KEY` (submissions de TanStack, pendiente de revisión; sin uso activo) y `CHROMATIC_PROJECT_TOKEN` (build 1 de Chromatic publicado). `crypt` + `backup` + `verify` OK |
+| 18 ago 2026 | **+3 secrets SimpleLogin en vault** (`SIMPLELOGIN_API_KEY`, `SIMPLELOGIN_EMAIL`, `SIMPLELOGIN_RECOVERY_CODES`): API verificada (cuenta `fplayersoffcial@proton.me`, 2 aliases activos, 4 dominios). `crypt` + `backup` + `verify` OK |
+| 18 ago 2026 | **Puente SECRET_TEMP (3.7 ✅)**: `SECRET_TEMP.env` gitignored creado; secretos del `TODO.md` (SimpleLogin + Plasmic/Puck/Subframe) movidos fuera de los MDs → referencias por variable; regla documentada en §3.7, AGENTS.md §6.5 y este historial |
