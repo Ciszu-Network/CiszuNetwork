@@ -1029,7 +1029,13 @@ function main(argv) {
   }
 
   if (!sources.length || !output) {
-    console.error('Uso: node scripts/generate-erd.js <sqlFile|dir>... -o <salida.json> [--dbname <nombre>]');
+    console.error('Uso: node scripts/generate-erd.js <sqlFile|dir>... -o <salida>.erd.json [--dbname <nombre>]');
+    console.error('La salida debe terminar en .erd.json (reconoce la extension ERD Editor de VSCode).');
+    process.exit(1);
+  }
+
+  if (!/\.erd\.json$/i.test(output)) {
+    console.error(`ERROR: la salida "${output}" debe terminar en .erd.json para que la extension ERD Editor la reconozca.`);
     process.exit(1);
   }
 

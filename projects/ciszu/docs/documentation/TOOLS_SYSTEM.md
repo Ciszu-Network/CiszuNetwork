@@ -289,9 +289,12 @@ node scripts/backup-db.js
   diagramas en formato **vuerd v3.0.0** (JSON): `$schema`, `version`, `settings`, `doc`,
   `collections` (`tableEntities`, `tableColumnEntities`, `relationshipEntities`,
   `indexEntities`, `indexColumnEntities`, `memoEntities`).
-- **Regla del repo**: el formato canónico de los diagramas es **SQL → generador → `erd.json`**.
-  El `erd.json` se versiona y se abre con el editor para inspección/ajuste; **no** se edita a
-  mano salvo retoques puntuales (el editor regenera IDs nanoid y meta en cada guardado).
+- **Extensión obligatoria**: los archivos de diagrama deben terminar en **`.erd.json`**
+  (`schema.erd.json`, `migrations.erd.json`, ...). La extensión de VSCode solo reconoce esa
+  terminación; un `erd.json` a secas se abre como JSON normal y el editor no lo detecta.
+- **Regla del repo**: el formato canónico de los diagramas es **SQL → generador → `<nombre>.erd.json`**.
+  El `<nombre>.erd.json` se versiona y se abre con el editor para inspección/ajuste; **no** se
+  edita a mano salvo retoques puntuales (el editor regenera IDs nanoid y meta en cada guardado).
 - **Limitación del importador oficial**: no crea relaciones desde `REFERENCES` inline (solo
   `FOREIGN KEY` de tabla). El generador del repo **sí** las crea (ver §9.3).
 
@@ -299,9 +302,9 @@ node scripts/backup-db.js
 
 | Archivo | SQL fuente | Contenido |
 |---|---|---|
-| `services/supabase/erd.json` | `services/supabase/schema.sql` | BD `ciszunetwork` (3 tablas) |
-| `services/supabase/migrations/erd.json` | `services/supabase/migrations/*.sql` (38) | BD consolidada `migrations` (33 tablas, incl. `ciszubot.tickets` y `public.tickets`, tabla sintética `users` de `auth.users`) |
-| `services/supabase/seeds/erd.json` | `services/supabase/seeds/seed.sql` | BD `seeds` (0 tablas — seed vacío) |
+| `services/supabase/schema.erd.json` | `services/supabase/schema.sql` | BD `ciszunetwork` (3 tablas) |
+| `services/supabase/migrations/migrations.erd.json` | `services/supabase/migrations/*.sql` (38) | BD consolidada `migrations` (33 tablas, incl. `ciszubot.tickets` y `public.tickets`, tabla sintética `users` de `auth.users`) |
+| `services/supabase/seeds/seeds.erd.json` | `services/supabase/seeds/seed.sql` | BD `seeds` (0 tablas — seed vacío) |
 
 ### 9.3 Generador (`scripts/generate-erd.js`)
 
@@ -327,9 +330,9 @@ node scripts/generate-erd.js <sqlFile|dir>... -o <salida.json> [--dbname <nombre
 - **Uso con git**: regenerar los 3 `erd.json` tras cambiar migraciones:
 
 ```bash
-node scripts/generate-erd.js services/supabase/schema.sql -o services/supabase/erd.json --dbname ciszunetwork
-node scripts/generate-erd.js services/supabase/migrations -o services/supabase/migrations/erd.json --dbname migrations
-node scripts/generate-erd.js services/supabase/seeds/seed.sql -o services/supabase/seeds/erd.json --dbname seeds
+node scripts/generate-erd.js services/supabase/schema.sql -o services/supabase/schema.erd.json --dbname ciszunetwork
+node scripts/generate-erd.js services/supabase/migrations -o services/supabase/migrations/migrations.erd.json --dbname migrations
+node scripts/generate-erd.js services/supabase/seeds/seed.sql -o services/supabase/seeds/seeds.erd.json --dbname seeds
 ```
 
 - Depuración: `node -e "const {buildSchema, toErdJson, splitStatements, parseCreateTable, parseColumnGroup} = require('./scripts/generate-erd.js'); ..."`
