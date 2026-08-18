@@ -237,6 +237,32 @@ usar para datos no públicos de terceros.
 
 ---
 
+## 4.6 Cuadro consolidado — aplicadas vs descartadas (18 ago 2026)
+
+| Herramienta | Categoría | Estado | Por qué (aplicada / descartada) |
+|---|---|---|---|
+| **Sherlock** | username | ✅ **APLICADA** | Open source (MIT), instalada, wrapper `sherlock.ps1`, comandos `/sherlock` + `osint-sher` |
+| **Maigret** | username | ✅ **APLICADA** | Open source, instalada, wrapper `maigret.ps1`, comandos `/maigret` + `osint-mai` |
+| **SimpleLogin** | email (alias) | ✅ **APLICADA** | API gratuita vinculada (cuenta `fplayersoffcial@proton.me`), vault + Bitwarden, `/simplelogin` + `osint-slo` |
+| **SpiderFoot** | framework integral (email + teléfono + dominio + IP) | ✅ **APLICADA** | Open source (MIT), activo, **200+ módulos**, instalada en `clones/spiderfoot` (v4.0.0), `/spiderfoot` + `osint-sfx`. Cubre el hueco de email/teléfono que sherlock/maigret no tienen |
+| **Google Dorking** | técnica | ✅ **PROTOCOLO** | Gratuito, sin instalación; operadores documentados (§4.5) |
+| **HIBP (Have I Been Pwned)** | email (brechas) | ✅ **VÍA SPIDERFOOT** | Free con rate limit estricto; se usa como módulo pasivo de SpiderFoot (sin key) |
+| **PhoneInfoga** | teléfono | ❌ **DESCARTADA** | "stable but **unmaintained**" (podría archivarse); requiere compilar Go + scanners externos con API para ser útil |
+| **SEON** | teléfono/email | ❌ **DESCARTADA** | API de **pago**; descartada hasta tener capital |
+| **Sherlockeye** | teléfono | ❌ **DESCARTADA** | Sube datos del objetivo a un tercero con IA (riesgo de privacidad); servicio comercial |
+| **Hunter.io** | email corporativo | ❌ **DESCARTADA** | Freemium con cupo; módulo tiered de SpiderFoot — no se paga hasta tener capital |
+| **Epieos** | email Google | ⏸️ **SIN INTEGRAR** | Servicio web manual; requiere auth de Google del objetivo (uso manual cuidado, sin wrapper) |
+| **Thatsthem** | email inverso | ⏸️ **SIN INTEGRAR** | Web con límites; solo uso manual |
+| **Maltego** | framework GUI | ⏸️ **OPCIONAL** | Community gratuita pero GUI desktop, sin CLI para CI; no aporta algo que SpiderFoot no haga |
+| **AbstractAPI/numverify/Twilio/CallerName/TextMagic** | teléfono | ❌ **DESCARTADAS** | Módulos de SpiderFoot que requieren API key de pago (abstractapi, numverify, Twilio, CallerName…) — sin capital |
+| **SEON/Epieos/Thatsthem** | email | ❌ **DESCARTADAS/SIN INTEGRAR** | Ver filas individuales |
+
+**Resumen**: el stack OSINT hoy cubre **username** (Sherlock/Maigret), **email y teléfono**
+(SpiderFoot, gratis sin API keys) y **alias** (SimpleLogin). Todo lo de pago queda descartado
+hasta haber capital (ver §4.0).
+
+---
+
 ## 5. Seguridad y manejo de datos
 
 1. **Datos de terceros = sensibles.** Aunque sean "públicos", no se exponen en el repo ni en
