@@ -6,11 +6,11 @@
 # Documentado en: projects/ciszu/docs/documentation/CIBERSECURITY_SYSTEM.md y OSINT_PROTOCOLS.md
 #
 # Uso:
-#   .\tools\osint\simplelogin.ps1 info          # validar key + datos de la cuenta
-#   .\tools\osint\simplelogin.ps1 aliases       # listar aliases
-#   .\tools\osint\simplelogin.ps1 options       # dominios/suffix disponibles
-#   .\tools\osint\simplelogin.ps1 create <prefijo>   # crear alias custom con el primer suffix libre
-#   .\tools\osint\simplelogin.ps1 random              # crear alias aleatorio
+#   .\tools\cibersecurity\osint\simplelogin.ps1 info          # validar key + datos de la cuenta
+#   .\tools\cibersecurity\osint\simplelogin.ps1 aliases       # listar aliases
+#   .\tools\cibersecurity\osint\simplelogin.ps1 options       # dominios/suffix disponibles
+#   .\tools\cibersecurity\osint\simplelogin.ps1 create <prefijo>   # crear alias custom con el primer suffix libre
+#   .\tools\cibersecurity\osint\simplelogin.ps1 random              # crear alias aleatorio
 #
 # Acciones: info | aliases | options | create <prefijo> | random
 #

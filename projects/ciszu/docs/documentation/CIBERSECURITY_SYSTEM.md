@@ -34,7 +34,7 @@ Principios operativos:
 2. **Mínimo necesario.** Pedir el dato mínimo que resuelve la pregunta (un username, un
    correo o un alias), no datos masivos de terceros.
 3. **No contaminar.** Los reportes con URLs/propiedades personales de terceros NO se
-   committean: viven en `test/osint/` o `tools/osint/output/` (gitignored).
+   committean: viven en `test/osint/` o `tools/cibersecurity/osint/output/` (gitignored).
 4. **Verificación externa.** Si una tarea afirma un resultado, comprobarlo con la
    herramienta/librería real (curl a la API, salida del biniario, query a la BD).
 5. **Rotación y puente.** Ningún valor va en `.md`; los temporales van a `SECRET_TEMP.env`
@@ -49,10 +49,11 @@ wrapper están operativas desde PowerShell, opencode (comandos) o CI.
 
 | Herramienta | Versión | Tipo | Estado | Wrapper oficial | Doc detallada |
 |---|---|---|---|---|---|
-| **Sherlock** | 0.16.0 | Username → presencia en ~400 redes | ✅ operativa | `tools/osint/sherlock.ps1` | §3.1 |
-| **Maigret** | 0.6.4 | Username → URLs + datos extraídos (recursión) | ✅ operativa | `tools/osint/maigret.ps1` | §3.2 |
-| **SimpleLogin** | API v2 | Alias de email temporales (privacidad) | ✅ vinculada | `tools/osint/simplelogin.ps1` | §3.3 |
-| **SpiderFoot** | v4 | Framework integral OSINT (correos, teléfonos, dominios, IPs) | ✅ instalada (clon `clones/spiderfoot`) | `tools/osint/spiderfoot.ps1` | `OSINT_PROTOCOLS.md` §4.1 |
+| **Sherlock** | 0.16.0 | Username → presencia en ~400 redes | ✅ operativa | `tools/cibersecurity/osint/sherlock.ps1` | §3.1 |
+| **Maigret** | 0.6.4 | Username → URLs + datos extraídos (recursión) | ✅ operativa | `tools/cibersecurity/osint/maigret.ps1` | §3.2 |
+| **SimpleLogin** | API v2 | Alias de email temporales (privacidad) | ✅ vinculada | `tools/cibersecurity/osint/simplelogin.ps1` | §3.3 |
+| **SpiderFoot** | v4 | Framework integral OSINT (correos, teléfonos, dominios, IPs) | ✅ instalada (clon `clones/spiderfoot`) | `tools/cibersecurity/osint/spiderfoot.ps1` | `OSINT_PROTOCOLS.md` §4.1 |
+| **Maltego** | 4.12.1 | Minería de datos + visualización de vínculos (GUI) | ✅ instalada (Ciszuko, 18 ago 2026) — en configuración | `tools/cibersecurity/maltego/maltego.ps1` | `OSINT_PROTOCOLS.md` §4.4 |
 | age | 1.2.1 | Cifrado de copias de secretos | ✅ | `scripts/vault.ps1` | `VAULT_SYSTEM.md` |
 | Bitwarden | CLI 2026.6.0 | Vault maestro en la nube | ✅ | `bw` + vault `.env` | `VAULT_SYSTEM.md` §3.5 |
 
@@ -73,16 +74,16 @@ Herramientas candidatas (POST-OSINT, aún sin integrar): ver `OSINT_PROTOCOLS.md
 **Qué hace**: comprueba el username contra ~400 redes sociales y devuelve las URLs donde
 "existe" un perfil. Salida CSV/terminal; opciones de timeout, proxy/Tor y filtro por sitio.
 
-**Wrapper oficial**: `tools/osint/sherlock.ps1`
+**Wrapper oficial**: `tools/cibersecurity/osint/sherlock.ps1`
 
 ```powershell
 # Full (por defecto): CSV + timeout 30
-.\tools\osint\sherlock.ps1 -Usernames foo,bar
+.\tools\cibersecurity\osint\sherlock.ps1 -Usernames foo,bar
 
 # Rápido (pruebas): CSV + timeout 15, salida a test/osint/sherlock
-.\tools\osint\sherlock.ps1 -Usernames foo -Preset quick -Test
+.\tools\cibersecurity\osint\sherlock.ps1 -Usernames foo -Preset quick -Test
 
-# Salida oficial en tools/osint/output/sherlock/ (sin -Test)
+# Salida oficial en tools/cibersecurity/osint/output/sherlock/ (sin -Test)
 ```
 
 **Sintaxis nativa útil**:
@@ -102,14 +103,14 @@ sherlock foo --site github.com # limitar a un sitio
 las páginas (nombres, lugares, otros usernames, tags de interés) y permite **recursión** a
 otros datos extraídos. Soporta `--graph` (HTML), `--tags` por categoría, y varios formatos.
 
-**Wrapper oficial**: `tools/osint/maigret.ps1`
+**Wrapper oficial**: `tools/cibersecurity/osint/maigret.ps1`
 
 ```powershell
 # Full (por defecto): graph + tags social,tech + CSV + JSON(ndjson) + HTML
-.\tools\osint\maigret.ps1 -Usernames none_xisty_zzz_999
+.\tools\cibersecurity\osint\maigret.ps1 -Usernames none_xisty_zzz_999
 
 # Rápido (pruebas): solo CSV en test/osint/maigret
-.\tools\osint\maigret.ps1 -Usernames foo -Preset quick -Test
+.\tools\cibersecurity\osint\maigret.ps1 -Usernames foo -Preset quick -Test
 ```
 
 **Sintaxis nativa útil** (claves del ejemplo manual de Ciszuko):
@@ -125,7 +126,7 @@ maigret foo --permute                          # variantes de usernames
 
 **Nota de salida**: los reportes por username se generan como `report_<username>.{csv,html,…}`
 en la carpeta de salida del `--folderoutput`. Úsese `-Test` para `test/osint/maigret/`
-(pruebas) y el default para `tools/osint/output/maigret/` (uso oficial).
+(pruebas) y el default para `tools/cibersecurity/osint/output/maigret/` (uso oficial).
 
 ### 3.3 SimpleLogin — alias de email temporales
 
@@ -164,14 +165,14 @@ desactiva sin tocar el correo real. Ideal para registrar cuentas/boletines de te
 | Crear alias custom | `POST /api/v3/alias/custom/new` | body `{alias_prefix, signed_suffix}` |
 | Crear alias aleatorio | `POST /api/alias/random/new` | `{}` |
 
-**Wrapper oficial**: `tools/osint/simplelogin.ps1` (lee la key del vault; nunca la imprime)
+**Wrapper oficial**: `tools/cibersecurity/osint/simplelogin.ps1` (lee la key del vault; nunca la imprime)
 
 ```powershell
-.\tools\osint\simplelogin.ps1 info
-.\tools\osint\simplelogin.ps1 aliases
-.\tools\osint\simplelogin.ps1 options
-.\tools\osint\simplelogin.ps1 create <prefijo>
-.\tools\osint\simplelogin.ps1 random
+.\tools\cibersecurity\osint\simplelogin.ps1 info
+.\tools\cibersecurity\osint\simplelogin.ps1 aliases
+.\tools\cibersecurity\osint\simplelogin.ps1 options
+.\tools\cibersecurity\osint\simplelogin.ps1 create <prefijo>
+.\tools\cibersecurity\osint\simplelogin.ps1 random
 ```
 
 **Atajos**: PowerShell `osint-slo info|aliases|options|create <prefijo>|random` ·
@@ -200,7 +201,7 @@ Capa de acceso a las herramientas desde opencode (IA) y PowerShell (persona).
 | `/spiderfoot <targets>` | SpiderFoot con preset full (`-u passive`) |
 
 Reglas de los comandos: si el usuario no indica lo contrario, la salida oficial va a
-`tools/osint/output/<herramienta>/`; nunca imprimir API keys/recovery codes; al final
+`tools/cibersecurity/osint/output/<herramienta>/`; nunca imprimir API keys/recovery codes; al final
 resumir usernames consultados, nº de hallazgos y carpeta de salida.
 
 ### 4.2 PowerShell (perfil de usuario)
@@ -209,17 +210,18 @@ Funciones definidas en `Microsoft.PowerShell_profile.ps1`:
 
 | Función | Equivale a |
 |---|---|
-| `osint` | `tools/osint/osint.ps1` (dispatcher) |
-| `osint-mai` | `tools/osint/maigret.ps1` |
-| `osint-sher` | `tools/osint/sherlock.ps1` |
-| `osint-slo` | `tools/osint/simplelogin.ps1` |
-| `osint-sfx` | `tools/osint/spiderfoot.ps1` |
+| `osint` | `tools/cibersecurity/osint/osint.ps1` (dispatcher) |
+| `osint-mai` | `tools/cibersecurity/osint/maigret.ps1` |
+| `osint-sher` | `tools/cibersecurity/osint/sherlock.ps1` |
+| `osint-slo` | `tools/cibersecurity/osint/simplelogin.ps1` |
+| `osint-sfx` | `tools/cibersecurity/osint/spiderfoot.ps1` |
+| `maltego` | `tools/cibersecurity/maltego/maltego.ps1` (GUI; `-Config`/`-Log`) |
 
 ### 4.3 Reglas de ejecución (obligatorias)
 
 1. **Diagnóstico antes de pedir datos**: si el target no se indica, usar un username
    sintético (`none_xisty_zzz_999`) para validar el pipeline.
-2. **Datos personales fuera de git**: `test/osint/` y `tools/osint/output/` están
+2. **Datos personales fuera de git**: `test/osint/` y `tools/cibersecurity/osint/output/` están
    gitignored; si se obtienen datos reales, guardarlos ahí, jamás en `docs/` ni commits.
 3. **Sin credenciales en resúmenes**: al reportar, decir "API validada" sin pegar la key.
 4. **Verificación externa**: tras modificar wrappers o config, ejecutar la herramienta y
@@ -306,7 +308,7 @@ Tras tocar las herramientas, ejecutar:
 2. `osint-mai none_xxx_zzz999 -Preset quick -Test` → CSV en `test/osint/maigret/`.
 3. `osint-slo info` → devuelve la cuenta (email), sin imprimir la key.
 4. `vault verify` → hash OK de `.env` vs `.env.age`.
-5. `git status` → `test/osint/` y `tools/osint/output/` NO aparecen (gitignored).
+5. `git status` → `test/osint/` y `tools/cibersecurity/osint/output/` NO aparecen (gitignored).
 6. `git check-ignore SECRET_TEMP.env` → ruta ignorada.
 7. `bw get item 9c6fa289-ccd2-46e3-b5e2-b4aa004d37f9` (con sesión desbloqueada) →
    item SimpleLogin presente.

@@ -1,4 +1,4 @@
-﻿# TOOLS_SYSTEM — Herramientas de Desarrollo — Análisis Final e Integración (2 ago 2026)
+# TOOLS_SYSTEM — Herramientas de Desarrollo — Análisis Final e Integración (2 ago 2026)
 
 Versión: 2.0.0
 Actualización: 2026-08-13
@@ -219,9 +219,9 @@ AGENTS §6.4) ni en `downloads/`.
 - Separación: un clon por carpeta (`clones/spiderfoot`, `clones/myskull`, …). NO bajo
   `tools/` — `tools/` es solo código propio del repo.
 - Instalación de dependencias: dentro del clon, vía su propio gestor (pip/npm/pnpm/…).
-- **NUNCA** commitear el clon; reportes/artefactos generados van a `test/` o `tools/osint/output/`
+- **NUNCA** commitear el clon; reportes/artefactos generados van a `test/` o `tools/cibersecurity/osint/output/`
   según su naturreza (ver `OSINT_PROTOCOLS.md`, `CIBERSECURITY_SYSTEM.md`).
-- El wrapper/conector debe buscar el clon en `clones/` (p. ej. `tools/osint/spiderfoot.ps1`
+- El wrapper/conector debe buscar el clon en `clones/` (p. ej. `tools/cibersecurity/osint/spiderfoot.ps1`
   resuelve `clones\spiderfoot\sf.py`).
 - Registro del clon: ver §8 Estado.
 

@@ -5,16 +5,16 @@
 # Documentado en: projects/ciszu/docs/documentation/CIBERSECURITY_SYSTEM.md y OSINT_PROTOCOLS.md
 #
 # Uso:
-#   .\tools\osint\sherlock.ps1 -Usernames none_xisty_zzz_999    # preset full
-#   .\tools\osint\sherlock.ps1 -Usernames none_xisty_zzz_999 -Preset quick -Test
-#   .\tools\osint\sherlock.ps1 -Usernames foo -Out "E:\ruta\custom"
+#   .\tools\cibersecurity\osint\sherlock.ps1 -Usernames none_xisty_zzz_999    # preset full
+#   .\tools\cibersecurity\osint\sherlock.ps1 -Usernames none_xisty_zzz_999 -Preset quick -Test
+#   .\tools\cibersecurity\osint\sherlock.ps1 -Usernames foo -Out "E:\ruta\custom"
 #
 # Presets:
 #   full  (default) -> --csv --timeout 30
 #   quick           -> --csv --timeout 15
 #
 # Salida:
-#   oficial -> tools/osint/output/sherlock/
+#   oficial -> tools/cibersecurity/osint/output/sherlock/
 #   -Test   -> test/osint/sherlock/   (pruebas rapidas, gitignored)
 
 param(
@@ -31,7 +31,7 @@ $repo = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 
 if ($Out) { $outDir = $Out }
 elseif ($Test) { $outDir = Join-Path $repo 'test\osint\sherlock' }
-else { $outDir = Join-Path $repo 'tools\osint\output\sherlock' }
+else { $outDir = Join-Path $repo 'tools\cibersecurity\osint\output\sherlock' }
 New-Item -ItemType Directory -Force -Path $outDir | Out-Null
 
 $flags = @('--csv', '--timeout', '30', '--folderoutput', $outDir)

@@ -5,18 +5,18 @@
 # Repo: https://github.com/smicallef/spiderfoot · Doc: CIBERSECURITY_SYSTEM.md / OSINT_PROTOCOLS.md
 #
 # Uso (SpiderFoot detecta el tipo por el formato del target):
-#   .\tools\osint\spiderfoot.ps1 -Targets foo@example.com     # EMAIL  (contiene @)
-#   .\tools\osint\spiderfoot.ps1 -Targets ejemplo.com,tld     # DOMINIO (formato DNS)
-#   .\tools\osint\spiderfoot.ps1 -Targets +584161234567       # TELEFONO (empieza con + y solo digitos)
-#   .\tools\osint\spiderfoot.ps1 -Targets foo                 # USERNAME (lo demás)
-#   .\tools\osint\spiderfoot.ps1 -Targets foo@example.com -Preset quick -Test
+#   .\tools\cibersecurity\osint\spiderfoot.ps1 -Targets foo@example.com     # EMAIL  (contiene @)
+#   .\tools\cibersecurity\osint\spiderfoot.ps1 -Targets ejemplo.com,tld     # DOMINIO (formato DNS)
+#   .\tools\cibersecurity\osint\spiderfoot.ps1 -Targets +584161234567       # TELEFONO (empieza con + y solo digitos)
+#   .\tools\cibersecurity\osint\spiderfoot.ps1 -Targets foo                 # USERNAME (lo demás)
+#   .\tools\cibersecurity\osint\spiderfoot.ps1 -Targets foo@example.com -Preset quick -Test
 #
 # Presets:
 #   full  (default) -> -u passive (todos los modulos pasivos, sin API keys; lento/exhaustivo)
 #   quick            -> modulos gratuitos seleccionados segun el tipo de target (rapido)
 #
 # Salida:
-#   oficial -> tools/osint/output/spiderfoot/
+#   oficial -> tools/cibersecurity/osint/output/spiderfoot/
 #   -Test   -> test/osint/spiderfoot/   (pruebas rapidas, gitignored)
 #
 # Nota instalacion: clon vive en clones/spiderfoot (aprobado 18 ago 2026)
@@ -37,7 +37,7 @@ $repo = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 
 if ($Out) { $outDir = $Out }
 elseif ($Test) { $outDir = Join-Path $repo 'test\osint\spiderfoot' }
-else { $outDir = Join-Path $repo 'tools\osint\output\spiderfoot' }
+else { $outDir = Join-Path $repo 'tools\cibersecurity\osint\output\spiderfoot' }
 New-Item -ItemType Directory -Force -Path $outDir | Out-Null
 
 # Detectar sf.py (clon local de SpiderFoot >= 4.0)

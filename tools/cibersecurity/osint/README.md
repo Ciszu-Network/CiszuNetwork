@@ -7,7 +7,7 @@ desacoplado: usable desde PowerShell, opencode (a través de los comandos
 instalados (`sherlock.exe`, `maigret.exe` en `Python314\Scripts`).
 
 > **Política**: `test/` es para pruebas rápidas; la salida **oficial** de estas
-> herramientas va a `tools/osint/output/<herramienta>/`. `test/osint/` está
+> herramientas va a `tools/cibersecurity/osint/output/<herramienta>/`. `test/osint/` está
 > gitignored (los reportes pueden contener datos personales de terceros).
 
 ## Estructura
@@ -24,26 +24,26 @@ instalados (`sherlock.exe`, `maigret.exe` en `Python314\Scripts`).
 
 ```powershell
 # Dispatcher único
-.\tools\osint\osint.ps1 maigret -Usernames none_xisty_zzz_999
-.\tools\osint\osint.ps1 sherlock -Usernames none_xisty_zzz_999 -Preset quick -Test
-.\tools\osint\osint.ps1 simplelogin info
-.\tools\osint\osint.ps1 spiderfoot -Targets ejemplo@correo.com
+.\tools\cibersecurity\osint\osint.ps1 maigret -Usernames none_xisty_zzz_999
+.\tools\cibersecurity\osint\osint.ps1 sherlock -Usernames none_xisty_zzz_999 -Preset quick -Test
+.\tools\cibersecurity\osint\osint.ps1 simplelogin info
+.\tools\cibersecurity\osint\osint.ps1 spiderfoot -Targets ejemplo@correo.com
 
 # Individuales (mismos presets que opencode)
-.\tools\osint\maigret.ps1 -Usernames foo,bar            # full: --graph --tags social,tech --csv --json ndjson --html
-.\tools\osint\maigret.ps1 -Usernames foo -Preset quick  # solo CSV
+.\tools\cibersecurity\osint\maigret.ps1 -Usernames foo,bar            # full: --graph --tags social,tech --csv --json ndjson --html
+.\tools\cibersecurity\osint\maigret.ps1 -Usernames foo -Preset quick  # solo CSV
 
-.\tools\osint\sherlock.ps1 -Usernames foo,.bar-        # full: --csv --timeout 30
-.\tools\osint\sherlock.ps1 -Usernames foo -Preset quick # --csv --timeout 15
+.\tools\cibersecurity\osint\sherlock.ps1 -Usernames foo,.bar-        # full: --csv --timeout 30
+.\tools\cibersecurity\osint\sherlock.ps1 -Usernames foo -Preset quick # --csv --timeout 15
 
-.\tools\osint\simplelogin.ps1 info                     # validar API key + cuenta
-.\tools\osint\simplelogin.ps1 aliases                  # listar alias
-.\tools\osint\simplelogin.ps1 options                  # dominios disponibles
-.\tools\osint\simplelogin.ps1 create <prefijo>         # crear alias custom
-.\tools\osint\simplelogin.ps1 random                   # crear alias aleatorio
+.\tools\cibersecurity\osint\simplelogin.ps1 info                     # validar API key + cuenta
+.\tools\cibersecurity\osint\simplelogin.ps1 aliases                  # listar alias
+.\tools\cibersecurity\osint\simplelogin.ps1 options                  # dominios disponibles
+.\tools\cibersecurity\osint\simplelogin.ps1 create <prefijo>         # crear alias custom
+.\tools\cibersecurity\osint\simplelogin.ps1 random                   # crear alias aleatorio
 
-.\tools\osint\spiderfoot.ps1 -Targets foo@example.com  # full: -u passive (modulos sin API key)
-.\tools\osint\spiderfoot.ps1 -Targets foo -Preset quick -Test
+.\tools\cibersecurity\osint\spiderfoot.ps1 -Targets foo@example.com  # full: -u passive (modulos sin API key)
+.\tools\cibersecurity\osint\spiderfoot.ps1 -Targets foo -Preset quick -Test
 ```
 
 > **SpiderFoot**: instalado en `clones/spiderfoot` (v4.0.0, 18 ago 2026). El wrapper resuelve
@@ -64,6 +64,6 @@ instalados (`sherlock.exe`, `maigret.exe` en `Python314\Scripts`).
 - `simplelogin.ps1` lee `SIMPLELOGIN_API_KEY` del vault (`services/supabase/.env`);
   nunca la imprime. Si no está presente, falla pidiendo `vault crypt`.
 - Los reportes de maigret/sherlock pueden contener datos personales: NO
-  commitear a git. `test/osint/` y `tools/osint/output/` están gitignored.
+  commitear a git. `test/osint/` y `tools/cibersecurity/osint/output/` están gitignored.
 - Todo caso de uso cumple `CIBERSECURITY_SYSTEM.md` y `OSINT_PROTOCOLS.md`
   (uso legal, verificación externa, rotación de credenciales).
