@@ -38,7 +38,8 @@ Identificador: STATUS_SYSTEM_V2.1.3_2026_08_17_ciszunetwork
 | Directus GUI local | ✅ `tools/directus/docker-compose.yml`, `http://localhost:8055` (admin ciszunetwork@gmail.com, 2FA, proyecto `ciszunetwork`) — credenciales en vault |
 | Compilación local de webs | ⚠️ Errores conocidos sin arreglar (logos sin resolver, interacciones y body de páginas que no cargan) — ver `PROJECTS_SYSTEM` §4.1 |
 | Cloudflare (standalone) | ✅ Web Analytics + Turnstile en las 4 webs (guard solo en prod; en dev local no bloquea) |
-| Seguridad | ✅ RLS 28/28 tablas, migración 16 aplicada, rate limits, robots.ts ×4 |
+| Seguridad | ✅ RLS 29/29 tablas, migración 18 aplicada, rate limits, robots.ts ×4 |
+| Editor visual UI/UX (Puck) | ✅ Implementado en ciszunetwork (`/edit`, `/pages`, `POST /api/puck/save`, tabla `ciszu.puck_pages` con RLS) — 18 ago 2026; ver `VISUAL_BUILDERS_SYSTEM.md` |
 | Storybook `@ciszu/ui` | ✅ Chromatic (builds 1–5, visual) + a11y + addon-vitest + addon-designs (Figma) + themes/dark-mode/tag-badges/Visual Tests/MSW |
 | Testing | ✅ Vitest (171 unit) + Playwright E2E + Storybook (component + a11y + visual) |
 | Backups BD | ⏳ Requiere PostgreSQL 17 (pg_dump ≥17) instalado |
@@ -204,6 +205,7 @@ Este doc es una **foto del estado** del ecosistema; al cerrar sesión:
 
 | Fecha | Cambio relevante |
 |---|---|
+| 2026-08-18 | **ERD Editor integrado** (`scripts/generate-erd.js`, diagramas `*.erd.json` versionados: schema/migrations/seeds) + **editor visual UI/UX Puck** implementado en ciszunetwork (`@puckeditor/core@0.23.0`, bloque/hero/stats/cta/wrapper, `/edit` + `/pages` + `POST /api/puck/save`, tabla `ciszu.puck_pages` con RLS, migración 18 aplicada). Lint/tsc/build y smoke test OK. Ver `VISUAL_BUILDERS_SYSTEM.md` + `PROJECTS_SYSTEM` §4. Commits `c645aae`..`6ac7611` (ERD) + pendiente commit Puck |
 | 2026-08-18 | **Tarea OSINT/ciberseguridad completada** (TODO): stack integrado y verificado — Sherlock 0.16.0, Maigret 0.6.4 (+extra `pdf`, genera csv/json/html/graph/pdf), SimpleLogin (API, cuenta proton), SpiderFoot 4.0.0 (`clones/spiderfoot`), Maltego 4.12.1 Community (instalada por Ciszuko, en configuración). `tools/osint/` → `tools/cibersecurity/osint/`; wrappers corregidos (ruta raíz `..\..\..`, arregla `tools\tools` duplicado y SimpleLogin) + `--pdf`/`--xlsx` en presets full. Epieos y Thatsthem documentadas como manuales (sin CLI, webs anti-bot, §4.7 OSINT_PROTOCOLS). Descartadas por capital: SEON, Hunter.io, Sherlockeye, PhoneInfoga, API de pago SpiderFoot. Protocolo `clones/` + flujo SECRET_TEMP.env formalizados. Commits: `3de46ce`..`49486c0` |
 | 2026-08-17 | TODO global de frontend cerrado: cookies banner ×3 webs (patrón muzicmania, entrada en store + `/policies` o `/privacidad`+`/terminos`), hero titles interactivos ×3 homes (`Link` a sí mismo + `animate-float` + glow hover), Soporte como ítem independiente en navbar ciszu, botón Invitar antes del search en navbar ciszubot, sidebar ciszukoa bajo el header (`top-[64px]`) con hamburguesa-toggle (X interna redundante eliminada), e iconos oficiales next.js/typescript en muzicmania subidos al CDN híbrido (`tech/{nextjs,typescript}.svg`). `tsc` + `eslint` ×3 webs en verde |
 | 2026-08-16 | Navbar ciszubot con paridad total de diseño: búsqueda full-width bajo el nav (reemplaza el panel flotante), hamburguesa siempre visible con sidebar slide-right (vistas MENÚ/IDIOMAS, overlay sin blur) y lista de idiomas es/en con banderas. `tsc` + `lint` ×4 webs en verde |
@@ -238,7 +240,7 @@ Este doc es una **foto del estado** del ecosistema; al cerrar sesión:
 - [ ] Nuevas incidencias registradas en su `*_SYSTEM.md`.
 - [ ] `ÚLTIMA ACTUALIZACIÓN` fechada y `PROJECTS_SYSTEM.md` con historia.
 
-_Última revisión: 16 ago 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
+_Última revisión: 18 ago 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
 `WORKFLOW_SYSTEM.md`, `ARCHITECTURE.md`, `FULL_STACK_SYSTEM.md`.
 
 ÚLTIMA ACTUALIZACIÓN: 2026-08-16
