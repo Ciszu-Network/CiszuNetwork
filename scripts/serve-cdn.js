@@ -65,6 +65,24 @@ function resolveSafe(rawPath) {
   }
 }
 
+// Fallback de ENTREGA (Capa 4): en dev el repo local no tiene las variantes
+// derivadas (.avif/.webp/.opus) que sí existen en el CDN de producción. Cuando
+// se pide una variante que no existe en disco, se sirve el ORIGINAL de la misma
+// base (.png/.jpg/.jpeg/.gif/.mp3/.ogg/.wav...). Es lo que haría un CDN real con
+// transformación de imágenes, y evita 404 en las webs en localhost.
+function resolveDeliveryFallback(absPath) {
+  const ext = path.extname(absPath).toLowerCase();
+  const DELIVERY = { '.avif': ['.png', '.jpg', '.jpeg', '.gif'], '.webp': ['.png', '.jpg', '.jpeg', '.gif'], '.opus': ['.mp3', '.ogg', '.wav', '.m4a'] };
+  const targets = DELIVERY[ext];
+  if (!targets) return null;
+  const base = absPath.slice(0, absPath.length - ext.length);
+  for (const t of targets) {
+    const cand = base + t;
+    if (fs.existsSync(cand)) return cand;
+  }
+  return null;
+}
+
 const server = http.createServer((req, res) => {
   if (req.method !== 'GET' && req.method !== 'HEAD') {
     send(res, 405, 'Method not allowed');
@@ -79,7 +97,29 @@ const server = http.createServer((req, res) => {
 
   fs.stat(abs, (err, stats) => {
     if (err || !stats.isFile()) {
-      send(res, 404, `Not found: ${req.url}`);
+      const fallback = resolveDeliveryFallback(abs);
+      if (!fallback) {
+        send(res, 404, `Not found: ${req.url}`);
+        return;
+      }
+      fs.stat(fallback, (err2, stats2) => {
+        if (err2 || !stats2.isFile()) {
+          send(res, 404, `Not found: ${req.url}`);
+          return;
+        }
+        const type = getContentType(fallback);
+        const headers = {
+          'Content-Type': type,
+          'Cache-Control': 'no-cache',
+          'Content-Length': stats2.size,
+        };
+        res.writeHead(200, headers);
+        if (req.method === 'HEAD') {
+          res.end();
+          return;
+        }
+        fs.createReadStream(fallback).pipe(res);
+      });
       return;
     }
     const type = getContentType(abs);
