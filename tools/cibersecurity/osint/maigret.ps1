@@ -10,7 +10,7 @@
 #   .\tools\cibersecurity\osint\maigret.ps1 -Usernames foo -Out "E:\ruta\custom"              # carpeta de salida explicita
 #
 # Presets:
-#   full  (default) -> --graph --tags social,tech --csv --json ndjson --html
+#   full  (default) -> --graph --tags social,tech --csv --json ndjson --html --pdf
 #   quick           -> --csv (solo CSV, mas rapido)
 #
 # Salida:
@@ -27,7 +27,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$repo = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
+$repo = (Resolve-Path (Join-Path $PSScriptRoot '..\..\..')).Path
 
 if ($Out) { $outDir = $Out }
 elseif ($Test) { $outDir = Join-Path $repo 'test\osint\maigret' }
@@ -36,7 +36,7 @@ New-Item -ItemType Directory -Force -Path $outDir | Out-Null
 
 $flags = @('--folderoutput', $outDir)
 switch ($Preset) {
-  'full'  { $flags += @('--graph', '--tags', 'social,tech', '--csv', '--json', 'ndjson', '--html') }
+  'full'  { $flags += @('--graph', '--tags', 'social,tech', '--csv', '--json', 'ndjson', '--html', '--pdf') }
   'quick' { $flags += @('--csv') }
 }
 

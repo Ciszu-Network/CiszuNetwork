@@ -33,7 +33,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$repo = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
+$repo = (Resolve-Path (Join-Path $PSScriptRoot '..\..\..')).Path
 
 if ($Out) { $outDir = $Out }
 elseif ($Test) { $outDir = Join-Path $repo 'test\osint\spiderfoot' }
