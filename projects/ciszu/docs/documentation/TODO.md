@@ -4,8 +4,41 @@
 
 ### Cambios a todas las Websites
 
-- [ ] FUTURO: Sincronizar AUTH y PREFERENCIAS LOCALES (no realizar aun)
-- [ ] AUN POR APROBAR IMPLEMENTACION DE EDITOR VISUAL:
+- [ ] Sincronizar AUTH. De manera que implementemos la primera fase del auth, segun su documentacion cada webapp debe tener un AUTH oficial, finalmente el unico que tendra un oAUTH aparte sera ciszubot con discord, los auth no puedes ser tan diferentes. Todos deben decir iniciarse sesion o registarse. Muy parecido a MuzicMania. Pero al entrar a registrase o logearse, en su pantalla. Debe salir la seccion de logear/registrase con CISZU ID (normal, default o por defecto con correo contraseña etc, el auth que tiene el mejor diseño y es el de muzicmania, debemos crear la base de datos de cada pagina dentro de ciszunetwork con respecto al auth no centralizada, pero en un futuro si), y opciones adicionales como google, microsoft entre otros. PERO estas opciones por ahora funcionaran como placeholder, al darle click saldra un error de beta. Pero el unico que funcionara sera el de discord de ciszubot. De hecho, es obligatorio usar el registro y login de discord en ciszubot indiferentemente si tiene CISZU ID)
+
+- [ ] IMPLEMENTAR SISTEMA DE INVITADOS, actualmente implemente en muzicmania un sistema de invitados, un ID unico local con nomenclatura especial. Para crear un nametag de "invitado", el problema es que actualmente solo esta en /play de muzicmania. Ni si quiera esta afuera de play en muzicmania. ¿Que debmemos hacer? simple, en una web misma, el invitado sera el auth sin registro o login, al entrar al boton de auth saldra un icono de invitado generico + el nombre de invitado. Este invitado usara preferencias locales pero nunca tendra presencia en base de datos, seguira siendo un usuario no logeado o no registrado aun. Esto con el fin de incentivar a los usuarios a registrarse y personalizar su foto y nombre. Existe exepciones como en muzicmania que los invitados pueden jugar y guardar sus leaderboard. Pero no hay que darles prioridad. Este sistema solo esta en muzicmania, pero debemos llevarlo a ciszubot, ciszunetwork y ciszukoantony de manera mas simplificada. No importa si el ID generado del invitado cambia al actualizar o cambia por website, es solo frotend y no importa. Lo importante es mantener un diseño coherente, replicar si hace falta y guiarnos por muzicmania que lo tiene implementado parcialmente (solo en play), ojo, en muzicmania si debe ser siempre el mismo ID, tanto el del header como en la seccion dentro de play, para no crear confusion.
+
+- [ ] IMPLEMENTAR PREFERENCIAS LOCALES, a diferencias de configuraciones o opciones de perfil. Las preferencias simpre estaran disponibles para todos los usuarios. De esta manera, para acceder siempre sera dando el boton de AUTH (Logeado o no, debe salir) estas preferencias se guardan siempre localmente, pero si logeado si debe guardarlo. Las opciones de preferencias seran el idioma, el tema, una pequeña seccion de ayuda, hacer zoom o disminuir el zoom, y otras opciones de interaccion directa con el navageador, como silenciar la pestaña entre otras. Y que los usuarios no se quejen por que esten obligados a registrarse, estas opciones siempre se guardan localmente, es basicamente un menu rapido de opciones y preferencias para todos invitados o usuarios registrados. Se debe usar los mismos botones de theme y lenguaje que en los navbars
+
+- [ ] He instalado herramientras OSINT como sherlock, SimpleLogin y maigret, entre otras mas, documentalas para que sean herramientas oficiales de CIBERSECURITY_SYSTEM.md y OSINT_PROTOCOLS.md, he creado una carpeta nueva en test para hacer pruebas OSINT. Debemos crear los comandos para uso de IA y personal en powershell y opencode. Y usar las carpetas test para testeos por herramienta, y la carpeta tools para usarlas oficialmente como herramientas. Linkear apis, tokens probar etc. Rapida vinculacion de api con SimpleLogin (herramienta de ciberseguridad para crear alises emails temporales rapidos) Guardar todo en vault cifrado, vincular, documentalas para que sean herramientas oficiales de CIBERSECURITY_SYSTEM.md y guardar en bitwarden la api key y recovery codes encontrados en SECRET_TEMP.env
+- [ ] POST-OSINT | Despues de terminar al anterior tarea de ciberseguridad, investigar estas herramientas para autocomplementarlos:
+
+1. Búsqueda de números de teléfono
+   PhoneInfoga: Es una de las herramientas más conocidas para la búsqueda avanzada de números de teléfono. Es gratuita, de código abierto y permite recopilar información técnica (como el país de origen, proveedor de servicios y tipo de línea) y buscar rastros del número en la web.
+
+SEON: Ofrece una herramienta de "huella digital" (digital footprint) que, al introducir un número, intenta verificar en qué redes sociales y servicios digitales está registrado ese número. Es muy utilizada en entornos profesionales para prevención de fraude.
+
+Sherlockeye: Una plataforma que utiliza IA para realizar búsquedas inversas profundas, cruzando datos de cientos de fuentes en tiempo real.
+
+2. Búsqueda de correos electrónicos
+   Have I Been Pwned?: Es el estándar de oro para verificar si un correo (o teléfono) ha aparecido en filtraciones de datos (breaches). Es esencial para saber si esa cuenta ha sido comprometida en algún servicio.
+
+Epieos: Excelente herramienta para obtener información sobre una cuenta de correo electrónico de Google. Te indica si el correo está asociado a perfiles en servicios como Google Maps, Google Calendar o Google Photos (siempre que la configuración de privacidad del objetivo lo permita).
+
+Hunter.io: Muy efectiva si estás investigando correos corporativos. Te permite encontrar direcciones asociadas a un dominio específico (ejemplo: @empresa.com), lo cual ayuda a mapear a las personas que trabajan allí.
+
+Thatsthem: Permite realizar búsquedas inversas de correos intentando vincularlos con registros públicos para obtener nombre, ubicación o teléfonos asociados.
+
+3. Herramientas de investigación integral (Frameworks)
+   Si buscas realizar una investigación más profunda que conecte varios puntos (nombres, alias, correos, IPs):
+
+Maltego: Es una herramienta profesional de minería de datos y visualización de vínculos. Permite "conectar los puntos" entre diferentes tipos de información. Tiene una versión comunitaria gratuita que es muy potente.
+
+SpiderFoot: Automatiza la búsqueda de información sobre un objetivo en cientos de fuentes públicas. Es ideal para recopilar datos de forma masiva (correos, números, nombres, dominios) y organizarlos.
+
+Google Dorking (Búsqueda avanzada): Nunca subestimes el poder de los operadores de búsqueda. Combinar búsquedas entre comillas "correo@ejemplo.com" o usar comandos como site:linkedin.com "nombre de la persona" suele dar mejores resultados que muchas herramientas automatizadas.
+
+- [ ] IMPLEMENTACION DE EDITOR VISUAL UI/UX (no realizar aun):
 
 Para desarrolladores que trabajan con **React, Next.js y Tailwind**, existen herramientas modernas espectaculares que hacen exactamente lo que necesitas. Aquí tienes las mejores opciones reales que trabajan directo con tu código local:
 
@@ -159,38 +192,13 @@ Análisis técnico y comparativo detallado de las 4 opciones finalistas (**Onloo
 - Si lo que buscas es **crear un sistema interno donde tú u otras personas armen páginas mediante bloques visuales dentro de tu propio código de Next.js**, la mejor opción es **Puck** (por ser una librería open-source 100% gratuita que vive en tus dependencias).
 - **Subframe** y **Plasmic** quedan un paso atrás si buscas una experiencia puramente local y sin fricciones de nube, ya que ambas dependen fuertemente de plataformas web externas antes de llevar el código a tu máquina.
 
-TOKEN DE PLASMIC: **gRenqyQnND6N1z2KDm6ONwrwWp5ZER8pdPEulvuOrHkxP1OAqffOG92f2Vr07RmeezG1TR22mDLrmIWlatg**
-
-CMS: [studio.plasmic.app/cms/sZNEucnyLTRchsQ2rKwfwx/content](https://studio.plasmic.app/cms/sZNEucnyLTRchsQ2rKwfwx/content)
-
-ID: sZNEucnyLTRchsQ2rKwfwx
-
-PUBLIC TOKEN: RXVUwtquRonuELN875rbVvdLUoiL5nUEEOjw8IKK3pCMC61xTaX9wnjywoiAfHSg3KDycmrm2Mwhvso2HlUw
-
-SECRET TOKEN: Ikoayg6szGXoDxgKEHZ7YAAbJVHw52uEVTtwLtzaFIx1uvyKt6tVqwNOE2I3tFlc7yAHFsuEbCGvmY47HVRQ
+> Credenciales de las herramientas de editor visual (PLASMIC_*, PUCK_*, SUBFRAME_*) movidas a
+> `SECRET_TEMP.env` — nunca en este MD. Referencias: `PLASMIC_TOKEN`, `PLASMIC_CMS_ID`,
+> `PLASMIC_PUBLIC_TOKEN`, `PLASMIC_SECRET_TOKEN`, `PUCK_KEY`, `PUCK_ORG_KEY`, `SUBFRAME_KEY`.
+> CMS Plasmic: studio.plasmic.app/cms/<PLASMIC_CMS_ID> · Subframe: app.subframe.com/<SUBFRAME_FLOW>.
 
 Install the Puck Skill by running `npx skills add puckeditor/skills --skill puck`,
 then use it to add Puck AI to this application.
-
-PUCK KEY: hoVOlMpQLsFaEjkuFIvNJjsfgxxKIKaDTrOatXROdRdfBUIIbZIcEBdXrBBVFyhS
-
-PUCK ORG KEY: TNGvWNvlapgBUZLQhrhImyHxmEcDJtHhcKHSQkqAzeVoAgpvMVzSZGPotwlnPDAg
-
-SUBFRAME KEY. fe5cfb1055b1f506d3692bcedec67ed30a0e3ac6c7f0f0c0e65f91dc4bf37d73
-
-[app.subframe.com/721491c39094/flow/59117a8b-b804-44d2-9764-0729969674d4/edit](https://app.subframe.com/721491c39094/flow/59117a8b-b804-44d2-9764-0729969674d4/edit)
-
-- [ ] Porciero en ciszuko antony cuando estoy en home el title de la pagina deice que "CEO AND Founder of Ciszuko..." (llo de mas no se lee)
-
-Esto es un error. Si estoy en home debe decir HOME. Y Ciszuko antony no es fundados de "ciszuko antony" eso no tiene sentido. Corrige eso.
-
-Ademas en Muzicmania pasa algo similiar, aunque este en home o directamente en index no dice | HOME. Solamente MuzicMania,
-
-POtro error que he notado es que para dispositivos tablets o moviles se desaparecen las paginas del navbar en el header, lo cual es un error.
-
-Recuerda que tiene que ser mas inteligente aun, primeramente siempre debe mostrar la pagina selccion ada y donde este actualmente, y el resto de paginas a salir son los que caben dentro del posible espacio, no que simplemente se oculten todos.
-
-Prioriza siempre mostrar las cosas cuando exista espacio. Principalmente loogos, pagina o seccion actual y los botones. Pero las paginas no seleccionadas son los que se esconden segun el espacio. Todo esto lo guarde en el TODO. Arregla esto + todo lo anterior.
 
 ### Cambios por Website
 

@@ -250,6 +250,47 @@ Pipeline de documentación: `node scripts/txt2md.js` (txt→md) · `node scripts
   sin env vars). Script de migración: `.opencode/temp/migrate-opencode-data.ps1` (correr con opencode
   cerrado). Nunca mover/borrar ese junction ni el data dir directamente.
 
+### 6.5 Puente de secretos de documentación (SECRET_TEMP.env)
+
+- **`projects/ciszu/docs/documentation/SECRET_TEMP.env`** (gitignored) es el **puente**
+  transitorio entre los secretos que Ciszuko pasa y su uso real. **Nunca se cifra** (se abre
+  a cada rato) y **nunca se sube a ningún sitio**; solo existe local.
+- Ciszuko **nunca pasa secretos en texto plano** por el chat: los escribe como variables en
+  `SECRET_TEMP.env` y los referenciados en docs/TODO por nombre (`ver SECRET_TEMP.env → <VAR>`).
+- **Protocolo de resolución**: cuando un MD/TODO refiera un token/API key/ID **no incluido**,
+  o el usuario diga "te paso un token"/"está en SECRET_TEMP", el agente debe **abrir
+  `SECRET_TEMP.env` y leer el valor de la variable** antes de ejecutar cualquier tarea que lo
+  necesite (curl, wrappers, vault, etc.). Si la variable no existe, pedirla al usuario.
+- **Tarea del agente con cada secreto**: **llevarlo al vault cifrado**
+  (`services/supabase/.env` + `vault.ps1 crypt`) y a **Bitwarden**, y **después** usarlo en
+  la tarea. El `SECRET_TEMP` es solo el contenedor de entrada; el oficial y durable es el
+  vault cifrado (que además es la fuente para Bitwarden). Cuando Ciszuko vea la tarea
+  terminada, **él** elimina la variable de `SECRET_TEMP.env`; el valor se mantiene cifrado
+  en vault/Bitwarden.
+- **Regla de oro**: `SECRET_TEMP.env` y `services/supabase/.env` **nunca** se suben ni se
+  importan; cualquier valor que llegue de ahí se usa al vuelo y solo se persiste en el vault
+  cifrado (+ Bitwarden).
+- Los secretos de `SECRET_TEMP.env` **nunca** se imprimen en resúmenes ni logs; se usan desde
+  la variable al vuelo. Ver `VAULT_SYSTEM.md` §3.7 y `CIBERSECURITY_SYSTEM.md` §5.
+- **Regla para docs**: al terminar una tarea que usó secretos, verificar que ningún `.md`
+  haya quedado con valores en claro (solo referencias). `gitleaks`/`secretlint` bloquean en
+  pre-commit.
+
+### 6.6 El vault de secrets (`services/supabase/.env`) — solo lo escribe Ciszuko
+
+- **`services/supabase/.env`** es el vault local de credenciales (descifrado para el flujo
+  diario; la copia cifrada es `.env.age`). **Solo Ciszuko Antony lo edita/escribe** a partir
+  de ahora: contiene los secrets que él pasa directamente. El agente **NUNCA borra, modifica
+  ni reordena ninguna entrada existente** de ese archivo, y solo lo **lee** para usar
+  variables al vuelo o cifrarlo/verificarlo (`vault.ps1 crypt|verify|backup`).
+- Excepción: cuando el agente añada secretos nuevos que el usuario le entregue a través del
+  SECRET_TEMP para guardar (p. ej. los de una tarea aprobada), puede **añadir entradas nuevas
+  al final** del `.env` (mismo nombre de variable) y ejecutar `vault crypt` + Bitwarden;
+  nunca tocar lo existente. Si duda si una modificación es segura, preguntar antes.
+- El `SECRET_TEMP.env` es el canal de ENTRADA; el **vault cifrado es el oficial**: debe
+  replicar el contenido del SECRET_TEMP (lo que esté destinado a persistir) porque es la copia
+  cifrada de la que se alimenta Bitwarden.
+
 ---
 
 ## 7. Seguridad — obligatorio en toda implementación
