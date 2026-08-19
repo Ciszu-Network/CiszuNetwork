@@ -17,7 +17,7 @@ function safeEqual(a: string, b: string): boolean {
 }
 
 export async function editSessionCookie(): Promise<string> {
-  const token = process.env.EDIT_TOKEN || "";
+  const token = process.env.PUCK_EDIT_TOKEN || "";
   const digest = await crypto.subtle.digest("SHA-256", encoder.encode(`ciszu-edit:${token}`));
   return toHex(new Uint8Array(digest));
 }
@@ -28,7 +28,7 @@ export async function cookieEqualsToken(cookie: string): Promise<boolean> {
 }
 
 export async function verifyEditToken(input: string): Promise<boolean> {
-  const expected = process.env.EDIT_TOKEN || "";
+  const expected = process.env.PUCK_EDIT_TOKEN || "";
   if (!expected || !input || !expected.length || !input.length) return false;
   const a = toHex(new Uint8Array(await crypto.subtle.digest("SHA-256", encoder.encode(input))));
   const b = toHex(new Uint8Array(await crypto.subtle.digest("SHA-256", encoder.encode(expected))));

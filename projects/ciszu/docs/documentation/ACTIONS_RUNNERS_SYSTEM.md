@@ -69,10 +69,10 @@ sistema para **independizarse del billing**: correr las mismas tareas localmente
 | `ci.yml` | Lint (4 webs: ciszunetwork, ciszukoa, muzicmania, ciszubot), tests Vitest, tests Storybook (`@ciszu/ui`), Semgrep (SAST), `pnpm audit` (SCA), Gitleaks, Security E2E | push/PR/diario 06:00 UTC | GH Actions |
 | `codeql.yml` | CodeQL por lenguaje (actions, JS/TS, python, rust) | push/PR/viernes 16:28 UTC | GHAS habilitado |
 | `dast.yml` | ZAP baseline sobre las 4 webs de producción | Lunes 06:30 UTC | GH Actions |
-| `deploy-ciszunetwork-website.yml` | Deploy Vercel `ciszunetworkpage` | push a main (sin path filter, redespliega en cada push) | GH Actions + token |
-| `deploy-ciszukoantony-website.yml` | Deploy Vercel `ciszukoantonypage` | push a main (sin path filter) | GH Actions + token |
-| `deploy-ciszubot-website.yml` | Deploy Vercel `ciszubot` | push a main (sin path filter) | GH Actions + token |
-| `deploy-muzicmania-website.yml` | Deploy Vercel `muzicmania` | push a main (sin path filter) | GH Actions + token |
+| `deploy-ciszunetwork-website.yml` | Deploy Vercel `ciszunetworkpage` | push a main → production (sin path filter, redespliega en cada push); `workflow_dispatch` con input `environment` (production \| preview) | GH Actions + token |
+| `deploy-ciszukoantony-website.yml` | Deploy Vercel `ciszukoantonypage` | push a main → production (sin path filter); `workflow_dispatch` con input `environment` | GH Actions + token |
+| `deploy-ciszubot-website.yml` | Deploy Vercel `ciszubot` | push a main → production (sin path filter); `workflow_dispatch` con input `environment` | GH Actions + token |
+| `deploy-muzicmania-website.yml` | Deploy Vercel `muzicmania` | push a main → production (sin path filter); `workflow_dispatch` con input `environment` | GH Actions + token |
 | `chromatic.yml` | Publica Storybook de `@ciszu/ui` en Chromatic (visual/a11y) | push en `packages/ui/**` | GH Actions + token |
 | `release-please.yml` | Release Please (versionado Changesets) | push en `main` | GH Actions |
 | `uptime-watch.yml` | Consulta UptimeRobot API y publica en ntfy solo cambios de estado | cada 5 min | GH Actions + secrets |
@@ -95,6 +95,30 @@ sistema para **independizarse del billing**: correr las mismas tareas localmente
 > `E:\actions-runners\CISZU-PC-3`). Los 3 corren como servicios Windows con arranque
 > automático retardado. Al desinstalar o reinstalar, usar `--unattended` con el mismo nombre
 > para no dejar runners huérfanos en GitHub.
+
+### 3.2.1 Producción vs previews (verificado 19 ago 2026)
+
+**Antes**: los 4 workflows `deploy-*.yml` solo lanzaban `vercel --prod` en cada `push` a main.
+**No existía ningún camino para desplegar un preview**: cualquier deploy era producción. Desde
+el 19 ago 2026 los 4 workflows aceptan un `workflow_dispatch` con el input `environment`
+(`production` | `preview`):
+
+| Entorno | Cómo se dispara | Comando Vercel | Cuándo usarlo |
+|---|---|---|---|
+| **production** | `push` a `main`/`master` (automático) o `workflow_dispatch` con `environment: production` (manual) | `vercel --prod --yes --archive=tgz` | Cambios finales, revisados y verificados en local o en preview. Es el estado visible al público en `*.vercel.app`. |
+| **preview** | `workflow_dispatch` con `environment: preview` (manual, bajo demanda) | `vercel --yes --archive=tgz` (sin `--prod`) | Cambios en desarrollo que aún no deben verse en producción: verificación visual, revisión de una rama, prueba de un feature antes de publicarlo. Genera una URL de preview efímera de Vercel. |
+
+Reglas de uso:
+
+1. **Por defecto, production**. El flujo normal es `git push` a `main` → 4 deploys de
+   producción automáticos. Los previews son la excepción, no la regla.
+2. **Un preview se pide con `workflow_dispatch`** sobre el workflow de la web concreta y el
+   input `environment: preview`. Si solo se pide "deploy" sin especificar, se asume production.
+3. **No mezclar**: un preview no promueve a producción; para publicar el preview hay que
+   lanzar un deploy de producción con el commit ya en `main` (o el flujo normal de `push`).
+4. El script local `scripts/deploy-vercel.js` y los scripts `pnpm deploy:*` son **siempre de
+   producción** (`--prod`); para previews usar el `workflow_dispatch` de GitHub, no los scripts
+   locales.
 
 ### 3.3 Scripts de la raíz (implementados en `package.json` el 15 ago 2026)
 

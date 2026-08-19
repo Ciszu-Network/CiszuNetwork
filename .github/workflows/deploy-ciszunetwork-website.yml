@@ -4,6 +4,15 @@ on:
   push:
     branches: [main, master]
   workflow_dispatch:
+    inputs:
+      environment:
+        description: Entorno del deploy (production o preview)
+        required: true
+        default: production
+        type: choice
+        options:
+          - preview
+          - production
 
 permissions:
   contents: read
@@ -24,6 +33,11 @@ jobs:
       - name: Link Vercel Project
         run: vercel link --yes --project ciszunetworkpage --token=${{ secrets.VERCEL_TOKEN }}
         working-directory: .
-      - name: Deploy to Vercel
+      - name: Deploy to Vercel (preview)
+        if: ${{ github.event.inputs.environment == 'preview' }}
+        run: vercel --yes --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}
+        working-directory: .
+      - name: Deploy to Vercel (production)
+        if: ${{ github.event.inputs.environment != 'preview' }}
         run: vercel --prod --yes --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}
         working-directory: .

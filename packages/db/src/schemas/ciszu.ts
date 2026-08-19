@@ -3,6 +3,7 @@ import {
   bigint,
   index,
   jsonb,
+  primaryKey,
   text,
   timestamp,
 } from 'drizzle-orm/pg-core';
@@ -36,8 +37,13 @@ export const counters = ciszu.table(
 export const puckPages = ciszu.table(
   'puck_pages',
   {
-    path: text('path').primaryKey(),
+    app: text('app').notNull().default('ciszunetwork'),
+    path: text('path').notNull(),
     data: jsonb('data').notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-  }
+  },
+  (t) => [
+    primaryKey({ columns: [t.app, t.path] }),
+    index('puck_pages_app_idx').on(t.app),
+  ]
 );

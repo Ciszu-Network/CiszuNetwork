@@ -3,6 +3,8 @@ import { z } from "zod";
 import { createRateLimiter, parseJsonBody } from "@ciszunetwork/utils";
 import { savePuckPage } from "@/lib/puck";
 
+const APP = "ciszunetwork";
+
 const limiter = createRateLimiter({ windowMs: 60_000, max: 20 });
 
 const puckSaveSchema = z.object({
@@ -29,7 +31,7 @@ export async function POST(request: NextRequest) {
   const normalized = path.startsWith("/") ? path : "/" + path;
 
   try {
-    await savePuckPage(normalized, data);
+    await savePuckPage(APP, normalized, data);
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ success: false, error: "Error al guardar" }, { status: 500 });

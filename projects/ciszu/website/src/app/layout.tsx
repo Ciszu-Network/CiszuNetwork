@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { headers } from "next/headers";
 import { IBM_Plex_Sans, IBM_Plex_Sans_Condensed } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, FabStackProvider, ZoomWarning } from "@ciszu/ui";
@@ -47,21 +48,24 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+  const store = await headers();
+  const isEdit = store.get("x-is-edit") === "1";
+
   return (
     <html lang="es" className={`${ibmPlex.variable} ${ibmPlexCondensed.variable}`}>
       <body className="bg-black text-white min-h-screen font-sans flex flex-col">
         <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={ICON_SVG} title="Ciszu Network" subtitle="Ciszu Network Security • Cloudflare" accent="#22d3ee" storageKey="cf_verified_ciszu">
-          <ZoomWarning />
-          <Navbar />
+          {!isEdit && <ZoomWarning />}
+          {!isEdit && <Navbar />}
           <main className="flex-grow">{children}</main>
-          <Footer />
-          <CookiesBanner />
+          {!isEdit && <Footer />}
+          {!isEdit && <CookiesBanner />}
         </CloudflareGuard>
         <PwaRegister />
         <FabStackProvider>
-          <InstallPdwaButton site="Ciszu Network" accent="#22d3ee" accentAlt="#f472b6" />
-          <FeedbackFab />
+          {!isEdit && <InstallPdwaButton site="Ciszu Network" accent="#22d3ee" accentAlt="#f472b6" />}
+          {!isEdit && <FeedbackFab />}
         </FabStackProvider>
         <PostHogAnalytics app="ciszunetwork" />
         {process.env.NODE_ENV === 'production' && (

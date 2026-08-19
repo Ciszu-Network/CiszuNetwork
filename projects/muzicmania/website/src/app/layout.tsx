@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { headers } from "next/headers";
 import { Exo_2, Rajdhani } from "next/font/google";
 import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -44,34 +45,37 @@ import { ConnectivityBanner } from "@/components/layout/ConnectivityBanner";
 import FeedbackFab from "@/components/layout/FeedbackFab";
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: ReactNode;
 }>) {
+  const store = await headers();
+  const isEdit = store.get("x-is-edit") === "1";
+
   return (
     <html lang="es" className={`${exo2.variable} ${rajdhani.variable}`}>
       <body className="bg-black text-white min-h-screen font-sans flex flex-col">
         {/* AuthProvider: hidrata el store global con la sesión de Supabase en cada carga */}
         <AuthProvider>
           <CloudflareGuard>
-            <Navbar />
-            <ZoomWarning />
-            <ConnectivityBanner />
-            <main className="flex-grow pt-20">
+            {!isEdit && <Navbar />}
+            {!isEdit && <ZoomWarning />}
+            {!isEdit && <ConnectivityBanner />}
+            <main className={isEdit ? "flex-grow" : "flex-grow pt-20"}>
               <NuqsAdapter>
                 {children}
               </NuqsAdapter>
             </main>
-            <Footer />
-            <CookiesBanner />
+            {!isEdit && <Footer />}
+            {!isEdit && <CookiesBanner />}
           </CloudflareGuard>
         </AuthProvider>
         <SpeedInsights />
         <PwaRegister />
         <FabStackProvider>
-          <InstallPdwaButton site="MuzicMania" accent="#00f0ff" accentAlt="#ff33cc" desktopAppHref="/download" />
-          <FeedbackFab />
+          {!isEdit && <InstallPdwaButton site="MuzicMania" accent="#00f0ff" accentAlt="#ff33cc" desktopAppHref="/download" />}
+          {!isEdit && <FeedbackFab />}
         </FabStackProvider>
         <PostHogAnalytics app="muzicmania" />
         {process.env.NODE_ENV === 'production' && (

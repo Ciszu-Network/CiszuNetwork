@@ -18,6 +18,9 @@ declare module 'next/navigation' {
   export function usePathname(): any;
   export function useParams(): any;
   export function useSearchParams(): any;
+  export function notFound(): never;
+  export function redirect(url: string): never;
+  export function permanentRedirect(url: string): never;
 }
 
 declare module 'framer-motion' {

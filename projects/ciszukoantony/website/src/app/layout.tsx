@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { headers } from "next/headers";
 import { Exo_2, Rajdhani } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, FabStackProvider, ZoomWarning } from "@ciszu/ui";
@@ -48,21 +49,24 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const store = await headers();
+  const isEdit = store.get("x-is-edit") === "1";
+
   return (
     <html lang="en" className={`${exo2.variable} ${rajdhani.variable}`}>
       <body className="bg-black text-white min-h-screen font-sans flex flex-col">
         <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={PROFILE_PIC} title="Ciszuko Antony" subtitle="Ciszuko Antony Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszukoantony">
-          <Navbar />
-          <ZoomWarning />
+          {!isEdit && <Navbar />}
+          {!isEdit && <ZoomWarning />}
           <main className="flex-grow">{children}</main>
-          <Footer />
-          <CookiesBanner />
+          {!isEdit && <Footer />}
+          {!isEdit && <CookiesBanner />}
         </CloudflareGuard>
         <PwaRegister />
         <FabStackProvider>
-          <InstallPdwaButton site="Ciszuko Antony" accent="#a78bfa" accentAlt="#22d3ee" />
-          <FeedbackFab />
+          {!isEdit && <InstallPdwaButton site="Ciszuko Antony" accent="#a78bfa" accentAlt="#22d3ee" />}
+          {!isEdit && <FeedbackFab />}
         </FabStackProvider>
         <PostHogAnalytics app="ciszukoantony" />
         {process.env.NODE_ENV === 'production' && (

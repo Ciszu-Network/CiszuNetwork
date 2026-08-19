@@ -369,8 +369,10 @@ Onlook sigue siendo atractiva para **diseño AI de prototipos**, no para mantene
 pnpm --filter ciszunetwork-website add @puckeditor/core@0.23.0
 ```
 
-- Instalado solo en `ciszunetwork-website` (primera web con editor). Si otra web lo necesita, el
-  `config` de bloques puede moverse a un paquete compartido reutilizable.
+- Instalado en las 4 webs (18 ago-19 ago 2026): `@puckeditor/core@^0.23.0` +
+  `@puckeditor/plugin-ai@^0.8.2` + `@puckeditor/cloud-client@^0.8.2` en cada
+  `projects/<web>/website`. Cada web tiene su propio `puck.config.tsx` y bloques adaptados a
+  su identidad visual (no se duplpican: el config de bloques se adapta por web).
 
 ### 6.2 Fase 1 — Implementación real en `ciszunetwork-website` ✅ (18 ago 2026)
 
@@ -433,11 +435,13 @@ chat que genera/ensambla páginas con los componentes del config. Él usa la key
 - **Verificación local**: tsc OK, lint OK, `pnpm build` OK (routes `/api/puck/[...all]` y
   `/api/puck/save` coexisten, ambos `ƒ` dynamic).
 
-> ⚠️ **Deuda de auth (hoja de ruta)**: el editor se cierra con token privado `EDIT_TOKEN`
-> via middleware: `/edit/*` y `/api/puck/*` sin cookie de sesión → redirect a `/edit/login`.
-> En Vercel NO existe `EDIT_TOKEN` → las rutas devuelven **403** (nunca expuestas). La
-> deuda real pendiente es reemplazar el token por Supabase Auth (N2) cuando llegue el
-> roadmap (`AUTH_SYSTEM.md`). Detalle del cierre por token: sección §6.5.
+> ⚠️ **Deuda de auth (hoja de ruta)**: el editor se cierra con token privado `PUCK_EDIT_TOKEN`
+> via middleware en las 4 webs: `/edit/*` y `/api/puck/*` sin cookie de sesión → redirect a
+> `/edit/login`. En Vercel NO existe `PUCK_EDIT_TOKEN` → **todo el área edit (incluido
+> `/edit/login`) responde 404** con el `not-found.tsx` custom de cada web (nunca 403 ni login
+> visible). Páginas vs APIs: páginas → redirect/rewrite al 404 custom; `/api/*` → JSON 404.
+> La deuda real pendiente es reemplazar el token por Supabase Auth (N2) cuando
+> llegue el roadmap (`AUTH_SYSTEM.md`). Detalle del cierre por token: sección §6.5.
 
 ### 6.4 Fase 3 — Onlook como herramienta de prototipado (opcional, no integrado)
 
@@ -451,21 +455,65 @@ chat que genera/ensambla páginas con los componentes del config. Él usa la key
 Ante la exposición real de `/edit/*` y `/api/puck/*` en producción potencial, se cerró el
 acceso con un token privado. Diseño:
 
-- **`src/middleware.ts`**: si `EDIT_TOKEN` no está definido (caso Vercel) → **403 en firme**
-  de `/edit/*` y `/api/puck/*`. Si está definido (local) → exige cookie de sesión válida;
-  sin ella, redirect a `/edit/login?from=…`.
+- **`src/middleware.ts`**: si `PUCK_EDIT_TOKEN` no está definido (caso Vercel) → **404 en firme**
+  de `/edit/*` y `/api/puck/*`, **incluido `/edit/login`** (páginas → `rewrite` al
+  `not-found.tsx` custom de cada web; `/api/*` → JSON 404). Así el login "Acceso de
+  administración" solo existe localmente (con token); en producción la superficie se
+  camufla como un 404 normal de la web. Si está definido (local) → exige cookie de sesión
+  válida; sin ella, redirect a `/edit/login?from=…`.
 - **`src/lib/edit-auth.ts`**: `verifyEditToken` (hash SHA-256, comparación en tiempo
   constante, Edge-safe) y `editSessionCookie` (hash de la sesión).
 - **`/api/edit/login`** (POST, rate limit 10/min `createRateLimiter` + Zod): valida el token
   y setea cookie `edit_session` (**httpOnly, sameSite=lax, secure en prod, maxAge 24h**).
 - **`/edit/login`** → `admin-login-form.tsx` (form client; la ruta estática tiene prioridad
   sobre el catch-all `edit/[[...path]]`).
-- `EDIT_TOKEN` vive solo en `projects/ciszu/website/.env.local` (gitignored). **NUNCA** en
+- `PUCK_EDIT_TOKEN` vive solo en el `.env.local` de cada web (`projects/<web>/website/.env.local`,
+  gitignored) + vault cifrado (`services/supabase/.env`) + Bitwarden. **NUNCA** en
   Vercel: por diseño el editor no existe en producción.
 - Verificado: tsc OK, lint OK, `pnpm build` OK; en local el flujo login→cookie→`/edit/home`
   devuelve 200 y `/api/puck/chat` conecta con Puck Cloud (key aceptada, versiones 0.8.2 match).
 
-### 6.5 Criterios de aceptación (estado 18 ago 2026)
+### 6.6 Editor Puck multi-web + BD `app` (19 ago 2026)
+
+El editor pasa de `ciszunetwork-website` a las **4 webs**. Por web se replica el mismo patrón
+adaptando el `app`, la identidad visual (`puck.config.tsx` + `puck/blocks.tsx`) y el `ai.context`:
+
+| Web | `app` en BD | URL dev | Filtro pnpm |
+| --- | --- | --- | --- |
+| CiszuNetwork | `ciszunetwork` | :3000 | `ciszunetwork-website` |
+| CiszukoAntony | `ciszukoantony` | :3001 | `ciszukoantony-website` |
+| CiszuBot | `ciszubot` | :3002 | `ciszubot-website` |
+| MuzicMania | `muzicmania` | :3003 | `muzicmania-website` |
+
+- **Migración 19** (`services/supabase/migrations/20260819000019_puck_pages_app.sql`, aplicada):
+  columna `app text not null default 'ciszunetwork'`, PK compuesta `(app, path)`, índice
+  `puck_pages_app_idx`, función `save_puck_page(p_app, p_path, p_data)` actualizada. RLS sin
+  cambios (SELECT público, write solo service_role).
+- **`packages/db`**: schema Drizzle `puckPages` con `app` + `primaryKey({ columns: [app, path] })`.
+- **`lib/puck.ts`** de cada web: `APP` fija, `getPuckPage(path)` / `savePuckPage(path, data)` con
+  `and(eq(app), eq(path))` y conflict target compuesto. Los consumidores (editar, publicar,
+  guardar) no conocen `app`: lo inyecta la capa de datos.
+- **Por web** se crean: `puck.config.tsx`, `puck/blocks.tsx`, `puck/PuckEditor.tsx`,
+  `lib/puck.ts`, `lib/edit-auth.ts`, `app/edit/[[...path]]/page.tsx`,
+  `app/pages/[[...path]]/page.tsx`, `app/edit/login/` (+ form), `api/edit/login/`,
+  `api/puck/save/`, `api/puck/[...all]/`. Middleware con protección token (matcher incluye
+  `api` para cubrir `/api/puck/*`).
+- **Caso especial MuzicMania**: su `src/types/declarations.d.ts` redeclaraba `next/navigation`
+  sin `notFound`; se amplió con `notFound()`/`redirect()`/`permanentRedirect()`.
+- **Env local**: `PUCK_EDIT_TOKEN` (48 chars, mismo valor en las 4 webs, ~mismo token de
+  ciszunetwork) + `PUCK_API_KEY` (org) en el `.env.local` de cada web (gitignored).
+  `PUCK_API_KEY` además en env de Vercel (production). `PUCK_EDIT_TOKEN` NUNCA en Vercel.
+- **Login**: título "Acceso de administración" + subtítulo "Visual Builder de Puck · editor
+  reservado a administración. Introduce el token de acceso." (futuro login admin local).
+- **404 de cierre (producción)**: sin `PUCK_EDIT_TOKEN` el middleware responde **404** en todo
+  el área edit incluyendo `/edit/login` (páginas → `NextResponse.rewrite` al `not-found.tsx`
+  custom; `/api/*` → JSON 404). Las 4 webs tienen `not-found.tsx` propio; **ciszubot** no lo
+  tenía y se creó (estilo bot, tokens `neon-*`/`brand-*`, link "VOLVER AL HOME"). Así el login
+  de administración **solo existe localmente**.
+- Verificación: tsc + lint OK en las 4 webs; build OK ciszukoantony; dev smoke en :3001/:3002/:3003
+  (login 307→200, edit con cookie 200, API protegida).
+
+### 6.7 Criterios de aceptación (estado 19 ago 2026)
 
 - [x] Un editor visual funcional en al menos una web (ciszunetwork) construyendo una sección con
       bloques (config propios de `puck.config.tsx`).
@@ -503,7 +551,12 @@ acceso con un token privado. Diseño:
 | 2026-08-18 | Creación. Investigación verificada de las 4 candidatas (repos/registry npm/docs), decisión híbrido Puck-first, plan en fases. |
 | 2026-08-18 | Implementación Fase 0-1 en `ciszunetwork-website` (6 archivos + migración 18 + schema Drizzle), verificación lint/tsc/build/smoke. |
 | 2026-08-19 | Fase 2 Puck AI: onboarding "Create your Puck App" completado (plugin-ai@0.8.2 + cloud-client@0.8.2, handler `/api/puck/[...all]`, `PUCK_API_KEY` desde `PUCK_ORG_KEY` del vault). tsc/lint/build OK. Deuda: auth delante del handler. |
-| 2026-08-19 | Cierre de acceso del editor por token (§6.5): middleware 403 en Vercel (sin EDIT_TOKEN), login `/edit/login` + `/api/edit/login` (rate limit + cookie httpOnly), `edit-auth.ts`. Verificado el vínculo con Puck Cloud (key + versiones 0.8.2). Build OK. |
+| 2026-08-19 | Cierre de acceso del editor por token (§6.5): middleware 403 en Vercel (sin PUCK_EDIT_TOKEN), login `/edit/login` + `/api/edit/login` (rate limit + cookie httpOnly), `edit-auth.ts`. Verificado el vínculo con Puck Cloud (key + versiones 0.8.2). Build OK. |
+| 2026-08-19 | Editor Puck multi-web (§6.6): integración completa en las 4 webs (ciszu/ciszukoantony/ciszubot/muzicmania) con `app` en BD (migración 19, PK compuesta), token `PUCK_EDIT_TOKEN` renombrado + vault/Bitwarden, login "Acceso de administración". tsc/lint 4 webs OK, build OK, smoke dev 3 webs. |
+| 2026-08-19 | Cierre 404 en producción (§6.5/§6.6): sin token TODO el área edit — incluido `/edit/login` — responde 404 (páginas → rewrite al `not-found.tsx` custom, APIs → JSON 404); `not-found.tsx` creado en ciszubot (única web que no lo tenía). El login de administración solo existe localmente. tsc/lint 4 webs OK, smoke dev 4 webs OK. |
+| 2026-08-19 | UX editor: navbar del sitio oculto en rutas `/edit/*` (cabecera `x-is-edit` vía middleware + layouts condicionales de las 4 webs) para que el Puck fullscreen no quede tapado; `main` sin padding vertical en edit (muzicmania/ciszubot). Verificado por HTML en los 4 puertos. |
+| 2026-08-19 | Fix runtime `[object Event]` en ciszubot (§6.5): el CSP `style-src 'self' 'unsafe-inline'` bloqueaba `https://rsms.me/inter/inter.css` (import CSS del bundle de Puck) y el bloqueo lanzaba un pageerror `Event` capturado por el overlay de Next. Fix: opción `styleSrc` nueva en `buildCsp` (`packages/utils/src/csp.ts`) + `styleSrc:['https://rsms.me']` y `fontSrc:['https://rsms.me']` en los middlewares de las 4 webs. Verificado: sin pageerror y sin `requestfailed` del editor; CSP correcto en respuesta. |
+| 2026-08-19 | Deploys Vercel (verificado): las 4 webs en producción responden `/edit/*` y `/api/puck/*` con **404** (sin `PUCK_EDIT_TOKEN` en Vercel). Configurado `workflow_dispatch` con input `environment` (production \| preview) en los 4 workflows `deploy-*.yml`; documentado el uso de previews en `ACTIONS_RUNNERS_SYSTEM.md` §3.2.1. |
 
 ---
 

@@ -136,6 +136,11 @@ services/supabase/.temp/
 .opencode/pw-browsers/
 # Data dir global de opencode (db de sesiones + snapshots, junction E:)
 .opencode/data/
+# Skills locales del agente opencode (solo existen en este PC, no se comparten)
+.opencode/skills/
+
+# ERD de la BD generado localmente (scripts/generate-erd.js) — regenerable
+test/database/
 
 # Sistema de voz opencode — binarios/modelos/voces y temporales (el codigo del plugin SI se trackea)
 tools/tts-stt-ai/runtime/
