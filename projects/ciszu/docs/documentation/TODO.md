@@ -4,12 +4,7 @@
 
 ### Cambios de Generales:
 
-- [ ] Finalizar el cambio de los VISUAL_BUILDESR e conciderar las demas herramientras como Onlook u otras pendientes o posibles. Instalar, implementar, documentar y commitear.
-- [ ] Arreglar vulnerabilidad:
-
-* [uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided](https://github.com/Ciszu-Network/CiszuNetwork/security/dependabot/50) [Moderate](https://github.com/Ciszu-Network/CiszuNetwork/security/dependabot?q=is%3Aopen+severity%3Amoderate 'Severity: moderate')
-
-    #50 opened 2 hours ago • Detected in uuid (npm) • pnpm-lock.yaml
+- [ ] Finalizar el cambio de los VISUAL_BUILDERS e conciderar las demas herramientras como Onlook u otras pendientes o posibles. Instalar, implementar, documentar y commitear.
 
 ### Cambios a todas las Websites:
 
@@ -26,7 +21,7 @@
 
 **Ciszubot Website:**
 
-- [ ] El 404 de ciszubot tiene un error visual en el VOLVER A HOME. Arreglar error de diseño y estilo css, actualmente el boton se divide en dos en vez de ser un completo.
+- [ ] Nada.
 
 **Ciszuko Antony Website:**
 

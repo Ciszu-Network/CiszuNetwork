@@ -1,0 +1,26 @@
+# Config de `cargo audit` para el launcher de MuzicMania (Tauri).
+#
+# Contexto de seguridad obligatorio: este crate compila SOLO para Windows
+# (tauri.conf.json -> bundle.targets = ["nsis"]). Por tanto su árbol de
+# dependencias declarado en Cargo.lock incluye crates que NUNCA se compilan
+# ni se enlazan en el artefacto final:
+#
+#   - glib/gtk/tao => stack GTK de Tauri para Linux (target cfg(linux)).
+#     En Windows Tauri usa WebView2 (crates `windows`), unos cero glib/gtk.
+#   - rkyv/rsa    => arrastrados por el feature opcional `local-db`
+#     (SeaORM/sqlx-sqlite), que queda FUERA del build (`default = []`).
+#
+# Los ignore que siguen tienen esa justificación: no aplican al binario
+# Windows entregado. NO añadir ignores sin esa garantía (CI de seguridad
+# revisa este archivo). Al hacer build Linux en el futuro, revisar cada uno.
+
+[advisories]
+# glib: RUSTSEC-2024-0429 (VariantStrIter unsound) — crate Linux-only,
+# no compilado en el target NSIS de Windows. Sin parche hacia atrás:
+# el fix exige glib >=0.20 (salto mayor de gtk-rs) no soportado por el
+# stack Tauri 2 actual (gtk 0.18 topado en crates.io).
+ignore = ["RUSTSEC-2024-0429", "RUSTSEC-2026-0235", "RUSTSEC-2023-0071"]
+# rkyv: RUSTSEC-2026-0235 (out-of-bounds reads en Rc/Arc) — viene de SeaORM
+# via feature opcional `local-db` desactivada (default = []). No compilado.
+# rsa: RUSTSEC-2023-0071 (Marvin Attack) — mismo origen (sqlx/SeaORM, vía
+# feature local-db apagado). No compilado. Sin fix disponible en 0.9.x.
