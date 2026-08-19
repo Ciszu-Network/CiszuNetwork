@@ -5,11 +5,13 @@ import { getPuckPage } from "@/lib/puck";
 
 export const dynamic = "force-dynamic";
 
+const APP = "ciszunetwork";
+
 export default async function PuckRenderPage({ params }: { params: Promise<{ path?: string[] }> }) {
   const { path: pathSegments } = await params;
   const path = "/" + (pathSegments?.join("/") ?? "home");
 
-  const page = await getPuckPage(path).catch(() => null);
+  const page = await getPuckPage(APP, path).catch(() => null);
   if (!page) notFound();
 
   return <Render config={puckConfig} data={page.data as Data} />;

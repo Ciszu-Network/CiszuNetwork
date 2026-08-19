@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { headers } from "next/headers";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { cookies } from "next/headers";
 import Navbar from "@/components/layout/Navbar";
@@ -59,6 +60,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const session = await getSessionData();
   const theme = store.get("ciszubot_theme")?.value ?? "dark";
   const isDark = theme !== "light";
+  const headerStore = await headers();
+  const isEdit = headerStore.get("x-is-edit") === "1";
 
   return (
     <html lang={lang} className={`${inter.variable} ${spaceGrotesk.variable}${isDark ? " dark" : ""}`} suppressHydrationWarning>
@@ -71,16 +74,16 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       <body className="bg-bg text-ink min-h-screen font-sans flex flex-col">
         <QueryProvider>
            <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={LOGO_ISOTIPO_CIRCLE} title="CiszuBot" subtitle="CiszuBot Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszubot">
-            <Navbar lang={lang} dict={dict} account={session} />
-            <ZoomWarning />
-            <main className="flex-grow pt-[60px]">{children}</main>
-            <Footer lang={lang} dict={dict} />
-            <CookiesBanner lang={lang} dict={dict} />
+            {!isEdit && <Navbar lang={lang} dict={dict} account={session} />}
+            {!isEdit && <ZoomWarning />}
+            <main className={isEdit ? "flex-grow" : "flex-grow pt-[60px]"}>{children}</main>
+            {!isEdit && <Footer lang={lang} dict={dict} />}
+            {!isEdit && <CookiesBanner lang={lang} dict={dict} />}
           </CloudflareGuard>
           <PwaRegister />
           <FabStackProvider>
-            <InstallPdwaButton site="CiszuBot" accent="#22d3ee" accentAlt="#a78bfa" />
-            <FeedbackFab accent="#22d3ee" accentAlt="#a78bfa" />
+            {!isEdit && <InstallPdwaButton site="CiszuBot" accent="#22d3ee" accentAlt="#a78bfa" />}
+            {!isEdit && <FeedbackFab accent="#22d3ee" accentAlt="#a78bfa" />}
           </FabStackProvider>
           <PostHogAnalytics app="ciszubot" />
         </QueryProvider>

@@ -1,7 +1,7 @@
 import AdminLoginForm from './admin-login-form';
 
 export const metadata = {
-  title: 'Acceso administrador',
+  title: 'Acceso de administración — Ciszu Network',
   robots: { index: false, follow: false },
 };
 

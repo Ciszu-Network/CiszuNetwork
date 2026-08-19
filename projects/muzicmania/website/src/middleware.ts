@@ -1,52 +1,87 @@
 ﻿import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { createIast, buildCsp } from '@ciszunetwork/utils';
+import { cookieEqualsToken } from '@/lib/edit-auth';
 
 const iast = createIast('muzicmania');
 
+/** Cabecera interna que marca las rutas /edit/* para que el layout oculte el chrome del sitio. */
+const EDIT_HEADER = 'x-is-edit';
+const withIsEditHeader = (request: NextRequest, pathname: string): Headers => {
+  const headers = new Headers(request.headers);
+  headers.set(EDIT_HEADER, pathname === '/edit' || pathname.startsWith('/edit/') ? '1' : '0');
+  return headers;
+};
+
 /**
  * Middleware de Next.js (MuzicMania Security Layer).
- * Capa de seguridad Edge: cabeceras HTTP seguras + rutas protegidas.
+ * Capa de seguridad Edge: cabeceras HTTP seguras + IAST + editor Puck protegido.
  *
- * NOTA sobre Supabase v2:
- * Supabase v2 usa cookies con nombre dinámico `sb-<project-ref>-auth-token`.
- * La autenticación real se gestiona en AuthProvider (client-side).
- * El middleware solo aplica cabeceras de seguridad y protege rutas estrictas.
+ * Protección del editor Puck (edit/* y api/puck/*): superficie de escritura de
+ * contenido. Solo accesible LOCALMENTE con token; NUNCA expuesto en producción.
+ * Sin cookie de sesión válida -> redirect a /edit/login (o 403 si no hay token).
  */
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const response = NextResponse.next();
 
-  // ── 1. Cabeceras de Seguridad HTTP ──────────────────────────────────────────
+  // ── Protección del editor visual (Puck) ────────────────────────────────────
+  const isEditPage = pathname === '/edit' || pathname.startsWith('/edit/');
+  const isPuckApi = pathname.startsWith('/api/puck/');
+  const isEditLogin = pathname === '/edit/login' || pathname === '/api/edit/login';
+
+  const isEditArea = isEditPage || isPuckApi;
+
+  if (isEditArea) {
+    // Sin PUCK_EDIT_TOKEN (producción/Vercel o local sin configurar): el
+    // editor NO existe. Todo el área edit/* y api/puck/* — INCLUIDO
+    // /edit/login — responde 404 (nunca 403 ni login visible).
+    if (!process.env.PUCK_EDIT_TOKEN) {
+      if (pathname.startsWith('/api/')) {
+        return NextResponse.json(
+          { error: 'Not Found' },
+          { status: 404, headers: { 'Cache-Control': 'no-store' } }
+        );
+      }
+      return NextResponse.rewrite(new URL('/not-found', request.url));
+    }
+
+    // Con token (solo dev local): login y su API quedan libres para
+    // autenticarse; el resto exige cookie de sesión válida.
+    if (!isEditLogin) {
+      const sessionCookie = request.cookies.get('edit_session')?.value;
+      if (!sessionCookie || !(await cookieEqualsToken(sessionCookie))) {
+        const loginUrl = new URL('/edit/login', request.url);
+        loginUrl.searchParams.set('from', pathname);
+        return NextResponse.redirect(loginUrl);
+      }
+    }
+  }
+
+  const response = NextResponse.next({
+    request: { headers: withIsEditHeader(request, pathname) },
+  });
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
-  // X-Frame-Options NO se pone aquí (permite previsualizaciones en Vercel Dashboard)
-  response.headers.set('Content-Security-Policy', buildCsp({ connectSrc: ['wss://obwzzmbvkrcscqwptlqo.supabase.co'] }));
+  response.headers.set(
+    'Content-Security-Policy',
+    buildCsp({
+      connectSrc: ['wss://obwzzmbvkrcscqwptlqo.supabase.co'],
+      styleSrc: ['https://rsms.me'],
+      fontSrc: ['https://rsms.me'],
+    })
+  );
 
-  // ── 1b. Sensor IAST (runtime): detecta payloads maliciosos, solo observa ────
-  // Edge-safe (regex puras). Emite [IAST] a logs de Vercel con dedupe 5 min.
-  // Doc: packages/utils/src/iast.ts + SECURITY_PROTOCOLS.md
+  // ── Sensor IAST (runtime): detecta payloads maliciosos, solo observa ────────
   const params: Record<string, string> = {};
   request.nextUrl.searchParams.forEach((v, k) => {
     params[k] = v;
   });
   iast.observe(request.method, pathname, params);
 
-  // ── 2. Detección de sesión compatible con Supabase v2 ───────────────────────
-  // NOTA: Como la app usa localStorage (standard client) en vez de cookies SSR,
-  // el middleware no puede leer la sesión fiablemente.
-  // La protección de rutas se hará en el cliente (Zustand + useEffect) o 
-  // creando componentes ProtectedRoute.
-  // Por ahora, eliminamos los bloqueos de middleware para evitar falsos 404/redirects.
-
-  // ── 3. Cabeceras y paso libre ───────────────────────────────────────────────
-
   return response;
 }
 
 export const config = {
-  matcher: [
-    '/((?!api|_next|static|favicon.ico|sitemap.xml|robots.txt|images|icons|audio|logos|fonts).*)',
-  ],
+  matcher: ['/((?!_next|static|favicon.ico|sitemap.xml|robots.txt|images|icons|audio|logos|fonts).*)'],
 };

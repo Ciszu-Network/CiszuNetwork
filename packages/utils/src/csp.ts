@@ -21,6 +21,8 @@ export interface CspOptions {
   connectSrc?: string[];
   /** Fuentes extra de fuentes. */
   fontSrc?: string[];
+  /** Fuentes extra de estilos (CSS remoto, p.ej. rsms.me/inter.css del editor Puck). */
+  styleSrc?: string[];
   /** Fuentes extra para iframes (frame-src). */
   frameSrc?: string[];
   /**
@@ -50,7 +52,8 @@ export function buildCsp(opts: CspOptions = {}): string {
       ["'self'", "'unsafe-inline'", ...(dev ? ["'unsafe-eval'"] : []), 'https://challenges.cloudflare.com', 'https://static.cloudflareinsights.com', 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://va.vercel-scripts.com', ...(opts.scriptSrc ?? [])],
     ],
     // Estilos inline de la v3 PDWA y utilidades CSS en línea del ecosistema.
-    ['style-src', ["'self'", "'unsafe-inline'"]],
+    // styleSrc extra: hoja de estilos remota del editor Puck (inter.css de rsms.me).
+    ['style-src', ["'self'", "'unsafe-inline'", ...(opts.styleSrc ?? [])]],
     ['img-src', ["'self'", 'data:', 'blob:', SUPABASE_ORIGIN, ...local, ...(opts.imgSrc ?? [])]],
     ['media-src', ["'self'", ...local]],
     ['font-src', ["'self'", 'data:', ...local, ...(opts.fontSrc ?? [])]],

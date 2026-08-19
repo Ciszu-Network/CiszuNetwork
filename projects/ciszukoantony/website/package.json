@@ -15,12 +15,17 @@
   "dependencies": {
     "@ciszu/ui": "workspace:*",
     "@ciszunetwork/cdn": "workspace:*",
+    "@ciszunetwork/db": "workspace:^",
     "@ciszunetwork/utils": "workspace:*",
+    "@puckeditor/cloud-client": "^0.8.2",
+    "@puckeditor/core": "^0.23.0",
+    "@puckeditor/plugin-ai": "^0.8.2",
     "@sentry/nextjs": "^10.69.0",
     "framer-motion": "^12.38.0",
     "next": "^15.5.22",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "zod": "^4.4.3",
     "zustand": "^5.0.14"
   },
   "devDependencies": {
