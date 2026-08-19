@@ -65,11 +65,11 @@ export default function NotFound() {
         <div className="pt-10">
           <Link
             href="/"
-            className="group relative overflow-hidden bg-bg border-2 border-neon-cyan px-10 py-4 font-black text-neon-cyan uppercase tracking-[0.3em] text-base transition-all hover:text-bg hover:border-neon-cyan"
+            className="group relative inline-flex items-center justify-center overflow-hidden bg-bg border-2 border-neon-cyan px-10 py-4 font-black text-neon-cyan uppercase tracking-[0.3em] text-base transition-all hover:text-bg hover:border-neon-cyan"
           >
             <span className="absolute inset-0 bg-neon-cyan translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-            <span className="relative flex items-center gap-2">
-              <Command className="w-5 h-5" />
+            <span className="relative flex items-center gap-2 whitespace-nowrap">
+              <Command className="w-5 h-5 shrink-0" />
               VOLVER AL HOME
             </span>
           </Link>

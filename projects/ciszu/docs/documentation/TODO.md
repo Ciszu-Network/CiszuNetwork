@@ -2,10 +2,14 @@
 
 > Este archivo solo puede ser editado por Ciszuko Antony.
 
-### Cambios de Backend:
+### Cambios de Generales:
 
-- [ ] Verificar el pendiente de vercel y sus deploys en las varias websites.
-- [ ] Preguntar a la IA si, como actualmente esta configurado el despliege de las websites en produccion, actualmente en el proyecto esta configurado tambien para previews? en caso de que si documentar el uso de produccion y previews cuando hagan falta y cuando no. En caso de que NO este configurado, configurarlo para que cuando le pida a la IA que haga un deploy para PREVIEW lo haga correctamente.
+- [ ] Finalizar el cambio de los VISUAL_BUILDESR e conciderar las demas herramientras como Onlook u otras pendientes o posibles. Instalar, implementar, documentar y commitear.
+- [ ] Arreglar vulnerabilidad:
+
+* [uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided](https://github.com/Ciszu-Network/CiszuNetwork/security/dependabot/50) [Moderate](https://github.com/Ciszu-Network/CiszuNetwork/security/dependabot?q=is%3Aopen+severity%3Amoderate 'Severity: moderate')
+
+    #50 opened 2 hours ago • Detected in uuid (npm) • pnpm-lock.yaml
 
 ### Cambios a todas las Websites:
 
@@ -22,7 +26,7 @@
 
 **Ciszubot Website:**
 
-- [ ] Nada.
+- [ ] El 404 de ciszubot tiene un error visual en el VOLVER A HOME. Arreglar error de diseño y estilo css, actualmente el boton se divide en dos en vez de ser un completo.
 
 **Ciszuko Antony Website:**
 

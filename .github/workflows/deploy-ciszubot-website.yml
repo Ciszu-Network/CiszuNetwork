@@ -33,11 +33,13 @@ jobs:
       - name: Link Vercel Project
         run: vercel link --yes --project ciszubot --token=${{ secrets.VERCEL_TOKEN }}
         working-directory: .
-      - name: Deploy to Vercel (preview)
-        if: ${{ github.event.inputs.environment == 'preview' }}
-        run: vercel --yes --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}
-        working-directory: .
-      - name: Deploy to Vercel (production)
-        if: ${{ github.event.inputs.environment != 'preview' }}
-        run: vercel --prod --yes --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy to Vercel
+        env:
+          IS_PREVIEW: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'preview' }}
+        run: |
+          if [ "$IS_PREVIEW" = "true" ]; then
+            vercel --yes --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}
+          else
+            vercel --prod --yes --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}
+          fi
         working-directory: .

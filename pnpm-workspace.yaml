@@ -25,3 +25,4 @@ overrides:
   sharp: 0.35.3
   "@typescript-eslint/eslint-plugin": 8.63.0
   "@typescript-eslint/parser": 8.63.0
+  uuid: 13.0.1
