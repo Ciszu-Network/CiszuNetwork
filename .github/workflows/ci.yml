@@ -94,7 +94,9 @@ jobs:
         run: |
           $zip = Join-Path $env:RUNNER_TEMP 'python-nuget.zip'
           $nugetUrl = 'https://www.nuget.org/api/v2/package/python/3.12.10'
-          Invoke-WebRequest $nugetUrl -OutFile $zip
+          # curl.exe (incluido en Windows 10+) evita el truncado de archivos
+          # grandes que sufre Invoke-WebRequest en PowerShell 5.1 (zip corrupto).
+          curl.exe -sL $nugetUrl -o $zip
           $pyDir = Join-Path $env:RUNNER_TEMP 'pynuget\d'
           New-Item -ItemType Directory -Path $pyDir -Force | Out-Null
           Expand-Archive -Path $zip -DestinationPath $pyDir -Force
@@ -134,7 +136,7 @@ jobs:
         shell: powershell
         run: |
           $zip = Join-Path $env:RUNNER_TEMP 'gitleaks.zip'
-          Invoke-WebRequest https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_windows_x64.zip -OutFile $zip
+          curl.exe -sL https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_windows_x64.zip -o $zip
           $dest = Join-Path $env:RUNNER_TEMP 'gitleaks'
           Expand-Archive -Path $zip -DestinationPath $dest -Force
           $exe = Join-Path $dest 'gitleaks.exe'
