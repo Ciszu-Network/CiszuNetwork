@@ -13,7 +13,10 @@ permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.ref }}
+  # Grupo por evento (push/schedule/pull_request) para que el schedule diario
+  # o los PRs no cancelen el CI de un push en curso (y viceversa). Dentro del
+  # mismo evento+ref, un run nuevo sí cancela al anterior (solo corre el último).
+  group: ci-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
