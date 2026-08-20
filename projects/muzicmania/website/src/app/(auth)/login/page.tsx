@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
@@ -11,8 +10,10 @@ import { supabase } from '@/config/supabase';
 import { useAppStore } from '@/store/useAppStore';
 import { useRouter } from 'next/navigation';
 import AuthFeedback from '@/components/molecules/AuthFeedback';
-import OAuthProviders from '@/components/molecules/OAuthProviders';
 import { usePageTitle } from '@/lib/usePageTitle';
+import Image from 'next/image';
+import { resolveAssetPath } from '@ciszunetwork/cdn';
+import { AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders } from '@ciszu/ui';
 
 // --- Icons Library ---
 const I = {
@@ -319,18 +320,15 @@ export default function LoginPage() {
           variants={sectionVariants} 
           className="relative space-y-8 pt-12"
         >
-          <div className="flex flex-col items-center gap-1 text-center">
-             <div className="flex items-center justify-center gap-6 group">
-                <div className="w-12 h-12 text-neon-blue flex items-center justify-center drop-shadow-[0_0_15px_rgba(39,158,255,0.4)]">
-                   {I.login}
-                </div>
-                <h1 className="text-4xl md:text-8xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-neon-purple to-neon-blue bg-clip-text text-transparent [-webkit-text-stroke:1px_black]">
-                  ACCESO
-                </h1>
-             </div>
-             <p className="text-neon-cyan font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-               Bienvenido de nuevo a la dimensión rítmica
-             </p>
+          <div className="mb-10">
+            <CiszuIdBrand
+              ciszuIsotype={<img src={resolveAssetPath('projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg')} alt="Ciszu ID" width={36} height={36} />}
+              appIsotype={<img src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} alt="MuzicMania" width={36} height={36} />}
+              ciszuHref="https://ciszunetwork.vercel.app"
+              appHref="/"
+              title="CISZU ID"
+              subtitle="Inicia sesión en MuzicMania con CISZU ID"
+            />
           </div>
         </motion.header>
 
@@ -408,21 +406,15 @@ export default function LoginPage() {
 
             {!isForgotPassword && (
               <>
-                <OAuthProviders />
-                <div className="pt-6 border-t border-white/5 text-center flex flex-col gap-3">
-                  <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em]">
-                    ¿Problemas de acceso?{' '}
-                    <button onClick={() => setIsForgotPassword(true)} className="text-gray-300 hover:text-white transition-colors underline decoration-white/20 underline-offset-8">
-                      RECUPERAR CLAVE
-                    </button>
-                  </p>
-                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em]">
-                  ¿Sin credenciales?{' '}
-                  <Link href="/register" className="text-neon-cyan hover:text-white transition-colors underline decoration-neon-cyan/20 underline-offset-8">
-                    CREAR IDENTIDAD
-                  </Link>
-                </p>
-                </div>
+                <SharedOAuthProviders
+                  onSelect={(p) => showToast(`OAuth de ${p} disponible en futura versión beta`)}
+                />
+                <AuthSecondaryActions
+                  mode="login"
+                  onForgotPassword={() => setIsForgotPassword(true)}
+                  registerHref="/register"
+                  supportHref="/support"
+                />
               </>
             )}
           </div>

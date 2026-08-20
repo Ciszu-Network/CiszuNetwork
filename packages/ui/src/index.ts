@@ -56,6 +56,19 @@ export type { ZoomState, ZoomStatus } from './ZoomWarning';
 // Radix UI primitives: Modal accesible (Dialog con focus trap + teclado)
 export { default as Modal } from './Modal';
 export type { ModalProps } from './Modal';
+// Auth CISZU ID (LOGIN_REGISTER_PROTOCOLS): componentes compartidos de login/registro
+export { default as AuthField } from './auth/AuthField';
+export type { AuthFieldProps } from './auth/AuthField';
+export { default as PasswordStrengthBar, evaluatePassword, MIN_ACCEPTABLE_SCORE, MAX_SCORE } from './auth/PasswordStrengthBar';
+export { passwordMeetsMinimum } from './auth/passwordPolicy';
+export { default as OAuthProviders, OAuthProviderButton, GoogleIcon, MicrosoftIcon, DiscordIcon } from './auth/OAuthProviders';
+export type { OAuthProvidersProps, OAuthProviderButtonProps } from './auth/OAuthProviders';
+export { default as CiszuIdBrand, BrandX } from './auth/CiszuIdBrand';
+export type { CiszuIdBrandProps } from './auth/CiszuIdBrand';
+export { default as AuthSecondaryActions } from './auth/AuthSecondaryActions';
+export type { AuthSecondaryActionsProps } from './auth/AuthSecondaryActions';
+export { default as PreferencesModal } from './auth/PreferencesModal';
+export type { PreferencesModalProps } from './auth/PreferencesModal';
 export type { PostHogAnalyticsProps } from './PostHogAnalytics';
 // Re-exportar desde @ciszunetwork/cdn para conveniencia
 export {

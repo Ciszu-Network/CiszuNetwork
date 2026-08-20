@@ -10,6 +10,7 @@ import { supabase } from '@/config/supabase';
 import { getGuestName } from '@/lib/guest';
 import { syncPreferencesToProfile, updatePreferences } from '@/lib/preferences';
 import PreferencesPanel from '@/components/layout/PreferencesPanel';
+import { PreferencesModal } from '@ciszu/ui';
 import { INVITE_URL, LOGO_ISOTIPO, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
 
 const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'status' | 'support' | 'downloads' | 'feedback'; icon: string }[] = [
@@ -105,6 +106,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [authOpen, setAuthOpen] = useState(false);
+  const [prefsOpen, setPrefsOpen] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [isDark, setIsDark] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
@@ -523,19 +525,31 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                       </div>
                     </div>
                   )}
-                  <PreferencesPanel
-                    lang={lang}
-                    isDark={isDark}
-                    userId={activeUserId}
-                    onSetLang={setLang}
-                    onToggleTheme={setTheme}
-                  />
+                  <div className="border-t border-border px-4 py-3">
+                    <button
+                      type="button"
+                      onClick={() => setPrefsOpen(true)}
+                      className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-bold text-ink/85 border border-border bg-card transition hover:border-neon-blue hover:text-neon-blue cursor-pointer"
+                    >
+                      <Icon name="settings" size={15} /> Preferencias locales
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
           </div>
         </div>
       </div>
+
+      <PreferencesModal open={prefsOpen} onOpenChange={setPrefsOpen} title="Preferencias locales" contentClassName="border-border bg-surface">
+        <PreferencesPanel
+          lang={lang}
+          isDark={isDark}
+          userId={activeUserId}
+          onSetLang={setLang}
+          onToggleTheme={setTheme}
+        />
+      </PreferencesModal>
 
       {searchOpen && (
         <div ref={searchRef} className="absolute left-0 right-0 top-[64px] border-b border-border bg-[#0a0a14]/95 backdrop-blur-2xl shadow-2xl animate-fade-in-down">

@@ -142,6 +142,30 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 > Este historial absorbe `PROJECT_HISTORY.md` (eliminado 13 ago 2026). Añadir aquí los
 > nuevos hitos al cierre de sesión.
 
+### 20 de Agosto, 2026 — Auth CISZU ID pulido en las 4 webs (protocolo LOGIN_REGISTER)
+
+- **Nuevo doc oficial `LOGIN_REGISTER_PROTOCOLS.md` v1.0.0** (fuente de verdad del flujo auth:
+  branding, orden de acciones, seguridades Cloudflare/reCAPTCHA, 2FA `C-123 434`, olvido con
+  link de un solo uso, logs de intentos, geo-idioma). `AUTH_SYSTEM.md` y `AGENTS.md`
+  actualizados con la referencia.
+- **Componentes compartidos en `packages/ui/src/auth/`**: `CiszuIdBrand` (isotipo CISZU + X +
+  isotipo web, cabecera "CISZU ID" + subtítulo web), `AuthField`, `PasswordStrengthBar`
+  (criterios 1 mayúscula/1 minúscula/1 número/1 especial, mínimo Media), `OAuthProviders`
+  (heading "CONTINUAR CON:", iconos Google/Microsoft idénticos en las 4 webs),
+  `AuthSecondaryActions` (RECUPÉRALA / REGÍSTRATE / ACCEDER / SOPORTE) y `PreferencesModal`
+  (Radix, centrado, X) — exportados y consumidos por las 4 webs.
+- **Login/Registro reescritos en las 4 webs**: branding `CiszuIdBrand`, OAuth bajo
+  "CONTINUAR CON:", footer de acciones, errores a la izquierda, campos con placeholder/requerido/
+  opcional/botón de ayuda. Muzicmania conserva reCAPTCHA, olvido con OTP, 2FA simulado y
+  selects de país/fecha; ciszubot mantiene Discord funcional prominente.
+- **Preferencias locales → modal centrado**: botón "Preferencias locales" dentro del dropdown
+  AUTH abre `PreferencesModal`. `PreferencesPanel` nuebo en ciszukoantony (botones de
+  tema/idioma yzoom/mute idénticos al hamburguesa/footer); Navbar de ciszubot y muzicmania
+  migrados de panel inline a modal.
+- Verificación: tsc + lint + build exit 0 en las 4 webs; smoke localhost — 8 endpoints
+  login/register (3000–3003) responden 200 con branding/CONTINUAR CON/footer.
+- Pendiente: push + deploys Vercel de las 4 webs.
+
 ### 19 de Agosto, 2026 — Identidad unificada (AUTH + invitados + preferencias) en las 4 webs
 
 - **AUTH CISZU ID no-centralizado** (nivel N1, `AUTH_SYSTEM.md`): cada web tiene su propio
@@ -516,5 +540,5 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 3. **Pendientes (§3)**: mover a historial cuando se resuelva, añadir nuevos bloqueos.
 4. Marcar "Última actualización" y actualizar `STATUS_SYSTEM.md` y `STATISTICS_SYSTEM.md`.
 
-_Última revisión: 19 ago 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
+_Última revisión: 20 ago 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
 `ARCHITECTURE.md`, `WORKFLOW_SYSTEM.md`, `AGENTS.md`.

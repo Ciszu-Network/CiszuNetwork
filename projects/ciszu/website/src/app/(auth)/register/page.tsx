@@ -1,83 +1,42 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { assetResolver } from '@ciszunetwork/cdn';
 import { supabase } from '@/config/supabase';
 import { useAppStore } from '@/store';
+import {
+  AuthField,
+  AuthSecondaryActions,
+  CiszuIdBrand,
+  OAuthProviders,
+  PasswordStrengthBar,
+  passwordMeetsMinimum,
+} from '@ciszu/ui';
 
 const IconUser = () => (
-  <svg viewBox="0 0 24 24" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+  <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
     <circle cx="12" cy="7" r="4" />
   </svg>
 );
 
 const IconMail = () => (
-  <svg viewBox="0 0 24 24" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+  <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
     <rect x="2" y="4" width="20" height="16" rx="2" />
     <polyline points="22,6 12,13 2,6" />
   </svg>
 );
 
 const IconLock = () => (
-  <svg viewBox="0 0 24 24" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+  <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
     <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
   </svg>
 );
 
-const IconGoogle = () => (
-  <svg viewBox="0 0 24 24" className="w-4 h-4">
-    <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z" />
-    <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z" />
-    <path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z" />
-    <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09C6.22 6.86 8.87 4.75 12 4.75z" />
-  </svg>
-);
-
-const IconMicrosoft = () => (
-  <svg viewBox="0 0 23 23" className="w-4 h-4">
-    <path fill="#F35325" d="M1 1h10v10H1z" />
-    <path fill="#81BC06" d="M12 1h10v10H12z" />
-    <path fill="#05A6F0" d="M1 12h10v10H1z" />
-    <path fill="#FFBA08" d="M12 12h10v10H12z" />
-  </svg>
-);
-
-const InputField = ({ label, name, icon, type = 'text', placeholder, value, onChange, autoComplete }: {
-  label: string;
-  name: string;
-  icon: React.ReactNode;
-  type?: string;
-  placeholder: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  autoComplete?: string;
-}) => (
-  <div className="space-y-1.5">
-    <div className="flex items-center gap-2 ml-1">
-      <span className="w-3 h-3 text-neon-pink flex items-center justify-center">{icon}</span>
-      <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">{label}</label>
-    </div>
-    <input
-      type={type}
-      name={name}
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      required
-      autoComplete={autoComplete}
-      className="w-full bg-black/60 border border-white/10 rounded-xl px-5 py-4 text-white font-header font-bold placeholder:text-gray-700 focus:border-neon-pink/60 transition-all outline-none [color-scheme:dark]"
-    />
-  </div>
-);
-
-const oauthPlaceholder = (provider: 'Google' | 'Microsoft', showToast: (msg: string) => void) => {
-  showToast(`OAuth de ${provider} disponible en futura versión beta`);
-};
+const CISZU_ISOTYPE = assetResolver.resolve('projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg');
 
 export default function RegisterPage() {
   const { showToast } = useAppStore();
@@ -89,28 +48,47 @@ export default function RegisterPage() {
     password: '',
     confirmPassword: '',
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
+  const [emailSent, setEmailSent] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    setErrors(prev => ({ ...prev, [e.target.name]: '' }));
+    setLocalError(null);
+  };
+
+  const validate = () => {
+    const next: Record<string, string> = {};
+    const u = form.username.trim();
+    if (!u) next.username = 'Este campo es obligatorio';
+    else if (u.includes(' ')) next.username = 'No se permiten espacios';
+    else if (u.length < 3) next.username = 'Mínimo 3 caracteres';
+    else if (u.length > 20) next.username = 'Máximo 20 caracteres';
+
+    if (!form.displayName.trim()) next.displayName = 'Este campo es obligatorio';
+    else if (form.displayName.trim().length > 30) next.displayName = 'Máximo 30 caracteres';
+
+    if (!form.email.trim()) next.email = 'Este campo es obligatorio';
+    else if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) next.email = 'Formato de email inválido (requiere @)';
+
+    if (!form.password) next.password = 'La contraseña es obligatoria';
+    else if (!passwordMeetsMinimum(form.password))
+      next.password = 'La contraseña no cumple el nivel mínimo de seguridad CISZU ID (al menos 1 mayúscula, 1 minúscula, 1 número y 1 símbolo)';
+
+    if (!form.confirmPassword) next.confirmPassword = 'Este campo es obligatorio';
+    else if (form.confirmPassword !== form.password) next.confirmPassword = 'Las contraseñas no coinciden';
+
+    setErrors(next);
+    return Object.keys(next).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setLocalError(null);
-
-    if (form.password.length < 8) {
-      setLocalError('La contraseña debe tener al menos 8 caracteres.');
-      setLoading(false);
-      return;
-    }
-    if (form.password !== form.confirmPassword) {
-      setLocalError('Las contraseñas no coinciden.');
-      setLoading(false);
-      return;
-    }
+    if (!validate()) return;
+    setLoading(true);
 
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -125,18 +103,15 @@ export default function RegisterPage() {
       });
 
       if (error) {
-        if (error.message.includes('registered')) {
-          throw new Error('Este email ya está registrado. ¿Olvidaste tu contraseña?');
+        if (error.message.includes('already registered') || error.message.includes('User already registered')) {
+          throw new Error('Este email ya está registrado. ¿Olvidaste tu contraseña? Ve a login y pulsa RECUPÉRALA.');
         }
         throw new Error(error.message);
       }
 
       if (data.user) {
-        if (!data.session) {
-          showToast('Cuenta creada. Revisa tu email para confirmarla.');
-        } else {
-          showToast('Registro exitoso. Bienvenido a Ciszu Network.');
-        }
+        setEmailSent(true);
+        showToast('Cuenta creada. Revisa tu email para confirmarla.');
         router.push('/login');
       }
     } catch (err: any) {
@@ -153,125 +128,142 @@ export default function RegisterPage() {
       </div>
 
       <div className="max-w-lg mx-auto px-4">
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center mb-4">
-            <Image
-              src={assetResolver.resolve('projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg')}
-              alt="Ciszu ID"
-              width={64}
-              height={64}
-              className="drop-shadow-brand"
-            />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-header font-black bg-gradient-to-r from-neon-pink via-brand-accent to-neon-blue bg-clip-text text-transparent uppercase tracking-tighter mb-2">
-            Registro
-          </h1>
-          <p className="text-neon-pink font-black tracking-[0.35em] uppercase text-[10px] md:text-xs">
-            CISZU ID · Crea tu identidad oficial
-          </p>
+        <div className="mb-10">
+          <CiszuIdBrand
+            ciszuIsotype={
+              <Image src={CISZU_ISOTYPE} alt="Ciszu ID" width={40} height={40} className="w-9 h-9" />
+            }
+            appIsotype={
+              <Image src={CISZU_ISOTYPE} alt="Ciszu Network" width={40} height={40} className="w-9 h-9" />
+            }
+            ciszuHref="https://ciszunetwork.vercel.app"
+            appHref="/"
+            title="CISZU ID"
+            subtitle="Crea tu cuenta en Ciszu Network con CISZU ID"
+          />
         </div>
 
         <div className="relative group">
           <div className="absolute -inset-1 bg-gradient-to-r from-neon-pink to-brand-light rounded-[2.5rem] blur opacity-20 transition duration-500" />
           <div className="relative bg-[#070710]/95 border border-white/10 rounded-[2.5rem] p-8 md:p-10 space-y-6 backdrop-blur-2xl shadow-2xl">
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <InputField
-                  label="Nombre de Usuario"
-                  name="username"
-                  icon={<IconUser />}
-                  placeholder="tunickname"
-                  value={form.username}
-                  onChange={handleChange}
-                  autoComplete="username"
-                />
-                <InputField
-                  label="Nombre a Mostrar"
-                  name="displayName"
-                  icon={<IconUser />}
-                  placeholder="Tu nombre"
-                  value={form.displayName}
-                  onChange={handleChange}
-                />
+            {emailSent ? (
+              <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center space-y-3">
+                <p className="text-emerald-400 font-black uppercase tracking-widest text-sm">Verifica tu correo</p>
+                <p className="text-gray-400 text-xs font-bold leading-relaxed">
+                  Te hemos enviado un email de confirmación. Puedes seguir usando Ciszu Network y
+                  completar la verificación cuando quieras desde la configuración de tu cuenta.
+                </p>
               </div>
+            ) : (
+              <>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <AuthField
+                      label="Nombre de Usuario"
+                      name="username"
+                      icon={<span className="w-full h-full text-neon-pink"><IconUser /></span>}
+                      placeholder="tunickname"
+                      required
+                      maxLength={20}
+                      autoComplete="username"
+                      value={form.username}
+                      onChange={handleChange}
+                      error={errors.username}
+                      requirements={['3–20 caracteres', 'Sin espacios', 'Sin símbolos especiales']}
+                    />
+                    <AuthField
+                      label="Nombre a Mostrar"
+                      name="displayName"
+                      icon={<span className="w-full h-full text-neon-pink"><IconUser /></span>}
+                      placeholder="Tu nombre"
+                      required
+                      maxLength={30}
+                      value={form.displayName}
+                      onChange={handleChange}
+                      error={errors.displayName}
+                      requirements={['3–30 caracteres', 'Nombre visible para los demás']}
+                    />
+                  </div>
 
-              <InputField
-                label="Dirección Email"
-                name="email"
-                icon={<IconMail />}
-                type="email"
-                placeholder="tu@email.com"
-                value={form.email}
-                onChange={handleChange}
-                autoComplete="email"
-              />
+                  <AuthField
+                    label="Dirección Email"
+                    name="email"
+                    icon={<span className="w-full h-full text-neon-pink"><IconMail /></span>}
+                    type="email"
+                    placeholder="tu@email.com"
+                    required
+                    autoComplete="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    error={errors.email}
+                    requirements={['Formato de email válido (p. ej. nombre@dominio.com)']}
+                  />
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <InputField
-                  label="Contraseña"
-                  name="password"
-                  icon={<IconLock />}
-                  type="password"
-                  placeholder="Mínimo 8 caracteres"
-                  value={form.password}
-                  onChange={handleChange}
-                  autoComplete="new-password"
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div className="space-y-1">
+                      <AuthField
+                        label="Contraseña"
+                        name="password"
+                        icon={<span className="w-full h-full text-neon-pink"><IconLock /></span>}
+                        type="password"
+                        placeholder="••••••••"
+                        required
+                        autoComplete="new-password"
+                        value={form.password}
+                        onChange={handleChange}
+                        error={errors.password}
+                        requirements={['Mínimo 8 caracteres', 'Al menos 1 mayúscula', 'Al menos 1 minúscula', 'Al menos 1 número y 1 símbolo', 'Nivel mínimo: Media (3/5 en la barra)']}
+                      />
+                      <PasswordStrengthBar password={form.password} />
+                    </div>
+                    <AuthField
+                      label="Confirmar Contraseña"
+                      name="confirmPassword"
+                      icon={<span className="w-full h-full text-neon-pink"><IconLock /></span>}
+                      type="password"
+                      placeholder="••••••••"
+                      required
+                      autoComplete="new-password"
+                      value={form.confirmPassword}
+                      onChange={handleChange}
+                      error={errors.confirmPassword}
+                      requirements={['Debe ser idéntica al campo "Contraseña"']}
+                    />
+                  </div>
+
+                  {localError && <p className="text-red-400 text-[11px] font-bold">{localError}</p>}
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-4 rounded-xl bg-gradient-to-r from-neon-pink to-brand-accent text-black font-header font-black uppercase tracking-widest text-sm hover:brightness-110 hover:scale-[1.01] active:scale-[0.99] transition-all shadow-[0_0_20px_rgba(255,51,204,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? 'PROCESANDO…' : 'CREAR CUENTA'}
+                  </button>
+                </form>
+
+                <OAuthProviders
+                  onSelect={(p) => showToast(`OAuth de ${p} disponible en futura versión beta`)}
                 />
-                <InputField
-                  label="Confirmar Contraseña"
-                  name="confirmPassword"
-                  icon={<IconLock />}
-                  type="password"
-                  placeholder="••••••••"
-                  value={form.confirmPassword}
-                  onChange={handleChange}
-                  autoComplete="new-password"
+
+                <div className="pt-3">
+                  <p className="text-center text-[9px] text-white/30 font-bold uppercase tracking-[0.25em]">
+                    ¿Sin cuenta en Ciszu Network?
+                  </p>
+                  <p className="text-center text-[10px] text-gray-500 font-bold mt-1">
+                    Crea tu cuenta y úsala en todas nuestras apps con un solo{' '}
+                    <a href="https://ciszunetwork.vercel.app/register" className="text-neon-cyan hover:underline">CISZU ID</a>.
+                  </p>
+                </div>
+
+                <AuthSecondaryActions
+                  mode="register"
+                  loginHref="/login"
+                  supportHref="/support"
+                  linkClass="text-gray-300 hover:text-white transition-colors underline decoration-white/20 underline-offset-8"
                 />
-              </div>
-
-              {localError && (
-                <p className="text-red-400 text-[11px] font-bold">{localError}</p>
-              )}
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-4 rounded-xl bg-gradient-to-r from-neon-pink to-brand-accent text-black font-header font-black uppercase tracking-widest text-sm hover:brightness-110 hover:scale-[1.01] active:scale-[0.99] transition-all shadow-[0_0_20px_rgba(255,51,204,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? 'PROCESANDO…' : 'CREAR CUENTA'}
-              </button>
-            </form>
-
-            <div className="text-center">
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em]">
-                ¿Ya eres parte?{' '}
-                <Link href="/login" className="text-neon-cyan hover:text-white transition-colors underline decoration-neon-cyan/20 underline-offset-8">
-                  INICIAR SESIÓN
-                </Link>
-              </p>
-            </div>
-
-            <div className="pt-4 border-t border-white/10">
-              <p className="text-center text-[9px] font-black uppercase tracking-[0.25em] text-white/30 mb-3">
-                Opciones adicionales
-              </p>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => oauthPlaceholder('Google', showToast)}
-                  className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-xs font-bold hover:border-brand-light/50 hover:text-brand-light transition-all active:scale-95 cursor-pointer"
-                >
-                  <IconGoogle /> Google
-                </button>
-                <button
-                  type="button"
-                  onClick={() => oauthPlaceholder('Microsoft', showToast)}
-                  className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-xs font-bold hover:border-brand-light/50 hover:text-brand-light transition-all active:scale-95 cursor-pointer"
-                >
-                  <IconMicrosoft /> Microsoft
-                </button>
-              </div>
-            </div>
+              </>
+            )}
           </div>
         </div>
       </div>

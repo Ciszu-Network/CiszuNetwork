@@ -1,8 +1,8 @@
 # STATUS_SYSTEM — Estado del Ecosistema CISZU NETWORK
 
-Versión: 2.1.7
-Actualización: 2026-08-19
-Identificador: STATUS_SYSTEM_V2.1.7_2026_08_19_ciszunetwork
+Versión: 2.1.8
+Actualización: 2026-08-20
+Identificador: STATUS_SYSTEM_V2.1.8_2026_08_20_ciszunetwork
 
 > **Definición**: documento operativo de estado del monorepo. Se actualiza al cerrar cada
 > sesión de trabajo. Refleja la foto actual de proyectos, sistemas y scripts.
@@ -30,9 +30,10 @@ Identificador: STATUS_SYSTEM_V2.1.7_2026_08_19_ciszunetwork
 | Sistema de formatos (avif/webp/opus) | ✅ Implementado (8 ago 2026) + `SmartImage` en las webs |
 | PDWA (manifest + sw + botón instalar) | ✅ Las 4 webs |
 | Sistema de invitados | ✅ Invitado local (`Invitado` + 6 dígitos, localStorage) en las 4 webs; en muzicmania ID unificado header/`/play` (`play_guest_name`) — 19 ago 2026 |
-| Preferencias locales | ✅ Panel en botón AUTH (idioma, tema, ayuda, zoom, silenciar pestaña) en las 4 webs; localStorage siempre + sync a `profiles` si sesión — 19 ago 2026 |
+| Preferencias locales | ✅ En **modal centrado** (botón "Preferencias locales" del dropdown AUTH) en las 4 webs; idioma, tema, ayuda, zoom y silenciar pestaña con botones iguales al hamburguesa/footer; localStorage siempre + sync a `profiles` si sesión — 20 ago 2026 |
 | Auth Supabase (MuzicMania) | ✅ REST corregido, RLS activo |
-| Auth CISZU ID (4 webs) | ✅ Login/registro por schema propio (ciszu/ciszukoantony/ciszubot/muzicmania), migración 20 (profiles + RLS + trigger), OAuth Google/Microsoft placeholder beta, Discord obligatorio en ciszubot — 19 ago 2026 |
+| Auth CISZU ID (4 webs) | ✅ Login/registro por schema propio (ciszu/ciszukoantony/ciszubot/muzicmania), migración 20 (profiles + RLS + trigger), branding CISZU ID (isotipo CISZU + X + isotipo web), OAuth Google/Microsoft bajo "CONTINUAR CON:", footer de acciones (recuperar/registrar/acceder/soporte), errores a la izquierda, Discord obligatorio en ciszubot — 20 ago 2026 |
+| Componentes de auth compartidos | ✅ `packages/ui/src/auth/*` (CiszuIdBrand, AuthField, PasswordStrengthBar, OAuthProviders, AuthSecondaryActions, PreferencesModal) usados en las 4 webs — 20 ago 2026 |
 | Bot de Discord | ✅ v3.2.0, 72 comandos, Supabase conectado (heartbeat `bot_status`) |
 | Caché multi-tienda | ✅ Implementado (9 ago 2026) — memoria → KV Upstash (`upstash-kv-ciszunetwork`) → Postgres `ciszu.cache` |
 | Monitoreo externo | ✅ UptimeRobot 5 monitores + watcher ntfy (10 ago 2026) |
@@ -210,6 +211,7 @@ Este doc es una **foto del estado** del ecosistema; al cerrar sesión:
 
 | Fecha | Cambio relevante |
 |---|---|
+| 2026-08-20 | **Auth CISZU ID pulido en las 4 webs** según `LOGIN_REGISTER_PROTOCOLS.md` v1.0.0 (nuevo doc + AGENTS.md + AUTH_SYSTEM.md actualizados): branding `CiszuIdBrand` (isotipo CISZU + X + isotipo web, cabecera "CISZU ID" + subtítulo "Crea tu cuenta en (proyecto) con CISZU ID") en todos los login/registro; OAuth Google/Microsoft bajo heading "CONTINUAR CON:" via componente compartido `SharedOAuthProviders` (mismos iconos en las 4 webs); footer `AuthSecondaryActions` en todos los auth (RECUPÉRALA/REGÍSTRATE/ACCEDER/SOPORTE); errores de formulario a la izquierda; botón "Preferencias locales" en el dropdown AUTH abriendo **PreferencesModal** centrado con botones de tema/idioma iguales al hamburguesa/footer (PreferencesPanel nuevo en ciszukoantony; Navbar con modal en ciszubot y muzicmania). Muzicmania conserva reCAPTCHA, olvido con OTP, 2FA y selects de país/fecha. Verificado: tsc + lint + build exit 0 en las 4 webs y smoke localhost (8 endpoints login/register 200 con branding/continuar/footer). Pendiente push + deploys Vercel. |
 | 2026-08-19 | **TODO globales verificados tras arrancar dev servers correctos (puertos 3000–3003, CDN local 8788)**: AUTH login/registro 200 en las 4 webs con placeholders OAuth Google/Microsoft β + Discord obligatorio en ciszubot; sistema de invitados (`Invitado` + 6 dígitos) y preferencias locales presentes en el SSR de las 4; guest ID de muzicmania unificado header/`/play` (`play_guest_name`). Fix: **botón AUTH de ciszubot movido después del botón de menú** (tsc+lint+build OK). Verificado que **los assets de ciszukoantony cargan en dev y en el CDN de producción** (todos 200; el log `.webp` del TODO era un estado anterior del código). |
 | 2026-08-19 | **LSP del agente activado** en opencode: `opencode.json` (raíz) con `"lsp": true` + `permission.lsp: allow`; `typescript ^6.0.3` añadido a `devDependencies` de la raíz (requisito: dep resoluble en el root del workspace, pnpm no hoista) + `pnpm install`; env vars de usuario `OPENCODE_EXPERIMENTAL_LSP_TOOL=true` y `OPENCODE_DISABLE_LSP_DOWNLOAD=true`. Verificado: server del log emite `enabled LSP servers` (typescript, eslint, …). Documentado en `OPENCODE_SYSTEM.md` (nueva sección LSP, v2.1.0) y `AGENTS.md` §6.7 |
 | 2026-08-19 | **Editor Puck multi-web completo** (`VISUAL_BUILDERS_SYSTEM.md` §6.6): integrado en las **4 webs** (ciszu/ciszukoantony/ciszubot/muzicmania) con `app` en BD (migración 19, PK compuesta `(app,path)`, `save_puck_page(p_app,…)`), token renombrado **`EDIT_TOKEN`→`PUCK_EDIT_TOKEN`** (48 chars, valor conservado) en código/`.env.local`×4/docs, en vault cifrado (`vault.ps1 crypt`/`verify`/`backup`) + Bitwarden (item "Puck (Visual Builder) - PUCK_EDIT_TOKEN"). Por web: `puck.config.tsx`+`puck/blocks.tsx` (identidad propia), `PuckEditor`, `lib/puck.ts` (APP fija), `lib/edit-auth.ts`, `/edit`+`/pages`+`/api/puck/*`+`/api/edit/login`, middleware con protección token. Login "Acceso de administración · Visual Builder de Puck". Fixes: `zod` añadido a ciszukoantony; `declarations.d.ts` de muzicmania ampliado (`notFound/redirect/permanentRedirect` en `next/navigation`); `globals.css.d.ts` con `declare module '*.css'`. tsc+lint ×4 webs OK; build OK ciszukoantony; smoke dev 3 webs (login 307→200, `/edit/home` 200 con cookie, API protegida). Pendiente push + validación Vercel (runners online). |
@@ -251,4 +253,4 @@ Este doc es una **foto del estado** del ecosistema; al cerrar sesión:
 _Última revisión: 19 ago 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
 `WORKFLOW_SYSTEM.md`, `ARCHITECTURE.md`, `FULL_STACK_SYSTEM.md`.
 
-ÚLTIMA ACTUALIZACIÓN: 2026-08-16
+ÚLTIMA ACTUALIZACIÓN: 2026-08-20
