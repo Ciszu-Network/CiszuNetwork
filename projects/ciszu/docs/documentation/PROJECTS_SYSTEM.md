@@ -156,6 +156,10 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 - **Sistema de invitados**: `Invitado` + 6 dígitos (localStorage) en el navbar de las 4 webs
   (icono genérico + nombre, botón AUTH). En muzicmania el ID es **el mismo en header y en
   `/play`** (`play_guest_name` unificado vía `src/lib/guest.ts`). Nunca va a base de datos.
+- **Fixes por-website**: en ciszubot el botón AUTH se movió **después** del botón de menú
+  hamburguesa (el TODO lo marcaba como error); verificado que los assets del portfolio de
+  ciszukoantony cargan correctamente (todos responden 200 contra el CDN local, rutas
+  `/`, `/about`, `/team`, `/certificates`, `/projects`, `/support` y resto de páginas).
 - **Preferencias locales**: panel en el botón AUTH (logueado o no) con idioma, tema, ayuda,
   zoom +/- y silenciar pestaña. Se guardan en `localStorage` siempre (`ciszu_preferences`
   / `syncPreferencesToProfile`) y, con sesión, se **sincronizan a `profiles`
