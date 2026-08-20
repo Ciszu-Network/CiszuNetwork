@@ -5,7 +5,11 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icon, SmartImage, useZoomStatus } from '@ciszu/ui';
 import { Menu, X, Search } from 'lucide-react';
-import { useAppStore } from '@/store';
+import { useAppStore, type AppUser } from '@/store';
+import { supabase } from '@/config/supabase';
+import { getGuestName } from '@/lib/guest';
+import { syncPreferencesToProfile, updatePreferences } from '@/lib/preferences';
+import PreferencesPanel from '@/components/layout/PreferencesPanel';
 import { INVITE_URL, LOGO_ISOTIPO, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
 
 const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'status' | 'support' | 'downloads' | 'feedback'; icon: string }[] = [
@@ -96,22 +100,31 @@ interface NavbarProps {
 
 export default function Navbar({ lang, dict, account }: NavbarProps) {
   const pathname = usePathname();
-  const { isMenuOpen, setIsMenuOpen, sidebarView, setSidebarView } = useAppStore();
+  const { isMenuOpen, setIsMenuOpen, sidebarView, setSidebarView, user, setUser, isHydrated } = useAppStore();
   const [toast, setToast] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [authOpen, setAuthOpen] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
-  const [accountOpen, setAccountOpen] = useState(false);
   const [isDark, setIsDark] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const firstRender = useRef(true);
   const searchRef = useRef<HTMLDivElement | null>(null);
   const searchToggleRef = useRef<HTMLButtonElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const authRef = useRef<HTMLDivElement | null>(null);
   const inviteRef = useRef<HTMLDivElement | null>(null);
-  const accountRef = useRef<HTMLDivElement | null>(null);
+
+  // Usuario activo: prioridad al store sincronizado (CISZU ID o Discord vía
+  // AuthProvider); antes de la hidratación fallback a la sesión Discord SSR.
+  const activeUser: AppUser | null =
+    user ?? (isHydrated ? null : account ? { ...account, email: null, provider: 'discord' as const } : null);
+  const activeUserId = activeUser?.id ?? null;
+
+  // Fallback de avatar para cuentas Discord sin avatar propio
+  const accountAvatar = (userId: string, avatar: string | null) =>
+    avatar ?? `https://cdn.discordapp.com/embed/avatars/${Number(userId) % 5}.png`;
 
   const suggestions = query.trim().length > 0
     ? SEARCH_PAGES.filter(
@@ -124,6 +137,10 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
 
   useEffect(() => {
     setIsDark(document.documentElement.classList.contains('dark'));
+  }, []);
+
+  useEffect(() => {
+    setMounted(true);
   }, []);
 
   const [scrolled, setScrolled] = useState(false);
@@ -154,7 +171,6 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
     setQuery('');
     setAuthOpen(false);
     setInviteOpen(false);
-    setAccountOpen(false);
     setIsMenuOpen(false);
     setSidebarView('main');
     setToast(null);
@@ -184,7 +200,6 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
       const target = e.target as Node;
       if (authRef.current && !authRef.current.contains(target)) setAuthOpen(false);
       if (inviteRef.current && !inviteRef.current.contains(target)) setInviteOpen(false);
-      if (accountRef.current && !accountRef.current.contains(target)) setAccountOpen(false);
     };
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
@@ -217,11 +232,29 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
     root.classList.toggle('dark', next === 'dark');
     setIsDark(next === 'dark');
     document.cookie = `ciszubot_theme=${next}; path=/; max-age=31536000`;
+    const prefs = updatePreferences({ theme: next });
+    if (activeUserId) void syncPreferencesToProfile(activeUserId, prefs);
   };
 
   const setLang = (code: Lang) => {
     document.cookie = `ciszubot_lang=${code}; path=/; max-age=31536000`;
+    if (activeUserId) {
+      const prefs = updatePreferences({ lang: code });
+      void syncPreferencesToProfile(activeUserId, prefs);
+    } else {
+      updatePreferences({ lang: code });
+    }
     window.location.reload();
+  };
+
+  const handleSignOut = async () => {
+    if (activeUser?.provider === 'ciszu') {
+      await supabase.auth.signOut();
+      setUser(null);
+      window.location.href = '/';
+    } else {
+      window.location.href = '/api/auth/logout';
+    }
   };
 
   const currentLangCode = lang === 'es' ? 'ES-LA' : 'EN-US';
@@ -322,7 +355,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
             {/* Invitar — botón con texto */}
             <div className="relative hidden sm:block" ref={inviteRef}>
               <button
-                onClick={() => { setInviteOpen(!inviteOpen); setAuthOpen(false); setAccountOpen(false); setSearchOpen(false); }}
+                onClick={() => { setInviteOpen(!inviteOpen); setAuthOpen(false); setSearchOpen(false); }}
                 className={`flex items-center gap-2 rounded-xl px-3 py-2 transition-all duration-300 cursor-pointer shadow-md border group font-header font-bold text-sm ${
                   inviteOpen
                     ? 'bg-neon-blue border-neon-blue text-black'
@@ -356,7 +389,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
             <div className="relative">
               <button
                 ref={searchToggleRef}
-                onClick={() => { setSearchOpen(v => !v); setIsMenuOpen(false); setAccountOpen(false); setAuthOpen(false); setInviteOpen(false); }}
+                onClick={() => { setSearchOpen(v => !v); setIsMenuOpen(false); setAuthOpen(false); setInviteOpen(false); }}
                 className={`p-2 rounded-full border transition-all duration-300 cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_10px_rgba(0,212,255,0.25)] ${
                   searchOpen
                     ? 'bg-neon-blue border-neon-blue text-black'
@@ -369,90 +402,128 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
               </button>
             </div>
 
-            {/* Cuenta / Login */}
-            {account ? (
-              <div className="relative" ref={accountRef}>
+            {/* Cuenta / Login — botón AUTH (sesión, invitado y preferencias) */}
+            <div className="relative" ref={authRef}>
+              {activeUser ? (
                 <button
-                  onClick={() => { setAccountOpen(!accountOpen); setAuthOpen(false); setSearchOpen(false); setInviteOpen(false); }}
+                  onClick={() => { setAuthOpen(!authOpen); setSearchOpen(false); setInviteOpen(false); }}
                   className="flex items-center gap-2 rounded-full border border-border bg-card p-1 pr-2.5 transition hover:border-[#5865F2] hover:bg-muted/15 cursor-pointer"
                   aria-label="Cuenta"
+                  aria-expanded={authOpen}
                 >
                   <img
-                    src={account.avatar ?? `https://cdn.discordapp.com/embed/avatars/${Number(account.id) % 5}.png`}
+                    src={accountAvatar(activeUser.id, activeUser.avatar)}
                     alt=""
                     className="h-7 w-7 rounded-full object-cover"
                   />
                   <span className="hidden lg:block max-w-[90px] truncate text-xs font-bold text-ink/85">
-                    {account.name ?? 'Cuenta'}
+                    {activeUser.name ?? 'Cuenta'}
                   </span>
-                  <Icon name="arrow-right" size={12} className={`text-muted transition-transform ${accountOpen ? 'rotate-90' : '-rotate-90'}`} />
+                  <Icon name="arrow-right" size={12} className={`text-muted transition-transform ${authOpen ? 'rotate-90' : '-rotate-90'}`} />
                 </button>
-                {accountOpen && (
-                  <div className="absolute right-0 top-12 w-52 overflow-hidden rounded-xl border border-border bg-surface shadow-2xl animate-fade-in-down">
-                    <div className="border-b border-border px-4 py-3">
-                      <p className="truncate text-sm font-bold text-ink">{account.name ?? 'Cuenta'}</p>
-                      <p className="truncate text-[11px] text-muted">{account.id}</p>
-                    </div>
-                    <Link
-                      href="/dashboard"
-                      onClick={() => setAccountOpen(false)}
-                      className="flex items-center gap-2 px-4 py-2.5 text-sm text-ink/85 transition hover:bg-muted/15 hover:text-neon-blue"
-                    >
-                      <Icon name="server" size={15} /> Panel de control
-                    </Link>
-                    <a
-                      href="/api/auth/logout"
-                      className="flex items-center gap-2 px-4 py-2.5 text-sm text-red-400 transition hover:bg-muted/15"
-                    >
-                      <Icon name="close" size={15} /> Cerrar sesión
-                    </a>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="relative" ref={authRef}>
+              ) : (
                 <button
-                  onClick={() => { setAuthOpen(!authOpen); setAccountOpen(false); setSearchOpen(false); setInviteOpen(false); }}
-                  className={`p-2 rounded-full border transition-all duration-300 cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_10px_rgba(88,101,242,0.4)] ${
+                  onClick={() => { setAuthOpen(!authOpen); setSearchOpen(false); setInviteOpen(false); }}
+                  className={`flex items-center gap-1.5 rounded-full border transition-all duration-300 cursor-pointer py-1 pl-1.5 pr-2.5 shadow-sm ${
                     authOpen
-                      ? 'bg-[#5865F2] border-[#5865F2] text-white shadow-[0_0_12px_rgba(88,101,242,0.6)]'
-                      : 'bg-card border-border text-ink hover:border-[#5865F2]'
+                      ? 'bg-[#5865F2]/15 border-[#5865F2] text-[#5865F2]'
+                      : 'bg-card border-border text-ink hover:border-[#5865F2] hover:shadow-[0_0_10px_rgba(88,101,242,0.25)]'
                   }`}
-                  aria-label="Iniciar sesión"
-                  title="Iniciar sesión"
+                  aria-label="Cuenta de invitado"
+                  aria-expanded={authOpen}
+                  title={mounted ? getGuestName() : 'Invitado'}
                 >
-                  <IcoUser />
+                  <span className="h-6 w-6 rounded-full flex items-center justify-center bg-muted/15 text-faint">
+                    <IcoUser />
+                  </span>
+                  <span className="hidden lg:block max-w-[110px] truncate text-xs font-bold text-ink/85">
+                    {mounted ? getGuestName() : 'Invitado'}
+                  </span>
+                  <Icon name="arrow-right" size={12} className={`text-muted transition-transform ${authOpen ? 'rotate-90' : '-rotate-90'}`} />
                 </button>
-                {authOpen && (
-                  <div className="absolute right-0 top-12 w-60 overflow-hidden rounded-xl border border-border bg-surface shadow-2xl animate-fade-in-down">
-                    <a
-                      href="/api/auth/discord"
-                      className="flex items-center gap-3 px-4 py-3 text-sm font-bold bg-[#5865F2] text-white transition hover:bg-[#4752c4]"
-                    >
-                      <Icon name="discord" size={16} className="[&>g]:fill-current" />
-                      <span>Iniciar sesión con Discord</span>
-                    </a>
-                    <Link
-                      href="/dashboard"
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-muted transition hover:bg-muted/15 hover:text-neon-blue"
-                    >
-                      <Icon name="server" size={15} /> Panel de control
-                    </Link>
-                    <a
-                      href={INVITE_URL}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-muted transition hover:bg-muted/15 hover:text-neon-blue"
-                    >
-                      <Icon name="external" size={15} /> {dict.nav.invite}
-                    </a>
-                  </div>
-                )}
-              </div>
-            )}
+              )}
+
+              {authOpen && (
+                <div className="absolute right-0 top-12 w-72 overflow-hidden rounded-xl border border-border bg-surface shadow-2xl animate-fade-in-down max-h-[calc(100vh-90px)] overflow-y-auto">
+                  {activeUser ? (
+                    <div className="border-b border-border px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={accountAvatar(activeUser.id, activeUser.avatar)}
+                          alt=""
+                          className="h-10 w-10 rounded-full object-cover"
+                        />
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-bold text-ink">{activeUser.name ?? 'Cuenta'}</p>
+                          <p className="truncate text-[11px] text-muted">{activeUser.email ?? activeUser.id}</p>
+                        </div>
+                      </div>
+                      <div className="mt-3 flex flex-col gap-1">
+                        <Link
+                          href="/dashboard"
+                          onClick={() => setAuthOpen(false)}
+                          className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-ink/85 transition hover:bg-muted/15 hover:text-neon-blue"
+                        >
+                          <Icon name="server" size={15} /> Panel de control
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={handleSignOut}
+                          className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-red-400 transition hover:bg-muted/15 text-left cursor-pointer"
+                        >
+                          <Icon name="close" size={15} /> Cerrar sesión
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="border-b border-border px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <span className="h-10 w-10 rounded-full flex items-center justify-center bg-muted/15 text-faint shrink-0">
+                          <IcoUser />
+                        </span>
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-bold text-ink">{mounted ? getGuestName() : 'Invitado'}</p>
+                          <p className="text-[11px] text-muted">Estás navegando como invitado</p>
+                        </div>
+                      </div>
+                      <div className="mt-3 flex flex-col gap-1.5">
+                        <Link
+                          href="/login"
+                          onClick={() => setAuthOpen(false)}
+                          className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-bold text-ink/85 border border-border transition hover:border-neon-blue hover:text-neon-blue"
+                        >
+                          Iniciar sesión
+                        </Link>
+                        <Link
+                          href="/register"
+                          onClick={() => setAuthOpen(false)}
+                          className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-bold text-ink/85 border border-border transition hover:border-neon-blue hover:text-neon-blue"
+                        >
+                          Registrarse
+                        </Link>
+                        <a
+                          href="/api/auth/discord"
+                          className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-bold bg-[#5865F2] text-white transition hover:bg-[#4752c4] active:scale-95"
+                        >
+                          <Icon name="discord" size={16} className="[&>g]:fill-current" />
+                          Continuar con Discord
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                  <PreferencesPanel
+                    lang={lang}
+                    isDark={isDark}
+                    userId={activeUserId}
+                    onSetLang={setLang}
+                    onToggleTheme={setTheme}
+                  />
+                </div>
+              )}
+            </div>
 
             <button
-              onClick={() => { setIsMenuOpen(!isMenuOpen); setSearchOpen(false); setAuthOpen(false); setInviteOpen(false); setAccountOpen(false); if (!isMenuOpen) setSidebarView('main'); }}
+              onClick={() => { setIsMenuOpen(!isMenuOpen); setSearchOpen(false); setAuthOpen(false); setInviteOpen(false); if (!isMenuOpen) setSidebarView('main'); }}
               className={`p-2 rounded-full border transition-all duration-300 cursor-pointer shadow-sm active:scale-95 ${
                 isMenuOpen
                   ? 'bg-neon-blue border-neon-blue text-black'
@@ -596,7 +667,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
 
                 <div className="h-px bg-white/10 my-4" />
                 <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">{lang === 'es' ? 'CUENTA' : 'ACCOUNT'}</p>
-                {account ? (
+                {activeUser ? (
                   <Link
                     href="/dashboard"
                     onClick={() => { setIsMenuOpen(false); setSidebarView('main'); }}

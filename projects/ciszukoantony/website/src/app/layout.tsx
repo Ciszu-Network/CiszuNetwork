@@ -8,6 +8,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import FeedbackFab from "@/components/layout/FeedbackFab";
 import { CookiesBanner } from "@/components/layout/CookiesBanner";
+import AuthProvider from "@/components/providers/AuthProvider";
 import "./globals.css";
 const PROFILE_PIC = assetResolver.resolve("projects/ciszukoantony/content/assets/youtube_canal.png");
 const OG_IMAGE = assetResolver.resolve("projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png");
@@ -56,13 +57,15 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   return (
     <html lang="en" className={`${exo2.variable} ${rajdhani.variable}`}>
       <body className="bg-black text-white min-h-screen font-sans flex flex-col">
-        <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={PROFILE_PIC} title="Ciszuko Antony" subtitle="Ciszuko Antony Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszukoantony">
-          {!isEdit && <Navbar />}
-          {!isEdit && <ZoomWarning />}
-          <main className="flex-grow">{children}</main>
-          {!isEdit && <Footer />}
-          {!isEdit && <CookiesBanner />}
-        </CloudflareGuard>
+        <AuthProvider>
+          <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={PROFILE_PIC} title="Ciszuko Antony" subtitle="Ciszuko Antony Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszukoantony">
+            {!isEdit && <Navbar />}
+            {!isEdit && <ZoomWarning />}
+            <main className="flex-grow">{children}</main>
+            {!isEdit && <Footer />}
+            {!isEdit && <CookiesBanner />}
+          </CloudflareGuard>
+        </AuthProvider>
         <PwaRegister />
         <FabStackProvider>
           {!isEdit && <InstallPdwaButton site="Ciszuko Antony" accent="#a78bfa" accentAlt="#22d3ee" />}

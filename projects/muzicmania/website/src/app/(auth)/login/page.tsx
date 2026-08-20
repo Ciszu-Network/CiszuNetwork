@@ -11,6 +11,7 @@ import { supabase } from '@/config/supabase';
 import { useAppStore } from '@/store/useAppStore';
 import { useRouter } from 'next/navigation';
 import AuthFeedback from '@/components/molecules/AuthFeedback';
+import OAuthProviders from '@/components/molecules/OAuthProviders';
 import { usePageTitle } from '@/lib/usePageTitle';
 
 // --- Icons Library ---
@@ -406,20 +407,23 @@ export default function LoginPage() {
             </form>
 
             {!isForgotPassword && (
-              <div className="pt-6 border-t border-white/5 text-center flex flex-col gap-3">
+              <>
+                <OAuthProviders />
+                <div className="pt-6 border-t border-white/5 text-center flex flex-col gap-3">
+                  <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em]">
+                    ¿Problemas de acceso?{' '}
+                    <button onClick={() => setIsForgotPassword(true)} className="text-gray-300 hover:text-white transition-colors underline decoration-white/20 underline-offset-8">
+                      RECUPERAR CLAVE
+                    </button>
+                  </p>
                 <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em]">
-                  ¿Problemas de acceso?{' '}
-                  <button onClick={() => setIsForgotPassword(true)} className="text-gray-300 hover:text-white transition-colors underline decoration-white/20 underline-offset-8">
-                    RECUPERAR CLAVE
-                  </button>
+                  ¿Sin credenciales?{' '}
+                  <Link href="/register" className="text-neon-cyan hover:text-white transition-colors underline decoration-neon-cyan/20 underline-offset-8">
+                    CREAR IDENTIDAD
+                  </Link>
                 </p>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em]">
-                ¿Sin credenciales?{' '}
-                <Link href="/register" className="text-neon-cyan hover:text-white transition-colors underline decoration-neon-cyan/20 underline-offset-8">
-                  CREAR IDENTIDAD
-                </Link>
-              </p>
-              </div>
+                </div>
+              </>
             )}
           </div>
         </motion.section>

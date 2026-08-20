@@ -8,6 +8,8 @@ import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CookiesBanner } from "@/components/layout/CookiesBanner";
 import FeedbackFab from "@/components/layout/FeedbackFab";
+import AuthProvider from "@/components/providers/AuthProvider";
+import GlobalToast from "@/components/auth/GlobalToast";
 import { CISZU_NETWORK } from "@/config/site";
 import "./globals.css";
 
@@ -55,13 +57,16 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   return (
     <html lang="es" className={`${ibmPlex.variable} ${ibmPlexCondensed.variable}`}>
       <body className="bg-black text-white min-h-screen font-sans flex flex-col">
-        <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={ICON_SVG} title="Ciszu Network" subtitle="Ciszu Network Security • Cloudflare" accent="#22d3ee" storageKey="cf_verified_ciszu">
-          {!isEdit && <ZoomWarning />}
-          {!isEdit && <Navbar />}
-          <main className="flex-grow">{children}</main>
-          {!isEdit && <Footer />}
-          {!isEdit && <CookiesBanner />}
-        </CloudflareGuard>
+        <AuthProvider>
+          <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={ICON_SVG} title="Ciszu Network" subtitle="Ciszu Network Security • Cloudflare" accent="#22d3ee" storageKey="cf_verified_ciszu">
+            {!isEdit && <ZoomWarning />}
+            {!isEdit && <Navbar />}
+            <main className="flex-grow">{children}</main>
+            {!isEdit && <Footer />}
+            {!isEdit && <CookiesBanner />}
+          </CloudflareGuard>
+          <GlobalToast />
+        </AuthProvider>
         <PwaRegister />
         <FabStackProvider>
           {!isEdit && <InstallPdwaButton site="Ciszu Network" accent="#22d3ee" accentAlt="#f472b6" />}

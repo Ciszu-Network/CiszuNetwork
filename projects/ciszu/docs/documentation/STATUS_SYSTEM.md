@@ -29,7 +29,10 @@ Identificador: STATUS_SYSTEM_V2.1.7_2026_08_19_ciszunetwork
 | CDN Supabase Storage `ciszu-cdn` | ✅ 7.353 objetos / 160.6 MB (16% de cuota; bucket legacy `ciszu-assets` eliminado 10 ago 2026) |
 | Sistema de formatos (avif/webp/opus) | ✅ Implementado (8 ago 2026) + `SmartImage` en las webs |
 | PDWA (manifest + sw + botón instalar) | ✅ Las 4 webs |
+| Sistema de invitados | ✅ Invitado local (`Invitado` + 6 dígitos, localStorage) en las 4 webs; en muzicmania ID unificado header/`/play` (`play_guest_name`) — 19 ago 2026 |
+| Preferencias locales | ✅ Panel en botón AUTH (idioma, tema, ayuda, zoom, silenciar pestaña) en las 4 webs; localStorage siempre + sync a `profiles` si sesión — 19 ago 2026 |
 | Auth Supabase (MuzicMania) | ✅ REST corregido, RLS activo |
+| Auth CISZU ID (4 webs) | ✅ Login/registro por schema propio (ciszu/ciszukoantony/ciszubot/muzicmania), migración 20 (profiles + RLS + trigger), OAuth Google/Microsoft placeholder beta, Discord obligatorio en ciszubot — 19 ago 2026 |
 | Bot de Discord | ✅ v3.2.0, 72 comandos, Supabase conectado (heartbeat `bot_status`) |
 | Caché multi-tienda | ✅ Implementado (9 ago 2026) — memoria → KV Upstash (`upstash-kv-ciszunetwork`) → Postgres `ciszu.cache` |
 | Monitoreo externo | ✅ UptimeRobot 5 monitores + watcher ntfy (10 ago 2026) |

@@ -142,6 +142,29 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 > Este historial absorbe `PROJECT_HISTORY.md` (eliminado 13 ago 2026). Añadir aquí los
 > nuevos hitos al cierre de sesión.
 
+### 19 de Agosto, 2026 — Identidad unificada (AUTH + invitados + preferencias) en las 4 webs
+
+- **AUTH CISZU ID no-centralizado** (nivel N1, `AUTH_SYSTEM.md`): cada web tiene su propio
+  schema auth (`ciszunetwork.profiles`, `ciszukoantony.profiles`, `ciszubot.profiles` —
+  muzicmania ya lo tenía en `muzicmania`). Migración 20 (`20260819000020_identity_profiles.sql`,
+  aplicada): tablas `profiles` + RLS por comando + triggers `handle_new_user` por schema.
+- **Login/Registro en las 4 webs**: rutas `/login` y `/register` con diseño CISZU ID
+  (email/contraseña por defecto, patrón de muzicmania), campo usuario + `signUp` con
+  `options.data`. OAuth Google/Microsoft como **placeholders beta** (error al click).
+  Discord sigue siendo **obligatorio y funcional** en ciszubot (OAuth cookie/HMAC existente
+  conservada + sesión CISZU ID alternativa en el mismo navbar).
+- **Sistema de invitados**: `Invitado` + 6 dígitos (localStorage) en el navbar de las 4 webs
+  (icono genérico + nombre, botón AUTH). En muzicmania el ID es **el mismo en header y en
+  `/play`** (`play_guest_name` unificado vía `src/lib/guest.ts`). Nunca va a base de datos.
+- **Preferencias locales**: panel en el botón AUTH (logueado o no) con idioma, tema, ayuda,
+  zoom +/- y silenciar pestaña. Se guardan en `localStorage` siempre (`ciszu_preferences`
+  / `syncPreferencesToProfile`) y, con sesión, se **sincronizan a `profiles`
+  (`settings_lang`, `settings_theme`, `settings_controls`)** reutilizando los botones de
+  theme/language existentes de cada navbar.
+- `@supabase/supabase-js` añadido a `ciszunetwork-website` y `ciszukoantony-website`
+  (mismo patrón que muzicmania/ciszubot).
+- Verificación: tsc + lint + build OK en las 4 webs.
+
 ### 18 de Agosto, 2026 — Tarea OSINT y ciberseguridad completada
 
 - **Stack OSINT integrado y verificado** (TODO cerrado): Sherlock 0.16.0, Maigret 0.6.4,
@@ -489,5 +512,5 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 3. **Pendientes (§3)**: mover a historial cuando se resuelva, añadir nuevos bloqueos.
 4. Marcar "Última actualización" y actualizar `STATUS_SYSTEM.md` y `STATISTICS_SYSTEM.md`.
 
-_Última revisión: 18 ago 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
+_Última revisión: 19 ago 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
 `ARCHITECTURE.md`, `WORKFLOW_SYSTEM.md`, `AGENTS.md`.

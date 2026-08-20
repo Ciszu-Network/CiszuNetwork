@@ -6,11 +6,21 @@ import { usePathname, useRouter } from 'next/navigation';
 import { SmartImage, useZoomStatus } from '@ciszu/ui';
 import { NAV_MAIN, SOCIALS, I, ALL_PAGES, SEARCH_INDEX, type NavGroup, type NavItem } from '@/config/navigation';
 import { useAppStore } from '@/store';
+import AuthMenu, { GuestIcon } from '@/components/auth/AuthMenu';
+import { getGuestName } from '@/lib/guest';
 
 const UserIcon = () => (
   <svg viewBox="0 0 24 24" className="w-[20px] h-[20px]" fill="none" stroke="currentColor" strokeWidth={2}>
     <circle cx="12" cy="8" r="4" />
     <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+  </svg>
+);
+
+const SignOutIcon = () => (
+  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}>
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+    <polyline points="16 17 21 12 16 7" />
+    <line x1="21" y1="12" x2="9" y2="12" />
   </svg>
 );
 
@@ -91,13 +101,18 @@ export default function Navbar() {
   const [infoOpen, setInfoOpen] = useState(false);
   const [accOpen, setAccOpen] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
-  const { isMenuOpen, setIsMenuOpen, theme, setTheme, language, setLanguage, sidebarView, setSidebarView, searchQuery, setSearchQuery } = useAppStore();
+  const { isMenuOpen, setIsMenuOpen, theme, setTheme, language, setLanguage, sidebarView, setSidebarView, searchQuery, setSearchQuery, user } = useAppStore();
   const firstRender = useRef(true);
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const searchToggleRef = useRef<HTMLButtonElement>(null);
   const infoRef = useRef<HTMLDivElement>(null);
   const accRef = useRef<HTMLDivElement>(null);
+  const [guestName, setGuestName] = useState('');
+
+  useEffect(() => {
+    setGuestName(getGuestName());
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -214,10 +229,7 @@ export default function Navbar() {
     setAccOpen(v => !v);
   };
 
-  const accountComingSoon = () => {
-    setAccOpen(false);
-    setToast('[SISTEMA]: Account authentication is coming soon.');
-  };
+  const accountLabel = user ? (user.display_name || user.username) : guestName;
 
   return (
     <>
@@ -335,31 +347,33 @@ export default function Navbar() {
                 {isMenuOpen ? I.close : I.menu}
               </button>
 
-              {/* Account button + dropdown (non-functional, toast) */}
+              {/* Account button + dropdown (CISZU ID auth + preferencias) */}
               <div className="relative" ref={accRef}>
                 <button onClick={toggleAcceder}
-                  className={`p-2 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_15px_rgba(255,51,204,0.4)] ${
+                  className={`flex items-center gap-2 pl-2.5 pr-3 h-10 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_15px_rgba(255,51,204,0.4)] ${
                     accOpen
                       ? 'bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink border-transparent text-white'
                       : 'bg-gradient-to-r from-neon-blue/20 via-[#6600ff]/20 to-neon-pink/20 border-white/20 text-white hover:border-neon-pink opacity-90 hover:opacity-100'
                   }`}
-                  title="Account">
-                  <UserIcon />
+                  title={user ? `Account: ${accountLabel}` : `Guest: ${accountLabel}`}>
+                  {user ? (
+                    user.avatar_url ? (
+                      <img src={user.avatar_url} alt="" className="w-6 h-6 rounded-full object-cover ring-2 ring-neon-blue/60 shrink-0" />
+                    ) : (
+                      <span className="w-6 h-6 rounded-full bg-gradient-to-br from-neon-blue to-[#6600ff] flex items-center justify-center text-white font-header font-black text-xs shrink-0">
+                        {(user.display_name || user.username || 'U').charAt(0).toUpperCase()}
+                      </span>
+                    )
+                  ) : (
+                    <span className="text-white/80 shrink-0"><GuestIcon className="w-5 h-5" /></span>
+                  )}
+                  <span className="hidden min-[900px]:block max-w-[120px] truncate text-xs font-header font-bold">
+                    {user ? (user.display_name || user.username) : (guestName || 'Invitado')}
+                  </span>
                 </button>
                 {accOpen && (
-                  <div className="absolute right-0 top-full pt-3 w-56 z-50 animate-fade-in-down origin-top">
-                    <div className="bg-[#070712]/95 backdrop-blur-2xl border border-white/10 rounded-xl overflow-hidden shadow-2xl">
-                      <button onClick={accountComingSoon}
-                        className="w-full flex items-center justify-center gap-2 p-4 text-white font-header font-bold text-sm bg-gradient-to-br from-neon-blue/30 to-neon-blue/5 border-b border-white/10 hover:from-neon-blue/50 transition-all cursor-pointer group shadow-[inset_0_0_20px_rgba(61,106,223,0.1)] hover:shadow-[inset_0_0_30px_rgba(61,106,223,0.3)]">
-                        <span className="text-neon-blue group-hover:text-white"><UserIcon /></span>
-                        <span className="text-neon-blue group-hover:text-white">Login</span>
-                      </button>
-                      <button onClick={accountComingSoon}
-                        className="w-full flex items-center justify-center gap-2 p-4 text-white font-header font-bold text-sm bg-gradient-to-bl from-neon-pink/30 to-neon-pink/5 hover:from-neon-pink/50 transition-all cursor-pointer group shadow-[inset_0_0_20px_rgba(255,51,204,0.1)] hover:shadow-[inset_0_0_30px_rgba(255,51,204,0.3)]">
-                        <span className="text-neon-pink group-hover:text-white"><UserIcon /></span>
-                        <span className="text-neon-pink group-hover:text-white">Register</span>
-                      </button>
-                    </div>
+                  <div className="absolute right-0 top-full pt-3 w-72 max-w-[calc(100vw-2rem)] z-50 origin-top">
+                    <AuthMenu onClose={() => setAccOpen(false)} />
                   </div>
                 )}
               </div>
@@ -471,10 +485,17 @@ export default function Navbar() {
 
               <div className="h-px bg-white/10 my-4" />
               <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">Account</p>
-              <button onClick={() => setToast('[SISTEMA]: Account authentication is coming soon.')}
-                className="w-full flex items-center justify-center gap-2 py-3 bg-neon-blue/10 border border-neon-blue/30 text-neon-blue rounded-xl font-header font-bold hover:bg-neon-blue/20 hover:text-white text-xs shadow-[0_4px_15px_rgba(61,106,223,0.1)] transition-all">
-                <UserIcon /> Get Started
-              </button>
+              {user ? (
+                <button onClick={async () => { const { supabase } = await import('@/config/supabase'); await supabase.auth.signOut(); }}
+                  className="w-full flex items-center justify-center gap-2 py-3 bg-neon-pink/10 border border-neon-pink/30 text-neon-pink rounded-xl font-header font-bold hover:bg-neon-pink/20 hover:text-white text-xs shadow-[0_4px_15px_rgba(255,51,204,0.1)] transition-all">
+                  <SignOutIcon /> Cerrar sesión ({user.display_name || user.username})
+                </button>
+              ) : (
+                <Link href="/login"
+                  className="w-full flex items-center justify-center gap-2 py-3 bg-neon-blue/10 border border-neon-blue/30 text-neon-blue rounded-xl font-header font-bold hover:bg-neon-blue/20 hover:text-white text-xs shadow-[0_4px_15px_rgba(61,106,223,0.1)] transition-all">
+                  <UserIcon /> Get Started
+                </Link>
+              )}
 
               <div className="h-px bg-white/10 my-4" />
               <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">Social</p>
