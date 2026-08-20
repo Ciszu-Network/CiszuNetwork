@@ -20,11 +20,20 @@
 
 **Ciszubot Website:**
 
-- [ ] Nada.
+- [ ] El boton de auth va despues del boton de hamburguesa, actualmente el de auth esta antes lo cual es un error.
 
 **Ciszuko Antony Website:**
 
-- [ ] Nada.
+- [ ] Actualmente no estan cargando los assets de la pagina, dan errores, revisa bien.
+
+Failed to load resource: the server responded with a status of 400 ()
+obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn/projects/ciszukoantony/content/assets/youtube_canal.webp:1 Failed to load resource: the server responded with a status of 400 ()
+4(index):1 Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.
+chrome-extension://g…ution/content.js:18 Uncaught (in promise) TypeError: Cannot read properties of undefined (reading 'useCache')
+at me (chrome-extension://gighmmpiobklfepjocnamgkkbiglidom/vendor/@eyeo/webext-ad-filtering-solution/content.js:18:81254)
+chrome-extension://g…dom/polyfill.js:496 Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.
+at wrappedSendMessageCallback (chrome-extension://gighmmpiobklfepjocnamgkkbiglidom/polyfill.js:496:18)
+8(index):1 Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.
 
 **MuzicMania Website:**
 

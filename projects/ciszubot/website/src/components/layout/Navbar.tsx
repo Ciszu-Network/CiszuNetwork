@@ -402,7 +402,19 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
               </button>
             </div>
 
-            {/* Cuenta / Login — botón AUTH (sesión, invitado y preferencias) */}
+            <button
+              onClick={() => { setIsMenuOpen(!isMenuOpen); setSearchOpen(false); setAuthOpen(false); setInviteOpen(false); if (!isMenuOpen) setSidebarView('main'); }}
+              className={`p-2 rounded-full border transition-all duration-300 cursor-pointer shadow-sm active:scale-95 ${
+                isMenuOpen
+                  ? 'bg-neon-blue border-neon-blue text-black'
+                  : 'bg-card border-border text-ink hover:border-neon-blue'
+              }`}
+              aria-label="Menu"
+            >
+              {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5 stroke-[2.5]" />}
+            </button>
+
+            {/* Cuenta / Login — botón AUTH (sesión, invitado y preferencias) — va DESPUÉS del botón de menú */}
             <div className="relative" ref={authRef}>
               {activeUser ? (
                 <button
@@ -521,18 +533,6 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                 </div>
               )}
             </div>
-
-            <button
-              onClick={() => { setIsMenuOpen(!isMenuOpen); setSearchOpen(false); setAuthOpen(false); setInviteOpen(false); if (!isMenuOpen) setSidebarView('main'); }}
-              className={`p-2 rounded-full border transition-all duration-300 cursor-pointer shadow-sm active:scale-95 ${
-                isMenuOpen
-                  ? 'bg-neon-blue border-neon-blue text-black'
-                  : 'bg-card border-border text-ink hover:border-neon-blue'
-              }`}
-              aria-label="Menu"
-            >
-              {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5 stroke-[2.5]" />}
-            </button>
           </div>
         </div>
       </div>
