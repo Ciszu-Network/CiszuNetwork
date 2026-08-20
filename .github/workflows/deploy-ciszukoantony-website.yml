@@ -1,4 +1,4 @@
-name: Deploy Ciszuko Antony Website
+﻿name: Deploy Ciszuko Antony Website
 
 on:
     push:
@@ -34,12 +34,13 @@ jobs:
               run: vercel link --yes --project ciszukoantonypage --token=${{ secrets.VERCEL_TOKEN }}
               working-directory: .
             - name: Deploy to Vercel
+              shell: powershell
               env:
                   IS_PREVIEW: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'preview' }}
               run: |
-                  if [ "$IS_PREVIEW" = "true" ]; then
+                  if ($env:IS_PREVIEW -eq 'true') {
                     vercel --yes --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}
-                  else
+                  } else {
                     vercel --prod --yes --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}
-                  fi
+                  }
               working-directory: .
