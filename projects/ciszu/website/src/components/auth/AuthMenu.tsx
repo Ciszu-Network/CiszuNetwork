@@ -7,6 +7,7 @@ import { useAppStore } from '@/store';
 import { supabase } from '@/config/supabase';
 import { getGuestName } from '@/lib/guest';
 import PreferencesPanel from '@/components/auth/PreferencesPanel';
+import { PreferencesModal } from '@ciszu/ui';
 
 const GuestIcon = () => (
   <svg viewBox="0 0 24 24" className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -41,13 +42,22 @@ const RegisterIcon = () => (
   </svg>
 );
 
+const SettingsIcon = () => (
+  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="3" />
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+  </svg>
+);
+
 /**
- * AuthMenu — Botón AUTH del navbar + dropdown de sesión e invitado
- * y el panel de preferencias locales (funcional con o sin sesión).
+ * AuthMenu — Botón AUTH del navbar + dropdown de sesión e invitado.
+ * Las preferencias locales viven en un MODAL centrado separado (PreferencesModal),
+ * abierto desde el botón "Preferencias locales" (LOGIN_REGISTER_PROTOCOLS §4).
  */
 export default function AuthMenu() {
   const { user, isHydrated, setUser, showToast } = useAppStore();
   const [open, setOpen] = useState(false);
+  const [prefsOpen, setPrefsOpen] = useState(false);
   const [guestName, setGuestName] = useState<string | null>(null);
   const [loggingOut, setLoggingOut] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -116,7 +126,7 @@ export default function AuthMenu() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full pt-3 w-[320px] max-w-[85vw] z-50 animate-fade-in-down origin-top">
+        <div className="absolute right-0 top-full pt-3 w-[300px] max-w-[85vw] z-50 animate-fade-in-down origin-top">
           <div className="bg-[#070710]/98 backdrop-blur-2xl border border-white/10 rounded-2xl p-4 shadow-2xl overflow-hidden">
             {/* Cabecera del dropdown */}
             <div className="flex items-center gap-3 pb-3 mb-1 border-b border-white/10">
@@ -174,13 +184,23 @@ export default function AuthMenu() {
               </div>
             )}
 
-            {/* Panel de preferencias */}
+            {/* Botón de preferencias locales -> abre el modal centrado */}
             <div className="pt-1">
-              <PreferencesPanel />
+              <button
+                onClick={() => { setPrefsOpen(true); }}
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-xs font-bold hover:border-brand-light/50 hover:text-brand-light transition-all cursor-pointer active:scale-95"
+              >
+                <SettingsIcon /> Preferencias locales
+              </button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Modal centrado de preferencias (Radix), con X de cierre */}
+      <PreferencesModal open={prefsOpen} onOpenChange={setPrefsOpen} title="Preferencias locales">
+        <PreferencesPanel />
+      </PreferencesModal>
     </div>
   );
 }

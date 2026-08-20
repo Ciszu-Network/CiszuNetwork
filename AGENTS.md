@@ -62,6 +62,7 @@ Antes de codificar, lee el doc del área que tocas. Mapa por tipo de tarea:
 | -------------------- | ------------------------------------------------------------------------------------------ |
 | Frontend (webs)      | `FRONTEND_SYSTEM` · `STYLES_SYSTEM` · `FRAMEWORKS_SYSTEM` · `ICON_SYSTEM` · `COLOR_SYSTEM` |
 | Backend/API          | `BACKEND_SYSTEM` · `FULL_STACK_SYSTEM` · `ERRORS_SYSTEM`                                   |
+| Auth / login/registro| `LOGIN_REGISTER_PROTOCOLS` (UI/branding/reglas CISZU ID) · `AUTH_SYSTEM` (estrategia)      |
 | Paquetes compartidos | `PACKAGES_SYSTEM` · `FRONTEND_SYSTEM` · `FULL_STACK_SYSTEM`                                |
 | Base de datos        | `DB_SYSTEM` · `SECURITY_PROTOCOLS` (RLS)                                                   |
 | Seguridad            | `SECURITY_PROTOCOLS` · `DEVSECOPS_SYSTEM` · `VAULT_SYSTEM`                                 |
@@ -98,6 +99,7 @@ Antes de codificar, lee el doc del área que tocas. Mapa por tipo de tarea:
   `SECURITY_PROTOCOLS` · `CONTACTS_PROTOCOLS` · `IT_GLOSSARY_PROTOCOLS` · `MATERIAL_ICONS_PROTOCOLS`
 - **Protocolos (testing/operación)**: `LOCAL_TESTING_PROTOCOLS` (pruebas locales obligatorias) ·
   `LSP_PROTOCOLS` (servidores LSP del agente) · `MCP_PROTOCOLS` (servidores MCP del ecosistema)
+- **Protocolos de identidad**: `LOGIN_REGISTER_PROTOCOLS` (UI/branding/reglas CISZU ID)
 - **Estado (vivo)**: `PROJECT_STATE.md` · `PROJECT_HISTORY.md` · `TODO.md`
 - **Estándares**: `CODE_PRINCIPLES_PROTOCOLS` (DRY/KISS/YAGNI/SOLID) · `DEVSECOPS_SYSTEM`
   (SAST/DAST, shift-left) · `DOCUMENTATION_SYSTEM` (reglas de docs)

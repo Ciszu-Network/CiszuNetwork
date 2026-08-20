@@ -201,6 +201,8 @@ Hasta entonces: **decisión cerrada — Supabase-only.**
 
 ## Referencias
 
+- **`LOGIN_REGISTER_PROTOCOLS.md`** — protocolo oficial de UI/branding/login/registro CISZU
+  ID (esta estrategia es la fuente de identidad; aquel es la fuente de experiencia).
 - Auditoría del auth de MuzicMania: `projects/muzicmania/website/src/` (login/register,
   `AuthProvider.tsx`, `config/supabase.ts`, `middleware.ts`) + migraciones en
   `services/supabase/migrations/`.

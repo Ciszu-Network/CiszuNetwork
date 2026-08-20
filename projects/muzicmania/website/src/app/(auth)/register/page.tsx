@@ -13,8 +13,9 @@ import { useAppStore } from '@/store/useAppStore';
 import { supabase } from '@/config/supabase';
 import { useRouter } from 'next/navigation';
 import AuthFeedback from '@/components/molecules/AuthFeedback';
-import OAuthProviders from '@/components/molecules/OAuthProviders';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { resolveAssetPath } from '@ciszunetwork/cdn';
+import { AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders } from '@ciszu/ui';
 
 // --- Icons Library ---
 const I = {
@@ -296,18 +297,15 @@ export default function RegisterPage() {
           variants={sectionVariants} 
           className="relative space-y-8 pt-12"
         >
-          <div className="flex flex-col items-center gap-1 text-center">
-             <div className="flex items-center justify-center gap-6 group">
-                <div className="w-12 h-12 text-neon-purple flex items-center justify-center drop-shadow-[0_0_15px_rgba(128,0,255,0.4)]">
-                   {I.register}
-                </div>
-                <h1 className="text-4xl md:text-8xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-neon-pink to-neon-purple bg-clip-text text-transparent [-webkit-text-stroke:1px_black]">
-                  REGISTRO
-                </h1>
-             </div>
-             <p className="text-neon-pink font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-               Crea tu identidad oficial en MuzicMania
-             </p>
+          <div className="mb-10">
+            <CiszuIdBrand
+              ciszuIsotype={<img src={resolveAssetPath('projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg')} alt="Ciszu ID" width={36} height={36} />}
+              appIsotype={<img src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} alt="MuzicMania" width={36} height={36} />}
+              ciszuHref="https://ciszunetwork.vercel.app"
+              appHref="/"
+              title="CISZU ID"
+              subtitle="Crea tu cuenta en MuzicMania con CISZU ID"
+            />
           </div>
         </motion.header>
 
@@ -419,16 +417,14 @@ export default function RegisterPage() {
               </div>
             </form>
 
-            <OAuthProviders />
-
-            <div className="pt-6 border-t border-white/5 text-center">
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em]">
-                ¿Ya eres un veterano?{' '}
-                <Link href="/login" className="text-neon-purple hover:text-white transition-colors underline decoration-neon-purple/20 underline-offset-8">
-                  INICIAR CONEXIÓN
-                </Link>
-              </p>
-            </div>
+            <SharedOAuthProviders
+              onSelect={(p) => showToast(`OAuth de ${p} disponible en futura versión beta`)}
+            />
+            <AuthSecondaryActions
+              mode="register"
+              loginHref="/login"
+              supportHref="/support"
+            />
           </div>
         </motion.section>
 

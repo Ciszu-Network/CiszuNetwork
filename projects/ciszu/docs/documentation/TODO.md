@@ -5,12 +5,58 @@
 ### Cambios de Generales:
 
 - [ ] Finalizar el cambio de los VISUAL_BUILDERS e conciderar las demas herramientras como Onlook u otras pendientes o posibles. Instalar, implementar, documentar y commitear.
+- [ ] Agregar en todas las websites un discleimer que se pueda quitar con una X, posicionado de extremo a extremo en la header de cada website, sobre que esta website/app seta siendo construida en version BETA.
+- [ ] Terminar por lo menos el tema oscuro y claro en TODAS LAS WEBSITES.
+- [ ] Terminar por lo menos 2 ramas de idiomas (español e ingles (latam, españa, usa, uk)) en TODAS LAS WEBSITES, las que no estan disponiblse seguir dando error por version beta.
+- [ ] Investigar herramientas de SEO e crear documentacion de SEO_PLAN.md e implementarla.
 
 ### Cambios a todas las Websites:
 
-- [ ] Sincronizar AUTH. De manera que implementemos la primera fase del auth, segun su documentacion cada webapp debe tener un AUTH oficial, finalmente el unico que tendra un oAUTH aparte sera ciszubot con discord, los auth no puedes ser tan diferentes. Todos deben decir iniciarse sesion o registarse. Muy parecido a MuzicMania. Pero al entrar a registrase o logearse, en su pantalla. Debe salir la seccion de logear/registrase con CISZU ID (normal, default o por defecto con correo contraseña etc, el auth que tiene el mejor diseño y es el de muzicmania, debemos crear la base de datos de cada pagina dentro de ciszunetwork con respecto al auth no centralizada, pero en un futuro si), y opciones adicionales como google, microsoft entre otros. PERO estas opciones por ahora funcionaran como placeholder, al darle click saldra un error de beta. Pero el unico que funcionara sera el de discord de ciszubot. De hecho, es obligatorio usar el registro y login de discord en ciszubot indiferentemente si tiene CISZU ID)
-- [ ] IMPLEMENTAR SISTEMA DE INVITADOS, actualmente implemente en muzicmania un sistema de invitados, un ID unico local con nomenclatura especial. Para crear un nametag de "invitado", el problema es que actualmente solo esta en /play de muzicmania. Ni si quiera esta afuera de play en muzicmania. ¿Que debmemos hacer? simple, en una web misma, el invitado sera el auth sin registro o login, al entrar al boton de auth saldra un icono de invitado generico + el nombre de invitado. Este invitado usara preferencias locales pero nunca tendra presencia en base de datos, seguira siendo un usuario no logeado o no registrado aun. Esto con el fin de incentivar a los usuarios a registrarse y personalizar su foto y nombre. Existe exepciones como en muzicmania que los invitados pueden jugar y guardar sus leaderboard. Pero no hay que darles prioridad. Este sistema solo esta en muzicmania, pero debemos llevarlo a ciszubot, ciszunetwork y ciszukoantony de manera mas simplificada. No importa si el ID generado del invitado cambia al actualizar o cambia por website, es solo frotend y no importa. Lo importante es mantener un diseño coherente, replicar si hace falta y guiarnos por muzicmania que lo tiene implementado parcialmente (solo en play), ojo, en muzicmania si debe ser siempre el mismo ID, tanto el del header como en la seccion dentro de play, para no crear confusion.
-- [ ] IMPLEMENTAR PREFERENCIAS LOCALES, a diferencias de configuraciones o opciones de perfil. Las preferencias simpre estaran disponibles para todos los usuarios. De esta manera, para acceder siempre sera dando el boton de AUTH (Logeado o no, debe salir) estas preferencias se guardan siempre localmente, pero si logeado si debe guardarlo. Las opciones de preferencias seran el idioma, el tema, una pequeña seccion de ayuda, hacer zoom o disminuir el zoom, y otras opciones de interaccion directa con el navageador, como silenciar la pestaña entre otras. Y que los usuarios no se quejen por que esten obligados a registrarse, estas opciones siempre se guardan localmente, es basicamente un menu rapido de opciones y preferencias para todos invitados o usuarios registrados. Se debe usar los mismos botones de theme y lenguaje que en los navbars.
+- [ ] TODAS las cuentas deben ser oficialmente "CISZU ID", y debajo un subtitlo como, crea tu cuenta en (proyecto) con CISZU ID.
+
+    Por otro lado los iconos de google y microsoft cambian entre apps, usa el de ciszunetwork website. Son lso correctos por sus colores.
+
+    El sistemas de errores de ciszuko antony website es bastante diferente a los de los demas (centrado), para mejorar el estilo guiate de los demas.
+
+    Google y microsoft no son opciones adicionales, cuando se registre o logee debe ser una opcion como "CONTINUAR CON:"
+
+    Finalmente las preferencias locales estan bien pero no es coo o pensaba. Quiero que esten dentro de un modal aparte, en el boton de auth, quiero que al darle click en un boton sobre preferencias locales, salga el menu en el medio.
+
+    Parecido al menu de configuracion de muzicmania, dentro estara silenciar pestaña, zoom, idioma, lenguaje y acceso rapido de ayuda. Ten en cuenta que actualmente existen 2 errores de consistencia, los botones de tema y de lenguaje deben ser iguales a los del menu hamburguesa/footer. Actualmente la mayoria usa un ssitema de lenguajes diferente e erroneo. Debes adaptar el sistema de lenguaje que no solo salga como en el menu de hamburguesa slidebar, si no tambien independientemente, de hecho en muzicmania ya existe dentro de play, un menu de lenguajes parecido a lo que necesito.
+
+    Digamos que el sistema de zoom debe ser independientemente de cualquier otra pagina (por pagina) y ademas el de silenciar pagina tambien, las preferencias se guardan localmente.
+
+    Como diseño el de idioma y tema obviamenta ya sabes como lo quiero. Pero para los otros, Sobre el zoom prefiero mucho el estilo de zoom de ciszubot, y para el silenciar pestaña cualquiera menos ciszubot.
+
+    Sobre la ayuda directa depende de cada pagina, aunque en un futuro tendremos todas las paginas con muchas paginas parecidas, pro ahora adaptalo por pagina.
+
+    Y bueno, como siempre a la hora de auth siempre debe haber discleimer o opciones secundarios de acceso rapido preguntandole al usuario, como ¿has olvido tu contraseña? RECUPERALA , ¿sin registro? REGISTRATE, ¿acceder ahora? ACCEDER, ¿Necesitas ayuda? SOPORTE. Y asi, estos deben estar en TODOS los auth en todos los websites, exceptuando el de REGISTRATE o ACCEDER, depende de que auth estas haciendo.
+
+    Finalmente, los campos de texto de auth debe tener un placeholder interno de ayuda visual, mostrar cuales son los requeridos, dar error si uno campo de dato no se relleno y es requerido, indicar cuando es opcional, y si da error o antes de probar los datos siempre debe haber un boton por cada titulo de campo de texto o un icono para que despliegue cuales son los requerimientos.
+
+    Para la contraseña, siempre al registrarse repetir contraseña, ademas de una barra de seguridad, ciszu ID requiere un nivel alto de seguridad, almenos 1 mayuscula, 1 minuscula, 1 numero, 1 especial. Por cada acertado la barra de seguridad sube, el minimo es seguridad normal, cambia de color por nivel de seguridad. Recuerda que el repetir contraseña debe ser igual a la contraseña. Ese es otro tipo de error.
+
+    Tanto en login como em registro, el icono que debes usar siempre es el de CISZU como isotipo, luego una "X" en svg para mostrar que es una colaboracion o coneccion, y luego el isotipo de la website. De manera que se entienda que CISZU ID es de ciszunetwork y se coencta entre varias apps.
+
+    Ademas al darle click en el isotipo de ciszunetwork lo llevara a la pagina, asi como opciones secundarios, puedes recomendarle al usuario crearse una cuenta en ciszunetwork.
+
+    Finalmente recuerda que al registrarse o logearse debe ahber cumplido la seguridad de cloudflare antes, y en ese instante un recaptcha, actualmente muzicmania tiene recaptcha. Siempre luego debe haber una pantalla para verificar el correo en momento de reggistrarse (pero es opcional, luego en sus configuraciones de cuenta puede terminar la verificacion) pero si el usuario tiene 2FA siempre debe haber una pantalla pidiendole una clave que empieze po C- y seguido de 6 digitos y en la mitad un espacio (C-123 434) clave oficial de ciszunetwork, temporal, expirable en 3 horas e indicar, unico por website, indicar si ya expiro y posibilidad de reenviar otro codigo con limites, al tercer limite se suspende temporalmente y localmente por que no logro iniciar sesion.
+
+    Basicamente un auth pulido y seguro de toda la vida.
+
+    Cuando un usuario se registre luego se tiene que logear denuevo, si un usuario pierde su contra debe darle a olvide la contraseña y debe enviar una peticion, SOLAMENTE ESO, ya en su email se le enviare un link temporal de un oslo uso para recuperar su contra, con una pantalla exclusiva donde coloca su contraseña nueva y lo repite. No puede ser la antigua, luego requiere logearse.
+
+    TODO esto debes documentarlo en AUTH_SYSTEM o LOGIN_REGISTER_PROTOCOLS. Oficiales de CISZU.
+
+    Tambien se debe detecar el intento de inicio o registro de sesion, su IP, para sancionarlo luego si es spam o intento de hackeo, logs. Permitir que los usuarios copien y pegen exepto en la contraseña, pero si puede autocompletar con seguradores de contraseñas. Las sesiones de cuentas se guardan con cookie pero intenta que no sea tan dificil de hacker las cuentas.
+
+    Tambien debes de por si detectar las ips o el pais de quien entra para configurarla su idioma, si su idioma no esta disponible automaticamente llevarla al ingles.
+
+    Planificar, analiza investiga y documenta primero. Luego resuleve y implementa, ten en cuneta que muchas de las cosas a estan, en especial muzicmania que esta mas avanzada. Pero muchas cosas no estan hechas.
+
+    Obviamnete el menu de opciones debe tener su X, para quitar.
+
+    Si se elimina los datos locales se pierden las preferencias locales y el Invitado generado.
 
 ### Cambios por Website
 
@@ -20,20 +66,11 @@
 
 **Ciszubot Website:**
 
-- [ ] El boton de auth va despues del boton de hamburguesa, actualmente el de auth esta antes lo cual es un error.
+- [ ] Nada.
 
 **Ciszuko Antony Website:**
 
-- [ ] Actualmente no estan cargando los assets de la pagina, dan errores, revisa bien.
-
-Failed to load resource: the server responded with a status of 400 ()
-obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn/projects/ciszukoantony/content/assets/youtube_canal.webp:1 Failed to load resource: the server responded with a status of 400 ()
-4(index):1 Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.
-chrome-extension://g…ution/content.js:18 Uncaught (in promise) TypeError: Cannot read properties of undefined (reading 'useCache')
-at me (chrome-extension://gighmmpiobklfepjocnamgkkbiglidom/vendor/@eyeo/webext-ad-filtering-solution/content.js:18:81254)
-chrome-extension://g…dom/polyfill.js:496 Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.
-at wrappedSendMessageCallback (chrome-extension://gighmmpiobklfepjocnamgkkbiglidom/polyfill.js:496:18)
-8(index):1 Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.
+- [ ] Nada.
 
 **MuzicMania Website:**
 
