@@ -13,6 +13,9 @@ import { supabase } from '@/config/supabase';
 // ── All icons and configs migrated to src/config/navigation.tsx ───────────────────
 import { I, MAIN_NAV_LINKS as NAV_LINKS, COMMUNITY_LINKS, GENERAL_INFO_LINKS, LEGAL_LINKS, ALL_PAGES, LANGS } from '@/config/navigation';
 import { isTauri } from '@/lib/isTauri';
+import { getGuestName } from '@/lib/guest';
+import { loadPreferences, applyZoom, setMuteTab, updatePreferences } from '@/lib/preferences';
+import PreferencesPanel from '@/components/molecules/PreferencesPanel';
 
 const INFO_LINKS = [ ...COMMUNITY_LINKS, ...GENERAL_INFO_LINKS, ...LEGAL_LINKS ].filter((v, i, a) => a.findIndex(t => (t.href === v.href)) === i);
 
@@ -26,6 +29,7 @@ export const NavbarContent = () => {
   const [scrolled,      setScrolled]      = useState(false);
   const [query,         setQuery]         = useState('');
   const [isDesktopApp, setIsDesktopApp] = useState(false);
+  const [guestName, setGuestName] = useState<string>('');
 
   const zoom = useZoomStatus();
   const isZoomWarning = !zoom.dismissed && zoom.status !== 'normal';
@@ -55,6 +59,20 @@ export const NavbarContent = () => {
     return () => {
       window.removeEventListener('scroll', onScroll);
     };
+  }, []);
+
+  // Nombre de invitado unificado (misma clave que /play) para el botón AUTH
+  useEffect(() => {
+    setGuestName(getGuestName());
+  }, []);
+
+  // Aplicar preferencias locales guardadas (zoom, idioma, tema, pestaña silenciada)
+  useEffect(() => {
+    const prefs = loadPreferences();
+    applyZoom(prefs.zoom);
+    setMuteTab(prefs.muteTab);
+    setLang(prefs.lang);
+    setDarkMode(prefs.theme === 'dark');
   }, []);
 
   const floating = scrolled && !isSearchOpen && !isMenuOpen && !isAccederOpen && !isZoomWarning;
@@ -323,53 +341,83 @@ export const NavbarContent = () => {
                 ) : (
                   <button
                     onClick={toggleAcceder}
-                    className={`p-2 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_15px_rgba(255,51,204,0.4)] ${
+                    className={`flex items-center gap-2 pl-1 pr-3 py-1 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_15px_rgba(255,51,204,0.4)] ${
                       isAccederOpen
-                        ? 'bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink border-transparent text-white'
-                        : 'bg-gradient-to-r from-neon-blue/20 via-[#6600ff]/20 to-neon-pink/20 border-white/20 text-white hover:border-neon-pink hover:opacity-100 opacity-90'
+                        ? 'bg-gradient-to-r from-neon-blue/40 via-[#6600ff]/40 to-neon-pink/40 border-neon-pink text-white'
+                        : 'bg-gradient-to-r from-neon-blue/10 via-[#6600ff]/10 to-neon-pink/10 border-white/20 text-white hover:border-neon-pink'
                     }`}
-                    title="Login"
+                    title={guestName || 'Invitado'}
                   >
-                    <svg viewBox="0 0 24 24" className="w-[20px] h-[20px]" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                    <span className="relative w-8 h-8 rounded-full bg-gradient-to-br from-neon-blue/30 via-[#6600ff]/30 to-neon-pink/30 border border-white/20 flex items-center justify-center overflow-hidden">
+                      <svg viewBox="0 0 24 24" className="w-4 h-4 text-neon-cyan" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="8" r="4" />
+                        <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+                      </svg>
+                    </span>
+                    <span className="hidden sm:block max-w-[110px] truncate text-xs font-header font-bold text-white/85">
+                      {guestName || 'Invitado'}
+                    </span>
                   </button>
                 )}
 
                 {isAccederOpen && (
-                  <div className="absolute right-0 top-full pt-3 w-72 z-50 animate-fade-in-down origin-top">
-                    <div className="bg-[#070710]/98 backdrop-blur-2xl border border-white/10 rounded-xl overflow-hidden shadow-2xl">
+                  <div className="absolute right-0 top-full pt-3 w-80 z-50 animate-fade-in-down origin-top">
+                    <div className="bg-[#070710]/98 backdrop-blur-2xl border border-white/10 rounded-xl overflow-hidden shadow-2xl max-h-[80vh] overflow-y-auto custom-scrollbar">
                       {user ? (
-                        <div className="flex flex-col">
-                          {/* User Header Info */}
-                          <div className="p-5 border-b border-white/5 bg-white/5">
+                        <div className="p-4 border-b border-white/5 bg-white/5 flex items-center gap-3">
+                          <div className="relative w-10 h-10 rounded-full border-2 border-neon-cyan/50 overflow-hidden shrink-0">
+                            {user.avatar_url ? (
+                              <Image src={user.avatar_url} alt={user.display_name} fill className="object-cover" />
+                            ) : (
+                              <div className="w-full h-full bg-gradient-to-br from-neon-blue to-neon-purple flex items-center justify-center text-white font-black text-xs">
+                                {user.display_name.charAt(0).toUpperCase()}
+                              </div>
+                            )}
+                          </div>
+                          <div className="min-w-0">
                             <p className="text-white font-black text-xs uppercase tracking-widest truncate">{user.display_name}</p>
                             <p className="text-gray-500 text-[10px] font-bold truncate">@{user.username}</p>
                           </div>
-
-                          {/* Menu Items */}
-                          <div className="p-2 space-y-1">
-                            <Link href={`/profile/@${user.username}`} className="flex items-center gap-3 px-4 py-2 text-white/70 hover:text-neon-cyan hover:bg-white/5 rounded-lg transition-all font-header font-bold text-xs">
-                              {I.user} Mi Perfil
-                            </Link>
-                            <Link href="/profile/settings" className="flex items-center gap-3 px-4 py-2 text-white/70 hover:text-neon-purple hover:bg-white/5 rounded-lg transition-all font-header font-bold text-xs">
-                              {I.policy} Configuración
-                            </Link>
-                            <button
-                              onClick={() => {
-                                // Deslogueo optimista para evitar bloqueos si Supabase no responde
-                                setUser(null);
-                                router.push('/');
-                                showToast('[SISTEMA]: Sesión cerrada correctamente.');
-                                // Ejecutar signOut en background
-                                supabase.auth.signOut().catch(() => {});
-                              }}
-                              className="w-full flex items-center gap-3 px-4 py-2 text-red-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all font-header font-bold text-xs"
-                            >
-                              {I.login} Cerrar Sesión
-                            </button>
-                          </div>
                         </div>
                       ) : (
-                        <div className="grid grid-cols-2">
+                        <div className="p-4 border-b border-white/5 bg-white/5 flex items-center gap-3">
+                          <div className="relative w-10 h-10 rounded-full border-2 border-neon-pink/50 bg-gradient-to-br from-neon-blue/40 via-[#6600ff]/40 to-neon-pink/40 flex items-center justify-center shrink-0 overflow-hidden">
+                            <svg viewBox="0 0 24 24" className="w-5 h-5 text-neon-cyan" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                              <circle cx="12" cy="8" r="4" />
+                              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+                            </svg>
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-white font-black text-xs uppercase tracking-widest truncate">{guestName || 'Invitado'}</p>
+                            <p className="text-gray-500 text-[10px] font-bold truncate">@{guestName.replace(/^Invitado/i, 'invitado').toLowerCase()}</p>
+                          </div>
+                        </div>
+                      )}
+
+                      {user ? (
+                        <div className="p-2 border-b border-white/5 space-y-1">
+                          <Link href={`/profile/@${user.username}`} className="flex items-center gap-3 px-4 py-2 text-white/70 hover:text-neon-cyan hover:bg-white/5 rounded-lg transition-all font-header font-bold text-xs">
+                            {I.user} Mi Perfil
+                          </Link>
+                          <Link href="/profile/settings" className="flex items-center gap-3 px-4 py-2 text-white/70 hover:text-neon-purple hover:bg-white/5 rounded-lg transition-all font-header font-bold text-xs">
+                            {I.policy} Configuración
+                          </Link>
+                          <button
+                            onClick={() => {
+                              // Deslogueo optimista para evitar bloqueos si Supabase no responde
+                              setUser(null);
+                              router.push('/');
+                              showToast('[SISTEMA]: Sesión cerrada correctamente.');
+                              // Ejecutar signOut en background
+                              supabase.auth.signOut().catch(() => {});
+                            }}
+                            className="w-full flex items-center gap-3 px-4 py-2 text-red-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all font-header font-bold text-xs"
+                          >
+                            {I.login} Cerrar Sesión
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-2 border-b border-white/5">
                           <Link href="/login"
                             className="flex flex-col items-center gap-2 p-5 text-white font-header font-bold text-sm bg-gradient-to-br from-neon-green/30 to-neon-green/5 border-r border-white/10 hover:from-neon-green/50 transition-all cursor-pointer group shadow-[inset_0_0_20px_rgba(0,255,136,0.1)] hover:shadow-[inset_0_0_30px_rgba(0,255,136,0.3)]"
                           >
@@ -388,6 +436,11 @@ export const NavbarContent = () => {
                           </Link>
                         </div>
                       )}
+
+                      {/* Panel de Preferencias (comparte estado con el navbar: tema/idioma) */}
+                      <div className="p-3 border-t border-white/10">
+                        <PreferencesPanel />
+                      </div>
                     </div>
                   </div>
                 )}
@@ -458,7 +511,11 @@ export const NavbarContent = () => {
               
               {/* Dark/Light Toggle (Yellow/Black or White/Black) Filled Icons */}
               <button
-                onClick={() => showToast('Esta función no está desarrollada para la beta aún')}
+                onClick={() => {
+                  setDarkMode(!darkMode);
+                  updatePreferences({ theme: darkMode ? 'light' : 'dark' });
+                  showToast(!darkMode ? '[SISTEMA]: Modo claro activado.' : '[SISTEMA]: Modo oscuro activado.');
+                }}
                 className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group ${
                   darkMode ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
                 }`}
@@ -556,7 +613,12 @@ export const NavbarContent = () => {
                   {LANGS.map((l) => (
                     <button
                       key={l.code}
-                      onClick={() => showToast('Esta función no está desarrollada para la beta aún')}
+                      onClick={() => {
+                        setLang(l.code);
+                        updatePreferences({ lang: l.code });
+                        setSidebarView('main');
+                        showToast(`[SISTEMA]: Idioma cambiado a ${l.label}`);
+                      }}
                       className={`flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-header font-bold transition-all cursor-pointer group ${
                         lang === l.code ? 'bg-neon-blue/20 text-neon-cyan border border-neon-blue/30' : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'
                       }`}

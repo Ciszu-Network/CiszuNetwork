@@ -12,6 +12,7 @@ import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, FabStackProvider, ZoomWarning } from "@ciszu/ui";
 import { getSessionData } from "@/lib/auth";
 import QueryProvider from "@/components/layout/QueryProvider";
+import AuthProvider from "@/components/providers/AuthProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -74,11 +75,13 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       <body className="bg-bg text-ink min-h-screen font-sans flex flex-col">
         <QueryProvider>
            <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={LOGO_ISOTIPO_CIRCLE} title="CiszuBot" subtitle="CiszuBot Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszubot">
+            <AuthProvider>
             {!isEdit && <Navbar lang={lang} dict={dict} account={session} />}
             {!isEdit && <ZoomWarning />}
             <main className={isEdit ? "flex-grow" : "flex-grow pt-[60px]"}>{children}</main>
             {!isEdit && <Footer lang={lang} dict={dict} />}
             {!isEdit && <CookiesBanner lang={lang} dict={dict} />}
+            </AuthProvider>
           </CloudflareGuard>
           <PwaRegister />
           <FabStackProvider>

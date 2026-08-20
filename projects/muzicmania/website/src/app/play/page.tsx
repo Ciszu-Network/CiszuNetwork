@@ -28,6 +28,7 @@ import { LANGS } from '@/config/navigation';
 import { CHANGELOG_DATA } from '@/data/changelog';
 import { TAG_CONFIG as CHANGELOG_TAGS, I as CHANGELOG_I } from '@/config/changelogIcons';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { getGuestId, getGuestName } from '@/lib/guest';
 // --- Icons Library ---
 const I = {
   play: <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>,
@@ -443,17 +444,9 @@ function PlayPageContent() {
   }, []);
 
   useEffect(() => {
-    const savedGuest = localStorage.getItem('play_guest_name');
-    if (savedGuest) {
-      setGuestName(savedGuest);
-      setGuestId('@' + savedGuest.toLowerCase());
-    } else {
-      const randomId = Math.floor(100000 + Math.random() * 900000).toString();
-      const name = 'Invitado' + randomId;
-      localStorage.setItem('play_guest_name', name);
-      setGuestName(name);
-      setGuestId('@' + name.toLowerCase());
-    }
+    const name = getGuestName();
+    setGuestName(name);
+    setGuestId(getGuestId());
   }, []);
 
   // Sincronizar display settings con el engine y persistir

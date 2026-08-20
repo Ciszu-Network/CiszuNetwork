@@ -8,13 +8,13 @@ import { useZoomStatus } from '@ciszu/ui';
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store';
 import { CISZU_NETWORK } from '@/config/site';
+import AuthMenu from '@/components/auth/AuthMenu';
 import {
   Search,
   X,
   Menu,
   ChevronDown,
   ChevronRight,
-  Globe,
   User,
   Home,
   Shield,
@@ -35,13 +35,6 @@ import {
   MessageSquareWarning,
   Download,
 } from 'lucide-react';
-
-const IcoUser = () => (
-  <svg viewBox="0 0 24 24" className="w-[20px] h-[20px]" fill="none" stroke="currentColor" strokeWidth={2}>
-    <circle cx="12" cy="8" r="4" />
-    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-  </svg>
-);
 
 const IcoDiscord = () => (
   <svg viewBox="0 0 24 24" className="w-5 h-5 flex-shrink-0" fill="currentColor">
@@ -216,7 +209,6 @@ export const NavbarContent = () => {
   const { isMenuOpen, setIsMenuOpen, theme, setTheme, language, setLanguage, searchQuery, setSearchQuery, sidebarView, setSidebarView } = useAppStore();
   const [scrolled, setScrolled] = useState(false);
   const [isSearchOpen, setShowSearch] = useState(false);
-  const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [isNavigating, setIsNavigating] = useState(false);
@@ -225,7 +217,6 @@ export const NavbarContent = () => {
   const searchRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const searchToggleRef = useRef<HTMLButtonElement | null>(null);
-  const accountRef = useRef<HTMLDivElement | null>(null);
 
   const dropdownTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -246,7 +237,6 @@ export const NavbarContent = () => {
     setIsMenuOpen(false);
     setSidebarView('main');
     setShowSearch(false);
-    setIsAccountOpen(false);
     setOpenDropdown(null);
     setSearchQuery('');
     if (firstRender.current) {
@@ -295,17 +285,6 @@ export const NavbarContent = () => {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  // Close account dropdown on outside click
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (accountRef.current && !accountRef.current.contains(e.target as Node)) {
-        setIsAccountOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
-
   // Auto-hide the language-unavailable toast after ~4s
   useEffect(() => {
     if (!toast) return;
@@ -337,7 +316,6 @@ export const NavbarContent = () => {
     }
     if (!isSearchOpen) {
       setIsMenuOpen(false);
-      setIsAccountOpen(false);
       setOpenDropdown(null);
     }
     setShowSearch(v => !v);
@@ -350,24 +328,10 @@ export const NavbarContent = () => {
     }
     if (!isMenuOpen) {
       setShowSearch(false);
-      setIsAccountOpen(false);
       setOpenDropdown(null);
       setSidebarView('main');
     }
     setIsMenuOpen(!isMenuOpen);
-  };
-
-  const toggleAccount = (e?: React.MouseEvent) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    if (!isAccountOpen) {
-      setShowSearch(false);
-      setIsMenuOpen(false);
-      setOpenDropdown(null);
-    }
-    setIsAccountOpen(!isAccountOpen);
   };
 
   const hoverOpen = (s: (v: string | null) => void, t: React.MutableRefObject<ReturnType<typeof setTimeout> | null>, name: string) => {
@@ -527,36 +491,8 @@ export const NavbarContent = () => {
                 {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
 
-              {/* Account / User Button */}
-              <div className="relative" ref={accountRef}>
-                <button
-                  onClick={toggleAccount}
-                  className={`p-2 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 ${
-                    isAccountOpen
-                      ? 'bg-gradient-to-r from-brand-light via-brand-accent to-brand-light border-transparent text-white'
-                      : 'bg-white/5 border-white/20 text-white hover:border-brand-light hover:opacity-100 opacity-90'
-                  }`}
-                  title="Cuenta"
-                >
-                  <IcoUser />
-                </button>
-                {isAccountOpen && (
-                  <div className="absolute right-0 top-full pt-3 w-64 z-50 animate-fade-in-down origin-top">
-                    <div className="bg-[#070710]/98 backdrop-blur-2xl border border-white/10 rounded-xl p-4 shadow-2xl">
-                      <p className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-2">Sistema · Cuenta</p>
-                      <p className="text-xs text-white/85 font-header font-bold leading-relaxed">
-                        El centro de cuentas de {CISZU_NETWORK.name} está en desarrollo.
-                      </p>
-                      <button
-                        onClick={() => { setIsAccountOpen(false); }}
-                        className="mt-3 w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-brand-light/10 border border-brand-light/30 text-brand-light text-xs font-bold hover:bg-brand-light hover:text-black transition-all cursor-pointer active:scale-95"
-                      >
-                        <Globe className="w-3 h-3" /> Próximamente
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
+              {/* Account / User Button (CISZU ID + invitado + preferencias) */}
+              <AuthMenu />
             </div>
           </div>
         </div>

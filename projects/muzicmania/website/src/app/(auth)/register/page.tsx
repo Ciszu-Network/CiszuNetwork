@@ -13,6 +13,7 @@ import { useAppStore } from '@/store/useAppStore';
 import { supabase } from '@/config/supabase';
 import { useRouter } from 'next/navigation';
 import AuthFeedback from '@/components/molecules/AuthFeedback';
+import OAuthProviders from '@/components/molecules/OAuthProviders';
 import { usePageTitle } from '@/lib/usePageTitle';
 
 // --- Icons Library ---
@@ -417,6 +418,8 @@ export default function RegisterPage() {
                 </Button>
               </div>
             </form>
+
+            <OAuthProviders />
 
             <div className="pt-6 border-t border-white/5 text-center">
               <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em]">
