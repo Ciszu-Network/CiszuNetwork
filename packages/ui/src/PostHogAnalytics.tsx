@@ -70,6 +70,10 @@ function PostHogTracker({ app }: PostHogAnalyticsProps) {
   useEffect(() => {
     const key = getKey();
     if (!key) return;
+    // En entorno de test (happy-dom/vitest) no cargar scripts externos
+    if (process.env.NODE_ENV === 'test') {
+      return;
+    }
     const host = getHost();
     const scriptSrc = `${host}/static/array.js`;
     if (!document.querySelector(`script[src="${scriptSrc}"]`)) {
