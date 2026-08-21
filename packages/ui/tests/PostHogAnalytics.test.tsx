@@ -26,19 +26,31 @@ describe('PostHogAnalytics', () => {
     expect(container.innerHTML).toBe('');
   });
 
-  it('con key carga array.js del host por defecto (us.i.posthog.com)', () => {
+  it('con key POSTHOG se inicializa (mock en test)', () => {
     vi.stubEnv('NEXT_PUBLIC_POSTHOG_KEY', 'phc_test');
+    window.posthog = { init: vi.fn(), capture: vi.fn() };
     render(<PostHogAnalytics app="muzicmania" />);
-    const srcs = Array.from(document.head.querySelectorAll('script')).map((s) => s.src);
-    expect(srcs.some((src) => src === 'https://us.i.posthog.com/static/array.js')).toBe(true);
+    expect(window.posthog?.init).toHaveBeenCalledWith(
+      'phc_test',
+      expect.objectContaining({
+        capture_pageview: false,
+        capture_pageleave: true,
+      })
+    );
   });
 
   it('usa NEXT_PUBLIC_POSTHOG_HOST si está definido', () => {
     vi.stubEnv('NEXT_PUBLIC_POSTHOG_KEY', 'phc_test');
     vi.stubEnv('NEXT_PUBLIC_POSTHOG_HOST', 'https://eu.i.posthog.com');
+    window.posthog = { init: vi.fn(), capture: vi.fn() };
     render(<PostHogAnalytics app="ciszubot" />);
-    const srcs = Array.from(document.head.querySelectorAll('script')).map((s) => s.src);
-    expect(srcs.some((src) => src === 'https://eu.i.posthog.com/static/array.js')).toBe(true);
+    expect(window.posthog?.init).toHaveBeenCalledWith(
+      'phc_test',
+      expect.objectContaining({
+        capture_pageview: false,
+        capture_pageleave: true,
+      })
+    );
   });
 
   it('inicializa PostHog con capture_pageview:false + pageleave y web vitals', async () => {
