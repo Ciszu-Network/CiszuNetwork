@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@source "../../../../../packages/ui/src/**/*.{ts,tsx}";
+
 /* ============================================================
    MUZICMANIA 2.0 — GLOBAL STYLES
    Neon/Synthwave/Futurista — Tailwind v4 + Custom Layer
@@ -48,6 +50,73 @@
   --drop-shadow-neon-red:    drop-shadow(0 0 8px #ff0000) drop-shadow(0 0 20px rgba(255,0,0,.4));
 }
 
+/* ── Theme tokens (dark-first) ───────────────────────────── */
+:root {
+  --bg: #000000;
+  --bg-soft: #000617;
+  --bg-card: #0a0a0f;
+  --ink: #ffffff;
+  --ink-muted: rgba(255, 255, 255, 0.7);
+  --ink-faint: rgba(255, 255, 255, 0.4);
+  --border: rgba(255, 255, 255, 0.1);
+  --surface: #0e1420;
+  color-scheme: dark;
+}
+
+.light {
+  --bg: #f5f7fc;
+  --bg-soft: #ffffff;
+  --bg-card: #ffffff;
+  --ink: #0d1526;
+  --ink-muted: #3d4a63;
+  --ink-faint: #6b7890;
+  --border: rgba(30, 50, 96, 0.12);
+  --surface: #eef1f8;
+  color-scheme: light;
+}
+
+/* Modo claro: superficies base hardcodeadas → paleta clara. */
+.light .bg-black { background-color: #f5f7fc !important; }
+.light .bg-black\/20 { background-color: rgba(13, 21, 38, 0.06) !important; }
+.light .bg-black\/40 { background-color: rgba(13, 21, 38, 0.12) !important; }
+.light .bg-black\/50 { background-color: rgba(13, 21, 38, 0.16) !important; }
+.light .bg-black\/60 { background-color: rgba(250, 251, 255, 0.82) !important; }
+.light .bg-black\/70 { background-color: rgba(250, 251, 255, 0.88) !important; }
+.light .bg-black\/80 { background-color: rgba(250, 251, 255, 0.92) !important; }
+.light .bg-black\/90 { background-color: rgba(250, 251, 255, 0.96) !important; }
+.light .bg-black\/92 { background-color: rgba(250, 251, 255, 0.97) !important; }
+.light .bg-\[\#0a0a0f\] { background-color: #ffffff !important; }
+.light .bg-\[\#0a0a14\] { background-color: #f5f7fc !important; }
+.light .bg-\[\#0a0a14\]\/60 { background-color: rgba(250, 251, 255, 0.82) !important; }
+.light .bg-\[\#0a0a14\]\/80 { background-color: rgba(250, 251, 255, 0.92) !important; }
+.light .bg-\[\#0a0a14\]\/90 { background-color: rgba(250, 251, 255, 0.96) !important; }
+.light .bg-\[\#070710\] { background-color: #f4f6fb !important; }
+.light .bg-\[\#05050a\]\/95 { background-color: rgba(255, 255, 255, 0.96) !important; }
+.light .bg-\[\#000617\] { background-color: #f0f3fa !important; }
+.light .bg-white\/5 { background-color: rgba(30, 50, 96, 0.05) !important; }
+.light .bg-white\/10 { background-color: rgba(30, 50, 96, 0.08) !important; }
+.light .bg-white\/20 { background-color: rgba(30, 50, 96, 0.12) !important; }
+.light .bg-white\/30 { background-color: rgba(30, 50, 96, 0.16) !important; }
+.light .border-white\/5 { border-color: rgba(30, 50, 96, 0.06) !important; }
+.light .border-white\/10 { border-color: rgba(30, 50, 96, 0.12) !important; }
+.light .border-white\/15 { border-color: rgba(30, 50, 96, 0.14) !important; }
+.light .border-white\/20 { border-color: rgba(30, 50, 96, 0.16) !important; }
+.light .border-white\/30 { border-color: rgba(30, 50, 96, 0.2) !important; }
+.light .text-white { color: #0d1526 !important; }
+.light .text-white\/90 { color: rgba(13, 21, 38, 0.9) !important; }
+.light .text-white\/85 { color: rgba(13, 21, 38, 0.85) !important; }
+.light .text-white\/80 { color: rgba(13, 21, 38, 0.8) !important; }
+.light .text-white\/70 { color: rgba(13, 21, 38, 0.72) !important; }
+.light .text-white\/60 { color: rgba(13, 21, 38, 0.62) !important; }
+.light .text-white\/50 { color: rgba(13, 21, 38, 0.52) !important; }
+.light .text-white\/40 { color: rgba(13, 21, 38, 0.42) !important; }
+.light .text-white\/30 { color: rgba(13, 21, 38, 0.32) !important; }
+.light .text-gray-300 { color: #2e3a54 !important; }
+.light .text-gray-400 { color: #5a6780 !important; }
+.light .text-gray-500 { color: #7b879e !important; }
+.light .text-gray-600 { color: #8b97ad !important; }
+.light { --shadow-neon-blue: 0 0 10px rgba(0, 212, 255, 0.25); --shadow-neon-cyan: 0 0 10px rgba(0, 240, 255, 0.25); --shadow-neon-pink: 0 0 10px rgba(255, 51, 204, 0.18); --drop-shadow-neon-blue: none; --drop-shadow-neon-cyan: none; --drop-shadow-neon-pink: none; }
+
 /* ── Base Layer ─────────────────────────────────────────── */
 @layer base {
   *, *::before, *::after {
@@ -61,8 +130,8 @@
   }
 
   body {
-    background-color: #000000;
-    color: #fff;
+    background-color: var(--bg);
+    color: var(--ink);
     font-family: var(--font-sans);
     min-height: 100vh;
     /* Prevent text selection globally (restored from legacy) */

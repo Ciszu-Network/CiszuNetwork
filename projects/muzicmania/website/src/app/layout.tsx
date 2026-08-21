@@ -8,7 +8,7 @@ import "./globals.css";
 import AuthProvider from "@/components/providers/AuthProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, PostHogAnalytics, FabStackProvider, ZoomWarning } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, PostHogAnalytics, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack } from "@ciszu/ui";
 
 const exo2 = Exo_2({
   subsets: ["latin"],
@@ -54,22 +54,33 @@ export default async function RootLayout({
   const isEdit = store.get("x-is-edit") === "1";
 
   return (
-    <html lang="es" className={`${exo2.variable} ${rajdhani.variable}`}>
-      <body className="bg-black text-white min-h-screen font-sans flex flex-col">
+    <html lang="es" className={`${exo2.variable} ${rajdhani.variable}`} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=JSON.parse(localStorage.getItem('ciszu_preferences')||'{}');if(t&&t.theme==='light')document.documentElement.classList.add('light');}catch(e){}})();`,
+          }}
+        />
+      </head>
+      <body className="min-h-screen font-sans flex flex-col">
         {/* AuthProvider: hidrata el store global con la sesión de Supabase en cada carga */}
         <AuthProvider>
-          <CloudflareGuard>
-            {!isEdit && <Navbar />}
-            {!isEdit && <ZoomWarning />}
-            {!isEdit && <ConnectivityBanner />}
-            <main className={isEdit ? "flex-grow" : "flex-grow pt-20"}>
-              <NuqsAdapter>
-                {children}
-              </NuqsAdapter>
-            </main>
-            {!isEdit && <Footer />}
-            {!isEdit && <CookiesBanner />}
-          </CloudflareGuard>
+          <DisclaimerProvider>
+            <CloudflareGuard>
+              {!isEdit && <BetaDisclaimer storageKey="betadisclaimer_muzicmania_dismissed" />}
+              {!isEdit && <Navbar />}
+              {!isEdit && <ZoomWarning />}
+              {!isEdit && <DisclaimerStack headerHeight={60} />}
+              {!isEdit && <ConnectivityBanner />}
+              <main className={isEdit ? "flex-grow" : "flex-grow pt-20"}>
+                <NuqsAdapter>
+                  {children}
+                </NuqsAdapter>
+              </main>
+              {!isEdit && <Footer />}
+              {!isEdit && <CookiesBanner />}
+            </CloudflareGuard>
+          </DisclaimerProvider>
         </AuthProvider>
         <SpeedInsights />
         <PwaRegister />

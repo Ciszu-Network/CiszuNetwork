@@ -164,6 +164,10 @@ export default function CloudflareGuard({
   // Cargar el script de Turnstile (una sola vez por página)
   useEffect(() => {
     if (!enabled || !mounted || state === ('verified' as GuardState)) return;
+    // En entorno de test (happy-dom/vitest) no cargar scripts externos
+    if (process.env.NODE_ENV === 'test') {
+      return;
+    }
     if (document.querySelector(`script[src="${TURNSTILE_SCRIPT}"]`)) return;
     const s = document.createElement('script');
     s.src = TURNSTILE_SCRIPT;

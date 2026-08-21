@@ -130,6 +130,7 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 
 | Sistema | Estado | Referencia |
 |---|---|---|
+| Tema oscuro/claro | Operativo en las 4 webs | `STYLES_SYSTEM.md` / `COLOR_SYSTEM.md` |
 | Auth | Operativo | `AUTH_SYSTEM.md` |
 | Base de datos | Operativo | `DB_SYSTEM.md` |
 | Cacheo | Operativo | `CACHING_SYSTEM.md` |

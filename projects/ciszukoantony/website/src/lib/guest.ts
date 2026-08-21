@@ -9,19 +9,23 @@ function randomDigits(): string {
 }
 
 /**
- * Sistema de invitados (solo frontend). Genera un nombre "Invitado XXXXXX"
+ * Sistema de invitados (solo frontend). Genera un nombre "Guest XXXXXX"
  * la primera vez y lo reutiliza desde localStorage. Nunca se persiste en BD.
+ * Los invitados SIEMPRE se muestran en inglés, sin importar el idioma.
  */
 export function getGuestName(): string {
   if (typeof window === 'undefined') return '';
   try {
     let name = window.localStorage.getItem(GUEST_KEY);
     if (!name) {
-      name = `Invitado ${randomDigits()}`;
+      name = `Guest ${randomDigits()}`;
+      window.localStorage.setItem(GUEST_KEY, name);
+    } else if (/^Invitado/.test(name)) {
+      name = name.replace(/^Invitado\s*/, 'Guest ');
       window.localStorage.setItem(GUEST_KEY, name);
     }
     return name;
   } catch {
-    return `Invitado ${randomDigits()}`;
+    return `Guest ${randomDigits()}`;
   }
 }

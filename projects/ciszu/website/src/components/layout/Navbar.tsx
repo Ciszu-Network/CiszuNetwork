@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { assetResolver } from '@ciszunetwork/cdn';
-import { useZoomStatus } from '@ciszu/ui';
+import { useZoomStatus, publishHeaderMode } from '@ciszu/ui';
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store';
 import { CISZU_NETWORK } from '@/config/site';
@@ -211,6 +211,7 @@ export const NavbarContent = () => {
   const [isSearchOpen, setShowSearch] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [accOpen, setAccOpen] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
   const firstRender = useRef(true);
 
@@ -231,6 +232,15 @@ export const NavbarContent = () => {
   const isZoomWarning = !zoom.dismissed && zoom.status !== 'normal';
 
   const floating = scrolled && !isSearchOpen && !isMenuOpen && !isZoomWarning;
+
+  const prevHeaderMode = useRef<'island' | 'full' | null>(null);
+  useEffect(() => {
+    const mode = floating ? 'island' : 'full';
+    if (prevHeaderMode.current !== mode) {
+      prevHeaderMode.current = mode;
+      publishHeaderMode(mode);
+    }
+  }, [floating]);
 
   // Reset UI state on route change
   useEffect(() => {
@@ -317,6 +327,7 @@ export const NavbarContent = () => {
     if (!isSearchOpen) {
       setIsMenuOpen(false);
       setOpenDropdown(null);
+      setAccOpen(false);
     }
     setShowSearch(v => !v);
   };
@@ -329,6 +340,7 @@ export const NavbarContent = () => {
     if (!isMenuOpen) {
       setShowSearch(false);
       setOpenDropdown(null);
+      setAccOpen(false);
       setSidebarView('main');
     }
     setIsMenuOpen(!isMenuOpen);
@@ -492,7 +504,20 @@ export const NavbarContent = () => {
               </button>
 
               {/* Account / User Button (CISZU ID + invitado + preferencias) */}
-              <AuthMenu />
+              <AuthMenu
+                open={accOpen}
+                onToggle={() => {
+                  setAccOpen(v => {
+                    if (!v) {
+                      setShowSearch(false);
+                      setIsMenuOpen(false);
+                      setOpenDropdown(null);
+                    }
+                    return !v;
+                  });
+                }}
+                onClose={() => setAccOpen(false)}
+              />
             </div>
           </div>
         </div>

@@ -53,6 +53,26 @@ export { default as SocialIcon, SOCIAL_COLORS } from './SocialIcon';
 export type { SocialPlatform } from './SocialIcon';
 export { default as ZoomWarning, useZoomStatus, dismissZoomWarning, isZoomWarningActive } from './ZoomWarning';
 export type { ZoomState, ZoomStatus } from './ZoomWarning';
+// BetaDisclaimer: aviso BETA de extremo a extremo en la cabecera (descartable con X)
+export { default as BetaDisclaimer } from './BetaDisclaimer';
+export type { BetaDisclaimerProps } from './BetaDisclaimer';
+// Sistema de disclaimers: stack global apilable que se adapta al header (full/island)
+export {
+  DisclaimerProvider,
+  DisclaimerStack,
+  useDisclaimer,
+  useHeaderMode,
+  publishHeaderMode,
+} from './Disclaimer';
+export type {
+  DisclaimerItem,
+  DisclaimerKind,
+  HeaderMode,
+  DisclaimerStackProps,
+} from './Disclaimer';
+// CopyWithButton: botón de copiar junto a contenido copiable (sistema anti-copy)
+export { default as CopyWithButton, copyText } from './CopyWithButton';
+export type { CopyWithButtonProps } from './CopyWithButton';
 // Radix UI primitives: Modal accesible (Dialog con focus trap + teclado)
 export { default as Modal } from './Modal';
 export type { ModalProps } from './Modal';
@@ -69,6 +89,9 @@ export { default as AuthSecondaryActions } from './auth/AuthSecondaryActions';
 export type { AuthSecondaryActionsProps } from './auth/AuthSecondaryActions';
 export { default as PreferencesModal } from './auth/PreferencesModal';
 export type { PreferencesModalProps } from './auth/PreferencesModal';
+// LanguagesModal: selector de idioma en modal centrado (preferencias locales, misma lista que el hamburguesa)
+export { default as LanguagesModal } from './auth/LanguagesModal';
+export type { LanguagesModalProps, LanguageOption } from './auth/LanguagesModal';
 export type { PostHogAnalyticsProps } from './PostHogAnalytics';
 // Re-exportar desde @ciszunetwork/cdn para conveniencia
 export {

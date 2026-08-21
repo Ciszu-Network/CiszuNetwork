@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Icon, SmartImage, useZoomStatus } from '@ciszu/ui';
+import { Icon, SmartImage, useZoomStatus, publishHeaderMode } from '@ciszu/ui';
 import { Menu, X, Search } from 'lucide-react';
 import { useAppStore, type AppUser } from '@/store';
 import { supabase } from '@/config/supabase';
@@ -157,6 +157,15 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
   const isZoomWarning = !zoom.dismissed && zoom.status !== 'normal';
 
   const floating = scrolled && !searchOpen && !isMenuOpen && !isZoomWarning;
+
+  const prevHeaderMode = useRef<'island' | 'full' | null>(null);
+  useEffect(() => {
+    const mode = floating ? 'island' : 'full';
+    if (prevHeaderMode.current !== mode) {
+      prevHeaderMode.current = mode;
+      publishHeaderMode(mode);
+    }
+  }, [floating]);
 
   // Clear navigation loader once the route change completed
   useEffect(() => {
@@ -357,7 +366,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
             {/* Invitar — botón con texto */}
             <div className="relative hidden sm:block" ref={inviteRef}>
               <button
-                onClick={() => { setInviteOpen(!inviteOpen); setAuthOpen(false); setSearchOpen(false); }}
+                onClick={() => { setInviteOpen(!inviteOpen); setAuthOpen(false); setSearchOpen(false); setIsMenuOpen(false); }}
                 className={`flex items-center gap-2 rounded-xl px-3 py-2 transition-all duration-300 cursor-pointer shadow-md border group font-header font-bold text-sm ${
                   inviteOpen
                     ? 'bg-neon-blue border-neon-blue text-black'
@@ -420,7 +429,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
             <div className="relative" ref={authRef}>
               {activeUser ? (
                 <button
-                  onClick={() => { setAuthOpen(!authOpen); setSearchOpen(false); setInviteOpen(false); }}
+                  onClick={() => { setAuthOpen(!authOpen); setSearchOpen(false); setInviteOpen(false); setIsMenuOpen(false); }}
                   className="flex items-center gap-2 rounded-full border border-border bg-card p-1 pr-2.5 transition hover:border-[#5865F2] hover:bg-muted/15 cursor-pointer"
                   aria-label="Cuenta"
                   aria-expanded={authOpen}
@@ -437,7 +446,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                 </button>
               ) : (
                 <button
-                  onClick={() => { setAuthOpen(!authOpen); setSearchOpen(false); setInviteOpen(false); }}
+                  onClick={() => { setAuthOpen(!authOpen); setSearchOpen(false); setInviteOpen(false); setIsMenuOpen(false); }}
                   className={`flex items-center gap-1.5 rounded-full border transition-all duration-300 cursor-pointer py-1 pl-1.5 pr-2.5 shadow-sm ${
                     authOpen
                       ? 'bg-[#5865F2]/15 border-[#5865F2] text-[#5865F2]'
@@ -445,13 +454,13 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                   }`}
                   aria-label="Cuenta de invitado"
                   aria-expanded={authOpen}
-                  title={mounted ? getGuestName() : 'Invitado'}
+                  title={mounted ? getGuestName() : 'Guest'}
                 >
                   <span className="h-6 w-6 rounded-full flex items-center justify-center bg-muted/15 text-faint">
                     <IcoUser />
                   </span>
                   <span className="hidden lg:block max-w-[110px] truncate text-xs font-bold text-ink/85">
-                    {mounted ? getGuestName() : 'Invitado'}
+                    {mounted ? getGuestName() : 'Guest'}
                   </span>
                   <Icon name="arrow-right" size={12} className={`text-muted transition-transform ${authOpen ? 'rotate-90' : '-rotate-90'}`} />
                 </button>
@@ -496,7 +505,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                           <IcoUser />
                         </span>
                         <div className="min-w-0">
-                          <p className="truncate text-sm font-bold text-ink">{mounted ? getGuestName() : 'Invitado'}</p>
+                          <p className="truncate text-sm font-bold text-ink">{mounted ? getGuestName() : 'Guest'}</p>
                           <p className="text-[11px] text-muted">Estás navegando como invitado</p>
                         </div>
                       </div>

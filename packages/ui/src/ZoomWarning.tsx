@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useSyncExternalStore, useEffect } from 'react';
+import { useDisclaimer } from './Disclaimer';
 
 /* ------------------------------------------------------------------ *
  * Store compartido de estado de zoom (SSR-safe, pub/sub con
@@ -100,163 +101,43 @@ export function dismissZoomWarning() {
 
 export const isZoomWarningActive = (s: ZoomState) => !s.dismissed && s.status !== 'normal';
 
-/* ------------------------------------------------------------------ *
- * CSS autocontenido (no depende del scanner de Tailwind de las apps)
- * ------------------------------------------------------------------ */
-
-const ZOOM_WARNING_CSS = `
-@keyframes zoom-warning-down {
-  0% { opacity: 0; transform: translateY(-100%); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-.zoom-warning-banner {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 70;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 6px 16px;
-  color: #fff;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  backdrop-filter: blur(8px) saturate(150%);
-  -webkit-backdrop-filter: blur(8px) saturate(150%);
-  animation: zoom-warning-down 0.2s ease forwards;
-  border-bottom: 1px solid rgba(255,255,255,0.2);
-}
-.zoom-warning-banner .zw-body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-width: 0;
-  margin: 0 auto;
-}
-.zoom-warning-banner .zw-icon {
-  flex-shrink: 0;
-  width: 14px;
-  height: 14px;
-}
-.zoom-warning-banner .zw-text {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-family: inherit;
-}
-.zoom-warning-banner .zw-close {
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border: none;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.14);
-  color: #fff;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.15s;
-}
-.zoom-warning-banner .zw-close:hover { background: rgba(255,255,255,0.28); }
-.zoom-warning-banner .zw-close:active { transform: scale(0.9); }
-
-@media (min-width: 640px) {
-  .zoom-warning-banner { font-size: 12px; }
-}
-`;
-
-function AlertTriangleIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden="true"
-    >
-      <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
-      <path d="M12 9v4" />
-      <path d="M12 17h.01" />
-    </svg>
-  );
-}
-
-function XIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden="true"
-    >
-      <path d="M18 6 6 18" />
-      <path d="m6 6 12 12" />
-    </svg>
-  );
-}
-
 /**
- * Banner global de aviso de zoom, compartido por las 4 webs.
+ * Aviso de zoom, compartido por las 4 webs.
  *
- * Aparece al superar los límites de zoom (máximo o mínimo), adaptado a
- * PC y móvil. Al mostrarse, los Navbars aplican `mt-8` y desactivan el
- * island (leyendo `useZoomStatus()`), igual que hacía muzicmania.
+ * CONSTRUCCIÓN: es un PRODUCTOR del sistema de disclaimers global
+ * (packages/ui/src/Disclaimer.tsx): cuando el zoom está fuera de rango
+ * registra su aviso en la pila; la posición la decide <DisclaimerStack />.
+ * Los Navbars siguen usando `useZoomStatus()` para desplazar el header
+ * (`mt-8`) y desactivar el island mientras el aviso está activo.
  */
 export function ZoomWarning() {
   const s = useZoomStatus();
   const active = isZoomWarningActive(s);
+  const { push, remove } = useDisclaimer();
   const zoomedOut = s.status === 'zoomed-out';
 
   const msg = s.isMobile
     ? zoomedOut
-      ? '⚠ ZOOM: Vista muy alejada. Haz zoom para una experiencia óptima.'
-      : '⚠ ZOOM: Ampliación excesiva. Reduce el zoom para una experiencia óptima.'
+      ? 'ZOOM: Vista muy alejada. Haz zoom para una experiencia óptima.'
+      : 'ZOOM: Ampliación excesiva. Reduce el zoom para una experiencia óptima.'
     : zoomedOut
-      ? '⚠ SISTEMA: Zoom mínimo detectado (alejado). Acércate (90-120%) para una experiencia óptima.'
-      : `⚠ SISTEMA: Zoom crítico detectado (${s.zoom}%). Reduce el zoom (90-120%) para una experiencia óptima.`;
+      ? 'SISTEMA: Zoom mínimo detectado (alejado). Acércate (90-120%) para una experiencia óptima.'
+      : `SISTEMA: Zoom crítico detectado (${s.zoom}%). Reduce el zoom (90-120%) para una experiencia óptima.`;
 
-  return (
-    <>
-      {active && (
-        <>
-          <style>{ZOOM_WARNING_CSS}</style>
-          <div
-            className="zoom-warning-banner"
-            role="alert"
-            style={{
-              background: zoomedOut
-                ? 'rgba(245,158,11,0.9)'
-                : 'rgba(244,63,94,0.9)',
-            }}
-          >
-            <div className="zw-body">
-              <AlertTriangleIcon className="zw-icon" />
-              <span className="zw-text">{msg}</span>
-            </div>
-            <button
-              onClick={dismissZoomWarning}
-              aria-label="Cerrar aviso de zoom"
-              className="zw-close"
-            >
-              <XIcon className="zw-icon" />
-            </button>
-          </div>
-        </>
-      )}
-    </>
-  );
+  useEffect(() => {
+    if (active) {
+      push({
+        id: 'zoom',
+        kind: 'warning',
+        message: msg,
+        onClose: dismissZoomWarning,
+      });
+    } else {
+      remove('zoom');
+    }
+  }, [active, msg, push, remove]);
+
+  return null;
 }
 
 export default ZoomWarning;

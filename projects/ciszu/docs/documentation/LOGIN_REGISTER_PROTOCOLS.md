@@ -44,12 +44,12 @@ Toda página/panel de login y registro muestra una línea horizontal centrada co
 
 ### 1.2 Subtítulo del proyecto
 
-| Web          | Subtítulo login                                        | Subtítulo registro                                                |
-| ------------ | ------------------------------------------------------ | ----------------------------------------------------------------- |
-| ciszunetwork | Inicia sesión en Ciszu Network con CISZU ID            | Crea tu cuenta en Ciszu Network con CISZU ID                      |
-| ciszukoantony| Inicia sesión en Ciszuko Antony con CISZU ID           | Crea tu cuenta en Ciszuko Antony con CISZU ID                     |
-| ciszubot     | Inicia sesión en CiszuBot con CISZU ID                 | Crea tu cuenta en CiszuBot con CISZU ID                           |
-| muzicmania   | Inicia sesión en MuzicMania con CISZU ID               | Crea tu cuenta en MuzicMania con CISZU ID                         |
+| Web           | Subtítulo login                              | Subtítulo registro                            |
+| ------------- | -------------------------------------------- | --------------------------------------------- |
+| ciszunetwork  | Inicia sesión en Ciszu Network con CISZU ID  | Crea tu cuenta en Ciszu Network con CISZU ID  |
+| ciszukoantony | Inicia sesión en Ciszuko Antony con CISZU ID | Crea tu cuenta en Ciszuko Antony con CISZU ID |
+| ciszubot      | Inicia sesión en CiszuBot con CISZU ID       | Crea tu cuenta en CiszuBot con CISZU ID       |
+| muzicmania    | Inicia sesión en MuzicMania con CISZU ID     | Crea tu cuenta en MuzicMania con CISZU ID     |
 
 ---
 
@@ -60,10 +60,10 @@ Toda página/panel de login y registro muestra una línea horizontal centrada co
 - Orden: Google, Microsoft y (solo ciszubot) Discord. El orden por defecto es Google,
   Microsoft; en ciszubot se añade Discord como primera opción destacada.
 - **Iconos oficiales (idénticos en las 4 webs)**, copiados de ciszunetwork:
+    - **Google** (4 colores): `#4285F4`, `#34A853`, `#FBBC05`, `#EA4335`.
+    - **Microsoft** (4 cuadrantes): `#F35325`, `#81BC06`, `#05A6F0`, `#FFBA08`.
+    - **Discord**: `#5865F2` (isotipo oficial).
 
-  - **Google** (4 colores): `#4285F4`, `#34A853`, `#FBBC05`, `#EA4335`.
-  - **Microsoft** (4 cuadrantes): `#F35325`, `#81BC06`, `#05A6F0`, `#FFBA08`.
-  - **Discord**: `#5865F2` (isotipo oficial).
 - Comportamiento: Google/Microsoft muestran un aviso toast "OAuth de X disponible en
   futura versión beta" (placeholder). Discord en ciszubot hace el flujo real
   (`/api/auth/discord`).
@@ -80,8 +80,7 @@ para el flujo completo.
 
 ### 3.1 Errores de formulario coherentes (regla global)
 
-- Los errores van **bajo el campo, alineados a la izquierda**, con `text-red-400 text-[10-11px]
-  font-bold`, animación suave de entrada (fade/slide corta) — estilo de muzicmania/login de
+- Los errores van **bajo el campo, alineados a la izquierda**, con `text-red-400 text-[10-11px] font-bold`, animación suave de entrada (fade/slide corta) — estilo de muzicmania/login de
   ciszunetwork.
 - Los inputs con error marcan borde `border-red-500/50`.
 - **PROHIBIDO** el estilo "centrado" de los errores de ciszukoantony: la tarjeta se centra,
@@ -94,12 +93,12 @@ para el flujo completo.
 Todo formulario de login o registro incluye debajo la batería de accesos rápidos, excluyendo
 el que corresponde a la propia pantalla:
 
-| Acción                | En login         | En registro      |
-| --------------------- | ---------------- | ---------------- |
-| ¿Has olvidado tu contraseña? **RECUPÉRALA** | ✅ (abre olvido) | —                |
-| ¿Sin registro? **REGÍSTRATE**               | ✅ → /register  | —                |
-| ¿Acceder ahora? **ACCEDER**                 | —                | ✅ → /login      |
-| ¿Necesitas ayuda? **SOPORTE**               | ✅ → /support (o /soporte según web) | ✅ idem |
+| Acción                                     | En login                             | En registro |
+| ------------------------------------------ | ------------------------------------ | ----------- |
+| ¿Has olvidado tu contraseña?**RECUPÉRALA** | ✅ (abre olvido)                     | —           |
+| ¿Sin registro?**REGÍSTRATE**               | ✅ → /register                       | —           |
+| ¿Acceder ahora?**ACCEDER**                 | —                                    | ✅ → /login |
+| ¿Necesitas ayuda?**SOPORTE**               | ✅ → /support (o /soporte según web) | ✅ idem     |
 
 - Formato de cada línea: pregunta en `text-gray-500 font-bold uppercase tracking-[0.2em]` y
   la acción subrayada con `underline decoration-*` uso del color de marca de la web.
@@ -122,13 +121,13 @@ el que corresponde a la propia pantalla:
 
 Todas las webs muestran los mismos controles, con el ESTILO del control por-web definido:
 
-| Control          | Obligatorio | Regla de estilo                                                        |
-| ---------------- | ----------- | ---------------------------------------------------------------------- |
-| **Idioma**       | Sí          | MISMO selector que el menú hamburguesa/sidebar y el footer (ver §6.1)   |
-| **Tema**         | Sí          | MISMO botón sol/luna del menú hamburguesa/footer (ver §6.2)             |
-| **Zoom**         | Sí          | Estilo de ciszubot (botones redondos − / valor % / +)                   |
-| **Silenciar**    | Sí          | Cualquier estilo EXCEPTO el de ciszubot (usar etiqueta + switch)        |
-| **Ayuda rápida** | Sí           | Enlaces propios de cada web (ver §4.2)                                  |
+| Control          | Obligatorio | Regla de estilo                                                       |
+| ---------------- | ----------- | --------------------------------------------------------------------- |
+| **Idioma**       | Sí          | MISMO selector que el menú hamburguesa/sidebar y el footer (ver §6.1) |
+| **Tema**         | Sí          | MISMO botón sol/luna del menú hamburguesa/footer (ver §6.2)           |
+| **Zoom**         | Sí          | Estilo de ciszubot (botones redondos − / valor % / +)                 |
+| **Silenciar**    | Sí          | Cualquier estilo EXCEPTO el de ciszubot (usar etiqueta + switch)      |
+| **Ayuda rápida** | Sí          | Enlaces propios de cada web (ver §4.2)                                |
 
 - **Zoom**: de forma **independiente por página** (cada ruta guarda su zoom en
   `localStorage`) y persistido. Límites 80–140%, paso 10%. Se aplica al `<html>` `font-size`.
@@ -136,12 +135,12 @@ Todas las webs muestran los mismos controles, con el ESTILO del control por-web 
 
 ### 4.2 Ayuda rápida por web
 
-| Web          | Enlaces de ayuda                                              |
-| ------------ | ------------------------------------------------------------- |
-| ciszunetwork | /help · /faq · /support · /policies                          |
-| ciszukoantony| /support · /feedback (o sus rutas equivalentes)              |
-| ciszubot     | /soporte · /faq (según su navegación)                        |
-| muzicmania   | /help · /faq · /support · /rules                             |
+| Web           | Enlaces de ayuda                                |
+| ------------- | ----------------------------------------------- |
+| ciszunetwork  | /help · /faq · /support · /policies             |
+| ciszukoantony | /support · /feedback (o sus rutas equivalentes) |
+| ciszubot      | /soporte · /faq (según su navegación)           |
+| muzicmania    | /help · /faq · /support · /rules                |
 
 ---
 
@@ -185,7 +184,7 @@ Todas las webs muestran los mismos controles, con el ESTILO del control por-web 
 - Un único toggle sol/luna con el mismo markup en hamburguesa, footer y modal prefs.
 - Persistido en `localStorage` (clave `ciszu_preferences`, campo `theme`) y alternativa en
   cookie (`ciszubot_theme`). Al aplicar, togglea la clase `.light`/`.dark` en `<html>` y
-  escribe `color-scheme`.
+  escribe `color-scheme`. Siempre eliguiendo el dark como default.
 - En ciszukoantony el footer NO debe tener estado local propio: debe leer/llamar el store o
   el helper compartido (fix de coherencia conocido).
 
@@ -201,19 +200,19 @@ Todas las webs muestran los mismos controles, con el ESTILO del control por-web 
   (tooltip/inline) los requisitos de ese campo (mínimos, formato, prohibiciones).
 - Lista de campos por flujo:
 
-| Campo (login)        | Requisito mostrar                                                |
-| -------------------- | ---------------------------------------------------------------- |
-| Email o @usuario     | Formato email válido o @usuario; sin espacios                     |
-| Contraseña           | Obligatoria; 8+ caracteres; política CISZU (ver §8)               |
+| Campo (login)    | Requisito mostrar                                   |
+| ---------------- | --------------------------------------------------- |
+| Email o @usuario | Formato email válido o @usuario; sin espacios       |
+| Contraseña       | Obligatoria; 8+ caracteres; política CISZU (ver §8) |
 
-| Campo (registro)     | Requisito mostrar                                                |
-| -------------------- | ---------------------------------------------------------------- |
-| Nombre de usuario    | 3–20 caracteres, sin espacios, sin símbolos                       |
-| Nombre a mostrar     | 3–30 caracteres                                                  |
-| Email                | Formato válido (regex `^\S+@\S+\.\S+$`)                           |
-| Fecha de nacimiento  | Mayor de 13 años (muzicmania/opcional según web)                  |
-| Contraseña           | 8+ caracteres; ≥1 mayúscula, ≥1 minúscula, ≥1 número, ≥1 símbolo |
-| Confirmar contraseña | Debe ser idéntica a "Contraseña"                                  |
+| Campo (registro)     | Requisito mostrar                                                   |
+| -------------------- | ------------------------------------------------------------------- |
+| Nombre de usuario    | 3–20 caracteres, sin espacios, sin símbolos                         |
+| Nombre a mostrar     | 3–30 caracteres                                                     |
+| Email                | Formato válido (regex`^\S+@\S+\.\S+$`)                              |
+| Fecha de nacimiento  | Mayor de 13 años (muzicmania/opcional según web)                    |
+| Contraseña           | 8+ caracteres; ≥1 mayúscula, ≥1 minúscula, ≥1 número, ≥1 símbolo    |
+| Confirmar contraseña | Debe ser idéntica a "Contraseña"                                    |
 | (opcionales)         | Nombres reales, apellidos, país, teléfono (2FA) — etiqueta Opcional |
 
 ---
@@ -225,15 +224,16 @@ Todas las webs muestran los mismos controles, con el ESTILO del control por-web 
   propio e independiente de la barra de seguridad.
 - **Barra de seguridad** siempre visible mientras se escribe (registro y cambio de contraseña):
   5 segmentos que se llenan por cada criterio cumplido:
-  1. 8+ caracteres
-  2. 12+ caracteres
-  3. ≥1 mayúscula (`[A-Z]`)
-  4. ≥1 minúscula (`[a-z]`)
-  5. ≥1 número (`[0-9]`) + ≥1 símbolo (`[^A-Za-z0-9]`)
+    1. 8+ caracteres
+    2. 12+ caracteres
+    3. ≥1 mayúscula (`[A-Z]`)
+    4. ≥1 minúscula (`[a-z]`)
+    5. ≥1 número (`[0-9]`) + ≥1 símbolo (`[^A-Za-z0-9]`)
 
-  (En muzicmania hoy cuenta 6 criterios con longitud doble; se unifica a 5 segmentos con la
-  regla anterior en Ciszuko? No: **se unifica a 5 segmentos** en TODAS las webs con la misma
-  lógica.)
+    (En muzicmania hoy cuenta 6 criterios con longitud doble; se unifica a 5 segmentos con la
+    regla anterior en Ciszuko? No: **se unifica a 5 segmentos** en TODAS las webs con la misma
+    lógica.)
+
 - **Colores por nivel**: 1-2 segmentos `bg-red-500` (Débil), 3 `bg-yellow-500` (Media),
   4-5 `bg-neon-cyan` (Fuerte). **El mínimo aceptable para CISZU ID es "Media" (3/5)**; por
   debajo el formulario no se envía y se avisa: "La contraseña no cumple el nivel mínimo de
@@ -273,13 +273,13 @@ Todas las webs muestran los mismos controles, con el ESTILO del control por-web 
 - Si la cuenta tiene **2FA activada**, tras credenciales válidas se pide una pantalla con la
   clave oficial de CISZU: formato **`C-123 434`** (prefijo `C-`, 6 dígitos, espacio en
   medio de la cifra). Temporal y **expirable en 3 horas**.
-  - Mientras se escribe, se auto-formatea `C-` + 3 dígitos + espacio + 3 dígitos.
-  - Patrón de validación: `^C-\d{3} \d{3}$`.
+    - Mientras se escribe, se auto-formatea `C-` + 3 dígitos + espacio + 3 dígitos.
+    - Patrón de validación: `^C-\d{3} \d{3}$`.
 - **Único por website**: el mismo secreto 2FA de una cuenta se emite por web (el usuario usa
   un código distinto por web si tiene 2FA en varias).
 - Indicar en la pantalla:
-  - "La clave expira en 3 horas".
-  - Si expiró: aviso y **botón de reenviar** otro código.
+    - "La clave expira en 3 horas".
+    - Si expiró: aviso y **botón de reenviar** otro código.
 - **Reenviar con límites**: máximo 3 reenvíos por intento de acceso. Al 3er reenvío sin éxito
   se **suspende temporalmente el intento de login de forma local** (bloqueo de 10 minutos
   registrado en localStorage/log).
@@ -299,10 +299,10 @@ Todas las webs muestran los mismos controles, con el ESTILO del control por-web 
 - El email (Supabase `resetPasswordForEmail` / plantilla) lleva un **link de un solo uso**
   que abre la **pantalla exclusiva** de actualización de contraseña (ruta
   `/reset-password` / `?code=` recovery de Supabase):
-  - Campo "Nueva contraseña" + "Repetir contraseña" + barra de seguridad CISZU (igual §8).
-  - **La nueva contraseña no puede ser la anterior**: se envía a Supabase `updateUser` y, si
-    la devuelve igual, se avisa.
-  - Tras guardar: "Contraseña actualizada. Inicia sesión de nuevo." → `/login`.
+    - Campo "Nueva contraseña" + "Repetir contraseña" + barra de seguridad CISZU (igual §8).
+    - **La nueva contraseña no puede ser la anterior**: se envía a Supabase `updateUser` y, si
+      la devuelve igual, se avisa.
+    - Tras guardar: "Contraseña actualizada. Inicia sesión de nuevo." → `/login`.
 - Si el link ya fue usado o expiró: mensaje "El enlace ya fue utilizado o expiró. Solicita
   uno nuevo."
 
@@ -339,14 +339,15 @@ Todas las webs muestran los mismos controles, con el ESTILO del control por-web 
 
 ## 14. Estado actual por web (baseline 19 ago 2026)
 
-| Web          | Login/Register | Olvido | Captcha form | Modal prefs | Invitado | OAuth placeholders |
-| ------------ | -------------- | ------ | ------------ | ----------- | -------- | ------------------ |
-| ciszunetwork | ✅ páginas      | ❌     | ❌           | dropdown    | ✅       | ✅ Google/MS       |
-| ciszukoantony| ✅ páginas      | ❌     | ❌           | dropdown    | ✅       | ✅ Google/MS       |
-| ciszubot     | ✅ páginas + Discord | ❌ | ❌        | dropdown    | ✅       | ✅ Google/MS + Discord |
-| muzicmania   | ✅ páginas      | ✅ código 6 díg | ✅ reCAPTCHA | dropdown | ✅ (header+play) | ✅ Google/MS |
+| Web           | Login/Register       | Olvido          | Captcha form | Modal prefs | Invitado         | OAuth placeholders     |
+| ------------- | -------------------- | --------------- | ------------ | ----------- | ---------------- | ---------------------- |
+| ciszunetwork  | ✅ páginas           | ❌              | ❌           | dropdown    | ✅               | ✅ Google/MS           |
+| ciszukoantony | ✅ páginas           | ❌              | ❌           | dropdown    | ✅               | ✅ Google/MS           |
+| ciszubot      | ✅ páginas + Discord | ❌              | ❌           | dropdown    | ✅               | ✅ Google/MS + Discord |
+| muzicmania    | ✅ páginas           | ✅ código 6 díg | ✅ reCAPTCHA | dropdown    | ✅ (header+play) | ✅ Google/MS           |
 
 Brechas principales a cerrar con este protocolo:
+
 1. Olvido/recovery y link de un solo uso en **ciszunetwork, ciszukoantony y ciszubot**.
 2. reCAPTCHA en el formulario en **ciszunetwork, ciszukoantony y ciszubot**.
 3. Modal de preferencias separado + "Preferencias locales" como botón del dropdown en las 4.

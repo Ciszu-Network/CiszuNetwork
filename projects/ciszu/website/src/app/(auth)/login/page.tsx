@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { assetResolver } from '@ciszunetwork/cdn';
 import { supabase } from '@/config/supabase';
@@ -12,6 +11,7 @@ import {
   AuthSecondaryActions,
   CiszuIdBrand,
   OAuthProviders,
+  SmartImage,
 } from '@ciszu/ui';
 
 const IconMail = () => (
@@ -130,11 +130,13 @@ export default function LoginPage() {
       <div className="max-w-md mx-auto px-4">
         <div className="mb-10">
           <CiszuIdBrand
+            solo
+            soloSize="w-24 h-24"
             ciszuIsotype={
-              <Image src={CISZU_ISOTYPE} alt="Ciszu ID" width={40} height={40} className="w-9 h-9" />
+              <SmartImage src={CISZU_ISOTYPE} alt="Ciszu ID" width={72} height={72} className="w-full h-full" />
             }
             appIsotype={
-              <Image src={CISZU_ISOTYPE} alt="Ciszu Network" width={40} height={40} className="w-9 h-9" />
+              <SmartImage src={CISZU_ISOTYPE} alt="Ciszu Network" width={72} height={72} className="w-full h-full" />
             }
             ciszuHref="https://ciszunetwork.vercel.app"
             appHref="/"
