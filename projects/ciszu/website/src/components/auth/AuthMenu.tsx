@@ -51,12 +51,12 @@ const SettingsIcon = () => (
 
 /**
  * AuthMenu — Botón AUTH del navbar + dropdown de sesión e invitado.
- * Las preferencias locales viven en un MODAL centrado separado (PreferencesModal),
- * abierto desde el botón "Preferencias locales" (LOGIN_REGISTER_PROTOCOLS §4).
+ * Controlado por el Navbar (open/onClose): cuando se abre search o la
+ * hamburguesa, el Navbar cierra este dropdown (exclusividad mútua).
+ * Las preferencias locales viven en un MODAL centrado separado (PreferencesModal).
  */
-export default function AuthMenu() {
+export default function AuthMenu({ open, onToggle, onClose }: { open: boolean; onToggle: () => void; onClose: () => void }) {
   const { user, isHydrated, setUser, showToast } = useAppStore();
-  const [open, setOpen] = useState(false);
   const [prefsOpen, setPrefsOpen] = useState(false);
   const [guestName, setGuestName] = useState<string | null>(null);
   const [loggingOut, setLoggingOut] = useState(false);
@@ -71,14 +71,14 @@ export default function AuthMenu() {
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setOpen(false);
+        onClose();
       }
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
-  }, []);
+  }, [onClose]);
 
-  const toggle = () => setOpen(v => !v);
+  const toggle = () => onToggle();
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -87,14 +87,14 @@ export default function AuthMenu() {
       showToast('Error al cerrar sesión');
     } else {
       setUser(null);
-      setOpen(false);
+      onClose();
       showToast('Sesión cerrada. Vuelve pronto.');
     }
     setLoggingOut(false);
   };
 
   const displayName = user?.display_name || user?.username || 'Usuario';
-  const guest = guestName ?? 'Invitado';
+  const guest = guestName ?? 'Guest';
 
   return (
     <div className="relative shrink-0" ref={menuRef}>
@@ -148,7 +148,7 @@ export default function AuthMenu() {
                   {isHydrated ? (user ? displayName : guest) : '…'}
                 </p>
                 <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest truncate">
-                  {isHydrated ? (user ? user.email : 'Invitado local') : 'Cargando…'}
+                  {isHydrated ? (user ? user.email : 'Guest local') : 'Cargando…'}
                 </p>
               </div>
             </div>
@@ -169,14 +169,14 @@ export default function AuthMenu() {
               <div className="pt-1 pb-1 border-b border-white/10 grid grid-cols-2 gap-1.5">
                 <Link
                   href="/login"
-                  onClick={() => setOpen(false)}
+                  onClick={() => onClose()}
                   className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-brand-light/10 border border-brand-light/30 text-brand-light text-xs font-bold hover:bg-brand-light hover:text-black transition-all cursor-pointer active:scale-95"
                 >
                   <LoginIcon /> Iniciar sesión
                 </Link>
                 <Link
                   href="/register"
-                  onClick={() => setOpen(false)}
+                  onClick={() => onClose()}
                   className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-xs font-bold hover:border-brand-accent/50 hover:text-brand-accent transition-all cursor-pointer active:scale-95"
                 >
                   <RegisterIcon /> Registrarse

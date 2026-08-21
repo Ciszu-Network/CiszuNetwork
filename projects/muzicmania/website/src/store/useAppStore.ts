@@ -99,7 +99,12 @@ export const useAppStore = create<AppState>((set: any, get: any) => ({
   setIsNavigating: (val: NavigationState) => set({ isNavigating: val }),
   setIsMenuOpen: (val: boolean) => set({ isMenuOpen: val }),
   setSidebarView: (val: SidebarView) => set({ sidebarView: val }),
-  setDarkMode: (val: boolean) => set({ darkMode: val }),
+  setDarkMode: (val: boolean) => {
+    set({ darkMode: val });
+    if (typeof document !== 'undefined') {
+      document.documentElement.classList.toggle('light', !val);
+    }
+  },
   setLang: (val: string) => set({ lang: val }),
   toastMessage: null,
   showToast: (msg: string) => set({ toastMessage: msg }),

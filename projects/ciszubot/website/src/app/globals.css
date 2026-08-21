@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@source "../../../../../packages/ui/src/**/*.{ts,tsx}";
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ============================================================
@@ -141,6 +143,16 @@
     color: var(--ink);
     font-family: var(--font-sans);
     min-height: 100vh;
+    /* Prevent text selection globally (sistema anti-copy, ver muzicmania) */
+    -webkit-user-select: none;
+    -moz-user-select:    none;
+    user-select:         none;
+  }
+
+  /* Allow selection in inputs, textareas and contenteditable */
+  input, textarea, [contenteditable] {
+    -webkit-user-select: text;
+    user-select: text;
   }
 
   a, button, [role="button"], label[for], summary {

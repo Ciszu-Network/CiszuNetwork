@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { headers } from "next/headers";
 import { Exo_2, Rajdhani } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, FabStackProvider, ZoomWarning } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack } from "@ciszu/ui";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import FeedbackFab from "@/components/layout/FeedbackFab";
@@ -55,16 +55,27 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const isEdit = store.get("x-is-edit") === "1";
 
   return (
-    <html lang="en" className={`${exo2.variable} ${rajdhani.variable}`}>
-      <body className="bg-black text-white min-h-screen font-sans flex flex-col">
+    <html lang="en" className={`${exo2.variable} ${rajdhani.variable}`} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=JSON.parse(localStorage.getItem('ciszu_preferences')||'{}');if(t&&t.theme==='light')document.documentElement.classList.add('light');}catch(e){}})();`,
+          }}
+        />
+      </head>
+      <body className="min-h-screen font-sans flex flex-col">
         <AuthProvider>
-          <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={PROFILE_PIC} title="Ciszuko Antony" subtitle="Ciszuko Antony Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszukoantony">
-            {!isEdit && <Navbar />}
-            {!isEdit && <ZoomWarning />}
-            <main className="flex-grow">{children}</main>
-            {!isEdit && <Footer />}
-            {!isEdit && <CookiesBanner />}
-          </CloudflareGuard>
+          <DisclaimerProvider>
+            <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={PROFILE_PIC} title="Ciszuko Antony" subtitle="Ciszuko Antony Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszukoantony">
+              {!isEdit && <BetaDisclaimer storageKey="betadisclaimer_ciszukoantony_dismissed" />}
+              {!isEdit && <Navbar />}
+              {!isEdit && <ZoomWarning />}
+              {!isEdit && <DisclaimerStack headerHeight={64} />}
+              <main className="flex-grow">{children}</main>
+              {!isEdit && <Footer />}
+              {!isEdit && <CookiesBanner />}
+            </CloudflareGuard>
+          </DisclaimerProvider>
         </AuthProvider>
         <PwaRegister />
         <FabStackProvider>

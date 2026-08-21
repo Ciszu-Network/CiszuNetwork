@@ -52,6 +52,9 @@ export const useAppStore = create<AppState>((set) => ({
     set({ theme: val });
     const prefs = loadPreferences();
     savePreferences({ ...prefs, theme: val });
+    if (typeof document !== 'undefined') {
+      document.documentElement.classList.toggle('light', val === 'light');
+    }
   },
   language: persisted?.lang ?? 'es',
   setLanguage: (val: Language) => {

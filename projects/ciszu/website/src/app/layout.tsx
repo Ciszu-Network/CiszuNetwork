@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { headers } from "next/headers";
 import { IBM_Plex_Sans, IBM_Plex_Sans_Condensed } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, FabStackProvider, ZoomWarning } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack } from "@ciszu/ui";
 import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CookiesBanner } from "@/components/layout/CookiesBanner";
@@ -50,21 +50,38 @@ export const metadata: Metadata = {
   },
 };
 
+const themeScript = `
+(function () {
+  try {
+    var t = JSON.parse(localStorage.getItem('ciszu_preferences') || '{}');
+    var theme = (t && t.theme) || 'dark';
+    if (theme === 'light') document.documentElement.classList.add('light');
+  } catch (e) {}
+})();
+`;
+
 export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   const store = await headers();
   const isEdit = store.get("x-is-edit") === "1";
 
   return (
-    <html lang="es" className={`${ibmPlex.variable} ${ibmPlexCondensed.variable}`}>
-      <body className="bg-black text-white min-h-screen font-sans flex flex-col">
+    <html lang="es" className={`${ibmPlex.variable} ${ibmPlexCondensed.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body className="min-h-screen font-sans flex flex-col">
         <AuthProvider>
-          <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={ICON_SVG} title="Ciszu Network" subtitle="Ciszu Network Security • Cloudflare" accent="#22d3ee" storageKey="cf_verified_ciszu">
-            {!isEdit && <ZoomWarning />}
-            {!isEdit && <Navbar />}
-            <main className="flex-grow">{children}</main>
-            {!isEdit && <Footer />}
-            {!isEdit && <CookiesBanner />}
-          </CloudflareGuard>
+          <DisclaimerProvider>
+            <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={ICON_SVG} title="Ciszu Network" subtitle="Ciszu Network Security • Cloudflare" accent="#22d3ee" storageKey="cf_verified_ciszu">
+              {!isEdit && <ZoomWarning />}
+              {!isEdit && <BetaDisclaimer storageKey="betadisclaimer_ciszu_dismissed" />}
+              {!isEdit && <Navbar />}
+              {!isEdit && <DisclaimerStack headerHeight={64} />}
+              <main className="flex-grow">{children}</main>
+              {!isEdit && <Footer />}
+              {!isEdit && <CookiesBanner />}
+            </CloudflareGuard>
+          </DisclaimerProvider>
           <GlobalToast />
         </AuthProvider>
         <PwaRegister />

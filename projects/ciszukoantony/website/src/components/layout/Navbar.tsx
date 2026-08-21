@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { SmartImage, useZoomStatus } from '@ciszu/ui';
+import { SmartImage, useZoomStatus, publishHeaderMode } from '@ciszu/ui';
 import { NAV_MAIN, SOCIALS, I, ALL_PAGES, SEARCH_INDEX, type NavGroup, type NavItem } from '@/config/navigation';
 import { useAppStore } from '@/store';
 import AuthMenu, { GuestIcon } from '@/components/auth/AuthMenu';
@@ -124,6 +124,15 @@ export default function Navbar() {
   const isZoomWarning = !zoom.dismissed && zoom.status !== 'normal';
 
   const floating = scrolled && !searchOpen && !isMenuOpen && !isZoomWarning;
+
+  const prevHeaderMode = useRef<'island' | 'full' | null>(null);
+  useEffect(() => {
+    const mode = floating ? 'island' : 'full';
+    if (prevHeaderMode.current !== mode) {
+      prevHeaderMode.current = mode;
+      publishHeaderMode(mode);
+    }
+  }, [floating]);
 
   useEffect(() => {
     if (firstRender.current) {
@@ -368,7 +377,7 @@ export default function Navbar() {
                     <span className="text-white/80 shrink-0"><GuestIcon className="w-5 h-5" /></span>
                   )}
                   <span className="hidden min-[900px]:block max-w-[120px] truncate text-xs font-header font-bold">
-                    {user ? (user.display_name || user.username) : (guestName || 'Invitado')}
+                    {user ? (user.display_name || user.username) : (guestName || 'Guest')}
                   </span>
                 </button>
                 {accOpen && (

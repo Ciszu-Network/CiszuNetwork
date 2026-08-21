@@ -13,6 +13,11 @@ export interface CiszuIdBrandProps {
   subtitle?: string;
   onCiszuClick?: () => void;
   onAppClick?: () => void;
+  /** Variante "solo": 1 aliado (isotipo de la propia web) grande, sin la X.
+   *  Útil en ciszunetwork donde la app es Ciszu Network mismo. */
+  solo?: boolean;
+  /** Tamaño del isotipo en la variante solo (clases Tailwind de tamaño). */
+  soloSize?: string;
 }
 
 export const BrandX = () => (
@@ -38,12 +43,52 @@ export function CiszuIdBrand({
   subtitle,
   onCiszuClick,
   onAppClick,
+  solo = false,
+  soloSize = 'w-20 h-20',
 }: CiszuIdBrandProps) {
   const clickHandler = (fn?: () => void) => (e: React.MouseEvent) => {
     if (!fn) return;
     e.preventDefault();
     fn();
   };
+
+  if (solo) {
+    const href = appHref ?? ciszuHref;
+    const onClick = onAppClick ?? onCiszuClick;
+    const node = (
+      <span
+        className={`inline-flex items-center justify-center ${soloSize} rounded-full border border-white/10 bg-white/5 shadow-lg`}
+      >
+        {appIsotype ?? ciszuIsotype}
+      </span>
+    );
+    return (
+      <div className="text-center">
+        <div className="inline-flex items-center justify-center mb-3">
+          {href ? (
+            <a
+              href={href}
+              onClick={clickHandler(onClick)}
+              className={`inline-flex items-center justify-center ${soloSize} rounded-full border border-white/10 bg-white/5 shadow-lg transition-all hover:border-cyan-400/60 hover:scale-110 active:scale-95 cursor-pointer`}
+              title={subtitle}
+            >
+              {appIsotype ?? ciszuIsotype}
+            </a>
+          ) : (
+            node
+          )}
+        </div>
+        <h1 className="text-3xl md:text-4xl font-header font-black bg-gradient-to-r from-cyan-400 via-fuchsia-400 to-blue-400 bg-clip-text text-transparent uppercase tracking-tighter mb-2">
+          {title}
+        </h1>
+        {subtitle && (
+          <p className="text-white/60 font-black tracking-[0.35em] uppercase text-[10px] md:text-xs">
+            {subtitle}
+          </p>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="text-center">

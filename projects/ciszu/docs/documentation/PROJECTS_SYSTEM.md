@@ -142,6 +142,29 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 > Este historial absorbe `PROJECT_HISTORY.md` (eliminado 13 ago 2026). Añadir aquí los
 > nuevos hitos al cierre de sesión.
 
+### 20 de Agosto, 2026 — Tema oscuro/claro en las 4 webs (infraestructura)
+
+- **Infraestructura de tema dark-first completa en ciszu, ciszukoa y muzicmania** (ciszubot
+  ya la tenía con `.dark`): tokens CSS en `:root` (`--bg`, `--bg-soft`, `--bg-card`, `--ink`,
+  `--ink-muted`, `--ink-faint`, `--border`, `--surface`, `color-scheme`) + clase `.light`
+  que los sobreescribe y remapeo de superficies hardcodeadas (`bg-black`, `bg-[#0a0a0f]`,
+  `bg-white/5`, `bg-white/10`, `border-white/10`, `text-white`, `text-gray-*`) para que el
+  toggle tenga efecto visible sin refactor masivo.
+- **Anti-FOUC**: script inline en `<head>` de cada layout lee `ciszu_preferences` de
+  localStorage y aplica `.light` antes de hidratar; `suppressHydrationWarning` en `<html>`.
+  Cuerpos sin colores hardcodeados (usan `var(--bg)`/`var(--ink)`).
+- **Stores**: ciszu/ciszukoa `setTheme` aplica `.light` y persiste `theme` en
+  `ciszu_preferences`; muzicmania `setDarkMode` aplica `.light`. Los paneles de preferencias
+  de las 4 webs llaman a estos setters.
+- **Selectores de idioma unificados en 4 webs**: `PreferencesPanel` de ciszukoa y ciszubot
+  (11 flags `LANGS_DISPLAY`), ciszu (11 flags `LANGS` con códigos duplicados ES-LA/ES-ES y
+  EN-US/EN-UK), muzicmania (selector completo `LANGS` de `@/config/navigation`). Se eliminó
+  el toggle segmentado ES/EN y los verificadores auxiliares redundantes.
+- Verificación: `tsc --noEmit` exit 0 en las 4 webs; `next build` exit 0 en ciszukoa y
+  muzicmania.
+- Pendiente: revisión visual del modo claro (el remapeo es pragmático: zonas con gradientes o
+  clases arbitrarias `bg-[#...]` no listadas pueden quedar oscuras); marcar en TODO.md.
+
 ### 20 de Agosto, 2026 — Auth CISZU ID pulido en las 4 webs (protocolo LOGIN_REGISTER)
 
 - **Nuevo doc oficial `LOGIN_REGISTER_PROTOCOLS.md` v1.0.0** (fuente de verdad del flujo auth:

@@ -15,9 +15,6 @@ import {
   ZOOM_STEP,
 } from '@/lib/preferences';
 
-const ES_LANGS = LANGS.filter((l) => l.code.startsWith('ES'));
-const EN_LANGS = LANGS.filter((l) => l.code.startsWith('EN'));
-
 export default function PreferencesPanel() {
   const { lang, setLang, darkMode, setDarkMode, user, showToast } = useAppStore();
   const [zoom, setZoom] = useState<number>(100);
@@ -32,9 +29,6 @@ export default function PreferencesPanel() {
     setLang(prefs.lang);
     setDarkMode(prefs.theme === 'dark');
   }, []);
-
-  const isSpanish = lang.startsWith('ES');
-  const isEnglish = lang.startsWith('EN');
 
   const persist = () => {
     return updatePreferences({
@@ -89,13 +83,6 @@ export default function PreferencesPanel() {
     showToast(next ? '[SISTEMA]: Pestaña silenciada.' : '[SISTEMA]: Pestaña restaurada.');
   };
 
-  const langBtnCls = (active: boolean) =>
-    `flex items-center gap-2 px-3 py-1.5 rounded-full border text-[10px] font-header font-bold uppercase tracking-widest transition-all active:scale-95 ${
-      active
-        ? 'bg-neon-blue/20 border-neon-blue/50 text-neon-cyan shadow-[0_0_10px_rgba(0,212,255,0.3)]'
-        : 'bg-white/5 border-white/10 text-gray-400 hover:text-white hover:border-white/25'
-    }`;
-
   return (
     <div className="px-2 pt-1 pb-2 space-y-4">
       {/* Tema y Idioma: mismos controles que el navbar */}
@@ -120,16 +107,27 @@ export default function PreferencesPanel() {
           )}
         </button>
 
-        {/* Idioma ES/EN */}
-        <div className="flex items-center gap-1.5">
-          <button onClick={() => applyLang(ES_LANGS[0]?.code ?? 'ES-LA')} className={langBtnCls(isSpanish)}>
-            {ES_LANGS[0]?.flag}
-            ES
-          </button>
-          <button onClick={() => applyLang(EN_LANGS[0]?.code ?? 'EN-US')} className={langBtnCls(isEnglish)}>
-            {EN_LANGS[0]?.flag}
-            EN
-          </button>
+        {/* Idioma */}
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {LANGS.map((l) => {
+            const active = lang === l.code;
+            const isAlt = !l.code.startsWith('ES') && !l.code.startsWith('EN');
+            return (
+              <button
+                key={l.code}
+                onClick={() => applyLang(l.code)}
+                className={`relative rounded-full transition-transform duration-300 cursor-pointer ${
+                  active ? 'scale-105' : 'opacity-60 grayscale hover:opacity-100 hover:grayscale-0 scale-95'
+                } ${isAlt ? 'hidden sm:block' : ''}`}
+                title={l.label}
+              >
+                {l.flag}
+                {active && (
+                  <span className="absolute top-0 right-0 w-2 h-2 rounded-full border border-white bg-green-400" />
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
 

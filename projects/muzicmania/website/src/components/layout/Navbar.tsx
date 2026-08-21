@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
-import { useZoomStatus } from '@ciszu/ui';
+import { useZoomStatus, publishHeaderMode } from '@ciszu/ui';
 import { PreferencesModal } from '@ciszu/ui';
 import { usePathname, useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
@@ -78,6 +78,15 @@ export const NavbarContent = () => {
   }, []);
 
   const floating = scrolled && !isSearchOpen && !isMenuOpen && !isAccederOpen && !isZoomWarning;
+
+  const prevHeaderMode = useRef<'island' | 'full' | null>(null);
+  useEffect(() => {
+    const mode = floating ? 'island' : 'full';
+    if (prevHeaderMode.current !== mode) {
+      prevHeaderMode.current = mode;
+      publishHeaderMode(mode);
+    }
+  }, [floating]);
 
   const searchParams = useSearchParams();
 
@@ -348,7 +357,7 @@ export const NavbarContent = () => {
                         ? 'bg-gradient-to-r from-neon-blue/40 via-[#6600ff]/40 to-neon-pink/40 border-neon-pink text-white'
                         : 'bg-gradient-to-r from-neon-blue/10 via-[#6600ff]/10 to-neon-pink/10 border-white/20 text-white hover:border-neon-pink'
                     }`}
-                    title={guestName || 'Invitado'}
+                    title={guestName || 'Guest'}
                   >
                     <span className="relative w-8 h-8 rounded-full bg-gradient-to-br from-neon-blue/30 via-[#6600ff]/30 to-neon-pink/30 border border-white/20 flex items-center justify-center overflow-hidden">
                       <svg viewBox="0 0 24 24" className="w-4 h-4 text-neon-cyan" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -357,7 +366,7 @@ export const NavbarContent = () => {
                       </svg>
                     </span>
                     <span className="hidden sm:block max-w-[110px] truncate text-xs font-header font-bold text-white/85">
-                      {guestName || 'Invitado'}
+                      {guestName || 'Guest'}
                     </span>
                   </button>
                 )}
@@ -390,8 +399,8 @@ export const NavbarContent = () => {
                             </svg>
                           </div>
                           <div className="min-w-0">
-                            <p className="text-white font-black text-xs uppercase tracking-widest truncate">{guestName || 'Invitado'}</p>
-                            <p className="text-gray-500 text-[10px] font-bold truncate">@{guestName.replace(/^Invitado/i, 'invitado').toLowerCase()}</p>
+                            <p className="text-white font-black text-xs uppercase tracking-widest truncate">{guestName || 'Guest'}</p>
+                            <p className="text-gray-500 text-[10px] font-bold truncate">@{guestName.replace(/^Invitado/i, 'invitado').replace(/^Guest/i, 'guest').toLowerCase()}</p>
                           </div>
                         </div>
                       )}

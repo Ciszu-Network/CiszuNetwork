@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
-import QuickDocks from '@/components/molecules/QuickDocks';
 import { Button } from '@/components/atoms/Button';
 import ReCAPTCHA from 'react-google-recaptcha';
 import CountrySelect from '@/components/atoms/CountrySelect';
@@ -428,7 +427,6 @@ export default function RegisterPage() {
           </div>
         </motion.section>
 
-        <QuickDocks />
       </div>
 
       <AuthFeedback 

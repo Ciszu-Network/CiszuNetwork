@@ -15,6 +15,7 @@ import {
   type PreferenceLang,
 } from '@/lib/preferences';
 import { I } from '@/config/navigation';
+import { LanguagesModal } from '@ciszu/ui';
 
 const MoonIcon = ({ className = 'w-5 h-5' }: { className?: string }) => (
   <svg viewBox="0 0 24 24" className={className} fill="currentColor">
@@ -43,6 +44,22 @@ const VolumeIcon = ({ className = 'w-4 h-4' }: { className?: string }) => (
   </svg>
 );
 
+const IcoZoomMinus = () => (
+  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="8" />
+    <path d="m21 21-4.35-4.35" />
+    <line x1="8" y1="11" x2="14" y2="11" />
+  </svg>
+);
+const IcoZoomPlus = () => (
+  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="8" />
+    <path d="m21 21-4.35-4.35" />
+    <line x1="11" y1="8" x2="11" y2="14" />
+    <line x1="8" y1="11" x2="14" y2="11" />
+  </svg>
+);
+
 const FlagES = () => (
   <svg viewBox="0 0 512 512" className="w-4 h-4 rounded-full overflow-hidden">
     <rect width="512" height="512" fill="#ad1519" />
@@ -63,6 +80,49 @@ const FlagEN = () => (
   </svg>
 );
 
+const LANGS_DISPLAY = [
+  { code: 'ES-LA', label: 'Español (Latam)', flag: (
+    <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner">
+      <rect width="512" height="170.6" fill="#ffcc00"/>
+      <rect width="512" height="170.6" y="170.6" fill="#003399"/>
+      <rect width="512" height="170.6" y="341.2" fill="#cf142b"/>
+      <g fill="#fff" transform="translate(256,230) scale(4)">
+        <circle cx="0" cy="0" r="18" fill="none" stroke="#fff" strokeWidth="1" strokeDasharray="2,2"/>
+        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(-45) translate(0,-18) scale(0.4)"/>
+        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(-22.5) translate(0,-18) scale(0.4)"/>
+        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="translate(0,-18) scale(0.4)"/>
+        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(22.5) translate(0,-18) scale(0.4)"/>
+        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(45) translate(0,-18) scale(0.4)"/>
+        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(-67.5) translate(0,-18) scale(0.4)"/>
+        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(67.5) translate(0,-18) scale(0.4)"/>
+      </g>
+    </svg>
+  ) },
+  { code: 'ES-ES', label: 'Español (España)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#ad1519"/><rect width="512" height="300" y="106" fill="#fabd00"/><circle cx="150" cy="256" r="50" fill="#ad1519"/></svg> },
+  { code: 'EN-US', label: 'English (US)', flag: (
+    <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner font-sans">
+      <rect width="512" height="512" fill="#bd3d44"/>
+      <rect width="512" height="36" y="36.5" fill="#fff"/><rect width="512" height="36" y="109.5" fill="#fff"/><rect width="512" height="36" y="182.5" fill="#fff"/><rect width="512" height="36" y="255.5" fill="#fff"/><rect width="512" height="36" y="328.5" fill="#fff"/><rect width="512" height="36" y="401.5" fill="#fff"/><rect width="512" height="36" y="474.5" fill="#fff"/>
+      <rect width="240" height="260" fill="#192f5d"/>
+      <g fill="#fff">
+        <circle cx="30" cy="35" r="5"/><circle cx="70" cy="35" r="5"/><circle cx="110" cy="35" r="5"/><circle cx="150" cy="35" r="5"/><circle cx="190" cy="35" r="5"/>
+        <circle cx="50" cy="65" r="5"/><circle cx="90" cy="65" r="5"/><circle cx="130" cy="65" r="5"/><circle cx="170" cy="65" r="5"/><circle cx="210" cy="65" r="5"/>
+        <circle cx="30" cy="95" r="5"/><circle cx="70" cy="95" r="5"/><circle cx="110" cy="95" r="5"/><circle cx="150" cy="95" r="5"/><circle cx="190" cy="95" r="5"/>
+        <circle cx="50" cy="125" r="5"/><circle cx="90" cy="125" r="5"/><circle cx="130" cy="125" r="5"/><circle cx="170" cy="125" r="5"/><circle cx="210" cy="125" r="5"/>
+        <circle cx="30" cy="155" r="5"/><circle cx="70" cy="155" r="5"/><circle cx="110" cy="155" r="5"/><circle cx="150" cy="155" r="5"/><circle cx="190" cy="155" r="5"/>
+      </g>
+    </svg>
+  ) },
+  { code: 'EN-UK', label: 'English (UK)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#012169"/><path d="M0 0l512 512M512 0L0 512" stroke="#fff" strokeWidth="60"/><path d="M0 0l512 512M512 0L0 512" stroke="#cf142b" strokeWidth="30"/><rect width="512" height="100" y="206" fill="#fff"/><rect width="100" height="512" x="206" fill="#fff"/><rect width="512" height="60" y="226" fill="#cf142b"/><rect width="60" height="512" x="226" fill="#cf142b"/></svg> },
+  { code: 'PT', label: 'Português (Brasil)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#009c3b"/><path d="M256 70l186 186-186 186L70 256z" fill="#ffdf00"/><circle cx="256" cy="256" r="100" fill="#002776"/></svg> },
+  { code: 'FR', label: 'Français', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="170" height="512" fill="#002395"/><rect width="170" height="512" x="171" fill="#fff"/><rect width="171" height="512" x="341" fill="#ed2939"/></svg> },
+  { code: 'IT', label: 'Italiano', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="170" height="512" fill="#009246"/><rect width="170" height="512" x="171" fill="#fff"/><rect width="171" height="512" x="341" fill="#ce2b37"/></svg> },
+  { code: 'DE', label: 'Deutsch', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="170" fill="#000"/><rect width="512" height="170" y="171" fill="#d00"/><rect width="512" height="171" y="341" fill="#ffce00"/></svg> },
+  { code: 'RU', label: 'Русский', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="170" fill="#fff"/><rect width="512" height="170" y="171" fill="#0039a6"/><rect width="512" height="171" y="341" fill="#d52b1e"/></svg> },
+  { code: 'JA', label: '日本語 (Japanese)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#fff"/><circle cx="256" cy="256" r="120" fill="#bc002d"/></svg> },
+  { code: 'KO', label: '한국어 (Korean)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#fff"/><circle cx="256" cy="256" r="80" fill="#cd2e3a"/><path d="M256 176a80 80 0 0 0 0 160c44 0 44-80 80-80s36 80 80 80" fill="#0047a0"/></svg> },
+];
+
 const HELP_LINKS = [
   { name: 'FAQ', href: '/faq', icon: I.faq },
   { name: 'Support', href: '/support', icon: I.support },
@@ -78,6 +138,7 @@ const HELP_LINKS = [
 export default function PreferencesPanel() {
   const { user, theme, setTheme, language, setLanguage } = useAppStore();
   const [prefs, setPrefs] = useState(() => getPreferences());
+  const [langOpen, setLangOpen] = useState(false);
 
   const syncToProfile = () => {
     if (user) pushPreferencesToProfile(user.id);
@@ -90,11 +151,22 @@ export default function PreferencesPanel() {
     syncToProfile();
   };
 
-  const setLangSafe = (l: PreferenceLang) => {
+const setLangSafe = (l: PreferenceLang) => {
     setLanguage(l);
-    updatePreferences({ lang: l });
+    setPrefs(updatePreferences({ lang: l }));
     syncToProfile();
   };
+
+  const handleLangSelect = (code: string) => {
+    if (code === 'EN-US' || code === 'EN-UK') { setLangSafe('EN'); return; }
+    if (code === 'ES-LA' || code === 'ES-ES') { setLangSafe('ES'); return; }
+  };
+
+  const currentLang = LANGS_DISPLAY.find((l) =>
+    language === 'ES'
+      ? l.code === 'ES-LA'
+      : l.code === 'EN-US',
+  ) ?? LANGS_DISPLAY[0];
 
   const changeZoom = (delta: number) => {
     const next = Math.min(FONT_SIZE_MAX, Math.max(FONT_SIZE_MIN, prefs.fontSize + delta));
@@ -114,13 +186,6 @@ export default function PreferencesPanel() {
 
   const sectionTitleCls = 'text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-2';
 
-  const langBtnCls = (active: boolean) =>
-    `flex items-center gap-2 px-3 py-2 rounded-lg border font-header font-bold text-xs transition-all active:scale-95 ${
-      active
-        ? 'border-neon-blue bg-neon-blue/15 text-neon-blue shadow-[0_0_10px_rgba(61,106,223,0.3)]'
-        : 'border-white/10 bg-white/5 text-gray-400 hover:text-white hover:border-white/25'
-    }`;
-
   return (
     <div className="space-y-4">
       {/* Tema e idioma: mismos controles que el menú hamburguesa/footer */}
@@ -133,20 +198,34 @@ export default function PreferencesPanel() {
           title={theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
         >
           {theme === 'dark' ? (
-            <SunIcon className="w-5 h-5 text-black transition-transform duration-500 group-hover:rotate-90" />
-          ) : (
             <MoonIcon className="w-5 h-5 text-black transition-transform duration-500 group-hover:-rotate-12" />
+          ) : (
+            <SunIcon className="w-5 h-5 text-black transition-transform duration-500 group-hover:rotate-90" />
           )}
         </button>
 
-        <div className="flex items-center gap-1.5">
-          <button onClick={() => setLangSafe('ES')} className={langBtnCls(language === 'ES')} title="Español">
-            <FlagES /> ES
-          </button>
-          <button onClick={() => setLangSafe('EN')} className={langBtnCls(language === 'EN')} title="English">
-            <FlagEN /> EN
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setLangOpen(true)}
+          className="flex-1 flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-neon-cyan/50 text-gray-200 transition-all active:scale-95 text-xs font-bold font-header"
+          title="Cambiar idioma"
+        >
+          <span className="flex items-center gap-2">
+            <svg viewBox="0 0 24 24" className="w-4 h-4 text-neon-cyan" fill="none" stroke="currentColor" strokeWidth={2}>
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+              <path d="M2 12h20" />
+            </svg>
+            Idioma
+          </span>
+          <span className="flex items-center gap-1.5 text-[11px] text-gray-400">
+            <span className="shrink-0">{currentLang.flag}</span>
+            <span className="truncate max-w-[90px]">{currentLang.label}</span>
+            <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" strokeWidth={2}>
+              <path d="m6 9 6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+        </button>
       </div>
 
       {/* Zoom */}
@@ -164,21 +243,21 @@ export default function PreferencesPanel() {
           <button
             onClick={() => changeZoom(-FONT_SIZE_STEP)}
             disabled={prefs.fontSize <= FONT_SIZE_MIN}
-            className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:border-neon-blue/50 font-header font-bold text-sm transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
+            className="p-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:border-neon-cyan/50 transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
             title="Disminuir zoom"
           >
-            Zoom −
+            <IcoZoomMinus />
           </button>
-          <span className="w-16 text-center text-xs font-header font-black text-neon-cyan tabular-nums">
+          <span className="flex-1 text-center text-xs font-header font-black text-neon-cyan tabular-nums">
             {prefs.fontSize}%
           </span>
           <button
             onClick={() => changeZoom(FONT_SIZE_STEP)}
             disabled={prefs.fontSize >= FONT_SIZE_MAX}
-            className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:border-neon-blue/50 font-header font-bold text-sm transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
+            className="p-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:border-neon-cyan/50 transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
             title="Aumentar zoom"
           >
-            Zoom +
+            <IcoZoomPlus />
           </button>
         </div>
       </div>

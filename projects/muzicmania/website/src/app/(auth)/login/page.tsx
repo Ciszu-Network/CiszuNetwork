@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
-import QuickDocks from '@/components/molecules/QuickDocks';
 import { Button } from '@/components/atoms/Button';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { supabase } from '@/config/supabase';
@@ -420,7 +419,6 @@ export default function LoginPage() {
           </div>
         </motion.section>
 
-        <QuickDocks />
       </div>
 
       <AuthFeedback 
