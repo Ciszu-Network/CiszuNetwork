@@ -1,8 +1,14 @@
-# Dependencies & build outputs
+# ==========================================
+# Dependencies & Build Outputs
+# ==========================================
 node_modules
 **/node_modules
+.pnpm-store/
 .next
 **/.next
+!.next/standalone
+!.next/static
+!.next/server
 .turbo
 **/.turbo
 .out
@@ -11,8 +17,12 @@ dist
 **/dist
 build
 **/build
+out
+**/out
 
-# Source control & IDE
+# ==========================================
+# Source Control & IDE
+# ==========================================
 .git
 **/.git
 .gitignore
@@ -24,7 +34,9 @@ build
 .idea
 **/.idea
 
-# Test & development
+# ==========================================
+# Test & Development
+# ==========================================
 **/*.test.ts
 **/*.test.tsx
 **/*.spec.ts
@@ -33,32 +45,28 @@ build
 **/__mocks__/**
 **/coverage/**
 **/.nyc_output/**
+**/test-results/**
+**/playwright-report/**
 cypress
 **/cypress/**
-playwright-report
-**/playwright-report/**
-test-results
-**/test-results/**
+storybook
+**/storybook/**
+**/stories/*.tsx
+**/stories/*.ts
 
-# Documentation & configs not needed at runtime
+# ==========================================
+# Documentation
+# ==========================================
 **/*.md
-**/docs/**
-**/documentation/**
 **/README*
 **/CHANGELOG*
 **/LICENSE*
-**/*.config.js
-**/*.config.ts
-**/*.config.mjs
-**/eslint.config.*
-**/prettierrc*
-**/tailwind.config.*
-**/postcss.config.*
-**/tsconfig*.json
-**/next.config.*
-**/next-env.d.ts
+**/docs/**
+**/documentation/**
 
-# Heavy assets not used in production
+# ==========================================
+# Heavy Assets & Binaries
+# ==========================================
 *.mp4
 *.webm
 *.mov
@@ -99,32 +107,38 @@ test-results
 *.DS_Store
 Thumbs.db
 
-# Vercel specific
+# ==========================================
+# Vercel & Caches
+# ==========================================
 .vercel
 **/.vercel
 .vercelignore
 **/.vercelignore
-
-# Turbo & build caches
-.turbo
-**/.turbo
 .node_modules/.cache
 **/.cache
 **/node_modules/.cache
+**/.next/cache
 
-# Supabase & debug
+# ==========================================
+# Supabase & Debug
+# ==========================================
 supabase/debug/
 supabase/download/
 **/supabase/debug/**
 **/supabase/download/**
 
-# Misc
+# ==========================================
+# Misc & Source Maps
+# ==========================================
 downloads
 **/downloads/**
 archives
 **/archives/**
-*.rar
-*.7z
-*.zip
 *.tar.gz
 *.tgz
+*.map
+*.map.gz
+*.js.map
+*.css.map
+*.ts.map
+*.tsx.map

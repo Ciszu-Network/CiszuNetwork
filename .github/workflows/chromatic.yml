@@ -12,6 +12,7 @@ on:
     paths:
       - 'packages/ui/**'
       - '.github/workflows/chromatic.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
