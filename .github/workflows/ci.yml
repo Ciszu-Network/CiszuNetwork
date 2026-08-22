@@ -5,6 +5,7 @@ on:
     branches: [main, master]
   pull_request:
     branches: [main, master]
+  workflow_dispatch:
   # Cotidianización: el pipeline de seguridad completo corre diario (06:00 UTC)
   schedule:
     - cron: '0 6 * * *'
