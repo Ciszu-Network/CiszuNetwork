@@ -1,5 +1,9 @@
 import type { NextConfig } from 'next';
 import { withSentryConfig } from '@sentry/nextjs';
+import path from 'path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const nextConfig: NextConfig = {
   async redirects() {
@@ -16,13 +20,20 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Resolver alias @/ para que funcione en Vercel build
+  webpack(config) {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': path.resolve(__dirname, 'src'),
+    };
+    return config;
+  },
 };
 
 export default withSentryConfig(nextConfig, {
   org: 'ciszu-network',
   project: 'ciszunetwork',
   silent: true,
-  // Source maps: se suben en build cuando exista SENTRY_AUTH_TOKEN (production).
   sourcemaps: {
     disable: !process.env.SENTRY_AUTH_TOKEN,
     filesToDeleteAfterUpload: ['.next/static/**/*.map'],

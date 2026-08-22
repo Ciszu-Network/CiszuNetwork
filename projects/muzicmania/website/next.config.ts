@@ -1,6 +1,9 @@
 import type { NextConfig } from 'next';
 import path from 'path';
+import { fileURLToPath } from 'node:url';
 import { withSentryConfig } from '@sentry/nextjs';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const nextConfig: NextConfig = {
   turbopack: {
@@ -45,6 +48,14 @@ const nextConfig: NextConfig = {
         hostname: 'obwzzmbvkrcscqwptlqo.supabase.co',
       },
     ],
+  },
+  // Resolver alias @/ para que funcione en Vercel build
+  webpack(config: any) {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': path.resolve(__dirname, 'src'),
+    };
+    return config;
   },
 };
 
