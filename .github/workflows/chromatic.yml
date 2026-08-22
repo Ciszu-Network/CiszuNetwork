@@ -38,7 +38,9 @@ jobs:
         with:
           cache: pnpm
       - name: Instalar dependencias
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
+      - name: Build Storybook
+        run: pnpm --filter @ciszu/ui build-storybook
       - name: Publicar en Chromatic
         uses: chromaui/action@v18
         with:

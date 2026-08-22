@@ -31,5 +31,6 @@ export default defineConfig({
     ],
     css: false,
     globals: false,
+    maxConcurrency: 1,
   },
 });

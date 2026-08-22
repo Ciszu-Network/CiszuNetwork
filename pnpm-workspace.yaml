@@ -26,3 +26,10 @@ overrides:
   "@typescript-eslint/eslint-plugin": 8.63.0
   "@typescript-eslint/parser": 8.63.0
   uuid: 13.0.1
+
+# Vercel cache optimization
+# Habilita caché global de pnpm en la raíz del monorepo
+# Esto evita re-descargar dependencias en cada sub-proyecto
+engineStrict: true
+prefer-frozen-lockfile: true
+shamefully-hoist: false
