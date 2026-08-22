@@ -15,7 +15,7 @@ permissions:
 jobs:
   lighthouse:
     name: Lighthouse CI
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.PREFERRED_RUNNER || 'self-hosted' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -33,10 +33,22 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install Chrome
+      - name: Install Chrome (Windows self-hosted)
+        if: runner.os == 'Windows'
+        shell: powershell
         run: |
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
+          # Chrome ya debería estar instalado en el runner self-hosted Windows
+          # Si no, instalar con winget
+          if (-not (Get-Command "chrome.exe" -ErrorAction SilentlyContinue)) {
+            winget install --id Google.Chrome --silent --accept-source-agreements --accept-package-agreements
+          }
+
+      - name: Install Chrome (Linux self-hosted)
+        if: runner.os != 'Windows'
+        run: |
+          if ! command -v google-chrome-stable &> /dev/null; then
+            sudo apt-get update && sudo apt-get install -y google-chrome-stable
+          fi
 
       - name: Run Lighthouse CI
         env:
