@@ -75,8 +75,8 @@ Identificador: SEO_PLAN_V1.0.0_2026_08_21_ciszunetwork
 #### Paso 4: Exportar datos básicos (10 min)
 
 - En Screaming Frog, da click en "Export" -> "Selected"
-- Guarda como CSV: "Title", "Meta Description", "H1", "H1 count", "Response Code"
-- Guardar en carpeta del proyecto: `projects/ciszu/seo-audit-2026-08-21/`
+- Guarda como CSV: "Title", "Meta Description", "H1", "H1 count", "Response Code", "Images", "Redirects", "Canonicals", "Directives"
+- Guardar en carpeta del proyecto: `projects/<nombre>/seo/audits/screaming-frog/crawl-YYYY-MM-DD/exports/`
 
 ---
 
@@ -234,7 +234,7 @@ Disallow: /admin/
 
 ---
 
-## 6. Lighthouse CI — Automatización en CI/CD
+## 11. Lighthouse CI — Automatización en CI/CD
 
 ### Configuración implementada
 
@@ -344,7 +344,7 @@ pnpm lhci:full
 
 ---
 
-## 7. Protocolos de Optimización SEO Técnica
+## 12. Protocolos de Optimización SEO Técnica
 
 ### 7.1 Core Web Vitals - Optimización Práctica
 
@@ -505,7 +505,7 @@ pnpm lhci:collect --url=https://ciszunetwork.vercel.app --url=https://cizukoanto
 
 ---
 
-## 8. Roadmap de Implementación (Post-Baseline)
+## 13. Roadmap de Implementación (Post-Baseline)
 
 ### Semana 1-2: Quick Wins
 - [ ] Corregir todos los titles/descriptions (Screaming Frog export)
@@ -533,7 +533,7 @@ pnpm lhci:collect --url=https://ciszunetwork.vercel.app --url=https://cizukoanto
 
 ---
 
-## 9. Comandos de Referencia Rápida
+## 14. Comandos de Referencia Rápida
 
 ```bash
 # === DEPLOYS ===
@@ -565,11 +565,18 @@ pnpm dev:log                 # Logs de todas las webs
 # Screaming Frog: manual
 # GSC: manual en dashboard
 # Lighthouse: pnpm lhci:full o Chrome DevTools
+
+# === SEO SCRIPTS ===
+pnpm seo:sf:all              # Procesa CSVs SF (4 proyectos)
+pnpm seo:log:all             # Procesa access logs Vercel (4 proyectos)
+pnpm seo:compare:ciszu       # Compara crawls (ej: 2026-08-21 2026-08-22)
+pnpm seo:fixes:ciszu apply   # Aplica fixes automáticos
+pnpm seo:audit:full          # Pipeline completo SF + Logs + Compare
 ```
 
 ---
 
-## 10. Referencias y Recursos
+## 15. Referencias y Recursos
 
 - **Lighthouse CI**: https://github.com/GoogleChrome/lighthouse-ci
 - **Core Web Vitals**: https://web.dev/vitals/

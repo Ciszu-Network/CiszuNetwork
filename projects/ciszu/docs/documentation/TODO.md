@@ -5,11 +5,128 @@
 ### Cambios Generales:
 
 - [ ] #1 Finalizar el cambio de los VISUAL_BUILDERS e conciderar las demas herramientras como Onlook u otras pendientes o posibles. Instalar, implementar, documentar y commitear. (NO REALIZAR AUN)
-- [ ] #3 Crear sistema de mensajes globales en todas las paginas usando el toast de error. Mejorar los errores para que se compilen entre si y no se sobrepasen.
-- [ ] #5 Crear sistemas de anuncios particulares e intrucivos, intrucivos son los que aparecen por alguna accion del usuario, aparecen siempre luego de esa accion, aparen como un modal en el centro con animacion fluida y blur al fondo. Ejemplo luego de una partida de muzicmania, luego de comprar algo en la tienda (futuro), etc. Particulares son los que aparecen de vez en cuando, en ciertos lugares de las paginas tanto en el body, como flotantes en las esquinas, sin ser tan intrucivos.
+- [ ] #2 Arregla los errores de los workflows sobre Vitest, Chromatic y Storybook.
+
+* **Chromatic / Chromatic (Storybook @ciszu/ui) (push)** **Failing after 33m**
+
+19:25:00.690 ℹ Uploading 7 metadata files to https://6a7f722e2641a24bc6249782-svmdzfljbl.chromatic.com/.chromatic/ - build-storybook.log - chromatic-diagnostics.json - chromatic.log - main.ts - preview-stats.trimmed.json - preview.ts - index.html
+Error: non-zero exit code
+
+- **CI / Tests de componente Storybook (Vitest + Playwright) (push)** **Failing after 33m**
+
+**⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯**
+
+[](https://github.com/Ciszu-Network/CiszuNetwork/actions/runs/32533816590/job/96931817066#step:7:91)
+
+[](https://github.com/Ciszu-Network/CiszuNetwork/actions/runs/32533816590/job/96931817066#step:7:92)E:\actions-runners\CISZU-PC-3_work\CiszuNetwork\CiszuNetwork\packages\ui:
+
+[](https://github.com/Ciszu-Network/CiszuNetwork/actions/runs/32533816590/job/96931817066#step:7:93) ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @ciszu/ui@1.0.0 test:storybook: `vitest run --config vitest.config.mts`
+
+[](https://github.com/Ciszu-Network/CiszuNetwork/actions/runs/32533816590/job/96931817066#step:7:94)Exit status 1
+
+[](https://github.com/Ciszu-Network/CiszuNetwork/actions/runs/32533816590/job/96931817066#step:7:95)Error: Process completed with exit code 1.
+
+- **CI / Tests unitarios (Vitest) (push)** **Failing after 26m**
+
+❯ projects/ciszubot/discord-bot/tests/statsServer.test.ts (6 tests | 6 skipped) 37551ms
+↓ GET /api/stats devuelve el estado inicial
+↓ POST /api/update-stats actualiza campos y el GET los refleja
+↓ updateStats(client) vuelca el estado del cliente
+↓ POST /api/votes/dbl exige autenticación (401)
+↓ POST /api/votes/dbl con secreto responde 200
+↓ incrementCommands / getTotalCommands
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+FAIL projects/ciszubot/discord-bot/tests/statsServer.test.ts [ projects/ciszubot/discord-bot/tests/statsServer.test.ts ]
+Error: Hook timed out in 30000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
+❯ projects/ciszubot/discord-bot/tests/statsServer.test.ts:20:1
+18| let base = '';
+19|
+20| beforeAll(async () => {
+| ^
+21| process.env.PORT = '0'; // puerto efímero para no chocar con el bot …
+22| process.env.DBL_WEBHOOK_SECRET = 'test-secret';
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 5 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Failed to start forks worker for test files E:/actions-runners/CISZU-PC-3/_work/CiszuNetwork/CiszuNetwork/packages/ui/tests/CloudflareGuard.test.tsx.
+❯ node_modules/.pnpm/vitest@4.1.10_@opentelemetr*2eb0fe4a0d1afe5f2bbf369c900f9db2/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:3465:94
+❯ Pool.schedule node_modules/.pnpm/vitest@4.1.10*@opentelemetr_2eb0fe4a0d1afe5f2bbf369c900f9db2/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:3465:5
+
+Test Files 1 failed | 15 passed (16)
+Caused by: Error: [vitest-pool-runner]: Timeout waiting for worker to respond
+Tests 128 passed | 6 skipped (134)
+❯ Timeout.<anonymous></anonymous> node*modules/.pnpm/vitest@4.1.10*@opentelemetr_2eb0fe4a0d1afe5f2bbf369c900f9db2/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:3041:58
+Errors 5 errors
+❯ listOnTimeout node:internal/timers:605:17
+Start at 19:44:19
+❯ processTimers node:internal/timers:541:7
+Duration 543.51s (transform 27.95s, setup 98.27s, import 921.58s, tests 38.42s, environment 3ms)
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: Error: Hook timed out in 30000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
+❯ projects/ciszubot/discord-bot/tests/statsServer.test.ts:20:1
+
+Error: [vitest-pool]: Failed to start forks worker for test files E:/actions-runners/CISZU-PC-3/_work/CiszuNetwork/CiszuNetwork/packages/ui/tests/FabStack.test.tsx.
+❯ node_modules/.pnpm/vitest@4.1.10_@opentelemetr*2eb0fe4a0d1afe5f2bbf369c900f9db2/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:3465:94
+❯ Pool.schedule node_modules/.pnpm/vitest@4.1.10*@opentelemetr_2eb0fe4a0d1afe5f2bbf369c900f9db2/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:3465:5
+
+Caused by: Error: [vitest-pool-runner]: Timeout waiting for worker to respond
+❯ Timeout.<anonymous></anonymous> node*modules/.pnpm/vitest@4.1.10*@opentelemetr_2eb0fe4a0d1afe5f2bbf369c900f9db2/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:3041:58
+❯ listOnTimeout node:internal/timers:605:17
+❯ processTimers node:internal/timers:541:7
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Failed to start forks worker for test files E:/actions-runners/CISZU-PC-3/_work/CiszuNetwork/CiszuNetwork/packages/ui/tests/InstallPdwaButton.test.tsx.
+❯ node_modules/.pnpm/vitest@4.1.10_@opentelemetr*2eb0fe4a0d1afe5f2bbf369c900f9db2/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:3465:94
+❯ Pool.schedule node_modules/.pnpm/vitest@4.1.10*@opentelemetr_2eb0fe4a0d1afe5f2bbf369c900f9db2/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:3465:5
+
+Caused by: Error: [vitest-pool-runner]: Timeout waiting for worker to respond
+❯ Timeout.<anonymous></anonymous> node*modules/.pnpm/vitest@4.1.10*@opentelemetr_2eb0fe4a0d1afe5f2bbf369c900f9db2/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:3041:58
+❯ listOnTimeout node:internal/timers:605:17
+❯ processTimers node:internal/timers:541:7
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Failed to start forks worker for test files E:/actions-runners/CISZU-PC-3/_work/CiszuNetwork/CiszuNetwork/packages/ui/tests/Icon.test.tsx.
+❯ node_modules/.pnpm/vitest@4.1.10_@opentelemetr*2eb0fe4a0d1afe5f2bbf369c900f9db2/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:3465:94
+❯ Pool.schedule node_modules/.pnpm/vitest@4.1.10*@opentelemetr_2eb0fe4a0d1afe5f2bbf369c900f9db2/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:3465:5
+
+Caused by: Error: [vitest-pool-runner]: Timeout waiting for worker to respond
+❯ Timeout.<anonymous></anonymous> node*modules/.pnpm/vitest@4.1.10*@opentelemetr_2eb0fe4a0d1afe5f2bbf369c900f9db2/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:3041:58
+❯ listOnTimeout node:internal/timers:605:17
+❯ processTimers node:internal/timers:541:7
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Failed to start forks worker for test files E:/actions-runners/CISZU-PC-3/_work/CiszuNetwork/CiszuNetwork/packages/ui/tests/PostHogAnalytics.test.tsx.
+❯ node_modules/.pnpm/vitest@4.1.10_@opentelemetr*2eb0fe4a0d1afe5f2bbf369c900f9db2/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:3465:94
+❯ Pool.schedule node_modules/.pnpm/vitest@4.1.10*@opentelemetr_2eb0fe4a0d1afe5f2bbf369c900f9db2/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:3465:5
+
+Caused by: Error: [vitest-pool-runner]: Timeout waiting for worker to respond
+❯ Timeout.<anonymous></anonymous> node*modules/.pnpm/vitest@4.1.10*@opentelemetr_2eb0fe4a0d1afe5f2bbf369c900f9db2/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:3041:58
+❯ listOnTimeout node:internal/timers:605:17
+❯ processTimers node:internal/timers:541:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+ ELIFECYCLE  Test failed. See above for more details.
+Error: Process completed with exit code 1.
+
+- **UI Tests** - 1 test failed to render
+
+* [ ] #3 Crear sistema de mensajes globales en todas las paginas usando el toast de error. Mejorar los errores para que se compilen entre si y no se sobrepasen.
+* [ ] #5 Crear sistemas de anuncios particulares e intrucivos, intrucivos son los que aparecen por alguna accion del usuario, aparecen siempre luego de esa accion, aparen como un modal en el centro con animacion fluida y blur al fondo. Ejemplo luego de una partida de muzicmania, luego de comprar algo en la tienda (futuro), etc. Particulares son los que aparecen de vez en cuando, en ciertos lugares de las paginas tanto en el body, como flotantes en las esquinas, sin ser tan intrucivos.
       Luego existen los anuncios por recompensa (periodicos/temporales) y anucios opcionales. TODOS los anuncios deben tener su oportunidad de quitarse, la diferencia es que los temporales o periodicos debes esperar cierto tiempo para obtener cierta recompensa (la mitad), los opcionales aparecen en ciertos lugares donde puedas quitarlos en cualquier momento, como los intrucivos. Todos los anuncios respaldados por ciszu network y google analiticas. Crear AD_SYSTEM.md y crear MONETIZATION_PROTOCOLS.md (Manera de monetizacion de ciszunetwork, donacios directas e indirectas, anuncios y en el futuro compras y subcripciones)
-- [ ] #6 Actualizar los terminos, condiciones, guildelines, reaglas y mas bases legales de todas las paginas para completar mas sobre el uso de datos de los usuarios para recomendar mejores anuncios, geolocalizacion, entre muchas otras cosas mas como la creacion de cuentas. Ciszu Network es el que debe tener mayor informacion de todo. Ademas cada pagina legal debe tener un dock para llevar a ciszunetwork, de manera que los usuarios puedan ver la version completa alli.
-- [ ] #10 Implementar herramientas de SEO_PLAN.md y añadir mas informacion como metodos o protocolos para mejorar el SEO.
+* [ ] #6 Actualizar los terminos, condiciones, guildelines, reaglas y mas bases legales de todas las paginas para completar mas sobre el uso de datos de los usuarios para recomendar mejores anuncios, geolocalizacion, entre muchas otras cosas mas como la creacion de cuentas. Ciszu Network es el que debe tener mayor informacion de todo. Ademas cada pagina legal debe tener un dock para llevar a ciszunetwork, de manera que los usuarios puedan ver la version completa alli.
+* [ ] #10 Implementar herramientas de SEO_PLAN.md y añadir mas informacion como metodos o protocolos para mejorar el SEO.
 
 ### Cambios de AUTH en todas las Websites:
 
