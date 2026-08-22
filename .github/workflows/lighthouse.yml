@@ -41,4 +41,11 @@ jobs:
       - name: Run Lighthouse CI
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
-        run: pnpm lhci:full
+        run: |
+          if [ -z "${LHCI_GITHUB_APP_TOKEN}" ]; then
+            echo "LHCI_GITHUB_APP_TOKEN no configurado - saltando upload a LHCI"
+            pnpm lhci:collect
+            pnpm lhci:assert
+          else
+            pnpm lhci:full
+          fi
