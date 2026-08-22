@@ -1,8 +1,6 @@
 ﻿name: Deploy CiszuNetwork Website
 
 on:
-  push:
-    branches: [main, master]
   workflow_dispatch:
     inputs:
       environment:

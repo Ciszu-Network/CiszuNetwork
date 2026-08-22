@@ -19,7 +19,7 @@ permissions:
 
 concurrency:
   group: chromatic-${{ github.ref }}
-  cancel-in-progress: true
+  # No cancel-in-progress: permite que corran concurrentes sin cancelar previos
 
 jobs:
   chromatic:

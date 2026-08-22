@@ -1,18 +1,16 @@
 ﻿name: Deploy Ciszuko Antony Website
 
 on:
-    push:
-        branches: [main, master]
-    workflow_dispatch:
-        inputs:
-            environment:
-                description: Entorno del deploy (production o preview)
-                required: true
-                default: production
-                type: choice
-                options:
-                    - preview
-                    - production
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Entorno del deploy (production o preview)
+        required: true
+        default: production
+        type: choice
+        options:
+          - preview
+          - production
 
 permissions:
     contents: read
