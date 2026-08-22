@@ -1,10 +1,54 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["**/.env.*local"],
+  "globalEnv": [
+    "VERCEL",
+    "VERCEL_URL",
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "KV_REST_API_TOKEN",
+    "KV_URL",
+    "KV_REST_API_READ_ONLY_TOKEN",
+    "KV_REST_API_URL",
+    "REDIS_URL",
+    "TURNSTILE_SECRET_KEY",
+    "SENTRY_DSN",
+    "SENTRY_AUTH_TOKEN",
+    "NOWPAYMENTS_API_KEY",
+    "NOWPAYMENTS_IPN_SECRET",
+    "NOWPAYMENTS_PUBLIC_KEY",
+    "NOWPAYMENTS_DONATE_URL",
+    "NOWPAYMENTS_POS_URL",
+    "WALLET_BINANCE_URL",
+    "DONATE_ETH",
+    "DONATE_USDT_ERC20"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [".next/**", "!.next/cache/**"],
+      "env": [
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "KV_REST_API_TOKEN",
+        "KV_URL",
+        "KV_REST_API_READ_ONLY_TOKEN",
+        "KV_REST_API_URL",
+        "REDIS_URL",
+        "TURNSTILE_SECRET_KEY",
+        "SENTRY_DSN",
+        "SENTRY_AUTH_TOKEN",
+        "NOWPAYMENTS_API_KEY",
+        "NOWPAYMENTS_IPN_SECRET",
+        "NOWPAYMENTS_PUBLIC_KEY",
+        "NOWPAYMENTS_DONATE_URL",
+        "NOWPAYMENTS_POS_URL",
+        "WALLET_BINANCE_URL",
+        "DONATE_ETH",
+        "DONATE_USDT_ERC20"
+      ]
     },
     "lint": {},
     "dev": {
