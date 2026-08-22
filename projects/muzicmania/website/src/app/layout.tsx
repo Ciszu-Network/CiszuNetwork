@@ -32,6 +32,9 @@ export const metadata = {
   description: "El Juego de Ritmo Definitivo en la Web. Domina el beat en una dimensión online con estética futurista.",
   appleWebApp: { capable: true, title: "MuzicMania", statusBarStyle: "black-translucent" },
   manifest: "/manifest.webmanifest",
+  verification: {
+    google: "9jc8qVjHjC3ZpZ7gpgbIpHrloar3kaeNIEy0EnR2uc0",
+  },
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",

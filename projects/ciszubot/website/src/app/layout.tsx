@@ -47,6 +47,9 @@ export const metadata: Metadata = {
     "El bot de Discord de Ciszu Network. Comandos divertidos, de información y utilidad con prefijo cz! y slash commands. Moderno, rápido y en español.",
   appleWebApp: { capable: true, title: "CiszuBot", statusBarStyle: "black-translucent" },
   manifest: "/manifest.webmanifest",
+  verification: {
+    google: "9jc8qVjHjC3ZpZ7gpgbIpHrloar3kaeNIEy0EnR2uc0",
+  },
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",

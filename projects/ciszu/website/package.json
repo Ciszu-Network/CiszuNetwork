@@ -10,7 +10,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "verify": "pnpm run lint && next build"
+    "verify": "pnpm run lint && next build",
+    "postbuild": "next-sitemap"
   },
   "dependencies": {
     "@ciszu/ui": "workspace:*",
@@ -40,6 +41,7 @@
     "autoprefixer": "^10.4.20",
     "eslint": "^9.0.0",
     "eslint-config-next": "^15.1.7",
+    "next-sitemap": "^4.2.3",
     "postcss": "^8.5.25",
     "sharp": "^0.35.3",
     "tailwindcss": "^4.2.4",
