@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://ciszunetwork.vercel.app
+
+# Sitemaps
+Sitemap: https://ciszunetwork.vercel.app/sitemap.xml
