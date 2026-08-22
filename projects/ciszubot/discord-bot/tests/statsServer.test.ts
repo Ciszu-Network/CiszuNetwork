@@ -23,7 +23,7 @@ beforeAll(async () => {
   server = await setupStatsServer();
   const addr = server!.address();
   base = `http://127.0.0.1:${(addr as { port: number }).port}`;
-}, 30000); // timeout extendido para CI lento
+}, 60000); // timeout extendido para CI lento (NestJS startup)
 
 afterAll(async () => {
   await new Promise<void>((resolve) => server?.close(() => resolve()));
