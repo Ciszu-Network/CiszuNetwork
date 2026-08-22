@@ -53,10 +53,6 @@ public/
 !public/sitemap-*.xml
 !public/robots.txt
 
-# Tauri source (not needed for web deploy)
-src-tauri/
-**/src-tauri/**
-
 # Config files not needed at runtime
 *.config.js
 *.config.ts
@@ -150,12 +146,6 @@ Thumbs.db
 **/node_modules/.cache
 **/.next/cache
 
-# Supabase debug
-supabase/debug/
-supabase/download/
-**/supabase/debug/**
-**/supabase/download/**
-
 # Misc
 downloads
 **/downloads/**
@@ -174,10 +164,3 @@ archives
 *.css.map
 *.ts.map
 *.tsx.map
-
-# Game-specific assets not needed for web
-public/arrowskins/
-**/public/arrowskins/**
-*.osr
-*.osk
-*.osz

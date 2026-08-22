@@ -48,7 +48,7 @@ function run(cmd) {
 
 try {
     run(`vercel link --yes --project ${project} --token=${token}`);
-    run(`vercel --prod --yes --archive=tgz --token=${token}`);
+    run(`vercel --prod --yes --archive=tgz --logs --token=${token}`);
     console.log(`[deploy] OK: ${project} desplegado en producción`);
 } catch (err) {
     console.error(`[deploy] FALLÓ el deploy de ${project}`);
