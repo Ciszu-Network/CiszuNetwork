@@ -1,8 +1,11 @@
-# Dependencies & build outputs
+# Dependencies & build outputs (Next.js standalone only needs .next/standalone)
 node_modules
 **/node_modules
 .next
 **/.next
+!.next/standalone
+!.next/static
+!.next/server
 .turbo
 **/.turbo
 .out
@@ -11,6 +14,8 @@ dist
 **/dist
 build
 **/build
+out
+**/out
 
 # Source control & IDE
 .git
@@ -24,6 +29,44 @@ build
 .idea
 **/.idea
 
+# Source files not needed at runtime (Next.js compiles to .next)
+src/
+**/src/**
+app/
+**/app/**
+pages/
+**/pages/**
+components/
+**/components/**
+lib/
+**/lib/**
+hooks/
+**/hooks/**
+utils/
+**/utils/**
+styles/
+**/styles/**
+public/
+**/public/
+!public/**/*
+!public/sitemap.xml
+!public/sitemap-*.xml
+!public/robots.txt
+
+# Config files not needed at runtime
+*.config.js
+*.config.ts
+*.config.mjs
+*.config.cjs
+eslint.config.*
+prettierrc*
+tailwind.config.*
+postcss.config.*
+tsconfig*.json
+next.config.*
+next-env.d.ts
+jsconfig*.json
+
 # Test & development
 **/*.test.ts
 **/*.test.tsx
@@ -33,32 +76,24 @@ build
 **/__mocks__/**
 **/coverage/**
 **/.nyc_output/**
+**/test-results/**
+**/playwright-report/**
 cypress
 **/cypress/**
-playwright-report
-**/playwright-report/**
-test-results
-**/test-results/**
+storybook
+**/storybook/**
+**/stories/*.tsx
+**/stories/*.ts
 
-# Documentation & configs not needed at runtime
+# Documentation
 **/*.md
-**/docs/**
-**/documentation/**
 **/README*
 **/CHANGELOG*
 **/LICENSE*
-**/*.config.js
-**/*.config.ts
-**/*.config.mjs
-**/eslint.config.*
-**/prettierrc*
-**/tailwind.config.*
-**/postcss.config.*
-**/tsconfig*.json
-**/next.config.*
-**/next-env.d.ts
+**/docs/**
+**/documentation/**
 
-# Heavy assets not used in production
+# Heavy assets
 *.mp4
 *.webm
 *.mov
@@ -99,24 +134,17 @@ test-results
 *.DS_Store
 Thumbs.db
 
-# Vercel specific
+# Vercel & build caches
 .vercel
 **/.vercel
 .vercelignore
 **/.vercelignore
-
-# Turbo & build caches
 .turbo
 **/.turbo
 .node_modules/.cache
 **/.cache
 **/node_modules/.cache
-
-# Supabase & debug
-supabase/debug/
-supabase/download/
-**/supabase/debug/**
-**/supabase/download/**
+**/.next/cache
 
 # Misc
 downloads
@@ -128,3 +156,11 @@ archives
 *.zip
 *.tar.gz
 *.tgz
+*.map
+*.map.gz
+
+# Source maps not needed in production
+*.js.map
+*.css.map
+*.ts.map
+*.tsx.map
