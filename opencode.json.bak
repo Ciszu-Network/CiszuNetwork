@@ -1,0 +1,14 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+    "lsp": true,
+    "permission": {
+        "*": "allow",
+        "lsp": "allow",
+        "doom_loop": "ask",
+        "question": "ask"
+    },
+    "compaction": {
+        "auto": true,
+        "tail_turns": 15
+    }
+}
