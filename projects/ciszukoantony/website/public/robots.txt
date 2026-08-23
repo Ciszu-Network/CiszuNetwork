@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://cizukoantony.vercel.app
+Host: https://ciszukoantony.vercel.app
 
 # Sitemaps
-Sitemap: https://cizukoantony.vercel.app/sitemap.xml
+Sitemap: https://ciszukoantony.vercel.app/sitemap.xml

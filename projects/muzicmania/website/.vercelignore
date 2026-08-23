@@ -53,7 +53,7 @@ storybook
 # Documentation
 **/*.md
 **/README*
-**/CHANGELOG*
+**/CHANGELOG.md
 **/LICENSE*
 **/docs/**
 **/documentation/**
