@@ -45,7 +45,7 @@ test-results
 **/docs/**
 **/documentation/**
 **/README*
-**/CHANGELOG*
+**/CHANGELOG.md
 **/LICENSE*
 
 # Heavy assets not used in production

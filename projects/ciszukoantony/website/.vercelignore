@@ -57,7 +57,7 @@ storybook
 
 **/\*.md
 **/README*
-\*\*/CHANGELOG*
+\*\*/CHANGELOG.md
 **/LICENSE\*
 **/docs/\*\*
 **/documentation/**
@@ -194,7 +194,7 @@ storybook
 
 **/\*.md
 **/README*
-\*\*/CHANGELOG*
+\*\*/CHANGELOG.md
 **/LICENSE\*
 **/docs/\*\*
 **/documentation/**
