@@ -9,6 +9,16 @@
 
 export const GUEST_STORAGE_KEY = 'ciszu_guest_name';
 
+function secureRandomDigits(length: number): string {
+  const bytes = new Uint32Array(1);
+  let digits = '';
+  for (let i = 0; i < length; i += 1) {
+    crypto.getRandomValues(bytes);
+    digits += (bytes[0] % 10).toString();
+  }
+  return digits;
+}
+
 function normalizeGuest(name: string): string {
   return name.replace(/^Invitado\s*/, 'Guest').replace(/^Invite\s*/, 'Guest');
 }
@@ -27,7 +37,7 @@ export function getGuestName(): string {
     }
     return normalized;
   }
-  const digits = Math.floor(100000 + Math.random() * 900000).toString();
+  const digits = secureRandomDigits(6);
   const name = `Guest${digits}`;
   try {
     window.localStorage.setItem(GUEST_STORAGE_KEY, name);

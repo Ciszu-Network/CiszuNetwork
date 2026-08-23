@@ -21,7 +21,15 @@ import { expect, test } from '@playwright/test';
  * bloques se eliminan antes de chequear reflejo.
  */
 function stripFlightData(html: string): string {
-  return html.replace(/<script[^>]*>self\.__next_f[\s\S]*?<\/script>/gi, '');
+  let out = html;
+  // Iterar hasta estabilizar: un replace único puede dejar variantes del bloque
+  // (atributos/espacios distintos) y falsear el chequeo de reflejo del DAST.
+  let prev = '';
+  while (prev !== out) {
+    prev = out;
+    out = out.replace(/<script[^>]*>self\.__next_f[\s\S]*?<\/script\s*>/gi, '');
+  }
+  return out;
 }
 
 const SITES = {

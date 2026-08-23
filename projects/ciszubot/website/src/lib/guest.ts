@@ -6,8 +6,18 @@ function normalizeGuest(name: string): string {
 }
 
 export function generateGuestName(): string {
-  const randomId = Math.floor(100000 + Math.random() * 900000).toString();
+  const randomId = secureRandomDigits(6);
   return `Guest${randomId}`;
+}
+
+function secureRandomDigits(length: number): string {
+  const bytes = new Uint32Array(1);
+  let digits = '';
+  for (let i = 0; i < length; i += 1) {
+    crypto.getRandomValues(bytes);
+    digits += (bytes[0] % 10).toString();
+  }
+  return digits;
 }
 
 export function getGuestName(): string {

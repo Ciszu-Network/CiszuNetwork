@@ -48,7 +48,9 @@ const MODELS = {
 const DEFAULT_MODEL = "large-v3-turbo-q5_0";
 
 export function isOpenRouterEndpoint(endpoint) {
-  return /(^https?:\/\/)?([^/]+\.)?openrouter\.ai(\/|$)/i.test(endpoint || "");
+  // Regex sin cuantificadores anidados (evita ReDoS): solo exige que el
+  // hostname termine en openrouter.ai.
+  return /(^https?:\/\/)?[^/\s]*openrouter\.ai([/:]|$)/i.test(endpoint || "");
 }
 
 function buildMultipartTranscriptionRequest(model, audioBuffer, apiKey) {
