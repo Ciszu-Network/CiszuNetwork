@@ -93,7 +93,15 @@ export function applyMuted(muted: boolean): void {
 /** Solo admite esquemas seguros para el favicon (http/https/data); evita
  *  reinterpretar un href arbitrario del DOM (javascript: etc.) como URL. */
 function safeFaviconHref(href: string): string | null {
-  if (/^(https?:|data:image\/)/i.test(href)) return href;
+  if (!href) return null;
+  try {
+    const parsed = new URL(href, typeof window !== 'undefined' ? window.location.href : 'http://localhost');
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:' || parsed.protocol === 'data:') {
+      return href;
+    }
+  } catch {
+    return null;
+  }
   return null;
 }
 

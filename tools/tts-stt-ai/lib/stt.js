@@ -48,9 +48,18 @@ const MODELS = {
 const DEFAULT_MODEL = "large-v3-turbo-q5_0";
 
 export function isOpenRouterEndpoint(endpoint) {
-  // Regex sin cuantificadores anidados (evita ReDoS): solo exige que el
-  // hostname termine en openrouter.ai.
-  return /(^https?:\/\/)?[^/\s]*openrouter\.ai([/:]|$)/i.test(endpoint || "");
+  // Sin regex sobre input no controlado (evita ReDoS): parsear la URL y
+  // comparar el hostname.
+  if (!endpoint) return false;
+  const candidate = String(endpoint).trim();
+  const withScheme = /^https?:\/\//i.test(candidate) ? candidate : `https://${candidate}`;
+  try {
+    const url = new URL(withScheme);
+    const host = url.hostname.toLowerCase();
+    return host === "openrouter.ai" || host.endsWith(".openrouter.ai");
+  } catch {
+    return false;
+  }
 }
 
 function buildMultipartTranscriptionRequest(model, audioBuffer, apiKey) {
