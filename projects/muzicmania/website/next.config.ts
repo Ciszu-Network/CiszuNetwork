@@ -49,14 +49,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // Resolver alias @/ para que funcione en Vercel build
-  webpack(config: any) {
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      '@': path.resolve(__dirname, 'src'),
-    };
-    return config;
-  },
 };
 
 export default withSentryConfig(nextConfig, {
