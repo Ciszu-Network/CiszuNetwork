@@ -38,7 +38,7 @@ export function CloudflareGuard({ children }: { children: React.ReactNode }) {
   // sincroniza igualmente por si algún otro código consulta isCloudflareVerified.
   return (
     <SharedCloudflareGuard
-      siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '0x4AAAAAADm0pqu349Um-eH8'}
+      siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
       storageKey="cf_verified"
       logo={resolveAssetPath(
         'projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg'

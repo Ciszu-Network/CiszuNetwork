@@ -1,4 +1,4 @@
-﻿name: Deploy Ciszuko Antony Website
+name: Deploy Ciszuko Antony Website
 
 on:
   workflow_dispatch:
@@ -17,7 +17,7 @@ permissions:
 
 jobs:
     deploy:
-        runs-on: ${{ vars.PREFERRED_RUNNER || 'self-hosted' }}
+        runs-on: ${{ vars.PREFERRED_RUNNER || "ubuntu-latest" }}
         steps:
             - uses: actions/checkout@v4
             - uses: pnpm/action-setup@v4
