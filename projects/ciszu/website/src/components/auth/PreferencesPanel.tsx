@@ -244,26 +244,34 @@ export default function PreferencesPanel() {
         </button>
       </div>
 
-      {/* Zoom (iconos lupa −/+ estilo ciszubot) */}
+      {/* Zoom (barra con botones −/+ en extremos; inicia en 100%) */}
       <div>
         <p className={sectionTitleCls}>Zoom</p>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => changeZoom(-ZOOM_STEP)}
             disabled={zoom <= ZOOM_MIN}
-            className="p-1.5 rounded-md bg-white/5 border border-white/10 text-white hover:border-brand-light/50 hover:text-brand-light transition-all active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-            title="Disminuir zoom"
-            aria-label="Disminuir zoom"
+            className="p-2 rounded-lg bg-white/5 border border-white/10 text-white hover:border-brand-light/50 hover:text-brand-light transition-all active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shrink-0"
+            title="Quitar zoom"
+            aria-label="Quitar zoom"
           >
             <IcoZoomMinus />
           </button>
-          <span className="w-11 text-center text-xs font-header font-black text-brand-light tabular-nums">{zoom}%</span>
+          <div className="flex-1 min-w-0 flex items-center gap-2">
+            <div className="relative flex-1 h-2 rounded-full bg-white/10 overflow-hidden">
+              <div
+                className="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-brand-light to-brand-accent transition-all duration-200"
+                style={{ width: `${((zoom - ZOOM_MIN) / (ZOOM_MAX - ZOOM_MIN)) * 100}%` }}
+              />
+            </div>
+            <span className="w-12 text-center text-xs font-header font-black text-brand-light tabular-nums shrink-0">{zoom}%</span>
+          </div>
           <button
             onClick={() => changeZoom(ZOOM_STEP)}
             disabled={zoom >= ZOOM_MAX}
-            className="p-1.5 rounded-md bg-white/5 border border-white/10 text-white hover:border-brand-light/50 hover:text-brand-light transition-all active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-            title="Aumentar zoom"
-            aria-label="Aumentar zoom"
+            className="p-2 rounded-lg bg-white/5 border border-white/10 text-white hover:border-brand-light/50 hover:text-brand-light transition-all active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shrink-0"
+            title="Sumar zoom"
+            aria-label="Sumar zoom"
           >
             <IcoZoomPlus />
           </button>
