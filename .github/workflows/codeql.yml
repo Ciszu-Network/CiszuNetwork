@@ -32,6 +32,9 @@ jobs:
     outputs:
       enabled: ${{ steps.check-win.outputs.enabled || steps.check-lin.outputs.enabled }}
     steps:
+      # CodeQL es gratis en repos publicos (no requiere GHAS). En repos
+      # privados requiere Advanced Security habilitado. En cualquier caso que
+      # el analisis pueda correr, se marca enabled=true.
       - name: Check if Advanced Security is enabled [Windows]
         if: runner.os == 'Windows'
         id: check-win
@@ -39,9 +42,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         shell: powershell
         run: |
+          $visibility = gh api "repos/$env:GITHUB_REPOSITORY" --jq '.visibility' 2>$null
           $status = gh api "repos/$env:GITHUB_REPOSITORY" --jq '.security_and_analysis.advanced_security.status' 2>$null
-          if (-not $status) { $status = 'disabled' }
-          if ($status -eq 'enabled') {
+          if ($visibility -eq 'public' -or $status -eq 'enabled') {
             Add-Content -Path $env:GITHUB_OUTPUT -Value 'enabled=true'
           } else {
             Add-Content -Path $env:GITHUB_OUTPUT -Value 'enabled=false'
@@ -53,9 +56,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
+          visibility=$(gh api "repos/$GITHUB_REPOSITORY" --jq '.visibility' 2>/dev/null || true)
           status=$(gh api "repos/$GITHUB_REPOSITORY" --jq '.security_and_analysis.advanced_security.status' 2>/dev/null || true)
-          if [ -z "$status" ]; then status='disabled'; fi
-          if [ "$status" = "enabled" ]; then
+          if [ "$visibility" = "public" ] || [ "$status" = "enabled" ]; then
             echo 'enabled=true' >> "$GITHUB_OUTPUT"
           else
             echo 'enabled=false' >> "$GITHUB_OUTPUT"
