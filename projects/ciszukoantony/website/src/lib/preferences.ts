@@ -72,32 +72,33 @@ const MUTED_FAVICON_SVG = `data:image/svg+xml,${encodeURIComponent(
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect width="24" height="24" rx="5" fill="#050a14"/><path d="M11 5 6 9H2v6h4l5 4V5z" fill="#3d6adf"/><g stroke="#ff33cc" stroke-width="2" stroke-linecap="round" fill="none"><path d="m15.5 9 6 6M21.5 9l-6 6"/></g></svg>`
 )}`;
 
+/** Href original del favicon capturado en JS (nunca se relee del DOM). */
+let originalFaviconHref: string | null = null;
+
 export function applyMuted(muted: boolean): void {
   if (typeof window === 'undefined') return;
 
   const icon = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
-  if (icon) {
-    if (!icon.hasAttribute('data-original-href')) {
-      icon.setAttribute('data-original-href', icon.href || '');
-    }
+  if (icon && originalFaviconHref === null) {
+    originalFaviconHref = icon.href || '';
   }
-  const originalHref = icon?.getAttribute('data-original-href') || '';
 
   document.title = muted ? `${SITE_NAME} \uD83D\uDD07 (sin sonido)` : SITE_NAME;
 
   if (icon) {
-    icon.href = muted ? MUTED_FAVICON_SVG : safeFaviconHref(originalHref) || MUTED_FAVICON_SVG;
+    icon.href = muted ? MUTED_FAVICON_SVG : safeFaviconHref(originalFaviconHref) || MUTED_FAVICON_SVG;
   }
 }
 
 /** Solo admite esquemas seguros para el favicon (http/https/data); evita
- *  reinterpretar un href arbitrario del DOM (javascript: etc.) como URL. */
-function safeFaviconHref(href: string): string | null {
+ *  reinterpretar un href arbitrario (javascript: etc.) como URL.
+ *  Devuelve el href normalizado por `new URL` (nunca el string crudo). */
+function safeFaviconHref(href: string | null): string | null {
   if (!href) return null;
   try {
     const parsed = new URL(href, typeof window !== 'undefined' ? window.location.href : 'http://localhost');
     if (parsed.protocol === 'http:' || parsed.protocol === 'https:' || parsed.protocol === 'data:') {
-      return href;
+      return parsed.href;
     }
   } catch {
     return null;
