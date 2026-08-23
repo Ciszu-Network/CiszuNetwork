@@ -243,5 +243,41 @@ workers/.wrangler/
 # Directus local (tools/directus) — base de datos SQLite del contenedor
 tools/directus/data/
 
+# ─── Exclusiones para repo público (docs internas, scripts, infra, etc.) ───────
+# Documentación técnica interna de cada proyecto (docs/documentation/)
+# Los docs de usuario (docx, pdf, md, txt en docs/) SÍ se trackean
+projects/*/docs/documentation/
+# SEO configs y scripts (internos)
+projects/*/seo/
+# Scripts de automatización (locales)
+scripts/
+# Servicios e infraestructura (Supabase, Vercel, etc.)
+services/
+# Herramientas de desarrollo (IA, OSINT, conversores, etc.)
+tools/
+# Tests E2E, debug, playwright outputs
+test/
+# Archivos grandes, backups, clientes
+archives/
+# Documentación de agente/IA (AGENTS.md, opencode config)
+AGENTS.md
+opencode.json
+.opencode/
+# Workers (Cloudflare/Miniflare)
+workers/
+# VR/AR, clientes, descargas, reportes
+downloads/
+reports/
+# Legacy duplicate project
+CiszuGamens/
+projects/ciszugamens/
+
+# Database files (SQL dumps, SQLite, etc.) - no data in public repo
+*.sql
+*.db
+*.sqlite
+*.sqlite3
+*.dump
+
 .vercel
 .env*
