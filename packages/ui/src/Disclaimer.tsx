@@ -18,6 +18,7 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useSyncExternalStore } from 'react';
+import { useZoomWarningActive } from './zoomStore';
 
 export type DisclaimerKind = 'info' | 'beta' | 'warning';
 
@@ -237,11 +238,15 @@ export interface DisclaimerStackProps {
 export function DisclaimerStack({ headerHeight = 64, zoomShift = 32 }: DisclaimerStackProps) {
   const { items } = useDisclaimer();
   const mode = useHeaderMode();
+  // Cuando el zoom está fuera de rango, los Navbars desplazan el header con
+  // mt-8 (zoomShift px). El stack debe bajar la misma cantidad para no
+  // quedar por detrás del header.
+  const zoomActive = useZoomWarningActive();
 
   if (items.length === 0) return null;
 
   const island = mode === 'island';
-  const top = headerHeight + (island ? 14 : 0);
+  const top = headerHeight + (island ? 14 : 0) + (zoomActive ? zoomShift : 0);
 
   return (
     <>
