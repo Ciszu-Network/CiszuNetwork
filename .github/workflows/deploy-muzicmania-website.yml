@@ -1,6 +1,8 @@
 name: Deploy MuzicMania Website
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       environment:
@@ -25,6 +27,7 @@ jobs:
           dest: ~/setup-pnpm-${{ runner.name }}
       - uses: actions/setup-node@v4
         with:
+          node-version: '22'
           cache: pnpm
       - name: Install Vercel CLI
         run: pnpm add -g vercel
