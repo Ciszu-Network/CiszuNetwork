@@ -86,8 +86,15 @@ export function applyMuted(muted: boolean): void {
   document.title = muted ? `${SITE_NAME} \uD83D\uDD07 (sin sonido)` : SITE_NAME;
 
   if (icon) {
-    icon.href = muted ? MUTED_FAVICON_SVG : originalHref || MUTED_FAVICON_SVG;
+    icon.href = muted ? MUTED_FAVICON_SVG : safeFaviconHref(originalHref) || MUTED_FAVICON_SVG;
   }
+}
+
+/** Solo admite esquemas seguros para el favicon (http/https/data); evita
+ *  reinterpretar un href arbitrario del DOM (javascript: etc.) como URL. */
+function safeFaviconHref(href: string): string | null {
+  if (/^(https?:|data:image\/)/i.test(href)) return href;
+  return null;
 }
 
 /** Empuja las preferencias locales al perfil conectado (schema ciszukoantony). */

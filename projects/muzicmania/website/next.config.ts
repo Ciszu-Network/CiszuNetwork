@@ -6,9 +6,6 @@ import { withSentryConfig } from '@sentry/nextjs';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const nextConfig: NextConfig = {
-  turbopack: {
-    root: path.resolve(__dirname),
-  },
   async redirects() {
     return [
       { source: '/index.html', destination: '/', permanent: true },
@@ -55,8 +52,6 @@ const nextConfig: NextConfig = {
     config.resolve.alias = {
       ...config.resolve.alias,
       '@': path.resolve(__dirname, 'src'),
-      '@/': path.resolve(__dirname, 'src'),
-      '@/*': path.resolve(__dirname, 'src'),
     };
     return config;
   },

@@ -58,7 +58,10 @@ function resolveSafe(rawPath) {
     const decoded = decodeURIComponent(rawPath);
     const rel = decoded.replace(/^[\\/]+/, '');
     const abs = path.resolve(ROOT, rel);
-    if (abs !== ROOT && !abs.startsWith(ROOT + path.sep)) return null; // path traversal
+    // Sanitizacion de path traversal reconocida por CodeQL: cualquier ruta que
+    // se salga de ROOT produce un path.relative con prefijo '..' o absoluto.
+    const relCheck = path.relative(ROOT, abs);
+    if (relCheck.startsWith('..') || path.isAbsolute(relCheck)) return null;
     return abs;
   } catch {
     return null;
@@ -70,6 +73,11 @@ function resolveSafe(rawPath) {
 // se pide una variante que no existe en disco, se sirve el ORIGINAL de la misma
 // base (.png/.jpg/.jpeg/.gif/.mp3/.ogg/.wav...). Es lo que haría un CDN real con
 // transformación de imágenes, y evita 404 en las webs en localhost.
+function isWithinRoot(absPath) {
+  const relCheck = path.relative(ROOT, absPath);
+  return !relCheck.startsWith('..') && !path.isAbsolute(relCheck);
+}
+
 function resolveDeliveryFallback(absPath) {
   const ext = path.extname(absPath).toLowerCase();
   const DELIVERY = { '.avif': ['.png', '.jpg', '.jpeg', '.gif'], '.webp': ['.png', '.jpg', '.jpeg', '.gif'], '.opus': ['.mp3', '.ogg', '.wav', '.m4a'] };
@@ -78,6 +86,7 @@ function resolveDeliveryFallback(absPath) {
   const base = absPath.slice(0, absPath.length - ext.length);
   for (const t of targets) {
     const cand = base + t;
+    if (!isWithinRoot(cand)) continue;
     if (fs.existsSync(cand)) return cand;
   }
   return null;

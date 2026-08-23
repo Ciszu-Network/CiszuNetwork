@@ -9,6 +9,15 @@ vi.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams('track=genesis'),
 }));
 
+/** Comprueba que el src es del host oficial de PostHog (sin substring parcial). */
+function isPostHogScript(src: string): boolean {
+  try {
+    return new URL(src).hostname.endsWith('.posthog.com') || new URL(src).hostname === 'posthog.com';
+  } catch {
+    return false;
+  }
+}
+
 afterEach(() => {
   vi.unstubAllEnvs();
   vi.unstubAllGlobals();
@@ -22,7 +31,7 @@ describe('PostHogAnalytics', () => {
     vi.stubEnv('NEXT_PUBLIC_POSTHOG_KEY', '');
     const { container } = render(<PostHogAnalytics app="ciszunetwork" />);
     const scripts = Array.from(document.head.querySelectorAll('script')).map((s) => s.src);
-    expect(scripts.some((src) => src.includes('posthog.com'))).toBe(false);
+    expect(scripts.some((src) => isPostHogScript(src))).toBe(false);
     expect(container.innerHTML).toBe('');
   });
 
@@ -30,7 +39,7 @@ describe('PostHogAnalytics', () => {
     vi.stubEnv('NEXT_PUBLIC_POSTHOG_KEY', 'phc_test');
     const { container } = render(<PostHogAnalytics app="muzicmania" />);
     const scripts = Array.from(document.head.querySelectorAll('script')).map((s) => s.src);
-    expect(scripts.some((src) => src.includes('posthog.com'))).toBe(false);
+    expect(scripts.some((src) => isPostHogScript(src))).toBe(false);
     expect(container.innerHTML).toBe('');
   });
 
@@ -39,7 +48,7 @@ describe('PostHogAnalytics', () => {
     vi.stubEnv('NEXT_PUBLIC_POSTHOG_HOST', 'https://eu.i.posthog.com');
     const { container } = render(<PostHogAnalytics app="ciszubot" />);
     const scripts = Array.from(document.head.querySelectorAll('script')).map((s) => s.src);
-    expect(scripts.some((src) => src.includes('posthog.com'))).toBe(false);
+    expect(scripts.some((src) => isPostHogScript(src))).toBe(false);
     expect(container.innerHTML).toBe('');
   });
 
@@ -47,7 +56,7 @@ describe('PostHogAnalytics', () => {
     vi.stubEnv('NEXT_PUBLIC_POSTHOG_KEY', 'phc_test');
     const { container } = render(<PostHogAnalytics app="ciszunetwork" />);
     const scripts = Array.from(document.head.querySelectorAll('script')).map((s) => s.src);
-    expect(scripts.some((src) => src.includes('posthog.com'))).toBe(false);
+    expect(scripts.some((src) => isPostHogScript(src))).toBe(false);
     expect(container.innerHTML).toBe('');
   });
 

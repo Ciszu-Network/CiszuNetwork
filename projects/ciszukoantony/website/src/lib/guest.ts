@@ -1,9 +1,11 @@
 const GUEST_KEY = 'ciszu_guest_name';
 
 function randomDigits(): string {
+  const bytes = new Uint32Array(1);
   let digits = '';
   for (let i = 0; i < 6; i += 1) {
-    digits += Math.floor(Math.random() * 10).toString();
+    crypto.getRandomValues(bytes);
+    digits += (bytes[0] % 10).toString();
   }
   return digits;
 }
