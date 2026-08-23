@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { SmartImage } from '@ciszu/ui';
 import { supabase } from '@/config/supabase';
 import { useAppStore } from '@/store';
+import { usePageTitle } from '@/lib/usePageTitle';
 import {
   AuthField,
   AuthSecondaryActions,
@@ -49,6 +50,7 @@ const CISZU_ISOTYPE = 'projects/ciszu/content/logos/images/outline/isotype/color
 const BOT_ISOTYPE = 'projects/ciszubot/content/logos/images/samples/circle/ciszubot_logo_isotipo_color_circle.png';
 
 export default function RegisterPage() {
+  usePageTitle('REGISTER');
   const router = useRouter();
   const { user } = useAppStore();
   const [form, setForm] = useState({

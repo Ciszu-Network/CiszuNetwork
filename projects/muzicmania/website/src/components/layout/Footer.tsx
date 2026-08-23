@@ -85,6 +85,17 @@ export const Footer = () => {
               ))}
             </div>
 
+            {/* Open Source — repositorio del ecosistema */}
+            <a
+              href="https://github.com/Ciszu-Network/CiszuNetwork"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-neon-blue text-white hover:text-neon-blue px-6 py-3.5 rounded-2xl transition-all duration-300 shadow-lg mb-8"
+            >
+              <IcoGithub />
+              <span className="text-sm font-bold tracking-wide">Open Source · Repositorio en GitHub</span>
+            </a>
+
             {/* Community Connectors (WhatsApp & Discord) */}
             <div className="flex flex-col sm:flex-row items-stretch gap-4 w-full max-w-3xl mb-8">
               {/* WhatsApp Button */}
