@@ -32,6 +32,7 @@ jobs:
         run: vercel link --yes --project ciszubot --token=${{ secrets.VERCEL_TOKEN }}
         working-directory: .
       - name: Deploy to Vercel
+        if: runner.os == 'Windows'
         shell: powershell
         env:
           IS_PREVIEW: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'preview' }}
@@ -41,4 +42,16 @@ jobs:
           } else {
             vercel --prod --yes --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}
           }
+        working-directory: .
+      - name: Deploy to Vercel (Linux)
+        if: runner.os != 'Windows'
+        shell: bash
+        env:
+          IS_PREVIEW: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'preview' }}
+        run: |
+          if [ "$IS_PREVIEW" = "true" ]; then
+            vercel --yes --archive=tgz --token="${{ secrets.VERCEL_TOKEN }}"
+          else
+            vercel --prod --yes --archive=tgz --token="${{ secrets.VERCEL_TOKEN }}"
+          fi
         working-directory: .
