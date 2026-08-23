@@ -172,8 +172,9 @@ jobs:
           wget -q https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz -O gitleaks.tar.gz
           mkdir -p "$RUNNER_TEMP/gitleaks"
           tar -xzf gitleaks.tar.gz -C "$RUNNER_TEMP/gitleaks"
+          chmod +x "$RUNNER_TEMP/gitleaks/gitleaks"
           echo "$RUNNER_TEMP/gitleaks" >> "$GITHUB_PATH"
-          gitleaks version
+          "$RUNNER_TEMP/gitleaks/gitleaks" version
       - name: Escaneo de secrets (diff del push/PR) [Windows]
         # NO escanear el historial completo: contiene ~135 leaks históricos
         # conocidos (`.turbo/runs/*.json` destrackeados, cloudflare-api-key ×3,

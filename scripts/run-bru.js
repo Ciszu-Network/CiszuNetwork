@@ -8,6 +8,7 @@ const args = process.argv.slice(2);
 // CodeQL (js/command-line-injection): se evita cmd.exe por completo.
 // En Windows se resuelve el binario JS real de bru a traves del shim
 // .cmd de pnpm y se ejecuta con node (sin shell intermedio).
+// Validación de rutas para evitar inyección de comandos.
 function resolveBruBin() {
   // PNPM_HOME puede no estar propagado en la sesion (pnpm setup lo define
   // solo en shells nuevos): fallback al directorio global por defecto.
@@ -24,13 +25,34 @@ function resolveBruBin() {
     const shim = path.join(dir, process.platform === 'win32' ? 'bru.cmd' : 'bru');
     if (!fs.existsSync(shim)) continue;
 
-    if (process.platform !== 'win32') return { exec: shim, args: [] };
+    if (process.platform !== 'win32') {
+      // Validar que la ruta está dentro de directorios permitidos
+      const normalizedShim = path.normalize(shim);
+      if (!isAllowedPath(normalizedShim)) continue;
+      return { exec: normalizedShim, args: [] };
+    }
 
     const content = fs.readFileSync(shim, 'utf8');
     const m = content.match(/node\s+"([^"]+\.js)"/) || content.match(/node\s+'([^']+\.js)'/);
-    if (m && fs.existsSync(m[1])) return { exec: process.execPath, args: [m[1]] };
+    if (m && fs.existsSync(m[1])) {
+      const resolvedPath = path.normalize(m[1]);
+      if (!isAllowedPath(resolvedPath)) continue;
+      return { exec: process.execPath, args: [resolvedPath] };
+    }
   }
   return null;
+}
+
+// Validar que la ruta está dentro de directorios de confianza
+function isAllowedPath(filePath) {
+  const allowedDirs = [
+    process.env.PNPM_HOME,
+    process.env.LOCALAPPDATA ? path.join(process.env.LOCALAPPDATA, 'pnpm') : null,
+    ...(process.env.PATH || '').split(path.delimiter),
+  ].filter(Boolean).map(p => path.normalize(p));
+
+  const normalized = path.normalize(filePath);
+  return allowedDirs.some(dir => normalized.startsWith(dir + path.sep) || normalized === dir);
 }
 
 const bin = resolveBruBin();
