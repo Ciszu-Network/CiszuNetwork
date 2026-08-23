@@ -165,6 +165,17 @@ export default function Footer({ lang, dict }: FooterProps) {
               <span>{dict.nav.invite}</span>
             </a>
 
+            {/* Open Source — repositorio del ecosistema */}
+            <a
+              href="https://github.com/Ciszu-Network/CiszuNetwork"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full group flex items-center justify-center gap-2 rounded-xl bg-card border border-border text-muted hover:text-neon-blue hover:border-neon-blue/60 px-8 py-3 font-header font-bold text-sm transition-all duration-300 hover:scale-[1.02] active:scale-95 mb-8"
+            >
+              <IcoGithub />
+              <span>Open Source · Repositorio en GitHub</span>
+            </a>
+
             {/* Social icons */}
             <div className="flex flex-wrap justify-center gap-3">
               {SOCIALS.map(({ Ico, href, label, glow }, i) => (

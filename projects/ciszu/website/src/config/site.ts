@@ -40,6 +40,9 @@ export const EXTERNAL_LINKS = {
   ciszubot: 'https://ciszubot.vercel.app/',
 };
 
+/** Repositorio público principal del ecosistema (monorepo). */
+export const GITHUB_REPO = 'https://github.com/Ciszu-Network/CiszuNetwork';
+
 export const CISZUBOT_LINKS = {
   website: 'https://ciszubot.vercel.app/',
   invite: 'https://discord.com/oauth2/authorize?client_id=1395532235872141312&permissions=8&scope=bot%20applications.commands',

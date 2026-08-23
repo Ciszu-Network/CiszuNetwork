@@ -6,6 +6,7 @@ import { assetResolver } from '@ciszunetwork/cdn';
 import { supabase } from '@/config/supabase';
 import { useAppStore } from '@/store';
 import { syncPreferencesToProfile, loadPreferences } from '@/lib/preferences';
+import { usePageTitle } from '@/lib/usePageTitle';
 import {
   AuthField,
   AuthSecondaryActions,
@@ -31,6 +32,7 @@ const IconLock = () => (
 const CISZU_ISOTYPE = assetResolver.resolve('projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg');
 
 export default function LoginPage() {
+  usePageTitle('LOGIN');
   const { setUser, showToast } = useAppStore();
   const router = useRouter();
   const [form, setForm] = useState({ email: '', password: '' });
