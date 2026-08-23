@@ -21,8 +21,8 @@ on:
     - cron: '28 16 * * 5'
 
 jobs:
-  # Code scanning in private repositories requires GitHub Advanced Security.
-  # If GHAS is not enabled (not purchased), skip the analysis instead of failing.
+  # CodeQL es gratis en repos publicos; en privados requiere GitHub Advanced Security.
+  # El check de abajo habilita el analisis cuando el repo es publico o GHAS esta activo.
   # NOTA (16 ago 2026): billing de runners hosted bloqueado → corren en el runner self-hosted Windows.
   check:
     name: Check Advanced Security
