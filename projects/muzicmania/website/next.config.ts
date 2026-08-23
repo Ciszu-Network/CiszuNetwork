@@ -50,8 +50,7 @@ const nextConfig: NextConfig = {
     ],
   },
   // Resolver aliases para que funcionen en Vercel build
-  // Usamos webpack config para agregar alias @/* -> src/
-  // NOTA: El tsconfig.json ya tiene @/* -> ./src/*, pero Vercel build no lo respeta
+  // El tsconfig.json ya tiene @/* -> ./src/*, y el base tsconfig ya no tiene @/* conflictivo
   webpack(config: any, { isServer }: { isServer: boolean }) {
     config.resolve.alias = {
       ...config.resolve.alias,
