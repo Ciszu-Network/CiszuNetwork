@@ -1,142 +1,172 @@
-﻿# Ciszu Network Monorepo
+﻿# Ciszu Network
 
-Monorepo principal de **Ciszu Network** — el ecosistema digital de **CiszukoAntony**. Contiene 4 webs (Next.js 15 + Tailwind 4), un bot de Discord (Discord.js), un juego de música (web + app Tauri), paquetes compartidos y el CDN de assets sobre Supabase Storage.
+[![GitHub Stars](https://img.shields.io/github/stars/Ciszu-Network/CiszuNetwork?style=for-the-badge&logo=github&color=5865F2)](https://github.com/Ciszu-Network/CiszuNetwork/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/Ciszu-Network/CiszuNetwork?style=for-the-badge&logo=github&color=8B5CF6)](https://github.com/Ciszu-Network/CiszuNetwork/network/members)
+[![GitHub Watchers](https://img.shields.io/github/watchers/Ciszu-Network/CiszuNetwork?style=for-the-badge&logo=github&color=EC4899)](https://github.com/Ciszu-Network/CiszuNetwork/watchers)
+[![License: MIT](https://img.shields.io/badge/License-MIT-7C3AED?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
+[![Node](https://img.shields.io/badge/Node-20+-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org)
+[![pnpm](https://img.shields.io/badge/pnpm-10+-F69220?style=for-the-badge&logo=pnpm&logoColor=white)](https://pnpm.io)
+[![Next.js](https://img.shields.io/badge/Next.js-15-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://typescriptlang.org)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 
-```
-.
-├── projects/                 # Aplicaciones individuales (webs + bot + contenido)
-│   ├── ciszu/                # Web principal CiszuNetwork (ciszunetwork.vercel.app)
-│   │   ├── website/          #   Next.js — ciszunetwork-website
-│   │   ├── content/          #   Multimedia (banners, flayers, logos)
-│   │   └── docs/             #   Documentación (incl. documentation/)
-│   ├── ciszukoantony/        # Portfolio personal (ciszukoantony.vercel.app)
-│   │   ├── website/          #   Next.js — ciszukoantony-website
-│   │   ├── content/          #   Multimedia + logos (fuente maestra)
-│   │   ├── musicboard/       #   (contenido musical)
-│   │   └── docs/
-│   ├── muzicmania/           # Juego musical (muzicmania.vercel.app)
-│   │   ├── website/          #   Next.js — muzicmania-website
-│   │   ├── launcher/         #   App de escritorio (Tauri + NSIS)
-│   │   ├── mobile/           #   App móvil
-│   │   ├── content/          #   Música, covers, arrows, particles
-│   │   └── docs/
-│   ├── ciszubot/             # Bot de Discord (ciszubot.vercel.app)
-│   │   ├── website/          #   Next.js — ciszubot-website (landing + dashboard)
-│   │   ├── discord-bot/      #   Discord.js + Express (Docker)
-│   │   ├── content/
-│   │   └── docs/
-│   └── ciszugamens/          # Legacy (contenido antiguo — líneas de canales)
-├── packages/                 # Paquetes compartidos (pnpm workspace)
-│   ├── cdn/                  # @ciszunetwork/cdn — Asset resolver + CDN
-│   └── ui/                   # @ciszu/ui — Componentes compartidos (Icon, etc.)
-├── shared/                   # Recursos compartidos del monorepo
-│   ├── icons/svg/            #   Sistema de iconos (5.194 SVGs: outline/filled/flags)
-│   ├── fonts/                #   Fuentes tipográficas (Geomanist, etc.)
-│   ├── images/               #   Imágenes compartidas
-│   └── widgets/              #   Widgets HTML (Ko-fi, Top.gg)
-├── services/                 # Infraestructura
-│   ├── supabase/              #   config.toml, migrations, seeds, .env
-│   └── vercel/                #   Configuración de despliegues
-├── scripts/                   # Scripts de automatización (build, CDN, BD, docs)
-├── apis/bruno/                # Colecciones API de Bruno (OpenCollection YAML)
-├── archives/                  # Backups (bases de datos, envs, clientes)
-└── docs/                      # ⚠️ Movido dentro de projects/ciszu/docs/
-```
+---
 
-> **Estructura 2.5 (ago 2026)**: la estructura antigua (`apps/...`, `public/...`, `assets/`) fue restructurada a `projects/`. Cada producto vive bajo `projects/<nombre>/` con su `website/`, `content/` y `docs/` propios. La documentación general (`docs/documentation/`) vive en `projects/ciszu/docs/documentation/`. Los clientes API de Bruno viven en `apis/bruno/` (antes `apis-client/bruno/`).
->
-> **Terminología**: cada producto web es un **website** (cúmulo de webpages). Los pnpm filter names, workflows y carpetas usan `-website` (nunca `-webpage`).
+## 🌐 Ecosistema Ciszu Network
 
-## Quick start
+**Ciszu Network** es el ecosistema digital de **CiszukoAntony** — desarrollador, músico y creador de contenido desde Venezuela. Un monorepo moderno que agrupa 4 productos web, un bot de Discord, paquetes compartidos y un CDN propio sobre Supabase Storage.
 
-```bash
-pnpm install              # install all workspaces (pnpm v10.8.1, Node >=20)
-pnpm dev                  # turbo: all apps
-pnpm build                # turbo: all apps
-pnpm lint                 # turbo: lint all apps
-pnpm --filter <nombre> dev  # single app
-```
-
-### Filtros pnpm por app
-
-| Filtro | Producto | Comando útil |
-|---|---|---|
-| `ciszunetwork-website` | Web principal Ciszu Network | `web:dev` / `web:build` |
-| `ciszukoantony-website` | Portfolio CiszukoAntony | `antony:dev` / `antony:build` |
-| `muzicmania-website` | Juego de música | `muzicmania:dev` / `muzicmania:build` |
-| `ciszubot-website` | Landing del bot | `pnpm --filter ciszubot-website dev` |
-| `ciszubot` | Bot de Discord (TS, Docker) | `bot:start` / `bot:dev` |
-
-## CDN y assets
-
-- **CDN**: bucket público `ciszu-cdn` en Supabase Storage (`NEXT_PUBLIC_CDN_URL = .../object/public/ciszu-cdn`). El bucket **espeja las rutas del repo** (misma ruta relativa bajo `projects/`).
-- **Resolver**: `@ciszunetwork/cdn` — `assetResolver.resolve(path)` y `resolveIcon(name, style, format)` con estrategia híbrida local/CDN según entorno (dev, Tauri, producción).
-- **Iconos**: sistema inline-first en `packages/ui` (`Icon.tsx`) con registry generado (`packages/ui/src/generated/icon-registry.ts`) y fallback al CDN. Regenerar: `node scripts/generate-icon-registry.js`.
-- **Upload**: `pnpm cdn:upload` sube 6 fuentes: `shared/icons/svg`, `projects/ciszu/content`, `projects/ciszu/docs`, `projects/ciszukoantony/content`, `projects/ciszubot/content`, `projects/muzicmania/content`. No hay prebuild ni mirrors locales: cada web sirve sus assets vía resolver/CDN (`NEXT_PUBLIC_CDN_URL`).
-- **Logos**: `projects/ciszukoantony/content/logos/` es la fuente maestra; usa `assetResolver.resolve('projects/ciszukoantony/content/logos/...')`.
-
-## Supabase
-
-- Proyecto único: `obwzzmbvkrcscqwptlqo` — auth, Postgres, Storage.
-- Schemas: `muzicmania` (scores, profiles con auth), `ciszubot` (guild_configs, wallets, levels, tickets…), `ciszunetwork`.
-- CDN en bucket público `ciszu-cdn`; bucket `avatars` para fotos de perfil.
-- Credenciales reales solo en `services/supabase/.env` (gitignored). Migraciones SQL en `services/supabase/migrations/`.
-
-## CI/CD (GitHub Actions)
-
-Seis flujos en `.github/workflows/` — CI + **CodeQL** + 4 deploys a Vercel, cada uno con nombre descriptivo completo:
-
-| Archivo | Proyecto Vercel | Raíz | Web |
+| Producto | Descripción | Tecnologías | Estado |
 |---|---|---|---|
-| `deploy-ciszunetwork-website.yml` | `ciszunetworkpage` | `projects/ciszu/website` | ciszunetwork.vercel.app |
-| `deploy-ciszukoantony-website.yml` | `ciszukoantonypage` | `projects/ciszukoantony/website` | ciszukoantony.vercel.app |
-| `deploy-muzicmania-website.yml` | `muzicmania` | `projects/muzicmania/website` | muzicmania.vercel.app |
-| `deploy-ciszubot-website.yml` | `ciszubot` | `projects/ciszubot/website` | ciszubot.vercel.app |
+| **Ciszu Network** | Web principal — portafolio, blog, documentación técnica | Next.js 15, Tailwind 4, Supabase | 🟢 Producción |
+| **Ciszuko Antony** | Portfolio personal — proyectos, música, galería | Next.js 15, Tailwind 4, Supabase | 🟢 Producción |
+| **MuzicMania** | Juego musical web + app Tauri (desktop) | Next.js 15, Tauri v2, Supabase, WebAudio | 🟢 Producción |
+| **CiszuBot** | Bot de Discord + dashboard web (landing, stats, tickets) | Discord.js, Next.js 15, Express, Docker | 🟢 Producción |
 
-Cada deploy se dispara con cambios en el `projects/<proyecto>/**` o `packages/**`. ⚠️ Desplegar SIEMPRE desde la raíz (`vercel --prod` con `working-directory: .`); nunca `vercel pull/prebuilt` dentro de `projects/*/website` (ruta duplicada → deploy vacío).
-- ⚠️ Desplegar SIEMPRE desde la raíz (`vercel --prod` con `working-directory: .`); nunca `vercel pull/prebuilt` dentro de `projects/*/website` (ruta duplicada → deploy vacío).
+> **Todos los productos están desplegados en Vercel** y son accesibles públicamente.
 
-## Seguridad y calidad
+---
 
-- **XSS**: nunca `innerHTML`/`dangerouslySetInnerHTML` sin escapar; usa `escapeHtml()` o `textContent`; DOMPurify el entrante.
-- **SQL Injection**: siempre ORM parametrizado o RPC — nunca concatenar.
-- **Secrets**: `secretlint` + `gitleaks` en pre-commit (hook); rotar credenciales si el repo se hace público.
-- **DevSecOps**: SAST (Semgrep), DAST (ZAP), dependencias (pnpm audit, trivy, cargo audit), advisors de Supabase verificados tras cada cambio de policies/functions. Detalles: `projects/ciszu/docs/documentation/DEVSECOPS_SYSTEM.md`.
-- **Advisors Supabase**: usar SECURITY INVOKER siempre que sea posible; envolver `auth.*()` en `(SELECT …)`; separar políticas RLS por comando (no ALL).
+## 🏗️ Arquitectura del Monorepo
 
-## Documentación
-
-- Estándares de ingeniería: `projects/ciszu/docs/documentation/CODE_PRINCIPLES_PROTOCOLS.md`
-- DevSecOps: `projects/ciszu/docs/documentation/DEVSECOPS_SYSTEM.md`
-- Herramientas de desarrollo: `projects/ciszu/docs/documentation/TOOLS_SYSTEM.md`
-- Estado de los proyectos y migraciones: `projects/ciszu/docs/documentation/PROJECT_STATE.md`
-- Docs de cada producto en `projects/<project>/docs/`.
-- AGENTS.md en la raíz: gestión de multiworkspace, gotchas y checklist de implementación.
-
-## Scripts de automatización (`scripts/`)
-
-```bash
-node scripts/upload-cdn.js            # Subir assets al CDN ciszu-cdn (pnpm cdn:upload)
-node scripts/generate-icon-registry.js# Regenerar registry de iconos inline
-node scripts/sync-public-docs.js      # Sincronizar docs a public/docs
-node scripts/backup-db.js             # Backup BD con timestamp (archives/backups)
-node scripts/update-env-keys.js       # Actualizar keys Supabase en .env (con backup)
-node scripts/apply-migration-XX.js    # Aplicar migración SQL
-node scripts/run-bru.js               # API testing con Bruno (gitignore: environments/prod.yml)
+```
+ciszunetwork-monorepo/
+├── projects/                    # 4 productos independientes
+│   ├── ciszu/                   # Web principal (ciszunetwork.vercel.app)
+│   │   └── website/             # Next.js 15 (ciszunetwork-website)
+│   ├── ciszukoantony/           # Portfolio (ciszukoantony.vercel.app)
+│   │   └── website/             # Next.js 15 (ciszukoantony-website)
+│   ├── muzicmania/              # Juego musical (muzicmania.vercel.app)
+│   │   ├── website/             # Next.js 15 (muzicmania-website)
+│   │   ├── launcher/            # Tauri v2 (app desktop Windows)
+│   │   └── mobile/              # App móvil (futuro)
+│   └── ciszubot/                # Bot + Dashboard (ciszubot.vercel.app)
+│       ├── website/             # Next.js 15 (ciszubot-website)
+│       └── discord-bot/         # Discord.js v14 + Express
+├── packages/                    # Paquetes compartidos (pnpm workspace)
+│   ├── cdn/                     # @ciszunetwork/cdn — Asset resolver + CDN client
+│   └── ui/                      # @ciszu/ui — Componentes compartidos, iconos, CloudflareGuard
+├── shared/                      # Recursos globales
+│   ├── icons/svg/               # 5.194 SVGs (outline, filled, flags, logos)
+│   ├── fonts/                   # Fuentes tipográficas (Geomanist, etc.)
+│   ├── images/                  # Imágenes compartidas
+│   └── widgets/                 # Widgets HTML (Ko-fi, Top.gg)
+├── .github/workflows/           # CI/CD (GitHub Actions)
+├── apis/bruno/                  # Colecciones API (Bruno OpenCollection YAML)
+└── services/supabase/           # Migraciones SQL, schema, seeds
 ```
 
-## APIs y testing
+---
 
-- **Bruno**: colecciones OpenCollection YAML en `apis/bruno/` — `health/` (4 webs + bot status) y `rest/` (leaderboard, bot_status, stats local).
-- Uso: `pnpm api:test` (prod, excluye `local`), `pnpm api:test:report`, `pnpm api:test:local`.
+## ⚙️ Stack Tecnológico
 
-## Contribución
+| Capa | Tecnología | Versión |
+|---|---|---|
+| **Runtime** | Node.js | 20+ |
+| **Package Manager** | pnpm | 10+ |
+| **Framework Web** | Next.js | 15 (App Router) |
+| **Styling** | Tailwind CSS | 4 |
+| **Language** | TypeScript | 5 |
+| **Database/Storage/Auth** | Supabase | Postgres + Storage + Auth |
+| **Bot Discord** | Discord.js | 14 |
+| **Desktop App** | Tauri | 2 |
+| **CI/CD** | GitHub Actions | Ubuntu Latest |
+| **Deploy** | Vercel | Produccion + Preview |
+| **CDN** | Supabase Storage | Bucket `ciszu-cdn` |
+| **Captcha** | Cloudflare Turnstile | Widget global |
+| **Analytics** | PostHog + Cloudflare Web Analytics | US Cloud |
+| **Error Tracking** | Sentry | 5 proyectos |
+| **Testing** | Vitest + Playwright | Unit + E2E |
+| **Lint/Format** | ESLint + Prettier | Flat config |
 
-1. Branch desde `main`: `git checkout -b feature/…`
-2. Desarrollar, verificar `pnpm lint` y build de tu app.
-3. Commit con mensaje descriptivo **en español**.
-4. Push (manualmente desde tu máquina; GitHub bloqued DNS de esta PC).
+---
 
-## Licencia
+## 🔑 Características Principales
 
-Propietario — Ciszu Network © 2024-2026. El repositorio es **privado**.
+### CDN Propio (`@ciszunetwork/cdn`)
+- **Bucket público**: `ciszu-cdn` en Supabase Storage
+- **Resolver híbrido**: CDN → local → fallback según entorno
+- **Estrategia inline-first** para iconos (5.194 SVGs registrados)
+- **Sin mirrors locales**: assets servidos vía resolver/CDN
+
+### Seguridad
+- **RLS** en todas las tablas Supabase (políticas por comando)
+- **Captcha invisible** Cloudflare Turnstile (widget global, 4 hostnames)
+- **Rate limiting** propio (`createRateLimiter` en `@ciszunetwork/utils`)
+- **Secret scanning**: gitleaks + secretlint en CI
+- **SAST/DAST**: Semgrep + OWASP ZAP programados
+
+### Discord Bot (CiszuBot)
+- Slash commands + prefix (`cz!`)
+- Sistema de economía, niveles, tickets, wallets crypto
+- Dashboard web con OAuth2 Discord
+- Auto-post a Top.gg / DiscordBotList cada 30 min
+
+### Juego Musical (MuzicMania)
+- WebAudio + Tone.js para reproducción
+- Leaderboards globales (Supabase RPC)
+- App desktop nativa con Tauri v2 (Windows NSIS installer)
+- Contenido: covers, arrows, particles, partículas personalizadas
+
+---
+
+## 📦 Paquetes Compartidos
+
+| Paquete | Descripción | Exportaciones clave |
+|---|---|---|
+| `@ciszunetwork/cdn` | Asset resolver, CDN client, icon resolver | `assetResolver`, `resolveIcon`, `deliveryVariants` |
+| `@ciszu/ui` | Componentes React compartidos | `Icon`, `CloudflareGuard`, `Modal`, `Button`, `Input`, `escapeHtml` |
+
+---
+
+## 🔗 Enlaces en Producción
+
+| Producto | URL |
+|---|---|
+| **Ciszu Network** | https://ciszunetwork.vercel.app |
+| **Ciszuko Antony** | https://ciszukoantony.vercel.app |
+| **MuzicMania** | https://muzicmania.vercel.app |
+| **CiszuBot** | https://ciszubot.vercel.app |
+
+---
+
+## 🛡️ Seguridad y Transparencia
+
+Este repositorio es **público por transparencia y credibilidad**. El código está abierto para:
+- ✅ Auditoría de seguridad
+- ✅ Aprendizaje y referencia
+- ✅ Contribuciones (ver [CONTRIBUTING.md](CONTRIBUTING.md))
+- ✅ Verificación de prácticas de desarrollo
+
+**No incluye**: credenciales, tokens, `.env` files, claves privadas. Todas las variables sensibles están en `.gitignore` y se gestionan via GitHub Secrets / Vercel Environment Variables.
+
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo licencia **MIT** — ver [LICENSE](LICENSE) para detalles.
+
+> **© 2024-2026 Ciszu Network** — Desarrollado por **CiszukoAntony** (Venezuela 🇻🇪)
+
+---
+
+## 🤝 Conectar
+
+[![GitHub](https://img.shields.io/badge/GitHub-Ciszu_Network-181717?style=for-the-badge&logo=github)](https://github.com/Ciszu-Network)
+[![Discord](https://img.shields.io/badge/Discord-Ciszu_Network-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/ciszunetwork)
+[![Twitter/X](https://img.shields.io/badge/X-@CiszukoAntony-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/CiszukoAntony)
+[![YouTube](https://img.shields.io/badge/YouTube-Ciszu_Network-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtube.com/@CiszuNetwork)
+[![Email](https://img.shields.io/badge/Email-ciszu.network@gmail.com-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:ciszu.network@gmail.com)
+
+---
+
+## 🙏 Créditos
+
+- **Iconos**: Sistema propio basado en Tabler Icons, Material Icons, Remix Icon, Lucide
+- **Fuentes**: Geomanist, Inter, JetBrains Mono
+- **Inspiración**: Vercel, Supabase, Cloudflare, Discord.js, Tauri communities
+- **Herramientas**: pnpm, Turbo, ESLint, Prettier, Vitest, Playwright, Bruno, ZAP
+
+---
+
+> **Nota**: Este es un proyecto personal de código abierto para mostrar transparencia en el desarrollo. No está diseñado para ser clonado y ejecutado directamente por terceros (requiere infraestructura propia: Supabase, Vercel, Cloudflare, Discord App). Si te inspira, ¡dale una ⭐ y síguenos!
