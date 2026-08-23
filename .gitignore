@@ -282,3 +282,7 @@ projects/ciszugamens/
 
 .vercel
 .env*
+
+# Lighthouse CI artifacts
+.lighthouseci/
+.lighthouseci/**

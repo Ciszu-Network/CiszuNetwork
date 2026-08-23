@@ -38,7 +38,12 @@ export async function POST(request: NextRequest) {
     if (data.success) {
       return NextResponse.json({ success: true });
     }
-    return NextResponse.json({ success: false, error: 'Verification failed' }, { status: 403 });
+    // Devolver los error-codes reales de Cloudflare para diagnóstico (p.ej.
+    // invalid-input-secret = secret no corresponde a la sitekey; timeout-or-
+    // duplicate = token ya usado). El widget puede resolver bien y aun asi
+    // fallar aqui si la env de Vercel quedo con un secret viejo tras rotar.
+    const codes = Array.isArray(data['error-codes']) ? data['error-codes'].join(', ') : 'unknown';
+    return NextResponse.json({ success: false, error: `Verification failed (${codes})` }, { status: 403 });
   } catch {
     return NextResponse.json({ success: false, error: 'Internal error' }, { status: 500 });
   }
