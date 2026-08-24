@@ -32,24 +32,20 @@ export const viewport = {
 export async function generateMetadata(): Promise<Metadata> {
   const h = await headers();
   const pathname = h.get("x-pathname") ?? "/";
-  return metadataForPath(pathname);
+  return {
+    ...metadataForPath(pathname),
+    appleWebApp: { capable: true, title: "MuzicMania", statusBarStyle: "black-translucent" },
+    manifest: "/manifest.webmanifest",
+    verification: {
+      google: "9jc8qVjHjC3ZpZ7gpgbIpHrloar3kaeNIEy0EnR2uc0",
+    },
+    icons: {
+      icon: "/favicon.ico?v=2",
+      shortcut: "/favicon.ico?v=2",
+      apple: "/pwa/icon-192.png",
+    },
+  };
 }
-
-/** @type {import('next').Metadata} */
-export const metadata = {
-  title: "MuzicMania",
-  description: "El Juego de Ritmo Definitivo en la Web. Domina el beat en una dimensión online con estética futurista.",
-  appleWebApp: { capable: true, title: "MuzicMania", statusBarStyle: "black-translucent" },
-  manifest: "/manifest.webmanifest",
-  verification: {
-    google: "9jc8qVjHjC3ZpZ7gpgbIpHrloar3kaeNIEy0EnR2uc0",
-  },
-  icons: {
-    icon: "/favicon.ico?v=2",
-    shortcut: "/favicon.ico?v=2",
-    apple: "/pwa/icon-192.png",
-  },
-};
 
 import { CookiesBanner } from "@/components/atoms/CookiesBanner";
 import { CloudflareGuard } from "@/components/layout/CloudflareGuard";

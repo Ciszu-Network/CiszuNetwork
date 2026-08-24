@@ -34,33 +34,31 @@ export const viewport = {
 export async function generateMetadata(): Promise<Metadata> {
   const h = await headers();
   const pathname = h.get("x-pathname") ?? "/";
-  return metadataForPath(pathname);
+  return {
+    metadataBase: new URL("https://ciszukoantony.vercel.app"),
+    ...metadataForPath(pathname),
+    keywords: ["Ciszuko Antony", "Ciszuko Network", "portfolio", "developer", "Venezuela", "CEO", "technology"],
+    icons: {
+      icon: PROFILE_PIC,
+      shortcut: PROFILE_PIC,
+      apple: "/pwa/icon-192.png",
+    },
+    appleWebApp: { capable: true, title: "Ciszuko Antony", statusBarStyle: "black-translucent" },
+    manifest: "/manifest.webmanifest",
+    openGraph: {
+      title: "Ciszuko Antony",
+      description: "Official portfolio of Ciszuko Antony (Francisco Garcia Antonio M. / y8) — CEO & Founder of Ciszuko Network.",
+      url: "https://ciszukoantony.vercel.app",
+      siteName: "Ciszuko Antony",
+      images: [{ url: OG_IMAGE, width: 132, height: 118 }],
+      locale: "en_US",
+      type: "website",
+    },
+    verification: {
+      google: "9jc8qVjHjC3ZpZ7gpgbIpHrloar3kaeNIEy0EnR2uc0",
+    },
+  };
 }
-export const metadata: Metadata = {
-  metadataBase: new URL("https://ciszukoantony.vercel.app"),
-  title: "Ciszuko Antony",
-  description: "Official portfolio of Ciszuko Antony (Francisco Garcia Antonio M. / y8) — CEO & Founder of Ciszuko Network. Innovation, development and technology.",
-  keywords: ["Ciszuko Antony", "Ciszuko Network", "portfolio", "developer", "Venezuela", "CEO", "technology"],
-  icons: {
-    icon: PROFILE_PIC,
-    shortcut: PROFILE_PIC,
-    apple: "/pwa/icon-192.png",
-  },
-  appleWebApp: { capable: true, title: "Ciszuko Antony", statusBarStyle: "black-translucent" },
-  manifest: "/manifest.webmanifest",
-  openGraph: {
-    title: "Ciszuko Antony",
-    description: "Official portfolio of Ciszuko Antony (Francisco Garcia Antonio M. / y8) — CEO & Founder of Ciszuko Network.",
-    url: "https://ciszukoantony.vercel.app",
-    siteName: "Ciszuko Antony",
-    images: [{ url: OG_IMAGE, width: 132, height: 118 }],
-    locale: "en_US",
-    type: "website",
-  },
-  verification: {
-    google: "9jc8qVjHjC3ZpZ7gpgbIpHrloar3kaeNIEy0EnR2uc0",
-  },
-};
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   const store = await headers();
