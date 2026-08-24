@@ -138,11 +138,15 @@ export default function PreferencesPanel() {
           <button
             onClick={() => changeZoom(-ZOOM_STEP)}
             disabled={zoom <= ZOOM_MIN}
-            className="w-9 h-9 shrink-0 rounded-lg bg-white/5 border border-white/10 text-white hover:border-neon-blue/50 hover:text-neon-cyan font-header font-black text-lg transition-all active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed"
+            className="w-9 h-9 shrink-0 rounded-lg bg-white/5 border border-white/10 text-white hover:border-neon-blue/50 hover:text-neon-cyan transition-all active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed inline-flex items-center justify-center"
             title="Quitar zoom"
             aria-label="Quitar zoom"
           >
-            −
+            <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+              <line x1="8" y1="11" x2="14" y2="11" />
+            </svg>
           </button>
           <div className="flex-1 min-w-0 flex items-center gap-2">
             <div className="relative flex-1 h-2 rounded-full bg-white/10 overflow-hidden">
@@ -156,11 +160,16 @@ export default function PreferencesPanel() {
           <button
             onClick={() => changeZoom(ZOOM_STEP)}
             disabled={zoom >= ZOOM_MAX}
-            className="w-9 h-9 shrink-0 rounded-lg bg-white/5 border border-white/10 text-white hover:border-neon-blue/50 hover:text-neon-cyan font-header font-black text-lg transition-all active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed"
+            className="w-9 h-9 shrink-0 rounded-lg bg-white/5 border border-white/10 text-white hover:border-neon-blue/50 hover:text-neon-cyan transition-all active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed inline-flex items-center justify-center"
             title="Sumar zoom"
             aria-label="Sumar zoom"
           >
-            +
+            <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+              <line x1="11" y1="8" x2="11" y2="14" />
+              <line x1="8" y1="11" x2="14" y2="11" />
+            </svg>
           </button>
         </div>
       </div>
