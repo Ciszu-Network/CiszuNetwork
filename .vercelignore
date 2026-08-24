@@ -88,6 +88,7 @@ storybook
 *.tiff
 *.bmp
 *.ico
+!**/favicon.ico
 *.svg
 *.woff
 *.woff2
