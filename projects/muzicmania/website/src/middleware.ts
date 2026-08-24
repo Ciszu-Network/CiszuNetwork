@@ -7,9 +7,12 @@ const iast = createIast('muzicmania');
 
 /** Cabecera interna que marca las rutas /edit/* para que el layout oculte el chrome del sitio. */
 const EDIT_HEADER = 'x-is-edit';
+/** Cabecera interna con el pathname, para metadata SSR por ruta (SEO). */
+const PATHNAME_HEADER = 'x-pathname';
 const withIsEditHeader = (request: NextRequest, pathname: string): Headers => {
   const headers = new Headers(request.headers);
   headers.set(EDIT_HEADER, pathname === '/edit' || pathname.startsWith('/edit/') ? '1' : '0');
+  headers.set(PATHNAME_HEADER, pathname);
   return headers;
 };
 

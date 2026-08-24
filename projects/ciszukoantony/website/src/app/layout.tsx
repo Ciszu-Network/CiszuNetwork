@@ -9,6 +9,7 @@ import Footer from "@/components/layout/Footer";
 import FeedbackFab from "@/components/layout/FeedbackFab";
 import { CookiesBanner } from "@/components/layout/CookiesBanner";
 import AuthProvider from "@/components/providers/AuthProvider";
+import { metadataForPath } from "@/lib/page-metadata";
 import "./globals.css";
 const PROFILE_PIC = assetResolver.resolve("projects/ciszukoantony/content/assets/youtube_canal.png");
 const OG_IMAGE = assetResolver.resolve("projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png");
@@ -27,6 +28,14 @@ const rajdhani = Rajdhani({
 export const viewport = {
   themeColor: "#000000",
 };
+/** Metadata SSR por ruta (SEO): las páginas son client components y no pueden
+ *  exportar `export const metadata`; se resuelve aquí desde el pathname que
+ *  inyecta el middleware (header x-pathname). */
+export async function generateMetadata(): Promise<Metadata> {
+  const h = await headers();
+  const pathname = h.get("x-pathname") ?? "/";
+  return metadataForPath(pathname);
+}
 export const metadata: Metadata = {
   metadataBase: new URL("https://ciszukoantony.vercel.app"),
   title: "Ciszuko Antony",

@@ -162,7 +162,7 @@ export default function StatsPage() {
                           className="w-full flex items-center gap-6 p-6 hover:bg-neon-blue/10 border-b border-white/5 last:border-0 transition-all text-left group"
                         >
                            <div className="w-12 h-12 rounded-full border-2 border-neon-blue p-1">
-                              {user.avatar_url ? <Image src={user.avatar_url} alt="" width={48} height={48} className="rounded-full" /> : <div className="w-full h-full rounded-full bg-white/5" />}
+                              {user.avatar_url ? <Image src={user.avatar_url} alt={`Avatar de ${user.display_name}`} width={48} height={48} className="rounded-full" /> : <div className="w-full h-full rounded-full bg-white/5" />}
                            </div>
                            <div className="flex-1">
                               <h4 className="text-lg font-header font-black text-white group-hover:text-neon-green transition-colors uppercase italic">{user.display_name}</h4>
@@ -358,7 +358,7 @@ export default function StatsPage() {
                              <div className="absolute inset-0 bg-neon-green rounded-full blur-2xl opacity-20" />
                              <div className="relative w-full h-full rounded-full border-4 border-neon-green p-1 bg-black">
                                 {selectedUser.avatar_url ? (
-                                   <Image src={selectedUser.avatar_url} alt="" width={120} height={120} className="rounded-full" />
+                                   <Image src={selectedUser.avatar_url} alt={`Avatar de ${selectedUser.display_name}`} width={120} height={120} className="rounded-full" />
                                 ) : (
                                    <div className="w-full h-full rounded-full bg-white/5 flex items-center justify-center text-neon-green font-header font-black text-5xl italic">
                                       {selectedUser.display_name.charAt(0)}

@@ -18,7 +18,7 @@ export default function AboutPage() {
           <div className="inline-flex items-center justify-center mb-6">
             <Image
               src={assetResolver.resolve("projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg")}
-              alt=""
+              alt={CISZU_NETWORK.name}
               width={60}
               height={60}
               className="drop-shadow-brand"

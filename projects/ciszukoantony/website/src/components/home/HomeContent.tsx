@@ -41,6 +41,7 @@ export default function HomeContent() {
         <div className="absolute top-1/3 right-1/3 w-64 h-64 bg-neon-cyan/5 rounded-full blur-3xl animate-blob animation-delay-4000" />
 
         <div className="relative z-10 max-w-4xl mx-auto">
+          <h1 className="sr-only">Ciszuko Antony — Portfolio y CEO & Founder de Ciszuko Network</h1>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
             <Link href="/" aria-label="Ciszuko Antony — Inicio" className="flex items-center justify-center gap-4 md:gap-6 mb-6 flex-wrap group cursor-pointer">
               <SmartImage

@@ -26,6 +26,15 @@ export const viewport = {
   themeColor: "#000000",
 };
 
+/** Metadata SSR por ruta (SEO): las páginas son client components y no pueden
+ *  exportar `export const metadata`; se resuelve aquí desde el pathname que
+ *  inyecta el middleware (header x-pathname). */
+export async function generateMetadata(): Promise<Metadata> {
+  const h = await headers();
+  const pathname = h.get("x-pathname") ?? "/";
+  return metadataForPath(pathname);
+}
+
 /** @type {import('next').Metadata} */
 export const metadata = {
   title: "MuzicMania",
@@ -47,6 +56,7 @@ import { CloudflareGuard } from "@/components/layout/CloudflareGuard";
 import { ConnectivityBanner } from "@/components/layout/ConnectivityBanner";
 import FeedbackFab from "@/components/layout/FeedbackFab";
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import { metadataForPath } from '@/lib/page-metadata';
 
 export default async function RootLayout({
   children,
