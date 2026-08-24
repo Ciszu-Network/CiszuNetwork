@@ -276,6 +276,9 @@ importers:
       '@ciszunetwork/utils':
         specifier: workspace:*
         version: link:../../../packages/utils
+      '@plasmicapp/loader-nextjs':
+        specifier: ^2.0.24
+        version: 2.0.24(next@15.5.22(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@puckeditor/cloud-client':
         specifier: ^0.8.2
         version: 0.8.2
@@ -422,6 +425,9 @@ importers:
       '@ciszunetwork/utils':
         specifier: workspace:*
         version: link:../../../packages/utils
+      '@plasmicapp/loader-nextjs':
+        specifier: ^2.0.24
+        version: 2.0.24(next@15.5.22(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@puckeditor/cloud-client':
         specifier: ^0.8.2
         version: 0.8.2
@@ -510,6 +516,9 @@ importers:
       '@ciszunetwork/utils':
         specifier: workspace:*
         version: link:../../../packages/utils
+      '@plasmicapp/loader-nextjs':
+        specifier: ^2.0.24
+        version: 2.0.24(next@15.5.22(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@puckeditor/cloud-client':
         specifier: ^0.8.2
         version: 0.8.2
@@ -601,6 +610,9 @@ importers:
       '@ciszunetwork/utils':
         specifier: workspace:*
         version: link:../../../packages/utils
+      '@plasmicapp/loader-nextjs':
+        specifier: ^2.0.24
+        version: 2.0.24(next@15.5.22(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@puckeditor/cloud-client':
         specifier: ^0.8.2
         version: 0.8.2
@@ -2095,6 +2107,71 @@ packages:
   '@pinojs/redact@0.4.0':
     resolution: {integrity: sha512-k2ENnmBugE/rzQfEcdWHcCY+/FM3VLzH9cYEsbdsoqrvzAKRhUZeRNhAZvB8OitQJ1TBed3yqWtdjzS6wJKBwg==}
 
+  '@plasmicapp/data-sources-context@0.1.25':
+    resolution: {integrity: sha512-wCU+uxslvoPns/gWdUd615v1yBS9rVjyWmcc0qEhiEKCk8qHh0adc0e4hxbf34A4la0EaKj93B0iXw69m7GH+A==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16.8.0'
+
+  '@plasmicapp/host@2.0.17':
+    resolution: {integrity: sha512-WQMkK5xCuPvkngK0lxrBv5si38TqNdKbVJyMqFHwFv61YMTPUt44yjwD43RbuBbXBgg0nI2LAwc49B7ch/zd/g==}
+    peerDependencies:
+      react: '>=18.0.0'
+      react-dom: '>=18.0.0'
+
+  '@plasmicapp/loader-core@2.0.5':
+    resolution: {integrity: sha512-QccEFWk7FeHSMAkpwXGojFBtFM7yr9l0WtmwnH1+Md5ZrEXL6F3M1kbJFa89q9IfyBCcUnLuAksvb/jnLb94yA==}
+    engines: {node: '>=18'}
+
+  '@plasmicapp/loader-edge@1.0.82':
+    resolution: {integrity: sha512-9fCtT/B2noRh91uXAk3DRSX1MonESqRK/0TFqFJ+ozvD0Vpchs5utu5uZD1Hc/cRPzjbXU0qktnaUibZaGe9Pg==}
+    engines: {node: '>=18'}
+
+  '@plasmicapp/loader-fetcher@2.0.5':
+    resolution: {integrity: sha512-ThbSd7ZMODD7lJ3SWtdZqC/r73UIYGXx7GqLMlrCJ1kGMzvy18DXwyx+9Bdt0glJPuS0YDk/je8ioylsR8IwuQ==}
+    engines: {node: '>=18'}
+
+  '@plasmicapp/loader-nextjs@2.0.24':
+    resolution: {integrity: sha512-ItjS6YUnIHwR2xAzU0XCn7b4Rvo1Ut/2UX/dHktp4vPqlhliSJEVocYdlr5EAV674gKHSCkT/d8w/r5OuRxkmQ==}
+    engines: {node: '>=18.17'}
+    peerDependencies:
+      next: '>=14.0.0'
+      react: '>=18.2.0'
+      react-dom: '>=18.2.0'
+
+  '@plasmicapp/loader-react@2.0.20':
+    resolution: {integrity: sha512-ssyJBH9wRuCohESxD/Hb3cdDnMxpb2SJlsBrlgTF1/wt2gBvJVmRDv7zjJhYK7BtHsnrxbFyfT7l/5cPNL+gjg==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      react: '>=18.0.0'
+      react-dom: '>=18.0.0'
+
+  '@plasmicapp/loader-splits@1.0.76':
+    resolution: {integrity: sha512-fzFdT4hmB51Qv2fHxdMLO9oKRi5E5YqzXjAZtUXm9sl4ehRZHP5S9YiOU7ZWjhqphktsoT4x5yJXvYplJsyOjw==}
+    engines: {node: '>=18'}
+
+  '@plasmicapp/prepass@1.0.28':
+    resolution: {integrity: sha512-8RBCWR+b05wi7alMOaUWC8sO6fSnph1kRqBd2XMZCWrgYG3tfGhgfXrvwNR2SOUs8WgMozsHRyeXccmAJf/8Gg==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+
+  '@plasmicapp/query@0.1.87':
+    resolution: {integrity: sha512-4M4QvE9IE8DtVv/LuEruGkMLo3bPhTZIwrYpQpcaXj6FQCL2G5XdhjhcH6JzSW2LxqjhyC+2xDLlZKUAzYqpvw==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16.8.0'
+
+  '@plasmicapp/react-ssr-prepass@2.0.9':
+    resolution: {integrity: sha512-HO932uH/Y4otaDmjwzJbCLlokxNAdtU9VhDVUZUuVbzh0DhWaNyn/MINCu1oeZ4a6MIjdXFIm/U2VaxNxHYdsw==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+
+  '@plasmicapp/watcher@1.0.87':
+    resolution: {integrity: sha512-tABimL3sPI45Aw15PNbrdfPI0WF9ZJ3B/4wweGkitiTRodcLTnxvosu440sDI0/Y8JttUoeFyJa+TVuiT6zW7A==}
+    engines: {node: '>=10'}
+
   '@playwright/test@1.62.1':
     resolution: {integrity: sha512-DTcUc8qii+cpHvtOwggMtBRMjKZHXYWdw8syRYu2vtzuq4Wxphqq4NfCs5Zt44L6mA8rfDfj+PHnxFc/FeK6mQ==}
     engines: {node: '>=20'}
@@ -3010,6 +3087,9 @@ packages:
   '@snazzah/davey@0.1.12':
     resolution: {integrity: sha512-V+NlX5931RwVamZhhEfZekMdcvXDKdMAmHW1AuGaykVQsNyBOq3bpmGpoKRBDCYgFWKIufJ0Dcg3m4cYhvUy6g==}
     engines: {node: '>= 10'}
+
+  '@socket.io/component-emitter@3.1.2':
+    resolution: {integrity: sha512-9BCxFwvbGg/RsZK9tjXd8s4UcwR0MWeFQ1XEKIQVVvAGJyINdrqKMcTRyLoK8Rse1GjzLV9cwjWV1olXRWEXVA==}
 
   '@speed-highlight/core@1.2.24':
     resolution: {integrity: sha512-qeW2e1l78afw8VhRPfPQ1Gjj+KU5XFQ/OFV5ti6eTa9bruO7mJyZtA4vw0ofqmA3tKCkROE9xLk3VZoeRc98nw==}
@@ -4907,6 +4987,13 @@ packages:
   end-of-stream@1.4.5:
     resolution: {integrity: sha512-ooEGc6HP26xXq/N+GCGOT0JKCLDGrq2bQUZrQ7gyrJiZANJ/8YDTxTpQBXGMn+WbIQXNVpyWymm7KYVICQnyOg==}
 
+  engine.io-client@6.6.6:
+    resolution: {integrity: sha512-iY6QdftLQ9pyiPoX082bpf/u1UewnOaJrtJIF9T0++QB34lZrj0uP+Q/bj8AlUsAxqhnkTV2BS8SBZSxOmoV5Q==}
+
+  engine.io-parser@5.2.3:
+    resolution: {integrity: sha512-HqD3yTBfnBxIrbnM1DoD6Pcq8NECnh8d4As1Qgh0z5Gg3jRRIqijury0CL3ghu/edArpUYiYqQiDUQBIs4np3Q==}
+    engines: {node: '>=10.0.0'}
+
   enhanced-resolve@5.21.6:
     resolution: {integrity: sha512-aNnGCvbJ/RIyWo1IuhNdVjnNF+EjH9wpzpNHt+ci/m9He9LJvUN8wrCcXjp9cWsGNAuvSpVFTx/vraAFQ8qGjQ==}
     engines: {node: '>=10.13.0'}
@@ -5921,6 +6008,9 @@ packages:
   json-buffer@3.0.1:
     resolution: {integrity: sha512-4bV5BfR2mqfQTJm+V5tPPdf+ZpuhiIvTuAB5g8kcrXOZpTT/QwwVRWBywX1ozr6lEuPdbHxwaJlm9G6mI2sfSQ==}
 
+  json-logic-js@2.0.5:
+    resolution: {integrity: sha512-rTT2+lqcuUmj4DgWfmzupZqQDA64AdmYqizzMPWj3DxGdfFNsxPpcNVSaTj4l8W2tG/+hg7/mQhxjU3aPacO6g==}
+
   json-schema-ref-resolver@3.0.0:
     resolution: {integrity: sha512-hOrZIVL5jyYFjzk7+y7n5JDzGlU8rfWDuYyHwGa2WA8/pcmMHezp2xsVwxrebD/Q9t8Nc5DboieySDpCp4WG4A==}
 
@@ -6789,6 +6879,10 @@ packages:
     resolution: {integrity: sha512-CiyeOxFT/JZyN5m0z9PfXw4SCBJ6Sygz1Dpl0wqjlhDEGGBP1GnsUVEL0p63hoG1fcj3fHynXi9NYO4nWOL+qQ==}
     engines: {node: '>= 0.8'}
 
+  pascalcase@1.0.0:
+    resolution: {integrity: sha512-BSExi0rRnCHReJys6NocaK+cfTXNinAegfWBvr0JD3hiaEG7Nuc7r0CIdOJunXrs8gU/sbHQ9dxVAtiVQisjmg==}
+    engines: {node: '>=8'}
+
   path-exists@4.0.0:
     resolution: {integrity: sha512-ak9Qy5Q7jYb2Wwcey5Fpvg2KoAc/ZIhLSLOSBmRmygPsGwkVVt0fZa0qrtMz+m6tJTAHfZQ8FnmB4MG4LWy7/w==}
     engines: {node: '>=8'}
@@ -7480,6 +7574,14 @@ packages:
     resolution: {integrity: sha512-94hK0Hh8rPqQl2xXc3HsaBoOXKV20MToPkcXvwbISWLEs+64sBq5kFgn2kJDHb1Pry9yrP0dxrCI9RRci7RXKg==}
     engines: {node: '>= 6.0.0', npm: '>= 3.0.0'}
 
+  socket.io-client@4.8.3:
+    resolution: {integrity: sha512-uP0bpjWrjQmUt5DTHq9RuoCBdFJF10cdX9X+a368j/Ft0wmaVgxlrjvK3kjvgCODOMMOz9lcaRzxmso0bTWZ/g==}
+    engines: {node: '>=10.0.0'}
+
+  socket.io-parser@4.2.7:
+    resolution: {integrity: sha512-IH/iSeO9T6gz1KkFleGDWkG9N3dl4jXVYUtMhIqH10Md0ttMer8nUNWiP1DKuNrybD2xBrixLJdCC9J6ECoYkg==}
+    engines: {node: '>=10.0.0'}
+
   socks-proxy-agent@8.0.5:
     resolution: {integrity: sha512-HehCEsotFqbPW9sJ8WVYB6UbmIMv7kUUORIF2Nncq4VQvBfNBLibW9YZR5dlYCSUhwcD628pRllm7n+E+YTzJw==}
     engines: {node: '>= 14'}
@@ -7707,6 +7809,11 @@ packages:
   supports-preserve-symlinks-flag@1.0.0:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
+
+  swr@1.3.0:
+    resolution: {integrity: sha512-dkghQrOl2ORX9HYrMDtPa7LTVHJjCTeZoB1dqTbnnEDlSvN8JEKpYIYurDfvbQFUUS8Cg8PceFVZNkW0KNNYPw==}
+    peerDependencies:
+      react: ^16.11.0 || ^17.0.0 || ^18.0.0
 
   tagged-tag@1.0.0:
     resolution: {integrity: sha512-yEFYrVhod+hdNyx7g5Bnkkb0G6si8HJurOoOEgC8B/O0uXLHlaey/65KRv6cuWBNhBgHKAROVpc7QyYqE5gFng==}
@@ -8298,6 +8405,9 @@ packages:
     engines: {node: '>=8'}
     hasBin: true
 
+  window-or-global@1.0.1:
+    resolution: {integrity: sha512-tE12J/NenOv4xdVobD+AD3fT06T4KNqnzRhkv5nBIu7K+pvOH2oLCEgYP+i+5mF2jtI6FEADheOdZkA8YWET9w==}
+
   word-wrap@1.2.5:
     resolution: {integrity: sha512-BN22B5eaMMI9UMtjrGd5g5eCYPpCPDUy0FJXbYsaT5zYxjFOckS53SQDE3pWkVoWpHXVb3BrYcEN4Twa55B5cA==}
     engines: {node: '>=0.10.0'}
@@ -8379,6 +8489,10 @@ packages:
   xdg-basedir@4.0.0:
     resolution: {integrity: sha512-PSNhEJDejZYV7h50BohL09Er9VaIefr2LMAf3OEmpCkjOi34eYyQYAXUTjEQtZJTKcF0E2UKTh+osDLsgNim9Q==}
     engines: {node: '>=8'}
+
+  xmlhttprequest-ssl@2.1.2:
+    resolution: {integrity: sha512-TEU+nJVUUnA4CYJFLvK5X9AOeH4KvDvhIfm0vV1GaQRtchnG0hgK5p8hw/xjv8cunWYCsiPCSDzObPyhEwq3KQ==}
+    engines: {node: '>=0.4.0'}
 
   xtend@4.0.2:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
@@ -9900,6 +10014,85 @@ snapshots:
 
   '@pinojs/redact@0.4.0': {}
 
+  '@plasmicapp/data-sources-context@0.1.25(react@19.2.7)':
+    dependencies:
+      react: 19.2.7
+
+  '@plasmicapp/host@2.0.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+    dependencies:
+      '@plasmicapp/query': 0.1.87(react@19.2.7)
+      csstype: 3.2.3
+      react: 19.2.7
+      react-dom: 19.2.7(react@19.2.7)
+      window-or-global: 1.0.1
+
+  '@plasmicapp/loader-core@2.0.5':
+    dependencies:
+      '@plasmicapp/loader-fetcher': 2.0.5
+
+  '@plasmicapp/loader-edge@1.0.82':
+    dependencies:
+      '@plasmicapp/loader-splits': 1.0.76
+
+  '@plasmicapp/loader-fetcher@2.0.5': {}
+
+  '@plasmicapp/loader-nextjs@2.0.24(next@15.5.22(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+    dependencies:
+      '@plasmicapp/loader-core': 2.0.5
+      '@plasmicapp/loader-edge': 1.0.82
+      '@plasmicapp/loader-react': 2.0.20(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@plasmicapp/watcher': 1.0.87
+      next: 15.5.22(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@25.9.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      react: 19.2.7
+      react-dom: 19.2.7(react@19.2.7)
+      server-only: 0.0.1
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  '@plasmicapp/loader-react@2.0.20(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+    dependencies:
+      '@plasmicapp/data-sources-context': 0.1.25(react@19.2.7)
+      '@plasmicapp/host': 2.0.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@plasmicapp/loader-core': 2.0.5
+      '@plasmicapp/loader-fetcher': 2.0.5
+      '@plasmicapp/loader-splits': 1.0.76
+      '@plasmicapp/prepass': 1.0.28(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@plasmicapp/query': 0.1.87(react@19.2.7)
+      pascalcase: 1.0.0
+      react: 19.2.7
+      react-dom: 19.2.7(react@19.2.7)
+      server-only: 0.0.1
+
+  '@plasmicapp/loader-splits@1.0.76':
+    dependencies:
+      json-logic-js: 2.0.5
+
+  '@plasmicapp/prepass@1.0.28(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+    dependencies:
+      '@plasmicapp/query': 0.1.87(react@19.2.7)
+      '@plasmicapp/react-ssr-prepass': 2.0.9(react@19.2.7)
+      react: 19.2.7
+      react-dom: 19.2.7(react@19.2.7)
+
+  '@plasmicapp/query@0.1.87(react@19.2.7)':
+    dependencies:
+      react: 19.2.7
+      swr: 1.3.0(react@19.2.7)
+
+  '@plasmicapp/react-ssr-prepass@2.0.9(react@19.2.7)':
+    dependencies:
+      react: 19.2.7
+
+  '@plasmicapp/watcher@1.0.87':
+    dependencies:
+      socket.io-client: 4.8.3
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
   '@playwright/test@1.62.1':
     dependencies:
       playwright: 1.62.1
@@ -10819,6 +11012,8 @@ snapshots:
     transitivePeerDependencies:
       - '@emnapi/core'
       - '@emnapi/runtime'
+
+  '@socket.io/component-emitter@3.1.2': {}
 
   '@speed-highlight/core@1.2.24': {}
 
@@ -12737,6 +12932,20 @@ snapshots:
     dependencies:
       once: 1.4.0
 
+  engine.io-client@6.6.6:
+    dependencies:
+      '@socket.io/component-emitter': 3.1.2
+      debug: 4.4.3(supports-color@5.5.0)
+      engine.io-parser: 5.2.3
+      ws: 8.21.3
+      xmlhttprequest-ssl: 2.1.2
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  engine.io-parser@5.2.3: {}
+
   enhanced-resolve@5.21.6:
     dependencies:
       graceful-fs: 4.2.11
@@ -14038,6 +14247,8 @@ snapshots:
 
   json-buffer@3.0.1: {}
 
+  json-logic-js@2.0.5: {}
+
   json-schema-ref-resolver@3.0.0:
     dependencies:
       dequal: 2.0.3
@@ -15072,6 +15283,8 @@ snapshots:
 
   parseurl@1.3.3: {}
 
+  pascalcase@1.0.0: {}
+
   path-exists@4.0.0: {}
 
   path-is-absolute@1.0.1: {}
@@ -15960,6 +16173,24 @@ snapshots:
 
   smart-buffer@4.2.0: {}
 
+  socket.io-client@4.8.3:
+    dependencies:
+      '@socket.io/component-emitter': 3.1.2
+      debug: 4.4.3(supports-color@5.5.0)
+      engine.io-client: 6.6.6
+      socket.io-parser: 4.2.7
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  socket.io-parser@4.2.7:
+    dependencies:
+      '@socket.io/component-emitter': 3.1.2
+      debug: 4.4.3(supports-color@5.5.0)
+    transitivePeerDependencies:
+      - supports-color
+
   socks-proxy-agent@8.0.5:
     dependencies:
       agent-base: 7.1.4
@@ -16230,6 +16461,10 @@ snapshots:
       has-flag: 4.0.0
 
   supports-preserve-symlinks-flag@1.0.0: {}
+
+  swr@1.3.0(react@19.2.7):
+    dependencies:
+      react: 19.2.7
 
   tagged-tag@1.0.0: {}
 
@@ -16896,6 +17131,8 @@ snapshots:
       siginfo: 2.0.0
       stackback: 0.0.2
 
+  window-or-global@1.0.1: {}
+
   word-wrap@1.2.5: {}
 
   workerd@1.20260730.1:
@@ -16963,6 +17200,8 @@ snapshots:
       is-wsl: 3.1.1
 
   xdg-basedir@4.0.0: {}
+
+  xmlhttprequest-ssl@2.1.2: {}
 
   xtend@4.0.2: {}
 

@@ -18,6 +18,7 @@
     "@ciszunetwork/db": "workspace:^",
     "@ciszunetwork/payments": "workspace:*",
     "@ciszunetwork/utils": "workspace:*",
+    "@plasmicapp/loader-nextjs": "^2.0.24",
     "@puckeditor/cloud-client": "^0.8.2",
     "@puckeditor/core": "^0.23.0",
     "@puckeditor/plugin-ai": "^0.8.2",
