@@ -489,6 +489,40 @@ function Show-Version {
     Press-Continue
 }
 
+# ---------- Advisor (mensajes globales) ----------
+function Show-AdvisorMenu {
+    Clear-Host
+    Show-MenuHeader "GLOBAL ADVISOR - enviar mensaje a las webs"
+    Write-Host "${c_gray}Selecciona las webs a las que llegara el mensaje (Espacio marca):${c_reset}"
+    $res = Show-MultiSelect -Options @(
+        @{ k = 'global';       l = "TODAS las webs (global)" },
+        @{ k = 'ciszu';        l = "Ciszu Network (ciszunetwork)" },
+        @{ k = 'ciszukoantony'; l = "Ciszuko Antony (ciszukoantony)" },
+        @{ k = 'muzicmania';   l = "MuzicMania (muzicmania)" },
+        @{ k = 'ciszubot';     l = "CiszuBot (ciszubot)" }
+    )
+    if ($res.Action -ne 'proceed' -or -not $res.Selection) { Write-Host "${c_yellow}Cancelo (sin seleccion).${c_reset}"; Press-Continue; return }
+    $target = $res.Selection -join ','
+    if ($target -match 'global') { $target = 'global' }
+
+    $kinds = @('info','success','warning','error')
+    $ki = Show-Menu -Title "TIPO DE MENSAJE" -Options ($kinds | ForEach-Object { @{ ic = '▪'; l = $_ } })
+    if ($ki -lt 0) { Write-Host "${c_yellow}Cancelo.${c_reset}"; Press-Continue; return }
+    $kind = $kinds[$ki]
+
+    $msg = Read-Host "Mensaje a enviar"
+    if ([string]::IsNullOrWhiteSpace($msg)) { Write-Host "${c_yellow}Mensaje vacio - cancelo.${c_reset}"; Press-Continue; return }
+
+    $sender = Read-Host "De parte de (quien lo envia)"
+    if ([string]::IsNullOrWhiteSpace($sender)) { $sender = 'admin' }
+
+    Write-Host "${c_cyan}Enviando mensaje global...${c_reset}"
+    Push-Location $root
+    node scripts/advisor.js $msg --target $target --kind $kind --sender $sender 2>&1 | Out-Host
+    Pop-Location
+    Press-Continue
+}
+
 # ---------- Herramientas extra ----------
 function Show-Tools {
     $opts = @(
@@ -501,6 +535,7 @@ function Show-Tools {
         @{ ic = '🧾'; l = "Abrir carpeta de logs en el explorador";    act = { if (Test-Path $LOG_DIR) { Start-Process explorer.exe (Resolve-Path $LOG_DIR).Path } else { Write-Host "${c_yellow}No hay carpeta de logs aun.${c_reset}" }; Press-Continue } },
         @{ ic = '⚙'; l = "Ver versiones node / pnpm / turbo";        act = { Clear-Host; node -v; pnpm -v; turbo --version 2>$null; Press-Continue } },
         @{ ic = '📦'; l = "Ver git status del monorepo";              act = { Clear-Host; git -C $root status --short --branch | Out-Host; Press-Continue } },
+        @{ ic = '📢'; l = "Advisor: enviar mensaje global a las webs"; act = { Show-AdvisorMenu } },
         @{ ic = '🌡'; l = "Ver espacio en disco (C y E)";             act = { Clear-Host; Get-PSDrive C,E | Select-Object Name, @{n='Libre GB';e={[math]::Round($_.Free/1GB,1)}}, @{n='Usado GB';e={[math]::Round($_.Used/1GB,1)}} | Format-Table | Out-Host; Press-Continue } },
         @{ ic = '🖥'; l = "Estado CDN local (offline :8788)";         act = { $s = Get-NetTCPConnection -LocalPort $CDN_PORT -State Listen -ErrorAction SilentlyContinue; if ($s) { Write-Host "${c_green}CDN local activo (pid $($s.OwningProcess)) -> http://localhost:$CDN_PORT${c_reset}" } else { Write-Host "${c_yellow}CDN local DETENIDO. Arranca una web para encenderlo.${c_reset}" }; Press-Continue } },
         @{ ic = '♻'; l = "Reiniciar CDN local (offline :8788)";      act = { Stop-CdnServe; Ensure-CdnServe; Start-Sleep -Milliseconds 800; Press-Continue } }

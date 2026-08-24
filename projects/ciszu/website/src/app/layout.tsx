@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { headers } from "next/headers";
 import { IBM_Plex_Sans, IBM_Plex_Sans_Condensed } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor } from "@ciszu/ui";
 import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CookiesBanner } from "@/components/layout/CookiesBanner";
@@ -86,6 +86,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             </CloudflareGuard>
           </DisclaimerProvider>
           <GlobalToast />
+          <GlobalAdvisor site="ciszu" />
         </AuthProvider>
         <PwaRegister />
         <FabStackProvider>

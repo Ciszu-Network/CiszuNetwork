@@ -39,6 +39,9 @@ export { default as SmartImage } from './SmartImage';
 export type { SmartImageProps } from './SmartImage';
 // Analíticas: PostHog (product analytics compartido; NO pisa Cloudflare Web Analytics)
 export { default as PostHogAnalytics, captureEvent } from './PostHogAnalytics';
+// GlobalAdvisor: sistema de mensajes globales del admin (GLOBAL_ADVISOR_SYSTEM, TODO #3)
+export { default as GlobalAdvisor } from './GlobalAdvisor';
+export type { GlobalAdvisorProps, Announcement } from './GlobalAdvisor';
 // Atoms portados desde los proyectos (librería de componentes reales)
 export { default as Button } from './Button';
 export type { ButtonProps } from './Button';
