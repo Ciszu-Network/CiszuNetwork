@@ -134,21 +134,31 @@ export default function PreferencesPanel() {
       {/* Zoom */}
       <div>
         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-2">Zoom</p>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => changeZoom(-ZOOM_STEP)}
             disabled={zoom <= ZOOM_MIN}
-            className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white hover:border-neon-blue/50 font-header font-black text-sm transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
-            title="Disminuir zoom"
+            className="w-9 h-9 shrink-0 rounded-lg bg-white/5 border border-white/10 text-white hover:border-neon-blue/50 hover:text-neon-cyan font-header font-black text-lg transition-all active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed"
+            title="Quitar zoom"
+            aria-label="Quitar zoom"
           >
             −
           </button>
-          <span className="w-16 text-center text-xs font-header font-black text-neon-cyan">{zoom}%</span>
+          <div className="flex-1 min-w-0 flex items-center gap-2">
+            <div className="relative flex-1 h-2 rounded-full bg-white/10 overflow-hidden">
+              <div
+                className="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-neon-cyan to-neon-purple transition-all duration-200"
+                style={{ width: `${((zoom - ZOOM_MIN) / (ZOOM_MAX - ZOOM_MIN)) * 100}%` }}
+              />
+            </div>
+            <span className="w-12 text-center text-xs font-header font-black text-neon-cyan tabular-nums shrink-0">{zoom}%</span>
+          </div>
           <button
             onClick={() => changeZoom(ZOOM_STEP)}
             disabled={zoom >= ZOOM_MAX}
-            className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white hover:border-neon-blue/50 font-header font-black text-sm transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
-            title="Aumentar zoom"
+            className="w-9 h-9 shrink-0 rounded-lg bg-white/5 border border-white/10 text-white hover:border-neon-blue/50 hover:text-neon-cyan font-header font-black text-lg transition-all active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed"
+            title="Sumar zoom"
+            aria-label="Sumar zoom"
           >
             +
           </button>
