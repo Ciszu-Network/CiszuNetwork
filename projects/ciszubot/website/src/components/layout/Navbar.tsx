@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Icon, SmartImage, useZoomStatus, publishHeaderMode } from '@ciszu/ui';
 import { Menu, X, Search } from 'lucide-react';
 import { useAppStore, type AppUser } from '@/store';
@@ -101,6 +101,7 @@ interface NavbarProps {
 
 export default function Navbar({ lang, dict, account }: NavbarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const { isMenuOpen, setIsMenuOpen, sidebarView, setSidebarView, user, setUser, isHydrated } = useAppStore();
   const [toast, setToast] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -255,7 +256,10 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
     } else {
       updatePreferences({ lang: code });
     }
-    window.location.reload();
+    // router.refresh() re-renderiza los RSC (idioma server-side) SIN recargar
+    // la página completa: evita que el CloudflareGuard y los assets CDN se
+    // re-monten (eran la causa de logos que no cargaban al cambiar idioma).
+    router.refresh();
   };
 
   const handleSignOut = async () => {
