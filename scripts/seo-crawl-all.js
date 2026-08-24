@@ -4,7 +4,7 @@
 const { spawnSync } = require('child_process');
 const path = require('path');
 
-const SITES = ['ciszu', 'cizukoantony', 'muzicmania', 'ciszubot'];
+const SITES = ['ciszu', 'ciszukoantony', 'muzicmania', 'ciszubot'];
 
 const [,, dateArg] = process.argv;
 const date = dateArg || new Date().toISOString().split('T')[0];

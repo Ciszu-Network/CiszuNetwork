@@ -5,7 +5,7 @@
 //   node scripts/seo-run.js <site> compare <old-date> <new-date>
 //   node scripts/seo-run.js <site> fixes <date> [apply|dry-run]
 //
-// site: ciszu | cizukoantony | muzicmania | ciszubot
+// site: ciszu | ciszukoantony | muzicmania | ciszubot
 // La carpeta seo vive en projects/<folder>/website/seo/scripts/.
 
 const { spawnSync } = require('child_process');
@@ -13,7 +13,7 @@ const path = require('path');
 
 const SITE_FOLDERS = {
   ciszu: 'ciszu',
-  cizukoantony: 'ciszukoantony',
+  ciszukoantony: 'ciszukoantony',
   muzicmania: 'muzicmania',
   ciszubot: 'ciszubot',
 };

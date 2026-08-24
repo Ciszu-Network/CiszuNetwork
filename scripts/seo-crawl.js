@@ -3,7 +3,7 @@
 //   node scripts/seo-crawl.js <site> [fecha]
 //   node scripts/seo-crawl-all.js <fecha>
 //
-// site: ciszu | cizukoantony | muzicmania | ciszubot
+// site: ciszu | ciszukoantony | muzicmania | ciszubot
 // Requiere: Screaming Frog SEO Spider instalado (versión free suficiente, límite 500 URLs).
 // El CLI exporta en el idioma del sistema (ES/EN); los scripts de análisis soportan ambos.
 
@@ -13,14 +13,14 @@ const fs = require('fs');
 
 const SITE_FOLDERS = {
   ciszu: 'ciszu',
-  cizukoantony: 'ciszukoantony',
+  ciszukoantony: 'ciszukoantony',
   muzicmania: 'muzicmania',
   ciszubot: 'ciszubot',
 };
 
 const SITE_URLS = {
   ciszu: 'https://ciszunetwork.vercel.app',
-  cizukoantony: 'https://cizukoantony.vercel.app',
+  ciszukoantony: 'https://ciszukoantony.vercel.app',
   muzicmania: 'https://muzicmania.vercel.app',
   ciszubot: 'https://ciszubot.vercel.app',
 };

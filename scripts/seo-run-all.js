@@ -9,7 +9,7 @@
 const { spawnSync } = require('child_process');
 const path = require('path');
 
-const SITES = ['ciszu', 'cizukoantony', 'muzicmania', 'ciszubot'];
+const SITES = ['ciszu', 'ciszukoantony', 'muzicmania', 'ciszubot'];
 
 const [,, action, ...args] = process.argv;
 
