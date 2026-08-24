@@ -507,14 +507,12 @@ export const NavbarContent = () => {
               <AuthMenu
                 open={accOpen}
                 onToggle={() => {
-                  setAccOpen(v => {
-                    if (!v) {
-                      setShowSearch(false);
-                      setIsMenuOpen(false);
-                      setOpenDropdown(null);
-                    }
-                    return !v;
-                  });
+                  if (!accOpen) {
+                    setShowSearch(false);
+                    setIsMenuOpen(false);
+                    setOpenDropdown(null);
+                  }
+                  setAccOpen(!accOpen);
                 }}
                 onClose={() => setAccOpen(false)}
               />

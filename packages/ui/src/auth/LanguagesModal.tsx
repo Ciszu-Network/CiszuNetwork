@@ -16,6 +16,7 @@
  * ------------------------------------------------------------------ */
 
 import React from 'react';
+import { createPortal } from 'react-dom';
 
 export interface LanguageOption {
   code: string;
@@ -47,7 +48,12 @@ export default function LanguagesModal({
 }: LanguagesModalProps) {
   if (!open) return null;
 
-  return (
+  // createPortal: el modal se renderiza en document.body para ESCAPAR del
+  // PreferencesModal padre (que tiene transform + overflow-y-auto). Sin el
+  // portal, el position:fixed del modal de idiomas quedaba relativo a ese
+  // contenedor y se cortaba.
+  return createPortal(
+    (
     <div
       className="fixed inset-0 z-[80] flex items-center justify-center p-4"
       role="dialog"
@@ -137,5 +143,7 @@ export default function LanguagesModal({
         </div>
       </div>
     </div>
+    ),
+    document.body
   );
 }

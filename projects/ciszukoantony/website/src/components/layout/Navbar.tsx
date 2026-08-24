@@ -40,11 +40,11 @@ const SunIcon = () => (
 function Toast({ message, onClose }: { message: string; onClose: () => void }) {
   useEffect(() => { const t = setTimeout(onClose, 4000); return () => clearTimeout(t); }, [onClose]);
   return (
-    <div className="fixed bottom-6 right-6 z-[100] animate-fade-in-up">
-      <div className="px-5 py-3 rounded-xl bg-brand/20 border border-brand/30 backdrop-blur-xl text-sm text-white shadow-lg shadow-brand/10 flex items-center gap-3">
-        <span className="w-2 h-2 rounded-full bg-brand animate-pulse" />
-        {message}
-        <button onClick={onClose} className="text-gray-400 hover:text-white ml-2">{I.close}</button>
+    <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[1000] animate-fade-in-up pointer-events-none">
+      <div className="bg-[#05050a]/95 border border-neon-blue/40 px-6 py-3 rounded-full shadow-[0_4px_30px_rgba(61,106,223,0.4)] backdrop-blur-md flex items-center gap-3">
+        <span className="w-2 h-2 rounded-full bg-neon-blue animate-pulse shrink-0" />
+        <span className="text-neon-blue font-bold uppercase tracking-widest text-[10px] sm:text-xs">{message}</span>
+        <button onClick={onClose} className="text-gray-400 hover:text-white ml-1 shrink-0">{I.close}</button>
       </div>
     </div>
   );
@@ -175,6 +175,10 @@ export default function Navbar() {
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       const t = e.target as Node;
+      // No cerrar los dropdowns cuando el click ocurre dentro de un diálogo
+      // (p.ej. el PreferencesModal de Radix, que es un portal fuera del navbar).
+      const inDialog = !!(t as HTMLElement)?.closest?.('[role="dialog"]');
+      if (inDialog) return;
       if (infoRef.current && !infoRef.current.contains(t)) setInfoOpen(false);
       if (accRef.current && !accRef.current.contains(t)) setAccOpen(false);
       if (searchRef.current && searchToggleRef.current &&
