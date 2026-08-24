@@ -239,23 +239,33 @@ const setLangSafe = (l: PreferenceLang) => {
           </svg>
           Zoom
         </p>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => changeZoom(-FONT_SIZE_STEP)}
             disabled={prefs.fontSize <= FONT_SIZE_MIN}
-            className="p-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:border-neon-cyan/50 transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
-            title="Disminuir zoom"
+            className="p-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:border-neon-cyan/50 transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed shrink-0"
+            title="Quitar zoom"
+            aria-label="Quitar zoom"
           >
             <IcoZoomMinus />
           </button>
-          <span className="flex-1 text-center text-xs font-header font-black text-neon-cyan tabular-nums">
-            {prefs.fontSize}%
-          </span>
+          <div className="flex-1 min-w-0 flex items-center gap-2">
+            <div className="relative flex-1 h-2 rounded-full bg-white/10 overflow-hidden">
+              <div
+                className="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-neon-cyan to-neon-blue transition-all duration-200"
+                style={{ width: `${((prefs.fontSize - FONT_SIZE_MIN) / (FONT_SIZE_MAX - FONT_SIZE_MIN)) * 100}%` }}
+              />
+            </div>
+            <span className="w-12 text-center text-xs font-header font-black text-neon-cyan tabular-nums shrink-0">
+              {prefs.fontSize}%
+            </span>
+          </div>
           <button
             onClick={() => changeZoom(FONT_SIZE_STEP)}
             disabled={prefs.fontSize >= FONT_SIZE_MAX}
-            className="p-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:border-neon-cyan/50 transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
-            title="Aumentar zoom"
+            className="p-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:border-neon-cyan/50 transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed shrink-0"
+            title="Sumar zoom"
+            aria-label="Sumar zoom"
           >
             <IcoZoomPlus />
           </button>

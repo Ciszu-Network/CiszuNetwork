@@ -30,7 +30,7 @@ const IconLock = () => (
 );
 
 const CISZU_ISOTYPE = assetResolver.resolve('projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg');
-const ANTONY_ISOTYPE = assetResolver.resolve('projects/ciszukoantony/content/logos/images/not-outline/isotype/color/ciszuko_logo_isotipo_outline_zwhite_ccolor.svg');
+const ANTONY_ISOTYPE = assetResolver.resolve('projects/ciszukoantony/content/logos/images/not-outline/isotype/color/ciszuko_logo_isotipo_outline_zcolor_ccolor.svg');
 
 export default function LoginPage() {
   usePageTitle('LOGIN');

@@ -203,23 +203,31 @@ export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onTo
       </div>
 
       {/* Zoom */}
-      <div className="px-4 py-1.5 flex items-center justify-between gap-3">
-        <span className="text-xs font-bold text-ink/85">Zoom</span>
-        <div className="flex items-center gap-1">
+      <div className="px-4 py-1.5">
+        <span className="text-xs font-bold text-ink/85 block mb-1.5">Zoom</span>
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setZoom(-ZOOM_STEP)}
             disabled={zoom <= ZOOM_MIN}
-            aria-label="Reducir zoom"
-            className="p-1.5 rounded-md bg-card border border-border text-ink hover:border-neon-blue hover:text-neon-blue disabled:opacity-30 disabled:cursor-not-allowed transition"
+            aria-label="Quitar zoom"
+            className="p-1.5 rounded-md bg-card border border-border text-ink hover:border-neon-blue hover:text-neon-blue disabled:opacity-30 disabled:cursor-not-allowed transition shrink-0"
           >
             <IcoZoomMinus />
           </button>
-          <span className="w-11 text-center text-[11px] font-black tabular-nums">{zoom}%</span>
+          <div className="flex-1 min-w-0 flex items-center gap-2">
+            <div className="relative flex-1 h-2 rounded-full bg-border/60 overflow-hidden">
+              <div
+                className="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-neon-blue to-neon-pink transition-all duration-200"
+                style={{ width: `${((zoom - ZOOM_MIN) / (ZOOM_MAX - ZOOM_MIN)) * 100}%` }}
+              />
+            </div>
+            <span className="w-11 text-center text-[11px] font-black tabular-nums shrink-0">{zoom}%</span>
+          </div>
           <button
             onClick={() => setZoom(ZOOM_STEP)}
             disabled={zoom >= ZOOM_MAX}
-            aria-label="Aumentar zoom"
-            className="p-1.5 rounded-md bg-card border border-border text-ink hover:border-neon-blue hover:text-neon-blue disabled:opacity-30 disabled:cursor-not-allowed transition"
+            aria-label="Sumar zoom"
+            className="p-1.5 rounded-md bg-card border border-border text-ink hover:border-neon-blue hover:text-neon-blue disabled:opacity-30 disabled:cursor-not-allowed transition shrink-0"
           >
             <IcoZoomPlus />
           </button>
