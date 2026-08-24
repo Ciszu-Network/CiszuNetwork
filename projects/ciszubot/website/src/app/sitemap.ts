@@ -1,4 +1,3 @@
-import type { MetadataRoute } from 'next';
 
 export const dynamic = 'force-static';
 
@@ -16,7 +15,7 @@ const ROUTES = [
   'terminos',
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default function sitemap() {
   return ROUTES.map((route) => ({
     url: `${BASE}/${route}`,
     lastModified: new Date(),
