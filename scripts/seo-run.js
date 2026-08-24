@@ -4,6 +4,8 @@
 //   node scripts/seo-run.js <site> log <log-file>
 //   node scripts/seo-run.js <site> compare <old-date> <new-date>
 //   node scripts/seo-run.js <site> fixes <date> [apply|dry-run]
+//   node scripts/seo-run.js <site> semrush <date>
+//   node scripts/seo-run.js <site> ahrefs <date>
 //
 // site: ciszu | ciszukoantony | muzicmania | ciszubot
 // La carpeta seo vive en projects/<folder>/website/seo/scripts/.
@@ -23,12 +25,14 @@ const SCRIPTS = {
   log: 'process-log-file.ts',
   compare: 'compare-crawls.ts',
   fixes: 'generate-fixes.ts',
+  semrush: 'process-semrush-csv.ts',
+  ahrefs: 'process-ahrefs-csv.ts',
 };
 
 const [,, site, action, ...args] = process.argv;
 
 if (!site || !action) {
-  console.log('Uso: node scripts/seo-run.js <site> <sf|log|compare|fixes> [args...]');
+  console.log('Uso: node scripts/seo-run.js <site> <sf|log|compare|fixes|semrush|ahrefs> [args...]');
   console.log('Sites: ' + Object.keys(SITE_FOLDERS).join(' | '));
   process.exit(1);
 }

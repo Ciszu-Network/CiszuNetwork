@@ -4,6 +4,8 @@
 //   node scripts/seo-run-all.js log <log-file-per-site>   (o "auto" para detectar)
 //   node scripts/seo-run-all.js compare <old-date> <new-date>
 //   node scripts/seo-run-all.js fixes <date> [apply|dry-run]
+//   node scripts/seo-run-all.js semrush <date>
+//   node scripts/seo-run-all.js ahrefs <date>
 //   node scripts/seo-run-all.js all <crawl-date>          (sf + fixes dry-run)
 
 const { spawnSync } = require('child_process');
@@ -14,7 +16,7 @@ const SITES = ['ciszu', 'ciszukoantony', 'muzicmania', 'ciszubot'];
 const [,, action, ...args] = process.argv;
 
 if (!action) {
-  console.log('Uso: node scripts/seo-run-all.js <sf|log|compare|fixes|all> [args...]');
+  console.log('Uso: node scripts/seo-run-all.js <sf|log|compare|fixes|semrush|ahrefs|all> [args...]');
   process.exit(1);
 }
 
