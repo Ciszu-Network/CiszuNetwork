@@ -169,6 +169,12 @@ export default function CloudflareGuard({
       return;
     }
     if (document.querySelector(`script[src="${TURNSTILE_SCRIPT}"]`)) return;
+    // Preload del script: reduce la latencia del widget (el guard bloquea la página)
+    const preload = document.createElement('link');
+    preload.rel = 'preload';
+    preload.as = 'script';
+    preload.href = TURNSTILE_SCRIPT;
+    document.head.appendChild(preload);
     const s = document.createElement('script');
     s.src = TURNSTILE_SCRIPT;
     s.async = true;
