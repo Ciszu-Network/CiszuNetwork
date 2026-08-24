@@ -9,7 +9,7 @@ import FeedbackFab from "@/components/layout/FeedbackFab";
 import { CookiesBanner } from "@/components/layout/CookiesBanner";
 import { getDict, type Lang } from "@/lib/i18n";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor } from "@ciszu/ui";
 import { getSessionData } from "@/lib/auth";
 import QueryProvider from "@/components/layout/QueryProvider";
 import AuthProvider from "@/components/providers/AuthProvider";
@@ -90,6 +90,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
               </DisclaimerProvider>
             </AuthProvider>
           </CloudflareGuard>
+          <GlobalAdvisor site="ciszubot" />
           <PwaRegister />
           <FabStackProvider>
             {!isEdit && <InstallPdwaButton site="CiszuBot" accent="#22d3ee" accentAlt="#a78bfa" />}
