@@ -205,7 +205,7 @@ export default function LeaderboardPage() {
                            <div className="col-span-5 flex items-center gap-6">
                               <div className={`relative w-16 h-16 rounded-2xl p-1 bg-black border-2 transition-all group-hover:rotate-6 ${isTop3 ? `border-${rankColor}` : 'border-white/10'}`}>
                                  {entry.avatar_url ? (
-                                    <Image src={entry.avatar_url} alt="" width={64} height={64} className="rounded-xl object-cover" />
+                                    <Image src={entry.avatar_url} alt={`Avatar de ${entry.display_name}`} width={64} height={64} className="rounded-xl object-cover" />
                                  ) : (
                                     <div className={`w-full h-full rounded-xl flex items-center justify-center font-header font-black text-2xl ${isTop3 ? `text-${rankColor}` : 'text-white/20'}`}>
                                        {entry.display_name.charAt(0)}

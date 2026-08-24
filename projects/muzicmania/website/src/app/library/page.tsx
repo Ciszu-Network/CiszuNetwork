@@ -332,7 +332,7 @@ function LibraryContent() {
                     className={`group/track flex items-center gap-5 p-5 rounded-3xl border transition-all cursor-pointer ${selectedTrack.id === track.id ? (accentColors[track.id] ? 'border' : `bg-neon-${track.colorKey}/10 border-neon-${track.colorKey}`) : 'bg-black/40 border-white/5 hover:border-white/20'}`}
                     style={selectedTrack.id === track.id && accentColors[track.id] ? { backgroundColor: `${accentColors[track.id]}1A`, borderColor: accentColors[track.id] } : undefined}>
                      <div className="w-16 h-16 shrink-0 relative group/tc">
-                        <img src={trackDisc(track.id)} alt=""
+                        <img src={trackDisc(track.id)} alt={`Disco de ${track.name}`}
                           className={`absolute inset-0 w-full h-full -translate-y-1 z-0 transition-all duration-500 ease-out group-hover/tc:-translate-y-2 group-hover/tc:z-20 ${
                             selectedTrack.id === track.id && isPlaying ? 'animate-spin' : ''
                           }`}

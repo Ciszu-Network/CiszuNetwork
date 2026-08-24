@@ -68,6 +68,7 @@ export default function HomeContent() {
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden">
+        <h1 className="sr-only">MuzicMania — El Juego de Ritmo Definitivo en la Web</h1>
         {/* Deep radial glow */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_50%,rgba(40,0,90,0.45)_0%,rgba(0,10,30,0.2)_60%,transparent_100%)] pointer-events-none" />
 
@@ -364,7 +365,7 @@ export default function HomeContent() {
               {TRACKS_DATA.slice(0, 4).map((track, i) => (
                 <div key={i} className={`flex items-center gap-4 p-5 rounded-2xl bg-doc-dark border-2 border-white/5 transition-all group active-depth hover-glow-${track.colorKey} border-neon-${track.colorKey}/20 cursor-default`}>
                   <Link href={`/library?track=${track.id}`} className="w-12 h-12 shrink-0 relative block cursor-pointer">
-                    <img src={trackDisc(track.id)} alt=""
+                    <img src={trackDisc(track.id)} alt={`Disco de ${track.name}`}
                       className="absolute inset-0 w-full h-full -translate-y-1.5 z-0 transition-all duration-500 ease-out group-hover:-translate-y-3 group-hover:z-20"
                     />
                     <img src={trackCover(track.id)} alt={track.name}
