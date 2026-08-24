@@ -36,10 +36,11 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": [
+"exclude": [
     "node_modules",
     "legacy_backup",
     "supabase",
-    "scratch*.ts"
+    "scratch*.ts",
+    "seo"
   ]
 }
