@@ -249,7 +249,7 @@ tools/directus/data/
 # Los docs de usuario (docx, pdf, md, txt en docs/) SÍ se trackean
 projects/*/docs/documentation/
 # SEO configs y scripts (internos)
-projects/*/seo/
+projects/*/website/seo/
 # Scripts de automatización (locales)
 scripts/
 # Servicios e infraestructura (Supabase, Vercel, etc.)
