@@ -122,7 +122,9 @@ function failProfanity(what, value, found) {
   auditLog({ session: sessionId(), action: 'blocked-profanity', field: what, value, matched: found });
   console.error(`🚫 Contenido prohibido detectado en ${what === 'message' ? 'el mensaje' : 'el autor'}: "${found}"`);
   console.error('   La operación se ha cancelado y se ha registrado el intento (sesión + fecha).');
-  process.exit(2);
+  const e = new Error('blocked-profanity');
+  e.isProfanity = true;
+  throw e;
 }
 
 function assertClean(text, what) {
@@ -281,6 +283,7 @@ async function run() {
 
   if (!['info', 'success', 'warning', 'error'].includes(kind)) {
     console.error(`❌ kind inválido: ${kind}. Opciones: info|success|warning|error`);
+    auditLog({ session: sessionId(), action: 'error', error: `kind inválido: ${kind}`, sender, target });
     process.exit(1);
   }
 
@@ -293,7 +296,10 @@ async function run() {
   const enabled = Array.isArray(settings) && settings.length ? settings[0].enabled : true;
   if (!enabled) {
     console.error('🚫 Mensajes globales DESACTIVADOS (kill switch). Usa --toggle on para reactivar.');
-    process.exit(1);
+    auditLog({ session: sessionId(), action: 'blocked-killswitch', message, sender, target, kind });
+    const e = new Error('blocked-killswitch');
+    e.isKillSwitch = true;
+    throw e;
   }
 
   // Resolver perfil verificado del emisor (staff/cuenta real en alguna web destino)
@@ -330,6 +336,16 @@ async function run() {
 }
 
 run().catch((e) => {
+  if (e.isProfanity) {
+    // Devcon: exit code 2 = cerrar la consola por seguridad.
+    process.exitCode = 2;
+    return;
+  }
+  if (e.isKillSwitch) {
+    process.exitCode = 1;
+    return;
+  }
   console.error('❌ Error:', e.message);
-  process.exit(1);
+  auditLog({ session: sessionId(), action: 'error', error: e.message, argv: args.slice(0, 8) });
+  process.exitCode = 1;
 });
