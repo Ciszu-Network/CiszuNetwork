@@ -234,7 +234,7 @@ function Show-MultiSelect {
             $opt = $Options[$n]
             $k   = $opt.key
             $ic  = if ($opt.ic) { $opt.ic } else { $opt.emoji }
-            $ct  = if ($sel[$k]) { '☑' } else { '☐' }
+            $ct  = if ($k -and $sel[$k]) { '☑' } else { '☐' }
             $st  = if ($opt.s) { '  ' + $opt.s } else { '' }
             if ($n -eq $i) {
                 Write-Host "${c_yellow}▸ [${ct}] ${ic}  ${c_yellow}$($opt.l)${c_reset}${c_yellow}$st${c_reset}"
@@ -256,7 +256,7 @@ function Show-MultiSelect {
         elseif ($k -eq [ConsoleKey]::DownArrow) { if ($i -lt $total - 1) { $i++ } }
         elseif ($k -eq [ConsoleKey]::Spacebar)  {
             $ck = $Options[$i].key
-            if ($sel.ContainsKey($ck)) { $sel.Remove($ck) } else { $sel[$ck] = $true }
+            if ($ck -and $sel.ContainsKey($ck)) { $sel.Remove($ck) } elseif ($ck) { $sel[$ck] = $true }
         }
         elseif ($k -eq [ConsoleKey]::Enter) {
             return @{ Action = 'proceed'; Selection = @($sel.Keys) }
@@ -495,11 +495,11 @@ function Show-AdvisorMenu {
     Show-MenuHeader "GLOBAL ADVISOR - enviar mensaje a las webs"
     Write-Host "${c_gray}Selecciona las webs a las que llegara el mensaje (Espacio marca):${c_reset}"
     $res = Show-MultiSelect -Options @(
-        @{ k = 'global';       l = "TODAS las webs (global)" },
-        @{ k = 'ciszu';        l = "Ciszu Network (ciszunetwork)" },
-        @{ k = 'ciszukoantony'; l = "Ciszuko Antony (ciszukoantony)" },
-        @{ k = 'muzicmania';   l = "MuzicMania (muzicmania)" },
-        @{ k = 'ciszubot';     l = "CiszuBot (ciszubot)" }
+        @{ key = 'global';       l = "TODAS las webs (global)" },
+        @{ key = 'ciszu';        l = "Ciszu Network (ciszunetwork)" },
+        @{ key = 'ciszukoantony'; l = "Ciszuko Antony (ciszukoantony)" },
+        @{ key = 'muzicmania';   l = "MuzicMania (muzicmania)" },
+        @{ key = 'ciszubot';     l = "CiszuBot (ciszubot)" }
     )
     if ($res.Action -ne 'proceed' -or -not $res.Selection) { Write-Host "${c_yellow}Cancelo (sin seleccion).${c_reset}"; Press-Continue; return }
     $target = $res.Selection -join ','
