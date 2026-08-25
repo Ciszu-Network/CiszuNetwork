@@ -13,6 +13,7 @@ import {
   AuthSecondaryActions,
   CiszuIdBrand,
   OAuthProviders,
+  useToast,
 } from '@ciszu/ui';
 
 const IconMail = () => (
@@ -43,7 +44,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
-  const [betaToast, setBetaToast] = useState<string | null>(null);
+  const { toast } = useToast();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -54,13 +55,6 @@ export default function LoginPage() {
   React.useEffect(() => {
     if (user) router.push('/');
   }, [user, router]);
-
-  React.useEffect(() => {
-    if (betaToast) {
-      const t = setTimeout(() => setBetaToast(null), 3500);
-      return () => clearTimeout(t);
-    }
-  }, [betaToast]);
 
   const validate = () => {
     const next: Record<string, string> = {};
@@ -220,7 +214,7 @@ export default function LoginPage() {
                 </form>
 
                 <OAuthProviders
-                  onSelect={(p) => setBetaToast(`OAuth de ${p} disponible en futura versión beta`)}
+                  onSelect={(p) => toast(`OAuth de ${p} disponible en futura versión beta`)}
                 />
 
                 <AuthSecondaryActions
@@ -234,15 +228,6 @@ export default function LoginPage() {
           </div>
         </div>
       </motion.div>
-
-      {betaToast && (
-        <div className="fixed bottom-6 right-6 z-[100] animate-fade-in-up">
-          <div className="px-5 py-3 rounded-xl bg-brand/20 border border-brand/30 backdrop-blur-xl text-sm text-white shadow-lg shadow-brand/10 flex items-center gap-3">
-            <span className="w-2 h-2 rounded-full bg-neon-pink animate-pulse" />
-            {betaToast}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

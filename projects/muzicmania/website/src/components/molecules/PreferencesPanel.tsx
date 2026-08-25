@@ -14,9 +14,11 @@ import {
   ZOOM_MAX,
   ZOOM_STEP,
 } from '@/lib/preferences';
+import { useToast } from '@ciszu/ui';
 
 export default function PreferencesPanel() {
-  const { lang, setLang, darkMode, setDarkMode, user, showToast } = useAppStore();
+  const { lang,  setLang,  darkMode,  setDarkMode,  user } = useAppStore();
+  const { toast } = useToast();
   const [zoom, setZoom] = useState<number>(100);
   const [muted, setMuted] = useState<boolean>(false);
 
@@ -56,16 +58,22 @@ export default function PreferencesPanel() {
       });
   }, [lang, darkMode, zoom, muted, user?.id]);
 
+  const AVAILABLE_LANGS = ['ES-LA', 'ES-ES', 'EN-US', 'EN-UK'];
+
   const applyLang = (code: string) => {
+    if (!AVAILABLE_LANGS.includes(code)) {
+      toast('Esta función no está desarrollada para la beta aún');
+      return;
+    }
     setLang(code);
     updatePreferences({ lang: code });
-    showToast(`[SISTEMA]: Idioma cambiado a ${code}`);
+    toast(`[SISTEMA]: Idioma cambiado a ${code}`);
   };
 
   const applyTheme = () => {
     setDarkMode(!darkMode);
     updatePreferences({ theme: !darkMode ? 'dark' : 'light' });
-    showToast(!darkMode ? '[SISTEMA]: Modo claro activado.' : '[SISTEMA]: Modo oscuro activado.');
+    toast(!darkMode ? '[SISTEMA]: Modo claro activado.' : '[SISTEMA]: Modo oscuro activado.');
   };
 
   const changeZoom = (delta: number) => {
@@ -80,7 +88,7 @@ export default function PreferencesPanel() {
     setMuted(next);
     setMuteTab(next);
     updatePreferences({ muteTab: next });
-    showToast(next ? '[SISTEMA]: Pestaña silenciada.' : '[SISTEMA]: Pestaña restaurada.');
+    toast(next ? '[SISTEMA]: Pestaña silenciada.' : '[SISTEMA]: Pestaña restaurada.');
   };
 
   return (
@@ -112,6 +120,7 @@ export default function PreferencesPanel() {
           {LANGS.map((l) => {
             const active = lang === l.code;
             const isAlt = !l.code.startsWith('ES') && !l.code.startsWith('EN');
+            const unavailable = !AVAILABLE_LANGS.includes(l.code);
             return (
               <button
                 key={l.code}
@@ -119,11 +128,16 @@ export default function PreferencesPanel() {
                 className={`relative rounded-full transition-transform duration-300 cursor-pointer ${
                   active ? 'scale-105' : 'opacity-60 grayscale hover:opacity-100 hover:grayscale-0 scale-95'
                 } ${isAlt ? 'hidden sm:block' : ''}`}
-                title={l.label}
+                title={unavailable ? `${l.label} (Beta)` : l.label}
               >
                 {l.flag}
                 {active && (
                   <span className="absolute top-0 right-0 w-2 h-2 rounded-full border border-white bg-green-400" />
+                )}
+                {unavailable && (
+                  <span className="absolute -bottom-1 -right-1 text-[7px] font-black uppercase tracking-widest px-1 py-px rounded bg-white/10 border border-white/20 text-white/70">
+                    Beta
+                  </span>
                 )}
               </button>
             );

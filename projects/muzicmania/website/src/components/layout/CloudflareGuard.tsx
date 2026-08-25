@@ -7,16 +7,13 @@ import { resolveAssetPath } from '@ciszunetwork/cdn';
 import { isTauri } from '@/lib/isTauri';
 
 /**
- * CloudflareGuard (MuzicMania) — wrapper del guard COMPARTIDO de @ciszu/ui.
+ * CloudflareGuard (MuzicMania) — adaptador del guard COMPARTIDO de @ciszu/ui.
  *
- * Migrado 11 ago 2026: antes usaba @marsidev/react-turnstile (legacy, solo para
- * MuzicMania). Ahora las 4 webs usan el mismo sistema (packages/ui), con props
- * por app (siteKey/logo/title/subtitle/accent/storageKey/verifyPath).
- *
- * Este wrapper conserva lo propio de MuzicMania:
- *  - Tauri (desktop): salta la verificación Cloudflare.
+ * Todas las webs usan el mismo sistema (packages/ui) con props por app. Este
+ * adaptador conserva lo propio de MuzicMania:
+ *  - Tauri (desktop): desactiva el guard vía la prop `disabled` del compartido.
  *  - Store global (isCloudflareVerified): se sincroniza vía onVerified.
- *    La URL del logo y el accent neon-cyan (#00f0ff) de la marca.
+ * La URL del logo y el accent neon-cyan (#00f0ff) de la marca.
  */
 export function CloudflareGuard({ children }: { children: React.ReactNode }) {
   const { setIsCloudflareVerified } = useAppStore();
@@ -26,16 +23,6 @@ export function CloudflareGuard({ children }: { children: React.ReactNode }) {
     setIsDesktop(isTauri());
   }, []);
 
-  // En Tauri (desktop), saltar verificación Cloudflare
-  if (isDesktop) {
-    return <>{children}</>;
-  }
-
-  // El guard compartido gestiona la verificación por sesión (sessionStorage) y por
-  // su propio estado interno; por eso NO hacemos un gate rápido aquí: si devolviéramos
-  // children en cuanto onVerified dispara el store, desmontaríamos el guard justo al
-  // empezar su animación de salida (fundido) y se cortaría a negro. El store se
-  // sincroniza igualmente por si algún otro código consulta isCloudflareVerified.
   return (
     <SharedCloudflareGuard
       siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
@@ -47,6 +34,7 @@ export function CloudflareGuard({ children }: { children: React.ReactNode }) {
       subtitle="MuzicMania Security • Cloudflare"
       accent="#00f0ff"
       verifyPath="/api/verify-turnstile"
+      disabled={isDesktop}
       onVerified={() => setIsCloudflareVerified(true)}
     >
       {children}

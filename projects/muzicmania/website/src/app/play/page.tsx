@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
@@ -29,6 +29,7 @@ import { CHANGELOG_DATA } from '@/data/changelog';
 import { TAG_CONFIG as CHANGELOG_TAGS, I as CHANGELOG_I } from '@/config/changelogIcons';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { getGuestId, getGuestName } from '@/lib/guest';
+import { useToast } from '@ciszu/ui';
 // --- Icons Library ---
 const I = {
   play: <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>,
@@ -312,7 +313,8 @@ function PlayPageContent() {
   const [newPlaylistName, setNewPlaylistName] = useState('');
   const [guestName, setGuestName] = useState<string>('');
   const [guestId, setGuestId] = useState<string>('');
-  const { user, showToast } = useAppStore();
+  const { user } = useAppStore();
+  const { toast } = useToast();
 
   const [searchUser, setSearchUser] = useState('');
   const [searchUserError, setSearchUserError] = useState('');
@@ -579,17 +581,17 @@ function PlayPageContent() {
 
       if (existing) {
         await supabase.from('track_likes').delete().eq('id', existing.id);
-        showToast('Like eliminado');
+        toast('Like eliminado');
       } else {
         await supabase.from('track_likes').insert({ user_id: user.id, track_id: trackId });
-        showToast('¡Track calificado positivamente!');
+        toast('¡Track calificado positivamente!');
       }
       
       toggleFavorite(trackId);
     } catch (err) {
       console.error('Error toggling like:', err);
       toggleFavorite(trackId);
-      showToast('¡Track calificado! (Local)');
+      toast('¡Track calificado! (Local)');
     }
   };
 

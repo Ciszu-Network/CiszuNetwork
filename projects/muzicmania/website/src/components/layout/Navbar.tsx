@@ -1,10 +1,10 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
-import { useZoomStatus, publishHeaderMode } from '@ciszu/ui';
+import { useZoomStatus, publishHeaderMode, useToast } from '@ciszu/ui';
 import { PreferencesModal } from '@ciszu/ui';
 import { usePathname, useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
@@ -23,7 +23,8 @@ const INFO_LINKS = [ ...COMMUNITY_LINKS, ...GENERAL_INFO_LINKS, ...LEGAL_LINKS ]
 export const NavbarContent = () => {
   const pathname  = usePathname();
   const router    = useRouter();
-  const { isMusicPlaying, toggleMusic, isNavigating, setIsNavigating, isMenuOpen, setIsMenuOpen, sidebarView, setSidebarView, darkMode, setDarkMode, lang, setLang, showToast, user, setUser } = useAppStore();
+  const { isMusicPlaying,  toggleMusic,  isNavigating,  setIsNavigating,  isMenuOpen,  setIsMenuOpen,  sidebarView,  setSidebarView,  darkMode,  setDarkMode,  lang,  setLang,  user,  setUser } = useAppStore();
+  const { toast } = useToast();
   const [isInfoOpen,    setIsInfoOpen]    = useState(false);
   const [isAccederOpen, setIsAccederOpen] = useState(false);
   const [isPrefsOpen, setIsPrefsOpen] = useState(false);
@@ -418,7 +419,7 @@ export const NavbarContent = () => {
                               // Deslogueo optimista para evitar bloqueos si Supabase no responde
                               setUser(null);
                               router.push('/');
-                              showToast('[SISTEMA]: Sesión cerrada correctamente.');
+                              toast('[SISTEMA]: Sesión cerrada correctamente.');
                               // Ejecutar signOut en background
                               supabase.auth.signOut().catch(() => {});
                             }}
@@ -540,7 +541,7 @@ export const NavbarContent = () => {
                 onClick={() => {
                   setDarkMode(!darkMode);
                   updatePreferences({ theme: darkMode ? 'light' : 'dark' });
-                  showToast(!darkMode ? '[SISTEMA]: Modo claro activado.' : '[SISTEMA]: Modo oscuro activado.');
+                  toast(!darkMode ? '[SISTEMA]: Modo claro activado.' : '[SISTEMA]: Modo oscuro activado.');
                 }}
                 className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group ${
                   darkMode ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
@@ -643,7 +644,7 @@ export const NavbarContent = () => {
                         setLang(l.code);
                         updatePreferences({ lang: l.code });
                         setSidebarView('main');
-                        showToast(`[SISTEMA]: Idioma cambiado a ${l.label}`);
+                        toast(`[SISTEMA]: Idioma cambiado a ${l.label}`);
                       }}
                       className={`flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-header font-bold transition-all cursor-pointer group ${
                         lang === l.code ? 'bg-neon-blue/20 text-neon-cyan border border-neon-blue/30' : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'

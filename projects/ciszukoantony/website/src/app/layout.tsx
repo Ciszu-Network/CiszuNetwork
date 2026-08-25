@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { headers } from "next/headers";
 import { Exo_2, Rajdhani } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor, ToastProvider } from "@ciszu/ui";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import FeedbackFab from "@/components/layout/FeedbackFab";
@@ -76,6 +76,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       <body className="min-h-screen font-sans flex flex-col">
         <AuthProvider>
           <DisclaimerProvider>
+            <ToastProvider>
             <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={PROFILE_PIC} title="Ciszuko Antony" subtitle="Ciszuko Antony Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszukoantony">
               {!isEdit && <BetaDisclaimer storageKey="betadisclaimer_ciszukoantony_dismissed" />}
               {!isEdit && <Navbar />}
@@ -85,6 +86,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
               {!isEdit && <Footer />}
               {!isEdit && <CookiesBanner />}
             </CloudflareGuard>
+            </ToastProvider>
           </DisclaimerProvider>
         </AuthProvider>
         <GlobalAdvisor site="ciszukoantony" />

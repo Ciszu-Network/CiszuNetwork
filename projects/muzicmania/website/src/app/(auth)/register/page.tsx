@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 import AuthFeedback from '@/components/molecules/AuthFeedback';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
-import { AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders } from '@ciszu/ui';
+import { AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders, useToast } from '@ciszu/ui';
 
 // --- Icons Library ---
 const I = {
@@ -78,7 +78,8 @@ const InputField = ({ label, name, icon, type = "text", placeholder, maxLength, 
 
 export default function RegisterPage() {
   usePageTitle('REGISTER');
-  const { setHasAcceptedCookies, showToast, user } = useAppStore();
+  const { setHasAcceptedCookies,  user } = useAppStore();
+  const { toast } = useToast();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState<{ isVisible: boolean; type: 'success' | 'error' | 'loading' | 'info'; title: string; message: string }>({
@@ -417,7 +418,7 @@ export default function RegisterPage() {
             </form>
 
             <SharedOAuthProviders
-              onSelect={(p) => showToast(`OAuth de ${p} disponible en futura versión beta`)}
+              onSelect={(p) => toast(`OAuth de ${p} disponible en futura versión beta`)}
             />
             <AuthSecondaryActions
               mode="register"

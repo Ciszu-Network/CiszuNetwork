@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Icon, SmartImage, useZoomStatus, publishHeaderMode } from '@ciszu/ui';
+import { Icon, SmartImage, useZoomStatus, publishHeaderMode, useToast } from '@ciszu/ui';
 import { Menu, X, Search } from 'lucide-react';
 import { useAppStore, type AppUser } from '@/store';
 import { supabase } from '@/config/supabase';
@@ -103,7 +103,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { isMenuOpen, setIsMenuOpen, sidebarView, setSidebarView, user, setUser, isHydrated } = useAppStore();
-  const [toast, setToast] = useState<string | null>(null);
+  const { toast } = useToast();
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [authOpen, setAuthOpen] = useState(false);
@@ -185,15 +185,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
     setInviteOpen(false);
     setIsMenuOpen(false);
     setSidebarView('main');
-    setToast(null);
   }, [pathname]);
-
-  // Auto-hide the language-unavailable toast after ~4s
-  useEffect(() => {
-    if (!toast) return;
-    const t = setTimeout(() => setToast(null), 4000);
-    return () => clearTimeout(t);
-  }, [toast]);
 
   // Focus the search input when opening
   useEffect(() => {
@@ -243,7 +235,6 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
     const next = isDarkNow ? 'light' : 'dark';
     root.classList.toggle('dark', next === 'dark');
     setIsDark(next === 'dark');
-    document.cookie = `ciszubot_theme=${next}; path=/; max-age=31536000`;
     const prefs = updatePreferences({ theme: next });
     if (activeUserId) void syncPreferencesToProfile(activeUserId, prefs);
   };
@@ -280,7 +271,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
     } else if (code === 'EN-US') {
       if (lang !== 'en') setLang('en');
     } else {
-      setToast('Esta función no está desarrollada para la beta aún');
+      toast('Esta función no está desarrollada para la beta aún');
     }
   };
 
@@ -762,16 +753,6 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
               </div>
             )}
           </div>
-        </div>
-      </div>
-    )}
-
-    {/* Toast de aviso para idiomas no disponibles */}
-    {toast && (
-      <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[1000] animate-fade-in-up pointer-events-none">
-        <div className="bg-[#05050a]/95 border border-neon-blue/40 px-6 py-3 rounded-full shadow-[0_4px_30px_rgba(0,212,255,0.4)] backdrop-blur-md flex items-center gap-3">
-          <span className="w-2 h-2 rounded-full bg-neon-blue animate-pulse shrink-0" />
-          <span className="text-neon-blue font-bold uppercase tracking-widest text-[10px] sm:text-xs">{toast}</span>
         </div>
       </div>
     )}

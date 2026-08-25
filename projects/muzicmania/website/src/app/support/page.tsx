@@ -10,6 +10,7 @@ import { supabase } from '@/config/supabase';
 import { SOCIALS } from '@/config/navigation';
 import Link from 'next/link';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useToast } from '@ciszu/ui';
 
 // --- Icons Library ---
 const I = {
@@ -80,7 +81,7 @@ export default function SupportPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'new' | 'list'>('new');
   const [submitting, setSubmitting] = useState(false);
-  const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const { toast } = useToast();
 
   // Form State
   const [formData, setFormData] = useState({
@@ -120,8 +121,7 @@ export default function SupportPage() {
   };
 
   const showToast = (msg: string, type: 'success' | 'error' | 'info' = 'info') => {
-    setToast({ msg, type });
-    setTimeout(() => setToast(null), 4000);
+    toast(msg, type);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -200,25 +200,6 @@ export default function SupportPage() {
         <div className="absolute top-1/4 left-0 w-[800px] h-[800px] bg-neon-purple/5 rounded-full blur-[200px] animate-pulse" />
         <div className="absolute bottom-0 right-0 w-[700px] h-[700px] bg-neon-pink/5 rounded-full blur-[180px]" />
       </div>
-
-      {/* TOAST NOTIFICATION */}
-      <AnimatePresence>
-        {toast && (
-          <motion.div 
-            initial={{ opacity: 0, y: 50, x: '-50%' }}
-            animate={{ opacity: 1, y: 0, x: '-50%' }}
-            exit={{ opacity: 0, y: 20, x: '-50%' }}
-            className={`fixed bottom-10 left-1/2 z-[100] px-8 py-4 rounded-2xl border backdrop-blur-xl shadow-2xl flex items-center gap-4 ${
-              toast.type === 'success' ? 'border-neon-green/30 bg-neon-green/10 text-neon-green' :
-              toast.type === 'error' ? 'border-neon-pink/30 bg-neon-pink/10 text-neon-pink' :
-              'border-neon-blue/30 bg-neon-blue/10 text-neon-blue'
-            }`}
-          >
-            <div className="w-5 h-5">{toast.type === 'success' ? I.shield : I.info}</div>
-            <span className="font-black uppercase text-xs tracking-widest">{toast.msg}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <div className="max-w-7xl mx-auto px-6 pt-0 pb-32 space-y-16">
         

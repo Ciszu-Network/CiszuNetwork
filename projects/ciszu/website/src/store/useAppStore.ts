@@ -35,9 +35,6 @@ interface AppState {
   setZoom: (val: number) => void;
   tabMuted: boolean;
   setTabMuted: (val: boolean) => void;
-  toast: string | null;
-  showToast: (msg: string) => void;
-  hideToast: () => void;
 }
 
 const persisted = typeof window !== 'undefined' ? loadPreferences() : null;
@@ -83,7 +80,4 @@ export const useAppStore = create<AppState>((set) => ({
     const prefs = loadPreferences();
     savePreferences({ ...prefs, tabMuted: val });
   },
-  toast: null,
-  showToast: (msg: string) => set({ toast: msg }),
-  hideToast: () => set({ toast: null }),
 }));

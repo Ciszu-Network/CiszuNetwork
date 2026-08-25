@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { SmartImage, useZoomStatus, publishHeaderMode } from '@ciszu/ui';
+import { SmartImage, useZoomStatus, publishHeaderMode, useToast } from '@ciszu/ui';
 import { NAV_MAIN, SOCIALS, I, ALL_PAGES, SEARCH_INDEX, type NavGroup, type NavItem } from '@/config/navigation';
 import { useAppStore } from '@/store';
 import AuthMenu, { GuestIcon } from '@/components/auth/AuthMenu';
@@ -36,19 +36,6 @@ const SunIcon = () => (
     <path d="M12 1v3m0 16v3M4.22 4.22l2.12 2.12m11.32 11.32l2.12 2.12M1 12h3m16 0h3M4.22 19.78l2.12-2.12M19.78 4.22l-2.12 2.12" strokeLinecap="round"/>
   </svg>
 );
-
-function Toast({ message, onClose }: { message: string; onClose: () => void }) {
-  useEffect(() => { const t = setTimeout(onClose, 4000); return () => clearTimeout(t); }, [onClose]);
-  return (
-    <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[1000] animate-fade-in-up pointer-events-none">
-      <div className="bg-[#05050a]/95 border border-neon-blue/40 px-6 py-3 rounded-full shadow-[0_4px_30px_rgba(61,106,223,0.4)] backdrop-blur-md flex items-center gap-3">
-        <span className="w-2 h-2 rounded-full bg-neon-blue animate-pulse shrink-0" />
-        <span className="text-neon-blue font-bold uppercase tracking-widest text-[10px] sm:text-xs">{message}</span>
-        <button onClick={onClose} className="text-gray-400 hover:text-white ml-1 shrink-0">{I.close}</button>
-      </div>
-    </div>
-  );
-}
 
 const LANGS = [
   { code: 'ES-LA', label: 'Español (Latam)', flag: (
@@ -97,8 +84,8 @@ export default function Navbar() {
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
   const [infoOpen, setInfoOpen] = useState(false);
+  const { toast } = useToast();
   const [accOpen, setAccOpen] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
   const { isMenuOpen, setIsMenuOpen, theme, setTheme, language, setLanguage, sidebarView, setSidebarView, searchQuery, setSearchQuery, user } = useAppStore();
@@ -190,7 +177,7 @@ export default function Navbar() {
 
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
-    setToast('[SISTEMA]: Theme changer is in beta — some styles may not apply correctly yet.');
+    toast(theme === 'dark' ? '[SISTEMA]: Modo claro activado.' : '[SISTEMA]: Modo oscuro activado.');
   };
 
   const closeSearch = () => { setSearchOpen(false); setSearchQuery(''); };
@@ -216,7 +203,7 @@ export default function Navbar() {
   const handleLangSelect = (code: string) => {
     if (code === 'EN-US' || code === 'EN-UK') { setLanguage('EN'); return; }
     if (code === 'ES-LA' || code === 'ES-ES') { setLanguage('ES'); return; }
-    setToast('Esta función no está desarrollada para la beta aún');
+    toast('Esta función no está desarrollada para la beta aún');
   };
 
   // Pill nav: reveal label only on hover/active (muzicmania pattern)
@@ -549,8 +536,6 @@ export default function Navbar() {
           </div>
         </div>
       )}
-
-      {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </>
   );
 }

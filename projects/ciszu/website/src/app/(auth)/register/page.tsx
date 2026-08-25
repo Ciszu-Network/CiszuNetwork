@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { assetResolver } from '@ciszunetwork/cdn';
 import { supabase } from '@/config/supabase';
-import { useAppStore } from '@/store';
 import { usePageTitle } from '@/lib/usePageTitle';
 import {
   AuthField,
@@ -14,6 +13,7 @@ import {
   PasswordStrengthBar,
   passwordMeetsMinimum,
   SmartImage,
+  useToast,
 } from '@ciszu/ui';
 
 const IconUser = () => (
@@ -41,7 +41,7 @@ const CISZU_ISOTYPE = assetResolver.resolve('projects/ciszu/content/logos/images
 
 export default function RegisterPage() {
   usePageTitle('REGISTER');
-  const { showToast } = useAppStore();
+  const { toast } = useToast();
   const router = useRouter();
   const [form, setForm] = useState({
     username: '',
@@ -113,7 +113,7 @@ export default function RegisterPage() {
 
       if (data.user) {
         setEmailSent(true);
-        showToast('Cuenta creada. Revisa tu email para confirmarla.');
+        toast('Cuenta creada. Revisa tu email para confirmarla.');
         router.push('/login');
       }
     } catch (err: any) {
@@ -247,7 +247,7 @@ export default function RegisterPage() {
                 </form>
 
                 <OAuthProviders
-                  onSelect={(p) => showToast(`OAuth de ${p} disponible en futura versión beta`)}
+                  onSelect={(p) => toast(`OAuth de ${p} disponible en futura versión beta`)}
                 />
 
                 <div className="pt-3">

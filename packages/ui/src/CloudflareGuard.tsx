@@ -79,6 +79,8 @@ export interface CloudflareGuardProps {
   retryDelays?: number[];
   /** Callback al completar la verificación (antes de mostrar children) */
   onVerified?: () => void;
+  /** Si true, el guard se desactiva y renderiza children directamente (p.ej. apps nativas Tauri) */
+  disabled?: boolean;
 }
 
 type GuardState = 'loading' | 'verifying' | 'error';
@@ -112,6 +114,7 @@ export default function CloudflareGuard({
   verifyPath = '/api/verify-turnstile',
   retryDelays = RETRY_DELAYS,
   onVerified,
+  disabled = false,
 }: CloudflareGuardProps) {
   const [mounted, setMounted] = useState(false);
   const [state, setState] = useState<GuardState>('loading');
@@ -146,7 +149,7 @@ export default function CloudflareGuard({
   // Salida de emergencia de debug: ?cf_bypass=1 fuerza el skip (sessionStorage no
   // se toca; solo dura en esa URL). Útil si Turnstile falla en un entorno controlado.
   const urlBypass = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('cf_bypass') === '1';
-  const enabled = Boolean(siteKey) && !urlBypass && !isLocalHost && (!isDev || forceInDev);
+  const enabled = Boolean(siteKey) && !urlBypass && !isLocalHost && (!isDev || forceInDev) && !disabled;
 
   useEffect(() => {
     setMounted(true);

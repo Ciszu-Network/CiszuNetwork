@@ -11,11 +11,12 @@ import { I, TAG_CONFIG } from '@/config/changelogIcons';
 import { useAppStore } from '@/store/useAppStore';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useToast } from '@ciszu/ui';
  
 export default function ChangelogDetail() {
   usePageTitle('CHANGELOG');
   const { id } = useParams();
-  const { showToast } = useAppStore();
+const { toast } = useToast();
   const [isAuthWarningOpen, setIsAuthWarningOpen] = useState(false);
   const mostRecentId = useMemo(() => {
     return CHANGELOG_DATA.reduce((latest, item) =>
