@@ -7,7 +7,7 @@ import { useAppStore } from '@/store';
 import { supabase } from '@/config/supabase';
 import { getGuestName } from '@/lib/guest';
 import PreferencesPanel from '@/components/auth/PreferencesPanel';
-import { PreferencesModal } from '@ciszu/ui';
+import { PreferencesModal, useToast } from '@ciszu/ui';
 
 const GuestIcon = () => (
   <svg viewBox="0 0 24 24" className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -56,7 +56,8 @@ const SettingsIcon = () => (
  * Las preferencias locales viven en un MODAL centrado separado (PreferencesModal).
  */
 export default function AuthMenu({ open, onToggle, onClose }: { open: boolean; onToggle: () => void; onClose: () => void }) {
-  const { user, isHydrated, setUser, showToast } = useAppStore();
+  const { user, isHydrated, setUser } = useAppStore();
+  const { toast } = useToast();
   const [prefsOpen, setPrefsOpen] = useState(false);
   const [guestName, setGuestName] = useState<string | null>(null);
   const [loggingOut, setLoggingOut] = useState(false);
@@ -84,11 +85,11 @@ export default function AuthMenu({ open, onToggle, onClose }: { open: boolean; o
     setLoggingOut(true);
     const { error } = await supabase.auth.signOut();
     if (error) {
-      showToast('Error al cerrar sesión');
+      toast('Error al cerrar sesión');
     } else {
       setUser(null);
       onClose();
-      showToast('Sesión cerrada. Vuelve pronto.');
+      toast('Sesión cerrada. Vuelve pronto.');
     }
     setLoggingOut(false);
   };

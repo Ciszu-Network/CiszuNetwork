@@ -13,6 +13,7 @@ import {
   CiszuIdBrand,
   OAuthProviders,
   SmartImage,
+  useToast,
 } from '@ciszu/ui';
 
 const IconMail = () => (
@@ -33,7 +34,8 @@ const CISZU_ISOTYPE = assetResolver.resolve('projects/ciszu/content/logos/images
 
 export default function LoginPage() {
   usePageTitle('LOGIN');
-  const { setUser, showToast } = useAppStore();
+  const { setUser } = useAppStore();
+  const { toast } = useToast();
   const router = useRouter();
   const [form, setForm] = useState({ email: '', password: '' });
   const [forgot, setForgot] = useState(false);
@@ -95,7 +97,7 @@ export default function LoginPage() {
         await syncPreferencesToProfile(data.user.id, loadPreferences());
       }
 
-      showToast('Bienvenido de nuevo, ' + (profile?.display_name || data.user.email));
+      toast('Bienvenido de nuevo, ' + (profile?.display_name || data.user.email));
       router.push('/');
     } catch (err: any) {
       setLocalError(err.message || 'Error desconocido al iniciar sesión');
@@ -231,7 +233,7 @@ export default function LoginPage() {
                 </form>
 
                 <OAuthProviders
-                  onSelect={(p) => showToast(`OAuth de ${p} disponible en futura versión beta`)}
+                  onSelect={(p) => toast(`OAuth de ${p} disponible en futura versión beta`)}
                 />
 
                 <AuthSecondaryActions

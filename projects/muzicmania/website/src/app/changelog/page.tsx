@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -11,6 +11,7 @@ import AuthWarningModal from '@/components/shared/AuthWarningModal';
  
 import { I, TAG_CONFIG } from '@/config/changelogIcons';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useToast } from '@ciszu/ui';
 
 const TypeTag = ({ type, active = false, onClick }: { type: ChangelogType, active?: boolean, onClick?: () => void }) => {
   const config = TAG_CONFIG[type];
@@ -39,7 +40,7 @@ export default function ChangelogIndex() {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  const { showToast } = useAppStore();
+const { toast } = useToast();
   const [isAuthWarningOpen, setIsAuthWarningOpen] = useState(false);
 
   const handleLike = (id: string) => {

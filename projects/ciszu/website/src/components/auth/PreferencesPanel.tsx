@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAppStore } from '@/store';
-import { LanguagesModal } from '@ciszu/ui';
+import { LanguagesModal, useToast } from '@ciszu/ui';
 import {
   loadPreferences,
   updatePreferences,
@@ -136,7 +136,8 @@ const HELP_LINKS = [
 ];
 
 export default function PreferencesPanel() {
-  const { theme, setTheme, language, setLanguage, zoom, setZoom, tabMuted, setTabMuted, user, showToast } = useAppStore();
+  const { theme, setTheme, language, setLanguage, zoom, setZoom, tabMuted, setTabMuted, user } = useAppStore();
+  const { toast } = useToast();
   const [langOpen, setLangOpen] = useState(false);
 
   // Aplicar preferencias persistidas al montar (cajita, fuera del evento de click).
@@ -154,14 +155,14 @@ export default function PreferencesPanel() {
   const applyLanguage = (lang: 'es' | 'en') => {
     setLanguage(lang);
     updatePreferences({ lang });
-    showToast(lang === 'es' ? 'Idioma: Español' : 'Language: English');
+    toast(lang === 'es' ? 'Idioma: Español' : 'Language: English');
     syncToProfile();
   };
 
   const handleLangSelect = (code: string) => {
     if (code === 'es-latam' || code === 'es-es') return applyLanguage('es');
     if (code === 'en-us' || code === 'en-uk') return applyLanguage('en');
-    showToast('Esta función no está desarrollada para la beta aún');
+    toast('Esta función no está desarrollada para la beta aún');
   };
 
   const currentLang = LANGS.find((l) =>
@@ -174,7 +175,7 @@ export default function PreferencesPanel() {
     const next = theme === 'dark' ? 'light' : 'dark';
     setTheme(next);
     updatePreferences({ theme: next });
-    showToast(next === 'dark' ? 'Modo oscuro activado' : 'Modo claro activado');
+    toast(next === 'dark' ? 'Modo oscuro activado' : 'Modo claro activado');
     syncToProfile();
   };
 
@@ -191,7 +192,7 @@ export default function PreferencesPanel() {
     setTabMuted(next);
     setMuteTab(next);
     updatePreferences({ tabMuted: next });
-    showToast(next ? 'Pestaña silenciada' : 'Pestaña restaurada');
+    toast(next ? 'Pestaña silenciada' : 'Pestaña restaurada');
     syncToProfile();
   };
 

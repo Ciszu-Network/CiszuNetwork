@@ -42,6 +42,9 @@ export { default as PostHogAnalytics, captureEvent } from './PostHogAnalytics';
 // GlobalAdvisor: sistema de mensajes globales del admin (GLOBAL_ADVISOR_SYSTEM, TODO #3)
 export { default as GlobalAdvisor } from './GlobalAdvisor';
 export type { GlobalAdvisorProps, Announcement } from './GlobalAdvisor';
+// Toast: sistema de notificación unificado (stack centrado inferior, colores por tipo)
+export { default as ToastProvider, useToast } from './Toast';
+export type { ToastProviderProps, ToastType, ToastData, ToastContextValue } from './Toast';
 // Atoms portados desde los proyectos (librería de componentes reales)
 export { default as Button } from './Button';
 export type { ButtonProps } from './Button';
@@ -51,6 +54,9 @@ export { default as VinylDisc } from './VinylDisc';
 export type { VinylDiscProps } from './VinylDisc';
 export { default as ScrollSpy } from './ScrollSpy';
 export type { ScrollSpyItem } from './ScrollSpy';
+// ScrollNavButton: flechas flotantes ir-arriba/ir-abajo (compartido entre footers)
+export { default as ScrollNavButton } from './ScrollNavButton';
+export type { ScrollNavButtonProps } from './ScrollNavButton';
 export { default as FlagIcon } from './FlagIcon';
 export { default as SocialIcon, SOCIAL_COLORS } from './SocialIcon';
 export type { SocialPlatform } from './SocialIcon';

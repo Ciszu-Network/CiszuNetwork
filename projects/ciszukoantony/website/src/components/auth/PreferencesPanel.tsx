@@ -313,6 +313,22 @@ const setLangSafe = (l: PreferenceLang) => {
       <p className="text-[9px] text-gray-600 font-bold text-center">
         Preferencias guardadas en este dispositivo{user ? ' y sincronizadas a tu perfil' : ''}.
       </p>
+
+      <LanguagesModal
+        open={langOpen}
+        title="Seleccionar idioma"
+        current={language}
+        onSelect={handleLangSelect}
+        onClose={() => setLangOpen(false)}
+        langs={LANGS_DISPLAY.map((l) => ({
+          ...l,
+          available: ['ES-LA', 'ES-ES', 'EN-US', 'EN-UK'].includes(l.code),
+          active:
+            language === 'ES'
+              ? l.code === 'ES-LA' || l.code === 'ES-ES'
+              : l.code === 'EN-US' || l.code === 'EN-UK',
+        }))}
+      />
     </div>
   );
 }

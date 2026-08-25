@@ -1,10 +1,11 @@
 ﻿'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { assetResolver } from '@ciszunetwork/cdn';
+import { ScrollNavButton, useToast } from '@ciszu/ui';
 import { useAppStore } from '@/store';
 import { SocialIcon } from '@/components/ui/SocialIcon';
 import { CISZU_NETWORK, CISZUKO_ANTONY, EXTERNAL_LINKS, GITHUB_REPO, SOCIAL_COLORS } from '@/config/site';
@@ -29,16 +30,6 @@ import {
   Download,
 } from 'lucide-react';
 
-const IcoArrowUp = () => (
-  <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2}>
-    <path d="m18 15-6-6-6 6" />
-  </svg>
-);
-const IcoArrowDown = () => (
-  <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2}>
-    <path d="m6 9 6 6 6-6" />
-  </svg>
-);
 const IcoPhone = () => (
   <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}>
     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
@@ -119,7 +110,7 @@ const TECH_LINKS = [
 
 export const Footer = () => {
   const { theme, setTheme, language, setIsMenuOpen, setSidebarView } = useAppStore();
-  const [toast, setToast] = useState<string | null>(null);
+  const { toast } = useToast();
   const pathname = usePathname();
 
   const isActive = (href: string) => pathname === href;
@@ -130,14 +121,7 @@ export const Footer = () => {
       <div className="absolute top-0 left-0 w-full h-[2px] animate-gradient-x bg-[length:200%_auto] bg-gradient-to-r from-brand-light via-brand-accent to-brand-light shadow-[0_0_15px_rgba(58,107,240,0.45)]" />
 
       {/* Floating scroll arrows */}
-      <div className="fixed bottom-8 right-8 z-40 flex flex-col gap-3">
-        <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="p-3 bg-black/60 backdrop-blur-md border-2 border-brand-light rounded-full text-brand-light hover:border-brand-accent hover:text-brand-accent transition-all active:scale-95" aria-label="Ir arriba">
-          <IcoArrowUp />
-        </button>
-        <button onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })} className="p-3 bg-black/60 backdrop-blur-md border-2 border-brand-light rounded-full text-brand-light hover:border-brand-accent hover:text-brand-accent transition-all active:scale-95" aria-label="Ir abajo">
-          <IcoArrowDown />
-        </button>
-      </div>
+      <ScrollNavButton accent="#3a6bf0" accentAlt="#4a7dff" />
 
       <div className="max-w-screen-xl mx-auto">
         {/* Main Footer Layout Container */}
@@ -360,19 +344,6 @@ export const Footer = () => {
           ))}
         </div>
       </div>
-
-      {/* Toast hint for non-ready controls */}
-      {toast && (
-        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[1000] animate-fade-in-up pointer-events-none">
-          <button
-            onClick={() => setToast(null)}
-            className="bg-[#05050a]/95 border border-brand-light/40 px-6 py-3 rounded-full shadow-[0_4px_30px_rgba(58,107,240,0.4)] backdrop-blur-md flex items-center gap-3"
-          >
-            <span className="w-2 h-2 rounded-full bg-brand-light animate-pulse shrink-0" />
-            <span className="text-brand-light font-bold uppercase tracking-widest text-[10px] sm:text-xs">{toast}</span>
-          </button>
-        </div>
-      )}
     </footer>
   );
 };

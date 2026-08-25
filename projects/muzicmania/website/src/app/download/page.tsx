@@ -1,10 +1,10 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import Link from 'next/link';
 import MainLayout from '@/components/templates/MainLayout';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
-import { FabRestore } from '@ciszu/ui';
+import { FabRestore, useToast } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '@/store';
@@ -149,7 +149,8 @@ const InfoCard = ({ title, desc, icon, color }: { title: string; desc: string; i
 
 export default function DownloadPage() {
   usePageTitle('DOWNLOAD');
-  const { showToast } = useAppStore();
+  const {  } = useAppStore();
+  const { toast } = useToast();
   const [isDownloading, setIsDownloading] = useState<string | null>(null);
 
   // Allowlist: valores válidos de SO y arquitectura (vienen de botones fijos)
@@ -162,7 +163,7 @@ export default function DownloadPage() {
     if (!isArchAvailable(os, arch)) {
       const osName = os === 'w10' ? 'Windows 10' : 'Windows 11';
       const archName = arch === 'x86' ? '32 bits' : arch === 'x64' ? '64 bits' : 'ARM64';
-      showToast(`[SISTEMA]: El instalador para ${osName} (${archName}) aún no ha sido compilado. Prueba con otra arquitectura.`);
+      toast(`[SISTEMA]: El instalador para ${osName} (${archName}) aún no ha sido compilado. Prueba con otra arquitectura.`);
       return;
     }
     setIsDownloading(`${os}-${arch}`);
@@ -175,7 +176,7 @@ export default function DownloadPage() {
   };
 
   const handleUnsupportedOS = (os: string) => {
-    showToast(`[SISTEMA]: La descarga de MuzicMania para ${os} es una función beta cerrada y estará disponible próximamente.`);
+    toast(`[SISTEMA]: La descarga de MuzicMania para ${os} es una función beta cerrada y estará disponible próximamente.`);
   };
 
   const handleCloseOverlay = () => {

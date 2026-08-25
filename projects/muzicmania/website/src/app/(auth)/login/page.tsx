@@ -12,7 +12,7 @@ import AuthFeedback from '@/components/molecules/AuthFeedback';
 import { usePageTitle } from '@/lib/usePageTitle';
 import Image from 'next/image';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
-import { AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders } from '@ciszu/ui';
+import { AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders, useToast } from '@ciszu/ui';
 
 // --- Icons Library ---
 const I = {
@@ -75,7 +75,8 @@ export default function LoginPage() {
   const [forgotStep2, setForgotStep2] = useState(false);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const { showToast, setUser, user } = useAppStore();
+  const { setUser,  user } = useAppStore();
+  const { toast } = useToast();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState<{ isVisible: boolean; type: 'success' | 'error' | 'loading' | 'info'; title: string; message: string }>({
@@ -220,7 +221,7 @@ export default function LoginPage() {
         }, 1500);
 
       } else {
-        showToast('[SISTEMA]: 2FA no implementado en esta versión beta.');
+        toast('[SISTEMA]: 2FA no implementado en esta versión beta.');
       }
     } catch (err: any) {
       setFeedback({ 
@@ -406,7 +407,7 @@ export default function LoginPage() {
             {!isForgotPassword && (
               <>
                 <SharedOAuthProviders
-                  onSelect={(p) => showToast(`OAuth de ${p} disponible en futura versión beta`)}
+                  onSelect={(p) => toast(`OAuth de ${p} disponible en futura versión beta`)}
                 />
                 <AuthSecondaryActions
                   mode="login"

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -7,7 +7,7 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 import { useAppStore } from '@/store/useAppStore';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/config/supabase';
-import { Icon } from '@ciszu/ui';
+import { Icon, useToast } from '@ciszu/ui';
 import AvatarUploadModal from '@/components/profile/AvatarUploadModal';
 import Image from 'next/image';
 import { usePageTitle } from '@/lib/usePageTitle';
@@ -15,7 +15,8 @@ import { usePageTitle } from '@/lib/usePageTitle';
 
 export default function ProfileSettingsPage() {
   usePageTitle('SETTINGS');
-  const { user, setUser, showToast, isHydrated } = useAppStore();
+  const { user,  setUser,  isHydrated } = useAppStore();
+  const { toast } = useToast();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('account');
   const [showUUID, setShowUUID] = useState(false);
@@ -58,7 +59,7 @@ export default function ProfileSettingsPage() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUser(null);
-    showToast('[SISTEMA]: Sesión finalizada');
+    toast('[SISTEMA]: Sesión finalizada');
     router.push('/');
   };
 
@@ -134,7 +135,7 @@ export default function ProfileSettingsPage() {
                       await supabase.from('profiles').update({ bio }).eq('id', user.id);
                       setProfileData({ ...profileData, bio });
                       setIsSavingBio(false);
-                      showToast('[SISTEMA]: Biografía actualizada.');
+                      toast('[SISTEMA]: Biografía actualizada.');
                     }}
                     className="px-6 py-2 bg-neon-blue/20 text-neon-blue font-bold text-xs uppercase rounded-lg border border-neon-blue/30 hover:bg-neon-blue hover:text-black transition-all disabled:opacity-50 flex items-center gap-2"
                   >
@@ -165,7 +166,7 @@ export default function ProfileSettingsPage() {
               onUploadSuccess={(url) => {
                 setProfileData({ ...profileData, avatar_url: url });
                 setUser({ ...user, avatar_url: url });
-                showToast('[SISTEMA]: Avatar actualizado correctamente.');
+                toast('[SISTEMA]: Avatar actualizado correctamente.');
               }}
             />
           </div>
@@ -207,7 +208,7 @@ export default function ProfileSettingsPage() {
                   <button 
                     onClick={async () => {
                       await supabase.auth.signOut({ scope: 'others' });
-                      showToast('[SISTEMA]: Sesiones en otros dispositivos cerradas.');
+                      toast('[SISTEMA]: Sesiones en otros dispositivos cerradas.');
                     }}
                     className="text-[10px] font-black uppercase tracking-widest text-red-400 hover:text-red-300 hover:underline transition-all"
                   >
@@ -240,7 +241,7 @@ export default function ProfileSettingsPage() {
                     </div>
                   </div>
                   <button 
-                    onClick={() => showToast('[SISTEMA]: Utiliza "Cerrar otras sesiones" para forzar la desconexión.')}
+                    onClick={() => toast('[SISTEMA]: Utiliza "Cerrar otras sesiones" para forzar la desconexión.')}
                     className="px-4 py-2 bg-red-500/10 text-red-400 font-bold text-[10px] uppercase rounded-lg hover:bg-red-500 hover:text-white transition-all"
                   >
                     Desconectar
@@ -284,7 +285,7 @@ export default function ProfileSettingsPage() {
                       const newPrivacy = e.target.value;
                       setProfileData({ ...profileData, birth_privacy: newPrivacy });
                       await supabase.from('profiles').update({ birth_privacy: newPrivacy }).eq('id', user.id);
-                      showToast('[SISTEMA]: Privacidad de edad actualizada.');
+                      toast('[SISTEMA]: Privacidad de edad actualizada.');
                     }}
                     className="bg-black border border-white/20 rounded-xl px-4 py-2 text-white font-header font-bold text-xs outline-none hover:border-white/40 focus:border-neon-purple transition-all"
                   >

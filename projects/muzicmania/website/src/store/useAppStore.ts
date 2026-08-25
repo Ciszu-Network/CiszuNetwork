@@ -38,10 +38,7 @@ interface AppState {
     role?: string;
   } | null;
   setUser: (user: any | null) => void;
-  toastMessage: string | null;
-  showToast: (msg: string) => void;
-  hideToast: () => void;
-  
+
   // Actions
   initializeAudio: () => void;
   playGlobalMusic: () => void;
@@ -106,9 +103,6 @@ export const useAppStore = create<AppState>((set: any, get: any) => ({
     }
   },
   setLang: (val: string) => set({ lang: val }),
-  toastMessage: null,
-  showToast: (msg: string) => set({ toastMessage: msg }),
-  hideToast: () => set({ toastMessage: null }),
 
   initializeAudio: () => {
     if (get().isAudioInitialized || typeof window === 'undefined') return;

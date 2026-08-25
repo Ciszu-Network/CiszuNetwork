@@ -16,6 +16,7 @@ import {
   PasswordStrengthBar,
   evaluatePassword,
   passwordMeetsMinimum,
+  useToast,
 } from '@ciszu/ui';
 
 const IconMail = () => (
@@ -51,18 +52,11 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const [created, setCreated] = useState(false);
-  const [betaToast, setBetaToast] = useState<string | null>(null);
+  const { toast } = useToast();
 
   React.useEffect(() => {
     if (user) router.push('/');
   }, [user, router]);
-
-  React.useEffect(() => {
-    if (betaToast) {
-      const t = setTimeout(() => setBetaToast(null), 3500);
-      return () => clearTimeout(t);
-    }
-  }, [betaToast]);
 
   const validate = (name: string, value: string) => {
     let error = '';
@@ -244,7 +238,7 @@ export default function RegisterPage() {
             </form>
 
             <OAuthProviders
-              onSelect={(p) => setBetaToast(`OAuth de ${p} disponible en futura versión beta`)}
+              onSelect={(p) => toast(`OAuth de ${p} disponible en futura versión beta`)}
             />
 
             <AuthSecondaryActions
@@ -255,15 +249,6 @@ export default function RegisterPage() {
           </div>
         </div>
       </motion.div>
-
-      {betaToast && (
-        <div className="fixed bottom-6 right-6 z-[100] animate-fade-in-up">
-          <div className="px-5 py-3 rounded-xl bg-brand/20 border border-brand/30 backdrop-blur-xl text-sm text-white shadow-lg shadow-brand/10 flex items-center gap-3">
-            <span className="w-2 h-2 rounded-full bg-neon-pink animate-pulse" />
-            {betaToast}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

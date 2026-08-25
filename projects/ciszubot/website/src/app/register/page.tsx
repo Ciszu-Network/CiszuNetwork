@@ -14,6 +14,7 @@ import {
   PasswordStrengthBar,
   evaluatePassword,
   passwordMeetsMinimum,
+  useToast,
 } from '@ciszu/ui';
 
 const IconMail = () => (
@@ -64,17 +65,11 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (user) router.replace('/dashboard');
   }, [user, router]);
-
-  useEffect(() => {
-    if (!toast) return;
-    const t = setTimeout(() => setToast(null), 4000);
-    return () => clearTimeout(t);
-  }, [toast]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -174,7 +169,7 @@ export default function RegisterPage() {
                   Registrarse con Discord
                 </a>
               )}
-              onSelect={(p) => setToast(`${p} estará disponible en la beta soon. Usa Discord o CISZU ID por ahora.`)}
+              onSelect={(p) => toast(`${p} estará disponible en la beta soon. Usa Discord o CISZU ID por ahora.`)}
             />
 
             <div className="flex items-center gap-3">
@@ -269,7 +264,7 @@ export default function RegisterPage() {
             </form>
 
             <OAuthProviders
-              onSelect={(p) => setToast(`${p} estará disponible en la beta soon. Usa Discord o CISZU ID por ahora.`)}
+              onSelect={(p) => toast(`${p} estará disponible en la beta soon. Usa Discord o CISZU ID por ahora.`)}
             />
 
             <AuthSecondaryActions
@@ -281,15 +276,6 @@ export default function RegisterPage() {
           </div>
         </div>
       </div>
-
-      {toast && (
-        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[1000] animate-fade-in-up pointer-events-none">
-          <div className="bg-[#05050a]/95 border border-neon-blue/40 px-6 py-3 rounded-full shadow-[0_4px_30px_rgba(0,212,255,0.4)] backdrop-blur-md flex items-center gap-3">
-            <span className="w-2 h-2 rounded-full bg-neon-blue animate-pulse shrink-0" />
-            <span className="text-neon-blue font-bold uppercase tracking-widest text-[10px] sm:text-xs">{toast}</span>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

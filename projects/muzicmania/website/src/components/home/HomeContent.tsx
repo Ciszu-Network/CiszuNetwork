@@ -5,7 +5,7 @@ import { trackCover, trackDisc } from '@/utils/musicAssets';
 import React, { useState, useEffect } from 'react';
 import { FloatingSymbols } from "@/components/molecules/FloatingSymbols";
 import { StatsTicker } from "@/components/molecules/StatsTicker";
-import { Icon } from '@ciszu/ui';
+import { Icon, useToast } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import Image from "next/image";
 import Link from "next/link";
@@ -24,7 +24,8 @@ import { usePageTitle } from '@/lib/usePageTitle';
 export default function HomeContent() {
   usePageTitle('HOME');
   const router = useRouter();
-  const { showToast, isMusicPlaying, playGlobalMusic } = useAppStore();
+  const { isMusicPlaying,  playGlobalMusic } = useAppStore();
+  const { toast } = useToast();
   const [realStats, setRealStats] = useState<Record<string, { plays: number, likes: number }>>({});
   const [isDesktopApp, setIsDesktopApp] = useState(false);
   const [isAuthWarningOpen, setIsAuthWarningOpen] = useState(false);

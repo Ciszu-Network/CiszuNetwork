@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Icon, SmartImage } from '@ciszu/ui';
+import { Icon, SmartImage, ScrollNavButton } from '@ciszu/ui';
 import { useAppStore } from '@/store';
+import { updatePreferences } from '@/lib/preferences';
 import {
   CISZUKO_ANTONY,
   CISZU_NETWORK,
@@ -70,18 +71,6 @@ const SOCIALS = [
   { Ico: IcoX, href: X_SOCIAL, label: 'X', glow: 'hover:border-ink hover:text-ink hover:shadow-[0_0_15px_rgba(0,0,0,0.3)]' },
 ];
 
-const IcoUp = () => (
-  <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2}>
-    <path d="m18 15-6-6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const IcoDown = () => (
-  <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2}>
-    <path d="m6 9 6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
 interface FooterProps {
   lang: Lang;
   dict: Dict;
@@ -103,28 +92,13 @@ export default function Footer({ lang, dict }: FooterProps) {
     const next = isDarkNow ? 'light' : 'dark';
     root.classList.toggle('dark', next === 'dark');
     setIsDark(next === 'dark');
-    document.cookie = `ciszubot_theme=${next}; path=/; max-age=31536000`;
+    updatePreferences({ theme: next });
   };
 
   return (
     <footer className="relative bg-bg border-t border-border pt-12 pb-6 px-4 md:px-8 overflow-hidden">
       {/* Scroll arrows flotantes (arriba / abajo) */}
-      <div className="fixed bottom-8 right-8 z-40 flex flex-col gap-3">
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          aria-label="Ir arriba"
-          className="p-3 bg-surface/90 backdrop-blur-md border-2 border-neon-blue rounded-full text-neon-blue shadow-[0_0_15px_rgba(0,212,255,0.3)] hover:text-neon-pink hover:border-neon-pink hover:shadow-[0_0_15px_rgba(255,51,204,0.4)] transition-all active:scale-95"
-        >
-          <IcoUp />
-        </button>
-        <button
-          onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}
-          aria-label="Ir abajo"
-          className="p-3 bg-surface/90 backdrop-blur-md border-2 border-neon-blue rounded-full text-neon-blue shadow-[0_0_15px_rgba(0,212,255,0.3)] hover:text-neon-pink hover:border-neon-pink hover:shadow-[0_0_15px_rgba(255,51,204,0.4)] transition-all active:scale-95"
-        >
-          <IcoDown />
-        </button>
-      </div>
+      <ScrollNavButton accent="#00d4ff" accentAlt="#ff33cc" />
 
       <div className="absolute top-0 left-0 w-full h-[2px] bg-[length:200%_auto] animate-gradient-x bg-gradient-to-r from-neon-blue via-neon-purple to-neon-pink" />
 

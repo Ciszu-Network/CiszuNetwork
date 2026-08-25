@@ -9,7 +9,7 @@ import FeedbackFab from "@/components/layout/FeedbackFab";
 import { CookiesBanner } from "@/components/layout/CookiesBanner";
 import { getDict, type Lang } from "@/lib/i18n";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor, ToastProvider } from "@ciszu/ui";
 import { getSessionData } from "@/lib/auth";
 import QueryProvider from "@/components/layout/QueryProvider";
 import AuthProvider from "@/components/providers/AuthProvider";
@@ -29,9 +29,9 @@ const spaceGrotesk = Space_Grotesk({
 const themeScript = `
 (function () {
   try {
-    var t = document.cookie.match(/(?:^|; )ciszubot_theme=([^;]*)/);
-    var theme = t ? t[1] : 'dark';
-    if (theme === 'dark') document.documentElement.classList.add('dark');
+    var t = JSON.parse(localStorage.getItem('ciszu_preferences') || '{}');
+    var theme = (t && t.theme) || 'dark';
+    if (theme !== 'light') document.documentElement.classList.add('dark');
   } catch (e) {}
 })();
 `;
@@ -62,13 +62,11 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const lang = (store.get("ciszubot_lang")?.value ?? "es") as Lang;
   const dict = getDict(lang);
   const session = await getSessionData();
-  const theme = store.get("ciszubot_theme")?.value ?? "dark";
-  const isDark = theme !== "light";
   const headerStore = await headers();
   const isEdit = headerStore.get("x-is-edit") === "1";
 
   return (
-    <html lang={lang} className={`${inter.variable} ${spaceGrotesk.variable}${isDark ? " dark" : ""}`} suppressHydrationWarning>
+    <html lang={lang} className={`${inter.variable} ${spaceGrotesk.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         {process.env.NODE_ENV === 'production' && (
@@ -79,6 +77,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <QueryProvider>
            <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={LOGO_ISOTIPO_CIRCLE} title="CiszuBot" subtitle="CiszuBot Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszubot">
             <AuthProvider>
+              <ToastProvider>
               <DisclaimerProvider>
               {!isEdit && <BetaDisclaimer storageKey="betadisclaimer_ciszubot_dismissed" />}
               {!isEdit && <Navbar lang={lang} dict={dict} account={session} />}
@@ -88,6 +87,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
               {!isEdit && <Footer lang={lang} dict={dict} />}
               {!isEdit && <CookiesBanner lang={lang} dict={dict} />}
               </DisclaimerProvider>
+              </ToastProvider>
             </AuthProvider>
           </CloudflareGuard>
           <GlobalAdvisor site="ciszubot" />

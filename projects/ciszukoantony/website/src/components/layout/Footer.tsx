@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { SmartImage } from '@ciszu/ui';
+import React from 'react';
+import { SmartImage, ScrollNavButton, useToast } from '@ciszu/ui';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { SOCIALS, I, FOOTER_SECTIONS } from '@/config/navigation';
@@ -32,37 +32,20 @@ const IcoDiscord = () => (
   </svg>
 );
 
-const IcoUp = () => (
-  <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2}><path d="m18 15-6-6-6 6"/></svg>
-);
-
-const IcoDown = () => (
-  <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2}><path d="m6 9 6 6 6-6"/></svg>
-);
-
 export default function Footer() {
   const pathname = usePathname();
-  const { setIsMenuOpen, setSidebarView } = useAppStore();
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-  const [toast, setToast] = useState<string | null>(null);
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('light', theme === 'light');
-  }, [theme]);
+  const { setIsMenuOpen, setSidebarView, theme, setTheme } = useAppStore();
+  const { toast } = useToast();
 
   const toggleTheme = () => {
-    setTheme(t => (t === 'dark' ? 'light' : 'dark') as 'dark' | 'light');
-    setToast('[SISTEMA]: Theme changer is in beta — some styles may not apply correctly yet.');
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+    toast(theme === 'dark' ? '[SISTEMA]: Modo claro activado.' : '[SISTEMA]: Modo oscuro activado.');
   };
 
   const openLangMenu = () => {
     setIsMenuOpen(true);
     setSidebarView('lang');
   };
-
-  useEffect(() => {
-    if (toast) { const t = setTimeout(() => setToast(null), 3000); return () => clearTimeout(t); }
-  }, [toast]);
 
   const isActive = (href: string) => pathname === href.split('#')[0];
 
@@ -79,10 +62,7 @@ export default function Footer() {
       <div className="absolute top-0 left-0 w-full h-[3px] animate-gradient-x bg-[length:200%_auto] bg-gradient-to-r from-neon-blue via-neon-purple to-neon-blue shadow-[0_0_15px_rgba(61,106,223,0.4)]" />
 
       {/* Floating scroll arrows (Global) */}
-      <div className="fixed bottom-8 right-8 z-40 flex flex-col gap-3">
-        <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="p-3 bg-black/60 backdrop-blur-md border-2 border-neon-blue rounded-full text-neon-blue shadow-neon-blue hover:text-neon-pink hover:border-neon-pink transition-all active:scale-95 cursor-pointer"><IcoUp /></button>
-        <button onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })} className="p-3 bg-black/60 backdrop-blur-md border-2 border-neon-blue rounded-full text-neon-blue shadow-neon-blue hover:text-neon-pink hover:border-neon-pink transition-all active:scale-95 cursor-pointer"><IcoDown /></button>
-      </div>
+      <ScrollNavButton accent="#3d6adf" accentAlt="#ff33cc" />
 
 
       <div className="max-w-7xl mx-auto">
@@ -231,16 +211,6 @@ export default function Footer() {
           </p>
         </div>
       </div>
-
-      {toast && (
-        <div className="fixed bottom-6 right-6 z-[100] animate-fade-in-up">
-          <div className="px-5 py-3 rounded-xl bg-brand/20 border border-brand/30 backdrop-blur-xl text-sm text-white shadow-lg shadow-brand/10 flex items-center gap-3">
-            <span className="w-2 h-2 rounded-full bg-brand animate-pulse" />
-            {toast}
-            <button onClick={() => setToast(null)} className="text-gray-400 hover:text-white ml-2">{I.close}</button>
-          </div>
-        </div>
-      )}
     </footer>
   );
 }

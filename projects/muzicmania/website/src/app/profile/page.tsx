@@ -5,20 +5,22 @@ import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
 import MainLayout from '@/components/templates/MainLayout';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useToast } from '@ciszu/ui';
 
 export default function ProfileRedirect() {
   usePageTitle('PROFILE');
   const router = useRouter();
-  const { user, showToast } = useAppStore();
+  const { user } = useAppStore();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (user) {
       router.replace(`/profile/@${user.username}`);
     } else {
-      showToast('[SISTEMA]: Debes iniciar sesión para ver tu perfil.');
+      toast('[SISTEMA]: Debes iniciar sesión para ver tu perfil.');
       router.replace('/login');
     }
-  }, [user, router, showToast]);
+  }, [user, router, toast]);
 
   return (
     <MainLayout>

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { assetResolver } from '@ciszunetwork/cdn';
-import { useZoomStatus, publishHeaderMode } from '@ciszu/ui';
+import { useZoomStatus, publishHeaderMode, useToast } from '@ciszu/ui';
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store';
 import { CISZU_NETWORK } from '@/config/site';
@@ -210,8 +210,8 @@ export const NavbarContent = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isSearchOpen, setShowSearch] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
   const [accOpen, setAccOpen] = useState(false);
+  const { toast } = useToast();
   const [isNavigating, setIsNavigating] = useState(false);
   const firstRender = useRef(true);
 
@@ -294,13 +294,6 @@ export const NavbarContent = () => {
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
-
-  // Auto-hide the language-unavailable toast after ~4s
-  useEffect(() => {
-    if (!toast) return;
-    const t = setTimeout(() => setToast(null), 4000);
-    return () => clearTimeout(t);
-  }, [toast]);
 
   const isActive = (href: string) => pathname === href;
 
@@ -704,7 +697,7 @@ export const NavbarContent = () => {
                         if (l.code === 'es' || l.code === 'en') {
                           setLanguage(l.code);
                         } else {
-                          setToast('Esta función no está desarrollada para la beta aún');
+                          toast('Esta función no está desarrollada para la beta aún');
                         }
                       }}
                       className={`flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-header font-bold transition-all cursor-pointer group ${
@@ -725,16 +718,6 @@ export const NavbarContent = () => {
                 </div>
               )}
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Toast hint for non-ready language controls */}
-      {toast && (
-        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[1000] animate-fade-in-up pointer-events-none">
-          <div className="bg-[#05050a]/95 border border-brand-light/40 px-6 py-3 rounded-full shadow-[0_4px_30px_rgba(58,107,240,0.4)] backdrop-blur-md flex items-center gap-3">
-            <span className="w-2 h-2 rounded-full bg-brand-light animate-pulse shrink-0" />
-            <span className="text-brand-light font-bold uppercase tracking-widest text-[10px] sm:text-xs">{toast}</span>
           </div>
         </div>
       )}
