@@ -97,7 +97,7 @@ export default function TeamPage() {
     navigator.clipboard.writeText('ciszukoantony_');
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-    toast('[ÉXITO]: Discord ID copiado al portapapeles.');
+    toast('[ÉXITO]: Discord ID copiado al portapapeles.', 'success');
   };
 
   const sectionVariants = {

@@ -418,7 +418,7 @@ export default function RegisterPage() {
             </form>
 
             <SharedOAuthProviders
-              onSelect={(p) => toast(`OAuth de ${p} disponible en futura versión beta`)}
+              onSelect={(p) => toast(`OAuth de ${p} disponible en futura versión beta`, 'warning')}
             />
             <AuthSecondaryActions
               mode="register"

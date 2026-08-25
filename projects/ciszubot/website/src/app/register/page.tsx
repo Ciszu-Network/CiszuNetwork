@@ -169,7 +169,7 @@ export default function RegisterPage() {
                   Registrarse con Discord
                 </a>
               )}
-              onSelect={(p) => toast(`${p} estará disponible en la beta soon. Usa Discord o CISZU ID por ahora.`)}
+              onSelect={(p) => toast(`${p} estará disponible en la beta soon. Usa Discord o CISZU ID por ahora.`, 'warning')}
             />
 
             <div className="flex items-center gap-3">
@@ -264,7 +264,7 @@ export default function RegisterPage() {
             </form>
 
             <OAuthProviders
-              onSelect={(p) => toast(`${p} estará disponible en la beta soon. Usa Discord o CISZU ID por ahora.`)}
+              onSelect={(p) => toast(`${p} estará disponible en la beta soon. Usa Discord o CISZU ID por ahora.`, 'warning')}
             />
 
             <AuthSecondaryActions

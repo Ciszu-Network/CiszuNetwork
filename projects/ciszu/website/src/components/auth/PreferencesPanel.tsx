@@ -162,7 +162,7 @@ export default function PreferencesPanel() {
   const handleLangSelect = (code: string) => {
     if (code === 'es-latam' || code === 'es-es') return applyLanguage('es');
     if (code === 'en-us' || code === 'en-uk') return applyLanguage('en');
-    toast('Esta función no está desarrollada para la beta aún');
+    toast('Esta función no está desarrollada para la beta aún', 'warning');
   };
 
   const currentLang = LANGS.find((l) =>

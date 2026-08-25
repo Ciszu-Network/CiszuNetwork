@@ -59,7 +59,7 @@ export default function ProfileSettingsPage() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUser(null);
-    toast('[SISTEMA]: Sesión finalizada');
+    toast('[SISTEMA]: Sesión finalizada', 'success');
     router.push('/');
   };
 
@@ -135,7 +135,7 @@ export default function ProfileSettingsPage() {
                       await supabase.from('profiles').update({ bio }).eq('id', user.id);
                       setProfileData({ ...profileData, bio });
                       setIsSavingBio(false);
-                      toast('[SISTEMA]: Biografía actualizada.');
+                      toast('[SISTEMA]: Biografía actualizada.', 'success');
                     }}
                     className="px-6 py-2 bg-neon-blue/20 text-neon-blue font-bold text-xs uppercase rounded-lg border border-neon-blue/30 hover:bg-neon-blue hover:text-black transition-all disabled:opacity-50 flex items-center gap-2"
                   >
@@ -166,7 +166,7 @@ export default function ProfileSettingsPage() {
               onUploadSuccess={(url) => {
                 setProfileData({ ...profileData, avatar_url: url });
                 setUser({ ...user, avatar_url: url });
-                toast('[SISTEMA]: Avatar actualizado correctamente.');
+                toast('[SISTEMA]: Avatar actualizado correctamente.', 'success');
               }}
             />
           </div>
@@ -208,7 +208,7 @@ export default function ProfileSettingsPage() {
                   <button 
                     onClick={async () => {
                       await supabase.auth.signOut({ scope: 'others' });
-                      toast('[SISTEMA]: Sesiones en otros dispositivos cerradas.');
+                      toast('[SISTEMA]: Sesiones en otros dispositivos cerradas.', 'success');
                     }}
                     className="text-[10px] font-black uppercase tracking-widest text-red-400 hover:text-red-300 hover:underline transition-all"
                   >
@@ -285,7 +285,7 @@ export default function ProfileSettingsPage() {
                       const newPrivacy = e.target.value;
                       setProfileData({ ...profileData, birth_privacy: newPrivacy });
                       await supabase.from('profiles').update({ birth_privacy: newPrivacy }).eq('id', user.id);
-                      toast('[SISTEMA]: Privacidad de edad actualizada.');
+                      toast('[SISTEMA]: Privacidad de edad actualizada.', 'success');
                     }}
                     className="bg-black border border-white/20 rounded-xl px-4 py-2 text-white font-header font-bold text-xs outline-none hover:border-white/40 focus:border-neon-purple transition-all"
                   >

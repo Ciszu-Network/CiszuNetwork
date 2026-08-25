@@ -214,7 +214,7 @@ export default function LoginPage() {
                 </form>
 
                 <OAuthProviders
-                  onSelect={(p) => toast(`OAuth de ${p} disponible en futura versión beta`)}
+                  onSelect={(p) => toast(`OAuth de ${p} disponible en futura versión beta`, 'warning')}
                 />
 
                 <AuthSecondaryActions

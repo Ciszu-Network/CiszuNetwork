@@ -17,7 +17,7 @@ export default function ProfileRedirect() {
     if (user) {
       router.replace(`/profile/@${user.username}`);
     } else {
-      toast('[SISTEMA]: Debes iniciar sesión para ver tu perfil.');
+      toast('[SISTEMA]: Debes iniciar sesión para ver tu perfil.', 'warning');
       router.replace('/login');
     }
   }, [user, router, toast]);

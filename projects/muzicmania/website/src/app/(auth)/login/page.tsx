@@ -221,7 +221,7 @@ export default function LoginPage() {
         }, 1500);
 
       } else {
-        toast('[SISTEMA]: 2FA no implementado en esta versión beta.');
+        toast('[SISTEMA]: 2FA no implementado en esta versión beta.', 'warning');
       }
     } catch (err: any) {
       setFeedback({ 
@@ -407,7 +407,7 @@ export default function LoginPage() {
             {!isForgotPassword && (
               <>
                 <SharedOAuthProviders
-                  onSelect={(p) => toast(`OAuth de ${p} disponible en futura versión beta`)}
+                  onSelect={(p) => toast(`OAuth de ${p} disponible en futura versión beta`, 'warning')}
                 />
                 <AuthSecondaryActions
                   mode="login"

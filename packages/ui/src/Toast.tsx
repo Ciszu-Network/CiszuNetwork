@@ -47,10 +47,10 @@ export interface ToastContextValue {
 const ToastContext = createContext<ToastContextValue | null>(null);
 
 const TYPE_STYLES: Record<ToastType, { color: string; border: string; shadow: string }> = {
-  info: { color: '#22d3ee', border: 'rgba(34,211,238,0.4)', shadow: 'rgba(34,211,238,0.35)' },
-  success: { color: '#34d399', border: 'rgba(52,211,153,0.4)', shadow: 'rgba(52,211,153,0.35)' },
-  warning: { color: '#fbbf24', border: 'rgba(251,191,36,0.45)', shadow: 'rgba(251,191,36,0.35)' },
-  error: { color: '#fb7185', border: 'rgba(251,113,133,0.45)', shadow: 'rgba(251,113,133,0.35)' },
+  info: { color: '#3b82f6', border: 'rgba(59,130,246,0.45)', shadow: 'rgba(59,130,246,0.35)' },
+  success: { color: '#22c55e', border: 'rgba(34,197,94,0.45)', shadow: 'rgba(34,197,94,0.35)' },
+  warning: { color: '#f59e0b', border: 'rgba(245,158,11,0.5)', shadow: 'rgba(245,158,11,0.35)' },
+  error: { color: '#ef4444', border: 'rgba(239,68,68,0.5)', shadow: 'rgba(239,68,68,0.35)' },
 };
 
 export interface ToastProviderProps {

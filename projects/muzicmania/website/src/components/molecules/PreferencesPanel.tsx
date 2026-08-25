@@ -62,7 +62,7 @@ export default function PreferencesPanel() {
 
   const applyLang = (code: string) => {
     if (!AVAILABLE_LANGS.includes(code)) {
-      toast('Esta función no está desarrollada para la beta aún');
+      toast('Esta función no está desarrollada para la beta aún', 'warning');
       return;
     }
     setLang(code);

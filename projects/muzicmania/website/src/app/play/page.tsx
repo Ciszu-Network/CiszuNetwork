@@ -581,17 +581,17 @@ function PlayPageContent() {
 
       if (existing) {
         await supabase.from('track_likes').delete().eq('id', existing.id);
-        toast('Like eliminado');
+        toast('Like eliminado', 'success');
       } else {
         await supabase.from('track_likes').insert({ user_id: user.id, track_id: trackId });
-        toast('¡Track calificado positivamente!');
+        toast('¡Track calificado positivamente!', 'success');
       }
       
       toggleFavorite(trackId);
     } catch (err) {
       console.error('Error toggling like:', err);
       toggleFavorite(trackId);
-      toast('¡Track calificado! (Local)');
+      toast('¡Track calificado! (Local)', 'success');
     }
   };
 

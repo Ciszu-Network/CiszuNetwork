@@ -203,7 +203,7 @@ export default function Navbar() {
   const handleLangSelect = (code: string) => {
     if (code === 'EN-US' || code === 'EN-UK') { setLanguage('EN'); return; }
     if (code === 'ES-LA' || code === 'ES-ES') { setLanguage('ES'); return; }
-    toast('Esta función no está desarrollada para la beta aún');
+    toast('Esta función no está desarrollada para la beta aún', 'warning');
   };
 
   // Pill nav: reveal label only on hover/active (muzicmania pattern)

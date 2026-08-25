@@ -6,10 +6,13 @@
  * TODO #3: permite que el admin (desde la dev console / API) envíe mensajes
  * globales que se muestran como toasts en las webs del ecosistema.
  *
- * - Hace polling a la tabla ciszunetwork.global_announcements (cada ~30s).
- * - Filtra por `target` ('global' o la web actual) y por expiración.
- * - Muestra el toast centrado (pill, estilo unificado del ecosistema).
- * - Marca como visto (announcement_reads) para "resetear notif" por usuario.
+ * - Hace polling a ciszunetwork.global_announcements (cada ~30s).
+ * - Respeta el KILL SWITCH global (ciszunetwork.global_announcement_settings):
+ *   si está desactivado, no muestra nada (y limpia lo mostrado) al instante.
+ * - Confirma entrega por sitio (ciszunetwork.global_announcement_deliveries)
+ *   para que el devcon pueda esperar a que TODAS las webs destino lo reciban.
+ * - Emisores verificados (cuenta real de una web destino) muestran
+ *   display_name + @username con badge verificado y enlace a su perfil.
  *
  * Uso en cada layout:
  *   <GlobalAdvisor site="ciszu" />
@@ -27,6 +30,9 @@ export interface Announcement {
   target: string;
   expires_at: string | null;
   created_at: string;
+  sender_display_name?: string | null;
+  sender_username?: string | null;
+  sender_site?: string | null;
 }
 
 export interface GlobalAdvisorProps {
@@ -50,15 +56,27 @@ const KIND_STYLES: Record<Announcement['kind'], { dot: string; text: string; sha
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://obwzzmbvkrcscqwptlqo.supabase.co';
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-function supabaseFetch(path: string, query = '') {
+function supabaseFetch(path: string, query = '', init?: RequestInit) {
   return fetch(`${SUPABASE_URL}/rest/v1/${path}?${query}`, {
     headers: {
       apikey: SUPABASE_ANON_KEY,
       Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
       'Content-Type': 'application/json',
       'Accept-Profile': 'ciszunetwork',
+      ...(init?.headers || {}),
     },
+    ...init,
   });
+}
+
+// Páginas públicas de perfil por web (solo muzicmania tiene ruta pública hoy).
+const PROFILE_HREFS: Record<string, (username: string) => string> = {
+  muzicmania: (u) => `https://muzicmania.vercel.app/profile/${u}`,
+};
+
+/** Username legible: sin @ y sin guiones bajos finales (ciszukoantony_ -> ciszukoantony). */
+function displayUsername(username: string): string {
+  return username.replace(/^@/, '').replace(/_+$/, '');
 }
 
 export default function GlobalAdvisor({ site, pollInterval = POLL_INTERVAL, disabled = false }: GlobalAdvisorProps) {
@@ -66,6 +84,7 @@ export default function GlobalAdvisor({ site, pollInterval = POLL_INTERVAL, disa
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const seenIdsRef = useRef<Set<number>>(new Set());
   const mountedRef = useRef(true);
+  const enabledRef = useRef(true);
 
   // Limpiar timers al desmontar
   useEffect(() => {
@@ -85,13 +104,52 @@ export default function GlobalAdvisor({ site, pollInterval = POLL_INTERVAL, disa
     seenIdsRef.current = next;
   }
 
+  // Marca la entrega del anuncio en este sitio (idempotente: upsert por PK).
+  const confirmDelivery = useCallback(
+    async (id: number) => {
+      try {
+        await supabaseFetch(
+          'global_announcement_deliveries',
+          `announcement_id=eq.${id}&site=eq.${site}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Profile': 'ciszunetwork',
+              Prefer: 'resolution=merge-duplicates,return=minimal',
+            },
+            body: JSON.stringify({ announcement_id: id, site }),
+          }
+        );
+      } catch { /* telemetría: no debe romper el toast */ }
+    },
+    [site],
+  );
+
   const poll = useCallback(async () => {
     if (disabled || !mountedRef.current) return;
+
+    // Kill switch: si está apagado, no mostrar nada y limpiar lo mostrado.
+    try {
+      const settingsRes = await supabaseFetch(
+        'global_announcement_settings',
+        'id=eq.1&select=enabled'
+      );
+      if (settingsRes.ok) {
+        const settings = (await settingsRes.json()) as { enabled: boolean }[];
+        const enabled = Array.isArray(settings) && settings.length ? settings[0].enabled : true;
+        enabledRef.current = enabled;
+        if (!enabled) {
+          setQueue([]);
+          return;
+        }
+      }
+    } catch { /* si falla settings, seguir como activo (fail-open) */ }
+
     try {
       const since = encodeURIComponent(new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString());
       const res = await supabaseFetch(
         'global_announcements',
-        `select=id,sender,source,message,kind,target,expires_at,created_at&or=(target.eq.global,target.eq.${site})&created_at=gt.${since}&order=created_at.asc`
+        `select=id,sender,source,message,kind,target,expires_at,created_at,sender_display_name,sender_username,sender_site&or=(target.eq.global,target.eq.${site})&created_at=gt.${since}&order=created_at.asc`
       );
       if (!res.ok) return;
       const items = (await res.json()) as Announcement[];
@@ -108,12 +166,13 @@ export default function GlobalAdvisor({ site, pollInterval = POLL_INTERVAL, disa
           return [...q, ...pending.filter((a) => !existing.has(a.id))];
         });
         pending.forEach((a) => {
+          void confirmDelivery(a.id);
           const t = setTimeout(() => dismiss(a.id), TOAST_DURATION);
           timersRef.current.push(t);
         });
       }
     } catch { /* ignore */ }
-  }, [site, disabled, dismiss]);
+  }, [site, disabled, dismiss, confirmDelivery]);
 
   useEffect(() => {
     poll();
@@ -127,6 +186,8 @@ export default function GlobalAdvisor({ site, pollInterval = POLL_INTERVAL, disa
     <div className="fixed bottom-14 left-1/2 -translate-x-1/2 z-[1100] flex flex-col items-center gap-2 pointer-events-none px-4 max-w-full">
       {queue.map((a) => {
         const style = KIND_STYLES[a.kind] || KIND_STYLES.info;
+        const verified = Boolean(a.sender_username);
+        const profileHref = a.sender_site ? PROFILE_HREFS[a.sender_site]?.(a.sender_username!) : undefined;
         return (
           <div
             key={a.id}
@@ -136,7 +197,33 @@ export default function GlobalAdvisor({ site, pollInterval = POLL_INTERVAL, disa
             <span className={`w-2 h-2 rounded-full ${style.dot} animate-pulse shrink-0`} />
             <div className="flex flex-col">
               <span className={`${style.text} font-bold uppercase tracking-widest text-[10px] leading-tight`}>
-                {a.sender} · {a.source}
+                {verified ? (
+                  <span className="inline-flex items-center gap-1.5">
+                    {profileHref ? (
+                      <a
+                        href={profileHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline decoration-dotted underline-offset-2 hover:text-white transition-colors"
+                        title={`Ver perfil de ${a.sender_display_name}`}
+                      >
+                        {a.sender_display_name || displayUsername(a.sender_username!)}
+                      </a>
+                    ) : (
+                      <span>{a.sender_display_name || displayUsername(a.sender_username!)}</span>
+                    )}
+                    <span className="inline-flex items-center gap-1 text-sky-400" title="Cuenta verificada">
+                      <svg viewBox="0 0 24 24" className="w-3 h-3" fill="currentColor">
+                        <path d="M12 1.5 14.6 4l3.3-.5.5 3.3 3 1.5-1.5 3 1.5 3-3 1.5-.5 3.3-3.3-.5L12 22.5 9.4 20l-3.3.5-.5-3.3-3-1.5 1.5-3-1.5-3 3-1.5.5-3.3 3.3.5z"/>
+                        <path d="m8.7 12 2.1 2.1 4.5-4.5" fill="none" stroke="#05050a" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      {displayUsername(a.sender_username!)}
+                    </span>
+                    <span className="text-white/50">· {a.source}</span>
+                  </span>
+                ) : (
+                  <span>{a.sender} · {a.source}</span>
+                )}
               </span>
               <span className="text-white/90 text-xs sm:text-sm font-medium">{a.message}</span>
             </div>
