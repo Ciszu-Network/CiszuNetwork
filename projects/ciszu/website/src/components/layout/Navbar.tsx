@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
@@ -697,7 +697,7 @@ export const NavbarContent = () => {
                         if (l.code === 'es' || l.code === 'en') {
                           setLanguage(l.code);
                         } else {
-                          toast('Esta función no está desarrollada para la beta aún');
+                          toast('Esta función no está desarrollada para la beta aún', 'warning');
                         }
                       }}
                       className={`flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-header font-bold transition-all cursor-pointer group ${

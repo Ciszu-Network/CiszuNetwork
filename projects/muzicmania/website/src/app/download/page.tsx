@@ -163,7 +163,7 @@ export default function DownloadPage() {
     if (!isArchAvailable(os, arch)) {
       const osName = os === 'w10' ? 'Windows 10' : 'Windows 11';
       const archName = arch === 'x86' ? '32 bits' : arch === 'x64' ? '64 bits' : 'ARM64';
-      toast(`[SISTEMA]: El instalador para ${osName} (${archName}) aún no ha sido compilado. Prueba con otra arquitectura.`);
+      toast(`[SISTEMA]: El instalador para ${osName} (${archName}) aún no ha sido compilado. Prueba con otra arquitectura.`, 'warning');
       return;
     }
     setIsDownloading(`${os}-${arch}`);
@@ -176,7 +176,7 @@ export default function DownloadPage() {
   };
 
   const handleUnsupportedOS = (os: string) => {
-    toast(`[SISTEMA]: La descarga de MuzicMania para ${os} es una función beta cerrada y estará disponible próximamente.`);
+    toast(`[SISTEMA]: La descarga de MuzicMania para ${os} es una función beta cerrada y estará disponible próximamente.`, 'warning');
   };
 
   const handleCloseOverlay = () => {

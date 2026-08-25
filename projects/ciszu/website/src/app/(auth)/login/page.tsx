@@ -97,7 +97,7 @@ export default function LoginPage() {
         await syncPreferencesToProfile(data.user.id, loadPreferences());
       }
 
-      toast('Bienvenido de nuevo, ' + (profile?.display_name || data.user.email));
+      toast('Bienvenido de nuevo, ' + (profile?.display_name || data.user.email), 'success');
       router.push('/');
     } catch (err: any) {
       setLocalError(err.message || 'Error desconocido al iniciar sesión');
@@ -233,7 +233,7 @@ export default function LoginPage() {
                 </form>
 
                 <OAuthProviders
-                  onSelect={(p) => toast(`OAuth de ${p} disponible en futura versión beta`)}
+                  onSelect={(p) => toast(`OAuth de ${p} disponible en futura versión beta`, 'warning')}
                 />
 
                 <AuthSecondaryActions

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
@@ -271,7 +271,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
     } else if (code === 'EN-US') {
       if (lang !== 'en') setLang('en');
     } else {
-      toast('Esta función no está desarrollada para la beta aún');
+      toast('Esta función no está desarrollada para la beta aún', 'warning');
     }
   };
 

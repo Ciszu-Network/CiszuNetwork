@@ -361,8 +361,8 @@ function Show-Log([string]$key) {
 
 # ---------- Menu simple (seleccion de una opcion) ----------
 function Show-Menu {
-    param([string]$Title, [object[]]$Options)
-    $i = 0
+    param([string]$Title, [object[]]$Options, [int]$InitIndex = 0)
+    $i = [Math]::Max(0, [Math]::Min($InitIndex, $Options.Count - 1))
     while ($true) {
         Clear-Host
         Show-Art
@@ -489,37 +489,131 @@ function Show-Version {
     Press-Continue
 }
 
+# ---------- Seguridad: password de acceso al devcon ----------
+# Lee la contraseña del vault local (services/supabase/.env, DEVCON_PASSWORD),
+# nunca la muestra. Se pide al arrancar y en acciones sensibles (kill switch,
+# borrado). Si falla -> se sale de la operación.
+function Read-VaultEnv([string]$Name) {
+    $vault = Join-Path $root 'services\supabase\.env'
+    if (-not (Test-Path -LiteralPath $vault)) { return $null }
+    foreach ($line in Get-Content -LiteralPath $vault) {
+        if ($line -match "^$Name\s*=\s*(.*)$") {
+            return $matches[1].Trim().Trim('"').Trim("'")
+        }
+    }
+    return $null
+}
+
+function Test-DevconPassword {
+    $expected = Read-VaultEnv 'DEVCON_PASSWORD'
+    if ([string]::IsNullOrWhiteSpace($expected)) {
+        Write-Host "${c_red}[SEGURIDAD] DEVCON_PASSWORD no configurado en el vault (services/supabase/.env).${c_reset}"
+        return $false
+    }
+    $secure = Read-Host "Contraseña de acceso" -AsSecureString
+    $plain = [System.Net.NetworkCredential]::new('', $secure).Password
+    return ($plain -ceq $expected)
+}
+
 # ---------- Advisor (mensajes globales) ----------
-function Show-AdvisorMenu {
-    Clear-Host
-    Show-MenuHeader "GLOBAL ADVISOR - enviar mensaje a las webs"
-    Write-Host "${c_gray}Selecciona las webs a las que llegara el mensaje (Espacio marca):${c_reset}"
-    $res = Show-MultiSelect -Options @(
-        @{ key = 'global';       l = "TODAS las webs (global)" },
-        @{ key = 'ciszu';        l = "Ciszu Network (ciszunetwork)" },
-        @{ key = 'ciszukoantony'; l = "Ciszuko Antony (ciszukoantony)" },
-        @{ key = 'muzicmania';   l = "MuzicMania (muzicmania)" },
-        @{ key = 'ciszubot';     l = "CiszuBot (ciszubot)" }
-    )
-    if ($res.Action -ne 'proceed' -or -not $res.Selection) { Write-Host "${c_yellow}Cancelo (sin seleccion).${c_reset}"; Press-Continue; return }
-    $target = $res.Selection -join ','
-    if ($target -match 'global') { $target = 'global' }
-
-    $kinds = @('info','success','warning','error')
-    $ki = Show-Menu -Title "TIPO DE MENSAJE" -Options ($kinds | ForEach-Object { @{ ic = '▪'; l = $_ } })
-    if ($ki -lt 0) { Write-Host "${c_yellow}Cancelo.${c_reset}"; Press-Continue; return }
-    $kind = $kinds[$ki]
-
-    $msg = Read-Host "Mensaje a enviar"
-    if ([string]::IsNullOrWhiteSpace($msg)) { Write-Host "${c_yellow}Mensaje vacio - cancelo.${c_reset}"; Press-Continue; return }
-
-    $sender = Read-Host "De parte de (quien lo envia)"
-    if ([string]::IsNullOrWhiteSpace($sender)) { $sender = 'admin' }
-
-    Write-Host "${c_cyan}Enviando mensaje global...${c_reset}"
+# Ejecuta scripts/advisor.js y, si detecta contenido prohibido (exit code 2),
+# cierra la consola de seguridad tras registrar el intento en el log.
+function Invoke-AdvisorNode {
+    param([string[]]$NodeArgs)
     Push-Location $root
-    node scripts/advisor.js $msg --target $target --kind $kind --sender $sender 2>&1 | Out-Host
+    try {
+        node @NodeArgs 2>&1 | Out-Host
+        $code = $LASTEXITCODE
+    } finally {
+        Pop-Location
+    }
+    if ($code -eq 2) {
+        Write-Host ""
+        Write-Host "${c_red}🔒 Contenido prohibido detectado (mensaje o autor). Intento registrado en el log de auditoría.${c_reset}"
+        Write-Host "${c_red}   Cerrando la consola por seguridad...${c_reset}"
+        Start-Sleep -Milliseconds 1500
+        exit 2
+    }
+    return $code
+}
+
+function Show-AdvisorMenu {
+    $sites = @('ciszu', 'ciszukoantony', 'muzicmania', 'ciszubot')
+    # Selección persistente entre mensajes (la tecla A marca todas; no hay opción "global").
+    $sel = @($sites)
+    $kind = 'info'
+    $sender = 'admin'
+    if (-not $script:advisorSession) {
+        $script:advisorSession = 'devcon-' + (Get-Date -Format 'yyyyMMdd-HHmmss') + '-' + ([guid]::NewGuid().ToString().Substring(0, 8))
+    }
+    while ($true) {
+        Clear-Host
+        Show-Art
+        Show-MenuHeader "GLOBAL ADVISOR - enviar mensaje (A=todas · Espacio marca · Esc=volver)"
+        $optWebs = @($sites | ForEach-Object { @{ key = $_; l = $_ } })
+        $res = Show-MultiSelect -Title "WEBS DESTINO (persiste entre mensajes)" -Options $optWebs -Init $sel
+        if ($res.Action -eq 'abort') { return }
+        if ($res.Action -eq 'noproceed') { continue }
+        $sel = @($res.Selection)
+        if ($sel.Count -eq 0) { Write-Host "${c_yellow}Selecciona al menos una web.${c_reset}"; Press-Continue; continue }
+        $target = $sel -join ','
+
+        $kinds = @('info', 'success', 'warning', 'error')
+        $ki = Show-Menu -Title "TIPO DE MENSAJE (actual: $kind)" -Options @($kinds | ForEach-Object { @{ ic = '▪'; l = $_ } }) -InitIndex $kinds.IndexOf($kind)
+        if ($ki -lt 0) { return }
+        $kind = $kinds[$ki]
+
+        $msg = Read-Host "Mensaje (Enter vacío = volver al menú)"
+        if ([string]::IsNullOrWhiteSpace($msg)) { return }
+
+        $raw = Read-Host "De parte de (Enter = $sender)"
+        if (-not [string]::IsNullOrWhiteSpace($raw)) { $sender = $raw.Trim() }
+
+        Write-Host ""
+        Write-Host "${c_cyan}Enviando a [$target] · tipo [$kind] · autor [$sender] (esperando entrega... )${c_reset}"
+        Invoke-AdvisorNode @('scripts/advisor.js', $msg, '--target', $target, '--kind', $kind, '--sender', $sender, '--session', $script:advisorSession, '--wait')
+
+        Write-Host ""
+        Write-Host "${c_green}[Enter] Enviar otro mensaje   ${c_red}[Q/Esc] Volver al menú${c_reset}"
+        $k = [System.Console]::ReadKey($true)
+        if ($k.Key -eq [ConsoleKey]::Q -or $k.Key -eq [ConsoleKey]::Escape) { return }
+    }
+}
+
+# Kill switch: activar/desactivar los mensajes globales (requiere password).
+function Show-AdvisorToggle {
+    if (-not (Test-DevconPassword)) { Write-Host "${c_red}Contraseña incorrecta. Operación cancelada.${c_reset}"; Press-Continue; return }
+    Clear-Host
+    Show-MenuHeader "KILL SWITCH - mensajes globales"
+    Push-Location $root
+    node scripts/advisor.js --status 2>&1 | Out-Host
     Pop-Location
+    Write-Host ""
+    Write-Host "${c_green}[1] ACTIVAR mensajes   ${c_red}[2] DESACTIVAR mensajes   [Q/Esc] volver${c_reset}"
+    $k = [System.Console]::ReadKey($true)
+    $ch = $k.KeyChar
+    if ($ch -eq '1') { Invoke-AdvisorNode @('scripts/advisor.js', '--toggle', 'on', '--sender', 'admin', '--session', $script:advisorSession) }
+    elseif ($ch -eq '2') { Invoke-AdvisorNode @('scripts/advisor.js', '--toggle', 'off', '--sender', 'admin', '--session', $script:advisorSession) }
+    Press-Continue
+}
+
+# Borrado de mensajes enviados (error o seguridad; requiere password).
+function Show-AdvisorClear {
+    if (-not (Test-DevconPassword)) { Write-Host "${c_red}Contraseña incorrecta. Operación cancelada.${c_reset}"; Press-Continue; return }
+    Clear-Host
+    Show-MenuHeader "BORRAR MENSAJES GLOBALES"
+    Push-Location $root
+    node scripts/advisor.js --list 2>&1 | Out-Host
+    Pop-Location
+    Write-Host ""
+    Write-Host "${c_cyan}IDs a borrar separados por espacio · [A] borrar TODOS · [Q] volver:${c_reset}"
+    $in = Read-Host ">"
+    if ($in -match '^[aA]$') {
+        Invoke-AdvisorNode @('scripts/advisor.js', '--clear-all', '--sender', 'admin', '--session', $script:advisorSession)
+    } elseif ($in -match '^[\d\s]+$') {
+        $ids = @($in -split '\s+' | Where-Object { $_ })
+        if ($ids.Count -gt 0) { Invoke-AdvisorNode @('scripts/advisor.js', '--clear', @($ids), '--sender', 'admin', '--session', $script:advisorSession) }
+    }
     Press-Continue
 }
 
@@ -536,6 +630,8 @@ function Show-Tools {
         @{ ic = '⚙'; l = "Ver versiones node / pnpm / turbo";        act = { Clear-Host; node -v; pnpm -v; turbo --version 2>$null; Press-Continue } },
         @{ ic = '📦'; l = "Ver git status del monorepo";              act = { Clear-Host; git -C $root status --short --branch | Out-Host; Press-Continue } },
         @{ ic = '📢'; l = "Advisor: enviar mensaje global a las webs"; act = { Show-AdvisorMenu } },
+        @{ ic = '🔘'; l = "Advisor: activar/desactivar mensajes globales (kill switch)"; act = { Show-AdvisorToggle } },
+        @{ ic = '🗑'; l = "Advisor: borrar mensajes enviados"; act = { Show-AdvisorClear } },
         @{ ic = '🌡'; l = "Ver espacio en disco (C y E)";             act = { Clear-Host; Get-PSDrive C,E | Select-Object Name, @{n='Libre GB';e={[math]::Round($_.Free/1GB,1)}}, @{n='Usado GB';e={[math]::Round($_.Used/1GB,1)}} | Format-Table | Out-Host; Press-Continue } },
         @{ ic = '🖥'; l = "Estado CDN local (offline :8788)";         act = { $s = Get-NetTCPConnection -LocalPort $CDN_PORT -State Listen -ErrorAction SilentlyContinue; if ($s) { Write-Host "${c_green}CDN local activo (pid $($s.OwningProcess)) -> http://localhost:$CDN_PORT${c_reset}" } else { Write-Host "${c_yellow}CDN local DETENIDO. Arranca una web para encenderlo.${c_reset}" }; Press-Continue } },
         @{ ic = '♻'; l = "Reiniciar CDN local (offline :8788)";      act = { Stop-CdnServe; Ensure-CdnServe; Start-Sleep -Milliseconds 800; Press-Continue } }
@@ -664,6 +760,19 @@ function Invoke-SelectedWebs([string]$Action, [string[]]$Keys) {
 }
 
 $script:quitRequested = $false
+
+# ---------- Login de acceso (seguridad) ----------
+Clear-Host
+Show-Art
+Write-Host "${c_cyan}════════════════  CISZU DEV CONSOLE - ACCESO RESTRINGIDO  ════════════════${c_reset}"
+if (-not (Test-DevconPassword)) {
+    Write-Host "${c_red}[SEGURIDAD] Contraseña incorrecta. Cerrando la consola.${c_reset}"
+    Start-Sleep -Milliseconds 900
+    exit 1
+}
+# Sesión de auditoría del advisor (queda registrada en el log con cada acción).
+$script:advisorSession = 'devcon-' + (Get-Date -Format 'yyyyMMdd-HHmmss') + '-' + ([guid]::NewGuid().ToString().Substring(0, 8))
+Clear-Host
 while (-not $script:quitRequested) {
     $menuItems = @(
         @{ ic = '🚀'; l = "Encender webs";      key = '__start' },

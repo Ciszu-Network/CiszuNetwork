@@ -85,11 +85,11 @@ export default function AuthMenu({ open, onToggle, onClose }: { open: boolean; o
     setLoggingOut(true);
     const { error } = await supabase.auth.signOut();
     if (error) {
-      toast('Error al cerrar sesión');
+      toast('Error al cerrar sesión', 'error');
     } else {
       setUser(null);
       onClose();
-      toast('Sesión cerrada. Vuelve pronto.');
+      toast('Sesión cerrada. Vuelve pronto.', 'success');
     }
     setLoggingOut(false);
   };

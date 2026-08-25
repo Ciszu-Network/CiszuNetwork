@@ -336,7 +336,7 @@ export default function ContactPage() {
                 </div>
                 <div className="w-full bg-black/60 rounded-3xl p-6 border border-white/5 space-y-4">
                   <div className="text-3xl font-header font-black text-white tracking-widest">{selectedDiscord}</div>
-                  <button onClick={() => { navigator.clipboard.writeText(selectedDiscord); toast('[ÉXITO]: Discord ID copiado al portapapeles.'); setSelectedDiscord(null); }}
+                  <button onClick={() => { navigator.clipboard.writeText(selectedDiscord); toast('[ÉXITO]: Discord ID copiado al portapapeles.', 'success'); setSelectedDiscord(null); }}
                     className="w-full py-4 bg-neon-green/20 border border-neon-green/40 text-neon-green font-black uppercase text-xs rounded-2xl flex items-center justify-center gap-3 hover:bg-neon-green hover:text-black transition-all"
                   >
                     <div className="w-4 h-4">{I.copy}</div> Sincronizar ID

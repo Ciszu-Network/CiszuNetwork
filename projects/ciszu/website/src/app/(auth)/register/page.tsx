@@ -113,7 +113,7 @@ export default function RegisterPage() {
 
       if (data.user) {
         setEmailSent(true);
-        toast('Cuenta creada. Revisa tu email para confirmarla.');
+        toast('Cuenta creada. Revisa tu email para confirmarla.', 'success');
         router.push('/login');
       }
     } catch (err: any) {
@@ -247,7 +247,7 @@ export default function RegisterPage() {
                 </form>
 
                 <OAuthProviders
-                  onSelect={(p) => toast(`OAuth de ${p} disponible en futura versión beta`)}
+                  onSelect={(p) => toast(`OAuth de ${p} disponible en futura versión beta`, 'warning')}
                 />
 
                 <div className="pt-3">
