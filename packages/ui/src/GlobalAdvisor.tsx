@@ -149,7 +149,7 @@ export default function GlobalAdvisor({ site, pollInterval = POLL_INTERVAL, disa
       const since = encodeURIComponent(new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString());
       const res = await supabaseFetch(
         'global_announcements',
-        `select=id,sender,source,message,kind,target,expires_at,created_at,sender_display_name,sender_username,sender_site&or=(target.eq.global,target.eq.${site})&created_at=gt.${since}&order=created_at.asc`
+        `select=id,sender,source,message,kind,target,expires_at,created_at,sender_display_name,sender_username,sender_site&created_at=gt.${since}&order=created_at.asc`
       );
       if (!res.ok) return;
       const items = (await res.json()) as Announcement[];
@@ -157,6 +157,9 @@ export default function GlobalAdvisor({ site, pollInterval = POLL_INTERVAL, disa
       const pending = items.filter((a) => {
         if (seenIdsRef.current.has(a.id)) return false;
         if (a.expires_at && new Date(a.expires_at) < now) return false;
+        // target puede ser 'global' o una lista separada por comas (devcon multi-select)
+        const targets = String(a.target || 'global').split(',').map((t) => t.trim());
+        if (a.target !== 'global' && !targets.includes(site)) return false;
         return true;
       });
 
