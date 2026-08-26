@@ -153,6 +153,17 @@ Ciszuko creó las propiedades de Google del ecosistema. **Implementación real**
 - **Deploy de `main` pendiente**: al pushear, el CI despliega las 4 webs con el stack Google
   (GA4 + GTM + AdSense) y las env vars se activan en producción.
 
+### 7.4 Pendientes de verificación (tras deploys en verde)
+
+- [ ] **Testear las 4 webs**: carga sin errores de consola; `window.dataLayer`/`gtag` presentes;
+      anuncios propios visibles (píldora ~2s, flotante ~8s, modal MuzicMania tras partida).
+- [ ] **GA4** (`analytics.google.com`): Realtime muestra los page_views por web.
+- [ ] **GTM** (`tagmanager.google.com`): contenedores publicados (N7Q8DGX5 / WNDXGD63 / T9LG9N6C /
+      N2SXL2FN). Opcional: crear tag GA4 dentro del contenedor.
+- [ ] **AdSense** (`adsense.google.com`): estado de la **revisión** del sitio (aprobación pendiente);
+      crear unidades de anuncio cuando aprueben.
+- [ ] **Looker Studio**: conectar cada propiedad GA4 como fuente de datos.
+
 ## 8. Relaciones
 
 - `REVIEWS_SYSTEM.md` — todas las plataformas de valoración (Trustpilot, top.gg, DBL, Google).
