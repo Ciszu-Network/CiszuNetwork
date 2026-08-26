@@ -1,0 +1,49 @@
+# CISZU NETWORK - CARGO: CTO (Director de Tecnologia)
+
+Version: 1.0.0
+Actualizacion: 2026-08-26
+Identificador: STAFF_CTO_V1_0_0_2026_08_26_ciszunetwork
+
+> **Definicion**: ficha del cargo **CTO** dentro de la organizacion.
+> Responsable de la arquitectura tecnica, el stack del monorepo, la seguridad del codigo y la calidad de los despliegues.
+
+---
+
+## 1. Ficha del cargo
+
+- **Cargo**: CTO
+- **Denominacion**: Director de Tecnologia
+- **Nivel jerarquico**: 1 (0 = mayor autoridad)
+- **Horario**: Lunes a viernes, 9:00-17:00 (flexible)
+
+## 2. Responsabilidades
+
+- Definir la arquitectura y el stack tecnico
+- Supervisar desarrolladores, DevOps y ciberseguridad
+- Garantizar calidad, testing y despliegues seguros
+- Mantener la documentacion tecnica de los sistemas
+
+## 3. Permisos en STAFFCON
+
+- Añadir empleados: SI
+- Quitar empleados: no
+- Cambiar rango: no
+- Modificar datos: SI
+
+Un cargo con nivel N solo puede gestionar cargos de nivel **mayor** que N.
+
+## 4. Miembros activos del cargo (1)
+
+| ID | Nombre | Correo | Telefono | Supervisor |
+|----|--------|--------|----------|------------|
+| CZ-001 | FRANCISCO GARCIA | ciszunetwork@outlook.com | - | Fundador |
+
+## 5. Escalabilidad
+
+El cargo **CTO** se ubica en el nivel 1 de la escala organizacional.
+La promocion asciende hacia el nivel 0 (direccion); la demora o el descenso se aplica
+bajando de nivel. El detalle de la escala vive en `EMPLOYEES_SYSTEM.md`.
+
+---
+
+_Ultima revision: 2026-08-26_
