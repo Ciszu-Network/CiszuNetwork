@@ -27,6 +27,7 @@ const TERMS_ARTICLES = [
   { id: 11, title: "INDEMNIZACIÓN Y DEFENSA", content: "Usted acepta indemnizar y eximir de responsabilidad a Ciszu Network y Ciszuko Antony frente a cualquier reclamación, pérdida o gasto resultante de su incumplimiento de estos términos o del uso indebido del software." },
   { id: 12, title: "SUSPENSIÓN Y TERMINACIÓN DIRECTA", content: "Nos reservamos el derecho de suspender o eliminar cualquier cuenta que viole estos términos, las reglas del juego o las directrices de la comunidad, sin previo aviso y sin posibilidad de reembolso de bienes virtuales." },
   { id: 13, title: "LEGISLACIÓN VIGENTE Y ARBITRAJE", content: "Estos términos se rigen por los principios generales del derecho electrónico internacional. Cualquier disputa no resuelta de manera amistosa podrá ser sometida a procesos de arbitraje digital." },
+{ id: 14, title: "ANUNCIOS Y PUBLICIDAD", content: "MuzicMania muestra anuncios propios (promoción del ecosistema Ciszu Network) y, en el futuro, de terceros. Todos los anuncios son opcionales y cerrables, con temporizador visible y enlace a estos términos. Tras finalizar una partida pueden mostrarse anuncios con recompensa (la mitad de puntos extra); cerrarlos antes de tiempo conlleva la pérdida de la recompensa. Las impresiones, clics y cierres se miden de forma agregada (Google Analytics 4) para mejorar la relevancia; nunca vinculamos anuncios a datos sensibles." },
   { id: 14, title: "COMUNICACIONES OFICIALES Y SOPORTE", content: "Toda notificación oficial respecto a estos términos se realizará mediante el canal general de Discord o la sección de anuncios en la web oficial. El soporte legal se gestionará únicamente vía correo electrónico corporativo." },
 ];
 
@@ -96,6 +97,7 @@ export default function TermsPage() {
               {TERMS_ARTICLES.map((art) => (
                 <motion.article 
                   key={art.id}
+                  id={art.id === 14 ? 'anuncios' : undefined}
                   variants={itemVariants}
                   className="group"
                 >
