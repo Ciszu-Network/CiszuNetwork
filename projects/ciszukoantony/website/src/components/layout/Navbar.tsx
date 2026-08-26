@@ -275,7 +275,7 @@ export default function Navbar() {
                 className="hidden sm:block group-hover:drop-shadow-[0_0_15px_rgba(61,106,223,0.8)] transition-all duration-300"
               />
               <SmartImage
-                src="projects/ciszukoantony/content/assets/youtube_canal.png"
+                src="projects/ciszukoantony/content/logos/images/samples/circle/circle_1_yt.png"
                 alt="Ciszuko Antony — Canal de YouTube" width={34} height={34}
                 className="hidden sm:block rounded-full ring-2 ring-brand/40 shadow-[0_0_15px_rgba(167,139,250,0.35)] shrink-0"
               />

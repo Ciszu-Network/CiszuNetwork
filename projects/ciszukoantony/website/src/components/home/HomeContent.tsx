@@ -57,7 +57,7 @@ export default function HomeContent() {
                 fetchPriority="high"
               />
               <SmartImage
-                src="projects/ciszukoantony/content/assets/youtube_canal.png"
+                src="projects/ciszukoantony/content/logos/images/samples/circle/circle_1_yt.png"
                 alt="Ciszuko Antony — Canal de YouTube" width={100} height={100}
                 className="rounded-full ring-2 ring-brand/40 shadow-[0_0_25px_rgba(167,139,250,0.35)] group-hover:shadow-[0_0_40px_rgba(167,139,250,0.6)] transition-all duration-500 shrink-0"
                 fetchPriority="high"
