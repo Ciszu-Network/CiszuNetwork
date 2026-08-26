@@ -9,7 +9,7 @@ import FeedbackFab from "@/components/layout/FeedbackFab";
 import { CookiesBanner } from "@/components/layout/CookiesBanner";
 import { getDict, type Lang } from "@/lib/i18n";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, GoogleAnalytics, GoogleTagManager, AdSenseLoader, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor, ToastProvider } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor, ToastProvider } from "@ciszu/ui";
 import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
 import { getSessionData } from "@/lib/auth";
 import QueryProvider from "@/components/layout/QueryProvider";
@@ -75,6 +75,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         )}
       </head>
       <body className="bg-bg text-ink min-h-screen font-sans flex flex-col">
+        <GoogleScripts />
         <QueryProvider>
            <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={LOGO_ISOTIPO_CIRCLE} title="CiszuBot" subtitle="CiszuBot Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszubot">
             <AuthProvider>
@@ -104,8 +105,6 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           </FabStackProvider>
           <PostHogAnalytics app="ciszubot" />
           <GoogleAnalytics app="ciszubot" />
-          <GoogleTagManager />
-          <AdSenseLoader />
         </QueryProvider>
       </body>
     </html>

@@ -130,12 +130,13 @@ import { GoogleAnalytics, AdsProvider, AdFloat, AdPill } from '@ciszu/ui';
 
 ## 6. Tracking con Google (GA4 + GTM + AdSense)
 
-`GoogleAnalytics.tsx` (espejo de `PostHogAnalytics`) + `GoogleTagManager.tsx` + `AdSenseLoader.tsx`:
+`GoogleScripts.tsx` (SSR estático) + `GoogleAnalytics.tsx` (tracking client):
 
-- `GoogleAnalytics` carga `gtag.js` con `NEXT_PUBLIC_GA4_MEASUREMENT_ID` (por web). Sin ID → no
-  carga nada (degradación segura).
-- `GoogleTagManager` carga el contenedor GTM con `NEXT_PUBLIC_GTM_ID` (por web).
-- `AdSenseLoader` carga el script de AdSense con `NEXT_PUBLIC_ADSENSE_CLIENT` (por web).
+- `GoogleScripts` renderiza en el HTML inicial (SSR) las etiquetas de GTM + GA4 + AdSense:
+  - contenedor GTM con `NEXT_PUBLIC_GTM_ID` (por web).
+  - gtag.js GA4 con `NEXT_PUBLIC_GA4_MEASUREMENT_ID` (por web).
+  - script de AdSense con `NEXT_PUBLIC_ADSENSE_CLIENT` (por web). Estático = la
+    **verificación de AdSense** funciona (los crawlers ven el script).
 - `page_view` manual por ruta (App Router no recarga).
 
 **IDs reales (ago 2026)**:
@@ -172,9 +173,9 @@ Eventos de anuncios (vía `trackEvent` de `@ciszu/ui`):
 | id | tipo | placement | contenido |
 |---|---|---|---|
 | `muzicmania_after_game` | intrusivo | `game_end` | "¿Disfrutaste la partida?" → /play |
-| `discord_community` | particulares | `corner` (180s) | Discord oficial |
+| `ecosystem_corner` | particulares | `corner` (3600s) | Conoce el ecosistema → ciszunetwork (acento azul-morado) |
 | `reward_score` | recompensa | `game_end` (600s, 30s espera) | Mitad de puntos extra |
-| `ecosystem_body` | opcional | `body` | Explora el ecosistema → ciszunetwork |
+| `ecosystem_body` | opcional | `body` (3600s) | Conoce más sobre Ciszu Network → ciszunetwork |
 
 Se puede ampliar sin tocar la mecánica: añadir un `AdConfig` al catálogo (o cambiar el provider
 de contenido a AdSense/otra red cuando se active).
@@ -198,7 +199,8 @@ de contenido a AdSense/otra red cuando se active).
 ### 9.2 Google AdSense (anuncios de terceros) — ACTIVO
 
 - **Realidad desde ago 2026**: Ciszuko está registrado en AdSense y el publisher ID
-  `ca-pub-3471969072198962` está implementado en las 4 webs (`AdSenseLoader`). **No es futuro**.
+  `ca-pub-3471969072198962` está implementado en las 4 webs (`GoogleScripts`, SSR estático).
+**No es futuro**.
 - Gratis; la integración es un tag de script (`adsbygoogle.js?client=ca-pub-...`). El script se
   carga, pero **las unidades de anuncio** (slots) se sirven vía AdSense cuando el sitio pasa la
   revisión/consentimiento. Mientras tanto el sistema de ads propios (`Ads.tsx`) sigue activo.

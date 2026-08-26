@@ -114,8 +114,8 @@ GOOGLE_BUSINESS_ADDRESS=98J5+WQ Coro, Falcón
 ## 7. Google Analytics 4, Tag Manager y AdSense (ago 2026 — ACTIVO)
 
 Ciszuko creó las propiedades de Google del ecosistema. **Implementación real** en las 4 webs
-(componentes de `@ciszu/ui`: `GoogleTagManager` + `GoogleAnalytics`; AdSense en
-`AdSenseLoader`). Config por env (Vercel/`.env.local`):
+(componente `GoogleScripts` de `@ciszu/ui` renderiza GTM + GA4 + AdSense en el **HTML estático
+SSR**; `GoogleAnalytics` hace el tracking client). Config por env (Vercel/`.env.local`):
 
 ### 7.1 Inventario por web
 
@@ -135,9 +135,9 @@ Ciszuko creó las propiedades de Google del ecosistema. **Implementación real**
 
 ### 7.2 Componentes (código)
 
-- `packages/ui/src/GoogleTagManager.tsx` — inyecta el contenedor GTM (env `NEXT_PUBLIC_GTM_ID`).
-- `packages/ui/src/GoogleAnalytics.tsx` — gtag.js GA4 + `trackEvent` (env `NEXT_PUBLIC_GA4_MEASUREMENT_ID`).
-- `packages/ui/src/AdSenseLoader.tsx` — carga el script de AdSense (env `NEXT_PUBLIC_ADSENSE_CLIENT`).
+- `packages/ui/src/GoogleScripts.tsx` — renderiza GTM + GA4 + AdSense en el HTML estático (SSR),
+  imprescindible para que la **verificación de AdSense** detecte el script.
+- `packages/ui/src/GoogleAnalytics.tsx` — tracking client (page_view + `trackEvent`).
 - Montados en los 4 layouts junto a `PostHogAnalytics`.
 
 ### 7.3 Verificación (QA)
