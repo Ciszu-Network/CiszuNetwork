@@ -33,7 +33,7 @@ jobs:
         run: pnpm add -g vercel
       - name: Link Vercel Project
         run: vercel link --yes --project ciszukoantonypage --token=${{ secrets.VERCEL_TOKEN }}
-        working-directory: projects/ciszukoantony/website
+        working-directory: .
       - name: Deploy to Vercel
         if: runner.os == 'Windows'
         shell: powershell
@@ -45,7 +45,7 @@ jobs:
           } else {
             vercel --prod --yes --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}
           }
-        working-directory: projects/ciszukoantony/website
+        working-directory: .
       - name: Deploy to Vercel (Linux)
         if: runner.os != 'Windows'
         shell: bash
@@ -57,4 +57,4 @@ jobs:
           else
             vercel --prod --yes --archive=tgz --token="${{ secrets.VERCEL_TOKEN }}"
           fi
-        working-directory: projects/ciszukoantony/website
+        working-directory: .

@@ -135,6 +135,7 @@ downloads
 **/downloads/**
 archives
 **/archives/**
+**/content/**
 *.tar.gz
 *.tgz
 *.map
