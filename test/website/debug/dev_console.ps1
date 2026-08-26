@@ -565,6 +565,11 @@ function Show-AdvisorMenu {
 
         $msg = Read-Host "Mensaje (Enter vacío = volver al menú)"
         if ([string]::IsNullOrWhiteSpace($msg)) { return }
+        if ($msg.Length -lt 2 -or $msg.Length -gt 620) {
+            Write-Host "${c_yellow}El mensaje debe tener entre 2 y 620 caracteres (actual: $($msg.Length)).${c_reset}"
+            Press-Continue
+            continue
+        }
 
         $raw = Read-Host "De parte de (Enter = $sender)"
         if (-not [string]::IsNullOrWhiteSpace($raw)) { $sender = $raw.Trim() }

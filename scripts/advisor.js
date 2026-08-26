@@ -188,7 +188,7 @@ async function setEnabled(enabled, by) {
   auditLog({ session: sessionId(), action: enabled ? 'toggle-on' : 'toggle-off', by: by || 'dev-console' });
 }
 
-async function waitForDelivery(announcementId, sites, timeoutMs = 30000) {
+async function waitForDelivery(announcementId, sites, timeoutMs = 45000) {
   const started = Date.now();
   const done = new Set();
   const inList = `(${sites.map((s) => `"${s}"`).join(',')})`;
@@ -284,6 +284,14 @@ async function run() {
   if (!['info', 'success', 'warning', 'error'].includes(kind)) {
     console.error(`❌ kind inválido: ${kind}. Opciones: info|success|warning|error`);
     auditLog({ session: sessionId(), action: 'error', error: `kind inválido: ${kind}`, sender, target });
+    process.exit(1);
+  }
+
+  // Límites de longitud del mensaje (2..620 caracteres).
+  const len = Array.from(message).length;
+  if (len < 2 || len > 620) {
+    console.error(`❌ El mensaje debe tener entre 2 y 620 caracteres (actual: ${len}).`);
+    auditLog({ session: sessionId(), action: 'error', error: `longitud de mensaje ${len}`, sender, target });
     process.exit(1);
   }
 

@@ -6,17 +6,17 @@
  * TODO #3: permite que el admin (desde la dev console / API) envíe mensajes
  * globales que se muestran como toasts en las webs del ecosistema.
  *
- * - Hace polling a ciszunetwork.global_announcements (cada ~30s).
- * - Respeta el KILL SWITCH global (ciszunetwork.global_announcement_settings):
- *   si está desactivado, no muestra nada (y limpia lo mostrado) al instante.
- * - Confirma entrega por sitio (ciszunetwork.global_announcement_deliveries)
- *   para que el devcon pueda esperar a que TODAS las webs destino lo reciban.
- * - Emisores verificados (cuenta real de una web destino) muestran
- *   display_name + @username con badge verificado y enlace a su perfil.
+ * - Hace polling a ciszunetwork.global_announcements (cada ~20s).
+ * - Respeta el KILL SWITCH (global_announcement_settings): si está desactivado
+ *   no muestra nada y limpia lo mostrado al instante.
+ * - CONFIRMA ENTREGA por sitio (global_announcement_deliveries) en cada fetch
+ *   para todo anuncio relevante (target global o lista con el site), de modo
+ *   que el devcon pueda esperar la llegada con `--wait` de forma fiable.
+ * - Recuerda los mensajes ya vistos/cerrados en localStorage (por web) para
+ *   que NO reaparezcan al recargar la página.
+ * - Emisores verificados: display_name + @username con badge y enlace a perfil.
  *
- * Uso en cada layout:
- *   <GlobalAdvisor site="ciszu" />
- *   site: 'ciszu' | 'ciszukoantony' | 'muzicmania' | 'ciszubot'
+ * Uso: <GlobalAdvisor site="ciszu" />  (site: 'ciszu'|'ciszukoantony'|'muzicmania'|'ciszubot')
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -37,14 +37,15 @@ export interface Announcement {
 
 export interface GlobalAdvisorProps {
   site: 'ciszu' | 'ciszukoantony' | 'muzicmania' | 'ciszubot';
-  /** Intervalo de polling en ms (default 30000). */
+  /** Intervalo de polling en ms (default 20000). */
   pollInterval?: number;
   /** Desactiva el polling (p.ej. modo edición). */
   disabled?: boolean;
 }
 
-const POLL_INTERVAL = 30000;
+const POLL_INTERVAL = 20000;
 const TOAST_DURATION = 8000;
+const SEEN_MAX = 200;
 
 const KIND_STYLES: Record<Announcement['kind'], { dot: string; text: string; shadow: string }> = {
   info: { dot: 'bg-sky-400', text: 'text-sky-300', shadow: 'shadow-[0_4px_30px_rgba(56,189,248,0.35)]' },
@@ -79,6 +80,28 @@ function displayUsername(username: string): string {
   return username.replace(/^@/, '').replace(/_+$/, '');
 }
 
+function seenKey(site: string): string {
+  return `global_advisor_seen_${site}`;
+}
+
+function loadSeen(site: string): Set<number> {
+  try {
+    const raw = window.localStorage.getItem(seenKey(site));
+    if (!raw) return new Set();
+    const arr = JSON.parse(raw);
+    return new Set(Array.isArray(arr) ? arr.filter((n: unknown) => typeof n === 'number') : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function persistSeen(site: string, ids: Set<number>) {
+  try {
+    const list = Array.from(ids).slice(-SEEN_MAX);
+    window.localStorage.setItem(seenKey(site), JSON.stringify(list));
+  } catch { /* no romper por localStorage */ }
+}
+
 export default function GlobalAdvisor({ site, pollInterval = POLL_INTERVAL, disabled = false }: GlobalAdvisorProps) {
   const [queue, setQueue] = useState<Announcement[]>([]);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
@@ -86,25 +109,27 @@ export default function GlobalAdvisor({ site, pollInterval = POLL_INTERVAL, disa
   const mountedRef = useRef(true);
   const enabledRef = useRef(true);
 
-  // Limpiar timers al desmontar
   useEffect(() => {
     mountedRef.current = true;
+    seenIdsRef.current = loadSeen(site);
     return () => {
       mountedRef.current = false;
       timersRef.current.forEach(clearTimeout);
     };
-  }, []);
+  }, [site]);
 
-  const dismiss = useCallback((id: number) => {
-    setQueue((q) => q.filter((a) => a.id !== id));
-    setSeenIdsRef(new Set(seenIdsRef.current).add(id));
-  }, []);
+  const dismiss = useCallback(
+    (id: number) => {
+      setQueue((q) => q.filter((a) => a.id !== id));
+      const next = new Set(seenIdsRef.current);
+      next.add(id);
+      seenIdsRef.current = next;
+      persistSeen(site, next);
+    },
+    [site],
+  );
 
-  function setSeenIdsRef(next: Set<number>) {
-    seenIdsRef.current = next;
-  }
-
-  // Marca la entrega del anuncio en este sitio (idempotente: upsert por PK).
+  // Confirma la entrega del anuncio en este sitio (upsert por PK, idempotente).
   const confirmDelivery = useCallback(
     async (id: number) => {
       try {
@@ -130,10 +155,7 @@ export default function GlobalAdvisor({ site, pollInterval = POLL_INTERVAL, disa
 
     // Kill switch: si está apagado, no mostrar nada y limpiar lo mostrado.
     try {
-      const settingsRes = await supabaseFetch(
-        'global_announcement_settings',
-        'id=eq.1&select=enabled'
-      );
+      const settingsRes = await supabaseFetch('global_announcement_settings', 'id=eq.1&select=enabled');
       if (settingsRes.ok) {
         const settings = (await settingsRes.json()) as { enabled: boolean }[];
         const enabled = Array.isArray(settings) && settings.length ? settings[0].enabled : true;
@@ -154,22 +176,24 @@ export default function GlobalAdvisor({ site, pollInterval = POLL_INTERVAL, disa
       if (!res.ok) return;
       const items = (await res.json()) as Announcement[];
       const now = new Date();
-      const pending = items.filter((a) => {
-        if (seenIdsRef.current.has(a.id)) return false;
+      const relevant = items.filter((a) => {
         if (a.expires_at && new Date(a.expires_at) < now) return false;
-        // target puede ser 'global' o una lista separada por comas (devcon multi-select)
         const targets = String(a.target || 'global').split(',').map((t) => t.trim());
-        if (a.target !== 'global' && !targets.includes(site)) return false;
-        return true;
+        return a.target === 'global' || targets.includes(site);
       });
 
+      // Confirmar entrega de TODOS los relevantes (la web ya los recibió),
+      // independientemente de si el usuario los cerró antes o en esta visita.
+      relevant.forEach((a) => void confirmDelivery(a.id));
+
+      // Mostrar solo los no vistos (persistidos en localStorage).
+      const pending = relevant.filter((a) => !seenIdsRef.current.has(a.id));
       if (pending.length > 0) {
         setQueue((q) => {
           const existing = new Set(q.map((x) => x.id));
           return [...q, ...pending.filter((a) => !existing.has(a.id))];
         });
         pending.forEach((a) => {
-          void confirmDelivery(a.id);
           const t = setTimeout(() => dismiss(a.id), TOAST_DURATION);
           timersRef.current.push(t);
         });
