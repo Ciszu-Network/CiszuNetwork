@@ -1,0 +1,52 @@
+# Ciszu Network — Technical Requirement Document (TRD)
+
+Version: 1.0.0
+Actualizacion: 2026-08-26
+Identificador: TRD_GLOBAL_SYSTEM_V1.0.0_2026_08_26_ciszunetwork
+
+> **Definicion**: Requisitos tecnicos del ecosistema.
+
+---
+
+
+## 1. Arquitectura
+
+- Monorepo pnpm; la web vive en `projects/<site>/website`.
+- Next.js 15 App Router (RSC + client), Tailwind 4, @ciszu/ui (paquetes compartidos).
+- Backend: RSC server + API routes + Supabase. Deploy: Vercel + GitHub Actions.
+
+## 2. Stack
+
+- Next.js 15 (App Router)
+- Tailwind 4
+- Supabase (Postgres + auth + storage CDN)
+- pnpm monorepo
+- @ciszu/ui (paquetes compartidos)
+- Vercel + GitHub Actions
+- Google (GA4 + GTM + AdSense)
+- PostHog + Cloudflare + Sentry
+
+## 3. Integraciones
+
+- Supabase (Postgres + auth + storage CDN `ciszu-cdn`).
+- Google: GA4 + GTM + AdSense (scripts SSR en <head>; env NEXT_PUBLIC_*).
+- PostHog (producto), Cloudflare Web Analytics (trafico), Sentry (errores).
+- Cloudflare Turnstile (anti-bot), Feedback, ntfy/UptimeRobot (monitoring).
+
+## 4. Componentes y paquetes
+
+- `@ciszu/ui`: Modal, Toast, AdsProvider/AdFloat/AdPill, GoogleScripts, GlobalAdvisor, auth.
+- `@ciszunetwork/cdn`: resolver de assets. `@ciszunetwork/db`: capa de datos server-only.
+
+## 5. Rendimiento y seguridad
+
+- Middleware con CSP + cabeceras; robots.ts (allow /, disallow /api/).
+- RLS en toda tabla; rate limit en POST; secretos solo en vault.
+- Core Web Vitals (Vercel Speed Insights en MuzicMania).
+
+## 6. Entornos
+
+- `development` (local, puerto fijo), `preview` (Vercel), `production` (main).
+
+---
+_Ultima revision: 2026-08-26_. Relacionado: PRD, BACKEND_SCHEMA, IMPLEMENTATION_PLAN.
