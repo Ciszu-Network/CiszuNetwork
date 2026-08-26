@@ -189,6 +189,20 @@ Los horarios son de referencia y los ajusta la dirección; la STAFFCON los docum
 + **Jerarquía**: nivel N gestiona solo niveles > N. + **Nadie se gestiona a sí mismo**. +
 **Fundador inmutable** (no se quita ni se cambia de rango). + **Modificar nunca toca el rango**.
 
+### 7.1 Acceso a consolas por nivel
+
+Cada consola del ecosistema exige un **nivel máximo** de acceso (definido en `staff.json` →
+`org.accesos`). Un empleado cuyo `nivel` supere el máximo no puede abrir la consola:
+
+| Consola | Nivel máximo | Quién puede entrar |
+|---|---|---|
+| `staffcon` | 9 | Cualquier empleado activo (las operaciones se restringen por la matriz de permisos) |
+| `devcon` | 6 | Dirección, gerencia, supervisión, administración, RRHH, ciberseguridad, DevOps y técnicos (hasta QA) |
+| `customerscon` | 7 | Los anteriores + Community Managers y Soporte Técnico (quienes atienden clientes) |
+
+Al entrar, la consola pide la **identidad** (ID de empresa); el log de sesión registra siempre
+quién operó (`actor`).
+
 ---
 
 ## 8. Ciclo de vida del empleado

@@ -268,18 +268,17 @@ function generateScoped(data, ids) {
 }
 
 function countFiles() {
-  const c = { md: 0, txt: 0, csv: 0, docx: 0, pdf: 0 };
-  for (const f of fs.readdirSync(path.join(CUSTOMERS, 'docs'))) {
-    const ext = f.split('.').pop();
-    if (ext in c) c[ext]++;
-  }
-  for (const cust of fs.readdirSync(CUSTOMERS)) {
-    const dd = path.join(CUSTOMERS, cust, 'docs');
-    if (!fs.existsSync(dd)) continue;
-    for (const f of fs.readdirSync(dd)) {
+  const c = { md: 0, txt: 0, csv: 0, xlsx: 0, docx: 0, pdf: 0 };
+  const countDir = (dir) => {
+    if (!fs.existsSync(dir)) return;
+    for (const f of fs.readdirSync(dir)) {
       const ext = f.split('.').pop();
       if (ext in c) c[ext]++;
     }
+  };
+  countDir(path.join(CUSTOMERS, 'docs'));
+  for (const cust of fs.readdirSync(CUSTOMERS)) {
+    countDir(path.join(CUSTOMERS, cust, 'docs'));
   }
   return c;
 }
@@ -293,7 +292,7 @@ function main() {
   console.log('CUSTOMERSGEN: regenerando archives/customers...');
   generate(data);
   const t = countFiles();
-  console.log(`OK: ${t.md} md, ${t.txt} txt, ${t.csv} csv, ${t.docx} docx, ${t.pdf} pdf`);
+  console.log(`OK: ${t.md} md, ${t.txt} txt, ${t.csv} csv, ${t.xlsx} xlsx, ${t.docx} docx, ${t.pdf} pdf`);
 }
 
 module.exports = { generate, generateScoped, readData, cname, slugName, DATA_FILE, CUSTOMERS };

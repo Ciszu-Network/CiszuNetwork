@@ -81,16 +81,20 @@ function today() {
   return new Date().toISOString().slice(0, 10);
 }
 
-// ---------- formatos (md/txt/csv/docx/pdf) ----------
+// ---------- formatos (md/txt/csv/xlsx/docx/pdf) ----------
 function generateFormats(levelDir, base, md, csvContent) {
   const mdPath = path.join(levelDir, base + '.md');
   const txtPath = path.join(levelDir, base + '.txt');
   const csvPath = path.join(levelDir, base + '.csv');
+  const xlsxPath = path.join(levelDir, base + '.xlsx');
   const docxPath = path.join(levelDir, base + '.docx');
   const pdfPath = path.join(levelDir, base + '.pdf');
   writeFile(mdPath, md);
   writeFile(txtPath, mdToTxt(md));
   writeFile(csvPath, csvContent);
+  try {
+    execSync(`python "${path.join(ROOT, 'scripts', 'xlsxgen.py')}" "${csvPath}" "${xlsxPath}"`, { stdio: 'pipe' });
+  } catch (e) { console.error(`  ✗ XLSX ${base}: ${e.message.substring(0, 60)}`); }
   try {
     execSync(`"${PANDOC}" "${mdPath}" -f markdown -t docx -o "${docxPath}"`, { stdio: 'pipe' });
   } catch (e) { console.error(`  ✗ DOCX ${base}: ${e.message.substring(0, 60)}`); }
@@ -439,25 +443,21 @@ function generateScoped(data, scope) {
 }
 
 function countFiles() {
-  const c = { md: 0, txt: 0, csv: 0, docx: 0, pdf: 0 };
-  for (const f of fs.readdirSync(path.join(STAFF, 'docs'))) {
-    const ext = f.split('.').pop();
-    if (ext in c) c[ext]++;
-  }
-  for (const role of fs.readdirSync(STAFF)) {
-    const rd = path.join(STAFF, role);
-    if (!fs.statSync(rd).isDirectory() || !fs.existsSync(path.join(rd, 'docs'))) continue;
-    for (const f of fs.readdirSync(path.join(rd, 'docs'))) {
+  const c = { md: 0, txt: 0, csv: 0, xlsx: 0, docx: 0, pdf: 0 };
+  const countDir = (dir) => {
+    if (!fs.existsSync(dir)) return;
+    for (const f of fs.readdirSync(dir)) {
       const ext = f.split('.').pop();
       if (ext in c) c[ext]++;
     }
+  };
+  countDir(path.join(STAFF, 'docs'));
+  for (const role of fs.readdirSync(STAFF)) {
+    const rd = path.join(STAFF, role);
+    if (!fs.statSync(rd).isDirectory()) continue;
+    countDir(path.join(rd, 'docs'));
     for (const emp of fs.readdirSync(rd)) {
-      const ed = path.join(rd, emp, 'docs');
-      if (!fs.existsSync(ed)) continue;
-      for (const f of fs.readdirSync(ed)) {
-        const ext = f.split('.').pop();
-        if (ext in c) c[ext]++;
-      }
+      countDir(path.join(rd, emp, 'docs'));
     }
   }
   return c;
@@ -472,7 +472,7 @@ function main() {
   console.log('STAFFGEN: regenerando archives/staff...');
   generate(data);
   const t = countFiles();
-  console.log(`OK: ${t.md} md, ${t.txt} txt, ${t.csv} csv, ${t.docx} docx, ${t.pdf} pdf`);
+  console.log(`OK: ${t.md} md, ${t.txt} txt, ${t.csv} csv, ${t.xlsx} xlsx, ${t.docx} docx, ${t.pdf} pdf`);
 }
 
 module.exports = {

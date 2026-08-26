@@ -67,7 +67,7 @@ function auditLog(entry) {
     fs.mkdirSync(LOG_DIR, { recursive: true });
     const stamp = new Date().toISOString().replace(/[:]/g, '-').slice(0, 10);
     const file = path.join(LOG_DIR, `advisor-${stamp}.log`);
-    fs.appendFileSync(file, JSON.stringify({ ts: new Date().toISOString(), ...entry }) + '\n', 'utf8');
+    fs.appendFileSync(file, JSON.stringify({ ts: new Date().toISOString(), actor: actorId(), ...entry }) + '\n', 'utf8');
   } catch { /* el log nunca debe romper la acción */ }
 }
 
@@ -83,6 +83,11 @@ function flag(name, def = null) {
 
 function sessionId() {
   return flag('session') || `cli-${new Date().toISOString().replace(/[:.]/g, '-')}`;
+}
+
+// Operador que ejecuta la consola (lo pasa el devcon tras elegir identidad).
+function actorId() {
+  return flag('actor') || 'dev-console';
 }
 
 async function api(path, options = {}, schema = 'ciszunetwork') {

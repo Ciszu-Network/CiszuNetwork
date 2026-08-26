@@ -48,6 +48,20 @@ function today() {
   return new Date().toISOString().slice(0, 10);
 }
 
+// Windows puede bloquear el rename de un directorio (antivirus/índice del
+// sistema). Reintenta unas veces y, si sigue fallando, copia y borra.
+function renameDir(from, to) {
+  if (!fs.existsSync(from)) return;
+  if (fs.existsSync(to)) fs.rmSync(to, { recursive: true, force: true });
+  for (let i = 0; i < 5; i++) {
+    try { fs.renameSync(from, to); return; } catch { /* reintenta */ }
+    const until = Date.now() + 300;
+    while (Date.now() < until) { /* espera activa breve */ }
+  }
+  fs.cpSync(from, to, { recursive: true });
+  fs.rmSync(from, { recursive: true, force: true });
+}
+
 function nowStamp() {
   const d = new Date();
   const p = (n) => String(n).padStart(2, '0');
@@ -268,9 +282,7 @@ function doModify(args, session) {
   const newName = gen.fullName(target).replace(/ /g, '_');
   if (newName !== oldName) {
     for (const c of target.cargos || []) {
-      const from = path.join(gen.STAFF, c, oldName);
-      const to = path.join(gen.STAFF, c, newName);
-      if (fs.existsSync(from) && !fs.existsSync(to)) fs.renameSync(from, to);
+      renameDir(path.join(gen.STAFF, c, oldName), path.join(gen.STAFF, c, newName));
     }
   }
   save(data, {

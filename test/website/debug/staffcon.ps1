@@ -192,7 +192,12 @@ function Show-PickEmployee([string]$Title, [string]$ExcludeId = '') {
         if ($ExcludeId -and $emp.id -eq $ExcludeId) { continue }
         $opts += @{ ic = '👤'; l = "$($emp.id)  $($emp.nombres) $($emp.apellidos)"; s = "cargo: $($emp.cargo)"; emp = $emp }
     }
-    if ($opts.Count -eq 0) { Write-Host "${c_yellow}No hay empleados para elegir.${c_reset}"; return $null }
+    if ($opts.Count -eq 0) {
+        Write-Host "${c_yellow}No hay empleados para gestionar: los únicos activos son tú o el fundador,${c_reset}"
+        Write-Host "${c_yellow}que no puede ser gestionado (ni tú mismo ni el fundador).${c_reset}"
+        Write-Host "${c_gray}Añade empleados primero desde el menú «Añadir empleado».${c_reset}"
+        return $null
+    }
     $sel = Show-Menu -Title $Title -Options $opts
     if ($sel -lt 0) { return $null }
     return $opts[$sel].emp.id

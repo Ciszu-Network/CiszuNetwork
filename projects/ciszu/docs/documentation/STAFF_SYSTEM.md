@@ -6,7 +6,7 @@ Identificador: STAFF_SYSTEM_V1.0.0_2026_08_25_ciszunetwork
 
 > **Definición**: sistema que gestiona la **documentación y organización real de los empleados**
 > de Ciszu Network: estructura de carpetas en `archives/staff/`, fuente de verdad en
-> `staff.json`, generación automática de los 5 formatos (md/txt/csv/docx/pdf) por nivel
+> `staff.json`, generación automática de los 6 formatos (md/txt/csv/xlsx/docx/pdf) por nivel
 > (general → cargo → empleado) y la consola **STAFFCON** (TUI) para añadir, quitar, cambiar
 > rango o modificar empleados con control de permisos y log de sesión. Tarea `TODO.md`.
 
@@ -17,7 +17,7 @@ Identificador: STAFF_SYSTEM_V1.0.0_2026_08_25_ciszunetwork
 Ciszu Network es hoy un monorepo de una sola persona (Ciszuko Antony / Francisco García). Este
 sistema convierte la **organización del personal** en algo tangible y automático: cada empleado
 tiene un **ID de empresa** (CZ-XXX), una carpeta física dentro de su cargo, y su ficha
-documentada en 5 formatos. La consola STAFFCON permite mantenerlo todo sin editar archivos a
+documentada en 6 formatos. La consola STAFFCON permite mantenerlo todo sin editar archivos a
 mano, con **permisos por cargo** y **traza completa** en logs.
 
 Relación con otros docs:
@@ -31,7 +31,7 @@ Relación con otros docs:
 |---|---|---|
 | `archives/staff/` | Estructura de documentación de empleados (general/cargo/empleado + content) | `archives/staff/` |
 | `staff.json` | **Fuente de verdad** de empleados y cargos | `archives/staff/data/staff.json` |
-| `scripts/staffgen.js` | Generador de los 5 formatos por nivel | `scripts/staffgen.js` |
+| `scripts/staffgen.js` | Generador de los formatos por nivel | `scripts/staffgen.js` |
 | `scripts/staffcon.js` | Motor de la STAFFCON (operaciones + permisos + logs) | `scripts/staffcon.js` |
 | `scripts/staffpdf.py` | Conversión md→pdf (reportlab, reusa `txt2pdf.py`) | `scripts/staffpdf.py` |
 | `test/website/debug/staffcon.ps1` | TUI de la Staff Console (estética devcon) | `test/website/debug/staffcon.ps1` |
@@ -42,22 +42,22 @@ Relación con otros docs:
 ## 2. Estructura de `archives/staff/`
 
 La regla es **de lo general a lo particular**: general → cargo → empleado. Cada nivel tiene su
-carpeta `docs/` con los **5 formatos** y su carpeta `content/` para contenido visual.
+carpeta `docs/` con los **6 formatos** y su carpeta `content/` para contenido visual.
 
 ```
 archives/staff/
 ├── data/
 │   └── staff.json                     # FUENTE DE VERDAD (la edita la STAFFCON)
 ├── docs/                              # GLOBAL
-│   ├── STAFF_GLOBAL.{md,txt,csv,docx,pdf}
+│   ├── STAFF_GLOBAL.{md,txt,csv,xlsx,docx,pdf}
 │   └── content/{images,videos,profile}      # organigrama, imagenes de la empresa
 ├── CEO/                               # CARGO (uno por cada rol, 20 en total)
 │   ├── docs/
-│   │   └── STAFF_CEO.{md,txt,csv,docx,pdf}
+│   │   └── STAFF_CEO.{md,txt,csv,xlsx,docx,pdf}
 │   ├── content/{images,videos,profile}
 │   └── FRANCISCO_GARCIA/              # EMPLEADO (uno por persona en ese cargo)
 │       ├── docs/
-│       │   └── EMPLEADO_FRANCISCO_GARCIA_CEO.{md,txt,csv,docx,pdf}
+│       │   └── EMPLEADO_FRANCISCO_GARCIA_CEO.{md,txt,csv,xlsx,docx,pdf}
 │       └── content/{images,videos,profile}
 ├── CTO/  ├── CCO/  ├── COO/  ├── CMO/  ├── CFO/
 ├── Gerentes/  ├── Supervisores/  ├── Administradores/
@@ -88,15 +88,16 @@ En cada nivel existe `content/{images,videos,profile}` (con `.gitkeep` para pers
 
 ---
 
-## 3. Los 5 formatos por nivel
+## 3. Los formatos por nivel
 
-Cada carpeta `docs/` contiene exactamente 5 archivos con la misma base de nombre:
+Cada carpeta `docs/` contiene 6 archivos con la misma base de nombre:
 
 | Formato | Contenido |
 |---|---|
 | `.md` | Fuente legible (markdown), con cabecera Versión/Actualización/Identificador |
 | `.txt` | Versión texto plano (derivada del md, sin markdown) |
 | `.csv` | Datos estructurados (1 fila por empleado; en el nivel empleado, 1 fila única) |
+| `.xlsx` | **Versión Excel estilizada** (colores de marca, bordes, celdas, autofiltro) — generada desde el `.csv` |
 | `.docx` | Documento Word (pandoc) |
 | `.pdf` | Documento PDF (reportlab vía `scripts/staffpdf.py`) |
 
@@ -217,7 +218,7 @@ quitar/rango. La validación final la hace siempre el motor (`staffcon.js`), no 
 1. Se valida identidad + permiso `anadir` + jerarquía del cargo destino.
 2. Se asigna el siguiente ID (`CZ-XXX`), se crea el registro en `staff.json` (`cargos=[cargo]`,
    `supervisor` = quien lo añade).
-3. El generador crea `archives/staff/<cargo>/<NOMBRE_APELLIDOS>/` con sus 5 formatos y su
+3. El generador crea `archives/staff/<cargo>/<NOMBRE_APELLIDOS>/` con sus 6 formatos y su
    `content/`, y actualiza los docs **global** y del **cargo** (el empleado aparece en ambos).
 4. Queda registrado en el log.
 

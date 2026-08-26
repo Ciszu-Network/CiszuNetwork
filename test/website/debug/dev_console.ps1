@@ -515,6 +515,41 @@ function Test-DevconPassword {
     return ($plain -ceq $expected)
 }
 
+# ---------- Identidad + acceso (quién opera la consola) ----------
+# Pide el ID de empresa (CZ-XXX) y valida que el rango del empleado tenga
+# acceso a la consola (org.accesos.<consola> en staff.json).
+function Select-StaffIdentity([string]$Console) {
+    $staffFile = Join-Path $root 'archives\staff\data\staff.json'
+    if (-not (Test-Path $staffFile)) { Write-Host "${c_red}No existe archives/staff/data/staff.json.${c_reset}"; return $null }
+    $d = Get-Content -LiteralPath $staffFile -Raw | ConvertFrom-Json
+    $emps = @($d.empleados | Where-Object { $_.estado -eq 'activo' })
+    if ($emps.Count -eq 0) { Write-Host "${c_red}No hay empleados activos.${c_reset}"; return $null }
+    $opts = @()
+    foreach ($emp in $emps) {
+        $role = $d.roles | Where-Object { $_.carpeta -eq $emp.cargo }
+        $nivel = if ($role) { [int]$role.nivel } else { 99 }
+        $opts += @{ ic = '👤'; l = "$($emp.id)  $($emp.nombres) $($emp.apellidos)"; s = "nivel $nivel - $($emp.cargo)"; nivel = $nivel; emp = $emp }
+    }
+    Write-Host ""
+    Write-Host "${c_gray}Indica quién eres (ID de empresa). Según tu rango podrás acceder o no.${c_reset}"
+    $sel = Show-Menu -Title "¿QUIÉN ERES? (identidad)" -Options $opts
+    if ($sel -lt 0) { return $null }
+    $nivel = $opts[$sel].nivel
+    $max = [int]$d.org.accesos.$Console
+    if ($nivel -gt $max) {
+        Write-Host "${c_red}Acceso DENEGADO: tu cargo (nivel $nivel) supera el máximo ($max) para esta consola.${c_reset}"
+        Write-Host "${c_gray}Solicita acceso a un cargo con nivel $max o menor.${c_reset}"
+        return $null
+    }
+    return $opts[$sel].emp.id
+}
+
+# Log de sesión del devcon (quién entró y cuándo).
+function Write-DevconLog([string]$Line) {
+    $log = Join-Path $LOG_DIR ("devcon-" + (Get-Date -Format 'yyyy-MM-dd') + '.log')
+    Add-Content -LiteralPath $log -Value ("[" + (Get-Date -Format 'yyyy-MM-dd HH:mm:ss') + "] " + $Line)
+}
+
 # ---------- Advisor (mensajes globales) ----------
 # Ejecuta scripts/advisor.js y, si detecta contenido prohibido (exit code 2),
 # cierra la consola de seguridad tras registrar el intento en el log.
@@ -576,7 +611,7 @@ function Show-AdvisorMenu {
 
         Write-Host ""
         Write-Host "${c_cyan}Enviando a [$target] · tipo [$kind] · autor [$sender] (esperando entrega... )${c_reset}"
-        Invoke-AdvisorNode @('scripts/advisor.js', $msg, '--target', $target, '--kind', $kind, '--sender', $sender, '--session', $script:advisorSession, '--wait')
+        Invoke-AdvisorNode @('scripts/advisor.js', $msg, '--target', $target, '--kind', $kind, '--sender', $sender, '--session', $script:advisorSession, '--actor', $script:devIdentity, '--wait')
 
         Write-Host ""
         Write-Host "${c_green}[Enter] Enviar otro mensaje   ${c_red}[Q/Esc] Volver al menú${c_reset}"
@@ -597,8 +632,8 @@ function Show-AdvisorToggle {
     Write-Host "${c_green}[1] ACTIVAR mensajes   ${c_red}[2] DESACTIVAR mensajes   [Q/Esc] volver${c_reset}"
     $k = [System.Console]::ReadKey($true)
     $ch = $k.KeyChar
-    if ($ch -eq '1') { Invoke-AdvisorNode @('scripts/advisor.js', '--toggle', 'on', '--sender', 'admin', '--session', $script:advisorSession) }
-    elseif ($ch -eq '2') { Invoke-AdvisorNode @('scripts/advisor.js', '--toggle', 'off', '--sender', 'admin', '--session', $script:advisorSession) }
+    if ($ch -eq '1') { Invoke-AdvisorNode @('scripts/advisor.js', '--toggle', 'on', '--sender', 'admin', '--session', $script:advisorSession, '--actor', $script:devIdentity) }
+    elseif ($ch -eq '2') { Invoke-AdvisorNode @('scripts/advisor.js', '--toggle', 'off', '--sender', 'admin', '--session', $script:advisorSession, '--actor', $script:devIdentity) }
     Press-Continue
 }
 
@@ -614,10 +649,10 @@ function Show-AdvisorClear {
     Write-Host "${c_cyan}IDs a borrar separados por espacio · [A] borrar TODOS · [Q] volver:${c_reset}"
     $in = Read-Host ">"
     if ($in -match '^[aA]$') {
-        Invoke-AdvisorNode @('scripts/advisor.js', '--clear-all', '--sender', 'admin', '--session', $script:advisorSession)
+        Invoke-AdvisorNode @('scripts/advisor.js', '--clear-all', '--sender', 'admin', '--session', $script:advisorSession, '--actor', $script:devIdentity)
     } elseif ($in -match '^[\d\s]+$') {
         $ids = @($in -split '\s+' | Where-Object { $_ })
-        if ($ids.Count -gt 0) { Invoke-AdvisorNode @('scripts/advisor.js', '--clear', @($ids), '--sender', 'admin', '--session', $script:advisorSession) }
+        if ($ids.Count -gt 0) { Invoke-AdvisorNode @('scripts/advisor.js', '--clear', @($ids), '--sender', 'admin', '--session', $script:advisorSession, '--actor', $script:devIdentity) }
     }
     Press-Continue
 }
@@ -771,14 +806,26 @@ $script:quitRequested = $false
 # ---------- Login de acceso (seguridad) ----------
 Clear-Host
 Show-Art
-Write-Host "${c_cyan}════════════════  CISZU DEV CONSOLE - ACCESO RESTRINGIDO  ════════════════${c_reset}"
+Write-Host "${c_cyan}════════════════════  CISZU DEV CONSOLE - ACCESO RESTRINGIDO  ════════════════${c_reset}"
 if (-not (Test-DevconPassword)) {
     Write-Host "${c_red}[SEGURIDAD] Contraseña incorrecta. Cerrando la consola.${c_reset}"
     Start-Sleep -Milliseconds 900
     exit 1
 }
 # Sesión de auditoría del advisor (queda registrada en el log con cada acción).
-$script:advisorSession = 'devcon-' + (Get-Date -Format 'yyyyMMdd-HHmmss') + '-' + ([guid]::NewGuid().ToString().Substring(0, 8))
+$script:devSession = 'devcon-' + (Get-Date -Format 'yyyyMMdd-HHmmss') + '-' + ([guid]::NewGuid().ToString().Substring(0, 8))
+$script:advisorSession = $script:devSession
+# Identidad: quién opera la consola (ID de empresa). Según su rango podrá acceder o no.
+Clear-Host
+Show-Art
+Write-Host "${c_green}Password OK. Indica quién eres.${c_reset}"
+$script:devIdentity = Select-StaffIdentity 'devcon'
+if (-not $script:devIdentity) {
+    Write-Host "${c_red}[SEGURIDAD] Identidad no válida o sin acceso. Cerrando la consola.${c_reset}"
+    Start-Sleep -Milliseconds 900
+    exit 1
+}
+Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=login"
 Clear-Host
 while (-not $script:quitRequested) {
     $menuItems = @(
@@ -834,6 +881,7 @@ while (-not $script:quitRequested) {
         '__credits' { Show-Credits }
         '__version' { Show-Version }
         '__quit' {
+            Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=logout"
             Write-Host "${c_cyan}Cerrando la consola SIN detener las webs (los servidores siguen activos).${c_reset}"
             foreach ($w in $WEBS) {
                 if ((Get-WebPhase $w.key) -eq 'on') {

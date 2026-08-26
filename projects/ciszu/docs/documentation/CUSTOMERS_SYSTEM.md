@@ -6,7 +6,7 @@ Identificador: CUSTOMERS_SYSTEM_V1.0.0_2026_08_25_ciszunetwork
 
 > **Definición**: sistema que gestiona la **documentación y organización real de los clientes**
 > (customers) de Ciszu Network: estructura de carpetas en `archives/customers/`, fuente de
-> verdad en `customers.json`, generación automática de los 5 formatos (md/txt/csv/docx/pdf)
+> verdad en `customers.json`, generación automática de los 6 formatos (md/txt/csv/xlsx/docx/pdf)
 > global y por cliente, y la consola **CUSTOMERSCON** (TUI) para añadir, quitar o modificar
 > clientes con log de sesión. Es la versión simplificada de `STAFF_SYSTEM`: **sin cargos ni
 > prioridad**. Tarea `TODO.md`.
@@ -17,7 +17,7 @@ Identificador: CUSTOMERS_SYSTEM_V1.0.0_2026_08_25_ciszunetwork
 
 Ciszu Network trabaja para clientes reales (tareas universitarias, arreglos de consolas,
 diseños, proyectos). Cada cliente tiene un **ID de empresa** (`CL-XXX`), un **asunto** (el
-trabajo o encargo) y su propia carpeta documentada en 5 formatos. La consola CUSTOMERSCON
+trabajo o encargo) y su propia carpeta documentada en 6 formatos. La consola CUSTOMERSCON
 permite llevar el registro sin editar archivos a mano.
 
 Antecedente: **hubo un sistema de customers anterior** que se eliminó y su contenido se perdió.
@@ -32,7 +32,7 @@ Este sistema lo reconstruye de forma ordenada y automática. Los primeros client
 |---|---|---|
 | `archives/customers/` | Estructura de documentación de clientes | `archives/customers/` |
 | `customers.json` | **Fuente de verdad** de clientes | `archives/customers/data/customers.json` |
-| `scripts/customersgen.js` | Generador de los 5 formatos | `scripts/customersgen.js` |
+| `scripts/customersgen.js` | Generador de los formatos | `scripts/customersgen.js` |
 | `scripts/customerscon.js` | Motor de la CUSTOMERSCON (operaciones + logs) | `scripts/customerscon.js` |
 | `test/website/debug/customerscon.ps1` | TUI de la Customers Console | `test/website/debug/customerscon.ps1` |
 | Log de sesión | Registro de cada acción | `test/website/debug/local-logs/customerscon-<fecha>.log` |
@@ -48,16 +48,16 @@ archives/customers/
 ├── data/
 │   └── customers.json                 # FUENTE DE VERDAD (la edita la CUSTOMERSCON)
 ├── docs/                              # GLOBAL
-│   └── CUSTOMERS_GLOBAL.{md,txt,csv,docx,pdf}
+│   └── CUSTOMERS_GLOBAL.{md,txt,csv,xlsx,docx,pdf}
 ├── content/{images,videos,profile}    # contenido global (organigrama de clientes, logos)
 ├── MARIA_FELIX/                       # CLIENTE (carpeta por nombre)
 │   ├── docs/
-│   │   └── CUSTOMER_MARIA_FELIX.{md,txt,csv,docx,pdf}
+│   │   └── CUSTOMER_MARIA_FELIX.{md,txt,csv,xlsx,docx,pdf}
 │   ├── content/{images,videos,profile}
 │   └── asunto/                        # carpeta adicional: archivos del trabajo/encargo
 └── NELGER_LUGO/
     ├── docs/
-    │   └── CUSTOMER_NELGER_LUGO.{md,txt,csv,docx,pdf}
+    │   └── CUSTOMER_NELGER_LUGO.{md,txt,csv,xlsx,docx,pdf}
     ├── content/{images,videos,profile}
     └── asunto/
 ```
@@ -79,15 +79,16 @@ archives/customers/
 
 ---
 
-## 3. Los 5 formatos
+## 3. Los formatos por nivel
 
-Cada carpeta `docs/` contiene 5 archivos con la misma base de nombre:
+Cada carpeta `docs/` contiene 6 archivos con la misma base de nombre:
 
 | Formato | Contenido |
 |---|---|
 | `.md` | Fuente legible (markdown) con cabecera Versión/Actualización/Identificador |
 | `.txt` | Versión texto plano (derivada del md) |
 | `.csv` | Datos estructurados (global: 1 fila por cliente; cliente: 1 fila única) |
+| `.xlsx` | **Versión Excel estilizada** (colores de marca, bordes, celdas, autofiltro) |
 | `.docx` | Documento Word (pandoc) |
 | `.pdf` | Documento PDF (reportlab vía `scripts/staffpdf.py`) |
 
@@ -149,8 +150,11 @@ customerscon.ps1 (TUI)  ──>  scripts/customerscon.js (motor)  ──>  custo
 
 1. **Password global** (la misma que devcon/staffcon, leída del vault
    `services/supabase/.env` → `DEVCON_PASSWORD`; nunca hardcodeada ni mostrada).
-2. **Sin identidad ni permisos**: con la password se puede operar. El operador se registra en el
-   log (usuario de Windows) para trazabilidad.
+2. **Identidad**: menú para indicar quién eres por ID de empresa (CZ-XXX). El operador queda
+   registrado en el log (actor) con cada acción.
+3. **Acceso por rango**: la CUSTOMERSCON se abre solo para empleados de nivel ≤ 7 (definido en
+   `staff.json` → `org.accesos.customerscon`). Los cargos de mayor número (Moderadores, Beta
+   Testers) no pueden operarla. Cualquier operación con la password queda trazada por el actor.
 
 ### 5.3 Menú principal
 
@@ -172,7 +176,7 @@ customerscon.ps1 (TUI)  ──>  scripts/customerscon.js (motor)  ──>  custo
 
 1. Se validan nombres y apellidos (obligatorios).
 2. Se asigna el siguiente ID (`CL-XXX`) y se crea el registro en `customers.json`.
-3. El generador crea `archives/customers/<NOMBRE>/` con su `docs/` (5 formatos), su `content/`
+3. El generador crea `archives/customers/<NOMBRE>/` con su `docs/` (6 formatos), su `content/`
    y su carpeta `asunto/`, y actualiza los docs **globales**.
 4. Queda registrado en el log.
 
