@@ -29,4 +29,10 @@ if (-not (Test-Path -LiteralPath $real)) {
     Write-Host "[ERROR] No se encontro la consola real en: $real"
     exit 1
 }
-& $real -Demo:$Demo -SelfTest:$SelfTest -Action:$Action -Web:$Web
+# Solo reenvía los parámetros que vengan definidos (evita -Action:$null).
+$fwd = @{}
+if ($Demo)     { $fwd['Demo'] = $true }
+if ($SelfTest) { $fwd['SelfTest'] = $true }
+if ($Action)   { $fwd['Action'] = $Action }
+if ($Web)      { $fwd['Web'] = $Web }
+& $real @fwd
