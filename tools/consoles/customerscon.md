@@ -1,0 +1,46 @@
+# Customers Console (CUSTOMERSCON) — Guía de uso (Ciszu Network)
+
+> Consola interactiva (TUI) para gestionar los **clientes** (customers) de la
+> organización. Mantiene `archives/customers/` (global → cliente) con sus 6
+> formatos (md/txt/csv/xlsx/docx/pdf) + `content/` y la carpeta `asunto/`.
+
+Versión: 1.0.0
+Ubicación: `tools/consoles/customerscon.ps1`
+Motor: `scripts/customerscon.js` + generador `scripts/customersgen.js`
+Fuente de verdad: `archives/customers/data/customers.json`
+
+## Qué hace
+
+- **Resumen / supervisar**: clientes activos y bajas, su asunto y ubicación exacta.
+- **Añadir cliente**: nombres, apellidos, asunto (trabajo/encargo), teléfono, correo,
+  dirección. ID auto (CL-XXX).
+- **Quitar cliente**: el ID se conserva; sus docs pasan a registro de baja.
+- **Modificar / editar**: cualquier campo del cliente (al cambiar nombres, la carpeta se renombra).
+- **Herramientas / Manual / Información / Salir**.
+
+## Acceso (seguridad)
+
+- **Password global** (vault `DEVCON_PASSWORD`, nunca en código).
+- **Identidad**: pide tu ID de empresa (CZ-XXX). Solo entras si tu rango está dentro del nivel
+  máximo (`org.accesos.customerscon`, nivel ≤ 7: dirección, gerencia, supervisión, admin, RRHH,
+  ciberseguridad, DevOps, técnicos, community y soporte).
+- Sin cargos ni prioridad internos: cualquier operación se registra como `actor` en el log.
+
+## Logs
+
+- `tools/consoles/local-logs/customerscon-<fecha>.log` — cada acción (login/logout/alta/baja/mod).
+
+## Comandos del perfil PowerShell
+
+```powershell
+customerscon
+```
+
+## Personalizar el banner (ASCII art)
+
+El banner vive en `Show-Banner` de `tools/consoles/customerscon.ps1` (ya incluye el arte CISZU).
+Se genera con TAAG (Text to ASCII Art Generator): https://patorjk.com/software/taag/ — preajuste
+Graffiti:
+`https://patorjk.com/software/taag/#p=display&f=Graffiti&t=Type+Something+&x=none&v=4&h=4&w=80&we=false`
+
+_Última revisión: 26 ago 2026._ Relacionado: `CUSTOMERS_SYSTEM.md`.

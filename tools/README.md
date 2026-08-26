@@ -57,6 +57,29 @@ node tools/ascii-ai/textart.js --text "CISZU" --scale 2 --ansi --frame
 node tools/ascii-ai/textart.js --text "CISZU NETWORK" --scale 2 --ansi --out banner.txt
 ```
 
+## Consolas (`consoles/`)
+
+Las consolas TUI del ecosistema viven en `tools/consoles/` (staffcon, customerscon y el wrapper
+devcon que apunta a la consola real de `test/website/debug/dev_console.ps1`). Cada una tiene su
+manual `.md`/`.txt` en el mismo nivel.
+
+| Consola | Script | Gestiona | Manual |
+|---|---|---|---|
+| `staffcon` | `tools/consoles/staffcon.ps1` | Empleados (`archives/staff/`) | `tools/consoles/staffcon.md` |
+| `customerscon` | `tools/consoles/customerscon.ps1` | Clientes (`archives/customers/`) | `tools/consoles/customerscon.md` |
+| `devcon` | `tools/consoles/devcon.ps1` (wrapper) | Webs locales (debug) | `tools/consoles/devcon.md` |
+
+Logs de sesión: `tools/consoles/local-logs/`. Motores: `scripts/staffcon.js` y
+`scripts/customerscon.js`. Se lanzan desde el perfil PowerShell (`staffcon`, `customerscon`,
+`devcon` y sus atajos `devall`/`devstop`/...).
+
+## ASCII art de consolas (TAAG)
+
+Los banners ASCII de las consolas se generan con **TAAG** (Text to ASCII Art Generator), fuente
+*Graffiti*:
+`https://patorjk.com/software/taag/#p=display&f=Graffiti&t=Type+Something+&x=none&v=4&h=4&w=80&we=false`
+Los banners viven en `Show-Banner` (staffcon/customerscon) y `$ART` + `Show-Art` (devcon).
+
 ## Música (`music-ai/generate-music.js`) — estructura estándar
 
 Cada pista genera un **directorio `<slug>/`** con la estructura MuzicMania-CDN:

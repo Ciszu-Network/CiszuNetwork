@@ -34,8 +34,8 @@ Relación con otros docs:
 | `scripts/staffgen.js` | Generador de los formatos por nivel | `scripts/staffgen.js` |
 | `scripts/staffcon.js` | Motor de la STAFFCON (operaciones + permisos + logs) | `scripts/staffcon.js` |
 | `scripts/staffpdf.py` | Conversión md→pdf (reportlab, reusa `txt2pdf.py`) | `scripts/staffpdf.py` |
-| `test/website/debug/staffcon.ps1` | TUI de la Staff Console (estética devcon) | `test/website/debug/staffcon.ps1` |
-| Log de sesión | Registro de cada acción (quién/qué/cuándo/sesión) | `test/website/debug/local-logs/staffcon-<fecha>.log` |
+| `tools/consoles/staffcon.ps1` | TUI de la Staff Console (estética devcon) | `tools/consoles/staffcon.ps1` |
+| Log de sesión | Registro de cada acción (quién/qué/cuándo/sesión) | `tools/consoles/local-logs/staffcon-<fecha>.log` |
 
 ---
 
@@ -168,7 +168,7 @@ staffcon.ps1 (TUI)  ──>  scripts/staffcon.js (motor)  ──>  staff.json
         └──> local-logs/staffcon-<fecha>.log   (todo queda registrado)
 ```
 
-- **TUI**: `test/website/debug/staffcon.ps1` — estética devcon (paleta neon, menús con flechas).
+- **TUI**: `tools/consoles/staffcon.ps1` — estética devcon (paleta neon, menús con flechas).
 - **Motor**: `scripts/staffcon.js` — subcomandos `login|list|roles|add|remove|rank|modify`.
 - **Generador**: `scripts/staffgen.js` — regenera solo los niveles afectados (rápido, ~3-4s).
 
@@ -249,7 +249,7 @@ quitar/rango. La validación final la hace siempre el motor (`staffcon.js`), no 
 
 ## 7. Logs de sesión
 
-Cada acción (exitosa o denegada) se escribe en `test/website/debug/local-logs/staffcon-<fecha>.log`
+Cada acción (exitosa o denegada) se escribe en `tools/consoles/local-logs/staffcon-<fecha>.log`
 con formato:
 
 ```
