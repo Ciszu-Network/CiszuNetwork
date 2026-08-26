@@ -475,6 +475,9 @@ function main() {
   console.log(`OK: ${t.md} md, ${t.txt} txt, ${t.csv} csv, ${t.docx} docx, ${t.pdf} pdf`);
 }
 
-module.exports = { generate, generateScoped, readData, fullName, roleByFolder, DATA_FILE, STAFF, today };
+module.exports = {
+  generate, generateScoped, readData, fullName, roleByFolder, DATA_FILE, STAFF, today,
+  generateFormats, csv, mdToTxt, ensureContent, idStamp, mkdirp, writeFile, PANDOC, STAFFPDF, ROOT,
+};
 
 if (require.main === module) main();

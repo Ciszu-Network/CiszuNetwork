@@ -1,0 +1,44 @@
+# CISZU NETWORK - REGISTRO GLOBAL DE CLIENTES
+
+Version: 1.0.0
+Actualizacion: 2026-08-26
+Identificador: CUSTOMERS_GLOBAL_V1_0_0_2026_08_26_ciszunetwork
+
+> **Definicion**: plantilla global que resume a todos los clientes de Ciszu Network,
+> su asunto (trabajo/encargo) y el historial de bajas. Fuente de verdad:
+> `archives/customers/data/customers.json`.
+
+---
+
+## 1. Organizacion
+
+- **Nombre**: Ciszu Network
+- **Fundador**: Francisco Garcia (Ciszuko Antony)
+- **Sede**: Caracas, Venezuela
+- **Pais**: Venezuela
+- **Correo de contacto**: ciszunetwork@outlook.com
+- **Descripcion**: Registro de clientes (customers) de Ciszu Network: trabajos, encargos y proyectos con su asunto.
+
+## 2. Clientes activos (2)
+
+| ID | Nombre | Asunto | Correo | Telefono |
+|----|--------|--------|--------|----------|
+| CL-001 | MARIA FELIX | Tarea universitaria | - | - |
+| CL-002 | NELGER LUGO | Arreglo de una 3DS | - | - |
+
+## 3. Historial de bajas (0)
+
+| ID | Nombre | Asunto | Fecha de baja | Motivo |
+|----|--------|--------|---------------|--------|
+| - | (sin bajas registradas) | - | - | - |
+
+## 4. Metadatos
+
+- Estructura: `archives/customers/docs/` (global), `archives/customers/<CLIENTE>/` por cliente.
+- Cada cliente mantiene sus 5 formatos (`md`, `txt`, `csv`, `docx`, `pdf`), `content/{images,videos,profile}`
+  y la carpeta adicional `asunto/` para los archivos del trabajo.
+- Consola de gestion: **CUSTOMERSCON** (`test/website/debug/customerscon.ps1`).
+
+---
+
+_Ultima revision: 2026-08-26_
