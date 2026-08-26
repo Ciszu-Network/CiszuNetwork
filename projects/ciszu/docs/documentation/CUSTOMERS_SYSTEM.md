@@ -34,8 +34,8 @@ Este sistema lo reconstruye de forma ordenada y automática. Los primeros client
 | `customers.json` | **Fuente de verdad** de clientes | `archives/customers/data/customers.json` |
 | `scripts/customersgen.js` | Generador de los formatos | `scripts/customersgen.js` |
 | `scripts/customerscon.js` | Motor de la CUSTOMERSCON (operaciones + logs) | `scripts/customerscon.js` |
-| `test/website/debug/customerscon.ps1` | TUI de la Customers Console | `test/website/debug/customerscon.ps1` |
-| Log de sesión | Registro de cada acción | `test/website/debug/local-logs/customerscon-<fecha>.log` |
+| `tools/consoles/customerscon.ps1` | TUI de la Customers Console | `tools/consoles/customerscon.ps1` |
+| Log de sesión | Registro de cada acción | `tools/consoles/local-logs/customerscon-<fecha>.log` |
 
 ---
 
@@ -141,7 +141,7 @@ customerscon.ps1 (TUI)  ──>  scripts/customerscon.js (motor)  ──>  custo
         └──> local-logs/customerscon-<fecha>.log   (todo queda registrado)
 ```
 
-- **TUI**: `test/website/debug/customerscon.ps1` — estética devcon/staffcon (paleta neon, menús
+- **TUI**: `tools/consoles/customerscon.ps1` — estética devcon/staffcon (paleta neon, menús
   con flechas).
 - **Motor**: `scripts/customerscon.js` — subcomandos `list|summary|add|remove|modify`.
 - **Generador**: `scripts/customersgen.js` — regenera solo los clientes afectados (rápido).
@@ -197,7 +197,7 @@ Campos modificables: `nombres`, `apellidos`, `asunto`, `telefono`, `correo`, `di
 
 ## 7. Logs de sesión
 
-Cada acción se escribe en `test/website/debug/local-logs/customerscon-<fecha>.log`:
+Cada acción se escribe en `tools/consoles/local-logs/customerscon-<fecha>.log`:
 
 ```
 [YYYY-MM-DD HH:MM:SS] <sesión> actor=<usuario> accion=<add|remove|modify> <detalle>

@@ -22,7 +22,7 @@ const gen = require('./staffgen.js');
 const cgen = require('./customersgen.js');
 
 const ROOT = gen.ROOT;
-const LOG_DIR = path.join(ROOT, 'test', 'website', 'debug', 'local-logs');
+const LOG_DIR = path.join(ROOT, 'tools', 'consoles', 'local-logs');
 
 function parseArgs(argv) {
   const args = { _: [] };

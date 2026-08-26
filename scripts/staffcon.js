@@ -27,7 +27,7 @@ const fs = require('fs');
 const gen = require('./staffgen.js');
 
 const ROOT = gen.ROOT || path.resolve(__dirname, '..');
-const LOG_DIR = path.join(ROOT, 'test', 'website', 'debug', 'local-logs');
+const LOG_DIR = path.join(ROOT, 'tools', 'consoles', 'local-logs');
 
 // ---------- parseo de args ----------
 function parseArgs(argv) {
@@ -259,9 +259,13 @@ function doModify(args, session) {
   if (!actor) { console.error('❌ Actor no valido.'); process.exit(1); }
   const target = findEmp(data, args.id);
   if (!target || target.estado !== 'activo') { console.error(`❌ Empleado ${args.id} no existe o no esta activo.`); process.exit(1); }
-  if (target.id === actor.emp.id) { console.error('❌ No puedes modificarte a ti mismo (un supervisor debe hacerlo).'); process.exit(1); }
-  if (!actor.role.permisos.modificar) { console.error('❌ Tu cargo no tiene permiso para MODIFICAR datos.'); logLine(data, session, actor.emp.id, 'modify', 'DENEGADO: sin permiso modificar'); process.exit(1); }
-  if (!canManage(data, actor.role, target.cargo)) { console.error(`❌ No puedes modificar un cargo de nivel igual o superior al tuyo.`); logLine(data, session, actor.emp.id, 'modify', `DENEGADO: jerarquia ${target.id}`); process.exit(1); }
+  const isSelf = target.id === actor.emp.id;
+  // Auto-edición permitida: puedes corregir TUS propios datos (el rango nunca
+  // se modifica por aquí). Para gestionar a OTROS se aplica permiso + jerarquía.
+  if (!isSelf) {
+    if (!actor.role.permisos.modificar) { console.error('❌ Tu cargo no tiene permiso para MODIFICAR datos.'); logLine(data, session, actor.emp.id, 'modify', 'DENEGADO: sin permiso modificar'); process.exit(1); }
+    if (!canManage(data, actor.role, target.cargo)) { console.error(`❌ No puedes modificar un cargo de nivel igual o superior al tuyo.`); logLine(data, session, actor.emp.id, 'modify', `DENEGADO: jerarquia ${target.id}`); process.exit(1); }
+  }
   const campo = args.campo;
   if (!MODIFY_FIELDS.includes(campo)) { console.error(`❌ Campo '${campo}' no modificable. Permitidos: ${MODIFY_FIELDS.join(', ')}.`); process.exit(1); }
   const valor = args.valor ?? '';
