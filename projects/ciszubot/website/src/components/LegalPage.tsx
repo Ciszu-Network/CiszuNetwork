@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Icon } from '@ciszu/ui';
+import { Icon, LegalCiszuLink } from '@ciszu/ui';
 import type { Dict } from '@/lib/i18n';
 
 interface LegalPageProps {
@@ -35,6 +35,8 @@ export default function LegalPage({ dict, kind, title }: LegalPageProps) {
             </section>
           ))}
         </div>
+
+        <LegalCiszuLink />
       </div>
     </div>
   );

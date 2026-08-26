@@ -8,7 +8,7 @@ import "./globals.css";
 import AuthProvider from "@/components/providers/AuthProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, PostHogAnalytics, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor, ToastProvider } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, PostHogAnalytics, GoogleAnalytics, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor, ToastProvider } from "@ciszu/ui";
 import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
 
 const exo2 = Exo_2({
@@ -76,6 +76,7 @@ export default async function RootLayout({
         {/* AuthProvider: hidrata el store global con la sesión de Supabase en cada carga */}
         <AuthProvider>
           <ToastProvider>
+          <AdsProvider site="muzicmania">
           <DisclaimerProvider>
             <CloudflareGuard>
               {!isEdit && <BetaDisclaimer storageKey="betadisclaimer_muzicmania_dismissed" />}
@@ -92,6 +93,7 @@ export default async function RootLayout({
               {!isEdit && <CookiesBanner />}
             </CloudflareGuard>
           </DisclaimerProvider>
+          </AdsProvider>
           </ToastProvider>
         </AuthProvider>
         <GlobalAdvisor site="muzicmania" />
@@ -103,6 +105,9 @@ export default async function RootLayout({
           {!isEdit && <FeedbackFab />}
         </FabStackProvider>
         <PostHogAnalytics app="muzicmania" />
+        <GoogleAnalytics app="muzicmania" />
+        <AdFloat placement="corner" side="bottom-right" />
+        <AdPill placement="body" />
         {process.env.NODE_ENV === 'production' && (
           <script defer type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
         )}

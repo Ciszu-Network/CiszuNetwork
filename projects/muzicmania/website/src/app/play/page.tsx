@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useQueryState } from 'nuqs';
 import NextImage from 'next/image';
+import AfterGameAd from '@/components/ads/AfterGameAd';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
 import { trackBanner, trackCover, trackDisc } from '@/utils/musicAssets';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -3692,6 +3693,7 @@ function PlayPageContent() {
           {/* --- RESULTS PHASE --- */}
           {phase === 'results' && selectedTrack && (
             <motion.div key="results" initial="hidden" animate="visible" exit="exit" variants={sectionVariants} className="max-w-5xl mx-auto w-full my-auto px-4 md:px-6">
+              <AfterGameAd />
               <div className="bg-black/60 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-6 md:p-8 shadow-2xl relative overflow-hidden">
                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] blur-[100px] rounded-full -z-10"
                    style={accentColors[selectedTrack.id] ? { backgroundColor: `${accentColors[selectedTrack.id]}33` } : { backgroundColor: 'rgba(128,0,255,0.2)' }}

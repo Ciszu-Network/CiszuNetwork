@@ -286,3 +286,7 @@ projects/ciszugamens/
 # Lighthouse CI artifacts
 .lighthouseci/
 .lighthouseci/**
+
+# Consolas (tools/consoles): logs de sesion
+tools/consoles/local-logs/
+

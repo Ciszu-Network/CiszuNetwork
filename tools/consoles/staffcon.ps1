@@ -177,10 +177,19 @@ function Invoke-StaffNode {
     Push-Location $root
     try {
         node @NodeArgs 2>&1 | Out-Host
-        return $LASTEXITCODE
+        $code = $LASTEXITCODE
     } finally {
         Pop-Location
     }
+    # Exit code 3 = denegación de permisos: el ID no puede proceder la acción.
+    # Los IDs de empleado son secretos; se cierra la consola por seguridad.
+    if ($code -eq 3) {
+        Write-Host ""
+        Write-Host "${c_red}Acceso DENEGADO: tu ID no tiene permisos para esa acción. Cerrando la consola por seguridad.${c_reset}"
+        Start-Sleep -Milliseconds 1200
+        exit 3
+    }
+    return $code
 }
 
 # ---------- Identidad ----------
