@@ -80,6 +80,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             <AuthProvider>
               <ToastProvider>
               <AdsProvider site="ciszubot">
+              <AdFloat placement="corner" side="bottom-right" />
+              <AdPill placement="body" />
               <DisclaimerProvider>
               {!isEdit && <BetaDisclaimer storageKey="betadisclaimer_ciszubot_dismissed" />}
               {!isEdit && <Navbar lang={lang} dict={dict} account={session} />}
@@ -104,8 +106,6 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           <GoogleAnalytics app="ciszubot" />
           <GoogleTagManager />
           <AdSenseLoader />
-          <AdFloat placement="corner" side="bottom-right" />
-          <AdPill placement="body" />
         </QueryProvider>
       </body>
     </html>

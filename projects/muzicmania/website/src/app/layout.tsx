@@ -77,6 +77,8 @@ export default async function RootLayout({
         <AuthProvider>
           <ToastProvider>
           <AdsProvider site="muzicmania">
+          <AdFloat placement="corner" side="bottom-right" />
+          <AdPill placement="body" />
           <DisclaimerProvider>
             <CloudflareGuard>
               {!isEdit && <BetaDisclaimer storageKey="betadisclaimer_muzicmania_dismissed" />}
@@ -108,8 +110,6 @@ export default async function RootLayout({
         <GoogleAnalytics app="muzicmania" />
         <GoogleTagManager />
         <AdSenseLoader />
-        <AdFloat placement="corner" side="bottom-right" />
-        <AdPill placement="body" />
         {process.env.NODE_ENV === 'production' && (
           <script defer type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
         )}

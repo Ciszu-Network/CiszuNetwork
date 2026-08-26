@@ -79,6 +79,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           <DisclaimerProvider>
             <ToastProvider>
             <AdsProvider site="ciszukoantony">
+            <AdFloat placement="corner" side="bottom-right" />
+            <AdPill placement="body" />
             <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={PROFILE_PIC} title="Ciszuko Antony" subtitle="Ciszuko Antony Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszukoantony">
               {!isEdit && <BetaDisclaimer storageKey="betadisclaimer_ciszukoantony_dismissed" />}
               {!isEdit && <Navbar />}
@@ -103,8 +105,6 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <GoogleAnalytics app="ciszukoantony" />
         <GoogleTagManager />
         <AdSenseLoader />
-        <AdFloat placement="corner" side="bottom-right" />
-        <AdPill placement="body" />
         {process.env.NODE_ENV === 'production' && (
           <script defer type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
         )}
