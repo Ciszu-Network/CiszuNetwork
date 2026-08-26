@@ -76,6 +76,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <AuthProvider>
           <ToastProvider>
           <AdsProvider site="ciszunetwork">
+          <AdFloat placement="corner" side="bottom-right" />
+          <AdPill placement="body" />
           <DisclaimerProvider>
             <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={ICON_SVG} title="Ciszu Network" subtitle="Ciszu Network Security • Cloudflare" accent="#22d3ee" storageKey="cf_verified_ciszu">
               {!isEdit && <ZoomWarning />}
@@ -101,8 +103,6 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <GoogleAnalytics app="ciszunetwork" />
         <GoogleTagManager />
         <AdSenseLoader />
-        <AdFloat placement="corner" side="bottom-right" />
-        <AdPill placement="body" />
         {process.env.NODE_ENV === 'production' && (
           <script defer type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
         )}

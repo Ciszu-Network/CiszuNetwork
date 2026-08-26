@@ -272,6 +272,12 @@ export function useAds(): AdsContextValue {
   return ctx;
 }
 
+// Variante null-safe: los componentes flotantes NO deben romper la página si se
+// montan sin <AdsProvider> (evita errores 500 en SSR por mal anidamiento).
+function useAdsSafe(): AdsContextValue | null {
+  return useContext(AdsContext);
+}
+
 // ---------- Estilos de animación (una sola vez) ----------
 const ADS_CSS = `
 @keyframes ciszu-ad-pop { from { opacity: 0; transform: translate(-50%,-48%) scale(.92); } to { opacity: 1; transform: translate(-50%,-50%) scale(1); } }
@@ -370,29 +376,30 @@ export interface AdFloatProps {
 }
 
 export function AdFloat({ placement = 'corner', side = 'bottom-right', className }: AdFloatProps) {
-  const { trigger, dismiss, current } = useAds();
+  const ads = useAdsSafe();
   const [visible, setVisible] = useState(false);
   const [ad, setAd] = useState<AdConfig | null>(null);
 
   const tryShow = useCallback(() => {
-    if (current) return; // si hay un modal abierto, no molestar
-    const picked = trigger('particulares', placement);
+    if (!ads || ads.current) return; // sin provider o con modal abierto, no molestar
+    const picked = ads.trigger('particulares', placement);
     if (picked) {
       setAd(picked);
       setVisible(true);
     }
-  }, [trigger, placement, current]);
+  }, [ads, placement]);
 
   useEffect(() => {
+    if (!ads) return;
     const first = window.setTimeout(tryShow, 8000);
     const iv = window.setInterval(tryShow, 60000);
     return () => {
       window.clearTimeout(first);
       window.clearInterval(iv);
     };
-  }, [tryShow]);
+  }, [tryShow, ads]);
 
-  if (!visible || !ad) return null;
+  if (!ads || !visible || !ad) return null;
 
   const c = ad.content;
   const pos =
@@ -406,7 +413,7 @@ export function AdFloat({ placement = 'corner', side = 'bottom-right', className
       <div className="relative w-[min(86vw,320px)] rounded-xl border border-white/10 bg-[#0e1118] p-4 shadow-xl">
         <button
           aria-label="Cerrar"
-          onClick={() => { setVisible(false); dismiss(); }}
+          onClick={() => { setVisible(false); ads?.dismiss(); }}
           className="absolute right-2 top-2 grid h-6 w-6 place-items-center rounded-full text-neutral-500 transition hover:bg-white/10 hover:text-white"
         >
           X
@@ -441,19 +448,20 @@ export interface AdPillProps {
 }
 
 export function AdPill({ placement = 'body', side = 'bottom-center', className }: AdPillProps) {
-  const { trigger, dismiss } = useAds();
+  const ads = useAdsSafe();
   const [ad, setAd] = useState<AdConfig | null>(null);
   const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
+    if (!ads) return;
     const t = window.setTimeout(() => {
-      const picked = trigger('optional', placement);
+      const picked = ads.trigger('optional', placement);
       if (picked) setAd(picked);
     }, 2000);
     return () => window.clearTimeout(t);
-  }, [trigger, placement]);
+  }, [ads, placement]);
 
-  if (!ad || hidden) return null;
+  if (!ads || !ad || hidden) return null;
   const c = ad.content;
   const pos =
     side === 'top-center'
@@ -481,7 +489,7 @@ export function AdPill({ placement = 'body', side = 'bottom-center', className }
         </a>
         <button
           aria-label="Cerrar"
-          onClick={() => { setHidden(true); dismiss(); }}
+          onClick={() => { setHidden(true); ads?.dismiss(); }}
           className="grid h-7 w-7 shrink-0 place-items-center rounded-full text-neutral-500 transition hover:bg-white/10 hover:text-white"
         >
           X
