@@ -142,10 +142,16 @@ Ciszuko creó las propiedades de Google del ecosistema. **Implementación real**
 
 ### 7.3 Verificación (QA)
 
+- Env vars añadidas a **Vercel** (CLI, production + preview) en los 4 proyectos
+  (`ciszunetworkpage`, `ciszukoantonypage`, `ciszubot`, `muzicmania`):
+  `NEXT_PUBLIC_GTM_ID`, `NEXT_PUBLIC_GA4_MEASUREMENT_ID`, `NEXT_PUBLIC_ADSENSE_CLIENT`
+  (verificadas con `vercel env ls production`).
 - `curl -I https://www.googletagmanager.com/gtm.js?id=GTM-N7Q8DGX5` → 200.
 - `curl -I https://www.googletagmanager.com/gtag/js?id=G-TQH12LRZK6` → 200.
 - `curl -I "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3471969072198962"` → 200.
 - En el navegador: `window.dataLayer` presente y `dataLayer.push` funcionando (GTM).
+- **Deploy de `main` pendiente**: al pushear, el CI despliega las 4 webs con el stack Google
+  (GA4 + GTM + AdSense) y las env vars se activan en producción.
 
 ## 8. Relaciones
 
