@@ -1,0 +1,439 @@
+{
+  "schemaVersion": "1.0.0",
+  "actualizacion": "2026-08-26",
+  "org": {
+    "nombre": "Ciszu Network",
+    "fundador": "Francisco Garcia (Ciszuko Antony)",
+    "pais": "Venezuela",
+    "sede": "Caracas, Venezuela",
+    "correo": "ciszunetwork@outlook.com",
+    "idioma": "es",
+    "prefijoId": "CZ",
+    "descripcion": "Ecosistema digital y masivo de Ciszuko Antony: 4 webs Next.js, bot de Discord, juego de musica y paquetes compartidos."
+  },
+  "roles": [
+    {
+      "carpeta": "CEO",
+      "nombre": "CEO",
+      "displayName": "Director Ejecutivo",
+      "nivel": 0,
+      "permisos": {
+        "anadir": true,
+        "quitar": true,
+        "rango": true,
+        "modificar": true
+      },
+      "descripcion": "Maxima autoridad de la organizacion. Unico fundador y legitimo creador del proyecto. Responsable de la vision, estrategia global, representacion de la marca y decisiones finales.",
+      "responsabilidades": [
+        "Definir la vision y estrategia global del ecosistema",
+        "Tomar las decisiones finales de producto, marca y negocio",
+        "Representar la organizacion ante terceros y medios",
+        "Aprobar rangos, contrataciones y bajas de personal",
+        "Supervisar a todos los equipos y C-level"
+      ],
+      "horario": "Lunes a domingo, horario flexible, disponibilidad total segun demanda"
+    },
+    {
+      "carpeta": "CTO",
+      "nombre": "CTO",
+      "displayName": "Director de Tecnologia",
+      "nivel": 1,
+      "permisos": {
+        "anadir": true,
+        "quitar": false,
+        "rango": false,
+        "modificar": true
+      },
+      "descripcion": "Responsable de la arquitectura tecnica, el stack del monorepo, la seguridad del codigo y la calidad de los despliegues.",
+      "responsabilidades": [
+        "Definir la arquitectura y el stack tecnico",
+        "Supervisar desarrolladores, DevOps y ciberseguridad",
+        "Garantizar calidad, testing y despliegues seguros",
+        "Mantener la documentacion tecnica de los sistemas"
+      ],
+      "horario": "Lunes a viernes, 9:00-17:00 (flexible)"
+    },
+    {
+      "carpeta": "CCO",
+      "nombre": "CCO",
+      "displayName": "Director Creativo",
+      "nivel": 1,
+      "permisos": {
+        "anadir": true,
+        "quitar": false,
+        "rango": false,
+        "modificar": true
+      },
+      "descripcion": "Responsable de la identidad visual de la marca: diseno, linea grafica, contenido multimedia y experiencia visual.",
+      "responsabilidades": [
+        "Definir y proteger la identidad visual (neon cyan/rosa, Geomanist)",
+        "Supervisar disenadores, UI/UX y editores",
+        "Guiar el contenido visual de todas las webs y redes"
+      ],
+      "horario": "Lunes a viernes, 9:00-17:00 (flexible)"
+    },
+    {
+      "carpeta": "COO",
+      "nombre": "COO",
+      "displayName": "Director de Operaciones",
+      "nivel": 1,
+      "permisos": {
+        "anadir": true,
+        "quitar": false,
+        "rango": false,
+        "modificar": true
+      },
+      "descripcion": "Responsable de la operacion diaria: flujos de trabajo, infraestructura, calendario y coordinacion entre equipos.",
+      "responsabilidades": [
+        "Coordinar la operacion diaria y los flujos de trabajo",
+        "Supervisar gerentes, supervisores y soporte",
+        "Gestionar el calendario y los hitos del ecosistema"
+      ],
+      "horario": "Lunes a viernes, 9:00-17:00 (flexible)"
+    },
+    {
+      "carpeta": "CMO",
+      "nombre": "CMO",
+      "displayName": "Director de Marketing",
+      "nivel": 1,
+      "permisos": {
+        "anadir": true,
+        "quitar": false,
+        "rango": false,
+        "modificar": true
+      },
+      "descripcion": "Responsable de la presencia de la marca: campanas, SEO, analitica, redes y crecimiento de audiencia.",
+      "responsabilidades": [
+        "Planificar campanas de marketing y crecimiento",
+        "Supervisar community managers y ventas",
+        "Analizar metricas y SEO de las webs"
+      ],
+      "horario": "Lunes a viernes, 9:00-17:00 (flexible)"
+    },
+    {
+      "carpeta": "CFO",
+      "nombre": "CFO",
+      "displayName": "Director Financiero",
+      "nivel": 1,
+      "permisos": {
+        "anadir": true,
+        "quitar": false,
+        "rango": false,
+        "modificar": true
+      },
+      "descripcion": "Responsable de las finanzas de la organizacion: presupuestos, pagos, facturacion y registro fiscal.",
+      "responsabilidades": [
+        "Gestionar presupuesto, pagos y facturacion",
+        "Supervisar al equipo de finanzas",
+        "Cumplimiento fiscal y legal de la empresa"
+      ],
+      "horario": "Lunes a viernes, 9:00-17:00 (flexible)"
+    },
+    {
+      "carpeta": "Gerentes",
+      "nombre": "Gerentes",
+      "displayName": "Gerencia",
+      "nivel": 2,
+      "permisos": {
+        "anadir": true,
+        "quitar": true,
+        "rango": true,
+        "modificar": true
+      },
+      "descripcion": "Lideran un area o proyecto concreto. Tienen autoridad para crear empleados, gestionar sus equipos, cambiar rangos y registrar bajas de su area.",
+      "responsabilidades": [
+        "Liderar un area o proyecto concreto",
+        "Crear y gestionar empleados de su equipo",
+        "Cambiar rangos dentro de su area",
+        "Reportar a direccion (C-level)"
+      ],
+      "horario": "Lunes a viernes, 9:00-17:00 (turnos segun equipo)"
+    },
+    {
+      "carpeta": "Supervisores",
+      "nombre": "Supervisores",
+      "displayName": "Supervision",
+      "nivel": 3,
+      "permisos": {
+        "anadir": true,
+        "quitar": true,
+        "rango": true,
+        "modificar": true
+      },
+      "descripcion": "Supervisan el trabajo diario de un equipo. Pueden crear empleados, gestionar datos, cambiar rangos y registrar bajas de rangos inferiores.",
+      "responsabilidades": [
+        "Supervisar el trabajo diario del equipo",
+        "Crear y gestionar empleados de rangos inferiores",
+        "Registrar datos y cambios de sus supervisados",
+        "Reportar a gerencia"
+      ],
+      "horario": "Lunes a viernes, 9:00-17:00 (turnos segun equipo)"
+    },
+    {
+      "carpeta": "Administradores",
+      "nombre": "Administradores",
+      "displayName": "Administracion",
+      "nivel": 4,
+      "permisos": {
+        "anadir": false,
+        "quitar": false,
+        "rango": false,
+        "modificar": true
+      },
+      "descripcion": "Manejan la operacion administrativa y el dia a dia del ecosistema. Pueden corregir datos de rangos inferiores pero no crear, quitar ni ascender.",
+      "responsabilidades": [
+        "Gestion operativa y administrativa del dia a dia",
+        "Corregir datos de contacto y perfiles de rangos inferiores",
+        "Soporte a gerencia y supervision"
+      ],
+      "horario": "Lunes a viernes, 9:00-16:00"
+    },
+    {
+      "carpeta": "RecursosHumanos",
+      "nombre": "RecursosHumanos",
+      "displayName": "Recursos Humanos",
+      "nivel": 4,
+      "permisos": {
+        "anadir": false,
+        "quitar": false,
+        "rango": false,
+        "modificar": true
+      },
+      "descripcion": "Gestiona la documentacion del personal, horarios y bienestar del equipo. Puede corregir datos de rangos inferiores.",
+      "responsabilidades": [
+        "Mantener la documentacion del personal",
+        "Gestionar horarios y bienestar del equipo",
+        "Corregir datos de perfiles de rangos inferiores"
+      ],
+      "horario": "Lunes a viernes, 9:00-16:00"
+    },
+    {
+      "carpeta": "Ciberseguridad",
+      "nombre": "Ciberseguridad",
+      "displayName": "Ciberseguridad",
+      "nivel": 5,
+      "permisos": {
+        "anadir": false,
+        "quitar": false,
+        "rango": false,
+        "modificar": false
+      },
+      "descripcion": "Protege el ecosistema: auditorias, RLS, SAST/DAST, gestion de secretos y respuesta a incidentes.",
+      "responsabilidades": [
+        "Auditorias de seguridad y revision de RLS",
+        "Gestion de secretos y politicas de acceso",
+        "Respuesta a incidentes de seguridad"
+      ],
+      "horario": "Lunes a domingo, guardias rotativas 24/7 segun plan de seguridad"
+    },
+    {
+      "carpeta": "DevOps",
+      "nombre": "DevOps",
+      "displayName": "DevOps e Infraestructura",
+      "nivel": 5,
+      "permisos": {
+        "anadir": false,
+        "quitar": false,
+        "rango": false,
+        "modificar": false
+      },
+      "descripcion": "Gestiona CI/CD, despliegues, contenedores, VPS y monitorizacion del ecosistema.",
+      "responsabilidades": [
+        "CI/CD y despliegues desde main",
+        "Gestion de contenedores, VPS y monitorizacion",
+        "Automatizacion de infraestructura"
+      ],
+      "horario": "Lunes a viernes, 9:00-18:00 (disponibilidad para ventanas de deploy)"
+    },
+    {
+      "carpeta": "Desarrolladores",
+      "nombre": "Desarrolladores",
+      "displayName": "Desarrollo",
+      "nivel": 6,
+      "permisos": {
+        "anadir": false,
+        "quitar": false,
+        "rango": false,
+        "modificar": false
+      },
+      "descripcion": "Implementan funcionalidades en las 4 webs, el bot de Discord y los paquetes compartidos del monorepo.",
+      "responsabilidades": [
+        "Desarrollo en Next.js, paquetes compartidos y bot",
+        "Testing y calidad de codigo",
+        "Seguir la documentacion de cada sistema"
+      ],
+      "horario": "Lunes a viernes, 9:00-18:00 (remoto, horario flexible con reunion diaria)"
+    },
+    {
+      "carpeta": "UIUX",
+      "nombre": "UIUX",
+      "displayName": "Diseno UI/UX",
+      "nivel": 6,
+      "permisos": {
+        "anadir": false,
+        "quitar": false,
+        "rango": false,
+        "modificar": false
+      },
+      "descripcion": "Disenan la interfaz y experiencia de usuario de todas las webs y de la consola.",
+      "responsabilidades": [
+        "Diseno de interfaces y experiencia de usuario",
+        "Mantener la consistencia visual y de componentes",
+        "Prototipado y testing de usabilidad"
+      ],
+      "horario": "Lunes a viernes, 9:00-18:00 (remoto, horario flexible)"
+    },
+    {
+      "carpeta": "Disenadores",
+      "nombre": "Disenadores",
+      "displayName": "Diseno Grafico",
+      "nivel": 6,
+      "permisos": {
+        "anadir": false,
+        "quitar": false,
+        "rango": false,
+        "modificar": false
+      },
+      "descripcion": "Crean el contenido visual de la marca: logos, banners, edicion multimedia y assets para el CDN.",
+      "responsabilidades": [
+        "Creacion de logos, banners y assets visuales",
+        "Edicion multimedia para las webs y redes",
+        "Mantener la linea grafica de la marca"
+      ],
+      "horario": "Lunes a viernes, 9:00-18:00 (remoto, horario flexible)"
+    },
+    {
+      "carpeta": "QA",
+      "nombre": "QA",
+      "displayName": "Control de Calidad",
+      "nivel": 6,
+      "permisos": {
+        "anadir": false,
+        "quitar": false,
+        "rango": false,
+        "modificar": false
+      },
+      "descripcion": "Prueba el ecosistema: E2E Playwright, unit tests, revision de builds y reporte de errores.",
+      "responsabilidades": [
+        "Testing E2E y unitario",
+        "Revision de builds y regresiones",
+        "Reporte y seguimiento de errores"
+      ],
+      "horario": "Lunes a viernes, 9:00-18:00 (horario flexible)"
+    },
+    {
+      "carpeta": "CommunityManagers",
+      "nombre": "CommunityManagers",
+      "displayName": "Community Management",
+      "nivel": 7,
+      "permisos": {
+        "anadir": false,
+        "quitar": false,
+        "rango": false,
+        "modificar": false
+      },
+      "descripcion": "Gestionan las redes sociales y la comunidad: publicaciones, interaccion, anuncios y feedback.",
+      "responsabilidades": [
+        "Gestionar redes sociales y comunidad",
+        "Publicar contenido y anuncios",
+        "Recolectar feedback de los usuarios"
+      ],
+      "horario": "Turnos rotativos, cobertura manana-tarde-noche segun calendario"
+    },
+    {
+      "carpeta": "SoporteTecnico",
+      "nombre": "SoporteTecnico",
+      "displayName": "Soporte Tecnico",
+      "nivel": 7,
+      "permisos": {
+        "anadir": false,
+        "quitar": false,
+        "rango": false,
+        "modificar": false
+      },
+      "descripcion": "Atienden dudas, reportes e incidencias de los usuarios de las webs y del bot.",
+      "responsabilidades": [
+        "Atender dudas y reportes de usuarios",
+        "Escalar incidencias tecnicas al equipo de desarrollo",
+        "Mantener el correo de contacto"
+      ],
+      "horario": "Turnos rotativos, cobertura manana-tarde-noche segun calendario"
+    },
+    {
+      "carpeta": "Moderadores",
+      "nombre": "Moderadores",
+      "displayName": "Moderacion",
+      "nivel": 8,
+      "permisos": {
+        "anadir": false,
+        "quitar": false,
+        "rango": false,
+        "modificar": false
+      },
+      "descripcion": "Mantienen el orden en la comunidad: canales, chats, reseñas y cumplimiento de las reglas.",
+      "responsabilidades": [
+        "Moderar canales, chats y reseñas",
+        "Aplicar las reglas de la comunidad",
+        "Escalar incidentes a soporte o administracion"
+      ],
+      "horario": "Turnos rotativos, cobertura amplia segun calendario"
+    },
+    {
+      "carpeta": "Betatesters",
+      "nombre": "Betatesters",
+      "displayName": "Beta Tester",
+      "nivel": 9,
+      "permisos": {
+        "anadir": false,
+        "quitar": false,
+        "rango": false,
+        "modificar": false
+      },
+      "descripcion": "Prueban funcionalidades en fase beta y reportan errores o mejoras antes de cada lanzamiento.",
+      "responsabilidades": [
+        "Probar funcionalidades en fase beta",
+        "Reportar errores y mejoras",
+        "Validar correcciones antes del lanzamiento"
+      ],
+      "horario": "Por campana de prueba, sin horario fijo"
+    }
+  ],
+  "empleados": [
+    {
+      "id": "CZ-001",
+      "nombres": "Francisco",
+      "apellidos": "Garcia",
+      "telefono": "",
+      "correo": "ciszunetwork@outlook.com",
+      "direccion": "Caracas, Venezuela",
+      "redes": [],
+      "cargo": "CEO",
+      "cargos": [
+        "CEO",
+        "CTO",
+        "CCO",
+        "COO",
+        "CMO",
+        "CFO",
+        "Gerentes",
+        "Supervisores",
+        "Administradores",
+        "RecursosHumanos",
+        "Ciberseguridad",
+        "DevOps",
+        "Desarrolladores",
+        "UIUX",
+        "Disenadores",
+        "QA",
+        "CommunityManagers",
+        "SoporteTecnico",
+        "Moderadores",
+        "Betatesters"
+      ],
+      "supervisor": null,
+      "fechaIngreso": null,
+      "estado": "activo",
+      "registroBaja": null
+    }
+  ]
+}

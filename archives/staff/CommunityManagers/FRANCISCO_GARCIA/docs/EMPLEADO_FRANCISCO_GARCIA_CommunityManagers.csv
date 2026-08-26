@@ -1,0 +1,2 @@
+id,nombres,apellidos,telefono,correo,direccion,cargo,nivel,supervisor,fechaIngreso,estado
+CZ-001,Francisco,Garcia,,ciszunetwork@outlook.com,"Caracas, Venezuela",CommunityManagers,7,,,activo
