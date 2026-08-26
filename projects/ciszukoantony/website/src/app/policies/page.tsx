@@ -32,6 +32,12 @@ const sections = [
     ] as RichPart[],
   },
   {
+    id: 'anuncios', title: 'Ads & Advertising',
+    content: [
+      { text: 'This website shows its own ads (promotion of the Ciszu Network ecosystem) and, in the future, third-party ads. All ads are optional and closable, with a visible countdown timer and a link to these policies. Impressions, clicks and dismissals are measured in aggregate (Google Analytics 4) to improve relevance; we never link ads to sensitive data.' },
+    ] as RichPart[],
+  },
+  {
     id: 'legal', title: 'Legal Notice',
     content: [
       NETWORK_LINK,

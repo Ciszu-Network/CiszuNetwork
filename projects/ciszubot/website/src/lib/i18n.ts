@@ -312,6 +312,10 @@ export const dict = {
           h: '6. Contacto',
           p: 'Para preguntas sobre estos términos, únete al servidor de soporte de Discord.',
         },
+        {
+          h: 'anuncios',
+          p: 'CiszuBot muestra anuncios propios (promoción del ecosistema Ciszu Network) y, en el futuro, de terceros. Todos los anuncios son opcionales y cerrables, con temporizador visible y enlace a estas políticas. Las impresiones, clics y cierres se miden de forma agregada (Google Analytics 4) para mejorar la relevancia; nunca vinculamos anuncios a datos sensibles. Puedes gestionar o bloquear las cookies de análisis desde tu navegador.',
+        },
       ],
     },
     privacyPage: {
@@ -614,6 +618,10 @@ export const dict = {
         {
           h: '6. Contact',
           p: 'For questions about these terms, join the Discord support server.',
+        },
+        {
+          h: 'anuncios',
+          p: 'CiszuBot displays its own ads (promotion of the Ciszu Network ecosystem) and, in the future, third-party ads. All ads are optional and closable, with a visible countdown timer and a link to these policies. Impressions, clicks and dismissals are measured in aggregate (Google Analytics 4) to improve relevance; we never link ads to sensitive data. You can manage or block analytics cookies from your browser.',
         },
       ],
     },

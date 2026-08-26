@@ -29,7 +29,7 @@ export default function LegalPage({ dict, kind, title }: LegalPageProps) {
 
         <div className="space-y-6">
           {page.sections.map((s) => (
-            <section key={s.h} className="soft-card rounded-2xl p-6">
+            <section key={s.h} id={s.h} className="soft-card rounded-2xl p-6">
               <h2 className="font-bold text-ink mb-2">{s.h}</h2>
               <p className="text-sm text-muted leading-relaxed">{s.p}</p>
             </section>

@@ -17,6 +17,7 @@ const sections = [
     content: "La información recopilada se utiliza para: (1) mejorar nuestros servicios y su rendimiento, (2) personalizar tu experiencia, (3) recomendar contenido y anuncios relevantes, (4) comunicarnos contigo, y (5) cumplir obligaciones legales. Puedes solicitar la eliminación de tus datos en cualquier momento contactándonos. No vendemos datos personales a terceros.",
   },
   {
+    id: "anuncios",
     title: "Anuncios y Publicidad",
     content: "Ciszu Network muestra anuncios propios (promoción del ecosistema) y, en el futuro, de terceros. Todos los anuncios son opcionales y cerrables. Los datos de interacción con anuncios (impresiones, clics, cierres) se miden de forma agregada para mejorar la experiencia y la relevancia, y pueden incluir señales de audiencia (idioma, ubicación aproximada). Nunca vinculamos anuncios a datos sensibles.",
   },
@@ -68,7 +69,7 @@ export default function PoliciesPage() {
 
         <div className="space-y-6">
           {sections.map((s, i) => (
-            <div key={i} className="p-6 rounded-2xl bg-brand/5 border border-brand/20">
+            <div key={i} id={s.id} className="p-6 rounded-2xl bg-brand/5 border border-brand/20">
               <h2 className="text-lg font-header font-bold text-white mb-3">{s.title}</h2>
               <p className="text-gray-400 text-sm leading-relaxed">{s.content}</p>
             </div>

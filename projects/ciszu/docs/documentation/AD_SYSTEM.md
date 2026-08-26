@@ -1,14 +1,16 @@
 # AD_SYSTEM — Sistema de Anuncios de Ciszu Network
 
-Versión: 1.0.0
+Versión: 2.0.0
 Actualización: 2026-08-26
-Identificador: AD_SYSTEM_V1.0.0_2026_08_26_ciszunetwork
+Identificador: AD_SYSTEM_V2.0.0_2026_08_26_ciszunetwork
 
-> **Definición**: sistema de anuncios compartido de Ciszu Network para las 4 webs. Define **4 tipos
-> de anuncio** (intrusivos, particulares, de recompensa y opcionales), sus reglas de aparición,
-> cierre y recompensa, el **catálogo** de anuncios propios, la integración con **Google Analytics 4**
-> para medir impresiones/clics/cierres y la investigación de Google AdSense y alternativas. Tarea
-> `TODO.md #5`.
+> **Definición**: sistema de anuncios compartido de Ciszu Network para las 4 webs. Define los
+> **4 tipos** (intrusivos, particulares, de recompensa y opcionales), sus **4 formatos**
+> (patrocinado, imagen, vídeo, carrusel) con **temporizador visible**, reglas de aparición,
+> cierre y recompensa (incluida la advertencia al cerrar recompensas), **cooldown global 1h**,
+> balance **25% patrocinado / 75% terceros**, **no auto-propagación**, mini aviso "Próximo
+> anuncio en", isotipos reales vía CDN, el **catálogo**, la integración con **Google Analytics 4**
+> para medir impresiones/clics/cierres y la investigación de Google AdSense. Tarea `TODO.md #5`.
 
 ---
 
@@ -20,7 +22,7 @@ Ciszu Network monetiza con anuncios **propios** (promoción del ecosistema) resp
 **catálogo** y la mecánica es idéntica en las 4 webs.
 
 Principios:
-1. **Todo anuncio se puede cerrar** (obligatorio).
+1. **Todo anuncio se puede cerrar salvo que se declare no-closable** (`closable: false`).
 2. **Nunca se incrustan en el layout**: son *overlays* flotantes (modal centrado, esquinas,
    píldora inferior) para no romper el estilo/diseño de ninguna web.
 3. **Respetan al usuario**: los temporales/periodicos exigen espera para la recompensa (la mitad);
@@ -33,23 +35,60 @@ Principios:
 
 | Tipo | Cuándo aparece | Cómo se ve | Cierre |
 |---|---|---|---|
-| **Intrusivo** | Siempre tras una acción del usuario (fin de partida, compra futura, etc.) | Modal centrado con blur de fondo y animación fluida | X en cualquier momento (vuelve en la siguiente acción) |
-| **Particulares** | De vez en cuando, en ciertos lugares (esquinas flotantes) | Flotante de esquina pequeño | X = *snooze*: respeta su intervalo para reaparecer |
-| **Recompensa** | Periódico/temporal (ej. tras una partida, con intervalo) | Modal centrado con contador | X sin reclamar; para reclamar hay que esperar el tiempo (recompensa = **la mitad**) |
-| **Opcional** | En lugares prescindibles, aparece sin molestar | Píldora flotante inferior | X en cualquier momento (se despide permanentemente) |
+| **Intrusivo** | SIEMPRE tras una acción explícita del usuario (hoy: fin de partida de MuzicMania). NUNCA en navegación normal | Modal centrado con blur | X (si lleva recompensa: avisa de la pérdida; si no, cierra directo) |
+| **Recompensa** | Tras una acción con recompensa (ej. partida) | Modal centrado con contador y botón Reclamar | X avisa de que perderás la recompensa (la mitad) |
+| **Particulares** | Pasivos, programados (esquina flotante), con cooldown global largo | Flotante de esquina | X = *snooze* (respeta su intervalo) |
+| **Opcional** | Pasivos, programados (banner inferior) | Píldora inferior | X (se despide permanentemente) |
 
-### 2.1 Reglas de recompensa (periódicos/temporales)
+### 2.1 Formatos y temporizador visible (TODOS los anuncios)
 
-- Un anuncio de recompensa muestra un **temporizador** (`rewardWaitSec`, por defecto 30s).
-- Hasta que no pasa el tiempo, el botón "Reclamar" está deshabilitado.
-- La recompensa otorgada es **la mitad** de la recompensa estándar (por eso es "periódico/temporal":
-  se puede ver muchas veces, pero cada recompensa individual vale la mitad).
-- Cerrar el anuncio = no reclamar (se pierde esa oportunidad).
+Todo anuncio muestra una **barra amarilla + contador de segundos** de auto-cierre. La duración
+depende del formato y del tipo:
 
-### 2.2 Frecuencia (particulares / recompensa)
+| Formato | Duración pasivo | Duración intrusivo/recompensa (el DOBLE) |
+|---|---|---|
+| **Patrocinado** (Ciszu Network) | 10s | 20s |
+| **Imagen** (terceros) | 30s | 60s |
+| **Vídeo** (terceros) | duración + mitad (1.5x): 1ª reproducción completa + 2ª con contador de la mitad | duración + duración (2x) |
+| **Carrusel** | máx. 4 anuncios en cadena (15s cada uno) | — (no se usa intrusivo) |
 
-Cada anuncio puede definir `minIntervalSec` (mínimo entre impresiones). Se respeta vía
-`localStorage` (`ciszu_ads_<site>_seen`), de modo que un "de vez en cuando" nunca spamea.
+### 2.2 Reglas de recompensa
+
+- `rewardWaitSec` (por defecto 30s): hasta que pasa el tiempo, "Reclamar" está deshabilitado.
+- Recompensa = **la mitad** de la estándar.
+- **Cerrar un anuncio de recompensa muestra una advertencia** ("vas a perder la recompensa") con
+  confirmar/cancelar. Los intrusivos SIN recompensa simplemente se cierran.
+
+### 2.3 Frecuencia y cooldown (mucho más larga)
+
+- `minIntervalSec` por anuncio (patrocinados 10800s=3h, huecos reales 7200s=2h) vía
+  `localStorage` (`ciszu_ads_<site>_seen`).
+- **Un solo flotante a la vez**: la esquina (particulares) y el banner inferior (opcional)
+  comparten `floatingActive`; si uno se muestra, el otro espera. La esquina reintenta cada 90s;
+  el banner aparece una sola vez por sesión de navegación.
+- **Primer show tardío**: esquina a los 45s, banner inferior a los 90s.
+- **Usuario inactivo** (>60s sin pointer/teclado/scroll) = más propenso: el primer show se
+  adelanta (15s/30s) y los tiempos se acortan.
+- **Mini aviso "Próximo anuncio en Xs"**: aparece 15s antes de un anuncio opcional/periódico
+  (en la propia superficie) y entre items de carrusel. NUNCA para anuncios de acción/interacción
+  ni no-closables.
+
+### 2.4 Balance 25/75 y no auto-propagación
+
+- La selección pasiva elige **25% patrocinados de Ciszu Network / 75% terceros** (AdSense/real),
+  con rotación para no repetir el mismo seguido.
+- **Ninguna web se patrocina a sí misma**: el catálogo se filtra por `content.source !== site`
+  (los intrusivos/recompensa, que son tras acción, se mantienen siempre).
+
+### 2.5 No-closable y legal
+
+- Un anuncio puede declararse **no-closable** (`closable: false`): no se muestra la X.
+- Todos los modales/flotantes muestran al pie el enlace a **Términos y condiciones → sección
+  anuncios** de la web que lo muestra (`/policies#anuncios`, `/terminos#anuncios`,
+  `/terms#anuncios` según la web).
+- Los anuncios van SIEMPRE por detrás de los overlays de UI (goToUp/goToDown, toasts, FAB):
+  `z-[30]`, a nivel de body; el modal centrado intrusivo usa `z-[1050]` (debajo de
+  GlobalAdvisor `z-[1100]`).
 
 ---
 
@@ -168,17 +207,27 @@ Eventos de anuncios (vía `trackEvent` de `@ciszu/ui`):
 
 ---
 
-## 8. Catálogo por defecto (promo Ciszu Network)
+## 8. Catálogo por defecto (promo ecosistema + huecos reales)
 
-| id | tipo | placement | contenido |
-|---|---|---|---|
-| `muzicmania_after_game` | intrusivo | `game_end` | "¿Disfrutaste la partida?" → /play |
-| `ecosystem_corner` | particulares | `corner` (3600s) | Conoce el ecosistema → ciszunetwork (acento azul-morado) |
-| `reward_score` | recompensa | `game_end` (600s, 30s espera) | Mitad de puntos extra |
-| `ecosystem_body` | opcional | `body` (3600s) | Conoce más sobre Ciszu Network → ciszunetwork |
+| id | tipo | placement | formato | contenido |
+|---|---|---|---|---|
+| `ciszunetwork_corner` | particulares | `corner` (7200s) | patrocinado 10s | Crear cuenta CISZU ID → /register (azul) |
+| `muzicmania_corner` | particulares | `corner` (7200s) | patrocinado 10s | Jugar → /play (morado-rosado) |
+| `ciszubot_corner` | particulares | `corner` (7200s) | patrocinado 10s | Bot oficial de Discord (celeste) |
+| `ciszukoantony_corner` | particulares | `corner` (7200s) | patrocinado 10s | Portfolio de Ciszuko Antony (morado) |
+| `ciszugamens_corner` | particulares | `corner` (7200s) | patrocinado 10s | Unirse al servidor de Discord (cian) |
+| `real_image_corner` | particulares | `corner` (3600s) | imagen 30s | Hueco AdSense real ("Próximamente") |
+| `real_video_corner` | particulares | `corner` (3600s) | vídeo 1.5x | Hueco vídeo real |
+| `real_carousel_corner` | particulares | `corner` (3600s) | carrusel máx 4 | Hueco carrusel real |
+| `real_image_pill` | opcional | `body` (3600s) | imagen 30s | Hueco AdSense real |
+| `real_carousel_pill` | opcional | `body` (3600s) | carrusel máx 4 | Hueco carrusel real |
+| `ciszunetwork_pill` | opcional | `body` (7200s) | patrocinado 10s | Crear cuenta CISZU ID |
+| `muzicmania_after_game` | intrusivo | `game_end` | patrocinado 20s | "¿Disfrutaste la partida?" → /play |
+| `reward_score` | recompensa | `game_end` (600s, 30s espera) | imagen 60s | Mitad de puntos extra |
 
-Se puede ampliar sin tocar la mecánica: añadir un `AdConfig` al catálogo (o cambiar el provider
-de contenido a AdSense/otra red cuando se active).
+Cada patrocinado usa el **isotipo/logotipo real** de la marca vía `AssetResolver` del CDN.
+Los huecos reales muestran placeholder "Próximamente" hasta que se active AdSense; entonces el
+catálogo puede apuntar a esa red sin tocar la mecánica.
 
 ---
 
