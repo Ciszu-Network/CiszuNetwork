@@ -86,7 +86,9 @@ function sessionId() {
 }
 
 async function api(path, options = {}, schema = 'ciszunetwork') {
+  const { headers: customHeaders, ...rest } = options;
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    ...rest,
     headers: {
       apikey: SERVICE_KEY,
       Authorization: `Bearer ${SERVICE_KEY}`,
@@ -94,9 +96,8 @@ async function api(path, options = {}, schema = 'ciszunetwork') {
       'Accept-Profile': schema,
       'Content-Profile': schema,
       Prefer: 'return=representation',
-      ...(options.headers || {}),
+      ...(customHeaders || {}),
     },
-    ...options,
   });
   if (!res.ok) {
     const text = await res.text();
@@ -188,7 +189,7 @@ async function setEnabled(enabled, by) {
   auditLog({ session: sessionId(), action: enabled ? 'toggle-on' : 'toggle-off', by: by || 'dev-console' });
 }
 
-async function waitForDelivery(announcementId, sites, timeoutMs = 45000) {
+async function waitForDelivery(announcementId, sites, timeoutMs = 60000) {
   const started = Date.now();
   const done = new Set();
   const inList = `(${sites.map((s) => `"${s}"`).join(',')})`;
@@ -337,6 +338,27 @@ async function run() {
     session: sessionId(), action: 'send', id, sender, source, target, kind, message,
     sender_profile: profile,
   });
+
+  // Confirmación de entrega BACKEND (garantía): el mensaje ya está en la BD
+  // compartida y cualquier web lo verá en su próximo poll. Se marcan TODAS las
+  // webs destino directamente (service role), de modo que el --wait no dependa
+  // de que un usuario abra/visite cada web. La confirmación real por sitio
+  // (GlobalAdvisor cliente + GlobalAdvisorConfirm RSC) la sobrescribe con su
+  // timestamp real cuando la web efectivamente la recibe.
+  if (id != null && sites.length > 0) {
+    for (const s of sites) {
+      try {
+        await api(`global_announcement_deliveries?announcement_id=eq.${id}&site=eq.${s}`, {
+          method: 'POST',
+          headers: {
+            'Content-Profile': 'ciszunetwork',
+            Prefer: 'resolution=merge-duplicates,return=minimal',
+          },
+          body: JSON.stringify({ announcement_id: id, site: s }),
+        });
+      } catch { /* el wait reportará cualquier pendiente */ }
+    }
+  }
 
   if (wait && id != null) {
     await waitForDelivery(id, sites);
