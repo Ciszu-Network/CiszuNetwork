@@ -71,9 +71,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     <html lang="es" className={`${ibmPlex.variable} ${ibmPlexCondensed.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <GoogleScripts />
       </head>
       <body className="min-h-screen font-sans flex flex-col">
-        <GoogleScripts />
         <AuthProvider>
           <ToastProvider>
           <AdsProvider site="ciszunetwork">

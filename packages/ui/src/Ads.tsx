@@ -47,6 +47,10 @@ export interface AdContent {
   cta: string;
   href: string;
   accent?: string;
+  /** URL del banner/imagen del anuncio (si es un anuncio con creatividad) */
+  image?: string;
+  /** true = hueco para anuncio REAL (aún sin creatividad): muestra el placeholder de verificación */
+  placeholder?: boolean;
 }
 
 export interface AdConfig {
@@ -89,10 +93,51 @@ interface AdsContextValue {
 
 const AdsContext = createContext<AdsContextValue | null>(null);
 
-// ---------- Catálogo por defecto (promo Ciszu Network; sin emojis) ----------
-// Frecuencia: los anuncios patrocinados por Ciszu Network aparecen ~1 vez/hora
-// (3600s). Los intrusivos/recompensa solo tras una acción del usuario.
+// ---------- Catálogo por defecto (variedad: promos del ecosistema + reales) ----------
+// Regla: Ciszu Network NO se auto-propaga al entrar; los anuncios de esquina/píldora
+// promocionan OTROS productos del ecosistema o son huecos para anuncios reales.
+// Frecuencia: promos ~1/h (3600s); los huecos reales aparecen más seguido.
 export const DEFAULT_AD_CATALOG: AdConfig[] = [
+  {
+    id: 'muzicmania_corner',
+    type: 'particulares',
+    placement: 'corner',
+    minIntervalSec: 3600,
+    content: {
+      title: 'MuzicMania',
+      description: 'Juego de ritmo: compite por la tabla de líderes.',
+      cta: 'Jugar',
+      href: 'https://muzicmania.vercel.app/play',
+      accent: '#00f0ff',
+    },
+  },
+  {
+    id: 'ciszubot_corner',
+    type: 'particulares',
+    placement: 'corner',
+    minIntervalSec: 3600,
+    content: {
+      title: 'CiszuBot',
+      description: 'Tu bot de Discord: música, moderación y más.',
+      cta: 'Probar',
+      href: 'https://ciszubot.vercel.app',
+      accent: '#a78bfa',
+    },
+  },
+  {
+    id: 'real_placeholder_corner',
+    type: 'particulares',
+    placement: 'corner',
+    minIntervalSec: 1800,
+    content: {
+      title: 'Espacio para tu anuncio',
+      description: 'Anuncio personalizado próximo.',
+      cta: 'Verificar app',
+      href: 'https://adsense.google.com',
+      accent: '#facc15',
+      placeholder: true,
+    },
+  },
   {
     id: 'muzicmania_after_game',
     type: 'intrusive',
@@ -102,20 +147,7 @@ export const DEFAULT_AD_CATALOG: AdConfig[] = [
       description: 'Sigue jugando y compite por la tabla de líderes en MuzicMania.',
       cta: 'Jugar de nuevo',
       href: 'https://muzicmania.vercel.app/play',
-      accent: '#22d3ee',
-    },
-  },
-  {
-    id: 'ecosystem_corner',
-    type: 'particulares',
-    placement: 'corner',
-    minIntervalSec: 3600,
-    content: {
-      title: 'Ciszu Network',
-      description: 'Cuatro webs, un bot y un juego: conoce todo el ecosistema.',
-      cta: 'Explorar',
-      href: 'https://ciszunetwork.vercel.app',
-      accent: '#8b5cf6',
+      accent: '#00f0ff',
     },
   },
   {
@@ -133,19 +165,56 @@ export const DEFAULT_AD_CATALOG: AdConfig[] = [
     },
   },
   {
-    id: 'ecosystem_body',
+    id: 'real_placeholder_pill',
     type: 'optional',
     placement: 'body',
     minIntervalSec: 3600,
     content: {
-      title: 'Conoce más sobre Ciszu Network',
-      description: 'El universo de Ciszuko Antony en un solo lugar.',
-      cta: 'Explorar',
-      href: 'https://ciszunetwork.vercel.app',
-      accent: '#7c3aed',
+      title: 'Publicidad real próxima',
+      description: 'Estamos verificando la app y necesitamos más tráfico.',
+      cta: 'AdSense',
+      href: 'https://adsense.google.com',
+      accent: '#facc15',
+      placeholder: true,
     },
   },
 ];
+
+// ---------- Piezas visuales (etiqueta AD + banner/placeholder) ----------
+function AdLabel() {
+  return (
+    <span className="absolute left-2 top-2 z-10 rounded bg-yellow-400 px-1.5 py-0.5 text-[10px] font-black uppercase leading-none text-black">
+      AD
+    </span>
+  );
+}
+
+function AdBanner({ ad }: { ad: AdConfig }) {
+  const c = ad.content;
+  if (c.image) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={c.image} alt={c.title} className="h-24 w-full rounded-lg object-cover" />;
+  }
+  if (c.placeholder) {
+    return (
+      <div className="flex h-24 w-full flex-col items-center justify-center rounded-lg border border-dashed border-yellow-500/40 bg-yellow-500/5 px-3 text-center">
+        <p className="text-[11px] font-bold text-yellow-400">Anuncio personalizado próximo</p>
+        <p className="mt-1 text-[10px] leading-snug text-neutral-400">
+          Estamos verificando la app y necesitamos más tráfico. Aquí aparecerá el anuncio real.
+        </p>
+      </div>
+    );
+  }
+  // Anuncio oficial de Ciszu Network: banner de marca (gradiente con el título).
+  return (
+    <div
+      className="flex h-24 w-full items-center justify-center rounded-lg"
+      style={{ background: `linear-gradient(135deg, ${c.accent || '#22d3ee'}33, ${c.accent || '#22d3ee'}cc)` }}
+    >
+      <span className="px-4 text-center text-sm font-bold text-white drop-shadow">{c.title}</span>
+    </div>
+  );
+}
 
 // ---------- Persistencia (localStorage) ----------
 function readJson<T>(key: string, fallback: T): T {
@@ -173,6 +242,7 @@ export function AdsProvider({ site, children, catalog = DEFAULT_AD_CATALOG }: Ad
   const dismissedRef = useRef<Record<string, true>>({});
   const seenRef = useRef<Record<string, number>>({});
   const claimedRef = useRef<Record<string, number>>({});
+  const lastShownRef = useRef<string | null>(null);
   const hydrated = useRef(false);
 
   const dKey = `ciszu_ads_${site}_dismissed`;
@@ -201,6 +271,7 @@ export function AdsProvider({ site, children, catalog = DEFAULT_AD_CATALOG }: Ad
     const interval = (ad.minIntervalSec ?? 0) * 1000;
     if (interval > 0 && Date.now() - last < interval) return null;
     markSeen(id);
+    lastShownRef.current = id;
     setCurrent(ad);
     trackEvent('ad_impression', { ad_id: id, ad_type: ad.type, placement: ad.placement, site });
     return ad;
@@ -209,14 +280,16 @@ export function AdsProvider({ site, children, catalog = DEFAULT_AD_CATALOG }: Ad
 
   const trigger = useCallback((type: AdType, placement: string): AdConfig | null => {
     const candidates = catalog.filter((a) => a.type === type && a.placement === placement);
-    for (const ad of candidates) {
-      if (dismissedRef.current[ad.id]) continue;
+    const valid = candidates.filter((ad) => {
+      if (dismissedRef.current[ad.id]) return false;
       const last = seenRef.current[ad.id] ?? 0;
       const interval = (ad.minIntervalSec ?? 0) * 1000;
-      if (interval > 0 && Date.now() - last < interval) continue;
-      return show(ad.id);
-    }
-    return null;
+      return !(interval > 0 && Date.now() - last < interval);
+    });
+    if (valid.length === 0) return null;
+    // Rotación: no repetir el mismo anuncio seguido.
+    const pick = valid.find((a) => a.id !== lastShownRef.current) ?? valid[0];
+    return show(pick.id);
   }, [catalog, show]);
 
   const dismiss = useCallback(() => {
@@ -334,11 +407,14 @@ function AdModalInner() {
         <button
           aria-label="Cerrar anuncio"
           onClick={dismiss}
-          className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full text-neutral-400 transition hover:bg-white/10 hover:text-white"
+          className="absolute right-3 top-3 z-10 grid h-8 w-8 place-items-center rounded-full text-neutral-400 transition hover:bg-white/10 hover:text-white"
         >
           X
         </button>
-        <div className="mb-3 h-1 w-12 rounded-full" style={{ background: c.accent || '#22d3ee' }} />
+        <AdLabel />
+        <div className="mb-3">
+          <AdBanner ad={ad} />
+        </div>
         <h3 className="text-lg font-bold text-white">{c.title}</h3>
         <p className="mt-2 text-sm leading-relaxed text-neutral-300">{c.description}</p>
 
@@ -417,11 +493,14 @@ export function AdFloat({ placement = 'corner', side = 'bottom-right', className
         <button
           aria-label="Cerrar"
           onClick={() => { setVisible(false); ads?.dismiss(); }}
-          className="absolute right-2 top-2 grid h-6 w-6 place-items-center rounded-full text-neutral-500 transition hover:bg-white/10 hover:text-white"
+          className="absolute right-2 top-2 z-10 grid h-6 w-6 place-items-center rounded-full text-neutral-500 transition hover:bg-white/10 hover:text-white"
         >
           X
         </button>
-        <div className="mb-2 h-0.5 w-8 rounded-full" style={{ background: c.accent || '#f472b6' }} />
+        <AdLabel />
+        <div className="mb-2">
+          <AdBanner ad={ad} />
+        </div>
         <p className="text-sm font-bold text-white">{c.title}</p>
         <p className="mt-1 text-xs leading-relaxed text-neutral-400">{c.description}</p>
         <a
@@ -474,7 +553,8 @@ export function AdPill({ placement = 'body', side = 'bottom-center', className }
   return createPortal(
     <div className={`fixed z-[900] ${className ?? ''}`} style={{ ...pos, animation: 'ciszu-ad-rise .4s ease-out' }}>
       <style>{ADS_CSS}</style>
-      <div className="flex w-[min(94vw,560px)] items-center gap-3 rounded-full border border-white/10 bg-[#0e1118] py-2 pl-3 pr-2 shadow-xl">
+      <div className="relative flex w-[min(94vw,560px)] items-center gap-2 rounded-full border border-white/10 bg-[#0e1118] py-2 pl-2 pr-2 shadow-xl">
+        <span className="shrink-0 rounded bg-yellow-400 px-1.5 py-0.5 text-[9px] font-black uppercase leading-none text-black">AD</span>
         <div className="h-8 w-1 shrink-0 rounded-full" style={{ background: c.accent || '#a3e635' }} />
         <div className="min-w-0">
           <p className="truncate text-xs font-bold text-white">{c.title}</p>

@@ -71,9 +71,9 @@ export default async function RootLayout({
             __html: `(function(){try{var t=JSON.parse(localStorage.getItem('ciszu_preferences')||'{}');if(t&&t.theme==='light')document.documentElement.classList.add('light');}catch(e){}})();`,
           }}
         />
+        <GoogleScripts />
       </head>
       <body className="min-h-screen font-sans flex flex-col">
-        <GoogleScripts />
         {/* AuthProvider: hidrata el store global con la sesión de Supabase en cada carga */}
         <AuthProvider>
           <ToastProvider>

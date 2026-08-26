@@ -73,9 +73,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         {process.env.NODE_ENV === 'production' && (
           <script defer type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
         )}
+        <GoogleScripts />
       </head>
       <body className="bg-bg text-ink min-h-screen font-sans flex flex-col">
-        <GoogleScripts />
         <QueryProvider>
            <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={LOGO_ISOTIPO_CIRCLE} title="CiszuBot" subtitle="CiszuBot Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszubot">
             <AuthProvider>
