@@ -137,14 +137,33 @@ const AD_TIMING = {
   sponsoredWeight: 0.25,     // 25% patrocinado / 75% terceros
 } as const;
 
-// ---------- Isotipos reales vía CDN ----------
+// ---------- Isotipos reales vía CDN (outline gradient color; fallback not-outline; fallback color) ----------
 const resolver = new AssetResolver();
 const ISOTIPO: Record<Exclude<AdSource, 'external'>, string> = {
-  ciszunetwork: resolver.resolve('projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg'),
+  // ciszunetwork: outline degradado zwhite (Z blanco) + ccolor (C color) — SVG
+  ciszunetwork: resolver.resolve('projects/ciszu/content/logos/images/outline/isotype/gradient/color/ciszu_logo_isotipo_outline_degradado_zwhite_ccolor.svg'),
+  // ciszukoantony: outline degradado zwhite (Z blanco) + ccolor (C azul) — SVG
+  ciszukoantony: resolver.resolve('projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.svg'),
+  // muzicmania: NO hay outline → usamos not-outline degradado color — SVG
   muzicmania: resolver.resolve('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg'),
+  // ciszubot: versión CIRCLE (petición expresa) — PNG
   ciszubot: resolver.resolve('projects/ciszubot/content/logos/images/samples/circle/ciszubot_logo_isotipo_color_circle.png'),
-  ciszukoantony: resolver.resolve('projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png'),
-  ciszugamens: resolver.resolve('projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg'),
+  // ciszugamens: no existe proyecto/carpeta → placeholder (se usará Discord brand en catálogo)
+  ciszugamens: resolver.resolve('projects/ciszu/content/logos/images/outline/isotype/gradient/color/ciszu_logo_isotipo_outline_degradado_zwhite_ccolor.svg'),
+};
+
+// ---------- Logotipos reales vía CDN (outline gradient color; fallback not-outline; fallback color) ----------
+const LOGOTIPO: Record<Exclude<AdSource, 'external'>, string> = {
+  // ciszunetwork: outline zcolor + ccolor simple — SVG
+  ciszunetwork: resolver.resolve('projects/ciszu/content/logos/images/outline/logotype/gradient/color/ciszu_logotipo_outline_zcolor_ccolor_simple.svg'),
+  // ciszukoantony: outline degradado color simple — PNG (no SVG en outline/logotype/gradient/color)
+  ciszukoantony: resolver.resolve('projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_simple.png'),
+  // muzicmania: NO hay outline → not-outline degradado color — SVG
+  muzicmania: resolver.resolve('projects/muzicmania/content/logos/images/not-outline/logotype/gradient/color/muzicmania_logotipo_degradado_color.svg'),
+  // ciszubot: outline color (NO hay gradient en outline) → color normal — SVG
+  ciszubot: resolver.resolve('projects/ciszubot/content/logos/images/outline/logotype/color/ciszubot_logotipo_outline_color.svg'),
+  // ciszugamens: no existe → placeholder
+  ciszugamens: resolver.resolve('projects/ciszu/content/logos/images/outline/logotype/gradient/color/ciszu_logotipo_outline_zcolor_ccolor_simple.svg'),
 };
 
 // ---------- Catálogo (los sponsors NO se anuncian a sí mismos; se filtra por site) ----------
