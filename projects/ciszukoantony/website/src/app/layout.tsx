@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { Exo_2, Rajdhani } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor, ToastProvider } from "@ciszu/ui";
+import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import FeedbackFab from "@/components/layout/FeedbackFab";
@@ -90,6 +91,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           </DisclaimerProvider>
         </AuthProvider>
         <GlobalAdvisor site="ciszukoantony" />
+        <GlobalAdvisorConfirm site="ciszukoantony" />
         <PwaRegister />
         <FabStackProvider>
           {!isEdit && <InstallPdwaButton site="Ciszuko Antony" accent="#a78bfa" accentAlt="#22d3ee" />}
