@@ -9,6 +9,11 @@
     "correo": "ciszunetwork@outlook.com",
     "idioma": "es",
     "prefijoId": "CZ",
+    "accesos": {
+      "staffcon": 9,
+      "devcon": 6,
+      "customerscon": 7
+    },
     "descripcion": "Ecosistema digital y masivo de Ciszuko Antony: 4 webs Next.js, bot de Discord, juego de musica y paquetes compartidos."
   },
   "roles": [
