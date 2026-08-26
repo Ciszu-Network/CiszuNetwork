@@ -159,8 +159,8 @@ function doAdd(args, session) {
   const cargo = args.cargo;
   const role = gen.roleByFolder(data, cargo);
   if (!role) { console.error(`❌ Cargo '${cargo}' no existe.`); logLine(data, session, actor.emp.id, 'add', `DENEGADO: cargo '${cargo}' inexistente`); process.exit(1); }
-  if (!actor.role.permisos.anadir) { console.error('❌ Tu cargo no tiene permiso para AÑADIR empleados.'); logLine(data, session, actor.emp.id, 'add', 'DENEGADO: sin permiso anadir'); process.exit(1); }
-  if (!canManage(data, actor.role, cargo)) { console.error(`❌ No puedes crear un cargo de nivel ${role.nivel} o superior al tuyo (${actor.role.nivel}).`); logLine(data, session, actor.emp.id, 'add', `DENEGADO: jerarquia cargo ${cargo} (nivel ${role.nivel})`); process.exit(1); }
+  if (!actor.role.permisos.anadir) { console.error('❌ Tu cargo no tiene permiso para AÑADIR empleados.'); logLine(data, session, actor.emp.id, 'add', 'DENEGADO: sin permiso anadir'); process.exit(3); }
+  if (!canManage(data, actor.role, cargo)) { console.error(`❌ No puedes crear un cargo de nivel ${role.nivel} o superior al tuyo (${actor.role.nivel}).`); logLine(data, session, actor.emp.id, 'add', `DENEGADO: jerarquia cargo ${cargo} (nivel ${role.nivel})`); process.exit(3); }
   const nombres = (args.nombres || '').trim();
   const apellidos = (args.apellidos || '').trim();
   if (!nombres || !apellidos) { console.error('❌ nombres y apellidos son obligatorios.'); logLine(data, session, actor.emp.id, 'add', 'DENEGADO: sin nombres/apellidos'); process.exit(1); }
@@ -194,10 +194,10 @@ function doRemove(args, session) {
   if (!actor) { console.error('❌ Actor no valido.'); process.exit(1); }
   const target = findEmp(data, args.id);
   if (!target || target.estado !== 'activo') { console.error(`❌ Empleado ${args.id} no existe o ya no esta activo.`); process.exit(1); }
-  if (target.id === actor.emp.id) { console.error('❌ No puedes quitarte a ti mismo.'); logLine(data, session, actor.emp.id, 'remove', `DENEGADO: auto-baja de ${target.id}`); process.exit(1); }
-  if (isFounder(target)) { console.error('❌ El fundador no se puede quitar.'); logLine(data, session, actor.emp.id, 'remove', `DENEGADO: fundador ${target.id}`); process.exit(1); }
-  if (!actor.role.permisos.quitar) { console.error('❌ Tu cargo no tiene permiso para QUITAR empleados.'); logLine(data, session, actor.emp.id, 'remove', 'DENEGADO: sin permiso quitar'); process.exit(1); }
-  if (!canManage(data, actor.role, target.cargo)) { console.error(`❌ No puedes quitar un cargo de nivel igual o superior al tuyo.`); logLine(data, session, actor.emp.id, 'remove', `DENEGADO: jerarquia ${target.id} cargo ${target.cargo}`); process.exit(1); }
+  if (target.id === actor.emp.id) { console.error('❌ No puedes quitarte a ti mismo.'); logLine(data, session, actor.emp.id, 'remove', `DENEGADO: auto-baja de ${target.id}`); process.exit(3); }
+  if (isFounder(target)) { console.error('❌ El fundador no se puede quitar.'); logLine(data, session, actor.emp.id, 'remove', `DENEGADO: fundador ${target.id}`); process.exit(3); }
+  if (!actor.role.permisos.quitar) { console.error('❌ Tu cargo no tiene permiso para QUITAR empleados.'); logLine(data, session, actor.emp.id, 'remove', 'DENEGADO: sin permiso quitar'); process.exit(3); }
+  if (!canManage(data, actor.role, target.cargo)) { console.error(`❌ No puedes quitar un cargo de nivel igual o superior al tuyo.`); logLine(data, session, actor.emp.id, 'remove', `DENEGADO: jerarquia ${target.id} cargo ${target.cargo}`); process.exit(3); }
   const motivo = (args.motivo || '').trim() || 'Baja no especificada';
 
   const datosPrevio = { ...target };
@@ -225,11 +225,11 @@ function doRank(args, session) {
   if (!target || target.estado !== 'activo') { console.error(`❌ Empleado ${args.id} no existe o no esta activo.`); process.exit(1); }
   if (target.id === actor.emp.id) { console.error('❌ No puedes cambiar tu propio rango.'); process.exit(1); }
   if (isFounder(target)) { console.error('❌ El fundador no se puede cambiar de rango.'); process.exit(1); }
-  if (!actor.role.permisos.rango) { console.error('❌ Tu cargo no tiene permiso para CAMBIAR RANGO.'); logLine(data, session, actor.emp.id, 'rank', 'DENEGADO: sin permiso rango'); process.exit(1); }
+  if (!actor.role.permisos.rango) { console.error('❌ Tu cargo no tiene permiso para CAMBIAR RANGO.'); logLine(data, session, actor.emp.id, 'rank', 'DENEGADO: sin permiso rango'); process.exit(3); }
   const newRole = gen.roleByFolder(data, args.cargo);
   if (!newRole) { console.error(`❌ Cargo '${args.cargo}' no existe.`); process.exit(1); }
   if (newRole.carpeta === target.cargo) { console.error('❌ El empleado ya tiene ese cargo.'); process.exit(1); }
-  if (!canManage(data, actor.role, newRole.carpeta)) { console.error(`❌ No puedes ascender a un cargo de nivel ${newRole.nivel} (igual o superior al tuyo ${actor.role.nivel}).`); logLine(data, session, actor.emp.id, 'rank', `DENEGADO: jerarquia hacia ${newRole.carpeta}`); process.exit(1); }
+  if (!canManage(data, actor.role, newRole.carpeta)) { console.error(`❌ No puedes ascender a un cargo de nivel ${newRole.nivel} (igual o superior al tuyo ${actor.role.nivel}).`); logLine(data, session, actor.emp.id, 'rank', `DENEGADO: jerarquia hacia ${newRole.carpeta}`); process.exit(3); }
 
   // Mueve la carpeta del empleado: elimina las del/los cargo(s) anterior(es) salvo el nuevo.
   const oldCargos = [...(target.cargos || [])];
@@ -263,8 +263,8 @@ function doModify(args, session) {
   // Auto-edición permitida: puedes corregir TUS propios datos (el rango nunca
   // se modifica por aquí). Para gestionar a OTROS se aplica permiso + jerarquía.
   if (!isSelf) {
-    if (!actor.role.permisos.modificar) { console.error('❌ Tu cargo no tiene permiso para MODIFICAR datos.'); logLine(data, session, actor.emp.id, 'modify', 'DENEGADO: sin permiso modificar'); process.exit(1); }
-    if (!canManage(data, actor.role, target.cargo)) { console.error(`❌ No puedes modificar un cargo de nivel igual o superior al tuyo.`); logLine(data, session, actor.emp.id, 'modify', `DENEGADO: jerarquia ${target.id}`); process.exit(1); }
+    if (!actor.role.permisos.modificar) { console.error('❌ Tu cargo no tiene permiso para MODIFICAR datos.'); logLine(data, session, actor.emp.id, 'modify', 'DENEGADO: sin permiso modificar'); process.exit(3); }
+    if (!canManage(data, actor.role, target.cargo)) { console.error(`❌ No puedes modificar un cargo de nivel igual o superior al tuyo.`); logLine(data, session, actor.emp.id, 'modify', `DENEGADO: jerarquia ${target.id}`); process.exit(3); }
   }
   const campo = args.campo;
   if (!MODIFY_FIELDS.includes(campo)) { console.error(`❌ Campo '${campo}' no modificable. Permitidos: ${MODIFY_FIELDS.join(', ')}.`); process.exit(1); }

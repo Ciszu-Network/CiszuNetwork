@@ -4,6 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import { LegalCiszuLink } from '@ciszu/ui';
 import { usePageTitle } from '@/lib/usePageTitle';
 
 // --- Icons Library ---
@@ -130,6 +131,8 @@ export default function TermsPage() {
         </motion.div>
 
         <QuickDocks />
+
+        <LegalCiszuLink />
 
       </div>
     </MainLayout>

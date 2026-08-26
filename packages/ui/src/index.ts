@@ -39,6 +39,15 @@ export { default as SmartImage } from './SmartImage';
 export type { SmartImageProps } from './SmartImage';
 // Analíticas: PostHog (product analytics compartido; NO pisa Cloudflare Web Analytics)
 export { default as PostHogAnalytics, captureEvent } from './PostHogAnalytics';
+// Analíticas: Google Analytics 4 (GA4, gtag.js) + eventos de anuncios
+export { default as GoogleAnalytics, trackEvent } from './GoogleAnalytics';
+export type { GoogleAnalyticsProps } from './GoogleAnalytics';
+// Anuncios: sistema de ads de Ciszu Network (intrusivos, particulares, recompensa, opcionales)
+export { AdsProvider, useAds, AdFloat, AdPill, DEFAULT_AD_CATALOG } from './Ads';
+export type { AdConfig, AdType, AdContent, AdsProviderProps, AdFloatProps, AdPillProps } from './Ads';
+// Legal: enlace a la versión completa de las bases legales (ciszunetwork)
+export { LegalCiszuLink } from './LegalCiszuLink';
+export type { LegalCiszuLinkProps } from './LegalCiszuLink';
 // GlobalAdvisor: sistema de mensajes globales del admin (GLOBAL_ADVISOR_SYSTEM, TODO #3)
 export { default as GlobalAdvisor } from './GlobalAdvisor';
 export type { GlobalAdvisorProps, Announcement } from './GlobalAdvisor';

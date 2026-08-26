@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { headers } from "next/headers";
 import { Exo_2, Rajdhani } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor, ToastProvider } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, GoogleAnalytics, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor, ToastProvider } from "@ciszu/ui";
 import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -78,6 +78,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <AuthProvider>
           <DisclaimerProvider>
             <ToastProvider>
+            <AdsProvider site="ciszukoantony">
             <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={PROFILE_PIC} title="Ciszuko Antony" subtitle="Ciszuko Antony Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszukoantony">
               {!isEdit && <BetaDisclaimer storageKey="betadisclaimer_ciszukoantony_dismissed" />}
               {!isEdit && <Navbar />}
@@ -87,6 +88,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
               {!isEdit && <Footer />}
               {!isEdit && <CookiesBanner />}
             </CloudflareGuard>
+            </AdsProvider>
             </ToastProvider>
           </DisclaimerProvider>
         </AuthProvider>
@@ -98,6 +100,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           {!isEdit && <FeedbackFab />}
         </FabStackProvider>
         <PostHogAnalytics app="ciszukoantony" />
+        <GoogleAnalytics app="ciszukoantony" />
+        <AdFloat placement="corner" side="bottom-right" />
+        <AdPill placement="body" />
         {process.env.NODE_ENV === 'production' && (
           <script defer type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
         )}

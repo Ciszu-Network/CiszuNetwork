@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { LegalCiszuLink } from '@ciszu/ui';
 import { RichText, type RichPart } from '@/components/RichText';
 import { usePageTitle } from '@/lib/usePageTitle';
 
@@ -73,6 +74,8 @@ export default function PoliciesPage() {
             <a href="/contact" className="text-brand hover:text-brand-200 transition-colors">our contact page</a>.
           </p>
         </motion.div>
+
+        <LegalCiszuLink />
       </div>
     </div>
   );
