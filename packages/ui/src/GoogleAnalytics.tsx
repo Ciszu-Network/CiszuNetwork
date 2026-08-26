@@ -23,7 +23,7 @@
  *   trackEvent('ad_click', { ad_id: 'x', ad_type: 'intrusive', site: 'muzicmania' });
  */
 
-import { Suspense, useEffect, useRef } from 'react';
+import { Suspense, useEffect } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 
 export interface GoogleAnalyticsProps {
@@ -54,13 +54,20 @@ function getMeasurementId(override?: string) {
 function GaTracker({ app, measurementId }: GoogleAnalyticsProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const initialized = useRef(false);
 
-  // 1) Cargar gtag.js una sola vez + config
+  // 1) Snippet oficial: define window.dataLayer + gtag (stub que encola) y carga
+  //    gtag.js. Cuando el script carga, procesa lo encolado (js/config/eventos).
   useEffect(() => {
     const id = getMeasurementId(measurementId);
     if (!id) return;
     if (process.env.NODE_ENV === 'test') return;
+    const w = window as Window & typeof globalThis;
+    w.dataLayer = w.dataLayer || [];
+    if (typeof w.gtag !== 'function') {
+      w.gtag = function () {
+        w.dataLayer?.push(arguments);
+      };
+    }
     const scriptSrc = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(id)}`;
     if (!document.querySelector(`script[src="${scriptSrc}"]`)) {
       const s = document.createElement('script');
@@ -68,36 +75,22 @@ function GaTracker({ app, measurementId }: GoogleAnalyticsProps) {
       s.async = true;
       document.head.appendChild(s);
     }
-    const tryInit = () => {
-      if (initialized.current) return;
-      const w = window as Window & typeof globalThis;
-      if (typeof w.gtag !== 'function') return;
-      initialized.current = true;
-      w.gtag('js', new Date());
-      w.gtag('config', id, {
-        // GA4 mide $page_view solo en carga; la navegación SPA se mide manualmente abajo.
-        send_page_view: false,
-      });
-    };
-    tryInit();
-    const iv = window.setInterval(tryInit, 300);
-    return () => window.clearInterval(iv);
+    w.gtag('js', new Date());
+    w.gtag('config', id, { send_page_view: false });
   }, [measurementId]);
 
   // 2) page_view manual en cada cambio de ruta (App Router no recarga)
   useEffect(() => {
     if (!getMeasurementId(measurementId)) return;
     const url = pathname + (searchParams?.toString() ? `?${searchParams}` : '');
-    const fire = (): boolean => {
-      if (typeof window.gtag !== 'function') return false;
-      window.gtag('event', 'page_view', { app, page_location: url, page_title: document.title });
-      return true;
-    };
-    if (fire()) return;
-    const iv = window.setInterval(() => {
-      if (fire()) window.clearInterval(iv);
-    }, 300);
-    return () => window.clearInterval(iv);
+    const w = window as Window & typeof globalThis;
+    w.dataLayer = w.dataLayer || [];
+    if (typeof w.gtag !== 'function') {
+      w.gtag = function () {
+        w.dataLayer?.push(arguments);
+      };
+    }
+    w.gtag('event', 'page_view', { app, page_location: url, page_title: document.title });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, searchParams, app, measurementId]);
 

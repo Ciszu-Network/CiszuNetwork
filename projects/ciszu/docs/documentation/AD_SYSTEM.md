@@ -128,14 +128,26 @@ import { GoogleAnalytics, AdsProvider, AdFloat, AdPill } from '@ciszu/ui';
 
 ---
 
-## 6. Tracking con Google Analytics 4
+## 6. Tracking con Google (GA4 + GTM + AdSense)
 
-`GoogleAnalytics.tsx` (espejo de `PostHogAnalytics`):
+`GoogleAnalytics.tsx` (espejo de `PostHogAnalytics`) + `GoogleTagManager.tsx` + `AdSenseLoader.tsx`:
 
-- Carga `gtag.js` con `NEXT_PUBLIC_GA4_MEASUREMENT_ID` (por web). Sin ID → no carga nada
-  (degradación segura; no rompe la web).
+- `GoogleAnalytics` carga `gtag.js` con `NEXT_PUBLIC_GA4_MEASUREMENT_ID` (por web). Sin ID → no
+  carga nada (degradación segura).
+- `GoogleTagManager` carga el contenedor GTM con `NEXT_PUBLIC_GTM_ID` (por web).
+- `AdSenseLoader` carga el script de AdSense con `NEXT_PUBLIC_ADSENSE_CLIENT` (por web).
 - `page_view` manual por ruta (App Router no recarga).
-- Eventos de anuncios (vía `trackEvent` de `@ciszu/ui`):
+
+**IDs reales (ago 2026)**:
+
+| Web | GA4 | GTM | AdSense |
+|---|---|---|---|
+| ciszunetwork | `G-TQH12LRZK6` | `GTM-N7Q8DGX5` | `ca-pub-3471969072198962` |
+| ciszukoantony | `G-V6E1QC7GQM` | `GTM-WNDXGD63` | `ca-pub-3471969072198962` |
+| ciszubot | `G-Y3X7RSM2J3` | `GTM-T9LG9N6C` | `ca-pub-3471969072198962` |
+| muzicmania | `G-GQ197GD1RH` | `GTM-N2SXL2FN` | `ca-pub-3471969072198962` |
+
+Eventos de anuncios (vía `trackEvent` de `@ciszu/ui`):
 
 | Evento | Props |
 |---|---|
@@ -183,16 +195,16 @@ de contenido a AdSense/otra red cuando se active).
   Ciszuko debe crear las propiedades y pasar los **Measurement IDs** (`G-XXXX`) para
   `NEXT_PUBLIC_GA4_MEASUREMENT_ID` en cada `.env.local`.
 
-### 9.2 Google AdSense (anuncios de terceros)
+### 9.2 Google AdSense (anuncios de terceros) — ACTIVO
 
-- **Gratis de unirse**, pero requiere **aprobación manual** del sitio (contenido suficiente,
-  política de privacidad, páginas "About"). Sitios con poco contenido (juegos/apps) pueden ser
-  rechazados en la primera revisión.
-- **No tiene API de "servir anuncios" directa para aprobación**; la integración es un tag de
-  script en las páginas (hay componente oficial `GoogleAdSense` en `@next/third-parties`).
-  Sí tiene *Management API* para gestionar unidades/reportes, no para la aprobación.
-- **Conclusión**: por ahora el sistema usa anuncios **propios** (promo del ecosistema); AdSense
-  es un proveedor de contenido futuro sin cambiar la mecánica.
+- **Realidad desde ago 2026**: Ciszuko está registrado en AdSense y el publisher ID
+  `ca-pub-3471969072198962` está implementado en las 4 webs (`AdSenseLoader`). **No es futuro**.
+- Gratis; la integración es un tag de script (`adsbygoogle.js?client=ca-pub-...`). El script se
+  carga, pero **las unidades de anuncio** (slots) se sirven vía AdSense cuando el sitio pasa la
+  revisión/consentimiento. Mientras tanto el sistema de ads propios (`Ads.tsx`) sigue activo.
+- **Google Ads** requiere crear una **primera campaña** para desbloquear la cuenta (pendiente).
+- **Looker Studio**: cuenta creada para dashboards de GA4/AdSense.
+- No hay API de aprobación; sí *Management API* (unidades/reportes).
 
 ### 9.3 Alternativas (para futuro, si se quiere publicidad de terceros)
 

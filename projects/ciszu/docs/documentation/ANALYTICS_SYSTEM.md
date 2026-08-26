@@ -184,23 +184,37 @@ Cloudflare Web Analytics: son complementarios.
 
 ---
 
-## 8.1 Herramienta nº6 — Google Analytics 4 (audiencia y anuncios) — NUEVA capa
+## 8.1 Herramienta nº6 — Google (GA4 + Tag Manager + AdSense) — NUEVA capa
 
-GA4 (`gtag.js`) mide la **audiencia** (público, geografía) y los **anuncios** del sistema
-`AD_SYSTEM.md`. Complementa y NO se solapa con:
+**Pack completo de Google Marketing Platform** (ago 2026, ACTIVO): GA4 + Google Tag Manager +
+Google AdSense + Looker Studio.
+
+- **GA4** (`gtag.js`) mide la **audiencia** y los **anuncios** (`ad_impression`, `ad_click`,
+  `ad_dismiss`, `ad_reward_claimed`). Componente `packages/ui/src/GoogleAnalytics.tsx`
+  (`NEXT_PUBLIC_GA4_MEASUREMENT_ID` por web).
+- **GTM** carga el contenedor de etiquetas. Componente `packages/ui/src/GoogleTagManager.tsx`
+  (`NEXT_PUBLIC_GTM_ID` por web).
+- **AdSense** (publisher `ca-pub-3471969072198962` en las 4 webs). Componente
+  `packages/ui/src/AdSenseLoader.tsx` (`NEXT_PUBLIC_ADSENSE_CLIENT`).
+- **Looker Studio** (Data Studio): cuenta creada para dashboards de GA4/AdSense.
+
+IDs reales:
+
+| Web | GA4 | GTM | AdSense |
+|---|---|---|---|
+| ciszunetwork | `G-TQH12LRZK6` | `GTM-N7Q8DGX5` | `ca-pub-3471969072198962` |
+| ciszukoantony | `G-V6E1QC7GQM` | `GTM-WNDXGD63` | `ca-pub-3471969072198962` |
+| ciszubot | `G-Y3X7RSM2J3` | `GTM-T9LG9N6C` | `ca-pub-3471969072198962` |
+| muzicmania | `G-GQ197GD1RH` | `GTM-N2SXL2FN` | `ca-pub-3471969072198962` |
+
+Complementan y NO se solapan con:
 - Cloudflare Web Analytics → tráfico/marketing (pageviews, referrers).
 - PostHog → comportamiento de producto.
-- GA4 → audiencia + eventos de anuncios (`ad_impression`, `ad_click`, `ad_dismiss`,
-  `ad_reward_claimed`) y datos demográficos/geo (base legal en `TODO.md #6`).
+- GA4/GTM → audiencia + eventos de anuncios + gestión de etiquetas.
 
-- Componente compartido: `packages/ui/src/GoogleAnalytics.tsx` (`<GoogleAnalytics app="...">` +
-  helper `trackEvent` desde `@ciszu/ui`).
-- Config por web: `NEXT_PUBLIC_GA4_MEASUREMENT_ID` (sin ID → no carga nada, degradación segura).
-- `page_view` manual por ruta (App Router no recarga), igual que PostHog.
-- **Gratis** (GA4 standard, free tier). **Measurement Protocol** (HTTP) es gratuito y sirve para
-  eventos server-side (bot de Discord, edge functions).
-- **Pendiente de Ciszuko**: crear la propiedad GA4 por web (o una sola separando con la prop
-  `app`) y proveer los Measurement IDs para cada `.env.local`.
+**Measurement Protocol** (HTTP) gratuito sirve para eventos server-side (bot de Discord, edge).
+Cuenta de Marketing Platform: `zu-yPXlmRS2MReYKOuKMJw` (interna → vault). **Gratis** (GA4/GTM/
+Looker standard; AdSense comparte ingresos al aprobar el sitio).
 
 ## 9. Implementación y activación (registro cronológico)
 

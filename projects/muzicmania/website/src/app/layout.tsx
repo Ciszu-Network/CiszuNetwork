@@ -8,7 +8,7 @@ import "./globals.css";
 import AuthProvider from "@/components/providers/AuthProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, PostHogAnalytics, GoogleAnalytics, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor, ToastProvider } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, PostHogAnalytics, GoogleAnalytics, GoogleTagManager, AdSenseLoader, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor, ToastProvider } from "@ciszu/ui";
 import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
 
 const exo2 = Exo_2({
@@ -106,6 +106,8 @@ export default async function RootLayout({
         </FabStackProvider>
         <PostHogAnalytics app="muzicmania" />
         <GoogleAnalytics app="muzicmania" />
+        <GoogleTagManager />
+        <AdSenseLoader />
         <AdFloat placement="corner" side="bottom-right" />
         <AdPill placement="body" />
         {process.env.NODE_ENV === 'production' && (
