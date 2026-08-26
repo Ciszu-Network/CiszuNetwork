@@ -111,35 +111,49 @@ GOOGLE_BUSINESS_ADDRESS=98J5+WQ Coro, Falcón
 - [x] Claves `GOOGLE_*` presentes en `services/supabase/.env`.
 - [x] `/support` renderiza el botón de reseñas + la cuadrícula con los 4 datos del negocio.
 
-## 7. Google Analytics 4 y AdSense (nueva integración, ago 2026)
+## 7. Google Analytics 4, Tag Manager y AdSense (ago 2026 — ACTIVO)
 
-### 7.1 Google Analytics 4
+Ciszuko creó las propiedades de Google del ecosistema. **Implementación real** en las 4 webs
+(componentes de `@ciszu/ui`: `GoogleTagManager` + `GoogleAnalytics`; AdSense en
+`AdSenseLoader`). Config por env (Vercel/`.env.local`):
 
-GA4 (gtag.js) se integró en las 4 webs (`packages/ui/src/GoogleAnalytics.tsx`). Mide la
-**audiencia** y los **anuncios** del sistema `AD_SYSTEM.md`. Config por web vía
-`NEXT_PUBLIC_GA4_MEASUREMENT_ID` (env público; sin ID no carga nada).
+### 7.1 Inventario por web
 
-- **Gratis** (GA4 standard). **Measurement Protocol** gratuito para eventos server-side.
-- **Pendiente de Ciszuko**: crear la propiedad GA4 y pasar los Measurement IDs (`G-XXXX`)
-  para cada `.env.local` de las 4 webs. Verificar con `curl "https://www.googletagmanager.com/gtag/js?id=G-XXXX"`.
+| Web | GTM (container) | GA4 (measurement ID) | GA4 (data stream) | AdSense client |
+|---|---|---|---|---|
+| ciszunetwork | `GTM-N7Q8DGX5` | `G-TQH12LRZK6` | `15503788796` | `ca-pub-3471969072198962` |
+| ciszukoantony | `GTM-WNDXGD63` | `G-V6E1QC7GQM` | `15503832664` | `ca-pub-3471969072198962` |
+| ciszubot | `GTM-T9LG9N6C` | `G-Y3X7RSM2J3` | `15503892170` | `ca-pub-3471969072198962` |
+| muzicmania | `GTM-N2SXL2FN` | `G-GQ197GD1RH` | `15503882473` | `ca-pub-3471969072198962` |
 
-### 7.2 Google AdSense (anuncios de terceros)
+- **Cuenta de Google Marketing Platform**: `zu-yPXlmRS2MReYKOuKMJw` (ID de cuenta).
+- **Looker Studio** (antes Data Studio): cuenta creada para dashboards de GA4/AdSense.
+- **Google Ads**: requiere crear una primera campaña para desbloquear (pendiente de Ciszuko).
+- Los IDs de GTM/GA4/AdSense aparecen en el HTML público (por diseño). La cuenta de Marketing
+  Platform y los data streams son **internos** → viven en el vault (`services/supabase/.env`,
+  claves `GOOGLE_*`) y Bitwarden.
 
-- Gratis de unirse, pero con **aprobación manual** (contenido + política de privacidad +
-  páginas legales actualizadas — `TODO.md #6`). Sitios con poco contenido (juegos/apps) pueden
-  ser rechazados.
-- No hay API de aprobación; integración vía tag de script (componente `GoogleAdSense` de
-  `@next/third-parties` cuando se apruebe). Sí existe *Management API* (unidades/reportes).
-- **Decisión actual**: el ecosistema usa anuncios **propios** (promo Ciszu Network); AdSense es
-  un proveedor futuro sin tocar la mecánica (`AD_SYSTEM.md` §9).
+### 7.2 Componentes (código)
+
+- `packages/ui/src/GoogleTagManager.tsx` — inyecta el contenedor GTM (env `NEXT_PUBLIC_GTM_ID`).
+- `packages/ui/src/GoogleAnalytics.tsx` — gtag.js GA4 + `trackEvent` (env `NEXT_PUBLIC_GA4_MEASUREMENT_ID`).
+- `packages/ui/src/AdSenseLoader.tsx` — carga el script de AdSense (env `NEXT_PUBLIC_ADSENSE_CLIENT`).
+- Montados en los 4 layouts junto a `PostHogAnalytics`.
+
+### 7.3 Verificación (QA)
+
+- `curl -I https://www.googletagmanager.com/gtm.js?id=GTM-N7Q8DGX5` → 200.
+- `curl -I https://www.googletagmanager.com/gtag/js?id=G-TQH12LRZK6` → 200.
+- `curl -I "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3471969072198962"` → 200.
+- En el navegador: `window.dataLayer` presente y `dataLayer.push` funcionando (GTM).
 
 ## 8. Relaciones
 
 - `REVIEWS_SYSTEM.md` — todas las plataformas de valoración (Trustpilot, top.gg, DBL, Google).
 - `VAULT_SYSTEM.md` — dónde y cómo se respaldan las claves `GOOGLE_*`.
 - `PAYMENTS_SYSTEM.md` — monetización; Google Business es reputación, no pago.
-- `AD_SYSTEM.md` — sistema de anuncios (GA4 + AdSense futuro).
-- `ANALYTICS_SYSTEM.md` — analíticas (GA4 es una capa).
+- `AD_SYSTEM.md` — sistema de anuncios (GA4 + GTM + AdSense reales).
+- `ANALYTICS_SYSTEM.md` — analíticas (GA4 + GTM son capas).
 - `ONLINE_SERVICES_SYSTEM.md` — servicios online gestionados de la cuenta del usuario.
 - `BUSINESS_SYSTEM.md` — identidad corporativa de Ciszu Network.
 

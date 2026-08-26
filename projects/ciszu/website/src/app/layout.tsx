@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { headers } from "next/headers";
 import { IBM_Plex_Sans, IBM_Plex_Sans_Condensed } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, GoogleAnalytics, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor, ToastProvider } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, GoogleAnalytics, GoogleTagManager, AdSenseLoader, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor, ToastProvider } from "@ciszu/ui";
 import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
 import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -99,6 +99,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         </FabStackProvider>
         <PostHogAnalytics app="ciszunetwork" />
         <GoogleAnalytics app="ciszunetwork" />
+        <GoogleTagManager />
+        <AdSenseLoader />
         <AdFloat placement="corner" side="bottom-right" />
         <AdPill placement="body" />
         {process.env.NODE_ENV === 'production' && (

@@ -42,6 +42,12 @@ export { default as PostHogAnalytics, captureEvent } from './PostHogAnalytics';
 // Analíticas: Google Analytics 4 (GA4, gtag.js) + eventos de anuncios
 export { default as GoogleAnalytics, trackEvent } from './GoogleAnalytics';
 export type { GoogleAnalyticsProps } from './GoogleAnalytics';
+// Analíticas: Google Tag Manager (GTM) compartido
+export { default as GoogleTagManager } from './GoogleTagManager';
+export type { GoogleTagManagerProps } from './GoogleTagManager';
+// Anuncios: Google AdSense (adsbygoogle.js) compartido
+export { default as AdSenseLoader } from './AdSenseLoader';
+export type { AdSenseLoaderProps } from './AdSenseLoader';
 // Anuncios: sistema de ads de Ciszu Network (intrusivos, particulares, recompensa, opcionales)
 export { AdsProvider, useAds, AdFloat, AdPill, DEFAULT_AD_CATALOG } from './Ads';
 export type { AdConfig, AdType, AdContent, AdsProviderProps, AdFloatProps, AdPillProps } from './Ads';

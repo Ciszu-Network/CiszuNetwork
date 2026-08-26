@@ -53,8 +53,9 @@ Los anuncios son la forma "pasiva" de monetizar sin pedir dinero:
 
 - **Anuncios propios** (promo del ecosistema): sin costo y sin cookies de terceros; mueven
   usuarios entre las webs (ej. de MuzicMania a la web principal).
-- **Anuncios de terceros (futuro)**: AdSense u otra red (ver investigación en `AD_SYSTEM.md` §9).
-- **Medición**: GA4 (impresiones/clics/cierres) — `AD_SYSTEM.md` §6.
+- **Google AdSense** (ACTIVO desde ago 2026): publisher `ca-pub-3471969072198962` en las 4 webs;
+  las unidades de anuncio se sirven al pasar la revisión. Ver `AD_SYSTEM.md` §9.2.
+- **Medición**: GA4 + GTM (impresiones/clics/cierres) — `AD_SYSTEM.md` §6.
 - **Reglas de anuncios**:
   1. Todo anuncio es **cerrable** (X).
   2. Los **intrusivos** solo tras una acción real (fin de partida, compra).
