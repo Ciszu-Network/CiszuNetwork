@@ -70,9 +70,10 @@ function supabaseFetch(path: string, query = '', init?: RequestInit) {
   });
 }
 
-// Páginas públicas de perfil por web (solo muzicmania tiene ruta pública hoy).
+// Páginas públicas de perfil por web. muzicmania resuelve el perfil por
+// USERNAME y exige el prefijo '@' en la URL (/profile/@<username>); sin él 404.
 const PROFILE_HREFS: Record<string, (username: string) => string> = {
-  muzicmania: (u) => `https://muzicmania.vercel.app/profile/${u}`,
+  muzicmania: (u) => `https://muzicmania.vercel.app/profile/@${u}`,
 };
 
 /** Username legible: sin @ y sin guiones bajos finales (ciszukoantony_ -> ciszukoantony). */

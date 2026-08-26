@@ -129,7 +129,7 @@ export default function Home() {
             </h1>
             <div className="flex items-center justify-center mb-8">
               <Image
-                src={assetResolver.resolve("projects/ciszu/content/logos/images/outline/tagline/tagline_white.svg")}
+                src={assetResolver.resolve("projects/ciszu/content/logos/images/outline/tagline/tagline_white.svg") + "?v=2"}
                 alt={CISZU_NETWORK.tagline}
                 width={400}
                 height={30}

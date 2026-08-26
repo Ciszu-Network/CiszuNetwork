@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { IBM_Plex_Sans, IBM_Plex_Sans_Condensed } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor, ToastProvider } from "@ciszu/ui";
+import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
 import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CookiesBanner } from "@/components/layout/CookiesBanner";
@@ -88,6 +89,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           </ToastProvider>
           <GlobalAdvisor site="ciszu" />
         </AuthProvider>
+        <GlobalAdvisorConfirm site="ciszu" />
         <PwaRegister />
         <FabStackProvider>
           {!isEdit && <InstallPdwaButton site="Ciszu Network" accent="#22d3ee" accentAlt="#f472b6" />}

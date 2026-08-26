@@ -9,6 +9,7 @@ import AuthProvider from "@/components/providers/AuthProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, PostHogAnalytics, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor, ToastProvider } from "@ciszu/ui";
+import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
 
 const exo2 = Exo_2({
   subsets: ["latin"],
@@ -94,6 +95,7 @@ export default async function RootLayout({
           </ToastProvider>
         </AuthProvider>
         <GlobalAdvisor site="muzicmania" />
+        <GlobalAdvisorConfirm site="muzicmania" />
         <SpeedInsights />
         <PwaRegister />
         <FabStackProvider>

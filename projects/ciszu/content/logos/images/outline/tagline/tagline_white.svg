@@ -4,7 +4,7 @@
     <style>
       .cls-1 {
         fill: #fff;
-        font-family: GothamPro-BlackItalic, 'Gotham Pro';
+        font-family: GothamPro-BlackItalic, 'Gotham Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
         font-size: 40.1px;
         font-style: italic;
         font-weight: 800;

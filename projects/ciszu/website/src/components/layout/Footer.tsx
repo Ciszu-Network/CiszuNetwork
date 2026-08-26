@@ -145,7 +145,7 @@ export const Footer = () => {
                 className="group-hover:drop-shadow-[0_0_20px_rgba(58,107,240,0.7)] transition-all duration-300"
               />
               <Image
-                src={assetResolver.resolve('projects/ciszu/content/logos/images/outline/tagline/tagline_white.svg')}
+                src={assetResolver.resolve('projects/ciszu/content/logos/images/outline/tagline/tagline_white.svg') + '?v=2'}
                 alt={CISZU_NETWORK.tagline}
                 width={220}
                 height={17}
