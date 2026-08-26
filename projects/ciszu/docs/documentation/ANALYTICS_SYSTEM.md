@@ -192,10 +192,10 @@ Google AdSense + Looker Studio.
 - **GA4** (`gtag.js`) mide la **audiencia** y los **anuncios** (`ad_impression`, `ad_click`,
   `ad_dismiss`, `ad_reward_claimed`). Componente `packages/ui/src/GoogleAnalytics.tsx`
   (`NEXT_PUBLIC_GA4_MEASUREMENT_ID` por web).
-- **GTM** carga el contenedor de etiquetas. Componente `packages/ui/src/GoogleTagManager.tsx`
-  (`NEXT_PUBLIC_GTM_ID` por web).
-- **AdSense** (publisher `ca-pub-3471969072198962` en las 4 webs). Componente
-  `packages/ui/src/AdSenseLoader.tsx` (`NEXT_PUBLIC_ADSENSE_CLIENT`).
+- **GTM** carga el contenedor de etiquetas. `GoogleScripts` (SSR estático) con
+  `NEXT_PUBLIC_GTM_ID` por web.
+- **AdSense** (publisher `ca-pub-3471969072198962` en las 4 webs). `GoogleScripts` (SSR
+  estático) con `NEXT_PUBLIC_ADSENSE_CLIENT`.
 - **Looker Studio** (Data Studio): cuenta creada para dashboards de GA4/AdSense.
 
 IDs reales:

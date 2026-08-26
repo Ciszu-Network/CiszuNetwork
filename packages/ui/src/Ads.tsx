@@ -90,6 +90,8 @@ interface AdsContextValue {
 const AdsContext = createContext<AdsContextValue | null>(null);
 
 // ---------- Catálogo por defecto (promo Ciszu Network; sin emojis) ----------
+// Frecuencia: los anuncios patrocinados por Ciszu Network aparecen ~1 vez/hora
+// (3600s). Los intrusivos/recompensa solo tras una acción del usuario.
 export const DEFAULT_AD_CATALOG: AdConfig[] = [
   {
     id: 'muzicmania_after_game',
@@ -104,16 +106,16 @@ export const DEFAULT_AD_CATALOG: AdConfig[] = [
     },
   },
   {
-    id: 'discord_community',
+    id: 'ecosystem_corner',
     type: 'particulares',
     placement: 'corner',
-    minIntervalSec: 180,
+    minIntervalSec: 3600,
     content: {
-      title: 'Únete a la comunidad',
-      description: 'Discord oficial de Ciszu Network: novedades, soporte y eventos.',
-      cta: 'Entrar al Discord',
-      href: 'https://discord.gg/ciszunetwork',
-      accent: '#f472b6',
+      title: 'Ciszu Network',
+      description: 'Cuatro webs, un bot y un juego: conoce todo el ecosistema.',
+      cta: 'Explorar',
+      href: 'https://ciszunetwork.vercel.app',
+      accent: '#8b5cf6',
     },
   },
   {
@@ -134,12 +136,13 @@ export const DEFAULT_AD_CATALOG: AdConfig[] = [
     id: 'ecosystem_body',
     type: 'optional',
     placement: 'body',
+    minIntervalSec: 3600,
     content: {
-      title: 'Descubre el ecosistema',
-      description: 'Cuatro webs, un bot y un juego: todo el universo de Ciszuko Antony.',
+      title: 'Conoce más sobre Ciszu Network',
+      description: 'El universo de Ciszuko Antony en un solo lugar.',
       cta: 'Explorar',
       href: 'https://ciszunetwork.vercel.app',
-      accent: '#a3e635',
+      accent: '#7c3aed',
     },
   },
 ];
