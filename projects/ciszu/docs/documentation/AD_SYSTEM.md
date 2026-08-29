@@ -124,7 +124,7 @@ fixed` y `z-index` alto.
 
 ### 4.1 `AdsProvider`
 
-- Prop `site` (ciszunetwork | ciszukoantony | muzicmania | ciszubot): aísla el `localStorage`
+- Prop `site` (ciszunetwork | ciszukoantony | muzicmania | ciszubot | **ciszugamens**): aísla el `localStorage`
   y etiqueta los eventos GA4 por web.
 - Prop `catalog` (opcional; default `DEFAULT_AD_CATALOG`).
 - API vía `useAds()`:
@@ -133,6 +133,9 @@ fixed` y `z-index` alto.
   - `dismiss()` → cierra el actual (marca "dismissed" si es opcional; *snooze* si es particular).
   - `rewardStatus(ad)` → `{ canClaim, remainingSec }`.
   - `claimReward(ad)` → reclama la recompensa si ya se puede (marca `claimed`).
+  - `isInactive()` → `true` si usuario > 60s sin interactuar (adelanta anuncios pasivos).
+  - `passiveHint` → `{ surface, at }` para mini "Próximo anuncio en Xs".
+  - `registerSurface('float'|'pill')` / `unregisterSurface()` → registro de superficies pasivas.
 
 ### 4.2 Persistencia (`localStorage`)
 
@@ -159,7 +162,7 @@ import { GoogleAnalytics, AdsProvider, AdFloat, AdPill } from '@ciszu/ui';
 <AdPill placement="body" />
 ```
 
-- **ciszu** (`app="ciszunetwork"`), **ciszukoantony**, **ciszubot** y **muzicmania**: montados.
+- **ciszu** (`app="ciszunetwork"`), **ciszukoantony**, **ciszubot**, **muzicmania** y **ciszugamens**: montados.
 - **MuzicMania — intrusivo tras la partida**: `AfterGameAd` (en `components/ads/`) se monta en la
   fase de resultados de `/play` y llama `trigger('intrusive', 'game_end')` (respaldo
   `trigger('reward', 'game_end')`).
@@ -186,6 +189,7 @@ import { GoogleAnalytics, AdsProvider, AdFloat, AdPill } from '@ciszu/ui';
 | ciszukoantony | `G-V6E1QC7GQM` | `GTM-WNDXGD63` | `ca-pub-3471969072198962` |
 | ciszubot | `G-Y3X7RSM2J3` | `GTM-T9LG9N6C` | `ca-pub-3471969072198962` |
 | muzicmania | `G-GQ197GD1RH` | `GTM-N2SXL2FN` | `ca-pub-3471969072198962` |
+| **ciszugamens** | *(por crear)* | *(por crear)* | *(por crear)* |
 
 Eventos de anuncios (vía `trackEvent` de `@ciszu/ui`):
 
