@@ -118,7 +118,6 @@ docs/md/VERCEL_ENV_VARS.md
 services/supabase/.env
 
 # ─── Legacy duplicate projects ───────────────────────
-CiszuGamens/
 
 # ─── Client archives (NDS ROMs, large binaries) ────
 archives/
@@ -269,9 +268,6 @@ workers/
 # VR/AR, clientes, descargas, reportes
 downloads/
 reports/
-# Legacy duplicate project
-CiszuGamens/
-projects/ciszugamens/
 
 # Database files (SQL dumps, SQLite, etc.) - no data in public repo
 *.sql
