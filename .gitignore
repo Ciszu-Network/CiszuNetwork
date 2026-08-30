@@ -271,6 +271,7 @@ reports/
 
 # Database files (SQL dumps, SQLite, etc.) - no data in public repo
 *.sql
+!services/supabase/migrations/**/*.sql
 *.db
 *.sqlite
 *.sqlite3
