@@ -250,6 +250,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File test/website/debug/dev_conso
 dev local no interfieren, así que la prueba local de seguridad (CSP/turnstile) se hace de
 forma básica y la validación final contra la web desplegada.
 
+**Skills del agente aplicables** (catálogo en `MODELS_SKILLS_SYSTEM.md`): `test-driven-development`
+(tests antes del código de implementación), `verification-before-completion` (evidencia real
+—build/lint/test verdes— antes de afirmar "listo"), `webapp-testing` (Playwright para
+verificar UI local, screenshots y logs), `systematic-debugging` (causa raíz en fallos de
+test). Opcionales y bajo demanda; no sustituyen los comandos de este doc.
+
 Detalle operativo completo en `DEV_CONSOLE_SYSTEM.md`, diagnóstico en `DEBUGGING_SYSTEM.md`
 y reglas obligatorias en `LOCAL_TESTING_PROTOCOLS.md`.
 

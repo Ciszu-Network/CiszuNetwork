@@ -287,6 +287,7 @@ claro).
 | Fecha | Cambio |
 |---|---|
 | 2026-08-31 | Doc creada (v1.0.0). Estado vanilla verificado (solo skill `puck`, sin MCP). 33 skills instaladas desde 4 fuentes clonadas; `MODELS_SKILLS_SYSTEM.md` + enlace en `AGENTS.md` |
+| 2026-08-31 | Refs cruzadas en docs operativos: `GLOBAL_SYSTEM.md` (tabla skills por fase del ciclo de tarea), `DEBUGGING_SYSTEM.md` §8, `TESTING_SYSTEM.md` §9, `CODE_PRINCIPLES_PROTOCOLS.md` §0 y §9.2 |
 
 ---
 

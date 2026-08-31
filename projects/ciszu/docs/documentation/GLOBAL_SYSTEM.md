@@ -116,6 +116,25 @@ Todos los workflows corren en `push: [main, master]` (+ PR y cron diario 06:00 U
 5. **Documentación**: actualizar el doc `_SYSTEM` del sistema tocado + refs cruzadas.
 6. **Cierre**: actualizar estado/historial y avisar al usuario.
 
+### 5A. Skills del agente aplicables al ciclo (opcional, bajo demanda)
+
+El agente puede cargar skills (`MODELS_SKILLS_SYSTEM.md`) para **reforzar pasos** sin
+duplicar el protocolo; son sugerencias, no reemplazan las reglas de este doc:
+
+| Fase | Skill recomendada | Cuándo cargarla |
+|---|---|---|
+| 1 Definición | `brainstorming` | Tarea creativa/ambigua antes de diseñar |
+| 2 Exploración | `writing-plans` | Con spec clara, multi-paso, antes de tocar código |
+| 3 Implementación | `test-driven-development` · `subagent-driven-development` | Feature/bugfix (tests primero) · plan con tareas independientes |
+| 4 Verificación | `verification-before-completion` | Antes de afirmar "listo"/commitear |
+| 3/4 Debugging | `systematic-debugging` | Bug/test fallido (causa raíz antes de fixes) |
+| — Git | `using-git-worktrees` · `finishing-a-development-branch` | Feature aislada · integrar trabajo terminado |
+| — Review | `requesting-code-review` · `receiving-code-review` | Verificar trabajo antes de merge · procesar feedback |
+| — Docs | `writing-clearly-and-concisely` | Redactar docs/commits/mensajes legibles |
+
+> Regla: cargar la skill **solo si aporta** (la invoca el modelo por `name`+`description`).
+> Las skills no sustituyen la verificación por comando (`pnpm lint`/`test`/`build` + verify externo).
+
 ## Protocolo de verificación (criterios de "listo")
 
 - Builds 4/4 OK (`pnpm build`).
