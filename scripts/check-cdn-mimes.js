@@ -6,6 +6,26 @@ const https = require('https');
 // según su extensión (detección de uploads con text/plain mal cacheados).
 // Uso: node scripts/check-cdn-mimes.js
 
+// Cargar envs del vault local (services/supabase/.env) para no depender de
+// variables de entorno manuales (mismo patrón que scripts/upload-cdn.js).
+const ENV_SOURCES = [
+  path.resolve(__dirname, '..', 'services', 'supabase', '.env'),
+  path.resolve(__dirname, '..', 'services', 'supabase', '.env.local'),
+];
+for (const envPath of ENV_SOURCES) {
+  if (fs.existsSync(envPath)) {
+    const content = fs.readFileSync(envPath, 'utf8');
+    for (const line of content.split('\n')) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#') || !trimmed.includes('=')) continue;
+      const eq = trimmed.indexOf('=');
+      const key = trimmed.slice(0, eq).trim();
+      const val = trimmed.slice(eq + 1).trim().replace(/^["']|["']$/g, '');
+      if (!process.env[key]) process.env[key] = val;
+    }
+  }
+}
+
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL || 'https://obwzzmbvkrcscqwptlqo.supabase.co';
 const PROJECT_REF = process.env.SUPABASE_PROJECT_REF || 'obwzzmbvkrcscqwptlqo';
 const ACCESS_TOKEN = process.env.SUPABASE_ACCESS_TOKEN;
