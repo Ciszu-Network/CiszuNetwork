@@ -6,7 +6,8 @@ Proyecto de comunidad gaming y servidor Discord del ecosistema Ciszu Network.
 - **Discord Bot List**: https://discordbotlist.com/servers/ciszugamens
 - **Documentación**: `docs/documentation/`
 - **Assets**: `content/` (logos, banners, thumbnails, flyers, icons, assets)
-- **Reglas del servidor**: `docs/{txt,md,docx,pdf}/SERVER_RULES.*` (plantilla template v4.2.0.0)
+- **Reglas del servidor**: `docs/{txt,md,docx,pdf}/DISCORD_SERVER_RULES.*` (plantilla template v4.2.0.0)
+- **Directrices de staff**: `docs/{txt,md,docx,pdf}/DISCORD_SERVER_STAFF_GUIDELINES.*`
 
 ---
 
@@ -24,7 +25,7 @@ projects/ciszugamens/
 │   └── assets/                             # Videos de stock
 ├── docs/
 │   ├── documentation/                      # Docs técnicos (gitignored, force-add)
-│   ├── txt/md/docx/pdf/                    # Distribución de docs (SERVER_RULES, DISCORD_MODERATION_GUIDELINES)
+│   ├── txt/md/docx/pdf/                    # Distribución de docs (DISCORD_SERVER_RULES, DISCORD_SERVER_STAFF_GUIDELINES)
 │   ├── backups/                            # Backups JSON/xlsx del servidor
 │   └── davinci_resolve/                    # Proyectos de edición
 └── README.md

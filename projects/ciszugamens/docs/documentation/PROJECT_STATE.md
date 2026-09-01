@@ -15,7 +15,7 @@ Identificador: PROJECT_STATE_V1.0.0_2026_08_29_ciszugamens
 - Content recuperado y normalizado en `content/` (logos, banners, thumbnails, flyers, icons, assets)
 - Estructura de carpetas creada (`projects/ciszugamens/`)
 - Documentación completa en `docs/documentation/` (ARCHITECTURE, STACK, BRAND, WORKFLOW, DISCORD_SECURITY + protocolos)
-- **SERVER_RULES** restaurada en 4 formatos: `docs/{txt,md,docx,pdf}/SERVER_RULES.*`
+- **DISCORD_SERVER_RULES** y **DISCORD_SERVER_STAFF_GUIDELINES** restaurados: `docs/{txt,md,docx,pdf}/`
 - Integración con sistema de ads: `source: 'ciszugamens'` en `Ads.tsx` con isotipo y logotipo **reales** de ciszugamens (ya no usa placeholder de ciszu)
 - Derivadas de entrega (Capa 4): 146 `.webp` generadas desde los PNG de `content/`
 - `upload-cdn.js` y `convert-media.py` incluyen `projects/ciszugamens/content`
@@ -41,7 +41,7 @@ Identificador: PROJECT_STATE_V1.0.0_2026_08_29_ciszugamens
 1. Rotar `SUPABASE_ACCESS_TOKEN` y ejecutar `pnpm cdn:upload` (sube ciszugamens content+docs con upsert)
 2. Ejecutar `pnpm cdn:upload -- --prune` para limpiar objetos antiguos del bucket que ya no existen localmente
 3. Revisar duplicados de `content/logos/video/` (confirmar si se conservan o se limpian)
-4. Documentar la plantilla template `SERVER_RULES` v4.2.0.0 en `DISCORD_SECURITY_PROTOCOLS.md` (hecho)
+4. Documentar la plantilla template `DISCORD_SERVER_RULES` v4.2.0.0 en `DISCORD_SECURITY_PROTOCOLS.md` (hecho)
 
 ---
 
