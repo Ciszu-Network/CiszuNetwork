@@ -58,7 +58,7 @@ $WEBS = @(
     @{ key = 'muzic';    name = 'MuzicMania';     filter = 'muzicmania-website';   port = 3003; dir = 'projects/muzicmania/website'; emoji = '🎵' }
 )
 
-$VERSION = '2.4.0'
+$VERSION = '2.5.0'
 # Logs locales visibles para Ciszuko, dentro de la carpeta de debug
 # (gitignored; use la herramienta "Abrir carpeta de logs" para verlos).
 $LOG_DIR = Join-Path $PSScriptRoot 'local-logs'
@@ -658,6 +658,84 @@ function Show-AdvisorClear {
 }
 
 # ---------- Herramientas extra ----------
+function Deploy-Webs {
+    # Deploy a Vercel de las webs seleccionadas (casillas o todas). Requiere vercel CLI.
+    $opts = Build-WebSelectOptions
+    $r = Show-MultiSelect -Title "🚀 DEPLOY A VERCEL - marca las webs a desplegar" -Options $opts -Init @($WEBS.key)
+    if ($r.Action -ne 'proceed' -or $r.Selection.Count -eq 0) { return }
+    foreach ($k in $r.Selection) {
+        $w = $WEBS | Where-Object { $_.key -eq $k }
+        Write-Host "${c_cyan}Desplegando ${w.emoji} $($w.name) a Vercel (prod)...${c_reset}"
+        Push-Location $root
+        try { vercel --prod --yes --archive=tgz --cwd "$($w.dir)" 2>&1 | Out-Host } catch { Write-Host "${c_red}Deploy fallo: $($_.Exception.Message)${c_reset}" }
+        Pop-Location
+        Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=deploy web=$($w.key)"
+    }
+    Press-Continue
+}
+
+function Show-PnpmQuick {
+    $acts = @(
+        @{ ic = '🧪'; l = "pnpm lint (todas)";      act = { Push-Location $root; pnpm lint 2>&1 | Out-Host; Pop-Location; Press-Continue } },
+        @{ ic = '✅'; l = "pnpm test (todas)";      act = { Push-Location $root; pnpm test 2>&1 | Out-Host; Pop-Location; Press-Continue } },
+        @{ ic = '🔨'; l = "pnpm build (todas)";     act = { Push-Location $root; pnpm build 2>&1 | Out-Host; Pop-Location; Press-Continue } },
+        @{ ic = '♻'; l = "pnpm install (todas)";    act = { Push-Location $root; pnpm install 2>&1 | Out-Host; Pop-Location; Press-Continue } },
+        @{ ic = '📤'; l = "pnpm cdn:upload";        act = { Push-Location $root; pnpm cdn:upload 2>&1 | Out-Host; Pop-Location; Press-Continue } },
+        @{ ic = '🖥'; l = "pnpm cdn:verify";        act = { Push-Location $root; pnpm cdn:verify 2>&1 | Out-Host; Pop-Location; Press-Continue } }
+    )
+    $sel = Show-Menu -Title "COMANDOS PNPM RAPIDOS" -Options $acts
+    if ($sel -ge 0) { & $acts[$sel].act }
+}
+
+function Show-VaultBw {
+    if (-not (Test-DevconPassword)) { Write-Host "${c_red}Contraseña incorrecta. Operación cancelada.${c_reset}"; Press-Continue; return }
+    Clear-Host
+    Show-MenuHeader "VAULT -> BITWARDEN"
+    Write-Host "${c_cyan}El vault cifrado (services/supabase/.env) se subira como secure note a Bitwarden.${c_reset}"
+    Write-Host "${c_gray}Si Bitwarden esta bloqueado se pedira la master password (o usa BW_SESSION).${c_reset}"
+    Write-Host ""
+    Write-Host "${c_green}[1] Subir vault a Bitwarden   [2] Solo cifrar vault (vault crypt)   [Q] volver${c_reset}"
+    $k = [System.Console]::ReadKey($true)
+    $ch = $k.KeyChar
+    if ($ch -eq '1') {
+        Push-Location $root
+        & .\scripts\vault-bitwarden.ps1 2>&1 | Out-Host
+        Pop-Location
+        Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=vault-bitwarden"
+    } elseif ($ch -eq '2') {
+        Push-Location $root
+        & .\scripts\vault.ps1 crypt 2>&1 | Out-Host
+        & .\scripts\vault.ps1 verify 2>&1 | Out-Host
+        Pop-Location
+        Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=vault-crypt"
+    }
+    Press-Continue
+}
+
+function Show-AdsDebug {
+    # Ads locales en debug: controla la variable de entorno NEXT_PUBLIC_ADS_DEBUG
+    # (localStorage 'ciszu_ads_debug' en las webs + .env.local) para forzar anuncios.
+    Clear-Host
+    Show-MenuHeader "ANUNCIOS - DEBUG LOCAL"
+    Write-Host "${c_gray}Controla la aparicion de anuncios en local para depurar el sistema ADS.${c_reset}"
+    Write-Host ""
+    $enabled = $env:NEXT_PUBLIC_ADS_DEBUG -eq '1'
+    Write-Host "${c_cyan}Estado ADS_DEBUG: $(if ($enabled) { 'ON' } else { 'OFF' })${c_reset}"
+    Write-Host ""
+    Write-Host "${c_green}[1] Forzar anuncios (intervalo corto 5s)   [2] Modo normal (5-10 min)   [Q] volver${c_reset}"
+    $k = [System.Console]::ReadKey($true)
+    $ch = $k.KeyChar
+    if ($ch -eq '1') {
+        $env:NEXT_PUBLIC_ADS_DEBUG = '1'
+        Write-Host "${c_green}ADS_DEBUG activado. Reinicia las webs para que los anuncios aparezcan con intervalo corto.${c_reset}"
+    } elseif ($ch -eq '2') {
+        $env:NEXT_PUBLIC_ADS_DEBUG = '0'
+        Write-Host "${c_gray}ADS_DEBUG desactivado. Reinicia las webs para volver al modo normal.${c_reset}"
+    }
+    Write-Host "${c_gray}(Nota: en local los anuncios pueden no depender de esta var si las webs usan su propio flag; ver DEV_CONSOLE_SYSTEM.md)${c_reset}"
+    Press-Continue
+}
+
 function Show-Tools {
     $opts = @(
         @{ ic = '🧹'; l = "Limpiar logs (test/website/debug/local-logs)";  act = { Remove-Item "$LOG_DIR\*" -Force -ErrorAction SilentlyContinue; Write-Host "${c_green}Logs limpiados.${c_reset}"; Press-Continue } },
@@ -669,6 +747,10 @@ function Show-Tools {
         @{ ic = '🧾'; l = "Abrir carpeta de logs en el explorador";    act = { if (Test-Path $LOG_DIR) { Start-Process explorer.exe (Resolve-Path $LOG_DIR).Path } else { Write-Host "${c_yellow}No hay carpeta de logs aun.${c_reset}" }; Press-Continue } },
         @{ ic = '⚙'; l = "Ver versiones node / pnpm / turbo";        act = { Clear-Host; node -v; pnpm -v; turbo --version 2>$null; Press-Continue } },
         @{ ic = '📦'; l = "Ver git status del monorepo";              act = { Clear-Host; git -C $root status --short --branch | Out-Host; Press-Continue } },
+        @{ ic = '🐉'; l = "Comandos pnpm rapidos (lint/test/build/install/cdn)"; act = { Show-PnpmQuick } },
+        @{ ic = '🚀'; l = "Deploy a Vercel (marca webs)";             act = { Deploy-Webs } },
+        @{ ic = '🔐'; l = "Vault -> Bitwarden (subir vault cifrado)"; act = { Show-VaultBw } },
+        @{ ic = '📢'; l = "Anuncios: debug local (forzar ads)";      act = { Show-AdsDebug } },
         @{ ic = '📢'; l = "Advisor: enviar mensaje global a las webs"; act = { Show-AdvisorMenu } },
         @{ ic = '🔘'; l = "Advisor: activar/desactivar mensajes globales (kill switch)"; act = { Show-AdvisorToggle } },
         @{ ic = '🗑'; l = "Advisor: borrar mensajes enviados"; act = { Show-AdvisorClear } },
@@ -750,7 +832,7 @@ if ($SelfTest.IsPresent) {
         if (-not $cond) { $script:failures += $label }
     }
 
-    AssertEqual 'Version' '2.4.0' $VERSION
+    AssertEqual 'Version' '2.5.0' $VERSION
     AssertEqual 'Webs count' 4 $WEBS.Count
     AssertEqual 'CDN port' 8788 $CDN_PORT
     AssertEqual 'Keys' 'network;antony;ciszubot;muzic' (($WEBS.key) -join ';')

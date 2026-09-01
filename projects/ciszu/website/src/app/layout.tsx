@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { headers } from "next/headers";
 import { IBM_Plex_Sans, IBM_Plex_Sans_Condensed } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor, ToastProvider } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
 import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -76,9 +76,11 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       <body className="min-h-screen font-sans flex flex-col">
         <AuthProvider>
           <ToastProvider>
+          <ActivityGuardProvider>
           <AdsProvider site="ciszunetwork">
           <AdFloat placement="corner" side="bottom-right" />
           <AdPill placement="body" />
+          <RedirectGuard />
           <DisclaimerProvider>
             <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={ICON_SVG} title="Ciszu Network" subtitle="Ciszu Network Security • Cloudflare" accent="#22d3ee" storageKey="cf_verified_ciszu">
               {!isEdit && <ZoomWarning />}
@@ -91,6 +93,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             </CloudflareGuard>
           </DisclaimerProvider>
           </AdsProvider>
+          </ActivityGuardProvider>
           </ToastProvider>
           <GlobalAdvisor site="ciszu" />
         </AuthProvider>

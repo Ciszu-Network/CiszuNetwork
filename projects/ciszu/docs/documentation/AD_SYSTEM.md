@@ -58,19 +58,24 @@ depende del formato y del tipo:
 - Recompensa = **la mitad** de la estándar.
 - **Cerrar un anuncio de recompensa muestra una advertencia** ("vas a perder la recompensa") con
   confirmar/cancelar. Los intrusivos SIN recompensa simplemente se cierran.
+- **Pérdida por abandono**: si el usuario recarga/cierra la pestaña con un anuncio de recompensa
+  activo SIN reclamar, la recompensa se pierde (se marca como vista/consumida para no reclamarla
+  en la siguiente visita sin verlo de nuevo). Se registra el evento `ad_reward_lost`.
 
-### 2.3 Frecuencia y cooldown (mucho más larga)
+### 2.3 Frecuencia y cooldown (5-10 minutos)
 
-- `minIntervalSec` por anuncio (patrocinados 10800s=3h, huecos reales 7200s=2h) vía
-  `localStorage` (`ciszu_ads_<site>_seen`).
+- **Intervalo entre anuncios periódicos/opcionales: 5 min mínimo / 10 min máximo** (ya no 1 hora).
+  `periodicInterval()` elige un valor aleatorio en ese rango para cada siguiente anuncio.
+- `minIntervalSec` por anuncio (420s-540s) vía `localStorage` (`ciszu_ads_<site>_seen`).
 - **Un solo flotante a la vez**: la esquina (particulares) y el banner inferior (opcional)
-  comparten `floatingActive`; si uno se muestra, el otro espera. La esquina reintenta cada 90s;
-  el banner aparece una sola vez por sesión de navegación.
-- **Primer show tardío**: esquina a los 45s, banner inferior a los 90s.
-- **Usuario inactivo** (>60s sin pointer/teclado/scroll) = más propenso: el primer show se
-  adelanta (15s/30s) y los tiempos se acortan.
-- **Mini aviso "Próximo anuncio en Xs"**: aparece 15s antes de un anuncio opcional/periódico
-  (en la propia superficie) y entre items de carrusel. NUNCA para anuncios de acción/interacción
+  comparten `floatingActive`; si uno se muestra, el otro espera. Ambos (esquina Y banner)
+  reintentan con `periodicInterval()` para que el banner inferior aparezca igual que la esquina.
+- **Primer show**: esquina a 15s (inactivo) / 5-10 min (activo); banner inferior a 30s (inactivo)
+  / 5-10 min (activo).
+- **Usuario inactivo** (>60s sin pointer/teclado/scroll) = más propenso: el primer show se adelanta.
+- **Periodo de gracia**: 10s sin anuncios desde que se entra a cualquier página (independiente del rango).
+- **Mini aviso "Próximo anuncio en Xs"**: siempre visible antes de un anuncio periódico/opcional,
+  con icono de **flecha doble a la derecha parpadeante**. NUNCA para anuncios de acción/interacción
   ni no-closables.
 
 ### 2.4 Balance 25/75 y no auto-propagación
@@ -80,7 +85,23 @@ depende del formato y del tipo:
 - **Ninguna web se patrocina a sí misma**: el catálogo se filtra por `content.source !== site`
   (los intrusivos/recompensa, que son tras acción, se mantienen siempre).
 
-### 2.5 No-closable y legal
+### 2.5 Usuarios autenticados y premium
+
+- `AdsProvider` acepta `authenticated` y `premium` (props opcionales).
+- **Premium** (`premium: true`): sin anuncios (se quitan todos).
+- **Autenticado** (`authenticated: true`, sin premium): se quitan los anuncios de footer/opcionales
+  (menos anuncios); se mantienen esquina y los de tras-acción (intrusivo/recompensa).
+- En los anuncios se indica "Regístrate para ver menos anuncios" (CTA en el pie de los anuncios).
+
+### 2.6 Registro de impresiones en BD
+
+- Cada anuncio mostrado se registra en `ciszu-network.ads_impressions` (migración
+  `20260831000026_ads_impressions.sql`) con: `site`, `ad_id`, `ad_type`, `ad_source`
+  (patrocinado de Ciszu Network vs `external`), y `user_id` (si el usuario está autenticado).
+- El front llama a `POST /api/ads/impression` (endpoint en ciszu) con RLS: cualquiera inserta,
+  solo `service_role` lee. Esto permite reportes de "anuncios vistos por usuario".
+
+### 2.7 No-closable y legal
 
 - Un anuncio puede declararse **no-closable** (`closable: false`): no se muestra la X.
 - Todos los modales/flotantes muestran al pie el enlace a **Términos y condiciones → sección
@@ -273,6 +294,26 @@ catálogo puede apuntar a esa red sin tocar la mecánica.
 
 La decisión actual: **red propia + GA4**, migrable a AdSense/otra red cambiando solo el
 contenido del catálogo.
+
+---
+
+## 9B. Guards de navegación (complementan los anuncios)
+
+Sistemas de aviso que protegen al usuario al navegar, integrados en las 4 webs (paquete
+`@ciszu/ui` → `BehaviorGuards.tsx`):
+
+- **RedirectGuard (aviso AZUL)**: al hacer clic en un hipervínculo que sale a OTRA website
+  (dominio distinto; NO aplica al mismo dominio), muestra "Redirigiendo a <host> en 3s..." con
+  opción de **cancelar**. Se usa para redireccionar anuncios/links oficiales o no oficiales y
+  enlaces de footers/páginas/headers a otras webs, dándole tiempo al usuario a cancelar.
+  Preferencia local `redirectGuard` (default activo).
+- **ActivityGuard (aviso ROJO)**: si hay una acción **no recuperable** en curso (jugar un nivel,
+  registro/login, edición de perfil, anuncio obligatorio no opcional) y el usuario intenta
+  navegar/cerrar, muestra un aviso rojo con 2 opciones "Seguir" / "Quedarme" (sin contador).
+  Pausa la actividad (`onPause`). Preferencia local `activityGuard` (default activo).
+
+Ambas se desactivan desde las preferencias locales (`ciszu_preferences`). Ver
+`GLOBAL_COMPONENTS_SYSTEM.md` y el código de `BehaviorGuards.tsx`.
 
 ---
 

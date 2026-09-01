@@ -8,7 +8,7 @@ import "./globals.css";
 import AuthProvider from "@/components/providers/AuthProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor, ToastProvider } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
 
 const exo2 = Exo_2({
@@ -77,9 +77,11 @@ export default async function RootLayout({
         {/* AuthProvider: hidrata el store global con la sesión de Supabase en cada carga */}
         <AuthProvider>
           <ToastProvider>
+          <ActivityGuardProvider>
           <AdsProvider site="muzicmania">
           <AdFloat placement="corner" side="bottom-right" />
           <AdPill placement="body" />
+          <RedirectGuard />
           <DisclaimerProvider>
             <CloudflareGuard>
               {!isEdit && <BetaDisclaimer storageKey="betadisclaimer_muzicmania_dismissed" />}
@@ -97,6 +99,7 @@ export default async function RootLayout({
             </CloudflareGuard>
           </DisclaimerProvider>
           </AdsProvider>
+          </ActivityGuardProvider>
           </ToastProvider>
         </AuthProvider>
         <GlobalAdvisor site="muzicmania" />

@@ -866,6 +866,9 @@ function PlayPageContent() {
     };
 
     saveScore();
+    // Salir de pantalla completa al terminar la partida: el anuncio tras-acción
+    // (modal intrusivo/recompensa) no debe molestar dentro del fullscreen.
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
     setPhase('results');
   };
 

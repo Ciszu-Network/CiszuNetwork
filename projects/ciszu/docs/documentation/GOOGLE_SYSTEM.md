@@ -155,6 +155,9 @@ SSR**; `GoogleAnalytics` hace el tracking client). Config por env (Vercel/`.env.
 
 ### 7.4 Pendientes de verificación (tras deploys en verde)
 
+- [x] **`ads.txt` creado** en `public/` de las 4 webs con
+      `google.com,ca-pub-3471969072198962,DIRECT,f08c47fec0942fa0` — método de verificación
+      de AdSense alternativo al código (01 sep 2026).
 - [ ] **Testear las 4 webs**: carga sin errores de consola; `window.dataLayer`/`gtag` presentes;
       anuncios propios visibles (píldora ~2s, flotante ~8s, modal MuzicMania tras partida).
 - [ ] **GA4** (`analytics.google.com`): Realtime muestra los page_views por web.
