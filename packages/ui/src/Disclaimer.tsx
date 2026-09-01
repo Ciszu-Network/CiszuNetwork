@@ -27,6 +27,15 @@ export interface DisclaimerItem {
   kind: DisclaimerKind;
   message: string;
   onClose: () => void;
+  /** false = obligatorio (sin botón X). Default true. */
+  dismissible?: boolean;
+  /** Fecha ISO de culminación: si llega, el disclaimer se cierra solo y no
+   *  vuelve (temporal con fecha). Si es null, es temporal SIN fecha de fin. */
+  expiresAt?: string | null;
+  /** Imagen opcional (URL) para disclaimers con creatividad (eventos). */
+  image?: string;
+  /** Mostrar contador de tiempo restante (solo si expiresAt). Default true. */
+  showCountdown?: boolean;
 }
 
 interface DisclaimerContextValue {
@@ -193,6 +202,23 @@ const DISCLAIMER_CSS = `
   min-width: 0;
   margin: 0 auto;
 }
+.disclaimer-item .disc-img {
+  flex-shrink: 0;
+  height: 24px;
+  width: 24px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+.disclaimer-item .disc-countdown {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.12);
+  color: var(--accent, #22d3ee);
+}
 .disclaimer-item .disc-text {
   white-space: nowrap;
   overflow: hidden;
@@ -234,14 +260,34 @@ export interface DisclaimerStackProps {
  * Render del stack: debe montarse tras el <Navbar /> de cada web.
  * - modo full  → banda de extremo a extremo anclada DEBAJO del header.
  * - modo island → tarjetas flotantes con los márgenes del header island.
+ *
+ * Soporta: imagen opcional, contador de expiración (temporal con fecha) y
+ * disclaimers obligatorios (sin X). Al llegar a la fecha de culminación, el
+ * disclaimer se auto-cierra y no vuelve a aparecer (onClose).
  */
 export function DisclaimerStack({ headerHeight = 64, zoomShift = 32 }: DisclaimerStackProps) {
-  const { items } = useDisclaimer();
+  const { items, remove } = useDisclaimer();
   const mode = useHeaderMode();
-  // Cuando el zoom está fuera de rango, los Navbars desplazan el header con
-  // mt-8 (zoomShift px). El stack debe bajar la misma cantidad para no
-  // quedar por detrás del header.
   const zoomActive = useZoomWarningActive();
+
+  // Auto-cierre de temporales con fecha de culminación + tick de contador.
+  const [, forceTick] = useState(0);
+  useEffect(() => {
+    if (items.length === 0) return;
+    const iv = window.setInterval(() => forceTick((t) => t + 1), 1000);
+    const checkExpired = () => {
+      for (const item of items) {
+        if (item.expiresAt && new Date(item.expiresAt).getTime() <= Date.now()) {
+          item.onClose();
+          remove(item.id);
+        }
+      }
+    };
+    checkExpired();
+    const exp = window.setInterval(checkExpired, 2000);
+    return () => { window.clearInterval(iv); window.clearInterval(exp); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items, remove]);
 
   if (items.length === 0) return null;
 
@@ -256,30 +302,107 @@ export function DisclaimerStack({ headerHeight = 64, zoomShift = 32 }: Disclaime
         style={{ top }}
         role="status"
       >
-        {items.map((item) => (
-          <div
-            key={item.id}
-            className={`disclaimer-item ${item.kind} ${island ? 'island' : 'full'}`}
-            role={item.kind === 'warning' ? 'alert' : 'status'}
-          >
-            <span className="disc-icon">{ICONS[item.kind]}</span>
-            <span className="disc-body">
-              <span className="disc-text">{item.message}</span>
-            </span>
-            <button
-              type="button"
-              onClick={item.onClose}
-              aria-label="Cerrar aviso"
-              title="Cerrar aviso"
-              className="disc-close"
+        {items.map((item) => {
+          const dismissible = item.dismissible !== false;
+          const remainingMs = item.expiresAt ? new Date(item.expiresAt).getTime() - Date.now() : null;
+          const remaining = remainingMs !== null && remainingMs > 0 ? Math.ceil(remainingMs / 1000) : 0;
+          return (
+            <div
+              key={item.id}
+              className={`disclaimer-item ${item.kind} ${island ? 'island' : 'full'}`}
+              role={item.kind === 'warning' ? 'alert' : 'status'}
             >
-              <XIcon />
-            </button>
-          </div>
-        ))}
+              <span className="disc-icon">{ICONS[item.kind]}</span>
+              <span className="disc-body">
+                {item.image && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={item.image} alt="" className="disc-img" />
+                )}
+                <span className="disc-text">{item.message}</span>
+                {item.expiresAt && remaining > 0 && item.showCountdown !== false && (
+                  <span className="disc-countdown" title={item.expiresAt}>
+                    {remaining}s
+                  </span>
+                )}
+              </span>
+              {dismissible && (
+                <button
+                  type="button"
+                  onClick={item.onClose}
+                  aria-label="Cerrar aviso"
+                  title="Cerrar aviso"
+                  className="disc-close"
+                >
+                  <XIcon />
+                </button>
+              )}
+            </div>
+          );
+        })}
       </div>
     </>
   );
 }
 
 export default DisclaimerStack;
+
+/* ------------------------------------------------------------------ *
+ * DisclaimerDebug — inyecta disclaimers de DEBUG (devcon) en desarrollo.
+ * Lee test/website/debug/local-logs/disclaimers_debug.json vía
+ * /api/disclaimers/debug (solo responde en dev). Cada web puede filtrar
+ * por su site (`site` prop). En producción no hace nada.
+ * ------------------------------------------------------------------ */
+export interface DebugDisclaimer {
+  id: string;
+  kind: DisclaimerKind;
+  message: string;
+  site?: string;
+  dismissible?: boolean;
+  expiresAt?: string | null;
+  image?: string;
+  showCountdown?: boolean;
+}
+
+export function DisclaimerDebug({ site }: { site: string }) {
+  const { push, remove } = useDisclaimer();
+  const [items, setItems] = useState<DebugDisclaimer[]>([]);
+
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'development') return;
+    const poll = () => {
+      fetch('/api/disclaimers/debug', { cache: 'no-store' })
+        .then((r) => (r.ok ? r.json() : { items: [] }))
+        .then((data: { items?: DebugDisclaimer[] }) => {
+          setItems((data.items ?? []).filter((i) => !i.site || i.site === site));
+        })
+        .catch(() => { /* ignora */ });
+    };
+    poll();
+    const iv = window.setInterval(poll, 2000);
+    return () => window.clearInterval(iv);
+  }, [site]);
+
+  // Sincroniza los items de debug con la pila global de disclaimers.
+  useEffect(() => {
+    const active = new Set<string>();
+    for (const item of items) {
+      active.add(item.id);
+      push({
+        id: item.id,
+        kind: item.kind,
+        message: item.message,
+        dismissible: item.dismissible,
+        expiresAt: item.expiresAt,
+        image: item.image,
+        showCountdown: item.showCountdown,
+        onClose: () => remove(item.id),
+      });
+    }
+    return () => {
+      for (const id of active) remove(id);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items, push, remove]);
+
+  return null;
+}

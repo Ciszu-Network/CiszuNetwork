@@ -121,7 +121,8 @@ Windows sin firma).
 | Comandos pnpm rápidos | lint / test / build / install / cdn:upload / cdn:verify |
 | Deploy a Vercel | Marca webs → `vercel --prod` en cada una |
 | Vault → Bitwarden | Sube el vault cifrado a Bitwarden (o `vault crypt`) |
-| Anuncios: debug local | Configura anuncios en local (webs, tipo, intervalo, fuente, recompensa, limpiar/reiniciar) |
+| Anuncios: debug local | Configura anuncios en local (webs, tipo, intervalo, fuente/marca, recompensa, limpiar/reiniciar) |
+| Disclaimers: debug local | Configura disclaimers en local (webs, tipo, duración, fecha, cierre, imagen, resumen/eliminar/modificar) |
 | Advisor: enviar mensaje global | Envía mensajes a las webs (GlobalAdvisor) |
 | Advisor: kill switch | Activa/desactiva los mensajes globales |
 | Staff Console / Customers Console | Abre las consolas de empleados/clientes |
@@ -169,15 +170,36 @@ ADS sin esperar los intervalos normales (5-10 min). Flujo:
 1. **Webs destino** (selección múltiple): casillas por web (network/antony/ciszubot/muzic).
 2. **Tipo**: intrusivo (centro tras acción) · particulares (esquina) · reward · optional (banner) · todos.
 3. **Intervalo** en segundos: 5s · 15s · 30s · 60s · normal (5-10 min).
-4. **Fuente**: oficiales de Ciszu Network · terceros (external) · ambas.
+4. **Fuente**: oficiales de Ciszu Network (requiere elegir la **marca**:
+   ciszunetwork/ciszukoantony/ciszubot/muzicmania/ciszugamens) · terceros (external) · ambas.
 5. **Solo recompensa** o todos.
-6. Al final: `[L]` limpiar anuncios en pantalla (dispara `clearCurrent`) · `[R]` reiniciar (desactiva la config).
+6. Al final: `[S]` resumen actual · `[L]` limpiar anuncios en pantalla (dispara `clearCurrent`) ·
+   `[R]` reiniciar (desactiva la config).
 
 La config se escribe en `test/website/debug/local-logs/ads_debug.json` y cada web
-(en desarrollo) la lee vía `GET /api/ads/debug` (endpoint de debug que solo responde
-en `NODE_ENV=development`). `AdsProvider` la aplica sobre el catálogo (webs, tipos,
-fuente, intervalo) y expone `clearCurrent()` para eliminar anuncios en pantalla.
-En producción el endpoint devuelve `{enabled:false}` y no tiene efecto.
+(en desarrollo) la lee vía `GET /api/ads/debug`. `AdsProvider` la aplica sobre el catálogo
+(webs, tipos, fuente/marca, intervalo) y expone `clearCurrent()`. **El periodo de gracia
+de 10s se ignora cuando el debug está activo** (los anuncios forzados salen al instante), y
+también se anula el filtro de "no anunciar la propia web" (se puede forzar cualquier marca,
+incluida la web actual, para depurar logos). En producción el endpoint devuelve `{enabled:false}`.
+
+### 4.6 Debug local de disclaimers (opción "Disclaimers: debug local")
+
+Permite configurar disclaimers en local para depurar el sistema global de avisos de cabecera
+(`DisclaimerStack`). Flujo:
+
+1. **Acciones**: crear · eliminar · modificar · resumen · reiniciar (todos).
+2. **Crear**: webs destino (casillas) → mensaje → tipo (info/beta/warning) →
+   **duración** (temporal sin fecha / temporal con fecha de culminación / permanente) →
+   **cierre** (opcional con X / obligatorio sin X) → imagen (URL opcional).
+3. **Fecha de culminación**: hora (HH:MM 24h), día, mes y año. Si la fecha es anterior a la
+   actual o inválida, da error y no guarda. Al llegar la fecha, el disclaimer se cierra solo y
+   no vuelve a aparecer (contador visible en el stack).
+4. **Modificar** permite cambiar periodo/cierre/tipo de un disclaimer existente por webs.
+
+La config se escribe en `local-logs/disclaimers_debug.json` y cada web la lee vía
+`GET /api/disclaimers/debug` (solo dev). El componente `DisclaimerDebug` la inyecta en la pila
+global. En producción no tiene efecto.
 
 ## 5. Modo CLI no interactivo
 

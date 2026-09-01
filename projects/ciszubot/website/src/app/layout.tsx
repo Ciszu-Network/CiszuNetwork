@@ -9,7 +9,7 @@ import FeedbackFab from "@/components/layout/FeedbackFab";
 import { CookiesBanner } from "@/components/layout/CookiesBanner";
 import { getDict, type Lang } from "@/lib/i18n";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
 import { getSessionData } from "@/lib/auth";
 import QueryProvider from "@/components/layout/QueryProvider";
@@ -90,6 +90,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
               {!isEdit && <Navbar lang={lang} dict={dict} account={session} />}
               {!isEdit && <ZoomWarning />}
               {!isEdit && <DisclaimerStack headerHeight={64} />}
+              <DisclaimerDebug site="ciszubot" />
               <main className={isEdit ? "flex-grow" : "flex-grow pt-[60px]"}>{children}</main>
               {!isEdit && <Footer lang={lang} dict={dict} />}
               {!isEdit && <CookiesBanner lang={lang} dict={dict} />}
