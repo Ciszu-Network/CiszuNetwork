@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "actualizacion": "2026-08-26",
+  "actualizacion": "2026-08-29",
   "org": {
     "nombre": "Ciszu Network",
     "fundador": "Francisco Garcia (Ciszuko Antony)",
@@ -436,6 +436,23 @@
         "Betatesters"
       ],
       "supervisor": null,
+      "fechaIngreso": null,
+      "estado": "activo",
+      "registroBaja": null
+    },
+    {
+      "id": "CZ-002",
+      "nombres": "RAFAEL",
+      "apellidos": "MENOLASCINA",
+      "telefono": "04120702370",
+      "correo": "rafameno@gmail.com",
+      "direccion": "",
+      "redes": [],
+      "cargo": "Betatesters",
+      "cargos": [
+        "Betatesters"
+      ],
+      "supervisor": "CZ-001",
       "fechaIngreso": null,
       "estado": "activo",
       "registroBaja": null

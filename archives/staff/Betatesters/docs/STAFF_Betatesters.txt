@@ -1,8 +1,8 @@
 CISZU NETWORK - CARGO: Betatesters (Beta Tester)
 
 Version: 1.0.0
-Actualizacion: 2026-08-26
-Identificador: STAFF_Betatesters_V1_0_0_2026_08_26_ciszunetwork
+Actualizacion: 2026-08-29
+Identificador: STAFF_Betatesters_V1_0_0_2026_08_29_ciszunetwork
 
 Definicion: ficha del cargo Betatesters dentro de la organizacion.
 Prueban funcionalidades en fase beta y reportan errores o mejoras antes de cada lanzamiento.
@@ -31,11 +31,12 @@ Prueban funcionalidades en fase beta y reportan errores o mejoras antes de cada 
 
 Un cargo con nivel N solo puede gestionar cargos de nivel mayor que N.
 
-4. Miembros activos del cargo (1)
+4. Miembros activos del cargo (2)
 
    ID    Nombre    Correo    Telefono    Supervisor
   ----  --------  --------  ----------  ------------
    CZ-001    FRANCISCO GARCIA    ciszunetwork@outlook.com    -    Fundador
+   CZ-002    RAFAEL MENOLASCINA    rafameno@gmail.com    04120702370    CZ-001
 
 5. Escalabilidad
 
@@ -45,4 +46,4 @@ bajando de nivel. El detalle de la escala vive en `EMPLOYEES_SYSTEM.md`.
 
 ============================================================
 
-_Ultima revision: 2026-08-26_
+_Ultima revision: 2026-08-29_

@@ -26,11 +26,11 @@ Identificador: CUSTOMERS_GLOBAL_V1_0_0_2026_08_26_ciszunetwork
 | CL-001 | MARIA FELIX | Tarea universitaria | - | - |
 | CL-002 | NELGER LUGO | Arreglo de una 3DS | - | - |
 
-## 3. Historial de bajas (0)
+## 3. Historial de bajas (1)
 
 | ID | Nombre | Asunto | Fecha de baja | Motivo |
 |----|--------|--------|---------------|--------|
-| - | (sin bajas registradas) | - | - | - |
+| CL-003 | TESTEO TESTEA | test | 2026-08-26 | Test |
 
 ## 4. Metadatos
 
