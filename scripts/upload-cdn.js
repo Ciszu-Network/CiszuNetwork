@@ -43,6 +43,7 @@ const SOURCES = [
   { dir: 'projects/ciszukoantony/content', prefix: 'projects/ciszukoantony/content' },
   { dir: 'projects/ciszubot/content', prefix: 'projects/ciszubot/content' },
   { dir: 'projects/muzicmania/content', prefix: 'projects/muzicmania/content' },
+  { dir: 'projects/ciszugamens/content', prefix: 'projects/ciszugamens/content' },
 ];
 
 const ROOT = path.resolve(__dirname, '..');

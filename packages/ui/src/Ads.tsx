@@ -148,8 +148,8 @@ const ISOTIPO: Record<Exclude<AdSource, 'external'>, string> = {
   muzicmania: resolver.resolve('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg'),
   // ciszubot: versión CIRCLE (petición expresa) — PNG
   ciszubot: resolver.resolve('projects/ciszubot/content/logos/images/samples/circle/ciszubot_logo_isotipo_color_circle.png'),
-  // ciszugamens: no existe proyecto/carpeta → placeholder (se usará Discord brand en catálogo)
-  ciszugamens: resolver.resolve('projects/ciszu/content/logos/images/outline/isotype/gradient/color/ciszu_logo_isotipo_outline_degradado_zwhite_ccolor.svg'),
+  // ciszugamens: isotipo real (not-outline degradado color, azul sobre blanco) — SVG
+  ciszugamens: resolver.resolve('projects/ciszugamens/content/logos/images/not-outline/isotype/gradient/color/ciszugamens_logo_isotipo_degradado_outline_color_cblue_zwhite.svg'),
 };
 
 // ---------- Logotipos reales vía CDN (outline gradient color; fallback not-outline; fallback color) ----------
@@ -162,8 +162,8 @@ const LOGOTIPO: Record<Exclude<AdSource, 'external'>, string> = {
   muzicmania: resolver.resolve('projects/muzicmania/content/logos/images/not-outline/logotype/gradient/color/muzicmania_logotipo_degradado_color.svg'),
   // ciszubot: outline color (NO hay gradient en outline) → color normal — SVG
   ciszubot: resolver.resolve('projects/ciszubot/content/logos/images/outline/logotype/color/ciszubot_logotipo_outline_color.svg'),
-  // ciszugamens: no existe → placeholder
-  ciszugamens: resolver.resolve('projects/ciszu/content/logos/images/outline/logotype/gradient/color/ciszu_logotipo_outline_zcolor_ccolor_simple.svg'),
+  // ciszugamens: logotipo real (not-outline degradado color) — PNG (sin SVG de logotipo)
+  ciszugamens: resolver.resolve('projects/ciszugamens/content/logos/images/not-outline/logotype/gradient/color/ciszugamens_logotipo_degradado_outline_color.png'),
 };
 
 // ---------- Catálogo (los sponsors NO se anuncian a sí mismos; se filtra por site) ----------

@@ -4,7 +4,7 @@ $names = @(
   "notify.js","list-icons.js","setup-hybrid-system.js","organize-assets.js","quick-start.js",
   "complete-setup.js","final-verification.js","verify-system.js","verify-final.js",
   "setup-documentation-system.js","fix-documentation-structure.js","clean-and-sync-docs.js",
-  "clean-and-unify-docs.js","analyze-docs-structure.js","organize-ciszugamens.js","convert-icons.js",
+  "clean-and-unify-docs.js","analyze-docs-structure.js","convert-icons.js",
   "extract-icons.js","migrate-icons.js","download-icons.js","download-icons-direct.js",
   "download-massive-icons.js","drop-duplicate.js","list-tickets.js","read-funcs.js","create-wrappers.js",
   "fix-funcs-sql.js","fix-bugs.js","sample-bucket.js","count-bucket.js","test-upload.js",

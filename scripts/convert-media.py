@@ -53,6 +53,7 @@ SOURCES = [
     f"{_ciszukoa_dir()}/content",
     "projects/ciszubot/content",
     "projects/muzicmania/content",
+    "projects/ciszugamens/content",
 ]
 
 # Assets criticos referenciados por las webs (barridos via grep 8 ago 2026)

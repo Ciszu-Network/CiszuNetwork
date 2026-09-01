@@ -24,6 +24,12 @@ Identificador: DISCORD_SECURITY_PROTOCOLS_V1.0.0_2026_08_29_ciszugamens
 2. **Captcha opcional**: Turnstile en web landing → rol `Verificado` automático
 3. **Anti-alt**: Detección de cuentas < 7 días o sin avatar → revisión manual
 
+> **Reglas del servidor**: el documento oficial es `SERVER_RULES` (plantilla
+> **TEMPLATE SECURITY · RESPALDO SERVER DISCORD OFICIAL PLANTILLA · v4.2.0.0**).
+> Distribución en `docs/{txt,md,docx,pdf}/SERVER_RULES.{txt,md,docx,pdf}`; la plantilla
+> base editable en <https://discord.new/JDPAEwyKHcZE>. Contiene 10 reglas generales + 3
+> reglas de canales de voz.
+
 ## Canales sensibles
 
 | Canal | Acceso | Protección |
