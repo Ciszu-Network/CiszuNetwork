@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 /**
  * ADS — Sistema de anuncios de Ciszu Network (compartido para las 4 webs).
@@ -81,6 +81,10 @@ export interface AdsProviderProps {
   site: string;
   children: React.ReactNode;
   catalog?: AdConfig[];
+  /** true si el usuario está autenticado (CISZU ID): menos anuncios (sin footer/opcionales). */
+  authenticated?: boolean;
+  /** true si el usuario es premium (suscripción futura): sin anuncios. */
+  premium?: boolean;
 }
 
 interface RewardStatus { canClaim: boolean; remainingSec: number }
@@ -127,6 +131,7 @@ const SITE_TERMS: Record<string, string> = {
 };
 
 // ---------- Timing (reglas de negocio) ----------
+// Intervalo entre anuncios periódicos/opcionales: 5 min mínimo / 10 min máximo.
 const AD_TIMING = {
   sponsoredSec: 10,          // patrocinado de Ciszu Network
   imageSec: 30,              // imagen de terceros
@@ -135,7 +140,13 @@ const AD_TIMING = {
   carouselMaxItems: 4,       // límite de carrusel
   inactiveThresholdSec: 60,  // umbral de inactividad
   sponsoredWeight: 0.25,     // 25% patrocinado / 75% terceros
+  periodicMinSec: 300,       // intervalo mínimo entre periódicos/opcionales (5 min)
+  periodicMaxSec: 600,       // intervalo máximo (10 min)
 } as const;
+
+function periodicInterval(): number {
+  return (Math.random() * (AD_TIMING.periodicMaxSec - AD_TIMING.periodicMinSec) + AD_TIMING.periodicMinSec) * 1000;
+}
 
 // ---------- Isotipos reales vía CDN (outline gradient color; fallback not-outline; fallback color) ----------
 const resolver = new AssetResolver();
@@ -170,35 +181,35 @@ const LOGOTIPO: Record<Exclude<AdSource, 'external'>, string> = {
 export const DEFAULT_AD_CATALOG: AdConfig[] = [
   // --- Esquina (particulares): patrocinados + huecos reales ---
   {
-    id: 'ciszu_account', type: 'particulares', placement: 'corner', minIntervalSec: 10800,
+    id: 'ciszu_account', type: 'particulares', placement: 'corner', minIntervalSec: 420,
     content: { title: 'Crea tu cuenta CISZU ID', description: 'Un solo perfil para todo el ecosistema.', cta: 'Crear cuenta', href: 'https://ciszunetwork.vercel.app/register', accent: '#3b82f6', format: 'sponsored', source: 'ciszunetwork', image: ISOTIPO.ciszunetwork },
   },
   {
-    id: 'muzicmania_play', type: 'particulares', placement: 'corner', minIntervalSec: 10800,
+    id: 'muzicmania_play', type: 'particulares', placement: 'corner', minIntervalSec: 420,
     content: { title: 'MuzicMania', description: 'Juego de ritmo: compite por la tabla de líderes.', cta: 'Jugar', href: 'https://muzicmania.vercel.app/play', accent: '#c026d3', format: 'sponsored', source: 'muzicmania', image: ISOTIPO.muzicmania },
   },
   {
-    id: 'ciszubot_bot', type: 'particulares', placement: 'corner', minIntervalSec: 10800,
+    id: 'ciszubot_bot', type: 'particulares', placement: 'corner', minIntervalSec: 420,
     content: { title: 'CiszuBot', description: 'El bot oficial de Discord del ecosistema.', cta: 'Probar', href: 'https://ciszubot.vercel.app', accent: '#38bdf8', format: 'sponsored', source: 'ciszubot', image: ISOTIPO.ciszubot },
   },
   {
-    id: 'antony_portfolio', type: 'particulares', placement: 'corner', minIntervalSec: 10800,
+    id: 'antony_portfolio', type: 'particulares', placement: 'corner', minIntervalSec: 420,
     content: { title: 'Ciszuko Antony', description: 'Conoce mi portfolio: logos, medios y música.', cta: 'Ver', href: 'https://ciszukoantony.vercel.app', accent: '#a855f7', format: 'sponsored', source: 'ciszukoantony', image: ISOTIPO.ciszukoantony },
   },
   {
-    id: 'ciszugamens_server', type: 'particulares', placement: 'corner', minIntervalSec: 10800,
+    id: 'ciszugamens_server', type: 'particulares', placement: 'corner', minIntervalSec: 420,
     content: { title: 'Ciszugamens', description: 'Únete al servidor de Discord de la comunidad gamer.', cta: 'Unirme', href: 'https://discord.gg/W3kMtMMj6E', accent: '#22d3ee', format: 'sponsored', source: 'ciszugamens', image: ISOTIPO.ciszugamens },
   },
   {
-    id: 'real_placeholder_corner', type: 'particulares', placement: 'corner', minIntervalSec: 7200,
+    id: 'real_placeholder_corner', type: 'particulares', placement: 'corner', minIntervalSec: 540,
     content: { title: 'Espacio para tu anuncio', description: 'Anuncio de terceros próximo (imagen).', cta: 'Próximamente', href: '#', accent: '#facc15', format: 'image', source: 'external', placeholder: true, durationSec: 30 },
   },
   {
-    id: 'real_video_corner', type: 'particulares', placement: 'corner', minIntervalSec: 7200,
+    id: 'real_video_corner', type: 'particulares', placement: 'corner', minIntervalSec: 540,
     content: { title: 'Tu anuncio en vídeo', description: 'Anuncio en vídeo de terceros próximo.', cta: 'Próximamente', href: '#', accent: '#facc15', format: 'video', source: 'external', placeholder: true, durationSec: 15 },
   },
   {
-    id: 'real_carousel_corner', type: 'particulares', placement: 'corner', minIntervalSec: 7200,
+    id: 'real_carousel_corner', type: 'particulares', placement: 'corner', minIntervalSec: 540,
     content: { title: 'Carrusel de anuncios', description: 'Varios anuncios en cadena, próximamente.', cta: 'Próximamente', href: '#', accent: '#facc15', format: 'carousel', source: 'external', placeholder: true, durationSec: 15, carouselItems: [
       { title: 'Anuncio 1', description: 'Anuncio personalizado próximo.', cta: 'Próximamente', href: '#', accent: '#facc15', placeholder: true, format: 'image' },
       { title: 'Anuncio 2', description: 'Anuncio personalizado próximo.', cta: 'Próximamente', href: '#', accent: '#facc15', placeholder: true, format: 'image' },
@@ -216,11 +227,11 @@ export const DEFAULT_AD_CATALOG: AdConfig[] = [
   },
   // --- Banner inferior (optional): huecos reales + un patrocinado ---
   {
-    id: 'real_image_pill', type: 'optional', placement: 'body', minIntervalSec: 10800,
+    id: 'real_image_pill', type: 'optional', placement: 'body', minIntervalSec: 420,
     content: { title: 'Publicidad real próxima', description: 'Estamos verificando la app y necesitamos más tráfico.', cta: 'Próximamente', href: '#', accent: '#facc15', format: 'image', source: 'external', placeholder: true, durationSec: 30 },
   },
   {
-    id: 'real_carousel_pill', type: 'optional', placement: 'body', minIntervalSec: 10800,
+    id: 'real_carousel_pill', type: 'optional', placement: 'body', minIntervalSec: 420,
     content: { title: 'Carrusel de anuncios', description: 'Varios anuncios en cadena, próximamente.', cta: 'Próximamente', href: '#', accent: '#facc15', format: 'carousel', source: 'external', placeholder: true, durationSec: 15, carouselItems: [
       { title: 'Anuncio 1', description: 'Anuncio personalizado próximo.', cta: 'Próximamente', href: '#', accent: '#facc15', placeholder: true, format: 'image' },
       { title: 'Anuncio 2', description: 'Anuncio personalizado próximo.', cta: 'Próximamente', href: '#', accent: '#facc15', placeholder: true, format: 'image' },
@@ -228,7 +239,7 @@ export const DEFAULT_AD_CATALOG: AdConfig[] = [
     ] },
   },
   {
-    id: 'ciszu_account_pill', type: 'optional', placement: 'body', minIntervalSec: 10800,
+    id: 'ciszu_account_pill', type: 'optional', placement: 'body', minIntervalSec: 420,
     content: { title: 'Crea tu cuenta CISZU ID', description: 'Un solo perfil para todo el ecosistema.', cta: 'Crear cuenta', href: 'https://ciszunetwork.vercel.app/register', accent: '#3b82f6', format: 'sponsored', source: 'ciszunetwork', image: ISOTIPO.ciszunetwork },
   },
 ];
@@ -275,7 +286,7 @@ function CountdownBar({ total, remaining }: { total: number; remaining: number }
 
 function AdBanner({ ad, compact = false }: { ad: AdConfig; compact?: boolean }) {
   const c = ad.content;
-  const h = compact ? 'h-10' : 'h-24';
+  const h = compact ? 'h-10' : 'h-28';
   if (c.placeholder) {
     return (
       <div className={`flex ${h} w-full flex-col items-center justify-center rounded-lg border border-dashed border-yellow-500/40 bg-yellow-500/5 px-3 text-center`}>
@@ -289,16 +300,22 @@ function AdBanner({ ad, compact = false }: { ad: AdConfig; compact?: boolean }) 
     return <img src={c.image} alt={c.title} className={`${h} w-full rounded-lg object-cover`} />;
   }
   const accent = c.accent || '#22d3ee';
+  const isSponsored = c.source && c.source !== 'external';
+  // Patrocinados de Ciszu Network: gradiente vibrante + brillo superior + shimmer animado.
   return (
     <div
-      className={`flex ${h} w-full items-center justify-center gap-3 overflow-hidden rounded-lg`}
-      style={{ background: `linear-gradient(135deg, ${accent}2e, ${accent}d9)` }}
+      className={`relative flex ${h} w-full items-center justify-center gap-3 overflow-hidden rounded-lg`}
+      style={{ background: isSponsored
+        ? `linear-gradient(135deg, ${accent}, ${accent}99 55%, ${accent}66)`
+        : `linear-gradient(135deg, ${accent}2e, ${accent}d9)` }}
     >
+      {isSponsored && <div className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/25 to-transparent" />}
+      {isSponsored && <div className="pointer-events-none absolute inset-0 animate-pulse bg-gradient-to-r from-transparent via-white/10 to-transparent" />}
       {c.image && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={c.image} alt={c.title} className="h-10 w-10 shrink-0 object-contain" />
+        <img src={c.image} alt={c.title} className={`${compact ? 'h-8 w-8' : 'h-12 w-12'} shrink-0 object-contain drop-shadow-lg`} />
       )}
-      <span className="px-2 text-center text-sm font-bold text-white drop-shadow">{c.title}</span>
+      <span className={`px-2 text-center font-bold text-white drop-shadow ${compact ? 'text-xs' : 'text-lg'}`}>{c.title}</span>
     </div>
   );
 }
@@ -308,7 +325,8 @@ function AdTerms({ site }: { site: string }) {
   return (
     <p className="mt-3 text-center text-[11px] text-neutral-500">
       <a href={url} className="underline hover:text-neutral-300">Términos y condiciones</a>{' '}
-      · publicidad de Ciszu Network
+      · publicidad de Ciszu Network ·{' '}
+      <a href="https://ciszunetwork.vercel.app/register" className="underline hover:text-neutral-300">Regístrate para ver menos anuncios</a>
     </p>
   );
 }
@@ -321,6 +339,26 @@ function readJson<T>(key: string, fb: T): T {
 function writeJson(key: string, v: unknown) {
   if (typeof window === 'undefined') return;
   try { window.localStorage.setItem(key, JSON.stringify(v)); } catch { /* ignora */ }
+}
+
+// ---------- Registro de impresión en DB (telemetría del sistema ADS) ----------
+const ADS_IMPRESSION_URL = 'https://ciszunetwork.vercel.app/api/ads/impression';
+let adsImpressionBusy = false;
+function recordImpression(site: string, ad: AdConfig) {
+  if (typeof window === 'undefined' || adsImpressionBusy) return;
+  adsImpressionBusy = true;
+  fetch(ADS_IMPRESSION_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      site,
+      ad_id: ad.id,
+      ad_type: ad.type,
+      ad_source: ad.content.source ?? 'external',
+    }),
+  }).catch(() => { /* telemetría no bloqueante: ignora fallos de red */ }).finally(() => {
+    adsImpressionBusy = false;
+  });
 }
 
 // ---------- Duración total por formato/tipo ----------
@@ -343,12 +381,28 @@ function useAutoClose(ad: AdConfig, onDone: () => void) {
   const [phase, setPhase] = useState(0);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const doneRef = useRef(false);
+  const onDoneRef = useRef(onDone);
+  onDoneRef.current = onDone;
 
   const finish = useCallback(() => {
     if (doneRef.current) return;
     doneRef.current = true;
-    onDone();
-  }, [onDone]);
+    onDoneRef.current();
+  }, []);
+
+  // Resetear SIEMPRE el temporizador y el flag cuando cambia el anuncio (ad.id):
+  // evita que un anuncio nuevo herede un contador ya gastado o un doneRef viejo
+  // que lo cierra antes de tiempo o que no se reinicie al cambiar de anuncio.
+  useEffect(() => {
+    setRemaining(adDurationSec(ad));
+    setPhase(0);
+    doneRef.current = false;
+    if (isVideo && videoRef.current) {
+      videoRef.current.currentTime = 0;
+      void videoRef.current.play().catch(() => {});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ad.id]);
 
   useEffect(() => {
     if (isVideo && phase === 0) {
@@ -358,13 +412,21 @@ function useAutoClose(ad: AdConfig, onDone: () => void) {
     }
     const iv = window.setInterval(() => {
       setRemaining((r) => {
-        if (r <= 1) { window.clearInterval(iv); finish(); return 0; }
+        if (r <= 1) { window.clearInterval(iv); return 0; }
         return r - 1;
       });
     }, 1000);
     return () => window.clearInterval(iv);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ad.id, phase]);
+
+  // Cierre cuando el contador llega a 0 (fuera del updater de setState, que en
+  // React 18+ puede ejecutarse dos veces y disparar el cierre prematuro).
+  useEffect(() => {
+    if (remaining <= 0 && !doneRef.current) {
+      finish();
+    }
+  }, [remaining, finish]);
 
   const handleVideoEnded = useCallback(() => {
     if (!isVideo) return;
@@ -383,7 +445,7 @@ function useAutoClose(ad: AdConfig, onDone: () => void) {
 }
 
 // ---------- Provider ----------
-export function AdsProvider({ site, children, catalog = DEFAULT_AD_CATALOG }: AdsProviderProps) {
+export function AdsProvider({ site, children, catalog = DEFAULT_AD_CATALOG, authenticated = false, premium = false }: AdsProviderProps) {
   const [current, setCurrent] = useState<AdConfig | null>(null);
   const [floatingActive, setFloatingActive] = useState(false);
   const dismissedRef = useRef<Record<string, true>>({});
@@ -393,19 +455,25 @@ export function AdsProvider({ site, children, catalog = DEFAULT_AD_CATALOG }: Ad
   const lastActivityRef = useRef(Date.now());
   const hydrated = useRef(false);
 
-  const dKey = `ciszu_ads_${site}_dismissed`;
+const dKey = `ciszu_ads_${site}_dismissed`;
   const sKey = `ciszu_ads_${site}_seen`;
   const cKey = `ciszu_ads_${site}_claimed`;
 
-  // Catálogo: acento por site + NO anunciar el propio sitio + balance 25/75 se
-  // resuelve en el pick (trigger).
+  // Periodo de gracia: 10s sin anuncios desde que se entra a la página (independiente del rango).
+  const graceUntilRef = useRef(Date.now() + 10000);
+
+// Catálogo: acento por site + NO anunciar el propio sitio + balance 25/75 se
+  // resuelve en el pick (trigger). Premium = sin anuncios; autenticado = sin
+  // anuncios de footer/opcionales (se mantienen esquina y tras-acción).
   const effective = useMemo(() => {
     const accent = SITE_ACCENT[site] || '#22d3ee';
     const host = SITE_URL[site] ? new URL(SITE_URL[site]).host : '';
     return catalog
       .filter((a) => !host || !a.content.href.includes(host))
+      .filter((a) => !(premium && a.type !== 'intrusive' && a.type !== 'reward'))
+      .filter((a) => !(authenticated && !premium && a.type === 'optional'))
       .map((a) => ({ ...a, content: { ...a.content, accent: a.content.accent || accent } }));
-  }, [catalog, site]);
+  }, [catalog, site, authenticated, premium]);
 
   useEffect(() => {
     dismissedRef.current = readJson(dKey, {});
@@ -415,7 +483,7 @@ export function AdsProvider({ site, children, catalog = DEFAULT_AD_CATALOG }: Ad
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [site]);
 
-  // Detección de inactividad: cualquier interacción reinicia el contador.
+// Detección de inactividad: cualquier interacción reinicia el contador.
   useEffect(() => {
     const reset = () => { lastActivityRef.current = Date.now(); };
     window.addEventListener('pointermove', reset);
@@ -428,17 +496,40 @@ export function AdsProvider({ site, children, catalog = DEFAULT_AD_CATALOG }: Ad
     };
   }, []);
 
+  // Si el usuario abandona la página (recarga/cierre) con un anuncio de recompensa
+  // activo SIN reclamar, la recompensa se pierde: se marca como vista/reclamada para
+  // que no pueda reclamarla en la siguiente visita sin verla otra vez.
+  useEffect(() => {
+    const onLeave = () => {
+      if (current && current.type === 'reward' && !claimedRef.current[current.id]) {
+        claimedRef.current[current.id] = Date.now();
+        writeJson(cKey, claimedRef.current);
+        trackEvent('ad_reward_lost', { ad_id: current.id, site });
+      }
+    };
+    window.addEventListener('beforeunload', onLeave);
+    window.addEventListener('pagehide', onLeave);
+    return () => {
+      window.removeEventListener('beforeunload', onLeave);
+      window.removeEventListener('pagehide', onLeave);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [current, cKey, site]);
+
   const isInactive = useCallback(
     () => Date.now() - lastActivityRef.current > AD_TIMING.inactiveThresholdSec * 1000,
     []
   );
 
-  const markSeen = useCallback((id: string) => {
+const markSeen = useCallback((id: string) => {
     seenRef.current[id] = Date.now();
     writeJson(sKey, seenRef.current);
-  }, [sKey]);
+    const ad = effective.find((a) => a.id === id);
+    if (ad) recordImpression(site, ad);
+  }, [sKey, effective, site]);
 
-  const show = useCallback((id: string): AdConfig | null => {
+const show = useCallback((id: string): AdConfig | null => {
+    if (Date.now() < graceUntilRef.current) return null; // periodo de gracia 10s
     const ad = effective.find((a) => a.id === id);
     if (!ad) return null;
     if (dismissedRef.current[id]) return null;
@@ -584,12 +675,12 @@ function AdModalInner() {
     dismiss();
   };
 
-  return createPortal(
+return createPortal(
     <div aria-modal="true" role="dialog" className="fixed inset-0 z-[800] flex items-center justify-center">
       <style>{ADS_CSS}</style>
-      <div onClick={() => closable && onClose()} className="absolute inset-0 bg-black/60 backdrop-blur-sm" style={{ animation: 'ciszu-ad-fade .25s ease-out' }} />
+      <div onClick={() => closable && onClose()} className="absolute inset-0 bg-black/70 backdrop-blur-md" style={{ animation: 'ciszu-ad-fade .25s ease-out' }} />
       <div
-        className="relative w-[min(92vw,420px)] rounded-2xl border border-white/10 bg-[#0b0e14] p-6 shadow-2xl"
+        className="relative w-[min(94vw,500px)] rounded-2xl border border-white/10 bg-[#0b0e14] p-6 shadow-2xl"
         style={{ animation: 'ciszu-ad-pop .35s cubic-bezier(.16,1,.3,1)' }}
       >
         <AdClose onClick={onClose} closable={closable} className="absolute right-3 top-3 h-8 w-8" />
@@ -773,16 +864,42 @@ function NextAdCountdown() {
     return () => window.clearInterval(iv);
   }, [ads]);
 
-  // Solo se muestra si el próximo anuncio periódico/opcional está inminente (< 60s).
-  if (!ads || nextMs <= 0 || nextMs > 60000 || ads.current || ads.floatingActive) return null;
+// Solo se muestra si el próximo anuncio periódico/opcional está inminente (< 2 min).
+  if (!ads || nextMs <= 0 || nextMs > 120000 || ads.current || ads.floatingActive) return null;
   const s = Math.ceil(nextMs / 1000);
 
   return createPortal(
     <div className="fixed bottom-2 left-2 z-[20]">
       <style>{ADS_CSS}</style>
       <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-1 text-[10px] text-neutral-400 backdrop-blur-sm" style={{ animation: 'ciszu-ad-shrink .25s ease-out' }}>
-        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-yellow-400" />
+        <NextArrowIcon />
         Próximo anuncio en <span className="font-bold text-white">{s}s</span>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+/** Icono de flecha doble a la derecha (próximo anuncio) — parpadeante. */
+function NextArrowIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 animate-pulse text-yellow-400" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="13 17 18 12 13 7" /><polyline points="6 17 11 12 6 7" />
+    </svg>
+  );
+}
+
+/** Mini aviso "Próximo anuncio" con flecha doble parpadeante (siempre visible). */
+function NextAdHint({ nextAt, now, pos, onNow }: { nextAt: number | null; now: number; pos: React.CSSProperties; onNow?: () => void }) {
+  const hintMs = nextAt ? nextAt - now : 0;
+  if (hintMs <= 0 || hintMs > 120000) return null;
+  return createPortal(
+    <div className="fixed z-[20]" style={pos}>
+      <style>{ADS_CSS}</style>
+      <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-1.5 text-[10px] text-neutral-400 backdrop-blur-sm" style={{ animation: 'ciszu-ad-shrink .25s ease-out' }}>
+        <NextArrowIcon />
+        <span>Próximo anuncio en</span>
+        <span className="font-bold text-white">{Math.max(0, Math.ceil(hintMs / 1000))}s</span>
       </div>
     </div>,
     document.body
@@ -798,6 +915,7 @@ export function AdFloat({ placement = 'corner', side = 'bottom-right', className
   const [ad, setAd] = useState<AdConfig | null>(null);
   const [nextAt, setNextAt] = useState<number | null>(null);
   const [now, setNow] = useState(Date.now());
+  const ivRef = useRef<number | null>(null);
 
   const tryShow = useCallback(() => {
     if (!ads || ads.current || ads.floatingActive) return;
@@ -806,13 +924,17 @@ export function AdFloat({ placement = 'corner', side = 'bottom-right', className
     if (picked) { ads.setFloatingActive(true); setAd(picked); setVisible(true); }
   }, [ads, placement]);
 
-  useEffect(() => {
+useEffect(() => {
     if (!ads) return;
-    const delay = ads.isInactive() ? 15000 : 45000;
-    setNextAt(Date.now() + delay);
-    const first = window.setTimeout(tryShow, delay);
-    const iv = window.setInterval(tryShow, 90000);
-    return () => { window.clearTimeout(first); window.clearInterval(iv); };
+    let firstDelay = ads.isInactive() ? 15000 : periodicInterval();
+    setNextAt(Date.now() + firstDelay);
+    const first = window.setTimeout(() => {
+      tryShow();
+      // Tras el primero, programar el siguiente dentro del rango 5-10 min.
+      const iv = window.setInterval(tryShow, periodicInterval());
+      ivRef.current = iv;
+    }, firstDelay);
+    return () => { window.clearTimeout(first); if (ivRef.current) window.clearInterval(ivRef.current); ivRef.current = null; };
   }, [tryShow, ads]);
 
   // Tick para el mini aviso "Próximo anuncio en Xs" (solo opcional/periódico).
@@ -823,25 +945,12 @@ export function AdFloat({ placement = 'corner', side = 'bottom-right', className
 
   if (!ads) return null;
 
-  const pos = side === 'bottom-left' ? { left: 12, bottom: 12 } : { right: 12, bottom: 12 };
+const pos = side === 'bottom-left' ? { left: 12, bottom: 12 } : { right: 12, bottom: 12 };
 
   const close = () => { setVisible(false); ads.setFloatingActive(false); ads.dismiss(); };
 
   if (!visible || !ad) {
-    const hintMs = nextAt ? nextAt - now : 0;
-    if (hintMs > 0 && hintMs <= 15000 && !ads.current && !ads.floatingActive) {
-      return createPortal(
-        <div className="fixed z-[20]" style={{ ...pos }}>
-          <style>{ADS_CSS}</style>
-          <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-1.5 text-[10px] text-neutral-400 backdrop-blur-sm" style={{ animation: 'ciszu-ad-shrink .25s ease-out' }}>
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-yellow-400" />
-            Próximo anuncio en <span className="font-bold text-white">{Math.max(0, Math.ceil(hintMs / 1000))}s</span>
-          </div>
-        </div>,
-        document.body
-      );
-    }
-    return null;
+    return <NextAdHint nextAt={nextAt} now={now} pos={pos} />;
   }
 
   const c = ad.content;
@@ -863,6 +972,7 @@ export function AdPill({ placement = 'body', side = 'bottom-center', className }
   const [hidden, setHidden] = useState(false);
   const [nextAt, setNextAt] = useState<number | null>(null);
   const [now, setNow] = useState(Date.now());
+  const ivRef = useRef<number | null>(null);
 
   const tryShow = useCallback(() => {
     if (!ads || ads.floatingActive || ads.current) return;
@@ -873,10 +983,14 @@ export function AdPill({ placement = 'body', side = 'bottom-center', className }
 
   useEffect(() => {
     if (!ads) return;
-    const delay = ads.isInactive() ? 30000 : 90000;
+    const delay = ads.isInactive() ? 30000 : periodicInterval();
     setNextAt(Date.now() + delay);
-    const t = window.setTimeout(tryShow, delay);
-    return () => window.clearTimeout(t);
+    const t = window.setTimeout(() => {
+      tryShow();
+      const iv = window.setInterval(tryShow, periodicInterval());
+      ivRef.current = iv;
+    }, delay);
+    return () => { window.clearTimeout(t); if (ivRef.current) window.clearInterval(ivRef.current); ivRef.current = null; };
   }, [tryShow, ads]);
 
   useEffect(() => {
@@ -886,25 +1000,12 @@ export function AdPill({ placement = 'body', side = 'bottom-center', className }
 
   if (!ads) return null;
 
-  const pos = side === 'top-center' ? { top: 12, left: '50%', transform: 'translateX(-50%)' } : { bottom: 12, left: '50%', transform: 'translateX(-50%)' };
+const pos = side === 'top-center' ? { top: 12, left: '50%', transform: 'translateX(-50%)' } : { bottom: 12, left: '50%', transform: 'translateX(-50%)' };
 
   const close = () => { setHidden(true); ads.setFloatingActive(false); ads.dismiss(); };
 
   if (!ad || hidden) {
-    const hintMs = nextAt ? nextAt - now : 0;
-    if (hintMs > 0 && hintMs <= 15000 && !ads.current && !ads.floatingActive) {
-      return createPortal(
-        <div className="fixed z-[20]" style={pos}>
-          <style>{ADS_CSS}</style>
-          <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-1.5 text-[10px] text-neutral-400 backdrop-blur-sm" style={{ animation: 'ciszu-ad-shrink .25s ease-out' }}>
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-yellow-400" />
-            Próximo anuncio en <span className="font-bold text-white">{Math.max(0, Math.ceil(hintMs / 1000))}s</span>
-          </div>
-        </div>,
-        document.body
-      );
-    }
-    return null;
+    return <NextAdHint nextAt={nextAt} now={now} pos={pos} />;
   }
 
   return createPortal(
