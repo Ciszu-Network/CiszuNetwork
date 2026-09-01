@@ -500,7 +500,11 @@ while (-not $script:quitRequested) {
         @{ ic = '➖'; l = "Quitar empleado";                  key = '__remove' },
         @{ ic = '🔄'; l = "Cambiar rango (cargo)";           key = '__rank' },
         @{ ic = '✏'; l = "Modificar datos de un empleado";   key = '__modify' },
-        @{ ic = '🧰'; l = "Otras herramientas";              key = '__tools' },
+        @{ ic = '📁'; l = "Abrir archives/staff en explorador"; key = '__tools_folder' },
+        @{ ic = '📜'; l = "Ver log de STAFFCON de hoy";      key = '__tools_log' },
+        @{ ic = '🗑'; l = "Limpiar logs de STAFFCON";        key = '__tools_cleanlogs' },
+        @{ ic = '🔄'; l = "Regenerar TODA la documentacion (staffgen)"; key = '__tools_staffgen' },
+        @{ ic = '🔍'; l = "Ver JSON fuente (staff.json)";    key = '__tools_json' },
         @{ ic = '❓'; l = "Manual de uso";                   key = '__manual' },
         @{ ic = 'ℹ'; l = "Información / Créditos";          key = '__info' },
         @{ ic = '👤'; l = "Cambiar identidad (quién eres)";  key = '__identity' },
@@ -528,7 +532,11 @@ while (-not $script:quitRequested) {
         '__remove'    { Show-Remove }
         '__rank'      { Show-Rank }
         '__modify'    { Show-Modify }
-        '__tools'     { Show-Tools }
+        '__tools_folder' { Start-Process explorer.exe (Resolve-Path (Join-Path $root 'archives\staff')).Path; Press-Continue }
+        '__tools_log' { $log = Join-Path $LOG_DIR ("staffcon-" + (Get-Date -Format 'yyyy-MM-dd') + '.log'); Clear-Host; if (Test-Path $log) { Get-Content $log -Tail 40 | Out-Host } else { Write-Host "${c_yellow}Sin log de hoy todavia.${c_reset}" }; Press-Continue }
+        '__tools_cleanlogs' { Remove-Item "$LOG_DIR\staffcon-*.log" -Force -ErrorAction SilentlyContinue; Write-Host "${c_green}Logs de STAFFCON limpiados.${c_reset}"; Press-Continue }
+        '__tools_staffgen' { Push-Location $root; node scripts/staffgen.js 2>&1 | Out-Host; Pop-Location; Press-Continue }
+        '__tools_json' { Clear-Host; Get-Content $DATA_FILE | Out-Host; Press-Continue }
         '__manual'    { Show-Manual }
         '__info'      { Show-Info }
         '__identity'  { Show-SwitchIdentity }

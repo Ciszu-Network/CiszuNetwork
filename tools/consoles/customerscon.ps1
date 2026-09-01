@@ -441,7 +441,11 @@ while (-not $script:quitRequested) {
         @{ ic = '➕'; l = "Añadir cliente";                   key = '__add' },
         @{ ic = '➖'; l = "Quitar cliente";                   key = '__remove' },
         @{ ic = '✏'; l = "Modificar / editar cliente";       key = '__modify' },
-        @{ ic = '🧰'; l = "Herramientas adicionales";        key = '__tools' },
+        @{ ic = '📁'; l = "Abrir archives/customers en explorador"; key = '__tools_folder' },
+        @{ ic = '📜'; l = "Ver log de CUSTOMERSCON de hoy";  key = '__tools_log' },
+        @{ ic = '🗑'; l = "Limpiar logs de CUSTOMERSCON";    key = '__tools_cleanlogs' },
+        @{ ic = '🔄'; l = "Regenerar TODA la documentacion (customersgen)"; key = '__tools_custgen' },
+        @{ ic = '🔍'; l = "Ver JSON fuente (customers.json)"; key = '__tools_json' },
         @{ ic = '❓'; l = "Manual de uso";                   key = '__manual' },
         @{ ic = 'ℹ'; l = "Información / Créditos";          key = '__info' },
         @{ ic = '🚪'; l = "Salir (Ctrl+C)";                  key = '__quit' }
@@ -467,7 +471,11 @@ while (-not $script:quitRequested) {
         '__add'       { Show-Add }
         '__remove'    { Show-Remove }
         '__modify'    { Show-Modify }
-        '__tools'     { Show-Tools }
+        '__tools_folder' { Start-Process explorer.exe (Resolve-Path (Join-Path $root 'archives\customers')).Path; Press-Continue }
+        '__tools_log' { $log = Join-Path $LOG_DIR ("customerscon-" + (Get-Date -Format 'yyyy-MM-dd') + '.log'); Clear-Host; if (Test-Path $log) { Get-Content $log -Tail 40 | Out-Host } else { Write-Host "${c_yellow}Sin log de hoy todavia.${c_reset}" }; Press-Continue }
+        '__tools_cleanlogs' { Remove-Item "$LOG_DIR\customerscon-*.log" -Force -ErrorAction SilentlyContinue; Write-Host "${c_green}Logs limpiados.${c_reset}"; Press-Continue }
+        '__tools_custgen' { Push-Location $root; node scripts/customersgen.js 2>&1 | Out-Host; Pop-Location; Press-Continue }
+        '__tools_json' { Clear-Host; Get-Content $DATA_FILE | Out-Host; Press-Continue }
         '__manual'    { Show-Manual }
         '__info'      { Show-Info }
         '__quit'      { Write-CustomersconLog "session=$script:custSession actor=$script:custActor accion=logout"; $script:quitRequested = $true }

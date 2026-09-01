@@ -11,6 +11,7 @@
  * ------------------------------------------------------------------ */
 
 import React from 'react';
+import { useAdsSafe } from './Ads';
 
 export interface ScrollNavButtonProps {
   /** Color base (borde/texto/sombra). Default #22d3ee (cyan). */
@@ -29,12 +30,19 @@ export function ScrollNavButton({
   className = '',
   hidden = false,
 }: ScrollNavButtonProps) {
+  const ads = useAdsSafe();
+  // Si hay un anuncio de esquina activo, sube los botones para que NO se
+  // superpongan: se desplazan por encima del anuncio con transición fluida.
+  const cornerActive = ads?.current?.type === 'particulares' || ads?.floatingActive;
+  const lift = cornerActive ? 132 : 0;
   if (hidden) return null;
 
   return (
     <div
-      className={`fixed bottom-8 right-8 z-40 flex flex-col gap-3 ${className}`}
+      className={`fixed right-8 z-40 flex flex-col gap-3 ${className}`}
       style={{
+        bottom: `calc(2rem + ${lift}px)`,
+        transition: 'bottom .45s cubic-bezier(.16,1,.3,1)',
         ['--btn-accent' as string]: accent,
         ['--btn-accent-hover' as string]: accentAlt,
       }}

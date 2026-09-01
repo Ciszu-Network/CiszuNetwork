@@ -102,8 +102,10 @@ interface AdsContextValue {
   setFloatingActive: (v: boolean) => void;
   /** ms hasta el próximo anuncio periódico/opcional (los intencionales NO cuentan) */
   getNextPeriodicAdIn: () => number;
-  /** true si el usuario lleva >60s sin interactuar (favorece anuncios) */
+/** true si el usuario lleva >60s sin interactuar (favorece anuncios) */
   isInactive: () => boolean;
+  /** Elimina el anuncio que esté en pantalla (debug / forzar limpieza). */
+  clearCurrent: () => void;
 }
 
 const AdsContext = createContext<AdsContextValue | null>(null);
@@ -445,6 +447,45 @@ function useAutoClose(ad: AdConfig, onDone: () => void) {
 }
 
 // ---------- Provider ----------
+// ---------- Debug local de ads (devcon) ----------
+// Config en localStorage['ciszu_ads_debug'] (o vía endpoint /api/ads/debug en
+// desarrollo, que el devcon escribe en local-logs/ads_debug.json). Permite
+// forzar anuncios en local para depurar: webs seleccionadas, tipo, intervalo
+// corto, tercero/oficial, recompensa, y limpiar/eliminar anuncios en pantalla.
+export interface AdsDebugConfig {
+  enabled: boolean;
+  sites?: string[];
+  types?: AdType[];
+  intervalSec?: number;
+  source?: AdSource | 'any';
+  requireReward?: boolean;
+}
+
+const ADS_DEBUG_KEY = 'ciszu_ads_debug';
+
+export function readAdsDebug(): AdsDebugConfig | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.localStorage.getItem(ADS_DEBUG_KEY);
+    if (!raw) return null;
+    const c = JSON.parse(raw) as AdsDebugConfig;
+    return c && c.enabled ? c : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Escribe la config de debug (la lee AdsProvider al arrancar y en cada show). */
+export function setAdsDebug(config: AdsDebugConfig) {
+  if (typeof window === 'undefined') return;
+  try { window.localStorage.setItem(ADS_DEBUG_KEY, JSON.stringify(config)); } catch { /* ignora */ }
+}
+
+export function clearAdsDebug() {
+  if (typeof window === 'undefined') return;
+  try { window.localStorage.removeItem(ADS_DEBUG_KEY); } catch { /* ignora */ }
+}
+
 export function AdsProvider({ site, children, catalog = DEFAULT_AD_CATALOG, authenticated = false, premium = false }: AdsProviderProps) {
   const [current, setCurrent] = useState<AdConfig | null>(null);
   const [floatingActive, setFloatingActive] = useState(false);
@@ -465,15 +506,48 @@ const dKey = `ciszu_ads_${site}_dismissed`;
 // Catálogo: acento por site + NO anunciar el propio sitio + balance 25/75 se
   // resuelve en el pick (trigger). Premium = sin anuncios; autenticado = sin
   // anuncios de footer/opcionales (se mantienen esquina y tras-acción).
+  // Debug local (devcon): filtra por sitios/tipos/fuente y acorta el intervalo.
+  const debugRef = useRef<AdsDebugConfig | null>(null);
+  const [debugTick, setDebugTick] = useState(0);
+  useEffect(() => {
+    debugRef.current = readAdsDebug();
+    setDebugTick((t) => t + 1);
+    // En desarrollo, también lee el archivo que escribe el devcon
+    // (local-logs/ads_debug.json vía /api/ads/debug) cada 2s.
+    if (process.env.NODE_ENV === 'development') {
+      const poll = () => {
+        fetch('/api/ads/debug', { cache: 'no-store' })
+          .then((r) => (r.ok ? r.json() : null))
+          .then((c: AdsDebugConfig | null) => {
+            if (c && c.enabled) debugRef.current = c;
+            else if (c) debugRef.current = null;
+            setDebugTick((t) => t + 1);
+          })
+          .catch(() => { /* local dev sin endpoint: ignora */ });
+      };
+      poll();
+      const iv = window.setInterval(poll, 2000);
+      return () => window.clearInterval(iv);
+    }
+  }, []);
+
   const effective = useMemo(() => {
     const accent = SITE_ACCENT[site] || '#22d3ee';
     const host = SITE_URL[site] ? new URL(SITE_URL[site]).host : '';
+    const dbg = debugRef.current;
+    const debugForThisSite = dbg && dbg.enabled && (!dbg.sites?.length || dbg.sites.includes(site));
+    const intervalSec = debugForThisSite && dbg.intervalSec ? dbg.intervalSec : undefined;
     return catalog
       .filter((a) => !host || !a.content.href.includes(host))
       .filter((a) => !(premium && a.type !== 'intrusive' && a.type !== 'reward'))
       .filter((a) => !(authenticated && !premium && a.type === 'optional'))
-      .map((a) => ({ ...a, content: { ...a.content, accent: a.content.accent || accent } }));
-  }, [catalog, site, authenticated, premium]);
+      .filter((a) => !(debugForThisSite && dbg.types?.length && !dbg.types.includes(a.type)))
+      .filter((a) => !(debugForThisSite && dbg.source && dbg.source !== 'any' && (a.content.source ?? 'external') !== dbg.source))
+      .filter((a) => !(debugForThisSite && dbg.requireReward && a.type !== 'reward'))
+      .map((a) => intervalSec
+        ? { ...a, minIntervalSec: intervalSec, content: { ...a.content, accent: a.content.accent || accent } }
+        : { ...a, content: { ...a.content, accent: a.content.accent || accent } });
+  }, [catalog, site, authenticated, premium, debugTick]);
 
   useEffect(() => {
     dismissedRef.current = readJson(dKey, {});
@@ -611,9 +685,14 @@ const show = useCallback((id: string): AdConfig | null => {
     return Number.isFinite(min) ? min : 0;
   }, [effective]);
 
+const clearCurrent = useCallback(() => {
+    setCurrent(null);
+    setFloatingActive(false);
+  }, []);
+
   const value = useMemo<AdsContextValue>(
-    () => ({ site, catalog: effective, current, show, trigger, dismiss, rewardStatus, claimReward, floatingActive, setFloatingActive, getNextPeriodicAdIn, isInactive }),
-    [site, effective, current, show, trigger, dismiss, rewardStatus, claimReward, floatingActive, getNextPeriodicAdIn, isInactive]
+    () => ({ site, catalog: effective, current, show, trigger, dismiss, rewardStatus, claimReward, floatingActive, setFloatingActive, getNextPeriodicAdIn, isInactive, clearCurrent }),
+    [site, effective, current, show, trigger, dismiss, rewardStatus, claimReward, floatingActive, getNextPeriodicAdIn, isInactive, clearCurrent]
   );
 
   return (
@@ -631,7 +710,7 @@ export function useAds(): AdsContextValue {
   return ctx;
 }
 
-function useAdsSafe(): AdsContextValue | null {
+export function useAdsSafe(): AdsContextValue | null {
   return useContext(AdsContext);
 }
 
@@ -911,33 +990,50 @@ export interface AdFloatProps { placement?: string; side?: 'bottom-left' | 'bott
 
 export function AdFloat({ placement = 'corner', side = 'bottom-right', className }: AdFloatProps) {
   const ads = useAdsSafe();
-  const [visible, setVisible] = useState(false);
   const [ad, setAd] = useState<AdConfig | null>(null);
   const [nextAt, setNextAt] = useState<number | null>(null);
   const [now, setNow] = useState(Date.now());
+  const adsRef = useRef(ads);
+  adsRef.current = ads;
   const ivRef = useRef<number | null>(null);
+  const tRef = useRef<number | null>(null);
 
+  // tryShow usa adsRef: no depende de la identidad del contexto (que cambia en
+  // cada impresión/cierre). Así el scheduler no se reinicia con cada cambio.
   const tryShow = useCallback(() => {
-    if (!ads || ads.current || ads.floatingActive) return;
-    const picked = ads.trigger('particulares', placement);
-    setNextAt(null);
-    if (picked) { ads.setFloatingActive(true); setAd(picked); setVisible(true); }
-  }, [ads, placement]);
+    const a = adsRef.current;
+    if (!a || a.current || a.floatingActive) return;
+    const picked = a.trigger('particulares', placement);
+    if (picked) { a.setFloatingActive(true); setAd(picked); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [placement]);
 
-useEffect(() => {
-    if (!ads) return;
-    let firstDelay = ads.isInactive() ? 15000 : periodicInterval();
-    setNextAt(Date.now() + firstDelay);
-    const first = window.setTimeout(() => {
+  const scheduleNext = useCallback(() => {
+    const a = adsRef.current;
+    const delay = a?.isInactive() ? 15000 : periodicInterval();
+    setNextAt(Date.now() + delay);
+    if (tRef.current) window.clearTimeout(tRef.current);
+    tRef.current = window.setTimeout(tryShow, delay);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tryShow]);
+
+  // Scheduler: arranca UNA vez y re-programa tras cada cierre/impresión.
+  useEffect(() => {
+    if (!adsRef.current) return;
+    scheduleNext();
+    const iv = window.setInterval(() => {
+      // Cuando el contexto está libre (sin anuncio mostrando) y llega el momento,
+      // mostrar el siguiente. Si ya hay uno activo, esperar (autocierre lo quitará).
+      const a = adsRef.current;
+      if (!a || a.current || a.floatingActive || !ad) return;
       tryShow();
-      // Tras el primero, programar el siguiente dentro del rango 5-10 min.
-      const iv = window.setInterval(tryShow, periodicInterval());
-      ivRef.current = iv;
-    }, firstDelay);
-    return () => { window.clearTimeout(first); if (ivRef.current) window.clearInterval(ivRef.current); ivRef.current = null; };
-  }, [tryShow, ads]);
+    }, 2000);
+    ivRef.current = iv;
+    return () => { if (ivRef.current) window.clearInterval(ivRef.current); if (tRef.current) window.clearTimeout(tRef.current); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // Tick para el mini aviso "Próximo anuncio en Xs" (solo opcional/periódico).
+  // Tick para el mini aviso "Próximo anuncio en Xs".
   useEffect(() => {
     const iv = window.setInterval(() => setNow(Date.now()), 500);
     return () => window.clearInterval(iv);
@@ -947,9 +1043,15 @@ useEffect(() => {
 
 const pos = side === 'bottom-left' ? { left: 12, bottom: 12 } : { right: 12, bottom: 12 };
 
-  const close = () => { setVisible(false); ads.setFloatingActive(false); ads.dismiss(); };
+  const close = useCallback(() => {
+    setAd(null);
+    ads.setFloatingActive(false);
+    ads.dismiss();
+    scheduleNext();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ads, scheduleNext]);
 
-  if (!visible || !ad) {
+  if (!ad) {
     return <NextAdHint nextAt={nextAt} now={now} pos={pos} />;
   }
 
@@ -969,29 +1071,42 @@ export interface AdPillProps { placement?: string; side?: 'bottom-center' | 'top
 export function AdPill({ placement = 'body', side = 'bottom-center', className }: AdPillProps) {
   const ads = useAdsSafe();
   const [ad, setAd] = useState<AdConfig | null>(null);
-  const [hidden, setHidden] = useState(false);
   const [nextAt, setNextAt] = useState<number | null>(null);
   const [now, setNow] = useState(Date.now());
+  const adsRef = useRef(ads);
+  adsRef.current = ads;
   const ivRef = useRef<number | null>(null);
+  const tRef = useRef<number | null>(null);
 
   const tryShow = useCallback(() => {
-    if (!ads || ads.floatingActive || ads.current) return;
-    const picked = ads.trigger('optional', placement);
-    setNextAt(null);
-    if (picked) { ads.setFloatingActive(true); setAd(picked); }
-  }, [ads, placement]);
+    const a = adsRef.current;
+    if (!a || a.floatingActive || a.current) return;
+    const picked = a.trigger('optional', placement);
+    if (picked) { a.setFloatingActive(true); setAd(picked); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [placement]);
+
+  const scheduleNext = useCallback(() => {
+    const a = adsRef.current;
+    const delay = a?.isInactive() ? 30000 : periodicInterval();
+    setNextAt(Date.now() + delay);
+    if (tRef.current) window.clearTimeout(tRef.current);
+    tRef.current = window.setTimeout(tryShow, delay);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tryShow]);
 
   useEffect(() => {
-    if (!ads) return;
-    const delay = ads.isInactive() ? 30000 : periodicInterval();
-    setNextAt(Date.now() + delay);
-    const t = window.setTimeout(() => {
+    if (!adsRef.current) return;
+    scheduleNext();
+    const iv = window.setInterval(() => {
+      const a = adsRef.current;
+      if (!a || a.floatingActive || a.current || !ad) return;
       tryShow();
-      const iv = window.setInterval(tryShow, periodicInterval());
-      ivRef.current = iv;
-    }, delay);
-    return () => { window.clearTimeout(t); if (ivRef.current) window.clearInterval(ivRef.current); ivRef.current = null; };
-  }, [tryShow, ads]);
+    }, 2000);
+    ivRef.current = iv;
+    return () => { if (ivRef.current) window.clearInterval(ivRef.current); if (tRef.current) window.clearTimeout(tRef.current); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const iv = window.setInterval(() => setNow(Date.now()), 500);
@@ -1002,9 +1117,15 @@ export function AdPill({ placement = 'body', side = 'bottom-center', className }
 
 const pos = side === 'top-center' ? { top: 12, left: '50%', transform: 'translateX(-50%)' } : { bottom: 12, left: '50%', transform: 'translateX(-50%)' };
 
-  const close = () => { setHidden(true); ads.setFloatingActive(false); ads.dismiss(); };
+  const close = useCallback(() => {
+    setAd(null);
+    ads.setFloatingActive(false);
+    ads.dismiss();
+    scheduleNext();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ads, scheduleNext]);
 
-  if (!ad || hidden) {
+  if (!ad) {
     return <NextAdHint nextAt={nextAt} now={now} pos={pos} />;
   }
 
