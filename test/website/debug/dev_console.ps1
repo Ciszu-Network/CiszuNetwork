@@ -756,15 +756,31 @@ function Show-AdsDebug {
     if ($ii -lt 0) { return }
     $intervalSec = @(5, 15, 30, 60, $null)[$ii]
 
-    # 4) Fuente: oficial de Ciszu Network vs terceros
+    # 4) Fuente: terceros / oficial de Ciszu Network (requiere elegir marca) / ambas
     $srcOpts = @(
-        @{ ic = '🏢'; l = "Oficiales (Ciszu Network / ecosistema)" },
+        @{ ic = '🏢'; l = "Oficiales de Ciszu Network (elegir marca)" },
         @{ ic = '🌍'; l = "Terceros (external, placeholders)" },
         @{ ic = '🌐'; l = "Ambas" }
     )
     $si = Show-Menu -Title "FUENTE DEL ANUNCIO" -Options $srcOpts
     if ($si -lt 0) { return }
-    $source = @('ciszunetwork', 'external', 'any')[$si]
+    if ($si -eq 0) {
+        # Elegir la marca oficial concreta (anuncios personalizados de Ciszu Network)
+        $brandOpts = @(
+            @{ ic = '🌐'; l = "ciszunetwork" },
+            @{ ic = '🎨'; l = "ciszukoantony" },
+            @{ ic = '🤖'; l = "ciszubot" },
+            @{ ic = '🎵'; l = "muzicmania" },
+            @{ ic = '🎮'; l = "ciszugamens" }
+        )
+        $bi = Show-Menu -Title "MARCA OFICIAL (anuncio personalizado)" -Options $brandOpts
+        if ($bi -lt 0) { return }
+        $source = @('ciszunetwork', 'ciszukoantony', 'ciszubot', 'muzicmania', 'ciszugamens')[$bi]
+    } elseif ($si -eq 1) {
+        $source = 'external'
+    } else {
+        $source = 'any'
+    }
 
     # 5) Solo recompensa?
     $rwOpts = @(
@@ -787,12 +803,31 @@ function Show-AdsDebug {
     Write-Host "${c_cyan}$($config | ConvertTo-Json)${c_reset}"
     Write-Host ""
     Write-Host "${c_gray}Opciones adicionales:${c_reset}"
-    Write-Host "${c_yellow}[L] Limpiar anuncios en pantalla   [R] Reiniciar (quitar config)   [Q] volver${c_reset}"
+    Write-Host "${c_yellow}[S] Resumen actual   [L] Limpiar anuncios en pantalla   [R] Reiniciar (quitar config)   [Q] volver${c_reset}"
     $k = [System.Console]::ReadKey($true)
     $ch = $k.KeyChar
-    if ($ch -eq 'l' -or $ch -eq 'L') {
+    if ($ch -eq 's' -or $ch -eq 'S') {
+        # Resumen de la config de debug actual y estado por webs seleccionadas
+        Clear-Host
+        Show-MenuHeader "RESUMEN ADS_DEBUG"
+        Write-Host "${c_cyan}Archivo: $debugFile${c_reset}"
+        if (Test-Path $debugFile) {
+            Get-Content $debugFile | Out-Host
+        } else {
+            Write-Host "${c_yellow}No hay config de ads debug (modo normal).${c_reset}"
+        }
+        Write-Host ""
+        Write-Host "${c_cyan}Webs destino de esta config:${c_reset}"
+        foreach ($s in $sites) {
+            $w = $WEBS | Where-Object { $_.key -eq $s }
+            $ph = Get-WebPhase $s
+            Write-Host ("  - {0} (port {1}) {2}" -f $w.name, $w.port, $(if ($ph -eq 'on') { '🟢 encendida' } else { '⚫ detenida' }))
+        }
+        Write-Host ""
+        Write-Host "${c_gray}Los anuncios se leeran de esta config en cada web (vía /api/ads/debug).${c_reset}"
+        Press-Continue
+    } elseif ($ch -eq 'l' -or $ch -eq 'L') {
         # Eliminar anuncios actuales: las webs exponen clearCurrent (contexto ADS).
-        # Forzamos recarga de la config con enabled=true pero sin anuncios mostrados.
         Write-Host "${c_green}Se eliminaran los anuncios en pantalla (dispara clearCurrent en las webs).${c_reset}"
     } elseif ($ch -eq 'r' -or $ch -eq 'R') {
         $reset = [ordered]@{ enabled = $false }
@@ -801,6 +836,166 @@ function Show-AdsDebug {
     }
     Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=ads-debug sites=$($sites -join ',') interval=$intervalSec source=$source"
     Press-Continue
+}
+
+function Show-DisclaimersDebug {
+    # Debug local de disclaimers (devcon). Escribe la config en
+    # local-logs/disclaimers_debug.json; cada web la lee vía /api/disclaimers/debug.
+    # Los disclaimers pueden ser: temporal (sin fecha) / temporal con fecha de
+    # culminación (contador + auto-cierre) / permanente; opcional (X) u
+    # obligatorio (sin X); con imagen opcional.
+    $debugFile = Join-Path $LOG_DIR 'disclaimers_debug.json'
+
+    # Estado / resumen / eliminar / modificar disclaimers existentes.
+    $existing = @()
+    if (Test-Path $debugFile) {
+        try { $existing = @((Get-Content $debugFile -Raw | ConvertFrom-Json).items) } catch { $existing = @() }
+    }
+
+    while ($true) {
+        Clear-Host
+        Show-MenuHeader "DISCLAIMERS - DEBUG LOCAL"
+        Write-Host "${c_gray}Archivo: $debugFile${c_reset}"
+        if ($existing.Count -gt 0) {
+            Write-Host ""
+            Write-Host "${c_cyan}Disclaimers actuales en config (${$existing.Count}):${c_reset}"
+            for ($n = 0; $n -lt $existing.Count; $n++) {
+                $d = $existing[$n]
+                Write-Host ("   {0}. [{1}] {2}  · webs: {3}  · cierre: {4}  · expira: {5}" -f ($n + 1), $d.kind, $d.message, ($d.site -join ','), $(if ($d.dismissible -eq $false) { 'obligatorio' } else { 'opcional' }), $(if ($d.expiresAt) { $d.expiresAt } else { 'sin fecha' }))
+            }
+        } else {
+            Write-Host "${c_yellow}No hay disclaimers de debug configurados.${c_reset}"
+        }
+        Write-Host ""
+        $actOpts = @(
+            @{ ic = '➕'; l = "Crear disclaimer" },
+            @{ ic = '🗑'; l = "Eliminar un disclaimer" },
+            @{ ic = '✏'; l = "Modificar un disclaimer" },
+            @{ ic = '📋'; l = "Ver resumen / estado" },
+            @{ ic = '🔄'; l = "Reiniciar (quitar todos)" },
+            @{ ic = '🚪'; l = "Volver" }
+        )
+        $ai = Show-Menu -Title "ACCION" -Options $actOpts
+        if ($ai -lt 0 -or $ai -eq 5) { break }
+
+        if ($ai -eq 4) {
+            $reset = [ordered]@{ items = @() }
+            $reset | ConvertTo-Json -Depth 5 | Out-File -LiteralPath $debugFile -Encoding UTF8
+            $existing = @()
+            Write-Host "${c_green}Config de disclaimers reiniciada (todos eliminados).${c_reset}"
+            Press-Continue
+            continue
+        }
+        if ($ai -eq 3) {
+            Clear-Host
+            Show-MenuHeader "RESUMEN DISCLAIMERS DEBUG"
+            if ($existing.Count -gt 0) { $existing | ConvertTo-Json -Depth 5 | Out-Host } else { Write-Host "${c_yellow}Sin disclaimers de debug.${c_reset}" }
+            Press-Continue
+            continue
+        }
+
+        # Crear o modificar: elegir disclaimer base (modificar selecciona el índice).
+        $editIndex = -1
+        if ($ai -eq 1) {
+            # Eliminar
+            if ($existing.Count -eq 0) { Write-Host "${c_yellow}No hay disclaimers para eliminar.${c_reset}"; Press-Continue; continue }
+            $delOpts = @()
+            for ($n = 0; $n -lt $existing.Count; $n++) { $delOpts += @{ ic = '🗑'; l = "$($existing[$n].message) [$($existing[$n].kind)]" } }
+            $delOpts += @{ ic = '🚪'; l = "Cancelar" }
+            $di = Show-Menu -Title "ELIMINAR DISCLAIMER" -Options $delOpts
+            if ($di -lt 0 -or $di -eq $existing.Count) { continue }
+            $existing = @($existing | Where-Object { $_ -ne $existing[$di] })
+            @{ items = $existing } | ConvertTo-Json -Depth 5 | Out-File -LiteralPath $debugFile -Encoding UTF8
+            Write-Host "${c_green}Disclaimer eliminado.${c_reset}"
+            Press-Continue
+            continue
+        }
+        if ($ai -eq 2) {
+            if ($existing.Count -eq 0) { Write-Host "${c_yellow}No hay disclaimers para modificar.${c_reset}"; Press-Continue; continue }
+            $modOpts = @()
+            for ($n = 0; $n -lt $existing.Count; $n++) { $modOpts += @{ ic = '✏'; l = "$($existing[$n].message) [$($existing[$n].kind)]" } }
+            $modOpts += @{ ic = '🚪'; l = "Cancelar" }
+            $mi = Show-Menu -Title "MODIFICAR DISCLAIMER" -Options $modOpts
+            if ($mi -lt 0 -or $mi -eq $existing.Count) { continue }
+            $editIndex = $mi
+        }
+
+        # ---- Formulario de disclaimer ----
+        # Webs destino (casillas)
+        $opts = Build-WebSelectOptions
+        $r = Show-MultiSelect -Title "WEBS DESTINO (Espacio marca)" -Options $opts -Init @($WEBS.key)
+        if ($r.Action -eq 'abort') { continue }
+        if ($r.Action -eq 'noproceed') { continue }
+        $sites = @($r.Selection)
+        if ($sites.Count -eq 0) { $sites = @($WEBS.key) }
+
+        $msg = Read-Host "Mensaje del disclaimer"
+        if ([string]::IsNullOrWhiteSpace($msg)) { Write-Host "${c_yellow}Mensaje vacio. Cancelado.${c_reset}"; Press-Continue; continue }
+
+        $kindOpts = @(@{ ic = 'ℹ'; l = 'info' }, @{ ic = '🧪'; l = 'beta' }, @{ ic = '⚠'; l = 'warning' })
+        $ki = Show-Menu -Title "TIPO" -Options $kindOpts
+        if ($ki -lt 0) { continue }
+        $kind = @('info', 'beta', 'warning')[$ki]
+
+        $durOpts = @(
+            @{ ic = '⏱'; l = "Temporal (sin fecha de culminacion)" },
+            @{ ic = '📅'; l = "Temporal con fecha de culminacion (contador)" },
+            @{ ic = '🔒'; l = "Permanente" }
+        )
+        $di = Show-Menu -Title "DURACION" -Options $durOpts
+        if ($di -lt 0) { continue }
+        $expiresAt = $null
+        if ($di -eq 1) {
+            # Fecha/hora de culminación: hora (12h geolocalizada) + día/mes/año.
+            $hour = Read-Host "Hora de culminacion (HH:MM, formato 24h)"
+            $day = Read-Host "Dia (1-31)"
+            $month = Read-Host "Mes (1-12)"
+            $year = Read-Host "Anio (YYYY)"
+            $hour = $hour.Trim(); $day = $day.Trim(); $month = $month.Trim(); $year = $year.Trim()
+            try {
+                $exp = Get-Date -Year $year -Month $month -Day $day -Hour ([int]($hour -split ':')[0]) -Minute ([int]($hour -split ':')[1]) -Second 0
+                if ($exp -lt (Get-Date)) {
+                    Write-Host "${c_red}ERROR: la fecha de culminacion es anterior a la actual (no tiene sentido).${c_reset}"
+                    Press-Continue
+                    continue
+                }
+                $expiresAt = $exp.ToUniversalTime().ToString('o')
+            } catch {
+                Write-Host "${c_red}ERROR: fecha/hora invalida: $($_.Exception.Message)${c_reset}"
+                Press-Continue
+                continue
+            }
+        } elseif ($di -eq 2) {
+            $expiresAt = ''
+        }
+
+        $closeOpts = @(
+            @{ ic = '✅'; l = "Opcional (con X para quitar)" },
+            @{ ic = '🔒'; l = "Obligatorio (sin X)" }
+        )
+        $ci = Show-Menu -Title "TIPO DE CIERRE" -Options $closeOpts
+        if ($ci -lt 0) { continue }
+        $dismissible = ($ci -eq 0)
+
+        $img = Read-Host "Imagen (URL, Enter = sin imagen)"
+        if ($img -match '^https?://') { $image = $img.Trim() } else { $image = $null }
+
+        $d = [ordered]@{
+            id = 'debug-' + [guid]::NewGuid().ToString().Substring(0, 8)
+            kind = $kind
+            message = $msg
+            site = $sites
+            dismissible = $dismissible
+        }
+        if ($expiresAt -ne $null) { $d.expiresAt = $expiresAt }
+        if ($image) { $d.image = $image }
+
+        if ($editIndex -ge 0) { $existing[$editIndex] = $d } else { $existing += $d }
+        @{ items = $existing } | ConvertTo-Json -Depth 5 | Out-File -LiteralPath $debugFile -Encoding UTF8
+        Write-Host "${c_green}Disclaimer guardado en: $debugFile${c_reset}"
+        Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=disclaimers-debug sites=$($sites -join ',') kind=$kind expires=$expiresAt"
+        Press-Continue
+    }
 }
 
 function Show-Tools {
@@ -990,6 +1185,7 @@ while (-not $script:quitRequested) {
         @{ ic = '🚀'; l = "Deploy a Vercel (marca webs)"; key = '__tools_deploy' },
         @{ ic = '🔐'; l = "Vault -> Bitwarden";  key = '__tools_vaultbw' },
         @{ ic = '📢'; l = "Anuncios: debug local"; key = '__tools_ads' },
+        @{ ic = '📋'; l = "Disclaimers: debug local"; key = '__tools_disclaimers' },
         @{ ic = '📢'; l = "Advisor: enviar mensaje global"; key = '__tools_advisor' },
         @{ ic = '🔘'; l = "Advisor: kill switch"; key = '__tools_advisor_toggle' },
         @{ ic = '👥'; l = "Staff Console (STAFFCON)"; key = '__tools_staffcon' },
@@ -1048,6 +1244,7 @@ while (-not $script:quitRequested) {
         '__tools_deploy' { Deploy-Webs }
         '__tools_vaultbw' { Show-VaultBw }
         '__tools_ads' { Show-AdsDebug }
+        '__tools_disclaimers' { Show-DisclaimersDebug }
         '__tools_advisor' { Show-AdvisorMenu }
         '__tools_advisor_toggle' { Show-AdvisorToggle }
         '__tools_staffcon' { Start-Process powershell.exe -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $root 'tools\consoles\staffcon.ps1'); Write-Host "${c_green}STAFFCON abierta en ventana separada.${c_reset}"; Press-Continue }

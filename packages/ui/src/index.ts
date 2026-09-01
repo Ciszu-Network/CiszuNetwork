@@ -82,6 +82,7 @@ export type { BetaDisclaimerProps } from './BetaDisclaimer';
 export {
   DisclaimerProvider,
   DisclaimerStack,
+  DisclaimerDebug,
   useDisclaimer,
   useHeaderMode,
   publishHeaderMode,
@@ -91,6 +92,7 @@ export type {
   DisclaimerKind,
   HeaderMode,
   DisclaimerStackProps,
+  DebugDisclaimer,
 } from './Disclaimer';
 // CopyWithButton: botón de copiar junto a contenido copiable (sistema anti-copy)
 export { default as CopyWithButton, copyText } from './CopyWithButton';

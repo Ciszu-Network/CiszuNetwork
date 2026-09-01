@@ -537,8 +537,11 @@ const dKey = `ciszu_ads_${site}_dismissed`;
     const dbg = debugRef.current;
     const debugForThisSite = dbg && dbg.enabled && (!dbg.sites?.length || dbg.sites.includes(site));
     const intervalSec = debugForThisSite && dbg.intervalSec ? dbg.intervalSec : undefined;
+    // El filtro de "no anunciar el propio sitio" se anula en debug: el devcon
+    // permite forzar cualquier anuncio (incluida la propia web) para depurar.
+    const filterSelf = debugForThisSite ? false : true;
     return catalog
-      .filter((a) => !host || !a.content.href.includes(host))
+      .filter((a) => filterSelf ? (!host || !a.content.href.includes(host)) : true)
       .filter((a) => !(premium && a.type !== 'intrusive' && a.type !== 'reward'))
       .filter((a) => !(authenticated && !premium && a.type === 'optional'))
       .filter((a) => !(debugForThisSite && dbg.types?.length && !dbg.types.includes(a.type)))
@@ -603,7 +606,11 @@ const markSeen = useCallback((id: string) => {
   }, [sKey, effective, site]);
 
 const show = useCallback((id: string): AdConfig | null => {
-    if (Date.now() < graceUntilRef.current) return null; // periodo de gracia 10s
+    // Periodo de gracia 10s: se ignora si el debug local (devcon) está activo
+    // para este site (los anuncios forzados desde la devcon salen al instante).
+    const dbg = debugRef.current;
+    const debugForThisSite = dbg && dbg.enabled && (!dbg.sites?.length || dbg.sites.includes(site));
+    if (!debugForThisSite && Date.now() < graceUntilRef.current) return null;
     const ad = effective.find((a) => a.id === id);
     if (!ad) return null;
     if (dismissedRef.current[id]) return null;
@@ -969,8 +976,8 @@ function NextArrowIcon() {
 }
 
 /** Mini aviso "Próximo anuncio" con flecha doble parpadeante (siempre visible). */
-function NextAdHint({ nextAt, now, pos, onNow }: { nextAt: number | null; now: number; pos: React.CSSProperties; onNow?: () => void }) {
-  const hintMs = nextAt ? nextAt - now : 0;
+function NextAdHint({ msUntil, now, pos, onNow }: { msUntil: number; now: number; pos: React.CSSProperties; onNow?: () => void }) {
+  const hintMs = msUntil > 0 ? msUntil : 0;
   if (hintMs <= 0 || hintMs > 120000) return null;
   return createPortal(
     <div className="fixed z-[20]" style={pos}>
@@ -991,12 +998,10 @@ export interface AdFloatProps { placement?: string; side?: 'bottom-left' | 'bott
 export function AdFloat({ placement = 'corner', side = 'bottom-right', className }: AdFloatProps) {
   const ads = useAdsSafe();
   const [ad, setAd] = useState<AdConfig | null>(null);
-  const [nextAt, setNextAt] = useState<number | null>(null);
   const [now, setNow] = useState(Date.now());
   const adsRef = useRef(ads);
   adsRef.current = ads;
   const ivRef = useRef<number | null>(null);
-  const tRef = useRef<number | null>(null);
 
   // tryShow usa adsRef: no depende de la identidad del contexto (que cambia en
   // cada impresión/cierre). Así el scheduler no se reinicia con cada cambio.
@@ -1008,28 +1013,15 @@ export function AdFloat({ placement = 'corner', side = 'bottom-right', className
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [placement]);
 
-  const scheduleNext = useCallback(() => {
-    const a = adsRef.current;
-    const delay = a?.isInactive() ? 15000 : periodicInterval();
-    setNextAt(Date.now() + delay);
-    if (tRef.current) window.clearTimeout(tRef.current);
-    tRef.current = window.setTimeout(tryShow, delay);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tryShow]);
-
-  // Scheduler: arranca UNA vez y re-programa tras cada cierre/impresión.
+  // Scheduler: interval fijo de 1s que reintenta SIEMPRE. El control de cuándo
+  // está permitido lo hace `trigger` (respeta minIntervalSec = 5-10min normal,
+  // o el intervalo corto del debug). Al mostrarse, floatingActive detiene los
+  // reintentos; al cerrarse, vuelven.
   useEffect(() => {
     if (!adsRef.current) return;
-    scheduleNext();
-    const iv = window.setInterval(() => {
-      // Cuando el contexto está libre (sin anuncio mostrando) y llega el momento,
-      // mostrar el siguiente. Si ya hay uno activo, esperar (autocierre lo quitará).
-      const a = adsRef.current;
-      if (!a || a.current || a.floatingActive || !ad) return;
-      tryShow();
-    }, 2000);
+    const iv = window.setInterval(tryShow, 1000);
     ivRef.current = iv;
-    return () => { if (ivRef.current) window.clearInterval(ivRef.current); if (tRef.current) window.clearTimeout(tRef.current); };
+    return () => { if (ivRef.current) window.clearInterval(ivRef.current); ivRef.current = null; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -1047,12 +1039,11 @@ const pos = side === 'bottom-left' ? { left: 12, bottom: 12 } : { right: 12, bot
     setAd(null);
     ads.setFloatingActive(false);
     ads.dismiss();
-    scheduleNext();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ads, scheduleNext]);
+  }, [ads]);
 
   if (!ad) {
-    return <NextAdHint nextAt={nextAt} now={now} pos={pos} />;
+    return <NextAdHint msUntil={ads.getNextPeriodicAdIn()} now={now} pos={pos} />;
   }
 
   const c = ad.content;
@@ -1071,12 +1062,10 @@ export interface AdPillProps { placement?: string; side?: 'bottom-center' | 'top
 export function AdPill({ placement = 'body', side = 'bottom-center', className }: AdPillProps) {
   const ads = useAdsSafe();
   const [ad, setAd] = useState<AdConfig | null>(null);
-  const [nextAt, setNextAt] = useState<number | null>(null);
   const [now, setNow] = useState(Date.now());
   const adsRef = useRef(ads);
   adsRef.current = ads;
   const ivRef = useRef<number | null>(null);
-  const tRef = useRef<number | null>(null);
 
   const tryShow = useCallback(() => {
     const a = adsRef.current;
@@ -1086,25 +1075,13 @@ export function AdPill({ placement = 'body', side = 'bottom-center', className }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [placement]);
 
-  const scheduleNext = useCallback(() => {
-    const a = adsRef.current;
-    const delay = a?.isInactive() ? 30000 : periodicInterval();
-    setNextAt(Date.now() + delay);
-    if (tRef.current) window.clearTimeout(tRef.current);
-    tRef.current = window.setTimeout(tryShow, delay);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tryShow]);
-
+  // Scheduler: interval fijo de 1s que reintenta SIEMPRE (el trigger controla
+  // el timing). Así el banner inferior aparece igual que la esquina.
   useEffect(() => {
     if (!adsRef.current) return;
-    scheduleNext();
-    const iv = window.setInterval(() => {
-      const a = adsRef.current;
-      if (!a || a.floatingActive || a.current || !ad) return;
-      tryShow();
-    }, 2000);
+    const iv = window.setInterval(tryShow, 1000);
     ivRef.current = iv;
-    return () => { if (ivRef.current) window.clearInterval(ivRef.current); if (tRef.current) window.clearTimeout(tRef.current); };
+    return () => { if (ivRef.current) window.clearInterval(ivRef.current); ivRef.current = null; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -1121,12 +1098,11 @@ const pos = side === 'top-center' ? { top: 12, left: '50%', transform: 'translat
     setAd(null);
     ads.setFloatingActive(false);
     ads.dismiss();
-    scheduleNext();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ads, scheduleNext]);
+  }, [ads]);
 
   if (!ad) {
-    return <NextAdHint nextAt={nextAt} now={now} pos={pos} />;
+    return <NextAdHint msUntil={ads.getNextPeriodicAdIn()} now={now} pos={pos} />;
   }
 
   return createPortal(

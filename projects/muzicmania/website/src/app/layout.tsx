@@ -8,7 +8,7 @@ import "./globals.css";
 import AuthProvider from "@/components/providers/AuthProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
 
 const exo2 = Exo_2({
@@ -88,6 +88,7 @@ export default async function RootLayout({
               {!isEdit && <Navbar />}
               {!isEdit && <ZoomWarning />}
               {!isEdit && <DisclaimerStack headerHeight={60} />}
+          <DisclaimerDebug site="muzicmania" />
               {!isEdit && <ConnectivityBanner />}
               <main className={isEdit ? "flex-grow" : "flex-grow pt-20"}>
                 <NuqsAdapter>

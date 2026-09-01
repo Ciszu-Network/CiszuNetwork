@@ -74,6 +74,7 @@ depende del formato y del tipo:
   / 5-10 min (activo).
 - **Usuario inactivo** (>60s sin pointer/teclado/scroll) = más propenso: el primer show se adelanta.
 - **Periodo de gracia**: 10s sin anuncios desde que se entra a cualquier página (independiente del rango).
+  **Se ignora cuando el debug local (devcon) está activo**: los anuncios forzados salen al instante.
 - **Mini aviso "Próximo anuncio en Xs"**: siempre visible antes de un anuncio periódico/opcional,
   con icono de **flecha doble a la derecha parpadeante**. NUNCA para anuncios de acción/interacción
   ni no-closables.
@@ -84,6 +85,9 @@ depende del formato y del tipo:
   con rotación para no repetir el mismo seguido.
 - **Ninguna web se patrocina a sí misma**: el catálogo se filtra por `content.source !== site`
   (los intrusivos/recompensa, que son tras acción, se mantienen siempre).
+- **En debug local (devcon) se anula el filtro de auto-propagación**: se puede forzar cualquier
+  marca oficial (ciszunetwork/ciszukoantony/ciszubot/muzicmania/ciszugamens), incluida la propia
+  web, para depurar logos visualmente. El devcon pide la **marca específica** al elegir "oficiales".
 
 ### 2.5 Usuarios autenticados y premium
 
