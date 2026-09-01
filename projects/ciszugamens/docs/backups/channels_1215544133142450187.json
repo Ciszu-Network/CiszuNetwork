@@ -1,0 +1,3970 @@
+[
+    {
+        "id": "1215544133641310269",
+        "type": 4,
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u208a\u30fb\u2726\u30fb\u2735\u30fb\u2730\ud83e\udd0d \ud83c\udde8 \ud83c\udded \ud83c\udde6 \ud83c\uddf9 \ud83c\uddf8 \ud83d\udcac\u2500\u256e\u208a",
+        "parent_id": null,
+        "position": 3,
+        "permission_overwrites": [
+            {
+                "id": "1216130712579870820",
+                "type": 0,
+                "allow": "954517863915329",
+                "deny": "7899847998971920"
+            },
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "4402378247681",
+                "deny": "8849963484639568"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "66561",
+                "deny": "8854365862820688"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1225286882477477969",
+                "type": 0,
+                "allow": "1447650993229633",
+                "deny": "7406714869657616"
+            }
+        ]
+    },
+    {
+        "id": "1215544133641310272",
+        "type": 4,
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u208a\u30fb\u2726\u30fb\u2735\u30fb\u2730\ud83d\udd0a \ud83c\uddfb \ud83c\udde8 \ud83e\udd16\u2500\u256e\u208a",
+        "parent_id": null,
+        "position": 7,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1236544743923521",
+                "deny": "7617821118963728"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ]
+    },
+    {
+        "id": "1215544133641310273",
+        "type": 2,
+        "last_message_id": "1523802236218642724",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u256d\u22b7\u3014\ud83d\udd0a\u3015\ud835\uddd6harlas\u30fb\u2726",
+        "parent_id": "1215544133641310272",
+        "rate_limit_per_user": 0,
+        "bitrate": 96000,
+        "user_limit": 0,
+        "rtc_region": null,
+        "video_quality_mode": 2,
+        "position": 5,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1236544743923521",
+                "deny": "7617821118963728"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1215544133641310274",
+        "type": 2,
+        "last_message_id": "1523802247929008349",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\u2460\u3014\ud83d\udcde\u3015\ud835\udde5oblox\u30fb\u2726  \u208a",
+        "parent_id": "1215544133641310272",
+        "rate_limit_per_user": 0,
+        "bitrate": 96000,
+        "user_limit": 0,
+        "rtc_region": null,
+        "video_quality_mode": 2,
+        "position": 6,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1196962325323585",
+                "deny": "7657403537563664"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1215832892547006574",
+        "type": 4,
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u2661\u30fb\u2726\u30fb\u2735\u30fb\u2730\u30fb\ud83d\udc9c \ud83c\udded \ud83c\uddf4 \ud83c\uddf2 \ud83c\uddea \ud83e\ude90\u2500\u256e\u208a",
+        "parent_id": null,
+        "position": 2,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66625",
+                "deny": "8854365862820624"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8836652612452161",
+                "deny": "17713250435088"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ]
+    },
+    {
+        "id": "1215833324409585734",
+        "type": 0,
+        "last_message_id": "1544209309418659962",
+        "flags": 128,
+        "last_pin_timestamp": "2025-06-20T20:49:59.620000+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\u2570\u2726\u2939\ud83d\udcdc\u30fb\ud835\udde5eglas\u2661\u22b9\u30fb",
+        "parent_id": "1241310082059341965",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude67\ud835\ude5a\ud835\ude5c\ud835\ude61\ud835\ude56\ud835\ude68 \ud835\ude6e \ud835\ude63\ud835\ude64\ud835\ude67\ud835\ude62\ud835\ude56\ud835\ude68 \ud835\ude59\ud835\ude5a \ud835\ude69\ud835\ude64\ud835\ude59\ud835\ude64 \ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67 \u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "position": 6,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66625",
+                "deny": "8854365862820624"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8619361345",
+                "deny": "8854357243525904"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1215876108554342480",
+        "type": 4,
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u208a\u30fb\u2726\u30fb\uff5a\uff5a\uff5a\u30fb\u2730\ud83d\udca4 \ud83c\udde6 \ud83c\uddeb \ud83c\uddf0 \ud83d\udcab\u2500\u256e\u208a",
+        "parent_id": null,
+        "position": 10,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1049600",
+                "deny": "8854365861837649"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ]
+    },
+    {
+        "id": "1215876192326909953",
+        "type": 2,
+        "last_message_id": "1243001704073396264",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\ud83d\udca4\ud83d\udca4\ud835\udde6lepping\ud83d\udca4\ud835\uddd4\ud835\uddd9\ud835\uddde\ud83d\udca4\ud83d\udca4",
+        "parent_id": "1215876108554342480",
+        "rate_limit_per_user": 0,
+        "bitrate": 8000,
+        "user_limit": 0,
+        "rtc_region": null,
+        "position": 18,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1049600",
+                "deny": "8854365861837649"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1215876349063991296",
+        "type": 2,
+        "last_message_id": "1523802275162751098",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\u3014\ud83c\udf33\u3015\ud835\udde0inecraft\u30fb\u2726  \u208a",
+        "parent_id": "1215544133641310272",
+        "rate_limit_per_user": 0,
+        "bitrate": 96000,
+        "user_limit": 34,
+        "rtc_region": null,
+        "video_quality_mode": 2,
+        "position": 9,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1236544743923521",
+                "deny": "7617821118963728"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1215880582815551630",
+        "type": 4,
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u2326\u30fb\u2735\u30fb\u2730\u30fb\ud83d\udcc8 \ud83c\uddf8 \ud83c\uddf9 \ud83c\udde6 \ud83c\uddf9 \ud83c\uddf8 \ud83d\udcca\u2500\u256e\u208a",
+        "parent_id": null,
+        "position": 0,
+        "permission_overwrites": [
+            {
+                "id": "458276816071950337",
+                "type": 1,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1024",
+                "deny": "8854365862886225"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "29426689",
+                "deny": "8854365833460560"
+            }
+        ]
+    },
+    {
+        "id": "1215880586992816178",
+        "type": 2,
+        "last_message_id": null,
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "+\u256d\u30fb\u2014\u2726 \ud83d\udc51 \u2727167 \u2661",
+        "parent_id": "1215880582815551630",
+        "rate_limit_per_user": 0,
+        "bitrate": 8000,
+        "user_limit": 0,
+        "rtc_region": null,
+        "position": 1,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1024",
+                "deny": "8854365862886225"
+            },
+            {
+                "id": "458276816071950337",
+                "type": 1,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "29426689",
+                "deny": "8854365833460560"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1215880599034921100",
+        "type": 2,
+        "last_message_id": null,
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\ufe31\u25c8 \ud83e\udd16 \u25b8\u30fb\ud835\ude09\ud835\ude16\ud835\ude1b\ud835\ude1a\ufe55 48",
+        "parent_id": "1215880582815551630",
+        "rate_limit_per_user": 0,
+        "bitrate": 8000,
+        "user_limit": 0,
+        "rtc_region": null,
+        "position": 3,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1024",
+                "deny": "8854365862886225"
+            },
+            {
+                "id": "458276816071950337",
+                "type": 1,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "29426689",
+                "deny": "8854365833460560"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1215883837863886878",
+        "type": 0,
+        "last_message_id": "1544231640912371733",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\ud83d\udcd1\u273f\ud835\udddfogs\u2726\u208a\u02da\u2312\u2727",
+        "parent_id": "1216133262276038706",
+        "rate_limit_per_user": 0,
+        "topic": "TPS: 20.0 | Mem: 1.2GB usado/0.3GB liberado/2.0GB maximo | 1.21.1-R0.1-SNAPSHOT",
+        "position": 59,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1343338299846164480",
+                "type": 0,
+                "allow": "1447513537185536",
+                "deny": "7406852325701713"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1215885289243807774",
+        "type": 15,
+        "last_message_id": "1326126897658335298",
+        "flags": 16,
+        "guild_id": "1215544133142450187",
+        "name": "\u256d\u2727\ud83d\udcac\u25c8\u2730\u2765\ud835\uddd9oro\u2726\u208a\u02da",
+        "parent_id": "1225312759357378560",
+        "rate_limit_per_user": 10,
+        "topic": "\u256d\u2500\u2014\u2735\u208a\u30fb\u2014\u2726\u208a\u30fb\u2014\u2730\u208a\u30fb\u2d53\ua564\u2d53\u2735\u208a\u30fb\u2014\u2726\u208a\u30fb\u2014\u2730\u208a\u30fb\u2014\u2500\u256e\n\u029a **Sigue las reglas y normas del servidor** \ud83d\udc9c  \u22b9\u30fb\u2726\n\n\u2765 **Aqu\u00ed puedes hablar con otras personas del servidor.**\n\n\u2765 `Puedes asignar etiquetas, descripciones, emojis, emotes, reacciones, t\u00edtulos y contenidos, como im\u00e1genes, fotos o videos a tus publicaciones` En el foro general del server.\n\n\u256d\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256e\n> Para cumplir con los requisitos de entrar al **FORO** del servidor, debe tener precauci\u00f3n y estar verificado en este servidor siguiendo las** normativas y reglas:**\n\u2570\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256f\n\n**\u2765 1 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nEsta prohibido mandar cosas +18, gore, violencia, ect... Si lo haces tendr\u00e1s una advertencia, y a la tercera tendr\u00e1s el respectivo ban.\n**\u2765 2 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nEsta prohibido insultar a los dem\u00e1s miembros, en caso de que los miembros se tengan confianza no habr\u00e1 tanto problema en eso.\n**\u2765 3 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nNo hacer spam, tendr\u00e1n una advertencia, y a la tercera tendr\u00e1s el respectivo ban.\n**\u2765 4 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nNo hacer ping a los moderadores a no ser que sea que necesites ayuda o sea algo urgente.\n**\u2765 5 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nUtiliza los canales de acuerdo con su prop\u00f3sito asignado.\n**\u2765 6 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \n\u00a1Respeta la privacidad de los dem\u00e1s! no pidas informaci\u00f3n personal a los miembros, y tampoco des tu informaci\u00f3n personal, en caso de que des tu informaci\u00f3n personal es bajo t\u00fa propio riesgo.\n**\u2765 7 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nSi tienes alg\u00fan problema con alg\u00fan otro miembro del servidor, aborda el problema de manera privada y respetuosa.\n**\u2765 8 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nEsta prohibido hacer everyone, solo lo pueden hacer los mod, admin y supremos, tendr\u00e1s dos advertencias y a la \u00faltima tendr\u00e1s un warn.\n**\u2765 9 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nEsta prohibido abusar de los audios que se encuentran en los canales de voces, recibir\u00e1s advertencias por eso.\n**\u2765 10 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nSi alguien esta escuchando m\u00fasica y le quitas el bot de m\u00fasica, tendr\u00e1s advertencias por eso.\n**\u2765 11 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nEsta prohibido mandar screamers, esto es para evitar molestar a los dem\u00e1s miembros.\n\n> ***\u00a1Bienvenido a nuestro FORO GENERAL OFICIAL!***\n\u30fb\u2014\u30fb\u2726  \u208a\u30fb\u2014\u30fb\u2726  \u208a\u30fb\u2014 \u02da\u22b9\u30fb\u2726  \u208a\u30fb\u2014\u30fb\u0b67 \u02da\u22b9\u30fb\u2726  \u208a\u30fb\u2014\u0b67 \u02da\u22b9 \ud83d\udc9c",
+        "default_auto_archive_duration": 10080,
+        "default_thread_rate_limit_per_user": 0,
+        "position": 28,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1799769575251777",
+                "deny": "7054596287635472"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "66561",
+                "deny": "8854365862820688"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8836669792321345",
+                "deny": "17696070565904"
+            }
+        ],
+        "nsfw": false,
+        "available_tags": [
+            {
+                "id": "1215885405614772309",
+                "name": "minecraft",
+                "moderated": false,
+                "emoji_id": null,
+                "emoji_name": "\ud83d\udc9a"
+            },
+            {
+                "id": "1288697641953136650",
+                "name": "roblox",
+                "moderated": false,
+                "emoji_id": null,
+                "emoji_name": "\u2764\ufe0f"
+            },
+            {
+                "id": "1288697745661493248",
+                "name": "memes",
+                "moderated": false,
+                "emoji_id": null,
+                "emoji_name": "\ud83e\udd23"
+            },
+            {
+                "id": "1288697766368903220",
+                "name": "art",
+                "moderated": false,
+                "emoji_id": "1241498204915372054",
+                "emoji_name": null
+            },
+            {
+                "id": "1288697807326281892",
+                "name": "fyp",
+                "moderated": false,
+                "emoji_id": "1241498514458935367",
+                "emoji_name": null
+            },
+            {
+                "id": "1306117004519931956",
+                "name": "dudas",
+                "moderated": false,
+                "emoji_id": "1289854225131638805",
+                "emoji_name": null
+            },
+            {
+                "id": "1306117030310711357",
+                "name": "ayuda",
+                "moderated": false,
+                "emoji_id": "1266239604525236336",
+                "emoji_name": null
+            },
+            {
+                "id": "1306117060316889139",
+                "name": "arte",
+                "moderated": false,
+                "emoji_id": "1241498684789620756",
+                "emoji_name": null
+            },
+            {
+                "id": "1306117093946691614",
+                "name": "juegos",
+                "moderated": false,
+                "emoji_id": "1241498223668105216",
+                "emoji_name": null
+            },
+            {
+                "id": "1306117141724008499",
+                "name": "outcontext",
+                "moderated": false,
+                "emoji_id": "1254310725644714045",
+                "emoji_name": null
+            },
+            {
+                "id": "1306117175425237093",
+                "name": "pc",
+                "moderated": false,
+                "emoji_id": "1261886170229374986",
+                "emoji_name": null
+            },
+            {
+                "id": "1306117202881286185",
+                "name": "tlf",
+                "moderated": false,
+                "emoji_id": "1258991416298704957",
+                "emoji_name": null
+            },
+            {
+                "id": "1306117258921381960",
+                "name": "info",
+                "moderated": false,
+                "emoji_id": "1241498218534142124",
+                "emoji_name": null
+            },
+            {
+                "id": "1306117280001687612",
+                "name": "msg",
+                "moderated": false,
+                "emoji_id": "1216666972805267549",
+                "emoji_name": null
+            }
+        ],
+        "default_reaction_emoji": {
+            "emoji_id": "1217042248391327875",
+            "emoji_name": null
+        },
+        "default_sort_order": null,
+        "default_forum_layout": 1,
+        "default_tag_setting": "match_some",
+        "icon_emoji": null,
+        "theme_color": null,
+        "template": ""
+    },
+    {
+        "id": "1215885688625561640",
+        "type": 5,
+        "last_message_id": "1544207073854750782",
+        "flags": 0,
+        "last_pin_timestamp": "2025-12-01T05:04:40.924000+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\u256d\u2661\ud83d\udce2\u025e\u2058\u22b1\ud835\uddd4nuncios\u2726\u208a\u30fb",
+        "parent_id": "1215832892547006574",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3c\ud835\ude63\ud835\ude6a\ud835\ude63\ud835\ude58\ud835\ude5e\ud835\ude64\ud835\ude68 \ud835\ude6e \ud835\ude56\ud835\ude6b\ud835\ude5e\ud835\ude68\ud835\ude64\ud835\ude68 \ud835\ude64\ud835\ude5b\ud835\ude5e\ud835\ude58\ud835\ude5e\ud835\ude56\ud835\ude61\ud835\ude5a\ud835\ude68 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "position": 8,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66625",
+                "deny": "8854365862820624"
+            },
+            {
+                "id": "1249824454679461970",
+                "type": 0,
+                "allow": "1724723575114817",
+                "deny": "6826095408066576"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8836652612452161",
+                "deny": "17713250435088"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1215885810545463387",
+        "type": 13,
+        "last_message_id": "1452102927358623875",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u2570\u22b7\u3014\ud83c\udfdf\ufe0f\u3015\ud835\udde6tadium\u30fb\u2726",
+        "parent_id": "1215544133641310272",
+        "rate_limit_per_user": 0,
+        "bitrate": 64000,
+        "user_limit": 10000,
+        "rtc_region": null,
+        "video_quality_mode": 2,
+        "topic": null,
+        "position": 13,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1236544743923521",
+                "deny": "7617821118963728"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            },
+            {
+                "id": "1225286882477477969",
+                "type": 0,
+                "allow": "668651268595264",
+                "deny": "6772991895543825"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1216133262276038706",
+        "type": 4,
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u2588\u2593\u2592\u2591\u2877\u30fb\u2726 \ud83d\udc9a \ud83c\udd62\ud83c\udd63\ud83c\udd50\ud83c\udd55\ud83c\udd55 \ud83d\udc9a\u2500\u256e\u208a",
+        "parent_id": null,
+        "position": 11,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1343338299846164480",
+                "type": 0,
+                "allow": "1447513537185536",
+                "deny": "7406852325701713"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ]
+    },
+    {
+        "id": "1221927000525246524",
+        "type": 0,
+        "last_message_id": "1541186519820279811",
+        "flags": 0,
+        "last_pin_timestamp": "2025-03-02T21:51:15+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\ua564\ud83d\uddbc\ufe0f\u2058\u22b1\ud835\udde0ulti\u2726media\u208a",
+        "parent_id": "1215544133641310269",
+        "rate_limit_per_user": 15,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude62\ud835\ude6a\ud835\ude61\ud835\ude69\ud835\ude5e\ud835\ude62\ud835\ude5a\ud835\ude59\ud835\ude5e\ud835\ude56 \ud835\ude58\ud835\ude64\ud835\ude62\ud835\ude64 \ud835\ude5e\ud835\ude62\ud835\ude56\ud835\ude5c\ud835\ude5a\ud835\ude63\ud835\ude5a\ud835\ude68, \ud835\ude5b\ud835\ude64\ud835\ude69\ud835\ude64\ud835\ude68, \ud835\ude6b\ud835\ude5e\ud835\ude5a\ud835\ude59\ud835\ude64\ud835\ude68 \ud835\ude64 \ud835\ude56\ud835\ude6a\ud835\ude59\ud835\ude5e\ud835\ude64\ud835\ude68 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "default_auto_archive_duration": 10080,
+        "position": 23,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "39724189601345",
+                "deny": "8814641673285904"
+            },
+            {
+                "id": "1216130712579870820",
+                "type": 0,
+                "allow": "2080969674186561",
+                "deny": "6773396188700688"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "66561",
+                "deny": "8854365862820688"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            },
+            {
+                "id": "1225286882477477969",
+                "type": 0,
+                "allow": "1447650993229633",
+                "deny": "7406714869657616"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1221927041427968010",
+        "type": 0,
+        "last_message_id": "1542034871419932785",
+        "flags": 0,
+        "last_pin_timestamp": "2025-07-28T04:23:01.728000+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\u256d\u2727\ud83c\udf0e\u2661\u2730\u2058\ud835\udddaeneral\u2726\u208a\u02da",
+        "parent_id": "1215544133641310269",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude69\ud835\ude5a\ud835\ude6d\ud835\ude69\ud835\ude64 \ud835\ude5a\ud835\ude63 \ud835\ude5c\ud835\ude5a\ud835\ude63\ud835\ude5a\ud835\ude67\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727\n\nAqui puedes hablar con todos los usuarios en el servidor.",
+        "default_auto_archive_duration": 10080,
+        "position": 22,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "110505250594369",
+                "deny": "8743860612292880"
+            },
+            {
+                "id": "1216130712579870820",
+                "type": 0,
+                "allow": "955067619729217",
+                "deny": "7899298243158032"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "1025",
+                "deny": "8854365862886224"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1225286882477477969",
+                "type": 0,
+                "allow": "1447650993229633",
+                "deny": "7406714869657616"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1221927081752006656",
+        "type": 0,
+        "last_message_id": "1533529119122259978",
+        "flags": 0,
+        "last_pin_timestamp": "2025-04-13T04:57:09+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\ua564\ud83d\udcd8\u2730\u2058\u22b1\ud835\uddd6omandos\u2726\u208a",
+        "parent_id": "1215544133641310269",
+        "rate_limit_per_user": 5,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude58\ud835\ude64\ud835\ude62\ud835\ude56\ud835\ude63\ud835\ude59\ud835\ude64\ud835\ude68 \ud835\ude6e \ud835\ude56\ud835\ude65\ud835\ude65\ud835\ude68 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727\n\n- Usa /bump para mantener vivo el servidor y publicarlo en el dashboard del disboard como un voto.\n\n- Usa /level o /rank oara saber tu nivel.\n\nhttps://disboard.org/es/server/1215544133142450187",
+        "default_auto_archive_duration": 10080,
+        "position": 25,
+        "permission_overwrites": [
+            {
+                "id": "1216130712579870820",
+                "type": 0,
+                "allow": "2080969674186561",
+                "deny": "6773396188700688"
+            },
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1166175999741505",
+                "deny": "7688189863145744"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "66561",
+                "deny": "8854365862820688"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1225286882477477969",
+                "type": 0,
+                "allow": "1447650993229633",
+                "deny": "7406714869657616"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1221927911997575369",
+        "type": 0,
+        "last_message_id": "1542038121523187783",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u2570\u029a\ud83d\udca7\u2729\ufe55\ud835\uddd7espedidas\u208a\u02da",
+        "parent_id": "1241310082059341965",
+        "rate_limit_per_user": 0,
+        "topic": "\u2735\ufe3d\ufe3d\u2730 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude3f\ud835\ude5a\ud835\ude68\ud835\ude65\ud835\ude5a\ud835\ude59\ud835\ude5e\ud835\ude59\ud835\ude56\ud835\ude68 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67... \u2735\ufe3d\ufe3d\u2730\n\n\u02da\u2727.\u22b9 Puedes volver cuando quieras a \ud835\ude4e\ud835\ude5d\ud835\ude5e\ud835\udc20\ud835\udc1a\ud835\udc26\ud835\udd8a\ud835\udd93\ud835\udd98 \u2729\u208a Server.\n\u273f  En \ud835\ude3f\ud835\ude5a\ud835\ude68\ud835\ude65\ud835\ude5a\ud835\ude59\ud835\ude5e\ud835\ude59\ud835\ude56\ud835\ude68\u208a\u02da te damos la Despedida a nuestro servidor de discord...  \u2735\n\u02da\u2727.\u22b9 Esperemos que te vaya bien... \u2726\n\n\u275b\u256d\u2550\ufe3d\u2735\ufe3d\u2730\ufe3d\u2550\ufe3d\u2735\ufe3d\u2730\ufe3d\u2550\ufe3d\u2735\ufe3d\u2730\ufe3d\u2550\ufe3d\u2735\ufe3d\u2730\ufe3d\u2550\u275c\n\u2735 La informaci\u00f3n (Roles y configuraci\u00f3n) personal dentro del servidor nunca se habr\u00e1 perdido al salir fuera del servidor. Cuando vuelvas tus datos estar\u00e1n guardados \u2726\n\n\u2735 Se ha descontado tu invitaci\u00f3n por registro (invites)\n\n\u2735 Si este usuario a sido baneado se mostrara en el mensaje anterior a este \u2726\n\u275b\u2570\u2550\ufe3d\u2735\ufe3d\u2730\ufe3d\u2550\ufe3d\u2735\ufe3d\u2730\ufe3d\u2735\ufe3d\u2730\ufe3d\u2550\ufe3d\u2735\ufe3d\u2730\ufe3d\u2550\u256f\u275c",
+        "position": 3,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66624",
+                "deny": "8854365862820625"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "6755408060425281",
+                "deny": "2098957802461968"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1221927992624808089",
+        "type": 0,
+        "last_message_id": "1542033776593338443",
+        "flags": 128,
+        "guild_id": "1215544133142450187",
+        "name": "\u256d\u029a\ud83d\udc4b\ud83c\udffb\u2726\ufe55\ud835\uddd5ienvenidas\u208a\u02da",
+        "parent_id": "1241310082059341965",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude3d\ud835\ude5e\ud835\ude5a\ud835\ude63\ud835\ude6b\ud835\ude5a\ud835\ude63\ud835\ude5e\ud835\ude59\ud835\ude56\ud835\ude68 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727\n\n\u2729\u208a\u02da\u2727.\u22b9 Gracias por unirte a \ud835\ude4e\ud835\ude5d\ud835\ude5e\ud835\udc20\ud835\udc1a\ud835\udc26\ud835\udd8a\ud835\udd93\ud835\udd98 \u2729\u208a Server.\n\u273fTe damos la Bienvenida a nuestro servidor de discord!\n\u275b\u256d\u2550\ufe3d\u2735\ufe3d\u2730\ufe3d\u2550\ufe3d\u2735\ufe3d\u2730\ufe3d \u2550\ufe3d\u2735\ufe3d\u2730\ufe3d\u2550\ufe3d\u2735\ufe3d\u2730\ufe3d\u2550\u275c\n\u25cd Recuerda leer las reglas y normas.\n\u25c8 Para seguir un buen comportamiento en tu estancia y colaborar con los dem\u00e1s \u0aee\ua4b0\u02f6\u2022 \u0f1d \u2022\u02f6\ua4b1\u10d0 \u2661",
+        "position": 1,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66625",
+                "deny": "8854365862820624"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "6755408060425281",
+                "deny": "2098957802461968"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1222811953878138940",
+        "type": 2,
+        "last_message_id": "1544227645481422850",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u25b8\u2460 \u3014\ud83c\udf38\u3015\ud835\udde5euniones\u2726\u208a\u02da",
+        "parent_id": "1216133262276038706",
+        "rate_limit_per_user": 0,
+        "bitrate": 96000,
+        "user_limit": 0,
+        "rtc_region": null,
+        "video_quality_mode": 2,
+        "position": 19,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1343338299846164480",
+                "type": 0,
+                "allow": "2080969674055488",
+                "deny": "6773396188831761"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1223052488999960626",
+        "type": 0,
+        "last_message_id": "1497870436900278363",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\ud83e\udd23\u2730\u2058\u22b1\ud835\udde0emes\u2726\u208a\ufe35\u203f",
+        "parent_id": "1215544133641310269",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude62\ud835\ude5a\ud835\ude62\ud835\ude5a\ud835\ude68 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "default_auto_archive_duration": 10080,
+        "position": 24,
+        "permission_overwrites": [
+            {
+                "id": "1216130712579870820",
+                "type": 0,
+                "allow": "2080969674186561",
+                "deny": "6773396188700688"
+            },
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1799494697344577",
+                "deny": "7054871165542672"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "66561",
+                "deny": "8854365862820688"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            },
+            {
+                "id": "1225286882477477969",
+                "type": 0,
+                "allow": "1447650993229633",
+                "deny": "7406714869657616"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1223053367690006548",
+        "type": 0,
+        "last_message_id": "1533527524372644022",
+        "flags": 128,
+        "last_pin_timestamp": "2024-04-01T05:15:22+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\u2570\u2661\ud83d\udcdb\u2058\u22b1\u2326\ud835\uddeaarns\u25c8\u2726\u208a\u2a2f",
+        "parent_id": "1215832892547006574",
+        "rate_limit_per_user": 0,
+        "topic": "\u25cd\u25c8 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude6c\ud835\ude56\ud835\ude67\ud835\ude63\ud835\ude68 \ud835\ude64 \ud835\ude56\ud835\ude61\ud835\ude5a\ud835\ude67\ud835\ude69\ud835\ude56\ud835\ude68 \ud835\ude59\ud835\ude5a \ud835\ude6a\ud835\ude68\ud835\ude6a\ud835\ude56\ud835\ude67\ud835\ude5e\ud835\ude64 \ud835\ude59\ud835\ude5a \ud835\ude69\ud835\ude64\ud835\ude59\ud835\ude64 \ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67 \u25cd\u25c8",
+        "position": 21,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66625",
+                "deny": "8854365862820624"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8836652612452161",
+                "deny": "17713250435088"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1223060086965145661",
+        "type": 2,
+        "last_message_id": "1439272937311178965",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u25b8\u2460 \u3014\ud83c\udfb5\u3015\ud835\udde0usic\u22b9\u30fb\u2726  \u208a",
+        "parent_id": "1227136953909121056",
+        "rate_limit_per_user": 0,
+        "bitrate": 96000,
+        "user_limit": 0,
+        "rtc_region": null,
+        "video_quality_mode": 2,
+        "position": 14,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1126456141926209",
+                "deny": "7727909720961040"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8836377734545217",
+                "deny": "17988128342032"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1223478890048131113",
+        "type": 0,
+        "last_message_id": "1472187342063145033",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u300e\ud83c\udfb6\u300f\u2765\u25b8\ud835\udde3lay\u2014\u273f",
+        "parent_id": "1227136953909121056",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a PLAY de \ud835\ude48\ud835\ude50\ud835\ude4e\ud835\ude44\ud835\ude3e\ud835\ude3c \ud835\ude51\ud835\ude3e \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "position": 47,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1795096650833729",
+                "deny": "7059269212053520"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8836377734545217",
+                "deny": "17988128342032"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1223826425602375720",
+        "type": 0,
+        "last_message_id": "1467588527092142293",
+        "flags": 0,
+        "last_pin_timestamp": "2024-09-23T01:51:36+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\ud83d\udcac\u273f\ud835\uddd7ebates\u2726\u208a\u02da",
+        "parent_id": "1216133262276038706",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude58\ud835\ude5d\ud835\ude56\ud835\ude69 \ud835\ude5c\ud835\ude5a\ud835\ude63\ud835\ude5a\ud835\ude67\ud835\ude56\ud835\ude61 \ud835\ude65\ud835\ude56\ud835\ude67\ud835\ude56 \ud835\ude61\ud835\ude64\ud835\ude68 \ud835\ude68\ud835\ude69\ud835\ude56\ud835\ude5b\ud835\ude5b \uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "position": 55,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1343338299846164480",
+                "type": 0,
+                "allow": "2080969674055488",
+                "deny": "6773396188831761"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1225312577895141409",
+        "type": 0,
+        "last_message_id": "1538699113733038081",
+        "flags": 0,
+        "last_pin_timestamp": "2024-09-26T03:36:15+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\ud83c\udf82\u25c8\u2730\u2765\ud835\uddd6umplea\u00f1os\u2726\u208a\u02da",
+        "parent_id": "1225312759357378560",
+        "rate_limit_per_user": 5,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude58\ud835\ude6a\ud835\ude62\ud835\ude65\ud835\ude61\ud835\ude5a\ud835\ude68 \ud835\ude59\ud835\ude5a \ud835\ude62\ud835\ude5e\ud835\ude5a\ud835\ude62\ud835\ude57\ud835\ude67\ud835\ude64\ud835\ude68 \ud835\ude56\ud835\ude59\ud835\ude5a\ud835\ude63\ud835\ude69\ud835\ude67\ud835\ude64 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727\n\nPara usar el comando birthday utiliza estos comandos:\n1. /birthday\n2. !birthday\n\nY con birthday set puedes colocar tu cumplea\u00f1os con su estructura.\nRevisa mas comandos con el comando help.",
+        "default_auto_archive_duration": 10080,
+        "position": 32,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1236544743907137",
+                "deny": "7617821118980112"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "66561",
+                "deny": "8854365862820688"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1225312759357378560",
+        "type": 4,
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u208a\u30fb\u2726\ud83c\udf88 \ud83c\uddee \ud83c\uddf3 \ud83c\uddf9 \ud83c\uddea \ud83c\uddf7 \ud83c\udde6 \ud83c\udde8 \ud83c\uddf9 \u2728\u2500\u256e",
+        "parent_id": null,
+        "position": 4,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1166175999692609",
+                "deny": "7688189863194640"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "66561",
+                "deny": "8854365862820688"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            }
+        ]
+    },
+    {
+        "id": "1225312991939924030",
+        "type": 0,
+        "last_message_id": "1497870464985464943",
+        "flags": 0,
+        "last_pin_timestamp": "2024-09-26T03:32:12+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\ud83c\udfa4\u25c8\u2765\ud835\uddd6onfesiones\u2726\u208a\u02da",
+        "parent_id": "1225312759357378560",
+        "rate_limit_per_user": 15,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude58\ud835\ude64\ud835\ude63\ud835\ude5b\ud835\ude5a\ud835\ude68\ud835\ude5e\ud835\ude64\ud835\ude63\ud835\ude5a\ud835\ude68 \ud835\ude56\ud835\ude63\ud835\ude64\ud835\ude63\ud835\ude5e\ud835\ude62\ud835\ude56\ud835\ude68 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727\n\nPara usar el comando confess utiliza y escribe con esta estructura: \n1. /confess (confesion)\n2. !confess (confesion)",
+        "default_auto_archive_duration": 10080,
+        "position": 30,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1130854188388161",
+                "deny": "7723511674499088"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "66561",
+                "deny": "8854365862820688"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1227136804382183435",
+        "type": 4,
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u208a\u30fb\u2726\u30fb\u2735\u30fb\u2730\ud83d\udd0a \ud83c\uddf5 \ud83c\uddf7 \ud83c\uddee \ud83c\uddfb \ud83c\uddf8 \ud83d\udeb7\u2500\u256e\u208a",
+        "parent_id": null,
+        "position": 9,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "2080969674055488",
+                "deny": "6773396188831761"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8836377734545217",
+                "deny": "17988128342032"
+            }
+        ]
+    },
+    {
+        "id": "1227136953909121056",
+        "type": 4,
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u208a\u30fb\u2726\u30fb\u2735\u30fb\u2730\ud83d\udd0a \ud83c\uddf2 \ud83c\uddfa \ud83c\uddf8 \ud83c\uddee \ud83c\udde8 \ud83c\udfb6\u2500\u256e\u208a",
+        "parent_id": null,
+        "position": 8,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1126456141926209",
+                "deny": "7727909720961040"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8836377734545217",
+                "deny": "17988128342032"
+            }
+        ]
+    },
+    {
+        "id": "1227137817503596594",
+        "type": 2,
+        "last_message_id": "1439272872454524948",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u25b8\u2461 \u3014\ud83c\udfb5\u3015\ud835\udde6ong\u30fb\u2726  \u208a",
+        "parent_id": "1227136953909121056",
+        "rate_limit_per_user": 0,
+        "bitrate": 96000,
+        "user_limit": 18,
+        "rtc_region": null,
+        "video_quality_mode": 2,
+        "position": 15,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1126456141926209",
+                "deny": "7727909720961040"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8836377734545217",
+                "deny": "17988128342032"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1227144267051565108",
+        "type": 0,
+        "last_message_id": "1544230509352063106",
+        "flags": 0,
+        "last_pin_timestamp": "2026-02-14T03:20:53.136000+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\u0dc6\ud83d\udcd4\ud835\uddd6onfiguracion\u2726\u208a\u02da",
+        "parent_id": "1216133262276038706",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude58\ud835\ude64\ud835\ude63\ud835\ude5b\ud835\ude5e\ud835\ude5c\ud835\ude6a\ud835\ude67\ud835\ude56\ud835\ude58\ud835\ude5e\ud835\ude64\ud835\ude63 \ud835\ude65\ud835\ude56\ud835\ude67\ud835\ude56 \ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5e\ud835\ude59\ud835\ude64\ud835\ude67 \ud835\ude59\ud835\ude5a \ud835\ude61\ud835\ude64\ud835\ude68 \ud835\ude68\ud835\ude69\ud835\ude56\ud835\ude5b\ud835\ude5b \uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "default_auto_archive_duration": 10080,
+        "position": 58,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1227145430819930165",
+        "type": 5,
+        "last_message_id": "1543411152099344405",
+        "flags": 0,
+        "last_pin_timestamp": "2024-08-31T18:56:29+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\ud83d\udce3\u2058\u22b1\u273f\ud835\uddd8vents\u273f\u2726\u208a",
+        "parent_id": "1215832892547006574",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude40\ud835\ude6b\ud835\ude5a\ud835\ude63\ud835\ude69\ud835\ude64\ud835\ude68 \ud835\ude64\ud835\ude5b\ud835\ude5e\ud835\ude58\ud835\ude5e\ud835\ude56\ud835\ude61\ud835\ude5a\ud835\ude68 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "position": 13,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66625",
+                "deny": "8854365862820624"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8836652612452161",
+                "deny": "17713250435088"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1249824780622757919",
+                "type": 0,
+                "allow": "1795092319280193",
+                "deny": "6755726663901200"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1227147132411314196",
+        "type": 2,
+        "last_message_id": null,
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u2570\u30fb\u2014\u2735\ud83c\udfc5\u2661 \ud835\ude19\ud835\ude16\ud835\ude13\ud835\ude0c\ud835\ude1a\ufe55218",
+        "parent_id": "1215880582815551630",
+        "rate_limit_per_user": 0,
+        "bitrate": 8000,
+        "user_limit": 0,
+        "rtc_region": null,
+        "position": 4,
+        "permission_overwrites": [
+            {
+                "id": "458276816071950337",
+                "type": 1,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1024",
+                "deny": "8854365862886225"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "29426689",
+                "deny": "8854365833460560"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1227147337361784873",
+        "type": 2,
+        "last_message_id": null,
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\ufe31\u273f \ud83d\udc65\u25b8\u30fb\ud835\ude1c\ud835\ude1a\ud835\ude1a\ud835\ude0c\ud835\ude19\ud835\ude1a\ufe55119",
+        "parent_id": "1215880582815551630",
+        "rate_limit_per_user": 0,
+        "bitrate": 8000,
+        "user_limit": 0,
+        "rtc_region": null,
+        "position": 2,
+        "permission_overwrites": [
+            {
+                "id": "458276816071950337",
+                "type": 1,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1024",
+                "deny": "8854365862886225"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "29426689",
+                "deny": "8854365833460560"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1227149748033814630",
+        "type": 15,
+        "last_message_id": "1455709764762730496",
+        "flags": 16,
+        "guild_id": "1215544133142450187",
+        "name": "\u2570\u2727\ud83c\udfa8\u25c8\u2730\u2765-\ud835\ude3c\ud835\ude67\ud835\ude69\ud835\ude5a-\u2726\u208a\u02da",
+        "parent_id": "1225312759357378560",
+        "rate_limit_per_user": 10,
+        "topic": "\u256d\u2500\u2014\u2735\u208a\u30fb\u2014\u2726\u208a\u30fb\u2014\u2730\u208a\u30fb\u2d53\ua564\u2d53\u2735\u208a\u30fb\u2014\u2726\u208a\u30fb\u2014\u2730\u208a\u30fb\u2014\u2500\u256e\n\u029a **Sigue las reglas y normas del servidor** \ud83d\udc9c  \u22b9\u30fb\u2726\n\n\u2765 **Aqu\u00ed puedes enviar tus dibujos y formar parte de la galer\u00eda de arte del servidor.**\n\n\u2765 `Puedes asignar etiquetas, descripcione, emojis, emotes, reacciones, titulos y contenidos, como imagenes, fotos o videos a tus publicaciones` En la galer\u00eda de arte del server.\n\n\u256d\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256e\n> Para cumplir con los requisitos de entrar al **FORO** del servidor, debe tener precauci\u00f3n y estar verificado en este servidor siguiendo las** normativas y reglas:**\n\u2570\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256f\n\n**\u2765 1 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nEsta prohibido mandar cosas +18, gore, violencia, ect... Si lo haces tendr\u00e1s una advertencia, y a la tercera tendr\u00e1s el respectivo ban.\n**\u2765 2 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nEsta prohibido insultar a los dem\u00e1s miembros, en caso de que los miembros se tengan confianza no habr\u00e1 tanto problema en eso.\n**\u2765 3 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nNo hacer spam, tendr\u00e1n una advertencia, y a la tercera tendr\u00e1s el respectivo ban.\n**\u2765 4 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nNo hacer ping a los moderadores a no ser que sea que necesites ayuda o sea algo urgente.\n**\u2765 5 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nUtiliza los canales de acuerdo con su prop\u00f3sito asignado.\n**\u2765 6 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \n\u00a1Respeta la privacidad de los dem\u00e1s! no pidas informaci\u00f3n personal a los miembros, y tampoco des tu informaci\u00f3n personal, en caso de que des tu informaci\u00f3n personal es bajo t\u00fa propio riesgo.\n**\u2765 7 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nSi tienes alg\u00fan problema con alg\u00fan otro miembro del servidor, aborda el problema de manera privada y respetuosa.\n**\u2765 8 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nEsta prohibido hacer everyone, solo lo pueden hacer los mod, admin y supremos, tendr\u00e1s dos advertencias y a la \u00faltima tendr\u00e1s un warn.\n**\u2765 9 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nEsta prohibido abusar de los audios que se encuentran en los canales de voces, recibir\u00e1s advertencias por eso.\n**\u2765 10 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nSi alguien esta escuchando m\u00fasica y le quitas el bot de m\u00fasica, tendr\u00e1s advertencias por eso.\n**\u2765 11 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nEsta prohibido mandar screamers, esto es para evitar molestar a los dem\u00e1s miembros.\n\n> ***\u00a1Bienvenido a nuestro FORO DE DIBUJANTES Y ARTES DE GALERIA OFICIAL!***\n\u30fb\u2014\u30fb\u2726  \u208a\u30fb\u2014\u30fb\u2726  \u208a\u30fb\u2014 \u02da\u22b9\u30fb\u2726  \u208a\u30fb\u2014\u30fb\u0b67 \u02da\u22b9\u30fb\u2726  \u208a\u30fb\u2014\u0b67 \u02da\u22b9 \ud83d\udc9c",
+        "default_auto_archive_duration": 10080,
+        "default_thread_rate_limit_per_user": 5,
+        "position": 41,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1799769575251777",
+                "deny": "7054596287635472"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "66561",
+                "deny": "8854365862820688"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8836669792321345",
+                "deny": "17696070565904"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false,
+        "available_tags": [
+            {
+                "id": "1288707863849734228",
+                "name": "arte",
+                "moderated": false,
+                "emoji_id": "1241498204915372054",
+                "emoji_name": null
+            },
+            {
+                "id": "1288707919042314272",
+                "name": "dibujo",
+                "moderated": false,
+                "emoji_id": "1241498328428974100",
+                "emoji_name": null
+            },
+            {
+                "id": "1288707952999530538",
+                "name": "love",
+                "moderated": false,
+                "emoji_id": null,
+                "emoji_name": "\u2764\ufe0f"
+            },
+            {
+                "id": "1288707980644192380",
+                "name": "roblox",
+                "moderated": false,
+                "emoji_id": null,
+                "emoji_name": "\ud83d\udc93"
+            },
+            {
+                "id": "1288708003750739999",
+                "name": "minecraft",
+                "moderated": false,
+                "emoji_id": null,
+                "emoji_name": "\ud83d\udc9a"
+            },
+            {
+                "id": "1288708039217512530",
+                "name": "3D",
+                "moderated": false,
+                "emoji_id": "1241498185583820850",
+                "emoji_name": null
+            },
+            {
+                "id": "1288708054749282324",
+                "name": "2D",
+                "moderated": false,
+                "emoji_id": "1241498201693884476",
+                "emoji_name": null
+            },
+            {
+                "id": "1288708098164523090",
+                "name": "ilustracion",
+                "moderated": false,
+                "emoji_id": "1241498665445756949",
+                "emoji_name": null
+            },
+            {
+                "id": "1288708122231181312",
+                "name": "realidad",
+                "moderated": false,
+                "emoji_id": "1241498218534142124",
+                "emoji_name": null
+            },
+            {
+                "id": "1288708159724191825",
+                "name": "caricatura",
+                "moderated": false,
+                "emoji_id": "1266239604525236336",
+                "emoji_name": null
+            },
+            {
+                "id": "1288708207715549295",
+                "name": "geometrico",
+                "moderated": false,
+                "emoji_id": "1241498192483319910",
+                "emoji_name": null
+            },
+            {
+                "id": "1288708236656246826",
+                "name": "cubico",
+                "moderated": false,
+                "emoji_id": "1267037169349038160",
+                "emoji_name": null
+            },
+            {
+                "id": "1288708263348539412",
+                "name": "pixelart",
+                "moderated": false,
+                "emoji_id": "1241498346405756978",
+                "emoji_name": null
+            },
+            {
+                "id": "1288708311318921217",
+                "name": "emo",
+                "moderated": false,
+                "emoji_id": "1267036988922531850",
+                "emoji_name": null
+            },
+            {
+                "id": "1288708335952072818",
+                "name": "happy",
+                "moderated": false,
+                "emoji_id": "1261527483627343925",
+                "emoji_name": null
+            },
+            {
+                "id": "1288708362208411669",
+                "name": "dark",
+                "moderated": false,
+                "emoji_id": "1241498223668105216",
+                "emoji_name": null
+            },
+            {
+                "id": "1288708414653861991",
+                "name": "relax",
+                "moderated": false,
+                "emoji_id": "1241498684789620756",
+                "emoji_name": null
+            },
+            {
+                "id": "1288708443510673500",
+                "name": "cute",
+                "moderated": false,
+                "emoji_id": "1241498446922387546",
+                "emoji_name": null
+            },
+            {
+                "id": "1288708467422396456",
+                "name": "kawaii",
+                "moderated": false,
+                "emoji_id": "1241498778083524710",
+                "emoji_name": null
+            },
+            {
+                "id": "1306116779877208156",
+                "name": "chibi",
+                "moderated": false,
+                "emoji_id": "1241498514458935367",
+                "emoji_name": null
+            }
+        ],
+        "default_reaction_emoji": {
+            "emoji_id": null,
+            "emoji_name": "\ud83d\udc96"
+        },
+        "default_sort_order": null,
+        "default_forum_layout": 2,
+        "default_tag_setting": "match_some",
+        "icon_emoji": null,
+        "theme_color": null,
+        "template": ""
+    },
+    {
+        "id": "1227151922067406858",
+        "type": 5,
+        "last_message_id": "1411411668491305071",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\ud83c\udf89\u2058\u22b1\ud835\udddaiveaways\u2726\u30fb",
+        "parent_id": "1215832892547006574",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude4e\ud835\ude64\ud835\ude67\ud835\ude69\ud835\ude5a\ud835\ude64\ud835\ude68 \ud835\ude64 \ud835\ude42\ud835\ude5e\ud835\ude6b\ud835\ude5a\ud835\ude56\ud835\ude6c\ud835\ude56\ud835\ude6e\ud835\ude68 \ud835\ude64\ud835\ude5b\ud835\ude5e\ud835\ude58\ud835\ude5e\ud835\ude56\ud835\ude61\ud835\ude5a\ud835\ude68 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "position": 19,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66625",
+                "deny": "8854365862820624"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8836652612452161",
+                "deny": "17713250435088"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1227152517679415296",
+        "type": 2,
+        "last_message_id": "1439273002255519805",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u25b8\u2462 \u3014\ud83c\udfb5\u3015\ud835\udde7rack\u30fb\u2726  \u208a",
+        "parent_id": "1227136953909121056",
+        "rate_limit_per_user": 0,
+        "bitrate": 96000,
+        "user_limit": 32,
+        "rtc_region": null,
+        "video_quality_mode": 2,
+        "position": 16,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1126456141926209",
+                "deny": "7727909720961040"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8836377734545217",
+                "deny": "17988128342032"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1227154556186660965",
+        "type": 2,
+        "last_message_id": "1523802308620849273",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\u3014\ud83e\ude84\u3015\ud835\udde2ther\u2730\ud835\udddaame",
+        "parent_id": "1215544133641310272",
+        "rate_limit_per_user": 0,
+        "bitrate": 96000,
+        "user_limit": 0,
+        "rtc_region": null,
+        "video_quality_mode": 2,
+        "position": 12,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1236544743923521",
+                "deny": "7617821118963728"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1227157327568703510",
+        "type": 2,
+        "last_message_id": "1523802299695104113",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\u3014\ud83e\udddf\u3015\ud835\udddfeft\u2463\ud835\uddd7ead",
+        "parent_id": "1215544133641310272",
+        "rate_limit_per_user": 0,
+        "bitrate": 96000,
+        "user_limit": 32,
+        "rtc_region": null,
+        "video_quality_mode": 2,
+        "position": 11,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1236544743923521",
+                "deny": "7617821118963728"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1229559643647250462",
+        "type": 5,
+        "last_message_id": "1451132447210082357",
+        "flags": 0,
+        "last_pin_timestamp": "2024-04-27T20:06:54+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\u2730\ud83c\udfc6\u2058\u22b1\ua564\ud835\udde7ournaments\ua564\u2726\u208a",
+        "parent_id": "1215832892547006574",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude4f\ud835\ude64\ud835\ude67\ud835\ude63\ud835\ude5a\ud835\ude64\ud835\ude68 \ud835\ude64\ud835\ude5b\ud835\ude5e\ud835\ude58\ud835\ude5e\ud835\ude56\ud835\ude61\ud835\ude5a\ud835\ude68 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "position": 14,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66625",
+                "deny": "8854365862820624"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8836652612452161",
+                "deny": "17713250435088"
+            },
+            {
+                "id": "1249824780622757919",
+                "type": 0,
+                "allow": "1795092319296577",
+                "deny": "6755726663884816"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1229694027964874773",
+        "type": 2,
+        "last_message_id": "1287660875754508369",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "discord.gg/W3kMtMMj6E",
+        "parent_id": null,
+        "rate_limit_per_user": 0,
+        "bitrate": 8000,
+        "user_limit": 0,
+        "rtc_region": null,
+        "position": 0,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1024",
+                "deny": "8853966430927697"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8853966430928721",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "29426689",
+                "deny": "8853966401502032"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1238921573310791730",
+        "type": 0,
+        "last_message_id": "1531859431690604584",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u25cd\ud83d\udd22\u25c8\u2730\u2765\ud835\uddd6ontador\u2726\u208a\u02da",
+        "parent_id": "1225312759357378560",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude58\ud835\ude64\ud835\ude63\ud835\ude69\ud835\ude56\ud835\ude67 \ud835\ude63\ud835\ude6a\ud835\ude62\ud835\ude5a\ud835\ude67\ud835\ude64\ud835\ude68 \ud835\ude5d\ud835\ude56\ud835\ude68\ud835\ude69\ud835\ude56 \ud835\ude5a\ud835\ude61 \ud835\ude5e\ud835\ude63\ud835\ude5b\ud835\ude5e\ud835\ude63\ud835\ude5e\ud835\ude69\ud835\ude64 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "default_auto_archive_duration": 10080,
+        "position": 31,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "4402378248001",
+                "deny": "8849963484639248"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "66561",
+                "deny": "8854365862820688"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "510016054391734273",
+                "type": 1,
+                "allow": "4503599627406416",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1238925233348411493",
+        "type": 0,
+        "last_message_id": "1541516792168452206",
+        "flags": 128,
+        "guild_id": "1215544133142450187",
+        "name": "\u2939\ud83c\udf00\u160f\ufe55\ud835\udddcnvites\ufe55\ua564\u208a\u02da",
+        "parent_id": "1241310082059341965",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude44\ud835\ude63\ud835\ude6b\ud835\ude5e\ud835\ude69\ud835\ude56\ud835\ude58\ud835\ude5e\ud835\ude64\ud835\ude63\ud835\ude5a\ud835\ude68 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67 \uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727\nGracias por apoyar y promover el servidor. \u02da\u22b9\u30fb\u2726 \u00a1Sigue asi! \u2661",
+        "position": 2,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66625",
+                "deny": "8854365862820624"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "6755408060425281",
+                "deny": "2098957802461968"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1239027436616941598",
+        "type": 0,
+        "last_message_id": "1468774535741308999",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\ud83d\udcaf\u25c8\u2730\u2765\ud835\udde7rivias\u22b9\u2726\u208a\u02da",
+        "parent_id": "1225312759357378560",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude69\ud835\ude67\ud835\ude5e\ud835\ude6b\ud835\ude5e\ud835\ude56\ud835\ude68 \ud835\ude5a \ud835\ude5e\ud835\ude63\ud835\ude58\ud835\ude64\ud835\ude5c\ud835\ude63\ud835\ude5e\ud835\ude69\ud835\ude56\ud835\ude68 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727\n\nUsa el comando !trivia o /trivia para empezar.",
+        "default_auto_archive_duration": 10080,
+        "position": 40,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1166175999692609",
+                "deny": "7688189863194640"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "66561",
+                "deny": "8854365862820688"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1241310082059341965",
+        "type": 4,
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u208a\u30fb\u2726\u30fb\u2735\u30fb\u2730\ud83c\udf0e \ud83c\uddf1 \ud83c\uddf4 \ud83c\udde7 \ud83c\udde7 \ud83c\uddfe \ud83d\udc4b\ud83c\udffb\u2500\u256e\u208a",
+        "parent_id": null,
+        "position": 1,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66560",
+                "deny": "8854365862820689"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8619361281",
+                "deny": "8854357243525968"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ]
+    },
+    {
+        "id": "1241906475190849647",
+        "type": 5,
+        "last_message_id": "1470552738143146017",
+        "flags": 0,
+        "last_pin_timestamp": "2024-06-10T04:07:25+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\ud83d\udcde\ud83d\udce2\u22b1\ud835\udde5oblox\u2735anuncios\u2727",
+        "parent_id": "1215832892547006574",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3c\ud835\ude63\ud835\ude6a\ud835\ude63\ud835\ude58\ud835\ude5e\ud835\ude64\ud835\ude68 \ud835\ude6e \ud835\ude56\ud835\ude6b\ud835\ude5e\ud835\ude68\ud835\ude64\ud835\ude68 \ud835\ude64\ud835\ude5b\ud835\ude5e\ud835\ude58\ud835\ude5e\ud835\ude56\ud835\ude61\ud835\ude5a\ud835\ude68 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude4d\ud835\ude64\ud835\ude57\ud835\ude61\ud835\ude64\ud835\ude6d\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "position": 11,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66624",
+                "deny": "8854365862820625"
+            },
+            {
+                "id": "1249824302929281086",
+                "type": 0,
+                "allow": "8550491760360512",
+                "deny": "395942297617"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8836652612452160",
+                "deny": "17713250435089"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1242196898039988286",
+        "type": 2,
+        "last_message_id": "1523802290505519267",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\u3014\ud83d\udd06\u3015\ud835\uddd9ortnite",
+        "parent_id": "1215544133641310272",
+        "rate_limit_per_user": 0,
+        "bitrate": 96000,
+        "user_limit": 18,
+        "rtc_region": null,
+        "video_quality_mode": 2,
+        "position": 10,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1236544743923521",
+                "deny": "7617821118963728"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1244335564203884674",
+        "type": 0,
+        "last_message_id": "1497870457469141137",
+        "flags": 0,
+        "last_pin_timestamp": "2024-09-26T03:36:55+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\u25cd\ud83d\udce9\u25c8\u2765\ud835\udde6ugerencias\u2726\u208a",
+        "parent_id": "1225312759357378560",
+        "rate_limit_per_user": 5,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude57\ud835\ude64\ud835\ude69 \ud835\ude58\ud835\ude5d\ud835\ude56\ud835\ude69 \ud835\ude56\ud835\ude5e \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5e\ud835\ude59\ud835\ude64\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "default_auto_archive_duration": 10080,
+        "position": 29,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1799769575251777",
+                "deny": "7054596287635472"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "66561",
+                "deny": "8854365862820688"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8836772871536449",
+                "deny": "17592991350800"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1244444830029971537",
+        "type": 0,
+        "last_message_id": "1345876142787137608",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u2730\u2b50\u2058\u22b1\ud835\udde6tarboard\u2726\u208a\u30fb",
+        "parent_id": "1215832892547006574",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude62\ud835\ude5a\ud835\ude63\ud835\ude68\ud835\ude56\ud835\ude5f\ud835\ude5a\ud835\ude68 \ud835\ude59\ud835\ude5a\ud835\ude68\ud835\ude69\ud835\ude56\ud835\ude58\ud835\ude56\ud835\ude59\ud835\ude64\ud835\ude68 \ud835\ude59\ud835\ude5a \ud835\ude69\ud835\ude64\ud835\ude59\ud835\ude64 \ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "position": 20,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66625",
+                "deny": "8854365862820624"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8836652612452161",
+                "deny": "17713250435088"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1244447297497202742",
+        "type": 2,
+        "last_message_id": "1486159027208589343",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u30fb\u300e\u2795\u300f\ud835\uddd6rear\u2726\u208a\u02da\u2312\u2727",
+        "parent_id": "1227136804382183435",
+        "rate_limit_per_user": 0,
+        "bitrate": 8000,
+        "user_limit": 0,
+        "rtc_region": null,
+        "position": 17,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "2080969674055488",
+                "deny": "6773396188831761"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8836377734545217",
+                "deny": "17988128342032"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1244449413984817283",
+        "type": 0,
+        "last_message_id": "1347658278556930098",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u256d\u2014\ud83d\udea5\ud835\udde3anel\u2729\u208a\u02da\u2312\u2727",
+        "parent_id": "1227136804382183435",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude58\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61\ud835\ude5a\ud835\ude68 \ud835\ude51\ud835\ude3e \ud835\ude4b\ud835\ude67\ud835\ude5e\ud835\ude6b\ud835\ude56\ud835\ude59\ud835\ude56\ud835\ude68 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727\n\nAqui encontraras el panel adminstrativo de tu canal vc priv",
+        "position": 48,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "285877354956545",
+                "deny": "8568488507930704"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8836377734545217",
+                "deny": "17988128342032"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1266570774026911755",
+        "type": 5,
+        "last_message_id": "1542593690395082803",
+        "flags": 0,
+        "last_pin_timestamp": "2025-06-30T03:34:01.247000+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\u2730\ud83c\udf33\ud83d\udce2\u22b1\ud835\udde0inecraft\u2726anuncios\u2729",
+        "parent_id": "1215832892547006574",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3c\ud835\ude63\ud835\ude6a\ud835\ude63\ud835\ude58\ud835\ude5e\ud835\ude64\ud835\ude68 \ud835\ude6e \ud835\ude56\ud835\ude6b\ud835\ude5e\ud835\ude68\ud835\ude64\ud835\ude68 \ud835\ude64\ud835\ude5b\ud835\ude5e\ud835\ude58\ud835\ude5e\ud835\ude56\ud835\ude61\ud835\ude5a\ud835\ude68 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude48\ud835\ude5e\ud835\ude63\ud835\ude5a\ud835\ude58\ud835\ude67\ud835\ude56\ud835\ude5b\ud835\ude69\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "position": 10,
+        "permission_overwrites": [
+            {
+                "id": "1261504676394963046",
+                "type": 0,
+                "allow": "8550491760360512",
+                "deny": "395942297617"
+            },
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66624",
+                "deny": "8854365862820625"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8836652612452160",
+                "deny": "17713250435089"
+            },
+            {
+                "id": "1249824302929281086",
+                "type": 0,
+                "allow": "7917173062757440",
+                "deny": "633714639900689"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1281034552739102750",
+        "type": 0,
+        "last_message_id": "1510447914655154247",
+        "flags": 0,
+        "last_pin_timestamp": "2025-01-10T05:10:59+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\ud83d\udcad\u2058\u22b1\ud835\udde6ub\u2726anuncios\u208a\u2729\u208a\u30fb",
+        "parent_id": "1215832892547006574",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 Sub-\ud835\ude3c\ud835\ude63\ud835\ude6a\ud835\ude63\ud835\ude58\ud835\ude5e\ud835\ude64\ud835\ude68 \ud835\ude6e \ud835\ude56\ud835\ude6b\ud835\ude5e\ud835\ude68\ud835\ude64\ud835\ude68 \ud835\ude64\ud835\ude5b\ud835\ude5e\ud835\ude58\ud835\ude5e\ud835\ude56\ud835\ude61\ud835\ude5a\ud835\ude68 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "position": 9,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66624",
+                "deny": "8854365862820625"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8836652612452160",
+                "deny": "17713250435089"
+            },
+            {
+                "id": "1225286882477477969",
+                "type": 0,
+                "allow": "1760182824983616",
+                "deny": "6755520505585681"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1282458902666940562",
+        "type": 0,
+        "last_message_id": "1528838018461339719",
+        "flags": 0,
+        "last_pin_timestamp": "2024-10-07T03:07:09+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\u300e\ud83d\udd07\u300f\u2765\u25b8\ud835\udde1ot\u2729mic\u2014\u273f",
+        "parent_id": "1215544133641310272",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude4f\ud835\ude4f\ud835\ude4e \ud835\ude49\ud835\ude4a \ud835\ude48\ud835\ude44\ud835\ude3e\ud835\ude4d\ud835\ude4a\ud835\ude41\ud835\ude4a\ud835\ude49\ud835\ude4a \ud835\ude40\ud835\ude49 \ud835\ude51\ud835\ude3e \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "default_auto_archive_duration": 10080,
+        "position": 46,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1236544743923521",
+                "deny": "7617821118963728"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1287511049737732190",
+        "type": 2,
+        "last_message_id": "1523802256628121632",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\ufe55\u2461\u3014\ud83d\udcde\u3015\ud835\udde5oblox\u30fb\u2726  \u208a",
+        "parent_id": "1215544133641310272",
+        "rate_limit_per_user": 0,
+        "bitrate": 96000,
+        "user_limit": 24,
+        "rtc_region": null,
+        "video_quality_mode": 2,
+        "position": 7,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "2080969674055489",
+                "deny": "6773396188831760"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1287511151080636498",
+        "type": 2,
+        "last_message_id": "1523802267080462469",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\ufe55\u2462\u3014\ud83d\udcde\u3015\ud835\udde5oblox\u30fb\u2726  \u208a",
+        "parent_id": "1215544133641310272",
+        "rate_limit_per_user": 0,
+        "bitrate": 96000,
+        "user_limit": 12,
+        "rtc_region": null,
+        "video_quality_mode": 2,
+        "position": 8,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "2080969674055489",
+                "deny": "6773396188831760"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1287694990264504320",
+        "type": 5,
+        "last_message_id": "1543439281484341279",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u2730\ud83d\udd14\u2058\u22b1\u2661\ud835\udde1otificaciones\u2726\u208a\u30fb",
+        "parent_id": "1215832892547006574",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude49\ud835\ude64\ud835\ude69\ud835\ude5e\ud835\ude5b\ud835\ude5e\ud835\ude58\ud835\ude56\ud835\ude58\ud835\ude5e\ud835\ude64\ud835\ude63\ud835\ude5a\ud835\ude68 \ud835\ude59\ud835\ude5a \ud835\ude4d\ud835\ude5a\ud835\ude59\ud835\ude5a\ud835\ude68 \ud835\ude4e\ud835\ude64\ud835\ude58\ud835\ude5e\ud835\ude56\ud835\ude61\ud835\ude5a\ud835\ude68 \ud835\ude64\ud835\ude5b\ud835\ude5e\ud835\ude58\ud835\ude5e\ud835\ude56\ud835\ude61\ud835\ude5a\ud835\ude68 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "position": 18,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66625",
+                "deny": "8854365862820624"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8836652612452161",
+                "deny": "17713250435088"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1290121639530332210",
+        "type": 0,
+        "last_message_id": "1466549515799760937",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\u2693\u02da\u22b9\u30fb\ud835\udde3artnerships\u2726\u208a",
+        "parent_id": "1215832892547006574",
+        "rate_limit_per_user": 60,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude4b\ud835\ude56\ud835\ude67\ud835\ude69\ud835\ude63\ud835\ude5a\ud835\ude67\ud835\ude68\ud835\ude5d\ud835\ude5e\ud835\ude65\ud835\ude68 \uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "default_auto_archive_duration": 10080,
+        "position": 15,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66624",
+                "deny": "8854365862820625"
+            },
+            {
+                "id": "1294519530554392658",
+                "type": 0,
+                "allow": "1232142365875265",
+                "deny": "7318745336782864"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "1795100938591297",
+                "deny": "7059264924295952"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1291265659908391015",
+        "type": 0,
+        "last_message_id": "1460767705975095316",
+        "flags": 0,
+        "last_pin_timestamp": "2025-08-27T04:23:52.897000+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\u2570\u2727\ud83e\udd16\u25c8\u2058\u22b1\ud835\uddd4\ud835\udddc\ud835\uddd5ot\u273f\ud835\uddd6hat\u2726\u208a\u02da",
+        "parent_id": "1215544133641310269",
+        "rate_limit_per_user": 10,
+        "topic": "Este canal esta en fase beta. Es posible que cambie.",
+        "position": 26,
+        "permission_overwrites": [
+            {
+                "id": "1216130712579870820",
+                "type": 0,
+                "allow": "2080969674184513",
+                "deny": "6773396188702736"
+            },
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1236544744052288",
+                "deny": "7617821118834961"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "66561",
+                "deny": "8854365862820688"
+            },
+            {
+                "id": "1225286882477477969",
+                "type": 0,
+                "allow": "1447650993229633",
+                "deny": "7406714869657616"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1294516029728489526",
+        "type": 0,
+        "last_message_id": "1544193587431088171",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\ud83d\udcb8\u25c8\u2765\ud835\uddd6iszuconomy\u2726\u208a\u02da",
+        "parent_id": "1225312759357378560",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude5a\ud835\ude58\ud835\ude64\ud835\ude63\ud835\ude64\ud835\ude62\ud835\ude5e\ud835\ude56 \ud835\ude58\ud835\ude6a\ud835\ude67\ud835\ude67\ud835\ude5a\ud835\ude63\ud835\ude58\ud835\ude6e \ud835\ude56\ud835\ude59\ud835\ude5a\ud835\ude63\ud835\ude69\ud835\ude67\ud835\ude64 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67. \ud835\ude4e\ud835\ude5d\ud835\ude5e\ud835\ude58\ud835\ude64\ud835\ude63\ud835\ude64\ud835\ude62\ud835\ude6e\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727\n\nUtiliza $work, $slut y $crime para ganar dinero. Compra rangos, coleccionables y objetos. Usando la moneda de la economia currency oficial del servidor. Bienvenido a Shiconomy.",
+        "position": 34,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1166175999692609",
+                "deny": "7688189863194640"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "66561",
+                "deny": "8854365862820688"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1294520360376733716",
+        "type": 0,
+        "last_message_id": "1412647928920674376",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u2730\ud83c\udf8f\u02da\u22b9\u30fb\ud835\uddd4ffiliates\u2726\u208a",
+        "parent_id": "1215832892547006574",
+        "rate_limit_per_user": 600,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude3c\ud835\ude5b\ud835\ude5b\ud835\ude5e\ud835\ude61\ud835\ude5e\ud835\ude56\ud835\ude69\ud835\ude5a\ud835\ude68\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "default_auto_archive_duration": 10080,
+        "position": 16,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66624",
+                "deny": "8854365862820625"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "1795100938591297",
+                "deny": "7059264924295952"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1294519601966612520",
+                "type": 0,
+                "allow": "1795092319296577",
+                "deny": "6755795383361552"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1294882604658458644",
+        "type": 0,
+        "last_message_id": "1544212484246868019",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\ud83d\udcf0\u2765\u25b8\ud835\uddd7irectrices\u02da\u2312\u2727",
+        "parent_id": "1216133262276038706",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude3f\ud835\ude5e\ud835\ude67\ud835\ude5a\ud835\ude58\ud835\ude69\ud835\ude67\ud835\ude5e\ud835\ude58\ud835\ude5a\ud835\ude68, \ud835\ude67\ud835\ude5a\ud835\ude5c\ud835\ude61\ud835\ude56\ud835\ude68 \ud835\ude6e \ud835\ude63\ud835\ude64\ud835\ude67\ud835\ude62\ud835\ude56\ud835\ude69\ud835\ude5e\ud835\ude6b\ud835\ude56\ud835\ude68 \ud835\ude65\ud835\ude56\ud835\ude67\ud835\ude56 \ud835\ude61\ud835\ude64\ud835\ude68 \ud835\ude68\ud835\ude69\ud835\ude56\ud835\ude5b\ud835\ude5b \uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "default_auto_archive_duration": 10080,
+        "position": 51,
+        "permission_overwrites": [
+            {
+                "id": "1225310168921804820",
+                "type": 0,
+                "allow": "66560",
+                "deny": "8515703330502737"
+            },
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1343338299846164480",
+                "type": 0,
+                "allow": "1447513537185536",
+                "deny": "7406852325701713"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1294883241748201514",
+        "type": 0,
+        "last_message_id": "1466244801794936872",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\ud83d\udcec\u2765\u25b8\ud835\udde0ail\u2729box\u2014\u273f",
+        "parent_id": "1216133262276038706",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude62\ud835\ude56\ud835\ude5e\ud835\ude61\ud835\ude57\ud835\ude64\ud835\ude6d \ud835\ude65\ud835\ude56\ud835\ude67\ud835\ude56 \ud835\ude61\ud835\ude64\ud835\ude68 \ud835\ude68\ud835\ude69\ud835\ude56\ud835\ude5b\ud835\ude5b \uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "default_auto_archive_duration": 10080,
+        "position": 53,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1343338299846164480",
+                "type": 0,
+                "allow": "1447513537185536",
+                "deny": "7406852325701713"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1294886825554350100",
+        "type": 0,
+        "last_message_id": "1451399806839951492",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u0dc6\u2754\u273f\ud835\uddd7udas\u2726\u208a\u02da\u2312\u2727",
+        "parent_id": "1216133262276038706",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude59\ud835\ude6a\ud835\ude59\ud835\ude56\ud835\ude68 \ud835\ude59\ud835\ude5a \ud835\ude61\ud835\ude64\ud835\ude68 \ud835\ude68\ud835\ude69\ud835\ude56\ud835\ude5b\ud835\ude5b \uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "default_auto_archive_duration": 10080,
+        "position": 56,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1343338299846164480",
+                "type": 0,
+                "allow": "2080969674055488",
+                "deny": "6773396188831761"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1294887483309428788",
+        "type": 0,
+        "last_message_id": "1467254167914418430",
+        "flags": 0,
+        "last_pin_timestamp": "2025-09-01T05:09:03.296000+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\u0dc6\ud83d\udcbc\u273f\ud835\udde5epositorios\u2726\u208a\u02da",
+        "parent_id": "1216133262276038706",
+        "rate_limit_per_user": 5,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude67\ud835\ude5a\ud835\ude65\ud835\ude64\ud835\ude68\ud835\ude5e\ud835\ude69\ud835\ude64\ud835\ude67\ud835\ude5e\ud835\ude64\ud835\ude68 \ud835\ude5e\ud835\ude63\ud835\ude59\ud835\ude5e\ud835\ude6b\ud835\ude5e\ud835\ude59\ud835\ude6a\ud835\ude56\ud835\ude61\ud835\ude5a\ud835\ude68 \ud835\ude59\ud835\ude5a \ud835\ude6e \ud835\ude65\ud835\ude56\ud835\ude67\ud835\ude56 \ud835\ude61\ud835\ude64\ud835\ude68 \ud835\ude68\ud835\ude69\ud835\ude56\ud835\ude5b\ud835\ude5b \uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "default_auto_archive_duration": 10080,
+        "position": 54,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1343338299846164480",
+                "type": 0,
+                "allow": "2081244551960384",
+                "deny": "6773121310926865"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1294887849396666391",
+        "type": 15,
+        "last_message_id": "1324405205579599882",
+        "flags": 16,
+        "guild_id": "1215544133142450187",
+        "name": "\u2570\u2727\ud83d\udd30\u2765\ud835\uddd5logs\u2726\u208a\u02da",
+        "parent_id": "1216133262276038706",
+        "rate_limit_per_user": 0,
+        "topic": "\u256d\u2500\u2014\u2735\u208a\u30fb\u2014\u2726\u208a\u30fb\u2014\u2730\u208a\u30fb\u2d53\ua564\u2d53\u2735\u208a\u30fb\u2014\u2726\u208a\u30fb\u2014\u2730\u208a\u30fb\u2014\u2500\u256e\n\u029a **Sigue las reglas y normas del staff** \ud83d\udc9e  \u22b9\u30fb\u2726\n\n>  **Prohibido publicar, filtrar o enviar mensajes de este foro fuera de este chat. Debes seguir estrictamente las normativas y reglas del miembro de staff y ser aceptado con rol | rango verificado.**\n\nEste Foro es completamente serio. Nada de bromas, pranks, troleos o otras ambiciones no relacionadas como staff.\n\n\u2765 `Puedes asignar etiquetas, descripciones, emojis, emotes, reacciones, t\u00edtulos y contenidos, como im\u00e1genes, fotos o videos a tus publicaciones en este foro privado solo para staff` \n\n\u256d\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256e\n> Para cumplir con los requisitos de entrar al **FORO** del servidor, debe tener precauci\u00f3n y estar verificado en este servidor siguiendo las** normativas y reglas:**\n\u2570\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256f\n\n**\u2765 1 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nEsta prohibido mandar cosas +18, gore, violencia, ect... Si lo haces tendr\u00e1s una advertencia, y a la tercera tendr\u00e1s el respectivo ban.\n**\u2765 2 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nEsta prohibido insultar a los dem\u00e1s miembros, en caso de que los miembros se tengan confianza no habr\u00e1 tanto problema en eso.\n**\u2765 3 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nNo hacer spam, tendr\u00e1n una advertencia, y a la tercera tendr\u00e1s el respectivo ban.\n**\u2765 4 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nNo hacer ping a los moderadores a no ser que sea que necesites ayuda o sea algo urgente.\n**\u2765 5 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nUtiliza los canales de acuerdo con su prop\u00f3sito asignado.\n**\u2765 6 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \n\u00a1Respeta la privacidad de los dem\u00e1s! no pidas informaci\u00f3n personal a los miembros, y tampoco des tu informaci\u00f3n personal, en caso de que des tu informaci\u00f3n personal es bajo t\u00fa propio riesgo.\n**\u2765 7 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nSi tienes alg\u00fan problema con alg\u00fan otro miembro del servidor, aborda el problema de manera privada y respetuosa.\n**\u2765 8 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nEsta prohibido hacer everyone, solo lo pueden hacer los mod, admin y supremos, tendr\u00e1s dos advertencias y a la \u00faltima tendr\u00e1s un warn.\n**\u2765 9 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nEsta prohibido abusar de los audios que se encuentran en los canales de voces, recibir\u00e1s advertencias por eso.\n**\u2765 10 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nSi alguien esta escuchando m\u00fasica y le quitas el bot de m\u00fasica, tendr\u00e1s advertencias por eso.\n**\u2765 11 ~ Regla:** \u30fb\u2014 \u02da\u22b9\u30fb\u2726 \nEsta prohibido mandar screamers, esto es para evitar molestar a los dem\u00e1s miembros.\n\n> ***\u00a1Bienvenido a nuestro FORO SOLO PARA STAFF!***\n\u30fb\u2014\u30fb\u2726  \u208a\u30fb\u2014\u30fb\u2726  \u208a\u30fb\u2014 \u02da\u22b9\u30fb\u2726  \u208a\u30fb\u2014\u30fb\u0b67 \u02da\u22b9\u30fb\u2726  \u208a\u30fb\u2014\u0b67 \u02da\u22b9 \ud83d\udc9e",
+        "default_auto_archive_duration": 10080,
+        "position": 60,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1795367197071424",
+                "deny": "7058998665815825"
+            },
+            {
+                "id": "1343338299846164480",
+                "type": 0,
+                "allow": "1447513537185536",
+                "deny": "7406852325701713"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false,
+        "available_tags": [
+            {
+                "id": "1306115673533186068",
+                "name": "problema",
+                "moderated": false,
+                "emoji_id": null,
+                "emoji_name": "\ud83d\udcdb"
+            },
+            {
+                "id": "1306115706710003763",
+                "name": "duda",
+                "moderated": false,
+                "emoji_id": null,
+                "emoji_name": "\u2753"
+            },
+            {
+                "id": "1306116005629792297",
+                "name": "informacion",
+                "moderated": false,
+                "emoji_id": null,
+                "emoji_name": "\ud83d\udcd7"
+            },
+            {
+                "id": "1306116051632656456",
+                "name": "outcontext",
+                "moderated": false,
+                "emoji_id": null,
+                "emoji_name": "\ud83d\udda4"
+            },
+            {
+                "id": "1306116096759304213",
+                "name": "avisos",
+                "moderated": false,
+                "emoji_id": null,
+                "emoji_name": "\ud83d\udea9"
+            },
+            {
+                "id": "1306116154141446154",
+                "name": "anuncios",
+                "moderated": false,
+                "emoji_id": null,
+                "emoji_name": "\ud83d\udc96"
+            },
+            {
+                "id": "1306116184394956813",
+                "name": "debate",
+                "moderated": false,
+                "emoji_id": null,
+                "emoji_name": "\u2764\ufe0f"
+            },
+            {
+                "id": "1306116244361183275",
+                "name": "bot",
+                "moderated": false,
+                "emoji_id": null,
+                "emoji_name": "\ud83e\ude75"
+            },
+            {
+                "id": "1306116269828735016",
+                "name": "discord",
+                "moderated": false,
+                "emoji_id": null,
+                "emoji_name": "\ud83d\udc9c"
+            },
+            {
+                "id": "1306116309863501904",
+                "name": "emotes",
+                "moderated": false,
+                "emoji_id": null,
+                "emoji_name": "\ud83d\ude00"
+            },
+            {
+                "id": "1306116345733316648",
+                "name": "stickers",
+                "moderated": false,
+                "emoji_id": null,
+                "emoji_name": "\ud83d\udcf1"
+            },
+            {
+                "id": "1306116375735177247",
+                "name": "mejoras",
+                "moderated": false,
+                "emoji_id": null,
+                "emoji_name": "\ud83d\udc9c"
+            },
+            {
+                "id": "1306116402893033482",
+                "name": "events",
+                "moderated": false,
+                "emoji_id": null,
+                "emoji_name": "\ud83d\udc9b"
+            },
+            {
+                "id": "1306116444085288980",
+                "name": "torneos",
+                "moderated": false,
+                "emoji_id": null,
+                "emoji_name": "\u2734\ufe0f"
+            }
+        ],
+        "default_reaction_emoji": {
+            "emoji_id": null,
+            "emoji_name": "\u2705"
+        },
+        "default_sort_order": null,
+        "default_forum_layout": 1,
+        "default_tag_setting": "match_some",
+        "icon_emoji": null,
+        "theme_color": null,
+        "template": ""
+    },
+    {
+        "id": "1294888951668281364",
+        "type": 5,
+        "last_message_id": "1544216186487574559",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u0dc6\ud83d\udce8\u2765\u25b8\ud835\uddd4visos\u2729\u208a\u02da\u2312\u2727",
+        "parent_id": "1216133262276038706",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude3c\ud835\ude6b\ud835\ude5e\ud835\ude68\ud835\ude64\ud835\ude68 \ud835\ude65\ud835\ude56\ud835\ude67\ud835\ude56 \ud835\ude61\ud835\ude64\ud835\ude68 \ud835\ude68\ud835\ude69\ud835\ude56\ud835\ude5b\ud835\ude5b \uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "default_auto_archive_duration": 10080,
+        "position": 52,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1343338299846164480",
+                "type": 0,
+                "allow": "1412329165096768",
+                "deny": "7442036697790481"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1294888992176603157",
+        "type": 0,
+        "last_message_id": "1353845535425167361",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\ud83d\udeab\u273f\ud835\uddd4usencias\u2726\u208a\u02da",
+        "parent_id": "1216133262276038706",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude56\ud835\ude6a\ud835\ude68\ud835\ude5a\ud835\ude63\ud835\ude58\ud835\ude5e\ud835\ude56\ud835\ude68 \ud835\ude59\ud835\ude5a \ud835\ude61\ud835\ude64\ud835\ude68 \ud835\ude68\ud835\ude69\ud835\ude56\ud835\ude5b\ud835\ude5b \uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727\n\nPlantillas para crear ausencia:\n\n## - \ud83d\udca4  Ausencia: \n**- Estado:** Terminada \ud83c\udff3\ufe0f\no\n**- Estado:** Ausente \ud83c\udff4 \n\n- Ausencia",
+        "default_auto_archive_duration": 10080,
+        "position": 57,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1343338299846164480",
+                "type": 0,
+                "allow": "2080969674055488",
+                "deny": "6773396188831761"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1294889077237092362",
+        "type": 0,
+        "last_message_id": "1541286821823119411",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\u2728\u25c8\u2765\ud835\uddd8pic\u2312\ud835\udde5pg\u2726\u208a\u02da\u2729\u208a\u02da\u2312\u2727",
+        "parent_id": "1225312759357378560",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude4d\ud835\ude4b\ud835\ude42 \ud835\ude56\ud835\ude59\ud835\ude5a\ud835\ude63\ud835\ude69\ud835\ude67\ud835\ude64 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727\n\nUsa el prefijo rpg para iniciar usa rpg start",
+        "position": 36,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1166175999692609",
+                "deny": "7688189863194640"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "66561",
+                "deny": "8854365862820688"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1294889130815393843",
+        "type": 0,
+        "last_message_id": "1541286708270731314",
+        "flags": 0,
+        "last_pin_timestamp": "2024-10-20T02:33:53+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\u25cd\ud83d\udc8d\u25c8\u2765\ud835\udde0udae\u2726\u208a\u02da\u2312\u2727",
+        "parent_id": "1225312759357378560",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude45\ud835\ude6a\ud835\ude5a\ud835\ude5c\ud835\ude64\ud835\ude68 \ud835\ude59\ud835\ude5a \ud835\ude48\ud835\ude6a\ud835\ude59\ud835\ude56\ud835\ude5a \ud835\ude56\ud835\ude59\ud835\ude5a\ud835\ude63\ud835\ude69\ud835\ude67\ud835\ude64 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727\n\nUtiliza el prefijo = para utilizar comandos de Mudae. Y empezar tus juegos y gacha.",
+        "default_auto_archive_duration": 10080,
+        "position": 39,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1166175999725377",
+                "deny": "7688189863161872"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "66561",
+                "deny": "8854365862820688"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1294889163044294686",
+        "type": 0,
+        "last_message_id": "1507511623135531149",
+        "flags": 0,
+        "last_pin_timestamp": "2024-10-20T02:33:44+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\ud83e\uddde\u25c8\u2765\ud835\uddd4kinator\u2726\u208a\u02da",
+        "parent_id": "1225312759357378560",
+        "rate_limit_per_user": 5,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude3c\ud835\ude60\ud835\ude5e\ud835\ude63\ud835\ude56\ud835\ude69\ud835\ude64\ud835\ude67 \ud835\ude56\ud835\ude59\ud835\ude5a\ud835\ude63\ud835\ude69\ud835\ude67\ud835\ude64 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727\n\nPara empezar usa /aki\nSitio Oficial del juego: https://es.akinator.com/",
+        "default_auto_archive_duration": 10080,
+        "position": 38,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1166175999741761",
+                "deny": "7688189863145488"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "66561",
+                "deny": "8854365862820688"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1294889459497701497",
+        "type": 2,
+        "last_message_id": null,
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u25b8\u2461 \u3014\ud83c\udf38\u3015\ud835\uddd4claraciones",
+        "parent_id": "1216133262276038706",
+        "rate_limit_per_user": 0,
+        "bitrate": 96000,
+        "user_limit": 5,
+        "rtc_region": null,
+        "video_quality_mode": 2,
+        "position": 20,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1343338299846164480",
+                "type": 0,
+                "allow": "2080978263990080",
+                "deny": "6773387598897169"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1294889478216880148",
+        "type": 2,
+        "last_message_id": null,
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u25b8\u2462 \u3014\ud83c\udf38\u3015\ud835\uddd8mergencias",
+        "parent_id": "1216133262276038706",
+        "rate_limit_per_user": 0,
+        "bitrate": 96000,
+        "user_limit": 10,
+        "rtc_region": null,
+        "video_quality_mode": 2,
+        "position": 21,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1343338299846164480",
+                "type": 0,
+                "allow": "2098570450034496",
+                "deny": "6755795412852753"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1294890214871007303",
+        "type": 0,
+        "last_message_id": "1542033894528909412",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u2727\ud83d\udc9b\u2661\u2730\u2058\ud835\udde9ips\u2726\u208a\u02da\u2765",
+        "parent_id": "1215544133641310269",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude40\ud835\ude6d\ud835\ude58\ud835\ude61\ud835\ude6a\ud835\ude68\ud835\ude5e\ud835\ude6b\ud835\ude64 \ud835\ude68\ud835\ude64\ud835\ude61\ud835\ude64 \ud835\ude65\ud835\ude56\ud835\ude67\ud835\ude56 \ud835\ude6b\ud835\ude5e\ud835\ude65\ud835\ude68 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727\n\nEste canal solo lo pueden ver los rangos VIPS",
+        "default_auto_archive_duration": 10080,
+        "position": 27,
+        "permission_overwrites": [
+            {
+                "id": "1216130712579870820",
+                "type": 0,
+                "allow": "2080969674055489",
+                "deny": "6773396188831760"
+            },
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "4402378179072",
+                "deny": "8849963484708177"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            },
+            {
+                "id": "1225286882477477969",
+                "type": 0,
+                "allow": "1447650993229633",
+                "deny": "7406714869657616"
+            }
+        ],
+        "nsfw": true
+    },
+    {
+        "id": "1297397327233028176",
+        "type": 5,
+        "last_message_id": "1544212998443376721",
+        "flags": 0,
+        "last_pin_timestamp": "2025-01-12T11:42:31+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\u2730\ud83c\udf3a\ud83d\udce2\u22b1\ud835\uddd4nime\u273fanuncios\u2729\u208a",
+        "parent_id": "1215832892547006574",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3c\ud835\ude63\ud835\ude6a\ud835\ude63\ud835\ude58\ud835\ude5e\ud835\ude64\ud835\ude68 \ud835\ude6e \ud835\ude56\ud835\ude6b\ud835\ude5e\ud835\ude68\ud835\ude64\ud835\ude68 \ud835\ude64\ud835\ude5b\ud835\ude5e\ud835\ude58\ud835\ude5e\ud835\ude56\ud835\ude61\ud835\ude5a\ud835\ude68 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude56\ud835\ude62\ud835\ude57\ud835\ude5e\ud835\ude69\ud835\ude64 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude56\ud835\ude63\ud835\ude5e\ud835\ude62\ud835\ude5a \ud835\ude6e \ud835\ude56\ud835\ude63\ud835\ude5e\ud835\ude62\ud835\ude56\ud835\ude58\ud835\ude5e\ud835\ude64\ud835\ude63 \ud835\ude5f\ud835\ude56\ud835\ude65\ud835\ude64\ud835\ude63\ud835\ude5a\ud835\ude68\ud835\ude56\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "default_auto_archive_duration": 10080,
+        "position": 12,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66624",
+                "deny": "8854365862820625"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8836652612452160",
+                "deny": "17713250435089"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1249824302929281086",
+                "type": 0,
+                "allow": "7917173062757440",
+                "deny": "633714639900689"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1297397828628381736",
+        "type": 0,
+        "last_message_id": "1542038110228185130",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u25cd\ud83d\ude3b\u25c8\u2765\ud835\udde1ekotina\u2726\u208a\u02da\u2312\u2727",
+        "parent_id": "1225312759357378560",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude45\ud835\ude6a\ud835\ude5a\ud835\ude5c\ud835\ude64\ud835\ude68 \ud835\ude59\ud835\ude5a \ud835\ude49\ud835\ude5a\ud835\ude60\ud835\ude64\ud835\ude69\ud835\ude5e\ud835\ude63\ud835\ude56 \ud835\ude56\ud835\ude59\ud835\ude5a\ud835\ude63\ud835\ude69\ud835\ude67\ud835\ude64 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727\n\nUtiliza el prefijo n! para utilizar comandos de nekotina. Y empezar tu aventura.",
+        "position": 33,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1166175999741761",
+                "deny": "7688189863145488"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "66561",
+                "deny": "8854365862820688"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1321609157500997788",
+        "type": 0,
+        "last_message_id": "1544227599289688105",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u25cd\ud83d\udd06\u25c8\u2765\ud835\udde3okemon\u2726\u208a\u02da",
+        "parent_id": "1225312759357378560",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude62\ud835\ude5e\ud835\ude63\ud835\ude5e\ud835\ude5f\ud835\ude6a\ud835\ude5a\ud835\ude5c\ud835\ude64 \ud835\ude65\ud835\ude64\ud835\ude60\ud835\ude5a\ud835\ude62\ud835\ude64\ud835\ude63 \ud835\ude56\ud835\ude59\ud835\ude5a\ud835\ude63\ud835\ude69\ud835\ude67\ud835\ude64 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67.\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727\n\nUtiliza los comandos de los bots pokemon aqui.",
+        "default_auto_archive_duration": 10080,
+        "position": 37,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1166175999725377",
+                "deny": "7688189863161872"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "66561",
+                "deny": "8854365862820688"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1321617876100321413",
+        "type": 0,
+        "last_message_id": "1544226034604441611",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\ua564\ud83e\ude77\u2014\ud835\uddd4nime-pics\u2726\u208a\u02da",
+        "parent_id": "1323616286214721546",
+        "rate_limit_per_user": 21600,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude5e\ud835\ude62\ud835\ude56\ud835\ude5c\ud835\ude5a\ud835\ude63\ud835\ude56\ud835\ude68 \ud835\ude5c\ud835\ude5a\ud835\ude63\ud835\ude5a\ud835\ude67\ud835\ude56\ud835\ude59\ud835\ude56\ud835\ude68 \ud835\ude56\ud835\ude61\ud835\ude5a\ud835\ude56\ud835\ude69\ud835\ude64\ud835\ude67\ud835\ude5e\ud835\ude56\ud835\ude68 \ud835\ude59\ud835\ude5a \ud835\ude56\ud835\ude63\ud835\ude5e\ud835\ude62\ud835\ude5a \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "default_auto_archive_duration": 10080,
+        "position": 44,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66624",
+                "deny": "8854365862820625"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1321617938549182484",
+        "type": 0,
+        "last_message_id": "1544226034331951187",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\ua564\ud83d\udc36\u2014\ud835\udde3ets-pics\u2726\u208a\u02da",
+        "parent_id": "1323616286214721546",
+        "rate_limit_per_user": 21600,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude5e\ud835\ude62\ud835\ude56\ud835\ude5c\ud835\ude5a\ud835\ude63\ud835\ude56\ud835\ude68 \ud835\ude5c\ud835\ude5a\ud835\ude63\ud835\ude5a\ud835\ude67\ud835\ude56\ud835\ude59\ud835\ude56\ud835\ude68 \ud835\ude56\ud835\ude61\ud835\ude5a\ud835\ude56\ud835\ude69\ud835\ude64\ud835\ude67\ud835\ude5e\ud835\ude56\ud835\ude68 \ud835\ude59\ud835\ude5a \ud835\ude56\ud835\ude63\ud835\ude5e\ud835\ude62\ud835\ude56\ud835\ude61\ud835\ude5a\ud835\ude68 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "default_auto_archive_duration": 10080,
+        "position": 45,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66624",
+                "deny": "8854365862820625"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1323616286214721546",
+        "type": 4,
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u208a\u30fb\u2726\u30fb\ud83c\udf80 \ud83c\uddf2 \ud83c\uddee \ud83c\uddf8 \ud83c\udde8 \ud83c\uddea \ud83c\uddf1 \ud83c\udde6 \ud83c\uddf3 \ud83c\uddea \ud83c\uddf4  \ud83c\udf11\u2500\u256e\u208a",
+        "parent_id": null,
+        "position": 6,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66560",
+                "deny": "8854365862820689"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ]
+    },
+    {
+        "id": "1324404472708993136",
+        "type": 0,
+        "last_message_id": "1465612998948290622",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u0dc6\ud83d\uddbc\ufe0f\u2765\u25b8\ud835\udde7emplates\u2729\u208a",
+        "parent_id": "1216133262276038706",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude3e\ud835\ude5a\ud835\ude63\ud835\ude69\ud835\ude67\ud835\ude64\ud835\ude4e\ud835\ude69\ud835\ude56\ud835\ude5b\ud835\ude5b, \ud835\ude5e\ud835\ude63\ud835\ude5b\ud835\ude64\ud835\ude67\ud835\ude62\ud835\ude56\ud835\ude58\ud835\ude5e\ud835\ude64\ud835\ude63 \ud835\ude65\ud835\ude56\ud835\ude67\ud835\ude56 \ud835\ude61\ud835\ude64\ud835\ude68 \ud835\ude68\ud835\ude69\ud835\ude56\ud835\ude5b\ud835\ude5b \uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "default_auto_archive_duration": 10080,
+        "position": 50,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1324514896016310282",
+        "type": 0,
+        "last_message_id": "1531859559130337292",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u25cd\ud83c\udf0b\u25c8\u2765\ud835\udde7he\u2726\ud835\udde0ina\u2726\u208a\u02da\u2312\u2727",
+        "parent_id": "1225312759357378560",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude62\ud835\ude5e\ud835\ude63\ud835\ude5e\ud835\ude5f\ud835\ude6a\ud835\ude5a\ud835\ude5c\ud835\ude64 \ud835\ude5e\ud835\ude59\ud835\ude61\ud835\ude5a\ud835\ude67 \ud835\ude62\ud835\ude5e\ud835\ude63\ud835\ude5a\ud835\ude67 \ud835\ude56\ud835\ude59\ud835\ude5a\ud835\ude63\ud835\ude69\ud835\ude67\ud835\ude64 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67.\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727\nUtiliza los comandos del idler miner aqui",
+        "default_auto_archive_duration": 10080,
+        "position": 35,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "1166175999692609",
+                "deny": "7688189863194640"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "66561",
+                "deny": "8854365862820688"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1343345680697000108",
+        "type": 0,
+        "last_message_id": "1531861189104107651",
+        "flags": 0,
+        "last_pin_timestamp": "2026-07-29T03:09:28.041000+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\ud83d\udd1e\u25c8\u2765\ud835\uddd6hat\u2765\u221418\u2726\u208a\u02da",
+        "parent_id": "1448876683427053618",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude49\ud835\ude4e\ud835\ude41\ud835\ude52 | MAYORES SOLO +18 \ud835\ude56\ud835\ude59\ud835\ude5a\ud835\ude63\ud835\ude69\ud835\ude67\ud835\ude64 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727\n\n(No apto para todos los p\u00fablicos, restringido a menores de edad) Mantenerse dentro del rango de las normativas cumplidas. Aqu\u00ed, adem\u00e1s de lo cotidiano, es un chat privado donde SOLO se vale nsfw, pornografia y contenido +18 sexual. Utiliza comandos NSFW.",
+        "default_auto_archive_duration": 10080,
+        "position": 42,
+        "permission_overwrites": [
+            {
+                "id": "1343337568502157407",
+                "type": 0,
+                "allow": "1795092319165504",
+                "deny": "6755795383492625"
+            },
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "4402378179328",
+                "deny": "8849963484707921"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "66561",
+                "deny": "8854365862820688"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": true
+    },
+    {
+        "id": "1345566943641604198",
+        "type": 5,
+        "last_message_id": "1436182893444468906",
+        "flags": 0,
+        "last_pin_timestamp": "2025-03-02T05:30:04+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\ud83c\udf19\u2058\u22b1\u273f\ud835\udddaamenights\u273f\u2726\u208a",
+        "parent_id": "1215832892547006574",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude42\ud835\ude56\ud835\ude62\ud835\ude5a\ud835\ude49\ud835\ude5e\ud835\ude5c\ud835\ude5d\ud835\ude69\ud835\ude68 \ud835\ude64\ud835\ude5b\ud835\ude5e\ud835\ude58\ud835\ude5e\ud835\ude56\ud835\ude61\ud835\ude5a\ud835\ude68 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727\n\nEs un m\u00e9todo para mantener el servidor activo por las noches. Los DC-Staffs se encargaran de cada noche entre las horas de 8pm a 10pm hora latinoamericano se enviara una encuesta de 10 juegos para decidir todas las noches en grupo para jugar.",
+        "default_auto_archive_duration": 10080,
+        "position": 17,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66625",
+                "deny": "8854365862820624"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8836652612452161",
+                "deny": "17713250435088"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            },
+            {
+                "id": "1249824780622757919",
+                "type": 0,
+                "allow": "1795092319280193",
+                "deny": "6755726663901200"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1448876559371866183",
+        "type": 0,
+        "last_message_id": "1531861218682208456",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u250a\ud83d\udd25\u25c8\ud835\uddd4\ud835\udddc\ud835\uddd5ot\u273f\ud835\uddd6hat\u2765\u221418\u2726\u208a\u02da",
+        "parent_id": "1448876683427053618",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a CHAT BOT \ud835\ude49\ud835\ude4e\ud835\ude41\ud835\ude52 | MAYORES SOLO +18 \ud835\ude56\ud835\ude59\ud835\ude5a\ud835\ude63\ud835\ude69\ud835\ude67\ud835\ude64 \ud835\ude59\ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67\uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727\n\n(No apto para todos los p\u00fablicos, restringido a menores de edad) Mantenerse dentro del rango de las normativas cumplidas. Aqu\u00ed, adem\u00e1s de lo cotidiano, es un chat privado donde puedes interactuar con un bot +18.",
+        "default_auto_archive_duration": 10080,
+        "position": 43,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "4402378179328",
+                "deny": "8849963484707921"
+            },
+            {
+                "id": "1343337568502157407",
+                "type": 0,
+                "allow": "1795092319165504",
+                "deny": "6755795383492625"
+            },
+            {
+                "id": "1215892096595005512",
+                "type": 0,
+                "allow": "66561",
+                "deny": "8854365862820688"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8273427781123905",
+                "deny": "580938081763344"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": true
+    },
+    {
+        "id": "1448876683427053618",
+        "type": 4,
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u208a\u30fb\u2726\u30fb\ud83d\udd25 \ud83c\uddf3 \ud83c\uddf8 \ud83c\uddeb \ud83c\uddfc  +18 \ud83d\udd1e\u2500\u256e\u208a",
+        "parent_id": null,
+        "position": 5,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "0",
+                "deny": "1049600"
+            },
+            {
+                "id": "1343337568502157407",
+                "type": 0,
+                "allow": "1049600",
+                "deny": "0"
+            }
+        ]
+    },
+    {
+        "id": "1531829851999178882",
+        "type": 0,
+        "last_message_id": "1531831532036296818",
+        "flags": 128,
+        "guild_id": "1215544133142450187",
+        "name": "\u2747\ufe0f\u2726\ufe55\ud835\ude51erificacion\u208a\u02da",
+        "parent_id": "1215832892547006574",
+        "rate_limit_per_user": 0,
+        "topic": "Canal de verificacion.",
+        "default_auto_archive_duration": 10080,
+        "position": 7,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66625",
+                "deny": "8854365862820624"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "6755408060425281",
+                "deny": "2098957802461968"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1531830660619305191",
+        "type": 0,
+        "last_message_id": "1531831067521318912",
+        "flags": 0,
+        "last_pin_timestamp": "2026-07-29T01:08:14.026000+00:00",
+        "guild_id": "1215544133142450187",
+        "name": "\ud83c\udf6f\u2726\ufe55\ud835\ude0f\ud835\ude30\ud835\ude2f\ud835\ude26\ud835\ude3a\ud835\ude17\ud835\ude30\ud835\ude35\u26a0\ufe0f\u26a0\ufe0f\u26a0\ufe0f",
+        "parent_id": null,
+        "rate_limit_per_user": 0,
+        "topic": "\ud83c\udf6f\u2726\ufe55\ud835\ude0f\ud835\ude30\ud835\ude2f\ud835\ude26\ud835\ude3a\ud835\ude17\ud835\ude30\ud835\ude35-\ud835\ude1b\ud835\ude33\ud835\ude22\ud835\ude2e\ud835\ude31\ud835\ude22\u208a\u02da\u26a0\ufe0f\u26a0\ufe0f\u26a0\ufe0f\n\ud83c\udf6f \u26a0\ufe0f Do not post here \u2014 any message in this channel triggers an automatic punishment. \u26a0\ufe0f",
+        "default_auto_archive_duration": 10080,
+        "position": 0,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "68608",
+                "deny": "377957122048"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1544209483671281734",
+        "type": 0,
+        "last_message_id": "1544215929703899137",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u256d\u2326\u300e\u2705\u300f\ud835\uddd6enterstaff\u2726\u208a\u02da",
+        "parent_id": "1216133262276038706",
+        "rate_limit_per_user": 0,
+        "topic": "\u256d\u2326\u300e\u2705\u300f\ud835\uddd6enterstaff\u2726\u208a\u02da\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a \ud835\ude3e\ud835\ude5a\ud835\ude63\ud835\ude69\ud835\ude67\ud835\ude64\ud835\ude4e\ud835\ude69\ud835\ude56\ud835\ude5b\ud835\ude5b, \ud835\ude5e\ud835\ude63\ud835\ude5b\ud835\ude64\ud835\ude67\ud835\ude62\ud835\ude56\ud835\ude58\ud835\ude5e\ud835\ude64\ud835\ude63 \ud835\ude65\ud835\ude56\ud835\ude67\ud835\ude56 \ud835\ude61\ud835\ude64\ud835\ude68 \ud835\ude68\ud835\ude69\ud835\ude56\ud835\ude5b\ud835\ude5b \uff08\u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727\n\u30fb\u2014\u30fb\u2726  \u208a\u30fb\u2014\u30fb\u2726  \u208a\u30fb\u2014 \u02da\u22b9\u30fb\u2726  \u208a\u30fb\u2014\u30fb\u0b67 \u02da\u22b9\u30fb\u2726  \u208a\u30fb\u2014\u0b67 \u02da\u22b9 \u2705",
+        "default_auto_archive_duration": 10080,
+        "position": 49,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "0",
+                "deny": "8854365862887249"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1544209849259270264",
+        "type": 0,
+        "last_message_id": "1544228026886258770",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u256d\u2726\u2939\ud83d\udcd6\u22b9\u30fb\ud835\udddcnformacion\u22b9\u30fb",
+        "parent_id": "1241310082059341965",
+        "rate_limit_per_user": 0,
+        "topic": "\u2729\u208a\u02da\u2312\u2727 \ud835\ude3e\ud835\ude56\ud835\ude63\ud835\ude56\ud835\ude61 \ud835\ude59\ud835\ude5a informacion \ud835\ude59\ud835\ude5a \ud835\ude69\ud835\ude64\ud835\ude59\ud835\ude64 \ud835\ude5a\ud835\ude61 \ud835\ude68\ud835\ude5a\ud835\ude67\ud835\ude6b\ud835\ude5a\ud835\ude67 \u3063\uff3e\u25bf\uff3e\uff09\u3063 \u2729\u208a\u02da\u2312\u2727",
+        "default_auto_archive_duration": 10080,
+        "position": 4,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66625",
+                "deny": "8854365862820624"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8619361345",
+                "deny": "8854357243525904"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    },
+    {
+        "id": "1544220517324820519",
+        "type": 0,
+        "last_message_id": "1544221600327671889",
+        "flags": 0,
+        "guild_id": "1215544133142450187",
+        "name": "\u2730\u203c\ufe0f\u2058\u22b1\ud835\udde6upport\u2726\u208a\u30fb",
+        "parent_id": "1241310082059341965",
+        "rate_limit_per_user": 0,
+        "topic": null,
+        "position": 5,
+        "permission_overwrites": [
+            {
+                "id": "1215544133142450187",
+                "type": 0,
+                "allow": "66560",
+                "deny": "8854365862820689"
+            },
+            {
+                "id": "1215736140791808120",
+                "type": 0,
+                "allow": "8619361281",
+                "deny": "8854357243525968"
+            },
+            {
+                "id": "1215735389411872898",
+                "type": 0,
+                "allow": "8854365862887249",
+                "deny": "0"
+            }
+        ],
+        "nsfw": false
+    }
+]
