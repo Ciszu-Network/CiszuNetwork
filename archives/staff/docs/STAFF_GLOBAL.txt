@@ -1,8 +1,8 @@
 CISZU NETWORK - REGISTRO GLOBAL DE EMPLEADOS
 
 Version: 1.0.0
-Actualizacion: 2026-08-26
-Identificador: STAFF_GLOBAL_V1_0_0_2026_08_26_ciszunetwork
+Actualizacion: 2026-08-29
+Identificador: STAFF_GLOBAL_V1_0_0_2026_08_29_ciszunetwork
 
 Definicion: plantilla global que resume a todos los empleados de Ciszu Network,
 sus cargos, la jerarquia de rangos y el historial de bajas. Fuente de verdad:
@@ -43,13 +43,14 @@ el numero de nivel; un cargo de nivel N solo puede gestionar cargos de nivel may
    7    CommunityManagers (Community Management)    1
    7    SoporteTecnico (Soporte Tecnico)    1
    8    Moderadores (Moderacion)    1
-   9    Betatesters (Beta Tester)    1
+   9    Betatesters (Beta Tester)    2
 
-3. Empleados activos (1)
+3. Empleados activos (2)
 
    ID    Nombre    Cargo    Correo    Telefono    Supervisor    Ingreso
   ----  --------  -------  --------  ----------  ------------  ---------
    CZ-001    FRANCISCO GARCIA    CEO    ciszunetwork@outlook.com    -    Fundador    Fundador (desde creacion)
+   CZ-002    RAFAEL MENOLASCINA    Betatesters    rafameno@gmail.com    04120702370    CZ-001    Fundador (desde creacion)
 
 4. Historial de bajas (0)
 
@@ -66,4 +67,4 @@ el numero de nivel; un cargo de nivel N solo puede gestionar cargos de nivel may
 
 ============================================================
 
-_Ultima revision: 2026-08-26_
+_Ultima revision: 2026-08-29_

@@ -1,3 +1,4 @@
 id,nombres,apellidos,asunto,telefono,correo,direccion,estado
 CL-001,Maria,Felix,Tarea universitaria,,,,activo
 CL-002,Nelger,Lugo,Arreglo de una 3DS,,,,activo
+CL-003,TESTEO,TESTEA,test,test,test,test,inactivo

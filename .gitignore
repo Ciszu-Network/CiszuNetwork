@@ -287,3 +287,8 @@ reports/
 # Consolas (tools/consoles): logs de sesion
 tools/consoles/local-logs/
 
+# Temporales de edición de diseño (DaVinci/Paint.NET/Photoshop) que se cuelan
+# en content/ (nunca son contenido real, solo logs de sesión del editor)
+**/gude-*.log
+**/gude-*.log.err
+

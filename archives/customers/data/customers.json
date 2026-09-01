@@ -37,6 +37,36 @@
       "fecha": null,
       "estado": "activo",
       "registroBaja": null
+    },
+    {
+      "id": "CL-003",
+      "nombres": "TESTEO",
+      "apellidos": "TESTEA",
+      "asunto": "test",
+      "telefono": "test",
+      "correo": "test",
+      "direccion": "test",
+      "redes": [],
+      "fecha": "test",
+      "estado": "inactivo",
+      "registroBaja": {
+        "eliminadoPor": "CZ-001",
+        "fecha": "2026-08-26",
+        "motivo": "Test",
+        "datosPrevio": {
+          "id": "CL-003",
+          "nombres": "TESTEO",
+          "apellidos": "TESTEA",
+          "asunto": "test",
+          "telefono": "test",
+          "correo": "test",
+          "direccion": "test",
+          "redes": [],
+          "fecha": "test",
+          "estado": "inactivo",
+          "registroBaja": null
+        }
+      }
     }
   ]
 }
