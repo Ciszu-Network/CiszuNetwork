@@ -47,7 +47,7 @@ export { GoogleScripts } from './GoogleScripts';
 // Guards de comportamiento: aviso de redirección (azul) + acciones no recuperables (rojo)
 export { RedirectGuard, ActivityGuardProvider, useActivityGuard } from './BehaviorGuards';
 // Anuncios: sistema de ads de Ciszu Network (intrusivos, particulares, recompensa, opcionales)
-export { AdsProvider, useAds, AdFloat, AdPill, DEFAULT_AD_CATALOG } from './Ads';
+export { AdsProvider, useAds, useAdsSafe, AdFloat, AdPill, DEFAULT_AD_CATALOG } from './Ads';
 export type { AdConfig, AdType, AdContent, AdsProviderProps, AdFloatProps, AdPillProps } from './Ads';
 // Legal: enlace a la versión completa de las bases legales (ciszunetwork)
 export { LegalCiszuLink } from './LegalCiszuLink';

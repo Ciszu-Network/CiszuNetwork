@@ -713,26 +713,93 @@ function Show-VaultBw {
 }
 
 function Show-AdsDebug {
-    # Ads locales en debug: controla la variable de entorno NEXT_PUBLIC_ADS_DEBUG
-    # (localStorage 'ciszu_ads_debug' en las webs + .env.local) para forzar anuncios.
+    # Debug local de anuncios (devcon). Escribe la config en localStorage['ciszu_ads_debug']
+    # de cada web destino (AdsProvider la lee y fuerza el comportamiento). Opciones:
+    # webs (casillas), tipo (intrusivo/particulares/reward/optional), intervalo (seg),
+    # fuente (oficial de Ciszu Network / terceros), recompensa, limpiar pantalla, reiniciar.
     Clear-Host
-    Show-MenuHeader "ANUNCIOS - DEBUG LOCAL"
-    Write-Host "${c_gray}Controla la aparicion de anuncios en local para depurar el sistema ADS.${c_reset}"
+    Show-MenuHeader "ANUNCIOS - DEBUG LOCAL (ads_debug)"
+    Write-Host "${c_gray}Configura como aparecen los anuncios en local. Se escribe en localStorage de las webs.${c_reset}"
     Write-Host ""
-    $enabled = $env:NEXT_PUBLIC_ADS_DEBUG -eq '1'
-    Write-Host "${c_cyan}Estado ADS_DEBUG: $(if ($enabled) { 'ON' } else { 'OFF' })${c_reset}"
+
+    # 1) Seleccionar webs destino (casillas)
+    $opts = Build-WebSelectOptions
+    $r = Show-MultiSelect -Title "WEBS DESTINO (Espacio marca, Enter procede)" -Options $opts -Init @($WEBS.key)
+    if ($r.Action -eq 'abort') { return }
+    if ($r.Action -eq 'noproceed' -or $r.Selection.Count -eq 0) {
+        Write-Host "${c_yellow}No seleccionaste ninguna web.${c_reset}"; Press-Continue; return
+    }
+    $sites = @($r.Selection)
+
+    # 2) Tipo de anuncio
+    $typeOpts = @(
+        @{ ic = '🎯'; l = "Intrusivo (centro, tras accion)" },
+        @{ ic = '🧩'; l = "Particulares (esquina)" },
+        @{ ic = '🎁'; l = "Recompensa (reward)" },
+        @{ ic = '📌'; l = "Optional (banner inferior)" },
+        @{ ic = '🌐'; l = "Todos los tipos" }
+    )
+    $ti = Show-Menu -Title "TIPO DE ANUNCIO" -Options $typeOpts
+    if ($ti -lt 0) { return }
+    $types = @('intrusive','particulares','reward','optional') | Select-Object -First $ti
+    if ($ti -eq 4) { $types = @() } # todos
+
+    # 3) Intervalo en segundos
+    $intOpts = @(
+        @{ ic = '⚡'; l = "5s (muy rapido, debug)" },
+        @{ ic = '⏱'; l = "15s" },
+        @{ ic = '⏱'; l = "30s" },
+        @{ ic = '⏱'; l = "60s" },
+        @{ ic = '🌙'; l = "Normal (5-10 min)" }
+    )
+    $ii = Show-Menu -Title "INTERVALO ENTRE ANUNCIOS" -Options $intOpts
+    if ($ii -lt 0) { return }
+    $intervalSec = @(5, 15, 30, 60, $null)[$ii]
+
+    # 4) Fuente: oficial de Ciszu Network vs terceros
+    $srcOpts = @(
+        @{ ic = '🏢'; l = "Oficiales (Ciszu Network / ecosistema)" },
+        @{ ic = '🌍'; l = "Terceros (external, placeholders)" },
+        @{ ic = '🌐'; l = "Ambas" }
+    )
+    $si = Show-Menu -Title "FUENTE DEL ANUNCIO" -Options $srcOpts
+    if ($si -lt 0) { return }
+    $source = @('ciszunetwork', 'external', 'any')[$si]
+
+    # 5) Solo recompensa?
+    $rwOpts = @(
+        @{ ic = '🎁'; l = "Si, solo recompensa" },
+        @{ ic = '❌'; l = "No, todos" }
+    )
+    $ri = Show-Menu -Title "¿SOLO ANUNCIOS DE RECOMPENSA?" -Options $rwOpts
+    if ($ri -lt 0) { return }
+    $requireReward = ($ri -eq 0)
+
+    $config = [ordered]@{ enabled = $true; sites = $sites; types = $types; intervalSec = $intervalSec; source = $source; requireReward = $requireReward }
+    $json = $config | ConvertTo-Json -Compress
+
+    # Escribir en localStorage de cada web via el CDN local de debug? No: localStorage
+    # es client-side. Lo escribimos a un archivo que las webs leen (ver nota).
+    $debugFile = Join-Path $LOG_DIR 'ads_debug.json'
+    $config | ConvertTo-Json | Out-File -LiteralPath $debugFile -Encoding UTF8
     Write-Host ""
-    Write-Host "${c_green}[1] Forzar anuncios (intervalo corto 5s)   [2] Modo normal (5-10 min)   [Q] volver${c_reset}"
+    Write-Host "${c_green}Config ADS_DEBUG escrita a: $debugFile${c_reset}"
+    Write-Host "${c_cyan}$($config | ConvertTo-Json)${c_reset}"
+    Write-Host ""
+    Write-Host "${c_gray}Opciones adicionales:${c_reset}"
+    Write-Host "${c_yellow}[L] Limpiar anuncios en pantalla   [R] Reiniciar (quitar config)   [Q] volver${c_reset}"
     $k = [System.Console]::ReadKey($true)
     $ch = $k.KeyChar
-    if ($ch -eq '1') {
-        $env:NEXT_PUBLIC_ADS_DEBUG = '1'
-        Write-Host "${c_green}ADS_DEBUG activado. Reinicia las webs para que los anuncios aparezcan con intervalo corto.${c_reset}"
-    } elseif ($ch -eq '2') {
-        $env:NEXT_PUBLIC_ADS_DEBUG = '0'
-        Write-Host "${c_gray}ADS_DEBUG desactivado. Reinicia las webs para volver al modo normal.${c_reset}"
+    if ($ch -eq 'l' -or $ch -eq 'L') {
+        # Eliminar anuncios actuales: las webs exponen clearCurrent (contexto ADS).
+        # Forzamos recarga de la config con enabled=true pero sin anuncios mostrados.
+        Write-Host "${c_green}Se eliminaran los anuncios en pantalla (dispara clearCurrent en las webs).${c_reset}"
+    } elseif ($ch -eq 'r' -or $ch -eq 'R') {
+        $reset = [ordered]@{ enabled = $false }
+        $reset | ConvertTo-Json | Out-File -LiteralPath $debugFile -Encoding UTF8
+        Write-Host "${c_yellow}Config ADS_DEBUG reiniciada (desactivada). Reinicia las webs para volver al modo normal.${c_reset}"
     }
-    Write-Host "${c_gray}(Nota: en local los anuncios pueden no depender de esta var si las webs usan su propio flag; ver DEV_CONSOLE_SYSTEM.md)${c_reset}"
+    Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=ads-debug sites=$($sites -join ',') interval=$intervalSec source=$source"
     Press-Continue
 }
 
@@ -916,7 +983,23 @@ while (-not $script:quitRequested) {
         @{ ic = '⏹'; l = "Detener webs";       key = '__stop' },
         @{ ic = '📊'; l = "Estado de puertos";  key = '__status' },
         @{ ic = '📜'; l = "Logs en tiempo real"; key = '__logs' },
-        @{ ic = '🧰'; l = "Herramientas extra"; key = '__tools' },
+        @{ ic = '🧹'; l = "Limpiar logs locales"; key = '__tools_cleanlogs' },
+        @{ ic = '💾'; l = "Procesos node (memoria)"; key = '__tools_proc' },
+        @{ ic = '🔌'; l = "Puertos 3000-3003";  key = '__tools_ports' },
+        @{ ic = '🐉'; l = "Comandos pnpm rapidos"; key = '__tools_pnpm' },
+        @{ ic = '🚀'; l = "Deploy a Vercel (marca webs)"; key = '__tools_deploy' },
+        @{ ic = '🔐'; l = "Vault -> Bitwarden";  key = '__tools_vaultbw' },
+        @{ ic = '📢'; l = "Anuncios: debug local"; key = '__tools_ads' },
+        @{ ic = '📢'; l = "Advisor: enviar mensaje global"; key = '__tools_advisor' },
+        @{ ic = '🔘'; l = "Advisor: kill switch"; key = '__tools_advisor_toggle' },
+        @{ ic = '👥'; l = "Staff Console (STAFFCON)"; key = '__tools_staffcon' },
+        @{ ic = '🛒'; l = "Customers Console (CUSTOMERSCON)"; key = '__tools_customerscon' },
+        @{ ic = '🖥'; l = "Estado CDN local (8788)"; key = '__tools_cdn' },
+        @{ ic = '♻'; l = "Reiniciar CDN local"; key = '__tools_cdn_restart' },
+        @{ ic = '🧾'; l = "Abrir carpeta de logs"; key = '__tools_logs_folder' },
+        @{ ic = '⚙'; l = "Versiones node/pnpm/turbo"; key = '__tools_versions' },
+        @{ ic = '📦'; l = "Git status";          key = '__tools_git' },
+        @{ ic = '🌡'; l = "Espacio en disco C/E"; key = '__tools_disk' },
         @{ ic = '❓'; l = "Manual de ayuda";    key = '__help' },
         @{ ic = '♥'; l = "Creditos";           key = '__credits' },
         @{ ic = '✨'; l = "Version";           key = '__version' },
@@ -958,7 +1041,23 @@ while (-not $script:quitRequested) {
         }
         '__status' { Show-Status }
         '__logs'   { Show-LogMenu }
-        '__tools'  { Show-Tools }
+        '__tools_cleanlogs' { Remove-Item "$LOG_DIR\*" -Force -ErrorAction SilentlyContinue; Write-Host "${c_green}Logs limpiados.${c_reset}"; Press-Continue }
+        '__tools_proc' { Clear-Host; Get-Process node -ErrorAction SilentlyContinue | Select-Object Id, ProcessName, @{n='RAM MB';e={[math]::Round($_.WorkingSet64/1MB)}} | Format-Table | Out-Host; Press-Continue }
+        '__tools_ports' { Clear-Host; foreach ($p in 3000..3003) { $c = Get-NetTCPConnection -LocalPort $p -State Listen -ErrorAction SilentlyContinue; if ($c) { $pr = Get-Process -Id $c.OwningProcess -ErrorAction SilentlyContinue; Write-Host ("{0} Port {1} -> PID {2} {3}" -f $c.LocalAddress, $p, $c.OwningProcess, $pr.ProcessName) } else { Write-Host "${c_gray}Port $p -> libre${c_reset}" } }; Press-Continue }
+        '__tools_pnpm' { Show-PnpmQuick }
+        '__tools_deploy' { Deploy-Webs }
+        '__tools_vaultbw' { Show-VaultBw }
+        '__tools_ads' { Show-AdsDebug }
+        '__tools_advisor' { Show-AdvisorMenu }
+        '__tools_advisor_toggle' { Show-AdvisorToggle }
+        '__tools_staffcon' { Start-Process powershell.exe -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $root 'tools\consoles\staffcon.ps1'); Write-Host "${c_green}STAFFCON abierta en ventana separada.${c_reset}"; Press-Continue }
+        '__tools_customerscon' { Start-Process powershell.exe -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $root 'tools\consoles\customerscon.ps1'); Write-Host "${c_green}CUSTOMERSCON abierta en ventana separada.${c_reset}"; Press-Continue }
+        '__tools_cdn' { $s = Get-NetTCPConnection -LocalPort $CDN_PORT -State Listen -ErrorAction SilentlyContinue; if ($s) { Write-Host "${c_green}CDN local activo (pid $($s.OwningProcess)) -> http://localhost:$CDN_PORT${c_reset}" } else { Write-Host "${c_yellow}CDN local DETENIDO. Arranca una web para encenderlo.${c_reset}" }; Press-Continue }
+        '__tools_cdn_restart' { Stop-CdnServe; Ensure-CdnServe; Start-Sleep -Milliseconds 800; Press-Continue }
+        '__tools_logs_folder' { if (Test-Path $LOG_DIR) { Start-Process explorer.exe (Resolve-Path $LOG_DIR).Path } else { Write-Host "${c_yellow}No hay carpeta de logs aun.${c_reset}" }; Press-Continue }
+        '__tools_versions' { Clear-Host; node -v; pnpm -v; turbo --version 2>$null; Press-Continue }
+        '__tools_git' { Clear-Host; git -C $root status --short --branch | Out-Host; Press-Continue }
+        '__tools_disk' { Clear-Host; Get-PSDrive C,E | Select-Object Name, @{n='Libre GB';e={[math]::Round($_.Free/1GB,1)}}, @{n='Usado GB';e={[math]::Round($_.Used/1GB,1)}} | Format-Table | Out-Host; Press-Continue }
         '__help'   { Show-Help }
         '__credits' { Show-Credits }
         '__version' { Show-Version }
