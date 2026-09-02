@@ -14,6 +14,19 @@ const withIsEditHeader = (request: NextRequest, pathname: string): Headers => {
 };
 
 /**
+ * Cabecera interna para rutas "desnudas" (sin chrome/UI overlay): p.ej.
+ * /youareanidiot (prueba no oficial). El layout raíz detecta este header y
+ * renderiza SOLO <html><body>{children}</body></html> — sin Navbar, Footer,
+ * ads, guards, disclaimers ni botones flotantes.
+ */
+const BARE_HEADER = 'x-is-bare';
+const withIsBareHeader = (request: NextRequest, pathname: string): Headers => {
+  const headers = withIsEditHeader(request, pathname);
+  headers.set(BARE_HEADER, pathname === '/youareanidiot' ? '1' : '0');
+  return headers;
+};
+
+/**
  * Middleware de Next.js (CiszuNetwork Security Layer).
  * Cabeceras de seguridad HTTP + sensor IAST runtime (edge-safe, solo observa).
  *
@@ -58,7 +71,7 @@ export async function middleware(request: NextRequest) {
   }
 
   const response = NextResponse.next({
-    request: { headers: withIsEditHeader(request, pathname) },
+    request: { headers: withIsBareHeader(request, pathname) },
   });
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');

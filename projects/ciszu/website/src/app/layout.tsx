@@ -66,6 +66,20 @@ const themeScript = `
 export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   const store = await headers();
   const isEdit = store.get("x-is-edit") === "1";
+  // Rutas "desnudas" (pruebas no oficiales, p.ej. /youareanidiot): sin chrome,
+  // sin ads, sin guards, sin disclaimers ni botones flotantes. Solo el body.
+  const isBare = store.get("x-is-bare") === "1";
+
+  if (isBare) {
+    return (
+      <html lang="es" className={`${ibmPlex.variable} ${ibmPlexCondensed.variable}`} suppressHydrationWarning>
+        <head>
+          <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        </head>
+        <body className="m-0 p-0 min-h-screen">{children}</body>
+      </html>
+    );
+  }
 
   return (
     <html lang="es" className={`${ibmPlex.variable} ${ibmPlexCondensed.variable}`} suppressHydrationWarning>
