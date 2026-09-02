@@ -22,6 +22,11 @@ const sections = [
     content: "Ciszu Network muestra anuncios propios (promoción del ecosistema) y, en el futuro, de terceros. Todos los anuncios son opcionales y cerrables. Los datos de interacción con anuncios (impresiones, clics, cierres) se miden de forma agregada para mejorar la experiencia y la relevancia, y pueden incluir señales de audiencia (idioma, ubicación aproximada). Nunca vinculamos anuncios a datos sensibles.",
   },
   {
+    id: "adblockers",
+    title: "Bloqueadores de Anuncios",
+    content: "Para mantener Ciszu Network y todas sus páginas funcionando, dependemos de la publicidad (autopatrocinio del ecosistema, monetización y mantenimiento). Si detectamos un bloqueador de anuncios, te lo haremos saber con un aviso claro y respetuoso, pidiéndote por favor que lo desactives en nuestro sitio. Puedes elegir desactivar el bloqueador (con contador de recarga) o seguir usando la página sin anuncios; esta elección se guarda solo en tu navegador y se renueva cada 24 horas. Si usas un bloqueador, los anuncios pueden no mostrarse o dar error, y no nos hacemos cargo de mal funcionamiento relacionado con el bloqueo.",
+  },
+  {
     title: "Datos para Recomendación de Anuncios",
     content: "Para recomendar mejores anuncios, Ciszu Network puede usar datos de navegación y de audiencia agregados (páginas visitadas, idioma del navegador, región aproximada) recogidos por Google Analytics 4. Estos datos se tratan de forma agregada y anónima; no se utilizan para identificar a una persona concreta fuera de lo necesario para el servicio. El usuario puede bloquear las cookies de análisis desde su navegador o desde las preferencias del sitio.",
   },
