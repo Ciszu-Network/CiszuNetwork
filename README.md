@@ -14,7 +14,7 @@
 
 ## 🌐 Ecosistema Ciszu Network
 
-**Ciszu Network** es el ecosistema digital de **CiszukoAntony** — desarrollador, músico y creador de contenido desde Venezuela. Un monorepo moderno que agrupa 4 productos web, un bot de Discord, paquetes compartidos y un CDN propio sobre Supabase Storage.
+**Ciszu Network** es el ecosistema digital de **CiszukoAntony** — desarrollador, músico y creador de contenido desde Venezuela. Un monorepo moderno que agrupa 4 productos web, un bot de Discord, la comunidad CiszuGamens, paquetes compartidos y un CDN propio sobre Supabase Storage.
 
 | Producto | Descripción | Tecnologías | Estado |
 |---|---|---|---|
@@ -22,6 +22,7 @@
 | **Ciszuko Antony** | Portfolio personal — proyectos, música, galería | Next.js 15, Tailwind 4, Supabase | 🟢 Producción |
 | **MuzicMania** | Juego musical web + app Tauri (desktop) | Next.js 15, Tauri v2, Supabase, WebAudio | 🟢 Producción |
 | **CiszuBot** | Bot de Discord + dashboard web (landing, stats, tickets) | Discord.js, Next.js 15, Express, Docker | 🟢 Producción |
+| **CiszuGamens** | Comunidad gaming — servidor Discord | Discord | 🟢 Activa |
 
 > **Todos los productos están desplegados en Vercel** y son accesibles públicamente.
 
@@ -31,7 +32,7 @@
 
 ```
 ciszunetwork-monorepo/
-├── projects/                    # 4 productos independientes
+├── projects/                    # Productos independientes (webs + comunidad)
 │   ├── ciszu/                   # Web principal (ciszunetwork.vercel.app)
 │   │   └── website/             # Next.js 15 (ciszunetwork-website)
 │   ├── ciszukoantony/           # Portfolio (ciszukoantony.vercel.app)
@@ -43,6 +44,7 @@ ciszunetwork-monorepo/
 │   └── ciszubot/                # Bot + Dashboard (ciszubot.vercel.app)
 │       ├── website/             # Next.js 15 (ciszubot-website)
 │       └── discord-bot/         # Discord.js v14 + Express
+│   └── ciszugamens/             # Comunidad gaming (Discord)
 ├── packages/                    # Paquetes compartidos (pnpm workspace)
 │   ├── cdn/                     # @ciszunetwork/cdn — Asset resolver + CDN client
 │   └── ui/                      # @ciszu/ui — Componentes compartidos, iconos, CloudflareGuard
@@ -127,6 +129,7 @@ ciszunetwork-monorepo/
 | **Ciszuko Antony** | https://ciszukoantony.vercel.app |
 | **MuzicMania** | https://muzicmania.vercel.app |
 | **CiszuBot** | https://ciszubot.vercel.app |
+| **CiszuGamens (Discord)** | https://discord.com/invite/W3kMtMMj6E |
 
 ---
 
@@ -152,11 +155,25 @@ Este proyecto está bajo licencia **MIT** — ver [LICENSE](LICENSE) para detall
 
 ## 🤝 Conectar
 
+### Discord
+
+[![Discord CiszuGamens](https://img.shields.io/badge/Discord-CiszuGamens-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/invite/W3kMtMMj6E)
+
+- **CiszuGamens** — la comunidad gaming oficial de Ciszu Network. Torneos, eventos,
+  canales de voz, staff y la mejor comunidad. Únete: **https://discord.com/invite/W3kMtMMj6E**
+- **CiszuBot** — el bot del ecosistema (soporte y stats en su web).
+
+### Redes sociales
+
 [![GitHub](https://img.shields.io/badge/GitHub-Ciszu_Network-181717?style=for-the-badge&logo=github)](https://github.com/Ciszu-Network)
-[![Discord](https://img.shields.io/badge/Discord-Ciszu_Network-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/ciszunetwork)
 [![Twitter/X](https://img.shields.io/badge/X-@CiszukoAntony-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/CiszukoAntony)
 [![YouTube](https://img.shields.io/badge/YouTube-Ciszu_Network-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtube.com/@CiszuNetwork)
-[![Email](https://img.shields.io/badge/Email-ciszu.network@gmail.com-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:ciszu.network@gmail.com)
+[![Email](https://img.shields.io/badge/Email-ciszunetwork@gmail.com-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:ciszunetwork@gmail.com)
+
+- **Email oficial**: **ciszunetwork@gmail.com**
+- **GitHub**: [Ciszu-Network](https://github.com/Ciszu-Network)
+- **X/Twitter**: [@CiszukoAntony](https://x.com/CiszukoAntony)
+- **YouTube**: [Ciszu Network](https://youtube.com/@CiszuNetwork)
 
 ---
 

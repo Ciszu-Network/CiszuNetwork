@@ -1,3 +1,0 @@
-id,nombres,apellidos,telefono,correo,cargo,nivel,supervisor,estado
-CZ-001,Francisco,Garcia,,ciszunetwork@outlook.com,Betatesters,9,,activo
-CZ-002,RAFAEL,MENOLASCINA,04120702370,rafameno@gmail.com,Betatesters,9,CZ-001,activo
