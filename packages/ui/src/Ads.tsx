@@ -525,9 +525,13 @@ export function AdsProvider({ site, children, catalog = DEFAULT_AD_CATALOG, auth
   const dismissedRef = useRef<Record<string, true>>({});
   const seenRef = useRef<Record<string, number>>({});
   const claimedRef = useRef<Record<string, number>>({});
-  const lastShownRef = useRef<string | null>(null);
+const lastShownRef = useRef<string | null>(null);
   const lastActivityRef = useRef(Date.now());
   const hydrated = useRef(false);
+  // Cooldown por superficie (placement): tras cerrar un anuncio pasivo, se
+  // espera 60-120s antes de mostrar otro en ESA superficie. Esquina e inferior
+  // son independientes.
+  const cooldownUntilRef = useRef<Record<string, number>>({});
 
 const dKey = `ciszu_ads_${site}_dismissed`;
   const sKey = `ciszu_ads_${site}_seen`;
@@ -585,10 +589,24 @@ const dKey = `ciszu_ads_${site}_dismissed`;
         : { ...a, content: { ...a.content, accent: a.content.accent || accent } });
   }, [catalog, site, authenticated, premium, debugTick]);
 
-  useEffect(() => {
+useEffect(() => {
+    // Al entrar (cada página) se REINICIA el pull de anuncios: `seenRef` no se
+    // carga de localStorage (los anuncios vuelven a estar disponibles). El
+    // cooldown por superficie (en memoria) controla la frecuencia entre
+    // anuncios (60-120s tras cerrar uno). Solo los descartados manualmente
+    // persisten (dismissed) para no repetir lo que el usuario cerró con X.
     dismissedRef.current = readJson(dKey, {});
-    seenRef.current = readJson(sKey, {});
+    seenRef.current = {};
     claimedRef.current = readJson(cKey, {});
+    // Cooldown inicial al entrar: esquina 20s, banner inferior 45s (independiente).
+    // El hint "Próximo anuncio en Xs" refleja este tiempo; así no se bombardea
+    // al usuario con un anuncio inmediato al cargar.
+    const dbg = debugRef.current;
+    if (!(dbg && dbg.enabled)) {
+      cooldownUntilRef.current = { corner: Date.now() + 20000, body: Date.now() + 45000 };
+    } else {
+      cooldownUntilRef.current = {};
+    }
     hydrated.current = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [site]);
@@ -658,13 +676,16 @@ const show = useCallback((id: string): AdConfig | null => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [effective, markSeen, site]);
 
-  const trigger = useCallback((type: AdType, placement: string): AdConfig | null => {
+const trigger = useCallback((type: AdType, placement: string): AdConfig | null => {
+    // Cooldown por superficie: al cerrar un anuncio pasivo se espera 60-120s
+    // (independiente por esquina / inferior). Si el cooldown no ha pasado, no
+    // se muestra nada (el hint "Próximo anuncio en Xs" refleja el tiempo).
+    const now = Date.now();
+    if (cooldownUntilRef.current[placement] && now < cooldownUntilRef.current[placement]) return null;
     const valid = effective.filter((ad) => {
       if (ad.type !== type || ad.placement !== placement) return false;
       if (dismissedRef.current[ad.id]) return false;
-      const last = seenRef.current[ad.id] ?? 0;
-      const interval = (ad.minIntervalSec ?? 0) * 1000;
-      return !(interval > 0 && Date.now() - last < interval);
+      return true;
     });
     if (valid.length === 0) return null;
     // Pasivos: balance 25% patrocinado / 75% terceros.
@@ -682,16 +703,20 @@ const show = useCallback((id: string): AdConfig | null => {
     return show(pick.id);
   }, [effective, show]);
 
-  const dismiss = useCallback(() => {
+const dismiss = useCallback(() => {
     if (!current) return;
     const ad = current;
     trackEvent('ad_dismiss', { ad_id: ad.id, ad_type: ad.type, site });
-    if (ad.type === 'optional' || ad.type === 'particulares') markSeen(ad.id);
+    if (ad.type === 'optional' || ad.type === 'particulares') {
+      // Cooldown tras cierre de un pasivo: 60-120s (aleatorio), por superficie.
+      const secs = Math.floor(Math.random() * (120 - 60) + 60);
+      cooldownUntilRef.current[ad.placement] = Date.now() + secs * 1000;
+    }
     setCurrent(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [current, markSeen, site]);
+  }, [current, site]);
 
-  const rewardStatus = useCallback((ad: AdConfig): RewardStatus => {
+const rewardStatus = useCallback((ad: AdConfig): RewardStatus => {
     if (ad.type !== 'reward') return { canClaim: false, remainingSec: 0 };
     const last = seenRef.current[ad.id] ?? 0;
     const wait = (ad.rewardWaitSec ?? 0) * 1000;
@@ -711,9 +736,15 @@ const show = useCallback((id: string): AdConfig | null => {
     return true;
   }, [rewardStatus, cKey, site]);
 
-  const getNextPeriodicAdIn = useCallback((): number => {
+const getNextPeriodicAdIn = useCallback((): number => {
     const now = Date.now();
     let min = Infinity;
+    // Cooldown por superficie: si alguno está en cooldown, devolver el menor.
+    for (const due of Object.values(cooldownUntilRef.current)) {
+      if (due > now) min = Math.min(min, due - now);
+    }
+    // Considerar también el minIntervalSec por anuncio (por si un anuncio aún no
+    // está "maduro" para reaparecer).
     for (const a of effective) {
       if (a.type !== 'particulares' && a.type !== 'optional') continue;
       if (!a.minIntervalSec) continue;
@@ -875,28 +906,46 @@ function SingleAdCard({ ad, onDone, compact, site }: { ad: AdConfig; onDone: () 
   const timer = useAutoClose(ad, onDone);
   const isVideo = c.format === 'video' && !!c.videoSrc;
 
+  // Modo compact (banner inferior): toast ANCHO. La fila de contenido arriba y
+  // el countdown DEBAJO, a lo ancho de todo el toast (barra + contador).
+  if (compact) {
+    return (
+      <div className="relative w-[min(94vw,560px)] rounded-xl border border-white/10 bg-[#0e1118] shadow-xl px-3 py-2">
+        <AdClose onClick={onDone} closable={closable} className="absolute right-2 top-2 h-6 w-6" />
+        <div className="flex items-center gap-2 pr-6">
+          <span className="shrink-0 rounded bg-yellow-400 px-1.5 py-0.5 text-[9px] font-black uppercase leading-none text-black">AD</span>
+          {!c.placeholder && c.image && <div className="hidden h-8 w-8 shrink-0 sm:block"><img src={c.image} alt={c.title} className="h-8 w-8 object-contain" /></div>}
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-xs font-bold text-white">{c.title}</p>
+            <p className="truncate text-[11px] text-neutral-400">{c.description}</p>
+          </div>
+        </div>
+        <div className="mt-1.5 w-full">
+          <CountdownBar total={timer.total} remaining={timer.remaining} />
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className={`relative rounded-xl border border-white/10 bg-[#0e1118] shadow-xl ${compact ? 'flex items-center gap-2 py-2 pl-2 pr-2' : 'p-4'}`}>
+    <div className="relative rounded-xl border border-white/10 bg-[#0e1118] shadow-xl p-4">
       <AdClose onClick={onDone} closable={closable} className="absolute right-2 top-2 h-7 w-7" />
       <span className="shrink-0 rounded bg-yellow-400 px-1.5 py-0.5 text-[9px] font-black uppercase leading-none text-black">AD</span>
 
-      {!compact && (
-        <div className="mb-2">
-          {isVideo ? (
-            <video ref={timer.videoRef} src={c.videoSrc} muted autoPlay playsInline className="h-20 w-full rounded-lg bg-black object-contain" onEnded={timer.handleVideoEnded} />
-          ) : (
-            <AdBanner ad={ad} />
-          )}
-        </div>
-      )}
-      {compact && !c.placeholder && c.image && <div className="ml-1 hidden h-8 w-8 shrink-0 sm:block"><img src={c.image} alt={c.title} className="h-8 w-8 object-contain" /></div>}
+      <div className="mb-2">
+        {isVideo ? (
+          <video ref={timer.videoRef} src={c.videoSrc} muted autoPlay playsInline className="h-20 w-full rounded-lg bg-black object-contain" onEnded={timer.handleVideoEnded} />
+        ) : (
+          <AdBanner ad={ad} />
+        )}
+      </div>
 
       <div className="min-w-0 flex-1">
         <p className="truncate text-xs font-bold text-white">{c.title}</p>
         <p className="truncate text-[11px] text-neutral-400">{c.description}</p>
       </div>
 
-{!c.placeholder && !compact && (
+      {!c.placeholder && (
         <a href={c.href} target="_blank" rel="noopener noreferrer"
           onClick={(e) => {
             if (isAdBlockContinue()) {
@@ -911,11 +960,11 @@ function SingleAdCard({ ad, onDone, compact, site }: { ad: AdConfig; onDone: () 
           style={{ background: c.accent || '#22d3ee' }}>{c.cta}</a>
       )}
 
-      <div className={compact ? 'w-16 shrink-0' : 'w-full'}>
+      <div className="w-full">
         <CountdownBar total={timer.total} remaining={timer.remaining} />
       </div>
 
-      {!compact && <AdTerms site={site} />}
+      <AdTerms site={site} />
     </div>
   );
 }
@@ -1068,10 +1117,10 @@ export function AdFloat({ placement = 'corner', side = 'bottom-right', className
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [placement]);
 
-  // Scheduler: interval fijo de 1s que reintenta SIEMPRE. El control de cuándo
-  // está permitido lo hace `trigger` (respeta minIntervalSec = 5-10min normal,
-  // o el intervalo corto del debug). Al mostrarse, floatingActive detiene los
-  // reintentos; al cerrarse, vuelven.
+  // Scheduler: interval fijo de 1s. El control de cuándo está permitido lo hace
+  // `trigger` (cooldown por superficie 60-120s tras cerrar, más debug). Al
+  // mostrarse, floatingActive detiene los reintentos; al cerrarse, el cooldown
+  // impide otro durante 60-120s.
   useEffect(() => {
     if (!adsRef.current) return;
     const iv = window.setInterval(tryShow, 1000);

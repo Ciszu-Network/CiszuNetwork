@@ -34,6 +34,7 @@ import {
   Building,
   MessageSquareWarning,
   Download,
+  Heart,
 } from 'lucide-react';
 
 const IcoDiscord = () => (
@@ -65,6 +66,7 @@ const NAV_ITEMS: NavEntry[] = [
   },
   { name: 'Soporte', href: '/support', icon: <LifeBuoy className="w-4 h-4" /> },
   { name: 'Descargas', href: '/descargas', icon: <Download className="w-4 h-4" /> },
+  { name: 'Donar', href: '/donate', icon: <Heart className="w-4 h-4" /> },
   { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" /> },
   {
     name: 'Proyectos',
@@ -105,6 +107,7 @@ const ALL_PAGES: { name: string; href: string; icon: React.ReactNode; keywords: 
   { name: 'Guías', href: '/guidelines', icon: <Sparkles className="w-4 h-4" />, keywords: ['guias', 'guia', 'normas', 'lineamientos', 'guide'] },
   { name: 'Soporte', href: '/support', icon: <LifeBuoy className="w-4 h-4" />, keywords: ['soporte', 'ayuda', 'support', 'asistencia'] },
   { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" />, keywords: ['feedback', 'reportar', 'reporte', 'problema', 'opinion', 'bug'] },
+  { name: 'Donar', href: '/donate', icon: <Heart className="w-4 h-4" />, keywords: ['donar', 'donation', 'donacion', 'apoyar', 'apoyo', 'support', 'ko-fi', 'kofi', 'patreon', 'paypal', 'crypto'] },
   { name: 'Descargas', href: '/descargas', icon: <Download className="w-4 h-4" />, keywords: ['descargas', 'descargar', 'instalar', 'pdwa', 'download'] },
   { name: 'Minecraft', href: '/projects/minecraft', icon: <Pickaxe className="w-4 h-4" />, keywords: ['minecraft', 'texture', 'mods', 'servidor'] },
   { name: 'Discord', href: '/projects/discord', icon: <MessageCircle className="w-4 h-4" />, keywords: ['discord', 'comunidad', 'servidores', 'bots'] },
