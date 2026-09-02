@@ -8,6 +8,7 @@ import { useAppStore } from '@/store';
 import { syncPreferencesToProfile, loadPreferences } from '@/lib/preferences';
 import { usePageTitle } from '@/lib/usePageTitle';
 import {
+  AuthBenefitsPanel,
   AuthField,
   AuthSecondaryActions,
   CiszuIdBrand,
@@ -29,6 +30,54 @@ const IconLock = () => (
     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
   </svg>
 );
+
+const IconShield = () => (
+  <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    <path d="M9 12l2 2 4-4" />
+  </svg>
+);
+
+const IconCloud = () => (
+  <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17.5 19H9a7 7 0 1 1 6.7-9h1.8a4.5 4.5 0 1 1 0 9z" />
+  </svg>
+);
+
+const IconGift = () => (
+  <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="8" width="18" height="4" rx="1" />
+    <path d="M12 8v13" />
+    <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7" />
+    <path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5" />
+  </svg>
+);
+
+const IconSparkles = () => (
+  <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z" />
+  </svg>
+);
+
+const LOGIN_BENEFITS = [
+  {
+    icon: <span className="w-full h-full text-brand-light"><IconShield /></span>,
+    title: 'Menos anuncios',
+    description: 'Al iniciar sesión quitamos los anuncios de footer y reduce la frecuencia del resto. Tu navegación, más limpia.',
+  },
+  {
+    icon: <span className="w-full h-full text-neon-cyan"><IconCloud /></span>,
+    title: 'Tus datos, siempre contigo',
+    description: 'Preferencias, progreso y configuración guardados en la nube y sincronizados entre todos tus dispositivos.',
+  },
+  {
+    icon: <span className="w-full h-full text-neon-pink"><IconGift /></span>,
+    title: 'Recompensas y VIP futuro',
+    description: 'Los usuarios registrados podrán optar a recompensas y, próximamente, a un rango VIP que quita los anuncios.',
+  },
+];
+
+const LOGIN_FOOTER = 'Iniciar sesión es gratis. Usamos tus datos para personalizar anuncios y ofrecerte menos publicidad — consulta nuestras políticas en Ciszu Network.';
 
 const CISZU_ISOTYPE = assetResolver.resolve('projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg');
 
@@ -131,7 +180,7 @@ export default function LoginPage() {
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-brand/15 rounded-full blur-[160px] animate-pulse" />
       </div>
 
-      <div className="max-w-md mx-auto px-4">
+      <div className="max-w-5xl mx-auto px-4">
         <div className="mb-10">
           <CiszuIdBrand
             solo
@@ -149,103 +198,122 @@ export default function LoginPage() {
           />
         </div>
 
-        <div className="relative group">
-          <div className="absolute -inset-1 bg-gradient-to-r from-brand-light to-neon-pink rounded-[2.5rem] blur opacity-20 transition duration-500" />
-          <div className="relative bg-[#070710]/95 border border-white/10 rounded-[2.5rem] p-8 md:p-10 space-y-6 backdrop-blur-2xl shadow-2xl">
-            {forgot ? (
-              <form onSubmit={handleForgotSubmit} className="space-y-5">
-                <div className="text-center space-y-2">
-                  <h3 className="text-white font-black uppercase tracking-widest text-sm">Recuperar identidad</h3>
-                  <p className="text-gray-400 text-[10px] font-bold">Enviaremos un enlace temporal de un solo uso a tu email. Revisa tu bandeja o spam.</p>
-                </div>
-                <AuthField
-                  label="Email de la cuenta"
-                  name="email"
-                  icon={<span className="w-full h-full text-brand-light"><IconMail /></span>}
-                  type="email"
-                  placeholder="tu@email.com"
-                  required
-                  autoComplete="email"
-                  value={forgotEmail}
-                  onChange={(e) => { setForgotEmail(e.target.value); setErrors(prev => ({ ...prev, email: '' })); }}
-                  error={errors.email}
-                  requirements={['Formato de email válido (p. ej. nombre@dominio.com)', 'Debe ser la cuenta CISZU ID registrada']}
-                />
-                {localError && <p className="text-red-400 text-[11px] font-bold">{localError}</p>}
-                {sent ? (
-                  <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-center">
-                    <p className="text-emerald-400 text-xs font-bold">Enlace enviado</p>
-                    <p className="text-gray-400 text-[10px] font-bold mt-1">Revisa tu bandeja de entrada o spam. El enlace es de un solo uso.</p>
+        {/* Libro de 2 caras: formulario (izquierda) + beneficios (derecha) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+          <div className="relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-brand-light to-neon-pink rounded-[2.5rem] blur opacity-20 transition duration-500" />
+            <div className="relative bg-[#070710]/95 border border-white/10 rounded-[2.5rem] p-8 md:p-10 space-y-6 backdrop-blur-2xl shadow-2xl">
+              {forgot ? (
+                <form onSubmit={handleForgotSubmit} className="space-y-5">
+                  <div className="text-center space-y-2">
+                    <h3 className="text-white font-black uppercase tracking-widest text-sm">Recuperar identidad</h3>
+                    <p className="text-gray-400 text-[10px] font-bold">Enviaremos un enlace temporal de un solo uso a tu email. Revisa tu bandeja o spam.</p>
                   </div>
-                ) : (
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full py-4 rounded-xl bg-gradient-to-r from-brand-light to-brand-accent text-black font-header font-black uppercase tracking-widest text-sm hover:brightness-110 hover:scale-[1.01] active:scale-[0.99] transition-all shadow-[0_0_20px_rgba(58,107,240,0.35)] disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {loading ? 'ENVIANDO…' : 'ENVIAR ENLACE'}
-                  </button>
-                )}
-                <button type="button" onClick={() => { setForgot(false); setSent(false); setLocalError(null); }}
-                  className="w-full text-[10px] text-gray-500 font-bold uppercase tracking-widest hover:text-white transition-all cursor-pointer">
-                  ← Volver al acceso normal
-                </button>
-              </form>
-            ) : (
-              <>
-                <form onSubmit={handleSubmit} className="space-y-5">
                   <AuthField
-                    label="Email"
+                    label="Email de la cuenta"
                     name="email"
                     icon={<span className="w-full h-full text-brand-light"><IconMail /></span>}
                     type="email"
                     placeholder="tu@email.com"
                     required
                     autoComplete="email"
-                    value={form.email}
-                    onChange={handleChange}
+                    value={forgotEmail}
+                    onChange={(e) => { setForgotEmail(e.target.value); setErrors(prev => ({ ...prev, email: '' })); }}
                     error={errors.email}
-                    requirements={['Formato de email válido (p. ej. nombre@dominio.com)']}
+                    requirements={['Formato de email válido (p. ej. nombre@dominio.com)', 'Debe ser la cuenta CISZU ID registrada']}
                   />
-                  <AuthField
-                    label="Contraseña"
-                    name="password"
-                    icon={<span className="w-full h-full text-brand-light"><IconLock /></span>}
-                    type="password"
-                    placeholder="••••••••"
-                    required
-                    autoComplete="current-password"
-                    value={form.password}
-                    onChange={handleChange}
-                    error={errors.password}
-                    requirements={['Mínimo 8 caracteres', 'Al menos 1 mayúscula', 'Al menos 1 minúscula', 'Al menos 1 número y 1 símbolo']}
-                  />
-
                   {localError && <p className="text-red-400 text-[11px] font-bold">{localError}</p>}
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full py-4 rounded-xl bg-gradient-to-r from-brand-light to-brand-accent text-black font-header font-black uppercase tracking-widest text-sm hover:brightness-110 hover:scale-[1.01] active:scale-[0.99] transition-all shadow-[0_0_20px_rgba(58,107,240,0.35)] disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {loading ? 'PROCESANDO…' : 'INICIAR SESIÓN'}
+                  {sent ? (
+                    <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-center">
+                      <p className="text-emerald-400 text-xs font-bold">Enlace enviado</p>
+                      <p className="text-gray-400 text-[10px] font-bold mt-1">Revisa tu bandeja de entrada o spam. El enlace es de un solo uso.</p>
+                    </div>
+                  ) : (
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full py-4 rounded-xl bg-gradient-to-r from-brand-light to-brand-accent text-black font-header font-black uppercase tracking-widest text-sm hover:brightness-110 hover:scale-[1.01] active:scale-[0.99] transition-all shadow-[0_0_20px_rgba(58,107,240,0.35)] disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {loading ? 'ENVIANDO…' : 'ENVIAR ENLACE'}
+                    </button>
+                  )}
+                  <button type="button" onClick={() => { setForgot(false); setSent(false); setLocalError(null); }}
+                    className="w-full text-[10px] text-gray-500 font-bold uppercase tracking-widest hover:text-white transition-all cursor-pointer">
+                    ← Volver al acceso normal
                   </button>
                 </form>
+              ) : (
+                <>
+                  <form onSubmit={handleSubmit} className="space-y-5">
+                    <AuthField
+                      label="Email"
+                      name="email"
+                      icon={<span className="w-full h-full text-brand-light"><IconMail /></span>}
+                      type="email"
+                      placeholder="tu@email.com"
+                      required
+                      autoComplete="email"
+                      value={form.email}
+                      onChange={handleChange}
+                      error={errors.email}
+                      requirements={['Formato de email válido (p. ej. nombre@dominio.com)']}
+                    />
+                    <AuthField
+                      label="Contraseña"
+                      name="password"
+                      icon={<span className="w-full h-full text-brand-light"><IconLock /></span>}
+                      type="password"
+                      placeholder="••••••••"
+                      required
+                      autoComplete="current-password"
+                      value={form.password}
+                      onChange={handleChange}
+                      error={errors.password}
+                      requirements={['Mínimo 8 caracteres', 'Al menos 1 mayúscula', 'Al menos 1 minúscula', 'Al menos 1 número y 1 símbolo']}
+                    />
 
-                <OAuthProviders
-                  onSelect={(p) => toast(`OAuth de ${p} disponible en futura versión beta`, 'warning')}
-                />
+                    {localError && <p className="text-red-400 text-[11px] font-bold">{localError}</p>}
 
-                <AuthSecondaryActions
-                  mode="login"
-                  onForgotPassword={() => setForgot(true)}
-                  registerHref="/register"
-                  supportHref="/support"
-                  linkClass="text-gray-300 hover:text-white transition-colors underline decoration-white/20 underline-offset-8"
-                />
-              </>
-            )}
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full py-4 rounded-xl bg-gradient-to-r from-brand-light to-brand-accent text-black font-header font-black uppercase tracking-widest text-sm hover:brightness-110 hover:scale-[1.01] active:scale-[0.99] transition-all shadow-[0_0_20px_rgba(58,107,240,0.35)] disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {loading ? 'PROCESANDO…' : 'INICIAR SESIÓN'}
+                    </button>
+                  </form>
+
+                  <OAuthProviders
+                    onSelect={(p) => toast(`OAuth de ${p} disponible en futura versión beta`, 'warning')}
+                  />
+
+                  <AuthSecondaryActions
+                    mode="login"
+                    onForgotPassword={() => setForgot(true)}
+                    registerHref="/register"
+                    supportHref="/support"
+                    linkClass="text-gray-300 hover:text-white transition-colors underline decoration-white/20 underline-offset-8"
+                  />
+                </>
+              )}
+            </div>
           </div>
+
+          {/* Lomo central del libro (solo escritorio) */}
+          <div className="relative hidden lg:block self-stretch">
+            <div className="absolute inset-y-2 left-0 w-px bg-gradient-to-b from-brand-light/50 via-white/10 to-neon-pink/50" />
+            <div className="absolute inset-y-2 -left-1.5 w-3 rounded-full opacity-50 bg-gradient-to-b from-brand-light to-neon-pink blur-[1px]" />
+          </div>
+
+          {/* Página derecha: beneficios */}
+          <AuthBenefitsPanel
+            badge="CISZU ID"
+            title="¿Por qué iniciar sesión?"
+            items={LOGIN_BENEFITS}
+            footerNote={LOGIN_FOOTER}
+            accent="#3a6bf0"
+            accentAlt="#f472b6"
+          />
         </div>
       </div>
     </div>

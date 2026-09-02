@@ -38,6 +38,24 @@ const sections = [
     ] as RichPart[],
   },
   {
+    id: 'ads-data', title: 'Data for Ad Recommendations',
+    content: [
+      { text: 'To recommend better ads we may use aggregate browsing and audience signals (pages visited, browser language, approximate region) collected by Google Analytics 4. This data is processed in an aggregated and anonymous way and is never used to identify a specific person beyond what is strictly necessary for the service. You can block analytics cookies from your browser or the site preferences.' },
+    ] as RichPart[],
+  },
+  {
+    id: 'geolocation', title: 'Geolocation',
+    content: [
+      { text: 'We may estimate your approximate location (region/country) from your IP address to: (1) serve content and ads relevant to your region, (2) comply with local legal requirements and (3) improve security (suspicious access detection). Precise (GPS) geolocation is only used when a feature explicitly requires it and with your consent; it is never used for advertising.' },
+    ] as RichPart[],
+  },
+  {
+    id: 'accounts', title: 'Accounts & Registration',
+    content: [
+      { text: 'Creating an account (CISZU ID) is optional and serves to sync your progress, profile and preferences across the ecosystem services. By creating an account you accept these policies, are responsible for keeping your credentials confidential and for the activity performed with your account. You can delete your account by contacting us; associated data will be removed unless legally required to retain it.' },
+    ] as RichPart[],
+  },
+  {
     id: 'legal', title: 'Legal Notice',
     content: [
       NETWORK_LINK,

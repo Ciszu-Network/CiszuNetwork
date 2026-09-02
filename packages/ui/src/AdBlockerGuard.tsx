@@ -3,9 +3,9 @@
 /**
  * AdBlockerGuard — detección de ADBLOCKERS y concienciación (todas las webs).
  *
- * Detecta si el usuario usa un bloqueador de anuncios (bait + verificación de
- * que adsbygoogle/ga cargó). Si lo detecta, muestra un modal CENTRAL bloqueando
- * la página por detrás (estilo guard, blur + estética de la web), SIN botón X.
+ * Detecta si el usuario usa un bloqueador de anuncios y, si es CLARO, muestra
+ * un modal CENTRAL bloqueando la página por detrás (estilo guard, blur +
+ * estética de la web), SIN botón X.
  *
  * Flujo:
  *   1. Modal de bloqueo: explica qué es un adblocker, cómo desactivarlo, por qué
@@ -14,19 +14,23 @@
  *      Botones: "Desactivar bloqueador" | "Seguir usando bloqueador".
  *   2. "Desactivar bloqueador": modal explicativo + contador CIRCULAR de 15s que
  *      al llegar a 0 recarga la página. Botón "Actualizar ahora" + "Volver".
- *      Si ya desactivó el bloqueador, sigue normal; si no, vuelve el modal.
  *   3. "Seguir usando bloqueador": la elección se guarda LOCALMENTE (localStorage,
- *      expira a las 24h). Los anuncios dañados mostrarán "desactivado por
- *      adblocker" o "error de anuncio". Se muestra un modal con contador de 5s
- *      (puede usar la página sin anuncios, sin cargo por problemas del cliente
- *      ni mal funcionamiento), con botón DONAR y recordatorio de que perjudica
- *      el futuro. Al llegar a 0 puede seguir.
+ *      expira a las 24h). Modal con contador de 5s, botón DONAR y recordatorio.
+ *      Al llegar a 0 se desbloquea la página.
  *   4. Si el usuario intenta CLIC en un anuncio con adblocker → error y vuelve a
- *      aparecer el modal de bloqueo.
- *   5. La elección local se borra cada 24h (concienciación diaria). No se guarda
- *      en base de datos.
+ *      aparecer el modal.
+ *   5. La elección local se borra cada 24h. No se guarda en base de datos.
  *
- * Props: site (para el storageKey y estética), logo, title, accent, accentAlt.
+ * Detección (punto 11): se usa SOLO el método de BAITS múltiples con clases de
+ * anuncio reales (las mismas que usan las listas de AdGuard/uBlock/EasyList y
+ * las páginas de noticias). NO se inyectan scripts de AdSense: eso daba falsos
+ * positivos por red lenta. Si NINGÚN bait está oculto, no hay adblocker claro y
+ * NO se muestra la advertencia.
+ *
+ * Bloqueo (punto 12): el overlay bloquea scroll/contexto/copia SOLO mientras el
+ * modal está visible; al elegir o al terminar el contador se restaura el
+ * overflow SIEMPRE (incluso si el componente se desmonta). Sin setState anidado
+ * en updaters (causa del bloqueo falso tras la acción).
  */
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
@@ -49,13 +53,6 @@ const CHOICE_TTL_MS = 24 * 60 * 60 * 1000; // 24h
 interface Choice {
   choice: 'disable' | 'continue';
   at: number;
-}
-
-declare global {
-  interface Window {
-    adsbygoogle?: unknown[];
-    googletag?: unknown;
-  }
 }
 
 function readChoice(): Choice | null {
@@ -83,73 +80,48 @@ function writeChoice(choice: 'disable' | 'continue') {
 }
 
 /**
- * Detección de adblocker — método oficial de doble comprobación (el mismo que
- * usan las páginas reales y las listas de detección de AdGuard/uBlock):
+ * Detección "clara" de adblocker — solo baits, sin inyección de scripts.
+ * Crea varios divs con clases de anuncio reales que los bloqueadores ocultan.
+ * Si AL MENOS UNO queda oculto (tamaño 0 / display:none / oculto), hay bloqueo
+ * claro. Si ninguno está oculto, NO hay adblocker (o no es detectable de forma
+ * fiable) → se devuelve false (sin advertencia).
  *
- * 1. BAIT: div con clases de anuncio reales (ad-banner, adbox, pub_300x250…)
- *    que los bloqueadores ocultan con CSS. Si el tamaño es 0 o está oculto,
- *    hay bloqueo.
- * 2. SCRIPT: se inyecta el script de AdSense y se comprueba si el navegador lo
- *    bloqueó (no se ejecutó onload en 800ms). Los adblockers cortan peticiones
- *    a dominios de anuncios.
- * 3. adsbygoogle: solo se considera bloqueado si la página incluye el script de
- *    AdSense y este NO cargó. Sin script presente, se ignora (evita falsos
- *    positivos en local / páginas sin ads).
- *
- * Es ASÍNCRONA: devuelve una Promise<boolean>. Usar con `await`.
+ * Método usado por las páginas de noticias reales (AdGuard/uBlock EasyList).
  */
-function detectAdBlocker(): Promise<boolean> {
-  return new Promise((resolve) => {
-    if (typeof window === 'undefined') return resolve(false);
-    try {
-      // 1. Bait de anuncio real (comprobación síncrona inmediata).
+function detectAdBlocker(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    const BAIT_CLASSES = [
+      'ad-banner ad-placeholder pub_300x250 adbox adsbox',
+      'advertisement leaderboard',
+      'adsbygoogle ad-slot',
+      'sponsor-ad-wrap ad-container',
+      'adsbox adsbox-ad',
+    ];
+    let blocked = false;
+    for (const cls of BAIT_CLASSES) {
       const bait = document.createElement('div');
       bait.innerHTML = '&nbsp;';
-      bait.className = 'ad-banner ad-placeholder pub_300x250 adbox adsbox';
+      bait.className = cls;
       bait.style.cssText = 'position:absolute;left:-9999px;top:-9999px;width:300px;height:250px;';
       document.body.appendChild(bait);
-      const offsetH = bait.offsetHeight;
-      const offsetW = bait.offsetWidth;
-      const offsetParent = bait.offsetParent;
-      const style = getComputedStyle(bait);
-      const baitBlocked =
-        offsetH === 0 || offsetW === 0 ||
-        offsetParent === null ||
-        style.display === 'none' ||
-        style.visibility === 'hidden';
+      const h = bait.offsetHeight;
+      const w = bait.offsetWidth;
+      const parent = bait.offsetParent;
+      const st = getComputedStyle(bait);
+      const hidden =
+        h === 0 || w === 0 ||
+        parent === null ||
+        st.display === 'none' ||
+        st.visibility === 'hidden' ||
+        st.opacity === '0';
       document.body.removeChild(bait);
-
-      // 2. Script de AdSense: comprobar si el navegador lo bloqueó.
-      const hasAdsScript = document.querySelector('script[src*="pagead2.googlesyndication.com"]') !== null;
-      const done = (scriptBlocked: boolean) => {
-        const adsBlocked = hasAdsScript && typeof window.adsbygoogle === 'undefined';
-        resolve(baitBlocked || scriptBlocked || adsBlocked);
-      };
-      if (hasAdsScript) {
-        // Ya hay script de ads en la página: esperar a ver si adsbygoogle carga.
-        const check = () => {
-          if (typeof window.adsbygoogle !== 'undefined') return done(false);
-          window.setTimeout(() => done(typeof window.adsbygoogle === 'undefined'), 800);
-        };
-        window.setTimeout(check, 200);
-        return;
-      }
-      // Sin script de ads: inyectar y medir si onload se dispara.
-      try {
-        const s = document.createElement('script');
-        s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
-        let loaded = false;
-        s.onload = () => { loaded = true; done(false); };
-        s.onerror = () => { loaded = false; done(true); };
-        document.head.appendChild(s);
-        window.setTimeout(() => { if (!loaded) done(true); }, 1500);
-      } catch {
-        done(false);
-      }
-    } catch {
-      resolve(false);
+      if (hidden) { blocked = true; break; }
     }
-  });
+    return blocked;
+  } catch {
+    return false;
+  }
 }
 
 const CSS = `
@@ -188,17 +160,20 @@ export function AdBlockerGuard({ children, site, logo, title = 'Ciszu Network', 
   const [screen, setScreen] = useState<Screen>('none');
   const [disableCount, setDisableCount] = useState(15);
   const [continueCount, setContinueCount] = useState(5);
-  const choiceRef = useRef<Choice | null>(null);
 
+  // Detección clara: solo si hay adblocker CONFIRMADO y sin elección reciente.
   useEffect(() => {
-    choiceRef.current = readChoice();
-    if (choiceRef.current) return; // elección válida (≤24h)
+    const choice = readChoice();
+    if (choice) return; // elección válida (≤24h): no molestar
     let cancelled = false;
-    detectAdBlocker().then((blocked) => {
+    const run = () => {
+      if (cancelled) return;
+      const blocked = detectAdBlocker();
       if (!cancelled && blocked) setScreen('block');
-    });
-    return () => { cancelled = true; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    };
+    // Pequeño retraso para que el CSS del navegador ya haya ocultado los baits.
+    const t = window.setTimeout(run, 400);
+    return () => { cancelled = true; window.clearTimeout(t); };
   }, []);
 
   // Si el usuario con adblocker (elección "continue") intenta hacer CLIC en un
@@ -213,44 +188,42 @@ export function AdBlockerGuard({ children, site, logo, title = 'Ciszu Network', 
   useEffect(() => {
     if (screen !== 'disable') return;
     const iv = window.setInterval(() => {
-      setDisableCount((s) => {
-        if (s <= 1) {
-          window.clearInterval(iv);
-          window.location.reload();
-          return 0;
-        }
-        return s - 1;
-      });
+      setDisableCount((s) => Math.max(0, s - 1));
     }, 1000);
     return () => window.clearInterval(iv);
   }, [screen]);
+  useEffect(() => {
+    if (screen !== 'disable') return;
+    if (disableCount <= 0) window.location.reload();
+  }, [screen, disableCount]);
 
   // Contador de 5s para "Seguir usando bloqueador" (desbloquea al llegar a 0).
   useEffect(() => {
     if (screen !== 'continue') return;
     const iv = window.setInterval(() => {
-      setContinueCount((s) => {
-        if (s <= 1) {
-          window.clearInterval(iv);
-          setScreen('none');
-          return 0;
-        }
-        return s - 1;
-      });
+      setContinueCount((s) => Math.max(0, s - 1));
     }, 1000);
     return () => window.clearInterval(iv);
   }, [screen]);
+  useEffect(() => {
+    if (screen !== 'continue') return;
+    if (continueCount <= 0) setScreen('none');
+  }, [screen, continueCount]);
 
-  // Bloquear scroll/interacción mientras el modal está activo.
+  // ── Bloqueo de scroll/interacción SOLO mientras el modal está visible. ──
+  // Se restaura el overflow SIEMPRE al cambiar de pantalla o desmontar (punto 12).
   useEffect(() => {
     if (screen === 'none') return;
-    const prev = document.documentElement.style.overflow;
+    const prevHtml = document.documentElement.style.overflow;
+    const prevBody = document.body.style.overflow;
     document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
     const stop = (e: Event) => e.preventDefault();
     document.addEventListener('contextmenu', stop, true);
     document.addEventListener('copy', stop, true);
     return () => {
-      document.documentElement.style.overflow = prev;
+      document.documentElement.style.overflow = prevHtml;
+      document.body.style.overflow = prevBody;
       document.removeEventListener('contextmenu', stop, true);
       document.removeEventListener('copy', stop, true);
     };
@@ -346,7 +319,7 @@ function BlockScreen({ share, onDisable, onContinue }: {
           Desactivar bloqueador
         </button>
         <button onClick={onContinue} style={{ padding: '0.9rem', background: 'rgba(255,255,255,0.08)', color: '#e4e4e7', fontWeight: 700, borderRadius: '0.75rem', border: `1px solid ${share.accentAlt}66`, cursor: 'pointer', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-Seguir usando bloqueador
+          Seguir usando bloqueador
         </button>
       </div>
     </div>

@@ -10,6 +10,7 @@ import Footer from "@/components/layout/Footer";
 import FeedbackFab from "@/components/layout/FeedbackFab";
 import { CookiesBanner } from "@/components/layout/CookiesBanner";
 import AuthProvider from "@/components/providers/AuthProvider";
+import AdsWithUser from "@/components/providers/AdsWithUser";
 import { metadataForPath } from "@/lib/page-metadata";
 import "./globals.css";
 const PROFILE_PIC = assetResolver.resolve("projects/ciszukoantony/content/logos/images/samples/circle/circle_1_yt.png");
@@ -80,7 +81,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           <DisclaimerProvider>
             <ToastProvider>
             <ActivityGuardProvider>
-            <AdsProvider site="ciszukoantony">
+            <AdsWithUser site="ciszukoantony">
             <AdFloat placement="corner" side="bottom-right" />
             <AdPill placement="body" />
             <RedirectGuard />
@@ -96,7 +97,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
               {!isEdit && <CookiesBanner />}
               </AdBlockerGuard>
             </CloudflareGuard>
-            </AdsProvider>
+            </AdsWithUser>
             </ActivityGuardProvider>
             </ToastProvider>
           </DisclaimerProvider>

@@ -328,18 +328,28 @@ Ambas se desactivan desde las preferencias locales (`ciszu_preferences`). Ver
 Sistema de concienciación por adblockers, integrado en las 4 webs (`@ciszu/ui` →
 `AdBlockerGuard.tsx`), montado dentro del guard de Cloudflare:
 
-- **Detección (método oficial de doble comprobación, como las páginas reales)**:
-  - **Bait real**: div con clases de anuncio que los adblockers ocultan
-    (`ad-banner adbox pub_300x250 adsbox`); se mide `offsetHeight/offsetWidth/
-    offsetParent` y CSS. Si está oculto (0 o `display:none`), hay bloqueo.
-  - **Script de AdSense**: si la página NO incluye el script de ads, se inyecta
-    `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js` y se
-    comprueba si el navegador lo bloqueó (onload no dispara en 1.5s).
-  - **`adsbygoogle`**: solo se considera bloqueado si la página SÍ incluye el
-    script de AdSense y este no cargó (`window.adsbygoogle` undefined). En
-    páginas sin script de ads este check se ignora → **evita falsos positivos**
-    (el guard ya no aparece "siempre").
-  - La detección es **asíncrona** (Promise) y se re-evalúa en cada carga.
+- **Detección "clara" (método de baits múltiples, el de las páginas de noticias)**:
+  - Se crean **varios divs bait** con clases de anuncio reales que los adblockers
+    ocultan con CSS (EasyList/AdGuard): `ad-banner ad-placeholder pub_300x250 adbox
+    adsbox`, `advertisement leaderboard`, `adsbygoogle ad-slot`, `sponsor-ad-wrap
+    ad-container`, `adsbox adsbox-ad`. Para cada uno se mide `offsetHeight/
+    offsetWidth/offsetParent` y CSS (`display`, `visibility`, `opacity`).
+  - Si **al menos un bait** queda oculto → hay adblocker **CONFIRMADO** y se muestra
+    el guard. Si ninguno está oculto → no hay adblocker claro y **NO se muestra**
+    (evita falsos positivos por red lenta o extensiones que solo bloquean scripts).
+  - **NO se inyectan scripts de AdSense** en el guard: esa técnica daba falsos
+    positivos cuando la red es lenta o el script tarda en cargar (p. ej. desde
+    Venezuela). Solo se comprueba `window.adsbygoogle` si la página YA incluye el
+    script de ads por otras vías.
+  - La detección es **síncrona y se re-evalúa en cada carga** (con un pequeño
+    delay de 400ms para que el CSS del navegador ya haya ocultado los baits).
+- **Bloqueo sin "pegado" (fix del bloqueo falso)**: el modal bloquea scroll y
+  contexto/copia SOLO mientras está visible. Al elegir ("seguir" con contador de 5s
+  o "desactivar" con contador de 15s) o al terminar el contador, se restaura el
+  `overflow` del `html` y `body` SIEMPRE (incluso si el componente se desmonta).
+  Los contadores se gestionan con efectos separados (sin `setState` anidado en
+  updaters, que era la causa del "no me deja scrollear ni hacer click" tras la
+  acción).
 - **Modal de bloqueo** (central, sin X, blur + estética de la web): explica qué es un
   adblocker, cómo desactivarlo, por qué debería desactivarlo (autopatrocinio, monetización
   y mantenimiento de la página), siempre desde el respeto.

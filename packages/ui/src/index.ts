@@ -114,6 +114,8 @@ export { default as CiszuIdBrand, BrandX } from './auth/CiszuIdBrand';
 export type { CiszuIdBrandProps } from './auth/CiszuIdBrand';
 export { default as AuthSecondaryActions } from './auth/AuthSecondaryActions';
 export type { AuthSecondaryActionsProps } from './auth/AuthSecondaryActions';
+export { default as AuthBenefitsPanel } from './auth/AuthBenefits';
+export type { AuthBenefitsPanelProps, AuthBenefit } from './auth/AuthBenefits';
 export { default as PreferencesModal } from './auth/PreferencesModal';
 export type { PreferencesModalProps } from './auth/PreferencesModal';
 // LanguagesModal: selector de idioma en modal centrado (preferencias locales, misma lista que el hamburguesa)

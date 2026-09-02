@@ -10,6 +10,7 @@ import { Footer } from "@/components/layout/Footer";
 import { CookiesBanner } from "@/components/layout/CookiesBanner";
 import FeedbackFab from "@/components/layout/FeedbackFab";
 import AuthProvider from "@/components/providers/AuthProvider";
+import AdsWithUser from "@/components/providers/AdsWithUser";
 import { CISZU_NETWORK } from "@/config/site";
 import "./globals.css";
 
@@ -91,7 +92,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <AuthProvider>
           <ToastProvider>
           <ActivityGuardProvider>
-          <AdsProvider site="ciszunetwork">
+          <AdsWithUser site="ciszunetwork">
           <AdFloat placement="corner" side="bottom-right" />
           <AdPill placement="body" />
           <RedirectGuard />
@@ -109,7 +110,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
               </AdBlockerGuard>
             </CloudflareGuard>
           </DisclaimerProvider>
-          </AdsProvider>
+          </AdsWithUser>
           </ActivityGuardProvider>
           </ToastProvider>
           <GlobalAdvisor site="ciszu" />

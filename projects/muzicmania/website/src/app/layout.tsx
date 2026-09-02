@@ -6,6 +6,7 @@ import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import "./globals.css";
 import AuthProvider from "@/components/providers/AuthProvider";
+import AdsWithUser from "@/components/providers/AdsWithUser";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
@@ -78,7 +79,7 @@ export default async function RootLayout({
         <AuthProvider>
           <ToastProvider>
           <ActivityGuardProvider>
-          <AdsProvider site="muzicmania">
+          <AdsWithUser site="muzicmania">
           <AdFloat placement="corner" side="bottom-right" />
           <AdPill placement="body" />
           <RedirectGuard />
@@ -101,7 +102,7 @@ export default async function RootLayout({
               </AdBlockerGuard>
             </CloudflareGuard>
           </DisclaimerProvider>
-          </AdsProvider>
+          </AdsWithUser>
           </ActivityGuardProvider>
           </ToastProvider>
         </AuthProvider>

@@ -85,6 +85,9 @@ export interface AdsProviderProps {
   authenticated?: boolean;
   /** true si el usuario es premium (suscripción futura): sin anuncios. */
   premium?: boolean;
+  /** UUID del usuario autenticado (CISZU ID). Se registra en ads_impressions para
+   *  saber cuántos anuncios ha visto cada usuario registrado (punto 4 del sistema ADS). */
+  userId?: string | null;
 }
 
 interface RewardStatus { canClaim: boolean; remainingSec: number }
@@ -379,7 +382,7 @@ function isAdBlockContinue(): boolean {
 // ---------- Registro de impresión en DB (telemetría del sistema ADS) ----------
 const ADS_IMPRESSION_URL = 'https://ciszunetwork.vercel.app/api/ads/impression';
 let adsImpressionBusy = false;
-function recordImpression(site: string, ad: AdConfig) {
+function recordImpression(site: string, ad: AdConfig, userId?: string | null) {
   if (typeof window === 'undefined' || adsImpressionBusy) return;
   adsImpressionBusy = true;
   fetch(ADS_IMPRESSION_URL, {
@@ -390,6 +393,7 @@ function recordImpression(site: string, ad: AdConfig) {
       ad_id: ad.id,
       ad_type: ad.type,
       ad_source: ad.content.source ?? 'external',
+      user_id: userId ?? null,
     }),
   }).catch(() => { /* telemetría no bloqueante: ignora fallos de red */ }).finally(() => {
     adsImpressionBusy = false;
@@ -519,7 +523,7 @@ export function clearAdsDebug() {
   try { window.localStorage.removeItem(ADS_DEBUG_KEY); } catch { /* ignora */ }
 }
 
-export function AdsProvider({ site, children, catalog = DEFAULT_AD_CATALOG, authenticated = false, premium = false }: AdsProviderProps) {
+export function AdsProvider({ site, children, catalog = DEFAULT_AD_CATALOG, authenticated = false, premium = false, userId = null }: AdsProviderProps) {
   const [current, setCurrent] = useState<AdConfig | null>(null);
   const [floatingActive, setFloatingActive] = useState(false);
   const dismissedRef = useRef<Record<string, true>>({});
@@ -653,8 +657,8 @@ const markSeen = useCallback((id: string) => {
     seenRef.current[id] = Date.now();
     writeJson(sKey, seenRef.current);
     const ad = effective.find((a) => a.id === id);
-    if (ad) recordImpression(site, ad);
-  }, [sKey, effective, site]);
+    if (ad) recordImpression(site, ad, userId);
+  }, [sKey, effective, site, userId]);
 
 const show = useCallback((id: string): AdConfig | null => {
     // Periodo de gracia 10s: se ignora si el debug local (devcon) está activo
@@ -760,6 +764,14 @@ const clearCurrent = useCallback(() => {
     setCurrent(null);
     setFloatingActive(false);
   }, []);
+
+  // Escucha el evento 'ciszu:ads:clear' (devcon / debug local) para limpiar
+  // los anuncios en pantalla al instante. Un POST a /api/ads/clear lo dispara.
+  useEffect(() => {
+    const onClear = () => clearCurrent();
+    window.addEventListener('ciszu:ads:clear', onClear);
+    return () => window.removeEventListener('ciszu:ads:clear', onClear);
+  }, [clearCurrent]);
 
   const value = useMemo<AdsContextValue>(
     () => ({ site, catalog: effective, current, show, trigger, dismiss, rewardStatus, claimReward, floatingActive, setFloatingActive, getNextPeriodicAdIn, isInactive, clearCurrent }),
@@ -1059,7 +1071,7 @@ function NextAdCountdown() {
   const s = Math.ceil(nextMs / 1000);
 
   return createPortal(
-    <div className="fixed bottom-2 left-2 z-[20]">
+    <div className="fixed bottom-2 left-2 z-[50]">
       <style>{ADS_CSS}</style>
       <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-1 text-[10px] text-neutral-400 backdrop-blur-sm" style={{ animation: 'ciszu-ad-shrink .25s ease-out' }}>
         <NextArrowIcon />
@@ -1084,7 +1096,7 @@ function NextAdHint({ msUntil, now, pos, onNow }: { msUntil: number; now: number
   const hintMs = msUntil > 0 ? msUntil : 0;
   if (hintMs <= 0 || hintMs > 120000) return null;
   return createPortal(
-    <div className="fixed z-[20]" style={pos}>
+    <div className="fixed z-[50]" style={pos}>
       <style>{ADS_CSS}</style>
       <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-1.5 text-[10px] text-neutral-400 backdrop-blur-sm" style={{ animation: 'ciszu-ad-shrink .25s ease-out' }}>
         <NextArrowIcon />
@@ -1217,3 +1229,4 @@ const pos = side === 'top-center' ? { top: 12, left: '50%', transform: 'translat
     document.body
   );
 }
+
