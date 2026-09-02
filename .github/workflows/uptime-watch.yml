@@ -38,4 +38,4 @@ jobs:
         env:
           UPTIMEROBOT_API_KEY: ${{ secrets.UPTIMEROBOT_API_KEY }}
           NOTIFY_TOPIC: ${{ secrets.NOTIFY_TOPIC }}
-        run: node scripts/uptime-watch.js
+        run: node .github/scripts/uptime-watch.js

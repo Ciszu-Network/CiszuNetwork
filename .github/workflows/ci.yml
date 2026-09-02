@@ -237,12 +237,12 @@ jobs:
       - run: pnpm install --frozen-lockfile
       # El spec usa la fixture `request` (sin navegador) → no hace falta
       # `npx playwright install` en este job.
-      - name: Security E2E contra producción
-        run: pnpm exec playwright test test/website/e2e/security.spec.ts --reporter=line
+- name: Security E2E contra producción
+        run: pnpm exec playwright test .github/e2e/security.spec.ts --reporter=line
       - name: Subir reporte
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: security-e2e-report
-          path: test/website/e2e/reports/
+          path: .github/e2e/reports/
           retention-days: 14

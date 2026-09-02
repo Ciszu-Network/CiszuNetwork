@@ -22,17 +22,17 @@ const launchOptions = existsSync(OPERA_GX) ? { executablePath: OPERA_GX } : {};
 // E2E (Fase 3 del plan TESTING.md): smoke tests contra los sitios en producción.
 // Ejecutar con: pnpm e2e
 export default defineConfig({
-  testDir: './test/website/e2e',
+  testDir: './.github/e2e',
   timeout: 90_000,
   fullyParallel: true,
   workers: 2,
   retries: 1,
-  outputDir: './test/website/e2e/reports/test-results',
+  outputDir: './.github/e2e/reports/test-results',
   reporter: [
     ['list'],
     [
       'html',
-      { open: 'never', outputFolder: './test/website/e2e/reports/playwright' },
+      { open: 'never', outputFolder: './.github/e2e/reports/playwright' },
     ],
   ],
   use: {

@@ -1,8 +1,8 @@
 # Contribución a Ciszu Network
 
-¡Gracias por tu interés en contribuir a **Ciszu Network**! Este repositorio es un **monorepo** con 4 webs (Next.js 15 + Tailwind 4), un bot de Discord (Discord.js), un juego de música (web + app Tauri), paquetes compartidos y el CDN de assets sobre Supabase Storage. Este documento establece las pautas para colaborar de forma ordenada.
+¡Gracias por tu interés en contribuir a **Ciszu Network**! Este repositorio es un **monorepo** con webs (Next.js 15 + Tailwind 4), un bot de Discord (Discord.js), un juego de música (web + app Tauri), la comunidad CiszuGamens, paquetes compartidos y el CDN de assets sobre Supabase Storage. Este documento establece las pautas para colaborar de forma ordenada.
 
-> **Importante**: el repositorio es **privado**. Cualquier credencial (Supabase, Vercel, Discord, tokens) filtrada en un PR será rechazada y rotada. Revisa `AGENTS.md` antes de empezar.
+> **Importante**: el repositorio es **público**. Cualquier credencial (Supabase, Vercel, Discord, tokens) filtrada en un PR será rechazada y rotada. Revisa las guías de contribución antes de empezar.
 
 ---
 
@@ -19,7 +19,7 @@ Puedes ayudar de diversas maneras:
 - Reportando errores (*bugs*) abriendo un *Issue*.
 - Proponiendo nuevas funcionalidades o mejoras en la arquitectura.
 - Resolviendo *issues* abiertos o enviando *Pull Requests* (PR).
-- Mejorando la documentación (`README.md`, `AGENTS.md`, `projects/*/docs/`).
+- Mejorando la documentación (`README.md`, `projects/*/docs/`).
 
 ---
 
@@ -89,10 +89,11 @@ pnpm --filter <nombre> dev # probar tu app individualmente
 ## 5. Recursos de referencia
 
 - `README.md` — estructura, quick start, CDN, Supabase, CI/CD.
-- `AGENTS.md` — gestión del multiworkspace, gotchas y checklist de implementación.
 - `projects/ciszu/docs/documentation/CODE_PRINCIPLES.md` — estándares de ingeniería (DRY, KISS, SOLID…).
 - `projects/ciszu/docs/documentation/DEVSECOPS.md` — SAST/DAST, shift-left y herramientas.
 - `apis/bruno/` — colecciones API (OpenCollection YAML): `pnpm api:test`.
+
+> Nota: las guías internas de operación del creador no se publican en el repo público.
 
 ---
 
