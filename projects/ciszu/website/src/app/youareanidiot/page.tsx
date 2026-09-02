@@ -1,13 +1,4 @@
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "You are an idiot",
-  robots: { index: false, follow: false, nocache: true },
-};
-
-export default function YouAreAnIdiotPage() {
-  return <YouAreAnIdiot />;
-}
+"use client";
 
 import { useEffect, useRef, useState } from "react";
 
@@ -20,7 +11,7 @@ const PHRASES = [
   "you are an idiot",
 ];
 
-function YouAreAnIdiot() {
+export default function YouAreAnIdiotPage() {
   const [bg, setBg] = useState("#ff0000");
   const [faceIdx, setFaceIdx] = useState(0);
   const [phrase, setPhrase] = useState(PHRASES[0]);
