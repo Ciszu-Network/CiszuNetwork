@@ -23,7 +23,7 @@ TEMAS DISPONIBLES:
 GUÍA RÁPIDA:
 1. Explora los proyectos en projects/ del monorepo
 2. Revisa la documentación en docs/ de cada proyecto
-3. Para contribuir, lee AGENTS.md en la raíz
+3. Para contribuir, lee README.md en la raíz y las guías del proyecto
 
 
 ---
@@ -43,4 +43,4 @@ AVAILABLE TOPICS:
 QUICK GUIDE:
 1. Explore the projects in projects/ of the monorepo
 2. Review the documentation in docs/ of each project
-3. To contribute, read AGENTS.md at the root
+3. To contribute, read README.md at the root and the project guides
