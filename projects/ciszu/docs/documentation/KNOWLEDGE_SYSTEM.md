@@ -44,6 +44,12 @@ como `EF_ENGLISH_ASSESSMENT_URL` y `SIMPLILEARN_ENGLISH_URL` y se resuelven al v
   oficial (CEFR). URL en vault (`EF_ENGLISH_ASSESSMENT_URL`).
 - **Simplilearn**: curso de inglés de la plataforma Simplilearn. URL en vault
   (`SIMPLILEARN_ENGLISH_URL`).
+- **Página pública `/cursos`**: la web de Ciszu Network expone el catálogo de cursos
+  en `projects/ciszu/website/src/app/cursos/page.tsx` (rutas `/cursos`, enlazada en
+  navbar y sitemap). El primer curso (único por ahora) es el de INGLÉS con EF SET;
+  el enlace del curso (URL pública de activación) vive como constante en la página
+  y abre en otra pestaña (`target="_blank"`). La URL oficial se mantiene también en
+  el vault (`EF_ENGLISH_ASSESSMENT_URL`) como fuente de verdad.
 - Protocolo: usar las variables del vault al ejecutar las tareas de formación; nunca
   compartir estos enlaces públicamente (son de activación única/vinculados a la cuenta).
 
