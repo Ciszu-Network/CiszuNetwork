@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 import AuthFeedback from '@/components/molecules/AuthFeedback';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
-import { AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders, useToast } from '@ciszu/ui';
+import { AuthBenefitsPanel, AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders, useToast } from '@ciszu/ui';
 
 // --- Icons Library ---
 const I = {
@@ -28,6 +28,32 @@ const I = {
   badge: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M12 15v5s3-1.5 5-5V7a2 2 0 0 0-2-2h-6a2 2 0 0 0-2 2v8c2 3.5 5 5 5 5z"/></svg>,
   eye: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>,
 };
+
+// Beneficios "libro de 2 caras" (punto 5 de la tarea de anuncios).
+const REGISTER_BENEFITS = [
+  {
+    icon: <span className="w-full h-full text-neon-purple"><svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span>,
+    title: 'Menos anuncios',
+    description: 'Al registrarte quitamos los anuncios de footer y reducimos la frecuencia del resto. Más ritmo, menos interrupciones.',
+  },
+  {
+    icon: <span className="w-full h-full text-neon-cyan"><svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.7-9h1.8a4.5 4.5 0 1 1 0 9z"/></svg></span>,
+    title: 'Guarda tu progreso',
+    description: 'Scores, partidas y preferencias sincronizados en la nube entre todos tus dispositivos.',
+  },
+  {
+    icon: <span className="w-full h-full text-neon-pink"><svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg></span>,
+    title: 'Recompensas y VIP futuro',
+    description: 'Acceso a recompensas y, próximamente, a un rango VIP que quita los anuncios por completo.',
+  },
+  {
+    icon: <span className="w-full h-full text-neon-blue"><svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><circle cx="7.5" cy="15.5" r="4.5"/><path d="M10.7 12.3L21 2"/><path d="M17 6l3 3"/></svg></span>,
+    title: 'Un solo CISZU ID',
+    description: 'Una cuenta para todas las webs del ecosistema: Ciszu Network, CiszukoAntony, MuzicMania y CiszuBot.',
+  },
+];
+
+const REGISTER_FOOTER = 'Crear tu cuenta es gratis. Usamos tus datos para personalizar anuncios y darte menos publicidad — consulta nuestras políticas en Ciszu Network.';
 
 const InputField = ({ label, name, icon, type = "text", placeholder, maxLength, required = false, isOptional = false, value, error, onChange, onBlur, options }: any) => {
   return (
@@ -313,8 +339,9 @@ export default function RegisterPage() {
           initial="hidden" 
           animate="visible" 
           variants={sectionVariants}
-          className="max-w-2xl mx-auto relative group"
+          className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-start"
         >
+          <div className="relative group">
           <div className="absolute -inset-1 bg-gradient-to-r from-neon-purple to-neon-pink rounded-[3rem] blur opacity-20 transition duration-500" />
           <div className="relative p-6 md:p-10 bg-doc-dark border border-white/10 rounded-[3rem] shadow-2xl space-y-6 backdrop-blur-3xl">
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -426,6 +453,23 @@ export default function RegisterPage() {
               supportHref="/support"
             />
           </div>
+          </div>
+
+          {/* Lomo central del libro (solo escritorio) */}
+          <div className="relative hidden lg:block self-stretch">
+            <div className="absolute inset-y-2 left-0 w-px bg-gradient-to-b from-neon-purple/50 via-white/10 to-neon-pink/50" />
+            <div className="absolute inset-y-2 -left-1.5 w-3 rounded-full opacity-50 bg-gradient-to-b from-neon-purple to-neon-pink blur-[1px]" />
+          </div>
+
+          {/* Página derecha: beneficios */}
+          <AuthBenefitsPanel
+            badge="CISZU ID"
+            title="¿Por qué crear tu cuenta?"
+            items={REGISTER_BENEFITS}
+            footerNote={REGISTER_FOOTER}
+            accent="#a855f7"
+            accentAlt="#f472b6"
+          />
         </motion.section>
 
       </div>

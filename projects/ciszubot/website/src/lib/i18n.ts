@@ -316,6 +316,14 @@ export const dict = {
           h: 'anuncios',
           p: 'CiszuBot muestra anuncios propios (promoción del ecosistema Ciszu Network) y, en el futuro, de terceros. Todos los anuncios son opcionales y cerrables, con temporizador visible y enlace a estas políticas. Las impresiones, clics y cierres se miden de forma agregada (Google Analytics 4) para mejorar la relevancia; nunca vinculamos anuncios a datos sensibles. Puedes gestionar o bloquear las cookies de análisis desde tu navegador.',
         },
+        {
+          h: 'Datos para recomendación de anuncios',
+          p: 'Para recomendar mejores anuncios podemos usar señales de audiencia agregadas (páginas visitadas, idioma del navegador, región aproximada) recogidas por Google Analytics 4. Estos datos se tratan de forma agregada y anónima; no se utilizan para identificar a una persona concreta más allá de lo necesario para el servicio. Puedes bloquear las cookies de análisis desde tu navegador o desde las preferencias del sitio.',
+        },
+        {
+          h: 'Geolocalización',
+          p: 'Podemos estimar tu ubicación aproximada (región/país) a partir de tu dirección IP para ofrecer contenido y anuncios relevantes a tu región, cumplir requisitos legales locales y mejorar la seguridad. La geolocalización precisa (GPS) solo se utiliza si una funcionalidad lo requiere explícitamente y con tu consentimiento; nunca se usa para anuncios.',
+        },
       ],
     },
     privacyPage: {
@@ -622,6 +630,14 @@ export const dict = {
         {
           h: 'anuncios',
           p: 'CiszuBot displays its own ads (promotion of the Ciszu Network ecosystem) and, in the future, third-party ads. All ads are optional and closable, with a visible countdown timer and a link to these policies. Impressions, clicks and dismissals are measured in aggregate (Google Analytics 4) to improve relevance; we never link ads to sensitive data. You can manage or block analytics cookies from your browser.',
+        },
+        {
+          h: 'Data for ad recommendations',
+          p: 'To recommend better ads we may use aggregate audience signals (pages visited, browser language, approximate region) collected by Google Analytics 4. This data is processed in an aggregated and anonymous way and is never used to identify a specific person beyond what is strictly necessary for the service. You can block analytics cookies from your browser or site preferences.',
+        },
+        {
+          h: 'Geolocation',
+          p: 'We may estimate your approximate location (region/country) from your IP address to serve content and ads relevant to your region, comply with local legal requirements and improve security. Precise (GPS) geolocation is only used when a feature explicitly requires it and with your consent; it is never used for advertising.',
         },
       ],
     },

@@ -12,7 +12,7 @@ import AuthFeedback from '@/components/molecules/AuthFeedback';
 import { usePageTitle } from '@/lib/usePageTitle';
 import Image from 'next/image';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
-import { AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders, useToast } from '@ciszu/ui';
+import { AuthBenefitsPanel, AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders, useToast } from '@ciszu/ui';
 
 // --- Icons Library ---
 const I = {
@@ -22,6 +22,27 @@ const I = {
   user: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
   shield: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
 };
+
+// Beneficios "libro de 2 caras" (punto 5 de la tarea de anuncios).
+const LOGIN_BENEFITS = [
+  {
+    icon: <span className="w-full h-full text-neon-blue"><svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span>,
+    title: 'Menos anuncios',
+    description: 'Al iniciar sesión quitamos los anuncios de footer y reducimos la frecuencia del resto. Más ritmo, menos interrupciones.',
+  },
+  {
+    icon: <span className="w-full h-full text-neon-cyan"><svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.7-9h1.8a4.5 4.5 0 1 1 0 9z"/></svg></span>,
+    title: 'Guarda tu progreso',
+    description: 'Scores, partidas y preferencias sincronizados en la nube entre todos tus dispositivos.',
+  },
+  {
+    icon: <span className="w-full h-full text-neon-purple"><svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg></span>,
+    title: 'Recompensas y VIP futuro',
+    description: 'Los usuarios registrados podrán optar a recompensas y, próximamente, a un rango VIP que quita los anuncios.',
+  },
+];
+
+const LOGIN_FOOTER = 'Iniciar sesión es gratis. Usamos tus datos para personalizar anuncios y ofrecerte menos publicidad — consulta nuestras políticas en Ciszu Network.';
 
 const InputField = ({ label, name, icon, type = "text", placeholder, maxLength, required = false, value, error, onChange, onBlur }: any) => {
   return (
@@ -336,8 +357,9 @@ export default function LoginPage() {
           initial="hidden" 
           animate="visible" 
           variants={sectionVariants}
-          className="max-w-md mx-auto relative group"
+          className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-start"
         >
+          <div className="relative group">
           <div className="absolute -inset-1 bg-gradient-to-r from-neon-blue to-neon-purple rounded-[3rem] blur opacity-20 transition duration-500" />
           <div className="relative p-8 md:p-10 bg-doc-dark border border-white/10 rounded-[3rem] shadow-2xl space-y-6 backdrop-blur-3xl">
             <form onSubmit={isForgotPassword ? handleForgotPasswordSubmit : handleSubmit} className="space-y-6">
@@ -418,6 +440,23 @@ export default function LoginPage() {
               </>
             )}
           </div>
+          </div>
+
+          {/* Lomo central del libro (solo escritorio) */}
+          <div className="relative hidden lg:block self-stretch">
+            <div className="absolute inset-y-2 left-0 w-px bg-gradient-to-b from-neon-blue/50 via-white/10 to-neon-purple/50" />
+            <div className="absolute inset-y-2 -left-1.5 w-3 rounded-full opacity-50 bg-gradient-to-b from-neon-blue to-neon-purple blur-[1px]" />
+          </div>
+
+          {/* Página derecha: beneficios */}
+          <AuthBenefitsPanel
+            badge="CISZU ID"
+            title="¿Por qué iniciar sesión?"
+            items={LOGIN_BENEFITS}
+            footerNote={LOGIN_FOOTER}
+            accent="#22d3ee"
+            accentAlt="#a855f7"
+          />
         </motion.section>
 
       </div>

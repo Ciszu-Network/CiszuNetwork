@@ -14,6 +14,7 @@ import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
 import { getSessionData } from "@/lib/auth";
 import QueryProvider from "@/components/layout/QueryProvider";
 import AuthProvider from "@/components/providers/AuthProvider";
+import AdsWithUser from "@/components/providers/AdsWithUser";
 import "./globals.css";
 
 const inter = Inter({
@@ -82,7 +83,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             <AuthProvider>
               <ToastProvider>
               <ActivityGuardProvider>
-              <AdsProvider site="ciszubot">
+              <AdsWithUser site="ciszubot">
               <AdFloat placement="corner" side="bottom-right" />
               <AdPill placement="body" />
               <RedirectGuard />
@@ -96,7 +97,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
               {!isEdit && <Footer lang={lang} dict={dict} />}
               {!isEdit && <CookiesBanner lang={lang} dict={dict} />}
               </DisclaimerProvider>
-              </AdsProvider>
+              </AdsWithUser>
               </ActivityGuardProvider>
               </ToastProvider>
             </AuthProvider>

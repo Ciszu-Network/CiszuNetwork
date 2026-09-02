@@ -6,6 +6,7 @@ import { assetResolver } from '@ciszunetwork/cdn';
 import { supabase } from '@/config/supabase';
 import { usePageTitle } from '@/lib/usePageTitle';
 import {
+  AuthBenefitsPanel,
   AuthField,
   AuthSecondaryActions,
   CiszuIdBrand,
@@ -36,6 +37,61 @@ const IconLock = () => (
     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
   </svg>
 );
+
+const IconShield = () => (
+  <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    <path d="M9 12l2 2 4-4" />
+  </svg>
+);
+
+const IconCloud = () => (
+  <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17.5 19H9a7 7 0 1 1 6.7-9h1.8a4.5 4.5 0 1 1 0 9z" />
+  </svg>
+);
+
+const IconGift = () => (
+  <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="8" width="18" height="4" rx="1" />
+    <path d="M12 8v13" />
+    <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7" />
+    <path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5" />
+  </svg>
+);
+
+const IconKey = () => (
+  <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="7.5" cy="15.5" r="4.5" />
+    <path d="M10.7 12.3L21 2" />
+    <path d="M17 6l3 3" />
+  </svg>
+);
+
+const REGISTER_BENEFITS = [
+  {
+    icon: <span className="w-full h-full text-neon-pink"><IconShield /></span>,
+    title: 'Menos anuncios',
+    description: 'Al registrarte quitamos los anuncios de footer y reducimos la frecuencia del resto. Menos publicidad, mejor experiencia.',
+  },
+  {
+    icon: <span className="w-full h-full text-neon-cyan"><IconCloud /></span>,
+    title: 'Guarda tus datos',
+    description: 'Tu progreso, preferencias y configuración se guardan en la nube y se sincronizan en todos tus dispositivos.',
+  },
+  {
+    icon: <span className="w-full h-full text-neon-pink"><IconGift /></span>,
+    title: 'Recompensas y VIP futuro',
+    description: 'Acceso a recompensas y, próximamente, a un rango VIP que quita los anuncios por completo.',
+  },
+  {
+    icon: <span className="w-full h-full text-neon-cyan"><IconKey /></span>,
+    title: 'Un solo CISZU ID',
+    description: 'Una cuenta para todas las webs del ecosistema: Ciszu Network, CiszukoAntony, MuzicMania y CiszuBot.',
+  },
+];
+
+const REGISTER_FOOTER = 'Crear tu cuenta es gratis. Usamos tus datos para personalizar anuncios y darte menos publicidad — consulta nuestras políticas en Ciszu Network.';
 
 const CISZU_ISOTYPE = assetResolver.resolve('projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg');
 
@@ -129,7 +185,7 @@ export default function RegisterPage() {
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-neon-pink/10 rounded-full blur-[160px] animate-pulse" />
       </div>
 
-      <div className="max-w-lg mx-auto px-4">
+      <div className="max-w-6xl mx-auto px-4">
         <div className="mb-10">
           <CiszuIdBrand
             solo
@@ -147,9 +203,11 @@ export default function RegisterPage() {
           />
         </div>
 
-        <div className="relative group">
-          <div className="absolute -inset-1 bg-gradient-to-r from-neon-pink to-brand-light rounded-[2.5rem] blur opacity-20 transition duration-500" />
-          <div className="relative bg-[#070710]/95 border border-white/10 rounded-[2.5rem] p-8 md:p-10 space-y-6 backdrop-blur-2xl shadow-2xl">
+        {/* Libro de 2 caras: formulario (izquierda) + beneficios (derecha) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+          <div className="relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-neon-pink to-brand-light rounded-[2.5rem] blur opacity-20 transition duration-500" />
+            <div className="relative bg-[#070710]/95 border border-white/10 rounded-[2.5rem] p-8 md:p-10 space-y-6 backdrop-blur-2xl shadow-2xl">
             {emailSent ? (
               <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center space-y-3">
                 <p className="text-emerald-400 font-black uppercase tracking-widest text-sm">Verifica tu correo</p>
@@ -269,6 +327,23 @@ export default function RegisterPage() {
               </>
             )}
           </div>
+          </div>
+
+          {/* Lomo central del libro (solo escritorio) */}
+          <div className="relative hidden lg:block self-stretch">
+            <div className="absolute inset-y-2 left-0 w-px bg-gradient-to-b from-neon-pink/50 via-white/10 to-brand-light/50" />
+            <div className="absolute inset-y-2 -left-1.5 w-3 rounded-full opacity-50 bg-gradient-to-b from-neon-pink to-brand-light blur-[1px]" />
+          </div>
+
+          {/* Página derecha: beneficios */}
+          <AuthBenefitsPanel
+            badge="CISZU ID"
+            title="¿Por qué crear tu cuenta?"
+            items={REGISTER_BENEFITS}
+            footerNote={REGISTER_FOOTER}
+            accent="#ff33cc"
+            accentAlt="#3a6bf0"
+          />
         </div>
       </div>
     </div>
