@@ -62,22 +62,24 @@ depende del formato y del tipo:
   activo SIN reclamar, la recompensa se pierde (se marca como vista/consumida para no reclamarla
   en la siguiente visita sin verlo de nuevo). Se registra el evento `ad_reward_lost`.
 
-### 2.3 Frecuencia y cooldown (5-10 minutos)
+### 2.3 Frecuencia y cooldown (60-120s por superficie)
 
-- **Intervalo entre anuncios periódicos/opcionales: 5 min mínimo / 10 min máximo** (ya no 1 hora).
-  `periodicInterval()` elige un valor aleatorio en ese rango para cada siguiente anuncio.
-- `minIntervalSec` por anuncio (420s-540s) vía `localStorage` (`ciszu_ads_<site>_seen`).
-- **Un solo flotante a la vez**: la esquina (particulares) y el banner inferior (opcional)
-  comparten `floatingActive`; si uno se muestra, el otro espera. Ambos (esquina Y banner)
-  reintentan con `periodicInterval()` para que el banner inferior aparezca igual que la esquina.
-- **Primer show**: esquina a 15s (inactivo) / 5-10 min (activo); banner inferior a 30s (inactivo)
-  / 5-10 min (activo).
-- **Usuario inactivo** (>60s sin pointer/teclado/scroll) = más propenso: el primer show se adelanta.
-- **Periodo de gracia**: 10s sin anuncios desde que se entra a cualquier página (independiente del rango).
-  **Se ignora cuando el debug local (devcon) está activo**: los anuncios forzados salen al instante.
-- **Mini aviso "Próximo anuncio en Xs"**: siempre visible antes de un anuncio periódico/opcional,
-  con icono de **flecha doble a la derecha parpadeante**. NUNCA para anuncios de acción/interacción
-  ni no-closables.
+- **Al entrar (cada página) se reinicia el pull de anuncios**: `seenRef` no se carga de
+  localStorage, así todos los anuncios vuelven a estar disponibles. Solo los descartados
+  manualmente (X) persisten.
+- **Cooldown tras cerrar**: al cerrar un anuncio pasivo (esquina o banner) se espera
+  **60-120s aleatorio** antes de mostrar otro en ESA superficie. Esquina e inferior son
+  **independientes** (cada una con su cooldown y su propio anuncio en tiempos distintos).
+- **Un solo anuncio a la vez por superficie**: `floatingActive` impide que esquina y banner
+  se muestren simultáneamente, pero sus schedulers son independientes.
+- **"Próximo anuncio en Xs"** (mini aviso con flecha doble parpadeante): aparece SIEMPRE que
+  no haya un anuncio mostrando, reflejando el cooldown restante de la superficie (60-120s).
+  Solo se oculta por error técnico o si no hay anuncios disponibles.
+- **Primer show**: esquina y banner intentan al montar; `trigger` respeta el cooldown inicial
+  y el periodo de gracia (10s). Con debug (devcon) el intervalo se acorta y la gracia se ignora.
+- **Periodo de gracia**: 10s sin anuncios al entrar (se ignora en debug local).
+- El **contador de autocierre** es independiente del cooldown: cada anuncio mostrado tiene su
+  propia barra de duración (sponsored/image/video/carousel) y se cierra solo al terminar.
 
 ### 2.4 Balance 25/75 y no auto-propagación
 
@@ -326,13 +328,24 @@ Ambas se desactivan desde las preferencias locales (`ciszu_preferences`). Ver
 Sistema de concienciación por adblockers, integrado en las 4 webs (`@ciszu/ui` →
 `AdBlockerGuard.tsx`), montado dentro del guard de Cloudflare:
 
-- **Detección**: heurística (bait de anuncio + verificación de que `adsbygoogle` cargó).
+- **Detección (método oficial de doble comprobación, como las páginas reales)**:
+  - **Bait real**: div con clases de anuncio que los adblockers ocultan
+    (`ad-banner adbox pub_300x250 adsbox`); se mide `offsetHeight/offsetWidth/
+    offsetParent` y CSS. Si está oculto (0 o `display:none`), hay bloqueo.
+  - **Script de AdSense**: si la página NO incluye el script de ads, se inyecta
+    `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js` y se
+    comprueba si el navegador lo bloqueó (onload no dispara en 1.5s).
+  - **`adsbygoogle`**: solo se considera bloqueado si la página SÍ incluye el
+    script de AdSense y este no cargó (`window.adsbygoogle` undefined). En
+    páginas sin script de ads este check se ignora → **evita falsos positivos**
+    (el guard ya no aparece "siempre").
+  - La detección es **asíncrona** (Promise) y se re-evalúa en cada carga.
 - **Modal de bloqueo** (central, sin X, blur + estética de la web): explica qué es un
   adblocker, cómo desactivarlo, por qué debería desactivarlo (autopatrocinio, monetización
   y mantenimiento de la página), siempre desde el respeto.
 - **"Desactivar bloqueador"**: modal explicativo + contador CIRCULAR de 15s que recarga la
   página al llegar a 0. Botones: "Actualizar ahora" y "Volver".
-- **"Seguir usando anuncios"**: la elección se guarda SOLO en localStorage (nunca en DB)
+- **"Seguir usando bloqueador"**: la elección se guarda SOLO en localStorage (nunca en DB)
   y expira a las **24h** (cada día vuelve a aparecer para concientizar). Modal con contador
   de 5s, aviso de que puede usar la página sin anuncios sin cargo por problemas del cliente,
   botón **Donar** y recordatorio de que perjudica el futuro.
@@ -341,6 +354,7 @@ Sistema de concienciación por adblockers, integrado en las 4 webs (`@ciszu/ui` 
 - **Anuncios degradados**: si la elección es "seguir", los anuncios muestran
   "Desactivado por adblocker"; si fallan sin saberse, "Error de anuncio".
 - Documentado en las políticas de cada web (sección "Bloqueadores de Anuncios").
+- Cada web pasa su **isotipo** (logo) al modal para mantener la estética de marca.
 
 ---
 

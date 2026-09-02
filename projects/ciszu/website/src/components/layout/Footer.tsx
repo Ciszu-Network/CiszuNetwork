@@ -28,6 +28,7 @@ import {
   User,
   MessageSquareWarning,
   Download,
+  Heart,
 } from 'lucide-react';
 
 const IcoPhone = () => (
@@ -61,6 +62,7 @@ const FOOTER_SECTIONS: FooterColumn[] = [
       { name: 'Políticas', href: '/policies', icon: <FileText className="w-4 h-4" /> },
       { name: 'Guías', href: '/guidelines', icon: <Sparkles className="w-4 h-4" /> },
       { name: 'Soporte', href: '/support', icon: <LifeBuoy className="w-4 h-4" /> },
+      { name: 'Donar', href: '/donate', icon: <Heart className="w-4 h-4" /> },
       { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" /> },
       { name: 'Descargas', href: '/descargas', icon: <Download className="w-4 h-4" /> },
     ],

@@ -84,7 +84,7 @@ export default async function RootLayout({
           <RedirectGuard />
           <DisclaimerProvider>
             <CloudflareGuard>
-              <AdBlockerGuard site="muzicmania" title="MuzicMania" accent="#c026d3" accentAlt="#ff33cc">
+              <AdBlockerGuard site="muzicmania" logo={assetResolver.resolve('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} title="MuzicMania" accent="#c026d3" accentAlt="#ff33cc">
               {!isEdit && <BetaDisclaimer storageKey="betadisclaimer_muzicmania_dismissed" />}
               {!isEdit && <Navbar />}
               {!isEdit && <ZoomWarning />}
