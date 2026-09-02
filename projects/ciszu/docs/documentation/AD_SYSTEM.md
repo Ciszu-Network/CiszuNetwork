@@ -321,6 +321,29 @@ Ambas se desactivan desde las preferencias locales (`ciszu_preferences`). Ver
 
 ---
 
+## 9C. Detección de adblockers (AdBlockerGuard)
+
+Sistema de concienciación por adblockers, integrado en las 4 webs (`@ciszu/ui` →
+`AdBlockerGuard.tsx`), montado dentro del guard de Cloudflare:
+
+- **Detección**: heurística (bait de anuncio + verificación de que `adsbygoogle` cargó).
+- **Modal de bloqueo** (central, sin X, blur + estética de la web): explica qué es un
+  adblocker, cómo desactivarlo, por qué debería desactivarlo (autopatrocinio, monetización
+  y mantenimiento de la página), siempre desde el respeto.
+- **"Desactivar bloqueador"**: modal explicativo + contador CIRCULAR de 15s que recarga la
+  página al llegar a 0. Botones: "Actualizar ahora" y "Volver".
+- **"Seguir usando anuncios"**: la elección se guarda SOLO en localStorage (nunca en DB)
+  y expira a las **24h** (cada día vuelve a aparecer para concientizar). Modal con contador
+  de 5s, aviso de que puede usar la página sin anuncios sin cargo por problemas del cliente,
+  botón **Donar** y recordatorio de que perjudica el futuro.
+- **Clic en anuncio con adblocker**: muestra el error y vuelve a abrir el modal de bloqueo
+  (evento `ciszu:adblock-click`).
+- **Anuncios degradados**: si la elección es "seguir", los anuncios muestran
+  "Desactivado por adblocker"; si fallan sin saberse, "Error de anuncio".
+- Documentado en las políticas de cada web (sección "Bloqueadores de Anuncios").
+
+---
+
 ## 10. Referencias
 
 - `MONETIZATION_PROTOCOLS.md` — modelo de monetización completo.

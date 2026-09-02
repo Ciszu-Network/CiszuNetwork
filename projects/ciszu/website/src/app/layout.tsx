@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { headers } from "next/headers";
 import { IBM_Plex_Sans, IBM_Plex_Sans_Condensed } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
 import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -83,6 +83,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           <RedirectGuard />
           <DisclaimerProvider>
             <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={ICON_SVG} title="Ciszu Network" subtitle="Ciszu Network Security • Cloudflare" accent="#22d3ee" storageKey="cf_verified_ciszu">
+              <AdBlockerGuard site="ciszunetwork" logo={ICON_SVG} title="Ciszu Network" accent="#22d3ee" accentAlt="#f472b6">
               {!isEdit && <ZoomWarning />}
               {!isEdit && <BetaDisclaimer storageKey="betadisclaimer_ciszu_dismissed" />}
               {!isEdit && <Navbar />}
@@ -91,6 +92,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
               <main className="flex-grow">{children}</main>
               {!isEdit && <Footer />}
               {!isEdit && <CookiesBanner />}
+              </AdBlockerGuard>
             </CloudflareGuard>
           </DisclaimerProvider>
           </AdsProvider>

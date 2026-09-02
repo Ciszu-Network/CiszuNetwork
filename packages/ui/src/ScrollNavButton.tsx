@@ -34,7 +34,10 @@ export function ScrollNavButton({
   // Si hay un anuncio de esquina activo, sube los botones para que NO se
   // superpongan: se desplazan por encima del anuncio con transición fluida.
   const cornerActive = ads?.current?.type === 'particulares' || ads?.floatingActive;
-  const lift = cornerActive ? 132 : 0;
+  // Altura del anuncio completo de esquina: banner h-28 (112px) + padding del
+  // card (~40px) + countdown/terms (~60px) ≈ 220px. Forzamos ~250px para que
+  // ambos botones salgan CLARAMENTE por encima del anuncio.
+  const lift = cornerActive ? 250 : 0;
   if (hidden) return null;
 
   return (

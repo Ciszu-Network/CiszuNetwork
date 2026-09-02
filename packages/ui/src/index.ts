@@ -34,6 +34,9 @@ export { default as InstallPwaButton } from './InstallPdwaButton';
 // CloudflareGuard: guard de acceso con Turnstile (compartido entre las webs)
 export { default as CloudflareGuard } from './CloudflareGuard';
 export type { CloudflareGuardProps } from './CloudflareGuard';
+// AdBlockerGuard: detección de adblockers + concienciación (modal de bloqueo)
+export { default as AdBlockerGuard } from './AdBlockerGuard';
+export type { AdBlockerGuardProps } from './AdBlockerGuard';
 // Sistema de Formatos: imagen Capa 4 -> Capa 3 con fallback en cadena
 export { default as SmartImage } from './SmartImage';
 export type { SmartImageProps } from './SmartImage';

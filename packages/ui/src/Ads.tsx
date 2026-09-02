@@ -161,8 +161,8 @@ const ISOTIPO: Record<Exclude<AdSource, 'external'>, string> = {
   muzicmania: resolver.resolve('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg'),
   // ciszubot: versión CIRCLE (petición expresa) — PNG
   ciszubot: resolver.resolve('projects/ciszubot/content/logos/images/samples/circle/ciszubot_logo_isotipo_color_circle.png'),
-  // ciszugamens: isotipo real (not-outline degradado color, azul sobre blanco) — SVG
-  ciszugamens: resolver.resolve('projects/ciszugamens/content/logos/images/not-outline/isotype/gradient/color/ciszugamens_logo_isotipo_degradado_outline_color_cblue_zwhite.svg'),
+// ciszugamens: isotipo real (outline degradado color, C morada + Z azul) — SVG
+  ciszugamens: resolver.resolve('projects/ciszugamens/content/logos/images/outline/isotype/gradient/color/ciszugamens_logo_isotipo_degradado_outline_color_cpurple_zblue.svg'),
 };
 
 // ---------- Logotipos reales vía CDN (outline gradient color; fallback not-outline; fallback color) ----------
@@ -175,8 +175,8 @@ const LOGOTIPO: Record<Exclude<AdSource, 'external'>, string> = {
   muzicmania: resolver.resolve('projects/muzicmania/content/logos/images/not-outline/logotype/gradient/color/muzicmania_logotipo_degradado_color.svg'),
   // ciszubot: outline color (NO hay gradient en outline) → color normal — SVG
   ciszubot: resolver.resolve('projects/ciszubot/content/logos/images/outline/logotype/color/ciszubot_logotipo_outline_color.svg'),
-  // ciszugamens: logotipo real (not-outline degradado color) — PNG (sin SVG de logotipo)
-  ciszugamens: resolver.resolve('projects/ciszugamens/content/logos/images/not-outline/logotype/gradient/color/ciszugamens_logotipo_degradado_outline_color.png'),
+// ciszugamens: logotipo real (outline degradado color) — PNG (sin SVG de logotipo)
+  ciszugamens: resolver.resolve('projects/ciszugamens/content/logos/images/outline/logotype/gradient/color/ciszugamens_logotipo_degradado_outline_color.png'),
 };
 
 // ---------- Catálogo (los sponsors NO se anuncian a sí mismos; se filtra por site) ----------
@@ -289,17 +289,32 @@ function CountdownBar({ total, remaining }: { total: number; remaining: number }
 function AdBanner({ ad, compact = false }: { ad: AdConfig; compact?: boolean }) {
   const c = ad.content;
   const h = compact ? 'h-10' : 'h-28';
-  if (c.placeholder) {
+  // Si el usuario eligió "seguir sin anuncios" (adblocker), mostramos el estado
+  // degradado: no se cargan imágenes ni creatividad real.
+  const adBlocked = isAdBlockContinue();
+  const [imgError, setImgError] = useState(false);
+  if (adBlocked || (c.placeholder && !c.image)) {
+    const text = adBlocked ? 'Desactivado por adblocker' : 'Próximamente';
     return (
       <div className={`flex ${h} w-full flex-col items-center justify-center rounded-lg border border-dashed border-yellow-500/40 bg-yellow-500/5 px-3 text-center`}>
-        <p className="text-[11px] font-bold text-yellow-400">Próximamente</p>
-        {!compact && <p className="mt-0.5 text-[10px] leading-snug text-neutral-400">Estamos verificando la app y necesitamos más tráfico. Aquí aparecerá el anuncio real.</p>}
+        <p className="text-[11px] font-bold text-yellow-400">{text}</p>
+        {!compact && <p className="mt-0.5 text-[10px] leading-snug text-neutral-400">
+          {adBlocked ? 'Has elegido no ver anuncios. Este bloque no puede mostrarse.' : 'Estamos verificando la app y necesitamos más tráfico. Aquí aparecerá el anuncio real.'}
+        </p>}
       </div>
     );
   }
   if (c.format === 'image' && c.image) {
+    if (imgError) {
+      return (
+        <div className={`flex ${h} w-full flex-col items-center justify-center rounded-lg border border-dashed border-red-500/40 bg-red-500/5 px-3 text-center`}>
+          <p className="text-[11px] font-bold text-red-400">Error de anuncio</p>
+          {!compact && <p className="mt-0.5 text-[10px] leading-snug text-neutral-400">No se pudo cargar la creatividad. Intenta de nuevo o desactiva tu bloqueador.</p>}
+        </div>
+      );
+    }
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={c.image} alt={c.title} className={`${h} w-full rounded-lg object-cover`} />;
+    return <img src={c.image} alt={c.title} onError={() => setImgError(true)} className={`${h} w-full rounded-lg object-cover`} />;
   }
   const accent = c.accent || '#22d3ee';
   const isSponsored = c.source && c.source !== 'external';
@@ -341,6 +356,24 @@ function readJson<T>(key: string, fb: T): T {
 function writeJson(key: string, v: unknown) {
   if (typeof window === 'undefined') return;
   try { window.localStorage.setItem(key, JSON.stringify(v)); } catch { /* ignora */ }
+}
+
+// ---------- Integración con AdBlockerGuard ----------
+// Si el usuario eligió "seguir usando anuncios" (local, 24h), los anuncios que
+// fallan muestran "desactivado por adblocker"; si no se sabe, "error de anuncio".
+const ADBLOCK_CHOICE_KEY = 'ciszu_adblock_choice';
+const ADBLOCK_TTL_MS = 24 * 60 * 60 * 1000;
+function isAdBlockContinue(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    const raw = localStorage.getItem(ADBLOCK_CHOICE_KEY);
+    if (!raw) return false;
+    const c = JSON.parse(raw) as { choice?: string; at?: number };
+    if (!c.choice || !c.at || Date.now() - c.at > ADBLOCK_TTL_MS) return false;
+    return c.choice === 'continue';
+  } catch {
+    return false;
+  }
 }
 
 // ---------- Registro de impresión en DB (telemetría del sistema ADS) ----------
@@ -749,8 +782,14 @@ function AdModalInner() {
   const c = ad.content;
   const closable = c.closable !== false;
 
-  const onCta = () => {
+const onCta = () => {
     if (isReward) { claimReward(ad); return; }
+    // Con adblocker elegido, el clic en anuncio muestra el error y re-abre el modal.
+    if (isAdBlockContinue()) {
+      trackEvent('ad_blocked_click', { ad_id: ad.id, site });
+      window.dispatchEvent(new CustomEvent('ciszu:adblock-click'));
+      return;
+    }
     trackEvent('ad_click', { ad_id: ad.id, ad_type: ad.type, href: c.href });
     window.open(c.href, '_blank', 'noopener,noreferrer');
     dismiss();
@@ -857,9 +896,17 @@ function SingleAdCard({ ad, onDone, compact, site }: { ad: AdConfig; onDone: () 
         <p className="truncate text-[11px] text-neutral-400">{c.description}</p>
       </div>
 
-      {!c.placeholder && !compact && (
+{!c.placeholder && !compact && (
         <a href={c.href} target="_blank" rel="noopener noreferrer"
-          onClick={() => trackEvent('ad_click', { ad_id: ad.id, ad_type: ad.type, href: c.href })}
+          onClick={(e) => {
+            if (isAdBlockContinue()) {
+              e.preventDefault();
+              trackEvent('ad_blocked_click', { ad_id: ad.id, site });
+              window.dispatchEvent(new CustomEvent('ciszu:adblock-click'));
+              return;
+            }
+            trackEvent('ad_click', { ad_id: ad.id, ad_type: ad.type, href: c.href });
+          }}
           className="mt-2 inline-block rounded-lg px-3 py-1.5 text-xs font-semibold text-black hover:brightness-110"
           style={{ background: c.accent || '#22d3ee' }}>{c.cta}</a>
       )}
@@ -918,9 +965,17 @@ function CarouselCard({ ad, onDone, compact, site }: { ad: AdConfig; onDone: () 
         <p className="truncate text-[11px] text-neutral-400">{item.description}</p>
       </div>
 
-      {!compact && (
+{!compact && (
         <a href={item.href} target="_blank" rel="noopener noreferrer"
-          onClick={() => trackEvent('ad_click', { ad_id: ad.id, ad_type: ad.type, href: item.href })}
+          onClick={(e) => {
+            if (isAdBlockContinue()) {
+              e.preventDefault();
+              trackEvent('ad_blocked_click', { ad_id: ad.id, site });
+              window.dispatchEvent(new CustomEvent('ciszu:adblock-click'));
+              return;
+            }
+            trackEvent('ad_click', { ad_id: ad.id, ad_type: ad.type, href: item.href });
+          }}
           className="mt-2 inline-block rounded-lg px-3 py-1.5 text-xs font-semibold text-black hover:brightness-110"
           style={{ background: item.accent || '#facc15' }}>{item.cta}</a>
       )}
@@ -1048,7 +1103,7 @@ const pos = side === 'bottom-left' ? { left: 12, bottom: 12 } : { right: 12, bot
 
   const c = ad.content;
   return createPortal(
-    <div className={`fixed z-[30] ${className ?? ''}`} style={{ ...pos, animation: 'ciszu-ad-rise .4s ease-out' }}>
+    <div className={`fixed z-[35] ${className ?? ''}`} style={{ ...pos, animation: 'ciszu-ad-rise .4s ease-out' }}>
       <style>{ADS_CSS}</style>
       <PassiveAdCard ad={ad} onDone={close} site={ads.site} />
     </div>,
@@ -1106,7 +1161,7 @@ const pos = side === 'top-center' ? { top: 12, left: '50%', transform: 'translat
   }
 
   return createPortal(
-    <div className={`fixed z-[30] ${className ?? ''}`} style={{ ...pos, animation: 'ciszu-ad-rise .4s ease-out' }}>
+    <div className={`fixed z-[45] ${className ?? ''}`} style={{ ...pos, animation: 'ciszu-ad-rise .4s ease-out' }}>
       <style>{ADS_CSS}</style>
       <PassiveAdCard ad={ad} onDone={close} compact site={ads.site} />
     </div>,

@@ -9,7 +9,7 @@ import FeedbackFab from "@/components/layout/FeedbackFab";
 import { CookiesBanner } from "@/components/layout/CookiesBanner";
 import { getDict, type Lang } from "@/lib/i18n";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
 import { getSessionData } from "@/lib/auth";
 import QueryProvider from "@/components/layout/QueryProvider";
@@ -78,6 +78,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       <body className="bg-bg text-ink min-h-screen font-sans flex flex-col">
         <QueryProvider>
            <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={LOGO_ISOTIPO_CIRCLE} title="CiszuBot" subtitle="CiszuBot Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszubot">
+            <AdBlockerGuard site="ciszubot" logo={LOGO_ISOTIPO_CIRCLE} title="CiszuBot" accent="#38bdf8" accentAlt="#ff33cc">
             <AuthProvider>
               <ToastProvider>
               <ActivityGuardProvider>
@@ -99,6 +100,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
               </ActivityGuardProvider>
               </ToastProvider>
             </AuthProvider>
+            </AdBlockerGuard>
           </CloudflareGuard>
           <GlobalAdvisor site="ciszubot" />
           <GlobalAdvisorConfirm site="ciszubot" />
