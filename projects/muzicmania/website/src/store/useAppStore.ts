@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { assetResolver } from '@ciszunetwork/cdn';
+import { createTrackAudio } from '@/utils/musicAssets';
 
 type NavigationState = false | 'navigating' | 'refreshing';
 export type SidebarView = 'main' | 'lang';
@@ -107,9 +107,8 @@ export const useAppStore = create<AppState>((set: any, get: any) => ({
   initializeAudio: () => {
     if (get().isAudioInitialized || typeof window === 'undefined') return;
     
-    const audio = new Audio(assetResolver.resolve('projects/muzicmania/content/music/albums/genesis_neon/cyber_beat/cyber_beat.ogg'));
-    audio.loop = true;
-    audio.volume = (get().musicVol || 100) / 100;
+    // Audio del main title con FALLBACK: CDN primero, public/music si falla.
+    const { audio } = createTrackAudio('cyber_beat', { volume: (get().musicVol || 100) / 100, loop: true, preload: 'auto' });
     
     // Web Audio API for visualizer
     const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
