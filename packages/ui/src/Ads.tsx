@@ -879,10 +879,9 @@ const clearCurrent = useCallback(() => {
   );
 
   return (
-    <AdsContext.Provider value={value}>
+<AdsContext.Provider value={value}>
       {children}
       {hydrated.current && <AdModalInner />}
-      {hydrated.current && <NextAdCountdown />}
     </AdsContext.Provider>
   );
 }
@@ -1119,77 +1118,67 @@ function CarouselCard({ ad, onDone, compact, site }: { ad: AdConfig; onDone: () 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idx, max, finish]);
 
-  const item = items[idx];
+const item = items[idx];
   const closable = ad.content.closable !== false;
 
+  // Modo compact (banner inferior): toast ANCHO. Fila de contenido arriba y el
+  // countdown DEBAJO a lo ancho (igual que SingleAdCard). Sin countdown lateral.
+  if (compact) {
+    return (
+      <div className="relative w-[min(94vw,560px)] rounded-xl border border-white/10 bg-[#0e1118] shadow-xl px-3 py-2">
+        <AdClose onClick={finish} closable={closable} className="absolute right-2 top-2 h-6 w-6" />
+        <div className="flex items-center gap-2 pr-6">
+          <span className="shrink-0 rounded bg-yellow-400 px-1.5 py-0.5 text-[9px] font-black uppercase leading-none text-black">AD</span>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-xs font-bold text-white">{item.title}</p>
+            <p className="truncate text-[11px] text-neutral-400">{item.description}</p>
+          </div>
+        </div>
+        <div className="mt-1.5 w-full">
+          <CountdownBar total={AD_TIMING.carouselItemSec} remaining={remaining} />
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className={`relative rounded-xl border border-white/10 bg-[#0e1118] shadow-xl ${compact ? 'flex items-center gap-2 py-2 pl-2 pr-2' : 'p-4'}`}>
+    <div className="relative rounded-xl border border-white/10 bg-[#0e1118] shadow-xl p-4">
       <AdClose onClick={finish} closable={closable} className="absolute right-2 top-2 h-7 w-7" />
       <span className="shrink-0 rounded bg-yellow-400 px-1.5 py-0.5 text-[9px] font-black uppercase leading-none text-black">AD</span>
 
-      {!compact && <div className="mb-2"><AdBanner ad={{ ...ad, content: item }} /></div>}
+      <div className="mb-2"><AdBanner ad={{ ...ad, content: item }} /></div>
 
       <div className="min-w-0 flex-1">
         <p className="truncate text-xs font-bold text-white">{item.title}</p>
         <p className="truncate text-[11px] text-neutral-400">{item.description}</p>
       </div>
 
-{!compact && (
-        <a href={item.href} target="_blank" rel="noopener noreferrer"
-          onClick={(e) => {
-            if (isAdBlockContinue()) {
-              e.preventDefault();
-              trackEvent('ad_blocked_click', { ad_id: ad.id, site });
-              window.dispatchEvent(new CustomEvent('ciszu:adblock-click'));
-              return;
-            }
-            trackEvent('ad_click', { ad_id: ad.id, ad_type: ad.type, href: item.href });
-          }}
-          className="mt-2 inline-block rounded-lg px-3 py-1.5 text-xs font-semibold text-black hover:brightness-110"
-          style={{ background: item.accent || '#facc15' }}>{item.cta}</a>
-      )}
+      <a href={item.href} target="_blank" rel="noopener noreferrer"
+        onClick={(e) => {
+          if (isAdBlockContinue()) {
+            e.preventDefault();
+            trackEvent('ad_blocked_click', { ad_id: ad.id, site });
+            window.dispatchEvent(new CustomEvent('ciszu:adblock-click'));
+            return;
+          }
+          trackEvent('ad_click', { ad_id: ad.id, ad_type: ad.type, href: item.href });
+        }}
+        className="mt-2 inline-block rounded-lg px-3 py-1.5 text-xs font-semibold text-black hover:brightness-110"
+        style={{ background: item.accent || '#facc15' }}>{item.cta}</a>
 
-      <div className={compact ? 'w-16 shrink-0' : 'w-full'}>
+      <div className="w-full">
         <CountdownBar total={AD_TIMING.carouselItemSec} remaining={remaining} />
         {idx > 0 && (
           <p className="mt-1 text-right text-[10px] font-semibold text-yellow-400/80">Próximo anuncio en {Math.max(0, Math.ceil(remaining))}s</p>
         )}
       </div>
 
-      {!compact && <AdTerms site={site} />}
+      <AdTerms site={site} />
     </div>
   );
 }
 
 // ---------- Mini "Próximo anuncio en..." (opcional/periódico, próximo e inminente) ----------
-function NextAdCountdown() {
-  const ads = useAdsSafe();
-  const [nextMs, setNextMs] = useState(0);
-
-  useEffect(() => {
-    if (!ads) return;
-    const compute = () => setNextMs(ads.getNextPeriodicAdIn());
-    compute();
-    const iv = window.setInterval(compute, 1000);
-    return () => window.clearInterval(iv);
-  }, [ads]);
-
-// Solo se muestra si el próximo anuncio periódico/opcional está inminente (< 2 min).
-  if (!ads || nextMs <= 0 || nextMs > 120000 || ads.current || ads.floatingActive) return null;
-  const s = Math.ceil(nextMs / 1000);
-
-  return createPortal(
-    <div className="fixed bottom-2 left-2 z-[50]">
-      <style>{ADS_CSS}</style>
-      <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-1 text-[10px] text-neutral-400 backdrop-blur-sm" style={{ animation: 'ciszu-ad-shrink .25s ease-out' }}>
-        <NextArrowIcon />
-        Próximo anuncio en <span className="font-bold text-white">{s}s</span>
-      </div>
-    </div>,
-    document.body
-  );
-}
-
 /** Icono de flecha doble a la derecha (próximo anuncio) — parpadeante. */
 function NextArrowIcon() {
   return (
@@ -1257,6 +1246,11 @@ export function AdFloat({ placement = 'corner', side = 'bottom-right', className
 
   if (!ads) return null;
 
+  // Soporte a push de la devcon: si hay un anuncio forzado (ads.current) de tipo
+  // esquina (particulares), se muestra AQUÍ aunque AdFloat no lo haya disparado.
+  const pushAd = ads.current && ads.current.type === 'particulares' ? ads.current : null;
+  const showAd = pushAd || ad;
+
 const pos = side === 'bottom-left' ? { left: 12, bottom: 12 } : { right: 12, bottom: 12 };
 
   const close = useCallback(() => {
@@ -1266,15 +1260,15 @@ const pos = side === 'bottom-left' ? { left: 12, bottom: 12 } : { right: 12, bot
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ads]);
 
-  if (!ad) {
+  if (!showAd) {
     return <NextAdHint msUntil={ads.getNextPeriodicAdIn()} now={now} pos={pos} />;
   }
 
-  const c = ad.content;
+  const c = showAd.content;
   return createPortal(
     <div className={`fixed z-[35] ${className ?? ''}`} style={{ ...pos, animation: 'ciszu-ad-rise .4s ease-out' }}>
       <style>{ADS_CSS}</style>
-      <PassiveAdCard ad={ad} onDone={close} site={ads.site} />
+      <PassiveAdCard ad={showAd} onDone={close} site={ads.site} />
     </div>,
     document.body
   );
@@ -1316,6 +1310,11 @@ export function AdPill({ placement = 'body', side = 'bottom-center', className }
 
   if (!ads) return null;
 
+  // Soporte a push de la devcon: si hay un anuncio forzado (ads.current) de tipo
+  // banner inferior (optional), se muestra AQUÍ aunque AdPill no lo haya disparado.
+  const pushAd = ads.current && ads.current.type === 'optional' ? ads.current : null;
+  const showAd = pushAd || ad;
+
 const pos = side === 'top-center' ? { top: 12, left: '50%', transform: 'translateX(-50%)' } : { bottom: 12, left: '50%', transform: 'translateX(-50%)' };
 
   const close = useCallback(() => {
@@ -1325,14 +1324,14 @@ const pos = side === 'top-center' ? { top: 12, left: '50%', transform: 'translat
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ads]);
 
-  if (!ad) {
+  if (!showAd) {
     return <NextAdHint msUntil={ads.getNextPeriodicAdIn()} now={now} pos={pos} />;
   }
 
   return createPortal(
     <div className={`fixed z-[45] ${className ?? ''}`} style={{ ...pos, animation: 'ciszu-ad-rise .4s ease-out' }}>
       <style>{ADS_CSS}</style>
-      <PassiveAdCard ad={ad} onDone={close} compact site={ads.site} />
+      <PassiveAdCard ad={showAd} onDone={close} compact site={ads.site} />
     </div>,
     document.body
   );

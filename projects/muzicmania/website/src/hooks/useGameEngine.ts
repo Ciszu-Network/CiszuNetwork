@@ -347,7 +347,16 @@ export const useGameEngine = (
 
   const getElapsed = useCallback(() => {
     const offset = (audioOffsetRef.current ?? 0) / 1000;
+    // Si el audio está reproduciéndose, usa su tiempo (precisión con la música).
     if (audioRef.current && audioRef.current.currentTime > 0) return audioRef.current.currentTime + offset;
+    // FALLBACK: si el audio no carga/no avanza (p. ej. CDN lento o bloqueado),
+    // el juego avanza con un reloj interno para que el charteo (flechas) siempre
+    // funcione y se pueda jugar/terminar el nivel. Sin esto el juego se congela.
+    const base = startTimeRef.current > 0 ? startTimeRef.current : 0;
+    if (base > 0) {
+      const wall = (Date.now() - base) / 1000 - totalPausedRef.current / 1000;
+      return wall > 0 ? wall + offset : 0;
+    }
     return 0;
   }, []);
 
