@@ -9,11 +9,13 @@ import { supabase } from '@/config/supabase';
 import { useAppStore } from '@/store';
 import { usePageTitle } from '@/lib/usePageTitle';
 import {
+  AuthBenefitsPanel,
   AuthField,
   AuthSecondaryActions,
   CiszuIdBrand,
   OAuthProviders,
   useToast,
+  useActivityGuard,
 } from '@ciszu/ui';
 
 const IconMail = () => (
@@ -30,6 +32,48 @@ const IconLock = () => (
   </svg>
 );
 
+const IconShield = () => (
+  <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    <path d="M9 12l2 2 4-4" />
+  </svg>
+);
+
+const IconCloud = () => (
+  <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17.5 19H9a7 7 0 1 1 6.7-9h1.8a4.5 4.5 0 1 1 0 9z" />
+  </svg>
+);
+
+const IconGift = () => (
+  <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="8" width="18" height="4" rx="1" />
+    <path d="M12 8v13" />
+    <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7" />
+    <path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5" />
+  </svg>
+);
+
+const LOGIN_BENEFITS = [
+  {
+    icon: <span className="w-full h-full text-neon-blue"><IconShield /></span>,
+    title: 'Menos anuncios',
+    description: 'Al iniciar sesión quitamos los anuncios de footer y reducimos la frecuencia del resto. Tu navegación, más limpia.',
+  },
+  {
+    icon: <span className="w-full h-full text-neon-cyan"><IconCloud /></span>,
+    title: 'Tus datos, siempre contigo',
+    description: 'Preferencias, configuración y progreso guardados en la nube y sincronizados entre tus dispositivos.',
+  },
+  {
+    icon: <span className="w-full h-full text-neon-pink"><IconGift /></span>,
+    title: 'Recompensas y VIP futuro',
+    description: 'Los usuarios registrados podrán optar a recompensas y, próximamente, a un rango VIP que quita los anuncios.',
+  },
+];
+
+const LOGIN_FOOTER = 'Iniciar sesión es gratis. Usamos tus datos para personalizar anuncios y ofrecerte menos publicidad — consulta nuestras políticas en Ciszu Network.';
+
 const CISZU_ISOTYPE = assetResolver.resolve('projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg');
 const ANTONY_ISOTYPE = assetResolver.resolve('projects/ciszukoantony/content/logos/images/outline/isotype/color/ciszuko_logo_isotipo_outline_zwhite_ccolor.ai.svg');
 
@@ -37,9 +81,21 @@ export default function LoginPage() {
   usePageTitle('LOGIN');
   const user = useAppStore((s) => s.user);
   const router = useRouter();
+  const { begin: beginActivity, end: endActivity } = useActivityGuard();
   const [form, setForm] = useState({ email: '', password: '' });
   const [forgot, setForgot] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');
+
+  // Guard de acciones no recuperables: login con contenido → no navegar sin aviso.
+  React.useEffect(() => {
+    const hasInput = form.email.trim().length > 0 || form.password.length > 0;
+    if (hasInput) beginActivity('auth-form');
+    else endActivity('auth-form');
+  }, [form, beginActivity, endActivity]);
+  React.useEffect(() => {
+    return () => endActivity('auth-form');
+     
+  }, []);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
@@ -113,7 +169,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen pt-28 pb-20 px-4 relative overflow-hidden">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-md mx-auto">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-6 lg:gap-10 items-start">
         <div className="mb-10">
           <CiszuIdBrand
             ciszuIsotype={
@@ -227,6 +283,22 @@ export default function LoginPage() {
             )}
           </div>
         </div>
+
+        {/* Lomo central del libro (solo escritorio) */}
+        <div className="relative hidden lg:block self-stretch">
+          <div className="absolute inset-y-2 left-0 w-px bg-gradient-to-b from-neon-blue/50 via-white/10 to-neon-pink/50" />
+          <div className="absolute inset-y-2 -left-1.5 w-3 rounded-full opacity-50 bg-gradient-to-b from-neon-blue to-neon-pink blur-[1px]" />
+        </div>
+
+        {/* Página derecha: beneficios */}
+        <AuthBenefitsPanel
+          badge="CISZU ID"
+          title="¿Por qué iniciar sesión?"
+          items={LOGIN_BENEFITS}
+          footerNote={LOGIN_FOOTER}
+          accent="#3b6ee2"
+          accentAlt="#ff33cc"
+        />
       </motion.div>
     </div>
   );

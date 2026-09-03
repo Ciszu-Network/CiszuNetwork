@@ -9,9 +9,11 @@ import { usePageTitle } from '@/lib/usePageTitle';
 import {
   AuthField,
   AuthSecondaryActions,
+  AuthBenefitsPanel,
   CiszuIdBrand,
   OAuthProviders,
   useToast,
+  useActivityGuard,
 } from '@ciszu/ui';
 
 const IconMail = () => (
@@ -28,6 +30,48 @@ const IconLock = () => (
   </svg>
 );
 
+const IconShield = () => (
+  <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    <path d="M9 12l2 2 4-4" />
+  </svg>
+);
+
+const IconCloud = () => (
+  <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17.5 19H9a7 7 0 1 1 6.7-9h1.8a4.5 4.5 0 1 1 0 9z" />
+  </svg>
+);
+
+const IconGift = () => (
+  <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="8" width="18" height="4" rx="1" />
+    <path d="M12 8v13" />
+    <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7" />
+    <path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5" />
+  </svg>
+);
+
+const LOGIN_BENEFITS = [
+  {
+    icon: <span className="w-full h-full text-neon-blue"><IconShield /></span>,
+    title: 'Menos anuncios',
+    description: 'Al iniciar sesión quitamos los anuncios de footer y reducimos la frecuencia del resto. Tu navegación, más limpia.',
+  },
+  {
+    icon: <span className="w-full h-full text-neon-cyan"><IconCloud /></span>,
+    title: 'Tus datos, siempre contigo',
+    description: 'Preferencias, configuración y progreso guardados en la nube y sincronizados entre tus dispositivos.',
+  },
+  {
+    icon: <span className="w-full h-full text-neon-pink"><IconGift /></span>,
+    title: 'Recompensas y VIP futuro',
+    description: 'Los usuarios registrados podrán optar a recompensas y, próximamente, a un rango VIP que quita los anuncios.',
+  },
+];
+
+const LOGIN_FOOTER = 'Iniciar sesión es gratis. Usamos tus datos para personalizar anuncios y ofrecerte menos publicidad — consulta nuestras políticas en Ciszu Network.';
+
 const IconUser = () => (
   <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
@@ -42,9 +86,21 @@ export default function LoginPage() {
   usePageTitle('LOGIN');
   const router = useRouter();
   const { user } = useAppStore();
+  const { begin: beginActivity, end: endActivity } = useActivityGuard();
   const [form, setForm] = useState({ identifier: '', password: '' });
   const [forgot, setForgot] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');
+
+  // Guard de acciones no recuperables: login con contenido → no navegar sin aviso.
+  useEffect(() => {
+    const hasInput = form.identifier.trim().length > 0 || form.password.length > 0;
+    if (hasInput) beginActivity('auth-form');
+    else endActivity('auth-form');
+  }, [form, beginActivity, endActivity]);
+  useEffect(() => {
+    return () => endActivity('auth-form');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -132,7 +188,7 @@ export default function LoginPage() {
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full bg-[#5865F2]/10 blur-[160px] pointer-events-none" />
       <div className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full bg-neon-blue/10 blur-[140px] pointer-events-none" />
 
-      <div className="max-w-md mx-auto px-4 pt-14 relative">
+      <div className="max-w-5xl mx-auto px-4 pt-14 relative grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-6 lg:gap-10 items-start">
         <div className="mb-10">
           <CiszuIdBrand
             ciszuIsotype={<SmartImage src={CISZU_ISOTYPE} alt="Ciszu ID" width={40} height={40} className="w-9 h-9" />}
@@ -268,6 +324,22 @@ export default function LoginPage() {
             )}
           </div>
         </div>
+
+        {/* Lomo central del libro (solo escritorio) */}
+        <div className="relative hidden lg:block self-stretch">
+          <div className="absolute inset-y-2 left-0 w-px bg-gradient-to-b from-[#5865F2]/50 via-white/10 to-neon-blue/50" />
+          <div className="absolute inset-y-2 -left-1.5 w-3 rounded-full opacity-50 bg-gradient-to-b from-[#5865F2] to-neon-blue blur-[1px]" />
+        </div>
+
+        {/* Página derecha: beneficios */}
+        <AuthBenefitsPanel
+          badge="CISZU ID"
+          title="¿Por qué iniciar sesión?"
+          items={LOGIN_BENEFITS}
+          footerNote={LOGIN_FOOTER}
+          accent="#38bdf8"
+          accentAlt="#ff33cc"
+        />
       </div>
     </div>
   );

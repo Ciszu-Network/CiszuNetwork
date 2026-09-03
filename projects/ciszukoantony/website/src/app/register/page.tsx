@@ -17,6 +17,8 @@ import {
   evaluatePassword,
   passwordMeetsMinimum,
   useToast,
+  AuthBenefitsPanel,
+  useActivityGuard,
 } from '@ciszu/ui';
 
 const IconMail = () => (
@@ -40,6 +42,61 @@ const IconUser = () => (
   </svg>
 );
 
+const IconShield = () => (
+  <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    <path d="M9 12l2 2 4-4" />
+  </svg>
+);
+
+const IconCloud = () => (
+  <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17.5 19H9a7 7 0 1 1 6.7-9h1.8a4.5 4.5 0 1 1 0 9z" />
+  </svg>
+);
+
+const IconGift = () => (
+  <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="8" width="18" height="4" rx="1" />
+    <path d="M12 8v13" />
+    <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7" />
+    <path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5" />
+  </svg>
+);
+
+const IconKey = () => (
+  <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="7.5" cy="15.5" r="4.5" />
+    <path d="M10.7 12.3L21 2" />
+    <path d="M17 6l3 3" />
+  </svg>
+);
+
+const REGISTER_BENEFITS = [
+  {
+    icon: <span className="w-full h-full text-neon-blue"><IconShield /></span>,
+    title: 'Menos anuncios',
+    description: 'Al registrarte quitamos los anuncios de footer y reducimos la frecuencia del resto. Menos publicidad, mejor experiencia.',
+  },
+  {
+    icon: <span className="w-full h-full text-neon-cyan"><IconCloud /></span>,
+    title: 'Guarda tus datos',
+    description: 'Tu progreso, preferencias y configuración se guardan en la nube y se sincronizan en todos tus dispositivos.',
+  },
+  {
+    icon: <span className="w-full h-full text-neon-pink"><IconGift /></span>,
+    title: 'Recompensas y VIP futuro',
+    description: 'Acceso a recompensas y, próximamente, a un rango VIP que quita los anuncios por completo.',
+  },
+  {
+    icon: <span className="w-full h-full text-neon-blue"><IconKey /></span>,
+    title: 'Un solo CISZU ID',
+    description: 'Una cuenta para todas las webs del ecosistema: Ciszu Network, CiszukoAntony, MuzicMania y CiszuBot.',
+  },
+];
+
+const REGISTER_FOOTER = 'Crear tu cuenta es gratis. Usamos tus datos para personalizar anuncios y darte menos publicidad — consulta nuestras políticas en Ciszu Network.';
+
 const CISZU_ISOTYPE = assetResolver.resolve('projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg');
 const ANTONY_ISOTYPE = assetResolver.resolve('projects/ciszukoantony/content/logos/images/outline/isotype/color/ciszuko_logo_isotipo_outline_zwhite_ccolor.ai.svg');
 
@@ -47,7 +104,19 @@ export default function RegisterPage() {
   usePageTitle('REGISTER');
   const user = useAppStore((s) => s.user);
   const router = useRouter();
+  const { begin: beginActivity, end: endActivity } = useActivityGuard();
   const [form, setForm] = useState({ username: '', email: '', password: '', confirm: '' });
+
+  // Guard de acciones no recuperables: registro con contenido → no navegar sin aviso.
+  React.useEffect(() => {
+    const hasInput = Object.values(form).some((v) => String(v).trim().length > 0);
+    if (hasInput) beginActivity('auth-form');
+    else endActivity('auth-form');
+  }, [form, beginActivity, endActivity]);
+  React.useEffect(() => {
+    return () => endActivity('auth-form');
+     
+  }, []);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
@@ -154,7 +223,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen pt-28 pb-20 px-4 relative overflow-hidden">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-md mx-auto">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-6 lg:gap-10 items-start">
         <div className="mb-10">
           <CiszuIdBrand
             ciszuIsotype={<Image src={CISZU_ISOTYPE} alt="Ciszu ID" width={40} height={40} className="w-9 h-9" />}
@@ -248,6 +317,22 @@ export default function RegisterPage() {
             />
           </div>
         </div>
+
+        {/* Lomo central del libro (solo escritorio) */}
+        <div className="relative hidden lg:block self-stretch">
+          <div className="absolute inset-y-2 left-0 w-px bg-gradient-to-b from-neon-pink/50 via-white/10 to-neon-blue/50" />
+          <div className="absolute inset-y-2 -left-1.5 w-3 rounded-full opacity-50 bg-gradient-to-b from-neon-pink to-neon-blue blur-[1px]" />
+        </div>
+
+        {/* Página derecha: beneficios */}
+        <AuthBenefitsPanel
+          badge="CISZU ID"
+          title="¿Por qué crear tu cuenta?"
+          items={REGISTER_BENEFITS}
+          footerNote={REGISTER_FOOTER}
+          accent="#ff33cc"
+          accentAlt="#3b6ee2"
+        />
       </motion.div>
     </div>
   );
