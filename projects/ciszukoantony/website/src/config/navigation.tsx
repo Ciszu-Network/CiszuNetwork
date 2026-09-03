@@ -45,6 +45,7 @@ export const NAV_MAIN: (NavItem | NavGroup)[] = [
     ],
   } as NavGroup,
   { name: 'Projects', href: '/projects', icon: I.projects },
+  { name: 'Certificates', href: '/certificates', icon: I.certificates },
   { name: 'Feedback', href: '/feedback', icon: I.feedback },
   { name: 'Descargas', href: '/descargas', icon: I.download },
 ];
