@@ -23,6 +23,8 @@ export type Certificate = {
   collection?: { id: string; name: string };
   verify?: { label: string; url: string }[];
   files: CertFile[];
+  thumbnail?: string; // preview image/screenshot
+  previewType?: 'image' | 'pdf' | 'document'; // tipo de previsualización
 };
 
 export type Category = { id: string; label: string; color: string };
@@ -37,7 +39,9 @@ export const CATEGORIES: Category[] = [
   { id: 'design', label: 'Design, UX & Video', color: '#fb923c' },
   { id: 'marketing', label: 'Marketing & Growth', color: '#facc15' },
   { id: 'finance', label: 'Personal Finance', color: '#4ade80' },
-  { id: 'other', label: 'Personal & Other', color: '#94a3b8' },
+  { id: 'personal', label: 'Personal', color: '#ec4899' },
+  { id: 'bachillerato', label: 'Bachillerato', color: '#8b5cf6' },
+  { id: 'other', label: 'Other Documents', color: '#94a3b8' },
 ];
 
 export const OFFICIAL_LINKS = [
@@ -71,6 +75,8 @@ export const CERTIFICATES: Certificate[] = [
       { name: 'EF-SET-Certificate-score.pdf', label: 'Score report', kind: 'report' },
       { name: 'ef_set_completation_english.pdf', label: 'Completion notice', kind: 'credential' },
     ],
+    thumbnail: 'shared/docs/certificados/previews/efset-preview.jpg',
+    previewType: 'pdf',
   },
   {
     id: 'penn-elp-english-fundamentals',
@@ -116,6 +122,8 @@ export const CERTIFICATES: Certificate[] = [
       { name: 'HTML_Essentials_certificate_fplayersoffcial-gmail-com_e218c456-06c7-4e52-8ec4-57ae4246e019.pdf', label: 'Certificate', kind: 'certificate' },
       { name: 'HTMLEssentialsv120260717-8-l2ejk6.pdf', label: 'Credential record', kind: 'credential' },
     ],
+    thumbnail: 'shared/docs/certificados/previews/cisco-preview.jpg',
+    previewType: 'pdf',
   },
   {
     id: 'cisco-css',
@@ -439,6 +447,8 @@ export const OTHER_DOCS: Certificate[] = [
     files: [
       { name: 'learner_transcript.pdf', label: 'Transcript', kind: 'transcript' },
     ],
+    thumbnail: 'shared/docs/certificados/previews/transcript-preview.jpg',
+    previewType: 'pdf',
   },
   {
     id: 'ms-expediente',
@@ -453,28 +463,34 @@ export const OTHER_DOCS: Certificate[] = [
     files: [
       { name: 'Expediente - CiscoAntonyGarciaM-8257 _ Microsoft Learn.pdf', label: 'Record (expediente)', kind: 'transcript' },
     ],
+    thumbnail: 'shared/docs/certificados/previews/expediente-preview.jpg',
+    previewType: 'pdf',
   },
   {
     id: '16p-profile',
     title: 'Personality profile — Architect (INTJ-A)',
     provider: '16Personalities (NERIS Analytics Limited)',
     providerUrl: 'https://www.16personalities.com',
-    category: 'other',
+    category: 'personal',
     date: '2026-04-08',
     summary: 'Test taken on 8 abr 2026. Personality type: INTJ-A (Architect).',
     collection: { id: '16p', name: '16Personalities' },
     files: [
       { name: 'Tu perfil _ 16Personalities.pdf', label: 'Profile report', kind: 'report' },
     ],
+    thumbnail: 'shared/docs/certificados/previews/personality-preview.jpg',
+    previewType: 'pdf',
   },
   {
-    id: 'dato-jpg',
-    title: 'Certificate image — unclassified',
-    provider: 'Not indicated',
-    category: 'other',
-    note: 'Image without extractable text; pending classification by the owner.',
+    id: 'bachillerato-cert',
+    title: 'Bachillerato Certificate',
+    provider: 'Educational Institution',
+    category: 'bachillerato',
+    summary: 'High school graduation certificate.',
     files: [
-      { name: 'dato (35).JPG', label: 'Image', kind: 'image' },
+      { name: 'dato (35).JPG', label: 'Certificate Image', kind: 'image' },
     ],
+    thumbnail: 'shared/docs/certificados/dato (35).JPG',
+    previewType: 'image',
   },
 ];
