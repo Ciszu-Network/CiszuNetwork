@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { supabase } from '@/config/supabase';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
 import { trackCover, trackDisc } from '@/utils/musicAssets';
@@ -265,7 +265,7 @@ export default function HomeContent() {
                 ].map((s, i) => (
                   <a key={i} href={s.href} target="_blank" rel="noopener noreferrer" className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-xl transition-all active-depth group font-black uppercase text-xs tracking-widest ${s.cls}`}>
                     <s.icon className="w-5 h-5" />
-                    <span>{s.name === 'Discord' ? 'Discord Server' : s.name}</span>
+                    <span>{s.name === 'Discord' ? 'Ciszugamens' : s.name}</span>
                   </a>
                 ))}
               </div>
@@ -575,3 +575,4 @@ export default function HomeContent() {
     </div>
   );
 }
+

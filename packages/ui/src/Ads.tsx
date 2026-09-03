@@ -61,8 +61,10 @@ export interface AdContent {
   videoSrc?: string;
   /** Items del carrusel (format 'carousel'); máximo 4 mostrados */
   carouselItems?: AdContent[];
-  /** false = anuncio no-closable (no se muestra la X) */
+/** false = anuncio no-closable (no se muestra la X) */
   closable?: boolean;
+  /** true = anuncio forzado por la devcon (muestra badge "enviado por devcon") */
+  debugPush?: boolean;
 }
 
 export interface AdConfig {
@@ -343,11 +345,33 @@ function AdBanner({ ad, compact = false }: { ad: AdConfig; compact?: boolean }) 
 function AdTerms({ site }: { site: string }) {
   const url = SITE_TERMS[site] || SITE_TERMS.ciszunetwork;
   return (
-    <p className="mt-3 text-center text-[11px] text-neutral-500">
-      <a href={url} className="underline hover:text-neutral-300">Términos y condiciones</a>{' '}
-      · publicidad de Ciszu Network ·{' '}
-      <a href="https://ciszunetwork.vercel.app/register" className="underline hover:text-neutral-300">Regístrate para ver menos anuncios</a>
-    </p>
+    <div className="mt-4 space-y-3">
+      {/* CTA llamativo: regístrate para ver menos anuncios */}
+      <a
+        href="https://ciszunetwork.vercel.app/register"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#22d3ee] to-[#f472b6] px-4 py-2.5 text-xs font-black uppercase tracking-widest text-black transition-all hover:brightness-110 hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_18px_rgba(58,107,240,0.35)]"
+      >
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+          <polyline points="10 17 15 12 10 7" />
+          <line x1="15" y1="12" x2="3" y2="12" />
+        </svg>
+        Regístrate y ve menos anuncios
+      </a>
+      {/* Términos con icono */}
+      <p className="flex items-center justify-center gap-1.5 text-center text-[11px] text-neutral-500">
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 16v-4" />
+          <path d="M12 8h.01" />
+        </svg>
+        <a href={url} className="underline hover:text-neutral-300">Términos y condiciones</a>
+        <span className="text-neutral-600">·</span>
+        publicidad de Ciszu Network
+      </p>
+    </div>
   );
 }
 
@@ -498,6 +522,56 @@ export interface AdsDebugConfig {
   requireReward?: boolean;
 }
 
+/**
+ * Push de anuncio forzado desde la devcon (punto H). Es un anuncio que DEBE
+ * aparecer YA, independientemente del intervalo/cooldown/periodo de gracia,
+ * con aviso claro de que fue enviado por la devcon (badge "enviado por devcon").
+ * La devcon lo escribe en test/website/debug/local-logs/ads_push.json; en dev
+ * la web lo lee vía GET /api/ads/push.
+ */
+export interface AdsPushConfig {
+  enabled: boolean;
+  sites?: string[];
+  title: string;
+  description: string;
+  cta: string;
+  href: string;
+  type?: AdType;
+  source?: AdSource;
+  /** Marca oficial a usar como isotipo (opcional). */
+  brand?: string;
+  /** true = anuncio de recompensa forzado. */
+  requireReward?: boolean;
+  /** timestamp de creación (para deduplicar el mismo push). */
+  createdAt: number;
+}
+
+export function buildPushAd(push: AdsPushConfig, site: string): AdConfig {
+  const type: AdType = push.type ?? 'intrusive';
+  const source: AdSource = push.source ?? (push.brand as AdSource) ?? 'external';
+  const accent = SITE_ACCENT[site] || (push.brand ? SITE_ACCENT[push.brand] : null) || '#22d3ee';
+  const image = push.brand && push.brand !== 'external' ? (ISOTIPO[push.brand as keyof typeof ISOTIPO] ?? ISOTIPO.ciszunetwork) : undefined;
+  return {
+    id: `devcon-push-${push.createdAt}`,
+    type,
+    placement: type === 'optional' ? 'body' : type === 'particulares' ? 'corner' : 'center',
+    minIntervalSec: 0,
+    rewardWaitSec: push.requireReward ? 5 : undefined,
+    content: {
+      title: push.title,
+      description: push.description,
+      cta: push.cta,
+      href: push.href,
+      accent,
+      image,
+      format: 'sponsored',
+      source,
+      closable: type === 'intrusive' || type === 'reward',
+      debugPush: true,
+    },
+  };
+}
+
 const ADS_DEBUG_KEY = 'ciszu_ads_debug';
 
 export function readAdsDebug(): AdsDebugConfig | null {
@@ -571,6 +645,32 @@ const dKey = `ciszu_ads_${site}_dismissed`;
       return () => window.clearInterval(iv);
     }
   }, []);
+
+  // ── Push de anuncio forzado (devcon, punto H) ──
+  // En desarrollo lee /api/ads/push (ads_push.json). Si hay un push activo
+  // para este site que NO se ha mostrado aún, lo muestra AHORA mismo (ignora
+  // cooldown/intervalo/periodo de gracia) con aviso de que vino de la devcon.
+  const pushShownRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'development') return;
+    const applyPush = (push: AdsPushConfig | null) => {
+      if (!push || !push.enabled) return;
+      if (push.sites?.length && !push.sites.includes(site)) return;
+      if (pushShownRef.current === push.createdAt) return;
+      pushShownRef.current = push.createdAt;
+      const ad = buildPushAd(push, site);
+      if (ad) setCurrent(ad);
+    };
+    const poll = () => {
+      fetch('/api/ads/push', { cache: 'no-store' })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((p: AdsPushConfig | null) => applyPush(p))
+        .catch(() => {});
+    };
+    poll();
+    const iv = window.setInterval(poll, 1500);
+    return () => window.clearInterval(iv);
+  }, [site]);
 
   const effective = useMemo(() => {
     const accent = SITE_ACCENT[site] || '#22d3ee';
@@ -851,8 +951,16 @@ return createPortal(
         className="relative w-[min(94vw,500px)] rounded-2xl border border-white/10 bg-[#0b0e14] p-6 shadow-2xl"
         style={{ animation: 'ciszu-ad-pop .35s cubic-bezier(.16,1,.3,1)' }}
       >
-        <AdClose onClick={onClose} closable={closable} className="absolute right-3 top-3 h-8 w-8" />
+<AdClose onClick={onClose} closable={closable} className="absolute right-3 top-3 h-8 w-8" />
         <AdLabel />
+        {c.debugPush && (
+          <span className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-amber-400/15 border border-amber-400/40 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-amber-300">
+            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+            Enviado por devcon
+          </span>
+        )}
         <div className="mb-3">
           {c.format === 'video' && c.videoSrc ? (
             <video ref={timer.videoRef} src={c.videoSrc} muted autoPlay playsInline className="h-32 w-full rounded-lg bg-black object-contain" onEnded={timer.handleVideoEnded} />

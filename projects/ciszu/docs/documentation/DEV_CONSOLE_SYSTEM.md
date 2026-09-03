@@ -162,26 +162,29 @@ la consola espera (spinner + `Wait-WebReady`) a que cada web responda en su puer
 | `N` | No proceder (cancelar) |
 | `Q` / `Esc` | Abortar (cerrar consola; las webs siguen activas) |
 
-### 4.5 Debug local de anuncios (opción "Anuncios: debug local")
+### 4.5 Debug local de anuncios (opción "Anuncios: envio de anuncio tipo advisors")
 
-El devcon permite **forzar y configurar anuncios en local** para depurar el sistema
-ADS sin esperar los intervalos normales (5-10 min). Flujo:
+El devcon permite **ENVIAR un anuncio forzado** en local (punto H), estilo advisor:
+aparece **YA**, independientemente del intervalo/cooldown/periodo de gracia, con aviso
+claro de que fue enviado por la devcon (badge "enviado por devcon" en el modal). Flujo:
 
-1. **Webs destino** (selección múltiple): casillas por web (network/antony/ciszubot/muzic).
-2. **Tipo**: intrusivo (centro tras acción) · particulares (esquina) · reward · optional (banner) · todos.
-3. **Intervalo** en segundos: 5s · 15s · 30s · 60s · normal (5-10 min).
-4. **Fuente**: oficiales de Ciszu Network (requiere elegir la **marca**:
-   ciszunetwork/ciszukoantony/ciszubot/muzicmania/ciszugamens) · terceros (external) · ambas.
-5. **Solo recompensa** o todos.
-6. Al final: `[S]` resumen actual · `[L]` limpiar anuncios en pantalla (dispara `clearCurrent`) ·
-   `[R]` reiniciar (desactiva la config).
+1. **Submenú**: Enviar anuncio · Quitar anuncios de pantalla · Resumen del push · Eliminar push.
+2. **Enviar anuncio**:
+   - **Webs destino** (selección múltiple): casillas por web (network/antony/ciszubot/muzic).
+   - **Tipo**: intrusivo (centro) · particulares (esquina) · reward · optional (banner inferior).
+   - **Fuente**: oficial de Ciszu Network (elegir marca con isotipo:
+     ciszunetwork/ciszukoantony/ciszubot/muzicmania/ciszugamens) · terceros (external, sin isotipo).
+   - **Mensaje**: título, descripción, texto del botón y URL destino (con defaults).
+   - **Recompensa** (solo si tipo = reward): si/no.
+3. Al escribir el push, se muestra el **fallback "Pendiente..."** (como advisor): se hace
+   `GET http://localhost:<puerto>/api/ads/push` a cada web y se comprueba que devuelve el
+   mismo `createdAt`. Si lo devuelve → ✅ entregado; si no → ⏳ pendiente… hasta timeout (30s).
 
-La config se escribe en `test/website/debug/local-logs/ads_debug.json` y cada web
-(en desarrollo) la lee vía `GET /api/ads/debug`. `AdsProvider` la aplica sobre el catálogo
-(webs, tipos, fuente/marca, intervalo) y expone `clearCurrent()`. **El periodo de gracia
-de 10s se ignora cuando el debug está activo** (los anuncios forzados salen al instante), y
-también se anula el filtro de "no anunciar la propia web" (se puede forzar cualquier marca,
-incluida la web actual, para depurar logos). En producción el endpoint devuelve `{enabled:false}`.
+El push se escribe en `test/website/debug/local-logs/ads_push.json` y cada web (en
+desarrollo) lo lee vía `GET /api/ads/push`. `AdsProvider` lo muestra al instante con el
+badge "enviado por devcon" (ignora cooldown, intervalo y gracia). "Quitar de pantalla"
+dispara `POST /api/ads/clear` → evento `ciszu:ads:clear` (clearCurrent). En producción el
+endpoint devuelve `{enabled:false}`.
 
 ### 4.6 Debug local de disclaimers (opción "Disclaimers: debug local")
 

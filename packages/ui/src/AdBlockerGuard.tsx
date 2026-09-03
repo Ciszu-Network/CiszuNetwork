@@ -19,7 +19,10 @@
  *      Al llegar a 0 se desbloquea la página.
  *   4. Si el usuario intenta CLIC en un anuncio con adblocker → error y vuelve a
  *      aparecer el modal.
- *   5. La elección local se borra cada 24h. No se guarda en base de datos.
+ *   5. La elección local se borra cada 12h (concienciación) y ADEMÁS se re-evalúa
+ *      en cada RECARGA MANUAL (F5): la mayoría de adblockers se activan/desactivan
+ *      recargando la página, así que el guard aprovecha ese momento para volver a
+ *      aparecer si el bloqueo sigue activo (punto D). No se guarda en base de datos.
  *
  * Detección (punto 11): se usa SOLO el método de BAITS múltiples con clases de
  * anuncio reales (las mismas que usan las listas de AdGuard/uBlock/EasyList y
@@ -48,7 +51,7 @@ export interface AdBlockerGuardProps {
 type Screen = 'none' | 'block' | 'disable' | 'continue';
 
 const CHOICE_KEY = 'ciszu_adblock_choice';
-const CHOICE_TTL_MS = 24 * 60 * 60 * 1000; // 24h
+const CHOICE_TTL_MS = 12 * 60 * 60 * 1000; // 12h
 
 interface Choice {
   choice: 'disable' | 'continue';
@@ -74,6 +77,39 @@ function readChoice(): Choice | null {
 function writeChoice(choice: 'disable' | 'continue') {
   try {
     localStorage.setItem(CHOICE_KEY, JSON.stringify({ choice, at: Date.now() }));
+  } catch {
+    /* noop */
+  }
+}
+
+/**
+ * ¿La página se cargó por una RECARGA MANUAL (F5 / Ctrl+R / botón recargar)?
+ * La mayoría de adblockers se activan/desactivan recargando la página: ahí es
+ * donde el guard debe re-evaluar si debe aparecer (punto D). Distinguimos:
+ *  - 'reload'  -> recarga manual del usuario (F5) → re-evaluar SIEMPRE
+ *  - 'navigate'-> navegación normal (abrir/enlazar) → respetar elección (≤12h)
+ *  - 'back_forward' -> volver/avanzar del historial → respetar elección
+ */
+function isManualReload(): boolean {
+  if (typeof window === 'undefined' || !window.performance) return false;
+  try {
+    const entries = window.performance.getEntriesByType('navigation');
+    if (entries && entries.length > 0) {
+      const nav = entries[0] as PerformanceNavigationTiming;
+      return nav.type === 'reload';
+    }
+    // Fallback legacy (navegadores sin PerformanceNavigationTiming).
+    const legacy = (window.performance as unknown as { navigation?: { type: number } }).navigation;
+    if (legacy) return legacy.type === 1; // 1 = reload
+  } catch {
+    /* noop */
+  }
+  return false;
+}
+
+function clearChoice() {
+  try {
+    localStorage.removeItem(CHOICE_KEY);
   } catch {
     /* noop */
   }
@@ -161,10 +197,17 @@ export function AdBlockerGuard({ children, site, logo, title = 'Ciszu Network', 
   const [disableCount, setDisableCount] = useState(15);
   const [continueCount, setContinueCount] = useState(5);
 
-  // Detección clara: solo si hay adblocker CONFIRMADO y sin elección reciente.
+  // Detección clara: solo si hay adblocker CONFIRMADO.
+  // - Recarga MANUAL (F5): se borra la elección previa y se re-evalúa SIEMPRE,
+  //   porque el usuario pudo activar/desactivar su adblocker al recargar.
+  // - Navegación normal: se respeta la elección guardada (≤12h).
   useEffect(() => {
-    const choice = readChoice();
-    if (choice) return; // elección válida (≤24h): no molestar
+    if (isManualReload()) {
+      clearChoice();
+    } else {
+      const choice = readChoice();
+      if (choice) return; // elección válida (≤12h): no molestar
+    }
     let cancelled = false;
     const run = () => {
       if (cancelled) return;

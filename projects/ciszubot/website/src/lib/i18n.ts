@@ -1,4 +1,4 @@
-export type Lang = 'es' | 'en';
+﻿export type Lang = 'es' | 'en';
 
 export const INVITE_URL =
   'https://discord.com/oauth2/authorize?client_id=1395532235872141312&permissions=8&scope=bot%20applications.commands';
@@ -144,7 +144,7 @@ export const dict = {
       support: 'Soporte',
       prefix: 'Prefijo',
       slash: 'Slash',
-      discordServer: 'Servidor de Discord',
+      discordServer: 'Ciszugamens',
       rights: 'Todos los derechos reservados.',
       madeBy: 'Hecho con amor por',
     },
@@ -460,7 +460,7 @@ export const dict = {
       support: 'Support',
       prefix: 'Prefix',
       slash: 'Slash',
-      discordServer: 'Discord server',
+      discordServer: 'Ciszugamens',
       rights: 'All rights reserved.',
       madeBy: 'Made with love by',
     },
@@ -500,7 +500,7 @@ export const dict = {
       title: 'Support',
       subtitle:
         'Need help with CiszuBot? These are the best channels to solve any question or report a problem.',
-      joinTitle: 'Discord server',
+      joinTitle: 'Ciszugamens',
       joinDesc:
         'Join the Ciszu Network community. Support channel, bot announcements and bug reports.',
       joinCta: 'Join the server',
@@ -686,3 +686,4 @@ export const LANGS: { code: Lang; label: string; flag: string }[] = [
   { code: 'es', label: 'ES', flag: 'es' },
   { code: 'en', label: 'EN', flag: 'gb' },
 ];
+

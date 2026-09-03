@@ -91,32 +91,18 @@ export const SOCIAL_COLORS: Record<SocialPlatform, string> = {
 
 export const PROJECT_SECTIONS = [
   {
-    id: 'minecraft',
-    title: 'Minecraft',
-    desc: 'Texture packs, mods y servidores personalizados con identidad Ciszu.',
-    icon: 'pickaxe',
-    color: '#44B272',
+    id: 'ciszugamens',
+    title: 'Ciszugamens',
+    desc: 'Servidor de la comunidad: Discord, WhatsApp y Telegram.',
+    icon: 'gamepad-2',
+    color: '#a855f7',
   },
   {
-    id: 'discord',
-    title: 'Discord',
-    desc: 'Servidores comunitarios y bots inteligentes para tu experiencia.',
-    icon: 'message-circle',
+    id: 'ciszubot',
+    title: 'CiszuBot',
+    desc: 'Bot inteligente de Discord del ecosistema: moderación, música y más.',
+    icon: 'bot',
     color: '#5865F2',
-  },
-  {
-    id: 'whatsapp',
-    title: 'WhatsApp',
-    desc: 'Comunidades y bots de automatización para empresas y grupos.',
-    icon: 'message-square',
-    color: '#25D366',
-  },
-  {
-    id: 'telegram',
-    title: 'Telegram',
-    desc: 'Canales, grupos y bots con tecnología Ciszu.',
-    icon: 'send',
-    color: '#26A5E4',
   },
   {
     id: 'muzicmania',
