@@ -12,7 +12,7 @@ import AuthFeedback from '@/components/molecules/AuthFeedback';
 import { usePageTitle } from '@/lib/usePageTitle';
 import Image from 'next/image';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
-import { AuthBenefitsPanel, AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders, useToast } from '@ciszu/ui';
+import { AuthBenefitsPanel, AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders, useToast, useActivityGuard } from '@ciszu/ui';
 
 // --- Icons Library ---
 const I = {
@@ -84,6 +84,7 @@ const InputField = ({ label, name, icon, type = "text", placeholder, maxLength, 
 
 export default function LoginPage() {
   usePageTitle('LOGIN');
+  const { begin: beginActivity, end: endActivity } = useActivityGuard();
   const [form, setForm] = useState({
     identifier: '',
     password: '',
@@ -91,6 +92,17 @@ export default function LoginPage() {
     twoFactor: '',
     captchaToken: null as string | null
   });
+
+  // Guard de acciones no recuperables: login con contenido → no navegar sin aviso.
+  useEffect(() => {
+    const hasInput = form.identifier.trim().length > 0 || form.password.length > 0 || form.twoFactor.trim().length > 0;
+    if (hasInput) beginActivity('auth-form');
+    else endActivity('auth-form');
+  }, [form, beginActivity, endActivity]);
+  useEffect(() => {
+    return () => endActivity('auth-form');
+     
+  }, []);
 
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [forgotStep2, setForgotStep2] = useState(false);

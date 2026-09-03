@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 import AuthFeedback from '@/components/molecules/AuthFeedback';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
-import { AuthBenefitsPanel, AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders, useToast } from '@ciszu/ui';
+import { AuthBenefitsPanel, AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders, useToast, useActivityGuard } from '@ciszu/ui';
 
 // --- Icons Library ---
 const I = {
@@ -104,6 +104,7 @@ const InputField = ({ label, name, icon, type = "text", placeholder, maxLength, 
 
 export default function RegisterPage() {
   usePageTitle('REGISTER');
+  const { begin: beginActivity, end: endActivity } = useActivityGuard();
   const { setHasAcceptedCookies,  user } = useAppStore();
   const { toast } = useToast();
   const router = useRouter();
@@ -135,6 +136,17 @@ export default function RegisterPage() {
     acceptedTerms: false,
     captchaToken: null as string | null
   });
+
+  // Guard de acciones no recuperables: registro con contenido → no navegar sin aviso.
+  useEffect(() => {
+    const hasInput = Object.values(form).some((v) => String(v).trim().length > 0);
+    if (hasInput) beginActivity('auth-form');
+    else endActivity('auth-form');
+  }, [form, beginActivity, endActivity]);
+  useEffect(() => {
+    return () => endActivity('auth-form');
+     
+  }, []);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [passwordStrength, setPasswordStrength] = useState({ score: 0, text: '', color: 'bg-gray-700' });

@@ -71,6 +71,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         theme: profile.settings_theme === 'light' ? 'light' as const : 'dark' as const,
         zoom: typeof profile.settings_controls?.zoom === 'number' ? profile.settings_controls.zoom : 100,
         tabMuted: profile.settings_controls?.tabMuted === true,
+        redirectGuard: profile.settings_controls?.redirectGuard !== false,
+        activityGuard: profile.settings_controls?.activityGuard !== false,
       };
       savePreferences(prefs);
       const { setTheme, setLanguage, setZoom, setTabMuted } = useAppStore.getState();

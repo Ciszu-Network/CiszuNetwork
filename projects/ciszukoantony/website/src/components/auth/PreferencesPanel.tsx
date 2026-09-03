@@ -184,6 +184,20 @@ const setLangSafe = (l: PreferenceLang) => {
     syncToProfile();
   };
 
+  const toggleRedirectGuard = () => {
+    const next = !prefs.redirectGuard;
+    const updated = updatePreferences({ redirectGuard: next });
+    setPrefs(updated);
+    syncToProfile();
+  };
+
+  const toggleActivityGuard = () => {
+    const next = !prefs.activityGuard;
+    const updated = updatePreferences({ activityGuard: next });
+    setPrefs(updated);
+    syncToProfile();
+  };
+
   const sectionTitleCls = 'text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-2';
 
   return (
@@ -290,6 +304,53 @@ const setLangSafe = (l: PreferenceLang) => {
           <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${prefs.muted ? 'left-4' : 'left-0.5'}`} />
         </span>
       </button>
+
+      {/* Navegación segura */}
+      <div>
+        <p className={sectionTitleCls}>Navegación</p>
+        <button
+          onClick={toggleRedirectGuard}
+          className={`w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg border transition-all active:scale-95 ${
+            prefs.redirectGuard
+              ? 'bg-blue-500/10 border-blue-500/40 text-blue-300 hover:bg-blue-500/20'
+              : 'bg-white/5 border-white/10 text-white/80 hover:border-blue-400/50 hover:text-blue-300'
+          }`}
+          title="Aviso de redirección"
+        >
+          <span className="flex items-center gap-2 font-header font-bold text-xs uppercase tracking-widest">
+            <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+              <polyline points="15 3 21 3 21 9" />
+              <line x1="10" y1="14" x2="21" y2="3" />
+            </svg>
+            Aviso de redirección
+          </span>
+          <span className={`w-9 h-5 rounded-full relative transition-colors ${prefs.redirectGuard ? 'bg-blue-500/70' : 'bg-white/15'}`}>
+            <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${prefs.redirectGuard ? 'left-4' : 'left-0.5'}`} />
+          </span>
+        </button>
+        <button
+          onClick={toggleActivityGuard}
+          className={`w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg border transition-all active:scale-95 mt-2 ${
+            prefs.activityGuard
+              ? 'bg-red-500/10 border-red-500/40 text-red-300 hover:bg-red-500/20'
+              : 'bg-white/5 border-white/10 text-white/80 hover:border-red-400/50 hover:text-red-300'
+          }`}
+          title="Protección de acciones no recuperables"
+        >
+          <span className="flex items-center gap-2 font-header font-bold text-xs uppercase tracking-widest">
+            <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              <path d="M12 9v4" />
+              <path d="M12 17h.01" />
+            </svg>
+            Proteger acciones
+          </span>
+          <span className={`w-9 h-5 rounded-full relative transition-colors ${prefs.activityGuard ? 'bg-red-500/70' : 'bg-white/15'}`}>
+            <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${prefs.activityGuard ? 'left-4' : 'left-0.5'}`} />
+          </span>
+        </button>
+      </div>
 
       {/* Ayuda */}
       <div>

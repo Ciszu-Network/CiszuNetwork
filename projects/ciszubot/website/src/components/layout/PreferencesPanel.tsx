@@ -113,11 +113,15 @@ const LANGS_DISPLAY = [
 export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onToggleTheme }: PreferencesPanelProps) {
   const [zoom, setZoomState] = useState<number>(100);
   const [muteTab, setMuteTabState] = useState<boolean>(false);
+  const [redirectGuard, setRedirectGuardState] = useState<boolean>(true);
+  const [activityGuard, setActivityGuardState] = useState<boolean>(true);
 
   useEffect(() => {
     const prefs = loadPreferences();
     setZoomState(prefs.zoom);
     setMuteTabState(prefs.muteTab);
+    setRedirectGuardState(prefs.redirectGuard);
+    setActivityGuardState(prefs.activityGuard);
     applyZoom(prefs.zoom);
     setMuteTab(prefs.muteTab);
   }, []);
@@ -139,6 +143,18 @@ export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onTo
     setMuteTabState(next);
     setMuteTab(next);
     persist({ muteTab: next });
+  };
+
+  const toggleRedirectGuard = () => {
+    const next = !redirectGuard;
+    setRedirectGuardState(next);
+    persist({ redirectGuard: next });
+  };
+
+  const toggleActivityGuard = () => {
+    const next = !activityGuard;
+    setActivityGuardState(next);
+    persist({ activityGuard: next });
   };
 
   const handleLanguage = (code: 'es' | 'en') => {
@@ -245,6 +261,42 @@ export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onTo
           }`}
         >
           {muteTab ? <IcoVolumeOff /> : <IcoVolume />}
+        </button>
+      </div>
+
+      {/* Navegación segura */}
+      <div className="px-4 py-1.5 flex items-center justify-between gap-3">
+        <span className="text-xs font-bold text-ink/85">Aviso de redirección</span>
+        <button
+          onClick={toggleRedirectGuard}
+          aria-label="Aviso de redirección"
+          title="Aviso azul al salir a otra web"
+          className={`p-1.5 rounded-md border transition ${
+            redirectGuard ? 'bg-blue-500/15 border-blue-500/50 text-blue-400' : 'bg-card border-border text-faint hover:text-ink'
+          }`}
+        >
+          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            <polyline points="15 3 21 3 21 9" />
+            <line x1="10" y1="14" x2="21" y2="3" />
+          </svg>
+        </button>
+      </div>
+      <div className="px-4 py-1.5 flex items-center justify-between gap-3">
+        <span className="text-xs font-bold text-ink/85">Proteger acciones</span>
+        <button
+          onClick={toggleActivityGuard}
+          aria-label="Protección de acciones no recuperables"
+          title="Aviso rojo si vas a perder progreso al navegar"
+          className={`p-1.5 rounded-md border transition ${
+            activityGuard ? 'bg-red-500/15 border-red-500/50 text-red-400' : 'bg-card border-border text-faint hover:text-ink'
+          }`}
+        >
+          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            <path d="M12 9v4" />
+            <path d="M12 17h.01" />
+          </svg>
         </button>
       </div>
 
