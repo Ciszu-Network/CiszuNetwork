@@ -54,6 +54,11 @@ depende del formato y del tipo:
 
 ### 2.2 Reglas de recompensa
 
+> **Política (2026-09)**: NUNCA hay recompensas que modifiquen el resultado del gameplay.
+> El anuncio tras ganar/perder en MuzicMania es **intrusivo temporal opcional** (se cierra con X),
+> sin espera ni recompensa. El tipo `reward` sigue existiendo en `@ciszu/ui` para un FUTURO
+> (p. ej. eventos o vidas extra en el juego), pero NO se aplica al fin de partida actual.
+
 - `rewardWaitSec` (por defecto 30s): hasta que pasa el tiempo, "Reclamar" está deshabilitado.
 - Recompensa = **la mitad** de la estándar.
 - **Cerrar un anuncio de recompensa muestra una advertencia** ("vas a perder la recompensa") con
@@ -61,6 +66,16 @@ depende del formato y del tipo:
 - **Pérdida por abandono**: si el usuario recarga/cierra la pestaña con un anuncio de recompensa
   activo SIN reclamar, la recompensa se pierde (se marca como vista/consumida para no reclamarla
   en la siguiente visita sin verlo de nuevo). Se registra el evento `ad_reward_lost`.
+
+### 2.2b Usuarios registrados (menos anuncios)
+
+- **Autenticado** (CISZU ID, sin premium): menos anuncios → la **MITAD de frecuencia**:
+  - Se quitan los anuncios **opcionales de footer**.
+  - Se **duplica el `minIntervalSec`** de los periódicos (esquina/banner).
+  - **Cooldown inicial el doble** (40s esquina, 90s banner).
+  - En los modales/CTA de anuncios **NO se muestra** el botón "Regístrate y ve menos anuncios"
+    (ya está registrado).
+- **Premium** (suscripción futura): sin anuncios salvo los tras-acción (intrusivo).
 
 ### 2.3 Frecuencia y cooldown (60-120s por superficie)
 
@@ -191,8 +206,8 @@ import { GoogleAnalytics, AdsProvider, AdFloat, AdPill } from '@ciszu/ui';
 
 - **ciszu** (`app="ciszunetwork"`), **ciszukoantony**, **ciszubot**, **muzicmania** y **ciszugamens**: montados.
 - **MuzicMania — intrusivo tras la partida**: `AfterGameAd` (en `components/ads/`) se monta en la
-  fase de resultados de `/play` y llama `trigger('intrusive', 'game_end')` (respaldo
-  `trigger('reward', 'game_end')`).
+  fase de resultados de `/play` y llama `trigger('intrusive', 'game_end')` (cerrable con X,
+  SIN recompensa — ver §2.2).
 - Futuros *intrusivos*: tras compra en tienda (`shop_checkout`), etc. — basta añadir un trigger.
 
 ---
@@ -253,8 +268,11 @@ Eventos de anuncios (vía `trackEvent` de `@ciszu/ui`):
 | `real_image_pill` | opcional | `body` (3600s) | imagen 30s | Hueco AdSense real |
 | `real_carousel_pill` | opcional | `body` (3600s) | carrusel máx 4 | Hueco carrusel real |
 | `ciszunetwork_pill` | opcional | `body` (7200s) | patrocinado 10s | Crear cuenta CISZU ID |
-| `muzicmania_after_game` | intrusivo | `game_end` | patrocinado 20s | "¿Disfrutaste la partida?" → /play |
-| `reward_score` | recompensa | `game_end` (600s, 30s espera) | imagen 60s | Mitad de puntos extra |
+| `muzicmania_after_game` | intrusivo | `game_end` | patrocinado 20s | "¿Disfrutaste la partida?" → /play (cerrable con X, SIN recompensa) |
+
+> El antiguo `reward_score` (mitad de puntos) se **eliminó** del catálogo por política:
+> ningún anuncio modifica el resultado del gameplay. El tipo `reward` sigue disponible en
+> `@ciszu/ui` para un futuro.
 
 Cada patrocinado usa el **isotipo/logotipo real** de la marca vía `AssetResolver` del CDN.
 Los huecos reales muestran placeholder "Próximamente" hasta que se active AdSense; entonces el

@@ -4,6 +4,7 @@ import { useEventsEngine, EventsState } from './useEventsEngine';
 import { getArrowSkin, getArrowTrailSkin, ArrowSkin, ArrowState } from '@/lib/arrowSkins';
 import { getParticleSkin, ensureParticleSkin, ParticleSkin, ParticleSprite } from '@/lib/particleSkins';
 import { useAppStore } from '@/store/useAppStore';
+import { createTrackAudio } from '@/utils/musicAssets';
 
 export interface GameNote {
   time: number;
@@ -320,17 +321,16 @@ export const useGameEngine = (
 
   useEffect(() => {
     if (!levelConfig || typeof window === 'undefined') return;
-    const audio = new Audio(levelConfig.files.audio);
-    audio.preload = 'auto';
-    audio.volume = audioVolume;
+    // Crea el audio con FALLBACK: CDN primero, y si no carga, public/music (local).
+    // Así la música SIEMPRE se reproduce aunque el CDN de assets esté caído o
+    // el servidor local (8788) no esté activo.
+    const trackId = levelConfig.id || (levelConfig.files.audio.split('/').pop() || '').replace(/\.(ogg|mp3|opus)$/, '');
+    const { audio } = createTrackAudio(trackId, { volume: audioVolume, preload: 'auto' });
     audio.addEventListener('loadedmetadata', () => {
       if (audio.duration && isFinite(audio.duration)) {
         audioDurationRef.current = audio.duration;
       }
     });
-    if (audio.duration && isFinite(audio.duration)) {
-      audioDurationRef.current = audio.duration;
-    }
     audioRef.current = audio;
     return () => {
       audio.pause();

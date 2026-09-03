@@ -55,6 +55,9 @@ export type { AdConfig, AdType, AdContent, AdsProviderProps, AdFloatProps, AdPil
 // Legal: enlace a la versión completa de las bases legales (ciszunetwork)
 export { LegalCiszuLink } from './LegalCiszuLink';
 export type { LegalCiszuLinkProps } from './LegalCiszuLink';
+// Ciszugamens: isotipo oficial de la comunidad (botones Discord Server)
+export { default as CiszugamensLogo } from './CiszugamensLogo';
+export type { CiszugamensLogoProps } from './CiszugamensLogo';
 // GlobalAdvisor: sistema de mensajes globales del admin (GLOBAL_ADVISOR_SYSTEM, TODO #3)
 export { default as GlobalAdvisor } from './GlobalAdvisor';
 export type { GlobalAdvisorProps, Announcement } from './GlobalAdvisor';

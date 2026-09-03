@@ -112,7 +112,14 @@ export const Footer = () => {
                 rel="noopener noreferrer"
                 className="flex-1 group flex items-center justify-center gap-4 bg-[#5865F2]/10 border border-[#5865F2]/40 text-[#5865F2] hover:bg-gradient-to-tr hover:from-[#5865F2] hover:to-[#7289da] hover:text-white px-8 py-4 rounded-2xl transition-all shadow-lg active-depth"
               >
-                <div className="w-6 h-6 transform group-hover:scale-110 transition-transform">
+                <div className="flex items-center gap-2 transform group-hover:scale-110 transition-transform">
+                  <Image
+                    src={resolveAssetPath('projects/ciszugamens/content/logos/images/outline/isotype/gradient/color/ciszugamens_logo_isotipo_degradado_outline_color_cpurple_zblue.svg')}
+                    alt="Ciszugamens"
+                    width={24}
+                    height={24}
+                    className="w-6 h-6 object-contain"
+                  />
                   <IcoDiscord />
                 </div>
                 <div className="flex flex-col items-start leading-none">

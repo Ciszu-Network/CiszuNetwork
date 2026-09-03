@@ -98,6 +98,8 @@ interface AdsContextValue {
   site: string;
   catalog: AdConfig[];
   current: AdConfig | null;
+  /** true si el usuario está autenticado (CISZU ID): menos anuncios y sin CTA de registro. */
+  authenticated: boolean;
   show: (id: string) => AdConfig | null;
   trigger: (type: AdType, placement: string) => AdConfig | null;
   dismiss: () => void;
@@ -224,13 +226,9 @@ export const DEFAULT_AD_CATALOG: AdConfig[] = [
     ] },
   },
   // --- Intrusivo / recompensa (tras acción) ---
-  {
+{
     id: 'muzicmania_after_game', type: 'intrusive', placement: 'game_end',
     content: { title: '¿Disfrutaste la partida?', description: 'Sigue jugando y compite en la tabla de líderes.', cta: 'Jugar de nuevo', href: 'https://muzicmania.vercel.app/play', accent: '#c026d3', format: 'sponsored', source: 'muzicmania', image: ISOTIPO.muzicmania },
-  },
-  {
-    id: 'reward_score', type: 'reward', placement: 'game_end', minIntervalSec: 600, rewardWaitSec: 30,
-    content: { title: 'Anuncio con recompensa', description: 'Espera unos segundos y obtén la MITAD de puntos extra.', cta: 'Reclamar recompensa', href: '#', accent: '#22c55e', format: 'image', source: 'external', placeholder: true, durationSec: 30 },
   },
   // --- Banner inferior (optional): huecos reales + un patrocinado ---
   {
@@ -342,24 +340,26 @@ function AdBanner({ ad, compact = false }: { ad: AdConfig; compact?: boolean }) 
   );
 }
 
-function AdTerms({ site }: { site: string }) {
+function AdTerms({ site, authenticated = false }: { site: string; authenticated?: boolean }) {
   const url = SITE_TERMS[site] || SITE_TERMS.ciszunetwork;
   return (
     <div className="mt-4 space-y-3">
-      {/* CTA llamativo: regístrate para ver menos anuncios */}
-      <a
-        href="https://ciszunetwork.vercel.app/register"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#22d3ee] to-[#f472b6] px-4 py-2.5 text-xs font-black uppercase tracking-widest text-black transition-all hover:brightness-110 hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_18px_rgba(58,107,240,0.35)]"
-      >
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round">
-          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-          <polyline points="10 17 15 12 10 7" />
-          <line x1="15" y1="12" x2="3" y2="12" />
-        </svg>
-        Regístrate y ve menos anuncios
-      </a>
+      {/* CTA llamativo: regístrate para ver menos anuncios (oculto si ya está registrado) */}
+      {!authenticated && (
+        <a
+          href="https://ciszunetwork.vercel.app/register"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#22d3ee] to-[#f472b6] px-4 py-2.5 text-xs font-black uppercase tracking-widest text-black transition-all hover:brightness-110 hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_18px_rgba(58,107,240,0.35)]"
+        >
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+            <polyline points="10 17 15 12 10 7" />
+            <line x1="15" y1="12" x2="3" y2="12" />
+          </svg>
+          Regístrate y ve menos anuncios
+        </a>
+      )}
       {/* Términos con icono */}
       <p className="flex items-center justify-center gap-1.5 text-center text-[11px] text-neutral-500">
         <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -652,7 +652,6 @@ const dKey = `ciszu_ads_${site}_dismissed`;
   // cooldown/intervalo/periodo de gracia) con aviso de que vino de la devcon.
   const pushShownRef = useRef<number | null>(null);
   useEffect(() => {
-    if (process.env.NODE_ENV !== 'development') return;
     const applyPush = (push: AdsPushConfig | null) => {
       if (!push || !push.enabled) return;
       if (push.sites?.length && !push.sites.includes(site)) return;
@@ -662,6 +661,8 @@ const dKey = `ciszu_ads_${site}_dismissed`;
       if (ad) setCurrent(ad);
     };
     const poll = () => {
+      // El endpoint /api/ads/push solo responde en desarrollo (devuelve
+      // {enabled:false} en producción), así que este poll es seguro siempre.
       fetch('/api/ads/push', { cache: 'no-store' })
         .then((r) => (r.ok ? r.json() : null))
         .then((p: AdsPushConfig | null) => applyPush(p))
@@ -678,6 +679,11 @@ const dKey = `ciszu_ads_${site}_dismissed`;
     const dbg = debugRef.current;
     const debugForThisSite = dbg && dbg.enabled && (!dbg.sites?.length || dbg.sites.includes(site));
     const intervalSec = debugForThisSite && dbg.intervalSec ? dbg.intervalSec : undefined;
+    // Usuarios registrados (CISZU ID): menos anuncios → la MITAD de frecuencia.
+    // Se duplica el minIntervalSec de los periódicos (esquina/banner) y los
+    // opcionales de footer ya se filtran para autenticados. Premium: sin
+    // anuncios (solo los tras-acción). (Punto E del sistema ADS.)
+    const authedMul = authenticated && !premium ? 2 : 1;
     // El filtro de "no anunciar el propio sitio" se anula en debug: el devcon
     // permite forzar cualquier anuncio (incluida la propia web) para depurar.
     const filterSelf = debugForThisSite ? false : true;
@@ -690,7 +696,11 @@ const dKey = `ciszu_ads_${site}_dismissed`;
       .filter((a) => !(debugForThisSite && dbg.requireReward && a.type !== 'reward'))
       .map((a) => intervalSec
         ? { ...a, minIntervalSec: intervalSec, content: { ...a.content, accent: a.content.accent || accent } }
-        : { ...a, content: { ...a.content, accent: a.content.accent || accent } });
+        : {
+            ...a,
+            minIntervalSec: (a.minIntervalSec ?? 0) * authedMul,
+            content: { ...a.content, accent: a.content.accent || accent },
+          });
   }, [catalog, site, authenticated, premium, debugTick]);
 
 useEffect(() => {
@@ -707,7 +717,9 @@ useEffect(() => {
     // al usuario con un anuncio inmediato al cargar.
     const dbg = debugRef.current;
     if (!(dbg && dbg.enabled)) {
-      cooldownUntilRef.current = { corner: Date.now() + 20000, body: Date.now() + 45000 };
+      // Autenticados: cooldown inicial el DOBLE (40s esquina, 90s banner).
+      const mul = authenticated && !premium ? 2 : 1;
+      cooldownUntilRef.current = { corner: Date.now() + 20000 * mul, body: Date.now() + 45000 * mul };
     } else {
       cooldownUntilRef.current = {};
     }
@@ -874,8 +886,8 @@ const clearCurrent = useCallback(() => {
   }, [clearCurrent]);
 
   const value = useMemo<AdsContextValue>(
-    () => ({ site, catalog: effective, current, show, trigger, dismiss, rewardStatus, claimReward, floatingActive, setFloatingActive, getNextPeriodicAdIn, isInactive, clearCurrent }),
-    [site, effective, current, show, trigger, dismiss, rewardStatus, claimReward, floatingActive, getNextPeriodicAdIn, isInactive, clearCurrent]
+    () => ({ site, catalog: effective, current, authenticated, show, trigger, dismiss, rewardStatus, claimReward, floatingActive, setFloatingActive, getNextPeriodicAdIn, isInactive, clearCurrent }),
+    [site, effective, current, authenticated, show, trigger, dismiss, rewardStatus, claimReward, floatingActive, getNextPeriodicAdIn, isInactive, clearCurrent]
   );
 
   return (
@@ -906,7 +918,7 @@ const ADS_CSS = `
 
 // ---------- Modal central (SOLO tras acción específica) ----------
 function AdModalInner() {
-  const { current, dismiss, rewardStatus, claimReward, site } = useAds();
+  const { current, dismiss, rewardStatus, claimReward, site, authenticated } = useAds();
   const [confirmLoss, setConfirmLoss] = useState(false);
 
   // useAutoClose no puede ser condicional; usamos un AdConfig vacío como guard.
@@ -980,6 +992,8 @@ return createPortal(
           </div>
         )}
 
+<AdTerms site={site} authenticated={authenticated} />
+
         <CountdownBar total={timer.total} remaining={timer.remaining} />
 
         <button
@@ -990,7 +1004,6 @@ return createPortal(
         >
           {isReward ? (status.canClaim ? c.cta : 'Espera para reclamar') : c.cta}
         </button>
-        <AdTerms site={site} />
 
         {confirmLoss && isReward && (
           <div className="absolute inset-0 z-30 flex items-center justify-center rounded-2xl bg-black/85 p-6" style={{ animation: 'ciszu-ad-fade .2s ease-out' }}>
@@ -1020,6 +1033,7 @@ function PassiveAdCard({ ad, onDone, compact = false, site }: { ad: AdConfig; on
 }
 
 function SingleAdCard({ ad, onDone, compact, site }: { ad: AdConfig; onDone: () => void; compact: boolean; site: string }) {
+  const ads = useAdsSafe();
   const c = ad.content;
   const closable = c.closable !== false;
   const timer = useAutoClose(ad, onDone);
@@ -1083,12 +1097,13 @@ function SingleAdCard({ ad, onDone, compact, site }: { ad: AdConfig; onDone: () 
         <CountdownBar total={timer.total} remaining={timer.remaining} />
       </div>
 
-      <AdTerms site={site} />
+      <AdTerms site={site} authenticated={ads?.authenticated} />
     </div>
   );
 }
 
 function CarouselCard({ ad, onDone, compact, site }: { ad: AdConfig; onDone: () => void; compact: boolean; site: string }) {
+  const ads = useAdsSafe();
   const items = ad.content.carouselItems ?? [];
   const max = Math.min(items.length, AD_TIMING.carouselMaxItems);
   const [idx, setIdx] = useState(0);
@@ -1173,7 +1188,7 @@ const item = items[idx];
         )}
       </div>
 
-      <AdTerms site={site} />
+      <AdTerms site={site} authenticated={ads?.authenticated} />
     </div>
   );
 }

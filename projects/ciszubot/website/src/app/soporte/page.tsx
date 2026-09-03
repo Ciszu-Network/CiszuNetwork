@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { Icon } from '@ciszu/ui';
 import Image from 'next/image';
+import { resolveAssetPath } from '@ciszunetwork/cdn';
 import {
   DISCORD_SERVER,
   BUY_ME_A_COFFEE,
@@ -106,7 +107,13 @@ export default async function SupportPage() {
           {/* Discord server */}
           <div className="soft-card rounded-2xl p-7 hover-card flex flex-col">
             <span className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#5865F2]/12 text-[#5865F2] mb-4">
-              <Icon name="discord" size={24} className="[&>g]:fill-current" />
+              <Image
+                src={resolveAssetPath('projects/ciszugamens/content/logos/images/outline/isotype/gradient/color/ciszugamens_logo_isotipo_degradado_outline_color_cpurple_zblue.svg')}
+                alt="Ciszugamens"
+                width={28}
+                height={28}
+                className="object-contain"
+              />
             </span>
             <h2 className="font-bold text-xl text-ink mb-2">{t.supportPage.joinTitle}</h2>
             <p className="text-sm text-muted mb-6 flex-grow leading-relaxed">{t.supportPage.joinDesc}</p>
@@ -116,7 +123,13 @@ export default async function SupportPage() {
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold btn-discord"
             >
-              <Icon name="discord" size={16} className="[&>g]:fill-current" />
+              <Image
+                src={resolveAssetPath('projects/ciszugamens/content/logos/images/outline/isotype/gradient/color/ciszugamens_logo_isotipo_degradado_outline_color_cpurple_zblue.svg')}
+                alt="Ciszugamens"
+                width={16}
+                height={16}
+                className="object-contain"
+              />
               {t.supportPage.joinCta}
             </a>
           </div>

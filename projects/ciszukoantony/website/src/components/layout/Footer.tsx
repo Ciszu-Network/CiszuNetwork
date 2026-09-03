@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { SmartImage, ScrollNavButton, useToast } from '@ciszu/ui';
+import { SmartImage, ScrollNavButton, useToast, CiszugamensLogo } from '@ciszu/ui';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { SOCIALS, I, FOOTER_SECTIONS } from '@/config/navigation';
@@ -137,7 +137,8 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 className="flex-1 group flex items-center justify-center gap-4 bg-[#5865F2]/10 border border-[#5865F2]/40 text-[#5865F2] hover:bg-gradient-to-tr hover:from-[#5865F2] hover:to-[#7289da] hover:text-white px-8 py-4 rounded-2xl transition-all shadow-lg active:scale-95"
               >
-                <div className="w-6 h-6 transform group-hover:scale-110 transition-transform">
+                <div className="flex items-center gap-2 transform group-hover:scale-110 transition-transform">
+                  <CiszugamensLogo size={24} />
                   <IcoDiscord />
                 </div>
                 <div className="flex flex-col items-start leading-none">

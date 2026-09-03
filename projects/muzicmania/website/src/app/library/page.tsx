@@ -8,7 +8,7 @@ import Image from 'next/image';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { TRACKS_DATA, Track } from '@/data/tracks';
-import { trackCover, trackDisc } from '@/utils/musicAssets';
+import { trackCover, trackDisc, trackAudioCandidates } from '@/utils/musicAssets';
 import { supabase } from '@/config/supabase';
 import { useAppStore } from '@/store/useAppStore';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
@@ -102,22 +102,35 @@ function LibraryContent() {
   }, [trackId]);
 
   useEffect(() => {
-    if (audioRef.current) {
-      // Si ya hay una canción seleccionada y el usuario cambia, 
-      // reseteamos el progreso y preparamos el nuevo track.
+    if (audioRef.current && selectedTrack) {
+      // Si ya hay una canción seleccionada y el usuario cambia, reseteamos el
+      // progreso y preparamos el nuevo track con FALLBACK (CDN → public/music).
       audioRef.current.pause();
-      audioRef.current.src = selectedTrack.url;
-      audioRef.current.load();
-      
-      // Si el usuario ya estaba en modo 'play', iniciamos el nuevo track
-      if (isPlaying) {
-        pauseGlobalMusic();
-        audioRef.current.play().catch(e => {
-          console.log("Audio play prevented:", e);
-          setIsPlaying(false);
-        });
-      }
-      
+      const candidates = trackAudioCandidates(selectedTrack.id);
+      let idx = 0;
+      const tryNext = () => {
+        if (idx >= candidates.length) return;
+        audioRef.current!.src = candidates[idx];
+        idx++;
+        audioRef.current!.load();
+        if (isPlaying) {
+          pauseGlobalMusic();
+          audioRef.current!.play().catch((e) => {
+            console.log('Audio play prevented:', e);
+            // Reintentar con el siguiente candidato si el actual no carga.
+            if (idx < candidates.length) {
+              window.setTimeout(tryNext, 300);
+            } else {
+              setIsPlaying(false);
+            }
+          });
+        }
+      };
+      audioRef.current.onerror = () => {
+        if (idx < candidates.length) window.setTimeout(tryNext, 200);
+      };
+      tryNext();
+
       setProgress(0);
       setCurrentTime(0);
     }
@@ -561,12 +574,10 @@ function LibraryContent() {
 
       <audio 
         ref={audioRef} 
-        src={selectedTrack.url}
         onTimeUpdate={handleTimeUpdate} 
         onLoadedMetadata={() => setDuration(audioRef.current?.duration || 0)}
         onEnded={() => setIsPlaying(false)} 
         preload="auto"
-        crossOrigin="anonymous"
         className="hidden" 
       />
     </MainLayout>
