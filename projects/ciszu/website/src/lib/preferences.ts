@@ -8,6 +8,10 @@ export interface CiszuPreferences {
   theme: PrefTheme;
   zoom: number;
   tabMuted: boolean;
+  /** Guard azul de redirección a otras webs (default activo). */
+  redirectGuard: boolean;
+  /** Guard rojo de acciones no recuperables (default activo). */
+  activityGuard: boolean;
 }
 
 export const PREFS_STORAGE_KEY = 'ciszu_preferences';
@@ -17,6 +21,8 @@ export const DEFAULT_PREFERENCES: CiszuPreferences = {
   theme: 'dark',
   zoom: 100,
   tabMuted: false,
+  redirectGuard: true,
+  activityGuard: true,
 };
 
 export const ZOOM_MIN = 80;
@@ -34,6 +40,8 @@ export function loadPreferences(): CiszuPreferences {
       theme: parsed.theme === 'light' ? 'light' : 'dark',
       zoom: typeof parsed.zoom === 'number' && parsed.zoom >= ZOOM_MIN && parsed.zoom <= ZOOM_MAX ? parsed.zoom : DEFAULT_PREFERENCES.zoom,
       tabMuted: parsed.tabMuted === true,
+      redirectGuard: parsed.redirectGuard !== false,
+      activityGuard: parsed.activityGuard !== false,
     };
   } catch {
     return DEFAULT_PREFERENCES;

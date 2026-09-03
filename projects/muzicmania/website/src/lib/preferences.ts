@@ -1,10 +1,12 @@
-export const PREFS_KEY = 'ciszu_preferences';
+﻿export const PREFS_KEY = 'ciszu_preferences';
 
 export interface Preferences {
   lang: string;
   theme: 'dark' | 'light';
   zoom: number;
   muteTab: boolean;
+  redirectGuard: boolean;
+  activityGuard: boolean;
 }
 
 export const PREFS_DEFAULTS: Preferences = {
@@ -12,6 +14,8 @@ export const PREFS_DEFAULTS: Preferences = {
   theme: 'dark',
   zoom: 100,
   muteTab: false,
+  redirectGuard: true,
+  activityGuard: true,
 };
 
 export const ZOOM_MIN = 80;

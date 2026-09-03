@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { assetResolver } from '@ciszunetwork/cdn';
 import { supabase } from '@/config/supabase';
@@ -15,6 +15,7 @@ import {
   passwordMeetsMinimum,
   SmartImage,
   useToast,
+  useActivityGuard,
 } from '@ciszu/ui';
 
 const IconUser = () => (
@@ -110,6 +111,18 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const [emailSent, setEmailSent] = useState(false);
+
+  // Guard de acciones no recuperables: formulario de registro con contenido.
+  const { begin: beginActivity, end: endActivity } = useActivityGuard();
+  useEffect(() => {
+    const hasInput = Object.values(form).some((v) => String(v).trim().length > 0);
+    if (hasInput) beginActivity('auth-form');
+    else endActivity('auth-form');
+  }, [form, beginActivity, endActivity]);
+  useEffect(() => {
+    return () => endActivity('auth-form');
+     
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));

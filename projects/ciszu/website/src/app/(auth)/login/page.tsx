@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { assetResolver } from '@ciszunetwork/cdn';
 import { supabase } from '@/config/supabase';
@@ -15,6 +15,7 @@ import {
   OAuthProviders,
   SmartImage,
   useToast,
+  useActivityGuard,
 } from '@ciszu/ui';
 
 const IconMail = () => (
@@ -93,6 +94,19 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
+
+  // Guard de acciones no recuperables: si hay contenido en el formulario de
+  // login y el usuario intenta navegar, se avisa (ActivityGuard rojo).
+  const { begin: beginActivity, end: endActivity } = useActivityGuard();
+  useEffect(() => {
+    const hasInput = form.email.trim().length > 0 || form.password.length > 0;
+    if (hasInput) beginActivity('auth-form');
+    else endActivity('auth-form');
+  }, [form.email, form.password, beginActivity, endActivity]);
+  useEffect(() => {
+    return () => endActivity('auth-form');
+     
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));

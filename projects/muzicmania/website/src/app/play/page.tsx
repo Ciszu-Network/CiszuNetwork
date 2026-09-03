@@ -30,7 +30,7 @@ import { CHANGELOG_DATA } from '@/data/changelog';
 import { TAG_CONFIG as CHANGELOG_TAGS, I as CHANGELOG_I } from '@/config/changelogIcons';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { getGuestId, getGuestName } from '@/lib/guest';
-import { useToast } from '@ciszu/ui';
+import { useToast, useActivityGuard } from '@ciszu/ui';
 // --- Icons Library ---
 const I = {
   play: <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>,
@@ -373,6 +373,10 @@ function PlayPageContent() {
     musicVol / 100
   );
 
+  // Guard de actividad no recuperable: jugando un nivel no se puede navegar
+  // sin aviso (ActivityGuard rojo). begin al empezar partida, end al terminar.
+  const { begin: beginActivity, end: endActivity } = useActivityGuard();
+
   // Visual & Accessibility settings
   const [audioInputDevice, setAudioInputDevice] = useState<string | null>(() => typeof window !== 'undefined' ? localStorage.getItem('audio_input_device') : null);
   const [audioDeviceList, setAudioDeviceList] = useState<MediaDeviceInfo[]>([]);
@@ -696,6 +700,8 @@ function PlayPageContent() {
     setPhase('game');
     setIsLoading(true);
     setResumeCountdown(null);
+    // Actividad no recuperable activa (juego en curso): navegar pide confirmación.
+    beginActivity('game');
     
     // Store level/chart for delayed start in unified countdown
     const notes = level.chart.notes.map((n, i) => ({
@@ -867,8 +873,9 @@ function PlayPageContent() {
 
     saveScore();
     // Salir de pantalla completa al terminar la partida: el anuncio tras-acción
-    // (modal intrusivo/recompensa) no debe molestar dentro del fullscreen.
+    // (modal intrusivo) no debe molestar dentro del fullscreen.
     if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    endActivity('game');
     setPhase('results');
   };
 

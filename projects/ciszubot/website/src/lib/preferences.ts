@@ -1,10 +1,12 @@
-export const PREFS_KEY = 'ciszu_preferences';
+﻿export const PREFS_KEY = 'ciszu_preferences';
 
 export interface Preferences {
   lang: 'es' | 'en';
   theme: 'dark' | 'light';
   zoom: number;
   muteTab: boolean;
+  redirectGuard: boolean;
+  activityGuard: boolean;
 }
 
 export const PREFS_DEFAULTS: Preferences = {
@@ -12,6 +14,8 @@ export const PREFS_DEFAULTS: Preferences = {
   theme: 'dark',
   zoom: 100,
   muteTab: false,
+  redirectGuard: true,
+  activityGuard: true,
 };
 
 export const ZOOM_MIN = 80;
@@ -24,11 +28,13 @@ export function loadPreferences(): Preferences {
     const raw = localStorage.getItem(PREFS_KEY);
     if (!raw) return { ...PREFS_DEFAULTS };
     const parsed = JSON.parse(raw) as Partial<Preferences>;
-    return {
+return {
       lang: parsed.lang === 'en' ? 'en' : 'es',
       theme: parsed.theme === 'light' ? 'light' : 'dark',
       zoom: typeof parsed.zoom === 'number' ? parsed.zoom : PREFS_DEFAULTS.zoom,
       muteTab: typeof parsed.muteTab === 'boolean' ? parsed.muteTab : PREFS_DEFAULTS.muteTab,
+      redirectGuard: parsed.redirectGuard !== false,
+      activityGuard: parsed.activityGuard !== false,
     };
   } catch {
     return { ...PREFS_DEFAULTS };

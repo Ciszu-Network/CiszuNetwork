@@ -39,14 +39,15 @@ function getPref(key: string, def: boolean): boolean {
 export function RedirectGuard({ disabled = false }: { disabled?: boolean }) {
   const [pending, setPending] = useState<{ href: string; host: string } | null>(null);
   const [remaining, setRemaining] = useState(3);
-  const enabledRef = useRef(getPref('redirectGuard', true));
   const pendingRef = useRef<typeof pending>(null);
   pendingRef.current = pending;
 
   useEffect(() => {
-    if (disabled || !enabledRef.current) return;
+    if (disabled) return;
     const onClick = (e: MouseEvent) => {
       if (pendingRef.current) return; // ya hay un aviso activo
+      // Preferencia en vivo (permite desactivar/activar sin recargar).
+      if (!getPref('redirectGuard', true)) return;
       const a = (e.target as HTMLElement).closest('a') as HTMLAnchorElement | null;
       if (!a || !a.href) return;
       if (a.target === '_blank') return; // nueva pestaña no interrumpe
@@ -107,7 +108,6 @@ export function ActivityGuardProvider({ children, disabled = false }: { children
   const [active, setActive] = useState(false);
   const [pendingNav, setPendingNav] = useState<string | null>(null);
   const activities = useRef<Map<string, { onPause?: () => void }>>(new Map());
-  const enabledRef = useRef(getPref('activityGuard', true));
 
   const begin = useCallback((key: string, onPause?: () => void) => {
     activities.current.set(key, { onPause });
@@ -125,9 +125,11 @@ export function ActivityGuardProvider({ children, disabled = false }: { children
 
   // Intercepta clics en enlaces cuando hay una actividad protegida.
   useEffect(() => {
-    if (disabled || !enabledRef.current) return;
+    if (disabled) return;
     const onClick = (e: MouseEvent) => {
       if (!active || pendingNav) return;
+      // Preferencia en vivo (permite desactivar/activar sin recargar).
+      if (!getPref('activityGuard', true)) return;
       const a = (e.target as HTMLElement).closest('a') as HTMLAnchorElement | null;
       if (!a || !a.href) return;
       const href = a.href;
@@ -146,9 +148,9 @@ export function ActivityGuardProvider({ children, disabled = false }: { children
 
   // beforeunload nativo (refresh/cerrar): aviso del navegador como respaldo.
   useEffect(() => {
-    if (disabled || !enabledRef.current) return;
+    if (disabled) return;
     const onBefore = (e: BeforeUnloadEvent) => {
-      if (active) { e.preventDefault(); e.returnValue = ''; }
+      if (active && getPref('activityGuard', true)) { e.preventDefault(); e.returnValue = ''; }
     };
     window.addEventListener('beforeunload', onBefore);
     return () => window.removeEventListener('beforeunload', onBefore);

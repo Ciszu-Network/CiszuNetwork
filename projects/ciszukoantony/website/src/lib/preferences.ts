@@ -10,6 +10,10 @@ export interface Preferences {
   fontSize: number;
   /** Indica si la pestaña está en modo silencio (título + favicon). */
   muted: boolean;
+  /** Guard azul de redirección a otras webs (default activo). */
+  redirectGuard: boolean;
+  /** Guard rojo de acciones no recuperables (default activo). */
+  activityGuard: boolean;
 }
 
 const PREFERENCES_KEY = 'ciszu_preferences';
@@ -21,6 +25,8 @@ export const DEFAULT_PREFERENCES: Preferences = {
   theme: 'dark',
   fontSize: 100,
   muted: false,
+  redirectGuard: true,
+  activityGuard: true,
 };
 
 export const FONT_SIZE_MIN = 80;
