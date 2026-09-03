@@ -8,7 +8,7 @@ import { usePageTitle } from '@/lib/usePageTitle';
 
 const supportChannels = [
   {
-    name: 'Discord', desc: 'Join our Discord server for real-time support.',
+    name: 'Ciszugamens (Discord)', desc: 'Join our Ciszugamens community on Discord for real-time support.',
     href: 'https://discord.com/invite/W3kMtMMj6E', color: 'from-indigo-500 to-purple-700',
   },
   {

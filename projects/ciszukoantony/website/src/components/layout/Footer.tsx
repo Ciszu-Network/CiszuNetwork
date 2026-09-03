@@ -141,7 +141,8 @@ export default function Footer() {
                   <IcoDiscord />
                 </div>
                 <div className="flex flex-col items-start leading-none">
-                  <span className="font-header font-black tracking-tighter text-lg uppercase italic">Discord Server</span>
+                  <span className="font-header font-black tracking-tighter text-lg uppercase italic">Ciszugamens</span>
+                  <span className="text-[9px] font-bold uppercase tracking-widest opacity-80">Discord Server</span>
                 </div>
               </a>
             </div>

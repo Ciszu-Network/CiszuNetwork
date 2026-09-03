@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -253,7 +253,7 @@ export default function ContactPage() {
                     {SOCIALS.filter(s => s.name !== 'GitHub').map(s => {
                       let actualHref = s.href;
                       let btnText = s.name;
-                      if (s.name === 'Discord') { actualHref = 'https://discord.gg/W3kMtMMj6E'; btnText = 'Discord Server'; }
+                      if (s.name === 'Discord') { actualHref = 'https://discord.gg/W3kMtMMj6E'; btnText = 'Ciszugamens'; }
                       return (
                         <button key={s.name} onClick={() => {if (s.name === 'Discord') setSelectedDiscord('ciszunetwork'); else window.open(actualHref, '_blank');}}
                           className={`flex items-center gap-3 px-5 py-2.5 rounded-2xl border transition-all hover:scale-105 ${s.borderCol} ${s.bgCol} ${s.textCol} hover:text-white hover:bg-opacity-40`}
@@ -273,7 +273,7 @@ export default function ContactPage() {
                 <div className="flex flex-wrap justify-center gap-4">
                    {SOCIALS.filter(s => s.name !== 'GitHub').map(s => {
                       let actualHref = s.href; let btnText = s.name;
-                      if (s.name === 'Discord') { actualHref = 'https://discord.gg/W3kMtMMj6E'; btnText = 'Discord Server'; }
+                      if (s.name === 'Discord') { actualHref = 'https://discord.gg/W3kMtMMj6E'; btnText = 'Ciszugamens'; }
                       return (
                         <button key={s.name} onClick={() => window.open(actualHref, '_blank')}
                           className={`flex items-center gap-3 px-5 py-2.5 rounded-2xl border transition-all hover:scale-105 ${s.borderCol} ${s.bgCol} ${s.textCol} hover:text-white hover:bg-opacity-40`}
@@ -350,3 +350,4 @@ export default function ContactPage() {
     </MainLayout>
   );
 }
+

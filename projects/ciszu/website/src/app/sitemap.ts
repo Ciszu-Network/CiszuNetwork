@@ -16,13 +16,11 @@ const ROUTES = [
   'policies',
   'support',
   'team',
+  'projects/ciszugamens',
+  'projects/ciszubot',
   'projects/ciszunetwork',
   'projects/ciszukoantony',
-  'projects/discord',
-  'projects/minecraft',
   'projects/muzicmania',
-  'projects/telegram',
-  'projects/whatsapp',
 ];
 
 export default function sitemap() {

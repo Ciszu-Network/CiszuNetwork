@@ -357,7 +357,7 @@ export default function LoginPage() {
           initial="hidden" 
           animate="visible" 
           variants={sectionVariants}
-          className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-start"
+          className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-6 lg:gap-10 items-start"
         >
           <div className="relative group">
           <div className="absolute -inset-1 bg-gradient-to-r from-neon-blue to-neon-purple rounded-[3rem] blur opacity-20 transition duration-500" />

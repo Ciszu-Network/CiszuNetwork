@@ -203,8 +203,8 @@ export default function RegisterPage() {
           />
         </div>
 
-        {/* Libro de 2 caras: formulario (izquierda) + beneficios (derecha) */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+        {/* Libro de 2 caras: formulario (izquierda) + lomo (centro) + beneficios (derecha) */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-6 lg:gap-10 items-start">
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-neon-pink to-brand-light rounded-[2.5rem] blur opacity-20 transition duration-500" />
             <div className="relative bg-[#070710]/95 border border-white/10 rounded-[2.5rem] p-8 md:p-10 space-y-6 backdrop-blur-2xl shadow-2xl">

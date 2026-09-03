@@ -26,15 +26,14 @@ import {
   FileText,
   Sparkles,
   LifeBuoy,
-  Pickaxe,
-  MessageCircle,
-  MessageSquare,
-  Send,
   Music,
   Building,
   MessageSquareWarning,
   Download,
   Heart,
+  GraduationCap,
+  Gamepad2,
+  Bot,
 } from 'lucide-react';
 
 const IcoDiscord = () => (
@@ -65,18 +64,17 @@ const NAV_ITEMS: NavEntry[] = [
     ],
   },
   { name: 'Soporte', href: '/support', icon: <LifeBuoy className="w-4 h-4" /> },
+  { name: 'Cursos', href: '/cursos', icon: <GraduationCap className="w-4 h-4" /> },
   { name: 'Descargas', href: '/descargas', icon: <Download className="w-4 h-4" /> },
   { name: 'Donar', href: '/donate', icon: <Heart className="w-4 h-4" /> },
   { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" /> },
   {
     name: 'Proyectos',
     icon: <Zap className="w-4 h-4" />,
-    keywords: ['minecraft', 'discord', 'whatsapp', 'telegram', 'muzicmania', 'ciszu network', 'ciszuko antony'],
+    keywords: ['ciszugamens', 'discord', 'whatsapp', 'telegram', 'ciszubot', 'muzicmania', 'ciszu network', 'ciszuko antony'],
     links: [
-      { name: 'Minecraft', href: '/projects/minecraft', icon: <Pickaxe className="w-4 h-4" /> },
-      { name: 'Discord', href: '/projects/discord', icon: <MessageCircle className="w-4 h-4" /> },
-      { name: 'WhatsApp', href: '/projects/whatsapp', icon: <MessageSquare className="w-4 h-4" /> },
-      { name: 'Telegram', href: '/projects/telegram', icon: <Send className="w-4 h-4" /> },
+      { name: 'Ciszugamens', href: '/projects/ciszugamens', icon: <Gamepad2 className="w-4 h-4" /> },
+      { name: 'CiszuBot', href: '/projects/ciszubot', icon: <Bot className="w-4 h-4" /> },
       { name: 'MuzicMania', href: '/projects/muzicmania', icon: <Music className="w-4 h-4" /> },
       { name: 'Ciszu Network', href: '/projects/ciszunetwork', icon: <Building className="w-4 h-4" /> },
       { name: 'Ciszuko Antony', href: '/projects/ciszukoantony', icon: <User className="w-4 h-4" /> },
@@ -106,13 +104,12 @@ const ALL_PAGES: { name: string; href: string; icon: React.ReactNode; keywords: 
   { name: 'Políticas', href: '/policies', icon: <FileText className="w-4 h-4" />, keywords: ['politicas', 'politica', 'privacidad', 'privacy', 'policy'] },
   { name: 'Guías', href: '/guidelines', icon: <Sparkles className="w-4 h-4" />, keywords: ['guias', 'guia', 'normas', 'lineamientos', 'guide'] },
   { name: 'Soporte', href: '/support', icon: <LifeBuoy className="w-4 h-4" />, keywords: ['soporte', 'ayuda', 'support', 'asistencia'] },
+  { name: 'Cursos', href: '/cursos', icon: <GraduationCap className="w-4 h-4" />, keywords: ['cursos', 'curso', 'ingles', 'formacion', 'learning', 'english', 'ef set', 'course'] },
   { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" />, keywords: ['feedback', 'reportar', 'reporte', 'problema', 'opinion', 'bug'] },
   { name: 'Donar', href: '/donate', icon: <Heart className="w-4 h-4" />, keywords: ['donar', 'donation', 'donacion', 'apoyar', 'apoyo', 'support', 'ko-fi', 'kofi', 'patreon', 'paypal', 'crypto'] },
   { name: 'Descargas', href: '/descargas', icon: <Download className="w-4 h-4" />, keywords: ['descargas', 'descargar', 'instalar', 'pdwa', 'download'] },
-  { name: 'Minecraft', href: '/projects/minecraft', icon: <Pickaxe className="w-4 h-4" />, keywords: ['minecraft', 'texture', 'mods', 'servidor'] },
-  { name: 'Discord', href: '/projects/discord', icon: <MessageCircle className="w-4 h-4" />, keywords: ['discord', 'comunidad', 'servidores', 'bots'] },
-  { name: 'WhatsApp', href: '/projects/whatsapp', icon: <MessageSquare className="w-4 h-4" />, keywords: ['whatsapp', 'comunidad', 'bots', 'grupos'] },
-  { name: 'Telegram', href: '/projects/telegram', icon: <Send className="w-4 h-4" />, keywords: ['telegram', 'canales', 'bots', 'grupos'] },
+  { name: 'Ciszugamens', href: '/projects/ciszugamens', icon: <Gamepad2 className="w-4 h-4" />, keywords: ['ciszugamens', 'gamens', 'discord', 'servidor', 'comunidad', 'whatsapp', 'telegram', 'games'] },
+  { name: 'CiszuBot', href: '/projects/ciszubot', icon: <Bot className="w-4 h-4" />, keywords: ['ciszubot', 'bot', 'discord', 'comandos'] },
   { name: 'MuzicMania', href: '/projects/muzicmania', icon: <Music className="w-4 h-4" />, keywords: ['muzicmania', 'musica', 'juego', 'ritmo'] },
   { name: 'Ciszu Network', href: '/projects/ciszunetwork', icon: <Building className="w-4 h-4" />, keywords: ['ciszu', 'network', 'compañia', 'marca'] },
   { name: 'Ciszuko Antony', href: '/projects/ciszukoantony', icon: <User className="w-4 h-4" />, keywords: ['ciszuko', 'antony', 'youtuber', 'streamer'] },
@@ -688,7 +685,7 @@ export const NavbarContent = () => {
                     className="flex items-center gap-4 px-4 py-3 rounded-2xl text-sm font-header font-bold border border-transparent text-gray-300 hover:text-white hover:bg-[#5865F2]/10 hover:border-[#5865F2]/30 transition-all active:scale-95"
                   >
                     <span className="w-8 h-8 rounded-full bg-black/40 text-white/70 flex items-center justify-center"><IcoDiscord /></span>
-                    Discord
+                    Ciszugamens · Discord
                   </a>
                 </div>
               ) : (

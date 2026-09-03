@@ -3,7 +3,7 @@ import Image from "next/image";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { SocialIcon } from "@/components/ui/SocialIcon";
 import { CISZU_NETWORK, CISZUKO_ANTONY, CISZUBOT_LINKS, DONATION_LINKS, EXTERNAL_LINKS, SOCIAL_COLORS } from "@/config/site";
-import { ArrowRight, Code, Shield, Zap, ExternalLink, Star, Globe, Music, Users, ChevronRight, Pickaxe, MessageCircle, MessageSquare, Send, Building, User, Gamepad2, Smartphone } from "lucide-react";
+import { ArrowRight, Code, Shield, Zap, ExternalLink, Star, Globe, Music, Users, ChevronRight, Building, User, Gamepad2, Bot } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -19,44 +19,24 @@ const services = [
 
 const projectSections = [
   {
-    id: "minecraft",
-    title: "Minecraft",
-    tagline: "Texture Packs, Mods & Servers",
-    desc: "Desarrollamos texture packs personalizados, mods y administramos servidores Minecraft con la identidad visual de Ciszu Network. Experiencias únicas para tu comunidad.",
-    href: "/projects/minecraft",
-    icon: Pickaxe,
-    gradient: "from-[#44B272] via-[#2ECC71] to-[#1ABC9C]",
-    tech: ["Resource Packs", "Mods", "Servers"],
+    id: "ciszugamens",
+    title: "Ciszugamens",
+    tagline: "Servidor de la Comunidad",
+    desc: "La comunidad gamer y digital de Ciszu Network en Discord, WhatsApp y Telegram. Eventos, partidas, soporte y más. Únete desde la plataforma que prefieras.",
+    href: "/projects/ciszugamens",
+    icon: Gamepad2,
+    gradient: "from-[#a855f7] via-[#3b82f6] to-[#22d3ee]",
+    tech: ["Discord", "WhatsApp", "Telegram"],
   },
   {
-    id: "discord",
-    title: "Discord",
-    tagline: "Servers & Bots Inteligentes",
-    desc: "Creamos y administramos servidores Discord comunitarios, bots personalizados con funcionalidades avanzadas y automatización para tu comunidad o empresa.",
-    href: "/projects/discord",
-    icon: MessageCircle,
+    id: "ciszubot",
+    title: "CiszuBot",
+    tagline: "Bot Inteligente de Discord",
+    desc: "El bot oficial del ecosistema: moderación, música, juegos, economía y automatización. Web con estado en vivo, comandos y soporte.",
+    href: "/projects/ciszubot",
+    icon: Bot,
     gradient: "from-[#5865F2] via-[#7289DA] to-[#4752C4]",
     tech: ["Bot Development", "Community Management", "Automation"],
-  },
-  {
-    id: "whatsapp",
-    title: "WhatsApp",
-    tagline: "Comunidades & Bots",
-    desc: "Automatización y bots inteligentes para WhatsApp. Comunidades organizadas, respuestas automáticas y herramientas de gestión para empresas y grupos.",
-    href: "/projects/whatsapp",
-    icon: MessageSquare,
-    gradient: "from-[#25D366] via-[#20BD5A] to-[#128C7E]",
-    tech: ["WhatsApp Bot", "Community", "Automation"],
-  },
-  {
-    id: "telegram",
-    title: "Telegram",
-    tagline: "Canales, Grupos & Bots",
-    desc: "Desarrollo de bots para Telegram, canales de contenido y grupos automatizados. Soluciones de mensajería con tecnología Ciszu.",
-    href: "/projects/telegram",
-    icon: Send,
-    gradient: "from-[#26A5E4] via-[#229ED9] to-[#1E8FC7]",
-    tech: ["Telegram Bot", "Channels", "Groups"],
   },
   {
     id: "muzicmania",
@@ -93,7 +73,7 @@ const projectSections = [
 ];
 
 const stats = [
-  { value: "7+", label: "Áreas de Proyecto" },
+  { value: "5+", label: "Proyectos del Ecosistema" },
   { value: "100%", label: "Compromiso" },
   { value: "24/7", label: "Soporte Técnico" },
 ];

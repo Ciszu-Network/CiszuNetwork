@@ -20,15 +20,14 @@ import {
   Home,
   Info,
   Mail,
-  Pickaxe,
-  MessageCircle,
-  MessageSquare,
-  Send,
   Music,
   User,
   MessageSquareWarning,
   Download,
   Heart,
+  GraduationCap,
+  Gamepad2,
+  Bot,
 } from 'lucide-react';
 
 const IcoPhone = () => (
@@ -62,6 +61,7 @@ const FOOTER_SECTIONS: FooterColumn[] = [
       { name: 'Políticas', href: '/policies', icon: <FileText className="w-4 h-4" /> },
       { name: 'Guías', href: '/guidelines', icon: <Sparkles className="w-4 h-4" /> },
       { name: 'Soporte', href: '/support', icon: <LifeBuoy className="w-4 h-4" /> },
+      { name: 'Cursos', href: '/cursos', icon: <GraduationCap className="w-4 h-4" /> },
       { name: 'Donar', href: '/donate', icon: <Heart className="w-4 h-4" /> },
       { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" /> },
       { name: 'Descargas', href: '/descargas', icon: <Download className="w-4 h-4" /> },
@@ -70,10 +70,8 @@ const FOOTER_SECTIONS: FooterColumn[] = [
   {
     title: 'Proyectos',
     links: [
-      { name: 'Minecraft', href: '/projects/minecraft', icon: <Pickaxe className="w-4 h-4" /> },
-      { name: 'Discord', href: '/projects/discord', icon: <MessageCircle className="w-4 h-4" /> },
-      { name: 'WhatsApp', href: '/projects/whatsapp', icon: <MessageSquare className="w-4 h-4" /> },
-      { name: 'Telegram', href: '/projects/telegram', icon: <Send className="w-4 h-4" /> },
+      { name: 'Ciszugamens', href: '/projects/ciszugamens', icon: <Gamepad2 className="w-4 h-4" /> },
+      { name: 'CiszuBot', href: '/projects/ciszubot', icon: <Bot className="w-4 h-4" /> },
       { name: 'MuzicMania', href: EXTERNAL_LINKS.muzicmania, icon: <Music className="w-4 h-4" /> },
       { name: 'Ciszuko Antony', href: EXTERNAL_LINKS.ciszukoantony, icon: <User className="w-4 h-4" /> },
     ],
@@ -210,11 +208,19 @@ export const Footer = () => {
                 rel="noopener noreferrer"
                 className="flex-1 group flex items-center justify-center gap-4 bg-[#5865F2]/10 border border-[#5865F2]/40 text-[#5865F2] hover:bg-gradient-to-tr hover:from-[#5865F2] hover:to-[#7289da] hover:text-white px-6 py-3.5 rounded-2xl transition-all shadow-lg active:scale-95"
               >
-                <div className="w-6 h-6 transform group-hover:scale-110 transition-transform">
+                <div className="flex items-center gap-2 transform group-hover:scale-110 transition-transform">
+                  <Image
+                    src={assetResolver.resolve('projects/ciszugamens/content/logos/images/outline/isotype/gradient/color/ciszugamens_logo_isotipo_degradado_outline_color_cpurple_zblue.svg')}
+                    alt="Ciszugamens"
+                    width={24}
+                    height={24}
+                    className="w-6 h-6 object-contain"
+                  />
                   <IcoDiscord />
                 </div>
                 <div className="flex flex-col items-start leading-none">
-                  <span className="font-header font-black tracking-tighter text-base uppercase italic">Discord Server</span>
+                  <span className="font-header font-black tracking-tighter text-base uppercase italic">Ciszugamens</span>
+                  <span className="text-[9px] font-bold uppercase tracking-widest opacity-80">Discord Server</span>
                 </div>
               </a>
             </div>

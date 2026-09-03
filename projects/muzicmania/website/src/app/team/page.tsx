@@ -281,7 +281,7 @@ export default function TeamPage() {
                     <div className="w-5 h-5 transform group-hover:scale-110 transition-transform">
                        {SOCIALS.find(s => s.name === 'Discord')?.icon}
                     </div>
-                    <span className="font-header font-black tracking-tighter text-sm uppercase italic">Discord Server</span>
+                    <span className="font-header font-black tracking-tighter text-sm uppercase italic">Ciszugamens</span>
                   </a>
                 </div>
               </div>
