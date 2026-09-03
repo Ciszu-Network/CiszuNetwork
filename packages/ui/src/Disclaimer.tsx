@@ -16,7 +16,7 @@
  * mismo gesto. Los Navbars publican su modo (island/full) vía pub/sub.
  * ------------------------------------------------------------------ */
 
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useSyncExternalStore } from 'react';
 import { useZoomWarningActive } from './zoomStore';
 
@@ -344,8 +344,6 @@ export function DisclaimerStack({ headerHeight = 64, zoomShift = 32 }: Disclaime
   );
 }
 
-export default DisclaimerStack;
-
 /* ------------------------------------------------------------------ *
  * DisclaimerDebug — inyecta disclaimers de DEBUG (devcon) en desarrollo.
  * Lee test/website/debug/local-logs/disclaimers_debug.json vía
@@ -406,3 +404,150 @@ export function DisclaimerDebug({ site }: { site: string }) {
 
   return null;
 }
+
+/* ------------------------------------------------------------------ *
+ * GlobalDisclaimer — disclaimers GLOBALES (replica de GLOBAL_ADVISOR_SYSTEM).
+ *
+ * Hace polling a ciszunetwork.global_disclaimers (cada ~20s). Respeta el
+ * kill switch (global_disclaimer_settings). Confirma entrega por sitio
+ * (global_disclaimer_deliveries) para que el devcon pueda esperar con --wait.
+ * Los disclaimers recibidos se inyectan en el DisclaimerProvider (stack), por
+ * lo que se muestran apilados en la cabecera como los locales.
+ *
+ * Uso: <GlobalDisclaimer site="ciszu" />  (site: 'ciszu'|'ciszukoantony'|'muzicmania'|'ciszubot')
+ * ------------------------------------------------------------------ */
+export interface GlobalDisclaimerProps {
+  site: 'ciszu' | 'ciszukoantony' | 'muzicmania' | 'ciszubot';
+  pollInterval?: number;
+  disabled?: boolean;
+}
+
+const GD_POLL_INTERVAL = 20000;
+const GD_SEEN_MAX = 100;
+
+const GD_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://obwzzmbvkrcscqwptlqo.supabase.co';
+const GD_SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
+function gdFetch(path: string, query = '', init?: RequestInit) {
+  return fetch(`${GD_SUPABASE_URL}/rest/v1/${path}?${query}`, {
+    headers: {
+      apikey: GD_SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${GD_SUPABASE_ANON_KEY}`,
+      'Content-Type': 'application/json',
+      'Accept-Profile': 'ciszunetwork',
+      ...(init?.headers || {}),
+    },
+    ...init,
+  });
+}
+
+export interface GlobalDisclaimerRow {
+  id: number;
+  sender: string;
+  source: string;
+  message: string;
+  kind: 'info' | 'beta' | 'warning';
+  target: string;
+  dismissible: boolean;
+  expires_at: string | null;
+  image: string | null;
+  created_at: string;
+}
+
+function gdSeenKey(site: string): string {
+  return `global_disclaimer_seen_${site}`;
+}
+
+function gdLoadSeen(site: string): Set<number> {
+  try {
+    const raw = window.localStorage.getItem(gdSeenKey(site));
+    if (!raw) return new Set();
+    const arr = JSON.parse(raw);
+    return new Set(Array.isArray(arr) ? arr.filter((n: unknown) => typeof n === 'number') : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function gdPersistSeen(site: string, ids: Set<number>) {
+  try {
+    window.localStorage.setItem(gdSeenKey(site), JSON.stringify(Array.from(ids).slice(-GD_SEEN_MAX)));
+  } catch { /* no romper */ }
+}
+
+export function GlobalDisclaimer({ site, pollInterval = GD_POLL_INTERVAL, disabled = false }: GlobalDisclaimerProps) {
+  const { push, remove } = useDisclaimer();
+  const seenRef = useRef<Set<number>>(new Set());
+  const [rows, setRows] = useState<GlobalDisclaimerRow[]>([]);
+
+  useEffect(() => {
+    seenRef.current = gdLoadSeen(site);
+    let cancelled = false;
+
+    const poll = async () => {
+      if (cancelled) return;
+      try {
+        const settingsRes = await gdFetch('global_disclaimer_settings', 'id=eq.1&select=enabled');
+        const settings = settingsRes.ok ? (await settingsRes.json()) : [];
+        const enabled = Array.isArray(settings) && settings.length ? settings[0].enabled !== false : true;
+        if (!enabled) {
+          setRows([]);
+          return;
+        }
+        const res = await gdFetch('global_disclaimers', 'select=*&order=created_at.desc&limit=50');
+        if (!res.ok) return;
+        const data = (await res.json()) as GlobalDisclaimerRow[];
+        const relevant = data.filter((d) => {
+          if (d.expires_at && new Date(d.expires_at).getTime() <= Date.now()) return false;
+          if (d.target === 'global') return true;
+          const list = String(d.target).split(',').map((s) => s.trim()).filter(Boolean);
+          return list.includes(site);
+        });
+        // Confirmar entrega por sitio (upsert) para el --wait del devcon.
+        for (const d of relevant) {
+          gdFetch('global_disclaimer_deliveries', `disclaimer_id=eq.${d.id}&site=eq.${site}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ delivered_at: new Date().toISOString() }),
+            headers: { 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates' },
+          }).catch(() => {});
+        }
+        setRows(relevant);
+      } catch {
+        /* red/API: no romper */
+      }
+    };
+
+    poll();
+    const iv = window.setInterval(poll, pollInterval);
+    return () => { cancelled = true; window.clearInterval(iv); };
+  }, [site, pollInterval]);
+
+  // Inyecta los disclaimers globales en el stack (no vistos aún o con fecha futura).
+  useEffect(() => {
+    const active = new Set<string>();
+    for (const row of rows) {
+      const key = `gd_${row.id}`;
+      if (seenRef.current.has(row.id)) continue;
+      active.add(key);
+      push({
+        id: key,
+        kind: row.kind,
+        message: row.message,
+        dismissible: row.dismissible,
+        expiresAt: row.expires_at,
+        image: row.image ?? undefined,
+        onClose: () => {
+          seenRef.current.add(row.id);
+          gdPersistSeen(site, seenRef.current);
+          remove(key);
+        },
+      });
+    }
+    return () => { for (const id of active) remove(id); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows, push, remove, site]);
+
+  return null;
+}
+
+export default DisclaimerStack;

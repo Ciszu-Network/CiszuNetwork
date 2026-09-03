@@ -204,6 +204,29 @@ La config se escribe en `local-logs/disclaimers_debug.json` y cada web la lee v�
 `GET /api/disclaimers/debug` (solo dev). El componente `DisclaimerDebug` la inyecta en la pila
 global. En producción no tiene efecto.
 
+> **Importante (site ids)**: el devcon selecciona webs por sus **keys cortas**
+> (`network/antony/ciszubot/muzic`), pero los componentes de `@ciszu/ui` usan los
+> **siteId completos** (`ciszunetwork/ciszukoantony/ciszubot/muzicmania`). La función
+> `Resolve-SiteIds` mapea keys → siteId al escribir `disclaimers_debug.json` y
+> `ads_push.json`. Sin ese mapeo, los disclaimers/anuncios NO coinciden con el `site`
+> prop de cada web y nunca se muestran.
+
+### 4.6b Disclaimers GLOBALES (opción "Disclaimers: GLOBAL", replica de advisor)
+
+Replica el sistema de advisors para disclaimers de cabecera a nivel ecosistema:
+
+- **Tablas** (migración `20260902000027_global_disclaimers.sql`):
+  `global_disclaimers` · `global_disclaimer_settings` (kill switch) ·
+  `global_disclaimer_deliveries` (confirmación por web).
+- **Componente** `GlobalDisclaimer` (`@ciszu/ui`), montado en los 4 layouts junto al
+  `DisclaimerStack`: hace polling a la BD (cada 20s), respeta el kill switch, confirma
+  entrega por sitio y muestra los disclaimers en el stack de cabecera.
+- **Script** `scripts/disclaimer.js`: envía (`--target global|site --kind info|beta|warning
+  --dismissible on|off --expires ISO`), gestiona el kill switch (`--toggle on|off`), lista
+  y borra. Con `--wait` espera confirmación de entrega por web ("Pendiente...").
+- **Devcon**: opciones "Disclaimers: GLOBAL (enviar)", "Disclaimers: activar/desactivar
+  globales (kill switch)" y "Disclaimers: borrar globales" en Herramientas.
+
 ## 5. Modo CLI no interactivo
 
 Pensado para opencode, scripts y automatización:
