@@ -947,8 +947,21 @@ export const useGameEngine = (
     lastTimeRemainingRef.current = -1;
 
     if (audioRef.current) {
-        audioRef.current.currentTime = 0;
-        audioRef.current.play().catch(e => console.error("Error playing audio:", e));
+      const a = audioRef.current;
+      a.currentTime = 0;
+      const tryPlay = () => {
+        a.play().catch((e) => console.error('Error playing audio:', e));
+      };
+      // Si el audio aún no tiene datos decodificables, esperar a `canplay`
+      // (max ~6s) y reintentar. Sin esto, si el .ogg tarda en cargar (CDN lento
+      // o fallback), el play() falla y el charteo no avanza (currentTime=0).
+      if (a.readyState >= 3) {
+        tryPlay();
+      } else {
+        const onCan = () => { a.removeEventListener('canplay', onCan); tryPlay(); };
+        a.addEventListener('canplay', onCan);
+        window.setTimeout(() => { a.removeEventListener('canplay', onCan); tryPlay(); }, 6000);
+      }
     }
 
     const sortedNotes = [...notes].sort((a, b) => a.time - b.time);

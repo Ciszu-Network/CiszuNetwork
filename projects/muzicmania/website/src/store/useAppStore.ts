@@ -139,12 +139,24 @@ export const useAppStore = create<AppState>((set: any, get: any) => ({
     
     const audio = state.audioInstance;
     if (audio) {
-      audio.play().then(() => {
-        set({ isMusicPlaying: true });
-      }).catch(() => {
-        console.log("Autoplay blocked or audio error");
-        set({ isMusicPlaying: false });
-      });
+      const tryPlay = () => {
+        audio.play().then(() => {
+          set({ isMusicPlaying: true });
+        }).catch(() => {
+          console.log("Autoplay blocked or audio error");
+          set({ isMusicPlaying: false });
+        });
+      };
+      // Esperar a que el .ogg cargue (canplay) antes de reproducir; si el CDN
+      // tarda o el fallback local aún carga, reintentar. Sin esto el play()
+      // puede fallar silenciosamente.
+      if (audio.readyState >= 3) {
+        tryPlay();
+      } else {
+        const onCan = () => { audio.removeEventListener('canplay', onCan); tryPlay(); };
+        audio.addEventListener('canplay', onCan);
+        window.setTimeout(() => { audio.removeEventListener('canplay', onCan); tryPlay(); }, 6000);
+      }
     }
   },
 

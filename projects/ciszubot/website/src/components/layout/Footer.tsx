@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Icon, SmartImage, ScrollNavButton } from '@ciszu/ui';
+import { Icon, SmartImage, ScrollNavButton, CiszugamensLogo } from '@ciszu/ui';
 import { useAppStore } from '@/store';
 import { updatePreferences } from '@/lib/preferences';
 import {
@@ -137,6 +137,18 @@ export default function Footer({ lang, dict }: FooterProps) {
             >
               <Icon name="discord" size={16} className="[&>g]:fill-current" />
               <span>{dict.nav.invite}</span>
+            </a>
+
+            {/* Píldora: servidor de Discord de la comunidad (Ciszugamens) */}
+            <a
+              href={DISCORD_SERVER}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full group flex items-center justify-center gap-2 rounded-full bg-[#5865F2]/10 border border-[#5865F2]/40 text-[#7289DA] hover:bg-gradient-to-tr hover:from-[#5865F2] hover:to-[#7289da] hover:text-white px-8 py-3 font-header font-bold text-sm transition-all duration-300 shadow-[0_4px_15px_rgba(88,101,242,0.15)] hover:scale-[1.02] active:scale-95 mb-8"
+            >
+              <CiszugamensLogo size={18} />
+              <IcoDiscord />
+              <span>Servidor de Discord · Ciszugamens</span>
             </a>
 
             {/* Open Source — repositorio del ecosistema */}

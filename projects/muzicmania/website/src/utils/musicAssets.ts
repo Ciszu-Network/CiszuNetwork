@@ -38,26 +38,51 @@ export function trackAudioCandidates(trackId: string): string[] {
 
 /**
  * Crea un elemento `<audio>` que reproduce un track con FALLBACK automático:
- * prueba cada candidato en orden (CDN → public/) y usa el primero que cargue.
- * Devuelve el elemento listo; `fallbackIndexRef` indica cuál se usó.
+ * prueba cada candidato en orden (CDN → public/music) y usa el primero que
+ * cargue correctamente (.ogg). Detección de fallo:
+ *   - evento `error` (404, códec, red),
+ *   - timeout de red: si en `timeoutMs` no llega `loadeddata`/`canplay`,
+ *     se pasa al siguiente candidato.
+ * Devuelve el elemento listo; `used()` indica qué fuente se usó.
  */
-export function createTrackAudio(trackId: string, opts?: { volume?: number; loop?: boolean; preload?: 'auto' | 'metadata' | 'none' }): { audio: HTMLAudioElement; used: () => string } {
+export function createTrackAudio(
+  trackId: string,
+  opts?: { volume?: number; loop?: boolean; preload?: 'auto' | 'metadata' | 'none'; timeoutMs?: number }
+): { audio: HTMLAudioElement; used: () => string } {
   const candidates = trackAudioCandidates(trackId);
+  const timeoutMs = opts?.timeoutMs ?? 8000;
   const audio = new Audio();
   audio.preload = opts?.preload ?? 'auto';
   if (typeof opts?.volume === 'number') audio.volume = opts.volume;
   if (opts?.loop) audio.loop = true;
+
   let idx = 0;
-  const tryNext = () => {
-    if (idx >= candidates.length) return;
-    audio.src = candidates[idx];
-    idx++;
+  let settled = false;
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+  const clearTimer = () => {
+    if (timeoutId) { clearTimeout(timeoutId); timeoutId = null; }
   };
+
+  const loadCandidate = (i: number) => {
+    if (i >= candidates.length || settled) return;
+    idx = i + 1;
+    audio.src = candidates[i];
+    clearTimer();
+    // Si no carga en el timeout, probamos el siguiente candidato.
+    timeoutId = setTimeout(() => {
+      if (!settled) loadCandidate(idx);
+    }, timeoutMs);
+  };
+
+  const onOk = () => { settled = true; clearTimer(); };
+  audio.addEventListener('loadeddata', onOk);
+  audio.addEventListener('canplay', onOk);
   audio.addEventListener('error', () => {
-    // El error puede dispararse antes de asignar src (noop) — reintentar con el siguiente.
-    if (idx < candidates.length) tryNext();
+    if (!settled) loadCandidate(idx);
   });
-  tryNext();
+
+  loadCandidate(0);
   return {
     audio,
     used: () => candidates[idx - 1] ?? candidates[0],
