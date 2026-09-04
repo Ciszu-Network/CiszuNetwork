@@ -10,6 +10,8 @@ import {
   applyZoom,
   setMuteTab,
   syncPreferencesToProfile,
+  AVAILABLE_LANGS,
+  isLangAvailable,
   ZOOM_MIN,
   ZOOM_MAX,
   ZOOM_STEP,
@@ -102,8 +104,6 @@ const LANGS = [
   },
 ];
 
-const AVAILABLE_LANGS = ['es-latam', 'es-es', 'en-us', 'en-uk'];
-
 const IcoZoomMinus = () => (
   <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
     <circle cx="11" cy="11" r="8" />
@@ -140,7 +140,7 @@ export default function PreferencesPanel() {
   const { toast } = useToast();
   const [langOpen, setLangOpen] = useState(false);
 
-  // Aplicar preferencias persistidas al montar (cajita, fuera del evento de click).
+  // Aplicar preferencias persistidas al montar
   useEffect(() => {
     const prefs = loadPreferences();
     applyZoom(prefs.zoom);
@@ -152,30 +152,20 @@ export default function PreferencesPanel() {
     syncPreferencesToProfile(user.id, loadPreferences());
   };
 
-  const applyLanguage = (lang: 'es' | 'en') => {
-    setLanguage(lang);
-    updatePreferences({ lang });
-    toast(lang === 'es' ? 'Idioma: Español' : 'Language: English');
+  const handleLangSelect = (code: string) => {
+    if (!isLangAvailable(code as any)) {
+      toast('Este idioma aún no está disponible', 'error');
+      return;
+    }
+    setLanguage(code as any);
+    toast(`Idioma cambiado a ${LANGS.find(l => l.code === code)?.label || code}`, 'info');
     syncToProfile();
   };
 
-  const handleLangSelect = (code: string) => {
-    if (code === 'es-latam' || code === 'es-es') return applyLanguage('es');
-    if (code === 'en-us' || code === 'en-uk') return applyLanguage('en');
-    toast('Esta función no está desarrollada para la beta aún', 'warning');
-  };
-
-  const currentLang = LANGS.find((l) =>
-    language === 'es'
-      ? l.code === 'es-latam'
-      : l.code === 'en-us',
-  ) ?? LANGS[0];
-
-  const toggleTheme = () => {
+  const handleThemeChange = () => {
     const next = theme === 'dark' ? 'light' : 'dark';
     setTheme(next);
-    updatePreferences({ theme: next });
-    toast(next === 'dark' ? 'Modo oscuro activado' : 'Modo claro activado');
+    toast(next === 'dark' ? 'Modo oscuro activado' : 'Modo claro activado', 'info');
     syncToProfile();
   };
 
@@ -192,7 +182,7 @@ export default function PreferencesPanel() {
     setTabMuted(next);
     setMuteTab(next);
     updatePreferences({ tabMuted: next });
-    toast(next ? 'Pestaña silenciada' : 'Pestaña restaurada');
+    toast(next ? 'Pestaña silenciada' : 'Pestaña restaurada', 'info');
     syncToProfile();
   };
 
@@ -204,7 +194,7 @@ export default function PreferencesPanel() {
     const next = !redirectGuard;
     setRedirectGuardPref(next);
     updatePreferences({ redirectGuard: next });
-    toast(next ? 'Aviso de redirección activado' : 'Aviso de redirección desactivado');
+    toast(next ? 'Aviso de redirección activado' : 'Aviso de redirección desactivado', 'info');
     syncToProfile();
   };
 
@@ -212,18 +202,20 @@ export default function PreferencesPanel() {
     const next = !activityGuard;
     setActivityGuardPref(next);
     updatePreferences({ activityGuard: next });
-    toast(next ? 'Protección de acciones activada' : 'Protección de acciones desactivada');
+    toast(next ? 'Protección de acciones activada' : 'Protección de acciones desactivada', 'info');
     syncToProfile();
   };
 
   const sectionTitleCls = 'text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-2';
+
+  const currentLang = LANGS.find((l) => l.code === language) ?? LANGS[0];
 
   return (
     <div className="px-2 pt-1 pb-2 space-y-4">
       {/* Tema e idioma: mismos controles que el navbar */}
       <div className="flex items-center justify-between gap-2">
         <button
-          onClick={toggleTheme}
+          onClick={handleThemeChange}
           className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group ${
             theme === 'dark' ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
           }`}
@@ -408,17 +400,16 @@ export default function PreferencesPanel() {
         open={langOpen}
         title="Seleccionar idioma"
         current={language}
-        onSelect={handleLangSelect}
+        onSelect={(code: string) => handleLangSelect(code as any)}
         onClose={() => setLangOpen(false)}
         langs={LANGS.map((l) => ({
           ...l,
-          available: AVAILABLE_LANGS.includes(l.code),
-          active:
-            language === 'es'
-              ? l.code === 'es-latam' || l.code === 'es-es'
-              : l.code === 'en-us' || l.code === 'en-uk',
+          available: isLangAvailable(l.code as any),
+          active: l.code === language,
         }))}
       />
     </div>
   );
 }
+
+const sectionTitleCls = 'text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-2';

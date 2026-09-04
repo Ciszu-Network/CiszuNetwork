@@ -48,6 +48,12 @@ export default function LanguagesModal({
 }: LanguagesModalProps) {
   if (!open) return null;
 
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   // createPortal: el modal se renderiza en document.body para ESCAPAR del
   // PreferencesModal padre (que tiene transform + overflow-y-auto). Sin el
   // portal, el position:fixed del modal de idiomas quedaba relativo a ese
@@ -63,7 +69,7 @@ export default function LanguagesModal({
       <div
         className="absolute inset-0"
         style={{ background: 'var(--overlay, rgba(0,0,0,0.7))', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)' }}
-        onClick={onClose}
+        onClick={handleOverlayClick}
       />
       <div
         className="relative w-[94vw] max-w-sm max-h-[80vh] overflow-y-auto rounded-3xl border p-5 shadow-2xl animate-in fade-in zoom-in-95"
@@ -71,6 +77,8 @@ export default function LanguagesModal({
           background: 'var(--bg-card, #0a0a0f)',
           borderColor: 'var(--border, rgba(255,255,255,0.1))',
           color: 'var(--ink, #fff)',
+          overscrollBehavior: 'contain',
+          WebkitOverflowScrolling: 'touch'
         }}
       >
         <div className="flex items-center justify-between mb-4">

@@ -22,12 +22,26 @@ export function PreferencesModal({
   overlayClassName = '',
   contentClassName = '',
 }: PreferencesModalProps) {
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    // Solo cerrar si el click es directamente en el overlay, no en el content
+    if (e.target === e.currentTarget) {
+      onOpenChange(false);
+    }
+  };
+
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className={`fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm data-[state=open]:animate-in data-[state=open]:fade-in ${overlayClassName}`} />
+        <Dialog.Overlay 
+          className={`fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm data-[state=open]:animate-in data-[state=open]:fade-in ${overlayClassName}`}
+          onClick={handleOverlayClick}
+        />
         <Dialog.Content
           className={`fixed left-1/2 top-1/2 z-[60] w-[94vw] max-w-md max-h-[88vh] overflow-y-auto -translate-x-1/2 -translate-y-1/2 rounded-3xl border border-white/10 bg-[#0a0a0f] p-6 shadow-2xl shadow-cyan-500/10 outline-none ${contentClassName}`}
+          style={{ 
+            overscrollBehavior: 'contain',
+            WebkitOverflowScrolling: 'touch'
+          }}
         >
           <div className="mb-5 flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">

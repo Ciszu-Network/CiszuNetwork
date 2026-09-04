@@ -1,77 +1,77 @@
 {
-  "name": "@ciszu/ui",
-  "version": "1.0.0",
-  "description": "Componentes de UI compartidos para Ciszu Network",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
-  "exports": {
-    ".": "./src/index.ts",
-    "./server": "./src/server.ts"
-  },
-  "scripts": {
-    "lint": "tsc --noEmit",
-    "type-check": "tsc --noEmit",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
-    "test:storybook": "vitest run --config vitest.config.mts",
-    "chromatic": "chromatic --exit-zero-on-changes"
-  },
-  "dependencies": {
-    "@ciszunetwork/cdn": "workspace:*",
-    "@radix-ui/react-dialog": "^1.1.14",
-    "@radix-ui/react-dropdown-menu": "^2.1.14",
-    "@radix-ui/react-tabs": "^1.1.12",
-    "@radix-ui/react-toast": "^1.2.12",
-    "@radix-ui/react-tooltip": "^1.2.6"
-  },
-  "devDependencies": {
-    "@chromatic-com/storybook": "^5.3.0",
-    "@storybook/addon-a11y": "10.5.8",
-    "@storybook/addon-designs": "^11.1.4",
-    "@storybook/addon-docs": "^10.5.8",
-    "@storybook/addon-themes": "^10.5.8",
-    "@storybook/addon-vitest": "10.5.8",
-    "@storybook/react": "^10.5.8",
-    "@storybook/react-vite": "^10.5.8",
-    "@types/node": "^25.9.3",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
-    "@vitejs/plugin-react": "^5.2.0",
-    "@vitest/browser": "^4.0.0",
-    "@vitest/browser-playwright": "^4.0.0",
-    "@vitest/coverage-v8": "^4.1.10",
-    "chromatic": "^18.2.0",
-    "eslint": "^8.0.0",
-    "msw": "^2.15.0",
-    "msw-storybook-addon": "^3.0.0",
-    "next": "^15.5.22",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "sharp": "^0.35.3",
-    "storybook": "^10.5.8",
-    "storybook-addon-tag-badges": "^3.1.0",
-    "storybook-dark-mode": "^5.0.0",
-    "typescript": "^5.3.0",
-    "vite": "^7.3.6"
-  },
-  "peerDependencies": {
-    "react": ">=17.0.0",
-    "react-dom": ">=17.0.0"
-  },
-  "keywords": [
-    "ui",
-    "components",
-    "ciszu",
-    "react"
-  ],
-  "author": "Ciszu Network",
-  "license": "UNLICENSED",
-  "private": true,
-  "msw": {
-    "workerDirectory": [
-      "..\\.storybook\\public"
-    ]
-  }
+    "name": "@ciszu/ui",
+    "version": "1.0.0",
+    "description": "Componentes de UI compartidos para Ciszu Network",
+    "main": "./src/index.ts",
+    "types": "./src/index.ts",
+    "exports": {
+        ".": "./src/index.ts",
+        "./server": "./src/server.ts"
+    },
+    "scripts": {
+        "lint": "tsc --noEmit",
+        "type-check": "tsc --noEmit",
+        "storybook": "storybook dev -p 6006",
+        "build-storybook": "storybook build",
+        "test:storybook": "vitest run --config vitest.config.mts",
+        "chromatic": "chromatic --exit-zero-on-changes"
+    },
+    "dependencies": {
+        "@ciszunetwork/cdn": "workspace:*",
+        "@radix-ui/react-dialog": "^1.1.14",
+        "@radix-ui/react-dropdown-menu": "^2.1.14",
+        "@radix-ui/react-tabs": "^1.1.12",
+        "@radix-ui/react-toast": "^1.2.12",
+        "@radix-ui/react-tooltip": "^1.2.6"
+    },
+    "devDependencies": {
+        "@chromatic-com/storybook": "^5.3.0",
+        "@storybook/addon-a11y": "10.5.8",
+        "@storybook/addon-designs": "^11.1.4",
+        "@storybook/addon-docs": "^10.5.8",
+        "@storybook/addon-themes": "^10.5.8",
+        "@storybook/addon-vitest": "10.5.8",
+        "@storybook/react": "^10.5.8",
+        "@storybook/react-vite": "^10.5.8",
+        "@types/node": "^25.9.3",
+        "@types/react": "^19.2.17",
+        "@types/react-dom": "^19.2.3",
+        "@typescript-eslint/eslint-plugin": "8.63.0",
+        "@typescript-eslint/parser": "8.63.0",
+        "@vitejs/plugin-react": "^5.2.0",
+        "@vitest/browser": "^4.0.0",
+        "@vitest/browser-playwright": "^4.0.0",
+        "@vitest/coverage-v8": "^4.1.10",
+        "chromatic": "^18.2.0",
+        "eslint": "^8.0.0",
+        "msw": "^2.15.0",
+        "msw-storybook-addon": "^3.0.0",
+        "next": "^15.5.22",
+        "react": "^19.2.7",
+        "react-dom": "^19.2.7",
+        "sharp": "0.35.3",
+        "storybook": "^10.5.8",
+        "storybook-addon-tag-badges": "^3.1.0",
+        "storybook-dark-mode": "^5.0.0",
+        "typescript": "^5.3.0",
+        "vite": "^7.3.6"
+    },
+    "peerDependencies": {
+        "react": ">=17.0.0",
+        "react-dom": ">=17.0.0"
+    },
+    "keywords": [
+        "ui",
+        "components",
+        "ciszu",
+        "react"
+    ],
+    "author": "Ciszu Network",
+    "license": "UNLICENSED",
+    "private": true,
+    "msw": {
+        "workerDirectory": [
+            "..\\.storybook\\public"
+        ]
+    }
 }

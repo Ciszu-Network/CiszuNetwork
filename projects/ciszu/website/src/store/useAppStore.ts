@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { loadPreferences, savePreferences, type PrefLang, type PrefTheme } from '@/lib/preferences';
+import { loadPreferences, savePreferences, applyZoom, applyTheme, type PrefLang, type PrefTheme } from '@/lib/preferences';
 
 type Theme = PrefTheme;
 type Language = PrefLang;
@@ -20,9 +20,9 @@ interface AppState {
   sidebarView: SidebarView;
   setSidebarView: (val: SidebarView) => void;
   theme: Theme;
-  setTheme: (val: Theme) => void;
+  setTheme: (val: Theme, skipReload?: boolean) => void;
   language: Language;
-  setLanguage: (val: Language) => void;
+  setLanguage: (val: Language, skipReload?: boolean) => void;
   searchQuery: string;
   setSearchQuery: (val: string) => void;
   hasAcceptedCookies: boolean;
@@ -45,19 +45,23 @@ export const useAppStore = create<AppState>((set) => ({
   sidebarView: 'main',
   setSidebarView: (val: SidebarView) => set({ sidebarView: val }),
   theme: persisted?.theme ?? 'dark',
-  setTheme: (val: Theme) => {
+  setTheme: (val: Theme, skipReload = false) => {
     set({ theme: val });
     const prefs = loadPreferences();
     savePreferences({ ...prefs, theme: val });
-    if (typeof document !== 'undefined') {
-      document.documentElement.classList.toggle('light', val === 'light');
+    applyTheme(val);
+    if (!skipReload && typeof window !== 'undefined') {
+      window.location.reload();
     }
   },
-  language: persisted?.lang ?? 'es',
-  setLanguage: (val: Language) => {
+  language: persisted?.lang ?? 'es-latam',
+  setLanguage: (val: Language, skipReload = false) => {
     set({ language: val });
     const prefs = loadPreferences();
     savePreferences({ ...prefs, lang: val });
+    if (!skipReload && typeof window !== 'undefined') {
+      window.location.reload();
+    }
   },
   searchQuery: '',
   setSearchQuery: (val: string) => set({ searchQuery: val }),
@@ -73,6 +77,7 @@ export const useAppStore = create<AppState>((set) => ({
     set({ zoom: clamped });
     const prefs = loadPreferences();
     savePreferences({ ...prefs, zoom: clamped });
+    applyZoom(clamped);
   },
   tabMuted: persisted?.tabMuted ?? false,
   setTabMuted: (val: boolean) => {
