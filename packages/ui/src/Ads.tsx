@@ -686,9 +686,13 @@ const dKey = `ciszu_ads_${site}_dismissed`;
     const authedMul = authenticated && !premium ? 2 : 1;
     // El filtro de "no anunciar el propio sitio" se anula en debug: el devcon
     // permite forzar cualquier anuncio (incluida la propia web) para depurar.
+    // Los anuncios TRAS ACCIÓN (intrusive/reward) tampoco se filtran: nacen de
+    // una acción explícita del usuario (p. ej. el anuncio post-partida de
+    // MuzicMania, cuyo catálogo apunta a la propia web) y deben mostrarse
+    // SIEMPRE (política AD_SYSTEM: retry hasta que aparezca).
     const filterSelf = debugForThisSite ? false : true;
     return catalog
-      .filter((a) => filterSelf ? (!host || !a.content.href.includes(host)) : true)
+      .filter((a) => filterSelf ? (!host || a.type === 'intrusive' || a.type === 'reward' || !a.content.href.includes(host)) : true)
       .filter((a) => !(premium && a.type !== 'intrusive' && a.type !== 'reward'))
       .filter((a) => !(authenticated && !premium && a.type === 'optional'))
       .filter((a) => !(debugForThisSite && dbg.types?.length && !dbg.types.includes(a.type)))

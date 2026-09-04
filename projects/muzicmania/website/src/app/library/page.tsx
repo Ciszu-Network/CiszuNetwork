@@ -84,6 +84,9 @@ function LibraryContent() {
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  // Espejo de `isPlaying` para el auto-play al cambiar de candidato/track
+  // dentro del efecto de audio (evita depender del valor en el render).
+  const isPlayingRef = useRef(false);
 
   const sectionVariants = {
     hidden: { opacity: 0, y: 30 },
@@ -102,38 +105,61 @@ function LibraryContent() {
   }, [trackId]);
 
   useEffect(() => {
-    if (audioRef.current && selectedTrack) {
-      // Si ya hay una canción seleccionada y el usuario cambia, reseteamos el
-      // progreso y preparamos el nuevo track con FALLBACK (CDN → public/music).
-      audioRef.current.pause();
-      const candidates = trackAudioCandidates(selectedTrack.id);
-      let idx = 0;
-      const tryNext = () => {
-        if (idx >= candidates.length) return;
-        audioRef.current!.src = candidates[idx];
-        idx++;
-        audioRef.current!.load();
-        if (isPlaying) {
-          pauseGlobalMusic();
-          audioRef.current!.play().catch((e) => {
-            console.log('Audio play prevented:', e);
-            // Reintentar con el siguiente candidato si el actual no carga.
-            if (idx < candidates.length) {
-              window.setTimeout(tryNext, 300);
-            } else {
-              setIsPlaying(false);
-            }
-          });
-        }
-      };
-      audioRef.current.onerror = () => {
-        if (idx < candidates.length) window.setTimeout(tryNext, 200);
-      };
-      tryNext();
+    isPlayingRef.current = isPlaying;
+  }, [isPlaying]);
 
-      setProgress(0);
-      setCurrentTime(0);
-    }
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !selectedTrack) return;
+    // Si ya hay una canción seleccionada y el usuario cambia, reseteamos el
+    // progreso y preparamos el nuevo track con FALLBACK robusto
+    // (CDN .ogg → CDN .opus → public .ogg). Mismo patrón que createTrackAudio
+    // (usado en /play): flag `settled` para ignorar eventos de error atrasados
+    // del candidato anterior (evita saltarse candidatos), timeout por candidato
+    // y auto-play si ya se estaba reproduciendo.
+    audio.pause();
+    const candidates = trackAudioCandidates(selectedTrack.id);
+    let idx = 0;
+    let settled = false;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const clearTimer = () => { if (timer) { clearTimeout(timer); timer = null; } };
+    const tryNext = () => {
+      if (settled || idx >= candidates.length) return;
+      const src = candidates[idx];
+      idx += 1;
+      audio.src = src;
+      audio.load();
+      clearTimer();
+      // Si ni `canplay` ni `error` llegan (red lenta/colgada), avanzamos.
+      timer = setTimeout(() => { if (!settled) tryNext(); }, 4000);
+    };
+    const onReady = () => {
+      if (settled) return;
+      settled = true;
+      clearTimer();
+      if (isPlayingRef.current) {
+        pauseGlobalMusic();
+        audio.play().catch((e) => {
+          console.log('Audio play prevented:', e);
+          setIsPlaying(false);
+        });
+      }
+    };
+    const onFail = () => { if (!settled) tryNext(); };
+    audio.addEventListener('canplay', onReady);
+    audio.addEventListener('loadeddata', onReady);
+    audio.addEventListener('error', onFail);
+    tryNext();
+
+    setProgress(0);
+    setCurrentTime(0);
+    return () => {
+      settled = true;
+      clearTimer();
+      audio.removeEventListener('canplay', onReady);
+      audio.removeEventListener('loadeddata', onReady);
+      audio.removeEventListener('error', onFail);
+    };
   }, [selectedTrack]);
 
   useEffect(() => {

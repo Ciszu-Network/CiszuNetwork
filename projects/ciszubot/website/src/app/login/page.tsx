@@ -188,18 +188,18 @@ export default function LoginPage() {
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full bg-[#5865F2]/10 blur-[160px] pointer-events-none" />
       <div className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full bg-neon-blue/10 blur-[140px] pointer-events-none" />
 
-      <div className="max-w-5xl mx-auto px-4 pt-14 relative grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-6 lg:gap-10 items-start">
-        <div className="mb-10">
-          <CiszuIdBrand
-            ciszuIsotype={<SmartImage src={CISZU_ISOTYPE} alt="Ciszu ID" width={40} height={40} className="w-9 h-9" />}
-            appIsotype={<SmartImage src={BOT_ISOTYPE} alt="CiszuBot" width={40} height={40} className="w-9 h-9 rounded-full" />}
-            ciszuHref="https://ciszunetwork.vercel.app"
-            appHref="/"
-            title="CISZU ID"
-            subtitle="Inicia sesión en CiszuBot con CISZU ID"
-          />
-        </div>
+      <div className="pt-14 mb-10 px-4">
+        <CiszuIdBrand
+          ciszuIsotype={<SmartImage src={CISZU_ISOTYPE} alt="Ciszu ID" width={40} height={40} className="w-9 h-9" />}
+          appIsotype={<SmartImage src={BOT_ISOTYPE} alt="CiszuBot" width={40} height={40} className="w-9 h-9 rounded-full" />}
+          ciszuHref="https://ciszunetwork.vercel.app"
+          appHref="/"
+          title="CISZU ID"
+          subtitle="Inicia sesión en CiszuBot con CISZU ID"
+        />
+      </div>
 
+      <div className="max-w-5xl mx-auto px-4 relative grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-6 lg:gap-10 items-start">
         <div className="relative group">
           <div className="absolute -inset-1 bg-gradient-to-r from-[#5865F2] to-neon-blue rounded-[2rem] blur opacity-20 transition duration-500" />
           <div className="relative p-6 md:p-8 bg-surface border border-border rounded-[2rem] shadow-2xl space-y-6 backdrop-blur-3xl">

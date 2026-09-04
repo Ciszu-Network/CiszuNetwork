@@ -24,23 +24,36 @@ export function trackBanner(trackId: string): string {
 
 /**
  * Candidatos de audio para un track, de más a menos preferente:
- *   1. URL del CDN (resolveAssetPath → Supabase Storage / CDN local en dev).
- *   2. Ruta pública local `/music/albums/...` (copiada a public/music/).
- * El CDN puede fallar en local si el servidor de assets (8788) no está activo;
- * el fallback local garantiza que la música SIEMPRE se reproduzca.
+ *   1. CDN `.ogg`  — `resolveAssetPath` (Supabase Storage en prod; servidor
+ *                    local 8788 en dev). Es la entrega oficial: el CDN sirve
+ *                    los 4 niveles en `.ogg`/`.opus`/`.mp3` (200, audio/*).
+ *   2. CDN `.opus` — misma ruta con la derivada `.opus` (menos peso), por si
+ *                    algún día el `.ogg` del CDN falta (también audio/*).
+ *   3. Pública `.ogg` — `/music/albums/...` copia local de DEV (`public/music`
+ *                    está gitignored para `.ogg` y NO llega al deploy).
+ * El CDN puede fallar (CSP antigua sin Supabase en media-src, servidor 8788
+ * apagado o red lenta); el fallback local de dev garantiza que la música se
+ * reproduzca igualmente al trabajar sin el servidor de assets.
+ *
+ * ⚠️ NO usar la copia pública `.opus` como fallback: Vercel/Next la sirven como
+ * `application/octet-stream` (+ `X-Content-Type-Options: nosniff` del middleware)
+ * y los navegadores se niegan a decodificarla. El `.opus` SOLO funciona desde el
+ * CDN, que responde `audio/opus`. Por eso el `.opus` del repo en `public/music/`
+ * es solo el origen de subida al CDN, no una fuente de reproducción.
  */
 export function trackAudioCandidates(trackId: string): string[] {
   return [
     trackAudio(trackId),
+    musicAsset(trackId, `${trackId}.opus`),
     `/music/albums/genesis_neon/${trackId}/${trackId}.ogg`,
   ];
 }
 
 /**
  * Crea un elemento `<audio>` que reproduce un track con FALLBACK automático:
- * prueba cada candidato en orden (CDN → public/music) y usa el primero que
- * cargue correctamente (.ogg). Detección de fallo:
- *   - evento `error` (404, códec, red),
+ * prueba cada candidato en orden (CDN .ogg → CDN .opus → public .ogg local) y
+ * usa el primero que cargue correctamente. Detección de fallo:
+ *   - evento `error` (404, códec, red o CSP que bloquea la carga),
  *   - timeout de red: si en `timeoutMs` no llega `loadeddata`/`canplay`,
  *     se pasa al siguiente candidato.
  * Devuelve el elemento listo; `used()` indica qué fuente se usó.
