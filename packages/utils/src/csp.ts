@@ -8,6 +8,9 @@
  * - static.cloudflareinsights.com    (beacon Cloudflare Web Analytics)
  * - us.i.posthog.com / us-assets.i.posthog.com (PostHog analítica)
  * - obwzzmbvkrcscqwptlqo.supabase.co (CDN de assets + PostgREST/auth)
+ * - www.googletagmanager.com         (GTM + gtag.js de Google Analytics 4)
+ * - pagead2.googlesyndication.com    (adsbygoogle.js de AdSense)
+ * - ciszunetwork.vercel.app          (API central de impresiones ADS)
  *
  * Por app se añade lo extra (p.ej. cdn.discordapp.com en ciszubot para los
  * avatares del dashboard, wss:// para realtime de muzicmania).
@@ -35,6 +38,15 @@ export interface CspOptions {
 
 const SUPABASE_ORIGIN = 'https://obwzzmbvkrcscqwptlqo.supabase.co';
 
+// Google (GoogleScripts de @ciszu/ui, en las 4 webs): GTM y gtag.js se sirven
+// desde googletagmanager.com; adsbygoogle.js de AdSense desde pagead2.
+const GOOGLE_TAG_MANAGER_ORIGIN = 'https://www.googletagmanager.com';
+const GOOGLE_ADSENSE_ORIGIN = 'https://pagead2.googlesyndication.com';
+
+// API central de impresiones ADS: Ads.tsx de @ciszu/ui registra cada impresión
+// en ciszunetwork.vercel.app desde CUALQUIERA de las 4 webs (fetch cross-site).
+const ADS_API_ORIGIN = 'https://ciszunetwork.vercel.app';
+
 // CDN local del ecosistema (scripts/serve-cdn.js) solo en desarrollo.
 const LOCAL_CDN_ORIGINS = ['http://localhost:8788', 'http://127.0.0.1:8788'];
 
@@ -49,7 +61,7 @@ export function buildCsp(opts: CspOptions = {}): string {
     // 'unsafe-eval' SOLO en desarrollo: el cliente de Next.js dev lo exige.
     [
       'script-src',
-      ["'self'", "'unsafe-inline'", ...(dev ? ["'unsafe-eval'"] : []), 'https://challenges.cloudflare.com', 'https://static.cloudflareinsights.com', 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://va.vercel-scripts.com', ...(opts.scriptSrc ?? [])],
+      ["'self'", "'unsafe-inline'", ...(dev ? ["'unsafe-eval'"] : []), 'https://challenges.cloudflare.com', 'https://static.cloudflareinsights.com', 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://va.vercel-scripts.com', GOOGLE_TAG_MANAGER_ORIGIN, GOOGLE_ADSENSE_ORIGIN, ...(opts.scriptSrc ?? [])],
     ],
     // Estilos inline de la v3 PDWA y utilidades CSS en línea del ecosistema.
     // styleSrc extra: hoja de estilos remota del editor Puck (inter.css de rsms.me).
@@ -57,8 +69,12 @@ export function buildCsp(opts: CspOptions = {}): string {
     ['img-src', ["'self'", 'data:', 'blob:', SUPABASE_ORIGIN, ...local, ...(opts.imgSrc ?? [])]],
     ['media-src', ["'self'", SUPABASE_ORIGIN, ...local]],
     ['font-src', ["'self'", 'data:', ...local, ...(opts.fontSrc ?? [])]],
-    ['connect-src', ["'self'", SUPABASE_ORIGIN, 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://static.cloudflareinsights.com', 'https://cloudflareinsights.com', 'https://challenges.cloudflare.com', 'https://va.vercel-scripts.com', 'https://*.ingest.us.sentry.io', ...local, ...(opts.connectSrc ?? [])]],
-    ['frame-src', ["'self'", 'https://challenges.cloudflare.com', ...(opts.frameSrc ?? [])]],
+    // connect-src: API de impresiones ADS + GTM; GA4 (gtag) envía la colecta de
+    // eventos por beacon a www.google-analytics.com, *.google-analytics.com
+    // (region1/2) y analytics.google.com. El noscript de GTM abre un iframe de
+    // ns.html en googletagmanager.com (frame-src más abajo).
+    ['connect-src', ["'self'", SUPABASE_ORIGIN, 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://static.cloudflareinsights.com', 'https://cloudflareinsights.com', 'https://challenges.cloudflare.com', 'https://va.vercel-scripts.com', 'https://*.ingest.us.sentry.io', GOOGLE_TAG_MANAGER_ORIGIN, ADS_API_ORIGIN, 'https://www.google-analytics.com', 'https://*.google-analytics.com', 'https://analytics.google.com', ...local, ...(opts.connectSrc ?? [])]],
+    ['frame-src', ["'self'", 'https://challenges.cloudflare.com', GOOGLE_TAG_MANAGER_ORIGIN, ...(opts.frameSrc ?? [])]],
     // worker-src explícito: PostHog recording crea workers desde blob: URLs;
     // sin esta directiva cae a script-src y se bloquea (paridad en las 4 webs).
     ['worker-src', ["'self'", 'blob:']],

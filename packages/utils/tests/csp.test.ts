@@ -20,6 +20,20 @@ describe('buildCsp', () => {
     expect(csp).toContain('https://obwzzmbvkrcscqwptlqo.supabase.co');
   });
 
+  it('permite Google (GTM/gtag.js/AdSense) y la API central de impresiones ADS', () => {
+    const csp = buildCsp();
+    // script-src: adsbygoogle.js (AdSense) y GTM/gtag.js (GA4)
+    expect(csp).toContain('script-src');
+    expect(csp).toContain('https://pagead2.googlesyndication.com');
+    expect(csp).toContain('https://www.googletagmanager.com');
+    // frame-src: iframe de noscript de GTM (ns.html)
+    expect(csp).toContain("frame-src 'self' https://challenges.cloudflare.com https://www.googletagmanager.com");
+    // connect-src: beacon de GA4 + fetch de impresiones ADS desde cualquier web
+    expect(csp).toContain('https://www.google-analytics.com');
+    expect(csp).toContain('https://analytics.google.com');
+    expect(csp).toContain('https://ciszunetwork.vercel.app');
+  });
+
   it('en producción no usa unsafe-eval ni el CDN local', () => {
     vi.stubEnv('NODE_ENV', 'production');
     const csp = buildCsp();
