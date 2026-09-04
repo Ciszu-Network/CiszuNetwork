@@ -66,9 +66,11 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const hasLocal = typeof window !== 'undefined' ? window.localStorage.getItem('ciszu_preferences') !== null : false;
 
     if (profile && !hasLocal) {
+      const lang = (profile.settings_lang === 'en-us' || profile.settings_lang === 'en-uk' ? 'en-us' : 'es-latam') as 'es-latam' | 'es-es' | 'en-us' | 'en-uk';
+      const theme = (profile.settings_theme === 'light' ? 'light' : 'dark') as 'light' | 'dark';
       const prefs = {
-        lang: profile.settings_lang === 'en' ? 'en' as const : 'es' as const,
-        theme: profile.settings_theme === 'light' ? 'light' as const : 'dark' as const,
+        lang,
+        theme,
         zoom: typeof profile.settings_controls?.zoom === 'number' ? profile.settings_controls.zoom : 100,
         tabMuted: profile.settings_controls?.tabMuted === true,
         redirectGuard: profile.settings_controls?.redirectGuard !== false,
@@ -76,8 +78,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       };
       savePreferences(prefs);
       const { setTheme, setLanguage, setZoom, setTabMuted } = useAppStore.getState();
-      setTheme(prefs.theme);
-      setLanguage(prefs.lang);
+      setTheme(theme);
+      setLanguage(lang);
       setZoom(prefs.zoom);
       setTabMuted(prefs.tabMuted);
     } else if (profile) {

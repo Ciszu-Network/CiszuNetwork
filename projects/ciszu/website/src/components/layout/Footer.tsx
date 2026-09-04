@@ -194,7 +194,7 @@ export const Footer = () => {
                 <IcoPhone />
                 <div className="flex flex-col items-start gap-0.5">
                   <span className="text-[10px] font-black uppercase tracking-widest opacity-80 group-hover:opacity-100">
-                    {language === 'es' ? 'WhatsApp Directo' : 'Direct WhatsApp'}
+                    {(language === 'es-latam' || language === 'es-es') ? 'WhatsApp Directo' : 'Direct WhatsApp'}
                   </span>
                   <span className="text-sm font-bold tracking-tight leading-none group-hover:text-white">{CISZU_NETWORK.phone}</span>
                 </div>
@@ -294,7 +294,7 @@ export const Footer = () => {
             <button
               onClick={() => { setIsMenuOpen(true); setSidebarView('lang'); }}
               className="group flex items-center gap-3 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all duration-300 shadow-lg"
-              title={language === 'es' ? 'Cambiar idioma' : 'Change language'}
+              title={language === 'es-latam' || language === 'es-es' ? 'Cambiar idioma' : 'Change language'}
             >
               <Globe className="w-5 h-5 transition-transform duration-500 group-hover:rotate-12 text-white/70" />
               <span className="text-gray-400 group-hover:text-white uppercase tracking-widest text-xs font-bold">LANG</span>
@@ -313,7 +313,7 @@ export const Footer = () => {
               &amp; TODOS LOS DERECHOS RESERVADOS.
             </p>
             <p className="text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-widest leading-loose">
-              {language === 'es' ? (
+              {(language === 'es-latam' || language === 'es-es') ? (
                 <>Hecho con amor por{' '}
                   <a href={CISZUKO_ANTONY.portfolio} target="_blank" rel="noopener noreferrer"
                     className="text-brand-accent font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(14,185,220,0.8)]">

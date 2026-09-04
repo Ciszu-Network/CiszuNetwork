@@ -524,7 +524,7 @@ export const NavbarContent = () => {
                 <input
                   ref={inputRef}
                   type="text"
-                  placeholder={language === 'es'
+                  placeholder={language === 'es-latam' || language === 'es-es'
                     ? 'Busca páginas de Ciszu Network (ej: inicio, soporte, discord)...'
                     : 'Search Ciszu Network pages (example: home, support, discord)...'}
                   value={searchQuery}
@@ -537,13 +537,13 @@ export const NavbarContent = () => {
               {searchQuery.trim().length > 0 && suggestions.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-6 animate-fade-in-down space-y-3">
                   <p className="text-gray-500 font-header font-black uppercase text-xs tracking-widest italic">
-                    {language === 'es' ? `Sin resultados para "${searchQuery}"` : `No results for "${searchQuery}"`}
+                    {(language === 'es-latam' || language === 'es-es') ? `Sin resultados para "${searchQuery}"` : `No results for "${searchQuery}"`}
                   </p>
                   <button
                     onClick={() => setSearchQuery('')}
                     className="px-6 py-2 bg-brand-light/20 border border-brand-light/40 text-brand-light rounded-full font-header font-bold text-[10px] uppercase tracking-widest hover:bg-brand-light hover:text-black transition-all active:scale-95"
                   >
-                    {language === 'es' ? 'Reiniciar búsqueda' : 'Reset search'}
+                    {(language === 'es-latam' || language === 'es-es') ? 'Reiniciar búsqueda' : 'Reset search'}
                   </button>
                 </div>
               )}
@@ -597,14 +597,14 @@ export const NavbarContent = () => {
               </button>
 
               <h2 className="text-brand-light text-base font-header font-black tracking-widest drop-shadow-[0_0_8px_rgba(58,107,240,0.8)]">
-                {sidebarView === 'main' ? (language === 'es' ? 'MENÚ' : 'MENU') : 'IDIOMA'}
+                {sidebarView === 'main' ? (language === 'es-latam' || language === 'es-es' ? 'MENÚ' : 'MENU') : 'IDIOMA'}
               </h2>
 
               {/* Language Selector (toggles sidebar view) */}
               <button
                 onClick={() => setSidebarView(sidebarView === 'main' ? 'lang' : 'main')}
                 className="group flex items-center gap-3 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all duration-300 shadow-lg cursor-pointer"
-                title={language === 'es' ? 'Cambiar idioma' : 'Change language'}
+                title={language === 'es-latam' || language === 'es-es' ? 'Cambiar idioma' : 'Change language'}
               >
                 <svg className={`w-5 h-5 transition-transform duration-500 ${sidebarView === 'lang' ? 'rotate-90 text-brand-light' : 'group-hover:rotate-12 text-white/70'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                   <circle cx="12" cy="12" r="10" />
@@ -675,7 +675,7 @@ export const NavbarContent = () => {
 
                   {/* Community / Account section */}
                   <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">
-                    {language === 'es' ? 'Comunidad' : 'Community'}
+                    {language === 'es-latam' || language === 'es-es' ? 'Comunidad' : 'Community'}
                   </p>
                   <a
                     href={CISZU_NETWORK.social.discord}
@@ -694,7 +694,7 @@ export const NavbarContent = () => {
                     <button
                       key={l.label}
                       onClick={() => {
-                        if (l.code === 'es' || l.code === 'en') {
+                        if (l.code === 'es-latam' || l.code === 'es-es' || l.code === 'en-us' || l.code === 'en-uk') {
                           setLanguage(l.code);
                         } else {
                           toast('Esta función no está desarrollada para la beta aún', 'warning');
