@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { headers } from "next/headers";
 import { Exo_2, Rajdhani } from "next/font/google";
@@ -84,7 +84,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             <AdsWithUser site="ciszukoantony">
             <AdFloat placement="corner" side="bottom-right" />
             <AdPill placement="body" />
-            <RedirectGuard />
+            <RedirectGuard debug={true} />
             <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={PROFILE_PIC} title="Ciszuko Antony" subtitle="Ciszuko Antony Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszukoantony">
               <AdBlockerGuard site="ciszukoantony" logo={PROFILE_PIC} title="Ciszuko Antony" accent="#a78bfa" accentAlt="#ff33cc">
               {!isEdit && <BetaDisclaimer storageKey="betadisclaimer_ciszukoantony_dismissed" />}
@@ -119,4 +119,5 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     </html>
   );
 }
+
 

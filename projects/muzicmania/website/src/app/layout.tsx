@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { headers } from "next/headers";
 import { Exo_2, Rajdhani } from "next/font/google";
@@ -82,7 +82,7 @@ export default async function RootLayout({
           <AdsWithUser site="muzicmania">
           <AdFloat placement="corner" side="bottom-right" />
           <AdPill placement="body" />
-          <RedirectGuard />
+          <RedirectGuard debug={true} />
           <DisclaimerProvider>
             <CloudflareGuard>
               <AdBlockerGuard site="muzicmania" logo={assetResolver.resolve('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} title="MuzicMania" accent="#c026d3" accentAlt="#ff33cc">
@@ -124,4 +124,5 @@ export default async function RootLayout({
     </html>
   );
 }
+
 
