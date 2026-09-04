@@ -510,10 +510,17 @@ export function GlobalDisclaimer({ site, pollInterval = GD_POLL_INTERVAL, disabl
         });
         // Confirmar entrega por sitio (upsert) para el --wait del devcon.
         for (const d of relevant) {
-          gdFetch('global_disclaimer_deliveries', `disclaimer_id=eq.${d.id}&site=eq.${site}`, {
-            method: 'PATCH',
-            body: JSON.stringify({ delivered_at: new Date().toISOString() }),
-            headers: { 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates' },
+          gdFetch('global_disclaimer_deliveries', '', {
+            method: 'POST',
+            body: JSON.stringify({
+              disclaimer_id: d.id,
+              site: site,
+              delivered_at: new Date().toISOString(),
+            }),
+            headers: {
+              'Content-Type': 'application/json',
+              Prefer: 'resolution=merge-duplicates',
+            },
           }).catch(() => {});
         }
         setRows(relevant);
