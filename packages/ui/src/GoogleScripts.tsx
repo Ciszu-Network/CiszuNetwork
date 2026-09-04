@@ -13,10 +13,20 @@
  *   <GoogleScripts />
  */
 
+/**
+ * Limpia IDs de env (GTM/GA4/AdSense): si el valor se pegó desde un editor o
+ * un .env guardado en Windows/UTF-8 con BOM, puede arrastrar un U+FEFF inicial
+ * (se ve como %EF%BB%BF en la URL) o espacios; eso rompe el ID de Google y
+ * dispara bloqueos de CSP al cargar con client=%EF%BB%BFca-pub-….
+ */
+function cleanId(v: string | undefined): string {
+  return (v ?? '').replace(/^\uFEFF+/, '').trim();
+}
+
 export function GoogleScripts() {
-  const gtm = process.env.NEXT_PUBLIC_GTM_ID || '';
-  const ga = process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID || '';
-  const ads = process.env.NEXT_PUBLIC_ADSENSE_CLIENT || '';
+  const gtm = cleanId(process.env.NEXT_PUBLIC_GTM_ID);
+  const ga = cleanId(process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID);
+  const ads = cleanId(process.env.NEXT_PUBLIC_ADSENSE_CLIENT);
   if (!gtm && !ga && !ads) return null;
 
   return (
