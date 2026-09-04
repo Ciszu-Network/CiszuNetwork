@@ -169,22 +169,21 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen pt-28 pb-20 px-4 relative overflow-hidden">
+      <div className="mb-10">
+        <CiszuIdBrand
+          ciszuIsotype={
+            <Image src={CISZU_ISOTYPE} alt="Ciszu ID" width={40} height={40} className="w-9 h-9" />
+          }
+          appIsotype={
+            <Image src={ANTONY_ISOTYPE} alt="Ciszuko Antony" width={40} height={40} className="w-9 h-9" />
+          }
+          ciszuHref="https://ciszunetwork.vercel.app"
+          appHref="/"
+          title="CISZU ID"
+          subtitle="Inicia sesión en Ciszuko Antony con CISZU ID"
+        />
+      </div>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-6 lg:gap-10 items-start">
-        <div className="mb-10">
-          <CiszuIdBrand
-            ciszuIsotype={
-              <Image src={CISZU_ISOTYPE} alt="Ciszu ID" width={40} height={40} className="w-9 h-9" />
-            }
-            appIsotype={
-              <Image src={ANTONY_ISOTYPE} alt="Ciszuko Antony" width={40} height={40} className="w-9 h-9" />
-            }
-            ciszuHref="https://ciszunetwork.vercel.app"
-            appHref="/"
-            title="CISZU ID"
-            subtitle="Inicia sesión en Ciszuko Antony con CISZU ID"
-          />
-        </div>
-
         <div className="relative group">
           <div className="absolute -inset-1 bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink rounded-3xl blur opacity-20 transition duration-500 group-hover:opacity-40" />
           <div className="relative p-7 md:p-8 bg-doc-dark border border-white/10 rounded-3xl shadow-2xl space-y-6 backdrop-blur-3xl">

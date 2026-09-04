@@ -11,7 +11,8 @@
  *
  * Retry: el `trigger('intrusive', 'game_end')` puede fallar si el periodo de
  * gracia (10s al entrar) o el cooldown lo bloquean al inicio. Se reintenta
- * cada 700ms hasta ~6s para que el anuncio SIEMPRE aparezca tras la partida.
+ * cada 700ms hasta ~15s (por encima de la gracia de 10s) para que el anuncio
+ * SIEMPRE aparezca tras la partida.
  */
 import { useEffect, useRef } from 'react';
 import { useAds } from '@ciszu/ui';
@@ -29,7 +30,7 @@ export default function AfterGameAd() {
         window.clearInterval(attempts);
       }
     }, 700);
-    const stop = window.setTimeout(() => window.clearInterval(attempts), 7000);
+    const stop = window.setTimeout(() => window.clearInterval(attempts), 15000);
     return () => { window.clearInterval(attempts); window.clearTimeout(stop); };
   }, [trigger]);
 

@@ -55,7 +55,7 @@ export function buildCsp(opts: CspOptions = {}): string {
     // styleSrc extra: hoja de estilos remota del editor Puck (inter.css de rsms.me).
     ['style-src', ["'self'", "'unsafe-inline'", ...(opts.styleSrc ?? [])]],
     ['img-src', ["'self'", 'data:', 'blob:', SUPABASE_ORIGIN, ...local, ...(opts.imgSrc ?? [])]],
-    ['media-src', ["'self'", ...local]],
+    ['media-src', ["'self'", SUPABASE_ORIGIN, ...local]],
     ['font-src', ["'self'", 'data:', ...local, ...(opts.fontSrc ?? [])]],
     ['connect-src', ["'self'", SUPABASE_ORIGIN, 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://static.cloudflareinsights.com', 'https://cloudflareinsights.com', 'https://challenges.cloudflare.com', 'https://va.vercel-scripts.com', 'https://*.ingest.us.sentry.io', ...local, ...(opts.connectSrc ?? [])]],
     ['frame-src', ["'self'", 'https://challenges.cloudflare.com', ...(opts.frameSrc ?? [])]],
