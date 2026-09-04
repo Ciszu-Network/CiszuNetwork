@@ -371,7 +371,9 @@ export function DisclaimerDebug({ site }: { site: string }) {
       fetch('/api/disclaimers/debug', { cache: 'no-store' })
         .then((r) => (r.ok ? r.json() : { items: [] }))
         .then((data: { items?: DebugDisclaimer[] }) => {
-          const filtered = (data.items ?? []).filter((i) => !i.site || i.site === site);
+          // i.site es un array de site IDs (escrito por devcon con Resolve-SiteIds).
+          // Filtrar: si no tiene site (undefined) -> se muestra en todas; si tiene array, verificar que incluye el site actual.
+          const filtered = (data.items ?? []).filter((i) => !i.site || (Array.isArray(i.site) ? i.site.includes(site) : i.site === site));
           console.log('[DisclaimerDebug] Poll result for', site, ':', filtered.length, 'items');
           setItems(filtered);
         })
