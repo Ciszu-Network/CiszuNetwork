@@ -40,16 +40,24 @@ function CertificateCard({
 }) {
   const color = catColor(cert.category);
   
-  // Si tiene thumbnail, usa la imagen de preview real
-  // Si no, usa el primer archivo del certificado como preview
-  const previewFile = cert.thumbnail ? cert.thumbnail : 
-                     cert.files.length > 0 ? cert.files[0].name : null;
+  // Obtener el archivo principal para thumbnail
+  const mainFile = cert.files.find(f => 
+    f.kind === 'certificate' || f.kind === 'image'
+  ) || cert.files[0];
+  
+  const previewFile = cert.thumbnail || (mainFile?.name);
   const previewUrl = previewFile ? fileUrl(previewFile) : null;
   const isImagePreview = previewFile && (
     previewFile.toLowerCase().endsWith('.jpg') || 
     previewFile.toLowerCase().endsWith('.jpeg') || 
-    previewFile.toLowerCase().endsWith('.png')
+    previewFile.toLowerCase().endsWith('.png') ||
+    previewFile.toLowerCase().endsWith('.jpeg')
   );
+  
+  // Si es PDF, usar Google Drive Viewer para thumbnail
+  const isPdfPreview = previewFile && previewFile.toLowerCase().endsWith('.pdf');
+  const pdfThumbnailUrl = isPdfPreview && previewUrl ? 
+    `https://drive.google.com/viewerng/viewer?embedded=true&url=${encodeURIComponent(previewUrl)}#page=1&toolbar=0&navpanes=0&scrollbar=0&view=fitH` : null;
   
   return (
     <motion.button
@@ -63,17 +71,49 @@ function CertificateCard({
       <div className="relative h-32 overflow-hidden bg-gradient-to-br from-white/5 to-white/10">
         {previewUrl ? (
           <>
-            {/* Preview real del documento */}
-            <div 
-              className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform group-hover:scale-105"
-              style={{ 
-                backgroundImage: `url(${previewUrl})`,
-                backgroundSize: isImagePreview ? 'cover' : 'contain',
-                backgroundPosition: 'center'
-              }}
-            />
-            {/* Overlay sutil para legibilidad del badge */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+            {isImagePreview ? (
+              // Para imágenes: mostrar directamente
+              <>
+                <div 
+                  className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform group-hover:scale-105"
+                  style={{ 
+                    backgroundImage: `url(${previewUrl})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+              </>
+            ) : isPdfPreview ? (
+              // Para PDFs: mostrar indicador visual con fondo de documento
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-blue-900/20 to-purple-900/20 p-4">
+                <div className="relative w-full h-full flex items-center justify-center">
+                  {/* Fondo de documento PDF */}
+                  <div className="absolute inset-2 bg-white/5 rounded-lg border border-white/10"></div>
+                  <div className="relative z-10 text-center">
+                    <svg viewBox="0 0 24 24" className="w-12 h-12 mx-auto text-white/60" fill="none" stroke="currentColor" strokeWidth={2}>
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                      <path d="M9 13h6" />
+                      <path d="M9 17h3" />
+                    </svg>
+                    <p className="text-xs text-white/70 mt-2 font-bold">PDF DOCUMENT</p>
+                    <p className="text-[10px] text-white/50 mt-1">Click to preview</p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              // Para otros tipos de archivo
+              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-white/5 to-white/10">
+                <div className="text-center p-3">
+                  <svg viewBox="0 0 24 24" className="w-10 h-10 mx-auto text-white/40" fill="none" stroke="currentColor" strokeWidth={2}>
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                  </svg>
+                  <p className="text-xs text-white/60 mt-1">Document</p>
+                </div>
+              </div>
+            )}
           </>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-white/5 to-white/10">
@@ -298,6 +338,7 @@ function DetailModal({
               previewFile.toLowerCase().endsWith('.jpeg') || 
               previewFile.toLowerCase().endsWith('.png')
             );
+            const isPdf = previewFile && previewFile.toLowerCase().endsWith('.pdf');
             
             if (!previewUrl) {
               return (
@@ -312,22 +353,92 @@ function DetailModal({
               );
             }
             
+            if (isImage) {
+              return (
+                <div className="relative rounded-xl border border-white/10 bg-white/[0.03] overflow-hidden">
+                  <div 
+                    className="h-64 bg-cover bg-center bg-no-repeat"
+                    style={{ 
+                      backgroundImage: `url(${previewUrl})`,
+                      backgroundSize: 'cover'
+                    }}
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-white/90 uppercase tracking-wider">
+                        IMAGEN
+                      </span>
+                      <span className="text-xs text-white/70">
+                        Documento visual
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+            
+            // Para PDFs, mostrar un viewer mejorado
             return (
-              <div className="relative rounded-xl border border-white/10 bg-white/[0.03] overflow-hidden">
-                <div 
-                  className="h-64 bg-cover bg-center bg-no-repeat"
-                  style={{ 
-                    backgroundImage: `url(${previewUrl})`,
-                    backgroundSize: isImage ? 'cover' : 'contain'
-                  }}
-                />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+              <div className="relative rounded-xl border border-white/10 bg-gradient-to-br from-blue-900/10 to-purple-900/10 overflow-hidden">
+                <div className="p-6">
+                  <div className="flex items-center justify-center mb-4">
+                    <div className="relative">
+                      <div className="w-16 h-20 bg-white/10 rounded-lg border border-white/20 flex items-center justify-center">
+                        <svg viewBox="0 0 24 24" className="w-10 h-10 text-white/60" fill="none" stroke="currentColor" strokeWidth={2}>
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                          <polyline points="14 2 14 8 20 8" />
+                          <path d="M9 13h6" />
+                          <path d="M9 17h3" />
+                        </svg>
+                      </div>
+                      <div className="absolute -top-2 -right-2 w-8 h-8 bg-neon-blue/20 border border-neon-blue/40 rounded-full flex items-center justify-center">
+                        <span className="text-[10px] font-bold text-neon-blue">PDF</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="text-center">
+                    <p className="text-sm font-bold text-white mb-2">Documento PDF disponible</p>
+                    <p className="text-xs text-gray-400 mb-4">
+                      {mainFile?.label || 'Documento'} · {previewFile}
+                    </p>
+                    
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                      <a
+                        href={previewUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold text-white bg-white/10 hover:bg-white/20 transition-all border border-white/20"
+                      >
+                        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}>
+                          <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+                          <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        Ver documento completo
+                      </a>
+                      <a
+                        href={previewUrl}
+                        download={previewFile}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold text-white bg-neon-blue/20 border border-neon-blue/40 hover:bg-neon-blue hover:text-white transition-all"
+                      >
+                        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}>
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                          <polyline points="7 10 12 15 17 10" />
+                          <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        Descargar
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-white/90 uppercase tracking-wider">
-                      {isImage ? 'IMAGEN' : 'PÁGINA DE PREVIEW'}
+                      DOCUMENTO PDF
                     </span>
                     <span className="text-xs text-white/70">
-                      {isImage ? 'Documento visual' : 'Primera página del PDF'}
+                      Haz clic en "Ver" para previsualizar
                     </span>
                   </div>
                 </div>
