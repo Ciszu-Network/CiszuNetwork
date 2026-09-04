@@ -241,6 +241,15 @@ const syncCertificates = async () => {
   const certLineIdx = lines.findIndex((l) => /export\s+const\s+CERTIFICATES\s*:\s*Certificate\[\]\s*=\s*\[/.test(l));
   const otherLineIdx = lines.findIndex((l) => /export\s+const\s+OTHER_DOCS\s*:\s*Certificate\[\]\s*=\s*\[/.test(l));
 
+  const escapeValue = (value) => {
+    if (typeof value !== 'string') return value;
+    return value
+      .replace(/\\/g, '\\\\')
+      .replace(/'/g, "\\'")
+      .replace(/\n/g, '\\n')
+      .replace(/\r/g, '\\r');
+  };
+
   const insertEntries = (arrayStartIdx, entries) => {
     const arrayEndIdx = findArrayEnd(lines, arrayStartIdx);
     if (arrayEndIdx === -1) return false;
@@ -252,7 +261,7 @@ const syncCertificates = async () => {
         const add = (key, value) => {
           if (value === undefined || value === null) return;
           if (typeof value === 'string') {
-            lines.push(`${indent}  ${key}: '${value.replace(/'/g, "\\'")}',`);
+            lines.push(`${indent}  ${key}: '${escapeValue(value)}',`);
           } else if (typeof value === 'object') {
             if (Array.isArray(value)) {
               lines.push(`${indent}  ${key}: [${value.map((v) => formatValue(v, indent)).join(', ')}],`);
@@ -308,7 +317,7 @@ const syncCertificates = async () => {
 
 const formatValue = (value, indent) => {
   if (typeof value === 'string') {
-    return `'${value.replace(/'/g, "\\'")}'`;
+    return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n').replace(/\r/g, '\\r')}'`;
   }
   if (typeof value === 'number' || typeof value === 'boolean') {
     return String(value);
