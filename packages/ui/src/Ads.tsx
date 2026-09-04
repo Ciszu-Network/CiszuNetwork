@@ -226,9 +226,43 @@ export const DEFAULT_AD_CATALOG: AdConfig[] = [
     ] },
   },
   // --- Intrusivo / recompensa (tras acción) ---
-{
-    id: 'muzicmania_after_game', type: 'intrusive', placement: 'game_end',
-    content: { title: '¿Disfrutaste la partida?', description: 'Sigue jugando y compite en la tabla de líderes.', cta: 'Jugar de nuevo', href: 'https://muzicmania.vercel.app/play', accent: '#c026d3', format: 'sponsored', source: 'muzicmania', image: ISOTIPO.muzicmania },
+  // Tras la partida de MuzicMania se muestra el MISMO pool creativo que los
+  // anuncios de esquina (marcas de Ciszu Network + huecos de terceros), NUNCA
+  // un anuncio de la propia web (política: no auto-propagar). Solo lo activa
+  // MuzicMania (AfterGameAd) y solo para usuarios NO registrados: los
+  // registrados no ven anuncios tras la partida (el CTA de registro se
+  // mantiene en los que sí los ven).
+  {
+    id: 'game_end_ciszu_account', type: 'intrusive', placement: 'game_end',
+    content: { title: 'Crea tu cuenta CISZU ID', description: 'Un solo perfil para todo el ecosistema.', cta: 'Crear cuenta', href: 'https://ciszunetwork.vercel.app/register', accent: '#3b82f6', format: 'sponsored', source: 'ciszunetwork', image: ISOTIPO.ciszunetwork },
+  },
+  {
+    id: 'game_end_ciszubot', type: 'intrusive', placement: 'game_end',
+    content: { title: 'CiszuBot', description: 'El bot oficial de Discord del ecosistema.', cta: 'Probar', href: 'https://ciszubot.vercel.app', accent: '#38bdf8', format: 'sponsored', source: 'ciszubot', image: ISOTIPO.ciszubot },
+  },
+  {
+    id: 'game_end_antony', type: 'intrusive', placement: 'game_end',
+    content: { title: 'Ciszuko Antony', description: 'Conoce mi portfolio: logos, medios y música.', cta: 'Ver', href: 'https://ciszukoantony.vercel.app', accent: '#a855f7', format: 'sponsored', source: 'ciszukoantony', image: ISOTIPO.ciszukoantony },
+  },
+  {
+    id: 'game_end_ciszugamens', type: 'intrusive', placement: 'game_end',
+    content: { title: 'Ciszugamens', description: 'Únete al servidor de Discord de la comunidad gamer.', cta: 'Unirme', href: 'https://discord.gg/W3kMtMMj6E', accent: '#22d3ee', format: 'sponsored', source: 'ciszugamens', image: ISOTIPO.ciszugamens },
+  },
+  {
+    id: 'game_end_real_image', type: 'intrusive', placement: 'game_end',
+    content: { title: 'Espacio para tu anuncio', description: 'Anuncio de terceros próximo (imagen).', cta: 'Próximamente', href: '#', accent: '#facc15', format: 'image', source: 'external', placeholder: true, durationSec: 30 },
+  },
+  {
+    id: 'game_end_real_video', type: 'intrusive', placement: 'game_end',
+    content: { title: 'Tu anuncio en vídeo', description: 'Anuncio en vídeo de terceros próximo.', cta: 'Próximamente', href: '#', accent: '#facc15', format: 'video', source: 'external', placeholder: true, durationSec: 15 },
+  },
+  {
+    id: 'game_end_real_carousel', type: 'intrusive', placement: 'game_end',
+    content: { title: 'Carrusel de anuncios', description: 'Varios anuncios en cadena, próximamente.', cta: 'Próximamente', href: '#', accent: '#facc15', format: 'carousel', source: 'external', placeholder: true, durationSec: 15, carouselItems: [
+      { title: 'Anuncio 1', description: 'Anuncio personalizado próximo.', cta: 'Próximamente', href: '#', accent: '#facc15', placeholder: true, format: 'image' },
+      { title: 'Anuncio 2', description: 'Anuncio personalizado próximo.', cta: 'Próximamente', href: '#', accent: '#facc15', placeholder: true, format: 'image' },
+      { title: 'Anuncio 3', description: 'Anuncio personalizado próximo.', cta: 'Próximamente', href: '#', accent: '#facc15', placeholder: true, format: 'image' },
+    ] },
   },
   // --- Banner inferior (optional): huecos reales + un patrocinado ---
   {
@@ -687,9 +721,10 @@ const dKey = `ciszu_ads_${site}_dismissed`;
     // El filtro de "no anunciar el propio sitio" se anula en debug: el devcon
     // permite forzar cualquier anuncio (incluida la propia web) para depurar.
     // Los anuncios TRAS ACCIÓN (intrusive/reward) tampoco se filtran: nacen de
-    // una acción explícita del usuario (p. ej. el anuncio post-partida de
-    // MuzicMania, cuyo catálogo apunta a la propia web) y deben mostrarse
-    // SIEMPRE (política AD_SYSTEM: retry hasta que aparezca).
+    // una acción explícita del usuario (p. ej. el post-partida de MuzicMania)
+    // y deben mostrarse SIEMPRE (política AD_SYSTEM: retry hasta que aparezca).
+    // El pool post-partida (game_end) ya excluye la propia web por construcción
+    // (mismas creatividades que la esquina, sin la marca del sitio activo).
     const filterSelf = debugForThisSite ? false : true;
     return catalog
       .filter((a) => filterSelf ? (!host || a.type === 'intrusive' || a.type === 'reward' || !a.content.href.includes(host)) : true)
@@ -808,9 +843,11 @@ const trigger = useCallback((type: AdType, placement: string): AdConfig | null =
       return true;
     });
     if (valid.length === 0) return null;
-    // Pasivos: balance 25% patrocinado / 75% terceros.
+    // Pasivos: balance 25% patrocinado / 75% terceros. El tras-partida
+    // (game_end) usa el mismo pool de creatividades que la esquina, así que
+    // aplica el mismo balance.
     let pool = valid;
-    if (type === 'particulares' || type === 'optional') {
+    if (type === 'particulares' || type === 'optional' || (type === 'intrusive' && placement === 'game_end')) {
       const sponsored = valid.filter((a) => a.content.source !== 'external');
       const real = valid.filter((a) => a.content.source === 'external');
       if (sponsored.length > 0 && real.length > 0) {
@@ -966,7 +1003,7 @@ return createPortal(
         className="relative w-[min(94vw,500px)] rounded-2xl border border-white/10 bg-[#0b0e14] p-6 shadow-2xl"
         style={{ animation: 'ciszu-ad-pop .35s cubic-bezier(.16,1,.3,1)' }}
       >
-<AdClose onClick={onClose} closable={closable} className="absolute right-3 top-3 h-8 w-8" />
+<AdClose onClick={onClose} closable={closable} className="absolute -right-2.5 -top-2.5 z-20 h-9 w-9" />
         <AdLabel />
         {c.debugPush && (
           <span className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-amber-400/15 border border-amber-400/40 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-amber-300">

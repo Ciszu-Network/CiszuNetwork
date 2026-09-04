@@ -36,7 +36,7 @@ function getPref(key: string, def: boolean): boolean {
 }
 
 // ================== 1) RedirectGuard ==================
-export function RedirectGuard({ disabled = false }: { disabled?: boolean }) {
+export function RedirectGuard({ disabled = false, debug = false }: { disabled?: boolean; debug?: boolean }) {
     const [pending, setPending] = useState<{
         href: string;
         host: string;
@@ -45,6 +45,10 @@ export function RedirectGuard({ disabled = false }: { disabled?: boolean }) {
     const [remaining, setRemaining] = useState(3);
     const pendingRef = useRef<typeof pending>(null);
     pendingRef.current = pending;
+
+    const log = useCallback((...args: unknown[]) => {
+        if (debug) console.log('[RedirectGuard]', ...args);
+    }, [debug]);
 
     useEffect(() => {
         if (disabled) return;
@@ -79,17 +83,25 @@ export function RedirectGuard({ disabled = false }: { disabled?: boolean }) {
                 targetHost.endsWith('.' + currentHost) ||
                 currentHost.endsWith('.' + targetHost);
 
-            if (isSameDomain) return; // mismo dominio o subdominio
+            if (isSameDomain) {
+                log('Same domain - skip', { targetHost, currentHost });
+                return; // mismo dominio o subdominio
+            }
 
             const targetBlank = a.target === '_blank';
 
+            log('External link detected - showing guard', { href: a.href, host: targetHost, targetBlank, currentHost });
             e.preventDefault();
             e.stopPropagation();
             setPending({ href: a.href, host: targetHost, targetBlank });
         };
         document.addEventListener('click', onClick, true);
-        return () => document.removeEventListener('click', onClick, true);
-    }, [disabled]);
+        log('RedirectGuard listener attached');
+        return () => {
+            document.removeEventListener('click', onClick, true);
+            log('RedirectGuard listener removed');
+        };
+    }, [disabled, log]);
 
     useEffect(() => {
         if (!pending) return;

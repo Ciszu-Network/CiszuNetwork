@@ -60,7 +60,7 @@ export function trackAudioCandidates(trackId: string): string[] {
  */
 export function createTrackAudio(
   trackId: string,
-  opts?: { volume?: number; loop?: boolean; preload?: 'auto' | 'metadata' | 'none'; timeoutMs?: number }
+  opts?: { volume?: number; loop?: boolean; preload?: 'auto' | 'metadata' | 'none'; timeoutMs?: number; crossOrigin?: string }
 ): { audio: HTMLAudioElement; used: () => string } {
   const candidates = trackAudioCandidates(trackId);
   const timeoutMs = opts?.timeoutMs ?? 8000;
@@ -68,6 +68,12 @@ export function createTrackAudio(
   audio.preload = opts?.preload ?? 'auto';
   if (typeof opts?.volume === 'number') audio.volume = opts.volume;
   if (opts?.loop) audio.loop = true;
+  // crossOrigin 'anonymous' SOLO donde hace falta (el audio del store se enruta
+  // por Web Audio API con createMediaElementSource, que exige medios CORS-clean;
+  // sin él el CDN cruza dominios y el analyser queda mudo). Debe fijarse ANTES
+  // de empezar a cargar candidatos. El CDN (Supabase en prod, 8788 en dev) envía
+  // Access-Control-Allow-Origin; el fallback local /music es same-origin.
+  if (opts?.crossOrigin) audio.crossOrigin = opts.crossOrigin;
 
   let idx = 0;
   let settled = false;

@@ -290,6 +290,23 @@ export const useGameEngine = (
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioDurationRef = useRef<number>(0);
   const elapsedAtLastFrameRef = useRef(0);
+  // Retry pendiente de play() (canplay o timeout de 6s) de startGame: si la
+  // partida termina antes de que el audio cargue, hay que CANCELARLO, si no
+  // dispara play() unos segundos después y la música del nivel suena por
+  // detrás de la pantalla de resultados (bug: música tras perder/ganar).
+  const audioRetryTimerRef = useRef<number | null>(null);
+  const audioCanPlayHandlerRef = useRef<(() => void) | null>(null);
+
+  const cancelPendingAudioPlay = useCallback(() => {
+    if (audioRetryTimerRef.current) {
+      clearTimeout(audioRetryTimerRef.current);
+      audioRetryTimerRef.current = null;
+    }
+    if (audioCanPlayHandlerRef.current && audioRef.current) {
+      audioRef.current.removeEventListener('canplay', audioCanPlayHandlerRef.current);
+    }
+    audioCanPlayHandlerRef.current = null;
+  }, []);
 
   const isPlayingRef = useRef<boolean>(false);
   const isPausedRef = useRef<boolean>(false);
@@ -333,11 +350,12 @@ export const useGameEngine = (
     });
     audioRef.current = audio;
     return () => {
+      cancelPendingAudioPlay();
       audio.pause();
       audio.src = '';
       audioRef.current = null;
     };
-  }, [levelConfig?.files.audio]);
+  }, [levelConfig?.files.audio, cancelPendingAudioPlay]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -949,18 +967,30 @@ export const useGameEngine = (
     if (audioRef.current) {
       const a = audioRef.current;
       a.currentTime = 0;
+      cancelPendingAudioPlay();
       const tryPlay = () => {
+        // Nunca reproducir si la partida ya terminó/paró: un play() tardío
+        // (canplay del CDN lento) sonaría detrás de la pantalla de resultados.
+        if (!isPlayingRef.current || isGameOverRef.current) return;
         a.play().catch((e) => console.error('Error playing audio:', e));
       };
       // Si el audio aún no tiene datos decodificables, esperar a `canplay`
       // (max ~6s) y reintentar. Sin esto, si el .ogg tarda en cargar (CDN lento
       // o fallback), el play() falla y el charteo no avanza (currentTime=0).
+      // El retry queda registrado para cancelarlo en stopGame si la partida
+      // termina antes (ver cancelPendingAudioPlay).
       if (a.readyState >= 3) {
         tryPlay();
       } else {
-        const onCan = () => { a.removeEventListener('canplay', onCan); tryPlay(); };
+        const onCan = () => { audioCanPlayHandlerRef.current = null; a.removeEventListener('canplay', onCan); tryPlay(); };
+        audioCanPlayHandlerRef.current = onCan;
         a.addEventListener('canplay', onCan);
-        window.setTimeout(() => { a.removeEventListener('canplay', onCan); tryPlay(); }, 6000);
+        audioRetryTimerRef.current = window.setTimeout(() => {
+          audioRetryTimerRef.current = null;
+          a.removeEventListener('canplay', onCan);
+          audioCanPlayHandlerRef.current = null;
+          tryPlay();
+        }, 6000);
       }
     }
 
@@ -1011,6 +1041,9 @@ export const useGameEngine = (
     isPlayingRef.current = false;
     isPausedRef.current = false;
     isGameOverRef.current = false;
+    // Cancela el retry pendiente de play() (canplay/timeout): si no, la música
+    // del nivel se reanuda sola unos segundos después de perder/ganar.
+    cancelPendingAudioPlay();
     if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
@@ -1023,7 +1056,7 @@ export const useGameEngine = (
       if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
     setGameState(prev => ({ ...prev, isPlaying: false, isPaused: false, isGameOver: false }));
-  }, [canvasRef]);
+  }, [canvasRef, cancelPendingAudioPlay]);
 
   const setArrowSkin = useCallback((id: ArrowSkinId) => {
     selectedArrowSkinRef.current = id;

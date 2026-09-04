@@ -371,9 +371,11 @@ export function DisclaimerDebug({ site }: { site: string }) {
       fetch('/api/disclaimers/debug', { cache: 'no-store' })
         .then((r) => (r.ok ? r.json() : { items: [] }))
         .then((data: { items?: DebugDisclaimer[] }) => {
-          setItems((data.items ?? []).filter((i) => !i.site || i.site === site));
+          const filtered = (data.items ?? []).filter((i) => !i.site || i.site === site);
+          console.log('[DisclaimerDebug] Poll result for', site, ':', filtered.length, 'items');
+          setItems(filtered);
         })
-        .catch(() => { /* ignora */ });
+        .catch((e) => console.log('[DisclaimerDebug] Poll error:', e));
     };
     poll();
     const iv = window.setInterval(poll, 2000);
@@ -382,13 +384,14 @@ export function DisclaimerDebug({ site }: { site: string }) {
 
   // Sincroniza los items de debug con la pila global de disclaimers.
   useEffect(() => {
+    console.log('[DisclaimerDebug] Syncing items for', site, ':', items.length);
     const active = new Set<string>();
     for (const item of items) {
       active.add(item.id);
       push({
         id: item.id,
         kind: item.kind,
-        message: item.message,
+        message: '[DEVCON] ' + item.message,
         dismissible: item.dismissible,
         expiresAt: item.expiresAt,
         image: item.image,

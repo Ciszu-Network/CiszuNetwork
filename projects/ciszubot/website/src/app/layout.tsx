@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { headers } from "next/headers";
 import { Inter, Space_Grotesk } from "next/font/google";
@@ -86,7 +86,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
               <AdsWithUser site="ciszubot">
               <AdFloat placement="corner" side="bottom-right" />
               <AdPill placement="body" />
-              <RedirectGuard />
+              <RedirectGuard debug={true} />
               <DisclaimerProvider>
               {!isEdit && <BetaDisclaimer storageKey="betadisclaimer_ciszubot_dismissed" />}
               {!isEdit && <Navbar lang={lang} dict={dict} account={session} />}
@@ -118,4 +118,5 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     </html>
   );
 }
+
 

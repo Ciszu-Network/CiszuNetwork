@@ -108,7 +108,10 @@ export const useAppStore = create<AppState>((set: any, get: any) => ({
     if (get().isAudioInitialized || typeof window === 'undefined') return;
     
     // Audio del main title con FALLBACK: CDN primero, public/music si falla.
-    const { audio } = createTrackAudio('cyber_beat', { volume: (get().musicVol || 100) / 100, loop: true, preload: 'auto' });
+    // crossOrigin 'anonymous': este audio se enruta por Web Audio (analyser del
+    // visualizador) y los medios cross-origin sin CORS quedan mudos; el CDN
+    // (Supabase prod / 8788 dev) envía Access-Control-Allow-Origin.
+    const { audio } = createTrackAudio('cyber_beat', { volume: (get().musicVol || 100) / 100, loop: true, preload: 'auto', crossOrigin: 'anonymous' });
     
     // Web Audio API for visualizer
     const AudioContext = window.AudioContext || (window as any).webkitAudioContext;

@@ -8,7 +8,7 @@ import Image from 'next/image';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { TRACKS_DATA, Track } from '@/data/tracks';
-import { trackCover, trackDisc, trackAudioCandidates } from '@/utils/musicAssets';
+import { trackCover, trackDisc, trackAudioCandidates, createTrackAudio } from '@/utils/musicAssets';
 import { supabase } from '@/config/supabase';
 import { useAppStore } from '@/store/useAppStore';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
@@ -109,64 +109,59 @@ function LibraryContent() {
   }, [isPlaying]);
 
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio || !selectedTrack) return;
-    // Si ya hay una canción seleccionada y el usuario cambia, reseteamos el
-    // progreso y preparamos el nuevo track con FALLBACK robusto
-    // (CDN .ogg → CDN .opus → public .ogg). Mismo patrón que createTrackAudio
-    // (usado en /play): flag `settled` para ignorar eventos de error atrasados
-    // del candidato anterior (evita saltarse candidatos), timeout por candidato
-    // y auto-play si ya se estaba reproduciendo.
-    audio.pause();
-    const candidates = trackAudioCandidates(selectedTrack.id);
-    let idx = 0;
-    let settled = false;
-    let timer: ReturnType<typeof setTimeout> | null = null;
-    const clearTimer = () => { if (timer) { clearTimeout(timer); timer = null; } };
-    const tryNext = () => {
-      if (settled || idx >= candidates.length) return;
-      const src = candidates[idx];
-      idx += 1;
-      audio.src = src;
-      audio.load();
-      clearTimer();
-      // Si ni `canplay` ni `error` llegan (red lenta/colgada), avanzamos.
-      timer = setTimeout(() => { if (!settled) tryNext(); }, 4000);
-    };
-    const onReady = () => {
-      if (settled) return;
-      settled = true;
-      clearTimer();
-      if (isPlayingRef.current) {
-        pauseGlobalMusic();
-        audio.play().catch((e) => {
-          console.log('Audio play prevented:', e);
-          setIsPlaying(false);
-        });
+    if (!selectedTrack) return;
+    // Usa createTrackAudio (fallback robusto CDN .ogg → .opus → public .ogg,
+    // timeout 8s, detección canplay/loadeddata/error). Evita duplicar lógica.
+    const { audio } = createTrackAudio(selectedTrack.id, {
+      volume,
+      preload: 'auto',
+      timeoutMs: 8000,
+    });
+    audioRef.current = audio;
+
+    const handleEnded = () => setIsPlaying(false);
+    const handleLoadedMeta = () => {
+      if (audioRef.current && isFinite(audioRef.current.duration) && audioRef.current.duration > 0) {
+        setDuration(audioRef.current.duration);
       }
     };
-    const onFail = () => { if (!settled) tryNext(); };
-    audio.addEventListener('canplay', onReady);
-    audio.addEventListener('loadeddata', onReady);
-    audio.addEventListener('error', onFail);
-    tryNext();
+
+    audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('loadedmetadata', handleLoadedMeta);
+
+    // Auto-play si ya se estaba reproduciendo
+    if (isPlayingRef.current) {
+      pauseGlobalMusic();
+      audio.play().catch((e) => {
+        console.log('Audio play prevented:', e);
+        setIsPlaying(false);
+      });
+    }
 
     setProgress(0);
     setCurrentTime(0);
+
     return () => {
-      settled = true;
-      clearTimer();
-      audio.removeEventListener('canplay', onReady);
-      audio.removeEventListener('loadeddata', onReady);
-      audio.removeEventListener('error', onFail);
+      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('loadedmetadata', handleLoadedMeta);
+      audio.pause();
+      audio.src = '';
+      audioRef.current = null;
     };
-  }, [selectedTrack]);
+  }, [selectedTrack, volume]);
 
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.playbackRate = playbackRate;
     }
   }, [playbackRate]);
+
+  // Sincronizar volumen cuando cambie
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+    }
+  }, [volume]);
 
   useEffect(() => {
     let filtered = [...TRACKS_DATA];
@@ -261,8 +256,9 @@ function LibraryContent() {
   const handleTimeUpdate = () => {
     if (audioRef.current) {
       setCurrentTime(audioRef.current.currentTime);
-      setDuration(audioRef.current.duration || 0);
-      setProgress((audioRef.current.currentTime / audioRef.current.duration) * 100 || 0);
+      const dur = audioRef.current.duration;
+      setDuration(isFinite(dur) && dur > 0 ? dur : 0);
+      setProgress(dur && isFinite(dur) && dur > 0 ? (audioRef.current.currentTime / dur) * 100 : 0);
     }
   };
 

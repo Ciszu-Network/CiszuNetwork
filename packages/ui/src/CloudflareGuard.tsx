@@ -184,7 +184,7 @@ export default function CloudflareGuard({
     s.defer = true;
     document.head.appendChild(s);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mounted, enabled]);
+  }, [mounted, enabled, regen]);
 
   /** Quita el widget del DOM por completo (limpieza total del iframe) */
   const removeWidget = useCallback(() => {
@@ -198,6 +198,20 @@ export default function CloudflareGuard({
     widgetIdRef.current = null;
     const el = document.getElementById('cf-guard-widget');
     if (el) el.innerHTML = '';
+  }, []);
+
+  /** Limpia también el script de Turnstile del DOM para forzar recarga limpia
+   *  (evita listeners huérfanos del script api.js tras expiración/retry). */
+  const removeTurnstileScript = useCallback(() => {
+    const existing = document.querySelector(`script[src="${TURNSTILE_SCRIPT}"]`);
+    if (existing) {
+      try {
+        existing.remove();
+      } catch { /* ignore */ }
+    }
+    // También limpiar preload si existe
+    const preload = document.querySelector(`link[href="${TURNSTILE_SCRIPT}"][rel="preload"]`);
+    if (preload) preload.remove();
   }, []);
 
   // Limpiar timers al desmontar
@@ -251,10 +265,12 @@ export default function CloudflareGuard({
       }, retryDelays[attempt]);
     } else {
       removeWidget();
+      // Agotados reintentos automáticos: limpiar script para que el retry manual cargue fresco
+      removeTurnstileScript();
       setState('error');
       setStatusText('El desafío falló varias veces. Revisa tu red y reintenta');
     }
-  }, [removeWidget, retryDelays]);
+  }, [removeWidget, removeTurnstileScript, retryDelays]);
 
   const handleError = useCallback(() => {
     startAutoRetry();
@@ -263,9 +279,10 @@ export default function CloudflareGuard({
   const handleRetry = useCallback(() => {
     retryCountRef.current = 0;
     removeWidget();
+    removeTurnstileScript();
     setState('loading');
     setStatusText('');
-  }, [removeWidget]);
+  }, [removeWidget, removeTurnstileScript]);
 
   // Renderizar el widget dentro del div (efecto único tras cargar el script)
   useEffect(() => {
@@ -291,6 +308,7 @@ export default function CloudflareGuard({
           // El iframe expiró: recrear el widget limpio para que el visitante
           // no se quede con un reto caducado pegado ("se cancela solo").
           removeWidget();
+          removeTurnstileScript();
           setStatusText('El reto expiró, generando uno nuevo…');
           timeoutRef.current = setTimeout(() => setRegen((n) => n + 1), 800);
         },
