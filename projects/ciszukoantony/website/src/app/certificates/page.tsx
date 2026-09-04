@@ -10,6 +10,7 @@ import {
   OTHER_DOCS,
   type Certificate,
 } from '@/data/certificates';
+import PdfThumbnail from '@/components/certificates/PdfThumbnail';
 
 const CDN_BASE =
   process.env.NEXT_PUBLIC_CDN_URL ||
@@ -68,23 +69,7 @@ function CertificateCard({
               />
             ) : isPdf ? (
               <div className="absolute inset-0">
-                {hasRealPreview ? (
-                  <img
-                    src={previewUrl}
-                    alt=""
-                    className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                  />
-                ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-blue-900/20 to-purple-900/20 p-4">
-                    <svg viewBox="0 0 24 24" className="w-12 h-12 text-white/60" fill="none" stroke="currentColor" strokeWidth={1.5}>
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                      <polyline points="14 2 14 8 20 8" />
-                      <path d="M9 13h6" />
-                      <path d="M9 17h3" />
-                    </svg>
-                    <p className="text-[10px] text-white/60 mt-2 font-bold uppercase tracking-wider">PDF Preview</p>
-                  </div>
-                )}
+                <PdfThumbnail url={previewUrl} />
               </div>
             ) : (
               <div className="absolute inset-0 flex items-center justify-center">
@@ -350,7 +335,7 @@ function DetailModal({
                         </span>
                       </div>
                     </div>
-                  ) : isPdf ? (
+                   ) : isPdf ? (
                     <div className="relative">
                       {cert.thumbnail ? (
                         <img
@@ -359,20 +344,15 @@ function DetailModal({
                           className="w-full h-64 sm:h-80 object-contain bg-black/40"
                         />
                       ) : (
-                        <div className="w-full h-64 sm:h-80 flex flex-col items-center justify-center bg-gradient-to-br from-blue-900/10 to-purple-900/10">
-                          <svg viewBox="0 0 24 24" className="w-16 h-16 text-white/40" fill="none" stroke="currentColor" strokeWidth={1.5}>
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                            <polyline points="14 2 14 8 20 8" />
-                            <path d="M9 13h6" />
-                            <path d="M9 17h3" />
-                          </svg>
-                          <p className="text-sm text-gray-400 mt-3">PDF document preview</p>
-                          <p className="text-xs text-gray-500 mt-1">Click "View" to open full document</p>
-                        </div>
+                        <iframe
+                          src={previewUrl}
+                          title="PDF preview"
+                          className="w-full h-64 sm:h-80 border-0 bg-white"
+                        />
                       )}
                       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 flex items-center justify-between">
                         <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">
-                          {cert.thumbnail ? 'PDF thumbnail' : 'PDF document'}
+                          {cert.thumbnail ? 'PDF thumbnail' : 'PDF preview'}
                         </span>
                         <a
                           href={previewUrl}
