@@ -10,7 +10,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "verify": "pnpm run lint && next build"
+    "verify": "pnpm run lint && next build",
+    "sync:certificates": "node scripts/sync-certificates.js"
   },
   "dependencies": {
     "@ciszu/ui": "workspace:*",

@@ -430,6 +430,33 @@ export const CERTIFICATES: Certificate[] = [
       { name: 'finanzaspersonales_Certificado_Francisco Antonio Garcia Menolascina.pdf', label: 'Certificate of completion', kind: 'certificate' },
     ],
   },
+
+  {
+    id: '373-fplayersoffcial-gmail-com',
+    title: '373 Fplayersoffcial@Gmail.Com',
+    provider: 'Online course platform',
+    category: 'ai',
+    files: [{ name: '373_fplayersoffcial@gmail.com.pdf', label: '373 Fplayersoffcial@Gmail.Com', kind: 'certificate' }],
+    previewType: 'pdf',
+  },
+
+  {
+    id: '4080-fplayersoffcial-gmail-com',
+    title: '4080 Fplayersoffcial@Gmail.Com',
+    provider: 'Online course platform',
+    category: 'ai',
+    files: [{ name: '4080_fplayersoffcial@gmail.com.pdf', label: '4080 Fplayersoffcial@Gmail.Com', kind: 'certificate' }],
+    previewType: 'pdf',
+  },
+
+  {
+    id: '508-fplayersoffcial-gmail-com',
+    title: '508 Fplayersoffcial@Gmail.Com',
+    provider: 'Online course platform',
+    category: 'ai',
+    files: [{ name: '508_fplayersoffcial@gmail.com.pdf', label: '508 Fplayersoffcial@Gmail.Com', kind: 'certificate' }],
+    previewType: 'pdf',
+  }
 ];
 
 // Documentos complementarios (transcripts, expedientes, perfiles): no son
@@ -493,4 +520,40 @@ export const OTHER_DOCS: Certificate[] = [
     thumbnail: 'shared/docs/certificados/dato (35).JPG',
     previewType: 'image',
   },
+
+  {
+    id: 'certificado-de-finalizaci-n-mskillsbuild',
+    title: 'Certificado De FinalizacióN MSkillsBuild',
+    provider: 'IBM SkillsBuild',
+    category: 'other',
+    files: [{ name: 'Certificado de finalización _ mSkillsBuild.pdf', label: 'Certificado De FinalizacióN MSkillsBuild', kind: 'certificate' }],
+    previewType: 'pdf',
+  },
+
+  {
+    id: 'certificado-de-finalizaci-n-skillsbuild',
+    title: 'Certificado De FinalizacióN SkillsBuild',
+    provider: 'IBM SkillsBuild',
+    category: 'other',
+    files: [{ name: 'Certificado de finalización _ SkillsBuild.pdf', label: 'Certificado De FinalizacióN SkillsBuild', kind: 'certificate' }],
+    previewType: 'pdf',
+  },
+
+  {
+    id: 'certificado-de-finalizaci-n-skillsbuild1',
+    title: 'Certificado De FinalizacióN SkillsBuild1',
+    provider: 'IBM SkillsBuild',
+    category: 'other',
+    files: [{ name: 'Certificado de finalización _ SkillsBuild1.pdf', label: 'Certificado De FinalizacióN SkillsBuild1', kind: 'certificate' }],
+    previewType: 'pdf',
+  },
+
+  {
+    id: 'certificado-de-finalizaci-n-skillsbuild2',
+    title: 'Certificado De FinalizacióN SkillsBuild2',
+    provider: 'IBM SkillsBuild',
+    category: 'other',
+    files: [{ name: 'Certificado de finalización _ SkillsBuild2.pdf', label: 'Certificado De FinalizacióN SkillsBuild2', kind: 'certificate' }],
+    previewType: 'pdf',
+  }
 ];
