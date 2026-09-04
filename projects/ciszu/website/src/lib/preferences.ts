@@ -1,6 +1,6 @@
 'use client';
 
-export type PrefLang = 'es' | 'en';
+export type PrefLang = 'es-latam' | 'es-es' | 'en-us' | 'en-uk';
 export type PrefTheme = 'dark' | 'light';
 
 export interface CiszuPreferences {
@@ -17,7 +17,7 @@ export interface CiszuPreferences {
 export const PREFS_STORAGE_KEY = 'ciszu_preferences';
 
 export const DEFAULT_PREFERENCES: CiszuPreferences = {
-  lang: 'es',
+  lang: 'es-latam',
   theme: 'dark',
   zoom: 100,
   tabMuted: false,
@@ -29,6 +29,13 @@ export const ZOOM_MIN = 80;
 export const ZOOM_MAX = 140;
 export const ZOOM_STEP = 10;
 
+/** Idiomas disponibles (completados). El resto están bloqueados. */
+export const AVAILABLE_LANGS: PrefLang[] = ['es-latam', 'es-es', 'en-us', 'en-uk'];
+
+export function isLangAvailable(lang: PrefLang): boolean {
+  return AVAILABLE_LANGS.includes(lang);
+}
+
 export function loadPreferences(): CiszuPreferences {
   if (typeof window === 'undefined') return DEFAULT_PREFERENCES;
   try {
@@ -36,7 +43,7 @@ export function loadPreferences(): CiszuPreferences {
     if (!raw) return DEFAULT_PREFERENCES;
     const parsed = JSON.parse(raw) as Partial<CiszuPreferences>;
     return {
-      lang: parsed.lang === 'en' ? 'en' : 'es',
+      lang: parsed.lang && AVAILABLE_LANGS.includes(parsed.lang as PrefLang) ? (parsed.lang as PrefLang) : DEFAULT_PREFERENCES.lang,
       theme: parsed.theme === 'light' ? 'light' : 'dark',
       zoom: typeof parsed.zoom === 'number' && parsed.zoom >= ZOOM_MIN && parsed.zoom <= ZOOM_MAX ? parsed.zoom : DEFAULT_PREFERENCES.zoom,
       tabMuted: parsed.tabMuted === true,
@@ -66,6 +73,11 @@ export function updatePreferences(patch: Partial<CiszuPreferences>): CiszuPrefer
 export function applyZoom(zoom: number) {
   if (typeof window === 'undefined') return;
   document.documentElement.style.fontSize = `${zoom}%`;
+}
+
+export function applyTheme(theme: PrefTheme) {
+  if (typeof window === 'undefined') return;
+  document.documentElement.classList.toggle('light', theme === 'light');
 }
 
 const MUTED_FAVICON_DATA_URI =
