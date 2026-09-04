@@ -60,7 +60,8 @@ export function RedirectGuard({ disabled = false, debug = false }: { disabled?: 
             if (!a || !a.href) return;
 
             // Omitir enlaces que son solo anclas (#) o javascript:
-            if (a.href.startsWith('#') || a.href.startsWith('javascript:')) return;
+            const hrefLower = a.href.toLowerCase();
+            if (hrefLower.startsWith('#') || hrefLower.startsWith('javascript:') || hrefLower.startsWith('data:') || hrefLower.startsWith('vbscript:')) return;
 
             let targetHost = '';
             try {
