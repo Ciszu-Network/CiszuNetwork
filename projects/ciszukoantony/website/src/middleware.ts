@@ -59,7 +59,13 @@ export async function middleware(request: NextRequest) {
   response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   response.headers.set(
     'Content-Security-Policy',
-    buildCsp({ styleSrc: ['https://rsms.me'], fontSrc: ['https://rsms.me'] })
+    buildCsp({
+      styleSrc: ['https://rsms.me'],
+      fontSrc: ['https://rsms.me'],
+      scriptSrc: ['https://cdnjs.cloudflare.com'],
+      workerSrc: ['https://cdnjs.cloudflare.com'],
+      frameSrc: ['https://obwzzmbvkrcscqwptlqo.supabase.co'],
+    })
   );
 
   // ── Sensor IAST (runtime, edge-safe): solo observa y loguea payloads ──────
