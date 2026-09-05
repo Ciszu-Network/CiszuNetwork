@@ -7,8 +7,8 @@
 1. [ ] #3 Plantear utilizar otro respaldador de archivos diferentes a github:
        Para no codigo y no cdn. Es decir un storage cloud privado, que pueda usarse con CLi o automatizacion con API. Como google drive, onedrive, terabox, dropbox entre otros para poder reguardar seguramente todo mi codigos exepto credenciales, mas centrado al contenido y docuemntacion que mi codigo.
 2. [x] #4 Mejorar sistema de certificados de ciszukoantony, thumbnails y sincronizacion automatica desde shared/docs/certificados. Completado: script sync:certificates + PdfThumbnail runtime + modal Preview/Files.
-3. [ ] #5 Crear sistema de anuncios: Google Adsense, GA4, GTM, Tag y Analytics pack completo.
-    - [ ] AdSense dice “Preparando el sitio”: revisar cuenta/sitio aprobado y crear unidades de anuncio tras aprobación.
+3. [x] #5 Crear sistema de anuncios: Google Adsense, GA4, GTM, Tag y Analytics pack completo.
+    - [x] AdSense dice “Preparando el sitio”: revisar cuenta/sitio aprobado y crear unidades de anuncio tras aprobación.
     - [ ] GA4: confirmar Realtime page_views (requiere acceso a analytics.google.com).
     - [ ] GTM: publicar/verificar contenedores (requiere acceso a tagmanager.google.com).
     - [ ] Looker Studio: conectar fuentes GA4 y crear dashboard (requiere acceso manual).
@@ -16,6 +16,8 @@
 4. [ ] El sistema de los discleimers y ads no llegan en local ni en global. Actualmente no funciona el sistema de agregar discleimer ni ads desde la devcon, simplemente no agrega nada visualmente a pesar que desde la devcon parece que si, siempre sale el banner de esta website esta en beta, recuerda que el discleimer de devcon debe indicar que fue enviado por la devcon, ademas que independientemente de la cantidad actual almacenada el usuario siempre le debe salir. Por otro lado la opcion de ads de la devcon ni si quiera me deja crear un ad, directamente no hace nada.
 
     Luego de que el sistema funcione debugear con ads para arreglar el error de el logo actual de ciszugamens no es correcto, usa los colores incorrectos, debe ser el de C morado, y Z azul. Con degradados. Outline. Actualmente se usa una version azul de la C y Z blanca.
+
+5. [ ] Debemos hacer obligatoriamente un cambio en los banners de las cookies de todas las websites, debemos agregar una opcion para rechazarlas, si el usuario las rechaza, los servicios que usen cookies externas no tecnicas o opcionales se deben "desactivar", esto provocara algunas fallas pero debes hacer que se bypaseen, ignorando los errores o solucionandolos. Por otro lado si el usuario acepta la cookies debe haber un boton o seccion de las preferencias locales, de esta manera no obligamos al usuario a crear una cuenta, el boton esta hecho para rechazarlas o reaparecer el banner para rechazarlas. El usuario siempre debe tener la opcion de poder rechazar el cualquier momento,
 
 ### Cambios de AUTH en todas las Websites:
 

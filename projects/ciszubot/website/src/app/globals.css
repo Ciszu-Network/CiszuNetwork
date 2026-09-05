@@ -126,6 +126,36 @@
   --neon-pink:   #ff33cc;
 }
 
+/* ── Modo claro (html sin .dark): superficies hardcodeadas de los docks,
+   modals, dropdowns y cards pasan a la paleta clara. Los textos blancos e
+   iconos blancos pasan a tinta oscura para ser legibles. ──────────────── */
+html:not(.dark) .bg-\[\#05050a\] { background-color: #f4f6fb !important; }
+html:not(.dark) .bg-\[\#05050a\]\/95 { background-color: rgba(255, 255, 255, 0.96) !important; }
+html:not(.dark) .bg-\[\#0a0a0f\] { background-color: #ffffff !important; }
+html:not(.dark) .bg-\[\#070710\] { background-color: #f4f6fb !important; }
+html:not(.dark) .bg-white\/5 { background-color: rgba(35, 63, 146, 0.05) !important; }
+html:not(.dark) .bg-white\/10 { background-color: rgba(35, 63, 146, 0.08) !important; }
+html:not(.dark) .bg-white\/20 { background-color: rgba(35, 63, 146, 0.12) !important; }
+html:not(.dark) .border-white\/5 { border-color: rgba(35, 63, 146, 0.06) !important; }
+html:not(.dark) .border-white\/10 { border-color: rgba(35, 63, 146, 0.12) !important; }
+html:not(.dark) .border-white\/15 { border-color: rgba(35, 63, 146, 0.14) !important; }
+html:not(.dark) .border-white\/20 { border-color: rgba(35, 63, 146, 0.16) !important; }
+html:not(.dark) .border-white\/30 { border-color: rgba(35, 63, 146, 0.2) !important; }
+html:not(.dark) .text-white { color: #1b2234 !important; }
+html:not(.dark) .text-white\/90 { color: rgba(27, 34, 52, 0.9) !important; }
+html:not(.dark) .text-white\/85 { color: rgba(27, 34, 52, 0.85) !important; }
+html:not(.dark) .text-white\/80 { color: rgba(27, 34, 52, 0.8) !important; }
+html:not(.dark) .text-white\/70 { color: rgba(27, 34, 52, 0.72) !important; }
+html:not(.dark) .text-white\/60 { color: rgba(27, 34, 52, 0.62) !important; }
+html:not(.dark) .text-white\/50 { color: rgba(27, 34, 52, 0.52) !important; }
+html:not(.dark) .text-white\/40 { color: rgba(27, 34, 52, 0.42) !important; }
+html:not(.dark) .text-white\/30 { color: rgba(27, 34, 52, 0.32) !important; }
+html:not(.dark) .text-gray-300 { color: #2e3a54 !important; }
+html:not(.dark) .text-gray-400 { color: #5a6478 !important; }
+html:not(.dark) .text-gray-500 { color: #7b879e !important; }
+html:not(.dark) .text-gray-600 { color: #8b93a7 !important; }
+html:not(.dark) { --shadow-neon-blue: 0 0 10px rgba(2, 132, 199, 0.18); --shadow-neon-pink: 0 0 10px rgba(219, 39, 119, 0.12); --shadow-neon-purple: 0 0 10px rgba(124, 58, 237, 0.14); }
+
 /* ── Base Layer ─────────────────────────────────────────── */
 @layer base {
   *, *::before, *::after {

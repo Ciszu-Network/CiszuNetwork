@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { Icon } from '@ciszu/ui';
-import { getDict, type Lang } from '@/lib/i18n';
+import { getDict, parseLang, isEsLang } from '@/lib/i18n';
 
 export const revalidate = 60;
 
@@ -54,9 +54,9 @@ function formatUptime(startedAt: string | null, now: number): string {
 
 export default async function StatusPage() {
   const store = await cookies();
-  const lang = (store.get('ciszubot_lang')?.value ?? 'es') as Lang;
+  const lang = parseLang(store.get('ciszubot_lang')?.value);
   const t = getDict(lang);
-  const locale = lang === 'es' ? 'es' : 'en';
+  const locale = isEsLang(lang) ? 'es' : 'en';
 
   const status = await getBotStatus();
   const now = Date.now();

@@ -511,7 +511,7 @@ export default function SupportPage() {
                    </div>
                 </div>
                 <p className="text-[10px] text-gray-500 font-bold leading-relaxed uppercase">
-                   Tu requerimiento será procesado directamente por el **Equipo de Asistencia de MuzicMania**, bajo la supervisión de **Ciszuko Antony**. Los datos se sincronizan con <span className="text-white">ciszunetowork@gmail.com</span>.
+                   Tu requerimiento será procesado directamente por el **Equipo de Asistencia de MuzicMania**, bajo la supervisión de **Ciszuko Antony**. Los datos se sincronizan con <span className="text-white">ciszunetwork@gmail.com</span>.
                 </p>
              </div>
 

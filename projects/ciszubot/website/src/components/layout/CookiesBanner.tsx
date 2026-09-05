@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAppStore } from '@/store';
-import { type Dict, type Lang } from '@/lib/i18n';
+import { type Dict, type Lang, isEsLang } from '@/lib/i18n';
 
 interface CookiesBannerProps {
   lang: Lang;
@@ -52,7 +52,7 @@ export function CookiesBanner({ lang, dict }: CookiesBannerProps) {
             <Link href="/privacidad" className="text-neon-cyan hover:text-neon-blue underline transition-colors">
               {dict.cookiesBanner.privacyLink}
             </Link>{' '}
-            {lang === 'es' ? 'y' : 'and'}{' '}
+            {isEsLang(lang) ? 'y' : 'and'}{' '}
             <Link href="/terminos" className="text-neon-cyan hover:text-neon-blue underline transition-colors">
               {dict.cookiesBanner.termsLink}
             </Link>.

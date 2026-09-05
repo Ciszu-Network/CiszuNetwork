@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { Icon, SmartImage, useZoomStatus, publishHeaderMode, useToast } from '@ciszu/ui';
+import { usePathname } from 'next/navigation';
+import { Icon, SmartImage, useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE } from '@ciszu/ui';
 import { Menu, X, Search } from 'lucide-react';
 import { useAppStore, type AppUser } from '@/store';
 import { supabase } from '@/config/supabase';
@@ -44,47 +44,9 @@ const SEARCH_PAGES: { href: string; labelKey: string; icon: string; keywords: st
   { href: '/terminos', labelKey: 'terminos', icon: 'external', keywords: ['terminos', 'terms', 'legal'] },
 ];
 
-const LANGS = [
-  { code: 'ES-LA', label: 'Español (Latam)', flag: (
-    <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner">
-      <rect width="512" height="170.6" fill="#ffcc00"/>
-      <rect width="512" height="170.6" y="170.6" fill="#003399"/>
-      <rect width="512" height="170.6" y="341.2" fill="#cf142b"/>
-      <g fill="#fff" transform="translate(256,230) scale(4)">
-        <circle cx="0" cy="0" r="18" fill="none" stroke="#fff" strokeWidth="1" strokeDasharray="2,2"/>
-        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(-45) translate(0,-18) scale(0.4)"/>
-        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(-22.5) translate(0,-18) scale(0.4)"/>
-        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="translate(0,-18) scale(0.4)"/>
-        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(22.5) translate(0,-18) scale(0.4)"/>
-        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(45) translate(0,-18) scale(0.4)"/>
-        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(-67.5) translate(0,-18) scale(0.4)"/>
-        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(67.5) translate(0,-18) scale(0.4)"/>
-      </g>
-    </svg>
-  ) },
-  { code: 'ES-ES', label: 'Español (España)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#ad1519"/><rect width="512" height="300" y="106" fill="#fabd00"/><circle cx="150" cy="256" r="50" fill="#ad1519"/></svg> },
-  { code: 'EN-US', label: 'English (US)', flag: (
-    <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner font-sans">
-      <rect width="512" height="512" fill="#bd3d44"/>
-      <rect width="512" height="36" y="36.5" fill="#fff"/><rect width="512" height="36" y="109.5" fill="#fff"/><rect width="512" height="36" y="182.5" fill="#fff"/><rect width="512" height="36" y="255.5" fill="#fff"/><rect width="512" height="36" y="328.5" fill="#fff"/><rect width="512" height="36" y="401.5" fill="#fff"/><rect width="512" height="36" y="474.5" fill="#fff"/>
-      <rect width="240" height="260" fill="#192f5d"/>
-      <g fill="#fff">
-        <circle cx="30" cy="35" r="5"/><circle cx="70" cy="35" r="5"/><circle cx="110" cy="35" r="5"/><circle cx="150" cy="35" r="5"/><circle cx="190" cy="35" r="5"/>
-        <circle cx="50" cy="65" r="5"/><circle cx="90" cy="65" r="5"/><circle cx="130" cy="65" r="5"/><circle cx="170" cy="65" r="5"/><circle cx="210" cy="65" r="5"/>
-        <circle cx="30" cy="95" r="5"/><circle cx="70" cy="95" r="5"/><circle cx="110" cy="95" r="5"/><circle cx="150" cy="95" r="5"/><circle cx="190" cy="95" r="5"/>
-        <circle cx="50" cy="125" r="5"/><circle cx="90" cy="125" r="5"/><circle cx="130" cy="125" r="5"/><circle cx="170" cy="125" r="5"/><circle cx="210" cy="125" r="5"/>
-        <circle cx="30" cy="155" r="5"/><circle cx="70" cy="155" r="5"/><circle cx="110" cy="155" r="5"/><circle cx="150" cy="155" r="5"/><circle cx="190" cy="155" r="5"/>
-      </g>
-    </svg>
-  ) },
-  { code: 'EN-UK', label: 'English (UK)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#012169"/><path d="M0 0l512 512M512 0L0 512" stroke="#fff" strokeWidth="60"/><path d="M0 0l512 512M512 0L0 512" stroke="#cf142b" strokeWidth="30"/><rect width="512" height="100" y="206" fill="#fff"/><rect width="100" height="512" x="206" fill="#fff"/><rect width="512" height="60" y="226" fill="#cf142b"/><rect width="60" height="512" x="226" fill="#cf142b"/></svg> },
-  { code: 'PT', label: 'Português (Brasil)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#009c3b"/><path d="M256 70l186 186-186 186L70 256z" fill="#ffdf00"/><circle cx="256" cy="256" r="100" fill="#002776"/></svg> },
-  { code: 'FR', label: 'Français', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="170" height="512" fill="#002395"/><rect width="170" height="512" x="171" fill="#fff"/><rect width="171" height="512" x="341" fill="#ed2939"/></svg> },
-  { code: 'IT', label: 'Italiano', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="170" height="512" fill="#009246"/><rect width="170" height="512" x="171" fill="#fff"/><rect width="171" height="512" x="341" fill="#ce2b37"/></svg> },
-  { code: 'DE', label: 'Deutsch', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="170" fill="#000"/><rect width="512" height="170" y="171" fill="#d00"/><rect width="512" height="171" y="341" fill="#ffce00"/></svg> },
-  { code: 'RU', label: 'Русский', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="170" fill="#fff"/><rect width="512" height="170" y="171" fill="#0039a6"/><rect width="512" height="171" y="341" fill="#d52b1e"/></svg> },
-  { code: 'JA', label: '日本語 (Japanese)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#fff"/><circle cx="256" cy="256" r="120" fill="#bc002d"/></svg> },
-  { code: 'KO', label: '한국어 (Korean)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#fff"/><circle cx="256" cy="256" r="80" fill="#cd2e3a"/><path d="M256 176a80 80 0 0 0 0 160c44 0 44-80 80-80s36 80 80 80" fill="#0047a0"/></svg> }];
+// LANGS: lista canónica compartida (@ciszu/ui). Los 4 idiomas de producción
+// (es-latam, es-es, en-us, en-uk) son INDIVIDUALES entre sí; el resto está
+// bloqueado (atenuado + toast de error al hacer click).
 
 const IcoUser = () => (
   <svg viewBox="0 0 24 24" className="w-[20px] h-[20px]" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -101,7 +63,6 @@ interface NavbarProps {
 
 export default function Navbar({ lang, dict, account }: NavbarProps) {
   const pathname = usePathname();
-  const router = useRouter();
   const { isMenuOpen, setIsMenuOpen, sidebarView, setSidebarView, user, setUser, isHydrated } = useAppStore();
   const { toast } = useToast();
   const [searchOpen, setSearchOpen] = useState(false);
@@ -229,6 +190,15 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
     return () => document.removeEventListener('click', handleClick);
   }, [pathname]);
 
+  // Recarga diferida: se muestra el toast (azul) y la página se recarga ~1.8s
+  // después para que el aviso sea visible. (Requirement: cambiar idioma/tema
+  // siempre recarga la página + toast del sistema de notif.)
+  const scheduleReload = () => {
+    window.setTimeout(() => {
+      window.location.reload();
+    }, 1800);
+  };
+
   const setTheme = () => {
     const root = document.documentElement;
     const isDarkNow = root.classList.contains('dark');
@@ -237,6 +207,8 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
     setIsDark(next === 'dark');
     const prefs = updatePreferences({ theme: next });
     if (activeUserId) void syncPreferencesToProfile(activeUserId, prefs);
+    toast(next === 'dark' ? 'Modo oscuro activado' : 'Modo claro activado', 'info');
+    scheduleReload();
   };
 
   const setLang = (code: Lang) => {
@@ -247,10 +219,8 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
     } else {
       updatePreferences({ lang: code });
     }
-    // router.refresh() re-renderiza los RSC (idioma server-side) SIN recargar
-    // la página completa: evita que el CloudflareGuard y los assets CDN se
-    // re-monten (eran la causa de logos que no cargaban al cambiar idioma).
-    router.refresh();
+    toast(`Idioma cambiado a ${getLangLabel(code)}`, 'info');
+    scheduleReload();
   };
 
   const handleSignOut = async () => {
@@ -263,15 +233,14 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
     }
   };
 
-  const currentLangCode = lang === 'es' ? 'ES-LA' : 'EN-US';
+  const currentLangCode = lang;
 
   const handleLangSelect = (code: string) => {
-    if (code === 'ES-LA') {
-      if (lang !== 'es') setLang('es');
-    } else if (code === 'EN-US') {
-      if (lang !== 'en') setLang('en');
+    // Los 4 idiomas son individuales: se guarda el código exacto.
+    if (code === 'es-latam' || code === 'es-es' || code === 'en-us' || code === 'en-uk') {
+      if (lang !== code) setLang(code);
     } else {
-      toast('Esta función no está desarrollada para la beta aún', 'warning');
+      toast(LANG_BLOCKED_MESSAGE, 'error');
     }
   };
 
@@ -600,7 +569,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                   onClick={() => setQuery('')}
                   className="mt-3 px-6 py-2 rounded-full text-[10px] uppercase tracking-widest font-header font-bold bg-neon-blue/20 border border-neon-blue/40 text-neon-blue hover:bg-neon-blue hover:text-black transition-all active:scale-95 cursor-pointer"
                 >
-                  {lang === 'es' ? 'Reiniciar búsqueda' : 'Reset search'}
+                  {lang === 'es-latam' || lang === 'es-es' ? 'Reiniciar búsqueda' : 'Reset search'}
                 </button>
               </div>
             )}
@@ -637,7 +606,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
             </button>
 
             <h2 className="text-neon-blue text-base font-header font-black tracking-widest drop-shadow-[0_0_8px_rgba(0,212,255,0.5)]">
-              {sidebarView === 'main' ? (lang === 'es' ? 'MENÚ' : 'MENU') : 'IDIOMAS'}
+              {sidebarView === 'main' ? (lang === 'es-latam' || lang === 'es-es' ? 'MENÚ' : 'MENU') : 'IDIOMAS'}
             </h2>
 
             <button
@@ -650,7 +619,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                 <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
               </svg>
               <div className="w-6 h-6 rounded-full overflow-hidden border border-white/20 shadow-[0_0_10px_rgba(255,255,255,0.1)] shrink-0 transition-transform duration-300 group-hover:scale-110 [&>svg]:w-6 [&>svg]:h-6">
-                {(LANGS.find(l => l.code === currentLangCode) || LANGS[0]).flag}
+                {(LANGUAGE_OPTIONS.find(l => l.code === currentLangCode) || LANGUAGE_OPTIONS[0]).flag}
               </div>
             </button>
           </div>
@@ -659,7 +628,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
             {sidebarView === 'main' ? (
               <>
                 <div className="mb-4">
-                  <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">{lang === 'es' ? 'NAVEGACIÓN' : 'NAVIGATION'}</p>
+                  <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">{lang === 'es-latam' || lang === 'es-es' ? 'NAVEGACIÓN' : 'NAVIGATION'}</p>
                   {NAV_PAGES.map((link) => (
                     <Link
                       key={link.href}
@@ -684,7 +653,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                 </div>
 
                 <div className="h-px bg-white/10 my-4" />
-                <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">{lang === 'es' ? 'CUENTA' : 'ACCOUNT'}</p>
+                <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">{lang === 'es-latam' || lang === 'es-es' ? 'CUENTA' : 'ACCOUNT'}</p>
                 {activeUser ? (
                   <Link
                     href="/dashboard"
@@ -700,7 +669,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                     className="w-full flex items-center justify-center gap-2 py-3 bg-[#5865F2] text-white rounded-xl font-header font-bold hover:bg-[#4752c4] text-xs transition-all"
                   >
                     <Icon name="discord" size={16} className="[&>g]:fill-current" />
-                    <span>{lang === 'es' ? 'Iniciar sesión con Discord' : 'Sign in with Discord'}</span>
+                    <span>{lang === 'es-latam' || lang === 'es-es' ? 'Iniciar sesión con Discord' : 'Sign in with Discord'}</span>
                   </a>
                 )}
 
@@ -718,28 +687,27 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
               </>
             ) : (
               <div className="grid grid-cols-1 gap-1 animate-fade-in-up pb-10">
-                {LANGS.map((l) => {
-                  const available = l.code === 'ES-LA' || l.code === 'EN-US';
+                {LANGUAGE_OPTIONS.map((l) => {
                   const active = currentLangCode === l.code;
                   return (
                     <button
                       key={l.code}
                       onClick={() => handleLangSelect(l.code)}
-                      className={`flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-header font-bold transition-all group ${
+                      className={`flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-header font-bold transition-all group border ${
                         active
-                          ? 'bg-neon-blue/20 text-neon-blue border border-neon-blue/30'
-                          : available
-                            ? 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent cursor-pointer'
-                            : 'text-gray-600 opacity-60 hover:opacity-90 hover:text-white/70 hover:bg-white/5 border border-transparent cursor-pointer'
+                          ? 'bg-neon-blue/20 text-neon-blue border-neon-blue/30'
+                          : l.available
+                            ? 'text-gray-400 hover:text-white hover:bg-white/5 border-transparent cursor-pointer'
+                            : 'text-gray-600 opacity-50 saturate-50 hover:opacity-90 hover:text-white/70 hover:bg-white/5 border-transparent cursor-pointer'
                       }`}
                     >
                       <span className="w-6 h-6 rounded-full overflow-hidden ring-1 ring-white/10 shrink-0 transition-transform duration-300 group-hover:scale-110 [&>svg]:w-6 [&>svg]:h-6">
                         {l.flag}
                       </span>
                       <span className="flex-1 text-left">{l.label}</span>
-                      {!available && (
+                      {!l.available && (
                         <span className="text-[9px] font-black uppercase tracking-widest text-white/30 bg-white/5 border border-white/10 rounded-full px-2 py-0.5 shrink-0">
-                          Beta
+                          No disponible
                         </span>
                       )}
                       {active && (

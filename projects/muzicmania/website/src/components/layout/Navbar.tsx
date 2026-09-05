@@ -15,7 +15,7 @@ import { supabase } from '@/config/supabase';
 import { I, MAIN_NAV_LINKS as NAV_LINKS, COMMUNITY_LINKS, GENERAL_INFO_LINKS, LEGAL_LINKS, ALL_PAGES, LANGS } from '@/config/navigation';
 import { isTauri } from '@/lib/isTauri';
 import { getGuestName } from '@/lib/guest';
-import { loadPreferences, applyZoom, setMuteTab, updatePreferences } from '@/lib/preferences';
+import { loadPreferences, applyZoom, setMuteTab, updatePreferences, isLangAvailable, consumeReloadToastMsg, reloadAfterPrefChange } from '@/lib/preferences';
 import PreferencesPanel from '@/components/molecules/PreferencesPanel';
 
 const INFO_LINKS = [ ...COMMUNITY_LINKS, ...GENERAL_INFO_LINKS, ...LEGAL_LINKS ].filter((v, i, a) => a.findIndex(t => (t.href === v.href)) === i);
@@ -76,6 +76,12 @@ export const NavbarContent = () => {
     setMuteTab(prefs.muteTab);
     setLang(prefs.lang);
     setDarkMode(prefs.theme === 'dark');
+
+    // Tras una recarga por cambio de idioma/tema, avisar con toast azul
+    const pendingMsg = consumeReloadToastMsg();
+    if (pendingMsg) {
+      setTimeout(() => toast(pendingMsg, 'info'), 350);
+    }
   }, []);
 
   const floating = scrolled && !isSearchOpen && !isMenuOpen && !isAccederOpen && !isZoomWarning;
@@ -180,6 +186,23 @@ export const NavbarContent = () => {
     }
     if (!isSearchOpen) { setIsMenuOpen(false); setIsAccederOpen(false); }
     setIsSearchOpen(v => !v);
+  };
+
+  const applyThemeChange = () => {
+    const next = !darkMode;
+    setDarkMode(next);
+    updatePreferences({ theme: next ? 'dark' : 'light' });
+    reloadAfterPrefChange(next ? '[SISTEMA]: Modo oscuro activado.' : '[SISTEMA]: Modo claro activado.');
+  };
+
+  const applyLangChange = (code: string, label: string) => {
+    if (!isLangAvailable(code)) {
+      toast(`[SISTEMA]: El idioma ${label} no está disponible aún.`, 'error');
+      return;
+    }
+    setLang(code);
+    updatePreferences({ lang: code });
+    reloadAfterPrefChange(`[SISTEMA]: Idioma cambiado a ${label}.`);
   };
 
   const toggleMenu = (e?: React.MouseEvent) => {
@@ -538,11 +561,7 @@ export const NavbarContent = () => {
               
               {/* Dark/Light Toggle (Yellow/Black or White/Black) Filled Icons */}
               <button
-                onClick={() => {
-                  setDarkMode(!darkMode);
-                  updatePreferences({ theme: darkMode ? 'light' : 'dark' });
-                  toast(!darkMode ? '[SISTEMA]: Modo claro activado.' : '[SISTEMA]: Modo oscuro activado.');
-                }}
+                onClick={applyThemeChange}
                 className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group ${
                   darkMode ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
                 }`}
@@ -573,7 +592,7 @@ export const NavbarContent = () => {
                   <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
                 </svg>
                 <div className="w-6 h-6 rounded-full overflow-hidden border border-white/20 shadow-[0_0_10px_rgba(255,255,255,0.1)] shrink-0 transition-transform duration-300 group-hover:scale-110">
-                  {(LANGS.find(l => l.code === lang) || LANGS.find(l => l.code === 'en-us'))?.flag}
+                  {(LANGS.find(l => l.code === lang) || LANGS.find(l => l.code === 'EN-US'))?.flag}
                 </div>
               </button>
             </div>
@@ -637,30 +656,39 @@ export const NavbarContent = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 gap-1 animate-fade-in-up pb-10">
-                  {LANGS.map((l) => (
+                  {LANGS.map((l) => {
+                    const unavailable = !isLangAvailable(l.code);
+                    return (
                     <button
                       key={l.code}
                       onClick={() => {
-                        setLang(l.code);
-                        updatePreferences({ lang: l.code });
+                        if (unavailable) {
+                          toast(`[SISTEMA]: El idioma ${l.label} no está disponible aún.`, 'error');
+                          return;
+                        }
+                        applyLangChange(l.code, l.label);
                         setSidebarView('main');
-                        toast(`[SISTEMA]: Idioma cambiado a ${l.label}`);
+                        setIsMenuOpen(false);
                       }}
-                      className={`flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-header font-bold transition-all cursor-pointer group ${
+                      className={`flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-header font-bold transition-all group ${
                         lang === l.code ? 'bg-neon-blue/20 text-neon-cyan border border-neon-blue/30' : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'
-                      }`}
+                      } ${unavailable ? 'opacity-40 grayscale cursor-not-allowed' : 'cursor-pointer'}`}
                     >
                       <div className="shrink-0 transition-transform duration-300 group-hover:scale-110 shadow-lg ring-1 ring-white/10 rounded-full">
                         {l.flag}
                       </div>
                       <span className="flex-1 text-left">{l.label}</span>
-                      {lang === l.code && (
+                      {unavailable && (
+                        <span className="text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-neon-pink/20 text-neon-pink shrink-0">Beta</span>
+                      )}
+                      {lang === l.code && !unavailable && (
                         <svg className="w-4 h-4 text-neon-cyan animate-bounce-in" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
                           <path d="M20 6L9 17l-5-5"/>
                         </svg>
                       )}
                     </button>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>

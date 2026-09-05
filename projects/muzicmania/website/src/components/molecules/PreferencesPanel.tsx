@@ -13,6 +13,8 @@ import {
   ZOOM_MIN,
   ZOOM_MAX,
   ZOOM_STEP,
+  isLangAvailable,
+  reloadAfterPrefChange,
 } from '@/lib/preferences';
 import { useToast } from '@ciszu/ui';
 
@@ -62,22 +64,21 @@ export default function PreferencesPanel() {
       });
   }, [lang, darkMode, zoom, muted, user?.id]);
 
-  const AVAILABLE_LANGS = ['ES-LA', 'ES-ES', 'EN-US', 'EN-UK'];
-
-  const applyLang = (code: string) => {
-    if (!AVAILABLE_LANGS.includes(code)) {
-      toast('Esta función no está desarrollada para la beta aún', 'warning');
+  const applyLang = (code: string, label: string) => {
+    if (!isLangAvailable(code)) {
+      toast(`[SISTEMA]: El idioma ${label} no está disponible aún.`, 'error');
       return;
     }
     setLang(code);
     updatePreferences({ lang: code });
-    toast(`[SISTEMA]: Idioma cambiado a ${code}`);
+    reloadAfterPrefChange(`[SISTEMA]: Idioma cambiado a ${label}.`);
   };
 
   const applyTheme = () => {
-    setDarkMode(!darkMode);
-    updatePreferences({ theme: !darkMode ? 'dark' : 'light' });
-    toast(!darkMode ? '[SISTEMA]: Modo claro activado.' : '[SISTEMA]: Modo oscuro activado.');
+    const next = !darkMode;
+    setDarkMode(next);
+    updatePreferences({ theme: next ? 'dark' : 'light' });
+    reloadAfterPrefChange(next ? '[SISTEMA]: Modo oscuro activado.' : '[SISTEMA]: Modo claro activado.');
   };
 
   const changeZoom = (delta: number) => {
@@ -124,12 +125,14 @@ export default function PreferencesPanel() {
           {LANGS.map((l) => {
             const active = lang === l.code;
             const isAlt = !l.code.startsWith('ES') && !l.code.startsWith('EN');
-            const unavailable = !AVAILABLE_LANGS.includes(l.code);
+            const unavailable = !isLangAvailable(l.code);
             return (
               <button
                 key={l.code}
-                onClick={() => applyLang(l.code)}
-                className={`relative rounded-full transition-transform duration-300 cursor-pointer ${
+                onClick={() => applyLang(l.code, l.label)}
+                className={`relative rounded-full transition-transform duration-300 ${
+                  unavailable ? 'cursor-not-allowed' : 'cursor-pointer'
+                } ${
                   active ? 'scale-105' : 'opacity-60 grayscale hover:opacity-100 hover:grayscale-0 scale-95'
                 } ${isAlt ? 'hidden sm:block' : ''}`}
                 title={unavailable ? `${l.label} (Beta)` : l.label}

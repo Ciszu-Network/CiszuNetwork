@@ -66,7 +66,10 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const hasLocal = typeof window !== 'undefined' ? window.localStorage.getItem('ciszu_preferences') !== null : false;
 
     if (profile && !hasLocal) {
-      const lang = (profile.settings_lang === 'en-us' || profile.settings_lang === 'en-uk' ? 'en-us' : 'es-latam') as 'es-latam' | 'es-es' | 'en-us' | 'en-uk';
+      // Los 4 idiomas son individuales: se conserva el código exacto del perfil.
+      const lang = (['es-latam', 'es-es', 'en-us', 'en-uk'].includes(profile.settings_lang)
+        ? profile.settings_lang
+        : 'es-latam') as 'es-latam' | 'es-es' | 'en-us' | 'en-uk';
       const theme = (profile.settings_theme === 'light' ? 'light' : 'dark') as 'light' | 'dark';
       const prefs = {
         lang,
@@ -78,8 +81,9 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       };
       savePreferences(prefs);
       const { setTheme, setLanguage, setZoom, setTabMuted } = useAppStore.getState();
-      setTheme(theme);
-      setLanguage(lang);
+      // skipReload: aplicar preferencias del perfil NO debe recargar la página.
+      setTheme(theme, true);
+      setLanguage(lang, true);
       setZoom(prefs.zoom);
       setTabMuted(prefs.tabMuted);
     } else if (profile) {

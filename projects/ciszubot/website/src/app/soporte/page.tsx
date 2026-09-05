@@ -17,7 +17,7 @@ import {
   TOP_GG_WIDGET_BOT,
   TOP_GG_WIDGET_SERVER,
   getDict,
-  type Lang,
+  parseLang,
 } from '@/lib/i18n';
 
 export const metadata: Metadata = {
@@ -63,7 +63,7 @@ const DONATIONS = [
 
 export default async function SupportPage() {
   const store = await cookies();
-  const lang = (store.get('ciszubot_lang')?.value ?? 'es') as Lang;
+  const lang = parseLang(store.get('ciszubot_lang')?.value);
   const t = getDict(lang);
 
   return (

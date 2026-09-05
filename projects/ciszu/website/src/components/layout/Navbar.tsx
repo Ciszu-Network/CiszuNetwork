@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { assetResolver } from '@ciszunetwork/cdn';
-import { useZoomStatus, publishHeaderMode, useToast } from '@ciszu/ui';
+import { useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE } from '@ciszu/ui';
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store';
 import { CISZU_NETWORK } from '@/config/site';
@@ -117,92 +117,9 @@ const ALL_PAGES: { name: string; href: string; icon: React.ReactNode; keywords: 
   { name: 'Contacto', href: '/contact', icon: <Mail className="w-4 h-4" />, keywords: ['contacto', 'contact', 'mensaje', 'email'] },
 ];
 
-const LANGS = [
-  {
-    code: 'es',
-    label: 'Español (Latam)',
-    flag: (
-      <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner">
-        <rect width="512" height="170.6" fill="#ffcc00"/>
-        <rect width="512" height="170.6" y="170.6" fill="#003399"/>
-        <rect width="512" height="170.6" y="341.2" fill="#cf142b"/>
-        <g fill="#fff" transform="translate(256,230) scale(4)">
-          <circle cx="0" cy="0" r="18" fill="none" stroke="#fff" strokeWidth="1" strokeDasharray="2,2"/>
-          <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(-45) translate(0,-18) scale(0.4)"/>
-          <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(-22.5) translate(0,-18) scale(0.4)"/>
-          <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="translate(0,-18) scale(0.4)"/>
-          <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(22.5) translate(0,-18) scale(0.4)"/>
-          <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(45) translate(0,-18) scale(0.4)"/>
-          <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(-67.5) translate(0,-18) scale(0.4)"/>
-          <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(67.5) translate(0,-18) scale(0.4)"/>
-        </g>
-      </svg>
-    ),
-  },
-  {
-    code: 'es',
-    label: 'Español (España)',
-    flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#ad1519"/><rect width="512" height="300" y="106" fill="#fabd00"/><circle cx="150" cy="256" r="50" fill="#ad1519"/></svg>,
-  },
-  {
-    code: 'en',
-    label: 'English (US)',
-    flag: (
-      <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner font-sans">
-        <rect width="512" height="512" fill="#bd3d44"/>
-        <rect width="512" height="36" y="36.5" fill="#fff"/><rect width="512" height="36" y="109.5" fill="#fff"/><rect width="512" height="36" y="182.5" fill="#fff"/><rect width="512" height="36" y="255.5" fill="#fff"/><rect width="512" height="36" y="328.5" fill="#fff"/><rect width="512" height="36" y="401.5" fill="#fff"/><rect width="512" height="36" y="474.5" fill="#fff"/>
-        <rect width="240" height="260" fill="#192f5d"/>
-        <g fill="#fff">
-          <circle cx="30" cy="35" r="5"/><circle cx="70" cy="35" r="5"/><circle cx="110" cy="35" r="5"/><circle cx="150" cy="35" r="5"/><circle cx="190" cy="35" r="5"/>
-          <circle cx="50" cy="65" r="5"/><circle cx="90" cy="65" r="5"/><circle cx="130" cy="65" r="5"/><circle cx="170" cy="65" r="5"/><circle cx="210" cy="65" r="5"/>
-          <circle cx="30" cy="95" r="5"/><circle cx="70" cy="95" r="5"/><circle cx="110" cy="95" r="5"/><circle cx="150" cy="95" r="5"/><circle cx="190" cy="95" r="5"/>
-          <circle cx="50" cy="125" r="5"/><circle cx="90" cy="125" r="5"/><circle cx="130" cy="125" r="5"/><circle cx="170" cy="125" r="5"/><circle cx="210" cy="125" r="5"/>
-          <circle cx="30" cy="155" r="5"/><circle cx="70" cy="155" r="5"/><circle cx="110" cy="155" r="5"/><circle cx="150" cy="155" r="5"/><circle cx="190" cy="155" r="5"/>
-        </g>
-      </svg>
-    ),
-  },
-  {
-    code: 'en',
-    label: 'English (UK)',
-    flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#012169"/><path d="M0 0l512 512M512 0L0 512" stroke="#fff" strokeWidth="60"/><path d="M0 0l512 512M512 0L0 512" stroke="#cf142b" strokeWidth="30"/><rect width="512" height="100" y="206" fill="#fff"/><rect width="100" height="512" x="206" fill="#fff"/><rect width="512" height="60" y="226" fill="#cf142b"/><rect width="60" height="512" x="226" fill="#cf142b"/></svg>,
-  },
-  {
-    code: 'pt',
-    label: 'Português (Brasil)',
-    flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#009c3b"/><path d="M256 70l186 186-186 186L70 256z" fill="#ffdf00"/><circle cx="256" cy="256" r="100" fill="#002776"/></svg>,
-  },
-  {
-    code: 'fr',
-    label: 'Français',
-    flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="170" height="512" fill="#002395"/><rect width="170" height="512" x="171" fill="#fff"/><rect width="171" height="512" x="341" fill="#ed2939"/></svg>,
-  },
-  {
-    code: 'it',
-    label: 'Italiano',
-    flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="170" height="512" fill="#009246"/><rect width="170" height="512" x="171" fill="#fff"/><rect width="171" height="512" x="341" fill="#ce2b37"/></svg>,
-  },
-  {
-    code: 'de',
-    label: 'Deutsch',
-    flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="170" fill="#000"/><rect width="512" height="170" y="171" fill="#d00"/><rect width="512" height="171" y="341" fill="#ffce00"/></svg>,
-  },
-  {
-    code: 'ru',
-    label: 'Русский',
-    flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="170" fill="#fff"/><rect width="512" height="170" y="171" fill="#0039a6"/><rect width="512" height="171" y="341" fill="#d52b1e"/></svg>,
-  },
-  {
-    code: 'ja',
-    label: '日本語 (Japanese)',
-    flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#fff"/><circle cx="256" cy="256" r="120" fill="#bc002d"/></svg>,
-  },
-  {
-    code: 'ko',
-    label: '한국어 (Korean)',
-    flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#fff"/><circle cx="256" cy="256" r="80" fill="#cd2e3a"/><path d="M256 176a80 80 0 0 0 0 160c44 0 44-80 80-80s36 80 80 80" fill="#0047a0"/></svg>,
-  },
-];
+// LANGS: lista canónica compartida (@ciszu/ui). Los 4 idiomas de producción
+// (es-latam, es-es, en-us, en-uk) son INDIVIDUALES entre sí; el resto se
+// muestra atenuado y bloqueado (toast de error al hacer click).
 
 export const NavbarContent = () => {
   const pathname = usePathname();
@@ -355,7 +272,7 @@ export const NavbarContent = () => {
       ).slice(0, 6)
     : ALL_PAGES.slice(0, 6);
 
-  const currentFlag = (LANGS.find(l => l.code === language) || LANGS[0]).flag;
+  const currentFlag = (LANGUAGE_OPTIONS.find(l => l.code === language) || LANGUAGE_OPTIONS[0]).flag;
 
   return (
     <>
@@ -578,7 +495,11 @@ export const NavbarContent = () => {
             {/* Header: Theme Toggle | TITLE | Language Selector */}
             <div className="flex items-center justify-between px-5 pt-8 pb-6 border-b border-white/5 shrink-0 gap-3">
               <button
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                onClick={() => {
+                  const next = theme === 'dark' ? 'light' : 'dark';
+                  toast(next === 'dark' ? 'Modo oscuro activado' : 'Modo claro activado', 'info');
+                  setTheme(next);
+                }}
                 className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group ${
                   theme === 'dark' ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
                 }`}
@@ -690,24 +611,35 @@ export const NavbarContent = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 gap-1 animate-fade-in-up pb-10">
-                  {LANGS.map((l) => (
+                  {LANGUAGE_OPTIONS.map((l) => (
                     <button
-                      key={l.label}
+                      key={l.code}
                       onClick={() => {
-                        if (l.code === 'es-latam' || l.code === 'es-es' || l.code === 'en-us' || l.code === 'en-uk') {
-                          setLanguage(l.code);
-                        } else {
-                          toast('Esta función no está desarrollada para la beta aún', 'warning');
+                        if (!isLangAvailable(l.code)) {
+                          toast(LANG_BLOCKED_MESSAGE, 'error');
+                          return;
                         }
+                        if (l.code === language) return;
+                        toast(`Idioma cambiado a ${getLangLabel(l.code)}`, 'info');
+                        setLanguage(l.code as 'es-latam' | 'es-es' | 'en-us' | 'en-uk');
                       }}
-                      className={`flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-header font-bold transition-all cursor-pointer group ${
-                        language === l.code ? 'bg-brand-light/20 text-brand-light border border-brand-light/30' : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'
+                      className={`flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-header font-bold transition-all cursor-pointer group border ${
+                        language === l.code
+                          ? 'bg-brand-light/20 text-brand-light border-brand-light/30'
+                          : l.available
+                            ? 'text-gray-400 hover:text-white hover:bg-white/5 border-transparent'
+                            : 'text-gray-400 opacity-50 saturate-50 hover:opacity-80 hover:bg-white/5 border-transparent'
                       }`}
                     >
                       <span className="w-6 h-6 rounded-full overflow-hidden ring-1 ring-white/10 shrink-0 transition-transform duration-300 group-hover:scale-110 [&>svg]:w-6 [&>svg]:h-6">
                         {l.flag}
                       </span>
                       <span className="flex-1 text-left">{l.label}</span>
+                      {!l.available && (
+                        <span className="text-[9px] font-black uppercase tracking-widest text-white/30 bg-white/5 border border-white/10 rounded-full px-2 py-0.5 shrink-0">
+                          No disponible
+                        </span>
+                      )}
                       {language === l.code && (
                         <svg className="w-4 h-4 text-brand-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
                           <path d="M20 6L9 17l-5-5" />

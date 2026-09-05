@@ -140,7 +140,7 @@ export default function ContactPage() {
               </p>
               
               <div className="pt-10 border-t border-white/5 space-y-6">
-                <CopyField label="Email de Consulta Primaria" value="ciszunetowork@gmail.com" icon={I.mail} theme="blue" />
+                <CopyField label="Email de Consulta Primaria" value="ciszunetwork@gmail.com" icon={I.mail} theme="blue" />
                 <CopyField label="Localidad de Operaciones" value="Coro, Falcón" subValue="Venezuela" icon={I.map} theme="purple" />
                 <CopyField label="Línea Directa WhatsApp" value="+58 412 6858111" subValue="Venezuela" icon={I.phone} theme="green" showWhatsApp={true} />
                 

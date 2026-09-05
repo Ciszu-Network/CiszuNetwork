@@ -9,7 +9,8 @@ import {
   LOGO_LOGOTIPO,
   BOT_PREFIX,
   getDict,
-  type Lang,
+  parseLang,
+  isEsLang,
 } from '@/lib/i18n';
 
 export const revalidate = 60;
@@ -57,7 +58,7 @@ const STAT_ICONS = ['server', 'terminal', 'clock', 'message'] as const;
 
 export default async function Home() {
   const store = await cookies();
-  const lang = (store.get('ciszubot_lang')?.value ?? 'es') as Lang;
+  const lang = parseLang(store.get('ciszubot_lang')?.value);
   const t = getDict(lang);
 
   const status = await getBotStatus();
@@ -68,7 +69,7 @@ export default async function Home() {
 
   const stats = [
     { icon: STAT_ICONS[0], label: t.stats.servers, value: status ? String(status.guilds) : '—' },
-    { icon: STAT_ICONS[1], label: t.stats.commandsRun, value: status ? status.commands_total.toLocaleString(lang === 'es' ? 'es' : 'en') : '—' },
+    { icon: STAT_ICONS[1], label: t.stats.commandsRun, value: status ? status.commands_total.toLocaleString(isEsLang(lang) ? 'es' : 'en') : '—' },
     { icon: STAT_ICONS[2], label: t.stats.uptime, value: formatUptime(status?.started_at ?? null, now) },
     { icon: STAT_ICONS[3], label: t.stats.commands, value: `${COMMANDS.length}` },
   ];
@@ -279,7 +280,7 @@ export default async function Home() {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
               {[
                 { label: t.statusSection.servers, value: status ? String(status.guilds) : '—' },
-                { label: t.statusSection.commands, value: status ? status.commands_total.toLocaleString(lang === 'es' ? 'es' : 'en') : '—' },
+                { label: t.statusSection.commands, value: status ? status.commands_total.toLocaleString(isEsLang(lang) ? 'es' : 'en') : '—' },
                 { label: t.statusSection.uptime, value: formatUptime(status?.started_at ?? null, now) },
                 { label: t.statusSection.version, value: status?.version ?? '—' },
               ].map((s) => (
@@ -292,7 +293,7 @@ export default async function Home() {
 
             <p className="mt-6 text-xs text-faint">
               {status?.last_seen
-                ? `${t.statusSection.lastSeen}: ${new Date(status.last_seen).toLocaleString(lang === 'es' ? 'es' : 'en')} · ${t.statusSection.heartbeat}`
+                ? `${t.statusSection.lastSeen}: ${new Date(status.last_seen).toLocaleString(isEsLang(lang) ? 'es' : 'en')} · ${t.statusSection.heartbeat}`
                 : t.statusSection.noStatus}
             </p>
 

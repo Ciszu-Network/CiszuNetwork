@@ -4,10 +4,10 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
-import { ScrollNavButton } from '@ciszu/ui';
+import { ScrollNavButton, useToast } from '@ciszu/ui';
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store';
-import { updatePreferences } from '@/lib/preferences';
+import { updatePreferences, reloadAfterPrefChange } from '@/lib/preferences';
 
 import { I, SOCIALS, FOOTER_NAV as footerNav } from '@/config/navigation';
 
@@ -23,8 +23,16 @@ const IcoPhone = () => <svg viewBox="0 0 24 24" className="w-4 h-4 text-green-40
 export const Footer = () => {
   const pathname = usePathname();
   const { isNavigating, setIsMenuOpen, setSidebarView, darkMode, setDarkMode } = useAppStore();
+  const { toast } = useToast();
 
   const isActive = (href: string) => pathname === href;
+
+  const applyThemeChange = () => {
+    const next = !darkMode;
+    setDarkMode(next);
+    updatePreferences({ theme: next ? 'dark' : 'light' });
+    reloadAfterPrefChange(next ? '[SISTEMA]: Modo oscuro activado.' : '[SISTEMA]: Modo claro activado.');
+  };
 
   return (
     <footer className="relative bg-black border-t-2 border-white/10 pt-10 pb-6 px-4 md:px-8 overflow-hidden z-30">
@@ -172,10 +180,7 @@ export const Footer = () => {
           {/* LEFT: Navbar-style trigger buttons */}
           <div className="flex items-center gap-4">
             <button
-              onClick={() => {
-                setDarkMode(!darkMode);
-                updatePreferences({ theme: darkMode ? 'light' : 'dark' });
-              }}
+              onClick={applyThemeChange}
               className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group ${
                 darkMode ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
               }`}

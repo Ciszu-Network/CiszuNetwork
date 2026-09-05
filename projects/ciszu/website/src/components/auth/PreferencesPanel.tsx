@@ -3,106 +3,17 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAppStore } from '@/store';
-import { LanguagesModal, useToast } from '@ciszu/ui';
+import { LanguagesModal, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE } from '@ciszu/ui';
 import {
   loadPreferences,
   updatePreferences,
   applyZoom,
   setMuteTab,
   syncPreferencesToProfile,
-  AVAILABLE_LANGS,
-  isLangAvailable,
   ZOOM_MIN,
   ZOOM_MAX,
   ZOOM_STEP,
 } from '@/lib/preferences';
-
-const LANGS = [
-  {
-    code: 'es-latam',
-    label: 'Español (Latam)',
-    flag: (
-      <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner">
-        <rect width="512" height="170.6" fill="#ffcc00"/>
-        <rect width="512" height="170.6" y="170.6" fill="#003399"/>
-        <rect width="512" height="170.6" y="341.2" fill="#cf142b"/>
-        <g fill="#fff" transform="translate(256,230) scale(4)">
-          <circle cx="0" cy="0" r="18" fill="none" stroke="#fff" strokeWidth="1" strokeDasharray="2,2"/>
-          <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(-45) translate(0,-18) scale(0.4)"/>
-          <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(-22.5) translate(0,-18) scale(0.4)"/>
-          <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="translate(0,-18) scale(0.4)"/>
-          <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(22.5) translate(0,-18) scale(0.4)"/>
-          <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(45) translate(0,-18) scale(0.4)"/>
-          <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(-67.5) translate(0,-18) scale(0.4)"/>
-          <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(67.5) translate(0,-18) scale(0.4)"/>
-        </g>
-      </svg>
-    ),
-  },
-  {
-    code: 'es-es',
-    label: 'Español (España)',
-    flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#ad1519"/><rect width="512" height="300" y="106" fill="#fabd00"/><circle cx="150" cy="256" r="50" fill="#ad1519"/></svg>,
-  },
-  {
-    code: 'en-us',
-    label: 'English (US)',
-    flag: (
-      <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner font-sans">
-        <rect width="512" height="512" fill="#bd3d44"/>
-        <rect width="512" height="36" y="36.5" fill="#fff"/><rect width="512" height="36" y="109.5" fill="#fff"/><rect width="512" height="36" y="182.5" fill="#fff"/><rect width="512" height="36" y="255.5" fill="#fff"/><rect width="512" height="36" y="328.5" fill="#fff"/><rect width="512" height="36" y="401.5" fill="#fff"/><rect width="512" height="36" y="474.5" fill="#fff"/>
-        <rect width="240" height="260" fill="#192f5d"/>
-        <g fill="#fff">
-          <circle cx="30" cy="35" r="5"/><circle cx="70" cy="35" r="5"/><circle cx="110" cy="35" r="5"/><circle cx="150" cy="35" r="5"/><circle cx="190" cy="35" r="5"/>
-          <circle cx="50" cy="65" r="5"/><circle cx="90" cy="65" r="5"/><circle cx="130" cy="65" r="5"/><circle cx="170" cy="65" r="5"/><circle cx="210" cy="65" r="5"/>
-          <circle cx="30" cy="95" r="5"/><circle cx="70" cy="95" r="5"/><circle cx="110" cy="95" r="5"/><circle cx="150" cy="95" r="5"/><circle cx="190" cy="95" r="5"/>
-          <circle cx="50" cy="125" r="5"/><circle cx="90" cy="125" r="5"/><circle cx="130" cy="125" r="5"/><circle cx="170" cy="125" r="5"/><circle cx="210" cy="125" r="5"/>
-          <circle cx="30" cy="155" r="5"/><circle cx="70" cy="155" r="5"/><circle cx="110" cy="155" r="5"/><circle cx="150" cy="155" r="5"/><circle cx="190" cy="155" r="5"/>
-        </g>
-      </svg>
-    ),
-  },
-  {
-    code: 'en-uk',
-    label: 'English (UK)',
-    flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#012169"/><path d="M0 0l512 512M512 0L0 512" stroke="#fff" strokeWidth="60"/><path d="M0 0l512 512M512 0L0 512" stroke="#cf142b" strokeWidth="30"/><rect width="512" height="100" y="206" fill="#fff"/><rect width="100" height="512" x="206" fill="#fff"/><rect width="512" height="60" y="226" fill="#cf142b"/><rect width="60" height="512" x="226" fill="#cf142b"/></svg>,
-  },
-  {
-    code: 'pt',
-    label: 'Português (Brasil)',
-    flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#009c3b"/><path d="M256 70l186 186-186 186L70 256z" fill="#ffdf00"/><circle cx="256" cy="256" r="100" fill="#002776"/></svg>,
-  },
-  {
-    code: 'fr',
-    label: 'Français',
-    flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="170" height="512" fill="#002395"/><rect width="170" height="512" x="171" fill="#fff"/><rect width="171" height="512" x="341" fill="#ed2939"/></svg>,
-  },
-  {
-    code: 'it',
-    label: 'Italiano',
-    flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="170" height="512" fill="#009246"/><rect width="170" height="512" x="171" fill="#fff"/><rect width="171" height="512" x="341" fill="#ce2b37"/></svg>,
-  },
-  {
-    code: 'de',
-    label: 'Deutsch',
-    flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="170" fill="#000"/><rect width="512" height="170" y="171" fill="#d00"/><rect width="512" height="171" y="341" fill="#ffce00"/></svg>,
-  },
-  {
-    code: 'ru',
-    label: 'Русский',
-    flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="170" fill="#fff"/><rect width="512" height="170" y="171" fill="#0039a6"/><rect width="512" height="171" y="341" fill="#d52b1e"/></svg>,
-  },
-  {
-    code: 'ja',
-    label: '日本語 (Japanese)',
-    flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#fff"/><circle cx="256" cy="256" r="120" fill="#bc002d"/></svg>,
-  },
-  {
-    code: 'ko',
-    label: '한국어 (Korean)',
-    flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#fff"/><circle cx="256" cy="256" r="80" fill="#cd2e3a"/><path d="M256 176a80 80 0 0 0 0 160c44 0 44-80 80-80s36 80 80 80" fill="#0047a0"/></svg>,
-  },
-];
 
 const IcoZoomMinus = () => (
   <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -153,12 +64,15 @@ export default function PreferencesPanel() {
   };
 
   const handleLangSelect = (code: string) => {
-    if (!isLangAvailable(code as any)) {
-      toast('Este idioma aún no está disponible', 'error');
+    if (!isLangAvailable(code)) {
+      // Idiomas bloqueados: toast de ERROR (rojo), nada más.
+      toast(LANG_BLOCKED_MESSAGE, 'error');
       return;
     }
+    if (code === language) return;
+    // Los 4 idiomas son individuales: se guarda el código exacto.
     setLanguage(code as any);
-    toast(`Idioma cambiado a ${LANGS.find(l => l.code === code)?.label || code}`, 'info');
+    toast(`Idioma cambiado a ${getLangLabel(code)}`, 'info');
     syncToProfile();
   };
 
@@ -206,9 +120,17 @@ export default function PreferencesPanel() {
     syncToProfile();
   };
 
-  const sectionTitleCls = 'text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-2';
+  const isDark = theme === 'dark';
+  // Clases adaptadas al tema claro/oscuro (mismos controles que el navbar).
+  const surfaceBtn = isDark
+    ? 'bg-white/5 border-white/10 text-white hover:border-brand-light/50 hover:text-brand-light'
+    : 'bg-black/5 border-black/10 text-black hover:border-brand-light/70 hover:text-brand-dark';
+  const surfaceActive = (active: boolean, activeCls: string) =>
+    active ? activeCls : surfaceBtn;
 
-  const currentLang = LANGS.find((l) => l.code === language) ?? LANGS[0];
+  const sectionTitleCls = `text-[10px] font-black uppercase tracking-[0.2em] mb-2 ${isDark ? 'text-white/40' : 'text-black/50'}`;
+
+  const currentLang = LANGUAGE_OPTIONS.find((l) => l.code === language) ?? LANGUAGE_OPTIONS[0];
 
   return (
     <div className="px-2 pt-1 pb-2 space-y-4">
@@ -217,11 +139,11 @@ export default function PreferencesPanel() {
         <button
           onClick={handleThemeChange}
           className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group ${
-            theme === 'dark' ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
+            isDark ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
           }`}
-          title={theme === 'dark' ? 'Modo Claro' : 'Modo Oscuro'}
+          title={isDark ? 'Modo Claro' : 'Modo Oscuro'}
         >
-          {theme === 'dark' ? (
+          {isDark ? (
             <svg className="w-5 h-5 text-black transition-transform duration-500 group-hover:rotate-12" viewBox="0 0 24 24" fill="currentColor">
               <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
             </svg>
@@ -236,7 +158,7 @@ export default function PreferencesPanel() {
         <button
           onClick={() => setLangOpen(true)}
           className={`flex-1 flex items-center justify-between gap-2 px-3 py-2 rounded-xl border transition-all cursor-pointer active:scale-95 group ${
-            theme === 'dark' ? 'bg-white/5 border-white/10 text-white hover:border-brand-light/50' : 'bg-black/5 border-black/10 text-black hover:border-brand-light'
+            isDark ? 'bg-white/5 border-white/10 text-white hover:border-brand-light/50' : 'bg-black/5 border-black/10 text-black hover:border-brand-light/70'
           }`}
           title="Cambiar idioma"
         >
@@ -249,7 +171,7 @@ export default function PreferencesPanel() {
             Idioma
           </span>
           <span className="flex items-center gap-2">
-            <span className="w-6 h-6 rounded-full overflow-hidden shadow-inner border border-white/10">{currentLang.flag}</span>
+            <span className="w-6 h-6 rounded-full overflow-hidden shadow-inner border" style={{ borderColor: 'var(--border, rgba(255,255,255,0.1))' }}>{currentLang.flag}</span>
             <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-brand-light" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
               <path d="M6 9l6 6 6-6" />
             </svg>
@@ -264,14 +186,14 @@ export default function PreferencesPanel() {
           <button
             onClick={() => changeZoom(-ZOOM_STEP)}
             disabled={zoom <= ZOOM_MIN}
-            className="p-2 rounded-lg bg-white/5 border border-white/10 text-white hover:border-brand-light/50 hover:text-brand-light transition-all active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shrink-0"
+            className={`p-2 rounded-lg border transition-all active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shrink-0 ${surfaceBtn}`}
             title="Quitar zoom"
             aria-label="Quitar zoom"
           >
             <IcoZoomMinus />
           </button>
           <div className="flex-1 min-w-0 flex items-center gap-2">
-            <div className="relative flex-1 h-2 rounded-full bg-white/10 overflow-hidden">
+            <div className={`relative flex-1 h-2 rounded-full overflow-hidden ${isDark ? 'bg-white/10' : 'bg-black/10'}`}>
               <div
                 className="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-brand-light to-brand-accent transition-all duration-200"
                 style={{ width: `${((zoom - ZOOM_MIN) / (ZOOM_MAX - ZOOM_MIN)) * 100}%` }}
@@ -282,7 +204,7 @@ export default function PreferencesPanel() {
           <button
             onClick={() => changeZoom(ZOOM_STEP)}
             disabled={zoom >= ZOOM_MAX}
-            className="p-2 rounded-lg bg-white/5 border border-white/10 text-white hover:border-brand-light/50 hover:text-brand-light transition-all active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shrink-0"
+            className={`p-2 rounded-lg border transition-all active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shrink-0 ${surfaceBtn}`}
             title="Sumar zoom"
             aria-label="Sumar zoom"
           >
@@ -297,7 +219,7 @@ export default function PreferencesPanel() {
         className={`w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg border transition-all active:scale-95 ${
           tabMuted
             ? 'bg-red-500/10 border-red-500/40 text-red-400 hover:bg-red-500/20'
-            : 'bg-white/5 border-white/10 text-white/80 hover:border-brand-light/50 hover:text-brand-light'
+            : surfaceBtn
         }`}
         title="Silenciar pestaña"
       >
@@ -319,7 +241,7 @@ export default function PreferencesPanel() {
           </svg>
           Silenciar pestaña
         </span>
-        <span className={`w-9 h-5 rounded-full relative transition-colors ${tabMuted ? 'bg-red-500/70' : 'bg-white/15'}`}>
+        <span className={`w-9 h-5 rounded-full relative transition-colors ${tabMuted ? 'bg-red-500/70' : isDark ? 'bg-white/15' : 'bg-black/15'}`}>
           <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${tabMuted ? 'left-4' : 'left-0.5'}`} />
         </span>
       </button>
@@ -333,7 +255,7 @@ export default function PreferencesPanel() {
           className={`w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg border transition-all active:scale-95 ${
             redirectGuard
               ? 'bg-blue-500/10 border-blue-500/40 text-blue-300 hover:bg-blue-500/20'
-              : 'bg-white/5 border-white/10 text-white/80 hover:border-blue-400/50 hover:text-blue-300'
+              : surfaceBtn
           }`}
           title="Aviso de redirección"
         >
@@ -345,7 +267,7 @@ export default function PreferencesPanel() {
             </svg>
             Aviso de redirección
           </span>
-          <span className={`w-9 h-5 rounded-full relative transition-colors ${redirectGuard ? 'bg-blue-500/70' : 'bg-white/15'}`}>
+          <span className={`w-9 h-5 rounded-full relative transition-colors ${redirectGuard ? 'bg-blue-500/70' : isDark ? 'bg-white/15' : 'bg-black/15'}`}>
             <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${redirectGuard ? 'left-4' : 'left-0.5'}`} />
           </span>
         </button>
@@ -355,7 +277,7 @@ export default function PreferencesPanel() {
           className={`w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg border transition-all active:scale-95 mt-2 ${
             activityGuard
               ? 'bg-red-500/10 border-red-500/40 text-red-300 hover:bg-red-500/20'
-              : 'bg-white/5 border-white/10 text-white/80 hover:border-red-400/50 hover:text-red-300'
+              : surfaceBtn
           }`}
           title="Protección de acciones no recuperables"
         >
@@ -367,7 +289,7 @@ export default function PreferencesPanel() {
             </svg>
             Proteger acciones
           </span>
-          <span className={`w-9 h-5 rounded-full relative transition-colors ${activityGuard ? 'bg-red-500/70' : 'bg-white/15'}`}>
+          <span className={`w-9 h-5 rounded-full relative transition-colors ${activityGuard ? 'bg-red-500/70' : isDark ? 'bg-white/15' : 'bg-black/15'}`}>
             <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${activityGuard ? 'left-4' : 'left-0.5'}`} />
           </span>
         </button>
@@ -381,7 +303,9 @@ export default function PreferencesPanel() {
             <Link
               key={item.href}
               href={item.href}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-md text-[11px] font-header font-bold text-gray-400 hover:text-brand-light hover:bg-white/5 transition-all"
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-[11px] font-header font-bold transition-all ${
+                isDark ? 'text-gray-400 hover:text-brand-light hover:bg-white/5' : 'text-gray-600 hover:text-brand-dark hover:bg-black/5'
+              }`}
             >
               <span className="text-brand-light/70">{item.icon}</span>
               {item.label}
@@ -391,7 +315,7 @@ export default function PreferencesPanel() {
       </div>
 
       {user && (
-        <p className="text-[9px] text-gray-600 font-bold uppercase tracking-widest text-center">
+        <p className={`text-[9px] font-bold uppercase tracking-widest text-center ${isDark ? 'text-gray-600' : 'text-gray-500'}`}>
           Preferencias sincronizadas con tu cuenta
         </p>
       )}
@@ -402,14 +326,12 @@ export default function PreferencesPanel() {
         current={language}
         onSelect={(code: string) => handleLangSelect(code as any)}
         onClose={() => setLangOpen(false)}
-        langs={LANGS.map((l) => ({
+        langs={LANGUAGE_OPTIONS.map((l) => ({
           ...l,
-          available: isLangAvailable(l.code as any),
+          available: isLangAvailable(l.code),
           active: l.code === language,
         }))}
       />
     </div>
   );
 }
-
-const sectionTitleCls = 'text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-2';

@@ -24,6 +24,7 @@ import {
   DISBOARD_SERVER,
   type Dict,
   type Lang,
+  isEsLang,
 } from '@/lib/i18n';
 
 const IcoDiscord = () => (
@@ -311,7 +312,7 @@ export default function Footer({ lang, dict }: FooterProps) {
             <button
               onClick={() => { setIsMenuOpen(true); setSidebarView('lang'); }}
               className="group flex items-center gap-3 px-4 py-2 bg-card hover:bg-muted/15 border border-border hover:border-neon-blue rounded-full transition-all duration-300 shadow-lg cursor-pointer"
-              title={lang === 'es' ? 'Cambiar idioma' : 'Change language'}
+              title={isEsLang(lang) ? 'Cambiar idioma' : 'Change language'}
             >
               <svg className="w-5 h-5 transition-transform duration-500 group-hover:rotate-12 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                 <circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />

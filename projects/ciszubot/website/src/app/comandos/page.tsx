@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import CommandExplorer from '@/components/CommandExplorer';
-import { BOT_PREFIX, getDict, type Lang } from '@/lib/i18n';
+import { BOT_PREFIX, getDict, parseLang } from '@/lib/i18n';
 
 export const metadata: Metadata = {
   title: 'CiszuBot | COMMANDS',
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default async function CommandsPage() {
   const store = await cookies();
-  const lang = (store.get('ciszubot_lang')?.value ?? 'es') as Lang;
+  const lang = parseLang(store.get('ciszubot_lang')?.value);
   const t = getDict(lang);
 
   return (

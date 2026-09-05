@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 const faqs = [
   { q: "¿Qué es Ciszu Network?", a: "Ciszu Network es una compañía de innovación digital fundada por Ciszuko Antony. Desarrollamos soluciones web, infraestructura cloud, bots, servidores de juego y experiencias digitales." },
   { q: "¿Qué servicios ofrecen?", a: "Ofrecemos desarrollo web (Next.js, React, TypeScript), infraestructura cloud (Vercel, AWS), diseño UI/UX, bots para Discord/WhatsApp/Telegram, servidores de Minecraft, y consultoría tecnológica." },
-  { q: "¿Cómo puedo contactarlos?", a: "Puedes contactarnos a través de nuestro formulario en la página de Contacto, por correo a ciszunetowork@gmail.com, o directamente por WhatsApp al +58 412 6858111." },
+  { q: "¿Cómo puedo contactarlos?", a: "Puedes contactarnos a través de nuestro formulario en la página de Contacto, por correo a ciszunetwork@gmail.com, o directamente por WhatsApp al +58 412 6858111." },
   { q: "¿MuzicMania es parte de Ciszu Network?", a: "Sí, MuzicMania es un proyecto de juego de ritmo desarrollado por Ciszu Network. Puedes probarlo en muzicmania.vercel.app." },
   { q: "¿Tienen servidores de Minecraft?", a: "Sí, desarrollamos texture packs, mods y administramos servidores Minecraft con identidad Ciszu. Consulta nuestra sección de proyectos para más información." },
   { q: "¿Ofrecen bots para Discord?", a: "Sí, creamos bots personalizados para Discord con diversas funcionalidades. También administramos servidores comunitarios." },
