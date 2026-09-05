@@ -41,10 +41,18 @@ export default function BetaDisclaimer({
   message = 'Esta web/app está siendo construida en versión BETA. Algunas funciones pueden fallar o cambiar sin previo aviso.',
   storageKey = 'betadisclaimer_dismissed',
 }: BetaDisclaimerProps) {
-  const [dismissed, setDismissed] = useState(() => loadDismissed(storageKey));
+  const [dismissed, setDismissed] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
   const { push, remove } = useDisclaimer();
 
   useEffect(() => {
+    setHydrated(true);
+    const isDismissed = loadDismissed(storageKey);
+    if (isDismissed) setDismissed(true);
+  }, [storageKey]);
+
+  useEffect(() => {
+    if (!hydrated) return;
     if (dismissed) return;
     const id = `beta:${storageKey}`;
     push({
@@ -60,7 +68,7 @@ export default function BetaDisclaimer({
     return () => {
       remove(id);
     };
-  }, [dismissed, storageKey, message, push, remove]);
+  }, [hydrated, dismissed, storageKey, message, push, remove]);
 
   return null;
 }
