@@ -541,16 +541,19 @@ export function GlobalDisclaimer({ site, pollInterval = GD_POLL_INTERVAL, disabl
       const key = `gd_${row.id}`;
       if (seenRef.current.has(row.id)) continue;
       active.add(key);
+      const isDevcon = row.sender === 'devcon';
       push({
         id: key,
         kind: row.kind,
-        message: row.message,
+        message: isDevcon ? `[DEVCON] ${row.message}` : row.message,
         dismissible: row.dismissible,
         expiresAt: row.expires_at,
         image: row.image ?? undefined,
         onClose: () => {
-          seenRef.current.add(row.id);
-          gdPersistSeen(site, seenRef.current);
+          if (!isDevcon) {
+            seenRef.current.add(row.id);
+            gdPersistSeen(site, seenRef.current);
+          }
           remove(key);
         },
       });

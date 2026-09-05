@@ -46,17 +46,20 @@ export default function BetaDisclaimer({
 
   useEffect(() => {
     if (dismissed) return;
+    const id = `beta:${storageKey}`;
     push({
-      id: `beta:${storageKey}`,
+      id,
       kind: 'beta',
       message,
       onClose: () => {
         saveDismissed(storageKey);
         setDismissed(true);
-        remove(`beta:${storageKey}`);
+        remove(id);
       },
     });
-    return () => remove(`beta:${storageKey}`);
+    return () => {
+      remove(id);
+    };
   }, [dismissed, storageKey, message, push, remove]);
 
   return null;
