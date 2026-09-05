@@ -54,10 +54,13 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   const setIsHydrated = useAppStore((s) => s.setIsHydrated);
 
   // 1. Hidratar preferencias locales (tema/idioma/zoom/silencio) en el store y el DOM
+  //    IMPORTANTE: skipReload=true. Sin esto, setTheme/setLanguage programan
+  //    la recarga diferida del store y la página se recargaba SOLA ~1.8s
+  //    después de cargar ("se actualiza antes del guard"), en cada visita.
   useEffect(() => {
     const prefs = getPreferences();
-    setTheme(prefs.theme);
-    setLanguage(prefs.lang);
+    setTheme(prefs.theme, true);
+    setLanguage(prefs.lang, true);
     applyFontSize(prefs.fontSize);
     if (prefs.muted) applyMuted(true);
   }, [setTheme, setLanguage]);

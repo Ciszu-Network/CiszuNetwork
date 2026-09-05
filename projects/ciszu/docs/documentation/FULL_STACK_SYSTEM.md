@@ -1,8 +1,8 @@
 ﻿# FULL_STACK_SYSTEM — Stack tecnológico de Ciszu Network
 
-Versión: 2.1.0
-Actualización: 2026-08-14
-Identificador: FULL_STACK_SYSTEM_V2.1.0_2026_08_14_ciszunetwork
+Versión: 2.2.0
+Actualización: 2026-09-05
+Identificador: FULL_STACK_SYSTEM_V2.2.0_2026_09_05_ciszunetwork
 
 > **Definición**: inventario actual (ago 2026) de lenguajes, frameworks, sistemas operativos,
 > herramientas y servicios del ecosistema completo. Fuente única del stack; detalles de
@@ -69,7 +69,8 @@ Inventario actual (ago 2026) de lenguajes, frameworks, sistemas operativos, herr
 ## Herramientas (CLI y GUI)
 
 - **CLI/IDE**: VS Code, opencode (agente in-terminal), git 2.55, bash, `dbvr` (BD), `supabase` CLI, `zap`, `semgrep`, `trivy`, `gitleaks`, `secretlint`, `cargo-audit`, `ffmpeg`, `rg` (ripgrep 15.2.0), `fzf` 0.74.2, `agen` (age cryptography).
-- **GUI**: DBeaver CE (BD), Bruno (API), Fork (Git GUI), ZAP (daemon+API), Docker Desktop, Windows Terminal, Opera GX (navegador/predeterminado + E2E), GIMP/photopea + Illustrator/Photoshop locales (diseño).
+- **GUI dev**: DBeaver CE (BD), Bruno (API), Fork (Git GUI), ZAP (daemon+API), Docker Desktop, Windows Terminal, Opera GX (navegador/predeterminado + E2E), GIMP/photopea + Illustrator/Photoshop locales (diseño).
+- **Productividad/creatividad**: Figma (diseño UI/UX), Canva (assets rápidos), Miro (whiteboards), Todoist (tareas), Slack (comunicación interna), ChatGPT (IA general), Gemini (voz + imagen).
 
 ## Backend / Servicios
 
@@ -266,6 +267,7 @@ global por defecto. Ver también `TOOLS_SYSTEM.md`.
 | Errores / analítica | Sentry, PostHog, Cloudflare Web Analytics |
 | Entrega | Vercel + GitHub Actions + Docker (bot) |
 
-_Última revisión: 14 ago 2026._ Relacionados: `BACKEND_SYSTEM.md` · `FRONTEND_SYSTEM.md` ·
-`PACKAGES_SYSTEM.md` · `ORM_SYSTEM.md` · `VAULT_SYSTEM.md`.
+_Última revisión: 5 sep 2026._ Relacionados: `BACKEND_SYSTEM.md` · `FRONTEND_SYSTEM.md` ·
+`PACKAGES_SYSTEM.md` · `ORM_SYSTEM.md` · `VAULT_SYSTEM.md` · `TOOLS_SYSTEM.md` ·
+`ONLINE_SERVICES_SYSTEM.md` · `MODELS_LLM_SYSTEM.md` · `UI_COMPONENTS_SYSTEM.md`.
 

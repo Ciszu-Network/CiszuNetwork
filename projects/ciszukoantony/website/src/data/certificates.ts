@@ -75,7 +75,6 @@ export const CERTIFICATES: Certificate[] = [
       { name: 'EF-SET-Certificate-score.pdf', label: 'Score report', kind: 'report' },
       { name: 'ef_set_completation_english.pdf', label: 'Completion notice', kind: 'credential' },
     ],
-    thumbnail: 'shared/docs/certificados/previews/efset-preview.jpg',
     previewType: 'pdf',
   },
   {
@@ -122,7 +121,6 @@ export const CERTIFICATES: Certificate[] = [
       { name: 'HTML_Essentials_certificate_fplayersoffcial-gmail-com_e218c456-06c7-4e52-8ec4-57ae4246e019.pdf', label: 'Certificate', kind: 'certificate' },
       { name: 'HTMLEssentialsv120260717-8-l2ejk6.pdf', label: 'Credential record', kind: 'credential' },
     ],
-    thumbnail: 'shared/docs/certificados/previews/cisco-preview.jpg',
     previewType: 'pdf',
   },
   {
@@ -474,7 +472,6 @@ export const OTHER_DOCS: Certificate[] = [
     files: [
       { name: 'learner_transcript.pdf', label: 'Transcript', kind: 'transcript' },
     ],
-    thumbnail: 'shared/docs/certificados/previews/transcript-preview.jpg',
     previewType: 'pdf',
   },
   {
@@ -490,7 +487,6 @@ export const OTHER_DOCS: Certificate[] = [
     files: [
       { name: 'Expediente - CiscoAntonyGarciaM-8257 _ Microsoft Learn.pdf', label: 'Record (expediente)', kind: 'transcript' },
     ],
-    thumbnail: 'shared/docs/certificados/previews/expediente-preview.jpg',
     previewType: 'pdf',
   },
   {
@@ -505,7 +501,6 @@ export const OTHER_DOCS: Certificate[] = [
     files: [
       { name: 'Tu perfil _ 16Personalities.pdf', label: 'Profile report', kind: 'report' },
     ],
-    thumbnail: 'shared/docs/certificados/previews/personality-preview.jpg',
     previewType: 'pdf',
   },
   {
@@ -517,7 +512,6 @@ export const OTHER_DOCS: Certificate[] = [
     files: [
       { name: 'dato (35).JPG', label: 'Certificate Image', kind: 'image' },
     ],
-    thumbnail: 'shared/docs/certificados/dato (35).JPG',
     previewType: 'image',
   },
   {
@@ -530,7 +524,6 @@ export const OTHER_DOCS: Certificate[] = [
     files: [
       { name: 'transcript_hplive.pdf', label: 'Transcript', kind: 'transcript' },
     ],
-    thumbnail: 'shared/docs/certificados/previews/transcript-hplive-preview.jpg',
     previewType: 'pdf',
   },
   {
@@ -542,7 +535,6 @@ export const OTHER_DOCS: Certificate[] = [
     files: [
       { name: 'Ciencia y Análisis de Datos.pdf', label: 'Certificate', kind: 'certificate' },
     ],
-    thumbnail: 'shared/docs/certificados/previews/ciencia-datos-preview.jpg',
     previewType: 'pdf',
   },
   {
@@ -551,30 +543,6 @@ export const OTHER_DOCS: Certificate[] = [
     provider: 'Online course platform',
     category: 'other',
     files: [{ name: '109_fplayersoffcial@gmail.com.pdf', label: 'Certificate 109', kind: 'certificate' }],
-    previewType: 'pdf',
-  },
-  {
-    id: 'course-373',
-    title: 'Course 373 — Fplayersoffcial@gmail.com',
-    provider: 'Online course platform',
-    category: 'other',
-    files: [{ name: '373_fplayersoffcial@gmail.com.pdf', label: 'Certificate 373', kind: 'certificate' }],
-    previewType: 'pdf',
-  },
-  {
-    id: 'course-4080',
-    title: 'Course 4080 — Fplayersoffcial@gmail.com',
-    provider: 'Online course platform',
-    category: 'other',
-    files: [{ name: '4080_fplayersoffcial@gmail.com.pdf', label: 'Certificate 4080', kind: 'certificate' }],
-    previewType: 'pdf',
-  },
-  {
-    id: 'course-508',
-    title: 'Course 508 — Fplayersoffcial@gmail.com',
-    provider: 'Online course platform',
-    category: 'other',
-    files: [{ name: '508_fplayersoffcial@gmail.com.pdf', label: 'Certificate 508', kind: 'certificate' }],
     previewType: 'pdf',
   }
 ];

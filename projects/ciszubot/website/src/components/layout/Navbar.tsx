@@ -8,7 +8,7 @@ import { Menu, X, Search } from 'lucide-react';
 import { useAppStore, type AppUser } from '@/store';
 import { supabase } from '@/config/supabase';
 import { getGuestName } from '@/lib/guest';
-import { syncPreferencesToProfile, updatePreferences } from '@/lib/preferences';
+import { syncPreferencesToProfile, updatePreferences, loadPreferences } from '@/lib/preferences';
 import PreferencesPanel from '@/components/layout/PreferencesPanel';
 import { PreferencesModal } from '@ciszu/ui';
 import { INVITE_URL, LOGO_ISOTIPO, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
@@ -100,7 +100,13 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
     : [];
 
   useEffect(() => {
-    setIsDark(document.documentElement.classList.contains('dark'));
+    // Re-aplicar tema tras la hidratación: themeScript añade la clase 'dark'
+    // al <html> ANTES de hidratar, pero React resetea el className del <html>
+    // al hidratar y la borra (el tema visual retrocedería al claro aunque el
+    // guardado sea oscuro). Se re-aplica desde las preferencias persistidas.
+    const prefs = loadPreferences();
+    document.documentElement.classList.toggle('dark', prefs.theme === 'dark');
+    setIsDark(prefs.theme === 'dark');
   }, []);
 
   useEffect(() => {
