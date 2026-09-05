@@ -50,7 +50,7 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.5",
+    "@eslint/eslintrc": "^3.3.7",
     "@tailwindcss/postcss": "^4.2.4",
     "@tauri-apps/cli": "^2.11.2",
     "@types/node": "^25.9.3",
