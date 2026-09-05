@@ -13,10 +13,10 @@ DROP POLICY IF EXISTS "Anyone can insert ads impressions" ON ciszunetwork.ads_im
 CREATE POLICY "Anyone can insert ads impressions"
   ON ciszunetwork.ads_impressions FOR INSERT
   WITH CHECK (
-    NEW.site IS NOT NULL
-    AND NEW.ad_id IS NOT NULL
-    AND NEW.ad_type IS NOT NULL
-    AND NEW.seen_at IS NOT NULL
+    site IS NOT NULL
+    AND ad_id IS NOT NULL
+    AND ad_type IS NOT NULL
+    AND seen_at IS NOT NULL
   );
 
 -- ============================================================
@@ -28,11 +28,11 @@ DROP POLICY IF EXISTS "Anyone insert disclaimer deliveries" ON ciszunetwork.glob
 CREATE POLICY "Anyone insert disclaimer deliveries"
   ON ciszunetwork.global_disclaimer_deliveries FOR INSERT
   WITH CHECK (
-    NEW.disclaimer_id IS NOT NULL
-    AND NEW.site IS NOT NULL
+    disclaimer_id IS NOT NULL
+    AND site IS NOT NULL
     AND EXISTS (
       SELECT 1 FROM ciszunetwork.global_disclaimers g
-      WHERE g.id = NEW.disclaimer_id
+      WHERE g.id = disclaimer_id
     )
   );
 
