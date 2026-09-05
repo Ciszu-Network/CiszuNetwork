@@ -28,6 +28,8 @@ export interface CspOptions {
   styleSrc?: string[];
   /** Fuentes extra para iframes (frame-src). */
   frameSrc?: string[];
+  /** Fuentes extra para workers (worker-src). */
+  workerSrc?: string[];
   /**
    * Modo desarrollo forzado (por defecto: NODE_ENV !== 'production').
    * En dev se añade 'unsafe-eval' (lo necesita el cliente de Next.js dev) y
@@ -77,7 +79,7 @@ export function buildCsp(opts: CspOptions = {}): string {
     ['frame-src', ["'self'", 'https://challenges.cloudflare.com', GOOGLE_TAG_MANAGER_ORIGIN, ...(opts.frameSrc ?? [])]],
     // worker-src explícito: PostHog recording crea workers desde blob: URLs;
     // sin esta directiva cae a script-src y se bloquea (paridad en las 4 webs).
-    ['worker-src', ["'self'", 'blob:']],
+    ['worker-src', ["'self'", 'blob:', ...(opts.workerSrc ?? [])]],
     ['object-src', ["'none'"]],
     ['base-uri', ["'self'"]],
     ['form-action', ["'self'"]],
