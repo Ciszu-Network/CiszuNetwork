@@ -12,14 +12,31 @@ import {
   ZOOM_MIN,
   ZOOM_STEP,
 } from '@/lib/preferences';
+import type { Lang } from '@/lib/i18n';
+import { LanguagesModal, useToast, LANGUAGE_OPTIONS, isLangAvailable, LANG_BLOCKED_MESSAGE } from '@ciszu/ui';
 
 interface PreferencesPanelProps {
-  lang: 'es' | 'en';
+  lang: Lang;
   isDark: boolean;
   userId?: string | null;
-  onSetLang: (code: 'es' | 'en') => void;
+  /** Cambia el idioma: cookie + preferencias + toast azul + recarga. */
+  onSetLang: (code: Lang) => void;
+  /** Cambia el tema: clase .dark + preferencias + toast azul + recarga. */
   onToggleTheme: () => void;
 }
+
+const MoonIcon = ({ className = 'w-5 h-5' }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+  </svg>
+);
+
+const SunIcon = ({ className = 'w-6 h-6' }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="currentColor" stroke="currentColor" strokeWidth={1}>
+    <circle cx="12" cy="12" r="4" />
+    <path d="M12 1v3m0 16v3M4.22 4.22l2.12 2.12m11.32 11.32l2.12 2.12M1 12h3m16 0h3M4.22 19.78l2.12-2.12M19.78 4.22l-2.12 2.12" strokeLinecap="round" />
+  </svg>
+);
 
 const IcoZoomMinus = () => (
   <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
@@ -61,56 +78,16 @@ const IcoHelp = () => (
   </svg>
 );
 
-const LANGS_DISPLAY = [
-  { code: 'ES-LA', label: 'Español (Latam)', flag: (
-    <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner">
-      <rect width="512" height="170.6" fill="#ffcc00"/>
-      <rect width="512" height="170.6" y="170.6" fill="#003399"/>
-      <rect width="512" height="170.6" y="341.2" fill="#cf142b"/>
-      <g fill="#fff" transform="translate(256,230) scale(4)">
-        <circle cx="0" cy="0" r="18" fill="none" stroke="#fff" strokeWidth="1" strokeDasharray="2,2"/>
-        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(-45) translate(0,-18) scale(0.4)"/>
-        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(-22.5) translate(0,-18) scale(0.4)"/>
-        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="translate(0,-18) scale(0.4)"/>
-        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(22.5) translate(0,-18) scale(0.4)"/>
-        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(45) translate(0,-18) scale(0.4)"/>
-        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(-67.5) translate(0,-18) scale(0.4)"/>
-        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(67.5) translate(0,-18) scale(0.4)"/>
-      </g>
-    </svg>
-  ) },
-  { code: 'ES-ES', label: 'Español (España)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#ad1519"/><rect width="512" height="300" y="106" fill="#fabd00"/><circle cx="150" cy="256" r="50" fill="#ad1519"/></svg> },
-  { code: 'EN-US', label: 'English (US)', flag: (
-    <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner font-sans">
-      <rect width="512" height="512" fill="#bd3d44"/>
-      <rect width="512" height="36" y="36.5" fill="#fff"/><rect width="512" height="36" y="109.5" fill="#fff"/><rect width="512" height="36" y="182.5" fill="#fff"/><rect width="512" height="36" y="255.5" fill="#fff"/><rect width="512" height="36" y="328.5" fill="#fff"/><rect width="512" height="36" y="401.5" fill="#fff"/><rect width="512" height="36" y="474.5" fill="#fff"/>
-      <rect width="240" height="260" fill="#192f5d"/>
-      <g fill="#fff">
-        <circle cx="30" cy="35" r="5"/><circle cx="70" cy="35" r="5"/><circle cx="110" cy="35" r="5"/><circle cx="150" cy="35" r="5"/><circle cx="190" cy="35" r="5"/>
-        <circle cx="50" cy="65" r="5"/><circle cx="90" cy="65" r="5"/><circle cx="130" cy="65" r="5"/><circle cx="170" cy="65" r="5"/><circle cx="210" cy="65" r="5"/>
-        <circle cx="30" cy="95" r="5"/><circle cx="70" cy="95" r="5"/><circle cx="110" cy="95" r="5"/><circle cx="150" cy="95" r="5"/><circle cx="190" cy="95" r="5"/>
-        <circle cx="50" cy="125" r="5"/><circle cx="90" cy="125" r="5"/><circle cx="130" cy="125" r="5"/><circle cx="170" cy="125" r="5"/><circle cx="210" cy="125" r="5"/>
-        <circle cx="30" cy="155" r="5"/><circle cx="70" cy="155" r="5"/><circle cx="110" cy="155" r="5"/><circle cx="150" cy="155" r="5"/><circle cx="190" cy="155" r="5"/>
-      </g>
-    </svg>
-  ) },
-  { code: 'EN-UK', label: 'English (UK)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#012169"/><path d="M0 0l512 512M512 0L0 512" stroke="#fff" strokeWidth="60"/><path d="M0 0l512 512M512 0L0 512" stroke="#cf142b" strokeWidth="30"/><rect width="512" height="100" y="206" fill="#fff"/><rect width="100" height="512" x="206" fill="#fff"/><rect width="512" height="60" y="226" fill="#cf142b"/><rect width="60" height="512" x="226" fill="#cf142b"/></svg> },
-  { code: 'PT', label: 'Português (Brasil)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#009c3b"/><path d="M256 70l186 186-186 186L70 256z" fill="#ffdf00"/><circle cx="256" cy="256" r="100" fill="#002776"/></svg> },
-  { code: 'FR', label: 'Français', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="170" height="512" fill="#002395"/><rect width="170" height="512" x="171" fill="#fff"/><rect width="171" height="512" x="341" fill="#ed2939"/></svg> },
-  { code: 'IT', label: 'Italiano', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="170" height="512" fill="#009246"/><rect width="170" height="512" x="171" fill="#fff"/><rect width="171" height="512" x="341" fill="#ce2b37"/></svg> },
-  { code: 'DE', label: 'Deutsch', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="170" fill="#000"/><rect width="512" height="170" y="171" fill="#d00"/><rect width="512" height="171" y="341" fill="#ffce00"/></svg> },
-  { code: 'RU', label: 'Русский', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="170" fill="#fff"/><rect width="512" height="170" y="171" fill="#0039a6"/><rect width="512" height="171" y="341" fill="#d52b1e"/></svg> },
-  { code: 'JA', label: '日本語 (Japanese)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#fff"/><circle cx="256" cy="256" r="120" fill="#bc002d"/></svg> },
-  { code: 'KO', label: '한국어 (Korean)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#fff"/><circle cx="256" cy="256" r="80" fill="#cd2e3a"/><path d="M256 176a80 80 0 0 0 0 160c44 0 44-80 80-80s36 80 80 80" fill="#0047a0"/></svg> },
-];
-
 /**
- * Panel de preferencias del botón AUTH. Idioma, tema, zoom (persistido),
- * silenciar pestaña y sección de ayuda. Se guarda SIEMPRE en localStorage
- * (ciszu_preferences) y, si hay sesión de CISZU ID, se sincroniza también al
- * perfil (ciszubot.profiles).
+ * Panel de preferencias locales del botón AUTH (sistema compartido con las
+ * demás webs). Idioma (LanguagesModal con 4 idiomas individuales + bloqueo),
+ * tema (mismo botón sol/luna que el resto de webs), zoom, silenciar pestaña,
+ * guards de navegación y ayuda. Los cambios de idioma/tema avisan con toast
+ * azul y recargan la página (lo gestiona el Navbar vía onSetLang/onToggleTheme).
  */
 export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onToggleTheme }: PreferencesPanelProps) {
+  const { toast } = useToast();
+  const [langOpen, setLangOpen] = useState(false);
   const [zoom, setZoomState] = useState<number>(100);
   const [muteTab, setMuteTabState] = useState<boolean>(false);
   const [redirectGuard, setRedirectGuardState] = useState<boolean>(true);
@@ -143,90 +120,100 @@ export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onTo
     setMuteTabState(next);
     setMuteTab(next);
     persist({ muteTab: next });
+    toast(next ? 'Pestaña silenciada' : 'Pestaña restaurada', 'info');
   };
 
   const toggleRedirectGuard = () => {
     const next = !redirectGuard;
     setRedirectGuardState(next);
     persist({ redirectGuard: next });
+    toast(next ? 'Aviso de redirección activado' : 'Aviso de redirección desactivado', 'info');
   };
 
   const toggleActivityGuard = () => {
     const next = !activityGuard;
     setActivityGuardState(next);
     persist({ activityGuard: next });
+    toast(next ? 'Protección de acciones activada' : 'Protección de acciones desactivada', 'info');
   };
 
-  const handleLanguage = (code: 'es' | 'en') => {
+  const handleLangSelect = (code: string) => {
+    if (!isLangAvailable(code)) {
+      // Idiomas bloqueados: toast de ERROR (rojo).
+      toast(LANG_BLOCKED_MESSAGE, 'error');
+      return;
+    }
     if (code !== lang) {
-      if (userId) persist({ lang: code });
-      onSetLang(code);
+      persist({ lang: code as Lang });
+      onSetLang(code as Lang);
     }
   };
 
   const handleTheme = () => {
-    const next: 'dark' | 'light' = isDark ? 'light' : 'dark';
-    persist({ theme: next });
+    persist({ theme: isDark ? 'light' : 'dark' });
     onToggleTheme();
   };
 
+  const currentLang = LANGUAGE_OPTIONS.find((l) => l.code === lang) ?? LANGUAGE_OPTIONS[0];
+
+  const rowLabel = 'text-xs font-bold text-ink/85';
+  const iconBtn = (active: boolean, activeCls: string) =>
+    `p-1.5 rounded-md border transition cursor-pointer ${
+      active ? activeCls : 'bg-card border-border text-faint hover:text-ink'
+    }`;
+
   return (
-    <div className="border-t border-border">
-      <p className="px-4 pt-3 pb-1.5 text-[9px] font-black uppercase tracking-[0.25em] text-faint">
-        Preferencias
-      </p>
-
-      {/* Idioma */}
-      <div className="px-4 py-1.5 flex items-center justify-between gap-3">
-        <span className="text-xs font-bold text-ink/85">Idioma</span>
-        <div className="flex items-center gap-1.5 flex-wrap">
-          {LANGS_DISPLAY.map((l) => {
-            const isEs = l.code.startsWith('ES');
-            const isEn = l.code.startsWith('EN');
-            const isActive = (isEs && lang === 'es') || (isEn && lang === 'en');
-            const isAlt = !isEs && !isEn;
-            return (
-              <button
-                key={l.code}
-                onClick={() => { if (isEs || isEn) handleLanguage(isEs ? 'es' : 'en'); }}
-                className={`relative rounded-full transition-transform duration-300 cursor-pointer ${
-                  isActive ? 'scale-105' : 'opacity-60 grayscale hover:opacity-100 hover:grayscale-0 scale-95'
-                } ${isAlt ? 'hidden sm:block' : ''}`}
-                title={l.label}
-              >
-                {l.flag}
-                {isActive && (
-                  <span className="absolute top-0 right-0 w-2 h-2 rounded-full border border-white bg-green-400" />
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Tema */}
-      <div className="px-4 py-1.5 flex items-center justify-between gap-3">
-        <span className="text-xs font-bold text-ink/85">Tema</span>
+    <div className="space-y-4">
+      {/* Tema e idioma: mismos controles que el navbar (sol/luna + selector) */}
+      <div className="flex items-center justify-between gap-2">
         <button
           onClick={handleTheme}
           aria-label="Cambiar tema"
-          className={`w-14 flex items-center rounded-full border px-0.5 py-0.5 transition-all cursor-pointer ${
-            isDark ? 'justify-end bg-[#5865F2]/40 border-[#5865F2]/50' : 'justify-start bg-card border-border'
+          title={isDark ? 'Modo claro' : 'Modo oscuro'}
+          className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group shrink-0 ${
+            isDark ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
           }`}
         >
-          <span className={`w-4 h-4 rounded-full shadow transition-colors ${isDark ? 'bg-[#5865F2]' : 'bg-yellow-400'}`} />
+          {isDark ? (
+            <MoonIcon className="w-5 h-5 text-black transition-transform duration-500 group-hover:-rotate-12" />
+          ) : (
+            <SunIcon className="w-6 h-6 text-black transition-transform duration-500 group-hover:rotate-90" />
+          )}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setLangOpen(true)}
+          className="flex-1 flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-card border border-border text-ink hover:border-neon-blue/60 transition-all active:scale-95 cursor-pointer"
+          title="Cambiar idioma"
+        >
+          <span className="flex items-center gap-2 text-xs font-header font-bold uppercase tracking-widest">
+            <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M2 12h20" />
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+            </svg>
+            Idioma
+          </span>
+          <span className="flex items-center gap-2">
+            <span className="w-6 h-6 rounded-full overflow-hidden shadow-inner border border-border shrink-0">{currentLang.flag}</span>
+            <span className="hidden sm:inline text-[11px] font-bold text-muted truncate max-w-[90px]">{currentLang.label}</span>
+            <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-neon-blue" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </span>
         </button>
       </div>
 
       {/* Zoom */}
-      <div className="px-4 py-1.5">
-        <span className="text-xs font-bold text-ink/85 block mb-1.5">Zoom</span>
+      <div>
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-faint mb-1.5">Zoom</p>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setZoom(-ZOOM_STEP)}
             disabled={zoom <= ZOOM_MIN}
             aria-label="Quitar zoom"
-            className="p-1.5 rounded-md bg-card border border-border text-ink hover:border-neon-blue hover:text-neon-blue disabled:opacity-30 disabled:cursor-not-allowed transition shrink-0"
+            className="p-1.5 rounded-md bg-card border border-border text-ink hover:border-neon-blue hover:text-neon-blue disabled:opacity-30 disabled:cursor-not-allowed transition shrink-0 cursor-pointer"
           >
             <IcoZoomMinus />
           </button>
@@ -243,7 +230,7 @@ export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onTo
             onClick={() => setZoom(ZOOM_STEP)}
             disabled={zoom >= ZOOM_MAX}
             aria-label="Sumar zoom"
-            className="p-1.5 rounded-md bg-card border border-border text-ink hover:border-neon-blue hover:text-neon-blue disabled:opacity-30 disabled:cursor-not-allowed transition shrink-0"
+            className="p-1.5 rounded-md bg-card border border-border text-ink hover:border-neon-blue hover:text-neon-blue disabled:opacity-30 disabled:cursor-not-allowed transition shrink-0 cursor-pointer"
           >
             <IcoZoomPlus />
           </button>
@@ -251,57 +238,54 @@ export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onTo
       </div>
 
       {/* Silenciar pestaña */}
-      <div className="px-4 py-1.5 flex items-center justify-between gap-3">
-        <span className="text-xs font-bold text-ink/85">Silenciar pestaña</span>
+      <div className="flex items-center justify-between gap-3">
+        <span className={rowLabel}>Silenciar pestaña</span>
         <button
           onClick={toggleMuteTab}
           aria-label="Silenciar pestaña"
-          className={`p-1.5 rounded-md border transition ${
-            muteTab ? 'bg-[#5865F2]/15 border-[#5865F2]/50 text-[#5865F2]' : 'bg-card border-border text-faint hover:text-ink'
-          }`}
+          className={iconBtn(muteTab, 'bg-[#5865F2]/15 border-[#5865F2]/50 text-[#5865F2]')}
         >
           {muteTab ? <IcoVolumeOff /> : <IcoVolume />}
         </button>
       </div>
 
       {/* Navegación segura */}
-      <div className="px-4 py-1.5 flex items-center justify-between gap-3">
-        <span className="text-xs font-bold text-ink/85">Aviso de redirección</span>
-        <button
-          onClick={toggleRedirectGuard}
-          aria-label="Aviso de redirección"
-          title="Aviso azul al salir a otra web"
-          className={`p-1.5 rounded-md border transition ${
-            redirectGuard ? 'bg-blue-500/15 border-blue-500/50 text-blue-400' : 'bg-card border-border text-faint hover:text-ink'
-          }`}
-        >
-          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-            <polyline points="15 3 21 3 21 9" />
-            <line x1="10" y1="14" x2="21" y2="3" />
-          </svg>
-        </button>
-      </div>
-      <div className="px-4 py-1.5 flex items-center justify-between gap-3">
-        <span className="text-xs font-bold text-ink/85">Proteger acciones</span>
-        <button
-          onClick={toggleActivityGuard}
-          aria-label="Protección de acciones no recuperables"
-          title="Aviso rojo si vas a perder progreso al navegar"
-          className={`p-1.5 rounded-md border transition ${
-            activityGuard ? 'bg-red-500/15 border-red-500/50 text-red-400' : 'bg-card border-border text-faint hover:text-ink'
-          }`}
-        >
-          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-            <path d="M12 9v4" />
-            <path d="M12 17h.01" />
-          </svg>
-        </button>
+      <div>
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-faint mb-1.5">Navegación</p>
+        <div className="flex items-center justify-between gap-3">
+          <span className={rowLabel}>Aviso de redirección</span>
+          <button
+            onClick={toggleRedirectGuard}
+            aria-label="Aviso de redirección"
+            title="Aviso azul al salir a otra web"
+            className={iconBtn(redirectGuard, 'bg-blue-500/15 border-blue-500/50 text-blue-400')}
+          >
+            <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+              <polyline points="15 3 21 3 21 9" />
+              <line x1="10" y1="14" x2="21" y2="3" />
+            </svg>
+          </button>
+        </div>
+        <div className="flex items-center justify-between gap-3 mt-2">
+          <span className={rowLabel}>Proteger acciones</span>
+          <button
+            onClick={toggleActivityGuard}
+            aria-label="Protección de acciones no recuperables"
+            title="Aviso rojo si vas a perder progreso al navegar"
+            className={iconBtn(activityGuard, 'bg-red-500/15 border-red-500/50 text-red-400')}
+          >
+            <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              <path d="M12 9v4" />
+              <path d="M12 17h.01" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* Ayuda */}
-      <div className="px-4 py-2 border-t border-border/70">
+      <div className="border-t border-border/70 pt-3">
         <Link
           href="/soporte"
           className="flex items-center gap-2 text-xs font-bold text-ink/85 hover:text-neon-blue transition"
@@ -309,6 +293,19 @@ export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onTo
           <IcoHelp /> Ayuda y soporte
         </Link>
       </div>
+
+      <LanguagesModal
+        open={langOpen}
+        title="Seleccionar idioma"
+        current={lang}
+        onSelect={handleLangSelect}
+        onClose={() => setLangOpen(false)}
+        langs={LANGUAGE_OPTIONS.map((l) => ({
+          ...l,
+          available: isLangAvailable(l.code),
+          active: l.code === lang,
+        }))}
+      />
     </div>
   );
 }

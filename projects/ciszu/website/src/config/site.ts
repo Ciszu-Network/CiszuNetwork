@@ -1,7 +1,7 @@
 export const CISZU_NETWORK = {
   name: 'Ciszu Network',
   tagline: 'Bright Future Promised',
-  email: 'ciszunetowork@gmail.com',
+  email: 'ciszunetwork@gmail.com',
   phone: '+58 412 6858111',
   location: 'Coro, Falcón, Venezuela',
   timezone: 'GMT-4',

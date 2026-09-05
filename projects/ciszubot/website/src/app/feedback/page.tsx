@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { Icon, FabRestore } from '@ciszu/ui';
 import FeedbackForm, { OpenReportButton } from '@/components/FeedbackForm';
-import { DISCORD_SERVER, FEEDBACK_EMAIL, getDict, type Lang } from '@/lib/i18n';
+import { DISCORD_SERVER, FEEDBACK_EMAIL, getDict, parseLang } from '@/lib/i18n';
 
 export const metadata: Metadata = {
   title: 'CiszuBot | FEEDBACK',
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default async function FeedbackPage() {
   const store = await cookies();
-  const lang = (store.get('ciszubot_lang')?.value ?? 'es') as Lang;
+  const lang = parseLang(store.get('ciszubot_lang')?.value);
   const t = getDict(lang);
 
   return (

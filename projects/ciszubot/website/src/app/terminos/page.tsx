@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import LegalPage from '@/components/LegalPage';
-import { getDict, type Lang } from '@/lib/i18n';
+import { getDict, parseLang } from '@/lib/i18n';
 
 export const metadata: Metadata = {
   title: 'CiszuBot | TERMS',
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default async function TermsPage() {
   const store = await cookies();
-  const lang = (store.get('ciszubot_lang')?.value ?? 'es') as Lang;
+  const lang = parseLang(store.get('ciszubot_lang')?.value);
   const t = getDict(lang);
 
   return <LegalPage dict={t} kind="terms" title={t.footer.terms} />;

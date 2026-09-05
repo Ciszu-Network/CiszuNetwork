@@ -32,8 +32,8 @@ export const ZOOM_STEP = 10;
 /** Idiomas disponibles (completados). El resto están bloqueados. */
 export const AVAILABLE_LANGS: PrefLang[] = ['es-latam', 'es-es', 'en-us', 'en-uk'];
 
-export function isLangAvailable(lang: PrefLang): boolean {
-  return AVAILABLE_LANGS.includes(lang);
+export function isLangAvailable(lang: string): boolean {
+  return AVAILABLE_LANGS.includes(lang as PrefLang);
 }
 
 export function loadPreferences(): CiszuPreferences {

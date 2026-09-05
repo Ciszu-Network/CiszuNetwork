@@ -1,8 +1,9 @@
-export type PreferenceLang = 'EN' | 'ES';
+/** Los 4 idiomas de producción son individuales entre sí. */
+export type PreferenceLang = 'es-latam' | 'es-es' | 'en-us' | 'en-uk';
 export type PreferenceTheme = 'dark' | 'light';
 
 export interface Preferences {
-  /** Idioma (se mapea a settings_lang: 'en' | 'es'). */
+  /** Idioma (se mapea a settings_lang: familia 'es' | 'en' en la DB). */
   lang: PreferenceLang;
   /** Tema (se mapea a settings_theme). */
   theme: PreferenceTheme;
@@ -21,7 +22,7 @@ const PREFERENCES_KEY = 'ciszu_preferences';
 export const SITE_NAME = 'Ciszuko Antony';
 
 export const DEFAULT_PREFERENCES: Preferences = {
-  lang: 'EN',
+  lang: 'es-latam',
   theme: 'dark',
   fontSize: 100,
   muted: false,
@@ -33,6 +34,24 @@ export const FONT_SIZE_MIN = 80;
 export const FONT_SIZE_MAX = 150;
 export const FONT_SIZE_STEP = 10;
 
+/** Idiomas terminados (el resto están bloqueados). */
+export const AVAILABLE_LANGS: PreferenceLang[] = ['es-latam', 'es-es', 'en-us', 'en-uk'];
+
+export function isLangAvailable(lang: string): boolean {
+  return (AVAILABLE_LANGS as string[]).includes(lang);
+}
+
+/** Normaliza un valor guardado (acepta códigos antiguos 'ES'/'EN'). */
+function normalizeLang(raw: unknown): PreferenceLang {
+  if (raw === 'ES' || raw === 'es' || raw === 'es-latam' || raw === 'es-es') {
+    return raw === 'es-es' ? 'es-es' : 'es-latam';
+  }
+  if (raw === 'EN' || raw === 'en' || raw === 'en-us' || raw === 'en-uk') {
+    return raw === 'en-uk' ? 'en-uk' : 'en-us';
+  }
+  return DEFAULT_PREFERENCES.lang;
+}
+
 export function getPreferences(): Preferences {
   if (typeof window === 'undefined') return { ...DEFAULT_PREFERENCES };
   try {
@@ -42,6 +61,7 @@ export function getPreferences(): Preferences {
     return {
       ...DEFAULT_PREFERENCES,
       ...parsed,
+      lang: normalizeLang(parsed.lang),
       fontSize: typeof parsed.fontSize === 'number' ? parsed.fontSize : DEFAULT_PREFERENCES.fontSize,
     };
   } catch {
@@ -112,7 +132,8 @@ function safeFaviconHref(href: string | null): string | null {
   return null;
 }
 
-/** Empuja las preferencias locales al perfil conectado (schema ciszukoantony). */
+/** Empuja las preferencias locales al perfil conectado (schema ciszukoantony).
+ *  La DB guarda la familia ('es' | 'en'); en local se conservan los 4 códigos. */
 export async function pushPreferencesToProfile(userId: string): Promise<void> {
   const prefs = getPreferences();
   try {
@@ -120,7 +141,7 @@ export async function pushPreferencesToProfile(userId: string): Promise<void> {
     await supabase
       .from('profiles')
       .update({
-        settings_lang: prefs.lang === 'ES' ? 'es' : 'en',
+        settings_lang: prefs.lang === 'en-us' || prefs.lang === 'en-uk' ? 'en' : 'es',
         settings_theme: prefs.theme,
         settings_controls: { fontSize: prefs.fontSize, muted: prefs.muted },
       })

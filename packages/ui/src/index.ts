@@ -126,6 +126,15 @@ export type { PreferencesModalProps } from './auth/PreferencesModal';
 // LanguagesModal: selector de idioma en modal centrado (preferencias locales, misma lista que el hamburguesa)
 export { default as LanguagesModal } from './auth/LanguagesModal';
 export type { LanguagesModalProps, LanguageOption } from './auth/LanguagesModal';
+// Idioma: lista CANÓNICA compartida de idiomas (4 disponibles + bloqueados)
+export {
+  LANGUAGE_OPTIONS,
+  AVAILABLE_LANG_CODES,
+  isLangAvailable,
+  getLangLabel,
+  LANG_BLOCKED_MESSAGE,
+} from './auth/languages';
+export type { LangCode } from './auth/languages';
 export type { PostHogAnalyticsProps } from './PostHogAnalytics';
 // Re-exportar desde @ciszunetwork/cdn para conveniencia
 export {

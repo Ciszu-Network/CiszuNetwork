@@ -30,6 +30,7 @@ import { CHANGELOG_DATA } from '@/data/changelog';
 import { TAG_CONFIG as CHANGELOG_TAGS, I as CHANGELOG_I } from '@/config/changelogIcons';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { getGuestId, getGuestName } from '@/lib/guest';
+import { updatePreferences, isLangAvailable, reloadAfterPrefChange } from '@/lib/preferences';
 import { useToast, useActivityGuard } from '@ciszu/ui';
 // --- Icons Library ---
 const I = {
@@ -177,8 +178,6 @@ function PlayPageContent() {
     pauseGlobalMusic, 
     audioInfo,
     isAudioInitialized,
-    darkMode,
-    setDarkMode,
     lang,
     setLang
   } = useAppStore();
@@ -2241,7 +2240,7 @@ function PlayPageContent() {
                           <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
                         </svg>
                         <div className="w-5 h-5 rounded-full overflow-hidden border border-white/20 shrink-0 transition-transform group-hover:scale-110">
-                          {(LANGS.find(l => l.code === 'EN-US') || LANGS.find(l => l.code === 'en-us'))?.flag}
+                          {(LANGS.find(l => l.code === lang) || LANGS.find(l => l.code === 'EN-US'))?.flag}
                         </div>
                       </button>
                     </div>
@@ -3818,25 +3817,30 @@ function PlayPageContent() {
                   </div>
                   <div className="grid grid-cols-1 gap-1 max-h-[60vh] overflow-y-auto px-4">
                     {LANGS.map((l) => {
-                      const isAvailable = l.code === 'EN-US';
+                      const unavailable = !isLangAvailable(l.code);
                       return (
                       <button
                         key={l.code}
-                        disabled={!isAvailable}
                         onClick={() => {
-                          if (isAvailable) { setLang(l.code); setHubSidebarView('main'); }
-                          else { setHubError({title:'IDIOMA NO DISPONIBLE',desc:'Actualmente solo EN-US está disponible en esta versión. Próximamente añadiremos más idiomas.'}); }
+                          if (unavailable) {
+                            toast(`[SISTEMA]: El idioma ${l.label} no está disponible aún.`, 'error');
+                            return;
+                          }
+                          setLang(l.code);
+                          updatePreferences({ lang: l.code });
+                          setHubSidebarView('main');
+                          reloadAfterPrefChange(`[SISTEMA]: Idioma cambiado a ${l.label}.`);
                         }}
                         className={`flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-header font-bold transition-all ${
                           lang === l.code ? 'bg-neon-blue/20 text-neon-cyan border border-neon-blue/30' : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'
-                        } ${!isAvailable ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
+                        } ${unavailable ? 'opacity-40 grayscale cursor-not-allowed' : 'cursor-pointer'}`}
                       >
                         <div className="shrink-0 transition-transform duration-300 hover:scale-110 shadow-lg ring-1 ring-white/10 rounded-full">
                           {l.flag}
                         </div>
                         <span className="flex-1 text-left">{l.label}</span>
-                        {!isAvailable && <span className="text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-neon-pink/20 text-neon-pink">BETA</span>}
-                        {lang === l.code && isAvailable && (
+                        {unavailable && <span className="text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-neon-pink/20 text-neon-pink">BETA</span>}
+                        {lang === l.code && !unavailable && (
                           <svg className="w-4 h-4 text-neon-cyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
                             <polyline points="20 6 9 17 4 12"/>
                           </svg>
@@ -3945,22 +3949,26 @@ function PlayPageContent() {
                         </div>
                         <div className="space-y-1">
                           {LANGS.map((l) => {
-                            const isAvailable = l.code === 'EN-US';
+                            const unavailable = !isLangAvailable(l.code);
                             return (
                             <button key={l.code}
-                              disabled={!isAvailable}
                               onClick={() => {
-                                if (isAvailable) { setLang(l.code); }
-                                else { setHubError({title:'IDIOMA NO DISPONIBLE',desc:'Actualmente solo EN-US está disponible en esta versión. Próximamente añadiremos más idiomas.'}); }
+                                if (unavailable) {
+                                  toast(`[SISTEMA]: El idioma ${l.label} no está disponible aún.`, 'error');
+                                  return;
+                                }
+                                setLang(l.code);
+                                updatePreferences({ lang: l.code });
+                                reloadAfterPrefChange(`[SISTEMA]: Idioma cambiado a ${l.label}.`);
                               }}
                               className={`flex items-center gap-3 w-full px-3 py-2 rounded-xl text-xs font-header font-bold transition-all ${
                                 lang === l.code ? 'bg-neon-blue/20 text-neon-cyan border border-neon-blue/30' : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'
-                              } ${!isAvailable ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer'}`}
+                              } ${unavailable ? 'opacity-30 grayscale cursor-not-allowed' : 'cursor-pointer'}`}
                             >
                               <div className="w-6 h-6 shrink-0 flex items-center justify-center">{l.flag}</div>
                               <span className="flex-1 text-left">{l.label}</span>
-                              {!isAvailable && <span className="text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-neon-pink/20 text-neon-pink">BETA</span>}
-                              {lang === l.code && isAvailable && (
+                              {unavailable && <span className="text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-neon-pink/20 text-neon-pink">BETA</span>}
+                              {lang === l.code && !unavailable && (
                                 <svg className="w-3.5 h-3.5 text-neon-cyan shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
                                   <polyline points="20 6 9 17 4 12"/>
                                 </svg>

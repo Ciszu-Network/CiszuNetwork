@@ -273,7 +273,11 @@ export const Footer = () => {
           {/* LEFT: Theme + Language triggers (muzicmania style) */}
           <div className="flex items-center gap-4">
             <button
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              onClick={() => {
+                const next = theme === 'dark' ? 'light' : 'dark';
+                toast(next === 'dark' ? 'Modo oscuro activado' : 'Modo claro activado', 'info');
+                setTheme(next);
+              }}
               className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group ${
                 theme === 'dark' ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
               }`}

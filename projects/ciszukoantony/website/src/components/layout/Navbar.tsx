@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { SmartImage, useZoomStatus, publishHeaderMode, useToast } from '@ciszu/ui';
+import { SmartImage, useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, LANG_BLOCKED_MESSAGE } from '@ciszu/ui';
 import { NAV_MAIN, SOCIALS, I, ALL_PAGES, SEARCH_INDEX, type NavGroup, type NavItem } from '@/config/navigation';
 import { useAppStore } from '@/store';
 import AuthMenu, { GuestIcon } from '@/components/auth/AuthMenu';
@@ -37,47 +37,9 @@ const SunIcon = () => (
   </svg>
 );
 
-const LANGS = [
-  { code: 'ES-LA', label: 'Español (Latam)', flag: (
-    <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner">
-      <rect width="512" height="170.6" fill="#ffcc00"/>
-      <rect width="512" height="170.6" y="170.6" fill="#003399"/>
-      <rect width="512" height="170.6" y="341.2" fill="#cf142b"/>
-      <g fill="#fff" transform="translate(256,230) scale(4)">
-        <circle cx="0" cy="0" r="18" fill="none" stroke="#fff" strokeWidth="1" strokeDasharray="2,2"/>
-        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(-45) translate(0,-18) scale(0.4)"/>
-        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(-22.5) translate(0,-18) scale(0.4)"/>
-        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="translate(0,-18) scale(0.4)"/>
-        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(22.5) translate(0,-18) scale(0.4)"/>
-        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(45) translate(0,-18) scale(0.4)"/>
-        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(-67.5) translate(0,-18) scale(0.4)"/>
-        <path d="M0-22l1.5 4.5h4.5l-3.5 3 1.5 4.5-4-3-4 3 1.5-4.5-3.5-3h4.5z" transform="rotate(67.5) translate(0,-18) scale(0.4)"/>
-      </g>
-    </svg>
-  ) },
-  { code: 'ES-ES', label: 'Español (España)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#ad1519"/><rect width="512" height="300" y="106" fill="#fabd00"/><circle cx="150" cy="256" r="50" fill="#ad1519"/></svg> },
-  { code: 'EN-US', label: 'English (US)', flag: (
-    <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner font-sans">
-      <rect width="512" height="512" fill="#bd3d44"/>
-      <rect width="512" height="36" y="36.5" fill="#fff"/><rect width="512" height="36" y="109.5" fill="#fff"/><rect width="512" height="36" y="182.5" fill="#fff"/><rect width="512" height="36" y="255.5" fill="#fff"/><rect width="512" height="36" y="328.5" fill="#fff"/><rect width="512" height="36" y="401.5" fill="#fff"/><rect width="512" height="36" y="474.5" fill="#fff"/>
-      <rect width="240" height="260" fill="#192f5d"/>
-      <g fill="#fff">
-        <circle cx="30" cy="35" r="5"/><circle cx="70" cy="35" r="5"/><circle cx="110" cy="35" r="5"/><circle cx="150" cy="35" r="5"/><circle cx="190" cy="35" r="5"/>
-        <circle cx="50" cy="65" r="5"/><circle cx="90" cy="65" r="5"/><circle cx="130" cy="65" r="5"/><circle cx="170" cy="65" r="5"/><circle cx="210" cy="65" r="5"/>
-        <circle cx="30" cy="95" r="5"/><circle cx="70" cy="95" r="5"/><circle cx="110" cy="95" r="5"/><circle cx="150" cy="95" r="5"/><circle cx="190" cy="95" r="5"/>
-        <circle cx="50" cy="125" r="5"/><circle cx="90" cy="125" r="5"/><circle cx="130" cy="125" r="5"/><circle cx="170" cy="125" r="5"/><circle cx="210" cy="125" r="5"/>
-        <circle cx="30" cy="155" r="5"/><circle cx="70" cy="155" r="5"/><circle cx="110" cy="155" r="5"/><circle cx="150" cy="155" r="5"/><circle cx="190" cy="155" r="5"/>
-      </g>
-    </svg>
-  ) },
-  { code: 'EN-UK', label: 'English (UK)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#012169"/><path d="M0 0l512 512M512 0L0 512" stroke="#fff" strokeWidth="60"/><path d="M0 0l512 512M512 0L0 512" stroke="#cf142b" strokeWidth="30"/><rect width="512" height="100" y="206" fill="#fff"/><rect width="100" height="512" x="206" fill="#fff"/><rect width="512" height="60" y="226" fill="#cf142b"/><rect width="60" height="512" x="226" fill="#cf142b"/></svg> },
-  { code: 'PT', label: 'Português (Brasil)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#009c3b"/><path d="M256 70l186 186-186 186L70 256z" fill="#ffdf00"/><circle cx="256" cy="256" r="100" fill="#002776"/></svg> },
-  { code: 'FR', label: 'Français', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="170" height="512" fill="#002395"/><rect width="170" height="512" x="171" fill="#fff"/><rect width="171" height="512" x="341" fill="#ed2939"/></svg> },
-  { code: 'IT', label: 'Italiano', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="170" height="512" fill="#009246"/><rect width="170" height="512" x="171" fill="#fff"/><rect width="171" height="512" x="341" fill="#ce2b37"/></svg> },
-  { code: 'DE', label: 'Deutsch', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="170" fill="#000"/><rect width="512" height="170" y="171" fill="#d00"/><rect width="512" height="171" y="341" fill="#ffce00"/></svg> },
-  { code: 'RU', label: 'Русский', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="170" fill="#fff"/><rect width="512" height="170" y="171" fill="#0039a6"/><rect width="512" height="171" y="341" fill="#d52b1e"/></svg> },
-  { code: 'JA', label: '日本語 (Japanese)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#fff"/><circle cx="256" cy="256" r="120" fill="#bc002d"/></svg> },
-  { code: 'KO', label: '한국어 (Korean)', flag: <svg viewBox="0 0 512 512" className="w-6 h-6 rounded-full overflow-hidden shadow-inner"><rect width="512" height="512" fill="#fff"/><circle cx="256" cy="256" r="80" fill="#cd2e3a"/><path d="M256 176a80 80 0 0 0 0 160c44 0 44-80 80-80s36 80 80 80" fill="#0047a0"/></svg> }];
+// LANGS: lista canónica compartida (@ciszu/ui). Los 4 idiomas de producción
+// (es-latam, es-es, en-us, en-uk) son INDIVIDUALES entre sí; el resto está
+// bloqueado (atenuado + toast de error al hacer click).
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -176,8 +138,9 @@ export default function Navbar() {
   }, []);
 
   const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-    toast(theme === 'dark' ? '[SISTEMA]: Modo claro activado.' : '[SISTEMA]: Modo oscuro activado.');
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    toast(next === 'dark' ? 'Modo oscuro activado' : 'Modo claro activado', 'info');
   };
 
   const closeSearch = () => { setSearchOpen(false); setSearchQuery(''); };
@@ -197,13 +160,18 @@ export default function Navbar() {
 
   const pageIcon = (href: string) => ALL_PAGES.find(p => p.href === href)?.icon;
 
-  // Store lang ('EN'|'ES') maps to the LANGS display code for header flag & active state
-  const currentLangCode = language === 'ES' ? 'ES-LA' : 'EN-US';
+  // Los 4 idiomas son individuales: language ya es el código canónico.
+  const currentLangCode = language;
 
   const handleLangSelect = (code: string) => {
-    if (code === 'EN-US' || code === 'EN-UK') { setLanguage('EN'); return; }
-    if (code === 'ES-LA' || code === 'ES-ES') { setLanguage('ES'); return; }
-    toast('Esta función no está desarrollada para la beta aún', 'warning');
+    if (!isLangAvailable(code)) {
+      toast(LANG_BLOCKED_MESSAGE, 'error');
+      return;
+    }
+    if (code !== language) {
+      toast(`Idioma cambiado a ${LANGUAGE_OPTIONS.find((l) => l.code === code)?.label ?? code}`, 'info');
+      setLanguage(code as any);
+    }
   };
 
   // Pill nav: reveal label only on hover/active (muzicmania pattern)
@@ -455,7 +423,7 @@ export default function Navbar() {
                   <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
                 </svg>
                 <div className="w-6 h-6 rounded-full overflow-hidden border border-white/20 shadow-[0_0_10px_rgba(255,255,255,0.1)] shrink-0 transition-transform duration-300 group-hover:scale-110 [&>svg]:w-6 [&>svg]:h-6">
-                  {(LANGS.find(l => l.code === currentLangCode) || LANGS[0]).flag}
+                  {(LANGUAGE_OPTIONS.find(l => l.code === currentLangCode) || LANGUAGE_OPTIONS[0]).flag}
                 </div>
               </button>
             </div>
@@ -511,25 +479,37 @@ export default function Navbar() {
               </>
               ) : (
                 <div className="grid grid-cols-1 gap-1 animate-fade-in-up pb-10">
-                  {LANGS.map((l) => (
-                    <button
-                      key={l.code}
-                      onClick={() => handleLangSelect(l.code)}
-                      className={`flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-header font-bold transition-all cursor-pointer group ${
-                        currentLangCode === l.code ? 'bg-neon-blue/20 text-neon-blue border border-neon-blue/30' : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'
-                      }`}
-                    >
-                      <span className="w-6 h-6 rounded-full overflow-hidden ring-1 ring-white/10 shrink-0 transition-transform duration-300 group-hover:scale-110 [&>svg]:w-6 [&>svg]:h-6">
-                        {l.flag}
-                      </span>
-                      <span className="flex-1 text-left">{l.label}</span>
-                      {currentLangCode === l.code && (
-                        <svg className="w-4 h-4 text-neon-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
-                          <path d="M20 6L9 17l-5-5" />
-                        </svg>
-                      )}
-                    </button>
-                  ))}
+                  {LANGUAGE_OPTIONS.map((l) => {
+                    const blocked = !isLangAvailable(l.code);
+                    return (
+                      <button
+                        key={l.code}
+                        onClick={() => handleLangSelect(l.code)}
+                        className={`flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-header font-bold transition-all cursor-pointer group border ${
+                          currentLangCode === l.code
+                            ? 'bg-neon-blue/20 text-neon-blue border-neon-blue/30'
+                            : blocked
+                              ? 'text-gray-400 opacity-50 saturate-50 hover:opacity-90 hover:bg-white/5 border-transparent'
+                              : 'text-gray-400 hover:text-white hover:bg-white/5 border-transparent'
+                        }`}
+                      >
+                        <span className="w-6 h-6 rounded-full overflow-hidden ring-1 ring-white/10 shrink-0 transition-transform duration-300 group-hover:scale-110 [&>svg]:w-6 [&>svg]:h-6">
+                          {l.flag}
+                        </span>
+                        <span className="flex-1 text-left">{l.label}</span>
+                        {blocked && (
+                          <span className="text-[9px] font-black uppercase tracking-widest text-white/30 bg-white/5 border border-white/10 rounded-full px-2 py-0.5 shrink-0">
+                            No disponible
+                          </span>
+                        )}
+                        {currentLangCode === l.code && (
+                          <svg className="w-4 h-4 text-neon-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
+                            <path d="M20 6L9 17l-5-5" />
+                          </svg>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>

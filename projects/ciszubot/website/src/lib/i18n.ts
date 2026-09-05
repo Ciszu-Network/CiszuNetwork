@@ -1,4 +1,4 @@
-﻿export type Lang = 'es' | 'en';
+export type Lang = 'es-latam' | 'es-es' | 'en-us' | 'en-uk';
 
 export const INVITE_URL =
   'https://discord.com/oauth2/authorize?client_id=1395532235872141312&permissions=8&scope=bot%20applications.commands';
@@ -17,7 +17,7 @@ export const BOT_PREFIX = 'cz!';
 export const BOT_VERSION = 'v3.2.0';
 
 // === Email de feedback ===
-export const FEEDBACK_EMAIL = 'ciszunetowork@gmail.com';
+export const FEEDBACK_EMAIL = 'ciszunetwork@gmail.com';
 
 // === URLs oficiales (listas de bots, servidores, donaciones) ===
 export const WEBSITE = 'https://ciszubot.vercel.app';
@@ -40,650 +40,690 @@ export const LOGO_ISOTIPO_CIRCLE =
 export const LOGO_LOGOTIPO =
   'projects/ciszubot/content/logos/images/outline/logotype/color/ciszubot_logotipo_outline_color.svg';
 
-export const dict = {
-  es: {
-    nav: {
-      home: 'Inicio',
-      commands: 'Comandos',
-      status: 'Estado',
-      support: 'Soporte',
-      downloads: 'Descargas',
-      feedback: 'Feedback',
-      invite: 'Invitar',
-      search: 'Buscar página…',
-      searchHint: 'Qué necesitas encontrar',
-      dashboard: 'Panel',
-      privacidad: 'Privacidad',
-      terminos: 'Términos',
-    },
-    hero: {
-      online: 'En línea',
-      offline: 'Desconectado',
-      tagline: 'El bot de Discord de Ciszu Network',
-      description:
-        'Comandos divertidos, de información y utilidad, en español. Con prefijo cz! y slash commands.',
-      ctaInvite: 'Invitar a Discord',
-      ctaGithub: 'GitHub',
-    },
-    stats: {
-      servers: 'Servidores',
-      commandsRun: 'Comandos ejecutados',
-      uptime: 'Uptime',
-      commands: 'Comandos',
-    },
-    features: {
-      title: '¿Por qué CiszuBot?',
-      subtitle: 'Todo lo que necesitas para tu servidor, sin complicaciones.',
-      items: [
-        { title: 'Rápido y ligero', desc: 'Respuesta instantánea a cada comando, sin demoras ni lag.' },
-        { title: '100% en español', desc: 'Todo el bot, sus comandos y mensajes están en tu idioma.' },
-        { title: 'Comandos variados', desc: 'Diversión, información, social y utilidad en un solo bot.' },
-        { title: 'Privacidad primero', desc: 'No vendemos datos. Solo registramos el uso de comandos para mejorar.' },
-      ],
-    },
-    commandsSection: {
-      kicker: '72 comandos · 9 categorías',
-      title: 'Comandos',
-      subtitle: 'Usa cz!comando en el chat o /comando con la barra de Discord.',
-      viewAll: 'Ver todos los comandos',
-      usage: 'Uso',
-      aliases: 'Aliases',
-      categories: {
-        'Diversión': 'Diversión',
-        'Información': 'Información',
-        'Social': 'Social',
-        'Utilidad': 'Utilidad',
-        'Economía': 'Economía',
-        'Música': 'Música',
-        'Niveles': 'Niveles',
-        'Moderación': 'Moderación',
-        'Configuración': 'Configuración',
-      },
-    },
-    statusSection: {
-      title: 'Estado en vivo',
-      subtitle: 'El bot envía un heartbeat cada 60 segundos. La web se actualiza automáticamente.',
-      online: 'Bot en línea',
-      offline: 'Bot offline',
-      servers: 'Servidores',
-      commands: 'Comandos',
-      uptime: 'Uptime',
-      version: 'Versión',
-      lastSeen: 'Última actualización',
-      heartbeat: 'El bot envía heartbeat cada 60s y la web refresca cada 60s',
-      noStatus: 'El bot no ha reportado estado aún. Si acaba de arrancar, espera un momento.',
-      viewPage: 'Ver estado detallado',
-    },
-    ecosystem: {
-      title: 'Ecosistema',
-      subtitle: 'CiszuBot es parte de Ciszu Network. Descubre más proyectos.',
-      visit: 'Visitar',
-      items: [
-        {
-          name: 'Ciszu Network',
-          desc: 'El hub central de la marca: ecosistema digital, redes y proyectos.',
-        },
-        {
-          name: 'Ciszuko Antony',
-          desc: 'Portfolio personal: logos, medios y música del creador.',
-        },
-      ],
-    },
-    cta: {
-      title: '¿Listo para probarlo?',
-      description: 'Invita a CiszuBot a tu servidor en menos de un minuto. Gratis y rápido.',
-      button: 'Invitar ahora',
-    },
-    footer: {
-      explore: 'Explorar',
-      projects: 'Proyectos',
-      bot: 'El Bot',
-      legal: 'Legal',
-      terms: 'Términos',
-      privacy: 'Privacidad',
-      support: 'Soporte',
-      prefix: 'Prefijo',
-      slash: 'Slash',
-      discordServer: 'Ciszugamens',
-      rights: 'Todos los derechos reservados.',
-      madeBy: 'Hecho con amor por',
-    },
-    cookiesBanner: {
-      title: 'Uso de Cookies y Privacidad',
-      text: 'Utilizamos cookies propias y de terceros (incluyendo servicios de Google y Cloudflare) para mantener tu sesión activa, proteger el bot de bots y mejorar tu experiencia. Al continuar navegando, aceptas nuestra ',
-      privacyLink: 'Política de Privacidad',
-      termsLink: 'Términos de Servicio',
-      accept: 'ENTENDIDO',
-    },
-    commandsPage: {
-      title: 'Comandos',
-      subtitle:
-        'Todos los comandos de CiszuBot con su descripción, uso y aliases. Úsalos con cz! o como slash commands.',
-      search: 'Buscar comando o alias…',
-      noResults: 'No se encontraron comandos para «{q}».',
-      all: 'Todos',
-      prefixNote: 'Prefijo',
-    },
-    statusPage: {
-      title: 'Estado de CiszuBot',
-      subtitle:
-        'El bot reporta su estado cada 60 segundos mediante un heartbeat. Esta página siempre muestra la última señal recibida.',
-      online: 'En línea',
-      offline: 'Sin señal',
-      servers: 'Servidores conectados',
-      commandsRun: 'Comandos ejecutados',
-      uptime: 'Tiempo activo',
-      version: 'Versión',
-      startedAt: 'Iniciado',
-      lastSeen: 'Última señal',
-      refresh: 'La página se refresca automáticamente cada 60s.',
-      updated: 'Datos de producción en vivo desde Supabase.',
-      back: 'Volver al inicio',
-    },
-    supportPage: {
-      title: 'Soporte',
-      subtitle:
-        '¿Necesitas ayuda con CiszuBot? Estos son los mejores canales para resolver cualquier duda o reportar un problema.',
-      joinTitle: 'Servidor de Discord',
-      joinDesc:
-        'Únete a la comunidad de Ciszu Network. Canal de soporte, anuncios del bot y reportes de bugs.',
-      joinCta: 'Unirme al servidor',
-      faqTitle: 'Preguntas frecuentes',
-      faq: [
-        {
-          q: '¿Cómo invito a CiszuBot a mi servidor?',
-          a: 'Usa el botón «Invitar» en la página principal y elige el servidor. Necesitas permisos de «Gestionar servidor» en Discord.',
-        },
-        {
-          q: '¿Cuál es el prefijo del bot?',
-          a: 'El prefijo es cz!. También puedes usar los slash commands escribiendo / en Discord.',
-        },
-        {
-          q: '¿CiszuBot es gratis?',
-          a: 'Sí, el bot es completamente gratis. En el futuro puede haber donaciones opcionales para apoyar el desarrollo.',
-        },
-        {
-          q: '¿Qué datos almacena el bot?',
-          a: 'Solo registra un contador de comandos ejecutados y el estado de conexión. No se almacenan mensajes ni datos personales. Ver la política de privacidad.',
-        },
-        {
-          q: '¿Puedo reportar un bug o pedir un comando?',
-          a: 'Sí. Entra al servidor de Discord y usa el canal de soporte con una descripción del problema o tu idea.',
-        },
-      ],
-      contactTitle: 'Contacto',
-      contactDesc:
-        'Para asuntos legales, prensa o colaboraciones escribe a:',
-      contactCta: 'Enviar email',
-      donateTitle: 'Apoya el proyecto',
-      donateDesc:
-        'CiszuBot es un proyecto sin ánimo de lucro. Si quieres apoyar su desarrollo, pronto habrá donaciones opcionales.',
-      comingSoon: 'Próximamente',
-      listsTitle: 'Listas de bots',
-      listsDesc:
-        'CiszuBot está disponible en directorios de bots. Vótalo en las listas para ayudarnos a crecer:',
-      vote: 'Votar',
-      serverListsTitle: 'Nuestro servidor en las listas',
-      server: 'Servidor',
-    },
-    feedbackPage: {
-      title: 'Feedback',
-      subtitle:
-        'Tu opinión es importante. Reporta errores, pide comandos o comparte tus ideas para mejorar CiszuBot.',
-      sections: {
-        form: 'Formulario',
-        formDesc:
-          'Escríbenos directamente por correo. Los campos de nombre y email son opcionales.',
-        report: 'Reporte de problemas',
-        reportDesc:
-          'El widget de Sentry captura un reporte con detalles técnicos (página, versión del navegador) y opcionalmente una captura de pantalla.',
-      },
-      name: 'Nombre',
-      namePlaceholder: 'Tu nombre (opcional)',
-      email: 'Email',
-      emailPlaceholder: 'tu@email.com (opcional)',
-      message: 'Mensaje',
-      messagePlaceholder: 'Cuéntanos qué ocurrió o qué te gustaría que añadamos…',
-      messageRequired: 'El mensaje es obligatorio.',
-      emailInvalid: 'Introduce un email válido.',
-      submit: 'Enviar feedback',
-      submitted: 'Correo listo. Revisa tu cliente de correo y pulsa enviar para completar.',
-      alternative: 'Prefieres email clásico',
-      openReport: 'Abrir el reporte de problemas',
-      openReportDesc: 'Usa el widget de Sentry para reportar un problema con captura de pantalla.',
-      noSentry: 'El reporte no está disponible ahora. Usa el formulario o el servidor de soporte.',
-      back: 'Volver al inicio',
-    },
-    descargasPage: {
-      title: 'Descargas',
-      subtitle:
-        'Lleva CiszuBot a tu escritorio con la PDWA (App de Escritorio Progresiva): sin pestañas, sin barra de direcciones y con tu logo.',
-      whatTitle: '¿Qué es la PDWA?',
-      whatDesc:
-        'Una PDWA (App de Escritorio Progresiva) es la web de CiszuBot instalada como una aplicación de escritorio real: se abre en su propia ventana, aparece en Inicio y en la barra de tareas, y funciona sin barra de navegación.',
-      howTitle: 'Cómo instalarla',
-      steps: [
-        'Abre esta web en un navegador compatible (Chrome, Chromium o Edge).',
-        'Pulsa el botón «Instalar PDWA» que flota en la esquina inferior izquierda.',
-        'Confirma el diálogo del navegador (Instalar / Instalar aplicación). Opera no instala de forma nativa: el propio botón te muestra el método alternativo (acceso directo con --app=URL).',
-        '¡Listo! CiszuBot queda como app en tu escritorio. Desde el menú podrás ocultar el botón.',
-      ],
-      installTitle: 'Instalar la PDWA',
-      installDesc:
-        'Pulsa el botón flotante inferior para instalar la app. Si tu navegador no lo permite, la web te guiará con una alternativa.',
-      advantagesTitle: 'Ventajas',
-      advantages: [
-        'Abrir sin pestañas ni barra de direcciones.',
-        'Icono propio en el escritorio y barra de tareas.',
-        'Se actualiza sola, siempre la última versión.',
-        'Funciona incluso en equipos de bajo rendimiento.',
-      ],
-      feedbackTitle: '¿Encontraste un problema?',
-      feedbackDesc:
-        'Tras instalar, si algo no funciona, cuéntanoslo desde Feedback o el botón flotante de reportes.',
-      feedbackCta: 'Ir a Feedback',
-      back: 'Volver al inicio',
-    },
-    legalPage: {
-      updated: 'Última actualización: 2 de agosto de 2026',
-      back: 'Volver',
-      sections: [
-        {
-          h: '1. Aceptación de los términos',
-          p: 'Al invitar y utilizar CiszuBot («el Bot») en un servidor de Discord, aceptas estos Términos de Servicio. Si no estás de acuerdo, no añadas el Bot a tu servidor.',
-        },
-        {
-          h: '2. Uso del servicio',
-          p: 'El Bot es gratuito y se ofrece «tal cual». No garantizamos disponibilidad continua ni ausencia de errores. Está prohibido usar el Bot para violar los Términos de Servicio de Discord, las leyes aplicables o los derechos de terceros.',
-        },
-        {
-          h: '3. Propiedad intelectual',
-          p: 'CiszuBot, su logotipo, marca y código son propiedad de CiszukoAntony. No se otorga ninguna licencia salvo el derecho de invitar al Bot a un servidor.',
-        },
-        {
-          h: '4. Cambios en el servicio',
-          p: 'Podemos modificar, pausar o discontinuar el Bot, sus comandos o estos términos en cualquier momento. Los cambios se publicarán en esta página.',
-        },
-        {
-          h: '5. Limitación de responsabilidad',
-          p: 'El Bot no será responsable de daños directos o indirectos derivados de su uso, incluyendo pérdida de datos o interrupciones.',
-        },
-        {
-          h: '6. Contacto',
-          p: 'Para preguntas sobre estos términos, únete al servidor de soporte de Discord.',
-        },
-        {
-          h: 'anuncios',
-          p: 'CiszuBot muestra anuncios propios (promoción del ecosistema Ciszu Network) y, en el futuro, de terceros. Todos los anuncios son opcionales y cerrables, con temporizador visible y enlace a estas políticas. Las impresiones, clics y cierres se miden de forma agregada (Google Analytics 4) para mejorar la relevancia; nunca vinculamos anuncios a datos sensibles. Puedes gestionar o bloquear las cookies de análisis desde tu navegador.',
-        },
-        {
-          h: 'Datos para recomendación de anuncios',
-          p: 'Para recomendar mejores anuncios podemos usar señales de audiencia agregadas (páginas visitadas, idioma del navegador, región aproximada) recogidas por Google Analytics 4. Estos datos se tratan de forma agregada y anónima; no se utilizan para identificar a una persona concreta más allá de lo necesario para el servicio. Puedes bloquear las cookies de análisis desde tu navegador o desde las preferencias del sitio.',
-        },
-        {
-          h: 'Geolocalización',
-          p: 'Podemos estimar tu ubicación aproximada (región/país) a partir de tu dirección IP para ofrecer contenido y anuncios relevantes a tu región, cumplir requisitos legales locales y mejorar la seguridad. La geolocalización precisa (GPS) solo se utiliza si una funcionalidad lo requiere explícitamente y con tu consentimiento; nunca se usa para anuncios.',
-        },
-      ],
-    },
-    privacyPage: {
-      updated: 'Última actualización: 2 de agosto de 2026',
-      back: 'Volver',
-      sections: [
-        {
-          h: '1. Datos que recopilamos',
-          p: 'El Bot registra un contador de comandos ejecutados, el número de servidores en los que está y el estado de conexión (online/offline). Estos datos se usan para la página de estado pública del bot.',
-        },
-        {
-          h: '2. Datos que NO recopilamos',
-          p: 'No almacenamos mensajes, contenido de comandos, datos personales, direcciones IP ni información de usuarios de Discord.',
-        },
-        {
-          h: '3. Almacenamiento y seguridad',
-          p: 'Los datos se almacenan en una base de datos en la nube (Supabase) con acceso restringido y políticas de seguridad. Solo se usan con fines operativos.',
-        },
-        {
-          h: '4. Uso de los datos',
-          p: 'Los datos agregados (nº de servidores, comandos ejecutados) se muestran públicamente en ciszubot.vercel.app como estadísticas del bot.',
-        },
-        {
-          h: '5. Terceros',
-          p: 'No vendemos, alquilamos ni compartimos datos con terceros. El bot usa la API de Discord y servicios de hosting estándar.',
-        },
-        {
-          h: '6. Contacto',
-          p: 'Para ejercer tus derechos o preguntar sobre esta política, únete al servidor de soporte de Discord.',
-        },
-      ],
+// ── Diccionarios: los 4 idiomas de producción son INDIVIDUALES entre sí ─────
+// es-latam (Español Latam), es-es (Español España), en-us (English US),
+// en-uk (English UK). Cada uno tiene su propia entrada; nunca se juntan.
+
+const es = {
+  nav: {
+    home: 'Inicio',
+    commands: 'Comandos',
+    status: 'Estado',
+    support: 'Soporte',
+    downloads: 'Descargas',
+    feedback: 'Feedback',
+    invite: 'Invitar',
+    search: 'Buscar página…',
+    searchHint: 'Qué necesitas encontrar',
+    dashboard: 'Panel',
+    privacidad: 'Privacidad',
+    terminos: 'Términos',
+  },
+  hero: {
+    online: 'En línea',
+    offline: 'Desconectado',
+    tagline: 'El bot de Discord de Ciszu Network',
+    description:
+      'Comandos divertidos, de información y utilidad, en español. Con prefijo cz! y slash commands.',
+    ctaInvite: 'Invitar a Discord',
+    ctaGithub: 'GitHub',
+  },
+  stats: {
+    servers: 'Servidores',
+    commandsRun: 'Comandos ejecutados',
+    uptime: 'Uptime',
+    commands: 'Comandos',
+  },
+  features: {
+    title: '¿Por qué CiszuBot?',
+    subtitle: 'Todo lo que necesitas para tu servidor, sin complicaciones.',
+    items: [
+      { title: 'Rápido y ligero', desc: 'Respuesta instantánea a cada comando, sin demoras ni lag.' },
+      { title: '100% en español', desc: 'Todo el bot, sus comandos y mensajes están en tu idioma.' },
+      { title: 'Comandos variados', desc: 'Diversión, información, social y utilidad en un solo bot.' },
+      { title: 'Privacidad primero', desc: 'No vendemos datos. Solo registramos el uso de comandos para mejorar.' },
+    ],
+  },
+  commandsSection: {
+    kicker: '72 comandos · 9 categorías',
+    title: 'Comandos',
+    subtitle: 'Usa cz!comando en el chat o /comando con la barra de Discord.',
+    viewAll: 'Ver todos los comandos',
+    usage: 'Uso',
+    aliases: 'Aliases',
+    categories: {
+      'Diversión': 'Diversión',
+      'Información': 'Información',
+      'Social': 'Social',
+      'Utilidad': 'Utilidad',
+      'Economía': 'Economía',
+      'Música': 'Música',
+      'Niveles': 'Niveles',
+      'Moderación': 'Moderación',
+      'Configuración': 'Configuración',
     },
   },
-  en: {
-    nav: {
-      home: 'Home',
-      commands: 'Commands',
-      status: 'Status',
-      support: 'Support',
-      downloads: 'Downloads',
-      feedback: 'Feedback',
-      invite: 'Invite',
-      search: 'Search page…',
-      searchHint: 'What do you need to find',
-      dashboard: 'Panel',
-      privacidad: 'Privacy',
-      terminos: 'Terms',
-    },
-    hero: {
-      online: 'Online',
-      offline: 'Offline',
-      tagline: "Ciszu Network's Discord bot",
-      description:
-        'Fun, informative and utility commands, in Spanish. With cz! prefix and slash commands.',
-      ctaInvite: 'Invite to Discord',
-      ctaGithub: 'GitHub',
-    },
-    stats: {
-      servers: 'Servers',
-      commandsRun: 'Commands run',
-      uptime: 'Uptime',
-      commands: 'Commands',
-    },
-    features: {
-      title: 'Why CiszuBot?',
-      subtitle: 'Everything you need for your server, without the hassle.',
-      items: [
-        { title: 'Fast & lightweight', desc: 'Instant response to every command, no lag.' },
-        { title: '100% Spanish', desc: 'The whole bot, its commands and messages are in your language.' },
-        { title: 'Varied commands', desc: 'Fun, info, social and utility in a single bot.' },
-        { title: 'Privacy first', desc: 'We do not sell data. We only log command usage to improve.' },
-      ],
-    },
-    commandsSection: {
-      kicker: '72 commands · 9 categories',
-      title: 'Commands',
-      subtitle: 'Type cz!command in chat or /command with the Discord bar.',
-      viewAll: 'View all commands',
-      usage: 'Usage',
-      aliases: 'Aliases',
-      categories: {
-        'Diversión': 'Fun',
-        'Información': 'Information',
-        'Social': 'Social',
-        'Utilidad': 'Utility',
-        'Economía': 'Economy',
-        'Música': 'Music',
-        'Niveles': 'Levels',
-        'Moderación': 'Moderation',
-        'Configuración': 'Configuration',
+  statusSection: {
+    title: 'Estado en vivo',
+    subtitle: 'El bot envía un heartbeat cada 60 segundos. La web se actualiza automáticamente.',
+    online: 'Bot en línea',
+    offline: 'Bot offline',
+    servers: 'Servidores',
+    commands: 'Comandos',
+    uptime: 'Uptime',
+    version: 'Versión',
+    lastSeen: 'Última actualización',
+    heartbeat: 'El bot envía heartbeat cada 60s y la web refresca cada 60s',
+    noStatus: 'El bot no ha reportado estado aún. Si acaba de arrancar, espera un momento.',
+    viewPage: 'Ver estado detallado',
+  },
+  ecosystem: {
+    title: 'Ecosistema',
+    subtitle: 'CiszuBot es parte de Ciszu Network. Descubre más proyectos.',
+    visit: 'Visitar',
+    items: [
+      {
+        name: 'Ciszu Network',
+        desc: 'El hub central de la marca: ecosistema digital, redes y proyectos.',
       },
+      {
+        name: 'Ciszuko Antony',
+        desc: 'Portfolio personal: logos, medios y música del creador.',
+      },
+    ],
+  },
+  cta: {
+    title: '¿Listo para probarlo?',
+    description: 'Invita a CiszuBot a tu servidor en menos de un minuto. Gratis y rápido.',
+    button: 'Invitar ahora',
+  },
+  footer: {
+    explore: 'Explorar',
+    projects: 'Proyectos',
+    bot: 'El Bot',
+    legal: 'Legal',
+    terms: 'Términos',
+    privacy: 'Privacidad',
+    support: 'Soporte',
+    prefix: 'Prefijo',
+    slash: 'Slash',
+    discordServer: 'Ciszugamens',
+    rights: 'Todos los derechos reservados.',
+    madeBy: 'Hecho con amor por',
+  },
+  cookiesBanner: {
+    title: 'Uso de Cookies y Privacidad',
+    text: 'Utilizamos cookies propias y de terceros (incluyendo servicios de Google y Cloudflare) para mantener tu sesión activa, proteger el bot de bots y mejorar tu experiencia. Al continuar navegando, aceptas nuestra ',
+    privacyLink: 'Política de Privacidad',
+    termsLink: 'Términos de Servicio',
+    accept: 'ENTENDIDO',
+  },
+  commandsPage: {
+    title: 'Comandos',
+    subtitle:
+      'Todos los comandos de CiszuBot con su descripción, uso y aliases. Úsalos con cz! o como slash commands.',
+    search: 'Buscar comando o alias…',
+    noResults: 'No se encontraron comandos para «{q}».',
+    all: 'Todos',
+    prefixNote: 'Prefijo',
+  },
+  statusPage: {
+    title: 'Estado de CiszuBot',
+    subtitle:
+      'El bot reporta su estado cada 60 segundos mediante un heartbeat. Esta página siempre muestra la última señal recibida.',
+    online: 'En línea',
+    offline: 'Sin señal',
+    servers: 'Servidores conectados',
+    commandsRun: 'Comandos ejecutados',
+    uptime: 'Tiempo activo',
+    version: 'Versión',
+    startedAt: 'Iniciado',
+    lastSeen: 'Última señal',
+    refresh: 'La página se refresca automáticamente cada 60s.',
+    updated: 'Datos de producción en vivo desde Supabase.',
+    back: 'Volver al inicio',
+  },
+  supportPage: {
+    title: 'Soporte',
+    subtitle:
+      '¿Necesitas ayuda con CiszuBot? Estos son los mejores canales para resolver cualquier duda o reportar un problema.',
+    joinTitle: 'Servidor de Discord',
+    joinDesc:
+      'Únete a la comunidad de Ciszu Network. Canal de soporte, anuncios del bot y reportes de bugs.',
+    joinCta: 'Unirme al servidor',
+    faqTitle: 'Preguntas frecuentes',
+    faq: [
+      {
+        q: '¿Cómo invito a CiszuBot a mi servidor?',
+        a: 'Usa el botón «Invitar» en la página principal y elige el servidor. Necesitas permisos de «Gestionar servidor» en Discord.',
+      },
+      {
+        q: '¿Cuál es el prefijo del bot?',
+        a: 'El prefijo es cz!. También puedes usar los slash commands escribiendo / en Discord.',
+      },
+      {
+        q: '¿CiszuBot es gratis?',
+        a: 'Sí, el bot es completamente gratis. En el futuro puede haber donaciones opcionales para apoyar el desarrollo.',
+      },
+      {
+        q: '¿Qué datos almacena el bot?',
+        a: 'Solo registra un contador de comandos ejecutados y el estado de conexión. No se almacenan mensajes ni datos personales. Ver la política de privacidad.',
+      },
+      {
+        q: '¿Puedo reportar un bug o pedir un comando?',
+        a: 'Sí. Entra al servidor de Discord y usa el canal de soporte con una descripción del problema o tu idea.',
+      },
+    ],
+    contactTitle: 'Contacto',
+    contactDesc:
+      'Para asuntos legales, prensa o colaboraciones escribe a:',
+    contactCta: 'Enviar email',
+    donateTitle: 'Apoya el proyecto',
+    donateDesc:
+      'CiszuBot es un proyecto sin ánimo de lucro. Si quieres apoyar su desarrollo, pronto habrá donaciones opcionales.',
+    comingSoon: 'Próximamente',
+    listsTitle: 'Listas de bots',
+    listsDesc:
+      'CiszuBot está disponible en directorios de bots. Vótalo en las listas para ayudarnos a crecer:',
+    vote: 'Votar',
+    serverListsTitle: 'Nuestro servidor en las listas',
+    server: 'Servidor',
+  },
+  feedbackPage: {
+    title: 'Feedback',
+    subtitle:
+      'Tu opinión es importante. Reporta errores, pide comandos o comparte tus ideas para mejorar CiszuBot.',
+    sections: {
+      form: 'Formulario',
+      formDesc:
+        'Escríbenos directamente por correo. Los campos de nombre y email son opcionales.',
+      report: 'Reporte de problemas',
+      reportDesc:
+        'El widget de Sentry captura un reporte con detalles técnicos (página, versión del navegador) y opcionalmente una captura de pantalla.',
     },
-    statusSection: {
-      title: 'Live status',
-      subtitle: 'The bot sends a heartbeat every 60 seconds. The page updates automatically.',
-      online: 'Bot online',
-      offline: 'Bot offline',
-      servers: 'Servers',
-      commands: 'Commands',
-      uptime: 'Uptime',
-      version: 'Version',
-      lastSeen: 'Last update',
-      heartbeat: 'The bot heartbeats every 60s and this page refreshes every 60s',
-      noStatus: 'The bot has not reported status yet. If it just started, wait a moment.',
-      viewPage: 'View detailed status',
+    name: 'Nombre',
+    namePlaceholder: 'Tu nombre (opcional)',
+    email: 'Email',
+    emailPlaceholder: 'tu@email.com (opcional)',
+    message: 'Mensaje',
+    messagePlaceholder: 'Cuéntanos qué ocurrió o qué te gustaría que añadamos…',
+    messageRequired: 'El mensaje es obligatorio.',
+    emailInvalid: 'Introduce un email válido.',
+    submit: 'Enviar feedback',
+    submitted: 'Correo listo. Revisa tu cliente de correo y pulsa enviar para completar.',
+    alternative: 'Prefieres email clásico',
+    openReport: 'Abrir el reporte de problemas',
+    openReportDesc: 'Usa el widget de Sentry para reportar un problema con captura de pantalla.',
+    noSentry: 'El reporte no está disponible ahora. Usa el formulario o el servidor de soporte.',
+    back: 'Volver al inicio',
+  },
+  descargasPage: {
+    title: 'Descargas',
+    subtitle:
+      'Lleva CiszuBot a tu escritorio con la PDWA (App de Escritorio Progresiva): sin pestañas, sin barra de direcciones y con tu logo.',
+    whatTitle: '¿Qué es la PDWA?',
+    whatDesc:
+      'Una PDWA (App de Escritorio Progresiva) es la web de CiszuBot instalada como una aplicación de escritorio real: se abre en su propia ventana, aparece en Inicio y en la barra de tareas, y funciona sin barra de navegación.',
+    howTitle: 'Cómo instalarla',
+    steps: [
+      'Abre esta web en un navegador compatible (Chrome, Chromium o Edge).',
+      'Pulsa el botón «Instalar PDWA» que flota en la esquina inferior izquierda.',
+      'Confirma el diálogo del navegador (Instalar / Instalar aplicación). Opera no instala de forma nativa: el propio botón te muestra el método alternativo (acceso directo con --app=URL).',
+      '¡Listo! CiszuBot queda como app en tu escritorio. Desde el menú podrás ocultar el botón.',
+    ],
+    installTitle: 'Instalar la PDWA',
+    installDesc:
+      'Pulsa el botón flotante inferior para instalar la app. Si tu navegador no lo permite, la web te guiará con una alternativa.',
+    advantagesTitle: 'Ventajas',
+    advantages: [
+      'Abrir sin pestañas ni barra de direcciones.',
+      'Icono propio en el escritorio y barra de tareas.',
+      'Se actualiza sola, siempre la última versión.',
+      'Funciona incluso en equipos de bajo rendimiento.',
+    ],
+    feedbackTitle: '¿Encontraste un problema?',
+    feedbackDesc:
+      'Tras instalar, si algo no funciona, cuéntanoslo desde Feedback o el botón flotante de reportes.',
+    feedbackCta: 'Ir a Feedback',
+    back: 'Volver al inicio',
+  },
+  legalPage: {
+    updated: 'Última actualización: 2 de agosto de 2026',
+    back: 'Volver',
+    sections: [
+      {
+        h: '1. Aceptación de los términos',
+        p: 'Al invitar y utilizar CiszuBot («el Bot») en un servidor de Discord, aceptas estos Términos de Servicio. Si no estás de acuerdo, no añadas el Bot a tu servidor.',
+      },
+      {
+        h: '2. Uso del servicio',
+        p: 'El Bot es gratuito y se ofrece «tal cual». No garantizamos disponibilidad continua ni ausencia de errores. Está prohibido usar el Bot para violar los Términos de Servicio de Discord, las leyes aplicables o los derechos de terceros.',
+      },
+      {
+        h: '3. Propiedad intelectual',
+        p: 'CiszuBot, su logotipo, marca y código son propiedad de CiszukoAntony. No se otorga ninguna licencia salvo el derecho de invitar al Bot a un servidor.',
+      },
+      {
+        h: '4. Cambios en el servicio',
+        p: 'Podemos modificar, pausar o discontinuar el Bot, sus comandos o estos términos en cualquier momento. Los cambios se publicarán en esta página.',
+      },
+      {
+        h: '5. Limitación de responsabilidad',
+        p: 'El Bot no será responsable de daños directos o indirectos derivados de su uso, incluyendo pérdida de datos o interrupciones.',
+      },
+      {
+        h: '6. Contacto',
+        p: 'Para preguntas sobre estos términos, únete al servidor de soporte de Discord.',
+      },
+      {
+        h: 'anuncios',
+        p: 'CiszuBot muestra anuncios propios (promoción del ecosistema Ciszu Network) y, en el futuro, de terceros. Todos los anuncios son opcionales y cerrables, con temporizador visible y enlace a estas políticas. Las impresiones, clics y cierres se miden de forma agregada (Google Analytics 4) para mejorar la relevancia; nunca vinculamos anuncios a datos sensibles. Puedes gestionar o bloquear las cookies de análisis desde tu navegador.',
+      },
+      {
+        h: 'Datos para recomendación de anuncios',
+        p: 'Para recomendar mejores anuncios podemos usar señales de audiencia agregadas (páginas visitadas, idioma del navegador, región aproximada) recogidas por Google Analytics 4. Estos datos se tratan de forma agregada y anónima; no se utilizan para identificar a una persona concreta más allá de lo necesario para el servicio. Puedes bloquear las cookies de análisis desde tu navegador o desde las preferencias del sitio.',
+      },
+      {
+        h: 'Geolocalización',
+        p: 'Podemos estimar tu ubicación aproximada (región/país) a partir de tu dirección IP para ofrecer contenido y anuncios relevantes a tu región, cumplir requisitos legales locales y mejorar la seguridad. La geolocalización precisa (GPS) solo se utiliza si una funcionalidad lo requiere explícitamente y con tu consentimiento; nunca se usa para anuncios.',
+      },
+    ],
+  },
+  privacyPage: {
+    updated: 'Última actualización: 2 de agosto de 2026',
+    back: 'Volver',
+    sections: [
+      {
+        h: '1. Datos que recopilamos',
+        p: 'El Bot registra un contador de comandos ejecutados, el número de servidores en los que está y el estado de conexión (online/offline). Estos datos se usan para la página de estado pública del bot.',
+      },
+      {
+        h: '2. Datos que NO recopilamos',
+        p: 'No almacenamos mensajes, contenido de comandos, datos personales, direcciones IP ni información de usuarios de Discord.',
+      },
+      {
+        h: '3. Almacenamiento y seguridad',
+        p: 'Los datos se almacenan en una base de datos en la nube (Supabase) con acceso restringido y políticas de seguridad. Solo se usan con fines operativos.',
+      },
+      {
+        h: '4. Uso de los datos',
+        p: 'Los datos agregados (nº de servidores, comandos ejecutados) se muestran públicamente en ciszubot.vercel.app como estadísticas del bot.',
+      },
+      {
+        h: '5. Terceros',
+        p: 'No vendemos, alquilamos ni compartimos datos con terceros. El bot usa la API de Discord y servicios de hosting estándar.',
+      },
+      {
+        h: '6. Contacto',
+        p: 'Para ejercer tus derechos o preguntar sobre esta política, únete al servidor de soporte de Discord.',
+      },
+    ],
+  },
+};
+
+const en = {
+  nav: {
+    home: 'Home',
+    commands: 'Commands',
+    status: 'Status',
+    support: 'Support',
+    downloads: 'Downloads',
+    feedback: 'Feedback',
+    invite: 'Invite',
+    search: 'Search page…',
+    searchHint: 'What do you need to find',
+    dashboard: 'Panel',
+    privacidad: 'Privacy',
+    terminos: 'Terms',
+  },
+  hero: {
+    online: 'Online',
+    offline: 'Offline',
+    tagline: "Ciszu Network's Discord bot",
+    description:
+      'Fun, informative and utility commands, in Spanish. With cz! prefix and slash commands.',
+    ctaInvite: 'Invite to Discord',
+    ctaGithub: 'GitHub',
+  },
+  stats: {
+    servers: 'Servers',
+    commandsRun: 'Commands run',
+    uptime: 'Uptime',
+    commands: 'Commands',
+  },
+  features: {
+    title: 'Why CiszuBot?',
+    subtitle: 'Everything you need for your server, without the hassle.',
+    items: [
+      { title: 'Fast & lightweight', desc: 'Instant response to every command, no lag.' },
+      { title: '100% Spanish', desc: 'The whole bot, its commands and messages are in your language.' },
+      { title: 'Varied commands', desc: 'Fun, info, social and utility in a single bot.' },
+      { title: 'Privacy first', desc: 'We do not sell data. We only log command usage to improve.' },
+    ],
+  },
+  commandsSection: {
+    kicker: '72 commands · 9 categories',
+    title: 'Commands',
+    subtitle: 'Type cz!command in chat or /command with the Discord bar.',
+    viewAll: 'View all commands',
+    usage: 'Usage',
+    aliases: 'Aliases',
+    categories: {
+      'Diversión': 'Fun',
+      'Información': 'Information',
+      'Social': 'Social',
+      'Utilidad': 'Utility',
+      'Economía': 'Economy',
+      'Música': 'Music',
+      'Niveles': 'Levels',
+      'Moderación': 'Moderation',
+      'Configuración': 'Configuration',
     },
-    ecosystem: {
-      title: 'Ecosystem',
-      subtitle: 'CiszuBot is part of Ciszu Network. Discover more projects.',
-      visit: 'Visit',
-      items: [
-        {
-          name: 'Ciszu Network',
-          desc: 'The brand hub: digital ecosystem, networks and projects.',
-        },
-        {
-          name: 'Ciszuko Antony',
-          desc: "Personal portfolio: creator's logos, media and music.",
-        },
-      ],
+  },
+  statusSection: {
+    title: 'Live status',
+    subtitle: 'The bot sends a heartbeat every 60 seconds. The page updates automatically.',
+    online: 'Bot online',
+    offline: 'Bot offline',
+    servers: 'Servers',
+    commands: 'Commands',
+    uptime: 'Uptime',
+    version: 'Version',
+    lastSeen: 'Last update',
+    heartbeat: 'The bot heartbeats every 60s and this page refreshes every 60s',
+    noStatus: 'The bot has not reported status yet. If it just started, wait a moment.',
+    viewPage: 'View detailed status',
+  },
+  ecosystem: {
+    title: 'Ecosystem',
+    subtitle: 'CiszuBot is part of Ciszu Network. Discover more projects.',
+    visit: 'Visit',
+    items: [
+      {
+        name: 'Ciszu Network',
+        desc: 'The brand hub: digital ecosystem, networks and projects.',
+      },
+      {
+        name: 'Ciszuko Antony',
+        desc: "Personal portfolio: creator's logos, media and music.",
+      },
+    ],
+  },
+  cta: {
+    title: 'Ready to try it?',
+    description: 'Invite CiszuBot to your server in less than a minute. Free and fast.',
+    button: 'Invite now',
+  },
+  footer: {
+    explore: 'Explore',
+    projects: 'Projects',
+    bot: 'The Bot',
+    legal: 'Legal',
+    terms: 'Terms',
+    privacy: 'Privacy',
+    support: 'Support',
+    prefix: 'Prefix',
+    slash: 'Slash',
+    discordServer: 'Ciszugamens',
+    rights: 'All rights reserved.',
+    madeBy: 'Made with love by',
+  },
+  cookiesBanner: {
+    title: 'Cookies & Privacy',
+    text: 'We use first and third-party cookies (including Google and Cloudflare services) to keep your session active, protect the bot from bots and improve your experience. By continuing to browse, you accept our ',
+    privacyLink: 'Privacy Policy',
+    termsLink: 'Terms of Service',
+    accept: 'GOT IT',
+  },
+  commandsPage: {
+    title: 'Commands',
+    subtitle:
+      'All CiszuBot commands with their description, usage and aliases. Use them with cz! or as slash commands.',
+    search: 'Search command or alias…',
+    noResults: 'No commands found for “{q}”.',
+    all: 'All',
+    prefixNote: 'Prefix',
+  },
+  statusPage: {
+    title: 'CiszuBot status',
+    subtitle:
+      'The bot reports its status every 60 seconds through a heartbeat. This page always shows the latest signal received.',
+    online: 'Online',
+    offline: 'No signal',
+    servers: 'Connected servers',
+    commandsRun: 'Commands run',
+    uptime: 'Uptime',
+    version: 'Version',
+    startedAt: 'Started',
+    lastSeen: 'Last signal',
+    refresh: 'This page refreshes automatically every 60s.',
+    updated: 'Live production data from Supabase.',
+    back: 'Back to home',
+  },
+  supportPage: {
+    title: 'Support',
+    subtitle:
+      'Need help with CiszuBot? These are the best channels to solve any question or report a problem.',
+    joinTitle: 'Ciszugamens',
+    joinDesc:
+      'Join the Ciszu Network community. Support channel, bot announcements and bug reports.',
+    joinCta: 'Join the server',
+    faqTitle: 'Frequently asked questions',
+    faq: [
+      {
+        q: 'How do I invite CiszuBot to my server?',
+        a: 'Use the “Invite” button on the home page and choose the server. You need “Manage server” permissions in Discord.',
+      },
+      {
+        q: "What is the bot's prefix?",
+        a: 'The prefix is cz!. You can also use slash commands by typing / in Discord.',
+      },
+      {
+        q: 'Is CiszuBot free?',
+        a: 'Yes, the bot is completely free. Optional donations may come in the future to support development.',
+      },
+      {
+        q: 'What data does the bot store?',
+        a: 'It only logs a counter of executed commands and connection status. No messages or personal data are stored. See the privacy policy.',
+      },
+      {
+        q: 'Can I report a bug or request a command?',
+        a: 'Yes. Join the Discord server and use the support channel with a description of the issue or your idea.',
+      },
+    ],
+    contactTitle: 'Contact',
+    contactDesc:
+      'For legal matters, press or collaborations write to:',
+    contactCta: 'Send email',
+    donateTitle: 'Support the project',
+    donateDesc:
+      'CiszuBot is a non-profit project. If you want to support its development, optional donations are coming soon.',
+    comingSoon: 'Coming soon',
+    listsTitle: 'Bot lists',
+    listsDesc:
+      'CiszuBot is available in bot directories. Vote on the lists to help us grow:',
+    vote: 'Vote',
+    serverListsTitle: 'Our server on the lists',
+    server: 'Server',
+  },
+  feedbackPage: {
+    title: 'Feedback',
+    subtitle:
+      'Your opinion matters. Report bugs, request commands or share your ideas to improve CiszuBot.',
+    sections: {
+      form: 'Form',
+      formDesc: 'Write to us directly by email. Name and email fields are optional.',
+      report: 'Problem report',
+      reportDesc:
+        'The Sentry widget captures a report with technical details (page, browser version) and optionally a screenshot.',
     },
-    cta: {
-      title: 'Ready to try it?',
-      description: 'Invite CiszuBot to your server in less than a minute. Free and fast.',
-      button: 'Invite now',
-    },
-    footer: {
-      explore: 'Explore',
-      projects: 'Projects',
-      bot: 'The Bot',
-      legal: 'Legal',
-      terms: 'Terms',
-      privacy: 'Privacy',
-      support: 'Support',
-      prefix: 'Prefix',
-      slash: 'Slash',
-      discordServer: 'Ciszugamens',
-      rights: 'All rights reserved.',
-      madeBy: 'Made with love by',
-    },
-    cookiesBanner: {
-      title: 'Cookies & Privacy',
-      text: 'We use first and third-party cookies (including Google and Cloudflare services) to keep your session active, protect the bot from bots and improve your experience. By continuing to browse, you accept our ',
-      privacyLink: 'Privacy Policy',
-      termsLink: 'Terms of Service',
-      accept: 'GOT IT',
-    },
-    commandsPage: {
-      title: 'Commands',
-      subtitle:
-        'All CiszuBot commands with their description, usage and aliases. Use them with cz! or as slash commands.',
-      search: 'Search command or alias…',
-      noResults: 'No commands found for “{q}”.',
-      all: 'All',
-      prefixNote: 'Prefix',
-    },
-    statusPage: {
-      title: 'CiszuBot status',
-      subtitle:
-        'The bot reports its status every 60 seconds through a heartbeat. This page always shows the latest signal received.',
-      online: 'Online',
-      offline: 'No signal',
-      servers: 'Connected servers',
-      commandsRun: 'Commands run',
-      uptime: 'Uptime',
-      version: 'Version',
-      startedAt: 'Started',
-      lastSeen: 'Last signal',
-      refresh: 'This page refreshes automatically every 60s.',
-      updated: 'Live production data from Supabase.',
-      back: 'Back to home',
-    },
+    name: 'Name',
+    namePlaceholder: 'Your name (optional)',
+    email: 'Email',
+    emailPlaceholder: 'you@email.com (optional)',
+    message: 'Message',
+    messagePlaceholder: 'Tell us what happened or what you would like us to add…',
+    messageRequired: 'The message is required.',
+    emailInvalid: 'Please enter a valid email.',
+    submit: 'Send feedback',
+    submitted: 'Email ready. Check your mail client and hit send to finish.',
+    alternative: 'Prefer classic email',
+    openReport: 'Open problem report',
+    openReportDesc: 'Use the Sentry widget to report a problem with a screenshot.',
+    noSentry: 'The report is unavailable right now. Use the form or the support server.',
+    back: 'Back to home',
+  },
+  descargasPage: {
+    title: 'Downloads',
+    subtitle:
+      'Bring CiszuBot to your desktop with the PDWA (Progressive Desktop Web App): no tabs, no address bar and with your logo.',
+    whatTitle: 'What is the PDWA?',
+    whatDesc:
+      'A PDWA (Progressive Desktop Web App) is the CiszuBot website installed as a real desktop application: it opens in its own window, appears in Start and the taskbar, and works without a navigation bar.',
+    howTitle: 'How to install it',
+    steps: [
+      'Open this website in a supported browser (Chrome, Chromium or Edge).',
+      'Click the “Install PDWA” button floating in the bottom-left corner.',
+      'Confirm the browser dialog (Install / Install application). Opera does not install natively: the button itself shows the alternative method (shortcut with --app=URL).',
+      'Done! CiszuBot becomes a desktop app. From its menu you can hide the button.',
+    ],
+    installTitle: 'Install the PDWA',
+    installDesc:
+      'Click the floating bottom button to install the app. If your browser does not allow it, the website will guide you with an alternative.',
+    advantagesTitle: 'Advantages',
+    advantages: [
+      'Opens without tabs or an address bar.',
+      'Its own icon on the desktop and taskbar.',
+      'Updates by itself, always the latest version.',
+      'Works even on low-end devices.',
+    ],
+    feedbackTitle: 'Found a problem?',
+    feedbackDesc:
+      'After installing, if something does not work, tell us from Feedback or the floating report button.',
+    feedbackCta: 'Go to Feedback',
+    back: 'Back to home',
+  },
+  legalPage: {
+    updated: 'Last updated: August 2, 2026',
+    back: 'Back',
+    sections: [
+      {
+        h: '1. Acceptance of terms',
+        p: 'By inviting and using CiszuBot (“the Bot”) on a Discord server, you accept these Terms of Service. If you do not agree, do not add the Bot to your server.',
+      },
+      {
+        h: '2. Use of the service',
+        p: 'The Bot is free and provided “as is”. We do not guarantee continuous availability or absence of errors. Using the Bot to violate Discord Terms of Service, applicable laws or third-party rights is prohibited.',
+      },
+      {
+        h: '3. Intellectual property',
+        p: 'CiszuBot, its logo, brand and code are owned by CiszukoAntony. No license is granted except the right to invite the Bot to a server.',
+      },
+      {
+        h: '4. Changes to the service',
+        p: 'We may modify, pause or discontinue the Bot, its commands or these terms at any time. Changes will be published on this page.',
+      },
+      {
+        h: '5. Limitation of liability',
+        p: 'The Bot shall not be liable for direct or indirect damages arising from its use, including data loss or interruptions.',
+      },
+      {
+        h: '6. Contact',
+        p: 'For questions about these terms, join the Discord support server.',
+      },
+      {
+        h: 'anuncios',
+        p: 'CiszuBot displays its own ads (promotion of the Ciszu Network ecosystem) and, in the future, third-party ads. All ads are optional and closable, with a visible countdown timer and a link to these policies. Impressions, clicks and dismissals are measured in aggregate (Google Analytics 4) to improve relevance; we never link ads to sensitive data. You can manage or block analytics cookies from your browser.',
+      },
+      {
+        h: 'Data for ad recommendations',
+        p: 'To recommend better ads we may use aggregate audience signals (pages visited, browser language, approximate region) collected by Google Analytics 4. This data is processed in an aggregated and anonymous way and is never used to identify a specific person beyond what is strictly necessary for the service. You can block analytics cookies from your browser or site preferences.',
+      },
+      {
+        h: 'Geolocation',
+        p: 'We may estimate your approximate location (region/country) from your IP address to serve content and ads relevant to your region, comply with local legal requirements and improve security. Precise (GPS) geolocation is only used when a feature explicitly requires it and with your consent; it is never used for advertising.',
+      },
+    ],
+  },
+  privacyPage: {
+    updated: 'Last updated: August 2, 2026',
+    back: 'Back',
+    sections: [
+      {
+        h: '1. Data we collect',
+        p: 'The Bot logs a counter of executed commands, the number of servers it is on and connection status (online/offline). This data powers the public status page of the bot.',
+      },
+      {
+        h: '2. Data we DO NOT collect',
+        p: 'We do not store messages, command content, personal data, IP addresses or Discord user information.',
+      },
+      {
+        h: '3. Storage and security',
+        p: 'Data is stored in a cloud database (Supabase) with restricted access and security policies. It is only used for operational purposes.',
+      },
+      {
+        h: '4. Use of data',
+        p: 'Aggregated data (server count, executed commands) is publicly displayed on ciszubot.vercel.app as bot statistics.',
+      },
+      {
+        h: '5. Third parties',
+        p: 'We do not sell, rent or share data with third parties. The bot uses the Discord API and standard hosting services.',
+      },
+      {
+        h: '6. Contact',
+        p: 'To exercise your rights or ask about this policy, join the Discord support server.',
+      },
+    ],
+  },
+};
+
+export const dict = {
+  'es-latam': es,
+  // Español (España): variante propia, individual de Latam.
+  'es-es': {
+    ...es,
     supportPage: {
-      title: 'Support',
-      subtitle:
-        'Need help with CiszuBot? These are the best channels to solve any question or report a problem.',
-      joinTitle: 'Ciszugamens',
-      joinDesc:
-        'Join the Ciszu Network community. Support channel, bot announcements and bug reports.',
-      joinCta: 'Join the server',
-      faqTitle: 'Frequently asked questions',
-      faq: [
-        {
-          q: 'How do I invite CiszuBot to my server?',
-          a: 'Use the “Invite” button on the home page and choose the server. You need “Manage server” permissions in Discord.',
-        },
-        {
-          q: "What is the bot's prefix?",
-          a: 'The prefix is cz!. You can also use slash commands by typing / in Discord.',
-        },
-        {
-          q: 'Is CiszuBot free?',
-          a: 'Yes, the bot is completely free. Optional donations may come in the future to support development.',
-        },
-        {
-          q: 'What data does the bot store?',
-          a: 'It only logs a counter of executed commands and connection status. No messages or personal data are stored. See the privacy policy.',
-        },
-        {
-          q: 'Can I report a bug or request a command?',
-          a: 'Yes. Join the Discord server and use the support channel with a description of the issue or your idea.',
-        },
-      ],
-      contactTitle: 'Contact',
-      contactDesc:
-        'For legal matters, press or collaborations write to:',
-      contactCta: 'Send email',
-      donateTitle: 'Support the project',
-      donateDesc:
-        'CiszuBot is a non-profit project. If you want to support its development, optional donations are coming soon.',
-      comingSoon: 'Coming soon',
-      listsTitle: 'Bot lists',
-      listsDesc:
-        'CiszuBot is available in bot directories. Vote on the lists to help us grow:',
-      vote: 'Vote',
-      serverListsTitle: 'Our server on the lists',
-      server: 'Server',
+      ...es.supportPage,
+      faq: es.supportPage.faq.map((f) => ({ ...f })),
     },
-    feedbackPage: {
-      title: 'Feedback',
-      subtitle:
-        'Your opinion matters. Report bugs, request commands or share your ideas to improve CiszuBot.',
-      sections: {
-        form: 'Form',
-        formDesc: 'Write to us directly by email. Name and email fields are optional.',
-        report: 'Problem report',
-        reportDesc:
-          'The Sentry widget captures a report with technical details (page, browser version) and optionally a screenshot.',
-      },
-      name: 'Name',
-      namePlaceholder: 'Your name (optional)',
-      email: 'Email',
-      emailPlaceholder: 'you@email.com (optional)',
-      message: 'Message',
-      messagePlaceholder: 'Tell us what happened or what you would like us to add…',
-      messageRequired: 'The message is required.',
-      emailInvalid: 'Please enter a valid email.',
-      submit: 'Send feedback',
-      submitted: 'Email ready. Check your mail client and hit send to finish.',
-      alternative: 'Prefer classic email',
-      openReport: 'Open problem report',
-      openReportDesc: 'Use the Sentry widget to report a problem with a screenshot.',
-      noSentry: 'The report is unavailable right now. Use the form or the support server.',
-      back: 'Back to home',
-    },
-    descargasPage: {
-      title: 'Downloads',
-      subtitle:
-        'Bring CiszuBot to your desktop with the PDWA (Progressive Desktop Web App): no tabs, no address bar and with your logo.',
-      whatTitle: 'What is the PDWA?',
-      whatDesc:
-        'A PDWA (Progressive Desktop Web App) is the CiszuBot website installed as a real desktop application: it opens in its own window, appears in Start and the taskbar, and works without a navigation bar.',
-      howTitle: 'How to install it',
-      steps: [
-        'Open this website in a supported browser (Chrome, Chromium or Edge).',
-        'Click the “Install PDWA” button floating in the bottom-left corner.',
-        'Confirm the browser dialog (Install / Install application). Opera does not install natively: the button itself shows the alternative method (shortcut with --app=URL).',
-        'Done! CiszuBot becomes a desktop app. From its menu you can hide the button.',
-      ],
-      installTitle: 'Install the PDWA',
-      installDesc:
-        'Click the floating bottom button to install the app. If your browser does not allow it, the website will guide you with an alternative.',
-      advantagesTitle: 'Advantages',
-      advantages: [
-        'Opens without tabs or an address bar.',
-        'Its own icon on the desktop and taskbar.',
-        'Updates by itself, always the latest version.',
-        'Works even on low-end devices.',
-      ],
-      feedbackTitle: 'Found a problem?',
-      feedbackDesc:
-        'After installing, if something does not work, tell us from Feedback or the floating report button.',
-      feedbackCta: 'Go to Feedback',
-      back: 'Back to home',
-    },
+  },
+  'en-us': en,
+  // English (UK): variante propia, individual de US.
+  'en-uk': {
+    ...en,
     legalPage: {
-      updated: 'Last updated: August 2, 2026',
-      back: 'Back',
-      sections: [
-        {
-          h: '1. Acceptance of terms',
-          p: 'By inviting and using CiszuBot (“the Bot”) on a Discord server, you accept these Terms of Service. If you do not agree, do not add the Bot to your server.',
-        },
-        {
-          h: '2. Use of the service',
-          p: 'The Bot is free and provided “as is”. We do not guarantee continuous availability or absence of errors. Using the Bot to violate Discord Terms of Service, applicable laws or third-party rights is prohibited.',
-        },
-        {
-          h: '3. Intellectual property',
-          p: 'CiszuBot, its logo, brand and code are owned by CiszukoAntony. No license is granted except the right to invite the Bot to a server.',
-        },
-        {
-          h: '4. Changes to the service',
-          p: 'We may modify, pause or discontinue the Bot, its commands or these terms at any time. Changes will be published on this page.',
-        },
-        {
-          h: '5. Limitation of liability',
-          p: 'The Bot shall not be liable for direct or indirect damages arising from its use, including data loss or interruptions.',
-        },
-        {
-          h: '6. Contact',
-          p: 'For questions about these terms, join the Discord support server.',
-        },
-        {
-          h: 'anuncios',
-          p: 'CiszuBot displays its own ads (promotion of the Ciszu Network ecosystem) and, in the future, third-party ads. All ads are optional and closable, with a visible countdown timer and a link to these policies. Impressions, clicks and dismissals are measured in aggregate (Google Analytics 4) to improve relevance; we never link ads to sensitive data. You can manage or block analytics cookies from your browser.',
-        },
-        {
-          h: 'Data for ad recommendations',
-          p: 'To recommend better ads we may use aggregate audience signals (pages visited, browser language, approximate region) collected by Google Analytics 4. This data is processed in an aggregated and anonymous way and is never used to identify a specific person beyond what is strictly necessary for the service. You can block analytics cookies from your browser or site preferences.',
-        },
-        {
-          h: 'Geolocation',
-          p: 'We may estimate your approximate location (region/country) from your IP address to serve content and ads relevant to your region, comply with local legal requirements and improve security. Precise (GPS) geolocation is only used when a feature explicitly requires it and with your consent; it is never used for advertising.',
-        },
-      ],
-    },
-    privacyPage: {
-      updated: 'Last updated: August 2, 2026',
-      back: 'Back',
-      sections: [
-        {
-          h: '1. Data we collect',
-          p: 'The Bot logs a counter of executed commands, the number of servers it is on and connection status (online/offline). This data powers the public status page of the bot.',
-        },
-        {
-          h: '2. Data we DO NOT collect',
-          p: 'We do not store messages, command content, personal data, IP addresses or Discord user information.',
-        },
-        {
-          h: '3. Storage and security',
-          p: 'Data is stored in a cloud database (Supabase) with restricted access and security policies. It is only used for operational purposes.',
-        },
-        {
-          h: '4. Use of data',
-          p: 'Aggregated data (server count, executed commands) is publicly displayed on ciszubot.vercel.app as bot statistics.',
-        },
-        {
-          h: '5. Third parties',
-          p: 'We do not sell, rent or share data with third parties. The bot uses the Discord API and standard hosting services.',
-        },
-        {
-          h: '6. Contact',
-          p: 'To exercise your rights or ask about this policy, join the Discord support server.',
-        },
-      ],
+      ...en.legalPage,
+      sections: en.legalPage.sections.map((s) =>
+        s.h === '3. Intellectual property'
+          ? { ...s, p: 'CiszuBot, its logo, brand and code are owned by CiszukoAntony. No licence is granted except the right to invite the Bot to a server.' }
+          : { ...s }
+      ),
     },
   },
 } as const;
 
 type DeepString<T> = { [K in keyof T]: T[K] extends string ? string : DeepString<T[K]> };
 
-export type Dict = DeepString<(typeof dict)['es']>;
+export type Dict = DeepString<(typeof dict)['es-latam']>;
 
 export function getDict(lang: Lang): Dict {
-  return lang === 'en' ? dict.en : dict.es;
+  return dict[lang];
 }
 
-export const LANGS: { code: Lang; label: string; flag: string }[] = [
-  { code: 'es', label: 'ES', flag: 'es' },
-  { code: 'en', label: 'EN', flag: 'gb' },
-];
+/** Lee y normaliza el idioma desde la cookie (acepta códigos antiguos 'es'/'en'). */
+export function parseLang(raw: string | undefined | null): Lang {
+  if (raw === 'es-es' || raw === 'en-us' || raw === 'en-uk') return raw;
+  if (raw === 'es' || raw === 'es-latam') return 'es-latam';
+  if (raw === 'en') return 'en-us';
+  return 'es-latam';
+}
 
+/** true si el idioma es una variante de español (latam o españa). */
+export const isEsLang = (lang: Lang): boolean => lang === 'es-latam' || lang === 'es-es';
+
+export const LANGS: { code: Lang; label: string; flag: string }[] = [
+  { code: 'es-latam', label: 'ES-LA', flag: 'es' },
+  { code: 'es-es', label: 'ES-ES', flag: 'es' },
+  { code: 'en-us', label: 'EN-US', flag: 'gb' },
+  { code: 'en-uk', label: 'EN-UK', flag: 'gb' },
+];

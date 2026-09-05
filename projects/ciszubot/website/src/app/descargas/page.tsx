@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { Icon, FabRestore } from '@ciszu/ui';
 import InstallPdwaCta from '@/components/InstallPdwaCta';
-import { getDict, type Lang } from '@/lib/i18n';
+import { getDict, parseLang } from '@/lib/i18n';
 
 export const metadata: Metadata = {
   title: 'CiszuBot | DESCARGAS',
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default async function DescargasPage() {
   const store = await cookies();
-  const lang = (store.get('ciszubot_lang')?.value ?? 'es') as Lang;
+  const lang = parseLang(store.get('ciszubot_lang')?.value);
   const t = getDict(lang);
 
   return (

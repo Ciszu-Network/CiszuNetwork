@@ -1,19 +1,20 @@
 import { create } from 'zustand';
+import { getPreferences, updatePreferences, type PreferenceLang } from '@/lib/preferences';
 
 type Theme = 'dark' | 'light';
-type Language = 'EN' | 'ES';
+type Language = PreferenceLang;
 type SidebarView = 'main' | 'lang';
 
-function readTheme(): Theme {
-  if (typeof window === 'undefined') return 'dark';
-  try {
-    const raw = window.localStorage.getItem('ciszu_preferences');
-    if (!raw) return 'dark';
-    const parsed = JSON.parse(raw) as { theme?: Theme };
-    return parsed.theme === 'light' ? 'light' : 'dark';
-  } catch {
-    return 'dark';
-  }
+// Recarga diferida: al cambiar idioma/tema se muestra el toast (azul) y se
+// recarga la página ~1.8s después para que el aviso sea visible.
+let reloadTimer: ReturnType<typeof setTimeout> | null = null;
+function scheduleReload() {
+  if (typeof window === 'undefined') return;
+  if (reloadTimer) clearTimeout(reloadTimer);
+  reloadTimer = setTimeout(() => {
+    reloadTimer = null;
+    window.location.reload();
+  }, 1800);
 }
 
 export interface AuthUser {
@@ -29,9 +30,9 @@ interface AppState {
   isMenuOpen: boolean;
   setIsMenuOpen: (val: boolean) => void;
   theme: Theme;
-  setTheme: (val: Theme) => void;
+  setTheme: (val: Theme, skipReload?: boolean) => void;
   language: Language;
-  setLanguage: (val: Language) => void;
+  setLanguage: (val: Language, skipReload?: boolean) => void;
   sidebarView: SidebarView;
   setSidebarView: (val: SidebarView) => void;
   searchQuery: string;
@@ -47,22 +48,22 @@ interface AppState {
 export const useAppStore = create<AppState>((set) => ({
   isMenuOpen: false,
   setIsMenuOpen: (val: boolean) => set({ isMenuOpen: val }),
-  theme: readTheme(),
-  setTheme: (val: Theme) => {
+  theme: getPreferences().theme,
+  setTheme: (val: Theme, skipReload = false) => {
     set({ theme: val });
     if (typeof document !== 'undefined') {
       document.documentElement.classList.toggle('light', val === 'light');
     }
-    try {
-      const raw = window.localStorage.getItem('ciszu_preferences');
-      const prefs = raw ? JSON.parse(raw) : {};
-      window.localStorage.setItem('ciszu_preferences', JSON.stringify({ ...prefs, theme: val }));
-    } catch {
-      // localStorage no disponible; el tema solo aplica en sesión.
-    }
+    updatePreferences({ theme: val });
+    if (!skipReload) scheduleReload();
   },
-  language: 'EN',
-  setLanguage: (val: Language) => set({ language: val }),
+  language: getPreferences().lang,
+  setLanguage: (val: Language, skipReload = false) => {
+    set({ language: val });
+    // Los 4 idiomas son individuales: se guarda el código exacto.
+    updatePreferences({ lang: val });
+    if (!skipReload) scheduleReload();
+  },
   sidebarView: 'main',
   setSidebarView: (val: SidebarView) => set({ sidebarView: val }),
   searchQuery: '',

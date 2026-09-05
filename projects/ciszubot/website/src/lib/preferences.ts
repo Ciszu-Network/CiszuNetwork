@@ -1,7 +1,10 @@
-﻿export const PREFS_KEY = 'ciszu_preferences';
+export const PREFS_KEY = 'ciszu_preferences';
+
+/** Los 4 idiomas de producción son individuales entre sí. */
+export type PrefLang = 'es-latam' | 'es-es' | 'en-us' | 'en-uk';
 
 export interface Preferences {
-  lang: 'es' | 'en';
+  lang: PrefLang;
   theme: 'dark' | 'light';
   zoom: number;
   muteTab: boolean;
@@ -10,7 +13,7 @@ export interface Preferences {
 }
 
 export const PREFS_DEFAULTS: Preferences = {
-  lang: 'es',
+  lang: 'es-latam',
   theme: 'dark',
   zoom: 100,
   muteTab: false,
@@ -22,14 +25,32 @@ export const ZOOM_MIN = 80;
 export const ZOOM_MAX = 140;
 export const ZOOM_STEP = 10;
 
+/** Idiomas terminados (el resto están bloqueados). */
+export const AVAILABLE_LANGS: PrefLang[] = ['es-latam', 'es-es', 'en-us', 'en-uk'];
+
+export function isLangAvailable(lang: string): boolean {
+  return (AVAILABLE_LANGS as string[]).includes(lang);
+}
+
+/** Normaliza un valor guardado (acepta códigos antiguos 'es'/'en'). */
+function normalizeLang(raw: unknown): PrefLang {
+  if (raw === 'es' || raw === 'es-latam' || raw === 'es-es') {
+    return raw === 'es-es' ? 'es-es' : 'es-latam';
+  }
+  if (raw === 'en' || raw === 'en-us' || raw === 'en-uk') {
+    return raw === 'en-uk' ? 'en-uk' : 'en-us';
+  }
+  return PREFS_DEFAULTS.lang;
+}
+
 export function loadPreferences(): Preferences {
   if (typeof window === 'undefined') return { ...PREFS_DEFAULTS };
   try {
     const raw = localStorage.getItem(PREFS_KEY);
     if (!raw) return { ...PREFS_DEFAULTS };
     const parsed = JSON.parse(raw) as Partial<Preferences>;
-return {
-      lang: parsed.lang === 'en' ? 'en' : 'es',
+    return {
+      lang: normalizeLang(parsed.lang),
       theme: parsed.theme === 'light' ? 'light' : 'dark',
       zoom: typeof parsed.zoom === 'number' ? parsed.zoom : PREFS_DEFAULTS.zoom,
       muteTab: typeof parsed.muteTab === 'boolean' ? parsed.muteTab : PREFS_DEFAULTS.muteTab,
