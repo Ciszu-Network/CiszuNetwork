@@ -98,7 +98,7 @@
     "lint-staged": "^17.3.0",
     "miniflare": "^4.20250424.0",
     "pngjs": "^7.0.0",
-    "turbo": "^2.5.0",
+    "turbo": "^2.10.12",
     "typescript": "^6.0.3",
     "vitest": "^4.1.10",
     "wrangler": "^4.0.0",
