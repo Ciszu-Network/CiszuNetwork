@@ -2,14 +2,14 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-const toAbsolute = (relative) =>
+const toAbsolute = (relative: string) =>
   `https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn/${relative
     .split('/')
     .map((segment) => encodeURIComponent(segment))
     .join('/')}`;
 
-const PdfThumbnail = ({ url, alt = 'PDF preview' }) => {
-  const canvasRef = useRef(null);
+const PdfThumbnail = ({ url, alt = 'PDF preview' }: { url: string; alt?: string }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -18,7 +18,7 @@ const PdfThumbnail = ({ url, alt = 'PDF preview' }) => {
     const pdfjs = await import('pdfjs-dist');
     pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
-    const loadingTask = pdfjs.getDocument(url);
+    const loadingTask = pdfjs.getDocument({ url });
     const pdf = await loadingTask.promise;
     const page = await pdf.getPage(1);
     const viewport = page.getViewport({ scale: 1.5 });
@@ -30,7 +30,8 @@ const PdfThumbnail = ({ url, alt = 'PDF preview' }) => {
     canvas.height = viewport.height;
 
     const ctx = canvas.getContext('2d');
-    await page.render({ canvasContext: ctx, viewport }).promise;
+    if (!ctx) return;
+    await page.render({ canvas, viewport }).promise;
     setLoading(false);
   }, [url]);
 
@@ -59,7 +60,7 @@ const PdfThumbnail = ({ url, alt = 'PDF preview' }) => {
     return (
       <canvas
         ref={canvasRef}
-        alt={alt}
+        aria-label={alt}
         className="w-full h-full object-contain bg-white transition-transform duration-300 group-hover:scale-105"
       />
     );
