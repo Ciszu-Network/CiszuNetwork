@@ -4,16 +4,19 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useAppStore } from '@/store';
+import { getCookieConsent, setCookieConsent, useToast } from '@ciszu/ui';
 
 export function CookiesBanner() {
   const [show, setShow] = useState(false);
   const { hasAcceptedCookies, setHasAcceptedCookies } = useAppStore();
+  const { toast } = useToast();
 
   useEffect(() => {
-    const accepted = localStorage.getItem('cookies_accepted');
-    if (!accepted && !hasAcceptedCookies) {
+    const consent = getCookieConsent();
+    // Solo se muestra si NO hay decisión aún ('false' = rechazado → oculto).
+    if (consent === null && !hasAcceptedCookies) {
       setShow(true);
-    } else if (accepted && !hasAcceptedCookies) {
+    } else if (consent === 'accepted' && !hasAcceptedCookies) {
       setHasAcceptedCookies(true);
     }
   }, [hasAcceptedCookies, setHasAcceptedCookies]);
@@ -25,9 +28,17 @@ export function CookiesBanner() {
   }, [hasAcceptedCookies]);
 
   const handleAccept = () => {
-    localStorage.setItem('cookies_accepted', 'true');
+    setCookieConsent('accepted');
     setHasAcceptedCookies(true);
     setShow(false);
+    toast('Cookies aceptadas. Gracias por apoyar a Ciszu Network.', 'info');
+  };
+
+  const handleReject = () => {
+    setCookieConsent('rejected');
+    setHasAcceptedCookies(false);
+    setShow(false);
+    toast('Cookies rechazadas: los servicios opcionales están desactivados.', 'info');
   };
 
   return (
@@ -55,7 +66,13 @@ export function CookiesBanner() {
               </p>
             </div>
 
-            <div className="shrink-0 flex gap-4 w-full md:w-auto">
+            <div className="shrink-0 flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+              <button
+                onClick={handleReject}
+                className="w-full md:w-auto px-6 py-3 bg-white/5 text-gray-300 font-black uppercase text-sm rounded-full hover:bg-white/10 hover:text-white active:scale-95 transition-all border border-white/20"
+              >
+                RECHAZAR
+              </button>
               <button
                 onClick={handleAccept}
                 className="w-full md:w-auto px-8 py-3 bg-gradient-to-r from-neon-cyan to-neon-purple text-white font-black uppercase text-sm rounded-full hover:scale-105 active:scale-95 transition-all shadow-lg border border-white/10 dark:bg-gradient-to-r dark:from-neon-blue dark:to-neon-purple"

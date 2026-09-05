@@ -16,8 +16,9 @@
  *   <GoogleAnalytics app="ciszunetwork" />
  */
 
-import { Suspense, useEffect } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
+import { COOKIE_CONSENT_EVENT, getCookieConsent } from './cookieConsent';
 
 export interface GoogleAnalyticsProps {
   /** Nombre corto de la app (se añade como propiedad a cada evento) */
@@ -43,9 +44,10 @@ function ensureGtag(): (...args: unknown[]) => void {
   return w.gtag!;
 }
 
-/** Evento custom de GA4: no-op si gtag no está cargado */
+/** Evento custom de GA4: no-op si gtag no está cargado o si el usuario rechazó cookies */
 export function trackEvent(event: string, params?: Record<string, unknown>) {
   if (typeof window === 'undefined') return;
+  if (getCookieConsent() === 'rejected') return;
   const w = window as Window & typeof globalThis;
   if (typeof w.gtag !== 'function') return;
   w.gtag('event', event, params ?? {});
@@ -54,13 +56,24 @@ export function trackEvent(event: string, params?: Record<string, unknown>) {
 function GaTracker({ app }: GoogleAnalyticsProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  // Reactivo al consentimiento: si el usuario rechaza en vivo, se deja de
+  // trackear al instante (sin recargar).
+  const [consentTick, setConsentTick] = useState(0);
 
   useEffect(() => {
+    const onChange = () => setConsentTick((t) => t + 1);
+    window.addEventListener(COOKIE_CONSENT_EVENT, onChange);
+    return () => window.removeEventListener(COOKIE_CONSENT_EVENT, onChange);
+  }, []);
+
+  useEffect(() => {
+    // Cookies rechazadas → Google Analytics desactivado (degradación segura).
+    if (getCookieConsent() === 'rejected') return;
     const url = pathname + (searchParams?.toString() ? `?${searchParams}` : '');
     const gtag = ensureGtag();
     gtag('event', 'page_view', { app, page_location: url, page_title: document.title });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname, searchParams, app]);
+  }, [pathname, searchParams, app, consentTick]);
 
   return null;
 }

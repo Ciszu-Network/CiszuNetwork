@@ -157,6 +157,7 @@ const es = {
     privacyLink: 'Política de Privacidad',
     termsLink: 'Términos de Servicio',
     accept: 'ENTENDIDO',
+    reject: 'RECHAZAR',
   },
   commandsPage: {
     title: 'Comandos',
@@ -474,6 +475,7 @@ const en = {
     privacyLink: 'Privacy Policy',
     termsLink: 'Terms of Service',
     accept: 'GOT IT',
+    reject: 'REJECT',
   },
   commandsPage: {
     title: 'Commands',
