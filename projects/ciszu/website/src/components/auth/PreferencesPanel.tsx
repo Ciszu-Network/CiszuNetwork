@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAppStore } from '@/store';
-import { LanguagesModal, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE } from '@ciszu/ui';
+import { LanguagesModal, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE, setCookieConsent, clearCookieConsent, useCookieConsent } from '@ciszu/ui';
 import {
   loadPreferences,
   updatePreferences,
@@ -132,6 +132,31 @@ export default function PreferencesPanel() {
 
   const currentLang = LANGUAGE_OPTIONS.find((l) => l.code === language) ?? LANGUAGE_OPTIONS[0];
 
+  // ── Cookies: el usuario SIEMPRE puede rechazar o reaparecer el aviso. ──
+  const cookieConsent = useCookieConsent();
+  const cookieStateLabel = cookieConsent === 'accepted' ? 'Aceptadas' : cookieConsent === 'rejected' ? 'Rechazadas' : 'Sin decidir';
+  const cookieStateCls = cookieConsent === 'accepted'
+    ? 'bg-green-500/10 border-green-500/40 text-green-400'
+    : cookieConsent === 'rejected'
+      ? 'bg-red-500/10 border-red-500/40 text-red-400'
+      : surfaceBtn;
+
+  const handleCookieReject = () => {
+    setCookieConsent('rejected');
+    toast('Cookies rechazadas: los servicios opcionales están desactivados.', 'info');
+    window.setTimeout(() => window.location.reload(), 1800);
+  };
+  const handleCookieAccept = () => {
+    setCookieConsent('accepted');
+    toast('Cookies aceptadas. Gracias por apoyar a Ciszu Network.', 'info');
+    window.setTimeout(() => window.location.reload(), 1800);
+  };
+  const handleCookieReappear = () => {
+    clearCookieConsent();
+    toast('El aviso de cookies volverá a aparecer.', 'info');
+    window.setTimeout(() => window.location.reload(), 1800);
+  };
+
   return (
     <div className="px-2 pt-1 pb-2 space-y-4">
       {/* Tema e idioma: mismos controles que el navbar */}
@@ -245,6 +270,53 @@ export default function PreferencesPanel() {
           <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${tabMuted ? 'left-4' : 'left-0.5'}`} />
         </span>
       </button>
+
+      {/* Cookies: rechazar en cualquier momento o reaparecer el aviso */}
+      <div>
+        <p className={sectionTitleCls}>Cookies</p>
+        <div className={`flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg border ${cookieStateCls}`}>
+          <span className="flex items-center gap-2 font-header font-bold text-xs uppercase tracking-widest">
+            <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2a10 10 0 0 0-6.88 17.26c1.89 1.74 4.3 2.74 6.88 2.74 5.52 0 10-4.48 10-10 0-2.58-1-5-2.74-6.88C17.52 3 15 2 12 2zm1 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm-4-3a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm6-2a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm-3-4a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
+            </svg>
+            Cookies
+          </span>
+          <span className="text-[10px] font-black uppercase tracking-widest">{cookieStateLabel}</span>
+        </div>
+        <div className="grid grid-cols-1 gap-1 mt-2">
+          {cookieConsent !== 'rejected' && (
+            <button
+              onClick={handleCookieReject}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-red-500/40 bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-all active:scale-95 font-header font-bold text-xs uppercase tracking-widest"
+            >
+              <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 6 6 18" /><path d="m6 6 12 12" />
+              </svg>
+              Rechazar cookies
+            </button>
+          )}
+          {cookieConsent !== 'accepted' && (
+            <button
+              onClick={handleCookieAccept}
+              className={`w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border transition-all active:scale-95 font-header font-bold text-xs uppercase tracking-widest ${surfaceBtn}`}
+            >
+              <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 6 9 17l-5-5" />
+              </svg>
+              Aceptar cookies
+            </button>
+          )}
+          <button
+            onClick={handleCookieReappear}
+            className={`w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border transition-all active:scale-95 font-header font-bold text-xs uppercase tracking-widest ${surfaceBtn}`}
+          >
+            <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M1 4v6h6" /><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+            </svg>
+            Reaparecer aviso de cookies
+          </button>
+        </div>
+      </div>
 
       {/* Navegación segura */}
       <div>

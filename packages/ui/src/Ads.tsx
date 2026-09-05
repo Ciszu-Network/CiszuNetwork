@@ -36,6 +36,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { createPortal } from 'react-dom';
 import { AssetResolver } from '@ciszunetwork/cdn';
 import { trackEvent } from './GoogleAnalytics';
+import { useCookieConsent } from './cookieConsent';
 
 export type AdType = 'intrusive' | 'particulares' | 'reward' | 'optional';
 export type AdFormat = 'sponsored' | 'image' | 'video' | 'carousel';
@@ -634,6 +635,9 @@ export function clearAdsDebug() {
 export function AdsProvider({ site, children, catalog = DEFAULT_AD_CATALOG, authenticated = false, premium = false, userId = null }: AdsProviderProps) {
   const [current, setCurrent] = useState<AdConfig | null>(null);
   const [floatingActive, setFloatingActive] = useState(false);
+  // Cookies rechazadas → anuncios (servicio opcional) DESACTIVADOS en vivo.
+  const consent = useCookieConsent();
+  const adsRejected = consent === 'rejected';
   const dismissedRef = useRef<Record<string, true>>({});
   const seenRef = useRef<Record<string, number>>({});
   const claimedRef = useRef<Record<string, number>>({});
@@ -708,6 +712,9 @@ const dKey = `ciszu_ads_${site}_dismissed`;
   }, [site]);
 
   const effective = useMemo(() => {
+    // Cookies rechazadas → catálogo vacío: show/trigger devuelven null, no se
+    // registran impresiones ni se trackea. (Degradación segura, sin errores.)
+    if (consent === 'rejected') return [];
     const accent = SITE_ACCENT[site] || '#22d3ee';
     const host = SITE_URL[site] ? new URL(SITE_URL[site]).host : '';
     const dbg = debugRef.current;
@@ -740,7 +747,16 @@ const dKey = `ciszu_ads_${site}_dismissed`;
             minIntervalSec: (a.minIntervalSec ?? 0) * authedMul,
             content: { ...a.content, accent: a.content.accent || accent },
           });
-  }, [catalog, site, authenticated, premium, debugTick]);
+  }, [catalog, site, authenticated, premium, debugTick, consent]);
+
+  // Si el usuario rechaza cookies en vivo (sin recargar), se limpia cualquier
+  // anuncio que esté en pantalla al instante.
+  useEffect(() => {
+    if (consent === 'rejected') {
+      setCurrent(null);
+      setFloatingActive(false);
+    }
+  }, [consent]);
 
 useEffect(() => {
     // Al entrar (cada página) se REINICIA el pull de anuncios: `seenRef` no se

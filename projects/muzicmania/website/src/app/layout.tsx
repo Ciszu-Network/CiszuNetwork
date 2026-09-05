@@ -118,7 +118,7 @@ export default async function RootLayout({
         <PostHogAnalytics app="muzicmania" />
         <GoogleAnalytics app="muzicmania" />
         {process.env.NODE_ENV === 'production' && (
-          <script defer type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
+          <script defer type="module" data-cookie-consent="optional" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
         )}
       </body>
     </html>

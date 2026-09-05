@@ -61,6 +61,19 @@ export type { CiszugamensLogoProps } from './CiszugamensLogo';
 // GlobalAdvisor: sistema de mensajes globales del admin (GLOBAL_ADVISOR_SYSTEM, TODO #3)
 export { default as GlobalAdvisor } from './GlobalAdvisor';
 export type { GlobalAdvisorProps, Announcement } from './GlobalAdvisor';
+// Consentimiento de cookies: helpers + hook reactivo + guard script para layouts
+export {
+  getCookieConsent,
+  setCookieConsent,
+  clearCookieConsent,
+  useCookieConsent,
+  isCookieConsentRejected,
+  isCookieConsentAccepted,
+  COOKIE_CONSENT_GUARD_JS,
+  COOKIE_CONSENT_KEY,
+  COOKIE_CONSENT_EVENT,
+} from './cookieConsent';
+export type { CookieConsent } from './cookieConsent';
 // Toast: sistema de notificación unificado (stack centrado inferior, colores por tipo)
 export { default as ToastProvider, useToast } from './Toast';
 export type { ToastProviderProps, ToastType, ToastData, ToastContextValue } from './Toast';

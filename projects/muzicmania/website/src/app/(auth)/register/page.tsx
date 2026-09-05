@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 import AuthFeedback from '@/components/molecules/AuthFeedback';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
-import { AuthBenefitsPanel, AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders, useToast, useActivityGuard } from '@ciszu/ui';
+import { AuthBenefitsPanel, AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders, useToast, useActivityGuard, setCookieConsent } from '@ciszu/ui';
 
 // --- Icons Library ---
 const I = {
@@ -228,7 +228,7 @@ export default function RegisterPage() {
       if (form.confirmPassword) validateField('confirmPassword', form.confirmPassword);
     }
     if (name === 'acceptedTerms' && checked) {
-      localStorage.setItem('cookies_accepted', 'true');
+      setCookieConsent('accepted');
       setHasAcceptedCookies(true);
     }
   };

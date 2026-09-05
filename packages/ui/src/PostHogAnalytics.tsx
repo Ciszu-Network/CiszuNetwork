@@ -27,8 +27,9 @@
  *   captureEvent('submit_score', { score: 12345, track_id: 'x' });
  */
 
-import { Suspense, useEffect, useRef } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
+import { COOKIE_CONSENT_EVENT, getCookieConsent } from './cookieConsent';
 
 export interface PostHogAnalyticsProps {
   /** Nombre corto de la app (se añade como propiedad a cada evento) */
@@ -46,9 +47,10 @@ declare global {
   }
 }
 
-/** Evento custom de producto (fase 2): no-op si PostHog no está cargado */
+/** Evento custom de producto (fase 2): no-op si PostHog no está cargado o si el usuario rechazó cookies */
 export function captureEvent(event: string, properties?: Record<string, unknown>) {
   if (typeof window === 'undefined') return;
+  if (getCookieConsent() === 'rejected') return;
   if (!window.posthog?.capture) return;
   window.posthog.capture(event, properties);
 }
@@ -65,11 +67,22 @@ function PostHogTracker({ app }: PostHogAnalyticsProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const initialized = useRef(false);
+  // Reactivo al consentimiento: si el usuario rechaza en vivo, se deja de
+  // capturar al instante (sin recargar).
+  const [consentTick, setConsentTick] = useState(0);
+
+  useEffect(() => {
+    const onChange = () => setConsentTick((t) => t + 1);
+    window.addEventListener(COOKIE_CONSENT_EVENT, onChange);
+    return () => window.removeEventListener(COOKIE_CONSENT_EVENT, onChange);
+  }, []);
 
   // 1) Cargar array.js una sola vez + init (polling: array.js es async)
   useEffect(() => {
     const key = getKey();
     if (!key) return;
+    // Cookies rechazadas → PostHog desactivado (degradación segura).
+    if (getCookieConsent() === 'rejected') return;
     // En entorno de test (happy-dom/vitest) no cargar scripts externos
     if (process.env.NODE_ENV === 'test') {
       return;
@@ -105,6 +118,8 @@ function PostHogTracker({ app }: PostHogAnalyticsProps) {
   // 2) $pageview manual en cada cambio de ruta (SPA: App Router no recarga)
   useEffect(() => {
     if (!getKey()) return;
+    // Cookies rechazadas → PostHog desactivado (degradación segura).
+    if (getCookieConsent() === 'rejected') return;
     const url = pathname + (searchParams?.toString() ? `?${searchParams}` : '');
     const fire = (): boolean => {
       if (!window.posthog?.capture) return false;
@@ -117,7 +132,7 @@ function PostHogTracker({ app }: PostHogAnalyticsProps) {
     }, 300);
     return () => window.clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname, searchParams, app]);
+  }, [pathname, searchParams, app, consentTick]);
 
   return null;
 }

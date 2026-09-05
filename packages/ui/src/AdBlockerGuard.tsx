@@ -37,6 +37,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { getCookieConsent } from './cookieConsent';
 
 export interface AdBlockerGuardProps {
   children: ReactNode;
@@ -193,9 +194,24 @@ function CircularCountdown({ seconds, accent }: { seconds: number; accent: strin
 }
 
 export function AdBlockerGuard({ children, site, logo, title = 'Ciszu Network', accent = '#22d3ee', accentAlt = '#f472b6' }: AdBlockerGuardProps) {
+  // Cookies rechazadas → el usuario ya eligió no ver anuncios: el guard de
+  // adblocker se bypasea por completo (no molesta, no bloquea, sin errores).
+  const [consentTick, setConsentTick] = useState(0);
+  useEffect(() => {
+    const onChange = () => setConsentTick((t) => t + 1);
+    window.addEventListener('ciszu:cookies-changed', onChange);
+    return () => window.removeEventListener('ciszu:cookies-changed', onChange);
+  }, []);
   const [screen, setScreen] = useState<Screen>('none');
   const [disableCount, setDisableCount] = useState(15);
   const [continueCount, setContinueCount] = useState(5);
+
+  // Cookies rechazadas → adblocker guard desactivado (bypass completo).
+  useEffect(() => {
+    if (getCookieConsent() === 'rejected') {
+      setScreen('none');
+    }
+  }, [consentTick]);
 
   // Detección clara: solo si hay adblocker CONFIRMADO.
   // - Recarga MANUAL (F5): se borra la elección previa y se re-evalúa SIEMPRE,
