@@ -28,6 +28,9 @@ overrides:
   uuid: 13.0.1
   tmp: ^0.2.7
   browserslist: ^4.28.7
+  "@tiptap/core": ^3.31.3
+  fast-uri: ^4.1.4
+  qs: ^6.16.0
 
 # Vercel cache optimization
 # Habilita caché global de pnpm en la raíz del monorepo
