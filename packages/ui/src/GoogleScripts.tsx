@@ -33,6 +33,7 @@ export function GoogleScripts() {
     <>
       {ads && (
         <script
+          suppressHydrationWarning
           async
           src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(ads)}`}
           crossOrigin="anonymous"
@@ -40,6 +41,7 @@ export function GoogleScripts() {
       )}
       {gtm && (
         <script
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtm}');`,
           }}
@@ -47,6 +49,7 @@ export function GoogleScripts() {
       )}
       {gtm && (
         <noscript
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=${encodeURIComponent(gtm)}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`,
           }}
@@ -54,8 +57,9 @@ export function GoogleScripts() {
       )}
       {ga && (
         <>
-          <script async src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(ga)}`} />
+          <script suppressHydrationWarning async src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(ga)}`} />
           <script
+            suppressHydrationWarning
             dangerouslySetInnerHTML={{
               __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${ga}',{send_page_view:false});`,
             }}
