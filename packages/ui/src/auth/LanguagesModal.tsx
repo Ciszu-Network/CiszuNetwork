@@ -61,6 +61,10 @@ export default function LanguagesModal({
   // PreferencesModal padre (que tiene transform + overflow-y-auto). Sin el
   // portal, el position:fixed del modal de idiomas quedaba relativo a ese
   // contenedor y se cortaba.
+  // pointerEvents: 'auto' es CRÍTICO: Radix Dialog pone `pointer-events: none`
+  // en document.body mientras un Dialog está abierto. Al portalear FUERA del
+  // Dialog.Content, este modal heredaría `none` de body y se volvería un
+  // "modal fantasma": visible pero con clicks que traspasan al modal de abajo.
   return createPortal(
     (
     <div
@@ -68,6 +72,7 @@ export default function LanguagesModal({
       role="dialog"
       aria-modal="true"
       aria-label={title}
+      style={{ pointerEvents: 'auto' }}
     >
       <div
         className="absolute inset-0"

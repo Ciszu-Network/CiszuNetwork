@@ -2,6 +2,23 @@ const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
 
+// ---------------------------------------------------------------------------
+// Rasterización de PDFs en Node: pdfjs-dist (legacy) renderiza la página 1 a
+// PNG usando @napi-rs/canvas (binarios precompilados; `canvas` nativo requiere
+// node-gyp). pdfjs legacy hace `require('canvas')` para DOMMatrix/Path2D, así
+// que redirigimos esa resolución a @napi-rs/canvas, que exporta lo mismo.
+// ---------------------------------------------------------------------------
+const Module = require('module');
+const originalResolve = Module._resolveFilename;
+Module._resolveFilename = function (request, ...args) {
+  if (request === 'canvas' || request.startsWith('canvas/')) {
+    return originalResolve.call(this, '@napi-rs/canvas', ...args);
+  }
+  return originalResolve.call(this, request, ...args);
+};
+const { createCanvas } = require('@napi-rs/canvas');
+const pdfjs = require('pdfjs-dist/legacy/build/pdf.js');
+
 const findMonorepoRoot = (startDir) => {
   let dir = startDir;
   while (dir !== path.parse(dir).root) {
@@ -18,6 +35,7 @@ const MONOREPO_ROOT = findMonorepoRoot(SCRIPT_DIR);
 const CERTIFICATES_DIR = path.join(MONOREPO_ROOT, 'shared/docs/certificados');
 const PREVIEWS_DIR = path.join(CERTIFICATES_DIR, 'previews');
 const DATA_FILE = path.join(SCRIPT_DIR, '../src/data/certificates.ts');
+const MANIFEST_FILE = path.join(SCRIPT_DIR, '../src/data/certificates.previews.ts');
 const SIDECAR_EXT = '.certmeta.json';
 
 if (!fs.existsSync(PREVIEWS_DIR)) {
@@ -47,6 +65,33 @@ const generateThumbnail = async (filePath, outputPath) => {
     return false;
   }
 };
+
+/** Renderiza la primera página de un PDF a PNG (thubnail real). */
+const rasterizePdfPage1 = async (pdfPath, outputPath) => {
+  try {
+    const data = new Uint8Array(fs.readFileSync(pdfPath));
+    const doc = await pdfjs.getDocument({ data }).promise;
+    const page = await doc.getPage(1);
+    const viewport = page.getViewport({ scale: 1.2 });
+    const canvas = createCanvas(Math.ceil(viewport.width), Math.ceil(viewport.height));
+    const ctx = canvas.getContext('2d');
+    await page.render({ canvasContext: ctx, viewport }).promise;
+    fs.writeFileSync(outputPath, canvas.toBuffer('image/png'));
+    return true;
+  } catch (error) {
+    console.error(`  Error rasterizando ${path.basename(pdfPath)}:`, error.message);
+    return false;
+  }
+};
+
+/** Normaliza un nombre para comparar duplicados ignorando acentos y mayúsculas. */
+const normalizeName = (fileName) =>
+  fileName
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\.pdf$/i, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-');
 
 const inferKind = (fileName) => {
   const lower = fileName.toLowerCase();
@@ -137,9 +182,8 @@ const buildEntry = (file) => {
 
   const baseName = path.basename(file.name, file.ext);
   const thumbPath = path.join(PREVIEWS_DIR, `${baseName}-preview.jpg`);
-  const thumbnail = fs.existsSync(thumbPath)
-    ? `shared/docs/certificados/previews/${baseName}-preview.jpg`
-    : undefined;
+  // Los thumbnails los resuelve la página vía PREVIEWS_BY_FILE (manifiesto).
+  const thumbnail = undefined;
 
   return {
     id,
@@ -183,18 +227,83 @@ const findArrayEnd = (lines, startIdx) => {
   return -1;
 };
 
+/** Resuelve el mejor preview existente para un archivo dado.
+ *  Orden de candidatos: <base>-preview.png > <base>-preview.jpg >
+ *  <base>-preview-preview.jpg > <nombre completo>-preview.* (p.ej. 'dato (35).JPG-preview.jpg').
+ *  Devuelve SOLO el nombre de archivo (los previews viven siempre en
+ *  shared/docs/certificados/previews/). */
+const resolvePreview = (baseName, fullName) => {
+  const candidates = [
+    `${baseName}-preview.png`,
+    `${baseName}-preview.jpg`,
+    `${baseName}-preview-preview.jpg`,
+    `${fullName}-preview.png`,
+    `${fullName}-preview.jpg`,
+  ];
+  for (const c of candidates) {
+    if (fs.existsSync(path.join(PREVIEWS_DIR, c))) {
+      return c;
+    }
+  }
+  return undefined;
+};
+
+/** Regenera el manifiesto de previews (certificates.previews.ts): mapea CADA
+ *  archivo del directorio a su preview real existente (si lo hay). La página
+ *  lo usa para resolver thumbnails automáticamente sin tocar certificates.ts. */
+const writePreviewManifest = (files) => {
+  const entries = files
+    .map((file) => {
+      const baseName = path.basename(file.name, path.extname(file.name));
+      const preview = resolvePreview(baseName, file.name);
+      return { name: file.relative, preview };
+    })
+    .filter((e) => e.preview);
+
+  const lines = [
+    '// AUTO-GENERADO por scripts/sync-certificates.js — NO editar a mano.',
+    '// Mapea cada archivo de shared/docs/certificados a su preview real (si existe).',
+    '// Re-ejecutar con: pnpm sync:certificates',
+    'export const PREVIEWS_BY_FILE: Record<string, string> = {',
+    ...entries.map((e) => `  '${e.name.replace(/'/g, "\\'")}': '${e.preview.replace(/'/g, "\\'")}',`),
+    '};',
+    '',
+  ];
+  fs.writeFileSync(MANIFEST_FILE, lines.join('\n'), 'utf8');
+  console.log(`\n🖼️  Manifiesto de previews actualizado (${entries.length} archivos con preview): ${MANIFEST_FILE}`);
+};
+
 const syncCertificates = async () => {
   console.log('🔍 Scanning certificates directory...');
   const files = await scanDir(CERTIFICATES_DIR);
   console.log(`   Found ${files.length} document(s)`);
 
+  // 1) Genera previews REALES (página 1 en PNG) para todo PDF sin preview.
+  let rasterized = 0;
+  for (const file of files) {
+    if (file.ext !== '.pdf') continue;
+    const baseName = path.basename(file.name, file.ext);
+    if (resolvePreview(baseName, file.name)) continue; // ya tiene preview
+    const thumbPath = path.join(PREVIEWS_DIR, `${baseName}-preview.png`);
+    console.log(`   Generando preview real de: ${file.name}`);
+    if (await rasterizePdfPage1(file.path, thumbPath)) rasterized++;
+  }
+  if (rasterized > 0) console.log(`   ✅ ${rasterized} preview(s) PDF generados`);
+
+  // 2) Manifiesto de previews SIEMPRE se regenera (es la fuente de thumbnails).
+  writePreviewManifest(files);
+
   const existingFileNames = new Set();
+  const existingNormalized = new Set();
   const existingIds = new Set();
 
   if (fs.existsSync(DATA_FILE)) {
     const content = fs.readFileSync(DATA_FILE, 'utf8');
     const matches = [...content.matchAll(/name:\s*'([^']+)'/g)];
-    matches.forEach((m) => existingFileNames.add(m[1]));
+    matches.forEach((m) => {
+      existingFileNames.add(m[1]);
+      existingNormalized.add(normalizeName(m[1]));
+    });
     const ids = [...content.matchAll(/id:\s*'([^']+)'/g)];
     ids.forEach((m) => existingIds.add(m[1]));
   }
@@ -207,6 +316,11 @@ const syncCertificates = async () => {
       console.log(`   Skipping existing: ${file.name}`);
       continue;
     }
+    if (existingNormalized.has(normalizeName(file.name))) {
+      // Duplicado solo por acentos/espacios (p.ej. 'finalización' vs 'finalizacion').
+      console.log(`   Skipping duplicate (accent): ${file.name}`);
+      continue;
+    }
 
     const entry = buildEntry(file);
     if (existingIds.has(entry.id)) {
@@ -215,15 +329,17 @@ const syncCertificates = async () => {
     }
 
     const baseName = path.basename(file.name, file.ext);
-    const thumbPath = path.join(PREVIEWS_DIR, `${baseName}-preview.jpg`);
-
-    if (!fs.existsSync(thumbPath)) {
+    const preview = resolvePreview(baseName, file.name);
+    if (!preview) {
+      const thumbPath = path.join(PREVIEWS_DIR, `${baseName}-preview.jpg`);
       console.log(`   Generating thumbnail for: ${file.name}`);
       const ok = await generateThumbnail(file.path, thumbPath);
       if (ok) {
         thumbnailsGenerated++;
-        entry.thumbnail = `shared/docs/certificados/previews/${baseName}-preview.jpg`;
+        entry.thumbnail = `${baseName}-preview.jpg`;
       }
+    } else {
+      entry.thumbnail = preview;
     }
 
     newEntries.push({ file, entry });

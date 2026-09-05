@@ -11,6 +11,7 @@ import {
   type Certificate,
 } from '@/data/certificates';
 import PdfThumbnail from '@/components/certificates/PdfThumbnail';
+import { PREVIEWS_BY_FILE } from '@/data/certificates.previews';
 
 const CDN_BASE =
   process.env.NEXT_PUBLIC_CDN_URL ||
@@ -18,6 +19,23 @@ const CDN_BASE =
 
 const fileUrl = (name: string) =>
   `${CDN_BASE}/shared/docs/certificados/${name.split('/').map(encodeURIComponent).join('/')}`;
+
+const previewUrlBuilder = (name: string) =>
+  `${CDN_BASE}/shared/docs/certificados/previews/${name.split('/').map(encodeURIComponent).join('/')}`;
+
+/**
+ * Resuelve el thumbnail de un certificado automáticamente desde el manifiesto
+ * generado por `pnpm sync:certificates` (shared/docs/certificados/previews).
+ * Orden: preview real del primer archivo (si existe) > el propio archivo
+ * (PDF se renderiza con pdfjs, imagen se muestra tal cual).
+ */
+const resolvePreview = (cert: Certificate): { name: string; isPreview: boolean } | undefined => {
+  const mainName = cert.files[0]?.name;
+  if (!mainName) return undefined;
+  const mapped = PREVIEWS_BY_FILE[mainName];
+  if (mapped) return { name: mapped, isPreview: true };
+  return { name: mainName, isPreview: false };
+};
 
 const fmtDate = (iso?: string) => {
   if (!iso) return '—';
@@ -41,11 +59,15 @@ function CertificateCard({
   const color = catColor(cert.category);
   
   const mainFile = cert.files[0];
-  const previewFile = cert.thumbnail || mainFile?.name;
-  const previewUrl = previewFile ? fileUrl(previewFile) : null;
-  const isImage = previewFile && /\.(jpg|jpeg|png|webp)$/i.test(previewFile);
-  const isPdf = previewFile && /\.pdf$/i.test(previewFile);
-  const hasRealPreview = !!cert.thumbnail;
+  const previewFile = resolvePreview(cert);
+  const previewUrl = previewFile
+    ? previewFile.isPreview
+      ? previewUrlBuilder(previewFile.name)
+      : fileUrl(previewFile.name)
+    : null;
+  const isImage = previewFile && /\.(jpg|jpeg|png|webp)$/i.test(previewFile.name);
+  const isPdf = previewFile && /\.pdf$/i.test(previewFile.name);
+  const hasRealPreview = mainFile ? !!PREVIEWS_BY_FILE[mainFile.name] : false;
   
   return (
     <motion.button
@@ -69,7 +91,7 @@ function CertificateCard({
               />
             ) : isPdf ? (
               <div className="absolute inset-0">
-                <PdfThumbnail url={previewUrl} />
+                <PdfThumbnail />
               </div>
             ) : (
               <div className="absolute inset-0 flex items-center justify-center">
@@ -185,10 +207,15 @@ function DetailModal({
   };
 
   const mainFile = cert.files[0];
-  const previewFile = cert.thumbnail || mainFile?.name;
-  const previewUrl = previewFile ? fileUrl(previewFile) : null;
-  const isImage = previewFile && /\.(jpg|jpeg|png|webp)$/i.test(previewFile);
-  const isPdf = previewFile && /\.pdf$/i.test(previewFile);
+  const previewFile = resolvePreview(cert);
+  const previewUrl = previewFile
+    ? previewFile.isPreview
+      ? previewUrlBuilder(previewFile.name)
+      : fileUrl(previewFile.name)
+    : null;
+  const isImage = previewFile && /\.(jpg|jpeg|png|webp)$/i.test(previewFile.name);
+  const isPdf = previewFile && /\.pdf$/i.test(previewFile.name);
+  const hasRealPreview = mainFile ? !!PREVIEWS_BY_FILE[mainFile.name] : false;
 
   return (
     <motion.div
@@ -337,22 +364,20 @@ function DetailModal({
                     </div>
                    ) : isPdf ? (
                     <div className="relative">
-                      {cert.thumbnail ? (
+                      {hasRealPreview ? (
                         <img
                           src={previewUrl}
                           alt=""
                           className="w-full h-64 sm:h-80 object-contain bg-black/40"
                         />
                       ) : (
-                        <iframe
-                          src={previewUrl}
-                          title="PDF preview"
-                          className="w-full h-64 sm:h-80 border-0 bg-white"
-                        />
+                        <div className="w-full h-64 sm:h-80 bg-black/40">
+                          <PdfThumbnail />
+                        </div>
                       )}
                       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 flex items-center justify-between">
                         <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">
-                          {cert.thumbnail ? 'PDF thumbnail' : 'PDF preview'}
+                          {hasRealPreview ? 'PDF thumbnail' : 'PDF preview'}
                         </span>
                         <a
                           href={previewUrl}

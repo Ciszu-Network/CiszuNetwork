@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import type { Session, AuthChangeEvent } from '@supabase/supabase-js';
 import { supabase } from '@/config/supabase';
 import { useAppStore } from '@/store';
-import { loadPreferences, savePreferences, syncPreferencesToProfile } from '@/lib/preferences';
+import { loadPreferences, savePreferences, syncPreferencesToProfile, applyTheme, applyZoom } from '@/lib/preferences';
 
 /**
  * AuthProvider — Componente invisible que mantiene la sesión CISZU ID sincronizada.
@@ -15,6 +15,16 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   const { setUser, setIsHydrated } = useAppStore();
 
   useEffect(() => {
+    // 0. Re-aplicar preferencias tras la hidratación: themeScript añade la
+    // clase 'light' al <html> ANTES de hidratar, pero React resetea el
+    // atributo className del <html> al hidratar (lo controla Next) y borra
+    // la clase. Resultado del bug: el tema visual retrocedía al anterior
+    // mientras el botón mostraba el nuevo activado. Aquí se re-aplica el
+    // tema y el zoom persistidos desde el store.
+    const { theme, zoom } = useAppStore.getState();
+    applyTheme(theme);
+    applyZoom(zoom);
+
     // 1. Cargar sesión existente al montar (hidratación inicial)
     const loadSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();

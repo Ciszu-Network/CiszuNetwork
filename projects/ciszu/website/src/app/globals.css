@@ -145,8 +145,11 @@
   }
 
   body {
-    background-color: #000000;
-    color: #fff;
+    /* Tema: usa las variables (--bg/--ink) para que el modo claro aplique;
+       el valor hardcodeado #000 dejaba el fondo negro aunque el resto de la
+       página (navbar, cards, banners) ya estuviera en modo claro. */
+    background-color: var(--bg, #000000);
+    color: var(--ink, #fff);
     min-height: 100vh;
     /* Prevent text selection globally (sistema anti-copy, ver muzicmania) */
     -webkit-user-select: none;
