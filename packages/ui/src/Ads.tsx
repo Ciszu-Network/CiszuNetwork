@@ -993,7 +993,7 @@ function AdModalInner() {
   const c = ad.content;
   const closable = c.closable !== false;
 
-const onCta = () => {
+  const onCta = () => {
     if (isReward) { claimReward(ad); return; }
     // Con adblocker elegido, el clic en anuncio muestra el error y re-abre el modal.
     if (isAdBlockContinue()) {
@@ -1011,7 +1011,7 @@ const onCta = () => {
     dismiss();
   };
 
-return createPortal(
+  return createPortal(
     <div aria-modal="true" role="dialog" className="fixed inset-0 z-[800] flex items-center justify-center">
       <style>{ADS_CSS}</style>
       <div onClick={() => closable && onClose()} className="absolute inset-0 bg-black/70 backdrop-blur-md" style={{ animation: 'ciszu-ad-fade .25s ease-out' }} />
@@ -1019,7 +1019,7 @@ return createPortal(
         className="relative w-[min(94vw,500px)] rounded-2xl border border-white/10 bg-[#0b0e14] p-6 shadow-2xl"
         style={{ animation: 'ciszu-ad-pop .35s cubic-bezier(.16,1,.3,1)' }}
       >
-<AdClose onClick={onClose} closable={closable} className="absolute -right-2.5 -top-2.5 z-20 h-9 w-9" />
+        <AdClose onClick={onClose} closable={closable} className="absolute -right-2.5 -top-2.5 z-20 h-9 w-9" />
         <AdLabel />
         {c.debugPush && (
           <span className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-amber-400/15 border border-amber-400/40 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-amber-300">
@@ -1049,7 +1049,7 @@ return createPortal(
           </div>
         )}
 
-<AdTerms site={site} authenticated={authenticated} />
+        <AdTerms site={site} authenticated={authenticated} />
 
         <CountdownBar total={timer.total} remaining={timer.remaining} />
 
@@ -1079,6 +1079,91 @@ return createPortal(
     document.body
   );
 }
+
+// ---------- Floating corner ad ----------
+function AdFloating() {
+  const { current, dismiss, site, authenticated, floatingActive, setFloatingActive, getNextPeriodicAdIn, isInactive } = useAds();
+  const [showHint, setShowHint] = useState(false);
+  const [hintIn, setHintIn] = useState(0);
+
+  useEffect(() => {
+    if (!current && !floatingActive) {
+      const inMs = getNextPeriodicAdIn();
+      if (inMs <= 0) return;
+      const t = setTimeout(() => setShowHint(true), Math.min(inMs, 8000));
+      setHintIn(inMs);
+      return () => clearTimeout(t);
+    }
+    if (!current) return;
+    setShowHint(false);
+    setHintIn(0);
+  }, [current?.id, floatingActive, site]);
+
+  if (current && current.placement === 'corner' && current.type === 'particulares') {
+    return (
+      <div className="fixed right-4 bottom-4 z-30 animate-ciszu-ad-pop pointer-events-none">
+        <div className="pointer-events-auto w-64">
+          <AdBanner ad={current} />
+          <AdTerms site={site} authenticated={authenticated} />
+          <div className="flex justify-center mt-2">
+            <button
+              onClick={dismiss}
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-yellow-400 border border-yellow-500/40 hover:bg-yellow-500/10 transition-all cursor-pointer"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (showHint && !current) {
+    return (
+      <div className="fixed right-4 bottom-4 z-30 animate-ciszu-ad-rise">
+        <button
+          onClick={() => setFloatingActive(true)}
+          className="pointer-events-auto flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-yellow-400 bg-yellow-500/10 border border-yellow-500/30 hover:bg-yellow-500/20 transition-all cursor-pointer"
+        >
+          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2}>
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          </svg>
+          Anuncio próximo en {Math.ceil(hintIn / 1000)}s
+        </button>
+      </div>
+    );
+  }
+
+  return null;
+}
+
+// ---------- Píldora inferior (optional) ----------
+function AdPillInner() {
+  const { current, dismiss, site, authenticated } = useAds();
+
+  if (current && current.placement === 'body' && current.type === 'optional') {
+    return (
+      <div className="fixed left-1/2 -translate-x-1/2 bottom-4 z-30 w-[90%] max-w-xl animate-ciszu-ad-rise pointer-events-none">
+        <div className="pointer-events-auto">
+          <AdBanner ad={current} />
+          <AdTerms site={site} authenticated={authenticated} />
+          <div className="flex justify-center mt-2">
+            <button
+              onClick={dismiss}
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-yellow-400 border border-yellow-500/40 hover:bg-yellow-500/10 transition-all cursor-pointer"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}
+
+export { AdFloating, AdPillInner };
 
 // ---------- Tarjeta de anuncio pasivo (esquina / banner inferior) ----------
 function PassiveAdCard({ ad, onDone, compact = false, site }: { ad: AdConfig; onDone: () => void; compact?: boolean; site: string }) {
