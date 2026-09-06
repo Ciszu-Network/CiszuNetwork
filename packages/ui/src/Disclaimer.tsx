@@ -225,6 +225,21 @@ const DISCLAIMER_CSS = `
   text-overflow: ellipsis;
   opacity: 0.85;
 }
+.disclaimer-item .disc-decon-badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  border-radius: 999px;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #fbbf24;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 1px 6px;
+}
 .disclaimer-item .disc-close {
   flex-shrink: 0;
   display: inline-flex;
@@ -306,6 +321,8 @@ export function DisclaimerStack({ headerHeight = 64, zoomShift = 32 }: Disclaime
           const dismissible = item.dismissible !== false;
           const remainingMs = item.expiresAt ? new Date(item.expiresAt).getTime() - Date.now() : null;
           const remaining = remainingMs !== null && remainingMs > 0 ? Math.ceil(remainingMs / 1000) : 0;
+          const isDevcon = item.message.startsWith('[DEVCON] ');
+          const message = isDevcon ? item.message.slice('[DEVCON] '.length) : item.message;
           return (
             <div
               key={item.id}
@@ -318,7 +335,15 @@ export function DisclaimerStack({ headerHeight = 64, zoomShift = 32 }: Disclaime
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={item.image} alt="" className="disc-img" />
                 )}
-                <span className="disc-text">{item.message}</span>
+                {isDevcon && (
+                  <span className="disc-decon-badge">
+                    <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
+                    Devcon
+                  </span>
+                )}
+                <span className="disc-text">{message}</span>
                 {item.expiresAt && remaining > 0 && item.showCountdown !== false && (
                   <span className="disc-countdown" title={item.expiresAt}>
                     {remaining}s
@@ -535,13 +560,14 @@ export function GlobalDisclaimer({ site, pollInterval = GD_POLL_INTERVAL, disabl
   }, [site, pollInterval]);
 
   // Inyecta los disclaimers globales en el stack (no vistos aún o con fecha futura).
+  // Los disclaimers enviados por devcon SIEMPRE se muestran (sin filtro seen).
   useEffect(() => {
     const active = new Set<string>();
     for (const row of rows) {
       const key = `gd_${row.id}`;
-      if (seenRef.current.has(row.id)) continue;
-      active.add(key);
       const isDevcon = row.sender === 'devcon';
+      if (!isDevcon && seenRef.current.has(row.id)) continue;
+      active.add(key);
       push({
         id: key,
         kind: row.kind,
