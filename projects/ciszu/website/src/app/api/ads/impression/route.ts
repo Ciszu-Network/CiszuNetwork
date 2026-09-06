@@ -29,6 +29,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: "invalid_payload" }, { status: 400 });
   }
 
+  // La tabla ads_impressions puede no existir en entornos de desarrollo o si no se ha
+  // ejecutado la migración. En ese caso, simplemente ignoramos el error y devolvemos
+  // éxito (la telemetría es no crítica).
   const { error } = await supabase.from("ads_impressions").insert({
     site: parsed.data.site,
     ad_id: parsed.data.ad_id,
