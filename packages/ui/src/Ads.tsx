@@ -138,6 +138,7 @@ const SITE_TERMS: Record<string, string> = {
   ciszukoantony: '/policies#anuncios',
   ciszubot: '/terminos#anuncios',
   muzicmania: '/terms#anuncios',
+  ciszugamens: '/policies#anuncios',
 };
 
 // ---------- Timing (reglas de negocio) ----------
@@ -211,6 +212,14 @@ export const DEFAULT_AD_CATALOG: AdConfig[] = [
     content: { title: 'Ciszugamens', description: 'Únete al servidor de Discord de la comunidad gamer.', cta: 'Unirme', href: 'https://discord.gg/W3kMtMMj6E', accent: '#22d3ee', format: 'sponsored', source: 'ciszugamens', image: ISOTIPO.ciszugamens },
   },
   {
+    id: 'ciszugamens_community', type: 'particulares', placement: 'corner', minIntervalSec: 420,
+    content: { title: 'Ciszugamens', description: 'Eventos, torneos y comunidad gamer activa.', cta: 'Explorar', href: 'https://discord.gg/W3kMtMMj6E', accent: '#22d3ee', format: 'sponsored', source: 'ciszugamens', image: ISOTIPO.ciszugamens },
+  },
+  {
+    id: 'ciszugamens_discord', type: 'particulares', placement: 'corner', minIntervalSec: 420,
+    content: { title: 'Discord Ciszugamens', description: 'Chatea, juega y conecta con la comunidad.', cta: 'Entrar', href: 'https://discord.gg/W3kMtMMj6E', accent: '#22d3ee', format: 'sponsored', source: 'ciszugamens', image: ISOTIPO.ciszugamens },
+  },
+  {
     id: 'real_placeholder_corner', type: 'particulares', placement: 'corner', minIntervalSec: 540,
     content: { title: 'Espacio para tu anuncio', description: 'Anuncio de terceros próximo (imagen).', cta: 'Próximamente', href: '#', accent: '#facc15', format: 'image', source: 'external', placeholder: true, durationSec: 30 },
   },
@@ -250,6 +259,10 @@ export const DEFAULT_AD_CATALOG: AdConfig[] = [
     content: { title: 'Ciszugamens', description: 'Únete al servidor de Discord de la comunidad gamer.', cta: 'Unirme', href: 'https://discord.gg/W3kMtMMj6E', accent: '#22d3ee', format: 'sponsored', source: 'ciszugamens', image: ISOTIPO.ciszugamens },
   },
   {
+    id: 'game_end_ciszugamens_community', type: 'intrusive', placement: 'game_end',
+    content: { title: 'Ciszugamens', description: 'Eventos y torneos gamer en Discord.', cta: 'Unirme', href: 'https://discord.gg/W3kMtMMj6E', accent: '#22d3ee', format: 'sponsored', source: 'ciszugamens', image: ISOTIPO.ciszugamens },
+  },
+  {
     id: 'game_end_real_image', type: 'intrusive', placement: 'game_end',
     content: { title: 'Espacio para tu anuncio', description: 'Anuncio de terceros próximo (imagen).', cta: 'Próximamente', href: '#', accent: '#facc15', format: 'image', source: 'external', placeholder: true, durationSec: 30 },
   },
@@ -281,6 +294,10 @@ export const DEFAULT_AD_CATALOG: AdConfig[] = [
   {
     id: 'ciszu_account_pill', type: 'optional', placement: 'body', minIntervalSec: 420,
     content: { title: 'Crea tu cuenta CISZU ID', description: 'Un solo perfil para todo el ecosistema.', cta: 'Crear cuenta', href: 'https://ciszunetwork.vercel.app/register', accent: '#3b82f6', format: 'sponsored', source: 'ciszunetwork', image: ISOTIPO.ciszunetwork },
+  },
+  {
+    id: 'ciszugamens_pill', type: 'optional', placement: 'body', minIntervalSec: 420,
+    content: { title: 'Ciszugamens', description: 'Únete al servidor de Discord de la comunidad gamer.', cta: 'Unirme', href: 'https://discord.gg/W3kMtMMj6E', accent: '#22d3ee', format: 'sponsored', source: 'ciszugamens', image: ISOTIPO.ciszugamens },
   },
 ];
 
