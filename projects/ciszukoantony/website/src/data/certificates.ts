@@ -451,10 +451,90 @@ export const CERTIFICATES: Certificate[] = [
     id: '508-fplayersoffcial-gmail-com',
     title: '508 Fplayersoffcial@Gmail.Com',
     provider: 'Online course platform',
-    category: 'ai',
+    category: 'other',
     files: [{ name: '508_fplayersoffcial@gmail.com.pdf', label: '508 Fplayersoffcial@Gmail.Com', kind: 'certificate' }],
     previewType: 'pdf',
-  }
+  },
+
+  {
+    id: '107-fplayersoffcial-gmail-com',
+    title: '107 Fplayersoffcial@Gmail.Com',
+    provider: 'Online course platform',
+    category: 'other',
+    files: [{ name: '107_fplayersoffcial@gmail.com.pdf', label: '107 Fplayersoffcial@Gmail.Com', kind: 'certificate' }],
+    thumbnail: '107_fplayersoffcial@gmail.com-preview.png',
+    previewType: 'pdf',
+  },
+
+  {
+    id: '1141-fplayersoffcial-gmail-com',
+    title: '1141 Fplayersoffcial@Gmail.Com',
+    provider: 'Online course platform',
+    category: 'other',
+    files: [{ name: '1141_fplayersoffcial@gmail.com.pdf', label: '1141 Fplayersoffcial@Gmail.Com', kind: 'certificate' }],
+    thumbnail: '1141_fplayersoffcial@gmail.com-preview.png',
+    previewType: 'pdf',
+  },
+
+  {
+    id: '171-fplayersoffcial-gmail-com',
+    title: '171 Fplayersoffcial@Gmail.Com',
+    provider: 'Online course platform',
+    category: 'other',
+    files: [{ name: '171_fplayersoffcial@gmail.com.pdf', label: '171 Fplayersoffcial@Gmail.Com', kind: 'certificate' }],
+    thumbnail: '171_fplayersoffcial@gmail.com-preview.png',
+    previewType: 'pdf',
+  },
+
+  {
+    id: '1852-fplayersoffcial-gmail-com',
+    title: '1852 Fplayersoffcial@Gmail.Com',
+    provider: 'Online course platform',
+    category: 'other',
+    files: [{ name: '1852_fplayersoffcial@gmail.com.pdf', label: '1852 Fplayersoffcial@Gmail.Com', kind: 'certificate' }],
+    thumbnail: '1852_fplayersoffcial@gmail.com-preview.png',
+    previewType: 'pdf',
+  },
+
+  {
+    id: '3030-fplayersoffcial-gmail-com',
+    title: '3030 Fplayersoffcial@Gmail.Com',
+    provider: 'Online course platform',
+    category: 'other',
+    files: [{ name: '3030_fplayersoffcial@gmail.com.pdf', label: '3030 Fplayersoffcial@Gmail.Com', kind: 'certificate' }],
+    thumbnail: '3030_fplayersoffcial@gmail.com-preview.png',
+    previewType: 'pdf',
+  },
+
+  {
+    id: '3296-fplayersoffcial-gmail-com',
+    title: '3296 Fplayersoffcial@Gmail.Com',
+    provider: 'Online course platform',
+    category: 'other',
+    files: [{ name: '3296_fplayersoffcial@gmail.com.pdf', label: '3296 Fplayersoffcial@Gmail.Com', kind: 'certificate' }],
+    thumbnail: '3296_fplayersoffcial@gmail.com-preview.png',
+    previewType: 'pdf',
+  },
+
+  {
+    id: '582-fplayersoffcial-gmail-com',
+    title: '582 Fplayersoffcial@Gmail.Com',
+    provider: 'Online course platform',
+    category: 'other',
+    files: [{ name: '582_fplayersoffcial@gmail.com.pdf', label: '582 Fplayersoffcial@Gmail.Com', kind: 'certificate' }],
+    thumbnail: '582_fplayersoffcial@gmail.com-preview.png',
+    previewType: 'pdf',
+  },
+
+  {
+    id: 'marketing-de-medios-sociales',
+    title: 'Marketing de Medios Sociales',
+    provider: 'Online course platform',
+    category: 'marketing',
+    files: [{ name: 'Marketing de Medios Sociales.pdf', label: 'Marketing de Medios Sociales', kind: 'certificate' }],
+    thumbnail: 'Marketing de Medios Sociales-preview.png',
+    previewType: 'pdf',
+  },
 ];
 
 // Documentos complementarios (transcripts, expedientes, perfiles): no son
@@ -543,6 +623,76 @@ export const OTHER_DOCS: Certificate[] = [
     provider: 'Online course platform',
     category: 'other',
     files: [{ name: '109_fplayersoffcial@gmail.com.pdf', label: 'Certificate 109', kind: 'certificate' }],
+    previewType: 'pdf',
+  },
+
+  {
+    id: 'comunicacion-empresarial',
+    title: 'Comunicación Empresarial',
+    provider: 'Online course platform',
+    category: 'digital',
+    files: [{ name: 'Comunicación Empresarial.pdf', label: 'Comunicación Empresarial', kind: 'certificate' }],
+    thumbnail: 'Comunicación Empresarial-preview.png',
+    previewType: 'pdf',
+  },
+
+  {
+    id: 'encontrar-financiamiento',
+    title: 'Encontrar Financiamiento',
+    provider: 'Online course platform',
+    category: 'finance',
+    files: [{ name: 'Encontrar Financiamiento.pdf', label: 'Encontrar Financiamiento', kind: 'certificate' }],
+    thumbnail: 'Encontrar Financiamiento-preview.png',
+    previewType: 'pdf',
+  },
+
+  {
+    id: 'experiencia-cliente-cx',
+    title: 'Experiencia del Cliente (CX) para el éxito comercial',
+    provider: 'Online course platform',
+    category: 'marketing',
+    files: [{ name: 'Experiencia del cliente (CX) para el éxito comercial.pdf', label: 'Experiencia del Cliente (CX)', kind: 'certificate' }],
+    thumbnail: 'Experiencia del cliente (CX) para el éxito comercial-preview.png',
+    previewType: 'pdf',
+  },
+
+  {
+    id: 'destrezas-empresariales-digitales',
+    title: 'Introducción a Destrezas Empresariales Digitales',
+    provider: 'Online course platform',
+    category: 'digital',
+    files: [{ name: 'Introducción a Destrezas Empresariales Digitales.pdf', label: 'Destrezas Empresariales Digitales', kind: 'certificate' }],
+    thumbnail: 'Introducción a Destrezas Empresariales Digitales-preview.png',
+    previewType: 'pdf',
+  },
+
+  {
+    id: 'ciberseguridad',
+    title: 'Introducción al Conocimiento de la Ciberseguridad',
+    provider: 'Online course platform',
+    category: 'cloud',
+    files: [{ name: 'Introducción al Conocimiento de la Ciberseguridad.pdf', label: 'Ciberseguridad', kind: 'certificate' }],
+    thumbnail: 'Introducción al Conocimiento de la Ciberseguridad-preview.png',
+    previewType: 'pdf',
+  },
+
+  {
+    id: 'planificacion-estrategica-ia',
+    title: 'La planificación estratégica en la era de la IA',
+    provider: 'Online course platform',
+    category: 'ai',
+    files: [{ name: 'La planificación estratégica en la era de la IA.pdf', label: 'Planificación estratégica en la era de la IA', kind: 'certificate' }],
+    thumbnail: 'La planificación estratégica en la era de la IA-preview.png',
+    previewType: 'pdf',
+  },
+
+  {
+    id: 'transcript',
+    title: 'Transcript',
+    provider: 'Online course platform',
+    category: 'other',
+    files: [{ name: 'transcript.pdf', label: 'Transcript', kind: 'transcript' }],
+    thumbnail: 'transcript-preview.png',
     previewType: 'pdf',
   }
 ];
