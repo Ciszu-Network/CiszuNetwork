@@ -260,12 +260,21 @@ const writePreviewManifest = (files) => {
     })
     .filter((e) => e.preview);
 
+  const escapeValue = (value) => {
+    if (typeof value !== 'string') return value;
+    return value
+      .replace(/\\/g, '\\\\')
+      .replace(/'/g, "\\'")
+      .replace(/\n/g, '\\n')
+      .replace(/\r/g, '\\r');
+  };
+
   const lines = [
     '// AUTO-GENERADO por scripts/sync-certificates.js — NO editar a mano.',
     '// Mapea cada archivo de shared/docs/certificados a su preview real (si existe).',
     '// Re-ejecutar con: pnpm sync:certificates',
     'export const PREVIEWS_BY_FILE: Record<string, string> = {',
-    ...entries.map((e) => `  '${e.name.replace(/'/g, "\\'")}': '${e.preview.replace(/'/g, "\\'")}',`),
+    ...entries.map((e) => `  '${escapeValue(e.name)}': '${escapeValue(e.preview)}',`),
     '};',
     '',
   ];

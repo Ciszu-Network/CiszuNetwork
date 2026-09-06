@@ -9,7 +9,7 @@ import FeedbackFab from "@/components/layout/FeedbackFab";
 import { CookiesBanner } from "@/components/layout/CookiesBanner";
 import { getDict, parseLang } from "@/lib/i18n";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
 import { getSessionData } from "@/lib/auth";
 import QueryProvider from "@/components/layout/QueryProvider";
@@ -88,7 +88,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
               <AdPill placement="body" />
               <RedirectGuard debug={true} />
               <DisclaimerProvider>
-              {!isEdit && <BetaDisclaimer storageKey="betadisclaimer_ciszubot_dismissed" />}
+              {/* BetaDisclaimer removido: ahora usa el sistema de push global (GlobalDisclaimer) */}
               {!isEdit && <Navbar lang={lang} dict={dict} account={session} />}
               {!isEdit && <ZoomWarning />}
               {!isEdit && <DisclaimerStack headerHeight={64} />}

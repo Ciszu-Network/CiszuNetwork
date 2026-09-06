@@ -5,19 +5,41 @@
 ### Cambios Generales:
 
 1. [x] #5 Crear sistema de anuncios: Google Adsense, GA4, GTM, Tag y Analytics pack completo.
+    - [x] Implementar GoogleScripts/GoogleAnalytics en las 4 webs (GTM + GA4 + AdSense auto ads).
+    - [x] Crear ads.txt en public/ de las 4 webs.
+    - [x] Configurar CSP para permitir scripts de AdSense/GTM.
     - [ ] AdSense dice “Preparando el sitio”: revisar cuenta/sitio aprobado y crear unidades de anuncio tras aprobación.
+        - [ ] Pasos en AdSense:
+            - [ ] Enviar/verificar los 4 sitios en AdSense (requiere acceso a adsense.google.com).
+            - [ ] Crear unidades de anuncio: al menos 1 unidad gráfica o nativa por sitio.
+            - [ ] Esperar aprobación de cuenta y sitios (puede tardar días).
+            - [ ] Una vez aprobado, sustituir auto-ads por unidades específicas si se desea.
     - [ ] GA4: confirmar Realtime page_views (requiere acceso a analytics.google.com).
+        - [ ] Pasos en GA4:
+            - [ ] Verificar en Realtime que llegan page_views de los 4 dominios.
+            - [ ] Completar las tareas pendientes de configuración (6/11 actualmente).
+            - [ ] Crear filtros/audiencias si se necesitan para Looker Studio.
     - [ ] GTM: publicar/verificar contenedores (requiere acceso a tagmanager.google.com).
+        - [ ] Pasos en GTM:
+            - [ ] Publicar cada contenedor (GTM-N7Q8DGX5, GTM-WNDXGD63, GTM-T9LG9N6C, GTM-N2SXL2FN).
+            - [ ] Verificar que los tags de GA4/AdSense se disparan correctamente en Preview.
     - [ ] Looker Studio: conectar fuentes GA4 y crear dashboard (requiere acceso manual).
+        - [ ] Pasos en Looker Studio:
+            - [ ] Crear dashboard conectado a las 4 propiedades GA4.
+            - [ ] Agregar métricas de ads si se desea (requiere AdSense activo).
+    - [ ] Verificar en producción que no hay errores 400/500 en impresiones de ads.
+    - [ ] Verificar CSP: AdSense puede requerir agregar ep2.adtrafficquality.google a script-src.
 
 2. [ ] #4 El sistema de los discleimers y ads no llegan en local ni en global. Actualmente no funciona el sistema de agregar discleimer ni ads desde la devcon, simplemente no agrega nada visualmente a pesar que desde la devcon parece que si, siempre sale el banner de esta website esta en beta, recuerda que el discleimer de devcon debe indicar que fue enviado por la devcon, ademas que independientemente de la cantidad actual almacenada el usuario siempre le debe salir. Los fallbacks nunca llegan a su cometido.
+    1. [ ] Luego de que el sistema funcione debugear con ads para arreglar el error de el logo actual de ciszugamens no es correcto, usa los colores incorrectos, debe ser el de C morado, y Z azul. Con degradados. Outline. Actualmente se usa una version azul de la C y Z blanca.
 
-    En general no veo muchos anuncios de ciszugamens, intentemos potenciarlo mas.
-
-3. [ ] Luego de que el sistema funcione debugear con ads para arreglar el error de el logo actual de ciszugamens no es correcto, usa los colores incorrectos, debe ser el de C morado, y Z azul. Con degradados. Outline. Actualmente se usa una version azul de la C y Z blanca.
-
-- [x] #1 Al registrarse o logearse debe haber cumplido la seguridad de cloudflare antes, y en ese instante un recaptcha, actualmente muzicmania tiene recaptcha. Siempre luego debe haber una pantalla para verificar el correo en momento de reggistrarse (pero es opcional, luego en sus configuraciones de cuenta puede terminar la verificacion) pero si el usuario tiene 2FA siempre debe haber una pantalla pidiendole una clave que empieze po C- y seguido de 6 digitos y en la mitad un espacio (C-123 434) clave oficial de ciszunetwork, temporal, expirable en 3 horas e indicar, unico por website, indicar si ya expiro y posibilidad de reenviar otro codigo con limites, al tercer limite se suspende temporalmente y localmente por que no logro iniciar sesion. (Primero arreglar todo lo de abajo)
-- [x] #2 Cuando un usuario se registre luego se tiene que logear denuevo, si un usuario pierde su contra debe darle a olvide la contraseña y debe enviar una peticion, SOLAMENTE ESO, ya en su email se le enviare un link temporal de un oslo uso para recuperar su contra, con una pantalla exclusiva donde coloca su contraseña nueva y lo repite. No puede ser la antigua, luego requiere logearse. (Primero arreglar todo lo de abajo)
+- [ ] Al registrarse o logearse debe haber cumplido la seguridad de recaptcha. Siempre luego debe haber una pantalla para verificar el correo en momento de registrarse, pero si el usuario tiene 2FA siempre debe haber una pantalla pidiendole una clave que empieze po C- y seguido de 6 digitos y en la mitad un espacio (C-123 434) clave oficial de ciszunetwork, temporal, expirable en 3 horas e indicar, unico por website, indicar si ya expiro y posibilidad de reenviar otro codigo con limites, al tercer limite se suspende temporalmente y localmente por que no logro iniciar sesion.
+- [ ] Los emails actualmente que se envian no estan customizados, los envia "supabase" lo cual puede confundir siempre debe ser ciszunetwork | (pagine en cuestion) ademas de un diseño interno diferente con botones y diseño. Terminos y condiciones y aclaracion de que este email no es de patrocinamiento o anuncio. Los que si son siempre se debe recalcar.
+- [ ] Cuando un usuario se registre luego se tiene que logear denuevo.
+- [ ] Actualmente el sistema OTP de las cuentas cuando le das a olvide la contraseña esa bien al inicio pero requiere muchas puliciones, actualmente cuando se entra a un link con token valido simplemente entra y ya, sin pantalla de recuperacion de contraseña cambiando la contraseña, con una pantalla exclusiva donde coloca su contraseña nueva y lo repite. No puede ser la antigua, luego se deslogea automaticamente para que se requiera logearse. Es decir es una sesion temporal, ademas de captar rate limits. En la pantalla de olvide contraseña si el usuario ya pidio varias veces en poco tiempo debe esperar 12 horas.
+- [ ] Cuando un usuario entra a un link invalido expirado, es cierto que no se logea. Pero no existe ninguna indicacion, debes crear un modal o advertencia de que ese link estuvo invalido por X tiempo, por la razon. Ademas de recordarle al usuario en la pantalla de login de olvide contraseña que el link es 1 solo uso.
+- [ ] Al cerrar sesion manual o automaticamente SIEMPRE redirigir a /index o home de la webpage.
+- [ ] TODAS las paginas de registro deben tener el recaptacha al final del formulario antes del boton de registrarse, Y tambien OBLIGATORIAMENTE debe haber 2 casillas de verificacion obligatorias para aceptar los terminos y condiciones y otras cosas.
 
 ### Cambios por Website
 
@@ -28,7 +50,8 @@
 
 **Ciszubot Website:**
 
-- [x] Nada.
+- [ ] Termina el sistema de quickdocks en ciszubot, parecido a las demas websites. Un modal de acceso directos. Ademas, veo que varios de las opciones/paginas de los quickdocks al entrar no tienen el quickdock en especial terminos y politicas. TODAS las paginas que tienen quickdocks como acceso rapido debe tambien tener el quickdock.
+- [ ] Terminar idiomas en ingles (UK y USA) por separado.
 
 **Ciszuko Antony Website:**
 
@@ -325,6 +348,5 @@ impression:1 Failed to load resource: the server responded with a status of 500 
 
 **MuzicMania Website:**
 
-- [x] En las preferencias locales. No tiene el sistema de idiomas correcto, el boton para entrar al menu de lenguaje es diferente. Debemos mejorar la apariencia y que se parezca a los de los demas. Con su icono preview de flag.
 - [ ] Terminar idiomas en ingles (UK y USA) por separado.
 - [ ] Terminar bien el tema claro (Todos los docks, modals o cards con fondo oscuro paran a claro, los textos oscuros o negros e iconos negros o oscuros)

@@ -42,6 +42,10 @@
     "cdn:verify": "node scripts/check-cdn-mimes.js",
     "cdn:serve": "node scripts/serve-cdn.js",
     "db:backup": "node scripts/backup-db.js",
+    "backup:dry-run": "bash scripts/backup-cloud.sh --dry-run",
+    "backup": "bash scripts/backup-cloud.sh",
+    "backup:check": "bash scripts/backup-cloud.sh --check",
+    "backup:restore": "bash -lc 'rclone copy ciszu-backup:CiszuNetwork /tmp/ciszu-restore --progress'",
     "notify": "node scripts/ntfy-notif.js",
     "api:test": "node scripts/run-bru.js run . -r --env prod --exclude-tags local",
     "api:test:report": "node scripts/run-bru.js run . -r --env prod --exclude-tags local --reporter-json ../.opencode/temp/bru-report.json",
@@ -103,7 +107,8 @@
     "vitest": "^4.1.10",
     "wrangler": "^4.0.0",
     "tsx": "^4.22.4",
-    "csv-parse": "^7.0.2"
+    "csv-parse": "^7.0.2",
+    "tar": "^7.5.22"
   },
   "packageManager": "pnpm@10.8.1",
   "dependencies": {

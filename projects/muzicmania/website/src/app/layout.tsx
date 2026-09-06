@@ -9,7 +9,7 @@ import AuthProvider from "@/components/providers/AuthProvider";
 import AdsWithUser from "@/components/providers/AdsWithUser";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, BetaDisclaimer, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
 
 const exo2 = Exo_2({
@@ -86,7 +86,7 @@ export default async function RootLayout({
           <DisclaimerProvider>
             <CloudflareGuard>
               <AdBlockerGuard site="muzicmania" logo={assetResolver.resolve('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} title="MuzicMania" accent="#c026d3" accentAlt="#ff33cc">
-              {!isEdit && <BetaDisclaimer storageKey="betadisclaimer_muzicmania_dismissed" />}
+              {/* BetaDisclaimer removido: ahora usa el sistema de push global (GlobalDisclaimer) */}
               {!isEdit && <Navbar />}
               {!isEdit && <ZoomWarning />}
               {!isEdit && <DisclaimerStack headerHeight={60} />}

@@ -453,6 +453,7 @@ export interface GlobalDisclaimerProps {
 }
 
 const GD_POLL_INTERVAL = 20000;
+const GD_POLL_INTERVAL_DEV = 3000; // 3s en desarrollo para respuesta inmediata
 const GD_SEEN_MAX = 100;
 
 const GD_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://obwzzmbvkrcscqwptlqo.supabase.co';
@@ -505,7 +506,9 @@ function gdPersistSeen(site: string, ids: Set<number>) {
   } catch { /* no romper */ }
 }
 
-export function GlobalDisclaimer({ site, pollInterval = GD_POLL_INTERVAL, disabled = false }: GlobalDisclaimerProps) {
+export function GlobalDisclaimer({ site, pollInterval, disabled = false }: GlobalDisclaimerProps) {
+  // En desarrollo: polling rápido (3s). En producción: 20s.
+  const effectiveInterval = pollInterval ?? (process.env.NODE_ENV === 'development' ? 3000 : 20000);
   const { push, remove } = useDisclaimer();
   const seenRef = useRef<Set<number>>(new Set());
   const [rows, setRows] = useState<GlobalDisclaimerRow[]>([]);
@@ -555,18 +558,22 @@ export function GlobalDisclaimer({ site, pollInterval = GD_POLL_INTERVAL, disabl
     };
 
     poll();
-    const iv = window.setInterval(poll, pollInterval);
+    const iv = window.setInterval(poll, effectiveInterval);
     return () => { cancelled = true; window.clearInterval(iv); };
-  }, [site, pollInterval]);
+  }, [site, effectiveInterval]);
 
-  // Inyecta los disclaimers globales en el stack (no vistos aún o con fecha futura).
-  // Los disclaimers enviados por devcon SIEMPRE se muestran (sin filtro seen).
+  // Inyecta los disclaimers globales en el stack.
+  // Reglas:
+  //  - Devcon (source=dev-console o sender=devcon): SIEMPRE se muestra, sin filtro seen.
+  //  - Otros: se muestra si no se ha visto (seen) O si es un disclaimer nuevo (no está en seen).
+  //  - El usuario pide que SIEMPRE salgan independientemente del count almacenado.
+  //    Así que eliminamos el filtro seen para todos; solo filtramos expirados en el poll.
   useEffect(() => {
     const active = new Set<string>();
     for (const row of rows) {
       const key = `gd_${row.id}`;
-      const isDevcon = row.sender === 'devcon';
-      if (!isDevcon && seenRef.current.has(row.id)) continue;
+      const isDevcon = row.sender === 'devcon' || row.source === 'dev-console';
+      // SIEMPRE mostrar: quitamos el filtro seen. El usuario quiere que salgan siempre.
       active.add(key);
       push({
         id: key,

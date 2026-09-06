@@ -100,7 +100,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={ICON_SVG} title="Ciszu Network" subtitle="Ciszu Network Security • Cloudflare" accent="#22d3ee" storageKey="cf_verified_ciszu">
               <AdBlockerGuard site="ciszunetwork" logo={ICON_SVG} title="Ciszu Network" accent="#22d3ee" accentAlt="#f472b6">
               {!isEdit && <ZoomWarning />}
-              {!isEdit && <BetaDisclaimer storageKey="betadisclaimer_ciszu_dismissed" />}
+              {/* BetaDisclaimer removido: ahora usa el sistema de push global (GlobalDisclaimer) */}
               {!isEdit && <Navbar />}
               {!isEdit && <DisclaimerStack headerHeight={64} />}
               <DisclaimerDebug site="ciszunetwork" />
