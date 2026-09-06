@@ -10,7 +10,6 @@ import {
   OTHER_DOCS,
   type Certificate,
 } from '@/data/certificates';
-import PdfThumbnail from '@/components/certificates/PdfThumbnail';
 import { PREVIEWS_BY_FILE } from '@/data/certificates.previews';
 import QuickDocks from '@/components/molecules/QuickDocks';
 
@@ -19,8 +18,6 @@ const CDN_BASE =
   'https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn';
 
 const fileUrl = (name: string) => {
-  // Codificar solo el nombre del archivo, no la ruta completa.
-  // Los nombres de archivo ya vienen con el path relativo desde la raíz de certificados/.
   const parts = name.split('/');
   const encodedName = parts.map((p) => encodeURIComponent(p)).join('/');
   return `${CDN_BASE}/shared/docs/certificados/${encodedName}`;
@@ -32,12 +29,6 @@ const previewUrlBuilder = (name: string) => {
   return `${CDN_BASE}/shared/docs/certificados/previews/${encodedName}`;
 };
 
-/**
- * Resuelve el thumbnail de un certificado automáticamente desde el manifiesto
- * generado por `pnpm sync:certificates` (shared/docs/certificados/previews).
- * Orden: preview real del primer archivo (si existe) > el propio archivo
- * (PDF se renderiza con pdfjs, imagen se muestra tal cual).
- */
 const resolvePreview = (cert: Certificate): { name: string; isPreview: boolean } | undefined => {
   const mainName = cert.files[0]?.name;
   if (!mainName) return undefined;
@@ -56,6 +47,64 @@ const fmtDate = (iso?: string) => {
 const catColor = (id: string) => CATEGORIES.find((c) => c.id === id)?.color || '#94a3b8';
 const catLabel = (id: string) => CATEGORIES.find((c) => c.id === id)?.label || id;
 
+const ALL_DOCS: Certificate[] = [...CERTIFICATES, ...OTHER_DOCS];
+
+const PROVIDER_OPTIONS = [
+  { id: 'cisco', label: 'Cisco Networking Academy', color: '#1B75BC' },
+  { id: 'microsoft', label: 'Microsoft Learn', color: '#0078D4' },
+  { id: 'ibm', label: 'IBM SkillsBuild', color: '#0096D6' },
+  { id: 'hp', label: 'HP Life', color: '#0096D6' },
+  { id: 'ef-set', label: 'EF SET (Education First)', color: '#00A3E0' },
+  { id: 'penn-elp', label: 'University of Pennsylvania (Penn ELP)', color: '#990000' },
+  { id: '16personalities', label: '16Personalities (NERIS Analytics)', color: '#00C9A7' },
+  { id: 'online-es', label: 'Online Courses Platform (ES)', color: '#F472B6' },
+  { id: 'other', label: 'Other / Unknown', color: '#94A3B8' },
+];
+
+function getProviderGroup(cert: Certificate): string {
+  const provider = cert.provider.toLowerCase();
+  if (provider.includes('cisco')) return 'cisco';
+  if (provider.includes('microsoft') || provider.includes('learn.microsoft')) return 'microsoft';
+  if (provider.includes('ibm') || provider.includes('skillsbuild')) return 'ibm';
+  if (provider.includes('hp') || provider.includes('hp life')) return 'hp';
+  if (provider.includes('ef set') || provider.includes('efset')) return 'ef-set';
+  if (provider.includes('penn') || provider.includes('english language programs')) return 'penn-elp';
+  if (provider.includes('16personalities') || provider.includes('neris')) return '16personalities';
+  if (provider.includes('online') || provider.includes('es') || cert.collection?.id === 'cursos-online-es') return 'online-es';
+  return 'other';
+}
+
+const SORT_OPTIONS = [
+  { id: 'date-desc', label: 'Date ↓ (Newest first)', fn: (a: Certificate, b: Certificate) => (b.date || '').localeCompare(a.date || '') },
+  { id: 'date-asc', label: 'Date ↑ (Oldest first)', fn: (a: Certificate, b: Certificate) => (a.date || '').localeCompare(b.date || '') },
+  { id: 'alpha-asc', label: 'A–Z', fn: (a: Certificate, b: Certificate) => a.title.localeCompare(b.title) },
+  { id: 'alpha-desc', label: 'Z–A', fn: (a: Certificate, b: Certificate) => b.title.localeCompare(a.title) },
+  { id: 'provider', label: 'Provider', fn: (a: Certificate, b: Certificate) => a.provider.localeCompare(b.provider) },
+  { id: 'category', label: 'Category', fn: (a: Certificate, b: Certificate) => catLabel(a.category).localeCompare(catLabel(b.category)) },
+];
+
+const EXTERNAL_LINKS = [
+  { label: 'Cisco Networking Academy', url: 'https://skillsforall.com', icon: '🔗' },
+  { label: 'Microsoft Learn', url: 'https://learn.microsoft.com', icon: '📚' },
+  { label: 'IBM SkillsBuild', url: 'https://skillsbuild.org', icon: '🏷️' },
+  { label: 'HP Life', url: 'https://www.hp.com/us-en/life.html', icon: '💻' },
+  { label: 'EF SET', url: 'https://www.efset.org', icon: '🇬🇧' },
+  { label: 'Penn ELP', url: 'https://www.elp.upenn.edu', icon: '🎓' },
+  { label: '16Personalities', url: 'https://www.16personalities.com', icon: '🧠' },
+  { label: 'Simplilearn', url: 'https://simpli-web.app.link/e/aaWENDBP75b', icon: '📜' },
+];
+
+const COMPANIES = [
+  { name: 'Cisco Networking Academy', logo: 'cisco', desc: 'Global IT training & certification platform (Skills for All).', category: 'Networking & IT' },
+  { name: 'Microsoft Learn', logo: 'microsoft', desc: 'Official Microsoft learning platform for cloud, AI, dev tools.', category: 'Cloud & Development' },
+  { name: 'IBM SkillsBuild', logo: 'ibm', desc: 'Free digital learning platform by IBM for tech & professional skills.', category: 'Tech & Professional Skills' },
+  { name: 'HP Life', logo: 'hp', desc: 'Free business & IT skills training by HP Foundation.', category: 'Business & IT Skills' },
+  { name: 'EF SET (Education First)', logo: 'ef', desc: 'Standardized English proficiency test (CEFR-aligned).', category: 'Language Assessment' },
+  { name: 'University of Pennsylvania (Penn ELP)', logo: 'penn', desc: 'Ivy League English language programs & certifications.', category: 'Higher Education' },
+  { name: '16Personalities (NERIS Analytics)', logo: '16p', desc: 'Personality assessment based on Jungian typology (MBTI-inspired).', category: 'Psychometrics' },
+  { name: 'Simplilearn', logo: 'simplilearn', desc: 'Online bootcamps & certifications for digital economy skills.', category: 'Professional Training' },
+];
+
 function CertificateCard({
   cert,
   onOpen,
@@ -66,7 +115,8 @@ function CertificateCard({
   index: number;
 }) {
   const color = catColor(cert.category);
-  
+  const providerGroup = getProviderGroup(cert);
+
   const mainFile = cert.files[0];
   const previewFile = resolvePreview(cert);
   const previewUrl = previewFile
@@ -77,7 +127,7 @@ function CertificateCard({
   const isImage = previewFile && /\.(jpg|jpeg|png|webp)$/i.test(previewFile.name);
   const isPdf = previewFile && /\.pdf$/i.test(previewFile.name);
   const hasRealPreview = mainFile ? !!PREVIEWS_BY_FILE[mainFile.name] : false;
-  
+
   return (
     <motion.button
       initial={{ opacity: 0, y: 18 }}
@@ -90,21 +140,24 @@ function CertificateCard({
         {previewUrl ? (
           <>
             {isImage ? (
-              <div 
+              <div
                 className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform group-hover:scale-105"
-                style={{ 
+                style={{
                   backgroundImage: `url(${previewUrl})`,
                   backgroundSize: 'cover',
-                  backgroundPosition: 'center'
+                  backgroundPosition: 'center',
                 }}
               />
             ) : isPdf ? (
-              <div className="absolute inset-0">
-                <PdfThumbnail />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <svg viewBox="0 0 24 24" className="w-12 h-12 text-white/40" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                </svg>
               </div>
             ) : (
               <div className="absolute inset-0 flex items-center justify-center">
-                <svg viewBox="0 0 24 24" className="w-10 h-10 text-white/40" fill="none" stroke="currentColor" strokeWidth={2}>
+                <svg viewBox="0 0 24 24" className="w-10 h-10 text-white/30" fill="none" stroke="currentColor" strokeWidth={2}>
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                   <polyline points="14 2 14 8 20 8" />
                 </svg>
@@ -120,17 +173,22 @@ function CertificateCard({
             </svg>
           </div>
         )}
-        
+
         <span className="absolute top-2 right-2 text-[10px] uppercase tracking-widest font-black px-2 py-1 rounded-full z-10 backdrop-blur-md"
-          style={{ 
-            color, 
-            backgroundColor: `${color}22`, 
+          style={{
+            color,
+            backgroundColor: `${color}22`,
             border: `1px solid ${color}66`,
             textShadow: '0 1px 2px rgba(0,0,0,0.5)'
           }}>
           {catLabel(cert.category)}
         </span>
-        
+
+        <span className="absolute top-2 left-2 text-[9px] uppercase tracking-widest font-black px-1.5 py-0.5 rounded-full z-10 backdrop-blur-md"
+          style={{ backgroundColor: PROVIDER_OPTIONS.find(p => p.id === providerGroup)?.color + '22' || '#94a3b822', border: `1px solid ${PROVIDER_OPTIONS.find(p => p.id === providerGroup)?.color || '#94a3b8'}66` }}>
+          {PROVIDER_OPTIONS.find(p => p.id === providerGroup)?.label || 'Other'}
+        </span>
+
         {previewUrl && (
           <div className="absolute bottom-2 left-2 bg-black/70 backdrop-blur-sm rounded-md px-2 py-0.5 z-10">
             <span className="text-[9px] font-bold text-white/90 uppercase tracking-wider">
@@ -139,7 +197,7 @@ function CertificateCard({
           </div>
         )}
       </div>
-      
+
       <div className="p-4 flex-1 flex flex-col">
         <div className="flex-1">
           <h3 className="font-header font-bold text-[15px] text-white leading-snug group-hover:text-neon-blue transition-colors line-clamp-2">
@@ -147,7 +205,7 @@ function CertificateCard({
           </h3>
           <p className="mt-1 text-xs text-gray-400 line-clamp-1">{cert.provider}</p>
         </div>
-        
+
         <div className="mt-3 flex items-center justify-between gap-2 text-[11px] text-gray-500">
           <span className="flex items-center gap-1.5">
             <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -380,8 +438,11 @@ function DetailModal({
                           className="w-full h-64 sm:h-80 object-contain bg-black/40"
                         />
                       ) : (
-                        <div className="w-full h-64 sm:h-80 bg-black/40">
-                          <PdfThumbnail />
+                        <div className="w-full h-64 sm:h-80 bg-black/40 flex items-center justify-center">
+                          <svg viewBox="0 0 24 24" className="w-12 h-12 text-white/30" fill="none" stroke="currentColor" strokeWidth={2}>
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                          </svg>
                         </div>
                       )}
                       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 flex items-center justify-between">
@@ -515,29 +576,30 @@ function DetailModal({
 }
 
 export default function CertificatesPage() {
-  usePageTitle('Certificates');
+  usePageTitle('Certificates & Documents');
   const [category, setCategory] = useState<string>('all');
-  const [docsCategory, setDocsCategory] = useState<string>('all');
+  const [provider, setProvider] = useState<string>('all');
   const [query, setQuery] = useState('');
+  const [sort, setSort] = useState<string>('date-desc');
   const [selected, setSelected] = useState<Certificate | null>(null);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return CERTIFICATES.filter((c) => {
+    const result = ALL_DOCS.filter((c) => {
       if (category !== 'all' && c.category !== category) return false;
+      if (provider !== 'all' && getProviderGroup(c) !== provider) return false;
       if (!q) return true;
-      const hay = `${c.title} ${c.provider} ${c.collection?.name || ''}`.toLowerCase();
+      const hay = `${c.title} ${c.provider} ${c.collection?.name || ''} ${fmtDate(c.date)}`.toLowerCase();
       return hay.includes(q);
     });
-  }, [category, query]);
 
-  const filteredDocs = useMemo(() => {
-    if (docsCategory === 'all') return OTHER_DOCS;
-    return OTHER_DOCS.filter((c) => c.category === docsCategory);
-  }, [docsCategory]);
+    const sortFn = SORT_OPTIONS.find(s => s.id === sort)?.fn || SORT_OPTIONS[0].fn;
+    result.sort(sortFn);
+    return result;
+  }, [category, provider, query, sort]);
 
   const relatedOf = (c: Certificate) =>
-    CERTIFICATES.filter(
+    ALL_DOCS.filter(
       (x) =>
         x.id !== c.id &&
         (c.collection ? x.collection?.id === c.collection.id : x.category === c.category),
@@ -551,12 +613,7 @@ export default function CertificatesPage() {
             Certificates & Documents
           </h1>
           <p className="text-gray-500 text-sm uppercase tracking-widest mb-2">
-            {CERTIFICATES.length} learning credentials · {OTHER_DOCS.length} supporting documents
-          </p>
-          <p className="text-gray-400 text-xs max-w-2xl mx-auto">
-            Browse certificates with previews. Personal documents in <span className="text-[#ec4899] font-bold">Personal</span>, 
-            bachillerato in <span className="text-[#8b5cf6] font-bold">Bachillerato</span>, 
-            and supporting files in <span className="text-[#94a3b8] font-bold">Other Documents</span>.
+            {ALL_DOCS.length} total documents · {CERTIFICATES.length} certificates · {OTHER_DOCS.length} supporting docs
           </p>
         </motion.div>
 
@@ -564,53 +621,8 @@ export default function CertificatesPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.15 }}
-          className="flex flex-wrap items-center justify-center gap-2 mb-8"
+          className="mb-8 space-y-4"
         >
-          <span className="text-[11px] font-black uppercase tracking-widest text-gray-500 mr-1">Official links:</span>
-          {OFFICIAL_LINKS.map((l) => (
-            <a
-              key={l.url}
-              href={l.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border border-neon-cyan/40 text-neon-cyan hover:bg-neon-cyan/10 transition-all"
-            >
-              {l.label}
-              <svg viewBox="0 0 24 24" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2}>
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                <polyline points="15 3 21 3 21 9" />
-                <line x1="10" y1="14" x2="21" y2="3" />
-              </svg>
-            </a>
-          ))}
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="mb-10 p-5 rounded-2xl border border-white/10 bg-white/[0.02]"
-        >
-          <div className="flex gap-3">
-            <svg viewBox="0 0 24 24" className="w-5 h-5 text-neon-pink shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth={2}>
-              <circle cx="12" cy="12" r="10" />
-              <path d="M12 8v4M12 16h.01" />
-            </svg>
-            <div>
-              <p className="text-sm font-bold text-white">Fair use — honest portfolio display</p>
-              <p className="mt-1 text-xs text-gray-400 leading-relaxed">
-                All documents on this page belong to their respective issuers and are shown for
-                portfolio purposes only, under fair use and with full authority of the holder. They
-                are never modified or falsified, and they never impersonate any institution. Each
-                credential is labeled with the real data extracted from the original file; when the
-                issuer or date is not stated in the document, it is explicitly noted. The complete
-                legal terms are available on the <a href="/policies" className="text-neon-blue hover:underline">Policies</a> page.
-              </p>
-            </div>
-          </div>
-        </motion.div>
-
-        <div className="mb-8 space-y-4">
           <div className="flex flex-wrap items-center justify-center gap-2">
             <button
               onClick={() => setCategory('all')}
@@ -637,7 +649,45 @@ export default function CertificatesPage() {
                     : { borderColor: `${c.color}55`, color: undefined }
                 }
               >
-                {c.label}
+                <span className="inline-flex items-center gap-1.5">
+                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2}>
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <path d="M9 9h6v6H9z" />
+                  </svg>
+                  {c.label}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <span className="text-[11px] font-black uppercase tracking-widest text-gray-500 mr-1">Provider:</span>
+            <button
+              onClick={() => setProvider('all')}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer ${
+                provider === 'all'
+                  ? 'bg-white text-black border-white'
+                  : 'text-gray-300 border-white/15 hover:border-white/40 hover:text-white'
+              }`}
+            >
+              All
+            </button>
+            {PROVIDER_OPTIONS.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => setProvider(provider === p.id ? 'all' : p.id)}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer ${
+                  provider === p.id
+                    ? 'text-black'
+                    : 'text-gray-300 hover:text-white'
+                }`}
+                style={
+                  provider === p.id
+                    ? { backgroundColor: p.color, borderColor: p.color }
+                    : { borderColor: `${p.color}55`, color: undefined }
+                }
+              >
+                {p.label}
               </button>
             ))}
           </div>
@@ -652,21 +702,39 @@ export default function CertificatesPage() {
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by course, provider or collection…"
+              placeholder="Search by course, provider, collection, date…"
               className="w-full pl-11 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-gray-600 outline-none focus:border-neon-blue transition-all"
             />
           </div>
-        </div>
+
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-[11px] font-black uppercase tracking-widest text-gray-500">Sort:</span>
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+              className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:border-neon-blue outline-none"
+            >
+              {SORT_OPTIONS.map((s) => (
+                <option key={s.id} value={s.id}>{s.label}</option>
+              ))}
+            </select>
+          </div>
+        </motion.div>
 
         {filtered.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+          >
             {filtered.map((c, i) => (
               <CertificateCard key={c.id} cert={c} index={i} onOpen={setSelected} />
             ))}
-          </div>
+          </motion.div>
         ) : (
           <div className="text-center py-16">
-            <p className="text-gray-500 text-sm">No certificates match your search.</p>
+            <p className="text-gray-500 text-sm">No documents match your search.</p>
           </div>
         )}
 
@@ -676,54 +744,152 @@ export default function CertificatesPage() {
           transition={{ delay: 0.3 }}
           className="mt-16"
         >
-          <h2 className="font-header font-black text-2xl text-white text-center mb-2">
-            Personal & Supporting Documents
+          <h2 className="font-header font-black text-2xl text-white text-center mb-6">
+            Official Verification Links
           </h2>
-          <p className="text-center text-xs text-gray-500 uppercase tracking-widest mb-6">
-            Organized by type: Personal · Bachillerato · Other Documents
-          </p>
-          
-          <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
-            <button
-              onClick={() => setDocsCategory('all')}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer ${
-                docsCategory === 'all'
-                  ? 'bg-white text-black border-white'
-                  : 'text-gray-300 border-white/15 hover:border-white/40 hover:text-white'
-              }`}
-            >
-              All
-            </button>
-            {['personal', 'bachillerato', 'other'].map((catId) => {
-              const cat = CATEGORIES.find(c => c.id === catId);
-              if (!cat) return null;
-              return (
-                <button
-                  key={cat.id}
-                  onClick={() => setDocsCategory(docsCategory === cat.id ? 'all' : cat.id)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer ${
-                    docsCategory === cat.id
-                      ? 'text-black'
-                      : 'text-gray-300 hover:text-white'
-                  }`}
-                  style={
-                    docsCategory === cat.id
-                      ? { backgroundColor: cat.color, borderColor: cat.color }
-                      : { borderColor: `${cat.color}55`, color: undefined }
-                  }
-                >
-                  {cat.label}
-                </button>
-              );
-            })}
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredDocs.map((c, i) => (
-              <CertificateCard key={c.id} cert={c} index={i} onOpen={setSelected} />
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            {OFFICIAL_LINKS.map((l) => (
+              <a
+                key={l.url}
+                href={l.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border border-neon-cyan/40 text-neon-cyan hover:bg-neon-cyan/10 transition-all"
+              >
+                <span className="text-base">🔗</span>
+                {l.label}
+              </a>
             ))}
           </div>
         </motion.section>
+
+        <motion.section
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.35 }}
+          className="mt-10"
+        >
+          <h2 className="font-header font-black text-2xl text-white text-center mb-6">
+            External Resources & Platforms
+          </h2>
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            {EXTERNAL_LINKS.map((l) => (
+              <a
+                key={l.url}
+                href={l.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border border-neon-purple/40 text-neon-purple hover:bg-neon-purple/10 transition-all"
+              >
+                <span className="text-base">{l.icon}</span>
+                {l.label}
+              </a>
+            ))}
+          </div>
+        </motion.section>
+
+        <motion.section
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="mt-10"
+        >
+          <h2 className="font-header font-black text-2xl text-white text-center mb-6">
+            Organizations & Platforms Referenced
+          </h2>
+          <p className="text-center text-xs text-gray-500 uppercase tracking-widest mb-6">
+            Companies, academies, and platforms mentioned across certificates
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {COMPANIES.map((c) => (
+              <motion.div
+                key={c.name}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 }}
+                className="p-5 rounded-2xl border border-white/10 bg-white/[0.02] hover:border-white/20 transition-all"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl bg-white/5 border border-white/10">
+                    {c.logo === 'cisco' && (
+                      <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                      </svg>
+                    )}
+                    {c.logo === 'microsoft' && (
+                      <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
+                        <path d="M18.7 15.3c-1.1 0-2-.9-2-2v-4c0-1.1.9-2 2-2h4v2h-4v4h4v2h-4v4c0 1.1-.9 2-2 2zm-14.6 1.4c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2h-4v2h4v4h-4v4h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v-4h4zM5.5 7.4c0-1.1.9-2 2-2h4v2h-4v4h-4v-4h-4v-2h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v4h-4zm13 1.1c-1.1 0-2-.9-2-2v-4c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4zm0-10.5c-1.1 0-2-.9-2-2h-4c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h4c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2z" />
+                      </svg>
+                    )}
+                    {c.logo === 'ibm' && (
+                      <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
+                        <text x="2" y="18" fontSize="16" fontWeight="bold">IBM</text>
+                      </svg>
+                    )}
+                    {c.logo === 'hp' && (
+                      <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
+                        <text x="4" y="18" fontSize="14" fontWeight="bold">HP</text>
+                      </svg>
+                    )}
+                    {c.logo === 'ef' && (
+                      <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
+                        <text x="4" y="18" fontSize="14" fontWeight="bold">EF</text>
+                      </svg>
+                    )}
+                    {c.logo === 'penn' && (
+                      <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
+                        <text x="4" y="18" fontSize="14" fontWeight="bold">Penn</text>
+                      </svg>
+                    )}
+                    {c.logo === '16p' && (
+                      <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
+                        <text x="2" y="18" fontSize="16" fontWeight="bold">16P</text>
+                      </svg>
+                    )}
+                    {c.logo === 'simplilearn' && (
+                      <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
+                        <text x="2" y="18" fontSize="14" fontWeight="bold">SL</text>
+                      </svg>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-header font-bold text-white truncate">{c.name}</h4>
+                    <p className="text-xs text-gray-400 mt-1">{c.category}</p>
+                    <p className="text-[11px] text-gray-500 mt-1">{c.desc}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.section>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="mt-10 p-5 rounded-2xl border border-white/10 bg-white/[0.02]"
+        >
+          <div className="flex gap-3">
+            <svg viewBox="0 0 24 24" className="w-5 h-5 text-neon-pink shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth={2}>
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 8v4M12 16h.01" />
+            </svg>
+            <div>
+              <p className="text-sm font-bold text-white">Fair use — honest portfolio display</p>
+              <p className="mt-1 text-xs text-gray-400 leading-relaxed">
+                All documents on this page belong to their respective issuers and are shown for
+                portfolio purposes only, under fair use and with full authority of the holder. They
+                are never modified or falsified, and they never impersonate any institution. Each
+                credential is labeled with the real data extracted from the original file; when the
+                issuer or date is not stated in the document, it is explicitly noted. The complete
+                legal terms are available on the <a href="/policies" className="text-neon-blue hover:underline">Policies</a> page.
+              </p>
+              <p className="mt-2 text-xs text-gray-500 italic">
+                Holder: <span className="font-bold text-white">FRANCISCO ANTONIO GARCIA MENOLASCINA</span>
+              </p>
+            </div>
+          </div>
+        </motion.div>
 
         <motion.p
           initial={{ opacity: 0 }}
