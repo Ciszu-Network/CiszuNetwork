@@ -19,6 +19,7 @@ import {
   getDict,
   parseLang,
 } from '@/lib/i18n';
+import QuickDocks from '@/components/molecules/QuickDocks';
 
 export const metadata: Metadata = {
   title: 'CiszuBot | SUPPORT',
@@ -242,6 +243,8 @@ export default async function SupportPage() {
           </div>
         </div>
       </div>
+
+      <QuickDocks />
     </div>
   );
 }

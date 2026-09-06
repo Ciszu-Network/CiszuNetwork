@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { assetResolver } from '@ciszunetwork/cdn';
 import { usePageTitle } from '@/lib/usePageTitle';
+import QuickDocks from '@/components/molecules/QuickDocks';
 
 const team = [
   { name: 'Ciszuko Antony (Francisco Garcia Antonio M. / y8)', role: 'CEO & Founder', desc: 'Created Ciszuko Network. Full-stack developer and leader of innovative projects.', photo: assetResolver.resolve('shared/images/francisco_selfie/IMG_20251207_001632@893898207.jpg') },
@@ -40,6 +41,8 @@ export default function TeamPage() {
           ))}
         </div>
       </div>
+
+      <QuickDocks />
     </div>
   );
 }

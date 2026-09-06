@@ -1,6 +1,7 @@
 import { SocialIcon } from "@/components/ui/SocialIcon";
 import { CISZU_NETWORK, CISZUKO_ANTONY, SOCIAL_COLORS } from "@/config/site";
 import { Mail, Phone, MapPin, Clock, Send, ArrowRight, MessageCircle } from "lucide-react";
+import QuickDocks from "@/components/molecules/QuickDocks";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -86,6 +87,8 @@ export default function ContactPage() {
           </div>
         </div>
       </div>
+
+      <QuickDocks />
     </div>
   );
 }

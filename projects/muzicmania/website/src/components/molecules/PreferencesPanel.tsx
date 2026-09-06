@@ -16,7 +16,7 @@ import {
   isLangAvailable,
   reloadAfterPrefChange,
 } from '@/lib/preferences';
-import { useToast, getCookieConsent, setCookieConsent, clearCookieConsent, useCookieConsent } from '@ciszu/ui';
+import { useToast, getCookieConsent, setCookieConsent, clearCookieConsent, useCookieConsent, LanguagesModal, LANGUAGE_OPTIONS } from '@ciszu/ui';
 
 export default function PreferencesPanel() {
   const { lang,  setLang,  darkMode,  setDarkMode,  user } = useAppStore();
@@ -25,6 +25,12 @@ export default function PreferencesPanel() {
   const [muted, setMuted] = useState<boolean>(false);
   const [redirectGuard, setRedirectGuard] = useState<boolean>(true);
   const [activityGuard, setActivityGuard] = useState<boolean>(true);
+  const [langOpen, setLangOpen] = useState<boolean>(false);
+
+  const handleLangSelect = (code: string) => {
+    applyLang(code, code.toUpperCase());
+    setLangOpen(false);
+  };
 
   useEffect(() => {
     const prefs = loadPreferences();
@@ -146,35 +152,18 @@ export default function PreferencesPanel() {
         </button>
 
         {/* Idioma */}
-        <div className="flex items-center gap-1.5 flex-wrap">
-          {LANGS.map((l) => {
-            const active = lang === l.code;
-            const isAlt = !l.code.startsWith('ES') && !l.code.startsWith('EN');
-            const unavailable = !isLangAvailable(l.code);
-            return (
-              <button
-                key={l.code}
-                onClick={() => applyLang(l.code, l.label)}
-                className={`relative rounded-full transition-transform duration-300 ${
-                  unavailable ? 'cursor-not-allowed' : 'cursor-pointer'
-                } ${
-                  active ? 'scale-105' : 'opacity-60 grayscale hover:opacity-100 hover:grayscale-0 scale-95'
-                } ${isAlt ? 'hidden sm:block' : ''}`}
-                title={unavailable ? `${l.label} (Beta)` : l.label}
-              >
-                {l.flag}
-                {active && (
-                  <span className="absolute top-0 right-0 w-2 h-2 rounded-full border border-white bg-green-400" />
-                )}
-                {unavailable && (
-                  <span className="absolute -bottom-1 -right-1 text-[7px] font-black uppercase tracking-widest px-1 py-px rounded bg-white/10 border border-white/20 text-white/70">
-                    Beta
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
+        <button
+          onClick={() => setLangOpen(true)}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white hover:border-neon-cyan/50 hover:text-neon-cyan transition-all active:scale-95"
+          title="Seleccionar idioma"
+        >
+          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="2" y1="12" x2="22" y2="12" />
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+          </svg>
+          <span className="text-xs font-header font-bold uppercase tracking-widest">Idioma</span>
+        </button>
       </div>
 
       {/* Zoom */}
@@ -374,6 +363,19 @@ export default function PreferencesPanel() {
           Preferencias sincronizadas con tu cuenta
         </p>
       )}
+
+      <LanguagesModal
+        open={langOpen}
+        title="Seleccionar idioma"
+        current={lang}
+        onSelect={handleLangSelect}
+        onClose={() => setLangOpen(false)}
+        langs={LANGUAGE_OPTIONS.map((l) => ({
+          ...l,
+          available: isLangAvailable(l.code),
+          active: l.code === lang,
+        }))}
+      />
     </div>
   );
 }

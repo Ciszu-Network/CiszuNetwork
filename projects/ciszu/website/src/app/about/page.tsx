@@ -3,6 +3,7 @@ import Image from "next/image";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { CISZU_NETWORK, CISZUKO_ANTONY } from "@/config/site";
 import { Shield, ArrowRight, ExternalLink } from "lucide-react";
+import QuickDocks from "@/components/molecules/QuickDocks";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -93,6 +94,8 @@ export default function AboutPage() {
           </div>
         </div>
       </div>
+
+      <QuickDocks />
     </div>
   );
 }

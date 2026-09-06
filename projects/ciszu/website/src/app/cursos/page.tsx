@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { BookOpen, GraduationCap, ExternalLink, Globe, Clock, Award, Search } from "lucide-react";
 import { usePageTitle } from "@/lib/usePageTitle";
+import QuickDocks from "@/components/molecules/QuickDocks";
 
 /**
  * /cursos — catálogo de cursos del ecosistema Ciszu Network.
@@ -208,6 +209,8 @@ export default function CursosPage() {
           </p>
         </div>
       </div>
+
+      <QuickDocks />
     </div>
   );
 }

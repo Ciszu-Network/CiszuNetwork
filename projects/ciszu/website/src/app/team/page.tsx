@@ -4,6 +4,7 @@ import { assetResolver } from "@ciszunetwork/cdn";
 import { SocialIcon } from "@/components/ui/SocialIcon";
 import { CISZU_NETWORK, CISZUKO_ANTONY, SOCIAL_COLORS } from "@/config/site";
 import { Users, Mail, Phone, MapPin, ArrowRight, ExternalLink } from "lucide-react";
+import QuickDocks from "@/components/molecules/QuickDocks";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -99,6 +100,8 @@ export default function TeamPage() {
           ))}
         </div>
       </div>
+
+      <QuickDocks />
     </div>
   );
 }

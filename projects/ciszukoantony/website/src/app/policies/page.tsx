@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { LegalCiszuLink } from '@ciszu/ui';
 import { RichText, type RichPart } from '@/components/RichText';
 import { usePageTitle } from '@/lib/usePageTitle';
+import QuickDocks from '@/components/molecules/QuickDocks';
 
 const NETWORK_LINK: RichPart = { link: 'Ciszuko Network', href: 'https://ciszunetwork.vercel.app' };
 
@@ -101,6 +102,8 @@ export default function PoliciesPage() {
 
         <LegalCiszuLink />
       </div>
+
+      <QuickDocks />
     </div>
   );
 }

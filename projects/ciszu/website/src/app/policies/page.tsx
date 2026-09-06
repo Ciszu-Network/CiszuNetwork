@@ -1,5 +1,6 @@
 import { FileText } from "lucide-react";
 import { CISZU_NETWORK } from "@/config/site";
+import QuickDocks from "@/components/molecules/QuickDocks";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -81,6 +82,8 @@ export default function PoliciesPage() {
           ))}
         </div>
       </div>
+
+      <QuickDocks />
     </div>
   );
 }

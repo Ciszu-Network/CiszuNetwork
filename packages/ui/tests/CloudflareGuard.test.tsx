@@ -2,7 +2,7 @@
 import React from 'react';
 import { cleanup, render, screen, waitFor, act, fireEvent } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import CloudflareGuard from '../src/CloudflareGuard';
+import CloudflareGuard, { SCRIPT_LOAD_TIMEOUT_MS } from '../src/CloudflareGuard';
 
 interface TurnstileMock {
   render: ReturnType<typeof vi.fn>;
@@ -217,6 +217,32 @@ describe('CloudflareGuard', () => {
     });
     await waitFor(() => expect(screen.getByText('REINTENTAR')).toBeTruthy());
     expect(screen.getByText('challenge-failed')).toBeTruthy();
+  });
+
+  it('si api.js nunca inicializa window.turnstile (p.ej. tras un deploy con rate limit), a los 10s pasa a error con REINTENTAR en vez de quedar vacío para siempre', async () => {
+    vi.useFakeTimers();
+    try {
+      // Simular que el script no llega: sin window.turnstile
+      delete (window as Record<string, unknown>).turnstile;
+      render(<CloudflareGuard {...props} />);
+      await act(async () => {});
+
+      expect(turnstileMock.render).not.toHaveBeenCalled();
+      expect(screen.queryByText('REINTENTAR')).toBeNull();
+
+      // Avanzar el reloj: el sondeo (200ms) debe tropezar con el timeout de 10s
+      act(() => {
+        vi.advanceTimersByTime(SCRIPT_LOAD_TIMEOUT_MS + 1000);
+      });
+      await act(async () => {});
+
+      expect(screen.getByText('REINTENTAR')).toBeTruthy();
+      // Nunca hubo widget renderizado: no hay iframe que limpiar (y el hueco
+      // quedó vacío, no con un iframe fantasma colgado).
+      expect(turnstileMock.remove).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('error-callback nativo (rate limit free) limpia el iframe; expired-callback recrea el widget', async () => {

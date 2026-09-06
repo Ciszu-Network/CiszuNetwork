@@ -4,6 +4,7 @@ import { cookies } from 'next/headers';
 import { Icon, FabRestore } from '@ciszu/ui';
 import FeedbackForm, { OpenReportButton } from '@/components/FeedbackForm';
 import { DISCORD_SERVER, FEEDBACK_EMAIL, getDict, parseLang } from '@/lib/i18n';
+import QuickDocks from '@/components/molecules/QuickDocks';
 
 export const metadata: Metadata = {
   title: 'CiszuBot | FEEDBACK',
@@ -119,6 +120,8 @@ export default async function FeedbackPage() {
           <FabRestore accent="#22d3ee" keys={['ciszu-feedback-dismissed']} />
         </div>
       </div>
+
+      <QuickDocks />
     </div>
   );
 }

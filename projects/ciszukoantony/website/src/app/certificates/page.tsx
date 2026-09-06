@@ -12,6 +12,7 @@ import {
 } from '@/data/certificates';
 import PdfThumbnail from '@/components/certificates/PdfThumbnail';
 import { PREVIEWS_BY_FILE } from '@/data/certificates.previews';
+import QuickDocks from '@/components/molecules/QuickDocks';
 
 const CDN_BASE =
   process.env.NEXT_PUBLIC_CDN_URL ||
@@ -737,6 +738,8 @@ export default function CertificatesPage() {
           />
         )}
       </AnimatePresence>
+
+      <QuickDocks />
     </div>
   );
 }

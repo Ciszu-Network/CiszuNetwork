@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { attachFeedback } from '@/lib/feedback';
 import { FabRestore } from '@ciszu/ui';
+import QuickDocks from '@/components/molecules/QuickDocks';
 
 const FEEDBACK_EMAIL = 'fplayersoffcial@gmail.com';
 
@@ -211,6 +212,8 @@ export default function FeedbackPage() {
           <FabRestore accent="#a78bfa" keys={['ciszu-feedback-dismissed']} />
         </motion.div>
       </div>
+
+      <QuickDocks />
     </div>
   );
 }

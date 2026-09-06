@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { Icon } from '@ciszu/ui';
 import { getDict, parseLang, isEsLang } from '@/lib/i18n';
+import QuickDocks from '@/components/molecules/QuickDocks';
 
 export const revalidate = 60;
 
@@ -138,6 +139,8 @@ export default async function StatusPage() {
             </Link>
           </div>
         </div>
+
+        <QuickDocks />
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { cookies } from 'next/headers';
 import { Icon, FabRestore } from '@ciszu/ui';
 import InstallPdwaCta from '@/components/InstallPdwaCta';
 import { getDict, parseLang } from '@/lib/i18n';
+import QuickDocks from '@/components/molecules/QuickDocks';
 
 export const metadata: Metadata = {
   title: 'CiszuBot | DESCARGAS',
@@ -115,6 +116,8 @@ export default async function DescargasPage() {
           <FabRestore accent="#22d3ee" keys={['ciszu-pdwa-dismissed']} />
         </div>
       </div>
+
+      <QuickDocks />
     </div>
   );
 }
