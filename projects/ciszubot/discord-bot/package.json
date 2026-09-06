@@ -27,7 +27,7 @@
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
-    "@types/node": "^26.0.0",
+    "@types/node": "^26.4.1",
     "nodemon": "^3.0.1",
     "typescript": "^5.9.0"
   },
