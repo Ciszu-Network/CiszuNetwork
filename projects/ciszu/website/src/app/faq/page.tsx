@@ -1,4 +1,5 @@
 import { HelpCircle, ChevronDown } from "lucide-react";
+import QuickDocks from "@/components/molecules/QuickDocks";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -47,6 +48,8 @@ export default function FAQPage() {
           ))}
         </div>
       </div>
+
+      <QuickDocks />
     </div>
   );
 }

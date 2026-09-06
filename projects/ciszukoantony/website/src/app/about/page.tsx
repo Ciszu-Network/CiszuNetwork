@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { assetResolver } from '@ciszunetwork/cdn';
 import { RichText, type RichPart } from '@/components/RichText';
 import { usePageTitle } from '@/lib/usePageTitle';
+import QuickDocks from '@/components/molecules/QuickDocks';
 
 const timeline = [
   { year: '2022', event: [{ text: 'Started software development and created personal projects.' }] as RichPart[] },
@@ -112,6 +113,8 @@ export default function AboutPage() {
           </div>
         </motion.div>
       </div>
+
+      <QuickDocks />
     </div>
   );
 }

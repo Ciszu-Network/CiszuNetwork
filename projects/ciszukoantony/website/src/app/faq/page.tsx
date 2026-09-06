@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { RichText, type RichPart } from '@/components/RichText';
 import { usePageTitle } from '@/lib/usePageTitle';
+import QuickDocks from '@/components/molecules/QuickDocks';
 
 const faqs = [
   {
@@ -95,6 +96,8 @@ export default function FAQPage() {
           ))}
         </div>
       </div>
+
+      <QuickDocks />
     </div>
   );
 }

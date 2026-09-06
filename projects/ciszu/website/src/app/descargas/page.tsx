@@ -3,6 +3,7 @@ import { CISZU_NETWORK } from '@/config/site';
 import type { Metadata } from 'next';
 import { InstallPdwaCta } from '@/components/descargas/InstallPdwaCta';
 import { FabRestore } from '@ciszu/ui';
+import QuickDocks from '@/components/molecules/QuickDocks';
 
 export const metadata: Metadata = {
   title: 'Ciszu Network | DESCARGAS',
@@ -75,6 +76,8 @@ export default function DescargasPage() {
           <FabRestore accent="#22d3ee" keys={['ciszu-pdwa-dismissed']} />
         </div>
       </div>
+
+      <QuickDocks />
     </div>
   );
 }

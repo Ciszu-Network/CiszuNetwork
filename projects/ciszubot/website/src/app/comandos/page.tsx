@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import CommandExplorer from '@/components/CommandExplorer';
 import { BOT_PREFIX, getDict, parseLang } from '@/lib/i18n';
+import QuickDocks from '@/components/molecules/QuickDocks';
 
 export const metadata: Metadata = {
   title: 'CiszuBot | COMMANDS',
@@ -26,6 +27,8 @@ export default async function CommandsPage() {
         </div>
         <CommandExplorer dict={t} prefix={BOT_PREFIX} />
       </div>
+
+      <QuickDocks />
     </div>
   );
 }

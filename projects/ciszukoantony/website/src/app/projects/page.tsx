@@ -4,6 +4,7 @@ import React from 'react';
 import { SmartImage } from '@ciszu/ui';
 import { motion } from 'framer-motion';
 import { usePageTitle } from '@/lib/usePageTitle';
+import QuickDocks from '@/components/molecules/QuickDocks';
 
 const categories = [
   {
@@ -114,6 +115,8 @@ export default function ProjectsPage() {
           </motion.section>
         ))}
       </div>
+
+      <QuickDocks />
     </div>
   );
 }

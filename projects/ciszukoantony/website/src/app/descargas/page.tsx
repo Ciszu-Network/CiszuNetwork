@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import InstallPdwaInline from '@/components/layout/InstallPdwaInline';
 import { FabRestore } from '@ciszu/ui';
+import QuickDocks from '@/components/molecules/QuickDocks';
 
 export const metadata: Metadata = {
   title: 'Ciszuko Antony | DESCARGAS',
@@ -149,6 +150,8 @@ export default function DescargasPage() {
           </div>
         </section>
       </div>
+
+      <QuickDocks />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { BookOpen } from "lucide-react";
 import { CISZU_NETWORK } from "@/config/site";
+import QuickDocks from "@/components/molecules/QuickDocks";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -40,6 +41,8 @@ export default function GuidelinesPage() {
           ))}
         </div>
       </div>
+
+      <QuickDocks />
     </div>
   );
 }

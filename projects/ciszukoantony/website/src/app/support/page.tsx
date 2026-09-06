@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { SOCIALS } from '@/config/navigation';
 import { usePageTitle } from '@/lib/usePageTitle';
+import QuickDocks from '@/components/molecules/QuickDocks';
 
 const supportChannels = [
   {
@@ -132,6 +133,8 @@ export default function SupportPage() {
           </div>
         </motion.div>
       </div>
+
+      <QuickDocks />
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { CISZU_NETWORK } from '@/config/site';
 import type { Metadata } from 'next';
 import { FeedbackForm } from '@/components/feedback/FeedbackForm';
 import { FabRestore } from '@ciszu/ui';
+import QuickDocks from '@/components/molecules/QuickDocks';
 
 export const metadata: Metadata = {
   title: 'Ciszu Network | FEEDBACK',
@@ -35,6 +36,8 @@ export default function FeedbackPage() {
           <FabRestore accent="#22d3ee" keys={['ciszu-feedback-dismissed']} />
         </div>
       </div>
+
+      <QuickDocks />
     </div>
   );
 }

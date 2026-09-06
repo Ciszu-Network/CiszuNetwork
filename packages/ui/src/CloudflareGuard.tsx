@@ -55,6 +55,22 @@
  * ciszubot) es un límite del plan free de Turnstile por IP — no se elimina con
  * código; el auto-retry + backoff lo mitiga (espera y reintenta). Documentado
  * en CLOUDFLARE_SYSTEM.md.
+ *
+ * Fix 5 sep 2026 (el guard tardaba ~5 min en arrancar tras cada deploy):
+ *   10. El widget se cargaba SIN timeout: tryRender sondeaba window.turnstile
+ *       cada 200ms para siempre, y si api.js tardaba/fallaba (red, rate limit,
+ *       arranque tras deploy) el usuario veía un hueco vacío eterno sin error
+ *       ni botón. Ahora hay timeout de carga (10s) → estado error + REINTENTAR.
+ *   11. El auto-retry agotaba su backoff en ~31s (3/8/20s), pero la ventana de
+ *       rate limit del plan free (ratelimited: global, por IP) dura MINUTOS y
+ *       se dispara justo tras los deploys (bots + las 4 webs desde la misma
+ *       IP). Backoff extendido hasta ~6 min para cruzar la ventana solo.
+ *   12. Turnstile puede invocar error-callback VARIAS veces por el mismo fallo
+ *       (docs: "the error callback can be invoked multiple times"). Ahora el
+ *       reintento se deduplica: solo se programa uno nuevo si no hay uno
+ *       pendiente (antes el contador se quemaba a la primera ráfaga).
+ *   13. preconnect + dns-prefetch a challenges.cloudflare.com ANTES del script:
+ *       el guard bloquea la página, cada ms cuenta (DNS/TLS en paralelo).
  */
 
 import { useEffect, useState, useCallback, useRef, type ReactNode } from 'react';
@@ -85,8 +101,15 @@ export interface CloudflareGuardProps {
 
 type GuardState = 'loading' | 'verifying' | 'error';
 
-/** Backoff entre reintentos automáticos del widget (ms) */
-const RETRY_DELAYS = [3000, 8000, 20000];
+/** Backoff entre reintentos automáticos del widget (ms).
+ *  Cubre ~6 min: la ventana de rate limit del plan free de Turnstile
+ *  ("ratelimited: global" por IP) dura MINUTOS y se dispara tras los deploys
+ *  (bots + varias webs desde la misma IP). Con delays cortos (31s) el guard
+ *  se rendía antes de que la ventana pasara y el usuario veía el error. */
+const RETRY_DELAYS = [3000, 8000, 20000, 45000, 90000, 180000];
+/** Si api.js no ha inicializado window.turnstile en este tiempo, pasar a error
+ *  (antes: bucle infinito de sondeo con hueco vacío para el usuario). */
+export const SCRIPT_LOAD_TIMEOUT_MS = 10_000;
 /** Ancho del iframe de Turnstile (fijo — el contenedor no debe dejar que desborde) */
 const WIDGET_WIDTH = 300;
 
@@ -123,6 +146,11 @@ export default function CloudflareGuard({
   const widgetIdRef = useRef<string | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const renderSeqRef = useRef(0);
+  /** Evita reintentos duplicados: Turnstile puede disparar error-callback
+   *  varias veces por el mismo fallo (docs oficiales). */
+  const retryPendingRef = useRef(false);
+  /** Momento en que empezamos a esperar a window.turnstile (timeout de carga). */
+  const scriptStartRef = useRef(0);
   const [regen, setRegen] = useState(0);
   const [leaving, setLeaving] = useState(false);
 
@@ -172,6 +200,17 @@ export default function CloudflareGuard({
       return;
     }
     if (document.querySelector(`script[src="${TURNSTILE_SCRIPT}"]`)) return;
+    // Arranque rápido: el guard bloquea la página, cada ms cuenta. preconnect +
+    // dns-prefetch abren DNS/TLS a challenges.cloudflare.com EN PARALELO al
+    // resto de la página (antes solo preload, que no calienta DNS/TLS).
+    const preconnect = document.createElement('link');
+    preconnect.rel = 'preconnect';
+    preconnect.href = 'https://challenges.cloudflare.com';
+    document.head.appendChild(preconnect);
+    const dnsPrefetch = document.createElement('link');
+    dnsPrefetch.rel = 'dns-prefetch';
+    dnsPrefetch.href = 'https://challenges.cloudflare.com';
+    document.head.appendChild(dnsPrefetch);
     // Preload del script: reduce la latencia del widget (el guard bloquea la página)
     const preload = document.createElement('link');
     preload.rel = 'preload';
@@ -182,7 +221,18 @@ export default function CloudflareGuard({
     s.src = TURNSTILE_SCRIPT;
     s.async = true;
     s.defer = true;
+    // Si api.js no se pudo descargar (red/extensiones), avisar YA en vez de
+    // esperar al timeout del sondeo.
+    s.onerror = () => {
+      if (retryPendingRef.current) return;
+      removeWidget();
+      removeTurnstileScript();
+      setState('error');
+      setStatusText('No se pudo cargar el verificador de Cloudflare. Comprueba tu red.');
+    };
     document.head.appendChild(s);
+    scriptStartRef.current = Date.now();
+    setStatusText('Iniciando verificación segura…');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mounted, enabled, regen]);
 
@@ -255,15 +305,21 @@ export default function CloudflareGuard({
   );
 
   const startAutoRetry = useCallback(() => {
+    // Dedupe: Turnstile dispara error-callback varias veces por el mismo fallo
+    // (docs oficiales). Si ya hay un reintento programado, ignorar la ráfaga.
+    if (retryPendingRef.current) return;
     const attempt = retryCountRef.current;
     if (attempt < retryDelays.length) {
       retryCountRef.current = attempt + 1;
+      retryPendingRef.current = true;
       setStatusText(`Reintentando verificación… (${attempt + 1}/${retryDelays.length})`);
       timeoutRef.current = setTimeout(() => {
+        retryPendingRef.current = false;
         removeWidget();
         setRegen((n) => n + 1);
       }, retryDelays[attempt]);
     } else {
+      retryPendingRef.current = false;
       removeWidget();
       // Agotados reintentos automáticos: limpiar script para que el retry manual cargue fresco
       removeTurnstileScript();
@@ -278,6 +334,8 @@ export default function CloudflareGuard({
 
   const handleRetry = useCallback(() => {
     retryCountRef.current = 0;
+    retryPendingRef.current = false;
+    scriptStartRef.current = Date.now();
     removeWidget();
     removeTurnstileScript();
     setState('loading');
@@ -290,10 +348,22 @@ export default function CloudflareGuard({
     const el = document.getElementById('cf-guard-widget');
     if (!el || typeof window === 'undefined') return;
     const seq = ++renderSeqRef.current;
+    scriptStartRef.current = Date.now();
     const tryRender = () => {
       // Si cambió el estado mientras esperábamos el script, ya no renderizamos
       if (seq !== renderSeqRef.current) return;
       if (!window.turnstile || !el) {
+        // Timeout de carga: si api.js no inicializó en 10s, no dejar al usuario
+        // con un hueco vacío infinito (antes pasaba tras deploys: ventana de
+        // rate limit o api.js lento) → error con REINTENTAR.
+        if (Date.now() - scriptStartRef.current > SCRIPT_LOAD_TIMEOUT_MS) {
+          retryPendingRef.current = false;
+          removeWidget();
+          removeTurnstileScript();
+          setState('error');
+          setStatusText('El verificador tardó demasiado en cargar. Reintenta');
+          return;
+        }
         timeoutRef.current = setTimeout(tryRender, 200);
         return;
       }

@@ -4,8 +4,9 @@
 
 ### Cambios Generales:
 
-1. [ ] #3 Plantear utilizar otro respaldador de archivos diferentes a github:
+1. [x] #3 Plantear utilizar otro respaldador de archivos diferentes a github:
        Para no codigo y no cdn. Es decir un storage cloud privado, que pueda usarse con CLi o automatizacion con API. Como google drive, onedrive, terabox, dropbox entre otros para poder reguardar seguramente todo mi codigos exepto credenciales, mas centrado al contenido y docuemntacion que mi codigo.
+       ✅ RESUELTO: elegido **Mega** (20GB gratis, cifrado E2E zero-knowledge, backend oficial de rclone + API REST + MEGAcmd). Script `scripts/backup-cloud.sh` con exclusiones (node_modules, .env*, builds, logs) y papelera con fecha. Documentación completa, comparativa de todos los servicios (Google Drive, OneDrive, Terabox, Dropbox, pCloud, R2, B2, S3) y guía de restauración en `projects/ciszu/docs/documentation/BACKUP_SYSTEM.md`. Pendiente del usuario: crear cuenta Mega, `rclone config` y primer backup.
 2. [x] #5 Crear sistema de anuncios: Google Adsense, GA4, GTM, Tag y Analytics pack completo.
     - [ ] AdSense dice “Preparando el sitio”: revisar cuenta/sitio aprobado y crear unidades de anuncio tras aprobación.
     - [ ] GA4: confirmar Realtime page_views (requiere acceso a analytics.google.com).

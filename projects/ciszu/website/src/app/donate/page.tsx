@@ -1,6 +1,7 @@
 import { getDonationMethods } from "@ciszunetwork/payments";
 import { Heart } from "lucide-react";
 import DonateButtons from "./DonateButtons";
+import QuickDocks from "@/components/molecules/QuickDocks";
 
 export default function DonatePage() {
   const methods = getDonationMethods();
@@ -59,6 +60,8 @@ export default function DonatePage() {
           </p>
         </div>
       </div>
+
+      <QuickDocks />
     </div>
   );
 }

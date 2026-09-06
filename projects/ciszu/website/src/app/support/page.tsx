@@ -5,6 +5,7 @@ import { SocialIcon } from "@/components/ui/SocialIcon";
 import { SOCIAL_COLORS } from "@/config/site";
 import { LifeBuoy, Mail, MessageCircle, ArrowRight, ExternalLink, Heart, Star } from "lucide-react";
 import { getDonationMethods } from "@ciszunetwork/payments";
+import QuickDocks from "@/components/molecules/QuickDocks";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -191,6 +192,8 @@ export default function SupportPage() {
           </Link>
         </div>
       </div>
+
+      <QuickDocks />
     </div>
   );
 }
