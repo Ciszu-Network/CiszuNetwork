@@ -18,11 +18,19 @@ const CDN_BASE =
   process.env.NEXT_PUBLIC_CDN_URL ||
   'https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn';
 
-const fileUrl = (name: string) =>
-  `${CDN_BASE}/shared/docs/certificados/${name.split('/').map(encodeURIComponent).join('/')}`;
+const fileUrl = (name: string) => {
+  // Codificar solo el nombre del archivo, no la ruta completa.
+  // Los nombres de archivo ya vienen con el path relativo desde la raíz de certificados/.
+  const parts = name.split('/');
+  const encodedName = parts.map((p) => encodeURIComponent(p)).join('/');
+  return `${CDN_BASE}/shared/docs/certificados/${encodedName}`;
+};
 
-const previewUrlBuilder = (name: string) =>
-  `${CDN_BASE}/shared/docs/certificados/previews/${name.split('/').map(encodeURIComponent).join('/')}`;
+const previewUrlBuilder = (name: string) => {
+  const parts = name.split('/');
+  const encodedName = parts.map((p) => encodeURIComponent(p)).join('/');
+  return `${CDN_BASE}/shared/docs/certificados/previews/${encodedName}`;
+};
 
 /**
  * Resuelve el thumbnail de un certificado automáticamente desde el manifiesto

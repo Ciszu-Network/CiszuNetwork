@@ -12,11 +12,12 @@ import { useAppStore } from '@/store';
 import { supabase } from '@/config/supabase';
 
 // ── All icons and configs migrated to src/config/navigation.tsx ───────────────────
-import { I, MAIN_NAV_LINKS as NAV_LINKS, COMMUNITY_LINKS, GENERAL_INFO_LINKS, LEGAL_LINKS, ALL_PAGES, LANGS } from '@/config/navigation';
+import { I, MAIN_NAV_LINKS as NAV_LINKS, COMMUNITY_LINKS, GENERAL_INFO_LINKS, LEGAL_LINKS, ALL_PAGES } from '@/config/navigation';
 import { isTauri } from '@/lib/isTauri';
 import { getGuestName } from '@/lib/guest';
-import { loadPreferences, applyZoom, setMuteTab, updatePreferences, isLangAvailable, consumeReloadToastMsg, reloadAfterPrefChange } from '@/lib/preferences';
+import { loadPreferences, applyZoom, setMuteTab, updatePreferences, consumeReloadToastMsg, reloadAfterPrefChange } from '@/lib/preferences';
 import PreferencesPanel from '@/components/molecules/PreferencesPanel';
+import { LANGUAGE_OPTIONS, isLangAvailable } from '@ciszu/ui';
 
 const INFO_LINKS = [ ...COMMUNITY_LINKS, ...GENERAL_INFO_LINKS, ...LEGAL_LINKS ].filter((v, i, a) => a.findIndex(t => (t.href === v.href)) === i);
 
@@ -200,8 +201,8 @@ export const NavbarContent = () => {
       toast(`[SISTEMA]: El idioma ${label} no está disponible aún.`, 'error');
       return;
     }
-    setLang(code);
-    updatePreferences({ lang: code });
+    setLang(code as 'es-latam' | 'es-es' | 'en-us' | 'en-uk');
+    updatePreferences({ lang: code as 'es-latam' | 'es-es' | 'en-us' | 'en-uk' });
     reloadAfterPrefChange(`[SISTEMA]: Idioma cambiado a ${label}.`);
   };
 
@@ -592,7 +593,7 @@ export const NavbarContent = () => {
                   <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
                 </svg>
                 <div className="w-6 h-6 rounded-full overflow-hidden border border-white/20 shadow-[0_0_10px_rgba(255,255,255,0.1)] shrink-0 transition-transform duration-300 group-hover:scale-110">
-                  {(LANGS.find(l => l.code === lang) || LANGS.find(l => l.code === 'EN-US'))?.flag}
+                  {(LANGUAGE_OPTIONS.find(l => l.code === lang) || LANGUAGE_OPTIONS.find(l => l.code === 'en-us'))?.flag}
                 </div>
               </button>
             </div>
@@ -656,7 +657,7 @@ export const NavbarContent = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 gap-1 animate-fade-in-up pb-10">
-                  {LANGS.map((l) => {
+                  {LANGUAGE_OPTIONS.map((l) => {
                     const unavailable = !isLangAvailable(l.code);
                     return (
                     <button

@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAppStore } from '@/store/useAppStore';
 import { supabase } from '@/config/supabase';
-import { LANGS } from '@/config/navigation';
 import {
   loadPreferences,
   updatePreferences,
@@ -19,7 +18,7 @@ import {
 import { useToast, getCookieConsent, setCookieConsent, clearCookieConsent, useCookieConsent, LanguagesModal, LANGUAGE_OPTIONS } from '@ciszu/ui';
 
 export default function PreferencesPanel() {
-  const { lang,  setLang,  darkMode,  setDarkMode,  user } = useAppStore();
+  const { lang, setLang, darkMode, setDarkMode, user } = useAppStore();
   const { toast } = useToast();
   const [zoom, setZoom] = useState<number>(100);
   const [muted, setMuted] = useState<boolean>(false);
@@ -60,7 +59,7 @@ export default function PreferencesPanel() {
     supabase
       .from('profiles')
       .update({
-        settings_lang: lang,
+        settings_lang: lang === 'en-us' || lang === 'en-uk' ? 'en' : 'es',
         settings_theme: darkMode ? 'dark' : 'light',
         settings_controls: { zoom, mute_tab: muted },
       })
@@ -75,8 +74,8 @@ export default function PreferencesPanel() {
       toast(`[SISTEMA]: El idioma ${label} no está disponible aún.`, 'error');
       return;
     }
-    setLang(code);
-    updatePreferences({ lang: code });
+    setLang(code as 'es-latam' | 'es-es' | 'en-us' | 'en-uk');
+    updatePreferences({ lang: code as 'es-latam' | 'es-es' | 'en-us' | 'en-uk' });
     reloadAfterPrefChange(`[SISTEMA]: Idioma cambiado a ${label}.`);
   };
 
