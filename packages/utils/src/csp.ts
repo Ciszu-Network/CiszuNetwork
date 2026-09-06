@@ -43,6 +43,7 @@ const SUPABASE_ORIGIN = 'https://obwzzmbvkrcscqwptlqo.supabase.co';
 // Google (GoogleScripts de @ciszu/ui, en las 4 webs): GTM y gtag.js se sirven
 // desde googletagmanager.com; adsbygoogle.js de AdSense desde pagead2.
 const GOOGLE_TAG_MANAGER_ORIGIN = 'https://www.googletagmanager.com';
+const GOOGLE_DOUBLECLICK_ORIGIN = 'https://googleads.g.doubleclick.net';
 const GOOGLE_ADSENSE_ORIGIN = 'https://pagead2.googlesyndication.com';
 
 // API central de impresiones ADS: Ads.tsx de @ciszu/ui registra cada impresión
@@ -68,15 +69,15 @@ export function buildCsp(opts: CspOptions = {}): string {
     // Estilos inline de la v3 PDWA y utilidades CSS en línea del ecosistema.
     // styleSrc extra: hoja de estilos remota del editor Puck (inter.css de rsms.me).
     ['style-src', ["'self'", "'unsafe-inline'", ...(opts.styleSrc ?? [])]],
-    ['img-src', ["'self'", 'data:', 'blob:', SUPABASE_ORIGIN, ...local, ...(opts.imgSrc ?? [])]],
+    ['img-src', ["'self'", 'data:', 'blob:', SUPABASE_ORIGIN, GOOGLE_ADSENSE_ORIGIN, ...local, ...(opts.imgSrc ?? [])]],
     ['media-src', ["'self'", SUPABASE_ORIGIN, ...local]],
     ['font-src', ["'self'", 'data:', ...local, ...(opts.fontSrc ?? [])]],
     // connect-src: API de impresiones ADS + GTM; GA4 (gtag) envía la colecta de
     // eventos por beacon a www.google-analytics.com, *.google-analytics.com
     // (region1/2) y analytics.google.com. El noscript de GTM abre un iframe de
     // ns.html en googletagmanager.com (frame-src más abajo).
-    ['connect-src', ["'self'", SUPABASE_ORIGIN, 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://static.cloudflareinsights.com', 'https://cloudflareinsights.com', 'https://challenges.cloudflare.com', 'https://va.vercel-scripts.com', 'https://*.ingest.us.sentry.io', GOOGLE_TAG_MANAGER_ORIGIN, ADS_API_ORIGIN, 'https://www.google-analytics.com', 'https://*.google-analytics.com', 'https://analytics.google.com', ...local, ...(opts.connectSrc ?? [])]],
-    ['frame-src', ["'self'", 'https://challenges.cloudflare.com', GOOGLE_TAG_MANAGER_ORIGIN, ...(opts.frameSrc ?? [])]],
+    ['connect-src', ["'self'", SUPABASE_ORIGIN, 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://static.cloudflareinsights.com', 'https://cloudflareinsights.com', 'https://challenges.cloudflare.com', 'https://va.vercel-scripts.com', 'https://*.ingest.us.sentry.io', GOOGLE_TAG_MANAGER_ORIGIN, ADS_API_ORIGIN, 'https://www.google-analytics.com', 'https://*.google-analytics.com', 'https://analytics.google.com', 'https://ep1.adtrafficquality.google', ...local, ...(opts.connectSrc ?? [])]],
+    ['frame-src', ["'self'", 'https://challenges.cloudflare.com', GOOGLE_TAG_MANAGER_ORIGIN, GOOGLE_DOUBLECLICK_ORIGIN, ...(opts.frameSrc ?? [])]],
     // worker-src explícito: PostHog recording crea workers desde blob: URLs;
     // sin esta directiva cae a script-src y se bloquea (paridad en las 4 webs).
     ['worker-src', ["'self'", 'blob:', ...(opts.workerSrc ?? [])]],
