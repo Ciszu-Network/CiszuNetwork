@@ -442,7 +442,7 @@ export const NavbarContent = () => {
                             onClick={() => {
                               // Deslogueo optimista para evitar bloqueos si Supabase no responde
                               setUser(null);
-                              router.push('/');
+                              router.push('/login');
                               toast('[SISTEMA]: Sesión cerrada correctamente.', 'success');
                               // Ejecutar signOut en background
                               supabase.auth.signOut().catch(() => {});

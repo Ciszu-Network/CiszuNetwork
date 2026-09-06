@@ -90,6 +90,7 @@ export default function AuthMenu({ open, onToggle, onClose }: { open: boolean; o
       setUser(null);
       onClose();
       toast('Sesión cerrada. Vuelve pronto.', 'success');
+      window.location.href = '/login';
     }
     setLoggingOut(false);
   };

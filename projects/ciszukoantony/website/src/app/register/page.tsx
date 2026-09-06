@@ -121,11 +121,41 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const [created, setCreated] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const { toast } = useToast();
 
   React.useEffect(() => {
     if (user) router.push('/');
   }, [user, router]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const script = document.createElement('script');
+    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+    script.async = true;
+    document.head.appendChild(script);
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+
+  const renderTurnstile = () => {
+    if (typeof window === 'undefined' || !window.turnstile) return null;
+    const container = document.getElementById('turnstile-register');
+    if (!container) return;
+    window.turnstile.render(container, {
+      sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '',
+      theme: 'dark',
+      callback: (token: string) => setCaptchaToken(token),
+      'expired-callback': () => setCaptchaToken(null),
+    });
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(renderTurnstile, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const validate = (name: string, value: string) => {
     let error = '';
@@ -138,6 +168,7 @@ export default function RegisterPage() {
     if (name === 'email' && !/^\S+@\S+\.\S+$/.test(value)) error = 'Formato de email inválido';
     if (name === 'password' && value.length > 0 && !passwordMeetsMinimum(value)) error = 'La contraseña no alcanza el nivel mínimo (Media)';
     if (name === 'confirm' && value !== form.password) error = 'Las contraseñas no coinciden';
+    if (name === 'terms' && !acceptedTerms) error = 'Debes aceptar los términos y condiciones';
     setErrors((prev) => ({ ...prev, [name]: error }));
     return error;
   };
@@ -156,6 +187,8 @@ export default function RegisterPage() {
       const err = validate(k, form[k as keyof typeof form]);
       if (err) errs[k] = err;
     });
+    if (!acceptedTerms) errs.terms = 'Debes aceptar los términos y condiciones';
+    if (!captchaToken) errs.captcha = 'Debes completar el CAPTCHA';
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
 
     setLoading(true);
@@ -297,6 +330,29 @@ export default function RegisterPage() {
               />
 
               {localError && <p className="text-red-400 text-[11px] font-bold">{localError}</p>}
+
+              <div className="flex items-start gap-3">
+                <div className="relative flex items-center justify-center shrink-0 w-5 h-5 mt-0.5">
+                  <input
+                    type="checkbox"
+                    checked={acceptedTerms}
+                    onChange={(e) => setAcceptedTerms(e.target.checked)}
+                    className="peer appearance-none w-full h-full border-2 border-white/20 rounded bg-black/50 checked:bg-neon-blue checked:border-neon-blue transition-all"
+                  />
+                  <svg viewBox="0 0 24 24" className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <p className="text-[11px] text-gray-400 font-bold leading-relaxed">
+                  Acepto los <a href="/terms" className="text-neon-cyan hover:underline">Términos de Servicio</a> y la <a href="/policies" className="text-neon-cyan hover:underline">Política de Privacidad</a>.
+                </p>
+              </div>
+              {(errors.terms || errors.captcha) && (
+                <p className="text-red-400 text-[11px] font-bold">{errors.terms || errors.captcha}</p>
+              )}
+
+              <div className="flex flex-col items-center gap-2">
+                <div id="turnstile-register" className="flex justify-center" />
+                {!captchaToken && <span className="text-gray-500 text-[10px] font-bold">Completa el CAPTCHA</span>}
+              </div>
 
               <motion.button
                 type="submit"

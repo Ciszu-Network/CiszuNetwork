@@ -454,7 +454,7 @@ export default function Navbar() {
               <div className="h-px bg-white/10 my-4" />
               <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">Account</p>
               {user ? (
-                <button onClick={async () => { const { supabase } = await import('@/config/supabase'); await supabase.auth.signOut(); }}
+                <button onClick={async () => { const { supabase } = await import('@/config/supabase'); await supabase.auth.signOut(); window.location.href = '/login'; }}
                   className="w-full flex items-center justify-center gap-2 py-3 bg-neon-pink/10 border border-neon-pink/30 text-neon-pink rounded-xl font-header font-bold hover:bg-neon-pink/20 hover:text-white text-xs shadow-[0_4px_15px_rgba(255,51,204,0.1)] transition-all">
                   <SignOutIcon /> Cerrar sesión ({user.display_name || user.username})
                 </button>

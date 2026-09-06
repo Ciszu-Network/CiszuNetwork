@@ -233,7 +233,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
     if (activeUser?.provider === 'ciszu') {
       await supabase.auth.signOut();
       setUser(null);
-      window.location.href = '/';
+      window.location.href = '/login';
     } else {
       window.location.href = '/api/auth/logout';
     }

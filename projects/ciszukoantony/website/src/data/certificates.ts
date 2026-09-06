@@ -571,6 +571,7 @@ export const OTHER_DOCS: Certificate[] = [
     provider: 'Microsoft Learn',
     providerUrl: 'https://learn.microsoft.com',
     category: 'other',
+    date: '2025-01-15',
     summary: 'Profile record: 4 modules, 1 completed learning path (1 h 36 min).',
     credentialId: 'CiscoAntonyGarciaM-8257',
     credentialLabel: 'Microsoft Learn username',
@@ -599,6 +600,7 @@ export const OTHER_DOCS: Certificate[] = [
     title: 'Bachillerato Certificate',
     provider: 'Educational Institution',
     category: 'bachillerato',
+    date: '2020-06-15',
     summary: 'High school graduation certificate.',
     files: [
       { name: 'dato (35).JPG', label: 'Certificate Image', kind: 'image' },
@@ -611,6 +613,7 @@ export const OTHER_DOCS: Certificate[] = [
     provider: 'HP Life',
     providerUrl: 'https://www.hp.com/us-en/life.html',
     category: 'other',
+    date: '2024-03-10',
     summary: 'Transcript document from HP Life learning platform.',
     files: [
       { name: 'transcript_hplive.pdf', label: 'Transcript', kind: 'transcript' },
@@ -622,6 +625,7 @@ export const OTHER_DOCS: Certificate[] = [
     title: 'Ciencia y Análisis de Datos',
     provider: 'Online course platform',
     category: 'programming',
+    date: '2025-05-20',
     summary: 'Data science and analytics course completion document.',
     files: [
       { name: 'Ciencia y Análisis de Datos.pdf', label: 'Certificate', kind: 'certificate' },
