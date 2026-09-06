@@ -129,32 +129,113 @@
 /* ── Modo claro (html sin .dark): superficies hardcodeadas de los docks,
    modals, dropdowns y cards pasan a la paleta clara. Los textos blancos e
    iconos blancos pasan a tinta oscura para ser legibles. ──────────────── */
+html:not(.dark) .bg-black { background-color: #f4f6fb !important; }
+html:not(.dark) .bg-black\/5 { background-color: rgba(27, 34, 52, 0.03) !important; }
+html:not(.dark) .bg-black\/10 { background-color: rgba(27, 34, 52, 0.05) !important; }
+html:not(.dark) .bg-black\/15 { background-color: rgba(27, 34, 52, 0.07) !important; }
+html:not(.dark) .bg-black\/20 { background-color: rgba(27, 34, 52, 0.06) !important; }
+html:not(.dark) .bg-black\/25 { background-color: rgba(27, 34, 52, 0.08) !important; }
+html:not(.dark) .bg-black\/30 { background-color: rgba(27, 34, 52, 0.09) !important; }
+html:not(.dark) .bg-black\/40 { background-color: rgba(27, 34, 52, 0.12) !important; }
+html:not(.dark) .bg-black\/50 { background-color: rgba(27, 34, 52, 0.16) !important; }
+html:not(.dark) .bg-black\/60 { background-color: rgba(250, 251, 255, 0.82) !important; }
+html:not(.dark) .bg-black\/70 { background-color: rgba(250, 251, 255, 0.88) !important; }
+html:not(.dark) .bg-black\/80 { background-color: rgba(250, 251, 255, 0.92) !important; }
+html:not(.dark) .bg-black\/85 { background-color: rgba(250, 251, 255, 0.94) !important; }
+html:not(.dark) .bg-black\/90 { background-color: rgba(250, 251, 255, 0.96) !important; }
+html:not(.dark) .bg-black\/92 { background-color: rgba(250, 251, 255, 0.97) !important; }
+html:not(.dark) .bg-black\/95 { background-color: rgba(250, 251, 255, 0.98) !important; }
+
 html:not(.dark) .bg-\[\#05050a\] { background-color: #f4f6fb !important; }
-html:not(.dark) .bg-\[\#05050a\]\/95 { background-color: rgba(255, 255, 255, 0.96) !important; }
+html:not(.dark) .bg-\[\#05050a\]\/[0-9]+ { background-color: #f4f6fb !important; }
 html:not(.dark) .bg-\[\#0a0a0f\] { background-color: #ffffff !important; }
+html:not(.dark) .bg-\[\#0a0a0f\]\/[0-9]+ { background-color: #ffffff !important; }
 html:not(.dark) .bg-\[\#070710\] { background-color: #f4f6fb !important; }
+html:not(.dark) .bg-\[\#070710\]\/[0-9]+ { background-color: #f4f6fb !important; }
+html:not(.dark) .bg-\[\#070712\] { background-color: #f4f6fb !important; }
+html:not(.dark) .bg-\[\#070712\]\/[0-9]+ { background-color: #f4f6fb !important; }
+html:not(.dark) .bg-\[\#050a14\] { background-color: #f0f3fa !important; }
+html:not(.dark) .bg-\[\#050a14\]\/[0-9]+ { background-color: #f0f3fa !important; }
+html:not(.dark) .bg-\[\#1a1a2e\] { background-color: #eef1f8 !important; }
+html:not(.dark) .bg-\[\#1a1a2e\]\/[0-9]+ { background-color: #eef1f8 !important; }
+html:not(.dark) .bg-\[\#0d1117\] { background-color: #eef1f8 !important; }
+html:not(.dark) .bg-\[\#0d1117\]\/[0-9]+ { background-color: #eef1f8 !important; }
+html:not(.dark) .bg-\[\#111118\] { background-color: #eef1f8 !important; }
+html:not(.dark) .bg-\[\#111118\]\/[0-9]+ { background-color: #eef1f8 !important; }
+html:not(.dark) .bg-\[\#161b22\] { background-color: #eef1f8 !important; }
+html:not(.dark) .bg-\[\#161b22\]\/[0-9]+ { background-color: #eef1f8 !important; }
+html:not(.dark) .bg-\[\#21262d\] { background-color: #e8ebf0 !important; }
+html:not(.dark) .bg-\[\#21262d\]\/[0-9]+ { background-color: #e8ebf0 !important; }
+html:not(.dark) .bg-\[\#30363d\] { background-color: #dce1e8 !important; }
+html:not(.dark) .bg-\[\#30363d\]\/[0-9]+ { background-color: #dce1e8 !important; }
+
 html:not(.dark) .bg-white\/5 { background-color: rgba(35, 63, 146, 0.05) !important; }
 html:not(.dark) .bg-white\/10 { background-color: rgba(35, 63, 146, 0.08) !important; }
+html:not(.dark) .bg-white\/15 { background-color: rgba(35, 63, 146, 0.1) !important; }
 html:not(.dark) .bg-white\/20 { background-color: rgba(35, 63, 146, 0.12) !important; }
+html:not(.dark) .bg-white\/25 { background-color: rgba(35, 63, 146, 0.14) !important; }
+html:not(.dark) .bg-white\/30 { background-color: rgba(35, 63, 146, 0.16) !important; }
+html:not(.dark) .bg-white\/40 { background-color: rgba(35, 63, 146, 0.2) !important; }
+html:not(.dark) .bg-white\/50 { background-color: rgba(35, 63, 146, 0.24) !important; }
+html:not(.dark) .bg-white\/60 { background-color: rgba(35, 63, 146, 0.28) !important; }
+html:not(.dark) .bg-white\/70 { background-color: rgba(35, 63, 146, 0.32) !important; }
+html:not(.dark) .bg-white\/80 { background-color: rgba(35, 63, 146, 0.36) !important; }
+html:not(.dark) .bg-white\/90 { background-color: rgba(35, 63, 146, 0.4) !important; }
+
 html:not(.dark) .border-white\/5 { border-color: rgba(35, 63, 146, 0.06) !important; }
 html:not(.dark) .border-white\/10 { border-color: rgba(35, 63, 146, 0.12) !important; }
 html:not(.dark) .border-white\/15 { border-color: rgba(35, 63, 146, 0.14) !important; }
 html:not(.dark) .border-white\/20 { border-color: rgba(35, 63, 146, 0.16) !important; }
+html:not(.dark) .border-white\/25 { border-color: rgba(35, 63, 146, 0.18) !important; }
 html:not(.dark) .border-white\/30 { border-color: rgba(35, 63, 146, 0.2) !important; }
+html:not(.dark) .border-white\/40 { border-color: rgba(35, 63, 146, 0.26) !important; }
+html:not(.dark) .border-white\/50 { border-color: rgba(35, 63, 146, 0.3) !important; }
+html:not(.dark) .border-white\/60 { border-color: rgba(35, 63, 146, 0.36) !important; }
+
 html:not(.dark) .text-white { color: #1b2234 !important; }
 html:not(.dark) .text-white\/90 { color: rgba(27, 34, 52, 0.9) !important; }
 html:not(.dark) .text-white\/85 { color: rgba(27, 34, 52, 0.85) !important; }
 html:not(.dark) .text-white\/80 { color: rgba(27, 34, 52, 0.8) !important; }
+html:not(.dark) .text-white\/75 { color: rgba(27, 34, 52, 0.75) !important; }
 html:not(.dark) .text-white\/70 { color: rgba(27, 34, 52, 0.72) !important; }
+html:not(.dark) .text-white\/65 { color: rgba(27, 34, 52, 0.65) !important; }
 html:not(.dark) .text-white\/60 { color: rgba(27, 34, 52, 0.62) !important; }
+html:not(.dark) .text-white\/55 { color: rgba(27, 34, 52, 0.55) !important; }
 html:not(.dark) .text-white\/50 { color: rgba(27, 34, 52, 0.52) !important; }
+html:not(.dark) .text-white\/45 { color: rgba(27, 34, 52, 0.45) !important; }
 html:not(.dark) .text-white\/40 { color: rgba(27, 34, 52, 0.42) !important; }
+html:not(.dark) .text-white\/35 { color: rgba(27, 34, 52, 0.35) !important; }
 html:not(.dark) .text-white\/30 { color: rgba(27, 34, 52, 0.32) !important; }
+html:not(.dark) .text-white\/25 { color: rgba(27, 34, 52, 0.25) !important; }
+html:not(.dark) .text-white\/20 { color: rgba(27, 34, 52, 0.2) !important; }
+html:not(.dark) .text-white\/15 { color: rgba(27, 34, 52, 0.15) !important; }
+html:not(.dark) .text-white\/10 { color: rgba(27, 34, 52, 0.1) !important; }
+html:not(.dark) .text-white\/5 { color: rgba(27, 34, 52, 0.05) !important; }
+
 html:not(.dark) .text-gray-300 { color: #2e3a54 !important; }
 html:not(.dark) .text-gray-400 { color: #5a6478 !important; }
 html:not(.dark) .text-gray-500 { color: #7b879e !important; }
 html:not(.dark) .text-gray-600 { color: #8b93a7 !important; }
-html:not(.dark) { --shadow-neon-blue: 0 0 10px rgba(2, 132, 199, 0.18); --shadow-neon-pink: 0 0 10px rgba(219, 39, 119, 0.12); --shadow-neon-purple: 0 0 10px rgba(124, 58, 237, 0.14); }
+html:not(.dark) .text-gray-700 { color: #9aa5bb !important; }
+html:not(.dark) .text-gray-800 { color: #aab3c5 !important; }
+html:not(.dark) .placeholder\:text-gray-700 { color: #9aa5bb !important; }
+html:not(.dark) .placeholder\:text-gray-600 { color: #8b93a7 !important; }
+html:not(.dark) .placeholder\:text-gray-500 { color: #7b879e !important; }
+
+/* Common modal/dropdown/card/pill/bar backgrounds */
+html:not(.dark) .bg-black\/50 { background-color: rgba(27, 34, 52, 0.16) !important; }
+html:not(.dark) .bg-black\/60 { background-color: rgba(250, 251, 255, 0.82) !important; }
+html:not(.dark) .bg-black\/70 { background-color: rgba(250, 251, 255, 0.88) !important; }
+html:not(.dark) .bg-black\/80 { background-color: rgba(250, 251, 255, 0.92) !important; }
+html:not(.dark) .bg-black\/90 { background-color: rgba(250, 251, 255, 0.96) !important; }
+html:not(.dark) .bg-black\/95 { background-color: rgba(250, 251, 255, 0.98) !important; }
+
+/* Shadow adjustments for light mode */
+html:not(.dark) { 
+  --shadow-neon-blue: 0 0 10px rgba(2, 132, 199, 0.18); 
+  --shadow-neon-pink: 0 0 10px rgba(219, 39, 119, 0.12); 
+  --shadow-neon-purple: 0 0 10px rgba(124, 58, 237, 0.14); 
+}
 
 /* ── Base Layer ─────────────────────────────────────────── */
 @layer base {
