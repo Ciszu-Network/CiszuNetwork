@@ -25,13 +25,12 @@ import { Button } from '@/components/atoms/Button';
 import { MusicVisualizer } from '@/components/atoms/MusicVisualizer';
 import { VinylDisc } from '@/components/atoms/VinylDisc';
 import { supabase } from '@/config/supabase';
-import { LANGS } from '@/config/navigation';
 import { CHANGELOG_DATA } from '@/data/changelog';
 import { TAG_CONFIG as CHANGELOG_TAGS, I as CHANGELOG_I } from '@/config/changelogIcons';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { getGuestId, getGuestName } from '@/lib/guest';
 import { updatePreferences, isLangAvailable, reloadAfterPrefChange } from '@/lib/preferences';
-import { useToast, useActivityGuard } from '@ciszu/ui';
+import { useToast, useActivityGuard, LANGUAGE_OPTIONS } from '@ciszu/ui';
 // --- Icons Library ---
 const I = {
   play: <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>,
@@ -2240,7 +2239,7 @@ function PlayPageContent() {
                           <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
                         </svg>
                         <div className="w-5 h-5 rounded-full overflow-hidden border border-white/20 shrink-0 transition-transform group-hover:scale-110">
-                          {(LANGS.find(l => l.code === lang) || LANGS.find(l => l.code === 'EN-US'))?.flag}
+                          {(LANGUAGE_OPTIONS.find(l => l.code === lang) || LANGUAGE_OPTIONS.find(l => l.code === 'en-us'))?.flag}
                         </div>
                       </button>
                     </div>
@@ -3816,7 +3815,7 @@ function PlayPageContent() {
                     <button onClick={() => setHubSidebarView('main')} className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-gray-500 hover:text-white transition-all">{I.close}</button>
                   </div>
                   <div className="grid grid-cols-1 gap-1 max-h-[60vh] overflow-y-auto px-4">
-                    {LANGS.map((l) => {
+                    {LANGUAGE_OPTIONS.map((l) => {
                       const unavailable = !isLangAvailable(l.code);
                       return (
                       <button
@@ -3826,8 +3825,8 @@ function PlayPageContent() {
                             toast(`[SISTEMA]: El idioma ${l.label} no está disponible aún.`, 'error');
                             return;
                           }
-                          setLang(l.code);
-                          updatePreferences({ lang: l.code });
+                          setLang(l.code as 'es-latam' | 'es-es' | 'en-us' | 'en-uk');
+                          updatePreferences({ lang: l.code as 'es-latam' | 'es-es' | 'en-us' | 'en-uk' });
                           setHubSidebarView('main');
                           reloadAfterPrefChange(`[SISTEMA]: Idioma cambiado a ${l.label}.`);
                         }}
@@ -3948,7 +3947,7 @@ function PlayPageContent() {
                           <span>Idioma</span>
                         </div>
                         <div className="space-y-1">
-                          {LANGS.map((l) => {
+                          {LANGUAGE_OPTIONS.map((l) => {
                             const unavailable = !isLangAvailable(l.code);
                             return (
                             <button key={l.code}
@@ -3957,8 +3956,8 @@ function PlayPageContent() {
                                   toast(`[SISTEMA]: El idioma ${l.label} no está disponible aún.`, 'error');
                                   return;
                                 }
-                                setLang(l.code);
-                                updatePreferences({ lang: l.code });
+                                setLang(l.code as 'es-latam' | 'es-es' | 'en-us' | 'en-uk');
+                                updatePreferences({ lang: l.code as 'es-latam' | 'es-es' | 'en-us' | 'en-uk' });
                                 reloadAfterPrefChange(`[SISTEMA]: Idioma cambiado a ${l.label}.`);
                               }}
                               className={`flex items-center gap-3 w-full px-3 py-2 rounded-xl text-xs font-header font-bold transition-all ${
