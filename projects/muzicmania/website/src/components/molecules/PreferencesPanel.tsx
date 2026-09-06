@@ -153,15 +153,25 @@ export default function PreferencesPanel() {
         {/* Idioma */}
         <button
           onClick={() => setLangOpen(true)}
-          className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white hover:border-neon-cyan/50 hover:text-neon-cyan transition-all active:scale-95"
+          className="flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white hover:border-neon-cyan/50 hover:text-neon-cyan transition-all active:scale-95"
           title="Seleccionar idioma"
         >
-          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="2" y1="12" x2="22" y2="12" />
-            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-          </svg>
-          <span className="text-xs font-header font-bold uppercase tracking-widest">Idioma</span>
+          <span className="flex items-center gap-2 text-xs font-header font-bold uppercase tracking-widest">
+            <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="2" y1="12" x2="22" y2="12" />
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+            </svg>
+            Idioma
+          </span>
+          <span className="flex items-center gap-2">
+            <span className="w-6 h-6 rounded-full overflow-hidden shadow-inner border border-white/10 shrink-0">
+              {(LANGUAGE_OPTIONS.find((l) => l.code === lang) || LANGUAGE_OPTIONS.find((l) => l.code === 'en-us'))?.flag}
+            </span>
+            <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-neon-cyan" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </span>
         </button>
       </div>
 

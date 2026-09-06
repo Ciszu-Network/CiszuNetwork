@@ -177,4 +177,33 @@ SSR**; `GoogleAnalytics` hace el tracking client). Config por env (Vercel/`.env.
 - `ONLINE_SERVICES_SYSTEM.md` — servicios online gestionados de la cuenta del usuario.
 - `BUSINESS_SYSTEM.md` — identidad corporativa de Ciszu Network.
 
-_Última revisión: 26 ago 2026._ Relacionados: `REVIEWS_SYSTEM.md` · `VAULT_SYSTEM.md` · `AD_SYSTEM.md` · `ANALYTICS_SYSTEM.md`.
+_Última revisión: 26 ago 2026._ Relacionados: `REVIEWS_SYSTEM.md` · `VAULT_SYSTEM.md` · `AD_SYSTEM.md` · `ANALYTICS_SYSTEM.md` · `SEO_PLAN.md` · `TOOLS_SYSTEM.md`.
+
+## 9. Herramientas SEO de Google (Alertas, Trends, Keyword Planner) — AGOSTO 2026
+
+Complementan a `SEO_PLAN.md` §2.3. Son **gratuitas** (Alerts, Trends) o **requieren cuenta Ads** (Keyword Planner) que ya existe en el ecosistema (`ca-pub-3471969072198962`).
+
+### 9.1 Google Alerts
+- **URL**: https://www.google.com/alerts
+- **Alertas configuradas**: 5 términos de marca (Ciszu Network, Ciszuko Antony, MuzicMania, CiszuBot, Francisco Garcia).
+- **Frecuencia**: diario; entrega por email a la cuenta Google del usuario.
+- **Doc**: `SEO_PLAN.md` §2.3.1.
+
+### 9.2 Google Trends
+- **URL**: https://trends.google.com
+- **Uso**: comparar interés de búsqueda (ej. "juego ritmo" vs "rhythm game", "bot Discord" vs "Discord bot").
+- **Export**: CSV manual → `projects/<web>/website/seo/audits/google-trends/`.
+- **Doc**: `SEO_PLAN.md` §2.3.2.
+
+### 9.3 Google Keyword Planner
+- **URL**: https://ads.google.com/aw/keywordplanner
+- **Cuenta Ads**: `ca-pub-3471969072198962` (la misma de AdSense/GA4/GTM).
+- **Export**: CSV → `projects/<web>/website/seo/audits/keyword-planner/`.
+- **Doc**: `SEO_PLAN.md` §2.3.3.
+
+### 9.4 Vault (claves relacionadas)
+```
+GOOGLE_ADS_CUSTOMER_ID=...          # ID de cliente Ads (si se usa API)
+GOOGLE_ADS_DEVELOPER_TOKEN=...      # Developer token (si se usa API)
+```
+Actualmente no se usa API; todo es manual/CSV. Ver `VAULT_SYSTEM.md`.

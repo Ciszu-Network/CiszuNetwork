@@ -126,16 +126,16 @@ export default function QuickDocks() {
 
   return (
     <div className="container mx-auto px-4 mt-24 mb-16 relative z-20">
-      <div className="relative bg-black border-2 border-white/10 rounded-[3.5rem] p-8 md:p-14 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden">
+      <div className="relative bg-token border-2 border-token-border rounded-[3.5rem] p-8 md:p-14 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-neon-purple/5 blur-[100px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/2" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-neon-pink/5 blur-[100px] rounded-full pointer-events-none translate-y-1/2 -translate-x-1/2" />
 
         <div className="relative z-10">
           <div className="flex flex-col items-center mb-10 text-center">
-            <h3 className="text-4xl font-header font-black text-white uppercase tracking-[0.3em] leading-none mb-2">
+            <h3 className="text-4xl font-header font-black text-token uppercase tracking-[0.3em] leading-none mb-2">
               Quick Docks
             </h3>
-            <p className="text-white/30 text-[10px] uppercase tracking-widest font-bold">
+            <p className="text-token-muted text-[10px] uppercase tracking-widest font-bold">
               Acceso rápido a todas las secciones
             </p>
           </div>
@@ -150,7 +150,7 @@ export default function QuickDocks() {
                 <Link
                   key={i}
                   href={doc.href}
-                  className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-black border-2 transition-all group active-depth hover:-translate-y-1 ${isActive ? `${style.borderActive} ${style.shadow} scale-[1.02]` : style.border}`}
+                  className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-token-border border-2 transition-all group active-depth hover:-translate-y-1 ${isActive ? `${style.borderActive} ${style.shadow} scale-[1.02]` : style.border}`}
                   onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => {
                     if (!isActive) {
                       (e.currentTarget as HTMLElement).style.borderColor = hoverColor;
@@ -164,10 +164,10 @@ export default function QuickDocks() {
                     }
                   }}
                 >
-                  <div className={`flex items-center justify-center transition-colors ${isActive ? `${style.text} ${style.dropShadow}` : `text-gray-500 ${style.hoverText}`}`}>
+                  <div className={`flex items-center justify-center transition-colors ${isActive ? `${style.text} ${style.dropShadow}` : `text-token-faint ${style.hoverText}`}`}>
                     {doc.icon}
                   </div>
-                  <span className={`text-[8px] font-black uppercase tracking-[0.15em] transition-colors text-center leading-tight ${isActive ? style.text : `text-white/40 group-hover:text-white`}`}>
+                  <span className={`text-[8px] font-black uppercase tracking-[0.15em] transition-colors text-center leading-tight ${isActive ? style.text : `text-token-muted group-hover:text-token`}`}>
                     {doc.label}
                   </span>
                 </Link>
