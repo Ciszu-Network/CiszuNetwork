@@ -278,17 +278,25 @@ const syncCertificates = async () => {
   const files = await scanDir(CERTIFICATES_DIR);
   console.log(`   Found ${files.length} document(s)`);
 
-  // 1) Genera previews REALES (página 1 en PNG) para todo PDF sin preview.
+  // 0) Limpiar previews viejas para regenerarlas todas desde cero
+  if (fs.existsSync(PREVIEWS_DIR)) {
+    const oldPreviews = fs.readdirSync(PREVIEWS_DIR);
+    for (const old of oldPreviews) {
+      fs.unlinkSync(path.join(PREVIEWS_DIR, old));
+    }
+    console.log(`   🗑️  Cleaned ${oldPreviews.length} old preview(s)`);
+  }
+
+  // 1) Genera previews REALES para TODOS los PDFs (página 1 en PNG)
   let rasterized = 0;
   for (const file of files) {
     if (file.ext !== '.pdf') continue;
     const baseName = path.basename(file.name, file.ext);
-    if (resolvePreview(baseName, file.name)) continue; // ya tiene preview
     const thumbPath = path.join(PREVIEWS_DIR, `${baseName}-preview.png`);
-    console.log(`   Generando preview real de: ${file.name}`);
+    console.log(`   Generating preview for: ${file.name}`);
     if (await rasterizePdfPage1(file.path, thumbPath)) rasterized++;
   }
-  if (rasterized > 0) console.log(`   ✅ ${rasterized} preview(s) PDF generados`);
+  if (rasterized > 0) console.log(`   ✅ ${rasterized} PDF preview(s) generated`);
 
   // 2) Manifiesto de previews SIEMPRE se regenera (es la fuente de thumbnails).
   writePreviewManifest(files);
