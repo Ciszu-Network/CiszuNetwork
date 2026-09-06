@@ -5,6 +5,7 @@ import { Icon } from '@ciszu/ui';
 import { getSessionUserId, getGuildsForUser, getBotGuildIds, isGuildAdmin, type DiscordGuild } from '@/lib/auth';
 import { db, ciszubotSchema, eq } from '@/lib/db';
 import { INVITE_URL } from '@/lib/i18n';
+import QuickDocks from '@/components/molecules/QuickDocks';
 
 export const metadata: Metadata = {
   title: 'CiszuBot | DASHBOARD',
@@ -136,6 +137,8 @@ export default async function DashboardPage() {
           </div>
         )}
       </div>
+
+      <QuickDocks />
     </div>
   );
 }

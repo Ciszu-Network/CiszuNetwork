@@ -17,12 +17,12 @@
       }
     </style>
     <linearGradient id="Degradado_sin_nombre_361" data-name="Degradado sin nombre 361" x1="12.14" y1="78.12" x2="116.26" y2="78.12" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#563eff"/>
-      <stop offset="1" stop-color="#406dff"/>
+      <stop offset="0" stop-color="#a855f7"/>
+      <stop offset="1" stop-color="#7c3aed"/>
     </linearGradient>
     <linearGradient id="Degradado_sin_nombre_240" data-name="Degradado sin nombre 240" x1="1.5" y1="65.64" x2="148.4" y2="65.64" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#57eeff"/>
-      <stop offset="1" stop-color="#0082ca"/>
+      <stop offset="0" stop-color="#3b82f6"/>
+      <stop offset="1" stop-color="#1d4ed8"/>
     </linearGradient>
   </defs>
   <path class="cls-1" d="M111.14,100.32L12.14,124.74l42.79-62.23-31.28,5.75,9.57-31.16,80.97-5.59-47.55,55.52,19.93-7.42,10.89,5.34,18.8-14.82-5.12,30.19Z"/>

@@ -111,6 +111,8 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const [emailSent, setEmailSent] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   // Guard de acciones no recuperables: formulario de registro con contenido.
   const { begin: beginActivity, end: endActivity } = useActivityGuard();
@@ -121,7 +123,35 @@ export default function RegisterPage() {
   }, [form, beginActivity, endActivity]);
   useEffect(() => {
     return () => endActivity('auth-form');
-     
+      
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const script = document.createElement('script');
+    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+    script.async = true;
+    document.head.appendChild(script);
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+
+  const renderTurnstile = () => {
+    if (typeof window === 'undefined' || !window.turnstile) return null;
+    const container = document.getElementById('turnstile-register');
+    if (!container) return;
+    window.turnstile.render(container, {
+      sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '',
+      theme: 'dark',
+      callback: (token: string) => setCaptchaToken(token),
+      'expired-callback': () => setCaptchaToken(null),
+    });
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(renderTurnstile, 100);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -151,6 +181,8 @@ export default function RegisterPage() {
     if (!form.confirmPassword) next.confirmPassword = 'Este campo es obligatorio';
     else if (form.confirmPassword !== form.password) next.confirmPassword = 'Las contraseñas no coinciden';
 
+    if (!acceptedTerms) next.terms = 'Debes aceptar los términos y condiciones';
+
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -159,6 +191,10 @@ export default function RegisterPage() {
     e.preventDefault();
     setLocalError(null);
     if (!validate()) return;
+    if (!captchaToken) {
+      setLocalError('Debes completar el CAPTCHA');
+      return;
+    }
     setLoading(true);
 
     try {
@@ -304,6 +340,27 @@ export default function RegisterPage() {
                       error={errors.confirmPassword}
                       requirements={['Debe ser idéntica al campo "Contraseña"']}
                     />
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <div className="relative flex items-center justify-center shrink-0 w-5 h-5 mt-0.5">
+                      <input
+                        type="checkbox"
+                        checked={acceptedTerms}
+                        onChange={(e) => setAcceptedTerms(e.target.checked)}
+                        className="peer appearance-none w-full h-full border-2 border-white/20 rounded bg-black/50 checked:bg-neon-pink checked:border-neon-pink transition-all"
+                      />
+                      <svg viewBox="0 0 24 24" className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <p className="text-[11px] text-gray-400 font-bold leading-relaxed">
+                      Acepto los <a href="/terminos" className="text-neon-cyan hover:underline">Términos de Servicio</a> y la <a href="/privacidad" className="text-neon-cyan hover:underline">Política de Privacidad</a>.
+                    </p>
+                  </div>
+                  {errors.terms && <p className="text-red-400 text-[11px] font-bold">{errors.terms}</p>}
+
+                  <div className="flex flex-col items-center gap-2">
+                    <div id="turnstile-register" className="flex justify-center" />
+                    {!captchaToken && <span className="text-gray-500 text-[10px] font-bold">Completa el CAPTCHA</span>}
                   </div>
 
                   {localError && <p className="text-red-400 text-[11px] font-bold">{localError}</p>}

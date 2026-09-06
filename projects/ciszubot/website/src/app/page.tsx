@@ -12,6 +12,7 @@ import {
   parseLang,
   isEsLang,
 } from '@/lib/i18n';
+import QuickDocks from '@/components/molecules/QuickDocks';
 
 export const revalidate = 60;
 
@@ -359,5 +360,7 @@ export default async function Home() {
         </div>
       </section>
     </div>
+
+    <QuickDocks />
   );
 }

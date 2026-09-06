@@ -47,6 +47,38 @@ const fmtDate = (iso?: string) => {
 const catColor = (id: string) => CATEGORIES.find((c) => c.id === id)?.color || '#94a3b8';
 const catLabel = (id: string) => CATEGORIES.find((c) => c.id === id)?.label || id;
 
+const CategoryIcon = ({ id, className }: { id: string; className?: string }) => {
+  const icons: Record<string, React.ReactNode> = {
+    english: <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>,
+    programming: <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>,
+    web: <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>,
+    ai: <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93"/><path d="M12 2a4 4 0 0 0-4 4c0 1.95 1.4 3.58 3.25 3.93"/><path d="M12 10v4"/><path d="M8 18h8"/><circle cx="12" cy="18" r="4"/></svg>,
+    cloud: <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><path d="M17.5 19H9a7 7 0 1 1 6.7-9h1.8a4.5 4.5 0 1 1 0 9z"/></svg>,
+    digital: <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>,
+    design: <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>,
+    marketing: <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>,
+    finance: <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>,
+    personal: <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+    bachillerato: <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5l6 3 6-3v-5"/></svg>,
+    other: <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>,
+  };
+  return <>{icons[id] || icons.other}</>;
+};
+
+const ProviderLogo = ({ id, className }: { id: string; className?: string }) => {
+  const logos: Record<string, React.ReactNode> = {
+    cisco: <svg viewBox="0 0 24 24" className={className} fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>,
+    microsoft: <svg viewBox="0 0 24 24" className={className} fill="currentColor"><path d="M18.7 15.3c-1.1 0-2-.9-2-2v-4c0-1.1.9-2 2-2h4v2h-4v4h4v2h-4v4c0 1.1-.9 2-2 2zm-14.6 1.4c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2h-4v2h4v4h-4v4h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v-4h4zM5.5 7.4c0-1.1.9-2 2-2h4v2h-4v4h-4v-4h-4v-2h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v4h-4zm13 1.1c-1.1 0-2-.9-2-2v-4c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4zm0-10.5c-1.1 0-2-.9-2-2h-4c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h4c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2z"/></svg>,
+    ibm: <svg viewBox="0 0 24 24" className={className} fill="currentColor"><text x="2" y="18" fontSize="16" fontWeight="bold">IBM</text></svg>,
+    hp: <svg viewBox="0 0 24 24" className={className} fill="currentColor"><text x="4" y="18" fontSize="14" fontWeight="bold">HP</text></svg>,
+    ef: <svg viewBox="0 0 24 24" className={className} fill="currentColor"><text x="4" y="18" fontSize="14" fontWeight="bold">EF</text></svg>,
+    penn: <svg viewBox="0 0 24 24" className={className} fill="currentColor"><text x="4" y="18" fontSize="14" fontWeight="bold">Penn</text></svg>,
+    '16p': <svg viewBox="0 0 24 24" className={className} fill="currentColor"><text x="2" y="18" fontSize="16" fontWeight="bold">16P</text></svg>,
+    simplilearn: <svg viewBox="0 0 24 24" className={className} fill="currentColor"><text x="2" y="18" fontSize="14" fontWeight="bold">SL</text></svg>,
+  };
+  return <>{logos[id] || null}</>;
+};
+
 const ALL_DOCS: Certificate[] = [...CERTIFICATES, ...OTHER_DOCS];
 
 const PROVIDER_OPTIONS = [
@@ -84,14 +116,14 @@ const SORT_OPTIONS = [
 ];
 
 const EXTERNAL_LINKS = [
-  { label: 'Cisco Networking Academy', url: 'https://skillsforall.com', icon: '🔗' },
-  { label: 'Microsoft Learn', url: 'https://learn.microsoft.com', icon: '📚' },
-  { label: 'IBM SkillsBuild', url: 'https://skillsbuild.org', icon: '🏷️' },
-  { label: 'HP Life', url: 'https://www.hp.com/us-en/life.html', icon: '💻' },
-  { label: 'EF SET', url: 'https://www.efset.org', icon: '🇬🇧' },
-  { label: 'Penn ELP', url: 'https://www.elp.upenn.edu', icon: '🎓' },
-  { label: '16Personalities', url: 'https://www.16personalities.com', icon: '🧠' },
-  { label: 'Simplilearn', url: 'https://simpli-web.app.link/e/aaWENDBP75b', icon: '📜' },
+  { label: 'Cisco Networking Academy', url: 'https://skillsforall.com', icon: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> },
+  { label: 'Microsoft Learn', url: 'https://learn.microsoft.com', icon: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> },
+  { label: 'IBM SkillsBuild', url: 'https://skillsbuild.org', icon: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg> },
+  { label: 'HP Life', url: 'https://www.hp.com/us-en/life.html', icon: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg> },
+  { label: 'EF SET', url: 'https://www.efset.org', icon: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> },
+  { label: 'Penn ELP', url: 'https://www.elp.upenn.edu', icon: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5l6 3 6-3v-5"/></svg> },
+  { label: '16Personalities', url: 'https://www.16personalities.com', icon: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> },
+  { label: 'Simplilearn', url: 'https://simpli-web.app.link/e/aaWENDBP75b', icon: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> },
 ];
 
 const COMPANIES = [
@@ -174,17 +206,18 @@ function CertificateCard({
           </div>
         )}
 
-        <span className="absolute top-2 right-2 text-[10px] uppercase tracking-widest font-black px-2 py-1 rounded-full z-10 backdrop-blur-md"
+        <span className="absolute top-2 right-2 text-[10px] uppercase tracking-widest font-black px-2 py-1 rounded-full z-10 backdrop-blur-md inline-flex items-center gap-1.5"
           style={{
             color,
             backgroundColor: `${color}22`,
             border: `1px solid ${color}66`,
             textShadow: '0 1px 2px rgba(0,0,0,0.5)'
           }}>
+          <span className="w-3 h-3"><CategoryIcon id={cert.category} /></span>
           {catLabel(cert.category)}
         </span>
 
-        <span className="absolute top-2 left-2 text-[9px] uppercase tracking-widest font-black px-1.5 py-0.5 rounded-full z-10 backdrop-blur-md"
+        <span className="absolute top-2 left-2 text-[9px] uppercase tracking-widest font-black px-1.5 py-0.5 rounded-full z-10 backdrop-blur-md inline-flex items-center gap-1"
           style={{ backgroundColor: PROVIDER_OPTIONS.find(p => p.id === providerGroup)?.color + '22' || '#94a3b822', border: `1px solid ${PROVIDER_OPTIONS.find(p => p.id === providerGroup)?.color || '#94a3b8'}66` }}>
           {PROVIDER_OPTIONS.find(p => p.id === providerGroup)?.label || 'Other'}
         </span>
@@ -650,10 +683,7 @@ export default function CertificatesPage() {
                 }
               >
                 <span className="inline-flex items-center gap-1.5">
-                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2}>
-                    <rect x="3" y="3" width="18" height="18" rx="2" />
-                    <path d="M9 9h6v6H9z" />
-                  </svg>
+                  <span className="w-3.5 h-3.5"><CategoryIcon id={c.id} /></span>
                   {c.label}
                 </span>
               </button>
@@ -756,7 +786,9 @@ export default function CertificatesPage() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border border-neon-cyan/40 text-neon-cyan hover:bg-neon-cyan/10 transition-all"
               >
-                <span className="text-base">🔗</span>
+                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                </svg>
                 {l.label}
               </a>
             ))}
@@ -781,7 +813,7 @@ export default function CertificatesPage() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border border-neon-purple/40 text-neon-purple hover:bg-neon-purple/10 transition-all"
               >
-                <span className="text-base">{l.icon}</span>
+                <span className="w-4 h-4">{l.icon}</span>
                 {l.label}
               </a>
             ))}

@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import { getSessionUserId, getGuildsForUser, isGuildAdmin } from '@/lib/auth';
 import DashboardGuildClient from './client';
+import QuickDocks from '@/components/molecules/QuickDocks';
 
 export const metadata: Metadata = {
   title: 'CiszuBot | DASHBOARD',
@@ -21,5 +22,10 @@ export default async function DashboardGuildPage({ params }: { params: Promise<{
     redirect('/dashboard?error=forbidden');
   }
 
-  return <DashboardGuildClient guildId={guildId} guildName={guild.name} guildIcon={guild.icon ?? null} />;
+  return (
+    <div className="bg-bg min-h-screen">
+      <QuickDocks />
+      <DashboardGuildClient guildId={guildId} guildName={guild.name} guildIcon={guild.icon ?? null} />
+    </div>
+  );
 }
