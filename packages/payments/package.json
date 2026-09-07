@@ -1,6 +1,6 @@
 {
   "name": "@ciszunetwork/payments",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Sistema de pagos de Ciszu Network: abstracción de proveedor (NOWPayments hoy, Lemon Squeezy a los 18) con verificación de webhooks por firma",
   "main": "./index.ts",
   "types": "./index.ts",
