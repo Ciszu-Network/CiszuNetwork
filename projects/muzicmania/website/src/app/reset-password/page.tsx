@@ -32,12 +32,9 @@ export default function ResetPasswordPage() {
         return;
       }
 
-      const { error: verifyError } = await supabase.auth.verifyOtp({
-        token: accessToken,
-        type: 'recovery',
-      });
-
-      if (verifyError) {
+      // Flujo implicit: supabase-js recupera la sesión automáticamente desde el hash del enlace
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) {
         setError('El enlace ha expirado o es inválido. Solicita uno nuevo desde login.');
         return;
       }
