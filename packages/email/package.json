@@ -1,6 +1,6 @@
 {
   "name": "@ciszunetwork/email",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Sistema de emails de Ciszu Network: abstracción de proveedor (Resend con dominio — Fase B) con errores claros",
   "main": "./index.ts",
   "types": "./index.ts",
