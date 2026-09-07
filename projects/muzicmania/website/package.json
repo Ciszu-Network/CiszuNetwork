@@ -29,7 +29,7 @@
     "@puckeditor/cloud-client": "^0.8.2",
     "@puckeditor/core": "^0.23.0",
     "@puckeditor/plugin-ai": "^0.8.2",
-    "@sentry/nextjs": "^10.69.0",
+    "@sentry/nextjs": "^10.73.0",
     "@supabase/supabase-js": "^2.108.1",
     "@tauri-apps/api": "^2.11.0",
     "@types/react-google-recaptcha": "^2.1.9",
