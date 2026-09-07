@@ -76,6 +76,7 @@ export default async function Home() {
   ];
 
   return (
+    <>
     <div className="bg-bg">
       {/* ═══ HERO ═══ */}
       <section className="relative overflow-hidden py-20 md:py-28">
@@ -362,5 +363,6 @@ export default async function Home() {
     </div>
 
     <QuickDocks />
+    </>
   );
 }
