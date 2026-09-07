@@ -5,7 +5,8 @@
 ### Cambios Generales:
 
 1. [x] #5 Crear sistema de anuncios: Google Adsense, GA4, GTM, Tag y Analytics pack completo.
-    - [x] Implementar GoogleScripts/GoogleAnalytics en las 4 webs (GTM + GA4 + AdSense auto ads).
+
+2.  - [x] Implementar GoogleScripts/GoogleAnalytics en las 4 webs (GTM + GA4 + AdSense auto ads).
     - [x] Crear ads.txt en public/ de las 4 webs.
     - [x] Configurar CSP para permitir scripts de AdSense/GTM.
     - [ ] AdSense dice “Preparando el sitio”: revisar cuenta/sitio aprobado y crear unidades de anuncio tras aprobación.
@@ -30,7 +31,7 @@
     - [ ] Verificar en producción que no hay errores 400/500 en impresiones de ads.
     - [ ] Verificar CSP: AdSense puede requerir agregar ep2.adtrafficquality.google a script-src.
 
-2. [ ] #4 El sistema de los discleimers y ads no llegan en local ni en global. Actualmente no funciona el sistema de agregar discleimer ni ads desde la devcon, simplemente no agrega nada visualmente a pesar que desde la devcon parece que si, siempre sale el banner de esta website esta en beta, recuerda que el discleimer de devcon debe indicar que fue enviado por la devcon, ademas que independientemente de la cantidad actual almacenada el usuario siempre le debe salir. Los fallbacks nunca llegan a su cometido.
+3. [ ] #4 El sistema de los discleimers y ads no llegan en local ni en global. Actualmente no funciona el sistema de agregar discleimer ni ads desde la devcon, simplemente no agrega nada visualmente a pesar que desde la devcon parece que si, siempre sale el banner de esta website esta en beta, recuerda que el discleimer de devcon debe indicar que fue enviado por la devcon, ademas que independientemente de la cantidad actual almacenada el usuario siempre le debe salir. Los fallbacks nunca llegan a su cometido.
     1. [ ] Luego de que el sistema funcione debugear con ads para arreglar el error de el logo actual de ciszugamens no es correcto, usa los colores incorrectos, debe ser el de C morado, y Z azul. Con degradados. Outline. Actualmente se usa una version azul de la C y Z blanca.
 
 - [ ] Al registrarse o logearse debe haber cumplido la seguridad de recaptcha. Siempre luego debe haber una pantalla para verificar el correo en momento de registrarse, pero si el usuario tiene 2FA siempre debe haber una pantalla pidiendole una clave que empieze po C- y seguido de 6 digitos y en la mitad un espacio (C-123 434) clave oficial de ciszunetwork, temporal, expirable en 3 horas e indicar, unico por website, indicar si ya expiro y posibilidad de reenviar otro codigo con limites, al tercer limite se suspende temporalmente y localmente por que no logro iniciar sesion.
@@ -40,6 +41,7 @@
 - [ ] Cuando un usuario entra a un link invalido expirado, es cierto que no se logea. Pero no existe ninguna indicacion, debes crear un modal o advertencia de que ese link estuvo invalido por X tiempo, por la razon. Ademas de recordarle al usuario en la pantalla de login de olvide contraseña que el link es 1 solo uso.
 - [ ] Al cerrar sesion manual o automaticamente SIEMPRE redirigir a /index o home de la webpage.
 - [ ] TODAS las paginas de registro deben tener el recaptacha al final del formulario antes del boton de registrarse, Y tambien OBLIGATORIAMENTE debe haber 2 casillas de verificacion obligatorias para aceptar los terminos y condiciones y otras cosas.
+- [ ] Actualmente cuando un usuario le da al boton de "seguir usando adblocker" en la eleccion doble del modal de guard del anti adblocker, si es verdad que lo deja seguir pero no le permite al usuario scrollear o hacer click en el body, muy raro. El usuario tiene que actualizar para que funcione bien la pagina, debemos arreglar esto.
 
 ### Cambios por Website
 
