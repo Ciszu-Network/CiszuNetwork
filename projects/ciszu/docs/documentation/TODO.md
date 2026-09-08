@@ -5,31 +5,16 @@
 ### Cambios Generales:
 
 1. [x] #5 Crear sistema de anuncios: Google Adsense, GA4, GTM, Tag y Analytics pack completo.
-
-2.  - [x] Implementar GoogleScripts/GoogleAnalytics en las 4 webs (GTM + GA4 + AdSense auto ads).
-    - [x] Crear ads.txt en public/ de las 4 webs.
-    - [x] Configurar CSP para permitir scripts de AdSense/GTM.
-    - [ ] AdSense dice “Preparando el sitio”: revisar cuenta/sitio aprobado y crear unidades de anuncio tras aprobación.
-        - [ ] Pasos en AdSense:
-            - [ ] Enviar/verificar los 4 sitios en AdSense (requiere acceso a adsense.google.com).
-            - [ ] Crear unidades de anuncio: al menos 1 unidad gráfica o nativa por sitio.
-            - [ ] Esperar aprobación de cuenta y sitios (puede tardar días).
-            - [ ] Una vez aprobado, sustituir auto-ads por unidades específicas si se desea.
-    - [ ] GA4: confirmar Realtime page_views (requiere acceso a analytics.google.com).
-        - [ ] Pasos en GA4:
-            - [ ] Verificar en Realtime que llegan page_views de los 4 dominios.
-            - [ ] Completar las tareas pendientes de configuración (6/11 actualmente).
-            - [ ] Crear filtros/audiencias si se necesitan para Looker Studio.
-    - [ ] GTM: publicar/verificar contenedores (requiere acceso a tagmanager.google.com).
-        - [ ] Pasos en GTM:
-            - [ ] Publicar cada contenedor (GTM-N7Q8DGX5, GTM-WNDXGD63, GTM-T9LG9N6C, GTM-N2SXL2FN).
-            - [ ] Verificar que los tags de GA4/AdSense se disparan correctamente en Preview.
-    - [ ] Looker Studio: conectar fuentes GA4 y crear dashboard (requiere acceso manual).
-        - [ ] Pasos en Looker Studio:
-            - [ ] Crear dashboard conectado a las 4 propiedades GA4.
-            - [ ] Agregar métricas de ads si se desea (requiere AdSense activo).
-    - [ ] Verificar en producción que no hay errores 400/500 en impresiones de ads.
-    - [ ] Verificar CSP: AdSense puede requerir agregar ep2.adtrafficquality.google a script-src.
+   - [x] Implementar GoogleScripts/GoogleAnalytics en las 4 webs (GTM + GA4 + AdSense auto ads).
+   - [x] Crear ads.txt en public/ de las 4 webs.
+   - [x] Configurar CSP para permitir scripts de AdSense/GTM.
+   - [x] Actualizar IDs de GTM en Vercel: ciszunetwork GT-KV5477MC, ciszubot GT-WF8B9HT8, ciszukoantony GT-TXZGRRF9, muzicmania GT-K4Z6G8LS.
+   - [x] Ajustar CSP en packages/utils/src/csp.ts para GA4/AdSense (img-src y connect-src extras).
+   - [ ] AdSense: enviar/verificar los 4 sitios, esperar aprobación y crear unidades de anuncio por sitio.
+   - [ ] GA4: confirmar Realtime page_views en los 4 dominios y completar tareas pendientes de configuración.
+   - [ ] GTM: publicar/verificar contenedores y confirmar que los tags de GA4/AdSense se disparan en Preview.
+   - [ ] Looker Studio: conectar fuentes GA4 y crear dashboard.
+   - [ ] Verificar en producción que no hay errores 400/500 en impresiones de ads ni bloqueos de CSP.
 
 3. [ ] #4 El sistema de ads no llegan en local ni en global y no funciona desde la devcon, simplemente no agrega nada visualmente a pesar que desde la devcon parece que si. Actualmente el sistema de ads el fallback de pendientes siempre dice timeout.
     1. [ ] Algunas opciones como desactivar anuncios temporalmente no funciona, ademas de que no esta muy claro exactmanete la funcion de cada opcion. Quitar anuncio deberia ser limpiar ads actuales, reactivar anuncios debe ser una opcion no 2, y desactivar anuncios debe ser 1 opcion. Resumen debe estar despues de enviar. Pule las opciones. Ademas las reactivaciones y desactivaciones tiene que ser por websites.
