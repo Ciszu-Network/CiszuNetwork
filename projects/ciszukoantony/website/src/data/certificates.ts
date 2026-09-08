@@ -77,6 +77,7 @@ export const CERTIFICATES: Certificate[] = [
       { name: 'ef_set_completation_english.pdf', label: 'Completion notice', kind: 'credential' },
     ],
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'penn-elp-english-fundamentals',
@@ -92,6 +93,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [
       { name: '896_fplayersoffcial@gmail.com.pdf', label: 'Certificate of completion', kind: 'certificate' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'spoken-english',
@@ -107,6 +109,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [
       { name: '10686381_11037949_1788416004123.pdf', label: 'Certificate', kind: 'certificate' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
 
   // ─────────────────────── Cisco Networking Academy ───────────────────────
@@ -123,6 +126,7 @@ export const CERTIFICATES: Certificate[] = [
       { name: 'HTMLEssentialsv120260717-8-l2ejk6.pdf', label: 'Credential record', kind: 'credential' },
     ],
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'cisco-css',
@@ -136,6 +140,7 @@ export const CERTIFICATES: Certificate[] = [
       { name: 'CSS_Essentials_certificate_fplayersoffcial-gmail-com_16350af5-66c7-4813-b024-360414a2b260.pdf', label: 'Certificate', kind: 'certificate' },
       { name: 'CSSEssentialsv120260719-8-1rzw7n.pdf', label: 'Credential record', kind: 'credential' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'cisco-python1',
@@ -149,6 +154,7 @@ export const CERTIFICATES: Certificate[] = [
       { name: 'Python_Essentials_1_certificate_fplayersoffcial-gmail-com_0b6aae8e-2aa8-44be-8dfd-3945f0aa4dd1.pdf', label: 'Certificate', kind: 'certificate' },
       { name: 'PythonEssentials1Update20260625-32-g4p28r.pdf', label: 'Credential record', kind: 'credential' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'cisco-python2',
@@ -162,6 +168,7 @@ export const CERTIFICATES: Certificate[] = [
       { name: 'Python_Essentials_2_certificate_fplayersoffcial-gmail-com_74a5d7a2-7fae-4812-bd49-f2662bebfa63.pdf', label: 'Certificate', kind: 'certificate' },
       { name: 'PythonEssentials2Update20260721-8-lly54c.pdf', label: 'Credential record', kind: 'credential' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'cisco-ai',
@@ -175,6 +182,7 @@ export const CERTIFICATES: Certificate[] = [
       { name: 'Introduction_to_Modern_AI_certificate_fplayersoffcial-gmail-com_5128c26e-8386-4d23-bef9-94035d7b0bc5.pdf', label: 'Certificate', kind: 'certificate' },
       { name: 'IntrotoModernAIUpdate20260628-32-qxbxrj.pdf', label: 'Credential record', kind: 'credential' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'cisco-digital-awareness',
@@ -188,6 +196,7 @@ export const CERTIFICATES: Certificate[] = [
       { name: 'Digital_Awareness_certificate_fplayersoffcial-gmail-com_6022fb74-41f5-414e-83f9-f5c84dd80fa6.pdf', label: 'Certificate', kind: 'certificate' },
       { name: 'DigitalAwarenessUpdate20260625-31-xone63.pdf', label: 'Credential record', kind: 'credential' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
 
   // ─────────────────────────── Microsoft Learn ───────────────────────────
@@ -202,6 +211,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [
       { name: 'Logros - ciscoantonygarciam-8257 _ Microsoft Learn.pdf', label: 'Achievement', kind: 'credential' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'ms-cloud-services',
@@ -214,6 +224,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [
       { name: 'Logros - ciscoantonygarciam-8257 _ Microsoft Learn1.pdf', label: 'Achievement', kind: 'credential' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'ms-cloud-infra',
@@ -226,6 +237,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [
       { name: 'Logros - ciscoantonygarciam-8257 _ Microsoft Learn2.pdf', label: 'Achievement', kind: 'credential' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'ms-cloud-computing',
@@ -238,6 +250,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [
       { name: 'Logros - ciscoantonygarciam-8257 _ Microsoft Learn3.pdf', label: 'Achievement', kind: 'credential' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
 
   // ─────────────────────────── IBM SkillsBuild ───────────────────────────
@@ -252,6 +265,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [
       { name: 'Certificado de finalizacion _ SkillsBuild.pdf', label: 'Certificate of completion', kind: 'certificate' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'ibm-intro-it',
@@ -264,6 +278,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [
       { name: 'Certificado de finalizacion _ SkillsBuild1.pdf', label: 'Certificate of completion', kind: 'certificate' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'ibm-ux',
@@ -276,6 +291,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [
       { name: 'Certificado de finalizacion _ SkillsBuild2.pdf', label: 'Certificate of completion', kind: 'certificate' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'ibm-digital-marketing',
@@ -288,6 +304,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [
       { name: 'Certificado de finalizacion _ mSkillsBuild.pdf', label: 'Certificate of completion', kind: 'certificate' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
 
   // ──────────────── Cursos de formación en línea (ES) ────────────────
@@ -304,6 +321,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [
       { name: 'chatgpt_Certificado_Francisco Antonio Garcia Menolascina.pdf', label: 'Certificate of completion', kind: 'certificate' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'es-ia-ingresos',
@@ -316,6 +334,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [
       { name: 'iaingresosCertificado_Francisco Antonio Garcia Menolascina.pdf', label: 'Certificate of completion', kind: 'certificate' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'es-python',
@@ -330,6 +349,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [
       { name: 'phyton_Certificado_Francisco Antonio Garcia Menolascina.pdf', label: 'Certificate of completion', kind: 'certificate' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'es-ingles',
@@ -344,6 +364,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [
       { name: 'ingles_Certificado_Francisco Antonio Garcia Menolascina.pdf', label: 'Certificate of completion', kind: 'certificate' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'es-photoshop',
@@ -358,6 +379,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [
       { name: 'photoshop_Certificado_Francisco Antonio Garcia Menolascina.pdf', label: 'Certificate of completion', kind: 'certificate' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'es-capcut',
@@ -372,6 +394,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [
       { name: 'capcut_Certificado_Francisco Antonio Garcia Menolascina.pdf', label: 'Certificate of completion', kind: 'certificate' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'es-edicion',
@@ -386,6 +409,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [
       { name: 'edicion_Certificado_Francisco Antonio Garcia Menolascina.pdf', label: 'Certificate of completion', kind: 'certificate' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'es-youtube',
@@ -400,6 +424,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [
       { name: 'youtube_Certificado_Francisco Antonio Garcia Menolascina.pdf', label: 'Certificate of completion', kind: 'certificate' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'es-autotub',
@@ -414,6 +439,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [
       { name: 'autotub_Certificado_Francisco Antonio Garcia Menolascina.pdf', label: 'Certificate of completion', kind: 'certificate' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'es-finanzas',
@@ -428,6 +454,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [
       { name: 'finanzaspersonales_Certificado_Francisco Antonio Garcia Menolascina.pdf', label: 'Certificate of completion', kind: 'certificate' },
     ],
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
 
   {
@@ -438,6 +465,7 @@ export const CERTIFICATES: Certificate[] = [
     date: '2026-04-27',
     files: [{ name: '373_fplayersoffcial@gmail.com.pdf', label: '373 Fplayersoffcial@Gmail.Com', kind: 'certificate' }],
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
 
   {
@@ -448,6 +476,7 @@ export const CERTIFICATES: Certificate[] = [
     date: '2026-04-27',
     files: [{ name: '4080_fplayersoffcial@gmail.com.pdf', label: '4080 Fplayersoffcial@Gmail.Com', kind: 'certificate' }],
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
 
   {
@@ -458,6 +487,7 @@ export const CERTIFICATES: Certificate[] = [
     date: '2026-04-27',
     files: [{ name: '508_fplayersoffcial@gmail.com.pdf', label: '508 Fplayersoffcial@Gmail.Com', kind: 'certificate' }],
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
 
   {
@@ -469,6 +499,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [{ name: '107_fplayersoffcial@gmail.com.pdf', label: '107 Fplayersoffcial@Gmail.Com', kind: 'certificate' }],
     thumbnail: '107_fplayersoffcial@gmail.com-preview.png',
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
 
   {
@@ -480,6 +511,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [{ name: '1141_fplayersoffcial@gmail.com.pdf', label: '1141 Fplayersoffcial@Gmail.Com', kind: 'certificate' }],
     thumbnail: '1141_fplayersoffcial@gmail.com-preview.png',
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
 
   {
@@ -491,6 +523,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [{ name: '171_fplayersoffcial@gmail.com.pdf', label: '171 Fplayersoffcial@Gmail.Com', kind: 'certificate' }],
     thumbnail: '171_fplayersoffcial@gmail.com-preview.png',
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
 
   {
@@ -502,6 +535,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [{ name: '1852_fplayersoffcial@gmail.com.pdf', label: '1852 Fplayersoffcial@Gmail.Com', kind: 'certificate' }],
     thumbnail: '1852_fplayersoffcial@gmail.com-preview.png',
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
 
   {
@@ -513,6 +547,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [{ name: '3030_fplayersoffcial@gmail.com.pdf', label: '3030 Fplayersoffcial@Gmail.Com', kind: 'certificate' }],
     thumbnail: '3030_fplayersoffcial@gmail.com-preview.png',
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
 
   {
@@ -524,6 +559,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [{ name: '3296_fplayersoffcial@gmail.com.pdf', label: '3296 Fplayersoffcial@Gmail.Com', kind: 'certificate' }],
     thumbnail: '3296_fplayersoffcial@gmail.com-preview.png',
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
 
   {
@@ -535,6 +571,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [{ name: '582_fplayersoffcial@gmail.com.pdf', label: '582 Fplayersoffcial@Gmail.Com', kind: 'certificate' }],
     thumbnail: '582_fplayersoffcial@gmail.com-preview.png',
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
 
   {
@@ -546,6 +583,7 @@ export const CERTIFICATES: Certificate[] = [
     files: [{ name: 'Marketing de Medios Sociales.pdf', label: 'Marketing de Medios Sociales', kind: 'certificate' }],
     thumbnail: 'Marketing de Medios Sociales-preview.png',
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
 ];
 
@@ -565,6 +603,7 @@ export const OTHER_DOCS: Certificate[] = [
       { name: 'learner_transcript.pdf', label: 'Transcript', kind: 'transcript' },
     ],
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'ms-expediente',
@@ -581,6 +620,7 @@ export const OTHER_DOCS: Certificate[] = [
       { name: 'Expediente - CiscoAntonyGarciaM-8257 _ Microsoft Learn.pdf', label: 'Record (expediente)', kind: 'transcript' },
     ],
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: '16p-profile',
@@ -595,6 +635,7 @@ export const OTHER_DOCS: Certificate[] = [
       { name: 'Tu perfil _ 16Personalities.pdf', label: 'Profile report', kind: 'report' },
     ],
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'bachillerato-cert',
@@ -607,6 +648,7 @@ export const OTHER_DOCS: Certificate[] = [
       { name: 'diploma_certificado_bachillerato_monseñorcastro_censored.jpg', label: 'Certificate Image', kind: 'image' },
     ],
     previewType: 'image',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'hp-live-transcript',
@@ -620,6 +662,7 @@ export const OTHER_DOCS: Certificate[] = [
       { name: 'transcript_hplive.pdf', label: 'Transcript', kind: 'transcript' },
     ],
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'ciencia-datos',
@@ -632,6 +675,7 @@ export const OTHER_DOCS: Certificate[] = [
       { name: 'Ciencia y Análisis de Datos.pdf', label: 'Certificate', kind: 'certificate' },
     ],
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
   {
     id: 'course-109',
@@ -641,6 +685,7 @@ export const OTHER_DOCS: Certificate[] = [
     date: '2026-04-27',
     files: [{ name: '109_fplayersoffcial@gmail.com.pdf', label: 'Certificate 109', kind: 'certificate' }],
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
 
   {
@@ -652,6 +697,7 @@ export const OTHER_DOCS: Certificate[] = [
     files: [{ name: 'Comunicación Empresarial.pdf', label: 'Comunicación Empresarial', kind: 'certificate' }],
     thumbnail: 'Comunicación Empresarial-preview.png',
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
 
   {
@@ -663,6 +709,7 @@ export const OTHER_DOCS: Certificate[] = [
     files: [{ name: 'Encontrar Financiamiento.pdf', label: 'Encontrar Financiamiento', kind: 'certificate' }],
     thumbnail: 'Encontrar Financiamiento-preview.png',
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
 
   {
@@ -674,6 +721,7 @@ export const OTHER_DOCS: Certificate[] = [
     files: [{ name: 'Experiencia del cliente (CX) para el éxito comercial.pdf', label: 'Experiencia del Cliente (CX)', kind: 'certificate' }],
     thumbnail: 'Experiencia del cliente (CX) para el éxito comercial-preview.png',
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
 
   {
@@ -685,6 +733,7 @@ export const OTHER_DOCS: Certificate[] = [
     files: [{ name: 'Introducción a Destrezas Empresariales Digitales.pdf', label: 'Destrezas Empresariales Digitales', kind: 'certificate' }],
     thumbnail: 'Introducción a Destrezas Empresariales Digitales-preview.png',
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
 
   {
@@ -696,6 +745,7 @@ export const OTHER_DOCS: Certificate[] = [
     files: [{ name: 'Introducción al Conocimiento de la Ciberseguridad.pdf', label: 'Ciberseguridad', kind: 'certificate' }],
     thumbnail: 'Introducción al Conocimiento de la Ciberseguridad-preview.png',
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
 
   {
@@ -707,6 +757,7 @@ export const OTHER_DOCS: Certificate[] = [
     files: [{ name: 'La planificación estratégica en la era de la IA.pdf', label: 'Planificación estratégica en la era de la IA', kind: 'certificate' }],
     thumbnail: 'La planificación estratégica en la era de la IA-preview.png',
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
 
   {
@@ -718,5 +769,6 @@ export const OTHER_DOCS: Certificate[] = [
     files: [{ name: 'transcript.pdf', label: 'Transcript', kind: 'transcript' }],
     thumbnail: 'transcript-preview.png',
     previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   }
 ];
