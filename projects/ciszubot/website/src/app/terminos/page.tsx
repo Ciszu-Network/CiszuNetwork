@@ -16,8 +16,8 @@ export default async function TermsPage() {
 
   return (
     <>
-      <QuickDocks />
       <LegalPage dict={t} kind="terms" title={t.footer.terms} />
+      <QuickDocks />
     </>
   );
 }

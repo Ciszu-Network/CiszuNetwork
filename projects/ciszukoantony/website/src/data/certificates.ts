@@ -25,6 +25,7 @@ export type Certificate = {
   files: CertFile[];
   thumbnail?: string; // preview image/screenshot
   previewType?: 'image' | 'pdf' | 'document'; // tipo de previsualización
+  holderName?: string; // nombre del titular del certificado
 };
 
 export type Category = { id: string; label: string; color: string };
@@ -603,7 +604,7 @@ export const OTHER_DOCS: Certificate[] = [
     date: '2020-06-15',
     summary: 'High school graduation certificate.',
     files: [
-      { name: 'dato (35).JPG', label: 'Certificate Image', kind: 'image' },
+      { name: 'diploma_certificado_bachillerato_monseñorcastro_censored.jpg', label: 'Certificate Image', kind: 'image' },
     ],
     previewType: 'image',
   },

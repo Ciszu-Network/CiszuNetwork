@@ -16,8 +16,8 @@ export default async function PrivacyPage() {
 
   return (
     <>
-      <QuickDocks />
       <LegalPage dict={t} kind="privacy" title={t.footer.privacy} />
+      <QuickDocks />
     </>
   );
 }
