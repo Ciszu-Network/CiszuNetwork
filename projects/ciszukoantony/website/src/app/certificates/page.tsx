@@ -10,6 +10,7 @@ import {
   OTHER_DOCS,
   type Certificate,
 } from '@/data/certificates';
+import { getCategoryIcon } from '@/data/categoryIcons';
 import { PREVIEWS_BY_FILE } from '@/data/certificates.previews';
 import QuickDocks from '@/components/molecules/QuickDocks';
 
@@ -48,34 +49,54 @@ const catColor = (id: string) => CATEGORIES.find((c) => c.id === id)?.color || '
 const catLabel = (id: string) => CATEGORIES.find((c) => c.id === id)?.label || id;
 
 const CategoryIcon = ({ id, className }: { id: string; className?: string }) => {
-  const icons: Record<string, React.ReactNode> = {
-    english: <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>,
-    programming: <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>,
-    web: <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>,
-    ai: <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93"/><path d="M12 2a4 4 0 0 0-4 4c0 1.95 1.4 3.58 3.25 3.93"/><path d="M12 10v4"/><path d="M8 18h8"/><circle cx="12" cy="18" r="4"/></svg>,
-    cloud: <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><path d="M17.5 19H9a7 7 0 1 1 6.7-9h1.8a4.5 4.5 0 1 1 0 9z"/></svg>,
-    digital: <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>,
-    design: <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>,
-    marketing: <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>,
-    finance: <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>,
-    personal: <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
-    bachillerato: <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5l6 3 6-3v-5"/></svg>,
-    other: <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>,
-  };
-  return <>{icons[id] || icons.other}</>;
+  const Icon = getCategoryIcon(id);
+  return <Icon className={className} />;
 };
 
 const ProviderLogo = ({ id, className }: { id: string; className?: string }) => {
   const logos: Record<string, React.ReactNode> = {
-    cisco: <svg viewBox="0 0 24 24" className={className} fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>,
-    microsoft: <svg viewBox="0 0 24 24" className={className} fill="currentColor"><path d="M18.7 15.3c-1.1 0-2-.9-2-2v-4c0-1.1.9-2 2-2h4v2h-4v4h4v2h-4v4c0 1.1-.9 2-2 2zm-14.6 1.4c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2h-4v2h4v4h-4v4h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v-4h4zM5.5 7.4c0-1.1.9-2 2-2h4v2h-4v4h-4v-4h-4v-2h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v4h-4zm13 1.1c-1.1 0-2-.9-2-2v-4c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4zm0-10.5c-1.1 0-2-.9-2-2h-4c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h4c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2z"/></svg>,
-    ibm: <svg viewBox="0 0 24 24" className={className} fill="currentColor"><text x="2" y="18" fontSize="16" fontWeight="bold">IBM</text></svg>,
-    hp: <svg viewBox="0 0 24 24" className={className} fill="currentColor"><text x="4" y="18" fontSize="14" fontWeight="bold">HP</text></svg>,
-    ef: <svg viewBox="0 0 24 24" className={className} fill="currentColor"><text x="4" y="18" fontSize="14" fontWeight="bold">EF</text></svg>,
-    penn: <svg viewBox="0 0 24 24" className={className} fill="currentColor"><text x="4" y="18" fontSize="14" fontWeight="bold">Penn</text></svg>,
-    '16p': <svg viewBox="0 0 24 24" className={className} fill="currentColor"><text x="2" y="18" fontSize="16" fontWeight="bold">16P</text></svg>,
-    simplilearn: <svg viewBox="0 0 24 24" className={className} fill="currentColor"><text x="2" y="18" fontSize="14" fontWeight="bold">SL</text></svg>,
-  };
+    cisco: (
+      <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+      </svg>
+    ),
+    microsoft: (
+      <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+        <path d="M18.7 15.3c-1.1 0-2-.9-2-2v-4c0-1.1.9-2 2-2h4v2h-4v4h4v2h-4v4c0 1.1-.9 2-2 2zm-14.6 1.4c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2h-4v2h4v4h-4v4h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v-4h4zM5.5 7.4c0-1.1.9-2 2-2h4v2h-4v4h-4v-4h-4v-2h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v-4h4zM5.5 7.4c0-1.1.9-2 2-2h4v2h-4v4h-4v-4h-4v-2h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v-4h4zM5.5 7.4c0-1.1.9-2 2-2h4v2h-4v4h-4v-4h-4v-2h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v-4h4z"/>
+      </svg>
+    ),
+    ibm: (
+      <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+        <path d="M2 4h20v4H2V4zm0 5h20v4H2V9zm0 5h20v4H2v-4zm0 5h20v4H2v-4z" />
+      </svg>
+    ),
+    hp: (
+      <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8z" />
+        <path d="M14 11h-4v4h-2v-4H8V9h4V5h2v4h4v2h-4v4z" fill="white" />
+      </svg>
+    ),
+    ef: (
+      <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93c3.57.27 6.5-3.13 6.5-6.93 0-.62-.08-1.21-.21-1.79L15 9V7c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L15 15v-1c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L9 9v1c0 1.1.9 2 2 2z" />
+      </svg>
+    ),
+    penn: (
+      <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93c3.57.27 6.5-3.13 6.5-6.93 0-.62-.08-1.21-.21-1.79L15 9V7c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L15 15v-1c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L9 9v1c0 1.1.9 2 2 2z" />
+      </svg>
+    ),
+    '16p': (
+      <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93c3.57.27 6.5-3.13 6.5-6.93 0-.62-.08-1.21-.21-1.79L15 9V7c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L15 15v-1c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L9 9v1c0 1.1.9 2 2 2z" />
+      </svg>
+    ),
+    simplilearn: (
+      <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93c3.57.27 6.5-3.13 6.5-6.93 0-.62-.08-1.21-.21-1.79L15 9V7c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L15 15v-1c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L9 9v1c0 1.1.9 2 2 2z" />
+      </svg>
+    ),
+};
   return <>{logos[id] || null}</>;
 };
 

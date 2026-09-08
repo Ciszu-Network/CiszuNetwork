@@ -66,4 +66,5 @@ export const PREVIEWS_BY_FILE: Record<string, string> = {
   'transcript_hplive.pdf': 'transcript_hplive-preview.png',
   'Tu perfil _ 16Personalities.pdf': 'Tu perfil _ 16Personalities-preview.png',
   'youtube_Certificado_Francisco Antonio Garcia Menolascina.pdf': 'youtube_Certificado_Francisco Antonio Garcia Menolascina-preview.png',
+  'diploma_certificado_bachillerato_monseñorcastro_censored.jpg': 'diploma_certificado_bachillerato_monseñorcastro_censored-preview.jpg',
 };
