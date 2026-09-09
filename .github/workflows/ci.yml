@@ -34,7 +34,7 @@ jobs:
           dest: ~/setup-pnpm-${{ runner.name }}
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter ${{ matrix.app }} lint
@@ -49,7 +49,7 @@ jobs:
           dest: ~/setup-pnpm-${{ runner.name }}
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm test
@@ -64,7 +64,7 @@ jobs:
           dest: ~/setup-pnpm-${{ runner.name }}
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Instalar browsers de Playwright (chromium, para @vitest/browser)
@@ -138,7 +138,7 @@ jobs:
           dest: ~/setup-pnpm-${{ runner.name }}
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       # 0 vulns requerido: fail si hay HIGH/CRITICAL (audit-level high)
@@ -156,7 +156,7 @@ jobs:
           dest: ~/setup-pnpm-${{ runner.name }}
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Instalar gitleaks v8.30.1 (binary Windows)
@@ -232,7 +232,7 @@ jobs:
           dest: ~/setup-pnpm-${{ runner.name }}
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       # El spec usa la fixture `request` (sin navegador) → no hace falta
