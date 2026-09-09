@@ -398,7 +398,7 @@ export default function RegisterPage() {
             <AuthSecondaryActions
               mode="register"
               loginHref="/login"
-              supportHref="/soporte"
+               supportHref="/support"
               linkClass="text-neon-blue hover:text-white transition-colors underline decoration-neon-blue/30 underline-offset-8"
             />
           </div>

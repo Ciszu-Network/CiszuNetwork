@@ -8,9 +8,9 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: 'CiszuBot | STATUS',
+  title: 'CiszuBot | STATS',
   description:
-    'Estado en vivo de CiszuBot: servidores conectados, comandos ejecutados, uptime y versión.',
+    'Estadísticas de CiszuBot: servidores conectados, comandos ejecutados, uptime y versión.',
 };
 
 interface BotStatus {

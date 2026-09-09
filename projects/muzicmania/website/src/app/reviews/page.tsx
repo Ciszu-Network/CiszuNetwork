@@ -130,7 +130,15 @@ export default function ReviewsPage() {
   const [sortBy, setSortBy] = useState('created_at');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [page, setPage] = useState(1);
+  const [reviewsCount, setReviewsCount] = useState(0);
   const reviewsPerPage = 10;
+
+  // Ghost review baseline: 5.0
+  const GHOST_RATING = 5.0;
+  const averageWithGhost = reviewsCount > 0
+    ? (reviews.reduce((sum, r) => sum + r.rating, 0) + GHOST_RATING) / (reviewsCount + 1)
+    : GHOST_RATING;
+  const hasRealReviews = reviewsCount > 0;
 
   // Form State
   const [rating, setRating] = useState(5.0);
@@ -184,6 +192,11 @@ export default function ReviewsPage() {
 
       setReviews(filteredData);
     }
+    
+    // Fetch total count for ghost review calculation
+    const { count } = await supabase.from('reviews').select('*', { count: 'exact', head: true });
+    setReviewsCount(count ?? 0);
+    
     setLoading(false);
   };
 
@@ -267,28 +280,30 @@ export default function ReviewsPage() {
           <div className="bg-black border border-white/10 p-12 rounded-[4rem] shadow-2xl relative overflow-hidden group">
             <div className="absolute -top-10 -left-10 w-60 h-60 bg-neon-yellow/10 rounded-full blur-[80px] opacity-0 group-hover:opacity-100 transition-opacity" />
             
-            <div className="flex items-center justify-center gap-14 relative z-10 text-center flex-wrap">
-               <div className="relative group/score">
-                  <div className="w-40 h-40 rounded-full border-8 border-neon-yellow/10 flex items-center justify-center shadow-[0_0_80px_rgba(255,217,0,0.15)] bg-black transition-transform group-hover/score:scale-110 duration-500">
-                     <div className="text-center">
-                        <div className="text-6xl font-header font-black text-neon-yellow drop-shadow-neon-yellow italic -mb-2">4.9</div>
-                        <div className="text-[12px] text-neon-yellow font-black uppercase tracking-[0.3em] opacity-40">/ 5.0</div>
-                     </div>
-                  </div>
-                  <div className="absolute -bottom-2 -right-2 bg-neon-yellow text-black w-12 h-12 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(255,217,0,0.5)] border-4 border-black group-hover/score:rotate-12 transition-transform">
-                    <div className="w-6 h-6">{I.check}</div>
-                  </div>
-               </div>
-               <div className="space-y-4">
-                  <div className="flex gap-2.5">
-                     {[1,2,3,4,5].map(i => <div key={i} className="w-8 h-8 transform hover:scale-125 transition-transform">{I.star('good')}</div>)}
-                  </div>
-                  <div className="flex items-center justify-center gap-4">
-                     <div className="h-0.5 w-12 bg-neon-yellow/20" />
-                     <p className="text-[12px] text-white font-black tracking-[0.4em] uppercase opacity-40">Satisfaction Protocol v2.1.0</p>
-                  </div>
-               </div>
-            </div>
+             <div className="flex items-center justify-center gap-14 relative z-10 text-center flex-wrap">
+                <div className="relative group/score">
+                   <div className="w-40 h-40 rounded-full border-8 border-neon-yellow/10 flex items-center justify-center shadow-[0_0_80px_rgba(255,217,0,0.15)] bg-black transition-transform group-hover/score:scale-110 duration-500">
+                      <div className="text-center">
+                         <div className="text-6xl font-header font-black text-neon-yellow drop-shadow-neon-yellow italic -mb-2">{averageWithGhost.toFixed(1)}</div>
+                         <div className="text-[12px] text-neon-yellow font-black uppercase tracking-[0.3em] opacity-40">/ 5.0</div>
+                      </div>
+                   </div>
+                   <div className="absolute -bottom-2 -right-2 bg-neon-yellow text-black w-12 h-12 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(255,217,0,0.5)] border-4 border-black group-hover/score:rotate-12 transition-transform">
+                     <div className="w-6 h-6">{I.check}</div>
+                   </div>
+                </div>
+                <div className="space-y-4">
+                   <div className="flex gap-2.5">
+                      {[1,2,3,4,5].map(i => <div key={i} className="w-8 h-8 transform hover:scale-125 transition-transform">{I.star('good')}</div>)}
+                   </div>
+                   <div className="flex items-center justify-center gap-4">
+                      <div className="h-0.5 w-12 bg-neon-yellow/20" />
+                      <p className="text-[12px] text-white font-black tracking-[0.4em] uppercase opacity-40">
+                        {hasRealReviews ? 'Satisfaction Protocol v2.1.0' : 'Sin reseñas · Baseline 5.0'}
+                      </p>
+                   </div>
+                </div>
+             </div>
           </div>
 
           <div className="space-y-8">
@@ -354,6 +369,29 @@ export default function ReviewsPage() {
         </motion.section>
 
         <QuickDocks />
+
+        <motion.section initial="hidden" animate="visible" variants={sectionVariants} className="space-y-12 pt-12">
+          <div className="p-8 rounded-[3rem] bg-gradient-to-br from-neon-green/10 via-transparent to-transparent border border-neon-green/25 text-center">
+            <h2 className="text-2xl font-header font-black text-white mb-2 uppercase tracking-tight">Confianza y Verificación</h2>
+            <p className="text-gray-400 text-sm mb-8 max-w-md mx-auto">
+              MuzicMania forma parte de Ciszu Network. Verifica nuestra reputación en plataformas independientes.
+            </p>
+            <div className="flex flex-wrap justify-center gap-6 mb-8">
+              <div className="px-6 py-3 rounded-2xl bg-black border-2 border-neon-green/30 text-neon-green font-header font-black text-sm uppercase tracking-widest">
+                Trustpilot
+              </div>
+              <div className="px-6 py-3 rounded-2xl bg-black border-2 border-neon-blue/30 text-neon-blue font-header font-black text-sm uppercase tracking-widest">
+                Google Reviews
+              </div>
+              <div className="px-6 py-3 rounded-2xl bg-black border-2 border-neon-purple/30 text-neon-purple font-header font-black text-sm uppercase tracking-widest">
+                Discord Server
+              </div>
+            </div>
+            <p className="text-[10px] text-white/20 font-black uppercase tracking-[0.3em]">
+              Verified by community · Trusted by players · Powered by Ciszuko Antony
+            </p>
+          </div>
+        </motion.section>
       </div>
 
       {/* --- MODAL DE RESEÑA --- */}

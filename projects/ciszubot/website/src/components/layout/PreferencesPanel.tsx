@@ -359,7 +359,7 @@ export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onTo
       {/* Ayuda */}
       <div className="border-t border-border/70 pt-3">
         <Link
-          href="/soporte"
+          href="/support"
           className="flex items-center gap-2 text-xs font-bold text-ink/85 hover:text-neon-blue transition"
         >
           <IcoHelp /> Ayuda y soporte

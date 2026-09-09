@@ -13,11 +13,20 @@ import PreferencesPanel from '@/components/layout/PreferencesPanel';
 import { PreferencesModal } from '@ciszu/ui';
 import { INVITE_URL, LOGO_ISOTIPO, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
 
-const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'status' | 'support' | 'downloads' | 'feedback'; icon: string }[] = [
+const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'stats' | 'support' | 'downloads' | 'feedback' | 'changelog' | 'reviews' | 'leaderboard' | 'forum' | 'contact' | 'documentation' | 'about' | 'team' | 'help'; icon: string }[] = [
   { href: '/', key: 'home', icon: 'home' },
   { href: '/comandos', key: 'commands', icon: 'gamepad' },
-  { href: '/estado', key: 'status', icon: 'clock' },
-  { href: '/soporte', key: 'support', icon: 'support' },
+  { href: '/stats', key: 'stats', icon: 'chart' },
+  { href: '/changelog', key: 'changelog', icon: 'history' },
+  { href: '/reviews', key: 'reviews', icon: 'star' },
+  { href: '/leaderboard', key: 'leaderboard', icon: 'trophy' },
+  { href: '/forum', key: 'forum', icon: 'message' },
+  { href: '/support', key: 'support', icon: 'support' },
+  { href: '/contact', key: 'contact', icon: 'mail' },
+  { href: '/documentation', key: 'documentation', icon: 'file' },
+  { href: '/about', key: 'about', icon: 'info' },
+  { href: '/team', key: 'team', icon: 'users' },
+  { href: '/help', key: 'help', icon: 'help' },
   { href: '/descargas', key: 'downloads', icon: 'download' },
   { href: '/feedback', key: 'feedback', icon: 'message' },
 ];
@@ -35,8 +44,17 @@ const NAV_HIDE_CLS: string[] = [
 const SEARCH_PAGES: { href: string; labelKey: string; icon: string; keywords: string[] }[] = [
   { href: '/', labelKey: 'home', icon: 'home', keywords: ['inicio', 'home', 'main'] },
   { href: '/comandos', labelKey: 'commands', icon: 'gamepad', keywords: ['comandos', 'commands', 'bot', 'slash'] },
-  { href: '/estado', labelKey: 'status', icon: 'clock', keywords: ['estado', 'status', 'uptime', 'online'] },
-  { href: '/soporte', labelKey: 'support', icon: 'support', keywords: ['soporte', 'support', 'ayuda', 'help'] },
+  { href: '/stats', labelKey: 'stats', icon: 'chart', keywords: ['estadisticas', 'stats', 'uptime', 'online', 'status'] },
+  { href: '/changelog', labelKey: 'changelog', icon: 'history', keywords: ['cambios', 'updates', 'actualizaciones', 'historial'] },
+  { href: '/reviews', labelKey: 'reviews', icon: 'star', keywords: ['reseñas', 'reviews', 'opiniones', 'feedback'] },
+  { href: '/leaderboard', labelKey: 'leaderboard', icon: 'trophy', keywords: ['ranking', 'leaderboard', 'top', 'scores'] },
+  { href: '/forum', labelKey: 'forum', icon: 'message', keywords: ['foro', 'forum', 'comunidad', 'community'] },
+  { href: '/support', labelKey: 'support', icon: 'support', keywords: ['soporte', 'support', 'ayuda', 'help'] },
+  { href: '/contact', labelKey: 'contact', icon: 'mail', keywords: ['contacto', 'contact', 'email', 'mensaje'] },
+  { href: '/documentation', labelKey: 'documentation', icon: 'file', keywords: ['documentacion', 'docs', 'documentation'] },
+  { href: '/about', labelKey: 'about', icon: 'info', keywords: ['about', 'sobre', 'nosotros'] },
+  { href: '/team', labelKey: 'team', icon: 'users', keywords: ['equipo', 'team', 'staff'] },
+  { href: '/help', labelKey: 'help', icon: 'help', keywords: ['ayuda', 'help', 'faq', 'preguntas'] },
   { href: '/descargas', labelKey: 'downloads', icon: 'download', keywords: ['descargas', 'downloads', 'app', 'exe'] },
   { href: '/feedback', labelKey: 'feedback', icon: 'message', keywords: ['feedback', 'reporte', 'report', 'problema'] },
   { href: '/dashboard', labelKey: 'dashboard', icon: 'server', keywords: ['panel', 'dashboard', 'config', 'admin'] },

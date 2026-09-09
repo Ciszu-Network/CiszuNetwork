@@ -359,7 +359,7 @@ export default function LoginPage() {
                   mode="login"
                   onForgotPassword={() => setForgot(true)}
                   registerHref="/register"
-                  supportHref="/soporte"
+                   supportHref="/support"
                   linkClass="text-neon-blue hover:text-white transition-colors underline decoration-neon-blue/30 underline-offset-8"
                 />
               </>
