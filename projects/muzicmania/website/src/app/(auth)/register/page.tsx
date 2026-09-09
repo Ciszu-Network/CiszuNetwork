@@ -134,6 +134,7 @@ export default function RegisterPage() {
     phone: '',
     nationality: '',
     acceptedTerms: false,
+    acceptedMarketing: false,
     captchaToken: null as string | null
   });
 
@@ -207,6 +208,12 @@ export default function RegisterPage() {
           if (currentYear - birthYear < 13) error = 'Debes tener al menos 13 años';
         }
         break;
+      case 'acceptedTerms':
+        if (!value) error = 'Debes aceptar los términos y condiciones';
+        break;
+      case 'acceptedMarketing':
+        if (!value) error = 'Debes aceptar el tratamiento de datos para comunicaciones';
+        break;
       default:
         break;
     }
@@ -257,7 +264,17 @@ export default function RegisterPage() {
 
     setFeedback({ isVisible: true, type: 'loading', title: 'Registrando', message: 'Verificando disponibilidad de cuenta...' });
     try {
-      // ── Verificar username único ANTES de crear la cuenta ──────────────────
+      const verifyRes = await fetch('/api/verify-recaptcha', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: form.captchaToken, siteKey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_MUZIC, version: 'v2' }),
+      });
+      const verifyData = await verifyRes.json();
+      if (!verifyData.success) {
+        throw new Error(verifyData.error || 'Verificación de reCAPTCHA fallida');
+      }
+
+      // Verificar username único
       const { data: isAvailable, error: usernameCheckError } = await supabase
         .rpc('check_username_available', { p_username: form.username.trim().toLowerCase() });
 
@@ -415,7 +432,7 @@ export default function RegisterPage() {
                 )}
               </AnimatePresence>
 
-              <div className="pt-4">
+              <div className="pt-4 space-y-3">
                 <label className="flex items-start gap-3 cursor-pointer group/chk">
                   <div className="relative flex items-center justify-center shrink-0 w-5 h-5 mt-0.5">
                     <input 
@@ -432,11 +449,29 @@ export default function RegisterPage() {
                     Acepto los <Link href="/terms" className="text-neon-cyan hover:underline">Términos de Servicio</Link>, la Política de Privacidad y consiento el uso de <span className="text-white">Cookies</span> obligatorias.
                   </p>
                 </label>
-              </div>
+                {errors.acceptedTerms && <span className="text-red-500 text-[10px] font-bold ml-8">{errors.acceptedTerms}</span>}
 
-              <div className="pt-2 flex flex-col items-center gap-2">
-                <ReCAPTCHA
-                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ""}
+                <label className="flex items-start gap-3 cursor-pointer group/chk">
+                  <div className="relative flex items-center justify-center shrink-0 w-5 h-5 mt-0.5">
+                    <input 
+                      type="checkbox" 
+                      name="acceptedMarketing"
+                      checked={form.acceptedMarketing}
+                      onChange={handleChange}
+                      required
+                      className="peer appearance-none w-full h-full border-2 border-white/20 rounded bg-black/50 checked:bg-neon-purple checked:border-neon-purple transition-all"
+                    />
+                    <svg viewBox="0 0 24 24" className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <p className="text-[11px] text-gray-400 font-bold leading-relaxed">
+                    Acepto recibir comunicaciones de <Link href="/terms" className="text-neon-cyan hover:underline">MuzicMania</Link> (novedades, actualizaciones, ofertas). <strong className="text-neon-pink">No es publicidad de terceros.</strong>
+                  </p>
+                </label>
+                {errors.acceptedMarketing && <span className="text-red-500 text-[10px] font-bold ml-8">{errors.acceptedMarketing}</span>}
+
+                <div className="pt-2 flex flex-col items-center gap-2">
+                  <ReCAPTCHA
+                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_MUZIC || ''}
                   theme="dark"
                   onChange={(val: string | null) => {
                     setForm(prev => ({ ...prev, captchaToken: val }));
@@ -448,6 +483,7 @@ export default function RegisterPage() {
                 />
                 {errors.captcha && <span className="text-red-500 text-[10px] font-bold">{errors.captcha}</span>}
               </div>
+            </div>
 
               <div className="pt-4">
                 <Button type="submit" variant="neon" fullWidth size="lg" className="!bg-neon-purple shadow-neon-purple hover:scale-[1.02] active:scale-[0.98] transition-all">

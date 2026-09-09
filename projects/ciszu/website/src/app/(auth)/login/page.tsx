@@ -17,6 +17,7 @@ import {
   useToast,
   useActivityGuard,
 } from '@ciszu/ui';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const IconMail = () => (
   <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -94,6 +95,12 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+
+  // Rate limit constants
+  const RATE_LIMIT_KEY = 'ciszu_reset_rate_limit';
+  const RATE_LIMIT_WINDOW_MS = 12 * 60 * 60 * 1000;
+  const MAX_ATTEMPTS = 3;
 
   // Guard de acciones no recuperables: si hay contenido en el formulario de
   // login y el usuario intenta navegar, se avisa (ActivityGuard rojo).
@@ -105,8 +112,22 @@ export default function LoginPage() {
   }, [form.email, form.password, beginActivity, endActivity]);
   useEffect(() => {
     return () => endActivity('auth-form');
-     
   }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const script = document.createElement('script');
+    script.src = 'https://www.google.com/recaptcha/api.js';
+    script.async = true;
+    document.head.appendChild(script);
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+
+  const handleCaptchaChange = (token: string | null) => {
+    setCaptchaToken(token);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -119,8 +140,48 @@ export default function LoginPage() {
     if (!form.email.trim()) next.email = 'Este campo es obligatorio';
     else if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) next.email = 'Formato de email inválido (requiere @)';
     if (!form.password) next.password = 'La contraseña es obligatoria';
+    if (!captchaToken) next.captcha = 'Debes completar el reCAPTCHA';
     setErrors(next);
     return Object.keys(next).length === 0;
+  };
+
+  // Rate limit functions
+  const getRateLimitData = () => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const raw = localStorage.getItem(RATE_LIMIT_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  };
+
+  const checkRateLimit = () => {
+    const data = getRateLimitData();
+    if (!data) return { allowed: true, remainingMs: 0 };
+    const elapsed = Date.now() - data.firstRequest;
+    if (elapsed >= RATE_LIMIT_WINDOW_MS) {
+      return { allowed: true, remainingMs: 0 };
+    }
+    if (data.count >= MAX_ATTEMPTS) {
+      return { allowed: false, remainingMs: RATE_LIMIT_WINDOW_MS - elapsed };
+    }
+    return { allowed: true, remainingMs: 0 };
+  };
+
+  const incrementRateLimit = () => {
+    const data = getRateLimitData();
+    if (!data) {
+      try { localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify({ count: 1, firstRequest: Date.now() })); } catch {}
+    } else {
+      const elapsed = Date.now() - data.firstRequest;
+      if (elapsed >= RATE_LIMIT_WINDOW_MS) {
+        try { localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify({ count: 1, firstRequest: Date.now() })); } catch {}
+      } else {
+        try { localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify({ count: data.count + 1, firstRequest: data.firstRequest })); } catch {}
+      }
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -129,6 +190,16 @@ export default function LoginPage() {
     if (!validate()) return;
     setLoading(true);
     try {
+      const verifyRes = await fetch('/api/verify-recaptcha', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: captchaToken, siteKey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_CISZU, version: 'v3' }),
+      });
+      const verifyData = await verifyRes.json();
+      if (!verifyData.success) {
+        throw new Error(verifyData.error || 'Verificación de reCAPTCHA fallida');
+      }
+
       const { data, error } = await supabase.auth.signInWithPassword({
         email: form.email.trim(),
         password: form.password,
@@ -176,12 +247,35 @@ export default function LoginPage() {
       setErrors(prev => ({ ...prev, email: 'Introduce un email válido' }));
       return;
     }
+    // Check rate limit
+    const data = getRateLimitData();
+    if (data) {
+      const elapsed = Date.now() - data.firstRequest;
+      if (elapsed < RATE_LIMIT_WINDOW_MS && data.count >= MAX_ATTEMPTS) {
+        const remainingMs = RATE_LIMIT_WINDOW_MS - elapsed;
+        const hours = Math.floor(remainingMs / (1000 * 60 * 60));
+        const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+        setLocalError(`Demasiados intentos. Intenta de nuevo en ${hours}h ${minutes}m.`);
+        return;
+      }
+    }
     setLoading(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail.trim(), {
         redirectTo: `${window.location.origin}/reset-password`,
       });
       if (error) throw error;
+      // Increment rate limit
+      if (!data) {
+        try { localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify({ count: 1, firstRequest: Date.now() })); } catch {}
+      } else {
+        const elapsed = Date.now() - data.firstRequest;
+        if (elapsed >= RATE_LIMIT_WINDOW_MS) {
+          try { localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify({ count: 1, firstRequest: Date.now() })); } catch {}
+        } else {
+          try { localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify({ count: data.count + 1, firstRequest: data.firstRequest })); } catch {}
+        }
+      }
       setSent(true);
     } catch (err: any) {
       setLocalError(err.message || 'No se pudo enviar el enlace');
@@ -289,6 +383,15 @@ export default function LoginPage() {
                     />
 
                     {localError && <p className="text-red-400 text-[11px] font-bold">{localError}</p>}
+
+                    <div className="flex justify-center">
+                      <ReCAPTCHA
+                        size="invisible"
+                        sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_CISZU || ''}
+                        onChange={handleCaptchaChange}
+                      />
+                    </div>
+                    {errors.captcha && <p className="text-red-400 text-[11px] font-bold text-center">{errors.captcha}</p>}
 
                     <button
                       type="submit"

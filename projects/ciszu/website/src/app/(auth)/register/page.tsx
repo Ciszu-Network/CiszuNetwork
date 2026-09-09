@@ -17,6 +17,7 @@ import {
   useToast,
   useActivityGuard,
 } from '@ciszu/ui';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const IconUser = () => (
   <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -129,7 +130,7 @@ export default function RegisterPage() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const script = document.createElement('script');
-    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+    script.src = 'https://www.google.com/recaptcha/api.js';
     script.async = true;
     document.head.appendChild(script);
     return () => {
@@ -137,22 +138,9 @@ export default function RegisterPage() {
     };
   }, []);
 
-  const renderTurnstile = () => {
-    if (typeof window === 'undefined' || !window.turnstile) return null;
-    const container = document.getElementById('turnstile-register');
-    if (!container) return;
-    window.turnstile.render(container, {
-      sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '',
-      theme: 'dark',
-      callback: (token: string) => setCaptchaToken(token),
-      'expired-callback': () => setCaptchaToken(null),
-    });
+  const handleCaptchaChange = (token: string | null) => {
+    setCaptchaToken(token);
   };
-
-  useEffect(() => {
-    const timer = setTimeout(renderTurnstile, 100);
-    return () => clearTimeout(timer);
-  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -182,6 +170,7 @@ export default function RegisterPage() {
     else if (form.confirmPassword !== form.password) next.confirmPassword = 'Las contraseñas no coinciden';
 
     if (!acceptedTerms) next.terms = 'Debes aceptar los términos y condiciones';
+    if (!captchaToken) next.captcha = 'Debes completar el reCAPTCHA';
 
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -191,13 +180,19 @@ export default function RegisterPage() {
     e.preventDefault();
     setLocalError(null);
     if (!validate()) return;
-    if (!captchaToken) {
-      setLocalError('Debes completar el CAPTCHA');
-      return;
-    }
     setLoading(true);
 
     try {
+      const verifyRes = await fetch('/api/verify-recaptcha', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: captchaToken, siteKey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_CISZU, version: 'v2' }),
+      });
+      const verifyData = await verifyRes.json();
+      if (!verifyData.success) {
+        throw new Error(verifyData.error || 'Verificación de reCAPTCHA fallida');
+      }
+
       const { data, error } = await supabase.auth.signUp({
         email: form.email.trim(),
         password: form.password,
@@ -356,11 +351,15 @@ export default function RegisterPage() {
                       Acepto los <a href="/terminos" className="text-neon-cyan hover:underline">Términos de Servicio</a> y la <a href="/privacidad" className="text-neon-cyan hover:underline">Política de Privacidad</a>.
                     </p>
                   </div>
-                  {errors.terms && <p className="text-red-400 text-[11px] font-bold">{errors.terms}</p>}
+                   {errors.terms && <p className="text-red-400 text-[11px] font-bold">{errors.terms}</p>}
 
                   <div className="flex flex-col items-center gap-2">
-                    <div id="turnstile-register" className="flex justify-center" />
-                    {!captchaToken && <span className="text-gray-500 text-[10px] font-bold">Completa el CAPTCHA</span>}
+                    <ReCAPTCHA
+                      sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_CISZU || ''}
+                      onChange={handleCaptchaChange}
+                    />
+                    {!captchaToken && <span className="text-gray-500 text-[10px] font-bold">Completa el reCAPTCHA</span>}
+                    {errors.captcha && <p className="text-red-400 text-[11px] font-bold">{errors.captcha}</p>}
                   </div>
 
                   {localError && <p className="text-red-400 text-[11px] font-bold">{localError}</p>}

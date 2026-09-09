@@ -273,16 +273,14 @@ export function AdBlockerGuard({ children, site, logo, title = 'Ciszu Network', 
   // Se restaura el overflow SIEMPRE al cambiar de pantalla o desmontar (punto 12).
   useEffect(() => {
     if (screen === 'none') return;
-    const prevHtml = document.documentElement.style.overflow;
-    const prevBody = document.body.style.overflow;
     document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
     const stop = (e: Event) => e.preventDefault();
     document.addEventListener('contextmenu', stop, true);
     document.addEventListener('copy', stop, true);
     return () => {
-      document.documentElement.style.overflow = prevHtml;
-      document.body.style.overflow = prevBody;
+      document.documentElement.style.overflow = 'auto';
+      document.body.style.overflow = 'auto';
       document.removeEventListener('contextmenu', stop, true);
       document.removeEventListener('copy', stop, true);
     };

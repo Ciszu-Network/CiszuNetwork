@@ -17,7 +17,7 @@ export async function GET(_request: NextRequest) {
       process.cwd(), "..", "..", "..", "test", "website", "debug", "local-logs", "ads_debug.json"
     );
     if (!fs.existsSync(debugFile)) return NextResponse.json({ enabled: false });
-    const raw = fs.readFileSync(debugFile, "utf8");
+    const raw = fs.readFileSync(debugFile, "utf8").replace(/^\uFEFF/, "");
     return NextResponse.json(JSON.parse(raw));
   } catch {
     return NextResponse.json({ enabled: false });

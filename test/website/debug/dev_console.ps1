@@ -50,6 +50,18 @@ $c_gray   = "${e}[38;2;120;130;145m"
 $c_reset  = "$e[0m"
 # ---------- fin paleta ----------
 
+# ---------- Helper JSON sin BOM ----------
+# Out-File -Encoding UTF8 en PowerShell 5.1 escribe un BOM (EF BB BF) al inicio
+# del archivo. Las rutas de Next.js (/api/ads/push, /api/ads/debug,
+# /api/disclaimers/debug) leen el JSON con JSON.parse(), que FALLA con BOM y
+# devuelve {enabled:false} -> la web nunca recibe el push y el devcon queda
+# "pendiente..." hasta timeout. Este helper escribe UTF-8 SIN BOM (PS 5.1-safe).
+function Write-JsonFile([string]$Path, $Obj, [int]$Depth = 5) {
+    $json = $Obj | ConvertTo-Json -Depth $Depth
+    $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+    [System.IO.File]::WriteAllText($Path, $json, $utf8NoBom)
+}
+
 # ---------- Web catalog (nomenclatura central del monorepo) ----------
 $WEBS = @(
     @{ key = 'network';  name = 'Ciszu Network';  siteId = 'ciszunetwork';   filter = 'ciszunetwork-website'; port = 3000; dir = 'projects/ciszu/website';  emoji = '🌐' },
@@ -751,7 +763,7 @@ function Show-AdsDebug {
         if (Test-Path $pushFile) {
             $cfg = Get-Content $pushFile -Raw | ConvertFrom-Json
             $cfg.enabled = $false
-            $cfg | ConvertTo-Json | Out-File -LiteralPath $pushFile -Encoding UTF8
+            Write-JsonFile $pushFile $cfg
             Write-Host "${c_yellow}Anuncios DESACTIVADOS temporalmente (enabled=false). El push se mantiene.${c_reset}"
             Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=ads-push-disable"
         } else { Write-Host "${c_gray}No hay push activo. Nada que desactivar.${c_reset}" }
@@ -761,7 +773,7 @@ function Show-AdsDebug {
         if (Test-Path $pushFile) {
             $cfg = Get-Content $pushFile -Raw | ConvertFrom-Json
             $cfg.enabled = $true
-            $cfg | ConvertTo-Json | Out-File -LiteralPath $pushFile -Encoding UTF8
+            Write-JsonFile $pushFile $cfg
             Write-Host "${c_green}Anuncios REACTIVADOS (enabled=true). Reaparecen al instante.${c_reset}"
             Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=ads-push-enable"
         } else { Write-Host "${c_gray}No hay push activo. Crea uno primero.${c_reset}" }
@@ -851,7 +863,7 @@ function Ads-SendPush([string]$pushFile) {
         requireReward = $requireReward
         createdAt = [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
     }
-    $push | ConvertTo-Json | Out-File -LiteralPath $pushFile -Encoding UTF8
+    Write-JsonFile $pushFile $push
     Write-Host ""
     Write-Host "${c_green}Push ADS_DEV escrito a: $pushFile${c_reset}"
     Write-Host "${c_cyan}$($push | ConvertTo-Json)${c_reset}"
@@ -864,6 +876,7 @@ function Ads-SendPush([string]$pushFile) {
         Write-Host "${c_yellow}⚠️  No se pudo verificar la entrega (las webs pueden estar apagadas): $($_.Exception.Message)${c_reset}"
     }
 
+    Ads-PushSummary $pushFile
     Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=ads-push sites=$($sites -join ',') type=$type source=$source"
 }
 
@@ -1011,7 +1024,7 @@ function Show-DisclaimersDebug {
 
         if ($ai -eq 4) {
             $reset = [ordered]@{ items = @() }
-            $reset | ConvertTo-Json -Depth 5 | Out-File -LiteralPath $debugFile -Encoding UTF8
+            Write-JsonFile $debugFile $reset
             $existing = @()
             Write-Host "${c_green}Config de disclaimers reiniciada (todos eliminados).${c_reset}"
             Press-Continue
@@ -1036,7 +1049,7 @@ function Show-DisclaimersDebug {
             $di = Show-Menu -Title "ELIMINAR DISCLAIMER" -Options $delOpts
             if ($di -lt 0 -or $di -eq $existing.Count) { continue }
             $existing = @($existing | Where-Object { $_ -ne $existing[$di] })
-            @{ items = $existing } | ConvertTo-Json -Depth 5 | Out-File -LiteralPath $debugFile -Encoding UTF8
+            Write-JsonFile $debugFile @{ items = $existing }
             Write-Host "${c_green}Disclaimer eliminado.${c_reset}"
             Press-Continue
             continue
@@ -1063,10 +1076,10 @@ function Show-DisclaimersDebug {
         $msg = Read-Host "Mensaje del disclaimer"
         if ([string]::IsNullOrWhiteSpace($msg)) { Write-Host "${c_yellow}Mensaje vacio. Cancelado.${c_reset}"; Press-Continue; continue }
 
-        $kindOpts = @(@{ ic = 'ℹ'; l = 'info' }, @{ ic = '🧪'; l = 'beta' }, @{ ic = '⚠'; l = 'warning' })
+        $kindOpts = @(@{ ic = 'ℹ'; l = 'info' }, @{ ic = '⚠'; l = 'warning' })
         $ki = Show-Menu -Title "TIPO" -Options $kindOpts
         if ($ki -lt 0) { continue }
-        $kind = @('info', 'beta', 'warning')[$ki]
+        $kind = @('info', 'warning')[$ki]
 
         $durOpts = @(
             @{ ic = '⏱'; l = "Temporal (sin fecha de culminacion)" },
@@ -1111,6 +1124,27 @@ function Show-DisclaimersDebug {
         $img = Read-Host "Imagen (URL, Enter = sin imagen)"
         if ($img -match '^https?://') { $image = $img.Trim() } else { $image = $null }
 
+        $devconOpts = @(
+            @{ ic = '🏷'; l = "Con etiqueta DEVCON (por defecto)" },
+            @{ ic = '🔕'; l = "Sin etiqueta DEVCON (anonimo)" }
+        )
+        $devconIdx = Show-Menu -Title "ETIQUETA DEVCON" -Options $devconOpts -InitIndex 0
+        if ($devconIdx -lt 0) { continue }
+        $devconLabel = ($devconIdx -eq 0)
+
+        $actions = @()
+        $addAction = $true
+        while ($addAction) {
+            $actOpts = @(@{ ic = '➕'; l = "Agregar boton de accion" }, @{ ic = '🚪'; l = "No agregar mas" })
+            $ai = Show-Menu -Title "BOTONES DE ACCION" -Options $actOpts -InitIndex 0
+            if ($ai -lt 0 -or $ai -eq 1) { break }
+            $actLabel = Read-Host "Texto del boton"
+            if ([string]::IsNullOrWhiteSpace($actLabel)) { continue }
+            $actHref = Read-Host "URL al hacer clic (Enter = sin navegacion)"
+            if ($actHref -match '^https?://') { $actHref = $actHref.Trim() } else { $actHref = $null }
+            $actions += @{ label = $actLabel; href = $actHref }
+        }
+
         $d = [ordered]@{
             id = 'debug-' + [guid]::NewGuid().ToString().Substring(0, 8)
             kind = $kind
@@ -1118,14 +1152,70 @@ function Show-DisclaimersDebug {
             site = @(Resolve-SiteIds $sites)
             dismissible = $dismissible
         }
+        if ($devconLabel) { $d.devcon = $true }
         if ($expiresAt -ne $null) { $d.expiresAt = $expiresAt }
         if ($image) { $d.image = $image }
+        if ($actions.Count -gt 0) { $d.actions = $actions }
 
         if ($editIndex -ge 0) { $existing[$editIndex] = $d } else { $existing += $d }
-        @{ items = $existing } | ConvertTo-Json -Depth 5 | Out-File -LiteralPath $debugFile -Encoding UTF8
+        Write-JsonFile $debugFile @{ items = $existing }
         Write-Host "${c_green}Disclaimer guardado en: $debugFile${c_reset}"
         Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=disclaimers-debug sites=$($sites -join ',') kind=$kind expires=$expiresAt"
         Press-Continue
+    }
+}
+
+function Verify-DisclaimerDebugDelivery([string]$debugFile) {
+    Write-Host ""
+    Write-Host "${c_gray}Verificando entrega de disclaimers de debug por web...${c_reset}"
+    if (-not (Test-Path $debugFile)) {
+        Write-Host "${c_yellow}No hay config de debug. Nada que verificar.${c_reset}"
+        return
+    }
+    $expected = Get-Content $debugFile -Raw | ConvertFrom-Json
+    $expectedItems = @($expected.items)
+    if ($expectedItems.Count -eq 0) {
+        Write-Host "${c_yellow}No hay disclaimers en config. Nada que verificar.${c_reset}"
+        return
+    }
+
+    $timeoutSec = 30
+    $started = Get-Date
+    $pending = @($WEBS.key)
+    $done = @{}
+    while ($pending.Count -gt 0 -and (Get-Date).Subtract($started).TotalSeconds -lt $timeoutSec) {
+        foreach ($site in @($pending)) {
+            $w = $WEBS | Where-Object { $_.key -eq $site }
+            if (-not $w) { $done[$site] = "desconocido"; $pending = @($pending | Where-Object { $_ -ne $site }); continue }
+            if ((Get-WebPhase $site) -ne 'on') {
+                Write-Host "  ⚫ $($w.name.PadRight(14)) web apagada (no se puede verificar)"
+                $done[$site] = "apagada"; $pending = @($pending | Where-Object { $_ -ne $site }); continue
+            }
+            try {
+                $resp = Invoke-RestMethod -Uri "http://localhost:$($w.port)/api/disclaimers/debug" -TimeoutSec 5
+                $respItems = @($resp.items)
+                $expectedCount = 0
+                foreach ($item in $expectedItems) {
+                    if ($null -eq $item.site) { $expectedCount++; continue }
+                    if ($item.site -is [string] -and $item.site -eq $site) { $expectedCount++; continue }
+                    if ($item.site -is [System.Collections.IEnumerable] -and $item.site -contains $site) { $expectedCount++ }
+                }
+                $ok = $respItems.Count -ge $expectedCount
+                if ($ok) {
+                    Write-Host "  ✅ $($w.name.PadRight(14)) disclaimers entregados ($($respItems.Count) items)"
+                    $done[$site] = "ok"; $pending = @($pending | Where-Object { $_ -ne $site })
+                } else {
+                    Write-Host "  ⏳ $($w.name.PadRight(14)) pendiente... ($($respItems.Count)/$expectedCount)"
+                }
+            } catch {
+                Write-Host "  ⏳ $($w.name.PadRight(14)) pendiente..."
+            }
+        }
+        if ($pending.Count -gt 0) { Start-Sleep -Seconds 2 }
+    }
+    foreach ($site in $pending) {
+        $w = $WEBS | Where-Object { $_.key -eq $site }
+        Write-Host "  ⚠️  $(if ($w) { $w.name } else { $site }) sin confirmación (pendiente...)"
     }
 }
 
@@ -1162,7 +1252,7 @@ function Show-DisclaimerGlobal {
         if ($sel.Count -eq 0) { Write-Host "${c_yellow}Selecciona al menos una web.${c_reset}"; Press-Continue; continue }
         $target = $sel -join ','
 
-        $kinds = @('info', 'beta', 'warning')
+        $kinds = @('info', 'warning')
         $ki = Show-Menu -Title "TIPO DE DISCLAIMER (actual: $kind)" -Options @($kinds | ForEach-Object { @{ ic = '▪'; l = $_ } }) -InitIndex $kinds.IndexOf($kind)
         if ($ki -lt 0) { return }
         $kind = $kinds[$ki]
@@ -1203,9 +1293,18 @@ function Show-DisclaimerGlobal {
         if ($di -lt 0) { return }
         $dismissible = ($di -eq 0)
 
+        $devconOpts = @(
+            @{ ic = '🏷'; l = "Con etiqueta DEVCON (por defecto)" },
+            @{ ic = '🔕'; l = "Sin etiqueta DEVCON (anonimo)" }
+        )
+        $devconIdx = Show-Menu -Title "ETIQUETA DEVCON" -Options $devconOpts -InitIndex 0
+        if ($devconIdx -lt 0) { return }
+        $useDevconSender = ($devconIdx -eq 0)
+
         $extra = @('scripts/disclaimer.js', $msg, '--target', $target, '--kind', $kind, '--session', $script:disclaimerSession, '--actor', $script:devIdentity, '--wait')
         if ($expires) { $extra += @('--expires', $expires) }
         $extra += @('--dismissible', $(if ($dismissible) { 'on' } else { 'off' }))
+        if (-not $useDevconSender) { $extra += @('--sender', 'admin') }
 
         Write-Host ""
         Write-Host "${c_cyan}Enviando disclaimer a [$target] · tipo [$kind] · cierre [$($(if ($dismissible) { 'opcional' } else { 'obligatorio' }))] (esperando entrega...)${c_reset}"
@@ -1257,6 +1356,64 @@ function Show-DisclaimerClear {
     Press-Continue
 }
 
+function Show-AdsSection {
+    $opts = @(
+        @{ ic = '💻'; l = "Local (debug local, forzar ads)" },
+        @{ ic = '🌐'; l = "Global (ads en produccion)" },
+        @{ ic = '🔀'; l = "Hibrido (local + global)" },
+        @{ ic = '🛑'; l = "Kill switch ads" },
+        @{ ic = '🚪'; l = "Volver" }
+    )
+    $sel = Show-Menu -Title "ADS" -Options $opts
+    if ($sel -lt 0 -or $sel -eq 4) { return }
+    switch ($sel) {
+        0 { Show-AdsDebug }
+        1 { Write-Host "${c_yellow}Global ads: no implementado todavia.${c_reset}"; Press-Continue }
+        2 { Write-Host "${c_yellow}Hibrido ads: no implementado todavia.${c_reset}"; Press-Continue }
+        3 { Write-Host "${c_yellow}Kill switch ads: no implementado todavia.${c_reset}"; Press-Continue }
+    }
+}
+
+function Show-DisclaimersSection {
+    $opts = @(
+        @{ ic = '💻'; l = "Local (debug local)" },
+        @{ ic = '🌐'; l = "Global (enviar a las webs)" },
+        @{ ic = '🔀'; l = "Hibrido (local + global)" },
+        @{ ic = '🔘'; l = "Kill switch global" },
+        @{ ic = '🗑'; l = "Borrar globales enviados" },
+        @{ ic = '🚪'; l = "Volver" }
+    )
+    $sel = Show-Menu -Title "DISCLAIMERS" -Options $opts
+    if ($sel -lt 0 -or $sel -eq 5) { return }
+    switch ($sel) {
+        0 { Show-DisclaimersDebug }
+        1 { Show-DisclaimerGlobal }
+        2 { Write-Host "${c_yellow}Hibrido disclaimers: no implementado todavia.${c_reset}"; Press-Continue }
+        3 { Show-DisclaimerToggle }
+        4 { Show-DisclaimerClear }
+    }
+}
+
+function Show-AdvisorSection {
+    $opts = @(
+        @{ ic = '💻'; l = "Local (debug local)" },
+        @{ ic = '🌐'; l = "Global (enviar mensaje)" },
+        @{ ic = '🔀'; l = "Hibrido (local + global)" },
+        @{ ic = '🔘'; l = "Kill switch global" },
+        @{ ic = '🗑'; l = "Borrar mensajes enviados" },
+        @{ ic = '🚪'; l = "Volver" }
+    )
+    $sel = Show-Menu -Title "ADVISOR" -Options $opts
+    if ($sel -lt 0 -or $sel -eq 5) { return }
+    switch ($sel) {
+        0 { Write-Host "${c_yellow}Local advisor: no implementado todavia.${c_reset}"; Press-Continue }
+        1 { Show-AdvisorMenu }
+        2 { Write-Host "${c_yellow}Hibrido advisor: no implementado todavia.${c_reset}"; Press-Continue }
+        3 { Show-AdvisorToggle }
+        4 { Show-AdvisorClear }
+    }
+}
+
 function Show-Tools {
     $opts = @(
         @{ ic = '🧹'; l = "Limpiar logs (test/website/debug/local-logs)";  act = { Remove-Item "$LOG_DIR\*" -Force -ErrorAction SilentlyContinue; Write-Host "${c_green}Logs limpiados.${c_reset}"; Press-Continue } },
@@ -1271,13 +1428,9 @@ function Show-Tools {
         @{ ic = '🐉'; l = "Comandos pnpm rapidos (lint/test/build/install/cdn)"; act = { Show-PnpmQuick } },
         @{ ic = '🚀'; l = "Deploy a Vercel (marca webs)";             act = { Deploy-Webs } },
         @{ ic = '🔐'; l = "Vault -> Bitwarden (subir vault cifrado)"; act = { Show-VaultBw } },
-        @{ ic = '📢'; l = "Anuncios: debug local (forzar ads)";      act = { Show-AdsDebug } },
-        @{ ic = '📢'; l = "Advisor: enviar mensaje global a las webs"; act = { Show-AdvisorMenu } },
-        @{ ic = '🔘'; l = "Advisor: activar/desactivar mensajes globales (kill switch)"; act = { Show-AdvisorToggle } },
-        @{ ic = '🗑'; l = "Advisor: borrar mensajes enviados"; act = { Show-AdvisorClear } },
-        @{ ic = '📢'; l = "Disclaimers: GLOBAL (enviar a las webs, tipo advisors)"; act = { Show-DisclaimerGlobal } },
-        @{ ic = '🔘'; l = "Disclaimers: activar/desactivar globales (kill switch)"; act = { Show-DisclaimerToggle } },
-        @{ ic = '🗑'; l = "Disclaimers: borrar globales enviados"; act = { Show-DisclaimerClear } },
+        @{ ic = '📢'; l = "ADS"; key = '__section_ads' },
+        @{ ic = '📋'; l = "Disclaimers"; key = '__section_disclaimers' },
+        @{ ic = '📢'; l = "Advisor"; key = '__section_advisor' },
         @{ ic = '👥'; l = "Staff Console (STAFFCON) - empleados"; act = { Start-Process powershell.exe -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $root 'tools\consoles\staffcon.ps1'); Write-Host "${c_green}STAFFCON abierta en ventana separada.${c_reset}"; Press-Continue } },
         @{ ic = '🛒'; l = "Customers Console (CUSTOMERSCON) - clientes"; act = { Start-Process powershell.exe -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $root 'tools\consoles\customerscon.ps1'); Write-Host "${c_green}CUSTOMERSCON abierta en ventana separada.${c_reset}"; Press-Continue } },
         @{ ic = '🌡'; l = "Ver espacio en disco (C y E)";             act = { Clear-Host; Get-PSDrive C,E | Select-Object Name, @{n='Libre GB';e={[math]::Round($_.Free/1GB,1)}}, @{n='Usado GB';e={[math]::Round($_.Used/1GB,1)}} | Format-Table | Out-Host; Press-Continue } },
@@ -1521,13 +1674,9 @@ while (-not $script:quitRequested) {
         '__tools_pnpm' { Show-PnpmQuick }
         '__tools_deploy' { Deploy-Webs }
         '__tools_vaultbw' { Show-VaultBw }
-        '__tools_ads' { Show-AdsDebug }
-        '__tools_disclaimers' { Show-DisclaimersDebug }
-        '__tools_disclaimers_global' { Show-DisclaimerGlobal }
-        '__tools_disclaimers_toggle' { Show-DisclaimerToggle }
-        '__tools_disclaimers_clear' { Show-DisclaimerClear }
-        '__tools_advisor' { Show-AdvisorMenu }
-        '__tools_advisor_toggle' { Show-AdvisorToggle }
+        '__section_ads' { Show-AdsSection }
+        '__section_disclaimers' { Show-DisclaimersSection }
+        '__section_advisor' { Show-AdvisorSection }
         '__tools_staffcon' { Start-Process powershell.exe -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $root 'tools\consoles\staffcon.ps1'); Write-Host "${c_green}STAFFCON abierta en ventana separada.${c_reset}"; Press-Continue }
         '__tools_customerscon' { Start-Process powershell.exe -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $root 'tools\consoles\customerscon.ps1'); Write-Host "${c_green}CUSTOMERSCON abierta en ventana separada.${c_reset}"; Press-Continue }
         '__tools_cdn' { $s = Get-NetTCPConnection -LocalPort $CDN_PORT -State Listen -ErrorAction SilentlyContinue; if ($s) { Write-Host "${c_green}CDN local activo (pid $($s.OwningProcess)) -> http://localhost:$CDN_PORT${c_reset}" } else { Write-Host "${c_yellow}CDN local DETENIDO. Arranca una web para encenderlo.${c_reset}" }; Press-Continue }

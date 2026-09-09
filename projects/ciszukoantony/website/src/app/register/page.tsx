@@ -20,6 +20,7 @@ import {
   AuthBenefitsPanel,
   useActivityGuard,
 } from '@ciszu/ui';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const IconMail = () => (
   <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -123,6 +124,7 @@ export default function RegisterPage() {
   const [created, setCreated] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [acceptedMarketing, setAcceptedMarketing] = useState(false);
   const { toast } = useToast();
 
   React.useEffect(() => {
@@ -132,7 +134,7 @@ export default function RegisterPage() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const script = document.createElement('script');
-    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+    script.src = 'https://www.google.com/recaptcha/api.js';
     script.async = true;
     document.head.appendChild(script);
     return () => {
@@ -140,22 +142,9 @@ export default function RegisterPage() {
     };
   }, []);
 
-  const renderTurnstile = () => {
-    if (typeof window === 'undefined' || !window.turnstile) return null;
-    const container = document.getElementById('turnstile-register');
-    if (!container) return;
-    window.turnstile.render(container, {
-      sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '',
-      theme: 'dark',
-      callback: (token: string) => setCaptchaToken(token),
-      'expired-callback': () => setCaptchaToken(null),
-    });
+  const handleCaptchaChange = (token: string | null) => {
+    setCaptchaToken(token);
   };
-
-  useEffect(() => {
-    const timer = setTimeout(renderTurnstile, 100);
-    return () => clearTimeout(timer);
-  }, []);
 
   const validate = (name: string, value: string) => {
     let error = '';
@@ -169,6 +158,7 @@ export default function RegisterPage() {
     if (name === 'password' && value.length > 0 && !passwordMeetsMinimum(value)) error = 'La contraseña no alcanza el nivel mínimo (Media)';
     if (name === 'confirm' && value !== form.password) error = 'Las contraseñas no coinciden';
     if (name === 'terms' && !acceptedTerms) error = 'Debes aceptar los términos y condiciones';
+    if (name === 'marketing' && !acceptedMarketing) error = 'Debes aceptar el tratamiento de datos para comunicaciones';
     setErrors((prev) => ({ ...prev, [name]: error }));
     return error;
   };
@@ -188,7 +178,8 @@ export default function RegisterPage() {
       if (err) errs[k] = err;
     });
     if (!acceptedTerms) errs.terms = 'Debes aceptar los términos y condiciones';
-    if (!captchaToken) errs.captcha = 'Debes completar el CAPTCHA';
+    if (!acceptedMarketing) errs.marketing = 'Debes aceptar el tratamiento de datos para comunicaciones';
+    if (!captchaToken) errs.captcha = 'Debes completar el reCAPTCHA';
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
 
     setLoading(true);
@@ -331,6 +322,7 @@ export default function RegisterPage() {
 
               {localError && <p className="text-red-400 text-[11px] font-bold">{localError}</p>}
 
+              <div className="space-y-3">
               <div className="flex items-start gap-3">
                 <div className="relative flex items-center justify-center shrink-0 w-5 h-5 mt-0.5">
                   <input
@@ -345,14 +337,35 @@ export default function RegisterPage() {
                   Acepto los <a href="/terms" className="text-neon-cyan hover:underline">Términos de Servicio</a> y la <a href="/policies" className="text-neon-cyan hover:underline">Política de Privacidad</a>.
                 </p>
               </div>
-              {(errors.terms || errors.captcha) && (
-                <p className="text-red-400 text-[11px] font-bold">{errors.terms || errors.captcha}</p>
+              {errors.terms && <p className="text-red-400 text-[11px] font-bold">{errors.terms}</p>}
+
+              <div className="flex items-start gap-3">
+                <div className="relative flex items-center justify-center shrink-0 w-5 h-5 mt-0.5">
+                  <input
+                    type="checkbox"
+                    checked={acceptedMarketing}
+                    onChange={(e) => setAcceptedMarketing(e.target.checked)}
+                    className="peer appearance-none w-full h-full border-2 border-white/20 rounded bg-black/50 checked:bg-neon-blue checked:border-neon-blue transition-all"
+                  />
+                  <svg viewBox="0 0 24 24" className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <p className="text-[11px] text-gray-400 font-bold leading-relaxed">
+                  Acepto recibir comunicaciones de <a href="/terms" className="text-neon-cyan hover:underline">Ciszuko Antony</a> (novedades, actualizaciones, ofertas). <strong className="text-neon-pink">No es publicidad de terceros.</strong>
+                </p>
+              </div>
+              {errors.marketing && <p className="text-red-400 text-[11px] font-bold">{errors.marketing}</p>}
+              {(errors.terms || errors.captcha || errors.marketing) && (
+                <p className="text-red-400 text-[11px] font-bold">{errors.terms || errors.captcha || errors.marketing}</p>
               )}
 
               <div className="flex flex-col items-center gap-2">
-                <div id="turnstile-register" className="flex justify-center" />
-                {!captchaToken && <span className="text-gray-500 text-[10px] font-bold">Completa el CAPTCHA</span>}
+                <ReCAPTCHA
+                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_CISZUKOANTONY || ''}
+                  onChange={handleCaptchaChange}
+                />
+                {!captchaToken && <span className="text-gray-500 text-[10px] font-bold">Completa el reCAPTCHA</span>}
               </div>
+            </div>
 
               <motion.button
                 type="submit"

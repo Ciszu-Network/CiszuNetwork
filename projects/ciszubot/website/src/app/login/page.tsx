@@ -16,6 +16,7 @@ import {
   useActivityGuard,
 } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const IconMail = () => (
   <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -106,7 +107,23 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const script = document.createElement('script');
+    script.src = 'https://www.google.com/recaptcha/api.js';
+    script.async = true;
+    document.head.appendChild(script);
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+
+  const handleCaptchaChange = (token: string | null) => {
+    setCaptchaToken(token);
+  };
 
   useEffect(() => {
     if (user) router.replace('/dashboard');
@@ -131,8 +148,22 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
     if (!validate()) return;
+    if (!captchaToken) {
+      setError('Debes completar el reCAPTCHA');
+      return;
+    }
     setLoading(true);
     try {
+      const verifyRes = await fetch('/api/verify-recaptcha', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: captchaToken, siteKey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_CISZUBOT, version: 'v3' }),
+      });
+      const verifyData = await verifyRes.json();
+      if (!verifyData.success) {
+        throw new Error(verifyData.error || 'Verificación de reCAPTCHA fallida');
+      }
+
       let emailToUse = form.identifier.trim();
 
       if (emailToUse && !emailToUse.includes('@')) {
@@ -302,6 +333,14 @@ export default function LoginPage() {
                   />
 
                   {error && <p className="text-red-400 text-[11px] font-bold px-1">{error}</p>}
+
+                  <div className="flex justify-center">
+                    <ReCAPTCHA
+                      size="invisible"
+                      sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_CISZUBOT || ''}
+                      onChange={handleCaptchaChange}
+                    />
+                  </div>
 
                   <button
                     type="submit"

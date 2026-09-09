@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
@@ -17,6 +17,7 @@ import {
   useToast,
   useActivityGuard,
 } from '@ciszu/ui';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const IconMail = () => (
   <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -100,7 +101,23 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const script = document.createElement('script');
+    script.src = 'https://www.google.com/recaptcha/api.js';
+    script.async = true;
+    document.head.appendChild(script);
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+
+  const handleCaptchaChange = (token: string | null) => {
+    setCaptchaToken(token);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -125,8 +142,22 @@ export default function LoginPage() {
     e.preventDefault();
     setLocalError(null);
     if (!validate()) return;
+    if (!captchaToken) {
+      setLocalError('Debes completar el reCAPTCHA');
+      return;
+    }
     setLoading(true);
     try {
+      const verifyRes = await fetch('/api/verify-recaptcha', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: captchaToken, siteKey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_CISZUKOANTONY, version: 'v3' }),
+      });
+      const verifyData = await verifyRes.json();
+      if (!verifyData.success) {
+        throw new Error(verifyData.error || 'Verificación de reCAPTCHA fallida');
+      }
+
       const { data, error } = await supabase.auth.signInWithPassword({
         email: form.email.trim(),
         password: form.password,
@@ -259,6 +290,14 @@ export default function LoginPage() {
                   />
 
                   {localError && <p className="text-red-400 text-[11px] font-bold">{localError}</p>}
+
+                  <div className="flex justify-center">
+                    <ReCAPTCHA
+                      size="invisible"
+                      sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_CISZUKOANTONY || ''}
+                      onChange={handleCaptchaChange}
+                    />
+                  </div>
 
                   <motion.button
                     type="submit"

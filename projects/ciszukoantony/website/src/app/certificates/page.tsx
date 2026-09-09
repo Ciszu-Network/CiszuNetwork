@@ -238,7 +238,13 @@ const COMPANY_LOGOS = {
 
 function getCompanyLogo(logoId: string) {
   const Logo = COMPANY_LOGOS[logoId as keyof typeof COMPANY_LOGOS];
-  return Logo ? <Logo className="w-12 h-12" /> : <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-white/30">?</div>;
+  return Logo ? (
+    <div className="w-12 h-12">
+      <Logo />
+    </div>
+  ) : (
+    <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-white/30">?</div>
+  );
 }
 
 function CertificateCard({
@@ -264,6 +270,20 @@ function CertificateCard({
   const isPdf = previewFile && /\.pdf$/i.test(previewFile.name);
   const hasRealPreview = mainFile ? !!PREVIEWS_BY_FILE[mainFile.name] : false;
 
+  // Preload image for immediate display
+  const [imageLoaded, setImageLoaded] = React.useState(false);
+  const [imageError, setImageError] = React.useState(false);
+
+  // Preload image on mount
+  React.useEffect(() => {
+    if (isImage && previewUrl) {
+      const img = new Image();
+      img.src = previewUrl;
+      img.onload = () => setImageLoaded(true);
+      img.onerror = () => setImageError(true);
+    }
+  }, [previewUrl, isImage]);
+
   return (
     <motion.button
       initial={{ opacity: 0, y: 18 }}
@@ -276,14 +296,30 @@ function CertificateCard({
         {previewUrl ? (
           <>
             {isImage ? (
-              <div
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform group-hover:scale-105"
-                style={{
-                  backgroundImage: `url(${previewUrl})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }}
-              />
+              <div className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform group-hover:scale-105">
+                {!imageLoaded && !imageError ? (
+                  <div className="absolute inset-0 flex items-center justify-center bg-white/5">
+                    <div className="w-8 h-8 border-2 border-neon-cyan/50 border-t-transparent rounded-full animate-spin" />
+                  </div>
+                ) : imageError ? (
+                  <div className="absolute inset-0 flex items-center justify-center bg-red-500/10">
+                    <svg viewBox="0 0 24 24" className="w-12 h-12 text-red-400" fill="none" stroke="currentColor" strokeWidth={2}>
+                      <path d="M12 9v3m0 3h.01M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16z" />
+                    </svg>
+                    <p className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[10px] text-red-400 font-bold">Failed to load</p>
+                  </div>
+                ) : (
+                  <img
+                    src={previewUrl}
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
+                    style={{ opacity: imageLoaded ? 1 : 0 }}
+                    loading="eager"
+                    onLoad={() => setImageLoaded(true)}
+                    onError={() => setImageError(true)}
+                  />
+                )}
+              </div>
             ) : isPdf ? (
               <div className="absolute inset-0 flex items-center justify-center">
                 <svg viewBox="0 0 24 24" className="w-12 h-12 text-white/40" fill="none" stroke="currentColor" strokeWidth={2}>

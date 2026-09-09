@@ -50,6 +50,29 @@ export const OFFICIAL_LINKS = [
   { label: 'Simplilearn — certificate (online link)', url: 'https://simpli-web.app.link/e/aaWENDBP75b' },
 ];
 
+export const PROVIDER_OPTIONS = [
+  { id: 'cisco', label: 'Cisco Networking Academy', color: '#1B75BC' },
+  { id: 'microsoft', label: 'Microsoft Learn', color: '#0078D4' },
+  { id: 'ibm', label: 'IBM SkillsBuild', color: '#0096D6' },
+  { id: 'hp', label: 'HP Life', color: '#0096D6' },
+  { id: 'ef-set', label: 'EF SET (Education First)', color: '#00A3E0' },
+  { id: 'penn-elp', label: 'University of Pennsylvania (Penn ELP)', color: '#990000' },
+  { id: '16personalities', label: '16Personalities (NERIS Analytics)', color: '#00C9A7' },
+  { id: 'online-es', label: 'Online Courses Platform (ES)', color: '#F472B6' },
+  { id: 'other', label: 'Other / Unknown', color: '#94A3B8' },
+];
+
+export const SORT_OPTIONS = [
+  { id: 'date-desc', label: 'Date ↓ (Newest first)', fn: (a: Certificate, b: Certificate) => (b.date || '').localeCompare(a.date || '') },
+  { id: 'date-asc', label: 'Date ↑ (Oldest first)', fn: (a: Certificate, b: Certificate) => (a.date || '').localeCompare(b.date || '') },
+  { id: 'alpha-asc', label: 'A–Z', fn: (a: Certificate, b: Certificate) => a.title.localeCompare(b.title) },
+  { id: 'alpha-desc', label: 'Z–A', fn: (a: Certificate, b: Certificate) => b.title.localeCompare(a.title) },
+  { id: 'provider', label: 'Provider', fn: (a: Certificate, b: Certificate) => a.provider.localeCompare(b.provider) },
+  { id: 'category', label: 'Category', fn: (a: Certificate, b: Certificate) => catLabel(a.category).localeCompare(catLabel(b.category)) },
+];
+
+export const catLabel = (id: string) => CATEGORIES.find((c) => c.id === id)?.label || id;
+
 const CISCO = { id: 'cisco-sfa', name: 'Cisco Networking Academy · Skills for All' };
 const MSLEARN = { id: 'microsoft-learn', name: 'Microsoft Learn' };
 const IBM = { id: 'ibm-skillsbuild', name: 'IBM SkillsBuild' };

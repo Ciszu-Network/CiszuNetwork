@@ -36,6 +36,7 @@ export default function AuthMenu({ onClose }: { onClose: () => void }) {
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     onClose();
+    window.location.href = '/';
   };
 
   return (
