@@ -46,6 +46,7 @@ export const MAIN_NAV_LINKS = [
   { name: 'Reviews',     href: '/reviews',      icon: I.reviews,     hideCls: 'hidden min-[650px]:flex', keywords: ['reseñas', 'criticas', 'opiniones', 'feedback', 'estrellas'] },
   { name: 'Download',    href: '/download',     icon: I.download,    hideCls: 'hidden min-[700px]:flex', keywords: ['descargas', 'download', 'pc', 'windows', 'ejecutable', 'tauri', 'app'] },
   { name: 'Feedback',    href: '/feedback',     icon: I.feedback,    hideCls: 'hidden min-[780px]:flex', keywords: ['feedback', 'opiniones', 'sugerencias', 'reporte', 'bug', 'quejas'] },
+  { name: 'Donation',    href: '/donation',     icon: I.handshake,   hideCls: 'hidden min-[850px]:flex', keywords: ['donar', 'donation', 'apoyar', 'support', 'patreon', 'kofi'] },
 ];
 
 export const COMMUNITY_LINKS = [

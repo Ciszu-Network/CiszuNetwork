@@ -196,7 +196,7 @@ export default function HomeContent() {
         </div>
       </section>
 
-      <section className="py-20 px-4">
+      <section className="py-20 px-4 bg-white/[0.02] border-t border-white/5">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
             <h2 className="text-3xl md:text-4xl font-header font-black tracking-tighter bg-gradient-to-r from-brand to-brand-200 bg-clip-text text-transparent uppercase mb-8">
@@ -214,6 +214,30 @@ export default function HomeContent() {
               ))}
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      <section className="py-20 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="soft-card rounded-3xl p-8 md:p-12 border border-border">
+            <div className="flex flex-col items-center gap-6">
+              <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-brand-400/12 border border-brand-400/25 flex items-center justify-center">
+                <svg viewBox="0 0 24 24" className="w-10 h-10 md:w-12 md:h-12 text-brand-600 dark:text-brand-300" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                  <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                  <path d="M2 17l10 5 10-5" />
+                  <path d="M2 12l10 5 10-5" />
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-2xl md:text-3xl font-bold text-ink mb-2">Project provided by CiszuNetwork</h2>
+                <p className="text-muted max-w-xl mx-auto">This project is part of the Ciszu Network ecosystem. Discover more projects and tools built by Ciszuko Antony.</p>
+              </div>
+              <Link href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl text-sm font-bold tracking-wide btn-ghost">
+                Visit CiszuNetwork
+                <span className="group-hover:translate-x-1 transition-transform">{I.chevronRight}</span>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </div>

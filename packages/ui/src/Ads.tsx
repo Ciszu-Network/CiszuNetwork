@@ -978,7 +978,7 @@ const trigger = useCallback((type: AdType, placement: string): AdConfig | null =
         pool = sponsored.length > 0 ? sponsored : real;
       }
     }
-    const pick = pool.find((a) => a.id !== lastShownRef.current) ?? pool[0];
+    const pick = pool[Math.floor(Math.random() * pool.length)];
     return show(pick.id);
   }, [effective, show]);
 

@@ -190,10 +190,19 @@ export default function Footer({ lang, dict }: FooterProps) {
                 {[
                   { href: '/', label: dict.nav.home, icon: 'home' },
                   { href: '/comandos', label: dict.nav.commands, icon: 'gamepad' },
-                  { href: '/estado', label: dict.nav.status, icon: 'clock' },
-                  { href: '/soporte', label: dict.nav.support, icon: 'support' },
+                  { href: '/stats', label: dict.nav.status, icon: 'chart' },
+                  { href: '/support', label: dict.nav.support, icon: 'support' },
                   { href: '/descargas', label: dict.nav.downloads, icon: 'download' },
                   { href: '/feedback', label: dict.nav.feedback, icon: 'message' },
+                  { href: '/changelog', label: 'Changelog', icon: 'history' },
+                  { href: '/reviews', label: 'Reviews', icon: 'star' },
+                  { href: '/leaderboard', label: 'Leaderboard', icon: 'trophy' },
+                  { href: '/forum', label: 'Forum', icon: 'message' },
+                  { href: '/contact', label: 'Contact', icon: 'mail' },
+                  { href: '/documentation', label: 'Documentation', icon: 'file' },
+                  { href: '/about', label: 'About', icon: 'info' },
+                  { href: '/team', label: 'Team', icon: 'users' },
+                  { href: '/help', label: 'Help', icon: 'help' },
                 ].map((l) => {
                   const active = isActive(l.href);
                   return (

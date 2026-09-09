@@ -49,7 +49,7 @@ const DOCK_ITEMS: DockItem[] = [
   },
   {
     label: 'Status',
-    href: '/estado',
+    href: '/stats',
     color: 'green',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
@@ -71,7 +71,7 @@ const DOCK_ITEMS: DockItem[] = [
   },
   {
     label: 'Support',
-    href: '/soporte',
+    href: '/support',
     color: 'pink',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">

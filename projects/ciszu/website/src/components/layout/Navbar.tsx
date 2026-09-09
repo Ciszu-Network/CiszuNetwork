@@ -34,6 +34,11 @@ import {
   GraduationCap,
   Gamepad2,
   Bot,
+  History,
+  Star,
+  BarChart3,
+  Trophy,
+  MessageSquare,
 } from 'lucide-react';
 
 const IcoDiscord = () => (
@@ -52,24 +57,28 @@ interface NavEntry {
 }
 
 const NAV_ITEMS: NavEntry[] = [
-  { name: 'Inicio', href: '/', icon: <Home className="w-4 h-4" /> },  {
-    name: 'Información',
-    icon: <Shield className="w-4 h-4" />,
-    keywords: ['sobre nosotros', 'faq', 'políticas', 'guías', 'info'],
+  { name: 'Home', href: '/', icon: <Home className="w-4 h-4" /> },
+  {
+    name: 'Information',
+    icon: <Info className="w-4 h-4" />,
+    keywords: ['about', 'team', 'faq', 'documentation', 'help', 'contact', 'support', 'info', 'about us'],
     links: [
-      { name: 'Sobre Nosotros', href: '/about', icon: <Info className="w-4 h-4" /> },
+      { name: 'About', href: '/about', icon: <Info className="w-4 h-4" /> },
+      { name: 'Team', href: '/team', icon: <Users className="w-4 h-4" /> },
       { name: 'FAQ', href: '/faq', icon: <HelpCircle className="w-4 h-4" /> },
-      { name: 'Políticas', href: '/policies', icon: <FileText className="w-4 h-4" /> },
-      { name: 'Guías', href: '/guidelines', icon: <Sparkles className="w-4 h-4" /> },
+      { name: 'Documentation', href: '/documentation', icon: <FileText className="w-4 h-4" /> },
+      { name: 'Help', href: '/help', icon: <HelpCircle className="w-4 h-4" /> },
+      { name: 'Contact', href: '/contact', icon: <Mail className="w-4 h-4" /> },
+      { name: 'Support', href: '/support', icon: <LifeBuoy className="w-4 h-4" /> },
     ],
   },
-  { name: 'Soporte', href: '/support', icon: <LifeBuoy className="w-4 h-4" /> },
-  { name: 'Cursos', href: '/cursos', icon: <GraduationCap className="w-4 h-4" /> },
-  { name: 'Descargas', href: '/descargas', icon: <Download className="w-4 h-4" /> },
-  { name: 'Donar', href: '/donate', icon: <Heart className="w-4 h-4" /> },
-  { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" /> },
+  { name: 'Changelog', href: '/changelog', icon: <History className="w-4 h-4" /> },
+  { name: 'Reviews', href: '/reviews', icon: <Star className="w-4 h-4" /> },
+  { name: 'Stats', href: '/stats', icon: <BarChart3 className="w-4 h-4" /> },
+  { name: 'Leaderboard', href: '/leaderboard', icon: <Trophy className="w-4 h-4" /> },
+  { name: 'Forum', href: '/forum', icon: <MessageSquare className="w-4 h-4" /> },
   {
-    name: 'Proyectos',
+    name: 'Projects',
     icon: <Zap className="w-4 h-4" />,
     keywords: ['ciszugamens', 'discord', 'whatsapp', 'telegram', 'ciszubot', 'muzicmania', 'ciszu network', 'ciszuko antony'],
     links: [
@@ -80,8 +89,9 @@ const NAV_ITEMS: NavEntry[] = [
       { name: 'Ciszuko Antony', href: '/projects/ciszukoantony', icon: <User className="w-4 h-4" /> },
     ],
   },
-  { name: 'Equipo', href: '/team', icon: <Users className="w-4 h-4" /> },
-  { name: 'Contacto', href: '/contact', icon: <Mail className="w-4 h-4" /> },
+  { name: 'Download', href: '/download', icon: <Download className="w-4 h-4" /> },
+  { name: 'Donate', href: '/donate', icon: <Heart className="w-4 h-4" /> },
+  { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" /> },
 ];
 
 // Clases responsive por índice de NAV_ITEMS: el link activo siempre visible; el resto aparece según espacio.
@@ -94,27 +104,35 @@ const NAV_HIDE_CLS: string[] = [
   'hidden min-[920px]:flex',
   'hidden min-[1020px]:flex',
   'hidden min-[1120px]:flex',
+  'hidden min-[1220px]:flex',
+  'hidden min-[1320px]:flex',
+  'hidden min-[1420px]:flex',
+  'hidden min-[1520px]:flex',
 ];
 
 // Massive page catalog for the global search (references the same routes as the nav).
 const ALL_PAGES: { name: string; href: string; icon: React.ReactNode; keywords: string[] }[] = [
-  { name: 'Inicio', href: '/', icon: <Home className="w-4 h-4" />, keywords: ['inicio', 'home', 'index', 'main'] },
-  { name: 'Información', href: '/about', icon: <Info className="w-4 h-4" />, keywords: ['informacion', 'info', 'sobre', 'about'] },
+  { name: 'Home', href: '/', icon: <Home className="w-4 h-4" />, keywords: ['inicio', 'home', 'index', 'main'] },
+  { name: 'About', href: '/about', icon: <Info className="w-4 h-4" />, keywords: ['about', 'sobre', 'nosotros', 'informacion'] },
+  { name: 'Team', href: '/team', icon: <Users className="w-4 h-4" />, keywords: ['equipo', 'team', 'staff', 'miembros'] },
   { name: 'FAQ', href: '/faq', icon: <HelpCircle className="w-4 h-4" />, keywords: ['faq', 'preguntas', 'frecuentes', 'dudas'] },
-  { name: 'Políticas', href: '/policies', icon: <FileText className="w-4 h-4" />, keywords: ['politicas', 'politica', 'privacidad', 'privacy', 'policy'] },
-  { name: 'Guías', href: '/guidelines', icon: <Sparkles className="w-4 h-4" />, keywords: ['guias', 'guia', 'normas', 'lineamientos', 'guide'] },
-  { name: 'Soporte', href: '/support', icon: <LifeBuoy className="w-4 h-4" />, keywords: ['soporte', 'ayuda', 'support', 'asistencia'] },
-  { name: 'Cursos', href: '/cursos', icon: <GraduationCap className="w-4 h-4" />, keywords: ['cursos', 'curso', 'ingles', 'formacion', 'learning', 'english', 'ef set', 'course'] },
-  { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" />, keywords: ['feedback', 'reportar', 'reporte', 'problema', 'opinion', 'bug'] },
-  { name: 'Donar', href: '/donate', icon: <Heart className="w-4 h-4" />, keywords: ['donar', 'donation', 'donacion', 'apoyar', 'apoyo', 'support', 'ko-fi', 'kofi', 'patreon', 'paypal', 'crypto'] },
-  { name: 'Descargas', href: '/descargas', icon: <Download className="w-4 h-4" />, keywords: ['descargas', 'descargar', 'instalar', 'pdwa', 'download'] },
-  { name: 'Ciszugamens', href: '/projects/ciszugamens', icon: <Gamepad2 className="w-4 h-4" />, keywords: ['ciszugamens', 'gamens', 'discord', 'servidor', 'comunidad', 'whatsapp', 'telegram', 'games'] },
+  { name: 'Documentation', href: '/documentation', icon: <FileText className="w-4 h-4" />, keywords: ['documentacion', 'docs', 'guia', 'desarrollo'] },
+  { name: 'Help', href: '/help', icon: <HelpCircle className="w-4 h-4" />, keywords: ['ayuda', 'help', 'centro', 'guias', 'tutorial'] },
+  { name: 'Contact', href: '/contact', icon: <Mail className="w-4 h-4" />, keywords: ['contacto', 'contact', 'mensaje', 'email'] },
+  { name: 'Support', href: '/support', icon: <LifeBuoy className="w-4 h-4" />, keywords: ['soporte', 'ayuda', 'support', 'asistencia'] },
+  { name: 'Changelog', href: '/changelog', icon: <History className="w-4 h-4" />, keywords: ['cambios', 'updates', 'actualizaciones', 'historial', 'news'] },
+  { name: 'Reviews', href: '/reviews', icon: <Star className="w-4 h-4" />, keywords: ['reseñas', 'criticas', 'opiniones', 'feedback', 'estrellas'] },
+  { name: 'Stats', href: '/stats', icon: <BarChart3 className="w-4 h-4" />, keywords: ['estadisticas', 'stats', 'analisis', 'rendimiento', 'server'] },
+  { name: 'Leaderboard', href: '/leaderboard', icon: <Trophy className="w-4 h-4" />, keywords: ['ranking', 'top', 'leaderboard', 'clasificacion', 'global'] },
+  { name: 'Forum', href: '/forum', icon: <MessageSquare className="w-4 h-4" />, keywords: ['foro', 'comunidad', 'community', 'discusión', 'discussion', 'posts'] },
+  { name: 'Download', href: '/download', icon: <Download className="w-4 h-4" />, keywords: ['descargas', 'download', 'pc', 'windows', 'ejecutable'] },
+  { name: 'Donate', href: '/donate', icon: <Heart className="w-4 h-4" />, keywords: ['donar', 'donation', 'donacion', 'apoyar', 'apoyo', 'ko-fi', 'patreon'] },
+  { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" />, keywords: ['feedback', 'opiniones', 'sugerencias', 'reporte', 'bug', 'quejas'] },
+  { name: 'Ciszugamens', href: '/projects/ciszugamens', icon: <Gamepad2 className="w-4 h-4" />, keywords: ['ciszugamens', 'gamens', 'discord', 'servidor', 'comunidad'] },
   { name: 'CiszuBot', href: '/projects/ciszubot', icon: <Bot className="w-4 h-4" />, keywords: ['ciszubot', 'bot', 'discord', 'comandos'] },
   { name: 'MuzicMania', href: '/projects/muzicmania', icon: <Music className="w-4 h-4" />, keywords: ['muzicmania', 'musica', 'juego', 'ritmo'] },
   { name: 'Ciszu Network', href: '/projects/ciszunetwork', icon: <Building className="w-4 h-4" />, keywords: ['ciszu', 'network', 'compañia', 'marca'] },
   { name: 'Ciszuko Antony', href: '/projects/ciszukoantony', icon: <User className="w-4 h-4" />, keywords: ['ciszuko', 'antony', 'youtuber', 'streamer'] },
-  { name: 'Equipo', href: '/team', icon: <Users className="w-4 h-4" />, keywords: ['equipo', 'team', 'staff', 'miembros'] },
-  { name: 'Contacto', href: '/contact', icon: <Mail className="w-4 h-4" />, keywords: ['contacto', 'contact', 'mensaje', 'email'] },
 ];
 
 // LANGS: lista canónica compartida (@ciszu/ui). Los 4 idiomas de producción
