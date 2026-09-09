@@ -46,11 +46,11 @@ export default async function ReviewsPage() {
           <div className="text-4xl font-bold text-ink mb-2">
             {averageWithGhost.toFixed(1)} <span className="text-lg text-muted">/ 5.0</span>
           </div>
-          <p className="text-sm text-muted">
-            {hasRealReviews
-              ? t.reviewsPage.averageWithGhost || 'Average with baseline review'
-              : t.reviewsPage.noReviews || 'No reviews yet — default baseline 5.0'}
-          </p>
+           <p className="text-sm text-muted">
+             {hasRealReviews
+               ? 'Average with baseline review'
+               : 'No reviews yet — default baseline 5.0'}
+           </p>
           <p className="text-xs text-faint mt-2">
             {hasRealReviews
               ? `Based on ${reviewsCount} review${reviewsCount !== 1 ? 's' : ''} + baseline 5.0`
