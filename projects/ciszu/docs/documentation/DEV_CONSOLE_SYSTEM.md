@@ -191,7 +191,7 @@ endpoint devuelve `{enabled:false}`.
 Permite configurar disclaimers en local para depurar el sistema global de avisos de cabecera
 (`DisclaimerStack`). Flujo:
 
-1. **Acciones**: crear · eliminar · modificar · resumen · reiniciar (todos).
+1. **Acciones**: crear · eliminar · modificar · resumen · reiniciar (todos) · verificar entrega.
 2. **Crear**: webs destino (casillas) → mensaje → tipo (info/beta/warning) →
    **duración** (temporal sin fecha / temporal con fecha de culminación / permanente) →
    **cierre** (opcional con X / obligatorio sin X) → imagen (URL opcional).
@@ -199,6 +199,9 @@ Permite configurar disclaimers en local para depurar el sistema global de avisos
    actual o inválida, da error y no guarda. Al llegar la fecha, el disclaimer se cierra solo y
    no vuelve a aparecer (contador visible en el stack).
 4. **Modificar** permite cambiar periodo/cierre/tipo de un disclaimer existente por webs.
+5. **Verificar entrega**: consulta `GET /api/disclaimers/debug` en cada web encendida y
+   compara los items recibidos contra la config local (`disclaimers_debug.json`). Muestra
+   ✅ entregado / ⏳ pendiente… / ⚠️ sin confirmación (pendiente…) tras 30s.
 
 La config se escribe en `local-logs/disclaimers_debug.json` y cada web la lee vía
 `GET /api/disclaimers/debug` (solo dev). El componente `DisclaimerDebug` la inyecta en la pila
@@ -382,4 +385,4 @@ Al tocar lógica del TUI, ejecutar siempre el runner antes de commitear.
 - Framework de tests global: `TESTING_SYSTEM.md`.
 - Comandos del agente: `OPENCODE_SYSTEM.md`.
 
-_Última revisión: 17 ago 2026._ Relacionado: `DEBUGGING_SYSTEM.md`, `LOCAL_TESTING_PROTOCOLS.md`, `TESTING_SYSTEM.md`.
+_Última revisión: 8 sep 2026._ Relacionado: `DEBUGGING_SYSTEM.md`, `LOCAL_TESTING_PROTOCOLS.md`, `TESTING_SYSTEM.md`.

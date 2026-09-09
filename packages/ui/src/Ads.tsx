@@ -584,6 +584,8 @@ export interface AdsDebugConfig {
 export interface AdsPushConfig {
   enabled: boolean;
   sites?: string[];
+  /** Webs con anuncios DESACTIVADOS (por website, reactivaciones/desactivaciones). */
+  disabledSites?: string[];
   title: string;
   description: string;
   cta: string;
@@ -701,23 +703,26 @@ const dKey = `ciszu_ads_${site}_dismissed`;
     }
   }, []);
 
-  // ── Push de anuncio forzado (devcon, punto H) ──
-  // En desarrollo lee /api/ads/push (ads_push.json). Si hay un push activo
-  // para este site que NO se ha mostrado aún, lo muestra AHORA mismo (ignora
-  // cooldown/intervalo/periodo de gracia) con aviso de que vino de la devcon.
+  // ── Push de anuncio forzado (devcon + globales) ──
+  // 1) Devcon local: lee /api/ads/push (ads_push.json, solo responde en dev).
+  // 2) Globales (producción): hace polling a ciszunetwork.global_ads vía Supabase
+  //    (mismo patrón que GlobalAdvisor/GlobalDisclaimer). Respeta el kill switch
+  //    global (global_ads_settings) y confirma entrega por sitio
+  //    (global_ads_deliveries) para que el devcon espere con --wait.
+  // Si hay un push activo para este site que NO se ha mostrado aún, se muestra
+  // AHORA mismo (ignora cooldown/intervalo/periodo de gracia).
   const pushShownRef = useRef<number | null>(null);
+  const applyPush = (push: AdsPushConfig | null) => {
+    if (!push || !push.enabled) return;
+    if (push.sites?.length && !push.sites.includes(site)) return;
+    if (push.disabledSites?.includes(site)) return;
+    if (pushShownRef.current === push.createdAt) return;
+    pushShownRef.current = push.createdAt;
+    const ad = buildPushAd(push, site);
+    if (ad) setCurrent(ad);
+  };
   useEffect(() => {
-    const applyPush = (push: AdsPushConfig | null) => {
-      if (!push || !push.enabled) return;
-      if (push.sites?.length && !push.sites.includes(site)) return;
-      if (pushShownRef.current === push.createdAt) return;
-      pushShownRef.current = push.createdAt;
-      const ad = buildPushAd(push, site);
-      if (ad) setCurrent(ad);
-    };
     const poll = () => {
-      // El endpoint /api/ads/push solo responde en desarrollo (devuelve
-      // {enabled:false} en producción), así que este poll es seguro siempre.
       fetch('/api/ads/push', { cache: 'no-store' })
         .then((r) => (r.ok ? r.json() : null))
         .then((p: AdsPushConfig | null) => applyPush(p))
@@ -726,6 +731,90 @@ const dKey = `ciszu_ads_${site}_dismissed`;
     poll();
     const iv = window.setInterval(poll, 1500);
     return () => window.clearInterval(iv);
+  }, [site]);
+
+  // ── Push GLOBAL (producción: ciszunetwork.global_ads vía Supabase) ──
+  interface GlobalAdRow {
+    id: number;
+    title: string;
+    description: string;
+    cta: string;
+    href: string;
+    type: AdType;
+    source_web: string;
+    brand: string | null;
+    require_reward: boolean;
+    target: string;
+    expires_at: string | null;
+    created_at: string;
+  }
+  const globalAdsRef = useRef(false);
+  useEffect(() => {
+    const ADS_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://obwzzmbvkrcscqwptlqo.supabase.co';
+    const ADS_SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+    const headers = {
+      apikey: ADS_SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${ADS_SUPABASE_ANON_KEY}`,
+      'Content-Type': 'application/json',
+      'Accept-Profile': 'ciszunetwork',
+    };
+    let killed = false;
+
+    const confirmDelivery = (id: number) => {
+      if (typeof window === 'undefined') return;
+      fetch(`${ADS_SUPABASE_URL}/rest/v1/global_ads_deliveries?ad_id=eq.${id}&site=eq.${site}`, {
+        method: 'POST',
+        headers: { ...headers, 'Content-Profile': 'ciszunetwork', Prefer: 'resolution=merge-duplicates,return=minimal' },
+        body: JSON.stringify({ ad_id: id, site }),
+      }).catch(() => { /* telemetría no bloqueante */ });
+    };
+
+    const pollGlobal = () => {
+      // Kill switch global: si está apagado, no mostrar anuncios globales.
+      fetch(`${ADS_SUPABASE_URL}/rest/v1/global_ads_settings?id=eq.1&select=enabled`, { headers, cache: 'no-store' })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((settings: { enabled: boolean }[] | null) => {
+          const enabled = Array.isArray(settings) && settings.length ? settings[0].enabled : true;
+          killed = !enabled;
+        })
+        .catch(() => { /* fail-open: seguir como activo */ });
+      fetch(
+        `${ADS_SUPABASE_URL}/rest/v1/global_ads?select=id,title,description,cta,href,type,source_web,brand,require_reward,target,expires_at,created_at&order=created_at.asc&limit=10`,
+        { headers, cache: 'no-store' }
+      )
+        .then((r) => (r.ok ? r.json() : null))
+        .then((rows: GlobalAdRow[] | null) => {
+          if (killed || !Array.isArray(rows)) return;
+          const now = Date.now();
+          for (const row of rows) {
+            if (row.expires_at && new Date(row.expires_at).getTime() < now) continue;
+            const targets = String(row.target || 'global').split(',').map((t) => t.trim());
+            if (row.target !== 'global' && !targets.includes(site)) continue;
+            const push: AdsPushConfig = {
+              enabled: true,
+              sites: row.target === 'global' ? undefined : targets,
+              title: row.title,
+              description: row.description,
+              cta: row.cta,
+              href: row.href,
+              type: row.type,
+              source: (row.source_web as AdSource) || 'external',
+              brand: row.brand ?? undefined,
+              requireReward: row.require_reward,
+              createdAt: Date.parse(row.created_at),
+            };
+            // La web ya recibió el anuncio -> confirmar entrega (para el --wait del devcon).
+            confirmDelivery(row.id);
+            applyPush(push);
+          }
+        })
+        .catch(() => {});
+    };
+
+    pollGlobal();
+    const iv = window.setInterval(pollGlobal, 20000);
+    return () => window.clearInterval(iv);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [site]);
 
   const effective = useMemo(() => {
@@ -963,6 +1052,21 @@ const clearCurrent = useCallback(() => {
     () => ({ site, catalog: effective, current, authenticated, show, trigger, dismiss, rewardStatus, claimReward, floatingActive, setFloatingActive, getNextPeriodicAdIn, isInactive, clearCurrent }),
     [site, effective, current, authenticated, show, trigger, dismiss, rewardStatus, claimReward, floatingActive, getNextPeriodicAdIn, isInactive, clearCurrent]
   );
+
+  // Escucha el evento 'ciszu:ads:external' (ads GLOBALES desde la BD vía
+  // GlobalAds): muestra el anuncio al instante (ignora cooldown/intervalo).
+  useEffect(() => {
+    const onExternal = (e: Event) => {
+      const detail = (e as CustomEvent<AdConfig | null>).detail;
+      if (!detail) return;
+      markSeen(detail.id);
+      lastShownRef.current = detail.id;
+      setCurrent(detail);
+    };
+    window.addEventListener('ciszu:ads:external', onExternal);
+    return () => window.removeEventListener('ciszu:ads:external', onExternal);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [markSeen]);
 
   return (
 <AdsContext.Provider value={value}>

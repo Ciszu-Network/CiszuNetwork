@@ -6,35 +6,55 @@ import { motion } from 'framer-motion';
 import { supabase } from '@/config/supabase';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
+import { useToast } from '@ciszu/ui';
 
 export default function ResetPasswordPage() {
   usePageTitle('RESET_PASSWORD');
   const router = useRouter();
+  const { toast } = useToast();
+  
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [verified, setVerified] = useState(false);
+  const [invalidLink, setInvalidLink] = useState(false);
 
   useEffect(() => {
     const verifyToken = async () => {
       const hash = window.location.hash;
+      
       if (!hash || !hash.includes('access_token')) {
-        setError('Enlace inválido o expirado. Solicita uno nuevo desde login.');
+        setInvalidLink(true);
+        setError('Enlace inválido o expirado. Este enlace es de un solo uso y tiene una validez limitada.');
         return;
       }
 
       const params = new URLSearchParams(hash.substring(1));
       const accessToken = params.get('access_token');
-      if (!accessToken) {
-        setError('Token de acceso no encontrado. Solicita uno nuevo desde login.');
+      const refreshToken = params.get('refresh_token');
+      const type = params.get('type');
+      
+      if (!accessToken || !refreshToken) {
+        setInvalidLink(true);
+        setError('Token de acceso incompleto. Solicita uno nuevo desde login.');
         return;
       }
 
-      // Flujo implicit: supabase-js recupera la sesión automáticamente desde el hash del enlace
-      const { data } = await supabase.auth.getSession();
-      if (!data.session) {
+      if (type !== 'recovery') {
+        setInvalidLink(true);
+        setError('Este enlace no es para recuperación de contraseña. Solicita uno nuevo desde login.');
+        return;
+      }
+
+      const { data, error: sessionError } = await supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      });
+
+      if (sessionError || !data.session) {
+        setInvalidLink(true);
         setError('El enlace ha expirado o es inválido. Solicita uno nuevo desde login.');
         return;
       }
@@ -64,16 +84,33 @@ export default function ResetPasswordPage() {
         password,
       });
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        if (updateError.message.includes('same') || updateError.message.includes('identical') || updateError.message.includes('current')) {
+          throw new Error('La nueva contraseña no puede ser igual a la actual. Elige una diferente.');
+        }
+        throw updateError;
+      }
 
+      // Sign out immediately after password change (temporary session ends)
+      await supabase.auth.signOut();
+      
       setSuccess(true);
-      setTimeout(() => router.push('/login'), 2500);
+      toast('Contraseña actualizada correctamente. Inicia sesión con tu nueva contraseña.', 'success');
+      setTimeout(() => router.push('/login'), 3000);
     } catch (err: any) {
       setError(err.message || 'No se pudo actualizar la contraseña.');
     } finally {
       setLoading(false);
     }
   };
+
+  // Warning icon for invalid link
+  const WarningIcon = () => (
+    <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}>
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+      <path d="M12 9v4M12 17h.01" />
+    </svg>
+  );
 
   return (
     <div className="min-h-screen pt-24 pb-20 relative overflow-hidden">
@@ -93,14 +130,14 @@ export default function ResetPasswordPage() {
               <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center space-y-3">
                 <p className="text-emerald-400 font-black uppercase tracking-widest text-sm">Contraseña actualizada</p>
                 <p className="text-gray-400 text-xs font-bold leading-relaxed">
-                  Tu contraseña ha sido restablecida. Serás redirigido al login para acceder.
+                  Tu contraseña ha sido restablecida. Serás redirigido al login para acceder con tu nueva contraseña.
                 </p>
               </div>
             ) : verified ? (
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="text-center space-y-2">
                   <h3 className="text-white font-black uppercase tracking-widest text-sm">Nueva contraseña</h3>
-                  <p className="text-gray-400 text-[10px] font-bold">Establece una contraseña segura para tu cuenta.</p>
+                  <p className="text-gray-400 text-[10px] font-bold">Establece una contraseña segura para tu cuenta. No puede ser igual a la anterior.</p>
                 </div>
 
                 <div className="space-y-1">
@@ -131,29 +168,30 @@ export default function ResetPasswordPage() {
 
                 {error && <p className="text-red-400 text-[11px] font-bold">{error}</p>}
 
-                <button
+                <motion.button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 rounded-xl bg-gradient-to-r from-neon-purple to-neon-pink text-white font-header font-black uppercase tracking-widest text-sm hover:brightness-110 hover:scale-[1.01] active:scale-[0.99] transition-all shadow-[0_0_20px_rgba(255,51,204,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  whileTap={{ scale: 0.97 }}
+                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-neon-pink via-[#6600ff] to-neon-blue text-white font-header font-black uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(255,51,204,0.3)] hover:shadow-[0_0_30px_rgba(61,106,223,0.4)] transition-all disabled:opacity-50 disabled:pointer-events-none"
                 >
                   {loading ? 'PROCESANDO…' : 'RESTABLECER CONTRASEÑA'}
-                </button>
+                </motion.button>
               </form>
             ) : (
               <div className="text-center space-y-4">
-                <div className="w-16 h-16 mx-auto text-red-400">
-                  <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}>
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 8v4M12 16h.01" />
-                  </svg>
+                <div className="w-16 h-16 mx-auto text-amber-400">
+                  <WarningIcon />
                 </div>
-                <p className="text-white font-black uppercase tracking-widest text-sm">Enlace inválido</p>
+                <p className="text-white font-black uppercase tracking-widest text-sm">Enlace inválido o expirado</p>
                 <p className="text-gray-400 text-xs font-bold leading-relaxed">
-                  {error || 'El enlace de recuperación ha expirado o es inválido.'}
+                  {error || 'Este enlace de recuperación ha expirado o ya fue utilizado.'}
+                </p>
+                <p className="text-amber-400 text-[10px] font-bold uppercase tracking-wider">
+                  ⚠ Los enlaces de recuperación son de UN SOLO USO y expiran por seguridad.
                 </p>
                 <button
                   onClick={() => router.push('/login')}
-                  className="px-8 py-3 rounded-xl bg-gradient-to-r from-neon-purple to-neon-pink text-white font-header font-black uppercase tracking-widest text-sm hover:brightness-110 transition-all"
+                  className="px-8 py-3 rounded-xl bg-gradient-to-r from-neon-pink via-[#6600ff] to-neon-blue text-white font-header font-black uppercase tracking-widest text-sm hover:brightness-110 transition-all"
                 >
                   VOLVER AL LOGIN
                 </button>

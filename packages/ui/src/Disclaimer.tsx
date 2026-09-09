@@ -20,7 +20,15 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 import { useSyncExternalStore } from 'react';
 import { useZoomWarningActive } from './zoomStore';
 
-export type DisclaimerKind = 'info' | 'beta' | 'warning';
+export type DisclaimerKind = 'info' | 'beta' | 'warning' | 'basic';
+
+export interface DisclaimerAction {
+  label: string;
+  onClick?: () => void;
+  href?: string;
+  /** true = el botón cierra el disclaimer como si fuera la X (p.ej. botón OK). */
+  close?: boolean;
+}
 
 export interface DisclaimerItem {
   id: string;
@@ -32,10 +40,15 @@ export interface DisclaimerItem {
   /** Fecha ISO de culminación: si llega, el disclaimer se cierra solo y no
    *  vuelve (temporal con fecha). Si es null, es temporal SIN fecha de fin. */
   expiresAt?: string | null;
+  /** Fecha ISO de inicio (temporal con fecha). Si no se define, se usa el
+   *  momento de creación. Se muestra como "inicio - culminación". */
+  startsAt?: string | null;
   /** Imagen opcional (URL) para disclaimers con creatividad (eventos). */
   image?: string;
   /** Mostrar contador de tiempo restante (solo si expiresAt). Default true. */
   showCountdown?: boolean;
+  /** Botones de acción opcionales (texto + onclick o href, o close). */
+  actions?: DisclaimerAction[];
 }
 
 interface DisclaimerContextValue {
@@ -109,6 +122,12 @@ export function useHeaderMode(): HeaderMode {
 
 const ICONS: Record<DisclaimerKind, React.ReactNode> = {
   info: (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z" />
+    </svg>
+  ),
+  // 'basic' sustituye a 'beta' (renombrado por claridad); mismo icono informativo.
+  basic: (
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z" />
     </svg>
@@ -211,13 +230,45 @@ const DISCLAIMER_CSS = `
 }
 .disclaimer-item .disc-countdown {
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-variant-numeric: tabular-nums;
   font-size: 10px;
   font-weight: 800;
-  padding: 1px 6px;
+  padding: 2px 8px;
   border-radius: 999px;
   background: rgba(255,255,255,0.12);
   color: var(--accent, #22d3ee);
+}
+.disclaimer-item .disc-cd-dates {
+  font-size: 9px;
+  font-weight: 700;
+  opacity: 0.8;
+  color: var(--ink, #fff);
+  letter-spacing: 0.03em;
+}
+.disclaimer-item .disc-cd-clock {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 1px;
+}
+.disclaimer-item .disc-cd-seg {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 1px;
+}
+.disclaimer-item .disc-cd-sep { color: rgba(255,255,255,0.4); margin: 0 1px; }
+.disclaimer-item .disc-cd-num {
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 6px currentColor;
+}
+.disclaimer-item .disc-cd-unit {
+  font-size: 8px;
+  font-weight: 800;
+  opacity: 0.75;
+  text-transform: lowercase;
 }
 .disclaimer-item .disc-text {
   white-space: nowrap;
@@ -259,6 +310,30 @@ const DISCLAIMER_CSS = `
 .disclaimer-item .disc-close:active { transform: scale(0.9); }
 .disclaimer-item .disc-close svg { width: 11px; height: 11px; }
 
+.disclaimer-item .disc-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 8px;
+}
+
+.disclaimer-item .disc-action {
+  border: none;
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  background: rgba(255,255,255,0.14);
+  color: inherit;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.disclaimer-item .disc-action:hover { background: rgba(255,255,255,0.26); }
+.disclaimer-item .disc-action:active { transform: scale(0.96); }
+
 @media (min-width: 640px) {
   .disclaimer-item { font-size: 12px; }
 }
@@ -280,6 +355,90 @@ export interface DisclaimerStackProps {
  * disclaimers obligatorios (sin X). Al llegar a la fecha de culminación, el
  * disclaimer se auto-cierra y no vuelve a aparecer (onClose).
  */
+/* ------------------------------------------------------------------ *
+ * Contador de expiración con formato profesional (fechas + reloj).
+ *
+ * Muestra primero "fecha de inicio - fecha de culminación" (fechas
+ * localizadas y traducibles según el idioma del documento) y después un
+ * reloj descendente separado por ":" donde cada número lleva su unidad
+ * (años, días, horas, minutos, segundos) y su propio color.
+ * ------------------------------------------------------------------ */
+
+type CdUnit = 'y' | 'd' | 'h' | 'm' | 's';
+
+const CD_UNIT_LABELS: Record<string, Record<CdUnit, string>> = {
+  es: { y: 'años', d: 'días', h: 'horas', m: 'min', s: 'seg' },
+  en: { y: 'years', d: 'days', h: 'hrs', m: 'min', s: 'sec' },
+};
+
+const CD_UNIT_COLORS: Record<CdUnit, string> = {
+  y: '#a855f7', // años: morado
+  d: '#22d3ee', // días: cian
+  h: '#fbbf24', // horas: ámbar
+  m: '#f472b6', // minutos: rosa
+  s: '#4ade80', // segundos: verde
+};
+
+function cdUnitLabel(unit: CdUnit): string {
+  const lang = typeof document !== 'undefined' && document.documentElement
+    ? (document.documentElement.lang || navigator.language || 'es').slice(0, 2).toLowerCase()
+    : 'es';
+  return (CD_UNIT_LABELS[lang] || CD_UNIT_LABELS.es)[unit];
+}
+
+function formatCdDate(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  const lang = typeof document !== 'undefined' && document.documentElement
+    ? (document.documentElement.lang || navigator.language || 'es').slice(0, 2).toLowerCase()
+    : 'es';
+  return d.toLocaleDateString(lang === 'en' ? 'en-US' : 'es-ES', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+
+function countdownParts(expiresAt: string, startsAt?: string | null): { value: number; unit: CdUnit }[] {
+  const end = new Date(expiresAt).getTime();
+  const start = startsAt && !Number.isNaN(new Date(startsAt).getTime()) ? new Date(startsAt).getTime() : Date.now();
+  let remainingMs = end - start;
+  if (remainingMs < 0) remainingMs = 0;
+  const totalSeconds = Math.max(1, Math.ceil(remainingMs / 1000));
+  const years = Math.floor(totalSeconds / (365 * 24 * 60 * 60));
+  const days = Math.floor((totalSeconds % (365 * 24 * 60 * 60)) / (24 * 60 * 60));
+  const hours = Math.floor((totalSeconds % (24 * 60 * 60)) / (60 * 60));
+  const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+  const seconds = totalSeconds % 60;
+  return [
+    { value: years, unit: 'y' },
+    { value: days, unit: 'd' },
+    { value: hours, unit: 'h' },
+    { value: minutes, unit: 'm' },
+    { value: seconds, unit: 's' },
+  ];
+}
+
+/** Reloj descendente 0y:17d:3h:12m:43s con unidades coloreadas y tooltip traducible. */
+function CountdownClock({ expiresAt, startsAt }: { expiresAt: string; startsAt?: string | null }) {
+  const parts = countdownParts(expiresAt, startsAt);
+  return (
+    <span className="disc-cd-clock">
+      {parts.map((p, i) => (
+        <span key={p.unit} className="disc-cd-seg">
+          {i > 0 && <span className="disc-cd-sep">:</span>}
+          <span className="disc-cd-num" style={{ color: CD_UNIT_COLORS[p.unit] }}>
+            {String(p.value).padStart(2, '0')}
+          </span>
+          <span className="disc-cd-unit" title={cdUnitLabel(p.unit)}>
+            {p.unit}
+          </span>
+        </span>
+      ))}
+    </span>
+  );
+}
+
 export function DisclaimerStack({ headerHeight = 64, zoomShift = 32 }: DisclaimerStackProps) {
   const { items, remove } = useDisclaimer();
   const mode = useHeaderMode();
@@ -345,8 +504,36 @@ export function DisclaimerStack({ headerHeight = 64, zoomShift = 32 }: Disclaime
                 )}
                 <span className="disc-text">{message}</span>
                 {item.expiresAt && remaining > 0 && item.showCountdown !== false && (
-                  <span className="disc-countdown" title={item.expiresAt}>
-                    {remaining}s
+                  <span className="disc-countdown" title={`${item.startsAt ? formatCdDate(item.startsAt) + ' - ' : ''}${formatCdDate(item.expiresAt)}`}>
+                    {item.startsAt && (
+                      <span className="disc-cd-dates">
+                        {formatCdDate(item.startsAt)} - {formatCdDate(item.expiresAt)}
+                      </span>
+                    )}
+                    <CountdownClock expiresAt={item.expiresAt} startsAt={item.startsAt} />
+                  </span>
+                )}
+                {item.actions && item.actions.length > 0 && (
+                  <span className="disc-actions">
+                    {item.actions.map((action, idx) => {
+                      const baseClass = 'disc-action';
+                      const handleClick = () => {
+                        // Acción "close": cierra el disclaimer como si fuera la X.
+                        if (action.close) {
+                          item.onClose();
+                          return;
+                        }
+                        if (action.href) {
+                          window.open(action.href, '_blank', 'noopener,noreferrer');
+                        }
+                        action.onClick?.();
+                      };
+                      return (
+                        <button key={idx} type="button" className={baseClass} onClick={handleClick}>
+                          {action.label}
+                        </button>
+                      );
+                    })}
                   </span>
                 )}
               </span>
@@ -382,16 +569,46 @@ export interface DebugDisclaimer {
   site?: string;
   dismissible?: boolean;
   expiresAt?: string | null;
+  startsAt?: string | null;
   image?: string;
   showCountdown?: boolean;
+  devcon?: boolean;
+  /** Botones de acción opcionales (abrir URL o cerrar el disclaimer). */
+  actions?: DisclaimerAction[];
+}
+
+function ddbgDismissedKey(site: string): string {
+  return `ciszu_disclaimer_debug_dismissed_${site}`;
+}
+
+function ddbgLoadDismissed(site: string): Set<string> {
+  try {
+    const raw = window.localStorage.getItem(ddbgDismissedKey(site));
+    if (!raw) return new Set();
+    const arr = JSON.parse(raw);
+    return new Set(Array.isArray(arr) ? arr.filter((s: unknown) => typeof s === 'string') : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function ddbgPersistDismissed(site: string, ids: Set<string>) {
+  try {
+    window.localStorage.setItem(ddbgDismissedKey(site), JSON.stringify(Array.from(ids)));
+  } catch { /* no romper */ }
 }
 
 export function DisclaimerDebug({ site }: { site: string }) {
   const { push, remove } = useDisclaimer();
   const [items, setItems] = useState<DebugDisclaimer[]>([]);
+  // Si el usuario cerró un disclaimer de debug con la X, se recuerda por web
+  // (localStorage) y NO vuelve a aparecer aunque el devcon lo siga emitiendo
+  // (mismo id). Para que reaparezca: borrarlo y crearlo de nuevo (id nuevo).
+  const dismissedRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     if (process.env.NODE_ENV !== 'development') return;
+    dismissedRef.current = ddbgLoadDismissed(site);
     const poll = () => {
       fetch('/api/disclaimers/debug', { cache: 'no-store' })
         .then((r) => (r.ok ? r.json() : { items: [] }))
@@ -414,16 +631,24 @@ export function DisclaimerDebug({ site }: { site: string }) {
     console.log('[DisclaimerDebug] Syncing items for', site, ':', items.length);
     const active = new Set<string>();
     for (const item of items) {
+      // Cerrado con X anteriormente (mismo id) -> no reaparece.
+      if (dismissedRef.current.has(item.id)) continue;
       active.add(item.id);
       push({
         id: item.id,
         kind: item.kind,
-        message: '[DEVCON] ' + item.message,
+        message: item.devcon ? '[DEVCON] ' + item.message : item.message,
         dismissible: item.dismissible,
         expiresAt: item.expiresAt,
+        startsAt: item.startsAt,
         image: item.image,
         showCountdown: item.showCountdown,
-        onClose: () => remove(item.id),
+        actions: item.actions,
+        onClose: () => {
+          dismissedRef.current.add(item.id);
+          ddbgPersistDismissed(site, dismissedRef.current);
+          remove(item.id);
+        },
       });
     }
     return () => {
@@ -477,11 +702,15 @@ export interface GlobalDisclaimerRow {
   sender: string;
   source: string;
   message: string;
-  kind: 'info' | 'beta' | 'warning';
+  kind: 'info' | 'beta' | 'warning' | 'basic';
   target: string;
   dismissible: boolean;
   expires_at: string | null;
+  /** Fecha de inicio opcional (para el rango "inicio - culminación"). */
+  starts_at?: string | null;
   image: string | null;
+  /** Botones de acción opcionales (abrir URL o cerrar el disclaimer). */
+  actions?: DisclaimerAction[] | null;
   created_at: string;
 }
 
@@ -563,17 +792,19 @@ export function GlobalDisclaimer({ site, pollInterval, disabled = false }: Globa
   }, [site, effectiveInterval]);
 
   // Inyecta los disclaimers globales en el stack.
-  // Reglas:
-  //  - Devcon (source=dev-console o sender=devcon): SIEMPRE se muestra, sin filtro seen.
-  //  - Otros: se muestra si no se ha visto (seen) O si es un disclaimer nuevo (no está en seen).
-  //  - El usuario pide que SIEMPRE salgan independientemente del count almacenado.
-  //    Así que eliminamos el filtro seen para todos; solo filtramos expirados en el poll.
+  // Regla: si el usuario cerró el disclaimer con la X (visto), NO vuelve a
+  // aparecer (localStorage por web), igual que el disclaimer beta default.
+  // Aplica a TODOS (incluidos los de devcon): al cerrar se recuerda el id y,
+  // al recargar o pasar el tiempo, no reaparece. Un envío nuevo genera un id
+  // nuevo, así que el devcon puede seguir probando.
   useEffect(() => {
     const active = new Set<string>();
     for (const row of rows) {
       const key = `gd_${row.id}`;
       const isDevcon = row.sender === 'devcon' || row.source === 'dev-console';
-      // SIEMPRE mostrar: quitamos el filtro seen. El usuario quiere que salgan siempre.
+      if (seenRef.current.has(row.id)) {
+        continue;
+      }
       active.add(key);
       push({
         id: key,
@@ -581,12 +812,12 @@ export function GlobalDisclaimer({ site, pollInterval, disabled = false }: Globa
         message: isDevcon ? `[DEVCON] ${row.message}` : row.message,
         dismissible: row.dismissible,
         expiresAt: row.expires_at,
+        startsAt: row.starts_at ?? undefined,
         image: row.image ?? undefined,
+        actions: row.actions ?? undefined,
         onClose: () => {
-          if (!isDevcon) {
-            seenRef.current.add(row.id);
-            gdPersistSeen(site, seenRef.current);
-          }
+          seenRef.current.add(row.id);
+          gdPersistSeen(site, seenRef.current);
           remove(key);
         },
       });

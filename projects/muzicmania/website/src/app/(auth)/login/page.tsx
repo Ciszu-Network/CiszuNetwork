@@ -161,7 +161,7 @@ export default function LoginPage() {
     e.preventDefault();
     Object.keys(form).forEach(key => validateField(key, form[key as keyof typeof form] as string));
     
-    if (!form.captchaToken && process.env.NODE_ENV === 'production') {
+    if (!form.captchaToken) {
       setErrors(prev => ({ ...prev, captcha: 'Debes completar el reCAPTCHA' }));
       return;
     }
@@ -171,6 +171,16 @@ export default function LoginPage() {
 
     setFeedback({ isVisible: true, type: 'loading', title: 'Verificando', message: 'Iniciando sesión en el sistema...' });
     try {
+      const verifyRes = await fetch('/api/verify-recaptcha', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: form.captchaToken, siteKey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_MUZIC, version: 'v3' }),
+      });
+      const verifyData = await verifyRes.json();
+      if (!verifyData.success) {
+        throw new Error(verifyData.error || 'Verificación de reCAPTCHA fallida');
+      }
+
       if (!needs2FA) {
         let emailToUse = form.identifier;
         let cleanIdentifier = form.identifier.trim();
@@ -413,8 +423,8 @@ export default function LoginPage() {
 
               <div className="pt-2 flex flex-col items-center gap-2">
                 <ReCAPTCHA
-                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ""}
-                  theme="dark"
+                  size="invisible"
+                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_MUZIC || ''}
                   onChange={(val: string | null) => {
                     setForm(prev => ({ ...prev, captchaToken: val }));
                     if (val) setErrors(prev => ({ ...prev, captcha: '' }));
