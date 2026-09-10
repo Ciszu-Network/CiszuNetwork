@@ -26,9 +26,9 @@ type StatCard = {
 
 const statCards: StatCard[] = [
   { key: 'visitors', label: 'Visitantes', sub: 'Visitors', icon: 'users' },
-  { key: 'page_views', label: 'Vistas', sub: 'Page views', icon: 'zap' },
+  { key: 'page_views', label: 'Vistas', sub: 'Page views', icon: 'flame' },
   { key: 'reviews_count', label: 'Reseñas', sub: 'Reviews', icon: 'star' },
-  { key: 'tickets_open', label: 'Tickets abiertos', sub: 'Open tickets', icon: 'alert' },
+  { key: 'tickets_open', label: 'Tickets abiertos', sub: 'Open tickets', icon: 'warning' },
   { key: 'avg_rating', label: 'Rating promedio', sub: 'Average rating', icon: 'verified' },
   { key: 'updated_at', label: 'Última actualización', sub: 'Last updated', icon: 'clock', format: (value) => new Date(value as string).toLocaleString() },
 ];
@@ -67,7 +67,11 @@ export default function StatsPage() {
       <div className="max-w-4xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand/10 text-brand-light mb-6">
-            <Icon name="chart" size={32} />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="w-8 h-8">
+              <path d="M12 20V10" />
+              <path d="M18 20V4" />
+              <path d="M6 20V14" />
+            </svg>
           </div>
           <h1 className="text-4xl md:text-6xl font-header font-black bg-gradient-to-r from-brand-light to-brand-accent bg-clip-text text-transparent uppercase tracking-tighter mb-4">
             Stats

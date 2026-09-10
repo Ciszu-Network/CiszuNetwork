@@ -134,10 +134,10 @@ const DownloadOverlay = ({ onClose }: { onClose: () => void }) => (
   </motion.div>
 );
 
-const InfoCard = ({ title, desc, icon, color }: { title: string; desc: string; icon: React.ReactNode; color: string }) => (
+const InfoCard = ({ title, desc, icon, glowClass, iconClass }: { title: string; desc: string; icon: React.ReactNode; glowClass: string; iconClass: string }) => (
   <div className="bg-white/5 border border-white/10 rounded-3xl p-8 hover:border-white/20 transition-all flex gap-6 items-start relative group overflow-hidden">
-    <div className={`absolute top-0 right-0 w-24 h-24 bg-${color}/5 blur-xl group-hover:bg-${color}/10 transition-all rounded-full`} />
-    <div className={`w-12 h-12 rounded-2xl bg-black border border-white/10 flex items-center justify-center text-${color} p-3 shrink-0`}>
+    <div className={`absolute top-0 right-0 w-24 h-24 blur-xl rounded-full ${glowClass}`} />
+    <div className={`w-12 h-12 rounded-2xl bg-black border border-white/10 flex items-center justify-center p-3 shrink-0 ${iconClass}`}>
       {icon}
     </div>
     <div className="space-y-2 relative z-10">
@@ -525,19 +525,22 @@ export default function DownloadPage() {
               title="Prioridad del Proceso" 
               desc="Al ejecutarse en un proceso aislado a través del núcleo de Tauri en Rust, MuzicMania recibe prioridad sobre otros subprocesos de Windows, garantizando cero congelamientos."
               icon={<MonitorIcon />}
-              color="neon-blue"
+              glowClass="bg-neon-blue/5 group-hover:bg-neon-blue/10"
+              iconClass="text-neon-blue"
             />
             <InfoCard 
               title="Aislamiento del Teclado" 
               desc="Se interceptan y bloquean atajos de navegador conflictivos (F5, F11, Alt+D, Spacebar scroll). Tus controles y combos permanecen 100% seguros y estables."
               icon={<TerminalIcon />}
-              color="neon-purple"
+              glowClass="bg-neon-purple/5 group-hover:bg-neon-purple/10"
+              iconClass="text-neon-purple"
             />
             <InfoCard 
               title="Motor Gráfico WebView2" 
               desc="Se utiliza el SDK nativo de Windows Chromium con aceleración directa por GPU y asignación de buffer independiente para mantener frames óptimos (144 fps)."
               icon={<LayersIcon />}
-              color="neon-pink"
+              glowClass="bg-neon-pink/5 group-hover:bg-neon-pink/10"
+              iconClass="text-neon-pink"
             />
           </div>
         </motion.section>

@@ -381,6 +381,39 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ═══ PROJECT PROVIDED BY CISZU NETWORK ═══ */}
+      <section className="relative py-16 border-t border-white/5">
+        <div className="max-w-screen-xl mx-auto px-4 text-center">
+          <div className="soft-card relative max-w-4xl mx-auto border border-brand/30 overflow-hidden group">
+            <div className="absolute -top-20 -right-20 w-64 h-64 bg-brand/10 rounded-full blur-[80px] group-hover:bg-brand-light/15 transition-all" />
+            <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-brand-accent/10 rounded-full blur-[80px] group-hover:bg-brand-accent/15 transition-all" />
+            <div className="relative p-8 md:p-12 flex flex-col items-center gap-6">
+              <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-brand via-brand-light to-brand-accent flex items-center justify-center shadow-[0_0_30px_rgba(35,63,146,0.4)] border-2 border-brand-300/30">
+                <Image
+                  src={assetResolver.resolve("projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg")}
+                  alt="Ciszu Network"
+                  width={40}
+                  height={40}
+                  className="w-10 h-10 text-white"
+                />
+              </div>
+              <div>
+                <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Project provided by CiszuNetwork</h2>
+                <p className="text-gray-400 max-w-xl mx-auto">This project is part of the Ciszu Network ecosystem. Discover more projects and tools built by Ciszuko Antony.</p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link href="/projects" className="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-brand to-brand-light text-white font-bold rounded-xl shadow-lg shadow-brand/30 hover:shadow-2xl hover:shadow-brand/40 hover:scale-105 transition-all">
+                  View Projects <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link href="/contact" className="inline-flex items-center gap-2 px-8 py-3.5 bg-white/5 border border-white/20 text-white font-bold rounded-xl hover:bg-white/10 hover:scale-105 transition-all">
+                  Contact <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <QuickDocks />
     </div>
   );
