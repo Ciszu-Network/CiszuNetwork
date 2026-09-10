@@ -192,13 +192,15 @@ Permite configurar disclaimers en local para depurar el sistema global de avisos
 (`DisclaimerStack`). Flujo:
 
 1. **Acciones**: crear · eliminar · modificar · resumen · reiniciar (todos) · verificar entrega.
-2. **Crear**: webs destino (casillas) → mensaje → tipo (info/beta/warning) →
+2. **Crear**: webs destino (casillas) → mensaje → tipo (info/basic/warning) →
    **duración** (temporal sin fecha / temporal con fecha de culminación / permanente) →
-   **cierre** (opcional con X / obligatorio sin X) → imagen (URL opcional).
+   **cierre** (opcional con X / obligatorio sin X) → imagen (URL opcional) →
+   **botones de acción** (opcional, repetible): `Texto|URL` para abrir una página,
+   o `Texto|close` / `Texto|` para botón que cierra el disclaimer como la X (ej: "OK|close").
 3. **Fecha de culminación**: hora (HH:MM 24h), día, mes y año. Si la fecha es anterior a la
    actual o inválida, da error y no guarda. Al llegar la fecha, el disclaimer se cierra solo y
    no vuelve a aparecer (contador visible en el stack).
-4. **Modificar** permite cambiar periodo/cierre/tipo de un disclaimer existente por webs.
+4. **Modificar** permite cambiar periodo/cierre/tipo/acciones de un disclaimer existente por webs.
 5. **Verificar entrega**: consulta `GET /api/disclaimers/debug` en cada web encendida y
    compara los items recibidos contra la config local (`disclaimers_debug.json`). Muestra
    ✅ entregado / ⏳ pendiente… / ⚠️ sin confirmación (pendiente…) tras 30s.
@@ -218,15 +220,21 @@ global. En producción no tiene efecto.
 
 Replica el sistema de advisors para disclaimers de cabecera a nivel ecosistema:
 
-- **Tablas** (migración `20260902000027_global_disclaimers.sql`):
+- **Tablas** (migración `20260902000027_global_disclaimers.sql` y
+  `20260910000001_global_disclaimers_multilang.sql`):
   `global_disclaimers` · `global_disclaimer_settings` (kill switch) ·
   `global_disclaimer_deliveries` (confirmación por web).
 - **Componente** `GlobalDisclaimer` (`@ciszu/ui`), montado en los 4 layouts junto al
   `DisclaimerStack`: hace polling a la BD (cada 20s), respeta el kill switch, confirma
   entrega por sitio y muestra los disclaimers en el stack de cabecera.
-- **Script** `scripts/disclaimer.js`: envía (`--target global|site --kind info|beta|warning
-  --dismissible on|off --expires ISO`), gestiona el kill switch (`--toggle on|off`), lista
-  y borra. Con `--wait` espera confirmación de entrega por web ("Pendiente...").
+- **Script** `scripts/disclaimer.js`: envía (`--target global|site --kind info|basic|warning
+  --dismissible on|off --expires ISO --action "Texto|URL"`), gestiona el kill switch
+  (`--toggle on|off`), lista y borra. Con `--wait` espera confirmación de entrega por web
+  ("Pendiente...").
+  - `--action "OK|close"` o `--action "OK|"` crea un botón que cierra el disclaimer
+    como si fuera la X (estilo "Estamos trabajando... OK").
+  - `--action "Ver más|https://..."` crea un botón que abre la URL en nueva pestaña.
+  - Se puede repetir `--action` para añadir varios botones al mismo disclaimer.
 - **Devcon**: opciones "Disclaimers: GLOBAL (enviar)", "Disclaimers: activar/desactivar
   globales (kill switch)" y "Disclaimers: borrar globales" en Herramientas.
 
