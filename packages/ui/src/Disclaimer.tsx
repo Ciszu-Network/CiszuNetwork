@@ -3,7 +3,7 @@
 /* ------------------------------------------------------------------ *
  * SISTEMA DE DISCLAIMERS (ciszu network — paquete @ciszu/ui)
  *
- * Sustituye los banners sueltos (BetaDisclaimer, ZoomWarning) por un
+ * Sustituye los banners sueltos (ZoomWarning) por un
  * sistema global apilable que SE ADAPTA AL HEADER de cada web:
  *
  *  - Header estático (full): el disclaimer se ancla DEBAJO del header,
@@ -20,7 +20,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 import { useSyncExternalStore } from 'react';
 import { useZoomWarningActive } from './zoomStore';
 
-export type DisclaimerKind = 'info' | 'beta' | 'warning' | 'basic';
+export type DisclaimerKind = 'info' | 'basic' | 'warning';
 
 export interface DisclaimerAction {
   label: string;
@@ -76,7 +76,7 @@ export function DisclaimerProvider({ children }: { children: React.ReactNode }) 
   return <DisclaimerContext.Provider value={value}>{children}</DisclaimerContext.Provider>;
 }
 
-/** Hook para que los productores (BetaDisclaimer, ZoomWarning, etc.) publiquen/retiren disclaimers. */
+/** Hook para que los productores (ZoomWarning, etc.) publiquen/retiren disclaimers. */
 export function useDisclaimer() {
   const ctx = useContext(DisclaimerContext);
   if (!ctx) throw new Error('useDisclaimer debe usarse dentro de <DisclaimerProvider>.');
@@ -126,17 +126,9 @@ const ICONS: Record<DisclaimerKind, React.ReactNode> = {
       <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z" />
     </svg>
   ),
-  // 'basic' sustituye a 'beta' (renombrado por claridad); mismo icono informativo.
   basic: (
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z" />
-    </svg>
-  ),
-  beta: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="10" />
-      <path d="M12 8h.01" />
-      <path d="M12 12v4" />
     </svg>
   ),
   warning: (
@@ -213,7 +205,6 @@ const DISCLAIMER_CSS = `
   color: var(--accent, #22d3ee);
 }
 .disclaimer-item.warning .disc-icon { color: var(--warn, #f59e0b); }
-.disclaimer-item.beta .disc-icon { color: var(--accent, #22d3ee); }
 .disclaimer-item .disc-body {
   display: flex;
   align-items: center;
@@ -702,7 +693,7 @@ export interface GlobalDisclaimerRow {
   sender: string;
   source: string;
   message: string;
-  kind: 'info' | 'beta' | 'warning' | 'basic';
+  kind: 'info' | 'basic' | 'warning';
   target: string;
   dismissible: boolean;
   expires_at: string | null;

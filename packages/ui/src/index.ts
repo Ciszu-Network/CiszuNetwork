@@ -94,9 +94,6 @@ export { default as SocialIcon, SOCIAL_COLORS } from './SocialIcon';
 export type { SocialPlatform } from './SocialIcon';
 export { default as ZoomWarning, useZoomStatus, dismissZoomWarning, isZoomWarningActive } from './ZoomWarning';
 export type { ZoomState, ZoomStatus } from './ZoomWarning';
-// BetaDisclaimer: aviso BETA de extremo a extremo en la cabecera (descartable con X)
-export { default as BetaDisclaimer } from './BetaDisclaimer';
-export type { BetaDisclaimerProps } from './BetaDisclaimer';
 // Sistema de disclaimers: stack global apilable que se adapta al header (full/island)
 export {
   DisclaimerProvider,
