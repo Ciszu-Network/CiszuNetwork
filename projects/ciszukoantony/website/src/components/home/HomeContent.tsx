@@ -219,23 +219,31 @@ export default function HomeContent() {
 
       <section className="py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="soft-card rounded-3xl p-8 md:p-12 border border-border">
-            <div className="flex flex-col items-center gap-6">
-              <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-brand-400/12 border border-brand-400/25 flex items-center justify-center">
-                <svg viewBox="0 0 24 24" className="w-10 h-10 md:w-12 md:h-12 text-brand-600 dark:text-brand-300" fill="none" stroke="currentColor" strokeWidth={1.5}>
-                  <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                  <path d="M2 17l10 5 10-5" />
-                  <path d="M2 12l10 5 10-5" />
-                </svg>
+          <div className="soft-card rounded-3xl p-8 md:p-12 border border-gradient-to-b from-brand-500/20 via-brand-400/20 to-brand-500/20">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-8">
+              <div className="w-20 h-20 md:w-24 md:h-24 rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center border-2 border-brand-300/30">
+                <SmartImage
+                  src="projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg"
+                  alt="Ciszu Network"
+                  width={40}
+                  height={40}
+                  className="w-8 h-8 text-white"
+                />
               </div>
               <div>
-                <h2 className="text-2xl md:text-3xl font-bold text-ink mb-2">Project provided by CiszuNetwork</h2>
+                <h2 className="text-2xl md:text-3xl font-bold text-brand mb-2">Project provided by CiszuNetwork</h2>
                 <p className="text-muted max-w-xl mx-auto">This project is part of the Ciszu Network ecosystem. Discover more projects and tools built by Ciszuko Antony.</p>
               </div>
-              <Link href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl text-sm font-bold tracking-wide btn-ghost">
+            </div>
+            <div className="flex flex-col items-center gap-4">
+              <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="w-full md:w-auto bg-gradient-to-r from-brand-500 to-brand-600 text-white font-bold rounded-xl px-8 py-3.5 text-sm font-bold tracking-wide shadow-lg shadow-brand-300/30 hover:shadow-2xl hover:shadow-brand-400/30 transition-all">
                 Visit CiszuNetwork
-                <span className="group-hover:translate-x-1 transition-transform">{I.chevronRight}</span>
-              </Link>
+                <svg viewBox="0 0 24 24" className="w-4 h-4 ml-2 -mt-0.5" fill="none" stroke="currentColor" strokeWidth={2}><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+              <a href="/projects" className="w-full md:w-auto bg-white/5 border border-white/20 rounded-xl px-8 py-3.5 text-sm font-medium text-white hover:bg-white hover:text-black transition-all hover:shadow-lg hover:shadow-white/20">
+                View All Projects
+                <svg viewBox="0 0 24 24" className="w-4 h-4 ml-2 -mt-0.5" fill="none" stroke="currentColor" strokeWidth={2}><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
             </div>
           </div>
         </div>

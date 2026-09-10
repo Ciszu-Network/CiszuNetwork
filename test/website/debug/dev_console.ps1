@@ -1473,7 +1473,13 @@ function Show-DisclaimersHybrid {
         $extra = @('scripts/disclaimer.js', $msg, '--target', $globalTarget, '--kind', $kind, '--session', $script:disclaimerSession, '--actor', $script:devIdentity, '--wait')
         if ($expiresAt) { $extra += @('--expires', $expiresAt) }
         $extra += @('--dismissible', $(if ($dismissible) { 'on' } else { 'off' }))
-        if (-not $devconLabel) { $extra += @('--sender', 'admin') }
+        if (-not $devconLabel) {
+            $extra += @('--sender', 'admin')
+            $extra += @('--source', 'admin')
+        } else {
+            $extra += @('--sender', 'devcon')
+            $extra += @('--source', 'dev-console')
+        }
         if ($image) { $extra += @('--image', $image) }
         foreach ($act in $actions) {
             $extra += @('--action', "$($act.label)|$($act.href)")
@@ -1663,7 +1669,13 @@ function Show-DisclaimerGlobal {
         $extra = @('scripts/disclaimer.js', $msg, '--target', $target, '--kind', $kind, '--session', $script:disclaimerSession, '--actor', $script:devIdentity, '--wait')
         if ($expires) { $extra += @('--expires', $expires) }
         $extra += @('--dismissible', $(if ($dismissible) { 'on' } else { 'off' }))
-        if (-not $useDevconSender) { $extra += @('--sender', 'admin') }
+        if (-not $useDevconSender) {
+            $extra += @('--sender', 'admin')
+            $extra += @('--source', 'admin')
+        } else {
+            $extra += @('--sender', 'devcon')
+            $extra += @('--source', 'dev-console')
+        }
 
         Write-Host ""
         Write-Host "${c_cyan}Enviando disclaimer a [$target] · tipo [$kind] (esperando entrega...)${c_reset}"
