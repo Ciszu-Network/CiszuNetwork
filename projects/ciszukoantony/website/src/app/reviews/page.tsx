@@ -1,13 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Icon } from '@ciszu/ui';
 import Script from 'next/script';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { usePageTitle } from '@/lib/usePageTitle';
+import Link from 'next/link';
+import AuthWarningModal from '@/components/shared/AuthWarningModal';
+import { useAppStore } from '@/store';
 
 const GHOST_RATING = 5.0;
+const PAGE_SIZE = 10;
 
 const STATIC_REVIEWS = [
   {
@@ -18,6 +22,8 @@ const STATIC_REVIEWS = [
     author: 'Cliente verificado',
     is_verified: true,
     created_at: '2026-08-01T12:00:00.000Z',
+    likes: 0,
+    liked: false,
   },
   {
     id: 'antony-2',
@@ -27,6 +33,8 @@ const STATIC_REVIEWS = [
     author: 'Miembro activo',
     is_verified: false,
     created_at: '2026-08-10T12:00:00.000Z',
+    likes: 0,
+    liked: false,
   },
   {
     id: 'antony-3',
@@ -36,8 +44,12 @@ const STATIC_REVIEWS = [
     author: 'Usuario web',
     is_verified: true,
     created_at: '2026-08-15T12:00:00.000Z',
+    likes: 0,
+    liked: false,
   },
 ];
+
+type Review = typeof STATIC_REVIEWS[number];
 
 const sectionVariants = {
   hidden: { opacity: 0, y: 30 },
@@ -74,13 +86,54 @@ const I = {
 
 export default function ReviewsPage() {
   usePageTitle('REVIEWS');
-  const [reviews] = useState<typeof STATIC_REVIEWS>(() => STATIC_REVIEWS);
-
+  const { user } = useAppStore();
+  const [reviews] = useState<Review[]>(() => STATIC_REVIEWS);
+  const [page, setPage] = useState(0);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authAction, setAuthAction] = useState('');
+  const totalPages = Math.max(1, Math.ceil(reviews.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages - 1);
+  const pageReviews = useMemo(() => {
+    const start = currentPage * PAGE_SIZE;
+    return reviews.slice(start, start + PAGE_SIZE);
+  }, [reviews, currentPage]);
   const reviewsCount = reviews.length;
   const averageWithGhost = reviewsCount > 0
     ? (reviews.reduce((sum, r) => sum + r.rating, 0) + GHOST_RATING) / (reviewsCount + 1)
     : GHOST_RATING;
   const hasRealReviews = reviewsCount > 0;
+
+  const handleActionRequiresAuth = useCallback((actionName: string) => {
+    setAuthAction(actionName);
+    setShowAuthModal(true);
+  }, []);
+
+  const handleLike = useCallback((reviewId: string) => {
+    if (!user) {
+      handleActionRequiresAuth('like');
+      return;
+    }
+  }, [handleActionRequiresAuth, user]);
+
+  const buildDots = () => {
+    const total = totalPages;
+    const current = currentPage;
+    const pages: (number | 'left-more' | 'right-more')[] = [];
+    if (total <= 7) {
+      for (let i = 0; i < total; i++) pages.push(i);
+    } else {
+      pages.push(0);
+      if (current > 3) pages.push('left-more');
+      const start = Math.max(1, current - 1);
+      const end = Math.min(total - 2, current + 1);
+      for (let i = start; i <= end; i++) pages.push(i);
+      if (current < total - 4) pages.push('right-more');
+      pages.push(total - 1);
+    }
+    return pages;
+  };
+
+  const goTo = (idx: number) => setPage(idx);
 
   return (
     <div className="min-h-screen pt-24 pb-16 px-4 relative">
@@ -135,12 +188,15 @@ export default function ReviewsPage() {
                 ? `Baseline + ${reviewsCount} review${reviewsCount !== 1 ? 's' : ''}`
                 : 'No user reviews to analyze — showing baseline 5.0'}
             </p>
+            <Link href="/reviews/new" className="mt-2 inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-neon-purple to-neon-pink text-white font-header font-black uppercase tracking-widest text-xs shadow-lg hover:scale-105 active:scale-95 transition-all">
+              Escribir reseña
+            </Link>
           </div>
         </motion.div>
 
         <motion.div initial="hidden" animate="visible" variants={sectionVariants} className="grid grid-cols-1 gap-10">
           <AnimatePresence mode="popLayout">
-            {reviews.map((rev, i) => (
+            {pageReviews.map((rev, i) => (
               <motion.div
                 key={rev.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -173,6 +229,13 @@ export default function ReviewsPage() {
                         Verificado
                       </div>
                     )}
+                    <button
+                      onClick={() => handleLike(rev.id)}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl border text-[11px] font-header font-black uppercase tracking-widest transition-all bg-white/5 border-white/10 text-white/70 hover:border-neon-purple/30 hover:text-neon-purple"
+                    >
+                      <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                      {rev.likes ?? 0}
+                    </button>
                   </div>
                 </div>
 
@@ -197,6 +260,39 @@ export default function ReviewsPage() {
           </AnimatePresence>
         </motion.div>
 
+        <div className="flex flex-wrap items-center justify-center gap-3 mt-10 mb-12">
+          <button
+            onClick={() => goTo(currentPage - 1)}
+            disabled={currentPage === 0}
+            className="h-10 w-10 rounded-full border border-white/10 bg-white/5 text-white/70 hover:border-neon-purple/30 hover:text-neon-purple disabled:opacity-30 flex items-center justify-center transition-all"
+          >
+            ‹
+          </button>
+          {buildDots().map((p, idx) => {
+            if (p === 'left-more' || p === 'right-more') {
+              return <span key={`${p}-${idx}`} className="text-[10px] text-white/30 font-black tracking-widest px-1">…</span>;
+            }
+            const pageIdx = p as number;
+            const isActive = pageIdx === currentPage;
+            return (
+              <button
+                key={pageIdx}
+                onClick={() => goTo(pageIdx)}
+                className={`h-10 min-w-[40px] rounded-full border text-xs font-black uppercase tracking-widest transition-all ${isActive ? 'bg-neon-purple text-white border-neon-purple' : 'bg-white/5 border-white/10 text-white/70 hover:border-neon-purple/30 hover:text-neon-purple'}`}
+              >
+                {pageIdx + 1}
+              </button>
+            );
+          })}
+          <button
+            onClick={() => goTo(currentPage + 1)}
+            disabled={currentPage >= totalPages - 1}
+            className="h-10 w-10 rounded-full border border-white/10 bg-white/5 text-white/70 hover:border-neon-purple/30 hover:text-neon-purple disabled:opacity-30 flex items-center justify-center transition-all"
+          >
+            ›
+          </button>
+        </div>
+
         <QuickDocks />
 
         <motion.section initial="hidden" animate="visible" variants={sectionVariants} className="space-y-12 pt-12">
@@ -206,10 +302,10 @@ export default function ReviewsPage() {
               Verifica la reputación de Ciszuko Antony en plataformas independientes.
             </p>
             <div className="flex flex-wrap justify-center gap-6 mb-8">
-              <div className="px-6 py-3 rounded-2xl bg-black border-2 border-neon-green/30 text-neon-green font-header font-black text-sm uppercase tracking-widest">
+              <div className="px-6 py-3 rounded-2xl bg-black border-2 border-neon-green/30 text-neon-green font-header font-black text-sm uppercase tracking-widest shadow-[0_0_25px_rgba(74,222,128,0.15)]">
                 Trustpilot
               </div>
-              <div className="px-6 py-3 rounded-2xl bg-black border-2 border-[#5865F2]/30 text-[#5865F2] font-header font-black text-sm uppercase tracking-widest">
+              <div className="px-6 py-3 rounded-2xl bg-black border-2 border-[#5865F2]/30 text-[#5865F2] font-header font-black text-sm uppercase tracking-widest shadow-[0_0_25px_rgba(88,101,242,0.15)]">
                 Discord Server
               </div>
             </div>
@@ -225,6 +321,10 @@ export default function ReviewsPage() {
         </motion.section>
         <Script src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js" strategy="lazyOnload" />
       </div>
+
+      {showAuthModal && (
+        <AuthWarningModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} message={`Necesitas una cuenta para ${authAction || 'interactuar en esta sección'}.`} />
+      )}
     </div>
   );
 }

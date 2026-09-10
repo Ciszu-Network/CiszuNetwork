@@ -1,143 +1,81 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
-import { cookies } from 'next/headers';
-import { Icon } from '@ciszu/ui';
-import { getDict, parseLang, isEsLang } from '@/lib/i18n';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import { Icon } from '@ciszu/ui';
 
 export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: 'CiszuBot | STATS',
-  description:
-    'Estadísticas de CiszuBot: servidores conectados, comandos ejecutados, uptime y versión.',
+  description: 'Estadísticas de CiszuBot: visitantes, vistas, reseñas, tickets y rating.',
 };
 
-interface BotStatus {
-  online: boolean;
-  last_seen: string | null;
-  started_at: string | null;
-  version: string | null;
-  guilds: number;
-  commands_total: number;
-  prefix: string;
-}
-
-async function getBotStatus(): Promise<BotStatus | null> {
+async function getStats() {
   try {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'https://obwzzmbvkrcscqwptlqo.supabase.co';
     const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
     const res = await fetch(
-      `${url}/rest/v1/bot_status?select=online,last_seen,started_at,version,guilds,commands_total,prefix&id=eq.1`,
+      `${url}/rest/v1/ciszubot_stats?select=visitors,page_views,reviews_count,tickets_open,avg_rating,updated_at&id=eq.1`,
       {
         headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}`, 'Accept-Profile': 'ciszubot' },
         next: { revalidate: 60 },
       }
     );
     if (!res.ok) return null;
-    const rows = (await res.json()) as BotStatus[];
+    const rows = await res.json();
     return rows[0] ?? null;
   } catch {
     return null;
   }
 }
 
-function formatUptime(startedAt: string | null, now: number): string {
-  if (!startedAt) return '—';
-  const diff = Math.max(0, Math.floor((now - Date.parse(startedAt)) / 1000));
-  const h = Math.floor(diff / 3600);
-  const m = Math.floor((diff % 3600) / 60);
-  const s = diff % 60;
-  if (h > 0) return `${h}h ${m}m ${s}s`;
-  if (m > 0) return `${m}m ${s}s`;
-  return `${s}s`;
-}
+const statCards = [
+  { key: 'visitors', label: 'Visitantes', sub: 'Visitors', icon: 'users' },
+  { key: 'page_views', label: 'Vistas', sub: 'Page views', icon: 'zap' },
+  { key: 'reviews_count', label: 'Reseñas', sub: 'Reviews', icon: 'star' },
+  { key: 'tickets_open', label: 'Tickets abiertos', sub: 'Open tickets', icon: 'alert' },
+  { key: 'avg_rating', label: 'Rating promedio', sub: 'Average rating', icon: 'verified' },
+  { key: 'uptime', label: 'Uptime', sub: 'Uptime', icon: 'clock' },
+] as const;
 
-export default async function StatusPage() {
-  const store = await cookies();
-  const lang = parseLang(store.get('ciszubot_lang')?.value);
-  const t = getDict(lang);
-  const locale = isEsLang(lang) ? 'es' : 'en';
-
-  const status = await getBotStatus();
-  const now = Date.now();
-  const lastSeenMs = status?.last_seen ? Date.parse(status.last_seen) : 0;
-  const heartbeatFresh = now - lastSeenMs < 3 * 60 * 1000;
-  const isOnline = Boolean(status?.online) && heartbeatFresh;
-
-  const stats = [
-    { icon: 'server', label: t.statusPage.servers, value: status ? String(status.guilds) : '—', filled: true },
-    { icon: 'terminal', label: t.statusPage.commandsRun, value: status ? status.commands_total.toLocaleString(locale) : '—', filled: true },
-    { icon: 'clock', label: t.statusPage.uptime, value: formatUptime(status?.started_at ?? null, now), filled: false },
-    { icon: 'verified', label: t.statusPage.version, value: status?.version ?? '—', filled: false },
-  ];
+export default async function StatsPage() {
+  const stats = await getStats();
 
   return (
     <div className="bg-bg py-16">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-5xl font-bold text-ink">{t.statusPage.title}</h1>
-          <p className="mx-auto mt-4 max-w-2xl text-muted">{t.statusPage.subtitle}</p>
-        </div>
-
-        <div className="max-w-3xl mx-auto">
-          <div
-            className={`soft-card rounded-3xl p-8 border ${
-              isOnline ? 'border-success/30' : 'border-danger/30'
-            }`}
-          >
-            <div className="flex items-center justify-center gap-3 mb-8">
-              <span
-                className={`w-4 h-4 rounded-full ${
-                  isOnline ? 'bg-success animate-pulse shadow-[0_0_12px_var(--success)]' : 'bg-danger shadow-[0_0_12px_var(--danger)]'
-                }`}
-              />
-              <span className={`font-semibold text-2xl ${isOnline ? 'text-ink' : 'text-danger'}`}>
-                {isOnline ? t.statusPage.online : t.statusPage.offline}
-              </span>
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-neon-blue/12 text-neon-blue mb-6 shadow-[0_0_20px_rgba(0,212,255,0.25)]">
+              <Icon name="chart" size={32} />
             </div>
+            <h1 className="text-4xl md:text-6xl font-bold text-ink mb-4">
+              Stats
+            </h1>
+            <p className="text-muted max-w-xl mx-auto text-sm uppercase tracking-widest">
+              Estadísticas de CiszuBot
+            </p>
+          </div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-              {stats.map((s) => (
-                <div key={s.label} className="text-center">
-                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-brand-400/12 text-brand-600 dark:text-brand-300 mb-3">
-                    <Icon name={s.icon} style={s.filled ? 'filled' : 'outline'} size={20} />
-                  </span>
-                  <div className="text-xl md:text-2xl font-bold text-ink break-all">{s.value}</div>
-                  <div className="text-[10px] text-faint font-medium uppercase tracking-widest mt-1">{s.label}</div>
+          {!stats ? (
+            <div className="text-center">
+              <p className="text-muted text-sm">No hay métricas disponibles aún.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {statCards.map((s) => (
+                <div key={s.key} className="p-6 rounded-2xl bg-white/5 border border-white/10 text-center hover:border-neon-blue/30 transition-all">
+                  <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-neon-blue/10 text-neon-blue mb-3">
+                    <Icon name={s.icon} size={20} />
+                  </div>
+                  <div className="text-4xl md:text-5xl font-header font-black text-white mb-2">
+                    {s.key === 'avg_rating' ? (stats[s.key] ?? 0).toFixed(1) : (stats[s.key] ?? 0).toLocaleString()}
+                  </div>
+                  <div className="text-white font-bold text-sm mb-1">{s.label}</div>
+                  <div className="text-muted text-xs uppercase tracking-widest">{s.sub}</div>
                 </div>
               ))}
             </div>
-
-            <div className="mt-8 pt-6 border-t border-border grid sm:grid-cols-2 gap-4 text-sm">
-              {status?.started_at && (
-                <p className="text-muted">
-                  <span className="font-semibold text-ink">{t.statusPage.startedAt}:</span>{' '}
-                  {new Date(status.started_at).toLocaleString(locale)}
-                </p>
-              )}
-              <p className="text-muted">
-                <span className="font-semibold text-ink">{t.statusPage.lastSeen}:</span>{' '}
-                {status?.last_seen ? new Date(status.last_seen).toLocaleString(locale) : '—'}
-              </p>
-              {status?.prefix && (
-                <p className="text-muted">
-                  <span className="font-semibold text-ink">{t.statusPage.version}:</span>{' '}
-                  <code className="text-brand-600 dark:text-brand-300 bg-card border border-border px-1.5 py-0.5 rounded">{status.prefix}</code>
-                </p>
-              )}
-            </div>
-          </div>
-
-          <p className="mt-6 text-center text-xs text-faint">
-            {t.statusPage.refresh} {t.statusPage.updated}
-          </p>
-
-          <div className="text-center mt-8">
-            <Link href="/" className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold btn-ghost">
-              {t.statusPage.back}
-            </Link>
-          </div>
+          )}
         </div>
 
         <QuickDocks />

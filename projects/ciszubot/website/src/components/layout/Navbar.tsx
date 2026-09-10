@@ -23,22 +23,32 @@ const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'stats' | 'support' 
   { href: '/forum', key: 'forum', icon: 'message' },
   { href: '/support', key: 'support', icon: 'support' },
   { href: '/contact', key: 'contact', icon: 'mail' },
-  { href: '/documentation', key: 'documentation', icon: 'file' },
-  { href: '/about', key: 'about', icon: 'info' },
-  { href: '/team', key: 'team', icon: 'users' },
-  { href: '/help', key: 'help', icon: 'help' },
   { href: '/descargas', key: 'downloads', icon: 'download' },
   { href: '/feedback', key: 'feedback', icon: 'message' },
+  { href: '/documentation', key: 'documentation', icon: 'file' },
+  { href: '/team', key: 'team', icon: 'users' },
+  { href: '/about', key: 'about', icon: 'info' },
+  { href: '/help', key: 'help', icon: 'help' },
 ];
 
 // Clases responsive por índice de NAV_PAGES: el link activo siempre visible; el resto aparece según espacio.
 const NAV_HIDE_CLS: string[] = [
-  'hidden min-[330px]:flex',
-  'hidden min-[420px]:flex',
-  'hidden min-[510px]:flex',
-  'hidden min-[600px]:flex',
-  'hidden min-[690px]:flex',
-  'hidden min-[780px]:flex',
+  'hidden min-[320px]:flex',
+  'hidden min-[400px]:flex',
+  'hidden min-[480px]:flex',
+  'hidden min-[560px]:flex',
+  'hidden min-[640px]:flex',
+  'hidden min-[720px]:flex',
+  'hidden min-[800px]:flex',
+  'hidden min-[880px]:flex',
+  'hidden min-[960px]:flex',
+  'hidden min-[1040px]:flex',
+  'hidden min-[1120px]:flex',
+  'hidden min-[1200px]:flex',
+  'hidden min-[1280px]:flex',
+  'hidden min-[1360px]:flex',
+  'hidden min-[1440px]:flex',
+  'hidden min-[1520px]:flex',
 ];
 
 const SEARCH_PAGES: { href: string; labelKey: string; icon: string; keywords: string[] }[] = [
@@ -337,10 +347,10 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
 
           <div className="w-px h-7 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-1 shrink-0" />
 
-          <div className="flex items-center gap-1 flex-1 overflow-visible min-w-0">
+          <div className="flex items-center gap-1 flex-1 overflow-x-hidden min-w-0">
             {NAV_PAGES.map((link, idx) => {
               const active = isActive(link.href);
-              const responsiveClass = active ? 'flex' : (NAV_HIDE_CLS[idx] ?? 'hidden min-[780px]:flex');
+              const responsiveClass = active ? 'flex' : (NAV_HIDE_CLS[idx] ?? 'hidden min-[1520px]:flex');
               return (
                 <Link key={link.href} href={link.href} className={`${linkCls(link.href)} ${responsiveClass}`}>
                   <Icon name={link.icon} size={16} className="shrink-0" />
