@@ -16,6 +16,7 @@ import { I, MAIN_NAV_LINKS as NAV_LINKS, COMMUNITY_LINKS, GENERAL_INFO_LINKS, LE
 import { isTauri } from '@/lib/isTauri';
 import { getGuestName } from '@/lib/guest';
 import { loadPreferences, applyZoom, setMuteTab, updatePreferences, consumeReloadToastMsg, reloadAfterPrefChange } from '@/lib/preferences';
+import { getDict } from '@/lib/i18n';
 import PreferencesPanel from '@/components/molecules/PreferencesPanel';
 import { LANGUAGE_OPTIONS, isLangAvailable } from '@ciszu/ui';
 
@@ -25,6 +26,7 @@ export const NavbarContent = () => {
   const pathname  = usePathname();
   const router    = useRouter();
   const { isMusicPlaying,  toggleMusic,  isNavigating,  setIsNavigating,  isMenuOpen,  setIsMenuOpen,  sidebarView,  setSidebarView,  darkMode,  setDarkMode,  lang,  setLang,  user,  setUser } = useAppStore();
+  const dict = getDict(lang as any);
   const { toast } = useToast();
   const [isInfoOpen,    setIsInfoOpen]    = useState(false);
   const [isAccederOpen, setIsAccederOpen] = useState(false);
@@ -509,7 +511,7 @@ export const NavbarContent = () => {
                 <input
                   ref={inputRef}
                   type="text"
-                  placeholder="Seach pages in MuzicMania (example: home, bug, setup)..."
+                  placeholder={dict.nav.search}
                   value={query}
                   onChange={e => setQuery(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter' && suggestions[0]) { router.push(suggestions[0].href); setIsSearchOpen(false); }}}
@@ -566,7 +568,7 @@ export const NavbarContent = () => {
                 className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group ${
                   darkMode ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
                 }`}
-                title={darkMode ? 'Modo Claro' : 'Modo Oscuro'}
+                title={dict.common[darkMode ? 'lightMode' : 'darkMode']}
               >
                 {darkMode ? (
                   <svg className="w-5 h-5 text-black transition-transform duration-500 group-hover:rotate-12" viewBox="0 0 24 24" fill="currentColor">
@@ -587,7 +589,7 @@ export const NavbarContent = () => {
               <button
                 onClick={() => setSidebarView(sidebarView === 'main' ? 'lang' : 'main')}
                 className="group flex items-center gap-3 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all duration-300 shadow-lg"
-                title="Cambiar Idioma"
+                title={dict.common.changeLanguage}
               >
                 <svg className={`w-5 h-5 transition-transform duration-500 ${sidebarView === 'lang' ? 'rotate-90 text-neon-cyan' : 'group-hover:rotate-12 text-white/70'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                   <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>

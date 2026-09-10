@@ -2,23 +2,29 @@
 import fs from "fs";
 import path from "path";
 
-// Endpoint de DEBUG LOCAL (devcon) para PUSH de anuncios forzados.
-// Lee test/website/debug/local-logs/ads_push.json que el devcon escribe y
-// AdsProvider (@ciszu/ui) consume en desarrollo para mostrar el anuncio YA,
-// con aviso "enviado por devcon". SOLO responde en dev.
+function resolvePushFile(): string {
+  const cwd = process.cwd();
+  const candidates = [
+    path.resolve(cwd, "..", "..", "..", "test", "website", "debug", "local-logs", "ads_push.json"),
+    path.resolve(cwd, "..", "..", "test", "website", "debug", "local-logs", "ads_push.json"),
+    path.resolve(cwd, "test", "website", "debug", "local-logs", "ads_push.json"),
+  ];
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) return candidate;
+  }
+  return candidates[0];
+}
 
 export async function GET(_request: NextRequest) {
   if (process.env.NODE_ENV !== "development") {
-    return NextResponse.json({ enabled: false });
+    return NextResponse.json({ enabled: false, createdAt: null });
   }
   try {
-    const pushFile = path.resolve(
-      process.cwd(), "..", "..", "..", "test", "website", "debug", "local-logs", "ads_push.json"
-    );
-    if (!fs.existsSync(pushFile)) return NextResponse.json({ enabled: false });
+    const pushFile = resolvePushFile();
+    if (!fs.existsSync(pushFile)) return NextResponse.json({ enabled: false, createdAt: null });
     const raw = fs.readFileSync(pushFile, "utf8").replace(/^\uFEFF/, "");
     return NextResponse.json(JSON.parse(raw));
   } catch {
-    return NextResponse.json({ enabled: false });
+    return NextResponse.json({ enabled: false, createdAt: null });
   }
 }

@@ -60,7 +60,13 @@ const sections = [
     id: 'legal', title: 'Legal Notice',
     content: [
       NETWORK_LINK,
-      { text: '\u00AE is a registered trademark. All rights reserved. The content of this website may not be reproduced, distributed or used without prior written authorization. Product names, logos and brands mentioned are the property of their respective owners.' },
+      { text: '® is a registered trademark. All rights reserved. The content of this website may not be reproduced, distributed or used without prior written authorization. Product names, logos and brands mentioned are the property of their respective owners.' },
+    ] as RichPart[],
+  },
+  {
+    id: 'reviews', title: 'Reviews & Ratings',
+    content: [
+      { text: 'Public ratings for this site incorporate a ghost baseline review of 5.0 to reflect an objective quality standard. When no real user reviews exist, the displayed score is 5.0 and it is clearly indicated that there are no reviews to analyze. When real user reviews exist, the public rating is the arithmetic mean of the real reviews and the baseline 5.0. No reviews are fabricated: all visible reviews are real, or the site explicitly shows a "no reviews" state.' },
     ] as RichPart[],
   },
 ];

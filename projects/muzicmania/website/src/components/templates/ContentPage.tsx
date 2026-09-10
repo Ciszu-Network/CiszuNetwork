@@ -12,7 +12,7 @@ interface ContentPageProps {
 
 export const ContentPage = ({ title, subtitle, children, icon }: ContentPageProps) => {
   return (
-    <div className="min-h-screen bg-black text-white pb-20 px-4">
+    <div className="min-h-screen bg-token text-token pb-20 px-4">
       <div className="max-w-5xl mx-auto space-y-12">
         {/* Header Section */}
         <motion.div 

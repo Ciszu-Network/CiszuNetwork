@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { headers } from "next/headers";
+import { headers, cookies } from "next/headers";
 import { Exo_2, Rajdhani } from "next/font/google";
+import { getDict, parseLang } from "@/lib/i18n";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
@@ -13,6 +14,7 @@ import AuthProvider from "@/components/providers/AuthProvider";
 import AdsWithUser from "@/components/providers/AdsWithUser";
 import { metadataForPath } from "@/lib/page-metadata";
 import "./globals.css";
+
 const PROFILE_PIC = assetResolver.resolve("projects/ciszukoantony/content/logos/images/samples/circle/circle_1_yt.png");
 const OG_IMAGE = assetResolver.resolve("projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png");
 
@@ -64,10 +66,13 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   const store = await headers();
+  const cookieStore = await cookies();
+  const lang = parseLang(cookieStore.get("ciszu_lang")?.value);
+  const dict = getDict(lang);
   const isEdit = store.get("x-is-edit") === "1";
 
   return (
-    <html lang="en" className={`${exo2.variable} ${rajdhani.variable}`} suppressHydrationWarning>
+    <html lang={lang} className={`${exo2.variable} ${rajdhani.variable}`} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -88,14 +93,14 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={PROFILE_PIC} title="Ciszuko Antony" subtitle="Ciszuko Antony Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszukoantony">
               <AdBlockerGuard site="ciszukoantony" logo={PROFILE_PIC} title="Ciszuko Antony" accent="#a78bfa" accentAlt="#ff33cc">
               {/* BetaDisclaimer removido: ahora usa el sistema de push global (GlobalDisclaimer) */}
-              {!isEdit && <Navbar />}
+              {!isEdit && <Navbar lang={lang} dict={dict} />}
               {!isEdit && <ZoomWarning />}
               {!isEdit && <DisclaimerStack headerHeight={64} />}
               <DisclaimerDebug site="ciszukoantony" />
               <GlobalDisclaimer site="ciszukoantony" />
               <main className="flex-grow">{children}</main>
-              {!isEdit && <Footer />}
-              {!isEdit && <CookiesBanner />}
+              {!isEdit && <Footer lang={lang} dict={dict} />}
+              {!isEdit && <CookiesBanner lang={lang} dict={dict} />}
               </AdBlockerGuard>
             </CloudflareGuard>
             </AdsWithUser>
@@ -119,5 +124,3 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     </html>
   );
 }
-
-

@@ -55,6 +55,11 @@ const sections = [
     title: "Contacto Legal",
     content: `Para asuntos legales o solicitudes formales (acceso, rectificación, supresión de datos), escríbenos a: ${CISZU_NETWORK.email}`,
   },
+  {
+    id: "reviews",
+    title: "Reseñas y Calificaciones",
+    content: "Las calificaciones públicas de Ciszu Network incorporan una reseña base fantasma de 5.0 para reflejar un estándar de calidad objetivo. Cuando no existen reseñas reales de usuarios, se muestra 5.0 y se indica expresamente que no hay reseñas para analizar. Cuando existen reseñas reales, la calificación pública es la media aritmética entre las reseñas de usuarios y la reseña base 5.0. No se falsifican reseñas: todas las reseñas visibles son reales o, en su defecto, se muestra el estado de 'sin reseñas'.",
+  },
 ];
 
 export default function PoliciesPage() {

@@ -749,17 +749,16 @@ function Show-AdsDebug {
 
     # Submenú principal
     $mainOpts = @(
-        @{ ic = '📨'; l = "Enviar anuncio (aparece YA con badge devcon)" },
-        @{ ic = '⏸'; l = "Desactivar anuncios TEMPORALMENTE (sesión local, sin borrar)" },
-        @{ ic = '▶'; l = "Reactivar anuncios (push desactivado)" },
         @{ ic = '🗑'; l = "Quitar anuncios de pantalla (clearCurrent)" },
+        @{ ic = '⏸'; l = "Desactivar anuncios TEMPORALMENTE (sesion local, sin borrar)" },
+        @{ ic = '▶'; l = "Reactivar anuncios (push desactivado)" },
         @{ ic = '📋'; l = "Resumen del push actual" },
         @{ ic = '🛑'; l = "Eliminar push PERMANENTEMENTE (modo normal)" }
     )
     $mi = Show-Menu -Title "ANUNCIOS - ¿QUÉ QUIERES HACER?" -Options $mainOpts
     if ($mi -lt 0) { return }
-    if ($mi -eq 0) { Ads-SendPush $pushFile; Press-Continue; return }
-    if ($mi -eq 2) {
+    if ($mi -eq 0) { Show-AdsClear; Press-Continue; return }
+    if ($mi -eq 1) {
         if (Test-Path $pushFile) {
             $cfg = Get-Content $pushFile -Raw | ConvertFrom-Json
             $cfg.enabled = $false
@@ -769,7 +768,7 @@ function Show-AdsDebug {
         } else { Write-Host "${c_gray}No hay push activo. Nada que desactivar.${c_reset}" }
         Press-Continue; return
     }
-    if ($mi -eq 3) {
+    if ($mi -eq 2) {
         if (Test-Path $pushFile) {
             $cfg = Get-Content $pushFile -Raw | ConvertFrom-Json
             $cfg.enabled = $true
@@ -779,9 +778,8 @@ function Show-AdsDebug {
         } else { Write-Host "${c_gray}No hay push activo. Crea uno primero.${c_reset}" }
         Press-Continue; return
     }
-    if ($mi -eq 4) { Ads-ClearCurrent; Press-Continue; return }
-    if ($mi -eq 5) { Ads-PushSummary $pushFile; Press-Continue; return }
-    if ($mi -eq 6) {
+    if ($mi -eq 3) { Ads-PushSummary $pushFile; Press-Continue; return }
+    if ($mi -eq 4) {
         if (Test-Path $pushFile) { Remove-Item -LiteralPath $pushFile -Force; Write-Host "${c_yellow}Push BORRADO. Anuncios en modo normal (permanente).${c_reset}" }
         else { Write-Host "${c_gray}No había push activo. Ya estaba en modo normal.${c_reset}" }
         Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=ads-push-clear"
@@ -958,7 +956,7 @@ function Ads-PushSummary([string]$pushFile) {
     Write-Host "${c_gray}El push se lee en cada web vía /api/ads/push (solo dev).${c_reset}"
 }
 
-function Ads-ClearCurrent {
+function Show-AdsClear {
     Clear-Host
     Show-MenuHeader "QUITAR ANUNCIOS DE PANTALLA"
     Write-Host "${c_green}Dispara clearCurrent en las webs destino. Selecciona webs:${c_reset}"
@@ -980,6 +978,158 @@ function Ads-ClearCurrent {
         }
     }
     Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=ads-clear sites=$($r.Selection -join ',')"
+}
+
+# ---------- ADS global ----------
+function Invoke-AdsNode {
+    param([string[]]$NodeArgs)
+    Push-Location $root
+    try {
+        node @NodeArgs 2>&1 | Out-Host
+        $code = $LASTEXITCODE
+    } finally {
+        Pop-Location
+    }
+    return $code
+}
+
+function Show-AdsGlobal {
+    Clear-Host
+    Show-MenuHeader "ADS - GLOBAL (produccion)"
+    Write-Host "${c_gray}Envia un anuncio global a las webs via scripts/ads.js.${c_reset}"
+    Write-Host ""
+
+    $sites = @('ciszu', 'ciszukoantony', 'muzicmania', 'ciszubot')
+    $opts = $sites | ForEach-Object { @{ key = $_; l = $_ } }
+    $res = Show-MultiSelect -Title "WEBS DESTINO" -Options $opts -Init @($sites)
+    if ($res.Action -eq 'abort') { return }
+    if ($res.Action -eq 'noproceed' -or $res.Selection.Count -eq 0) {
+        Write-Host "${c_yellow}Selecciona al menos una web.${c_reset}"; Press-Continue; return
+    }
+    $target = $res.Selection -join ','
+
+    $typeOpts = @(
+        @{ ic = '🎯'; l = "Intrusivo" },
+        @{ ic = '🧩'; l = "Particulares" },
+        @{ ic = '🎁'; l = "Recompensa" },
+        @{ ic = '📌'; l = "Optional" }
+    )
+    $ti = Show-Menu -Title "TIPO" -Options $typeOpts
+    if ($ti -lt 0) { return }
+    $type = @('intrusive', 'particulares', 'reward', 'optional')[$ti]
+
+    $title = Read-Host "Título (Enter = por defecto)"
+    if (-not $title) { $title = 'Anuncio global (devcon)' }
+    $desc = Read-Host "Descripción (Enter = por defecto)"
+    if (-not $desc) { $desc = 'Enviado por la consola de desarrollo.' }
+    $cta = Read-Host "Texto del botón (Enter = Abrir)"
+    if (-not $cta) { $cta = 'Abrir' }
+    $href = Read-Host "URL destino (Enter = ciszunetwork)"
+    if (-not $href) { $href = 'https://ciszunetwork.vercel.app' }
+
+    $brandOpts = @(
+        @{ ic = '🌐'; l = "ciszunetwork" },
+        @{ ic = '🎨'; l = "ciszukoantony" },
+        @{ ic = '🤖'; l = "ciszubot" },
+        @{ ic = '🎵'; l = "muzicmania" },
+        @{ ic = '🎮'; l = "ciszugamens" },
+        @{ ic = '🌍'; l = "external" }
+    )
+    $bi = Show-Menu -Title "MARCA" -Options $brandOpts
+    if ($bi -lt 0) { return }
+    $brand = @('ciszunetwork', 'ciszukoantony', 'ciszubot', 'muzicmania', 'ciszugamens', 'external')[$bi]
+
+    Write-Host ""
+    Write-Host "${c_cyan}Enviando ADS a [$target] · tipo [$type] · marca [$brand] (esperando entrega...)${c_reset}"
+    Invoke-AdsNode @('scripts/ads.js', $title, $desc, $cta, $href, '--target', $target, '--type', $type, '--brand', $brand, '--sender', 'admin', '--session', $script:devSession, '--actor', $script:devIdentity, '--wait')
+
+    Write-Host ""
+    Write-Host "${c_green}[Enter] Enviar otro   ${c_red}[Q/Esc] Volver al menú${c_reset}"
+    $k = [System.Console]::ReadKey($true)
+    if ($k.Key -eq [ConsoleKey]::Q -or $k.Key -eq [ConsoleKey]::Escape) { return }
+}
+
+function Show-AdsHybrid {
+    Clear-Host
+    Show-MenuHeader "ADS - HIBRIDO (local + global)"
+    Write-Host "${c_gray}Combina el push local (ads_push.json) con el envio global (scripts/ads.js).${c_reset}"
+    Write-Host ""
+
+    $pushFile = Join-Path $LOG_DIR 'ads_push.json'
+
+    $mainOpts = @(
+        @{ ic = '🗑'; l = "Quitar anuncios de pantalla (clearCurrent)" },
+        @{ ic = '⏸'; l = "Desactivar anuncios TEMPORALMENTE (sesion local, sin borrar)" },
+        @{ ic = '▶'; l = "Reactivar anuncios (push desactivado)" },
+        @{ ic = '📋'; l = "Resumen del push actual" },
+        @{ ic = '🛑'; l = "Eliminar push PERMANENTEMENTE (modo normal)" },
+        @{ ic = '📤'; l = "Enviar anuncio (local + global)" }
+    )
+    $mi = Show-Menu -Title "ADS HIBRIDO - ¿QUÉ QUIERES HACER?" -Options $mainOpts
+    if ($mi -lt 0) { return }
+    if ($mi -eq 0) { Show-AdsClear; Press-Continue; return }
+    if ($mi -eq 1) {
+        if (Test-Path $pushFile) {
+            $cfg = Get-Content $pushFile -Raw | ConvertFrom-Json
+            $cfg.enabled = $false
+            Write-JsonFile $pushFile $cfg
+            Write-Host "${c_yellow}Anuncios DESACTIVADOS temporalmente (enabled=false). El push se mantiene.${c_reset}"
+            Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=ads-push-disable"
+        } else { Write-Host "${c_gray}No hay push activo. Nada que desactivar.${c_reset}" }
+        Press-Continue; return
+    }
+    if ($mi -eq 2) {
+        if (Test-Path $pushFile) {
+            $cfg = Get-Content $pushFile -Raw | ConvertFrom-Json
+            $cfg.enabled = $true
+            Write-JsonFile $pushFile $cfg
+            Write-Host "${c_green}Anuncios REACTIVADOS (enabled=true). Reaparecen al instante.${c_reset}"
+            Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=ads-push-enable"
+        } else { Write-Host "${c_gray}No hay push activo. Crea uno primero.${c_reset}" }
+        Press-Continue; return
+    }
+    if ($mi -eq 3) { Ads-PushSummary $pushFile; Press-Continue; return }
+    if ($mi -eq 4) {
+        if (Test-Path $pushFile) { Remove-Item -LiteralPath $pushFile -Force; Write-Host "${c_yellow}Push BORRADO. Anuncios en modo normal (permanente).${c_reset}" }
+        else { Write-Host "${c_gray}No había push activo. Ya estaba en modo normal.${c_reset}" }
+        Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=ads-push-clear"
+        Press-Continue; return
+    }
+    if ($mi -eq 5) {
+        Ads-SendPush $pushFile
+        Write-Host ""
+        Write-Host "${c_cyan}Ahora envia el MISMO anuncio a produccion (global)...${c_reset}"
+        $sites = @('ciszu', 'ciszukoantony', 'muzicmania', 'ciszubot')
+        $opts = $sites | ForEach-Object { @{ key = $_; l = $_ } }
+        $res = Show-MultiSelect -Title "WEBS DESTINO GLOBAL" -Options $opts -Init @($sites)
+        if ($res.Action -eq 'proceed' -and $res.Selection.Count -gt 0) {
+            $target = $res.Selection -join ','
+            $push = Get-Content $pushFile -Raw | ConvertFrom-Json
+            $type = $push.type
+            $source = $push.source
+            $brand = $push.brand
+            $extra = @('scripts/ads.js', $push.title, $push.description, $push.cta, $push.href, '--target', $target, '--type', $type, '--sender', 'admin', '--session', $script:devSession, '--actor', $script:devIdentity, '--wait')
+            if ($source -and $source -ne 'external') { $extra += @('--brand', $source) }
+            Invoke-AdsNode $extra
+        }
+        Press-Continue; return
+    }
+}
+
+function Show-AdsToggle {
+    if (-not (Test-DevconPassword)) { Write-Host "${c_red}Contraseña incorrecta. Operación cancelada.${c_reset}"; Press-Continue; return }
+    Clear-Host
+    Show-MenuHeader "KILL SWITCH - ads"
+    Push-Location $root
+    node scripts/ads.js --status 2>&1 | Out-Host
+    Pop-Location
+    Write-Host ""
+    Write-Host "${c_green}[1] ACTIVAR ads   ${c_red}[2] DESACTIVAR ads   [Q/Esc] volver${c_reset}"
+    $k = [System.Console]::ReadKey($true)
+    $ch = $k.KeyChar
+    if ($ch -eq '1') { Invoke-AdsNode @('scripts/ads.js', '--toggle', 'on', '--sender', 'admin', '--session', $script:devSession, '--actor', $script:devIdentity) }
+    elseif ($ch -eq '2') { Invoke-AdsNode @('scripts/ads.js', '--toggle', 'off', '--sender', 'admin', '--session', $script:devSession, '--actor', $script:devIdentity) }
+    Press-Continue
 }
 
 function Show-DisclaimersDebug {
@@ -1165,6 +1315,178 @@ function Show-DisclaimersDebug {
     }
 }
 
+function Show-DisclaimersHybrid {
+    Clear-Host
+    Show-MenuHeader "DISCLAIMERS - HIBRIDO (local + global)"
+    Write-Host "${c_gray}Combina el debug local (disclaimers_debug.json) con el envio global.${c_reset}"
+    Write-Host ""
+
+    $debugFile = Join-Path $LOG_DIR 'disclaimers_debug.json'
+
+    while ($true) {
+        $mainOpts = @(
+            @{ ic = '➕'; l = "Crear disclaimer (local + global)" },
+            @{ ic = '🗑'; l = "Eliminar disclaimer(s)" },
+            @{ ic = '📋'; l = "Ver resumen / estado" },
+            @{ ic = '🔘'; l = "Kill switch global" },
+            @{ ic = '🚪'; l = "Volver" }
+        )
+        $mi = Show-Menu -Title "DISCLAIMERS HIBRIDOS - ¿QUÉ QUIERES HACER?" -Options $mainOpts
+        if ($mi -lt 0 -or $mi -eq 4) { return }
+        if ($mi -eq 3) { Show-DisclaimerToggle; continue }
+        if ($mi -eq 2) {
+            $existing = @()
+            if (Test-Path $debugFile) {
+                try { $existing = @((Get-Content $debugFile -Raw | ConvertFrom-Json).items) } catch { $existing = @() }
+            }
+            Clear-Host
+            Show-MenuHeader "RESUMEN DISCLAIMERS HIBRIDOS"
+            Write-Host "${c_cyan}Local (${$existing.Count} items):${c_reset}"
+            if ($existing.Count -gt 0) { $existing | ConvertTo-Json -Depth 5 | Out-Host } else { Write-Host "${c_yellow}Sin disclaimers locales.${c_reset}" }
+            Write-Host ""
+            Push-Location $root
+            Write-Host "${c_cyan}Global:${c_reset}"
+            node scripts/disclaimer.js --status 2>&1 | Out-Host
+            Pop-Location
+            Press-Continue
+            continue
+        }
+        if ($mi -eq 1) {
+            Push-Location $root
+            node scripts/disclaimer.js --list 2>&1 | Out-Host
+            Pop-Location
+            Write-Host ""
+            Write-Host "${c_yellow}IDs globales a borrar separados por espacio · [A] borrar TODOS · [Q] volver:${c_reset}"
+            $in = Read-Host ">"
+            if ($in -match '^[aA]$') {
+                Invoke-DisclaimerNode @('scripts/disclaimer.js', '--clear-all', '--sender', 'admin', '--session', $script:disclaimerSession, '--actor', $script:devIdentity)
+            } elseif ($in -match '^[\d\s]+$') {
+                $ids = @($in -split '\s+' | Where-Object { $_ })
+                if ($ids.Count -gt 0) {
+                    Invoke-DisclaimerNode @('scripts/disclaimer.js', '--clear', @($ids), '--sender', 'admin', '--session', $script:disclaimerSession, '--actor', $script:devIdentity)
+                }
+            }
+            Press-Continue
+            continue
+        }
+
+        # ---- Crear disclaimer híbrido: local + global ----
+        $opts = Build-WebSelectOptions
+        $r = Show-MultiSelect -Title "WEBS DESTINO (local + global)" -Options $opts -Init @($WEBS.key)
+        if ($r.Action -eq 'abort') { continue }
+        if ($r.Action -eq 'noproceed') { continue }
+        $sites = @($r.Selection)
+        if ($sites.Count -eq 0) { $sites = @($WEBS.key) }
+
+        $msg = Read-Host "Mensaje del disclaimer"
+        if ([string]::IsNullOrWhiteSpace($msg)) { Write-Host "${c_yellow}Mensaje vacio. Cancelado.${c_reset}"; Press-Continue; continue }
+
+        $kindOpts = @(@{ ic = 'ℹ'; l = 'info' }, @{ ic = '⚠'; l = 'warning' })
+        $ki = Show-Menu -Title "TIPO" -Options $kindOpts
+        if ($ki -lt 0) { continue }
+        $kind = @('info', 'warning')[$ki]
+
+        $durOpts = @(
+            @{ ic = '⏱'; l = "Temporal (sin fecha de culminacion)" },
+            @{ ic = '📅'; l = "Temporal con fecha de culminacion (contador)" },
+            @{ ic = '🔒'; l = "Permanente" }
+        )
+        $di = Show-Menu -Title "DURACION" -Options $durOpts
+        if ($di -lt 0) { continue }
+        $expiresAt = $null
+        if ($di -eq 1) {
+            $hour = Read-Host "Hora de culminacion (HH:MM, formato 24h)"
+            $day = Read-Host "Dia (1-31)"
+            $month = Read-Host "Mes (1-12)"
+            $year = Read-Host "Anio (YYYY)"
+            $hour = $hour.Trim(); $day = $day.Trim(); $month = $month.Trim(); $year = $year.Trim()
+            try {
+                $exp = Get-Date -Year $year -Month $month -Day $day -Hour ([int]($hour -split ':')[0]) -Minute ([int]($hour -split ':')[1]) -Second 0
+                if ($exp -lt (Get-Date)) {
+                    Write-Host "${c_red}ERROR: la fecha de culminacion es anterior a la actual.${c_reset}"
+                    Press-Continue
+                    continue
+                }
+                $expiresAt = $exp.ToUniversalTime().ToString('o')
+            } catch {
+                Write-Host "${c_red}ERROR: fecha/hora invalida: $($_.Exception.Message)${c_reset}"
+                Press-Continue
+                continue
+            }
+        } elseif ($di -eq 2) {
+            $expiresAt = ''
+        }
+
+        $closeOpts = @(
+            @{ ic = '✅'; l = "Opcional (con X para quitar)" },
+            @{ ic = '🔒'; l = "Obligatorio (sin X)" }
+        )
+        $ci = Show-Menu -Title "TIPO DE CIERRE" -Options $closeOpts
+        if ($ci -lt 0) { continue }
+        $dismissible = ($ci -eq 0)
+
+        $img = Read-Host "Imagen (URL, Enter = sin imagen)"
+        if ($img -match '^https?://') { $image = $img.Trim() } else { $image = $null }
+
+        $devconOpts = @(
+            @{ ic = '🏷'; l = "Con etiqueta DEVCON (por defecto)" },
+            @{ ic = '🔕'; l = "Sin etiqueta DEVCON (anonimo)" }
+        )
+        $devconIdx = Show-Menu -Title "ETIQUETA DEVCON" -Options $devconOpts -InitIndex 0
+        if ($devconIdx -lt 0) { continue }
+        $devconLabel = ($devconIdx -eq 0)
+
+        $actions = @()
+        $addAction = $true
+        while ($addAction) {
+            $actOpts = @(@{ ic = '➕'; l = "Agregar boton de accion" }, @{ ic = '🚪'; l = "No agregar mas" })
+            $ai = Show-Menu -Title "BOTONES DE ACCION" -Options $actOpts -InitIndex 0
+            if ($ai -lt 0 -or $ai -eq 1) { break }
+            $actLabel = Read-Host "Texto del boton"
+            if ([string]::IsNullOrWhiteSpace($actLabel)) { continue }
+            $actHref = Read-Host "URL al hacer clic (Enter = sin navegacion)"
+            if ($actHref -match '^https?://') { $actHref = $actHref.Trim() } else { $actHref = $null }
+            $actions += @{ label = $actLabel; href = $actHref }
+        }
+
+        $d = [ordered]@{
+            id = 'debug-' + [guid]::NewGuid().ToString().Substring(0, 8)
+            kind = $kind
+            message = $msg
+            site = @(Resolve-SiteIds $sites)
+            dismissible = $dismissible
+        }
+        if ($devconLabel) { $d.devcon = $true }
+        if ($expiresAt -ne $null) { $d.expiresAt = $expiresAt }
+        if ($image) { $d.image = $image }
+        if ($actions.Count -gt 0) { $d.actions = $actions }
+
+        $existing = @()
+        if (Test-Path $debugFile) {
+            try { $existing = @((Get-Content $debugFile -Raw | ConvertFrom-Json).items) } catch { $existing = @() }
+        }
+        $existing += $d
+        Write-JsonFile $debugFile @{ items = $existing }
+        Write-Host "${c_green}Disclaimer LOCAL guardado en: $debugFile${c_reset}"
+
+        $globalTarget = $sites -join ','
+        $extra = @('scripts/disclaimer.js', $msg, '--target', $globalTarget, '--kind', $kind, '--session', $script:disclaimerSession, '--actor', $script:devIdentity, '--wait')
+        if ($expiresAt) { $extra += @('--expires', $expiresAt) }
+        $extra += @('--dismissible', $(if ($dismissible) { 'on' } else { 'off' }))
+        if (-not $devconLabel) { $extra += @('--sender', 'admin') }
+        if ($image) { $extra += @('--image', $image) }
+        foreach ($act in $actions) {
+            $extra += @('--action', "$($act.label)|$($act.href)")
+        }
+
+        Write-Host "${c_cyan}Enviando disclaimer GLOBAL a [$globalTarget]...${c_reset}"
+        Invoke-DisclaimerNode $extra
+
+        Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=disclaimers-hybrid sites=$($sites -join ',') kind=$kind"
+        Press-Continue
+    }
+}
+
 function Verify-DisclaimerDebugDelivery([string]$debugFile) {
     Write-Host ""
     Write-Host "${c_gray}Verificando entrega de disclaimers de debug por web...${c_reset}"
@@ -1234,18 +1556,57 @@ function Invoke-DisclaimerNode {
 
 # Enviar disclaimer GLOBAL a las webs (replica de advisor) con fallback --wait.
 function Show-DisclaimerGlobal {
-    $sites = @('ciszu', 'ciszukoantony', 'muzicmania', 'ciszubot')
-    $sel = @($sites)
-    $kind = 'info'
-    if (-not $script:disclaimerSession) {
-        $script:disclaimerSession = 'devcon-' + (Get-Date -Format 'yyyyMMdd-HHmmss') + '-' + ([guid]::NewGuid().ToString().Substring(0, 8))
-    }
+    Clear-Host
+    Show-MenuHeader "DISCLAIMERS - GLOBAL (produccion)"
+    Write-Host "${c_gray}Gestiona disclaimers globales via scripts/disclaimer.js.${c_reset}"
+    Write-Host ""
+
     while ($true) {
-        Clear-Host
-        Show-Art
-        Show-MenuHeader "DISCLAIMERS GLOBALES - enviar (A=todas · Espacio marca · Esc=volver)"
+        $mainOpts = @(
+            @{ ic = '➕'; l = "Crear disclaimer" },
+            @{ ic = '🗑'; l = "Eliminar disclaimer(s)" },
+            @{ ic = '📋'; l = "Ver resumen / estado" },
+            @{ ic = '🔘'; l = "Kill switch (activar/desactivar)" },
+            @{ ic = '🚪'; l = "Volver" }
+        )
+        $mi = Show-Menu -Title "DISCLAIMERS GLOBALES - ¿QUÉ QUIERES HACER?" -Options $mainOpts
+        if ($mi -lt 0 -or $mi -eq 4) { return }
+        if ($mi -eq 3) { Show-DisclaimerToggle; continue }
+        if ($mi -eq 2) {
+            Push-Location $root
+            node scripts/disclaimer.js --status 2>&1 | Out-Host
+            Pop-Location
+            Press-Continue
+            continue
+        }
+        if ($mi -eq 1) {
+            Push-Location $root
+            node scripts/disclaimer.js --list 2>&1 | Out-Host
+            Pop-Location
+            Write-Host ""
+            Write-Host "${c_yellow}IDs a borrar separados por espacio · [A] borrar TODOS · [Q] volver:${c_reset}"
+            $in = Read-Host ">"
+            if ($in -match '^[aA]$') {
+                Invoke-DisclaimerNode @('scripts/disclaimer.js', '--clear-all', '--sender', 'admin', '--session', $script:disclaimerSession, '--actor', $script:devIdentity)
+            } elseif ($in -match '^[\d\s]+$') {
+                $ids = @($in -split '\s+' | Where-Object { $_ })
+                if ($ids.Count -gt 0) {
+                    Invoke-DisclaimerNode @('scripts/disclaimer.js', '--clear', @($ids), '--sender', 'admin', '--session', $script:disclaimerSession, '--actor', $script:devIdentity)
+                }
+            }
+            Press-Continue
+            continue
+        }
+
+        # ---- Crear disclaimer (flujo original de Show-DisclaimerGlobal) ----
+        $sites = @('ciszu', 'ciszukoantony', 'muzicmania', 'ciszubot')
+        $sel = @($sites)
+        $kind = 'info'
+        if (-not $script:disclaimerSession) {
+            $script:disclaimerSession = 'devcon-' + (Get-Date -Format 'yyyyMMdd-HHmmss') + '-' + ([guid]::NewGuid().ToString().Substring(0, 8))
+        }
         $optWebs = @($sites | ForEach-Object { @{ key = $_; l = $_ } })
-        $res = Show-MultiSelect -Title "WEBS DESTINO (persiste entre envíos)" -Options $optWebs -Init $sel
+        $res = Show-MultiSelect -Title "WEBS DESTINO" -Options $optWebs -Init $sel
         if ($res.Action -eq 'abort') { return }
         if ($res.Action -eq 'noproceed') { continue }
         $sel = @($res.Selection)
@@ -1257,10 +1618,9 @@ function Show-DisclaimerGlobal {
         if ($ki -lt 0) { return }
         $kind = $kinds[$ki]
 
-        $msg = Read-Host "Mensaje (Enter vacío = volver al menú)"
+        $msg = Read-Host "Mensaje (Enter vacío = volver)"
         if ([string]::IsNullOrWhiteSpace($msg)) { return }
 
-        # Duración / expiración (opcional)
         $expires = $null
         $duOpts = @(
             @{ ic = '⏱'; l = "Temporal (sin fecha de culminacion)" },
@@ -1284,7 +1644,6 @@ function Show-DisclaimerGlobal {
             }
         }
 
-        # Cierre opcional u obligatorio
         $dismissOpts = @(
             @{ ic = '🔓'; l = "Opcional (con X)" },
             @{ ic = '🔒'; l = "Obligatorio (sin X)" }
@@ -1307,11 +1666,11 @@ function Show-DisclaimerGlobal {
         if (-not $useDevconSender) { $extra += @('--sender', 'admin') }
 
         Write-Host ""
-        Write-Host "${c_cyan}Enviando disclaimer a [$target] · tipo [$kind] · cierre [$($(if ($dismissible) { 'opcional' } else { 'obligatorio' }))] (esperando entrega...)${c_reset}"
+        Write-Host "${c_cyan}Enviando disclaimer a [$target] · tipo [$kind] (esperando entrega...)${c_reset}"
         Invoke-DisclaimerNode $extra
 
         Write-Host ""
-        Write-Host "${c_green}[Enter] Enviar otro   ${c_red}[Q/Esc] Volver al menú${c_reset}"
+        Write-Host "${c_green}[Enter] Crear otro   ${c_red}[Q/Esc] Volver al menú${c_reset}"
         $k = [System.Console]::ReadKey($true)
         if ($k.Key -eq [ConsoleKey]::Q -or $k.Key -eq [ConsoleKey]::Escape) { return }
     }
@@ -1356,21 +1715,298 @@ function Show-DisclaimerClear {
     Press-Continue
 }
 
+function Show-AdvisorLocal {
+    Clear-Host
+    Show-MenuHeader "ADVISOR - DEBUG LOCAL"
+    Write-Host "${c_gray}Gestiona mensajes de advisor locales vía /api/advisor/debug.${c_reset}"
+    Write-Host ""
+
+    $debugFile = Join-Path $LOG_DIR 'advisor_debug.json'
+
+    while ($true) {
+        $existing = @()
+        if (Test-Path $debugFile) {
+            try { $existing = @((Get-Content $debugFile -Raw | ConvertFrom-Json).items) } catch { $existing = @() }
+        }
+
+        Clear-Host
+        Show-MenuHeader "ADVISOR - DEBUG LOCAL"
+        Write-Host "${c_gray}Archivo: $debugFile${c_reset}"
+        if ($existing.Count -gt 0) {
+            Write-Host ""
+            Write-Host "${c_cyan}Mensajes actuales (${$existing.Count}):${c_reset}"
+            for ($n = 0; $n -lt $existing.Count; $n++) {
+                $m = $existing[$n]
+                Write-Host ("   {0}. [{1}] {2}  · webs: {3}  · expira: {4}" -f ($n + 1), $m.kind, $m.message, ($m.site -join ','), $(if ($m.expiresAt) { $m.expiresAt } else { 'sin fecha' }))
+            }
+        } else {
+            Write-Host "${c_yellow}No hay mensajes de advisor locales.${c_reset}"
+        }
+        Write-Host ""
+        $actOpts = @(
+            @{ ic = '➕'; l = "Crear mensaje" },
+            @{ ic = '🗑'; l = "Eliminar un mensaje" },
+            @{ ic = '📋'; l = "Ver resumen / estado" },
+            @{ ic = '🔄'; l = "Reiniciar (quitar todos)" },
+            @{ ic = '🚪'; l = "Volver" }
+        )
+        $ai = Show-Menu -Title "ACCION" -Options $actOpts
+        if ($ai -lt 0 -or $ai -eq 4) { break }
+
+        if ($ai -eq 3) {
+            $reset = [ordered]@{ items = @() }
+            Write-JsonFile $debugFile $reset
+            Write-Host "${c_green}Mensajes de advisor reiniciados (todos eliminados).${c_reset}"
+            Press-Continue
+            continue
+        }
+        if ($ai -eq 2) {
+            Clear-Host
+            Show-MenuHeader "RESUMEN ADVISOR DEBUG"
+            if ($existing.Count -gt 0) { $existing | ConvertTo-Json -Depth 5 | Out-Host } else { Write-Host "${c_yellow}Sin mensajes de advisor.${c_reset}" }
+            Press-Continue
+            continue
+        }
+
+        $editIndex = -1
+        if ($ai -eq 1) {
+            if ($existing.Count -eq 0) { Write-Host "${c_yellow}No hay mensajes para eliminar.${c_reset}"; Press-Continue; continue }
+            $delOpts = @()
+            for ($n = 0; $n -lt $existing.Count; $n++) { $delOpts += @{ ic = '🗑'; l = "$($existing[$n].message) [$($existing[$n].kind)]" } }
+            $delOpts += @{ ic = '🚪'; l = "Cancelar" }
+            $di = Show-Menu -Title "ELIMINAR MENSAJE" -Options $delOpts
+            if ($di -lt 0 -or $di -eq $existing.Count) { continue }
+            $existing = @($existing | Where-Object { $_ -ne $existing[$di] })
+            Write-JsonFile $debugFile @{ items = $existing }
+            Write-Host "${c_green}Mensaje eliminado.${c_reset}"
+            Press-Continue
+            continue
+        }
+
+        $opts = Build-WebSelectOptions
+        $r = Show-MultiSelect -Title "WEBS DESTINO (Espacio marca)" -Options $opts -Init @($WEBS.key)
+        if ($r.Action -eq 'abort') { continue }
+        if ($r.Action -eq 'noproceed') { continue }
+        $sites = @($r.Selection)
+        if ($sites.Count -eq 0) { $sites = @($WEBS.key) }
+
+        $msg = Read-Host "Mensaje del advisor"
+        if ([string]::IsNullOrWhiteSpace($msg)) { Write-Host "${c_yellow}Mensaje vacio. Cancelado.${c_reset}"; Press-Continue; continue }
+        if ($msg.Length -lt 2 -or $msg.Length -gt 620) {
+            Write-Host "${c_yellow}El mensaje debe tener entre 2 y 620 caracteres (actual: $($msg.Length)).${c_reset}"
+            Press-Continue
+            continue
+        }
+
+        $kindOpts = @(@{ ic = 'ℹ'; l = 'info' }, @{ ic = '✅'; l = 'success' }, @{ ic = '⚠'; l = 'warning' }, @{ ic = '❌'; l = 'error' })
+        $ki = Show-Menu -Title "TIPO" -Options $kindOpts
+        if ($ki -lt 0) { continue }
+        $kind = @('info', 'success', 'warning', 'error')[$ki]
+
+        $sender = Read-Host "De parte de (Enter = admin)"
+        if ([string]::IsNullOrWhiteSpace($sender)) { $sender = 'admin' }
+
+        $expiresAt = $null
+        $durOpts = @(
+            @{ ic = '⏱'; l = "Temporal (sin fecha)" },
+            @{ ic = '📅'; l = "Temporal con fecha de culminacion" },
+            @{ ic = '🔒'; l = "Permanente" }
+        )
+        $di = Show-Menu -Title "DURACION" -Options $durOpts
+        if ($di -lt 0) { continue }
+        if ($di -eq 1) {
+            $hour = Read-Host "Hora de culminacion (HH:MM, 24h)"
+            $day = Read-Host "Dia (1-31)"
+            $month = Read-Host "Mes (1-12)"
+            $year = Read-Host "Anio (YYYY)"
+            $hour = $hour.Trim(); $day = $day.Trim(); $month = $month.Trim(); $year = $year.Trim()
+            try {
+                $exp = Get-Date -Year $year -Month $month -Day $day -Hour ([int]($hour -split ':')[0]) -Minute ([int]($hour -split ':')[1]) -Second 0
+                if ($exp -lt (Get-Date)) {
+                    Write-Host "${c_red}ERROR: la fecha de culminacion es anterior a la actual.${c_reset}"
+                    Press-Continue
+                    continue
+                }
+                $expiresAt = $exp.ToUniversalTime().ToString('o')
+            } catch {
+                Write-Host "${c_red}ERROR: fecha/hora invalida: $($_.Exception.Message)${c_reset}"
+                Press-Continue
+                continue
+            }
+        } elseif ($di -eq 2) {
+            $expiresAt = ''
+        }
+
+        $m = [ordered]@{
+            id = 'advisor-debug-' + [guid]::NewGuid().ToString().Substring(0, 8)
+            kind = $kind
+            message = $msg
+            site = @(Resolve-SiteIds $sites)
+            sender = $sender
+        }
+        if ($expiresAt -ne $null) { $m.expiresAt = $expiresAt }
+
+        if ($editIndex -ge 0) { $existing[$editIndex] = $m } else { $existing += $m }
+        Write-JsonFile $debugFile @{ items = $existing }
+        Write-Host "${c_green}Mensaje de advisor LOCAL guardado en: $debugFile${c_reset}"
+        Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=advisor-debug sites=$($sites -join ',') kind=$kind"
+        Press-Continue
+    }
+}
+
+function Show-AdvisorHybrid {
+    Clear-Host
+    Show-MenuHeader "ADVISOR - HIBRIDO (local + global)"
+    Write-Host "${c_gray}Combina el debug local (advisor_debug.json) con el envio global.${c_reset}"
+    Write-Host ""
+
+    $debugFile = Join-Path $LOG_DIR 'advisor_debug.json'
+
+    while ($true) {
+        $mainOpts = @(
+            @{ ic = '➕'; l = "Enviar mensaje (local + global)" },
+            @{ ic = '🗑'; l = "Eliminar mensaje(s)" },
+            @{ ic = '📋'; l = "Ver resumen / estado" },
+            @{ ic = '🔘'; l = "Kill switch global" },
+            @{ ic = '🚪'; l = "Volver" }
+        )
+        $mi = Show-Menu -Title "ADVISOR HIBRIDO - ¿QUÉ QUIERES HACER?" -Options $mainOpts
+        if ($mi -lt 0 -or $mi -eq 4) { return }
+        if ($mi -eq 3) { Show-AdvisorToggle; continue }
+        if ($mi -eq 2) {
+            $existing = @()
+            if (Test-Path $debugFile) {
+                try { $existing = @((Get-Content $debugFile -Raw | ConvertFrom-Json).items) } catch { $existing = @() }
+            }
+            Clear-Host
+            Show-MenuHeader "RESUMEN ADVISOR HIBRIDO"
+            Write-Host "${c_cyan}Local (${$existing.Count} items):${c_reset}"
+            if ($existing.Count -gt 0) { $existing | ConvertTo-Json -Depth 5 | Out-Host } else { Write-Host "${c_yellow}Sin mensajes locales.${c_reset}" }
+            Write-Host ""
+            Push-Location $root
+            Write-Host "${c_cyan}Global:${c_reset}"
+            node scripts/advisor.js --status 2>&1 | Out-Host
+            Pop-Location
+            Press-Continue
+            continue
+        }
+        if ($mi -eq 1) {
+            Push-Location $root
+            node scripts/advisor.js --list 2>&1 | Out-Host
+            Pop-Location
+            Write-Host ""
+            Write-Host "${c_cyan}IDs a borrar separados por espacio · [A] borrar TODOS · [Q] volver:${c_reset}"
+            $in = Read-Host ">"
+            if ($in -match '^[aA]$') {
+                Invoke-AdvisorNode @('scripts/advisor.js', '--clear-all', '--sender', 'admin', '--session', $script:advisorSession, '--actor', $script:devIdentity)
+            } elseif ($in -match '^[\d\s]+$') {
+                $ids = @($in -split '\s+' | Where-Object { $_ })
+                if ($ids.Count -gt 0) {
+                    Invoke-AdvisorNode @('scripts/advisor.js', '--clear', @($ids), '--sender', 'admin', '--session', $script:advisorSession, '--actor', $script:devIdentity)
+                }
+            }
+            Press-Continue
+            continue
+        }
+
+        $opts = Build-WebSelectOptions
+        $r = Show-MultiSelect -Title "WEBS DESTINO (local + global)" -Options $opts -Init @($WEBS.key)
+        if ($r.Action -eq 'abort') { continue }
+        if ($r.Action -eq 'noproceed') { continue }
+        $sites = @($r.Selection)
+        if ($sites.Count -eq 0) { $sites = @($WEBS.key) }
+
+        $msg = Read-Host "Mensaje del advisor"
+        if ([string]::IsNullOrWhiteSpace($msg)) { Write-Host "${c_yellow}Mensaje vacio. Cancelado.${c_reset}"; Press-Continue; continue }
+        if ($msg.Length -lt 2 -or $msg.Length -gt 620) {
+            Write-Host "${c_yellow}El mensaje debe tener entre 2 y 620 caracteres (actual: $($msg.Length)).${c_reset}"
+            Press-Continue
+            continue
+        }
+
+        $kindOpts = @(@{ ic = 'ℹ'; l = 'info' }, @{ ic = '✅'; l = 'success' }, @{ ic = '⚠'; l = 'warning' }, @{ ic = '❌'; l = 'error' })
+        $ki = Show-Menu -Title "TIPO" -Options $kindOpts
+        if ($ki -lt 0) { continue }
+        $kind = @('info', 'success', 'warning', 'error')[$ki]
+
+        $sender = Read-Host "De parte de (Enter = admin)"
+        if ([string]::IsNullOrWhiteSpace($sender)) { $sender = 'admin' }
+
+        $expiresAt = $null
+        $durOpts = @(
+            @{ ic = '⏱'; l = "Temporal (sin fecha)" },
+            @{ ic = '📅'; l = "Temporal con fecha de culminacion" },
+            @{ ic = '🔒'; l = "Permanente" }
+        )
+        $di = Show-Menu -Title "DURACION" -Options $durOpts
+        if ($di -lt 0) { continue }
+        if ($di -eq 1) {
+            $hour = Read-Host "Hora de culminacion (HH:MM, 24h)"
+            $day = Read-Host "Dia (1-31)"
+            $month = Read-Host "Mes (1-12)"
+            $year = Read-Host "Anio (YYYY)"
+            $hour = $hour.Trim(); $day = $day.Trim(); $month = $month.Trim(); $year = $year.Trim()
+            try {
+                $exp = Get-Date -Year $year -Month $month -Day $day -Hour ([int]($hour -split ':')[0]) -Minute ([int]($hour -split ':')[1]) -Second 0
+                if ($exp -lt (Get-Date)) {
+                    Write-Host "${c_red}ERROR: la fecha de culminacion es anterior a la actual.${c_reset}"
+                    Press-Continue
+                    continue
+                }
+                $expiresAt = $exp.ToUniversalTime().ToString('o')
+            } catch {
+                Write-Host "${c_red}ERROR: fecha/hora invalida: $($_.Exception.Message)${c_reset}"
+                Press-Continue
+                continue
+            }
+        } elseif ($di -eq 2) {
+            $expiresAt = ''
+        }
+
+        $m = [ordered]@{
+            id = 'advisor-debug-' + [guid]::NewGuid().ToString().Substring(0, 8)
+            kind = $kind
+            message = $msg
+            site = @(Resolve-SiteIds $sites)
+            sender = $sender
+        }
+        if ($expiresAt -ne $null) { $m.expiresAt = $expiresAt }
+
+        $existing = @()
+        if (Test-Path $debugFile) {
+            try { $existing = @((Get-Content $debugFile -Raw | ConvertFrom-Json).items) } catch { $existing = @() }
+        }
+        $existing += $m
+        Write-JsonFile $debugFile @{ items = $existing }
+        Write-Host "${c_green}Mensaje de advisor LOCAL guardado en: $debugFile${c_reset}"
+
+        $globalTarget = $sites -join ','
+        $extra = @('scripts/advisor.js', $msg, '--target', $globalTarget, '--kind', $kind, '--sender', $sender, '--session', $script:advisorSession, '--actor', $script:devIdentity, '--wait')
+        if ($expiresAt) { $extra += @('--expires', $expiresAt) }
+
+        Write-Host "${c_cyan}Enviando mensaje GLOBAL a [$globalTarget]...${c_reset}"
+        Invoke-AdvisorNode $extra
+
+        Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=advisor-hybrid sites=$($sites -join ',') kind=$kind"
+        Press-Continue
+    }
+}
+
 function Show-AdsSection {
     $opts = @(
         @{ ic = '💻'; l = "Local (debug local, forzar ads)" },
         @{ ic = '🌐'; l = "Global (ads en produccion)" },
         @{ ic = '🔀'; l = "Hibrido (local + global)" },
-        @{ ic = '🛑'; l = "Kill switch ads" },
+        @{ ic = '🔘'; l = "Kill switch global" },
         @{ ic = '🚪'; l = "Volver" }
     )
     $sel = Show-Menu -Title "ADS" -Options $opts
     if ($sel -lt 0 -or $sel -eq 4) { return }
     switch ($sel) {
         0 { Show-AdsDebug }
-        1 { Write-Host "${c_yellow}Global ads: no implementado todavia.${c_reset}"; Press-Continue }
-        2 { Write-Host "${c_yellow}Hibrido ads: no implementado todavia.${c_reset}"; Press-Continue }
-        3 { Write-Host "${c_yellow}Kill switch ads: no implementado todavia.${c_reset}"; Press-Continue }
+        1 { Show-AdsGlobal }
+        2 { Show-AdsHybrid }
+        3 { Show-AdsToggle }
     }
 }
 
@@ -1380,17 +2016,15 @@ function Show-DisclaimersSection {
         @{ ic = '🌐'; l = "Global (enviar a las webs)" },
         @{ ic = '🔀'; l = "Hibrido (local + global)" },
         @{ ic = '🔘'; l = "Kill switch global" },
-        @{ ic = '🗑'; l = "Borrar globales enviados" },
         @{ ic = '🚪'; l = "Volver" }
     )
     $sel = Show-Menu -Title "DISCLAIMERS" -Options $opts
-    if ($sel -lt 0 -or $sel -eq 5) { return }
+    if ($sel -lt 0 -or $sel -eq 4) { return }
     switch ($sel) {
-        0 { Show-DisclaimersDebug }
-        1 { Show-DisclaimerGlobal }
-        2 { Write-Host "${c_yellow}Hibrido disclaimers: no implementado todavia.${c_reset}"; Press-Continue }
-        3 { Show-DisclaimerToggle }
-        4 { Show-DisclaimerClear }
+         0 { Show-DisclaimersDebug }
+         1 { Show-DisclaimerGlobal }
+         2 { Show-DisclaimersHybrid }
+         3 { Show-DisclaimerToggle }
     }
 }
 
@@ -1400,17 +2034,15 @@ function Show-AdvisorSection {
         @{ ic = '🌐'; l = "Global (enviar mensaje)" },
         @{ ic = '🔀'; l = "Hibrido (local + global)" },
         @{ ic = '🔘'; l = "Kill switch global" },
-        @{ ic = '🗑'; l = "Borrar mensajes enviados" },
         @{ ic = '🚪'; l = "Volver" }
     )
     $sel = Show-Menu -Title "ADVISOR" -Options $opts
-    if ($sel -lt 0 -or $sel -eq 5) { return }
+    if ($sel -lt 0 -or $sel -eq 4) { return }
     switch ($sel) {
-        0 { Write-Host "${c_yellow}Local advisor: no implementado todavia.${c_reset}"; Press-Continue }
-        1 { Show-AdvisorMenu }
-        2 { Write-Host "${c_yellow}Hibrido advisor: no implementado todavia.${c_reset}"; Press-Continue }
-        3 { Show-AdvisorToggle }
-        4 { Show-AdvisorClear }
+         0 { Show-AdvisorLocal }
+         1 { Show-AdvisorMenu }
+         2 { Show-AdvisorHybrid }
+         3 { Show-AdvisorToggle }
     }
 }
 
@@ -1428,9 +2060,6 @@ function Show-Tools {
         @{ ic = '🐉'; l = "Comandos pnpm rapidos (lint/test/build/install/cdn)"; act = { Show-PnpmQuick } },
         @{ ic = '🚀'; l = "Deploy a Vercel (marca webs)";             act = { Deploy-Webs } },
         @{ ic = '🔐'; l = "Vault -> Bitwarden (subir vault cifrado)"; act = { Show-VaultBw } },
-        @{ ic = '📢'; l = "ADS"; key = '__section_ads' },
-        @{ ic = '📋'; l = "Disclaimers"; key = '__section_disclaimers' },
-        @{ ic = '📢'; l = "Advisor"; key = '__section_advisor' },
         @{ ic = '👥'; l = "Staff Console (STAFFCON) - empleados"; act = { Start-Process powershell.exe -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $root 'tools\consoles\staffcon.ps1'); Write-Host "${c_green}STAFFCON abierta en ventana separada.${c_reset}"; Press-Continue } },
         @{ ic = '🛒'; l = "Customers Console (CUSTOMERSCON) - clientes"; act = { Start-Process powershell.exe -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $root 'tools\consoles\customerscon.ps1'); Write-Host "${c_green}CUSTOMERSCON abierta en ventana separada.${c_reset}"; Press-Continue } },
         @{ ic = '🌡'; l = "Ver espacio en disco (C y E)";             act = { Clear-Host; Get-PSDrive C,E | Select-Object Name, @{n='Libre GB';e={[math]::Round($_.Free/1GB,1)}}, @{n='Usado GB';e={[math]::Round($_.Used/1GB,1)}} | Format-Table | Out-Host; Press-Continue } },
@@ -1612,13 +2241,10 @@ while (-not $script:quitRequested) {
         @{ ic = '🐉'; l = "Comandos pnpm rapidos"; key = '__tools_pnpm' },
         @{ ic = '🚀'; l = "Deploy a Vercel (marca webs)"; key = '__tools_deploy' },
         @{ ic = '🔐'; l = "Vault -> Bitwarden";  key = '__tools_vaultbw' },
-        @{ ic = '📢'; l = "Anuncios: debug local"; key = '__tools_ads' },
-        @{ ic = '📋'; l = "Disclaimers: debug local"; key = '__tools_disclaimers' },
-        @{ ic = '📢'; l = "Disclaimers: GLOBAL (enviar a las webs)"; key = '__tools_disclaimers_global' },
-        @{ ic = '🔘'; l = "Disclaimers: activar/desactivar globales"; key = '__tools_disclaimers_toggle' },
-        @{ ic = '🗑'; l = "Disclaimers: borrar globales"; key = '__tools_disclaimers_clear' },
-        @{ ic = '📢'; l = "Advisor: enviar mensaje global"; key = '__tools_advisor' },
-        @{ ic = '🔘'; l = "Advisor: kill switch"; key = '__tools_advisor_toggle' },
+        @{ ic = '📢'; l = "ADS"; key = '__section_ads' },
+        @{ ic = '📋'; l = "DISCLAIMERS"; key = '__section_disclaimers' },
+        @{ ic = '📢'; l = "ADVISOR"; key = '__section_advisor' },
+        @{ ic = '🔧'; l = "HERRAMIENTAS"; key = '__tools' },
         @{ ic = '👥'; l = "Staff Console (STAFFCON)"; key = '__tools_staffcon' },
         @{ ic = '🛒'; l = "Customers Console (CUSTOMERSCON)"; key = '__tools_customerscon' },
         @{ ic = '🖥'; l = "Estado CDN local (8788)"; key = '__tools_cdn' },
@@ -1677,6 +2303,7 @@ while (-not $script:quitRequested) {
         '__section_ads' { Show-AdsSection }
         '__section_disclaimers' { Show-DisclaimersSection }
         '__section_advisor' { Show-AdvisorSection }
+        '__tools' { Show-Tools }
         '__tools_staffcon' { Start-Process powershell.exe -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $root 'tools\consoles\staffcon.ps1'); Write-Host "${c_green}STAFFCON abierta en ventana separada.${c_reset}"; Press-Continue }
         '__tools_customerscon' { Start-Process powershell.exe -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $root 'tools\consoles\customerscon.ps1'); Write-Host "${c_green}CUSTOMERSCON abierta en ventana separada.${c_reset}"; Press-Continue }
         '__tools_cdn' { $s = Get-NetTCPConnection -LocalPort $CDN_PORT -State Listen -ErrorAction SilentlyContinue; if ($s) { Write-Host "${c_green}CDN local activo (pid $($s.OwningProcess)) -> http://localhost:$CDN_PORT${c_reset}" } else { Write-Host "${c_yellow}CDN local DETENIDO. Arranca una web para encenderlo.${c_reset}" }; Press-Continue }

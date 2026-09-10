@@ -74,9 +74,8 @@ const NAV_ITEMS: NavEntry[] = [
   },
   { name: 'Changelog', href: '/changelog', icon: <History className="w-4 h-4" /> },
   { name: 'Reviews', href: '/reviews', icon: <Star className="w-4 h-4" /> },
-  { name: 'Stats', href: '/stats', icon: <BarChart3 className="w-4 h-4" /> },
-  { name: 'Leaderboard', href: '/leaderboard', icon: <Trophy className="w-4 h-4" /> },
-  { name: 'Forum', href: '/forum', icon: <MessageSquare className="w-4 h-4" /> },
+   { name: 'Stats', href: '/stats', icon: <BarChart3 className="w-4 h-4" /> },
+   { name: 'Forum', href: '/forum', icon: <MessageSquare className="w-4 h-4" /> },
   {
     name: 'Projects',
     icon: <Zap className="w-4 h-4" />,
@@ -123,7 +122,6 @@ const ALL_PAGES: { name: string; href: string; icon: React.ReactNode; keywords: 
   { name: 'Changelog', href: '/changelog', icon: <History className="w-4 h-4" />, keywords: ['cambios', 'updates', 'actualizaciones', 'historial', 'news'] },
   { name: 'Reviews', href: '/reviews', icon: <Star className="w-4 h-4" />, keywords: ['reseñas', 'criticas', 'opiniones', 'feedback', 'estrellas'] },
   { name: 'Stats', href: '/stats', icon: <BarChart3 className="w-4 h-4" />, keywords: ['estadisticas', 'stats', 'analisis', 'rendimiento', 'server'] },
-  { name: 'Leaderboard', href: '/leaderboard', icon: <Trophy className="w-4 h-4" />, keywords: ['ranking', 'top', 'leaderboard', 'clasificacion', 'global'] },
   { name: 'Forum', href: '/forum', icon: <MessageSquare className="w-4 h-4" />, keywords: ['foro', 'comunidad', 'community', 'discusión', 'discussion', 'posts'] },
   { name: 'Download', href: '/download', icon: <Download className="w-4 h-4" />, keywords: ['descargas', 'download', 'pc', 'windows', 'ejecutable'] },
   { name: 'Donate', href: '/donate', icon: <Heart className="w-4 h-4" />, keywords: ['donar', 'donation', 'donacion', 'apoyar', 'apoyo', 'ko-fi', 'patreon'] },
@@ -139,7 +137,7 @@ const ALL_PAGES: { name: string; href: string; icon: React.ReactNode; keywords: 
 // (es-latam, es-es, en-us, en-uk) son INDIVIDUALES entre sí; el resto se
 // muestra atenuado y bloqueado (toast de error al hacer click).
 
-export const NavbarContent = () => {
+export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<string, any> }) => {
   const pathname = usePathname();
   const { isMenuOpen, setIsMenuOpen, theme, setTheme, language, setLanguage, searchQuery, setSearchQuery, sidebarView, setSidebarView } = useAppStore();
   const [scrolled, setScrolled] = useState(false);
@@ -443,6 +441,8 @@ export const NavbarContent = () => {
                   setAccOpen(!accOpen);
                 }}
                 onClose={() => setAccOpen(false)}
+                lang={lang}
+                dict={dict}
               />
             </div>
           </div>
@@ -459,9 +459,7 @@ export const NavbarContent = () => {
                 <input
                   ref={inputRef}
                   type="text"
-                  placeholder={language === 'es-latam' || language === 'es-es'
-                    ? 'Busca páginas de Ciszu Network (ej: inicio, soporte, discord)...'
-                    : 'Search Ciszu Network pages (example: home, support, discord)...'}
+                  placeholder={dict.nav.searchPlaceholder}
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter' && suggestions[0]) { window.location.href = suggestions[0].href; } }}
@@ -472,13 +470,13 @@ export const NavbarContent = () => {
               {searchQuery.trim().length > 0 && suggestions.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-6 animate-fade-in-down space-y-3">
                   <p className="text-gray-500 font-header font-black uppercase text-xs tracking-widest italic">
-                    {(language === 'es-latam' || language === 'es-es') ? `Sin resultados para "${searchQuery}"` : `No results for "${searchQuery}"`}
+                    {dict.nav.searchNoResults.replace('{q}', searchQuery)}
                   </p>
                   <button
                     onClick={() => setSearchQuery('')}
                     className="px-6 py-2 bg-brand-light/20 border border-brand-light/40 text-brand-light rounded-full font-header font-bold text-[10px] uppercase tracking-widest hover:bg-brand-light hover:text-black transition-all active:scale-95"
                   >
-                    {(language === 'es-latam' || language === 'es-es') ? 'Reiniciar búsqueda' : 'Reset search'}
+                    {dict.nav.searchReset}
                   </button>
                 </div>
               )}
@@ -675,10 +673,10 @@ export const NavbarContent = () => {
   );
 };
 
-const Navbar = () => {
+const Navbar = ({ lang, dict }: { lang: string; dict: Record<string, any> }) => {
   return (
     <React.Suspense fallback={<div className="h-16 bg-black/50 animate-pulse" />}>
-      <NavbarContent />
+      <NavbarContent lang={lang} dict={dict} />
     </React.Suspense>
   );
 };

@@ -19,6 +19,8 @@
   --color-neon-purple:  #4800ff;
   --color-neon-green:   #00ff88;
   --color-neon-orange:  #ff6600;
+  --color-neon-yellow:  #ffd900;
+  --color-neon-red:     #ff0000;
 
   --color-bg-dark:   #000;
   --color-bg-darker: #050a14;
@@ -28,12 +30,20 @@
   --shadow-neon-cyan:   0 0 10px #5a82e8, 0 0 25px rgba(90, 130, 232, 0.4);
   --shadow-neon-pink:   0 0 10px #ff33cc, 0 0 25px rgba(255, 51, 204, 0.35);
   --shadow-neon-purple: 0 0 10px #8000ff, 0 0 25px hsla(270, 100%, 66%, 0.35);
+  --shadow-neon-green:  0 0 10px #00ff88, 0 0 25px rgba(0, 255, 136, 0.4);
+  --shadow-neon-orange: 0 0 10px #ff6600, 0 0 25px rgba(255, 102, 0, 0.4);
+  --shadow-neon-yellow: 0 0 10px #ffd900, 0 0 25px rgba(255, 217, 0, 0.4);
+  --shadow-neon-red:    0 0 10px #ff0000, 0 0 25px rgba(255, 0, 0, 0.4);
 
   --drop-shadow-brand:   drop-shadow(0 0 8px #233f92) drop-shadow(0 0 20px rgba(35, 63, 146, 0.3));
   --drop-shadow-neon-blue:   drop-shadow(0 0 8px #3d6adf) drop-shadow(0 0 20px rgba(61, 106, 223, 0.3));
   --drop-shadow-neon-cyan:   drop-shadow(0 0 8px #5a82e8) drop-shadow(0 0 20px rgba(90, 130, 232, 0.3));
   --drop-shadow-neon-pink:   drop-shadow(0 0 8px #ff33cc) drop-shadow(0 0 20px rgba(255, 51, 204, 0.3));
   --drop-shadow-neon-purple: drop-shadow(0 0 8px #8000ff) drop-shadow(0 0 20px rgba(128, 0, 255, 0.3));
+  --drop-shadow-neon-green:  drop-shadow(0 0 8px #00ff88) drop-shadow(0 0 20px rgba(0, 255, 136, 0.3));
+  --drop-shadow-neon-orange: drop-shadow(0 0 8px #ff6600) drop-shadow(0 0 20px rgba(255, 102, 0, 0.3));
+  --drop-shadow-neon-yellow: drop-shadow(0 0 8px #ffd900) drop-shadow(0 0 20px rgba(255, 217, 0, 0.3));
+  --drop-shadow-neon-red:    drop-shadow(0 0 8px #ff0000) drop-shadow(0 0 20px rgba(255, 0, 0, 0.3));
 }
 
 /* ── Theme tokens (dark-first) ───────────────────────────── */
@@ -104,6 +114,11 @@
 .light .bg-\[\#21262d\]\/[0-9]+ { background-color: #e8ebf0 !important; }
 .light .bg-\[\#30363d\] { background-color: #dce1e8 !important; }
 .light .bg-\[\#30363d\]\/[0-9]+ { background-color: #dce1e8 !important; }
+.light .bg-\[\#0a0a12\] { background-color: #f4f6fb !important; }
+.light .bg-\[\#0a0a12\]\/[0-9]+ { background-color: #f4f6fb !important; }
+.light .bg-\[\#050505\] { background-color: #f5f7fc !important; }
+.light .bg-\[\#050505\]\/[0-9]+ { background-color: #f5f7fc !important; }
+.light .glass { background: rgba(255, 255, 255, 0.7); border-color: rgba(30, 50, 96, 0.12); }
 
 .light .bg-white\/5 { background-color: rgba(30, 50, 96, 0.05) !important; }
 .light .bg-white\/10 { background-color: rgba(30, 50, 96, 0.08) !important; }

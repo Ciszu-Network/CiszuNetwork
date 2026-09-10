@@ -108,6 +108,8 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [acceptedMarketing, setAcceptedMarketing] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -333,6 +335,38 @@ export default function LoginPage() {
                   />
 
                   {error && <p className="text-red-400 text-[11px] font-bold px-1">{error}</p>}
+
+                  <div className="flex items-start gap-3">
+                    <div className="relative flex items-center justify-center shrink-0 w-5 h-5 mt-0.5">
+                      <input
+                        type="checkbox"
+                        checked={acceptedTerms}
+                        onChange={(e) => setAcceptedTerms(e.target.checked)}
+                        className="peer appearance-none w-full h-full border-2 border-white/20 rounded bg-black/50 checked:bg-neon-blue checked:border-neon-blue transition-all"
+                      />
+                      <svg viewBox="0 0 24 24" className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <p className="text-[11px] text-gray-400 font-bold leading-relaxed">
+                      Acepto los <a href="/terminos" className="text-neon-blue hover:underline">Términos de Servicio</a> y la <a href="/privacidad" className="text-neon-blue hover:underline">Política de Privacidad</a>.
+                    </p>
+                  </div>
+                  {errors.terms && <p className="text-red-400 text-[11px] font-bold px-1">{errors.terms}</p>}
+
+                  <div className="flex items-start gap-3">
+                    <div className="relative flex items-center justify-center shrink-0 w-5 h-5 mt-0.5">
+                      <input
+                        type="checkbox"
+                        checked={acceptedMarketing}
+                        onChange={(e) => setAcceptedMarketing(e.target.checked)}
+                        className="peer appearance-none w-full h-full border-2 border-white/20 rounded bg-black/50 checked:bg-neon-blue checked:border-neon-blue transition-all"
+                      />
+                      <svg viewBox="0 0 24 24" className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <p className="text-[11px] text-gray-400 font-bold leading-relaxed">
+                      Acepto recibir comunicaciones de <a href="/terms" className="text-neon-blue hover:underline">CiszuBot</a> (novedades, actualizaciones, ofertas). <strong className="text-neon-pink">No es publicidad de terceros.</strong>
+                    </p>
+                  </div>
+                  {errors.marketing && <p className="text-red-400 text-[11px] font-bold px-1">{errors.marketing}</p>}
 
                   <div className="flex justify-center">
                     <ReCAPTCHA

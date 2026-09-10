@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { headers } from "next/headers";
+import { headers, cookies } from "next/headers";
 import { Exo_2, Rajdhani } from "next/font/google";
+import { getDict, parseLang } from "@/lib/i18n";
 import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import "./globals.css";
@@ -62,10 +63,13 @@ export default async function RootLayout({
   children: ReactNode;
 }>) {
   const store = await headers();
+  const cookieStore = await cookies();
+  const lang = parseLang(cookieStore.get("ciszu_lang")?.value);
+  const dict = getDict(lang);
   const isEdit = store.get("x-is-edit") === "1";
 
   return (
-    <html lang="es" className={`${exo2.variable} ${rajdhani.variable}`} suppressHydrationWarning>
+    <html lang={lang} className={`${exo2.variable} ${rajdhani.variable}`} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -98,8 +102,8 @@ export default async function RootLayout({
                   {children}
                 </NuqsAdapter>
               </main>
-              {!isEdit && <Footer />}
-              {!isEdit && <CookiesBanner />}
+              {!isEdit && <Footer lang={lang} dict={dict} />}
+              {!isEdit && <CookiesBanner lang={lang} dict={dict} />}
               </AdBlockerGuard>
             </CloudflareGuard>
           </DisclaimerProvider>

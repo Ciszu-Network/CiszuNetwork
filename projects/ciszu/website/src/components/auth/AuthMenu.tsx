@@ -55,7 +55,7 @@ const SettingsIcon = () => (
  * hamburguesa, el Navbar cierra este dropdown (exclusividad mútua).
  * Las preferencias locales viven en un MODAL centrado separado (PreferencesModal).
  */
-export default function AuthMenu({ open, onToggle, onClose }: { open: boolean; onToggle: () => void; onClose: () => void }) {
+export default function AuthMenu({ open, onToggle, onClose, lang, dict }: { open: boolean; onToggle: () => void; onClose: () => void; lang: string; dict: Record<string, any> }) {
   const { user, isHydrated, setUser } = useAppStore();
   const { toast } = useToast();
   const [prefsOpen, setPrefsOpen] = useState(false);

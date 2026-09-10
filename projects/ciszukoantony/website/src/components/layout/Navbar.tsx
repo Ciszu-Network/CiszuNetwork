@@ -41,7 +41,7 @@ const SunIcon = () => (
 // (es-latam, es-es, en-us, en-uk) son INDIVIDUALES entre sí; el resto está
 // bloqueado (atenuado + toast de error al hacer click).
 
-export default function Navbar() {
+export default function Navbar({ lang, dict }: { lang: string; dict: Record<string, any> }) {
   const pathname = usePathname();
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
@@ -361,7 +361,7 @@ export default function Navbar() {
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter' && suggestions[0]) { router.push(suggestions[0].href); closeSearch(); } }}
-                  placeholder="Search pages in Ciszuko Antony (example: projects, team)..."
+                  placeholder={dict.nav.search}
                   className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 focus:border-neon-blue rounded-xl text-white placeholder:text-gray-600 outline-none text-sm transition-all font-header font-bold"
                 />
               </div>
@@ -371,7 +371,7 @@ export default function Navbar() {
                   <p className="text-gray-500 font-header font-black uppercase text-xs tracking-widest italic">No results found for &quot;{searchQuery.trim()}&quot;</p>
                   <button onClick={() => setSearchQuery('')}
                     className="px-6 py-2 bg-neon-blue/20 border border-neon-blue/40 text-neon-blue rounded-full font-header font-bold text-[10px] uppercase tracking-widest hover:bg-neon-blue hover:text-white transition-all active:scale-95">
-                    Reset Search
+                     {dict.common.resetSearch || 'Reset search'}
                   </button>
                 </div>
               )}
@@ -405,7 +405,7 @@ export default function Navbar() {
                 className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group ${
                   theme === 'dark' ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
                 }`}
-                title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
+                title={dict.common[theme === 'dark' ? 'lightMode' : 'darkMode']}>
                 {theme === 'dark' ? <MoonIcon /> : <SunIcon />}
               </button>
 
@@ -416,7 +416,7 @@ export default function Navbar() {
               <button
                 onClick={() => setSidebarView(sidebarView === 'main' ? 'lang' : 'main')}
                 className="group flex items-center gap-3 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all duration-300 shadow-lg cursor-pointer"
-                title="Language"
+                title={dict.common.changeLanguage}
               >
                 <svg className={`w-5 h-5 transition-transform duration-500 ${sidebarView === 'lang' ? 'rotate-90 text-neon-blue' : 'group-hover:rotate-12 text-white/70'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                   <circle cx="12" cy="12" r="10" />
