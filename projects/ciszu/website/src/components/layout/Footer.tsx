@@ -50,39 +50,38 @@ const IcoDiscord = () => (
 interface FooterLink { name: string; href: string; icon: React.ReactNode; }
 interface FooterColumn { title: string; links: FooterLink[]; }
 
-const FOOTER_SECTIONS: FooterColumn[] = [
+const FOOTER_SECTIONS = (dict: Record<string, any>) => [
   {
-    title: 'Ciszu Network',
+    title: dict.footer.brand,
     links: [
-      { name: 'Home', href: '/', icon: <Home className="w-4 h-4" /> },
-      { name: 'About', href: '/about', icon: <Info className="w-4 h-4" /> },
-      { name: 'Team', href: '/team', icon: <Users className="w-4 h-4" /> },
-      { name: 'Contact', href: '/contact', icon: <Mail className="w-4 h-4" /> },
+      { name: dict.nav.home, href: '/', icon: <Home className="w-4 h-4" /> },
+      { name: dict.nav.about, href: '/about', icon: <Info className="w-4 h-4" /> },
+      { name: dict.nav.team, href: '/team', icon: <Users className="w-4 h-4" /> },
+      { name: dict.nav.contact, href: '/contact', icon: <Mail className="w-4 h-4" /> },
     ],
   },
   {
-    title: 'Information',
+    title: dict.footer.explore,
     links: [
-      { name: 'FAQ', href: '/faq', icon: <HelpCircle className="w-4 h-4" /> },
+      { name: dict.nav.faq, href: '/faq', icon: <HelpCircle className="w-4 h-4" /> },
       { name: 'Policies', href: '/policies', icon: <FileText className="w-4 h-4" /> },
-      { name: 'Support', href: '/support', icon: <LifeBuoy className="w-4 h-4" /> },
-      { name: 'Documentation', href: '/documentation', icon: <FileText className="w-4 h-4" /> },
-      { name: 'Help', href: '/help', icon: <HelpCircle className="w-4 h-4" /> },
-      { name: 'Changelog', href: '/changelog', icon: <History className="w-4 h-4" /> },
-      { name: 'Reviews', href: '/reviews', icon: <Star className="w-4 h-4" /> },
-      { name: 'Stats', href: '/stats', icon: <BarChart3 className="w-4 h-4" /> },
-      { name: 'Leaderboard', href: '/leaderboard', icon: <Trophy className="w-4 h-4" /> },
-      { name: 'Forum', href: '/forum', icon: <MessageSquare className="w-4 h-4" /> },
+      { name: dict.nav.support, href: '/support', icon: <LifeBuoy className="w-4 h-4" /> },
+      { name: dict.nav.documentation, href: '/documentation', icon: <FileText className="w-4 h-4" /> },
+      { name: dict.nav.help, href: '/help', icon: <HelpCircle className="w-4 h-4" /> },
+      { name: dict.nav.changelog, href: '/changelog', icon: <History className="w-4 h-4" /> },
+      { name: dict.nav.reviews, href: '/reviews', icon: <Star className="w-4 h-4" /> },
+      { name: dict.nav.stats, href: '/stats', icon: <BarChart3 className="w-4 h-4" /> },
+      { name: dict.nav.forum, href: '/forum', icon: <MessageSquare className="w-4 h-4" /> },
     ],
   },
   {
-    title: 'Projects',
+    title: dict.footer.projects,
     links: [
       { name: 'Ciszugamens', href: '/projects/ciszugamens', icon: <Gamepad2 className="w-4 h-4" /> },
-      { name: 'CiszuBot', href: '/projects/ciszubot', icon: <Bot className="w-4 h-4" /> },
-      { name: 'MuzicMania', href: EXTERNAL_LINKS.muzicmania, icon: <Music className="w-4 h-4" /> },
-      { name: 'Ciszu Network', href: '/projects/ciszunetwork', icon: <Building className="w-4 h-4" /> },
-      { name: 'Ciszuko Antony', href: EXTERNAL_LINKS.ciszukoantony, icon: <User className="w-4 h-4" /> },
+      { name: dict.nav.ciszubot, href: '/projects/ciszubot', icon: <Bot className="w-4 h-4" /> },
+      { name: dict.nav.muzicmania, href: EXTERNAL_LINKS.muzicmania, icon: <Music className="w-4 h-4" /> },
+      { name: dict.nav.ciszuNetwork, href: '/projects/ciszunetwork', icon: <Building className="w-4 h-4" /> },
+      { name: dict.nav.ciszukoAntony, href: EXTERNAL_LINKS.ciszukoantony, icon: <User className="w-4 h-4" /> },
     ],
   },
 ];
@@ -117,7 +116,7 @@ const TECH_LINKS = [
   { name: 'Zustand', url: 'https://zustand-demo.pmnd.rs' },
 ];
 
-export const Footer = () => {
+export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any> }) => {
   const { theme, setTheme, language, setIsMenuOpen, setSidebarView } = useAppStore();
   const { toast } = useToast();
   const pathname = usePathname();
@@ -188,7 +187,7 @@ export const Footer = () => {
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.873.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
               </svg>
-              <span className="text-sm font-bold tracking-wide">Open Source · Repositorio en GitHub</span>
+              <span className="text-sm font-bold tracking-wide">{dict.footer.openSource} · {dict.footer.githubRepo}</span>
               <ExternalLink className="w-3 h-3 opacity-60 shrink-0" />
             </a>
 
@@ -203,7 +202,7 @@ export const Footer = () => {
                 <IcoPhone />
                 <div className="flex flex-col items-start gap-0.5">
                   <span className="text-[10px] font-black uppercase tracking-widest opacity-80 group-hover:opacity-100">
-                    {(language === 'es-latam' || language === 'es-es') ? 'WhatsApp Directo' : 'Direct WhatsApp'}
+                    {dict.footer.whatsappDirect}
                   </span>
                   <span className="text-sm font-bold tracking-tight leading-none group-hover:text-white">{CISZU_NETWORK.phone}</span>
                 </div>
@@ -229,7 +228,7 @@ export const Footer = () => {
                 </div>
                 <div className="flex flex-col items-start leading-none">
                   <span className="font-header font-black tracking-tighter text-base uppercase italic">Ciszugamens</span>
-                  <span className="text-[9px] font-bold uppercase tracking-widest opacity-80">Discord Server</span>
+                  <span className="text-[9px] font-bold uppercase tracking-widest opacity-80">{dict.footer.discordServer}</span>
                 </div>
               </a>
             </div>
@@ -237,7 +236,7 @@ export const Footer = () => {
 
           {/* RIGHT: Footer Nav Layout */}
           <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-center sm:text-left content-start">
-            {FOOTER_SECTIONS.map((section) => (
+            {FOOTER_SECTIONS(dict).map((section) => (
               <div key={section.title} className="flex flex-col items-center sm:items-start">
                 <span className="text-brand-light text-[10px] font-black uppercase tracking-[0.3em] mb-4 drop-shadow-[0_0_8px_rgba(58,107,240,0.5)]">
                   {section.title}
@@ -290,7 +289,7 @@ export const Footer = () => {
               className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group ${
                 theme === 'dark' ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
               }`}
-              title={theme === 'dark' ? 'Modo Claro' : 'Modo Oscuro'}
+              title={dict.common[theme === 'dark' ? 'lightMode' : 'darkMode']}
             >
               {theme === 'dark' ? (
                 <svg className="w-5 h-5 text-black transition-transform duration-500 group-hover:rotate-12" viewBox="0 0 24 24" fill="currentColor">
@@ -307,7 +306,7 @@ export const Footer = () => {
             <button
               onClick={() => { setIsMenuOpen(true); setSidebarView('lang'); }}
               className="group flex items-center gap-3 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all duration-300 shadow-lg"
-              title={language === 'es-latam' || language === 'es-es' ? 'Cambiar idioma' : 'Change language'}
+               title={dict.common.changeLanguage}
             >
               <Globe className="w-5 h-5 transition-transform duration-500 group-hover:rotate-12 text-white/70" />
               <span className="text-gray-400 group-hover:text-white uppercase tracking-widest text-xs font-bold">LANG</span>

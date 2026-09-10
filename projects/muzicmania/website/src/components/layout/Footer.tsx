@@ -20,7 +20,7 @@ const IcoFacebook = () => <svg viewBox="0 0 24 24" className="w-5 h-5" fill="cur
 const IcoTiktok = () => <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 2.89 3.5 2.53 1.53-.3 2.7-1.67 2.68-3.23.03-4.32.01-8.64.02-12.96z"/></svg>;
 const IcoPhone = () => <svg viewBox="0 0 24 24" className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" strokeWidth={2}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>;
 
-export const Footer = () => {
+export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any> }) => {
   const pathname = usePathname();
   const { isNavigating, setIsMenuOpen, setSidebarView, darkMode, setDarkMode } = useAppStore();
   const { toast } = useToast();
@@ -184,7 +184,7 @@ export const Footer = () => {
               className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group ${
                 darkMode ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
               }`}
-              title={darkMode ? 'Modo Claro' : 'Modo Oscuro'}
+               title={dict.common[darkMode ? 'lightMode' : 'darkMode']}
             >
               {darkMode ? (
                 <svg className="w-5 h-5 text-black transition-transform duration-500 group-hover:rotate-12" viewBox="0 0 24 24" fill="currentColor">
@@ -200,7 +200,7 @@ export const Footer = () => {
             <button
               onClick={() => { setIsMenuOpen(true); setSidebarView('lang'); }}
               className="group flex items-center gap-3 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all duration-300 shadow-lg"
-              title="Cambiar Idioma"
+               title={dict.common.changeLanguage}
             >
               <svg className="w-5 h-5 transition-transform duration-500 group-hover:rotate-12 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                 <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
@@ -213,12 +213,12 @@ export const Footer = () => {
           <div className="text-center space-y-2">
             <p className="text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-widest leading-loose">
               <span className="text-neon-cyan">&copy;</span> 2024-{new Date().getFullYear()}{' '}
-              <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="hover:text-neon-cyan transition-colors cursor-pointer uppercase font-black">CISZU NETWORK</a> &amp; MUZICMANIA. ALL RIGHTS RESERVED.
+              <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="hover:text-neon-cyan transition-colors cursor-pointer uppercase font-black">CISZU NETWORK</a> &amp; MUZICMANIA. {dict.footer.rights.toUpperCase()}
             </p>
             <p className="text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-widest leading-loose">
-              HECHO CON AMOR POR{' '}
+              {dict.footer.madeBy.toUpperCase()}{' '}
               <a href="https://ciszukoantony.vercel.app" target="_blank" rel="noopener noreferrer" className="text-neon-cyan font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(0,240,255,0.8)]">CISZUKO ANTONY</a>{' '}
-              · RESPALDADO POR{' '}
+              · {dict.common.learnMore.toUpperCase()}{' '}
               <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="text-neon-cyan font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(0,240,255,0.8)]">CISZU NETWORK</a>
             </p>
           </div>

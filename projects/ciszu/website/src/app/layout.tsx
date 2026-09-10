@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { headers } from "next/headers";
+import { headers, cookies } from "next/headers";
 import { IBM_Plex_Sans, IBM_Plex_Sans_Condensed } from "next/font/google";
+import { getDict, parseLang } from "@/lib/i18n";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
@@ -66,14 +67,15 @@ const themeScript = `
 
 export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   const store = await headers();
+  const cookieStore = await cookies();
+  const lang = parseLang(cookieStore.get("ciszu_lang")?.value);
+  const dict = getDict(lang);
   const isEdit = store.get("x-is-edit") === "1";
-  // Rutas "desnudas" (pruebas no oficiales, p.ej. /youareanidiot): sin chrome,
-  // sin ads, sin guards, sin disclaimers ni botones flotantes. Solo el body.
   const isBare = store.get("x-is-bare") === "1";
 
   if (isBare) {
     return (
-      <html lang="es" className={`${ibmPlex.variable} ${ibmPlexCondensed.variable}`} suppressHydrationWarning>
+      <html lang={lang} className={`${ibmPlex.variable} ${ibmPlexCondensed.variable}`} suppressHydrationWarning>
         <head>
           <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         </head>
@@ -83,7 +85,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   }
 
   return (
-    <html lang="es" className={`${ibmPlex.variable} ${ibmPlexCondensed.variable}`} suppressHydrationWarning>
+    <html lang={lang} className={`${ibmPlex.variable} ${ibmPlexCondensed.variable}`} suppressHydrationWarning>
       <head suppressHydrationWarning>
         <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: themeScript }} />
         <GoogleScripts />
@@ -100,14 +102,13 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={ICON_SVG} title="Ciszu Network" subtitle="Ciszu Network Security • Cloudflare" accent="#22d3ee" storageKey="cf_verified_ciszu">
               <AdBlockerGuard site="ciszunetwork" logo={ICON_SVG} title="Ciszu Network" accent="#22d3ee" accentAlt="#f472b6">
               {!isEdit && <ZoomWarning />}
-              {/* BetaDisclaimer removido: ahora usa el sistema de push global (GlobalDisclaimer) */}
-              {!isEdit && <Navbar />}
+              {!isEdit && <Navbar lang={lang} dict={dict} />}
               {!isEdit && <DisclaimerStack headerHeight={64} />}
               <DisclaimerDebug site="ciszunetwork" />
               <GlobalDisclaimer site="ciszu" />
               <main className="flex-grow">{children}</main>
-              {!isEdit && <Footer />}
-              {!isEdit && <CookiesBanner />}
+              {!isEdit && <Footer lang={lang} dict={dict} />}
+              {!isEdit && <CookiesBanner lang={lang} dict={dict} />}
               </AdBlockerGuard>
             </CloudflareGuard>
           </DisclaimerProvider>
@@ -131,4 +132,3 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     </html>
   );
 }
-

@@ -32,7 +32,7 @@ const IcoDiscord = () => (
   </svg>
 );
 
-export default function Footer() {
+export default function Footer({ lang, dict }: { lang: string; dict: Record<string, any> }) {
   const pathname = usePathname();
   const { setIsMenuOpen, setSidebarView, theme, setTheme } = useAppStore();
   const { toast } = useToast();
@@ -122,9 +122,9 @@ export default function Footer() {
               >
                 <IcoPhone />
                 <div className="flex flex-col items-start gap-0.5">
-                  <span className="text-[10px] font-black uppercase tracking-widest opacity-80 group-hover:opacity-100">
-                    WhatsApp Directo
-                  </span>
+                   <span className="text-[10px] font-black uppercase tracking-widest opacity-80 group-hover:opacity-100">
+                     {dict.footer.whatsappDirect}
+                   </span>
                   <span className="text-base font-bold tracking-tight leading-none group-hover:text-white">+58 412 6858111</span>
                 </div>
               </a>
@@ -188,13 +188,13 @@ export default function Footer() {
               className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group ${
                 theme === 'dark' ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
               }`}
-              title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
+                             title={dict.common[theme === 'dark' ? 'lightMode' : 'darkMode']}>
               {theme === 'dark' ? <MoonIcon /> : <SunIcon />}
             </button>
 
             <button onClick={openLangMenu}
               className="group flex items-center gap-3 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all duration-300 shadow-lg"
-              title="Language">
+                             title={dict.common.changeLanguage}>
               {I.globe}
               <span className="text-gray-400 group-hover:text-white uppercase tracking-widest text-xs font-bold">LANG</span>
             </button>

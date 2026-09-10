@@ -17,6 +17,9 @@
   --color-neon-green: #00ff88;
   --color-neon-pink: #ff33cc;
   --color-neon-purple: #4800ff;
+  --color-neon-yellow: #ffd900;
+  --color-neon-orange: #ff6600;
+  --color-neon-red: #ff0000;
 
   --color-bg-dark: #000000;
   --color-bg-card: #0a0a0f;
@@ -24,9 +27,23 @@
 
   --shadow-brand: 0 0 10px rgba(35, 63, 146, 0.5), 0 0 25px rgba(35, 63, 146, 0.3);
   --shadow-neon-blue: 0 0 10px rgba(89, 180, 255, 0.4), 0 0 25px rgba(89, 180, 255, 0.2);
+  --shadow-neon-cyan: 0 0 10px rgba(104, 207, 255, 0.4), 0 0 25px rgba(104, 207, 255, 0.2);
+  --shadow-neon-green: 0 0 10px rgba(0, 255, 136, 0.4), 0 0 25px rgba(0, 255, 136, 0.2);
+  --shadow-neon-pink: 0 0 10px rgba(255, 51, 204, 0.4), 0 0 25px rgba(255, 51, 204, 0.2);
+  --shadow-neon-purple: 0 0 10px rgba(72, 0, 255, 0.4), 0 0 25px rgba(72, 0, 255, 0.2);
+  --shadow-neon-yellow: 0 0 10px rgba(255, 217, 0, 0.4), 0 0 25px rgba(255, 217, 0, 0.2);
+  --shadow-neon-orange: 0 0 10px rgba(255, 102, 0, 0.4), 0 0 25px rgba(255, 102, 0, 0.2);
+  --shadow-neon-red: 0 0 10px rgba(255, 0, 0, 0.4), 0 0 25px rgba(255, 0, 0, 0.2);
 
   --drop-shadow-brand: drop-shadow(0 0 8px rgba(35, 63, 146, 0.6));
   --drop-shadow-neon-blue: drop-shadow(0 0 8px rgba(89, 180, 255, 0.5));
+  --drop-shadow-neon-cyan: drop-shadow(0 0 8px rgba(104, 207, 255, 0.5));
+  --drop-shadow-neon-green: drop-shadow(0 0 8px rgba(0, 255, 136, 0.5));
+  --drop-shadow-neon-pink: drop-shadow(0 0 8px rgba(255, 51, 204, 0.5));
+  --drop-shadow-neon-purple: drop-shadow(0 0 8px rgba(72, 0, 255, 0.5));
+  --drop-shadow-neon-yellow: drop-shadow(0 0 8px rgba(255, 217, 0, 0.5));
+  --drop-shadow-neon-orange: drop-shadow(0 0 8px rgba(255, 102, 0, 0.5));
+  --drop-shadow-neon-red: drop-shadow(0 0 8px rgba(255, 0, 0, 0.5));
 }
 
 /* ── Theme tokens (dark-first) ───────────────────────────── */
@@ -101,6 +118,10 @@
 .light .bg-\[\#21262d\]\/[0-9]+ { background-color: #e8ebf0 !important; }
 .light .bg-\[\#30363d\] { background-color: #dce1e8 !important; }
 .light .bg-\[\#30363d\]\/[0-9]+ { background-color: #dce1e8 !important; }
+.light .bg-\[\#0a0a12\] { background-color: #f4f6fb !important; }
+.light .bg-\[\#0a0a12\]\/[0-9]+ { background-color: #f4f6fb !important; }
+.light .bg-\[\#050505\] { background-color: #f5f7fc !important; }
+.light .bg-\[\#050505\]\/[0-9]+ { background-color: #f5f7fc !important; }
 
 .light .bg-white\/5 { background-color: rgba(30, 50, 96, 0.05) !important; }
 .light .bg-white\/10 { background-color: rgba(30, 50, 96, 0.08) !important; }

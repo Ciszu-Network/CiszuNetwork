@@ -338,6 +338,10 @@ const es = {
         h: 'Geolocalización',
         p: 'Podemos estimar tu ubicación aproximada (región/país) a partir de tu dirección IP para ofrecer contenido y anuncios relevantes a tu región, cumplir requisitos legales locales y mejorar la seguridad. La geolocalización precisa (GPS) solo se utiliza si una funcionalidad lo requiere explícitamente y con tu consentimiento; nunca se usa para anuncios.',
       },
+      {
+        h: 'Reseñas y Calificaciones',
+        p: 'Las calificaciones públicas de CiszuBot incorporan una reseña base fantasma de 5.0 para reflejar un estándar de calidad objetivo. Cuando no existen reseñas reales de usuarios, se muestra 5.0 y se indica expresamente que no hay reseñas para analizar. Cuando existen reseñas reales, la calificación pública es la media aritmética entre las reseñas de usuarios y la reseña base 5.0. No se falsifican reseñas: todas las reseñas visibles son reales o, en su defecto, se muestra el estado de "sin reseñas".',
+      },
     ],
   },
   privacyPage: {
@@ -718,6 +722,10 @@ const en = {
       {
         h: 'Geolocation',
         p: 'We may estimate your approximate location (region/country) from your IP address to serve content and ads relevant to your region, comply with local legal requirements and improve security. Precise (GPS) geolocation is only used when a feature explicitly requires it and with your consent; it is never used for advertising.',
+      },
+      {
+        h: 'Reviews & Ratings',
+        p: 'Public ratings for CiszuBot incorporate a ghost baseline review of 5.0 to reflect an objective quality standard. When no real user reviews exist, the displayed score is 5.0 and it is clearly indicated that there are no reviews to analyze. When real user reviews exist, the public rating is the arithmetic mean of the real reviews and the baseline 5.0. No reviews are fabricated: all visible reviews are real, or the site explicitly shows a "no reviews" state.',
       },
     ],
   },

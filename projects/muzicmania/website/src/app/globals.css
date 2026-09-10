@@ -118,6 +118,15 @@
 .light .bg-\[\#21262d\]\/[0-9]+ { background-color: #e8ebf0 !important; }
 .light .bg-\[\#30363d\] { background-color: #dce1e8 !important; }
 .light .bg-\[\#30363d\]\/[0-9]+ { background-color: #dce1e8 !important; }
+.light .bg-\[\#0a0a14\] { background-color: #f5f7fc !important; }
+.light .bg-\[\#0a0a14\]\/[0-9]+ { background-color: #f5f7fc !important; }
+.light .bg-\[\#0a0a12\] { background-color: #f4f6fb !important; }
+.light .bg-\[\#0a0a12\]\/[0-9]+ { background-color: #f4f6fb !important; }
+.light .bg-\[\#05050a\] { background-color: #f4f6fb !important; }
+.light .bg-\[\#05050a\]\/[0-9]+ { background-color: #f4f6fb !important; }
+.light .bg-\[\#050505\] { background-color: #f5f7fc !important; }
+.light .bg-\[\#050505\]\/[0-9]+ { background-color: #f5f7fc !important; }
+.light .glass { background: rgba(255, 255, 255, 0.7); border-color: rgba(30, 50, 96, 0.12); }
 
 .light .bg-white\/5 { background-color: rgba(30, 50, 96, 0.05) !important; }
 .light .bg-white\/10 { background-color: rgba(30, 50, 96, 0.08) !important; }
@@ -237,6 +246,15 @@
     background: rgba(0,212,255,.25);
     color: #fff;
   }
+
+  .light ::selection {
+    background: rgba(35, 63, 146, 0.3);
+    color: #0d1526;
+  }
+
+  .light ::-webkit-scrollbar-track { background: #f5f7fc; }
+  .light ::-webkit-scrollbar-thumb { background: rgba(35, 63, 146, 0.4); border-radius: 3px; }
+  .light ::-webkit-scrollbar-thumb:hover { background: rgba(35, 63, 146, 0.7); }
 }
 
 /* ── Utilities Layer ────────────────────────────────────── */
