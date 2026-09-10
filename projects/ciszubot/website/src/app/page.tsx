@@ -346,10 +346,12 @@ export default async function Home() {
       {/* ═══ PROVIDED BY CISZU NETWORK ═══ */}
       <section className="relative py-16 border-t border-border">
         <div className="max-w-screen-xl mx-auto px-4 text-center">
-          <div className="soft-card rounded-3xl p-8 md:p-12 max-w-4xl mx-auto border border-border">
-            <div className="flex flex-col items-center gap-6">
-              <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-brand-400/12 border border-brand-400/25 flex items-center justify-center">
-                <svg viewBox="0 0 24 24" className="w-10 h-10 md:w-12 md:h-12 text-brand-600 dark:text-brand-300" fill="none" stroke="currentColor" strokeWidth={1.5}>
+          <div className="soft-card relative max-w-4xl mx-auto border border-brand-400/30 overflow-hidden group">
+            <div className="absolute -top-20 -right-20 w-64 h-64 bg-brand-400/10 rounded-full blur-[80px] group-hover:bg-brand-300/15 transition-all" />
+            <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-brand-300/10 rounded-full blur-[80px] group-hover:bg-brand-400/15 transition-all" />
+            <div className="relative p-8 md:p-12 flex flex-col items-center gap-6">
+              <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center shadow-[0_0_30px_rgba(35,63,146,0.4)] border-2 border-brand-300/30">
+                <svg viewBox="0 0 24 24" className="w-10 h-10 md:w-12 md:h-12 text-white" fill="none" stroke="currentColor" strokeWidth={1.5}>
                   <path d="M12 2L2 7l10 5 10-5-10-5z" />
                   <path d="M2 17l10 5 10-5" />
                   <path d="M2 12l10 5 10-5" />
@@ -359,15 +361,14 @@ export default async function Home() {
                 <h2 className="text-2xl md:text-3xl font-bold text-ink mb-2">Project provided by CiszuNetwork</h2>
                 <p className="text-muted max-w-xl mx-auto">CiszuBot is part of the Ciszu Network ecosystem. Discover more projects and tools built by Ciszuko Antony.</p>
               </div>
-              <a
-                href="https://ciszunetwork.vercel.app"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl text-sm font-bold tracking-wide btn-ghost"
-              >
-                Visit CiszuNetwork
-                <Icon name="arrow-right" style="filled" size={16} />
-              </a>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-brand-400 to-brand-600 text-white font-bold rounded-xl shadow-lg shadow-brand-300/30 hover:shadow-2xl hover:shadow-brand-400/30 hover:scale-105 transition-all">
+                  Visit CiszuNetwork <Icon name="arrow-right" style="filled" size={16} />
+                </a>
+                <a href="/projects" className="inline-flex items-center gap-2 px-8 py-3.5 bg-white/5 border border-white/20 text-white font-bold rounded-xl hover:bg-white/10 hover:scale-105 transition-all">
+                  View All Projects <Icon name="arrow-right" style="filled" size={16} />
+                </a>
+              </div>
             </div>
           </div>
         </div>
