@@ -25,7 +25,7 @@ const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'stats' | 'support' 
   { href: '/contact', key: 'contact', icon: 'mail' },
   { href: '/descargas', key: 'downloads', icon: 'download' },
   { href: '/feedback', key: 'feedback', icon: 'message' },
-  { href: '/documentation', key: 'documentation', icon: 'file' },
+  { href: '/documentation', key: 'documentation', icon: 'file-text' },
   { href: '/team', key: 'team', icon: 'users' },
   { href: '/about', key: 'about', icon: 'info' },
   { href: '/help', key: 'help', icon: 'help' },
@@ -82,6 +82,27 @@ const IcoUser = () => (
     <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
   </svg>
 );
+
+const IconChart = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="w-4 h-4">
+    <path d="M12 20V10" />
+    <path d="M18 20V4" />
+    <path d="M6 20V14" />
+  </svg>
+);
+
+const IconTrophy = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
+    <path d="M6 9H4v2h2V9zm8 0h2v2h-2V9zM6 4h12v2H6V4zM6 19h12v2H6v-2z" />
+    <path d="M6 9h12v6H6z" />
+  </svg>
+);
+
+const renderIcon = (name: string, size: number) => {
+  if (name === 'chart') return <IconChart />;
+  if (name === 'trophy') return <IconTrophy />;
+  return <Icon name={name} size={size} className="shrink-0" />;
+};
 
 interface NavbarProps {
   lang: Lang;
@@ -347,14 +368,21 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
 
           <div className="w-px h-7 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-1 shrink-0" />
 
-          <div className="flex items-center gap-1 flex-1 overflow-x-hidden min-w-0">
+          <div className="flex items-center gap-1 flex-1 min-w-0 overflow-visible">
             {NAV_PAGES.map((link, idx) => {
               const active = isActive(link.href);
               const responsiveClass = active ? 'flex' : (NAV_HIDE_CLS[idx] ?? 'hidden min-[1520px]:flex');
               return (
-                <Link key={link.href} href={link.href} className={`${linkCls(link.href)} ${responsiveClass}`}>
-                  <Icon name={link.icon} size={16} className="shrink-0" />
-                  <span className={linkLabelCls(link.href)}>{dict.nav[link.key]}</span>
+                <Link key={link.href} href={link.href} className={`${linkCls(link.href)} ${responsiveClass} relative group flex-shrink-0`}>
+                  <span className="shrink-0">{renderIcon(link.icon, 16)}</span>
+                  <span className="sr-only">{dict.nav[link.key]}</span>
+                  <span className={`whitespace-nowrap transition-all duration-300 ${
+                    active
+                      ? 'opacity-100 ml-1.5 inline'
+                      : 'opacity-0 group-hover:opacity-100 absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-surface border border-border rounded-lg text-xs font-bold pointer-events-none z-50 shadow-xl'
+                  }`}>
+                    {dict.nav[link.key]}
+                  </span>
                 </Link>
               );
             })}
