@@ -4,10 +4,10 @@
 [![GitHub Forks](https://img.shields.io/github/forks/Ciszu-Network/CiszuNetwork?style=for-the-badge&logo=github&color=8B5CF6)](https://github.com/Ciszu-Network/CiszuNetwork/network/members)
 [![GitHub Watchers](https://img.shields.io/github/watchers/Ciszu-Network/CiszuNetwork?style=for-the-badge&logo=github&color=EC4899)](https://github.com/Ciszu-Network/CiszuNetwork/watchers)
 [![License: MIT](https://img.shields.io/badge/License-MIT-7C3AED?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
-[![Node](https://img.shields.io/badge/Node-20+-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org)
+[![Node](https://img.shields.io/badge/Node-24+-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org)
 [![pnpm](https://img.shields.io/badge/pnpm-10+-F69220?style=for-the-badge&logo=pnpm&logoColor=white)](https://pnpm.io)
 [![Next.js](https://img.shields.io/badge/Next.js-15-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://typescriptlang.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 
 ---
@@ -64,11 +64,11 @@ ciszunetwork-monorepo/
 
 | Capa | Tecnología | Versión |
 |---|---|---|
-| **Runtime** | Node.js | 20+ |
+| **Runtime** | Node.js | 24+ |
 | **Package Manager** | pnpm | 10+ |
 | **Framework Web** | Next.js | 15 (App Router) |
 | **Styling** | Tailwind CSS | 4 |
-| **Language** | TypeScript | 5 |
+| **Language** | TypeScript | 6 |
 | **Database/Storage/Auth** | Supabase | Postgres + Storage + Auth |
 | **Bot Discord** | Discord.js | 14 |
 | **Desktop App** | Tauri | 2 |

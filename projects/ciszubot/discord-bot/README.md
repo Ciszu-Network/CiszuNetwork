@@ -19,8 +19,8 @@ CiszuBot es un bot de Discord en español, desarrollado con Node.js 24, TypeScri
 ## Stack (migración jul/ago 2026)
 
 - Node.js 24 (imagen `node:24-alpine` en Docker)
-- TypeScript 5.9, compilación con `tsc` a `dist/`
-- pnpm 11 (monorepo, `projects/ciszubot/*` en el workspace)
+- TypeScript 6, compilación con `tsc` a `dist/`
+- pnpm 10 (monorepo, `projects/ciszubot/*` en el workspace)
 - Discord.js ^14.22
 - Express ^5 + dotenv ^16
 - Docker multi-stage (builder + runtime, usuario no-root, `--frozen-lockfile`)
