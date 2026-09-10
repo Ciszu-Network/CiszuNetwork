@@ -693,6 +693,7 @@ export interface GlobalDisclaimerRow {
   sender: string;
   source: string;
   message: string;
+  message_i18n: Record<string, string> | null;
   kind: 'info' | 'basic' | 'warning';
   target: string;
   dismissible: boolean;
@@ -724,6 +725,21 @@ function gdPersistSeen(site: string, ids: Set<number>) {
   try {
     window.localStorage.setItem(gdSeenKey(site), JSON.stringify(Array.from(ids).slice(-GD_SEEN_MAX)));
   } catch { /* no romper */ }
+}
+
+/** Resuelve el mensaje multi-idioma: i18n > fallback TEXT. */
+function resolveMessage(row: GlobalDisclaimerRow): string {
+  if (row.message_i18n && typeof row.message_i18n === 'object') {
+    const lang = (typeof navigator !== 'undefined' ? navigator.language || 'es' : 'es').toLowerCase();
+    const map: Record<string, string> = row.message_i18n;
+    if (map[lang]) return map[lang];
+    if (lang.startsWith('en') && map['en']) return map['en'];
+    if (lang.startsWith('en') && map['en-uk']) return map['en-uk'];
+    if (map['es']) return map['es'];
+    const first = Object.values(map)[0];
+    if (typeof first === 'string') return first;
+  }
+  return row.message;
 }
 
 export function GlobalDisclaimer({ site, pollInterval, disabled = false }: GlobalDisclaimerProps) {
@@ -800,7 +816,7 @@ export function GlobalDisclaimer({ site, pollInterval, disabled = false }: Globa
       push({
         id: key,
         kind: row.kind,
-        message: isDevcon ? `[DEVCON] ${row.message}` : row.message,
+        message: isDevcon ? `[DEVCON] ${resolveMessage(row)}` : resolveMessage(row),
         dismissible: row.dismissible,
         expiresAt: row.expires_at,
         startsAt: row.starts_at ?? undefined,
