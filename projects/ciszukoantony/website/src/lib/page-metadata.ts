@@ -60,6 +60,10 @@ const META: Record<string, { title: string; description: string }> = {
     title: `Downloads | ${SITE_NAME}`,
     description: 'Downloads and resources of Ciszuko Network.',
   },
+  '/downloads': {
+    title: `Downloads | ${SITE_NAME}`,
+    description: 'Download and install Ciszuko Antony as a desktop app (PDWA): what it is and installation steps.',
+  },
   '/login': {
     title: `Login | ${SITE_NAME}`,
     description: 'Sign in to your Ciszuko ID account.',
