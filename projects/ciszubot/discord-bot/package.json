@@ -29,7 +29,7 @@
   "devDependencies": {
     "@types/node": "^26.5.0",
     "nodemon": "^3.1.14",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   },
   "keywords": [
     "discord",
@@ -40,6 +40,6 @@
   "author": "Ciszu",
   "license": "MIT",
   "engines": {
-    "node": ">=22"
+    "node": ">=24"
   }
 }
