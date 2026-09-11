@@ -25,7 +25,7 @@ const DOCK_ITEMS: DockItem[] = [
   },
   {
     label: 'Commands',
-    href: '/comandos',
+    href: '/commands',
     color: 'blue',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
@@ -59,7 +59,7 @@ const DOCK_ITEMS: DockItem[] = [
   },
   {
     label: 'Downloads',
-    href: '/descargas',
+    href: '/downloads',
     color: 'orange',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
@@ -83,7 +83,7 @@ const DOCK_ITEMS: DockItem[] = [
   },
   {
     label: 'Terms',
-    href: '/terminos',
+    href: '/terms',
     color: 'red',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
@@ -94,7 +94,7 @@ const DOCK_ITEMS: DockItem[] = [
   },
   {
     label: 'Privacy',
-    href: '/privacidad',
+    href: '/privacy',
     color: 'cyan',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">

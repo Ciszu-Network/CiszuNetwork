@@ -1,5 +1,5 @@
 /**
- * InstallPdwaInline — botón "Instalar PDWA" grande para la página /descargas.
+ * InstallPdwaInline — botón "Instalar PDWA" grande para la página /Downloads.
  *
  * Reutiliza `detectPdwaBrowser` de @ciszu/ui (el mismo que usa el InstallPdwaButton
  * flotante del layout) y el listener `beforeinstallprompt`: si el navegador ofrece

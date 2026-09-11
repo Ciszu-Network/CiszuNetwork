@@ -56,7 +56,7 @@ export const puckConfig: Config<PuckComponents> = {
         ctaLabel: "Añadir a Discord",
         ctaHref: "https://discord.com/oauth2/authorize",
         secondaryLabel: "Comandos",
-        secondaryHref: "/comandos",
+        secondaryHref: "/commands",
       },
       render: (props) => <HeroBlock {...props} />,
     },

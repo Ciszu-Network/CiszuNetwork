@@ -133,7 +133,7 @@ export default async function Home() {
             {' '}
             <code className="text-brand-600 dark:text-brand-300 bg-card border border-border px-2 py-0.5 rounded">{BOT_PREFIX}</code>
             {' '}
-            <code className="text-violet-500 dark:text-violet-300 bg-card border border-border px-2 py-0.5 rounded">/comandos</code>
+            <code className="text-violet-500 dark:text-violet-300 bg-card border border-border px-2 py-0.5 rounded">/commands</code>
           </p>
 
           <div className="flex flex-wrap justify-center gap-4 mb-14">
@@ -253,7 +253,7 @@ export default async function Home() {
           })}
 
           <div className="text-center mt-12">
-            <Link href="/comandos" className="inline-flex items-center gap-2 px-7 py-3 rounded-xl text-sm font-semibold btn-ghost">
+            <Link href="/commands" className="inline-flex items-center gap-2 px-7 py-3 rounded-xl text-sm font-semibold btn-ghost">
               {t.commandsSection.viewAll}
               <Icon name="arrow-right" style="filled" size={16} />
             </Link>
