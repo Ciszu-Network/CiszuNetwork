@@ -193,7 +193,7 @@ export default function FeedbackPage() {
             </p>
           )}
           <div className="mt-6 pt-6 border-t border-white/5">
-            <Link href="/descargas" className="text-sm text-brand hover:text-brand-200 transition-colors">
+            <Link href="/downloads" className="text-sm text-brand hover:text-brand-200 transition-colors">
               Ver cómo instalar Ciszuko Antony como app (PDWA) →
             </Link>
           </div>

@@ -1,13 +1,30 @@
 {
-    "cleanUrls": true,
-    "framework": "nextjs",
-    "installCommand": "cd ../../.. && pnpm install",
-    "buildCommand": "cd ../../.. && pnpm turbo run build --filter=./projects/ciszu/website",
-    "env": {
-        "NEXT_PUBLIC_CDN_URL": "https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn",
-        "NEXT_PUBLIC_APP_ENV": "production"
+  "cleanUrls": true,
+  "framework": "nextjs",
+  "installCommand": "cd ../../.. && pnpm install",
+  "buildCommand": "cd ../../.. && pnpm turbo run build --filter=./projects/ciszu/website",
+  "env": {
+    "NEXT_PUBLIC_CDN_URL": "https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn",
+    "NEXT_PUBLIC_APP_ENV": "production"
+  },
+  "redirects": [
+    {
+      "source": "/descargas",
+      "destination": "/downloads",
+      "permanent": true
     },
-    "headers": [
+    {
+      "source": "/terminos",
+      "destination": "/terms",
+      "permanent": true
+    },
+    {
+      "source": "/privacidad",
+      "destination": "/privacy",
+      "permanent": true
+    }
+  ],
+  "headers": [
         {
             "source": "/(.*)",
             "headers": [

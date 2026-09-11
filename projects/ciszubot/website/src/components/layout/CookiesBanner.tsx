@@ -60,11 +60,11 @@ export function CookiesBanner({ lang, dict }: CookiesBannerProps) {
           </h3>
           <p className="text-gray-400 text-xs md:text-sm font-bold leading-relaxed">
             {dict.cookiesBanner.text}
-            <Link href="/privacidad" className="text-neon-cyan hover:text-neon-blue underline transition-colors">
+            <Link href="/privacy" className="text-neon-cyan hover:text-neon-blue underline transition-colors">
               {dict.cookiesBanner.privacyLink}
             </Link>{' '}
             {isEsLang(lang) ? 'y' : 'and'}{' '}
-            <Link href="/terminos" className="text-neon-cyan hover:text-neon-blue underline transition-colors">
+            <Link href="/terms" className="text-neon-cyan hover:text-neon-blue underline transition-colors">
               {dict.cookiesBanner.termsLink}
             </Link>.
           </p>

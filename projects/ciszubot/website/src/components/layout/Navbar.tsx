@@ -15,7 +15,7 @@ import { INVITE_URL, LOGO_ISOTIPO, LOGO_LOGOTIPO, type Dict, type Lang } from '@
 
 const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'stats' | 'support' | 'downloads' | 'feedback' | 'changelog' | 'reviews' | 'leaderboard' | 'forum' | 'contact' | 'documentation' | 'about' | 'team' | 'help'; icon: string }[] = [
   { href: '/', key: 'home', icon: 'home' },
-  { href: '/comandos', key: 'commands', icon: 'gamepad' },
+  { href: '/commands', key: 'commands', icon: 'gamepad' },
   { href: '/stats', key: 'stats', icon: 'chart' },
   { href: '/changelog', key: 'changelog', icon: 'history' },
   { href: '/reviews', key: 'reviews', icon: 'star' },
@@ -23,7 +23,7 @@ const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'stats' | 'support' 
   { href: '/forum', key: 'forum', icon: 'message' },
   { href: '/support', key: 'support', icon: 'support' },
   { href: '/contact', key: 'contact', icon: 'mail' },
-  { href: '/descargas', key: 'downloads', icon: 'download' },
+  { href: '/downloads', key: 'downloads', icon: 'download' },
   { href: '/feedback', key: 'feedback', icon: 'message' },
   { href: '/documentation', key: 'documentation', icon: 'file-text' },
   { href: '/team', key: 'team', icon: 'users' },
@@ -53,7 +53,7 @@ const NAV_HIDE_CLS: string[] = [
 
 const SEARCH_PAGES: { href: string; labelKey: string; icon: string; keywords: string[] }[] = [
   { href: '/', labelKey: 'home', icon: 'home', keywords: ['inicio', 'home', 'main'] },
-  { href: '/comandos', labelKey: 'commands', icon: 'gamepad', keywords: ['comandos', 'commands', 'bot', 'slash'] },
+  { href: '/commands', labelKey: 'commands', icon: 'gamepad', keywords: ['comandos', 'commands', 'bot', 'slash'] },
   { href: '/stats', labelKey: 'stats', icon: 'chart', keywords: ['estadisticas', 'stats', 'uptime', 'online', 'status'] },
   { href: '/changelog', labelKey: 'changelog', icon: 'history', keywords: ['cambios', 'updates', 'actualizaciones', 'historial'] },
   { href: '/reviews', labelKey: 'reviews', icon: 'star', keywords: ['reseñas', 'reviews', 'opiniones', 'feedback'] },
@@ -65,11 +65,11 @@ const SEARCH_PAGES: { href: string; labelKey: string; icon: string; keywords: st
   { href: '/about', labelKey: 'about', icon: 'info', keywords: ['about', 'sobre', 'nosotros'] },
   { href: '/team', labelKey: 'team', icon: 'users', keywords: ['equipo', 'team', 'staff'] },
   { href: '/help', labelKey: 'help', icon: 'help', keywords: ['ayuda', 'help', 'faq', 'preguntas'] },
-  { href: '/descargas', labelKey: 'downloads', icon: 'download', keywords: ['descargas', 'downloads', 'app', 'exe'] },
+  { href: '/downloads', labelKey: 'downloads', icon: 'download', keywords: ['descargas', 'downloads', 'app', 'exe'] },
   { href: '/feedback', labelKey: 'feedback', icon: 'message', keywords: ['feedback', 'reporte', 'report', 'problema'] },
   { href: '/dashboard', labelKey: 'dashboard', icon: 'server', keywords: ['panel', 'dashboard', 'config', 'admin'] },
-  { href: '/privacidad', labelKey: 'privacidad', icon: 'lock', keywords: ['privacidad', 'privacy'] },
-  { href: '/terminos', labelKey: 'terminos', icon: 'external', keywords: ['terminos', 'terms', 'legal'] },
+  { href: '/privacy', labelKey: 'privacidad', icon: 'lock', keywords: ['privacidad', 'privacy'] },
+  { href: '/terms', labelKey: 'terminos', icon: 'external', keywords: ['terminos', 'terms', 'legal'] },
 ];
 
 // LANGS: lista canónica compartida (@ciszu/ui). Los 4 idiomas de producción

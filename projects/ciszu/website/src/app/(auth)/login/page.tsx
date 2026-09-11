@@ -397,7 +397,7 @@ export default function LoginPage() {
                         <svg viewBox="0 0 24 24" className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                       </div>
                       <p className="text-[11px] text-gray-400 font-bold leading-relaxed">
-                        Acepto los <a href="/terminos" className="text-neon-cyan hover:underline">Términos de Servicio</a> y la <a href="/privacidad" className="text-neon-cyan hover:underline">Política de Privacidad</a>.
+                        Acepto los <a href="/terms" className="text-neon-cyan hover:underline">Términos de Servicio</a> y la <a href="/privacy" className="text-neon-cyan hover:underline">Política de Privacidad</a>.
                       </p>
                     </div>
                     {errors.terms && <p className="text-red-400 text-[11px] font-bold">{errors.terms}</p>}

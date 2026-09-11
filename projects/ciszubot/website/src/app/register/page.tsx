@@ -364,7 +364,7 @@ export default function RegisterPage() {
                   <svg viewBox="0 0 24 24" className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
                 <p className="text-[11px] text-gray-400 font-bold leading-relaxed">
-                  Acepto los <a href="/terminos" className="text-neon-blue hover:underline">Términos de Servicio</a> y la <a href="/privacidad" className="text-neon-blue hover:underline">Política de Privacidad</a>.
+                  Acepto los <a href="/terms" className="text-neon-blue hover:underline">Términos de Servicio</a> y la <a href="/privacy" className="text-neon-blue hover:underline">Política de Privacidad</a>.
                 </p>
               </div>
               {errors.terms && <p className="text-red-400 text-[11px] font-bold px-1">{errors.terms}</p>}
@@ -403,8 +403,8 @@ export default function RegisterPage() {
 
               <p className="text-[10px] text-faint font-bold leading-relaxed px-1">
                 Al registrarte aceptas los{' '}
-                <a href="/terminos" className="text-neon-blue hover:underline">Términos de Servicio</a> y la{' '}
-                <a href="/privacidad" className="text-neon-blue hover:underline">Política de Privacidad</a>.
+                <a href="/terms" className="text-neon-blue hover:underline">Términos de Servicio</a> y la{' '}
+                <a href="/privacy" className="text-neon-blue hover:underline">Política de Privacidad</a>.
               </p>
             </form>
 

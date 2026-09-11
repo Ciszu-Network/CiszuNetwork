@@ -189,10 +189,10 @@ export default function Footer({ lang, dict }: FooterProps) {
               <div className="flex flex-col gap-1.5 w-full">
                 {[
                   { href: '/', label: dict.nav.home, icon: 'home' },
-                  { href: '/comandos', label: dict.nav.commands, icon: 'gamepad' },
+                  { href: '/commands', label: dict.nav.commands, icon: 'gamepad' },
                   { href: '/stats', label: dict.nav.status, icon: 'chart' },
                   { href: '/support', label: dict.nav.support, icon: 'support' },
-                  { href: '/descargas', label: dict.nav.downloads, icon: 'download' },
+                  { href: '/downloads', label: dict.nav.downloads, icon: 'download' },
                   { href: '/feedback', label: dict.nav.feedback, icon: 'message' },
                   { href: '/changelog', label: 'Changelog', icon: 'history' },
                   { href: '/reviews', label: 'Reviews', icon: 'star' },
@@ -254,7 +254,7 @@ export default function Footer({ lang, dict }: FooterProps) {
                   {dict.footer.prefix}: <code className="text-neon-blue bg-neon-blue/10 border border-neon-blue/30 px-1.5 py-0.5 rounded">{BOT_PREFIX}</code>
                 </span>
                 <span>
-                  {dict.footer.slash}: <code className="text-neon-blue bg-neon-blue/10 border border-neon-blue/30 px-1.5 py-0.5 rounded">/comandos</code>
+                  {dict.footer.slash}: <code className="text-neon-blue bg-neon-blue/10 border border-neon-blue/30 px-1.5 py-0.5 rounded">/commands</code>
                 </span>
                 <span>20 comandos · 4 categorías</span>
                 <span>7 listas de bots</span>
@@ -266,11 +266,11 @@ export default function Footer({ lang, dict }: FooterProps) {
                 {dict.footer.legal}
               </h4>
               <div className="flex flex-col gap-1.5 w-full">
-                <Link href="/terminos"
+                <Link href="/terms"
                   className="flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border border-transparent text-ink font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]">
                   <span className="tracking-wide">{dict.footer.terms}</span>
                 </Link>
-                <Link href="/privacidad"
+                <Link href="/privacy"
                   className="flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border border-transparent text-ink font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]">
                   <span className="tracking-wide">{dict.footer.privacy}</span>
                 </Link>

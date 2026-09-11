@@ -285,7 +285,7 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
                 const active = isActive(link.href);
                 const { name } = link;
                 const hideCls =
-                  { '/': 'hidden min-[300px]:flex', '/projects': 'hidden min-[540px]:flex', '/feedback': 'hidden min-[640px]:flex', '/descargas': 'hidden min-[740px]:flex' }[link.href] ?? 'hidden min-[850px]:flex';
+                  { '/': 'hidden min-[300px]:flex', '/projects': 'hidden min-[540px]:flex', '/feedback': 'hidden min-[640px]:flex', '/downloads': 'hidden min-[740px]:flex' }[link.href] ?? 'hidden min-[850px]:flex';
                 const responsiveClass = active ? 'flex' : hideCls;
                 return (
                   <Link key={link.href} href={link.href} className={`${navLinkCls(active)} ${responsiveClass}`}>
