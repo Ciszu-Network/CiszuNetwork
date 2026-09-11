@@ -19,7 +19,7 @@ const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'stats' | 'support' 
   { href: '/stats', key: 'stats', icon: 'chart' },
   { href: '/changelog', key: 'changelog', icon: 'history' },
   { href: '/reviews', key: 'reviews', icon: 'star' },
-  { href: '/leaderboard', key: 'leaderboard', icon: 'trophy' },
+  { href: '/leaderboard', key: 'leaderboard', icon: 'chart' },
   { href: '/forum', key: 'forum', icon: 'message' },
   { href: '/support', key: 'support', icon: 'support' },
   { href: '/contact', key: 'contact', icon: 'mail' },
@@ -379,7 +379,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                   <span className={`whitespace-nowrap transition-all duration-300 ${
                     active
                       ? 'opacity-100 ml-1.5 inline'
-                      : 'opacity-0 group-hover:opacity-100 absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-surface border border-border rounded-lg text-xs font-bold pointer-events-none z-50 shadow-xl'
+                      : 'opacity-0 group-hover:opacity-100 absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-surface border border-border rounded-lg text-xs font-bold pointer-events-none z-50 shadow-xl'
                   }`}>
                     {dict.nav[link.key]}
                   </span>
