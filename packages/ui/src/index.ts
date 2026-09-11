@@ -111,6 +111,7 @@ export type {
   DisclaimerStackProps,
   DebugDisclaimer,
   GlobalDisclaimerProps,
+  DisclaimerAction,
 } from './Disclaimer';
 // CopyWithButton: botón de copiar junto a contenido copiable (sistema anti-copy)
 export { default as CopyWithButton, copyText } from './CopyWithButton';
