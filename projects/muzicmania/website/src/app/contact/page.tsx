@@ -156,21 +156,26 @@ export default function ContactPage() {
           </div>
 
           <div className="lg:col-span-12 xl:col-span-7">
-             <div className="h-full min-h-[500px] p-4 bg-doc-dark border border-white/10 rounded-[3rem] overflow-hidden relative shadow-2xl group">
-                <iframe 
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d62705.41904791941!2d-69.70417936173264!3d11.41160105307374!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e85906f362ed9b3%3A0xe54508493d077c5c!2sSanta%20Ana%20de%20Coro%2C%20Falc%C3%B3n!5e0!3m2!1ses-419!2sve!4v1714574921941!5m2!1ses-419!2sve" 
-                  width="100%" height="100%" 
-                  style={{ border: 0, filter: 'invert(90%) hue-rotate(180deg) contrast(110%)' }} 
-                  allowFullScreen={true} loading="lazy" 
-                  className="rounded-[2.5rem] opacity-70 group-hover:opacity-100 transition-opacity duration-1000 grayscale hover:grayscale-0"
-                />
-                <div className="absolute top-8 right-8 p-6 bg-black/80 border border-white/10 backdrop-blur-xl rounded-3xl space-y-2 pointer-events-none group-hover:-translate-x-4 transition-transform text-right">
-                   <div className="flex items-center justify-end gap-3 text-neon-blue">
-                     <span className="text-xs font-black uppercase tracking-widest flex items-center gap-2">LOCALIDAD</span>
-                     <div className="w-4 h-4">{I.map}</div>
+             <div className="h-full min-h-[500px] p-10 bg-doc-dark border border-white/10 rounded-[3rem] overflow-hidden relative shadow-2xl group">
+                <div className="flex flex-col h-full justify-center items-center text-center space-y-8">
+                   <div className="w-20 h-20 text-neon-blue p-5 bg-neon-blue/5 rounded-[2rem] border border-neon-blue/20">
+                      {I.map}
                    </div>
-                   <p className="text-xl font-header font-black text-white italic uppercase tracking-tighter flex items-center justify-end gap-2">Coro, Falcón</p>
-                   <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Base de Operaciones Suramericana</p>
+                   <div className="space-y-4">
+                      <h3 className="text-4xl md:text-5xl font-header font-black text-white uppercase italic tracking-tighter">
+                         Nuestra Localidad
+                      </h3>
+                      <p className="text-xl font-header font-black text-neon-blue italic uppercase tracking-tighter">
+                         Coro, Falcón
+                      </p>
+                      <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest max-w-md">
+                         Base de Operaciones Suramericana - Venezuela (GMT-4)
+                      </p>
+                   </div>
+                   <div className="flex flex-wrap justify-center gap-4 pt-8">
+                      <CopyField label="Email de Consulta" value="ciszunetwork@gmail.com" icon={I.mail} theme="blue" />
+                      <CopyField label="WhatsApp Directo" value="+58 412 6858111" icon={I.phone} theme="green" showWhatsApp={true} />
+                   </div>
                 </div>
              </div>
           </div>

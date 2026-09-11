@@ -60,6 +60,15 @@ export async function middleware(request: NextRequest) {
   response.headers.set(
     'Content-Security-Policy',
     buildCsp({
+      imgSrc: [
+        'https://cdn.discordapp.com',
+        'https://top.gg',
+        'https://www.google.com',
+        'https://www.google.co.ve',
+        'https://www.google-analytics.com',
+        'https://analytics.google.com',
+        'https://pagead2.googlesyndication.com',
+      ],
       styleSrc: ['https://rsms.me'],
       fontSrc: ['https://rsms.me'],
       scriptSrc: ['https://cdnjs.cloudflare.com'],
