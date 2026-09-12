@@ -398,7 +398,9 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
               const active = isActive(link.href);
               const responsiveClass = active ? 'flex' : (NAV_HIDE_CLS[idx] ?? 'hidden min-[1520px]:flex');
               return (
-                <Link key={link.href} href={link.href} className={`${linkCls(link.href)} ${responsiveClass} relative group flex-shrink-0`}>
+                <Link key={link.href} href={link.href} className={
+                  `${linkCls(link.href)} ${responsiveClass} relative group flex-shrink-0`
+                }>
                   <span className="shrink-0">{renderIcon(link.icon, 16)}</span>
                   <span className="sr-only">{dict.nav[link.key]}</span>
                   <span className={`whitespace-nowrap transition-all duration-300 ${
