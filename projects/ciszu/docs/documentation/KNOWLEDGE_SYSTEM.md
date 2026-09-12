@@ -247,3 +247,98 @@ como hecho confirmado en los docs hasta verificarla empíricamente.
 
 _Última revisión: 13 ago 2026._ Relacionado: `FULL_STACK_SYSTEM.md`, `TOOLS_SYSTEM.md`,
 `WORKFLOW_SYSTEM.md`, `CODE_PRINCIPLES_PROTOCOLS.md`.
+
+## AC3 — Aprendizaje Completo Cruzado Continuo (C3L)
+
+Versión: 1.0.0
+Actualización: 2026-09-12
+Identificador: AC3_C3L_V1.0.0_2026_09_12_ciszunetwork
+
+> **Definición**: modelo de aprendizaje patentado por Ciszuko Antony que integra
+> supervisión de IA, práctica individual y teoría multimedia en tres frentes
+> simultáneos. Enfocado en programación beginner pero aplicable a cualquier campo.
+
+### Resumen
+
+AC3 (Aprendizaje Completo Cruzado Continuo) / C3L (Comprehensive Continuous Cross-Learning) 
+propone utilizar la IA como consejera auxiliar, no como reemplazo. El estudiante se convierte 
+en el "jefe" del proyecto: pide a la IA que construya el proyecto ideal, supervisa el código 
+complejo en segundo plano y aprende por ósmosis mientras practica fragmentos específicos y 
+consume teoría multimedia en paralelo.
+
+### Pilares
+
+1. **Supervisión de IA** — La IA construye el proyecto en segundo plano. Tú revisas, 
+   corriges errores visuales, estructura y escalabilidad. Entiendes el código complejo 
+   por lectura analítica.
+2. **Práctica constante** — Cuaderno, IDE o programa de testeo. Practicas fragmentos 
+   específicos mientras la IA avanza en el proyecto principal.
+3. **Teoría multimedia** — Cursos, videos, libros, podcasts o cualquier fuente externa. 
+   La teoría se consume en paralelo y se aplica inmediatamente en el proyecto.
+
+### Aplicación práctica
+
+- **Godot/Videojuegos**: La IA genera la base del juego mientras tú aprendes Godot con 
+  tutoriales y practicas scripts específicos. A medida que avanzas, entiendes lo que la IA 
+  hizo y no pierdes tiempo recreándolo.
+- **Web/Next.js**: La IA scaffolding una app completa mientras tú estudias React, 
+  Tailwind y Supabase por separado. Corriges estilos, estructura y lógica.
+- **Bot de Discord**: La IA implementa comandos mientras tú aprendes Discord.js, 
+  slash commands y despliegue en Vercel.
+
+### Beneficios
+
+- Visión global desde el día uno (arquitectura, UX, escalabilidad).
+- Optimización del tiempo: no recreas lo que la IA ya resolvió.
+- Independencia cognitiva: la herramienta más importante eres tú.
+- Transición rápida de "consumidor de tutorials" a "creador de productos reales".
+
+### Retos
+
+- Multitasking cognitivo: requiere disciplina y guía clara.
+- Riesgo de "caja negra": si solo revisas errores visuales, puedes no entender la 
+  arquitectura profunda.
+- Constancia: necesita hábitos y métricas de seguimiento.
+
+### Veredicto
+
+AC3 es un enfoque moderno y pragmático alineado con el desarrollo de software actual. 
+Rompe con la pedagogía tradicional y abraza la realidad del desarrollo asistido por IA. 
+Con andamiaje y métricas de constancia, tiene potencial como metodología de aceleración 
+para creadores independientes y juniors.
+
+### Documentación relacionada
+
+- Página pública: `projects/ciszu/website/src/app/cursos/page.tsx` (ruta `/cursos`)
+- Componente UI: `packages/ui/src/Ac3Section.tsx`
+- Propuesta original: `projects/ciszu/docs/documentation/` (AC3_C3L_PROPOSAL.md)
+
+### Caso de éxito: Dogfooding
+
+Aplica AC3 tú mismo para construir un proyecto real, visible y funcional dentro de 
+CiszuNetwork (por ejemplo, un juego en Godot, una app web con Next.js, o un bot de Discord). 
+Documenta todo el proceso en formato de diario de abordo o serie de artículos 
+("Cómo construí X app en 30 días usando AC3"). Ver para creer.
+
+### Kit de Inicio Gratuito
+
+En la sección de educación de CiszuNetwork se ofrece una Guía Rápida de Inicio de AC3 
+(PDF o Notion) descargable de forma gratuita a cambio del correo. Incluye:
+
+- Prompt Maestro para configurar la IA como tutor auxiliar.
+- Plantilla de planificación de tareas (Teoría + Práctica + Supervisión).
+- Checklist de constancia y hábitos.
+
+### Manifiesto AC3 — Propiedad intelectual
+
+Documento oficial del framework AC3, publicado en CiszuNetwork. Se recomienda registrar 
+formalmente la obra en oficinas de propiedad intelectual del país o mediante sellos de 
+tiempo digitales en blockchain (Proof of Existence, Copyrighted.com) bajo el nombre 
+legal o seudónimo profesional CiszukoAntony. Esto otorga fecha cierta de creación.
+
+**Licencia**: Creative Commons Atribución-NoComercial-CompartirIgual (CC BY-NC-SA).  
+Permite usar y compartir libremente, obliga a reconocer al autor original y prohíbe 
+la monetización por terceros sin autorización expresa.
+
+_Última revisión: 12 sep 2026._ Relacionado: `KNOWLEDGE_SYSTEM.md`, `FULL_STACK_SYSTEM.md`,
+`TOOLS_SYSTEM.md`, `WORKFLOW_SYSTEM.md`.

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { BookOpen, GraduationCap, ExternalLink, Globe, Clock, Award, Search } from "lucide-react";
 import { usePageTitle } from "@/lib/usePageTitle";
 import QuickDocks from "@/components/molecules/QuickDocks";
+import { Ac3Section } from "@ciszu/ui";
 
 /**
  * /cursos — catálogo de cursos del ecosistema Ciszu Network.
@@ -208,6 +209,8 @@ export default function CursosPage() {
             <a href="mailto:ciszunetwork@gmail.com" className="text-brand-light underline">ciszunetwork@gmail.com</a>
           </p>
         </div>
+
+        <Ac3Section />
       </div>
 
       <QuickDocks />

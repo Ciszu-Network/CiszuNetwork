@@ -166,3 +166,6 @@ export type {
 
 export { default as EcosystemSection } from './EcosystemSection';
 export type { EcosystemSectionProps } from './EcosystemSection';
+
+export { default as Ac3Section } from './Ac3Section';
+export type { Ac3SectionProps } from './Ac3Section';
