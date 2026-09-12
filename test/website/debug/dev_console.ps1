@@ -1635,19 +1635,23 @@ function Read-DisclaimerActions {
             $label = Read-Host "Texto del boton (Enter = OK)"
             if ([string]::IsNullOrWhiteSpace($label)) { $label = 'OK' }
             $actions += @{ label = $label.Trim(); close = $true }
+            Write-Host "${c_green}Botón OK/close agregado. Total: $($actions.Count)${c_reset}"
             continue
         }
 
         $label = Read-Host "Texto del boton"
-        if ([string]::IsNullOrWhiteSpace($label)) { continue }
+        if ([string]::IsNullOrWhiteSpace($label)) { Write-Host "${c_yellow}Texto vacío, se descarta este botón.${c_reset}"; continue }
         $href = Read-Host "URL al hacer clic (debe empezar por http)"
         if ($href -match '^https?://') {
             $actions += @{ label = $label.Trim(); href = $href.Trim() }
+            Write-Host "${c_green}Botón URL agregado: $($label.Trim()) -> $($href.Trim()) [total=$($actions.Count)]${c_reset}"
         } else {
             Write-Host "${c_yellow}URL no valida: el boton '$($label.Trim())' se guardara como boton de CIERRE (OK).${c_reset}"
             $actions += @{ label = $label.Trim(); close = $true }
+            Write-Host "${c_green}Botón OK/close agregado por fallback. Total: $($actions.Count)${c_reset}"
         }
     }
+    Write-Host "${c_cyan}Acciones finales para este disclaimer: $($actions.Count) boton(es)${c_reset}"
     $actions
 }
 

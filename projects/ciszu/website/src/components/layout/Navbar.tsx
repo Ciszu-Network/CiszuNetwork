@@ -74,23 +74,32 @@ const NAV_ITEMS: NavEntry[] = [
   },
   { name: 'Changelog', href: '/changelog', icon: <History className="w-4 h-4" /> },
   { name: 'Reviews', href: '/reviews', icon: <Star className="w-4 h-4" /> },
-   { name: 'Stats', href: '/stats', icon: <BarChart3 className="w-4 h-4" /> },
-   { name: 'Forum', href: '/forum', icon: <MessageSquare className="w-4 h-4" /> },
-  {
-    name: 'Projects',
-    icon: <Zap className="w-4 h-4" />,
-    keywords: ['ciszugamens', 'discord', 'whatsapp', 'telegram', 'ciszubot', 'muzicmania', 'ciszu network', 'ciszuko antony'],
-    links: [
+  { name: 'Stats', href: '/stats', icon: <BarChart3 className="w-4 h-4" /> },
+  { name: 'Forum', href: '/forum', icon: <MessageSquare className="w-4 h-4" /> },
+  { name: 'Projects', icon: <Zap className="w-4 h-4" />, keywords: ['ciszugamens', 'discord', 'whatsapp', 'telegram', 'ciszubot', 'muzicmania', 'ciszu network', 'ciszuko antony'], links: [
       { name: 'Ciszugamens', href: '/projects/ciszugamens', icon: <Gamepad2 className="w-4 h-4" /> },
       { name: 'CiszuBot', href: '/projects/ciszubot', icon: <Bot className="w-4 h-4" /> },
       { name: 'MuzicMania', href: '/projects/muzicmania', icon: <Music className="w-4 h-4" /> },
       { name: 'Ciszu Network', href: '/projects/ciszunetwork', icon: <Building className="w-4 h-4" /> },
       { name: 'Ciszuko Antony', href: '/projects/ciszukoantony', icon: <User className="w-4 h-4" /> },
-    ],
-  },
+    ] },
   { name: 'Download', href: '/download', icon: <Download className="w-4 h-4" /> },
   { name: 'Donate', href: '/donate', icon: <Heart className="w-4 h-4" /> },
   { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" /> },
+  {
+    name: 'Information',
+    icon: <Info className="w-4 h-4" />,
+    keywords: ['about', 'team', 'faq', 'documentation', 'help', 'contact', 'support', 'info', 'about us'],
+    links: [
+      { name: 'About', href: '/about', icon: <Info className="w-4 h-4" /> },
+      { name: 'Team', href: '/team', icon: <Users className="w-4 h-4" /> },
+      { name: 'FAQ', href: '/faq', icon: <HelpCircle className="w-4 h-4" /> },
+      { name: 'Documentation', href: '/documentation', icon: <FileText className="w-4 h-4" /> },
+      { name: 'Help', href: '/help', icon: <HelpCircle className="w-4 h-4" /> },
+      { name: 'Contact', href: '/contact', icon: <Mail className="w-4 h-4" /> },
+      { name: 'Support', href: '/support', icon: <LifeBuoy className="w-4 h-4" /> },
+    ],
+  },
 ];
 
 // Clases responsive por índice de NAV_ITEMS: el link activo siempre visible; el resto aparece según espacio.
@@ -131,6 +140,13 @@ const ALL_PAGES: { name: string; href: string; icon: React.ReactNode; keywords: 
   { name: 'MuzicMania', href: '/projects/muzicmania', icon: <Music className="w-4 h-4" />, keywords: ['muzicmania', 'musica', 'juego', 'ritmo'] },
   { name: 'Ciszu Network', href: '/projects/ciszunetwork', icon: <Building className="w-4 h-4" />, keywords: ['ciszu', 'network', 'compañia', 'marca'] },
   { name: 'Ciszuko Antony', href: '/projects/ciszukoantony', icon: <User className="w-4 h-4" />, keywords: ['ciszuko', 'antony', 'youtuber', 'streamer'] },
+  { name: 'About', href: '/about', icon: <Info className="w-4 h-4" />, keywords: ['about', 'sobre', 'nosotros', 'informacion'] },
+  { name: 'Team', href: '/team', icon: <Users className="w-4 h-4" />, keywords: ['equipo', 'team', 'staff', 'miembros'] },
+  { name: 'FAQ', href: '/faq', icon: <HelpCircle className="w-4 h-4" />, keywords: ['faq', 'preguntas', 'frecuentes', 'dudas'] },
+  { name: 'Documentation', href: '/documentation', icon: <FileText className="w-4 h-4" />, keywords: ['documentacion', 'docs', 'guia', 'desarrollo'] },
+  { name: 'Help', href: '/help', icon: <HelpCircle className="w-4 h-4" />, keywords: ['ayuda', 'help', 'centro', 'guias', 'tutorial'] },
+  { name: 'Contact', href: '/contact', icon: <Mail className="w-4 h-4" />, keywords: ['contacto', 'contact', 'mensaje', 'email'] },
+  { name: 'Support', href: '/support', icon: <LifeBuoy className="w-4 h-4" />, keywords: ['soporte', 'ayuda', 'support', 'asistencia'] },
 ];
 
 // LANGS: lista canónica compartida (@ciszu/ui). Los 4 idiomas de producción
