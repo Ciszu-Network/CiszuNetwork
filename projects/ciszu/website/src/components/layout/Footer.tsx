@@ -60,20 +60,21 @@ const FOOTER_SECTIONS = (dict: Record<string, any>) => [
       { name: dict.nav.contact, href: '/contact', icon: <Mail className="w-4 h-4" /> },
     ],
   },
-  {
-    title: dict.footer.explore,
-    links: [
-      { name: dict.nav.faq, href: '/faq', icon: <HelpCircle className="w-4 h-4" /> },
-      { name: 'Policies', href: '/policies', icon: <FileText className="w-4 h-4" /> },
-      { name: dict.nav.support, href: '/support', icon: <LifeBuoy className="w-4 h-4" /> },
-      { name: dict.nav.documentation, href: '/documentation', icon: <FileText className="w-4 h-4" /> },
-      { name: dict.nav.help, href: '/help', icon: <HelpCircle className="w-4 h-4" /> },
-      { name: dict.nav.changelog, href: '/changelog', icon: <History className="w-4 h-4" /> },
-      { name: dict.nav.reviews, href: '/reviews', icon: <Star className="w-4 h-4" /> },
-      { name: dict.nav.stats, href: '/stats', icon: <BarChart3 className="w-4 h-4" /> },
-      { name: dict.nav.forum, href: '/forum', icon: <MessageSquare className="w-4 h-4" /> },
-    ],
-  },
+{
+      title: dict.footer.explore,
+      links: [
+        { name: dict.nav.faq, href: '/faq', icon: <HelpCircle className="w-4 h-4" /> },
+        { name: 'Policies', href: '/policies', icon: <FileText className="w-4 h-4" /> },
+        { name: dict.nav.support, href: '/support', icon: <LifeBuoy className="w-4 h-4" /> },
+        { name: dict.nav.documentation, href: '/documentation', icon: <FileText className="w-4 h-4" /> },
+        { name: dict.nav.help, href: '/help', icon: <HelpCircle className="w-4 h-4" /> },
+        { name: dict.nav.changelog, href: '/changelog', icon: <History className="w-4 h-4" /> },
+        { name: dict.nav.reviews, href: '/reviews', icon: <Star className="w-4 h-4" /> },
+        { name: dict.nav.stats, href: '/stats', icon: <BarChart3 className="w-4 h-4" /> },
+        { name: dict.nav.forum, href: '/forum', icon: <MessageSquare className="w-4 h-4" /> },
+        { name: dict.nav.donate, href: '/donate', icon: <Heart className="w-4 h-4" /> },
+      ],
+    },
   {
     title: dict.footer.projects,
     links: [

@@ -94,17 +94,17 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <AuthProvider>
           <ToastProvider>
           <ActivityGuardProvider>
-          <AdsWithUser site="ciszunetwork">
+          <AdsWithUser site="ciszu">
           <AdFloat placement="corner" side="bottom-right" />
           <AdPill placement="body" />
           <RedirectGuard debug={true} />
           <DisclaimerProvider>
             <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={ICON_SVG} title="Ciszu Network" subtitle="Ciszu Network Security • Cloudflare" accent="#22d3ee" storageKey="cf_verified_ciszu">
-              <AdBlockerGuard site="ciszunetwork" logo={ICON_SVG} title="Ciszu Network" accent="#22d3ee" accentAlt="#f472b6">
+              <AdBlockerGuard site="ciszu" logo={ICON_SVG} title="Ciszu Network" accent="#22d3ee" accentAlt="#f472b6">
               {!isEdit && <ZoomWarning />}
               {!isEdit && <Navbar lang={lang} dict={dict} />}
               {!isEdit && <DisclaimerStack headerHeight={64} />}
-              <DisclaimerDebug site="ciszunetwork" />
+              <DisclaimerDebug site="ciszu" />
               <GlobalDisclaimer site="ciszu" />
               <main className="flex-grow">{children}</main>
               {!isEdit && <Footer lang={lang} dict={dict} />}

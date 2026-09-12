@@ -13,13 +13,13 @@ import PreferencesPanel from '@/components/layout/PreferencesPanel';
 import { PreferencesModal } from '@ciszu/ui';
 import { INVITE_URL, LOGO_ISOTIPO, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
 
-const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'stats' | 'support' | 'downloads' | 'feedback' | 'changelog' | 'reviews' | 'leaderboard' | 'forum' | 'contact' | 'documentation' | 'about' | 'team' | 'help'; icon: string }[] = [
+const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'stats' | 'support' | 'downloads' | 'feedback' | 'changelog' | 'reviews' | 'leaderboard' | 'forum' | 'contact' | 'documentation' | 'about' | 'team' | 'help' | 'donate'; icon: string }[] = [
   { href: '/', key: 'home', icon: 'home' },
   { href: '/commands', key: 'commands', icon: 'gamepad' },
   { href: '/stats', key: 'stats', icon: 'chart' },
   { href: '/changelog', key: 'changelog', icon: 'history' },
   { href: '/reviews', key: 'reviews', icon: 'star' },
-  { href: '/leaderboard', key: 'leaderboard', icon: 'chart' },
+  { href: '/leaderboard', key: 'leaderboard', icon: 'trophy' },
   { href: '/forum', key: 'forum', icon: 'message' },
   { href: '/support', key: 'support', icon: 'support' },
   { href: '/contact', key: 'contact', icon: 'mail' },
@@ -29,6 +29,7 @@ const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'stats' | 'support' 
   { href: '/team', key: 'team', icon: 'users' },
   { href: '/about', key: 'about', icon: 'info' },
   { href: '/help', key: 'help', icon: 'help' },
+  { href: '/donate', key: 'donate', icon: 'heart' },
 ];
 
 // Clases responsive por índice de NAV_PAGES: el link activo siempre visible; el resto aparece según espacio.
@@ -70,6 +71,7 @@ const SEARCH_PAGES: { href: string; labelKey: string; icon: string; keywords: st
   { href: '/dashboard', labelKey: 'dashboard', icon: 'server', keywords: ['panel', 'dashboard', 'config', 'admin'] },
   { href: '/privacy', labelKey: 'privacidad', icon: 'lock', keywords: ['privacidad', 'privacy'] },
   { href: '/terms', labelKey: 'terminos', icon: 'external', keywords: ['terminos', 'terms', 'legal'] },
+  { href: '/donate', labelKey: 'donate', icon: 'heart', keywords: ['donar', 'donate', 'apoyo', 'support'] },
 ];
 
 // LANGS: lista canónica compartida (@ciszu/ui). Los 4 idiomas de producción
@@ -98,9 +100,16 @@ const IconTrophy = () => (
   </svg>
 );
 
+const IconHeart = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
+    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+  </svg>
+);
+
 const renderIcon = (name: string, size: number) => {
   if (name === 'chart') return <IconChart />;
   if (name === 'trophy') return <IconTrophy />;
+  if (name === 'heart') return <IconHeart />;
   return <Icon name={name} size={size} className="shrink-0" />;
 };
 

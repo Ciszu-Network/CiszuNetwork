@@ -64,7 +64,7 @@ function Write-JsonFile([string]$Path, $Obj, [int]$Depth = 5) {
 
 # ---------- Web catalog (nomenclatura central del monorepo) ----------
 $WEBS = @(
-    @{ key = 'network';  name = 'Ciszu Network';  siteId = 'ciszunetwork';   filter = 'ciszunetwork-website'; port = 3000; dir = 'projects/ciszu/website';  emoji = '🌐' },
+    @{ key = 'network';  name = 'Ciszu Network';  siteId = 'ciszu';   filter = 'ciszunetwork-website'; port = 3000; dir = 'projects/ciszu/website';  emoji = '🌐' },
     @{ key = 'antony';   name = 'Ciszuko Antony'; siteId = 'ciszukoantony';  filter = 'ciszukoantony-website'; port = 3001; dir = (Get-ChildItem projects -Directory | Where-Object { $_.Name -match 'antony' } | Select-Object -First 1).Name + '/website'; emoji = '🎨' },
     @{ key = 'ciszubot'; name = 'CiszuBot';       siteId = 'ciszubot';       filter = 'ciszubot-website';     port = 3002; dir = 'projects/ciszubot/website'; emoji = '🤖' },
     @{ key = 'muzic';    name = 'MuzicMania';     siteId = 'muzicmania';     filter = 'muzicmania-website';   port = 3003; dir = 'projects/muzicmania/website'; emoji = '🎵' }
@@ -994,59 +994,136 @@ function Invoke-AdsNode {
 }
 
 function Show-AdsGlobal {
-    Clear-Host
-    Show-MenuHeader "ADS - GLOBAL (produccion)"
-    Write-Host "${c_gray}Envia un anuncio global a las webs via scripts/ads.js.${c_reset}"
-    Write-Host ""
+    while ($true) {
+        Clear-Host
+        Show-MenuHeader "ADS - GLOBAL (produccion)"
+        Write-Host "${c_gray}Gestiona anuncios globales via scripts/ads.js.${c_reset}"
+        Write-Host ""
 
-    $sites = @('ciszu', 'ciszukoantony', 'muzicmania', 'ciszubot')
-    $opts = $sites | ForEach-Object { @{ key = $_; l = $_ } }
-    $res = Show-MultiSelect -Title "WEBS DESTINO" -Options $opts -Init @($sites)
-    if ($res.Action -eq 'abort') { return }
-    if ($res.Action -eq 'noproceed' -or $res.Selection.Count -eq 0) {
-        Write-Host "${c_yellow}Selecciona al menos una web.${c_reset}"; Press-Continue; return
+        $mainOpts = @(
+            @{ ic = '📤'; l = "Enviar anuncio" },
+            @{ ic = '🗑'; l = "Quitar anuncios de pantalla (clearCurrent)" },
+            @{ ic = '📋'; l = "Ver resumen / estado" },
+            @{ ic = '🛑'; l = "Eliminar anuncio(s)" },
+            @{ ic = '🔘'; l = "Kill switch (activar/desactivar)" },
+            @{ ic = '🚪'; l = "Volver" }
+        )
+        $mi = Show-Menu -Title "ADS GLOBALES - ¿QUÉ QUIERES HACER?" -Options $mainOpts
+        if ($mi -lt 0 -or $mi -eq 5) { return }
+
+        if ($mi -eq 0) {
+            while ($true) {
+                Clear-Host
+                Show-MenuHeader "ADS - GLOBAL (produccion) - ENVIAR"
+                Write-Host "${c_gray}Envia un anuncio global a las webs via scripts/ads.js.${c_reset}"
+                Write-Host ""
+
+                $sites = @('ciszu', 'ciszukoantony', 'muzicmania', 'ciszubot')
+                $opts = $sites | ForEach-Object { @{ key = $_; l = $_ } }
+                $res = Show-MultiSelect -Title "WEBS DESTINO" -Options $opts -Init @($sites)
+                if ($res.Action -eq 'abort') { break }
+                if ($res.Action -eq 'noproceed' -or $res.Selection.Count -eq 0) {
+                    Write-Host "${c_yellow}Selecciona al menos una web.${c_reset}"; Press-Continue; continue
+                }
+                $target = $res.Selection -join ','
+
+                $typeOpts = @(
+                    @{ ic = '🎯'; l = "Intrusivo" },
+                    @{ ic = '🧩'; l = "Particulares" },
+                    @{ ic = '🎁'; l = "Recompensa" },
+                    @{ ic = '📌'; l = "Optional" }
+                )
+                $ti = Show-Menu -Title "TIPO" -Options $typeOpts
+                if ($ti -lt 0) { break }
+                $type = @('intrusive', 'particulares', 'reward', 'optional')[$ti]
+
+                $title = Read-Host "Título (Enter = por defecto)"
+                if (-not $title) { $title = 'Anuncio global (devcon)' }
+                $desc = Read-Host "Descripción (Enter = por defecto)"
+                if (-not $desc) { $desc = 'Enviado por la consola de desarrollo.' }
+                $cta = Read-Host "Texto del botón (Enter = Abrir)"
+                if (-not $cta) { $cta = 'Abrir' }
+                $href = Read-Host "URL destino (Enter = ciszunetwork)"
+                if (-not $href) { $href = 'https://ciszunetwork.vercel.app' }
+
+                $brandOpts = @(
+                    @{ ic = '🌐'; l = "ciszunetwork" },
+                    @{ ic = '🎨'; l = "ciszukoantony" },
+                    @{ ic = '🤖'; l = "ciszubot" },
+                    @{ ic = '🎵'; l = "muzicmania" },
+                    @{ ic = '🎮'; l = "ciszugamens" },
+                    @{ ic = '🌍'; l = "external" }
+                )
+                $bi = Show-Menu -Title "MARCA" -Options $brandOpts
+                if ($bi -lt 0) { break }
+                $brand = @('ciszunetwork', 'ciszukoantony', 'ciszubot', 'muzicmania', 'ciszugamens', 'external')[$bi]
+
+                Write-Host ""
+                Write-Host "${c_cyan}Enviando ADS a [$target] · tipo [$type] · marca [$brand] (esperando entrega...)${c_reset}"
+                Invoke-AdsNode @('scripts/ads.js', $title, $desc, $cta, $href, '--target', $target, '--type', $type, '--brand', $brand, '--sender', 'admin', '--session', $script:devSession, '--actor', $script:devIdentity, '--wait')
+
+                Write-Host ""
+                Write-Host "${c_green}[Enter] Enviar otro   ${c_red}[Q/Esc] Volver al menú${c_reset}"
+                $k = [System.Console]::ReadKey($true)
+                if ($k.Key -eq [ConsoleKey]::Q -or $k.Key -eq [ConsoleKey]::Escape) { break }
+            }
+            continue
+        }
+
+        if ($mi -eq 1) {
+            Show-AdsClear
+            Press-Continue
+            continue
+        }
+
+        if ($mi -eq 2) {
+            Clear-Host
+            Show-MenuHeader "RESUMEN ADS GLOBALES"
+            Push-Location $root
+            node scripts/ads.js --status 2>&1 | Out-Host
+            Pop-Location
+            Press-Continue
+            continue
+        }
+
+        if ($mi -eq 3) {
+            Clear-Host
+            Show-MenuHeader "ELIMINAR ANUNCIOS GLOBALES"
+            Push-Location $root
+            node scripts/ads.js --list 2>&1 | Out-Host
+            Pop-Location
+            Write-Host ""
+            Write-Host "${c_yellow}IDs a borrar separados por espacio · [A] borrar TODOS · [Q] volver:${c_reset}"
+            $in = Read-Host ">"
+            if ($in -match '^[aA]$') {
+                Invoke-AdsNode @('scripts/ads.js', '--clear-all', '--sender', 'admin', '--session', $script:devSession, '--actor', $script:devIdentity)
+            } elseif ($in -match '^[\d\s]+$') {
+                $ids = @($in -split '\s+' | Where-Object { $_ })
+                if ($ids.Count -gt 0) {
+                    Invoke-AdsNode @('scripts/ads.js', '--clear', @($ids), '--sender', 'admin', '--session', $script:devSession, '--actor', $script:devIdentity)
+                }
+            }
+            Press-Continue
+            continue
+        }
+
+        if ($mi -eq 4) {
+            if (-not (Test-DevconPassword)) { Write-Host "${c_red}Contraseña incorrecta. Operación cancelada.${c_reset}"; Press-Continue; continue }
+            Clear-Host
+            Show-MenuHeader "KILL SWITCH - ads globales"
+            Push-Location $root
+            node scripts/ads.js --status 2>&1 | Out-Host
+            Pop-Location
+            Write-Host ""
+            Write-Host "${c_green}[1] ACTIVAR ads   ${c_red}[2] DESACTIVAR ads   [Q/Esc] volver${c_reset}"
+            $k = [System.Console]::ReadKey($true)
+            $ch = $k.KeyChar
+            if ($ch -eq '1') { Invoke-AdsNode @('scripts/ads.js', '--toggle', 'on', '--sender', 'admin', '--session', $script:devSession, '--actor', $script:devIdentity) }
+            elseif ($ch -eq '2') { Invoke-AdsNode @('scripts/ads.js', '--toggle', 'off', '--sender', 'admin', '--session', $script:devSession, '--actor', $script:devIdentity) }
+            Press-Continue
+            continue
+        }
     }
-    $target = $res.Selection -join ','
-
-    $typeOpts = @(
-        @{ ic = '🎯'; l = "Intrusivo" },
-        @{ ic = '🧩'; l = "Particulares" },
-        @{ ic = '🎁'; l = "Recompensa" },
-        @{ ic = '📌'; l = "Optional" }
-    )
-    $ti = Show-Menu -Title "TIPO" -Options $typeOpts
-    if ($ti -lt 0) { return }
-    $type = @('intrusive', 'particulares', 'reward', 'optional')[$ti]
-
-    $title = Read-Host "Título (Enter = por defecto)"
-    if (-not $title) { $title = 'Anuncio global (devcon)' }
-    $desc = Read-Host "Descripción (Enter = por defecto)"
-    if (-not $desc) { $desc = 'Enviado por la consola de desarrollo.' }
-    $cta = Read-Host "Texto del botón (Enter = Abrir)"
-    if (-not $cta) { $cta = 'Abrir' }
-    $href = Read-Host "URL destino (Enter = ciszunetwork)"
-    if (-not $href) { $href = 'https://ciszunetwork.vercel.app' }
-
-    $brandOpts = @(
-        @{ ic = '🌐'; l = "ciszunetwork" },
-        @{ ic = '🎨'; l = "ciszukoantony" },
-        @{ ic = '🤖'; l = "ciszubot" },
-        @{ ic = '🎵'; l = "muzicmania" },
-        @{ ic = '🎮'; l = "ciszugamens" },
-        @{ ic = '🌍'; l = "external" }
-    )
-    $bi = Show-Menu -Title "MARCA" -Options $brandOpts
-    if ($bi -lt 0) { return }
-    $brand = @('ciszunetwork', 'ciszukoantony', 'ciszubot', 'muzicmania', 'ciszugamens', 'external')[$bi]
-
-    Write-Host ""
-    Write-Host "${c_cyan}Enviando ADS a [$target] · tipo [$type] · marca [$brand] (esperando entrega...)${c_reset}"
-    Invoke-AdsNode @('scripts/ads.js', $title, $desc, $cta, $href, '--target', $target, '--type', $type, '--brand', $brand, '--sender', 'admin', '--session', $script:devSession, '--actor', $script:devIdentity, '--wait')
-
-    Write-Host ""
-    Write-Host "${c_green}[Enter] Enviar otro   ${c_red}[Q/Esc] Volver al menú${c_reset}"
-    $k = [System.Console]::ReadKey($true)
-    if ($k.Key -eq [ConsoleKey]::Q -or $k.Key -eq [ConsoleKey]::Escape) { return }
 }
 
 function Show-AdsHybrid {
@@ -1282,18 +1359,7 @@ function Show-DisclaimersDebug {
         if ($devconIdx -lt 0) { continue }
         $devconLabel = ($devconIdx -eq 0)
 
-        $actions = @()
-        $addAction = $true
-        while ($addAction) {
-            $actOpts = @(@{ ic = '➕'; l = "Agregar boton de accion" }, @{ ic = '🚪'; l = "No agregar mas" })
-            $ai = Show-Menu -Title "BOTONES DE ACCION" -Options $actOpts -InitIndex 0
-            if ($ai -lt 0 -or $ai -eq 1) { break }
-            $actLabel = Read-Host "Texto del boton"
-            if ([string]::IsNullOrWhiteSpace($actLabel)) { continue }
-            $actHref = Read-Host "URL al hacer clic (Enter = sin navegacion)"
-            if ($actHref -match '^https?://') { $actHref = $actHref.Trim() } else { $actHref = $null }
-            $actions += @{ label = $actLabel; href = $actHref }
-        }
+        $actions = @(Read-DisclaimerActions)
 
         $d = [ordered]@{
             id = 'debug-' + [guid]::NewGuid().ToString().Substring(0, 8)
@@ -1436,18 +1502,7 @@ function Show-DisclaimersHybrid {
         if ($devconIdx -lt 0) { continue }
         $devconLabel = ($devconIdx -eq 0)
 
-        $actions = @()
-        $addAction = $true
-        while ($addAction) {
-            $actOpts = @(@{ ic = '➕'; l = "Agregar boton de accion" }, @{ ic = '🚪'; l = "No agregar mas" })
-            $ai = Show-Menu -Title "BOTONES DE ACCION" -Options $actOpts -InitIndex 0
-            if ($ai -lt 0 -or $ai -eq 1) { break }
-            $actLabel = Read-Host "Texto del boton"
-            if ([string]::IsNullOrWhiteSpace($actLabel)) { continue }
-            $actHref = Read-Host "URL al hacer clic (Enter = sin navegacion)"
-            if ($actHref -match '^https?://') { $actHref = $actHref.Trim() } else { $actHref = $null }
-            $actions += @{ label = $actLabel; href = $actHref }
-        }
+        $actions = @(Read-DisclaimerActions)
 
         $d = [ordered]@{
             id = 'debug-' + [guid]::NewGuid().ToString().Substring(0, 8)
@@ -1469,7 +1524,7 @@ function Show-DisclaimersHybrid {
         Write-JsonFile $debugFile @{ items = $existing }
         Write-Host "${c_green}Disclaimer LOCAL guardado en: $debugFile${c_reset}"
 
-        $globalTarget = $sites -join ','
+        $globalTarget = (Resolve-SiteIds $sites) -join ','
         $extra = @('scripts/disclaimer.js', $msg, '--target', $globalTarget, '--kind', $kind, '--session', $script:disclaimerSession, '--actor', $script:devIdentity, '--wait')
         if ($expiresAt) { $extra += @('--expires', $expiresAt) }
         $extra += @('--dismissible', $(if ($dismissible) { 'on' } else { 'off' }))
@@ -1482,7 +1537,8 @@ function Show-DisclaimersHybrid {
         }
         if ($image) { $extra += @('--image', $image) }
         foreach ($act in $actions) {
-            $extra += @('--action', "$($act.label)|$($act.href)")
+            if ($act.close) { $extra += @('--action', "$($act.label)|close") }
+            elseif ($act.href) { $extra += @('--action', "$($act.label)|$($act.href)") }
         }
 
         Write-Host "${c_cyan}Enviando disclaimer GLOBAL a [$globalTarget]...${c_reset}"
@@ -1558,6 +1614,41 @@ function Invoke-DisclaimerNode {
         Pop-Location
     }
     return $code
+}
+
+# Botones de acción de un disclaimer: abrir una página o cerrar el propio
+# disclaimer (estilo "Estamos trabajando..." con botón OK). Se combinan con la X
+# (dismissible), sin X (obligatorio) o sin botones. Devuelve una lista de
+# hashtables: @{ label = 'OK'; close = $true } o @{ label = 'Ver'; href = 'https://...' }.
+function Read-DisclaimerActions {
+    $actions = @()
+    while ($true) {
+        $actOpts = @(
+            @{ ic = '🔗'; l = "Boton que ABRE una pagina (URL)" },
+            @{ ic = '✅'; l = "Boton que CIERRA el disclaimer (OK)" },
+            @{ ic = '🚪'; l = "Terminar (sin mas botones)" }
+        )
+        $ai = Show-Menu -Title "BOTONES DE ACCION" -Options $actOpts
+        if ($ai -lt 0 -or $ai -eq 2) { break }
+
+        if ($ai -eq 1) {
+            $label = Read-Host "Texto del boton (Enter = OK)"
+            if ([string]::IsNullOrWhiteSpace($label)) { $label = 'OK' }
+            $actions += @{ label = $label.Trim(); close = $true }
+            continue
+        }
+
+        $label = Read-Host "Texto del boton"
+        if ([string]::IsNullOrWhiteSpace($label)) { continue }
+        $href = Read-Host "URL al hacer clic (debe empezar por http)"
+        if ($href -match '^https?://') {
+            $actions += @{ label = $label.Trim(); href = $href.Trim() }
+        } else {
+            Write-Host "${c_yellow}URL no valida: el boton '$($label.Trim())' se guardara como boton de CIERRE (OK).${c_reset}"
+            $actions += @{ label = $label.Trim(); close = $true }
+        }
+    }
+    $actions
 }
 
 # Enviar disclaimer GLOBAL a las webs (replica de advisor) con fallback --wait.
@@ -1666,6 +1757,9 @@ function Show-DisclaimerGlobal {
         if ($devconIdx -lt 0) { return }
         $useDevconSender = ($devconIdx -eq 0)
 
+        # Botones de acción opcionales: abrir una URL o cerrar el disclaimer (OK).
+        $actions = @(Read-DisclaimerActions)
+
         $extra = @('scripts/disclaimer.js', $msg, '--target', $target, '--kind', $kind, '--session', $script:disclaimerSession, '--actor', $script:devIdentity, '--wait')
         if ($expires) { $extra += @('--expires', $expires) }
         $extra += @('--dismissible', $(if ($dismissible) { 'on' } else { 'off' }))
@@ -1675,6 +1769,10 @@ function Show-DisclaimerGlobal {
         } else {
             $extra += @('--sender', 'devcon')
             $extra += @('--source', 'dev-console')
+        }
+        foreach ($act in $actions) {
+            if ($act.close) { $extra += @('--action', "$($act.label)|close") }
+            elseif ($act.href) { $extra += @('--action', "$($act.label)|$($act.href)") }
         }
 
         Write-Host ""
@@ -1992,7 +2090,7 @@ function Show-AdvisorHybrid {
         Write-JsonFile $debugFile @{ items = $existing }
         Write-Host "${c_green}Mensaje de advisor LOCAL guardado en: $debugFile${c_reset}"
 
-        $globalTarget = $sites -join ','
+        $globalTarget = (Resolve-SiteIds $sites) -join ','
         $extra = @('scripts/advisor.js', $msg, '--target', $globalTarget, '--kind', $kind, '--sender', $sender, '--session', $script:advisorSession, '--actor', $script:devIdentity, '--wait')
         if ($expiresAt) { $extra += @('--expires', $expiresAt) }
 

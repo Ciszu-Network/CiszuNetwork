@@ -68,6 +68,7 @@ const es = {
     about: 'Acerca de',
     team: 'Equipo',
     help: 'Ayuda',
+    donate: 'Donar',
   },
   hero: {
     online: 'En línea',
@@ -454,6 +455,7 @@ const en = {
     about: 'About',
     team: 'Team',
     help: 'Help',
+    donate: 'Donate',
   },
   hero: {
     online: 'Online',

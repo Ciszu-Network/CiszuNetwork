@@ -120,14 +120,16 @@ const AdsContext = createContext<AdsContextValue | null>(null);
 
 // ---------- Config por site ----------
 const SITE_ACCENT: Record<string, string> = {
-  ciszunetwork: '#3b82f6',  // azulado
-  ciszukoantony: '#a855f7', // más morado
-  ciszubot: '#38bdf8',      // celeste
-  muzicmania: '#c026d3',    // morado-rosado
+  ciszunetwork: '#3b82f6',
+  ciszu: '#3b82f6',
+  ciszukoantony: '#a855f7',
+  ciszubot: '#38bdf8',
+  muzicmania: '#c026d3',
   ciszugamens: '#22d3ee',
 };
 const SITE_URL: Record<string, string> = {
   ciszunetwork: 'https://ciszunetwork.vercel.app',
+  ciszu: 'https://ciszunetwork.vercel.app',
   ciszukoantony: 'https://ciszukoantony.vercel.app',
   ciszubot: 'https://ciszubot.vercel.app',
   muzicmania: 'https://muzicmania.vercel.app',
@@ -135,6 +137,7 @@ const SITE_URL: Record<string, string> = {
 };
 const SITE_TERMS: Record<string, string> = {
   ciszunetwork: '/policies#anuncios',
+  ciszu: '/policies#anuncios',
   ciszukoantony: '/policies#anuncios',
   ciszubot: '/terminos#anuncios',
   muzicmania: '/terms#anuncios',
@@ -583,6 +586,8 @@ export interface AdsDebugConfig {
  */
 export interface AdsPushConfig {
   enabled: boolean;
+  /** Identificador estable del origen (p. ej. `global-<id>`); si falta se usa createdAt. */
+  id?: string;
   sites?: string[];
   /** Webs con anuncios DESACTIVADOS (por website, reactivaciones/desactivaciones). */
   disabledSites?: string[];
@@ -711,13 +716,18 @@ const dKey = `ciszu_ads_${site}_dismissed`;
   //    (global_ads_deliveries) para que el devcon espere con --wait.
   // Si hay un push activo para este site que NO se ha mostrado aún, se muestra
   // AHORA mismo (ignora cooldown/intervalo/periodo de gracia).
-  const pushShownRef = useRef<number | null>(null);
+  // Deduplicación por ORIGEN: cada push (local o global) se muestra una sola
+  // vez. Antes se guardaba un único `createdAt`; con varios anuncios globales
+  // (o con push local + global a la vez) cada poll volvía a aplicar los
+  // antiguos y el anuncio se re-mostraba en bucle.
+  const pushShownRef = useRef<Set<string>>(new Set());
   const applyPush = (push: AdsPushConfig | null) => {
     if (!push || !push.enabled) return;
     if (push.sites?.length && !push.sites.includes(site)) return;
     if (push.disabledSites?.includes(site)) return;
-    if (pushShownRef.current === push.createdAt) return;
-    pushShownRef.current = push.createdAt;
+    const key = push.id ?? `devcon-push-${push.createdAt}`;
+    if (pushShownRef.current.has(key)) return;
+    pushShownRef.current.add(key);
     const ad = buildPushAd(push, site);
     if (ad) setCurrent(ad);
   };
@@ -792,6 +802,7 @@ const dKey = `ciszu_ads_${site}_dismissed`;
             if (row.target !== 'global' && !targets.includes(site)) continue;
             const push: AdsPushConfig = {
               enabled: true,
+              id: `global-${row.id}`,
               sites: row.target === 'global' ? undefined : targets,
               title: row.title,
               description: row.description,
