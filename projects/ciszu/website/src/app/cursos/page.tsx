@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { BookOpen, GraduationCap, ExternalLink, Globe, Clock, Award, Search } from "lucide-react";
+import { useMemo, useState, useRef, useEffect } from "react";
+import { BookOpen, GraduationCap, ExternalLink, Globe, Clock, Award, Search, Filter, BookMarked, Target, Layers } from "lucide-react";
 import { usePageTitle } from "@/lib/usePageTitle";
 import QuickDocks from "@/components/molecules/QuickDocks";
 import { Ac3Section } from "@ciszu/ui";
@@ -46,10 +46,24 @@ const COURSES: Course[] = [
     href: EF_COURSE_URL,
     badges: ["Oficial", "CEFR", "Gratuito", "Certificado"],
   },
+  {
+    id: "ac3-metodologia",
+    title: "AC3 — Aprendizaje Completo Cruzado Continuo",
+    provider: "Ciszuko Antony · Ciszu Network",
+    category: "Metodología de estudio",
+    level: "Todos",
+    duration: "Variable",
+    format: "Online · Guía descargable",
+    language: "Español / Inglés",
+    description:
+      "Nuevo modelo de aprendizaje creado por Ciszuko Antony. Aprende programación y otras áreas supervisando IA en segundo plano, practicando fragmentos específicos y consumiendo teoría multimedia. Incluye manifiesto oficial, caso de éxito dogfooding y kit de inicio gratuito.",
+    href: "#ac3",
+    badges: ["Nuevo", "Metodología", "IA", "Gratuito"],
+  },
 ];
 
-const CATEGORIES = ["Todos", "Idiomas"];
-const LEVELS = ["Todos", "Básico (A1-A2)", "Intermedio (B1-B2)", "Avanzado (C1-C2)"];
+const CATEGORIES = [{ value: 'Todos', label: 'Todos' }, { value: 'Idiomas', label: 'Idiomas' }, { value: 'Metodología de estudio', label: 'Metodología de estudio' }];
+const LEVELS = [{ value: 'Todos', label: 'Todos' }, { value: 'Básico (A1-A2)', label: 'Básico (A1-A2)' }, { value: 'Intermedio (B1-B2)', label: 'Intermedio (B1-B2)' }, { value: 'Avanzado (C1-C2)', label: 'Avanzado (C1-C2)' }, { value: 'Todos', label: 'Todos' }];
 
 function levelBucket(level: string): string {
   if (/A1|A2|Básico/.test(level)) return "Básico (A1-A2)";
@@ -62,6 +76,35 @@ function providerColor(p: string): string {
   if (/EF/i.test(p)) return "#00a8e8";
   if (/Simpli/i.test(p)) return "#f97316";
   return "#22d3ee";
+}
+
+function FilterSelect({ icon, label, options, value, onChange }: { icon: React.ReactNode; label: string; options: { value: string; label: string }[]; value: string; onChange: (v: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const handler = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+  return (
+    <div className="relative" ref={ref}>
+      <button onClick={() => setOpen(!open)} className="inline-flex items-center gap-2 rounded-xl bg-[#0b0e1a]/80 border border-white/10 px-3 py-2.5 text-sm text-white hover:border-brand-light/40 transition-colors">
+        {icon}
+        <span className="hidden sm:inline">{label}</span>
+        <span className="sm:hidden">{label.split(' ')[0]}</span>
+        <svg className={`w-3.5 h-3.5 ml-1 transition-transform ${open ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+      </button>
+      {open && (
+        <div className="absolute top-full mt-2 left-0 z-50 min-w-[160px] rounded-xl bg-[#0b0e1a]/95 border border-brand/20 backdrop-blur-xl shadow-2xl shadow-black/40 overflow-hidden">
+          {options.map((o) => (
+            <button key={o.value} onClick={() => { onChange(o.value); setOpen(false); }} className={`w-full text-left px-4 py-2.5 text-sm hover:bg-brand/10 transition-colors ${value === o.value ? 'text-brand-light font-bold bg-brand/5' : 'text-gray-300'}`}>
+              {o.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function CursosPage() {
@@ -110,7 +153,7 @@ export default function CursosPage() {
 
         {/* Filtros */}
         <div className="rounded-2xl bg-brand/5 border border-brand/20 p-5 mb-8 space-y-4">
-          <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center">
+          <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center">
             <div className="relative flex-1">
               <Search className="w-4 h-4 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
@@ -120,30 +163,10 @@ export default function CursosPage() {
                 className="w-full rounded-xl bg-[#0b0e1a]/80 border border-white/10 pl-9 pr-3 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-brand-light/40 outline-none transition-colors"
               />
             </div>
-            <div className="flex gap-2 flex-wrap">
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="rounded-xl bg-[#0b0e1a]/80 border border-white/10 px-3 py-2.5 text-sm text-white focus:border-brand-light/40 outline-none transition-colors cursor-pointer"
-              >
-                {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
-              </select>
-              <select
-                value={level}
-                onChange={(e) => setLevel(e.target.value)}
-                className="rounded-xl bg-[#0b0e1a]/80 border border-white/10 px-3 py-2.5 text-sm text-white focus:border-brand-light/40 outline-none transition-colors cursor-pointer"
-              >
-                {LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
-              </select>
-              <select
-                value={sort}
-                onChange={(e) => setSort(e.target.value as typeof sort)}
-                className="rounded-xl bg-[#0b0e1a]/80 border border-white/10 px-3 py-2.5 text-sm text-white focus:border-brand-light/40 outline-none transition-colors cursor-pointer"
-              >
-                <option value="recientes">Ordenar: Recientes</option>
-                <option value="nombre">Ordenar: Nombre</option>
-                <option value="duracion">Ordenar: Duración</option>
-              </select>
+            <div className="flex flex-wrap gap-2">
+              <FilterSelect icon={<BookMarked className="w-4 h-4" />} label={category === 'Todos' ? 'Categoría' : category} options={CATEGORIES} value={category} onChange={setCategory} />
+              <FilterSelect icon={<Target className="w-4 h-4" />} label={level === 'Todos' ? 'Nivel' : level} options={LEVELS} value={level} onChange={setLevel} />
+              <FilterSelect icon={<Layers className="w-4 h-4" />} label={sort === 'recientes' ? 'Ordenar' : sort === 'nombre' ? 'Nombre' : 'Duración'} options={[{ value: 'recientes', label: 'Recientes' }, { value: 'nombre', label: 'Nombre' }, { value: 'duracion', label: 'Duración' }]} value={sort} onChange={(v) => setSort(v as typeof sort)} />
             </div>
           </div>
         </div>
@@ -192,11 +215,12 @@ export default function CursosPage() {
 
                 <a
                   href={c.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  target={c.href.startsWith('#') ? undefined : '_blank'}
+                  rel={c.href.startsWith('#') ? undefined : 'noopener noreferrer'}
+                  onClick={c.href.startsWith('#') ? (e) => { e.preventDefault(); const el = document.getElementById(c.href.slice(1)); if (el) el.scrollIntoView({ behavior: 'smooth' }); } : undefined}
                   className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand-light to-brand-accent text-black font-header font-black uppercase tracking-widest text-xs py-3 hover:brightness-110 hover:scale-[1.01] active:scale-[0.99] transition-all"
                 >
-                  Ir al curso <ExternalLink className="w-3.5 h-3.5" />
+                  {c.href.startsWith('#') ? 'Ver sección' : 'Ir al curso'} {c.href.startsWith('#') ? <Target className="w-3.5 h-3.5" /> : <ExternalLink className="w-3.5 h-3.5" />}
                 </a>
               </article>
             ))}

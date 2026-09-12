@@ -35,7 +35,7 @@
 - [ ] Se debe crear y replicar el sistema de soporte de muzicmania para las demas websites. Con su necesidad de logeo, tickets o peticiones, etc. Replica de muzicmania. No inventarse correos, el unico correo es ciszunetwork@gmail.com, ademas los titulos heros deben tener concitencia con las demas webpages de la misma website. Se deben agregar el apartado de redes social debajo, el sistema de soporte debe ser funcional en todas las websites, en ciszuko antony el correo sera fplayersoffcial@gmail.com. Corrige algunas pills o modals que no corresponden al tamaño del texto. Ademas veo que estas usando diferentes iconso por cada website de soporte, el icono correcto es una boya salvavidas circular.
 - [ ] Se debe actualizar las paginas de los quickdocks de cada websites para añadir mas nuevas.
 - [ ] Se debe crear el estilo o sistema de contacto para las demas paginas exepto muzicmania. Se debe agregar la disponibilidad, la estructura tecnica, el apartado del ceo y la red social unificada en cada website, cn su estilo pero mismo orden y estructura. Actualmente hay ciertas cosas que debemos arreglar, ciszukoantony no tiene todo lo que pedi, ciszubot y sus sistema de redes sociales es excasa, y ciszunetwork parcialmente. Debes usar todo el sistema y redes de redes unificada de muzicmania. En ciszubot el dock de disponibilidad al hacer hover el icono desaparece por el fondo, es decir no esta cuidado el UI. Pule todo los UIs y mejora el contact en todas las websites.
-- [ ] Agregar pagina de donacion a los que no tienen. Se deben utilizar iconos REALES no generados por IA, se desben descargar oficialmente el svg y agregarlo a los icons del CDN. CiszukoAntony no tiene donate.
+- [ ] Agregar pagina de donacion a los que no tienen. Se deben utilizar iconos REALES no generados por IA, se deben descargar oficialmente el svg y agregarlo a los icons del CDN. CiszukoAntony no tiene donate.
 - [ ] Se debe crear el sistema de changelog de muzicmania, con su tag, barprogress, roadmap, status, cada changelog con su seccion interna a pagina diferente, likes, filtros, orden, search. Entre otas cosas por cada website. Se debe agregar estado actual con la barra, proximos nodos, filstros realmente funcionales y boton de detalles realmente funciona que abre otra pagina (cada changelog es una pagina aparte, con su info enlazada pero mas larga parecido a muzicmania), interrogativa para ver protocolos de docuemntacion antes de los quickdocks y antes de eso el glosario y hoja de ruta.
 
 ### Cambios por Website
@@ -51,8 +51,7 @@
 **Ciszubot Website:**
 
 - [ ] Terminar idiomas en ingles UK.
-- [ ] El icono de leaderboard es incorrecto, deberia usar una copa.
-- [ ] Los hero titles en general de ciszubo se ven mal por que la tipografia muestra las lineas vectorizadas o completas.
+- [ ] Los hero titles en general de ciszubot se ven mal por que la tipografia muestra las lineas vectorizadas o completas.
 - [ ] Terminar idiomas en ingles USA.
 - [ ] Terminar idiomas en español LATAM.
 - [ ] Terminar idiomas en español España.

@@ -68,12 +68,18 @@ export async function middleware(request: NextRequest) {
         'https://www.google-analytics.com',
         'https://analytics.google.com',
         'https://pagead2.googlesyndication.com',
+        'https://nowpayments.io',
+        'https://ko-fi.com',
       ],
       styleSrc: ['https://rsms.me'],
       fontSrc: ['https://rsms.me'],
       scriptSrc: ['https://cdnjs.cloudflare.com'],
       workerSrc: ['https://cdnjs.cloudflare.com'],
-      frameSrc: ['https://obwzzmbvkrcscqwptlqo.supabase.co'],
+      frameSrc: [
+        'https://obwzzmbvkrcscqwptlqo.supabase.co',
+        'https://nowpayments.io',
+        'https://ko-fi.com',
+      ],
     })
   );
 
