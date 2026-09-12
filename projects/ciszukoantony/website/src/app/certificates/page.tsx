@@ -246,6 +246,23 @@ function getCompanyLogo(logoId: string) {
   );
 }
 
+function OwnershipBadge() {
+  return (
+    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border"
+      style={{
+        color: '#92400e',
+        backgroundColor: '#fef3c7',
+        borderColor: '#fbbf24',
+      }}
+    >
+      <svg viewBox="0 0 24 24" className="w-3 h-3" fill="currentColor">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+      </svg>
+      Owned by FRANCISCO ANTONIO GARCIA MENOLASCINA
+    </span>
+  );
+}
+
 function CertificateCard({
   cert,
   onOpen,
@@ -1064,16 +1081,20 @@ export default function CertificatesPage() {
           </div>
         </motion.div>
 
-        <motion.p
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="mt-12 text-center text-xs text-gray-600"
+          className="mt-12 text-center"
         >
-          Constantly learning — documents are stored in the Ciszu Network CDN and verified against
-          the original files.
-        </motion.p>
-      </div>      <AnimatePresence>
+          <OwnershipBadge />
+          <p className="mt-3 text-xs text-gray-600">
+            Documents stored in the Ciszu Network CDN and verified against the original files.
+          </p>
+        </motion.div>
+      </div>
+
+      <AnimatePresence>
         {selected && (
           <DetailModal
             cert={selected}
