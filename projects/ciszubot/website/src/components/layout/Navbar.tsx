@@ -16,7 +16,7 @@ import { INVITE_URL, LOGO_ISOTIPO, LOGO_LOGOTIPO, type Dict, type Lang } from '@
 const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'stats' | 'support' | 'downloads' | 'feedback' | 'changelog' | 'reviews' | 'leaderboard' | 'forum' | 'donate'; icon: string }[] = [
   { href: '/', key: 'home', icon: 'home' },
   { href: '/commands', key: 'commands', icon: 'gamepad' },
-  { href: '/stats', key: 'stats', icon: 'chart' },
+  { href: '/stats', key: 'stats', icon: 'chart-bar' },
   { href: '/changelog', key: 'changelog', icon: 'history' },
   { href: '/reviews', key: 'reviews', icon: 'star' },
   { href: '/leaderboard', key: 'leaderboard', icon: 'trophy' },
@@ -61,7 +61,7 @@ const NAV_HIDE_CLS: string[] = [
 const SEARCH_PAGES: { href: string; labelKey: string; icon: string; keywords: string[] }[] = [
   { href: '/', labelKey: 'home', icon: 'home', keywords: ['inicio', 'home', 'main'] },
   { href: '/commands', labelKey: 'commands', icon: 'gamepad', keywords: ['comandos', 'commands', 'bot', 'slash'] },
-  { href: '/stats', labelKey: 'stats', icon: 'chart', keywords: ['estadisticas', 'stats', 'uptime', 'online', 'status'] },
+  { href: '/stats', labelKey: 'stats', icon: 'chart-bar', keywords: ['estadisticas', 'stats', 'uptime', 'online', 'status'] },
   { href: '/changelog', labelKey: 'changelog', icon: 'history', keywords: ['cambios', 'updates', 'actualizaciones', 'historial'] },
   { href: '/reviews', labelKey: 'reviews', icon: 'star', keywords: ['reseñas', 'reviews', 'opiniones', 'feedback'] },
   { href: '/leaderboard', labelKey: 'leaderboard', icon: 'trophy', keywords: ['ranking', 'leaderboard', 'top', 'scores'] },

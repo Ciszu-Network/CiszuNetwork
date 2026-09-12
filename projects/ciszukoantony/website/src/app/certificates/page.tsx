@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePageTitle } from '@/lib/usePageTitle';
 import {
@@ -12,7 +12,6 @@ import {
 } from '@/data/certificates';
 import { getCategoryIcon } from '@/data/categoryIcons';
 import { PREVIEWS_BY_FILE } from '@/data/certificates.previews';
-import QuickDocks from '@/components/molecules/QuickDocks';
 
 const CDN_BASE =
   process.env.NEXT_PUBLIC_CDN_URL ||
@@ -1074,9 +1073,7 @@ export default function CertificatesPage() {
           Constantly learning — documents are stored in the Ciszu Network CDN and verified against
           the original files.
         </motion.p>
-      </div>
-
-      <AnimatePresence>
+      </div>      <AnimatePresence>
         {selected && (
           <DetailModal
             cert={selected}
@@ -1086,8 +1083,6 @@ export default function CertificatesPage() {
           />
         )}
       </AnimatePresence>
-
-      <QuickDocks />
     </div>
   );
 }

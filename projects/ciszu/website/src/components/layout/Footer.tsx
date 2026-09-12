@@ -34,6 +34,7 @@ import {
   Trophy,
   MessageSquare,
   Building,
+  BookOpen,
 } from 'lucide-react';
 
 const IcoPhone = () => (
@@ -71,6 +72,7 @@ const FOOTER_SECTIONS = (dict: Record<string, any>) => [
         { name: dict.nav.changelog, href: '/changelog', icon: <History className="w-4 h-4" /> },
         { name: dict.nav.reviews, href: '/reviews', icon: <Star className="w-4 h-4" /> },
         { name: dict.nav.stats, href: '/stats', icon: <BarChart3 className="w-4 h-4" /> },
+        { name: 'Cursos', href: '/cursos', icon: <BookOpen className="w-4 h-4" /> },
         { name: dict.nav.forum, href: '/forum', icon: <MessageSquare className="w-4 h-4" /> },
         { name: dict.nav.donate, href: '/donate', icon: <Heart className="w-4 h-4" /> },
       ],

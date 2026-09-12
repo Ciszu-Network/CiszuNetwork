@@ -41,7 +41,9 @@ export async function POST(request: NextRequest) {
   });
 
   if (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    // No romper la UX por telemetría fallida; loguear y devolver éxito
+    console.error("[ads/impression] insert error:", error.message);
+    return NextResponse.json({ success: true, warning: "telemetry_failed" });
   }
   return NextResponse.json({ success: true });
 }
