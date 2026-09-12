@@ -8,7 +8,7 @@ on:
 
 concurrency:
   group: release-please
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   release-please:
