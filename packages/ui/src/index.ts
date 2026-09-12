@@ -163,3 +163,6 @@ export type {
   ResolveOptions,
   AssetType,
 } from '@ciszunetwork/cdn';
+
+export { default as EcosystemSection } from './EcosystemSection';
+export type { EcosystemSectionProps } from './EcosystemSection';

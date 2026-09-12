@@ -4,7 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import { SmartImage } from '@ciszu/ui';
+import { SmartImage, EcosystemSection } from '@ciszu/ui';
 import { assetResolver } from '@ciszunetwork/cdn';
 import { SOCIALS, I } from '@/config/navigation';
 import { usePageTitle } from '@/lib/usePageTitle';
@@ -217,39 +217,12 @@ export default function HomeContent() {
         </div>
       </section>
 
-      <section className="py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="soft-card relative rounded-3xl p-8 md:p-12 border border-brand-500/30 overflow-hidden group">
-            <div className="absolute -top-20 -right-20 w-64 h-64 bg-brand-500/10 rounded-full blur-[80px] group-hover:bg-brand-400/15 transition-all" />
-            <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-brand-400/10 rounded-full blur-[80px] group-hover:bg-brand-500/15 transition-all" />
-            <div className="relative flex flex-col items-center gap-6">
-              <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center border-2 border-brand-300/30 shadow-[0_0_30px_rgba(35,63,146,0.4)]">
-                <SmartImage
-                  src="projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg"
-                  alt="Ciszu Network"
-                  width={40}
-                  height={40}
-                  className="w-8 h-8 text-white"
-                />
-              </div>
-              <div>
-                <h2 className="text-2xl md:text-3xl font-bold text-brand mb-2">Project provided by CiszuNetwork</h2>
-                <p className="text-muted max-w-xl mx-auto">This project is part of the Ciszu Network ecosystem. Discover more projects and tools built by Ciszuko Antony.</p>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto bg-gradient-to-r from-brand-500 to-brand-600 text-white font-bold rounded-xl px-8 py-3.5 text-sm font-bold tracking-wide shadow-lg shadow-brand-300/30 hover:shadow-2xl hover:shadow-brand-400/30 transition-all">
-                  Visit CiszuNetwork
-                  <svg viewBox="0 0 24 24" className="w-4 h-4 ml-2 -mt-0.5 inline" fill="none" stroke="currentColor" strokeWidth={2}><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </a>
-                <a href="/projects" className="w-full sm:w-auto bg-white/5 border border-white/20 rounded-xl px-8 py-3.5 text-sm font-medium text-white hover:bg-white hover:text-black transition-all hover:shadow-lg hover:shadow-white/20">
-                  View All Projects
-                  <svg viewBox="0 0 24 24" className="w-4 h-4 ml-2 -mt-0.5 inline" fill="none" stroke="currentColor" strokeWidth={2}><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <EcosystemSection
+        title="Project provided by CiszuNetwork"
+        description="This project is part of the Ciszu Network ecosystem. Discover more projects and tools built by Ciszuko Antony."
+        visitHref="https://ciszunetwork.vercel.app"
+        projectsHref="/projects"
+      />
     </div>
   );
 }
