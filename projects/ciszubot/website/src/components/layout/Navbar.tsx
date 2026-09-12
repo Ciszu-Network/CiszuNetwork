@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icon, SmartImage, useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE } from '@ciszu/ui';
-import { Menu, X, Search } from 'lucide-react';
+import { Menu, X, Search, ChevronDown } from 'lucide-react';
 import { useAppStore, type AppUser } from '@/store';
 import { supabase } from '@/config/supabase';
 import { getGuestName } from '@/lib/guest';
@@ -13,7 +13,7 @@ import PreferencesPanel from '@/components/layout/PreferencesPanel';
 import { PreferencesModal } from '@ciszu/ui';
 import { INVITE_URL, LOGO_ISOTIPO, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
 
-const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'stats' | 'support' | 'downloads' | 'feedback' | 'changelog' | 'reviews' | 'leaderboard' | 'forum' | 'contact' | 'documentation' | 'about' | 'team' | 'help' | 'donate'; icon: string }[] = [
+const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'stats' | 'support' | 'downloads' | 'feedback' | 'changelog' | 'reviews' | 'leaderboard' | 'forum' | 'donate'; icon: string }[] = [
   { href: '/', key: 'home', icon: 'home' },
   { href: '/commands', key: 'commands', icon: 'gamepad' },
   { href: '/stats', key: 'stats', icon: 'chart' },
@@ -22,15 +22,21 @@ const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'stats' | 'support' 
   { href: '/leaderboard', key: 'leaderboard', icon: 'trophy' },
   { href: '/forum', key: 'forum', icon: 'message' },
   { href: '/support', key: 'support', icon: 'support' },
-  { href: '/contact', key: 'contact', icon: 'mail' },
   { href: '/downloads', key: 'downloads', icon: 'download' },
   { href: '/feedback', key: 'feedback', icon: 'message' },
-  { href: '/documentation', key: 'documentation', icon: 'file-text' },
-  { href: '/team', key: 'team', icon: 'users' },
-  { href: '/about', key: 'about', icon: 'info' },
-  { href: '/help', key: 'help', icon: 'help' },
   { href: '/donate', key: 'donate', icon: 'heart' },
 ];
+
+const INFO_PAGES: { href: string; key: 'about' | 'team' | 'faq' | 'documentation' | 'help' | 'contact' | 'support'; icon: string }[] = [
+  { href: '/about', key: 'about', icon: 'info' },
+  { href: '/team', key: 'team', icon: 'users' },
+  { href: '/faq', key: 'faq', icon: 'help' },
+  { href: '/documentation', key: 'documentation', icon: 'file-text' },
+  { href: '/help', key: 'help', icon: 'help' },
+  { href: '/contact', key: 'contact', icon: 'mail' },
+  { href: '/support', key: 'support', icon: 'support' },
+];
+
 
 // Clases responsive por índice de NAV_PAGES: el link activo siempre visible; el resto aparece según espacio.
 const NAV_HIDE_CLS: string[] = [
@@ -62,16 +68,17 @@ const SEARCH_PAGES: { href: string; labelKey: string; icon: string; keywords: st
   { href: '/forum', labelKey: 'forum', icon: 'message', keywords: ['foro', 'forum', 'comunidad', 'community'] },
   { href: '/support', labelKey: 'support', icon: 'support', keywords: ['soporte', 'support', 'ayuda', 'help'] },
   { href: '/contact', labelKey: 'contact', icon: 'mail', keywords: ['contacto', 'contact', 'email', 'mensaje'] },
+  { href: '/downloads', labelKey: 'downloads', icon: 'download', keywords: ['descargas', 'downloads', 'app', 'exe'] },
+  { href: '/feedback', labelKey: 'feedback', icon: 'message', keywords: ['feedback', 'reporte', 'report', 'problema'] },
+  { href: '/donate', labelKey: 'donate', icon: 'heart', keywords: ['donar', 'donate', 'apoyo', 'support'] },
   { href: '/documentation', labelKey: 'documentation', icon: 'file', keywords: ['documentacion', 'docs', 'documentation'] },
   { href: '/about', labelKey: 'about', icon: 'info', keywords: ['about', 'sobre', 'nosotros'] },
   { href: '/team', labelKey: 'team', icon: 'users', keywords: ['equipo', 'team', 'staff'] },
   { href: '/help', labelKey: 'help', icon: 'help', keywords: ['ayuda', 'help', 'faq', 'preguntas'] },
-  { href: '/downloads', labelKey: 'downloads', icon: 'download', keywords: ['descargas', 'downloads', 'app', 'exe'] },
-  { href: '/feedback', labelKey: 'feedback', icon: 'message', keywords: ['feedback', 'reporte', 'report', 'problema'] },
+  { href: '/faq', labelKey: 'faq', icon: 'help', keywords: ['faq', 'preguntas', 'dudas', 'frecuentes'] },
   { href: '/dashboard', labelKey: 'dashboard', icon: 'server', keywords: ['panel', 'dashboard', 'config', 'admin'] },
   { href: '/privacy', labelKey: 'privacidad', icon: 'lock', keywords: ['privacidad', 'privacy'] },
   { href: '/terms', labelKey: 'terminos', icon: 'external', keywords: ['terminos', 'terms', 'legal'] },
-  { href: '/donate', labelKey: 'donate', icon: 'heart', keywords: ['donar', 'donate', 'apoyo', 'support'] },
 ];
 
 // LANGS: lista canónica compartida (@ciszu/ui). Los 4 idiomas de producción
@@ -132,6 +139,8 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
   const [isNavigating, setIsNavigating] = useState(false);
   const [mounted, setMounted] = useState(false);
   const firstRender = useRef(true);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const dropdownTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const searchRef = useRef<HTMLDivElement | null>(null);
   const searchToggleRef = useRef<HTMLButtonElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -156,6 +165,15 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
           p.keywords.some((k) => k.includes(query.toLowerCase()))
       )
     : [];
+
+  const hoverOpen = (s: (v: string | null) => void, t: React.MutableRefObject<ReturnType<typeof setTimeout> | null>, name: string) => {
+    if (t.current) clearTimeout(t.current);
+    s(name);
+  };
+
+  const hoverClose = (s: (v: string | null) => void, t: React.MutableRefObject<ReturnType<typeof setTimeout> | null>) => {
+    t.current = setTimeout(() => s(null), 180);
+  };
 
   useEffect(() => {
     // Re-aplicar tema tras la hidratación: themeScript añade la clase 'dark'
@@ -375,9 +393,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
             />
           </Link>
 
-          <div className="w-px h-7 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-1 shrink-0" />
-
-          <div className="flex items-center gap-1 flex-1 min-w-0 overflow-visible">
+          <div className="w-px h-7 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-1 shrink-0" />              <div className="flex items-center gap-1 flex-1 min-w-0 overflow-visible">
             {NAV_PAGES.map((link, idx) => {
               const active = isActive(link.href);
               const responsiveClass = active ? 'flex' : (NAV_HIDE_CLS[idx] ?? 'hidden min-[1520px]:flex');
@@ -395,6 +411,40 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                 </Link>
               );
             })}
+            <div
+              className={`relative z-40 shrink-0 ${openDropdown === 'Information' ? 'flex' : 'hidden min-[1520px]:flex'}`}
+              onMouseEnter={() => hoverOpen(setOpenDropdown, dropdownTimer, 'Information')}
+              onMouseLeave={() => hoverClose(setOpenDropdown, dropdownTimer)}
+            >
+              <button
+                onClick={() => setOpenDropdown(openDropdown === 'Information' ? null : 'Information')}
+                className={linkCls('/about')}
+              >
+                <span className="flex items-center justify-center shrink-0"><Icon name="info" size={16} /></span>
+                <span className={linkLabelCls('/about')}>{dict.nav.information}</span>
+                <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${openDropdown === 'Information' ? 'rotate-180' : ''}`} />
+              </button>
+
+              {openDropdown === 'Information' && (
+                <div className="absolute top-full left-0 pt-2 w-56 z-50 animate-fade-in-down origin-top drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)]">
+                  <div className="bg-[#0a0a14]/98 backdrop-blur-2xl border border-border rounded-xl py-2 shadow-2xl">
+                    {INFO_PAGES.map((sub) => (
+                      <Link
+                        key={sub.href}
+                        href={sub.href}
+                        onClick={() => setOpenDropdown(null)}
+                        className={`flex items-center gap-3 px-4 py-2 text-sm font-header font-bold transition-all cursor-pointer ${
+                          isActive(sub.href) ? 'text-neon-blue bg-neon-blue/5 hover:text-white' : 'text-ink hover:text-neon-blue hover:bg-white/5'
+                        }`}
+                      >
+                        <span className="shrink-0 text-neon-blue/80">{renderIcon(sub.icon, 16)}</span>
+                        {dict.nav[sub.key]}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex items-center gap-2 ml-auto shrink-0">
@@ -701,6 +751,31 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                 <div className="mb-4">
                   <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">{lang === 'es-latam' || lang === 'es-es' ? 'NAVEGACIÓN' : 'NAVIGATION'}</p>
                   {NAV_PAGES.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => { setIsMenuOpen(false); setSidebarView('main'); }}
+                      className={`flex justify-start items-center px-4 py-3 rounded-2xl transition-all font-header font-bold text-[15px] group mb-1 active:scale-95 border ${
+                        isActive(link.href)
+                          ? 'border-neon-blue bg-neon-blue/20 shadow-[0_0_15px_rgba(0,212,255,0.3)] text-neon-blue hover:text-white'
+                          : 'border-transparent text-gray-300 hover:text-neon-blue hover:bg-white/5 hover:border-white/10'
+                      }`}
+                    >
+                      <div className="flex items-center gap-4">
+                        <span className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                          isActive(link.href) ? 'bg-neon-blue/20 text-neon-blue shadow-[0_0_10px_rgba(0,212,255,0.3)]' : 'bg-black/40 text-gray-500 group-hover:text-neon-blue group-hover:bg-neon-blue/10'
+                        }`}>
+                          <Icon name={link.icon} size={16} />
+                        </span>
+                        <span>{dict.nav[link.key]}</span>
+                      </div>
+                    </Link>
+                  ))}
+
+                  <div className="h-px bg-white/10 my-4" />
+                  <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">{lang === 'es-latam' || lang === 'es-es' ? 'INFORMACIÓN' : 'INFORMATION'}
+                  </p>
+                  {INFO_PAGES.map((link) => (
                     <Link
                       key={link.href}
                       href={link.href}

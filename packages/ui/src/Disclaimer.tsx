@@ -775,7 +775,8 @@ export function GlobalDisclaimer({ site, pollInterval, disabled = false }: Globa
           if (d.expires_at && new Date(d.expires_at).getTime() <= Date.now()) return false;
           if (d.target === 'global') return true;
           const list = String(d.target).split(',').map((s) => s.trim()).filter(Boolean);
-          return list.includes(site);
+          const siteToCheck = site === 'ciszu' ? ['ciszu', 'ciszunetwork'] : [site];
+          return siteToCheck.some((s) => list.includes(s));
         });
         // Confirma la entrega real por web (upsert idempotente) para que el
         // devcon pueda esperar con --wait de forma fiable. Se confirma en cada

@@ -799,7 +799,8 @@ const dKey = `ciszu_ads_${site}_dismissed`;
           for (const row of rows) {
             if (row.expires_at && new Date(row.expires_at).getTime() < now) continue;
             const targets = String(row.target || 'global').split(',').map((t) => t.trim());
-            if (row.target !== 'global' && !targets.includes(site)) continue;
+            const siteToCheck = site === 'ciszu' ? ['ciszu', 'ciszunetwork'] : [site];
+            if (row.target !== 'global' && !siteToCheck.some((s) => targets.includes(s))) continue;
             const push: AdsPushConfig = {
               enabled: true,
               id: `global-${row.id}`,
