@@ -676,15 +676,16 @@ const GD_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://obwzzmb
 const GD_SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
 function gdFetch(path: string, query = '', init?: RequestInit) {
-  const isGlobalTable = path.startsWith('global_');
+  // Las tablas global_* viven en el schema `ciszunetwork` (igual que
+  // global_announcements / global_ads). PostgREST necesita Accept-Profile para
+  // leer ese schema; sin él busca en `public` y no encuentra las filas que
+  // escribe el devcon (scripts/disclaimer.js con Content-Profile ciszunetwork).
   const baseHeaders: Record<string, string> = {
     apikey: GD_SUPABASE_ANON_KEY,
     Authorization: `Bearer ${GD_SUPABASE_ANON_KEY}`,
     'Content-Type': 'application/json',
+    'Accept-Profile': 'ciszunetwork',
   };
-  if (!isGlobalTable) {
-    baseHeaders['Accept-Profile'] = 'ciszunetwork';
-  }
   const headers = { ...baseHeaders, ...(init?.headers as Record<string, string> | undefined) };
   return fetch(`${GD_SUPABASE_URL}/rest/v1/${path}?${query}`, {
     headers,
@@ -776,6 +777,20 @@ export function GlobalDisclaimer({ site, pollInterval, disabled = false }: Globa
           const list = String(d.target).split(',').map((s) => s.trim()).filter(Boolean);
           return list.includes(site);
         });
+        // Confirma la entrega real por web (upsert idempotente) para que el
+        // devcon pueda esperar con --wait de forma fiable. Se confirma en cada
+        // fetch aunque el usuario ya lo haya cerrado.
+        for (const d of relevant) {
+          gdFetch('global_disclaimer_deliveries', '', {
+            method: 'POST',
+            body: JSON.stringify({ disclaimer_id: d.id, site }),
+            headers: {
+              'Content-Type': 'application/json',
+              'Content-Profile': 'ciszunetwork',
+              Prefer: 'resolution=merge-duplicates,return=minimal',
+            },
+          }).catch(() => {});
+        }
         setRows(relevant);
       } catch {
         /* red/API: no romper */

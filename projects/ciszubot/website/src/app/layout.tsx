@@ -83,10 +83,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             <AuthProvider>
               <ToastProvider>
               <ActivityGuardProvider>
-              <AdsWithUser site="ciszubot">
-              <AdFloat placement="corner" side="bottom-right" />
-              <AdPill placement="body" />
-              <RedirectGuard debug={true} />
+               <AdsWithUser site="ciszubot">
+               <AdFloat placement="corner" side="bottom-right" />
+               <AdPill placement="body" />
+               <RedirectGuard debug={true} />
               <DisclaimerProvider>
               {/* BetaDisclaimer removido: ahora usa el sistema de push global (GlobalDisclaimer) */}
               {!isEdit && <Navbar lang={lang} dict={dict} account={session} />}

@@ -203,6 +203,7 @@ export default function Footer({ lang, dict }: FooterProps) {
                   { href: '/about', label: 'About', icon: 'info' },
                   { href: '/team', label: 'Team', icon: 'users' },
                   { href: '/help', label: 'Help', icon: 'help' },
+                  { href: '/donate', label: dict.nav.donate, icon: 'heart' },
                 ].map((l) => {
                   const active = isActive(l.href);
                   return (

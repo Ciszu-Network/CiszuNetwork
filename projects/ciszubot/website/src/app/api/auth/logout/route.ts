@@ -10,5 +10,6 @@ export async function GET() {
     await logAudit({ event: 'logout', actorId: session.id, actorName: session.name });
   }
   await clearSession();
-  return NextResponse.redirect(new URL('/login', process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'));
+  // Al cerrar sesión (manual o automática) SIEMPRE se vuelve al home de la web.
+  return NextResponse.redirect(new URL('/', process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'));
 }

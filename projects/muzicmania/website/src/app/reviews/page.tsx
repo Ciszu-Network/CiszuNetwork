@@ -33,36 +33,9 @@ interface Review {
   };
 }
 
-const DEBUG_REVIEWS: Review[] = [
-  {
-    id: 'debug-1',
-    user_id: 'bot-1',
-    rating: 5.0,
-    comment: '¡Increíble! El sistema rítmico es de otro planeta. #MuzicMania',
-    is_anonymous: false,
-    is_verified: true,
-    likes_count: 99,
-    is_edited: false,
-    is_bot: true,
-    created_at: '2026-07-20T12:00:00.000Z',
-    updated_at: '2026-07-20T12:00:00.000Z',
-    user_profile: { display_name: 'Ciszuko Antony', username: 'ciszuko', avatar_url: '' }
-  },
-  {
-    id: 'debug-2',
-    user_id: 'bot-2',
-    rating: 4.5,
-    comment: 'Me encanta la estética amarilla de esta sección. Muy Nexo.',
-    is_anonymous: false,
-    is_verified: false,
-    likes_count: 42,
-    is_edited: true,
-    is_bot: true,
-    created_at: '2026-07-19T12:00:00.000Z',
-    updated_at: '2026-07-19T12:00:00.000Z',
-    user_profile: { display_name: 'Neon Rider', username: 'neonrider', avatar_url: '' }
-  }
-];
+// IMPORTANTE: no se inyectan reseñas de prueba/inventadas. La lista muestra
+// únicamente reseñas reales; si no hay ninguna, se muestra el estado "sin
+// reseñas" con el baseline 5.0.
 
 // --- Icons ---
 const I = {
@@ -184,12 +157,6 @@ export default function ReviewsPage() {
         }
       }
       
-      // Inject debug reviews if local
-      const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-      if (isLocal && page === 1) {
-        filteredData = [...DEBUG_REVIEWS, ...filteredData];
-      }
-
       setReviews(filteredData);
     }
     

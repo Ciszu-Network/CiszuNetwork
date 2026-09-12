@@ -11,16 +11,25 @@ import { useAppStore } from '@/store';
 const GHOST_RATING = 5.0;
 const PAGE_SIZE = 10;
 
-const DEFAULT_REVIEWS = [
-  { id: 'bot-1', platform: 'Top.gg', rating: 5.0, text: 'Bot imprescindible para cualquier comunidad de Discord.', author: 'Votante verificado', is_verified: true, created_at: '2026-08-01T12:00:00.000Z', likes: 0, liked: false },
-  { id: 'bot-2', platform: 'Discord Bot List', rating: 5.0, text: 'Muy estable y con comandos útiles.', author: 'Admin de servidor', is_verified: false, created_at: '2026-08-05T12:00:00.000Z', likes: 0, liked: false },
-];
+interface Review {
+  id: string;
+  platform: string;
+  rating: number;
+  text: string;
+  author: string;
+  is_verified: boolean;
+  created_at: string;
+  likes: number;
+  liked: boolean;
+}
 
-type Review = typeof DEFAULT_REVIEWS[number];
+// IMPORTANTE: no se inventan reseñas. La lista solo se llena con reseñas
+// reales (base de datos). Mientras no existan, la web muestra el estado
+// "sin reseñas" y el rating público es el baseline 5.0.
 
 export default function ReviewsPage() {
   const { user } = useAppStore();
-  const [reviews, setReviews] = useState<Review[]>(() => DEFAULT_REVIEWS);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [page, setPage] = useState(0);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authAction, setAuthAction] = useState<string>('');
@@ -109,13 +118,33 @@ export default function ReviewsPage() {
                 ? `Baseline + ${reviewsCount} review${reviewsCount !== 1 ? 's' : ''}`
                 : 'No user reviews to analyze — showing baseline 5.0'}
             </p>
-            <Link href="/reviews/new" className="mt-2 inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-neon-pink to-neon-purple text-white font-header font-black uppercase tracking-widest text-xs shadow-lg shadow-neon-pink/20 hover:scale-105 active:scale-95 transition-all">
+            <button
+              type="button"
+              onClick={() => handleActionRequiresAuth('publicar una reseña')}
+              className="mt-2 inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-neon-pink to-neon-purple text-white font-header font-black uppercase tracking-widest text-xs shadow-lg shadow-neon-pink/20 hover:scale-105 active:scale-95 transition-all"
+            >
               <Icon name="plus" size={14} /> Escribir reseña
-            </Link>
+            </button>
           </div>
         </div>
 
         <div className="max-w-3xl mx-auto space-y-4 mb-10">
+          {reviews.length === 0 && (
+            <div className="soft-card rounded-[2.5rem] p-12 text-center space-y-5 border-dashed">
+              <div className="w-14 h-14 mx-auto text-neon-pink/50">
+                <Icon name="star" size={56} />
+              </div>
+              <h2 className="text-2xl font-header font-black text-ink uppercase tracking-tight">Ninguna reseña subida aún</h2>
+              <p className="text-muted text-sm">Sé el primero en reseñar CiszuBot.</p>
+              <button
+                type="button"
+                onClick={() => handleActionRequiresAuth('publicar una reseña')}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-neon-pink text-black font-header font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition-all"
+              >
+                <Icon name="plus" size={14} /> Escribir la primera reseña
+              </button>
+            </div>
+          )}
           {pageReviews.map((r, i) => (
             <div
               key={r.id}

@@ -83,10 +83,10 @@ export default async function RootLayout({
         <AuthProvider>
           <ToastProvider>
           <ActivityGuardProvider>
-          <AdsWithUser site="muzicmania">
-          <AdFloat placement="corner" side="bottom-right" />
-          <AdPill placement="body" />
-          <RedirectGuard debug={true} />
+           <AdsWithUser site="muzicmania">
+           <AdFloat placement="corner" side="bottom-right" />
+           <AdPill placement="body" />
+           <RedirectGuard debug={true} />
           <DisclaimerProvider>
             <CloudflareGuard>
               <AdBlockerGuard site="muzicmania" logo={assetResolver.resolve('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} title="MuzicMania" accent="#c026d3" accentAlt="#ff33cc">

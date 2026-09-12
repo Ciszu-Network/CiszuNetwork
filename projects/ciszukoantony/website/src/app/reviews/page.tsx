@@ -13,43 +13,21 @@ import { useAppStore } from '@/store';
 const GHOST_RATING = 5.0;
 const PAGE_SIZE = 10;
 
-const STATIC_REVIEWS = [
-  {
-    id: 'antony-1',
-    platform: 'Trustpilot',
-    rating: 5.0,
-    text: 'El portfolio de Ciszuko Antony es impresionante. Gran atención al detalle y profesionalismo.',
-    author: 'Cliente verificado',
-    is_verified: true,
-    created_at: '2026-08-01T12:00:00.000Z',
-    likes: 0,
-    liked: false,
-  },
-  {
-    id: 'antony-2',
-    platform: 'Discord',
-    rating: 5.0,
-    text: 'Comunidad increíble y contenido de alta calidad. Muy recomendado.',
-    author: 'Miembro activo',
-    is_verified: false,
-    created_at: '2026-08-10T12:00:00.000Z',
-    likes: 0,
-    liked: false,
-  },
-  {
-    id: 'antony-3',
-    platform: 'Google Reviews',
-    rating: 4.5,
-    text: 'Excelente trabajo en multimedia y branding. Totalmente recomendado.',
-    author: 'Usuario web',
-    is_verified: true,
-    created_at: '2026-08-15T12:00:00.000Z',
-    likes: 0,
-    liked: false,
-  },
-];
+interface Review {
+  id: string;
+  platform: string;
+  rating: number;
+  text: string;
+  author: string;
+  is_verified: boolean;
+  created_at: string;
+  likes: number;
+  liked: boolean;
+}
 
-type Review = typeof STATIC_REVIEWS[number];
+// IMPORTANTE: no se inventan reseñas. La lista solo se llena con reseñas
+// reales (base de datos). Mientras no existan, la web muestra el estado
+// "sin reseñas" y el rating público es el baseline 5.0.
 
 const sectionVariants = {
   hidden: { opacity: 0, y: 30 },
@@ -87,7 +65,7 @@ const I = {
 export default function ReviewsPage() {
   usePageTitle('REVIEWS');
   const { user } = useAppStore();
-  const [reviews] = useState<Review[]>(() => STATIC_REVIEWS);
+  const [reviews] = useState<Review[]>([]);
   const [page, setPage] = useState(0);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authAction, setAuthAction] = useState('');
@@ -188,9 +166,13 @@ export default function ReviewsPage() {
                 ? `Baseline + ${reviewsCount} review${reviewsCount !== 1 ? 's' : ''}`
                 : 'No user reviews to analyze — showing baseline 5.0'}
             </p>
-            <Link href="/reviews/new" className="mt-2 inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-neon-purple to-neon-pink text-white font-header font-black uppercase tracking-widest text-xs shadow-lg hover:scale-105 active:scale-95 transition-all">
+            <button
+              type="button"
+              onClick={() => handleActionRequiresAuth('publicar una reseña')}
+              className="mt-2 inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-neon-purple to-neon-pink text-white font-header font-black uppercase tracking-widest text-xs shadow-lg hover:scale-105 active:scale-95 transition-all"
+            >
               Escribir reseña
-            </Link>
+            </button>
           </div>
         </motion.div>
 
@@ -258,6 +240,21 @@ export default function ReviewsPage() {
               </motion.div>
             ))}
           </AnimatePresence>
+
+          {reviews.length === 0 && (
+            <div className="p-14 rounded-[4rem] bg-black border-2 border-dashed border-neon-purple/25 text-center space-y-5">
+              <div className="w-16 h-16 mx-auto text-neon-purple/50">{I.star('good')}</div>
+              <h2 className="text-3xl font-header font-black text-white uppercase tracking-tighter">Ninguna reseña subida aún</h2>
+              <p className="text-white/40 text-sm font-bold uppercase tracking-widest">Sé el primero en reseñar Ciszuko Antony.</p>
+              <button
+                type="button"
+                onClick={() => handleActionRequiresAuth('publicar una reseña')}
+                className="inline-flex items-center gap-2 px-7 py-3 rounded-2xl bg-neon-purple text-white font-header font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition-all"
+              >
+                Escribir la primera reseña
+              </button>
+            </div>
+          )}
         </motion.div>
 
         <div className="flex flex-wrap items-center justify-center gap-3 mt-10 mb-12">
