@@ -25,6 +25,7 @@
     "@sentry/nextjs": "^10.73.0",
     "@supabase/supabase-js": "^2.116.0",
     "framer-motion": "^12.43.0",
+    "lucide-react": "^1.43.0",
     "next": "^15.5.25",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",

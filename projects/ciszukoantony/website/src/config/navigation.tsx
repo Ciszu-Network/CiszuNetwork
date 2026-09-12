@@ -61,6 +61,7 @@ export const NAV_MAIN: (NavItem | NavGroup)[] = [
   { name: 'Certificates', href: '/certificates', icon: I.certificates },
   { name: 'Feedback', href: '/feedback', icon: I.feedback },
   { name: 'Downloads', href: '/downloads', icon: I.download },
+  { name: 'Donar', href: '/donate', icon: I.heart },
 ];
 
 export const ALL_PAGES: NavItem[] = [
@@ -81,6 +82,7 @@ export const ALL_PAGES: NavItem[] = [
   { name: 'Certificates', href: '/certificates', icon: I.certificates },
   { name: 'Feedback', href: '/feedback', icon: I.feedback },
   { name: 'Downloads', href: '/downloads', icon: I.download },
+  { name: 'Donar', href: '/donate', icon: I.heart },
 ];
 
 export const SOCIALS = [

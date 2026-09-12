@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Icon, SmartImage, useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE } from '@ciszu/ui';
-import { Menu, X, Search, ChevronDown } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { Icon, SmartImage, useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE } from '@ciszu/ui'
+import { Menu, X, Search, ChevronDown } from 'lucide-react'
 import { useAppStore, type AppUser } from '@/store';
 import { supabase } from '@/config/supabase';
 import { getGuestName } from '@/lib/guest';
@@ -100,12 +100,7 @@ const IconChart = () => (
   </svg>
 );
 
-const IconTrophy = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
-    <path d="M6 9H4v2h2V9zm8 0h2v2h-2V9zM6 4h12v2H6V4zM6 19h12v2H6v-2z" />
-    <path d="M6 9h12v6H6z" />
-  </svg>
-);
+
 
 const IconHeart = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
@@ -115,7 +110,6 @@ const IconHeart = () => (
 
 const renderIcon = (name: string, size: number) => {
   if (name === 'chart') return <IconChart />;
-  if (name === 'trophy') return <IconTrophy />;
   if (name === 'heart') return <IconHeart />;
   return <Icon name={name} size={size} className="shrink-0" />;
 };
@@ -414,7 +408,9 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
               );
             })}
             <div
-              className={`relative z-40 shrink-0 ${openDropdown === 'Information' ? 'flex' : 'hidden min-[1520px]:flex'}`}
+              className={
+                `relative z-40 shrink-0 ${openDropdown === 'Information' ? 'flex' : 'hidden min-[1520px]:flex'}`
+              }
               onMouseEnter={() => hoverOpen(setOpenDropdown, dropdownTimer, 'Information')}
               onMouseLeave={() => hoverClose(setOpenDropdown, dropdownTimer)}
             >
@@ -424,10 +420,10 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
               >
                 <span className="flex items-center justify-center shrink-0"><Icon name="info" size={16} /></span>
                 <span className={linkLabelCls('/about')}>{dict.nav.information}</span>
-                <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${openDropdown === 'Information' ? 'rotate-180' : ''}`} />
-              </button>
-
-              {openDropdown === 'Information' && (
+                <ChevronDown className={
+                  `w-3 h-3 transition-transform duration-200 ${openDropdown === 'Information' ? 'rotate-180' : ''}`
+                } />
+              </button>                {openDropdown === 'Information' && (
                 <div className="absolute top-full left-0 pt-2 w-56 z-50 animate-fade-in-down origin-top drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)]">
                   <div className="bg-[#0a0a14]/98 backdrop-blur-2xl border border-border rounded-xl py-2 shadow-2xl">
                     {INFO_PAGES.map((sub) => (
@@ -435,9 +431,11 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                         key={sub.href}
                         href={sub.href}
                         onClick={() => setOpenDropdown(null)}
-                        className={`flex items-center gap-3 px-4 py-2 text-sm font-header font-bold transition-all cursor-pointer ${
-                          isActive(sub.href) ? 'text-neon-blue bg-neon-blue/5 hover:text-white' : 'text-ink hover:text-neon-blue hover:bg-white/5'
-                        }`}
+                        className={
+                          `flex items-center gap-3 px-4 py-2 text-sm font-header font-bold transition-all cursor-pointer ${
+                            isActive(sub.href) ? 'text-neon-blue bg-neon-blue/5 hover:text-white' : 'text-ink hover:text-neon-blue hover:bg-white/5'
+                          }`
+                        }
                       >
                         <span className="shrink-0 text-neon-blue/80">{renderIcon(sub.icon, 16)}</span>
                         {dict.nav[sub.key]}
@@ -445,7 +443,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                     ))}
                   </div>
                 </div>
-              )}
+                )}
             </div>
           </div>
 
