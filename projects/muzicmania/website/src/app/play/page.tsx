@@ -11,6 +11,7 @@ import { trackBanner, trackCover, trackDisc } from '@/utils/musicAssets';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameEngine, getComboColor, getKpsColor, getMistakesColor, getAccuracyColor, getScoreGradient, GameNote } from '@/hooks/useGameEngine';
 import { usePixiGameEngine } from '@/hooks/usePixiGameEngine';
+import { usePhaserGameEngine } from '@/hooks/usePhaserGameEngine';
 import { useAppStore } from '@/store/useAppStore';
 import { getLevel, LoadedLevel } from '@/data/levels';
 import { TRACKS_DATA, Track } from '@/data/tracks';
@@ -53,6 +54,7 @@ const I = {
   disc: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>,
   terminal: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>,
   cpu: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/></svg>,
+  gamepad: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><rect x="2" y="6" width="20" height="12" rx="2"/></svg>,
   search: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>,
   filter: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>,
   heart: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>,
@@ -137,6 +139,7 @@ function PlayPageContent() {
   const initialTrackParam = trackParam;
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const pixiContainerRef = useRef<HTMLDivElement | null>(null);
+  const phaserContainerRef = useRef<HTMLDivElement | null>(null);
   const gameContainerRef = useRef<HTMLDivElement | null>(null);
   const filtersRef = useRef<HTMLDivElement | null>(null);
   const difficultyRef = useRef<HTMLDivElement | null>(null);
@@ -364,7 +367,7 @@ function PlayPageContent() {
   const [showAudioDeviceMenu, setShowAudioDeviceMenu] = useState(false);
   const [audioDevice, setAudioDevice] = useState<string | null>(null);
   const [micVolume, setMicVolume] = useState(() => { if (typeof window !== 'undefined') return Number(localStorage.getItem('audio_mic_vol')) || 80; return 80; });
-  const [renderer, setRenderer] = useState<'canvas2d' | 'pixi'>(() => { if (typeof window !== 'undefined') return (localStorage.getItem('renderer') as any) || 'canvas2d'; return 'canvas2d'; });
+  const [renderer, setRenderer] = useState<'canvas2d' | 'pixi' | 'phaser'>(() => { if (typeof window !== 'undefined') return (localStorage.getItem('renderer') as any) || 'canvas2d'; return 'canvas2d'; });
 
   const { gameState, startGame, stopGame, togglePause, handleInput, setShowHitZones, setShowEarlyLate: setShowEarlyLateEngine, setMsPrecision, setArrowSkin, setParticleSkin, setScrollSpeed, setAudioOffset } = useGameEngine(
     canvasRef,
@@ -382,16 +385,24 @@ function PlayPageContent() {
     musicVol / 100
   );
 
-  const activeGameState = renderer === 'pixi' ? pixiGame.gameState : gameState;
-  const activeStartGame = renderer === 'pixi' ? pixiGame.startGame : startGame;
-  const activeStopGame = renderer === 'pixi' ? pixiGame.stopGame : stopGame;
-  const activeTogglePause = renderer === 'pixi' ? pixiGame.togglePause : togglePause;
-  const activeHandleInput = renderer === 'pixi' ? pixiGame.handleInput : handleInput;
-  const activeSetShowHitZones = renderer === 'pixi' ? pixiGame.setShowHitZones : setShowHitZones;
-  const activeSetArrowSkin = renderer === 'pixi' ? pixiGame.setArrowSkin : setArrowSkin;
-  const activeSetParticleSkin = renderer === 'pixi' ? pixiGame.setParticleSkin : setParticleSkin;
-  const activeSetScrollSpeed = renderer === 'pixi' ? pixiGame.setScrollSpeed : setScrollSpeed;
-  const activeSetAudioOffset = renderer === 'pixi' ? pixiGame.setAudioOffset : setAudioOffset;
+  const phaserGame = usePhaserGameEngine({
+    containerRef: phaserContainerRef,
+    levelConfig: currentLevel?.config ?? null,
+    chart: currentLevel?.chart ?? null,
+    events: currentLevel?.events?.events ?? [],
+    sfxVol: musicVol / 100,
+  });
+
+  const activeGameState = renderer === 'pixi' ? pixiGame.gameState : renderer === 'phaser' ? phaserGame.gameState : gameState;
+  const activeStartGame = renderer === 'pixi' ? pixiGame.startGame : renderer === 'phaser' ? phaserGame.startGame : startGame;
+  const activeStopGame = renderer === 'pixi' ? pixiGame.stopGame : renderer === 'phaser' ? phaserGame.stopGame : stopGame;
+  const activeTogglePause = renderer === 'pixi' ? pixiGame.togglePause : renderer === 'phaser' ? phaserGame.togglePause : togglePause;
+  const activeHandleInput = renderer === 'pixi' ? pixiGame.handleInput : renderer === 'phaser' ? phaserGame.handleInput : handleInput;
+  const activeSetShowHitZones = renderer === 'pixi' ? pixiGame.setShowHitZones : renderer === 'phaser' ? phaserGame.setShowHitZones : setShowHitZones;
+  const activeSetArrowSkin = renderer === 'pixi' ? pixiGame.setArrowSkin : renderer === 'phaser' ? phaserGame.setArrowSkin : setArrowSkin;
+  const activeSetParticleSkin = renderer === 'pixi' ? pixiGame.setParticleSkin : renderer === 'phaser' ? phaserGame.setParticleSkin : setParticleSkin;
+  const activeSetScrollSpeed = renderer === 'pixi' ? pixiGame.setScrollSpeed : renderer === 'phaser' ? phaserGame.setScrollSpeed : setScrollSpeed;
+  const activeSetAudioOffset = renderer === 'pixi' ? pixiGame.setAudioOffset : renderer === 'phaser' ? phaserGame.setAudioOffset : setAudioOffset;
 
   // Guard de actividad no recuperable: jugando un nivel no se puede navegar
   // sin aviso (ActivityGuard rojo). begin al empezar partida, end al terminar.
@@ -3178,12 +3189,15 @@ function PlayPageContent() {
                 </AnimatePresence>
 
                 {/* Canvas de juego */}
-                {renderer === 'canvas2d' && (
-                  <canvas ref={canvasRef} width={1920} height={1080} className={`absolute inset-0 w-full h-full block z-10 ${!activeGameState.isPlaying ? 'opacity-0' : ''}`} />
-                )}
-                {renderer === 'pixi' && (
-                  <div ref={pixiContainerRef} className={`absolute inset-0 w-full h-full block z-10 ${!pixiGame.gameState.isPlaying ? 'opacity-0' : ''}`} />
-                )}
+                 {renderer === 'canvas2d' && (
+                   <canvas ref={canvasRef} width={1920} height={1080} className={`absolute inset-0 w-full h-full block z-10 ${!activeGameState.isPlaying ? 'opacity-0' : ''}`} />
+                 )}
+                 {renderer === 'pixi' && (
+                   <div ref={pixiContainerRef} className={`absolute inset-0 w-full h-full block z-10 ${!pixiGame.gameState.isPlaying ? 'opacity-0' : ''}`} />
+                 )}
+                 {renderer === 'phaser' && (
+                   <div ref={phaserContainerRef} className={`absolute inset-0 w-full h-full block z-10 ${!phaserGame.gameState.isPlaying ? 'opacity-0' : ''}`} />
+                 )}
 
                 {/* Debug overlay dentro del juego */}
                 {showDebug && debugShowInfoPanel && (
@@ -4550,11 +4564,12 @@ function PlayPageContent() {
                             <div className="w-4 h-4">{I.monitor}</div>
                             <span>Motor de Renderizado</span>
                           </div>
-                          <div className="flex gap-1.5">
-                            {[
-                              { id: 'canvas2d', label: 'Canvas 2D', icon: I.cpu },
-                              { id: 'pixi', label: 'Pixi.js', icon: I.layers },
-                            ].map(r => (
+                           <div className="flex gap-1.5">
+                             {[
+                               { id: 'canvas2d', label: 'Canvas 2D', icon: I.cpu },
+                               { id: 'pixi', label: 'Pixi.js', icon: I.layers },
+                               { id: 'phaser', label: 'Phaser', icon: I.gamepad },
+                             ].map(r => (
                               <button key={r.id} onClick={() => {
                                 setRenderer(r.id as any);
                                 localStorage.setItem('renderer', r.id);
