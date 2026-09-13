@@ -109,7 +109,7 @@ const IconHeart = () => (
 );
 
 const renderIcon = (name: string, size: number) => {
-  if (name === 'chart') return <IconChart />;
+  if (name === 'chart-bar') return <IconChart />;
   if (name === 'heart') return <IconHeart />;
   return <Icon name={name} size={size} className="shrink-0" />;
 };
