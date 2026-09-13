@@ -10,6 +10,7 @@ import { resolveAssetPath } from '@ciszunetwork/cdn';
 import { trackBanner, trackCover, trackDisc } from '@/utils/musicAssets';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameEngine, getComboColor, getKpsColor, getMistakesColor, getAccuracyColor, getScoreGradient, GameNote } from '@/hooks/useGameEngine';
+import { usePixiGameEngine } from '@/hooks/usePixiGameEngine';
 import { useAppStore } from '@/store/useAppStore';
 import { getLevel, LoadedLevel } from '@/data/levels';
 import { TRACKS_DATA, Track } from '@/data/tracks';
@@ -135,6 +136,7 @@ function PlayPageContent() {
   const [trackParam] = useQueryState('track');
   const initialTrackParam = trackParam;
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const pixiContainerRef = useRef<HTMLDivElement | null>(null);
   const gameContainerRef = useRef<HTMLDivElement | null>(null);
   const filtersRef = useRef<HTMLDivElement | null>(null);
   const difficultyRef = useRef<HTMLDivElement | null>(null);
@@ -330,12 +332,12 @@ function PlayPageContent() {
   const [currentLevel, setCurrentLevel] = useState<LoadedLevel | null>(null);
   const [currentArrowSkin, setCurrentArrowSkin] = useState<ArrowSkinId>('default');
   const [currentParticleSkin, setCurrentParticleSkin] = useState<string>('default');
-  const [scrollSpeed, setScrollSpeedState] = useState(() => {
+  const [scrollSpeed, activeSetScrollSpeedState] = useState(() => {
     if (typeof window === 'undefined') return 480;
     const saved = localStorage.getItem('display_scroll_speed');
     return saved ? Number(saved) : 480;
   });
-  const [audioOffset, setAudioOffsetState] = useState(() => {
+  const [audioOffset, activeSetAudioOffsetState] = useState(() => {
     if (typeof window === 'undefined') return 0;
     const saved = localStorage.getItem('display_audio_offset');
     return saved ? Number(saved) : 0;
@@ -362,6 +364,7 @@ function PlayPageContent() {
   const [showAudioDeviceMenu, setShowAudioDeviceMenu] = useState(false);
   const [audioDevice, setAudioDevice] = useState<string | null>(null);
   const [micVolume, setMicVolume] = useState(() => { if (typeof window !== 'undefined') return Number(localStorage.getItem('audio_mic_vol')) || 80; return 80; });
+  const [renderer, setRenderer] = useState<'canvas2d' | 'pixi'>(() => { if (typeof window !== 'undefined') return (localStorage.getItem('renderer') as any) || 'canvas2d'; return 'canvas2d'; });
 
   const { gameState, startGame, stopGame, togglePause, handleInput, setShowHitZones, setShowEarlyLate: setShowEarlyLateEngine, setMsPrecision, setArrowSkin, setParticleSkin, setScrollSpeed, setAudioOffset } = useGameEngine(
     canvasRef,
@@ -370,6 +373,25 @@ function PlayPageContent() {
     currentLevel?.events?.events ?? [],
     musicVol / 100
   );
+
+  const pixiGame = usePixiGameEngine(
+    pixiContainerRef,
+    currentLevel?.config ?? null,
+    currentLevel?.chart ?? null,
+    currentLevel?.events?.events ?? [],
+    musicVol / 100
+  );
+
+  const activeGameState = renderer === 'pixi' ? pixiGame.gameState : gameState;
+  const activeStartGame = renderer === 'pixi' ? pixiGame.startGame : startGame;
+  const activeStopGame = renderer === 'pixi' ? pixiGame.stopGame : stopGame;
+  const activeTogglePause = renderer === 'pixi' ? pixiGame.togglePause : togglePause;
+  const activeHandleInput = renderer === 'pixi' ? pixiGame.handleInput : handleInput;
+  const activeSetShowHitZones = renderer === 'pixi' ? pixiGame.setShowHitZones : setShowHitZones;
+  const activeSetArrowSkin = renderer === 'pixi' ? pixiGame.setArrowSkin : setArrowSkin;
+  const activeSetParticleSkin = renderer === 'pixi' ? pixiGame.setParticleSkin : setParticleSkin;
+  const activeSetScrollSpeed = renderer === 'pixi' ? pixiGame.setScrollSpeed : setScrollSpeed;
+  const activeSetAudioOffset = renderer === 'pixi' ? pixiGame.setAudioOffset : setAudioOffset;
 
   // Guard de actividad no recuperable: jugando un nivel no se puede navegar
   // sin aviso (ActivityGuard rojo). begin al empezar partida, end al terminar.
@@ -455,8 +477,8 @@ function PlayPageContent() {
   }, []);
 
   // Sincronizar display settings con el engine y persistir
-  useEffect(() => { setScrollSpeed(scrollSpeed); localStorage.setItem('display_scroll_speed', String(scrollSpeed)); }, [scrollSpeed, setScrollSpeed]);
-  useEffect(() => { setAudioOffset(audioOffset); localStorage.setItem('display_audio_offset', String(audioOffset)); }, [audioOffset, setAudioOffset]);
+  useEffect(() => { activeSetScrollSpeed(scrollSpeed); localStorage.setItem('display_scroll_speed', String(scrollSpeed)); }, [scrollSpeed, activeSetScrollSpeed]);
+  useEffect(() => { activeSetAudioOffset(audioOffset); localStorage.setItem('display_audio_offset', String(audioOffset)); }, [audioOffset, activeSetAudioOffset]);
   useEffect(() => { setShowEarlyLateEngine(showEarlyLate); localStorage.setItem('display_show_early_late', String(showEarlyLate)); }, [showEarlyLate, setShowEarlyLateEngine]);
   useEffect(() => { setMsPrecision(showPrecisionMS); localStorage.setItem('display_precision_ms', String(showPrecisionMS)); }, [showPrecisionMS, setMsPrecision]);
   useEffect(() => { localStorage.setItem('play_playlists', JSON.stringify(playlists)); }, [playlists]);
@@ -674,7 +696,7 @@ function PlayPageContent() {
     if (countdownIntervalRef.current) { clearInterval(countdownIntervalRef.current); countdownIntervalRef.current = null; }
     if (gameFinishedTimeoutRef.current) { clearTimeout(gameFinishedTimeoutRef.current); gameFinishedTimeoutRef.current = null; }
     
-    stopGame();
+    activeStopGame();
     gameActiveRef.current = true;
     setSelectedTrack(track);
     setLoadError(null);
@@ -733,17 +755,17 @@ function PlayPageContent() {
   }, [resumeCountdown, setResumeCountdown]);
 
   // Countdown effect using refs to avoid stale closures
-  const togglePauseRef = useRef(togglePause);
-  togglePauseRef.current = togglePause;
-  const isPausedRef_ = useRef(gameState.isPaused);
-  isPausedRef_.current = gameState.isPaused;
-  const isPlayingRefCheck = useRef(gameState.isPlaying);
-  isPlayingRefCheck.current = gameState.isPlaying;
+  const activeTogglePauseRef = useRef(activeTogglePause);
+  activeTogglePauseRef.current = activeTogglePause;
+  const isPausedRef_ = useRef(activeGameState.isPaused);
+  isPausedRef_.current = activeGameState.isPaused;
+  const isPlayingRefCheck = useRef(activeGameState.isPlaying);
+  isPlayingRefCheck.current = activeGameState.isPlaying;
   const resumeCountdownCancelRef = useRef(false);
   const countdownPurposeRef = useRef<'start' | 'resume'>('start');
   const pendingGameDataRef = useRef<{ notes: GameNote[]; level: LoadedLevel } | null>(null);
-  const startGameRef = useRef(startGame);
-  startGameRef.current = startGame;
+  const activeStartGameRef = useRef(activeStartGame);
+  activeStartGameRef.current = activeStartGame;
 
   useEffect(() => {
     if (resumeCountdown === null) return;
@@ -756,12 +778,12 @@ function PlayPageContent() {
         setResumeCountdown(null);
         countdownPurposeRef.current = 'start';
         if (purpose === 'resume') {
-          if (isPausedRef_.current && isPlayingRefCheck.current) togglePauseRef.current();
+          if (isPausedRef_.current && isPlayingRefCheck.current) activeTogglePauseRef.current();
         } else if (purpose === 'start') {
           // Start the game engine after countdown
           const data = pendingGameDataRef.current;
           if (data) {
-            startGameRef.current(data.notes);
+            activeStartGameRef.current(data.notes);
             pendingGameDataRef.current = null;
             if (loadingTimeoutRef.current) { clearTimeout(loadingTimeoutRef.current); loadingTimeoutRef.current = null; }
           }
@@ -779,7 +801,7 @@ function PlayPageContent() {
     if (loadingTimeoutRef.current) { clearTimeout(loadingTimeoutRef.current); loadingTimeoutRef.current = null; }
     if (countdownIntervalRef.current) { clearInterval(countdownIntervalRef.current); countdownIntervalRef.current = null; }
     if (gameFinishedTimeoutRef.current) { clearTimeout(gameFinishedTimeoutRef.current); gameFinishedTimeoutRef.current = null; }
-    stopGame();
+    activeStopGame();
     playGlobalMusic();
     setPhase('solo');
   };
@@ -812,9 +834,9 @@ function PlayPageContent() {
   const handleGameFinished = () => {
     if (!gameActiveRef.current) return;
     gameActiveRef.current = false;
-    stopGame();
+    activeStopGame();
     if (!selectedTrack) return;
-    const isFail = gameState.life <= 0;
+    const isFail = activeGameState.life <= 0;
 
     const saveScore = async () => {
       if (isFail) {
@@ -827,15 +849,15 @@ function PlayPageContent() {
         try {
           const { error: submitError } = await supabase.rpc('submit_game_score', {
             p_track_id: selectedTrack.id,
-            p_score: gameState.score,
-            p_combo: gameState.maxCombo,
-            p_accuracy: gameState.accuracy,
-            p_grade: getGrade(gameState.accuracy).rank,
-            p_max_combo: gameState.maxCombo,
-            p_perfect: gameState.hits.perfect,
-            p_great: gameState.hits.great,
-            p_good: gameState.hits.good,
-            p_miss: gameState.hits.miss
+            p_score: activeGameState.score,
+            p_combo: activeGameState.maxCombo,
+            p_accuracy: activeGameState.accuracy,
+            p_grade: getGrade(activeGameState.accuracy).rank,
+            p_max_combo: activeGameState.maxCombo,
+            p_perfect: activeGameState.hits.perfect,
+            p_great: activeGameState.hits.great,
+            p_good: activeGameState.hits.good,
+            p_miss: activeGameState.hits.miss
           });
 
           if (submitError) {
@@ -847,24 +869,24 @@ function PlayPageContent() {
       }
 
       const storedBest = localStorage.getItem(`record_${selectedTrack.id}`);
-      if (!storedBest || gameState.score > parseInt(storedBest, 10)) {
-        localStorage.setItem(`record_${selectedTrack.id}`, gameState.score.toString());
+      if (!storedBest || activeGameState.score > parseInt(storedBest, 10)) {
+        localStorage.setItem(`record_${selectedTrack.id}`, activeGameState.score.toString());
       }
       
       localStorage.setItem('play_last_player', guestName);
       localStorage.setItem(`last_match_${selectedTrack.id}`, JSON.stringify({
-        score: gameState.score,
-        maxPotentialScore: gameState.maxPotentialScore,
-        maxCombo: gameState.maxCombo,
-        accuracy: gameState.accuracy,
-        progress: gameState.progress,
-        notesHit: gameState.notesHit,
-        totalNotes: gameState.totalNotes,
-        mistakes: gameState.mistakes,
-        life: gameState.life,
-        kps: gameState.kps,
-        deaths: gameState.deaths,
-        hits: gameState.hits,
+        score: activeGameState.score,
+        maxPotentialScore: activeGameState.maxPotentialScore,
+        maxCombo: activeGameState.maxCombo,
+        accuracy: activeGameState.accuracy,
+        progress: activeGameState.progress,
+        notesHit: activeGameState.notesHit,
+        totalNotes: activeGameState.totalNotes,
+        mistakes: activeGameState.mistakes,
+        life: activeGameState.life,
+        kps: activeGameState.kps,
+        deaths: activeGameState.deaths,
+        hits: activeGameState.hits,
         date: new Date().toISOString()
       }));
     };
@@ -947,16 +969,16 @@ function PlayPageContent() {
           setResumeCountdown(null);
           if (countdownPurposeRef.current === 'start' && pendingGameDataRef.current) {
             const data = pendingGameDataRef.current;
-            startGameRef.current(data.notes);
+            activeStartGameRef.current(data.notes);
             pendingGameDataRef.current = null;
             if (loadingTimeoutRef.current) { clearTimeout(loadingTimeoutRef.current); loadingTimeoutRef.current = null; }
-            togglePauseRef.current();
+            activeTogglePauseRef.current();
           }
           return;
-        } else if (gameState.isPaused) {
+        } else if (activeGameState.isPaused) {
           handleResume();
         } else {
-          togglePause();
+          activeTogglePause();
         }
         return;
       }
@@ -972,15 +994,15 @@ function PlayPageContent() {
       
       const activeKeys = inputMode === 'wasd' ? keysWASD : inputMode === 'custom' ? keysCustom : keysArrows;
       if (activeKeys[e.code] !== undefined) {
-        handleInput(activeKeys[e.code]);
+        activeHandleInput(activeKeys[e.code]);
       }
     };
     window.addEventListener('keydown', handleKeyDown, { passive: false });
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [phase, inputMode, customKeys, togglePause, handleInput, resumeCountdown, setResumeCountdown, handleResume, gameState.isPaused]);
+  }, [phase, inputMode, customKeys, activeTogglePause, activeHandleInput, resumeCountdown, setResumeCountdown, handleResume, activeGameState.isPaused]);
 
   useEffect(() => {
-    if (phase === 'game' && gameState.isPlaying && !gameState.isPaused && countdown === null && selectedTrack) {
+    if (phase === 'game' && activeGameState.isPlaying && !activeGameState.isPaused && countdown === null && selectedTrack) {
       const endTime = (currentLevel?.config.durationSec ?? selectedTrack.duration_sec) + 3;
       gameFinishedTimeoutRef.current = setTimeout(() => {
         handleGameFinished();
@@ -993,25 +1015,25 @@ function PlayPageContent() {
         }
       };
     }
-    if (gameState.isGameOver && phase === 'game') {
+    if (activeGameState.isGameOver && phase === 'game') {
       if (gameFinishedTimeoutRef.current) {
         clearTimeout(gameFinishedTimeoutRef.current);
         gameFinishedTimeoutRef.current = null;
       }
       handleGameFinished();
     }
-  }, [phase, gameState.isPlaying, gameState.isPaused, gameState.isGameOver, countdown, currentLevel]);
+  }, [phase, activeGameState.isPlaying, activeGameState.isPaused, activeGameState.isGameOver, countdown, currentLevel]);
 
   // Network detection during gameplay
   useEffect(() => {
-    if (phase !== 'game' || !gameState.isPlaying) return;
+    if (phase !== 'game' || !activeGameState.isPlaying) return;
     if (!isNetworkOnline) {
       setIsDisconnected(true);
       disconnectRetryRef.current = 0;
       setDisconnectRetryCount(0);
-      if (!gameState.isPaused) togglePause();
+      if (!activeGameState.isPaused) activeTogglePause();
     }
-  }, [phase, gameState.isPlaying, isNetworkOnline]);
+  }, [phase, activeGameState.isPlaying, isNetworkOnline]);
 
   // Auto-retry: independent loop, runs as long as isDisconnected
   useEffect(() => {
@@ -1032,7 +1054,7 @@ function PlayPageContent() {
           setIsDisconnected(false);
           disconnectRetryRef.current = 0;
           setDisconnectRetryCount(0);
-          if (gameState.isPaused) togglePause();
+          if (activeGameState.isPaused) activeTogglePause();
         } else {
           doRetry();
         }
@@ -1052,13 +1074,13 @@ function PlayPageContent() {
   // Auto-pause on tab leave / window blur / click outside game
   useEffect(() => {
     const handlePause = () => {
-      if (phase === 'game' && gameState.isPlaying && !gameState.isPaused) {
-        togglePause();
+      if (phase === 'game' && activeGameState.isPlaying && !activeGameState.isPaused) {
+        activeTogglePause();
       }
     };
     const onVisibility = () => { if (document.hidden) handlePause(); };
     const onClickOutside = (e: MouseEvent) => {
-      if (phase !== 'game' || !gameState.isPlaying || gameState.isPaused) return;
+      if (phase !== 'game' || !activeGameState.isPlaying || activeGameState.isPaused) return;
       const target = e.target as HTMLElement;
       if (!gameContainerRef.current || !gameContainerRef.current.contains(target)) {
         handlePause();
@@ -1072,7 +1094,7 @@ function PlayPageContent() {
       window.removeEventListener('blur', handlePause);
       document.removeEventListener('mousedown', onClickOutside, true);
     };
-  }, [phase, gameState.isPlaying, gameState.isPaused]);
+  }, [phase, activeGameState.isPlaying, activeGameState.isPaused]);
 
   const renderTrackCard = (track: Track) => {
     const isSelected = selectedTrack?.id === track.id;
@@ -1139,11 +1161,11 @@ function PlayPageContent() {
                 <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: diffColor }} />
                 {track.difficulty}
               </span>
-              <div className="flex">
-                {Array.from({length: Math.min(Math.ceil(track.stars / 4), 5)}).map((_, i) => (
-                  <div key={i} className="w-2 h-2" style={{ color: getStarColor(track.stars) }}>{I.star}</div>
-                ))}
-              </div>
+               <div className="flex">
+                 {Array.from({length: Math.min(Math.ceil(track.stars / 4), 5)}).map((_, i) => (
+                   <div key={i} className="w-2 h-2" style={{ color: getStarColor(track.stars) }}>{I.star}</div>
+                 ))}
+               </div>
               <span className="text-gray-700 text-[6px]">•</span>
               <span className="flex items-center gap-1 text-[8px] text-gray-500 font-bold">
                 <div className="w-2.5 h-2.5">{I.clock}</div>
@@ -3144,9 +3166,9 @@ function PlayPageContent() {
               <div className="relative w-full h-full max-w-full max-h-full aspect-video bg-black overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.8)] flex items-center justify-center">
                 {/* Flash de Error */}
                 <AnimatePresence>
-                  {gameState.mistakes > 0 && (
+                  {activeGameState.mistakes > 0 && (
                     <motion.div 
-                      key={gameState.mistakes}
+                      key={activeGameState.mistakes}
                       initial={{ opacity: 0.8 }}
                       animate={{ opacity: 0 }}
                       transition={{ duration: 0.4 }}
@@ -3156,7 +3178,12 @@ function PlayPageContent() {
                 </AnimatePresence>
 
                 {/* Canvas de juego */}
-                <canvas ref={canvasRef} width={1920} height={1080} className={`absolute inset-0 w-full h-full block z-10 ${!gameState.isPlaying ? 'opacity-0' : ''}`} />
+                {renderer === 'canvas2d' && (
+                  <canvas ref={canvasRef} width={1920} height={1080} className={`absolute inset-0 w-full h-full block z-10 ${!activeGameState.isPlaying ? 'opacity-0' : ''}`} />
+                )}
+                {renderer === 'pixi' && (
+                  <div ref={pixiContainerRef} className={`absolute inset-0 w-full h-full block z-10 ${!pixiGame.gameState.isPlaying ? 'opacity-0' : ''}`} />
+                )}
 
                 {/* Debug overlay dentro del juego */}
                 {showDebug && debugShowInfoPanel && (
@@ -3219,7 +3246,7 @@ function PlayPageContent() {
                    <div className="flex items-center gap-3 pointer-events-auto">
                       <div className="w-14 h-14 shrink-0 relative group/disc cursor-pointer" onClick={() => router.push(`/library?track=${selectedTrack.id}`)}>
                          <img src={trackDisc(selectedTrack.id)} alt={`Disco de ${selectedTrack.name}`}
-                           className={`absolute inset-0 w-full h-full -translate-y-2 z-0 transition-all duration-500 ease-out group-hover/disc:-translate-y-4 group-hover/disc:z-20 ${gameState.isPlaying && !gameState.isPaused ? 'animate-spin' : ''}`}
+                           className={`absolute inset-0 w-full h-full -translate-y-2 z-0 transition-all duration-500 ease-out group-hover/disc:-translate-y-4 group-hover/disc:z-20 ${activeGameState.isPlaying && !activeGameState.isPaused ? 'animate-spin' : ''}`}
                            style={{ animationDuration: '4s' }}
                          />
                          <img src={trackCover(selectedTrack.id)} alt={`Carátula de ${selectedTrack.name}`}
@@ -3255,7 +3282,7 @@ function PlayPageContent() {
                           <div className="w-3 h-3 text-neon-cyan">{I.stats}</div>
                           Score
                         </div>
-                        <div className="text-2xl font-header font-black text-white">{gameState.score.toLocaleString()}</div>
+                        <div className="text-2xl font-header font-black text-white">{activeGameState.score.toLocaleString()}</div>
                       </div>
                       
                       {/* Combo */}
@@ -3264,11 +3291,11 @@ function PlayPageContent() {
                          <div className="w-3 h-3 text-neon-pink">{I.zap}</div>
                          Combo
                        </div>
-                       <div className="text-3xl font-header font-black transition-colors" style={{color: gameState.combo > 0 ? getComboColor(gameState.combo) : '#ffffff'}}>
-                         {gameState.combo}x
+                       <div className="text-3xl font-header font-black transition-colors" style={{color: activeGameState.combo > 0 ? getComboColor(activeGameState.combo) : '#ffffff'}}>
+                         {activeGameState.combo}x
                        </div>
-                       {gameState.combo > 10 && (
-                         <div className="h-1 mt-1 rounded-full transition-all" style={{background: getComboColor(gameState.combo), width: `${Math.min(gameState.combo, 100)}%`}}/>
+                       {activeGameState.combo > 10 && (
+                         <div className="h-1 mt-1 rounded-full transition-all" style={{background: getComboColor(activeGameState.combo), width: `${Math.min(activeGameState.combo, 100)}%`}}/>
                        )}
                      </div>
                      
@@ -3278,7 +3305,7 @@ function PlayPageContent() {
                           <div className="w-3 h-3 text-neon-pink">{I.zap}</div>
                           Combo
                         </div>
-                       <div className="text-md font-header font-black text-neon-purple">{gameState.maxCombo}x</div>
+                       <div className="text-md font-header font-black text-neon-purple">{activeGameState.maxCombo}x</div>
                      </div>
                   </div>
 
@@ -3289,7 +3316,7 @@ function PlayPageContent() {
                           <div className="w-2.5 h-2.5 text-neon-green">{I.target}</div>
                           KPS
                         </div>
-                       <div className="text-lg font-header font-black transition-colors" style={{color: getKpsColor(gameState.kps)}}>{gameState.kps}</div>
+                       <div className="text-lg font-header font-black transition-colors" style={{color: getKpsColor(activeGameState.kps)}}>{activeGameState.kps}</div>
                      </div>
                      <div className="h-8 w-px bg-white/10" />
                      <div className="text-right">
@@ -3297,7 +3324,7 @@ function PlayPageContent() {
                           <div className="w-2.5 h-2.5 text-red-400">{I.circleX}</div>
                           Mistakes
                        </div>
-                       <div className="text-lg font-header font-black transition-colors" style={{color: getMistakesColor(gameState.mistakes)}}>{gameState.mistakes}</div>
+                       <div className="text-lg font-header font-black transition-colors" style={{color: getMistakesColor(activeGameState.mistakes)}}>{activeGameState.mistakes}</div>
                      </div>
                   </div>
                 </div>
@@ -3311,7 +3338,7 @@ function PlayPageContent() {
                           <div className="w-3 h-3 text-neon-cyan">{I.target}</div>
                           Precisión
                         </div>
-                       <div className="text-3xl font-header font-black transition-colors" style={{color: getAccuracyColor(gameState.accuracy)}}>{gameState.accuracy}%</div>
+                       <div className="text-3xl font-header font-black transition-colors" style={{color: getAccuracyColor(activeGameState.accuracy)}}>{activeGameState.accuracy}%</div>
                     </div>
                     
                     <div className="h-px bg-white/10" />
@@ -3319,13 +3346,13 @@ function PlayPageContent() {
                     {/* Hits Breakdown */}
                      <div className="space-y-1">
                        {[
-                         { label: 'Perfect', val: gameState.hits.perfect, color: 'text-neon-cyan', icon: I.star },
-                         { label: 'Great', val: gameState.hits.great, color: 'text-neon-purple', icon: I.zap },
-                         { label: 'Good', val: gameState.hits.good, color: 'text-neon-green', icon: I.heart },
-                         { label: 'Meh', val: gameState.hits.meh, color: 'text-yellow-400', icon: I.target },
-                         { label: 'Bad', val: gameState.hits.bad, color: 'text-orange-500', icon: I.flame },
-                         { label: 'Very Bad', val: gameState.hits.veryBad, color: 'text-red-400', icon: I.circleX },
-                         { label: 'Miss', val: gameState.hits.miss, color: 'text-red-500', icon: I.about }
+                         { label: 'Perfect', val: activeGameState.hits.perfect, color: 'text-neon-cyan', icon: I.star },
+                         { label: 'Great', val: activeGameState.hits.great, color: 'text-neon-purple', icon: I.zap },
+                         { label: 'Good', val: activeGameState.hits.good, color: 'text-neon-green', icon: I.heart },
+                         { label: 'Meh', val: activeGameState.hits.meh, color: 'text-yellow-400', icon: I.target },
+                         { label: 'Bad', val: activeGameState.hits.bad, color: 'text-orange-500', icon: I.flame },
+                         { label: 'Very Bad', val: activeGameState.hits.veryBad, color: 'text-red-400', icon: I.circleX },
+                         { label: 'Miss', val: activeGameState.hits.miss, color: 'text-red-500', icon: I.about }
                        ].map(h => (
                          <div key={h.label} className="flex justify-between text-[10px] font-bold items-center">
                            <span className="text-gray-400 flex items-center gap-1">
@@ -3348,13 +3375,13 @@ function PlayPageContent() {
                         <div className="flex items-center justify-between">
                           <motion.div
                             className="text-md font-header font-black tabular-nums"
-                            style={{ color: gameState.progress >= 95 ? '#68cfff' : gameState.progress >= 75 ? '#00ff88' : gameState.progress >= 50 ? '#ffd900' : gameState.progress >= 25 ? '#ff6600' : '#ff2244' }}
-                            animate={gameState.progress >= 95 ? { scale: [1, 1.08, 1], textShadow: ['0 0 0 rgba(104,207,255,0)', '0 0 20px rgba(104,207,255,0.6)', '0 0 0 rgba(104,207,255,0)'] } : {}}
+                            style={{ color: activeGameState.progress >= 95 ? '#68cfff' : activeGameState.progress >= 75 ? '#00ff88' : activeGameState.progress >= 50 ? '#ffd900' : activeGameState.progress >= 25 ? '#ff6600' : '#ff2244' }}
+                            animate={activeGameState.progress >= 95 ? { scale: [1, 1.08, 1], textShadow: ['0 0 0 rgba(104,207,255,0)', '0 0 20px rgba(104,207,255,0.6)', '0 0 0 rgba(104,207,255,0)'] } : {}}
                             transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
                           >
-                            {gameState.progress}%
+                            {activeGameState.progress}%
                           </motion.div>
-                          <div className="text-[10px] font-bold text-white/60">{gameState.notesHit} / {gameState.totalNotes} notas</div>
+                          <div className="text-[10px] font-bold text-white/60">{activeGameState.notesHit} / {activeGameState.totalNotes} notas</div>
                         </div>
                         <div className="h-3 bg-white/10 rounded-full mt-1.5 overflow-hidden relative">
                           {/* Segment tick marks */}
@@ -3364,32 +3391,32 @@ function PlayPageContent() {
                           <motion.div
                             className="h-full rounded-full relative"
                             style={{
-                              width: `${gameState.progress}%`,
-                              background: `linear-gradient(90deg, ${getScoreGradient(gameState.progress).join(', ')})`,
+                              width: `${activeGameState.progress}%`,
+                              background: `linear-gradient(90deg, ${getScoreGradient(activeGameState.progress).join(', ')})`,
                               backgroundSize: '200% 100%',
-                              boxShadow: gameState.progress >= 80 ? `0 0 12px ${getScoreGradient(gameState.progress)[0]}80, 0 0 30px ${getScoreGradient(gameState.progress)[0]}40` : 'none',
+                              boxShadow: activeGameState.progress >= 80 ? `0 0 12px ${getScoreGradient(activeGameState.progress)[0]}80, 0 0 30px ${getScoreGradient(activeGameState.progress)[0]}40` : 'none',
                             }}
                             animate={{
                               backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-                              boxShadow: gameState.progress >= 80
+                              boxShadow: activeGameState.progress >= 80
                                 ? [
-                                  `0 0 12px ${getScoreGradient(gameState.progress)[0]}80, 0 0 30px ${getScoreGradient(gameState.progress)[0]}40`,
-                                  `0 0 18px ${getScoreGradient(gameState.progress)[0]}b0, 0 0 45px ${getScoreGradient(gameState.progress)[0]}60`,
-                                  `0 0 12px ${getScoreGradient(gameState.progress)[0]}80, 0 0 30px ${getScoreGradient(gameState.progress)[0]}40`,
+                                  `0 0 12px ${getScoreGradient(activeGameState.progress)[0]}80, 0 0 30px ${getScoreGradient(activeGameState.progress)[0]}40`,
+                                  `0 0 18px ${getScoreGradient(activeGameState.progress)[0]}b0, 0 0 45px ${getScoreGradient(activeGameState.progress)[0]}60`,
+                                  `0 0 12px ${getScoreGradient(activeGameState.progress)[0]}80, 0 0 30px ${getScoreGradient(activeGameState.progress)[0]}40`,
                                 ]
                                 : 'none',
                             }}
                             transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
                           />
                           {/* Progress tip glow */}
-                          {gameState.progress > 0 && (
+                          {activeGameState.progress > 0 && (
                             <motion.div
                               className="absolute top-1/2 -translate-y-1/2 w-2 h-2 rounded-full pointer-events-none"
                               style={{
-                                left: `${gameState.progress}%`,
+                                left: `${activeGameState.progress}%`,
                                 marginLeft: -4,
-                                background: getScoreGradient(gameState.progress)[getScoreGradient(gameState.progress).length - 1] || '#68cfff',
-                                boxShadow: `0 0 8px ${getScoreGradient(gameState.progress)[0]}cc`,
+                                background: getScoreGradient(activeGameState.progress)[getScoreGradient(activeGameState.progress).length - 1] || '#68cfff',
+                                boxShadow: `0 0 8px ${getScoreGradient(activeGameState.progress)[0]}cc`,
                               }}
                               animate={{ scale: [1, 1.5, 1], opacity: [0.7, 1, 0.7] }}
                               transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
@@ -3417,11 +3444,11 @@ function PlayPageContent() {
                 <div className="md:hidden absolute top-4 left-4 flex gap-6 pointer-events-none z-30">
                   <div className="flex flex-col drop-shadow-md">
                     <span className="text-[9px] uppercase text-neon-cyan font-black tracking-widest">Score</span>
-                    <span className="text-lg font-header font-black text-white">{gameState.score.toLocaleString()}</span>
+                    <span className="text-lg font-header font-black text-white">{activeGameState.score.toLocaleString()}</span>
                   </div>
                   <div className="flex flex-col drop-shadow-md">
                     <span className="text-[9px] uppercase text-neon-purple font-black tracking-widest">Combo</span>
-                    <span className={`text-lg font-header font-black ${gameState.combo > 50 ? 'text-neon-pink animate-pulse' : 'text-white'}`}>{gameState.combo}x</span>
+                    <span className={`text-lg font-header font-black ${activeGameState.combo > 50 ? 'text-neon-pink animate-pulse' : 'text-white'}`}>{activeGameState.combo}x</span>
                   </div>
                 </div>
 
@@ -3464,7 +3491,7 @@ function PlayPageContent() {
                 </AnimatePresence>
 
                 {/* Overlay de Pausa */}
-                {gameState.isPaused && selectedTrack && resumeCountdown === null && (
+                {activeGameState.isPaused && selectedTrack && resumeCountdown === null && (
                   <div className="absolute inset-0 bg-black/85 backdrop-blur-xl z-40 flex flex-col items-center justify-center pointer-events-auto overflow-y-auto">
                     <div className="max-w-2xl w-full mx-auto px-6 py-8">
                       <motion.h1 initial={{y:-30,opacity:0}} animate={{y:0,opacity:1}} className="text-4xl md:text-6xl font-header font-black uppercase italic tracking-tighter text-white drop-shadow-[0_0_50px_rgba(255,255,255,0.3)] text-center mb-1">PAUSA</motion.h1>
@@ -3611,7 +3638,7 @@ function PlayPageContent() {
 
                 {/* Botones flotantes - esquinas */}
                 <div className="absolute top-4 left-4 z-[70] pointer-events-auto">
-                  <button onClick={() => { if (resumeCountdown !== null) { if (resumeCountdownTimerRef.current) { clearTimeout(resumeCountdownTimerRef.current); resumeCountdownTimerRef.current = null; } resumeCountdownCancelRef.current = true; setResumeCountdown(null); if (countdownPurposeRef.current === 'start' && pendingGameDataRef.current) { const data = pendingGameDataRef.current; startGameRef.current(data.notes); pendingGameDataRef.current = null; if (loadingTimeoutRef.current) { clearTimeout(loadingTimeoutRef.current); loadingTimeoutRef.current = null; } togglePauseRef.current(); } } else if (gameState.isPaused) { handleResume(); } else { togglePause(); } }} className="w-10 h-10 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all shadow-lg">
+                  <button onClick={() => { if (resumeCountdown !== null) { if (resumeCountdownTimerRef.current) { clearTimeout(resumeCountdownTimerRef.current); resumeCountdownTimerRef.current = null; } resumeCountdownCancelRef.current = true; setResumeCountdown(null); if (countdownPurposeRef.current === 'start' && pendingGameDataRef.current) { const data = pendingGameDataRef.current; activeStartGameRef.current(data.notes); pendingGameDataRef.current = null; if (loadingTimeoutRef.current) { clearTimeout(loadingTimeoutRef.current); loadingTimeoutRef.current = null; } activeTogglePauseRef.current(); } } else if (activeGameState.isPaused) { handleResume(); } else { activeTogglePause(); } }} className="w-10 h-10 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all shadow-lg">
                     <div className="w-4 h-4">{I.pause}</div>
                   </button>
                 </div>
@@ -3622,21 +3649,21 @@ function PlayPageContent() {
                 </div>
 
                 {/* Barra de Vida */}
-                <div className={`absolute bottom-8 left-0 right-0 z-20 px-4 ${gameState.life <= 20 ? 'animate-glitch' : ''}`}>
+                <div className={`absolute bottom-8 left-0 right-0 z-20 px-4 ${activeGameState.life <= 20 ? 'animate-glitch' : ''}`}>
                   <div className="flex items-center gap-2">
-                    <div className={`w-4 h-4 text-red-400 shrink-0 drop-shadow-[0_0_6px_rgba(248,113,113,0.8)] ${gameState.life <= 20 ? 'animate-glitch' : ''}`}>
+                    <div className={`w-4 h-4 text-red-400 shrink-0 drop-shadow-[0_0_6px_rgba(248,113,113,0.8)] ${activeGameState.life <= 20 ? 'animate-glitch' : ''}`}>
                       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                     </div>
-                    <div className="flex-1 h-2.5 bg-white/10 rounded-full overflow-hidden shadow-[0_0_12px_rgba(0,0,0,0.5)]" style={{boxShadow: gameState.life <= 20 ? '0 0 12px rgba(255,0,0,0.6), 0 0 4px rgba(255,0,0,0.4) inset' : ''}}>
+                    <div className="flex-1 h-2.5 bg-white/10 rounded-full overflow-hidden shadow-[0_0_12px_rgba(0,0,0,0.5)]" style={{boxShadow: activeGameState.life <= 20 ? '0 0 12px rgba(255,0,0,0.6), 0 0 4px rgba(255,0,0,0.4) inset' : ''}}>
                       <div className="h-full rounded-full transition-all duration-150" 
                         style={{
-                          width: `${gameState.life}%`,
-                          background: `linear-gradient(90deg, #ff2244 0%, #ff6600 ${100 - gameState.life * 0.6}%, #ffd900 ${100 - gameState.life * 0.3}%, #00ff88 100%)`,
-                          boxShadow: `0 0 8px ${gameState.life <= 20 ? 'rgba(255,0,0,0.8)' : gameState.life <= 50 ? 'rgba(255,100,0,0.4)' : 'rgba(0,255,136,0.3)'}`,
+                          width: `${activeGameState.life}%`,
+                          background: `linear-gradient(90deg, #ff2244 0%, #ff6600 ${100 - activeGameState.life * 0.6}%, #ffd900 ${100 - activeGameState.life * 0.3}%, #00ff88 100%)`,
+                          boxShadow: `0 0 8px ${activeGameState.life <= 20 ? 'rgba(255,0,0,0.8)' : activeGameState.life <= 50 ? 'rgba(255,100,0,0.4)' : 'rgba(0,255,136,0.3)'}`,
                         }}
                       />
                     </div>
-                    <span className="text-[8px] font-black tabular-nums text-gray-300 w-8 text-right">{gameState.life}%</span>
+                    <span className="text-[8px] font-black tabular-nums text-gray-300 w-8 text-right">{activeGameState.life}%</span>
                   </div>
                 </div>
 
@@ -3644,12 +3671,12 @@ function PlayPageContent() {
                 <div className="absolute bottom-0 left-0 right-0 z-20 bg-white/5 backdrop-blur-xl border-t border-white/10 px-4 py-1.5 flex items-center gap-3">
                   <div className="flex items-center gap-1.5 text-gray-400">
                     <div className="w-3 h-3">{I.clock}</div>
-                    <span className="text-[9px] font-black uppercase tracking-widest tabular-nums">{formatTime(Math.max(0, gameState.trackDuration - gameState.timeRemaining))}</span>
+                    <span className="text-[9px] font-black uppercase tracking-widest tabular-nums">{formatTime(Math.max(0, activeGameState.trackDuration - activeGameState.timeRemaining))}</span>
                   </div>
                   <div className="flex-1 h-3 bg-white/10 rounded-full overflow-hidden border border-white/5">
-                    <div className="h-full rounded-full bg-gradient-to-r from-neon-cyan to-neon-purple transition-all duration-200" style={{width:`${gameState.trackDuration > 0 ? (gameState.trackDuration - gameState.timeRemaining) / gameState.trackDuration * 100 : 0}%`}}/>
+                    <div className="h-full rounded-full bg-gradient-to-r from-neon-cyan to-neon-purple transition-all duration-200" style={{width:`${activeGameState.trackDuration > 0 ? (activeGameState.trackDuration - activeGameState.timeRemaining) / activeGameState.trackDuration * 100 : 0}%`}}/>
                   </div>
-                  <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 tabular-nums">-{formatTime(gameState.timeRemaining)}</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 tabular-nums">-{formatTime(activeGameState.timeRemaining)}</span>
                 </div>
               </div>
             </motion.div>
@@ -3673,11 +3700,11 @@ function PlayPageContent() {
                 <div className="relative z-10 grid md:grid-cols-2 gap-8">
                   <div className="text-left space-y-2">
                     <div className="text-[10px] text-gray-500 uppercase font-black tracking-widest">Puntuación Final</div>
-                    <div className="text-5xl font-header font-black text-white">{gameState.score.toLocaleString()}</div>
+                    <div className="text-5xl font-header font-black text-white">{activeGameState.score.toLocaleString()}</div>
                   </div>
                   <div className="text-right space-y-2">
                     <div className="text-[10px] text-gray-500 uppercase font-black tracking-widest">Errores Registrados</div>
-                    <div className="text-5xl font-header font-black text-red-500">{gameState.mistakes}</div>
+                    <div className="text-5xl font-header font-black text-red-500">{activeGameState.mistakes}</div>
                   </div>
                   <div className="col-span-2 pt-8 border-t border-red-600/20">
                     <p className="text-gray-400 text-sm italic">&quot;Tu conexión con el Nexo se ha degradado por debajo de los niveles operativos.&quot;</p>
@@ -3714,22 +3741,22 @@ function PlayPageContent() {
                      animate={{ scale: 1, rotate: 0 }}
                      transition={{ type: 'spring', damping: 12, stiffness: 100, delay: 0.1 }}
                      className="text-[80px] md:text-[120px] leading-none font-header font-black italic shrink-0"
-                     style={{ color: getGrade(gameState.accuracy).color, textShadow: `0 0 60px ${getGrade(gameState.accuracy).color}66` }}
+                     style={{ color: getGrade(activeGameState.accuracy).color, textShadow: `0 0 60px ${getGrade(activeGameState.accuracy).color}66` }}
                    >
-                     {getGrade(gameState.accuracy).rank}
+                     {getGrade(activeGameState.accuracy).rank}
                    </motion.div>
                    
                    {/* Stats Compact Grid */}
                    <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-2 w-full">
                      {[
-                       { label: 'Score', val: gameState.score.toLocaleString(), cls: 'text-white', icon: I.stats, iconCls: 'text-neon-cyan' },
-                       { label: 'Max Combo', val: `${gameState.maxCombo}x`, cls: 'text-neon-pink', icon: I.trophy, iconCls: 'text-yellow-500' },
-                       { label: 'Precisión', val: `${gameState.accuracy}%`, cls: 'text-neon-cyan', icon: I.target, iconCls: 'text-neon-cyan' },
-                       { label: 'Errores', val: gameState.hits.miss, cls: 'text-red-500', icon: I.circleX, iconCls: 'text-red-400' },
-                       { label: 'Punt. Máx', val: gameState.maxPotentialScore.toLocaleString(), cls: 'text-gray-300', icon: I.star, iconCls: 'text-yellow-400' },
-                       { label: 'KPS', val: `${gameState.kps}`, cls: 'text-neon-green', icon: I.zap, iconCls: 'text-neon-green' },
-                       { label: 'Vida', val: `${gameState.life}%`, cls: gameState.life > 50 ? 'text-green-400' : 'text-red-400', icon: I.heart, iconCls: gameState.life > 50 ? 'text-green-400' : 'text-red-400' },
-                        { label: 'Progreso', val: `${gameState.notesHit} / ${gameState.totalNotes} notas`, cls: 'text-neon-purple', icon: I.clock, iconCls: 'text-neon-purple' },
+                       { label: 'Score', val: activeGameState.score.toLocaleString(), cls: 'text-white', icon: I.stats, iconCls: 'text-neon-cyan' },
+                       { label: 'Max Combo', val: `${activeGameState.maxCombo}x`, cls: 'text-neon-pink', icon: I.trophy, iconCls: 'text-yellow-500' },
+                       { label: 'Precisión', val: `${activeGameState.accuracy}%`, cls: 'text-neon-cyan', icon: I.target, iconCls: 'text-neon-cyan' },
+                       { label: 'Errores', val: activeGameState.hits.miss, cls: 'text-red-500', icon: I.circleX, iconCls: 'text-red-400' },
+                       { label: 'Punt. Máx', val: activeGameState.maxPotentialScore.toLocaleString(), cls: 'text-gray-300', icon: I.star, iconCls: 'text-yellow-400' },
+                       { label: 'KPS', val: `${activeGameState.kps}`, cls: 'text-neon-green', icon: I.zap, iconCls: 'text-neon-green' },
+                       { label: 'Vida', val: `${activeGameState.life}%`, cls: activeGameState.life > 50 ? 'text-green-400' : 'text-red-400', icon: I.heart, iconCls: activeGameState.life > 50 ? 'text-green-400' : 'text-red-400' },
+                        { label: 'Progreso', val: `${activeGameState.notesHit} / ${activeGameState.totalNotes} notas`, cls: 'text-neon-purple', icon: I.clock, iconCls: 'text-neon-purple' },
                      ].map((stat, i) => (
                        <motion.div 
                          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
@@ -3752,9 +3779,9 @@ function PlayPageContent() {
                      className="hidden md:flex flex-col items-center shrink-0"
                    >
                      <div className="text-xs uppercase font-black tracking-[0.3em]"
-                       style={{ color: getGrade(gameState.accuracy).color }}
+                       style={{ color: getGrade(activeGameState.accuracy).color }}
                      >
-                       {getGrade(gameState.accuracy).label}
+                       {getGrade(activeGameState.accuracy).label}
                      </div>
                    </motion.div>
                  </div>
@@ -3771,7 +3798,7 @@ function PlayPageContent() {
                          <motion.div key={key} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 + i * 0.03 }}
                            className="bg-black/60 backdrop-blur-sm border border-white/5 p-1.5 rounded-lg text-center"
                          >
-                           <div className={`text-xs md:text-sm font-black font-header ${colors[key]}`}>{gameState.hits[key]}</div>
+                           <div className={`text-xs md:text-sm font-black font-header ${colors[key]}`}>{activeGameState.hits[key]}</div>
                            <div className="flex items-center justify-center gap-0.5 text-[6px] uppercase text-gray-600 font-black tracking-widest">
                              <div className={`w-2 h-2 ${iconColors[key]}`}>{icons[key]}</div>
                              {labels[key]}
@@ -4436,7 +4463,7 @@ function PlayPageContent() {
                             <span>Zonas de Acierto</span>
                           </div>
                           <button
-                            onClick={() => { setShowHitZoneVisuals(!showHitZoneVisuals); setShowHitZones(!showHitZoneVisuals); }}
+                            onClick={() => { setShowHitZoneVisuals(!showHitZoneVisuals); activeSetShowHitZones(!showHitZoneVisuals); }}
                             className={`w-full py-4 text-sm font-black uppercase tracking-widest rounded-xl border transition-all flex items-center justify-center gap-3 ${
                               showHitZoneVisuals
                                 ? 'bg-neon-cyan/20 border-neon-cyan text-neon-cyan'
@@ -4518,6 +4545,26 @@ function PlayPageContent() {
                               <div className="w-3 h-3">{graphicsAutoDetecting ? I.refresh : I.zap}</div>
                               {graphicsAutoDetecting ? 'DETECTANDO...' : 'DETECTAR AUTOMÁTICAMENTE'}
                             </button>
+                          </div>
+                          <div className="flex items-center gap-2 text-[10px] text-gray-500 uppercase font-black tracking-widest mb-2">
+                            <div className="w-4 h-4">{I.monitor}</div>
+                            <span>Motor de Renderizado</span>
+                          </div>
+                          <div className="flex gap-1.5">
+                            {[
+                              { id: 'canvas2d', label: 'Canvas 2D', icon: I.cpu },
+                              { id: 'pixi', label: 'Pixi.js', icon: I.layers },
+                            ].map(r => (
+                              <button key={r.id} onClick={() => {
+                                setRenderer(r.id as any);
+                                localStorage.setItem('renderer', r.id);
+                              }} className={`px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest rounded-lg border transition-all flex items-center gap-1.5 ${
+                                renderer === r.id ? 'bg-neon-purple/20 border-neon-purple text-neon-purple' : 'bg-white/5 border-transparent text-gray-400 hover:bg-white/10'
+                              }`}>
+                                <div className="w-3 h-3">{r.icon}</div>
+                                {r.label}
+                              </button>
+                            ))}
                           </div>
                         </div>
                         {/* Toggles individuales */}
@@ -4644,14 +4691,14 @@ function PlayPageContent() {
                                     min="-200"
                                     max="200"
                                     value={audioOffset}
-                                    onChange={e => setAudioOffsetState(Number(e.target.value))}
+                                    onChange={e => activeSetAudioOffsetState(Number(e.target.value))}
                                     className="w-full accent-neon-cyan h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer"
                                   />
                                   <div className="text-center text-[10px] font-bold text-gray-400 mt-1">{audioOffset > 0 ? `+${audioOffset}` : audioOffset} ms</div>
                                 </div>
                                 <div className="flex gap-2">
                                   <button
-                                    onClick={() => { setAudioOffsetState(detectedOffset); }}
+                                    onClick={() => { activeSetAudioOffsetState(detectedOffset); }}
                                     className="flex-1 py-2 text-[8px] font-black uppercase tracking-widest rounded-xl bg-neon-cyan/20 border border-neon-cyan/40 text-neon-cyan hover:bg-neon-cyan/30 transition-all flex items-center justify-center gap-1"
                                   >
                                     <div className="w-3 h-3">{I.check}</div>
@@ -5177,7 +5224,7 @@ function PlayPageContent() {
                       <div className="grid grid-cols-3 gap-2">
                         {(user ? getSkinList() : getSkinList().filter(s => s.id === 'default')).map(skin => (
                           <button key={skin.id}
-                            onClick={() => { setCurrentArrowSkin(skin.id); setArrowSkin(skin.id); }}
+                            onClick={() => { setCurrentArrowSkin(skin.id); activeSetArrowSkin(skin.id); }}
                             className={`py-3 text-xs font-bold uppercase rounded-xl border transition-all ${
                               currentArrowSkin === skin.id
                                 ? 'bg-neon-cyan/20 border-neon-cyan text-neon-cyan shadow-neon-cyan/20'
@@ -5198,7 +5245,7 @@ function PlayPageContent() {
                       <div className="grid grid-cols-3 gap-2">
                         {(user ? getParticleSkinList() : getParticleSkinList().filter(s => s.id === 'default')).map(skin => (
                           <button key={skin.id}
-                            onClick={() => { setCurrentParticleSkin(skin.id); setParticleSkin(skin.id); }}
+                            onClick={() => { setCurrentParticleSkin(skin.id); activeSetParticleSkin(skin.id); }}
                             className={`py-3 text-xs font-bold uppercase rounded-xl border transition-all ${
                               currentParticleSkin === skin.id
                                 ? 'bg-neon-purple/20 border-neon-purple text-neon-purple shadow-neon-purple/20'

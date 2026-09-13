@@ -243,6 +243,10 @@ export default function Footer({ lang, dict }: FooterProps) {
                   className="flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border border-transparent text-ink font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]">
                   <span className="tracking-wide">GitHub</span>
                 </a>
+                <a href="https://ciszunetwork.vercel.app/courses" target="_blank" rel="noopener noreferrer"
+                  className="flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border border-transparent text-ink font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]">
+                  <span className="tracking-wide">Courses</span>
+                </a>
               </div>
             </div>
 

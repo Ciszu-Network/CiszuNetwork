@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { SocialIcon } from "@/components/ui/SocialIcon";
-import { CISZU_NETWORK, CISZUKO_ANTONY, SOCIAL_COLORS } from "@/config/site";
+import { SocialIcon, SOCIAL_COLORS } from '@ciszu/ui';
+import { CISZU_NETWORK, CISZUKO_ANTONY } from "@/config/site";
 import { Users, Mail, Phone, MapPin, ArrowRight, ExternalLink } from "lucide-react";
 import QuickDocks from "@/components/molecules/QuickDocks";
 import type { Metadata } from "next";

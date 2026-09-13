@@ -86,6 +86,7 @@ const NAV_ITEMS: NavEntry[] = [
   { name: 'Download', href: '/download', icon: <Download className="w-4 h-4" /> },
   { name: 'Donate', href: '/donate', icon: <Heart className="w-4 h-4" /> },
   { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" /> },
+  { name: 'Courses', href: '/courses', icon: <GraduationCap className="w-4 h-4" /> },
   {
     name: 'Information',
     icon: <Info className="w-4 h-4" />,
@@ -135,6 +136,7 @@ const ALL_PAGES: { name: string; href: string; icon: React.ReactNode; keywords: 
   { name: 'Download', href: '/download', icon: <Download className="w-4 h-4" />, keywords: ['descargas', 'download', 'pc', 'windows', 'ejecutable'] },
   { name: 'Donate', href: '/donate', icon: <Heart className="w-4 h-4" />, keywords: ['donar', 'donation', 'donacion', 'apoyar', 'apoyo', 'ko-fi', 'patreon'] },
   { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" />, keywords: ['feedback', 'opiniones', 'sugerencias', 'reporte', 'bug', 'quejas'] },
+  { name: 'Courses', href: '/courses', icon: <GraduationCap className="w-4 h-4" />, keywords: ['courses', 'cursos', 'formacion', 'formación', 'educacion', 'educación', 'learning', 'clases'] },
   { name: 'Ciszugamens', href: '/projects/ciszugamens', icon: <Gamepad2 className="w-4 h-4" />, keywords: ['ciszugamens', 'gamens', 'discord', 'servidor', 'comunidad'] },
   { name: 'CiszuBot', href: '/projects/ciszubot', icon: <Bot className="w-4 h-4" />, keywords: ['ciszubot', 'bot', 'discord', 'comandos'] },
   { name: 'MuzicMania', href: '/projects/muzicmania', icon: <Music className="w-4 h-4" />, keywords: ['muzicmania', 'musica', 'juego', 'ritmo'] },

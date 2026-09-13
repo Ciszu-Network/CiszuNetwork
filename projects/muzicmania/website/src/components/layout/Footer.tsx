@@ -170,6 +170,19 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
               </div>
             ))}
           </div>
+
+          {/* Ecosystem link */}
+          <div className="flex flex-col items-center sm:items-start">
+            <h4 className="text-neon-blue text-[10px] font-black uppercase tracking-[0.3em] mb-4 drop-shadow-[0_0_8px_rgba(0,212,255,0.5)]">
+              Ecosystem
+            </h4>
+            <div className="flex flex-col gap-1.5 w-full">
+              <a href="https://ciszunetwork.vercel.app/courses" target="_blank" rel="noopener noreferrer"
+                className="flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border border-transparent text-ink font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]">
+                <span className="tracking-wide">Courses</span>
+              </a>
+            </div>
+          </div>
         </div>
 
         {/* Global Controls & Bottom Bar */}

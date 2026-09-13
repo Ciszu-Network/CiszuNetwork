@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
-import { Button } from '@/components/atoms/Button';
+import { Button, useToast, useActivityGuard, AuthBenefitsPanel, AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders, setCookieConsent } from '@ciszu/ui';
 import ReCAPTCHA from 'react-google-recaptcha';
 import CountrySelect from '@/components/atoms/CountrySelect';
 import DateSelect from '@/components/atoms/DateSelect';
@@ -14,7 +14,6 @@ import { useRouter } from 'next/navigation';
 import AuthFeedback from '@/components/molecules/AuthFeedback';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
-import { AuthBenefitsPanel, AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders, useToast, useActivityGuard, setCookieConsent } from '@ciszu/ui';
 
 // --- Icons Library ---
 const I = {
