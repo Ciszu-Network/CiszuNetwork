@@ -39,11 +39,5 @@
       ]
     }
   ],
-  "redirects": [
-    {
-      "source": "/downloads",
-      "destination": "/descargas",
-      "permanent": true
-    }
-  ]
+  "redirects": []
 }
