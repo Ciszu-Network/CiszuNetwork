@@ -17,6 +17,9 @@
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://obwzzmbvkrcscqwptlqo.supabase.co';
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
+const IS_BUILD = process.env.NEXT_PHASE === 'build' || process.env.VERCEL === '1';
+const FETCH_TIMEOUT_MS = 4000;
+
 export type AdvisorSite = 'ciszu' | 'ciszukoantony' | 'muzicmania' | 'ciszubot';
 
 const BASE_HEADERS: Record<string, string> = {
@@ -33,13 +36,16 @@ interface Row {
 }
 
 async function confirmDeliveries(site: string): Promise<void> {
-  if (!SUPABASE_ANON_KEY) return;
+  if (!SUPABASE_ANON_KEY || IS_BUILD) return;
   try {
     const since = encodeURIComponent(new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString());
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
     const res = await fetch(
       `${SUPABASE_URL}/rest/v1/global_announcements?select=id,target,expires_at&created_at=gt.${since}&order=created_at.asc`,
-      { headers: BASE_HEADERS, cache: 'no-store' }
+      { headers: BASE_HEADERS, cache: 'no-store', signal: controller.signal }
     );
+    clearTimeout(timeout);
     if (!res.ok) return;
     const items = (await res.json()) as Row[];
     const now = Date.now();
@@ -50,6 +56,8 @@ async function confirmDeliveries(site: string): Promise<void> {
     });
     for (const a of relevant) {
       try {
+        const deliveryController = new AbortController();
+        const deliveryTimeout = setTimeout(() => deliveryController.abort(), FETCH_TIMEOUT_MS);
         await fetch(
           `${SUPABASE_URL}/rest/v1/global_announcement_deliveries?announcement_id=eq.${a.id}&site=eq.${site}`,
           {
@@ -60,8 +68,10 @@ async function confirmDeliveries(site: string): Promise<void> {
               Prefer: 'resolution=merge-duplicates,return=minimal',
             },
             body: JSON.stringify({ announcement_id: a.id, site }),
+            signal: deliveryController.signal,
           }
         );
+        clearTimeout(deliveryTimeout);
       } catch { /* continuar con el resto */ }
     }
   } catch { /* la confirmación nunca debe romper el render */ }
