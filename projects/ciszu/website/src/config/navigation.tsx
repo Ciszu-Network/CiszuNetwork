@@ -14,7 +14,7 @@ export const NAV_LINKS = [
   { name: 'Inicio', href: '/', icon: I.home },
   { name: 'Info', href: '/about', icon: I.info },
   { name: 'Equipo', href: '/team', icon: I.team },
-  { name: 'Cursos', href: '/cursos', icon: I.courses },
+  { name: 'Courses', href: '/courses', icon: I.courses },
   { name: 'Contacto', href: '/contact', icon: I.contact },
 ];
 
@@ -25,7 +25,7 @@ export const FOOTER_NAV = [
       { name: 'Inicio', href: '/', icon: I.home },
       { name: 'Sobre Nosotros', href: '/about', icon: I.info },
       { name: 'Equipo', href: '/team', icon: I.team },
-      { name: 'Cursos', href: '/cursos', icon: I.courses },
+      { name: 'Courses', href: '/courses', icon: I.courses },
       { name: 'Contacto', href: '/contact', icon: I.contact },
     ],
   },

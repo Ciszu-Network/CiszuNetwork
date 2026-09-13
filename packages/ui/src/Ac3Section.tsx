@@ -82,7 +82,7 @@ const AC3_KIT = {
 const AC3_MANIFESTO = {
   title: 'Manifiesto AC3',
   desc: 'Documento oficial que define el framework AC3. Publicado en CiszuNetwork. Se recomienda registro en oficinas de propiedad intelectual o sellos de tiempo digitales (Proof of Existence, Copyrighted.com) bajo el nombre CiszukoAntony. Disponible bajo licencia Creative Commons Atribución-NoComercial-CompartirIgual (CC BY-NC-SA).',
-  href: 'https://ciszunetwork.vercel.app',
+  href: '/docs/AC3_MANIFIESTO.md',
   label: 'Leer manifiesto',
 };
 
@@ -96,7 +96,7 @@ export function Ac3Section({ title = 'Educación', subtitle = 'Metodología AC3 
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
   return (
-    <section className="relative py-16 border-t border-white/5">
+    <section id="ac3" className="relative py-16 border-t border-white/5">
       {/* Background gradients */}
       <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-brand/10 rounded-full blur-[140px]" />
@@ -270,8 +270,8 @@ export function Ac3Section({ title = 'Educación', subtitle = 'Metodología AC3 
 
           <a
             href={AC3_MANIFESTO.href}
-            target="_blank"
-            rel="noopener noreferrer"
+            target={AC3_MANIFESTO.href.startsWith('http') ? '_blank' : undefined}
+            rel={AC3_MANIFESTO.href.startsWith('http') ? 'noopener noreferrer' : undefined}
             className="group p-5 rounded-2xl bg-white/5 border border-white/10 hover:border-brand-light/40 transition-all duration-300 hover:-translate-y-1"
           >
             <div className="flex items-center gap-3 mb-3">

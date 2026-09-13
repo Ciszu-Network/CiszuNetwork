@@ -9,6 +9,7 @@ import { supabase } from '@/config/supabase';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 // --- Icons ---
 const I = {
@@ -245,29 +246,35 @@ export default function StatsPage() {
                          </div>
                       </div>
 
-                      {/* MAIN CHART */}
-                      <div className="bg-doc-dark border-2 border-white/5 p-12 rounded-[4rem] relative overflow-hidden group shadow-2xl">
-                         <div className="absolute top-0 right-0 w-80 h-80 bg-neon-green/5 rounded-full blur-[100px]" />
-                         <div className="relative z-10 space-y-10">
-                            <h2 className="text-4xl font-header font-black text-white italic uppercase tracking-tighter">ANÁLISIS DE TRANSMISIÓN</h2>
-                            
-                            <div className="h-80 w-full bg-black/40 rounded-[3rem] border border-white/5 p-10 flex items-end justify-between relative group/chart">
-                               {chartData.map((h, i) => (
-                                 <motion.div 
-                                   key={`${activeMetric}-${i}`}
-                                   initial={{ height: 0 }}
-                                   animate={{ height: `${h}%` }}
-                                   transition={{ delay: i * 0.05, duration: 1 }}
-                                   className="w-10 bg-gradient-to-t from-neon-blue/20 to-neon-green rounded-t-xl relative group/bar"
-                                 >
-                                    <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-neon-green text-black px-2 py-1 rounded-md text-[8px] font-black opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap">
-                                      {h} UNIDADES
-                                    </div>
-                                 </motion.div>
-                               ))}
-                            </div>
-                         </div>
-                      </div>
+                       {/* MAIN CHART */}
+                       <div className="bg-doc-dark border-2 border-white/5 p-12 rounded-[4rem] relative overflow-hidden group shadow-2xl">
+                          <div className="absolute top-0 right-0 w-80 h-80 bg-neon-green/5 rounded-full blur-[100px]" />
+                          <div className="relative z-10 space-y-10">
+                             <h2 className="text-4xl font-header font-black text-white italic uppercase tracking-tighter">ANÁLISIS DE TRANSMISIÓN</h2>
+                             
+                             <div className="h-80 w-full bg-black/40 rounded-[3rem] border border-white/5 p-6">
+                                <ResponsiveContainer width="100%" height="100%">
+                                  <BarChart data={chartData.map((value, index) => ({ month: index + 1, value }))}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                                    <XAxis dataKey="month" stroke="rgba(255,255,255,0.3)" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} />
+                                    <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} />
+                                    <Tooltip 
+                                      contentStyle={{ backgroundColor: '#0a0a0a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                                      itemStyle={{ color: '#00ffa3' }}
+                                      labelStyle={{ color: 'rgba(255,255,255,0.7)' }}
+                                    />
+                                    <Bar dataKey="value" fill="url(#colorBar)" radius={[8, 8, 0, 0]} />
+                                    <defs>
+                                      <linearGradient id="colorBar" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#00d4ff" stopOpacity={0.8}/>
+                                        <stop offset="95%" stopColor="#00ffa3" stopOpacity={0.4}/>
+                                      </linearGradient>
+                                    </defs>
+                                  </BarChart>
+                                </ResponsiveContainer>
+                             </div>
+                          </div>
+                       </div>
 
                       {/* STATS GRID - GREEN/BLUE */}
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">

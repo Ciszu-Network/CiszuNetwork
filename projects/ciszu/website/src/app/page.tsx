@@ -1,8 +1,8 @@
 ﻿import Link from "next/link";
 import Image from "next/image";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { SocialIcon } from "@/components/ui/SocialIcon";
-import { CISZU_NETWORK, CISZUKO_ANTONY, CISZUBOT_LINKS, DONATION_LINKS, EXTERNAL_LINKS, SOCIAL_COLORS } from "@/config/site";
+import { SocialIcon, SOCIAL_COLORS } from '@ciszu/ui';
+import { CISZU_NETWORK, CISZUKO_ANTONY, CISZUBOT_LINKS, DONATION_LINKS, EXTERNAL_LINKS } from "@/config/site";
 import { ArrowRight, Code, Shield, Zap, ExternalLink, Star, Globe, Music, Users, ChevronRight, Building, User, Gamepad2, Bot } from "lucide-react";
 import { EcosystemSection } from "@ciszu/ui";
 import QuickDocks from "@/components/molecules/QuickDocks";

@@ -4,13 +4,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
-import { Button } from '@/components/atoms/Button';
+import { useToast, Button } from '@ciszu/ui';
 import { FlagIcon } from '@/components/atoms/FlagIcon';
 import { supabase } from '@/config/supabase';
 import { SOCIALS } from '@/config/navigation';
 import Link from 'next/link';
 import { usePageTitle } from '@/lib/usePageTitle';
-import { useToast } from '@ciszu/ui';
 
 // --- Icons Library ---
 const I = {

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
-import { Button } from '@/components/atoms/Button';
+import { Button, useToast, useActivityGuard, AuthBenefitsPanel, AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders } from '@ciszu/ui';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { supabase } from '@/config/supabase';
 import { useAppStore } from '@/store/useAppStore';
@@ -12,7 +12,6 @@ import AuthFeedback from '@/components/molecules/AuthFeedback';
 import { usePageTitle } from '@/lib/usePageTitle';
 import Image from 'next/image';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
-import { AuthBenefitsPanel, AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders, useToast, useActivityGuard } from '@ciszu/ui';
 
 // --- Icons Library ---
 const I = {

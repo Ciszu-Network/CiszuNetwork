@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
-import { Button } from '@/components/atoms/Button';
+import { Button, useToast } from '@ciszu/ui';
 import { ListControls } from '@/components/molecules/ListControls';
 import { supabase } from '@/config/supabase';
 import { Session, AuthChangeEvent } from '@supabase/supabase-js';

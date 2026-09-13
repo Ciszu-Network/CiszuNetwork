@@ -7,12 +7,12 @@ import QuickDocks from "@/components/molecules/QuickDocks";
 import { Ac3Section } from "@ciszu/ui";
 
 /**
- * /cursos — catálogo de cursos del ecosistema Ciszu Network.
+ * /courses — course catalog of the Ciszu Network ecosystem.
  *
- * El primer curso (único por ahora) es el de INGLÉS con EF SET: un test
- * oficial de nivel CEFR alojado en EF Corporate. El enlace abre en otra
- * pestaña (external). La URL oficial vive en el vault como
- * EF_ENGLISH_ASSESSMENT_URL (ver KNOWLEDGE_SYSTEM.md).
+ * The first course (currently the only one) is ENGLISH with EF SET: an official
+ * CEFR level assessment hosted by EF Corporate. The link opens in another
+ * tab (external). The official URL lives in the vault as
+ * EF_ENGLISH_ASSESSMENT_URL (see KNOWLEDGE_SYSTEM.md).
  */
 
 const EF_COURSE_URL = "https://assessment.corporate.ef.com/public/test/f0d3daa7-4db2-4bb8-9ce2-5fb8d9fbba5c";
@@ -34,42 +34,42 @@ interface Course {
 const COURSES: Course[] = [
   {
     id: "ingles-ef-set",
-    title: "Inglés — Test de nivel oficial (EF SET)",
+    title: "English — Official Level Assessment (EF SET)",
     provider: "EF SET · EF Corporate",
-    category: "Idiomas",
+    category: "Languages",
     level: "A1 – C2",
     duration: "50 min",
-    format: "Online · Certificado CEFR",
-    language: "Inglés",
+    format: "Online · CEFR Certificate",
+    language: "English",
     description:
-      "Mide tu nivel de inglés de forma oficial con el EF SET (EF Standard English Test), un test estandarizado alineado al Marco Común Europeo de Referencia (CEFR). Es el curso de inglés oficial de Ciszu Network: identifica tu nivel real para seguir aprendiendo.",
+      "Measure your English level officially with the EF SET (EF Standard English Test), a standardized test aligned with the Common European Framework of Reference (CEFR). This is the official English course of Ciszu Network: identify your real level to keep learning.",
     href: EF_COURSE_URL,
-    badges: ["Oficial", "CEFR", "Gratuito", "Certificado"],
+    badges: ["Official", "CEFR", "Free", "Certificate"],
   },
   {
     id: "ac3-metodologia",
-    title: "AC3 — Aprendizaje Completo Cruzado Continuo",
+    title: "AC3 — Complete Continuous Cross-Learning",
     provider: "Ciszuko Antony · Ciszu Network",
-    category: "Metodología de estudio",
-    level: "Todos",
-    duration: "Variable",
-    format: "Online · Guía descargable",
-    language: "Español / Inglés",
+    category: "Study Methodology",
+    level: "All levels",
+    duration: "Flexible",
+    format: "Online · Downloadable guide",
+    language: "Spanish / English",
     description:
-      "Nuevo modelo de aprendizaje creado por Ciszuko Antony. Aprende programación y otras áreas supervisando IA en segundo plano, practicando fragmentos específicos y consumiendo teoría multimedia. Incluye manifiesto oficial, caso de éxito dogfooding y kit de inicio gratuito.",
+      "New learning model created by Ciszuko Antony. Learn programming and other areas by supervising AI in the background, practicing specific fragments, and consuming multimedia theory. Includes official manifesto, dogfooding success case, and free starter kit.",
     href: "#ac3",
-    badges: ["Nuevo", "Metodología", "IA", "Gratuito"],
+    badges: ["New", "Methodology", "AI", "Free"],
   },
 ];
 
-const CATEGORIES = [{ value: 'Todos', label: 'Todos' }, { value: 'Idiomas', label: 'Idiomas' }, { value: 'Metodología de estudio', label: 'Metodología de estudio' }];
-const LEVELS = [{ value: 'Todos', label: 'Todos' }, { value: 'Básico (A1-A2)', label: 'Básico (A1-A2)' }, { value: 'Intermedio (B1-B2)', label: 'Intermedio (B1-B2)' }, { value: 'Avanzado (C1-C2)', label: 'Avanzado (C1-C2)' }, { value: 'Todos', label: 'Todos' }];
+const CATEGORIES = [{ value: 'All', label: 'All' }, { value: 'Languages', label: 'Languages' }, { value: 'Study Methodology', label: 'Study Methodology' }];
+const LEVELS = [{ value: 'All', label: 'All' }, { value: 'Basic (A1-A2)', label: 'Basic (A1-A2)' }, { value: 'Intermediate (B1-B2)', label: 'Intermediate (B1-B2)' }, { value: 'Advanced (C1-C2)', label: 'Advanced (C1-C2)' }];
 
 function levelBucket(level: string): string {
-  if (/A1|A2|Básico/.test(level)) return "Básico (A1-A2)";
-  if (/B1|B2|Intermedio/.test(level)) return "Intermedio (B1-B2)";
-  if (/C1|C2|Avanzado/.test(level)) return "Avanzado (C1-C2)";
-  return "Todos";
+  if (/A1|A2|Basic/.test(level)) return "Basic (A1-A2)";
+  if (/B1|B2|Intermediate/.test(level)) return "Intermediate (B1-B2)";
+  if (/C1|C2|Advanced/.test(level)) return "Advanced (C1-C2)";
+  return "All";
 }
 
 function providerColor(p: string): string {
@@ -95,7 +95,7 @@ function FilterSelect({ icon, label, options, value, onChange }: { icon: React.R
         <svg className={`w-3.5 h-3.5 ml-1 transition-transform ${open ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
       </button>
       {open && (
-        <div className="absolute top-full mt-2 left-0 z-50 min-w-[160px] rounded-xl bg-[#0b0e1a]/95 border border-brand/20 backdrop-blur-xl shadow-2xl shadow-black/40 overflow-hidden">
+        <div className="absolute top-full mt-2 left-0 z-50 min-w-[160px] rounded-xl bg-[#0b0e1a]/95 border border-brand/20 backdrop:blur-xl shadow-2xl shadow-black/40 overflow-hidden">
           {options.map((o) => (
             <button key={o.value} onClick={() => { onChange(o.value); setOpen(false); }} className={`w-full text-left px-4 py-2.5 text-sm hover:bg-brand/10 transition-colors ${value === o.value ? 'text-brand-light font-bold bg-brand/5' : 'text-gray-300'}`}>
               {o.label}
@@ -107,23 +107,23 @@ function FilterSelect({ icon, label, options, value, onChange }: { icon: React.R
   );
 }
 
-export default function CursosPage() {
-  usePageTitle('CURSOS');
-  const [category, setCategory] = useState("Todos");
-  const [level, setLevel] = useState("Todos");
-  const [sort, setSort] = useState<"recientes" | "nombre" | "duracion">("recientes");
+export default function CoursesPage() {
+  usePageTitle('COURSES');
+  const [category, setCategory] = useState("All");
+  const [level, setLevel] = useState("All");
+  const [sort, setSort] = useState<"recent" | "name" | "duration">("recent");
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
     let list = COURSES.filter((c) => {
-      const matchCat = category === "Todos" || c.category === category;
-      const matchLevel = level === "Todos" || levelBucket(c.level) === level;
+      const matchCat = category === "All" || c.category === category;
+      const matchLevel = level === "All" || levelBucket(c.level) === level;
       const q = query.trim().toLowerCase();
       const matchQ = !q || `${c.title} ${c.description} ${c.provider}`.toLowerCase().includes(q);
       return matchCat && matchLevel && matchQ;
     });
-    if (sort === "nombre") list = [...list].sort((a, b) => a.title.localeCompare(b.title));
-    if (sort === "duracion") list = [...list].sort((a, b) => parseInt(a.duration) - parseInt(b.duration));
+    if (sort === "name") list = [...list].sort((a, b) => a.title.localeCompare(b.title));
+    if (sort === "duration") list = [...list].sort((a, b) => parseInt(a.duration) - parseInt(b.duration));
     return list;
   }, [category, level, sort, query]);
 
@@ -140,18 +140,18 @@ export default function CursosPage() {
             <GraduationCap className="w-8 h-8" />
           </div>
           <h1 className="text-4xl md:text-6xl font-header font-black bg-gradient-to-r from-brand-light to-brand-accent bg-clip-text text-transparent uppercase tracking-tighter mb-4">
-            Cursos
+            Courses
           </h1>
           <p className="text-gray-400 max-w-xl mx-auto text-sm uppercase tracking-widest">
-            Formación oficial del ecosistema Ciszu Network
+            Official training from the Ciszu Network ecosystem
           </p>
           <p className="text-gray-500 max-w-2xl mx-auto mt-4 text-sm leading-relaxed">
-            Cursos seleccionados para crecer: idiomas, desarrollo, diseño y más.
-            Cada curso se abre en su plataforma oficial.
+            Selected courses to grow: languages, development, design and more.
+            Each course opens on its official platform.
           </p>
         </div>
 
-        {/* Filtros */}
+        {/* Filters */}
         <div className="rounded-2xl bg-brand/5 border border-brand/20 p-5 mb-8 space-y-4">
           <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center">
             <div className="relative flex-1">
@@ -159,27 +159,27 @@ export default function CursosPage() {
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Buscar curso…"
+                placeholder="Search course…"
                 className="w-full rounded-xl bg-[#0b0e1a]/80 border border-white/10 pl-9 pr-3 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-brand-light/40 outline-none transition-colors"
               />
             </div>
             <div className="flex flex-wrap gap-2">
-              <FilterSelect icon={<BookMarked className="w-4 h-4" />} label={category === 'Todos' ? 'Categoría' : category} options={CATEGORIES} value={category} onChange={setCategory} />
-              <FilterSelect icon={<Target className="w-4 h-4" />} label={level === 'Todos' ? 'Nivel' : level} options={LEVELS} value={level} onChange={setLevel} />
-              <FilterSelect icon={<Layers className="w-4 h-4" />} label={sort === 'recientes' ? 'Ordenar' : sort === 'nombre' ? 'Nombre' : 'Duración'} options={[{ value: 'recientes', label: 'Recientes' }, { value: 'nombre', label: 'Nombre' }, { value: 'duracion', label: 'Duración' }]} value={sort} onChange={(v) => setSort(v as typeof sort)} />
+              <FilterSelect icon={<BookMarked className="w-4 h-4" />} label={category === 'All' ? 'Category' : category} options={CATEGORIES} value={category} onChange={setCategory} />
+              <FilterSelect icon={<Target className="w-4 h-4" />} label={level === 'All' ? 'Level' : level} options={LEVELS} value={level} onChange={setLevel} />
+              <FilterSelect icon={<Layers className="w-4 h-4" />} label={sort === 'recent' ? 'Sort' : sort === 'name' ? 'Name' : 'Duration'} options={[{ value: 'recent', label: 'Recent' }, { value: 'name', label: 'Name' }, { value: 'duration', label: 'Duration' }]} value={sort} onChange={(v) => setSort(v as typeof sort)} />
             </div>
           </div>
         </div>
 
-        {/* Resultado */}
+        {/* Results */}
         <div className="mb-3 text-xs text-gray-500 font-bold uppercase tracking-widest">
-          {filtered.length} curso{filtered.length !== 1 ? "s" : ""}
+          {filtered.length} course{filtered.length !== 1 ? "s" : ""}
         </div>
 
         {filtered.length === 0 ? (
           <div className="text-center py-20 rounded-2xl bg-brand/5 border border-brand/20">
             <BookOpen className="w-10 h-10 text-gray-600 mx-auto mb-3" />
-            <p className="text-gray-400 text-sm">No hay cursos que coincidan con los filtros.</p>
+            <p className="text-gray-400 text-sm">No courses match the filters.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -220,7 +220,7 @@ export default function CursosPage() {
                   onClick={c.href.startsWith('#') ? (e) => { e.preventDefault(); const el = document.getElementById(c.href.slice(1)); if (el) el.scrollIntoView({ behavior: 'smooth' }); } : undefined}
                   className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand-light to-brand-accent text-black font-header font-black uppercase tracking-widest text-xs py-3 hover:brightness-110 hover:scale-[1.01] active:scale-[0.99] transition-all"
                 >
-                  {c.href.startsWith('#') ? 'Ver sección' : 'Ir al curso'} {c.href.startsWith('#') ? <Target className="w-3.5 h-3.5" /> : <ExternalLink className="w-3.5 h-3.5" />}
+                  {c.href.startsWith('#') ? 'View section' : 'Go to course'} {c.href.startsWith('#') ? <Target className="w-3.5 h-3.5" /> : <ExternalLink className="w-3.5 h-3.5" />}
                 </a>
               </article>
             ))}
@@ -229,7 +229,7 @@ export default function CursosPage() {
 
         <div className="text-center mt-12">
           <p className="text-gray-500 text-xs">
-            ¿Quieres un curso? Escríbenos a{" "}
+            Want a course? Write us at{" "}
             <a href="mailto:ciszunetwork@gmail.com" className="text-brand-light underline">ciszunetwork@gmail.com</a>
           </p>
         </div>

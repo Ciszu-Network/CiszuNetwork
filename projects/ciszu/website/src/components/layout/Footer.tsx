@@ -5,10 +5,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { assetResolver } from '@ciszunetwork/cdn';
-import { ScrollNavButton, useToast } from '@ciszu/ui';
+import { ScrollNavButton, useToast, SocialIcon, SOCIAL_COLORS } from '@ciszu/ui';
 import { useAppStore } from '@/store';
-import { SocialIcon } from '@/components/ui/SocialIcon';
-import { CISZU_NETWORK, CISZUKO_ANTONY, EXTERNAL_LINKS, GITHUB_REPO, SOCIAL_COLORS } from '@/config/site';
+import { CISZU_NETWORK, CISZUKO_ANTONY, EXTERNAL_LINKS, GITHUB_REPO } from '@/config/site';
 import {
   Globe,
   ExternalLink,
@@ -72,7 +71,7 @@ const FOOTER_SECTIONS = (dict: Record<string, any>) => [
         { name: dict.nav.changelog, href: '/changelog', icon: <History className="w-4 h-4" /> },
         { name: dict.nav.reviews, href: '/reviews', icon: <Star className="w-4 h-4" /> },
         { name: dict.nav.stats, href: '/stats', icon: <BarChart3 className="w-4 h-4" /> },
-        { name: 'Cursos', href: '/cursos', icon: <BookOpen className="w-4 h-4" /> },
+        { name: 'Courses', href: '/courses', icon: <BookOpen className="w-4 h-4" /> },
         { name: dict.nav.forum, href: '/forum', icon: <MessageSquare className="w-4 h-4" /> },
         { name: dict.nav.donate, href: '/donate', icon: <Heart className="w-4 h-4" /> },
       ],
