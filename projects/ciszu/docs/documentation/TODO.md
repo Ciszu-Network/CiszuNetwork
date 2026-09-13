@@ -16,6 +16,26 @@
 - [ ] GTM: publicar/verificar contenedores y confirmar que los tags de GA4/AdSense se disparan en Preview.
 - [ ] Looker Studio: conectar fuentes GA4 y crear dashboard.
 - [ ] Verificar en producción que no hay errores 400/500 en impresiones de ads ni bloqueos de CSP.
+- [ ] #10 Evaluar uso de nuevas librerias:
+
+Instalar y aplicar PixisJS y Phaser para el motor de muzicmania. Desde ahora para que en un futuro sea mejor.
+
+Quiero que uses los 2 o por lo menos los instales y uses el que mejor convenga. Actualizes la documentacion y repliques EXACTAMENTE TODO CORRECTAMENTE.
+
+Por otro lado, para todas las pagina (las 4) vas a instalar librerias que ayuden al progreso como los mencionados. recharts, embla carousel react, react-intersection-observer, framer-motion y next-themes y los apliques.
+
+Tambien instala nextui, shadcn ui y nextlib. Para que en un futuro lo usemos.
+
+No te pedire que en las paginas normales reescribas TODo, pero instalalos e implementalos en zonas que hagan falta o para añadir un mejor sistema, evalua siempre cual seria el mejor caso.
+
+La primera tarea es instalar todo lo que te pedi en todas las websites.
+
+Documentar el uso y actualizacion de stack.
+
+Cuando todo este instalado listo para usarse es donde aplicaras el cambio del motor del juego y la reactualizacion de paginas usando nuevas librerias potentes.
+
+Tambien te permito investigar muchas mas librerias a instalar si hacen falta para el progreso de cada website.
+
 - [ ] Al registrarse o logearse debe haber cumplido la seguridad de recaptcha. Siempre luego debe haber una pantalla para verificar el correo en momento de registrarse, pero si el usuario tiene 2FA siempre debe haber una pantalla pidiendole una clave que empieze po C- y seguido de 6 digitos y en la mitad un espacio (C-123 434) clave oficial de ciszunetwork, temporal, expirable en 3 horas e indicar, unico por website, indicar si ya expiro y posibilidad de reenviar otro codigo con limites, al tercer limite se suspende temporalmente y localmente por que no logro iniciar sesion.
 - [ ] Los emails actualmente que se envian no estan customizados, los envia "supabase" lo cual puede confundir siempre debe ser ciszunetwork | (pagina en cuestion) ademas de un diseño interno diferente con botones y diseño. Terminos y condiciones y aclaracion de que este email no es de patrocinamiento o anuncio. Los que si son siempre se debe recalcar.
 - [ ] Cuando un usuario se registre luego se tiene que logear denuevo.
@@ -44,6 +64,7 @@
 
 - [ ] Terminar idiomas en ingles UK.
 - [ ] Terminar idiomas en ingles USA.
+- [ ] Actualmente en la pagina cursos el boton de ir a la seccion de AC3 en cursos no funciona, el boton de manifiesto de AC3 te lleva a un link del home de ciszunetwork, un error. Deberia llevarte al manifiesto en diferentes formatos. Finalmente la pagina de cursos no aparece en las navbars, debes agregarlos tanto en el header, footer y mainmenu o sliderbar. Y cambiar el nombre de la pagina a cursos pero en ingles (solo el url siempre debe ir en ingles)
 - [ ] Terminar bien el tema claro (Todos los docks, modals o cards con fondo oscuro paran a claro, los textos oscuros o negros e iconos negros o oscuros.) Actualmente esta corregido un 80% pero aun existen muchos problemas visuales, algunos textos no se persiven bien al fondo. El slidebar, fondos flotantes de menus o botones flotantes, headers bugeados con iconos ilegibles.
 - [ ] Terminar idiomas en español LATAM.
 - [ ] Terminar idiomas en español España.
