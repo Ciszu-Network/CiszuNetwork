@@ -268,11 +268,9 @@ export function Ac3Section({ title = 'Educación', subtitle = 'Metodología AC3 
             </span>
           </a>
 
-          <a
-            href={AC3_MANIFESTO.href}
-            target={AC3_MANIFESTO.href.startsWith('http') ? '_blank' : undefined}
-            rel={AC3_MANIFESTO.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-            className="group p-5 rounded-2xl bg-white/5 border border-white/10 hover:border-brand-light/40 transition-all duration-300 hover:-translate-y-1"
+          <button
+            onClick={() => setModalOpen(true)}
+            className="group p-5 rounded-2xl bg-white/5 border border-white/10 hover:border-brand-light/40 transition-all duration-300 hover:-translate-y-1 text-left"
           >
             <div className="flex items-center gap-3 mb-3">
               <div className="w-10 h-10 rounded-lg bg-brand/10 text-brand-light flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -284,7 +282,7 @@ export function Ac3Section({ title = 'Educación', subtitle = 'Metodología AC3 
             <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-brand-light">
               {AC3_MANIFESTO.label} <ExternalLink className="w-3 h-3" />
             </span>
-          </a>
+          </button>
         </div>
 
         {/* Modal */}

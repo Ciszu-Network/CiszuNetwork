@@ -13,7 +13,7 @@ import PreferencesPanel from '@/components/layout/PreferencesPanel';
 import { PreferencesModal } from '@ciszu/ui';
 import { INVITE_URL, LOGO_ISOTIPO, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
 
-const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'stats' | 'support' | 'downloads' | 'feedback' | 'changelog' | 'reviews' | 'leaderboard' | 'forum' | 'donate'; icon: string }[] = [
+const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'stats' | 'support' | 'downloads' | 'feedback' | 'changelog' | 'reviews' | 'leaderboard' | 'forum' | 'contact' | 'documentation' | 'about' | 'team' | 'help' | 'donate' | 'information'; icon: string }[] = [
   { href: '/', key: 'home', icon: 'home' },
   { href: '/commands', key: 'commands', icon: 'gamepad' },
   { href: '/stats', key: 'stats', icon: 'chart-bar' },
@@ -22,9 +22,11 @@ const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'stats' | 'support' 
   { href: '/leaderboard', key: 'leaderboard', icon: 'trophy' },
   { href: '/forum', key: 'forum', icon: 'message' },
   { href: '/support', key: 'support', icon: 'support' },
+  { href: '/contact', key: 'contact', icon: 'mail' },
   { href: '/downloads', key: 'downloads', icon: 'download' },
   { href: '/feedback', key: 'feedback', icon: 'message' },
   { href: '/donate', key: 'donate', icon: 'heart' },
+  { href: '/information', key: 'information', icon: 'info' },
 ];
 
 const INFO_PAGES: { href: string; key: 'about' | 'team' | 'faq' | 'documentation' | 'help' | 'contact' | 'support'; icon: string }[] = [
@@ -71,11 +73,12 @@ const SEARCH_PAGES: { href: string; labelKey: string; icon: string; keywords: st
   { href: '/downloads', labelKey: 'downloads', icon: 'download', keywords: ['descargas', 'downloads', 'app', 'exe'] },
   { href: '/feedback', labelKey: 'feedback', icon: 'message', keywords: ['feedback', 'reporte', 'report', 'problema'] },
   { href: '/donate', labelKey: 'donate', icon: 'heart', keywords: ['donar', 'donate', 'apoyo', 'support'] },
+  { href: '/information', labelKey: 'information', icon: 'info', keywords: ['informacion', 'information', 'acerca', 'about'] },
   { href: '/documentation', labelKey: 'documentation', icon: 'file', keywords: ['documentacion', 'docs', 'documentation'] },
   { href: '/about', labelKey: 'about', icon: 'info', keywords: ['about', 'sobre', 'nosotros'] },
   { href: '/team', labelKey: 'team', icon: 'users', keywords: ['equipo', 'team', 'staff'] },
   { href: '/help', labelKey: 'help', icon: 'help', keywords: ['ayuda', 'help', 'faq', 'preguntas'] },
-  { href: '/faq', labelKey: 'faq', icon: 'help', keywords: ['faq', 'preguntas', 'dudas', 'frecuentes'] },
+  { href: '/faq', labelKey: 'faq', icon: 'help', keywords: ['faq', 'preguntas', 'frecuentes'] },
   { href: '/dashboard', labelKey: 'dashboard', icon: 'server', keywords: ['panel', 'dashboard', 'config', 'admin'] },
   { href: '/privacy', labelKey: 'privacidad', icon: 'lock', keywords: ['privacidad', 'privacy'] },
   { href: '/terms', labelKey: 'terminos', icon: 'external', keywords: ['terminos', 'terms', 'legal'] },
@@ -333,6 +336,11 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
   const linkLabelCls = (href: string) =>
     `max-w-0 overflow-hidden transition-all duration-300 group-hover:max-w-[100px] ${isActive(href) ? 'max-w-[100px]' : ''}`;
 
+  const infoGroupActive = INFO_PAGES.some((sub) => isActive(sub.href));
+  const infoActiveHref = infoGroupActive
+    ? INFO_PAGES.find((sub) => isActive(sub.href))?.href ?? INFO_PAGES[0].href
+    : INFO_PAGES[0].href;
+
   return (
     <>
       {/* Loader de navegación global — aparece al navegar entre páginas */}
@@ -409,17 +417,17 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
             })}
             <div
               className={
-                `relative z-40 shrink-0 ${openDropdown === 'Information' ? 'flex' : 'hidden min-[1520px]:flex'}`
+                `relative z-40 shrink-0 ${openDropdown === 'Information' ? 'flex' : infoGroupActive ? 'flex' : 'hidden min-[1520px]:flex'}`
               }
               onMouseEnter={() => hoverOpen(setOpenDropdown, dropdownTimer, 'Information')}
               onMouseLeave={() => hoverClose(setOpenDropdown, dropdownTimer)}
             >
               <button
                 onClick={() => setOpenDropdown(openDropdown === 'Information' ? null : 'Information')}
-                className={linkCls('/about')}
+                className={linkCls(infoActiveHref)}
               >
                 <span className="flex items-center justify-center shrink-0"><Icon name="info" size={16} /></span>
-                <span className={linkLabelCls('/about')}>{dict.nav.information}</span>
+                <span className={linkLabelCls(infoActiveHref)}>{dict.nav.information}</span>
                 <ChevronDown className={
                   `w-3 h-3 transition-transform duration-200 ${openDropdown === 'Information' ? 'rotate-180' : ''}`
                 } />
@@ -709,17 +717,17 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
             <button
               onClick={setTheme}
               className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transition-all duration-500 cursor-pointer border group ${
-                isDark ? 'bg-white border-gray-100 hover:rotate-12' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
+                isDark ? 'bg-surface border-border hover:rotate-12' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
               }`}
               aria-label="Toggle theme"
               title="Toggle theme"
             >
               {isDark ? (
-                <svg className="w-5 h-5 text-black transition-transform duration-500 group-hover:rotate-12" viewBox="0 0 24 24" fill="currentColor">
+                <svg className="w-5 h-5 text-ink transition-transform duration-500 group-hover:rotate-12" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
                 </svg>
               ) : (
-                <svg className="w-6 h-6 text-black transition-transform duration-500 group-hover:rotate-90" viewBox="0 0 24 24" fill="currentColor" stroke="black" strokeWidth={1}>
+                <svg className="w-6 h-6 text-ink transition-transform duration-500 group-hover:rotate-90" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth={1}>
                   <circle cx="12" cy="12" r="4" />
                   <path d="M12 1v3m0 16v3M4.22 4.22l2.12 2.12m11.32 11.32l2.12 2.12M1 12h3m16 0h3M4.22 19.78l2.12-2.12M19.78 4.22l-2.12 2.12" strokeLinecap="round" />
                 </svg>

@@ -306,17 +306,17 @@ export default function Footer({ lang, dict }: FooterProps) {
             <button
               onClick={setTheme}
               className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group ${
-                isDark ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
+                isDark ? 'bg-surface border-border hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
               }`}
               aria-label="Toggle theme"
               title="Toggle theme"
             >
               {isDark ? (
-                <svg className="w-5 h-5 text-black transition-transform duration-500 group-hover:rotate-12" viewBox="0 0 24 24" fill="currentColor">
+                <svg className="w-5 h-5 text-ink transition-transform duration-500 group-hover:rotate-12" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
                 </svg>
               ) : (
-                <svg className="w-6 h-6 text-black transition-transform duration-500 group-hover:rotate-90" viewBox="0 0 24 24" fill="currentColor" stroke="black" strokeWidth={1}>
+                <svg className="w-6 h-6 text-ink transition-transform duration-500 group-hover:rotate-90" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth={1}>
                   <circle cx="12" cy="12" r="4" />
                   <path d="M12 1v3m0 16v3M4.22 4.22l2.12 2.12m11.32 11.32l2.12 2.12M1 12h3m16 0h3M4.22 19.78l2.12-2.12M19.78 4.22l-2.12 2.12" strokeLinecap="round" />
                 </svg>
