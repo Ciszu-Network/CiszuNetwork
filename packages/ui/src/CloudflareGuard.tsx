@@ -71,6 +71,15 @@
  *       pendiente (antes el contador se quemaba a la primera ráfaga).
  *   13. preconnect + dns-prefetch a challenges.cloudflare.com ANTES del script:
  *       el guard bloquea la página, cada ms cuenta (DNS/TLS en paralelo).
+ *   14. crossorigin="anonymous" en el script: evita bloqueos CORS y permite
+ *       inspeccionar errores de carga desde DevTools.
+ *   15. fetchpriority="high" en el preload: prioriza la descarga de api.js
+ *       sobre recursos menos críticos.
+ *   16. retry: 'auto' en render(): Turnstile reintenta internamente el widget
+ *       si falla la primera vez, reduciendo la necesidad de retry manual.
+ *   17. No remover el script de Turnstile en retry/error/expiración: volver a
+ *       descargar api.js añade ~500-1500ms innecesarios. Basta con quitar el
+ *       widget y regenerarlo; el script queda caliente en memoria.
  */
 
 import { useEffect, useState, useCallback, useRef, type ReactNode } from 'react';
@@ -109,7 +118,7 @@ type GuardState = 'loading' | 'verifying' | 'error';
 const RETRY_DELAYS = [3000, 8000, 20000, 45000, 90000, 180000];
 /** Si api.js no ha inicializado window.turnstile en este tiempo, pasar a error
  *  (antes: bucle infinito de sondeo con hueco vacío para el usuario). */
-export const SCRIPT_LOAD_TIMEOUT_MS = 10_000;
+export const SCRIPT_LOAD_TIMEOUT_MS = 6_000;
 /** Ancho del iframe de Turnstile (fijo — el contenedor no debe dejar que desborde) */
 const WIDGET_WIDTH = 300;
 
@@ -216,17 +225,18 @@ export default function CloudflareGuard({
     preload.rel = 'preload';
     preload.as = 'script';
     preload.href = TURNSTILE_SCRIPT;
+    preload.fetchPriority = 'high';
     document.head.appendChild(preload);
     const s = document.createElement('script');
     s.src = TURNSTILE_SCRIPT;
     s.async = true;
     s.defer = true;
+    s.crossOrigin = 'anonymous';
     // Si api.js no se pudo descargar (red/extensiones), avisar YA en vez de
     // esperar al timeout del sondeo.
     s.onerror = () => {
       if (retryPendingRef.current) return;
       removeWidget();
-      removeTurnstileScript();
       setState('error');
       setStatusText('No se pudo cargar el verificador de Cloudflare. Comprueba tu red.');
     };
@@ -321,12 +331,10 @@ export default function CloudflareGuard({
     } else {
       retryPendingRef.current = false;
       removeWidget();
-      // Agotados reintentos automáticos: limpiar script para que el retry manual cargue fresco
-      removeTurnstileScript();
       setState('error');
       setStatusText('El desafío falló varias veces. Revisa tu red y reintenta');
     }
-  }, [removeWidget, removeTurnstileScript, retryDelays]);
+  }, [removeWidget, retryDelays]);
 
   const handleError = useCallback(() => {
     startAutoRetry();
@@ -337,10 +345,9 @@ export default function CloudflareGuard({
     retryPendingRef.current = false;
     scriptStartRef.current = Date.now();
     removeWidget();
-    removeTurnstileScript();
     setState('loading');
     setStatusText('');
-  }, [removeWidget, removeTurnstileScript]);
+  }, [removeWidget]);
 
   // Renderizar el widget dentro del div (efecto único tras cargar el script)
   useEffect(() => {
@@ -353,7 +360,7 @@ export default function CloudflareGuard({
       // Si cambió el estado mientras esperábamos el script, ya no renderizamos
       if (seq !== renderSeqRef.current) return;
       if (!window.turnstile || !el) {
-        // Timeout de carga: si api.js no inicializó en 10s, no dejar al usuario
+        // Timeout de carga: si api.js no inicializó en 6s, no dejar al usuario
         // con un hueco vacío infinito (antes pasaba tras deploys: ventana de
         // rate limit o api.js lento) → error con REINTENTAR.
         if (Date.now() - scriptStartRef.current > SCRIPT_LOAD_TIMEOUT_MS) {
@@ -372,15 +379,13 @@ export default function CloudflareGuard({
         sitekey: siteKey,
         theme: 'dark',
         language: 'es',
+        retry: 'auto',
         callback: (token: string) => handleSuccess(token),
         'error-callback': () => handleError(),
         'expired-callback': () => {
-          // El iframe expiró: recrear el widget limpio para que el visitante
-          // no se quede con un reto caducado pegado ("se cancela solo").
           removeWidget();
-          removeTurnstileScript();
           setStatusText('El reto expiró, generando uno nuevo…');
-          timeoutRef.current = setTimeout(() => setRegen((n) => n + 1), 800);
+          timeoutRef.current = setTimeout(() => setRegen((n) => n + 1), 300);
         },
       });
       widgetIdRef.current = id;

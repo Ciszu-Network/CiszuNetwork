@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createRateLimiter, parseJsonBody, firstZodMessage, turnstileTokenSchema } from '@ciszunetwork/utils';
+import { createRateLimiter, parseJsonBody, firstZodMessage, turnstileTokenSchema, verifyTurnstileToken } from '@ciszunetwork/utils';
 
 const limiter = createRateLimiter({ windowMs: 60_000, max: 30 });
 
@@ -27,23 +27,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Server misconfigured' }, { status: 500 });
     }
 
-    const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ secret: secretKey, response: token }),
-    });
+    const result = await verifyTurnstileToken(token, secretKey, 5000);
 
-    const data = await res.json();
-
-    if (data.success) {
+    if (result.success) {
       return NextResponse.json({ success: true });
     }
-    // Devolver los error-codes reales de Cloudflare para diagnóstico (p.ej.
-    // invalid-input-secret = secret no corresponde a la sitekey; timeout-or-
-    // duplicate = token ya usado). El widget puede resolver bien y aun asi
-    // fallar aqui si la env de Vercel quedo con un secret viejo tras rotar.
-    const codes = Array.isArray(data['error-codes']) ? data['error-codes'].join(', ') : 'unknown';
-    return NextResponse.json({ success: false, error: `Verification failed (${codes})` }, { status: 403 });
+    return NextResponse.json(
+      { success: false, error: result.error },
+      { status: 403 }
+    );
   } catch {
     return NextResponse.json({ success: false, error: 'Internal error' }, { status: 500 });
   }
