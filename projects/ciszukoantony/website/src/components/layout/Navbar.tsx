@@ -56,6 +56,7 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
   const inputRef = useRef<HTMLInputElement>(null);
   const searchToggleRef = useRef<HTMLButtonElement>(null);
   const infoRef = useRef<HTMLDivElement>(null);
+  const infoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const accRef = useRef<HTMLDivElement>(null);
   const [guestName, setGuestName] = useState('');
 
@@ -197,6 +198,15 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
     setAccOpen(v => !v);
   };
 
+  const hoverOpenInfo = () => {
+    if (infoTimer.current) clearTimeout(infoTimer.current);
+    setInfoOpen(true);
+  };
+
+  const hoverCloseInfo = () => {
+    infoTimer.current = setTimeout(() => setInfoOpen(false), 180);
+  };
+
   const accountLabel = user ? (user.display_name || user.username) : guestName;
 
   return (
@@ -252,18 +262,28 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
             <div className="w-px h-7 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-1 shrink-0 hidden md:block" />
 
             <div className="flex items-center gap-1 flex-1 overflow-visible min-w-0">
-              {NAV_MAIN.map((item) => {
-                if ('items' in item) {
-                  const group = item as NavGroup;
-                  const responsiveClass = infoActive ? 'flex' : 'hidden min-[440px]:flex';
-                  return (
-                    <div key={group.name} className={`relative ${responsiveClass}`} ref={infoRef}
-                      onMouseEnter={() => setInfoOpen(true)}>
-                      <button onClick={() => setInfoOpen(!infoOpen)} className={navLinkCls(infoActive)}>
-                        <span className="opacity-80 shrink-0">{group.icon}</span>
-                        <span className={navLabelCls(infoActive)}>{group.name}</span>
-                        <span className={`opacity-70 transition-transform duration-200 ${infoOpen ? 'rotate-180' : ''}`}>{I.chevronDown}</span>
-                      </button>
+               {NAV_MAIN.map((item) => {
+                 if ('items' in item) {
+                   const group = item as NavGroup;
+                   const isInfo = group.name === 'Information';
+                   const responsiveClass = infoActive ? 'flex' : 'hidden min-[440px]:flex';
+                   return (
+                     <div key={group.name} className={`relative ${responsiveClass}`} ref={isInfo ? infoRef : undefined}
+                       onMouseEnter={isInfo ? hoverOpenInfo : () => setInfoOpen(true)}
+                       onMouseLeave={isInfo ? hoverCloseInfo : undefined}>
+                       {isInfo ? (
+                         <Link href={group.items[0].href} className={navLinkCls(infoActive)}>
+                           <span className="opacity-80 shrink-0">{group.icon}</span>
+                           <span className={navLabelCls(infoActive)}>{group.name}</span>
+                           <span className={`opacity-70 transition-transform duration-200 ${infoOpen ? 'rotate-180' : ''}`}>{I.chevronDown}</span>
+                         </Link>
+                       ) : (
+                         <button onClick={() => setInfoOpen(!infoOpen)} className={navLinkCls(infoActive)}>
+                           <span className="opacity-80 shrink-0">{group.icon}</span>
+                           <span className={navLabelCls(infoActive)}>{group.name}</span>
+                           <span className={`opacity-70 transition-transform duration-200 ${infoOpen ? 'rotate-180' : ''}`}>{I.chevronDown}</span>
+                         </button>
+                       )}
                       {infoOpen && (
                         <div className="absolute top-full left-0 pt-2 w-56 z-50 animate-fade-in-down origin-top drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)]">
                           <div className="bg-[#070712]/95 backdrop-blur-2xl border border-white/10 rounded-xl py-2 shadow-2xl">

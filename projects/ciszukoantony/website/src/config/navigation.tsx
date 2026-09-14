@@ -40,6 +40,15 @@ export type NavGroup = { name: string; icon: React.ReactNode; items: NavItem[] }
 
 export const NAV_MAIN: (NavItem | NavGroup)[] = [
   { name: 'Home', href: '/', icon: I.home },
+  { name: 'Changelog', href: '/changelog', icon: I.history },
+  { name: 'Reviews', href: '/reviews', icon: I.star },
+  { name: 'Stats', href: '/stats', icon: I.barChart },
+  { name: 'Forum', href: '/forum', icon: I.messageSquare },
+  { name: 'Projects', href: '/projects', icon: I.projects },
+  { name: 'Certificates', href: '/certificates', icon: I.certificates },
+  { name: 'Feedback', href: '/feedback', icon: I.feedback },
+  { name: 'Downloads', href: '/downloads', icon: I.download },
+  { name: 'Donar', href: '/donate', icon: I.heart },
   {
     name: 'Information', icon: I.info,
     items: [
@@ -53,15 +62,6 @@ export const NAV_MAIN: (NavItem | NavGroup)[] = [
       { name: 'Contact', href: '/contact', icon: I.contact },
     ],
   } as NavGroup,
-  { name: 'Changelog', href: '/changelog', icon: I.history },
-  { name: 'Reviews', href: '/reviews', icon: I.star },
-  { name: 'Stats', href: '/stats', icon: I.barChart },
-  { name: 'Forum', href: '/forum', icon: I.messageSquare },
-  { name: 'Projects', href: '/projects', icon: I.projects },
-  { name: 'Certificates', href: '/certificates', icon: I.certificates },
-  { name: 'Feedback', href: '/feedback', icon: I.feedback },
-  { name: 'Downloads', href: '/downloads', icon: I.download },
-  { name: 'Donar', href: '/donate', icon: I.heart },
 ];
 
 export const ALL_PAGES: NavItem[] = [
