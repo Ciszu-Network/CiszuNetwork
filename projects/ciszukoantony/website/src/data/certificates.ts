@@ -608,6 +608,17 @@ export const CERTIFICATES: Certificate[] = [
     previewType: 'pdf',
     holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
+
+  {
+    id: '1108-fplayersoffcial-gmail-com',
+    title: '1108 Fplayersoffcial@Gmail.Com',
+    provider: 'Online course platform',
+    category: 'ai',
+    files: [{ name: '1108_fplayersoffcial@gmail.com.pdf', label: '1108 Fplayersoffcial@Gmail.Com', kind: 'certificate' }],
+    thumbnail: '1108_fplayersoffcial@gmail.com-preview.png',
+    previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
+  }
 ];
 
 // Documentos complementarios (transcripts, expedientes, perfiles): no son
@@ -668,7 +679,7 @@ export const OTHER_DOCS: Certificate[] = [
     date: '2020-06-15',
     summary: 'High school graduation certificate.',
     files: [
-      { name: 'diploma_certificado_bachillerato_monseñorcastro_censored.jpg', label: 'Certificate Image', kind: 'image' },
+      { name: 'diploma_certificado_bachillerato_monsecastro_censored.jpg', label: 'Certificate Image', kind: 'image' },
     ],
     previewType: 'image',
     holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
@@ -695,7 +706,7 @@ export const OTHER_DOCS: Certificate[] = [
     date: '2025-05-20',
     summary: 'Data science and analytics course completion document.',
     files: [
-      { name: 'Ciencia y Análisis de Datos.pdf', label: 'Certificate', kind: 'certificate' },
+      { name: 'Ciencia y Analisis de Datos.pdf', label: 'Certificate', kind: 'certificate' },
     ],
     previewType: 'pdf',
     holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
@@ -717,7 +728,7 @@ export const OTHER_DOCS: Certificate[] = [
     provider: 'Online course platform',
     category: 'digital',
     date: '2026-04-27',
-    files: [{ name: 'Comunicación Empresarial.pdf', label: 'Comunicación Empresarial', kind: 'certificate' }],
+    files: [{ name: 'Comunicacion Empresarial.pdf', label: 'Comunicación Empresarial', kind: 'certificate' }],
     thumbnail: 'Comunicación Empresarial-preview.png',
     previewType: 'pdf',
     holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
@@ -741,7 +752,7 @@ export const OTHER_DOCS: Certificate[] = [
     provider: 'Online course platform',
     category: 'marketing',
     date: '2026-04-27',
-    files: [{ name: 'Experiencia del cliente (CX) para el éxito comercial.pdf', label: 'Experiencia del Cliente (CX)', kind: 'certificate' }],
+    files: [{ name: 'Experiencia del cliente (CX) para el exito comercial.pdf', label: 'Experiencia del Cliente (CX)', kind: 'certificate' }],
     thumbnail: 'Experiencia del cliente (CX) para el éxito comercial-preview.png',
     previewType: 'pdf',
     holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
@@ -753,7 +764,7 @@ export const OTHER_DOCS: Certificate[] = [
     provider: 'Online course platform',
     category: 'digital',
     date: '2026-04-27',
-    files: [{ name: 'Introducción a Destrezas Empresariales Digitales.pdf', label: 'Destrezas Empresariales Digitales', kind: 'certificate' }],
+    files: [{ name: 'Introduccion a Destrezas Empresariales Digitales.pdf', label: 'Destrezas Empresariales Digitales', kind: 'certificate' }],
     thumbnail: 'Introducción a Destrezas Empresariales Digitales-preview.png',
     previewType: 'pdf',
     holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
@@ -765,7 +776,7 @@ export const OTHER_DOCS: Certificate[] = [
     provider: 'Online course platform',
     category: 'cloud',
     date: '2026-04-27',
-    files: [{ name: 'Introducción al Conocimiento de la Ciberseguridad.pdf', label: 'Ciberseguridad', kind: 'certificate' }],
+    files: [{ name: 'Introduccion al Conocimiento de la Ciberseguridad.pdf', label: 'Ciberseguridad', kind: 'certificate' }],
     thumbnail: 'Introducción al Conocimiento de la Ciberseguridad-preview.png',
     previewType: 'pdf',
     holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
@@ -777,7 +788,7 @@ export const OTHER_DOCS: Certificate[] = [
     provider: 'Online course platform',
     category: 'ai',
     date: '2026-04-27',
-    files: [{ name: 'La planificación estratégica en la era de la IA.pdf', label: 'Planificación estratégica en la era de la IA', kind: 'certificate' }],
+    files: [{ name: 'La planificacion estrategica en la era de la IA.pdf', label: 'Planificación estratégica en la era de la IA', kind: 'certificate' }],
     thumbnail: 'La planificación estratégica en la era de la IA-preview.png',
     previewType: 'pdf',
     holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
@@ -791,6 +802,17 @@ export const OTHER_DOCS: Certificate[] = [
     date: '2026-04-27',
     files: [{ name: 'transcript.pdf', label: 'Transcript', kind: 'transcript' }],
     thumbnail: 'transcript-preview.png',
+    previewType: 'pdf',
+    holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
+  },
+
+  {
+    id: '10728403-11037949-1789365127912',
+    title: '10728403 11037949 1789365127912',
+    provider: 'Online course platform',
+    category: 'other',
+    files: [{ name: '10728403_11037949_1789365127912.pdf', label: '10728403 11037949 1789365127912', kind: 'certificate' }],
+    thumbnail: '10728403_11037949_1789365127912-preview.png',
     previewType: 'pdf',
     holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   }

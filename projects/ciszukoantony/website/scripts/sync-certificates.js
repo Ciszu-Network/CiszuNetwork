@@ -17,7 +17,7 @@ Module._resolveFilename = function (request, ...args) {
   return originalResolve.call(this, request, ...args);
 };
 const { createCanvas } = require('@napi-rs/canvas');
-const pdfjs = require('pdfjs-dist/legacy/build/pdf.js');
+const pdfjs = require('pdfjs-dist/legacy/build/pdf.mjs');
 
 const findMonorepoRoot = (startDir) => {
   let dir = startDir;
