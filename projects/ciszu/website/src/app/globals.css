@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "@heroui/react/styles.css";
 
 @source "../../../../../packages/ui/src/**/*.{ts,tsx}";
 
