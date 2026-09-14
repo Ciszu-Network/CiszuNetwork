@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@heroui/react/styles.css";
 
 @source "../../../../../packages/ui/src/**/*.{ts,tsx}";
 
@@ -291,6 +292,16 @@
   to { opacity: 1; transform: translateX(0); }
 }
 
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
 @keyframes grid-scroll {
   0% { transform: translateY(0); }
   100% { transform: translateY(-50%); }
@@ -321,6 +332,30 @@
   .animate-slide-right-fade { animation: slide-right-fade 0.25s ease forwards; }
   .animate-grid-scroll { animation: grid-scroll 60s linear infinite; }
   .animate-gradient-x { animation: gradient-x 5s ease infinite; background-size: 200% auto; }
+  .animate-scale-in { animation: scale-in 0.5s ease forwards; }
+  .animate-slide-in-right { animation: slide-in-right 0.6s ease forwards; }
   .animation-delay-2000 { animation-delay: 2s; }
   .animation-delay-4000 { animation-delay: 4s; }
+}
+
+/* Embla carousel base */
+.embla {
+  overflow: hidden;
+}
+.embla__container {
+  display: flex;
+}
+.embla__slide {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+@media (min-width: 768px) {
+  .embla__slide {
+    flex: 0 0 calc(50% - 12px);
+  }
+}
+@media (min-width: 1024px) {
+  .embla__slide {
+    flex: 0 0 calc(33.333% - 16px);
+  }
 }

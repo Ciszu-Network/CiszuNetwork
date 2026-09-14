@@ -6,6 +6,8 @@ import { CISZU_NETWORK, CISZUKO_ANTONY, CISZUBOT_LINKS, DONATION_LINKS, EXTERNAL
 import { ArrowRight, Code, Shield, Zap, ExternalLink, Star, Globe, Music, Users, ChevronRight, Building, User, Gamepad2, Bot } from "lucide-react";
 import { EcosystemSection } from "@ciszu/ui";
 import QuickDocks from "@/components/molecules/QuickDocks";
+import { AnimatedSection } from "@/components/shared/AnimatedSection";
+import { ProjectCarousel } from "@/components/shared/ProjectCarousel";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -152,23 +154,27 @@ export default function Home() {
       {/* Services */}
       <section className="py-24">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-header font-black bg-gradient-to-r from-brand-light via-brand-accent to-neon-blue bg-clip-text text-transparent uppercase tracking-tighter">
-              Servicios
-            </h2>
-            <p className="text-gray-400 mt-4 max-w-xl mx-auto text-sm uppercase tracking-widest">
-              Tecnología de punta para proyectos ambiciosos
-            </p>
-          </div>
+          <AnimatedSection animation="fade-in-up" delay={0}>
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-header font-black bg-gradient-to-r from-brand-light via-brand-accent to-neon-blue bg-clip-text text-transparent uppercase tracking-tighter">
+                Servicios
+              </h2>
+              <p className="text-gray-400 mt-4 max-w-xl mx-auto text-sm uppercase tracking-widest">
+                Tecnología de punta para proyectos ambiciosos
+              </p>
+            </div>
+          </AnimatedSection>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {services.map((s, i) => (
-              <div key={i} className="p-8 rounded-2xl bg-brand/5 border border-brand/20 hover:border-brand-light/30 transition-all group hover:-translate-y-1">
-                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6" style={{ backgroundColor: `${s.color}20`, color: s.color }}>
-                  <s.icon className="w-7 h-7" />
+              <AnimatedSection key={i} animation="scale-in" delay={i * 100}>
+                <div className="p-8 rounded-2xl bg-brand/5 border border-brand/20 hover:border-brand-light/30 transition-all group hover:-translate-y-1">
+                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6" style={{ backgroundColor: `${s.color}20`, color: s.color }}>
+                    <s.icon className="w-7 h-7" />
+                  </div>
+                  <h3 className="text-xl font-header font-bold mb-3 text-white">{s.title}</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">{s.desc}</p>
                 </div>
-                <h3 className="text-xl font-header font-bold mb-3 text-white">{s.title}</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">{s.desc}</p>
-              </div>
+              </AnimatedSection>
             ))}
           </div>
         </div>
@@ -186,46 +192,48 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {projectSections.map((p) => {
-              const Comp = p.external ? 'a' : Link;
-              const props = p.external
-                ? { href: p.href, target: '_blank', rel: 'noopener noreferrer' as const }
-                : { href: p.href };
-              return (
-                <Comp key={p.id} {...props}
-                  className="group relative p-[1px] rounded-[2rem] bg-gradient-to-br from-white/10 via-transparent to-transparent hover:from-brand-light/30 transition-all duration-500 overflow-hidden"
-                >
-                  <div className="bg-[#0a0a0f] rounded-[2rem] p-6 h-full flex flex-col relative overflow-hidden">
-                    <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full blur-[60px] opacity-0 group-hover:opacity-30 transition-opacity"
-                      style={{ background: `radial-gradient(circle, ${p.gradient.includes('brand') ? '#233f92' : p.gradient.split(' ')[0].replace('from-', '')}, transparent)` }}
-                    />
-                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${p.gradient} flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform relative z-10`}>
-                      <p.icon className="w-6 h-6 text-white" />
+          <div className="max-w-6xl mx-auto">
+            <ProjectCarousel>
+              {projectSections.map((p) => {
+                const Comp = p.external ? 'a' : Link;
+                const props = p.external
+                  ? { href: p.href, target: '_blank', rel: 'noopener noreferrer' as const }
+                  : { href: p.href };
+                return (
+                  <Comp key={p.id} {...props}
+                    className="group relative p-[1px] rounded-[2rem] bg-gradient-to-br from-white/10 via-transparent to-transparent hover:from-brand-light/30 transition-all duration-500 overflow-hidden min-w-0 shrink-0"
+                  >
+                    <div className="bg-[#0a0a0f] rounded-[2rem] p-6 h-full flex flex-col relative overflow-hidden">
+                      <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full blur-[60px] opacity-0 group-hover:opacity-30 transition-opacity"
+                        style={{ background: `radial-gradient(circle, ${p.gradient.includes('brand') ? '#233f92' : p.gradient.split(' ')[0].replace('from-', '')}, transparent)` }}
+                      />
+                      <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${p.gradient} flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform relative z-10`}>
+                        <p.icon className="w-6 h-6 text-white" />
+                      </div>
+                      <h3 className="text-xl font-header font-bold text-white mb-1 group-hover:text-brand-light transition-colors relative z-10">
+                        {p.title}
+                      </h3>
+                      <p className="text-brand-light text-[10px] font-bold uppercase tracking-[0.2em] mb-3 relative z-10">
+                        {p.tagline}
+                      </p>
+                      <p className="text-gray-400 text-xs leading-relaxed flex-grow relative z-10">
+                        {p.desc}
+                      </p>
+                      <div className="flex flex-wrap gap-1.5 mt-4 relative z-10">
+                        {p.tech.map((t) => (
+                          <span key={t} className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[9px] font-bold text-gray-500 uppercase tracking-wider">
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="flex items-center gap-1.5 text-brand-light text-[10px] font-bold uppercase tracking-widest mt-4 group-hover:gap-2.5 transition-all relative z-10">
+                        {p.external ? 'Visitar' : 'Explorar'} <ExternalLink className="w-3 h-3" />
+                      </div>
                     </div>
-                    <h3 className="text-xl font-header font-bold text-white mb-1 group-hover:text-brand-light transition-colors relative z-10">
-                      {p.title}
-                    </h3>
-                    <p className="text-brand-light text-[10px] font-bold uppercase tracking-[0.2em] mb-3 relative z-10">
-                      {p.tagline}
-                    </p>
-                    <p className="text-gray-400 text-xs leading-relaxed flex-grow relative z-10">
-                      {p.desc}
-                    </p>
-                    <div className="flex flex-wrap gap-1.5 mt-4 relative z-10">
-                      {p.tech.map((t) => (
-                        <span key={t} className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[9px] font-bold text-gray-500 uppercase tracking-wider">
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="flex items-center gap-1.5 text-brand-light text-[10px] font-bold uppercase tracking-widest mt-4 group-hover:gap-2.5 transition-all relative z-10">
-                      {p.external ? 'Visitar' : 'Explorar'} <ExternalLink className="w-3 h-3" />
-                    </div>
-                  </div>
-                </Comp>
-              );
-            })}
+                  </Comp>
+                );
+              })}
+            </ProjectCarousel>
           </div>
         </div>
       </section>
@@ -233,56 +241,58 @@ export default function Home() {
       {/* CEO */}
       <section className="py-24 border-t border-white/5">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto p-10 md:p-14 rounded-[2.5rem] bg-gradient-to-br from-brand/10 via-brand-dark/10 to-transparent border border-brand/30 text-center relative overflow-hidden group">
-            <div className="absolute -top-20 -right-20 w-64 h-64 bg-brand/10 rounded-full blur-[80px] group-hover:bg-brand-light/15 transition-all" />
-            <div className="relative z-10">
-              <div className="w-28 h-28 rounded-full bg-gradient-to-br from-brand via-brand-light to-brand-accent mx-auto mb-6 flex items-center justify-center shadow-[0_0_30px_rgba(35,63,146,0.4)] p-1">
-                <Image
-                  src={assetResolver.resolve("shared/images/francisco_selfie/IMG_20251207_001627@869886661.jpg")}
-                  alt={CISZUKO_ANTONY.name}
-                  width={108}
-                  height={108}
-                  className="rounded-full object-cover w-full h-full"
-                />
-              </div>
-              <h2 className="text-3xl md:text-4xl font-header font-black text-white mb-2 uppercase tracking-tighter">
-                {CISZUKO_ANTONY.name}
-              </h2>
-              <p className="text-brand-light font-black text-xs uppercase tracking-[0.4em] mb-6">
-                {CISZUKO_ANTONY.role}
-              </p>
-              <p className="text-gray-300 max-w-2xl mx-auto leading-relaxed mb-6">
-                Visionario digital y desarrollador full-stack. Fundador de {CISZU_NETWORK.name} y creador de MuzicMania. 
-                Lidera con una visión centrada en la innovación, la calidad técnica y la experiencia de usuario. 
-                También youtuber y streamer en crecimiento.
-              </p>
-              <div className="flex flex-wrap justify-center gap-3 mb-6">
-                {Object.entries(CISZUKO_ANTONY.social).filter(([k]) => k !== 'discordTag').map(([platform, url]) => (
-                  <a key={platform} href={url} target="_blank" rel="noopener noreferrer"
-                    className="hover:scale-110 transition-transform"
-                    style={{ color: SOCIAL_COLORS[platform as keyof typeof SOCIAL_COLORS] }}
-                  >
-                    <SocialIcon platform={platform as keyof typeof SOCIAL_COLORS} size={22} />
+          <AnimatedSection animation="scale-in" delay={200}>
+            <div className="max-w-4xl mx-auto p-10 md:p-14 rounded-[2.5rem] bg-gradient-to-br from-brand/10 via-brand-dark/10 to-transparent border border-brand/30 text-center relative overflow-hidden group">
+              <div className="absolute -top-20 -right-20 w-64 h-64 bg-brand/10 rounded-full blur-[80px] group-hover:bg-brand-light/15 transition-all" />
+              <div className="relative z-10">
+                <div className="w-28 h-28 rounded-full bg-gradient-to-br from-brand via-brand-light to-brand-accent mx-auto mb-6 flex items-center justify-center shadow-[0_0_30px_rgba(35,63,146,0.4)] p-1">
+                  <Image
+                    src={assetResolver.resolve("shared/images/francisco_selfie/IMG_20251207_001627@869886661.jpg")}
+                    alt={CISZUKO_ANTONY.name}
+                    width={108}
+                    height={108}
+                    className="rounded-full object-cover w-full h-full"
+                  />
+                </div>
+                <h2 className="text-3xl md:text-4xl font-header font-black text-white mb-2 uppercase tracking-tighter">
+                  {CISZUKO_ANTONY.name}
+                </h2>
+                <p className="text-brand-light font-black text-xs uppercase tracking-[0.4em] mb-6">
+                  {CISZUKO_ANTONY.role}
+                </p>
+                <p className="text-gray-300 max-w-2xl mx-auto leading-relaxed mb-6">
+                  Visionario digital y desarrollador full-stack. Fundador de {CISZU_NETWORK.name} y creador de MuzicMania. 
+                  Lidera con una visión centrada en la innovación, la calidad técnica y la experiencia de usuario. 
+                  También youtuber y streamer en crecimiento.
+                </p>
+                <div className="flex flex-wrap justify-center gap-3 mb-6">
+                  {Object.entries(CISZUKO_ANTONY.social).filter(([k]) => k !== 'discordTag').map(([platform, url]) => (
+                    <a key={platform} href={url} target="_blank" rel="noopener noreferrer"
+                      className="hover:scale-110 transition-transform"
+                      style={{ color: SOCIAL_COLORS[platform as keyof typeof SOCIAL_COLORS] }}
+                    >
+                      <SocialIcon platform={platform as keyof typeof SOCIAL_COLORS} size={22} />
+                    </a>
+                  ))}
+                </div>
+                <div className="flex flex-wrap justify-center gap-4 mb-8">
+                  {["Next.js", "React", "TypeScript", "UI/UX", "Arquitectura Cloud", "Liderazgo"].map((skill) => (
+                    <span key={skill} className="px-4 py-2 rounded-full bg-brand/10 border border-brand/30 text-xs font-bold text-brand-light">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Link href="/contact" className="inline-flex items-center gap-2 px-6 py-3 bg-brand/20 border border-brand/40 text-brand-light rounded-xl font-bold text-sm hover:bg-brand hover:text-white transition-all">
+                    Contactar <ArrowRight className="w-4 h-4" />
+                  </Link>
+                  <a href={CISZUKO_ANTONY.portfolio} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/10 transition-all">
+                    <ExternalLink className="w-4 h-4" /> Portafolio
                   </a>
-                ))}
-              </div>
-              <div className="flex flex-wrap justify-center gap-4 mb-8">
-                {["Next.js", "React", "TypeScript", "UI/UX", "Arquitectura Cloud", "Liderazgo"].map((skill) => (
-                  <span key={skill} className="px-4 py-2 rounded-full bg-brand/10 border border-brand/30 text-xs font-bold text-brand-light">
-                    {skill}
-                  </span>
-                ))}
-              </div>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/contact" className="inline-flex items-center gap-2 px-6 py-3 bg-brand/20 border border-brand/40 text-brand-light rounded-xl font-bold text-sm hover:bg-brand hover:text-white transition-all">
-                  Contactar <ArrowRight className="w-4 h-4" />
-                </Link>
-                <a href={CISZUKO_ANTONY.portfolio} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/10 transition-all">
-                  <ExternalLink className="w-4 h-4" /> Portafolio
-                </a>
+                </div>
               </div>
             </div>
-          </div>
+          </AnimatedSection>
         </div>
       </section>
 

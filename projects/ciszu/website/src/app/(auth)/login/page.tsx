@@ -17,6 +17,7 @@ import {
   useToast,
   useActivityGuard,
 } from '@ciszu/ui';
+import { Button } from '@heroui/react';
 import ReCAPTCHA from 'react-google-recaptcha';
 
 const IconMail = () => (
@@ -341,18 +342,19 @@ export default function LoginPage() {
                       <p className="text-gray-400 text-[10px] font-bold mt-1">Revisa tu bandeja de entrada o spam. El enlace es de un solo uso.</p>
                     </div>
                   ) : (
-                    <button
+                    <Button
                       type="submit"
-                      disabled={loading}
-                      className="w-full py-4 rounded-xl bg-gradient-to-r from-brand-light to-brand-accent text-black font-header font-black uppercase tracking-widest text-sm hover:brightness-110 hover:scale-[1.01] active:scale-[0.99] transition-all shadow-[0_0_20px_rgba(58,107,240,0.35)] disabled:opacity-50 disabled:cursor-not-allowed"
+                      variant="primary"
+                      size="lg"
+                      isDisabled={loading}
+                      className="w-full font-header font-black uppercase tracking-widest text-sm"
                     >
                       {loading ? 'ENVIANDO…' : 'ENVIAR ENLACE'}
-                    </button>
+                    </Button>
                   )}
-                  <button type="button" onClick={() => { setForgot(false); setSent(false); setLocalError(null); }}
-                    className="w-full text-[10px] text-gray-500 font-bold uppercase tracking-widest hover:text-white transition-all cursor-pointer">
+                  <Button type="button" variant="secondary" size="sm" onPress={() => { setForgot(false); setSent(false); setLocalError(null); }} className="w-full text-[10px] font-bold uppercase tracking-widest">
                     ← Volver al acceso normal
-                  </button>
+                  </Button>
                 </form>
               ) : (
                 <>
@@ -427,13 +429,15 @@ export default function LoginPage() {
                     </div>
                     {errors.captcha && <p className="text-red-400 text-[11px] font-bold text-center">{errors.captcha}</p>}
 
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="w-full py-4 rounded-xl bg-gradient-to-r from-brand-light to-brand-accent text-black font-header font-black uppercase tracking-widest text-sm hover:brightness-110 hover:scale-[1.01] active:scale-[0.99] transition-all shadow-[0_0_20px_rgba(58,107,240,0.35)] disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {loading ? 'PROCESANDO…' : 'INICIAR SESIÓN'}
-                    </button>
+                     <Button
+                       type="submit"
+                       variant="primary"
+                       size="lg"
+                       isDisabled={loading}
+                       className="w-full font-header font-black uppercase tracking-widest text-sm"
+                     >
+                       {loading ? 'PROCESANDO…' : 'INICIAR SESIÓN'}
+                     </Button>
                   </form>
 
                   <OAuthProviders

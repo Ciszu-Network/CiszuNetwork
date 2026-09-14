@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { assetResolver } from '@ciszunetwork/cdn';
 import { ScrollNavButton, useToast, SocialIcon, SOCIAL_COLORS } from '@ciszu/ui';
+import { Button } from '@heroui/react';
 import { useAppStore } from '@/store';
 import { CISZU_NETWORK, CISZUKO_ANTONY, EXTERNAL_LINKS, GITHUB_REPO } from '@/config/site';
 import {
@@ -282,16 +283,16 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
 
           {/* LEFT: Theme + Language triggers (muzicmania style) */}
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => {
+            <Button
+              isIconOnly
+              size="md"
+              variant="outline"
+              onPress={() => {
                 const next = theme === 'dark' ? 'light' : 'dark';
                 toast(next === 'dark' ? 'Modo oscuro activado' : 'Modo claro activado', 'info');
                 setTheme(next);
               }}
-              className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group ${
-                theme === 'dark' ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
-              }`}
-              title={dict.common[theme === 'dark' ? 'lightMode' : 'darkMode']}
+              className="transition-all duration-500"
             >
               {theme === 'dark' ? (
                 <svg className="w-5 h-5 text-black transition-transform duration-500 group-hover:rotate-12" viewBox="0 0 24 24" fill="currentColor">
@@ -303,16 +304,17 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
                   <path d="M12 1v3m0 16v3M4.22 4.22l2.12 2.12m11.32 11.32l2.12 2.12M1 12h3m16 0h3M4.22 19.78l2.12-2.12M19.78 4.22l-2.12 2.12" strokeLinecap="round" />
                 </svg>
               )}
-            </button>
+            </Button>
 
-            <button
-              onClick={() => { setIsMenuOpen(true); setSidebarView('lang'); }}
-              className="group flex items-center gap-3 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all duration-300 shadow-lg"
-               title={dict.common.changeLanguage}
+            <Button
+              size="sm"
+              variant="outline"
+              onPress={() => { setIsMenuOpen(true); setSidebarView('lang'); }}
+              className="group flex items-center gap-3 transition-all duration-300"
             >
               <Globe className="w-5 h-5 transition-transform duration-500 group-hover:rotate-12 text-white/70" />
               <span className="text-gray-400 group-hover:text-white uppercase tracking-widest text-xs font-bold">LANG</span>
-            </button>
+            </Button>
           </div>
 
           {/* RIGHT: Copyright */}

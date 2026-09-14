@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { assetResolver } from '@ciszunetwork/cdn';
 import { useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE } from '@ciszu/ui';
+import { Button } from '@heroui/react';
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store';
 import { CISZU_NETWORK } from '@/config/site';
@@ -263,7 +264,7 @@ export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<strin
     return `max-w-0 overflow-hidden transition-all duration-300 group-hover:max-w-[110px] ${active ? 'max-w-[110px]' : ''}`;
   };
 
-  const toggleSearch = (e?: React.MouseEvent) => {
+  const toggleSearch = (e?: any) => {
     if (e) {
       e.preventDefault();
       e.stopPropagation();
@@ -276,7 +277,7 @@ export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<strin
     setShowSearch(v => !v);
   };
 
-  const toggleMenu = (e?: React.MouseEvent) => {
+  const toggleMenu = (e?: any) => {
     if (e) {
       e.preventDefault();
       e.stopPropagation();
@@ -421,31 +422,24 @@ export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<strin
             {/* Right actions */}
             <div className="flex items-center gap-2 ml-auto shrink-0 min-w-fit">
               {/* Search icon toggle */}
-              <button
-                ref={searchToggleRef}
-                onClick={toggleSearch}
-                className={`p-2 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 ${
-                  isSearchOpen
-                    ? 'bg-brand-light border-brand-light text-black'
-                    : 'bg-white/5 border-white/20 text-white hover:border-brand-light hover:shadow-[0_0_10px_rgba(58,107,240,0.2)]'
-                }`}
-                title="Buscar"
+              <Button
+                isIconOnly
+                size="sm"
+                variant={isSearchOpen ? "primary" : "outline"}
+                onPress={toggleSearch}
               >
                 {isSearchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
-              </button>
+              </Button>
 
               {/* Hamburger contextual toggle (siempre visible) */}
-              <button
-                onClick={toggleMenu}
-                className={`p-2 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 ${
-                  isMenuOpen
-                    ? 'bg-brand-light border-brand-light text-black'
-                    : 'bg-white/5 border-white/20 text-white hover:border-brand-light hover:shadow-[0_0_10px_rgba(58,107,240,0.2)]'
-                }`}
-                title="Menú"
+              <Button
+                isIconOnly
+                size="sm"
+                variant={isMenuOpen ? "primary" : "outline"}
+                onPress={toggleMenu}
               >
                 {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-              </button>
+              </Button>
 
               {/* Account / User Button (CISZU ID + invitado + preferencias) */}
               <AuthMenu
@@ -490,12 +484,13 @@ export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<strin
                   <p className="text-gray-500 font-header font-black uppercase text-xs tracking-widest italic">
                     {dict.nav.searchNoResults.replace('{q}', searchQuery)}
                   </p>
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="px-6 py-2 bg-brand-light/20 border border-brand-light/40 text-brand-light rounded-full font-header font-bold text-[10px] uppercase tracking-widest hover:bg-brand-light hover:text-black transition-all active:scale-95"
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onPress={() => setSearchQuery('')}
                   >
                     {dict.nav.searchReset}
-                  </button>
+                  </Button>
                 </div>
               )}
 
@@ -528,16 +523,16 @@ export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<strin
 
             {/* Header: Theme Toggle | TITLE | Language Selector */}
             <div className="flex items-center justify-between px-5 pt-8 pb-6 border-b border-white/5 shrink-0 gap-3">
-              <button
-                onClick={() => {
+              <Button
+                isIconOnly
+                size="md"
+                variant="outline"
+                onPress={() => {
                   const next = theme === 'dark' ? 'light' : 'dark';
                   toast(next === 'dark' ? 'Modo oscuro activado' : 'Modo claro activado', 'info');
                   setTheme(next);
                 }}
-                className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group ${
-                  theme === 'dark' ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
-                }`}
-                title={theme === 'dark' ? 'Modo Claro' : 'Modo Oscuro'}
+                className="transition-all duration-500"
               >
                 {theme === 'dark' ? (
                   <svg className="w-5 h-5 text-black transition-transform duration-500 group-hover:rotate-12" viewBox="0 0 24 24" fill="currentColor">
@@ -549,17 +544,18 @@ export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<strin
                     <path d="M12 1v3m0 16v3M4.22 4.22l2.12 2.12m11.32 11.32l2.12 2.12M1 12h3m16 0h3M4.22 19.78l2.12-2.12M19.78 4.22l-2.12 2.12" strokeLinecap="round" />
                   </svg>
                 )}
-              </button>
+              </Button>
 
               <h2 className="text-brand-light text-base font-header font-black tracking-widest drop-shadow-[0_0_8px_rgba(58,107,240,0.8)]">
                 {sidebarView === 'main' ? (language === 'es-latam' || language === 'es-es' ? 'MENÚ' : 'MENU') : 'IDIOMA'}
               </h2>
 
               {/* Language Selector (toggles sidebar view) */}
-              <button
-                onClick={() => setSidebarView(sidebarView === 'main' ? 'lang' : 'main')}
-                className="group flex items-center gap-3 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all duration-300 shadow-lg cursor-pointer"
-                title={language === 'es-latam' || language === 'es-es' ? 'Cambiar idioma' : 'Change language'}
+              <Button
+                size="sm"
+                variant="outline"
+                onPress={() => setSidebarView(sidebarView === 'main' ? 'lang' : 'main')}
+                className="group flex items-center gap-3 transition-all duration-300"
               >
                 <svg className={`w-5 h-5 transition-transform duration-500 ${sidebarView === 'lang' ? 'rotate-90 text-brand-light' : 'group-hover:rotate-12 text-white/70'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                   <circle cx="12" cy="12" r="10" />
@@ -568,7 +564,7 @@ export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<strin
                 <div className="w-6 h-6 rounded-full overflow-hidden border border-white/20 shadow-[0_0_10px_rgba(255,255,255,0.1)] shrink-0 transition-transform duration-300 group-hover:scale-110 [&>svg]:w-6 [&>svg]:h-6">
                   {currentFlag}
                 </div>
-              </button>
+              </Button>
             </div>
 
             {/* Content Area */}

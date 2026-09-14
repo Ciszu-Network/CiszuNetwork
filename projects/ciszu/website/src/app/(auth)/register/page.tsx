@@ -17,6 +17,7 @@ import {
   useToast,
   useActivityGuard,
 } from '@ciszu/ui';
+import { Button } from '@heroui/react';
 import ReCAPTCHA from 'react-google-recaptcha';
 
 const IconUser = () => (
@@ -381,13 +382,15 @@ export default function RegisterPage() {
 
                   {localError && <p className="text-red-400 text-[11px] font-bold">{localError}</p>}
 
-                  <button
+                  <Button
                     type="submit"
-                    disabled={loading}
-                    className="w-full py-4 rounded-xl bg-gradient-to-r from-neon-pink to-brand-accent text-black font-header font-black uppercase tracking-widest text-sm hover:brightness-110 hover:scale-[1.01] active:scale-[0.99] transition-all shadow-[0_0_20px_rgba(255,51,204,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
+                    variant="primary"
+                    size="lg"
+                    isDisabled={loading}
+                    className="w-full font-header font-black uppercase tracking-widest text-sm"
                   >
                     {loading ? 'PROCESANDO…' : 'CREAR CUENTA'}
-                  </button>
+                  </Button>
                 </form>
 
                 <OAuthProviders

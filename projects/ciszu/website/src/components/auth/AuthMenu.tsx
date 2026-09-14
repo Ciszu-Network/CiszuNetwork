@@ -8,6 +8,7 @@ import { supabase } from '@/config/supabase';
 import { getGuestName } from '@/lib/guest';
 import PreferencesPanel from '@/components/auth/PreferencesPanel';
 import { PreferencesModal, useToast } from '@ciszu/ui';
+import { Button } from '@heroui/react';
 
 const GuestIcon = () => (
   <svg viewBox="0 0 24 24" className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -100,14 +101,11 @@ export default function AuthMenu({ open, onToggle, onClose, lang, dict }: { open
 
   return (
     <div className="relative shrink-0" ref={menuRef}>
-      <button
-        onClick={toggle}
-        className={`flex items-center gap-2 pl-1.5 pr-3 py-1.5 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 ${
-          open
-            ? 'bg-gradient-to-r from-brand-light via-brand-accent to-brand-light border-transparent text-white shadow-[0_0_15px_rgba(58,107,240,0.4)]'
-            : 'bg-white/5 border-white/20 text-white hover:border-brand-light hover:bg-white/10'
-        }`}
-        title={user ? `Cuenta — ${displayName}` : 'Cuenta de invitado'}
+      <Button
+        variant={open ? "primary" : "outline"}
+        size="sm"
+        onPress={toggle}
+        className="flex items-center gap-2"
       >
         <span className={`w-7 h-7 rounded-full flex items-center justify-center ${open ? 'bg-black/30' : 'bg-black/40 border border-brand-light/30'}`}>
           {user?.avatar_url ? (
@@ -125,7 +123,7 @@ export default function AuthMenu({ open, onToggle, onClose, lang, dict }: { open
         <span className="max-w-[120px] truncate text-xs font-header font-bold tracking-wide">
           {isHydrated ? (user ? displayName : guest) : '…'}
         </span>
-      </button>
+      </Button>
 
       {open && (
         <div className="absolute right-0 top-full pt-3 w-[300px] max-w-[85vw] z-50 animate-fade-in-down origin-top">
@@ -158,14 +156,16 @@ export default function AuthMenu({ open, onToggle, onClose, lang, dict }: { open
             {/* Acciones de sesión */}
             {user ? (
               <div className="pt-1 pb-1 border-b border-white/10">
-                <button
-                  onClick={handleLogout}
-                  disabled={loggingOut}
-                  className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-bold hover:bg-red-500/20 transition-all cursor-pointer active:scale-95 disabled:opacity-50"
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onPress={handleLogout}
+                  isDisabled={loggingOut}
+                  className="w-full flex items-center justify-center gap-2 bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20"
                 >
                   <LogoutIcon />
                   {loggingOut ? 'Cerrando sesión…' : 'Cerrar sesión'}
-                </button>
+                </Button>
               </div>
             ) : (
               <div className="pt-1 pb-1 border-b border-white/10 grid grid-cols-2 gap-1.5">
@@ -188,12 +188,14 @@ export default function AuthMenu({ open, onToggle, onClose, lang, dict }: { open
 
             {/* Botón de preferencias locales -> abre el modal centrado */}
             <div className="pt-1">
-              <button
-                onClick={() => { setPrefsOpen(true); }}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-xs font-bold hover:border-brand-light/50 hover:text-brand-light transition-all cursor-pointer active:scale-95"
+              <Button
+                variant="outline"
+                size="sm"
+                onPress={() => { setPrefsOpen(true); }}
+                className="w-full flex items-center justify-center gap-2"
               >
                 <SettingsIcon /> Preferencias locales
-              </button>
+              </Button>
             </div>
           </div>
         </div>
