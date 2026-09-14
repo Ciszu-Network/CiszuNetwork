@@ -397,7 +397,7 @@ export default function Home() {
         title="Project provided by CiszuNetwork"
         description="This project is part of the Ciszu Network ecosystem. Discover more projects and tools built by Ciszuko Antony."
         visitHref="https://ciszunetwork.vercel.app"
-        projectsHref="/projects"
+        projectsHref="https://ciszunetwork.vercel.app/projects"
         visitLabel="Visit CiszuNetwork"
         projectsLabel="View Projects"
       />

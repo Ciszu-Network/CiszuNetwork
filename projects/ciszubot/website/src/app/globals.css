@@ -14,7 +14,7 @@
 @theme inline {
   /* Fonts */
   --font-sans:   var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-header: var(--font-exo2), var(--font-sans);
+  --font-header: var(--font-space-grotesk), var(--font-sans);
 
   /* Semantic colors (flip between themes) */
   --color-bg:       var(--bg);
