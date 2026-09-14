@@ -422,8 +422,8 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
               onMouseEnter={() => hoverOpen(setOpenDropdown, dropdownTimer, 'Information')}
               onMouseLeave={() => hoverClose(setOpenDropdown, dropdownTimer)}
             >
-              <button
-                onClick={() => setOpenDropdown(openDropdown === 'Information' ? null : 'Information')}
+              <Link
+                href="/information"
                 className={linkCls(infoActiveHref)}
               >
                 <span className="flex items-center justify-center shrink-0"><Icon name="info" size={16} /></span>
@@ -431,7 +431,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                 <ChevronDown className={
                   `w-3 h-3 transition-transform duration-200 ${openDropdown === 'Information' ? 'rotate-180' : ''}`
                 } />
-              </button>                {openDropdown === 'Information' && (
+              </Link>                {openDropdown === 'Information' && (
                 <div className="absolute top-full left-0 pt-2 w-56 z-50 animate-fade-in-down origin-top drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)]">
                   <div className="bg-[#0a0a14]/98 backdrop-blur-2xl border border-border rounded-xl py-2 shadow-2xl">
                     {INFO_PAGES.map((sub) => (
