@@ -271,13 +271,13 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
                      <div key={group.name} className={`relative ${responsiveClass}`} ref={isInfo ? infoRef : undefined}
                        onMouseEnter={isInfo ? hoverOpenInfo : () => setInfoOpen(true)}
                        onMouseLeave={isInfo ? hoverCloseInfo : undefined}>
-                       {isInfo ? (
-                         <Link href={group.items[0].href} className={navLinkCls(infoActive)}>
-                           <span className="opacity-80 shrink-0">{group.icon}</span>
-                           <span className={navLabelCls(infoActive)}>{group.name}</span>
-                           <span className={`opacity-70 transition-transform duration-200 ${infoOpen ? 'rotate-180' : ''}`}>{I.chevronDown}</span>
-                         </Link>
-                       ) : (
+                        {isInfo ? (
+                          <Link href="/information" className={navLinkCls(infoActive)}>
+                            <span className="opacity-80 shrink-0">{group.icon}</span>
+                            <span className={navLabelCls(infoActive)}>{group.name}</span>
+                            <span className={`opacity-70 transition-transform duration-200 ${infoOpen ? 'rotate-180' : ''}`}>{I.chevronDown}</span>
+                          </Link>
+                        ) : (
                          <button onClick={() => setInfoOpen(!infoOpen)} className={navLinkCls(infoActive)}>
                            <span className="opacity-80 shrink-0">{group.icon}</span>
                            <span className={navLabelCls(infoActive)}>{group.name}</span>
