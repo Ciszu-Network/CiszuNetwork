@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAppStore } from '@/store';
 import { LanguagesModal, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE, setCookieConsent, clearCookieConsent, useCookieConsent } from '@ciszu/ui';
+import { Button } from '@heroui/react';
 import {
   loadPreferences,
   updatePreferences,
@@ -158,12 +159,13 @@ export default function PreferencesPanel() {
     <div className="px-2 pt-1 pb-2 space-y-4">
       {/* Tema e idioma: mismos controles que el navbar */}
       <div className="flex items-center justify-between gap-2">
-        <button
-          onClick={handleThemeChange}
+        <Button
+          onPress={handleThemeChange}
           className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group ${
             isDark ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
           }`}
-          title={isDark ? 'Modo Claro' : 'Modo Oscuro'}
+          variant="outline"
+          size="sm"
         >
           {isDark ? (
             <svg className="w-5 h-5 text-black transition-transform duration-500 group-hover:rotate-12" viewBox="0 0 24 24" fill="currentColor">
@@ -175,14 +177,14 @@ export default function PreferencesPanel() {
               <path d="M12 1v3m0 16v3M4.22 4.22l2.12 2.12m11.32 11.32l2.12 2.12M1 12h3m16 0h3M4.22 19.78l2.12-2.12M19.78 4.22l-2.12 2.12" strokeLinecap="round" />
             </svg>
           )}
-        </button>
+        </Button>
 
-        <button
-          onClick={() => setLangOpen(true)}
+        <Button
+          onPress={() => setLangOpen(true)}
           className={`flex-1 flex items-center justify-between gap-2 px-3 py-2 rounded-xl border transition-all cursor-pointer active:scale-95 group ${
             isDark ? 'bg-white/5 border-white/10 text-white hover:border-brand-light/50' : 'bg-black/5 border-black/10 text-black hover:border-brand-light/70'
           }`}
-          title="Cambiar idioma"
+          variant="outline"
         >
           <span className="flex items-center gap-2 text-xs font-header font-bold uppercase tracking-widest">
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -198,22 +200,22 @@ export default function PreferencesPanel() {
               <path d="M6 9l6 6 6-6" />
             </svg>
           </span>
-        </button>
+        </Button>
       </div>
 
       {/* Zoom (barra con botones −/+ en extremos; inicia en 100%) */}
       <div>
         <p className={sectionTitleCls}>Zoom</p>
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => changeZoom(-ZOOM_STEP)}
-            disabled={zoom <= ZOOM_MIN}
+          <Button
+            onPress={() => changeZoom(-ZOOM_STEP)}
+            isDisabled={zoom <= ZOOM_MIN}
             className={`p-2 rounded-lg border transition-all active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shrink-0 ${surfaceBtn}`}
-            title="Quitar zoom"
-            aria-label="Quitar zoom"
+            variant="secondary"
+            size="sm"
           >
             <IcoZoomMinus />
-          </button>
+          </Button>
           <div className="flex-1 min-w-0 flex items-center gap-2">
             <div className={`relative flex-1 h-2 rounded-full overflow-hidden ${isDark ? 'bg-white/10' : 'bg-black/10'}`}>
               <div
@@ -223,27 +225,27 @@ export default function PreferencesPanel() {
             </div>
             <span className="w-12 text-center text-xs font-header font-black text-brand-light tabular-nums shrink-0">{zoom}%</span>
           </div>
-          <button
-            onClick={() => changeZoom(ZOOM_STEP)}
-            disabled={zoom >= ZOOM_MAX}
+          <Button
+            onPress={() => changeZoom(ZOOM_STEP)}
+            isDisabled={zoom >= ZOOM_MAX}
             className={`p-2 rounded-lg border transition-all active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shrink-0 ${surfaceBtn}`}
-            title="Sumar zoom"
-            aria-label="Sumar zoom"
+            variant="secondary"
+            size="sm"
           >
             <IcoZoomPlus />
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Silenciar pestaña */}
-      <button
-        onClick={toggleMuteTab}
+      <Button
+        onPress={toggleMuteTab}
         className={`w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg border transition-all active:scale-95 ${
           tabMuted
             ? 'bg-red-500/10 border-red-500/40 text-red-400 hover:bg-red-500/20'
             : surfaceBtn
         }`}
-        title="Silenciar pestaña"
+        variant="secondary"
       >
         <span className="flex items-center gap-2 font-header font-bold text-xs uppercase tracking-widest">
           <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -266,7 +268,7 @@ export default function PreferencesPanel() {
         <span className={`w-9 h-5 rounded-full relative transition-colors ${tabMuted ? 'bg-red-500/70' : isDark ? 'bg-white/15' : 'bg-black/15'}`}>
           <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${tabMuted ? 'left-4' : 'left-0.5'}`} />
         </span>
-      </button>
+      </Button>
 
       {/* Cookies: rechazar en cualquier momento o reaparecer el aviso */}
       <div>
@@ -282,36 +284,39 @@ export default function PreferencesPanel() {
         </div>
         <div className="grid grid-cols-1 gap-1 mt-2">
           {cookieConsent !== 'rejected' && (
-            <button
-              onClick={handleCookieReject}
+            <Button
+              onPress={handleCookieReject}
               className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-red-500/40 bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-all active:scale-95 font-header font-bold text-xs uppercase tracking-widest"
+              variant="primary"
             >
               <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M18 6 6 18" /><path d="m6 6 12 12" />
               </svg>
               Rechazar cookies
-            </button>
+            </Button>
           )}
           {cookieConsent !== 'accepted' && (
-            <button
-              onClick={handleCookieAccept}
-              className={`w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border transition-all active:scale-95 font-header font-bold text-xs uppercase tracking-widest ${surfaceBtn}`}
-            >
+          <Button
+            onPress={handleCookieAccept}
+            className={`w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border transition-all active:scale-95 font-header font-bold text-xs uppercase tracking-widest ${surfaceBtn}`}
+            variant="secondary"
+          >
               <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20 6 9 17l-5-5" />
               </svg>
               Aceptar cookies
-            </button>
+            </Button>
           )}
-          <button
-            onClick={handleCookieReappear}
+          <Button
+            onPress={handleCookieReappear}
             className={`w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border transition-all active:scale-95 font-header font-bold text-xs uppercase tracking-widest ${surfaceBtn}`}
+            variant="secondary"
           >
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
               <path d="M1 4v6h6" /><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
             </svg>
             Reaparecer aviso de cookies
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -319,14 +324,14 @@ export default function PreferencesPanel() {
       <div>
         <p className={sectionTitleCls}>Navegación</p>
         {/* Guard azul: aviso de redirección a otras webs */}
-        <button
-          onClick={toggleRedirectGuard}
+        <Button
+          onPress={toggleRedirectGuard}
           className={`w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg border transition-all active:scale-95 ${
             redirectGuard
               ? 'bg-blue-500/10 border-blue-500/40 text-blue-300 hover:bg-blue-500/20'
               : surfaceBtn
           }`}
-          title="Aviso de redirección"
+          variant="secondary"
         >
           <span className="flex items-center gap-2 font-header font-bold text-xs uppercase tracking-widest">
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -339,16 +344,16 @@ export default function PreferencesPanel() {
           <span className={`w-9 h-5 rounded-full relative transition-colors ${redirectGuard ? 'bg-blue-500/70' : isDark ? 'bg-white/15' : 'bg-black/15'}`}>
             <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${redirectGuard ? 'left-4' : 'left-0.5'}`} />
           </span>
-        </button>
+        </Button>
         {/* Guard rojo: protección de acciones no recuperables */}
-        <button
-          onClick={toggleActivityGuard}
+        <Button
+          onPress={toggleActivityGuard}
           className={`w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg border transition-all active:scale-95 mt-2 ${
             activityGuard
               ? 'bg-red-500/10 border-red-500/40 text-red-300 hover:bg-red-500/20'
               : surfaceBtn
           }`}
-          title="Protección de acciones no recuperables"
+          variant="secondary"
         >
           <span className="flex items-center gap-2 font-header font-bold text-xs uppercase tracking-widest">
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -361,7 +366,7 @@ export default function PreferencesPanel() {
           <span className={`w-9 h-5 rounded-full relative transition-colors ${activityGuard ? 'bg-red-500/70' : isDark ? 'bg-white/15' : 'bg-black/15'}`}>
             <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${activityGuard ? 'left-4' : 'left-0.5'}`} />
           </span>
-        </button>
+        </Button>
       </div>
 
       {/* Ayuda */}

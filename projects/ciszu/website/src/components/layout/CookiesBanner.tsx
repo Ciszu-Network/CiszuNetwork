@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useAppStore } from '@/store';
 import { getCookieConsent, setCookieConsent, useToast } from '@ciszu/ui';
+import { Button } from '@heroui/react';
 
 export function CookiesBanner({ lang, dict }: { lang: string; dict: Record<string, any> }) {
   const [show, setShow] = useState(false);
@@ -68,18 +69,22 @@ export function CookiesBanner({ lang, dict }: { lang: string; dict: Record<strin
             </div>
 
             <div className="shrink-0 flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-              <button
-                onClick={handleReject}
-                className="w-full md:w-auto px-6 py-3 bg-white/5 text-gray-300 font-black uppercase text-sm rounded-full hover:bg-white/10 hover:text-white active:scale-95 transition-all border border-white/20"
+              <Button
+                variant="outline"
+                size="md"
+                onPress={handleReject}
+                className="w-full md:w-auto font-black uppercase text-sm"
               >
                 {(lang === 'es-latam' || lang === 'es-es') ? dict.cookies.reject : dict.cookiesEn.reject}
-              </button>
-              <button
-                onClick={handleAccept}
-                className="w-full md:w-auto px-8 py-3 bg-gradient-to-r from-neon-cyan to-neon-purple text-white font-black uppercase text-sm rounded-full hover:scale-105 active:scale-95 transition-all shadow-lg border border-white/10 dark:bg-gradient-to-r dark:from-neon-blue dark:to-neon-purple"
+              </Button>
+              <Button
+                variant="primary"
+                size="md"
+                onPress={handleAccept}
+                className="w-full md:w-auto font-black uppercase text-sm"
               >
                 {(lang === 'es-latam' || lang === 'es-es') ? dict.cookies.accept : dict.cookiesEn.accept}
-              </button>
+              </Button>
             </div>
           </div>
         </motion.div>

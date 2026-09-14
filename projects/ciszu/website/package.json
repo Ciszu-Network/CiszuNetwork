@@ -18,6 +18,8 @@
     "@ciszunetwork/db": "workspace:^",
     "@ciszunetwork/payments": "workspace:*",
     "@ciszunetwork/utils": "workspace:*",
+    "@heroui/react": "^3.2.5",
+    "@heroui/styles": "^3.2.5",
     "@plasmicapp/loader-nextjs": "^2.0.27",
     "@puckeditor/cloud-client": "^0.8.2",
     "@puckeditor/core": "^0.23.0",

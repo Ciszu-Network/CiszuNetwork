@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { ArrowRight, Bug } from 'lucide-react';
 import { openSentryFeedback } from '@/lib/sentry';
 import { CISZU_NETWORK } from '@/config/site';
+import { CiszButton } from '@/components/shared/CiszButton';
 
 interface FeedbackFormProps {
   email: string;
@@ -121,19 +122,12 @@ export function FeedbackForm({ email }: FeedbackFormProps) {
           )}
 
           <div className="flex flex-col sm:flex-row gap-3">
-            <button
-              type="submit"
-              className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-brand/20 border-2 border-brand/50 text-white font-black rounded-xl hover:bg-brand hover:scale-105 transition-all text-sm uppercase tracking-widest shadow-[0_0_20px_rgba(35,63,146,0.3)]"
-            >
+            <CiszButton type="submit" variant="primary" size="lg">
               Enviar Feedback <ArrowRight className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={reportIssue}
-              className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-white/5 border-2 border-white/20 text-white font-black rounded-xl hover:bg-white/10 hover:scale-105 transition-all text-sm uppercase tracking-widest"
-            >
+            </CiszButton>
+            <CiszButton type="button" variant="outline" size="lg" onClick={reportIssue}>
               Reportar un problema <Bug className="w-4 h-4" />
-            </button>
+            </CiszButton>
           </div>
 
           <p className="text-[11px] text-gray-600 leading-relaxed">

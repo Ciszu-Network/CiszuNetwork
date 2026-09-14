@@ -13,6 +13,7 @@ import FeedbackFab from "@/components/layout/FeedbackFab";
 import AuthProvider from "@/components/providers/AuthProvider";
 import AdsWithUser from "@/components/providers/AdsWithUser";
 import { CISZU_NETWORK } from "@/config/site";
+import { ThemeProvider } from 'next-themes';
 import "./globals.css";
 
 const ICON_SVG = assetResolver.resolve("projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg");
@@ -91,6 +92,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <GoogleScripts />
       </head>
       <body className="min-h-screen font-sans flex flex-col">
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
         <AuthProvider>
           <ToastProvider>
           <ActivityGuardProvider>
@@ -128,6 +130,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         {process.env.NODE_ENV === 'production' && (
           <script defer type="module" data-cookie-consent="optional" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
         )}
+        </ThemeProvider>
       </body>
     </html>
   );
