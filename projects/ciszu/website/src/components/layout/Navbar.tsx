@@ -365,9 +365,9 @@ export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<strin
                       onMouseLeave={() => hoverClose(setOpenDropdown, dropdownTimer)}
                     >
                       {isInfo ? (
-                        <Link href={item.links[0].href} className={navLinkCls(groupActive ? item.links.find((s) => isActive(s.href))?.href ?? item.links[0].href : item.links[0].href)}>
+                        <Link href="/information" className={navLinkCls(groupActive ? item.links.find((s) => isActive(s.href))?.href ?? '/information' : '/information')}>
                           <span className="flex items-center justify-center shrink-0">{item.icon}</span>
-                          <span className={navLabelCls(groupActive ? item.links.find((s) => isActive(s.href))?.href ?? item.links[0].href : item.links[0].href)}>{item.name}</span>
+                          <span className={navLabelCls(groupActive ? item.links.find((s) => isActive(s.href))?.href ?? '/information' : '/information')}>{item.name}</span>
                           <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
                         </Link>
                       ) : (
