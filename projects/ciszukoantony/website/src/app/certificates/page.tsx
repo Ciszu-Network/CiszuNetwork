@@ -17,6 +17,24 @@ const CDN_BASE =
   process.env.NEXT_PUBLIC_CDN_URL ||
   'https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn';
 
+// Logos de marca oficiales (simple-icons) servidos desde el CDN. No son
+// aproximaciones dibujadas a mano: son los SVG oficiales de cada marca.
+const BRAND_LOGO_BASE = `${CDN_BASE}/assets/brand-logos`;
+const BRAND_IMG: Record<string, string> = {
+  cisco: `${BRAND_LOGO_BASE}/cisco.svg`,
+  microsoft: `${BRAND_LOGO_BASE}/microsoft.svg`,
+  ibm: `${BRAND_LOGO_BASE}/ibm.svg`,
+  hp: `${BRAND_LOGO_BASE}/hp.svg`,
+};
+// Marcas sin SVG oficial en simple-icons: wordmark tipográfico limpio con el
+// color corporativo (nunca emojis, nunca paths inventados).
+const BRAND_WORDMARK: Record<string, { text: string; color: string }> = {
+  ef: { text: 'EF SET', color: '#00A3E0' },
+  penn: { text: 'PENN', color: '#990000' },
+  '16p': { text: '16P', color: '#00C9A7' },
+  simplilearn: { text: 'SL', color: '#FF7A1A' },
+};
+
 const fileUrl = (name: string) => {
   const parts = name.split('/');
   const encodedName = parts.map((p) => encodeURIComponent(p)).join('/');
@@ -52,51 +70,67 @@ const CategoryIcon = ({ id, className }: { id: string; className?: string }) => 
   return <Icon className={className} />;
 };
 
-const ProviderLogo = ({ id, className }: { id: string; className?: string }) => {
-  const logos: Record<string, React.ReactNode> = {
-    cisco: (
-      <svg viewBox="0 0 24 24" className={className} fill="currentColor">
-        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-      </svg>
-    ),
-    microsoft: (
-      <svg viewBox="0 0 24 24" className={className} fill="currentColor">
-        <path d="M18.7 15.3c-1.1 0-2-.9-2-2v-4c0-1.1.9-2 2-2h4v2h-4v4h4v2h-4v4c0 1.1-.9 2-2 2zm-14.6 1.4c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2h-4v2h4v4h-4v4h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v-4h4zM5.5 7.4c0-1.1.9-2 2-2h4v2h-4v4h-4v-4h-4v-2h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v-4h4zM5.5 7.4c0-1.1.9-2 2-2h4v2h-4v4h-4v-4h-4v-2h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v-4h4zM5.5 7.4c0-1.1.9-2 2-2h4v2h-4v4h-4v-4h-4v-2h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v-4h4z"/>
-      </svg>
-    ),
-    ibm: (
-      <svg viewBox="0 0 24 24" className={className} fill="currentColor">
-        <path d="M2 4h20v4H2V4zm0 5h20v4H2V9zm0 5h20v4H2v-4zm0 5h20v4H2v-4z" />
-      </svg>
-    ),
-    hp: (
-      <svg viewBox="0 0 24 24" className={className} fill="currentColor">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8z" />
-        <path d="M14 11h-4v4h-2v-4H8V9h4V5h2v4h4v2h-4v4z" fill="white" />
-      </svg>
-    ),
-    ef: (
-      <svg viewBox="0 0 24 24" className={className} fill="currentColor">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93c3.57.27 6.5-3.13 6.5-6.93 0-.62-.08-1.21-.21-1.79L15 9V7c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L15 15v-1c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L9 9v1c0 1.1.9 2 2 2z" />
-      </svg>
-    ),
-    penn: (
-      <svg viewBox="0 0 24 24" className={className} fill="currentColor">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93c3.57.27 6.5-3.13 6.5-6.93 0-.62-.08-1.21-.21-1.79L15 9V7c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L15 15v-1c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L9 9v1c0 1.1.9 2 2 2z" />
-      </svg>
-    ),
-    '16p': (
-      <svg viewBox="0 0 24 24" className={className} fill="currentColor">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93c3.57.27 6.5-3.13 6.5-6.93 0-.62-.08-1.21-.21-1.79L15 9V7c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L15 15v-1c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L9 9v1c0 1.1.9 2 2 2z" />
-      </svg>
-    ),
-    simplilearn: (
-      <svg viewBox="0 0 24 24" className={className} fill="currentColor">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93c3.57.27 6.5-3.13 6.5-6.93 0-.62-.08-1.21-.21-1.79L15 9V7c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L15 15v-1c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L9 9v1c0 1.1.9 2 2 2z" />
-      </svg>
-    ),
-};
-  return <>{logos[id] || null}</>;
+// ---------------------------------------------------------------------------
+// Iconos compartidos (trazos estándar tipo Lucide, verificados).
+// ---------------------------------------------------------------------------
+const IconShieldCheck = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+    <path d="m9 12 2 2 4-4" />
+  </svg>
+);
+
+const IconInfo = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 16v-4" />
+    <path d="M12 8h.01" />
+  </svg>
+);
+
+const IconAlert = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+    <path d="M12 9v4" />
+    <path d="M12 17h.01" />
+  </svg>
+);
+
+const IconScale = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" />
+    <path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" />
+    <path d="M7 21h10" />
+    <path d="M12 3v18" />
+    <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2" />
+  </svg>
+);
+
+/** Logo de proveedor: SVG oficial desde el CDN si existe, wordmark si no. */
+const BrandLogo = ({ id, className }: { id: string; className?: string }) => {
+  const img = BRAND_IMG[id];
+  if (img) {
+    return (
+      <span
+        className={`inline-flex items-center justify-center rounded-lg bg-white/90 p-1.5 ${className || ''}`}
+        title={id}
+      >
+        <img src={img} alt={`${id} logo`} className="h-full w-full object-contain" loading="lazy" />
+      </span>
+    );
+  }
+  const mark = BRAND_WORDMARK[id];
+  if (mark) {
+    return (
+      <span
+        className={`inline-flex items-center justify-center font-black tracking-tight ${className || ''}`}
+        style={{ color: mark.color }}
+      >
+        {mark.text}
+      </span>
+    );
+  }
+  return null;
 };
 
 const ALL_DOCS: Certificate[] = [...CERTIFICATES, ...OTHER_DOCS];
@@ -136,47 +170,14 @@ const SORT_OPTIONS = [
 ];
 
 const EXTERNAL_LINKS = [
-  { label: 'Cisco Networking Academy', url: 'https://skillsforall.com', icon: (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-    </svg>
-  )},
-  { label: 'Microsoft Learn', url: 'https://learn.microsoft.com', icon: (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-      <path d="M18.7 15.3c-1.1 0-2-.9-2-2v-4c0-1.1.9-2 2-2h4v2h-4v4h4v2h-4v4c0 1.1-.9 2-2 2zm-14.6 1.4c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2h-4v2h4v4h-4v4h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v-4h4zM5.5 7.4c0-1.1.9-2 2-2h4v2h-4v4h-4v-4h-4v-2h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v-4h4zM5.5 7.4c0-1.1.9-2 2-2h4v2h-4v4h-4v-4h-4v-2h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v-4h4zM5.5 7.4c0-1.1.9-2 2-2h4v2h-4v4h-4v-4h-4v-2h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v-4h4z"/>
-    </svg>
-  )},
-  { label: 'IBM SkillsBuild', url: 'https://skillsbuild.org', icon: (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-      <path d="M2 4h20v4H2V4zm0 5h20v4H2V9zm0 5h20v4H2v-4zm0 5h20v4H2v-4z"/>
-    </svg>
-  )},
-  { label: 'HP Life', url: 'https://www.hp.com/us-en/life.html', icon: (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8zm-1 13h-2v-6h2v6zm2-16h2v6h-2V7z"/>
-    </svg>
-  )},
-  { label: 'EF SET', url: 'https://www.efset.org', icon: (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93c3.57.27 6.5-3.13 6.5-6.93 0-.62-.08-1.21-.21-1.79L15 9V7c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L15 15v-1c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L9 9v1c0 1.1.9 2 2 2z"/>
-    </svg>
-  )},
-  { label: 'Penn ELP', url: 'https://www.elp.upenn.edu', icon: (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93c3.57.27 6.5-3.13 6.5-6.93 0-.62-.08-1.21-.21-1.79L15 9V7c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L15 15v-1c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L9 9v1c0 1.1.9 2 2 2z"/>
-    </svg>
-  )},
-  { label: '16Personalities', url: 'https://www.16personalities.com', icon: (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93c3.57.27 6.5-3.13 6.5-6.93 0-.62-.08-1.21-.21-1.79L15 9V7c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L15 15v-1c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L9 9v1c0 1.1.9 2 2 2z"/>
-    </svg>
-  )},
-  { label: 'Simplilearn', url: 'https://simpli-web.app.link/e/aaWENDBP75b', icon: (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-      <polyline points="14 2 14 8 20 8"/>
-    </svg>
-  )},
+  { label: 'Cisco Networking Academy', url: 'https://skillsforall.com', logo: 'cisco' },
+  { label: 'Microsoft Learn', url: 'https://learn.microsoft.com', logo: 'microsoft' },
+  { label: 'IBM SkillsBuild', url: 'https://skillsbuild.org', logo: 'ibm' },
+  { label: 'HP Life', url: 'https://www.hp.com/us-en/life.html', logo: 'hp' },
+  { label: 'EF SET', url: 'https://www.efset.org', logo: 'ef' },
+  { label: 'Penn ELP', url: 'https://www.elp.upenn.edu', logo: 'penn' },
+  { label: '16Personalities', url: 'https://www.16personalities.com', logo: '16p' },
+  { label: 'Simplilearn', url: 'https://simpli-web.app.link/e/aaWENDBP75b', logo: 'simplilearn' },
 ];
 
 const COMPANIES = [
@@ -190,75 +191,20 @@ const COMPANIES = [
   { name: 'Simplilearn', logo: 'simplilearn', desc: 'Online bootcamps & certifications for digital economy skills.', category: 'Professional Training' },
 ];
 
-const COMPANY_LOGOS = {
-  cisco: () => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-    </svg>
-  ),
-  microsoft: () => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-      <path d="M18.7 15.3c-1.1 0-2-.9-2-2v-4c0-1.1.9-2 2-2h4v2h-4v4h4v2h-4v4c0 1.1-.9 2-2 2zm-14.6 1.4c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2h-4v2h4v4h-4v4h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v-4h4zM5.5 7.4c0-1.1.9-2 2-2h4v2h-4v4h-4v-4h-4v-2h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v-4h4zM5.5 7.4c0-1.1.9-2 2-2h4v2h-4v4h-4v-4h-4v-2h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v-4h4zM5.5 7.4c0-1.1.9-2 2-2h4v2h-4v4h-4v-4h-4v-2h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v-4h4zM5.5 7.4c0-1.1.9-2 2-2h4v2h-4v4h-4v-4h-4v-2h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v-4h4z"/>
-    </svg>
-  ),
-  ibm: () => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-      <path d="M2 4h20v4H2V4zm0 5h20v4H2V9zm0 5h20v4H2v-4zm0 5h20v4H2v-4z"/>
-    </svg>
-  ),
-  hp: () => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8z"/>
-      <path d="M14 11h-4v4h-2v-4H8V9h4V5h2v4h2v2z" fill="white" />
-    </svg>
-  ),
-  ef: () => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93c3.57.27 6.5-3.13 6.5-6.93 0-.62-.08-1.21-.21-1.79L15 9V7c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L15 15v-1c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L9 9v1c0 1.1.9 2 2 2z"/>
-    </svg>
-  ),
-  penn: () => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93c3.57.27 6.5-3.13 6.5-6.93 0-.62-.08-1.21-.21-1.79L15 9V7c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L15 15v-1c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L9 9v1c0 1.1.9 2 2 2z"/>
-    </svg>
-  ),
-  '16p': () => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93c3.57.27 6.5-3.13 6.5-6.93 0-.62-.08-1.21-.21-1.79L15 9V7c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L15 15v-1c0-1.1-.9-2-2-2v-1.93c-3.57-.27-6.5 3.13-6.5 6.93 0 .62.08 1.21.21 1.79L9 9v1c0 1.1.9 2 2 2z"/>
-    </svg>
-  ),
-  simplilearn: () => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-      <polyline points="14 2 14 8 20 8"/>
-    </svg>
-  ),
-};
 
-function getCompanyLogo(logoId: string) {
-  const Logo = COMPANY_LOGOS[logoId as keyof typeof COMPANY_LOGOS];
-  return Logo ? (
-    <div className="w-12 h-12">
-      <Logo />
-    </div>
-  ) : (
-    <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-white/30">?</div>
-  );
-}
-
-function OwnershipBadge() {
+function OwnershipBadge({ compact = false }: { compact?: boolean }) {
   return (
-    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border"
+    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border w-fit"
       style={{
         color: '#92400e',
         backgroundColor: '#fef3c7',
         borderColor: '#fbbf24',
       }}
+      title="Verificado contra el documento original"
     >
-      <svg viewBox="0 0 24 24" className="w-3 h-3" fill="currentColor">
-        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-      </svg>
+      <IconShieldCheck className="w-3 h-3 shrink-0" />
       Owned by FRANCISCO ANTONIO GARCIA MENOLASCINA
+      {!compact && <span aria-hidden>· Verified holder</span>}
     </span>
   );
 }
@@ -318,11 +264,9 @@ function CertificateCard({
                     <div className="w-8 h-8 border-2 border-neon-cyan/50 border-t-transparent rounded-full animate-spin" />
                   </div>
                 ) : imageError ? (
-                  <div className="absolute inset-0 flex items-center justify-center bg-red-500/10">
-                    <svg viewBox="0 0 24 24" className="w-12 h-12 text-red-400" fill="none" stroke="currentColor" strokeWidth={2}>
-                      <path d="M12 9v3m0 3h.01M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16z" />
-                    </svg>
-                    <p className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[10px] text-red-400 font-bold">Failed to load</p>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-500/10 gap-1">
+                    <IconAlert className="w-10 h-10 text-red-400" />
+                    <p className="text-[10px] text-red-300 font-bold uppercase tracking-wider">Preview failed to load</p>
                   </div>
                 ) : (
                   <img
@@ -410,6 +354,11 @@ function CertificateCard({
               {cert.files.length} files
             </span>
           )}
+        </div>
+
+        {/* Tag de posesión — presente en TODAS las cards */}
+        <div className="mt-2.5">
+          <OwnershipBadge compact />
         </div>
       </div>
     </motion.button>
@@ -521,6 +470,10 @@ function DetailModal({
               </a>
             )}
           </p>
+
+          <div className="mt-3">
+            <OwnershipBadge />
+          </div>
 
           <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-gray-400">
             <span className="flex items-center gap-1.5">
@@ -778,7 +731,7 @@ export default function CertificatesPage() {
       if (category !== 'all' && c.category !== category) return false;
       if (provider !== 'all' && getProviderGroup(c) !== provider) return false;
       if (!q) return true;
-      const hay = `${c.title} ${c.provider} ${c.collection?.name || ''} ${fmtDate(c.date)}`.toLowerCase();
+      const hay = `${c.title} ${c.provider} ${c.collection?.name || ''} ${fmtDate(c.date)} ${c.credentialId || ''} ${c.credentialLabel || ''}`.toLowerCase();
       return hay.includes(q);
     });
 
@@ -894,6 +847,10 @@ export default function CertificatesPage() {
           </div>
 
           <div className="flex items-center justify-center gap-2">
+            <span className="text-[11px] font-black uppercase tracking-widest text-gray-500">
+              Showing {filtered.length} of {ALL_DOCS.length}
+            </span>
+            <span className="text-gray-700">·</span>
             <span className="text-[11px] font-black uppercase tracking-widest text-gray-500">Sort:</span>
             <select
               value={sort}
@@ -920,7 +877,21 @@ export default function CertificatesPage() {
           </motion.div>
         ) : (
           <div className="text-center py-16">
-            <p className="text-gray-500 text-sm">No documents match your search.</p>
+            <IconInfo className="w-10 h-10 text-gray-600 mx-auto mb-3" />
+            <p className="text-gray-400 text-sm font-bold">No documents match your filters.</p>
+            <p className="text-gray-600 text-xs mt-1">
+              {filtered.length} of {ALL_DOCS.length} documents shown
+            </p>
+            <button
+              onClick={() => {
+                setCategory('all');
+                setProvider('all');
+                setQuery('');
+              }}
+              className="mt-4 px-4 py-2 rounded-lg text-xs font-bold border border-white/15 text-gray-300 hover:text-white hover:border-white/40 transition-all cursor-pointer"
+            >
+              Clear all filters
+            </button>
           </div>
         )}
 
@@ -969,7 +940,7 @@ export default function CertificatesPage() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border border-neon-purple/40 text-neon-purple hover:bg-neon-purple/10 transition-all"
               >
-                <span className="w-4 h-4">{l.icon}</span>
+                <BrandLogo id={l.logo} className="w-4 h-4" />
                 {l.label}
               </a>
             ))}
@@ -999,46 +970,7 @@ export default function CertificatesPage() {
               >
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl bg-white/5 border border-white/10">
-                    {c.logo === 'cisco' && (
-                      <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
-                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                      </svg>
-                    )}
-                    {c.logo === 'microsoft' && (
-                      <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
-                        <path d="M18.7 15.3c-1.1 0-2-.9-2-2v-4c0-1.1.9-2 2-2h4v2h-4v4h4v2h-4v4c0 1.1-.9 2-2 2zm-14.6 1.4c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2h-4v2h4v4h-4v4h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v-4h4zM5.5 7.4c0-1.1.9-2 2-2h4v2h-4v4h-4v-4h-4v-2h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4v-2h4v-4h-4v4h-4zm13 1.1c-1.1 0-2-.9-2-2v-4c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-4zm0-10.5c-1.1 0-2-.9-2-2h-4c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h4c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2z" />
-                      </svg>
-                    )}
-                    {c.logo === 'ibm' && (
-                      <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
-                        <text x="2" y="18" fontSize="16" fontWeight="bold">IBM</text>
-                      </svg>
-                    )}
-                    {c.logo === 'hp' && (
-                      <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
-                        <text x="4" y="18" fontSize="14" fontWeight="bold">HP</text>
-                      </svg>
-                    )}
-                    {c.logo === 'ef' && (
-                      <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
-                        <text x="4" y="18" fontSize="14" fontWeight="bold">EF</text>
-                      </svg>
-                    )}
-                    {c.logo === 'penn' && (
-                      <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
-                        <text x="4" y="18" fontSize="14" fontWeight="bold">Penn</text>
-                      </svg>
-                    )}
-                    {c.logo === '16p' && (
-                      <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
-                        <text x="2" y="18" fontSize="16" fontWeight="bold">16P</text>
-                      </svg>
-                    )}
-                    {c.logo === 'simplilearn' && (
-                      <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
-                        <text x="2" y="18" fontSize="14" fontWeight="bold">SL</text>
-                      </svg>
-                    )}
+                  <BrandLogo id={c.logo} className="w-10 h-10 text-sm" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="font-header font-bold text-white truncate">{c.name}</h4>
@@ -1058,12 +990,7 @@ export default function CertificatesPage() {
           className="mt-10 p-5 rounded-2xl border border-white/10 bg-white/[0.02]"
         >
           <div className="flex gap-3">
-            <svg viewBox="0 0 24 24" className="w-5 h-5 text-neon-pink shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth={2}>
-              <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
-              <path d="M12 6v6l4 2" />
-              <path d="M9 17c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2v-3.5" />
-              <path d="M9 12h6" />
-            </svg>
+            <IconScale className="w-5 h-5 text-neon-pink shrink-0 mt-0.5" />
             <div>
               <p className="text-sm font-bold text-white">Fair use — honest portfolio display</p>
               <p className="mt-1 text-xs text-gray-400 leading-relaxed">
