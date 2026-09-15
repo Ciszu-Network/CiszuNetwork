@@ -118,9 +118,8 @@ Thumbs.db
 **/.next/cache
 
 # Misc
-
-downloads
-**/downloads/**
+# ⚠️ NUNCA ignorar "downloads": src/app/downloads/ es una PÁGINA de Next.js
+# (ignorarla hace que /downloads dé 404 en producción).
 archives
 **/archives/**
 _.rar
@@ -255,9 +254,8 @@ Thumbs.db
 **/.next/cache
 
 # Misc
-
-downloads
-**/downloads/**
+# ⚠️ NUNCA ignorar "downloads": src/app/downloads/ es una PÁGINA de Next.js
+# (ignorarla hace que /downloads dé 404 en producción).
 archives
 **/archives/**
 _.rar
