@@ -3,13 +3,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { SmartImage, useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, LANG_BLOCKED_MESSAGE } from '@ciszu/ui';
-import { NAV_MAIN, SOCIALS, I, ALL_PAGES, SEARCH_INDEX, type NavGroup, type NavItem } from '@/config/navigation';
+import { SmartImage, useZoomStatus, publishHeaderMode, useToast } from '@ciszu/ui';
+import { NAV_MAIN, type NavGroup } from '@/config/navigation';
 import { useAppStore } from '@/store';
 import { getGuestName } from '@/lib/guest';
+import { getDict, parseLang } from '@/lib/i18n';
 import QuickDocks from '@/components/molecules/QuickDocks';
 
-const infoItems = (NAV_MAIN.find(n => 'items' in n && n.name === 'Info') as NavGroup)?.items || [];
+const infoItems = (NAV_MAIN.find(n => 'items' in n && n.name === 'Information') as NavGroup)?.items || [];
 
 const navLinkCls = (active: boolean) =>
   `relative group flex items-center gap-0 hover:gap-1.5 px-3 py-1.5 rounded-lg font-header font-bold text-sm transition-all duration-300 cursor-pointer border hover:-translate-y-0.5 active:scale-95 ${
@@ -21,7 +22,7 @@ const navLinkCls = (active: boolean) =>
 const navLabelCls = (active: boolean) =>
   `max-w-0 overflow-hidden transition-all duration-300 whitespace-nowrap group-hover:max-w-[110px] ${active ? 'max-w-[110px]' : ''}`;
 
-export default function InformationPage({ lang, dict }: { lang: string; dict: Record<string, any> }) {
+export default function InformationPage() {
   const pathname = usePathname();
   const router = useRouter();
   const { isMenuOpen, setIsMenuOpen, theme, setTheme, language, setLanguage, searchQuery, setSearchQuery, sidebarView, setSidebarView } = useAppStore();
@@ -29,8 +30,8 @@ export default function InformationPage({ lang, dict }: { lang: string; dict: Re
   const [scrolled, setScrolled] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [isDark, setIsDark] = useState(true);
   const [guestName, setGuestName] = useState('');
+  const [dict, setDict] = useState(() => getDict('es-latam'));
   const firstRender = useRef(true);
 
   const zoom = useZoomStatus();
@@ -64,9 +65,15 @@ export default function InformationPage({ lang, dict }: { lang: string; dict: Re
     setIsNavigating(false);
   }, [pathname]);
 
+  useEffect(() => {
+    const cookie = document.cookie.split('; ').find(row => row.startsWith('ciszu_lang='));
+    const lang = parseLang(cookie?.split('=')[1]);
+    setDict(getDict(lang));
+  }, [language]);
+
   const toggleTheme = () => {
     const next = theme === 'dark' ? 'light' : 'dark';
-    setTheme(next);
+    setTheme(next, true);
     toast(next === 'dark' ? 'Modo oscuro activado' : 'Modo claro activado', 'info');
   };
 

@@ -3,8 +3,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Icon, useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE } from '@ciszu/ui';
-import { INVITE_URL, LOGO_ISOTIPO, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
+import { Icon, useZoomStatus, publishHeaderMode, useToast } from '@ciszu/ui';
+import { getDict, parseLang } from '@/lib/i18n';
 import { useAppStore } from '@/store';
 import QuickDocks from '@/components/molecules/QuickDocks';
 
@@ -18,13 +18,14 @@ const INFO_ITEMS: { name: string; href: string; icon: string; key: string; desc:
   { name: 'Support', href: '/support', icon: 'support', key: 'support', desc: 'Soporte técnico' },
 ];
 
-export default function InformationPage({ lang, dict }: { lang: Lang; dict: Dict }) {
+export default function InformationPage() {
   const pathname = usePathname();
-  const { isMenuOpen, setIsMenuOpen, user, setUser } = useAppStore();
+  const { isMenuOpen, setIsMenuOpen } = useAppStore();
   const { toast } = useToast();
   const [scrolled, setScrolled] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [dict, setDict] = useState(() => getDict('es-latam'));
   const firstRender = useRef(true);
 
   const zoom = useZoomStatus();
@@ -56,6 +57,12 @@ export default function InformationPage({ lang, dict }: { lang: Lang; dict: Dict
     }
     setIsNavigating(false);
   }, [pathname]);
+
+  useEffect(() => {
+    const cookie = document.cookie.split('; ').find(row => row.startsWith('ciszubot_lang='));
+    const lang = parseLang(cookie?.split('=')[1]);
+    setDict(getDict(lang));
+  }, []);
 
   const isActive = (href: string) => pathname === href;
 
@@ -101,7 +108,7 @@ export default function InformationPage({ lang, dict }: { lang: Lang; dict: Dict
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-6xl font-header font-black text-neon-blue uppercase tracking-tighter mb-4">
-              Information
+              {dict.nav.information || 'Information'}
             </h1>
             <p className="text-gray-400 text-sm max-w-xl mx-auto">
               Explora las diferentes secciones de CiszuBot.
