@@ -31,6 +31,7 @@ const findMonorepoRoot = (startDir) => {
 };
 
 const SCRIPT_DIR = path.resolve(__dirname);
+const FORCE = process.argv.includes('--force');
 const MONOREPO_ROOT = findMonorepoRoot(SCRIPT_DIR);
 const CERTIFICATES_DIR = path.join(MONOREPO_ROOT, 'shared/docs/certificados');
 const PREVIEWS_DIR = path.join(CERTIFICATES_DIR, 'previews');
@@ -66,23 +67,77 @@ const generateThumbnail = async (filePath, outputPath) => {
   }
 };
 
-/** Renderiza la primera página de un PDF a PNG (thubnail real). */
+// Fuentes estándar y cMaps empaquetados con pdfjs-dist. SIN standardFontDataUrl,
+// los PDFs que usan fuentes estándar (Helvetica, Times, etc.) renderizan SIN
+// TEXTO — era la causa de previews de SkillsBuild/Cisco sin contenido legible.
+const toPosix = (p) => p.replace(/\\/g, '/');
+const FONTS_DIR = path.join(SCRIPT_DIR, '../node_modules/pdfjs-dist/standard_fonts');
+const CMAPS_DIR = path.join(SCRIPT_DIR, '../node_modules/pdfjs-dist/cmaps');
+const RENDER_SCALE = 2; // alta DPI para texto nítido; sharp reduce después
+const PREVIEW_MAX_WIDTH = 900;
+const PREVIEW_JPEG_QUALITY = 82;
+
+/** Renderiza la primera página de un PDF a JPG (thumbnail real, con texto).
+ *  - Resuelve fuentes estándar y cMaps desde node_modules (texto siempre visible).
+ *  - Fondo blanco explícito (canvas transparente haría ilegibles PDFs con alpha).
+ *  - Detecta páginas "en blanco" (sin tinta) para no publicar previews vacías.
+ */
 const rasterizePdfPage1 = async (pdfPath, outputPath) => {
   try {
     const data = new Uint8Array(fs.readFileSync(pdfPath));
-    const doc = await pdfjs.getDocument({ data }).promise;
+    const doc = await pdfjs.getDocument({
+      data,
+      standardFontDataUrl: fs.existsSync(FONTS_DIR) ? `${toPosix(FONTS_DIR)}/` : undefined,
+      cMapUrl: fs.existsSync(CMAPS_DIR) ? `${toPosix(CMAPS_DIR)}/` : undefined,
+      cMapPacked: true,
+      isEvalSupported: false,
+      useSystemFonts: false,
+    }).promise;
     const page = await doc.getPage(1);
-    const viewport = page.getViewport({ scale: 1.2 });
+    const viewport = page.getViewport({ scale: RENDER_SCALE });
     const canvas = createCanvas(Math.ceil(viewport.width), Math.ceil(viewport.height));
     const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     await page.render({ canvasContext: ctx, viewport }).promise;
-    fs.writeFileSync(outputPath, canvas.toBuffer('image/png'));
+
+    // Chequeo de contenido: proporción de píxeles "con tinta" (no blanco).
+    const { data: pixels } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let inked = 0;
+    const total = canvas.width * canvas.height;
+    for (let i = 0; i < pixels.length; i += 4) {
+      // blanco puro/ cercano cuenta como fondo; cualquier otra cosa es contenido
+      if (pixels[i] < 245 || pixels[i + 1] < 245 || pixels[i + 2] < 245) inked++;
+    }
+    const inkRatio = inked / total;
+    if (inkRatio < 0.005) {
+      console.warn(`  ⚠️  ${path.basename(pdfPath)}: página casi en blanco (${(inkRatio * 100).toFixed(2)}% tinta) — posible PDF escaneado vacío o error de render`);
+    }
+
+    const pngBuffer = canvas.toBuffer('image/png');
+    await sharp(pngBuffer)
+      .resize({
+        width: PREVIEW_MAX_WIDTH,
+        height: Math.round(PREVIEW_MAX_WIDTH * 1.4),
+        fit: 'inside',
+        withoutEnlargement: true,
+      })
+      .jpeg({ quality: PREVIEW_JPEG_QUALITY, mozjpeg: true })
+      .toFile(outputPath);
     return true;
   } catch (error) {
     console.error(`  Error rasterizando ${path.basename(pdfPath)}:`, error.message);
     return false;
   }
 };
+
+/** Supabase Storage rechaza claves con caracteres no-ASCII (InvalidKey).
+ *  Los PREVIEWS usan siempre nombre ASCII-seguro (sin acentos); los archivos
+ *  fuente conservan su nombre original. */
+const asciiSafeName = (name) =>
+  name
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
 
 /** Normaliza un nombre para comparar duplicados ignorando acentos y mayúsculas. */
 const normalizeName = (fileName) =>
@@ -228,17 +283,19 @@ const findArrayEnd = (lines, startIdx) => {
 };
 
 /** Resuelve el mejor preview existente para un archivo dado.
- *  Orden de candidatos: <base>-preview.png > <base>-preview.jpg >
- *  <base>-preview-preview.jpg > <nombre completo>-preview.* (p.ej. 'dato (35).JPG-preview.jpg').
+ *  Orden de candidatos: <base>-preview.jpg (formato actual) > <base>-preview.png
+ *  (legacy) > <base>-preview-preview.jpg > <nombre completo>-preview.*
  *  Devuelve SOLO el nombre de archivo (los previews viven siempre en
  *  shared/docs/certificados/previews/). */
-const resolvePreview = (baseName, fullName) => {
+const resolvePreview = (rawBaseName, rawFullName) => {
+  const baseName = asciiSafeName(rawBaseName);
+  const fullName = asciiSafeName(rawFullName);
   const candidates = [
-    `${baseName}-preview.png`,
     `${baseName}-preview.jpg`,
+    `${baseName}-preview.png`,
     `${baseName}-preview-preview.jpg`,
-    `${fullName}-preview.png`,
     `${fullName}-preview.jpg`,
+    `${fullName}-preview.png`,
   ];
   for (const c of candidates) {
     if (fs.existsSync(path.join(PREVIEWS_DIR, c))) {
@@ -287,8 +344,10 @@ const syncCertificates = async () => {
   const files = await scanDir(CERTIFICATES_DIR);
   console.log(`   Found ${files.length} document(s)`);
 
-  // 0) Limpiar previews viejas para regenerarlas todas desde cero
-  if (fs.existsSync(PREVIEWS_DIR)) {
+  // 0) Con --force: limpiar previews viejas para regenerarlas todas desde cero.
+  //    Sin --force el script es idempotente: reutiliza previews existentes y
+  //    solo genera las que falten.
+  if (FORCE && fs.existsSync(PREVIEWS_DIR)) {
     const oldPreviews = fs.readdirSync(PREVIEWS_DIR);
     for (const old of oldPreviews) {
       fs.unlinkSync(path.join(PREVIEWS_DIR, old));
@@ -296,16 +355,40 @@ const syncCertificates = async () => {
     console.log(`   🗑️  Cleaned ${oldPreviews.length} old preview(s)`);
   }
 
-  // 1) Genera previews REALES para TODOS los PDFs (página 1 en PNG)
+  // 1) Genera previews REALES para TODOS los PDFs (página 1 en JPG con texto)
+  //    y para imágenes (resize). Sin esto, la limpieza del paso 0 dejaría sin
+  //    preview a los archivos que ya existen en certificates.ts.
   let rasterized = 0;
   for (const file of files) {
-    if (file.ext !== '.pdf') continue;
-    const baseName = path.basename(file.name, file.ext);
-    const thumbPath = path.join(PREVIEWS_DIR, `${baseName}-preview.png`);
+    const baseName = asciiSafeName(path.basename(file.name, file.ext));
+    const thumbPath = path.join(PREVIEWS_DIR, `${baseName}-preview.jpg`);
+    if (file.ext !== '.pdf') {
+      if (['.jpg', '.jpeg', '.png', '.webp'].includes(file.ext) && !fs.existsSync(thumbPath)) {
+        console.log(`   Generating image preview for: ${file.name}`);
+        if (await generateThumbnail(file.path, thumbPath)) rasterized++;
+      }
+      continue;
+    }
+    if (!FORCE && fs.existsSync(thumbPath)) continue; // idempotente
     console.log(`   Generating preview for: ${file.name}`);
     if (await rasterizePdfPage1(file.path, thumbPath)) rasterized++;
   }
-  if (rasterized > 0) console.log(`   ✅ ${rasterized} PDF preview(s) generated`);
+  if (rasterized > 0) console.log(`   ✅ ${rasterized} preview(s) generated`);
+
+  // 1b) Limpieza de previews obsoletas: nombres que ya no corresponden a
+  //     ningún archivo fuente (p.ej. con acentos que Supabase rechaza).
+  const validPreviewNames = new Set(
+    files.map((f) => `${asciiSafeName(path.basename(f.name, f.ext))}-preview.jpg`),
+  );
+  let removedStale = 0;
+  for (const p of fs.readdirSync(PREVIEWS_DIR)) {
+    if (!validPreviewNames.has(p)) {
+      fs.unlinkSync(path.join(PREVIEWS_DIR, p));
+      console.log(`   🗑️  Removed stale preview: ${p}`);
+      removedStale++;
+    }
+  }
+  if (removedStale > 0) console.log(`   🧹 ${removedStale} stale preview(s) removed`);
 
   // 2) Manifiesto de previews SIEMPRE se regenera (es la fuente de thumbnails).
   writePreviewManifest(files);
@@ -345,7 +428,7 @@ const syncCertificates = async () => {
       entry.id = `${entry.id}-${suffix}`;
     }
 
-    const baseName = path.basename(file.name, file.ext);
+    const baseName = asciiSafeName(path.basename(file.name, file.ext));
     const preview = resolvePreview(baseName, file.name);
     if (!preview) {
       const thumbPath = path.join(PREVIEWS_DIR, `${baseName}-preview.jpg`);
