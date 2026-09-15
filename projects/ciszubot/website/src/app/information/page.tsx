@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Icon, useZoomStatus, publishHeaderMode, useToast } from '@ciszu/ui';
+import { Icon, useZoomStatus, useToast } from '@ciszu/ui';
 import { getDict, parseLang } from '@/lib/i18n';
 import { useAppStore } from '@/store';
 import QuickDocks from '@/components/molecules/QuickDocks';
@@ -32,15 +32,6 @@ export default function InformationPage() {
   const isZoomWarning = !zoom.dismissed && zoom.status !== 'normal';
 
   const floating = scrolled && !isMenuOpen && !isZoomWarning;
-
-  const prevHeaderMode = useRef<'island' | 'full' | null>(null);
-  useEffect(() => {
-    const mode = floating ? 'island' : 'full';
-    if (prevHeaderMode.current !== mode) {
-      prevHeaderMode.current = mode;
-      publishHeaderMode(mode);
-    }
-  }, [floating]);
 
   useEffect(() => {
     setMounted(true);
@@ -75,34 +66,6 @@ export default function InformationPage() {
           <path d="M13 5l7 7-7 7M5 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
-
-      <nav className={`fixed z-50 transition-all duration-500 ease-out ${
-        floating ? 'top-3 inset-x-3 rounded-2xl bg-bg/60 backdrop-blur-2xl border border-border/80 shadow-[0_10px_40px_rgba(0,0,0,0.55)]' : `top-0 left-0 w-full bg-bg/85 backdrop-blur-2xl border-b border-border`
-      }`}>
-        <div className={`${floating ? 'hidden' : ''} absolute bottom-0 left-0 w-full h-[2px] bg-[length:200%_auto] animate-gradient-x transition-colors duration-500 bg-gradient-to-r from-neon-blue via-neon-purple to-neon-blue shadow-[0_0_10px_rgba(0,212,255,0.3)]`} />
-        <div className="max-w-screen-xl mx-auto px-4">
-          <div className={`flex items-center ${floating ? 'h-14' : 'h-[64px]'} gap-3`}>
-            <Link href="/" className="flex items-center gap-2.5 shrink-0 group cursor-pointer">
-              <Icon name="home" size={28} className="text-neon-blue group-hover:drop-shadow-[0_0_15px_rgba(0,212,255,0.8)] transition-all duration-300" />
-              <span className="hidden lg:block text-lg font-header font-black text-neon-blue group-hover:drop-shadow-[0_0_15px_rgba(0,212,255,0.8)] transition-all duration-300">CiszuBot</span>
-            </Link>
-            <div className="w-px h-7 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-1 shrink-0" />
-            <div className="flex items-center gap-1 flex-1 overflow-visible">
-              {INFO_ITEMS.map((item) => {
-                const active = isActive(item.href);
-                return (
-                  <Link key={item.href} href={item.href} className={`relative group flex items-center gap-0 hover:gap-1.5 px-3 py-1.5 rounded-lg font-header font-bold text-sm transition-all duration-300 cursor-pointer border hover:-translate-y-0.5 active:scale-95 ${
-                    active ? 'border-neon-blue bg-neon-blue/15 shadow-[0_0_15px_rgba(0,212,255,0.3)] text-neon-blue gap-1.5 -translate-y-0.5 hover:text-ink' : 'border-transparent text-muted hover:text-neon-blue hover:border-neon-blue/40 hover:bg-neon-blue/10 hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]'
-                  }`}>
-                    <span className="shrink-0"><Icon name={item.icon} size={16} /></span>
-                    <span className="max-w-0 overflow-hidden transition-all duration-300 group-hover:max-w-[100px] whitespace-nowrap">{dict.nav[item.key as keyof typeof dict.nav] || item.name}</span>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </nav>
 
       <div className="min-h-screen pt-24 pb-20 px-4">
         <div className="max-w-4xl mx-auto">

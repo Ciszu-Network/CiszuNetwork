@@ -238,16 +238,20 @@ export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<strin
   // Pill active link: REVEAL text ONLY on hover/active.
   const navLinkCls = (href: string) => {
     const active = isActive(href);
-    return `relative group flex items-center gap-0 hover:gap-1.5 px-3 py-1.5 rounded-lg font-header font-bold text-sm transition-all duration-300 cursor-pointer border hover:-translate-y-0.5 active:scale-95 ${
+    return `relative group flex items-center justify-center px-3 py-1.5 rounded-lg font-header font-bold text-sm transition-all duration-300 cursor-pointer border hover:-translate-y-0.5 active:scale-95 ${
       active
-        ? 'border-brand-light bg-brand-light/20 shadow-[0_0_15px_rgba(58,107,240,0.3)] text-brand-light gap-1.5 -translate-y-0.5 hover:text-white'
+        ? 'border-brand-light bg-brand-light/20 shadow-[0_0_15px_rgba(58,107,240,0.3)] text-brand-light hover:text-white'
         : 'border-transparent text-white hover:border-brand-light hover:bg-brand-light/15 hover:text-brand-light hover:shadow-[0_0_10px_rgba(58,107,240,0.2)]'
     }`;
   };
 
   const navLabelCls = (href: string) => {
     const active = isActive(href);
-    return `max-w-0 overflow-hidden transition-all duration-300 group-hover:max-w-[110px] ${active ? 'max-w-[110px]' : ''}`;
+    return `whitespace-nowrap transition-all duration-300 ${
+      active
+        ? 'opacity-100 ml-1.5 inline'
+        : 'opacity-0 group-hover:opacity-100 absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-surface border border-white/10 rounded-lg text-xs font-bold pointer-events-none z-50 shadow-xl'
+    }`;
   };
 
   const toggleSearch = (e?: any) => {

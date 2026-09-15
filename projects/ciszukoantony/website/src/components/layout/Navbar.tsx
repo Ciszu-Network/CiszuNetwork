@@ -177,14 +177,18 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
 
   // Pill nav: reveal label only on hover/active (muzicmania pattern)
   const navLinkCls = (active: boolean) =>
-    `relative group flex items-center gap-0 hover:gap-1.5 px-3 py-1.5 rounded-lg font-header font-bold text-sm transition-all duration-300 cursor-pointer border hover:-translate-y-0.5 active:scale-95 ${
+    `relative group flex items-center justify-center px-3 py-1.5 rounded-lg font-header font-bold text-sm transition-all duration-300 cursor-pointer border hover:-translate-y-0.5 active:scale-95 ${
       active
-        ? 'border-neon-blue bg-neon-blue/20 shadow-[0_0_15px_rgba(61,106,223,0.4)] text-neon-blue gap-1.5 -translate-y-0.5 hover:text-white'
+        ? 'border-neon-blue bg-neon-blue/20 shadow-[0_0_15px_rgba(61,106,223,0.4)] text-neon-blue hover:text-white'
         : 'border-transparent text-white hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(61,106,223,0.25)]'
     }`;
 
   const navLabelCls = (active: boolean) =>
-    `max-w-0 overflow-hidden transition-all duration-300 whitespace-nowrap group-hover:max-w-[110px] ${active ? 'max-w-[110px]' : ''}`;
+    `whitespace-nowrap transition-all duration-300 ${
+      active
+        ? 'opacity-100 ml-1.5 inline'
+        : 'opacity-0 group-hover:opacity-100 absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-surface border border-white/10 rounded-lg text-xs font-bold pointer-events-none z-50 shadow-xl'
+    }`;
 
   const toggleSearch = (e?: React.MouseEvent) => {
     if (e) { e.preventDefault(); e.stopPropagation(); }
