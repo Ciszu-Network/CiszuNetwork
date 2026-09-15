@@ -49,6 +49,15 @@ node website/scripts/verify-previews.js   # valida el manifiesto completo end-to
 node website/scripts/upload-brand-logos.js
 ```
 
+## Trampa conocida: `.vercelignore`
+
+Tanto el `.vercelignore` del repo como el de `website/` tuvieron el patrón
+`**/downloads/**` (pensado para instaladores binarios que no existen). Eso impedía
+que Vercel recibiera `src/app/downloads/page.tsx`: la ruta nunca se compilaba y
+`/downloads` daba 404 en producción aunque el build local funcionara. Si una página
+desaparece del build de Vercel pero existe localmente, **revisa `.vercelignore`** y
+verifica la tabla `Route (app)` del build (API: `GET /v2/deployments/{id}/events`).
+
 ## Verificación end-to-end (checklist)
 
 - [ ] `sync:certificates` corre sin errores y el manifiesto tiene 1 entrada por documento.
