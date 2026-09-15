@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { SmartImage, useZoomStatus, publishHeaderMode, useToast } from '@ciszu/ui';
+import { usePathname } from 'next/navigation';
+import { SmartImage, useZoomStatus, useToast } from '@ciszu/ui';
 import { NAV_MAIN, type NavGroup } from '@/config/navigation';
 import { useAppStore } from '@/store';
 import { getGuestName } from '@/lib/guest';
@@ -12,20 +12,9 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 
 const infoItems = (NAV_MAIN.find(n => 'items' in n && n.name === 'Information') as NavGroup)?.items || [];
 
-const navLinkCls = (active: boolean) =>
-  `relative group flex items-center gap-0 hover:gap-1.5 px-3 py-1.5 rounded-lg font-header font-bold text-sm transition-all duration-300 cursor-pointer border hover:-translate-y-0.5 active:scale-95 ${
-    active
-      ? 'border-neon-blue bg-neon-blue/20 shadow-[0_0_15px_rgba(61,106,223,0.4)] text-neon-blue gap-1.5 -translate-y-0.5 hover:text-white'
-      : 'border-transparent text-white hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(61,106,223,0.25)]'
-  }`;
-
-const navLabelCls = (active: boolean) =>
-  `max-w-0 overflow-hidden transition-all duration-300 whitespace-nowrap group-hover:max-w-[110px] ${active ? 'max-w-[110px]' : ''}`;
-
 export default function InformationPage() {
   const pathname = usePathname();
-  const router = useRouter();
-  const { isMenuOpen, setIsMenuOpen, theme, setTheme, language, setLanguage, searchQuery, setSearchQuery, sidebarView, setSidebarView } = useAppStore();
+  const { isMenuOpen, setIsMenuOpen, theme, setTheme, language, setLanguage } = useAppStore();
   const { toast } = useToast();
   const [scrolled, setScrolled] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
@@ -38,15 +27,6 @@ export default function InformationPage() {
   const isZoomWarning = !zoom.dismissed && zoom.status !== 'normal';
 
   const floating = scrolled && !isMenuOpen && !isZoomWarning;
-
-  const prevHeaderMode = useRef<'island' | 'full' | null>(null);
-  useEffect(() => {
-    const mode = floating ? 'island' : 'full';
-    if (prevHeaderMode.current !== mode) {
-      prevHeaderMode.current = mode;
-      publishHeaderMode(mode);
-    }
-  }, [floating]);
 
   useEffect(() => {
     setMounted(true);
@@ -71,12 +51,6 @@ export default function InformationPage() {
     setDict(getDict(lang));
   }, [language]);
 
-  const toggleTheme = () => {
-    const next = theme === 'dark' ? 'light' : 'dark';
-    setTheme(next, true);
-    toast(next === 'dark' ? 'Modo oscuro activado' : 'Modo claro activado', 'info');
-  };
-
   const isActive = (href: string) => pathname === href;
 
   return (
@@ -88,32 +62,6 @@ export default function InformationPage() {
           <path d="M13 5l7 7-7 7M5 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
-
-      <nav className={`fixed z-50 transition-all duration-500 ease-out ${
-        floating ? 'top-3 inset-x-3 rounded-2xl bg-black/60 backdrop-blur-2xl border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.6)]' : `top-0 left-0 w-full ${scrolled ? 'bg-black/92 backdrop-blur-2xl border-b border-white/10' : 'bg-transparent'}`
-      }`}>
-        <div className={`${floating ? 'hidden' : ''} absolute bottom-0 left-0 w-full h-[2px] animate-gradient-x bg-[length:200%_auto] bg-gradient-to-r from-neon-blue via-neon-purple to-neon-blue shadow-[0_0_10px_rgba(61,106,223,0.3)]`} />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className={`flex items-center justify-between ${floating ? 'h-14' : 'h-16'} gap-3`}>
-            <Link href="/" className="flex items-center gap-2 group shrink-0 active:scale-95 transition-all duration-300">
-              <SmartImage src="projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png" alt="Ciszuko" width={28} height={25} className="drop-shadow-brand group-hover:drop-shadow-[0_0_15px_rgba(61,106,223,0.8)] transition-all duration-300" />
-              <SmartImage src="projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png" alt="Ciszuko Antony" width={120} height={28} className="hidden sm:block group-hover:drop-shadow-[0_0_15px_rgba(61,106,223,0.8)] transition-all duration-300" />
-            </Link>
-            <div className="w-px h-7 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-1 shrink-0 hidden md:block" />
-            <div className="flex items-center gap-1 flex-1 overflow-visible min-w-0">
-              {infoItems.map((item) => {
-                const active = isActive(item.href);
-                return (
-                  <Link key={item.href} href={item.href} className={`${navLinkCls(active)} ${active ? 'flex' : 'hidden min-[300px]:flex'}`}>
-                    <span className="opacity-80 shrink-0">{item.icon}</span>
-                    <span className={navLabelCls(active)}>{item.name}</span>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </nav>
 
       <div className="min-h-screen pt-24 pb-20 px-4">
         <div className="max-w-4xl mx-auto">
