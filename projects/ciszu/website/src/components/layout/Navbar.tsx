@@ -79,6 +79,7 @@ const NAV_ITEMS: NavEntry[] = [
     icon: <Info className="w-4 h-4" />,
     keywords: ['about', 'team', 'faq', 'documentation', 'help', 'contact', 'support', 'info', 'about us'],
     links: [
+      { name: 'Information', href: '/information', icon: <Info className="w-4 h-4" /> },
       { name: 'About', href: '/about', icon: <Info className="w-4 h-4" /> },
       { name: 'Team', href: '/team', icon: <Users className="w-4 h-4" /> },
       { name: 'FAQ', href: '/faq', icon: <HelpCircle className="w-4 h-4" /> },
@@ -386,7 +387,9 @@ export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<strin
                       )}
                       {isOpen && (
                         <div className="absolute top-full left-0 pt-2 w-56 z-50 animate-fade-in-down origin-top drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)]">
-                          <div className="bg-[#070710]/98 backdrop-blur-2xl border border-white/10 rounded-xl py-2 shadow-2xl">
+                          <div className="bg-[#0a0a14]/98 backdrop-blur-2xl border border-white/10 rounded-xl py-2 shadow-2xl">
+                            <div className="px-4 py-2 text-xs font-black text-brand-light/80 uppercase tracking-widest">{item.name}</div>
+                            <div className="h-px bg-white/10 mx-2" />
                             {item.links.map((sub) => (
                               <Link
                                 key={sub.href}

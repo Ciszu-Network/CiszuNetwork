@@ -319,19 +319,21 @@ export const NavbarContent = () => {
                   <span className={navLabelCls('/information')}>Information</span>
                   {I.chevron(isInfoOpen)}
                 </Link>
-                {isInfoOpen && (
-                  <div className="absolute top-full left-0 pt-2 w-56 z-50 animate-fade-in-down origin-top drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)]">
-                    <div className="bg-[#070710]/98 backdrop-blur-2xl border border-white/10 rounded-xl py-2 shadow-2xl">
-                      {INFO_LINKS.map((s) => (
-                        <Link key={s.name} href={s.href}
-                          className={`flex items-center gap-3 px-4 py-2 text-sm font-header font-bold transition-all cursor-pointer ${isActive(s.href) ? 'text-neon-blue bg-neon-blue/5 hover:text-white' : 'text-white hover:text-neon-blue hover:bg-white/5'}`}
-                        >
-                          <span className="opacity-70">{s.icon}</span>{s.name}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                 {isInfoOpen && (
+                   <div className="absolute top-full left-0 pt-2 w-56 z-50 animate-fade-in-down origin-top drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)]">
+                     <div className="bg-[#0a0a14]/98 backdrop-blur-2xl border border-white/10 rounded-xl py-2 shadow-2xl">
+                       <div className="px-4 py-2 text-xs font-black text-neon-blue/80 uppercase tracking-widest">Information</div>
+                       <div className="h-px bg-white/10 mx-2" />
+                       {INFO_LINKS.map((s) => (
+                         <Link key={s.name} href={s.href}
+                           className={`flex items-center gap-3 px-4 py-2 text-sm font-header font-bold transition-all cursor-pointer ${isActive(s.href) ? 'text-neon-blue bg-neon-blue/5 hover:text-white' : 'text-white hover:text-neon-blue hover:bg-white/5'}`}
+                         >
+                           <span className="opacity-70">{s.icon}</span>{s.name}
+                         </Link>
+                       ))}
+                     </div>
+                   </div>
+                 )}
               </div>
             </div>
 

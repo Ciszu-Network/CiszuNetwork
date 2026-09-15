@@ -290,7 +290,9 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
                        )}
                       {infoOpen && (
                         <div className="absolute top-full left-0 pt-2 w-56 z-50 animate-fade-in-down origin-top drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)]">
-                          <div className="bg-[#070712]/95 backdrop-blur-2xl border border-white/10 rounded-xl py-2 shadow-2xl">
+                          <div className="bg-[#0a0a14]/98 backdrop-blur-2xl border border-white/10 rounded-xl py-2 shadow-2xl">
+                            <div className="px-4 py-2 text-xs font-black text-neon-blue/80 uppercase tracking-widest">{group.name}</div>
+                            <div className="h-px bg-white/10 mx-2" />
                             {group.items.map((sub) => (
                               <Link key={sub.href} href={sub.href} onClick={() => setInfoOpen(false)}
                                 className={`flex items-center gap-3 px-4 py-2 text-sm font-header font-bold transition-all cursor-pointer ${

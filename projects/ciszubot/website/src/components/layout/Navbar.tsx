@@ -13,7 +13,7 @@ import PreferencesPanel from '@/components/layout/PreferencesPanel';
 import { PreferencesModal } from '@ciszu/ui';
 import { INVITE_URL, LOGO_ISOTIPO, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
 
-const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'stats' | 'support' | 'downloads' | 'feedback' | 'changelog' | 'reviews' | 'leaderboard' | 'forum' | 'contact' | 'documentation' | 'about' | 'team' | 'help' | 'donate' | 'information'; icon: string }[] = [
+const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'stats' | 'support' | 'downloads' | 'feedback' | 'changelog' | 'reviews' | 'leaderboard' | 'forum' | 'contact' | 'documentation' | 'about' | 'team' | 'help' | 'donate'; icon: string }[] = [
   { href: '/', key: 'home', icon: 'home' },
   { href: '/commands', key: 'commands', icon: 'gamepad' },
   { href: '/stats', key: 'stats', icon: 'chart-bar' },
@@ -26,10 +26,10 @@ const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'stats' | 'support' 
   { href: '/downloads', key: 'downloads', icon: 'download' },
   { href: '/feedback', key: 'feedback', icon: 'message' },
   { href: '/donate', key: 'donate', icon: 'heart' },
-  { href: '/information', key: 'information', icon: 'info' },
 ];
 
-const INFO_PAGES: { href: string; key: 'about' | 'team' | 'faq' | 'documentation' | 'help' | 'contact' | 'support'; icon: string }[] = [
+const INFO_PAGES: { href: string; key: 'information' | 'about' | 'team' | 'faq' | 'documentation' | 'help' | 'contact' | 'support'; icon: string }[] = [
+  { href: '/information', key: 'information', icon: 'info' },
   { href: '/about', key: 'about', icon: 'info' },
   { href: '/team', key: 'team', icon: 'users' },
   { href: '/faq', key: 'faq', icon: 'help' },
@@ -434,6 +434,8 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
               </Link>                {openDropdown === 'Information' && (
                 <div className="absolute top-full left-0 pt-2 w-56 z-50 animate-fade-in-down origin-top drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)]">
                   <div className="bg-[#0a0a14]/98 backdrop-blur-2xl border border-border rounded-xl py-2 shadow-2xl">
+                    <div className="px-4 py-2 text-xs font-black text-neon-blue/80 uppercase tracking-widest">Information</div>
+                    <div className="h-px bg-white/10 mx-2" />
                     {INFO_PAGES.map((sub) => (
                       <Link
                         key={sub.href}
