@@ -64,6 +64,17 @@ const fmtDate = (iso?: string) => {
 
 const catColor = (id: string) => CATEGORIES.find((c) => c.id === id)?.color || '#94a3b8';
 const catLabel = (id: string) => CATEGORIES.find((c) => c.id === id)?.label || id;
+const providerColor = (id: string) => PROVIDER_OPTIONS.find((p) => p.id === id)?.color || '#94a3b8';
+const providerLabel = (id: string) => PROVIDER_OPTIONS.find((p) => p.id === id)?.label || id;
+
+const sortMeta: Record<string, { label: string; icon: string }> = {
+  'date-desc': { label: 'Newest first', icon: '↓' },
+  'date-asc': { label: 'Oldest first', icon: '↑' },
+  'alpha-asc': { label: 'A → Z', icon: 'A' },
+  'alpha-desc': { label: 'Z → A', icon: 'Z' },
+  provider: { label: 'Provider', icon: 'P' },
+  category: { label: 'Category', icon: 'C' },
+};
 
 const CategoryIcon = ({ id, className }: { id: string; className?: string }) => {
   const Icon = getCategoryIcon(id);
@@ -190,6 +201,116 @@ const COMPANIES = [
   { name: '16Personalities (NERIS Analytics)', logo: '16p', desc: 'Personality assessment based on Jungian typology (MBTI-inspired).', category: 'Psychometrics' },
   { name: 'Simplilearn', logo: 'simplilearn', desc: 'Online bootcamps & certifications for digital economy skills.', category: 'Professional Training' },
 ];
+
+function FilterDropdown({ label, icon, options, value, onChange, colorMap, getLabel }: {
+  label: string; icon: React.ReactNode; options: { id: string; label: string }[]; value: string; onChange: (v: string) => void; colorMap?: Record<string, string>; getLabel?: (id: string) => string;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const activeLabel = value === 'all' ? label : getLabel ? getLabel(value) : options.find(o => o.id === value)?.label || value;
+  const activeColor = value === 'all' ? '#94a3b8' : (colorMap?.[value] || '#94a3b8');
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest border transition-all cursor-pointer bg-white/5 hover:bg-white/10"
+        style={{ borderColor: open ? activeColor : 'rgba(255,255,255,0.12)', color: activeColor }}
+      >
+        {icon}
+        <span className="max-w-[160px] truncate">{activeLabel}</span>
+        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 ml-1 shrink-0" fill="none" stroke="currentColor" strokeWidth={2.5}>
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </button>
+      {open && (
+        <div className="absolute top-full left-0 mt-2 w-64 max-h-80 overflow-y-auto rounded-xl border border-white/10 bg-[#0a0a14]/95 backdrop-blur-2xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] z-50 py-1.5">
+          <button
+            onClick={() => { onChange('all'); setOpen(false); }}
+            className={`w-full text-left px-4 py-2.5 text-xs font-bold transition-all cursor-pointer flex items-center gap-2.5 ${value === 'all' ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+          >
+            <span className="w-2 h-2 rounded-full bg-gray-500" />
+            All {label}
+          </button>
+          {options.map((o) => {
+            const color = colorMap?.[o.id] || '#94a3b8';
+            const isActive = value === o.id;
+            return (
+              <button
+                key={o.id}
+                onClick={() => { onChange(o.id); setOpen(false); }}
+                className={`w-full text-left px-4 py-2.5 text-xs font-bold transition-all cursor-pointer flex items-center gap-2.5 ${isActive ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+              >
+                <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                {o.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SortDropdown({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const ref = React.useRef<HTMLDivElement>(null);
+  const meta = sortMeta[value] || sortMeta['date-desc'];
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest border transition-all cursor-pointer bg-white/5 hover:bg-white/10 border-white/10 text-gray-300 hover:text-white"
+      >
+        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2.5}>
+          <path d="M3 6h18M6 12h12M9 18h6" />
+        </svg>
+        Sort: {meta.label}
+        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 ml-1 shrink-0" fill="none" stroke="currentColor" strokeWidth={2.5}>
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </button>
+      {open && (
+        <div className="absolute top-full right-0 mt-2 w-56 max-h-80 overflow-y-auto rounded-xl border border-white/10 bg-[#0a0a14]/95 backdrop-blur-2xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] z-50 py-1.5">
+          {SORT_OPTIONS.map((s) => {
+            const m = sortMeta[s.id] || { label: s.id };
+            const isActive = value === s.id;
+            return (
+              <button
+                key={s.id}
+                onClick={() => { onChange(s.id); setOpen(false); }}
+                className={`w-full text-left px-4 py-2.5 text-xs font-bold transition-all cursor-pointer flex items-center gap-3 ${isActive ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+              >
+                <span className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[10px] font-black text-gray-400">
+                  {m.icon}
+                </span>
+                {m.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
 
 
 function OwnershipBadge({ compact = false }: { compact?: boolean }) {
@@ -766,69 +887,25 @@ export default function CertificatesPage() {
           className="mb-8 space-y-4"
         >
           <div className="flex flex-wrap items-center justify-center gap-2">
-            <button
-              onClick={() => setCategory('all')}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer ${
-                category === 'all'
-                  ? 'bg-white text-black border-white'
-                  : 'text-gray-300 border-white/15 hover:border-white/40 hover:text-white'
-              }`}
-            >
-              All
-            </button>
-            {CATEGORIES.filter((c) => c.id !== 'other').map((c) => (
-              <button
-                key={c.id}
-                onClick={() => setCategory(category === c.id ? 'all' : c.id)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer ${
-                  category === c.id
-                    ? 'text-black'
-                    : 'text-gray-300 hover:text-white'
-                }`}
-                style={
-                  category === c.id
-                    ? { backgroundColor: c.color, borderColor: c.color }
-                    : { borderColor: `${c.color}55`, color: undefined }
-                }
-              >
-                <span className="inline-flex items-center gap-1.5">
-                  <span className="w-3.5 h-3.5"><CategoryIcon id={c.id} /></span>
-                  {c.label}
-                </span>
-              </button>
-            ))}
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            <span className="text-[11px] font-black uppercase tracking-widest text-gray-500 mr-1">Provider:</span>
-            <button
-              onClick={() => setProvider('all')}
-              className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer ${
-                provider === 'all'
-                  ? 'bg-white text-black border-white'
-                  : 'text-gray-300 border-white/15 hover:border-white/40 hover:text-white'
-              }`}
-            >
-              All
-            </button>
-            {PROVIDER_OPTIONS.map((p) => (
-              <button
-                key={p.id}
-                onClick={() => setProvider(provider === p.id ? 'all' : p.id)}
-                className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer ${
-                  provider === p.id
-                    ? 'text-black'
-                    : 'text-gray-300 hover:text-white'
-                }`}
-                style={
-                  provider === p.id
-                    ? { backgroundColor: p.color, borderColor: p.color }
-                    : { borderColor: `${p.color}55`, color: undefined }
-                }
-              >
-                {p.label}
-              </button>
-            ))}
+            <FilterDropdown
+              label="Category"
+              icon={<svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M4 6h16M4 12h16M4 18h16" /></svg>}
+              options={CATEGORIES.filter((c) => c.id !== 'other')}
+              value={category}
+              onChange={setCategory}
+              colorMap={Object.fromEntries(CATEGORIES.map(c => [c.id, c.color]))}
+              getLabel={catLabel}
+            />
+            <FilterDropdown
+              label="Provider"
+              icon={<svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M20 7h-9M20 11h-9M20 15h-9M4 7h1M4 11h1M4 15h1" /></svg>}
+              options={PROVIDER_OPTIONS}
+              value={provider}
+              onChange={setProvider}
+              colorMap={Object.fromEntries(PROVIDER_OPTIONS.map(p => [p.id, p.color]))}
+              getLabel={providerLabel}
+            />
+            <SortDropdown value={sort} onChange={setSort} />
           </div>
 
           <div className="max-w-md mx-auto relative">
@@ -846,21 +923,21 @@ export default function CertificatesPage() {
             />
           </div>
 
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center justify-center gap-3">
             <span className="text-[11px] font-black uppercase tracking-widest text-gray-500">
               Showing {filtered.length} of {ALL_DOCS.length}
             </span>
-            <span className="text-gray-700">·</span>
-            <span className="text-[11px] font-black uppercase tracking-widest text-gray-500">Sort:</span>
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value)}
-              className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:border-neon-blue outline-none"
-            >
-              {SORT_OPTIONS.map((s) => (
-                <option key={s.id} value={s.id}>{s.label}</option>
-              ))}
-            </select>
+            {(category !== 'all' || provider !== 'all' || query || sort !== 'date-desc') && (
+              <button
+                onClick={() => { setCategory('all'); setProvider('all'); setQuery(''); setSort('date-desc'); }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-black uppercase tracking-widest border border-neon-pink/40 text-neon-pink hover:bg-neon-pink/10 transition-all cursor-pointer"
+              >
+                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                  <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+                Clear filters
+              </button>
+            )}
           </div>
         </motion.div>
 
