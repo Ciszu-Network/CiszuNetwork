@@ -205,7 +205,7 @@ export default function SupportPage() {
 
   const sectionVariants = {
     hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] } }
   };
 
   return (
@@ -538,18 +538,18 @@ export default function SupportPage() {
                  <span className="text-brand-light font-black text-[10px] uppercase tracking-widest px-4">Sincronización Social Unificada</span>
                  <div className="h-[1px] flex-1 bg-brand/10" />
               </div>
-              <div className="flex flex-wrap justify-center gap-4">
-                  {SOCIALS.map(s => {
-                    return (
-                      <button key={s.name} onClick={() => window.open(s.href, '_blank')}
-                        className={`flex items-center gap-4 px-8 py-4 rounded-3xl border transition-all hover:scale-105 shadow-xl ${s.borderCol || 'border-white/10'} ${s.bgCol || 'bg-white/5'} ${s.textCol || 'text-gray-300'} hover:text-white hover:bg-opacity-40 group/btn`}
-                      >
-                         <div className="w-6 h-6 group-hover/btn:scale-110 transition-transform">{s.icon}</div>
-                         <span className="text-[11px] font-black uppercase tracking-widest">{s.name}</span>
-                      </button>
-                    );
-                  })}
-              </div>
+               <div className="flex flex-wrap justify-center gap-4">
+                   {SOCIALS.map(s => {
+                     return (
+                       <button key={s.name} onClick={() => window.open(s.href, '_blank')}
+                         className="flex items-center gap-4 px-8 py-4 rounded-3xl border border-white/10 bg-white/5 text-gray-300 transition-all hover:scale-105 shadow-xl hover:text-white hover:bg-opacity-40 group/btn"
+                       >
+                          <div className="w-6 h-6 group-hover/btn:scale-110 transition-transform">{s.icon}</div>
+                          <span className="text-[11px] font-black uppercase tracking-widest">{s.name}</span>
+                       </button>
+                     );
+                   })}
+               </div>
            </div>
         </motion.section>
 

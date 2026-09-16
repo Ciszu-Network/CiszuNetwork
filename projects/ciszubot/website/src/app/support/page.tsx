@@ -10,6 +10,7 @@ import AuthWarningModal from "@/components/shared/AuthWarningModal";
 import { useAppStore } from '@/store';
 import { useToast, Button } from '@ciszu/ui';
 import { FlagIcon } from '@ciszu/ui';
+import { usePageTitle } from '@/lib/usePageTitle';
 
 const I = {
   support: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>,
@@ -44,7 +45,6 @@ const I = {
   server: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>,
   ceo: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
   share: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>,
-  globe: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>,
 };
 
 const CONTACT_TYPES = [
@@ -197,7 +197,7 @@ export default function SupportPage() {
 
   const sectionVariants = {
     hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] } }
   };
 
   return (
@@ -565,18 +565,18 @@ export default function SupportPage() {
                  <span className="text-neon-cyan font-black text-[10px] uppercase tracking-widest px-4">Sincronización Social Unificada</span>
                  <div className="h-[1px] flex-1 bg-neon-cyan/10" />
               </div>
-              <div className="flex flex-wrap justify-center gap-4">
-                  {SOCIALS.map(s => {
-                    return (
-                      <button key={s.name} onClick={() => window.open(s.href, '_blank')}
-                        className={`flex items-center gap-4 px-8 py-4 rounded-3xl border transition-all hover:scale-105 shadow-xl ${s.borderCol || 'border-white/10'} ${s.bgCol || 'bg-white/5'} ${s.textCol || 'text-gray-300'} hover:text-white hover:bg-opacity-40 group/btn`}
-                      >
-                         <div className="w-6 h-6 group-hover/btn:scale-110 transition-transform">{s.icon}</div>
-                         <span className="text-[11px] font-black uppercase tracking-widest">{s.name}</span>
-                      </button>
-                    );
-                  })}
-              </div>
+               <div className="flex flex-wrap justify-center gap-4">
+                   {SOCIALS.map(s => {
+                     return (
+                       <button key={s.name} onClick={() => window.open(s.href, '_blank')}
+                         className="flex items-center gap-4 px-8 py-4 rounded-3xl border border-white/10 bg-white/5 text-gray-300 transition-all hover:scale-105 shadow-xl hover:text-white hover:bg-opacity-40 group/btn"
+                       >
+                          <div className="w-6 h-6 group-hover/btn:scale-110 transition-transform">{s.icon}</div>
+                          <span className="text-[11px] font-black uppercase tracking-widest">{s.name}</span>
+                       </button>
+                     );
+                   })}
+               </div>
            </div>
         </motion.section>
 

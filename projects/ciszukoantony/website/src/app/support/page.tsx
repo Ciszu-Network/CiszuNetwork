@@ -3,47 +3,42 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
-import Link from 'next/link';
-import { SOCIALS } from '@/config/navigation';
-import { usePageTitle } from '@/lib/usePageTitle';
 import QuickDocks from '@/components/molecules/QuickDocks';
-import { supabase } from "@/config/supabase";
-import AuthWarningModal from "@/components/shared/AuthWarningModal";
+import { useToast, FlagIcon } from '@ciszu/ui';
+import { supabase } from '@/config/supabase';
+import { SOCIALS } from '@/config/navigation';
+import Link from 'next/link';
+import { usePageTitle } from '@/lib/usePageTitle';
 import { useAppStore } from '@/store';
-import { useToast } from '@ciszu/ui';
-import { FlagIcon } from '@ciszu/ui';
+import AuthWarningModal from '@/components/shared/AuthWarningModal';
 
 const I = {
-  support: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>,
-  msg: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
-  alert: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" />
-      <line x1="12" y1="7" x2="12" y2="13" />
-      <circle cx="12" cy="17" r="0.5" fill="currentColor" />
-    </svg>
-  ),
+  support: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>,
+  msg: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
+  pulse: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
+  user: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+  tag: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>,
+  send: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>,
+  info: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>,
+  trash: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>,
+  globe: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>,
   help: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+    <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="10" />
       <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
       <circle cx="12" cy="17" r="0.5" fill="currentColor" />
     </svg>
   ),
-  contact: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>,
-  info: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>,
-  login: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>,
-  userPlus: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>,
-  send: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>,
-  trash: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>,
-  clock: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
-  pulse: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
-  server: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>,
-  ceo: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
-  share: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>,
-  globe: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>,
-  user: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
-  tag: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>,
+  alert: (
+    <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" y1="7" x2="12" y2="13" />
+      <circle cx="12" cy="17" r="0.5" fill="currentColor" />
+    </svg>
+  ),
+  contact: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>,
+  login: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>,
+  userPlus: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>,
 };
 
 const CONTACT_TYPES = [
@@ -187,7 +182,7 @@ export default function SupportPage() {
 
   const sectionVariants = {
     hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] } }
   };
 
   return (
@@ -199,7 +194,6 @@ export default function SupportPage() {
 
       <div className="max-w-7xl mx-auto px-6 pt-0 pb-32 space-y-16">
 
-        {/* --- HERO HEADER --- */}
         <motion.header id="hero" initial="hidden" animate="visible" variants={sectionVariants} className="relative space-y-8 pt-12">
           <div className="flex flex-col items-center gap-1 text-center">
              <div className="flex items-center gap-6 group">
@@ -216,7 +210,6 @@ export default function SupportPage() {
           </div>
         </motion.header>
 
-        {/* TABS NAVEGACIÓN */}
         <div className="flex justify-center gap-4 pt-8">
             <button
               onClick={() => setActiveTab('new')}
@@ -238,13 +231,11 @@ export default function SupportPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
 
-          {/* --- MAIN CONTENT --- */}
           <div className="lg:col-span-8 space-y-12">
             <AnimatePresence mode="wait">
               {activeTab === 'new' ? (
                 <motion.div key="form" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-12">
 
-                   {/* RECURSOS DE AUTOSERVICIO (SIEMPRE VISIBLES) */}
                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       <Link href="/help" className="p-8 bg-brand/10 border-2 border-brand/20 rounded-[2.5rem] hover:bg-brand/20 hover:border-brand-light/30 transition-all group/card">
                          <div className="flex flex-col items-center text-center gap-4">
@@ -296,114 +287,113 @@ export default function SupportPage() {
                      </div>
                    ) : (
                      <>
-                        {/* REGLAS RÁPIDAS */}
-                        <div className="bg-black/40 border border-white/5 p-6 rounded-3xl flex items-start gap-4">
-                           <div className="w-8 h-8 text-brand-light shrink-0 mt-1">{I.info}</div>
-                           <div className="space-y-1">
-                              <h4 className="text-xs font-black text-white uppercase tracking-widest">Protocolo de Asistencia</h4>
-                              <p className="text-[10px] text-gray-500 font-bold leading-relaxed uppercase">
-                                 ¿No encontraste solución en los recursos anteriores? Genera un ticket a continuación. Garantizamos respuesta en menos de 24h.
-                              </p>
-                           </div>
-                        </div>
+                       <div className="bg-black/40 border border-white/5 p-6 rounded-3xl flex items-start gap-4">
+                          <div className="w-8 h-8 text-brand-light shrink-0 mt-1">{I.info}</div>
+                          <div className="space-y-1">
+                             <h4 className="text-xs font-black text-white uppercase tracking-widest">Protocolo de Asistencia</h4>
+                             <p className="text-[10px] text-gray-500 font-bold leading-relaxed uppercase">
+                                ¿No encontraste solución en los recursos anteriores? Genera un ticket a continuación. Garantizamos respuesta en menos de 24h.
+                             </p>
+                          </div>
+                       </div>
 
-                        <form onSubmit={handleSubmit} className="p-8 md:p-10 bg-white/5 border border-white/5 rounded-[3rem] space-y-10">
-                           <div className="space-y-6">
-                             <div className="flex items-center gap-3 border-b border-white/5 pb-2">
-                                <div className="w-4 h-4 text-brand-light">{I.user}</div>
-                                <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Identidad del Remitente</h3>
-                             </div>
-                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Nombre de usuario</label>
-                                   <input type="text" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="@usuario" />
-                                </div>
-                                <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Nombre completo</label>
-                                   <input type="text" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="Nombre" />
-                                </div>
-                             </div>
-                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Apellido</label>
-                                   <input type="text" value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="Apellido" />
-                                </div>
-                                <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Email de Contacto</label>
-                                   <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="tu@email.com" />
-                                </div>
-                             </div>
-                           </div>
+                       <form onSubmit={handleSubmit} className="p-8 md:p-12 bg-white/5 border border-white/5 rounded-[3rem] space-y-10 relative overflow-hidden">
+                          <div className="space-y-8">
+                            <div className="flex items-center gap-3 border-b border-white/5 pb-2">
+                               <div className="w-4 h-4 text-brand-light">{I.user}</div>
+                               <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Identidad del Remitente</h3>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                               <div className="space-y-2">
+                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Nombre de usuario</label>
+                                  <input type="text" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="@usuario" />
+                               </div>
+                               <div className="space-y-2">
+                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Nombre completo</label>
+                                  <input type="text" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="Nombre" />
+                               </div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                               <div className="space-y-2">
+                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Apellido</label>
+                                  <input type="text" value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="Apellido" />
+                               </div>
+                               <div className="space-y-2">
+                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Email de Contacto</label>
+                                  <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="tu@email.com" />
+                               </div>
+                            </div>
+                          </div>
 
-                           <div className="space-y-6 pt-4">
-                             <div className="flex items-center gap-3 border-b border-white/5 pb-2">
-                                <div className="w-4 h-4 text-brand-accent">{I.tag}</div>
-                                <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Naturaleza del Ticket</h3>
-                             </div>
-                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Tipo de Contacto</label>
-                                   <select value={formData.contactType} onChange={e => setFormData({...formData, contactType: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
-                                      {CONTACT_TYPES.map(c => <option key={c} value={c}>{c}</option>)}
-                                   </select>
-                                </div>
-                                <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Región de Origen</label>
-                                   <div className="relative">
-                                      <select value={formData.region} onChange={e => setFormData({...formData, region: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl pl-12 pr-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
-                                         {REGIONS.map(r => <option key={r.code} value={r.code}>{r.name}</option>)}
-                                      </select>
-                                      <div className="absolute left-4 top-1/2 -translate-y-1/2">
-                                         <FlagIcon code={formData.region} className="w-5 h-4" />
-                                      </div>
-                                   </div>
-                                </div>
-                             </div>
-                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Categoría</label>
-                                   <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value, subCategory: Object.values(CATEGORIES)[0][0]})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
-                                      {Object.keys(CATEGORIES).map(c => <option key={c} value={c}>{c}</option>)}
-                                   </select>
-                                </div>
-                                <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Subcategoría</label>
-                                   <select value={formData.subCategory} onChange={e => setFormData({...formData, subCategory: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
-                                      {CATEGORIES[formData.category as keyof typeof CATEGORIES]?.map(s => <option key={s} value={s}>{s}</option>)}
-                                   </select>
-                                </div>
-                             </div>
-                           </div>
+                          <div className="space-y-6 pt-4">
+                            <div className="flex items-center gap-3 border-b border-white/5 pb-2">
+                               <div className="w-4 h-4 text-brand-accent">{I.tag}</div>
+                               <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Naturaleza del Ticket</h3>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                               <div className="space-y-2">
+                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Tipo de Contacto</label>
+                                  <select value={formData.contactType} onChange={e => setFormData({...formData, contactType: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
+                                     {CONTACT_TYPES.map(c => <option key={c} value={c}>{c}</option>)}
+                                  </select>
+                               </div>
+                               <div className="space-y-2">
+                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Región de Origen</label>
+                                  <div className="relative">
+                                     <select value={formData.region} onChange={e => setFormData({...formData, region: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl pl-12 pr-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
+                                        {REGIONS.map(r => <option key={r.code} value={r.code}>{r.name}</option>)}
+                                     </select>
+                                     <div className="absolute left-4 top-1/2 -translate-y-1/2">
+                                        <FlagIcon code={formData.region} className="w-5 h-4" />
+                                     </div>
+                                  </div>
+                               </div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                               <div className="space-y-2">
+                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Categoría</label>
+                                  <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value, subCategory: Object.values(CATEGORIES)[0][0]})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
+                                     {Object.keys(CATEGORIES).map(c => <option key={c} value={c}>{c}</option>)}
+                                  </select>
+                               </div>
+                               <div className="space-y-2">
+                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Subcategoría</label>
+                                  <select value={formData.subCategory} onChange={e => setFormData({...formData, subCategory: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
+                                     {CATEGORIES[formData.category as keyof typeof CATEGORIES]?.map(s => <option key={s} value={s}>{s}</option>)}
+                                  </select>
+                               </div>
+                            </div>
+                          </div>
 
-                           <div className="space-y-6 pt-4">
-                             <div className="flex items-center gap-3 border-b border-white/5 pb-2">
-                                <div className="w-4 h-4 text-brand-light">{I.msg}</div>
-                                <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Detalles del Requerimiento</h3>
-                             </div>
-                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Teléfono (opcional)</label>
-                                   <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="+58 412 685 8111" />
-                                </div>
-                                <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Dispositivo</label>
-                                   <input type="text" value={formData.device} onChange={e => setFormData({...formData, device: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="PC / Móvil / Tablet" />
-                                </div>
-                             </div>
-                             <div className="space-y-2">
-                                <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Mensaje / Descripción</label>
-                                <textarea value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} rows={5} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all resize-none" placeholder="Describe tu situación detalladamente..." />
-                             </div>
-                           </div>
+                          <div className="space-y-6 pt-4">
+                            <div className="flex items-center gap-3 border-b border-white/5 pb-2">
+                               <div className="w-4 h-4 text-brand-light">{I.msg}</div>
+                               <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Detalles del Requerimiento</h3>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                               <div className="space-y-2">
+                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Teléfono (opcional)</label>
+                                  <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="+58 412 685 8111" />
+                               </div>
+                               <div className="space-y-2">
+                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Dispositivo</label>
+                                  <input type="text" value={formData.device} onChange={e => setFormData({...formData, device: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="PC / Móvil / Tablet" />
+                               </div>
+                            </div>
+                            <div className="space-y-2">
+                               <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Mensaje / Descripción</label>
+                               <textarea value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} rows={5} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all resize-none" placeholder="Describe tu situación detalladamente..." />
+                            </div>
+                          </div>
 
-                           <button type="submit" disabled={submitting} className="w-full py-5 bg-brand-light text-black font-black uppercase text-xs tracking-[0.2em] rounded-2xl hover:shadow-lg hover:shadow-brand-light/20 transition-all disabled:opacity-50 flex items-center justify-center gap-3">
-                              <div className="w-5 h-5">{I.send}</div> {submitting ? 'ENVIANDO...' : 'ENVIAR TICKET'}
-                           </button>
-                        </form>
+                          <button type="submit" disabled={submitting} className="w-full py-5 bg-brand-light text-black font-black uppercase text-xs tracking-[0.2em] rounded-2xl hover:shadow-lg hover:shadow-brand-light/20 transition-all disabled:opacity-50 flex items-center justify-center gap-3">
+                             <div className="w-5 h-5">{I.send}</div> {submitting ? 'ENVIANDO...' : 'ENVIAR TICKET'}
+                          </button>
+                       </form>
                      </>
                    )}
-                  </motion.div>
-                ) : (
+                </motion.div>
+              ) : (
                 <motion.div key="list" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
                   {loading ? (
                     <div className="p-20 bg-white/5 border border-white/5 rounded-[4rem] text-center">
@@ -416,8 +406,8 @@ export default function SupportPage() {
                         {I.msg}
                       </div>
                       <div className="space-y-2">
-                        <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-tighter">SIN TICKETS</h3>
-                        <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.3em]">No has enviado ninguna solicitud aún</p>
+                         <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-tighter">SIN TICKETS</h3>
+                         <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.3em]">No has enviado ninguna solicitud aún</p>
                       </div>
                       <button onClick={() => setActiveTab('new')} className="px-8 py-3 bg-brand-light text-black font-header font-black uppercase italic tracking-widest rounded-2xl hover:shadow-lg hover:shadow-brand-light/20 transition-all">
                          CREAR PRIMER TICKET
@@ -451,9 +441,7 @@ export default function SupportPage() {
             </AnimatePresence>
           </div>
 
-          {/* --- SIDEBAR INFO --- */}
           <aside className="lg:col-span-4 space-y-8">
-             {/* RECEPTOR DEL CONTACTO */}
              <div className="p-8 bg-gradient-to-br from-brand/10 to-transparent border border-brand/20 rounded-[3rem] space-y-6 relative overflow-hidden group">
                 <div className="absolute top-0 right-0 p-4 opacity-5 text-brand-light font-black text-6xl italic pointer-events-none">CEO</div>
                 <div className="flex items-center gap-4">
@@ -466,7 +454,7 @@ export default function SupportPage() {
                    </div>
                 </div>
                 <p className="text-[10px] text-gray-500 font-bold leading-relaxed uppercase">
-                   Tu requerimiento será procesado directamente por el **Equipo de Ciszuko Antony**. Los datos se sincronizan con <span className="text-white">fplayersoffcial@gmail.com</span>.
+                   Tu requerimiento será procesado directamente por el Equipo de Ciszuko Antony. Los datos se sincronizan con <span className="text-white">fplayersoffcial@gmail.com</span>.
                 </p>
              </div>
 
@@ -495,7 +483,7 @@ export default function SupportPage() {
                         <div className={`w-1 h-8 rounded-full bg-current ${p.color} opacity-40 group-hover:opacity-100 transition-all`} />
                         <div>
                            <p className={`text-[10px] font-black uppercase tracking-widest ${p.color}`}>{p.label}</p>
-                           <p className="text-[9px] text-gray-500 font-bold uppercase mt-1}>{p.desc}</p>
+                           <p className="text-[9px] text-gray-500 font-bold uppercase mt-1">{p.desc}</p>
                         </div>
                      </div>
                    ))}
@@ -504,7 +492,6 @@ export default function SupportPage() {
           </aside>
         </div>
 
-        {/* --- SOCIAL GALAXY --- */}
         <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={sectionVariants} className="space-y-12 bg-black/40 p-12 md:p-20 rounded-[5rem] border border-white/5">
            <div className="text-center space-y-2 mb-12">
              <div className="flex items-center justify-center gap-4 text-brand-light mb-4">
@@ -524,7 +511,7 @@ export default function SupportPage() {
                   {SOCIALS.map(s => {
                     return (
                       <button key={s.name} onClick={() => window.open(s.href, '_blank')}
-                        className={`flex items-center gap-4 px-8 py-4 rounded-3xl border transition-all hover:scale-105 shadow-xl ${s.borderCol || 'border-white/10'} ${s.bgCol || 'bg-white/5'} ${s.textCol || 'text-gray-300'} hover:text-white hover:bg-opacity-40 group/btn`}
+                        className="flex items-center gap-4 px-8 py-4 rounded-3xl border border-white/10 bg-white/5 text-gray-300 transition-all hover:scale-105 shadow-xl hover:text-white hover:bg-opacity-40 group/btn"
                       >
                          <div className="w-6 h-6 group-hover/btn:scale-110 transition-transform">{s.icon}</div>
                          <span className="text-[11px] font-black uppercase tracking-widest">{s.name}</span>
