@@ -1,28 +1,28 @@
-import { ReactNode } from 'react';
+/**
+ * Registro de cambios de Ciszu Network.
+ *
+ * Los tipos, el estado de despliegue y la lógica de filtrado viven en el
+ * paquete compartido `@ciszunetwork/utils/changelog` para que las 4 webs
+ * (ciszu, ciszukoantony, ciszubot, muzicmania) usen exactamente el mismo
+ * contrato. Aquí solo se declaran los datos del proyecto.
+ */
+import type {
+  ChangelogItem,
+  ChangelogPhase,
+  ChangelogStatus,
+  ChangelogType,
+} from '@ciszunetwork/utils/changelog';
 
-export type ChangelogType =
-  | 'hotfix' | 'add' | 'ui' | 'bugfix' | 'perf' | 'ux'
-  | 'sec' | 'refactor' | 'build' | 'test' | 'docs' | 'chore'
-  | 'feat' | 'style' | 'rework' | 'sync' | 'node'
-  | 'delete' | 'ci' | 'revert' | 'fix' | 'bump';
-
-export interface ChangelogDetail {
-  text: string;
-  type: ChangelogType;
-}
-
-export interface ChangelogItem {
-  id: string;
-  version: string;
-  code: string;
-  title: string;
-  description: string;
-  date: string;
-  types: ChangelogType[];
-  author: string;
-  likes: number;
-  details: ChangelogDetail[];
-}
+export type {
+  ChangelogDetail,
+  ChangelogItem,
+  ChangelogNode,
+  ChangelogNodeStatus,
+  ChangelogPhase,
+  ChangelogPhaseStatus,
+  ChangelogStatus,
+  ChangelogType,
+} from '@ciszunetwork/utils/changelog';
 
 export const CHANGELOG_DATA: ChangelogItem[] = [
   {
@@ -197,4 +197,63 @@ export const CHANGELOG_DATA: ChangelogItem[] = [
       { text: 'Suite de tests automatizados para validar estabilidad de carga.', type: 'test' }
     ]
   }
+];
+
+/**
+ * Estado de despliegue: alimenta la barra de progreso, las tarjetas de estado
+ * y el diagrama de "Próximos Nodos" del encabezado.
+ */
+export const CHANGELOG_STATUS: ChangelogStatus = {
+  headline: 'PLATAFORMA CISZU V2.4',
+  progress: 82,
+  progressStartLabel: 'Núcleo CDN unificado',
+  progressEndLabel: 'Lanzamiento estable',
+  version: 'v2.4.0',
+  deploy: 'OPERATIVO / SUPABASE',
+  developer: 'CiszukoAntony',
+  nodes: [
+    { label: 'CDN Unificado', desc: 'Resolución híbrida de assets', status: 'done' },
+    { label: 'Seguridad Endurecida', desc: 'Auditoría Supabase activa', status: 'next' },
+    { label: 'Documentación Viva', desc: 'Protocolos enlazados al código', status: 'locked' },
+    { label: 'Lanzamiento Público', desc: 'Apertura general del ecosistema', status: 'locked' },
+  ],
+  phases: [
+    {
+      id: 'patch-v2.4.0',
+      name: 'PATCH V2.4.0',
+      status: 'current',
+      progress: 82,
+      tasks: [
+        { text: 'CDN unificado (@ciszunetwork/cdn) en las 4 webs', done: true },
+        { text: 'Auditoría Security Advisor de Supabase (RLS + funciones)', done: true },
+        { text: 'Changelog con página interna por versión', done: true },
+        { text: 'Sincronización de descargas y documentación generada', done: false },
+      ],
+    },
+    {
+      id: 'patch-v2.5.0',
+      name: 'PATCH V2.5.0',
+      status: 'planned',
+      progress: 0,
+      tasks: [
+        { text: 'Historial de versiones suscribible por RSS', done: false },
+        { text: 'Panel de contribuciones abiertas', done: false },
+        { text: 'Métricas públicas de Core Web Vitals', done: false },
+        { text: 'Búsqueda global desde el navbar', done: false },
+      ],
+    },
+  ],
+};
+
+/** Glosario canónico de etiquetas del registro de cambios. */
+export const CHANGELOG_GLOSSARY: { type: ChangelogType; desc: string }[] = [
+  { type: 'add', desc: 'Inyección de nuevos módulos, funciones o activos.' },
+  { type: 'hotfix', desc: 'Intervención de emergencia para errores críticos.' },
+  { type: 'rework', desc: 'Reestructuración profunda de mecánicas existentes.' },
+  { type: 'bugfix', desc: 'Erradicación de anomalías y comportamientos erróneos.' },
+  { type: 'perf', desc: 'Optimización de recursos y velocidad de respuesta.' },
+  { type: 'ux', desc: 'Mejoras en el flujo de interacción y accesibilidad.' },
+  { type: 'sec', desc: 'Fortalecimiento de protocolos de seguridad.' },
+  { type: 'refactor', desc: 'Limpieza y reestructuración de la base de código.' },
+  { type: 'build', desc: 'Mejoras en el sistema de compilación y despliegue.' },
 ];

@@ -8,7 +8,8 @@
     ".": "./index.ts",
     "./logger": "./src/logger.ts",
     "./schema": "./src/schema.ts",
-    "./effect": "./src/effect.ts"
+    "./effect": "./src/effect.ts",
+    "./changelog": "./src/changelog.ts"
   },
   "scripts": {
     "lint": "tsc --noEmit",
