@@ -26,6 +26,17 @@ export interface ChangelogDetail {
   type: ChangelogType;
 }
 
+/** Ciclo de vida de una entrada publicada desde el devcon. */
+export type ChangelogEntryStatus = 'planned' | 'in-progress' | 'released' | 'hotfix';
+
+/** Etiqueta legible de cada estado (para chips de UI). */
+export const CHANGELOG_STATUS_LABELS: Record<ChangelogEntryStatus, string> = {
+  planned: 'Planificado',
+  'in-progress': 'En progreso',
+  released: 'Publicado',
+  hotfix: 'Hotfix',
+};
+
 /** Una entrada del registro de cambios. */
 export interface ChangelogItem {
   id: string;
@@ -38,6 +49,16 @@ export interface ChangelogItem {
   author: string;
   likes: number;
   details: ChangelogDetail[];
+  /** De dónde viene la entrada: código (`static`) o almacén en vivo. */
+  origin?: 'static' | 'global' | 'debug';
+  /** Nombre del icono del catálogo compartido (solo entradas publicadas). */
+  icon?: string;
+  /** Ciclo de vida declarado por el admin (solo entradas publicadas). */
+  status?: ChangelogEntryStatus;
+  /** Fase/roadmap asociada. */
+  phase?: string;
+  /** Frases destacadas de la página interna. */
+  highlights?: string[];
 }
 
 /** Estado de una fase del roadmap. */
@@ -279,4 +300,119 @@ export function getPhaseProgress(phase: ChangelogPhase): number {
   if (phase.tasks.length === 0) return clampProgress(phase.progress);
   const done = phase.tasks.filter((task) => task.done).length;
   return Math.round((done / phase.tasks.length) * 100);
+}
+
+/* ------------------------------------------------------------------ *
+ * Entradas PUBLICADAS desde el devcon (almacén en vivo)
+ * ------------------------------------------------------------------ */
+
+/** Entrada tal como llega del almacén (Supabase / debug local). */
+export interface PublishedChangelogInput {
+  id?: number | string;
+  slug: string;
+  version: string;
+  code?: string | null;
+  title: string;
+  description?: string | null;
+  body?: { text?: string; type?: string }[] | null;
+  highlights?: string[] | null;
+  types?: string[] | null;
+  icon?: string | null;
+  status?: string | null;
+  phase?: string | null;
+  releaseDate?: string | null;
+  release_date?: string | null;
+  author?: string | null;
+  origin?: 'global' | 'debug';
+}
+
+const KNOWN_TYPES: readonly string[] = [
+  'hotfix', 'add', 'ui', 'bugfix', 'perf', 'ux', 'sec', 'refactor', 'build', 'test',
+  'docs', 'chore', 'feat', 'style', 'rework', 'sync', 'node', 'delete', 'ci', 'revert',
+  'fix', 'bump',
+];
+
+const KNOWN_STATUSES: readonly string[] = ['planned', 'in-progress', 'released', 'hotfix'];
+
+/** Normaliza la fecha de la entrada a `YYYY-MM-DD` (o cadena vacía). */
+function normalizeReleaseDate(value: string | null | undefined): string {
+  if (!value) return '';
+  const iso = String(value).slice(0, 10);
+  return /^\d{4}-\d{2}-\d{2}$/.test(iso) ? iso : '';
+}
+
+/**
+ * Convierte una entrada publicada en `ChangelogItem`.
+ *
+ * Es defensivo a propósito: descarta etiquetas desconocidas (para que un dato
+ * corrupto no rompa el render de `TAG_CONFIG`) y sanea la fecha.
+ */
+export function publishedToChangelogItem(entry: PublishedChangelogInput): ChangelogItem {
+  const types = (entry.types ?? [])
+    .map((type) => String(type).trim().toLowerCase())
+    .filter((type): type is ChangelogType => KNOWN_TYPES.includes(type));
+  const status = String(entry.status ?? '').toLowerCase();
+  const details = (entry.body ?? [])
+    .map((detail) => ({
+      text: String(detail?.text ?? '').trim(),
+      type: (KNOWN_TYPES.includes(String(detail?.type).toLowerCase())
+        ? String(detail?.type).toLowerCase()
+        : 'add') as ChangelogType,
+    }))
+    .filter((detail) => detail.text.length > 0);
+
+  return {
+    id: entry.slug,
+    version: entry.version || entry.slug,
+    code: entry.code || '',
+    title: entry.title || entry.slug,
+    description: entry.description || '',
+    date: normalizeReleaseDate(entry.releaseDate ?? entry.release_date),
+    types: types.length > 0 ? types : ['add'],
+    author: entry.author || 'CiszukoAntony',
+    likes: 0,
+    details,
+    origin: entry.origin ?? 'global',
+    icon: entry.icon || undefined,
+    status: (KNOWN_STATUSES.includes(status) ? status : 'released') as ChangelogEntryStatus,
+    phase: entry.phase || undefined,
+    highlights: (entry.highlights ?? []).filter((h) => typeof h === 'string' && h.trim().length > 0),
+  };
+}
+
+/**
+ * Fusiona las entradas publicadas (almacén en vivo) con las estáticas del
+ * código. Si comparten `id`, gana la publicada; dentro de las publicadas, gana
+ * la global sobre la de debug local.
+ */
+export function mergeChangelogSources(
+  published: readonly PublishedChangelogInput[],
+  staticItems: readonly ChangelogItem[],
+): ChangelogItem[] {
+  const byId = new Map<string, ChangelogItem>();
+
+  for (const item of staticItems) {
+    byId.set(item.id, item);
+  }
+
+  for (const entry of [...published].sort((a, b) => {
+    // 'debug' antes que 'global' para que la global sobrescriba al final.
+    const rank = (origin?: string) => (origin === 'global' ? 1 : 0);
+    return rank(a.origin) - rank(b.origin);
+  })) {
+    if (!entry?.slug) continue;
+    byId.set(entry.slug, publishedToChangelogItem(entry));
+  }
+
+  return Array.from(byId.values());
+}
+
+/** Cuenta entradas por origen (para el aviso de "registro en vivo"). */
+export function countByOrigin(items: readonly ChangelogItem[]): Record<string, number> {
+  const counts: Record<string, number> = { static: 0, global: 0, debug: 0 };
+  for (const item of items) {
+    const origin = item.origin ?? 'static';
+    counts[origin] = (counts[origin] || 0) + 1;
+  }
+  return counts;
 }

@@ -6,16 +6,24 @@ import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
-import { CHANGELOG_DATA } from '@/data/changelog';
+import { CHANGELOG_DATA as CHANGELOG_STATIC } from '@/data/changelog';
 import { I, TAG_CONFIG } from '@/config/changelogIcons';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useAppStore } from '@/store';
-import { useChangelogLikes, useToast } from '@ciszu/ui';
+import { useChangelogLikes, usePublishedChangelogs, useToast } from '@ciszu/ui';
 import {
   getChangelogById,
   getMostRecentId,
   getRelatedChangelog,
+  mergeChangelogSources,
 } from '@ciszunetwork/utils/changelog';
+
+
+/** Icono de una entrada: usa el icono publicado (devcon) si existe. */
+const entryIcon = (item: { icon?: string; types: string[] }) =>
+  (item.icon && (I as Record<string, React.ReactNode>)[item.icon]) ||
+  TAG_CONFIG[item.types[0] as keyof typeof TAG_CONFIG]?.icon ||
+  I.history;
 
 export default function ChangelogDetailPage() {
   usePageTitle('CHANGELOG');
@@ -25,13 +33,19 @@ export default function ChangelogDetailPage() {
   const { user } = useAppStore();
   const { toast } = useToast();
   const likes = useChangelogLikes();
+  // Entradas publicadas desde el devcon (almacén en vivo) + las del código.
+  const published = usePublishedChangelogs('ciszubot');
+  const CHANGELOG_DATA = useMemo(
+    () => mergeChangelogSources(published.entries, CHANGELOG_STATIC),
+    [published.entries],
+  );
   const [isAuthWarningOpen, setIsAuthWarningOpen] = useState(false);
 
-  const item = useMemo(() => getChangelogById(CHANGELOG_DATA, idParam), [idParam]);
-  const mostRecentId = useMemo(() => getMostRecentId(CHANGELOG_DATA), []);
+  const item = useMemo(() => getChangelogById(CHANGELOG_DATA, idParam), [idParam, CHANGELOG_DATA]);
+  const mostRecentId = useMemo(() => getMostRecentId(CHANGELOG_DATA), [CHANGELOG_DATA]);
   const related = useMemo(
     () => (item ? getRelatedChangelog(item, CHANGELOG_DATA, 3) : []),
-    [item],
+    [item, CHANGELOG_DATA],
   );
 
   const handleLike = () => {
@@ -103,7 +117,7 @@ export default function ChangelogDetailPage() {
             )}
 
             <div className={`w-20 h-20 p-5 rounded-3xl bg-black/60 border border-white/10 ${primaryTag.color} flex items-center justify-center relative z-10`}>
-              <div className="w-full h-full">{primaryTag.icon}</div>
+              <div className="w-full h-full">{entryIcon(item)}</div>
             </div>
 
             <div className="space-y-5 relative z-10 w-full">
@@ -159,7 +173,7 @@ export default function ChangelogDetailPage() {
 
             <div className="max-w-3xl w-full mx-auto p-8 bg-black/40 rounded-[2.5rem] border border-white/5 relative">
               <div className={`absolute -top-4 -left-4 w-10 h-10 opacity-20 transform rotate-12 ${primaryTag.color}`}>
-                {primaryTag.icon}
+                {entryIcon(item)}
               </div>
               <p className="text-gray-300 text-lg md:text-xl font-bold italic leading-relaxed tracking-tight">
                 &quot;{item.description}&quot;

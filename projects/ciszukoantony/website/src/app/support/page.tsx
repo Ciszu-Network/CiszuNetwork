@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import MainLayout from '@/components/templates/MainLayout';
 import Link from 'next/link';
 import { SOCIALS } from '@/config/navigation';
 import { usePageTitle } from '@/lib/usePageTitle';
@@ -10,6 +11,7 @@ import { supabase } from "@/config/supabase";
 import AuthWarningModal from "@/components/shared/AuthWarningModal";
 import { useAppStore } from '@/store';
 import { useToast } from '@ciszu/ui';
+import { FlagIcon } from '@ciszu/ui';
 
 const I = {
   support: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>,
@@ -70,21 +72,6 @@ const CATEGORIES = {
   "Contenido": ["Canciones", "Mapas / Charts", "Gráficos", "Eventos"],
   "Comunidad": ["Moderación", "Foros", "Competitivo", "Reportes"]
 } as const;
-
-const supportChannels = [
-  {
-    name: 'Ciszugamens (Discord)', desc: 'Join our Ciszugamens community on Discord for real-time support.',
-    href: 'https://discord.com/invite/W3kMtMMj6E', color: 'from-indigo-500 to-purple-700',
-  },
-  {
-    name: 'WhatsApp', desc: 'Quick support via WhatsApp.',
-    href: 'https://wa.me/584126858111', color: 'from-green-400 to-emerald-600',
-  },
-  {
-    name: 'Email', desc: 'For formal inquiries or collaborations.',
-    href: 'mailto:fplayersoffcial@gmail.com', color: 'from-brand to-brand-300',
-  },
-];
 
 export default function SupportPage() {
   usePageTitle('SUPPORT');
@@ -198,23 +185,39 @@ export default function SupportPage() {
     }
   };
 
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
+  };
+
   return (
-    <div className="min-h-screen pt-24 pb-16 px-4">
-      <div className="max-w-4xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand/10 text-brand-light mb-6">
-            <svg viewBox="0 0 24 24" className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth={2}><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+    <MainLayout>
+      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+        <div className="absolute top-1/4 left-0 w-[800px] h-[800px] bg-brand/10 rounded-full blur-[200px] animate-pulse" />
+        <div className="absolute bottom-0 right-0 w-[700px] h-[700px] bg-brand-accent/10 rounded-full blur-[180px]" />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 pt-0 pb-32 space-y-16">
+
+        {/* --- HERO HEADER --- */}
+        <motion.header id="hero" initial="hidden" animate="visible" variants={sectionVariants} className="relative space-y-8 pt-12">
+          <div className="flex flex-col items-center gap-1 text-center">
+             <div className="flex items-center gap-6 group">
+                <div className="w-12 h-12 text-brand-light flex items-center justify-center">
+                   {I.support}
+                </div>
+                <h1 className="text-4xl md:text-8xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-brand-light to-brand-accent bg-clip-text text-transparent [-webkit-text-stroke:1px_black]">
+                   SOPORTE
+                </h1>
+             </div>
+             <p className="text-brand-light font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
+                Estamos aquí para ayudarte
+             </p>
           </div>
-          <h1 className="text-4xl md:text-6xl font-header font-black bg-gradient-to-r from-brand-light to-brand-accent bg-clip-text text-transparent uppercase tracking-tighter mb-4">
-            Soporte
-          </h1>
-          <p className="text-gray-400 max-w-xl mx-auto text-sm uppercase tracking-widest">
-            Estamos aquí para ayudarte
-          </p>
-        </motion.div>
+        </motion.header>
 
         {/* TABS NAVEGACIÓN */}
-        <div className="flex justify-center gap-4 pt-8 mb-12">
+        <div className="flex justify-center gap-4 pt-8">
             <button
               onClick={() => setActiveTab('new')}
               className={`px-8 py-3 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all ${
@@ -234,6 +237,7 @@ export default function SupportPage() {
          </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+
           {/* --- MAIN CONTENT --- */}
           <div className="lg:col-span-8 space-y-12">
             <AnimatePresence mode="wait">
@@ -272,7 +276,8 @@ export default function SupportPage() {
                    </div>
 
                    {!user && !loading ? (
-                     <div className="p-16 bg-black border-2 border-brand-light/20 rounded-[4rem] text-center space-y-10 shadow-2xl">
+                     <div className="p-16 bg-black border-2 border-brand-light/20 rounded-[4rem] text-center space-y-10 shadow-2xl relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-12 opacity-[0.03] text-brand-light font-black text-9xl italic uppercase tracking-tighter">STOP</div>
                         <div className="w-24 h-24 text-brand-light mx-auto animate-pulse">{I.alert}</div>
                         <div className="space-y-3">
                            <h2 className="text-4xl md:text-5xl font-header font-black text-white uppercase italic tracking-tighter leading-none">AUTENTICACIÓN REQUERIDA</h2>
@@ -281,103 +286,121 @@ export default function SupportPage() {
                            </p>
                         </div>
                         <div className="pt-6 flex flex-col sm:flex-row justify-center gap-6">
-                           <Link href="/login" className="px-16 py-6 bg-white text-black font-black uppercase text-xs tracking-[0.2em] rounded-3xl hover:bg-brand-light hover:scale-105 transition-all shadow-2xl flex items-center justify-center gap-4">
-                              <div className="w-5 h-5">{I.login}</div> ACCEDER
+                           <Link href="/login" className="px-16 py-6 bg-white text-black font-black uppercase text-xs tracking-[0.2em] rounded-3xl hover:bg-brand-light hover:scale-105 transition-all shadow-2xl flex items-center justify-center gap-4 group/btn">
+                              <div className="w-5 h-5 group-hover/btn:scale-110 transition-transform">{I.login}</div> ACCEDER
                            </Link>
-                           <Link href="/register" className="px-16 py-6 bg-transparent border-2 border-brand-light text-brand-light font-black uppercase text-xs tracking-[0.2em] rounded-3xl hover:bg-brand-light/10 hover:scale-105 transition-all flex items-center justify-center gap-4">
-                              <div className="w-5 h-5">{I.userPlus}</div> REGISTRARSE
+                           <Link href="/register" className="px-16 py-6 bg-transparent border-2 border-brand-light text-brand-light font-black uppercase text-xs tracking-[0.2em] rounded-3xl hover:bg-brand-light/10 hover:scale-105 transition-all flex items-center justify-center gap-4 group/reg">
+                              <div className="w-5 h-5 group-hover/reg:scale-110 transition-transform">{I.userPlus}</div> REGISTRARSE
                            </Link>
                         </div>
                      </div>
                    ) : (
-                     <form onSubmit={handleSubmit} className="p-8 md:p-10 bg-white/5 border border-white/5 rounded-[3rem] space-y-10">
-                        <div className="space-y-6">
-                          <div className="flex items-center gap-3 border-b border-white/5 pb-2">
-                             <div className="w-4 h-4 text-brand-light">{I.user}</div>
-                             <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Identidad del Remitente</h3>
-                          </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                             <div className="space-y-2">
-                                <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Nombre de usuario</label>
-                                <input type="text" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="@usuario" />
-                             </div>
-                             <div className="space-y-2">
-                                <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Nombre completo</label>
-                                <input type="text" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="Nombre" />
-                             </div>
-                          </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                             <div className="space-y-2">
-                                <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Apellido</label>
-                                <input type="text" value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="Apellido" />
-                             </div>
-                             <div className="space-y-2">
-                                <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Email de Contacto</label>
-                                <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="tu@email.com" />
-                             </div>
-                          </div>
+                     <>
+                        {/* REGLAS RÁPIDAS */}
+                        <div className="bg-black/40 border border-white/5 p-6 rounded-3xl flex items-start gap-4">
+                           <div className="w-8 h-8 text-brand-light shrink-0 mt-1">{I.info}</div>
+                           <div className="space-y-1">
+                              <h4 className="text-xs font-black text-white uppercase tracking-widest">Protocolo de Asistencia</h4>
+                              <p className="text-[10px] text-gray-500 font-bold leading-relaxed uppercase">
+                                 ¿No encontraste solución en los recursos anteriores? Genera un ticket a continuación. Garantizamos respuesta en menos de 24h.
+                              </p>
+                           </div>
                         </div>
 
-                        <div className="space-y-6 pt-4">
-                          <div className="flex items-center gap-3 border-b border-white/5 pb-2">
-                             <div className="w-4 h-4 text-brand-accent">{I.tag}</div>
-                             <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Naturaleza del Ticket</h3>
-                          </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                             <div className="space-y-2">
-                                <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Tipo de Contacto</label>
-                                <select value={formData.contactType} onChange={e => setFormData({...formData, contactType: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
-                                   {CONTACT_TYPES.map(c => <option key={c} value={c}>{c}</option>)}
-                                </select>
+                        <form onSubmit={handleSubmit} className="p-8 md:p-10 bg-white/5 border border-white/5 rounded-[3rem] space-y-10">
+                           <div className="space-y-6">
+                             <div className="flex items-center gap-3 border-b border-white/5 pb-2">
+                                <div className="w-4 h-4 text-brand-light">{I.user}</div>
+                                <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Identidad del Remitente</h3>
                              </div>
-                             <div className="space-y-2">
-                                <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Región de Origen</label>
-                                <select value={formData.region} onChange={e => setFormData({...formData, region: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
-                                   {REGIONS.map(r => <option key={r.code} value={r.code}>{r.name}</option>)}
-                                </select>
+                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Nombre de usuario</label>
+                                   <input type="text" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="@usuario" />
+                                </div>
+                                <div className="space-y-2">
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Nombre completo</label>
+                                   <input type="text" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="Nombre" />
+                                </div>
                              </div>
-                          </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                             <div className="space-y-2">
-                                <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Categoría</label>
-                                <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value, subCategory: Object.values(CATEGORIES)[0][0]})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
-                                   {Object.keys(CATEGORIES).map(c => <option key={c} value={c}>{c}</option>)}
-                                </select>
+                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Apellido</label>
+                                   <input type="text" value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="Apellido" />
+                                </div>
+                                <div className="space-y-2">
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Email de Contacto</label>
+                                   <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="tu@email.com" />
+                                </div>
                              </div>
-                             <div className="space-y-2">
-                                <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Subcategoría</label>
-                                <select value={formData.subCategory} onChange={e => setFormData({...formData, subCategory: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
-                                   {CATEGORIES[formData.category as keyof typeof CATEGORIES]?.map(s => <option key={s} value={s}>{s}</option>)}
-                                </select>
-                             </div>
-                          </div>
-                        </div>
+                           </div>
 
-                        <div className="space-y-6 pt-4">
-                          <div className="flex items-center gap-3 border-b border-white/5 pb-2">
-                             <div className="w-4 h-4 text-brand-light">{I.msg}</div>
-                             <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Detalles del Requerimiento</h3>
-                          </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                             <div className="space-y-2">
-                                <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Teléfono (opcional)</label>
-                                <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="+58 412 685 8111" />
+                           <div className="space-y-6 pt-4">
+                             <div className="flex items-center gap-3 border-b border-white/5 pb-2">
+                                <div className="w-4 h-4 text-brand-accent">{I.tag}</div>
+                                <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Naturaleza del Ticket</h3>
                              </div>
-                             <div className="space-y-2">
-                                <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Dispositivo</label>
-                                <input type="text" value={formData.device} onChange={e => setFormData({...formData, device: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="PC / Móvil / Tablet" />
+                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Tipo de Contacto</label>
+                                   <select value={formData.contactType} onChange={e => setFormData({...formData, contactType: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
+                                      {CONTACT_TYPES.map(c => <option key={c} value={c}>{c}</option>)}
+                                   </select>
+                                </div>
+                                <div className="space-y-2">
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Región de Origen</label>
+                                   <div className="relative">
+                                      <select value={formData.region} onChange={e => setFormData({...formData, region: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl pl-12 pr-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
+                                         {REGIONS.map(r => <option key={r.code} value={r.code}>{r.name}</option>)}
+                                      </select>
+                                      <div className="absolute left-4 top-1/2 -translate-y-1/2">
+                                         <FlagIcon code={formData.region} className="w-5 h-4" />
+                                      </div>
+                                   </div>
+                                </div>
                              </div>
-                          </div>
-                          <div className="space-y-2">
-                             <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Mensaje / Descripción</label>
-                             <textarea value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} rows={5} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all resize-none" placeholder="Describe tu situación detalladamente..." />
-                          </div>
-                        </div>
+                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Categoría</label>
+                                   <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value, subCategory: Object.values(CATEGORIES)[0][0]})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
+                                      {Object.keys(CATEGORIES).map(c => <option key={c} value={c}>{c}</option>)}
+                                   </select>
+                                </div>
+                                <div className="space-y-2">
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Subcategoría</label>
+                                   <select value={formData.subCategory} onChange={e => setFormData({...formData, subCategory: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
+                                      {CATEGORIES[formData.category as keyof typeof CATEGORIES]?.map(s => <option key={s} value={s}>{s}</option>)}
+                                   </select>
+                                </div>
+                             </div>
+                           </div>
 
-                        <button type="submit" disabled={submitting} className="w-full py-5 bg-brand-light text-black font-black uppercase text-xs tracking-[0.2em] rounded-2xl hover:shadow-lg hover:shadow-brand-light/20 transition-all disabled:opacity-50 flex items-center justify-center gap-3">
-                           <div className="w-5 h-5">{I.send}</div> {submitting ? 'ENVIANDO...' : 'ENVIAR TICKET'}
-                        </button>
-                     </form>
+                           <div className="space-y-6 pt-4">
+                             <div className="flex items-center gap-3 border-b border-white/5 pb-2">
+                                <div className="w-4 h-4 text-brand-light">{I.msg}</div>
+                                <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Detalles del Requerimiento</h3>
+                             </div>
+                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Teléfono (opcional)</label>
+                                   <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="+58 412 685 8111" />
+                                </div>
+                                <div className="space-y-2">
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Dispositivo</label>
+                                   <input type="text" value={formData.device} onChange={e => setFormData({...formData, device: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="PC / Móvil / Tablet" />
+                                </div>
+                             </div>
+                             <div className="space-y-2">
+                                <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Mensaje / Descripción</label>
+                                <textarea value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} rows={5} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all resize-none" placeholder="Describe tu situación detalladamente..." />
+                             </div>
+                           </div>
+
+                           <button type="submit" disabled={submitting} className="w-full py-5 bg-brand-light text-black font-black uppercase text-xs tracking-[0.2em] rounded-2xl hover:shadow-lg hover:shadow-brand-light/20 transition-all disabled:opacity-50 flex items-center justify-center gap-3">
+                              <div className="w-5 h-5">{I.send}</div> {submitting ? 'ENVIANDO...' : 'ENVIAR TICKET'}
+                           </button>
+                        </form>
+                     </>
                    )}
                   </motion.div>
                 ) : (
@@ -428,111 +451,92 @@ export default function SupportPage() {
             </AnimatePresence>
           </div>
 
-          {/* --- SIDEBAR --- */}
-          <div className="lg:col-span-4 space-y-8">
-            <div className="p-8 bg-white/5 border border-white/5 rounded-[3rem] space-y-6">
-              <h3 className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em]">Canales Directos</h3>
-              <div className="space-y-4">
-                <a href="mailto:fplayersoffcial@gmail.com" className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-brand-light/30 transition-all group">
-                  <div className="w-10 h-10 rounded-xl bg-brand/20 flex items-center justify-center text-brand-light group-hover:scale-110 transition-transform">{I.msg}</div>
-                  <div>
-                    <div className="text-[8px] font-black text-white/20 uppercase tracking-widest">Email</div>
-                    <div className="text-sm font-bold text-white">fplayersoffcial@gmail.com</div>
-                  </div>
-                </a>
-                <a href="https://discord.com/invite/W3kMtMMj6E" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-brand-light/30 transition-all group">
-                  <div className="w-10 h-10 rounded-xl bg-[#5865F2]/20 flex items-center justify-center text-[#5865F2] group-hover:scale-110 transition-transform"><svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 4.18 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.11 10.11 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg></div>
-                  <div>
-                    <div className="text-[8px] font-black text-white/20 uppercase tracking-widest">Discord</div>
-                    <div className="text-sm font-bold text-white">Servidor Oficial</div>
-                  </div>
-                </a>
-              </div>
-            </div>
-
-            <div className="p-8 bg-brand/5 border border-brand/20 rounded-[3rem] space-y-4">
-              <h3 className="text-[10px] font-black text-brand-light/60 uppercase tracking-widest">Tiempo de respuesta</h3>
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-neon-green animate-pulse" />
-                <span className="text-sm font-bold text-white">24-48 horas hábiles</span>
-              </div>
-              <p className="text-[10px] text-white/40 font-bold leading-relaxed">
-                Los tickets se procesan por orden de llegada. Para urgencias, usa Discord.
-              </p>
-            </div>
-
-            <div className="p-8 bg-brand/5 border border-brand/20 rounded-[3rem] space-y-4">
-              <h3 className="text-[10px] font-black text-brand-light/60 uppercase tracking-widest">Estructura Técnica</h3>
-              <div className="space-y-2 text-[11px] text-gray-300 font-bold">
-                <p>Next.js + Vercel</p>
-                <p>Supabase (Auth / DB)</p>
-                <p>Tailwind + Framer Motion</p>
-              </div>
-            </div>
-
-            <div className="p-8 bg-brand/5 border border-brand/20 rounded-[3rem] space-y-4">
-              <h3 className="text-[10px] font-black text-brand-light/60 uppercase tracking-widest">CEO</h3>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-brand/20 flex items-center justify-center text-brand-light">{I.ceo}</div>
-                <div>
-                  <div className="text-sm font-bold text-white">Ciszuko Antony</div>
-                  <div className="text-[10px] text-gray-400">CEO · Creador</div>
+          {/* --- SIDEBAR INFO --- */}
+          <aside className="lg:col-span-4 space-y-8">
+             {/* RECEPTOR DEL CONTACTO */}
+             <div className="p-8 bg-gradient-to-br from-brand/10 to-transparent border border-brand/20 rounded-[3rem] space-y-6 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-4 opacity-5 text-brand-light font-black text-6xl italic pointer-events-none">CEO</div>
+                <div className="flex items-center gap-4">
+                   <div className="w-12 h-12 text-brand-light p-3 bg-brand/10 rounded-2xl border border-brand/20">
+                      {I.user}
+                   </div>
+                   <div>
+                      <h3 className="text-xs font-black text-white uppercase tracking-widest">Receptor del Ticket</h3>
+                      <p className="text-[10px] text-brand-light font-black uppercase tracking-[0.2em]">Ciszuko Antony</p>
+                   </div>
                 </div>
-              </div>
-              <div className="space-y-2 text-[11px] text-gray-300 font-bold">
-                <p>fplayersoffcial@gmail.com</p>
-                <p>+58 412 6858111</p>
-              </div>
-            </div>
+                <p className="text-[10px] text-gray-500 font-bold leading-relaxed uppercase">
+                   Tu requerimiento será procesado directamente por el **Equipo de Ciszuko Antony**. Los datos se sincronizan con <span className="text-white">fplayersoffcial@gmail.com</span>.
+                </p>
+             </div>
 
-            <div className="p-8 bg-white/5 border border-white/5 rounded-[3rem] space-y-4">
-              <h3 className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em]">Niveles de Prioridad</h3>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3"><span className="w-2 h-2 rounded-full bg-red-500" /><span className="text-[11px] font-bold text-white">Crítica</span></div>
-                <div className="flex items-center gap-3"><span className="w-2 h-2 rounded-full bg-neon-blue" /><span className="text-[11px] font-bold text-white">Alta</span></div>
-                <div className="flex items-center gap-3"><span className="w-2 h-2 rounded-full bg-yellow-400" /><span className="text-[11px] font-bold text-white">Normal</span></div>
-                <div className="flex items-center gap-3"><span className="w-2 h-2 rounded-full bg-gray-500" /><span className="text-[11px] font-bold text-white">Baja</span></div>
-              </div>
-            </div>
-          </div>
+             <div className="p-8 bg-gradient-to-br from-neon-green/10 to-transparent border border-neon-green/20 rounded-[3rem] space-y-6 text-center relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4 opacity-5 text-neon-green font-black text-6xl italic pointer-events-none">24/7</div>
+                <div className="w-16 h-16 text-neon-green mx-auto animate-pulse">{I.pulse}</div>
+                <div className="space-y-1">
+                   <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-tighter">NÚCLEO OPERATIVO</h3>
+                   <p className="text-neon-green font-black text-[9px] uppercase tracking-[0.4em]">Soporte Global Activo</p>
+                </div>
+                <p className="text-[10px] text-gray-500 font-bold leading-relaxed uppercase">
+                   Atendemos requerimientos las 24 horas, priorizando la estabilidad del ecosistema Ciszuko Antony.
+                </p>
+             </div>
+
+             <div className="p-8 bg-doc-dark border border-white/5 rounded-[3rem] space-y-6">
+                <h3 className="text-xs font-black text-white uppercase tracking-[0.4em] border-b border-white/10 pb-4">Niveles de Prioridad</h3>
+                <div className="space-y-4">
+                   {[
+                     { label: 'Crítica', desc: 'Fallos de sistema o seguridad.', color: 'text-neon-pink' },
+                     { label: 'Alta', desc: 'Problemas de cuenta o pagos.', color: 'text-neon-purple' },
+                     { label: 'Normal', desc: 'Bugs menores o consultas.', color: 'text-neon-blue' },
+                     { label: 'Baja', desc: 'Sugerencias y recomendaciones.', color: 'text-gray-500' },
+                   ].map(p => (
+                     <div key={p.label} className="flex gap-4 items-start group">
+                        <div className={`w-1 h-8 rounded-full bg-current ${p.color} opacity-40 group-hover:opacity-100 transition-all`} />
+                        <div>
+                           <p className={`text-[10px] font-black uppercase tracking-widest ${p.color}`}>{p.label}</p>
+                           <p className="text-[9px] text-gray-500 font-bold uppercase mt-1}>{p.desc}</p>
+                        </div>
+                     </div>
+                   ))}
+                </div>
+             </div>
+          </aside>
         </div>
 
-        {/* CANALES DE SOPORTE ADICIONALES */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-12">
-          {supportChannels.map((c, i) => (
-            <motion.a key={c.name} href={c.href} target="_blank" rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
-              className="group p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-brand/50 transition-all hover:-translate-y-1"
-            >
-              <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${c.color} mb-4`} />
-              <h3 className="text-lg font-header font-bold text-white mb-2 group-hover:text-brand transition-colors">{c.name}</h3>
-              <p className="text-gray-400 text-sm">{c.desc}</p>
-            </motion.a>
-          ))}
-        </div>
+        {/* --- SOCIAL GALAXY --- */}
+        <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={sectionVariants} className="space-y-12 bg-black/40 p-12 md:p-20 rounded-[5rem] border border-white/5">
+           <div className="text-center space-y-2 mb-12">
+             <div className="flex items-center justify-center gap-4 text-brand-light mb-4">
+                <div className="w-8 h-8">{I.globe}</div>
+                <h3 className="text-4xl font-header font-black text-white uppercase italic tracking-tighter">REDES OFICIALES</h3>
+             </div>
+             <p className="text-gray-500 font-black text-[10px] uppercase tracking-[0.5em] flex items-center justify-center gap-2">CANALES EXCLUSIVOS DE CISZUKO ANTONY</p>
+           </div>
 
-        {/* REDES OFICIALES */}
-        <div className="mt-16 space-y-8">
-          <div className="text-center space-y-2">
-            <div className="flex items-center justify-center gap-4 text-brand-light mb-4">
-              <div className="w-8 h-8">{I.globe}</div>
-              <h3 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">REDES OFICIALES</h3>
-            </div>
-            <p className="text-gray-500 font-black text-[10px] uppercase tracking-[0.5em]">CANALES EXCLUSIVOS DE CISZUKO ANTONY</p>
-          </div>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            {SOCIALS.map((s) => (
-              <a key={s.name} href={s.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold border border-white/10 text-gray-300 hover:text-white hover:border-white/40 transition-all">
-                <span className="w-4 h-4">{s.icon}</span>
-                {s.name}
-              </a>
-            ))}
-          </div>
-        </div>
+           <div className="space-y-10">
+              <div className="flex items-center gap-4">
+                 <div className="h-[1px] flex-1 bg-brand/10" />
+                 <span className="text-brand-light font-black text-[10px] uppercase tracking-widest px-4">Sincronización Social Unificada</span>
+                 <div className="h-[1px] flex-1 bg-brand/10" />
+              </div>
+              <div className="flex flex-wrap justify-center gap-4">
+                  {SOCIALS.map(s => {
+                    return (
+                      <button key={s.name} onClick={() => window.open(s.href, '_blank')}
+                        className={`flex items-center gap-4 px-8 py-4 rounded-3xl border transition-all hover:scale-105 shadow-xl ${s.borderCol || 'border-white/10'} ${s.bgCol || 'bg-white/5'} ${s.textCol || 'text-gray-300'} hover:text-white hover:bg-opacity-40 group/btn`}
+                      >
+                         <div className="w-6 h-6 group-hover/btn:scale-110 transition-transform">{s.icon}</div>
+                         <span className="text-[11px] font-black uppercase tracking-widest">{s.name}</span>
+                      </button>
+                    );
+                  })}
+              </div>
+           </div>
+        </motion.section>
+
+        <QuickDocks />
       </div>
-
-      <AuthWarningModal isOpen={isAuthWarningOpen} onClose={() => setIsAuthWarningOpen(false)} />
-      <QuickDocks />
-    </div>
+    </MainLayout>
   );
 }

@@ -6,23 +6,37 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
-import { CHANGELOG_DATA } from '@/data/changelog';
+import { CHANGELOG_DATA as CHANGELOG_STATIC } from '@/data/changelog';
 import { I, TAG_CONFIG } from '@/config/changelogIcons';
 import { useAppStore } from '@/store/useAppStore';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
 import { usePageTitle } from '@/lib/usePageTitle';
-import { useToast } from '@ciszu/ui';
+import { usePublishedChangelogs, useToast } from '@ciszu/ui';
+import { mergeChangelogSources } from '@ciszunetwork/utils/changelog';
  
+
+/** Icono de una entrada: usa el icono publicado (devcon) si existe. */
+const entryIcon = (item: { icon?: string; types: string[] }) =>
+  (item.icon && (I as Record<string, React.ReactNode>)[item.icon]) ||
+  TAG_CONFIG[item.types[0] as keyof typeof TAG_CONFIG]?.icon ||
+  I.history;
+
 export default function ChangelogDetail() {
   usePageTitle('CHANGELOG');
   const { id } = useParams();
 const { toast } = useToast();
   const [isAuthWarningOpen, setIsAuthWarningOpen] = useState(false);
+  // Entradas publicadas desde el devcon (almacén en vivo) + las del código.
+  const published = usePublishedChangelogs('muzicmania');
+  const CHANGELOG_DATA = useMemo(
+    () => mergeChangelogSources(published.entries, CHANGELOG_STATIC),
+    [published.entries],
+  );
   const mostRecentId = useMemo(() => {
     return CHANGELOG_DATA.reduce((latest, item) =>
       new Date(item.date) > new Date(latest.date) ? item : latest
     , CHANGELOG_DATA[0]).id;
-  }, []);
+  }, [CHANGELOG_DATA]);
   const item = CHANGELOG_DATA.find(i => i.id === id);
 
   if (!item) {
@@ -77,7 +91,7 @@ const { toast } = useToast();
               )}
 
               <div className={`w-24 h-24 p-6 rounded-3xl bg-black/60 border border-white/10 ${primaryTag.color} group-hover:scale-110 transition-transform flex items-center justify-center relative z-10`}>
-                 <div className="w-full h-full">{primaryTag.icon}</div>
+                 <div className="w-full h-full">{entryIcon(item)}</div>
               </div>
 
               <div className="space-y-6 relative z-10 w-full">
@@ -132,7 +146,7 @@ const { toast } = useToast();
               </div>
 
               <div className="max-w-3xl w-full mx-auto p-8 bg-black/40 rounded-[2.5rem] border border-white/5 relative group/quote mt-8">
-                 <div className={`absolute -top-4 -left-4 w-10 h-10 opacity-20 transform rotate-12 ${primaryTag.color}`}>{primaryTag.icon}</div>
+                 <div className={`absolute -top-4 -left-4 w-10 h-10 opacity-20 transform rotate-12 ${primaryTag.color}`}>{entryIcon(item)}</div>
                  <p className="text-gray-300 text-lg md:text-xl font-bold italic leading-relaxed tracking-tight group-hover/quote:text-white transition-colors">
                     &quot;{item.description}&quot;
                  </p>
