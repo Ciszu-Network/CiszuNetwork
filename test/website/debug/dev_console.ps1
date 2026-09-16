@@ -70,7 +70,7 @@ $WEBS = @(
     @{ key = 'muzic';    name = 'MuzicMania';     siteId = 'muzicmania';     filter = 'muzicmania-website';   port = 3003; dir = 'projects/muzicmania/website'; emoji = '🎵' }
 )
 
-$VERSION = '2.5.0'
+$VERSION = '2.6.0'
 # Logs locales visibles para Ciszuko, dentro de la carpeta de debug
 # (gitignored; use la herramienta "Abrir carpeta de logs" para verlos).
 $LOG_DIR = Join-Path $PSScriptRoot 'local-logs'
@@ -2160,6 +2160,610 @@ function Show-AdvisorSection {
     }
 }
 
+# =====================================================================
+# CHANGELOGS (registro de cambios de las 4 webs)
+# =====================================================================
+# Publica entradas del changelog en tres alcances independientes:
+#   LOCAL   -> test/website/debug/local-logs/changelogs_debug.json (solo dev;
+#              cada web lo lee por /api/changelogs/debug)
+#   GLOBAL  -> Supabase (ciszunetwork.global_changelogs) vía scripts/changelogs.js
+#   HIBRIDO -> los dos a la vez
+# Cada alcance tiene su submenu independiente (crear / modificar / eliminar /
+# resumen / kill switch) y las webs destino se eligen con casillas.
+#
+# "Pendiente hasta su creación": una web muestra la entrada como PENDIENTE
+# mientras no la haya leído. En GLOBAL el propio script marca la entrega al
+# publicar (garantía backend, igual que ads/disclaimers) y la web confirmará su
+# timestamp real; en LOCAL la marca la web al abrir /changelog.
+$script:clTypes = $null
+$script:clIcons = $null
+$script:clStatuses = $null
+
+# Pistas visuales por icono (solo consola; las webs renderizan SVG reales).
+$CL_ICON_HINT = @{
+    history = '⟲';  zap = '⚡';     check = '✔';   lock = '🔒';   shield = '🛡'
+    box = '📦';     layers = '▤';   settings = '⚙'; file = '📄';   eye = '👁'
+    target = '🎯';  plus = '➕';    minus = '➖';   refresh = '🔄'; star = '★'
+    clock = '🕒';   alert = '⚠';   heart = '♥';   verified = '✅'; server = '🖥'
+    code = '⌨';     user = '👤';    trash = '🗑';   back = '↩';     sparkles = '✨'
+    rocket = '🚀';  gauge = '📈';   bug = '🐞';     palette = '🎨'; database = '🗄'
+    globe = '🌐';   wrench = '🔧'
+}
+
+# Ejecuta scripts/changelogs.js. Si detecta contenido prohibido (exit 2),
+# registra el intento y cierra la consola (mismo contrato que el advisor).
+function Invoke-ChangelogNode {
+    param([string[]]$NodeArgs, [switch]$Quiet)
+    Push-Location $root
+    try {
+        $out = (& node 'scripts/changelogs.js' @NodeArgs 2>&1 | Out-String)
+        $code = $LASTEXITCODE
+    } finally {
+        Pop-Location
+    }
+    if (-not $Quiet) { Write-Host $out.TrimEnd() }
+    if ($code -eq 2) {
+        Write-Host ""
+        Write-Host "${c_red}🔒 Contenido prohibido detectado en el changelog (título, autor o texto).${c_reset}"
+        Write-Host "${c_red}   El intento quedó registrado en el log de auditoría. Cerrando la consola...${c_reset}"
+        Start-Sleep -Milliseconds 1500
+        exit 2
+    }
+    return @{ code = $code; text = $out }
+}
+
+function Get-ChangelogData([string[]]$NodeArgs) {
+    $r = Invoke-ChangelogNode -NodeArgs $NodeArgs -Quiet
+    if ($r.code -ne 0) {
+        Write-Host "${c_yellow}No pude leer el registro de changelogs (revisa el .env / la conexión).${c_reset}"
+        if ($r.text) { Write-Host "${c_gray}$($r.text.Trim())${c_reset}" }
+        Press-Continue
+        return $null
+    }
+    try { return ($r.text | ConvertFrom-Json) } catch {
+        Write-Host "${c_yellow}Respuesta ilegible del registro de changelogs.${c_reset}"
+        Press-Continue
+        return $null
+    }
+}
+
+function Get-ChangelogModeLabel([string]$Mode) {
+    switch ($Mode) {
+        'local'  { return 'LOCAL (debug, no toca produccion)' }
+        'global' { return 'GLOBAL (produccion)' }
+        'hybrid' { return 'HIBRIDO (local + global)' }
+    }
+    return $Mode
+}
+
+function Get-ChangelogScopes([string]$Mode) {
+    switch ($Mode) {
+        'local'  { return @('local') }
+        'global' { return @('global') }
+        'hybrid' { return @('local', 'global') }
+    }
+    return @()
+}
+
+# Catálogos compartidos con el script (cache en memoria de la sesión).
+function Get-ChangelogCatalog([string]$Kind) {
+    if ($Kind -eq 'type-names'   -and $script:clTypes)    { return $script:clTypes }
+    if ($Kind -eq 'icon-names'   -and $script:clIcons)    { return $script:clIcons }
+    if ($Kind -eq 'status-names' -and $script:clStatuses) { return $script:clStatuses }
+    $r = Invoke-ChangelogNode -NodeArgs @("--$Kind") -Quiet
+    $items = @($r.text -split "`r?`n" | Where-Object { $_.Trim() -ne '' })
+    if ($Kind -eq 'type-names')   { $script:clTypes = $items }
+    if ($Kind -eq 'icon-names')   { $script:clIcons = $items }
+    if ($Kind -eq 'status-names') { $script:clStatuses = $items }
+    return $items
+}
+
+function Get-ChangelogSnapshot([string]$Scope) {
+    $a = @('--status', '--json')
+    if ($Scope -eq 'local') { $a += @('--local') }
+    return Get-ChangelogData $a
+}
+
+function ConvertTo-ChangelogSlug([string]$Value) {
+    $s = $Value.ToLower()
+    $s = $s -replace '[áàäâ]', 'a' -replace '[éèëê]', 'e' -replace '[íìïî]', 'i'
+    $s = $s -replace '[óòöô]', 'o' -replace '[úùüû]', 'u' -replace 'ñ', 'n'
+    $s = ($s -replace '[^a-z0-9]+', '-').Trim('-')
+    return $s
+}
+
+function Read-WithDefault([string]$Label, [string]$Default) {
+    if ($Default) { $v = Read-Host "$Label [$Default]" } else { $v = Read-Host $Label }
+    if ([string]::IsNullOrWhiteSpace($v)) { return $Default }
+    return $v.Trim()
+}
+
+function Read-Required([string]$Label, [string]$Default) {
+    while ($true) {
+        $v = Read-WithDefault $Label $Default
+        if (-not [string]::IsNullOrWhiteSpace($v)) { return $v }
+        Write-Host "${c_yellow}$Label es obligatorio.${c_reset}"
+    }
+}
+
+function Get-ExistingField($Existing, [string]$Field) {
+    if (-not $Existing) { return '' }
+    $v = $Existing.$Field
+    if ($null -eq $v) { return '' }
+    return [string]$v
+}
+
+# ---- Formulario completo de una entrada (todos los campos del changelog) ----
+function Read-ChangelogForm {
+    param([string]$Mode, $Existing = $null, [string]$Scope = 'local')
+
+    Clear-Host
+    Show-Art
+    Show-MenuHeader "CHANGELOG - $(if ($Existing) { 'MODIFICAR' } else { 'CREAR' }) ($(Get-ChangelogModeLabel $Mode))"
+
+    # 1) Webs destino (casillas)
+    $initSites = @($WEBS.key)
+    if ($Existing) {
+        $sites = @(([string]$Existing.target) -split ',')
+        $keys = @()
+        foreach ($w in $WEBS) { if ($sites -contains $w.siteId) { $keys += $w.key } }
+        if ($keys.Count -gt 0) { $initSites = $keys }
+    }
+    $siteOpts = @($WEBS | ForEach-Object { @{ key = $_.key; ic = $_.emoji; l = "$($_.name)  (siteId: $($_.siteId), puerto $($_.port))" } })
+    $r = Show-MultiSelect -Title "WEBS DESTINO (Espacio marca · Enter procede)" -Options $siteOpts -Init $initSites
+    if ($r.Action -eq 'abort') { return $null }
+    if ($r.Action -ne 'proceed') { return $null }
+    $pickedKeys = @($r.Selection)
+    if ($pickedKeys.Count -eq 0) { Write-Host "${c_yellow}Selecciona al menos una web.${c_reset}"; Press-Continue; return $null }
+    $targets = @(Resolve-SiteIds $pickedKeys)
+
+    # 2) Textos
+    Clear-Host
+    Show-Art
+    Show-MenuHeader "CHANGELOG - CONTENIDO ($(Get-ChangelogModeLabel $Mode))"
+    Write-Host "${c_gray}Webs destino: $($targets -join ', ')${c_reset}"
+    Write-Host ""
+    $title = Read-Required 'Título' (Get-ExistingField $Existing 'title')
+    $version = Read-Required 'Versión (ej: PATCH V2.5.0, LOCAL E2E)' (Get-ExistingField $Existing 'version')
+    $slugDefault = Get-ExistingField $Existing 'slug'
+    if (-not $slugDefault) { $slugDefault = ConvertTo-ChangelogSlug $version }
+    $slug = Read-WithDefault 'Slug (id de la URL /changelog/<slug>)' $slugDefault
+    $code = Read-WithDefault 'Código interno (opcional)' (Get-ExistingField $Existing 'code')
+    $description = Read-WithDefault 'Descripción corta (opcional)' (Get-ExistingField $Existing 'description')
+    $phase = Read-WithDefault 'Fase / roadmap (opcional)' (Get-ExistingField $Existing 'phase')
+    $author = Read-WithDefault 'Autor' ("$(if (Get-ExistingField $Existing 'author') { Get-ExistingField $Existing 'author' } else { 'CiszukoAntony' })")
+    $dateDefault = Get-ExistingField $Existing 'release_date'
+    if (-not $dateDefault) { $dateDefault = Get-Date -Format 'yyyy-MM-dd' }
+    $date = Read-WithDefault 'Fecha (YYYY-MM-DD)' $dateDefault
+
+    # 3) Etiquetas (multi-selección)
+    $typeList = @(Get-ChangelogCatalog 'type-names')
+    $typeInit = @('add')
+    if ($Existing) { $typeInit = @([string[]]$Existing.types) }
+    $tr = Show-MultiSelect -Title "ETIQUETAS (Espacio marca · Enter procede)" -Options @($typeList | ForEach-Object { @{ key = $_; ic = '🏷'; l = $_ } }) -Init $typeInit
+    if ($tr.Action -eq 'abort') { return $null }
+    if ($tr.Action -ne 'proceed') { return $null }
+    $types = @($tr.Selection)
+    if ($types.Count -eq 0) { $types = @('add') }
+
+    # 4) Icono del preview (catálogo completo)
+    $iconList = @(Get-ChangelogCatalog 'icon-names')
+    $iconOpts = @()
+    foreach ($ic in $iconList) {
+        $hint = if ($CL_ICON_HINT.ContainsKey($ic)) { $CL_ICON_HINT[$ic] } else { '•' }
+        $iconOpts += @{ ic = $hint; l = $ic }
+    }
+    $iconDefault = Get-ExistingField $Existing 'icon'
+    if (-not $iconDefault) { $iconDefault = 'history' }
+    $iconIdx = $iconList.IndexOf($iconDefault)
+    if ($iconIdx -lt 0) { $iconIdx = 0 }
+    $ii = Show-Menu -Title "ICONO DEL PREVIEW ($($iconList.Count) disponibles)" -Options $iconOpts -InitIndex $iconIdx
+    if ($ii -lt 0) { return $null }
+    $icon = $iconList[$ii]
+
+    # 5) Estado del ciclo de vida
+    $statusList = @(Get-ChangelogCatalog 'status-names')
+    $statusLabelMap = @{ planned = 'Planificado'; 'in-progress' = 'En progreso'; released = 'Publicado'; hotfix = 'Hotfix' }
+    $statusOpts = @()
+    foreach ($st in $statusList) {
+        $lbl = if ($statusLabelMap.ContainsKey($st)) { $statusLabelMap[$st] } else { $st }
+        $statusOpts += @{ ic = '▪'; l = "$st  ($lbl)" }
+    }
+    $statusDefault = Get-ExistingField $Existing 'status'
+    if (-not $statusDefault) { $statusDefault = 'released' }
+    $stIdx = $statusList.IndexOf($statusDefault)
+    if ($stIdx -lt 0) { $stIdx = 2 }
+    $si = Show-Menu -Title "ESTADO DE LA ENTRADA" -Options $statusOpts -InitIndex $stIdx
+    if ($si -lt 0) { return $null }
+    $status = $statusList[$si]
+
+    # 6) Contenido de la página interna + frases destacadas
+    Clear-Host
+    Show-Art
+    Show-MenuHeader "CHANGELOG - PÁGINA INTERNA"
+    Write-Host "${c_gray}Escribe cada punto separado por ';'. Puedes indicar el tipo con 'texto|etiqueta'."
+    Write-Host "Ejemplo: Se añade el roadmap|feat;Se corrige el filtro|bugfix${c_reset}"
+    if ($Existing) {
+        $current = @($Existing.body)
+        if ($current.Count -gt 0) {
+            Write-Host "${c_cyan}Contenido actual:${c_reset}"
+            foreach ($b in $current) { Write-Host "   ${c_gray}· [$($b.type)] $($b.text)${c_reset}" }
+        }
+    }
+    Write-Host ""
+    $bodyRaw = Read-Host "Contenido (Enter = mantener el actual)"
+    if ([string]::IsNullOrWhiteSpace($bodyRaw) -and $Existing) {
+        $parts = @()
+        foreach ($b in @($Existing.body)) { $parts += "$($b.text)|$($b.type)" }
+        $bodyRaw = ($parts -join ';')
+    }
+    $hlDefault = ''
+    if ($Existing) { $hlDefault = (@($Existing.highlights) -join ';') }
+    if ($hlDefault) { Write-Host "${c_cyan}Frases destacadas actuales:${c_reset} ${c_gray}$hlDefault${c_reset}" }
+    $hlRaw = Read-Host "Frases destacadas (separadas por ';' · Enter = mantener)"
+    if ([string]::IsNullOrWhiteSpace($hlRaw)) { $hlRaw = $hlDefault }
+
+    return @{
+        sites       = @($targets)
+        title       = $title
+        version     = $version
+        slug        = $slug
+        code        = $code
+        description = $description
+        phase       = $phase
+        author      = $author
+        date        = $date
+        types       = @($types)
+        icon        = $icon
+        status      = $status
+        body        = $bodyRaw
+        highlights  = $hlRaw
+    }
+}
+
+function Show-ChangelogFormPreview($Form) {
+    Write-Host "${c_cyan}Título:${c_reset}        $($Form.title)"
+    Write-Host "${c_cyan}Versión:${c_reset}       $($Form.version)"
+    Write-Host "${c_cyan}Slug:${c_reset}          $($Form.slug)"
+    Write-Host "${c_cyan}Webs:${c_reset}          $(@($Form.sites) -join ', ')"
+    Write-Host "${c_cyan}Etiquetas:${c_reset}     $(@($Form.types) -join ', ')"
+    Write-Host "${c_cyan}Icono:${c_reset}         $($Form.icon)"
+    Write-Host "${c_cyan}Estado:${c_reset}        $($Form.status)"
+    Write-Host "${c_cyan}Fecha:${c_reset}         $($Form.date)"
+    Write-Host "${c_cyan}Autor:${c_reset}         $($Form.author)"
+    if ($Form.phase) { Write-Host "${c_cyan}Fase:${c_reset}          $($Form.phase)" }
+    if ($Form.code) { Write-Host "${c_cyan}Código:${c_reset}        $($Form.code)" }
+    if ($Form.description) { Write-Host "${c_cyan}Descripción:${c_reset}   $($Form.description)" }
+    Write-Host "${c_cyan}Página interna:${c_reset} $(if ($Form.body) { $Form.body } else { '(vacía)' })"
+    Write-Host "${c_cyan}Destacados:${c_reset}    $(if ($Form.highlights) { $Form.highlights } else { '(ninguno)' })"
+    Write-Host ""
+}
+
+# Solo se envían los campos con valor: el script rechaza flags vacíos.
+function Build-ChangelogArgs {
+    param([hashtable]$Form, [string]$EditTarget, [string]$Scope, [switch]$Wait)
+    $a = @()
+    if ($EditTarget) { $a += @('edit', $EditTarget) } else { $a += @('create') }
+    if ($Form.slug)        { $a += @('--slug', [string]$Form.slug) }
+    if ($Form.version)     { $a += @('--version', [string]$Form.version) }
+    if ($Form.title)       { $a += @('--title', [string]$Form.title) }
+    if ($Form.code)        { $a += @('--code', [string]$Form.code) }
+    if ($Form.description) { $a += @('--description', [string]$Form.description) }
+    if ($Form.phase)       { $a += @('--phase', [string]$Form.phase) }
+    if ($Form.date)        { $a += @('--date', [string]$Form.date) }
+    if ($Form.author)      { $a += @('--author', [string]$Form.author) }
+    if ($Form.types -and @($Form.types).Count -gt 0) { $a += @('--types', (@($Form.types) -join ',')) }
+    if ($Form.icon)        { $a += @('--icon', [string]$Form.icon) }
+    if ($Form.status)      { $a += @('--status', [string]$Form.status) }
+    if ($Form.body)        { $a += @('--body', [string]$Form.body) }
+    if ($Form.highlights)  { $a += @('--highlights', [string]$Form.highlights) }
+    if ($Form.sites -and @($Form.sites).Count -gt 0) { $a += @('--target', (@($Form.sites) -join ',')) }
+    $a += @('--sender', 'devcon', '--actor', "$script:devIdentity", '--session', "$script:devSession")
+    if ($Scope -eq 'local') { $a += @('--local') }
+    if ($Wait -and $Scope -eq 'global') { $a += @('--wait') }
+    return $a
+}
+
+function Publish-Changelog {
+    param([string]$Mode, [hashtable]$Form, [hashtable]$EditTargets = $null, [switch]$Wait)
+    Clear-Host
+    Show-Art
+    Show-MenuHeader "CHANGELOGS - PUBLICANDO ($(Get-ChangelogModeLabel $Mode))"
+    $allOk = $true
+    foreach ($scope in @(Get-ChangelogScopes $Mode)) {
+        $target = $null
+        if ($EditTargets -and $EditTargets.ContainsKey($scope)) { $target = $EditTargets[$scope] }
+        if ($target) { Write-Host "${c_cyan}▶ Editando en $scope (id $target)...${c_reset}" }
+        else { Write-Host "${c_cyan}▶ Creando en $scope...${c_reset}" }
+        $r = Invoke-ChangelogNode -NodeArgs (Build-ChangelogArgs -Form $Form -EditTarget $target -Scope $scope -Wait:$Wait)
+        if ($r.code -ne 0) { $allOk = $false }
+        Write-Host ""
+    }
+    Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=changelog-publish mode=$Mode slug=$($Form.slug) sites=$((@($Form.sites)) -join ',') ok=$allOk"
+    if ($allOk) {
+        Write-Host "${c_green}✔ Operación completada.${c_reset}"
+        if ($Mode -ne 'global') {
+            Write-Host "${c_gray}LOCAL: la web mostrará la entrada al leer /changelog (marca ⏳ pendiente hasta entonces).${c_reset}"
+        }
+        if ($Mode -ne 'local') {
+            Write-Host "${c_gray}GLOBAL: la entrega queda registrada al publicar; ábrela con el resumen para verla por web.${c_reset}"
+        }
+        $open = Read-Host "¿Abrir /changelog de las webs destino? (s/n)"
+        if ($open -eq 's') {
+            foreach ($sid in @($Form.sites)) {
+                $w = $WEBS | Where-Object { $_.siteId -eq $sid } | Select-Object -First 1
+                if ($w) {
+                    if ((Get-WebPhase $w.key) -eq 'on') { Start-Process "http://localhost:$($w.port)/changelog" }
+                    else { Write-Host "${c_gray}$($w.name) detenida: no se abre.${c_reset}" }
+                }
+            }
+        }
+    } else {
+        Write-Host "${c_red}✖ Alguno de los alcances falló. Revisa el mensaje anterior.${c_reset}"
+    }
+    Press-Continue
+}
+
+function New-ChangelogEntry([string]$Mode) {
+    $form = Read-ChangelogForm -Mode $Mode
+    if (-not $form) { return }
+    Clear-Host
+    Show-Art
+    Show-MenuHeader "CONFIRMAR NUEVO CHANGELOG ($(Get-ChangelogModeLabel $Mode))"
+    Show-ChangelogFormPreview $form
+    $ok = Read-Host "¿Publicar? (s/n)"
+    if ($ok -ne 's') { return }
+    $wait = $false
+    if ($Mode -ne 'local') {
+        $w = Read-Host "¿Esperar confirmación de entrega por web (--wait)? (s/n)"
+        $wait = ($w -eq 's')
+    }
+    Publish-Changelog -Mode $Mode -Form $form -Wait:$wait
+}
+
+function Read-ChangelogScopeEntries([string]$Scope) {
+    $a = @('--list', '--json')
+    if ($Scope -eq 'local') { $a += @('--local') }
+    $data = Get-ChangelogData $a
+    if (-not $data) { return @() }
+    return @($data.entries)
+}
+
+function Edit-ChangelogEntry([string]$Mode) {
+    $scopes = @(Get-ChangelogScopes $Mode)
+    $pickScope = $scopes[0]
+    $entries = @(Read-ChangelogScopeEntries $pickScope)
+    if ($entries.Count -eq 0) {
+        Write-Host "${c_yellow}No hay entradas en $pickScope para modificar.${c_reset}"
+        Press-Continue
+        return
+    }
+    $opts = @()
+    foreach ($e in $entries) {
+        $opts += @{ ic = '✏'; l = "[$($e.id)] $($e.version) — $($e.title)"; s = "· $($e.target)" }
+    }
+    $opts += @{ ic = '🚪'; l = 'Cancelar' }
+    $mi = Show-Menu -Title "MODIFICAR CHANGELOG ($pickScope)" -Options $opts
+    if ($mi -lt 0 -or $mi -ge $entries.Count) { return }
+    $entry = $entries[$mi]
+
+    # Localiza la misma entrada (por slug) en cada alcance para editarla en ambos.
+    $editTargets = @{}
+    foreach ($scope in $scopes) {
+        $found = $null
+        foreach ($c in @(Read-ChangelogScopeEntries $scope)) {
+            if ("$($c.slug)" -eq "$($entry.slug)") { $found = $c; break }
+        }
+        if (-not $found) {
+            foreach ($c in @(Read-ChangelogScopeEntries $scope)) {
+                if ("$($c.id)" -eq "$($entry.id)") { $found = $c; break }
+            }
+        }
+        if ($found) { $editTargets[$scope] = "$($found.id)" }
+    }
+    if ($editTargets.Count -eq 0) {
+        Write-Host "${c_yellow}No encontré la entrada al re-consultar el almacén.${c_reset}"
+        Press-Continue
+        return
+    }        if ($Mode -eq 'hybrid' -and -not $editTargets.ContainsKey('global')) {
+        Write-Host "${c_yellow}Aviso: la entrada solo existe en local; en GLOBAL se creará una nueva con el mismo slug.${c_reset}"
+        Press-Continue
+    }
+    foreach ($scope in @(Get-ChangelogScopes $Mode)) {
+        if (-not $editTargets.ContainsKey($scope)) {
+            # En DEVCON LOCAL de la demo: probar si la web ha leído la entrada.
+            $delSnaps = @()
+            foreach ($en in (Read-ChangelogScopeEntries $scope)) {
+                $delSnaps += @{ id=$en.id; slug=$en.slug; delivered=$en.delivered -contains 'ciszu' }
+            }
+            if ($delSnaps.Count -gt 0 -and ($delSnaps | Where-Object { $_.delivered }).Count -eq 0) {
+                Write-Host "${c_yellow}{$($scope.ToUpper())} probablemente no se entregó a ciszu. Reenviando confirmación por web…${c_reset}"
+                foreach ($sn in $delSnaps) {
+                    curl -s -X POST "http://localhost:3000/api/changelogs/debug" -H "Content-Type: application/json" -d "{\"slug\":\"$($sn.slug)\",\"site\":\"ciszu\", \"silent\":true}"
+                }
+            } else {
+                Write-Host "${c_green}{$($scope.ToUpper())} entrada(s) ya entregadas.${c_reset}"
+            }
+        }
+    }
+    $confirmed = Read-Host "¿Entregas confirmadas de forma fiable? (s/n envelope)"
+    if ($confirmed -ne 's') { return }
+    $form = Read-ChangelogForm -Mode $Mode -Existing $entry -Scope $pickScope
+    if (-not $form) { return }
+    Clear-Host
+    Show-Art
+    Show-MenuHeader "CONFIRMAR MODIFICACIÓN ($(Get-ChangelogModeLabel $Mode))"
+    Show-ChangelogFormPreview $form
+    $ok = Read-Host "¿Guardar cambios? (s/n)"
+    if ($ok -ne 's') { return }
+    $wait = $false
+    if ($Mode -ne 'local') {
+        $w = Read-Host "¿Esperar confirmación de entrega (--wait)? (s/n)"
+        $wait = ($w -eq 's')
+    }
+    Publish-Changelog -Mode $Mode -Form $form -EditTargets $editTargets -Wait:$wait
+}
+
+function Remove-ChangelogEntry([string]$Mode) {
+    $scopes = @(Get-ChangelogScopes $Mode)
+    $all = @()
+    foreach ($scope in $scopes) {
+        foreach ($e in @(Read-ChangelogScopeEntries $scope)) {
+            $all += @{ scope = $scope; entry = $e }
+        }
+    }
+    if ($all.Count -eq 0) {
+        Write-Host "${c_yellow}No hay changelogs para eliminar en este alcance.${c_reset}"
+        Press-Continue
+        return
+    }
+    Clear-Host
+    Show-Art
+    Show-MenuHeader "ELIMINAR CHANGELOGS ($(Get-ChangelogModeLabel $Mode))"
+    $opts = @()
+    foreach ($item in $all) {
+        $e = $item.entry
+        $opts += @{ key = "$($item.scope)|$($e.id)"; ic = '📝'; l = "[$($e.id)] $($e.version) — $($e.title)"; s = "· $($item.scope) · $($e.target)" }
+    }
+    $r = Show-MultiSelect -Title "MARCA LAS ENTRADAS A ELIMINAR (Espacio marca · Enter procede)" -Options $opts
+    if ($r.Action -eq 'abort') { return }
+    if ($r.Action -ne 'proceed') { return }
+    $sel = @($r.Selection)
+    if ($sel.Count -eq 0) { Write-Host "${c_yellow}No marcaste ninguna entrada.${c_reset}"; Press-Continue; return }
+    $confirm = Read-Host "Se eliminarán $($sel.Count) entrada(s). Escribe BORRAR para confirmar"
+    if ($confirm -ne 'BORRAR') { Write-Host "${c_yellow}Cancelado.${c_reset}"; Press-Continue; return }
+    foreach ($scope in $scopes) {
+        $ids = @($sel | Where-Object { $_ -like "$scope|*" } | ForEach-Object { ($_ -split '\|')[1] })
+        if ($ids.Count -eq 0) { continue }
+        $a = @('--clear') + $ids
+        if ($scope -eq 'local') { $a += @('--local') }
+        $a += @('--sender', 'devcon', '--actor', "$script:devIdentity", '--session', "$script:devSession")
+        Invoke-ChangelogNode -NodeArgs $a
+    }
+    Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=changelog-delete mode=$Mode count=$($sel.Count)"
+    Press-Continue
+}
+
+function Show-ChangelogSummary([string]$Mode) {
+    $scopes = @(Get-ChangelogScopes $Mode)
+    Clear-Host
+    Show-Art
+    Show-MenuHeader "CHANGELOGS - RESUMEN / ESTADO"
+    $siteOpts = @($WEBS | ForEach-Object { @{ key = $_.siteId; ic = $_.emoji; l = $_.name } })
+    $r = Show-MultiSelect -Title "WEBS A CONSULTAR (Espacio marca · Enter procede)" -Options $siteOpts -Init @($WEBS.siteId)
+    if ($r.Action -eq 'abort') { return }
+    if ($r.Action -ne 'proceed') { return }
+    $targets = @($r.Selection)
+
+    foreach ($scope in $scopes) {
+        Clear-Host
+        Show-Art
+        Show-MenuHeader "RESUMEN CHANGELOGS - $($scope.ToUpper())"
+        $snap = Get-ChangelogSnapshot $scope
+        if ($snap) {
+            $state = if ($snap.enabled) { "${c_green}ACTIVADO${c_reset}" } else { "${c_red}DESACTIVADO${c_reset}" }
+            Write-Host "   Kill switch: $state   ·   entradas totales: $(@($snap.entries).Count)"
+        }
+        Write-Host ""
+        $a = @('--summary', '--json')
+        if ($targets.Count -gt 0) { $a += @('--target', ($targets -join ',')) }
+        if ($scope -eq 'local') { $a += @('--local') }
+        $data = Get-ChangelogData $a
+        if ($data -and $data.webs) {
+            foreach ($siteProp in $data.webs.PSObject.Properties) {
+                $info = $siteProp.Value
+                Write-Host "${c_cyan}🌐 $($siteProp.Name)${c_reset}  · entradas: $($info.letters)  · ✅ $($info.delivered)  · ⏳ $($info.pending)"
+                foreach ($e in @($info.entries)) {
+                    if ($e.delivered) {
+                        Write-Host "     ${c_green}✅ entregado${c_reset}  [$($e.id)] $($e.version) — $($e.title)"
+                    } else {
+                        Write-Host "     ${c_yellow}⏳ pendiente${c_reset}  [$($e.id)] $($e.version) — $($e.title)"
+                    }
+                }
+            }
+        } else {
+            Write-Host "${c_yellow}Sin entradas para las webs seleccionadas.${c_reset}"
+        }
+        Write-Host ""
+    }
+    Write-Host "${c_gray}⏳ pendiente = la web aún no ha leído la entrada (aparece como PENDIENTE hasta su creación)."
+    Write-Host "✅ entregado = local: la web leyó /changelog · global: la entrega se registra al publicar.${c_reset}"
+    Press-Continue
+}
+
+function Show-ChangelogToggleFor([string]$Mode) {
+    $scopes = @(Get-ChangelogScopes $Mode)
+    $opts = @()
+    foreach ($scope in $scopes) {
+        $opts += @{ ic = '🟢'; l = "ACTIVAR changelogs $scope" }
+        $opts += @{ ic = '🔴'; l = "DESACTIVAR changelogs $scope" }
+    }
+    $opts += @{ ic = '🚪'; l = 'Volver' }
+    $sel = Show-Menu -Title "KILL SWITCH - $(Get-ChangelogModeLabel $Mode)" -Options $opts
+    if ($sel -lt 0 -or $sel -ge ($opts.Count - 1)) { return }
+    $scope = $scopes[[int][math]::Floor($sel / 2)]
+    $turnOn = (($sel % 2) -eq 0)
+    $a = @('--toggle', $(if ($turnOn) { 'on' } else { 'off' }))
+    if ($scope -eq 'local') { $a += @('--local') }
+    $a += @('--sender', 'devcon', '--actor', "$script:devIdentity", '--session', "$script:devSession")
+    Invoke-ChangelogNode -NodeArgs $a
+    Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=changelog-killswitch scope=$scope enabled=$turnOn"
+    Press-Continue
+}
+
+function Show-ChangelogsMode([string]$Mode) {
+    while ($true) {
+        Clear-Host
+        Show-Art
+        Show-MenuHeader "CHANGELOGS - $(Get-ChangelogModeLabel $Mode)"
+        foreach ($scope in @(Get-ChangelogScopes $Mode)) {
+            $snap = Get-ChangelogSnapshot $scope
+            if ($snap) {
+                $state = if ($snap.enabled) { "${c_green}ACTIVADO${c_reset}" } else { "${c_red}DESACTIVADO${c_reset}" }
+                Write-Host "   ${c_gray}$($scope.ToUpper().PadRight(7))${c_reset} kill switch: $state  ·  entradas: $(@($snap.entries).Count)"
+            } else {
+                Write-Host "   ${c_yellow}$($scope.ToUpper()): sin respuesta del almacén${c_reset}"
+            }
+        }
+        Write-Host ""
+        $opts = @(
+            @{ ic = '➕'; l = "Crear changelog" },
+            @{ ic = '✏';  l = "Modificar changelog" },
+            @{ ic = '🗑';  l = "Eliminar changelog" },
+            @{ ic = '📋'; l = "Ver resumen / estado" },
+            @{ ic = '🔘'; l = "Kill switch de este alcance" },
+            @{ ic = '🚪'; l = "Volver" }
+        )
+        $sel = Show-Menu -Title "¿QUÉ QUIERES HACER?" -Options $opts
+        if ($sel -lt 0 -or $sel -eq 5) { return }
+        switch ($sel) {
+            0 { New-ChangelogEntry $Mode }
+            1 { Edit-ChangelogEntry $Mode }
+            2 { Remove-ChangelogEntry $Mode }
+            3 { Show-ChangelogSummary $Mode }
+            4 { Show-ChangelogToggleFor $Mode }
+        }
+    }
+}
+
+function Show-ChangelogsSection {
+    $opts = @(
+        @{ ic = '💻'; l = "Local (debug local, sin produccion)" },
+        @{ ic = '🌐'; l = "Global (publicar en las webs)" },
+        @{ ic = '🔀'; l = "Hibrido (local + global)" },
+        @{ ic = '🔘'; l = "Kill switch (global / local)" },
+        @{ ic = '🚪'; l = "Volver" }
+    )
+    $sel = Show-Menu -Title "CHANGELOGS" -Options $opts
+    if ($sel -lt 0 -or $sel -eq 4) { return }
+    switch ($sel) {
+        0 { Show-ChangelogsMode 'local' }
+        1 { Show-ChangelogsMode 'global' }
+        2 { Show-ChangelogsMode 'hybrid' }
+        3 { Show-ChangelogToggleFor 'hybrid' }
+    }
+}
+
 function Show-Tools {
     $opts = @(
         @{ ic = '🧹'; l = "Limpiar logs (test/website/debug/local-logs)";  act = { Remove-Item "$LOG_DIR\*" -Force -ErrorAction SilentlyContinue; Write-Host "${c_green}Logs limpiados.${c_reset}"; Press-Continue } },
@@ -2265,7 +2869,7 @@ if ($SelfTest.IsPresent) {
         if (-not $cond) { $script:failures += $label }
     }
 
-    AssertEqual 'Version' '2.5.0' $VERSION
+    AssertEqual 'Version' '2.6.0' $VERSION
     AssertEqual 'Webs count' 4 $WEBS.Count
     AssertEqual 'CDN port' 8788 $CDN_PORT
     AssertEqual 'Keys' 'network;antony;ciszubot;muzic' (($WEBS.key) -join ';')
@@ -2286,6 +2890,13 @@ if ($SelfTest.IsPresent) {
     # Build-WebSelectOptions devuelve 4 opciones con key (requiere WEBS cargada)
     $opts = Build-WebSelectOptions
     AssertEqual 'WebSelectOptions count' 4 $opts.Count
+
+    # Changelogs: alcances por modo y slug ASCII-safe
+    AssertEqual 'ChangelogScopes local' 'local' (@(Get-ChangelogScopes 'local') -join ';')
+    AssertEqual 'ChangelogScopes global' 'global' (@(Get-ChangelogScopes 'global') -join ';')
+    AssertEqual 'ChangelogScopes hybrid' 'local;global' (@(Get-ChangelogScopes 'hybrid') -join ';')
+    AssertEqual 'ChangelogSlug acentos' 'patch-v2-6-0-novedades' (ConvertTo-ChangelogSlug 'PATCH V2.6.0 · Novedades')
+    AssertTrue 'Icon hint catalogo' ($CL_ICON_HINT.ContainsKey('rocket'))
 
     # Menu de seleccion multiple: Enter procede (sin ReadKey) => construimos AMBA seleccion
     $sel = @{ network = $true; antony = $true }
@@ -2358,6 +2969,7 @@ while (-not $script:quitRequested) {
         @{ ic = '📢'; l = "ADS"; key = '__section_ads' },
         @{ ic = '📋'; l = "DISCLAIMERS"; key = '__section_disclaimers' },
         @{ ic = '📢'; l = "ADVISOR"; key = '__section_advisor' },
+        @{ ic = '📝'; l = "CHANGELOGS"; key = '__section_changelogs' },
         @{ ic = '🔧'; l = "HERRAMIENTAS"; key = '__tools' },
         @{ ic = '👥'; l = "Staff Console (STAFFCON)"; key = '__tools_staffcon' },
         @{ ic = '🛒'; l = "Customers Console (CUSTOMERSCON)"; key = '__tools_customerscon' },
@@ -2417,6 +3029,7 @@ while (-not $script:quitRequested) {
         '__section_ads' { Show-AdsSection }
         '__section_disclaimers' { Show-DisclaimersSection }
         '__section_advisor' { Show-AdvisorSection }
+        '__section_changelogs' { Show-ChangelogsSection }
         '__tools' { Show-Tools }
         '__tools_staffcon' { Start-Process powershell.exe -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $root 'tools\consoles\staffcon.ps1'); Write-Host "${c_green}STAFFCON abierta en ventana separada.${c_reset}"; Press-Continue }
         '__tools_customerscon' { Start-Process powershell.exe -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $root 'tools\consoles\customerscon.ps1'); Write-Host "${c_green}CUSTOMERSCON abierta en ventana separada.${c_reset}"; Press-Continue }

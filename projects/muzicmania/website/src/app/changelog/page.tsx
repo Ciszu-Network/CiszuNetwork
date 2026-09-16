@@ -5,13 +5,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
-import { CHANGELOG_DATA, ChangelogType } from '@/data/changelog';
+import { CHANGELOG_DATA as CHANGELOG_STATIC, ChangelogType } from '@/data/changelog';
 import { useAppStore } from '@/store/useAppStore';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
  
 import { I, TAG_CONFIG } from '@/config/changelogIcons';
 import { usePageTitle } from '@/lib/usePageTitle';
-import { useToast } from '@ciszu/ui';
+import { usePublishedChangelogs, useToast } from '@ciszu/ui';
+import { mergeChangelogSources } from '@ciszunetwork/utils/changelog';
 
 const TypeTag = ({ type, active = false, onClick }: { type: ChangelogType, active?: boolean, onClick?: () => void }) => {
   const config = TAG_CONFIG[type];
@@ -26,6 +27,13 @@ const TypeTag = ({ type, active = false, onClick }: { type: ChangelogType, activ
     </button>
   );
 };
+
+
+/** Icono de una entrada: usa el icono publicado (devcon) si existe. */
+const entryIcon = (item: { icon?: string; types: ChangelogType[] }) =>
+  (item.icon && (I as Record<string, React.ReactNode>)[item.icon]) ||
+  TAG_CONFIG[item.types[0]]?.icon ||
+  I.history;
 
 const TypeLabel = ({ type }: { type: ChangelogType }) => {
   return TAG_CONFIG[type]?.label || type.toUpperCase();
@@ -42,6 +50,12 @@ export default function ChangelogIndex() {
   const itemsPerPage = 5;
 const { toast } = useToast();
   const [isAuthWarningOpen, setIsAuthWarningOpen] = useState(false);
+  // Entradas publicadas desde el devcon (almacén en vivo) + las del código.
+  const published = usePublishedChangelogs('muzicmania');
+  const CHANGELOG_DATA = useMemo(
+    () => mergeChangelogSources(published.entries, CHANGELOG_STATIC),
+    [published.entries],
+  );
 
   const handleLike = (id: string) => {
     setIsAuthWarningOpen(true);
@@ -70,7 +84,7 @@ const { toast } = useToast();
       });
     });
     return stats;
-  }, []);
+  }, [CHANGELOG_DATA]);
 
   const paginatedData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
@@ -79,7 +93,7 @@ const { toast } = useToast();
     return CHANGELOG_DATA.reduce((latest, item) =>
       new Date(item.date) > new Date(latest.date) ? item : latest
     , CHANGELOG_DATA[0]).id;
-  }, []);
+  }, [CHANGELOG_DATA]);
 
   const sectionVariants = {
     hidden: { opacity: 0, y: 30 },
@@ -385,7 +399,7 @@ const { toast } = useToast();
                               <div className={`w-24 h-24 rounded-[2.5rem] bg-gradient-to-br ${TAG_CONFIG[item.types[0]]?.gradient || 'from-white/10 to-transparent'} p-px group-hover:scale-105 transition-transform shadow-lg shadow-black/40`}>
                                  <div className="w-full h-full rounded-[2.4rem] bg-black/80 flex items-center justify-center backdrop-blur-xl">
                                     <div className={`w-10 h-10 ${TAG_CONFIG[item.types[0]]?.color || 'text-white'}`}>
-                                       {TAG_CONFIG[item.types[0]]?.icon || I.history}
+                                       {entryIcon(item)}
                                     </div>
                                  </div>
                               </div>

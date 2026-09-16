@@ -4,6 +4,7 @@ import {
   CHANGELOG_PAGE_SIZE,
   changelogMatches,
   clampProgress,
+  countByOrigin,
   filterChangelog,
   getChangelogById,
   getCurrentPhase,
@@ -12,8 +13,10 @@ import {
   getPhaseProgress,
   getRelatedChangelog,
   getTagStats,
+  mergeChangelogSources,
   normalizeText,
   paginate,
+  publishedToChangelogItem,
   sortChangelog,
   type ChangelogItem,
   type ChangelogPhase,
@@ -221,5 +224,109 @@ describe('roadmap helpers', () => {
     expect(getPhaseProgress({
       id: 'x', name: 'X', status: 'current', progress: 33, tasks: [],
     })).toBe(33);
+  });
+});
+
+describe('publishedToChangelogItem', () => {
+  it('normaliza una entrada publicada completa', () => {
+    const published = publishedToChangelogItem({
+      slug: 'patch-v2.0.0',
+      version: 'PATCH V2.0.0',
+      code: 'P-200-XX',
+      title: 'Nueva versión',
+      description: 'Resumen',
+      body: [{ text: 'detalle 1', type: 'feat' }, { text: '   ', type: 'feat' }],
+      types: ['feat', 'ui'],
+      icon: 'rocket',
+      status: 'released',
+      phase: 'p.czdashboard-1',
+      releaseDate: '2026-09-16T10:00:00Z',
+      origin: 'global',
+    });
+
+    expect(published.id).toBe('patch-v2.0.0');
+    expect(published.date).toBe('2026-09-16');
+    expect(published.types).toEqual(['feat', 'ui']);
+    expect(published.icon).toBe('rocket');
+    expect(published.status).toBe('released');
+    expect(published.origin).toBe('global');
+    expect(published.details).toEqual([{ text: 'detalle 1', type: 'feat' }]);
+  });
+
+  it('es defensivo con etiquetas, fechas y estados desconocidos', () => {
+    const published = publishedToChangelogItem({
+      slug: 'x',
+      version: 'X',
+      title: 'X',
+      types: ['inventada', 'feat'],
+      status: 'raro',
+      release_date: 'ayer',
+    });
+
+    expect(published.types).toEqual(['feat']);
+    expect(published.status).toBe('released');
+    expect(published.date).toBe('');
+    expect(published.types.length).toBeGreaterThan(0);
+  });
+
+  it('cae a valores por defecto cuando faltan campos', () => {
+    const published = publishedToChangelogItem({ slug: 'solo-slug', version: '', title: '' });
+    expect(published.version).toBe('solo-slug');
+    expect(published.title).toBe('solo-slug');
+    expect(published.types).toEqual(['add']);
+    expect(published.author).toBe('CiszukoAntony');
+  });
+});
+
+describe('mergeChangelogSources', () => {
+  it('las entradas publicadas sobrescriben a las estáticas con el mismo id', () => {
+    const merged = mergeChangelogSources(
+      [{ slug: 'patch-v1.0.0', version: 'PATCH V1.0.0', title: 'Desde el devcon', origin: 'global' }],
+      [item()],
+    );
+    expect(merged).toHaveLength(1);
+    expect(merged[0].title).toBe('Desde el devcon');
+    expect(merged[0].origin).toBe('global');
+  });
+
+  it('conserva las estáticas que no están publicadas', () => {
+    const merged = mergeChangelogSources(
+      [{ slug: 'nueva', version: 'NUEVA', title: 'Nueva', origin: 'global' }],
+      [item()],
+    );
+    expect(merged).toHaveLength(2);
+    expect(merged.map((i) => i.id).sort()).toEqual(['nueva', 'patch-v1.0.0']);
+  });
+
+  it('la entrada global gana sobre la de debug con el mismo slug', () => {
+    const merged = mergeChangelogSources(
+      [
+        { slug: 'dup', version: 'DUP', title: 'Debug', origin: 'debug' },
+        { slug: 'dup', version: 'DUP', title: 'Global', origin: 'global' },
+      ],
+      [],
+    );
+    expect(merged).toHaveLength(1);
+    expect(merged[0].title).toBe('Global');
+  });
+
+  it('ignora entradas sin slug', () => {
+    const merged = mergeChangelogSources(
+      [
+        { slug: '', version: 'X', title: 'X', origin: 'global' },
+        { slug: 'ok', version: 'OK', title: 'OK', origin: 'global' },
+      ],
+      [],
+    );
+    expect(merged.map((i) => i.id)).toEqual(['ok']);
+  });
+
+  it('cuenta entradas por origen', () => {
+    const counts = countByOrigin([
+      item(),
+      { ...item({ id: 'g' }), origin: 'global' },
+      { ...item({ id: 'd' }), origin: 'debug' },
+    ]);
+    expect(counts).toEqual({ static: 1, global: 1, debug: 1 });
   });
 });

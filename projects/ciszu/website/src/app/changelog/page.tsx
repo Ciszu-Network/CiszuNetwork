@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
 import {
-  CHANGELOG_DATA,
+  CHANGELOG_DATA as CHANGELOG_STATIC,
   CHANGELOG_GLOSSARY,
   CHANGELOG_STATUS,
   type ChangelogType,
@@ -14,7 +14,7 @@ import {
 import { I, TAG_CONFIG } from '@/config/changelogIcons';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useAppStore } from '@/store';
-import { useChangelogLikes, useToast } from '@ciszu/ui';
+import { useChangelogLikes, usePublishedChangelogs, useToast } from '@ciszu/ui';
 import {
   CHANGELOG_PAGE_SIZE,
   filterChangelog,
@@ -23,11 +23,19 @@ import {
   getOverallProgress,
   getPhaseProgress,
   getTagStats,
+  mergeChangelogSources,
   paginate,
   type ChangelogNode,
   type ChangelogSortBy,
   type ChangelogSortDir,
 } from '@ciszunetwork/utils/changelog';
+
+
+/** Icono de una entrada: usa el icono publicado (devcon) si existe. */
+const entryIcon = (item: { icon?: string; types: ChangelogType[] }) =>
+  (item.icon && (I as Record<string, React.ReactNode>)[item.icon]) ||
+  TAG_CONFIG[item.types[0]]?.icon ||
+  I.history;
 
 const NODE_ICON: Record<ChangelogNode['status'], React.ReactNode> = {
   done: I.check,
@@ -65,6 +73,12 @@ export default function ChangelogPage() {
   const { user } = useAppStore();
   const { toast } = useToast();
   const likes = useChangelogLikes();
+  // Entradas publicadas desde el devcon (almacén en vivo) + las del código.
+  const published = usePublishedChangelogs('ciszu');
+  const CHANGELOG_DATA = useMemo(
+    () => mergeChangelogSources(published.entries, CHANGELOG_STATIC),
+    [published.entries],
+  );
 
   const [filters, setFilters] = useState<ChangelogType[]>([]);
   const [sortBy, setSortBy] = useState<ChangelogSortBy>('date');
@@ -76,10 +90,10 @@ export default function ChangelogPage() {
 
   const filteredData = useMemo(
     () => filterChangelog(CHANGELOG_DATA, { search: searchQuery, tags: filters, sortBy, sortDir }),
-    [searchQuery, filters, sortBy, sortDir],
+    [searchQuery, filters, sortBy, sortDir, CHANGELOG_DATA],
   );
 
-  const tagStats = useMemo(() => getTagStats(CHANGELOG_DATA), []);
+  const tagStats = useMemo(() => getTagStats(CHANGELOG_DATA), [CHANGELOG_DATA]);
   const sortedTagStats = useMemo(
     () => Object.entries(tagStats).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])),
     [tagStats],
@@ -91,7 +105,7 @@ export default function ChangelogPage() {
   );
   const paginatedData = page.items;
 
-  const mostRecentId = useMemo(() => getMostRecentId(CHANGELOG_DATA), []);
+  const mostRecentId = useMemo(() => getMostRecentId(CHANGELOG_DATA), [CHANGELOG_DATA]);
 
   const { phases } = CHANGELOG_STATUS;
   const currentPhase = useMemo(() => getCurrentPhase(phases), [phases]);
@@ -456,7 +470,7 @@ export default function ChangelogPage() {
                       >
                         <div className="w-full h-full rounded-[2.4rem] bg-black/80 flex items-center justify-center backdrop-blur-xl">
                           <div className={`w-10 h-10 ${TAG_CONFIG[item.types[0]]?.color || 'text-white'}`}>
-                            {TAG_CONFIG[item.types[0]]?.icon || I.history}
+                            {entryIcon(item)}
                           </div>
                         </div>
                       </div>
