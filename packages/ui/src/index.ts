@@ -164,6 +164,10 @@ export type {
   AssetType,
 } from '@ciszunetwork/cdn';
 
+// Changelog: likes locales del registro de cambios (persistidos en localStorage)
+export { useChangelogLikes, CHANGELOG_LIKES_KEY } from './useChangelogLikes';
+export type { UseChangelogLikesResult } from './useChangelogLikes';
+
 export { default as EcosystemSection } from './EcosystemSection';
 export type { EcosystemSectionProps } from './EcosystemSection';
 

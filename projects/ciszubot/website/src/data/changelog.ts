@@ -1,28 +1,27 @@
-import { ReactNode } from 'react';
+/**
+ * Registro de cambios de Ciszubot.
+ *
+ * Los tipos, el estado de despliegue y la lógica de filtrado viven en el
+ * paquete compartido `@ciszunetwork/utils/changelog` para que las 4 webs
+ * (ciszu, ciszukoantony, ciszubot, muzicmania) usen exactamente el mismo
+ * contrato. Aquí solo se declaran los datos del proyecto.
+ */
+import type {
+  ChangelogItem,
+  ChangelogStatus,
+  ChangelogType,
+} from '@ciszunetwork/utils/changelog';
 
-export type ChangelogType =
-  | 'hotfix' | 'add' | 'ui' | 'bugfix' | 'perf' | 'ux'
-  | 'sec' | 'refactor' | 'build' | 'test' | 'docs' | 'chore'
-  | 'feat' | 'style' | 'rework' | 'sync' | 'node'
-  | 'delete' | 'ci' | 'revert' | 'fix' | 'bump';
-
-export interface ChangelogDetail {
-  text: string;
-  type: ChangelogType;
-}
-
-export interface ChangelogItem {
-  id: string;
-  version: string;
-  code: string;
-  title: string;
-  description: string;
-  date: string;
-  types: ChangelogType[];
-  author: string;
-  likes: number;
-  details: ChangelogDetail[];
-}
+export type {
+  ChangelogDetail,
+  ChangelogItem,
+  ChangelogNode,
+  ChangelogNodeStatus,
+  ChangelogPhase,
+  ChangelogPhaseStatus,
+  ChangelogStatus,
+  ChangelogType,
+} from '@ciszunetwork/utils/changelog';
 
 export const CHANGELOG_DATA: ChangelogItem[] = [
   {
@@ -94,4 +93,63 @@ export const CHANGELOG_DATA: ChangelogItem[] = [
       { text: 'Establecimiento de estructura de comandos y eventos.', type: 'chore' }
     ]
   }
+];
+
+/**
+ * Estado de despliegue: alimenta la barra de progreso, las tarjetas de estado
+ * y el diagrama de "Próximos Nodos" del encabezado.
+ */
+export const CHANGELOG_STATUS: ChangelogStatus = {
+  headline: 'CISZUBOT V2.4',
+  progress: 68,
+  progressStartLabel: 'Bot unificado y seguro',
+  progressEndLabel: 'Bot público',
+  version: 'v2.4.0',
+  deploy: 'OPERATIVO / DISCORD',
+  developer: 'CiszukoAntony',
+  nodes: [
+    { label: 'Comandos Slash', desc: 'Permisos validados', status: 'done' },
+    { label: 'Anti-spam Activo', desc: 'Rate limiting por guild', status: 'next' },
+    { label: 'Dashboard Web', desc: 'Configuración desde la web', status: 'locked' },
+    { label: 'Bot Público', desc: 'Apertura a otros servidores', status: 'locked' },
+  ],
+  phases: [
+    {
+      id: 'patch-v2.4.0',
+      name: 'PATCH V2.4.0',
+      status: 'current',
+      progress: 68,
+      tasks: [
+        { text: 'Comandos slash con validación de permisos', done: true },
+        { text: 'Protección anti-spam y rate limiting', done: true },
+        { text: 'Logs estructurados para depuración', done: true },
+        { text: 'Reconexión automática ante caídas de shards', done: false },
+      ],
+    },
+    {
+      id: 'patch-v2.5.0',
+      name: 'PATCH V2.5.0',
+      status: 'planned',
+      progress: 0,
+      tasks: [
+        { text: 'Sistema de economía del servidor', done: false },
+        { text: 'Niveles y leaderboard por guild', done: false },
+        { text: 'Panel de configuración web por servidor', done: false },
+        { text: 'Publicación en directorios públicos de bots', done: false },
+      ],
+    },
+  ],
+};
+
+/** Glosario canónico de etiquetas del registro de cambios. */
+export const CHANGELOG_GLOSSARY: { type: ChangelogType; desc: string }[] = [
+  { type: 'add', desc: 'Inyección de nuevos módulos, funciones o activos.' },
+  { type: 'hotfix', desc: 'Intervención de emergencia para errores críticos.' },
+  { type: 'rework', desc: 'Reestructuración profunda de mecánicas existentes.' },
+  { type: 'bugfix', desc: 'Erradicación de anomalías y comportamientos erróneos.' },
+  { type: 'perf', desc: 'Optimización de recursos y velocidad de respuesta.' },
+  { type: 'ux', desc: 'Mejoras en el flujo de interacción y accesibilidad.' },
+  { type: 'sec', desc: 'Fortalecimiento de protocolos de seguridad.' },
+  { type: 'refactor', desc: 'Limpieza y reestructuración de la base de código.' },
+  { type: 'build', desc: 'Mejoras en el sistema de compilación y despliegue.' },
 ];
