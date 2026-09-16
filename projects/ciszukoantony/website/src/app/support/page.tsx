@@ -35,11 +35,18 @@ const I = {
   send: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>,
   trash: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>,
   clock: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
+  pulse: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
+  server: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>,
+  ceo: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+  share: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>,
+  globe: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>,
+  user: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+  tag: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>,
 };
 
 const CONTACT_TYPES = [
   "Colaboración", "Reporte de Bug", "Denuncia de Usuario", "Recomendación",
-  "Feedback de Audio", "Problema de Seguridad", "Recuperación de Cuenta",
+  "Feedback", "Problema de Seguridad", "Recuperación de Cuenta",
   "Error de Pago", "Error de Traducción", "Sugerencia de Función",
   "Asociación / Partnership", "Consulta de Prensa", "Asunto Legal",
   "Soporte Técnico General", "Participación en Eventos", "Otro"
@@ -68,10 +75,6 @@ const supportChannels = [
   {
     name: 'Ciszugamens (Discord)', desc: 'Join our Ciszugamens community on Discord for real-time support.',
     href: 'https://discord.com/invite/W3kMtMMj6E', color: 'from-indigo-500 to-purple-700',
-  },
-  {
-    name: 'Telegram', desc: 'Contact us directly on Telegram.',
-    href: 'https://t.me/CiszukoNetwork', color: 'from-blue-400 to-cyan-600',
   },
   {
     name: 'WhatsApp', desc: 'Quick support via WhatsApp.',
@@ -236,8 +239,40 @@ export default function SupportPage() {
             <AnimatePresence mode="wait">
               {activeTab === 'new' ? (
                 <motion.div key="form" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-12">
+
+                   {/* RECURSOS DE AUTOSERVICIO (SIEMPRE VISIBLES) */}
+                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <Link href="/help" className="p-8 bg-brand/10 border-2 border-brand/20 rounded-[2.5rem] hover:bg-brand/20 hover:border-brand-light/30 transition-all group/card">
+                         <div className="flex flex-col items-center text-center gap-4">
+                            <div className="w-14 h-14 text-brand-light group-hover/card:scale-110 transition-transform">{I.help}</div>
+                            <div className="space-y-1">
+                               <h4 className="text-[12px] font-black text-white uppercase tracking-widest italic">Centro de Ayuda</h4>
+                               <p className="text-[9px] text-brand-light/60 font-bold uppercase tracking-[0.2em]">Guías y Protocolos</p>
+                            </div>
+                         </div>
+                      </Link>
+                      <Link href="/contact" className="p-8 bg-brand/10 border-2 border-brand/20 rounded-[2.5rem] hover:bg-brand/20 hover:border-brand-light/30 transition-all group/card">
+                         <div className="flex flex-col items-center text-center gap-4">
+                            <div className="w-14 h-14 text-brand-light group-hover/card:scale-110 transition-transform">{I.contact}</div>
+                            <div className="space-y-1">
+                               <h4 className="text-[12px] font-black text-white uppercase tracking-widest italic">Contacto</h4>
+                               <p className="text-[9px] text-brand-light/60 font-bold uppercase tracking-[0.2em]">Canales Directos</p>
+                            </div>
+                         </div>
+                      </Link>
+                      <Link href="/information" className="p-8 bg-brand/10 border-2 border-brand/20 rounded-[2.5rem] hover:bg-brand/20 hover:border-brand-light/30 transition-all group/card">
+                         <div className="flex flex-col items-center text-center gap-4">
+                            <div className="w-14 h-14 text-brand-light group-hover/card:scale-110 transition-transform">{I.info}</div>
+                            <div className="space-y-1">
+                               <h4 className="text-[12px] font-black text-white uppercase tracking-widest italic">Información</h4>
+                               <p className="text-[9px] text-brand-light/60 font-bold uppercase tracking-[0.2em]">Acerca del Proyecto</p>
+                            </div>
+                         </div>
+                      </Link>
+                   </div>
+
                    {!user && !loading ? (
-                     <div className="p-16 bg-black border-2 border-brand-light/20 rounded-[4rem] text-center space-y-10">
+                     <div className="p-16 bg-black border-2 border-brand-light/20 rounded-[4rem] text-center space-y-10 shadow-2xl">
                         <div className="w-24 h-24 text-brand-light mx-auto animate-pulse">{I.alert}</div>
                         <div className="space-y-3">
                            <h2 className="text-4xl md:text-5xl font-header font-black text-white uppercase italic tracking-tighter leading-none">AUTENTICACIÓN REQUERIDA</h2>
@@ -255,73 +290,88 @@ export default function SupportPage() {
                         </div>
                      </div>
                    ) : (
-                     <form onSubmit={handleSubmit} className="p-8 md:p-10 bg-white/5 border border-white/5 rounded-[3rem] space-y-8">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                           <div className="space-y-2">
-                              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest">Nombre de usuario</label>
-                              <input type="text" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="@usuario" />
-                           </div>
-                           <div className="space-y-2">
-                              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest">Nombre</label>
-                              <input type="text" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="Nombre" />
-                           </div>
+                     <form onSubmit={handleSubmit} className="p-8 md:p-10 bg-white/5 border border-white/5 rounded-[3rem] space-y-10">
+                        <div className="space-y-6">
+                          <div className="flex items-center gap-3 border-b border-white/5 pb-2">
+                             <div className="w-4 h-4 text-brand-light">{I.user}</div>
+                             <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Identidad del Remitente</h3>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                             <div className="space-y-2">
+                                <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Nombre de usuario</label>
+                                <input type="text" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="@usuario" />
+                             </div>
+                             <div className="space-y-2">
+                                <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Nombre completo</label>
+                                <input type="text" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="Nombre" />
+                             </div>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                             <div className="space-y-2">
+                                <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Apellido</label>
+                                <input type="text" value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="Apellido" />
+                             </div>
+                             <div className="space-y-2">
+                                <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Email de Contacto</label>
+                                <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="tu@email.com" />
+                             </div>
+                          </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                           <div className="space-y-2">
-                              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest">Apellido</label>
-                              <input type="text" value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="Apellido" />
-                           </div>
-                           <div className="space-y-2">
-                              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest">Email</label>
-                              <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="tu@email.com" />
-                           </div>
+                        <div className="space-y-6 pt-4">
+                          <div className="flex items-center gap-3 border-b border-white/5 pb-2">
+                             <div className="w-4 h-4 text-brand-accent">{I.tag}</div>
+                             <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Naturaleza del Ticket</h3>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                             <div className="space-y-2">
+                                <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Tipo de Contacto</label>
+                                <select value={formData.contactType} onChange={e => setFormData({...formData, contactType: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
+                                   {CONTACT_TYPES.map(c => <option key={c} value={c}>{c}</option>)}
+                                </select>
+                             </div>
+                             <div className="space-y-2">
+                                <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Región de Origen</label>
+                                <select value={formData.region} onChange={e => setFormData({...formData, region: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
+                                   {REGIONS.map(r => <option key={r.code} value={r.code}>{r.name}</option>)}
+                                </select>
+                             </div>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                             <div className="space-y-2">
+                                <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Categoría</label>
+                                <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value, subCategory: Object.values(CATEGORIES)[0][0]})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
+                                   {Object.keys(CATEGORIES).map(c => <option key={c} value={c}>{c}</option>)}
+                                </select>
+                             </div>
+                             <div className="space-y-2">
+                                <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Subcategoría</label>
+                                <select value={formData.subCategory} onChange={e => setFormData({...formData, subCategory: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
+                                   {CATEGORIES[formData.category as keyof typeof CATEGORIES]?.map(s => <option key={s} value={s}>{s}</option>)}
+                                </select>
+                             </div>
+                          </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                           <div className="space-y-2">
-                              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest">Región</label>
-                              <select value={formData.region} onChange={e => setFormData({...formData, region: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
-                                {REGIONS.map(r => <option key={r.code} value={r.code}>{r.name}</option>)}
-                              </select>
-                           </div>
-                           <div className="space-y-2">
-                              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest">Tipo de contacto</label>
-                              <select value={formData.contactType} onChange={e => setFormData({...formData, contactType: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
-                                {CONTACT_TYPES.map(c => <option key={c} value={c}>{c}</option>)}
-                              </select>
-                           </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                           <div className="space-y-2">
-                              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest">Teléfono (opcional)</label>
-                              <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="+58 412 685 8111" />
-                           </div>
-                           <div className="space-y-2">
-                              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest">Dispositivo</label>
-                              <input type="text" value={formData.device} onChange={e => setFormData({...formData, device: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="PC / Móvil / Tablet" />
-                           </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                           <div className="space-y-2">
-                              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest">Categoría</label>
-                              <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value, subCategory: Object.values(CATEGORIES)[0][0]})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
-                                {Object.keys(CATEGORIES).map(c => <option key={c} value={c}>{c}</option>)}
-                              </select>
-                           </div>
-                           <div className="space-y-2">
-                              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest">Subcategoría</label>
-                              <select value={formData.subCategory} onChange={e => setFormData({...formData, subCategory: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
-                                {CATEGORIES[formData.category as keyof typeof CATEGORIES]?.map(s => <option key={s} value={s}>{s}</option>)}
-                              </select>
-                           </div>
-                        </div>
-
-                        <div className="space-y-2">
-                           <label className="text-[10px] font-black text-white/40 uppercase tracking-widest">Mensaje</label>
-                           <textarea value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} rows={5} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all resize-none" placeholder="Describe tu problema o solicitud en detalle..." />
+                        <div className="space-y-6 pt-4">
+                          <div className="flex items-center gap-3 border-b border-white/5 pb-2">
+                             <div className="w-4 h-4 text-brand-light">{I.msg}</div>
+                             <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Detalles del Requerimiento</h3>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                             <div className="space-y-2">
+                                <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Teléfono (opcional)</label>
+                                <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="+58 412 685 8111" />
+                             </div>
+                             <div className="space-y-2">
+                                <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Dispositivo</label>
+                                <input type="text" value={formData.device} onChange={e => setFormData({...formData, device: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="PC / Móvil / Tablet" />
+                             </div>
+                          </div>
+                          <div className="space-y-2">
+                             <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Mensaje / Descripción</label>
+                             <textarea value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} rows={5} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all resize-none" placeholder="Describe tu situación detalladamente..." />
+                          </div>
                         </div>
 
                         <button type="submit" disabled={submitting} className="w-full py-5 bg-brand-light text-black font-black uppercase text-xs tracking-[0.2em] rounded-2xl hover:shadow-lg hover:shadow-brand-light/20 transition-all disabled:opacity-50 flex items-center justify-center gap-3">
@@ -410,6 +460,40 @@ export default function SupportPage() {
                 Los tickets se procesan por orden de llegada. Para urgencias, usa Discord.
               </p>
             </div>
+
+            <div className="p-8 bg-brand/5 border border-brand/20 rounded-[3rem] space-y-4">
+              <h3 className="text-[10px] font-black text-brand-light/60 uppercase tracking-widest">Estructura Técnica</h3>
+              <div className="space-y-2 text-[11px] text-gray-300 font-bold">
+                <p>Next.js + Vercel</p>
+                <p>Supabase (Auth / DB)</p>
+                <p>Tailwind + Framer Motion</p>
+              </div>
+            </div>
+
+            <div className="p-8 bg-brand/5 border border-brand/20 rounded-[3rem] space-y-4">
+              <h3 className="text-[10px] font-black text-brand-light/60 uppercase tracking-widest">CEO</h3>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-brand/20 flex items-center justify-center text-brand-light">{I.ceo}</div>
+                <div>
+                  <div className="text-sm font-bold text-white">Ciszuko Antony</div>
+                  <div className="text-[10px] text-gray-400">CEO · Creador</div>
+                </div>
+              </div>
+              <div className="space-y-2 text-[11px] text-gray-300 font-bold">
+                <p>fplayersoffcial@gmail.com</p>
+                <p>+58 412 6858111</p>
+              </div>
+            </div>
+
+            <div className="p-8 bg-white/5 border border-white/5 rounded-[3rem] space-y-4">
+              <h3 className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em]">Niveles de Prioridad</h3>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3"><span className="w-2 h-2 rounded-full bg-red-500" /><span className="text-[11px] font-bold text-white">Crítica</span></div>
+                <div className="flex items-center gap-3"><span className="w-2 h-2 rounded-full bg-neon-blue" /><span className="text-[11px] font-bold text-white">Alta</span></div>
+                <div className="flex items-center gap-3"><span className="w-2 h-2 rounded-full bg-yellow-400" /><span className="text-[11px] font-bold text-white">Normal</span></div>
+                <div className="flex items-center gap-3"><span className="w-2 h-2 rounded-full bg-gray-500" /><span className="text-[11px] font-bold text-white">Baja</span></div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -425,6 +509,25 @@ export default function SupportPage() {
               <p className="text-gray-400 text-sm">{c.desc}</p>
             </motion.a>
           ))}
+        </div>
+
+        {/* REDES OFICIALES */}
+        <div className="mt-16 space-y-8">
+          <div className="text-center space-y-2">
+            <div className="flex items-center justify-center gap-4 text-brand-light mb-4">
+              <div className="w-8 h-8">{I.globe}</div>
+              <h3 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">REDES OFICIALES</h3>
+            </div>
+            <p className="text-gray-500 font-black text-[10px] uppercase tracking-[0.5em]">CANALES EXCLUSIVOS DE CISZUKO ANTONY</p>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {SOCIALS.map((s) => (
+              <a key={s.name} href={s.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold border border-white/10 text-gray-300 hover:text-white hover:border-white/40 transition-all">
+                <span className="w-4 h-4">{s.icon}</span>
+                {s.name}
+              </a>
+            ))}
+          </div>
         </div>
       </div>
 
