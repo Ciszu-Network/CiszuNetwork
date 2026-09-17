@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import Link from 'next/link';
-import { Mail, MessageCircle, ExternalLink } from "lucide-react";
+import { Mail, MessageCircle, ExternalLink, LifeBuoy } from "lucide-react";
 import { SocialIcon, SOCIAL_COLORS } from '@ciszu/ui';
 import { CISZU_NETWORK } from "@/config/site";
 import QuickDocks from "@/components/molecules/QuickDocks";
@@ -48,6 +48,7 @@ const I = {
   server: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>,
   ceo: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
   share: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>,
+  lifebuoy: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="22"/><line x1="2" y1="12" x2="8" y2="12"/><line x1="16" y1="12" x2="22" y2="12"/></svg>,
 };
 
 const CONTACT_TYPES = [
@@ -100,6 +101,14 @@ export default function SupportPage() {
   const [activeTab, setActiveTab] = useState<'new' | 'list'>('new');
   const [submitting, setSubmitting] = useState(false);
   const [isAuthWarningOpen, setIsAuthWarningOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const copyEmail = async () => {
+    await navigator.clipboard.writeText('ciszunetwork@gmail.com');
+    setCopied(true);
+    toast('Email copiado al portapapeles', 'success');
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const [formData, setFormData] = useState({
     displayName: '',
@@ -472,21 +481,27 @@ export default function SupportPage() {
           {/* --- SIDEBAR INFO --- */}
           <aside className="lg:col-span-4 space-y-8">
              {/* RECEPTOR DEL CONTACTO */}
-             <div className="p-8 bg-gradient-to-br from-brand/10 to-transparent border border-brand/20 rounded-[3rem] space-y-6 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-4 opacity-5 text-brand-light font-black text-6xl italic pointer-events-none">CEO</div>
-                <div className="flex items-center gap-4">
-                   <div className="w-12 h-12 text-brand-light p-3 bg-brand/10 rounded-2xl border border-brand/20">
-                      {I.user}
-                   </div>
-                   <div>
-                      <h3 className="text-xs font-black text-white uppercase tracking-widest">Receptor del Ticket</h3>
-                      <p className="text-[10px] text-brand-light font-black uppercase tracking-[0.2em]">Ciszu Network Support</p>
-                   </div>
-                </div>
-                <p className="text-[10px] text-gray-500 font-bold leading-relaxed uppercase">
-                   Tu requerimiento será procesado directamente por el **Equipo de Asistencia de Ciszu Network**, bajo la supervisión de **Ciszuko Antony**. Los datos se sincronizan con <span className="text-white">{CISZU_NETWORK.email}</span>.
-                </p>
-             </div>
+              <div className="p-8 bg-gradient-to-br from-brand/10 to-transparent border border-brand/20 rounded-[3rem] space-y-6 relative overflow-hidden group">
+                 <div className="absolute top-0 right-0 p-4 opacity-5 text-brand-light font-black text-6xl italic pointer-events-none">CEO</div>
+                 <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 text-brand-light p-3 bg-brand/10 rounded-2xl border border-brand/20">
+                       {I.lifebuoy}
+                    </div>
+                    <div>
+                       <h3 className="text-xs font-black text-white uppercase tracking-widest">Receptor del Ticket</h3>
+                       <p className="text-[10px] text-brand-light font-black uppercase tracking-[0.2em]">Ciszu Network Support</p>
+                    </div>
+                 </div>
+                 <p className="text-[10px] text-gray-500 font-bold leading-relaxed uppercase">
+                    Tu requerimiento será procesado directamente por el **Equipo de Asistencia de Ciszu Network**, bajo la supervisión de **Ciszuko Antony**. Los datos se sincronizan con:
+                 </p>
+                 <div className="flex items-center gap-3">
+                    <a href="mailto:ciszunetwork@gmail.com" className="text-white underline text-sm">ciszunetwork@gmail.com</a>
+                    <button onClick={copyEmail} className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-colors">
+                      {copied ? 'COPIADO' : 'COPIAR'}
+                    </button>
+                 </div>
+              </div>
 
              <div className="p-8 bg-gradient-to-br from-neon-green/10 to-transparent border border-neon-green/20 rounded-[3rem] space-y-6 text-center relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-4 opacity-5 text-neon-green font-black text-6xl italic pointer-events-none">24/7</div>

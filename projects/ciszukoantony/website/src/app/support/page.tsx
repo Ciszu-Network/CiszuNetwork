@@ -39,6 +39,7 @@ const I = {
   contact: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>,
   login: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>,
   userPlus: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>,
+  lifebuoy: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="22"/><line x1="2" y1="12" x2="8" y2="12"/><line x1="16" y1="12" x2="22" y2="12"/></svg>,
 };
 
 const CONTACT_TYPES = [
@@ -77,6 +78,14 @@ export default function SupportPage() {
   const [activeTab, setActiveTab] = useState<'new' | 'list'>('new');
   const [submitting, setSubmitting] = useState(false);
   const [isAuthWarningOpen, setIsAuthWarningOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const copyEmail = async () => {
+    await navigator.clipboard.writeText('fplayersoffcial@gmail.com');
+    setCopied(true);
+    toast('Email copiado al portapapeles', 'success');
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const [formData, setFormData] = useState({
     displayName: '',
@@ -446,7 +455,7 @@ export default function SupportPage() {
                 <div className="absolute top-0 right-0 p-4 opacity-5 text-brand-light font-black text-6xl italic pointer-events-none">CEO</div>
                 <div className="flex items-center gap-4">
                    <div className="w-12 h-12 text-brand-light p-3 bg-brand/10 rounded-2xl border border-brand/20">
-                      {I.user}
+                      {I.lifebuoy}
                    </div>
                    <div>
                       <h3 className="text-xs font-black text-white uppercase tracking-widest">Receptor del Ticket</h3>
@@ -454,8 +463,14 @@ export default function SupportPage() {
                    </div>
                 </div>
                 <p className="text-[10px] text-gray-500 font-bold leading-relaxed uppercase">
-                   Tu requerimiento será procesado directamente por el Equipo de Ciszuko Antony. Los datos se sincronizan con <span className="text-white">fplayersoffcial@gmail.com</span>.
+                   Tu requerimiento será procesado directamente por el Equipo de Ciszuko Antony. Los datos se sincronizan con:
                 </p>
+                <div className="flex items-center gap-3">
+                   <a href="mailto:fplayersoffcial@gmail.com" className="text-white underline text-sm">fplayersoffcial@gmail.com</a>
+                   <button onClick={copyEmail} className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-colors">
+                     {copied ? 'COPIADO' : 'COPIAR'}
+                   </button>
+                </div>
              </div>
 
              <div className="p-8 bg-gradient-to-br from-neon-green/10 to-transparent border border-neon-green/20 rounded-[3rem] space-y-6 text-center relative overflow-hidden">
