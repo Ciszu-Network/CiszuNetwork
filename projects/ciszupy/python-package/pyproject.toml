@@ -5,14 +5,14 @@ description = "Una librería y CLI de Python híbrida que invierte el clásico H
 authors = [{ name = "CiszukoAntony", email = "fplayersoffcial@gmail.com" }]
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = ["typer>=0.27.2", "rich>=10.0.0"]
+dependencies = ["typer>=0.27.2", "rich>=10.0.0", "keyboard>=0.13.5"]
 
 [tool.poetry]
-packages = [{ include = "*", from = "src" }]
+packages = [{ include = "ciszupy", from = "src" }]
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-ciszupy = "ciszupy.main:app" # Comando CLI global que se instalará en el sistema
+ciszupy = "ciszupy.main:app"
