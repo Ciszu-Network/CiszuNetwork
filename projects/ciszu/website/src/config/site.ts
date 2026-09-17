@@ -56,9 +56,9 @@ export const CISZUBOT_LINKS = {
 };
 
 export const DONATION_LINKS = {
-  patreon: 'https://www.patreon.com/cw/ciszukoantony',
-  koFi: 'https://ko-fi.com/ciszukoantony',
-  buyMeACoffee: 'https://buymeacoffee.com/ciszukoantony',
+  patreon: 'https://www.patreon.com/cw/ciszunetwork',
+  koFi: 'https://ko-fi.com/ciszunetwork',
+  buyMeACoffee: 'https://buymeacoffee.com/ciszunetwork',
 };
 
 export const WIDGETS = {

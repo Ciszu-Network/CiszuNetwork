@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { Icon } from '@ciszu/ui';
 import Link from 'next/link';
 
 const DONATION_OPTIONS = [
@@ -13,18 +14,21 @@ const DONATION_OPTIONS = [
     href: 'https://www.patreon.com/cw/ciszukoantony',
     desc: 'Suscripción mensual con recompensas exclusivas',
     color: 'from-[#FF424D] to-[#FF6B81]',
+    icon: 'patreon',
   },
   {
     name: 'Ko-fi',
     href: 'https://ko-fi.com/ciszukoantony',
     desc: 'Compra un café a CiszukoAntony',
-    color: 'from-[#29ABE0] to-[#5BC0DE]',
+    color: 'from-[#FF5E5B] to-[#FFB02E]',
+    icon: 'kofi',
   },
   {
     name: 'Buy Me a Coffee',
     href: 'https://buymeacoffee.com/ciszukoantony',
     desc: 'Donación única, sin suscripción',
     color: 'from-[#FFDD00] to-[#FFE066]',
+    icon: 'buymeacoffee',
   },
 ];
 
@@ -92,11 +96,9 @@ export default function DonationPage() {
                   className="group relative flex flex-col items-center text-center p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-neon-pink/50 transition-all hover:-translate-y-1 overflow-hidden"
                 >
                   <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${option.color} opacity-60 group-hover:opacity-100 transition-opacity`} />
-                  <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${option.color} mb-4 opacity-80 group-hover:scale-110 transition-transform flex items-center justify-center`}>
-                    <svg viewBox="0 0 24 24" className="w-7 h-7 text-white" fill="currentColor">
-                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                    </svg>
-                  </div>
+                   <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${option.color} mb-4 opacity-80 group-hover:scale-110 transition-transform flex items-center justify-center`}>
+                     <Icon name={option.icon} style="brand" size={28} color="white" />
+                   </div>
                   <h3 className="text-xl font-header font-bold text-white mb-2 group-hover:text-neon-pink transition-colors">
                     {option.name}
                   </h3>
