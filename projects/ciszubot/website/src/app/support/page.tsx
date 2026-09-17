@@ -13,7 +13,8 @@ import { FlagIcon } from '@ciszu/ui';
 import { usePageTitle } from '@/lib/usePageTitle';
 
 const I = {
-  support: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>,
+  // Icono de soporte: boya salvavidas circular (Lucide life-buoy), no auriculares.
+  support: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="22"/><line x1="2" y1="12" x2="8" y2="12"/><line x1="16" y1="12" x2="22" y2="12"/></svg>,
   msg: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
   pulse: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
   shield: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
@@ -511,7 +512,7 @@ export default function SupportPage() {
                 <div className="absolute top-0 right-0 p-4 opacity-5 text-neon-blue font-black text-6xl italic pointer-events-none">CEO</div>
                 <div className="flex items-center gap-4">
                    <div className="w-12 h-12 text-neon-blue p-3 bg-neon-blue/10 rounded-2xl border border-neon-blue/20">
-                      {I.user}
+                      {I.support}
                    </div>
                    <div>
                       <h3 className="text-xs font-black text-white uppercase tracking-widest">Receptor del Ticket</h3>
@@ -523,7 +524,7 @@ export default function SupportPage() {
                        Tu requerimiento será procesado directamente por el **Equipo de Asistencia de CiszuBot**, bajo la supervisión de **Ciszuko Antony**.
                     </p>
                     <div className="flex items-center gap-3">
-                       <a href="mailto:ciszunetwork@gmail.com" className="text-white underline text-sm">ciszunetwork@gmail.com</a>
+                       <a href="mailto:ciszunetwork@gmail.com" className="text-white underline text-sm lowercase">ciszunetwork@gmail.com</a>
                        <button onClick={copyEmail} className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-colors">
                          {copied ? 'COPIADO' : 'COPIAR'}
                        </button>
