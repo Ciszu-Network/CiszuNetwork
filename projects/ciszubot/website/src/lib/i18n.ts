@@ -391,8 +391,8 @@ const es = {
   },
   leaderboardPage: {
     title: 'Ranking',
-    subtitle: 'Usuarios y servidores más activos de CiszuBot.',
-    comingSoon: 'Próximamente: rankings por comandos ejecutados, niveles y servidores.',
+    subtitle: 'Top usuarios por economía de CiszuBot.',
+    comingSoon: '',
     back: 'Volver al inicio',
   },
   forumPage: {

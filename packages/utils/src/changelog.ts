@@ -207,9 +207,18 @@ export function getTagStats(items: readonly ChangelogItem[]): Record<string, num
 /** Id de la entrada más reciente, o `null` si la lista está vacía. */
 export function getMostRecentId(items: readonly ChangelogItem[]): string | null {
   if (items.length === 0) return null;
-  return items.reduce((latest, item) =>
-    (Date.parse(item.date) || 0) > (Date.parse(latest.date) || 0) ? item : latest,
-  ).id;
+  const originRank = (origin?: string) => (origin === 'global' ? 2 : origin === 'debug' ? 1 : 0);
+  return items.reduce((latest, item) => {
+    const latestTime = Date.parse(latest.date) || 0;
+    const itemTime = Date.parse(item.date) || 0;
+    if (itemTime > latestTime) return item;
+    if (itemTime < latestTime) return latest;
+    const latestRank = originRank(latest.origin);
+    const itemRank = originRank(item.origin);
+    if (itemRank > latestRank) return item;
+    if (itemRank < latestRank) return latest;
+    return item;
+  }).id;
 }
 
 /** Busca una entrada por id (los ids de ruta llegan como `string | string[]`). */
