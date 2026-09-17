@@ -11,8 +11,12 @@ import keyboard as kb
 import typer
 from rich import print as rprint
 
-from .modules.helloworldprintmeme import HelloWorld
-from .modules import clear_cls_command, hotkeys, install_libs
+try:
+    from .modules.helloworldprintmeme import HelloWorld
+    from .modules import clear_cls_command, hotkeys, install_libs
+except ImportError:
+    from ciszupy.modules.helloworldprintmeme import HelloWorld
+    from ciszupy.modules import clear_cls_command, hotkeys, install_libs
 
 
 def ensure_dependencies() -> None:
@@ -26,7 +30,6 @@ def run_app() -> None:
     """
     Lógica central de la aplicación que ejecuta los hilos y espera la salida.
     """
-    clear_cls_command.clear_cls()
     thr_hotkeys = thr.Thread(target=hotkeys.init_hotkeys, daemon=True)
     thr_hotkeys.start()
     time.sleep(0.1)
@@ -107,7 +110,5 @@ if __name__ == "__main__":
         rprint("\n[bold red]Interrumpido por el usuario.[/bold red]")
         sys.exit(0)
     except Exception as exc:
-        rprint(
-            f"\n[ERROR CRÍTICO]: {exc}"
-        )
+        rprint(f"\n[ERROR CRÍTICO]: {exc}")
         sys.exit(1)
