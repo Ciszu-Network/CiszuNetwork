@@ -1,8 +1,8 @@
-CISZUBOT - DOCUMENTACIÓN OFICIAL
+CISZUPY - DOCUMENTACIÓN OFICIAL
 Nombre: POLICY
-Versión: 2.5.5
-Actualización: 2026-07-28
-Identificador: POLICY_V2.5.5_2026_07_28_ciszubot
+Versión: 0.1.0
+Actualización: 2026-09-17
+Identificador: POLICY_V0.1.0_2026_09_17_ciszupy
 
 ---
 
@@ -12,18 +12,18 @@ POLÍTICAS / POLICIES
 [ESPAÑOL]
 
 POLÍTICA DE PRIVACIDAD
-- Ciszubot no recopila, almacena ni comparte datos personales
-- Las confesiones (comando confess) son eliminadas tras su envío
-- No se guardan logs de mensajes privados
+- Ciszupy no recopila, almacena ni comparte datos personales
+- El paquete funciona completamente offline
+- No se envía información a servidores externos
 
 POLÍTICA DE USO
-- El bot puede ser usado en cualquier servidor que cumpla las reglas de Discord
-- Prohibido usar el bot para spam, raids o actividades maliciosas
-- Los administradores del servidor son responsables del uso del bot
+- El paquete puede ser usado para fines personales y educativos
+- Prohibido usar Ciszupy para actividades maliciosas o ilegales
+- Los usuarios son responsables del uso que hagan del paquete
 
 POLÍTICA DE CONTRIBUCIONES
 - Las contribuciones al código son bienvenidas vía GitHub
-- Todo código contribuido debe ser original
+- Todo código contribuido debe ser original y estar bajo MIT
 
 
 ---
@@ -32,15 +32,15 @@ POLÍTICA DE CONTRIBUCIONES
 [ENGLISH]
 
 PRIVACY POLICY
-- Ciszubot does not collect, store, or share personal data
-- Confessions (confess command) are deleted after sending
-- No private message logs are kept
+- Ciszupy does not collect, store, or share personal data
+- The package works completely offline
+- No information is sent to external servers
 
 USAGE POLICY
-- The bot may be used on any server that follows Discord's rules
-- Using the bot for spam, raids, or malicious activities is prohibited
-- Server administrators are responsible for bot usage
+- The package may be used for personal and educational purposes
+- Using Ciszupy for malicious or illegal activities is prohibited
+- Users are responsible for their use of the package
 
 CONTRIBUTION POLICY
 - Code contributions are welcome via GitHub
-- All contributed code must be original
+- All contributed code must be original and under MIT

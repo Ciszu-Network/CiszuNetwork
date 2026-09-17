@@ -1,8 +1,8 @@
-CISZUBOT - DOCUMENTACIÓN OFICIAL
+CISZUPY - DOCUMENTACIÓN OFICIAL
 Nombre: DOCUMENTATION
-Versión: 2.5.5
-Actualización: 2026-07-28
-Identificador: DOCUMENTATION_V2.5.5_2026_07_28_ciszubot
+Versión: 0.1.0
+Actualización: 2026-09-17
+Identificador: DOCUMENTATION_V0.1.0_2026_09_17_ciszupy
 
 ---
 
@@ -11,48 +11,34 @@ DOCUMENTACIÓN TÉCNICA / TECHNICAL DOCUMENTATION
 
 [ESPAÑOL]
 
-ARQUITECTURA DEL BOT
+ARQUITECTURA DEL PAQUETE
 
-El bot está estructurado en módulos independientes dentro de src/commands/.
-Cada comando exporta name, aliases, description y execute.
+El paquete está estructurado en módulos independientes dentro de src/.
+Cada módulo exporta funciones y clases especializadas.
 
 FLUJO DE EJECUCIÓN:
-1. index.js inicializa el cliente de Discord
-2. Carga los módulos de comandos desde commands/
-3. Registra slash commands vía REST
-4. Procesa mensajes con prefix cz! y mention
-5. server.js inicia panel Express en puerto 5000
+1. main.py inicializa la aplicación Typer
+2. Carga los módulos desde src/modules/
+3. Registra comandos CLI con Typer
+4. Ejecuta la interfaz interactiva con Rich
+5. Hotkeys globales con Keyboard
 
-COMANDOS POR CATEGORÍA:
+MÓDULOS:
 
-Información:
-- help (aliases: ayuda, comandos) — Lista completa con selector
-- profile (aliases: perfil) — Información detallada del usuario
-- serverinfo (aliases: servidor) — Información del servidor
-
-Utilidad:
-- ping (aliases: latencia) — Latencia del bot
-- pong (aliases: latencia2) — Latencia (inverso)
-- test (aliases: prueba) — Health check del bot
-
-Diversión:
-- say (aliases: decir) — Repite mensaje en embed
-- directsay (aliases: decirdirecto) — Repite mensaje en texto plano
-- confess (aliases: confesar) — Confesión anónima
-- 8ball (aliases: bola8) — Bola mágica con ~40 respuestas
-
-Social:
-- hi (aliases: hola) — Saludo aleatorio
-- bye (aliases: adios) — Despedida aleatoria
+- main.py — Entry point de la CLI
+- core.py — Lógica central y clases base
+- modules/clear_cls_command.py — Limpieza de consola
+- modules/hotkeys.py — Hotkeys globales
+- modules/install_libs.py — Auto-instalación de dependencias
+- modules/helloworldprintmeme.py — Meme HelloWorld
 
 ESTRUCTURA DE DIRECTORIOS:
-discord/
+ciszupy/
+  pyproject.toml — Metadata y build con Poetry
   src/
-    index.js          # Entry point del bot
-    server.js         # Panel admin Express (puerto 5000)
-    logger.js         # Sistema de logging
-    bot-config.json   # Configuración (prefix, colores, activity)
-    commands/         # 12 módulos de comandos
+    main.py — CLI entry point
+    core.py — Lógica central
+    modules/ — Módulos especializados
 
 
 ---
@@ -60,45 +46,31 @@ discord/
 
 [ENGLISH]
 
-BOT ARCHITECTURE
+PACKAGE ARCHITECTURE
 
-The bot is structured in independent modules within src/commands/.
-Each command exports name, aliases, description, and execute.
+The package is structured in independent modules within src/.
+Each module exports specialized functions and classes.
 
 EXECUTION FLOW:
-1. index.js initializes the Discord client
-2. Loads command modules from commands/
-3. Registers slash commands via REST
-4. Processes messages with cz! prefix and mention
-5. server.js starts Express panel on port 5000
+1. main.py initializes the Typer application
+2. Loads modules from src/modules/
+3. Registers CLI commands with Typer
+4. Runs interactive interface with Rich
+5. Global hotkeys with Keyboard
 
-COMMANDS BY CATEGORY:
+MODULES:
 
-Information:
-- help (aliases: ayuda, comandos) — Full list with selector
-- profile (aliases: perfil) — Detailed user information
-- serverinfo (aliases: servidor) — Server information
-
-Utility:
-- ping (aliases: latencia) — Bot latency
-- pong (aliases: latencia2) — Latency (inverse)
-- test (aliases: prueba) — Bot health check
-
-Fun:
-- say (aliases: decir) — Repeats message in embed
-- directsay (aliases: decirdirecto) — Repeats in plain text
-- confess (aliases: confesar) — Anonymous confession
-- 8ball (aliases: bola8) — Magic 8-ball with ~40 responses
-
-Social:
-- hi (aliases: hola) — Random greeting
-- bye (aliases: adios) — Random farewell
+- main.py — CLI entry point
+- core.py — Core logic and base classes
+- modules/clear_cls_command.py — Console clearing
+- modules/hotkeys.py — Global hotkeys
+- modules/install_libs.py — Auto-install dependencies
+- modules/helloworldprintmeme.py — HelloWorld meme
 
 DIRECTORY STRUCTURE:
-discord/
+ciszupy/
+  pyproject.toml — Metadata and Poetry build
   src/
-    index.js          # Bot entry point
-    server.js         # Express admin panel (port 5000)
-    logger.js         # Logging system
-    bot-config.json   # Configuration (prefix, colors, activity)
-    commands/         # 12 command modules
+    main.py — CLI entry point
+    core.py — Core logic
+    modules/ — Specialized modules

@@ -1,53 +1,51 @@
-CISZUBOT - DOCUMENTACIÓN OFICIAL
+CISZUPY - DOCUMENTACIÓN OFICIAL
 Nombre: ABOUT
-Versión: 2.5.5
-Actualización: 2026-07-28
-Identificador: ABOUT_V2.5.5_2026_07_28_ciszubot
+Versión: 0.1.0
+Actualización: 2026-09-17
+Identificador: ABOUT_V0.1.0_2026_09_17_ciszupy
 -------------------------------------------------------------------------------
 
-SOBRE CISZUBOT / ABOUT CISZUBOT
+SOBRE CISZUPY / ABOUT CISZUPY
 
 [ESPAÑOL]
-Ciszubot es un bot de Discord en español con 12 comandos de información,
-utilidad, diversión y sociales. Moderno, rápido y fácil de usar.
+Ciszupy es una librería y CLI de Python híbrida que invierte el clásico
+HelloWorld y rinde homenaje a los seres queridos. Moderna, rápida y fácil
+de usar.
 
-Desarrollado con Node.js y Discord.js v14, Ciszubot responde tanto al
-prefijo tradicional cz! como a los comandos de barra (slash commands) de
-Discord, ofreciendo una experiencia completa y accesible para todos los
-servidores.
+Desarrollada con Python 3.10+, Typer, Rich y Keyboard, Ciszupy ofrece una
+experiencia interactiva en la terminal con comandos personalizados.
 
-COMANDOS DISPONIBLES (12):
-- Información: help, profile, serverinfo
-- Utilidad: ping, pong, test
-- Diversión: say, directsay, confess, 8ball
-- Social: hi, bye
+COMANDOS DISPONIBLES:
+
+- Información: help, helloworldmemetest
+- Homenajes: profesor, papa, mama
 
 CARACTERÍSTICAS:
-- Prefijo: cz! (configurable)
-- Slash commands: Todos los comandos disponibles como /comando
-- Embeds con paleta de colores índigo y violeta
-- Panel de administración Express con estadísticas en vivo
-- Logging a consola y archivo
+
+- CLI con Typer
+- Salida enriquecida con Rich
+- Hotkeys globales con Keyboard
+- Auto-instalación de dependencias
+- Clear screen automático
 
 -------------------------------------------------------------------------------
 
 [ENGLISH]
-Ciszubot is a Spanish-language Discord bot with 12 commands for information,
-utility, fun, and social interaction. Modern, fast, and easy to use.
+Ciszupy is a hybrid Python library and CLI that inverts the classic HelloWorld
+and pays tribute to loved ones. Modern, fast, and easy to use.
 
-Developed with Node.js and Discord.js v14, Ciszubot responds to both the
-traditional cz! prefix and Discord's slash commands, offering a complete
-and accessible experience for all servers.
+Built with Python 3.10+, Typer, Rich, and Keyboard, Ciszupy offers an
+interactive terminal experience with custom commands.
 
-AVAILABLE COMMANDS (12):
-- Information: help, profile, serverinfo
-- Utility: ping, pong, test
-- Fun: say, directsay, confess, 8ball
-- Social: hi, bye
+AVAILABLE COMMANDS:
+
+- Information: help, helloworldmemetest
+- Tributes: profesor, papa, mama
 
 FEATURES:
-- Prefix: cz! (configurable)
-- Slash commands: All commands available as /command
-- Embeds with indigo and violet color palette
-- Express admin panel with live statistics
-- Console and file logging
+
+- Typer-based CLI
+- Rich terminal output
+- Global hotkeys with Keyboard
+- Auto-install dependencies
+- Auto clear screen

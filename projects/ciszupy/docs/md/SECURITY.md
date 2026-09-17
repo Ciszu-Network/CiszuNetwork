@@ -1,8 +1,8 @@
-CISZUBOT - DOCUMENTACIÓN OFICIAL
+CISZUPY - DOCUMENTACIÓN OFICIAL
 Nombre: SECURITY
-Versión: 3.0.0
-Actualización: 2026-08-01
-Identificador: SECURITY_V3.0.0_2026_08_01_ciszubot
+Versión: 0.1.0
+Actualización: 2026-09-17
+Identificador: SECURITY_V0.1.0_2026_09_17_ciszupy
 
 ---
 
@@ -11,37 +11,22 @@ SEGURIDAD / SECURITY
 
 [ESPAÑOL]
 
-SEGURIDAD DEL BOT
-
-TOKEN Y CREDENCIALES:
-- El token de Discord se almacena en .env (no versionado)
-- Variables requeridas: DISCORD_TOKEN, CLIENT_ID, GUILD_ID
-- No compartir el token ni commitearlo
-
-PANEL DE ADMINISTRACIÓN:
-- Express corre en localhost:5000 (no expuesto públicamente)
-- No agregar rutas sensibles sin autenticación
-
-COMANDOS:
-- confess publica el mensaje y elimina el original (anonimato)
-- No almacenar confesiones en base de datos
-- Validar entradas del usuario en todos los comandos
+SEGURIDAD DEL PAQUETE
 
 DEPENDENCIAS:
-- Mantener discord.js y express actualizados
-- Ejecutar npm audit regularmente
-- Usar pnpm con ignore-scripts=true
+- Mantener las dependencias actualizadas con Poetry
+- Revisar pip audit o pip-audit regularmente
+- No instalar paquetes sin verificar su origen
 
-MARCO DE DESARROLLO SEGURO (DevSecOps)
+DISTRIBUCIÓN:
+- Las releases se publican via Trusted Publishing en PyPI
+- No incluir secrets ni datos sensibles en el paquete
+- El source code es público en GitHub
 
-CiszuBot aplica la filosofía DevSecOps bajo marcos normativos globales
-estables: OWASP Top 10, NIST SP 800-218 (SSDF) e ISO/IEC 27001.
-
-- Shift-Left: pruebas de seguridad desde el pre-commit local hasta el deploy.
-- SAST: Semgrep, Secretlint y Gitleaks detectan secretos y malas prácticas en el código.
-- DAST: OWASP ZAP escanea la landing page desplegada.
-- Auditoría de dependencias: pnpm audit contra bases CVE.
-- Gestión de secretos: hooks pre-commit, .env excluido de git, rotación ante filtraciones.
+COMANDOS:
+- Validar entradas del usuario en todos los comandos
+- No ejecutar código externo sin validación
+- Mantener errores legibles pero sin exponer paths sensibles
 
 
 ---
@@ -49,34 +34,19 @@ estables: OWASP Top 10, NIST SP 800-218 (SSDF) e ISO/IEC 27001.
 
 [ENGLISH]
 
-BOT SECURITY
-
-TOKEN AND CREDENTIALS:
-- The Discord token is stored in .env (not versioned)
-- Required variables: DISCORD_TOKEN, CLIENT_ID, GUILD_ID
-- Do not share the token or commit it
-
-ADMIN PANEL:
-- Express runs on localhost:5000 (not publicly exposed)
-- Do not add sensitive routes without authentication
-
-COMMANDS:
-- confess posts the message and deletes the original (anonymous)
-- Do not store confessions in a database
-- Validate user input on all commands
+PACKAGE SECURITY
 
 DEPENDENCIES:
-- Keep discord.js and express updated
-- Run npm audit regularly
-- Use pnpm with ignore-scripts=true
+- Keep dependencies updated with Poetry
+- Review pip audit or pip-audit regularly
+- Do not install packages without verifying their origin
 
-SECURE DEVELOPMENT FRAMEWORK (DevSecOps)
+DISTRIBUTION:
+- Releases are published via Trusted Publishing on PyPI
+- Do not include secrets or sensitive data in the package
+- Source code is public on GitHub
 
-CiszuBot applies the DevSecOps philosophy under stable global regulatory
-frameworks: OWASP Top 10, NIST SP 800-218 (SSDF) and ISO/IEC 27001.
-
-- Shift-Left: security tests from local pre-commit to deployment.
-- SAST: Semgrep, Secretlint and Gitleaks detect secrets and bad practices in code.
-- DAST: OWASP ZAP scans the deployed landing page.
-- Dependency auditing: pnpm audit against CVE databases.
-- Secrets management: pre-commit hooks, .env excluded from git, rotation after leaks.
+COMMANDS:
+- Validate user input on all commands
+- Do not execute external code without validation
+- Keep errors readable but without exposing sensitive paths

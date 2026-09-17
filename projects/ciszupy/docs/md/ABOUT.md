@@ -6,11 +6,13 @@ Identificador: ABOUT_V0.1.0_2026_09_17_ciszupy
 
 ---
 
+
 SOBRE CISZUPY / ABOUT CISZUPY
 
 [ESPAÑOL]
-Ciszupy es una librería y CLI de Python híbrida que invierte el clásico HelloWorld
-y rinde homenaje a los seres queridos. Moderna, rápida y fácil de usar.
+Ciszupy es una librería y CLI de Python híbrida que invierte el clásico
+HelloWorld y rinde homenaje a los seres queridos. Moderna, rápida y fácil
+de usar.
 
 Desarrollada con Python 3.10+, Typer, Rich y Keyboard, Ciszupy ofrece una
 experiencia interactiva en la terminal con comandos personalizados.
@@ -28,7 +30,9 @@ CARACTERÍSTICAS:
 - Auto-instalación de dependencias
 - Clear screen automático
 
+
 ---
+
 
 [ENGLISH]
 Ciszupy is a hybrid Python library and CLI that inverts the classic HelloWorld

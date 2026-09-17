@@ -1,8 +1,8 @@
-CISZUBOT - DOCUMENTACIÓN OFICIAL
+CISZUPY - DOCUMENTACIÓN OFICIAL
 Nombre: HELP
-Versión: 2.5.5
-Actualización: 2026-07-28
-Identificador: HELP_V2.5.5_2026_07_28_ciszubot
+Versión: 0.1.0
+Actualización: 2026-09-17
+Identificador: HELP_V0.1.0_2026_09_17_ciszupy
 
 ---
 
@@ -10,43 +10,39 @@ Identificador: HELP_V2.5.5_2026_07_28_ciszubot
 CENTRO DE AYUDA / HELP CENTER
 
 [ESPAÑOL]
-¿Cómo podemos ayudarte con Ciszubot?
+¿Cómo podemos ayudarte con Ciszupy?
 
 COMANDOS DE AYUDA:
-- cz!help o /help — Muestra la lista completa de comandos
-- cz!ping o /ping — Verifica la latencia del bot
-- cz!test o /test — Health check del sistema
+- ciszupy --help — Muestra la lista completa de comandos
+- ciszupy helloworldmemetest — Prueba la funcionalidad principal
 
 TEMAS DE AYUDA:
-- Invitación: Cómo agregar el bot a tu servidor
-- Configuración: Prefijo y ajustes del bot
-- Solución de problemas: El bot no responde, slash commands no aparecen
-- Reportes: Cómo reportar bugs y sugerir mejoras
+- Instalación: pip install ciszupy
+- Requisitos: Python 3.10+
+- Solución de problemas: permisos, dependencias, entorno virtual
 
 SOLUCIÓN DE PROBLEMAS COMUNES:
-- Si el bot no responde: verifica que tenga permisos en el canal
-- Si los slash commands no aparecen: re-invita al bot con permisos
-- Si el admin panel no carga: confirma Express en puerto 5000
+- Si falla la instalación: verifica Python 3.10+
+- Si los comandos no funcionan: revisa que el entorno virtual esté activo
+- Si keyboard falla: ejecuta como administrador en Windows
 
 
 ---
 
 
 [ENGLISH]
-How can we help you with Ciszubot?
+How can we help you with Ciszupy?
 
 HELP COMMANDS:
-- cz!help or /help — Shows the full command list
-- cz!ping or /ping — Checks bot latency
-- cz!test or /test — System health check
+- ciszupy --help — Shows the full command list
+- ciszupy helloworldmemetest — Tests main functionality
 
 HELP TOPICS:
-- Invitation: How to add the bot to your server
-- Configuration: Bot prefix and settings
-- Troubleshooting: Bot not responding, slash commands not appearing
-- Reports: How to report bugs and suggest improvements
+- Installation: pip install ciszupy
+- Requirements: Python 3.10+
+- Troubleshooting: permissions, dependencies, virtual environment
 
 COMMON ISSUES:
-- If the bot doesn't respond: check it has channel permissions
-- If slash commands don't appear: re-invite the bot with permissions
-- If the admin panel doesn't load: confirm Express on port 5000
+- If installation fails: verify Python 3.10+
+- If commands don't work: check virtual environment is active
+- If keyboard fails: run as administrator on Windows

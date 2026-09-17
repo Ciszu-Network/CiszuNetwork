@@ -1,8 +1,8 @@
-CISZUBOT - DOCUMENTACIÓN OFICIAL
+CISZUPY - DOCUMENTACIÓN OFICIAL
 Nombre: RULES
-Versión: 2.5.5
-Actualización: 2026-07-28
-Identificador: RULES_V2.5.5_2026_07_28_ciszubot
+Versión: 0.1.0
+Actualización: 2026-09-17
+Identificador: RULES_V0.1.0_2026_09_17_ciszupy
 
 ---
 
@@ -11,15 +11,14 @@ REGLAS / RULES
 
 [ESPAÑOL]
 
-REGLAS DE USO DE CISZUBOT
+REGLAS DE USO DE CISZUPY
 
-1. No usar el bot para acosar, discriminar o difamar a otros usuarios.
-2. No hacer spam con los comandos del bot.
-3. No usar el comando confess para enviar mensajes inapropiados.
-4. No intentar vulnerar la seguridad del bot ni su infraestructura.
-5. Respetar las reglas de Discord y del servidor donde esté el bot.
-6. Reportar bugs y vulnerabilidades de manera responsable.
-7. No explotar errores del bot para obtener ventajas injustas.
+1. No modificar el paquete para fines maliciosos o ilegales.
+2. No distribuir versiones modificadas sin indicar cambios.
+3. Respetar la licencia MIT en todas las copias y derivados.
+4. No usar el nombre de Ciszupy para proyectos sin autorización.
+5. Reportar vulnerabilidades de manera responsable.
+6. No intentar vulnerar la seguridad del paquete ni su infraestructura.
 
 
 ---
@@ -27,12 +26,11 @@ REGLAS DE USO DE CISZUBOT
 
 [ENGLISH]
 
-CISZUBOT USAGE RULES
+CISZUPY USAGE RULES
 
-1. Do not use the bot to harass, discriminate, or defame other users.
-2. Do not spam the bot's commands.
-3. Do not use the confess command to send inappropriate messages.
-4. Do not attempt to breach the bot's security or infrastructure.
-5. Respect Discord's rules and the rules of the server where the bot is.
-6. Report bugs and vulnerabilities responsibly.
-7. Do not exploit bot errors for unfair advantages.
+1. Do not modify the package for malicious or illegal purposes.
+2. Do not distribute modified versions without indicating changes.
+3. Respect the MIT license in all copies and derivatives.
+4. Do not use the Ciszupy name for projects without authorization.
+5. Report vulnerabilities responsibly.
+6. Do not attempt to breach the package's security or infrastructure.

@@ -1,8 +1,8 @@
-CISZUBOT - DOCUMENTACIÓN OFICIAL
+CISZUPY - DOCUMENTACIÓN OFICIAL
 Nombre: CHANGELOG
-Versión: 2.5.5
-Actualización: 2026-07-28
-Identificador: CHANGELOG_V2.5.5_2026_07_28_ciszubot
+Versión: 0.1.0
+Actualización: 2026-09-17
+Identificador: CHANGELOG_V0.1.0_2026_09_17_ciszupy
 
 ---
 
@@ -11,24 +11,13 @@ REGISTRO DE CAMBIOS / CHANGELOG
 
 [ESPAÑOL]
 
-v2.5.5 (2026)
-- Bot funcional con 12 comandos en Discord.js v14
-- Implementación de slash commands globales
-- Sistema de comandos con prefix cz! y / slash
-- Panel de administración Express en puerto 5000
-- Landing page promocional en Next.js 15
-- Logging a consola y archivo
-- Manejo de eventos guildCreate/guildDelete
-
-v2.0.0 (2025)
-- Migración a Discord.js v14
-- Implementación de alias en español para todos los comandos
-- Sistema de embeds con paleta de colores personalizada
-
-v1.0.0 (2024)
-- Bot inicial con comandos básicos
-- Sistema de prefix cz!
-- Comandos de utilidad y diversión
+v0.1.0 (2026-09-17)
+- CLI inicial con Typer
+- Comandos: help, helloworldmemetest, profesor, papa, mama
+- Salida en consola con Rich
+- Hotkeys globales con Keyboard
+- Auto-instalación de dependencias
+- Clear screen automático
 
 
 ---
@@ -36,21 +25,10 @@ v1.0.0 (2024)
 
 [ENGLISH]
 
-v2.5.5 (2026)
-- Functional bot with 12 commands on Discord.js v14
-- Global slash command implementation
-- Command system with cz! prefix and / slash
-- Express admin panel on port 5000
-- Promotional landing page in Next.js 15
-- Console and file logging
-- GuildCreate/guildDelete event handling
-
-v2.0.0 (2025)
-- Migration to Discord.js v14
-- Spanish alias implementation for all commands
-- Custom color palette embed system
-
-v1.0.0 (2024)
-- Initial bot with basic commands
-- cz! prefix system
-- Utility and fun commands
+v0.1.0 (2026-09-17)
+- Initial CLI with Typer
+- Commands: help, helloworldmemetest, profesor, papa, mama
+- Rich console output
+- Global hotkeys with Keyboard
+- Auto-install dependencies
+- Auto clear screen

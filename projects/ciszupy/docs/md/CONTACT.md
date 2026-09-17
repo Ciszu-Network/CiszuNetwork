@@ -6,6 +6,7 @@ Identificador: CONTACT_V0.1.0_2026_09_17_ciszupy
 
 ---
 
+
 CONTACTO Y REDES / CONTACT & SOCIAL MEDIA
 
 [ESPAÑOL]
@@ -20,7 +21,9 @@ PYPI:
 - Paquete: ciszupy
 - Instalación: pip install ciszupy
 
+
 ---
+
 
 [ENGLISH]
 Need help with Ciszupy? Here are our channels.

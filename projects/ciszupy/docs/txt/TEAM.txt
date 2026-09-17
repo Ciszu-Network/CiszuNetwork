@@ -1,8 +1,8 @@
-CISZUBOT - DOCUMENTACIÓN OFICIAL
+CISZUPY - DOCUMENTACIÓN OFICIAL
 Nombre: TEAM
-Versión: 2.5.5
-Actualización: 2026-07-28
-Identificador: TEAM_V2.5.5_2026_07_28_ciszubot
+Versión: 0.1.0
+Actualización: 2026-09-17
+Identificador: TEAM_V0.1.0_2026_09_17_ciszupy
 -------------------------------------------------------------------------------
 
 EQUIPO / TEAM
@@ -12,13 +12,14 @@ EQUIPO / TEAM
 DESARROLLADOR PRINCIPAL:
 - Ciszuko Antony (Francisco Garcia)
   - Rol: Creador, desarrollador full-stack
-  - Áreas: Bot (Discord.js), Web (Next.js), Admin (Express)
+  - Áreas: Python, CLI, librerías
 
 TECNOLOGÍAS DEL EQUIPO:
-- Node.js + Discord.js v14 — Bot
-- Next.js 15 + React 19 + TypeScript — Landing page
-- Express — Admin panel
-- Tailwind CSS v4 — Estilos
+- Python 3.10+ — Lenguaje base
+- Typer — CLI
+- Rich — Output de consola
+- Keyboard — Hotkeys
+- Poetry — Build y publish
 
 PERTENECE A:
 - Ciszu Network
@@ -30,13 +31,14 @@ PERTENECE A:
 LEAD DEVELOPER:
 - Ciszuko Antony (Francisco Garcia)
   - Role: Creator, full-stack developer
-  - Areas: Bot (Discord.js), Web (Next.js), Admin (Express)
+  - Areas: Python, CLI, libraries
 
 TEAM TECHNOLOGIES:
-- Node.js + Discord.js v14 — Bot
-- Next.js 15 + React 19 + TypeScript — Landing page
-- Express — Admin panel
-- Tailwind CSS v4 — Styles
+- Python 3.10+ — Base language
+- Typer — CLI
+- Rich — Console output
+- Keyboard — Hotkeys
+- Poetry — Build and publish
 
 BELONGS TO:
 - Ciszu Network

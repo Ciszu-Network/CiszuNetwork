@@ -1,8 +1,8 @@
-CISZUBOT - DOCUMENTACIÓN OFICIAL
+CISZUPY - DOCUMENTACIÓN OFICIAL
 Nombre: CREDITS
-Versión: 2.5.5
-Actualización: 2026-07-28
-Identificador: CREDITS_V2.5.5_2026_07_28_ciszubot
+Versión: 0.1.0
+Actualización: 2026-09-17
+Identificador: CREDITS_V0.1.0_2026_09_17_ciszupy
 -------------------------------------------------------------------------------
 
 CRÉDITOS / CREDITS
@@ -13,11 +13,11 @@ DESARROLLADOR:
 - Ciszuko Antony (Francisco Garcia) — Creador y desarrollador
 
 TECNOLOGÍAS:
-- Discord.js v14 — Librería principal
-- Node.js — Entorno de ejecución
-- Express — Panel de administración
-- Next.js 15 — Landing page
-- Tailwind CSS v4 — Estilos
+- Python 3.10+ — Lenguaje base
+- Typer — CLI moderna
+- Rich — Salida en consola enriquecida
+- Keyboard — Hotkeys globales
+- Poetry — Gestión de paquetes y build
 
 PERTENECE A:
 - Ciszu Network
@@ -30,11 +30,11 @@ DEVELOPER:
 - Ciszuko Antony (Francisco Garcia) — Creator and developer
 
 TECHNOLOGIES:
-- Discord.js v14 — Main library
-- Node.js — Runtime environment
-- Express — Admin panel
-- Next.js 15 — Landing page
-- Tailwind CSS v4 — Styles
+- Python 3.10+ — Base language
+- Typer — Modern CLI
+- Rich — Rich console output
+- Keyboard — Global hotkeys
+- Poetry — Package management and build
 
 BELONGS TO:
 - Ciszu Network

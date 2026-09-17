@@ -1,8 +1,8 @@
-CISZUBOT - DOCUMENTACIÓN OFICIAL
+CISZUPY - DOCUMENTACIÓN OFICIAL
 Nombre: GUIDELINES
-Versión: 2.5.5
-Actualización: 2026-07-28
-Identificador: GUIDELINES_V2.5.5_2026_07_28_ciszubot
+Versión: 0.1.0
+Actualización: 2026-09-17
+Identificador: GUIDELINES_V0.1.0_2026_09_17_ciszupy
 
 ---
 
@@ -11,23 +11,21 @@ DIRECTRICES / GUIDELINES
 
 [ESPAÑOL]
 
-USO DEL BOT
-- Los comandos deben usarse de forma responsable y respetuosa
-- No usar el bot para spam, acoso o actividades ilegales
-- Las confesiones (comando confess) son anónimas y no deben usarse
-  para difamar o acosar
+USO DEL PAQUETE
+- Usar Ciszupy de forma responsable y respetuosa
+- No modificar el paquete para fines maliciosos
+- Reportar bugs y sugerir mejoras por los canales oficiales
 
 DESARROLLO
-- Usar Discord.js v14 (no migrar a v15 hasta estable)
-- Los comandos nuevos deben tener soporte dual: prefix y slash
-- Los embeds deben usar la paleta índigo #4f46e5 / violeta #8b5cf6
-- Los comandos deben tener alias en español
-- Mantener logger.js para todo registro de eventos
+- Usar Python 3.10+ como mínimo
+- Los comandos nuevos deben seguir la convención Typer
+- Mantener la compatibilidad con Windows, macOS y Linux
+- Usar Poetry para gestión de dependencias
 
 ADMINISTRACIÓN
-- El panel Express corre en localhost:5000 (no exponer públicamente)
-- No agregar rutas sensibles sin autenticación
-- Las estadísticas del panel son informativas, no modificables
+- No commitear secretos ni tokens en el código
+- Las versiones se publican via GitHub Releases + PyPI
+- Mantener pyproject.toml actualizado
 
 
 ---
@@ -35,20 +33,18 @@ ADMINISTRACIÓN
 
 [ENGLISH]
 
-BOT USAGE
-- Commands must be used responsibly and respectfully
-- Do not use the bot for spam, harassment, or illegal activities
-- Confessions (confess command) are anonymous and must not be used
-  to defame or harass
+PACKAGE USAGE
+- Use Ciszupy responsibly and respectfully
+- Do not modify the package for malicious purposes
+- Report bugs and suggest improvements through official channels
 
 DEVELOPMENT
-- Use Discord.js v14 (do not migrate to v15 until stable)
-- New commands must have dual support: prefix and slash
-- Embeds must use the indigo #4f46e5 / violet #8b5cf6 palette
-- Commands must have Spanish aliases
-- Maintain logger.js for all event logging
+- Use Python 3.10+ as minimum
+- New commands must follow the Typer convention
+- Maintain compatibility with Windows, macOS, and Linux
+- Use Poetry for dependency management
 
 ADMINISTRATION
-- The Express panel runs on localhost:5000 (do not expose publicly)
-- Do not add sensitive routes without authentication
-- Panel statistics are informational, not modifiable
+- Do not commit secrets or tokens in the code
+- Versions are published via GitHub Releases + PyPI
+- Keep pyproject.toml updated
