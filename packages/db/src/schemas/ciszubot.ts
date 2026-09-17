@@ -240,6 +240,20 @@ export const discordUsers = ciszubot.table(
   }
 );
 
+export const profiles = ciszubot.table(
+  'profiles',
+  {
+    id: text('id').primaryKey(),
+    username: text('username').notNull(),
+    displayName: text('display_name').notNull(),
+    avatarUrl: text('avatar_url'),
+    email: text('email'),
+    settingsControls: jsonb('settings_controls').notNull().default('{}'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  }
+);
+
 export const snipes = ciszubot.table(
   'snipes',
   {
