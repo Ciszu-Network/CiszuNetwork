@@ -27,6 +27,7 @@ jobs:
         uses: snok/install-poetry@v1
         
       - name: Build package with Poetry
+        working-directory: projects/ciszupy/python-package
         run: poetry build
         
       # 1️⃣ Primero a TestPyPI (desactivamos las attestations aquí para evitar el conflicto)
@@ -35,7 +36,10 @@ jobs:
         with:
           repository-url: https://test.pypi.org/legacy/
           attestations: false  # 👈 Evita el error de archivos duplicados de certificación
+          packages-dir: projects/ciszupy/python-package/dist
           
       # 2️⃣ Después al PyPI oficial de producción (aquí sí las genera y sube con éxito)
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: projects/ciszupy/python-package/dist
