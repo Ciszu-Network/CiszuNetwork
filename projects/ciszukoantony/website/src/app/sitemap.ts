@@ -10,6 +10,7 @@ const ROUTES = [
   'certificates',
   'contact',
   'descargas',
+  'donate',
   'faq',
   'feedback',
   'policies',

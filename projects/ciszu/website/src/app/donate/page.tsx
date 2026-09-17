@@ -33,10 +33,10 @@ export default function DonatePage() {
           <h3 className="text-white font-bold font-header text-sm mb-3 text-center">Ko-fi embebido</h3>
           <iframe
             id="kofiframe"
-            src="https://ko-fi.com/ciszukoantony/?hidefeed=true&widget=true&embed=true&preview=true"
+            src="https://ko-fi.com/ciszunetwork/?hidefeed=true&widget=true&embed=true&preview=true"
             style={{ border: "none", width: "100%", padding: 4, background: "#f9f9f9" }}
             height="712"
-            title="Apoya a CiszukoAntony en Ko-fi"
+            title="Apoya a CiszuNetwork en Ko-fi"
           />
         </div>
 

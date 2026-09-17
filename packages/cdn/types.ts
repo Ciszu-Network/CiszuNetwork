@@ -2,7 +2,7 @@
  * Tipos para el sistema de iconos de Ciszu Network
  */
 
-export type IconStyle = 'outline' | 'filled' | 'flag';
+export type IconStyle = 'outline' | 'filled' | 'flag' | 'brand';
 export type IconFormat = 'svg' | 'png' | 'ai';
 
 export interface IconMetadata {

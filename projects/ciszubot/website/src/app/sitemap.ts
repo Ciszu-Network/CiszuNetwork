@@ -15,6 +15,7 @@ const ROUTES = [
   'soporte',
   'terminos',
   'changelog',
+  'donate',
   // Una URL por entrada del registro de cambios (página interna de detalle).
   ...CHANGELOG_DATA.map((item) => `changelog/${item.id}`),
 ];
