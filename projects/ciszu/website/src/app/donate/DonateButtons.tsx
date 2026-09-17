@@ -3,53 +3,33 @@
 import { DONATION_LINKS } from "@/config/site";
 import { useToast } from "@ciszu/ui";
 import { ExternalLink } from "lucide-react";
+import { Icon } from '@ciszu/ui';
 
 /* ── Logos SVG oficiales de cada servicio ─────────────────────────────── */
 
 function KoFiLogo({ size = 22 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" aria-label="Ko-fi">
-      <path d="M32.5 9C24 9 16.5 15 16.5 22.5c0 2.5 1 4.8 2.7 6.7l6.3 7.2 6.3-7.2c1.7-1.9 2.7-4.2 2.7-6.7C34.5 15 32 9 32.5 9z" fill="#FF5E5B"/>
-      <path d="M24 42c0-3.5 3-6 7-6s7 2.5 7 6c0 4-7 7-7 7s-7-3-7-7z" fill="#FFB02E"/>
-    </svg>
-  );
+  // Logo oficial de la marca, servido desde el CDN (shared/icons/svg/brands).
+  return <Icon name="kofi" style="brand" size={size} />;
 }
 
 function BuyMeACoffeeLogo({ size = 22 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" aria-label="Buy Me a Coffee">
-      <rect x="4" y="14" width="40" height="22" rx="5" fill="#FFDD00"/>
-      <path d="M12 18h8a4 4 0 0 1 4 4v2a4 4 0 0 1-4 4h-8a4 4 0 0 1-4-4v-2a4 4 0 0 1 4-4z" fill="#000"/>
-      <path d="M30 18h6a4 4 0 0 1 4 4v2a4 4 0 0 1-4 4h-6a4 4 0 0 1-4-4v-2a4 4 0 0 1 4-4z" fill="#fff"/>
-      <path d="M24 34l-2 6 4-2 4 2-2-6" fill="#7A5C00"/>
-    </svg>
-  );
+  // Logo oficial de la marca, servido desde el CDN (shared/icons/svg/brands).
+  return <Icon name="buymeacoffee" style="brand" size={size} />;
 }
 
 function PatreonLogo({ size = 22 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-label="Patreon">
-      <path d="M15 0a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM4 22h3v-3H4v3z"/>
-    </svg>
-  );
+  // Logo oficial de la marca, servido desde el CDN (shared/icons/svg/brands).
+  return <Icon name="patreon" style="brand" size={size} />;
 }
 
 function PayPalLogo({ size = 22 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="#00457C" aria-label="PayPal">
-      <path d="M7.08 21H3.5l1.1-7h3.6c.5-3 2.4-5 5.4-5 1.2 0 2.2.3 3 .8l-.4 2.6c-.5-.3-1.1-.5-1.8-.5-1.6 0-2.6 1.2-2.9 3.1H8l-.92 6z"/>
-    </svg>
-  );
+  // Logo oficial de la marca, servido desde el CDN (shared/icons/svg/brands).
+  return <Icon name="paypal" style="brand" size={size} />;
 }
 
 function NowPaymentsLogo({ size = 22 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-label="NOWPayments">
-      <circle cx="12" cy="12" r="10" fill="#6B21A8"/>
-      <path d="M12 6a4 4 0 1 1 0 8 3 3 0 1 0 0 6" stroke="#fff" strokeWidth="1.6" fill="none"/>
-      <circle cx="12" cy="14" r="1.2" fill="#fff"/>
-    </svg>
-  );
+  // Logo oficial de la marca, servido desde el CDN (shared/icons/svg/brands).
+  return <Icon name="nowpayments" style="brand" size={size} />;
 }
 
 const LEGACY = [
