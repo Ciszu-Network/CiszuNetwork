@@ -1,0 +1,20 @@
+# Changelog
+
+## [1.1.0](https://github.com/Ciszu-Network/CiszuNetwork/compare/utils-v1.0.0...utils-v1.1.0) (2026-09-17)
+
+
+### Features
+
+* conecta logging a Better Stack (transporte logtail/pino) y corrige el worker Miniflare (rutas base) ([fef9191](https://github.com/Ciszu-Network/CiszuNetwork/commit/fef9191a910a10aad36d327fb6ba6645bf0626b4))
+* **google:** CSP + env cleanup para GTM/GA4/AdSense; sharp dep + circle_1_yt.webp ([4618c40](https://github.com/Ciszu-Network/CiszuNetwork/commit/4618c40e74ac080d756b0059d3966ec75ca6c9c4))
+* migra acceso a BD a Drizzle en webs y bot (F1) y statsServer a NestJS+Fastify (F2), eliminando supabase-js y express de ciszubot ([f44415f](https://github.com/Ciszu-Network/CiszuNetwork/commit/f44415f90d8960bec31dfc8e7e3576fd24b76a09))
+* QuickDocks updated on all 4 websites + 401 fix on delivery APIs ([5d3375e](https://github.com/Ciszu-Network/CiszuNetwork/commit/5d3375e2a716ad600da52d872684c227684f6639))
+* **reviews:** sistema de reseñas real en las cuatro webs ([3f7b6a2](https://github.com/Ciszu-Network/CiszuNetwork/commit/3f7b6a2951096d5abe61d522f703d684c5f28c3f))
+* sistema de caché completo (memoria→Vercel KV→Postgres ciszu) — migración 15, leaderboard MuzicMania via API cacheada, dashboard ciszubot TTL 60s, rate-limit 10/h en webhooks de votos e INCR atómico ([335495f](https://github.com/Ciszu-Network/CiszuNetwork/commit/335495f50765f2c3745a240c42f7bb4d316f7669))
+
+
+### Bug Fixes
+
+* ciszukoantony CSP, PdfThumbnail fallback y categorias de certificados ([66fb8ce](https://github.com/Ciszu-Network/CiszuNetwork/commit/66fb8ce5ca5d54ec9cbb20c5f03a5bfcb82e40d5))
+* **csp:** add Google Analytics/AdSense origins to img-src and googleads.doubleclick.net to connect-src ([9a84964](https://github.com/Ciszu-Network/CiszuNetwork/commit/9a84964ca9869850ba8ca480978c60baa7f607df))
+* navigation Information section at end + 401 fix on deliveries ([961de91](https://github.com/Ciszu-Network/CiszuNetwork/commit/961de910022d44a233707ff892018d3d21f9103a))
