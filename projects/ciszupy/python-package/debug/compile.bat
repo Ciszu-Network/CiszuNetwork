@@ -5,6 +5,9 @@ echo ==========================================
 echo Building new CiszuPY version...
 echo ==========================================
 
+:: Go to python-package root
+cd /d "%~dp0.."
+
 :: Check if pyinstaller is installed
 where pyinstaller >nul 2>&1
 if errorlevel 1 (
