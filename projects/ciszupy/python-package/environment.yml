@@ -1,0 +1,7 @@
+name: ciszupy
+channels:
+    - defaults
+    - conda-forge
+dependencies:
+    - keyboard>=0.13
+    - rich>=15.0

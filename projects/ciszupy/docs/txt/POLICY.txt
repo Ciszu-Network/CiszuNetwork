@@ -1,0 +1,42 @@
+CISZUBOT - DOCUMENTACIÓN OFICIAL
+Nombre: POLICY
+Versión: 2.5.5
+Actualización: 2026-07-28
+Identificador: POLICY_V2.5.5_2026_07_28_ciszubot
+-------------------------------------------------------------------------------
+
+POLÍTICAS / POLICIES
+
+[ESPAÑOL]
+
+POLÍTICA DE PRIVACIDAD
+- Ciszubot no recopila, almacena ni comparte datos personales
+- Las confesiones (comando confess) son eliminadas tras su envío
+- No se guardan logs de mensajes privados
+
+POLÍTICA DE USO
+- El bot puede ser usado en cualquier servidor que cumpla las reglas de Discord
+- Prohibido usar el bot para spam, raids o actividades maliciosas
+- Los administradores del servidor son responsables del uso del bot
+
+POLÍTICA DE CONTRIBUCIONES
+- Las contribuciones al código son bienvenidas vía GitHub
+- Todo código contribuido debe ser original
+
+-------------------------------------------------------------------------------
+
+[ENGLISH]
+
+PRIVACY POLICY
+- Ciszubot does not collect, store, or share personal data
+- Confessions (confess command) are deleted after sending
+- No private message logs are kept
+
+USAGE POLICY
+- The bot may be used on any server that follows Discord's rules
+- Using the bot for spam, raids, or malicious activities is prohibited
+- Server administrators are responsible for bot usage
+
+CONTRIBUTION POLICY
+- Code contributions are welcome via GitHub
+- All contributed code must be original
