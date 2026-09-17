@@ -17,7 +17,7 @@ def init_hotkeys() -> None:
     rprint("Usa CONTROL+Z para Cerrar la App")
 
     def ctrl_z_func():
-        rprint("\nCerrado App...")
+        rprint("\nCerrando App...")
         sys.exit(0)
 
     kb.add_hotkey(hotkey="ctrl+z", callback=ctrl_z_func)
