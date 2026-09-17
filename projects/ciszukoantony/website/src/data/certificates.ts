@@ -807,5 +807,4 @@ export const OTHER_DOCS: Certificate[] = [
     previewType: 'pdf',
     holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
   },
-
-};
+];

@@ -9,7 +9,8 @@
     "./logger": "./src/logger.ts",
     "./schema": "./src/schema.ts",
     "./effect": "./src/effect.ts",
-    "./changelog": "./src/changelog.ts"
+    "./changelog": "./src/changelog.ts",
+    "./reviews": "./src/reviews.ts"
   },
   "scripts": {
     "lint": "tsc --noEmit",
