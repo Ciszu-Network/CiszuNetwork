@@ -2672,9 +2672,11 @@ function Show-ChangelogSummary([string]$Mode) {
         if ($data -and $data.webs) {
             foreach ($siteProp in $data.webs.PSObject.Properties) {
                 $info = $siteProp.Value
-                Write-Host "${c_cyan}🌐 $($siteProp.Name)${c_reset}  · entradas: $($info.letters)  · ✅ $($info.delivered)  · ⏳ $($info.pending)"
+                Write-Host "${c_cyan}🌐 $($siteProp.Name)${c_reset}  · entradas: $($info.total)  · 🌍 $($info.global) en la nube (✅ $($info.delivered) · ⏳ $($info.pending))  · 📦 $($info.static) solo locales"
                 foreach ($e in @($info.entries)) {
-                    if ($e.delivered) {
+                    if ($e.origin -eq 'static') {
+                        Write-Host "     ${c_gray}📦 solo en el código${c_reset}  [$($e.id)] $($e.version) — $($e.title)"
+                    } elseif ($e.delivered) {
                         Write-Host "     ${c_green}✅ entregado${c_reset}  [$($e.id)] $($e.version) — $($e.title)"
                     } else {
                         Write-Host "     ${c_yellow}⏳ pendiente${c_reset}  [$($e.id)] $($e.version) — $($e.title)"
@@ -2686,8 +2688,8 @@ function Show-ChangelogSummary([string]$Mode) {
         }
         Write-Host ""
     }
-    Write-Host "${c_gray}⏳ pendiente = la web aún no ha leído la entrada (aparece como PENDIENTE hasta su creación)."
-    Write-Host "✅ entregado = local: la web leyó /changelog · global: la entrega se registra al publicar.${c_reset}"
+    Write-Host "${c_gray}🌍 en la nube = publicada desde el devcon (✅ la web ya la leyó · ⏳ aún no).${c_reset}"
+    Write-Host "${c_gray}📦 solo en el código = changelog actual de la web que todavía no existe en el store global.${c_reset}"
     Press-Continue
 }
 
