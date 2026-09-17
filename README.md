@@ -16,13 +16,14 @@
 
 **Ciszu Network** es el ecosistema digital de **CiszukoAntony** — desarrollador, músico y creador de contenido desde Venezuela. Un monorepo moderno que agrupa 4 productos web, un bot de Discord, la comunidad CiszuGamens, paquetes compartidos y un CDN propio sobre Supabase Storage.
 
-| Producto | Descripción | Tecnologías | Estado |
-|---|---|---|---|
-| **Ciszu Network** | Web principal — portafolio, blog, documentación técnica | Next.js 15, Tailwind 4, Supabase | 🟢 Producción |
-| **Ciszuko Antony** | Portfolio personal — proyectos, música, galería | Next.js 15, Tailwind 4, Supabase | 🟢 Producción |
-| **MuzicMania** | Juego musical web + app Tauri (desktop) | Next.js 15, Tauri v2, Supabase, WebAudio | 🟢 Producción |
-| **CiszuBot** | Bot de Discord + dashboard web (landing, stats, tickets) | Discord.js, Next.js 15, Express, Docker | 🟢 Producción |
-| **CiszuGamens** | Comunidad gaming — servidor Discord | Discord | 🟢 Activa |
+| Producto           | Descripción                                              | Tecnologías                              | Estado        |
+| ------------------ | -------------------------------------------------------- | ---------------------------------------- | ------------- |
+| **Ciszu Network**  | Web principal — portafolio, blog, documentación técnica  | Next.js 15, Tailwind 4, Supabase         | 🟢 Producción |
+| **Ciszuko Antony** | Portfolio personal — proyectos, música, galería          | Next.js 15, Tailwind 4, Supabase         | 🟢 Producción |
+| **MuzicMania**     | Juego musical web + app Tauri (desktop)                  | Next.js 15, Tauri v2, Supabase, WebAudio | 🟢 Producción |
+| **CiszuBot**       | Bot de Discord + dashboard web (landing, stats, tickets) | Discord.js, Next.js 15, Express, Docker  | 🟢 Producción |
+| **CiszuGamens**    | Comunidad gaming — servidor Discord                      | Discord                                  | 🟢 Activa     |
+| **CiszuPy**        | Paquete Python + CLI híbrida                             | Python 3.10+, Typer, Rich, Poetry        | 🟢 Publicado  |
 
 > **Todos los productos están desplegados en Vercel** y son accesibles públicamente.
 
@@ -32,7 +33,7 @@
 
 ```
 ciszunetwork-monorepo/
-├── projects/                    # Productos independientes (webs + comunidad)
+├── projects/                    # Productos independientes (webs + comunidad + paquetes)
 │   ├── ciszu/                   # Web principal (ciszunetwork.vercel.app)
 │   │   └── website/             # Next.js 15 (ciszunetwork-website)
 │   ├── ciszukoantony/           # Portfolio (ciszukoantony.vercel.app)
@@ -41,10 +42,12 @@ ciszunetwork-monorepo/
 │   │   ├── website/             # Next.js 15 (muzicmania-website)
 │   │   ├── launcher/            # Tauri v2 (app desktop Windows)
 │   │   └── mobile/              # App móvil (futuro)
-│   └── ciszubot/                # Bot + Dashboard (ciszubot.vercel.app)
-│       ├── website/             # Next.js 15 (ciszubot-website)
-│       └── discord-bot/         # Discord.js v14 + Express
-│   └── ciszugamens/             # Comunidad gaming (Discord)
+│   ├── ciszubot/                # Bot + Dashboard (ciszubot.vercel.app)
+│   │   ├── website/             # Next.js 15 (ciszubot-website)
+│   │   └── discord-bot/         # Discord.js v14 + Express
+│   ├── ciszugamens/             # Comunidad gaming (Discord)
+│   └── ciszupy/                 # Paquete Python + CLI (ciszupy)
+│       └── python-package/      # Poetry + Typer + Rich
 ├── packages/                    # Paquetes compartidos (pnpm workspace)
 │   ├── cdn/                     # @ciszunetwork/cdn — Asset resolver + CDN client
 │   └── ui/                      # @ciszu/ui — Componentes compartidos, iconos, CloudflareGuard
@@ -62,36 +65,39 @@ ciszunetwork-monorepo/
 
 ## ⚙️ Stack Tecnológico
 
-| Capa | Tecnología | Versión |
-|---|---|---|
-| **Runtime** | Node.js | 24+ |
-| **Package Manager** | pnpm | 10+ |
-| **Framework Web** | Next.js | 15 (App Router) |
-| **Styling** | Tailwind CSS | 4 |
-| **Language** | TypeScript | 6 |
-| **Database/Storage/Auth** | Supabase | Postgres + Storage + Auth |
-| **Bot Discord** | Discord.js | 14 |
-| **Desktop App** | Tauri | 2 |
-| **CI/CD** | GitHub Actions | Ubuntu Latest |
-| **Deploy** | Vercel | Produccion + Preview |
-| **CDN** | Supabase Storage | Bucket `ciszu-cdn` |
-| **Captcha** | Cloudflare Turnstile | Widget global |
-| **Analytics** | PostHog + Cloudflare Web Analytics | US Cloud |
-| **Error Tracking** | Sentry | 5 proyectos |
-| **Testing** | Vitest + Playwright | Unit + E2E |
-| **Lint/Format** | ESLint + Prettier | Flat config |
+| Capa                      | Tecnología                         | Versión                   |
+| ------------------------- | ---------------------------------- | ------------------------- |
+| **Runtime**               | Node.js                            | 24+                       |
+| **Package Manager**       | pnpm                               | 10+                       |
+| **Framework Web**         | Next.js                            | 15 (App Router)           |
+| **Styling**               | Tailwind CSS                       | 4                         |
+| **Language**              | TypeScript                         | 6                         |
+| **Database/Storage/Auth** | Supabase                           | Postgres + Storage + Auth |
+| **Bot Discord**           | Discord.js                         | 14                        |
+| **Desktop App**           | Tauri                              | 2                         |
+| **Python Package**        | Python + Poetry                    | 3.10+ / Poetry            |
+| **CI/CD**                 | GitHub Actions                     | Ubuntu Latest             |
+| **Deploy**                | Vercel                             | Produccion + Preview      |
+| **CDN**                   | Supabase Storage                   | Bucket`ciszu-cdn`         |
+| **Captcha**               | Cloudflare Turnstile               | Widget global             |
+| **Analytics**             | PostHog + Cloudflare Web Analytics | US Cloud                  |
+| **Error Tracking**        | Sentry                             | 5 proyectos               |
+| **Testing**               | Vitest + Playwright                | Unit + E2E                |
+| **Lint/Format**           | ESLint + Prettier                  | Flat config               |
 
 ---
 
 ## 🔑 Características Principales
 
 ### CDN Propio (`@ciszunetwork/cdn`)
+
 - **Bucket público**: `ciszu-cdn` en Supabase Storage
 - **Resolver híbrido**: CDN → local → fallback según entorno
 - **Estrategia inline-first** para iconos (5.194 SVGs registrados)
 - **Sin mirrors locales**: assets servidos vía resolver/CDN
 
 ### Seguridad
+
 - **RLS** en todas las tablas Supabase (políticas por comando)
 - **Captcha invisible** Cloudflare Turnstile (widget global, 4 hostnames)
 - **Rate limiting** propio (`createRateLimiter` en `@ciszunetwork/utils`)
@@ -99,12 +105,14 @@ ciszunetwork-monorepo/
 - **SAST/DAST**: Semgrep + OWASP ZAP programados
 
 ### Discord Bot (CiszuBot)
+
 - Slash commands + prefix (`cz!`)
 - Sistema de economía, niveles, tickets, wallets crypto
 - Dashboard web con OAuth2 Discord
 - Auto-post a Top.gg / DiscordBotList cada 30 min
 
 ### Juego Musical (MuzicMania)
+
 - WebAudio + Tone.js para reproducción
 - Leaderboards globales (Supabase RPC)
 - App desktop nativa con Tauri v2 (Windows NSIS installer)
@@ -114,21 +122,27 @@ ciszunetwork-monorepo/
 
 ## 📦 Paquetes Compartidos
 
-| Paquete | Descripción | Exportaciones clave |
-|---|---|---|
-| `@ciszunetwork/cdn` | Asset resolver, CDN client, icon resolver | `assetResolver`, `resolveIcon`, `deliveryVariants` |
-| `@ciszu/ui` | Componentes React compartidos | `Icon`, `CloudflareGuard`, `Modal`, `Button`, `Input`, `escapeHtml` |
+| Paquete             | Descripción                               | Exportaciones clave                                                 |
+| ------------------- | ----------------------------------------- | ------------------------------------------------------------------- |
+| `@ciszunetwork/cdn` | Asset resolver, CDN client, icon resolver | `assetResolver`, `resolveIcon`, `deliveryVariants`                  |
+| `@ciszu/ui`         | Componentes React compartidos             | `Icon`, `CloudflareGuard`, `Modal`, `Button`, `Input`, `escapeHtml` |
+
+## 🐍 Paquete Python
+
+| Paquete   | Descripción                                     | Tecnologías          | Estado        |
+| --------- | ----------------------------------------------- | -------------------- | ------------- |
+| `ciszupy` | CLI + librería Python híbrida                   | Python 3.10+, Typer, Rich, Keyboard | 🟢 Publicado  |
 
 ---
 
 ## 🔗 Enlaces en Producción
 
-| Producto | URL |
-|---|---|
-| **Ciszu Network** | https://ciszunetwork.vercel.app |
-| **Ciszuko Antony** | https://ciszukoantony.vercel.app |
-| **MuzicMania** | https://muzicmania.vercel.app |
-| **CiszuBot** | https://ciszubot.vercel.app |
+| Producto                  | URL                                   |
+| ------------------------- | ------------------------------------- |
+| **Ciszu Network**         | https://ciszunetwork.vercel.app       |
+| **Ciszuko Antony**        | https://ciszukoantony.vercel.app      |
+| **MuzicMania**            | https://muzicmania.vercel.app         |
+| **CiszuBot**              | https://ciszubot.vercel.app           |
 | **CiszuGamens (Discord)** | https://discord.com/invite/W3kMtMMj6E |
 
 ---
@@ -136,6 +150,7 @@ ciszunetwork-monorepo/
 ## 🛡️ Seguridad y Transparencia
 
 Este repositorio es **público por transparencia y credibilidad**. El código está abierto para:
+
 - ✅ Auditoría de seguridad
 - ✅ Aprendizaje y referencia
 - ✅ Contribuciones (ver [CONTRIBUTING.md](CONTRIBUTING.md))
@@ -143,7 +158,42 @@ Este repositorio es **público por transparencia y credibilidad**. El código es
 
 **No incluye**: credenciales, tokens, `.env` files, claves privadas. Todas las variables sensibles están en `.gitignore` y se gestionan via GitHub Secrets / Vercel Environment Variables.
 
----
+# CiszuPy
+
+`ciszupy` es una herramienta híbrida de Python (CLI y librería) diseñada para ofrecer una experiencia interactiva y moderna en la terminal. Incluye comandos personalizados que invierten el clásico `HelloWorld` y rinden homenaje a seres queridos.
+
+## Características
+
+- CLI construida con **Typer**
+- Salida enriquecida con **Rich**
+- Hotkeys globales con **Keyboard**
+- Comandos: `profesor`, `papa`, `mama`, `helloworldmemetest`
+- Auto-instalación de dependencias
+
+## Instalación
+
+```bash
+pip install ciszupy
+pipx install ciszupy
+```
+
+## Requisitos
+
+- **Python**: `>=3.10`
+- **Dependencias principales**:
+  - `typer` — Gestión de argumentos y comandos de terminal
+  - `rich` — Interfaces visuales enriquecidas y colores en consola
+  - `keyboard` — Control y escucha de eventos de teclado
+
+## Uso
+
+```bash
+ciszupy --help
+ciszupy profesor
+ciszupy papa
+ciszupy mama
+ciszupy helloworldmemetest
+```
 
 ## 📄 Licencia
 
@@ -159,9 +209,8 @@ Este proyecto está bajo licencia **MIT** — ver [LICENSE](LICENSE) para detall
 
 [![Discord CiszuGamens](https://img.shields.io/badge/Discord-CiszuGamens-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/invite/W3kMtMMj6E)
 
-- **CiszuGamens** — la comunidad gaming oficial de Ciszu Network. Torneos, eventos,
-  canales de voz, staff y la mejor comunidad. Únete: **https://discord.com/invite/W3kMtMMj6E**
-- **CiszuBot** — el bot del ecosistema (soporte y stats en su web).
+- **CiszuGamens** — la comunidad gaming oficial de Ciszu Network.
+- **CiszuBot** — el bot del ecosistema.
 
 ### Redes sociales
 
@@ -169,11 +218,6 @@ Este proyecto está bajo licencia **MIT** — ver [LICENSE](LICENSE) para detall
 [![Twitter/X](https://img.shields.io/badge/X-@CiszukoAntony-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/CiszukoAntony)
 [![YouTube](https://img.shields.io/badge/YouTube-Ciszu_Network-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtube.com/@CiszuNetwork)
 [![Email](https://img.shields.io/badge/Email-ciszunetwork@gmail.com-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:ciszunetwork@gmail.com)
-
-- **Email oficial**: **ciszunetwork@gmail.com**
-- **GitHub**: [Ciszu-Network](https://github.com/Ciszu-Network)
-- **X/Twitter**: [@CiszukoAntony](https://x.com/CiszukoAntony)
-- **YouTube**: [Ciszu Network](https://youtube.com/@CiszuNetwork)
 
 ---
 
