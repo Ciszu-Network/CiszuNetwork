@@ -1,8 +1,8 @@
-CISZUBOT - DOCUMENTACIÓN OFICIAL
+CISZUPY - DOCUMENTACIÓN OFICIAL
 Nombre: LICENSE
-Versión: 2.5.5
-Actualización: 2026-07-28
-Identificador: LICENSE_V2.5.5_2026_07_28_ciszubot
+Versión: 0.1.0
+Actualización: 2026-09-17
+Identificador: LICENSE_V0.1.0_2026_07_28_CISZUPY
 
 ---
 
@@ -12,7 +12,7 @@ LICENCIA / LICENSE
 [ESPAÑOL]
 
 ARTÍCULO 1: PROPIEDAD INTELECTUAL
-Ciszubot es propiedad de Ciszu Network y Ciszuko Antony (Francisco Garcia).
+CISZUPY es propiedad de Ciszu Network y Ciszuko Antony (Francisco Garcia).
 Todos los derechos no concedidos explícitamente quedan reservados.
 
 ARTÍCULO 2: LICENCIA DE USO
@@ -49,7 +49,7 @@ SOFTWARE.
 [ENGLISH]
 
 ARTICLE 1: INTELLECTUAL PROPERTY
-Ciszubot is owned by Ciszu Network and Ciszuko Antony (Francisco Garcia).
+CISZUPY is owned by Ciszu Network and Ciszuko Antony (Francisco Garcia).
 All rights not explicitly granted are reserved.
 
 ARTICLE 2: USE LICENSE

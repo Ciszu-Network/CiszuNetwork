@@ -1,8 +1,8 @@
-CISZUBOT - DOCUMENTACIÓN OFICIAL
+CISZUPY - DOCUMENTACIÓN OFICIAL
 Nombre: TERMS_AND_CONDITIONS
-Versión: 2.5.5
-Actualización: 2026-07-28
-Identificador: TERMS_AND_CONDITIONS_V2.5.5_2026_07_28_ciszubot
+Versión: 0.1.0
+Actualización: 2026-09-17
+Identificador: TERMS_AND_CONDITIONS_V0.1.0_2026_09_17_ciszupy
 
 ---
 
@@ -12,20 +12,19 @@ TÉRMINOS Y CONDICIONES / TERMS AND CONDITIONS
 [ESPAÑOL]
 
 ARTÍCULO 1: ACEPTACIÓN
-Al invitar o usar a Ciszubot en un servidor de Discord, usted acepta estos
-términos. Si no está de acuerdo, no utilice el bot.
+Al usar Ciszupy, usted acepta estos términos. Si no está de acuerdo,
+no utilice el paquete.
 
-ARTÍCULO 2: USO DEL BOT
-Ciszubot se proporciona "tal cual" para fines de entretenimiento y utilidad.
+ARTÍCULO 2: USO DEL PAQUETE
+Ciszupy se proporciona "tal cual" para fines personales y educativos.
 No se garantiza disponibilidad continua.
 
 ARTÍCULO 3: PRIVACIDAD
-Ciszubot no almacena datos personales. Los mensajes de confess se eliminan
-inmediatamente después de su envío.
+Ciszupy no almacena datos personales. Funciona completamente offline.
 
 ARTÍCULO 4: RESPONSABILIDAD
-El desarrollador no se hace responsable del uso indebido del bot por parte
-de los usuarios o administradores de servidores.
+El desarrollador no se hace responsable del uso indebido del paquete
+por parte de los usuarios.
 
 ARTÍCULO 5: MODIFICACIONES
 Estos términos pueden modificarse. El uso continuado implica aceptación.
@@ -37,20 +36,18 @@ Estos términos pueden modificarse. El uso continuado implica aceptación.
 [ENGLISH]
 
 ARTICLE 1: ACCEPTANCE
-By inviting or using Ciszubot on a Discord server, you agree to these terms.
-If you do not agree, do not use the bot.
+By using Ciszupy, you agree to these terms. If you do not agree,
+do not use the package.
 
-ARTICLE 2: BOT USAGE
-Ciszubot is provided "as is" for entertainment and utility purposes.
+ARTICLE 2: PACKAGE USAGE
+Ciszupy is provided "as is" for personal and educational purposes.
 Continuous availability is not guaranteed.
 
 ARTICLE 3: PRIVACY
-Ciszubot does not store personal data. Confess messages are deleted
-immediately after sending.
+Ciszupy does not store personal data. It works completely offline.
 
 ARTICLE 4: LIABILITY
-The developer is not responsible for misuse of the bot by server users
-or administrators.
+The developer is not responsible for misuse of the package by users.
 
 ARTICLE 5: MODIFICATIONS
 These terms may be modified. Continued use implies acceptance.

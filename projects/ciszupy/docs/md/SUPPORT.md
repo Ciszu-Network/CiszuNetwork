@@ -1,8 +1,8 @@
-CISZUBOT - DOCUMENTACIÓN OFICIAL
+CISZUPY - DOCUMENTACIÓN OFICIAL
 Nombre: SUPPORT
-Versión: 2.5.5
-Actualización: 2026-07-28
-Identificador: SUPPORT_V2.5.5_2026_07_28_ciszubot
+Versión: 0.1.0
+Actualización: 2026-09-17
+Identificador: SUPPORT_V0.1.0_2026_09_17_ciszupy
 
 ---
 
@@ -12,15 +12,14 @@ SOPORTE / SUPPORT
 [ESPAÑOL]
 
 CANALES DE SOPORTE:
-- Comandos in-app: cz!help o /help
 - Discord: Servidor oficial de Ciszu Network
 - GitHub: github.com/Ciszu-Network (Issues)
-- Email: ciszunetwork@proton.me
+- Email: ciszunetwork@gmail.com
 
 INFORMACIÓN TÉCNICA:
-- Bot: Node.js + Discord.js v14
-- Panel: Express en puerto 5000
-- Landing: Next.js 15
+- Paquete: Python 3.10+ con Poetry
+- CLI: Typer + Rich + Keyboard
+- Publicación: PyPI / TestPyPI
 
 
 ---
@@ -29,12 +28,11 @@ INFORMACIÓN TÉCNICA:
 [ENGLISH]
 
 SUPPORT CHANNELS:
-- In-app commands: cz!help or /help
 - Discord: Official Ciszu Network server
 - GitHub: github.com/Ciszu-Network (Issues)
-- Email: ciszunetwork@proton.me
+- Email: ciszunetwork@gmail.com
 
 TECHNICAL INFO:
-- Bot: Node.js + Discord.js v14
-- Panel: Express on port 5000
-- Landing: Next.js 15
+- Package: Python 3.10+ with Poetry
+- CLI: Typer + Rich + Keyboard
+- Publishing: PyPI / TestPyPI

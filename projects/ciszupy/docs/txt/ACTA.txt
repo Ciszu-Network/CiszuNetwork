@@ -2,7 +2,7 @@ CISZU NETWORK - DOCUMENTACIÓN OFICIAL
 Nombre: ACTA_CONSTITUTIVA
 Versión: 1.0.0
 Actualización: 2026-07-14
-Identificador: ACTA_CONSTITUTIVA_V1.0.0_2026_07_14_ciszubot
+Identificador: ACTA_CONSTITUTIVA_V1.0.0_2026_07_14_ciszunetwork
 ----------------------------------------------------------------------------------------------------------------
 
 ACTA CONSTITUTIVA DE CISZU NETWORK
@@ -42,10 +42,11 @@ Las utilidades se distribuirán de la siguiente manera:
 - 10% para programas de responsabilidad social digital.
 
 ARTÍCULO VII - PROYECTOS ACTUALES
-1. Ciszubot: Sistema de automatización y comunidad digital.
-2. MuzicMania: Plataforma de juego musical interactivo.
-3. CiszuKoAntony: Portal de contenido y documentación técnica.
-4. CiszuGamens: Comunidad de gaming y contenido social.
+1. Ciszu Network: Web principal y ecosistema digital
+2. MuzicMania: Plataforma de juego musical interactivo
+3. Ciszuko Antony: Portal de contenido y portfolio
+4. CiszuGamens: Comunidad de gaming y contenido social
+5. CiszuPy: Paquete Python + CLI híbrida
 
 ARTÍCULO VIII - NORMAS DE OPERACIÓN
 1. Todas las operaciones se regirán por principios de transparencia digital.
@@ -98,7 +99,7 @@ Profits shall be distributed as follows:
 - 10% for digital social responsibility programs.
 
 ARTICLE VII - CURRENT PROJECTS
-1. Ciszubot: Automation system and digital community.
+1. CISZUPY: Automation system and digital community.
 2. MuzicMania: Interactive musical gaming platform.
 3. CiszuKoAntony: Technical content and documentation portal.
 4. CiszuGamens: Gaming community and social content.
