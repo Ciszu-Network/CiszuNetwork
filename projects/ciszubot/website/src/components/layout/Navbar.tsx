@@ -417,7 +417,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
             })}
             <div
               className={
-                `relative z-40 shrink-0 ${openDropdown === 'Information' ? 'flex' : infoGroupActive ? 'flex' : 'hidden min-[1520px]:flex'}`
+                `relative z-40 shrink-0 ${openDropdown === 'Information' ? 'flex' : infoGroupActive ? 'flex' : 'hidden min-[1120px]:flex'}`
               }
               onMouseEnter={() => hoverOpen(setOpenDropdown, dropdownTimer, 'Information')}
               onMouseLeave={() => hoverClose(setOpenDropdown, dropdownTimer)}

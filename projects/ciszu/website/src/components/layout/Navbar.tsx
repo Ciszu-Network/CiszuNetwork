@@ -360,7 +360,7 @@ export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<strin
                 if (item.links) {
                   const isOpen = openDropdown === item.name;
                   const groupActive = item.links.some((sub) => isActive(sub.href));
-                  const responsiveClass = groupActive ? 'flex' : (NAV_HIDE_CLS[idx] ?? 'hidden min-[1120px]:flex');
+                  const responsiveClass = groupActive ? 'flex' : (item.links ? 'hidden min-[1120px]:flex' : (NAV_HIDE_CLS[idx] ?? 'hidden min-[1120px]:flex'));
                   const isInfo = item.name === 'Information';
                   return (
                     <div
