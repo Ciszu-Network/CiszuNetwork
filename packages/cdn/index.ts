@@ -1,7 +1,7 @@
 import { assetUrl, encodePath } from './src/cdn-client';
 
 export type AssetType = 'logos' | 'icons' | 'fonts' | 'images' | 'docs' | 'banners' | 'thumbnails' | 'flyers';
-export type IconStyle = 'outline' | 'filled' | 'flag';
+export type IconStyle = 'outline' | 'filled' | 'flag' | 'brand';
 export type IconFormat = 'svg' | 'png' | 'ai';
 
 export interface ResolveOptions {
@@ -37,7 +37,7 @@ export function resolveIcon(
   const cdnUrl = process.env.NEXT_PUBLIC_CDN_URL;
   const useLocal = opts?.forceLocal || !cdnUrl;
 
-  const dir = style === 'flag' ? 'flags' : style;
+  const dir = style === 'flag' ? 'flags' : style === 'brand' ? 'brands' : style;
   const path = `shared/icons/${format}/${dir}/${name}.${format}`;
 
   if (useLocal) {
