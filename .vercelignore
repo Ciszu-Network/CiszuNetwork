@@ -61,8 +61,10 @@ storybook
 **/README*
 **/CHANGELOG.md
 **/LICENSE*
-**/docs/**
-**/documentation/**
+**/docs/documentation/**
+!projects/ciszu/website/public/docs/**
+!projects/ciszubot/website/public/docs/**
+!projects/ciszukoantony/website/public/docs/**
 
 # ==========================================
 # Heavy Assets & Binaries
