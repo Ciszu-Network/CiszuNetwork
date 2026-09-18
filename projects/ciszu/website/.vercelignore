@@ -47,6 +47,11 @@ test-results
 **/README*
 **/CHANGELOG.md
 **/LICENSE*
+!public/docs/**
+!public/docs/txt/**
+!public/docs/md/**
+!public/docs/docx/**
+!public/docs/pdf/**
 
 # Heavy assets not used in production
 *.mp4
