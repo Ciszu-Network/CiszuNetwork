@@ -1,7 +1,8 @@
 {
-  "bootstrap-sha": "main",
+  "bootstrap-sha": "cfcf2a16367af848cf88b78996af0bba96c1be80",
   "release-type": "node",
   "separate-pull-requests": true,
+  "commit-search-depth": 100,
   "packages": {
     "packages/ui": {
       "package-name": "@ciszu/ui",
