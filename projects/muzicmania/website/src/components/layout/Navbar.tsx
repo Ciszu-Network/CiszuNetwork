@@ -179,7 +179,11 @@ export const NavbarContent = () => {
 
   const navLabelCls = (href: string) => {
     const active = isActive(href);
-    return `max-w-0 overflow-hidden transition-all duration-300 group-hover:max-w-[100px] ${active ? 'max-w-[100px]' : ''}`;
+    return `whitespace-nowrap transition-all duration-300 ${
+      active
+        ? 'opacity-100 ml-1.5 inline'
+        : 'opacity-0 group-hover:opacity-100 absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-[#0a0a14]/98 backdrop-blur-2xl border border-white/10 rounded-lg text-xs font-bold pointer-events-none z-50 shadow-xl'
+    }`;
   };
 
   const toggleSearch = (e?: React.MouseEvent) => {
