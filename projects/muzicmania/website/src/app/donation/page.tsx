@@ -108,33 +108,35 @@ export default function DonationPage() {
             ))}
           </section>
 
-          <section className="mb-12 rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-center">
-            <h2 className="mb-2 font-header text-sm font-bold text-white">
-              ¿Prefieres donar directamente?
+          <section className="mb-12 rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+            <h2 className="mb-3 text-center font-header text-sm font-bold text-white">
+              Ko-fi embebido
             </h2>
-            <p className="mx-auto mb-4 max-w-xl text-xs text-white/45">
-              Los widgets externos pueden estar bloqueados por tu navegador o extensión.
-              Usa el botón oficial de cada plataforma para donar de forma segura.
-            </p>
-            <div className="flex flex-wrap justify-center gap-3">
-              {METHODS.map((method) => (
-                <a
-                  key={method.label}
-                  href={method.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-xs font-bold transition-all hover:scale-105"
-                  style={{
-                    borderColor: `${method.color}66`,
-                    color: method.color,
-                    background: `${method.color}15`,
-                  }}
-                >
-                  <Icon name={method.brand} style="brand" size={18} color={method.color} />
-                  {method.label}
-                </a>
-              ))}
-            </div>
+            <iframe
+              id="kofiframe"
+              src="https://ko-fi.com/ciszukoantony/?hidefeed=true&widget=true&embed=true&preview=true"
+              style={{ border: 'none', width: '100%', padding: 4, background: '#f9f9f9' }}
+              height="712"
+              title="Apoya a MuzicMania en Ko-fi"
+              allow="payment"
+              sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+            />
+          </section>
+
+          <section className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+            <h2 className="mb-3 text-center font-header text-sm font-bold text-white">
+              Cripto (NOWPayments)
+            </h2>
+            <iframe
+              src="https://nowpayments.io/embeds/donation-widget?api_key=739f2096-6c64-40d6-a2a1-635784185dfb"
+              width="100%"
+              height="623"
+              scrolling="no"
+              style={{ overflowY: 'hidden', border: 'none' }}
+              title="Donaciones en cripto (NOWPayments)"
+              allow="payment"
+              sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+            />
           </section>
 
           <div className="mt-12 text-center">

@@ -75,23 +75,34 @@ export default function DonatePage() {
           ))}
         </div>
 
-        <div className="rounded-2xl bg-brand/5 border border-brand/20 p-6 mb-12 text-center">
-          <h3 className="text-white font-bold font-header text-sm mb-2">¿Prefieres donar directamente?</h3>
-          <p className="text-gray-400 text-xs mb-4">
-            Los widgets externos pueden estar bloqueados por tu navegador o extensión.
-            Usa el botón oficial de cada plataforma para donar de forma segura.
-          </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            {METHODS.map((m, i) => (
-              <a key={i} href={m.href} target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold border transition-all hover:scale-105"
-                style={{ borderColor: `${m.color}66`, color: m.color, background: `${m.color}15` }}
-              >
-                {m.logo}
-                {m.label}
-              </a>
-            ))}
-          </div>
+        {/* Widget Ko-fi real */}
+        <div className="rounded-2xl bg-brand/5 border border-brand/20 p-4 mb-12">
+          <h3 className="text-white font-bold font-header text-sm mb-3 text-center">Ko-fi embebido</h3>
+          <iframe
+            id="kofiframe"
+            src="https://ko-fi.com/ciszunetwork/?hidefeed=true&widget=true&embed=true&preview=true"
+            style={{ border: "none", width: "100%", padding: 4, background: "#f9f9f9" }}
+            height="712"
+            title="Apoya a CiszuNetwork en Ko-fi"
+            allow="payment"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+          />
+        </div>
+
+        {/* Widget NOWPayments real */}
+        <div className="rounded-2xl bg-brand/5 border border-brand/20 p-4">
+          <h3 className="text-white font-bold font-header text-sm mb-3 text-center">Cripto (NOWPayments)</h3>
+          <iframe
+            src={`https://nowpayments.io/embeds/donation-widget?api_key=739f2096-6c64-40d6-a2a1-635784185dfb`}
+            width="100%"
+            height="623"
+            frameBorder="0"
+            scrolling="no"
+            style={{ overflowY: "hidden", border: "none" }}
+            title="Donaciones en cripto (NOWPayments)"
+            allow="payment"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+          />
         </div>
 
         <DonateButtons methods={methods} />
