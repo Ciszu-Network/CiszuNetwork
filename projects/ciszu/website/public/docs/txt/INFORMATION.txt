@@ -1,0 +1,42 @@
+CISZU NETWORK - DOCUMENTACIÓN OFICIAL
+Nombre: INFORMATION
+Versión: 2.0.0
+Actualización: 2026-09-18
+Identificador: INFORMATION_V2.0.0_2026_09_18_ciszunetwork
+
+---
+
+
+DETALLES PROFUNDOS SOBRE LA ARQUITECTURA DEL ECOSISTEMA CISZU NETWORK.
+
+1. ARQUITECTURA: MONOREPO PNPM CON 4 WEBS NEXT.JS, 1 BOT DISCORD Y PAQUETES COMPARTIDOS.
+2. FRONTEND: NEXT.JS 15 + REACT 19 + TYPESCRIPT 6 + TAILWIND CSS V4.
+3. BACKEND: SUPABASE (POSTGRESQL + AUTH + STORAGE) COMO BACKBONE DEL ECOSISTEMA.
+4. SEGURIDAD: RLS OBLIGATORIO, RATE LIMITING, CSP Y AUDITORÍAS CONTINUAS.
+
+Detalles profundos sobre la arquitectura del ecosistema Ciszu Network.
+
+1. ARQUITECTURA: Monorepo pnpm con 4 webs Next.js, 1 bot Discord y paquetes compartidos.
+2. FRONTEND: Next.js 15 + React 19 + TypeScript 6 + Tailwind CSS v4.
+3. BACKEND: Supabase (PostgreSQL + Auth + Storage) como backbone del ecosistema.
+4. SEGURIDAD: RLS obligatorio, rate limiting, CSP y auditorías continuas.
+
+
+---
+
+
+
+
+DEEP TECHNICAL DETAILS ABOUT THE CISZU NETWORK ECOSYSTEM ARCHITECTURE.
+
+1. ARCHITECTURE: PNPM MONOREPO WITH 4 NEXT.JS WEBSITES, 1 DISCORD BOT, AND SHARED PACKAGES.
+2. FRONTEND: NEXT.JS 15 + REACT 19 + TYPESCRIPT 6 + TAILWIND CSS V4.
+3. BACKEND: SUPABASE (POSTGRESQL + AUTH + STORAGE) AS ECOSYSTEM BACKBONE.
+4. SECURITY: MANDATORY RLS, RATE LIMITING, CSP, AND CONTINUOUS AUDITS.
+
+Deep technical details about the Ciszu Network ecosystem architecture.
+
+1. ARCHITECTURE: pnpm monorepo with 4 Next.js websites, 1 Discord bot, and shared packages.
+2. FRONTEND: Next.js 15 + React 19 + TypeScript 6 + Tailwind CSS v4.
+3. BACKEND: Supabase (PostgreSQL + Auth + Storage) as ecosystem backbone.
+4. SECURITY: Mandatory RLS, rate limiting, CSP, and continuous audits.

@@ -1,8 +1,8 @@
 CISZU NETWORK - DOCUMENTACIÓN OFICIAL
 Nombre: SECURITY
-Versión: 2.0.0
-Actualización: 2026-07-28
-Identificador: SECURITY_V2.0.0_2026_07_28_ciszunetwork
+Versión: 3.0.0
+Actualización: 2026-08-01
+Identificador: SECURITY_V3.0.0_2026_08_01_ciszunetwork
 
 ---
 
@@ -29,6 +29,25 @@ Código y Dependencias:
 - ESLint para análisis estático de código
 - Prohibido el uso de dangerouslySetInnerHTML (prevención de XSS)
 - Renderizado nativo de React que escapa y sanitiza automáticamente
+- Sanitización DOMPurify en componentes compartidos que requieren HTML dinámico
+- Auditoría de dependencias (pnpm audit, cargo audit, trivy) contra bases CVE/RUSTSEC
+
+MARCO DE DESARROLLO SEGURO (DevSecOps)
+
+Ciszu Network aplica la filosofía DevSecOps: la seguridad se integra en cada
+etapa del ciclo de vida del desarrollo (SDLC), bajo marcos normativos globales
+estables: OWASP Top 10, NIST SP 800-218 (SSDF) e ISO/IEC 27001.
+
+- Shift-Left: las pruebas de seguridad se ejecutan lo más temprano posible,
+  desde el pre-commit local hasta el despliegue.
+- SAST (Análisis Estático): Semgrep, Secretlint, Gitleaks y CodeQL detectan
+  vulnerabilidades, malas prácticas y secretos directamente en el código fuente.
+- DAST (Análisis Dinámico): OWASP ZAP prueba las aplicaciones desplegadas
+  desde el exterior, simulando ataques reales (SQLi, XSS).
+- Gestión de secretos: hooks de pre-commit, .env excluido de git y política de
+  rotación de credenciales ante cualquier filtración (Secret Sprawl).
+- Reporte de vulnerabilidades públicas: se opera con la base CVE/CWE para el
+  seguimiento de dependencias.
 
 Infraestructura:
 - Variables de entorno en .env (excluido de git)
@@ -79,6 +98,24 @@ Code and Dependencies:
 - ESLint for static code analysis
 - Prohibited use of dangerouslySetInnerHTML (XSS prevention)
 - Native React rendering that automatically escapes and sanitizes
+- DOMPurify sanitization in shared components requiring dynamic HTML
+- Dependency auditing (pnpm audit, cargo audit, trivy) against CVE/RUSTSEC databases
+
+SECURE DEVELOPMENT FRAMEWORK (DevSecOps)
+
+Ciszu Network applies the DevSecOps philosophy: security is integrated into
+every stage of the software development lifecycle (SDLC), under stable global
+regulatory frameworks: OWASP Top 10, NIST SP 800-218 (SSDF) and ISO/IEC 27001.
+
+- Shift-Left: security tests run as early as possible, from local pre-commit to deployment.
+- SAST (Static Analysis): Semgrep, Secretlint, Gitleaks and CodeQL detect
+  vulnerabilities, bad practices and secrets directly in source code.
+- DAST (Dynamic Analysis): OWASP ZAP tests deployed applications from the
+  outside, simulating real attacks (SQLi, XSS).
+- Secrets management: pre-commit hooks, .env excluded from git, and credential
+  rotation policy after any leak (Secret Sprawl).
+- Public vulnerability reporting: operations rely on the CVE/CWE base for
+  dependency tracking.
 
 Infrastructure:
 - Environment variables in .env (excluded from git)
