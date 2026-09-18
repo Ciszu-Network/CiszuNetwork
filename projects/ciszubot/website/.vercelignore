@@ -55,8 +55,12 @@ storybook
 **/README*
 **/CHANGELOG.md
 **/LICENSE*
-**/docs/**
-**/documentation/**
+!public/docs/**
+!public/docs/txt/**
+!public/docs/md/**
+!public/docs/docx/**
+!public/docs/pdf/**
+**/docs/documentation/**
 
 # Heavy assets
 *.mp4
