@@ -225,7 +225,7 @@ export default function SupportPage() {
         <div className="absolute bottom-0 right-0 w-[700px] h-[700px] bg-brand-accent/10 rounded-full blur-[180px]" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 pt-0 pb-32 space-y-16">
+      <div className="max-w-7xl mx-auto px-6 pt-24 pb-32 space-y-16">
 
         {/* --- HERO HEADER --- */}
         <motion.header id="hero" initial="hidden" animate="visible" variants={sectionVariants} className="relative space-y-8 pt-12">
