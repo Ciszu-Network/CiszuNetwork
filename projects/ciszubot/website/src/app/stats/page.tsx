@@ -150,7 +150,7 @@ export default function StatsPage() {
 
   return (
     <MainLayout>
-      <div className="max-w-7xl mx-auto px-6 pt-12 pb-32 space-y-16">
+      <div className="max-w-7xl mx-auto px-6 pt-24 pb-32 space-y-16">
         {/* --- HEADER --- */}
         <motion.header initial="hidden" animate="visible" variants={sectionVariants} className="relative space-y-6 pt-12">
           <div className="flex flex-col items-center gap-1 text-center">

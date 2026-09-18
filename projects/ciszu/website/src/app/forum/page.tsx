@@ -40,7 +40,7 @@ export default function ForumPage() {
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-neon-blue/5 rounded-full blur-[200px] animate-pulse" />
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 pt-0 pb-32 space-y-20">
+        <div className="max-w-7xl mx-auto px-6 pt-24 pb-32 space-y-20">
           <motion.header id="hero" initial="hidden" animate="visible" variants={sectionVariants} className="relative space-y-8 pt-12">
             <div className="flex flex-col items-center gap-1 text-center">
                <div className="flex items-center justify-center gap-6 group">

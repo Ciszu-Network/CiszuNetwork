@@ -151,7 +151,7 @@ export default function ContactPage() {
         <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-neon-blue/5 rounded-full blur-[180px]" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 pt-0 pb-32 space-y-20">
+      <div className="max-w-7xl mx-auto px-6 pt-24 pb-32 space-y-20">
 
         {/* --- HERO HEADER (Information Style Refined) --- */}
         <motion.header id="hero" initial="hidden" animate="visible" variants={sectionVariants} className="relative space-y-8 pt-12">
