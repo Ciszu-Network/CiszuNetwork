@@ -108,7 +108,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
               {!isEdit && <DisclaimerStack headerHeight={64} />}
               <DisclaimerDebug site="ciszu" />
               <GlobalDisclaimer site="ciszu" />
-              <main className="flex-grow">{children}</main>
+              <main className="flex-grow pt-16">{children}</main>
               {!isEdit && <Footer lang={lang} dict={dict} />}
               {!isEdit && <CookiesBanner lang={lang} dict={dict} />}
               </AdBlockerGuard>

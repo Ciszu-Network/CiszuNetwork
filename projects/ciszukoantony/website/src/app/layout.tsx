@@ -98,7 +98,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
               {!isEdit && <DisclaimerStack headerHeight={64} />}
               <DisclaimerDebug site="ciszukoantony" />
               <GlobalDisclaimer site="ciszukoantony" />
-              <main className="flex-grow">{children}</main>
+              <main className="flex-grow pt-16">{children}</main>
               {!isEdit && <Footer lang={lang} dict={dict} />}
               {!isEdit && <CookiesBanner lang={lang} dict={dict} />}
               </AdBlockerGuard>
