@@ -21,7 +21,7 @@ const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'stats' | 'support' 
   { href: '/reviews', key: 'reviews', icon: 'star' },
   { href: '/leaderboard', key: 'leaderboard', icon: 'trophy' },
   { href: '/forum', key: 'forum', icon: 'message' },
-  { href: '/support', key: 'support', icon: 'support' },
+  { href: '/support', key: 'support', icon: 'life-ring' },
   { href: '/contact', key: 'contact', icon: 'mail' },
   { href: '/downloads', key: 'downloads', icon: 'download' },
   { href: '/feedback', key: 'feedback', icon: 'message' },
@@ -36,7 +36,7 @@ const INFO_PAGES: { href: string; key: 'information' | 'about' | 'team' | 'faq' 
   { href: '/documentation', key: 'documentation', icon: 'file-text' },
   { href: '/help', key: 'help', icon: 'help' },
   { href: '/contact', key: 'contact', icon: 'mail' },
-  { href: '/support', key: 'support', icon: 'support' },
+  { href: '/support', key: 'support', icon: 'life-ring' },
 ];
 
 
@@ -68,7 +68,7 @@ const SEARCH_PAGES: { href: string; labelKey: string; icon: string; keywords: st
   { href: '/reviews', labelKey: 'reviews', icon: 'star', keywords: ['reseñas', 'reviews', 'opiniones', 'feedback'] },
   { href: '/leaderboard', labelKey: 'leaderboard', icon: 'trophy', keywords: ['ranking', 'leaderboard', 'top', 'scores'] },
   { href: '/forum', labelKey: 'forum', icon: 'message', keywords: ['foro', 'forum', 'comunidad', 'community'] },
-  { href: '/support', labelKey: 'support', icon: 'support', keywords: ['soporte', 'support', 'ayuda', 'help'] },
+  { href: '/support', labelKey: 'support', icon: 'life-ring', keywords: ['soporte', 'support', 'ayuda', 'help'] },
   { href: '/contact', labelKey: 'contact', icon: 'mail', keywords: ['contacto', 'contact', 'email', 'mensaje'] },
   { href: '/downloads', labelKey: 'downloads', icon: 'download', keywords: ['descargas', 'downloads', 'app', 'exe'] },
   { href: '/feedback', labelKey: 'feedback', icon: 'message', keywords: ['feedback', 'reporte', 'report', 'problema'] },
