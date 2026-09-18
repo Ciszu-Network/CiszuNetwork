@@ -408,7 +408,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                   <span className={`whitespace-nowrap transition-all duration-300 ${
                     active
                       ? 'opacity-100 ml-1.5 inline'
-                      : 'opacity-0 group-hover:opacity-100 absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-surface border border-border rounded-lg text-xs font-bold pointer-events-none z-50 shadow-xl'
+                      : 'opacity-0 group-hover:opacity-100 absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-[#0a0a14]/98 backdrop-blur-2xl border border-white/10 rounded-lg text-xs font-bold pointer-events-none z-50 shadow-xl'
                   }`}>
                     {dict.nav[link.key]}
                   </span>
@@ -417,7 +417,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
             })}
             <div
               className={
-                `relative z-40 shrink-0 ${openDropdown === 'Information' ? 'flex' : infoGroupActive ? 'flex' : 'hidden min-[1120px]:flex'}`
+                `relative z-40 shrink-0 ${openDropdown === 'Information' ? 'flex' : infoGroupActive ? 'flex' : 'hidden min-[800px]:flex'}`
               }
               onMouseEnter={() => hoverOpen(setOpenDropdown, dropdownTimer, 'Information')}
               onMouseLeave={() => hoverClose(setOpenDropdown, dropdownTimer)}
@@ -475,7 +475,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                 <span>{dict.nav.invite}</span>
               </button>
               {inviteOpen && (
-                <div className="absolute right-0 top-12 w-56 overflow-hidden rounded-xl border border-border bg-surface shadow-2xl animate-fade-in-down">
+                <div className="absolute right-0 top-12 w-56 overflow-hidden rounded-xl border border-white/10 bg-[#0a0a14]/98 shadow-2xl animate-fade-in-down">
                 <a
                   href={INVITE_URL}
                   target="_blank"
@@ -562,7 +562,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
               )}
 
               {authOpen && (
-                <div className="absolute right-0 top-12 w-72 overflow-hidden rounded-xl border border-border bg-surface shadow-2xl animate-fade-in-down max-h-[calc(100vh-90px)] overflow-y-auto">
+                <div className="absolute right-0 top-12 w-72 overflow-hidden rounded-xl border border-white/10 bg-[#0a0a14]/98 shadow-2xl animate-fade-in-down max-h-[calc(100vh-90px)] overflow-y-auto">
                   {activeUser ? (
                     <div className="border-b border-border px-4 py-3">
                       <div className="flex items-center gap-3">
@@ -645,7 +645,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
         </div>
       </div>
 
-      <PreferencesModal open={prefsOpen} onOpenChange={setPrefsOpen} title="Preferencias locales" contentClassName="border-border bg-surface">
+      <PreferencesModal open={prefsOpen} onOpenChange={setPrefsOpen} title="Preferencias locales" contentClassName="border border-white/10 bg-[#0a0a14]/98">
         <PreferencesPanel
           lang={lang}
           isDark={isDark}
@@ -718,9 +718,9 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
           <div className="flex items-center justify-between px-5 pt-8 pb-6 border-b border-white/5 shrink-0 gap-3">
             <button
               onClick={setTheme}
-              className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transition-all duration-500 cursor-pointer border group ${
-                isDark ? 'bg-surface border-border hover:rotate-12' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
-              }`}
+                className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transition-all duration-500 cursor-pointer border group ${
+                  isDark ? 'bg-[#0a0a14]/98 border-white/10 hover:rotate-12' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
+                }`}
               aria-label="Toggle theme"
               title="Toggle theme"
             >
