@@ -67,13 +67,17 @@ export const Icon: React.FC<IconProps> = ({
   // ciszubot - caian al <img> CDN/local y desaparecian al fallar. Si el estilo
   // exacto no esta en el registry, se usa el otro (outline<->filled) antes de
   // recurrir al fallback remoto.
-  const entry =
+  // Override: life-ring uses lucide-style stroke SVG (consistent across all sites)
+  const LIFE_RING_OVERRIDE = name === 'life-ring' ? { viewBox: '0 0 24 24', inner: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="22"/><line x1="2" y1="12" x2="8" y2="12"/><line x1="16" y1="12" x2="22" y2="12"/>', stroke: true } : null;
+
+  const entry = LIFE_RING_OVERRIDE ?? (
     !forceLocal && format === 'svg'
       ? getIcon(style, name) ??
         (style === 'filled' || style === 'outline'
           ? getIcon(style === 'filled' ? 'outline' : 'filled', name)
           : undefined)
-      : undefined;
+      : undefined
+  );
 
   const inlineStyles: React.CSSProperties = {
     width: typeof size === 'number' ? `${size}px` : size,

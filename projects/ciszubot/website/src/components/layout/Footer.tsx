@@ -191,7 +191,7 @@ export default function Footer({ lang, dict }: FooterProps) {
                   { href: '/', label: dict.nav.home, icon: 'home' },
                   { href: '/commands', label: dict.nav.commands, icon: 'gamepad' },
                   { href: '/stats', label: dict.nav.status, icon: 'chart-bar' },
-                  { href: '/support', label: dict.nav.support, icon: 'support' },
+                  { href: '/support', label: dict.nav.support, icon: 'life-ring' },
                   { href: '/downloads', label: dict.nav.downloads, icon: 'download' },
                   { href: '/feedback', label: dict.nav.feedback, icon: 'message' },
                   { href: '/changelog', label: 'Changelog', icon: 'history' },

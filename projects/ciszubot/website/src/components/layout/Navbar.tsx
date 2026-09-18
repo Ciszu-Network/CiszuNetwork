@@ -114,6 +114,7 @@ const IconHeart = () => (
 const renderIcon = (name: string, size: number) => {
   if (name === 'chart-bar') return <IconChart />;
   if (name === 'heart') return <IconHeart />;
+  if (name === 'life-ring') return <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={2} className="shrink-0"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="22"/><line x1="2" y1="12" x2="8" y2="12"/><line x1="16" y1="12" x2="22" y2="12"/></svg>;
   return <Icon name={name} size={size} className="shrink-0" />;
 };
 
