@@ -78,16 +78,24 @@ export async function middleware(request: NextRequest) {
         'https://pagead2.googlesyndication.com',
         'https://nowpayments.io',
         'https://ko-fi.com',
+        'https://www.trustpilot.com',
+        'https://widget.trustpilot.com',
+        'https://images.trustpilot.com',
       ],
       connectSrc: [
         'https://cdn.discordapp.com',
         'https://stats.g.doubleclick.net',
+        'https://widget.trustpilot.com',
+        'https://images.trustpilot.com',
       ],
+      scriptSrc: ['https://widget.trustpilot.com', 'https://www.trustpilot.com'],
       styleSrc: ['https://rsms.me'],
       fontSrc: ['https://rsms.me'],
       frameSrc: [
         'https://nowpayments.io',
         'https://ko-fi.com',
+        'https://www.trustpilot.com',
+        'https://widget.trustpilot.com',
       ],
     })
   );
