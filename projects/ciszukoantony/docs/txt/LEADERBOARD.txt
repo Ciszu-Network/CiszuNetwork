@@ -1,0 +1,42 @@
+CISZUKO ANTONY - DOCUMENTACIÓN OFICIAL
+Nombre: LEADERBOARD
+Versión: 2.0.0
+Actualización: 2026-09-18
+Identificador: LEADERBOARD_V2.0.0_2026_09_18_ciszukoantony
+
+---
+
+
+REGLAS DE CLASIFICACIÓN Y MÉTRICAS DEL PORTFOLIO.
+
+1. CRITERIOS: PROYECTOS DESTACADOS POR INNOVACIÓN, IMPACTO Y CALIDAD TÉCNICA.
+2. ACTUALIZACIÓN: CLASIFICACIÓN ACTUALIZADA CON CADA NUEVO RELEASE.
+3. FAIR PLAY: EVALUACIÓN OBJETIVA BASADA EN CÓDIGO ABIERTO Y CONTRIBUCIONES.
+4. RECONOCIMIENTO: PROYECTOS TOP DESTACADOS EN LA SECCIÓN PRINCIPAL.
+
+Reglas de clasificación y métricas del portfolio.
+
+1. CRITERIOS: Proyectos destacados por innovación, impacto y calidad técnica.
+2. ACTUALIZACIÓN: Clasificación actualizada con cada nuevo release.
+3. FAIR PLAY: Evaluación objetiva basada en código abierto y contribuciones.
+4. RECONOCIMIENTO: Proyectos top destacados en la sección principal.
+
+
+---
+
+
+
+
+CLASSIFICATION RULES AND PORTFOLIO METRICS.
+
+1. CRITERIA: FEATURED PROJECTS BY INNOVATION, IMPACT, AND TECHNICAL QUALITY.
+2. UPDATE: RANKING UPDATED WITH EACH NEW RELEASE.
+3. FAIR PLAY: OBJECTIVE EVALUATION BASED ON OPEN SOURCE AND CONTRIBUTIONS.
+4. RECOGNITION: TOP PROJECTS FEATURED IN THE MAIN SECTION.
+
+Classification rules and portfolio metrics.
+
+1. CRITERIA: Featured projects by innovation, impact, and technical quality.
+2. UPDATE: Ranking updated with each new release.
+3. FAIR PLAY: Objective evaluation based on open source and contributions.
+4. RECOGNITION: Top projects featured in the main section.

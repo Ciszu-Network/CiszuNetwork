@@ -1,8 +1,8 @@
 CISZU NETWORK - DOCUMENTACIÓN OFICIAL
 Nombre: DOCUMENTATION
-Versión: 2.0.0
-Actualización: 2026-07-28
-Identificador: DOCUMENTATION_V2.0.0_2026_07_28_ciszunetwork
+Versión: 2.1.0
+Actualización: 2026-08-01
+Identificador: DOCUMENTATION_V2.1.0_2026_08_01_ciszunetwork
 
 ---
 
@@ -98,6 +98,10 @@ Cada proyecto tiene documentation/ con la siguiente estructura estándar:
   ARCHITECTURE.md, STACK_SYSTEM.md, WORKFLOW_SYSTEM.md, PROJECT_STATE.md,
   PROJECT_HISTORY.md, TODO.md, BRAND_PLAN.md, README.md
 
+- SECURITY_PROTOCOLS.md: Protocolos de seguridad (RLS, secretos, rate limit, CSP)
+- CODE_PRINCIPLES_PROTOCOLS.md: Principios de ingeniería (DRY, KISS, YAGNI, SOLID)
+- DOCUMENTATION_SYSTEM.md: Reglas del sistema de documentación (estándar)
+
 El proyecto de referencia para la documentación es ciszu (62 archivos).
 
 CDN Y ASSETS
@@ -183,5 +187,9 @@ IA_DOCS (Documentation for AI Agents)
 Each project has documentation/ with the following standard structure:
   ARCHITECTURE.md, STACK_SYSTEM.md, WORKFLOW_SYSTEM.md, PROJECT_STATE.md,
   PROJECT_HISTORY.md, TODO.md, BRAND_PLAN.md, README.md
+
+- SECURITY_PROTOCOLS.md: Security protocols (RLS, secrets, rate limit, CSP)
+- CODE_PRINCIPLES_PROTOCOLS.md: Engineering principles (DRY, KISS, YAGNI, SOLID)
+- DOCUMENTATION_SYSTEM.md: Documentation system rules (standard)
 
 The reference project for documentation is ciszu (62 files).

@@ -1,0 +1,42 @@
+CISZUBOT - DOCUMENTACIÓN OFICIAL
+Nombre: INFORMATION
+Versión: 2.5.5
+Actualización: 2026-09-18
+Identificador: INFORMATION_V2.5.5_2026_09_18_ciszubot
+
+---
+
+
+DETALLES TÉCNICOS DEL BOT DE DISCORD CISZUBOT.
+
+1. ARQUITECTURA: NODE.JS + DISCORD.JS V14 CON COMANDOS SLASH Y PREFIJO CZ!.
+2. COMANDOS: 12 COMANDOS ORGANIZADOS EN INFORMACIÓN, UTILIDAD, DIVERSIÓN Y SOCIALES.
+3. EMBEDS: PALETA DE COLORES ÍNDIGO Y VIOLETA CON FORMATO PROFESIONAL.
+4. PANEL: DASHBOARD EXPRESS CON ESTADÍSTICAS EN VIVO Y LOGS DE ACTIVIDAD.
+
+Detalles técnicos del bot de Discord CiszuBot.
+
+1. ARQUITECTURA: Node.js + Discord.js v14 con comandos slash y prefijo cz!.
+2. COMANDOS: 12 comandos organizados en información, utilidad, diversión y sociales.
+3. EMBEDS: Paleta de colores índigo y violeta con formato profesional.
+4. PANEL: Dashboard Express con estadísticas en vivo y logs de actividad.
+
+
+---
+
+
+
+
+TECHNICAL DETAILS OF THE CISZUBOT DISCORD BOT.
+
+1. ARCHITECTURE: NODE.JS + DISCORD.JS V14 WITH SLASH COMMANDS AND CZ! PREFIX.
+2. COMMANDS: 12 COMMANDS ORGANIZED INTO INFORMATION, UTILITY, FUN, AND SOCIAL CATEGORIES.
+3. EMBEDS: INDIGO AND VIOLET COLOR PALETTE WITH PROFESSIONAL FORMATTING.
+4. PANEL: EXPRESS DASHBOARD WITH LIVE STATISTICS AND ACTIVITY LOGS.
+
+Technical details of the CiszuBot Discord bot.
+
+1. ARCHITECTURE: Node.js + Discord.js v14 with slash commands and cz! prefix.
+2. COMMANDS: 12 commands organized into information, utility, fun, and social categories.
+3. EMBEDS: Indigo and violet color palette with professional formatting.
+4. PANEL: Express dashboard with live statistics and activity logs.

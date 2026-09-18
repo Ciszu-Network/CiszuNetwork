@@ -1,0 +1,42 @@
+CISZUKO ANTONY - DOCUMENTACIÓN OFICIAL
+Nombre: INFORMATION
+Versión: 2.0.0
+Actualización: 2026-09-18
+Identificador: INFORMATION_V2.0.0_2026_09_18_ciszukoantony
+
+---
+
+
+DETALLES TÉCNICOS DEL PORTFOLIO DE CISZUKO ANTONY.
+
+1. ARQUITECTURA: NEXT.JS 15 + TAILWIND CSS V4 + FRAMER MOTION.
+2. DISEÑO: ESTÉTICA NEÓN Y CYBERPUNK CON ANIMACIONES FLUIDAS.
+3. RENDIMIENTO: OPTIMIZACIÓN DE IMÁGENES Y CARGA LAZY DE COMPONENTES.
+4. ACCESIBILIDAD: CONTRASTE MEJORADO Y NAVEGACIÓN POR TECLADO.
+
+Detalles técnicos del portfolio de Ciszuko Antony.
+
+1. ARQUITECTURA: Next.js 15 + Tailwind CSS v4 + Framer Motion.
+2. DISEÑO: Estética neón y cyberpunk con animaciones fluidas.
+3. RENDIMIENTO: Optimización de imágenes y carga lazy de componentes.
+4. ACCESIBILIDAD: Contraste mejorado y navegación por teclado.
+
+
+---
+
+
+
+
+TECHNICAL DETAILS OF THE CISZUKO ANTONY PORTFOLIO.
+
+1. ARCHITECTURE: NEXT.JS 15 + TAILWIND CSS V4 + FRAMER MOTION.
+2. DESIGN: NEON AND CYBERPUNK AESTHETIC WITH SMOOTH ANIMATIONS.
+3. PERFORMANCE: IMAGE OPTIMIZATION AND LAZY COMPONENT LOADING.
+4. ACCESSIBILITY: ENHANCED CONTRAST AND KEYBOARD NAVIGATION.
+
+Technical details of the Ciszuko Antony portfolio.
+
+1. ARCHITECTURE: Next.js 15 + Tailwind CSS v4 + Framer Motion.
+2. DESIGN: Neon and cyberpunk aesthetic with smooth animations.
+3. PERFORMANCE: Image optimization and lazy component loading.
+4. ACCESSIBILITY: Enhanced contrast and keyboard navigation.
