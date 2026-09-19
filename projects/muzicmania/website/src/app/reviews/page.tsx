@@ -1115,7 +1115,7 @@ export default function ReviewsPage() {
         message={`Necesitas una cuenta CISZU ID para ${authAction || 'interactuar en esta sección'}.`}
       />
 
-      <Script src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js" strategy="lazyOnload" />
+      <Script src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js" strategy="afterInteractive" />
     </Shell>
   );
 }
