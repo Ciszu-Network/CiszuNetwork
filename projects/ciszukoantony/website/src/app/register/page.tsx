@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
@@ -19,8 +19,8 @@ import {
   useToast,
   AuthBenefitsPanel,
   useActivityGuard,
+  RecaptchaGate,
 } from '@ciszu/ui';
-import ReCAPTCHA from 'react-google-recaptcha';
 
 const IconMail = () => (
   <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -123,6 +123,9 @@ export default function RegisterPage() {
   const [localError, setLocalError] = useState<string | null>(null);
   const [created, setCreated] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  // Cada envío fallido quema el token de v2 (es de un solo uso): se reinicia el widget.
+  const [captchaResetKey, setCaptchaResetKey] = useState(0);
+  const v3ExecutorRef = React.useRef<(() => Promise<string | null>) | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [acceptedMarketing, setAcceptedMarketing] = useState(false);
   const { toast } = useToast();
@@ -130,21 +133,6 @@ export default function RegisterPage() {
   React.useEffect(() => {
     if (user) router.push('/');
   }, [user, router]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const script = document.createElement('script');
-    script.src = 'https://www.google.com/recaptcha/api.js';
-    script.async = true;
-    document.head.appendChild(script);
-    return () => {
-      document.head.removeChild(script);
-    };
-  }, []);
-
-  const handleCaptchaChange = (token: string | null) => {
-    setCaptchaToken(token);
-  };
 
   const validate = (name: string, value: string) => {
     let error = '';
@@ -185,6 +173,19 @@ export default function RegisterPage() {
     setLoading(true);
     setLocalError(null);
     try {
+      // Se pide un token de v3 JUSTO antes de enviar: caduca en 2 minutos y es
+      // de un solo uso, así que pedirlo al montar el formulario no sirve.
+      const v3Token = (await v3ExecutorRef.current?.()) ?? null;
+      const verifyRes = await fetch('/api/verify-recaptcha', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ v2Token: captchaToken, v3Token, action: 'register' }),
+      });
+      const verifyData = await verifyRes.json().catch(() => ({}));
+      if (!verifyData.success) {
+        throw new Error(verifyData.error || 'Verificación de reCAPTCHA fallida.');
+      }
+
       const username = form.username.trim().toLowerCase();
       const { data, error } = await supabase.auth.signUp({
         email: form.email.trim(),
@@ -202,10 +203,14 @@ export default function RegisterPage() {
         throw new Error('Este email ya está registrado. Intenta iniciar sesión o recuperar tu contraseña.');
       }
 
+      // Tras registrarse hay que INICIAR SESIÓN de nuevo: supabase-js deja una
+      // sesión creada al vuelo y entrar directo saltaba la verificación.
+      await supabase.auth.signOut().catch(() => {});
       setCreated(true);
     } catch (err: any) {
       console.error('[REGISTER ERROR]:', err);
       setLocalError(err.message || 'Error desconocido al registrarse.');
+      setCaptchaResetKey((k) => k + 1);
     } finally {
       setLoading(false);
     }
@@ -358,13 +363,14 @@ export default function RegisterPage() {
                 <p className="text-red-400 text-[11px] font-bold">{errors.terms || errors.captcha || errors.marketing}</p>
               )}
 
-              <div className="flex flex-col items-center gap-2">
-                <ReCAPTCHA
-                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_CISZUKOANTONY || ''}
-                  onChange={handleCaptchaChange}
-                />
-                {!captchaToken && <span className="text-gray-500 text-[10px] font-bold">Completa el reCAPTCHA</span>}
-              </div>
+              <RecaptchaGate
+                siteKeyV2={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_CISZUKOANTONY || ''}
+                siteKeyV3={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_CISZUKOANTONY || ''}
+                action="register"
+                onV2Token={setCaptchaToken}
+                v3ExecutorRef={v3ExecutorRef}
+                resetKey={captchaResetKey}
+              />
             </div>
 
               <motion.button

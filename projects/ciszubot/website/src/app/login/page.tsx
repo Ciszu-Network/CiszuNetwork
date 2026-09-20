@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { SmartImage } from '@ciszu/ui';
 import { supabase } from '@/config/supabase';
@@ -14,9 +14,18 @@ import {
   OAuthProviders,
   useToast,
   useActivityGuard,
+  RecaptchaGate,
+  RecoveryOneUseNotice,
+  TwoFactorGate,
 } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
-import ReCAPTCHA from 'react-google-recaptcha';
+import {
+  describeDuration,
+  evaluateRecoveryRequest,
+  readRequestTimestamps,
+  recordRecoveryRequest,
+  writeRequestedAt,
+} from '@ciszunetwork/utils';
 
 const IconMail = () => (
   <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -101,31 +110,20 @@ export default function LoginPage() {
   }, [form, beginActivity, endActivity]);
   useEffect(() => {
     return () => endActivity('auth-form');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [endActivity]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  // El token de v2 es de un solo uso: cada envío fallido reinicia el widget.
+  const [captchaResetKey, setCaptchaResetKey] = useState(0);
+  const v3ExecutorRef = useRef<(() => Promise<string | null>) | null>(null);
+  // Sesión a medio autenticar: la contraseña ya es válida pero falta la clave 2FA.
+  const [twoFactor, setTwoFactor] = useState<{ token: string; email: string } | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [acceptedMarketing, setAcceptedMarketing] = useState(false);
   const { toast } = useToast();
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const script = document.createElement('script');
-    script.src = 'https://www.google.com/recaptcha/api.js';
-    script.async = true;
-    document.head.appendChild(script);
-    return () => {
-      document.head.removeChild(script);
-    };
-  }, []);
-
-  const handleCaptchaChange = (token: string | null) => {
-    setCaptchaToken(token);
-  };
 
   useEffect(() => {
     if (user) router.replace('/dashboard');
@@ -156,12 +154,14 @@ export default function LoginPage() {
     }
     setLoading(true);
     try {
+      // Token de v3 fresco: caduca en 2 minutos, se pide justo antes de enviar.
+      const v3Token = (await v3ExecutorRef.current?.()) ?? null;
       const verifyRes = await fetch('/api/verify-recaptcha', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: captchaToken, siteKey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_CISZUBOT, version: 'v3' }),
+        body: JSON.stringify({ v2Token: captchaToken, v3Token, action: 'login' }),
       });
-      const verifyData = await verifyRes.json();
+      const verifyData = await verifyRes.json().catch(() => ({}));
       if (!verifyData.success) {
         throw new Error(verifyData.error || 'Verificación de reCAPTCHA fallida');
       }
@@ -179,12 +179,28 @@ export default function LoginPage() {
         emailToUse = profile.email;
       }
 
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
         email: emailToUse,
         password: form.password,
       });
 
       if (signInError) throw signInError;
+
+      // Si la cuenta tiene la verificación en dos pasos activa EN ESTA WEB, la
+      // sesión no se da por buena todavía: se pide la clave antes de entrar.
+      const accessToken = signInData.session?.access_token;
+      if (accessToken) {
+        const twoFactorStatus = await fetch('/api/auth/2fa/status', {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        })
+          .then((res) => res.json())
+          .catch(() => null);
+
+        if (twoFactorStatus?.enabled) {
+          setTwoFactor({ token: accessToken, email: signInData.user?.email ?? '' });
+          return;
+        }
+      }
 
       router.replace('/dashboard');
     } catch (err) {
@@ -205,12 +221,22 @@ export default function LoginPage() {
       setErrors((prev) => ({ ...prev, email: 'Introduce un email válido' }));
       return;
     }
+    // Hay que esperar 12 horas si se piden demasiados enlaces seguidos.
+    const policy = evaluateRecoveryRequest({ timestamps: readRequestTimestamps() });
+    if (!policy.allowed) {
+      setError(`Demasiadas peticiones de enlace. Vuelve a intentarlo en ${describeDuration(policy.waitMs)}.`);
+      return;
+    }
     setLoading(true);
     try {
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(forgotEmail.trim(), {
         redirectTo: `${window.location.origin}/reset-password`,
       });
       if (resetError) throw resetError;
+      // Se registra la petición y su hora: permite aplicar las 12 h y calcular
+      // después en /reset-password el instante exacto en que el enlace caducó.
+      recordRecoveryRequest();
+      writeRequestedAt();
       setSent(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo enviar el enlace');
@@ -218,6 +244,30 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  // Pantalla de verificación en dos pasos: se muestra en lugar del formulario.
+  if (twoFactor) {
+    return (
+      <div className="bg-bg min-h-[calc(100vh-60px)] relative overflow-hidden pb-24">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full bg-[#5865F2]/10 blur-[160px] pointer-events-none" />
+        <div className="max-w-md mx-auto px-4 pt-24 relative">
+          <div className="p-6 md:p-8 bg-surface border border-border rounded-[2rem] shadow-2xl backdrop-blur-3xl">
+            <TwoFactorGate
+              accessToken={twoFactor.token}
+              email={twoFactor.email}
+              siteName="CiszuBot"
+              onVerified={() => router.replace('/dashboard')}
+              onCancel={() => {
+                setTwoFactor(null);
+                void supabase.auth.signOut();
+                setError('Verificación cancelada. Vuelve a iniciar sesión cuando tengas la clave.');
+              }}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-bg min-h-[calc(100vh-60px)] relative overflow-hidden pb-24">
@@ -258,6 +308,7 @@ export default function LoginPage() {
                   error={errors.email}
                   requirements={['Formato de email válido (p. ej. nombre@dominio.com)', 'Debe ser la cuenta CISZU ID registrada']}
                 />
+                <RecoveryOneUseNotice />
                 {error && <p className="text-red-400 text-[11px] font-bold">{error}</p>}
                 {sent ? (
                   <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-center">
@@ -368,13 +419,14 @@ export default function LoginPage() {
                   </div>
                   {errors.marketing && <p className="text-red-400 text-[11px] font-bold px-1">{errors.marketing}</p>}
 
-                  <div className="flex justify-center">
-                    <ReCAPTCHA
-                      size="invisible"
-                      sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_CISZUBOT || ''}
-                      onChange={handleCaptchaChange}
-                    />
-                  </div>
+                  <RecaptchaGate
+                    siteKeyV2={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_CISZUBOT || ''}
+                    siteKeyV3={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_CISZUBOT || ''}
+                    action="login"
+                    onV2Token={setCaptchaToken}
+                    v3ExecutorRef={v3ExecutorRef}
+                    resetKey={captchaResetKey}
+                  />
 
                   <button
                     type="submit"

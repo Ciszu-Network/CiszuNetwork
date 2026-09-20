@@ -16,9 +16,9 @@ import {
   SmartImage,
   useToast,
   useActivityGuard,
+  RecaptchaGate,
 } from '@ciszu/ui';
 import { Button } from '@heroui/react';
-import ReCAPTCHA from 'react-google-recaptcha';
 
 const IconUser = () => (
   <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -114,6 +114,9 @@ export default function RegisterPage() {
   const [localError, setLocalError] = useState<string | null>(null);
   const [emailSent, setEmailSent] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  // El token de v2 es de un solo uso: cada envío fallido reinicia el widget.
+  const [captchaResetKey, setCaptchaResetKey] = useState(0);
+  const v3ExecutorRef = React.useRef<(() => Promise<string | null>) | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [acceptedMarketing, setAcceptedMarketing] = useState(false);
 
@@ -128,21 +131,6 @@ export default function RegisterPage() {
     return () => endActivity('auth-form');
       
   }, []);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const script = document.createElement('script');
-    script.src = 'https://www.google.com/recaptcha/api.js';
-    script.async = true;
-    document.head.appendChild(script);
-    return () => {
-      document.head.removeChild(script);
-    };
-  }, []);
-
-  const handleCaptchaChange = (token: string | null) => {
-    setCaptchaToken(token);
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -185,12 +173,14 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
+      // Token de v3 fresco: caduca en 2 minutos, así que se pide justo antes de enviar.
+      const v3Token = (await v3ExecutorRef.current?.()) ?? null;
       const verifyRes = await fetch('/api/verify-recaptcha', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: captchaToken, siteKey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_CISZU, version: 'v2' }),
+        body: JSON.stringify({ v2Token: captchaToken, v3Token, action: 'register' }),
       });
-      const verifyData = await verifyRes.json();
+      const verifyData = await verifyRes.json().catch(() => ({}));
       if (!verifyData.success) {
         throw new Error(verifyData.error || 'Verificación de reCAPTCHA fallida');
       }
@@ -214,12 +204,16 @@ export default function RegisterPage() {
       }
 
       if (data.user) {
+        // Tras registrarse hay que iniciar sesión otra vez: supabase-js deja una
+        // sesión abierta al vuelo y entrar directo saltaba la verificación.
+        await supabase.auth.signOut().catch(() => {});
         setEmailSent(true);
-        toast('Cuenta creada. Revisa tu email para confirmarla.', 'success');
+        toast('Cuenta creada. Revisa tu email y vuelve a iniciar sesión.', 'success');
         router.push('/login');
       }
     } catch (err: any) {
       setLocalError(err.message || 'Error desconocido al registrarse');
+      setCaptchaResetKey((k) => k + 1);
     } finally {
       setLoading(false);
     }
@@ -371,14 +365,15 @@ export default function RegisterPage() {
                     </div>
                     {errors.marketing && <p className="text-red-400 text-[11px] font-bold">{errors.marketing}</p>}
 
-                    <div className="flex flex-col items-center gap-2">
-                    <ReCAPTCHA
-                      sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_CISZU || ''}
-                      onChange={handleCaptchaChange}
+                    <RecaptchaGate
+                      siteKeyV2={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_CISZU || ''}
+                      siteKeyV3={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_CISZU || ''}
+                      action="register"
+                      onV2Token={setCaptchaToken}
+                      v3ExecutorRef={v3ExecutorRef}
+                      resetKey={captchaResetKey}
                     />
-                    {!captchaToken && <span className="text-gray-500 text-[10px] font-bold">Completa el reCAPTCHA</span>}
                     {errors.captcha && <p className="text-red-400 text-[11px] font-bold">{errors.captcha}</p>}
-                  </div>
 
                   {localError && <p className="text-red-400 text-[11px] font-bold">{localError}</p>}
 

@@ -1,248 +1,246 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+/**
+ * Recuperación de contraseña (CISZU ID) — página dedicada.
+ *
+ * CONTRATO (ver @ciszunetwork/utils/auth-recovery):
+ *   1. PRIMERO se evalúa el enlace. NUNCA se inicia sesión con un enlace
+ *      inválido: si el enlace no es válido se explica el motivo y se acabó.
+ *   2. Si el enlace es válido, la sesión de recuperación es TEMPORAL: al
+ *      guardar la contraseña nueva se cierra sola y hay que volver a entrar.
+ *   3. La contraseña nueva NO puede ser la anterior.
+ *   4. El enlace es de un solo uso; si falla, se dice POR QUÉ y desde cuándo.
+ *
+ * Página generada desde scripts/apply-reset-password-pages.mjs: para cambiar el
+ * comportamiento de las 4 webs, edita la plantilla y vuelve a ejecutarlo.
+ */
+
+import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import { supabase } from '@/config/supabase';
 import { usePageTitle } from '@/lib/usePageTitle';
-import { SmartImage } from '@ciszu/ui';
-import { useToast } from '@ciszu/ui';
+import {
+  PasswordStrengthBar,
+  RecoveryNotice,
+  SmartImage,
+  passwordMeetsMinimum,
+  useToast,
+} from '@ciszu/ui';
+
+import {
+  RECOVERY_LINK_TTL_MS,
+  clearRecoveryMarkers,
+  describeDuration,
+  evaluateRecoveryLink,
+  parseRecoveryHash,
+  readRequestedAt,
+  readSessionMarker,
+  resolveInvalidSince,
+  validateNewPassword,
+  writeSessionMarker,
+  type RecoveryLinkStatus,
+} from '@ciszunetwork/utils';
 
 const CISZU_ISOTYPE = 'projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg';
 
-const RATE_LIMIT_KEY = 'ciszu_reset_rate_limit';
-const RATE_LIMIT_WINDOW_MS = 12 * 60 * 60 * 1000; // 12 hours
 
-function getRateLimitData(): { count: number; firstRequest: number } | null {
-  if (typeof window === 'undefined') return null;
-  try {
-    const raw = localStorage.getItem(RATE_LIMIT_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
-
-function setRateLimitData(count: number, firstRequest: number) {
-  if (typeof window === 'undefined') return;
-  try {
-    localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify({ count, firstRequest }));
-  } catch {
-    /* noop */
-  }
-}
-
-function checkRateLimit(): { allowed: boolean; remainingMs: number } {
-  const data = getRateLimitData();
-  if (!data) return { allowed: true, remainingMs: 0 };
-  const elapsed = Date.now() - data.firstRequest;
-  if (elapsed >= RATE_LIMIT_WINDOW_MS) {
-    // Window expired, reset
-    return { allowed: true, remainingMs: 0 };
-  }
-  if (data.count >= 3) {
-    return { allowed: false, remainingMs: RATE_LIMIT_WINDOW_MS - elapsed };
-  }
-  return { allowed: true, remainingMs: 0 };
-}
-
-function incrementRateLimit() {
-  const data = getRateLimitData();
-  if (!data) {
-    setRateLimitData(1, Date.now());
-  } else {
-    const elapsed = Date.now() - data.firstRequest;
-    if (elapsed >= RATE_LIMIT_WINDOW_MS) {
-      setRateLimitData(1, Date.now());
-    } else {
-      setRateLimitData(data.count + 1, data.firstRequest);
-    }
-  }
-}
+const SITE_NAME = 'Ciszu Network';
 
 export default function ResetPasswordPage() {
   usePageTitle('RESET_PASSWORD');
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { toast } = useToast();
-  
+
+  const [status, setStatus] = useState<RecoveryLinkStatus | null>(null);
+  const [checking, setChecking] = useState(true);
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-  const [verified, setVerified] = useState(false);
-  const [invalidLink, setInvalidLink] = useState(false);
-  const [rateLimited, setRateLimited] = useState(false);
-  const [rateLimitRemaining, setRateLimitRemaining] = useState(0);
-  const [showRateLimitModal, setShowRateLimitModal] = useState(false);
+  const [done, setDone] = useState(false);
+  const emailRef = useRef<string | null>(null);
 
-  // Check rate limit on mount (for the reset password request page)
+  // 1) Evaluar el enlace ANTES de mostrar el formulario.
   useEffect(() => {
-    const { allowed, remainingMs } = checkRateLimit();
-    if (!allowed) {
-      setRateLimited(true);
-      setRateLimitRemaining(remainingMs);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (rateLimited && rateLimitRemaining > 0) {
-      const interval = setInterval(() => {
-        const { remainingMs } = checkRateLimit();
-        setRateLimitRemaining(remainingMs);
-        if (remainingMs <= 0) {
-          setRateLimited(false);
-          clearInterval(interval);
-        }
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [rateLimited, rateLimitRemaining]);
-
-  useEffect(() => {
-    const verifyToken = async () => {
-      const hash = window.location.hash;
-      
-      // Check if we have a valid token in the URL hash
-      if (!hash || !hash.includes('access_token')) {
-        setInvalidLink(true);
-        setError('Enlace inválido o expirado. Este enlace es de un solo uso y tiene una validez limitada.');
-        return;
-      }
-
-      const params = new URLSearchParams(hash.substring(1));
-      const accessToken = params.get('access_token');
-      const refreshToken = params.get('refresh_token');
-      const type = params.get('type');
-      
-      if (!accessToken || !refreshToken) {
-        setInvalidLink(true);
-        setError('Token de acceso incompleto. Solicita uno nuevo desde login.');
-        return;
-      }
-
-      // Verify the token is for password recovery
-      if (type !== 'recovery') {
-        setInvalidLink(true);
-        setError('Este enlace no es para recuperación de contraseña. Solicita uno nuevo desde login.');
-        return;
-      }
-
-      // Set the session manually to verify the token
-      const { data, error: sessionError } = await supabase.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken,
-      });
-
-      if (sessionError || !data.session) {
-        setInvalidLink(true);
-        setError('El enlace ha expirado o es inválido. Solicita uno nuevo desde login.');
-        return;
-      }
-
-      setVerified(true);
+    let settled = false;
+    const finish = (result: RecoveryLinkStatus) => {
+      if (settled) return;
+      settled = true;
+      setStatus(result);
+      setChecking(false);
     };
 
-    verifyToken();
-  }, [router]);
+    const verified = () => {
+      writeSessionMarker();
+      return evaluateRecoveryLink({ hasToken: true, hasSession: true });
+    };
 
+    const parsed = parseRecoveryHash(typeof window === 'undefined' ? '' : window.location.hash);
+    const marker = readSessionMarker();
+    // Una sesión normal NO habilita esta pantalla: hace falta evidencia del
+    // enlace de recuperación (token en la URL o marca de esta pestaña).
+    const hasEvidence = parsed.hasToken || marker !== null;
+
+    // Tipos explícitos: el cliente de cada web no siempre infiere el callback.
+    const { data: sub } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
+      if (!hasEvidence) return;
+      if (event === 'PASSWORD_RECOVERY') {
+        emailRef.current = session?.user?.email ?? emailRef.current;
+        finish(verified());
+      }
+    });
+
+    const evaluateNow = async () => {
+      if (hasEvidence) {
+        const { data } = await supabase.auth.getSession();
+        if (data.session?.user) {
+          emailRef.current = data.session.user.email ?? null;
+          finish(verified());
+          return;
+        }
+        const { data: fetched } = await supabase.auth.getUser();
+        if (fetched?.user) {
+          emailRef.current = fetched.user.email ?? null;
+          finish(verified());
+          return;
+        }
+      }
+
+      const requestedAt = readRequestedAt();
+      finish(
+        evaluateRecoveryLink({
+          hasToken: parsed.hasToken,
+          hasSession: false,
+          sessionMarker: null,
+          issuedAt: requestedAt,
+          reason: parsed.reason ?? (hasEvidence ? null : 'invalid'),
+        }),
+      );
+    };
+
+    void evaluateNow();
+
+    // Red de seguridad: si supabase-js no resuelve el hash (sin red, bloqueadores),
+    // no dejamos la pantalla en "comprobando" para siempre.
+    const timeout = window.setTimeout(() => void evaluateNow(), 4000);
+
+    return () => {
+      settled = true;
+      window.clearTimeout(timeout);
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+
+  // Instante en que el enlace dejó de servir, para poder decir cuánto lleva así.
+  const invalidSince = status && !status.canSetPassword ? resolveInvalidSince() : null;
+  const invalidFor = invalidSince ? describeDuration(Date.now() - invalidSince) : null;
+
+  // 2) Guardar la contraseña nueva.
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    if (password.length < 8) {
-      setError('La contraseña debe tener al menos 8 caracteres.');
+    const check = validateNewPassword({ next: password, confirm });
+    if (!check.ok) {
+      setError(check.errors[0]);
       return;
     }
-    if (password !== confirm) {
-      setError('Las contraseñas no coinciden.');
+    if (!passwordMeetsMinimum(password)) {
+      setError('La contraseña no alcanza el nivel mínimo de seguridad (Media).');
       return;
     }
-
-    // Check if new password is same as old (we can't directly check, but Supabase will reject if same)
-    // We'll rely on Supabase error handling
 
     setLoading(true);
     try {
-      const { error: updateError } = await supabase.auth.updateUser({
-        password,
-      });
-
-      if (updateError) {
-        if (updateError.message.includes('same') || updateError.message.includes('identical') || updateError.message.includes('current')) {
-          throw new Error('La nueva contraseña no puede ser igual a la actual. Elige una diferente.');
+      // La contraseña nueva no puede ser la anterior. Supabase no expone la
+      // anterior, así que se comprueba intentando entrar con la candidata: si
+      // entra, es que es la misma.
+      const email = emailRef.current;
+      if (email) {
+        const { data: probe, error: probeError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (!probeError && probe.session) {
+          await supabase.auth.signOut().catch(() => {});
+          clearRecoveryMarkers();
+          throw new Error('La contraseña nueva no puede ser igual a la anterior. Puedes volver a intentarlo desde el correo.');
         }
-        throw updateError;
       }
 
-      // Sign out immediately after password change (temporary session ends)
-      await supabase.auth.signOut();
-      
-      setSuccess(true);
-      toast('Contraseña actualizada correctamente. Inicia sesión con tu nueva contraseña.', 'success');
-      setTimeout(() => router.push('/login'), 3000);
-    } catch (err: any) {
-      setError(err.message || 'No se pudo actualizar la contraseña.');
+      const { error: updateError } = await supabase.auth.updateUser({ password });
+      if (updateError) throw updateError;
+
+      // Sesión TEMPORAL: se cierra sola y hay que volver a iniciar sesión.
+      await supabase.auth.signOut().catch(() => {});
+      clearRecoveryMarkers();
+      setDone(true);
+      toast('Contraseña actualizada. Vuelve a iniciar sesión con la nueva.', 'success');
+      window.setTimeout(() => router.replace('/login'), 2600);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No se pudo actualizar la contraseña.');
     } finally {
       setLoading(false);
     }
   };
 
-  // Warning icon for invalid link
-  const WarningIcon = () => (
-    <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}>
-      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-      <path d="M12 9v4M12 17h.01" />
-    </svg>
-  );
-
-  // Format remaining time
-  const formatTime = (ms: number) => {
-    const hours = Math.floor(ms / (1000 * 60 * 60));
-    const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((ms % (1000 * 60)) / 1000);
-    if (hours > 0) return `${hours}h ${minutes}m`;
-    if (minutes > 0) return `${minutes}m ${seconds}s`;
-    return `${seconds}s`;
-  };
-
   return (
-    <div className="min-h-screen pt-24 pb-20 relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-brand/15 rounded-full blur-[160px] animate-pulse" />
+    <div className="bg-bg min-h-[calc(100vh-60px)] relative overflow-hidden pb-24">
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full bg-neon-blue/10 blur-[160px] pointer-events-none" />
+      <div className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full bg-neon-purple/10 blur-[140px] pointer-events-none" />
+
+      <div className="pt-14 mb-8 px-4 flex items-center justify-center gap-3">
+        <SmartImage src={CISZU_ISOTYPE} alt="Ciszu ID" width={40} height={40} className="w-9 h-9" />
+
       </div>
 
-      <div className="max-w-md mx-auto px-4">
-        <div className="mb-10">
-          <SmartImage
-            src={CISZU_ISOTYPE}
-            alt="Ciszu ID"
-            width={72}
-            height={72}
-            className="w-18 h-18 mx-auto"
-          />
+      <div className="max-w-md mx-auto px-4 relative">
+        <div className="text-center mb-6 space-y-1">
+          <h1 className="text-white font-black uppercase tracking-widest text-sm">CISZU ID</h1>
+          <p className="text-gray-400 text-[11px] font-bold">Recupera el acceso a tu CISZU ID</p>
         </div>
 
         <div className="relative">
-          <div className="absolute -inset-1 bg-gradient-to-r from-brand-light to-neon-pink rounded-[2.5rem] blur opacity-20 transition duration-500" />
-          <div className="relative bg-[#070710]/95 border border-white/10 rounded-[2.5rem] p-8 md:p-10 space-y-6 backdrop-blur-2xl shadow-2xl">
-            {success ? (
-              <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center space-y-3">
-                <p className="text-emerald-400 font-black uppercase tracking-widest text-sm">Contraseña actualizada</p>
-                <p className="text-gray-400 text-xs font-bold leading-relaxed">
-                  Tu contraseña ha sido restablecida. Serás redirigido al login para acceder con tu nueva contraseña.
-                </p>
+          <div className="absolute -inset-1 bg-gradient-to-r from-neon-blue to-neon-purple rounded-[2rem] blur opacity-20" />
+          <div className="relative p-6 md:p-8 bg-surface border border-border rounded-[2rem] shadow-2xl space-y-5 backdrop-blur-3xl">
+            {checking ? (
+              <div className="text-center space-y-3 py-6">
+                <div className="w-10 h-10 mx-auto border-2 border-white/20 border-t-neon-blue rounded-full animate-spin" />
+                <p className="text-gray-400 text-[11px] font-bold">Comprobando el enlace…</p>
               </div>
-            ) : verified ? (
+            ) : done ? (
+              <RecoveryNotice
+                tone="success"
+                title="Contraseña actualizada"
+                message="Tu contraseña ha sido restablecida y por seguridad cerramos la sesión. Inicia sesión con tu contraseña nueva."
+                actionLabel="Ir al login"
+                onAction={() => router.replace('/login')}
+              />
+            ) : status && !status.canSetPassword ? (
+              <RecoveryNotice
+                tone="warning"
+                title={status.title}
+                message={status.message}
+                invalidFor={invalidFor}
+                actionLabel="Pedir un enlace nuevo"
+                onAction={() => router.replace('/login?forgot=1')}
+                secondaryLabel="Volver al login"
+                onSecondary={() => router.replace('/login')}
+              />
+            ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="text-center space-y-2">
-                  <h3 className="text-white font-black uppercase tracking-widest text-sm">Nueva contraseña</h3>
-                  <p className="text-gray-400 text-[10px] font-bold">Establece una contraseña segura para tu cuenta. No puede ser igual a la anterior.</p>
-                </div>
+                <RecoveryNotice
+                  tone="info"
+                  title="Enlace verificado"
+                  message="Establece tu contraseña nueva. El enlace es de un solo uso y la sesión se cerrará al guardarla."
+                  className="!p-4"
+                />
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 ml-1">Nueva Contraseña</label>
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 ml-1">
+                    Nueva contraseña
+                  </label>
                   <input
                     type="password"
                     value={password}
@@ -253,9 +251,12 @@ export default function ResetPasswordPage() {
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-gray-600 outline-none focus:border-neon-blue transition-all"
                   />
                 </div>
+                <PasswordStrengthBar password={password} />
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 ml-1">Confirmar Contraseña</label>
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 ml-1">
+                    Repetir contraseña
+                  </label>
                   <input
                     type="password"
                     value={confirm}
@@ -267,66 +268,29 @@ export default function ResetPasswordPage() {
                   />
                 </div>
 
+                <p className="text-[10px] font-bold text-gray-500 leading-relaxed">
+                  Mínimo 8 caracteres. No puede ser igual a tu contraseña anterior.
+                </p>
+
                 {error && <p className="text-red-400 text-[11px] font-bold">{error}</p>}
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 rounded-xl bg-gradient-to-r from-brand-light to-neon-pink text-black font-header font-black uppercase tracking-widest text-sm hover:brightness-110 hover:scale-[1.01] active:scale-[0.99] transition-all shadow-[0_0_20px_rgba(255,51,204,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full py-3.5 rounded-xl btn-primary font-header font-black uppercase tracking-widest text-xs disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
                 >
-                  {loading ? 'PROCESANDO…' : 'RESTABLECER CONTRASEÑA'}
+                  {loading ? 'Procesando…' : 'Restablecer contraseña'}
                 </button>
               </form>
-            ) : (
-              <div className="text-center space-y-4">
-                <div className="w-16 h-16 mx-auto text-amber-400">
-                  <WarningIcon />
-                </div>
-                <p className="text-white font-black uppercase tracking-widest text-sm">Enlace inválido o expirado</p>
-                <p className="text-gray-400 text-xs font-bold leading-relaxed">
-                  {error || 'Este enlace de recuperación ha expirado o ya fue utilizado.'}
-                </p>
-                <p className="text-amber-400 text-[10px] font-bold uppercase tracking-wider">
-                  ⚠ Los enlaces de recuperación son de UN SOLO USO y expiran por seguridad.
-                </p>
-                <button
-                  onClick={() => router.push('/login')}
-                  className="px-8 py-3 rounded-xl bg-gradient-to-r from-brand-light to-neon-pink text-black font-header font-black uppercase tracking-widest text-sm hover:brightness-110 transition-all"
-                >
-                  VOLVER AL LOGIN
-                </button>
-              </div>
             )}
+
+            <p className="text-[10px] text-faint font-bold leading-relaxed text-center">
+              Los enlaces de recuperación caducan {Math.round(RECOVERY_LINK_TTL_MS / 60000)} minutos después de pedirlos.
+              Este proceso se aplica a {SITE_NAME}.
+            </p>
           </div>
         </div>
       </div>
-
-      {/* Rate limit modal */}
-      {showRateLimitModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
-          <div className="bg-[#070710]/98 backdrop-blur-2xl border border-amber-500/50 rounded-2xl p-6 max-w-md mx-4 text-center">
-            <div className="w-16 h-16 mx-auto text-amber-400 mb-4">
-              <WarningIcon />
-            </div>
-            <h3 className="text-white font-black uppercase tracking-widest text-sm mb-2">Demasiados intentos</h3>
-            <p className="text-gray-400 text-xs font-bold leading-relaxed mb-4">
-              Has solicitado recuperación de contraseña demasiadas veces recientemente.
-            </p>
-            <p className="text-amber-400 text-xs font-bold mb-6">
-              Próximo intento disponible en: <span className="text-white font-mono">{formatTime(rateLimitRemaining)}</span>
-            </p>
-            <p className="text-gray-500 text-[10px] font-bold mb-6">
-              Por seguridad, solo se permiten 3 solicitudes cada 12 horas.
-            </p>
-            <button
-              onClick={() => setShowRateLimitModal(false)}
-              className="px-6 py-2 rounded-xl bg-gradient-to-r from-brand-light to-neon-pink text-black font-header font-black uppercase tracking-widest text-xs hover:brightness-110 transition-all"
-            >
-              ENTENDIDO
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

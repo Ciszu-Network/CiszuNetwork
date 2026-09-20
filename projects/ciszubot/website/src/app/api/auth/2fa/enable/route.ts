@@ -1,69 +1,59 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { authenticate, isTwoFactorEnabled, setTwoFactorEnabled } from '../_lib';
 
-// Cliente admin bajo demanda: evita ejecutar createClient al importar el módulo,
-// que rompía `next build` cuando la env var no está disponible durante el build.
-function createAdminClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) {
-    throw new Error('Supabase admin no configurado (NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY)');
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+/**
+ * Activa el 2FA en ESTA web. Exige verificar un código válido primero: si se
+ * pudiera activar sin comprobarlo, cualquiera podría bloquear la cuenta de otro
+ * activando un 2FA cuya clave solo llega al dueño del email… o al contrario,
+ * activarlo y no poder usarlo. Verificar antes garantiza que el canal de email
+ * funciona.
+ */
+export async function POST(request: Request) {
+  const user = await authenticate(request);
+  if (!user) {
+    return NextResponse.json({ success: false, error: 'No autorizado.' }, { status: 401 });
   }
-  return createClient(url, key);
+
+  try {
+    const body = (await request.json().catch(() => ({}))) as { code?: string };
+    if (!body.code) {
+      return NextResponse.json(
+        { success: false, state: 'missing-code', error: 'Pide un código y verifícalo para activar el 2FA.' },
+        { status: 400 },
+      );
+    }
+
+    const { twoFactorService } = await import('../_lib');
+    const verified = await twoFactorService().verify({ userId: user.userId, code: body.code });
+    if (verified.status !== 200) {
+      return NextResponse.json(verified.body, { status: verified.status });
+    }
+
+    await setTwoFactorEnabled(user.userId, true);
+    return NextResponse.json({ success: true, enabled: true });
+  } catch (err) {
+    return NextResponse.json(
+      { success: false, error: err instanceof Error ? err.message : 'Error interno.' },
+      { status: 500 },
+    );
+  }
 }
 
-export async function POST(request: Request) {
+/** Consulta rápida del estado de activación. */
+export async function GET(request: Request) {
+  const user = await authenticate(request);
+  if (!user) {
+    return NextResponse.json({ success: false, error: 'No autorizado.' }, { status: 401 });
+  }
   try {
-    const supabase = createAdminClient();
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { code } = await request.json();
-    if (!code) {
-      return NextResponse.json({ error: 'Code required' }, { status: 400 });
-    }
-
-    // Verify the code
-    const { data: codeData, error: codeError } = await supabase
-      .from('two_factor_codes')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('code', code.toUpperCase())
-      .eq('used', false)
-      .gt('expires_at', new Date().toISOString())
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    if (codeError || !codeData) {
-      return NextResponse.json({ error: 'Invalid or expired code' }, { status: 400 });
-    }
-
-    // Mark code as used
-    await supabase
-      .from('two_factor_codes')
-      .update({ used: true })
-      .eq('id', codeData.id);
-
-    // Enable 2FA
-    const { error: updateError } = await supabase
-      .from('profiles')
-      .update({ two_factor_enabled: true })
-      .eq('id', user.id);
-
-    if (updateError) throw updateError;
-
-    return NextResponse.json({ success: true });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ success: true, enabled: await isTwoFactorEnabled(user.userId) });
+  } catch (err) {
+    return NextResponse.json(
+      { success: false, error: err instanceof Error ? err.message : 'Error interno.' },
+      { status: 500 },
+    );
   }
 }

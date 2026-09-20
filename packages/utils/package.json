@@ -10,7 +10,14 @@
     "./schema": "./src/schema.ts",
     "./effect": "./src/effect.ts",
     "./changelog": "./src/changelog.ts",
-    "./reviews": "./src/reviews.ts"
+    "./reviews": "./src/reviews.ts",
+    "./duration": "./src/duration.ts",
+    "./auth-codes": "./src/authCodes.ts",
+    "./auth-recovery": "./src/authRecovery.ts",
+    "./recaptcha": "./src/recaptcha.ts",
+    "./recaptcha-route": "./src/recaptchaRoute.ts",
+    "./recovery-client": "./src/recoveryClient.ts",
+    "./two-factor": "./src/twoFactor.ts"
   },
   "scripts": {
     "lint": "tsc --noEmit",

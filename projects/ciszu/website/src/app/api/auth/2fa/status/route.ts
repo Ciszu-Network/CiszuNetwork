@@ -1,42 +1,30 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { authenticate, isTwoFactorEnabled } from '../_lib';
 
-// Cliente admin bajo demanda: evita ejecutar createClient al importar el módulo,
-// que rompía `next build` cuando la env var no está disponible durante el build.
-function createAdminClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) {
-    throw new Error('Supabase admin no configurado (NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY)');
-  }
-  return createClient(url, key);
-}
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
+/**
+ * Estado del 2FA en ESTA web: si está activado y en qué punto va el código
+ * (minutos restantes, intentos, reenvíos disponibles).
+ */
 export async function GET(request: Request) {
+  const user = await authenticate(request);
+  if (!user) {
+    return NextResponse.json({ success: false, error: 'No autorizado.' }, { status: 401 });
+  }
+
   try {
-    const supabase = createAdminClient();
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('two_factor_enabled')
-      .eq('id', user.id)
-      .single();
-
-    if (error) throw error;
-
-    return NextResponse.json({ enabled: data?.two_factor_enabled || false });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    const { twoFactorService } = await import('../_lib');
+    const [enabled, result] = await Promise.all([
+      isTwoFactorEnabled(user.userId),
+      twoFactorService().status({ userId: user.userId }),
+    ]);
+    return NextResponse.json({ ...result.body, enabled }, { status: result.status });
+  } catch (err) {
+    return NextResponse.json(
+      { success: false, error: err instanceof Error ? err.message : 'Error interno.' },
+      { status: 500 },
+    );
   }
 }

@@ -1,49 +1,28 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { authenticate } from '../_lib';
 
-// Cliente admin bajo demanda: evita ejecutar createClient al importar el módulo,
-// que rompía `next build` cuando la env var no está disponible durante el build.
-function createAdminClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) {
-    throw new Error('Supabase admin no configurado (NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY)');
-  }
-  return createClient(url, key);
-}
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
+/**
+ * Verifica el código. Consume el código al acertar, acumula intento al fallar y
+ * suspende el acceso al llegar al límite.
+ */
 export async function POST(request: Request) {
+  const user = await authenticate(request);
+  if (!user) {
+    return NextResponse.json({ success: false, error: 'No autorizado.' }, { status: 401 });
+  }
+
   try {
-    const supabase = createAdminClient();
-    const { userId, website, code } = await request.json();
-
-    if (!userId || !website || !code) {
-      return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
-    }
-
-    const { data, error } = await supabase
-      .from('two_factor_codes')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('website', website)
-      .eq('code', code.toUpperCase())
-      .eq('used', false)
-      .gt('expires_at', new Date().toISOString())
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    if (error || !data) {
-      return NextResponse.json({ valid: false, error: 'Invalid or expired code' }, { status: 400 });
-    }
-
-    await supabase
-      .from('two_factor_codes')
-      .update({ used: true })
-      .eq('id', data.id);
-
-    return NextResponse.json({ valid: true });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    const body = (await request.json().catch(() => ({}))) as { code?: string };
+    const { twoFactorService } = await import('../_lib');
+    const result = await twoFactorService().verify({ userId: user.userId, code: body.code ?? '' });
+    return NextResponse.json(result.body, { status: result.status });
+  } catch (err) {
+    return NextResponse.json(
+      { success: false, error: err instanceof Error ? err.message : 'Error interno.' },
+      { status: 500 },
+    );
   }
 }
