@@ -79,10 +79,11 @@ export async function middleware(request: NextRequest) {
   response.headers.set(
     'Content-Security-Policy',
     buildCsp({
-      scriptSrc: ['https://widget.trustpilot.com', 'https://www.trustpilot.com'],
+      scriptSrc: ['https://widget.trustpilot.com', 'https://www.trustpilot.com', 'https://storage.ko-fi.com'],
       imgSrc: [
         'https://nowpayments.io',
         'https://ko-fi.com',
+        'https://storage.ko-fi.com',
         'https://www.trustpilot.com',
         'https://widget.trustpilot.com',
         'https://images.trustpilot.com',
@@ -98,7 +99,7 @@ export async function middleware(request: NextRequest) {
         'https://www.trustpilot.com',
         'https://widget.trustpilot.com',
       ],
-      connectSrc: ['https://widget.trustpilot.com', 'https://images.trustpilot.com'],
+      connectSrc: ['https://widget.trustpilot.com', 'https://images.trustpilot.com', 'https://storage.ko-fi.com'],
       styleSrc: ['https://rsms.me'],
       fontSrc: ['https://rsms.me'],
     })
