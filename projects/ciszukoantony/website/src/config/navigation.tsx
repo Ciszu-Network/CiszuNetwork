@@ -38,22 +38,27 @@ export const I = {
 export type NavItem = { name: string; href: string; icon: React.ReactNode; external?: boolean };
 export type NavGroup = { name: string; icon: React.ReactNode; items: NavItem[] };
 
+// Header = solo lo esencial. TODO lo demás vive indexado en el desplegable
+// "Information" (un único punto de entrada) para no duplicar enlaces en el
+// header ni desbordar el ancho disponible a zoom 100%.
 export const NAV_MAIN: (NavItem | NavGroup)[] = [
   { name: 'Home', href: '/', icon: I.home },
-  { name: 'Changelog', href: '/changelog', icon: I.history },
-  { name: 'Reviews', href: '/reviews', icon: I.star },
-  { name: 'Stats', href: '/stats', icon: I.barChart },
-  { name: 'Forum', href: '/forum', icon: I.messageSquare },
   { name: 'Projects', href: '/projects', icon: I.projects },
   { name: 'Certificates', href: '/certificates', icon: I.certificates },
-  { name: 'Feedback', href: '/feedback', icon: I.feedback },
-  { name: 'Downloads', href: '/downloads', icon: I.download },
-  { name: 'Donar', href: '/donate', icon: I.heart },
   {
     name: 'Information', icon: I.info,
     items: [
+      { name: 'Information', href: '/information', icon: I.info },
       { name: 'About', href: '/about', icon: I.about },
       { name: 'Team', href: '/team', icon: I.team },
+      { name: 'Changelog', href: '/changelog', icon: I.history },
+      { name: 'Reviews', href: '/reviews', icon: I.star },
+      { name: 'Leaderboard', href: '/leaderboard', icon: I.trophy },
+      { name: 'Stats', href: '/stats', icon: I.barChart },
+      { name: 'Forum', href: '/forum', icon: I.messageSquare },
+      { name: 'Downloads', href: '/downloads', icon: I.download },
+      { name: 'Donar', href: '/donate', icon: I.heart },
+      { name: 'Feedback', href: '/feedback', icon: I.feedback },
       { name: 'FAQ', href: '/faq', icon: I.faq },
       { name: 'Support', href: '/support', icon: I.support },
       { name: 'Policies', href: '/policies', icon: I.policies },
@@ -66,6 +71,7 @@ export const NAV_MAIN: (NavItem | NavGroup)[] = [
 
 export const ALL_PAGES: NavItem[] = [
   { name: 'Home', href: '/', icon: I.home },
+  { name: 'Information', href: '/information', icon: I.info },
   { name: 'About', href: '/about', icon: I.about },
   { name: 'Team', href: '/team', icon: I.team },
   { name: 'FAQ', href: '/faq', icon: I.faq },
@@ -77,6 +83,7 @@ export const ALL_PAGES: NavItem[] = [
   { name: 'Changelog', href: '/changelog', icon: I.history },
   { name: 'Reviews', href: '/reviews', icon: I.star },
   { name: 'Stats', href: '/stats', icon: I.barChart },
+  { name: 'Leaderboard', href: '/leaderboard', icon: I.trophy },
   { name: 'Forum', href: '/forum', icon: I.messageSquare },
   { name: 'Projects', href: '/projects', icon: I.projects },
   { name: 'Certificates', href: '/certificates', icon: I.certificates },

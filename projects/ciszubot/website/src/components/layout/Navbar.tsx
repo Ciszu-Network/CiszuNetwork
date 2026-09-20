@@ -13,30 +13,33 @@ import PreferencesPanel from '@/components/layout/PreferencesPanel';
 import { PreferencesModal } from '@ciszu/ui';
 import { INVITE_URL, LOGO_ISOTIPO, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
 
-const NAV_PAGES: { href: string; key: 'home' | 'commands' | 'stats' | 'support' | 'downloads' | 'feedback' | 'changelog' | 'reviews' | 'leaderboard' | 'forum' | 'contact' | 'documentation' | 'about' | 'team' | 'help' | 'donate'; icon: string }[] = [
+// Header = solo lo esencial. TODO lo demás se indexa en el desplegable
+// "Information" (un único punto de entrada) para no duplicar enlaces en el
+// header ni desbordar el ancho disponible a zoom 100%.
+const NAV_PAGES: { href: string; key: keyof Dict['nav']; icon: string }[] = [
   { href: '/', key: 'home', icon: 'home' },
   { href: '/commands', key: 'commands', icon: 'gamepad' },
   { href: '/stats', key: 'stats', icon: 'chart-bar' },
+  { href: '/downloads', key: 'downloads', icon: 'download' },
+];
+
+const INFO_PAGES: { href: string; key: keyof Dict['nav']; icon: string }[] = [
+  { href: '/information', key: 'information', icon: 'info' },
   { href: '/changelog', key: 'changelog', icon: 'history' },
   { href: '/reviews', key: 'reviews', icon: 'star' },
   { href: '/leaderboard', key: 'leaderboard', icon: 'trophy' },
   { href: '/forum', key: 'forum', icon: 'message' },
-  { href: '/support', key: 'support', icon: 'life-ring' },
-  { href: '/contact', key: 'contact', icon: 'mail' },
-  { href: '/downloads', key: 'downloads', icon: 'download' },
   { href: '/feedback', key: 'feedback', icon: 'message' },
   { href: '/donate', key: 'donate', icon: 'heart' },
-];
-
-const INFO_PAGES: { href: string; key: 'information' | 'about' | 'team' | 'faq' | 'documentation' | 'help' | 'contact' | 'support'; icon: string }[] = [
-  { href: '/information', key: 'information', icon: 'info' },
-  { href: '/about', key: 'about', icon: 'info' },
-  { href: '/team', key: 'team', icon: 'users' },
-  { href: '/faq', key: 'faq', icon: 'help' },
   { href: '/documentation', key: 'documentation', icon: 'file-text' },
   { href: '/help', key: 'help', icon: 'help' },
-  { href: '/contact', key: 'contact', icon: 'mail' },
+  { href: '/faq', key: 'faq', icon: 'help' },
   { href: '/support', key: 'support', icon: 'life-ring' },
+  { href: '/contact', key: 'contact', icon: 'mail' },
+  { href: '/about', key: 'about', icon: 'info' },
+  { href: '/team', key: 'team', icon: 'users' },
+  { href: '/privacy', key: 'privacidad', icon: 'lock' },
+  { href: '/terms', key: 'terminos', icon: 'external' },
 ];
 
 
@@ -399,7 +402,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
           <div className="w-px h-7 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-1 shrink-0" />              <div className="flex items-center gap-1 flex-1 min-w-0 overflow-visible">
             {NAV_PAGES.map((link, idx) => {
               const active = isActive(link.href);
-              const responsiveClass = active ? 'flex' : (NAV_HIDE_CLS[idx] ?? 'hidden min-[1520px]:flex');
+              const responsiveClass = active ? 'flex' : (NAV_HIDE_CLS[idx] ?? 'flex');
               return (
                 <Link key={link.href} href={link.href} className={
                   `${linkCls(link.href)} ${responsiveClass} relative group flex-shrink-0`
@@ -418,7 +421,9 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
             })}
             <div
               className={
-                `relative z-40 shrink-0 ${openDropdown === 'Information' ? 'flex' : infoGroupActive ? 'flex' : 'hidden min-[800px]:flex'}`
+                // El desplegable Information SIEMPRE visible: es el índice
+                // completo del sitio, no un extra responsive.
+                'relative z-40 shrink-0 flex'
               }
               onMouseEnter={() => hoverOpen(setOpenDropdown, dropdownTimer, 'Information')}
               onMouseLeave={() => hoverClose(setOpenDropdown, dropdownTimer)}
@@ -434,7 +439,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                 } />
               </Link>                {openDropdown === 'Information' && (
                 <div className="absolute top-full left-0 pt-2 w-56 z-50 animate-fade-in-down origin-top drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)]">
-                  <div className="bg-[#0a0a14]/98 backdrop-blur-2xl border border-border rounded-xl py-2 shadow-2xl">
+                  <div className="bg-[#0a0a14]/98 backdrop-blur-2xl border border-border rounded-xl py-2 shadow-2xl max-h-[70vh] overflow-y-auto">
                     <div className="px-4 py-2 text-xs font-black text-neon-blue/80 uppercase tracking-widest">Information</div>
                     <div className="h-px bg-white/10 mx-2" />
                     {INFO_PAGES.map((sub) => (

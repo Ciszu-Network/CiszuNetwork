@@ -4,10 +4,12 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePageTitle } from '@/lib/usePageTitle';
 import {
+  ALL_DOCUMENTS,
   CATEGORIES,
   CERTIFICATES,
   OFFICIAL_LINKS,
   OTHER_DOCS,
+  catalogRef,
   type Certificate,
 } from '@/data/certificates';
 import { getCategoryIcon } from '@/data/categoryIcons';
@@ -55,8 +57,10 @@ const resolvePreview = (cert: Certificate): { name: string; isPreview: boolean }
   return { name: mainName, isPreview: false };
 };
 
+const NO_DATE = 'No date in document';
+
 const fmtDate = (iso?: string) => {
-  if (!iso) return '—';
+  if (!iso) return NO_DATE;
   const [y, m, d] = iso.split('-').map(Number);
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   return `${d} ${months[(m || 1) - 1]} ${y}`;
@@ -72,6 +76,7 @@ const sortMeta: Record<string, { label: string; icon: string }> = {
   'date-asc': { label: 'Oldest first', icon: '↑' },
   'alpha-asc': { label: 'A → Z', icon: 'A' },
   'alpha-desc': { label: 'Z → A', icon: 'Z' },
+  'ref-asc': { label: 'Catalog ref', icon: '#' },
   provider: { label: 'Provider', icon: 'P' },
   category: { label: 'Category', icon: 'C' },
 };
@@ -144,7 +149,7 @@ const BrandLogo = ({ id, className }: { id: string; className?: string }) => {
   return null;
 };
 
-const ALL_DOCS: Certificate[] = [...CERTIFICATES, ...OTHER_DOCS];
+const ALL_DOCS: Certificate[] = ALL_DOCUMENTS;
 
 const PROVIDER_OPTIONS = [
   { id: 'cisco', label: 'Cisco Networking Academy', color: '#1B75BC' },
@@ -176,6 +181,7 @@ const SORT_OPTIONS = [
   { id: 'date-asc', label: 'Date ↑ (Oldest first)', fn: (a: Certificate, b: Certificate) => (a.date || '').localeCompare(b.date || '') },
   { id: 'alpha-asc', label: 'A–Z', fn: (a: Certificate, b: Certificate) => a.title.localeCompare(b.title) },
   { id: 'alpha-desc', label: 'Z–A', fn: (a: Certificate, b: Certificate) => b.title.localeCompare(a.title) },
+  { id: 'ref-asc', label: 'Catalog ref ↑', fn: (a: Certificate, b: Certificate) => catalogRef(a).localeCompare(catalogRef(b)) },
   { id: 'provider', label: 'Provider', fn: (a: Certificate, b: Certificate) => a.provider.localeCompare(b.provider) },
   { id: 'category', label: 'Category', fn: (a: Certificate, b: Certificate) => catLabel(a.category).localeCompare(catLabel(b.category)) },
 ];
@@ -477,8 +483,14 @@ function CertificateCard({
           )}
         </div>
 
-        {/* Tag de posesión — presente en TODAS las cards */}
-        <div className="mt-2.5">
+        {/* Nomenclatura de catálogo + tag de posesión — presentes en TODAS las cards */}
+        <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+          <span
+            className="font-mono text-[10px] tracking-tight text-neon-cyan bg-neon-cyan/5 border border-neon-cyan/25 rounded-md px-1.5 py-0.5"
+            title="Referencia interna de catálogo"
+          >
+            {catalogRef(cert)}
+          </span>
           <OwnershipBadge compact />
         </div>
       </div>
@@ -597,7 +609,7 @@ function DetailModal({
           </div>
 
           <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-gray-400">
-            <span className="flex items-center gap-1.5">
+            <span className={`flex items-center gap-1.5 ${cert.date ? '' : 'text-amber-400/80'}`}>
               <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}>
                 <rect x="3" y="4" width="18" height="18" rx="2" />
                 <line x1="16" y1="2" x2="16" y2="6" />
@@ -605,6 +617,9 @@ function DetailModal({
                 <line x1="3" y1="10" x2="21" y2="10" />
               </svg>
               {fmtDate(cert.date)}
+            </span>
+            <span className="flex items-center gap-1.5 font-mono text-neon-cyan" title="Referencia interna de catálogo">
+              {catalogRef(cert)}
             </span>
             {cert.level && <span>{cert.level}</span>}
             {cert.credentialId && (
@@ -852,7 +867,7 @@ export default function CertificatesPage() {
       if (category !== 'all' && c.category !== category) return false;
       if (provider !== 'all' && getProviderGroup(c) !== provider) return false;
       if (!q) return true;
-      const hay = `${c.title} ${c.provider} ${c.collection?.name || ''} ${fmtDate(c.date)} ${c.credentialId || ''} ${c.credentialLabel || ''}`.toLowerCase();
+      const hay = `${c.title} ${c.provider} ${c.collection?.name || ''} ${fmtDate(c.date)} ${c.credentialId || ''} ${c.credentialLabel || ''} ${catalogRef(c)}`.toLowerCase();
       return hay.includes(q);
     });
 
@@ -875,8 +890,8 @@ export default function CertificatesPage() {
           <h1 className="text-5xl font-header font-black tracking-tighter bg-gradient-to-r from-brand to-brand-200 bg-clip-text text-transparent mb-3">
             Certificates & Documents
           </h1>
-          <p className="text-gray-500 text-sm uppercase tracking-widest mb-2">
-            {ALL_DOCS.length} total documents · {CERTIFICATES.length} certificates · {OTHER_DOCS.length} supporting docs
+          <p className="mt-1 text-xs text-gray-500 uppercase tracking-widest mb-2">
+            {ALL_DOCS.length} total documents · {CERTIFICATES.length} certificates · {OTHER_DOCS.length} supporting docs · catalog CKO-*
           </p>
         </motion.div>
 
@@ -918,7 +933,7 @@ export default function CertificatesPage() {
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by course, provider, collection, date…"
+              placeholder="Search by course, provider, category, catalog ref…"
               className="w-full pl-11 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-gray-600 outline-none focus:border-neon-blue transition-all"
             />
           </div>
