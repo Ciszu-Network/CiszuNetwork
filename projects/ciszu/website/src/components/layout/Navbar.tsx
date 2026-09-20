@@ -345,6 +345,7 @@ export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<strin
                 alt={CISZU_NETWORK.name}
                 width={34}
                 height={34}
+                data-logo-white="true"
                 className="group-hover:drop-shadow-[0_0_15px_rgba(58,107,240,0.8)] transition-all duration-300"
               />
               <Image
@@ -352,6 +353,7 @@ export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<strin
                 alt={CISZU_NETWORK.name}
                 width={100}
                 height={34}
+                data-logo-white="true"
                 className="hidden lg:block group-hover:drop-shadow-[0_0_10px_rgba(58,107,240,0.6)] transition-all duration-300"
               />
             </Link>

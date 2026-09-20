@@ -253,6 +253,7 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
               <SmartImage
                 src="projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png"
                 alt="Ciszuko" width={28} height={25}
+                data-logo-white="true"
                 className="drop-shadow-brand group-hover:drop-shadow-[0_0_15px_rgba(61,106,223,0.8)] transition-all duration-300"
               />
               <SmartImage
