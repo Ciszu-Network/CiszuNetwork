@@ -1,92 +1,90 @@
-# Sistema de Certificados Mejorado - CiszukoAntony
+# Sistema de certificados — Ciszuko Antony
 
-## Resumen de Mejoras Implementadas
+Estado: septiembre 2026.
 
-### 1. Reorganización de Categorías
-Se han añadido y reorganizado las categorías según especificaciones:
+- Datos: `src/data/certificates.ts`
+- Manifiesto de previews: `src/data/certificates.previews.ts`
+- Archivos originales: `shared/docs/certificados/` (espejados al CDN `ciszu-cdn`)
+- Página: `/certificates`
 
-| Categoría | Color | Descripción | Documentos incluidos |
-|-----------|-------|-------------|---------------------|
-| **Personal** | `#ec4899` | Documentos personales | Perfil de personalidad (16Personalities) |
-| **Bachillerato** | `#8b5cf6` | Certificado de bachillerato | Imagen de certificado de bachillerato |
-| **Other Documents** | `#94a3b8` | Documentos complementarios | Transcripts, expedientes, records |
-| *Categorías existentes* | *Originales* | Certificados profesionales | Todos los certificados anteriores |
+## Regla de oro: nada se inventa
 
-### 2. Sistema de Thumbnails/Previsualizaciones REALES
-Cada certificado muestra una **previsualización real del documento**:
+Cada campo declarado (`title`, `provider`, `date`, `credentialId`) se extrae del
+propio documento. Si el documento no indica un dato, se omite y se explica en
+`note`. Ejemplo: el diploma de bachillerato está censurado y su fecha no es
+legible, así que no se declara fecha.
 
-```typescript
-{
-  thumbnail?: string; // Ruta a la imagen de previsualización (opcional)
-  // Si no hay thumbnail, se usa el primer archivo del certificado
-}
+## Detección del contenido
+
+Los PDF se convierten a texto con `pdftotext` (poppler) y de ahí se leen el
+nombre real del curso, la fecha de finalización y el serial:
+
+```bash
+cd shared/docs/certificados
+for f in *.pdf; do pdftotext -enc UTF-8 "$f" "${f%.pdf}.txt"; done
 ```
 
-**Características:**
-- ✅ **Previsualización REAL**: Muestra la primera página del PDF/imagen real
-- ✅ **Auto-detección**: Detecta automáticamente si es imagen o PDF
-- ✅ **Fallback inteligente**: Si no hay thumbnail específico, usa el documento principal
-- ✅ **Visual directo**: Sin filtros oscuros, muestra el contenido real
+Antes, 13 documentos se titulaban `Certificate #373`, `Course 109`, etc. Ahora
+cada uno usa el nombre real detectado en el documento (`Business English, Part 1`,
+`SEO y content marketing`, `Fundamentos de ciberseguridad`, …).
 
-### 3. UI Mejorada
-- **Tarjetas con previsualización**: Muestra iconos de PDF/imagen con overlay oscuro
-- **Modal interactivo mejorado**: Sección de previsualización destacada
-- **Filtros independientes**: Certificados principales vs documentos complementarios
-- **Design más visual**: Gradientes, efectos hover, y organización clara
+## Nomenclatura de catálogo
 
-## Cómo Agregar Thumbnails/Primeras Páginas
-
-### Opción 1: Thumbnails específicos (recomendado)
-1. **Crear screenshots** de la primera página de cada PDF
-2. **Guardar imágenes** en: `shared/docs/certificados/previews/`
-3. **Usar nombres descriptivos**:
-   - `efset-preview.jpg` (EF SET Certificate)
-   - `personality-preview.jpg` (Personality Profile)
-   - `cisco-preview.jpg` (Cisco certificates)
-   - `transcript-preview.jpg` (Learning transcript)
-   - `expediente-preview.jpg` (Microsoft Learn record)
-
-4. **Actualizar el archivo `certificates.ts`**:
-```typescript
-thumbnail: 'shared/docs/certificados/previews/nombre-preview.jpg',
+```
+CKO-<EMISOR>-<AAAA>-<NNN>
 ```
 
-### Opción 2: Sistema automático (funciona ahora)
-- **Sin configuración**: El sistema usa automáticamente el primer archivo del certificado
-- **Para imágenes JPG/PNG**: Muestra la imagen completa como preview
-- **Para PDFs**: Muestra la primera página del PDF como preview
-- **Etiquetado automático**: Muestra "IMAGEN" o "PDF" según el tipo
+- `CKO` — prefijo del portafolio.
+- `EMISOR` — sigla real: `CSCO`, `MSFT`, `IBM`, `HP`, `EFSET`, `PENN`, `16P`,
+  `SMPL`. Para plataformas que no se identifican en el documento: `OAC`
+  (seriales `OA-*`), `OLC` (IDs `cert_*`), `OEN` / `ONL`.
+- `AAAA` — año del documento.
+- `NNN` — consecutivo dentro de ese emisor y año, en orden cronológico.
 
-## Script de Ayuda
+Se calcula en `buildCatalogRefs()` / `catalogRef()` y se muestra como chip
+monoespaciado en la card y en la ficha. **No es un número del emisor**: ese vive
+en `credentialId`, copiado literalmente del documento. Es determinista (mismo
+emisor + misma fecha ⇒ mismo código) y la opción de orden `Catalog ref ↑`
+agrupa el catálogo por emisor y año.
 
-Ejecuta el script para ver instrucciones detalladas:
-```powershell
-.\scripts\create-certificate-thumbnails.ps1
+## Clasificación
+
+| Campo | Uso |
+| --- | --- |
+| `category` | Familia temática (`english`, `programming`, `marketing`, …) |
+| `provider` | Emisor real (institución o plataforma) |
+| `collection` | Colección (Cisco, HP LIFE, Penn ELP, …) |
+| `files[].kind` | `certificate`, `credential`, `transcript`, `report`, `image` |
+| `date` | Fecha ISO verificada en el documento |
+| `credentialId` | Serial/ID literal del documento |
+
+## Previews
+
+`scripts/sync-certificates.js` rasteriza la página 1 de cada PDF **con las
+fuentes estándar y los cMaps de `pdfjs-dist`** (`standardFontDataUrl`, `cMapUrl`);
+sin ellos, los PDFs con fuentes estándar renderizaban sin texto. Genera el JPG
+ASCII-seguro en `shared/docs/certificados/previews/<nombre>-preview.jpg` y
+regenera el manifiesto `certificates.previews.ts`.
+
+La página resuelve la preview con `PREVIEWS_BY_FILE[archivoPrincipal]`; si no
+existe, cae al propio archivo. Una preview que no carga muestra un estado de
+error explícito con icono, nunca un hueco vacío.
+
+```bash
+pnpm sync:certificates   # regenera previews + manifiesto
+pnpm verify:catalog      # valida el catálogo (falla con exit 1)
 ```
 
-## Flujo de Trabajo Recomendado
+## Criterios de calidad (verificados por `pnpm verify:catalog`)
 
-1. **Organización**: Clasifica nuevos documentos en las categorías apropiadas
-2. **Previsualizaciones**: Toma screenshots de cada documento importante
-3. **Actualización**: Añade thumbnails al archivo de datos
-4. **Verificación**: Revisa que las previsualizaciones se muestren correctamente
+1. Cero títulos genéricos (`Certificate #NNN`, `Course NNN`).
+2. Cero `ref` de catálogo duplicadas.
+3. Todo documento con fecha verificable la declara; el resto lo explica en `note`.
+4. Cada archivo declarado existe en disco y tiene preview mapeada.
+5. Cada preview mapeada existe en disco.
 
-## Categorías Actuales Disponibles
-
-1. **Certificados Profesionales**:
-   - english, programming, web, ai, cloud, digital, design, marketing, finance
-
-2. **Documentos Personales**:
-   - personal, bachillerato, other
-
-## Notas Técnicas
-
-- Las previsualizaciones usan un filtro de `brightness(0.4)` para legibilidad del texto
-- Los iconos cambian según el tipo de documento (PDF, imagen, documento genérico)
-- El sistema es retrocompatible: certificados sin thumbnail muestran un placeholder
-- La estructura del CDN mantiene: `${CDN_BASE}/shared/docs/certificados/...`
+La disponibilidad en el CDN se comprueba aparte con `scripts/verify-previews.js`.
 
 ---
 
-*Última actualización: 3 Sep 2026*  
-*Responsable: Ciszuko Antony - Sistema de Portfolio Profesional*
+*Última actualización: septiembre 2026*

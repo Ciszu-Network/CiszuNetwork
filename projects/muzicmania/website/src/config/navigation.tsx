@@ -49,6 +49,18 @@ export const MAIN_NAV_LINKS = [
   { name: 'Donation',    href: '/donation',     icon: I.handshake,   hideCls: 'hidden min-[850px]:flex', keywords: ['donar', 'donation', 'apoyar', 'support', 'patreon', 'kofi'] },
 ];
 
+// Header = solo lo esencial (páginas de juego). TODO lo demás se indexa en el
+// desplegable "Information" para no duplicar enlaces ni desbordar el header a
+// zoom 100%. MAIN_NAV_LINKS se mantiene completo para footer y búsqueda global.
+export const HEADER_NAV_LINKS = MAIN_NAV_LINKS.filter((l) =>
+  ['/', '/play', '/library', '/leaderboard', '/stats'].includes(l.href),
+);
+
+// Enlaces que viven únicamente dentro del desplegable "Information".
+export const INFO_DROPDOWN_LINKS = MAIN_NAV_LINKS.filter((l) =>
+  ['/forum', '/changelog', '/reviews', '/download', '/feedback', '/donation'].includes(l.href),
+);
+
 export const COMMUNITY_LINKS = [
   { name: 'Team',          href: '/team',          icon: I.team,       keywords: ['equipo', 'staff', 'creadores', 'desarrolladores', 'members', 'miembros'] },
   { name: 'Credits',       href: '/credits',       icon: I.handshake,  keywords: ['creditos', 'contribuciones', 'agradecimientos', 'handshake', 'legal'] },

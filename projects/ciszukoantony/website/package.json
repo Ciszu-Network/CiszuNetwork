@@ -11,7 +11,8 @@
     "start": "next start",
     "lint": "eslint .",
     "verify": "pnpm run lint && next build",
-    "sync:certificates": "node scripts/sync-certificates.js"
+    "sync:certificates": "node scripts/sync-certificates.js",
+    "verify:catalog": "tsx scripts/verify-catalog.ts"
   },
   "dependencies": {
     "@ciszu/ui": "workspace:*",

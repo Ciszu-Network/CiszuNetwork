@@ -57,12 +57,11 @@ interface NavEntry {
   keywords?: string[];
 }
 
+// Header = solo lo esencial. TODO lo demás se indexa en el desplegable
+// "Information" (un único punto de entrada) para no duplicar enlaces en el
+// header ni desbordar el ancho disponible a zoom 100%.
 const NAV_ITEMS: NavEntry[] = [
   { name: 'Home', href: '/', icon: <Home className="w-4 h-4" /> },
-  { name: 'Changelog', href: '/changelog', icon: <History className="w-4 h-4" /> },
-  { name: 'Reviews', href: '/reviews', icon: <Star className="w-4 h-4" /> },
-  { name: 'Stats', href: '/stats', icon: <BarChart3 className="w-4 h-4" /> },
-  { name: 'Forum', href: '/forum', icon: <MessageSquare className="w-4 h-4" /> },
   { name: 'Projects', href: '/projects', icon: <Zap className="w-4 h-4" />, keywords: ['ciszugamens', 'discord', 'whatsapp', 'telegram', 'ciszubot', 'muzicmania', 'ciszu network', 'ciszuko antony'], links: [
       { name: 'Ciszugamens', href: '/projects/ciszugamens', icon: <Gamepad2 className="w-4 h-4" /> },
       { name: 'CiszuBot', href: '/projects/ciszubot', icon: <Bot className="w-4 h-4" /> },
@@ -70,30 +69,36 @@ const NAV_ITEMS: NavEntry[] = [
       { name: 'Ciszu Network', href: '/projects/ciszunetwork', icon: <Building className="w-4 h-4" /> },
       { name: 'Ciszuko Antony', href: '/projects/ciszukoantony', icon: <User className="w-4 h-4" /> },
     ] },
-  { name: 'Download', href: '/download', icon: <Download className="w-4 h-4" /> },
-  { name: 'Donate', href: '/donate', icon: <Heart className="w-4 h-4" /> },
-  { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" /> },
-  { name: 'Courses', href: '/courses', icon: <GraduationCap className="w-4 h-4" /> },
   {
     name: 'Information',
     icon: <Info className="w-4 h-4" />,
-    keywords: ['about', 'team', 'faq', 'documentation', 'help', 'contact', 'support', 'info', 'about us'],
+    keywords: ['about', 'team', 'faq', 'documentation', 'help', 'contact', 'support', 'info', 'about us', 'changelog', 'reviews', 'stats', 'forum', 'download', 'donate', 'feedback', 'courses', 'policies', 'leaderboard'],
     links: [
       { name: 'Information', href: '/information', icon: <Info className="w-4 h-4" /> },
       { name: 'About', href: '/about', icon: <Info className="w-4 h-4" /> },
       { name: 'Team', href: '/team', icon: <Users className="w-4 h-4" /> },
+      { name: 'Changelog', href: '/changelog', icon: <History className="w-4 h-4" /> },
+      { name: 'Reviews', href: '/reviews', icon: <Star className="w-4 h-4" /> },
+      { name: 'Leaderboard', href: '/leaderboard', icon: <Trophy className="w-4 h-4" /> },
+      { name: 'Stats', href: '/stats', icon: <BarChart3 className="w-4 h-4" /> },
+      { name: 'Forum', href: '/forum', icon: <MessageSquare className="w-4 h-4" /> },
+      { name: 'Courses', href: '/courses', icon: <GraduationCap className="w-4 h-4" /> },
+      { name: 'Download', href: '/downloads', icon: <Download className="w-4 h-4" /> },
+      { name: 'Donate', href: '/donate', icon: <Heart className="w-4 h-4" /> },
+      { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" /> },
       { name: 'FAQ', href: '/faq', icon: <HelpCircle className="w-4 h-4" /> },
       { name: 'Documentation', href: '/documentation', icon: <FileText className="w-4 h-4" /> },
       { name: 'Help', href: '/help', icon: <HelpCircle className="w-4 h-4" /> },
       { name: 'Contact', href: '/contact', icon: <Mail className="w-4 h-4" /> },
       { name: 'Support', href: '/support', icon: <LifeBuoy className="w-4 h-4" /> },
+      { name: 'Policies', href: '/policies', icon: <Shield className="w-4 h-4" /> },
     ],
   },
 ];
 
 // Clases responsive por índice de NAV_ITEMS: el link activo siempre visible; el resto aparece según espacio.
 const NAV_HIDE_CLS: string[] = [
-  'hidden min-[420px]:flex',
+  'flex',
   'hidden min-[520px]:flex',
   'hidden min-[620px]:flex',
   'hidden min-[720px]:flex',
@@ -121,7 +126,7 @@ const ALL_PAGES: { name: string; href: string; icon: React.ReactNode; keywords: 
   { name: 'Reviews', href: '/reviews', icon: <Star className="w-4 h-4" />, keywords: ['reseñas', 'criticas', 'opiniones', 'feedback', 'estrellas'] },
   { name: 'Stats', href: '/stats', icon: <BarChart3 className="w-4 h-4" />, keywords: ['estadisticas', 'stats', 'analisis', 'rendimiento', 'server'] },
   { name: 'Forum', href: '/forum', icon: <MessageSquare className="w-4 h-4" />, keywords: ['foro', 'comunidad', 'community', 'discusión', 'discussion', 'posts'] },
-  { name: 'Download', href: '/download', icon: <Download className="w-4 h-4" />, keywords: ['descargas', 'download', 'pc', 'windows', 'ejecutable'] },
+  { name: 'Download', href: '/downloads', icon: <Download className="w-4 h-4" />, keywords: ['descargas', 'download', 'pc', 'windows', 'ejecutable'] },
   { name: 'Donate', href: '/donate', icon: <Heart className="w-4 h-4" />, keywords: ['donar', 'donation', 'donacion', 'apoyar', 'apoyo', 'ko-fi', 'patreon'] },
   { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" />, keywords: ['feedback', 'opiniones', 'sugerencias', 'reporte', 'bug', 'quejas'] },
   { name: 'Courses', href: '/courses', icon: <GraduationCap className="w-4 h-4" />, keywords: ['courses', 'cursos', 'formacion', 'formación', 'educacion', 'educación', 'learning', 'clases'] },
@@ -360,7 +365,9 @@ export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<strin
                 if (item.links) {
                   const isOpen = openDropdown === item.name;
                   const groupActive = item.links.some((sub) => isActive(sub.href));
-                  const responsiveClass = groupActive ? 'flex' : (item.links ? 'hidden min-[800px]:flex' : (NAV_HIDE_CLS[idx] ?? 'hidden min-[1120px]:flex'));
+                  // Los desplegables (Projects / Information) SIEMPRE visibles:
+                  // son el índice completo del sitio, no un extra responsive.
+                  const responsiveClass = item.links ? 'flex' : groupActive ? 'flex' : (NAV_HIDE_CLS[idx] ?? 'flex');
                   const isInfo = item.name === 'Information';
                   return (
                     <div
@@ -387,7 +394,7 @@ export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<strin
                       )}
                       {isOpen && (
                         <div className="absolute top-full left-0 pt-2 w-56 z-50 animate-fade-in-down origin-top drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)]">
-                          <div className="bg-[#0a0a14]/98 backdrop-blur-2xl border border-white/10 rounded-xl py-2 shadow-2xl">
+                          <div className="bg-[#0a0a14]/98 backdrop-blur-2xl border border-white/10 rounded-xl py-2 shadow-2xl max-h-[70vh] overflow-y-auto">
                             <div className="px-4 py-2 text-xs font-black text-brand-light/80 uppercase tracking-widest">{item.name}</div>
                             <div className="h-px bg-white/10 mx-2" />
                             {item.links.map((sub) => (
@@ -411,7 +418,7 @@ export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<strin
                 }
                 const href = item.href!;
                 const active = isActive(href);
-                const responsiveClass = active ? 'flex' : (NAV_HIDE_CLS[idx] ?? 'hidden min-[1120px]:flex');
+                const responsiveClass = active ? 'flex' : (NAV_HIDE_CLS[idx] ?? 'flex');
                 return (
                   <Link key={item.name} href={href} className={`${navLinkCls(href)} ${responsiveClass}`}>
                     <span className="flex items-center justify-center shrink-0">{item.icon}</span>

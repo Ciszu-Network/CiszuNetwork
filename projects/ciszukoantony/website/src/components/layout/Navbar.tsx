@@ -146,10 +146,10 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
 
   const closeSearch = () => { setSearchOpen(false); setSearchQuery(''); };
 
-  const infoItems = (NAV_MAIN.find(n => 'items' in n && n.name === 'Info') as NavGroup)?.items || [];
+  const infoItems = (NAV_MAIN.find(n => 'items' in n && n.name === 'Information') as NavGroup)?.items || [];
 
   const isActive = (href: string) => pathname === href;
-  const infoActive = infoItems.some(i => isActive(i.href));
+  const infoActiveHref = infoItems.find(i => isActive(i.href))?.href ?? '/information';
 
   const q = searchQuery.trim().toLowerCase();
   const suggestions = q.length > 0
@@ -274,15 +274,15 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
                  if ('items' in item) {
                    const group = item as NavGroup;
                    const isInfo = group.name === 'Information';
-                    const responsiveClass = infoActive ? 'flex' : 'hidden min-[800px]:flex';
+                    const responsiveClass = 'flex';
                    return (
                      <div key={group.name} className={`relative ${responsiveClass}`} ref={isInfo ? infoRef : undefined}
                        onMouseEnter={isInfo ? hoverOpenInfo : () => setInfoOpen(true)}
                        onMouseLeave={isInfo ? hoverCloseInfo : undefined}>
                          {isInfo ? (
-                           <Link href="/information" className={navLinkCls('/information')}>
+                           <Link href="/information" className={navLinkCls(infoActiveHref)}>
                              <span className="opacity-80 shrink-0">{group.icon}</span>
-                             <span className={navLabelCls('/information')}>{group.name}</span>
+                             <span className={navLabelCls(infoActiveHref)}>{group.name}</span>
                              <span className={`opacity-70 transition-transform duration-200 ${infoOpen ? 'rotate-180' : ''}`}>{I.chevronDown}</span>
                            </Link>
                          ) : (
@@ -294,7 +294,7 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
                         )}
                       {infoOpen && (
                         <div className="absolute top-full left-0 pt-2 w-56 z-50 animate-fade-in-down origin-top drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)]">
-                          <div className="bg-[#0a0a14]/98 backdrop-blur-2xl border border-white/10 rounded-xl py-2 shadow-2xl">
+                          <div className="bg-[#0a0a14]/98 backdrop-blur-2xl border border-white/10 rounded-xl py-2 shadow-2xl max-h-[70vh] overflow-y-auto">
                             <div className="px-4 py-2 text-xs font-black text-neon-blue/80 uppercase tracking-widest">{group.name}</div>
                             <div className="h-px bg-white/10 mx-2" />
                             {group.items.map((sub) => (
@@ -315,7 +315,7 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
                 const active = isActive(link.href);
                 const { name } = link;
                 const hideCls =
-                  { '/': 'hidden min-[300px]:flex', '/projects': 'hidden min-[540px]:flex', '/feedback': 'hidden min-[640px]:flex', '/downloads': 'hidden min-[740px]:flex' }[link.href] ?? 'hidden min-[850px]:flex';
+                  { '/': 'flex', '/projects': 'flex', '/certificates': 'hidden min-[480px]:flex' }[link.href] ?? 'flex';
                 const responsiveClass = active ? 'flex' : hideCls;
                 return (
                   <Link key={link.href} href={link.href} className={`${navLinkCls(link.href)} ${responsiveClass}`}>

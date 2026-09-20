@@ -12,7 +12,7 @@ import { useAppStore } from '@/store';
 import { supabase } from '@/config/supabase';
 
 // ── All icons and configs migrated to src/config/navigation.tsx ───────────────────
-import { I, MAIN_NAV_LINKS as NAV_LINKS, COMMUNITY_LINKS, GENERAL_INFO_LINKS, LEGAL_LINKS, ALL_PAGES } from '@/config/navigation';
+import { I, HEADER_NAV_LINKS as NAV_LINKS, INFO_DROPDOWN_LINKS, COMMUNITY_LINKS, GENERAL_INFO_LINKS, LEGAL_LINKS, ALL_PAGES } from '@/config/navigation';
 import { isTauri } from '@/lib/isTauri';
 import { getGuestName } from '@/lib/guest';
 import { loadPreferences, applyZoom, setMuteTab, updatePreferences, consumeReloadToastMsg, reloadAfterPrefChange } from '@/lib/preferences';
@@ -20,7 +20,10 @@ import { getDict } from '@/lib/i18n';
 import PreferencesPanel from '@/components/molecules/PreferencesPanel';
 import { LANGUAGE_OPTIONS, isLangAvailable } from '@ciszu/ui';
 
-const INFO_LINKS = [ ...COMMUNITY_LINKS, ...GENERAL_INFO_LINKS, ...LEGAL_LINKS ].filter((v, i, a) => a.findIndex(t => (t.href === v.href)) === i);
+// El desplegable "Information" es el índice completo: incluye las páginas que
+// ya no viven en el header (foro, changelog, reviews, descarga, feedback,
+// donación) más las secciones de comunidad, información general y legal.
+const INFO_LINKS = [ ...INFO_DROPDOWN_LINKS, ...COMMUNITY_LINKS, ...GENERAL_INFO_LINKS, ...LEGAL_LINKS ].filter((v, i, a) => a.findIndex(t => (t.href === v.href)) === i);
 
 export const NavbarContent = () => {
   const pathname  = usePathname();
@@ -301,20 +304,11 @@ export const NavbarContent = () => {
                 );
               })}
 
-              {/* Contact */}
-              <Link href="/contact" className={`${navLinkCls('/contact')} ${isActive('/contact') ? 'flex' : 'hidden min-[700px]:flex'}`}>
-                <span className="flex items-center justify-center shrink-0">{I.contact}</span>
-                <span className={navLabelCls('/contact')}>Contact</span>
-              </Link>
-
-              {/* Support */}
-              <Link href="/support" className={`${navLinkCls('/support')} ${isActive('/support') ? 'flex' : 'hidden min-[750px]:flex'}`}>
-                <span className="flex items-center justify-center shrink-0">{I.support}</span>
-                <span className={navLabelCls('/support')}>Support</span>
-              </Link>
+              {/* Contact y Support ya NO viven en el header: se indexan en
+                  "Information" (evita duplicar enlaces y ganar ancho). */}
 
               {/* Information dropdown (Must be the last item on the right of the links) */}
-              <div className={`relative z-50 shrink-0 ${isActive('/information') || isInfoOpen ? 'flex' : 'hidden min-[800px]:flex'}`}
+              <div className="relative z-50 shrink-0 flex"
                 onMouseEnter={() => hoverOpen(setIsInfoOpen, infoTimer)}
                 onMouseLeave={() => hoverClose(setIsInfoOpen, infoTimer)}
               >
@@ -325,7 +319,7 @@ export const NavbarContent = () => {
                 </Link>
                  {isInfoOpen && (
                    <div className="absolute top-full left-0 pt-2 w-56 z-50 animate-fade-in-down origin-top drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)]">
-                     <div className="bg-[#0a0a14]/98 backdrop-blur-2xl border border-white/10 rounded-xl py-2 shadow-2xl">
+                     <div className="bg-[#0a0a14]/98 backdrop-blur-2xl border border-white/10 rounded-xl py-2 shadow-2xl max-h-[70vh] overflow-y-auto">
                        <div className="px-4 py-2 text-xs font-black text-neon-blue/80 uppercase tracking-widest">Information</div>
                        <div className="h-px bg-white/10 mx-2" />
                        {INFO_LINKS.map((s) => (
