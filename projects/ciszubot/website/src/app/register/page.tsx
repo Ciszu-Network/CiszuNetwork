@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { SmartImage } from '@ciszu/ui';
 import { supabase } from '@/config/supabase';
@@ -17,9 +17,9 @@ import {
   passwordMeetsMinimum,
   useToast,
   useActivityGuard,
+  RecaptchaGate,
 } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
-import ReCAPTCHA from 'react-google-recaptcha';
 
 const IconMail = () => (
   <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -130,14 +130,16 @@ export default function RegisterPage() {
   }, [form, beginActivity, endActivity]);
   useEffect(() => {
     return () => endActivity('auth-form');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [endActivity]);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  // El token de v2 es de un solo uso: cada envío fallido reinicia el widget.
+  const [captchaResetKey, setCaptchaResetKey] = useState(0);
+  const v3ExecutorRef = useRef<(() => Promise<string | null>) | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [acceptedMarketing, setAcceptedMarketing] = useState(false);
   const { toast } = useToast();
@@ -145,21 +147,6 @@ export default function RegisterPage() {
   useEffect(() => {
     if (user) router.replace('/dashboard');
   }, [user, router]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const script = document.createElement('script');
-    script.src = 'https://www.google.com/recaptcha/api.js';
-    script.async = true;
-    document.head.appendChild(script);
-    return () => {
-      document.head.removeChild(script);
-    };
-  }, []);
-
-  const handleCaptchaChange = (token: string | null) => {
-    setCaptchaToken(token);
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -196,12 +183,14 @@ export default function RegisterPage() {
     setError(null);
     setInfo('Creando tu cuenta...');
     try {
+      // Token de v3 fresco: caduca en 2 minutos, se pide justo antes de enviar.
+      const v3Token = (await v3ExecutorRef.current?.()) ?? null;
       const verifyRes = await fetch('/api/verify-recaptcha', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: captchaToken, siteKey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_CISZUBOT, version: 'v2' }),
+        body: JSON.stringify({ v2Token: captchaToken, v3Token, action: 'register' }),
       });
-      const verifyData = await verifyRes.json();
+      const verifyData = await verifyRes.json().catch(() => ({}));
       if (!verifyData.success) {
         throw new Error(verifyData.error || 'Verificación de reCAPTCHA fallida');
       }
@@ -224,16 +213,15 @@ export default function RegisterPage() {
         throw signUpError;
       }
 
-      if (data.session) {
-        router.replace('/dashboard');
-        return;
-      }
-
-      setInfo('Cuenta creada. Ya puedes iniciar sesión con CISZU ID.');
+      // Tras registrarse hay que INICIAR SESIÓN de nuevo: supabase-js deja una
+      // sesión creada al vuelo y entrar directo saltaba la verificación.
+      await supabase.auth.signOut().catch(() => {});
+      setInfo('Cuenta creada. Revisa tu email y vuelve a iniciar sesión con CISZU ID.');
       setTimeout(() => router.replace('/login'), 1800);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo registrar la cuenta. Intenta de nuevo.');
       setInfo(null);
+      setCaptchaResetKey((k) => k + 1);
     } finally {
       setLoading(false);
     }
@@ -385,13 +373,14 @@ export default function RegisterPage() {
               </div>
               {errors.marketing && <p className="text-red-400 text-[11px] font-bold px-1">{errors.marketing}</p>}
 
-              <div className="flex flex-col items-center gap-2">
-                <ReCAPTCHA
-                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_CISZUBOT || ''}
-                  onChange={handleCaptchaChange}
-                />
-                {!captchaToken && <span className="text-gray-500 text-[10px] font-bold">Completa el reCAPTCHA</span>}
-              </div>
+              <RecaptchaGate
+                siteKeyV2={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_CISZUBOT || ''}
+                siteKeyV3={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_CISZUBOT || ''}
+                action="register"
+                onV2Token={setCaptchaToken}
+                v3ExecutorRef={v3ExecutorRef}
+                resetKey={captchaResetKey}
+              />
 
               <button
                 type="submit"

@@ -132,6 +132,28 @@ export { default as AuthSecondaryActions } from './auth/AuthSecondaryActions';
 export type { AuthSecondaryActionsProps } from './auth/AuthSecondaryActions';
 export { default as AuthBenefitsPanel } from './auth/AuthBenefits';
 export type { AuthBenefitsPanelProps, AuthBenefit } from './auth/AuthBenefits';
+// reCAPTCHA v2 + v3 en formularios de auth (widget visible + token invisible)
+export { default as RecaptchaGate, loadRecaptcha } from './auth/RecaptchaGate';
+export type { RecaptchaGateProps } from './auth/RecaptchaGate';
+// Recuperación de contraseña: aviso de enlace inválido/expirado + recordatorio de un solo uso
+export {
+  default as RecoveryNotice,
+  RecoveryOneUseNotice,
+  WarningTriangleIcon,
+  VerifiedShieldIcon,
+} from './auth/RecoveryNotice';
+export type { RecoveryNoticeProps, RecoveryNoticeTone } from './auth/RecoveryNotice';
+// 2FA por email: pantalla de clave temporal C-123 434 con caducidad y reenvíos
+export {
+  default as AuthCodePanel,
+  formatAuthCodeInput,
+  isAuthCodeComplete,
+  useCountdown,
+} from './auth/AuthCodePanel';
+export type { AuthCodePanelProps, AuthCodePanelState } from './auth/AuthCodePanel';
+// 2FA por email: pantalla completa lista para conectar a /api/auth/2fa
+export { default as TwoFactorGate } from './auth/TwoFactorGate';
+export type { TwoFactorGateProps } from './auth/TwoFactorGate';
 export { default as PreferencesModal } from './auth/PreferencesModal';
 export type { PreferencesModalProps } from './auth/PreferencesModal';
 // LanguagesModal: selector de idioma en modal centrado (preferencias locales, misma lista que el hamburguesa)

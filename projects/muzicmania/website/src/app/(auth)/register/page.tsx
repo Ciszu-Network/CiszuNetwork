@@ -4,8 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
-import { Button, useToast, useActivityGuard, AuthBenefitsPanel, AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders, setCookieConsent } from '@ciszu/ui';
-import ReCAPTCHA from 'react-google-recaptcha';
+import { Button, useToast, useActivityGuard, AuthBenefitsPanel, AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders, setCookieConsent, RecaptchaGate } from '@ciszu/ui';
 import CountrySelect from '@/components/atoms/CountrySelect';
 import DateSelect from '@/components/atoms/DateSelect';
 import { useAppStore } from '@/store/useAppStore';
@@ -136,6 +135,9 @@ export default function RegisterPage() {
     acceptedMarketing: false,
     captchaToken: null as string | null
   });
+  // El token de v2 es de un solo uso: cada envío fallido reinicia el widget.
+  const [captchaResetKey, setCaptchaResetKey] = React.useState(0);
+  const v3ExecutorRef = React.useRef<(() => Promise<string | null>) | null>(null);
 
   // Guard de acciones no recuperables: registro con contenido → no navegar sin aviso.
   useEffect(() => {
@@ -263,12 +265,14 @@ export default function RegisterPage() {
 
     setFeedback({ isVisible: true, type: 'loading', title: 'Registrando', message: 'Verificando disponibilidad de cuenta...' });
     try {
+      // Token de v3 fresco: caduca en 2 minutos, se pide justo antes de enviar.
+      const v3Token = (await v3ExecutorRef.current?.()) ?? null;
       const verifyRes = await fetch('/api/verify-recaptcha', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: form.captchaToken, siteKey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_MUZIC, version: 'v2' }),
+        body: JSON.stringify({ v2Token: form.captchaToken, v3Token, action: 'register' }),
       });
-      const verifyData = await verifyRes.json();
+      const verifyData = await verifyRes.json().catch(() => ({}));
       if (!verifyData.success) {
         throw new Error(verifyData.error || 'Verificación de reCAPTCHA fallida');
       }
@@ -315,6 +319,10 @@ export default function RegisterPage() {
           throw new Error('Este email ya está registrado. Intenta iniciar sesión o recuperar tu contraseña.');
         }
 
+        // Tras registrarse hay que INICIAR SESIÓN de nuevo: supabase-js deja una
+        // sesión creada al vuelo y entrar directo saltaba la verificación.
+        await supabase.auth.signOut().catch(() => {});
+
         setFeedback({ 
           isVisible: true, 
           type: 'success', 
@@ -333,6 +341,7 @@ export default function RegisterPage() {
         title: 'Fallo de Registro', 
         message: err.message || 'Error desconocido' 
       });
+      setCaptchaResetKey((k) => k + 1);
     } finally {
       setLoading(false);
     }
@@ -469,19 +478,20 @@ export default function RegisterPage() {
                 {errors.acceptedMarketing && <span className="text-red-500 text-[10px] font-bold ml-8">{errors.acceptedMarketing}</span>}
 
                 <div className="pt-2 flex flex-col items-center gap-2">
-                  <ReCAPTCHA
-                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_MUZIC || ''}
-                  theme="dark"
-                  onChange={(val: string | null) => {
-                    setForm(prev => ({ ...prev, captchaToken: val }));
-                    setErrors(prev => ({ ...prev, captcha: '' }));
-                  }}
-                  onExpired={() => {
-                    setForm(prev => ({ ...prev, captchaToken: null }));
-                  }}
-                />
-                {errors.captcha && <span className="text-red-500 text-[10px] font-bold">{errors.captcha}</span>}
-              </div>
+                  <RecaptchaGate
+                    siteKeyV2={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_MUZIC || ''}
+                    siteKeyV3={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_MUZIC || ''}
+                    action="register"
+                    theme="dark"
+                    onV2Token={(val) => {
+                      setForm(prev => ({ ...prev, captchaToken: val }));
+                      setErrors(prev => ({ ...prev, captcha: '' }));
+                    }}
+                    v3ExecutorRef={v3ExecutorRef}
+                    resetKey={captchaResetKey}
+                  />
+                  {errors.captcha && <span className="text-red-500 text-[10px] font-bold">{errors.captcha}</span>}
+                </div>
             </div>
 
               <div className="pt-4">

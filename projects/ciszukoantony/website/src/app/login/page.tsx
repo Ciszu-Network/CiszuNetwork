@@ -16,8 +16,17 @@ import {
   OAuthProviders,
   useToast,
   useActivityGuard,
+  RecaptchaGate,
+  RecoveryOneUseNotice,
+  TwoFactorGate,
 } from '@ciszu/ui';
-import ReCAPTCHA from 'react-google-recaptcha';
+import {
+  describeDuration,
+  evaluateRecoveryRequest,
+  readRequestTimestamps,
+  recordRecoveryRequest,
+  writeRequestedAt,
+} from '@ciszunetwork/utils';
 
 const IconMail = () => (
   <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -102,22 +111,12 @@ export default function LoginPage() {
   const [localError, setLocalError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  // El token de v2 es de un solo uso: cada envío fallido reinicia el widget.
+  const [captchaResetKey, setCaptchaResetKey] = useState(0);
+  const v3ExecutorRef = React.useRef<(() => Promise<string | null>) | null>(null);
+  // Sesión a medio autenticar: la contraseña ya es válida pero falta la clave 2FA.
+  const [twoFactor, setTwoFactor] = useState<{ token: string; email: string } | null>(null);
   const { toast } = useToast();
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const script = document.createElement('script');
-    script.src = 'https://www.google.com/recaptcha/api.js';
-    script.async = true;
-    document.head.appendChild(script);
-    return () => {
-      document.head.removeChild(script);
-    };
-  }, []);
-
-  const handleCaptchaChange = (token: string | null) => {
-    setCaptchaToken(token);
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -148,12 +147,14 @@ export default function LoginPage() {
     }
     setLoading(true);
     try {
+      // Token de v3 fresco: caduca en 2 minutos, se pide justo antes de enviar.
+      const v3Token = (await v3ExecutorRef.current?.()) ?? null;
       const verifyRes = await fetch('/api/verify-recaptcha', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: captchaToken, siteKey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_CISZUKOANTONY, version: 'v3' }),
+        body: JSON.stringify({ v2Token: captchaToken, v3Token, action: 'login' }),
       });
-      const verifyData = await verifyRes.json();
+      const verifyData = await verifyRes.json().catch(() => ({}));
       if (!verifyData.success) {
         throw new Error(verifyData.error || 'Verificación de reCAPTCHA fallida');
       }
@@ -169,10 +170,27 @@ export default function LoginPage() {
           : error.message);
       }
 
+      // Si la cuenta tiene la verificación en dos pasos activa EN ESTA WEB, la
+      // sesión no se da por buena todavía: se pide la clave antes de entrar.
+      const accessToken = data.session?.access_token;
+      if (accessToken) {
+        const twoFactorStatus = await fetch('/api/auth/2fa/status', {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        })
+          .then((res) => res.json())
+          .catch(() => null);
+
+        if (twoFactorStatus?.enabled) {
+          setTwoFactor({ token: accessToken, email: data.user?.email ?? '' });
+          return;
+        }
+      }
+
       setTimeout(() => router.push('/'), 900);
     } catch (err: any) {
       console.error('[LOGIN ERROR]:', err);
       setLocalError(err.message || 'Error desconocido al iniciar sesión');
+      setCaptchaResetKey((k) => k + 1);
     } finally {
       setLoading(false);
     }
@@ -185,12 +203,22 @@ export default function LoginPage() {
       setErrors(prev => ({ ...prev, email: 'Introduce un email válido' }));
       return;
     }
+    // Hay que esperar 12 horas si se piden demasiados enlaces seguidos.
+    const policy = evaluateRecoveryRequest({ timestamps: readRequestTimestamps() });
+    if (!policy.allowed) {
+      setLocalError(`Demasiadas peticiones de enlace. Vuelve a intentarlo en ${describeDuration(policy.waitMs)}.`);
+      return;
+    }
     setLoading(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail.trim(), {
         redirectTo: `${window.location.origin}/reset-password`,
       });
       if (error) throw error;
+      // Se registra la petición y su hora: permite aplicar las 12 h y calcular
+      // después en /reset-password el instante exacto en que el enlace caducó.
+      recordRecoveryRequest();
+      writeRequestedAt();
       setSent(true);
     } catch (err: any) {
       console.error('[FORGOT ERROR]:', err);
@@ -199,6 +227,29 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  // Pantalla de verificación en dos pasos: sustituye al formulario de acceso.
+  if (twoFactor) {
+    return (
+      <div className="min-h-screen pt-28 pb-20 px-4 relative overflow-hidden">
+        <div className="max-w-md mx-auto relative">
+          <div className="p-6 md:p-8 bg-doc-dark border border-white/10 rounded-3xl shadow-2xl backdrop-blur-3xl">
+            <TwoFactorGate
+              accessToken={twoFactor.token}
+              email={twoFactor.email}
+              siteName="Ciszuko Antony"
+              onVerified={() => router.push('/')}
+              onCancel={() => {
+                setTwoFactor(null);
+                void supabase.auth.signOut();
+                setLocalError('Verificación cancelada. Vuelve a iniciar sesión cuando tengas la clave.');
+              }}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pt-28 pb-20 px-4 relative overflow-hidden">
@@ -239,6 +290,7 @@ export default function LoginPage() {
                   error={errors.email}
                   requirements={['Formato de email válido (p. ej. nombre@dominio.com)', 'Debe ser la cuenta CISZU ID registrada']}
                 />
+                <RecoveryOneUseNotice />
                 {localError && <p className="text-red-400 text-[11px] font-bold">{localError}</p>}
                 {sent ? (
                   <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-center">
@@ -291,13 +343,14 @@ export default function LoginPage() {
 
                   {localError && <p className="text-red-400 text-[11px] font-bold">{localError}</p>}
 
-                  <div className="flex justify-center">
-                    <ReCAPTCHA
-                      size="invisible"
-                      sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_CISZUKOANTONY || ''}
-                      onChange={handleCaptchaChange}
-                    />
-                  </div>
+                  <RecaptchaGate
+                    siteKeyV2={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_CISZUKOANTONY || ''}
+                    siteKeyV3={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_CISZUKOANTONY || ''}
+                    action="login"
+                    onV2Token={setCaptchaToken}
+                    v3ExecutorRef={v3ExecutorRef}
+                    resetKey={captchaResetKey}
+                  />
 
                   <motion.button
                     type="submit"

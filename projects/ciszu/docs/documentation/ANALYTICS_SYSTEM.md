@@ -283,3 +283,14 @@ PostHog (producto) + Sentry (errores) + Vercel SI (CWV) + UptimeRobot (uptime) +
 
 _Última revisión: 13 ago 2026._ Relacionado: `CLOUDFLARE_SYSTEM` → `CDN_SYSTEM.md`,
 `MONITORING_SYSTEM.md`, `ERRORS_SYSTEM.md`, `CACHING_SYSTEM.md`, `STATISTICS_SYSTEM.md`.
+
+## Verificación del bloque GA4 + GTM + AdSense (19 sep 2026)
+
+Comprobado en las 4 webs: `ads.txt` servido con el publisher id correcto,
+`GoogleScripts` en el `layout.tsx`, IDs de GTM/GA4/AdSense presentes y CSP con
+los orígenes de Google en `script-src`, `img-src`, `connect-src` y `frame-src`.
+
+Queda **configuración externa** (aprobación de AdSense, unidades por sitio,
+comprobación en tiempo real de GA4, publicación de contenedores GTM y panel de
+Looker Studio): la lista con casillas está en
+**`AUTH_HARDENING_SYSTEM.md` §8**.

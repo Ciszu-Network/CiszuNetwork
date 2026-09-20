@@ -1,51 +1,30 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-import { createRateLimiter } from '@ciszunetwork/utils';
+import { authenticate } from '../_lib';
 
-// Cliente admin bajo demanda: evita ejecutar createClient al importar el módulo,
-// que rompía `next build` cuando la env var no está disponible durante el build.
-function createAdminClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) {
-    throw new Error('Supabase admin no configurado (NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY)');
-  }
-  return createClient(url, key);
-}
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
-const rateLimiter = createRateLimiter({ windowMs: 60_000, max: 5 });
-
+/**
+ * Emite (o reutiliza) el código 2FA de CiszuBot y lo envía por email.
+ *
+ * Antes esta ruta generaba el código, lo guardaba y hacía `console.log`: el
+ * usuario nunca lo recibía. Ahora el resultado del envío forma parte de la
+ * respuesta, así que un fallo del proveedor se ve en vez de fingir éxito.
+ */
 export async function POST(request: Request) {
-  const ip = request.headers.get('x-forwarded-for') || 'unknown';
-  if (!rateLimiter.allow(ip)) {
-    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+  const user = await authenticate(request);
+  if (!user) {
+    return NextResponse.json({ success: false, error: 'No autorizado.' }, { status: 401 });
   }
 
   try {
-    const supabase = createAdminClient();
-    const { userId, website, email } = await request.json();
-
-    if (!userId || !website || !email) {
-      return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
-    }
-
-    const code = `C-${Math.floor(100 + Math.random() * 900)} ${Math.floor(100 + Math.random() * 900)}`;
-    const expiresAt = new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString();
-
-    const { error } = await supabase.from('two_factor_codes').insert({
-      user_id: userId,
-      website,
-      code,
-      expires_at: expiresAt,
-    });
-
-    if (error) throw error;
-
-    // TODO: Send email with the code using Resend/Supabase email
-    console.log(`[2FA] Code for ${email} on ${website}: ${code}`);
-
-    return NextResponse.json({ success: true, message: 'Code sent' });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    const { twoFactorService } = await import('../_lib');
+    const result = await twoFactorService().request({ userId: user.userId, email: user.email });
+    return NextResponse.json(result.body, { status: result.status });
+  } catch (err) {
+    return NextResponse.json(
+      { success: false, error: err instanceof Error ? err.message : 'Error interno.' },
+      { status: 500 },
+    );
   }
 }

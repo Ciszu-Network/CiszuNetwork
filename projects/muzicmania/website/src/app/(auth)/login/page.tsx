@@ -3,8 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
-import { Button, useToast, useActivityGuard, AuthBenefitsPanel, AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders } from '@ciszu/ui';
-import ReCAPTCHA from 'react-google-recaptcha';
+import { Button, useToast, useActivityGuard, AuthBenefitsPanel, AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders, RecaptchaGate, RecoveryOneUseNotice, TwoFactorGate } from '@ciszu/ui';
+import {
+  describeDuration,
+  evaluateRecoveryRequest,
+  readRequestTimestamps,
+  recordRecoveryRequest,
+  writeRequestedAt,
+} from '@ciszunetwork/utils';
 import { supabase } from '@/config/supabase';
 import { useAppStore } from '@/store/useAppStore';
 import { useRouter } from 'next/navigation';
@@ -117,7 +123,12 @@ export default function LoginPage() {
     title: '',
     message: ''
   });
-  const [needs2FA, setNeeds2FA] = useState(false); // Simulando flujo 2FA
+  // El token de v2 es de un solo uso: cada envío fallido reinicia el widget.
+  const [captchaResetKey, setCaptchaResetKey] = useState(0);
+  const v3ExecutorRef = React.useRef<(() => Promise<string | null>) | null>(null);
+  const [needs2FA, setNeeds2FA] = useState(false);
+  // Sesión a medio autenticar: la contraseña ya es válida pero falta la clave 2FA.
+  const [twoFactor, setTwoFactor] = useState<{ token: string; email: string } | null>(null);
 
   useEffect(() => {
     // Si ya hay usuario logeado, mandarlo a su perfil o pedirle que cierre sesión.
@@ -170,12 +181,14 @@ export default function LoginPage() {
 
     setFeedback({ isVisible: true, type: 'loading', title: 'Verificando', message: 'Iniciando sesión en el sistema...' });
     try {
+      // Token de v3 fresco: caduca en 2 minutos, se pide justo antes de enviar.
+      const v3Token = (await v3ExecutorRef.current?.()) ?? null;
       const verifyRes = await fetch('/api/verify-recaptcha', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: form.captchaToken, siteKey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_MUZIC, version: 'v3' }),
+        body: JSON.stringify({ v2Token: form.captchaToken, v3Token, action: 'login' }),
       });
-      const verifyData = await verifyRes.json();
+      const verifyData = await verifyRes.json().catch(() => ({}));
       if (!verifyData.success) {
         throw new Error(verifyData.error || 'Verificación de reCAPTCHA fallida');
       }
@@ -217,6 +230,22 @@ export default function LoginPage() {
             throw new Error('Credenciales inválidas. Verifica tu usuario/email y contraseña.');
           }
           throw error;
+        }
+
+        // Si la cuenta tiene la verificación en dos pasos activa EN ESTA WEB, la
+        // sesión no se da por buena todavía: se pide la clave antes de entrar.
+        const accessToken = data.session?.access_token;
+        if (accessToken) {
+          const twoFactorStatus = await fetch('/api/auth/2fa/status', {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          })
+            .then((res) => res.json())
+            .catch(() => null);
+
+          if (twoFactorStatus?.enabled) {
+            setTwoFactor({ token: accessToken, email: data.user?.email ?? '' });
+            return;
+          }
         }
 
         // Obtener datos extendidos del perfil
@@ -263,7 +292,9 @@ export default function LoginPage() {
         }, 1500);
 
       } else {
-        toast('[SISTEMA]: 2FA no implementado en esta versión beta.', 'warning');
+        // La rama 2FA vive ahora en `twoFactor` (TwoFactorGate), que solo se
+        // activa cuando la API confirma que el 2FA está activo en esta web.
+        toast('[SISTEMA]: Inicia sesión con tu contraseña para completar la verificación en dos pasos.', 'info');
       }
     } catch (err: any) {
       setFeedback({ 
@@ -286,56 +317,35 @@ export default function LoginPage() {
       return;
     }
 
+    // Hay que esperar 12 horas si se piden demasiados enlaces seguidos.
+    const policy = evaluateRecoveryRequest({ timestamps: readRequestTimestamps() });
+    if (!policy.allowed) {
+      setErrors({ email: `Demasiadas peticiones de enlace. Vuelve a intentarlo en ${describeDuration(policy.waitMs)}.` });
+      return;
+    }
+
     setLoading(true);
 
     try {
-      if (!forgotStep2) {
-        // Enviar código de reseteo
-        const { error } = await supabase.auth.resetPasswordForEmail(form.identifier);
-        if (error) throw error;
-        
-        setFeedback({
-          isVisible: true,
-          type: 'success',
-          title: 'Código Enviado',
-          message: 'Revisa tu bandeja de entrada o spam. Hemos enviado el código de verificación.'
-        });
-        setForgotStep2(true);
-      } else {
-        // Validar contraseña
-        if (form.password.length < 8) {
-          throw new Error('La contraseña debe tener al menos 8 caracteres');
-        }
-        if (form.password !== form.confirmPassword) {
-          throw new Error('Las contraseñas no coinciden');
-        }
+      // Se envía el enlace y se sigue en la PÁGINA DEDICADA /reset-password.
+      // Antes esta pantalla pedía el código y la contraseña nueva aquí mismo,
+      // en dos pasos dentro del login, que es justo lo que confundía.
+      const { error } = await supabase.auth.resetPasswordForEmail(form.identifier.trim(), {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
 
-        // Recuperar sesión y establecer nueva contraseña
-        const { error: verifyError } = await supabase.auth.verifyOtp({
-          email: form.identifier,
-          token: form.twoFactor,
-          type: 'recovery'
-        });
-        
-        if (verifyError) throw verifyError;
+      // Se registra la petición y su hora: permite aplicar las 12 h y calcular
+      // después en /reset-password el instante exacto en que el enlace caducó.
+      recordRecoveryRequest();
+      writeRequestedAt();
 
-        const { error: updateError } = await supabase.auth.updateUser({
-          password: form.password
-        });
-
-        if (updateError) throw updateError;
-
-        setFeedback({
-          isVisible: true,
-          type: 'success',
-          title: 'Identidad Restaurada',
-          message: 'Tu contraseña ha sido actualizada. Iniciando sesión...'
-        });
-
-        setTimeout(() => {
-          router.push('/');
-        }, 1500);
-      }
+      setFeedback({
+        isVisible: true,
+        type: 'success',
+        title: 'Enlace enviado',
+        message: 'Abre el enlace del correo para establecer tu contraseña nueva. Es de un solo uso y caduca en 1 hora.'
+      });
     } catch (err: any) {
       setFeedback({
         isVisible: true,
@@ -347,6 +357,28 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  // Pantalla de verificación en dos pasos: sustituye al formulario de acceso.
+  if (twoFactor) {
+    return (
+      <MainLayout>
+        <div className="min-h-[70vh] flex items-center justify-center px-4 py-20">
+          <div className="w-full max-w-md p-6 md:p-8 bg-white/5 border border-white/10 rounded-3xl shadow-2xl backdrop-blur-3xl">
+            <TwoFactorGate
+              accessToken={twoFactor.token}
+              email={twoFactor.email}
+              siteName="MuzicMania"
+              onVerified={() => router.push('/')}
+              onCancel={() => {
+                setTwoFactor(null);
+                void supabase.auth.signOut();
+              }}
+            />
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout>
@@ -421,16 +453,17 @@ export default function LoginPage() {
               </AnimatePresence>
 
               <div className="pt-2 flex flex-col items-center gap-2">
-                <ReCAPTCHA
-                  size="invisible"
-                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_MUZIC || ''}
-                  onChange={(val: string | null) => {
+                <RecaptchaGate
+                  siteKeyV2={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_MUZIC || ''}
+                  siteKeyV3={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_MUZIC || ''}
+                  action="login"
+                  theme="dark"
+                  onV2Token={(val) => {
                     setForm(prev => ({ ...prev, captchaToken: val }));
                     if (val) setErrors(prev => ({ ...prev, captcha: '' }));
                   }}
-                  onExpired={() => {
-                    setForm(prev => ({ ...prev, captchaToken: null }));
-                  }}
+                  v3ExecutorRef={v3ExecutorRef}
+                  resetKey={captchaResetKey}
                 />
                 {errors.captcha && <span className="text-red-500 text-[10px] font-bold">{errors.captcha}</span>}
               </div>
