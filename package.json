@@ -47,6 +47,8 @@
                     "api:test:report":  "node scripts/run-bru.js run . -r --env prod --exclude-tags local --reporter-json ../.opencode/temp/bru-report.json",
                     "api:test:local":  "node scripts/run-bru.js run . -r --env prod",
                     "test":  "vitest run",
+                    "verify:i18n":  "tsx scripts/verify-i18n.ts",
+                    "verify:i18n:baseline":  "tsx scripts/verify-i18n.ts --update-baseline",
                     "test:watch":  "vitest",
                     "test:ui":  "vitest --ui",
                     "e2e":  "playwright test",

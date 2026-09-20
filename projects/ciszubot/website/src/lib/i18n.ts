@@ -1,3 +1,5 @@
+import { applyDialect } from '@ciszunetwork/utils/i18n-audit';
+
 export type Lang = 'es-latam' | 'es-es' | 'en-us' | 'en-uk';
 
 export const INVITE_URL =
@@ -392,7 +394,7 @@ const es = {
   leaderboardPage: {
     title: 'Ranking',
     subtitle: 'Top usuarios por economía de CiszuBot.',
-    comingSoon: '',
+    comingSoon: 'Próximamente: clasificación por comandos usados, niveles y servidores.',
     back: 'Volver al inicio',
   },
   forumPage: {
@@ -851,29 +853,91 @@ const en = {
   },
 };
 
+/**
+ * Español (España): variante PROPIA, individual de Latam.
+ *
+ * Antes esto era una copia superficial de es-latam con los mismos textos, así
+ * que elegir "Español España" no cambiaba nada visible. Aquí van las
+ * diferencias de vocabulario reales del castellano de España.
+ */
+const esEs: typeof es = {
+  ...es,
+  nav: {
+    ...es.nav,
+    about: 'Sobre',
+    reviews: 'Opiniones',
+  },
+  hero: {
+    ...es.hero,
+    ctaInvite: 'Añadir a Discord',
+  },
+  footer: {
+    ...es.footer,
+    madeBy: 'Hecho con cariño por',
+  },
+  cookiesBanner: {
+    ...es.cookiesBanner,
+    text: es.cookiesBanner.text.replace('Utilizamos', 'Usamos'),
+    accept: 'DE ACUERDO',
+  },
+  statusSection: {
+    ...es.statusSection,
+    viewPage: 'Ver el estado detallado',
+  },
+  supportPage: {
+    ...es.supportPage,
+    contactDesc: 'Para asuntos legales, prensa o colaboraciones escríbenos a:',
+  },
+  descargasPage: {
+    ...es.descargasPage,
+    subtitle: es.descargasPage.subtitle.replace(
+      'la PDWA (App de Escritorio Progresiva)',
+      'la PDWA (Aplicación de Escritorio Progresiva)'
+    ),
+  },
+  feedbackPage: {
+    ...es.feedbackPage,
+    messagePlaceholder: 'Cuéntanos qué ha pasado o qué te gustaría que añadiésemos…',
+  },
+  faqPage: {
+    ...es.faqPage,
+    items: es.faqPage.items.map((f) => ({ ...f })),
+  },
+};
+
+/**
+ * English (UK): variante PROPIA, individual de US.
+ *
+ * Se deriva de en-us con el dialecto británico compartido (ortografía -our/-re,
+ * -ise y licence) más la terminología propia del Reino Unido.
+ */
+const enUk: typeof en = {
+  ...applyDialect(en, 'en-uk'),
+  cookiesBanner: {
+    ...en.cookiesBanner,
+  },
+  legalPage: {
+    ...en.legalPage,
+    sections: en.legalPage.sections.map((s) =>
+      s.h === '3. Intellectual property'
+        ? {
+            ...s,
+            p: 'CiszuBot, its logo, brand and code are owned by CiszukoAntony. No licence is granted except the right to invite the Bot to a server.',
+          }
+        : { ...s }
+    ),
+  },
+  faqPage: {
+    ...en.faqPage,
+    items: en.faqPage.items.map((f) => ({ ...f })),
+  },
+};
+
 export const dict = {
   'es-latam': es,
-  // Español (España): variante propia, individual de Latam.
-  'es-es': {
-    ...es,
-    supportPage: {
-      ...es.supportPage,
-      faq: es.supportPage.faq.map((f) => ({ ...f })),
-    },
-  },
+  'es-es': esEs,
   'en-us': en,
-  // English (UK): variante propia, individual de US.
-  'en-uk': {
-    ...en,
-    legalPage: {
-      ...en.legalPage,
-      sections: en.legalPage.sections.map((s) =>
-        s.h === '3. Intellectual property'
-          ? { ...s, p: 'CiszuBot, its logo, brand and code are owned by CiszukoAntony. No licence is granted except the right to invite the Bot to a server.' }
-          : { ...s }
-      ),
-    },
-  },
+  'en-uk': enUk,
 } as const;
 
 type DeepString<T> = { [K in keyof T]: T[K] extends string ? string : DeepString<T[K]> };

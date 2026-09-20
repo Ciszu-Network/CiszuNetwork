@@ -17,7 +17,9 @@
     "./recaptcha": "./src/recaptcha.ts",
     "./recaptcha-route": "./src/recaptchaRoute.ts",
     "./recovery-client": "./src/recoveryClient.ts",
-    "./two-factor": "./src/twoFactor.ts"
+    "./two-factor": "./src/twoFactor.ts",
+    "./i18n-audit": "./src/i18nAudit.ts",
+    "./i18n-coverage": "./src/i18nCoverage.ts"
   },
   "scripts": {
     "lint": "tsc --noEmit",

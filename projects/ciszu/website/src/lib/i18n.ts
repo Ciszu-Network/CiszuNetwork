@@ -1,3 +1,5 @@
+import { applyDialect } from '@ciszunetwork/utils/i18n-audit';
+
 export type Lang = 'es-latam' | 'es-es' | 'en-us' | 'en-uk';
 
 export const CISZU_NETWORK = 'https://ciszunetwork.vercel.app';
@@ -224,17 +226,63 @@ const en = {
   },
 };
 
-const enGb = {
-  ...en,
+/**
+ * Español (España).
+ *
+ * NO es una copia de es-latam: hasta ahora `'es-es': es` apuntaba al MISMO
+ * objeto, así que elegir "Español España" no cambiaba nada. Aquí van las
+ * diferencias de vocabulario reales del castellano de España.
+ */
+const esEs: typeof es = {
+  ...es,
+  nav: {
+    ...es.nav,
+    about: 'Sobre',
+    reviews: 'Opiniones',
+    download: 'Descargas',
+  },
   footer: {
-    ...en.footer,
-    whatsappDirect: 'Direct WhatsApp',
+    ...es.footer,
+    madeBy: 'Hecho con cariño por',
+  },
+  auth: {
+    ...es.auth,
+    login: 'Acceder',
+  },
+  common: {
+    ...es.common,
+    learnMore: 'Más información',
+    showMore: 'Ver más',
+    showLess: 'Ver menos',
+    lightMode: 'Modo claro',
+    darkMode: 'Modo oscuro',
+  },
+  cookies: {
+    ...es.cookies,
+    text: es.cookies.text.replace('Utilizamos', 'Usamos'),
+    accept: 'DE ACUERDO',
+  },
+};
+
+/**
+ * English (UK).
+ *
+ * Se deriva de en-us con el dialecto británico compartido (ortografía -our/-re
+ * y -ise), más el uso de minúscula en los nombres de ajuste, que en inglés
+ * británico no van en mayúscula inicial.
+ */
+const enGb: typeof en = {
+  ...applyDialect(en, 'en-uk'),
+  common: {
+    ...en.common,
+    lightMode: 'Light mode',
+    darkMode: 'Dark mode',
   },
 };
 
 export const dict = {
   'es-latam': es,
-  'es-es': es,
+  'es-es': esEs,
   'en-us': en,
   'en-uk': enGb,
 } as const;
