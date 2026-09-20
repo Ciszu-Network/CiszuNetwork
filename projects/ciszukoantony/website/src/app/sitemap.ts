@@ -13,6 +13,8 @@ const ROUTES = [
   'donate',
   'faq',
   'feedback',
+  'help',
+  'information',
   'policies',
   'projects',
   'support',

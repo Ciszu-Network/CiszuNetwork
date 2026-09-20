@@ -431,6 +431,21 @@ const es = {
     comingSoon: 'Próximamente: guías paso a paso y respuestas a preguntas frecuentes.',
     back: 'Volver al inicio',
   },
+  faqPage: {
+    title: 'Preguntas Frecuentes',
+    subtitle: 'Respuestas rápidas a las dudas más comunes sobre CiszuBot.',
+    back: 'Volver al inicio',
+    items: [
+      { q: '¿Cómo invito a CiszuBot a mi servidor?', a: 'Usa el botón «Invitar» en la página principal y elige el servidor. Necesitas permisos de «Gestionar servidor» en Discord.' },
+      { q: '¿Cuál es el prefijo del bot?', a: 'El prefijo es cz!. También puedes usar los slash commands escribiendo / en Discord.' },
+      { q: '¿CiszuBot es gratis?', a: 'Sí, el bot es completamente gratuito. En el futuro puede haber donaciones opcionales para apoyar el desarrollo.' },
+      { q: '¿Qué datos almacena el bot?', a: 'Solo registra un contador de comandos ejecutados y el estado de conexión. No se almacenan mensajes ni datos personales. Ver la política de privacidad.' },
+      { q: '¿Puedo reportar un bug o pedir un comando?', a: 'Sí. Entra al servidor de Discord y usa el canal de soporte con una descripción del problema o tu idea.' },
+      { q: '¿Cómo cambio el idioma del bot?', a: 'CiszuBot detecta el idioma del servidor automáticamente. Actualmente soporta español latino, español España, inglés US y inglés UK.' },
+      { q: '¿Los comandos funcionan en mensajes privados?', a: 'Algunos comandos de utilidad sí, pero la mayoría requieren estar en un servidor con permisos adecuados.' },
+      { q: '¿Cómo solicito soporte oficial?', a: 'Escríbenos a ciszunetwork@gmail.com o únete al servidor de Discord de Ciszu Network.' },
+    ],
+  },
 };
 
 const en = {
@@ -818,6 +833,21 @@ const en = {
     subtitle: 'Help center: FAQ, tutorials and troubleshooting.',
     comingSoon: 'Coming soon: step-by-step guides and frequently asked questions.',
     back: 'Back to home',
+  },
+  faqPage: {
+    title: 'Frequently Asked Questions',
+    subtitle: 'Quick answers to the most common questions about CiszuBot.',
+    back: 'Back to home',
+    items: [
+      { q: 'How do I invite CiszuBot to my server?', a: 'Use the «Invite» button on the home page and choose the server. You need «Manage server» permissions in Discord.' },
+      { q: "What is the bot's prefix?", a: 'The prefix is cz!. You can also use slash commands by typing / in Discord.' },
+      { q: 'Is CiszuBot free?', a: 'Yes, the bot is completely free. Optional donations may come in the future to support development.' },
+      { q: 'What data does the bot store?', a: 'It only logs a counter of executed commands and connection status. No messages or personal data are stored. See the privacy policy.' },
+      { q: 'Can I report a bug or request a command?', a: 'Yes. Join the Discord server and use the support channel with a description of the issue or your idea.' },
+      { q: 'How do I change the bot language?', a: 'CiszuBot auto-detects the server language. It currently supports Latin American Spanish, Spain Spanish, US English and UK English.' },
+      { q: 'Do commands work in direct messages?', a: 'Some utility commands do, but most require a server with the appropriate permissions.' },
+      { q: 'How do I request official support?', a: 'Email us at ciszunetwork@gmail.com or join the Ciszu Network Discord server.' },
+    ],
   },
 };
 
