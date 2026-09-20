@@ -22,6 +22,7 @@ const ROUTES = [
    'forum',
   'documentation',
   'help',
+  'information',
   'projects/ciszugamens',
   'projects/ciszubot',
   'projects/ciszunetwork',
