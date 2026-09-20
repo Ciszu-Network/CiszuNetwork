@@ -27,10 +27,9 @@
 - [ ] Al cerrar sesion manual o automaticamente SIEMPRE redirigir a /index o home de la webpage.
 - [ ] Si el usuario entra a un enlace expirado o no invalido nunca se debe iniciarse sesion, es decir, primero evalua el enlace y verificalo en caso de que este bien si inicia sesion temporalmente hasta que cambie su contraseña pero si sale da error.
 - [ ] TODAS las paginas de registro deben tener el recaptacha al final del formulario antes del boton de registrarse. Actualmente el sistema de recaptchas de los sitiowebs estaban rotos por que no habia creado los proyectos y sus ids / tokens eran inexistentes. Implementa las veresiones 2 y 3 de cada catpcha de cada website. Debemos implementar esto aun, no aparecen en los register. (Solucionar problemas de recaptcha)
-- [ ] En la pagina de review de muzicmania, La seccion de confianza y trustpilot se debe usar el widget en vez de un label de truspilot.
-- [x] Terminar de indexar TODAS las paginas a la seccion de information de cada website y quitarlos del header para no duplicar inncesariamente. (Hecho en las 4 webs: el header queda con pocas páginas clave y el desplegable "Information" es el índice completo, siempre visible.)
+- [ ] Arreglar error de los headers. Necesito que saques de la seccion de information en el header a reviews, stats, leaderboard, downloads, changelogs y feedback.
 - [ ] Terminar paginas de information como team, help, faq, about e information estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
-- [ ] Existe un problema en las paginas de donacion, en ciszunetwork las opciones estan duplicadas debajo. En las paginas de donacion de ciszubot y ciszunetwork los widgets embedidos fallan
+- [ ] Exite un problema en las paginas de donacion de ciszubot y ciszunetwork los widgets embedidos fallan
 
     ERR_BLOCKED_BY_RESPONSE
 
@@ -54,12 +53,10 @@
 - [ ] Terminar idiomas en ingles USA.
 - [ ] Terminar idiomas en español LATAM.
 - [ ] Terminar idiomas en español España.
-- [x] Arreglar problema claro en la cantidad de paginas en el header de ciszubot. En zoom 100% la seccion de information se esconde, debemos acomodar y corregir esto. (Header reducido a Inicio/Comandos/Estadísticas/Descargas; "Information" siempre visible con las 16 páginas restantes. Verificado en vivo a 1280, 1366, 1440 y 1920 px.)
 
 **Ciszuko Antony Website:**
 
 - [ ] Terminar bien el tema claro (Todos los docks, modals o cards con fondo oscuro paran a claro, los textos oscuros o negros e iconos negros o oscuros.) Actualmente esta corregido un 80% pero aun existen muchos problemas visuales, algunos textos no se persiven bien al fondo. El slidebar, fondos flotantes de menus o botones flotantes, headers bugeados con iconos ilegibles.
-- [x] #1 Mejorar sistema de certificados de ciszukoantony. Debemos definir cada certificado y nombre para que podamos clasificarlos. Actualmente existen certificados con nombres numerales o genericos que provocan que no se puedan catalogar. Visualmente se ve muy mal y varios no tienen fecha. Debemos detectar el contenido y cambiar el nombre con una nomenclatura. (Título, emisor, fecha y serial detectados del PDF real con `pdftotext`; nomenclatura de catálogo `CKO-<EMISOR>-<AAAA>-<NNN>` visible en cada card y ficha; 54 documentos con ref única y sin nombres genéricos.)
 - [ ] Terminar idiomas en ingles UK.
 - [ ] Terminar idiomas en ingles USA.
 - [ ] Terminar idiomas en español LATAM.

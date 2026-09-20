@@ -19,17 +19,10 @@ import { INVITE_URL, LOGO_ISOTIPO, LOGO_LOGOTIPO, type Dict, type Lang } from '@
 const NAV_PAGES: { href: string; key: keyof Dict['nav']; icon: string }[] = [
   { href: '/', key: 'home', icon: 'home' },
   { href: '/commands', key: 'commands', icon: 'gamepad' },
-  { href: '/stats', key: 'stats', icon: 'chart-bar' },
-  { href: '/downloads', key: 'downloads', icon: 'download' },
 ];
 
 const INFO_PAGES: { href: string; key: keyof Dict['nav']; icon: string }[] = [
   { href: '/information', key: 'information', icon: 'info' },
-  { href: '/changelog', key: 'changelog', icon: 'history' },
-  { href: '/reviews', key: 'reviews', icon: 'star' },
-  { href: '/leaderboard', key: 'leaderboard', icon: 'trophy' },
-  { href: '/forum', key: 'forum', icon: 'message' },
-  { href: '/feedback', key: 'feedback', icon: 'message' },
   { href: '/donate', key: 'donate', icon: 'heart' },
   { href: '/documentation', key: 'documentation', icon: 'file-text' },
   { href: '/help', key: 'help', icon: 'help' },
