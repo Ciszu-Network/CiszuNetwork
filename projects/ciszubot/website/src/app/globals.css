@@ -59,11 +59,22 @@
 :root {
   --bg: #f4f6fb;
   --surface: #ffffff;
+  /* Panel de cristal compartido (FAB de instalación PDWA y aviso de descarte).
+     Aquí el claro es el valor por defecto; el oscuro los redefine abajo. */
+  --ui-panel: rgba(255, 255, 255, 0.92);
+  --ui-panel-border: rgba(35, 63, 146, 0.16);
+  --ui-track: rgba(35, 63, 146, 0.12);
+  /* Porcentaje de color de marca que conserva el texto de las redes sociales
+     (100 = color puro, como en oscuro; 70 = oscurecido lo justo para AA). */
+  --brand-ink-mix: 70%;
   --card: #fbfcff;
   --border: rgba(35, 63, 146, 0.12);
   --ink: #1b2234;
   --muted: #5a6478;
-  --faint: #8b93a7;
+  /* Antes #8b93a7: sobre el fondo claro por defecto daba 3.0:1 — por debajo
+     del mínimo AA (4.5:1) para texto normal. Era la causa del texto "que no se
+     percibe al fondo" en estadísticas, alias y pies de tarjeta. */
+  --faint: #66708a;
 
   --brand-50:  #eef4ff;
   --brand-100: #dce8ff;
@@ -85,15 +96,19 @@
   --danger:  #dc2626;
   --warn:    #d97706;
 
-  --neon-blue:   #0284c7;
-  --neon-cyan:   #0891b2;
-  --neon-purple: #7c3aed;
-  --neon-pink:   #db2777;
+  --neon-blue:   #0675b1;
+  --neon-cyan:   #0c7795;
+  --neon-purple: #7739e4;
+  --neon-pink:   #ce2772;
 }
 
 .dark {
   --bg: #12141a;
   --surface: #1a1d25;
+  --ui-panel: rgba(9, 9, 14, 0.80);
+  --ui-panel-border: rgba(255, 255, 255, 0.14);
+  --ui-track: rgba(255, 255, 255, 0.12);
+  --brand-ink-mix: 100%;
   --card: #20232d;
   --border: rgba(255, 255, 255, 0.09);
   --ink: #e7eaf3;
@@ -125,6 +140,13 @@
   --neon-purple: #a855f7;
   --neon-pink:   #ff33cc;
 }
+
+/* Texto de marca sobre fondo claro: se oscurece lo mínimo para llegar a AA.
+   El blurple de Discord quedaba en 3.25:1 y violet-500 en 4.23:1 sobre el
+   fondo claro por defecto (ambos por debajo del mínimo para texto normal). */
+html:not(.dark) .text-\[\#7289DA\] { color: #596baa !important; }
+html:not(.dark) .text-\[\#7289da\] { color: #596baa !important; }
+html:not(.dark) .text-violet-500 { color: #7c54dd !important; }
 
 /* ── Modo claro (html sin .dark): superficies hardcodeadas de los docks,
    modals, dropdowns y cards pasan a la paleta clara. Los textos blancos e

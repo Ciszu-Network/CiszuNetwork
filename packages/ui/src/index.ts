@@ -90,7 +90,7 @@ export type { ScrollSpyItem } from './ScrollSpy';
 export { default as ScrollNavButton } from './ScrollNavButton';
 export type { ScrollNavButtonProps } from './ScrollNavButton';
 export { default as FlagIcon } from './FlagIcon';
-export { default as SocialIcon, SOCIAL_COLORS } from './SocialIcon';
+export { default as SocialIcon, SOCIAL_COLORS, socialInk } from './SocialIcon';
 export type { SocialPlatform } from './SocialIcon';
 export { default as ZoomWarning, useZoomStatus, dismissZoomWarning, isZoomWarningActive } from './ZoomWarning';
 export type { ZoomState, ZoomStatus } from './ZoomWarning';
@@ -116,6 +116,25 @@ export type {
 // CopyWithButton: botón de copiar junto a contenido copiable (sistema anti-copy)
 export { default as CopyWithButton, copyText } from './CopyWithButton';
 export type { CopyWithButtonProps } from './CopyWithButton';
+// KoFiPanel: panel de donación Ko-fi sin iframe (ko-fi.com envía X-Frame-Options
+// SAMEORIGIN y el navegador rechaza el embed con ERR_BLOCKED_BY_RESPONSE)
+export { default as KoFiPanel } from './KoFiPanel';
+export type { KoFiPanelProps } from './KoFiPanel';
+// InfoBlocks: bloques compartidos de las páginas de información (about/team/
+// help/faq/information) para que las 4 webs tengan la misma estructura.
+export { InfoHero, InfoLinkGrid, InfoCardGrid, InfoAccordion, InfoSteps, InfoCtaRow } from './InfoBlocks';
+export type {
+  InfoTheme,
+  InfoHeroProps,
+  InfoLinkItem,
+  InfoLinkGroup,
+  InfoLinkGridProps,
+  InfoCardItem,
+  InfoCardGridProps,
+  InfoAccordionItem,
+  InfoStepGroup,
+  InfoCta,
+} from './InfoBlocks';
 // Radix UI primitives: Modal accesible (Dialog con focus trap + teclado)
 export { default as Modal } from './Modal';
 export type { ModalProps } from './Modal';

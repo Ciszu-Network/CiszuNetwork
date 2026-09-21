@@ -315,9 +315,8 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
                 const link = item as NavItem;
                 const active = isActive(link.href);
                 const { name } = link;
-                const hideCls =
-                  { '/': 'flex', '/projects': 'flex', '/certificates': 'hidden min-[480px]:flex' }[link.href] ?? 'flex';
-                const responsiveClass = active ? 'flex' : hideCls;
+                // hideCls por enlace (en la config) para no desbordar el header.
+                const responsiveClass = active ? 'flex' : (link.hideCls ?? 'flex');
                 return (
                   <Link key={link.href} href={link.href} className={`${navLinkCls(link.href)} ${responsiveClass}`}>
                     <span className="opacity-80 shrink-0">{link.icon}</span>

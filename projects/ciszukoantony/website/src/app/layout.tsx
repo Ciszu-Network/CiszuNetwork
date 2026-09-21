@@ -73,8 +73,12 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 
   return (
     <html lang={lang} className={`${exo2.variable} ${rajdhani.variable}`} suppressHydrationWarning>
-      <head>
+      {/* suppressHydrationWarning: AdSense (auto ads) inyecta su propio <script> en
+          el <head> antes de que React hidrate, así que el primer hijo no coincide.
+          Es una mutación legítima de un tercero: se silencia el aviso, no el bug. */}
+      <head suppressHydrationWarning>
         <script
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=JSON.parse(localStorage.getItem('ciszu_preferences')||'{}');if(t&&t.theme==='light')document.documentElement.classList.add('light');}catch(e){}})();`,
           }}

@@ -69,8 +69,11 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 
   return (
     <html lang={lang} className={`${inter.variable} ${spaceGrotesk.variable}`} suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      {/* suppressHydrationWarning: AdSense (auto ads) inyecta su propio <script> en
+          el <head> antes de que React hidrate, así que el primer hijo no coincide.
+          Es una mutación legítima de un tercero: se silencia el aviso, no el bug. */}
+      <head suppressHydrationWarning>
+        <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: themeScript }} />
         {process.env.NODE_ENV === 'production' && (
           <script defer type="module" data-cookie-consent="optional" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
         )}

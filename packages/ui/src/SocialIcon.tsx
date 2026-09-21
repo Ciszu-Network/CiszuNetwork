@@ -19,6 +19,21 @@ export const SOCIAL_COLORS: Record<SocialPlatform, string> = {
   tiktok: '#000000',
 };
 
+/**
+ * Color de marca de una red social para usarlo como TEXTO.
+ *
+ * Los colores de marca están pensados para brillar sobre fondo oscuro: el rojo
+ * de YouTube sobre blanco queda en 4:1 y sobre su propio tinte claro en 3.2:1,
+ * por debajo del mínimo AA (4.5:1). Se mezcla con la tinta oscura el mínimo
+ * necesario para llegar a AA, conservando el tono.
+ *
+ * `--brand-ink-mix` es el porcentaje de color de marca que se conserva: 100 en
+ * oscuro (color puro, como siempre) y ~70 en claro (cada globals.css lo define
+ * en su bloque claro). Si una web no lo define, el resultado es el color puro.
+ */
+export const socialInk = (platform: SocialPlatform): string =>
+  `color-mix(in srgb, ${SOCIAL_COLORS[platform]} var(--brand-ink-mix, 100%), #0d1526)`;
+
 const PATHS: Record<SocialPlatform, { viewBox: string; d: string }> = {
   youtube: {
     viewBox: '0 0 24 24',

@@ -46,6 +46,7 @@
 - [ ] Terminar bien el tema claro (Todos los docks, modals o cards con fondo oscuro paran a claro, los textos oscuros o negros e iconos negros o oscuros.) Actualmente esta corregido un 80% pero aun existen muchos problemas visuales, algunos textos no se persiven bien al fondo. El slidebar, fondos flotantes de menus o botones flotantes, headers bugeados con iconos ilegibles.
 - [ ] Terminar idiomas en español LATAM.
 - [ ] Terminar idiomas en español España.
+- [ ] Corregir incosistencias de botones y toggles, como el de slidebar search o theme.. No esta usando el mismo de los demas websites y actualmente no funcionan. Retrocede a los botones correctos.
 
 **Ciszubot Website:**
 

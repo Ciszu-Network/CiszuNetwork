@@ -2809,12 +2809,26 @@ if ($Action) {
             Show-Help
         }
         default {
-            if (-not $w) { Write-Host "${c_red}Web no valida. Usa: network | antony | ciszubot | muzic${c_reset}"; exit 1 }
-            switch ($Action) {
-                'start'   { Start-WebByKey $w.key -Wait }
-                'stop'    { Stop-WebByKey $w.key -Wait }
-                'restart' { Stop-WebByKey $w.key -Wait; Start-WebByKey $w.key -Wait }
-                'log'     { Show-Log $w.key }
+            # `-Web all` aplica la accion a las 4 webs en orden. Antes no era
+            # posible desde CLI (el parametro solo acepta una web) y el script
+            # `dev:all` del package.json encadenaba varias invocaciones con ';',
+            # que en cmd.exe NO separa comandos: llegaban como argumentos de la
+            # primera llamada, PowerShell veia -Action dos veces y abortaba con
+            # ParameterAlreadyBound. Con esto basta una sola invocacion.
+            if ($Web -eq 'all') {
+                $targets = $WEBS
+            } elseif ($w) {
+                $targets = @($w)
+            } else {
+                Write-Host "${c_red}Web no valida. Usa: network | antony | ciszubot | muzic | all${c_reset}"; exit 1
+            }
+            foreach ($target in $targets) {
+                switch ($Action) {
+                    'start'   { Start-WebByKey $target.key -Wait }
+                    'stop'    { Stop-WebByKey $target.key -Wait }
+                    'restart' { Stop-WebByKey $target.key -Wait; Start-WebByKey $target.key -Wait }
+                    'log'     { Show-Log $target.key }
+                }
             }
         }
     }

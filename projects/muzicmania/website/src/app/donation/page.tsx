@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
-import { Icon } from '@ciszu/ui';
+import { Icon, KoFiPanel } from '@ciszu/ui';
 
 /**
  * Página de donaciones de MuzicMania.
@@ -108,18 +108,18 @@ export default function DonationPage() {
             ))}
           </section>
 
-          <section className="mb-12 rounded-2xl border border-white/10 bg-white/[0.02] p-4">
-            <h2 className="mb-3 text-center font-header text-sm font-bold text-white">
-              Ko-fi embebido
-            </h2>
-            <iframe
-              id="kofiframe"
-              src="https://ko-fi.com/ciszukoantony/?hidefeed=true&widget=true&embed=true&preview=true"
-              style={{ border: 'none', width: '100%', padding: 4, background: '#f9f9f9' }}
-              height="712"
-              title="Apoya a MuzicMania en Ko-fi"
-              allow="payment"
-              sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+          {/* Ko-fi: SIN iframe. ko-fi.com responde con X-Frame-Options:
+              SAMEORIGIN y `frame-ancestors 'self'`, así que el navegador rechaza
+              cualquier embed con ERR_BLOCKED_BY_RESPONSE. El panel de enlace es
+              la única integración soportada por Ko-fi. */}
+          <section className="mb-12">
+            <KoFiPanel
+              handle="ciszukoantony"
+              projectName="MuzicMania"
+              title="Apoya en Ko-fi"
+              description="Ko-fi no permite incrustar su página (X-Frame-Options SAMEORIGIN): el navegador bloquea el iframe con ERR_BLOCKED_BY_RESPONSE. Abre su perfil con el botón y dona en un clic."
+              actionLabel="Abrir Ko-fi"
+              className="bg-white/[0.02]"
             />
           </section>
 

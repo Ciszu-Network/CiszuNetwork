@@ -172,10 +172,10 @@ const cardStyle: CSSProperties = {
   width: 276,
   maxWidth: 'calc(100vw - 32px)',
   borderRadius: 16,
-  border: '1px solid rgba(255,255,255,0.14)',
-  background: 'rgba(9,9,14,0.8)',
+  border: '1px solid var(--ui-panel-border, var(--border, rgba(255,255,255,0.14)))',
+  background: 'var(--ui-panel, rgba(9,9,14,0.8))',
   padding: 14,
-  color: '#e4e4e7',
+  color: 'var(--ink, #e4e4e7)',
   fontSize: 12,
   lineHeight: 1.5,
   backdropFilter: 'blur(20px) saturate(150%)',
@@ -201,7 +201,7 @@ const closeStyle: CSSProperties = {
   flexShrink: 0,
   border: 'none',
   background: 'transparent',
-  color: '#a1a1aa',
+  color: 'var(--ink-muted, var(--muted, #a1a1aa))',
   fontSize: 12,
   cursor: 'pointer',
   borderRadius: 999,
@@ -212,7 +212,7 @@ const messageStyle: CSSProperties = {
   margin: '0 0 10px',
   fontSize: 11,
   lineHeight: 1.5,
-  color: '#d4d4d8',
+  color: 'var(--ink, #d4d4d8)',
 };
 
 const linkStyle: CSSProperties = {
@@ -238,7 +238,7 @@ const countTextStyle: CSSProperties = {
   flexShrink: 0,
   fontSize: 10,
   fontWeight: 700,
-  color: '#a1a1aa',
+  color: 'var(--ink-muted, var(--muted, #a1a1aa))',
   minWidth: 14,
   textAlign: 'center',
 };
@@ -247,7 +247,7 @@ const countTrackStyle: CSSProperties = {
   flex: 1,
   height: 4,
   borderRadius: 999,
-  background: 'rgba(255,255,255,0.12)',
+  background: 'var(--ui-track, rgba(255,255,255,0.12))',
   overflow: 'hidden',
 };
 
