@@ -35,36 +35,47 @@ export const I = {
   discord: <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor"><path d="M20.317 4.3698a19.7913 19.7913 0 0 0-4.8851-1.5152.0741.0741 0 0 0-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 0 0-.0785-.037 19.7363 19.7363 0 0 0-4.8852 1.515.0699.0699 0 0 0-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 0 0 .0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 0 0 .0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 0 0-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 0 1-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 0 1 .0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 0 1 .0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 0 1-.0066.1276 12.2986 12.2986 0 0 1-1.873.8914.0766.0766 0 0 0-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 0 0 .0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 0 0 .0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 0 0-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg>,
 };
 
-export type NavItem = { name: string; href: string; icon: React.ReactNode; external?: boolean };
+export type NavItem = {
+  name: string;
+  href: string;
+  icon: React.ReactNode;
+  external?: boolean;
+  /** Clases responsive: permite ocultar el enlace cuando no hay ancho. */
+  hideCls?: string;
+};
 export type NavGroup = { name: string; icon: React.ReactNode; items: NavItem[] };
 
-// Header = solo lo esencial. TODO lo demás vive indexado en el desplegable
-// "Information" (un único punto de entrada) para no duplicar enlaces en el
-// header ni desbordar el ancho disponible a zoom 100%.
+// Header = productos + secciones de contenido propias del sitio. Las páginas
+// de contenido (changelog, reviews, leaderboard, stats, downloads, feedback)
+// NO van dentro del desplegable "Information": el desplegable queda para las
+// páginas institucionales (about, team, help, faq, contact, legal) y así no se
+// mezclan secciones vivas con documentación.
+// Cada enlace declara sus breakpoints en `hideCls` para que el header no
+// desborde a zoom 100% (el desplegable Information siempre queda visible).
 export const NAV_MAIN: (NavItem | NavGroup)[] = [
-  { name: 'Home', href: '/', icon: I.home },
-  { name: 'Projects', href: '/projects', icon: I.projects },
-  { name: 'Certificates', href: '/certificates', icon: I.certificates },
+  { name: 'Home', href: '/', icon: I.home, hideCls: 'flex' },
+  { name: 'Projects', href: '/projects', icon: I.projects, hideCls: 'flex' },
+  { name: 'Certificates', href: '/certificates', icon: I.certificates, hideCls: 'hidden min-[520px]:flex' },
+  { name: 'Changelog', href: '/changelog', icon: I.history, hideCls: 'hidden min-[900px]:flex' },
+  { name: 'Reviews', href: '/reviews', icon: I.star, hideCls: 'hidden min-[980px]:flex' },
+  { name: 'Leaderboard', href: '/leaderboard', icon: I.trophy, hideCls: 'hidden min-[1060px]:flex' },
+  { name: 'Stats', href: '/stats', icon: I.barChart, hideCls: 'hidden min-[1140px]:flex' },
+  { name: 'Downloads', href: '/downloads', icon: I.download, hideCls: 'hidden min-[1220px]:flex' },
+  { name: 'Feedback', href: '/feedback', icon: I.feedback, hideCls: 'hidden min-[1300px]:flex' },
   {
     name: 'Information', icon: I.info,
     items: [
       { name: 'Information', href: '/information', icon: I.info },
       { name: 'About', href: '/about', icon: I.about },
       { name: 'Team', href: '/team', icon: I.team },
-      { name: 'Changelog', href: '/changelog', icon: I.history },
-      { name: 'Reviews', href: '/reviews', icon: I.star },
-      { name: 'Leaderboard', href: '/leaderboard', icon: I.trophy },
-      { name: 'Stats', href: '/stats', icon: I.barChart },
       { name: 'Forum', href: '/forum', icon: I.messageSquare },
-      { name: 'Downloads', href: '/downloads', icon: I.download },
       { name: 'Donar', href: '/donate', icon: I.heart },
-      { name: 'Feedback', href: '/feedback', icon: I.feedback },
       { name: 'FAQ', href: '/faq', icon: I.faq },
       { name: 'Support', href: '/support', icon: I.support },
-      { name: 'Policies', href: '/policies', icon: I.policies },
       { name: 'Documentation', href: '/documentation', icon: I.file },
       { name: 'Help', href: '/help', icon: I.help },
       { name: 'Contact', href: '/contact', icon: I.contact },
+      { name: 'Policies', href: '/policies', icon: I.policies },
     ],
   } as NavGroup,
 ];

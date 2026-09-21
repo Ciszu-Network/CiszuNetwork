@@ -1,7 +1,7 @@
 ﻿import Link from "next/link";
 import Image from "next/image";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { SocialIcon, SOCIAL_COLORS } from '@ciszu/ui';
+import { SocialIcon, SOCIAL_COLORS, socialInk } from '@ciszu/ui';
 import { CISZU_NETWORK, CISZUKO_ANTONY, CISZUBOT_LINKS, DONATION_LINKS, EXTERNAL_LINKS } from "@/config/site";
 import { ArrowRight, Code, Shield, Zap, ExternalLink, Star, Globe, Music, Users, ChevronRight, Building, User, Gamepad2, Bot } from "lucide-react";
 import { EcosystemSection } from "@ciszu/ui";
@@ -269,7 +269,7 @@ export default function Home() {
                   {Object.entries(CISZUKO_ANTONY.social).filter(([k]) => k !== 'discordTag').map(([platform, url]) => (
                     <a key={platform} href={url} target="_blank" rel="noopener noreferrer"
                       className="hover:scale-110 transition-transform"
-                      style={{ color: SOCIAL_COLORS[platform as keyof typeof SOCIAL_COLORS] }}
+                      style={{ color: socialInk(platform as keyof typeof SOCIAL_COLORS) }}
                     >
                       <SocialIcon platform={platform as keyof typeof SOCIAL_COLORS} size={22} />
                     </a>
@@ -307,14 +307,18 @@ export default function Home() {
           </p>
           <div className="flex flex-wrap justify-center gap-4 max-w-lg mx-auto">
             {Object.entries(CISZU_NETWORK.social).map(([platform, url]) => {
-              const color = SOCIAL_COLORS[platform as keyof typeof SOCIAL_COLORS];
+              const key = platform as keyof typeof SOCIAL_COLORS;
+              const color = SOCIAL_COLORS[key];
+              // El texto usa el color atenuado para claro; el fondo y el borde
+              // mantienen el tinte de marca puro.
+              const ink = socialInk(key);
               return (
                 <a key={platform} href={url} target="_blank" rel="noopener noreferrer"
                   className="flex items-center gap-3 px-5 py-3 rounded-xl border transition-all hover:scale-105"
                   style={{
                     backgroundColor: `${color}15`,
                     borderColor: `${color}40`,
-                    color,
+                    color: ink,
                   }}
                 >
                   <SocialIcon platform={platform as keyof typeof SOCIAL_COLORS} size={18} />

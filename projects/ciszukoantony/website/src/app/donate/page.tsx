@@ -2,7 +2,7 @@
 
 import { Heart } from "lucide-react";
 import QuickDocks from "@/components/molecules/QuickDocks";
-import { Icon } from '@ciszu/ui';
+import { Icon, KoFiPanel } from '@ciszu/ui';
 
 const DONATION_LINKS = {
   patreon: "https://www.patreon.com/cw/ciszukoantony",
@@ -74,17 +74,18 @@ export default function DonatePage() {
           ))}
         </div>
 
-        {/* Widget Ko-fi real */}
-        <div className="rounded-2xl bg-brand/5 border border-brand/20 p-4 mb-12">
-          <h3 className="text-white font-bold font-header text-sm mb-3 text-center">Ko-fi embebido</h3>
-          <iframe
-            id="kofiframe"
-            src="https://ko-fi.com/ciszukoantony/?hidefeed=true&widget=true&embed=true"
-            style={{ border: "none", width: "100%", padding: 4, background: "#f9f9f9" }}
-            height="712"
-            title="Apoya a CiszukoAntony en Ko-fi"
-            allow="payment"
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+        {/* Ko-fi: SIN iframe. ko-fi.com responde con X-Frame-Options: SAMEORIGIN
+            y `frame-ancestors 'self'`, así que el navegador rechaza cualquier
+            embed con ERR_BLOCKED_BY_RESPONSE. El panel oficial de enlace es la
+            única integración soportada. */}
+        <div className="mb-12">
+          <KoFiPanel
+            handle="ciszukoantony"
+            projectName="Ciszuko Antony"
+            title="Apoya en Ko-fi"
+            description="Ko-fi no permite incrustar su página (X-Frame-Options SAMEORIGIN): el navegador bloquea el iframe con ERR_BLOCKED_BY_RESPONSE. Abre su perfil con el botón y dona en un clic."
+            actionLabel="Abrir Ko-fi"
+            className="bg-brand/5"
           />
         </div>
 

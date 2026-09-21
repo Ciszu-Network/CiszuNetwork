@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -85,13 +86,6 @@ export default function TeamPage() {
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
   const [showDiscordPopup, setShowDiscordPopup] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
 
   const handleCopyDiscord = () => {
     navigator.clipboard.writeText('ciszukoantony_');

@@ -49,16 +49,32 @@ export const MAIN_NAV_LINKS = [
   { name: 'Donation',    href: '/donation',     icon: I.handshake,   hideCls: 'hidden min-[850px]:flex', keywords: ['donar', 'donation', 'apoyar', 'support', 'patreon', 'kofi'] },
 ];
 
-// Header = solo lo esencial (páginas de juego). TODO lo demás se indexa en el
-// desplegable "Information" para no duplicar enlaces ni desbordar el header a
-// zoom 100%. MAIN_NAV_LINKS se mantiene completo para footer y búsqueda global.
-export const HEADER_NAV_LINKS = MAIN_NAV_LINKS.filter((l) =>
-  ['/', '/play', '/library', '/leaderboard', '/stats'].includes(l.href),
-);
+// Header = páginas de contenido del sitio (juego + secciones vivas).
+// Changelog, Reviews, Download y Feedback YA NO viven en el desplegable
+// "Information": son secciones primarias y el desplegable queda reservado a lo
+// institucional (team, contacto, soporte, legal, docs). El orden va de lo más
+// esencial a lo menos para que el ocultado progresivo por ancho funcione.
+// MAIN_NAV_LINKS se mantiene completo para footer y búsqueda global.
+const HEADER_ORDER: Record<string, string> = {
+  '/': 'flex',
+  '/play': 'hidden min-[300px]:flex',
+  '/library': 'hidden min-[400px]:flex',
+  '/leaderboard': 'hidden min-[500px]:flex',
+  '/stats': 'hidden min-[580px]:flex',
+  '/changelog': 'hidden min-[680px]:flex',
+  '/reviews': 'hidden min-[780px]:flex',
+  '/download': 'hidden min-[880px]:flex',
+  '/feedback': 'hidden min-[980px]:flex',
+};
+
+export const HEADER_NAV_LINKS = Object.keys(HEADER_ORDER)
+  .map((href) => MAIN_NAV_LINKS.find((l) => l.href === href))
+  .filter((l): l is (typeof MAIN_NAV_LINKS)[number] => Boolean(l))
+  .map((l) => ({ ...l, hideCls: HEADER_ORDER[l.href] }));
 
 // Enlaces que viven únicamente dentro del desplegable "Information".
 export const INFO_DROPDOWN_LINKS = MAIN_NAV_LINKS.filter((l) =>
-  ['/forum', '/changelog', '/reviews', '/download', '/feedback', '/donation'].includes(l.href),
+  ['/forum', '/donation'].includes(l.href),
 );
 
 export const COMMUNITY_LINKS = [

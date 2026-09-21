@@ -363,15 +363,24 @@ const PDWA_CSS = `
 }
 `;
 
+/*
+ * Colores del panel con TOKENS del tema y el valor oscuro como respaldo.
+ *
+ * Antes estaban fijados a mano y el panel se quedaba oscuro en modo claro: el
+ * ✕ de cerrar daba 1.03:1 (gris sobre gris, prácticamente invisible). Ahora usa
+ * los tokens que cada web ya invierte en claro (`--ink`, `--ink-muted`,
+ * `--ink-faint`, `--border`) más dos variables de panel que cada globals.css
+ * define en su bloque claro. Si una web no las define, se ve como antes.
+ */
 const panelStyle: CSSProperties = {
   marginBottom: 12,
   width: 288,
   maxWidth: 'calc(100vw - 32px)',
   borderRadius: 16,
-  border: '1px solid rgba(255,255,255,0.14)',
-  background: 'rgba(9,9,14,0.72)',
+  border: '1px solid var(--ui-panel-border, var(--border, rgba(255,255,255,0.14)))',
+  background: 'var(--ui-panel, rgba(9,9,14,0.72))',
   padding: 16,
-  color: '#e4e4e7',
+  color: 'var(--ink, #e4e4e7)',
   fontSize: 13,
   lineHeight: 1.5,
   boxShadow: '0 0 28px var(--pdwa-accent)',
@@ -399,7 +408,7 @@ const panelCloseStyle: CSSProperties = {
   flexShrink: 0,
   border: 'none',
   background: 'transparent',
-  color: '#a1a1aa',
+  color: 'var(--ink-muted, var(--muted, #a1a1aa))',
   fontSize: 13,
   cursor: 'pointer',
   borderRadius: 999,
@@ -410,7 +419,7 @@ const panelSubStyle: CSSProperties = {
   margin: '0 0 8px',
   fontSize: 12,
   lineHeight: 1.5,
-  color: '#a1a1aa',
+  color: 'var(--ink-muted, var(--muted, #a1a1aa))',
 };
 
 const panelOlStyle: CSSProperties = {
@@ -424,7 +433,7 @@ const panelOlStyle: CSSProperties = {
 const panelLiStyle: CSSProperties = {
   fontSize: 12,
   lineHeight: 1.5,
-  color: '#d4d4d8',
+  color: 'var(--ink, #d4d4d8)',
 };
 
 const appLinkStyle: CSSProperties = {
@@ -445,7 +454,7 @@ const panelFootnoteStyle: CSSProperties = {
   marginTop: 12,
   fontSize: 10,
   lineHeight: 1.4,
-  color: '#71717a',
+  color: 'var(--ink-faint, var(--faint, #71717a))',
 };
 
 const fabRowStyle: CSSProperties = {
@@ -526,9 +535,9 @@ const dismissStyle: CSSProperties = {
   height: 20,
   flexShrink: 0,
   borderRadius: 999,
-  border: '1px solid rgba(255,255,255,0.15)',
-  background: 'rgba(9,9,14,0.35)',
-  color: '#a1a1aa',
+  border: '1px solid var(--ui-panel-border, var(--border, rgba(255,255,255,0.15)))',
+  background: 'var(--ui-panel, rgba(9,9,14,0.35))',
+  color: 'var(--ink-muted, var(--muted, #a1a1aa))',
   fontSize: 10,
   cursor: 'pointer',
   backdropFilter: 'blur(20px) saturate(150%)',

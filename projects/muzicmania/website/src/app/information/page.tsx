@@ -10,6 +10,16 @@ import ScrollSpy from '@/components/molecules/ScrollSpy';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { usePageTitle } from '@/lib/usePageTitle';
 
+/**
+ * Color de marca para usarlo como TEXTO sobre el tema activo.
+ *
+ * `--brand-ink-mix` vale 100% en oscuro (color puro) y ~70% en claro: la
+ * mezcla con la tinta oscura lo justo para llegar a contraste AA sin perder el
+ * tono. Sin esto, el verde y el cian de neón quedaban en 1.1:1 sobre claro.
+ */
+const ink = (color: string): string =>
+  `color-mix(in srgb, ${color} var(--brand-ink-mix, 100%), #0d1526)`;
+
 // --- Icons Library ---
 const I = {
   home:        <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
@@ -290,7 +300,7 @@ export default function InformationPage() {
                    { step: '03', desc: 'Presiona INICIAR y prepárate para la sincronización perfecta.', color: '#00FF88' },
                  ].map((item, idx) => (
                    <div key={item.step} className="flex gap-5 items-start p-4 bg-black/40 rounded-2xl border-l-4 transition-all hover:bg-black/60 hover:pl-6" style={{ borderColor: item.color }}>
-                      <div className="text-3xl font-header font-black italic drop-shadow-md" style={{ color: item.color }}>{item.step}</div>
+                      <div className="text-3xl font-header font-black italic drop-shadow-md" style={{ color: ink(item.color) }}>{item.step}</div>
                       <div className="pt-2 text-xs font-bold text-gray-400 uppercase tracking-widest leading-relaxed">{item.desc}</div>
                    </div>
                  ))}
@@ -460,6 +470,10 @@ export default function InformationPage() {
         </motion.section>
 
         {/* --- FORMATOS DE ARCHIVO --- */}
+        {/* Los datos pintan sus colores con `style={{ color }}`. Un literal hex
+            no se entera del tema: sobre fondo claro, verde/cian neón quedan en
+            1.1:1. `ink()` lo mezcla con la tinta oscura el mínimo necesario
+            (100% en oscuro = color puro; ~70% en claro) conservando el tono. */}
         <motion.section id="formatos" data-scrollspy initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={sectionVariants} className="space-y-8">
           <div className="flex items-center gap-4 justify-center">
             <div className="w-8 h-8 text-neon-green">{I.database}</div>
@@ -478,14 +492,14 @@ export default function InformationPage() {
                 onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.backgroundColor = cat.colorAlpha; (e.currentTarget as HTMLDivElement).style.borderColor = cat.color + '55'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.backgroundColor = 'transparent'; (e.currentTarget as HTMLDivElement).style.borderColor = cat.colorBorder; }}
               >
-                <div className="w-10 h-10 flex-shrink-0 group-hover:scale-110 transition-transform" style={{ color: cat.color }}>{cat.icon}</div>
+                <div className="w-10 h-10 flex-shrink-0 group-hover:scale-110 transition-transform" style={{ color: ink(cat.color) }}>{cat.icon}</div>
                 <div className="flex-1 space-y-3">
                   <div className="flex flex-wrap items-center gap-3">
                     <h4 className="text-white font-black uppercase text-sm italic">{cat.category}</h4>
                     <div className="flex flex-wrap gap-2">
                       {cat.formats.map(f => (
                         <code key={f} className="px-2 py-0.5 rounded-lg text-[10px] font-black tracking-wider"
-                          style={{ color: cat.color, backgroundColor: cat.colorAlpha, border: `1px solid ${cat.colorBorder}` }}
+                          style={{ color: ink(cat.color), backgroundColor: cat.colorAlpha, border: `1px solid ${cat.colorBorder}` }}
                         >{f}</code>
                       ))}
                     </div>
@@ -550,10 +564,10 @@ export default function InformationPage() {
                 <div className="relative space-y-5">
                   <div className="flex items-start justify-between">
                     <div>
-                      <p className="text-5xl font-header font-black italic" style={{ color: phase.color }}>{phase.year}</p>
+                      <p className="text-5xl font-header font-black italic" style={{ color: ink(phase.color) }}>{phase.year}</p>
                       <p className="text-white font-black uppercase text-xs tracking-widest mt-1">{phase.label}</p>
                     </div>
-                    <div className="w-10 h-10 opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all" style={{ color: phase.color }}>{phase.icon}</div>
+                    <div className="w-10 h-10 opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all" style={{ color: ink(phase.color) }}>{phase.icon}</div>
                   </div>
                   <ul className="space-y-2">
                     {phase.items.map(item => (
@@ -648,8 +662,8 @@ export default function InformationPage() {
                 onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = pillar.color + '80'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = pillar.color + '33'; }}
               >
-                <div className="w-12 h-12 mb-4 group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_currentColor] transition-all duration-300" style={{ color: pillar.color }}>{pillar.icon}</div>
-                <h4 className="text-lg font-header font-black uppercase italic leading-none mb-3" style={{ color: pillar.color }}>{pillar.title}</h4>
+                <div className="w-12 h-12 mb-4 group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_currentColor] transition-all duration-300" style={{ color: ink(pillar.color) }}>{pillar.icon}</div>
+                <h4 className="text-lg font-header font-black uppercase italic leading-none mb-3" style={{ color: ink(pillar.color) }}>{pillar.title}</h4>
                 <p className="text-[11px] text-gray-400 font-bold leading-relaxed">{pillar.desc}</p>
               </div>
             ))}
@@ -685,7 +699,7 @@ export default function InformationPage() {
                     onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.backgroundColor = f.colorAlpha; }}
                     onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.backgroundColor = 'rgba(0,0,0,0.4)'; }}
                   >
-                    <h4 className="text-xs font-black uppercase tracking-widest" style={{ color: f.color }}>{f.label}</h4>
+                    <h4 className="text-xs font-black uppercase tracking-widest" style={{ color: ink(f.color) }}>{f.label}</h4>
                     <p className="text-[11px] text-gray-400 font-bold leading-relaxed italic">{f.quote}</p>
                   </div>
                 ))}

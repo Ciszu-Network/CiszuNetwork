@@ -16,9 +16,19 @@ import { INVITE_URL, LOGO_ISOTIPO, LOGO_LOGOTIPO, type Dict, type Lang } from '@
 // Header = solo lo esencial. TODO lo demás se indexa en el desplegable
 // "Information" (un único punto de entrada) para no duplicar enlaces en el
 // header ni desbordar el ancho disponible a zoom 100%.
+// Navegación primaria del header: producto + secciones vivas del sitio.
+// Stats, leaderboard, changelog, reviews, downloads y feedback NO van dentro
+// del desplegable "Information": ese queda para lo institucional (about, team,
+// help, faq, contacto, soporte, documentación y legal).
 const NAV_PAGES: { href: string; key: keyof Dict['nav']; icon: string }[] = [
   { href: '/', key: 'home', icon: 'home' },
   { href: '/commands', key: 'commands', icon: 'gamepad' },
+  { href: '/stats', key: 'stats', icon: 'chart-bar' },
+  { href: '/leaderboard', key: 'leaderboard', icon: 'trophy' },
+  { href: '/changelog', key: 'changelog', icon: 'history' },
+  { href: '/reviews', key: 'reviews', icon: 'star' },
+  { href: '/downloads', key: 'downloads', icon: 'download' },
+  { href: '/feedback', key: 'feedback', icon: 'message' },
 ];
 
 const INFO_PAGES: { href: string; key: keyof Dict['nav']; icon: string }[] = [
@@ -36,24 +46,19 @@ const INFO_PAGES: { href: string; key: keyof Dict['nav']; icon: string }[] = [
 ];
 
 
-// Clases responsive por índice de NAV_PAGES: el link activo siempre visible; el resto aparece según espacio.
+// Clases responsive por índice de NAV_PAGES: el link activo siempre visible; el
+// resto aparece progresivamente. El desplegable Information NUNCA se oculta
+// (es el índice del sitio). Los enlaces ocultos siguen en el menú lateral y la
+// búsqueda global.
 const NAV_HIDE_CLS: string[] = [
-  'hidden min-[320px]:flex',
-  'hidden min-[400px]:flex',
-  'hidden min-[480px]:flex',
-  'hidden min-[560px]:flex',
-  'hidden min-[640px]:flex',
-  'hidden min-[720px]:flex',
-  'hidden min-[800px]:flex',
-  'hidden min-[880px]:flex',
+  'flex',
+  'flex',
+  'hidden min-[860px]:flex',
   'hidden min-[960px]:flex',
-  'hidden min-[1040px]:flex',
-  'hidden min-[1120px]:flex',
-  'hidden min-[1200px]:flex',
-  'hidden min-[1280px]:flex',
+  'hidden min-[1060px]:flex',
+  'hidden min-[1160px]:flex',
+  'hidden min-[1260px]:flex',
   'hidden min-[1360px]:flex',
-  'hidden min-[1440px]:flex',
-  'hidden min-[1520px]:flex',
 ];
 
 const SEARCH_PAGES: { href: string; labelKey: string; icon: string; keywords: string[] }[] = [
