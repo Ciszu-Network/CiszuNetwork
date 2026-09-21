@@ -76,16 +76,16 @@ const NAV_ITEMS: NavEntry[] = [
   { name: 'Stats', href: '/stats', icon: <BarChart3 className="w-4 h-4" /> },
   { name: 'Downloads', href: '/downloads', icon: <Download className="w-4 h-4" /> },
   { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" /> },
+  { name: 'Courses', href: '/courses', icon: <GraduationCap className="w-4 h-4" /> },
   {
     name: 'Information',
     icon: <Info className="w-4 h-4" />,
-    keywords: ['about', 'team', 'faq', 'documentation', 'help', 'contact', 'support', 'info', 'about us', 'forum', 'donate', 'courses', 'policies'],
+    keywords: ['about', 'team', 'faq', 'documentation', 'help', 'contact', 'support', 'info', 'about us', 'forum', 'donate', 'policies'],
     links: [
       { name: 'Information', href: '/information', icon: <Info className="w-4 h-4" /> },
       { name: 'About', href: '/about', icon: <Info className="w-4 h-4" /> },
       { name: 'Team', href: '/team', icon: <Users className="w-4 h-4" /> },
       { name: 'Forum', href: '/forum', icon: <MessageSquare className="w-4 h-4" /> },
-      { name: 'Courses', href: '/courses', icon: <GraduationCap className="w-4 h-4" /> },
       { name: 'Donate', href: '/donate', icon: <Heart className="w-4 h-4" /> },
       { name: 'FAQ', href: '/faq', icon: <HelpCircle className="w-4 h-4" /> },
       { name: 'Documentation', href: '/documentation', icon: <FileText className="w-4 h-4" /> },
@@ -111,6 +111,7 @@ const NAV_HIDE_CLS: string[] = [
   'hidden min-[1140px]:flex',
   'hidden min-[1220px]:flex',
   'hidden min-[1300px]:flex',
+  'hidden min-[1380px]:flex',
 ];
 
 // Massive page catalog for the global search (references the same routes as the nav).
