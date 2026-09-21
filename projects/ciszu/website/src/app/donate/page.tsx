@@ -1,6 +1,5 @@
 import { getDonationMethods } from "@ciszunetwork/payments";
 import { Heart } from "lucide-react";
-import { KoFiPanel } from "@ciszu/ui";
 import DonateButtons from "./DonateButtons";
 import QuickDocks from "@/components/molecules/QuickDocks";
 
@@ -29,18 +28,14 @@ export default function DonatePage() {
 
         <DonateButtons methods={methods} />
 
-        {/* Ko-fi: SIN iframe. ko-fi.com responde con X-Frame-Options: SAMEORIGIN
-            y `frame-ancestors 'self'`, así que el navegador rechaza cualquier
-            embed con ERR_BLOCKED_BY_RESPONSE. El panel oficial de enlace es la
-            única integración soportada. */}
+        {/* Ko-fi embed oficial */}
         <div className="mb-12">
-          <KoFiPanel
-            handle="ciszunetwork"
-            projectName="Ciszu Network"
-            title="Apoya en Ko-fi"
-            description="Ko-fi no permite incrustar su página (X-Frame-Options SAMEORIGIN): el navegador bloquea el iframe con ERR_BLOCKED_BY_RESPONSE. Abre su perfil con el botón y dona en un clic."
-            actionLabel="Abrir Ko-fi"
-            className="bg-brand/5"
+          <iframe
+            src="https://ko-fi.com/ciszunetwork/?hidefeed=true&widget=true&embed=true&preview=true"
+            title="Apoya a Ciszu Network en Ko-fi"
+            className="w-full rounded-2xl border border-white/10 bg-white/5"
+            style={{ height: 712 }}
+            allow="payment"
           />
         </div>
 
