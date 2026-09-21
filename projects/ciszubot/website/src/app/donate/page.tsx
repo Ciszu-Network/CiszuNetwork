@@ -2,7 +2,7 @@
 
 import { Heart } from "lucide-react";
 import QuickDocks from "@/components/molecules/QuickDocks";
-import { Icon, KoFiPanel } from '@ciszu/ui';
+import { Icon } from '@ciszu/ui';
 
 const DONATION_LINKS = {
   patreon: 'https://www.patreon.com/cw/ciszubot',
@@ -74,22 +74,18 @@ export default function DonatePage() {
           ))}
         </div>
 
-        {/* Ko-fi: SIN iframe. ko-fi.com responde con X-Frame-Options: SAMEORIGIN
-            y `frame-ancestors 'self'`, así que el navegador rechaza cualquier
-            embed con ERR_BLOCKED_BY_RESPONSE. El panel oficial de enlace es la
-            única integración soportada. */}
+        {/* Ko-fi embed oficial */}
         <div className="mb-12">
-          <KoFiPanel
-            handle="ciszubot"
-            projectName="CiszuBot"
-            title="Apoya en Ko-fi"
-            description="Ko-fi no permite incrustar su página (X-Frame-Options SAMEORIGIN): el navegador bloquea el iframe con ERR_BLOCKED_BY_RESPONSE. Abre su perfil con el botón y dona en un clic."
-            actionLabel="Abrir Ko-fi"
-            className="bg-brand/5"
+          <iframe
+            src="https://ko-fi.com/ciszubot/?hidefeed=true&widget=true&embed=true&preview=true"
+            title="Apoya a CiszuBot en Ko-fi"
+            className="w-full rounded-2xl border border-white/10 bg-white/5"
+            style={{ height: 712 }}
+            allow="payment"
           />
         </div>
 
-        {/* Widget NOWPayments real */}
+        {/* NOWPayments */}
         <div className="rounded-2xl bg-brand/5 border border-brand/20 p-4">
           <h3 className="text-white font-bold font-header text-sm mb-3 text-center">Cripto (NOWPayments)</h3>
           <iframe
