@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { assetResolver } from '@ciszunetwork/cdn';
 import { ScrollNavButton, useToast, SocialIcon, SOCIAL_COLORS } from '@ciszu/ui';
-import { Button } from '@heroui/react';
 import { useAppStore } from '@/store';
 import { CISZU_NETWORK, CISZUKO_ANTONY, EXTERNAL_LINKS, GITHUB_REPO } from '@/config/site';
 import {
@@ -281,40 +280,40 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
 
         <div className="flex flex-col items-center justify-center gap-6 pb-6 text-center">
 
-          {/* LEFT: Theme + Language triggers (muzicmania style) */}
+          {/* LEFT: Theme + Language triggers */}
           <div className="flex items-center gap-4">
-            <Button
-              isIconOnly
-              size="md"
-              variant="outline"
-              onPress={() => {
+            <button
+              onClick={() => {
                 const next = theme === 'dark' ? 'light' : 'dark';
                 toast(next === 'dark' ? 'Modo oscuro activado' : 'Modo claro activado', 'info');
                 setTheme(next);
               }}
-              className="transition-all duration-500"
+              className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transition-all duration-500 cursor-pointer border group ${
+                theme === 'dark' ? 'bg-[#0a0a14]/98 border-white/10 hover:rotate-12' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
+              }`}
+              aria-label="Toggle theme"
+              title="Toggle theme"
             >
               {theme === 'dark' ? (
-                <svg className="w-5 h-5 text-black transition-transform duration-500 group-hover:rotate-12" viewBox="0 0 24 24" fill="currentColor">
+                <svg className="w-5 h-5 text-ink transition-transform duration-500 group-hover:rotate-12" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
                 </svg>
               ) : (
-                <svg className="w-6 h-6 text-black transition-transform duration-500 group-hover:rotate-90" viewBox="0 0 24 24" fill="currentColor" stroke="black" strokeWidth={1}>
+                <svg className="w-6 h-6 text-ink transition-transform duration-500 group-hover:rotate-90" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth={1}>
                   <circle cx="12" cy="12" r="4" />
                   <path d="M12 1v3m0 16v3M4.22 4.22l2.12 2.12m11.32 11.32l2.12 2.12M1 12h3m16 0h3M4.22 19.78l2.12-2.12M19.78 4.22l-2.12 2.12" strokeLinecap="round" />
                 </svg>
               )}
-            </Button>
+            </button>
 
-            <Button
-              size="sm"
-              variant="outline"
-              onPress={() => { setIsMenuOpen(true); setSidebarView('lang'); }}
-              className="group flex items-center gap-3 transition-all duration-300"
+            <button
+              onClick={() => { setIsMenuOpen(true); setSidebarView('lang'); }}
+              className="group flex items-center gap-3 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all duration-300 shadow-lg cursor-pointer"
+              title="Idioma"
             >
               <Globe className="w-5 h-5 transition-transform duration-500 group-hover:rotate-12 text-white/70" />
               <span className="text-gray-400 group-hover:text-white uppercase tracking-widest text-xs font-bold">LANG</span>
-            </Button>
+            </button>
           </div>
 
           {/* RIGHT: Copyright */}
