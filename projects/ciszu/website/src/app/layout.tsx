@@ -14,7 +14,7 @@ import FeedbackFab from "@/components/layout/FeedbackFab";
 import AuthProvider from "@/components/providers/AuthProvider";
 import AdsWithUser from "@/components/providers/AdsWithUser";
 import { CISZU_NETWORK } from "@/config/site";
-import "./globals.css";
+import "./globals.scss";
 
 const ICON_SVG = assetResolver.resolve("projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg");
 

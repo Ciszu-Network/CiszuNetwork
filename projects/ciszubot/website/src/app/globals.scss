@@ -1,0 +1,430 @@
+@import "tailwindcss";
+
+@source "../../../../../packages/ui/src/**/*.{ts,tsx}";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ============================================================
+   CISZUBOT — GLOBAL STYLES
+   Tema limpio estilo Discord: azules y morados pastel,
+   basado en los colores del logotipo oficial (#233f92, #007bc0).
+   Dark mode por defecto, toggle a light vía clase .dark.
+   ============================================================ */
+
+@theme inline {
+  /* Fonts */
+  --font-sans:   var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-header: var(--font-space-grotesk), var(--font-sans);
+
+  /* Semantic colors (flip between themes) */
+  --color-bg:       var(--bg);
+  --color-surface:  var(--surface);
+  --color-card:     var(--card);
+  --color-border:   var(--border);
+  --color-ink:      var(--ink);
+  --color-muted:    var(--muted);
+  --color-faint:    var(--faint);
+
+  /* Brand (from official logo + pastel variants) */
+  --color-brand-50:  var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-400: var(--brand-400);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+
+  /* Violet / purple pastel accent */
+  --color-violet-100: var(--violet-100);
+  --color-violet-200: var(--violet-200);
+  --color-violet-300: var(--violet-300);
+  --color-violet-400: var(--violet-400);
+  --color-violet-500: var(--violet-500);
+  --color-violet-600: var(--violet-600);
+
+  /* Neon accent (estilo MuzicMania — más brillante en dark) */
+  --color-neon-blue:   var(--neon-blue);
+  --color-neon-cyan:   var(--neon-cyan);
+  --color-neon-purple: var(--neon-purple);
+  --color-neon-pink:   var(--neon-pink);
+
+  /* Status */
+  --color-success: var(--success);
+  --color-danger:  var(--danger);
+  --color-warn:    var(--warn);
+}
+
+/* ── Theme variables ─────────────────────────────────────── */
+:root {
+  --bg: #f4f6fb;
+  --surface: #ffffff;
+  /* El claro es el valor por defecto de esta web; `color-scheme` lo declara
+     para los controles nativos y para que el resto del código pueda leer el
+     tema activo del DOM (ver la página de reseñas). */
+  color-scheme: light;
+  /* Panel de cristal compartido (FAB de instalación PDWA y aviso de descarte).
+     Aquí el claro es el valor por defecto; el oscuro los redefine abajo. */
+  --ui-panel: rgba(255, 255, 255, 0.92);
+  --ui-panel-border: rgba(35, 63, 146, 0.16);
+  --ui-track: rgba(35, 63, 146, 0.12);
+  /* Porcentaje de color de marca que conserva el texto de las redes sociales
+     (100 = color puro, como en oscuro; 70 = oscurecido lo justo para AA). */
+  --brand-ink-mix: 70%;
+  --card: #fbfcff;
+  --border: rgba(35, 63, 146, 0.12);
+  --ink: #1b2234;
+  --muted: #5a6478;
+  /* Antes #8b93a7: sobre el fondo claro por defecto daba 3.0:1 — por debajo
+     del mínimo AA (4.5:1) para texto normal. Era la causa del texto "que no se
+     percibe al fondo" en estadísticas, alias y pies de tarjeta. */
+  --faint: #66708a;
+
+  --brand-50:  #eef4ff;
+  --brand-100: #dce8ff;
+  --brand-200: #bcd3ff;
+  --brand-300: #8fb4f5;
+  --brand-400: #6395e8;
+  --brand-500: #3f6fd6;
+  --brand-600: #233f92;
+  --brand-700: #1a2f6e;
+
+  --violet-100: #ece9ff;
+  --violet-200: #ddd5ff;
+  --violet-300: #c2b4fb;
+  --violet-400: #a08cf4;
+  --violet-500: #7c66e0;
+  --violet-600: #5f4bc4;
+
+  --success: #16a34a;
+  --danger:  #dc2626;
+  --warn:    #d97706;
+
+  --neon-blue:   #0675b1;
+  --neon-cyan:   #0c7795;
+  --neon-purple: #7739e4;
+  --neon-pink:   #ce2772;
+}
+
+.dark {
+  --bg: #12141a;
+  --surface: #1a1d25;
+  color-scheme: dark;
+  --ui-panel: rgba(9, 9, 14, 0.80);
+  --ui-panel-border: rgba(255, 255, 255, 0.14);
+  --ui-track: rgba(255, 255, 255, 0.12);
+  --brand-ink-mix: 100%;
+  --card: #20232d;
+  --border: rgba(255, 255, 255, 0.09);
+  --ink: #e7eaf3;
+  --muted: #9aa3b8;
+  --faint: #6d7689;
+
+  --brand-50:  #1a2340;
+  --brand-100: #1f2c55;
+  --brand-200: #2b3f80;
+  --brand-300: #3a56a8;
+  --brand-400: #5b7fd8;
+  --brand-500: #7ea0ea;
+  --brand-600: #9db8f2;
+  --brand-700: #c3d3f8;
+
+  --violet-100: #272147;
+  --violet-200: #322a5e;
+  --violet-300: #453c85;
+  --violet-400: #6a5cbd;
+  --violet-500: #8b7cd9;
+  --violet-600: #a79bee;
+
+  --success: #34d399;
+  --danger:  #f87171;
+  --warn:    #fbbf24;
+
+  --neon-blue:   #00d4ff;
+  --neon-cyan:   #22d3ee;
+  --neon-purple: #a855f7;
+  --neon-pink:   #ff33cc;
+}
+
+/* Texto de marca sobre fondo claro: se oscurece lo mínimo para llegar a AA.
+   El blurple de Discord quedaba en 3.25:1 y violet-500 en 4.23:1 sobre el
+   fondo claro por defecto (ambos por debajo del mínimo para texto normal). */
+html:not(.dark) .text-\[\#7289DA\] { color: #596baa !important; }
+html:not(.dark) .text-\[\#7289da\] { color: #596baa !important; }
+html:not(.dark) .text-violet-500 { color: #7c54dd !important; }
+
+/* ── Modo claro (html sin .dark): superficies hardcodeadas de los docks,
+   modals, dropdowns y cards pasan a la paleta clara. Los textos blancos e
+   iconos blancos pasan a tinta oscura para ser legibles. ──────────────── */
+html:not(.dark) .bg-black { background-color: #f4f6fb !important; }
+html:not(.dark) .bg-black\/5 { background-color: rgba(27, 34, 52, 0.03) !important; }
+html:not(.dark) .bg-black\/10 { background-color: rgba(27, 34, 52, 0.05) !important; }
+html:not(.dark) .bg-black\/15 { background-color: rgba(27, 34, 52, 0.07) !important; }
+html:not(.dark) .bg-black\/20 { background-color: rgba(27, 34, 52, 0.06) !important; }
+html:not(.dark) .bg-black\/25 { background-color: rgba(27, 34, 52, 0.08) !important; }
+html:not(.dark) .bg-black\/30 { background-color: rgba(27, 34, 52, 0.09) !important; }
+html:not(.dark) .bg-black\/40 { background-color: rgba(27, 34, 52, 0.12) !important; }
+html:not(.dark) .bg-black\/50 { background-color: rgba(27, 34, 52, 0.16) !important; }
+html:not(.dark) .bg-black\/60 { background-color: rgba(250, 251, 255, 0.82) !important; }
+html:not(.dark) .bg-black\/70 { background-color: rgba(250, 251, 255, 0.88) !important; }
+html:not(.dark) .bg-black\/80 { background-color: rgba(250, 251, 255, 0.92) !important; }
+html:not(.dark) .bg-black\/85 { background-color: rgba(250, 251, 255, 0.94) !important; }
+html:not(.dark) .bg-black\/90 { background-color: rgba(250, 251, 255, 0.96) !important; }
+html:not(.dark) .bg-black\/92 { background-color: rgba(250, 251, 255, 0.97) !important; }
+html:not(.dark) .bg-black\/95 { background-color: rgba(250, 251, 255, 0.98) !important; }
+
+html:not(.dark) .bg-\[\#05050a\] { background-color: #f4f6fb !important; }
+html:not(.dark) .bg-\[\#05050a\]\/[0-9]+ { background-color: #f4f6fb !important; }
+html:not(.dark) .bg-\[\#0a0a0f\] { background-color: #ffffff !important; }
+html:not(.dark) .bg-\[\#0a0a0f\]\/[0-9]+ { background-color: #ffffff !important; }
+html:not(.dark) .bg-\[\#070710\] { background-color: #f4f6fb !important; }
+html:not(.dark) .bg-\[\#070710\]\/[0-9]+ { background-color: #f4f6fb !important; }
+html:not(.dark) .bg-\[\#070712\] { background-color: #f4f6fb !important; }
+html:not(.dark) .bg-\[\#070712\]\/[0-9]+ { background-color: #f4f6fb !important; }
+html:not(.dark) .bg-\[\#050a14\] { background-color: #f0f3fa !important; }
+html:not(.dark) .bg-\[\#050a14\]\/[0-9]+ { background-color: #f0f3fa !important; }
+html:not(.dark) .bg-\[\#1a1a2e\] { background-color: #eef1f8 !important; }
+html:not(.dark) .bg-\[\#1a1a2e\]\/[0-9]+ { background-color: #eef1f8 !important; }
+html:not(.dark) .bg-\[\#0d1117\] { background-color: #eef1f8 !important; }
+html:not(.dark) .bg-\[\#0d1117\]\/[0-9]+ { background-color: #eef1f8 !important; }
+html:not(.dark) .bg-\[\#111118\] { background-color: #eef1f8 !important; }
+html:not(.dark) .bg-\[\#111118\]\/[0-9]+ { background-color: #eef1f8 !important; }
+html:not(.dark) .bg-\[\#161b22\] { background-color: #eef1f8 !important; }
+html:not(.dark) .bg-\[\#161b22\]\/[0-9]+ { background-color: #eef1f8 !important; }
+html:not(.dark) .bg-\[\#21262d\] { background-color: #e8ebf0 !important; }
+html:not(.dark) .bg-\[\#21262d\]\/[0-9]+ { background-color: #e8ebf0 !important; }
+html:not(.dark) .bg-\[\#30363d\] { background-color: #dce1e8 !important; }
+html:not(.dark) .bg-\[\#30363d\]\/[0-9]+ { background-color: #dce1e8 !important; }
+
+html:not(.dark) .bg-white\/5 { background-color: rgba(35, 63, 146, 0.05) !important; }
+html:not(.dark) .bg-white\/10 { background-color: rgba(35, 63, 146, 0.08) !important; }
+html:not(.dark) .bg-white\/15 { background-color: rgba(35, 63, 146, 0.1) !important; }
+html:not(.dark) .bg-white\/20 { background-color: rgba(35, 63, 146, 0.12) !important; }
+html:not(.dark) .bg-white\/25 { background-color: rgba(35, 63, 146, 0.14) !important; }
+html:not(.dark) .bg-white\/30 { background-color: rgba(35, 63, 146, 0.16) !important; }
+html:not(.dark) .bg-white\/40 { background-color: rgba(35, 63, 146, 0.2) !important; }
+html:not(.dark) .bg-white\/50 { background-color: rgba(35, 63, 146, 0.24) !important; }
+html:not(.dark) .bg-white\/60 { background-color: rgba(35, 63, 146, 0.28) !important; }
+html:not(.dark) .bg-white\/70 { background-color: rgba(35, 63, 146, 0.32) !important; }
+html:not(.dark) .bg-white\/80 { background-color: rgba(35, 63, 146, 0.36) !important; }
+html:not(.dark) .bg-white\/90 { background-color: rgba(35, 63, 146, 0.4) !important; }
+
+html:not(.dark) .border-white\/5 { border-color: rgba(35, 63, 146, 0.06) !important; }
+html:not(.dark) .border-white\/10 { border-color: rgba(35, 63, 146, 0.12) !important; }
+html:not(.dark) .border-white\/15 { border-color: rgba(35, 63, 146, 0.14) !important; }
+html:not(.dark) .border-white\/20 { border-color: rgba(35, 63, 146, 0.16) !important; }
+html:not(.dark) .border-white\/25 { border-color: rgba(35, 63, 146, 0.18) !important; }
+html:not(.dark) .border-white\/30 { border-color: rgba(35, 63, 146, 0.2) !important; }
+html:not(.dark) .border-white\/40 { border-color: rgba(35, 63, 146, 0.26) !important; }
+html:not(.dark) .border-white\/50 { border-color: rgba(35, 63, 146, 0.3) !important; }
+html:not(.dark) .border-white\/60 { border-color: rgba(35, 63, 146, 0.36) !important; }
+
+html:not(.dark) .text-white { color: #1b2234 !important; }
+html:not(.dark) .text-white\/90 { color: rgba(27, 34, 52, 0.9) !important; }
+html:not(.dark) .text-white\/85 { color: rgba(27, 34, 52, 0.85) !important; }
+html:not(.dark) .text-white\/80 { color: rgba(27, 34, 52, 0.8) !important; }
+html:not(.dark) .text-white\/75 { color: rgba(27, 34, 52, 0.75) !important; }
+html:not(.dark) .text-white\/70 { color: rgba(27, 34, 52, 0.72) !important; }
+html:not(.dark) .text-white\/65 { color: rgba(27, 34, 52, 0.65) !important; }
+html:not(.dark) .text-white\/60 { color: rgba(27, 34, 52, 0.62) !important; }
+html:not(.dark) .text-white\/55 { color: rgba(27, 34, 52, 0.55) !important; }
+html:not(.dark) .text-white\/50 { color: rgba(27, 34, 52, 0.52) !important; }
+html:not(.dark) .text-white\/45 { color: rgba(27, 34, 52, 0.45) !important; }
+html:not(.dark) .text-white\/40 { color: rgba(27, 34, 52, 0.42) !important; }
+html:not(.dark) .text-white\/35 { color: rgba(27, 34, 52, 0.35) !important; }
+html:not(.dark) .text-white\/30 { color: rgba(27, 34, 52, 0.32) !important; }
+html:not(.dark) .text-white\/25 { color: rgba(27, 34, 52, 0.25) !important; }
+html:not(.dark) .text-white\/20 { color: rgba(27, 34, 52, 0.2) !important; }
+html:not(.dark) .text-white\/15 { color: rgba(27, 34, 52, 0.15) !important; }
+html:not(.dark) .text-white\/10 { color: rgba(27, 34, 52, 0.1) !important; }
+html:not(.dark) .text-white\/5 { color: rgba(27, 34, 52, 0.05) !important; }
+
+html:not(.dark) .text-gray-300 { color: #2e3a54 !important; }
+html:not(.dark) .text-gray-400 { color: #5a6478 !important; }
+html:not(.dark) .text-gray-500 { color: #7b879e !important; }
+html:not(.dark) .text-gray-600 { color: #8b93a7 !important; }
+html:not(.dark) .text-gray-700 { color: #9aa5bb !important; }
+html:not(.dark) .text-gray-800 { color: #aab3c5 !important; }
+html:not(.dark) .placeholder\:text-gray-700 { color: #9aa5bb !important; }
+html:not(.dark) .placeholder\:text-gray-600 { color: #8b93a7 !important; }
+html:not(.dark) .placeholder\:text-gray-500 { color: #7b879e !important; }
+
+/* Common modal/dropdown/card/pill/bar backgrounds */
+html:not(.dark) .bg-black\/50 { background-color: rgba(27, 34, 52, 0.16) !important; }
+html:not(.dark) .bg-black\/60 { background-color: rgba(250, 251, 255, 0.82) !important; }
+html:not(.dark) .bg-black\/70 { background-color: rgba(250, 251, 255, 0.88) !important; }
+html:not(.dark) .bg-black\/80 { background-color: rgba(250, 251, 255, 0.92) !important; }
+html:not(.dark) .bg-black\/90 { background-color: rgba(250, 251, 255, 0.96) !important; }
+html:not(.dark) .bg-black\/95 { background-color: rgba(250, 251, 255, 0.98) !important; }
+
+/* Shadow adjustments for light mode */
+html:not(.dark) { 
+  --shadow-neon-blue: 0 0 10px rgba(2, 132, 199, 0.18); 
+  --shadow-neon-pink: 0 0 10px rgba(219, 39, 119, 0.12); 
+  --shadow-neon-purple: 0 0 10px rgba(124, 58, 237, 0.14); 
+}
+
+/* ── Base Layer ─────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    /* Prevent text selection globally (sistema anti-copy, ver muzicmania) */
+    -webkit-user-select: none;
+    -moz-user-select:    none;
+    user-select:         none;
+  }
+
+  /* Allow selection in inputs, textareas and contenteditable */
+  input, textarea, [contenteditable] {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  a, button, [role="button"], label[for], summary {
+    cursor: pointer;
+  }
+
+  ::-webkit-scrollbar       { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--brand-500) 45%, transparent); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--brand-500); }
+
+  h1, h2, h3, h4 { font-family: var(--font-header); }
+
+  ::selection {
+    background: color-mix(in srgb, var(--brand-400) 35%, transparent);
+    color: var(--ink);
+  }
+}
+
+/* ── Utilities Layer ────────────────────────────────────── */
+@layer utilities {
+  .surface-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+
+  .soft-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+  }
+
+  .hover-card {
+    transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+  }
+  .hover-card:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--brand-500) 45%, transparent);
+    box-shadow: 0 12px 30px -12px rgba(35, 63, 146, 0.25);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--brand-500), var(--brand-600));
+    color: #fff;
+    box-shadow: 0 8px 20px -8px color-mix(in srgb, var(--brand-500) 65%, transparent);
+    transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+  }
+  .btn-primary:hover {
+    filter: brightness(1.07);
+    box-shadow: 0 10px 26px -8px color-mix(in srgb, var(--brand-500) 80%, transparent);
+  }
+  .btn-primary:active { transform: scale(.96); }
+
+  .btn-discord {
+    background: #5865f2;
+    color: #fff;
+    box-shadow: 0 8px 22px -8px rgba(88, 101, 242, 0.7);
+    transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+  }
+  .btn-discord:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 12px 28px -8px rgba(88, 101, 242, 0.85);
+    transform: translateY(-1px);
+  }
+  .btn-discord:active { transform: scale(.96); }
+
+  .btn-ghost {
+    border: 1px solid var(--border);
+    color: var(--ink);
+    background: var(--surface);
+    transition: border-color .18s ease, background .18s ease, transform .18s ease;
+  }
+  .btn-ghost:hover {
+    border-color: var(--brand-400);
+    background: color-mix(in srgb, var(--brand-400) 10%, var(--surface));
+  }
+  .btn-ghost:active { transform: scale(.96); }
+
+  .chip {
+    background: color-mix(in srgb, var(--brand-400) 12%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--brand-400) 30%, transparent);
+    color: var(--brand-600);
+  }
+  .dark .chip {
+    color: var(--brand-300);
+  }
+
+  .text-gradient {
+    background: linear-gradient(120deg, var(--brand-600), var(--violet-500));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .dark .text-gradient {
+    background: linear-gradient(120deg, var(--brand-500), var(--violet-400));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .btn-social-discord { background: #5865F2 !important; color: white !important; border: none !important; }
+  .btn-social-github { background: #333333 !important; color: white !important; border: none !important; }
+  .btn-social-youtube { background: #FF0000 !important; color: white !important; border: none !important; }
+
+  .btn-social-discord:hover, .btn-social-github:hover, .btn-social-youtube:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+  }
+
+  .animate-fade-in-up  { animation: fade-in-up .35s ease both; }
+  .animate-fade-in-down{ animation: fade-in-down .25s ease both; }
+  .animate-float       { animation: float 6s ease-in-out infinite; }
+  .animate-gradient-x  { animation: gradient-x 5s ease infinite; background-size: 200% auto; }
+  .animate-slide-right-fade { animation: slide-right-fade 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
+}
+
+/* ── Keyframe Animations ────────────────────────────────── */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in-down {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes gradient-x {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+@keyframes slide-right-fade {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
