@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Script from 'next/script';
 import QuickDocks from '@/components/molecules/QuickDocks';
@@ -38,6 +38,13 @@ const SITE = {
   /** Color de acento propio de la web. */
   accent: '#a855f7',
   accentSoft: '#ff33cc',
+  /**
+   * Variantes legibles para fondos CLAROS: el acento original es muy luminoso
+   * y sobre blanco no llega al mínimo AA (4.5:1). Se oscurece el mismo tono sin
+   * cambiar la identidad de color de la web.
+   */
+  accentLight: '#8206f9',
+  accentSoftLight: '#bd058f',
 };
 
 const GHOST_RATING = 5.0;
@@ -46,18 +53,20 @@ const TRUSTPILOT_BUSINESS_UNIT = '6a7be8beb27b048803166c8f';
 const TRUSTPILOT_TOKEN = '62a9715c-b305-4cb7-a9cf-629a5cc67f63';
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-const PLATFORMS: { label: string; href: string; accent: string }[] = [
+const PLATFORMS: { label: string; href: string; accent: string; accentLight: string }[] = [
   {
     label: 'Trustpilot',
     href: `https://www.trustpilot.com/review/${SITE.domain}`,
     accent: '#00b67a',
+    accentLight: '#007750',
   },
   {
     label: 'Google Reviews',
     href: `https://www.google.com/search?q=${encodeURIComponent(`${SITE.entity} Ciszuko Antony reseñas`)}`,
     accent: '#4285f4',
+    accentLight: '#0d5ad9',
   },
-  { label: 'Discord', href: DISCORD_INVITE, accent: '#5865f2' },
+  { label: 'Discord', href: DISCORD_INVITE, accent: '#5865f2', accentLight: '#1121d5' },
 ];
 
 interface ReviewRow {
@@ -86,13 +95,74 @@ type SessionUser = { id?: string | null; role?: string | null } | null;
  * Helpers de presentación
  * ---------------------------------------------------------- */
 
-/** Color de las estrellas según la nota (sube de brillo con la nota). */
-function ratingColor(rating: number): string {
-  if (rating >= 4.5) return '#ffd900';
-  if (rating >= 3.5) return '#00e08a';
-  if (rating >= 2.5) return '#ff8a00';
-  return '#ff3b57';
+/**
+ * Paletas de la vista de reseñas.
+ *
+ * POR QUÉ: la página se diseñó sobre fondo negro —tintas blancas translúcidas,
+ * superficies apenas visibles y acentos muy luminosos—. Sobre el fondo claro
+ * esos mismos valores caen por debajo del mínimo AA y el resultado es el
+ * "texto que no se percibe" reportado. Cada literal vive ahora en un token que
+ * cambia con el tema.
+ */
+const DARK_TOKENS = {
+  ink: '#ffffff',
+  inkSoft: 'rgba(255,255,255,0.55)',
+  inkSubtle: 'rgba(255,255,255,0.4)',
+  border: 'rgba(255,255,255,0.12)',
+  borderSoft: 'rgba(255,255,255,0.1)',
+  surface: 'rgba(255,255,255,0.03)',
+  /** Sufijo alfa del tinte de los chips activos (ver `Chip`). */
+  accentTint: '1f',
+  surfaceSolid: '#000000',
+  onAccent: '#000000',
+  verified: '#00b67a',
+  verifiedInk: '#000000',
+  positive: '#00e08a',
+  negative: '#ff3b57',
+};
+
+const LIGHT_TOKENS: typeof DARK_TOKENS = {
+  ink: '#0d1526',
+  inkSoft: 'rgba(13,21,38,0.68)',
+  inkSubtle: 'rgba(13,21,38,0.58)',
+  border: 'rgba(30,50,96,0.18)',
+  borderSoft: 'rgba(30,50,96,0.14)',
+  surface: 'rgba(13,21,38,0.04)',
+  /** En claro el tinte baja a 8%: sobre blanco restaba contraste al texto. */
+  accentTint: '14',
+  surfaceSolid: '#ffffff',
+  onAccent: '#ffffff',
+  verified: '#007750',
+  verifiedInk: '#ffffff',
+  positive: '#00774a',
+  negative: '#cb001d',
+};
+
+type Tokens = typeof DARK_TOKENS;
+
+/** Colores de las estrellas según la nota (suben de brillo con la nota). */
+const RATING_COLORS = {
+  dark: { top: '#ffd900', good: '#00e08a', mid: '#ff8a00', low: '#ff3b57' },
+  light: { top: '#796700', good: '#00774a', mid: '#9e5600', low: '#cb001d' },
+};
+
+function ratingColor(rating: number, light = false): string {
+  const palette = light ? RATING_COLORS.light : RATING_COLORS.dark;
+  if (rating >= 4.5) return palette.top;
+  if (rating >= 3.5) return palette.good;
+  if (rating >= 2.5) return palette.mid;
+  return palette.low;
 }
+
+/** Color del texto de un tag (verde/rojo del tema activo). */
+function tagColor(tag: ReviewTag, tokens: Tokens): string {
+  if (tag === 'verified') return tokens.verified;
+  if (tag === 'positive') return tokens.positive;
+  return tokens.negative;
+}
+
+/** `useLayoutEffect` no existe en el servidor; en SSR cae a `useEffect`. */
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 function displayNameOf(review: ReviewRecord): string {
   if (review.is_anonymous) return 'CIUDADANO ANÓNIMO';
@@ -147,7 +217,7 @@ function Star({
       <defs>
         <linearGradient id={gradientId} x1="0" y1="0" x2="100%" y2="0">
           <stop offset={`${pct}%`} stopColor={color} />
-          <stop offset={`${pct}%`} stopColor="rgba(255,255,255,0.12)" />
+          <stop offset={`${pct}%`} stopColor="currentColor" stopOpacity={0.18} />
         </linearGradient>
       </defs>
       <polygon
@@ -159,8 +229,8 @@ function Star({
   );
 }
 
-function StarRow({ rating, size = 18 }: { rating: number; size?: number }) {
-  const color = ratingColor(rating);
+function StarRow({ rating, size = 18, light = false }: { rating: number; size?: number; light?: boolean }) {
+  const color = ratingColor(rating, light);
   return (
     <div className="flex items-center gap-1" role="img" aria-label={`${formatRating(rating)} de 5 estrellas`}>
       {[1, 2, 3, 4, 5].map((star) => (
@@ -176,8 +246,16 @@ function StarRow({ rating, size = 18 }: { rating: number; size?: number }) {
   );
 }
 
-function RatingPicker({ value, onChange }: { value: number; onChange: (next: number) => void }) {
-  const color = ratingColor(value);
+function RatingPicker({
+  value,
+  onChange,
+  light = false,
+}: {
+  value: number;
+  onChange: (next: number) => void;
+  light?: boolean;
+}) {
+  const color = ratingColor(value, light);
   const pick = (star: number, clientX: number, rect: DOMRect) => {
     const pct = rect.width > 0 ? (clientX - rect.left) / rect.width : 1;
     const next = star - 1 + (pct > 0.5 ? 1 : 0.5);
@@ -217,11 +295,13 @@ function Chip({
   onClick,
   children,
   accent,
+  tokens,
 }: {
   active: boolean;
   onClick: () => void;
   children: React.ReactNode;
   accent: string;
+  tokens: Tokens;
 }) {
   return (
     <button
@@ -230,9 +310,9 @@ function Chip({
       aria-pressed={active}
       className="rounded-full border px-3 py-1.5 text-[10px] font-black uppercase tracking-widest transition-all"
       style={{
-        borderColor: active ? accent : 'rgba(255,255,255,0.12)',
-        color: active ? accent : 'rgba(255,255,255,0.55)',
-        background: active ? `${accent}1f` : 'rgba(255,255,255,0.03)',
+        borderColor: active ? accent : tokens.border,
+        color: active ? accent : tokens.inkSoft,
+        background: active ? `${accent}${tokens.accentTint}` : tokens.surface,
       }}
     >
       {children}
@@ -252,6 +332,29 @@ function Shell({ children }: { children: React.ReactNode }) {
 export default function ReviewsPage() {
   const storeUser = useAppStore((state: { user?: unknown }) => state.user) as unknown as SessionUser;
   const userId = storeUser?.id && UUID_RE.test(storeUser.id) ? storeUser.id : null;
+
+  /* El tema se lee del DOM dentro de un layout effect: el primer render coincide
+     con el del servidor (oscuro) y el claro aparece antes de pintar, sin avisos
+     de hidratación ni parpadeo. Se observa la clase de <html> porque cada web
+     marca el tema de forma distinta (.light / .dark) y `color-scheme` sirve a
+     todas como fuente de verdad. */
+  const [isLight, setIsLight] = useState(false);
+
+  useIsomorphicLayoutEffect(() => {
+    const root = document.documentElement;
+    const read = () => {
+      const scheme = window.getComputedStyle(root).colorScheme || '';
+      setIsLight(scheme.includes('light'));
+    };
+    read();
+    const observer = new MutationObserver(read);
+    observer.observe(root, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
+  const tokens = isLight ? LIGHT_TOKENS : DARK_TOKENS;
+  const accent = isLight ? SITE.accentLight : SITE.accent;
+  const accentSoft = isLight ? SITE.accentSoftLight : SITE.accentSoft;
   const isAdmin = String(storeUser?.role ?? '').toLowerCase() === 'admin';
 
   const [reviews, setReviews] = useState<ReviewRecord[]>([]);
@@ -511,7 +614,7 @@ export default function ReviewsPage() {
     <Shell>
       <div
         className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[420px] w-[900px] -translate-x-1/2 rounded-full blur-[220px]"
-        style={{ background: `${SITE.accent}14` }}
+        style={{ background: `${accent}14` }}
       />
 
       <div className="mx-auto max-w-5xl space-y-10">
@@ -519,18 +622,18 @@ export default function ReviewsPage() {
         <header className="space-y-3 pt-8 text-center">
           <div className="flex items-center justify-center gap-4">
             <div className="h-10 w-10">
-              <Star fill={1} color={SITE.accent} size={40} />
+              <Star fill={1} color={accent} size={40} />
             </div>
             <h1
               className="bg-clip-text font-header text-4xl font-black uppercase leading-none tracking-tighter text-transparent md:text-6xl"
-              style={{ backgroundImage: `linear-gradient(to right, ${SITE.accent}, #ffffff)` }}
+              style={{ backgroundImage: `linear-gradient(to right, ${accent}, ${tokens.ink})` }}
             >
               RESEÑAS
             </h1>
           </div>
           <p
             className="text-[10px] font-black uppercase tracking-[0.4em] md:text-xs"
-            style={{ color: SITE.accent }}
+            style={{ color: accent }}
           >
             {SITE.subtitle}
           </p>
@@ -540,12 +643,12 @@ export default function ReviewsPage() {
         <section className="relative overflow-hidden rounded-[3rem] border border-white/10 bg-black p-10">
           <div
             className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full blur-[90px]"
-            style={{ background: `${SITE.accent}22` }}
+            style={{ background: `${accent}22` }}
           />
           <div className="relative z-10 flex flex-wrap items-center justify-center gap-12 text-center">
-            <div className="flex h-36 w-36 items-center justify-center rounded-full border-8 bg-black" style={{ borderColor: `${SITE.accent}22` }}>
+            <div className="flex h-36 w-36 items-center justify-center rounded-full border-8 bg-black" style={{ borderColor: `${accent}22` }}>
               <div className="text-center">
-                <div className="font-header text-5xl font-black italic" style={{ color: SITE.accent }}>
+                <div className="font-header text-5xl font-black italic" style={{ color: accent }}>
                   {formatRating(averageWithGhost)}
                 </div>
                 <div className="text-[11px] font-black uppercase tracking-[0.3em] text-white/40">/ 5.0</div>
@@ -554,7 +657,7 @@ export default function ReviewsPage() {
             <div className="space-y-4">
               <div className="flex justify-center gap-2">
                 {(hasRealReviews ? [1, 2, 3, 4, 5].map(() => averageWithGhost) : [5, 5, 5, 5, 5]).map((value, index) => (
-                  <Star key={index} fill={hasRealReviews ? Math.min(1, Math.max(0.5, value / 5)) : 1} color={hasRealReviews ? ratingColor(averageWithGhost) : SITE.accent} size={26} />
+                  <Star key={index} fill={hasRealReviews ? Math.min(1, Math.max(0.5, value / 5)) : 1} color={hasRealReviews ? ratingColor(averageWithGhost, isLight) : accent} size={26} />
                 ))}
               </div>
               <p className="text-[11px] font-black uppercase tracking-[0.3em] text-white/45">
@@ -571,7 +674,7 @@ export default function ReviewsPage() {
                 type="button"
                 onClick={openComposer}
                 className="rounded-2xl border-2 px-8 py-4 font-header text-sm font-black uppercase tracking-[0.2em] transition-transform hover:scale-105 active:scale-95"
-                style={{ borderColor: `${SITE.accent}66`, color: SITE.accent, background: '#000' }}
+                style={{ borderColor: `${accent}66`, color: accent, background: tokens.surfaceSolid }}
               >
                 {myReview ? 'Editar mi reseña' : 'Escribir reseña'}
               </button>
@@ -614,7 +717,7 @@ export default function ReviewsPage() {
               { key: 'popularity', label: 'Popularidad' },
             ] as { key: ReviewSortKey; label: string }[]
             ).map((option) => (
-              <Chip key={option.key} active={sortKey === option.key} onClick={() => setSortKey(option.key)} accent={SITE.accent}>
+              <Chip key={option.key} active={sortKey === option.key} onClick={() => setSortKey(option.key)} accent={accent} tokens={tokens}>
                 {option.label}
               </Chip>
             ))}
@@ -623,7 +726,7 @@ export default function ReviewsPage() {
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30">Filtros</span>
             {(Object.keys(TAG_LABELS) as ReviewTag[]).map((tag) => (
-              <Chip key={tag} active={tags.includes(tag)} onClick={() => toggleTag(tag)} accent={SITE.accent}>
+              <Chip key={tag} active={tags.includes(tag)} onClick={() => toggleTag(tag)} accent={accent} tokens={tokens}>
                 {TAG_LABELS[tag]}
               </Chip>
             ))}
@@ -632,18 +735,18 @@ export default function ReviewsPage() {
               { value: 4, label: '4★ o más' },
               { value: 3, label: '3★ o más' },
             ].map((option) => (
-              <Chip key={option.value} active={minRating === option.value} onClick={() => toggleStarFilter(option.value)} accent={SITE.accent}>
+              <Chip key={option.value} active={minRating === option.value} onClick={() => toggleStarFilter(option.value)} accent={accent} tokens={tokens}>
                 {option.label}
               </Chip>
             ))}
-            <Chip active={maxRating === 2} onClick={() => { setMinRating(null); setMaxRating(maxRating === 2 ? null : 2); }} accent={SITE.accent}>
+            <Chip active={maxRating === 2} onClick={() => { setMinRating(null); setMaxRating(maxRating === 2 ? null : 2); }} accent={accent} tokens={tokens}>
               2★ o menos
             </Chip>
-            <Chip active={onlyLikes} onClick={() => setOnlyLikes((prev) => !prev)} accent={SITE.accent}>
+            <Chip active={onlyLikes} onClick={() => setOnlyLikes((prev) => !prev)} accent={accent} tokens={tokens}>
               Con likes
             </Chip>
             {userId && (
-              <Chip active={onlyMine} onClick={() => setOnlyMine((prev) => !prev)} accent={SITE.accent}>
+              <Chip active={onlyMine} onClick={() => setOnlyMine((prev) => !prev)} accent={accent} tokens={tokens}>
                 Solo las mías
               </Chip>
             )}
@@ -695,7 +798,7 @@ export default function ReviewsPage() {
                 type="button"
                 onClick={() => void loadReviews()}
                 className="mt-6 rounded-2xl border-2 px-6 py-3 text-xs font-black uppercase tracking-widest"
-                style={{ borderColor: `${SITE.accent}66`, color: SITE.accent }}
+                style={{ borderColor: `${accent}66`, color: accent }}
               >
                 Reintentar
               </button>
@@ -703,7 +806,7 @@ export default function ReviewsPage() {
           ) : sorted.length === 0 ? (
             <div className="rounded-[3rem] border-2 border-dashed border-white/15 bg-black p-12 text-center">
               <div className="mx-auto mb-5 h-14 w-14">
-                <Star fill={1} color={`${SITE.accent}80`} size={56} />
+                <Star fill={1} color={`${accent}80`} size={56} />
               </div>
               <h2 className="font-header text-2xl font-black uppercase tracking-tight text-white">
                 {totalReviews === 0 ? 'Ninguna reseña subida aún' : 'Ninguna reseña coincide con los filtros'}
@@ -717,8 +820,8 @@ export default function ReviewsPage() {
                 <button
                   type="button"
                   onClick={openComposer}
-                  className="rounded-2xl px-6 py-3 text-xs font-black uppercase tracking-widest text-black"
-                  style={{ background: SITE.accent }}
+                  className="rounded-2xl px-6 py-3 text-xs font-black uppercase tracking-widest"
+                  style={{ background: accent, color: tokens.onAccent }}
                 >
                   {totalReviews === 0 ? 'Escribir la primera reseña' : 'Escribir reseña'}
                 </button>
@@ -735,7 +838,7 @@ export default function ReviewsPage() {
             </div>
           ) : (
             paged.items.map((review) => {
-              const color = ratingColor(review.rating);
+              const color = ratingColor(review.rating, isLight);
               const reviewTags = deriveReviewTags(review, now);
               const href = profileHrefOf(review);
               const liked = likedIds.has(review.id);
@@ -785,9 +888,9 @@ export default function ReviewsPage() {
                               title="Reseña verificada"
                               aria-label="Reseña verificada"
                               className="inline-flex h-4 w-4 items-center justify-center rounded-full"
-                              style={{ background: '#00b67a' }}
+                              style={{ background: tokens.verified }}
                             >
-                              <svg viewBox="0 0 24 24" width={11} height={11} fill="none" stroke="#000" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round">
+                              <svg viewBox="0 0 24 24" width={11} height={11} fill="none" stroke={tokens.verifiedInk} strokeWidth={4} strokeLinecap="round" strokeLinejoin="round">
                                 <polyline points="20 6 9 17 4 12" />
                               </svg>
                             </span>
@@ -802,7 +905,7 @@ export default function ReviewsPage() {
 
                     <div className="flex-1 space-y-4">
                       <div className="flex flex-wrap items-center gap-4">
-                        <StarRow rating={review.rating} />
+                        <StarRow rating={review.rating} light={isLight} />
                         <span className="font-header text-sm font-black italic" style={{ color }}>
                           {formatRating(review.rating)} <span className="text-white/30">/ 5.0</span>
                         </span>
@@ -812,8 +915,8 @@ export default function ReviewsPage() {
                               key={tag}
                               className="rounded-full border px-3 py-1 text-[9px] font-black uppercase tracking-widest"
                               style={{
-                                borderColor: tag === 'verified' ? '#00b67a66' : tag === 'positive' ? '#00e08a55' : '#ff3b5755',
-                                color: tag === 'verified' ? '#00b67a' : tag === 'positive' ? '#00e08a' : '#ff3b57',
+                                borderColor: `${tagColor(tag, tokens)}66`,
+                                color: tagColor(tag, tokens),
                               }}
                             >
                               {TAG_LABELS[tag]}
@@ -838,9 +941,9 @@ export default function ReviewsPage() {
                           aria-pressed={liked}
                           className="flex items-center gap-2 rounded-2xl border px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-all"
                           style={{
-                            borderColor: liked ? `${SITE.accentSoft}88` : 'rgba(255,255,255,0.12)',
-                            color: liked ? SITE.accentSoft : 'rgba(255,255,255,0.5)',
-                            background: liked ? `${SITE.accentSoft}1a` : 'transparent',
+                            borderColor: liked ? `${accentSoft}88` : tokens.border,
+                            color: liked ? accentSoft : tokens.inkSoft,
+                            background: liked ? `${accentSoft}1a` : 'transparent',
                           }}
                         >
                           <svg viewBox="0 0 24 24" width={14} height={14} fill={liked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -924,9 +1027,9 @@ export default function ReviewsPage() {
                   aria-current={active ? 'page' : undefined}
                   className="h-10 min-w-[40px] rounded-full border text-xs font-black transition-all"
                   style={{
-                    borderColor: active ? SITE.accent : 'rgba(255,255,255,0.1)',
-                    background: active ? SITE.accent : 'rgba(255,255,255,0.03)',
-                    color: active ? '#000' : 'rgba(255,255,255,0.55)',
+                    borderColor: active ? accent : tokens.borderSoft,
+                    background: active ? accent : tokens.surface,
+                    color: active ? tokens.onAccent : tokens.inkSoft,
                   }}
                 >
                   {pageIndex + 1}
@@ -984,7 +1087,10 @@ export default function ReviewsPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-2xl border-2 bg-black px-6 py-3 font-header text-sm font-black uppercase tracking-widest transition-transform hover:scale-105"
-                style={{ borderColor: `${platform.accent}55`, color: platform.accent }}
+                style={{
+                  borderColor: `${isLight ? platform.accentLight : platform.accent}55`,
+                  color: isLight ? platform.accentLight : platform.accent,
+                }}
               >
                 {platform.label}
               </a>
@@ -999,7 +1105,7 @@ export default function ReviewsPage() {
               data-businessunit-id={TRUSTPILOT_BUSINESS_UNIT}
               data-style-height="52px"
               data-style-width="100%"
-              data-theme="dark"
+              data-theme={isLight ? 'light' : 'dark'}
               data-token={TRUSTPILOT_TOKEN}
             >
               <a href={`https://www.trustpilot.com/review/${SITE.domain}`} target="_blank" rel="noopener noreferrer">
@@ -1053,10 +1159,10 @@ export default function ReviewsPage() {
             <div className="space-y-6">
               <div className="space-y-3 rounded-[2rem] border border-white/10 bg-white/[0.02] p-6 text-center">
                 <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/35">Calificación final</p>
-                <p className="font-header text-3xl font-black italic" style={{ color: ratingColor(formRating) }}>
+                <p className="font-header text-3xl font-black italic" style={{ color: ratingColor(formRating, isLight) }}>
                   {formatRating(formRating)} <span className="text-lg text-white/25">/ 5.0</span>
                 </p>
-                <RatingPicker value={formRating} onChange={setFormRating} />
+                <RatingPicker value={formRating} onChange={setFormRating} light={isLight} />
                 <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/25">
                   Puedes elegir medias estrellas (2.5, 3.5, 4.5…)
                 </p>
@@ -1077,8 +1183,8 @@ export default function ReviewsPage() {
                   aria-pressed={formAnon}
                   className="rounded-2xl border-2 px-5 py-3 text-[10px] font-black uppercase tracking-widest transition-all"
                   style={{
-                    borderColor: formAnon ? SITE.accent : 'rgba(255,255,255,0.12)',
-                    color: formAnon ? SITE.accent : 'rgba(255,255,255,0.4)',
+                    borderColor: formAnon ? accent : tokens.border,
+                    color: formAnon ? accent : tokens.inkSubtle,
                   }}
                 >
                   {formAnon ? 'Publicando como anónimo' : 'Publicar como anónimo'}
@@ -1087,8 +1193,8 @@ export default function ReviewsPage() {
                   type="button"
                   onClick={() => void handleSubmit()}
                   disabled={submitting || formComment.trim().length < 10}
-                  className="rounded-2xl px-8 py-3 text-xs font-black uppercase tracking-widest text-black transition-transform hover:scale-105 disabled:opacity-40"
-                  style={{ background: SITE.accent }}
+                  className="rounded-2xl px-8 py-3 text-xs font-black uppercase tracking-widest transition-transform hover:scale-105 disabled:opacity-40"
+                  style={{ background: accent, color: tokens.onAccent }}
                 >
                   {submitting ? 'Guardando…' : myReview ? 'Guardar cambios' : 'Publicar reseña'}
                 </button>
