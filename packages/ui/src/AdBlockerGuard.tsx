@@ -41,13 +41,20 @@ import { getCookieConsent } from './cookieConsent';
 
 export interface AdBlockerGuardProps {
   children: ReactNode;
-  /** Nombre corto de la web (para la clave de localStorage). */
   site: string;
   logo?: string;
   title?: string;
   accent?: string;
   accentAlt?: string;
+  donateHref?: string;
 }
+
+const SITE_DONATE_HREF: Record<string, string> = {
+  ciszunetwork: 'https://ciszunetwork.vercel.app/donate',
+  ciszubot: 'https://ciszubot.vercel.app/donate',
+  ciszukoantony: 'https://ciszukoantony.vercel.app/donate',
+  muzicmania: 'https://muzicmania.vercel.app/donation',
+};
 
 type Screen = 'none' | 'block' | 'disable' | 'continue';
 
