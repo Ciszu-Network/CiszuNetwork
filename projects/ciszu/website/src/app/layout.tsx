@@ -59,9 +59,12 @@ export const metadata: Metadata = {
 const themeScript = `
 (function () {
   try {
-    var t = JSON.parse(localStorage.getItem('ciszu_preferences') || '{}');
-    var theme = (t && t.theme) || 'dark';
-    if (theme === 'light') document.documentElement.classList.add('light');
+    var raw = localStorage.getItem('ciszu_preferences');
+    if (!raw) return;
+    var t = JSON.parse(raw);
+    if (t && t.theme === 'light') {
+      document.documentElement.classList.add('light');
+    }
   } catch (e) {}
 })();
 `;
@@ -89,6 +92,12 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     <html lang={lang} className={`${ibmPlex.variable} ${ibmPlexCondensed.variable}`} suppressHydrationWarning>
       <head suppressHydrationWarning>
         <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: themeScript,
+          }}
+          strategy="beforeInteractive"
+        />
         <GoogleScripts />
       </head>
       <body className="min-h-screen font-sans flex flex-col">
