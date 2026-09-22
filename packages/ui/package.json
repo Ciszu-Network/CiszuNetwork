@@ -43,7 +43,7 @@
         "@vitest/browser": "^4.1.11",
         "@vitest/browser-playwright": "^4.1.11",
         "@vitest/coverage-v8": "^4.1.11",
-        "chromatic": "^18.7.2",
+        "chromatic": "^18.9.4",
         "eslint": "^8.57.1",
         "msw": "^2.15.0",
         "msw-storybook-addon": "^3.0.0",
