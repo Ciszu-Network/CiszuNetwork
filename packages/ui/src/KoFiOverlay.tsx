@@ -16,12 +16,13 @@ export default function KoFiOverlay({
   textColor = '#fff',
 }: KoFiOverlayProps) {
   useEffect(() => {
+    console.log('[KoFiOverlay] mount', { handle, buttonText, buttonColor, textColor });
+
     const script = document.createElement('script');
     script.src = 'https://storage.ko-fi.com/cdn/scripts/overlay-widget.js';
     script.async = true;
-    document.body.appendChild(script);
-
-    const draw = () => {
+    script.onload = () => {
+      console.log('[KoFiOverlay] script loaded');
       // @ts-ignore
       if (window.kofiWidgetOverlay) {
         // @ts-ignore
@@ -31,19 +32,43 @@ export default function KoFiOverlay({
           'floating-chat.donateButton.background-color': buttonColor,
           'floating-chat.donateButton.text-color': textColor,
         });
+        console.log('[KoFiOverlay] draw called');
+      } else {
+        console.warn('[KoFiOverlay] kofiWidgetOverlay not found after script load');
       }
     };
+    script.onerror = () => console.warn('[KoFiOverlay] script failed to load');
+    document.body.appendChild(script);
 
-    script.onload = draw;
     // @ts-ignore
     if (window.kofiWidgetOverlay) {
-      draw();
+      // @ts-ignore
+      window.kofiWidgetOverlay.draw(handle, {
+        type: 'floating-chat',
+        'floating-chat.donateButton.text': buttonText,
+        'floating-chat.donateButton.background-color': buttonColor,
+        'floating-chat.donateButton.text-color': textColor,
+      });
+      console.log('[KoFiOverlay] draw called (already loaded)');
     }
 
     return () => {
-      document.body.removeChild(script);
+      try {
+        document.body.removeChild(script);
+      } catch {
+        // already removed
+      }
     };
   }, [handle, buttonText, buttonColor, textColor]);
 
-  return null;
+  return (
+    <div
+      className="pointer-events-none fixed bottom-4 right-4 z-[99999]"
+      aria-hidden="true"
+    >
+      <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-[10px] font-bold text-white/70">
+        Ko-fi overlay: {handle}
+      </div>
+    </div>
+  );
 }

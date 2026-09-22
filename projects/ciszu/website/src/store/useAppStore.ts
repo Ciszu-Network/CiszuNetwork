@@ -58,19 +58,17 @@ export const useAppStore = create<AppState>((set, get) => ({
   sidebarView: 'main',
   setSidebarView: (val: SidebarView) => set({ sidebarView: val }),
   theme: persisted?.theme ?? 'dark',
-  setTheme: (val: Theme, skipReload = false) => {
+  setTheme: (val: Theme) => {
     set({ theme: val });
     const prefs = loadPreferences();
     savePreferences({ ...prefs, theme: val });
     applyTheme(val);
-    if (!skipReload) scheduleReload();
   },
   language: persisted?.lang ?? 'es-latam',
-  setLanguage: (val: Language, skipReload = false) => {
+  setLanguage: (val: Language) => {
     set({ language: val });
     const prefs = loadPreferences();
     savePreferences({ ...prefs, lang: val });
-    if (!skipReload) scheduleReload();
   },
   searchQuery: '',
   setSearchQuery: (val: string) => set({ searchQuery: val }),
