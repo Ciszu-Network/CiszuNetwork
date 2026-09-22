@@ -55,7 +55,6 @@ export const useAppStore = create<AppState>((set) => ({
       document.documentElement.classList.toggle('light', val === 'light');
     }
     updatePreferences({ theme: val });
-    setTimeout(() => window.location.reload(), 50);
   },
   language: getPreferences().lang,
   setLanguage: (val: Language, skipReload = false) => {
