@@ -208,8 +208,8 @@ const COMPANIES = [
   { name: 'Simplilearn', logo: 'simplilearn', desc: 'Online bootcamps & certifications for digital economy skills.', category: 'Professional Training' },
 ];
 
-function FilterDropdown({ label, icon, options, value, onChange, colorMap, getLabel }: {
-  label: string; icon: React.ReactNode; options: { id: string; label: string }[]; value: string; onChange: (v: string) => void; colorMap?: Record<string, string>; getLabel?: (id: string) => string;
+function FilterDropdown({ label, icon, options, value, onChange, colorMap, getLabel, multiple = false }: {
+  label: string; icon: React.ReactNode; options: { id: string; label: string }[]; value: string | string[]; onChange: (v: string | string[]) => void; colorMap?: Record<string, string>; getLabel?: (id: string) => string; multiple?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const ref = React.useRef<HTMLDivElement>(null);
@@ -222,8 +222,12 @@ function FilterDropdown({ label, icon, options, value, onChange, colorMap, getLa
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const activeLabel = value === 'all' ? label : getLabel ? getLabel(value) : options.find(o => o.id === value)?.label || value;
-  const activeColor = value === 'all' ? '#94a3b8' : (colorMap?.[value] || '#94a3b8');
+  const activeLabel = multiple
+    ? (Array.isArray(value) && value.length === 0 ? `All ${label}` : `${value.length} selected`)
+    : (value === 'all' ? label : getLabel ? getLabel(value as string) : options.find(o => o.id === value)?.label || value);
+  const activeColor = multiple
+    ? '#94a3b8'
+    : (value === 'all' ? '#94a3b8' : (colorMap?.[value as string] || '#94a3b8'));
 
   return (
     <div ref={ref} className="relative">
@@ -240,27 +244,62 @@ function FilterDropdown({ label, icon, options, value, onChange, colorMap, getLa
       </button>
       {open && (
         <div className="absolute top-full left-0 mt-2 w-64 max-h-80 overflow-y-auto rounded-xl border border-white/10 bg-[#0a0a14]/95 backdrop-blur-2xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] z-50 py-1.5">
-          <button
-            onClick={() => { onChange('all'); setOpen(false); }}
-            className={`w-full text-left px-4 py-2.5 text-xs font-bold transition-all cursor-pointer flex items-center gap-2.5 ${value === 'all' ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
-          >
-            <span className="w-2 h-2 rounded-full bg-gray-500" />
-            All {label}
-          </button>
-          {options.map((o) => {
-            const color = colorMap?.[o.id] || '#94a3b8';
-            const isActive = value === o.id;
-            return (
+          {multiple ? (
+            <>
               <button
-                key={o.id}
-                onClick={() => { onChange(o.id); setOpen(false); }}
-                className={`w-full text-left px-4 py-2.5 text-xs font-bold transition-all cursor-pointer flex items-center gap-2.5 ${isActive ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                onClick={() => { onChange([]); setOpen(false); }}
+                className={`w-full text-left px-4 py-2.5 text-xs font-bold transition-all cursor-pointer flex items-center gap-2.5 ${(Array.isArray(value) && value.length === 0) ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
               >
-                <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
-                {o.label}
+                <span className="w-2 h-2 rounded-full bg-gray-500" />
+                All {label}
               </button>
-            );
-          })}
+              {options.map((o) => {
+                const color = colorMap?.[o.id] || '#94a3b8';
+                const isActive = Array.isArray(value) && value.includes(o.id);
+                return (
+                  <button
+                    key={o.id}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const arr = Array.isArray(value) ? value : [];
+                      const next = arr.includes(o.id) ? arr.filter(x => x !== o.id) : [...arr, o.id];
+                      onChange(next);
+                    }}
+                    className={`w-full text-left px-4 py-2.5 text-xs font-bold transition-all cursor-pointer flex items-center gap-2.5 ${isActive ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                  >
+                    <span className="w-3 h-3 rounded border flex items-center justify-center shrink-0" style={{ borderColor: color }}>
+                      {isActive && <span className="w-1.5 h-1.5 rounded-sm" style={{ backgroundColor: color }} />}
+                    </span>
+                    {o.label}
+                  </button>
+                );
+              })}
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => { onChange('all'); setOpen(false); }}
+                className={`w-full text-left px-4 py-2.5 text-xs font-bold transition-all cursor-pointer flex items-center gap-2.5 ${value === 'all' ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+              >
+                <span className="w-2 h-2 rounded-full bg-gray-500" />
+                All {label}
+              </button>
+              {options.map((o) => {
+                const color = colorMap?.[o.id] || '#94a3b8';
+                const isActive = value === o.id;
+                return (
+                  <button
+                    key={o.id}
+                    onClick={() => { onChange(o.id); setOpen(false); }}
+                    className={`w-full text-left px-4 py-2.5 text-xs font-bold transition-all cursor-pointer flex items-center gap-2.5 ${isActive ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                  >
+                    <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                    {o.label}
+                  </button>
+                );
+              })}
+            </>
+          )}
         </div>
       )}
     </div>
@@ -855,8 +894,8 @@ function DetailModal({
 
 export default function CertificatesPage() {
   usePageTitle('Certificates & Documents');
-  const [category, setCategory] = useState<string>('all');
-  const [provider, setProvider] = useState<string>('all');
+  const [category, setCategory] = useState<string[]>([]);
+  const [provider, setProvider] = useState<string[]>([]);
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState<string>('date-desc');
   const [selected, setSelected] = useState<Certificate | null>(null);
@@ -864,8 +903,8 @@ export default function CertificatesPage() {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     const result = ALL_DOCS.filter((c) => {
-      if (category !== 'all' && c.category !== category) return false;
-      if (provider !== 'all' && getProviderGroup(c) !== provider) return false;
+      if (category.length > 0 && !category.includes(c.category)) return false;
+      if (provider.length > 0 && !provider.includes(getProviderGroup(c))) return false;
       if (!q) return true;
       const hay = `${c.title} ${c.provider} ${c.collection?.name || ''} ${fmtDate(c.date)} ${c.credentialId || ''} ${c.credentialLabel || ''} ${catalogRef(c)}`.toLowerCase();
       return hay.includes(q);
@@ -907,18 +946,20 @@ export default function CertificatesPage() {
               icon={<svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M4 6h16M4 12h16M4 18h16" /></svg>}
               options={CATEGORIES.filter((c) => c.id !== 'other')}
               value={category}
-              onChange={setCategory}
+              onChange={(v) => setCategory(v as string[])}
               colorMap={Object.fromEntries(CATEGORIES.map(c => [c.id, c.color]))}
               getLabel={catLabel}
+              multiple
             />
             <FilterDropdown
               label="Provider"
               icon={<svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M20 7h-9M20 11h-9M20 15h-9M4 7h1M4 11h1M4 15h1" /></svg>}
               options={PROVIDER_OPTIONS}
               value={provider}
-              onChange={setProvider}
+              onChange={(v) => setProvider(v as string[])}
               colorMap={Object.fromEntries(PROVIDER_OPTIONS.map(p => [p.id, p.color]))}
               getLabel={providerLabel}
+              multiple
             />
             <SortDropdown value={sort} onChange={setSort} />
           </div>
@@ -942,9 +983,9 @@ export default function CertificatesPage() {
             <span className="text-[11px] font-black uppercase tracking-widest text-gray-500">
               Showing {filtered.length} of {ALL_DOCS.length}
             </span>
-            {(category !== 'all' || provider !== 'all' || query || sort !== 'date-desc') && (
+            {(category.length > 0 || provider.length > 0 || query || sort !== 'date-desc') && (
               <button
-                onClick={() => { setCategory('all'); setProvider('all'); setQuery(''); setSort('date-desc'); }}
+                onClick={() => { setCategory([]); setProvider([]); setQuery(''); setSort('date-desc'); }}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-black uppercase tracking-widest border border-neon-pink/40 text-neon-pink hover:bg-neon-pink/10 transition-all cursor-pointer"
               >
                 <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5}>

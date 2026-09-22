@@ -12,7 +12,6 @@ type DockItem = {
 };
 
 const DOCK_ITEMS: DockItem[] = [
-  // --- Juego ---
   {
     label: 'Play',
     href: '/play',
@@ -55,7 +54,6 @@ const DOCK_ITEMS: DockItem[] = [
       </svg>
     ),
   },
-  // --- Información ---
   {
     label: 'Information',
     href: '/information',
@@ -75,7 +73,7 @@ const DOCK_ITEMS: DockItem[] = [
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
         <circle cx="9" cy="7" r="4" />
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+        <circle cx="23" cy="7" r="4" />
         <path d="M16 3.13a4 4 0 0 1 0 7.75" />
       </svg>
     ),
@@ -100,7 +98,6 @@ const DOCK_ITEMS: DockItem[] = [
       </svg>
     ),
   },
-  // --- Soporte ---
   {
     label: 'Help',
     href: '/help',
@@ -145,7 +142,6 @@ const DOCK_ITEMS: DockItem[] = [
       </svg>
     ),
   },
-  // --- Legal ---
   {
     label: 'Rules',
     href: '/rules',
@@ -199,14 +195,11 @@ export default function QuickDocks() {
 
   return (
     <div className="container mx-auto px-4 mt-24 mb-16 relative z-20">
-      {/* Caja contenida y redondeada */}
       <div className="relative bg-black border-2 border-white/10 rounded-[3.5rem] p-8 md:p-14 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden">
-        {/* Decorative background elements inside the box */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-neon-purple/5 blur-[100px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/2" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-neon-blue/5 blur-[100px] rounded-full pointer-events-none translate-y-1/2 -translate-x-1/2" />
 
         <div className="relative z-10">
-          {/* Header */}
           <div className="flex flex-col items-center mb-10 text-center">
             <h3 className="text-4xl font-header font-black text-white uppercase tracking-[0.3em] leading-none mb-2">
               Quick Docks
@@ -216,7 +209,6 @@ export default function QuickDocks() {
             </p>
           </div>
 
-          {/* Grid */}
           <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-8 gap-3 mb-12">
             {DOCK_ITEMS.map((doc, i) => {
               const isActive = pathname === doc.href;
