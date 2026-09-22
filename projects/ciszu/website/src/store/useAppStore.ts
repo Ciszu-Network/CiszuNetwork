@@ -39,20 +39,7 @@ interface AppState {
 
 const persisted = typeof window !== 'undefined' ? loadPreferences() : null;
 
-// Recarga diferida: al cambiar idioma/tema se muestra el toast (azul) y se
-// recarga la página ~1.8s después para que el aviso sea visible. Si se cambia
-// varias veces rápido, solo se programa una recarga.
-let reloadTimer: ReturnType<typeof setTimeout> | null = null;
-function scheduleReload() {
-  if (typeof window === 'undefined') return;
-  if (reloadTimer) clearTimeout(reloadTimer);
-  reloadTimer = setTimeout(() => {
-    reloadTimer = null;
-    window.location.reload();
-  }, 1800);
-}
-
-export const useAppStore = create<AppState>((set, get) => ({
+export const useAppStore = create<AppState>((set) => ({
   isMenuOpen: false,
   setIsMenuOpen: (val: boolean) => set({ isMenuOpen: val }),
   sidebarView: 'main',
