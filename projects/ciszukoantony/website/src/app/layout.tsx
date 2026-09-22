@@ -95,7 +95,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             <AdPill placement="body" />
             <RedirectGuard debug={true} />
             <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={PROFILE_PIC} title="Ciszuko Antony" subtitle="Ciszuko Antony Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszukoantony">
-              <AdBlockerGuard site="ciszukoantony" logo={PROFILE_PIC} title="Ciszuko Antony" accent="#a78bfa" accentAlt="#ff33cc">
+              <AdBlockerGuard site="ciszukoantony" logo={PROFILE_PIC} title="Ciszuko Antony" accent="#a78bfa" accentAlt="#ff33cc" donateHref="https://ciszukoantony.vercel.app/donate">
               {/* BetaDisclaimer removido: ahora usa el sistema de push global (GlobalDisclaimer) */}
               {!isEdit && <Navbar lang={lang} dict={dict} />}
               {!isEdit && <ZoomWarning />}

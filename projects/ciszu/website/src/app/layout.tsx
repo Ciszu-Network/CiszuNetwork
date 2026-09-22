@@ -112,7 +112,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             <RedirectGuard debug={true} />
             <DisclaimerProvider>
               <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={ICON_SVG} title="Ciszu Network" subtitle="Ciszu Network Security • Cloudflare" accent="#22d3ee" storageKey="cf_verified_ciszu">
-                <AdBlockerGuard site="ciszu" logo={ICON_SVG} title="Ciszu Network" accent="#22d3ee" accentAlt="#f472b6">
+                <AdBlockerGuard site="ciszu" logo={ICON_SVG} title="Ciszu Network" accent="#22d3ee" accentAlt="#f472b6" donateHref="https://ciszunetwork.vercel.app/donate">
                 {!isEdit && <ZoomWarning />}
                 {!isEdit && <Navbar lang={lang} dict={dict} />}
                 {!isEdit && <DisclaimerStack headerHeight={64} />}

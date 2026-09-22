@@ -82,7 +82,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       <body className="bg-bg text-ink min-h-screen font-sans flex flex-col">
         <QueryProvider>
            <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={LOGO_ISOTIPO_CIRCLE} title="CiszuBot" subtitle="CiszuBot Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszubot">
-            <AdBlockerGuard site="ciszubot" logo={LOGO_ISOTIPO_CIRCLE} title="CiszuBot" accent="#38bdf8" accentAlt="#ff33cc">
+             <AdBlockerGuard site="ciszubot" logo={LOGO_ISOTIPO_CIRCLE} title="CiszuBot" accent="#38bdf8" accentAlt="#ff33cc" donateHref="https://ciszubot.vercel.app/donate">
             <AuthProvider>
               <ToastProvider>
               <ActivityGuardProvider>
