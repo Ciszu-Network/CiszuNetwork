@@ -44,10 +44,6 @@ Y por ultimo al momento de seleccionar en los filtradores, los filtros de catego
 
 En resumen, mejora el sistema de ciszukoantony website certificates. Transformando los certificates actuales para permitir multitags, cada tag con un icono diferente, filtracion inteligente multitags y caegorizacion en all por seccion.
 
-Ademas del error de guard antiadblock.
-
-Existe un error de componentes compartidos. El QuickDock, en ciszunetwork tiene paginas como "certificate" que en ciszunetwork no existen y ciszukoantony si. Esto es un error claro, el quickdock debe ser independiente por website, inteligente y customizable. Debe mostrar paginas reales de la website, por cada website (actualmente 4) arregla esto, de manera que elimines las webpages que no pertenezcan a la website en su quickdock.
-
 Y por ultimo pero no menos importante, tambien hay un error en el guard antiadblock. Cuando se presiona el boton de donacion dentro del estado de bypass con adblocker activado, se va a la pagina de donacion de ciszunetwork, deberia ir a la pagina de donacion de la misma website que incluya un antiadblocker y pagina de donate. De esta manera al abrir el nuevo vinculo se mantiene en la misma website pero en otra pestaña.
 
 - [ ] Exite un problema en las paginas de donacion los widgets embedidos de kofi fallan, requiero obligatoriamente el widget iframe de kofi independientemente del kofipanel. Y arreglar problemas de CORS.

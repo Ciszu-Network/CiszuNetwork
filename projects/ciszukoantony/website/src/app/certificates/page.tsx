@@ -208,8 +208,8 @@ const COMPANIES = [
   { name: 'Simplilearn', logo: 'simplilearn', desc: 'Online bootcamps & certifications for digital economy skills.', category: 'Professional Training' },
 ];
 
-function FilterDropdown({ label, icon, options, value, onChange, colorMap, getLabel, multiple = false }: {
-  label: string; icon: React.ReactNode; options: { id: string; label: string }[]; value: string | string[]; onChange: (v: string | string[]) => void; colorMap?: Record<string, string>; getLabel?: (id: string) => string; multiple?: boolean;
+function FilterDropdown({ label, icon, options, value, onChange, colorMap, getLabel, multiple = false, optionIcon }: {
+  label: string; icon: React.ReactNode; options: { id: string; label: string }[]; value: string | string[]; onChange: (v: string | string[]) => void; colorMap?: Record<string, string>; getLabel?: (id: string) => string; multiple?: boolean; optionIcon?: (id: string) => React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const ref = React.useRef<HTMLDivElement>(null);
@@ -267,9 +267,7 @@ function FilterDropdown({ label, icon, options, value, onChange, colorMap, getLa
                     }}
                     className={`w-full text-left px-4 py-2.5 text-xs font-bold transition-all cursor-pointer flex items-center gap-2.5 ${isActive ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
                   >
-                    <span className="w-3 h-3 rounded border flex items-center justify-center shrink-0" style={{ borderColor: color }}>
-                      {isActive && <span className="w-1.5 h-1.5 rounded-sm" style={{ backgroundColor: color }} />}
-                    </span>
+                    {optionIcon ? <span className="w-4 h-4 flex items-center justify-center shrink-0">{optionIcon(o.id)}</span> : <span className="w-3 h-3 rounded border flex items-center justify-center shrink-0" style={{ borderColor: color }}>{isActive && <span className="w-1.5 h-1.5 rounded-sm" style={{ backgroundColor: color }} />}</span>}
                     {o.label}
                   </button>
                 );
@@ -293,7 +291,7 @@ function FilterDropdown({ label, icon, options, value, onChange, colorMap, getLa
                     onClick={() => { onChange(o.id); setOpen(false); }}
                     className={`w-full text-left px-4 py-2.5 text-xs font-bold transition-all cursor-pointer flex items-center gap-2.5 ${isActive ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
                   >
-                    <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                    {optionIcon ? <span className="w-4 h-4 flex items-center justify-center shrink-0">{optionIcon(o.id)}</span> : <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />}
                     {o.label}
                   </button>
                 );
@@ -950,6 +948,7 @@ export default function CertificatesPage() {
               colorMap={Object.fromEntries(CATEGORIES.map(c => [c.id, c.color]))}
               getLabel={catLabel}
               multiple
+              optionIcon={(id) => <CategoryIcon id={id} className="w-4 h-4" />}
             />
             <FilterDropdown
               label="Provider"
@@ -960,6 +959,7 @@ export default function CertificatesPage() {
               colorMap={Object.fromEntries(PROVIDER_OPTIONS.map(p => [p.id, p.color]))}
               getLabel={providerLabel}
               multiple
+              optionIcon={(id) => <BrandLogo id={id} className="w-4 h-4" />}
             />
             <SortDropdown value={sort} onChange={setSort} />
           </div>
@@ -1002,11 +1002,46 @@ export default function CertificatesPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+            className="space-y-8"
           >
-            {filtered.map((c, i) => (
-              <CertificateCard key={c.id} cert={c} index={i} onOpen={setSelected} />
-            ))}
+            {category.length === 0 && provider.length === 0 && !query ? (
+              Object.entries(
+                filtered.reduce<Record<string, Certificate[]>>((acc, c) => {
+                  const key = c.category;
+                  acc[key] = acc[key] || [];
+                  acc[key].push(c);
+                  return acc;
+                }, {})
+              ).map(([catId, items]) => {
+                const color = catColor(catId);
+                const label = catLabel(catId);
+                return (
+                  <motion.section
+                    key={catId}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="space-y-3"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="w-3 h-3 rounded-full" style={{ backgroundColor: color }} />
+                      <h3 className="text-sm font-black uppercase tracking-widest" style={{ color }}>{label}</h3>
+                      <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">({items.length})</span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {items.map((c, i) => (
+                        <CertificateCard key={c.id} cert={c} index={i} onOpen={setSelected} />
+                      ))}
+                    </div>
+                  </motion.section>
+                );
+              })
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filtered.map((c, i) => (
+                  <CertificateCard key={c.id} cert={c} index={i} onOpen={setSelected} />
+                ))}
+              </div>
+            )}
           </motion.div>
         ) : (
           <div className="text-center py-16">
