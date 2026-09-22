@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { headers, cookies } from "next/headers";
+import Script from "next/script";
 import { IBM_Plex_Sans, IBM_Plex_Sans_Condensed } from "next/font/google";
 import { getDict, parseLang } from "@/lib/i18n";
 import { assetResolver } from "@ciszunetwork/cdn";
@@ -92,10 +93,10 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     <html lang={lang} className={`${ibmPlex.variable} ${ibmPlexCondensed.variable}`} suppressHydrationWarning>
       <head suppressHydrationWarning>
         <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: themeScript }} />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: themeScript,
-          }}
+        <Script
+          id="theme-script"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: themeScript }}
           strategy="beforeInteractive"
         />
         <GoogleScripts />
