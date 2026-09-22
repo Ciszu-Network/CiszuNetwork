@@ -1017,9 +1017,10 @@ export default function CertificatesPage() {
             </p>
             <button
               onClick={() => {
-                setCategory('all');
-                setProvider('all');
+                setCategory([]);
+                setProvider([]);
                 setQuery('');
+                setSort('date-desc');
               }}
               className="mt-4 px-4 py-2 rounded-lg text-xs font-bold border border-white/15 text-gray-300 hover:text-white hover:border-white/40 transition-all cursor-pointer"
             >
