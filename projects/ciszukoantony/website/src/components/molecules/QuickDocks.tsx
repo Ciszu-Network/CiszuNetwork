@@ -63,7 +63,7 @@ const DOCK_ITEMS: DockItem[] = [
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
         <circle cx="9" cy="7" r="4" />
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+        <circle cx="23" cy="7" r="4" />
         <path d="M16 3.13a4 4 0 0 1 0 7.75" />
       </svg>
     ),
@@ -108,8 +108,8 @@ export default function QuickDocks() {
   const pathname = usePathname();
 
   const HOVER_COLORS: Record<string, string> = {
-    cyan: '#68cfff', purple: '#4800ff', pink: '#ff33cc',
-    blue: '#59b4ff', green: '#00ff88', orange: '#f97316',
+    cyan: '#68cfff', purple: '#b400ff', pink: '#ff33cc',
+    blue: '#59b4ff', green: '#00ff9d', orange: '#f97316',
     yellow: '#facc15', red: '#ef4444',
   };
 
@@ -118,7 +118,7 @@ export default function QuickDocks() {
     purple: { border: 'border-neon-purple/30', borderActive: 'border-neon-purple/100', shadow: 'shadow-[0_0_15px_var(--color-neon-purple)]', text: 'text-neon-purple', hoverText: 'group-hover:text-neon-purple', dropShadow: 'drop-shadow-neon-purple' },
     pink: { border: 'border-neon-pink/30', borderActive: 'border-neon-pink/100', shadow: 'shadow-[0_0_15px_var(--color-neon-pink)]', text: 'text-neon-pink', hoverText: 'group-hover:text-neon-pink', dropShadow: 'drop-shadow-neon-pink' },
     blue: { border: 'border-neon-blue/30', borderActive: 'border-neon-blue/100', shadow: 'shadow-[0_0_15px_var(--color-neon-blue)]', text: 'text-neon-blue', hoverText: 'group-hover:text-neon-blue', dropShadow: 'drop-shadow-neon-blue' },
-    green: { border: 'border-green-500/30', borderActive: 'border-green-500/100', shadow: 'shadow-[0_0_15px_#00ff88]', text: 'text-green-400', hoverText: 'group-hover:text-green-400', dropShadow: 'drop-shadow-md' },
+    green: { border: 'border-neon-green/30', borderActive: 'border-neon-green/100', shadow: 'shadow-[0_0_15px_var(--color-neon-green)]', text: 'text-neon-green', hoverText: 'group-hover:text-neon-green', dropShadow: 'drop-shadow-neon-green' },
     orange: { border: 'border-orange-500/30', borderActive: 'border-orange-500/100', shadow: 'shadow-[0_0_15px_#f97316]', text: 'text-orange-500', hoverText: 'group-hover:text-orange-500', dropShadow: 'drop-shadow-md' },
     yellow: { border: 'border-yellow-400/30', borderActive: 'border-yellow-400/100', shadow: 'shadow-[0_0_15px_#facc15]', text: 'text-yellow-400', hoverText: 'group-hover:text-yellow-400', dropShadow: 'drop-shadow-md' },
     red: { border: 'border-red-500/30', borderActive: 'border-red-500/100', shadow: 'shadow-[0_0_15px_#ef4444]', text: 'text-red-500', hoverText: 'group-hover:text-red-500', dropShadow: 'drop-shadow-md' },
@@ -126,17 +126,17 @@ export default function QuickDocks() {
 
   return (
     <div className="container mx-auto px-4 mt-24 mb-16 relative z-20">
-      <div className="relative bg-token border-2 border-token-border rounded-[3.5rem] p-8 md:p-14 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden">
+      <div className="relative bg-black border-2 border-white/10 rounded-[3.5rem] p-8 md:p-14 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-neon-purple/5 blur-[100px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/2" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-neon-pink/5 blur-[100px] rounded-full pointer-events-none translate-y-1/2 -translate-x-1/2" />
 
         <div className="relative z-10">
           <div className="flex flex-col items-center mb-10 text-center">
-            <h3 className="text-4xl font-header font-black text-token uppercase tracking-[0.3em] leading-none mb-2">
+            <h3 className="text-4xl font-header font-black text-white uppercase tracking-[0.3em] leading-none mb-2">
               Quick Docks
             </h3>
-            <p className="text-token-muted text-[10px] uppercase tracking-widest font-bold">
-              Acceso rápido a todas las secciones
+            <p className="text-white/30 text-[10px] uppercase tracking-widest font-bold">
+              Acceso rápido a todas las secciones del ecosistema
             </p>
           </div>
 
@@ -150,7 +150,7 @@ export default function QuickDocks() {
                 <Link
                   key={i}
                   href={doc.href}
-                  className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-token-border border-2 transition-all group active-depth hover:-translate-y-1 ${isActive ? `${style.borderActive} ${style.shadow} scale-[1.02]` : style.border}`}
+                  className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-black border-2 transition-all group active-depth hover:-translate-y-1 ${isActive ? `${style.borderActive} ${style.shadow} scale-[1.02]` : style.border}`}
                   onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => {
                     if (!isActive) {
                       (e.currentTarget as HTMLElement).style.borderColor = hoverColor;
@@ -164,10 +164,10 @@ export default function QuickDocks() {
                     }
                   }}
                 >
-                  <div className={`flex items-center justify-center transition-colors ${isActive ? `${style.text} ${style.dropShadow}` : `text-token-faint ${style.hoverText}`}`}>
+                  <div className={`flex items-center justify-center transition-colors ${isActive ? `${style.text} ${style.dropShadow}` : `text-gray-500 ${style.hoverText}`}`}>
                     {doc.icon}
                   </div>
-                  <span className={`text-[8px] font-black uppercase tracking-[0.15em] transition-colors text-center leading-tight ${isActive ? style.text : `text-token-muted group-hover:text-token`}`}>
+                  <span className={`text-[8px] font-black uppercase tracking-[0.15em] transition-colors text-center leading-tight ${isActive ? style.text : `text-white/40 group-hover:text-white`}`}>
                     {doc.label}
                   </span>
                 </Link>

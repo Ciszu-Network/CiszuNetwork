@@ -76,7 +76,7 @@ Y por ultimo pero no menos importante, tambien hay un error en el guard antiadbl
 - [ ] Terminar paginas de license estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
 - [ ] Terminar idiomas en español LATAM.
 - [ ] Terminar idiomas en español España.
-- [ ] Corregir incosistencias de botones y toggles, como el de slidebar search o theme. No esta usando el mismo de los demas websites y actualmente no funcionan. El togle theme al cambiar se actualiza la pagina pero no mantiene el theme. Los bordes del boton de search y mainmenu estan en blanco deberia ser de color segun la pagina.
+- [ ] Corregir incosistencias de botones y toggles, el toggle theme y el cambio de idomas no se actualiza, deberia actualizar la pagina.
 
 **Ciszubot Website:**
 
