@@ -31,15 +31,6 @@ export default function DonatePage() {
 
         {/* Ko-fi embed oficial */}
         <KoFiOverlay handle="ciszunetwork" buttonText="Support Ciszu Network" buttonColor="#3a6bf0" textColor="#fff" />
-        <div className="mb-12">
-          <iframe
-            src="https://ko-fi.com/ciszunetwork/?hidefeed=true&widget=true&embed=true&preview=true"
-            title="Apoya a Ciszu Network en Ko-fi"
-            className="w-full rounded-2xl border border-white/10 bg-white/5"
-            style={{ height: 712 }}
-            allow="payment"
-          />
-        </div>
 
         <div className="rounded-2xl bg-brand/5 border border-brand/20 p-4">
           <h3 className="text-white font-bold font-header text-sm mb-3 text-center">Cripto (NOWPayments)</h3>
