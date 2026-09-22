@@ -196,9 +196,11 @@ const fabRestoreBtnStyle: CSSProperties = {
   letterSpacing: '0.04em',
   textTransform: 'uppercase',
   cursor: 'pointer',
-  color: '#e4e4e7',
-  background: 'rgba(255,255,255,0.06)',
-  border: '1px solid rgba(255,255,255,0.18)',
+  // Tokens de tema: en claro este botón quedaba gris claro sobre gris claro
+  // (1.19:1) y su texto era ilegible.
+  color: 'var(--ink, #e4e4e7)',
+  background: 'var(--ui-track, rgba(255,255,255,0.06))',
+  border: '1px solid var(--ui-panel-border, rgba(255,255,255,0.18))',
   transition: 'transform 0.2s, box-shadow 0.2s, border-color 0.2s',
 };
 
