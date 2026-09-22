@@ -27,9 +27,30 @@
 - [ ] Al cerrar sesion manual o automaticamente SIEMPRE redirigir a /index o home de la webpage.
 - [ ] Si el usuario entra a un enlace expirado o no invalido nunca se debe iniciarse sesion, es decir, primero evalua el enlace y verificalo en caso de que este bien si inicia sesion temporalmente hasta que cambie su contraseña pero si sale da error.
 - [ ] TODAS las paginas de registro deben tener el recaptacha al final del formulario antes del boton de registrarse. Actualmente el sistema de recaptchas de los sitiowebs estaban rotos por que no habia creado los proyectos y sus ids / tokens eran inexistentes. Implementa las veresiones 2 y 3 de cada catpcha de cada website. Debemos implementar esto aun, no aparecen en los register. (Solucionar problemas de recaptcha)
-- [ ] Arreglar error de los headers. Necesito que saques de la seccion de information en el header a reviews, stats, leaderboard, downloads, changelogs y feedback.
-- [ ] Terminar paginas de information como team, help, faq, about e information estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
-- [ ] Exite un problema en las paginas de donacion de ciszubot y ciszunetwork los widgets embedidos fallan
+
+Actualmente hay una falla al momento de realizar una actualizacion de pagina al momento de presionar el boton toggle para cambiar el theme.
+
+Independientemente del theme, al actualizar la pagina todo funciona correctamente pero, reaparece el guard de antiadblock, puede ser molesto para el usuario al cambiar el tema.
+
+Debes hacer que al actualiazr por el toggle theme no se priorize el antiadblock. Ya que son recargas de pagina voluntarias del usuario por una accion.
+
+Esto debes aplicarlo y implementarlo en todas las websites.
+
+Por otro lado en ciszukoantony website, en la pagina de certificates. Quiero que cada etiqueta o tag tenga un icono propio, de los 3 filtradores. Tambien requiero que cuando el usuario no tenga ninguna etiqueta, es decir "all", los certificados se dividan y categorizen segun su etiqueta, ordenada individualmente por categoria segun el filtrador de orden.
+
+Finalmente requiero que TODOS los certificados aparte de la etiqueta de mi nombre tengan la etiqueta de su tag para filtracion de categoria y univerisdad con sus iconos y texto. Y que permitan multitag unicamente de la categoria (por ejemplo, los certificados de HTML estan dentro de web y programming)
+
+Y por ultimo al momento de seleccionar en los filtradores, los filtros de categoria y universidad. Deben se multiselccionables con casillas, y la filtracion debe permitir multitags tanto de universidad como de categoria.
+
+En resumen, mejora el sistema de ciszukoantony website certificates. Transformando los certificates actuales para permitir multitags, cada tag con un icono diferente, filtracion inteligente multitags y caegorizacion en all por seccion.
+
+Ademas del error de guard antiadblock.
+
+Existe un error de componentes compartidos. El QuickDock, en ciszunetwork tiene paginas como "certificate" que en ciszunetwork no existen y ciszukoantony si. Esto es un error claro, el quickdock debe ser independiente por website, inteligente y customizable. Debe mostrar paginas reales de la website, por cada website (actualmente 4) arregla esto, de manera que elimines las webpages que no pertenezcan a la website en su quickdock.
+
+Y por ultimo pero no menos importante, tambien hay un error en el guard antiadblock. Cuando se presiona el boton de donacion dentro del estado de bypass con adblocker activado, se va a la pagina de donacion de ciszunetwork, deberia ir a la pagina de donacion de la misma website que incluya un antiadblocker y pagina de donate. De esta manera al abrir el nuevo vinculo se mantiene en la misma website pero en otra pestaña.
+
+- [ ] Exite un problema en las paginas de donacion los widgets embedidos de kofi fallan, requiero obligatoriamente el widget iframe de kofi independientemente del kofipanel. Y arreglar problemas de CORS.
 
     ERR_BLOCKED_BY_RESPONSE
 
@@ -44,20 +65,47 @@
 - [ ] Terminar idiomas en ingles UK.
 - [ ] Terminar idiomas en ingles USA.
 - [ ] Terminar bien el tema claro (Todos los docks, modals o cards con fondo oscuro paran a claro, los textos oscuros o negros e iconos negros o oscuros.) Actualmente esta corregido un 80% pero aun existen muchos problemas visuales, algunos textos no se persiven bien al fondo. El slidebar, fondos flotantes de menus o botones flotantes, headers bugeados con iconos ilegibles.
+- [ ] Terminar paginas de information estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de team estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de help estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de faq estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de credits estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de guidelines estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de policy estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de rules estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de license estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
 - [ ] Terminar idiomas en español LATAM.
 - [ ] Terminar idiomas en español España.
-- [ ] Corregir incosistencias de botones y toggles, como el de slidebar search o theme.. No esta usando el mismo de los demas websites y actualmente no funcionan. Retrocede a los botones correctos.
+- [ ] Corregir incosistencias de botones y toggles, como el de slidebar search o theme. No esta usando el mismo de los demas websites y actualmente no funcionan. El togle theme al cambiar se actualiza la pagina pero no mantiene el theme. Los bordes del boton de search y mainmenu estan en blanco deberia ser de color segun la pagina.
 
 **Ciszubot Website:**
 
 - [ ] Terminar idiomas en ingles UK.
 - [ ] Terminar idiomas en ingles USA.
+- [ ] Terminar paginas de information estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de team estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de help estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de faq estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de credits estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de guidelines estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de policy estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de rules estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de license estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
 - [ ] Terminar idiomas en español LATAM.
 - [ ] Terminar idiomas en español España.
 
 **Ciszuko Antony Website:**
 
 - [ ] Terminar bien el tema claro (Todos los docks, modals o cards con fondo oscuro paran a claro, los textos oscuros o negros e iconos negros o oscuros.) Actualmente esta corregido un 80% pero aun existen muchos problemas visuales, algunos textos no se persiven bien al fondo. El slidebar, fondos flotantes de menus o botones flotantes, headers bugeados con iconos ilegibles.
+- [ ] Terminar paginas de information estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de team estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de help estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de faq estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de credits estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de guidelines estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de policy estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de rules estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de license estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
 - [ ] Terminar idiomas en ingles UK.
 - [ ] Terminar idiomas en ingles USA.
 - [ ] Terminar idiomas en español LATAM.
