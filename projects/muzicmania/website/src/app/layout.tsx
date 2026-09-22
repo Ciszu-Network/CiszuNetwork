@@ -5,7 +5,7 @@ import { Exo_2, Rajdhani } from "next/font/google";
 import { getDict, parseLang } from "@/lib/i18n";
 import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import "./globals.css";
+import "./globals.scss";
 import AuthProvider from "@/components/providers/AuthProvider";
 import AdsWithUser from "@/components/providers/AdsWithUser";
 import { SpeedInsights } from "@vercel/speed-insights/next";

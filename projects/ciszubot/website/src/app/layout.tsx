@@ -15,7 +15,7 @@ import { getSessionData } from "@/lib/auth";
 import QueryProvider from "@/components/layout/QueryProvider";
 import AuthProvider from "@/components/providers/AuthProvider";
 import AdsWithUser from "@/components/providers/AdsWithUser";
-import "./globals.css";
+import "./globals.scss";
 
 const inter = Inter({
   subsets: ["latin"],
