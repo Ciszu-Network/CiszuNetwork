@@ -2,7 +2,7 @@
 
 import { Heart } from "lucide-react";
 import QuickDocks from "@/components/molecules/QuickDocks";
-import { Icon } from '@ciszu/ui';
+import { Icon, KoFiOverlay } from '@ciszu/ui';
 
 const DONATION_LINKS = {
   patreon: 'https://www.patreon.com/cw/ciszubot',
@@ -75,15 +75,7 @@ export default function DonatePage() {
         </div>
 
         {/* Ko-fi embed oficial */}
-        <div className="mb-12">
-          <iframe
-            src="https://ko-fi.com/ciszubot/?hidefeed=true&widget=true&embed=true&preview=true"
-            title="Apoya a CiszuBot en Ko-fi"
-            className="w-full rounded-2xl border border-white/10 bg-white/5"
-            style={{ height: 712 }}
-            allow="payment"
-          />
-        </div>
+        <KoFiOverlay handle="ciszubot" buttonText="Support CiszuBot" buttonColor="#FF5E5B" textColor="#fff" />
 
         {/* NOWPayments */}
         <div className="rounded-2xl bg-brand/5 border border-brand/20 p-4">

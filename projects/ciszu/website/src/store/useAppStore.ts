@@ -52,7 +52,7 @@ function scheduleReload() {
   }, 1800);
 }
 
-export const useAppStore = create<AppState>((set) => ({
+export const useAppStore = create<AppState>((set, get) => ({
   isMenuOpen: false,
   setIsMenuOpen: (val: boolean) => set({ isMenuOpen: val }),
   sidebarView: 'main',
@@ -95,3 +95,8 @@ export const useAppStore = create<AppState>((set) => ({
     savePreferences({ ...prefs, tabMuted: val });
   },
 }));
+
+if (typeof window !== 'undefined') {
+  const initial = loadPreferences();
+  applyTheme(initial.theme);
+}

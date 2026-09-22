@@ -7,6 +7,7 @@ import { assetResolver } from '@ciszunetwork/cdn';
 import { useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE } from '@ciszu/ui';
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store';
+import { applyTheme } from '@/lib/preferences';
 import { CISZU_NETWORK } from '@/config/site';
 import AuthMenu from '@/components/auth/AuthMenu';
 import {
@@ -173,6 +174,10 @@ export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<strin
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  useEffect(() => {
+    applyTheme(theme);
+  }, [theme]);
 
   const zoom = useZoomStatus();
   const isZoomWarning = !zoom.dismissed && zoom.status !== 'normal';
@@ -440,7 +445,7 @@ export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<strin
                 className={`p-2 rounded-full border transition-all duration-300 cursor-pointer shadow-sm active:scale-95 ${
                   isSearchOpen
                     ? 'bg-brand-light border-brand-light text-black'
-                    : 'bg-card border-border text-ink hover:border-brand-light'
+                    : 'bg-card border-brand-light/30 text-ink hover:border-brand-light'
                 }`}
                 aria-label={dict.nav.search}
                 title={dict.nav.search}
@@ -454,7 +459,7 @@ export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<strin
                 className={`p-2 rounded-full border transition-all duration-300 cursor-pointer shadow-sm active:scale-95 ${
                   isMenuOpen
                     ? 'bg-brand-light border-brand-light text-black'
-                    : 'bg-card border-border text-ink hover:border-brand-light'
+                    : 'bg-card border-brand-light/30 text-ink hover:border-brand-light'
                 }`}
                 aria-label="Menu"
               >
