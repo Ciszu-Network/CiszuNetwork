@@ -14,7 +14,6 @@ import FeedbackFab from "@/components/layout/FeedbackFab";
 import AuthProvider from "@/components/providers/AuthProvider";
 import AdsWithUser from "@/components/providers/AdsWithUser";
 import { CISZU_NETWORK } from "@/config/site";
-import { ThemeProvider } from 'next-themes';
 import "./globals.css";
 
 const ICON_SVG = assetResolver.resolve("projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg");
@@ -94,36 +93,37 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       <head suppressHydrationWarning>
         <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: themeScript }} />
         <Script
-          id="theme-script"
-          suppressHydrationWarning
-          dangerouslySetInnerHTML={{ __html: themeScript }}
-          strategy="beforeInteractive"
+          id="kofi-widget"
+          src="https://storage.ko-fi.com/cdn/scripts/overlay-widget.js"
+          strategy="afterInteractive"
         />
+        {process.env.NODE_ENV === 'production' && (
+          <script defer type="module" data-cookie-consent="optional" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
+        )}
         <GoogleScripts />
       </head>
       <body className="min-h-screen font-sans flex flex-col">
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
         <AuthProvider>
           <ToastProvider>
           <ActivityGuardProvider>
           <AdsWithUser site="ciszu">
-          <AdFloat placement="corner" side="bottom-right" />
-          <AdPill placement="body" />
-          <RedirectGuard debug={true} />
-          <DisclaimerProvider>
-            <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={ICON_SVG} title="Ciszu Network" subtitle="Ciszu Network Security • Cloudflare" accent="#22d3ee" storageKey="cf_verified_ciszu">
-              <AdBlockerGuard site="ciszu" logo={ICON_SVG} title="Ciszu Network" accent="#22d3ee" accentAlt="#f472b6">
-              {!isEdit && <ZoomWarning />}
-              {!isEdit && <Navbar lang={lang} dict={dict} />}
-              {!isEdit && <DisclaimerStack headerHeight={64} />}
-              <DisclaimerDebug site="ciszu" />
-              <GlobalDisclaimer site="ciszu" />
-              <main className="flex-grow pt-16">{children}</main>
-              {!isEdit && <Footer lang={lang} dict={dict} />}
-              {!isEdit && <CookiesBanner lang={lang} dict={dict} />}
-              </AdBlockerGuard>
-            </CloudflareGuard>
-          </DisclaimerProvider>
+            <AdFloat placement="corner" side="bottom-right" />
+            <AdPill placement="body" />
+            <RedirectGuard debug={true} />
+            <DisclaimerProvider>
+              <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={ICON_SVG} title="Ciszu Network" subtitle="Ciszu Network Security • Cloudflare" accent="#22d3ee" storageKey="cf_verified_ciszu">
+                <AdBlockerGuard site="ciszu" logo={ICON_SVG} title="Ciszu Network" accent="#22d3ee" accentAlt="#f472b6">
+                {!isEdit && <ZoomWarning />}
+                {!isEdit && <Navbar lang={lang} dict={dict} />}
+                {!isEdit && <DisclaimerStack headerHeight={64} />}
+                <DisclaimerDebug site="ciszu" />
+                <GlobalDisclaimer site="ciszu" />
+                <main className="flex-grow pt-16">{children}</main>
+                {!isEdit && <Footer lang={lang} dict={dict} />}
+                {!isEdit && <CookiesBanner lang={lang} dict={dict} />}
+                </AdBlockerGuard>
+              </CloudflareGuard>
+            </DisclaimerProvider>
           </AdsWithUser>
           </ActivityGuardProvider>
           </ToastProvider>
@@ -137,10 +137,6 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         </FabStackProvider>
         <PostHogAnalytics app="ciszunetwork" />
         <GoogleAnalytics app="ciszunetwork" />
-        {process.env.NODE_ENV === 'production' && (
-          <script defer type="module" data-cookie-consent="optional" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
-        )}
-        </ThemeProvider>
       </body>
     </html>
   );
