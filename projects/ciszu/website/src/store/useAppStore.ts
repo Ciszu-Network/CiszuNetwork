@@ -50,6 +50,7 @@ export const useAppStore = create<AppState>((set) => ({
     const prefs = loadPreferences();
     savePreferences({ ...prefs, theme: val });
     applyTheme(val);
+    setTimeout(() => window.location.reload(), 50);
   },
   language: persisted?.lang ?? 'es-latam',
   setLanguage: (val: Language) => {

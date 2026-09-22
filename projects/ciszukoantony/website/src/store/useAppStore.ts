@@ -49,13 +49,13 @@ export const useAppStore = create<AppState>((set) => ({
   isMenuOpen: false,
   setIsMenuOpen: (val: boolean) => set({ isMenuOpen: val }),
   theme: getPreferences().theme,
-  setTheme: (val: Theme, skipReload = false) => {
+  setTheme: (val: Theme) => {
     set({ theme: val });
     if (typeof document !== 'undefined') {
       document.documentElement.classList.toggle('light', val === 'light');
     }
     updatePreferences({ theme: val });
-    if (!skipReload) scheduleReload();
+    setTimeout(() => window.location.reload(), 50);
   },
   language: getPreferences().lang,
   setLanguage: (val: Language, skipReload = false) => {

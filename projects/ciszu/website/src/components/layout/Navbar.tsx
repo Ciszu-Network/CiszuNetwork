@@ -73,7 +73,6 @@ const NAV_ITEMS: NavEntry[] = [
   // "Information" (que queda solo para lo institucional y legal).
   { name: 'Changelog', href: '/changelog', icon: <History className="w-4 h-4" /> },
   { name: 'Reviews', href: '/reviews', icon: <Star className="w-4 h-4" /> },
-  { name: 'Leaderboard', href: '/leaderboard', icon: <Trophy className="w-4 h-4" /> },
   { name: 'Stats', href: '/stats', icon: <BarChart3 className="w-4 h-4" /> },
   { name: 'Downloads', href: '/downloads', icon: <Download className="w-4 h-4" /> },
   { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" /> },
