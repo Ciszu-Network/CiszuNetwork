@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
-import { Icon } from '@ciszu/ui';
+import { Icon, KoFiOverlay } from '@ciszu/ui';
 
 /**
  * Página de donaciones de MuzicMania.
@@ -109,15 +109,7 @@ export default function DonationPage() {
           </section>
 
           {/* Ko-fi embed oficial */}
-          <section className="mb-12">
-            <iframe
-              src="https://ko-fi.com/ciszukoantony/?hidefeed=true&widget=true&embed=true&preview=true"
-              title="Apoya a MuzicMania en Ko-fi"
-              className="w-full rounded-2xl border border-white/10 bg-white/[0.02]"
-              style={{ height: 712 }}
-              allow="payment"
-            />
-          </section>
+          <KoFiOverlay handle="ciszukoantony" buttonText="Support MuzicMania" buttonColor="#ffd900" textColor="#000" />
 
           <section className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
             <h2 className="mb-3 text-center font-header text-sm font-bold text-white">
