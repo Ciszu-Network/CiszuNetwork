@@ -101,35 +101,35 @@
 
 /* Modo claro: superficies e iconos hardcodeados de los docks/modals/cards/bars/dropdowns/pills. */
 .light .bg-\[\#0a0a0f\] { background-color: #ffffff !important; }
-.light .bg-\[\#0a0a0f\]\/[0-9]+ { background-color: #ffffff !important; }
+.light [class*="bg-[#0a0a0f]/"] { background-color: #ffffff !important; }
 .light .bg-\[\#070710\] { background-color: #f4f6fb !important; }
 .light .bg-\[\#070710\]\/98 { background-color: rgba(244, 246, 251, 0.98) !important; }
-.light .bg-\[\#070710\]\/[0-9]+ { background-color: #f4f6fb !important; }
+.light [class*="bg-[#070710]/"] { background-color: #f4f6fb !important; }
 .light .bg-\[\#070712\] { background-color: #f4f6fb !important; }
-.light .bg-\[\#070712\]\/[0-9]+ { background-color: #f4f6fb !important; }
+.light [class*="bg-[#070712]/"] { background-color: #f4f6fb !important; }
 .light .bg-\[\#05050a\] { background-color: #f4f6fb !important; }
-.light .bg-\[\#05050a\]\/[0-9]+ { background-color: #f4f6fb !important; }
+.light [class*="bg-[#05050a]/"] { background-color: #f4f6fb !important; }
 .light .bg-\[\#05050a\]\/95 { background-color: rgba(255, 255, 255, 0.96) !important; }
 .light .bg-\[\#050a14\] { background-color: #f0f3fa !important; }
-.light .bg-\[\#050a14\]\/[0-9]+ { background-color: #f0f3fa !important; }
+.light [class*="bg-[#050a14]/"] { background-color: #f0f3fa !important; }
 .light .bg-\[\#000617\] { background-color: #f0f3fa !important; }
-.light .bg-\[\#000617\]\/[0-9]+ { background-color: #f0f3fa !important; }
+.light [class*="bg-[#000617]/"] { background-color: #f0f3fa !important; }
 .light .bg-\[\#1a1a2e\] { background-color: #eef1f8 !important; }
-.light .bg-\[\#1a1a2e\]\/[0-9]+ { background-color: #eef1f8 !important; }
+.light [class*="bg-[#1a1a2e]/"] { background-color: #eef1f8 !important; }
 .light .bg-\[\#0d1117\] { background-color: #eef1f8 !important; }
-.light .bg-\[\#0d1117\]\/[0-9]+ { background-color: #eef1f8 !important; }
+.light [class*="bg-[#0d1117]/"] { background-color: #eef1f8 !important; }
 .light .bg-\[\#111118\] { background-color: #eef1f8 !important; }
-.light .bg-\[\#111118\]\/[0-9]+ { background-color: #eef1f8 !important; }
+.light [class*="bg-[#111118]/"] { background-color: #eef1f8 !important; }
 .light .bg-\[\#161b22\] { background-color: #eef1f8 !important; }
-.light .bg-\[\#161b22\]\/[0-9]+ { background-color: #eef1f8 !important; }
+.light [class*="bg-[#161b22]/"] { background-color: #eef1f8 !important; }
 .light .bg-\[\#21262d\] { background-color: #e8ebf0 !important; }
-.light .bg-\[\#21262d\]\/[0-9]+ { background-color: #e8ebf0 !important; }
+.light [class*="bg-[#21262d]/"] { background-color: #e8ebf0 !important; }
 .light .bg-\[\#30363d\] { background-color: #dce1e8 !important; }
-.light .bg-\[\#30363d\]\/[0-9]+ { background-color: #dce1e8 !important; }
+.light [class*="bg-[#30363d]/"] { background-color: #dce1e8 !important; }
 .light .bg-\[\#0a0a12\] { background-color: #f4f6fb !important; }
-.light .bg-\[\#0a0a12\]\/[0-9]+ { background-color: #f4f6fb !important; }
+.light [class*="bg-[#0a0a12]/"] { background-color: #f4f6fb !important; }
 .light .bg-\[\#050505\] { background-color: #f5f7fc !important; }
-.light .bg-\[\#050505\]\/[0-9]+ { background-color: #f5f7fc !important; }
+.light [class*="bg-[#050505]/"] { background-color: #f5f7fc !important; }
 
 .light .bg-white\/5 { background-color: rgba(30, 50, 96, 0.05) !important; }
 .light .bg-white\/10 { background-color: rgba(30, 50, 96, 0.08) !important; }
@@ -177,15 +177,15 @@
 .light .bg-black\/95 { background-color: rgba(250, 251, 255, 0.98) !important; }
 
 /* Shadow adjustments for light mode */
-.light { 
-  --shadow-brand: 0 6px 20px rgba(35, 63, 146, 0.12); 
-  --shadow-neon-blue: 0 0 10px rgba(61, 106, 223, 0.25); 
-  --shadow-neon-cyan: 0 0 10px rgba(90, 130, 232, 0.25); 
-  --shadow-neon-pink: 0 0 10px rgba(255, 51, 204, 0.18); 
-  --drop-shadow-brand: none; 
-  --drop-shadow-neon-blue: none; 
-  --drop-shadow-neon-cyan: none; 
-  --drop-shadow-neon-pink: none; 
+.light {
+  --shadow-brand: 0 6px 20px rgba(35, 63, 146, 0.12);
+  --shadow-neon-blue: 0 0 10px rgba(61, 106, 223, 0.25);
+  --shadow-neon-cyan: 0 0 10px rgba(90, 130, 232, 0.25);
+  --shadow-neon-pink: 0 0 10px rgba(255, 51, 204, 0.18);
+  --drop-shadow-brand: none;
+  --drop-shadow-neon-blue: none;
+  --drop-shadow-neon-cyan: none;
+  --drop-shadow-neon-pink: none;
 }
 .light .glass { background: rgba(255, 255, 255, 0.7); border-color: rgba(30, 50, 96, 0.12); }
 /* Huecos del modo claro que no dependen de utilidades de clase:

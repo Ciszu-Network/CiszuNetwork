@@ -49,8 +49,8 @@ export function CookiesBanner({ lang, dict }: CookiesBannerProps) {
   if (!show) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 w-full z-[100] p-4 md:p-6 animate-fade-in-up">
-      <div className="max-w-4xl mx-auto bg-[#05050a]/95 backdrop-blur-xl border-t border-neon-cyan/30 md:border md:rounded-[2rem] p-6 shadow-[0_0_40px_rgba(8,145,178,0.15)] flex flex-col md:flex-row items-center gap-6 justify-between">
+    <div className="fixed bottom-0 left-0 w-full z-[100] p-4 md:p-6 animate-fade-in-up pointer-events-none">
+      <div className="pointer-events-auto max-w-4xl mx-auto bg-[#05050a]/95 backdrop-blur-xl border-t border-neon-cyan/30 md:border md:rounded-[2rem] p-6 shadow-[0_0_40px_rgba(8,145,178,0.15)] flex flex-col md:flex-row items-center gap-6 justify-between">
         <div className="space-y-2 flex-1 text-center md:text-left">
           <h3 className="text-white font-header font-black uppercase italic tracking-widest text-lg flex items-center justify-center md:justify-start gap-2">
             <svg viewBox="0 0 24 24" className="w-5 h-5 text-yellow-500" fill="currentColor">

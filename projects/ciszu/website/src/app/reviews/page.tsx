@@ -55,12 +55,6 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
 const PLATFORMS: { label: string; href: string; accent: string; accentLight: string }[] = [
   {
-    label: 'Trustpilot',
-    href: `https://www.trustpilot.com/review/${SITE.domain}`,
-    accent: '#00b67a',
-    accentLight: '#007750',
-  },
-  {
     label: 'Google Reviews',
     href: `https://www.google.com/search?q=${encodeURIComponent(`${SITE.entity} Ciszuko Antony reseñas`)}`,
     accent: '#4285f4',
