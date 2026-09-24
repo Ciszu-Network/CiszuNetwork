@@ -91,7 +91,7 @@ export async function middleware(request: NextRequest) {
         'https://storage.ko-fi.com',
       ],
       scriptSrc: ['https://widget.trustpilot.com', 'https://www.trustpilot.com', 'https://storage.ko-fi.com'],
-      styleSrc: ['https://rsms.me'],
+      styleSrc: ['https://rsms.me', 'https://storage.ko-fi.com', 'https://ko-fi.com'],
       fontSrc: ['https://rsms.me'],
       frameSrc: [
         'https://nowpayments.io',

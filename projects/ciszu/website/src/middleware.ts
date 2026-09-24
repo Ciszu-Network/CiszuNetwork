@@ -1,4 +1,4 @@
-﻿import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { createIast, buildCsp } from '@ciszunetwork/utils';
 import { cookieEqualsToken } from '@/lib/edit-auth';
@@ -100,7 +100,7 @@ export async function middleware(request: NextRequest) {
         'https://widget.trustpilot.com',
       ],
       connectSrc: ['https://widget.trustpilot.com', 'https://images.trustpilot.com', 'https://storage.ko-fi.com'],
-      styleSrc: ['https://rsms.me'],
+      styleSrc: ['https://rsms.me', 'https://storage.ko-fi.com', 'https://ko-fi.com'],
       fontSrc: ['https://rsms.me'],
     })
   );

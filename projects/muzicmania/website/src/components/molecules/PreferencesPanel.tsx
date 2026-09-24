@@ -15,7 +15,7 @@ import {
   isLangAvailable,
   reloadAfterPrefChange,
 } from '@/lib/preferences';
-import { useToast, getCookieConsent, setCookieConsent, clearCookieConsent, useCookieConsent, LanguagesModal, LANGUAGE_OPTIONS } from '@ciszu/ui';
+import { useToast, getCookieConsent, setCookieConsent, clearCookieConsent, useCookieConsent, LanguagesModal, LANGUAGE_OPTIONS, markVoluntaryReload } from '@ciszu/ui';
 
 export default function PreferencesPanel() {
   const { lang, setLang, darkMode, setDarkMode, user } = useAppStore();
@@ -113,17 +113,23 @@ export default function PreferencesPanel() {
   const handleCookieReject = () => {
     setCookieConsent('rejected');
     toast('Cookies rechazadas: los servicios opcionales están desactivados.', 'info');
-    window.setTimeout(() => window.location.reload(), 1800);
+    // Recarga voluntaria (acción de la UI): se marca para que el AdBlockerGuard
+    // no la trate como un F5 manual y no vuelva a aparecer.
+    window.setTimeout(() => { markVoluntaryReload(); window.location.reload(); }, 1800);
   };
   const handleCookieAccept = () => {
     setCookieConsent('accepted');
     toast('Cookies aceptadas. Gracias por apoyar a MuzicMania.', 'info');
-    window.setTimeout(() => window.location.reload(), 1800);
+    // Recarga voluntaria (acción de la UI): se marca para que el AdBlockerGuard
+    // no la trate como un F5 manual y no vuelva a aparecer.
+    window.setTimeout(() => { markVoluntaryReload(); window.location.reload(); }, 1800);
   };
   const handleCookieReappear = () => {
     clearCookieConsent();
     toast('El aviso de cookies volverá a aparecer.', 'info');
-    window.setTimeout(() => window.location.reload(), 1800);
+    // Recarga voluntaria (acción de la UI): se marca para que el AdBlockerGuard
+    // no la trate como un F5 manual y no vuelva a aparecer.
+    window.setTimeout(() => { markVoluntaryReload(); window.location.reload(); }, 1800);
   };
 
   return (

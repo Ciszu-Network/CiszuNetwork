@@ -1,25 +1,20 @@
 'use client';
 
 /**
- * Panel de donación Ko-fi (embebido que SÍ funciona).
+ * Panel de donación Ko-fi con el widget iframe OFICIAL.
  *
- * POR QUÉ NO HAY <iframe>:
- * ko-fi.com responde a la página de perfil con
- *   X-Frame-Options: SAMEORIGIN
- *   Content-Security-Policy: frame-ancestors 'self'
- * por lo que cualquier <iframe src="https://ko-fi.com/<usuario>"> es rechazado
- * por el navegador con `ERR_BLOCKED_BY_RESPONSE`. No es un problema de nuestra
- * CSP ni del CDN: es una decisión de Ko-fi y no se puede evitar desde el
- * cliente.
+ * Usa `KoFiEmbed` (obligatorio): el iframe con los parámetros
+ * `hidefeed=true&widget=true&embed=true&preview=true`, que es el único que
+ * Ko-fi autoriza para incrustar. El perfil a secas (`https://ko-fi.com/<user>`)
+ * responde con `X-Frame-Options: SAMEORIGIN` → `ERR_BLOCKED_BY_RESPONSE`.
  *
- * La forma soportada de integrarlo es un botón/enlace (el "Ko-fi button"
- * oficial de Ko-fi también es exactamente esto: un enlace con estilo). Aquí se
- * dibuja con el SVG real del CDN de Ciszu Network, sin scripts de terceros, sin
- * CSS remoto y sin imágenes externas.
+ * Se mantiene como respaldo un enlace directo ("Abrir Ko-fi") y el botón de
+ * copiar enlace, para navegadores/extractor que no carguen el iframe.
  */
 import React from 'react';
 import { Icon } from './Icon';
 import CopyWithButton from './CopyWithButton';
+import KoFiEmbed from './KoFiEmbed';
 
 export interface KoFiPanelProps {
   /** Usuario de Ko-fi sin la barra (p. ej. `ciszubot`). */
@@ -36,6 +31,8 @@ export interface KoFiPanelProps {
   copyLabel?: string;
   /** Nombre del proyecto para el `aria-label` del icono. */
   projectName?: string;
+  /** Alto del widget iframe. */
+  height?: number;
   className?: string;
 }
 
@@ -43,10 +40,11 @@ export default function KoFiPanel({
   handle,
   brandColor = '#FF5E5B',
   title = 'Apoya en Ko-fi',
-  description = 'El panel de Ko-fi no se puede incrustar: Ko-fi envía X-Frame-Options SAMEORIGIN y bloquea los iframes. Usa el botón para abrir el perfil y donar en un clic.',
+  description = 'Dona directamente con el widget oficial de Ko-fi. También puedes abrir el perfil en una pestaña nueva.',
   actionLabel = 'Abrir Ko-fi',
   copyLabel = 'Copiar enlace',
   projectName = handle,
+  height = 712,
   className = '',
 }: KoFiPanelProps) {
   const href = `https://ko-fi.com/${handle}`;
@@ -88,6 +86,11 @@ export default function KoFiPanel({
             </CopyWithButton>
           </div>
         </div>
+      </div>
+
+      {/* Widget iframe oficial de Ko-fi (único embed soportado). */}
+      <div className="mt-5 rounded-2xl overflow-hidden bg-white/[0.03] border border-white/10">
+        <KoFiEmbed handle={handle} height={height} />
       </div>
     </div>
   );

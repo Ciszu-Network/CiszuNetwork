@@ -1,4 +1,6 @@
-﻿/** Los 4 idiomas de producción son individuales entre sí. */
+import { markVoluntaryReload } from '@ciszu/ui';
+
+/** Los 4 idiomas de producción son individuales entre sí. */
 export type PreferenceLang = 'es-latam' | 'es-es' | 'en-us' | 'en-uk';
 export type PreferenceTheme = 'dark' | 'light';
 
@@ -157,5 +159,10 @@ export function consumeReloadToastMsg(): string | null {
 
 export function reloadAfterPrefChange(msg: string): void {
   setReloadToastMsg(msg);
-  if (typeof window !== 'undefined') window.location.reload();
+  if (typeof window !== 'undefined') {
+    // Recarga VOLUNTARIA (acción de la UI: tema/idioma): se marca para que el
+    // AdBlockerGuard no la trate como F5 manual y no vuelva a aparecer.
+    markVoluntaryReload();
+    window.location.reload();
+  }
 }

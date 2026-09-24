@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
-import { Icon, KoFiOverlay } from '@ciszu/ui';
+import { Icon, KoFiEmbed } from '@ciszu/ui';
 
 /**
  * Página de donaciones de MuzicMania.
@@ -108,8 +108,13 @@ export default function DonationPage() {
             ))}
           </section>
 
-          {/* Ko-fi embed oficial */}
-          <KoFiOverlay handle="ciszukoantony" buttonText="Support MuzicMania" buttonColor="#ffd900" textColor="#000" />
+          {/* Widget iframe OFICIAL de Ko-fi (`hidefeed&widget&embed&preview`), el
+              único embed que Ko-fi autoriza incrustar. Se usa KoFiEmbed directo
+              para que el iframe esté SIEMPRE presente, independientemente del panel. */}
+          <section className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+            <h2 className="mb-3 text-center font-header text-sm font-bold text-white">Apoya en Ko-fi</h2>
+            <KoFiEmbed handle="ciszukoantony" title="Apoya a MuzicMania en Ko-fi" background="#f9f9f9" />
+          </section>
 
           <section className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
             <h2 className="mb-3 text-center font-header text-sm font-bold text-white">

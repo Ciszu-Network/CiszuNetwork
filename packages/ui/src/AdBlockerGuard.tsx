@@ -23,6 +23,10 @@
  *      en cada RECARGA MANUAL (F5): la mayoría de adblockers se activan/desactivan
  *      recargando la página, así que el guard aprovecha ese momento para volver a
  *      aparecer si el bloqueo sigue activo (punto D). No se guarda en base de datos.
+ *      EXCEPCIÓN: las recargas VOLUNTARIAS disparadas por una acción de la UI
+ *      (cambiar tema/idioma, cookies…) NO re-evalúan ni vuelven a mostrar el guard
+ *      (`markVoluntaryReload()` de appReload.ts), para no molestar al usuario que
+ *      él mismo pidió la recarga.
  *
  * Detección (punto 11): se usa SOLO el método de BAITS múltiples con clases de
  * anuncio reales (las mismas que usan las listas de AdGuard/uBlock/EasyList y
@@ -38,6 +42,7 @@
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { getCookieConsent } from './cookieConsent';
+import { consumeVoluntaryReload } from './appReload';
 
 export interface AdBlockerGuardProps {
   children: ReactNode;
@@ -50,6 +55,7 @@ export interface AdBlockerGuardProps {
 }
 
 const SITE_DONATE_HREF: Record<string, string> = {
+  ciszu: 'https://ciszunetwork.vercel.app/donate',
   ciszunetwork: 'https://ciszunetwork.vercel.app/donate',
   ciszubot: 'https://ciszubot.vercel.app/donate',
   ciszukoantony: 'https://ciszukoantony.vercel.app/donate',
@@ -200,7 +206,11 @@ function CircularCountdown({ seconds, accent }: { seconds: number; accent: strin
   );
 }
 
-export function AdBlockerGuard({ children, site, logo, title = 'Ciszu Network', accent = '#22d3ee', accentAlt = '#f472b6' }: AdBlockerGuardProps) {
+export function AdBlockerGuard({ children, site, logo, title = 'Ciszu Network', accent = '#22d3ee', accentAlt = '#f472b6', donateHref }: AdBlockerGuardProps) {
+  // Botón DONAR del estado "seguir usando bloqueador": SIEMPRE lleva a la
+  // página de donación de LA MISMA web (nunca a la de ciszunetwork), para que
+  // el usuario siga dentro del sitio (se abre en otra pestaña).
+  const resolvedDonateHref = donateHref || SITE_DONATE_HREF[site] || 'https://ciszunetwork.vercel.app/donate';
   // Cookies rechazadas → el usuario ya eligió no ver anuncios: el guard de
   // adblocker se bypasea por completo (no molesta, no bloquea, sin errores).
   const [consentTick, setConsentTick] = useState(0);
@@ -221,10 +231,17 @@ export function AdBlockerGuard({ children, site, logo, title = 'Ciszu Network', 
   }, [consentTick]);
 
   // Detección clara: solo si hay adblocker CONFIRMADO.
+  // - Recarga VOLUNTARIA de la UI (tema/idioma/cookies): el antiadblock NO se
+  //   prioriza. Es una recarga pedida por el usuario desde una acción suya, así
+  //   que no se vuelve a mostrar el guard (se respeta su elección previa).
   // - Recarga MANUAL (F5): se borra la elección previa y se re-evalúa SIEMPRE,
   //   porque el usuario pudo activar/desactivar su adblocker al recargar.
   // - Navegación normal: se respeta la elección guardada (≤12h).
   useEffect(() => {
+    // Cookies rechazadas → el usuario ya eligió no ver anuncios: bypass total.
+    if (getCookieConsent() === 'rejected') return;
+    // Recarga VOLUNTARIA (tema/idioma/cookies): no se prioriza el antiadblock.
+    if (consumeVoluntaryReload()) return;
     if (isManualReload()) {
       clearChoice();
     } else {
@@ -234,6 +251,8 @@ export function AdBlockerGuard({ children, site, logo, title = 'Ciszu Network', 
     let cancelled = false;
     const run = () => {
       if (cancelled) return;
+      // Re-check: el usuario pudo rechazar cookies mientras corría el timeout.
+      if (getCookieConsent() === 'rejected') return;
       const blocked = detectAdBlocker();
       if (!cancelled && blocked) setScreen('block');
     };
@@ -313,8 +332,8 @@ export function AdBlockerGuard({ children, site, logo, title = 'Ciszu Network', 
   }, []);
 
   const onDonate = useCallback(() => {
-    window.open('https://ciszunetwork.vercel.app/donate', '_blank', 'noopener,noreferrer');
-  }, []);
+    window.open(resolvedDonateHref, '_blank', 'noopener,noreferrer');
+  }, [resolvedDonateHref]);
 
   if (screen === 'none') return <>{children}</>;
 

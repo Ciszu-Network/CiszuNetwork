@@ -2,7 +2,7 @@
 
 import { Heart } from "lucide-react";
 import QuickDocks from "@/components/molecules/QuickDocks";
-import { Icon, KoFiOverlay } from '@ciszu/ui';
+import { Icon, KoFiEmbed } from '@ciszu/ui';
 
 const DONATION_LINKS = {
   patreon: "https://www.patreon.com/cw/ciszukoantony",
@@ -74,8 +74,13 @@ export default function DonatePage() {
           ))}
         </div>
 
-        {/* Ko-fi embed oficial */}
-        <KoFiOverlay handle="ciszukoantony" buttonText="Support Ciszuko Antony" buttonColor="#FF5E5B" textColor="#fff" />
+        {/* Widget iframe OFICIAL de Ko-fi (`hidefeed&widget&embed&preview`), el
+            único embed que Ko-fi autoriza incrustar. Se usa KoFiEmbed directo
+            para que el iframe esté SIEMPRE presente, independientemente del panel. */}
+        <section className="rounded-2xl bg-brand/5 border border-brand/20 p-4">
+          <h3 className="text-white font-bold font-header text-sm mb-3 text-center">Apoya en Ko-fi</h3>
+          <KoFiEmbed handle="ciszukoantony" title="Apoya a Ciszuko Antony en Ko-fi" />
+        </section>
 
         <div className="rounded-2xl bg-brand/5 border border-brand/20 p-4">
           <h3 className="text-white font-bold font-header text-sm mb-3 text-center">Cripto (NOWPayments)</h3>
