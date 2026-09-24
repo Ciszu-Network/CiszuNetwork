@@ -12,6 +12,8 @@
     "lint": "eslint .",
     "verify": "pnpm run lint && next build",
     "sync:certificates": "node scripts/sync-certificates.js",
+    "sync:certificates:watch": "node scripts/sync-certificates.js --watch",
+    "sync:certificates:git-hook": "node scripts/git-hooks/install-hooks.js",
     "verify:catalog": "tsx scripts/verify-catalog.ts"
   },
   "dependencies": {

@@ -1,0 +1,37 @@
+#!/usr/bin/env node
+
+const { execSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+
+const MONOREPO_ROOT = path.resolve(__dirname, '../..');
+const CERTIFICATES_DIR = path.join(MONOREPO_ROOT, 'shared/docs/certificados');
+
+try {
+  const staged = execSync('git diff --cached --name-only', { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] });
+  const stagedFiles = staged.split('\n').filter(Boolean);
+  const hasCertChanges = stagedFiles.some((f) => {
+    const rel = path.relative(MONOREPO_ROOT, f);
+    return rel.startsWith('shared/docs/certificados/') && !rel.includes('/previews/') && !rel.endsWith('.certmeta.json');
+  });
+
+  if (!hasCertChanges) {
+    process.exit(0);
+  }
+
+  console.log('📋 Staged changes detected in shared/docs/certificados/');
+  console.log('🔄 Running certificates sync...');
+
+  const script = path.join(MONOREPO_ROOT, 'projects/ciszukoantony/website/scripts/sync-certificates.js');
+  execSync(`node "${script}"`, { encoding: 'utf8', stdio: 'inherit' });
+
+  const dataFile = path.join(MONOREPO_ROOT, 'src/data/certificates.ts');
+  const previewsFile = path.join(MONOREPO_ROOT, 'src/data/certificates.previews.ts');
+  if (fs.existsSync(dataFile)) execSync(`git add "${dataFile}"`, { stdio: 'pipe' });
+  if (fs.existsSync(previewsFile)) execSync(`git add "${previewsFile}"`, { stdio: 'pipe' });
+
+  console.log('✅ Certificates sync completed and files staged.');
+} catch (error) {
+  console.error('❌ Git hook failed:', error.message);
+  process.exit(1);
+}

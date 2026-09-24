@@ -65,6 +65,7 @@ export const PREVIEWS_BY_FILE: Record<string, string> = {
   'PythonEssentials2Update20260721-8-lly54c.pdf': 'PythonEssentials2Update20260721-8-lly54c-preview.jpg',
   'Python_Essentials_1_certificate_fplayersoffcial-gmail-com_0b6aae8e-2aa8-44be-8dfd-3945f0aa4dd1.pdf': 'Python_Essentials_1_certificate_fplayersoffcial-gmail-com_0b6aae8e-2aa8-44be-8dfd-3945f0aa4dd1-preview.jpg',
   'Python_Essentials_2_certificate_fplayersoffcial-gmail-com_74a5d7a2-7fae-4812-bd49-f2662bebfa63.pdf': 'Python_Essentials_2_certificate_fplayersoffcial-gmail-com_74a5d7a2-7fae-4812-bd49-f2662bebfa63-preview.jpg',
+  'react_simplelearn.pdf': 'react_simplelearn-preview.jpg',
   'transcript.pdf': 'transcript-preview.jpg',
   'transcript_hplive.pdf': 'transcript_hplive-preview.jpg',
   'Tu perfil _ 16Personalities.pdf': 'Tu perfil _ 16Personalities-preview.jpg',

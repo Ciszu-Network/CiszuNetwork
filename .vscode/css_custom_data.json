@@ -1,0 +1,20 @@
+{
+  "at-rules": [
+    {
+      "name": "source",
+      "description": "Tailwind CSS v4 at-rule to include source files for class detection."
+    },
+    {
+      "name": "theme",
+      "description": "Tailwind CSS v4 at-rule to define theme tokens."
+    },
+    {
+      "name": "custom-variant",
+      "description": "Tailwind CSS v4 at-rule to define custom variants."
+    },
+    {
+      "name": "layer",
+      "description": "CSS Cascade Layers at-rule."
+    }
+  ]
+}
