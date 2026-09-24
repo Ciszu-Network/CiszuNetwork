@@ -6,11 +6,11 @@
 
 #5 Crear sistema de anuncios: Google Adsense, GA4, GTM, Tag y Analytics pack completo.
 
-- [x] Implementar GoogleScripts/GoogleAnalytics en las 4 webs (GTM + GA4 + AdSense auto ads).
-- [x] Crear ads.txt en public/ de las 4 webs.
-- [x] Configurar CSP para permitir scripts de AdSense/GTM.
-- [x] Actualizar IDs de GTM en Vercel: ciszunetwork GT-KV5477MC, ciszubot GT-WF8B9HT8, ciszukoantony GT-TXZGRRF9, muzicmania GT-K4Z6G8LS.
-- [x] Ajustar CSP en packages/utils/src/csp.ts para GA4/AdSense (img-src y connect-src extras).
+- [X] Implementar GoogleScripts/GoogleAnalytics en las 4 webs (GTM + GA4 + AdSense auto ads).
+- [X] Crear ads.txt en public/ de las 4 webs.
+- [X] Configurar CSP para permitir scripts de AdSense/GTM.
+- [X] Actualizar IDs de GTM en Vercel: ciszunetwork GT-KV5477MC, ciszubot GT-WF8B9HT8, ciszukoantony GT-TXZGRRF9, muzicmania GT-K4Z6G8LS.
+- [X] Ajustar CSP en packages/utils/src/csp.ts para GA4/AdSense (img-src y connect-src extras).
 - [ ] AdSense: enviar/verificar los 4 sitios, esperar aprobación y crear unidades de anuncio por sitio.
 - [ ] GA4: confirmar Realtime page_views en los 4 dominios y completar tareas pendientes de configuración.
 - [ ] GTM: publicar/verificar contenedores y confirmar que los tags de GA4/AdSense se disparan en Preview.
@@ -22,8 +22,7 @@
 - [ ] Actualmente el sistema OTP de las cuentas cuando le das a olvide la contraseña esa bien al inicio pero requiere muchas puliciones, actualmente cuando se entra a un link con token valido simplemente entra y ya, sin pantalla de recuperacion de contraseña cambiando la contraseña, con una pantalla exclusiva donde coloca su contraseña nueva y lo repite. No puede ser la antigua, luego se deslogea automaticamente para que se requiera logearse. Es decir es una sesion temporal, ademas de captar rate limits. En la pantalla de olvide contraseña si el usuario ya pidio varias veces en poco tiempo debe esperar 12 horas.
 - [ ] Cuando un usuario entra a un link invalido expirado, es cierto que no se logea. Pero no existe ninguna indicacion, debes crear un modal o advertencia de que ese link estuvo invalido por X tiempo, por la razon. Ademas de recordarle al usuario en la pantalla de login de olvide contraseña que el link es 1 solo uso.
 
-    Actualmente al intentar entrar a un enlace valido si me salto un panel para camibar mi contraseña PERO de un momento a otra lo cambio a invalido por alguna razon, ademas. El icono de error de enlace invalida esta mal, debe ser una advertencia.
-
+  Actualmente al intentar entrar a un enlace valido si me salto un panel para camibar mi contraseña PERO de un momento a otra lo cambio a invalido por alguna razon, ademas. El icono de error de enlace invalida esta mal, debe ser una advertencia.
 - [ ] Al cerrar sesion manual o automaticamente SIEMPRE redirigir a /index o home de la webpage.
 - [ ] Si el usuario entra a un enlace expirado o no invalido nunca se debe iniciarse sesion, es decir, primero evalua el enlace y verificalo en caso de que este bien si inicia sesion temporalmente hasta que cambie su contraseña pero si sale da error.
 - [ ] TODAS las paginas de registro deben tener el recaptacha al final del formulario antes del boton de registrarse. Actualmente el sistema de recaptchas de los sitiowebs estaban rotos por que no habia creado los proyectos y sus ids / tokens eran inexistentes. Implementa las veresiones 2 y 3 de cada catpcha de cada website. Debemos implementar esto aun, no aparecen en los register. (Solucionar problemas de recaptcha)
@@ -46,13 +45,57 @@ En resumen, mejora el sistema de ciszukoantony website certificates. Transforman
 
 Y por ultimo pero no menos importante, tambien hay un error en el guard antiadblock. Cuando se presiona el boton de donacion dentro del estado de bypass con adblocker activado, se va a la pagina de donacion de ciszunetwork, deberia ir a la pagina de donacion de la misma website que incluya un antiadblocker y pagina de donate. De esta manera al abrir el nuevo vinculo se mantiene en la misma website pero en otra pestaña.
 
+Actualmente en los certificados de ciszukoantony se estan tratando las tags de categorias como diferentes, digamos que una principal y luego se declaran por id otras mas.
+
+Siento que es repetitivo, eso de multitag dirigido a extras no esta bien.
+
+Mi idea original es que simplemente al declarar la certificacion, soporte mas de 1 dato (tag) en el apartado de category, ej: category: 'other', "programming", etc...
+
+Ajustando las vistas para que el primero siempre sea el principal y los demas secundarios en el sentido de orden de visualizacion. Para no rompoer el UI. Por ejemplo, desde fuera de la targeta del certificado podria mostrar maximo 3 tags que tenga, pero al entrar siempre mostrar todas.
+
+Otra cosa es que existe un tag pegado a la preview fuera de la cardy es decir en los indexadores. Ese puede ser el principal.
+
+Finalmente a la hora de filtrar no importa si se duplica el certificado en caso de que he eleguido justamente los 2 o mas tags al filtrar que posee el certificado.
+
+Es decir se mostraran por ejemplo un certificado de Web y programming.
+
+- Web:
+
+1. certificado
+   ...
+
+- Programming
+
+1. certificado
+   ...
+
+Siendo el mismo certificado pero atencion, las etiquetas en este sentido SI deben cambiar dependiendo de que categoria este, obviamente si filtramos por una tag como el de programming y el certificado original su tag principal es web, a la hora de la busqueda no deberia mostrar como principal web, si no programming.
+
+Es decir por default el primero es el principal pero depende de la filtracion de busquedas multitag relativamente lo que se muestre como tag principal.
+
+Por eso removi eso de tags extras.
+
+Finalmente y algo muy importante es que la duplicacion de certificados si puede ocurrir a la hora de filtrar pero cuando no existe un filtro (all) NO deberia. Por que mostraria demasiados, si cada certificado tuviera 3 tags. Significa que mostraria la cantidad actual por 3.
+
+Para evitar esto, el all o sin filtros. Se mostraran las categorias principal segun la tag principal defualt, es decir el primero.
+
+Otro tipos de filtraciones como el de busqueda tambien mostrara la tag principal default (primero)
+
+Realiza los cambios necesarios para aplicar esto, y ademas, agrega 3 tags minimo a todos los certificados actuales para probar visualmente y el codigo. Modifica la pagina si es necesario, documenta adentro.
+
+Realizas un commit y el nuevo certificado de react rellenalo correctamente.
+
+Finalmente me acabo de dar cuenta de algo, existe un "unnamed platform" justamente en 2 certfs, esos 2 unnamed en realidad es SimpleLearn, la plataforma que use para sacarme el de react, lo se por que son 3 cursos gratuitos.
+
+Asi que agrega SimpleLearn como plataforma tambien, indexela en los buscadores, zona de institutos, tag de institutos, url oficial y su icono oficial descargada en svg.
+
 - [ ] Exite un problema en las paginas de donacion los widgets embedidos de kofi fallan, requiero obligatoriamente el widget iframe de kofi independientemente del kofipanel. Y arreglar problemas de CORS.
 
-    ERR_BLOCKED_BY_RESPONSE
+  ERR_BLOCKED_BY_RESPONSE
 
-    # Se bloqueó ko-fi.com
+  # Se bloqueó ko-fi.com
 
-    **ko-fi.com** rechazó la conexión.
+  **ko-fi.com** rechazó la conexión.
 
 ### Cambios por Website
 
@@ -72,7 +115,7 @@ Y por ultimo pero no menos importante, tambien hay un error en el guard antiadbl
 - [ ] Terminar paginas de license estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
 - [ ] Terminar idiomas en español LATAM.
 - [ ] Terminar idiomas en español España.
-- [ ] Corregir incosistencias de botones y toggles, el toggle theme y el cambio de idomas no se actualiza, deberia actualizar la pagina.
+- [ ] Al cambiar de tema deberia actualizarse la pagina.
 
 **Ciszubot Website:**
 

@@ -31,6 +31,9 @@ jobs:
           cache: pnpm
       - name: Install Vercel CLI
         run: pnpm add -g vercel
+      - name: Sync certificates
+        run: pnpm sync:certificates
+        working-directory: ./projects/ciszukoantony/website
       - name: Link Vercel Project
         run: vercel link --yes --project ciszukoantonypage --token=${{ secrets.VERCEL_TOKEN }}
         working-directory: .

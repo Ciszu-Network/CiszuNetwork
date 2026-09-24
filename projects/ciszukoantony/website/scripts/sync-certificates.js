@@ -550,7 +550,38 @@ const formatValue = (value, indent) => {
   return 'null';
 };
 
-syncCertificates().catch((error) => {
-  console.error('❌ Sync failed:', error);
-  process.exit(1);
-});
+const WATCH = process.argv.includes('--watch');
+
+const runSync = async () => {
+  await syncCertificates();
+};
+
+if (WATCH) {
+  (async () => {
+    console.log('👁️  Watch mode enabled. Watching for changes in', CERTIFICATES_DIR);
+    await runSync();
+
+    let timeout;
+    const watcher = fs.watch(CERTIFICATES_DIR, { persistent: false }, async (eventType, filename) => {
+      if (!filename) return;
+      console.log(`\n🔄 Change detected: ${filename} (${eventType})`);
+      if (timeout) clearTimeout(timeout);
+      timeout = setTimeout(async () => {
+        await runSync();
+      }, 500);
+    });
+
+    const cleanup = () => {
+      console.log('\n🛑 Stopping watcher...');
+      watcher.close();
+      process.exit(0);
+    };
+    process.on('SIGINT', cleanup);
+    process.on('SIGTERM', cleanup);
+  })();
+} else {
+  syncCertificates().catch((error) => {
+    console.error('❌ Sync failed:', error);
+    process.exit(1);
+  });
+}

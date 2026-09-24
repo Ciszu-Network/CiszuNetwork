@@ -10,6 +10,7 @@ import {
   OFFICIAL_LINKS,
   OTHER_DOCS,
   catalogRef,
+  principalCategory,
   type Certificate,
 } from '@/data/certificates';
 import { getCategoryIcon } from '@/data/categoryIcons';
@@ -27,6 +28,7 @@ const BRAND_IMG: Record<string, string> = {
   microsoft: `${BRAND_LOGO_BASE}/microsoft.svg`,
   ibm: `${BRAND_LOGO_BASE}/ibm.svg`,
   hp: `${BRAND_LOGO_BASE}/hp.svg`,
+  simplilearn: `${BRAND_LOGO_BASE}/simplilearn.svg`,
 };
 // Marcas sin SVG oficial en simple-icons: wordmark tipográfico limpio con el
 // color corporativo (nunca emojis, nunca paths inventados).
@@ -149,6 +151,40 @@ const BrandLogo = ({ id, className }: { id: string; className?: string }) => {
   return null;
 };
 
+// Marcas sin SVG oficial: iniciales con el color corporativo. Cada emisor tiene
+// su PROPIO icono, de modo que la etiqueta de universidad/emisor siempre muestra
+// icono + texto (nunca un cuadro vacío).
+const PROVIDER_MARK: Record<string, { text: string; color: string }> = {
+  'ef-set': { text: 'EF', color: '#00A3E0' },
+  'penn-elp': { text: 'PENN', color: '#990000' },
+  '16personalities': { text: '16P', color: '#00C9A7' },
+  'online-es': { text: 'ES', color: '#F472B8' },
+  'simplelearn': { text: 'SL', color: '#FF7A1A' },
+  other: { text: 'DOC', color: '#94A3B8' },
+};
+
+/**
+ * Icono de la etiqueta de universidad/emisor: SVG oficial si existe, iniciales
+ * de marca si no. Se usa en los filtros y en los tags de cada certificado.
+ */
+const ProviderIcon = ({ id, className }: { id: string; className?: string }) => {
+  const img = BRAND_IMG[id];
+  if (img) {
+    return <img src={img} alt="" className={className} loading="lazy" style={{ objectFit: 'contain' }} />;
+  }
+  const mark = PROVIDER_MARK[id];
+  if (!mark) return null;
+  return (
+    <span
+      className={`inline-flex items-center justify-center font-black leading-none ${className || ''}`}
+      style={{ color: mark.color, fontSize: 6, letterSpacing: '-0.02em' }}
+      aria-hidden
+    >
+      {mark.text}
+    </span>
+  );
+};
+
 const ALL_DOCS: Certificate[] = ALL_DOCUMENTS;
 
 const PROVIDER_OPTIONS = [
@@ -159,7 +195,8 @@ const PROVIDER_OPTIONS = [
   { id: 'ef-set', label: 'EF SET (Education First)', color: '#00A3E0' },
   { id: 'penn-elp', label: 'University of Pennsylvania (Penn ELP)', color: '#990000' },
   { id: '16personalities', label: '16Personalities (NERIS Analytics)', color: '#00C9A7' },
-  { id: 'online-es', label: 'Online Courses Platform (ES)', color: '#F472B6' },
+  { id: 'online-es', label: 'Online Courses Platform (ES)', color: '#F472B8' },
+  { id: 'simplelearn', label: 'SimpleLearn (Simplilearn)', color: '#FF7A1A' },
   { id: 'other', label: 'Other / Unknown', color: '#94A3B8' },
 ];
 
@@ -172,6 +209,7 @@ function getProviderGroup(cert: Certificate): string {
   if (provider.includes('ef set') || provider.includes('efset')) return 'ef-set';
   if (provider.includes('penn') || provider.includes('english language programs')) return 'penn-elp';
   if (provider.includes('16personalities') || provider.includes('neris')) return '16personalities';
+  if (provider.includes('simplelearn') || provider.includes('simplilearn')) return 'simplelearn';
   if (provider.includes('online') || provider.includes('es') || cert.collection?.id === 'cursos-online-es') return 'online-es';
   return 'other';
 }
@@ -183,7 +221,7 @@ const SORT_OPTIONS = [
   { id: 'alpha-desc', label: 'Z–A', fn: (a: Certificate, b: Certificate) => b.title.localeCompare(a.title) },
   { id: 'ref-asc', label: 'Catalog ref ↑', fn: (a: Certificate, b: Certificate) => catalogRef(a).localeCompare(catalogRef(b)) },
   { id: 'provider', label: 'Provider', fn: (a: Certificate, b: Certificate) => a.provider.localeCompare(b.provider) },
-  { id: 'category', label: 'Category', fn: (a: Certificate, b: Certificate) => catLabel(a.category).localeCompare(catLabel(b.category)) },
+  { id: 'category', label: 'Category', fn: (a: Certificate, b: Certificate) => catLabel(a.categories[0] || 'other').localeCompare(catLabel(b.categories[0] || 'other')) },
 ];
 
 const EXTERNAL_LINKS = [
@@ -194,7 +232,7 @@ const EXTERNAL_LINKS = [
   { label: 'EF SET', url: 'https://www.efset.org', logo: 'ef' },
   { label: 'Penn ELP', url: 'https://www.elp.upenn.edu', logo: 'penn' },
   { label: '16Personalities', url: 'https://www.16personalities.com', logo: '16p' },
-  { label: 'Simplilearn', url: 'https://simpli-web.app.link/e/aaWENDBP75b', logo: 'simplilearn' },
+  { label: 'SimpleLearn', url: 'https://www.simplilearn.com', logo: 'simplilearn' },
 ];
 
 const COMPANIES = [
@@ -205,7 +243,7 @@ const COMPANIES = [
   { name: 'EF SET (Education First)', logo: 'ef', desc: 'Standardized English proficiency test (CEFR-aligned).', category: 'Language Assessment' },
   { name: 'University of Pennsylvania (Penn ELP)', logo: 'penn', desc: 'Ivy League English language programs & certifications.', category: 'Higher Education' },
   { name: '16Personalities (NERIS Analytics)', logo: '16p', desc: 'Personality assessment based on Jungian typology (MBTI-inspired).', category: 'Psychometrics' },
-  { name: 'Simplilearn', logo: 'simplilearn', desc: 'Online bootcamps & certifications for digital economy skills.', category: 'Professional Training' },
+  { name: 'SimpleLearn (Simplilearn)', logo: 'simplilearn', desc: 'Online bootcamps & certifications for digital economy skills.', category: 'Professional Training' },
 ];
 
 function FilterDropdown({ label, icon, options, value, onChange, colorMap, getLabel, multiple = false, optionIcon }: {
@@ -267,7 +305,19 @@ function FilterDropdown({ label, icon, options, value, onChange, colorMap, getLa
                     }}
                     className={`w-full text-left px-4 py-2.5 text-xs font-bold transition-all cursor-pointer flex items-center gap-2.5 ${isActive ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
                   >
-                    {optionIcon ? <span className="w-4 h-4 flex items-center justify-center shrink-0">{optionIcon(o.id)}</span> : <span className="w-3 h-3 rounded border flex items-center justify-center shrink-0" style={{ borderColor: color }}>{isActive && <span className="w-1.5 h-1.5 rounded-sm" style={{ backgroundColor: color }} />}</span>}
+                    {/* Casilla de multiselección: el filtro es multitag. */}
+                    <span
+                      className="w-4 h-4 rounded-[5px] border flex items-center justify-center shrink-0 transition-colors"
+                      style={isActive ? { borderColor: color, backgroundColor: color } : { borderColor: 'rgba(255,255,255,0.3)' }}
+                      aria-hidden
+                    >
+                      {isActive && (
+                        <svg viewBox="0 0 24 24" className="w-3 h-3 text-black" fill="none" stroke="currentColor" strokeWidth={3.5} strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M20 6 9 17l-5-5" />
+                        </svg>
+                      )}
+                    </span>
+                    {optionIcon && <span className="w-4 h-4 flex items-center justify-center shrink-0">{optionIcon(o.id)}</span>}
                     {o.label}
                   </button>
                 );
@@ -291,7 +341,14 @@ function FilterDropdown({ label, icon, options, value, onChange, colorMap, getLa
                     onClick={() => { onChange(o.id); setOpen(false); }}
                     className={`w-full text-left px-4 py-2.5 text-xs font-bold transition-all cursor-pointer flex items-center gap-2.5 ${isActive ? 'text-white bg-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
                   >
-                    {optionIcon ? <span className="w-4 h-4 flex items-center justify-center shrink-0">{optionIcon(o.id)}</span> : <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />}
+                    <span
+                      className="w-4 h-4 rounded-full border flex items-center justify-center shrink-0"
+                      style={isActive ? { borderColor: color, backgroundColor: color } : { borderColor: 'rgba(255,255,255,0.3)' }}
+                      aria-hidden
+                    >
+                      {isActive && <span className="w-1.5 h-1.5 rounded-full bg-black" />}
+                    </span>
+                    {optionIcon && <span className="w-4 h-4 flex items-center justify-center shrink-0">{optionIcon(o.id)}</span>}
                     {o.label}
                   </button>
                 );
@@ -382,8 +439,10 @@ function CertificateCard({
   onOpen: (c: Certificate) => void;
   index: number;
 }) {
-  const color = catColor(cert.category);
+  const color = catColor(principalCategory(cert));
   const providerGroup = getProviderGroup(cert);
+  const provider = PROVIDER_OPTIONS.find((p) => p.id === providerGroup);
+  const categories = cert.categories;
 
   const mainFile = cert.files[0];
   const previewFile = resolvePreview(cert);
@@ -477,13 +536,14 @@ function CertificateCard({
             border: `1px solid ${color}66`,
             textShadow: '0 1px 2px rgba(0,0,0,0.5)'
           }}>
-          <span className="w-3 h-3"><CategoryIcon id={cert.category} /></span>
-          {catLabel(cert.category)}
+          <span className="w-3 h-3"><CategoryIcon id={principalCategory(cert)} /></span>
+          {catLabel(principalCategory(cert))}
         </span>
 
         <span className="absolute top-2 left-2 text-[9px] uppercase tracking-widest font-black px-1.5 py-0.5 rounded-full z-10 backdrop-blur-md inline-flex items-center gap-1"
-          style={{ backgroundColor: PROVIDER_OPTIONS.find(p => p.id === providerGroup)?.color + '22' || '#94a3b822', border: `1px solid ${PROVIDER_OPTIONS.find(p => p.id === providerGroup)?.color || '#94a3b8'}66` }}>
-          {PROVIDER_OPTIONS.find(p => p.id === providerGroup)?.label || 'Other'}
+          style={{ backgroundColor: `${provider?.color || '#94a3b8'}22`, border: `1px solid ${provider?.color || '#94a3b8'}66` }}>
+          <ProviderIcon id={providerGroup} className="w-2.5 h-3 shrink-0" />
+          {provider?.label || 'Other'}
         </span>
 
         {previewUrl && (
@@ -520,8 +580,37 @@ function CertificateCard({
           )}
         </div>
 
+        {/* Etiquetas del documento: muestra hasta 3 tags (principal + hasta 2 secundarios).
+            Al entrar al detalle se ven TODAS las categorías. */}
+        <div className="mt-3 flex flex-wrap items-center gap-1.5">
+          {categories.slice(0, 3).map((catId) => {
+            const c = catColor(catId);
+            return (
+              <span
+                key={catId}
+                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider border"
+                style={{ color: c, backgroundColor: `${c}14`, borderColor: `${c}55` }}
+              >
+                <CategoryIcon id={catId} className="w-3 h-3 shrink-0" />
+                {catLabel(catId)}
+              </span>
+            );
+          })}
+          <span
+            className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider border"
+            style={{
+              color: provider?.color || '#94a3b8',
+              backgroundColor: `${provider?.color || '#94a3b8'}14`,
+              borderColor: `${provider?.color || '#94a3b8'}55`,
+            }}
+          >
+            <ProviderIcon id={providerGroup} className="w-3.5 h-3.5 shrink-0" />
+            {provider?.label || 'Other'}
+          </span>
+        </div>
+
         {/* Nomenclatura de catálogo + tag de posesión — presentes en TODAS las cards */}
-        <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+        <div className="mt-2 flex flex-wrap items-center gap-1.5">
           <span
             className="font-mono text-[10px] tracking-tight text-neon-cyan bg-neon-cyan/5 border border-neon-cyan/25 rounded-md px-1.5 py-0.5"
             title="Referencia interna de catálogo"
@@ -546,7 +635,8 @@ function DetailModal({
   onClose: () => void;
   onPick: (c: Certificate) => void;
 }) {
-  const color = catColor(cert.category);
+  const providerGroup = getProviderGroup(cert);
+  const provider = PROVIDER_OPTIONS.find((p) => p.id === providerGroup);
   const [copied, setCopied] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'preview' | 'files'>('preview');
 
@@ -619,12 +709,34 @@ function DetailModal({
         </button>
 
         <div className="p-6 sm:p-8">
-          <span
-            className="inline-block text-[10px] uppercase tracking-widest font-black px-2.5 py-1 rounded-full"
-            style={{ color, backgroundColor: `${color}1a`, border: `1px solid ${color}55` }}
-          >
-            {catLabel(cert.category)}
-          </span>
+          {/* Etiquetas de categoría: se muestran TODAS las categorías del documento,
+              cada una con su icono y su texto. La principal es la primera. */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            {cert.categories.map((catId) => {
+              const c = catColor(catId);
+              return (
+                <span
+                  key={catId}
+                  className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-black px-2.5 py-1 rounded-full border"
+                  style={{ color: c, backgroundColor: `${c}1a`, borderColor: `${c}55` }}
+                >
+                  <CategoryIcon id={catId} className="w-3.5 h-3.5" />
+                  {catLabel(catId)}
+                </span>
+              );
+            })}
+            <span
+              className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-black px-2.5 py-1 rounded-full border"
+              style={{
+                color: provider?.color || '#94a3b8',
+                backgroundColor: `${provider?.color || '#94a3b8'}1a`,
+                borderColor: `${provider?.color || '#94a3b8'}55`,
+              }}
+            >
+              <ProviderIcon id={providerGroup} className="w-3.5 h-3.5" />
+              {provider?.label || 'Other'}
+            </span>
+          </div>
 
           <h2 className="mt-3 font-header font-black text-2xl text-white leading-tight pr-8">{cert.title}</h2>
           <p className="mt-1 text-sm text-gray-300">
@@ -901,7 +1013,7 @@ export default function CertificatesPage() {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     const result = ALL_DOCS.filter((c) => {
-      if (category.length > 0 && !category.includes(c.category)) return false;
+      if (category.length > 0 && !c.categories.some((id) => category.includes(id))) return false;
       if (provider.length > 0 && !provider.includes(getProviderGroup(c))) return false;
       if (!q) return true;
       const hay = `${c.title} ${c.provider} ${c.collection?.name || ''} ${fmtDate(c.date)} ${c.credentialId || ''} ${c.credentialLabel || ''} ${catalogRef(c)}`.toLowerCase();
@@ -913,12 +1025,31 @@ export default function CertificatesPage() {
     return result;
   }, [category, provider, query, sort]);
 
-  const relatedOf = (c: Certificate) =>
-    ALL_DOCS.filter(
-      (x) =>
-        x.id !== c.id &&
-        (c.collection ? x.collection?.id === c.collection.id : x.category === c.category),
-    ).slice(0, 5);
+const relatedOf = (c: Certificate) =>
+  ALL_DOCS.filter(
+    (x) =>
+      x.id !== c.id &&
+      (c.collection
+        ? x.collection?.id === c.collection.id
+        : x.categories.some((cat) => c.categories.includes(cat))),
+  ).slice(0, 5);
+
+  // Modo "all" (sin filtros ni búsqueda): se divide por categoría principal.
+  // Un documento aparece UNA SOLA VEZ en la sección de su categoría principal
+  // (el primer tag del array). Así no se duplica aunque tenga 3 tags.
+  const grouped = useMemo(() => {
+    if (category.length > 0 || provider.length > 0 || query) return null;
+    const map = new Map<string, Certificate[]>();
+    for (const c of filtered) {
+      const principal = principalCategory(c);
+      if (!map.has(principal)) map.set(principal, []);
+      map.get(principal)!.push(c);
+    }
+    return CATEGORIES.map((cat) => ({
+      cat,
+      items: map.get(cat.id) || [],
+    })).filter((g) => g.items.length > 0);
+  }, [filtered, category, provider, query]);
 
   return (
     <div className="min-h-screen pt-28 pb-16 px-4">
@@ -951,15 +1082,15 @@ export default function CertificatesPage() {
               optionIcon={(id) => <CategoryIcon id={id} className="w-4 h-4" />}
             />
             <FilterDropdown
-              label="Provider"
-              icon={<svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M20 7h-9M20 11h-9M20 15h-9M4 7h1M4 11h1M4 15h1" /></svg>}
+              label="University / Provider"
+              icon={<svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M22 10v6M2 10l10-5 10 5-10 5z" /><path d="M6 12v5l6 3 6-3v-5" /></svg>}
               options={PROVIDER_OPTIONS}
               value={provider}
               onChange={(v) => setProvider(v as string[])}
               colorMap={Object.fromEntries(PROVIDER_OPTIONS.map(p => [p.id, p.color]))}
               getLabel={providerLabel}
               multiple
-              optionIcon={(id) => <BrandLogo id={id} className="w-4 h-4" />}
+              optionIcon={(id) => <ProviderIcon id={id} className="w-4 h-4" />}
             />
             <SortDropdown value={sort} onChange={setSort} />
           </div>
@@ -1004,26 +1135,19 @@ export default function CertificatesPage() {
             transition={{ delay: 0.2 }}
             className="space-y-8"
           >
-            {category.length === 0 && provider.length === 0 && !query ? (
-              Object.entries(
-                filtered.reduce<Record<string, Certificate[]>>((acc, c) => {
-                  const key = c.category;
-                  acc[key] = acc[key] || [];
-                  acc[key].push(c);
-                  return acc;
-                }, {})
-              ).map(([catId, items]) => {
-                const color = catColor(catId);
-                const label = catLabel(catId);
+            {grouped ? (
+              grouped.map(({ cat, items }) => {
+                const color = cat.color;
+                const label = cat.label;
                 return (
                   <motion.section
-                    key={catId}
+                    key={cat.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="space-y-3"
                   >
                     <div className="flex items-center gap-2">
-                      <span className="w-3 h-3 rounded-full" style={{ backgroundColor: color }} />
+                      <CategoryIcon id={cat.id} className="w-4 h-4" />
                       <h3 className="text-sm font-black uppercase tracking-widest" style={{ color }}>{label}</h3>
                       <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">({items.length})</span>
                     </div>
