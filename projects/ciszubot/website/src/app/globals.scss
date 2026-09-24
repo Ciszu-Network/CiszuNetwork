@@ -174,27 +174,27 @@ html:not(.dark) .bg-black\/92 { background-color: rgba(250, 251, 255, 0.97) !imp
 html:not(.dark) .bg-black\/95 { background-color: rgba(250, 251, 255, 0.98) !important; }
 
 html:not(.dark) .bg-\[\#05050a\] { background-color: #f4f6fb !important; }
-html:not(.dark) .bg-\[\#05050a\]\/[0-9]+ { background-color: #f4f6fb !important; }
+html:not(.dark) [class*="bg-[#05050a]/"] { background-color: #f4f6fb !important; }
 html:not(.dark) .bg-\[\#0a0a0f\] { background-color: #ffffff !important; }
-html:not(.dark) .bg-\[\#0a0a0f\]\/[0-9]+ { background-color: #ffffff !important; }
+html:not(.dark) [class*="bg-[#0a0a0f]/"] { background-color: #ffffff !important; }
 html:not(.dark) .bg-\[\#070710\] { background-color: #f4f6fb !important; }
-html:not(.dark) .bg-\[\#070710\]\/[0-9]+ { background-color: #f4f6fb !important; }
+html:not(.dark) [class*="bg-[#070710]/"] { background-color: #f4f6fb !important; }
 html:not(.dark) .bg-\[\#070712\] { background-color: #f4f6fb !important; }
-html:not(.dark) .bg-\[\#070712\]\/[0-9]+ { background-color: #f4f6fb !important; }
+html:not(.dark) [class*="bg-[#070712]/"] { background-color: #f4f6fb !important; }
 html:not(.dark) .bg-\[\#050a14\] { background-color: #f0f3fa !important; }
-html:not(.dark) .bg-\[\#050a14\]\/[0-9]+ { background-color: #f0f3fa !important; }
+html:not(.dark) [class*="bg-[#050a14]/"] { background-color: #f0f3fa !important; }
 html:not(.dark) .bg-\[\#1a1a2e\] { background-color: #eef1f8 !important; }
-html:not(.dark) .bg-\[\#1a1a2e\]\/[0-9]+ { background-color: #eef1f8 !important; }
+html:not(.dark) [class*="bg-[#1a1a2e]/"] { background-color: #eef1f8 !important; }
 html:not(.dark) .bg-\[\#0d1117\] { background-color: #eef1f8 !important; }
-html:not(.dark) .bg-\[\#0d1117\]\/[0-9]+ { background-color: #eef1f8 !important; }
+html:not(.dark) [class*="bg-[#0d1117]/"] { background-color: #eef1f8 !important; }
 html:not(.dark) .bg-\[\#111118\] { background-color: #eef1f8 !important; }
-html:not(.dark) .bg-\[\#111118\]\/[0-9]+ { background-color: #eef1f8 !important; }
+html:not(.dark) [class*="bg-[#111118]/"] { background-color: #eef1f8 !important; }
 html:not(.dark) .bg-\[\#161b22\] { background-color: #eef1f8 !important; }
-html:not(.dark) .bg-\[\#161b22\]\/[0-9]+ { background-color: #eef1f8 !important; }
+html:not(.dark) [class*="bg-[#161b22]/"] { background-color: #eef1f8 !important; }
 html:not(.dark) .bg-\[\#21262d\] { background-color: #e8ebf0 !important; }
-html:not(.dark) .bg-\[\#21262d\]\/[0-9]+ { background-color: #e8ebf0 !important; }
+html:not(.dark) [class*="bg-[#21262d]/"] { background-color: #e8ebf0 !important; }
 html:not(.dark) .bg-\[\#30363d\] { background-color: #dce1e8 !important; }
-html:not(.dark) .bg-\[\#30363d\]\/[0-9]+ { background-color: #dce1e8 !important; }
+html:not(.dark) [class*="bg-[#30363d]/"] { background-color: #dce1e8 !important; }
 
 html:not(.dark) .bg-white\/5 { background-color: rgba(35, 63, 146, 0.05) !important; }
 html:not(.dark) .bg-white\/10 { background-color: rgba(35, 63, 146, 0.08) !important; }
