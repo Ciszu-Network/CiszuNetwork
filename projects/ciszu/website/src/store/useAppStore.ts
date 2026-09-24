@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { reloadPage } from '@ciszu/ui';
 import { loadPreferences, savePreferences, applyZoom, applyTheme, type PrefLang, type PrefTheme } from '@/lib/preferences';
 
 type Theme = PrefTheme;
@@ -45,11 +46,15 @@ export const useAppStore = create<AppState>((set) => ({
   sidebarView: 'main',
   setSidebarView: (val: SidebarView) => set({ sidebarView: val }),
   theme: persisted?.theme ?? 'dark',
-  setTheme: (val: Theme) => {
+  setTheme: (val: Theme, skipReload = false) => {
     set({ theme: val });
     const prefs = loadPreferences();
     savePreferences({ ...prefs, theme: val });
     applyTheme(val);
+    // Recarga VOLUNTARIA (~1.5s para que el toast sea visible): la página se
+    // actualiza al cambiar el tema y el AdBlockerGuard no reaparece porque es
+    // una acción del usuario, no un F5 manual.
+    if (!skipReload) reloadPage(1500);
   },
   language: persisted?.lang ?? 'es-latam',
   setLanguage: (val: Language) => {

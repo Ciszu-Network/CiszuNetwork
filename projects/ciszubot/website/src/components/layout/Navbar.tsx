@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Icon, SmartImage, useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE } from '@ciszu/ui'
+import { Icon, SmartImage, useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE, markVoluntaryReload } from '@ciszu/ui'
 import { Menu, X, Search, ChevronDown } from 'lucide-react'
 import { useAppStore, type AppUser } from '@/store';
 import { supabase } from '@/config/supabase';
@@ -274,6 +274,9 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
   // siempre recarga la página + toast del sistema de notif.)
   const scheduleReload = () => {
     window.setTimeout(() => {
+      // Recarga VOLUNTARIA (tema/idioma) → el AdBlockerGuard respeta la elección
+      // del usuario y no vuelve a mostrar el aviso antiadblock.
+      markVoluntaryReload();
       window.location.reload();
     }, 1800);
   };

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAppStore } from '@/store';
-import { LanguagesModal, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE, setCookieConsent, clearCookieConsent, useCookieConsent } from '@ciszu/ui';
+import { LanguagesModal, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE, setCookieConsent, clearCookieConsent, useCookieConsent, markVoluntaryReload } from '@ciszu/ui';
 import { Button } from '@heroui/react';
 import {
   loadPreferences,
@@ -142,17 +142,23 @@ export default function PreferencesPanel() {
   const handleCookieReject = () => {
     setCookieConsent('rejected');
     toast('Cookies rechazadas: los servicios opcionales están desactivados.', 'info');
-    window.setTimeout(() => window.location.reload(), 1800);
+    // Recarga voluntaria (acción de la UI): se marca para que el AdBlockerGuard
+    // no la trate como un F5 manual y no vuelva a aparecer.
+    window.setTimeout(() => { markVoluntaryReload(); window.location.reload(); }, 1800);
   };
   const handleCookieAccept = () => {
     setCookieConsent('accepted');
     toast('Cookies aceptadas. Gracias por apoyar a Ciszu Network.', 'info');
-    window.setTimeout(() => window.location.reload(), 1800);
+    // Recarga voluntaria (acción de la UI): se marca para que el AdBlockerGuard
+    // no la trate como un F5 manual y no vuelva a aparecer.
+    window.setTimeout(() => { markVoluntaryReload(); window.location.reload(); }, 1800);
   };
   const handleCookieReappear = () => {
     clearCookieConsent();
     toast('El aviso de cookies volverá a aparecer.', 'info');
-    window.setTimeout(() => window.location.reload(), 1800);
+    // Recarga voluntaria (acción de la UI): se marca para que el AdBlockerGuard
+    // no la trate como un F5 manual y no vuelva a aparecer.
+    window.setTimeout(() => { markVoluntaryReload(); window.location.reload(); }, 1800);
   };
 
   return (

@@ -14,7 +14,7 @@ import {
   FONT_SIZE_STEP,
 } from '@/lib/preferences';
 import { I } from '@/config/navigation';
-import { LanguagesModal, useToast, LANGUAGE_OPTIONS, isLangAvailable, LANG_BLOCKED_MESSAGE, setCookieConsent, clearCookieConsent, useCookieConsent } from '@ciszu/ui';
+import { LanguagesModal, useToast, LANGUAGE_OPTIONS, isLangAvailable, LANG_BLOCKED_MESSAGE, setCookieConsent, clearCookieConsent, useCookieConsent, markVoluntaryReload } from '@ciszu/ui';
 
 const MoonIcon = ({ className = 'w-5 h-5' }: { className?: string }) => (
   <svg viewBox="0 0 24 24" className={className} fill="currentColor">
@@ -127,17 +127,23 @@ export default function PreferencesPanel() {
   const handleCookieReject = () => {
     setCookieConsent('rejected');
     toast('Cookies rechazadas: los servicios opcionales están desactivados.', 'info');
-    window.setTimeout(() => window.location.reload(), 1800);
+    // Recarga voluntaria (acción de la UI): se marca para que el AdBlockerGuard
+    // no la trate como un F5 manual y no vuelva a aparecer.
+    window.setTimeout(() => { markVoluntaryReload(); window.location.reload(); }, 1800);
   };
   const handleCookieAccept = () => {
     setCookieConsent('accepted');
     toast('Cookies aceptadas. Gracias por apoyar a Ciszuko Antony.', 'info');
-    window.setTimeout(() => window.location.reload(), 1800);
+    // Recarga voluntaria (acción de la UI): se marca para que el AdBlockerGuard
+    // no la trate como un F5 manual y no vuelva a aparecer.
+    window.setTimeout(() => { markVoluntaryReload(); window.location.reload(); }, 1800);
   };
   const handleCookieReappear = () => {
     clearCookieConsent();
     toast('El aviso de cookies volverá a aparecer.', 'info');
-    window.setTimeout(() => window.location.reload(), 1800);
+    // Recarga voluntaria (acción de la UI): se marca para que el AdBlockerGuard
+    // no la trate como un F5 manual y no vuelva a aparecer.
+    window.setTimeout(() => { markVoluntaryReload(); window.location.reload(); }, 1800);
   };
 
   const changeZoom = (delta: number) => {

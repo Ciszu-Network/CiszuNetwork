@@ -116,10 +116,19 @@ export type {
 // CopyWithButton: botón de copiar junto a contenido copiable (sistema anti-copy)
 export { default as CopyWithButton, copyText } from './CopyWithButton';
 export type { CopyWithButtonProps } from './CopyWithButton';
-// Ko-fi: panel de enlace cuando no se puede incrustar (KoFiPanel), más widget
-// oficial overlay cargado desde storage.ko-fi.com cuando sí se permite embed.
+// Ko-fi: widget iframe OFICIAL (KoFiEmbed) + panel con el embed (KoFiPanel) +
+// overlay flotante opcional (KoFiOverlay).
 export { default as KoFiPanel, type KoFiPanelProps } from './KoFiPanel';
 export { default as KoFiOverlay, type KoFiOverlayProps } from './KoFiOverlay';
+export { default as KoFiEmbed, type KoFiEmbedProps } from './KoFiEmbed';
+// Recargas voluntarias de la UI (tema/idioma/cookies): evitan que los guards
+// (p. ej. AdBlockerGuard) vuelvan a aparecer tras una acción del usuario.
+export {
+  markVoluntaryReload,
+  consumeVoluntaryReload,
+  reloadPage,
+  VOLUNTARY_RELOAD_KEY,
+} from './appReload';
 // InfoBlocks: bloques compartidos de las páginas de información (about/team/
 // help/faq/information) para que las 4 webs tengan la misma estructura.
 export { InfoHero, InfoLinkGrid, InfoCardGrid, InfoAccordion, InfoSteps, InfoCtaRow } from './InfoBlocks';

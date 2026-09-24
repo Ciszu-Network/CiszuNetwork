@@ -13,7 +13,7 @@ import {
   ZOOM_STEP,
 } from '@/lib/preferences';
 import type { Lang } from '@/lib/i18n';
-import { LanguagesModal, useToast, LANGUAGE_OPTIONS, isLangAvailable, LANG_BLOCKED_MESSAGE, setCookieConsent, clearCookieConsent, useCookieConsent } from '@ciszu/ui';
+import { LanguagesModal, useToast, LANGUAGE_OPTIONS, isLangAvailable, LANG_BLOCKED_MESSAGE, setCookieConsent, clearCookieConsent, useCookieConsent, markVoluntaryReload } from '@ciszu/ui';
 
 interface PreferencesPanelProps {
   lang: Lang;
@@ -168,17 +168,17 @@ export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onTo
   const handleCookieReject = () => {
     setCookieConsent('rejected');
     toast('Cookies rechazadas: los servicios opcionales están desactivados.', 'info');
-    window.setTimeout(() => window.location.reload(), 1800);
+    window.setTimeout(() => { markVoluntaryReload(); window.location.reload(); }, 1800);
   };
   const handleCookieAccept = () => {
     setCookieConsent('accepted');
     toast('Cookies aceptadas. Gracias por apoyar a CiszuBot.', 'info');
-    window.setTimeout(() => window.location.reload(), 1800);
+    window.setTimeout(() => { markVoluntaryReload(); window.location.reload(); }, 1800);
   };
   const handleCookieReappear = () => {
     clearCookieConsent();
     toast('El aviso de cookies volverá a aparecer.', 'info');
-    window.setTimeout(() => window.location.reload(), 1800);
+    window.setTimeout(() => { markVoluntaryReload(); window.location.reload(); }, 1800);
   };
 
   const rowLabel = 'text-xs font-bold text-ink/85';

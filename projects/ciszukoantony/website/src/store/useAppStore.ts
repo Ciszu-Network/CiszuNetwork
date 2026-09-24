@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { markVoluntaryReload } from '@ciszu/ui';
 import { getPreferences, updatePreferences, type PreferenceLang } from '@/lib/preferences';
 
 type Theme = 'dark' | 'light';
@@ -7,12 +8,15 @@ type SidebarView = 'main' | 'lang';
 
 // Recarga diferida: al cambiar idioma/tema se muestra el toast (azul) y se
 // recarga la página ~1.8s después para que el aviso sea visible.
+// Se marca como VOLUNTARIA (markVoluntaryReload) para que el AdBlockerGuard no
+// la confunda con un F5 manual y no vuelva a aparecer al cambiar el tema/idioma.
 let reloadTimer: ReturnType<typeof setTimeout> | null = null;
 function scheduleReload() {
   if (typeof window === 'undefined') return;
   if (reloadTimer) clearTimeout(reloadTimer);
   reloadTimer = setTimeout(() => {
     reloadTimer = null;
+    markVoluntaryReload();
     window.location.reload();
   }, 1800);
 }
@@ -49,12 +53,13 @@ export const useAppStore = create<AppState>((set) => ({
   isMenuOpen: false,
   setIsMenuOpen: (val: boolean) => set({ isMenuOpen: val }),
   theme: getPreferences().theme,
-  setTheme: (val: Theme) => {
+  setTheme: (val: Theme, skipReload = false) => {
     set({ theme: val });
     if (typeof document !== 'undefined') {
       document.documentElement.classList.toggle('light', val === 'light');
     }
     updatePreferences({ theme: val });
+    if (!skipReload) scheduleReload();
   },
   language: getPreferences().lang,
   setLanguage: (val: Language, skipReload = false) => {
