@@ -555,6 +555,7 @@ const formatValue = (value, indent) => {
 };
 
 const WATCH = process.argv.includes('--watch');
+const AUTO_PUSH = process.argv.includes('--auto');
 
 let lastSyncNewEntries = [];
 
