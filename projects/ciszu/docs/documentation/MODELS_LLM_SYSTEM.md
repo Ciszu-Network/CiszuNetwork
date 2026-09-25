@@ -1,8 +1,8 @@
 # MODELS_LLM_SYSTEM — Sistema e Historial de Modelos LLM (Ciszu Network)
 
-Versión: 1.3.0
-Actualización: 2026-09-04
-Identificador: MODELS_LLM_SYSTEM_V1.3.0_2026_09_04_ciszunetwork
+Versión: 1.4.0
+Actualización: 2026-09-25
+Identificador: MODELS_LLM_SYSTEM_V1.4.0_2026_09_25_ciszunetwork
 
 > **Definición**: Documento histórico, comparativo y técnico que registra el uso de Modelos de
 > Lenguaje (LLMs) en el ecosistema de Ciszu Network, detallando su evolución, motivos de cambio,
@@ -72,6 +72,23 @@ El 4 de septiembre de 2026, Ciszuko Antony adopta **Kilo** como la interfaz CLI/
 - **Compatibilidad**: Reutiliza completamente el `AGENTS.md`, skills, skills path (`~/.agents/skills/`) y convenciones del monorepo; no requiere archivo de reglas propio.
 - **Diferencias frente a OpenCode Go**: Kilo mantiene el mismo flujo de agente, pero cambia el proveedor del LLM de `opencode-go` (DeepSeek V4 Flash de pago) a StepFun (free tier). El costo pasa a ser $0, sujeto a la disponibilidad del modelo free de StepFun.
 - **Motivo de la época**: Evaluar una alternativa gratuita estable para reducir el gasto en suscripciones sin renunciar a tool calling, ventana de contexto ni la integración con el ecosistema OpenCode.
+
+### 2.9 Época 9: Multiagencia activa (2026-09-25)
+
+A partir del 25 de septiembre de 2026, el ecosistema entra en una fase **multiagente y multimodelo**:
+no existe un único CLI ni un único modelo activos. De forma simultánea o intercalada pueden estar
+operando:
+
+- **Kilo CLI** sobre StepFun Step-3.7 Flash
+- **OpenCode Go** sobre DeepSeek V4 Flash
+- **Freebuff** sobre DeepSeek V4 Flash 07/31
+- **OpenCode local** con el modelo configurado en `opencode.json`
+- **IDE assistants** (GitHub Copilot, etc.) como apoyo en edición en caliente
+
+Esto implica que **el mismo archivo puede ser modificado por agentes distintos en ventanas
+temporales diferentes**, por lo que la coordinación ya no depende solo de sesiones lineales,
+sino de convenciones explícitas de coexistencia. Esta fase se documenta en detalle en
+`AGENTS.md` §6.9 y en la sección §9 de este documento.
 
 ---
 
@@ -191,6 +208,59 @@ Cualquier agente de IA que inicie sesión en este repositorio en el futuro debe 
 3. **No Te Atribuyas Logros**: No incluyas comentarios en el código que den a entender que la IA es la autora de la aplicación. Mantén el código limpio, conciso y enfocado únicamente en la lógica solicitada por Ciszuko Antony.
 4. **Validación Sistemática**: Recuerda que estás operando con un modelo de alta velocidad. Usa esa velocidad para ejecutar los comandos de linter, type-check (`tsc`) y tests unitarios tras cada cambio. No asumas que el código es correcto solo porque compila en tu mente.
 
+## 9. Multiagencia y Coexistencia de IAs (2026-09-25)
+
+El ecosistema ya no opera bajo un modelo uniagente ni unimodelo. A partir de septiembre de 2026,
+la configuración productiva combina **varias interfaces de IA** y **múltiples proveedores de modelo**
+trabajando sobre el mismo monorepo, de forma simultánea o intercalada.
+
+### 9.1 Inventario de agentes y modelos activos
+
+| Agente / Interfaz | Rol principal | Modelo / Proveedor | Estado |
+|---|---|---|---|
+| **Kilo CLI** | CLI/TUI oficial actual | StepFun Step-3.7 Flash (`stepfun/step-3.7-flash:free`) | Activo |
+| **OpenCode Go** | Agente CLI por suscripción | DeepSeek V4 Flash (`opencode-go/deepseek-v4-flash`) | Activo |
+| **Freebuff** | Agente secundario de prueba | Codebuff / DeepSeek V4 Flash 07/31 | Activo (pruebas) |
+| **OpenCode local** | Motor base / fallback | Configurable (`opencode.json`) | Activo |
+| **IDE assistants** | Edición en caliente | Varía por IDE (Copilot, etc.) | Complementario |
+
+Esta matriz implica que **un mismo archivo puede ser tocado por agentes distintos en ventanas
+temporales diferentes**. El repo no tiene lockeo automático por archivo, por lo que la coordinación
+depende de convenciones y revisiones humanas.
+
+### 9.2 Reglas de coexistencia
+
+1. **AGENTS.md prevalece**: cualquier `.agents/AGENTS.md`, `CLAUDE.md` o knowledge file de otro
+   agente se considera complementario, pero **este `AGENTS.md` tiene prioridad** sobre reglas
+   contradictorias.
+2. **No destruir trabajo de otro agente**: antes de borrar, renombrar o reescribir un archivo,
+   verificar quién lo tocó últimamente (`git log -p -- <archivo>`) y cuándo. Si hay otro agente
+   involucrado, coordinar con Ciszuko Antony.
+3. **Commits con actor explícito**: cuando corresponda, indicar el agente/proveedor en el mensaje,
+   p. ej. `feat(...): ... [agent:Kilo/StepFun]`. Esto evita bucles de recreación y permite
+   auditoría.
+4. **No limpiar temporales sin criterio de fecha**: `.opencode/temp/*`, `tmp/`, `clones/` y
+   `archives/` pueden contener conocimiento, skills, datos de sesión o migraciones diferidas de
+   otras IAs. Borrar solo lo **claramente antiguo y sin referencias**; ante la duda, preguntar.
+5. **Temporales por agente**: cada interfaz debe usar su propio subdirectorio dentro de
+   `.opencode/temp/<agent>/` o `tmp/<agent>/`. El directorio global `tmp/` es zona común.
+6. **Sesiones y handovers**: dejar siempre un resumen en `PROJECT_STATE.md` y/o en el chat con:
+   archivos modificados, comandos ejecutados, estado de build/lint, y próximo paso recomendado.
+7. **Validar antes de declarar listo**: no dar por terminada una tarea solo porque el código
+   “parece” completo; verificar build real (`next build`, `tsc --noEmit`, `pnpm lint`).
+
+### 9.3 Matriz de riesgos multiagente
+
+| Riesgo | Mitigación concreta |
+|---|---|
+| Dos agentes editan el mismo archivo | Revisar `git status`/`git diff` antes de editar; en conflicto, detener y coordinar |
+| Un agente borra archivos que otro necesita | Preguntar antes de borrar; revisar `git log` para ver última modificación |
+| Tareas duplicadas entre agentes | Leer `TODO.md` y `PROJECT_STATE.md` antes de iniciar trabajo |
+| Inyección de skills/prompts maliciosas | Solo instalar skills desde fuentes confiables; inspeccionar `SKILL.md` |
+| Consumo excesivo de cuota | Respetar límites de sesión (§9) y cerrar/archivar tareas terminadas |
+| Secretos compartidos entre agentes | Nunca compartir `.env` ni vault; cada agente accede por referencia, no por valor |
+| Deploys en paralelo | Los deploys pasan por GitHub Actions; no ejecutar `vercel` en paralelo desde múltiples agentes |
+
 ---
 
-_Última revisión: 2026-09-04._ Relacionado: `ARCHITECTURE.md`, `OPENCODE_SYSTEM.md`, `MODELS_SKILLS_SYSTEM.md`, `TODO.md`, `VAULT_SYSTEM.md`.
+_Última revisión: 2026-09-25._ Relacionado: `ARCHITECTURE.md`, `OPENCODE_SYSTEM.md`, `MODELS_SKILLS_SYSTEM.md`, `TODO.md`, `VAULT_SYSTEM.md`, `AGENTS.md`.

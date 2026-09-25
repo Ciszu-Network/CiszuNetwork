@@ -28,6 +28,71 @@
 - [ ] TODAS las paginas de registro deben tener el recaptacha al final del formulario antes del boton de registrarse. Actualmente el sistema de recaptchas de los sitiowebs estaban rotos por que no habia creado los proyectos y sus ids / tokens eran inexistentes. Implementa las veresiones 2 y 3 de cada catpcha de cada website. Debemos implementar esto aun, no aparecen en los register. (Solucionar problemas de recaptcha)
 - [ ] Arreglar errores de console y vulnerabilidades en todas las websites.
 
+Requiero que ahora tu debes sea pulir errores de consola de cada website, dando como base o inicio la pagina home o principal de cada una. Aqui et dejo las cargas de cada una y sus consolas luego de varios segundos, tu mision es arreglarlos o ignorarlos en caso de que sean extensiones o fuera de nuestros limites. Ciszu Network: GET https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3471969072198962 net::ERR_BLOCKED_BY_CLIENT
+8(index):1 Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.
+content.js:18 Uncaught (in promise) TypeError: Cannot read properties of undefined (reading 'useCache')
+    at me (content.js:18:84521)
+me @ content.js:18
+Promise.then
+(anonymous) @ content.js:18
+(anonymous) @ content.js:18
+(anonymous) @ content.js:18
+globals-front.js:5937 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+adblock-picreplacement.js:813 Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist. CiszukoAntony: Uncaught (in promise) TypeError: Cannot read properties of undefined (reading 'useCache')
+    at me (chrome-extension://gighmmpiobklfepjocnamgkkbiglidom/vendor/@eyeo/webext-ad-filtering-solution/content.js:18:84521)
+chrome-extension://g…obals-front.js:5937 Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.
+chrome-extension://g…creplacement.js:813 Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.
+chrome-extension://g…obals-front.js:5937 Uncaught (in promise)
+chrome-extension://g…creplacement.js:813 Uncaught (in promise)
+/leaderboard?_rsc=1p-R_iEY6bj0jY31:1  Failed to load resource: the server responded with a status of 404 ()6(index):1 Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.contentscript.js:14083 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 close listeners added. Use emitter.setMaxListeners() to increase limit
+n @ contentscript.js:14083
+contentscript.js:14083 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 end listeners added. Use emitter.setMaxListeners() to increase limit
+n @ contentscript.js:14083
+2contentscript.js:14083 ObjectMultiplex - orphaned data for stream "app-init-liveness"
+warn @ contentscript.js:14083
+2contentscript.js:14083 ObjectMultiplex - orphaned data for stream "background-liveness"
+warn @ contentscript.js:14083
+7562-f5ef499dea5352ee.js:15 AdSense head tag doesn't support data-cookie-consent attribute.
+(anonymous) @ 7562-f5ef499dea5352ee.js:15
+
+n @ contentscript.js:14083
+
+n @ contentscript.js:14083
+2 ObjectMultiplex - orphaned data for stream "app-init-liveness"
+warn @ contentscript.js:14083
+2 ObjectMultiplex - orphaned data for stream "background-liveness"
+warn @ contentscript.js:14083
+150The resource <URL></url> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. CiszuBot: 4(index):1 Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.
+chrome-extension://g…ution/content.js:18 Uncaught (in promise) TypeError: Cannot read properties of undefined (reading 'useCache')
+    at me (chrome-extension://gighmmpiobklfepjocnamgkkbiglidom/vendor/@eyeo/webext-ad-filtering-solution/content.js:18:84521)
+me @ chrome-extension://gighmmpiobklfepjocnamgkkbiglidom/vendor/@eyeo/webext-ad-filtering-solution/content.js:18
+Promise.then
+(anonymous) @ chrome-extension://gighmmpiobklfepjocnamgkkbiglidom/vendor/@eyeo/webext-ad-filtering-solution/content.js:18
+(anonymous) @ chrome-extension://gighmmpiobklfepjocnamgkkbiglidom/vendor/@eyeo/webext-ad-filtering-solution/content.js:18
+(anonymous) @ chrome-extension://gighmmpiobklfepjocnamgkkbiglidom/vendor/@eyeo/webext-ad-filtering-solution/content.js:18
+chrome-extension://g…obals-front.js:5937 Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.
+chrome-extension://g…creplacement.js:813 Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.contentscript.js:14083 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 close listeners added. Use emitter.setMaxListeners() to increase limit
+n @ contentscript.js:14083
+contentscript.js:14083 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 end listeners added. Use emitter.setMaxListeners() to increase limit
+n @ contentscript.js:14083
+2contentscript.js:14083 ObjectMultiplex - orphaned data for stream "app-init-liveness"
+warn @ contentscript.js:14083
+2contentscript.js:14083 ObjectMultiplex - orphaned data for stream "background-liveness"
+warn @ contentscript.js:14083
+Node cannot be found in the current page. MuzicMania: Uncaught (in promise) TypeError: Cannot read properties of undefined (reading 'useCache')
+    at me (VM682 content.js:18:84521)
+globals-front.js:5937 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+adsbygoogle.js:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+26(index):1 Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.contentscript.js:14083 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 close listeners added. Use emitter.setMaxListeners() to increase limit
+n @ contentscript.js:14083
+contentscript.js:14083 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 end listeners added. Use emitter.setMaxListeners() to increase limit
+n @ contentscript.js:14083
+2contentscript.js:14083 ObjectMultiplex - orphaned data for stream "app-init-liveness"
+warn @ contentscript.js:14083
+2contentscript.js:14083 ObjectMultiplex - orphaned data for stream "background-liveness"
+warn @ contentscript.js:14083
+15The resource <URL></url> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. La mayoria se repiten, cambian por page o crean mas errores. Arregla TODOS.
+
 ### Cambios por Website
 
 **Ciszu Network Website:**
