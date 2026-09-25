@@ -14,7 +14,7 @@ import {
 import { I, TAG_CONFIG } from '@/config/changelogIcons';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useAppStore } from '@/store';
-import { useChangelogLikes, usePublishedChangelogs, useToast } from '@ciszu/ui';
+import { InfoHero, useChangelogLikes, usePublishedChangelogs, useToast, type InfoTheme } from '@ciszu/ui';
 import {
   CHANGELOG_PAGE_SIZE,
   filterChangelog,
@@ -30,6 +30,14 @@ import {
   type ChangelogSortDir,
 } from '@ciszunetwork/utils/changelog';
 
+const THEME: InfoTheme = {
+  accent: 'text-neon-blue',
+  accentBg: 'bg-neon-blue/10',
+  accentBorder: 'border-neon-blue/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-dark to-brand',
+};
 
 /** Icono de una entrada: usa el icono publicado (devcon) si existe. */
 const entryIcon = (item: { icon?: string; types: ChangelogType[] }) =>
@@ -141,17 +149,12 @@ export default function ChangelogPage() {
     <div className="min-h-screen pt-24 pb-16 px-4">
       <div className="max-w-4xl mx-auto">
         {/* --- HERO --- */}
-        <header className="text-center mb-16">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand/10 text-brand-light mb-6">
-            {I.history}
-          </div>
-          <h1 className="text-4xl md:text-6xl font-header font-black bg-gradient-to-r from-brand-light to-brand-300 bg-clip-text text-transparent uppercase tracking-tighter mb-4">
-            Changelog
-          </h1>
-          <p className="text-gray-400 max-w-xl mx-auto text-sm uppercase tracking-widest">
-            Historial de actualizaciones / Update History
-          </p>
-        </header>
+        <InfoHero
+          icon="history"
+          title="Changelog"
+          subtitle="Historial de actualizaciones / Update History"
+          theme={THEME}
+        />
 
         {/* --- ESTADO ACTUAL / PROGRESS BAR --- */}
         <Section className="mb-10 p-8 bg-white/5 border border-white/10 rounded-[3rem] space-y-6 relative overflow-hidden">

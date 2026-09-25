@@ -8,9 +8,18 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 import { supabase } from "@/config/supabase";
 import AuthWarningModal from "@/components/shared/AuthWarningModal";
 import { useAppStore } from '@/store';
-import { useToast, Button } from '@ciszu/ui';
+import { InfoHero, useToast, Button, type InfoTheme } from '@ciszu/ui';
 import { FlagIcon } from '@ciszu/ui';
 import { usePageTitle } from '@/lib/usePageTitle';
+
+const THEME: InfoTheme = {
+  accent: 'text-neon-blue',
+  accentBg: 'bg-neon-blue/10',
+  accentBorder: 'border-neon-blue/40',
+  card: 'bg-card',
+  border: 'border-border',
+  gradient: 'from-neon-blue to-neon-purple',
+};
 
 const I = {
   // Icono de soporte: boya salvavidas circular (Lucide life-buoy), no auriculares.
@@ -219,20 +228,13 @@ export default function SupportPage() {
       <div className="max-w-7xl mx-auto px-6 pt-24 pb-32 space-y-16">
 
         {/* --- HERO HEADER --- */}
-        <motion.header id="hero" initial="hidden" animate="visible" variants={sectionVariants} className="relative space-y-8 pt-12">
-          <div className="flex flex-col items-center gap-1 text-center">
-             <div className="flex items-center gap-6 group">
-                <div className="w-12 h-12 text-neon-purple flex items-center justify-center">
-                   {I.support}
-                </div>
-                <h1 className="text-4xl md:text-8xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-neon-pink via-neon-purple to-neon-blue bg-clip-text text-transparent [-webkit-text-stroke:1px_black]">
-                   SOPORTE
-                </h1>
-             </div>
-             <p className="text-neon-pink font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-                Asistencia Maestra y Monitoreo de Sistemas
-             </p>
-          </div>
+        <motion.header id="hero" initial="hidden" animate="visible" variants={sectionVariants} className="relative pt-12">
+          <InfoHero
+            icon="support"
+            title="Soporte"
+            subtitle="Asistencia Maestra y Monitoreo de Sistemas"
+            theme={THEME}
+          />
         </motion.header>
 
         {/* TABS NAVEGACIÓN */}

@@ -1,9 +1,19 @@
 'use client';
 
 import React from 'react';
+import { InfoHero, type InfoTheme } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { usePageTitle } from '@/lib/usePageTitle';
 import Link from 'next/link';
+
+const THEME: InfoTheme = {
+  accent: 'text-neon-blue',
+  accentBg: 'bg-neon-blue/10',
+  accentBorder: 'border-neon-blue/40',
+  card: 'bg-card',
+  border: 'border-border',
+  gradient: 'from-neon-blue to-neon-purple',
+};
 
 // --- Pure SVG Icon Library ---
 const I = {
@@ -40,20 +50,13 @@ export default function ForumPage() {
         </div>
 
         <div className="max-w-7xl mx-auto px-6 pt-24 pb-32 space-y-20">
-          <div className="relative space-y-8 pt-12">
-            <div className="flex flex-col items-center gap-1 text-center">
-               <div className="flex items-center justify-center gap-6 group">
-                  <div className="w-12 h-12 text-neon-blue flex items-center justify-center">
-                     {I.forum}
-                  </div>
-                  <h1 className="text-4xl md:text-8xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-neon-blue via-white to-neon-cyan bg-clip-text text-transparent [-webkit-text-stroke:1px_black]">
-                    FORO
-                  </h1>
-               </div>
-               <p className="text-neon-cyan font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-                 El epicentro de la comunidad
-               </p>
-            </div>
+          <div className="relative pt-12">
+            <InfoHero
+              icon="comment"
+              title="Foro"
+              subtitle="El epicentro de la comunidad"
+              theme={THEME}
+            />
           </div>
 
           <div className="space-y-12">

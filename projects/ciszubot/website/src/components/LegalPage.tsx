@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Icon, LegalCiszuLink } from '@ciszu/ui';
+import { Icon, InfoHero, LegalCiszuLink, type InfoTheme } from '@ciszu/ui';
 import type { Dict } from '@/lib/i18n';
 
 interface LegalPageProps {
@@ -9,6 +9,15 @@ interface LegalPageProps {
   kind: 'terms' | 'privacy';
   title: string;
 }
+
+const THEME: InfoTheme = {
+  accent: 'text-neon-blue',
+  accentBg: 'bg-neon-blue/10',
+  accentBorder: 'border-neon-blue/40',
+  card: 'bg-card',
+  border: 'border-border',
+  gradient: 'from-neon-blue to-neon-purple',
+};
 
 export default function LegalPage({ dict, kind, title }: LegalPageProps) {
   const page = kind === 'terms' ? dict.legalPage : dict.privacyPage;
@@ -24,8 +33,12 @@ export default function LegalPage({ dict, kind, title }: LegalPageProps) {
           {page.back}
         </Link>
 
-        <h1 className="text-3xl md:text-4xl font-bold text-ink mb-2">{title}</h1>
-        <p className="text-sm text-faint mb-10">{page.updated}</p>
+        <InfoHero
+          icon={kind === 'terms' ? 'terms' : 'shield'}
+          title={title}
+          subtitle={page.updated}
+          theme={THEME}
+        />
 
         <div className="space-y-6">
           {page.sections.map((s) => (

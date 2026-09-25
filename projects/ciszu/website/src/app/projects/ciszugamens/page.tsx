@@ -1,7 +1,6 @@
-import Image from "next/image";
-import { assetResolver } from "@ciszunetwork/cdn";
 import { CISZU_NETWORK } from "@/config/site";
 import { ArrowRight, Gamepad2, Users, Trophy } from "lucide-react";
+import { InfoHero, type InfoTheme } from "@ciszu/ui";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -9,7 +8,14 @@ export const metadata: Metadata = {
   description: 'Ciszugamens: el servidor de la comunidad de Ciszu Network en Discord, WhatsApp y Telegram.',
 };
 
-const ISOTIPO = assetResolver.resolve('projects/ciszugamens/content/logos/images/outline/isotype/gradient/color/ciszugamens_logo_isotipo_degradado_outline_color_cpurple_zblue.svg');
+const THEME: InfoTheme = {
+  accent: 'text-brand-light',
+  accentBg: 'bg-brand/10',
+  accentBorder: 'border-brand/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-light to-brand-accent',
+};
 
 const channels = [
   {
@@ -57,17 +63,13 @@ export default function CiszugamensPage() {
   return (
     <div className="min-h-screen pt-24 pb-20">
       <div className="max-w-4xl mx-auto px-4">
-        <div className="text-center mb-16">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#a855f7] to-[#3b82f6] flex items-center justify-center mx-auto mb-6">
-            <Image src={ISOTIPO} alt="Ciszugamens" width={40} height={40} className="h-10 w-10 object-contain" />
-          </div>
-          <h1 className="text-4xl md:text-6xl font-header font-black bg-gradient-to-r from-[#a855f7] via-[#3b82f6] to-[#22d3ee] bg-clip-text text-transparent uppercase tracking-tighter mb-4">
-            Ciszugamens
-          </h1>
-          <p className="text-gray-400 max-w-xl mx-auto text-sm uppercase tracking-widest">
-            Servidor de la Comunidad · Discord · WhatsApp · Telegram
-          </p>
-        </div>
+        <InfoHero
+          icon="gamepad"
+          title="Ciszugamens"
+          subtitle="Servidor de la Comunidad · Discord · WhatsApp · Telegram"
+          kicker="Proyecto"
+          theme={THEME}
+        />
 
         <div className="space-y-8">
           <div className="p-8 rounded-[2rem] bg-brand/5 border border-brand/20">

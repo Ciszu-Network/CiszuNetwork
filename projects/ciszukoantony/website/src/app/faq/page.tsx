@@ -1,100 +1,129 @@
-'use client';
-
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { RichText, type RichPart } from '@/components/RichText';
-import { usePageTitle } from '@/lib/usePageTitle';
+import type { Metadata } from 'next';
+import {
+  InfoHero,
+  InfoAccordion,
+  InfoCardGrid,
+  InfoCtaRow,
+  type InfoTheme,
+  type InfoAccordionItem,
+  type InfoCardItem,
+} from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
 
-const faqs = [
+export const metadata: Metadata = {
+  title: 'Ciszuko Antony | FAQ',
+  description:
+    'Preguntas frecuentes sobre Ciszuko Antony, Ciszu Network, sus proyectos, certificados y formas de contacto.',
+};
+
+const THEME: InfoTheme = {
+  accent: 'text-neon-blue',
+  accentBg: 'bg-neon-blue/10',
+  accentBorder: 'border-neon-blue/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-dark to-brand',
+};
+
+const FAQS: InfoAccordionItem[] = [
   {
-    q: '¿Qué es Ciszuko Network?',
-    a: [
-      { link: 'Ciszuko Network', href: 'https://ciszunetwork.vercel.app' },
-      { text: ' is a network of technology projects founded by Ciszuko Antony (Francisco Garcia Antonio M. / y8). Includes software development, Minecraft servers, Discord/WhatsApp/Telegram bots, CLI tools and more.' },
-    ] as RichPart[],
+    q: '¿Quién es Ciszuko Antony?',
+    a: 'Ciszuko Antony (Francisco Garcia) es desarrollador full-stack, CEO y fundador de Ciszu Network. Desde Venezuela crea aplicaciones web, bots, juegos, herramientas y contenido digital; este portfolio reúne su obra, sus certificados, su música y su documentación oficial.',
   },
   {
-    q: '¿Cómo puedo unirme al servidor de Minecraft?',
-    a: [
-      { text: 'The server IP and more info are available in our projects section. The server is currently in development phase.' },
-    ] as RichPart[],
+    q: '¿Qué es Ciszu Network?',
+    a: 'Ciszu Network es el ecosistema digital fundado por Ciszuko Antony: agrupa las webs del ecosistema, el juego MuzicMania, el bot CiszuBot, la comunidad Ciszugamens y la infraestructura que los conecta. Toda la información está en ciszunetwork.vercel.app.',
   },
   {
-    q: '¿Los bots son de uso gratuito?',
-    a: [
-      { text: 'Yes, all bots developed by ' },
-      { link: 'Ciszuko Network', href: 'https://ciszunetwork.vercel.app' },
-      { text: ' are free to use. Some may have optional premium features.' },
-    ] as RichPart[],
+    q: '¿Qué certificados y logros tiene?',
+    a: 'El catálogo completo está en la página de Certificates: certificaciones, cursos y reconocimientos con su emisor y fecha. Cada certificado se muestra como referencia de formación verificable, no como acreditación oficial de terceros.',
   },
   {
-    q: '¿Cómo puedo contactar con Ciszuko Antony?',
-    a: [
-      { text: 'You can contact us through the Contact section on this website, or via our social networks: Discord, Telegram, WhatsApp.' },
-    ] as RichPart[],
+    q: '¿Qué proyectos forman parte del ecosistema?',
+    a: 'Además del portfolio, se documentan MuzicMania (juego de ritmo), CiszuBot (bot de Discord), CiszuGamens (comunidad gamer) y herramientas como la aplicación de escritorio PDWA. Puedes verlos todos en Projects y Downloads.',
   },
   {
-    q: '¿Dónde puedo ver el código fuente?',
-    a: [
-      { text: 'The source code for many projects is available on our GitHub: github.com/Ciszu-Network.' },
-    ] as RichPart[],
+    q: '¿Cómo puedo contactar o colaborar con Ciszuko Antony?',
+    a: 'A través de la página de Contact: formulario, correo, WhatsApp y redes oficiales. Para propuestas de colaboración, patrocinio o encargos profesionales, indica el proyecto y el alcance en el mensaje para recibir una respuesta más precisa.',
   },
   {
-    q: '¿Aceptan contribuciones?',
-    a: [
-      { text: 'Yes! Open source projects are open to contributions. You can fork, submit pull requests or report issues on GitHub.' },
-    ] as RichPart[],
+    q: '¿Cuáles son las redes oficiales?',
+    a: 'GitHub (Ciszu-Network), YouTube, Discord (Ciszugamens), X, Instagram, TikTok, Twitch, LinkedIn, Facebook, Pinterest, Spotify y WhatsApp. Cualquier otra cuenta que afirme representar al proyecto no es oficial: desconfía de suplantaciones.',
   },
   {
-    q: '¿Qué tecnologías usan principalmente?',
-    a: [
-      { text: 'We work with TypeScript, Node.js, Next.js, Python, Java (PaperMC/Spigot), MongoDB, Docker and more.' },
-    ] as RichPart[],
+    q: '¿Puedo usar el contenido de este portfolio?',
+    a: 'El contenido multimedia (fotos, vídeos, música, arte y logotipos) es propiedad de Ciszuko Antony. Se permite citarlo con atribución y enlace; para uso comercial o redistribución necesitas autorización previa. Consulta las páginas de Lineamientos y Licencia.',
   },
   {
-    q: '¿Tienen planes de expansión?',
-    a: [
-      { text: 'Yes, we are constantly developing new projects and improving existing ones. Follow us on social media to stay up to date.' },
-    ] as RichPart[],
+    q: '¿Cómo se tratan mis datos y las cookies?',
+    a: 'Solo se recopilan los datos necesarios para el funcionamiento del sitio y, con tu consentimiento, para analítica y anuncios. El detalle completo está en la página de Política (privacidad, cookies, anuncios y datos de audiencia).',
+  },
+  {
+    q: '¿Cómo puedo apoyar los proyectos?',
+    a: 'Con donaciones en Ko-fi o criptomonedas desde la página de Donar, compartiendo los proyectos en tus redes o contribuyendo al código abierto en GitHub. Cualquier apoyo, grande o pequeño, mantiene el ecosistema en pie.',
+  },
+  {
+    q: '¿Puedo contribuir al código fuente?',
+    a: 'Sí. Los proyectos open source del ecosistema aceptan forks, pull requests y reportes de issues en GitHub (github.com/Ciszu-Network). Antes de contribuir, revisa los lineamientos y el estilo de cada proyecto.',
+  },
+  {
+    q: '¿Qué tecnologías se usan en este portfolio?',
+    a: 'Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS 4, Supabase, Zustand y Framer Motion, entre otras. Todas las tecnologías base y sus autores están listados en la página de Créditos.',
+  },
+  {
+    q: '¿Existe una aplicación de escritorio?',
+    a: 'Sí. El portfolio es una PDWA instalable: puedes instalarlo como aplicación desde la página de Downloads, con instrucciones específicas por navegador (Chrome, Edge, Brave, entre otros).',
+  },
+];
+
+const TOPICS: InfoCardItem[] = [
+  {
+    icon: 'info',
+    title: 'Sobre Ciszuko Antony',
+    body: 'Biografía, trayectoria y certificados. Las páginas About y Certificates resumen quién está detrás del proyecto.',
+  },
+  {
+    icon: 'rocket',
+    title: 'Proyectos del ecosistema',
+    body: 'MuzicMania, CiszuBot, CiszuGamens y las webs de Ciszu Network, con detalles y enlaces en la página de Projects.',
+  },
+  {
+    icon: 'policies',
+    title: 'Contenido legal',
+    body: 'Lineamientos de uso, reglas de la comunidad, licencia del software y política de privacidad reunidos en el grupo Legal.',
+  },
+  {
+    icon: 'mail',
+    title: 'Soporte y contacto',
+    body: '¿No encuentras respuesta? Abre una incidencia en Support o escríbenos a través de la página de Contact.',
   },
 ];
 
 export default function FAQPage() {
-  usePageTitle('FAQ');
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-
   return (
-    <div className="min-h-screen pt-24 pb-16 px-4">
-      <div className="max-w-3xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16">
-          <h1 className="text-5xl font-header font-black tracking-tighter bg-gradient-to-r from-brand to-brand-200 bg-clip-text text-transparent mb-4">
-            FAQ
-          </h1>
-          <p className="text-gray-500 text-sm uppercase tracking-widest">Frequently Asked Questions</p>
-        </motion.div>
+    <div className="min-h-screen pt-24 pb-20 px-4">
+      <div className="max-w-screen-xl mx-auto">
+        <InfoHero
+          icon="faq"
+          title="Preguntas frecuentes"
+          subtitle="Respuestas rápidas sobre Ciszuko Antony, Ciszu Network, los proyectos del ecosistema, el uso del contenido y las vías de contacto."
+          kicker="FAQ"
+          theme={THEME}
+        />
 
-        <div className="space-y-3">
-          {faqs.map((faq, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-              className="rounded-xl bg-white/5 border border-white/10 overflow-hidden"
-            >
-              <button onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                className="w-full flex items-center justify-between p-5 text-left transition-colors hover:bg-white/[0.02]"
-              >
-                <span className="text-sm font-medium text-white pr-4">{faq.q}</span>
-                <svg className={`w-4 h-4 shrink-0 text-gray-400 transition-transform ${openIndex === i ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                  <path d="M6 9l6 6 6-6"/>
-                </svg>
-              </button>
-                  {openIndex === i && (
-                <div className="px-5 pb-5">
-                  <RichText parts={faq.a} className="text-sm text-gray-400 leading-relaxed" />
-                </div>
-              )}
-            </motion.div>
-          ))}
+        <div className="space-y-14">
+          <InfoAccordion items={FAQS} theme={THEME} />
+          <InfoCardGrid title="Temas relacionados" items={TOPICS} theme={THEME} columns={4} />
         </div>
+
+        <InfoCtaRow
+          theme={THEME}
+          actions={[
+            { label: 'Contacto', href: '/contact', icon: 'mail' },
+            { label: 'Ver certificados', href: '/certificates', icon: 'certificates', variant: 'ghost' },
+            { label: 'Donar', href: '/donate', icon: 'heart', variant: 'ghost' },
+          ]}
+        />
       </div>
 
       <QuickDocks />

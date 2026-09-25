@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import Link from 'next/link';
@@ -34,6 +34,8 @@ import {
   MessageSquare,
   Building,
   BookOpen,
+  Shield,
+  Scale,
 } from 'lucide-react';
 
 const IcoPhone = () => (
@@ -64,7 +66,7 @@ const FOOTER_SECTIONS = (dict: Record<string, any>) => [
       title: dict.footer.explore,
       links: [
         { name: dict.nav.faq, href: '/faq', icon: <HelpCircle className="w-4 h-4" /> },
-        { name: 'Policies', href: '/policies', icon: <FileText className="w-4 h-4" /> },
+        { name: 'Policies', href: '/policy', icon: <FileText className="w-4 h-4" /> },
         { name: dict.nav.support, href: '/support', icon: <LifeBuoy className="w-4 h-4" /> },
         { name: dict.nav.documentation, href: '/documentation', icon: <FileText className="w-4 h-4" /> },
         { name: dict.nav.help, href: '/help', icon: <HelpCircle className="w-4 h-4" /> },
@@ -84,6 +86,15 @@ const FOOTER_SECTIONS = (dict: Record<string, any>) => [
       { name: dict.nav.muzicmania, href: EXTERNAL_LINKS.muzicmania, icon: <Music className="w-4 h-4" /> },
       { name: dict.nav.ciszuNetwork, href: '/projects/ciszunetwork', icon: <Building className="w-4 h-4" /> },
       { name: dict.nav.ciszukoAntony, href: EXTERNAL_LINKS.ciszukoantony, icon: <User className="w-4 h-4" /> },
+    ],
+  },
+  {
+    title: 'Legal',
+    links: [
+      { name: 'Guidelines', href: '/guidelines', icon: <FileText className="w-4 h-4" /> },
+      { name: 'Rules', href: '/rules', icon: <Shield className="w-4 h-4" /> },
+      { name: 'License', href: '/license', icon: <Scale className="w-4 h-4" /> },
+      { name: 'Credits', href: '/credits', icon: <Trophy className="w-4 h-4" /> },
     ],
   },
 ];

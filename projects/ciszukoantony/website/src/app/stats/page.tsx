@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import { InfoHero, type InfoTheme } from '@ciszu/ui';
 import { usePageTitle } from '@/lib/usePageTitle';
 
 // ---------------------------------------------------------------------------
@@ -36,6 +37,15 @@ const I = {
 };
 
 type Tone = 'ok' | 'warn' | 'unknown';
+
+const THEME: InfoTheme = {
+  accent: 'text-neon-blue',
+  accentBg: 'bg-neon-blue/10',
+  accentBorder: 'border-neon-blue/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-dark to-brand',
+};
 
 interface Check { label: string; detail: string; tone: Tone; }
 interface Service { name: string; detail: string; tone: Tone; }
@@ -152,18 +162,14 @@ export default function StatsPage() {
     <MainLayout>
       <div className="max-w-7xl mx-auto px-6 pt-24 pb-32 space-y-16">
         {/* --- HEADER --- */}
-        <motion.header initial="hidden" animate="visible" variants={sectionVariants} className="relative space-y-6 pt-12">
-          <div className="flex flex-col items-center gap-1 text-center">
-            <div className="flex items-center gap-6 group">
-              <div className="w-12 h-12 text-neon-green flex items-center justify-center">{I.server}</div>
-              <h1 className="text-5xl md:text-8xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-neon-blue via-neon-green to-neon-blue bg-clip-text text-transparent [-webkit-text-stroke:1px_black]">
-                ESTADO
-              </h1>
-            </div>
-            <p className="text-neon-blue font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-              Servidor · Red · Seguridad
-            </p>
-          </div>
+        <motion.header initial="hidden" animate="visible" variants={sectionVariants} className="relative pt-12">
+          <InfoHero
+            icon="signal"
+            title="Estado"
+            subtitle="Monitorización en vivo de las webs, la base de datos y la seguridad del ecosistema."
+            kicker="Servidor · Red · Seguridad"
+            theme={THEME}
+          />
           <div className="flex justify-center">
             <button
               onClick={runChecks}

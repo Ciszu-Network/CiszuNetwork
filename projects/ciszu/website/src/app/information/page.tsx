@@ -14,7 +14,7 @@ export const metadata: Metadata = {
  * Antes esta página pintaba `item.icon` —una cadena como `'info'`— dentro de un
  * <div>, así que no se veía ningún icono. Ahora usa los bloques compartidos de
  * `@ciszu/ui` con iconos reales del CDN y agrupa TODAS las secciones, incluidas
- * las que viven en el header (changelog, reviews, leaderboard, stats, downloads,
+ * las que viven en el header (changelog, reviews, stats, downloads,
  * feedback) y que ya no están dentro del desplegable "Information".
  */
 const GROUPS: InfoLinkGroup[] = [
@@ -53,8 +53,17 @@ const GROUPS: InfoLinkGroup[] = [
       { name: 'Information', href: '/information', icon: 'info', desc: 'Este índice de secciones' },
       { name: 'Sobre nosotros', href: '/about', icon: 'info', desc: 'Misión, visión y compañía' },
       { name: 'Equipo', href: '/team', icon: 'team', desc: 'Quién está detrás de Ciszu Network' },
-      { name: 'Políticas', href: '/policies', icon: 'terms', desc: 'Términos, privacidad y cookies' },
+      { name: 'Créditos', href: '/credits', icon: 'trophy', desc: 'Equipo y tecnologías base' },
+      { name: 'Política', href: '/policy', icon: 'terms', desc: 'Privacidad, datos y cookies' },
       { name: 'Donar', href: '/donate', icon: 'heart', desc: 'Apoya el desarrollo del ecosistema' },
+    ],
+  },
+  {
+    title: 'Legal',
+    items: [
+      { name: 'Lineamientos', href: '/guidelines', icon: 'policies', desc: 'Uso, identidad y estándares' },
+      { name: 'Reglas', href: '/rules', icon: 'shield', desc: 'Convivencia y uso aceptable' },
+      { name: 'Licencia', href: '/license', icon: 'certificates', desc: 'MIT y propiedad intelectual' },
     ],
   },
 ];

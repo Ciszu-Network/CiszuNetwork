@@ -1,10 +1,20 @@
 import { EXTERNAL_LINKS, CISZU_NETWORK } from "@/config/site";
-import { Music, ArrowRight, ExternalLink, Gamepad2, Star, Sparkles } from "lucide-react";
+import { ArrowRight, ExternalLink, Gamepad2, Star, Sparkles } from "lucide-react";
+import { InfoHero, type InfoTheme } from "@ciszu/ui";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: 'Ciszu Network | PROJECTS — MUZICMANIA',
   description: 'MuzicMania, el juego de ritmo definitivo desarrollado por Ciszu Network.',
+};
+
+const THEME: InfoTheme = {
+  accent: 'text-brand-light',
+  accentBg: 'bg-brand/10',
+  accentBorder: 'border-brand/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-light to-brand-accent',
 };
 
 const features = [
@@ -17,17 +27,13 @@ export default function MuzicManiaPage() {
   return (
     <div className="min-h-screen pt-24 pb-20">
       <div className="max-w-4xl mx-auto px-4">
-        <div className="text-center mb-16">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand to-brand-light flex items-center justify-center mx-auto mb-6">
-            <Music className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-4xl md:text-6xl font-header font-black bg-gradient-to-r from-brand via-brand-light to-brand-accent bg-clip-text text-transparent uppercase tracking-tighter mb-4">
-            MuzicMania
-          </h1>
-          <p className="text-gray-400 max-w-xl mx-auto text-sm uppercase tracking-widest">
-            El juego de ritmo definitivo
-          </p>
-        </div>
+        <InfoHero
+          icon="music"
+          title="MuzicMania"
+          subtitle="El juego de ritmo definitivo"
+          kicker="Proyecto"
+          theme={THEME}
+        />
 
         <div className="space-y-8">
           <div className="p-8 rounded-[2rem] bg-brand/5 border border-brand/20">

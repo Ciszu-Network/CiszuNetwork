@@ -50,8 +50,18 @@ const GROUPS: InfoLinkGroup[] = [
       { name: 'Information', href: '/information', icon: 'info', desc: 'Este índice de secciones' },
       { name: 'About', href: '/about', icon: 'info', desc: 'Quién es Ciszuko Antony' },
       { name: 'Team', href: '/team', icon: 'team', desc: 'Equipo detrás del proyecto' },
+      { name: 'Créditos', href: '/credits', icon: 'trophy', desc: 'Autoría, tecnologías base y proyectos' },
       { name: 'Policies', href: '/policies', icon: 'terms', desc: 'Términos, privacidad y cookies' },
       { name: 'Donar', href: '/donate', icon: 'heart', desc: 'Apoya los proyectos' },
+    ],
+  },
+  {
+    title: 'Legal',
+    items: [
+      { name: 'Guidelines', href: '/guidelines', icon: 'policies', desc: 'Uso, contenido y estándares del portfolio' },
+      { name: 'Rules', href: '/rules', icon: 'shield', desc: 'Conducta y uso aceptable de la comunidad' },
+      { name: 'License', href: '/license', icon: 'certificates', desc: 'Licencia MIT y propiedad intelectual' },
+      { name: 'Policy', href: '/policy', icon: 'lock', desc: 'Privacidad, datos, cookies y anuncios' },
     ],
   },
 ];

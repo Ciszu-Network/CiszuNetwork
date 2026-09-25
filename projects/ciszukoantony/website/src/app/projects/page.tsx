@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { SmartImage } from '@ciszu/ui';
+import { InfoHero, SmartImage, type InfoTheme } from '@ciszu/ui';
 import { motion } from 'framer-motion';
 import { usePageTitle } from '@/lib/usePageTitle';
 import QuickDocks from '@/components/molecules/QuickDocks';
@@ -67,16 +67,27 @@ const categories = [
   },
 ];
 
+const THEME: InfoTheme = {
+  accent: 'text-neon-blue',
+  accentBg: 'bg-neon-blue/10',
+  accentBorder: 'border-neon-blue/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-dark to-brand',
+};
+
 export default function ProjectsPage() {
   usePageTitle('PROJECTS');
   return (
     <div className="min-h-screen pt-24 pb-16 px-4">
       <div className="max-w-7xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16">
-          <h1 className="text-5xl font-header font-black tracking-tighter bg-gradient-to-r from-brand to-brand-200 bg-clip-text text-transparent mb-4">
-            Projects
-          </h1>
-          <p className="text-gray-500 text-sm uppercase tracking-widest">Innovation in every line of code</p>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <InfoHero
+            icon="rocket"
+            title="Projects"
+            subtitle="Innovation in every line of code"
+            theme={THEME}
+          />
         </motion.div>
 
         {categories.map((cat, ci) => (

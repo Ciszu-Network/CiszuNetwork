@@ -2,9 +2,19 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
+import { InfoHero, type InfoTheme } from '@ciszu/ui';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { usePageTitle } from '@/lib/usePageTitle';
+
+const THEME: InfoTheme = {
+  accent: 'text-neon-blue',
+  accentBg: 'bg-neon-blue/10',
+  accentBorder: 'border-neon-blue/40',
+  card: 'bg-card',
+  border: 'border-border',
+  gradient: 'from-neon-blue to-neon-purple',
+};
 
 // ---------------------------------------------------------------------------
 // STATS — Estado del servidor e infraestructura (ciszunetwork / ciszukoantony /
@@ -153,17 +163,12 @@ export default function StatsPage() {
       <div className="max-w-7xl mx-auto px-6 pt-24 pb-32 space-y-16">
         {/* --- HEADER --- */}
         <motion.header initial="hidden" animate="visible" variants={sectionVariants} className="relative space-y-6 pt-12">
-          <div className="flex flex-col items-center gap-1 text-center">
-            <div className="flex items-center gap-6 group">
-              <div className="w-12 h-12 text-neon-green flex items-center justify-center">{I.server}</div>
-              <h1 className="text-5xl md:text-8xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-neon-blue via-neon-green to-neon-blue bg-clip-text text-transparent [-webkit-text-stroke:1px_black]">
-                ESTADO
-              </h1>
-            </div>
-            <p className="text-neon-blue font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-              Servidor · Red · Seguridad
-            </p>
-          </div>
+          <InfoHero
+            icon="signal"
+            title="Estado"
+            subtitle="Servidor · Red · Seguridad"
+            theme={THEME}
+          />
           <div className="flex justify-center">
             <button
               onClick={runChecks}

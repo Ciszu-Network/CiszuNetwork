@@ -14,7 +14,7 @@ import {
 import { I, TAG_CONFIG } from '@/config/changelogIcons';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useAppStore } from '@/store';
-import { useChangelogLikes, usePublishedChangelogs, useToast } from '@ciszu/ui';
+import { InfoHero, useChangelogLikes, usePublishedChangelogs, useToast, type InfoTheme } from '@ciszu/ui';
 import {
   CHANGELOG_PAGE_SIZE,
   filterChangelog,
@@ -41,6 +41,15 @@ const NODE_ICON: Record<ChangelogNode['status'], React.ReactNode> = {
   done: I.check,
   next: I.zap,
   locked: I.lock,
+};
+
+const THEME: InfoTheme = {
+  accent: 'text-brand-light',
+  accentBg: 'bg-brand/10',
+  accentBorder: 'border-brand/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-light to-brand-accent',
 };
 
 const TypeTag = ({ type, active = false, onClick }: { type: ChangelogType; active?: boolean; onClick?: () => void }) => {
@@ -141,17 +150,13 @@ export default function ChangelogPage() {
     <div className="min-h-screen pt-24 pb-20">
       <div className="max-w-4xl mx-auto px-4">
         {/* --- HERO --- */}
-        <header className="text-center mb-16">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand/10 text-brand-light mb-6">
-            {I.history}
-          </div>
-          <h1 className="text-4xl md:text-6xl font-header font-black bg-gradient-to-r from-brand-light to-brand-accent bg-clip-text text-transparent uppercase tracking-tighter mb-4">
-            Changelog
-          </h1>
-          <p className="text-gray-400 max-w-xl mx-auto text-sm uppercase tracking-widest">
-            Historial de actualizaciones / Update History
-          </p>
-        </header>
+        <InfoHero
+          icon="history"
+          title="Changelog"
+          subtitle="Historial de actualizaciones / Update History"
+          kicker="Versiones"
+          theme={THEME}
+        />
 
         {/* --- ESTADO ACTUAL / PROGRESS BAR --- */}
         <Section className="mb-10 p-8 bg-white/5 border border-white/10 rounded-[3rem] space-y-6 relative overflow-hidden">

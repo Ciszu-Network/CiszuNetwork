@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
-import { Icon, FabRestore } from '@ciszu/ui';
+import { Icon, FabRestore, InfoHero, type InfoTheme } from '@ciszu/ui';
 import InstallPdwaCta from '@/components/InstallPdwaCta';
 import { getDict, parseLang } from '@/lib/i18n';
 import QuickDocks from '@/components/molecules/QuickDocks';
@@ -12,6 +12,15 @@ export const metadata: Metadata = {
     'Descarga CiszuBot como PDWA (App de Escritorio Progresiva): instalación sin pestañas, con icono propio en tu escritorio y barra de tareas.',
 };
 
+const THEME: InfoTheme = {
+  accent: 'text-neon-blue',
+  accentBg: 'bg-neon-blue/10',
+  accentBorder: 'border-neon-blue/40',
+  card: 'bg-card',
+  border: 'border-border',
+  gradient: 'from-neon-blue to-neon-purple',
+};
+
 export default async function DescargasPage() {
   const store = await cookies();
   const lang = parseLang(store.get('ciszubot_lang')?.value);
@@ -20,13 +29,12 @@ export default async function DescargasPage() {
   return (
     <div className="bg-bg py-16">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-5xl font-bold text-ink">{t.descargasPage.title}</h1>
-          <p className="mx-auto mt-4 max-w-2xl text-muted">{t.descargasPage.subtitle}</p>
-          <div className="mt-6 inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-neon-blue/12 text-neon-blue shadow-[0_0_20px_rgba(0,212,255,0.25)]">
-            <Icon name="download" size={26} />
-          </div>
-        </div>
+        <InfoHero
+          icon="download"
+          title={t.descargasPage.title}
+          subtitle={t.descargasPage.subtitle}
+          theme={THEME}
+        />
 
         <div className="max-w-5xl mx-auto grid gap-8 lg:grid-cols-2">
           {/* Qué es */}

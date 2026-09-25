@@ -5,10 +5,19 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { attachFeedback } from '@/lib/feedback';
-import { FabRestore } from '@ciszu/ui';
+import { FabRestore, InfoHero, type InfoTheme } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
 
 const FEEDBACK_EMAIL = 'fplayersoffcial@gmail.com';
+
+const THEME: InfoTheme = {
+  accent: 'text-neon-blue',
+  accentBg: 'bg-neon-blue/10',
+  accentBorder: 'border-neon-blue/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-dark to-brand',
+};
 
 export default function FeedbackPage() {
   usePageTitle('FEEDBACK');
@@ -59,11 +68,13 @@ export default function FeedbackPage() {
   return (
     <div className="min-h-screen pt-24 pb-16 px-4">
       <div className="max-w-3xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16">
-          <h1 className="text-5xl font-header font-black tracking-tighter bg-gradient-to-r from-brand to-brand-200 bg-clip-text text-transparent mb-4">
-            Feedback
-          </h1>
-          <p className="text-gray-500 text-sm uppercase tracking-widest">Help us improve Ciszuko Network</p>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <InfoHero
+            icon="message"
+            title="Feedback"
+            subtitle="Help us improve Ciszuko Network"
+            theme={THEME}
+          />
         </motion.div>
 
         <motion.div

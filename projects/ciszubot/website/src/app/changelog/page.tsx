@@ -14,7 +14,7 @@ import {
 import { I, TAG_CONFIG } from '@/config/changelogIcons';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useAppStore } from '@/store';
-import { useChangelogLikes, usePublishedChangelogs, useToast } from '@ciszu/ui';
+import { InfoHero, useChangelogLikes, usePublishedChangelogs, useToast, type InfoTheme } from '@ciszu/ui';
 import {
   CHANGELOG_PAGE_SIZE,
   filterChangelog,
@@ -41,6 +41,15 @@ const NODE_ICON: Record<ChangelogNode['status'], React.ReactNode> = {
   done: I.check,
   next: I.zap,
   locked: I.lock,
+};
+
+const THEME: InfoTheme = {
+  accent: 'text-neon-blue',
+  accentBg: 'bg-neon-blue/10',
+  accentBorder: 'border-neon-blue/40',
+  card: 'bg-card',
+  border: 'border-border',
+  gradient: 'from-neon-blue to-neon-purple',
 };
 
 const TypeTag = ({ type, active = false, onClick }: { type: ChangelogType; active?: boolean; onClick?: () => void }) => {
@@ -141,16 +150,13 @@ export default function ChangelogPage() {
     <div className="bg-bg py-16">
       <div className="max-w-4xl mx-auto px-4">
         {/* --- HERO --- */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-neon-blue/12 text-neon-blue mb-6 shadow-[0_0_20px_rgba(0,212,255,0.25)]">
-            {I.history}
-          </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-ink mb-4">
-            Changelog
-          </h1>
-          <p className="text-muted max-w-xl mx-auto text-sm uppercase tracking-widest">
-            Historial de actualizaciones / Update History
-          </p>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <InfoHero
+            icon="history"
+            title="Changelog"
+            subtitle="Historial de actualizaciones / Update History"
+            theme={THEME}
+          />
         </motion.div>
 
         {/* --- ESTADO ACTUAL / PROGRESS BAR --- */}

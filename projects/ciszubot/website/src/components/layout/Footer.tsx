@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icon, SmartImage, ScrollNavButton, CiszugamensLogo } from '@ciszu/ui';
+import { Shield, Scale, Trophy, FileText } from 'lucide-react';
 import { useAppStore } from '@/store';
 import { updatePreferences } from '@/lib/preferences';
 import {
@@ -271,14 +272,31 @@ export default function Footer({ lang, dict }: FooterProps) {
                 {dict.footer.legal}
               </h4>
               <div className="flex flex-col gap-1.5 w-full">
-                <Link href="/terms"
-                  className="flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border border-transparent text-ink font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]">
-                  <span className="tracking-wide">{dict.footer.terms}</span>
-                </Link>
-                <Link href="/privacy"
-                  className="flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border border-transparent text-ink font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]">
-                  <span className="tracking-wide">{dict.footer.privacy}</span>
-                </Link>
+                {[
+                  { href: '/terms', label: dict.footer.terms, icon: <FileText className="w-4 h-4" /> },
+                  { href: '/privacy', label: dict.footer.privacy, icon: <Shield className="w-4 h-4" /> },
+                  { href: '/policy', label: 'Policy', icon: <FileText className="w-4 h-4" /> },
+                  { href: '/guidelines', label: 'Guidelines', icon: <FileText className="w-4 h-4" /> },
+                  { href: '/rules', label: 'Rules', icon: <Shield className="w-4 h-4" /> },
+                  { href: '/license', label: 'License', icon: <Scale className="w-4 h-4" /> },
+                  { href: '/credits', label: 'Credits', icon: <Trophy className="w-4 h-4" /> },
+                ].map((l) => {
+                  const active = isActive(l.href);
+                  return (
+                    <Link
+                      key={l.href}
+                      href={l.href}
+                      className={`flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 ${
+                        active
+                          ? 'border-neon-blue bg-neon-blue/20 shadow-[0_0_15px_rgba(0,212,255,0.3)] text-neon-blue hover:text-ink'
+                          : 'border-transparent text-ink hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]'
+                      }`}
+                    >
+                      <span className="transition-colors duration-300 shrink-0 opacity-70">{l.icon}</span>
+                      <span className="tracking-wide">{l.label}</span>
+                    </Link>
+                  );
+                })}
                 <div className="flex flex-wrap justify-center sm:justify-start gap-2 mt-2">
                   {[
                     { href: TOP_GG_BOT, label: 'Top.gg', glow: 'hover:border-[#FF3366] hover:text-[#FF3366]' },

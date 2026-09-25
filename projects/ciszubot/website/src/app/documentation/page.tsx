@@ -2,9 +2,19 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { InfoHero, type InfoTheme } from '@ciszu/ui';
 import { DOCS_METADATA, DocMetadata } from '@/config/docs';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { usePageTitle } from '@/lib/usePageTitle';
+
+const THEME: InfoTheme = {
+  accent: 'text-neon-blue',
+  accentBg: 'bg-neon-blue/10',
+  accentBorder: 'border-neon-blue/40',
+  card: 'bg-card',
+  border: 'border-border',
+  gradient: 'from-neon-blue to-neon-purple',
+};
 
 const I = {
   book: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>,
@@ -157,21 +167,14 @@ export default function DocumentationPortal() {
         initial="hidden"
         animate="visible"
         variants={sectionVariants}
-        className="relative space-y-8 pt-12"
+        className="relative pt-12"
       >
-        <div className="flex flex-col items-center gap-1 text-center">
-          <div className="flex items-center justify-center gap-6 group">
-            <div className="w-12 h-12 text-neon-blue flex items-center justify-center">
-              {I.bookOpen}
-            </div>
-            <h1 className="text-4xl md:text-8xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-neon-blue via-white to-neon-purple bg-clip-text text-transparent" style={{ WebkitTextStroke: '1px black' }}>
-              DOCUMENTACIÓN
-            </h1>
-          </div>
-          <p className="text-neon-cyan font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-            SISTEMA DE DOCUMENTACIÓN OFICIAL V2.5.5
-          </p>
-        </div>
+        <InfoHero
+          icon="policies"
+          title="Documentación"
+          subtitle="Sistema de documentación oficial V2.5.5"
+          theme={THEME}
+        />
       </motion.header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">

@@ -1,104 +1,169 @@
-import Link from "next/link";
-import Image from "next/image";
-import { assetResolver } from "@ciszunetwork/cdn";
-import { SocialIcon, SOCIAL_COLORS } from '@ciszu/ui';
-import { CISZU_NETWORK, CISZUKO_ANTONY } from "@/config/site";
-import { Users, Mail, Phone, MapPin, ArrowRight, ExternalLink } from "lucide-react";
-import QuickDocks from "@/components/molecules/QuickDocks";
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
+import Image from 'next/image';
+import { assetResolver } from '@ciszunetwork/cdn';
+import {
+  InfoHero,
+  InfoCardGrid,
+  InfoSteps,
+  InfoCtaRow,
+  SocialIcon,
+  type InfoTheme,
+  type InfoCardItem,
+  type InfoStepGroup,
+  type SocialPlatform,
+} from '@ciszu/ui';
+import QuickDocks from '@/components/molecules/QuickDocks';
+import { CISZUKO_ANTONY, CISZU_NETWORK } from '@/config/site';
 
 export const metadata: Metadata = {
   title: 'Ciszu Network | TEAM',
   description: 'Conoce al equipo de Ciszu Network y la visión de su fundador, Ciszuko Antony.',
 };
 
+const THEME: InfoTheme = {
+  accent: 'text-brand-light',
+  accentBg: 'bg-brand/10',
+  accentBorder: 'border-brand/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-light to-brand-accent',
+};
+
+const SKILLS = [
+  'Next.js / React',
+  'TypeScript',
+  'Tailwind CSS',
+  'Supabase / Postgres',
+  'Discord.js',
+  'Diseño UI/UX',
+  'Infraestructura Cloud',
+  'Automatización & IA',
+];
+
+const SOCIALS = Object.entries(CISZUKO_ANTONY.social).filter(([key]) => key !== 'discordTag');
+
+const ROLES: InfoCardItem[] = [
+  {
+    icon: 'crown',
+    title: 'Dirección',
+    body: 'Define la hoja de ruta del ecosistema, la identidad de marca y aprueba cada publicación y despliegue.',
+  },
+  {
+    icon: 'terminal',
+    title: 'Desarrollo',
+    body: 'Webs, APIs, bots y automatizaciones. Todo el código vive en el GitHub de Ciszu Network.',
+  },
+  {
+    icon: 'palette',
+    title: 'Diseño',
+    body: 'Logos, iconografía SVG, paletas y el sistema de UI compartido por las cuatro webs del ecosistema.',
+  },
+  {
+    icon: 'server',
+    title: 'Infraestructura',
+    body: 'Despliegues en Vercel, base de datos Supabase, CDN de assets y monitorización de uptime.',
+  },
+];
+
+const STEPS: InfoStepGroup[] = [
+  {
+    title: 'Únete a la comunidad',
+    body: 'El punto de entrada es el servidor de Discord y la comunidad de CiszuGamens, donde se anuncian las vacantes y colaboraciones.',
+  },
+  {
+    title: 'Elige un área',
+    body: 'Desarrollo, diseño, traducción, moderación o soporte. Se valora cualquier aporte, no solo el código.',
+  },
+  {
+    title: 'Presenta tu propuesta',
+    body: 'Abre un issue o un pull request en GitHub con la idea y el alcance. Se revisa y se responde siempre.',
+  },
+  {
+    title: 'Publicación con crédito',
+    body: 'Cada aporte aceptado se publica en el changelog con su autoría visible en la ficha del cambio.',
+  },
+];
+
 export default function TeamPage() {
-  const socialEntries = Object.entries(CISZUKO_ANTONY.social).filter(([k]) => k !== 'discordTag');
-
   return (
-    <div className="min-h-screen pt-24 pb-20">
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand/10 text-brand-light mb-6">
-            <Users className="w-8 h-8" />
-          </div>
-          <h1 className="text-4xl md:text-6xl font-header font-black bg-gradient-to-r from-brand-light to-brand-accent bg-clip-text text-transparent uppercase tracking-tighter mb-4">
-            Equipo
-          </h1>
-          <p className="text-gray-400 max-w-xl mx-auto text-sm uppercase tracking-widest">
-            La visión detrás de {CISZU_NETWORK.name}
-          </p>
-        </div>
+    <div className="min-h-screen pt-24 pb-16 px-4">
+      <div className="max-w-screen-xl mx-auto">
+        <InfoHero
+          icon="users"
+          title="Equipo"
+          subtitle={`Quién está detrás de ${CISZU_NETWORK.name}: el fundador, los roles que cubre el ecosistema y cómo entrar a colaborar.`}
+          theme={THEME}
+        />
 
-        <div className="p-8 md:p-12 rounded-[2.5rem] bg-gradient-to-br from-brand/10 via-brand-dark/5 to-transparent border border-brand/20 text-center mb-12 relative overflow-hidden group hover:border-brand-light/30 transition-all">
-          <div className="absolute -top-20 -right-20 w-64 h-64 bg-brand/10 rounded-full blur-[80px] group-hover:bg-brand-light/10 transition-all" />
+        {/* Fundador */}
+        <section
+          className={`mb-14 p-8 md:p-12 rounded-3xl border text-center relative overflow-hidden ${THEME.border} ${THEME.card}`}
+        >
           <div className="relative z-10">
-            <div className="w-28 h-28 rounded-full bg-gradient-to-br from-brand via-brand-light to-brand-accent mx-auto mb-6 flex items-center justify-center shadow-[0_0_30px_rgba(35,63,146,0.4)] p-1">
-              <Image
-                src={assetResolver.resolve("shared/images/francisco_selfie/IMG_20251207_001627@869886661.jpg")}
-                alt={CISZUKO_ANTONY.name}
-                width={104}
-                height={104}
-                className="rounded-full object-cover w-full h-full"
-              />
-            </div>
-            <h2 className="text-3xl md:text-5xl font-header font-black text-white mb-2 uppercase tracking-tighter">
+            <Image
+              src={assetResolver.resolve('shared/images/francisco_selfie/IMG_20251207_001632@893898207.jpg')}
+              alt={CISZUKO_ANTONY.name}
+              width={132}
+              height={132}
+              className="rounded-full object-cover mx-auto mb-6 border-2 border-brand-light/40 w-32 h-32"
+            />
+            <h2 className="text-3xl font-header font-black text-white uppercase tracking-tight">
               {CISZUKO_ANTONY.name}
             </h2>
-            <p className="text-brand-light font-black text-xs uppercase tracking-[0.4em] mb-6">
+            <p className="text-[11px] text-gray-500 mt-1">Francisco Antonio García Menolascina</p>
+            <p className={`text-xs font-black uppercase tracking-[0.35em] mt-3 mb-6 ${THEME.accent}`}>
               {CISZUKO_ANTONY.role}
             </p>
-            <p className="text-gray-300 max-w-2xl mx-auto leading-relaxed mb-6">
-              Visionario digital y desarrollador full-stack. Fundador de {CISZU_NETWORK.name}, 
-              lidera la creación de soluciones tecnológicas con un enfoque en rendimiento, 
-              estética y experiencia de usuario. Creador de MuzicMania, proyectos Minecraft, 
-              bots Discord/WhatsApp/Telegram y más.
+            <p className="max-w-2xl mx-auto text-sm text-gray-400 leading-relaxed mb-8">
+              Fundador y única persona detrás de {CISZU_NETWORK.name}. Diseña, desarrolla y mantiene cada proyecto del
+              ecosistema — desde la arquitectura cloud y las bases de datos hasta la identidad visual y el contenido —
+              con base en Caracas, Venezuela.
             </p>
 
-            <div className="flex flex-wrap justify-center gap-4 mb-8">
-              {["Next.js", "React", "TypeScript", "Python", "Tailwind", "UI/UX", "Cloud Architecture", "Node.js", "Git"].map((skill) => (
-                <span key={skill} className="px-4 py-2 rounded-full bg-brand/10 border border-brand/30 text-xs font-bold text-brand-light">
+            <p className={`text-[10px] font-black uppercase tracking-[0.3em] mb-4 ${THEME.accent}`}>Stack principal</p>
+            <div className="flex flex-wrap justify-center gap-2 mb-8">
+              {SKILLS.map((skill) => (
+                <span
+                  key={skill}
+                  className={`px-3 py-1.5 rounded-full border text-[11px] font-bold ${THEME.accentBorder} ${THEME.accentBg} ${THEME.accent}`}
+                >
                   {skill}
                 </span>
               ))}
             </div>
 
-            <div className="flex flex-wrap justify-center gap-3 mb-8">
-              {socialEntries.map(([platform, url]) => (
-                <a key={platform} href={url} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-brand/30 transition-all text-sm font-medium text-white"
-                  style={{ borderColor: `${SOCIAL_COLORS[platform as keyof typeof SOCIAL_COLORS]}40` }}
+            <p className={`text-[10px] font-black uppercase tracking-[0.3em] mb-4 ${THEME.accent}`}>Redes oficiales</p>
+            <div className="flex flex-wrap justify-center gap-3">
+              {SOCIALS.map(([platform, href]) => (
+                <a
+                  key={platform}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={platform}
+                  aria-label={platform}
+                  className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all hover:scale-110 ${THEME.border} ${THEME.card}`}
                 >
-                  <SocialIcon platform={platform as keyof typeof SOCIAL_COLORS} size={16} />
-                  <span className="capitalize">{platform === 'x' ? 'X' : platform === 'discordTag' ? 'Discord' : platform}</span>
+                  <SocialIcon platform={platform as SocialPlatform} size={20} colored />
                 </a>
               ))}
             </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/contact" className="inline-flex items-center gap-2 px-6 py-3 bg-brand/20 border border-brand/40 text-brand-light rounded-xl font-bold text-sm hover:bg-brand hover:text-white transition-all">
-                <Mail className="w-4 h-4" /> Contactar
-              </Link>
-              <a href={CISZUKO_ANTONY.portfolio} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/10 transition-all">
-                <ExternalLink className="w-4 h-4" /> Portafolio
-              </a>
-            </div>
           </div>
+        </section>
+
+        <div className="space-y-14">
+          <InfoCardGrid title="Áreas del ecosistema" items={ROLES} theme={THEME} columns={4} />
+          <InfoSteps title="Cómo colaborar" steps={STEPS} theme={THEME} />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[
-            { icon: Mail, label: "Email", value: CISZU_NETWORK.email },
-            { icon: Phone, label: "WhatsApp", value: CISZU_NETWORK.phone },
-            { icon: MapPin, label: "Ubicación", value: CISZU_NETWORK.location },
-          ].map((item, i) => (
-            <div key={i} className="p-6 rounded-2xl bg-brand/5 border border-brand/20 text-center group hover:border-brand-light/30 transition-all">
-              <item.icon className="w-8 h-8 text-brand-light mx-auto mb-4" />
-              <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mb-1">{item.label}</p>
-              <p className="text-white font-bold text-sm">{item.value}</p>
-            </div>
-          ))}
-        </div>
+        <InfoCtaRow
+          theme={THEME}
+          actions={[
+            { label: 'Ver créditos', href: '/credits', icon: 'trophy' },
+            { label: 'Contacto', href: '/contact', icon: 'mail', variant: 'ghost' },
+            { label: 'Únete al Discord', href: CISZUKO_ANTONY.social.discord, icon: 'support', variant: 'ghost', external: true },
+          ]}
+        />
       </div>
 
       <QuickDocks />

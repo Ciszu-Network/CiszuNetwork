@@ -1,8 +1,16 @@
 import { getDonationMethods } from "@ciszunetwork/payments";
-import { Heart } from "lucide-react";
-import { KoFiEmbed } from "@ciszu/ui";
+import { KoFiEmbed, InfoHero, type InfoTheme } from "@ciszu/ui";
 import DonateButtons from "./DonateButtons";
 import QuickDocks from "@/components/molecules/QuickDocks";
+
+const THEME: InfoTheme = {
+  accent: 'text-brand-light',
+  accentBg: 'bg-brand/10',
+  accentBorder: 'border-brand/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-light to-brand-accent',
+};
 
 export default function DonatePage() {
   const methods = getDonationMethods();
@@ -10,22 +18,13 @@ export default function DonatePage() {
   return (
     <div className="min-h-screen pt-24 pb-20">
       <div className="max-w-4xl mx-auto px-4">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand/10 text-brand-light mb-6">
-            <Heart className="w-8 h-8" />
-          </div>
-          <h1 className="text-4xl md:text-6xl font-header font-black bg-gradient-to-r from-brand-light to-brand-accent bg-clip-text text-transparent uppercase tracking-tighter mb-4">
-            Donar
-          </h1>
-          <p className="text-gray-400 max-w-xl mx-auto text-sm uppercase tracking-widest">
-            Apoya el ecosistema de Ciszu Network
-          </p>
-          <p className="text-gray-500 max-w-2xl mx-auto mt-4 text-sm leading-relaxed">
-            Tus donaciones ayudan a mantener las webs, el bot de Discord, MuzicMania y la
-            comunidad CiszuGamens funcionando. Cualquier aporte, por pequeño que sea, se
-            agradece de corazón.
-          </p>
-        </div>
+        <InfoHero
+          icon="heart"
+          title="Donar"
+          subtitle="Apoya el ecosistema de Ciszu Network: tus donaciones mantienen las webs, el bot de Discord, MuzicMania y la comunidad CiszuGamens funcionando."
+          kicker="Apoyo"
+          theme={THEME}
+        />
 
         <DonateButtons methods={methods} />
 
