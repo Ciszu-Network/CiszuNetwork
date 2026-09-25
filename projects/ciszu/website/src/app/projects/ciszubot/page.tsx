@@ -1,6 +1,8 @@
 import { CISZU_NETWORK, CISZUBOT_LINKS } from "@/config/site";
 import { ArrowRight, Shield, Music, Coins, Settings } from "lucide-react";
 import { InfoHero, type InfoTheme } from "@ciszu/ui";
+import PageAmbience from "@/components/layout/PageAmbience";
+import PageReveal from "@/components/layout/PageReveal";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -26,8 +28,9 @@ const features = [
 
 export default function CiszubotPage() {
   return (
-    <div className="min-h-screen pt-24 pb-20">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-screen-xl">
         <InfoHero
           icon="terminal"
           title="CiszuBot"
@@ -69,7 +72,7 @@ export default function CiszubotPage() {
             </div>
           </div>
         </div>
-      </div>
+      </PageReveal>
     </div>
   );
 }

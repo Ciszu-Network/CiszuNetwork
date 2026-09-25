@@ -3,18 +3,12 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import { InfoHero, type InfoTheme } from '@ciszu/ui';
+import { InfoHero } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
+import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 import { usePageTitle } from '@/lib/usePageTitle';
-
-const THEME: InfoTheme = {
-  accent: 'text-neon-blue',
-  accentBg: 'bg-neon-blue/10',
-  accentBorder: 'border-neon-blue/40',
-  card: 'bg-card',
-  border: 'border-border',
-  gradient: 'from-neon-blue to-neon-purple',
-};
 
 interface LeaderboardEntry {
   userId: string;
@@ -96,17 +90,19 @@ export default function LeaderboardPage() {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-20">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <div className="max-w-screen-xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         {/* --- HERO --- */}
-        <Section>
+        <PageReveal>
           <InfoHero
             icon="trophy"
             title="Leaderboard"
             subtitle="Top usuarios por economía de CiszuBot"
             theme={THEME}
           />
-        </Section>
+        </PageReveal>
 
         {/* --- SEARCH --- */}
         <Section className="mb-10">
@@ -268,8 +264,10 @@ export default function LeaderboardPage() {
           </Section>
         )}
 
-        <QuickDocks />
       </div>
+      </div>
+
+      <QuickDocks />
     </div>
   );
 }

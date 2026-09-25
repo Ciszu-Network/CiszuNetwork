@@ -7,7 +7,6 @@ import {
   InfoCardGrid,
   InfoSteps,
   InfoCtaRow,
-  type InfoTheme,
   type InfoCardItem,
   type InfoStepGroup,
 } from '@ciszu/ui';
@@ -23,6 +22,9 @@ import {
   FACEBOOK,
 } from '@/lib/i18n';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
+import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 
 export const revalidate = 60;
 
@@ -30,15 +32,6 @@ export const metadata: Metadata = {
   title: 'CiszuBot | TEAM',
   description:
     'Equipo detrás de CiszuBot: quién lo crea, qué roles existen y cómo colaborar en Ciszu Network.',
-};
-
-const THEME: InfoTheme = {
-  accent: 'text-neon-blue',
-  accentBg: 'bg-neon-blue/10',
-  accentBorder: 'border-neon-blue/40',
-  card: 'bg-card',
-  border: 'border-border',
-  gradient: 'from-neon-blue to-neon-purple',
 };
 
 const COPY = {
@@ -124,9 +117,12 @@ export default async function TeamPage() {
   const portrait = assetResolver.resolve('shared/images/francisco_selfie/IMG_20251207_001632@893898207.jpg');
 
   return (
-    <div className="bg-bg min-h-screen py-20 px-4">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
       <div className="max-w-screen-xl mx-auto">
-        <InfoHero icon="users" title={t.teamPage.title} subtitle={t.teamPage.subtitle} theme={THEME} />
+        <PageReveal>
+          <InfoHero icon="users" title={t.teamPage.title} subtitle={t.teamPage.subtitle} theme={THEME} />
+        </PageReveal>
 
         <section
           className={`mb-14 p-8 md:p-12 rounded-3xl border text-center relative overflow-hidden ${THEME.border} ${THEME.card}`}

@@ -6,8 +6,19 @@ import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useAppStore } from '@/store';
-import { useToast } from '@ciszu/ui';
+import { InfoHero, useToast, type InfoTheme } from '@ciszu/ui';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 import Link from 'next/link';
+
+const THEME: InfoTheme = {
+  accent: 'text-brand-light',
+  accentBg: 'bg-brand/10',
+  accentBorder: 'border-brand/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-light to-brand-accent',
+};
 
 // --- Shared Icon Library ---
 const I = {
@@ -146,29 +157,19 @@ export default function ContactPage() {
 
   return (
     <MainLayout>
-      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-        <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-neon-cyan/5 rounded-full blur-[200px]" />
-        <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-neon-blue/5 rounded-full blur-[180px]" />
-      </div>
+      <div className="relative min-h-screen pt-24 pb-20 px-4">
+        <PageAmbience />
 
-      <div className="max-w-7xl mx-auto px-6 pt-24 pb-32 space-y-20">
+        <PageReveal className="relative mx-auto max-w-screen-xl space-y-20">
 
-        {/* --- HERO HEADER (Information Style Refined) --- */}
-        <motion.header id="hero" initial="hidden" animate="visible" variants={sectionVariants} className="relative space-y-8 pt-12">
-          <div className="flex flex-col items-center gap-1 text-center">
-             <div className="flex items-center gap-6 group">
-                <div className="w-12 h-12 text-brand-light flex items-center justify-center">
-                   {I.globe}
-                </div>
-                <h1 className="text-4xl md:text-8xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-brand-light via-brand-accent to-brand-light bg-clip-text text-transparent [-webkit-text-stroke:1px_black]">
-                   CONTACTO
-                </h1>
-             </div>
-             <p className="text-brand-accent font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-                Núcleo de Asistencia y Canales de Comunicación
-             </p>
-          </div>
-        </motion.header>
+          {/* --- HERO --- */}
+          <InfoHero
+            icon="mail"
+            title="Contacto"
+            subtitle="Núcleo de asistencia y canales de comunicación de Ciszu Network: correo, WhatsApp, ubicación y redes oficiales."
+            kicker="Canales oficiales"
+            theme={THEME}
+          />
 
         {/* --- MAIN CONTACT GRID --- */}
         <motion.div initial="hidden" animate="visible" variants={sectionVariants} className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
@@ -349,6 +350,7 @@ export default function ContactPage() {
         </motion.section>
 
         <QuickDocks />
+        </PageReveal>
       </div>
 
       <AnimatePresence>

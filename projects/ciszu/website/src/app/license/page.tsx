@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { LegalDocument, type LegalArticle, type InfoTheme } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 
 export const metadata: Metadata = {
   title: 'Ciszu Network | LICENSE',
@@ -77,8 +79,9 @@ const ARTICLES: LegalArticle[] = [
 
 export default function LicensePage() {
   return (
-    <div className="min-h-screen pt-0 pb-28 px-4 md:px-6">
-      <div className="max-w-4xl mx-auto">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-4xl">
         <LegalDocument
           icon="certificates"
           title="LICENCIA"
@@ -88,7 +91,7 @@ export default function LicensePage() {
           signOff={{ title: 'Declaración de Libertad de Software', subtitle: 'Red Ciszu — Ciszu Network 2026' }}
           theme={THEME}
         />
-      </div>
+      </PageReveal>
 
       <QuickDocks />
     </div>

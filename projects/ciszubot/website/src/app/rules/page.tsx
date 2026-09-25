@@ -1,20 +1,14 @@
 import type { Metadata } from 'next';
-import { LegalDocument, type LegalArticle, type InfoTheme } from '@ciszu/ui';
+import { LegalDocument, type LegalArticle } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
+import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 
 export const metadata: Metadata = {
   title: 'CiszuBot | RULES',
   description:
     'Reglas de convivencia y uso aceptable de CiszuBot y de las comunidades de Ciszu Network en Discord.',
-};
-
-const THEME: InfoTheme = {
-  accent: 'text-neon-pink',
-  accentBg: 'bg-neon-pink/10',
-  accentBorder: 'border-neon-pink/40',
-  card: 'bg-card',
-  border: 'border-border',
-  gradient: 'from-neon-pink via-white to-neon-pink',
 };
 
 const ARTICLES: LegalArticle[] = [
@@ -100,18 +94,21 @@ const ARTICLES: LegalArticle[] = [
 
 export default function RulesPage() {
   return (
-    <div className="min-h-screen pt-24 pb-20 px-4">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
       <div className="max-w-screen-xl mx-auto">
         <div className="max-w-4xl mx-auto">
-          <LegalDocument
-            icon="shield"
-            title="REGLAS"
-            subtitle="Código de conducta y uso aceptable"
-            docLabel="Reglamento Oficial de CiszuBot"
-            articles={ARTICLES}
-            signOff={{ title: 'Convivencia de la Comunidad CiszuBot', subtitle: 'Actualizado 2026 — Ciszu Network' }}
-            theme={THEME}
-          />
+          <PageReveal>
+            <LegalDocument
+              icon="shield"
+              title="REGLAS"
+              subtitle="Código de conducta y uso aceptable"
+              docLabel="Reglamento Oficial de CiszuBot"
+              articles={ARTICLES}
+              signOff={{ title: 'Convivencia de la Comunidad CiszuBot', subtitle: 'Actualizado 2026 — Ciszu Network' }}
+              theme={THEME}
+            />
+          </PageReveal>
         </div>
       </div>
 

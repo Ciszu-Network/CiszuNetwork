@@ -6,17 +6,11 @@ import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useAppStore } from '@/store';
-import { InfoHero, useToast, type InfoTheme } from '@ciszu/ui';
+import { InfoHero, useToast } from '@ciszu/ui';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
+import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 import Link from 'next/link';
-
-const THEME: InfoTheme = {
-  accent: 'text-neon-blue',
-  accentBg: 'bg-neon-blue/10',
-  accentBorder: 'border-neon-blue/40',
-  card: 'bg-card',
-  border: 'border-border',
-  gradient: 'from-neon-blue to-neon-purple',
-};
 
 // --- Shared Icon Library ---
 const I = {
@@ -155,22 +149,20 @@ export default function ContactPage() {
 
   return (
     <MainLayout>
-      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-        <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-neon-purple/5 rounded-full blur-[200px]" />
-        <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-neon-blue/5 rounded-full blur-[180px]" />
-      </div>
+      <div className="relative min-h-screen pt-24 pb-20 px-4">
+        <PageAmbience />
 
-      <div className="max-w-7xl mx-auto px-6 pt-24 pb-32 space-y-20">
+        <div className="max-w-screen-xl mx-auto space-y-20">
 
         {/* --- HERO HEADER --- */}
-        <motion.header id="hero" initial="hidden" animate="visible" variants={sectionVariants} className="relative pt-12">
+        <PageReveal className="relative pt-12">
           <InfoHero
             icon="mail"
             title="Contacto"
             subtitle="Núcleo de Asistencia y Canales de Comunicación"
             theme={THEME}
           />
-        </motion.header>
+        </PageReveal>
 
         {/* --- MAIN CONTACT GRID --- */}
         <motion.div initial="hidden" animate="visible" variants={sectionVariants} className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
@@ -349,6 +341,8 @@ export default function ContactPage() {
               </div>
            </div>
         </motion.section>
+
+        </div>
 
         <QuickDocks />
       </div>

@@ -2,6 +2,8 @@ import { getDonationMethods } from "@ciszunetwork/payments";
 import { KoFiEmbed, InfoHero, type InfoTheme } from "@ciszu/ui";
 import DonateButtons from "./DonateButtons";
 import QuickDocks from "@/components/molecules/QuickDocks";
+import PageAmbience from "@/components/layout/PageAmbience";
+import PageReveal from "@/components/layout/PageReveal";
 
 const THEME: InfoTheme = {
   accent: 'text-brand-light',
@@ -16,8 +18,9 @@ export default function DonatePage() {
   const methods = getDonationMethods();
 
   return (
-    <div className="min-h-screen pt-24 pb-20">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-screen-xl">
         <InfoHero
           icon="heart"
           title="Donar"
@@ -59,7 +62,7 @@ export default function DonatePage() {
             </a>
           </p>
         </div>
-      </div>
+      </PageReveal>
 
       <QuickDocks />
     </div>

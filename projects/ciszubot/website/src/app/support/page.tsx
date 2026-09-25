@@ -8,18 +8,12 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 import { supabase } from "@/config/supabase";
 import AuthWarningModal from "@/components/shared/AuthWarningModal";
 import { useAppStore } from '@/store';
-import { InfoHero, useToast, Button, type InfoTheme } from '@ciszu/ui';
+import { InfoHero, useToast, Button } from '@ciszu/ui';
 import { FlagIcon } from '@ciszu/ui';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
+import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 import { usePageTitle } from '@/lib/usePageTitle';
-
-const THEME: InfoTheme = {
-  accent: 'text-neon-blue',
-  accentBg: 'bg-neon-blue/10',
-  accentBorder: 'border-neon-blue/40',
-  card: 'bg-card',
-  border: 'border-border',
-  gradient: 'from-neon-blue to-neon-purple',
-};
 
 const I = {
   // Icono de soporte: boya salvavidas circular (Lucide life-buoy), no auriculares.
@@ -220,22 +214,20 @@ export default function SupportPage() {
 
   return (
     <MainLayout>
-      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-        <div className="absolute top-1/4 left-0 w-[800px] h-[800px] bg-neon-purple/5 rounded-full blur-[200px] animate-pulse" />
-        <div className="absolute bottom-0 right-0 w-[700px] h-[700px] bg-neon-pink/5 rounded-full blur-[180px]" />
-      </div>
+      <div className="relative min-h-screen pt-24 pb-20 px-4">
+        <PageAmbience />
 
-      <div className="max-w-7xl mx-auto px-6 pt-24 pb-32 space-y-16">
+        <div className="max-w-screen-xl mx-auto space-y-16">
 
         {/* --- HERO HEADER --- */}
-        <motion.header id="hero" initial="hidden" animate="visible" variants={sectionVariants} className="relative pt-12">
+        <PageReveal className="relative pt-12">
           <InfoHero
             icon="support"
             title="Soporte"
             subtitle="Asistencia Maestra y Monitoreo de Sistemas"
             theme={THEME}
           />
-        </motion.header>
+        </PageReveal>
 
         {/* TABS NAVEGACIÓN */}
         <div className="flex justify-center gap-4 pt-8">
@@ -598,6 +590,8 @@ export default function SupportPage() {
                 </div>
            </div>
         </motion.section>
+
+        </div>
 
         <QuickDocks />
       </div>

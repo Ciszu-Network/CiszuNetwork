@@ -3,8 +3,20 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { InfoHero, type InfoTheme } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 import { usePageTitle } from '@/lib/usePageTitle';
+
+const THEME: InfoTheme = {
+  accent: 'text-brand-light',
+  accentBg: 'bg-brand/10',
+  accentBorder: 'border-brand/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-light to-brand-accent',
+};
 
 // --- Pure SVG Icon Library ---
 const I = {
@@ -27,35 +39,19 @@ export default function ForumPage() {
     { title: 'Off-Topic', desc: 'Temas libres fuera del ecosistema.', count: 31, icon: I.zap, color: 'purple' },
   ];
 
-  const sectionVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.25, 0.1, 0.25, 1] as const } }
-  };
-
   return (
     <div className="relative min-h-screen overflow-hidden">
+      <PageAmbience />
       {/* BLURRED CONTENT */}
       <div className="blur-[15px] pointer-events-none opacity-40 select-none transition-all duration-1000 grayscale-[0.5]">
-        <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-neon-blue/5 rounded-full blur-[200px] animate-pulse" />
-        </div>
-
-        <div className="max-w-7xl mx-auto px-6 pt-24 pb-32 space-y-20">
-          <motion.header id="hero" initial="hidden" animate="visible" variants={sectionVariants} className="relative space-y-8 pt-12">
-            <div className="flex flex-col items-center gap-1 text-center">
-               <div className="flex items-center justify-center gap-6 group">
-                  <div className="w-12 h-12 text-neon-blue flex items-center justify-center">
-                     {I.forum}
-                  </div>
-                  <h1 className="text-4xl md:text-8xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-neon-blue via-white to-neon-cyan bg-clip-text text-transparent [-webkit-text-stroke:1px_black]">
-                    FORO
-                  </h1>
-               </div>
-               <p className="text-neon-cyan font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-                 El epicentro de la comunidad
-               </p>
-            </div>
-          </motion.header>
+        <PageReveal className="relative mx-auto max-w-screen-xl px-4 pt-24 pb-20 space-y-20">
+          <InfoHero
+            icon="comment"
+            title="Foro"
+            subtitle="El epicentro de la comunidad de Ciszu Network."
+            kicker="Comunidad"
+            theme={THEME}
+          />
 
           <motion.section className="space-y-12">
             <div className="flex items-center justify-between mb-8 flex-wrap gap-6">
@@ -93,7 +89,7 @@ export default function ForumPage() {
               ))}
             </div>
           </motion.section>
-        </div>
+        </PageReveal>
       </div>
 
       {/* --- COMING SOON OVERLAY --- */}

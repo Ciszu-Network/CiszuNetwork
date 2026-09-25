@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import InstallPdwaInline from '@/components/layout/InstallPdwaInline';
 import { FabRestore, InfoHero, type InfoTheme } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 
 export const metadata: Metadata = {
   title: 'Ciszuko Antony | DOWNLOADS',
@@ -65,8 +67,9 @@ const DownloadIcon = () => (
 
 export default function DownloadsPage() {
   return (
-    <div className="min-h-screen pt-24 pb-16 px-4 animate-fade-in-up">
-      <div className="max-w-4xl mx-auto">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-screen-xl">
         <InfoHero
           icon="download"
           title="Downloads"
@@ -158,7 +161,7 @@ export default function DownloadsPage() {
             <FabRestore accent="#a78bfa" keys={['ciszu-pdwa-dismissed']} />
           </div>
         </section>
-      </div>
+      </PageReveal>
 
       <QuickDocks />
     </div>

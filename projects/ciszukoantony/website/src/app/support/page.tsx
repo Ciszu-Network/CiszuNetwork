@@ -2,15 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
-import { useToast, FlagIcon } from '@ciszu/ui';
+import { InfoHero, useToast, FlagIcon, type InfoTheme } from '@ciszu/ui';
 import { supabase } from '@/config/supabase';
 import { SOCIALS } from '@/config/navigation';
 import Link from 'next/link';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useAppStore } from '@/store';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 
 const I = {
   // Icono de soporte: boya salvavidas circular (Lucide life-buoy), no auriculares.
@@ -69,6 +70,15 @@ const CATEGORIES = {
   "Contenido": ["Canciones", "Mapas / Charts", "Gráficos", "Eventos"],
   "Comunidad": ["Moderación", "Foros", "Competitivo", "Reportes"]
 } as const;
+
+const THEME: InfoTheme = {
+  accent: 'text-neon-blue',
+  accentBg: 'bg-neon-blue/10',
+  accentBorder: 'border-neon-blue/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-dark to-brand',
+};
 
 export default function SupportPage() {
   usePageTitle('SUPPORT');
@@ -196,29 +206,17 @@ export default function SupportPage() {
   };
 
   return (
-    <MainLayout>
-      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-        <div className="absolute top-1/4 left-0 w-[800px] h-[800px] bg-brand/10 rounded-full blur-[200px] animate-pulse" />
-        <div className="absolute bottom-0 right-0 w-[700px] h-[700px] bg-brand-accent/10 rounded-full blur-[180px]" />
-      </div>
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
 
-      <div className="max-w-7xl mx-auto px-6 pt-24 pb-32 space-y-16">
+      <PageReveal className="relative mx-auto max-w-screen-xl space-y-16">
 
-        <motion.header id="hero" initial="hidden" animate="visible" variants={sectionVariants} className="relative space-y-8 pt-12">
-          <div className="flex flex-col items-center gap-1 text-center">
-             <div className="flex items-center gap-6 group">
-                <div className="w-12 h-12 text-brand-light flex items-center justify-center">
-                   {I.support}
-                </div>
-                <h1 className="text-4xl md:text-8xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-brand-light to-brand-accent bg-clip-text text-transparent [-webkit-text-stroke:1px_black]">
-                   SOPORTE
-                </h1>
-             </div>
-             <p className="text-brand-light font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-                Estamos aquí para ayudarte
-             </p>
-          </div>
-        </motion.header>
+        <InfoHero
+          icon="support"
+          title="SOPORTE"
+          subtitle="Estamos aquí para ayudarte"
+          theme={THEME}
+        />
 
         <div className="flex justify-center gap-4 pt-8">
             <button
@@ -539,7 +537,7 @@ export default function SupportPage() {
         </motion.section>
 
         <QuickDocks />
-      </div>
-    </MainLayout>
+      </PageReveal>
+    </div>
   );
 }

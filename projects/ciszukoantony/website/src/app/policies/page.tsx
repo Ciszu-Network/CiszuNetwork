@@ -6,6 +6,8 @@ import { InfoHero, LegalCiszuLink, type InfoTheme } from '@ciszu/ui';
 import { RichText, type RichPart } from '@/components/RichText';
 import { usePageTitle } from '@/lib/usePageTitle';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 
 const NETWORK_LINK: RichPart = { link: 'Ciszuko Network', href: 'https://ciszunetwork.vercel.app' };
 
@@ -83,16 +85,15 @@ const sections = [
 export default function PoliciesPage() {
   usePageTitle('POLICIES');
   return (
-    <div className="min-h-screen pt-24 pb-16 px-4">
-      <div className="max-w-3xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <InfoHero
-            icon="policies"
-            title="Policies"
-            subtitle="Terms, Privacy & Legal Notice"
-            theme={THEME}
-          />
-        </motion.div>
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-screen-xl">
+        <InfoHero
+          icon="policies"
+          title="Policies"
+          subtitle="Terms, Privacy & Legal Notice"
+          theme={THEME}
+        />
 
         <div className="space-y-8">
           {sections.map((s, i) => (
@@ -118,7 +119,7 @@ export default function PoliciesPage() {
         </motion.div>
 
         <LegalCiszuLink />
-      </div>
+      </PageReveal>
 
       <QuickDocks />
     </div>

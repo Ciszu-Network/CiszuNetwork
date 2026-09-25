@@ -1,20 +1,14 @@
 import type { Metadata } from 'next';
-import { LegalDocument, type LegalArticle, type InfoTheme } from '@ciszu/ui';
+import { LegalDocument, type LegalArticle } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
+import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 
 export const metadata: Metadata = {
   title: 'CiszuBot | LICENSE',
   description:
     'Licencia de uso, propiedad intelectual y términos de redistribución del software de CiszuBot.',
-};
-
-const THEME: InfoTheme = {
-  accent: 'text-neon-cyan',
-  accentBg: 'bg-neon-cyan/10',
-  accentBorder: 'border-neon-cyan/40',
-  card: 'bg-card',
-  border: 'border-border',
-  gradient: 'from-neon-cyan via-neon-blue to-neon-cyan',
 };
 
 const ARTICLES: LegalArticle[] = [
@@ -77,18 +71,21 @@ const ARTICLES: LegalArticle[] = [
 
 export default function LicensePage() {
   return (
-    <div className="min-h-screen pt-24 pb-20 px-4">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
       <div className="max-w-screen-xl mx-auto">
         <div className="max-w-4xl mx-auto">
-          <LegalDocument
-            icon="certificates"
-            title="LICENCIA"
-            subtitle="Open Source & Transparencia"
-            docLabel="Licencia Oficial de CiszuBot"
-            articles={ARTICLES}
-            signOff={{ title: 'Declaración de Libertad de Software', subtitle: 'CiszuBot — Ciszu Network 2026' }}
-            theme={THEME}
-          />
+          <PageReveal>
+            <LegalDocument
+              icon="certificates"
+              title="LICENCIA"
+              subtitle="Open Source & Transparencia"
+              docLabel="Licencia Oficial de CiszuBot"
+              articles={ARTICLES}
+              signOff={{ title: 'Declaración de Libertad de Software', subtitle: 'CiszuBot — Ciszu Network 2026' }}
+              theme={THEME}
+            />
+          </PageReveal>
         </div>
       </div>
 

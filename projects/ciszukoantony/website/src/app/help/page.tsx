@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
 import {
   InfoHero,
   InfoLinkGrid,
@@ -15,6 +14,8 @@ import {
 } from '@ciszu/ui';
 import { usePageTitle } from '@/lib/usePageTitle';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 
 /**
  * Centro de ayuda real (antes era un «Próximamente»).
@@ -28,7 +29,7 @@ const THEME: InfoTheme = {
   accentBorder: 'border-neon-blue/40',
   card: 'bg-white/5',
   border: 'border-white/10',
-  gradient: 'from-brand to-brand-200',
+  gradient: 'from-brand-dark to-brand',
 };
 
 const COPY = {
@@ -101,16 +102,15 @@ export default function HelpPage() {
   usePageTitle('HELP');
 
   return (
-    <div className="min-h-screen pt-24 pb-16 px-4">
-      <div className="max-w-screen-xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <InfoHero
-            icon="help"
-            title="Help"
-            subtitle="Centro de ayuda de Ciszuko Antony: cómo verificar certificados, resolver problemas y contactar con soporte."
-            theme={THEME}
-          />
-        </motion.div>
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-screen-xl">
+        <InfoHero
+          icon="help"
+          title="Help"
+          subtitle="Centro de ayuda de Ciszuko Antony: cómo verificar certificados, resolver problemas y contactar con soporte."
+          theme={THEME}
+        />
 
         <div className="space-y-14">
           <InfoLinkGrid groups={CATEGORIES} theme={THEME} />
@@ -132,7 +132,7 @@ export default function HelpPage() {
             { label: 'Contacto', href: '/contact', icon: 'mail', variant: 'ghost' },
           ]}
         />
-      </div>
+      </PageReveal>
 
       <QuickDocks />
     </div>

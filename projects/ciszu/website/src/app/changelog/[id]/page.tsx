@@ -5,18 +5,29 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
 import { CHANGELOG_DATA as CHANGELOG_STATIC } from '@/data/changelog';
 import { I, TAG_CONFIG } from '@/config/changelogIcons';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useAppStore } from '@/store';
-import { useChangelogLikes, usePublishedChangelogs, useToast } from '@ciszu/ui';
+import { InfoHero, useChangelogLikes, usePublishedChangelogs, useToast, type InfoTheme } from '@ciszu/ui';
 import {
   getChangelogById,
   getMostRecentId,
   getRelatedChangelog,
   mergeChangelogSources,
 } from '@ciszunetwork/utils/changelog';
+
+const THEME: InfoTheme = {
+  accent: 'text-brand-light',
+  accentBg: 'bg-brand/10',
+  accentBorder: 'border-brand/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-light to-brand-accent',
+};
 
 
 /** Icono de una entrada: usa el icono publicado (devcon) si existe. */
@@ -62,8 +73,10 @@ export default function ChangelogDetailPage() {
 
   if (!item) {
     return (
-      <div className="min-h-screen pt-24 pb-20">
-        <div className="max-w-4xl mx-auto px-4 min-h-[60vh] flex flex-col items-center justify-center text-center space-y-6">
+      <div className="relative min-h-screen pt-24 pb-20 px-4">
+        <PageAmbience />
+        <PageReveal className="relative mx-auto max-w-4xl">
+        <div className="min-h-[60vh] flex flex-col items-center justify-center text-center space-y-6">
           <div className="w-16 h-16 text-white/20">{I.alert}</div>
           <h1 className="text-4xl font-header font-black text-white uppercase italic tracking-tighter">
             VERSIÓN NO ENCONTRADA
@@ -78,6 +91,7 @@ export default function ChangelogDetailPage() {
             Volver al registro maestro
           </Link>
         </div>
+        </PageReveal>
       </div>
     );
   }
@@ -86,8 +100,9 @@ export default function ChangelogDetailPage() {
   const isNew = item.id === mostRecentId;
 
   return (
-    <div className="min-h-screen pt-24 pb-20">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-4xl">
         {/* --- BACK --- */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-8">
           <Link
@@ -100,87 +115,75 @@ export default function ChangelogDetailPage() {
         </motion.div>
 
         {/* --- HERO --- */}
-        <motion.header
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: 'easeOut' }}
-          className="relative mb-16"
-        >
-          <div className={`absolute -inset-1 bg-gradient-to-r ${primaryTag.gradient} rounded-[3.5rem] blur opacity-10`} />
-          <div className="relative bg-black/80 border border-white/5 rounded-[3.5rem] p-10 md:p-14 flex flex-col items-center text-center space-y-8 overflow-hidden">
+        <InfoHero
+          icon="history"
+          title={item.title}
+          subtitle="Bitácora oficial de cambios del ecosistema Ciszu Network."
+          kicker={`Versión ${item.version}`}
+          theme={THEME}
+        />
+
+        {/* METADATOS + LIKES + TAGS */}
+        <div className="mb-12 space-y-6">
+          <div className="flex flex-wrap items-center justify-center gap-4">
             {isNew && (
-              <div className="absolute top-0 left-0 w-40 h-40 overflow-hidden pointer-events-none z-10">
-                <div className="absolute top-0 left-0 w-full h-10 bg-green-500 text-black text-[11px] font-black flex items-center justify-center uppercase tracking-[0.4em] rotate-[-45deg] translate-x-[-30%] translate-y-[45%]">
-                  NUEVO
-                </div>
-              </div>
+              <span className="px-4 py-1.5 rounded-full bg-green-500 text-black text-[10px] font-black uppercase tracking-widest">
+                Nuevo
+              </span>
             )}
-
-            <div className={`w-20 h-20 p-5 rounded-3xl bg-black/60 border border-white/10 ${primaryTag.color} flex items-center justify-center relative z-10`}>
-              <div className="w-full h-full">{entryIcon(item)}</div>
-            </div>
-
-            <div className="space-y-5 relative z-10 w-full">
-              <div className="flex flex-wrap items-center justify-center gap-4">
-                <span className={`px-5 py-1.5 rounded-full bg-white/5 ${primaryTag.color} text-[10px] font-black uppercase tracking-widest border border-white/10`}>
-                  VERSIÓN {item.version}
-                </span>
-                <span className="text-white/30 font-black uppercase text-[11px] tracking-widest italic">{item.date}</span>
-                <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] font-black text-white/30 uppercase tracking-[0.2em]">
-                  {item.code}
-                </span>
-                <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-black text-white/60 uppercase tracking-widest">
-                  <div className="w-3 h-3 text-brand-light">{I.user}</div>
-                  <span>{item.author}</span>
-                </div>
-              </div>
-
-              <h1 className="text-4xl md:text-6xl font-header font-black text-white italic tracking-tighter uppercase leading-none">
-                {item.title}
-              </h1>
-            </div>
-
-            {/* LIKES + TAGS */}
-            <div className="flex flex-wrap justify-center items-center gap-6 relative z-10">
-              <button
-                onClick={handleLike}
-                aria-pressed={likes.isLiked(item.id)}
-                className={`flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/5 border transition-all group/like ${
-                  likes.isLiked(item.id) ? 'border-brand-accent text-brand-accent' : 'border-white/10 hover:border-brand-accent'
-                }`}
-              >
-                <div className="w-5 h-5 group-hover/like:scale-110 transition-all">{I.heart}</div>
-                <span className="text-[12px] font-mono font-black text-white/50 group-hover/like:text-brand-accent">
-                  {likes.getLikes(item.id, item.likes)} LIKES
-                </span>
-              </button>
-
-              <div className="h-8 w-px bg-white/10" />
-
-              <div className="flex flex-wrap gap-2">
-                {item.types.map((type) => {
-                  const tCfg = TAG_CONFIG[type];
-                  if (!tCfg) return null;
-                  return (
-                    <div key={type} className={`flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 ${tCfg.color}`}>
-                      <div className="w-4 h-4">{tCfg.icon}</div>
-                      <span className="text-[10px] font-black uppercase tracking-widest italic">{tCfg.label}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="max-w-3xl w-full mx-auto p-8 bg-black/40 rounded-[2.5rem] border border-white/5 relative">
-              <div className={`absolute -top-4 -left-4 w-10 h-10 opacity-20 transform rotate-12 ${primaryTag.color}`}>
-                {entryIcon(item)}
-              </div>
-              <p className="text-gray-300 text-lg md:text-xl font-bold italic leading-relaxed tracking-tight">
-                &quot;{item.description}&quot;
-              </p>
+            <span className={`px-5 py-1.5 rounded-full bg-white/5 ${primaryTag.color} text-[10px] font-black uppercase tracking-widest border border-white/10`}>
+              VERSIÓN {item.version}
+            </span>
+            <span className="text-white/30 font-black uppercase text-[11px] tracking-widest italic">{item.date}</span>
+            <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] font-black text-white/30 uppercase tracking-[0.2em]">
+              {item.code}
+            </span>
+            <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-black text-white/60 uppercase tracking-widest">
+              <div className="w-3 h-3 text-brand-light">{I.user}</div>
+              <span>{item.author}</span>
             </div>
           </div>
-        </motion.header>
+
+          <div className="flex flex-wrap justify-center items-center gap-6">
+            <button
+              onClick={handleLike}
+              aria-pressed={likes.isLiked(item.id)}
+              className={`flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/5 border transition-all group/like ${
+                likes.isLiked(item.id) ? 'border-brand-accent text-brand-accent' : 'border-white/10 hover:border-brand-accent'
+              }`}
+            >
+              <div className="w-5 h-5 group-hover/like:scale-110 transition-all">{I.heart}</div>
+              <span className="text-[12px] font-mono font-black text-white/50 group-hover/like:text-brand-accent">
+                {likes.getLikes(item.id, item.likes)} LIKES
+              </span>
+            </button>
+
+            <div className="h-8 w-px bg-white/10" />
+
+            <div className="flex flex-wrap gap-2">
+              {item.types.map((type) => {
+                const tCfg = TAG_CONFIG[type];
+                if (!tCfg) return null;
+                return (
+                  <div key={type} className={`flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 ${tCfg.color}`}>
+                    <div className="w-4 h-4">{tCfg.icon}</div>
+                    <span className="text-[10px] font-black uppercase tracking-widest italic">{tCfg.label}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* DESCRIPCIÓN DESTACADA */}
+        <div className="max-w-3xl w-full mx-auto mb-16 p-8 bg-black/40 rounded-[2.5rem] border border-white/5 relative">
+          <div className={`absolute -top-4 -left-4 w-10 h-10 opacity-20 transform rotate-12 ${primaryTag.color}`}>
+            {entryIcon(item)}
+          </div>
+          <p className="text-gray-300 text-lg md:text-xl font-bold italic leading-relaxed tracking-tight">
+            &quot;{item.description}&quot;
+          </p>
+        </div>
 
         {/* --- BITÁCORA TÉCNICA --- */}
         <motion.section
@@ -285,7 +288,7 @@ export default function ChangelogDetailPage() {
 
         <AuthWarningModal isOpen={isAuthWarningOpen} onClose={() => setIsAuthWarningOpen(false)} />
         <QuickDocks />
-      </div>
+      </PageReveal>
     </div>
   );
 }

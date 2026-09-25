@@ -4,7 +4,19 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
+import { InfoHero, type InfoTheme } from '@ciszu/ui';
 import { usePageTitle } from '@/lib/usePageTitle';
+
+const THEME: InfoTheme = {
+  accent: 'text-brand-light',
+  accentBg: 'bg-brand/10',
+  accentBorder: 'border-brand/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-light to-brand-accent',
+};
 
 // ---------------------------------------------------------------------------
 // STATS — Estado del servidor e infraestructura (ciszunetwork / ciszukoantony /
@@ -150,31 +162,28 @@ export default function StatsPage() {
 
   return (
     <MainLayout>
-      <div className="max-w-7xl mx-auto px-6 pt-24 pb-32 space-y-16">
-        {/* --- HEADER --- */}
-        <motion.header initial="hidden" animate="visible" variants={sectionVariants} className="relative space-y-6 pt-12">
-          <div className="flex flex-col items-center gap-1 text-center">
-            <div className="flex items-center gap-6 group">
-              <div className="w-12 h-12 text-neon-green flex items-center justify-center">{I.server}</div>
-              <h1 className="text-5xl md:text-8xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-neon-blue via-neon-green to-neon-blue bg-clip-text text-transparent [-webkit-text-stroke:1px_black]">
-                ESTADO
-              </h1>
-            </div>
-            <p className="text-neon-blue font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-              Servidor · Red · Seguridad
-            </p>
-          </div>
-          <div className="flex justify-center">
-            <button
-              onClick={runChecks}
-              disabled={checking}
-              className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-black border border-neon-blue/30 text-neon-blue font-header font-black uppercase tracking-widest text-[10px] hover:bg-neon-blue hover:text-black transition-all disabled:opacity-40"
-            >
-              <span className={`w-4 h-4 ${checking ? 'animate-spin' : ''}`}>{I.refresh}</span>
-              {checking ? 'Comprobando…' : 'Actualizar estado'}
-            </button>
-          </div>
-        </motion.header>
+      <div className="relative min-h-screen pt-24 pb-20 px-4">
+        <PageAmbience />
+        <PageReveal className="relative mx-auto max-w-screen-xl space-y-16">
+        {/* --- HERO --- */}
+        <InfoHero
+          icon="signal"
+          title="Estado"
+          subtitle="Servidor, red y seguridad de la infraestructura de Ciszu Network, medidos en tiempo real desde tu navegador."
+          kicker="Monitorización"
+          theme={THEME}
+        />
+
+        <div className="flex justify-center">
+          <button
+            onClick={runChecks}
+            disabled={checking}
+            className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-black border border-neon-blue/30 text-neon-blue font-header font-black uppercase tracking-widest text-[10px] hover:bg-neon-blue hover:text-black transition-all disabled:opacity-40"
+          >
+            <span className={`w-4 h-4 ${checking ? 'animate-spin' : ''}`}>{I.refresh}</span>
+            {checking ? 'Comprobando…' : 'Actualizar estado'}
+          </button>
+        </div>
 
         {/* --- OVERVIEW TILES --- */}
         <motion.section initial="hidden" animate="visible" variants={sectionVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-6">
@@ -276,6 +285,7 @@ export default function StatsPage() {
         </div>
 
         <QuickDocks />
+        </PageReveal>
       </div>
     </MainLayout>
   );

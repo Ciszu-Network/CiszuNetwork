@@ -2,19 +2,13 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { InfoHero, type InfoTheme } from '@ciszu/ui';
+import { InfoHero } from '@ciszu/ui';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
+import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 import { usePageTitle } from '@/lib/usePageTitle';
-
-const THEME: InfoTheme = {
-  accent: 'text-neon-blue',
-  accentBg: 'bg-neon-blue/10',
-  accentBorder: 'border-neon-blue/40',
-  card: 'bg-card',
-  border: 'border-border',
-  gradient: 'from-neon-blue to-neon-purple',
-};
 
 // ---------------------------------------------------------------------------
 // STATS — Estado del servidor e infraestructura (ciszunetwork / ciszukoantony /
@@ -160,9 +154,11 @@ export default function StatsPage() {
 
   return (
     <MainLayout>
-      <div className="max-w-7xl mx-auto px-6 pt-24 pb-32 space-y-16">
+      <div className="relative min-h-screen pt-24 pb-20 px-4">
+        <PageAmbience />
+        <div className="max-w-screen-xl mx-auto space-y-16">
         {/* --- HEADER --- */}
-        <motion.header initial="hidden" animate="visible" variants={sectionVariants} className="relative space-y-6 pt-12">
+        <PageReveal className="relative space-y-6 pt-12">
           <InfoHero
             icon="signal"
             title="Estado"
@@ -179,7 +175,7 @@ export default function StatsPage() {
               {checking ? 'Comprobando…' : 'Actualizar estado'}
             </button>
           </div>
-        </motion.header>
+        </PageReveal>
 
         {/* --- OVERVIEW TILES --- */}
         <motion.section initial="hidden" animate="visible" variants={sectionVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-6">
@@ -278,6 +274,7 @@ export default function StatsPage() {
             Plataforma · Ciszu Network
           </p>
           <div className="w-6 h-6 text-neon-green">{I.lock}</div>
+        </div>
         </div>
 
         <QuickDocks />

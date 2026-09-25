@@ -6,12 +6,14 @@ import {
   InfoAccordion,
   InfoSteps,
   InfoCtaRow,
-  type InfoTheme,
   type InfoLinkGroup,
   type InfoStepGroup,
 } from '@ciszu/ui';
 import { getDict, parseLang, DISCORD_SERVER, BOT_PREFIX } from '@/lib/i18n';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
+import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 
 export const revalidate = 60;
 
@@ -19,15 +21,6 @@ export const metadata: Metadata = {
   title: 'CiszuBot | HELP',
   description:
     'Centro de ayuda de CiszuBot: primeros pasos, comandos, permisos, privacidad y solución de problemas.',
-};
-
-const THEME: InfoTheme = {
-  accent: 'text-neon-blue',
-  accentBg: 'bg-neon-blue/10',
-  accentBorder: 'border-neon-blue/40',
-  card: 'bg-card',
-  border: 'border-border',
-  gradient: 'from-neon-blue to-neon-purple',
 };
 
 const COPY = {
@@ -79,9 +72,12 @@ export default async function HelpPage() {
   const t = getDict(lang);
 
   return (
-    <div className="bg-bg min-h-screen py-20 px-4">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
       <div className="max-w-screen-xl mx-auto">
-        <InfoHero icon="help" title={t.helpPage.title} subtitle={t.helpPage.subtitle} theme={THEME} />
+        <PageReveal>
+          <InfoHero icon="help" title={t.helpPage.title} subtitle={t.helpPage.subtitle} theme={THEME} />
+        </PageReveal>
 
         <div className="space-y-14">
           <InfoLinkGrid groups={CATEGORIES} theme={THEME} />

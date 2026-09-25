@@ -14,6 +14,8 @@ import {
 import { I, TAG_CONFIG } from '@/config/changelogIcons';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useAppStore } from '@/store';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 import { InfoHero, useChangelogLikes, usePublishedChangelogs, useToast, type InfoTheme } from '@ciszu/ui';
 import {
   CHANGELOG_PAGE_SIZE,
@@ -146,8 +148,9 @@ export default function ChangelogPage() {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-16 px-4">
-      <div className="max-w-4xl mx-auto">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-screen-xl">
         {/* --- HERO --- */}
         <InfoHero
           icon="history"
@@ -756,7 +759,7 @@ export default function ChangelogPage() {
 
         <AuthWarningModal isOpen={isAuthWarningOpen} onClose={() => setIsAuthWarningOpen(false)} />
         <QuickDocks />
-      </div>
+      </PageReveal>
     </div>
   );
 }

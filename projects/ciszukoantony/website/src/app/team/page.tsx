@@ -16,6 +16,8 @@ import {
 import { SOCIALS } from '@/config/navigation';
 import { usePageTitle } from '@/lib/usePageTitle';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 
 /**
  * Equipo de Ciszuko Antony.
@@ -105,16 +107,15 @@ export default function TeamPage() {
   usePageTitle('TEAM');
 
   return (
-    <div className="min-h-screen pt-24 pb-16 px-4">
-      <div className="max-w-screen-xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <InfoHero
-            icon="users"
-            title="Team"
-            subtitle="Quién está detrás de Ciszuko Antony: el fundador, los roles que cubre el ecosistema y cómo entrar a colaborar."
-            theme={THEME}
-          />
-        </motion.div>
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-screen-xl">
+        <InfoHero
+          icon="users"
+          title="Team"
+          subtitle="Quién está detrás de Ciszuko Antony: el fundador, los roles que cubre el ecosistema y cómo entrar a colaborar."
+          theme={THEME}
+        />
 
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -184,7 +185,7 @@ export default function TeamPage() {
             { label: 'Ver proyectos', href: '/projects', icon: 'rocket', variant: 'ghost' },
           ]}
         />
-      </div>
+      </PageReveal>
 
       <QuickDocks />
     </div>

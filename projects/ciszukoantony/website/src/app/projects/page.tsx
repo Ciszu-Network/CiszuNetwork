@@ -5,6 +5,8 @@ import { InfoHero, SmartImage, type InfoTheme } from '@ciszu/ui';
 import { motion } from 'framer-motion';
 import { usePageTitle } from '@/lib/usePageTitle';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 
 const categories = [
   {
@@ -79,16 +81,16 @@ const THEME: InfoTheme = {
 export default function ProjectsPage() {
   usePageTitle('PROJECTS');
   return (
-    <div className="min-h-screen pt-24 pb-16 px-4">
-      <div className="max-w-7xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <InfoHero
-            icon="rocket"
-            title="Projects"
-            subtitle="Innovation in every line of code"
-            theme={THEME}
-          />
-        </motion.div>
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-screen-xl">
+        <InfoHero
+          icon="rocket"
+          title="Projects"
+          subtitle="Innovation in every line of code"
+          theme={THEME}
+        />
+
 
         {categories.map((cat, ci) => (
           <motion.section key={cat.name} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="mb-16">
@@ -125,7 +127,7 @@ export default function ProjectsPage() {
             </div>
           </motion.section>
         ))}
-      </div>
+      </PageReveal>
 
       <QuickDocks />
     </div>

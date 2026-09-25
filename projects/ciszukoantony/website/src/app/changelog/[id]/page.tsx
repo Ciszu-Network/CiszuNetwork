@@ -10,6 +10,8 @@ import { CHANGELOG_DATA as CHANGELOG_STATIC } from '@/data/changelog';
 import { I, TAG_CONFIG } from '@/config/changelogIcons';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useAppStore } from '@/store';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 import { useChangelogLikes, usePublishedChangelogs, useToast } from '@ciszu/ui';
 import {
   getChangelogById,
@@ -62,8 +64,8 @@ export default function ChangelogDetailPage() {
 
   if (!item) {
     return (
-      <div className="min-h-screen pt-24 pb-16 px-4">
-        <div className="max-w-4xl mx-auto min-h-[60vh] flex flex-col items-center justify-center text-center space-y-6">
+      <div className="relative min-h-screen pt-24 pb-20 px-4">
+        <div className="relative mx-auto max-w-screen-xl min-h-[60vh] flex flex-col items-center justify-center text-center space-y-6">
           <div className="w-16 h-16 text-white/20">{I.alert}</div>
           <h1 className="text-4xl font-header font-black text-white uppercase italic tracking-tighter">
             VERSIÓN NO ENCONTRADA
@@ -86,8 +88,9 @@ export default function ChangelogDetailPage() {
   const isNew = item.id === mostRecentId;
 
   return (
-    <div className="min-h-screen pt-24 pb-16 px-4">
-      <div className="max-w-4xl mx-auto">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-screen-xl">
         {/* --- BACK --- */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-8">
           <Link
@@ -100,12 +103,7 @@ export default function ChangelogDetailPage() {
         </motion.div>
 
         {/* --- HERO --- */}
-        <motion.header
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: 'easeOut' }}
-          className="relative mb-16"
-        >
+        <header className="relative mb-16">
           <div className={`absolute -inset-1 bg-gradient-to-r ${primaryTag.gradient} rounded-[3.5rem] blur opacity-10`} />
           <div className="relative bg-black/80 border border-white/5 rounded-[3.5rem] p-10 md:p-14 flex flex-col items-center text-center space-y-8 overflow-hidden">
             {isNew && (
@@ -180,7 +178,7 @@ export default function ChangelogDetailPage() {
               </p>
             </div>
           </div>
-        </motion.header>
+        </header>
 
         {/* --- BITÁCORA TÉCNICA --- */}
         <motion.section
@@ -285,7 +283,7 @@ export default function ChangelogDetailPage() {
 
         <AuthWarningModal isOpen={isAuthWarningOpen} onClose={() => setIsAuthWarningOpen(false)} />
         <QuickDocks />
-      </div>
+      </PageReveal>
     </div>
   );
 }

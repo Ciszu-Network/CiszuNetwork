@@ -4,6 +4,8 @@ import { useMemo, useState, useRef, useEffect } from "react";
 import { BookOpen, ExternalLink, Globe, Clock, Award, Search, Filter, BookMarked, Target, Layers } from "lucide-react";
 import { usePageTitle } from "@/lib/usePageTitle";
 import QuickDocks from "@/components/molecules/QuickDocks";
+import PageAmbience from "@/components/layout/PageAmbience";
+import PageReveal from "@/components/layout/PageReveal";
 import { Ac3Section, InfoHero, type InfoTheme } from "@ciszu/ui";
 
 /**
@@ -137,12 +139,10 @@ export default function CoursesPage() {
   }, [category, level, sort, query]);
 
   return (
-    <div className="min-h-screen pt-24 pb-20 relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-brand/15 rounded-full blur-[160px] animate-pulse" />
-      </div>
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
 
-      <div className="max-w-5xl mx-auto px-4">
+      <PageReveal className="relative mx-auto max-w-screen-xl">
         {/* Hero */}
         <InfoHero
           icon="certificates"
@@ -236,7 +236,7 @@ export default function CoursesPage() {
         </div>
 
         <Ac3Section />
-      </div>
+      </PageReveal>
 
       <QuickDocks />
     </div>
