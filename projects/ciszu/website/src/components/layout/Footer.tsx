@@ -30,12 +30,12 @@ import {
   History,
   Star,
   BarChart3,
-  Trophy,
   MessageSquare,
   Building,
   BookOpen,
   Shield,
   Scale,
+  Lock,
 } from 'lucide-react';
 
 const IcoPhone = () => (
@@ -94,7 +94,8 @@ const FOOTER_SECTIONS = (dict: Record<string, any>) => [
       { name: 'Guidelines', href: '/guidelines', icon: <FileText className="w-4 h-4" /> },
       { name: 'Rules', href: '/rules', icon: <Shield className="w-4 h-4" /> },
       { name: 'License', href: '/license', icon: <Scale className="w-4 h-4" /> },
-      { name: 'Credits', href: '/credits', icon: <Trophy className="w-4 h-4" /> },
+      { name: 'Policy', href: '/policy', icon: <Lock className="w-4 h-4" /> },
+      { name: 'Credits', href: '/credits', icon: <FileText className="w-4 h-4" /> },
     ],
   },
 ];

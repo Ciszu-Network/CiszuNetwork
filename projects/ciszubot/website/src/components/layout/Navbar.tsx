@@ -40,6 +40,11 @@ const INFO_PAGES: { href: string; key: keyof Dict['nav']; icon: string }[] = [
   { href: '/contact', key: 'contact', icon: 'mail' },
   { href: '/about', key: 'about', icon: 'info' },
   { href: '/team', key: 'team', icon: 'users' },
+  { href: '/credits', key: 'credits', icon: 'file-text' },
+  { href: '/guidelines', key: 'guidelines', icon: 'policies' },
+  { href: '/rules', key: 'rules', icon: 'shield' },
+  { href: '/license', key: 'license', icon: 'certificates' },
+  { href: '/policy', key: 'policy', icon: 'lock' },
   { href: '/privacy', key: 'privacidad', icon: 'lock' },
   { href: '/terms', key: 'terminos', icon: 'external' },
 ];
@@ -79,6 +84,11 @@ const SEARCH_PAGES: { href: string; labelKey: string; icon: string; keywords: st
   { href: '/help', labelKey: 'help', icon: 'help', keywords: ['ayuda', 'help', 'faq', 'preguntas'] },
   { href: '/faq', labelKey: 'faq', icon: 'help', keywords: ['faq', 'preguntas', 'frecuentes'] },
   { href: '/dashboard', labelKey: 'dashboard', icon: 'server', keywords: ['panel', 'dashboard', 'config', 'admin'] },
+  { href: '/credits', labelKey: 'credits', icon: 'file-text', keywords: ['creditos', 'credits', 'autores', 'tecnologias', 'proyectos'] },
+  { href: '/guidelines', labelKey: 'guidelines', icon: 'policies', keywords: ['lineamientos', 'guidelines', 'estandares', 'integracion'] },
+  { href: '/rules', labelKey: 'rules', icon: 'shield', keywords: ['reglas', 'rules', 'convivencia', 'normas'] },
+  { href: '/license', labelKey: 'license', icon: 'certificates', keywords: ['licencia', 'license', 'mit', 'propiedad'] },
+  { href: '/policy', labelKey: 'policy', icon: 'lock', keywords: ['politica', 'policy', 'datos', 'cookies', 'anuncios'] },
   { href: '/privacy', labelKey: 'privacidad', icon: 'lock', keywords: ['privacidad', 'privacy'] },
   { href: '/terms', labelKey: 'terminos', icon: 'external', keywords: ['terminos', 'terms', 'legal'] },
 ];

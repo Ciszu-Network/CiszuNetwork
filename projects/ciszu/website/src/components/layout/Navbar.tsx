@@ -38,8 +38,10 @@ import {
   History,
   Star,
   BarChart3,
-  Trophy,
   MessageSquare,
+  Scale,
+  Lock,
+  ScrollText,
 } from 'lucide-react';
 
 const IcoDiscord = () => (
@@ -80,7 +82,7 @@ const NAV_ITEMS: NavEntry[] = [
   {
     name: 'Information',
     icon: <Info className="w-4 h-4" />,
-    keywords: ['about', 'team', 'faq', 'documentation', 'help', 'contact', 'support', 'info', 'about us', 'forum', 'donate', 'policies'],
+    keywords: ['about', 'team', 'faq', 'documentation', 'help', 'contact', 'support', 'info', 'about us', 'forum', 'donate', 'policies', 'policy', 'credits', 'guidelines', 'rules', 'license', 'legal'],
     links: [
       { name: 'Information', href: '/information', icon: <Info className="w-4 h-4" /> },
       { name: 'About', href: '/about', icon: <Info className="w-4 h-4" /> },
@@ -92,7 +94,12 @@ const NAV_ITEMS: NavEntry[] = [
       { name: 'Help', href: '/help', icon: <HelpCircle className="w-4 h-4" /> },
       { name: 'Contact', href: '/contact', icon: <Mail className="w-4 h-4" /> },
       { name: 'Support', href: '/support', icon: <LifeBuoy className="w-4 h-4" /> },
-      { name: 'Policies', href: '/policy', icon: <Shield className="w-4 h-4" /> },
+      // Legal: páginas propias indexadas también en el menú lateral y la búsqueda.
+      { name: 'Credits', href: '/credits', icon: <FileText className="w-4 h-4" /> },
+      { name: 'Guidelines', href: '/guidelines', icon: <ScrollText className="w-4 h-4" /> },
+      { name: 'Rules', href: '/rules', icon: <Shield className="w-4 h-4" /> },
+      { name: 'License', href: '/license', icon: <Scale className="w-4 h-4" /> },
+      { name: 'Policy', href: '/policy', icon: <Lock className="w-4 h-4" /> },
     ],
   },
 ];
@@ -144,6 +151,12 @@ const ALL_PAGES: { name: string; href: string; icon: React.ReactNode; keywords: 
   { name: 'Help', href: '/help', icon: <HelpCircle className="w-4 h-4" />, keywords: ['ayuda', 'help', 'centro', 'guias', 'tutorial'] },
   { name: 'Contact', href: '/contact', icon: <Mail className="w-4 h-4" />, keywords: ['contacto', 'contact', 'mensaje', 'email'] },
   { name: 'Support', href: '/support', icon: <LifeBuoy className="w-4 h-4" />, keywords: ['soporte', 'ayuda', 'support', 'asistencia'] },
+  // Legal (páginas propias indexadas en la búsqueda global).
+  { name: 'Credits', href: '/credits', icon: <FileText className="w-4 h-4" />, keywords: ['creditos', 'credits', 'atribuciones', 'tecnologias', 'autores'] },
+  { name: 'Guidelines', href: '/guidelines', icon: <ScrollText className="w-4 h-4" />, keywords: ['lineamientos', 'guidelines', 'estandares', 'identidad', 'normas', 'uso'] },
+  { name: 'Rules', href: '/rules', icon: <Shield className="w-4 h-4" />, keywords: ['reglas', 'rules', 'conducta', 'convivencia', 'uso aceptable'] },
+  { name: 'License', href: '/license', icon: <Scale className="w-4 h-4" />, keywords: ['licencia', 'license', 'mit', 'copyright', 'propiedad intelectual'] },
+  { name: 'Policy', href: '/policy', icon: <Lock className="w-4 h-4" />, keywords: ['politica', 'policy', 'privacidad', 'cookies', 'datos', 'terminos'] },
 ];
 
 // LANGS: lista canónica compartida (@ciszu/ui). Los 4 idiomas de producción

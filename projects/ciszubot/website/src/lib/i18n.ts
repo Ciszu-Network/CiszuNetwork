@@ -73,6 +73,11 @@ const es = {
     donate: 'Donar',
     information: 'Información',
     faq: 'Preguntas Frecuentes',
+    credits: 'Créditos',
+    guidelines: 'Lineamientos',
+    rules: 'Reglas',
+    license: 'Licencia',
+    policy: 'Política',
   },
   hero: {
     online: 'En línea',
@@ -477,6 +482,11 @@ const en = {
     donate: 'Donate',
     information: 'Information',
     faq: 'FAQ',
+    credits: 'Credits',
+    guidelines: 'Guidelines',
+    rules: 'Rules',
+    license: 'License',
+    policy: 'Policy',
   },
   hero: {
     online: 'Online',
