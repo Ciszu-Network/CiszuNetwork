@@ -26,24 +26,17 @@
 - [ ] Al cerrar sesion manual o automaticamente SIEMPRE redirigir a /index o home de la webpage.
 - [ ] Si el usuario entra a un enlace expirado o no invalido nunca se debe iniciarse sesion, es decir, primero evalua el enlace y verificalo en caso de que este bien si inicia sesion temporalmente hasta que cambie su contraseña pero si sale da error.
 - [ ] TODAS las paginas de registro deben tener el recaptacha al final del formulario antes del boton de registrarse. Actualmente el sistema de recaptchas de los sitiowebs estaban rotos por que no habia creado los proyectos y sus ids / tokens eran inexistentes. Implementa las veresiones 2 y 3 de cada catpcha de cada website. Debemos implementar esto aun, no aparecen en los register. (Solucionar problemas de recaptcha)
+- [ ] Arreglar errores de advisors, console y vulnerabilidades en todas las websites.
 
-Actualmente hay una falla al momento de realizar una actualizacion de pagina al momento de presionar el boton toggle para cambiar el theme.
+Al borrar todos los datos de cache de las paginas para que detecte desde un inicio el guard de antiadblock. No funciona y nunca aparece, si, solucionastes el problema de que aparezca despues de cambiar el tema pero ahora simplemente no aaprece donde si deberia aparecer. Soluciona esto.
 
-Independientemente del theme, al actualizar la pagina todo funciona correctamente pero, reaparece el guard de antiadblock, puede ser molesto para el usuario al cambiar el tema.
+Por otro lado en ciszuko antony website, en la pagina de certificates. Quiero que cada etiqueta o tag tenga un icono propio, de los 3 filtradores. Actualmente no estan completos los de institutos.
 
-Debes hacer que al actualiazr por el toggle theme no se priorize el antiadblock. Ya que son recargas de pagina voluntarias del usuario por una accion.
+Los selectores de los tags de la filtracion de las categorias deben ser multicheckeables, actualemnte lo son pero visualmente no tienen el icono de check singularmente,y e independiente del icono del tag.
 
-Esto debes aplicarlo y implementarlo en todas las websites.
+Finalmente requiero que TODOS los certificados aparte de la etiqueta de mi nombre tengan la etiqueta de su tag para filtracion de categoria y univerisdad con sus iconos y texto. Actualmente solo aparece 1 etiqueta sin importar las demas en la card completa, y sin iconos.
 
-Por otro lado en ciszukoantony website, en la pagina de certificates. Quiero que cada etiqueta o tag tenga un icono propio, de los 3 filtradores. Tambien requiero que cuando el usuario no tenga ninguna etiqueta, es decir "all", los certificados se dividan y categorizen segun su etiqueta, ordenada individualmente por categoria segun el filtrador de orden.
-
-Finalmente requiero que TODOS los certificados aparte de la etiqueta de mi nombre tengan la etiqueta de su tag para filtracion de categoria y univerisdad con sus iconos y texto. Y que permitan multitag unicamente de la categoria (por ejemplo, los certificados de HTML estan dentro de web y programming)
-
-Y por ultimo al momento de seleccionar en los filtradores, los filtros de categoria y universidad. Deben se multiselccionables con casillas, y la filtracion debe permitir multitags tanto de universidad como de categoria.
-
-En resumen, mejora el sistema de ciszukoantony website certificates. Transformando los certificates actuales para permitir multitags, cada tag con un icono diferente, filtracion inteligente multitags y caegorizacion en all por seccion.
-
-Y por ultimo pero no menos importante, tambien hay un error en el guard antiadblock. Cuando se presiona el boton de donacion dentro del estado de bypass con adblocker activado, se va a la pagina de donacion de ciszunetwork, deberia ir a la pagina de donacion de la misma website que incluya un antiadblocker y pagina de donate. De esta manera al abrir el nuevo vinculo se mantiene en la misma website pero en otra pestaña.
+Hay un error en el guard antiadblock. Cuando se presiona el boton de donacion dentro del estado de bypass con adblocker activado, se va a la pagina de donacion de ciszunetwork, deberia ir a la pagina de donacion de la misma website que incluya un antiadblocker y pagina de donate. De esta manera al abrir el nuevo vinculo se mantiene en la misma website pero en otra pestaña.
 
 Actualmente en los certificados de ciszukoantony se estan tratando las tags de categorias como diferentes, digamos que una principal y luego se declaran por id otras mas.
 
