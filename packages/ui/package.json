@@ -41,7 +41,7 @@
         "@typescript-eslint/parser": "8.63.0",
         "@vitejs/plugin-react": "^6.1.1",
         "@vitest/browser": "^4.1.11",
-        "@vitest/browser-playwright": "^4.1.11",
+        "@vitest/browser-playwright": "^5.0.1",
         "@vitest/coverage-v8": "^4.1.11",
         "chromatic": "^18.7.2",
         "eslint": "^8.57.1",
