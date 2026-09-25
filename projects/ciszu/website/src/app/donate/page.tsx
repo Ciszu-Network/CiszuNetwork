@@ -34,7 +34,7 @@ export default function DonatePage() {
             para que el iframe esté SIEMPRE presente, independientemente del panel. */}
         <section className="mt-12 rounded-2xl bg-brand/5 border border-brand/20 p-4">
           <h3 className="text-white font-bold font-header text-sm mb-3 text-center">Apoya en Ko-fi</h3>
-          <KoFiEmbed handle="ciszunetwork" title="Apoya a Ciszu Network en Ko-fi" />
+          <KoFiEmbed handle="ciszukoantony" title="Apoya a Ciszu Network en Ko-fi" />
         </section>
 
         <div className="rounded-2xl bg-brand/5 border border-brand/20 p-4">

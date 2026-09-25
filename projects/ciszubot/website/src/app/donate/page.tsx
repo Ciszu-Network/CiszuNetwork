@@ -5,9 +5,11 @@ import QuickDocks from "@/components/molecules/QuickDocks";
 import { Icon, KoFiEmbed } from '@ciszu/ui';
 
 const DONATION_LINKS = {
-  patreon: 'https://www.patreon.com/cw/ciszubot',
-  koFi: 'https://ko-fi.com/ciszubot',
-  buyMeACoffee: 'https://buymeacoffee.com/ciszubot',
+  // Cuentas canónicas de Ciszu Network (ciszukoantony es la única con perfil
+  // real en Ko-fi/Patreon; ciszubot/ciszunetwork redirigen a la home → 404).
+  patreon: 'https://www.patreon.com/cw/ciszukoantony',
+  koFi: 'https://ko-fi.com/ciszukoantony',
+  buyMeACoffee: 'https://buymeacoffee.com/ciszukoantony',
   nowPayments: 'https://nowpayments.io/donation/ciszunetwork',
 };
 
@@ -79,7 +81,7 @@ export default function DonatePage() {
             para que el iframe esté SIEMPRE presente, independientemente del panel. */}
         <section className="rounded-2xl bg-brand/5 border border-brand/20 p-4">
           <h3 className="text-white font-bold font-header text-sm mb-3 text-center">Apoya en Ko-fi</h3>
-          <KoFiEmbed handle="ciszubot" title="Apoya a CiszuBot en Ko-fi" />
+          <KoFiEmbed handle="ciszukoantony" title="Apoya a CiszuBot en Ko-fi" />
         </section>
 
         {/* NOWPayments */}

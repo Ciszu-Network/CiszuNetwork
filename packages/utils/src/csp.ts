@@ -86,7 +86,10 @@ export function buildCsp(opts: CspOptions = {}): string {
     // Estilos inline de la v3 PDWA y utilidades CSS en línea del ecosistema.
     // styleSrc extra: hoja de estilos remota del editor Puck (inter.css de rsms.me).
     ['style-src', ["'self'", "'unsafe-inline'", ...(opts.styleSrc ?? [])]],
-    ['img-src', ["'self'", 'data:', 'blob:', SUPABASE_ORIGIN, GOOGLE_ADSENSE_ORIGIN, GOOGLE_ADSENSE_WILDCARD, GOOGLE_DOUBLECLICK_ORIGIN, GOOGLE_AD_CREATIVE_ORIGIN, GOOGLE_STATIC_ORIGIN, 'https://www.google-analytics.com', 'https://analytics.google.com', GOOGLE_ANALYTICS_STATS_ORIGIN, ...local, ...(opts.imgSrc ?? [])]],
+    // img-src: AdSense también carga el píxel de verificación de tráfico
+    // (ep1/ep2.adtrafficquality.google/pagead/sodar...) como IMAGEN; sin esos
+    // orígenes el navegador lo bloquea y ensucia la consola con errores CSP.
+    ['img-src', ["'self'", 'data:', 'blob:', SUPABASE_ORIGIN, GOOGLE_ADSENSE_ORIGIN, GOOGLE_ADSENSE_WILDCARD, GOOGLE_DOUBLECLICK_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN_2, GOOGLE_AD_CREATIVE_ORIGIN, GOOGLE_STATIC_ORIGIN, 'https://www.google-analytics.com', 'https://analytics.google.com', GOOGLE_ANALYTICS_STATS_ORIGIN, ...local, ...(opts.imgSrc ?? [])]],
     ['media-src', ["'self'", SUPABASE_ORIGIN, ...local]],
     ['font-src', ["'self'", 'data:', ...local, ...(opts.fontSrc ?? [])]],
     // connect-src: API de impresiones ADS + GTM; GA4 (gtag) envía la colecta de
