@@ -26,18 +26,7 @@
 - [ ] Al cerrar sesion manual o automaticamente SIEMPRE redirigir a /index o home de la webpage.
 - [ ] Si el usuario entra a un enlace expirado o no invalido nunca se debe iniciarse sesion, es decir, primero evalua el enlace y verificalo en caso de que este bien si inicia sesion temporalmente hasta que cambie su contraseña pero si sale da error.
 - [ ] TODAS las paginas de registro deben tener el recaptacha al final del formulario antes del boton de registrarse. Actualmente el sistema de recaptchas de los sitiowebs estaban rotos por que no habia creado los proyectos y sus ids / tokens eran inexistentes. Implementa las veresiones 2 y 3 de cada catpcha de cada website. Debemos implementar esto aun, no aparecen en los register. (Solucionar problemas de recaptcha)
-- [ ] Arreglar errores de advisors, console y vulnerabilidades en todas las websites.
-- [ ] Al borrar todos los datos de cache de las paginas para que detecte desde un inicio el guard de antiadblock en ciszukoantony no aparece el guard.
-
-* [ ] Por otro lado en ciszuko antony website, en la pagina de certificates. Requiero que todos los iconos correspondan a su color de tag, incluyendo los de las secciones y instituos en filtradores. Actualmente algunos iconos de institutos estan en negro, y se ve mal.
-
-- [ ] Exite un problema en las paginas de donacion los widgets embedidos de kofi fallan, requiero obligatoriamente el widget iframe de kofi independientemente del kofipanel. Y arreglar problemas de CORS.
-
-  ERR_BLOCKED_BY_RESPONSE
-
-  # Se bloqueó ko-fi.com
-
-  **ko-fi.com** rechazó la conexión.
+- [ ] Arreglar errores de console y vulnerabilidades en todas las websites.
 
 ### Cambios por Website
 
@@ -90,6 +79,7 @@
 - [ ] Terminar idiomas en ingles USA.
 - [ ] Terminar idiomas en español LATAM.
 - [ ] Terminar idiomas en español España.
+- [ ] Al borrar todos los datos de cache de las paginas para que detecte desde un inicio el guard de antiadblock en ciszukoantony no aparece el guard. Ni con recargas manuales o activando el adblock. Debes arreglar esto.
 
 **MuzicMania Website:**
 
