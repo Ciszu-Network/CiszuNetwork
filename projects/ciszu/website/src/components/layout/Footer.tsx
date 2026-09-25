@@ -32,6 +32,7 @@ import {
   BarChart3,
   MessageSquare,
   Building,
+  LayoutGrid,
   BookOpen,
   Shield,
   Scale,
@@ -81,6 +82,7 @@ const FOOTER_SECTIONS = (dict: Record<string, any>) => [
   {
     title: dict.footer.projects,
     links: [
+      { name: 'Todos los Proyectos', href: '/projects', icon: <LayoutGrid className="w-4 h-4" /> },
       { name: 'Ciszugamens', href: '/projects/ciszugamens', icon: <Gamepad2 className="w-4 h-4" /> },
       { name: dict.nav.ciszubot, href: '/projects/ciszubot', icon: <Bot className="w-4 h-4" /> },
       { name: dict.nav.muzicmania, href: EXTERNAL_LINKS.muzicmania, icon: <Music className="w-4 h-4" /> },

@@ -1,8 +1,10 @@
-import { CISZU_NETWORK } from "@/config/site";
-import { ArrowRight, Gamepad2, Users, Trophy } from "lucide-react";
+import Link from "next/link";
+import { CISZU_NETWORK, CISZUBOT_LINKS } from "@/config/site";
+import { ArrowRight, ExternalLink, Gamepad2, Users, Trophy } from "lucide-react";
 import { InfoHero, type InfoTheme } from "@ciszu/ui";
 import PageAmbience from "@/components/layout/PageAmbience";
 import PageReveal from "@/components/layout/PageReveal";
+import QuickDocks from "@/components/molecules/QuickDocks";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -61,6 +63,14 @@ const features = [
   { icon: Gamepad2, title: "Gaming", desc: "Discord, WhatsApp y Telegram unidos en una sola comunidad de juego." },
 ];
 
+const stack = ['Discord', 'WhatsApp', 'Telegram', 'Top.gg', 'Disboard', 'Discord Bot List'];
+
+const communityLinks = [
+  { name: 'Top.gg', href: CISZUBOT_LINKS.topggServer },
+  { name: 'Disboard', href: CISZUBOT_LINKS.disboardServer },
+  { name: 'Discord Bot List', href: CISZUBOT_LINKS.discordBotListServer },
+];
+
 export default function CiszugamensPage() {
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
@@ -110,8 +120,36 @@ export default function CiszugamensPage() {
               </div>
             ))}
           </div>
+
+          <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10">
+            <h2 className="text-2xl font-header font-bold text-white mb-6">Dónde encontrarnos</h2>
+            <div className="flex flex-wrap gap-3 mb-8">
+              {communityLinks.map((l) => (
+                <a key={l.name} href={l.href} target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/15 text-white text-xs font-bold hover:border-[#a855f7]/60 hover:text-[#c084fc] transition-all">
+                  {l.name} <ExternalLink className="w-3 h-3" />
+                </a>
+              ))}
+            </div>
+            <h3 className="text-sm font-header font-bold text-white mb-3">Stack de la comunidad</h3>
+            <div className="flex flex-wrap gap-2">
+              {stack.map((s) => (
+                <span key={s} className="px-3 py-1.5 rounded-full bg-brand/10 border border-brand/30 text-brand-light text-[10px] font-bold uppercase tracking-wider">
+                  {s}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="text-center">
+            <Link href="/projects" className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/10 transition-all">
+              Ver todos los proyectos <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
       </PageReveal>
+
+      <QuickDocks />
     </div>
   );
 }

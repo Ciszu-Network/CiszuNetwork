@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { CISZU_NETWORK, CISZUKO_ANTONY } from "@/config/site";
-import { ArrowRight, Code, Cloud, Palette } from "lucide-react";
+import { CISZU_NETWORK, CISZUKO_ANTONY, EXTERNAL_LINKS, GITHUB_REPO } from "@/config/site";
+import { ArrowRight, Code, Cloud, ExternalLink, Palette } from "lucide-react";
 import { InfoHero, type InfoTheme } from "@ciszu/ui";
 import PageAmbience from "@/components/layout/PageAmbience";
 import PageReveal from "@/components/layout/PageReveal";
+import QuickDocks from "@/components/molecules/QuickDocks";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -24,6 +25,15 @@ const areas = [
   { icon: Code, title: "Desarrollo Web", desc: "Aplicaciones con Next.js, React, TypeScript y Tailwind." },
   { icon: Cloud, title: "Infraestructura Cloud", desc: "Despliegue en Vercel, AWS y servicios cloud modernos." },
   { icon: Palette, title: "Diseño UI/UX", desc: "Interfaces intuitivas con estética de alto nivel." },
+];
+
+const stack = ['Next.js 15', 'React 19', 'TypeScript', 'Tailwind CSS 4', 'Supabase', 'Vercel', 'pnpm', 'Turborepo', 'GitHub Actions'];
+
+const sites = [
+  { name: 'Web principal', href: EXTERNAL_LINKS.ciszunetwork, external: true },
+  { name: 'CiszuBot', href: '/projects/ciszubot', external: false },
+  { name: 'MuzicMania', href: EXTERNAL_LINKS.muzicmania, external: true },
+  { name: 'Ciszuko Antony', href: EXTERNAL_LINKS.ciszukoantony, external: true },
 ];
 
 export default function CiszuNetworkPage() {
@@ -61,8 +71,39 @@ export default function CiszuNetworkPage() {
               </Link>
             </div>
           </div>
+
+          <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10">
+            <h2 className="text-2xl font-header font-bold text-white mb-6">Stack tecnológico</h2>
+            <div className="flex flex-wrap gap-2 mb-8">
+              {stack.map((s) => (
+                <span key={s} className="px-3 py-1.5 rounded-full bg-brand/10 border border-brand/30 text-brand-light text-[10px] font-bold uppercase tracking-wider">
+                  {s}
+                </span>
+              ))}
+            </div>
+            <h3 className="text-sm font-header font-bold text-white mb-3">Proyectos del ecosistema</h3>
+            <div className="flex flex-wrap gap-3">
+              {sites.map((s) => (
+                <Link key={s.name} href={s.href} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/15 text-white text-xs font-bold hover:border-brand-light/60 hover:text-brand-light transition-all">
+                  {s.name} {s.external ? <ExternalLink className="w-3 h-3" /> : <ArrowRight className="w-3 h-3" />}
+                </Link>
+              ))}
+              <a href={GITHUB_REPO} target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/15 text-white text-xs font-bold hover:border-brand-light/60 hover:text-brand-light transition-all">
+                GitHub <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <Link href="/projects" className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/10 transition-all">
+              Ver todos los proyectos <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
       </PageReveal>
+
+      <QuickDocks />
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { InfoHero, type InfoTheme } from '@ciszu/ui';
+import { InfoHero, type InfoTheme, useToast } from '@ciszu/ui';
 import { usePageTitle } from '@/lib/usePageTitle';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
@@ -662,6 +662,7 @@ function DetailModal({
 }) {
   const providerGroup = getProviderGroup(cert);
   const provider = PROVIDER_OPTIONS.find((p) => p.id === providerGroup);
+  const { toast } = useToast();
   const [copied, setCopied] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'preview' | 'files'>('preview');
 
@@ -963,6 +964,7 @@ function DetailModal({
                       <a
                         href={fileUrl(f.name)}
                         download={f.name}
+                        onClick={() => toast(`¡Gracias por descargar ${f.label}! Gracias por apoyar Ciszu Network.`, 'success')}
                         className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold text-white bg-neon-blue/20 border border-neon-blue/40 hover:bg-neon-blue hover:text-white transition-all"
                       >
                         <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2}>

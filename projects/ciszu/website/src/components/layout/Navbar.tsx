@@ -65,6 +65,7 @@ interface NavEntry {
 const NAV_ITEMS: NavEntry[] = [
   { name: 'Home', href: '/', icon: <Home className="w-4 h-4" /> },
   { name: 'Projects', href: '/projects', icon: <Zap className="w-4 h-4" />, keywords: ['ciszugamens', 'discord', 'whatsapp', 'telegram', 'ciszubot', 'muzicmania', 'ciszu network', 'ciszuko antony'], links: [
+      { name: 'Todos los proyectos', href: '/projects', icon: <Zap className="w-4 h-4" /> },
       { name: 'Ciszugamens', href: '/projects/ciszugamens', icon: <Gamepad2 className="w-4 h-4" /> },
       { name: 'CiszuBot', href: '/projects/ciszubot', icon: <Bot className="w-4 h-4" /> },
       { name: 'MuzicMania', href: '/projects/muzicmania', icon: <Music className="w-4 h-4" /> },
@@ -139,6 +140,7 @@ const ALL_PAGES: { name: string; href: string; icon: React.ReactNode; keywords: 
   { name: 'Donate', href: '/donate', icon: <Heart className="w-4 h-4" />, keywords: ['donar', 'donation', 'donacion', 'apoyar', 'apoyo', 'ko-fi', 'patreon'] },
   { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" />, keywords: ['feedback', 'opiniones', 'sugerencias', 'reporte', 'bug', 'quejas'] },
   { name: 'Courses', href: '/courses', icon: <GraduationCap className="w-4 h-4" />, keywords: ['courses', 'cursos', 'formacion', 'formación', 'educacion', 'educación', 'learning', 'clases'] },
+  { name: 'Projects', href: '/projects', icon: <Zap className="w-4 h-4" />, keywords: ['proyectos', 'projects', 'ecosistema', 'portfolio', 'apps'] },
   { name: 'Ciszugamens', href: '/projects/ciszugamens', icon: <Gamepad2 className="w-4 h-4" />, keywords: ['ciszugamens', 'gamens', 'discord', 'servidor', 'comunidad'] },
   { name: 'CiszuBot', href: '/projects/ciszubot', icon: <Bot className="w-4 h-4" />, keywords: ['ciszubot', 'bot', 'discord', 'comandos'] },
   { name: 'MuzicMania', href: '/projects/muzicmania', icon: <Music className="w-4 h-4" />, keywords: ['muzicmania', 'musica', 'juego', 'ritmo'] },

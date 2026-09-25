@@ -5,6 +5,7 @@ import Link from 'next/link';
 import MainLayout from '@/components/templates/MainLayout';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
 import { FabRestore, useToast } from '@ciszu/ui';
+import InstallPdwaInline from '@/components/InstallPdwaInline';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '@/store';
@@ -167,6 +168,7 @@ export default function DownloadPage() {
       return;
     }
     setIsDownloading(`${os}-${arch}`);
+    toast('¡Gracias por descargar MuzicMania! Gracias por apoyar Ciszu Network.', 'success');
     const url = new URL('/api/download/windows', window.location.origin);
     url.searchParams.set('os', os);
     url.searchParams.set('arch', arch);
@@ -703,7 +705,7 @@ export default function DownloadPage() {
               </ul>
             </div>
 
-            <div className="bg-[#05050a]/90 border border-neon-pink/20 rounded-[3rem] p-10 shadow-2xl relative overflow-hidden group space-y-6">
+            <div id="como-instalar-pdwa" className="bg-[#05050a]/90 border border-neon-pink/20 rounded-[3rem] p-10 shadow-2xl relative overflow-hidden group space-y-6">
               <div className="absolute top-0 right-0 w-32 h-32 bg-neon-pink/5 blur-3xl group-hover:bg-neon-pink/10 transition-all pointer-events-none" />
               <h3 className="font-header font-black tracking-tighter text-xl text-neon-pink italic uppercase border-b border-white/5 pb-4 flex items-center gap-3">
                 <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -735,6 +737,10 @@ export default function DownloadPage() {
             </div>
           </div>
 
+          <div id="instalar-pdwa">
+            <InstallPdwaInline />
+          </div>
+
           <div className="flex flex-col md:flex-row items-center justify-center gap-6 p-8 bg-black/40 border border-white/5 rounded-[2.5rem]">
             <div className="flex items-center gap-4 text-center md:text-left">
               <div className="w-10 h-10 text-neon-blue shrink-0">
@@ -749,11 +755,11 @@ export default function DownloadPage() {
             </div>
             <div className="flex flex-wrap justify-center gap-4">
               <Link
-                href="#hero"
+                href="#instalar-pdwa"
                 className="inline-flex items-center gap-3 px-6 py-3.5 bg-neon-cyan/15 border border-neon-cyan/30 text-neon-cyan font-header font-black uppercase tracking-widest text-[10px] rounded-2xl hover:bg-neon-cyan hover:text-black hover:scale-105 transition-all"
               >
                 <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 6 6 12l7 6"/></svg>
-                VOLVER AL BOTÓN PDWA
+                IR AL INSTALADOR PDWA
               </Link>
               <Link
                 href="/feedback"

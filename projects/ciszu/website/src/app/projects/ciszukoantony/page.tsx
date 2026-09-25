@@ -4,6 +4,7 @@ import { assetResolver } from "@ciszunetwork/cdn";
 import { SocialIcon, SOCIAL_COLORS, InfoHero, type InfoTheme } from '@ciszu/ui';
 import PageAmbience from "@/components/layout/PageAmbience";
 import PageReveal from "@/components/layout/PageReveal";
+import QuickDocks from "@/components/molecules/QuickDocks";
 import { CISZUKO_ANTONY, CISZU_NETWORK } from "@/config/site";
 import { ArrowRight, ExternalLink, Music, Gamepad2, Mic, Video } from "lucide-react";
 import type { Metadata } from "next";
@@ -27,6 +28,8 @@ const contentTypes = [
   { icon: Music, title: "Música", desc: "Producción musical y proyectos de audio originales." },
   { icon: Mic, title: "Tech", desc: "Tutoriales, desarrollo y contenido tecnológico." },
 ];
+
+const platforms = ['YouTube', 'Twitch', 'TikTok', 'Instagram', 'Spotify', 'X'];
 
 export default function CiszukoAntonyPage() {
   return (
@@ -92,8 +95,26 @@ export default function CiszukoAntonyPage() {
               </a>
             </div>
           </div>
+
+          <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10">
+            <h2 className="text-2xl font-header font-bold text-white mb-6">Plataformas</h2>
+            <div className="flex flex-wrap gap-2 mb-8">
+              {platforms.map((p) => (
+                <span key={p} className="px-3 py-1.5 rounded-full bg-brand/10 border border-brand/30 text-brand-light text-[10px] font-bold uppercase tracking-wider">
+                  {p}
+                </span>
+              ))}
+            </div>
+            <div className="text-center">
+              <Link href="/projects" className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/10 transition-all">
+                Ver todos los proyectos <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
         </div>
       </PageReveal>
+
+      <QuickDocks />
     </div>
   );
 }

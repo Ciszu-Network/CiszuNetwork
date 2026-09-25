@@ -56,6 +56,7 @@ const es = {
     downloads: 'Descargas',
     feedback: 'Feedback',
     invite: 'Invitar',
+    explore: 'Explorar',
     search: 'Buscar página…',
     searchHint: 'Qué necesitas encontrar',
     dashboard: 'Panel',
@@ -453,6 +454,135 @@ const es = {
       { q: '¿Cómo solicito soporte oficial?', a: 'Escríbenos a ciszunetwork@gmail.com o únete al servidor de Discord de Ciszu Network.' },
     ],
   },
+  dashboardPage: {
+    title: 'Panel',
+    subtitle:
+      'Gestiona CiszuBot en tus servidores y revisa el estado de tu cuenta de Discord.',
+    kicker: 'CiszuBot · Sesión de Discord',
+    sessionActive: 'Sesión activa',
+    accountId: 'ID de Discord',
+    providerLabel: 'Proveedor',
+    providerDiscord: 'Discord',
+    serversTitle: 'Tus servidores',
+    serversSubtitle: 'Elige un servidor administrable para configurar a CiszuBot.',
+    noServers: 'No tienes servidores administrables.',
+    noServersHint:
+      'Necesitas el permiso «Gestionar servidor» en Discord y haber iniciado sesión para configurar el bot.',
+    botActive: 'Bot activo',
+    botMissing: 'Bot no presente',
+    inviteCta: 'Invitar a CiszuBot',
+    supportCta: 'Servidor de soporte',
+    logout: 'Cerrar sesión',
+    linksTitle: 'Enlaces útiles',
+    links: {
+      commands: 'Comandos',
+      stats: 'Estado',
+      support: 'Soporte',
+      documentation: 'Documentación',
+      invite: 'Invitación',
+      explore: 'Explorar plataformas',
+      download: 'Descargas',
+    },
+  },
+  invitePage: {
+    title: 'Invitación',
+    subtitle:
+      'Añade CiszuBot a tu servidor de Discord en menos de un minuto: gratis, sin registro y con todos los módulos listos.',
+    kicker: 'Discord · Autorización oficial',
+    cta: 'Invitar a CiszuBot',
+    thanks: '¡Gracias por invitar a CiszuBot! Completa la autorización en Discord.',
+    ctaNote: 'Se abre Discord en una pestaña nueva. Elige el servidor y acepta los permisos.',
+    permissionsTitle: 'Permisos que solicita',
+    permissions: [
+      {
+        title: 'Gestionar servidor',
+        body: 'Leer canales, roles y ajustes para aplicar la configuración que hagas desde el panel.',
+      },
+      {
+        title: 'Mensajes',
+        body: 'Enviar y editar sus propios mensajes, y leer el historial para comandos y moderación.',
+      },
+      {
+        title: 'Moderación',
+        body: 'Borrar mensajes y sancionar usuarios cuando tus moderadores ejecuten los comandos.',
+      },
+      {
+        title: 'Voz',
+        body: 'Conectarse a canales de voz para reproducir música y avisos.',
+      },
+      {
+        title: 'Usuarios y roles',
+        body: 'Consultar usuarios y gestionar roles para niveles, economía y verificaciones.',
+      },
+      {
+        title: 'Webhooks e invitaciones',
+        body: 'Crear webhooks y leer invitaciones para registros, sorteos y bienvenidas.',
+      },
+    ],
+    permissionsNote:
+      'El enlace solicita permisos de administrador para que todos los módulos funcionen sin configuración extra. Puedes revocar cualquier permiso desde Discord.',
+    stepsTitle: 'Cómo invitarlo en 3 pasos',
+    steps: [
+      {
+        title: 'Pulsa «Invitar a CiszuBot»',
+        body: 'Se abrirá Discord con la pantalla de autorización del bot.',
+      },
+      {
+        title: 'Elige el servidor',
+        body: 'Solo verás servidores donde tengas el permiso «Gestionar servidor».',
+      },
+      {
+        title: 'Acepta los permisos',
+        body: 'Revisa la lista y pulsa «Autorizar». CiszuBot queda listo al instante.',
+      },
+    ],
+    supportCta: 'Entrar al servidor de soporte',
+    exploreCta: 'Ver otras plataformas',
+  },
+  explorePage: {
+    title: 'Explorar',
+    subtitle:
+      'CiszuBot y Ciszu Network en los principales directorios de Discord: vota, deja tu reseña o únete a la comunidad.',
+    kicker: 'Top.gg · Discord Bot List · Disboard',
+    platformsTitle: 'Plataformas',
+    visit: 'Visitar',
+    vote: 'Votar',
+    join: 'Unirme',
+    platforms: {
+      topggBot: {
+        name: 'Top.gg · CiszuBot',
+        desc: 'Ficha oficial del bot en Top.gg. Vótalo cada 12 horas para ayudarnos a subir puestos.',
+      },
+      topggServer: {
+        name: 'Top.gg · Ciszugamens',
+        desc: 'Ficha del servidor de la comunidad en Top.gg. Vótalo para darle más visibilidad.',
+      },
+      dblBot: {
+        name: 'Discord Bot List · Bot',
+        desc: 'CiszuBot en Discord Bot List. Vota y deja tu reseña para que más gente lo descubra.',
+      },
+      dblServer: {
+        name: 'Discord Bot List · Servidor',
+        desc: 'El servidor Ciszugamens en Discord Bot List, con su ficha y votos.',
+      },
+      disboard: {
+        name: 'Disboard · Ciszugamens',
+        desc: 'Listado de nuestro servidor en Disboard, el directorio de servidores de Discord.',
+      },
+      ciszugamens: {
+        name: 'Ciszu Gamens',
+        desc: 'El servidor propio de la comunidad: soporte, anuncios del bot y eventos.',
+      },
+    },
+    widgetsTitle: 'Widgets de Top.gg',
+    widgetsDesc:
+      'Inserta el estado en vivo de CiszuBot en tu web o úsalo como firma. Se actualiza automáticamente.',
+    widgetBotAlt: 'Widget de CiszuBot en Top.gg',
+    widgetServerAlt: 'Widget del servidor Ciszugamens en Top.gg',
+    ctaTitle: '¿Aún no tienes el bot?',
+    ctaDesc: 'Invítalo a tu servidor y empieza a usar sus comandos en segundos.',
+    ctaButton: 'Invitar a CiszuBot',
+  },
 };
 
 const en = {
@@ -465,6 +595,7 @@ const en = {
     downloads: 'Downloads',
     feedback: 'Feedback',
     invite: 'Invite',
+    explore: 'Explore',
     search: 'Search page…',
     searchHint: 'What do you need to find',
     dashboard: 'Panel',
@@ -860,6 +991,135 @@ const en = {
       { q: 'Do commands work in direct messages?', a: 'Some utility commands do, but most require a server with the appropriate permissions.' },
       { q: 'How do I request official support?', a: 'Email us at ciszunetwork@gmail.com or join the Ciszu Network Discord server.' },
     ],
+  },
+  dashboardPage: {
+    title: 'Dashboard',
+    subtitle:
+      'Manage CiszuBot in your servers and check the status of your Discord account.',
+    kicker: 'CiszuBot · Discord session',
+    sessionActive: 'Session active',
+    accountId: 'Discord ID',
+    providerLabel: 'Provider',
+    providerDiscord: 'Discord',
+    serversTitle: 'Your servers',
+    serversSubtitle: 'Pick a server you manage to configure CiszuBot.',
+    noServers: 'You have no manageable servers.',
+    noServersHint:
+      'You need the “Manage Server” permission on Discord and to be signed in to configure the bot.',
+    botActive: 'Bot active',
+    botMissing: 'Bot not present',
+    inviteCta: 'Invite CiszuBot',
+    supportCta: 'Support server',
+    logout: 'Sign out',
+    linksTitle: 'Useful links',
+    links: {
+      commands: 'Commands',
+      stats: 'Status',
+      support: 'Support',
+      documentation: 'Documentation',
+      invite: 'Invite page',
+      explore: 'Explore platforms',
+      download: 'Downloads',
+    },
+  },
+  invitePage: {
+    title: 'Invite',
+    subtitle:
+      'Add CiszuBot to your Discord server in under a minute: free, no sign-up and with every module ready.',
+    kicker: 'Discord · Official authorization',
+    cta: 'Invite CiszuBot',
+    thanks: 'Thanks for inviting CiszuBot! Finish the authorization on Discord.',
+    ctaNote: 'Discord opens in a new tab. Choose the server and accept the permissions.',
+    permissionsTitle: 'Permissions requested',
+    permissions: [
+      {
+        title: 'Manage Server',
+        body: 'Read channels, roles and settings to apply the configuration you make from the dashboard.',
+      },
+      {
+        title: 'Messages',
+        body: 'Send and edit its own messages, and read history for commands and moderation.',
+      },
+      {
+        title: 'Moderation',
+        body: 'Delete messages and sanction users when your moderators run the commands.',
+      },
+      {
+        title: 'Voice',
+        body: 'Join voice channels to play music and announcements.',
+      },
+      {
+        title: 'Users and roles',
+        body: 'Look up users and manage roles for levels, economy and verifications.',
+      },
+      {
+        title: 'Webhooks and invites',
+        body: 'Create webhooks and read invites for logs, giveaways and welcomes.',
+      },
+    ],
+    permissionsNote:
+      'The link requests administrator permissions so every module works with no extra setup. You can revoke any permission from Discord.',
+    stepsTitle: 'How to invite it in 3 steps',
+    steps: [
+      {
+        title: 'Click “Invite CiszuBot”',
+        body: 'Discord opens with the bot authorization screen.',
+      },
+      {
+        title: 'Choose the server',
+        body: 'You will only see servers where you have the “Manage Server” permission.',
+      },
+      {
+        title: 'Accept the permissions',
+        body: 'Review the list and click “Authorize”. CiszuBot is ready instantly.',
+      },
+    ],
+    supportCta: 'Join the support server',
+    exploreCta: 'See other platforms',
+  },
+  explorePage: {
+    title: 'Explore',
+    subtitle:
+      'CiszuBot and Ciszu Network on the main Discord directories: vote, leave a review or join the community.',
+    kicker: 'Top.gg · Discord Bot List · Disboard',
+    platformsTitle: 'Platforms',
+    visit: 'Visit',
+    vote: 'Vote',
+    join: 'Join',
+    platforms: {
+      topggBot: {
+        name: 'Top.gg · CiszuBot',
+        desc: 'Official bot page on Top.gg. Vote every 12 hours to help us climb the ranks.',
+      },
+      topggServer: {
+        name: 'Top.gg · Ciszugamens',
+        desc: 'Community server page on Top.gg. Vote to give it more visibility.',
+      },
+      dblBot: {
+        name: 'Discord Bot List · Bot',
+        desc: 'CiszuBot on Discord Bot List. Vote and leave your review so more people discover it.',
+      },
+      dblServer: {
+        name: 'Discord Bot List · Server',
+        desc: 'The Ciszugamens server on Discord Bot List, with its page and votes.',
+      },
+      disboard: {
+        name: 'Disboard · Ciszugamens',
+        desc: 'Our server listing on Disboard, the Discord server directory.',
+      },
+      ciszugamens: {
+        name: 'Ciszu Gamens',
+        desc: 'The community’s own server: support, bot announcements and events.',
+      },
+    },
+    widgetsTitle: 'Top.gg widgets',
+    widgetsDesc:
+      'Embed CiszuBot’s live status on your site or use it as a signature. It updates automatically.',
+    widgetBotAlt: 'CiszuBot widget on Top.gg',
+    widgetServerAlt: 'Ciszugamens server widget on Top.gg',
+    ctaTitle: 'Don’t have the bot yet?',
+    ctaDesc: 'Invite it to your server and start using its commands in seconds.',
+    ctaButton: 'Invite CiszuBot',
   },
 };
 

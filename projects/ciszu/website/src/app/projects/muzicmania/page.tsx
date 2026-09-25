@@ -1,8 +1,10 @@
-import { EXTERNAL_LINKS, CISZU_NETWORK } from "@/config/site";
+import Link from "next/link";
+import { EXTERNAL_LINKS, CISZU_NETWORK, GITHUB_REPO } from "@/config/site";
 import { ArrowRight, ExternalLink, Gamepad2, Star, Sparkles } from "lucide-react";
 import { InfoHero, type InfoTheme } from "@ciszu/ui";
 import PageAmbience from "@/components/layout/PageAmbience";
 import PageReveal from "@/components/layout/PageReveal";
+import QuickDocks from "@/components/molecules/QuickDocks";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -24,6 +26,8 @@ const features = [
   { icon: Star, title: "Estética Futurista", desc: "Diseño visual impactante con identidad de marca única." },
   { icon: Sparkles, title: "Web Moderna", desc: "Desarrollado con Next.js y tecnologías web de última generación." },
 ];
+
+const stack = ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Web Audio', 'Supabase', 'Tauri'];
 
 export default function MuzicManiaPage() {
   return (
@@ -62,15 +66,33 @@ export default function MuzicManiaPage() {
             </div>
           </div>
 
+          <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10">
+            <h2 className="text-2xl font-header font-bold text-white mb-6">Stack tecnológico</h2>
+            <div className="flex flex-wrap gap-2">
+              {stack.map((s) => (
+                <span key={s} className="px-3 py-1.5 rounded-full bg-brand/10 border border-brand/30 text-brand-light text-[10px] font-bold uppercase tracking-wider">
+                  {s}
+                </span>
+              ))}
+            </div>
+          </div>
+
           <div className="text-center p-8 rounded-[2rem] bg-gradient-to-br from-brand/10 to-transparent border border-brand/30">
             <p className="text-gray-400 text-sm mb-2">¿Eres desarrollador o músico?</p>
             <p className="text-gray-500 text-xs mb-4">Colabora con MuzicMania aportando canciones, ideas o código.</p>
-            <a href={CISZU_NETWORK.social.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/20 text-white rounded-xl text-xs font-bold hover:bg-white/10 transition-all">
-              <ExternalLink className="w-3 h-3" /> GitHub
-            </a>
+            <div className="flex flex-wrap justify-center gap-3">
+              <a href={GITHUB_REPO} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/20 text-white rounded-xl text-xs font-bold hover:bg-white/10 transition-all">
+                <ExternalLink className="w-3 h-3" /> GitHub
+              </a>
+              <Link href="/projects" className="inline-flex items-center gap-2 px-4 py-2 bg-brand/10 border border-brand/30 text-brand-light rounded-xl text-xs font-bold hover:bg-brand/20 transition-all">
+                Ver todos los proyectos <ArrowRight className="w-3 h-3" />
+              </Link>
+            </div>
           </div>
         </div>
       </PageReveal>
+
+      <QuickDocks />
     </div>
   );
 }

@@ -14,6 +14,7 @@ import { useAppStore } from '@/store/useAppStore';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
 import { extractAccentColor } from '@/lib/colorUtils';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useToast } from '@ciszu/ui';
 
 // --- Icons Library ---
 const I = {
@@ -48,6 +49,7 @@ function getCoverUrl(track: Track): string {
 }
 
 function LibraryContent() {
+  const { toast } = useToast();
   const [trackId] = useQueryState('track');
   const initialTrackId = trackId;
   
@@ -227,6 +229,7 @@ function LibraryContent() {
   };
 
   const handleDownload = (track: Track) => {
+    toast(`¡Gracias por descargar ${track.name}! Gracias por apoyar Ciszu Network.`, 'success');
     const url = track.url.replace('.ogg', '.mp3');
     const filename = `${track.name}.mp3`;
     const a = document.createElement('a');

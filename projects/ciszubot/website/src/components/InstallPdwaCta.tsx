@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Icon } from '@ciszu/ui';
+import { Icon, useToast } from '@ciszu/ui';
 
 interface InstallPdwaCtaProps {
   title: string;
@@ -15,6 +15,7 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export default function InstallPdwaCta({ title, desc, notice }: InstallPdwaCtaProps) {
+  const { toast } = useToast();
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
   const [installed, setInstalled] = useState(false);
   const [hint, setHint] = useState(false);
@@ -34,6 +35,7 @@ export default function InstallPdwaCta({ title, desc, notice }: InstallPdwaCtaPr
   }, []);
 
   const handleInstall = async () => {
+    toast('¡Gracias por instalar CiszuBot! Gracias por apoyar Ciszu Network.', 'success');
     if (deferred) {
       await deferred.prompt();
       const { outcome } = await deferred.userChoice;
