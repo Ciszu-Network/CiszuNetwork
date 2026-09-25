@@ -28,11 +28,21 @@
  *      (`markVoluntaryReload()` de appReload.ts), para no molestar al usuario que
  *      él mismo pidió la recarga.
  *
- * Detección (punto 11): se usa SOLO el método de BAITS múltiples con clases de
- * anuncio reales (las mismas que usan las listas de AdGuard/uBlock/EasyList y
- * las páginas de noticias). NO se inyectan scripts de AdSense: eso daba falsos
- * positivos por red lenta. Si NINGÚN bait está oculto, no hay adblocker claro y
- * NO se muestra la advertencia.
+ * Detección (punto 11): TRES señales, se avisa si CUALQUIERA confirma bloqueo y
+ * nunca sin evidencia (una red lenta NO debe mostrar el modal):
+ *   1. BAITS con clases de anuncio reales (las mismas que usan las listas de
+ *      AdGuard/uBlock/EasyList): los filtros cosméticos las ocultan. Se muestrea
+ *      varias veces porque las extensiones MV3 aplican el CSS DESPUÉS de cargar.
+ *   2. Sonda de RED (fetch sin caché al dominio de AdSense): los bloqueadores de
+ *      red (DNS tipo NextDNS/Pi-hole/AdGuard DNS, o extensiones que cortan
+ *      peticiones) no ocultan nada y, si el script de AdSense ya está en la
+ *      caché HTTP, Chrome lo sirve desde disco y `window.adsbygoogle` acaba
+ *      definido → el guard se quedaba en silencio. La sonda con `cache:
+ *      'no-store'` y query único no se puede servir de caché.
+ *   3. API de AdSense: el tag SSR está en el DOM y `window.adsbygoogle` sigue
+ *      sin definirse tras un margen amplio → la petición fue cortada.
+ * NO se inyectan scripts de AdSense (la sonda es un fetch): eso daba falsos
+ * positivos por red lenta y ejecutaba AdSense dos veces.
  *
  * Bloqueo (punto 12): el overlay bloquea scroll/contexto/copia SOLO mientras el
  * modal está visible; al elegir o al terminar el contador se restaura el
@@ -151,6 +161,8 @@ function baitHidden(): boolean {
       'adsbygoogle ad-slot',
       'sponsor-ad-wrap ad-container',
       'adsbox adsbox-ad',
+      'pub_300x250m pub_728x90 textads banner-ad',
+      'google-ad ad-wrapper ad-unit',
     ];
     for (const cls of BAIT_CLASSES) {
       const bait = document.createElement('div');
@@ -178,40 +190,137 @@ function baitHidden(): boolean {
 }
 
 /**
- * Detección "clara" de adblocker — doble comprobación (ASÍNCRONA):
+ * Muestreo de BAITS (señal 1) con reintentos.
  *
- *  1. BAITS (síncrona): filtros cosméticos (uBlock/AdGuard/AdBlock con listas
- *     EasyList) ocultan los divs señuelo → bloqueo inmediato.
+ * Los filtros cosméticos de las extensiones MV3 (uBlock Origin Lite, AdGuard) se
+ * aplican DESPUÉS de que arranca el documento, así que una sola lectura a los
+ * 400 ms veía los divs señuelo todavía visibles y el guard se quedaba en
+ * silencio. Se muestrea durante ~6 s y en cuanto UNO queda oculto (display:none,
+ * tamaño 0, sin offsetParent o eliminado por un scriptlet) hay bloqueo claro.
+ */
+function waitForCosmeticBait(deadlineMs = 6000): Promise<boolean> {
+  return new Promise((resolve) => {
+    const started = Date.now();
+    const sample = () => {
+      if (baitHidden()) return resolve(true);
+      if (Date.now() - started >= deadlineMs) return resolve(false);
+      window.setTimeout(sample, 600);
+    };
+    sample();
+  });
+}
+
+/**
+ * Sonda de RED (señal 2): ¿el navegador puede pedir recursos del dominio de
+ * anuncios?
  *
- *  2. SCRIPT de AdSense (asíncrona): las 4 webs renderizan el script de AdSense
- *     de forma ESTÁTICA (SSR). Los bloqueadores de RED (DNS: NextDNS / Pi-hole /
- *     AdGuard DNS, o extensiones que cortan peticiones) NO ocultan los baits
- *     pero SÍ impiden que el script cargue. Si el script está en el DOM y tras
- *     un margen razonable `window.adsbygoogle` sigue sin definirse, la petición
- *     fue cortada → bloqueo claro.
+ * Es la única comprobación que atrapa a los bloqueadores de RED cuando el script
+ * de AdSense YA ESTÁ EN LA CACHÉ HTTP (DNS tipo NextDNS/Pi-hole/AdGuard DNS, o
+ * extensiones que cortan peticiones): no ocultan nada y Chrome sirve el script
+ * desde disco sin volver a pedirlo, así que `window.adsbygoogle` acaba definido
+ * y el guard no se mostraba nunca.
  *
- * La comprobación 2 solo se evalúa si el script de AdSense está presente en la
- * página (evita falsos positivos en local o páginas sin anuncios) y con margen
- * amplio (2.5s) para no confundir una red lenta con un bloqueo.
+ * Detalles: `fetch` (NO <script>: no ejecuta AdSense ni lo inicializa dos
+ * veces), `mode:'no-cors'` + `cache:'no-store'` + query único (inmune a la
+ * caché).
+ *   - Resuelve            → la petición salió del navegador: sin bloqueo.
+ *   - Rechaza (TypeError) → cortada por extensión/DNS: bloqueo.
+ *   - AbortError (<2.5s)  → sin respuesta: red lenta, SIN evidencia (nunca se
+ *                           avisa por red lenta).
+ *   - navigator.onLine === false → sin evidencia tampoco.
+ * Se exige doble intento para descartar un corte puntual de red.
+ */
+function probeAdNetwork(origin: string): Promise<boolean> {
+  if (typeof fetch !== 'function') return Promise.resolve(false);
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) return Promise.resolve(false);
+  const url = `${origin}/pagead/js/adsbygoogle.js?ciszu_probe=${Date.now()}`;
+
+  const attempt = async (): Promise<boolean> => {
+    const controller = typeof AbortController === 'function' ? new AbortController() : null;
+    const timer = controller ? window.setTimeout(() => controller.abort(), 2500) : null;
+    try {
+      await fetch(url, {
+        mode: 'no-cors',
+        cache: 'no-store',
+        credentials: 'omit',
+        ...(controller ? { signal: controller.signal } : {}),
+      });
+      return false; // respondió: la petición NO fue bloqueada
+    } catch (err) {
+      // Sin respuesta en el margen (AbortError) = red lenta, no bloqueo.
+      return (err as Error | undefined)?.name === 'AbortError' ? false : true;
+    } finally {
+      if (timer !== null) window.clearTimeout(timer);
+    }
+  };
+
+  return (async () => {
+    if (!(await attempt())) return false;
+    await new Promise((r) => window.setTimeout(r, 250));
+    return attempt();
+  })();
+}
+
+/**
+ * API de AdSense (señal 3): el tag SSR está en el DOM y tras un margen amplio
+ * `window.adsbygoogle` sigue sin definirse → la petición fue cortada (cubre una
+ * regla que solo bloquee el tipo `script`). Margen amplio a propósito: una red
+ * lenta no debe confundirse con un bloqueo.
+ */
+function waitForAdsenseApi(timeoutMs = 2500): Promise<boolean> {
+  return new Promise((resolve) => {
+    const deadline = Date.now() + timeoutMs;
+    const check = () => {
+      // El script cargó y definió la API → no hay bloqueo de red.
+      if (typeof window.adsbygoogle !== 'undefined') return resolve(false);
+      // Margen agotado sin API → la petición fue bloqueada.
+      if (Date.now() >= deadline) return resolve(true);
+      window.setTimeout(check, 150);
+    };
+    check();
+  });
+}
+
+/**
+ * Detección "clara" de adblocker: lanza las tres señales y resuelve `true` en
+ * cuanto UNA confirma bloqueo; si ninguna confirma antes del margen máximo se
+ * considera que NO hay bloqueo claro (nunca se avisa sin evidencia).
+ *
+ * Las señales 2 y 3 solo se evalúan si el script de AdSense está en la página
+ * (sin env de AdSense no hay anuncios que bloquear y avisar sería un falso
+ * positivo en local o en webs sin ads).
  */
 function detectAdBlocker(): Promise<boolean> {
   return new Promise((resolve) => {
     if (typeof window === 'undefined') return resolve(false);
     try {
-      if (baitHidden()) return resolve(true);
+      const adScript = document.querySelector<HTMLScriptElement>('script[src*="pagead2.googlesyndication.com"]');
 
-      const adScript = document.querySelector('script[src*="pagead2.googlesyndication.com"]');
-      if (!adScript) return resolve(false);
-
-      const deadline = Date.now() + 2500;
-      const check = () => {
-        // El script cargó y definió la API → no hay bloqueo de red.
-        if (typeof window.adsbygoogle !== 'undefined') return resolve(false);
-        // Margen agotado sin API → la petición fue bloqueada.
-        if (Date.now() >= deadline) return resolve(true);
-        window.setTimeout(check, 150);
+      let settled = false;
+      const finish = (blocked: boolean, via: string) => {
+        if (settled) return;
+        settled = true;
+        // Diagnóstico: en DevTools (nivel Verbose) se ve qué señal decidió.
+        console.debug(`[AdBlockerGuard] deteccion (${via}) →`, blocked ? 'BLOQUEO' : 'sin bloqueo');
+        resolve(blocked);
       };
-      check();
+
+      // Lectura inmediata (filtros cosméticos ya aplicados en la carga previa).
+      if (baitHidden()) return finish(true, 'baits');
+
+      waitForCosmeticBait().then((v) => { if (v) finish(true, 'baits'); });
+
+      if (adScript) {
+        waitForAdsenseApi().then((v) => { if (v) finish(true, 'adsense-api'); });
+        try {
+          const origin = new URL(adScript.src).origin;
+          probeAdNetwork(origin).then((v) => { if (v) finish(true, 'red'); });
+        } catch {
+          /* src no parseable: se sigue con las otras señales */
+        }
+      }
+
+      window.setTimeout(() => finish(false, 'sin-evidencia'), 6500);
     } catch {
       resolve(false);
     }
@@ -283,14 +392,24 @@ export function AdBlockerGuard({ children, site, logo, title = 'Ciszu Network', 
   // - Navegación normal: se respeta la elección guardada (≤12h).
   useEffect(() => {
     // Cookies rechazadas → el usuario ya eligió no ver anuncios: bypass total.
-    if (getCookieConsent() === 'rejected') return;
+    if (getCookieConsent() === 'rejected') {
+      // Diagnóstico: explica en consola por qué el guard no se muestra.
+      console.debug('[AdBlockerGuard] sin deteccion: cookies rechazadas (bypass)');
+      return;
+    }
     // Recarga VOLUNTARIA (tema/idioma/cookies): no se prioriza el antiadblock.
-    if (consumeVoluntaryReload()) return;
+    if (consumeVoluntaryReload()) {
+      console.debug('[AdBlockerGuard] sin deteccion: recarga voluntaria de la UI');
+      return;
+    }
     if (isManualReload()) {
       clearChoice();
     } else {
       const choice = readChoice();
-      if (choice) return; // elección válida (≤12h): no molestar
+      if (choice) {
+        console.debug('[AdBlockerGuard] sin deteccion: eleccion guardada (12h)');
+        return; // elección válida (≤12h): no molestar
+      }
     }
     let cancelled = false;
     const run = () => {
