@@ -170,6 +170,7 @@ export { LegalDocument, CreditsRoll } from './LegalDocument';
 export type {
   LegalArticle,
   LegalDocumentProps,
+  LegalOfficialLink,
   CreditEntry,
   CreditSection,
   CreditsRollProps,

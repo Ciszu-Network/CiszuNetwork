@@ -23,13 +23,11 @@ export interface LegalArticle {
   isCode?: boolean;
 }
 
-export interface LegalVersion {
-  /** Etiqueta de versión del documento (p. ej. `v2026.1 · Política de Privacidad`). */
+export interface LegalOfficialLink {
+  /** Texto del botón que enlaza a la versión oficial del documento. */
   label: string;
-  /** Fecha de la última actualización (texto libre, p. ej. `2026`). */
-  date: string;
-  /** Estado del documento (p. ej. `Vigente`). */
-  status?: string;
+  /** URL absoluta de la página legal oficial (p. ej. ciszunetwork.vercel.app/policy). */
+  href: string;
 }
 
 export interface LegalDocumentProps {
@@ -45,8 +43,9 @@ export interface LegalDocumentProps {
   articles: LegalArticle[];
   /** Firma al pie del documento. */
   signOff: { title: string; subtitle?: string };
-  /** Bloque opcional de versión/fecha/estado al pie, antes de la firma. */
-  version?: LegalVersion;
+  /** Bloque opcional con el recordatorio de que la versión íntegra y oficial
+   *  vive en la página legal de ciszunetwork, más el botón para ir allí. */
+  officialLink?: LegalOfficialLink;
   theme: InfoTheme;
 }
 
@@ -57,7 +56,7 @@ export function LegalDocument({
   docLabel,
   articles,
   signOff,
-  version,
+  officialLink,
   theme,
 }: LegalDocumentProps) {
   return (
@@ -128,36 +127,34 @@ export function LegalDocument({
             ))}
           </div>
 
-          {/* Versión completa del documento (opcional) */}
-          {version ? (
+          {/* Recordatorio de la versión oficial (opcional) */}
+          {officialLink ? (
             <div
-              className={`rounded-2xl border p-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between ${theme.border} ${theme.accentBg}`}
+              className={`rounded-2xl border p-6 flex flex-col gap-5 md:flex-row md:items-center md:justify-between ${theme.border} ${theme.accentBg}`}
             >
-              <div className="flex items-center gap-4">
+              <div className="flex items-start gap-4">
                 <div className={`w-8 h-8 shrink-0 ${theme.accent}`}>
                   <Icon name="certificates" size={32} />
                 </div>
                 <div className="space-y-0.5">
                   <p className="text-[9px] font-black uppercase tracking-[0.35em] text-gray-500">
-                    Versión completa del documento
+                    Versión completa y oficial
                   </p>
-                  <p className="font-mono text-xs md:text-sm font-bold text-white break-all">{version.label}</p>
+                  <p className="text-xs md:text-sm font-bold leading-relaxed text-gray-300 max-w-xl">
+                    Recuerda que la versión íntegra y oficial de este documento, emitida directamente por la
+                    compañía, está publicada en la página legal de Ciszu Network.
+                  </p>
                 </div>
               </div>
-              <div className="flex flex-wrap items-center gap-x-6 gap-y-1 md:justify-end">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">Actualizado</span>
-                  <span className="text-[11px] font-bold text-gray-300">{version.date}</span>
-                </div>
-                {version.status ? (
-                  <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">Estado</span>
-                    <span className={`text-[11px] font-black uppercase tracking-widest ${theme.accent}`}>
-                      {version.status}
-                    </span>
-                  </div>
-                ) : null}
-              </div>
+              <a
+                href={officialLink.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border px-6 py-3 text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:scale-[1.02] ${theme.accentBorder} ${theme.accent}`}
+              >
+                {officialLink.label}
+                <span aria-hidden>&#8599;</span>
+              </a>
             </div>
           ) : null}
 
