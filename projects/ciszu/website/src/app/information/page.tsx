@@ -383,6 +383,17 @@ const GROUPS: InfoLinkGroup[] = [
     ],
   },
   {
+    title: 'Proyectos',
+    items: [
+      { name: 'Todos los proyectos', href: '/projects', icon: 'rocket', desc: 'Índice completo del ecosistema' },
+      { name: 'Ciszugamens', href: '/projects/ciszugamens', icon: 'gamepad', desc: 'Comunidad en Discord, WhatsApp y Telegram' },
+      { name: 'CiszuBot', href: '/projects/ciszubot', icon: 'robot', desc: 'Bot de Discord del ecosistema' },
+      { name: 'MuzicMania', href: '/projects/muzicmania', icon: 'music', desc: 'Juego de ritmo con estética futurista' },
+      { name: 'Ciszu Network', href: '/projects/ciszunetwork', icon: 'server', desc: 'Compañía de innovación digital' },
+      { name: 'Ciszuko Antony', href: '/projects/ciszukoantony', icon: 'star', desc: 'Youtuber, streamer y desarrollador' },
+    ],
+  },
+  {
     title: 'Contenido',
     items: [
       { name: 'Changelog', href: '/changelog', icon: 'history', desc: 'Historial de cambios por versión' },

@@ -28,6 +28,42 @@ const META: Record<string, { title: string; description: string }> = {
     title: `Projects | ${SITE_NAME}`,
     description: 'Explore the projects of Ciszuko Antony: web apps, bots, games and open source.',
   },
+  '/portfolio': {
+    title: `Portfolio | ${SITE_NAME}`,
+    description: 'Visual portfolio of Ciszuko Antony: web, bots, game, community, content and tools.',
+  },
+  '/curriculum': {
+    title: `Curriculum | ${SITE_NAME}`,
+    description: 'CV of Ciszuko Antony: education, certifications, experience and technical skills.',
+  },
+  '/commissions': {
+    title: `Commissions | ${SITE_NAME}`,
+    description: 'Commission Ciszuko Antony: web development, bots, games, visual identity and automation.',
+  },
+  '/projects/ciszubot': {
+    title: `CiszuBot | ${SITE_NAME}`,
+    description: 'CiszuBot: the official Discord bot of the Ciszu Network ecosystem.',
+  },
+  '/projects/muzicmania': {
+    title: `MuzicMania | ${SITE_NAME}`,
+    description: 'MuzicMania: the rhythm game developed by Ciszu Network.',
+  },
+  '/projects/ciszugamens': {
+    title: `Ciszugamens | ${SITE_NAME}`,
+    description: 'Ciszugamens: the community of Ciszu Network on Discord, WhatsApp and Telegram.',
+  },
+  '/projects/ciszunetwork': {
+    title: `Ciszu Network | ${SITE_NAME}`,
+    description: 'Ciszu Network: digital innovation company founded by Ciszuko Antony.',
+  },
+  '/projects/ciszukoantony': {
+    title: `Ciszuko Antony | ${SITE_NAME}`,
+    description: 'Ciszuko Antony: youtuber, streamer and developer.',
+  },
+  '/projects/portfolio': {
+    title: `Portfolio Web | ${SITE_NAME}`,
+    description: 'The personal portfolio web built on the Ciszu Network monorepo.',
+  },
   '/contact': {
     title: `Contact | ${SITE_NAME}`,
     description: 'Contact Ciszuko Antony: collaborations, business and inquiries.',

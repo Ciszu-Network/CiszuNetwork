@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { detectPdwaBrowser } from '@ciszu/ui';
+import { detectPdwaBrowser, useToast } from '@ciszu/ui';
 import { Download, ExternalLink } from 'lucide-react';
 
 interface BeforeInstallPromptEvent extends Event {
@@ -14,6 +14,7 @@ interface InstallPdwaCtaProps {
 }
 
 export function InstallPdwaCta({ site }: InstallPdwaCtaProps) {
+  const { toast } = useToast();
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
   const [installed, setInstalled] = useState(false);
   const [detail, setDetail] = useState(false);
@@ -41,6 +42,7 @@ export function InstallPdwaCta({ site }: InstallPdwaCtaProps) {
   }, []);
 
   const handleInstall = useCallback(async () => {
+    toast(`¡Gracias por instalar ${site}! Gracias por apoyar Ciszu Network.`, 'success');
     if (deferred) {
       const promptEvent = deferred;
       await promptEvent.prompt();
@@ -50,7 +52,7 @@ export function InstallPdwaCta({ site }: InstallPdwaCtaProps) {
       return;
     }
     setDetail((v) => !v);
-  }, [deferred]);
+  }, [deferred, site, toast]);
 
   const browser = typeof window === 'undefined' ? null : detectPdwaBrowser(navigator.userAgent);
 

@@ -318,6 +318,9 @@ const GROUPS: InfoLinkGroup[] = [
     items: [
       { name: 'Home', href: '/', icon: 'home', desc: 'Portada y proyectos destacados' },
       { name: 'Projects', href: '/projects', icon: 'rocket', desc: 'Todos los proyectos de Ciszuko Antony' },
+      { name: 'Portfolio', href: '/portfolio', icon: 'palette', desc: 'Galería visual de trabajos y proyectos' },
+      { name: 'Curriculum', href: '/curriculum', icon: 'certificates', desc: 'Formación, experiencia y habilidades' },
+      { name: 'Commissions', href: '/commissions', icon: 'money', desc: 'Servicios, proceso y términos' },
       { name: 'Certificates', href: '/certificates', icon: 'certificates', desc: 'Catálogo de certificados y logros' },
       { name: 'Documentation', href: '/documentation', icon: 'policies', desc: 'Guías técnicas y referencia' },
       { name: 'Downloads', href: '/downloads', icon: 'download', desc: 'Aplicación de escritorio (PDWA)' },

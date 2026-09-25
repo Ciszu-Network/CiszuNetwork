@@ -21,6 +21,8 @@ const ROUTES = [
   'faq',
   'about',
   'information',
+  'invite',
+  'explore',
   // Una URL por entrada del registro de cambios (página interna de detalle).
   ...CHANGELOG_DATA.map((item) => `changelog/${item.id}`),
 ];

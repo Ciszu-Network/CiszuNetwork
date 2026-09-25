@@ -75,7 +75,7 @@ export {
 } from './cookieConsent';
 export type { CookieConsent } from './cookieConsent';
 // Toast: sistema de notificación unificado (stack centrado inferior, colores por tipo)
-export { default as ToastProvider, useToast } from './Toast';
+export { default as ToastProvider, useToast, useToastOptional } from './Toast';
 export type { ToastProviderProps, ToastType, ToastData, ToastContextValue } from './Toast';
 // Atoms portados desde los proyectos (librería de componentes reales)
 export { default as Button } from './Button';

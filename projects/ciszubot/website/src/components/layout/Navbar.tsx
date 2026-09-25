@@ -28,6 +28,8 @@ const NAV_PAGES: { href: string; key: keyof Dict['nav']; icon: string }[] = [
   { href: '/reviews', key: 'reviews', icon: 'star' },
   { href: '/downloads', key: 'downloads', icon: 'download' },
   { href: '/feedback', key: 'feedback', icon: 'message' },
+  { href: '/explore', key: 'explore', icon: 'globe' },
+  { href: '/invite', key: 'invite', icon: 'discord' },
 ];
 
 const INFO_PAGES: { href: string; key: keyof Dict['nav']; icon: string }[] = [
@@ -63,6 +65,7 @@ const NAV_HIDE_CLS: string[] = [
   'hidden min-[1160px]:flex',
   'hidden min-[1260px]:flex',
   'hidden min-[1360px]:flex',
+  'hidden min-[1440px]:flex',
 ];
 
 const SEARCH_PAGES: { href: string; labelKey: string; icon: string; keywords: string[] }[] = [
@@ -84,6 +87,8 @@ const SEARCH_PAGES: { href: string; labelKey: string; icon: string; keywords: st
   { href: '/help', labelKey: 'help', icon: 'help', keywords: ['ayuda', 'help', 'faq', 'preguntas'] },
   { href: '/faq', labelKey: 'faq', icon: 'help', keywords: ['faq', 'preguntas', 'frecuentes'] },
   { href: '/dashboard', labelKey: 'dashboard', icon: 'server', keywords: ['panel', 'dashboard', 'config', 'admin'] },
+  { href: '/invite', labelKey: 'invite', icon: 'discord', keywords: ['invitar', 'invite', 'añadir', 'add', 'discord', 'bot'] },
+  { href: '/explore', labelKey: 'explore', icon: 'globe', keywords: ['explorar', 'explore', 'top.gg', 'topgg', 'disboard', 'listas', 'directorios'] },
   { href: '/credits', labelKey: 'credits', icon: 'file-text', keywords: ['creditos', 'credits', 'autores', 'tecnologias', 'proyectos'] },
   { href: '/guidelines', labelKey: 'guidelines', icon: 'policies', keywords: ['lineamientos', 'guidelines', 'estandares', 'integracion'] },
   { href: '/rules', labelKey: 'rules', icon: 'shield', keywords: ['reglas', 'rules', 'convivencia', 'normas'] },

@@ -1,8 +1,10 @@
+import Link from "next/link";
 import { CISZU_NETWORK, CISZUBOT_LINKS } from "@/config/site";
-import { ArrowRight, Shield, Music, Coins, Settings } from "lucide-react";
+import { ArrowRight, ExternalLink, Shield, Music, Coins, Settings } from "lucide-react";
 import { InfoHero, type InfoTheme } from "@ciszu/ui";
 import PageAmbience from "@/components/layout/PageAmbience";
 import PageReveal from "@/components/layout/PageReveal";
+import QuickDocks from "@/components/molecules/QuickDocks";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -24,6 +26,14 @@ const features = [
   { icon: Music, title: "Música", desc: "Reproduce música de calidad directamente en tus canales de voz." },
   { icon: Coins, title: "Economía", desc: "Sistema de monedas, niveles, inventario y tiendas configurables." },
   { icon: Settings, title: "Automatización", desc: "Bienvenidas, tickets, logs y comandos personalizados." },
+];
+
+const stack = ['Discord.js', 'TypeScript', 'Node.js', 'Docker', 'Supabase', 'Top.gg'];
+
+const directories = [
+  { name: 'Top.gg', href: CISZUBOT_LINKS.topggBot },
+  { name: 'Votar en Top.gg', href: CISZUBOT_LINKS.topggBotVote },
+  { name: 'Discord Bot List', href: CISZUBOT_LINKS.discordBotListBot },
 ];
 
 export default function CiszubotPage() {
@@ -57,6 +67,26 @@ export default function CiszubotPage() {
             </div>
           </div>
 
+          <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10">
+            <h2 className="text-2xl font-header font-bold text-white mb-6">Stack tecnológico</h2>
+            <div className="flex flex-wrap gap-2 mb-8">
+              {stack.map((s) => (
+                <span key={s} className="px-3 py-1.5 rounded-full bg-[#5865F2]/10 border border-[#5865F2]/30 text-[#8b93f8] text-[10px] font-bold uppercase tracking-wider">
+                  {s}
+                </span>
+              ))}
+            </div>
+            <h3 className="text-sm font-header font-bold text-white mb-3">CiszuBot en directorios</h3>
+            <div className="flex flex-wrap gap-3">
+              {directories.map((d) => (
+                <a key={d.name} href={d.href} target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/15 text-white text-xs font-bold hover:border-[#5865F2]/60 hover:text-[#8b93f8] transition-all">
+                  {d.name} <ExternalLink className="w-3 h-3" />
+                </a>
+              ))}
+            </div>
+          </div>
+
           <div className="text-center p-8 rounded-[2rem] bg-gradient-to-br from-[#5865F2]/10 to-transparent border border-[#5865F2]/30">
             <h2 className="text-xl font-header font-bold text-white mb-4">Añade CiszuBot a tu servidor</h2>
             <p className="text-gray-400 text-sm mb-6">Web oficial con estado en vivo, comandos y soporte.</p>
@@ -71,8 +101,16 @@ export default function CiszubotPage() {
               </a>
             </div>
           </div>
+
+          <div className="text-center">
+            <Link href="/projects" className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/10 transition-all">
+              Ver todos los proyectos <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
       </PageReveal>
+
+      <QuickDocks />
     </div>
   );
 }

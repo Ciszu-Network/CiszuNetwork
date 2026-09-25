@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { InfoHero } from '@ciszu/ui';
+import { InfoHero, useToast } from '@ciszu/ui';
 import { DOCS_METADATA, DocMetadata } from '@/config/docs';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
@@ -70,6 +70,7 @@ const PKG_COLOR: Record<string, { bg: string; border: string; hover: string; tex
 
 export default function DocumentationPortal() {
   usePageTitle('DOCUMENTATION');
+  const { toast } = useToast();
   const [selectedDoc, setSelectedDoc] = useState('DOCUMENTATION');
   const [searchQuery, setSearchQuery] = useState('');
   const [content, setContent] = useState('');
@@ -112,6 +113,7 @@ export default function DocumentationPortal() {
   const generateRandomSuffix = () => Math.floor(100000 + Math.random() * 900000).toString();
 
   const downloadFile = (ext: string) => {
+    toast(`¡Gracias por descargar ${selectedDoc}! Gracias por apoyar Ciszu Network.`, 'success');
     const identifier = `${selectedDoc}_V${meta.version}_${meta.lastUpdate.replace(/-/g, '_')}_CISZUBOT`;
     const randomSuffix = generateRandomSuffix();
     const filename = `${identifier}_${randomSuffix}.${ext}`;
@@ -132,6 +134,7 @@ export default function DocumentationPortal() {
   };
 
   const handlePackageDownload = (pkgExt: string) => {
+    toast(`¡Gracias por descargar ${selectedDoc}! Gracias por apoyar Ciszu Network.`, 'success');
     const identifier = `${selectedDoc}_V${meta.version}_${meta.lastUpdate.replace(/-/g, '_')}_CISZUBOT_PKG`;
     const randomSuffix = generateRandomSuffix();
     const filename = `${identifier}_${randomSuffix}.${pkgExt}`;

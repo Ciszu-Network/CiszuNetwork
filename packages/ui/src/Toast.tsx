@@ -139,4 +139,13 @@ export function useToast(): ToastContextValue {
   return ctx;
 }
 
+/**
+ * Variante segura de `useToast`: devuelve `null` si no hay `<ToastProvider>`
+ * (tests, islas aisladas) en lugar de lanzar. Para componentes compartidos
+ * que deben funcionar con o sin provider.
+ */
+export function useToastOptional(): ToastContextValue | null {
+  return useContext(ToastContext);
+}
+
 export default ToastProvider;

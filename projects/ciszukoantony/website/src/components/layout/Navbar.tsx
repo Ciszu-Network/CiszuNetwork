@@ -46,7 +46,7 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [infoOpen, setInfoOpen] = useState(false);
+  const [openGroup, setOpenGroup] = useState<string | null>(null);
   const { toast } = useToast();
   const [accOpen, setAccOpen] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
@@ -55,8 +55,7 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const searchToggleRef = useRef<HTMLButtonElement>(null);
-  const infoRef = useRef<HTMLDivElement>(null);
-  const infoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const groupTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const accRef = useRef<HTMLDivElement>(null);
   const [guestName, setGuestName] = useState('');
 
@@ -87,10 +86,10 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
   useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
-      setIsMenuOpen(false); setSearchOpen(false); setInfoOpen(false); setAccOpen(false);
+      setIsMenuOpen(false); setSearchOpen(false); setOpenGroup(null); setAccOpen(false);
       return;
     }
-    setIsMenuOpen(false); setSearchOpen(false); setInfoOpen(false); setAccOpen(false); setSidebarView('main');
+    setIsMenuOpen(false); setSearchOpen(false); setOpenGroup(null); setAccOpen(false); setSidebarView('main');
     setIsNavigating(false);
   }, [pathname]);
 
@@ -129,7 +128,7 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
       // (p.ej. el PreferencesModal de Radix, que es un portal fuera del navbar).
       const inDialog = !!(t as HTMLElement)?.closest?.('[role="dialog"]');
       if (inDialog) return;
-      if (infoRef.current && !infoRef.current.contains(t)) setInfoOpen(false);
+      if (!(t as HTMLElement)?.closest?.('[data-nav-group]')) setOpenGroup(null);
       if (accRef.current && !accRef.current.contains(t)) setAccOpen(false);
       if (searchRef.current && searchToggleRef.current &&
           !searchRef.current.contains(t) && !searchToggleRef.current.contains(t)) setSearchOpen(false);
@@ -206,13 +205,13 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
     setAccOpen(v => !v);
   };
 
-  const hoverOpenInfo = () => {
-    if (infoTimer.current) clearTimeout(infoTimer.current);
-    setInfoOpen(true);
+  const hoverOpenGroup = (name: string) => {
+    if (groupTimer.current) clearTimeout(groupTimer.current);
+    setOpenGroup(name);
   };
 
-  const hoverCloseInfo = () => {
-    infoTimer.current = setTimeout(() => setInfoOpen(false), 180);
+  const hoverCloseGroup = () => {
+    groupTimer.current = setTimeout(() => setOpenGroup(null), 180);
   };
 
   const accountLabel = user ? (user.display_name || user.username) : guestName;
@@ -275,31 +274,35 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
                  if ('items' in item) {
                    const group = item as NavGroup;
                    const isInfo = group.name === 'Information';
-                    const responsiveClass = 'flex';
+                   const isOpen = openGroup === group.name;
+                   const groupActive = group.items.some((sub) => isActive(sub.href));
+                   const groupHref = isInfo
+                     ? infoActiveHref
+                     : (group.items.find((sub) => isActive(sub.href))?.href ?? group.items[0].href);
                    return (
-                     <div key={group.name} className={`relative ${responsiveClass}`} ref={isInfo ? infoRef : undefined}
-                       onMouseEnter={isInfo ? hoverOpenInfo : () => setInfoOpen(true)}
-                       onMouseLeave={isInfo ? hoverCloseInfo : undefined}>
+                     <div key={group.name} className="relative flex" data-nav-group={group.name}
+                       onMouseEnter={() => hoverOpenGroup(group.name)}
+                       onMouseLeave={hoverCloseGroup}>
                          {isInfo ? (
-                           <Link href="/information" className={navLinkCls(infoActiveHref)}>
+                           <Link href="/information" className={navLinkCls(groupHref)}>
                              <span className="opacity-80 shrink-0">{group.icon}</span>
-                             <span className={navLabelCls(infoActiveHref)}>{group.name}</span>
-                             <span className={`opacity-70 transition-transform duration-200 ${infoOpen ? 'rotate-180' : ''}`}>{I.chevronDown}</span>
+                             <span className={navLabelCls(groupActive ? groupHref : '/information')}>{group.name}</span>
+                             <span className={`opacity-70 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>{I.chevronDown}</span>
                            </Link>
                          ) : (
-                          <button onClick={() => setInfoOpen(!infoOpen)} className={navLinkCls('/projects')}>
+                          <button onClick={() => setOpenGroup(isOpen ? null : group.name)} className={navLinkCls(groupHref)}>
                             <span className="opacity-80 shrink-0">{group.icon}</span>
-                            <span className={navLabelCls('/projects')}>{group.name}</span>
-                            <span className={`opacity-70 transition-transform duration-200 ${infoOpen ? 'rotate-180' : ''}`}>{I.chevronDown}</span>
+                            <span className={navLabelCls(groupActive ? groupHref : '/projects')}>{group.name}</span>
+                            <span className={`opacity-70 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>{I.chevronDown}</span>
                           </button>
                         )}
-                      {infoOpen && (
+                      {isOpen && (
                         <div className="absolute top-full left-0 pt-2 w-56 z-50 animate-fade-in-down origin-top drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)]">
                           <div className="bg-[#0a0a14]/98 backdrop-blur-2xl border border-white/10 rounded-xl py-2 shadow-2xl max-h-[70vh] overflow-y-auto">
                             <div className="px-4 py-2 text-xs font-black text-neon-blue/80 uppercase tracking-widest">{group.name}</div>
                             <div className="h-px bg-white/10 mx-2" />
                             {group.items.map((sub) => (
-                              <Link key={sub.href} href={sub.href} onClick={() => setInfoOpen(false)}
+                              <Link key={sub.href} href={sub.href} onClick={() => setOpenGroup(null)}
                                 className={`flex items-center gap-3 px-4 py-2 text-sm font-header font-bold transition-all cursor-pointer ${
                                   isActive(sub.href) ? 'text-neon-blue bg-neon-blue/5 hover:text-white' : 'text-white hover:text-neon-blue hover:bg-white/5'
                                 }`}>

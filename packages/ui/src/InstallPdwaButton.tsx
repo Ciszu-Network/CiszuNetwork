@@ -19,10 +19,11 @@
  */
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { useFabStack, useFabRestore, restoreFabButtons } from './FabStack';
 import FabDismissHint from './FabDismissHint';
+import { useToastOptional } from './Toast';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -78,6 +79,7 @@ export default function InstallPdwaButton({
   uaOverride,
   storageKey = 'ciszu-pdwa-dismissed',
 }: InstallPdwaButtonProps) {
+  const toastCtx = useToastOptional();
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
   const [installed, setInstalled] = useState(false);
   const [dismissed, setDismissed] = useState(false);
@@ -85,6 +87,13 @@ export default function InstallPdwaButton({
   const [panel, setPanel] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const thankedRef = useRef(false);
+
+  const thank = useCallback(() => {
+    if (thankedRef.current) return;
+    thankedRef.current = true;
+    toastCtx?.toast(`¡Gracias por instalar ${site}! Gracias por apoyar Ciszu Network.`, 'success');
+  }, [toastCtx, site]);
 
   const browser = useMemo<PdwaBrowserInfo>(
     () => {
@@ -119,6 +128,7 @@ export default function InstallPdwaButton({
     const onInstalled = () => {
       setInstalled(true);
       setDeferred(null);
+      thank();
     };
     window.addEventListener('beforeinstallprompt', onPrompt);
     window.addEventListener('appinstalled', onInstalled);
@@ -126,7 +136,7 @@ export default function InstallPdwaButton({
       window.removeEventListener('beforeinstallprompt', onPrompt);
       window.removeEventListener('appinstalled', onInstalled);
     };
-  }, [storageKey]);
+  }, [storageKey, thank]);
 
   const handleDismiss = () => {
     setDismissed(true);
@@ -148,6 +158,7 @@ export default function InstallPdwaButton({
   };
 
   const handleInstall = useCallback(async () => {
+    thank();
     if (deferred) {
       const promptEvent = deferred;
       await promptEvent.prompt();
@@ -157,7 +168,7 @@ export default function InstallPdwaButton({
       return;
     }
     setPanel((v) => !v);
-  }, [deferred]);
+  }, [deferred, thank]);
 
   const vars = {
     '--pdwa-accent': accent,
