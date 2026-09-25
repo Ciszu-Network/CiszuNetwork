@@ -64,7 +64,7 @@ export default function DonatePage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
           {METHODS.map((m, i) => (
             <a key={i} href={m.href} target="_blank" rel="noopener noreferrer"
-              className="group p-6 rounded-2xl bg-brand/5 border border-brand/20 hover:border-brand-light/30 transition-all text-center"
+              className="group p-6 rounded-2xl bg-card border border-border hover:border-brand-light/30 transition-all text-center"
             >
               <div className="flex items-center justify-center w-14 h-14 rounded-xl mx-auto mb-4 group-hover:scale-110 transition-transform"
                 style={{ background: `${m.color}22`, color: m.color }}>
@@ -72,7 +72,7 @@ export default function DonatePage() {
               </div>
               <p className="text-white font-bold font-header text-sm mb-1">{m.label}</p>
               <p className="text-gray-400 text-xs mb-3">{m.note}</p>
-              <span className="inline-flex items-center gap-1 text-brand-light text-xs font-semibold">
+              <span className="inline-flex items-center gap-1 text-neon-blue text-xs font-semibold">
                 Abrir
               </span>
             </a>
@@ -82,13 +82,13 @@ export default function DonatePage() {
         {/* Widget iframe OFICIAL de Ko-fi (`hidefeed&widget&embed&preview`), el
             único embed que Ko-fi autoriza incrustar. Se usa KoFiEmbed directo
             para que el iframe esté SIEMPRE presente, independientemente del panel. */}
-        <section className="rounded-2xl bg-brand/5 border border-brand/20 p-4">
+        <section className="rounded-2xl bg-card border border-border p-4">
           <h3 className="text-white font-bold font-header text-sm mb-3 text-center">Apoya en Ko-fi</h3>
           <KoFiEmbed handle="ciszukoantony" title="Apoya a CiszuBot en Ko-fi" />
         </section>
 
         {/* NOWPayments */}
-        <div className="rounded-2xl bg-brand/5 border border-brand/20 p-4">
+        <div className="rounded-2xl bg-card border border-border p-4">
           <h3 className="text-white font-bold font-header text-sm mb-3 text-center">Cripto (NOWPayments)</h3>
           <iframe
             src="https://nowpayments.io/embeds/donation-widget?api_key=739f2096-6c64-40d6-a2a1-635784185dfb"
@@ -106,7 +106,7 @@ export default function DonatePage() {
         <div className="text-center mt-12">
           <p className="text-gray-500 text-xs">
             ¿Prefieres apoyar de otra forma? Escríbenos a{" "}
-            <a href="mailto:ciszunetwork@gmail.com" className="text-brand-light underline">
+            <a href="mailto:ciszunetwork@gmail.com" className="text-neon-blue underline">
               ciszunetwork@gmail.com
             </a>
           </p>
