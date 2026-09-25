@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { LegalDocument, type LegalArticle, type InfoTheme } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 
 export const metadata: Metadata = {
   title: 'Ciszuko Antony | LICENSE',
@@ -9,12 +11,12 @@ export const metadata: Metadata = {
 };
 
 const THEME: InfoTheme = {
-  accent: 'text-neon-cyan',
-  accentBg: 'bg-neon-cyan/10',
-  accentBorder: 'border-neon-cyan/40',
+  accent: 'text-neon-blue',
+  accentBg: 'bg-neon-blue/10',
+  accentBorder: 'border-neon-blue/40',
   card: 'bg-white/5',
   border: 'border-white/10',
-  gradient: 'from-neon-cyan via-neon-blue to-neon-cyan',
+  gradient: 'from-brand-dark to-brand',
 };
 
 const ARTICLES: LegalArticle[] = [
@@ -83,8 +85,9 @@ const ARTICLES: LegalArticle[] = [
 
 export default function LicensePage() {
   return (
-    <div className="min-h-screen pt-24 pb-20 px-4">
-      <div className="max-w-screen-xl mx-auto">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-screen-xl">
         <LegalDocument
           icon="certificates"
           title="LICENCIA"
@@ -94,7 +97,7 @@ export default function LicensePage() {
           signOff={{ title: 'Declaración de Autoría', subtitle: 'Ciszuko Antony — 2026' }}
           theme={THEME}
         />
-      </div>
+      </PageReveal>
 
       <QuickDocks />
     </div>

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { LegalDocument, type LegalArticle, type InfoTheme } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 import { CISZU_NETWORK } from '@/config/site';
 
 export const metadata: Metadata = {
@@ -93,8 +95,9 @@ const ARTICLES: LegalArticle[] = [
 
 export default function PolicyPage() {
   return (
-    <div className="min-h-screen pt-0 pb-28 px-4 md:px-6">
-      <div className="max-w-4xl mx-auto">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-4xl">
         <LegalDocument
           icon="lock"
           title="POLÍTICA"
@@ -104,7 +107,7 @@ export default function PolicyPage() {
           signOff={{ title: 'Compromiso de Privacidad', subtitle: 'Actualizado 2026 — Ciszu Network' }}
           theme={THEME}
         />
-      </div>
+      </PageReveal>
 
       <QuickDocks />
     </div>

@@ -1,20 +1,14 @@
 import type { Metadata } from 'next';
-import { LegalDocument, type LegalArticle, type InfoTheme } from '@ciszu/ui';
+import { LegalDocument, type LegalArticle } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
+import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 
 export const metadata: Metadata = {
   title: 'CiszuBot | POLICY',
   description:
     'Políticas de privacidad, uso de datos, cookies, anuncios y propiedad intelectual de CiszuBot y Ciszu Network.',
-};
-
-const THEME: InfoTheme = {
-  accent: 'text-neon-purple',
-  accentBg: 'bg-neon-purple/10',
-  accentBorder: 'border-neon-purple/40',
-  card: 'bg-card',
-  border: 'border-border',
-  gradient: 'from-neon-purple via-neon-blue to-neon-purple',
 };
 
 const ARTICLES: LegalArticle[] = [
@@ -94,18 +88,21 @@ const ARTICLES: LegalArticle[] = [
 
 export default function PolicyPage() {
   return (
-    <div className="min-h-screen pt-24 pb-20 px-4">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
       <div className="max-w-screen-xl mx-auto">
         <div className="max-w-4xl mx-auto">
-          <LegalDocument
-            icon="lock"
-            title="POLÍTICA"
-            subtitle="Privacidad, datos y transparencia"
-            docLabel="Política Oficial de CiszuBot"
-            articles={ARTICLES}
-            signOff={{ title: 'Compromiso de Privacidad', subtitle: 'Actualizado 2026 — Ciszu Network' }}
-            theme={THEME}
-          />
+          <PageReveal>
+            <LegalDocument
+              icon="lock"
+              title="POLÍTICA"
+              subtitle="Privacidad, datos y transparencia"
+              docLabel="Política Oficial de CiszuBot"
+              articles={ARTICLES}
+              signOff={{ title: 'Compromiso de Privacidad', subtitle: 'Actualizado 2026 — Ciszu Network' }}
+              theme={THEME}
+            />
+          </PageReveal>
         </div>
       </div>
 

@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import { FeedbackForm } from '@/components/feedback/FeedbackForm';
 import { FabRestore, InfoHero, type InfoTheme } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 
 export const metadata: Metadata = {
   title: 'Ciszu Network | FEEDBACK',
@@ -20,8 +22,9 @@ const THEME: InfoTheme = {
 
 export default function FeedbackPage() {
   return (
-    <div className="min-h-screen pt-24 pb-20">
-      <div className="max-w-3xl mx-auto px-4">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-screen-xl">
         <InfoHero
           icon="message"
           title="Feedback"
@@ -30,16 +33,18 @@ export default function FeedbackPage() {
           theme={THEME}
         />
 
-        <FeedbackForm email={CISZU_NETWORK.email} />
+        <div className="mx-auto max-w-3xl">
+          <FeedbackForm email={CISZU_NETWORK.email} />
 
-        <div className="mt-10 p-6 rounded-2xl bg-brand/5 border border-brand/20 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>
-            <p className="text-white font-header font-bold text-sm mb-1">¿Cerraste el botón flotante?</p>
-            <p className="text-gray-400 text-xs">El botón de reporte rápido de abajo a la izquierda se puede volver a mostrar cuando quieras.</p>
+          <div className="mt-10 p-6 rounded-2xl bg-brand/5 border border-brand/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+              <p className="text-white font-header font-bold text-sm mb-1">¿Cerraste el botón flotante?</p>
+              <p className="text-gray-400 text-xs">El botón de reporte rápido de abajo a la izquierda se puede volver a mostrar cuando quieras.</p>
+            </div>
+            <FabRestore accent="#22d3ee" keys={['ciszu-feedback-dismissed']} />
           </div>
-          <FabRestore accent="#22d3ee" keys={['ciszu-feedback-dismissed']} />
         </div>
-      </div>
+      </PageReveal>
 
       <QuickDocks />
     </div>

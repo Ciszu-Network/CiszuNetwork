@@ -1,21 +1,15 @@
 import type { Metadata } from 'next';
-import { CreditsRoll, type CreditSection, type InfoTheme } from '@ciszu/ui';
+import { CreditsRoll, type CreditSection } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
+import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 import { CISZUKO_ANTONY, CISZU_NETWORK, DISCORD_SERVER } from '@/lib/i18n';
 
 export const metadata: Metadata = {
   title: 'CiszuBot | CREDITS',
   description:
     'Créditos y contribuciones de CiszuBot: dirección, tecnologías base y proyectos del ecosistema Ciszu Network.',
-};
-
-const THEME: InfoTheme = {
-  accent: 'text-neon-blue',
-  accentBg: 'bg-neon-blue/10',
-  accentBorder: 'border-neon-blue/40',
-  card: 'bg-card',
-  border: 'border-border',
-  gradient: 'from-neon-blue to-neon-purple',
 };
 
 const SECTIONS: CreditSection[] = [
@@ -58,20 +52,23 @@ const SECTIONS: CreditSection[] = [
 
 export default function CreditsPage() {
   return (
-    <div className="min-h-screen pt-24 pb-20 px-4">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
       <div className="max-w-screen-xl mx-auto">
         <div className="max-w-4xl mx-auto">
-          <CreditsRoll
-            icon="users"
-            title="CRÉDITOS Y CONTRIBUCIONES"
-            subtitle="Desarrollo de CiszuBot · Ecosistema Ciszu Network"
-            sections={SECTIONS}
-            closing={{
-              note: 'CiszuBot nació como herramienta interna de CiszuGamens y hoy es el bot oficial del ecosistema Ciszu Network. Cada comando, módulo y respuesta se construye y mantiene línea por línea desde Venezuela.',
-              quote: 'Siempre en línea, siempre en tu servidor',
-            }}
-            theme={THEME}
-          />
+          <PageReveal>
+            <CreditsRoll
+              icon="users"
+              title="CRÉDITOS Y CONTRIBUCIONES"
+              subtitle="Desarrollo de CiszuBot · Ecosistema Ciszu Network"
+              sections={SECTIONS}
+              closing={{
+                note: 'CiszuBot nació como herramienta interna de CiszuGamens y hoy es el bot oficial del ecosistema Ciszu Network. Cada comando, módulo y respuesta se construye y mantiene línea por línea desde Venezuela.',
+                quote: 'Siempre en línea, siempre en tu servidor',
+              }}
+              theme={THEME}
+            />
+          </PageReveal>
         </div>
       </div>
 

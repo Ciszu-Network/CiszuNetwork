@@ -4,26 +4,19 @@ import {
   InfoAccordion,
   InfoCardGrid,
   InfoCtaRow,
-  type InfoTheme,
   type InfoAccordionItem,
   type InfoCardItem,
 } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
+import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 import { INVITE_URL } from '@/lib/i18n';
 
 export const metadata: Metadata = {
   title: 'CiszuBot | FAQ',
   description:
     'Preguntas frecuentes sobre CiszuBot: invitación, prefijo, comandos, dashboard, leaderboard, idiomas, privacidad y soporte.',
-};
-
-const THEME: InfoTheme = {
-  accent: 'text-neon-blue',
-  accentBg: 'bg-neon-blue/10',
-  accentBorder: 'border-neon-blue/40',
-  card: 'bg-card',
-  border: 'border-border',
-  gradient: 'from-neon-blue to-neon-purple',
 };
 
 const FAQS: InfoAccordionItem[] = [
@@ -98,15 +91,18 @@ const TOPICS: InfoCardItem[] = [
 
 export default function FAQPage() {
   return (
-    <div className="min-h-screen pt-24 pb-20 px-4">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
       <div className="max-w-screen-xl mx-auto">
-        <InfoHero
-          icon="faq"
-          title="Preguntas frecuentes"
-          subtitle="Respuestas rápidas a las dudas más comunes sobre CiszuBot: invitación, comandos, dashboard, idiomas, privacidad y soporte."
-          kicker="FAQ"
-          theme={THEME}
-        />
+        <PageReveal>
+          <InfoHero
+            icon="faq"
+            title="Preguntas frecuentes"
+            subtitle="Respuestas rápidas a las dudas más comunes sobre CiszuBot: invitación, comandos, dashboard, idiomas, privacidad y soporte."
+            kicker="FAQ"
+            theme={THEME}
+          />
+        </PageReveal>
 
         <div className="space-y-14">
           <InfoAccordion items={FAQS} theme={THEME} />

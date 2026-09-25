@@ -1,19 +1,13 @@
 'use client';
 
 import React from 'react';
-import { InfoHero, type InfoTheme } from '@ciszu/ui';
+import { InfoHero } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
+import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 import { usePageTitle } from '@/lib/usePageTitle';
 import Link from 'next/link';
-
-const THEME: InfoTheme = {
-  accent: 'text-neon-blue',
-  accentBg: 'bg-neon-blue/10',
-  accentBorder: 'border-neon-blue/40',
-  card: 'bg-card',
-  border: 'border-border',
-  gradient: 'from-neon-blue to-neon-purple',
-};
 
 // --- Pure SVG Icon Library ---
 const I = {
@@ -36,28 +30,21 @@ export default function ForumPage() {
     { title: 'Off-Topic', desc: 'Temas libres fuera del ecosistema.', count: 31, icon: I.zap, color: 'purple' },
   ];
 
-  const sectionVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: 'easeOut' } }
-  };
-
   return (
     <div className="relative min-h-screen overflow-hidden">
+      <PageAmbience />
+
       {/* BLURRED CONTENT */}
       <div className="blur-[15px] pointer-events-none opacity-40 select-none transition-all duration-1000 grayscale-[0.5]">
-        <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-neon-blue/5 rounded-full blur-[200px] animate-pulse" />
-        </div>
-
-        <div className="max-w-7xl mx-auto px-6 pt-24 pb-32 space-y-20">
-          <div className="relative pt-12">
+        <div className="max-w-screen-xl mx-auto px-4 pt-24 pb-20 space-y-20">
+          <PageReveal className="relative pt-12">
             <InfoHero
               icon="comment"
               title="Foro"
               subtitle="El epicentro de la comunidad"
               theme={THEME}
             />
-          </div>
+          </PageReveal>
 
           <div className="space-y-12">
             <div className="flex items-center justify-between mb-8 flex-wrap gap-6">

@@ -7,12 +7,14 @@ import {
   InfoCardGrid,
   InfoSteps,
   InfoCtaRow,
-  type InfoTheme,
   type InfoCardItem,
   type InfoStepGroup,
 } from '@ciszu/ui';
 import { getDict, parseLang, INVITE_URL, DISCORD_SERVER, BOT_PREFIX, BOT_VERSION } from '@/lib/i18n';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
+import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 
 export const revalidate = 60;
 
@@ -20,15 +22,6 @@ export const metadata: Metadata = {
   title: 'CiszuBot | ABOUT',
   description:
     'Acerca de CiszuBot: qué es, cómo funciona, su stack técnico y cómo empezar a usarlo.',
-};
-
-const THEME: InfoTheme = {
-  accent: 'text-neon-blue',
-  accentBg: 'bg-neon-blue/10',
-  accentBorder: 'border-neon-blue/40',
-  card: 'bg-card',
-  border: 'border-border',
-  gradient: 'from-neon-blue to-neon-purple',
 };
 
 const WHAT: InfoCardItem[] = [
@@ -97,15 +90,18 @@ export default async function AboutPage() {
   const portrait = assetResolver.resolve('shared/images/francisco_selfie/IMG_20251207_001627@869886661.jpg');
 
   return (
-    <div className="bg-bg min-h-screen py-20 px-4">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
       <div className="max-w-screen-xl mx-auto">
-        <InfoHero
-          icon="info"
-          title={t.aboutPage.title}
-          subtitle={t.aboutPage.subtitle}
-          kicker={`${BOT_VERSION} · Ciszu Network`}
-          theme={THEME}
-        />
+        <PageReveal>
+          <InfoHero
+            icon="info"
+            title={t.aboutPage.title}
+            subtitle={t.aboutPage.subtitle}
+            kicker={`${BOT_VERSION} · Ciszu Network`}
+            theme={THEME}
+          />
+        </PageReveal>
 
         <section className={`mb-14 p-8 md:p-10 rounded-3xl border ${THEME.border} ${THEME.card}`}>
           <div className="flex flex-col md:flex-row items-center gap-8">
@@ -150,3 +146,4 @@ export default async function AboutPage() {
     </div>
   );
 }
+

@@ -9,6 +9,8 @@ import {
   type InfoCardItem,
 } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 
 export const metadata: Metadata = {
   title: 'Ciszu Network | FAQ',
@@ -87,8 +89,9 @@ const TOPICS: InfoCardItem[] = [
 
 export default function FAQPage() {
   return (
-    <div className="min-h-screen pt-24 pb-20 px-4">
-      <div className="max-w-screen-xl mx-auto">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-screen-xl">
         <InfoHero
           icon="faq"
           title="Preguntas frecuentes"
@@ -110,7 +113,7 @@ export default function FAQPage() {
             { label: 'Contacto', href: '/contact', icon: 'mail', variant: 'ghost' },
           ]}
         />
-      </div>
+      </PageReveal>
 
       <QuickDocks />
     </div>

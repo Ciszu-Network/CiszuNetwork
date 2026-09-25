@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { InfoHero, type InfoTheme } from '@ciszu/ui';
 import { usePageTitle } from '@/lib/usePageTitle';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 
 // ---------------------------------------------------------------------------
 // STATS — Estado del servidor e infraestructura (ciszunetwork / ciszukoantony /
@@ -159,10 +160,11 @@ export default function StatsPage() {
   };
 
   return (
-    <MainLayout>
-      <div className="max-w-7xl mx-auto px-6 pt-24 pb-32 space-y-16">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-screen-xl space-y-16">
         {/* --- HEADER --- */}
-        <motion.header initial="hidden" animate="visible" variants={sectionVariants} className="relative pt-12">
+        <header className="relative">
           <InfoHero
             icon="signal"
             title="Estado"
@@ -180,7 +182,7 @@ export default function StatsPage() {
               {checking ? 'Comprobando…' : 'Actualizar estado'}
             </button>
           </div>
-        </motion.header>
+        </header>
 
         {/* --- OVERVIEW TILES --- */}
         <motion.section initial="hidden" animate="visible" variants={sectionVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-6">
@@ -282,7 +284,7 @@ export default function StatsPage() {
         </div>
 
         <QuickDocks />
-      </div>
-    </MainLayout>
+      </PageReveal>
+    </div>
   );
 }

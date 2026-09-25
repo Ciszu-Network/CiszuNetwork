@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { LegalDocument, type LegalArticle, type InfoTheme } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 
 export const metadata: Metadata = {
   title: 'Ciszuko Antony | RULES',
@@ -9,12 +11,12 @@ export const metadata: Metadata = {
 };
 
 const THEME: InfoTheme = {
-  accent: 'text-neon-pink',
-  accentBg: 'bg-neon-pink/10',
-  accentBorder: 'border-neon-pink/40',
+  accent: 'text-neon-blue',
+  accentBg: 'bg-neon-blue/10',
+  accentBorder: 'border-neon-blue/40',
   card: 'bg-white/5',
   border: 'border-white/10',
-  gradient: 'from-neon-pink via-white to-neon-pink',
+  gradient: 'from-brand-dark to-brand',
 };
 
 const ARTICLES: LegalArticle[] = [
@@ -94,8 +96,9 @@ const ARTICLES: LegalArticle[] = [
 
 export default function RulesPage() {
   return (
-    <div className="min-h-screen pt-24 pb-20 px-4">
-      <div className="max-w-screen-xl mx-auto">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-screen-xl">
         <LegalDocument
           icon="shield"
           title="REGLAS"
@@ -105,7 +108,7 @@ export default function RulesPage() {
           signOff={{ title: 'Convivencia y Respeto', subtitle: 'Actualizado 2026 — Ciszuko Antony' }}
           theme={THEME}
         />
-      </div>
+      </PageReveal>
 
       <QuickDocks />
     </div>

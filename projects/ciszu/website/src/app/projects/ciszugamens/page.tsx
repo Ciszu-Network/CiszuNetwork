@@ -1,6 +1,8 @@
 import { CISZU_NETWORK } from "@/config/site";
 import { ArrowRight, Gamepad2, Users, Trophy } from "lucide-react";
 import { InfoHero, type InfoTheme } from "@ciszu/ui";
+import PageAmbience from "@/components/layout/PageAmbience";
+import PageReveal from "@/components/layout/PageReveal";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -61,8 +63,9 @@ const features = [
 
 export default function CiszugamensPage() {
   return (
-    <div className="min-h-screen pt-24 pb-20">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-screen-xl">
         <InfoHero
           icon="gamepad"
           title="Ciszugamens"
@@ -108,7 +111,7 @@ export default function CiszugamensPage() {
             ))}
           </div>
         </div>
-      </div>
+      </PageReveal>
     </div>
   );
 }

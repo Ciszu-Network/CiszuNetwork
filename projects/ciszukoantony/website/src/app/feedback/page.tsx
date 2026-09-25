@@ -7,6 +7,8 @@ import { usePageTitle } from '@/lib/usePageTitle';
 import { attachFeedback } from '@/lib/feedback';
 import { FabRestore, InfoHero, type InfoTheme } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 
 const FEEDBACK_EMAIL = 'fplayersoffcial@gmail.com';
 
@@ -66,16 +68,15 @@ export default function FeedbackPage() {
     'w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-neon-blue outline-none text-white placeholder:text-gray-600 text-sm font-header font-bold transition-all';
 
   return (
-    <div className="min-h-screen pt-24 pb-16 px-4">
-      <div className="max-w-3xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <InfoHero
-            icon="message"
-            title="Feedback"
-            subtitle="Help us improve Ciszuko Network"
-            theme={THEME}
-          />
-        </motion.div>
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-screen-xl">
+        <InfoHero
+          icon="message"
+          title="Feedback"
+          subtitle="Help us improve Ciszuko Network"
+          theme={THEME}
+        />
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -222,7 +223,7 @@ export default function FeedbackPage() {
           </div>
           <FabRestore accent="#a78bfa" keys={['ciszu-feedback-dismissed']} />
         </motion.div>
-      </div>
+      </PageReveal>
 
       <QuickDocks />
     </div>

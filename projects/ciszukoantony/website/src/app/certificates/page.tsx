@@ -4,6 +4,8 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { InfoHero, type InfoTheme } from '@ciszu/ui';
 import { usePageTitle } from '@/lib/usePageTitle';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 import {
   ALL_DOCUMENTS,
   CATEGORIES,
@@ -1075,16 +1077,15 @@ const relatedOf = (c: Certificate) =>
   }, [filtered, category, provider, query]);
 
   return (
-    <div className="min-h-screen pt-28 pb-16 px-4">
-      <div className="max-w-6xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <InfoHero
-            icon="certificates"
-            title="Certificates & Documents"
-            subtitle={`${ALL_DOCS.length} total documents · ${CERTIFICATES.length} certificates · ${OTHER_DOCS.length} supporting docs · catalog CKO-*`}
-            theme={THEME}
-          />
-        </motion.div>
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-screen-xl">
+        <InfoHero
+          icon="certificates"
+          title="Certificates & Documents"
+          subtitle={`${ALL_DOCS.length} total documents · ${CERTIFICATES.length} certificates · ${OTHER_DOCS.length} supporting docs · catalog CKO-*`}
+          theme={THEME}
+        />
 
         <motion.div
           initial={{ opacity: 0 }}
@@ -1335,7 +1336,7 @@ const relatedOf = (c: Certificate) =>
             Documents stored in the Ciszu Network CDN and verified against the original files.
           </p>
         </motion.div>
-      </div>
+      </PageReveal>
 
       <AnimatePresence>
         {selected && (

@@ -1,24 +1,18 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
-import { Icon, FabRestore, InfoHero, type InfoTheme } from '@ciszu/ui';
+import { Icon, FabRestore, InfoHero } from '@ciszu/ui';
 import InstallPdwaCta from '@/components/InstallPdwaCta';
 import { getDict, parseLang } from '@/lib/i18n';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
+import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 
 export const metadata: Metadata = {
   title: 'CiszuBot | DESCARGAS',
   description:
     'Descarga CiszuBot como PDWA (App de Escritorio Progresiva): instalación sin pestañas, con icono propio en tu escritorio y barra de tareas.',
-};
-
-const THEME: InfoTheme = {
-  accent: 'text-neon-blue',
-  accentBg: 'bg-neon-blue/10',
-  accentBorder: 'border-neon-blue/40',
-  card: 'bg-card',
-  border: 'border-border',
-  gradient: 'from-neon-blue to-neon-purple',
 };
 
 export default async function DescargasPage() {
@@ -27,14 +21,17 @@ export default async function DescargasPage() {
   const t = getDict(lang);
 
   return (
-    <div className="bg-bg py-16">
-      <div className="max-w-screen-xl mx-auto px-4">
-        <InfoHero
-          icon="download"
-          title={t.descargasPage.title}
-          subtitle={t.descargasPage.subtitle}
-          theme={THEME}
-        />
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <div className="max-w-screen-xl mx-auto">
+        <PageReveal>
+          <InfoHero
+            icon="download"
+            title={t.descargasPage.title}
+            subtitle={t.descargasPage.subtitle}
+            theme={THEME}
+          />
+        </PageReveal>
 
         <div className="max-w-5xl mx-auto grid gap-8 lg:grid-cols-2">
           {/* Qué es */}

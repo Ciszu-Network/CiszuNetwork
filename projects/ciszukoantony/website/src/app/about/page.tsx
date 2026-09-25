@@ -8,6 +8,8 @@ import { InfoHero, type InfoTheme } from '@ciszu/ui';
 import { RichText, type RichPart } from '@/components/RichText';
 import { usePageTitle } from '@/lib/usePageTitle';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 
 const timeline = [
   { year: '2022', event: [{ text: 'Started software development and created personal projects.' }] as RichPart[] },
@@ -40,16 +42,15 @@ const THEME: InfoTheme = {
 export default function AboutPage() {
   usePageTitle('ABOUT');
   return (
-    <div className="min-h-screen pt-24 pb-16 px-4">
-      <div className="max-w-5xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <InfoHero
-            icon="info"
-            title="About Me"
-            subtitle="Learn more about Ciszuko Antony (Francisco Garcia Antonio M. / y8)"
-            theme={THEME}
-          />
-        </motion.div>
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-screen-xl">
+        <InfoHero
+          icon="info"
+          title="About Me"
+          subtitle="Learn more about Ciszuko Antony (Francisco Garcia Antonio M. / y8)"
+          theme={THEME}
+        />
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
           className="p-8 rounded-2xl bg-white/5 border border-white/10 mb-12"
@@ -124,7 +125,7 @@ export default function AboutPage() {
             </div>
           </div>
         </motion.div>
-      </div>
+      </PageReveal>
 
       <QuickDocks />
     </div>

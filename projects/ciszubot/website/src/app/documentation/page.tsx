@@ -2,19 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { InfoHero, type InfoTheme } from '@ciszu/ui';
+import { InfoHero } from '@ciszu/ui';
 import { DOCS_METADATA, DocMetadata } from '@/config/docs';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
+import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 import { usePageTitle } from '@/lib/usePageTitle';
-
-const THEME: InfoTheme = {
-  accent: 'text-neon-blue',
-  accentBg: 'bg-neon-blue/10',
-  accentBorder: 'border-neon-blue/40',
-  card: 'bg-card',
-  border: 'border-border',
-  gradient: 'from-neon-blue to-neon-purple',
-};
 
 const I = {
   book: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>,
@@ -148,34 +142,19 @@ export default function DocumentationPortal() {
     a.click();
   };
 
-  const sectionVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-  };
-
   return (
-    <>
-      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-        <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-neon-blue/5 rounded-full blur-[250px]" />
-        <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-neon-purple/5 rounded-full blur-[200px]" />
-      </div>
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <div className="max-w-screen-xl mx-auto space-y-16">
 
-      <div className="max-w-7xl mx-auto px-6 pt-0 pb-32 space-y-16">
-
-      <motion.header
-        id="hero"
-        initial="hidden"
-        animate="visible"
-        variants={sectionVariants}
-        className="relative pt-12"
-      >
+      <PageReveal className="relative pt-12">
         <InfoHero
           icon="policies"
           title="Documentación"
           subtitle="Sistema de documentación oficial V2.5.5"
           theme={THEME}
         />
-      </motion.header>
+      </PageReveal>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
 
@@ -394,9 +373,9 @@ export default function DocumentationPortal() {
           </div>
         </main>
       </div>
+      </div>
 
       <QuickDocks />
     </div>
-    </>
   );
 }

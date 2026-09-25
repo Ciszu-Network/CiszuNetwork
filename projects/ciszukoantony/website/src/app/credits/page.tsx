@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { CreditsRoll, type CreditSection, type InfoTheme } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 
 export const metadata: Metadata = {
   title: 'Ciszuko Antony | CREDITS',
@@ -57,8 +59,9 @@ const SECTIONS: CreditSection[] = [
 
 export default function CreditsPage() {
   return (
-    <div className="min-h-screen pt-24 pb-20 px-4">
-      <div className="max-w-screen-xl mx-auto">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-screen-xl">
         <CreditsRoll
           icon="trophy"
           title="Créditos y contribuciones"
@@ -70,7 +73,7 @@ export default function CreditsPage() {
           }}
           theme={THEME}
         />
-      </div>
+      </PageReveal>
 
       <QuickDocks />
     </div>

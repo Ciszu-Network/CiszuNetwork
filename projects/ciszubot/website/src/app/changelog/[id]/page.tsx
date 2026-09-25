@@ -10,7 +10,10 @@ import { CHANGELOG_DATA as CHANGELOG_STATIC } from '@/data/changelog';
 import { I, TAG_CONFIG } from '@/config/changelogIcons';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useAppStore } from '@/store';
-import { useChangelogLikes, usePublishedChangelogs, useToast } from '@ciszu/ui';
+import { InfoHero, useChangelogLikes, usePublishedChangelogs, useToast } from '@ciszu/ui';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
+import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 import {
   getChangelogById,
   getMostRecentId,
@@ -18,12 +21,6 @@ import {
   mergeChangelogSources,
 } from '@ciszunetwork/utils/changelog';
 
-
-/** Icono de una entrada: usa el icono publicado (devcon) si existe. */
-const entryIcon = (item: { icon?: string; types: string[] }) =>
-  (item.icon && (I as Record<string, React.ReactNode>)[item.icon]) ||
-  TAG_CONFIG[item.types[0] as keyof typeof TAG_CONFIG]?.icon ||
-  I.history;
 
 export default function ChangelogDetailPage() {
   usePageTitle('CHANGELOG');
@@ -62,21 +59,24 @@ export default function ChangelogDetailPage() {
 
   if (!item) {
     return (
-      <div className="min-h-screen pt-24 pb-20">
-        <div className="max-w-4xl mx-auto px-4 min-h-[60vh] flex flex-col items-center justify-center text-center space-y-6">
-          <div className="w-16 h-16 text-white/20">{I.alert}</div>
-          <h1 className="text-4xl font-header font-black text-white uppercase italic tracking-tighter">
-            VERSIÓN NO ENCONTRADA
-          </h1>
-          <p className="text-white/30 text-[10px] font-black uppercase tracking-[0.3em]">
-            La entrada solicitada no existe en el registro
-          </p>
-          <Link
-            href="/changelog"
-            className="text-neon-blue font-black tracking-widest uppercase text-xs pb-1 border-b border-neon-blue/40 hover:border-neon-blue transition-all"
-          >
-            Volver al registro maestro
-          </Link>
+      <div className="relative min-h-screen pt-24 pb-20 px-4">
+        <PageAmbience />
+        <div className="max-w-screen-xl mx-auto">
+          <div className="max-w-4xl mx-auto min-h-[60vh] flex flex-col items-center justify-center text-center space-y-6">
+            <div className="w-16 h-16 text-white/20">{I.alert}</div>
+            <h1 className="text-4xl font-header font-black text-white uppercase italic tracking-tighter">
+              VERSIÓN NO ENCONTRADA
+            </h1>
+            <p className="text-white/30 text-[10px] font-black uppercase tracking-[0.3em]">
+              La entrada solicitada no existe en el registro
+            </p>
+            <Link
+              href="/changelog"
+              className="text-neon-blue font-black tracking-widest uppercase text-xs pb-1 border-b border-neon-blue/40 hover:border-neon-blue transition-all"
+            >
+              Volver al registro maestro
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -86,10 +86,12 @@ export default function ChangelogDetailPage() {
   const isNew = item.id === mostRecentId;
 
   return (
-    <div className="min-h-screen pt-24 pb-20">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <div className="max-w-screen-xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         {/* --- BACK --- */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-8">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6">
           <Link
             href="/changelog"
             className={`inline-flex items-center gap-3 font-black uppercase text-[10px] tracking-[0.4em] group ${primaryTag.color}`}
@@ -100,87 +102,57 @@ export default function ChangelogDetailPage() {
         </motion.div>
 
         {/* --- HERO --- */}
-        <motion.header
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: 'easeOut' }}
-          className="relative mb-16"
-        >
-          <div className={`absolute -inset-1 bg-gradient-to-r ${primaryTag.gradient} rounded-[3.5rem] blur opacity-10`} />
-          <div className="relative bg-black/80 border border-white/5 rounded-[3.5rem] p-10 md:p-14 flex flex-col items-center text-center space-y-8 overflow-hidden">
-            {isNew && (
-              <div className="absolute top-0 left-0 w-40 h-40 overflow-hidden pointer-events-none z-10">
-                <div className="absolute top-0 left-0 w-full h-10 bg-green-500 text-black text-[11px] font-black flex items-center justify-center uppercase tracking-[0.4em] rotate-[-45deg] translate-x-[-30%] translate-y-[45%]">
-                  NUEVO
-                </div>
-              </div>
-            )}
+        <PageReveal>
+          <InfoHero
+            icon="history"
+            title={item.title}
+            subtitle={item.description}
+            kicker={`${item.version} · ${item.date}`}
+            theme={THEME}
+          />
+        </PageReveal>
 
-            <div className={`w-20 h-20 p-5 rounded-3xl bg-black/60 border border-white/10 ${primaryTag.color} flex items-center justify-center relative z-10`}>
-              <div className="w-full h-full">{entryIcon(item)}</div>
-            </div>
-
-            <div className="space-y-5 relative z-10 w-full">
-              <div className="flex flex-wrap items-center justify-center gap-4">
-                <span className={`px-5 py-1.5 rounded-full bg-white/5 ${primaryTag.color} text-[10px] font-black uppercase tracking-widest border border-white/10`}>
-                  VERSIÓN {item.version}
-                </span>
-                <span className="text-white/30 font-black uppercase text-[11px] tracking-widest italic">{item.date}</span>
-                <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] font-black text-white/30 uppercase tracking-[0.2em]">
-                  {item.code}
-                </span>
-                <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-black text-white/60 uppercase tracking-widest">
-                  <div className="w-3 h-3 text-neon-blue">{I.user}</div>
-                  <span>{item.author}</span>
-                </div>
-              </div>
-
-              <h1 className="text-4xl md:text-6xl font-header font-black text-white italic tracking-tighter uppercase leading-none">
-                {item.title}
-              </h1>
-            </div>
-
-            {/* LIKES + TAGS */}
-            <div className="flex flex-wrap justify-center items-center gap-6 relative z-10">
-              <button
-                onClick={handleLike}
-                aria-pressed={likes.isLiked(item.id)}
-                className={`flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/5 border transition-all group/like ${
-                  likes.isLiked(item.id) ? 'border-neon-pink text-neon-pink' : 'border-white/10 hover:border-neon-pink'
-                }`}
-              >
-                <div className="w-5 h-5 group-hover/like:scale-110 transition-all">{I.heart}</div>
-                <span className="text-[12px] font-mono font-black text-white/50 group-hover/like:text-neon-pink">
-                  {likes.getLikes(item.id, item.likes)} LIKES
-                </span>
-              </button>
-
-              <div className="h-8 w-px bg-white/10" />
-
-              <div className="flex flex-wrap gap-2">
-                {item.types.map((type) => {
-                  const tCfg = TAG_CONFIG[type];
-                  if (!tCfg) return null;
-                  return (
-                    <div key={type} className={`flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 ${tCfg.color}`}>
-                      <div className="w-4 h-4">{tCfg.icon}</div>
-                      <span className="text-[10px] font-black uppercase tracking-widest italic">{tCfg.label}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="max-w-3xl w-full mx-auto p-8 bg-black/40 rounded-[2.5rem] border border-white/5 relative">
-              <div className={`absolute -top-4 -left-4 w-10 h-10 opacity-20 transform rotate-12 ${primaryTag.color}`}>
-                {entryIcon(item)}
-              </div>
-              <p className="text-gray-300 text-lg md:text-xl font-bold italic leading-relaxed tracking-tight">
-                &quot;{item.description}&quot;
-              </p>
-            </div>
+        {/* --- META / LIKES / TAGS --- */}
+        <div className="mb-16 flex flex-wrap items-center justify-center gap-4">
+          {isNew && (
+            <span className="px-4 py-1.5 rounded-full bg-green-500/15 border border-green-500/40 text-green-400 text-[10px] font-black uppercase tracking-widest">
+              NUEVO
+            </span>
+          )}
+          <span className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">
+            {item.code}
+          </span>
+          <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-black text-white/60 uppercase tracking-widest">
+            <div className="w-3 h-3 text-neon-blue">{I.user}</div>
+            <span>{item.author}</span>
           </div>
-        </motion.header>
+
+          <button
+            onClick={handleLike}
+            aria-pressed={likes.isLiked(item.id)}
+            className={`flex items-center gap-3 px-6 py-2.5 rounded-2xl bg-white/5 border transition-all group/like ${
+              likes.isLiked(item.id) ? 'border-neon-pink text-neon-pink' : 'border-white/10 hover:border-neon-pink'
+            }`}
+          >
+            <div className="w-5 h-5 group-hover/like:scale-110 transition-all">{I.heart}</div>
+            <span className="text-[12px] font-mono font-black text-white/50 group-hover/like:text-neon-pink">
+              {likes.getLikes(item.id, item.likes)} LIKES
+            </span>
+          </button>
+
+          <div className="flex flex-wrap justify-center gap-2">
+            {item.types.map((type) => {
+              const tCfg = TAG_CONFIG[type];
+              if (!tCfg) return null;
+              return (
+                <div key={type} className={`flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 ${tCfg.color}`}>
+                  <div className="w-4 h-4">{tCfg.icon}</div>
+                  <span className="text-[10px] font-black uppercase tracking-widest italic">{tCfg.label}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
 
         {/* --- BITÁCORA TÉCNICA --- */}
         <motion.section
@@ -284,8 +256,10 @@ export default function ChangelogDetailPage() {
         </motion.section>
 
         <AuthWarningModal isOpen={isAuthWarningOpen} onClose={() => setIsAuthWarningOpen(false)} />
-        <QuickDocks />
       </div>
+      </div>
+
+      <QuickDocks />
     </div>
   );
 }

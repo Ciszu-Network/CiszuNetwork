@@ -4,7 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { DOCS_METADATA, DocMetadata } from '@/config/docs';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import { InfoHero, type InfoTheme } from '@ciszu/ui';
 import { usePageTitle } from '@/lib/usePageTitle';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 
 const I = {
   book: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>,
@@ -61,6 +64,15 @@ const PKG_COLOR: Record<string, { bg: string; border: string; hover: string; tex
   blue:   { bg: 'bg-neon-blue/5',   border: 'border-neon-blue/20',   hover: 'hover:bg-neon-blue/10',   text: 'text-neon-blue' },
   purple: { bg: 'bg-neon-purple/5', border: 'border-neon-purple/20', hover: 'hover:bg-neon-purple/10', text: 'text-neon-purple' },
   pink:   { bg: 'bg-neon-pink/5',   border: 'border-neon-pink/20',   hover: 'hover:bg-neon-pink/10',   text: 'text-neon-pink' },
+};
+
+const THEME: InfoTheme = {
+  accent: 'text-neon-blue',
+  accentBg: 'bg-neon-blue/10',
+  accentBorder: 'border-neon-blue/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-dark to-brand',
 };
 
 export default function DocumentationPortal() {
@@ -137,41 +149,18 @@ export default function DocumentationPortal() {
     a.click();
   };
 
-  const sectionVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-  };
-
   return (
-    <>
-      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-        <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-neon-blue/5 rounded-full blur-[250px]" />
-        <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-neon-pink/5 rounded-full blur-[200px]" />
-      </div>
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
 
-      <div className="max-w-7xl mx-auto px-6 pt-0 pb-32 space-y-16">
+      <PageReveal className="relative mx-auto max-w-screen-xl space-y-16">
 
-      <motion.header
-        id="hero"
-        initial="hidden"
-        animate="visible"
-        variants={sectionVariants}
-        className="relative space-y-8 pt-12"
-      >
-        <div className="flex flex-col items-center gap-1 text-center">
-          <div className="flex items-center justify-center gap-6 group">
-            <div className="w-12 h-12 text-neon-blue flex items-center justify-center">
-              {I.bookOpen}
-            </div>
-            <h1 className="text-4xl md:text-8xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-neon-blue via-white to-neon-pink bg-clip-text text-transparent" style={{ WebkitTextStroke: '1px black' }}>
-              DOCUMENTACIÓN
-            </h1>
-          </div>
-          <p className="text-neon-cyan font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-            SISTEMA DE DOCUMENTACIÓN OFICIAL V2.0.0
-          </p>
-        </div>
-      </motion.header>
+      <InfoHero
+        icon="file-text"
+        title="DOCUMENTACIÓN"
+        subtitle="SISTEMA DE DOCUMENTACIÓN OFICIAL V2.0.0"
+        theme={THEME}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
 
@@ -390,9 +379,9 @@ export default function DocumentationPortal() {
           </div>
         </main>
       </div>
+      </PageReveal>
 
       <QuickDocks />
     </div>
-    </>
   );
 }

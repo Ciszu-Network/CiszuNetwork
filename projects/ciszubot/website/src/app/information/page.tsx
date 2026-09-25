@@ -10,10 +10,12 @@ import {
   InfoCtaRow,
   type InfoLinkGroup,
   type InfoCardItem,
-  type InfoTheme,
 } from '@ciszu/ui';
 import { getDict, parseLang, DISCORD_SERVER } from '@/lib/i18n';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
+import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 import BrandSwatches from './BrandSwatches';
 import {
   HERO,
@@ -38,15 +40,6 @@ import {
 } from './content';
 
 export const metadata: Metadata = PAGE_META;
-
-const THEME: InfoTheme = {
-  accent: 'text-neon-blue',
-  accentBg: 'bg-neon-blue/10',
-  accentBorder: 'border-neon-blue/40',
-  card: 'bg-card',
-  border: 'border-border',
-  gradient: 'from-neon-blue to-neon-purple',
-};
 
 const ACCENTS: Record<
   AccentKey,
@@ -132,15 +125,18 @@ export default async function InformationPage() {
   }));
 
   return (
-    <div className="min-h-screen bg-bg px-4 py-20">
+    <div className="relative min-h-screen px-4 pt-24 pb-20">
+      <PageAmbience />
       <div className="mx-auto max-w-screen-xl">
-        <InfoHero
-          icon="info"
-          title={dict.nav.information}
-          subtitle={HERO.subtitle}
-          kicker={HERO.kicker}
-          theme={THEME}
-        />
+        <PageReveal>
+          <InfoHero
+            icon="info"
+            title={dict.nav.information}
+            subtitle={HERO.subtitle}
+            kicker={HERO.kicker}
+            theme={THEME}
+          />
+        </PageReveal>
 
         <div className="space-y-20">
           {/* ── Identidad Visual ─────────────────────────────── */}

@@ -4,6 +4,8 @@ import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
 import {
   CHANGELOG_DATA as CHANGELOG_STATIC,
@@ -147,8 +149,9 @@ export default function ChangelogPage() {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-20">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-4xl">
         {/* --- HERO --- */}
         <InfoHero
           icon="history"
@@ -758,7 +761,7 @@ export default function ChangelogPage() {
 
         <AuthWarningModal isOpen={isAuthWarningOpen} onClose={() => setIsAuthWarningOpen(false)} />
         <QuickDocks />
-      </div>
+      </PageReveal>
     </div>
   );
 }

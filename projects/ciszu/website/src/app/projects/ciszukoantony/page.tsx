@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { SocialIcon, SOCIAL_COLORS, InfoHero, type InfoTheme } from '@ciszu/ui';
+import PageAmbience from "@/components/layout/PageAmbience";
+import PageReveal from "@/components/layout/PageReveal";
 import { CISZUKO_ANTONY, CISZU_NETWORK } from "@/config/site";
 import { ArrowRight, ExternalLink, Music, Gamepad2, Mic, Video } from "lucide-react";
 import type { Metadata } from "next";
@@ -28,8 +30,9 @@ const contentTypes = [
 
 export default function CiszukoAntonyPage() {
   return (
-    <div className="min-h-screen pt-24 pb-20">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-screen-xl">
         <InfoHero
           icon="star"
           title={CISZUKO_ANTONY.name}
@@ -90,7 +93,7 @@ export default function CiszukoAntonyPage() {
             </div>
           </div>
         </div>
-      </div>
+      </PageReveal>
     </div>
   );
 }

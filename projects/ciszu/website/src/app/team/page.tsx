@@ -13,6 +13,8 @@ import {
   type SocialPlatform,
 } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 import { CISZUKO_ANTONY, CISZU_NETWORK } from '@/config/site';
 
 export const metadata: Metadata = {
@@ -86,12 +88,14 @@ const STEPS: InfoStepGroup[] = [
 
 export default function TeamPage() {
   return (
-    <div className="min-h-screen pt-24 pb-16 px-4">
-      <div className="max-w-screen-xl mx-auto">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <PageReveal className="relative mx-auto max-w-screen-xl">
         <InfoHero
           icon="users"
           title="Equipo"
           subtitle={`Quién está detrás de ${CISZU_NETWORK.name}: el fundador, los roles que cubre el ecosistema y cómo entrar a colaborar.`}
+          kicker="Compañía"
           theme={THEME}
         />
 
@@ -164,7 +168,7 @@ export default function TeamPage() {
             { label: 'Únete al Discord', href: CISZUKO_ANTONY.social.discord, icon: 'support', variant: 'ghost', external: true },
           ]}
         />
-      </div>
+      </PageReveal>
 
       <QuickDocks />
     </div>

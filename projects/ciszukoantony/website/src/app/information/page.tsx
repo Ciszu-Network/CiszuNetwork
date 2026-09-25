@@ -15,6 +15,8 @@ import {
 } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import ColorSwatches, { type BrandColor } from '@/components/information/ColorSwatches';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
 
 export const metadata: Metadata = {
   title: 'Information | Ciszuko Antony',
@@ -383,7 +385,8 @@ function SectionHeading({
 
 export default function InformationPage() {
   return (
-    <div className="min-h-screen pt-24 pb-16 px-4">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
       <ScrollSpy
         items={[
           { id: 'hero', label: 'Inicio' },
@@ -402,7 +405,7 @@ export default function InformationPage() {
         ]}
       />
 
-      <div className="max-w-screen-xl mx-auto space-y-24">
+      <PageReveal className="relative mx-auto max-w-screen-xl space-y-24">
         <section id="hero" className="scroll-mt-28">
           <InfoHero
             icon="info"
@@ -908,7 +911,7 @@ export default function InformationPage() {
             { label: 'Contacto', href: '/contact', icon: 'mail', variant: 'ghost' },
           ]}
         />
-      </div>
+      </PageReveal>
 
       <QuickDocks />
     </div>

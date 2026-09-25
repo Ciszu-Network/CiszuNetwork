@@ -1,20 +1,14 @@
 import type { Metadata } from 'next';
-import { LegalDocument, type LegalArticle, type InfoTheme } from '@ciszu/ui';
+import { LegalDocument, type LegalArticle } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
+import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 
 export const metadata: Metadata = {
   title: 'CiszuBot | GUIDELINES',
   description:
     'Lineamientos de uso de CiszuBot: invitación, permisos, comandos, identidad visual, privacidad e integración en servidores.',
-};
-
-const THEME: InfoTheme = {
-  accent: 'text-neon-blue',
-  accentBg: 'bg-neon-blue/10',
-  accentBorder: 'border-neon-blue/40',
-  card: 'bg-card',
-  border: 'border-border',
-  gradient: 'from-neon-blue to-neon-purple',
 };
 
 const ARTICLES: LegalArticle[] = [
@@ -94,18 +88,21 @@ const ARTICLES: LegalArticle[] = [
 
 export default function GuidelinesPage() {
   return (
-    <div className="min-h-screen pt-24 pb-20 px-4">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
       <div className="max-w-screen-xl mx-auto">
         <div className="max-w-4xl mx-auto">
-          <LegalDocument
-            icon="policies"
-            title="LINEAMIENTOS"
-            subtitle="Uso, integración y estándares de CiszuBot"
-            docLabel="Guía Oficial de CiszuBot"
-            articles={ARTICLES}
-            signOff={{ title: 'Lineamientos Oficiales de CiszuBot', subtitle: 'Actualizado 2026 — Ciszu Network' }}
-            theme={THEME}
-          />
+          <PageReveal>
+            <LegalDocument
+              icon="policies"
+              title="LINEAMIENTOS"
+              subtitle="Uso, integración y estándares de CiszuBot"
+              docLabel="Guía Oficial de CiszuBot"
+              articles={ARTICLES}
+              signOff={{ title: 'Lineamientos Oficiales de CiszuBot', subtitle: 'Actualizado 2026 — Ciszu Network' }}
+              theme={THEME}
+            />
+          </PageReveal>
         </div>
       </div>
 

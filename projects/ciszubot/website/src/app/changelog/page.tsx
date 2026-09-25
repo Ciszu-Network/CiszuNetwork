@@ -14,7 +14,10 @@ import {
 import { I, TAG_CONFIG } from '@/config/changelogIcons';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useAppStore } from '@/store';
-import { InfoHero, useChangelogLikes, usePublishedChangelogs, useToast, type InfoTheme } from '@ciszu/ui';
+import { InfoHero, useChangelogLikes, usePublishedChangelogs, useToast } from '@ciszu/ui';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
+import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 import {
   CHANGELOG_PAGE_SIZE,
   filterChangelog,
@@ -41,15 +44,6 @@ const NODE_ICON: Record<ChangelogNode['status'], React.ReactNode> = {
   done: I.check,
   next: I.zap,
   locked: I.lock,
-};
-
-const THEME: InfoTheme = {
-  accent: 'text-neon-blue',
-  accentBg: 'bg-neon-blue/10',
-  accentBorder: 'border-neon-blue/40',
-  card: 'bg-card',
-  border: 'border-border',
-  gradient: 'from-neon-blue to-neon-purple',
 };
 
 const TypeTag = ({ type, active = false, onClick }: { type: ChangelogType; active?: boolean; onClick?: () => void }) => {
@@ -147,17 +141,19 @@ export default function ChangelogPage() {
   };
 
   return (
-    <div className="bg-bg py-16">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="relative min-h-screen pt-24 pb-20 px-4">
+      <PageAmbience />
+      <div className="max-w-screen-xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         {/* --- HERO --- */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+        <PageReveal>
           <InfoHero
             icon="history"
             title="Changelog"
             subtitle="Historial de actualizaciones / Update History"
             theme={THEME}
           />
-        </motion.div>
+        </PageReveal>
 
         {/* --- ESTADO ACTUAL / PROGRESS BAR --- */}
         <Section className="mb-10 p-8 bg-white/5 border border-white/10 rounded-[3rem] space-y-6 relative overflow-hidden">
@@ -758,8 +754,10 @@ export default function ChangelogPage() {
         </Section>
 
         <AuthWarningModal isOpen={isAuthWarningOpen} onClose={() => setIsAuthWarningOpen(false)} />
-        <QuickDocks />
       </div>
+      </div>
+
+      <QuickDocks />
     </div>
   );
 }
