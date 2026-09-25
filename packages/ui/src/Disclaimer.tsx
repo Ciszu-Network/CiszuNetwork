@@ -794,7 +794,11 @@ export function GlobalDisclaimer({ site, pollInterval, disabled = false }: Globa
               'Content-Profile': 'ciszunetwork',
               Prefer: 'resolution=merge-duplicates,return=minimal',
             },
-          }).catch(() => {});
+          })
+            // Consumir el body: sin leerlo, Chrome reporta ERR_ABORTED en consola
+            // aunque el POST ya haya respondido 200 (fire-and-forget).
+            .then((r) => r.text())
+            .catch(() => {});
         }
         setRows(relevant);
       } catch {

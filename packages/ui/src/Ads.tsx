@@ -474,7 +474,7 @@ function recordImpression(site: string, ad: AdConfig, userId?: string | null) {
       ad_source: ad.content.source ?? 'external',
       user_id: userId ?? null,
     }),
-  }).catch(() => { /* telemetría no bloqueante: ignora fallos de red */ }).finally(() => {
+  }).then((r) => r.text() /* consumir body: evita ERR_ABORTED en consola */).catch(() => { /* telemetría no bloqueante: ignora fallos de red */ }).finally(() => {
     adsImpressionBusy = false;
   });
 }
@@ -776,7 +776,7 @@ const dKey = `ciszu_ads_${site}_dismissed`;
         method: 'POST',
         headers: { ...headers, 'Content-Profile': 'ciszunetwork', Prefer: 'resolution=merge-duplicates,return=minimal' },
         body: JSON.stringify({ ad_id: id, site }),
-      }).catch(() => { /* telemetría no bloqueante */ });
+      }).then((r) => r.text() /* consumir body: evita ERR_ABORTED */).catch(() => { /* telemetría no bloqueante */ });
     };
 
     const pollGlobal = () => {

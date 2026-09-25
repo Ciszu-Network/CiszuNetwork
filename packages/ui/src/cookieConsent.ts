@@ -103,10 +103,16 @@ export function useCookieConsent(): CookieConsent {
 /**
  * Script de guardia para los layouts (head, lo primero que corre):
  *   1. Define window.__ciszuCookieConsent leyendo localStorage (try/catch).
- *   2. Si el usuario RECHAZÓ, elimina del DOM todos los scripts marcados con
- *      data-cookie-consent="optional" (GTM, GA4, AdSense, beacon de Cloudflare…)
- *      en cuanto se insertan (MutationObserver) y de nuevo en DOMContentLoaded.
- *      Un script async eliminado antes de ejecutarse nunca llega a correr.
+ *   2. Si el usuario RECHAZÓ, elimina del DOM los scripts opcionales en cuanto
+ *      se insertan (MutationObserver) y de nuevo en DOMContentLoaded. Un script
+ *      async eliminado antes de ejecutarse nunca llega a correr.
+ *
+ * Qué se elimina:
+ *   - INLINE de configuración: por el atributo data-cookie-consent="optional"
+ *     (GTM/gtag config, beacon de Cloudflare…), porque no tienen src.
+ *   - EXTERNOS de Google: por PATRÓN DE URL (AdSense, GTM/gtag y GA4). Su tag NO
+ *     lleva data-cookie-consent a propósito: adsbygoogle.js inspecciona su
+ *     propio tag y avisa en consola si ve atributos que no soporta.
  *
  * Incluirlo SIEMPRE ANTES de <GoogleScripts /> en cada layout:
  *   <script dangerouslySetInnerHTML={{ __html: COOKIE_CONSENT_GUARD_JS }} />
@@ -117,15 +123,36 @@ export const COOKIE_CONSENT_GUARD_JS = `(function () {
     try { c = window.localStorage.getItem('cookies_accepted'); } catch (e) {}
     window.__ciszuCookieConsent = c === 'true' ? 'accepted' : c === 'false' ? 'rejected' : null;
     if (window.__ciszuCookieConsent === 'rejected') {
+      var SEL = [
+        'script[data-cookie-consent="optional"]',
+        'script[src*="pagead2.googlesyndication.com"]',
+        'script[src*="googletagmanager.com"]',
+        'script[src*="google-analytics.com"]',
+      ];
       var kill = function () {
-        document.querySelectorAll('script[data-cookie-consent="optional"]').forEach(function (s) {
-          if (s.parentNode) s.parentNode.removeChild(s);
-        });
+        for (var i = 0; i < SEL.length; i++) {
+          document.querySelectorAll(SEL[i]).forEach(function (s) {
+            if (s.parentNode) s.parentNode.removeChild(s);
+          });
+        }
+      };
+      // El observer solo actúa si el nodo añadido es un <script>: antes corría
+      // querySelectorAll en TODA mutación del DOM (renders de React incluidos).
+      var addedScript = function (records) {
+        for (var i = 0; i < records.length; i++) {
+          var nodes = records[i].addedNodes;
+          for (var j = 0; j < nodes.length; j++) {
+            if (nodes[j] && nodes[j].tagName === 'SCRIPT') return true;
+          }
+        }
+        return false;
       };
       kill();
       document.addEventListener('DOMContentLoaded', kill);
       if (window.MutationObserver) {
-        new MutationObserver(kill).observe(document.documentElement, { childList: true, subtree: true });
+        new MutationObserver(function (records) {
+          if (addedScript(records)) kill();
+        }).observe(document.documentElement, { childList: true, subtree: true });
       }
     }
   } catch (e) {}
