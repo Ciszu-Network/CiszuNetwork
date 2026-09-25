@@ -14,6 +14,14 @@ on:
           - preview
           - production
 
+concurrency:
+  # GitHub puede entregar el mismo push dos veces (duplicado); sin este
+  # grupo se lanzarian DOS deploys/analisis en paralelo del mismo ref. El run
+  # mas nuevo cancela al anterior (los deploys de Vercel son atomicos: la
+  # produccion previa se mantiene hasta que el nuevo termine).
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 

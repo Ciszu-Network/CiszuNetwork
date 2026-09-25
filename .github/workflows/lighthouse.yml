@@ -7,6 +7,13 @@ on:
     branches: [main, master]
   workflow_dispatch:
 
+concurrency:
+  # GitHub puede entregar el mismo push dos veces (duplicado); sin este
+  # grupo se lanzarian DOS analisis en paralelo del mismo ref. El run mas
+  # nuevo cancela al anterior.
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lighthouse:
     name: Lighthouse CI
