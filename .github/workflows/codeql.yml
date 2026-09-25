@@ -20,6 +20,13 @@ on:
   schedule:
     - cron: '28 16 * * 5'
 
+concurrency:
+  # GitHub puede entregar el mismo push dos veces (duplicado); sin este
+  # grupo se lanzarian DOS analisis en paralelo del mismo ref. El run mas
+  # nuevo cancela al anterior.
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # CodeQL es gratis en repos publicos; en privados requiere GitHub Advanced Security.
   # El check de abajo habilita el analisis cuando el repo es publico o GHAS esta activo.
