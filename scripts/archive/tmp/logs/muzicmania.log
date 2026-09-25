@@ -1,0 +1,82 @@
+   ▲ Next.js 15.5.25
+   - Local:        http://localhost:3003
+   - Network:      http://100.75.124.72:3003
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · clientTraceMetadata
+
+ ✓ Starting...
+ ○ Compiling /instrumentation ...
+ ✓ Compiled /instrumentation in 14.3s (1285 modules)
+ ✓ Ready in 106.6s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 3s (1035 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 24.4s (4863 modules)
+ GET / 200 in 29553ms
+ GET / 200 in 2831ms
+ ○ Compiling /api/disclaimers/debug ...
+ ✓ Compiled /information in 15.2s (4900 modules)
+ GET /information 200 in 16782ms
+ GET /api/disclaimers/debug 200 in 1221ms
+ GET /api/ads/push 200 in 535ms
+ GET /api/ads/debug 200 in 585ms
+ GET /api/ads/push 200 in 189ms
+ GET /api/disclaimers/debug 200 in 458ms
+ ○ Compiling /help ...
+ ✓ Compiled /help in 2.8s (4907 modules)
+ GET /help 200 in 5119ms
+ GET /api/disclaimers/debug 200 in 1600ms
+ GET /api/ads/push 200 in 949ms
+ GET /api/ads/debug 200 in 1359ms
+ ✓ Compiled in 10.8s (3103 modules)
+ ✓ Compiled in 7.4s (1323 modules)
+ ✓ Compiled in 11.3s (1323 modules)
+ ✓ Compiled in 6.9s (1323 modules)
+ ✓ Compiled in 5.1s (1323 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 4.7s (3555 modules)
+ GET / 200 in 8965ms
+ ○ Compiling /api/disclaimers/debug ...
+ ✓ Compiled /information in 3s (3574 modules)
+ ✓ Compiled (3593 modules)
+ GET /information 200 in 12611ms
+ GET /api/disclaimers/debug 200 in 1900ms
+ GET /api/ads/debug 200 in 1018ms
+ GET /api/ads/push 200 in 1243ms
+ ○ Compiling /help ...
+ ✓ Compiled /help in 8.7s (3598 modules)
+ GET /help 200 in 15752ms
+ GET /api/disclaimers/debug 200 in 1003ms
+ GET /api/ads/debug 200 in 1076ms
+ GET /api/ads/push 200 in 1167ms
+ ✓ Compiled in 13.5s (2187 modules)
+ ✓ Compiled in 5.6s (1323 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 3s (3555 modules)
+ GET / 200 in 9411ms
+ ○ Compiling /api/disclaimers/debug ...
+ ✓ Compiled /information in 3.8s (3574 modules)
+ ✓ Compiled (3593 modules)
+ GET /information 200 in 9673ms
+ GET /api/disclaimers/debug 200 in 1303ms
+ GET /api/ads/debug 200 in 436ms
+ GET /api/ads/push 200 in 500ms
+ GET /api/ads/push 200 in 307ms
+ GET /api/disclaimers/debug 200 in 357ms
+ GET /api/ads/debug 200 in 350ms
+ ○ Compiling /help ...
+ ✓ Compiled /help in 2.8s (3598 modules)
+ GET /help 200 in 5809ms
+ GET /api/disclaimers/debug 200 in 1088ms
+ GET /api/ads/debug 200 in 485ms
+ GET /api/ads/push 200 in 546ms
+ GET /api/ads/push 200 in 84ms
+ GET /api/disclaimers/debug 200 in 174ms
+ GET /api/ads/debug 200 in 221ms
+ ✓ Compiled in 4.7s (1323 modules)
+ ✓ Compiled in 2.1s (1323 modules)
+ ✓ Compiled in 2.2s (1323 modules)
+ ✓ Compiled in 1755ms (1323 modules)
+ ✓ Compiled in 5.2s (2358 modules)
+ ✓ Compiled in 2s (1323 modules)

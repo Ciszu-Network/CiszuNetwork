@@ -1,0 +1,20 @@
+
+── ciszubot / (modo claro ✅)
+   textos con contraste insuficiente: 1  · omitidos por degradado: 3  · ocultos: 19
+   ×1 ratio 1.02 (mín 4.5)  "✕"
+        tinta rgb(161, 161, 170) sobre rgb(162, 163, 168)
+        clase: (sin clase)
+
+── ciszubot /information (modo claro ✅)
+   textos con contraste insuficiente: 1  · omitidos por degradado: 3  · ocultos: 18
+   ×1 ratio 1.02 (mín 4.5)  "✕"
+        tinta rgb(161, 161, 170) sobre rgb(162, 163, 168)
+        clase: (sin clase)
+
+── ciszubot /help (modo claro ✅)
+   textos con contraste insuficiente: 1  · omitidos por degradado: 3  · ocultos: 18
+   ×1 ratio 1.02 (mín 4.5)  "✕"
+        tinta rgb(161, 161, 170) sobre rgb(162, 163, 168)
+        clase: (sin clase)
+
+❌ ciszubot: 3 textos con contraste insuficiente en 3 página(s); 9 omitidos por fondo degradado.

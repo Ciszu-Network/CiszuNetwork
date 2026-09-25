@@ -1,0 +1,89 @@
+{
+ "url": "http://127.0.0.1:3001/",
+ "modeNet": true,
+ "modeCss": false,
+ "modeDns": false,
+ "modeCssLate": false,
+ "modeReject": false,
+ "blocked": [
+  "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3471969072198962",
+  "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?ciszu_probe=1790323205682",
+  "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?ciszu_probe=1790323205682"
+ ],
+ "guardLogs": [
+  "[debug] [AdBlockerGuard] deteccion (red) → BLOQUEO"
+ ],
+ "out": {
+  "guardVisible": true,
+  "guardBlur": true,
+  "adScriptInDom": true,
+  "adScriptSrc": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3471969072198962",
+  "adsbygoogleType": "undefined",
+  "consent": null,
+  "choice": null,
+  "voluntary": null,
+  "turnstile": false,
+  "baits": [
+   {
+    "cls": "ad-banner ad-placeholder pub_300x250 adbox adsbox",
+    "h": 250,
+    "w": 300,
+    "parent": false,
+    "display": "block",
+    "vis": "visible",
+    "op": "1"
+   },
+   {
+    "cls": "advertisement leaderboard",
+    "h": 250,
+    "w": 300,
+    "parent": false,
+    "display": "block",
+    "vis": "visible",
+    "op": "1"
+   },
+   {
+    "cls": "adsbygoogle ad-slot",
+    "h": 250,
+    "w": 300,
+    "parent": false,
+    "display": "block",
+    "vis": "visible",
+    "op": "1"
+   },
+   {
+    "cls": "sponsor-ad-wrap ad-container",
+    "h": 250,
+    "w": 300,
+    "parent": false,
+    "display": "block",
+    "vis": "visible",
+    "op": "1"
+   },
+   {
+    "cls": "adsbox adsbox-ad",
+    "h": 250,
+    "w": 300,
+    "parent": false,
+    "display": "block",
+    "vis": "visible",
+    "op": "1"
+   }
+  ],
+  "bodyTextStart": "Home\nProjects\nCertificates\nChangelog\nReviews\nStats\nDownloads\nInformation\nGuest 892566\ntest\nEsta website esta siendo construida, la version actual es una BETA PUBLICA.\nOK\nCiszuko Antony — Portfolio y C"
+ },
+ "logs": [
+  "[error] Failed to load resource: net::ERR_CONNECTION_REFUSED",
+  "[error] Failed to load resource: net::ERR_CONNECTION_REFUSED",
+  "[error] Failed to load resource: net::ERR_CONNECTION_REFUSED",
+  "[error] Failed to load resource: net::ERR_CONNECTION_REFUSED",
+  "[error] Failed to load resource: net::ERR_CONNECTION_REFUSED",
+  "[error] Failed to load resource: net::ERR_CONNECTION_REFUSED",
+  "[error] Failed to load resource: net::ERR_CONNECTION_REFUSED",
+  "[error] Failed to load resource: net::ERR_FAILED",
+  "[log] [Client Instrumentation Hook] Slow execution detected: 171ms (Note: Code download overhead is not included in this measurement)",
+  "[info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+  "[error] Failed to load resource: net::ERR_CONNECTION_REFUSED",
+  "[error] Failed to load resource: net::ERR_CONNECTION_REFUSED"
+ ]
+}

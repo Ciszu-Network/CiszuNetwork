@@ -1,0 +1,83 @@
+
+── muzicmania / (modo claro ✅)
+   textos con contraste insuficiente: 61  · omitidos por degradado: 28  · ocultos: 32
+   ×8 ratio 2.68 (mín 4.5)  "Autor:"
+        tinta rgb(74, 85, 104) sobre rgb(2, 6, 23)
+        clase: text-gray-400 font-black uppercase text-[7px] tracking-wider
+   ×8 ratio 1.11 (mín 4.5)  "Ciszuko Antony"
+        tinta rgb(13, 21, 38) sobre rgb(2, 6, 23)
+        clase: text-white font-bold text-[7px] tracking-wider normal-case hover:text-neon-cyan transition-colors
+   ×6 ratio 1.1 (mín 4.5)  "Música & Canciones"
+        tinta rgb(13, 21, 38) sobre rgb(3, 8, 25)
+        clase: text-[9px] text-white font-bold uppercase tracking-[0.2em] opacity-30 group-hover:opacity-100 transition-opacity
+   ×4 ratio 1.11 (mín 4.5)  "OLED Darkness"
+        tinta rgb(13, 21, 38) sobre rgb(2, 6, 23)
+        clase: font-black text-white truncate text-sm tracking-tight italic group-hover:text-neon-cyan transition-colors flex items-center gap-1.5
+   ×4 ratio 2.68 (mín 4.5)  "0"
+        tinta rgb(74, 85, 104) sobre rgb(2, 6, 23)
+        clase: text-[8px] font-black text-gray-400 tabular-nums
+   ×4 ratio 2.68 (mín 4.5)  "0"
+        tinta rgb(74, 85, 104) sobre rgb(2, 6, 23)
+        clase: text-[8px] font-black tabular-nums
+   ×3 ratio 1.11 (mín 3)  "Visuales Reactivos"
+        tinta rgb(13, 21, 38) sobre rgb(2, 6, 23)
+        clase: text-2xl font-header font-bold mb-4 text-center text-white italic
+   ×3 ratio 2.68 (mín 4.5)  "Cada beat se traduce en espectrogramas y ondas de neón que r"
+        tinta rgb(74, 85, 104) sobre rgb(2, 6, 23)
+        clase: text-gray-400 text-center uppercase text-[10px] tracking-widest
+   ×3 ratio 4 (mín 4.5)  "YouTube"
+        tinta rgb(255, 255, 255) sobre rgb(255, 0, 0)
+        clase: (sin clase)
+   ×2 ratio 1.11 (mín 4.5)  "EXPLORAR REGISTRO COMPLETO"
+        tinta rgb(13, 21, 38) sobre rgb(2, 6, 23)
+        clase: relative z-10
+   ×1 ratio 1.53 (mín 4.5)  "En MuzicMania, el ritmo es el lenguaje universal del alma di"
+        tinta rgb(35, 48, 74) sobre rgb(2, 6, 23)
+        clase: text-gray-200 text-lg leading-relaxed text-center italic
+   ×1 ratio 2.68 (mín 4.5)  "Optimizamos cada milisegundo de respuesta para que tu pulso "
+        tinta rgb(74, 85, 104) sobre rgb(2, 6, 23)
+        clase: text-gray-400 leading-relaxed text-center uppercase text-[10px] tracking-widest opacity-60
+   ×1 ratio 1.53 (mín 4.5)  "MuzicMania es alimentado por una comunidad global de ritmist"
+        tinta rgb(35, 48, 74) sobre rgb(2, 6, 23)
+        clase: text-gray-200 text-lg leading-relaxed italic
+   ×1 ratio 1.11 (mín 3)  "¿TIENES UNA IDEA REVOLUCIONARIA?"
+        tinta rgb(13, 21, 38) sobre rgb(2, 6, 23)
+        clase: text-4xl font-header font-black text-white uppercase tracking-tighter italic
+   ×1 ratio 2.68 (mín 4.5)  "MuzicMania no solo evoluciona por nuestro código, sino por v"
+        tinta rgb(74, 85, 104) sobre rgb(2, 6, 23)
+        clase: text-gray-400 max-w-2xl mx-auto font-medium leading-relaxed uppercase text-[10px] tracking-widest opacity-80
+   ×1 ratio 1.05 (mín 4.5)  "DEJAR UNA RESEÑA"
+        tinta rgb(0, 0, 0) sobre rgb(3, 7, 24)
+        clase: inline-block px-12 py-5 bg-white text-black font-black rounded-2xl hover:bg-neon-cyan hover:scale-105 transition-all active-depth uppercase 
+   ×1 ratio 3.84 (mín 4.5)  "Transciende las dimensiones rítmicas"
+        tinta rgb(58, 114, 146) sobre rgb(2, 6, 23)
+        clase: text-neon-cyan font-black mb-16 uppercase tracking-[0.6em] text-xs drop-shadow-neon-cyan opacity-80
+   ×1 ratio 1.1 (mín 3)  "BIBLIOTECA"
+        tinta rgb(13, 21, 38) sobre rgb(3, 8, 25)
+        clase: text-2xl font-header font-bold text-white mb-1 group-hover:text-neon-cyan transition-colors uppercase tracking-tight italic
+   ×1 ratio 1.1 (mín 3)  "JUGAR"
+        tinta rgb(13, 21, 38) sobre rgb(3, 8, 25)
+        clase: text-2xl font-header font-bold text-white mb-1 group-hover:text-neon-purple transition-colors uppercase tracking-tight italic
+   ×1 ratio 1.1 (mín 3)  "PERFIL"
+        tinta rgb(13, 21, 38) sobre rgb(3, 8, 25)
+        clase: text-2xl font-header font-bold text-white mb-1 group-hover:text-neon-pink transition-colors uppercase tracking-tight italic
+   ×1 ratio 1.1 (mín 3)  "RANKING"
+        tinta rgb(13, 21, 38) sobre rgb(3, 8, 25)
+        clase: text-2xl font-header font-bold text-white mb-1 group-hover:text-neon-yellow transition-colors uppercase tracking-tight italic
+   ×1 ratio 1.1 (mín 3)  "FORO"
+        tinta rgb(13, 21, 38) sobre rgb(3, 8, 25)
+        clase: text-2xl font-header font-bold text-white mb-1 group-hover:text-neon-green transition-colors uppercase tracking-tight italic
+   ×1 ratio 1.1 (mín 3)  "CHANGELOG"
+        tinta rgb(13, 21, 38) sobre rgb(3, 8, 25)
+        clase: text-2xl font-header font-bold text-white mb-1 group-hover:text-neon-orange transition-colors uppercase tracking-tight italic
+   ×1 ratio 1.11 (mín 3)  "Project provided by CiszuNetwork"
+        tinta rgb(13, 21, 38) sobre rgb(2, 6, 23)
+        clase: text-2xl md:text-3xl font-bold text-white
+   ×1 ratio 1.11 (mín 4.5)  "MuzicMania is part of the Ciszu Network ecosystem. Discover "
+        tinta rgb(13, 21, 38) sobre rgb(2, 6, 23)
+        clase: text-muted max-w-xl mx-auto text-sm md:text-base
+   ×1 ratio 1.1 (mín 4.5)  "View All Projects"
+        tinta rgb(13, 21, 38) sobre rgb(2, 6, 23)
+        clase: w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-white/5 border border-white/20 text-white font-bold rounded-xl
+
+❌ muzicmania: 61 textos con contraste insuficiente en 1 página(s); 28 omitidos por fondo degradado.

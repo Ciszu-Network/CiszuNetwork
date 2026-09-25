@@ -1,0 +1,104 @@
+
+> ciszunetwork-website@1.0.0 dev E:\Ciszu Network\projects\ciszu\website
+> next dev "-p" "3000"
+
+   ▲ Next.js 15.5.25
+   - Local:        http://localhost:3000
+   - Network:      http://100.75.124.72:3000
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · clientTraceMetadata
+
+ ✓ Starting...
+ ○ Compiling /instrumentation ...
+ ✓ Compiled /instrumentation in 43.4s (1285 modules)
+ ✓ Ready in 114.7s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 7.5s (1035 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 137.1s (8425 modules)
+ GET / 200 in 1117ms
+ GET / 200 in 4512ms
+ ○ Compiling /api/ads/debug ...
+ ✓ Compiled /api/ads/push in 20.4s (8435 modules)
+ GET / 200 in 6607ms
+ GET /api/disclaimers/debug 200 in 1947ms
+ GET /api/ads/push 200 in 1467ms
+ GET /api/ads/debug 200 in 2395ms
+ ○ Compiling /information ...
+ ✓ Compiled /information in 7.4s (8440 modules)
+ GET /information 200 in 11928ms
+ GET /api/disclaimers/debug 200 in 1666ms
+ ○ Compiling /help ...
+ ✓ Compiled /help in 5s (8442 modules)
+ GET /help 200 in 8295ms
+ GET /api/disclaimers/debug 200 in 2380ms
+ GET /api/ads/push 200 in 1160ms
+ GET /api/ads/debug 200 in 1171ms
+ ○ Compiling /faq ...
+ ✓ Compiled /faq in 7.7s (8450 modules)
+ GET /faq 200 in 11595ms
+ GET /api/ads/debug 200 in 1520ms
+ GET /api/disclaimers/debug 200 in 2382ms
+ ○ Compiling /about ...
+ ✓ Compiled /about in 4.9s (8434 modules)
+ GET /about 200 in 8132ms
+ GET /api/disclaimers/debug 200 in 2593ms
+ GET /api/ads/debug 200 in 1817ms
+ GET /api/ads/push 200 in 2016ms
+ GET /api/disclaimers/debug 200 in 1357ms
+ GET /api/ads/debug 200 in 1402ms
+ GET /api/ads/push 200 in 603ms
+ GET /api/disclaimers/debug 200 in 933ms
+ GET /api/ads/push 200 in 966ms
+ ○ Compiling /team ...
+ ✓ Compiled /team in 6.2s (8442 modules)
+ GET /team 200 in 9894ms
+ GET /api/disclaimers/debug 200 in 1325ms
+ GET /api/ads/debug 200 in 1547ms
+ GET /api/ads/push 200 in 1761ms
+ ○ Compiling /donate ...
+ ✓ Compiled /donate in 7.1s (8458 modules)
+ GET /donate 200 in 10487ms
+ GET /api/disclaimers/debug 200 in 823ms
+ GET /api/ads/debug 200 in 1312ms
+ GET /api/disclaimers/debug 200 in 1431ms
+ GET /api/ads/push 200 in 1515ms
+ GET /api/ads/debug 200 in 1578ms
+ GET /api/ads/push 200 in 1573ms
+ ○ Compiling /changelog ...
+ ✓ Compiled /changelog in 12.1s (8482 modules)
+ GET /changelog 200 in 17984ms
+ GET /api/disclaimers/debug 200 in 2543ms
+ ○ Compiling /api/changelogs/debug ...
+ ✓ Compiled /reviews in 14.9s (8481 modules)
+ GET /reviews 200 in 25248ms
+ ○ Compiling /downloads ...
+ ✓ Compiled /downloads in 11.5s (8487 modules)
+ GET /downloads 200 in 16985ms
+ GET /api/disclaimers/debug 200 in 2656ms
+ GET /api/ads/debug 200 in 1218ms
+ GET /api/ads/push 200 in 1211ms
+ ○ Compiling /contact ...
+ ✓ Compiled /contact in 8.7s (8488 modules)
+ GET /contact 200 in 12222ms
+ GET /api/disclaimers/debug 200 in 741ms
+ ✓ Compiled in 33.7s (8452 modules)
+ ✓ Compiled in 21s (3096 modules)
+ ✓ Compiled in 3.5s (3096 modules)
+ ✓ Compiled in 5.6s (3096 modules)
+ ○ Compiling /reviews ...
+ ✓ Compiled /reviews in 4.9s (5364 modules)
+ GET /reviews 200 in 15222ms
+ ○ Compiling /api/disclaimers/debug ...
+ ✓ Compiled /api/ads/push in 3.7s (5381 modules)
+ ✓ Compiled (5385 modules)
+ GET /reviews 200 in 7362ms
+ ✓ Compiled in 18.7s (8481 modules)
+ GET /reviews 200 in 3045ms
+ GET /reviews 200 in 2274ms
+ GET /api/disclaimers/debug 200 in 2231ms
+ GET /api/ads/debug 200 in 1356ms
+ ✓ Compiled in 30s (8452 modules)
+ ✓ Compiled in 24.7s (8452 modules)
+ ✓ Compiled in 13.3s (8452 modules)

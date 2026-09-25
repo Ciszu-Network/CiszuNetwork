@@ -1,0 +1,11 @@
+
+── ciszukoantony / (modo claro ✅)
+   textos con contraste insuficiente: 0  · omitidos por degradado: 7  · ocultos: 12
+
+── ciszukoantony /information (modo claro ✅)
+   textos con contraste insuficiente: 0  · omitidos por degradado: 2  · ocultos: 11
+
+── ciszukoantony /help (modo claro ✅)
+   textos con contraste insuficiente: 0  · omitidos por degradado: 2  · ocultos: 11
+
+✅ ciszukoantony: 0 textos con contraste insuficiente en 3 página(s); 11 omitidos por fondo degradado.

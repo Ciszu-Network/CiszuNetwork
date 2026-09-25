@@ -1,0 +1,11 @@
+
+── ciszu / (modo claro ✅)
+   textos con contraste insuficiente: 0  · omitidos por degradado: 23  · ocultos: 11
+
+── ciszu /information (modo claro ✅)
+   textos con contraste insuficiente: 0  · omitidos por degradado: 0  · ocultos: 10
+
+── ciszu /help (modo claro ✅)
+   textos con contraste insuficiente: 0  · omitidos por degradado: 0  · ocultos: 10
+
+✅ ciszu: 0 textos con contraste insuficiente en 3 página(s); 23 omitidos por fondo degradado.

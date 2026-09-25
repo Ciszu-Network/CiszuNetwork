@@ -1,0 +1,26 @@
+
+── muzicmania / (modo claro ✅)
+   textos con contraste insuficiente: 3  · omitidos por degradado: 28  · ocultos: 32
+   ×2 ratio 4 (mín 4.5)  "YouTube"
+        tinta rgb(255, 255, 255) sobre rgb(255, 0, 0)
+        clase: (sin clase)
+   ×1 ratio 3.18 (mín 4.5)  "VER TODAS LAS CANCIONES"
+        tinta rgb(255, 255, 255) sobre rgb(255, 51, 204)
+        clase: relative z-10
+
+── muzicmania /information (modo claro ✅)
+   textos con contraste insuficiente: 2  · omitidos por degradado: 13  · ocultos: 26
+   ×1 ratio 2.02 (mín 3)  "→"
+        tinta rgb(128, 0, 255) sobre rgb(51, 51, 51)
+        clase: w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-2 flex items-center justify-center font-header font-black text-2xl sm:text-3xl transition-all d
+   ×1 ratio 1.03 (mín 4.5)  "✕"
+        tinta rgb(161, 161, 170) sobre rgb(162, 164, 169)
+        clase: (sin clase)
+
+── muzicmania /help (modo claro ✅)
+   textos con contraste insuficiente: 1  · omitidos por degradado: 5  · ocultos: 12
+   ×1 ratio 1.03 (mín 4.5)  "✕"
+        tinta rgb(161, 161, 170) sobre rgb(162, 164, 169)
+        clase: (sin clase)
+
+❌ muzicmania: 6 textos con contraste insuficiente en 3 página(s); 46 omitidos por fondo degradado.

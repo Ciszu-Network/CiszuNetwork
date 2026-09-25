@@ -1,0 +1,398 @@
+
+================ https://ciszunetwork.vercel.app/ ================
+--- consola (error/warning) ---
+[
+ {
+  "kind": "console.warning",
+  "text": "A preload for 'https://challenges.cloudflare.com/turnstile/v0/api.js' is found, but is not used because the request credentials mode does not match. Consider taking a look at crossorigin attribute.",
+  "loc": "_next/static/chunks/2995-ab20eaa826ccbcb6.js:0",
+  "count": 1
+ },
+ {
+  "kind": "console.warning",
+  "text": "AdSense head tag doesn't support data-cookie-consent attribute.",
+  "loc": "_next/static/chunks/7562-624d1597724a2fe5.js:14",
+  "count": 1
+ },
+ {
+  "kind": "console.warning",
+  "text": "The resource https://challenges.cloudflare.com/turnstile/v0/api.js was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+  "loc": ":0",
+  "count": 1
+ },
+ {
+  "kind": "console.startGroupCollapsed",
+  "text": "",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/4kr2d/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 1
+ },
+ {
+  "kind": "console.count",
+  "text": "\u0000: 1",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/4kr2d/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.dir",
+  "text": " Error",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/4kr2d/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.dirxml",
+  "text": "%c%d font-size:0;color:transparent Error",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/4kr2d/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.error",
+  "text": "%c%d font-size:0;color:transparent NaN",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/4kr2d/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.table",
+  "text": "%c%d font-size:0;color:transparent Error",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/4kr2d/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.trace",
+  "text": "%c%d font-size:0;color:transparent NaN",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/4kr2d/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.warning",
+  "text": "%c%d font-size:0;color:transparent NaN",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/4kr2d/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.endGroup",
+  "text": "console.groupEnd",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/4kr2d/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 1
+ },
+ {
+  "kind": "console.warning",
+  "text": "OTS parsing error: Size of decompressed WOFF 2.0 is less than compressed size",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/4kr2d/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 1
+ },
+ {
+  "kind": "console.warning",
+  "text": "The powerPreference option is currently ignored when calling requestAdapter() on Windows. See https://crbug.com/369219127",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/4kr2d/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.warning",
+  "text": "No available adapters.",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/4kr2d/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 1
+ }
+]
+--- red (fallos + 4xx/5xx) ---
+[
+ "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+ "HTTP 401 https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/pat/a4089252cc118e2f/1790324030635/9381f542f81830d112b6daf4442214b631d9fec2",
+ "fetch https://brunhild.challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/i/a4089252cc118e2f/GfWl0151sx9ZcBkMa6sTuRd0l_M9Rj6s0ur9jtKT4Rk-179 → net::ERR_NAME_NOT_RESOLVED"
+]
+
+================ https://ciszukoantony.vercel.app/ ================
+--- consola (error/warning) ---
+[
+ {
+  "kind": "console.warning",
+  "text": "A preload for 'https://challenges.cloudflare.com/turnstile/v0/api.js' is found, but is not used because the request credentials mode does not match. Consider taking a look at crossorigin attribute.",
+  "loc": "_next/static/chunks/2995-091b6a3ea1da2b66.js:0",
+  "count": 1
+ },
+ {
+  "kind": "console.warning",
+  "text": "AdSense head tag doesn't support data-cookie-consent attribute.",
+  "loc": "_next/static/chunks/7562-2f536382173cf4db.js:14",
+  "count": 1
+ },
+ {
+  "kind": "console.warning",
+  "text": "The powerPreference option is currently ignored when calling requestAdapter() on Windows. See https://crbug.com/369219127",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/uy1uz/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.startGroupCollapsed",
+  "text": "",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/uy1uz/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 1
+ },
+ {
+  "kind": "console.count",
+  "text": "\u0000: 1",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/uy1uz/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.dir",
+  "text": " Error",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/uy1uz/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.dirxml",
+  "text": "%c%d font-size:0;color:transparent Error",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/uy1uz/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.error",
+  "text": "%c%d font-size:0;color:transparent NaN",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/uy1uz/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.table",
+  "text": "%c%d font-size:0;color:transparent Error",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/uy1uz/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.trace",
+  "text": "%c%d font-size:0;color:transparent NaN",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/uy1uz/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.warning",
+  "text": "%c%d font-size:0;color:transparent NaN",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/uy1uz/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.endGroup",
+  "text": "console.groupEnd",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/uy1uz/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 1
+ },
+ {
+  "kind": "console.warning",
+  "text": "No available adapters.",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/uy1uz/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 1
+ },
+ {
+  "kind": "console.warning",
+  "text": "OTS parsing error: Size of decompressed WOFF 2.0 is less than compressed size",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/uy1uz/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 1
+ }
+]
+--- red (fallos + 4xx/5xx) ---
+[
+ "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+ "fetch https://brunhild.challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/i/a40892a41b6f3490/St6BpgYYza3BgTUT1n7LJ_phOMnK9LzImGK2CxpAeVY-179 → net::ERR_NAME_NOT_RESOLVED",
+ "HTTP 401 https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/pat/a40892a41b6f3490/1790324042554/8323fd475361a14de39c8b7fa1510a9f424a0bda"
+]
+
+================ https://ciszubot.vercel.app/ ================
+--- consola (error/warning) ---
+[
+ {
+  "kind": "console.warning",
+  "text": "A preload for 'https://challenges.cloudflare.com/turnstile/v0/api.js' is found, but is not used because the request credentials mode does not match. Consider taking a look at crossorigin attribute.",
+  "loc": "_next/static/chunks/2995-531a18aacf876973.js:0",
+  "count": 1
+ },
+ {
+  "kind": "console.warning",
+  "text": "AdSense head tag doesn't support data-cookie-consent attribute.",
+  "loc": "_next/static/chunks/8854-e00a7cf4020ad30d.js:17",
+  "count": 1
+ },
+ {
+  "kind": "console.warning",
+  "text": "The powerPreference option is currently ignored when calling requestAdapter() on Windows. See https://crbug.com/369219127",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/z3k30/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.warning",
+  "text": "No available adapters.",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/z3k30/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 1
+ },
+ {
+  "kind": "console.startGroupCollapsed",
+  "text": "",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/z3k30/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 1
+ },
+ {
+  "kind": "console.count",
+  "text": "\u0000: 1",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/z3k30/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.dir",
+  "text": " Error",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/z3k30/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.dirxml",
+  "text": "%c%d font-size:0;color:transparent Error",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/z3k30/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.error",
+  "text": "%c%d font-size:0;color:transparent NaN",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/z3k30/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.table",
+  "text": "%c%d font-size:0;color:transparent Error",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/z3k30/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.trace",
+  "text": "%c%d font-size:0;color:transparent NaN",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/z3k30/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.warning",
+  "text": "%c%d font-size:0;color:transparent NaN",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/z3k30/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.endGroup",
+  "text": "console.groupEnd",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/z3k30/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 1
+ },
+ {
+  "kind": "console.warning",
+  "text": "OTS parsing error: Size of decompressed WOFF 2.0 is less than compressed size",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/z3k30/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 1
+ },
+ {
+  "kind": "console.warning",
+  "text": "The resource https://challenges.cloudflare.com/turnstile/v0/api.js was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+  "loc": ":0",
+  "count": 1
+ }
+]
+--- red (fallos + 4xx/5xx) ---
+[
+ "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+ "HTTP 401 https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/pat/a40892f86c1e5370/1790324058130/b04b182963e8331e3d280e3a2d25e3046b8c77d8",
+ "fetch https://brunhild.challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/i/a40892f86c1e5370/QtOLDTDY8v0ypyucBwOO0Ta.Kf0w0qeMK9eThmDFFUU-179 → net::ERR_NAME_NOT_RESOLVED"
+]
+
+================ https://muzicmania.vercel.app/ ================
+--- consola (error/warning) ---
+[
+ {
+  "kind": "console.warning",
+  "text": "A preload for 'https://challenges.cloudflare.com/turnstile/v0/api.js' is found, but is not used because the request credentials mode does not match. Consider taking a look at crossorigin attribute.",
+  "loc": "_next/static/chunks/2995-ada37cc99a4081d8.js:0",
+  "count": 1
+ },
+ {
+  "kind": "console.warning",
+  "text": "AdSense head tag doesn't support data-cookie-consent attribute.",
+  "loc": "_next/static/chunks/104-b02174f9c99b1322.js:3",
+  "count": 1
+ },
+ {
+  "kind": "console.warning",
+  "text": "The resource https://challenges.cloudflare.com/turnstile/v0/api.js was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+  "loc": ":0",
+  "count": 1
+ },
+ {
+  "kind": "console.startGroupCollapsed",
+  "text": "",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/izx7g/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 1
+ },
+ {
+  "kind": "console.count",
+  "text": "\u0000: 1",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/izx7g/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.dir",
+  "text": " Error",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/izx7g/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.dirxml",
+  "text": "%c%d font-size:0;color:transparent Error",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/izx7g/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.error",
+  "text": "%c%d font-size:0;color:transparent NaN",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/izx7g/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.table",
+  "text": "%c%d font-size:0;color:transparent Error",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/izx7g/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.trace",
+  "text": "%c%d font-size:0;color:transparent NaN",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/izx7g/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.warning",
+  "text": "%c%d font-size:0;color:transparent NaN",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/izx7g/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.endGroup",
+  "text": "console.groupEnd",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/izx7g/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 1
+ },
+ {
+  "kind": "console.warning",
+  "text": "The powerPreference option is currently ignored when calling requestAdapter() on Windows. See https://crbug.com/369219127",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/izx7g/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 2
+ },
+ {
+  "kind": "console.warning",
+  "text": "No available adapters.",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/izx7g/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 1
+ },
+ {
+  "kind": "console.warning",
+  "text": "OTS parsing error: Size of decompressed WOFF 2.0 is less than compressed size",
+  "loc": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/izx7g/0x4AAAAAADm0pqu349Um-eH8/dark/fbE/new/normal?lang=es:0",
+  "count": 1
+ }
+]
+--- red (fallos + 4xx/5xx) ---
+[
+ "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+ "HTTP 401 https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/pat/a40893626c50e8dd/1790324074859/aac7deafd6b9dbf6c51b36a028326bbb98d1b8ac",
+ "fetch https://brunhild.challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/i/a40893626c50e8dd/N3DwqeXQ0.sygUzMEFFNRcl6r_WuO2jAJ4mDiE9B_uc-179 → net::ERR_NAME_NOT_RESOLVED"
+]

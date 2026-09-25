@@ -1,0 +1,35 @@
+
+> ciszukoantony-website@1.0.0 dev E:\Ciszu Network\projects\ciszukoantony\website
+> next dev "-p" "3001"
+
+   ▲ Next.js 15.5.25
+   - Local:        http://localhost:3001
+   - Network:      http://100.75.124.72:3001
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · clientTraceMetadata
+
+ ✓ Starting...
+ ○ Compiling /instrumentation ...
+ ✓ Compiled /instrumentation in 30.1s (1285 modules)
+ ✓ Ready in 115.2s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 7.4s (1035 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 79.5s (4826 modules)
+ GET / 200 in 2071ms
+ GET / 200 in 1039ms
+ ✓ Compiled in 14.2s (2154 modules)
+ ✓ Compiled in 5.3s (1290 modules)
+ ✓ Compiled in 4s (1290 modules)
+ ✓ Compiled in 6.1s (1290 modules)
+ ○ Compiling /reviews ...
+ ✓ Compiled /reviews in 5.9s (4824 modules)
+ GET /reviews 200 in 11458ms
+ GET /reviews 200 in 1989ms
+ ○ Compiling /api/ads/push ...
+ ✓ Compiled /api/ads/push in 7.6s (4848 modules)
+ GET /reviews 200 in 3114ms
+ ✓ Compiled in 26.6s (2161 modules)
+ ✓ Compiled in 10.1s (1297 modules)
+ ✓ Compiled in 5.8s (1297 modules)

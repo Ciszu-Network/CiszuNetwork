@@ -1,0 +1,62 @@
+   ▲ Next.js 15.5.25
+   - Local:        http://localhost:3001
+   - Network:      http://100.75.124.72:3001
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · clientTraceMetadata
+
+ ✓ Starting...
+ ○ Compiling /instrumentation ...
+ ✓ Compiled /instrumentation in 14.3s (1285 modules)
+ ✓ Ready in 106.3s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 6.9s (1035 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 33.2s (4823 modules)
+ GET / 200 in 40489ms
+ GET / 200 in 2439ms
+ ○ Compiling /api/ads/push ...
+ ✓ Compiled /information in 13.4s (4842 modules)
+ GET /information 200 in 15602ms
+ GET /api/disclaimers/debug 200 in 676ms
+ GET /api/ads/debug 200 in 847ms
+ GET /api/ads/push 200 in 892ms
+ GET /api/disclaimers/debug 200 in 1055ms
+ GET /api/ads/debug 200 in 1100ms
+ GET /api/ads/push 200 in 352ms
+ GET /api/ads/push 200 in 330ms
+ GET /api/disclaimers/debug 200 in 254ms
+ GET /api/ads/debug 200 in 319ms
+ GET /api/ads/push 200 in 276ms
+ ○ Compiling /help ...
+ ✓ Compiled /help in 2.9s (4849 modules)
+ GET /help 200 in 5613ms
+ GET /api/disclaimers/debug 200 in 2326ms
+ GET /api/ads/debug 200 in 1403ms
+ ✓ Compiled in 11.3s (4829 modules)
+ ✓ Compiled in 23.1s (4829 modules)
+ ✓ Compiled in 13.3s (4829 modules)
+ ✓ Compiled in 4.9s (1295 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 3s (3540 modules)
+ GET / 200 in 12726ms
+ ○ Compiling /api/disclaimers/debug ...
+ ✓ Compiled /api/ads/push in 4.9s (3559 modules)
+ ✓ Compiled (3563 modules)
+ GET /information 200 in 12416ms
+ GET /api/disclaimers/debug 200 in 1223ms
+ GET /api/ads/debug 200 in 644ms
+ GET /api/ads/push 200 in 1195ms
+ GET /api/ads/debug 200 in 1270ms
+ GET /api/disclaimers/debug 200 in 1288ms
+ ○ Compiling /help ...
+ ✓ Compiled /help in 6.4s (3568 modules)
+ GET /help 200 in 10179ms
+ GET /api/disclaimers/debug 200 in 1529ms
+ GET /api/ads/debug 200 in 640ms
+ GET /api/ads/push 200 in 758ms
+ GET /api/disclaimers/debug 200 in 703ms
+ GET /api/ads/debug 200 in 741ms
+ ✓ Compiled in 6s (1295 modules)
+ ✓ Compiled in 3.1s (1295 modules)
+ ✓ Compiled in 3.4s (1295 modules)

@@ -1,0 +1,413 @@
+XXXXXXXXXXXXXXXXXXXXXX  ciszu
+
+{
+ "ciszu": {
+  "/": {
+   "console": [
+    "warning: AdSense head tag doesn't support data-cookie-consent attribute."
+   ],
+   "pageerror": [],
+   "http": [
+    "401 https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/pat/a408b1241eb0bd01/1790325297316/c793c5b748fa70373085"
+   ],
+   "failed": [
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED"
+   ]
+  },
+  "/about": {
+   "console": [
+    "warning: The resource https://ciszunetwork.vercel.app/_next/static/media/fd89c2519bdbefb3-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded in",
+    "warning: The resource https://ciszunetwork.vercel.app/_next/static/media/98b2a1b09904fcf6-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded in",
+    "warning: The resource https://ciszunetwork.vercel.app/_next/static/media/c3ea40b89f2c1e84-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded in",
+    "warning: The resource https://ciszunetwork.vercel.app/_next/static/media/26d4368bf94c0ec4-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded in",
+    "warning: The resource https://ciszunetwork.vercel.app/_next/static/media/f3bd7e38ce097e28-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded in"
+   ],
+   "pageerror": [
+    "Error: Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+   ],
+   "http": [],
+   "failed": [
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED"
+   ]
+  },
+  "/changelog": {
+   "console": [],
+   "pageerror": [
+    "Error: Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+   ],
+   "http": [],
+   "failed": [
+    "font https://ciszunetwork.vercel.app/_next/static/media/26d4368bf94c0ec4-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/98b2a1b09904fcf6-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/c3ea40b89f2c1e84-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/f3bd7e38ce097e28-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/fd89c2519bdbefb3-s.p.woff2 → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED"
+   ]
+  },
+  "/contact": {
+   "console": [],
+   "pageerror": [
+    "Error: Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+   ],
+   "http": [],
+   "failed": [
+    "font https://ciszunetwork.vercel.app/_next/static/media/26d4368bf94c0ec4-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/98b2a1b09904fcf6-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/c3ea40b89f2c1e84-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/f3bd7e38ce097e28-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/fd89c2519bdbefb3-s.p.woff2 → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED"
+   ]
+  },
+  "/courses": {
+   "console": [],
+   "pageerror": [
+    "Error: Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+   ],
+   "http": [],
+   "failed": [
+    "font https://ciszunetwork.vercel.app/_next/static/media/26d4368bf94c0ec4-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/98b2a1b09904fcf6-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/c3ea40b89f2c1e84-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/f3bd7e38ce097e28-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/fd89c2519bdbefb3-s.p.woff2 → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED"
+   ]
+  },
+  "/credits": {
+   "console": [
+    "error: Failed to load resource: the server responded with a status of 404 ()"
+   ],
+   "pageerror": [
+    "Error: Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+   ],
+   "http": [
+    "404 https://ciszunetwork.vercel.app/credits"
+   ],
+   "failed": [
+    "font https://ciszunetwork.vercel.app/_next/static/media/26d4368bf94c0ec4-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/98b2a1b09904fcf6-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/c3ea40b89f2c1e84-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/f3bd7e38ce097e28-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/fd89c2519bdbefb3-s.p.woff2 → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED"
+   ]
+  },
+  "/documentation": {
+   "console": [
+    "error: Connecting to 'https://www.google.co.ve/ads/ga-audiences?v=1&t=sr&slf_rd=1&_r=4&tid=G-TQH12LRZK6&cid=1791906869.1790325287&gtm=45je69n1v9262327329za200zd9262327329xf1&rcb=6&aip=1&dma=0&gcd=13l3l3l3l1l1&npa=0&frm=0&tag_exp=115616985~115938466~115938469~11889792"
+   ],
+   "pageerror": [
+    "Error: Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+   ],
+   "http": [],
+   "failed": [
+    "font https://ciszunetwork.vercel.app/_next/static/media/26d4368bf94c0ec4-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/98b2a1b09904fcf6-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/c3ea40b89f2c1e84-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/f3bd7e38ce097e28-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/fd89c2519bdbefb3-s.p.woff2 → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED"
+   ]
+  },
+  "/donate": {
+   "console": [
+    "warning: AdSense head tag doesn't support data-cookie-consent attribute.",
+    "error: Loading the image 'https://www.googletagmanager.com/a?v=3&t=l&pid=712185168&rv=69n1&tag_exp=115616985~115938465~115938469~118897920~118897930~120213116~120385423~120469145~120469153&u=AAAAAAAAAAAAACA&h=Ag&gtm=45je69n1v9262327329za200zd9262327329xf1&ccid=262327"
+   ],
+   "pageerror": [
+    "Error: Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+   ],
+   "http": [
+    "403 https://ko-fi.com/ciszukoantony/?hidefeed=true&widget=true&embed=true&preview=true",
+    "403 https://ko-fi.com/ciszukoantony/?hidefeed=true&widget=true&embed=true&preview=true"
+   ],
+   "failed": [
+    "document https://ko-fi.com/ciszukoantony/?hidefeed=true&widget=true&embed=true&preview=true → net::ERR_BLOCKED_BY_RESPONSE",
+    "document https://nowpayments.io/embeds/donation-widget?api_key=739f2096-6c64-40d6-a2a1-635784185dfb → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/26d4368bf94c0ec4-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/98b2a1b09904fcf6-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/c3ea40b89f2c1e84-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/f3bd7e38ce097e28-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/fd89c2519bdbefb3-s.p.woff2 → net::ERR_ABORTED",
+    "document https://ko-fi.com/ciszukoantony/?hidefeed=true&widget=true&embed=true&preview=true → net::ERR_BLOCKED_BY_RESPONSE",
+    "image https://www.googletagmanager.com/a?v=3&t=l&pid=712185168&rv=69n1&tag_exp=115616985~115938465~115938469~1188979 → csp",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED"
+   ]
+  },
+  "/downloads": {
+   "console": [],
+   "pageerror": [
+    "Error: Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+   ],
+   "http": [],
+   "failed": [
+    "font https://ciszunetwork.vercel.app/_next/static/media/26d4368bf94c0ec4-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/98b2a1b09904fcf6-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/c3ea40b89f2c1e84-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/f3bd7e38ce097e28-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/fd89c2519bdbefb3-s.p.woff2 → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED"
+   ]
+  },
+  "/faq": {
+   "console": [],
+   "pageerror": [
+    "Error: Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+   ],
+   "http": [],
+   "failed": [
+    "font https://ciszunetwork.vercel.app/_next/static/media/26d4368bf94c0ec4-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/98b2a1b09904fcf6-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/c3ea40b89f2c1e84-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/f3bd7e38ce097e28-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/fd89c2519bdbefb3-s.p.woff2 → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED"
+   ]
+  },
+  "/feedback": {
+   "console": [],
+   "pageerror": [
+    "Error: Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+   ],
+   "http": [],
+   "failed": [
+    "font https://ciszunetwork.vercel.app/_next/static/media/26d4368bf94c0ec4-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/98b2a1b09904fcf6-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/c3ea40b89f2c1e84-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/f3bd7e38ce097e28-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/fd89c2519bdbefb3-s.p.woff2 → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED"
+   ]
+  },
+  "/forum": {
+   "console": [],
+   "pageerror": [
+    "Error: Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+   ],
+   "http": [],
+   "failed": [
+    "font https://ciszunetwork.vercel.app/_next/static/media/26d4368bf94c0ec4-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/98b2a1b09904fcf6-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/c3ea40b89f2c1e84-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/f3bd7e38ce097e28-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/fd89c2519bdbefb3-s.p.woff2 → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED"
+   ]
+  },
+  "/guidelines": {
+   "console": [
+    "error: Failed to load resource: the server responded with a status of 404 ()"
+   ],
+   "pageerror": [
+    "Error: Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+   ],
+   "http": [
+    "404 https://ciszunetwork.vercel.app/guidelines",
+    "401 https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/pat/a408b3f75d0c3812/1790325407782/8815ed23e66b2b231d1a"
+   ],
+   "failed": [
+    "font https://ciszunetwork.vercel.app/_next/static/media/26d4368bf94c0ec4-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/98b2a1b09904fcf6-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/c3ea40b89f2c1e84-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/f3bd7e38ce097e28-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/fd89c2519bdbefb3-s.p.woff2 → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED"
+   ]
+  },
+  "/help": {
+   "console": [
+    "error: Failed to load resource: the server responded with a status of 404 ()"
+   ],
+   "pageerror": [
+    "Error: Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+   ],
+   "http": [
+    "404 https://ciszunetwork.vercel.app/projects?_rsc=R0m0mqLrEw2wq9Wd"
+   ],
+   "failed": [
+    "font https://ciszunetwork.vercel.app/_next/static/media/26d4368bf94c0ec4-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/98b2a1b09904fcf6-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/c3ea40b89f2c1e84-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/f3bd7e38ce097e28-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/fd89c2519bdbefb3-s.p.woff2 → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED"
+   ]
+  },
+  "/information": {
+   "console": [
+    "error: Failed to load resource: the server responded with a status of 404 ()"
+   ],
+   "pageerror": [
+    "Error: Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+   ],
+   "http": [
+    "404 https://ciszunetwork.vercel.app/projects?_rsc=XATzFMGjfbPZTm5g"
+   ],
+   "failed": [
+    "font https://ciszunetwork.vercel.app/_next/static/media/26d4368bf94c0ec4-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/98b2a1b09904fcf6-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/c3ea40b89f2c1e84-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/f3bd7e38ce097e28-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/fd89c2519bdbefb3-s.p.woff2 → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED"
+   ]
+  },
+  "/license": {
+   "console": [
+    "error: Failed to load resource: the server responded with a status of 404 ()"
+   ],
+   "pageerror": [
+    "Error: Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+   ],
+   "http": [
+    "404 https://ciszunetwork.vercel.app/license"
+   ],
+   "failed": [
+    "font https://ciszunetwork.vercel.app/_next/static/media/26d4368bf94c0ec4-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/98b2a1b09904fcf6-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/c3ea40b89f2c1e84-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/f3bd7e38ce097e28-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/fd89c2519bdbefb3-s.p.woff2 → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED"
+   ]
+  },
+  "/policy": {
+   "console": [
+    "error: Failed to load resource: the server responded with a status of 404 ()"
+   ],
+   "pageerror": [
+    "Error: Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+   ],
+   "http": [
+    "404 https://ciszunetwork.vercel.app/policy"
+   ],
+   "failed": [
+    "font https://ciszunetwork.vercel.app/_next/static/media/26d4368bf94c0ec4-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/98b2a1b09904fcf6-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/c3ea40b89f2c1e84-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/f3bd7e38ce097e28-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/fd89c2519bdbefb3-s.p.woff2 → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED"
+   ]
+  },
+  "/reviews": {
+   "console": [
+    "warning: The resource https://ciszunetwork.vercel.app/_next/static/media/c3ea40b89f2c1e84-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded in",
+    "warning: The resource https://ciszunetwork.vercel.app/_next/static/media/f3bd7e38ce097e28-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded in",
+    "warning: The resource https://ciszunetwork.vercel.app/_next/static/media/fd89c2519bdbefb3-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded in",
+    "warning: The resource https://ciszunetwork.vercel.app/_next/static/media/98b2a1b09904fcf6-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded in",
+    "warning: The resource https://ciszunetwork.vercel.app/_next/static/media/26d4368bf94c0ec4-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded in"
+   ],
+   "pageerror": [
+    "Error: Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+   ],
+   "http": [],
+   "failed": [
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED"
+   ]
+  },
+  "/rules": {
+   "console": [
+    "error: Failed to load resource: the server responded with a status of 404 ()"
+   ],
+   "pageerror": [
+    "Error: Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+   ],
+   "http": [
+    "404 https://ciszunetwork.vercel.app/rules"
+   ],
+   "failed": [
+    "fetch https://analytics.google.com/g/collect?v=2&tid=G-TQH12LRZK6&gtm=45He69n1v9262327329za208zd9262327329xf1&_p=179 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/26d4368bf94c0ec4-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/98b2a1b09904fcf6-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/c3ea40b89f2c1e84-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/f3bd7e38ce097e28-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/fd89c2519bdbefb3-s.p.woff2 → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED"
+   ]
+  },
+  "/stats": {
+   "console": [
+    "warning: The resource https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn/projects/ciszu/content/logos/images/outline/logotype/gradient/color/ciszu_logotipo_outline_zcolor_cwhite_full.svg was preloaded using link preload but not used within a fe",
+    "warning: The resource https://ciszunetwork.vercel.app/_next/static/media/98b2a1b09904fcf6-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded in",
+    "warning: The resource https://ciszunetwork.vercel.app/_next/static/media/c3ea40b89f2c1e84-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded in",
+    "warning: The resource https://ciszunetwork.vercel.app/_next/static/media/fd89c2519bdbefb3-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded in",
+    "warning: The resource https://ciszunetwork.vercel.app/_next/static/media/26d4368bf94c0ec4-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded in",
+    "warning: The resource https://ciszunetwork.vercel.app/_next/static/media/f3bd7e38ce097e28-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded in"
+   ],
+   "pageerror": [
+    "Error: Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+   ],
+   "http": [
+    "401 https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/",
+    "401 https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/"
+   ],
+   "failed": [
+    "font https://ciszunetwork.vercel.app/_next/static/media/26d4368bf94c0ec4-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/98b2a1b09904fcf6-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/c3ea40b89f2c1e84-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/f3bd7e38ce097e28-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/fd89c2519bdbefb3-s.p.woff2 → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED"
+   ]
+  },
+  "/support": {
+   "console": [
+    "warning: The resource https://ciszunetwork.vercel.app/_next/static/media/26d4368bf94c0ec4-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded in",
+    "error: Connecting to 'https://www.google.co.ve/ads/ga-audiences?v=1&t=sr&slf_rd=1&_r=4&tid=G-TQH12LRZK6&cid=1791906869.1790325287&gtm=45je69n1v9262327329za200zd9262327329xf1&rcb=12&aip=1&dma=0&gcd=13l3l3l3l1l1&npa=0&frm=0&tag_exp=115616986~115938466~115938468~1188979"
+   ],
+   "pageerror": [
+    "Error: Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+   ],
+   "http": [
+    "401 https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/pat/a408b5ab9c723812/1790325476727/b0c527126c094cffb356"
+   ],
+   "failed": [
+    "font https://ciszunetwork.vercel.app/_next/static/media/98b2a1b09904fcf6-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/c3ea40b89f2c1e84-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/f3bd7e38ce097e28-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/fd89c2519bdbefb3-s.p.woff2 → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED"
+   ]
+  },
+  "/team": {
+   "console": [],
+   "pageerror": [
+    "Error: Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+   ],
+   "http": [],
+   "failed": [
+    "font https://ciszunetwork.vercel.app/_next/static/media/26d4368bf94c0ec4-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/98b2a1b09904fcf6-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/c3ea40b89f2c1e84-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/f3bd7e38ce097e28-s.p.woff2 → net::ERR_ABORTED",
+    "font https://ciszunetwork.vercel.app/_next/static/media/fd89c2519bdbefb3-s.p.woff2 → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED",
+    "fetch https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/global_disclaimer_deliveries? → net::ERR_ABORTED"
+   ]
+  }
+ }
+}

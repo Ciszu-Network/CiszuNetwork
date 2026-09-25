@@ -1,0 +1,133 @@
+
+> ciszunetwork-monorepo@1.0.0 antony:dev E:\Ciszu Network
+> pnpm --filter ciszukoantony-website dev -p 3001
+
+
+> ciszukoantony-website@1.0.0 dev E:\Ciszu Network\projects\ciszukoantony\website
+> next dev "-p" "3001"
+
+[@sentry/nextjs] Importing `withSentryConfig` from `@sentry/nextjs` is deprecated and will stop working in v11. Import it from `@sentry/nextjs/config` instead:
+  import { withSentryConfig } from '@sentry/nextjs/config';
+[@sentry/nextjs] Importing `withSentryConfig` from `@sentry/nextjs` is deprecated and will stop working in v11. Import it from `@sentry/nextjs/config` instead:
+  import { withSentryConfig } from '@sentry/nextjs/config';
+   ▲ Next.js 15.5.25
+   - Local:        http://localhost:3001
+   - Network:      http://100.75.124.72:3001
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · clientTraceMetadata
+
+ ✓ Starting...
+ ○ Compiling /instrumentation ...
+ ✓ Compiled /instrumentation in 22.6s (1285 modules)
+ ✓ Ready in 78.6s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 5.4s (1035 modules)
+ ○ Compiling / ...
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (132kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (139kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (106kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ ⚠ ./src/app/globals.scss.webpack[javascript/auto]!=!../../../node_modules/.pnpm/next@15.5.25_@babel+core@7._87d2e9833a3ffc94e6c8e1b944c63144/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!../../../node_modules/.pnpm/next@15.5.25_@babel+core@7._87d2e9833a3ffc94e6c8e1b944c63144/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!../../../node_modules/.pnpm/next@15.5.25_@babel+core@7._87d2e9833a3ffc94e6c8e1b944c63144/node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!../../../node_modules/.pnpm/next@15.5.25_@babel+core@7._87d2e9833a3ffc94e6c8e1b944c63144/node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/app/globals.scss
+Deprecation Warning on line 0, column 8 of file:///E:/Ciszu%20Network/projects/ciszukoantony/website/src/app/globals.scss:0:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+0 | @import "tailwindcss";
+
+src\app\globals.scss 1:9  root stylesheet
+
+Import trace for requested module:
+./src/app/globals.scss.webpack[javascript/auto]!=!../../../node_modules/.pnpm/next@15.5.25_@babel+core@7._87d2e9833a3ffc94e6c8e1b944c63144/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!../../../node_modules/.pnpm/next@15.5.25_@babel+core@7._87d2e9833a3ffc94e6c8e1b944c63144/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!../../../node_modules/.pnpm/next@15.5.25_@babel+core@7._87d2e9833a3ffc94e6c8e1b944c63144/node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!../../../node_modules/.pnpm/next@15.5.25_@babel+core@7._87d2e9833a3ffc94e6c8e1b944c63144/node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/app/globals.scss
+./src/app/globals.scss
+ GET / 200 in 3168ms
+ GET / 200 in 140ms
+ GET / 200 in 425ms
+ GET / 200 in 790ms
+ GET / 200 in 398ms
+ GET / 200 in 3910ms
+ ⚠ Cross origin request detected from 127.0.0.1 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ ⚠ ./src/app/globals.scss.webpack[javascript/auto]!=!../../../node_modules/.pnpm/next@15.5.25_@babel+core@7._87d2e9833a3ffc94e6c8e1b944c63144/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!../../../node_modules/.pnpm/next@15.5.25_@babel+core@7._87d2e9833a3ffc94e6c8e1b944c63144/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!../../../node_modules/.pnpm/next@15.5.25_@babel+core@7._87d2e9833a3ffc94e6c8e1b944c63144/node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!../../../node_modules/.pnpm/next@15.5.25_@babel+core@7._87d2e9833a3ffc94e6c8e1b944c63144/node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/app/globals.scss
+Deprecation Warning on line 0, column 8 of file:///E:/Ciszu%20Network/projects/ciszukoantony/website/src/app/globals.scss:0:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+0 | @import "tailwindcss";
+
+src\app\globals.scss 1:9  root stylesheet
+
+Import trace for requested module:
+./src/app/globals.scss.webpack[javascript/auto]!=!../../../node_modules/.pnpm/next@15.5.25_@babel+core@7._87d2e9833a3ffc94e6c8e1b944c63144/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!../../../node_modules/.pnpm/next@15.5.25_@babel+core@7._87d2e9833a3ffc94e6c8e1b944c63144/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!../../../node_modules/.pnpm/next@15.5.25_@babel+core@7._87d2e9833a3ffc94e6c8e1b944c63144/node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!../../../node_modules/.pnpm/next@15.5.25_@babel+core@7._87d2e9833a3ffc94e6c8e1b944c63144/node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/app/globals.scss
+./src/app/globals.scss
+ ✓ Compiled /api/ads/push in 17.9s (4842 modules)
+ GET / 200 in 2806ms
+ GET /api/disclaimers/debug 200 in 639ms
+ GET /api/ads/debug 200 in 1023ms
+ GET /api/ads/push 200 in 1286ms
+ GET /api/disclaimers/debug 200 in 1142ms
+ GET /api/disclaimers/debug 200 in 1111ms
+ GET /api/ads/push 200 in 937ms
+ GET /api/ads/debug 200 in 356ms
+ GET /api/disclaimers/debug 200 in 3840ms
+ GET /api/ads/push 200 in 5626ms
+ GET / 200 in 1165ms
+ GET /api/disclaimers/debug 200 in 1416ms
+ GET /api/ads/debug 200 in 511ms
+ GET /api/ads/push 200 in 1665ms
+ GET /api/disclaimers/debug 200 in 4587ms
+ GET /api/disclaimers/debug 200 in 4583ms
+ GET /api/ads/push 200 in 24988ms
+ GET /api/ads/debug 200 in 21176ms
+ GET / 200 in 769ms
+ GET /api/disclaimers/debug 200 in 67ms
+ GET /api/ads/debug 200 in 1702ms
+ GET /api/ads/push 200 in 2137ms
+ GET /api/disclaimers/debug 200 in 768ms
+ GET /api/ads/push 200 in 1725ms
+ GET /api/disclaimers/debug 200 in 1829ms
+ GET /api/ads/debug 200 in 2024ms
+ GET /api/ads/push 200 in 1762ms
+ GET /api/disclaimers/debug 200 in 933ms
+ GET /api/ads/debug 200 in 808ms
+ GET /api/ads/push 200 in 804ms
+ GET /api/disclaimers/debug 200 in 881ms
+ GET /api/ads/debug 200 in 435ms
+ GET /api/ads/push 200 in 582ms
+ GET /api/disclaimers/debug 200 in 186ms
+ GET /api/ads/push 200 in 901ms
+ GET /api/ads/debug 200 in 171ms
+ GET /api/ads/push 200 in 747ms
+ GET /api/disclaimers/debug 200 in 637ms
+ GET /api/ads/debug 200 in 333ms
+ GET /api/ads/push 200 in 320ms
+ GET /api/disclaimers/debug 200 in 183ms
+ GET /api/ads/debug 200 in 501ms
+ GET /api/ads/push 200 in 759ms
+ GET /api/disclaimers/debug 200 in 571ms
+ GET /api/ads/push 200 in 67ms
+ GET / 200 in 595ms
+ GET /api/disclaimers/debug 200 in 1443ms
+ GET /api/ads/debug 200 in 1158ms
+ GET /api/ads/push 200 in 538ms
+ GET /api/disclaimers/debug 200 in 278ms
+ GET /api/disclaimers/debug 200 in 277ms
+ GET /api/ads/push 200 in 293ms
+ GET /api/ads/debug 200 in 192ms
+ GET /api/disclaimers/debug 200 in 85ms
+ GET /api/ads/push 200 in 51ms
+ GET /api/ads/debug 200 in 61ms
+ GET /api/ads/push 200 in 562ms
+ GET /api/disclaimers/debug 200 in 585ms
+ GET /api/ads/debug 200 in 129ms
+ GET /api/ads/push 200 in 192ms
+ GET /api/disclaimers/debug 200 in 50ms
+ GET /api/ads/push 200 in 57ms
+ GET /api/ads/debug 200 in 57ms
+ GET /api/disclaimers/debug 200 in 47ms
+ GET /api/ads/push 200 in 53ms
+E:\Ciszu Network\projects\ciszukoantony\website:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  ciszukoantony-website@1.0.0 dev: `next dev "-p" "3001"`
+Exit status 1
+ ELIFECYCLE  Command failed with exit code 1.

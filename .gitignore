@@ -265,6 +265,8 @@ projects/*/docs/documentation/*.tmp
 projects/*/website/seo/
 # Scripts de automatización (locales) — solo la raíz (no .github/scripts)
 /scripts/
+# El archive de scripts SÍ se versiona para preservar histórico reutilizable
+!/cripts/archive/
 # Servicios e infraestructura: se ignora TODO salvo las migraciones SQL de
 # Supabase (necesarias para reconstruir el schema). `services/*` (no `services/`)
 # permite excepciones descendentes.

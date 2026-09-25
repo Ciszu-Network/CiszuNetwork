@@ -1,0 +1,40 @@
+
+> ciszubot-website@1.0.0 dev E:\Ciszu Network\projects\ciszubot\website
+> next dev "-p" "3002"
+
+   ▲ Next.js 15.5.25
+   - Local:        http://localhost:3002
+   - Network:      http://100.75.124.72:3002
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · clientTraceMetadata
+
+ ✓ Starting...
+ ○ Compiling /instrumentation ...
+ ✓ Compiled /instrumentation in 43.3s (1285 modules)
+ ✓ Ready in 113.7s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 33.1s (1899 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 79.1s (4431 modules)
+ GET / 200 in 4584ms
+ GET / 200 in 2991ms
+ GET / 200 in 1424ms
+ ✓ Compiled in 14.5s (1814 modules)
+ ✓ Compiled in 4.3s (950 modules)
+ ✓ Compiled in 4.7s (950 modules)
+ ✓ Compiled in 5.2s (950 modules)
+ ✓ Compiled in 3.6s (950 modules)
+ ✓ Compiled in 4.9s (950 modules)
+ ○ Compiling /reviews ...
+ ✓ Compiled /reviews in 6.6s (4428 modules)
+ GET /reviews 200 in 12468ms
+ GET /reviews 200 in 2947ms
+ ○ Compiling /api/ads/debug ...
+ ✓ Compiled /api/auth/session in 14.2s (4454 modules)
+ GET /reviews 200 in 4067ms
+ GET /api/disclaimers/debug 200 in 302ms
+ GET /api/ads/debug 200 in 454ms
+ GET /api/ads/push 200 in 517ms
+ GET /api/auth/session 200 in 633ms
+ GET /api/ads/push 200 in 373ms

@@ -1,0 +1,243 @@
+   ▲ Next.js 15.5.25
+   - Local:        http://localhost:3000
+   - Network:      http://100.75.124.72:3000
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · clientTraceMetadata
+
+ ✓ Starting...
+ ○ Compiling /instrumentation ...
+ ✓ Compiled /instrumentation in 15.6s (1285 modules)
+ ✓ Ready in 65s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 5.7s (1035 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 53.5s (8405 modules)
+ GET / 200 in 1566ms
+ GET / 200 in 2830ms
+ ○ Compiling /api/ads/push ...
+ ✓ Compiled /information in 17.6s (8434 modules)
+ GET /api/disclaimers/debug 200 in 18982ms
+ GET /api/disclaimers/debug 200 in 21804ms
+ GET /api/ads/debug 200 in 22049ms
+ GET /api/ads/push 200 in 22409ms
+ GET /api/ads/push 200 in 20527ms
+ GET /information 200 in 31020ms
+ ○ Compiling /help ...
+ ✓ Compiled /help in 10.4s (8436 modules)
+ GET /api/disclaimers/debug 200 in 3956ms
+ GET /api/ads/debug 200 in 4084ms
+ GET /api/ads/push 200 in 4132ms
+ GET /api/ads/push 200 in 399ms
+ GET /api/disclaimers/debug 200 in 281ms
+ GET /help 200 in 16473ms
+ ○ Compiling /about ...
+ ✓ Compiled /about in 6.8s (8442 modules)
+ GET /api/disclaimers/debug 200 in 2167ms
+ GET /api/ads/debug 200 in 2276ms
+ GET /api/ads/push 200 in 2397ms
+ GET /about 200 in 10709ms
+ ○ Compiling /team ...
+ ✓ Compiled /team in 6.2s (8452 modules)
+ GET /api/disclaimers/debug 200 in 2309ms
+ GET /api/ads/debug 200 in 2376ms
+ GET /api/ads/push 200 in 2411ms
+ GET /team 200 in 9919ms
+ ○ Compiling /faq ...
+ ✓ Compiled /faq in 8s (8460 modules)
+ GET /api/ads/debug 200 in 5735ms
+ GET /api/disclaimers/debug 200 in 4188ms
+ GET /api/disclaimers/debug 200 in 5798ms
+ GET /api/ads/push 200 in 5864ms
+ GET /api/ads/push 200 in 4264ms
+ GET /api/ads/debug 200 in 135ms
+ GET /api/disclaimers/debug 200 in 354ms
+ GET /api/ads/debug 200 in 355ms
+ GET /api/ads/push 200 in 358ms
+ GET /faq 200 in 11843ms
+ ○ Compiling /donate ...
+ ✓ Compiled /donate in 11.9s (8480 modules)
+ GET /api/disclaimers/debug 200 in 5883ms
+ GET /api/disclaimers/debug 200 in 7708ms
+ GET /api/ads/debug 200 in 7774ms
+ GET /api/ads/push 200 in 7897ms
+ GET /api/ads/push 200 in 6083ms
+ GET /api/ads/debug 200 in 165ms
+ GET /api/ads/push 200 in 353ms
+ GET /api/disclaimers/debug 200 in 362ms
+ GET /api/ads/debug 200 in 359ms
+ GET /api/ads/push 200 in 367ms
+ GET /donate 200 in 16263ms
+ GET / 200 in 2703ms
+ GET /api/disclaimers/debug 200 in 443ms
+ GET /api/ads/debug 200 in 777ms
+ GET /api/ads/push 200 in 995ms
+ GET /api/disclaimers/debug 200 in 1032ms
+ GET /api/ads/debug 200 in 945ms
+ GET /api/ads/push 200 in 670ms
+ GET / 200 in 2433ms
+ GET /api/disclaimers/debug 200 in 1388ms
+ GET /api/ads/debug 200 in 1369ms
+ GET /api/ads/push 200 in 1594ms
+ GET /api/disclaimers/debug 200 in 597ms
+ GET /api/ads/debug 200 in 639ms
+ GET /api/ads/push 200 in 613ms
+ ○ Compiling /reviews ...
+ ✓ Compiled /reviews in 19.6s (8494 modules)
+ ✓ Compiled in 5.6s (3084 modules)
+ GET /reviews 200 in 25653ms
+ GET /information 200 in 1656ms
+ GET /api/disclaimers/debug 200 in 1206ms
+ GET /api/ads/debug 200 in 1149ms
+ GET /api/ads/push 200 in 1398ms
+ GET /api/disclaimers/debug 200 in 775ms
+ GET /api/ads/debug 200 in 809ms
+ GET /api/ads/push 200 in 680ms
+ GET /api/ads/push 200 in 286ms
+ GET /help 200 in 1037ms
+ GET /api/disclaimers/debug 200 in 1101ms
+ GET /api/ads/debug 200 in 1003ms
+ GET /api/ads/push 200 in 1079ms
+ GET /api/disclaimers/debug 200 in 462ms
+ GET /api/ads/debug 200 in 499ms
+ GET /api/ads/push 200 in 229ms
+ GET /api/ads/push 200 in 182ms
+ GET /api/disclaimers/debug 200 in 193ms
+ ○ Compiling /donate ...
+ ✓ Compiled /donate in 3.8s (5427 modules)
+ GET /donate 200 in 7042ms
+ GET /api/disclaimers/debug 200 in 1946ms
+ GET /api/ads/debug 200 in 1081ms
+ GET / 200 in 4117ms
+ GET /api/disclaimers/debug 200 in 1373ms
+ GET /api/ads/debug 200 in 1592ms
+ GET /api/ads/push 200 in 1340ms
+ GET /api/disclaimers/debug 200 in 834ms
+ GET /api/ads/debug 200 in 837ms
+ GET / 200 in 3066ms
+ GET /api/disclaimers/debug 200 in 1002ms
+ GET /api/ads/debug 200 in 821ms
+ GET /api/ads/push 200 in 834ms
+ GET /api/disclaimers/debug 200 in 510ms
+ GET /api/ads/debug 200 in 457ms
+ GET /api/ads/push 200 in 286ms
+ GET /api/ads/push 200 in 87ms
+ ✓ Compiled in 37.6s (8437 modules)
+ ✓ Compiled in 17.5s (8437 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 48.9s (8459 modules)
+ GET / 200 in 40595ms
+ ○ Compiling /api/ads/push ...
+ ✓ Compiled /api/ads/push in 7.9s (5394 modules)
+ ✓ Compiled (5398 modules)
+ GET /information 200 in 13389ms
+ GET /api/disclaimers/debug 200 in 575ms
+ GET /api/ads/push 200 in 1255ms
+ GET /api/ads/debug 200 in 1904ms
+ GET /api/ads/debug 200 in 1920ms
+ GET /api/disclaimers/debug 200 in 1971ms
+ GET /api/ads/push 200 in 2080ms
+ GET /api/ads/push 200 in 960ms
+ GET /api/disclaimers/debug 200 in 1071ms
+ GET /api/ads/debug 200 in 1132ms
+ GET /api/ads/push 200 in 401ms
+ GET /help 200 in 1277ms
+ GET /api/disclaimers/debug 200 in 1405ms
+ GET /api/ads/debug 200 in 1692ms
+ GET /api/ads/push 200 in 1833ms
+ GET /api/ads/debug 200 in 1381ms
+ GET /api/disclaimers/debug 200 in 1436ms
+ GET /api/ads/push 200 in 501ms
+ GET /api/ads/push 200 in 607ms
+ GET /api/disclaimers/debug 200 in 675ms
+ GET /api/ads/debug 200 in 746ms
+ ✓ Compiled in 29s (8437 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 31.4s (8437 modules)
+ ✓ Compiled (8459 modules)
+ GET / 200 in 19425ms
+ ○ Compiling /api/ads/debug ...
+ ✓ Compiled /api/ads/push in 3.9s (5394 modules)
+ ✓ Compiled (5398 modules)
+ GET /information 200 in 17822ms
+ GET /api/disclaimers/debug 200 in 949ms
+ GET /api/ads/debug 200 in 787ms
+ GET /api/ads/push 200 in 860ms
+ GET /api/disclaimers/debug 200 in 425ms
+ GET /api/ads/debug 200 in 467ms
+ GET /api/ads/push 200 in 282ms
+ GET /api/ads/push 200 in 172ms
+ GET /api/ads/debug 200 in 152ms
+ GET /help 200 in 1122ms
+ GET /api/disclaimers/debug 200 in 831ms
+ GET /api/ads/debug 200 in 652ms
+ GET /api/ads/push 200 in 890ms
+ GET /api/disclaimers/debug 200 in 805ms
+ GET /api/ads/debug 200 in 842ms
+ GET /api/ads/push 200 in 229ms
+ GET /api/ads/push 200 in 186ms
+ GET /api/disclaimers/debug 200 in 211ms
+ GET /api/ads/debug 200 in 269ms
+ GET /api/ads/push 200 in 109ms
+ GET / 200 in 3091ms
+ GET /api/disclaimers/debug 200 in 1511ms
+ GET /api/ads/debug 200 in 726ms
+ GET /api/ads/push 200 in 807ms
+ GET /api/disclaimers/debug 200 in 750ms
+ GET /api/ads/debug 200 in 812ms
+ GET / 200 in 2523ms
+ GET /api/disclaimers/debug 200 in 1448ms
+ GET /api/ads/debug 200 in 692ms
+ GET /api/ads/push 200 in 791ms
+ GET /api/disclaimers/debug 200 in 601ms
+ GET /api/ads/debug 200 in 651ms
+ ✓ Compiled in 70.6s (8437 modules)
+ ✓ Compiled in 17.1s (8437 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 19.1s (5375 modules)
+ GET / 200 in 24223ms
+ GET / 200 in 2863ms
+ ○ Compiling /api/ads/debug ...
+ ✓ Compiled /api/ads/push in 14.4s (5394 modules)
+ ✓ Compiled (5398 modules)
+ GET /information 200 in 21191ms
+ GET /api/disclaimers/debug 200 in 1081ms
+ GET /api/ads/debug 200 in 939ms
+ GET /api/ads/push 200 in 1021ms
+ GET /api/disclaimers/debug 200 in 742ms
+ GET /api/ads/debug 200 in 773ms
+ GET /api/ads/push 200 in 516ms
+ GET /api/ads/push 200 in 380ms
+ GET /help 200 in 1631ms
+ GET /api/disclaimers/debug 200 in 1181ms
+ GET /api/ads/debug 200 in 604ms
+ GET /api/ads/push 200 in 916ms
+ GET /api/disclaimers/debug 200 in 673ms
+ GET /api/ads/debug 200 in 778ms
+ GET /api/ads/push 200 in 555ms
+ ✓ Compiled in 38.7s (8437 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 24.6s (8459 modules)
+ GET / 200 in 13787ms
+ ○ Compiling /api/ads/push ...
+ ✓ Compiled /api/ads/debug in 5s (5394 modules)
+ ✓ Compiled (5398 modules)
+ GET /information 200 in 18438ms
+ GET /api/disclaimers/debug 200 in 999ms
+ GET /api/ads/debug 200 in 977ms
+ GET /api/ads/push 200 in 1154ms
+ GET /api/disclaimers/debug 200 in 496ms
+ GET /api/ads/debug 200 in 546ms
+ GET /api/ads/push 200 in 442ms
+ GET /api/ads/push 200 in 106ms
+ GET /help 200 in 1249ms
+ GET /api/disclaimers/debug 200 in 2271ms
+ GET /api/ads/push 200 in 2317ms
+ GET /api/ads/debug 200 in 2355ms
+ ✓ Compiled in 20s (8437 modules)
+ ✓ Compiled in 14s (8437 modules)
+ ✓ Compiled in 7.7s (8437 modules)
+ ✓ Compiled in 14.4s (8437 modules)
+ ✓ Compiled in 5.6s (3084 modules)
+ ✓ Compiled in 4.1s (3084 modules)
+ ✓ Compiled in 2.8s (3084 modules)
