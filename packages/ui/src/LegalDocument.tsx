@@ -23,6 +23,15 @@ export interface LegalArticle {
   isCode?: boolean;
 }
 
+export interface LegalVersion {
+  /** Etiqueta de versión del documento (p. ej. `v2026.1 · Política de Privacidad`). */
+  label: string;
+  /** Fecha de la última actualización (texto libre, p. ej. `2026`). */
+  date: string;
+  /** Estado del documento (p. ej. `Vigente`). */
+  status?: string;
+}
+
 export interface LegalDocumentProps {
   /** Icono del registro (p. ej. `shield`, `rules`, `license`). */
   icon: string;
@@ -36,6 +45,8 @@ export interface LegalDocumentProps {
   articles: LegalArticle[];
   /** Firma al pie del documento. */
   signOff: { title: string; subtitle?: string };
+  /** Bloque opcional de versión/fecha/estado al pie, antes de la firma. */
+  version?: LegalVersion;
   theme: InfoTheme;
 }
 
@@ -46,6 +57,7 @@ export function LegalDocument({
   docLabel,
   articles,
   signOff,
+  version,
   theme,
 }: LegalDocumentProps) {
   return (
@@ -115,6 +127,39 @@ export function LegalDocument({
               </article>
             ))}
           </div>
+
+          {/* Versión completa del documento (opcional) */}
+          {version ? (
+            <div
+              className={`rounded-2xl border p-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between ${theme.border} ${theme.accentBg}`}
+            >
+              <div className="flex items-center gap-4">
+                <div className={`w-8 h-8 shrink-0 ${theme.accent}`}>
+                  <Icon name="certificates" size={32} />
+                </div>
+                <div className="space-y-0.5">
+                  <p className="text-[9px] font-black uppercase tracking-[0.35em] text-gray-500">
+                    Versión completa del documento
+                  </p>
+                  <p className="font-mono text-xs md:text-sm font-bold text-white break-all">{version.label}</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-1 md:justify-end">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">Actualizado</span>
+                  <span className="text-[11px] font-bold text-gray-300">{version.date}</span>
+                </div>
+                {version.status ? (
+                  <div className="flex items-center gap-2">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">Estado</span>
+                    <span className={`text-[11px] font-black uppercase tracking-widest ${theme.accent}`}>
+                      {version.status}
+                    </span>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          ) : null}
 
           {/* Firma */}
           <div className="pt-16 mt-16 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 opacity-40">

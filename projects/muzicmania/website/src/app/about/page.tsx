@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import MainLayout from '@/components/templates/MainLayout';
 import { Icon } from '@ciszu/ui';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
@@ -37,8 +38,14 @@ export default function AboutPage() {
               Nacido como un proyecto independiente, busca fusionar la fluidez de los juegos arcade clásicos con las capacidades modernas de la web. Nuestra misión es democratizar el acceso a la música y el arte visual cyberpunk.
             </p>
           </div>
-          <div className="w-48 h-48 bg-gradient-to-br from-neon-blue via-neon-purple to-neon-pink rounded-3xl flex items-center justify-center shadow-neon-blue/50 shadow-2xl animate-pulse">
-            <img src={resolveAssetPath('projects/muzicmania/content/logos/isotipo.svg')} alt="MuzicMania" className="w-24 h-24 drop-shadow-glow" />
+          <div className="relative w-48 h-48 shrink-0 rounded-3xl overflow-hidden bg-gradient-to-br from-neon-blue via-neon-purple to-neon-pink flex items-center justify-center shadow-neon-blue/50 shadow-2xl">
+            <Image
+              src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')}
+              alt="Isotipo de MuzicMania"
+              fill
+              sizes="192px"
+              className="object-contain p-8 drop-shadow-neon-blue"
+            />
           </div>
         </section>
 

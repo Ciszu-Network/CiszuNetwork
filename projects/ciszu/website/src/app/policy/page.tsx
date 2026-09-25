@@ -105,6 +105,7 @@ export default function PolicyPage() {
           docLabel={`Política Oficial de ${CISZU_NETWORK.name}`}
           articles={ARTICLES}
           signOff={{ title: 'Compromiso de Privacidad', subtitle: 'Actualizado 2026 — Ciszu Network' }}
+          version={{ label: 'v2026.1 · Política de Privacidad de Ciszu Network', date: '2026', status: 'Vigente' }}
           theme={THEME}
         />
       </PageReveal>

@@ -17,6 +17,7 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 import ColorSwatches, { type BrandColor } from '@/components/information/ColorSwatches';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
+import IconShowcase from './IconShowcase';
 
 export const metadata: Metadata = {
   title: 'Information | Ciszuko Antony',
@@ -217,10 +218,21 @@ const ICON_LIBRARY: Array<{ name: string; label: string }> = [
   { name: 'bell', label: 'Avisos' },
 ];
 
-const TECH_STACK = [
+const TECH_STACK: Array<{
+  name: string;
+  icon: string;
+  /** SVG de marca real del repo (`shared/icons/svg/**`, CDN con fallback local). */
+  brand?: string;
+  brandStyle?: 'filled' | 'outline';
+  tech: string;
+  use: string;
+  href: string;
+}> = [
   {
     name: 'Next.js 15',
     icon: 'globe',
+    brand: 'ri-filled-nextjs',
+    brandStyle: 'filled',
     tech: 'App Router · Server Components · SEO',
     use: 'Estructura y renderizado del portfolio, metadata SSR por ruta.',
     href: 'https://nextjs.org',
@@ -228,6 +240,8 @@ const TECH_STACK = [
   {
     name: 'React 19',
     icon: 'rocket',
+    brand: 'ri-filled-reactjs',
+    brandStyle: 'filled',
     tech: 'Hooks · Server Actions · UI',
     use: 'Interfaz reactiva de páginas, docks y editores visuales.',
     href: 'https://react.dev',
@@ -235,6 +249,8 @@ const TECH_STACK = [
   {
     name: 'TypeScript 6',
     icon: 'terminal',
+    brand: 'ri-typescript',
+    brandStyle: 'outline',
     tech: 'Strict · Tipos compartidos',
     use: 'Tipado estricto en webs, paquetes compartidos y scripts.',
     href: 'https://www.typescriptlang.org',
@@ -242,6 +258,8 @@ const TECH_STACK = [
   {
     name: 'Tailwind CSS 4',
     icon: 'palette',
+    brand: 'ri-filled-tailwind-css',
+    brandStyle: 'filled',
     tech: 'JIT · Design tokens',
     use: 'Sistema visual neón con tema oscuro y tema claro.',
     href: 'https://tailwindcss.com',
@@ -249,6 +267,8 @@ const TECH_STACK = [
   {
     name: 'Supabase',
     icon: 'security',
+    brand: 'ri-filled-supabase',
+    brandStyle: 'filled',
     tech: 'Auth · Postgres · Storage · RLS',
     use: 'CISZU ID, datos, certificados y CDN de assets de marca.',
     href: 'https://supabase.com',
@@ -256,6 +276,8 @@ const TECH_STACK = [
   {
     name: 'PostgreSQL + Drizzle',
     icon: 'server',
+    brand: 'ri-filled-drizzle',
+    brandStyle: 'filled',
     tech: 'ORM tipado · Migraciones',
     use: 'Capa @ciszunetwork/db: esquemas y cliente de base de datos.',
     href: 'https://orm.drizzle.team',
@@ -281,6 +303,13 @@ const TECH_STACK = [
     use: 'Edición visual de páginas del portfolio sobre componentes propios.',
     href: 'https://puckeditor.com',
   },
+];
+
+const HERO_STATS = [
+  { value: '01', label: 'Marca personal', sub: 'Ciszuko Antony' },
+  { value: '4+', label: 'Proyectos', sub: 'Web, bot, juego y comunidad' },
+  { value: '62', label: 'Documentos', sub: 'Ingeniería verificable' },
+  { value: '100%', label: 'Autoría propia', sub: 'Código, diseño y arte' },
 ];
 
 const GROUPS: InfoLinkGroup[] = [
@@ -414,6 +443,20 @@ export default function InformationPage() {
             subtitle="Identidad visual, colorología, iconografía, misión y stack tecnológico del portfolio personal de Ciszuko Antony: la marca, la obra y la ingeniería en una sola página."
             theme={THEME}
           />
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            {HERO_STATS.map((stat) => (
+              <div
+                key={stat.label}
+                className="group rounded-[2rem] border border-white/10 bg-white/5 p-5 text-center transition-all duration-300 hover:-translate-y-1 hover:border-neon-blue/40"
+              >
+                <p className="font-header text-3xl font-black text-neon-blue transition-transform duration-300 group-hover:scale-110">
+                  {stat.value}
+                </p>
+                <p className="mt-1 text-xs font-black uppercase text-white">{stat.label}</p>
+                <p className="mt-0.5 text-[10px] font-bold text-white/40">{stat.sub}</p>
+              </div>
+            ))}
+          </div>
         </section>
 
         <section id="identidad" className="scroll-mt-28 space-y-10">
@@ -427,7 +470,7 @@ export default function InformationPage() {
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <article className="rounded-[2.5rem] border border-white/10 bg-white/5 p-8 transition-colors hover:border-neon-blue/40">
+            <article className="group rounded-[2.5rem] border border-white/10 bg-white/5 p-8 transition-all duration-300 hover:-translate-y-1 hover:border-neon-blue/40 hover:bg-white/[0.07]">
               <div className="flex flex-col xl:flex-row items-center xl:items-start gap-7">
                 <div className="relative h-28 w-28 shrink-0 animate-float">
                   <Image
@@ -458,7 +501,7 @@ export default function InformationPage() {
               </div>
             </article>
 
-            <article className="rounded-[2.5rem] border border-white/10 bg-white/5 p-8 transition-colors hover:border-neon-blue/40">
+            <article className="group rounded-[2.5rem] border border-white/10 bg-white/5 p-8 transition-all duration-300 hover:-translate-y-1 hover:border-neon-blue/40 hover:bg-white/[0.07]">
               <div className="flex flex-col items-center gap-7 text-center">
                 <div className="relative h-28 w-full max-w-[300px] shrink-0">
                   <Image
@@ -568,9 +611,9 @@ export default function InformationPage() {
             {FILE_FORMATS.map((category) => (
               <div
                 key={category.category}
-                className={`flex flex-col gap-5 rounded-2xl border p-6 sm:flex-row ${category.border}`}
+                className={`group flex flex-col gap-5 rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-1 hover:bg-white/5 sm:flex-row ${category.border}`}
               >
-                <span className={`h-10 w-10 shrink-0 ${category.tone}`}>
+                <span className={`h-10 w-10 shrink-0 transition-transform duration-300 group-hover:scale-110 ${category.tone}`}>
                   <Icon name={category.icon} size={36} />
                 </span>
                 <div className="flex-1 space-y-3">
@@ -710,7 +753,7 @@ export default function InformationPage() {
             {PILLARS.map((pillar) => (
               <div
                 key={pillar.title}
-                className={`group rounded-[2rem] border p-7 transition-colors ${pillar.border} ${pillar.bg}`}
+                className={`group rounded-[2rem] border p-7 transition-all duration-300 hover:-translate-y-1.5 ${pillar.border} ${pillar.bg}`}
               >
                 <span className={`mb-4 block h-11 w-11 transition-transform group-hover:scale-110 ${pillar.tone}`}>
                   <Icon name={pillar.icon} size={40} />
@@ -750,7 +793,7 @@ export default function InformationPage() {
                 {PHILOSOPHY.map((item) => (
                   <div
                     key={item.label}
-                    className="space-y-3 rounded-2xl border border-white/10 border-t-2 bg-black/40 p-6"
+                    className="space-y-3 rounded-2xl border border-white/10 border-t-2 bg-black/40 p-6 transition-all duration-300 hover:-translate-y-1 hover:bg-black/60"
                     style={{ borderTopColor: item.color }}
                   >
                     <h4 className="text-xs font-black uppercase tracking-widest" style={{ color: ink(item.color) }}>
@@ -775,24 +818,13 @@ export default function InformationPage() {
             toneBg="bg-neon-blue/10"
             toneBorder="border-neon-blue/30"
           />
-          <div className="rounded-[3rem] border border-white/10 bg-white/5 p-5 md:p-7">
-            <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
-              {ICON_LIBRARY.map((item) => (
-                <div
-                  key={item.name}
-                  className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-white/10 bg-black/40 p-4 transition-colors hover:border-neon-blue/40"
-                  title={item.name}
-                >
-                  <span className="h-8 w-8 text-white">
-                    <Icon name={item.name} size={32} />
-                  </span>
-                  <span className="text-center text-[9px] font-black uppercase tracking-widest text-white/40">
-                    {item.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
+          <IconShowcase
+            icons={ICON_LIBRARY}
+            accent="text-neon-blue"
+            accentBg="bg-neon-blue/10"
+            accentBorder="border-neon-blue/40"
+            glow="bg-neon-blue/20"
+          />
         </section>
 
         <section id="ecosistema" className="scroll-mt-28 space-y-10">
@@ -811,12 +843,22 @@ export default function InformationPage() {
                 href={tech.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex flex-col gap-6 rounded-[2rem] border border-white/10 bg-white/5 p-8 transition-colors hover:border-neon-cyan/40"
+                className="group relative flex flex-col gap-6 overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 p-8 transition-all duration-300 hover:-translate-y-1.5 hover:border-neon-cyan/40 hover:bg-white/[0.07]"
               >
-                <span className="h-12 w-12 text-neon-blue transition-transform group-hover:scale-110">
-                  <Icon name={tech.icon} size={44} />
-                </span>
-                <div className="space-y-4">
+                <span className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-neon-cyan/10 opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-100" />
+                <div className="relative flex items-start justify-between gap-3">
+                  <span className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-[#0b1020] shadow-inner transition-transform duration-300 group-hover:scale-110">
+                    {tech.brand ? (
+                      <Icon name={tech.brand} style={tech.brandStyle} size={30} className="invert" />
+                    ) : (
+                      <Icon name={tech.icon} size={26} className="text-neon-blue" />
+                    )}
+                  </span>
+                  <span className="rounded-full border border-neon-cyan/30 bg-neon-cyan/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-widest text-neon-cyan">
+                    {tech.tech.split('·')[0].trim()}
+                  </span>
+                </div>
+                <div className="relative space-y-4">
                   <div className="space-y-1">
                     <h4 className="text-xl font-header font-black uppercase italic tracking-tight text-white">
                       {tech.name}
@@ -830,7 +872,7 @@ export default function InformationPage() {
                     </p>
                   </div>
                 </div>
-                <div className="mt-auto flex items-center gap-2 pt-4 text-[10px] font-black uppercase italic text-white/40 transition-colors group-hover:text-white">
+                <div className="relative mt-auto flex items-center gap-2 pt-4 text-[10px] font-black uppercase italic text-white/40 transition-colors group-hover:text-white">
                   Documentación oficial
                   <Icon name="arrow-right" size={12} />
                 </div>

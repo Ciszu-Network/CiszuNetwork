@@ -89,6 +89,7 @@ export default function LicensePage() {
           docLabel="Documento de Validez Tecnográfica"
           articles={ARTICLES}
           signOff={{ title: 'Declaración de Libertad de Software', subtitle: 'Red Ciszu — Ciszu Network 2026' }}
+          version={{ label: 'v2026.1 · Licencia MIT y Propiedad Intelectual', date: '2026', status: 'Vigente' }}
           theme={THEME}
         />
       </PageReveal>

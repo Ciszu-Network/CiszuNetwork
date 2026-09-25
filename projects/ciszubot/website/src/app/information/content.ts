@@ -30,9 +30,17 @@ export interface QuoteCard {
   quote: string;
 }
 
+export interface TechBrandIcon {
+  /** Nombre del SVG de marca real en `shared/icons/svg/**` (vía CDN con fallback local). */
+  name: string;
+  style: 'filled' | 'outline';
+}
+
 export interface TechItem {
   name: string;
   icon: string;
+  /** Logo de marca real del stack; si falta, se usa `icon` del registro de @ciszu/ui. */
+  brand?: TechBrandIcon;
   accent: AccentKey;
   href: string;
   role: string;
@@ -410,6 +418,7 @@ export const TECH_STACK = {
     {
       name: 'Discord.js v14',
       icon: 'robot',
+      brand: { name: 'ri-filled-discord', style: 'filled' },
       accent: 'blue' as AccentKey,
       href: 'https://discord.js.org',
       role: 'Gateway, comandos y voz',
@@ -418,6 +427,7 @@ export const TECH_STACK = {
     {
       name: 'Node.js 24',
       icon: 'terminal',
+      brand: { name: 'ri-filled-nodejs', style: 'filled' },
       accent: 'cyan' as AccentKey,
       href: 'https://nodejs.org',
       role: 'Runtime del bot y del tooling',
@@ -426,6 +436,7 @@ export const TECH_STACK = {
     {
       name: 'TypeScript 6',
       icon: 'keyboard',
+      brand: { name: 'ri-typescript', style: 'outline' },
       accent: 'purple' as AccentKey,
       href: 'https://www.typescriptlang.org',
       role: 'Tipado estricto del monorepo',
@@ -442,6 +453,7 @@ export const TECH_STACK = {
     {
       name: 'Supabase (Postgres)',
       icon: 'server',
+      brand: { name: 'ri-filled-supabase', style: 'filled' },
       accent: 'blue' as AccentKey,
       href: 'https://supabase.com',
       role: 'Datos del bot y estado en vivo',
@@ -450,6 +462,7 @@ export const TECH_STACK = {
     {
       name: 'Next.js 15',
       icon: 'globe',
+      brand: { name: 'ri-filled-nextjs', style: 'filled' },
       accent: 'cyan' as AccentKey,
       href: 'https://nextjs.org',
       role: 'Web oficial y dashboard',
@@ -458,6 +471,7 @@ export const TECH_STACK = {
     {
       name: 'React 19',
       icon: 'refresh',
+      brand: { name: 'ri-filled-reactjs', style: 'filled' },
       accent: 'purple' as AccentKey,
       href: 'https://react.dev',
       role: 'Interfaz del sitio y del panel',
@@ -466,6 +480,7 @@ export const TECH_STACK = {
     {
       name: 'Tailwind CSS 4',
       icon: 'palette',
+      brand: { name: 'ri-filled-tailwind-css', style: 'filled' },
       accent: 'pink' as AccentKey,
       href: 'https://tailwindcss.com',
       role: 'Diseño y tema de las webs',

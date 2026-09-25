@@ -144,6 +144,25 @@ export type {
   InfoStepGroup,
   InfoCta,
 } from './InfoBlocks';
+// InfoFaqExplorer: FAQ interactiva (buscador en vivo + chips por categoría +
+// acordeón con acento e icono por categoría) para las páginas /faq.
+export { InfoFaqExplorer } from './InfoFaq';
+export type {
+  InfoFaqExplorerProps,
+  InfoFaqCategory,
+  InfoFaqItem,
+  InfoFaqCopy,
+} from './InfoFaq';
+// InfoHelpExplorer: centro de ayuda interactivo (buscador en vivo + chips por
+// categoría + grid de tarjetas + modal central con detalle/pasos/CTA) para las
+// páginas /help.
+export { InfoHelpExplorer } from './InfoHelp';
+export type {
+  InfoHelpExplorerProps,
+  InfoHelpCategory,
+  InfoHelpCard,
+  InfoHelpCopy,
+} from './InfoHelp';
 // LegalDocument + CreditsRoll: bloques compartidos para las páginas legales
 // (policy/rules/license/guidelines) y de créditos, con la estructura de
 // MuzicMania (hero + documento de artículos + firma / roll de créditos).

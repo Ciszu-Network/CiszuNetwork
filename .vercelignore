@@ -61,6 +61,10 @@ storybook
 **/README*
 **/CHANGELOG.md
 **/LICENSE*
+# "license" NUNCA se ignora: src/app/license/ es una PÁGINA de Next.js en las 4 webs
+# (ignorarla hace que /license dé 404 en producción — mismo caso que /downloads).
+!**/src/app/license/
+!**/src/app/license/**
 **/docs/documentation/**
 !projects/ciszu/website/public/docs/**
 !projects/ciszubot/website/public/docs/**
