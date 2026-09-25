@@ -93,7 +93,7 @@ export default async function RootLayout({
            <RedirectGuard debug={true} />
           <DisclaimerProvider>
             <CloudflareGuard>
-              <AdBlockerGuard site="muzicmania" logo={assetResolver.resolve('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} title="MuzicMania" accent="#c026d3" accentAlt="#ff33cc" donateHref="https://muzicmania.vercel.app/donation">
+              <AdBlockerGuard site="muzicmania" logo={assetResolver.resolve('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} title="MuzicMania" accent="#c026d3" accentAlt="#ff33cc" donateHref="https://muzicmania.vercel.app/donate">
               {/* BetaDisclaimer removido: ahora usa el sistema de push global (GlobalDisclaimer) */}
               {!isEdit && <Navbar />}
               {!isEdit && <ZoomWarning />}

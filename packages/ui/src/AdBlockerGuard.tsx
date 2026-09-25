@@ -66,7 +66,7 @@ const SITE_DONATE_HREF: Record<string, string> = {
   ciszunetwork: 'https://ciszunetwork.vercel.app/donate',
   ciszubot: 'https://ciszubot.vercel.app/donate',
   ciszukoantony: 'https://ciszukoantony.vercel.app/donate',
-  muzicmania: 'https://muzicmania.vercel.app/donation',
+  muzicmania: 'https://muzicmania.vercel.app/donate',
 };
 
 type Screen = 'none' | 'block' | 'disable' | 'continue';

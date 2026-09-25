@@ -33,7 +33,6 @@ const GROUPS: InfoLinkGroup[] = [
     items: [
       { name: 'Changelog', href: '/changelog', icon: 'history', desc: 'Historial de cambios por versión' },
       { name: 'Reviews', href: '/reviews', icon: 'star', desc: 'Reseñas verificadas de la comunidad' },
-      { name: 'Leaderboard', href: '/leaderboard', icon: 'trophy', desc: 'Clasificación de usuarios y equipos' },
       { name: 'Stats', href: '/stats', icon: 'signal', desc: 'Métricas de proyectos e infraestructura' },
       { name: 'Foro', href: '/forum', icon: 'comment', desc: 'Debates, anuncios y comunidad' },
       { name: 'Feedback', href: '/feedback', icon: 'message', desc: 'Reportes de bugs y sugerencias' },
