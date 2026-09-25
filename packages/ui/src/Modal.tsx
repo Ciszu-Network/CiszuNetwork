@@ -10,8 +10,15 @@ export interface ModalProps {
   description?: string;
   children: ReactNode;
   trigger?: ReactNode;
+  /** Ancho del panel: `md` (por defecto) o `lg` para contenido con pasos. */
+  size?: 'md' | 'lg';
   className?: string;
 }
+
+const SIZE_CLASS: Record<NonNullable<ModalProps['size']>, string> = {
+  md: 'max-w-md',
+  lg: 'max-w-2xl',
+};
 
 /**
  * Modal accesible construido sobre Radix Dialog (focus trap, ESC, aria).
@@ -24,6 +31,7 @@ export const Modal: FC<ModalProps> = ({
   description,
   children,
   trigger,
+  size = 'md',
   className = '',
 }) => {
   return (
@@ -32,7 +40,7 @@ export const Modal: FC<ModalProps> = ({
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm data-[state=open]:animate-in data-[state=open]:fade-in" />
         <Dialog.Content
-          className={`fixed left-1/2 top-1/2 z-50 w-[92vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/10 bg-[#0a0a0f] p-6 shadow-2xl shadow-neon-blue/20 outline-none ${className}`}
+          className={`fixed left-1/2 top-1/2 z-50 w-[92vw] ${SIZE_CLASS[size]} -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/10 bg-[#0a0a0f] p-6 shadow-2xl shadow-neon-blue/20 outline-none ${className}`}
         >
           <div className="mb-4 flex items-start justify-between gap-4">
             <div>

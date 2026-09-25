@@ -94,6 +94,7 @@ export const LEGAL_LINKS = [
 ];
 
 export const GENERAL_INFO_LINKS = [
+  { name: 'About',         href: '/about',         icon: I.info,       keywords: ['sobre', 'about', 'nosotros', 'muzicmania', 'mision', 'vision', 'compania'] },
   { name: 'Documentation', href: '/documentation', icon: I.docs,       keywords: ['documentacion', 'docs', 'guia', 'desarrollo', 'api'] },
   { name: 'Help',          href: '/help',          icon: I.help,       keywords: ['ayuda', 'help', 'centro', 'preguntas', 'guias', 'tutorial'] },
   { name: 'FAQ',           href: '/faq',           icon: I.faq,        keywords: ['faq', 'preguntas', 'frecuentes', 'respuestas', 'dudas'] },

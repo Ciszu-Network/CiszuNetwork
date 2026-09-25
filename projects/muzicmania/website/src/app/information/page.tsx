@@ -809,6 +809,7 @@ export default function InformationPage() {
               { name: 'Jugar Ahora', href: '/play', icon: I.play, color: 'green' },
               { name: 'Changelog', href: '/changelog', icon: I.changelog, color: 'blue' },
               { name: 'Soporte', href: '/support', icon: I.support, color: 'pink' },
+              { name: 'Sobre Nosotros', href: '/about', icon: I.info, color: 'blue' },
               { name: 'Mi Equipo', href: '/team', icon: I.team, color: 'purple' },
               { name: 'Licencia', href: '/license', icon: I.license, color: 'cyan' },
               { name: 'Reseñas', href: '/reviews', icon: I.reviews, color: 'purple' },

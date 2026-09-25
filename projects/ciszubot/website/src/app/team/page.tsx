@@ -7,8 +7,12 @@ import {
   InfoCardGrid,
   InfoSteps,
   InfoCtaRow,
+  SocialIcon,
+  CopyWithButton,
+  Icon,
   type InfoCardItem,
   type InfoStepGroup,
+  type SocialPlatform,
 } from '@ciszu/ui';
 import {
   getDict,
@@ -20,6 +24,9 @@ import {
   INSTAGRAM,
   X_SOCIAL,
   FACEBOOK,
+  FEEDBACK_EMAIL,
+  CISZU_NETWORK,
+  CISZUKO_ANTONY,
 } from '@/lib/i18n';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
@@ -34,16 +41,23 @@ export const metadata: Metadata = {
     'Equipo detrás de CiszuBot: quién lo crea, qué roles existen y cómo colaborar en Ciszu Network.',
 };
 
+const MUZICMANIA = 'https://muzicmania.vercel.app';
+
 const COPY = {
   founder: 'Ciszuko Antony',
   founderLegal: 'Francisco Antonio García Menolascina',
   founderRole: 'CEO & Founder · Ciszu Network',
   founderBio:
     'Desarrollador full-stack venezolano. Crea y mantiene CiszuBot, MuzicMania, Ciszu Network y el resto del ecosistema. Diseña la arquitectura, escribe los módulos del bot y revisa cada despliegue antes de publicarse.',
+  founderQuote: 'Un solo núcleo mantiene el bot, las webs, el juego y toda la infraestructura del ecosistema.',
+  contactTitle: 'Contacto directo',
   skillsTitle: 'Stack y disciplinas',
+  socialsTitle: 'Canales oficiales',
   rolesTitle: 'Roles del ecosistema',
   joinTitle: 'Cómo colaborar',
-  actionsTitle: 'Canales oficiales',
+  networkTitle: 'Red del ecosistema',
+  networkBody:
+    'CiszuBot es una pieza de Ciszu Network. Estos son los proyectos hermanos y la comunidad donde vive el bot.',
 };
 
 const SKILLS = [
@@ -57,6 +71,52 @@ const SKILLS = [
   'UI / UX',
   'Cloud & CI',
   'Python',
+];
+
+const CONTACT = [
+  {
+    label: 'Email de soporte',
+    value: FEEDBACK_EMAIL,
+    icon: 'mail',
+    href: `mailto:${FEEDBACK_EMAIL}`,
+    actionLabel: 'Escribir email',
+  },
+];
+
+const SOCIALS: { name: string; href: string; platform: SocialPlatform }[] = [
+  { name: 'GitHub', href: GITHUB_ORG, platform: 'github' },
+  { name: 'Discord', href: DISCORD_SERVER, platform: 'discord' },
+  { name: 'YouTube', href: YOUTUBE, platform: 'youtube' },
+  { name: 'X', href: X_SOCIAL, platform: 'x' },
+  { name: 'Instagram', href: INSTAGRAM, platform: 'instagram' },
+  { name: 'Facebook', href: FACEBOOK, platform: 'facebook' },
+];
+
+const ECOSYSTEM = [
+  {
+    name: 'Ciszu Network',
+    desc: 'Web principal y centro de documentación del ecosistema.',
+    href: CISZU_NETWORK,
+    icon: 'globe',
+  },
+  {
+    name: 'Ciszuko Antony',
+    desc: 'Portfolio del fundador: proyectos, medios y música.',
+    href: CISZUKO_ANTONY,
+    icon: 'user',
+  },
+  {
+    name: 'MuzicMania',
+    desc: 'Juego de ritmo para web con clasificaciones y app de escritorio.',
+    href: MUZICMANIA,
+    icon: 'music',
+  },
+  {
+    name: 'CiszuGamens',
+    desc: 'Comunidad en Discord donde se anuncian bots, eventos y vacantes.',
+    href: DISCORD_SERVER,
+    icon: 'discord',
+  },
 ];
 
 const ROLES: InfoCardItem[] = [
@@ -101,15 +161,6 @@ const STEPS: InfoStepGroup[] = [
   },
 ];
 
-const SOCIALS = [
-  { name: 'GitHub', href: GITHUB_ORG, icon: 'verified' },
-  { name: 'Discord', href: DISCORD_SERVER, icon: 'discord' },
-  { name: 'YouTube', href: YOUTUBE, icon: 'music' },
-  { name: 'X', href: X_SOCIAL, icon: 'share' },
-  { name: 'Instagram', href: INSTAGRAM, icon: 'camera' },
-  { name: 'Facebook', href: FACEBOOK, icon: 'person' },
-];
-
 export default async function TeamPage() {
   const store = await cookies();
   const lang = parseLang(store.get('ciszubot_lang')?.value);
@@ -124,6 +175,7 @@ export default async function TeamPage() {
           <InfoHero icon="users" title={t.teamPage.title} subtitle={t.teamPage.subtitle} theme={THEME} />
         </PageReveal>
 
+        {/* Fundador */}
         <section
           className={`mb-14 p-8 md:p-12 rounded-3xl border text-center relative overflow-hidden ${THEME.border} ${THEME.card}`}
         >
@@ -140,7 +192,12 @@ export default async function TeamPage() {
             <p className={`text-xs font-black uppercase tracking-[0.35em] mt-3 mb-6 ${THEME.accent}`}>
               {COPY.founderRole}
             </p>
-            <p className="max-w-2xl mx-auto text-sm text-white/60 leading-relaxed mb-8">{COPY.founderBio}</p>
+            <p className="max-w-2xl mx-auto text-sm text-white/60 leading-relaxed mb-6">{COPY.founderBio}</p>
+            <p
+              className={`mx-auto mb-8 max-w-2xl rounded-2xl border px-6 py-4 text-xs font-bold uppercase tracking-widest text-white/70 ${THEME.accentBorder} ${THEME.accentBg}`}
+            >
+              {COPY.founderQuote}
+            </p>
 
             <p className={`text-[10px] font-black uppercase tracking-[0.3em] mb-4 ${THEME.accent}`}>
               {COPY.skillsTitle}
@@ -156,19 +213,111 @@ export default async function TeamPage() {
               ))}
             </div>
 
-            <div className="flex flex-wrap justify-center gap-3">
-              {SOCIALS.map((social) => (
-                <a
-                  key={social.name}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`px-4 py-2 rounded-xl border text-xs font-bold text-white transition-all ${THEME.border} ${THEME.card}`}
+            <p className={`text-[10px] font-black uppercase tracking-[0.3em] mb-4 ${THEME.accent}`}>
+              {COPY.contactTitle}
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
+              {CONTACT.map((field) => (
+                <div
+                  key={field.label}
+                  className={`flex items-center justify-between gap-3 rounded-2xl border p-4 ${THEME.border} ${THEME.card}`}
                 >
-                  {social.name}
-                </a>
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${THEME.accentBg} ${THEME.accent}`}
+                    >
+                      <Icon name={field.icon} size={18} />
+                    </span>
+                    <div className="min-w-0 text-left">
+                      <p className="text-[9px] font-black uppercase tracking-widest text-white/40">{field.label}</p>
+                      <CopyWithButton value={field.value} label={`Copiar ${field.label}`}>
+                        <span className="text-xs font-bold text-white truncate md:text-sm">{field.value}</span>
+                      </CopyWithButton>
+                    </div>
+                  </div>
+                  <a
+                    href={field.href}
+                    title={field.actionLabel}
+                    aria-label={field.actionLabel}
+                    className={`shrink-0 rounded-lg border p-2 transition-all hover:scale-110 ${THEME.border} ${THEME.card} ${THEME.accent}`}
+                  >
+                    <Icon name="chevronRight" size={16} />
+                  </a>
+                </div>
               ))}
+              <a
+                href={DISCORD_SERVER}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center justify-between gap-3 rounded-2xl border p-4 transition-all hover:scale-[1.02] ${THEME.border} ${THEME.card}`}
+              >
+                <div className="flex min-w-0 items-center gap-3">
+                  <span
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${THEME.accentBg} ${THEME.accent}`}
+                  >
+                    <Icon name="discord" size={18} />
+                  </span>
+                  <div className="min-w-0 text-left">
+                    <p className="text-[9px] font-black uppercase tracking-widest text-white/40">Discord</p>
+                    <span className="text-xs font-bold text-white truncate md:text-sm">Servidor oficial de soporte</span>
+                  </div>
+                </div>
+                <span className={`${THEME.accent}`}>
+                  <Icon name="chevronRight" size={16} />
+                </span>
+              </a>
             </div>
+          </div>
+        </section>
+
+        {/* Canales oficiales */}
+        <section className={`mb-14 rounded-3xl border p-8 md:p-12 ${THEME.border} ${THEME.card}`}>
+          <p className={`text-center text-[10px] font-black uppercase tracking-[0.3em] mb-6 ${THEME.accent}`}>
+            {COPY.socialsTitle}
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            {SOCIALS.map((social) => (
+              <a
+                key={social.name}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={social.name}
+                aria-label={social.name}
+                className={`flex h-12 w-12 items-center justify-center rounded-full border transition-all hover:scale-110 ${THEME.border} ${THEME.card}`}
+              >
+                <SocialIcon platform={social.platform} size={22} colored />
+              </a>
+            ))}
+          </div>
+        </section>
+
+        {/* Red del ecosistema */}
+        <section className={`mb-14 rounded-3xl border p-8 md:p-12 ${THEME.border} ${THEME.card}`}>
+          <div className="max-w-2xl mx-auto text-center mb-8">
+            <h2 className="font-header font-black text-2xl text-white uppercase tracking-tight mb-3">
+              {COPY.networkTitle}
+            </h2>
+            <p className="text-sm text-white/60 leading-relaxed">{COPY.networkBody}</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {ECOSYSTEM.map((item) => (
+              <a
+                key={item.name}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`p-6 rounded-2xl border transition-all hover:scale-[1.02] ${THEME.border} ${THEME.card}`}
+              >
+                <span
+                  className={`inline-flex items-center justify-center w-11 h-11 rounded-xl mb-4 ${THEME.accentBg} ${THEME.accent}`}
+                >
+                  <Icon name={item.icon} size={22} />
+                </span>
+                <h3 className="font-header font-bold text-white mb-2">{item.name}</h3>
+                <p className="text-sm text-white/60 leading-relaxed">{item.desc}</p>
+              </a>
+            ))}
           </div>
         </section>
 
