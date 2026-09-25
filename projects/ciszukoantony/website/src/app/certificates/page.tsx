@@ -312,12 +312,12 @@ function FilterDropdown({ label, icon, options, value, onChange, colorMap, getLa
                       aria-hidden
                     >
                       {isActive && (
-                        <svg viewBox="0 0 24 24" className="w-3 h-3 text-black" fill="none" stroke="currentColor" strokeWidth={3.5} strokeLinecap="round" strokeLinejoin="round">
+                        <svg viewBox="0 0 24 24" className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth={3.5} strokeLinecap="round" strokeLinejoin="round">
                           <path d="M20 6 9 17l-5-5" />
                         </svg>
                       )}
                     </span>
-                    {optionIcon && <span className="w-4 h-4 flex items-center justify-center shrink-0">{optionIcon(o.id)}</span>}
+                    {optionIcon && <span className="w-4 h-4 flex items-center justify-center shrink-0" style={{ color }}>{optionIcon(o.id)}</span>}
                     {o.label}
                   </button>
                 );
@@ -346,9 +346,9 @@ function FilterDropdown({ label, icon, options, value, onChange, colorMap, getLa
                       style={isActive ? { borderColor: color, backgroundColor: color } : { borderColor: 'rgba(255,255,255,0.3)' }}
                       aria-hidden
                     >
-                      {isActive && <span className="w-1.5 h-1.5 rounded-full bg-black" />}
+                      {isActive && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
                     </span>
-                    {optionIcon && <span className="w-4 h-4 flex items-center justify-center shrink-0">{optionIcon(o.id)}</span>}
+                    {optionIcon && <span className="w-4 h-4 flex items-center justify-center shrink-0" style={{ color }}>{optionIcon(o.id)}</span>}
                     {o.label}
                   </button>
                 );
@@ -1146,7 +1146,7 @@ const relatedOf = (c: Certificate) =>
                     animate={{ opacity: 1, y: 0 }}
                     className="space-y-3"
                   >
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2" style={{ color }}>
                       <CategoryIcon id={cat.id} className="w-4 h-4" />
                       <h3 className="text-sm font-black uppercase tracking-widest" style={{ color }}>{label}</h3>
                       <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">({items.length})</span>
