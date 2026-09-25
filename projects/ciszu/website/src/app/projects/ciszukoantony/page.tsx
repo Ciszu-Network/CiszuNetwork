@@ -1,14 +1,23 @@
 import Image from "next/image";
 import Link from "next/link";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { SocialIcon, SOCIAL_COLORS } from '@ciszu/ui';
+import { SocialIcon, SOCIAL_COLORS, InfoHero, type InfoTheme } from '@ciszu/ui';
 import { CISZUKO_ANTONY, CISZU_NETWORK } from "@/config/site";
-import { User, ArrowRight, ExternalLink, Music, Gamepad2, Mic, Video } from "lucide-react";
+import { ArrowRight, ExternalLink, Music, Gamepad2, Mic, Video } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: 'Ciszu Network | PROJECTS — CISZUKO ANTONY',
   description: 'Proyecto artístico de Ciszuko Antony: contenido gaming, música y tecnología.',
+};
+
+const THEME: InfoTheme = {
+  accent: 'text-brand-light',
+  accentBg: 'bg-brand/10',
+  accentBorder: 'border-brand/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-light to-brand-accent',
 };
 
 const contentTypes = [
@@ -21,17 +30,13 @@ export default function CiszukoAntonyPage() {
   return (
     <div className="min-h-screen pt-24 pb-20">
       <div className="max-w-4xl mx-auto px-4">
-        <div className="text-center mb-16">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-blue via-brand-accent to-neon-pink flex items-center justify-center mx-auto mb-6">
-            <User className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-4xl md:text-6xl font-header font-black bg-gradient-to-r from-neon-blue via-brand-accent to-neon-pink bg-clip-text text-transparent uppercase tracking-tighter mb-4">
-            {CISZUKO_ANTONY.name}
-          </h1>
-          <p className="text-gray-400 max-w-xl mx-auto text-sm uppercase tracking-widest">
-            Youtuber • Streamer • Desarrollador
-          </p>
-        </div>
+        <InfoHero
+          icon="star"
+          title={CISZUKO_ANTONY.name}
+          subtitle="Youtuber • Streamer • Desarrollador"
+          kicker="Proyecto"
+          theme={THEME}
+        />
 
         <div className="space-y-8">
           <div className="p-8 rounded-[2rem] bg-gradient-to-br from-brand/10 via-brand-dark/5 to-transparent border border-brand/20 text-center">

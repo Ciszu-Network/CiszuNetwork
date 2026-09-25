@@ -144,6 +144,17 @@ export type {
   InfoStepGroup,
   InfoCta,
 } from './InfoBlocks';
+// LegalDocument + CreditsRoll: bloques compartidos para las páginas legales
+// (policy/rules/license/guidelines) y de créditos, con la estructura de
+// MuzicMania (hero + documento de artículos + firma / roll de créditos).
+export { LegalDocument, CreditsRoll } from './LegalDocument';
+export type {
+  LegalArticle,
+  LegalDocumentProps,
+  CreditEntry,
+  CreditSection,
+  CreditsRollProps,
+} from './LegalDocument';
 // Radix UI primitives: Modal accesible (Dialog con focus trap + teclado)
 export { default as Modal } from './Modal';
 export type { ModalProps } from './Modal';

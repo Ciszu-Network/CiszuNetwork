@@ -61,7 +61,7 @@ export function CookiesBanner({ lang, dict }: { lang: string; dict: Record<strin
               </h3>
               <p className="text-gray-400 text-xs md:text-sm font-bold leading-relaxed">
                 {(lang === 'es-latam' || lang === 'es-es') ? dict.cookies.text : dict.cookiesEn.text}
-                <Link href="/policies" className="text-neon-cyan hover:text-neon-blue underline transition-colors">
+                <Link href="/policy" className="text-neon-cyan hover:text-neon-blue underline transition-colors">
                   {(lang === 'es-latam' || lang === 'es-es') ? dict.cookies.privacyLink : dict.cookiesEn.privacyLink}
                 </Link>
                 .

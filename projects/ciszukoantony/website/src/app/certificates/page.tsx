@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { InfoHero, type InfoTheme } from '@ciszu/ui';
 import { usePageTitle } from '@/lib/usePageTitle';
 import {
   ALL_DOCUMENTS,
@@ -16,6 +17,15 @@ import {
 import { getCategoryIcon } from '@/data/categoryIcons';
 import { CiscoIcon, HpIcon, IbmIcon, MicrosoftIcon, SimpleLearnIcon } from '@/data/providerIcons';
 import { PREVIEWS_BY_FILE } from '@/data/certificates.previews';
+
+const THEME: InfoTheme = {
+  accent: 'text-neon-blue',
+  accentBg: 'bg-neon-blue/10',
+  accentBorder: 'border-neon-blue/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-dark to-brand',
+};
 
 const CDN_BASE =
   process.env.NEXT_PUBLIC_CDN_URL ||
@@ -1067,13 +1077,13 @@ const relatedOf = (c: Certificate) =>
   return (
     <div className="min-h-screen pt-28 pb-16 px-4">
       <div className="max-w-6xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
-          <h1 className="text-5xl font-header font-black tracking-tighter bg-gradient-to-r from-brand to-brand-200 bg-clip-text text-transparent mb-3">
-            Certificates & Documents
-          </h1>
-          <p className="mt-1 text-xs text-gray-500 uppercase tracking-widest mb-2">
-            {ALL_DOCS.length} total documents · {CERTIFICATES.length} certificates · {OTHER_DOCS.length} supporting docs · catalog CKO-*
-          </p>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <InfoHero
+            icon="certificates"
+            title="Certificates & Documents"
+            subtitle={`${ALL_DOCS.length} total documents · ${CERTIFICATES.length} certificates · ${OTHER_DOCS.length} supporting docs · catalog CKO-*`}
+            theme={THEME}
+          />
         </motion.div>
 
         <motion.div

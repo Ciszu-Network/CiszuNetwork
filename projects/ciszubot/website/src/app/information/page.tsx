@@ -51,9 +51,19 @@ const GROUPS: InfoLinkGroup[] = [
       { name: 'information', href: '/information', icon: 'info', desc: 'Este índice de secciones' },
       { name: 'about', href: '/about', icon: 'info', desc: 'Qué es CiszuBot y quién lo hace' },
       { name: 'team', href: '/team', icon: 'users', desc: 'Equipo detrás del proyecto' },
+      { name: 'Créditos', href: '/credits', icon: 'trophy', desc: 'Dirección, tecnologías y proyectos del ecosistema' },
       { name: 'donate', href: '/donate', icon: 'heart', desc: 'Apoya el desarrollo' },
       { name: 'privacidad', href: '/privacy', icon: 'lock', desc: 'Política de privacidad' },
       { name: 'terminos', href: '/terms', icon: 'shield', desc: 'Términos y condiciones' },
+    ],
+  },
+  {
+    title: 'Legal',
+    items: [
+      { name: 'Lineamientos', href: '/guidelines', icon: 'policies', desc: 'Uso, integración y estándares del bot' },
+      { name: 'Reglas', href: '/rules', icon: 'shield', desc: 'Convivencia y uso aceptable en Discord' },
+      { name: 'Licencia', href: '/license', icon: 'certificates', desc: 'MIT y propiedad intelectual' },
+      { name: 'Política', href: '/policy', icon: 'lock', desc: 'Privacidad, datos, cookies y anuncios' },
     ],
   },
 ];

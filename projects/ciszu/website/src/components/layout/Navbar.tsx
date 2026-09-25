@@ -92,7 +92,7 @@ const NAV_ITEMS: NavEntry[] = [
       { name: 'Help', href: '/help', icon: <HelpCircle className="w-4 h-4" /> },
       { name: 'Contact', href: '/contact', icon: <Mail className="w-4 h-4" /> },
       { name: 'Support', href: '/support', icon: <LifeBuoy className="w-4 h-4" /> },
-      { name: 'Policies', href: '/policies', icon: <Shield className="w-4 h-4" /> },
+      { name: 'Policies', href: '/policy', icon: <Shield className="w-4 h-4" /> },
     ],
   },
 ];

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
-import { Icon, FabRestore } from '@ciszu/ui';
+import { Icon, FabRestore, InfoHero, type InfoTheme } from '@ciszu/ui';
 import FeedbackForm, { OpenReportButton } from '@/components/FeedbackForm';
 import { DISCORD_SERVER, FEEDBACK_EMAIL, getDict, parseLang } from '@/lib/i18n';
 import QuickDocks from '@/components/molecules/QuickDocks';
@@ -12,6 +12,15 @@ export const metadata: Metadata = {
     'Envía feedback, reporta errores o sugiere comandos para CiszuBot. Formulario, email y reporte de problemas.',
 };
 
+const THEME: InfoTheme = {
+  accent: 'text-neon-blue',
+  accentBg: 'bg-neon-blue/10',
+  accentBorder: 'border-neon-blue/40',
+  card: 'bg-card',
+  border: 'border-border',
+  gradient: 'from-neon-blue to-neon-purple',
+};
+
 export default async function FeedbackPage() {
   const store = await cookies();
   const lang = parseLang(store.get('ciszubot_lang')?.value);
@@ -20,10 +29,12 @@ export default async function FeedbackPage() {
   return (
     <div className="bg-bg py-16">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-5xl font-bold text-ink">{t.feedbackPage.title}</h1>
-          <p className="mx-auto mt-4 max-w-2xl text-muted">{t.feedbackPage.subtitle}</p>
-        </div>
+        <InfoHero
+          icon="comment"
+          title={t.feedbackPage.title}
+          subtitle={t.feedbackPage.subtitle}
+          theme={THEME}
+        />
 
         <div className="grid gap-8 lg:grid-cols-2 max-w-5xl mx-auto">
           {/* Formulario */}

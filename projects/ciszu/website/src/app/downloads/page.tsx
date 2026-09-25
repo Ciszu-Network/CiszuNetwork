@@ -1,13 +1,22 @@
-import { Download, MonitorDown, Smartphone, ShieldCheck } from 'lucide-react';
+import { MonitorDown, Smartphone, ShieldCheck } from 'lucide-react';
 import { CISZU_NETWORK } from '@/config/site';
 import type { Metadata } from 'next';
 import { InstallPdwaCta } from '@/components/descargas/InstallPdwaCta';
-import { FabRestore } from '@ciszu/ui';
+import { FabRestore, InfoHero, type InfoTheme } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
 
 export const metadata: Metadata = {
   title: 'Ciszu Network | DESCARGAS',
   description: 'Instala Ciszu Network como PDWA (App de Escritorio Progresiva) en tu PC o móvil, sin pestañas ni barra de dirección.',
+};
+
+const THEME: InfoTheme = {
+  accent: 'text-brand-light',
+  accentBg: 'bg-brand/10',
+  accentBorder: 'border-brand/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-light to-brand-accent',
 };
 
 const steps = [
@@ -32,17 +41,13 @@ export default function DescargasPage() {
   return (
     <div className="min-h-screen pt-24 pb-20">
       <div className="max-w-4xl mx-auto px-4">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand/10 text-brand-light mb-6">
-            <Download className="w-8 h-8" />
-          </div>
-          <h1 className="text-4xl md:text-6xl font-header font-black bg-gradient-to-r from-brand-light to-brand-accent bg-clip-text text-transparent uppercase tracking-tighter mb-4">
-            Descargas
-          </h1>
-          <p className="text-gray-400 max-w-xl mx-auto text-sm uppercase tracking-widest">
-            Instala {CISZU_NETWORK.name} como App de Escritorio Progresiva (PDWA)
-          </p>
-        </div>
+        <InfoHero
+          icon="download"
+          title="Descargas"
+          subtitle={`Instala ${CISZU_NETWORK.name} como App de Escritorio Progresiva (PDWA) en tu PC o móvil, sin pestañas ni barra de dirección.`}
+          kicker="PDWA"
+          theme={THEME}
+        />
 
         <div className="space-y-6 mb-10">
           {steps.map((s, i) => (

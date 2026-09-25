@@ -1,8 +1,7 @@
 "use client";
 
-import { Heart } from "lucide-react";
 import QuickDocks from "@/components/molecules/QuickDocks";
-import { Icon, KoFiEmbed } from '@ciszu/ui';
+import { Icon, InfoHero, KoFiEmbed, type InfoTheme } from '@ciszu/ui';
 
 const DONATION_LINKS = {
   patreon: "https://www.patreon.com/cw/ciszukoantony",
@@ -35,26 +34,25 @@ const METHODS = [
   { label: "Cripto (NOWPayments)", href: DONATION_LINKS.nowPayments, note: "Bitcoin, USDT, ETH y más · sin KYC", color: "#6B21A8", logo: <NowPaymentsLogo /> },
 ];
 
+const THEME: InfoTheme = {
+  accent: 'text-neon-blue',
+  accentBg: 'bg-neon-blue/10',
+  accentBorder: 'border-neon-blue/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-dark to-brand',
+};
+
 export default function DonatePage() {
   return (
     <div className="min-h-screen pt-24 pb-20">
       <div className="max-w-4xl mx-auto px-4">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand/10 text-brand-light mb-6">
-            <Heart className="w-8 h-8" />
-          </div>
-          <h1 className="text-4xl md:text-6xl font-header font-black bg-gradient-to-r from-brand-light to-brand-accent bg-clip-text text-transparent uppercase tracking-tighter mb-4">
-            Donar
-          </h1>
-          <p className="text-gray-400 max-w-xl mx-auto text-sm uppercase tracking-widest">
-            Apoya el ecosistema de Ciszuko Antony
-          </p>
-          <p className="text-gray-500 max-w-2xl mx-auto mt-4 text-sm leading-relaxed">
-            Tus donaciones ayudan a mantener las webs, el bot de Discord, MuzicMania y la
-            comunidad CiszuGamens funcionando. Cualquier aporte, por pequeño que sea, se
-            agradece de corazón.
-          </p>
-        </div>
+        <InfoHero
+          icon="heart"
+          title="Donar"
+          subtitle="Apoya el ecosistema de Ciszuko Antony. Tus donaciones ayudan a mantener las webs, el bot de Discord, MuzicMania y la comunidad CiszuGamens funcionando. Cualquier aporte, por pequeño que sea, se agradece de corazón."
+          theme={THEME}
+        />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
           {METHODS.map((m, i) => (

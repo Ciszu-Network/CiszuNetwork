@@ -1,11 +1,20 @@
 import type { Metadata } from 'next';
 import InstallPdwaInline from '@/components/layout/InstallPdwaInline';
-import { FabRestore } from '@ciszu/ui';
+import { FabRestore, InfoHero, type InfoTheme } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
 
 export const metadata: Metadata = {
   title: 'Ciszuko Antony | DOWNLOADS',
   description: 'Download and install Ciszuko Antony as a desktop app (PDWA): what it is and installation steps.',
+};
+
+const THEME: InfoTheme = {
+  accent: 'text-neon-blue',
+  accentBg: 'bg-neon-blue/10',
+  accentBorder: 'border-neon-blue/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-dark to-brand',
 };
 
 const whatIs = [
@@ -58,12 +67,12 @@ export default function DownloadsPage() {
   return (
     <div className="min-h-screen pt-24 pb-16 px-4 animate-fade-in-up">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-16">
-          <h1 className="text-5xl font-header font-black tracking-tighter bg-gradient-to-r from-brand to-brand-200 bg-clip-text text-transparent mb-4">
-            Downloads
-          </h1>
-          <p className="text-gray-500 text-sm uppercase tracking-widest">Install Ciszuko Antony as a desktop app (PDWA)</p>
-        </div>
+        <InfoHero
+          icon="download"
+          title="Downloads"
+          subtitle="Install Ciszuko Antony as a desktop app (PDWA)"
+          theme={THEME}
+        />
 
         <section className="mb-12">
           <h2 className="text-2xl font-header font-bold text-white mb-4 flex items-center gap-3">

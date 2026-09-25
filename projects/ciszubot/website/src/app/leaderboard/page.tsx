@@ -3,8 +3,18 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import { InfoHero, type InfoTheme } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { usePageTitle } from '@/lib/usePageTitle';
+
+const THEME: InfoTheme = {
+  accent: 'text-neon-blue',
+  accentBg: 'bg-neon-blue/10',
+  accentBorder: 'border-neon-blue/40',
+  card: 'bg-card',
+  border: 'border-border',
+  gradient: 'from-neon-blue to-neon-purple',
+};
 
 interface LeaderboardEntry {
   userId: string;
@@ -89,18 +99,13 @@ export default function LeaderboardPage() {
     <div className="min-h-screen pt-24 pb-20">
       <div className="max-w-4xl mx-auto px-4">
         {/* --- HERO --- */}
-        <Section className="text-center mb-16">
-          <div className="flex items-center justify-center gap-6 mb-6">
-            <div className="w-12 h-12 text-neon-blue flex items-center justify-center">
-              <LIFEbuoyIcon />
-            </div>
-            <h1 className="text-4xl md:text-8xl font-header font-black uppercase tracking-tighter bg-gradient-to-r from-neon-blue via-white to-neon-purple bg-clip-text text-transparent">
-              LEADERBOARD
-            </h1>
-          </div>
-          <p className="text-muted max-w-xl mx-auto text-sm uppercase tracking-widest">
-            Top usuarios por economía de CiszuBot
-          </p>
+        <Section>
+          <InfoHero
+            icon="trophy"
+            title="Leaderboard"
+            subtitle="Top usuarios por economía de CiszuBot"
+            theme={THEME}
+          />
         </Section>
 
         {/* --- SEARCH --- */}

@@ -1,8 +1,7 @@
-import { MessageSquareWarning } from 'lucide-react';
 import { CISZU_NETWORK } from '@/config/site';
 import type { Metadata } from 'next';
 import { FeedbackForm } from '@/components/feedback/FeedbackForm';
-import { FabRestore } from '@ciszu/ui';
+import { FabRestore, InfoHero, type InfoTheme } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
 
 export const metadata: Metadata = {
@@ -10,21 +9,26 @@ export const metadata: Metadata = {
   description: 'Envíanos tu opinión, reporta un problema o abre el reporte de seguridad. Tus comentarios hacen crecer Ciszu Network.',
 };
 
+const THEME: InfoTheme = {
+  accent: 'text-brand-light',
+  accentBg: 'bg-brand/10',
+  accentBorder: 'border-brand/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-light to-brand-accent',
+};
+
 export default function FeedbackPage() {
   return (
     <div className="min-h-screen pt-24 pb-20">
       <div className="max-w-3xl mx-auto px-4">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand/10 text-brand-light mb-6">
-            <MessageSquareWarning className="w-8 h-8" />
-          </div>
-          <h1 className="text-4xl md:text-6xl font-header font-black bg-gradient-to-r from-brand-light to-brand-accent bg-clip-text text-transparent uppercase tracking-tighter mb-4">
-            Feedback
-          </h1>
-          <p className="text-gray-400 max-w-xl mx-auto text-sm uppercase tracking-widest">
-            Tu opinión construye {CISZU_NETWORK.name}
-          </p>
-        </div>
+        <InfoHero
+          icon="message"
+          title="Feedback"
+          subtitle={`Tu opinión construye ${CISZU_NETWORK.name}`}
+          kicker="Sugerencias"
+          theme={THEME}
+        />
 
         <FeedbackForm email={CISZU_NETWORK.email} />
 

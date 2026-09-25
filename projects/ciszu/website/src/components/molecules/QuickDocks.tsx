@@ -93,7 +93,7 @@ const DOCK_ITEMS: DockItem[] = [
   },
   {
     label: 'Policies',
-    href: '/policies',
+    href: '/policy',
     color: 'red',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">

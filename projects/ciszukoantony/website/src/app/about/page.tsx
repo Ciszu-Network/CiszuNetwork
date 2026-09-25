@@ -4,6 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { assetResolver } from '@ciszunetwork/cdn';
+import { InfoHero, type InfoTheme } from '@ciszu/ui';
 import { RichText, type RichPart } from '@/components/RichText';
 import { usePageTitle } from '@/lib/usePageTitle';
 import QuickDocks from '@/components/molecules/QuickDocks';
@@ -27,16 +28,27 @@ const skills = [
   { name: 'Linux', level: 70 },
 ];
 
+const THEME: InfoTheme = {
+  accent: 'text-neon-blue',
+  accentBg: 'bg-neon-blue/10',
+  accentBorder: 'border-neon-blue/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-dark to-brand',
+};
+
 export default function AboutPage() {
   usePageTitle('ABOUT');
   return (
     <div className="min-h-screen pt-24 pb-16 px-4">
       <div className="max-w-5xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16">
-          <h1 className="text-5xl font-header font-black tracking-tighter bg-gradient-to-r from-brand-dark to-brand bg-clip-text text-transparent mb-4">
-            About Me
-          </h1>
-          <p className="text-gray-500 text-sm uppercase tracking-widest">Learn more about Ciszuko Antony (Francisco Garcia Antonio M. / y8)</p>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <InfoHero
+            icon="info"
+            title="About Me"
+            subtitle="Learn more about Ciszuko Antony (Francisco Garcia Antonio M. / y8)"
+            theme={THEME}
+          />
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}

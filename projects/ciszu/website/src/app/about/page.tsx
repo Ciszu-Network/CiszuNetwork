@@ -3,6 +3,7 @@ import Image from "next/image";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { CISZU_NETWORK, CISZUKO_ANTONY } from "@/config/site";
 import { Shield, ArrowRight, ExternalLink } from "lucide-react";
+import { InfoHero, type InfoTheme } from "@ciszu/ui";
 import QuickDocks from "@/components/molecules/QuickDocks";
 import type { Metadata } from "next";
 
@@ -11,31 +12,26 @@ export const metadata: Metadata = {
   description: 'Conoce a Ciszu Network: nuestra misión, visión y compañía de innovación digital.',
 };
 
+const THEME: InfoTheme = {
+  accent: 'text-brand-light',
+  accentBg: 'bg-brand/10',
+  accentBorder: 'border-brand/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-light to-brand-accent',
+};
+
 export default function AboutPage() {
   return (
     <div className="min-h-screen pt-24 pb-20">
       <div className="max-w-4xl mx-auto px-4">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center mb-6">
-            <Image
-              src={assetResolver.resolve("projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg")}
-              alt={CISZU_NETWORK.name}
-              width={60}
-              height={60}
-              className="drop-shadow-brand"
-            />
-          </div>
-          <h1 className="text-4xl md:text-6xl font-header font-black bg-gradient-to-r from-brand-light to-brand-accent bg-clip-text text-transparent uppercase tracking-tighter mb-4">
-            Sobre Nosotros
-          </h1>
-          <Image
-            src={assetResolver.resolve("projects/ciszu/content/logos/images/outline/tagline/tagline_white.svg")}
-            alt={CISZU_NETWORK.tagline}
-            width={260}
-            height={20}
-            className="opacity-90"
-          />
-        </div>
+        <InfoHero
+          icon="info"
+          title="Sobre Nosotros"
+          subtitle={`Misión, visión y compañía de ${CISZU_NETWORK.name}: tecnología de alto rendimiento con una estética inconfundible.`}
+          kicker="Compañía"
+          theme={THEME}
+        />
 
         <div className="space-y-12">
           <div className="p-8 md:p-10 rounded-[2rem] bg-gradient-to-br from-brand/10 via-brand-dark/5 to-transparent border border-brand/20">

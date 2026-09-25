@@ -2,12 +2,21 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { LegalCiszuLink } from '@ciszu/ui';
+import { InfoHero, LegalCiszuLink, type InfoTheme } from '@ciszu/ui';
 import { RichText, type RichPart } from '@/components/RichText';
 import { usePageTitle } from '@/lib/usePageTitle';
 import QuickDocks from '@/components/molecules/QuickDocks';
 
 const NETWORK_LINK: RichPart = { link: 'Ciszuko Network', href: 'https://ciszunetwork.vercel.app' };
+
+const THEME: InfoTheme = {
+  accent: 'text-neon-blue',
+  accentBg: 'bg-neon-blue/10',
+  accentBorder: 'border-neon-blue/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-dark to-brand',
+};
 
 const sections = [
   {
@@ -76,11 +85,13 @@ export default function PoliciesPage() {
   return (
     <div className="min-h-screen pt-24 pb-16 px-4">
       <div className="max-w-3xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16">
-          <h1 className="text-5xl font-header font-black tracking-tighter bg-gradient-to-r from-brand-dark to-brand bg-clip-text text-transparent mb-4">
-            Policies
-          </h1>
-          <p className="text-gray-500 text-sm uppercase tracking-widest">Terms, Privacy & Legal Notice</p>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <InfoHero
+            icon="policies"
+            title="Policies"
+            subtitle="Terms, Privacy & Legal Notice"
+            theme={THEME}
+          />
         </motion.div>
 
         <div className="space-y-8">

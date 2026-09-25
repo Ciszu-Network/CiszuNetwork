@@ -1,10 +1,10 @@
 "use client";
 
 import { useMemo, useState, useRef, useEffect } from "react";
-import { BookOpen, GraduationCap, ExternalLink, Globe, Clock, Award, Search, Filter, BookMarked, Target, Layers } from "lucide-react";
+import { BookOpen, ExternalLink, Globe, Clock, Award, Search, Filter, BookMarked, Target, Layers } from "lucide-react";
 import { usePageTitle } from "@/lib/usePageTitle";
 import QuickDocks from "@/components/molecules/QuickDocks";
-import { Ac3Section } from "@ciszu/ui";
+import { Ac3Section, InfoHero, type InfoTheme } from "@ciszu/ui";
 
 /**
  * /courses — course catalog of the Ciszu Network ecosystem.
@@ -16,6 +16,15 @@ import { Ac3Section } from "@ciszu/ui";
  */
 
 const EF_COURSE_URL = "https://assessment.corporate.ef.com/public/test/f0d3daa7-4db2-4bb8-9ce2-5fb8d9fbba5c";
+
+const THEME: InfoTheme = {
+  accent: 'text-brand-light',
+  accentBg: 'bg-brand/10',
+  accentBorder: 'border-brand/40',
+  card: 'bg-white/5',
+  border: 'border-white/10',
+  gradient: 'from-brand-light to-brand-accent',
+};
 
 interface Course {
   id: string;
@@ -135,21 +144,13 @@ export default function CoursesPage() {
 
       <div className="max-w-5xl mx-auto px-4">
         {/* Hero */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand/10 text-brand-light mb-6">
-            <GraduationCap className="w-8 h-8" />
-          </div>
-          <h1 className="text-4xl md:text-6xl font-header font-black bg-gradient-to-r from-brand-light to-brand-accent bg-clip-text text-transparent uppercase tracking-tighter mb-4">
-            Courses
-          </h1>
-          <p className="text-gray-400 max-w-xl mx-auto text-sm uppercase tracking-widest">
-            Official training from the Ciszu Network ecosystem
-          </p>
-          <p className="text-gray-500 max-w-2xl mx-auto mt-4 text-sm leading-relaxed">
-            Selected courses to grow: languages, development, design and more.
-            Each course opens on its official platform.
-          </p>
-        </div>
+        <InfoHero
+          icon="certificates"
+          title="Courses"
+          subtitle="Official training from the Ciszu Network ecosystem: selected courses to grow in languages, development, design and more. Each course opens on its official platform."
+          kicker="Learning"
+          theme={THEME}
+        />
 
         {/* Filters */}
         <div className="rounded-2xl bg-brand/5 border border-brand/20 p-5 mb-8 space-y-4">
