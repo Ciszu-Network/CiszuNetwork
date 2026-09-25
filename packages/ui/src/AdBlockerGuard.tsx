@@ -54,6 +54,13 @@ export interface AdBlockerGuardProps {
   donateHref?: string;
 }
 
+declare global {
+  interface Window {
+    /** API que define el script de AdSense; ausente si el script fue bloqueado. */
+    adsbygoogle?: unknown[];
+  }
+}
+
 const SITE_DONATE_HREF: Record<string, string> = {
   ciszu: 'https://ciszunetwork.vercel.app/donate',
   ciszunetwork: 'https://ciszunetwork.vercel.app/donate',
@@ -130,15 +137,12 @@ function clearChoice() {
 }
 
 /**
- * Detección "clara" de adblocker — solo baits, sin inyección de scripts.
- * Crea varios divs con clases de anuncio reales que los bloqueadores ocultan.
- * Si AL MENOS UNO queda oculto (tamaño 0 / display:none / oculto), hay bloqueo
- * claro. Si ninguno está oculto, NO hay adblocker (o no es detectable de forma
- * fiable) → se devuelve false (sin advertencia).
- *
- * Método usado por las páginas de noticias reales (AdGuard/uBlock EasyList).
+ * Comprobación 1 (síncrona): BAITS.
+ * Crea varios divs con clases de anuncio reales que los bloqueadores ocultan
+ * por CSS (filtros cosméticos de uBlock/AdGuard/AdBlock/EasyList). Si AL MENOS
+ * UNO queda oculto (tamaño 0 / display:none / sin offsetParent), hay bloqueo.
  */
-function detectAdBlocker(): boolean {
+function baitHidden(): boolean {
   if (typeof window === 'undefined') return false;
   try {
     const BAIT_CLASSES = [
@@ -148,7 +152,6 @@ function detectAdBlocker(): boolean {
       'sponsor-ad-wrap ad-container',
       'adsbox adsbox-ad',
     ];
-    let blocked = false;
     for (const cls of BAIT_CLASSES) {
       const bait = document.createElement('div');
       bait.innerHTML = '&nbsp;';
@@ -166,12 +169,53 @@ function detectAdBlocker(): boolean {
         st.visibility === 'hidden' ||
         st.opacity === '0';
       document.body.removeChild(bait);
-      if (hidden) { blocked = true; break; }
+      if (hidden) return true;
     }
-    return blocked;
+    return false;
   } catch {
     return false;
   }
+}
+
+/**
+ * Detección "clara" de adblocker — doble comprobación (ASÍNCRONA):
+ *
+ *  1. BAITS (síncrona): filtros cosméticos (uBlock/AdGuard/AdBlock con listas
+ *     EasyList) ocultan los divs señuelo → bloqueo inmediato.
+ *
+ *  2. SCRIPT de AdSense (asíncrona): las 4 webs renderizan el script de AdSense
+ *     de forma ESTÁTICA (SSR). Los bloqueadores de RED (DNS: NextDNS / Pi-hole /
+ *     AdGuard DNS, o extensiones que cortan peticiones) NO ocultan los baits
+ *     pero SÍ impiden que el script cargue. Si el script está en el DOM y tras
+ *     un margen razonable `window.adsbygoogle` sigue sin definirse, la petición
+ *     fue cortada → bloqueo claro.
+ *
+ * La comprobación 2 solo se evalúa si el script de AdSense está presente en la
+ * página (evita falsos positivos en local o páginas sin anuncios) y con margen
+ * amplio (2.5s) para no confundir una red lenta con un bloqueo.
+ */
+function detectAdBlocker(): Promise<boolean> {
+  return new Promise((resolve) => {
+    if (typeof window === 'undefined') return resolve(false);
+    try {
+      if (baitHidden()) return resolve(true);
+
+      const adScript = document.querySelector('script[src*="pagead2.googlesyndication.com"]');
+      if (!adScript) return resolve(false);
+
+      const deadline = Date.now() + 2500;
+      const check = () => {
+        // El script cargó y definió la API → no hay bloqueo de red.
+        if (typeof window.adsbygoogle !== 'undefined') return resolve(false);
+        // Margen agotado sin API → la petición fue bloqueada.
+        if (Date.now() >= deadline) return resolve(true);
+        window.setTimeout(check, 150);
+      };
+      check();
+    } catch {
+      resolve(false);
+    }
+  });
 }
 
 const CSS = `
@@ -253,8 +297,12 @@ export function AdBlockerGuard({ children, site, logo, title = 'Ciszu Network', 
       if (cancelled) return;
       // Re-check: el usuario pudo rechazar cookies mientras corría el timeout.
       if (getCookieConsent() === 'rejected') return;
-      const blocked = detectAdBlocker();
-      if (!cancelled && blocked) setScreen('block');
+      detectAdBlocker().then((blocked) => {
+        if (cancelled || !blocked) return;
+        // Re-check final: el usuario pudo rechazar cookies durante la detección.
+        if (getCookieConsent() === 'rejected') return;
+        setScreen('block');
+      });
     };
     // Pequeño retraso para que el CSS del navegador ya haya ocultado los baits.
     const t = window.setTimeout(run, 400);
