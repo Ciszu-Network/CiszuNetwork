@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icon, SmartImage, ScrollNavButton, CiszugamensLogo } from '@ciszu/ui';
-import { Shield, Scale, Trophy, FileText } from 'lucide-react';
+import { Shield, Scale, FileText } from 'lucide-react';
 import { useAppStore } from '@/store';
 import { updatePreferences } from '@/lib/preferences';
 import {
@@ -279,7 +279,7 @@ export default function Footer({ lang, dict }: FooterProps) {
                   { href: '/guidelines', label: 'Guidelines', icon: <FileText className="w-4 h-4" /> },
                   { href: '/rules', label: 'Rules', icon: <Shield className="w-4 h-4" /> },
                   { href: '/license', label: 'License', icon: <Scale className="w-4 h-4" /> },
-                  { href: '/credits', label: 'Credits', icon: <Trophy className="w-4 h-4" /> },
+                  { href: '/credits', label: 'Credits', icon: <FileText className="w-4 h-4" /> },
                 ].map((l) => {
                   const active = isActive(l.href);
                   return (
