@@ -15,10 +15,18 @@
  * CONSENTIMIENTO DE COOKIES: este componente incluye el guard de consentimiento
  * (COOKIE_CONSENT_GUARD_JS) ANTES que los scripts de Google. Si el usuario
  * rechazó las cookies (cookies_accepted === 'false'), el guard elimina del DOM
- * los scripts marcados con data-cookie-consent="optional" antes de que se
- * ejecuten (los async se cancelan al quitar el nodo; los inline de config se
- * envuelven en un check de window.__ciszuCookieConsent). Así Google Analytics,
- * GTM y AdSense quedan DESACTIVADOS sin romper nada (degradación segura).
+ * los scripts de Google antes de que se ejecuten (los async se cancelan al
+ * quitar el nodo; los inline de config se envuelven en un check de
+ * window.__ciszuCookieConsent). Así Google Analytics, GTM y AdSense quedan
+ * DESACTIVADOS sin romper nada (degradación segura).
+ *
+ * OJO con los atributos de los scripts EXTERNOS: el tag de AdSense NO lleva
+ * `data-cookie-consent` a propósito. adsbygoogle.js inspecciona su propio tag y
+ * avisa en consola ("AdSense head tag doesn't support data-cookie-consent
+ * attribute"). Los externos se matan por PATRÓN DE URL desde el guard
+ * (pagead2.googlesyndication.com / googletagmanager.com / google-analytics.com);
+ * el atributo se reserva a los scripts INLINE de configuración, que no se pueden
+ * identificar por src.
  */
 
 import { COOKIE_CONSENT_GUARD_JS } from './cookieConsent';
@@ -57,10 +65,11 @@ export function GoogleScripts() {
     <>
       <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: COOKIE_CONSENT_GUARD_JS }} />
       {ads && (
+        // Sin data-cookie-consent: adsbygoogle.js avisa en consola si ve atributos
+        // que no soporta en su propio tag. El guard lo elimina por patrón de URL.
         <script
           suppressHydrationWarning
           async
-          data-cookie-consent="optional"
           src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(ads)}`}
           crossOrigin="anonymous"
         />
@@ -86,7 +95,8 @@ export function GoogleScripts() {
       )}
       {ga && (
         <>
-          <script suppressHydrationWarning async data-cookie-consent="optional" src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(ga)}`} />
+          {/* Externo: el guard lo mata por patrón de URL (googletagmanager.com). */}
+          <script suppressHydrationWarning async src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(ga)}`} />
           <script
             suppressHydrationWarning
             data-cookie-consent="optional"

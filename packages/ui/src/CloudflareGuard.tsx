@@ -220,11 +220,15 @@ export default function CloudflareGuard({
     dnsPrefetch.rel = 'dns-prefetch';
     dnsPrefetch.href = 'https://challenges.cloudflare.com';
     document.head.appendChild(dnsPrefetch);
-    // Preload del script: reduce la latencia del widget (el guard bloquea la página)
+    // Preload del script: reduce la latencia del widget (el guard bloquea la página).
+    // crossOrigin DEBE coincidir con el del <script> (anonymous): si no, Chrome
+    // descarta el preload y avisa dos veces en consola ("credentials mode does not
+    // match" + "preloaded ... but not used").
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'script';
     preload.href = TURNSTILE_SCRIPT;
+    preload.crossOrigin = 'anonymous';
     preload.fetchPriority = 'high';
     document.head.appendChild(preload);
     const s = document.createElement('script');
