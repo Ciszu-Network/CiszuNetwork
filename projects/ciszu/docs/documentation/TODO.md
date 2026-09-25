@@ -27,60 +27,9 @@
 - [ ] Si el usuario entra a un enlace expirado o no invalido nunca se debe iniciarse sesion, es decir, primero evalua el enlace y verificalo en caso de que este bien si inicia sesion temporalmente hasta que cambie su contraseña pero si sale da error.
 - [ ] TODAS las paginas de registro deben tener el recaptacha al final del formulario antes del boton de registrarse. Actualmente el sistema de recaptchas de los sitiowebs estaban rotos por que no habia creado los proyectos y sus ids / tokens eran inexistentes. Implementa las veresiones 2 y 3 de cada catpcha de cada website. Debemos implementar esto aun, no aparecen en los register. (Solucionar problemas de recaptcha)
 - [ ] Arreglar errores de advisors, console y vulnerabilidades en todas las websites.
+- [ ] Al borrar todos los datos de cache de las paginas para que detecte desde un inicio el guard de antiadblock en ciszukoantony no aparece el guard.
 
-Al borrar todos los datos de cache de las paginas para que detecte desde un inicio el guard de antiadblock. No funciona y nunca aparece, si, solucionastes el problema de que aparezca despues de cambiar el tema pero ahora simplemente no aaprece donde si deberia aparecer. Soluciona esto.
-
-Por otro lado en ciszuko antony website, en la pagina de certificates. Quiero que cada etiqueta o tag tenga un icono propio, de los 3 filtradores. Actualmente no estan completos los de institutos.
-
-Los selectores de los tags de la filtracion de las categorias deben ser multicheckeables, actualemnte lo son pero visualmente no tienen el icono de check singularmente,y e independiente del icono del tag.
-
-Finalmente requiero que TODOS los certificados aparte de la etiqueta de mi nombre tengan la etiqueta de su tag para filtracion de categoria y univerisdad con sus iconos y texto. Actualmente solo aparece 1 etiqueta sin importar las demas en la card completa, y sin iconos.
-
-Hay un error en el guard antiadblock. Cuando se presiona el boton de donacion dentro del estado de bypass con adblocker activado, se va a la pagina de donacion de ciszunetwork, deberia ir a la pagina de donacion de la misma website que incluya un antiadblocker y pagina de donate. De esta manera al abrir el nuevo vinculo se mantiene en la misma website pero en otra pestaña.
-
-Actualmente en los certificados de ciszukoantony se estan tratando las tags de categorias como diferentes, digamos que una principal y luego se declaran por id otras mas.
-
-Siento que es repetitivo, eso de multitag dirigido a extras no esta bien.
-
-Mi idea original es que simplemente al declarar la certificacion, soporte mas de 1 dato (tag) en el apartado de category, ej: category: 'other', "programming", etc...
-
-Ajustando las vistas para que el primero siempre sea el principal y los demas secundarios en el sentido de orden de visualizacion. Para no rompoer el UI. Por ejemplo, desde fuera de la targeta del certificado podria mostrar maximo 3 tags que tenga, pero al entrar siempre mostrar todas.
-
-Otra cosa es que existe un tag pegado a la preview fuera de la cardy es decir en los indexadores. Ese puede ser el principal.
-
-Finalmente a la hora de filtrar no importa si se duplica el certificado en caso de que he eleguido justamente los 2 o mas tags al filtrar que posee el certificado.
-
-Es decir se mostraran por ejemplo un certificado de Web y programming.
-
-- Web:
-
-1. certificado
-   ...
-
-- Programming
-
-1. certificado
-   ...
-
-Siendo el mismo certificado pero atencion, las etiquetas en este sentido SI deben cambiar dependiendo de que categoria este, obviamente si filtramos por una tag como el de programming y el certificado original su tag principal es web, a la hora de la busqueda no deberia mostrar como principal web, si no programming.
-
-Es decir por default el primero es el principal pero depende de la filtracion de busquedas multitag relativamente lo que se muestre como tag principal.
-
-Por eso removi eso de tags extras.
-
-Finalmente y algo muy importante es que la duplicacion de certificados si puede ocurrir a la hora de filtrar pero cuando no existe un filtro (all) NO deberia. Por que mostraria demasiados, si cada certificado tuviera 3 tags. Significa que mostraria la cantidad actual por 3.
-
-Para evitar esto, el all o sin filtros. Se mostraran las categorias principal segun la tag principal defualt, es decir el primero.
-
-Otro tipos de filtraciones como el de busqueda tambien mostrara la tag principal default (primero)
-
-Realiza los cambios necesarios para aplicar esto, y ademas, agrega 3 tags minimo a todos los certificados actuales para probar visualmente y el codigo. Modifica la pagina si es necesario, documenta adentro.
-
-Realizas un commit y el nuevo certificado de react rellenalo correctamente.
-
-Finalmente me acabo de dar cuenta de algo, existe un "unnamed platform" justamente en 2 certfs, esos 2 unnamed en realidad es SimpleLearn, la plataforma que use para sacarme el de react, lo se por que son 3 cursos gratuitos.
-
-Asi que agrega SimpleLearn como plataforma tambien, indexela en los buscadores, zona de institutos, tag de institutos, url oficial y su icono oficial descargada en svg.
+* [ ] Por otro lado en ciszuko antony website, en la pagina de certificates. Requiero que todos los iconos correspondan a su color de tag, incluyendo los de las secciones y instituos en filtradores. Actualmente algunos iconos de institutos estan en negro, y se ve mal.
 
 - [ ] Exite un problema en las paginas de donacion los widgets embedidos de kofi fallan, requiero obligatoriamente el widget iframe de kofi independientemente del kofipanel. Y arreglar problemas de CORS.
 
@@ -108,7 +57,6 @@ Asi que agrega SimpleLearn como plataforma tambien, indexela en los buscadores, 
 - [ ] Terminar paginas de license estilo muzicmania para todas las demas websites, crearlos si hace falta e indexarlos.
 - [ ] Terminar idiomas en español LATAM.
 - [ ] Terminar idiomas en español España.
-- [ ] Al cambiar de tema deberia actualizarse la pagina.
 
 **Ciszubot Website:**
 
