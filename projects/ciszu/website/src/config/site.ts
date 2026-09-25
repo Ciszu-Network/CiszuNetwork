@@ -56,9 +56,11 @@ export const CISZUBOT_LINKS = {
 };
 
 export const DONATION_LINKS = {
-  patreon: 'https://www.patreon.com/cw/ciszunetwork',
-  koFi: 'https://ko-fi.com/ciszunetwork',
-  buyMeACoffee: 'https://buymeacoffee.com/ciszunetwork',
+  // Cuentas canónicas de Ciszu Network (ciszukoantony es la única con perfil
+  // real en Ko-fi/Patreon; ciszunetwork/ciszubot redirigen a la home → 404).
+  patreon: 'https://www.patreon.com/cw/ciszukoantony',
+  koFi: 'https://ko-fi.com/ciszukoantony',
+  buyMeACoffee: 'https://buymeacoffee.com/ciszukoantony',
 };
 
 export const WIDGETS = {

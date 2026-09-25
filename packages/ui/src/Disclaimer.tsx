@@ -687,9 +687,13 @@ function gdFetch(path: string, query = '', init?: RequestInit) {
     'Accept-Profile': 'ciszunetwork',
   };
   const headers = { ...baseHeaders, ...(init?.headers as Record<string, string> | undefined) };
+  // IMPORTANTE: `...init` va ANTES de `headers`; si se esparce después, el
+  // `init.headers` (solo Content-Type/Content-Profile/Prefer) PISA el merge y
+  // las peticiones POST salen SIN `apikey`/`Authorization` → 401
+  // ("No API key found in request") en global_disclaimer_deliveries.
   return fetch(`${GD_SUPABASE_URL}/rest/v1/${path}?${query}`, {
-    headers,
     ...init,
+    headers,
   });
 }
 

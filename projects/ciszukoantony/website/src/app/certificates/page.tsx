@@ -14,6 +14,7 @@ import {
   type Certificate,
 } from '@/data/certificates';
 import { getCategoryIcon } from '@/data/categoryIcons';
+import { CiscoIcon, HpIcon, IbmIcon, MicrosoftIcon, SimpleLearnIcon } from '@/data/providerIcons';
 import { PREVIEWS_BY_FILE } from '@/data/certificates.previews';
 
 const CDN_BASE =
@@ -168,6 +169,18 @@ const PROVIDER_MARK: Record<string, { text: string; color: string }> = {
  * de marca si no. Se usa en los filtros y en los tags de cada certificado.
  */
 const ProviderIcon = ({ id, className }: { id: string; className?: string }) => {
+  const IconComponent = {
+    cisco: CiscoIcon,
+    microsoft: MicrosoftIcon,
+    ibm: IbmIcon,
+    hp: HpIcon,
+    simplelearn: SimpleLearnIcon,
+  }[id];
+
+  if (IconComponent) {
+    return <IconComponent className={className} style={{ color: 'inherit' }} />;
+  }
+
   const img = BRAND_IMG[id];
   if (img) {
     return <img src={img} alt="" className={className} loading="lazy" style={{ objectFit: 'contain' }} />;
