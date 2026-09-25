@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import QuickDocks from '@/components/molecules/QuickDocks';
 
 /**
  * 404 de Ciszuko Antony — estética de "pérdida de señal / portfolio fuera de
@@ -37,6 +38,7 @@ export default function NotFound() {
   const rely = String(losses).padStart(4, '0');
 
   return (
+    <>
     <section className="relative flex min-h-[80vh] w-full select-none items-center justify-center overflow-hidden bg-black px-4 py-16">
       <style>{`
         .cztv-noise {
@@ -267,5 +269,7 @@ export default function NotFound() {
         ) : null}
       </div>
     </section>
+    <QuickDocks />
+    </>
   );
 }

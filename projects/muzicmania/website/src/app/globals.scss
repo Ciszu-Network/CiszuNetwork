@@ -27,8 +27,8 @@
   --color-neon-red:     #ff0000;
 
   /* Backgrounds */
-  --color-bg-dark:   #000000ff;
-  --color-bg-darker: #000617ffff;
+  --color-bg-dark:   #050508ff;
+  --color-bg-darker: #08080cff;
 
   /* Neon Box Shadows */
   --shadow-neon-blue:   0 0 10px #55e3ffff, 0 0 25px rgba(0, 128, 255, 0.52), 0 0 50px rgba(0,212,255,.15);
@@ -52,15 +52,15 @@
 
 /* ── Theme tokens (dark-first) ───────────────────────────── */
 :root {
-  --bg: #000000;
-  --bg-soft: #000617;
-  --bg-card: #0a0a0f;
+  --bg: #050508;
+  --bg-soft: #06060a;
+  --bg-card: #08080c;
   --ink: #ffffff;
   --ink-muted: rgba(255, 255, 255, 0.7);
   --ink-faint: rgba(255, 255, 255, 0.4);
   --border: rgba(255, 255, 255, 0.1);
-  --surface: #0e1420;
-  --doc-dark: #020617;
+  --surface: #0a0a10;
+  --doc-dark: #050508;
   color-scheme: dark;
 }
 

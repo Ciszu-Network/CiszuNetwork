@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import QuickDocks from '@/components/molecules/QuickDocks';
 
 /**
  * 404 de Ciszu Network — estética de "error de sistema / terminal corporativa".
@@ -65,6 +66,7 @@ export default function NotFound() {
   }, [pushLog, router]);
 
   return (
+    <>
     <section className="relative min-h-[80vh] w-full overflow-hidden bg-black text-neon-cyan flex items-center justify-center px-4 py-16 select-none">
       <style>{`
         .cz404-glitch { position: relative; display: inline-block; }
@@ -290,5 +292,7 @@ export default function NotFound() {
         </div>
       </div>
     </section>
+    <QuickDocks />
+    </>
   );
 }

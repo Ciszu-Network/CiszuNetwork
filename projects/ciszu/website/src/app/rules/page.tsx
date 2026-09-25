@@ -112,7 +112,7 @@ export default function RulesPage() {
           docLabel="Reglamento Oficial de Ciszu Network"
           articles={ARTICLES}
           signOff={{ title: 'Jurisdicción de la Red Ciszu', subtitle: 'Actualizado 2026 — Ciszu Network' }}
-          version={{ label: 'v2026.1 · Reglamento de Convivencia de Ciszu Network', date: '2026', status: 'Vigente' }}
+          officialLink={{ label: 'Ver versión oficial', href: 'https://ciszunetwork.vercel.app/rules' }}
           theme={THEME}
         />
       </PageReveal>

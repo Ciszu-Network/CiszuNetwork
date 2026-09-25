@@ -106,7 +106,7 @@ export default function GuidelinesPage() {
           docLabel="Guía Oficial de Ciszu Network"
           articles={ARTICLES}
           signOff={{ title: 'Estándares de la Red Ciszu', subtitle: 'Actualizado 2026 — Ciszu Network' }}
-          version={{ label: 'v2026.1 · Guía Oficial de Estándares del Ecosistema', date: '2026', status: 'Vigente' }}
+          officialLink={{ label: 'Ver versión oficial', href: 'https://ciszunetwork.vercel.app/guidelines' }}
           theme={THEME}
         />
       </PageReveal>

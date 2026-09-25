@@ -60,11 +60,9 @@ storybook
 **/*.md
 **/README*
 **/CHANGELOG.md
-**/LICENSE*
-# "license" NUNCA se ignora: src/app/license/ es una PÁGINA de Next.js en las 4 webs
-# (ignorarla hace que /license dé 404 en producción — mismo caso que /downloads).
-!**/src/app/license/
-!**/src/app/license/**
+# "LICENSE*" NO se ignora como patron: matcheaba tambien el directorio
+# src/app/license/ (case-insensitive) y /license daba 404 en produccion.
+# Los ficheros LICENSE de la raiz pesan unos KB; incluirlos es inofensivo.
 **/docs/documentation/**
 !projects/ciszu/website/public/docs/**
 !projects/ciszubot/website/public/docs/**
