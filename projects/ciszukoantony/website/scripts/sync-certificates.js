@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
+const https = require('https');
 
 // ---------------------------------------------------------------------------
 // Rasterización de PDFs en Node: pdfjs-dist (legacy) renderiza la página 1 a
@@ -32,6 +33,7 @@ const findMonorepoRoot = (startDir) => {
 
 const SCRIPT_DIR = path.resolve(__dirname);
 const FORCE = process.argv.includes('--force');
+const CDN_UPLOAD = process.argv.includes('--cdn');
 const MONOREPO_ROOT = findMonorepoRoot(SCRIPT_DIR);
 const CERTIFICATES_DIR = path.join(MONOREPO_ROOT, 'shared/docs/certificados');
 const PREVIEWS_DIR = path.join(CERTIFICATES_DIR, 'previews');
@@ -445,6 +447,8 @@ const syncCertificates = async () => {
     newEntries.push({ file, entry });
   }
 
+  lastSyncNewEntries = newEntries;
+
   if (newEntries.length === 0) {
     console.log('✅ No new certificates found. certificates.ts is up to date.');
     return;
@@ -552,8 +556,14 @@ const formatValue = (value, indent) => {
 
 const WATCH = process.argv.includes('--watch');
 
+let lastSyncNewEntries = [];
+
 const runSync = async () => {
+  lastSyncNewEntries = [];
   await syncCertificates();
+  if (CDN_UPLOAD) {
+    await uploadNewAssetsToCDN();
+  }
 };
 
 if (WATCH) {
@@ -580,8 +590,163 @@ if (WATCH) {
     process.on('SIGTERM', cleanup);
   })();
 } else {
-  syncCertificates().catch((error) => {
+  runSync().catch((error) => {
     console.error('❌ Sync failed:', error);
     process.exit(1);
   });
 }
+
+// ---------------------------------------------------------------------------
+// CDN upload helpers
+// ---------------------------------------------------------------------------
+const loadSupabaseEnv = () => {
+  const envPaths = [
+    path.join(MONOREPO_ROOT, 'services/supabase/.env'),
+    path.join(MONOREPO_ROOT, 'services/supabase/.env.local'),
+  ];
+  const env = {};
+  for (const envPath of envPaths) {
+    if (!fs.existsSync(envPath)) continue;
+    for (const line of fs.readFileSync(envPath, 'utf8').split('\n')) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#') || !trimmed.includes('=')) continue;
+      const eq = trimmed.indexOf('=');
+      const key = trimmed.slice(0, eq).trim();
+      const val = trimmed.slice(eq + 1).trim().replace(/^["']|["']$/g, '');
+      if (!(key in env)) env[key] = val;
+    }
+  }
+  return env;
+};
+
+const SUPABASE_ENV = loadSupabaseEnv();
+const SUPABASE_URL = SUPABASE_ENV.VITE_SUPABASE_URL || 'https://obwzzmbvkrcscqwptlqo.supabase.co';
+const PROJECT_REF = SUPABASE_ENV.SUPABASE_PROJECT_REF || 'obwzzmbvkrcscqwptlqo';
+const CDN_BUCKET = 'ciszu-cdn';
+const CDN_BASE = `${SUPABASE_URL}/storage/v1/object/public/${CDN_BUCKET}`;
+
+const cdnFetch = (url, opts = {}) => {
+  const u = new URL(url);
+  return new Promise((resolve, reject) => {
+    const req = https.request({
+      hostname: u.hostname,
+      port: u.port,
+      path: u.pathname + u.search,
+      method: opts.method || 'GET',
+      headers: opts.headers || {},
+    }, (res) => {
+      let data = '';
+      res.on('data', (c) => (data += c));
+      res.on('end', () => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          resolve(data ? JSON.parse(data) : '');
+        } else {
+          reject(new Error(`HTTP ${res.statusCode}: ${data}`));
+        }
+      });
+    });
+    req.on('error', reject);
+    if (opts.body) req.write(opts.body);
+    req.end();
+  });
+};
+
+const getMime = (ext) => {
+  const map = {
+    '.pdf': 'application/pdf',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.png': 'image/png',
+    '.webp': 'image/webp',
+  };
+  return map[ext.toLowerCase()] || 'application/octet-stream';
+};
+
+const encodePath = (p) => p.split('/').map((s) => encodeURIComponent(s)).join('/');
+
+const uploadFile = async (filePath, storagePath, serviceKey) => {
+  const content = fs.readFileSync(filePath);
+  const ext = path.extname(filePath);
+  const mimeType = getMime(ext);
+  const url = `${SUPABASE_URL}/storage/v1/object/${CDN_BUCKET}/${encodePath(storagePath)}`;
+  await cdnFetch(url, {
+    method: 'PUT',
+    headers: {
+      Authorization: `Bearer ${serviceKey}`,
+      'Content-Type': mimeType,
+      'x-upsert': 'true',
+    },
+    body: content,
+  });
+};
+
+const listCDNFiles = async (serviceKey) => {
+  const existing = {};
+  let offset = 0;
+  while (true) {
+    const res = await cdnFetch(`${SUPABASE_URL}/storage/v1/object/list/${CDN_BUCKET}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${serviceKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ limit: 1000, offset, prefix: 'shared/docs/certificados/', sortBy: { column: 'name', order: 'asc' } }),
+    });
+    const data = Array.isArray(res) ? res : [];
+    if (data.length === 0) break;
+    for (const obj of data) {
+      const name = obj.name ? obj.name.replace(/\/$/, '') : '';
+      if (!name || !obj.metadata || !obj.id) continue;
+      existing[name] = {
+        size: obj.metadata.size || obj.size,
+        mime: obj.metadata.mimetype || undefined,
+      };
+    }
+    offset += data.length;
+  }
+  return existing;
+};
+
+const uploadNewAssetsToCDN = async () => {
+  try {
+    const serviceKey = SUPABASE_ENV.SUPABASE_SERVICE_ROLE_KEY;
+    if (!serviceKey) {
+      console.warn('⚠️  SUPABASE_SERVICE_ROLE_KEY no configurada; se salta la subida al CDN.');
+      return;
+    }
+
+    console.log('\n☁️  CDN upload: consultando objetos existentes...');
+    const existing = await listCDNFiles(serviceKey);
+    const uploaded = new Set();
+
+    const uploadIfMissing = async (relative, localPath) => {
+      if (!fs.existsSync(localPath)) return;
+      const localSize = fs.statSync(localPath).size;
+      const remote = existing[relative];
+      if (remote && remote.size === localSize && getMime(path.extname(localPath)) === remote.mime) {
+        return;
+      }
+      await uploadFile(localPath, relative, serviceKey);
+      console.log(`  [CDN] ${relative}`);
+      uploaded.add(relative);
+    };
+
+    for (const file of lastSyncNewEntries) {
+      const relative = file.relative;
+      const baseName = path.basename(file.name, path.extname(file.name));
+      const safeBase = baseName.replace(/[^\x00-\x7F]/g, '').replace(/[^a-z0-9_-]/gi, '-');
+      const previewName = `${safeBase}-preview.jpg`;
+
+      await uploadIfMissing(relative, file.path);
+      await uploadIfMissing(`shared/docs/certificados/previews/${previewName}`, path.join(PREVIEWS_DIR, previewName));
+    }
+
+    if (uploaded.size === 0) {
+      console.log('  [CDN] No hay assets nuevos para subir.');
+    } else {
+      console.log(`  [CDN] ${uploaded.size} asset(s) subido(s) al bucket "${CDN_BUCKET}".`);
+    }
+  } catch (error) {
+    console.error('❌ CDN upload failed:', error.message);
+  }
+};
