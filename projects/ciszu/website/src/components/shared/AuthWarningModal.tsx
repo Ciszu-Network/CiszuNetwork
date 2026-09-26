@@ -2,6 +2,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { Button } from '@heroui/react';
+import { useDict } from '@/lib/useDict';
 
 interface AuthWarningModalProps {
   isOpen: boolean;
@@ -14,6 +15,7 @@ const I = {
 };
 
 export default function AuthWarningModal({ isOpen, onClose, message }: AuthWarningModalProps) {
+  const t = useDict();
   return (
     <AnimatePresence>
       {isOpen && (
@@ -26,19 +28,19 @@ export default function AuthWarningModal({ isOpen, onClose, message }: AuthWarni
               <div className="w-10 h-10">{I.user}</div>
             </div>
             <div className="space-y-3">
-              <h3 className="text-2xl font-header font-black text-white uppercase tracking-tighter">Invitado</h3>
-              <p className="text-white/40 font-bold uppercase text-[10px] leading-relaxed tracking-widest px-4">{message || 'Necesitas una cuenta para interactuar en esta sección.'}</p>
+              <h3 className="text-2xl font-header font-black text-white uppercase tracking-tighter">{t.authWarning.guest}</h3>
+              <p className="text-white/40 font-bold uppercase text-[10px] leading-relaxed tracking-widest px-4">{message || t.authWarning.message}</p>
             </div>
             <div className="flex flex-col gap-3">
               <Button variant="outline" size="lg" onPress={onClose} className="w-full font-black uppercase tracking-widest text-sm">
-                CONTINUAR COMO INVITADO
+                {t.authWarning.continueGuest.toUpperCase()}
               </Button>
               <div className="flex gap-3">
                 <Link href="/login" className="flex-1 inline-flex items-center justify-center h-12 bg-gradient-to-r from-neon-purple to-neon-pink text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:scale-105 active:scale-95 transition-all shadow-lg shadow-neon-pink/20">
-                  INICIAR SESIÓN
+                  {t.authWarning.login.toUpperCase()}
                 </Link>
                 <Link href="/register" className="flex-1 inline-flex items-center justify-center h-12 border border-white/20 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-white/10 transition-all">
-                  REGISTRARSE
+                  {t.authWarning.register.toUpperCase()}
                 </Link>
               </div>
             </div>

@@ -8,6 +8,7 @@ import { assetResolver } from '@ciszunetwork/cdn';
 import { supabase } from '@/config/supabase';
 import { useAppStore } from '@/store';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useDict } from '@/components/providers/I18nProvider';
 import {
   AuthField,
   AuthSecondaryActions,
@@ -103,6 +104,7 @@ const ANTONY_ISOTYPE = assetResolver.resolve('projects/ciszukoantony/content/log
 
 export default function RegisterPage() {
   usePageTitle('REGISTER');
+  const dict = useDict();
   const user = useAppStore((s) => s.user);
   const router = useRouter();
   const { begin: beginActivity, end: endActivity } = useActivityGuard();
@@ -226,23 +228,23 @@ export default function RegisterPage() {
               appIsotype={<Image src={ANTONY_ISOTYPE} alt="Ciszuko Antony" width={40} height={40} className="w-9 h-9" />}
               ciszuHref="https://ciszunetwork.vercel.app"
               appHref="/"
-              title="CUENTA CREADA"
+              title={dict.auth.accountCreated}
               subtitle="Ciszuko Antony · CISZU ID"
             />
           </div>
           <div className="rounded-3xl border border-emerald-500/30 bg-emerald-500/10 p-8 text-center shadow-2xl">
             <p className="text-emerald-400 font-header font-black uppercase tracking-widest text-sm mb-2">
-              Revisa tu email
+              {dict.auth.checkEmail}
             </p>
             <p className="text-gray-400 text-xs font-bold leading-relaxed">
-              Enviamos un enlace de verificación a <span className="text-white">{form.email}</span>.
-              Confirma tu correo y vuelve a iniciar sesión con tu nueva cuenta CISZU ID.
+              {dict.auth.checkEmailBody} <span className="text-white">{form.email}</span>.{' '}
+              {dict.auth.confirmEmail}
             </p>
             <button
               onClick={() => router.push('/login')}
               className="mt-6 px-8 py-3 rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white font-header font-black uppercase tracking-widest text-xs shadow-[0_0_20px_rgba(61,106,223,0.35)] hover:shadow-[0_0_30px_rgba(255,51,204,0.4)] transition-all active:scale-95 cursor-pointer"
             >
-              IR A INICIAR SESIÓN
+              {dict.auth.checkEmailAction}
             </button>
           </div>
         </motion.div>
@@ -262,7 +264,7 @@ export default function RegisterPage() {
           ciszuHref="https://ciszunetwork.vercel.app"
           appHref="/"
           title="CISZU ID"
-          subtitle="Crea tu cuenta en Ciszuko Antony con CISZU ID"
+          subtitle={dict.auth.registerSubtitleFull}
         />
       </div>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-6 lg:gap-10 items-start">
@@ -271,10 +273,10 @@ export default function RegisterPage() {
           <div className="relative p-7 md:p-8 bg-doc-dark border border-white/10 rounded-3xl shadow-2xl space-y-6 backdrop-blur-3xl">
             <form onSubmit={handleSubmit} className="space-y-5">
               <AuthField
-                label="Nombre de usuario"
+                label={dict.auth.usernameLabel}
                 name="username"
                 icon={<span className="w-full h-full text-neon-blue"><IconUser /></span>}
-                placeholder="ej: ciszuko"
+                placeholder={dict.auth.usernamePlaceholder}
                 required
                 autoComplete="username"
                 maxLength={20}
@@ -288,7 +290,7 @@ export default function RegisterPage() {
                 name="email"
                 icon={<span className="w-full h-full text-neon-blue"><IconMail /></span>}
                 type="email"
-                placeholder="tu@email.com"
+                placeholder={dict.auth.emailPlaceholder}
                 required
                 autoComplete="email"
                 value={form.email}
@@ -297,7 +299,7 @@ export default function RegisterPage() {
                 requirements={['Formato de email válido (p. ej. nombre@dominio.com)']}
               />
               <AuthField
-                label="Contraseña"
+                label={dict.auth.passwordLabel}
                 name="password"
                 icon={<span className="w-full h-full text-neon-blue"><IconLock /></span>}
                 type="password"
@@ -308,11 +310,11 @@ export default function RegisterPage() {
                 value={form.password}
                 onChange={handleChange}
                 error={errors.password}
-                requirements={['Mínimo 8 caracteres', 'Mínimo 12 caracteres', 'Al menos 1 mayúscula', 'Al menos 1 minúscula', 'Al menos 1 número y 1 símbolo']}
+                requirements={[dict.auth.reqMin8, dict.auth.reqMin12, dict.auth.reqUpper, dict.auth.reqLower, dict.auth.reqNumber]}
               />
               <PasswordStrengthBar password={form.password} />
               <AuthField
-                label="Confirmar contraseña"
+                label={dict.auth.confirmPassword}
                 name="confirm"
                 icon={<span className="w-full h-full text-neon-blue"><IconLock /></span>}
                 type="password"
@@ -339,7 +341,7 @@ export default function RegisterPage() {
                   <svg viewBox="0 0 24 24" className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
                 <p className="text-[11px] text-gray-400 font-bold leading-relaxed">
-                  Acepto los <a href="/terms" className="text-neon-cyan hover:underline">Términos de Servicio</a> y la <a href="/policies" className="text-neon-cyan hover:underline">Política de Privacidad</a>.
+                  {dict.auth.termsAccept} <a href="/terms" className="text-neon-cyan hover:underline">{dict.auth.termsOfService}</a> {dict.auth.and} <a href="/policies" className="text-neon-cyan hover:underline">{dict.auth.privacyPolicy}</a>.
                 </p>
               </div>
               {errors.terms && <p className="text-red-400 text-[11px] font-bold">{errors.terms}</p>}
@@ -355,7 +357,8 @@ export default function RegisterPage() {
                   <svg viewBox="0 0 24 24" className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
                 <p className="text-[11px] text-gray-400 font-bold leading-relaxed">
-                  Acepto recibir comunicaciones de <a href="/terms" className="text-neon-cyan hover:underline">Ciszuko Antony</a> (novedades, actualizaciones, ofertas). <strong className="text-neon-pink">No es publicidad de terceros.</strong>
+                  {dict.auth.marketingAccept} <a href="/terms" className="text-neon-cyan hover:underline">Ciszuko Antony</a> {dict.auth.marketingBody}{' '}
+                  <strong className="text-neon-pink">{dict.auth.marketingStrong}</strong>
                 </p>
               </div>
               {errors.marketing && <p className="text-red-400 text-[11px] font-bold">{errors.marketing}</p>}
@@ -404,7 +407,7 @@ export default function RegisterPage() {
         {/* Página derecha: beneficios */}
         <AuthBenefitsPanel
           badge="CISZU ID"
-          title="¿Por qué crear tu cuenta?"
+          title={dict.auth.whyAccount}
           items={REGISTER_BENEFITS}
           footerNote={REGISTER_FOOTER}
           accent="#ff33cc"

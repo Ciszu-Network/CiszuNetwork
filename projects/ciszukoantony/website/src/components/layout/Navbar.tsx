@@ -8,6 +8,7 @@ import { NAV_MAIN, SOCIALS, I, ALL_PAGES, SEARCH_INDEX, type NavGroup, type NavI
 import { useAppStore } from '@/store';
 import AuthMenu, { GuestIcon } from '@/components/auth/AuthMenu';
 import { getGuestName } from '@/lib/guest';
+import { navLabel, t, type Dict } from '@/lib/i18n';
 
 const UserIcon = () => (
   <svg viewBox="0 0 24 24" className="w-[20px] h-[20px]" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -41,8 +42,11 @@ const SunIcon = () => (
 // (es-latam, es-es, en-us, en-uk) son INDIVIDUALES entre sí; el resto está
 // bloqueado (atenuado + toast de error al hacer click).
 
-export default function Navbar({ lang, dict }: { lang: string; dict: Record<string, any> }) {
+export default function Navbar({ lang, dict }: { lang: string; dict: Dict }) {
   const pathname = usePathname();
+  const pageLabel = (href: string) => navLabel(dict, href);
+  const groupLabel = (name: string) =>
+    name === 'Information' ? dict.nav.groups.information : dict.nav.groups.projects;
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -140,12 +144,14 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
   const toggleTheme = () => {
     const next = theme === 'dark' ? 'light' : 'dark';
     setTheme(next);
-    toast(next === 'dark' ? 'Modo oscuro activado' : 'Modo claro activado', 'info');
+    toast(next === 'dark' ? dict.common.darkEnabled : dict.common.lightEnabled, 'info');
   };
 
   const closeSearch = () => { setSearchOpen(false); setSearchQuery(''); };
 
   const infoItems = (NAV_MAIN.find(n => 'items' in n && n.name === 'Information') as NavGroup)?.items || [];
+  const groupTitle = (name: string) =>
+    name === 'Information' ? dict.nav.groups.information : dict.nav.groups.projects;
 
   const isActive = (href: string) => pathname === href;
   const infoActiveHref = infoItems.find(i => isActive(i.href))?.href ?? '/information';
@@ -169,7 +175,7 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
       return;
     }
     if (code !== language) {
-      toast(`Idioma cambiado a ${LANGUAGE_OPTIONS.find((l) => l.code === code)?.label ?? code}`, 'info');
+      toast(t(dict.nav.languageChanged, { lang: LANGUAGE_OPTIONS.find((l) => l.code === code)?.label ?? code }), 'info');
       setLanguage(code as any);
     }
   };
@@ -286,27 +292,27 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
                          {isInfo ? (
                            <Link href="/information" className={navLinkCls(groupHref)}>
                              <span className="opacity-80 shrink-0">{group.icon}</span>
-                             <span className={navLabelCls(groupActive ? groupHref : '/information')}>{group.name}</span>
+                             <span className={navLabelCls(groupActive ? groupHref : '/information')}>{groupTitle(group.name)}</span>
                              <span className={`opacity-70 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>{I.chevronDown}</span>
                            </Link>
                          ) : (
                           <button onClick={() => setOpenGroup(isOpen ? null : group.name)} className={navLinkCls(groupHref)}>
                             <span className="opacity-80 shrink-0">{group.icon}</span>
-                            <span className={navLabelCls(groupActive ? groupHref : '/projects')}>{group.name}</span>
+                            <span className={navLabelCls(groupActive ? groupHref : '/projects')}>{groupTitle(group.name)}</span>
                             <span className={`opacity-70 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>{I.chevronDown}</span>
                           </button>
                         )}
                       {isOpen && (
                         <div className="absolute top-full left-0 pt-2 w-56 z-50 animate-fade-in-down origin-top drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)]">
                           <div className="bg-[#0a0a14]/98 backdrop-blur-2xl border border-white/10 rounded-xl py-2 shadow-2xl max-h-[70vh] overflow-y-auto">
-                            <div className="px-4 py-2 text-xs font-black text-neon-blue/80 uppercase tracking-widest">{group.name}</div>
+                            <div className="px-4 py-2 text-xs font-black text-neon-blue/80 uppercase tracking-widest">{groupTitle(group.name)}</div>
                             <div className="h-px bg-white/10 mx-2" />
                             {group.items.map((sub) => (
                               <Link key={sub.href} href={sub.href} onClick={() => setOpenGroup(null)}
                                 className={`flex items-center gap-3 px-4 py-2 text-sm font-header font-bold transition-all cursor-pointer ${
                                   isActive(sub.href) ? 'text-neon-blue bg-neon-blue/5 hover:text-white' : 'text-white hover:text-neon-blue hover:bg-white/5'
                                 }`}>
-                                <span className="opacity-70 w-4 h-4 shrink-0">{sub.icon}</span>{sub.name}
+                                <span className="opacity-70 w-4 h-4 shrink-0">{sub.icon}</span>{pageLabel(sub.href)}
                               </Link>
                             ))}
                           </div>
@@ -323,7 +329,7 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
                 return (
                   <Link key={link.href} href={link.href} className={`${navLinkCls(link.href)} ${responsiveClass}`}>
                     <span className="opacity-80 shrink-0">{link.icon}</span>
-                    <span className={navLabelCls(link.href)}>{name}</span>
+                    <span className={navLabelCls(link.href)}>{pageLabel(link.href)}</span>
                   </Link>
                 );
               })}
@@ -401,10 +407,10 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
 
               {q.length > 0 && suggestions.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-6 animate-fade-in-down space-y-3">
-                  <p className="text-gray-500 font-header font-black uppercase text-xs tracking-widest italic">No results found for &quot;{searchQuery.trim()}&quot;</p>
+                  <p className="text-gray-500 font-header font-black uppercase text-xs tracking-widest italic">{dict.nav.noResults} &quot;{searchQuery.trim()}&quot;</p>
                   <button onClick={() => setSearchQuery('')}
                     className="px-6 py-2 bg-neon-blue/20 border border-neon-blue/40 text-neon-blue rounded-full font-header font-bold text-[10px] uppercase tracking-widest hover:bg-neon-blue hover:text-white transition-all active:scale-95">
-                     {dict.common.resetSearch || 'Reset search'}
+                     {dict.common.resetSearch}
                   </button>
                 </div>
               )}
@@ -443,7 +449,7 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
               </button>
 
               <h2 className="text-neon-blue text-base font-header font-black tracking-widest drop-shadow-[0_0_8px_rgba(61,106,223,0.8)]">
-                {sidebarView === 'main' ? 'MENU' : 'LANGUAGES'}
+                {sidebarView === 'main' ? dict.nav.menu : dict.nav.languages}
               </h2>
 
               <button
@@ -466,7 +472,7 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
               {sidebarView === 'main' ? (
                 <>
               <div className="mb-4">
-                <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">Navigation</p>
+                <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">{dict.nav.navigation}</p>
                 {ALL_PAGES.map((link) => (
                   <Link key={link.href} href={link.href} onClick={() => setIsMenuOpen(false)}
                     className={`flex justify-start items-center px-4 py-3 rounded-2xl transition-all font-header font-bold text-[15px] group mb-1 active:scale-95 border ${
@@ -478,28 +484,28 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
                       <span className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
                         isActive(link.href) ? 'bg-neon-cyan/20 text-neon-blue shadow-[0_0_10px_rgba(61,106,223,0.3)]' : 'bg-black/40 text-gray-500 group-hover:text-neon-blue group-hover:bg-neon-blue/10'
                       }`}>{link.icon}</span>
-                      <span>{link.name}</span>
+                      <span>{pageLabel(link.href)}</span>
                     </div>
                   </Link>
                 ))}
               </div>
 
               <div className="h-px bg-white/10 my-4" />
-              <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">Account</p>
+              <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">{dict.nav.account}</p>
               {user ? (
                 <button onClick={async () => { const { supabase } = await import('@/config/supabase'); await supabase.auth.signOut(); window.location.href = '/'; }}
                   className="w-full flex items-center justify-center gap-2 py-3 bg-neon-pink/10 border border-neon-pink/30 text-neon-pink rounded-xl font-header font-bold hover:bg-neon-pink/20 hover:text-white text-xs shadow-[0_4px_15px_rgba(255,51,204,0.1)] transition-all">
-                  <SignOutIcon /> Cerrar sesión ({user.display_name || user.username})
+                  <SignOutIcon /> {dict.nav.signOut} ({user.display_name || user.username})
                 </button>
               ) : (
                 <Link href="/login"
                   className="w-full flex items-center justify-center gap-2 py-3 bg-neon-blue/10 border border-neon-blue/30 text-neon-blue rounded-xl font-header font-bold hover:bg-neon-blue/20 hover:text-white text-xs shadow-[0_4px_15px_rgba(61,106,223,0.1)] transition-all">
-                  <UserIcon /> Get Started
+                  <UserIcon /> {dict.nav.getStarted}
                 </Link>
               )}
 
               <div className="h-px bg-white/10 my-4" />
-              <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">Social</p>
+              <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">{dict.nav.social}</p>
               <div className="flex flex-wrap justify-center gap-3">
                 {SOCIALS.slice(0, 8).map((s) => (
                   <a key={s.name} href={s.href} target="_blank" rel="noopener noreferrer"
@@ -532,7 +538,7 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Record<stri
                         <span className="flex-1 text-left">{l.label}</span>
                         {blocked && (
                           <span className="text-[9px] font-black uppercase tracking-widest text-white/30 bg-white/5 border border-white/10 rounded-full px-2 py-0.5 shrink-0">
-                            No disponible
+                            {dict.nav.unavailable}
                           </span>
                         )}
                         {currentLangCode === l.code && (

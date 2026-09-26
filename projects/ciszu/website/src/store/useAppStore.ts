@@ -61,6 +61,14 @@ export const useAppStore = create<AppState>((set) => ({
     set({ language: val });
     const prefs = loadPreferences();
     savePreferences({ ...prefs, lang: val });
+    // La cookie es la que lee el servidor (layout y páginas con `i18n-server`):
+    // sin ella, cambiar el idioma solo cambiaba algunos textos de cliente y la
+    // web seguía sirviendo es-latam. Con recarga voluntaria, el render del
+    // servidor sale ya en el idioma elegido.
+    if (typeof document !== 'undefined') {
+      document.cookie = `ciszu_lang=${val}; path=/; max-age=31536000; samesite=lax`;
+    }
+    reloadPage(1200);
   },
   searchQuery: '',
   setSearchQuery: (val: string) => set({ searchQuery: val }),

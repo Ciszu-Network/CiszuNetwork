@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { MessageSquareWarning } from 'lucide-react';
 import { useFabStack, useFabRestore, FabDismissHint } from '@ciszu/ui';
 import { openSentryFeedback } from '@/lib/sentry';
+import { useDict } from '@/lib/useDict';
 
 const STORAGE_KEY = 'ciszu-feedback-dismissed';
 
@@ -19,6 +20,7 @@ const STORAGE_KEY = 'ciszu-feedback-dismissed';
  *   indicando que puede reactivarlo desde la página de Feedback.
  */
 export default function FeedbackFab() {
+  const t = useDict();
   const [dismissed, setDismissed] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -67,10 +69,10 @@ export default function FeedbackFab() {
         <FabDismissHint
           slotId="feedback"
           accent="#22d3ee"
-          title="Feedback ocultado"
-          message="Has ocultado el botón de reporte. Puedes reactivarlo desde la página de Feedback."
+          title={t.feedbackFab.hiddenTitle}
+          message={t.feedbackFab.hiddenMsg}
           href="/feedback"
-          linkLabel="Reactivar en Feedback"
+          linkLabel={t.feedbackFab.reactivate}
           onReactivate={handleReenable}
           onClose={() => setShowWarning(false)}
         />
@@ -85,8 +87,8 @@ export default function FeedbackFab() {
             onMouseLeave={() => setExpanded(false)}
             onFocus={() => setExpanded(true)}
             onBlur={() => setExpanded(false)}
-            aria-label="Reportar un problema"
-            title="Reportar un problema"
+            aria-label={t.feedbackFab.report}
+            title={t.feedbackFab.report}
             className={[
               'flex items-center h-9 rounded-full border backdrop-blur-xl bg-[#0a0a12]/60 text-white cursor-pointer overflow-hidden transition-all duration-500',
               expanded ? 'border-[#22d3ee] w-[168px] shadow-[0_0_18px_rgba(34,211,238,0.5)]' : 'border-white/15 w-9 shadow-[0_0_10px_rgba(0,0,0,0.4)]',
@@ -108,14 +110,14 @@ export default function FeedbackFab() {
               ].join(' ')}
               style={{ color: '#22d3ee', transition: 'opacity 0.5s cubic-bezier(0.22,1,0.36,1), transform 0.5s cubic-bezier(0.22,1,0.36,1)' }}
             >
-              Reportar un problema
+              {t.feedbackFab.report}
             </span>
           </button>
 
           <button
             type="button"
-            aria-label="No volver a mostrar"
-            title="No volver a mostrar"
+            aria-label={t.feedbackFab.hide}
+            title={t.feedbackFab.hide}
             onClick={handleDismiss}
             className="flex items-center justify-center w-5 h-5 shrink-0 rounded-full border border-white/15 bg-[#0a0a12]/60 text-[#a1a1aa] text-[10px] cursor-pointer backdrop-blur-xl hover:border-white/30 hover:text-white transition-all"
           >

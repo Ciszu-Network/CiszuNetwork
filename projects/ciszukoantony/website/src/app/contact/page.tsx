@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useAppStore } from '@/store';
+import { useDict } from '@/components/providers/I18nProvider';
 import { InfoHero, useToast, type InfoTheme } from '@ciszu/ui';
 import Link from 'next/link';
 import PageAmbience from '@/components/layout/PageAmbience';
@@ -138,6 +139,7 @@ const THEME: InfoTheme = {
 
 export default function ContactPage() {
   usePageTitle('CONTACT');
+  const dict = useDict();
   const { } = useAppStore();
   const { toast } = useToast();
   const [selectedDiscord, setSelectedDiscord] = useState<string | null>(null);
@@ -163,8 +165,8 @@ export default function ContactPage() {
         {/* --- HERO HEADER --- */}
         <InfoHero
           icon="globe"
-          title="CONTACTO"
-          subtitle="Núcleo de Asistencia y Canales de Comunicación"
+          title={dict.contact.heroTitle}
+          subtitle={dict.contact.heroSubtitle}
           theme={THEME}
         />
 
@@ -175,14 +177,14 @@ export default function ContactPage() {
             <div className="p-10 md:p-14 bg-doc-dark border border-white/5 rounded-[3rem] space-y-8 relative overflow-hidden group">
               <div className="absolute -top-10 -right-10 w-40 h-40 bg-neon-purple/10 rounded-full blur-3xl pointer-events-none" />
               <h2 className="text-4xl md:text-5xl font-header font-black text-white uppercase italic tracking-tighter leading-none">
-                ¿TIENES DUDAS?
+                {dict.contact.doubts}
               </h2>
               <p className="text-white/80 font-bold text-xl md:text-2xl leading-relaxed tracking-tight group-hover:text-white transition-colors">
-                Establece una conexión directa con Ciszuko Antony. Estamos listos para sincronizar soluciones y responder a tus requerimientos globales.
+                {dict.contact.intro}
               </p>
 
               <div className="pt-10 border-t border-white/5 space-y-6">
-                <CopyField label="Email Personal" value="fplayersoffcial@gmail.com" icon={I.mail} theme="purple" />
+                <CopyField label={dict.contact.emailPersonal} value="fplayersoffcial@gmail.com" icon={I.mail} theme="purple" />
                 <CopyField label="WhatsApp" value="+58 412 6858111" subValue="Venezuela" icon={I.phone} theme="green" showWhatsApp={true} />
               </div>
             </div>
@@ -196,18 +198,18 @@ export default function ContactPage() {
                    </div>
                    <div className="space-y-4">
                       <h3 className="text-4xl md:text-5xl font-header font-black text-white uppercase italic tracking-tighter">
-                         Nuestra Localidad
+                         {dict.contact.locality}
                       </h3>
                       <p className="text-xl font-header font-black text-neon-purple italic uppercase tracking-tighter">
-                         Coro, Falcón
+                         {dict.contact.localityCity}
                       </p>
                       <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest max-w-md">
-                         Base de Operaciones Suramericana - Venezuela (GMT-4)
+                         {dict.contact.localityBody}
                       </p>
                    </div>
                    <div className="flex flex-wrap justify-center gap-4 pt-8">
-                      <CopyField label="Email de Consulta" value="fplayersoffcial@gmail.com" icon={I.mail} theme="purple" />
-                      <CopyField label="WhatsApp Directo" value="+58 412 6858111" icon={I.phone} theme="green" showWhatsApp={true} />
+                      <CopyField label={dict.contact.emailInquiry} value="fplayersoffcial@gmail.com" icon={I.mail} theme="purple" />
+                      <CopyField label={dict.contact.whatsappDirect} value="+58 412 6858111" icon={I.phone} theme="green" showWhatsApp={true} />
                    </div>
                 </div>
              </div>
@@ -222,11 +224,11 @@ export default function ContactPage() {
                 <div className="absolute -top-1 -right-1 w-4 h-4 bg-neon-green rounded-full border-2 border-black animate-pulse" />
               </div>
               <div className="space-y-2">
-                 <h3 className="text-3xl font-header font-black text-white italic uppercase tracking-tighter">DISPONIBILIDAD 24/7</h3>
-                 <p className="text-neon-green font-black text-xs uppercase tracking-[0.5em] opacity-80 flex items-center justify-center gap-2">ONLINE AHORA</p>
+                 <h3 className="text-3xl font-header font-black text-white italic uppercase tracking-tighter">{dict.contact.availability}</h3>
+                 <p className="text-neon-green font-black text-xs uppercase tracking-[0.5em] opacity-80 flex items-center justify-center gap-2">{dict.contact.onlineNow}</p>
               </div>
               <p className="text-gray-400 font-bold text-sm leading-relaxed max-w-sm uppercase tracking-widest italic flex items-center justify-center flex-wrap gap-2 text-center">
-                Atención ininterrumpida los 365 días del año en horario <span className="text-white">Venezuela (GMT-4)</span>.
+                {dict.contact.availabilityBody} <span className="text-white">{dict.contact.venezuela}</span>.
               </p>
            </div>
            <div className="p-10 bg-black/40 border-2 border-neon-purple/20 rounded-[3rem] space-y-6 flex flex-col items-center text-center group hover:border-neon-purple transition-all">
@@ -234,8 +236,8 @@ export default function ContactPage() {
                 <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
               </div>
               <div className="space-y-2">
-                 <h3 className="text-3xl font-header font-black text-white italic uppercase tracking-tighter">ESTRUCTURA TÉCNICA</h3>
-                 <p className="text-neon-purple font-black text-xs uppercase tracking-[0.5em] opacity-80">Creative Portfolio Architecture</p>
+                 <h3 className="text-3xl font-header font-black text-white italic uppercase tracking-tighter">{dict.contact.technical}</h3>
+                 <p className="text-neon-purple font-black text-xs uppercase tracking-[0.5em] opacity-80">{dict.contact.technicalTitle}</p>
               </div>
               <div className="flex flex-wrap justify-center gap-2">
                  {['React', 'Next.js', 'Tailwind', 'Framer Motion', 'Vercel', 'Zustand'].map(tech => (
@@ -254,21 +256,21 @@ export default function ContactPage() {
                </div>
                <div className="space-y-6 text-center md:text-left relative z-10 w-full">
                   <div>
-                    <h3 className="text-5xl md:text-7xl font-header font-black text-white italic tracking-tighter uppercase leading-none">CISZUKO ANTONY</h3>
+                    <h3 className="text-5xl md:text-7xl font-header font-black text-white italic tracking-tighter uppercase leading-none">{dict.contact.ownerName}</h3>
                     <p className="text-brand-200 font-black tracking-[0.6em] uppercase text-xs md:text-sm pt-2 flex items-center justify-center md:justify-start gap-3">
-                       CEO & CREADOR · NÚCLEO CISZU
+                       {dict.contact.ownerRole}
                     </p>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-3xl">
-                     <CopyField label="Email Personal" value="fplayersoffcial@gmail.com" icon={I.mail} theme="blue" />
-                     <CopyField label="WhatsApp Personal" value="+58 412 6858111" subValue="Venezuela" icon={I.phone} theme="green" showWhatsApp={true} />
+                     <CopyField label={dict.contact.emailPersonal} value="fplayersoffcial@gmail.com" icon={I.mail} theme="blue" />
+                     <CopyField label={dict.contact.whatsappPersonal} value="+58 412 6858111" subValue="Venezuela" icon={I.phone} theme="green" showWhatsApp={true} />
                   </div>
                   <div className="flex flex-col sm:flex-row gap-5 pt-6">
                     <button onClick={() => window.open('https://ciszukoantony.vercel.app', '_blank')} className="px-8 py-4 bg-white text-black font-black uppercase text-xs tracking-[0.2em] rounded-3xl hover:bg-neon-purple hover:text-black hover:scale-105 transition-all shadow-xl flex items-center justify-center gap-4">
-                      <div className="w-4 h-4">{I.globe}</div> Portafolio Personal
+                      <div className="w-4 h-4">{I.globe}</div> {dict.contact.personalPortfolio}
                     </button>
                     <Link href="/team#ceo" className="px-8 py-4 bg-transparent border-2 border-brand-200 text-brand-200 font-black uppercase text-xs tracking-[0.2em] rounded-3xl hover:bg-brand-200 hover:text-black hover:scale-105 transition-all shadow-xl flex items-center justify-center gap-4 group">
-                       <div className="w-4 h-4 group-hover:scale-110 transition-transform">{I.team}</div> Perfil Completo
+                       <div className="w-4 h-4 group-hover:scale-110 transition-transform">{I.team}</div> {dict.contact.fullProfile}
                     </Link>
                   </div>
                </div>
@@ -278,14 +280,14 @@ export default function ContactPage() {
         {/* --- SOCIAL GALAXY --- */}
         <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={sectionVariants} className="space-y-12 bg-black/40 p-12 md:p-20 rounded-[5rem] border border-white/5">
            <div className="text-center space-y-2 mb-12">
-             <h3 className="text-4xl font-header font-black text-white uppercase italic tracking-tighter">SISTEMA SOCIAL UNIFICADO</h3>
-             <p className="text-white/40 font-black text-[10px] uppercase tracking-[0.5em] flex items-center justify-center gap-2">Conexión Global</p>
+            <h3 className="text-4xl font-header font-black text-white uppercase italic tracking-tighter">{dict.contact.socialSystem}</h3>
+            <p className="text-white/40 font-black text-[10px] uppercase tracking-[0.5em] flex items-center justify-center gap-2">{dict.contact.globalConnection}</p>
            </div>
 
            <div className="space-y-16">
               <div className="space-y-6">
                 <div className="flex items-center gap-4">
-                   <div className="h-[1px] flex-1 bg-neon-cyan/10" /><span className="text-neon-cyan font-black text-[10px] uppercase tracking-widest px-4">Ecosistema MuzicMania</span><div className="h-[1px] flex-1 bg-neon-cyan/10" />
+                   <div className="h-[1px] flex-1 bg-neon-cyan/10" /><span className="text-neon-cyan font-black text-[10px] uppercase tracking-widest px-4">{dict.contact.muzicmania}</span><div className="h-[1px] flex-1 bg-neon-cyan/10" />
                 </div>
                    <div className="flex flex-wrap justify-center gap-4">
                     {MUZICMANIA_SOCIALS.filter(s => s.name !== 'GitHub').map(s => {
@@ -301,7 +303,7 @@ export default function ContactPage() {
 
               <div className="space-y-6">
                 <div className="flex items-center gap-4">
-                   <div className="h-[1px] flex-1 bg-neon-purple/10" /><span className="text-neon-purple font-black text-[10px] uppercase tracking-widest px-4">Corporación Ciszu Network</span><div className="h-[1px] flex-1 bg-neon-purple/10" />
+                   <div className="h-[1px] flex-1 bg-neon-purple/10" /><span className="text-neon-purple font-black text-[10px] uppercase tracking-widest px-4">{dict.contact.corporation}</span><div className="h-[1px] flex-1 bg-neon-purple/10" />
                 </div>
                 <div className="flex flex-wrap justify-center gap-4">
                    {CISZUNETWORK_SOCIALS.filter(s => s.name !== 'GitHub').map(s => {
@@ -316,7 +318,7 @@ export default function ContactPage() {
 
               <div className="space-y-6">
                 <div className="flex items-center gap-4">
-                   <div className="h-[1px] flex-1 bg-white/5" /><span className="text-white font-black text-[10px] uppercase tracking-widest px-4">Portafolio Ciszuko Antony</span><div className="h-[1px] flex-1 bg-white/5" />
+                   <div className="h-[1px] flex-1 bg-white/5" /><span className="text-white font-black text-[10px] uppercase tracking-widest px-4">{dict.contact.portfolioLink}</span><div className="h-[1px] flex-1 bg-white/5" />
                 </div>
                 <div className="flex flex-wrap justify-center gap-4">
                    {CISZUKO_ANTONY_SOCIALS.map(s => {
@@ -329,7 +331,7 @@ export default function ContactPage() {
                       else if (s.name === 'Facebook') actualHref = 'https://facebook.com/ciszukoantony';
                       const isDiscord = s.name === 'Discord';
                       return (
-                        <SocialButton key={s.name} {...s} href={actualHref} name={isDiscord ? 'Discord ID' : s.name} onClick={() => isDiscord ? setSelectedDiscord('ciszukoantony_') : undefined} />
+                        <SocialButton key={s.name} {...s} href={actualHref} name={isDiscord ? dict.contact.discordId : s.name} onClick={() => isDiscord ? setSelectedDiscord('ciszukoantony_') : undefined} />
                       );
                     })}
                 </div>
@@ -354,7 +356,7 @@ export default function ContactPage() {
                   <svg viewBox="0 0 24 24" className="w-full h-full" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.03.053a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
                 </div>
                 <div className="space-y-1">
-                  <h4 className="text-2xl font-header font-black text-white uppercase italic">Discord ID</h4>
+                  <h4 className="text-2xl font-header font-black text-white uppercase italic">{dict.contact.discordId}</h4>
                   <p className="text-[#5865F2] font-black uppercase tracking-[0.4em] text-[10px]">Ciszuko Antony</p>
                 </div>
                 <div className="w-full bg-black/60 rounded-3xl p-6 border border-white/5 space-y-4">
@@ -362,7 +364,7 @@ export default function ContactPage() {
                   <button onClick={() => { navigator.clipboard.writeText(selectedDiscord); toast('[ÉXITO]: Discord ID copiado al portapapeles.', 'success'); setSelectedDiscord(null); }}
                     className="w-full py-4 bg-neon-green/20 border border-neon-green/40 text-neon-green font-black uppercase text-xs rounded-2xl flex items-center justify-center gap-3 hover:bg-neon-green hover:text-black transition-all"
                   >
-                    <div className="w-4 h-4">{I.copy}</div> Sincronizar ID
+                    <div className="w-4 h-4">{I.copy}</div> {dict.contact.syncId}
                   </button>
                 </div>
               </div>

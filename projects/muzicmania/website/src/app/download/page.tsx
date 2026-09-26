@@ -10,6 +10,7 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '@/store';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useT } from '@/hooks/useT';
 // Iconos personalizados SVGs de Sistemas Operativos
 const WindowsIcon = () => (
   <svg viewBox="0 0 24 24" className="w-full h-full" fill="currentColor">
@@ -150,6 +151,7 @@ const InfoCard = ({ title, desc, icon, glowClass, iconClass }: { title: string; 
 
 export default function DownloadPage() {
   usePageTitle('DOWNLOAD');
+  const t = useT();
   const {  } = useAppStore();
   const { toast } = useToast();
   const [isDownloading, setIsDownloading] = useState<string | null>(null);
@@ -238,11 +240,11 @@ export default function DownloadPage() {
                 </svg>
               </div>
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-neon-blue via-neon-purple to-neon-pink bg-clip-text text-transparent [-webkit-text-stroke:1px_black]">
-                CENTRO DE DESCARGAS
+                {t.pages.download.title}
               </h1>
             </div>
             <p className="text-neon-cyan font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-              INSTALADORES NATIVOS PARA WINDOWS • PRÓXIMAMENTE EN MÁS PLATAFORMAS
+              {t.pages.download.subtitle}
             </p>
           </div>
         </motion.header>

@@ -15,6 +15,7 @@ import AuthWarningModal from '@/components/shared/AuthWarningModal';
 import { extractAccentColor } from '@/lib/colorUtils';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useToast } from '@ciszu/ui';
+import { useT } from '@/hooks/useT';
 
 // --- Icons Library ---
 const I = {
@@ -49,6 +50,7 @@ function getCoverUrl(track: Track): string {
 }
 
 function LibraryContent() {
+  const t = useT();
   const { toast } = useToast();
   const [trackId] = useQueryState('track');
   const initialTrackId = trackId;
@@ -304,11 +306,11 @@ function LibraryContent() {
                    {I.disc}
                 </div>
                 <h1 className="text-4xl md:text-8xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-neon-blue via-white to-neon-purple bg-clip-text text-transparent [-webkit-text-stroke:1px_black]">
-                  LIBRERÍA
+                  {t.pages.library.title}
                 </h1>
              </div>
              <p className="text-neon-cyan font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-               Explora el repertorio exclusivo de CiszukoAntony
+               {t.pages.library.subtitle}
              </p>
            </div>
         </motion.header>

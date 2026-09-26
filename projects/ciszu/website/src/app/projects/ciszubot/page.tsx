@@ -5,6 +5,7 @@ import { InfoHero, type InfoTheme } from "@ciszu/ui";
 import PageAmbience from "@/components/layout/PageAmbience";
 import PageReveal from "@/components/layout/PageReveal";
 import QuickDocks from "@/components/molecules/QuickDocks";
+import { getServerI18n } from "@/lib/i18n-server";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -36,7 +37,8 @@ const directories = [
   { name: 'Discord Bot List', href: CISZUBOT_LINKS.discordBotListBot },
 ];
 
-export default function CiszubotPage() {
+export default async function CiszubotPage() {
+  const { t } = await getServerI18n();
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />
@@ -68,7 +70,7 @@ export default function CiszubotPage() {
           </div>
 
           <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10">
-            <h2 className="text-2xl font-header font-bold text-white mb-6">Stack tecnológico</h2>
+            <h2 className="text-2xl font-header font-bold text-white mb-6">{t.projectPages.stack}</h2>
             <div className="flex flex-wrap gap-2 mb-8">
               {stack.map((s) => (
                 <span key={s} className="px-3 py-1.5 rounded-full bg-[#5865F2]/10 border border-[#5865F2]/30 text-[#8b93f8] text-[10px] font-bold uppercase tracking-wider">
@@ -76,7 +78,7 @@ export default function CiszubotPage() {
                 </span>
               ))}
             </div>
-            <h3 className="text-sm font-header font-bold text-white mb-3">CiszuBot en directorios</h3>
+            <h3 className="text-sm font-header font-bold text-white mb-3">{t.projectPages.ciszubot.directories}</h3>
             <div className="flex flex-wrap gap-3">
               {directories.map((d) => (
                 <a key={d.name} href={d.href} target="_blank" rel="noopener noreferrer"
@@ -88,23 +90,23 @@ export default function CiszubotPage() {
           </div>
 
           <div className="text-center p-8 rounded-[2rem] bg-gradient-to-br from-[#5865F2]/10 to-transparent border border-[#5865F2]/30">
-            <h2 className="text-xl font-header font-bold text-white mb-4">Añade CiszuBot a tu servidor</h2>
-            <p className="text-gray-400 text-sm mb-6">Web oficial con estado en vivo, comandos y soporte.</p>
+            <h2 className="text-xl font-header font-bold text-white mb-4">{t.projectPages.ciszubot.addTitle}</h2>
+            <p className="text-gray-400 text-sm mb-6">{t.projectPages.ciszubot.addDesc}</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a href={CISZUBOT_LINKS.invite} target="_blank" rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#5865F2]/20 border border-[#5865F2]/40 text-[#5865F2] rounded-xl font-bold text-sm hover:bg-[#5865F2] hover:text-white transition-all">
-                Invitar el bot <ArrowRight className="w-4 h-4" />
+                {t.projectPages.ciszubot.invite} <ArrowRight className="w-4 h-4" />
               </a>
               <a href={CISZUBOT_LINKS.website} target="_blank" rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/10 transition-all">
-                Web oficial de CiszuBot <ArrowRight className="w-4 h-4" />
+                {t.projectPages.ciszubot.officialWeb} <ArrowRight className="w-4 h-4" />
               </a>
             </div>
           </div>
 
           <div className="text-center">
             <Link href="/projects" className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/10 transition-all">
-              Ver todos los proyectos <ArrowRight className="w-4 h-4" />
+              {t.projectPages.viewAll} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>

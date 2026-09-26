@@ -56,6 +56,10 @@
   --ink-faint: rgba(255, 255, 255, 0.4);
   --border: rgba(255, 255, 255, 0.1);
   --surface: #0e1420;
+  /* Superficie `bg-doc-dark` (paneles de documento/ficha). El modo claro la
+     reescribe; la utilidad la consume por variable para poder ganar al
+     `!important` de la capa utilities. */
+  --doc-dark: #050a14;
   color-scheme: dark;
 }
 
@@ -73,6 +77,7 @@
   --ui-panel: rgba(255, 255, 255, 0.92);
   --ui-panel-border: rgba(30, 50, 96, 0.16);
   --ui-track: rgba(30, 50, 96, 0.12);
+  --doc-dark: #eef1f8;
   /* Porcentaje de color de marca que conserva el texto de las redes sociales
      (100 = color puro, como en oscuro; 70 = oscurecido lo justo para AA). */
   --brand-ink-mix: 70%;
@@ -98,6 +103,18 @@
 .light .bg-black\/95 { background-color: rgba(250, 251, 255, 0.98) !important; }
 
 /* Modo claro: superficies e iconos hardcodeados de los docks/modals/cards/bars/dropdowns/pills. */
+/* Gradiente oscuro de la tarjeta del CEO en /contact (from-indigo-950/40 to-black). */
+.light .from-indigo-950\/40 { --tw-gradient-from: rgba(99, 102, 241, 0.14) !important; }
+.light .to-black { --tw-gradient-to: #eef1f8 !important; }
+/* Chip de los iconos de marca del stack (Information): caja oscura + icono `invert`.
+   En claro la caja se aclara y el icono vuelve a su tinta original (sin invertir). */
+.light .bg-\[\#0b1020\] { background-color: #e8ebf0 !important; }
+.light .bg-\[\#0b1020\] .invert { filter: none !important; }
+/* Viñeta "fuera de emisión" del 404 (estilo inline): en claro se invierte a un
+   halo suave para que el texto oscuro siga siendo legible. */
+.light .cztv-vignette {
+  background: radial-gradient(circle at center, rgba(245, 247, 252, 0.25) 25%, rgba(30, 50, 96, 0.4) 100%) !important;
+}
 .light .bg-\[\#0a0a0f\] { background-color: #ffffff !important; }
 .light [class*="bg-[#0a0a0f]/"] { background-color: #ffffff !important; }
 .light .bg-\[\#070710\] { background-color: #f4f6fb !important; }
@@ -260,7 +277,7 @@
     background: linear-gradient(135deg, #233f92 0%, #3d6adf 100%) !important;
   }
 
-  .bg-doc-dark { background-color: #050a14 !important; }
+  .bg-doc-dark { background-color: var(--doc-dark, #050a14) !important; }
 
   .active-depth { transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
   .active-depth:active { transform: scale(0.92) translateY(2px); filter: brightness(0.9); }
@@ -395,6 +412,14 @@
 .light :is(.bg-neon-green.text-white, .bg-neon-green:has(.text-white)) { background-color: #007f44 !important; }
 .light :is(.bg-brand-light.text-white, .bg-brand-light:has(.text-white)) { background-color: #4c6ec5 !important; }
 .light :is(.bg-neon-red.text-white, .bg-neon-red:has(.text-white)) { background-color: #e50000 !important; }
+
+/* Chip de cuenta/invitado del navbar: en claro el degradado translúcido queda
+   casi blanco y el texto blanco desaparecía (1.1:1). Pasa a tinta oscura. */
+.light :is(.from-neon-blue\/20, .from-neon-blue\/10).bg-gradient-to-r { color: var(--ink) !important; }
+.light :is(.from-neon-blue\/20, .from-neon-blue\/10).bg-gradient-to-r :is(.text-white, .text-white\/90, .text-white\/85, .text-white\/80) { color: var(--ink) !important; }
+/* Títulos con degradado recortado que arrancan en blanco: sobre fondo claro el
+   primer tramo desaparecía; arrancan en tinta oscura. */
+.light [class*="bg-clip-text"][class*="from-white"] { --tw-gradient-from: #0d1526 !important; }
 
 /* Utilidades propias y cromo del navegador (barra de desplazamiento,
    selección, vidrio y degradado de cards) en su versión clara. */

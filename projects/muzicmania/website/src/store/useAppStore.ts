@@ -69,7 +69,7 @@ export const useAppStore = create<AppState>((set: any, get: any) => ({
   isMenuOpen: false,
   sidebarView: 'main',
   darkMode: true,
-  lang: 'EN-US',
+  lang: 'es-latam',
   user: null,
   audioInstance: null,
   analyser: null,

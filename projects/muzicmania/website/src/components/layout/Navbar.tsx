@@ -16,7 +16,7 @@ import { I, HEADER_NAV_LINKS as NAV_LINKS, INFO_DROPDOWN_LINKS, COMMUNITY_LINKS,
 import { isTauri } from '@/lib/isTauri';
 import { getGuestName } from '@/lib/guest';
 import { loadPreferences, applyZoom, setMuteTab, updatePreferences, consumeReloadToastMsg, reloadAfterPrefChange } from '@/lib/preferences';
-import { getDict } from '@/lib/i18n';
+import { fill, getDict, parseLang } from '@/lib/i18n';
 import PreferencesPanel from '@/components/molecules/PreferencesPanel';
 import { LANGUAGE_OPTIONS, isLangAvailable } from '@ciszu/ui';
 
@@ -29,7 +29,7 @@ export const NavbarContent = () => {
   const pathname  = usePathname();
   const router    = useRouter();
   const { isMusicPlaying,  toggleMusic,  isNavigating,  setIsNavigating,  isMenuOpen,  setIsMenuOpen,  sidebarView,  setSidebarView,  darkMode,  setDarkMode,  lang,  setLang,  user,  setUser } = useAppStore();
-  const dict = getDict(lang as any);
+  const dict = getDict(parseLang(lang));
   const { toast } = useToast();
   const [isInfoOpen,    setIsInfoOpen]    = useState(false);
   const [isAccederOpen, setIsAccederOpen] = useState(false);
@@ -202,17 +202,17 @@ export const NavbarContent = () => {
     const next = !darkMode;
     setDarkMode(next);
     updatePreferences({ theme: next ? 'dark' : 'light' });
-    reloadAfterPrefChange(next ? '[SISTEMA]: Modo oscuro activado.' : '[SISTEMA]: Modo claro activado.');
+    reloadAfterPrefChange(next ? `[SISTEMA]: ${dict.system.darkOn}` : `[SISTEMA]: ${dict.system.lightOn}`);
   };
 
   const applyLangChange = (code: string, label: string) => {
     if (!isLangAvailable(code)) {
-      toast(`[SISTEMA]: El idioma ${label} no está disponible aún.`, 'error');
+      toast(`[SISTEMA]: ${fill(dict.prefs.unavailable, { label })}`, 'error');
       return;
     }
     setLang(code as 'es-latam' | 'es-es' | 'en-us' | 'en-uk');
     updatePreferences({ lang: code as 'es-latam' | 'es-es' | 'en-us' | 'en-uk' });
-    reloadAfterPrefChange(`[SISTEMA]: Idioma cambiado a ${label}.`);
+    reloadAfterPrefChange(`[SISTEMA]: ${fill(dict.system.langChanged, { label })}`);
   };
 
   const toggleMenu = (e?: React.MouseEvent) => {
@@ -314,13 +314,13 @@ export const NavbarContent = () => {
               >
                 <Link href="/information" className={navLinkCls('/information')}>
                   <span className="opacity-80 shrink-0">{I.info}</span>
-                  <span className={navLabelCls('/information')}>Information</span>
+                  <span className={navLabelCls('/information')}>{dict.nav.information}</span>
                   {I.chevron(isInfoOpen)}
                 </Link>
                  {isInfoOpen && (
                    <div className="absolute top-full left-0 pt-2 w-56 z-50 animate-fade-in-down origin-top drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)]">
                      <div className="bg-[#0a0a14]/98 backdrop-blur-2xl border border-white/10 rounded-xl py-2 shadow-2xl max-h-[70vh] overflow-y-auto">
-                       <div className="px-4 py-2 text-xs font-black text-neon-blue/80 uppercase tracking-widest">Information</div>
+                       <div className="px-4 py-2 text-xs font-black text-neon-blue/80 uppercase tracking-widest">{dict.nav.information}</div>
                        <div className="h-px bg-white/10 mx-2" />
                        {INFO_LINKS.map((s) => (
                          <Link key={s.name} href={s.href}
@@ -344,7 +344,7 @@ export const NavbarContent = () => {
                 className={`p-2 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_10px_rgba(0,212,255,0.2)] ${
                   isSearchOpen ? 'bg-neon-blue border-neon-blue text-black' : 'bg-white/5 border-white/20 text-white hover:border-neon-blue'
                 }`}
-                title="Search"
+                title={dict.nav.search}
               >
                 {isSearchOpen ? I.close : I.search}
               </button>
@@ -355,7 +355,7 @@ export const NavbarContent = () => {
                   isMenuOpen ? 'bg-neon-blue border-neon-blue text-black' : 'bg-white/5 border-white/20 text-white hover:border-neon-blue'
                 }`}
                 onClick={toggleMenu}
-                title="Game menu"
+                title={dict.menu.mainMenu}
               >
                 {isMenuOpen ? I.close : I.menu}
               </button>
@@ -384,7 +384,7 @@ export const NavbarContent = () => {
                         ? 'bg-gradient-to-r from-neon-blue/40 via-[#6600ff]/40 to-neon-pink/40 border-neon-pink text-white'
                         : 'bg-gradient-to-r from-neon-blue/10 via-[#6600ff]/10 to-neon-pink/10 border-white/20 text-white hover:border-neon-pink'
                     }`}
-                    title={guestName || 'Guest'}
+                    title={guestName || dict.common.guest}
                   >
                     <span className="relative w-8 h-8 rounded-full bg-gradient-to-br from-neon-blue/30 via-[#6600ff]/30 to-neon-pink/30 border border-white/20 flex items-center justify-center overflow-hidden">
                       <svg viewBox="0 0 24 24" className="w-4 h-4 text-neon-cyan" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -393,7 +393,7 @@ export const NavbarContent = () => {
                       </svg>
                     </span>
                     <span className="hidden sm:block max-w-[110px] truncate text-xs font-header font-bold text-white/85">
-                      {guestName || 'Guest'}
+                      {guestName || dict.common.guest}
                     </span>
                   </button>
                 )}
@@ -426,7 +426,7 @@ export const NavbarContent = () => {
                             </svg>
                           </div>
                           <div className="min-w-0">
-                            <p className="text-white font-black text-xs uppercase tracking-widest truncate">{guestName || 'Guest'}</p>
+                            <p className="text-white font-black text-xs uppercase tracking-widest truncate">{guestName || dict.common.guest}</p>
                             <p className="text-gray-500 text-[10px] font-bold truncate">@{guestName.replace(/^Invitado/i, 'invitado').replace(/^Guest/i, 'guest').toLowerCase()}</p>
                           </div>
                         </div>
@@ -435,23 +435,23 @@ export const NavbarContent = () => {
                       {user ? (
                         <div className="p-2 border-b border-white/5 space-y-1">
                           <Link href={`/profile/@${user.username}`} className="flex items-center gap-3 px-4 py-2 text-white/70 hover:text-neon-cyan hover:bg-white/5 rounded-lg transition-all font-header font-bold text-xs">
-                            {I.user} Mi Perfil
+                            {I.user} {dict.menu.myProfile}
                           </Link>
                           <Link href="/profile/settings" className="flex items-center gap-3 px-4 py-2 text-white/70 hover:text-neon-purple hover:bg-white/5 rounded-lg transition-all font-header font-bold text-xs">
-                            {I.policy} Configuración
+                            {I.policy} {dict.menu.settings}
                           </Link>
                           <button
                             onClick={() => {
                               // Deslogueo optimista para evitar bloqueos si Supabase no responde
                               setUser(null);
                               router.push('/');
-                              toast('[SISTEMA]: Sesión cerrada correctamente.', 'success');
+                              toast(`[SISTEMA]: ${dict.system.sessionClosed}`, 'success');
                               // Ejecutar signOut en background
                               supabase.auth.signOut().catch(() => {});
                             }}
                             className="w-full flex items-center gap-3 px-4 py-2 text-red-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all font-header font-bold text-xs"
                           >
-                            {I.login} Cerrar Sesión
+                            {I.login} {dict.menu.logout}
                           </button>
                         </div>
                       ) : (
@@ -462,7 +462,7 @@ export const NavbarContent = () => {
                             <span className="w-10 h-10 rounded-full bg-neon-green/20 border border-neon-green/50 flex items-center justify-center group-hover:shadow-[0_0_15px_rgba(0,255,136,0.8)] group-hover:bg-neon-green/40 transition-all text-neon-green group-hover:text-white">
                               {I.login}
                             </span>
-                            <span className="text-neon-green group-hover:text-white drop-shadow-[0_0_8px_rgba(0,255,136,0.8)]">Login</span>
+                            <span className="text-neon-green group-hover:text-white drop-shadow-[0_0_8px_rgba(0,255,136,0.8)]">{dict.menu.signIn}</span>
                           </Link>
                           <Link href="/register"
                             className="flex flex-col items-center gap-2 p-5 text-white font-header font-bold text-sm bg-gradient-to-bl from-neon-pink/30 to-neon-pink/5 hover:from-neon-pink/50 transition-all cursor-pointer group shadow-[inset_0_0_20px_rgba(255,51,204,0.1)] hover:shadow-[inset_0_0_30px_rgba(255,51,204,0.3)]"
@@ -470,7 +470,7 @@ export const NavbarContent = () => {
                             <span className="w-10 h-10 rounded-full bg-neon-pink/20 border border-neon-pink/50 flex items-center justify-center group-hover:shadow-[0_0_15px_rgba(255,51,204,0.8)] group-hover:bg-neon-pink/40 transition-all text-neon-pink group-hover:text-white">
                               {I.register}
                             </span>
-                            <span className="text-neon-pink group-hover:text-white drop-shadow-[0_0_8px_rgba(255,51,204,0.8)]">Register</span>
+                            <span className="text-neon-pink group-hover:text-white drop-shadow-[0_0_8px_rgba(255,51,204,0.8)]">{dict.menu.signUp}</span>
                           </Link>
                         </div>
                       )}
@@ -486,7 +486,7 @@ export const NavbarContent = () => {
                             <circle cx="12" cy="12" r="3" />
                             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
                           </svg>
-                          Preferencias locales
+                          {dict.menu.localPreferences}
                         </button>
                       </div>
                     </div>
@@ -494,7 +494,7 @@ export const NavbarContent = () => {
                 )}
 
                 {/* Modal centrado de preferencias (Radix), con X de cierre */}
-                <PreferencesModal open={isPrefsOpen} onOpenChange={setIsPrefsOpen} title="Preferencias locales">
+                <PreferencesModal open={isPrefsOpen} onOpenChange={setIsPrefsOpen} title={dict.prefs.title}>
                   <PreferencesPanel />
                 </PreferencesModal>
               </div>
@@ -522,12 +522,12 @@ export const NavbarContent = () => {
               {/* Reset search button ONLY when no results and there is a query */}
               {query.trim().length > 0 && suggestions.length === 0 && (
                  <div className="flex flex-col items-center justify-center py-6 animate-fade-in-down space-y-3">
-                    <p className="text-gray-500 font-header font-black uppercase text-xs tracking-widest italic">No results found for "{query}"</p>
+                    <p className="text-gray-500 font-header font-black uppercase text-xs tracking-widest italic">{fill(dict.search.noResults, { query })}</p>
                     <button 
                       onClick={() => setQuery('')}
                       className="px-6 py-2 bg-neon-blue/20 border border-neon-blue/40 text-neon-blue rounded-full font-header font-bold text-[10px] uppercase tracking-widest hover:bg-neon-blue hover:text-black transition-all active:scale-95"
                     >
-                      Reiniciar búsqueda
+                      {dict.search.reset}
                     </button>
                  </div>
               )}
@@ -582,7 +582,7 @@ export const NavbarContent = () => {
               </button>
 
               <h2 className="text-neon-cyan text-base font-header font-black tracking-widest drop-shadow-[0_0_8px_rgba(0,212,255,0.8)]">
-                {sidebarView === 'main' ? 'MAIN MENU' : 'LANGUAGES'}
+                {sidebarView === 'main' ? dict.menu.mainMenu.toUpperCase() : dict.menu.languages.toUpperCase()}
               </h2>
 
               {/* Language Selector (Toggles Sidebar View) with Unique SVG Icon */}
@@ -606,7 +606,7 @@ export const NavbarContent = () => {
                 <div className="animate-fade-in-up">
                   {/* Main Navigation Section */}
                   <div className="mb-4">
-                    <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">Navigation</p>
+                    <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">{dict.menu.navigation}</p>
                      {NAV_LINKS.filter(l => !(isDesktopApp && l.href === '/download')).map((link) => {
                       const active = isActive(link.href);
                       const isPlay = link.href === '/play';
@@ -633,7 +633,7 @@ export const NavbarContent = () => {
 
                   {/* Information & Support Section */}
                   <div className="mb-4">
-                    <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">Info & Support</p>
+                    <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">{dict.menu.infoSupport}</p>
                     {INFO_LINKS.map((link) => (
                       <Link key={link.name} href={link.href} onClick={() => setIsMenuOpen(false)}
                         className={`flex justify-start items-center px-4 py-3 rounded-2xl transition-all font-header font-bold text-[14px] group mb-1 active:scale-95 ${isActive(link.href) ? 'bg-neon-blue/10 border border-neon-blue/30 text-neon-cyan shadow-[inset_0_0_15px_rgba(0,212,255,0.1)] hover:text-white' : 'border border-transparent text-white hover:text-neon-cyan hover:bg-neon-blue/5 hover:border-neon-blue/20'}`}
@@ -647,13 +647,13 @@ export const NavbarContent = () => {
                   </div>
                   
                   <div className="h-px bg-white/10 my-4" />
-                  <div className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">Account</div>
+                  <div className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">{dict.menu.account}</div>
                   <div className="grid grid-cols-2 gap-2 mt-2">
                     <Link href="/login" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-center gap-2 py-3 bg-neon-green/10 border border-neon-green/30 text-neon-green rounded-xl font-header font-bold cursor-pointer hover:bg-neon-green/20 text-xs shadow-[0_4px_15px_rgba(0,255,136,0.1)]">
-                      {I.login} Ingresar
+                      {I.login} {dict.menu.signIn}
                     </Link>
                     <Link href="/register" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-center gap-2 py-3 bg-neon-pink/10 border border-neon-pink/30 text-neon-pink rounded-xl font-header font-bold cursor-pointer hover:bg-neon-pink/20 text-xs shadow-[0_4px_15px_rgba(255,51,204,0.1)]">
-                      {I.register} Registro
+                      {I.register} {dict.menu.signUp}
                     </Link>
                   </div>
                 </div>
@@ -666,7 +666,7 @@ export const NavbarContent = () => {
                       key={l.code}
                       onClick={() => {
                         if (unavailable) {
-                          toast(`[SISTEMA]: El idioma ${l.label} no está disponible aún.`, 'error');
+                          toast(`[SISTEMA]: ${fill(dict.prefs.unavailable, { label: l.label })}`, 'error');
                           return;
                         }
                         applyLangChange(l.code, l.label);
@@ -682,7 +682,7 @@ export const NavbarContent = () => {
                       </div>
                       <span className="flex-1 text-left">{l.label}</span>
                       {unavailable && (
-                        <span className="text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-neon-pink/20 text-neon-pink shrink-0">Beta</span>
+                        <span className="text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-neon-pink/20 text-neon-pink shrink-0">{dict.menu.beta}</span>
                       )}
                       {lang === l.code && !unavailable && (
                         <svg className="w-4 h-4 text-neon-cyan animate-bounce-in" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>

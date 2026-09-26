@@ -8,6 +8,8 @@ import { EcosystemSection } from "@ciszu/ui";
 import QuickDocks from "@/components/molecules/QuickDocks";
 import { AnimatedSection } from "@/components/shared/AnimatedSection";
 import { ProjectCarousel } from "@/components/shared/ProjectCarousel";
+import { getServerI18n } from "@/lib/i18n-server";
+import { fillTemplate } from "@/lib/i18n";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -15,74 +17,76 @@ export const metadata: Metadata = {
   description: 'Página principal de Ciszu Network: servicios, proyectos y el ecosistema digital.',
 };
 
-const services = [
-  { icon: Code, title: "Desarrollo Web", desc: "Aplicaciones web modernas con Next.js, React y TypeScript. Rendimiento, escalabilidad y diseño de alto nivel.", color: "#3a6bf0" },
-  { icon: Shield, title: "Infraestructura Digital", desc: "Arquitectura cloud, despliegue continuo y seguridad enterprise. Vercel, AWS y herramientas modernas.", color: "#59b4ff" },
-  { icon: Zap, title: "Experiencia de Usuario", desc: "Interfaces intuitivas con estética cuidada. Animaciones fluidas y diseño responsivo.", color: "#68cfff" },
-];
+export default async function Home() {
+  const { t } = await getServerI18n();
 
-const projectSections = [
-  {
-    id: "ciszugamens",
-    title: "Ciszugamens",
-    tagline: "Servidor de la Comunidad",
-    desc: "La comunidad gamer y digital de Ciszu Network en Discord, WhatsApp y Telegram. Eventos, partidas, soporte y más. Únete desde la plataforma que prefieras.",
-    href: "/projects/ciszugamens",
-    icon: Gamepad2,
-    gradient: "from-[#a855f7] via-[#3b82f6] to-[#22d3ee]",
-    tech: ["Discord", "WhatsApp", "Telegram"],
-  },
-  {
-    id: "ciszubot",
-    title: "CiszuBot",
-    tagline: "Bot Inteligente de Discord",
-    desc: "El bot oficial del ecosistema: moderación, música, juegos, economía y automatización. Web con estado en vivo, comandos y soporte.",
-    href: "/projects/ciszubot",
-    icon: Bot,
-    gradient: "from-[#5865F2] via-[#7289DA] to-[#4752C4]",
-    tech: ["Bot Development", "Community Management", "Automation"],
-  },
-  {
-    id: "muzicmania",
-    title: "MuzicMania",
-    tagline: "Juego de Ritmo Definitivo",
-    desc: "Plataforma de juego rítmico en la web con estética futurista. Desarrollada por Ciszu Network con Next.js y tecnologías modernas.",
-    href: EXTERNAL_LINKS.muzicmania,
-    icon: Music,
-    gradient: "from-brand via-brand-light to-brand-accent",
-    tech: ["Next.js", "Game Dev", "Web"],
-    external: true,
-  },
-  {
-    id: "ciszunetwork",
-    title: "Ciszu Network",
-    tagline: "Compañía de Innovación Digital",
-    desc: "Núcleo de todos los proyectos. Desarrollo web, infraestructura cloud, UI/UX, bots y soluciones digitales de alto rendimiento.",
-    href: "/about",
-    icon: Building,
-    gradient: "from-brand via-brand-light to-neon-blue",
-    tech: ["Web Dev", "Cloud", "UI/UX"],
-  },
-  {
-    id: "ciszukoantony",
-    title: "Ciszuko Antony",
-    tagline: "Youtuber & Streamer",
-    desc: "Proyecto artístico y de entretenimiento. Contenido gaming, música, tecnología y desarrollo. Streams, videos y una comunidad en crecimiento.",
-    href: EXTERNAL_LINKS.ciszukoantony,
-    icon: User,
-    gradient: "from-neon-blue via-brand-accent to-neon-pink",
-    tech: ["Content", "Streaming", "Gaming"],
-    external: true,
-  },
-];
+  const services = [
+    { icon: Code, title: t.homePage.serviceWebTitle, desc: t.homePage.serviceWebDesc, color: "#3a6bf0" },
+    { icon: Shield, title: t.homePage.serviceInfraTitle, desc: t.homePage.serviceInfraDesc, color: "#59b4ff" },
+    { icon: Zap, title: t.homePage.serviceUxTitle, desc: t.homePage.serviceUxDesc, color: "#68cfff" },
+  ];
 
-const stats = [
-  { value: "5+", label: "Proyectos del Ecosistema" },
-  { value: "100%", label: "Compromiso" },
-  { value: "24/7", label: "Soporte Técnico" },
-];
+  const projectSections = [
+    {
+      id: "ciszugamens",
+      title: "Ciszugamens",
+      tagline: t.homePage.tagCiszugamens,
+      desc: t.homePage.descCiszugamens,
+      href: "/projects/ciszugamens",
+      icon: Gamepad2,
+      gradient: "from-[#a855f7] via-[#3b82f6] to-[#22d3ee]",
+      tech: ["Discord", "WhatsApp", "Telegram"],
+    },
+    {
+      id: "ciszubot",
+      title: "CiszuBot",
+      tagline: t.homePage.tagCiszubot,
+      desc: t.homePage.descCiszubot,
+      href: "/projects/ciszubot",
+      icon: Bot,
+      gradient: "from-[#5865F2] via-[#7289DA] to-[#4752C4]",
+      tech: ["Bot Development", "Community Management", "Automation"],
+    },
+    {
+      id: "muzicmania",
+      title: "MuzicMania",
+      tagline: t.homePage.tagMuzicmania,
+      desc: t.homePage.descMuzicmania,
+      href: EXTERNAL_LINKS.muzicmania,
+      icon: Music,
+      gradient: "from-brand via-brand-light to-brand-accent",
+      tech: ["Next.js", "Game Dev", "Web"],
+      external: true,
+    },
+    {
+      id: "ciszunetwork",
+      title: "Ciszu Network",
+      tagline: t.homePage.tagCiszunetwork,
+      desc: t.homePage.descCiszunetwork,
+      href: "/about",
+      icon: Building,
+      gradient: "from-brand via-brand-light to-neon-blue",
+      tech: ["Web Dev", "Cloud", "UI/UX"],
+    },
+    {
+      id: "ciszukoantony",
+      title: "Ciszuko Antony",
+      tagline: t.homePage.tagAntony,
+      desc: t.homePage.descAntony,
+      href: EXTERNAL_LINKS.ciszukoantony,
+      icon: User,
+      gradient: "from-neon-blue via-brand-accent to-neon-pink",
+      tech: ["Content", "Streaming", "Gaming"],
+      external: true,
+    },
+  ];
 
-export default function Home() {
+  const stats = [
+    { value: "5+", label: t.homePage.statProjects },
+    { value: "100%", label: t.homePage.statCommitment },
+    { value: "24/7", label: t.homePage.statSupport },
+  ];
+
   return (
     <div>
       {/* Hero */}
@@ -123,15 +127,14 @@ export default function Home() {
             </div>
           </Link>
           <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10 font-accent">
-            Innovación digital con propósito. Desarrollamos soluciones de alto rendimiento 
-            que combinan tecnología de punta con una estética inconfundible.
+            {t.homePage.heroDescription}
           </p>
           <div className="flex gap-4 flex-wrap justify-center">
             <Link href="/contact" className="inline-flex items-center gap-2 px-8 py-4 bg-brand/20 text-white font-black rounded-xl border-2 border-brand/50 hover:bg-brand hover:scale-105 transition-all text-lg font-header shadow-[0_0_20px_rgba(35,63,146,0.3)] hover:shadow-[0_0_30px_rgba(35,63,146,0.5)]">
-              Contáctanos <ArrowRight className="w-5 h-5" />
+              {t.homePage.ctaContact} <ArrowRight className="w-5 h-5" />
             </Link>
             <Link href="/about" className="inline-flex items-center gap-2 px-8 py-4 bg-white/5 text-white font-black rounded-xl border-2 border-white/20 hover:bg-white/10 hover:scale-105 transition-all text-lg font-header">
-              Conócenos
+              {t.homePage.ctaAbout}
             </Link>
           </div>
         </div>
@@ -157,10 +160,10 @@ export default function Home() {
           <AnimatedSection animation="fade-in-up" delay={0}>
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-header font-black bg-gradient-to-r from-brand-light via-brand-accent to-neon-blue bg-clip-text text-transparent uppercase tracking-tighter">
-                Servicios
+                {t.homePage.servicesTitle}
               </h2>
               <p className="text-gray-400 mt-4 max-w-xl mx-auto text-sm uppercase tracking-widest">
-                Tecnología de punta para proyectos ambiciosos
+                {t.homePage.servicesSubtitle}
               </p>
             </div>
           </AnimatedSection>
@@ -185,10 +188,10 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-header font-black bg-gradient-to-r from-brand-light via-brand-accent to-neon-blue bg-clip-text text-transparent uppercase tracking-tighter">
-              Proyectos
+              {t.homePage.projectsTitle}
             </h2>
             <p className="text-gray-400 mt-4 max-w-xl mx-auto text-sm uppercase tracking-widest">
-              Soluciones digitales creadas por {CISZU_NETWORK.name}
+              {fillTemplate(t.homePage.projectsSubtitle, { site: CISZU_NETWORK.name })}
             </p>
           </div>
 
@@ -227,7 +230,7 @@ export default function Home() {
                         ))}
                       </div>
                       <div className="flex items-center gap-1.5 text-brand-light text-[10px] font-bold uppercase tracking-widest mt-4 group-hover:gap-2.5 transition-all relative z-10">
-                        {p.external ? 'Visitar' : 'Explorar'} <ExternalLink className="w-3 h-3" />
+                        {p.external ? t.homePage.projectVisit : t.homePage.projectExplore} <ExternalLink className="w-3 h-3" />
                       </div>
                     </div>
                   </Comp>
@@ -261,9 +264,7 @@ export default function Home() {
                   {CISZUKO_ANTONY.role}
                 </p>
                 <p className="text-gray-300 max-w-2xl mx-auto leading-relaxed mb-6">
-                  Visionario digital y desarrollador full-stack. Fundador de {CISZU_NETWORK.name} y creador de MuzicMania. 
-                  Lidera con una visión centrada en la innovación, la calidad técnica y la experiencia de usuario. 
-                  También youtuber y streamer en crecimiento.
+                  {fillTemplate(t.homePage.ceoBio, { site: CISZU_NETWORK.name })}
                 </p>
                 <div className="flex flex-wrap justify-center gap-3 mb-6">
                   {Object.entries(CISZUKO_ANTONY.social).filter(([k]) => k !== 'discordTag').map(([platform, url]) => (
@@ -276,7 +277,7 @@ export default function Home() {
                   ))}
                 </div>
                 <div className="flex flex-wrap justify-center gap-4 mb-8">
-                  {["Next.js", "React", "TypeScript", "UI/UX", "Arquitectura Cloud", "Liderazgo"].map((skill) => (
+                  {["Next.js", "React", "TypeScript", "UI/UX", t.homePage.skillCloud, t.homePage.skillLeadership].map((skill) => (
                     <span key={skill} className="px-4 py-2 rounded-full bg-brand/10 border border-brand/30 text-xs font-bold text-brand-light">
                       {skill}
                     </span>
@@ -284,10 +285,10 @@ export default function Home() {
                 </div>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Link href="/contact" className="inline-flex items-center gap-2 px-6 py-3 bg-brand/20 border border-brand/40 text-brand-light rounded-xl font-bold text-sm hover:bg-brand hover:text-white transition-all">
-                    Contactar <ArrowRight className="w-4 h-4" />
+                    {t.homePage.ceoContact} <ArrowRight className="w-4 h-4" />
                   </Link>
                   <a href={CISZUKO_ANTONY.portfolio} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/10 transition-all">
-                    <ExternalLink className="w-4 h-4" /> Portafolio
+                    <ExternalLink className="w-4 h-4" /> {t.homePage.ceoPortfolio}
                   </a>
                 </div>
               </div>
@@ -300,10 +301,10 @@ export default function Home() {
       <section className="py-20 border-t border-white/5">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-header font-black text-white mb-4 uppercase tracking-tighter">
-            Síguenos
+            {t.homePage.socialTitle}
           </h2>
           <p className="text-gray-400 text-sm mb-10 max-w-md mx-auto">
-            Conéctate con {CISZU_NETWORK.name} en todas nuestras plataformas
+            {fillTemplate(t.homePage.socialSubtitle, { site: CISZU_NETWORK.name })}
           </p>
           <div className="flex flex-wrap justify-center gap-4 max-w-lg mx-auto">
             {Object.entries(CISZU_NETWORK.social).map(([platform, url]) => {
@@ -335,30 +336,30 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-header font-black text-white mb-4 uppercase tracking-tighter">
-              Apoya el proyecto
+              {t.homePage.supportTitle}
             </h2>
             <p className="text-gray-400 text-sm max-w-xl mx-auto">
-              Mantén vivo el ecosistema Ciszu: vota por CiszuBot, bumpea el servidor o haz una donación.
+              {t.homePage.supportSubtitle}
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
             <a href={CISZUBOT_LINKS.website} target="_blank" rel="noopener noreferrer"
               className="p-8 rounded-2xl border border-brand/30 bg-gradient-to-br from-brand/15 to-transparent hover:scale-[1.02] transition-all">
               <h3 className="text-xl font-header font-black text-white mb-2 uppercase">CiszuBot</h3>
-              <p className="text-gray-400 text-sm mb-4">Web oficial del bot: estado en vivo, comandos y soporte.</p>
-              <span className="text-brand-light font-bold text-sm uppercase tracking-widest">Visitar →</span>
+              <p className="text-gray-400 text-sm mb-4">{t.homePage.supportBotDesc}</p>
+              <span className="text-brand-light font-bold text-sm uppercase tracking-widest">{t.homePage.supportVisitCta} →</span>
             </a>
             <a href={CISZUBOT_LINKS.topggBotVote} target="_blank" rel="noopener noreferrer"
               className="p-8 rounded-2xl border border-brand/30 bg-gradient-to-br from-brand/15 to-transparent hover:scale-[1.02] transition-all">
-              <h3 className="text-xl font-header font-black text-white mb-2 uppercase">Vota en Top.gg</h3>
-              <p className="text-gray-400 text-sm mb-4">Cada voto ayuda a que CiszuBot llegue a más servidores.</p>
-              <span className="text-brand-light font-bold text-sm uppercase tracking-widest">Votar →</span>
+              <h3 className="text-xl font-header font-black text-white mb-2 uppercase">{t.homePage.supportVoteTitle}</h3>
+              <p className="text-gray-400 text-sm mb-4">{t.homePage.supportVoteDesc}</p>
+              <span className="text-brand-light font-bold text-sm uppercase tracking-widest">{t.homePage.supportVoteCta} →</span>
             </a>
             <a href={CISZUBOT_LINKS.topggServer} target="_blank" rel="noopener noreferrer"
               className="p-8 rounded-2xl border border-brand/30 bg-gradient-to-br from-brand/15 to-transparent hover:scale-[1.02] transition-all">
-              <h3 className="text-xl font-header font-black text-white mb-2 uppercase">Nuestro servidor</h3>
-              <p className="text-gray-400 text-sm mb-4">Encuentra el servidor en Top.gg y bumpea para darle visibilidad.</p>
-              <span className="text-brand-light font-bold text-sm uppercase tracking-widest">Bumpear →</span>
+              <h3 className="text-xl font-header font-black text-white mb-2 uppercase">{t.homePage.supportServerTitle}</h3>
+              <p className="text-gray-400 text-sm mb-4">{t.homePage.supportServerDesc}</p>
+              <span className="text-brand-light font-bold text-sm uppercase tracking-widest">{t.homePage.supportServerCta} →</span>
             </a>
           </div>
           <div className="flex flex-wrap justify-center gap-4 mt-10">
@@ -384,13 +385,13 @@ export default function Home() {
           <div className="max-w-2xl mx-auto p-12 rounded-[2rem] bg-gradient-to-r from-brand/20 via-brand-dark/10 to-transparent border border-brand/30">
             <Globe className="w-16 h-16 text-brand-light mx-auto mb-6 drop-shadow-brand" />
             <h2 className="text-4xl md:text-5xl font-header font-black bg-gradient-to-r from-white via-brand-light to-brand-accent bg-clip-text text-transparent uppercase tracking-tighter mb-4">
-              Construyamos el Futuro
+              {t.homePage.ctaTitle}
             </h2>
             <p className="text-gray-400 mb-8 max-w-md mx-auto text-sm uppercase tracking-widest">
-              ¿Tienes un proyecto en mente? Hablemos.
+              {t.homePage.ctaSubtitle}
             </p>
             <Link href="/contact" className="inline-flex items-center gap-3 px-10 py-5 bg-brand text-white font-black rounded-2xl hover:bg-brand-light hover:scale-105 transition-all uppercase tracking-widest shadow-brand">
-              Iniciar Proyecto <ArrowRight className="w-5 h-5" />
+              {t.homePage.ctaButton} <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
         </div>

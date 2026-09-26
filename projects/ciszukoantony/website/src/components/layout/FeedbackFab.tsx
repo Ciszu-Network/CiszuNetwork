@@ -18,10 +18,12 @@ import type { CSSProperties } from 'react';
 import { useRouter } from 'next/navigation';
 import { useFabStack, useFabRestore, FabDismissHint } from '@ciszu/ui';
 import { attachFeedback } from '@/lib/feedback';
+import { useDict } from '@/components/providers/I18nProvider';
 
 const STORAGE_KEY = 'ciszu-feedback-dismissed';
 
 export default function FeedbackFab() {
+  const dict = useDict();
   const router = useRouter();
   const fabRef = useRef<HTMLButtonElement>(null);
   const [dismissed, setDismissed] = useState(false);
@@ -88,10 +90,10 @@ export default function FeedbackFab() {
         <FabDismissHint
           slotId="feedback"
           accent="#a78bfa"
-          title="Feedback ocultado"
-          message="Has ocultado el botón de reporte. Puedes reactivarlo desde la página de Feedback."
+          title={dict.fabs.feedbackHidden}
+          message={dict.fabs.hiddenBody}
           href="/feedback"
-          linkLabel="Reactivar en Feedback"
+          linkLabel={dict.fabs.reactivate}
           onReactivate={handleReenable}
           onClose={() => setPanel(false)}
         />
@@ -103,7 +105,7 @@ export default function FeedbackFab() {
             ref={fabRef}
             type="button"
             onClick={handleClick}
-            aria-label="Reportar un problema"
+            aria-label={dict.fabs.feedback}
             onMouseEnter={() => setExpanded(true)}
             onMouseLeave={() => setExpanded(false)}
             onFocus={() => setExpanded(true)}
@@ -134,11 +136,11 @@ export default function FeedbackFab() {
                   : { opacity: 0, transform: 'translateX(-8px)', pointerEvents: 'none' }),
               }}
             >
-              Reportar un problema
+              {dict.fabs.feedback}
             </span>
           </button>
 
-          <button type="button" aria-label="No volver a mostrar" onClick={handleDismiss} style={dismissStyle} title="No volver a mostrar">
+          <button type="button" aria-label={dict.fabs.hideForever} onClick={handleDismiss} style={dismissStyle} title={dict.fabs.hideForever}>
             ✕
           </button>
         </div>

@@ -673,6 +673,28 @@ body.focus-mode [data-focus-container] {
 .light :is(.bg-neon-red.text-white, .bg-neon-red:has(.text-white)) { background-color: #e50000 !important; }
 .light :is(.bg-neon-orange.text-white, .bg-neon-orange:has(.text-white)) { background-color: #bf4c00 !important; }
 
+/* CTAs del hero con fondos verde/rojo oscuros translúcidos: la regla general
+   de superficies les oscurecía el texto blanco sobre fondo oscuro. Se fijan
+   sólidos legibles. */
+.light .bg-green-950\/40 { background-color: #14532d !important; }
+.light .bg-red-950\/40 { background-color: #7f1d1d !important; }
+.light :is(.bg-green-950\/40, .bg-red-950\/40).text-white,
+.light :is(.bg-green-950\/40, .bg-red-950\/40) :is(.text-white) { color: #ffffff !important; }
+/* Botón de descarga: el relleno sólido en hover dejaría tinta oscura sobre
+   morado; se mantiene un tinte de marca. */
+.light .hover\:bg-neon-purple:hover { background-color: rgba(145, 70, 255, 0.3) !important; }
+/* Chip de invitado/cuenta del navbar: el degradado translúcido se aclara en
+   claro y el texto blanco desaparecía (1:1). Pasa a tinta oscura. */
+.light :is(.from-neon-blue\/20, .from-neon-blue\/10).bg-gradient-to-r { color: var(--ink) !important; }
+.light :is(.from-neon-blue\/20, .from-neon-blue\/10).bg-gradient-to-r :is(.text-white, .text-white\/90, .text-white\/85, .text-white\/80) { color: var(--ink) !important; }
+/* Títulos con degradado recortado que arrancan en blanco: sobre fondo claro el
+   primer tramo desaparecía; arrancan en tinta oscura. */
+.light [class*="bg-clip-text"][class*="from-white"] { --tw-gradient-from: #0d1526 !important; }
+/* Fechas y etiquetas tenues (`text-white/20`, `text-white/10`): suben para
+   cruzar AA en claro. */
+.light .text-white\/20 { color: rgba(13, 21, 38, 0.55) !important; }
+.light .text-white\/10 { color: rgba(13, 21, 38, 0.5) !important; }
+
 /* Utilidades propias y cromo del navegador (barra de desplazamiento,
    selección, vidrio y degradado de cards) en su versión clara. */
 .light .glass { background: rgba(255, 255, 255, 0.78); border-color: rgba(30, 50, 96, 0.18) !important; }

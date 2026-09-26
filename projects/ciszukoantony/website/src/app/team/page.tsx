@@ -17,6 +17,8 @@ import {
 } from '@ciszu/ui';
 import { SOCIALS, I } from '@/config/navigation';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useDict } from '@/components/providers/I18nProvider';
+import type { Dict } from '@/lib/i18n';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
@@ -37,21 +39,20 @@ const THEME: InfoTheme = {
   gradient: 'from-brand-dark to-brand',
 };
 
-const COPY = {
+const copyFor = (dict: Dict) => ({
   name: 'Ciszuko Antony',
   legal: 'Francisco Antonio García Menolascina',
-  role: 'CEO & Founder · Ciszuko Network',
-  bio: 'Desarrollador full-stack y creador de Ciszuko Network. Diseña y mantiene las webs del ecosistema, los bots de Discord/WhatsApp/Telegram, MuzicMania y los servidores de Minecraft. También produce el contenido que se publica en el canal.',
-  quote: 'Un solo núcleo creativo: el portfolio, las webs, el juego y la infraestructura salen del mismo taller.',
-  contactTitle: 'Contacto directo',
-  skillsTitle: 'Áreas que cubre el equipo',
-  socialsTitle: 'Redes oficiales',
-  rolesTitle: 'Roles activos',
-  joinTitle: 'Cómo colaborar',
-  networkTitle: 'Núcleo Ciszu Network',
-  networkBody:
-    'Ciszuko Antony es el fundador del ecosistema. Estos son los proyectos que mantiene y la comunidad donde se anuncian las novedades.',
-};
+  role: dict.team.role,
+  bio: dict.team.bio,
+  quote: dict.team.quote,
+  contactTitle: dict.team.contactTitle,
+  skillsTitle: dict.team.skillsTitle,
+  socialsTitle: dict.team.socialsTitle,
+  rolesTitle: dict.team.rolesTitle,
+  joinTitle: dict.team.joinTitle,
+  networkTitle: dict.team.networkTitle,
+  networkBody: dict.team.networkBody,
+});
 
 const SKILLS = [
   'Next.js',
@@ -68,92 +69,70 @@ const SKILLS = [
   'Edición de vídeo',
 ];
 
-const CONTACT = [
+const contactFor = (dict: Dict) => [
   {
-    label: 'Email personal',
+    label: dict.team.emailPersonal,
     value: 'fplayersoffcial@gmail.com',
     href: 'mailto:fplayersoffcial@gmail.com',
-    actionLabel: 'Escribir email',
+    actionLabel: dict.team.writeEmail,
   },
   {
-    label: 'WhatsApp',
+    label: dict.team.whatsapp,
     value: '+58 412 6858111',
     href: 'https://wa.me/584126858111',
-    actionLabel: 'Abrir WhatsApp',
+    actionLabel: dict.team.openWhatsapp,
   },
   {
-    label: 'Ubicación',
+    label: dict.team.location,
     value: 'Coro, Falcón, Venezuela',
   },
 ];
 
-const NETWORK = [
+const networkFor = (dict: Dict) => [
   {
     name: 'Ciszu Network',
-    desc: 'Web principal y centro de documentación del ecosistema.',
+    desc: dict.team.networkCiszuDesc,
     href: 'https://ciszunetwork.vercel.app',
   },
   {
     name: 'CiszuBot',
-    desc: 'Bot de Discord con moderación, música y comandos del ecosistema.',
+    desc: dict.team.networkCiszuBotDesc,
     href: 'https://ciszubot.vercel.app',
   },
   {
     name: 'MuzicMania',
-    desc: 'Juego de ritmo para web con clasificaciones y app de escritorio.',
+    desc: dict.team.networkMuzicManiaDesc,
     href: 'https://muzicmania.vercel.app',
   },
   {
     name: 'CiszuGamens',
-    desc: 'Comunidad en Discord donde se anuncian bots, eventos y vacantes.',
+    desc: dict.team.networkCiszuGamensDesc,
     href: 'https://discord.com/invite/W3kMtMMj6E',
   },
 ];
 
-const ROLES: InfoCardItem[] = [
-  {
-    icon: 'crown',
-    title: 'Dirección',
-    body: 'Define la hoja de ruta del ecosistema, la identidad de marca y aprueba cada publicación y despliegue.',
-  },
-  {
-    icon: 'terminal',
-    title: 'Desarrollo',
-    body: 'Webs, API, bots y automatizaciones. Todo el código vive en el GitHub de Ciszu Network.',
-  },
-  {
-    icon: 'palette',
-    title: 'Diseño',
-    body: 'Logos, iconografía SVG, paletas y el sistema de UI compartido por las cuatro webs.',
-  },
-  {
-    icon: 'music',
-    title: 'Contenido',
-    body: 'Vídeos, directos y material promocional de MuzicMania y los proyectos de Minecraft.',
-  },
+const rolesFor = (dict: Dict): InfoCardItem[] => [
+  { icon: 'crown', title: dict.team.roleDirection, body: dict.team.roleDirectionBody },
+  { icon: 'terminal', title: dict.team.roleDev, body: dict.team.roleDevBody },
+  { icon: 'palette', title: dict.team.roleDesign, body: dict.team.roleDesignBody },
+  { icon: 'music', title: dict.team.roleContent, body: dict.team.roleContentBody },
 ];
 
-const STEPS: InfoStepGroup[] = [
-  {
-    title: 'Únete a la comunidad',
-    body: 'El punto de entrada es el servidor de Discord y la comunidad de CiszuGamens, donde se anuncian las vacantes y las colaboraciones.',
-  },
-  {
-    title: 'Elige un área',
-    body: 'Desarrollo, diseño, traducción, moderación o soporte. Se valora cualquier aporte, no solo el código.',
-  },
-  {
-    title: 'Presenta tu propuesta',
-    body: 'Abre un issue o un pull request en GitHub con la idea y el alcance. Se revisa y se responde siempre.',
-  },
-  {
-    title: 'Publicación con crédito',
-    body: 'Cada aporte aceptado se publica en el changelog con su autoría visible en la ficha del cambio.',
-  },
+const stepsFor = (dict: Dict): InfoStepGroup[] => [
+  { title: dict.team.stepJoin, body: dict.team.stepJoinBody },
+  { title: dict.team.stepArea, body: dict.team.stepAreaBody },
+  { title: dict.team.stepProposal, body: dict.team.stepProposalBody },
+  { title: dict.team.stepCredit, body: dict.team.stepCreditBody },
 ];
 
 export default function TeamPage() {
   usePageTitle('TEAM');
+  const dict = useDict();
+  const COPY = copyFor(dict);
+  const CONTACT = contactFor(dict);
+  const NETWORK = networkFor(dict);
+  const ROLES = rolesFor(dict);
+  const STEPS = stepsFor(dict);
 
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
@@ -161,8 +140,8 @@ export default function TeamPage() {
       <PageReveal className="relative mx-auto max-w-screen-xl">
         <InfoHero
           icon="users"
-          title="Team"
-          subtitle="Quién está detrás de Ciszuko Antony: el fundador, los roles que cubre el ecosistema y cómo entrar a colaborar."
+          title={dict.team.title}
+          subtitle={dict.team.subtitle}
           theme={THEME}
         />
 
@@ -225,7 +204,7 @@ export default function TeamPage() {
                     <div className="min-w-0 text-left">
                       <p className="text-[9px] font-black uppercase tracking-widest text-gray-500">{field.label}</p>
                       {field.href ? (
-                        <CopyWithButton value={field.value} label={`Copiar ${field.label}`}>
+                        <CopyWithButton value={field.value} label={`${dict.team.copy} ${field.label}`}>
                           <span className="text-xs font-bold text-white truncate md:text-sm">{field.value}</span>
                         </CopyWithButton>
                       ) : (
@@ -313,10 +292,10 @@ export default function TeamPage() {
         <InfoCtaRow
           theme={THEME}
           actions={[
-            { label: 'Contacto', href: '/contact', icon: 'mail' },
-            { label: 'Ver proyectos', href: '/projects', icon: 'rocket', variant: 'ghost' },
+            { label: dict.team.ctaContact, href: '/contact', icon: 'mail' },
+            { label: dict.team.ctaProjects, href: '/projects', icon: 'rocket', variant: 'ghost' },
             {
-              label: 'Únete al Discord',
+              label: dict.team.ctaDiscord,
               href: SOCIALS.find((social) => social.name === 'Discord')?.href ?? 'https://discord.com/invite/W3kMtMMj6E',
               icon: 'support',
               variant: 'ghost',

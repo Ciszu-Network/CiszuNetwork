@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useDict } from '@/components/providers/I18nProvider';
 import { attachFeedback } from '@/lib/feedback';
 import { FabRestore, InfoHero, type InfoTheme } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
@@ -23,6 +24,7 @@ const THEME: InfoTheme = {
 
 export default function FeedbackPage() {
   usePageTitle('FEEDBACK');
+  const dict = useDict();
 
   const reportBtnRef = useRef<HTMLButtonElement>(null);
   const [form, setForm] = useState({ name: '', email: '', message: '' });
@@ -106,7 +108,7 @@ export default function FeedbackPage() {
                 }}
                 className="px-6 py-2.5 rounded-xl bg-neon-blue/20 border border-neon-blue/40 text-neon-blue font-header font-bold text-sm hover:bg-neon-blue hover:text-white transition-all active:scale-95 cursor-pointer"
               >
-                Enviar otro mensaje
+                {dict.feedback.sendAnother}
               </button>
             </div>
           ) : (
@@ -121,7 +123,7 @@ export default function FeedbackPage() {
                     type="text"
                     value={form.name}
                     onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                    placeholder="Tu nombre"
+                    placeholder={dict.feedback.namePlaceholder}
                     className={inputCls}
                   />
                 </div>
@@ -134,7 +136,7 @@ export default function FeedbackPage() {
                     type="email"
                     value={form.email}
                     onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                    placeholder="tucorreo@ejemplo.com"
+                    placeholder={dict.feedback.emailPlaceholder}
                     className={inputCls}
                   />
                   {errors.email && <p className="mt-1.5 text-xs text-red-400 font-bold">{errors.email}</p>}
@@ -150,7 +152,7 @@ export default function FeedbackPage() {
                   rows={6}
                   value={form.message}
                   onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
-                  placeholder="Cuéntanos qué ocurrió, qué te gustaría ver o cualquier sugerencia…"
+                  placeholder={dict.feedback.messagePlaceholder}
                   className={`${inputCls} resize-y`}
                 />
                 {errors.message && <p className="mt-1.5 text-xs text-red-400 font-bold">{errors.message}</p>}
@@ -161,9 +163,9 @@ export default function FeedbackPage() {
                   type="submit"
                   className="px-8 py-3 rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white font-header font-bold text-sm shadow-[0_0_25px_rgba(61,106,223,0.4)] hover:shadow-[0_0_35px_rgba(61,106,223,0.6)] transition-all hover:-translate-y-0.5 active:scale-95 cursor-pointer"
                 >
-                  Enviar feedback
+                  {dict.feedback.send}
                 </button>
-                <span className="text-xs text-gray-600">Se abrirá tu cliente de correo para el envío.</span>
+                <span className="text-xs text-gray-600">{dict.feedback.mailNote}</span>
               </div>
             </form>
           )}
@@ -177,7 +179,7 @@ export default function FeedbackPage() {
         >
           <h2 className="text-lg font-header font-bold text-white mb-2 flex items-center gap-3">
             <span className="w-2 h-2 rounded-full bg-brand" />
-            Reportar un problema
+            {dict.feedback.report}
           </h2>
           <p className="text-gray-400 text-sm leading-relaxed mb-5">
             ¿Encontraste un error técnico o algo no funciona como debería? Puedes abrir el
@@ -192,7 +194,7 @@ export default function FeedbackPage() {
               <line x1="12" y1="9" x2="12" y2="13" />
               <line x1="12" y1="17" x2="12.01" y2="17" />
             </svg>
-            Abrir el reporte de problemas
+            {dict.feedback.openReport}
           </button>
           {reportUnavailable && (
             <p className="mt-3 text-xs text-gray-500 leading-relaxed">
@@ -206,7 +208,7 @@ export default function FeedbackPage() {
           )}
           <div className="mt-6 pt-6 border-t border-white/5">
             <Link href="/downloads" className="text-sm text-brand hover:text-brand-200 transition-colors">
-              Ver cómo instalar Ciszuko Antony como app (PDWA) →
+              {dict.feedback.installLink}
             </Link>
           </div>
         </motion.div>
@@ -218,8 +220,8 @@ export default function FeedbackPage() {
           className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4"
         >
           <div>
-            <p className="text-white font-header font-bold text-sm mb-1">¿Cerraste el botón flotante?</p>
-            <p className="text-gray-500 text-xs">Los botones de instalación y feedback de abajo a la izquierda se pueden volver a mostrar cuando quieras.</p>
+            <p className="text-white font-header font-bold text-sm mb-1">{dict.feedback.closedButton}</p>
+            <p className="text-gray-500 text-xs">{dict.feedback.closedButtonBody}</p>
           </div>
           <FabRestore accent="#a78bfa" keys={['ciszu-feedback-dismissed']} />
         </motion.div>

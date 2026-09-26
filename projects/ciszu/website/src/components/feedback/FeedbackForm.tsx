@@ -5,6 +5,8 @@ import { ArrowRight, Bug } from 'lucide-react';
 import { openSentryFeedback } from '@/lib/sentry';
 import { CISZU_NETWORK } from '@/config/site';
 import { CiszButton } from '@/components/shared/CiszButton';
+import { useDict } from '@/lib/useDict';
+import { fillTemplate } from '@/lib/i18n';
 
 interface FeedbackFormProps {
   email: string;
@@ -13,6 +15,7 @@ interface FeedbackFormProps {
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function FeedbackForm({ email }: FeedbackFormProps) {
+  const t = useDict();
   const [name, setName] = useState('');
   const [from, setFrom] = useState('');
   const [message, setMessage] = useState('');
@@ -27,23 +30,23 @@ export function FeedbackForm({ email }: FeedbackFormProps) {
     const cleanMessage = message.trim();
 
     if (!cleanMessage) {
-      setError('El mensaje no puede estar vacío.');
+      setError(t.feedbackForm.emptyError);
       return;
     }
     if (cleanFrom && !EMAIL_RE.test(cleanFrom)) {
-      setError('Introduce un email válido o deja el campo vacío.');
+      setError(t.feedbackForm.emailError);
       return;
     }
 
     setError(null);
 
-    const subject = encodeURIComponent(`[Feedback] ${CISZU_NETWORK.name} — ${cleanName || 'Anónimo'}`);
+    const subject = encodeURIComponent(`[Feedback] ${CISZU_NETWORK.name} — ${cleanName || t.feedbackForm.anonymous}`);
     const body = encodeURIComponent(
       [
-        `Nombre: ${cleanName || 'Anónimo'}`,
-        cleanFrom ? `Email: ${cleanFrom}` : '',
+        `${t.feedbackForm.name}: ${cleanName || t.feedbackForm.anonymous}`,
+        cleanFrom ? `${t.feedbackForm.email}: ${cleanFrom}` : '',
         '',
-        `Mensaje:`,
+        t.feedbackForm.message,
         cleanMessage,
       ]
         .filter((l) => l !== '')
@@ -66,7 +69,7 @@ export function FeedbackForm({ email }: FeedbackFormProps) {
       <div className="p-6 md:p-8 rounded-[2rem] bg-gradient-to-br from-brand/20 via-brand-dark/10 to-transparent border border-brand/30">
         {sent && (
           <div className="mb-6 p-4 rounded-xl bg-white/5 border border-brand/20 text-brand-light text-sm font-header font-bold">
-            Se abrió tu cliente de correo. Si no se abrió, envíanos un mensaje directo a{' '}
+            {t.feedbackForm.sentPrefix}{' '}
             <a href={`mailto:${email}`} className="underline underline-offset-2 hover:text-white">
               {email}
             </a>
@@ -77,23 +80,23 @@ export function FeedbackForm({ email }: FeedbackFormProps) {
         <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs text-gray-500 font-bold uppercase tracking-widest mb-2">Nombre</label>
+              <label className="block text-xs text-gray-500 font-bold uppercase tracking-widest mb-2">{t.feedbackForm.name}</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Opcional"
+                placeholder={t.feedbackForm.optional}
                 className={inputCls}
                 maxLength={80}
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-500 font-bold uppercase tracking-widest mb-2">Email</label>
+              <label className="block text-xs text-gray-500 font-bold uppercase tracking-widest mb-2">{t.feedbackForm.email}</label>
               <input
                 type="email"
                 value={from}
                 onChange={(e) => setFrom(e.target.value)}
-                placeholder="Opcional — para responderte"
+                placeholder={t.feedbackForm.optionalEmail}
                 className={inputCls}
                 maxLength={120}
               />
@@ -102,12 +105,12 @@ export function FeedbackForm({ email }: FeedbackFormProps) {
 
           <div>
             <label className="block text-xs text-gray-500 font-bold uppercase tracking-widest mb-2">
-              Mensaje <span className="text-brand-light">*</span>
+              {t.feedbackForm.message} <span className="text-brand-light">*</span>
             </label>
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Cuéntanos qué opinas, qué falla o qué te gustaría ver…"
+              placeholder={t.feedbackForm.placeholder}
               rows={6}
               required
               className={inputCls + ' resize-y'}
@@ -123,17 +126,15 @@ export function FeedbackForm({ email }: FeedbackFormProps) {
 
           <div className="flex flex-col sm:flex-row gap-3">
             <CiszButton type="submit" variant="primary" size="lg">
-              Enviar Feedback <ArrowRight className="w-4 h-4" />
+              {t.feedbackForm.send} <ArrowRight className="w-4 h-4" />
             </CiszButton>
             <CiszButton type="button" variant="outline" size="lg" onClick={reportIssue}>
-              Reportar un problema <Bug className="w-4 h-4" />
+              {t.feedbackForm.report} <Bug className="w-4 h-4" />
             </CiszButton>
           </div>
 
           <p className="text-[11px] text-gray-600 leading-relaxed">
-            El formulario abre tu cliente de correo con el mensaje listo hacia {email}.
-            &nbsp;El botón &ldquo;Reportar un problema&rdquo; abre el widget seguro de{' '}
-            {CISZU_NETWORK.name} (Sentry) para errores técnicos.
+            {fillTemplate(t.feedbackForm.footnote, { email, site: CISZU_NETWORK.name })}
           </p>
         </form>
       </div>

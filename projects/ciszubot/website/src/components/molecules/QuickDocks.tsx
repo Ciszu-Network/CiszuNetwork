@@ -1,14 +1,36 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { getDict, readCookieLang, type Dict } from '@/lib/i18n';
 
 type DockItem = {
   label: string;
   href: string;
   color: string;
   icon: React.ReactNode;
+};
+
+/** Etiqueta inglesa del dock → clave del diccionario compartido. */
+const NAV_KEY: Record<string, keyof Dict['nav']> = {
+  Home: 'home',
+  Commands: 'commands',
+  Status: 'stats',
+  Downloads: 'downloads',
+  Support: 'support',
+  Terms: 'terminos',
+  Privacy: 'privacidad',
+  Information: 'information',
+  Documentation: 'documentation',
+  About: 'about',
+  Team: 'team',
+  Contact: 'contact',
+  Forum: 'forum',
+  Help: 'help',
+  FAQ: 'faq',
+  Reviews: 'reviews',
+  Leaderboard: 'leaderboard',
 };
 
 const DOCK_ITEMS: DockItem[] = [
@@ -211,6 +233,11 @@ const DOCK_ITEMS: DockItem[] = [
 
 export default function QuickDocks() {
   const pathname = usePathname();
+  const [dict, setDict] = useState<Dict>(() => getDict('es-latam'));
+
+  useEffect(() => {
+    setDict(getDict(readCookieLang()));
+  }, []);
 
   const HOVER_COLORS: Record<string, string> = {
     cyan: '#68cfff', purple: '#4800ff', pink: '#ff33cc',
@@ -241,7 +268,7 @@ export default function QuickDocks() {
               Quick Docks
             </h3>
             <p className="text-white/30 text-[10px] uppercase tracking-widest font-bold">
-              Acceso rápido a todas las secciones
+              {dict.quickDocks.subtitle}
             </p>
           </div>
 
@@ -273,7 +300,7 @@ export default function QuickDocks() {
                     {doc.icon}
                   </div>
                   <span className={`text-[8px] font-black uppercase tracking-[0.15em] transition-colors text-center leading-tight ${isActive ? style.text : `text-white/40 group-hover:text-white`}`}>
-                    {doc.label}
+                    {dict.nav[NAV_KEY[doc.label] ?? 'home']}
                   </span>
                 </Link>
               );

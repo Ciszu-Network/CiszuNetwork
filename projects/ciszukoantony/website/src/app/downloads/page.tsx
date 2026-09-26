@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
+import { getDict, parseLang, type Dict } from '@/lib/i18n';
 import InstallPdwaInline from '@/components/layout/InstallPdwaInline';
 import { FabRestore, InfoHero, type InfoTheme } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
@@ -19,42 +21,18 @@ const THEME: InfoTheme = {
   gradient: 'from-brand-dark to-brand',
 };
 
-const whatIs = [
-  {
-    title: 'No tabs or address bar',
-    desc: 'The website opens as an independent app window, with your logo and custom design.',
-  },
-  {
-    title: 'One-click installation',
-    desc: 'With Microsoft Edge or Chrome, just press "Install" and confirm the browser dialog.',
-  },
-  {
-    title: 'Desktop shortcut',
-    desc: 'It appears in Start or on the Desktop with the Ciszuko Antony logo and works offline.',
-  },
+const whatIsFor = (dict: Dict) => [
+  { title: dict.downloads.what1Title, desc: dict.downloads.what1Desc },
+  { title: dict.downloads.what2Title, desc: dict.downloads.what2Desc },
+  { title: dict.downloads.what3Title, desc: dict.downloads.what3Desc },
 ];
 
-const steps = [
-  {
-    title: 'Microsoft Edge / Chrome',
-    body: 'PDWA installation is native in Chrome/Chromium and Microsoft Edge. Press the "Install PDWA" button below and confirm the browser dialog. The app will be in Start/Desktop.',
-  },
-  {
-    title: 'Opera',
-    body: 'Opera does not install PDWA natively. Alternative method (non-PDWA): Menu (red logo) → "Save and Share" → "Create shortcut" → right-click the shortcut → Properties → add to the end of the path: --app="https://ciszukoantony.vercel.app". It opens as an independent app window, just like a PDWA.',
-  },
-  {
-    title: 'Firefox',
-    body: 'Firefox does not install apps. Install the PDWA with Microsoft Edge (already included in Windows) or Chrome: use the address bar icon.',
-  },
-  {
-    title: 'Safari (Mac)',
-    body: 'Menu File → "Add to Dock". It opens as an independent window with the logo, just like a PDWA.',
-  },
-  {
-    title: 'iPhone / iPad',
-    body: 'Open the website in Safari → Share button → "Add to Home Screen". Shortcut with the logo on your home screen.',
-  },
+const stepsFor = (dict: Dict) => [
+  { title: dict.downloads.step1Title, body: dict.downloads.step1Body },
+  { title: dict.downloads.step2Title, body: dict.downloads.step2Body },
+  { title: dict.downloads.step3Title, body: dict.downloads.step3Body },
+  { title: dict.downloads.step4Title, body: dict.downloads.step4Body },
+  { title: dict.downloads.step5Title, body: dict.downloads.step5Body },
 ];
 
 const DownloadIcon = () => (
@@ -65,28 +43,30 @@ const DownloadIcon = () => (
   </svg>
 );
 
-export default function DownloadsPage() {
+export default async function DownloadsPage() {
+  const lang = parseLang((await cookies()).get('ciszu_lang')?.value);
+  const dict = getDict(lang);
+  const whatIs = whatIsFor(dict);
+  const steps = stepsFor(dict);
+
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />
       <PageReveal className="relative mx-auto max-w-screen-xl">
         <InfoHero
           icon="download"
-          title="Downloads"
-          subtitle="Install Ciszuko Antony as a desktop app (PDWA)"
+          title={dict.downloads.heroTitle}
+          subtitle={dict.downloads.heroSubtitle}
           theme={THEME}
         />
 
         <section className="mb-12">
           <h2 className="text-2xl font-header font-bold text-white mb-4 flex items-center gap-3">
             <span className="w-2 h-2 rounded-full bg-brand" />
-            What is a PDWA?
+            {dict.downloads.title}
           </h2>
           <p className="text-gray-400 text-sm leading-relaxed mb-6">
-            PDWA means <strong className="text-white">Progressive Desktop Web App</strong>. It is this same website,
-            but installed on your PC or mobile as a desktop application: no tabs, no address bar and
-            access from Start/Desktop with your logo and taskbar. The normal web version
-            is still available at{' '}
+            {dict.downloads.pdwaBefore}<strong className="text-white">{dict.downloads.pdwaFull}</strong>{dict.downloads.pdwaAfter}{' '}
             <a href="https://ciszukoantony.vercel.app" target="_blank" rel="noopener noreferrer" className="text-brand font-bold hover:text-brand-200 transition-colors">
               ciszukoantony.vercel.app
             </a>
@@ -108,7 +88,7 @@ export default function DownloadsPage() {
         <section id="installation" className="mb-12">
           <h2 className="text-2xl font-header font-bold text-white mb-4 flex items-center gap-3">
             <span className="w-2 h-2 rounded-full bg-brand" />
-            Installation steps
+            {dict.downloads.installSteps}
           </h2>
           <div className="space-y-4">
             {steps.map((s, i) => (
@@ -130,24 +110,24 @@ export default function DownloadsPage() {
         <section className="mb-12">
           <h2 className="text-2xl font-header font-bold text-white mb-4 flex items-center gap-3">
             <span className="w-2 h-2 rounded-full bg-brand" />
-            Install now
+            {dict.downloads.installNow}
           </h2>
           <InstallPdwaInline />
           <p className="text-xs text-gray-600 text-center mt-4">
-            You also have the floating install and feedback buttons at the bottom left on all pages.
+            {dict.downloads.floatingNote}
           </p>
         </section>
 
         <section>
           <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-gray-400 text-sm leading-relaxed">
-              Is the PDWA, the website or this page not working as expected?
+              {dict.downloads.notWorking}
             </p>
             <a
               href="/feedback"
               className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-neon-pink/10 border border-neon-pink/40 text-neon-pink font-header font-bold text-sm hover:bg-neon-pink/20 hover:text-white transition-all active:scale-95"
             >
-              Leave feedback
+              {dict.downloads.leaveFeedback}
             </a>
           </div>
         </section>
@@ -155,8 +135,8 @@ export default function DownloadsPage() {
         <section className="mt-6">
           <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
-              <p className="text-white font-header font-bold text-sm mb-1">Did you close the floating button?</p>
-              <p className="text-gray-500 text-xs">The install and feedback buttons at the bottom left can be shown again whenever you want.</p>
+              <p className="text-white font-header font-bold text-sm mb-1">{dict.downloads.closedButton}</p>
+              <p className="text-gray-500 text-xs">{dict.downloads.closedButtonBody}</p>
             </div>
             <FabRestore accent="#a78bfa" keys={['ciszu-pdwa-dismissed']} />
           </div>

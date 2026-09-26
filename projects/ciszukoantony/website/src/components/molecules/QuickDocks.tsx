@@ -3,6 +3,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useDict } from '@/components/providers/I18nProvider';
+import { navLabel } from '@/lib/i18n';
 
 type DockItem = {
   label: string;
@@ -106,6 +108,7 @@ const DOCK_ITEMS: DockItem[] = [
 
 export default function QuickDocks() {
   const pathname = usePathname();
+  const dict = useDict();
 
   const HOVER_COLORS: Record<string, string> = {
     cyan: '#68cfff', purple: '#b400ff', pink: '#ff33cc',
@@ -133,10 +136,10 @@ export default function QuickDocks() {
         <div className="relative z-10">
           <div className="flex flex-col items-center mb-10 text-center">
             <h3 className="text-4xl font-header font-black text-white uppercase tracking-[0.3em] leading-none mb-2">
-              Quick Docks
+              {dict.docks.title}
             </h3>
             <p className="text-white/30 text-[10px] uppercase tracking-widest font-bold">
-              Acceso rápido a todas las secciones del ecosistema
+              {dict.docks.subtitle}
             </p>
           </div>
 
@@ -168,7 +171,7 @@ export default function QuickDocks() {
                     {doc.icon}
                   </div>
                   <span className={`text-[8px] font-black uppercase tracking-[0.15em] transition-colors text-center leading-tight ${isActive ? style.text : `text-white/40 group-hover:text-white`}`}>
-                    {doc.label}
+                    {navLabel(dict, doc.href)}
                   </span>
                 </Link>
               );

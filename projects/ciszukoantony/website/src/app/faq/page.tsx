@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
+import { getDict, parseLang } from '@/lib/i18n';
 import {
   InfoHero,
   InfoFaqExplorer,
@@ -241,30 +243,63 @@ const TOPICS: InfoCardItem[] = [
   },
 ];
 
-export default function FAQPage() {
+const CATEGORY_KEYS: Record<string, keyof ReturnType<typeof getDict>['faq']['categories']> = {
+  perfil: 'profile',
+  proyectos: 'projects',
+  certificados: 'certificates',
+  contenido: 'content',
+  privacidad: 'privacy',
+  soporte: 'support',
+};
+
+export default async function FAQPage() {
+  const lang = parseLang((await cookies()).get('ciszu_lang')?.value);
+  const dict = getDict(lang);
+
+  const categories = CATEGORIES.map((category) => ({
+    ...category,
+    label: dict.faq.categories[CATEGORY_KEYS[category.id] ?? 'profile'],
+  }));
+
+  const topics: InfoCardItem[] = [
+    { ...TOPICS[0], title: dict.faq.topics.about, body: dict.faq.topics.aboutBody },
+    { ...TOPICS[1], title: dict.faq.topics.projects, body: dict.faq.topics.projectsBody },
+    { ...TOPICS[2], title: dict.faq.topics.legal, body: dict.faq.topics.legalBody },
+    { ...TOPICS[3], title: dict.faq.topics.support, body: dict.faq.topics.supportBody },
+  ];
+
+  const copy: InfoFaqCopy = {
+    searchPlaceholder: dict.faq.copy.searchPlaceholder,
+    allCategories: dict.faq.copy.allCategories,
+    results: dict.faq.copy.results,
+    emptyTitle: dict.faq.copy.emptyTitle,
+    emptyHint: dict.faq.copy.emptyHint,
+    clear: dict.faq.copy.clear,
+  };
+
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />
       <PageReveal className="relative mx-auto max-w-screen-xl">
         <InfoHero
           icon="faq"
-          title="Preguntas frecuentes"
-          subtitle="Respuestas rápidas sobre Ciszuko Antony, Ciszu Network, los proyectos del ecosistema, el uso del contenido y las vías de contacto."
-          kicker="FAQ"
+          title={dict.faq.title}
+          subtitle={dict.faq.subtitle}
+          kicker={dict.faq.kicker}
           theme={THEME}
         />
 
         <div className="space-y-14">
-          <InfoFaqExplorer items={FAQS} categories={CATEGORIES} theme={THEME} copy={FAQ_COPY} />
-          <InfoCardGrid title="Temas relacionados" items={TOPICS} theme={THEME} columns={4} />
+          <InfoFaqExplorer items={FAQS} categories={categories} theme={THEME} copy={copy} />
+          <InfoCardGrid title={dict.faq.related} items={topics} theme={THEME} columns={4} />
         </div>
 
         <InfoCtaRow
           theme={THEME}
           actions={[
-            { label: 'Contacto', href: '/contact', icon: 'mail' },
-            { label: 'Ver certificados', href: '/certificates', icon: 'certificates', variant: 'ghost' },
-            { label: 'Donar', href: '/donate', icon: 'heart', variant: 'ghost' },
+            { label: dict.faq.ctaContact, href: '/contact', icon: 'mail' },
+            { label: dict.faq.ctaCertificates, href: '/certificates', icon: 'certificates', variant: 'ghost' },
+            { label: dict.faq.ctaDonate, href: '/donate', icon: 'heart', variant: 'ghost' },
           ]}
         />
       </PageReveal>

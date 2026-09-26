@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { detectPdwaBrowser, useToast } from '@ciszu/ui';
 import { Download, ExternalLink } from 'lucide-react';
+import { useDict } from '@/lib/useDict';
+import { fillTemplate } from '@/lib/i18n';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -14,6 +16,7 @@ interface InstallPdwaCtaProps {
 }
 
 export function InstallPdwaCta({ site }: InstallPdwaCtaProps) {
+  const t = useDict();
   const { toast } = useToast();
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
   const [installed, setInstalled] = useState(false);
@@ -42,7 +45,7 @@ export function InstallPdwaCta({ site }: InstallPdwaCtaProps) {
   }, []);
 
   const handleInstall = useCallback(async () => {
-    toast(`¡Gracias por instalar ${site}! Gracias por apoyar Ciszu Network.`, 'success');
+    toast(fillTemplate(t.installPdwa.thanks, { site }), 'success');
     if (deferred) {
       const promptEvent = deferred;
       await promptEvent.prompt();
@@ -52,14 +55,14 @@ export function InstallPdwaCta({ site }: InstallPdwaCtaProps) {
       return;
     }
     setDetail((v) => !v);
-  }, [deferred, site, toast]);
+  }, [deferred, site, t, toast]);
 
   const browser = typeof window === 'undefined' ? null : detectPdwaBrowser(navigator.userAgent);
 
   if (installed) {
     return (
       <div className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand/10 border border-brand/40 text-brand-light font-black text-sm uppercase tracking-widest">
-        PDWA instalada en este dispositivo
+        {t.installPdwa.installed}
       </div>
     );
   }
@@ -71,45 +74,49 @@ export function InstallPdwaCta({ site }: InstallPdwaCtaProps) {
         onClick={handleInstall}
         className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-brand/20 border-2 border-brand/50 text-white font-black rounded-xl hover:bg-brand hover:scale-105 transition-all text-sm uppercase tracking-widest shadow-[0_0_20px_rgba(35,63,146,0.3)]"
       >
-        <Download className="w-4 h-4" /> Instalar PDWA
+        <Download className="w-4 h-4" /> {t.installPdwa.install}
       </button>
 
       {detail && (
         <div className="w-full max-w-md p-5 rounded-2xl bg-black/40 border border-white/10 text-left text-sm">
           <p className="text-brand-light font-header font-bold mb-2">
-            {browser?.nativa ? `Instalación nativa (${browser.label})` : `Tu navegador (${browser?.label ?? 'desconocido'}) no ofrece instalación nativa`}
+            {browser?.nativa
+              ? fillTemplate(t.installPdwa.nativeTitle, { browser: browser.label })
+              : fillTemplate(t.installPdwa.noNativeTitle, { browser: browser?.label ?? t.installPdwa.unknownBrowser })}
           </p>
           {browser?.nativa ? (
             <ul className="list-disc pl-5 text-gray-400 space-y-1.5 text-sm">
-              <li>Pulsa de nuevo el botón y confirma el diálogo del navegador.</li>
-              <li>La PDWA queda en Inicio / Escritorio con tu logo.</li>
+              <li>{t.installPdwa.stepConfirm}</li>
+              <li>{t.installPdwa.stepHome}</li>
             </ul>
           ) : browser?.id === 'opera-gx' || browser?.id === 'opera' ? (
             <ul className="list-disc pl-5 text-gray-400 space-y-1.5 text-sm">
-              <li>Menú Opera → "Guardar y compartir" → "Crear acceso directo".</li>
+              <li>{t.installPdwa.opera1}</li>
               <li>
-                En Propiedades añade al final: <code className="text-brand-light">--app=&quot;{typeof window !== 'undefined' ? window.location.origin : ''}&quot;</code>
+                {t.installPdwa.opera2} <code className="text-brand-light">--app=&quot;{typeof window !== 'undefined' ? window.location.origin : ''}&quot;</code>
               </li>
-              <li>Se abre como ventana de app independiente, igual que una PDWA.</li>
+              <li>{t.installPdwa.opera3}</li>
             </ul>
           ) : browser?.id === 'safari' ? (
             <ul className="list-disc pl-5 text-gray-400 space-y-1.5 text-sm">
-              <li>Menú Archivo → "Añadir al Dock" (macOS).</li>
-              <li>O Compartir → "Añadir a pantalla de inicio" en iPhone/iPad.</li>
+              <li>{t.installPdwa.safari1}</li>
+              <li>{t.installPdwa.safari2}</li>
             </ul>
           ) : (
             <ul className="list-disc pl-5 text-gray-400 space-y-1.5 text-sm">
               <li>
-                La vía más fiable: abre {site} en <strong className="text-white">Microsoft Edge o Chrome</strong> e instálala desde el icono de la barra de direcciones.
+                {fillTemplate(t.installPdwa.fallbackLead, { site })}{' '}
+                <strong className="text-white">{t.installPdwa.edgeChrome}</strong>{' '}
+                {t.installPdwa.fallbackTail}
               </li>
-              <li>Se crea una app de escritorio con la misma experiencia que la PDWA.</li>
+              <li>{t.installPdwa.desktopApp}</li>
             </ul>
           )}
           <a
             href="#pasos"
             className="inline-flex items-center gap-1.5 mt-3 text-brand-light text-xs font-bold hover:text-white transition-all"
           >
-            Ver pasos detallados arriba <ExternalLink className="w-3 h-3" />
+            {t.installPdwa.seeSteps} <ExternalLink className="w-3 h-3" />
           </a>
         </div>
       )}

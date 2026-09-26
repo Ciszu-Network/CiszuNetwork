@@ -5,6 +5,7 @@ import { SocialIcon, SOCIAL_COLORS, InfoHero, type InfoTheme } from '@ciszu/ui';
 import PageAmbience from "@/components/layout/PageAmbience";
 import PageReveal from "@/components/layout/PageReveal";
 import QuickDocks from "@/components/molecules/QuickDocks";
+import { getServerI18n } from "@/lib/i18n-server";
 import { CISZUKO_ANTONY, CISZU_NETWORK } from "@/config/site";
 import { ArrowRight, ExternalLink, Music, Gamepad2, Mic, Video } from "lucide-react";
 import type { Metadata } from "next";
@@ -31,7 +32,8 @@ const contentTypes = [
 
 const platforms = ['YouTube', 'Twitch', 'TikTok', 'Instagram', 'Spotify', 'X'];
 
-export default function CiszukoAntonyPage() {
+export default async function CiszukoAntonyPage() {
+  const { t } = await getServerI18n();
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />
@@ -107,7 +109,7 @@ export default function CiszukoAntonyPage() {
             </div>
             <div className="text-center">
               <Link href="/projects" className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/10 transition-all">
-                Ver todos los proyectos <ArrowRight className="w-4 h-4" />
+                {t.projectPages.viewAll} <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>

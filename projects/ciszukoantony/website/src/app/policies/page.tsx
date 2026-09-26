@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { InfoHero, LegalCiszuLink, type InfoTheme } from '@ciszu/ui';
 import { RichText, type RichPart } from '@/components/RichText';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useDict } from '@/components/providers/I18nProvider';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
@@ -83,6 +84,7 @@ const sections = [
 ];
 
 export default function PoliciesPage() {
+  const dict = useDict();
   usePageTitle('POLICIES');
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
@@ -114,7 +116,7 @@ export default function PoliciesPage() {
         >
           <p className="text-gray-500 text-xs leading-relaxed">
             Last updated: July 2026. For more information, contact us on{' '}
-            <a href="/contact" className="text-brand hover:text-brand-200 transition-colors">our contact page</a>.
+            <a href="/contact" className="text-brand hover:text-brand-200 transition-colors">{dict.policies.contactLink}</a>.
           </p>
         </motion.div>
 

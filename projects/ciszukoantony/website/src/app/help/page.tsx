@@ -3,6 +3,7 @@
 import React from 'react';
 import { InfoHero, InfoCtaRow, type InfoTheme } from '@ciszu/ui';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useDict } from '@/components/providers/I18nProvider';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
@@ -26,6 +27,7 @@ const THEME: InfoTheme = {
 
 export default function HelpPage() {
   usePageTitle('HELP');
+  const dict = useDict();
 
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
@@ -33,8 +35,8 @@ export default function HelpPage() {
       <PageReveal className="relative mx-auto max-w-screen-xl">
         <InfoHero
           icon="help"
-          title="Help"
-          subtitle="Centro de ayuda de Ciszuko Antony: certificados, descargas, contacto y colaboración, con buscador y detalle en modal."
+          title={dict.help.title}
+          subtitle={dict.help.subtitle}
           theme={THEME}
         />
 
@@ -43,8 +45,8 @@ export default function HelpPage() {
         <InfoCtaRow
           theme={THEME}
           actions={[
-            { label: 'Abrir incidencia', href: '/support', icon: 'support' },
-            { label: 'Contacto', href: '/contact', icon: 'mail', variant: 'ghost' },
+            { label: dict.help.ctaTicket, href: '/support', icon: 'support' },
+            { label: dict.help.ctaContact, href: '/contact', icon: 'mail', variant: 'ghost' },
           ]}
         />
       </PageReveal>

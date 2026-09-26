@@ -16,6 +16,7 @@ import { useCallback, useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
 import * as Sentry from '@sentry/nextjs';
 import { useFabStack, useFabRestore, FabDismissHint } from '@ciszu/ui';
+import { getDict, readCookieLang, type Dict } from '@/lib/i18n';
 
 interface FeedbackFabProps {
   storageKey?: string;
@@ -45,6 +46,11 @@ export default function FeedbackFab({
   const [dismissed, setDismissed] = useState(false);
   const [dismissHint, setDismissHint] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [dict, setDict] = useState<Dict>(() => getDict('es-latam'));
+
+  useEffect(() => {
+    setDict(getDict(readCookieLang()));
+  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -96,10 +102,10 @@ export default function FeedbackFab({
         <FabDismissHint
           slotId="feedback"
           accent={accent}
-          title="Feedback ocultado"
-          message="Has ocultado el botón de reporte. Puedes reactivarlo desde la página de Feedback."
+          title={dict.feedbackFab.dismissedTitle}
+          message={dict.feedbackFab.dismissedHint}
           href="/feedback"
-          linkLabel="Reactivar en Feedback"
+          linkLabel={dict.feedbackFab.reactivate}
           onReactivate={() => {
             try {
               localStorage.removeItem(storageKey);
@@ -118,7 +124,7 @@ export default function FeedbackFab({
           <button
             type="button"
             onClick={handleClick}
-            aria-label="Reportar un problema"
+            aria-label={dict.feedbackFab.report}
             onMouseEnter={() => setExpanded(true)}
             onMouseLeave={() => setExpanded(false)}
             onFocus={() => setExpanded(true)}
@@ -149,16 +155,16 @@ export default function FeedbackFab({
                   : { opacity: 0, transform: 'translateX(-8px)', pointerEvents: 'none' }),
               }}
             >
-              Reportar un problema
+              {dict.feedbackFab.report}
             </span>
           </button>
 
           <button
             type="button"
-            aria-label="No volver a mostrar"
+            aria-label={dict.feedbackFab.dontShow}
             onClick={handleDismiss}
             style={dismissStyle}
-            title="No volver a mostrar"
+            title={dict.feedbackFab.dontShow}
           >
             ✕
           </button>

@@ -18,6 +18,9 @@ export interface Preferences {
 }
 
 const PREFERENCES_KEY = 'ciszu_preferences';
+/** Cookie de idioma que lee el layout en el servidor (SSR). */
+const LANG_COOKIE = 'ciszu_lang';
+const LANG_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 export const SITE_NAME = 'Ciszuko Antony';
 
@@ -75,6 +78,13 @@ export function savePreferences(prefs: Preferences): void {
     window.localStorage.setItem(PREFERENCES_KEY, JSON.stringify(prefs));
   } catch {
     // storage unavailable — ignore, preferences no son críticas
+  }
+  // El layout resuelve el idioma en el servidor desde esta cookie; sin ella la
+  // web siempre renderizaba es-latam aunque el usuario hubiera elegido otro.
+  try {
+    document.cookie = `${LANG_COOKIE}=${encodeURIComponent(prefs.lang)}; path=/; max-age=${LANG_COOKIE_MAX_AGE}; SameSite=Lax`;
+  } catch {
+    // cookie bloqueada — se mantiene el idioma local
   }
 }
 

@@ -2,8 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { AlertTriangle, X } from 'lucide-react';
+import { useDict } from '@/lib/useDict';
 
 export const ZoomWarning = () => {
+  const t = useDict();
   const [dismissed, setDismissed] = useState(true);
   const [show, setShow] = useState(false);
 
@@ -22,8 +24,8 @@ export const ZoomWarning = () => {
       <div className="glass rounded-2xl p-4 flex items-start gap-3 animate-fade-in-up border border-yellow-500/30">
         <AlertTriangle className="w-5 h-5 text-yellow-400 mt-0.5 shrink-0" />
         <div className="flex-1 min-w-0">
-          <p className="text-white text-sm font-bold mb-1">Zoom alto detectado</p>
-          <p className="text-gray-400 text-xs">Reduce el zoom del navegador para una mejor experiencia (100-120%).</p>
+          <p className="text-white text-sm font-bold mb-1">{t.zoomWarning.title}</p>
+          <p className="text-gray-400 text-xs">{t.zoomWarning.desc}</p>
         </div>
         <button onClick={() => setDismissed(true)} className="text-gray-500 hover:text-white transition-colors shrink-0">
           <X className="w-4 h-4" />

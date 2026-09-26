@@ -4,6 +4,7 @@ import { DONATION_LINKS } from "@/config/site";
 import { useToast } from "@ciszu/ui";
 import { ExternalLink } from "lucide-react";
 import { Icon } from '@ciszu/ui';
+import { useDict } from '@/lib/useDict';
 
 /* ── Logos SVG oficiales de cada servicio ─────────────────────────────── */
 
@@ -33,11 +34,11 @@ function NowPaymentsLogo({ size = 22 }: { size?: number }) {
 }
 
 const LEGACY = [
-  { label: "Ko-fi", href: DONATION_LINKS.koFi, note: "Café directo · sin comisiones", color: "#FF5E5B", logo: <KoFiLogo /> },
-  { label: "Buy Me a Coffee", href: DONATION_LINKS.buyMeACoffee, note: "Apoyo directo al creador", color: "#FFDD00", logo: <BuyMeACoffeeLogo /> },
-  { label: "Patreon", href: DONATION_LINKS.patreon, note: "Suscripción mensual con recompensas", color: "#FF424D", logo: <PatreonLogo /> },
-  { label: "PayPal", href: "", note: "Donación directa (próximamente)", color: "#00457C", logo: <PayPalLogo /> },
-  { label: "Cripto (NOWPayments)", href: "https://nowpayments.io/donation/ciszunetwork", note: "Bitcoin, USDT, ETH y más · sin KYC", color: "#6B21A8", logo: <NowPaymentsLogo /> },
+  { label: "Ko-fi", href: DONATION_LINKS.koFi, noteKey: 'noteKoFi' as const, color: "#FF5E5B", logo: <KoFiLogo /> },
+  { label: "Buy Me a Coffee", href: DONATION_LINKS.buyMeACoffee, noteKey: 'noteBmc' as const, color: "#FFDD00", logo: <BuyMeACoffeeLogo /> },
+  { label: "Patreon", href: DONATION_LINKS.patreon, noteKey: 'notePatreon' as const, color: "#FF424D", logo: <PatreonLogo /> },
+  { label: "PayPal", href: "", noteKey: 'notePaypal' as const, color: "#00457C", logo: <PayPalLogo /> },
+  { label: "Cripto (NOWPayments)", href: "https://nowpayments.io/donation/ciszunetwork", noteKey: 'noteCrypto' as const, color: "#6B21A8", logo: <NowPaymentsLogo /> },
 ];
 
 export interface DonationMethodProp {
@@ -49,12 +50,13 @@ export interface DonationMethodProp {
 }
 
 export default function DonateButtons({ methods }: { methods: DonationMethodProp[] }) {
+  const t = useDict();
   const { toast } = useToast();
 
   const handleClick = (e: React.MouseEvent, href?: string) => {
     if (href && href.startsWith("http")) return; // enlace real: navega normal
     e.preventDefault();
-    toast(href ? "Este método aún no está configurado" : "Método no disponible todavía", "error");
+    toast(href ? t.donatePage.methodNotConfigured : t.donatePage.methodUnavailable, "error");
   };
 
   return (
@@ -70,9 +72,9 @@ export default function DonateButtons({ methods }: { methods: DonationMethodProp
               {m.logo}
             </div>
             <p className="text-white font-bold font-header text-sm mb-1">{m.label}</p>
-            <p className="text-gray-400 text-xs mb-3">{m.note}</p>
+            <p className="text-gray-400 text-xs mb-3">{t.donatePage[m.noteKey]}</p>
             <span className="inline-flex items-center gap-1 text-brand-light text-xs font-semibold">
-              {m.href ? "Abrir" : "Próximamente"} <ExternalLink className="w-3 h-3" />
+              {m.href ? t.donatePage.open : t.common.comingSoon} <ExternalLink className="w-3 h-3" />
             </span>
           </a>
         ))}
@@ -82,11 +84,11 @@ export default function DonateButtons({ methods }: { methods: DonationMethodProp
       {methods.length > 0 && (
         <div className="mb-12">
           <h2 className="text-xl md:text-2xl font-header font-black text-white uppercase tracking-tight mb-6 text-center">
-            Otros métodos
+            {t.donatePage.otherMethods}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {methods.map((m) => (
-              <MethodCard key={m.id} method={m} onMissing={() => toast(`${m.label}: método no configurado`, "error")} />
+              <MethodCard key={m.id} method={m} onMissing={() => toast(`${m.label}: ${t.donatePage.methodNotConfigured}`, "error")} />
             ))}
           </div>
         </div>

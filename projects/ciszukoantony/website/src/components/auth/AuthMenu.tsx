@@ -7,6 +7,7 @@ import { getGuestName } from '@/lib/guest';
 import { supabase } from '@/config/supabase';
 import PreferencesPanel from '@/components/auth/PreferencesPanel';
 import { PreferencesModal } from '@ciszu/ui';
+import { useDict } from '@/components/providers/I18nProvider';
 
 export const GuestIcon = ({ className = 'w-5 h-5' }: { className?: string }) => (
   <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={1.8}>
@@ -29,6 +30,7 @@ const SettingsIcon = () => (
  * centrado separado (PreferencesModal); aquí solo quedan sesión y accesos.
  */
 export default function AuthMenu({ onClose }: { onClose: () => void }) {
+  const dict = useDict();
   const { user } = useAppStore();
   const [guestName] = useState(() => getGuestName());
   const [prefsOpen, setPrefsOpen] = useState(false);
@@ -72,7 +74,7 @@ export default function AuthMenu({ onClose }: { onClose: () => void }) {
             </div>
             <div className="min-w-0">
               <p className="text-white font-header font-bold text-sm truncate">{guestName}</p>
-              <p className="text-gray-400 text-[10px] uppercase tracking-widest font-bold">Sesión de invitado</p>
+              <p className="text-gray-400 text-[10px] uppercase tracking-widest font-bold">{dict.authMenu.guestSession}</p>
             </div>
           </>
         )}
@@ -90,7 +92,7 @@ export default function AuthMenu({ onClose }: { onClose: () => void }) {
               <polyline points="16 17 21 12 16 7" />
               <line x1="21" y1="12" x2="9" y2="12" />
             </svg>
-            Cerrar sesión
+            {dict.authMenu.signOut}
           </button>
         ) : (
           <>
@@ -104,7 +106,7 @@ export default function AuthMenu({ onClose }: { onClose: () => void }) {
                 <polyline points="10 17 15 12 10 7" />
                 <line x1="15" y1="12" x2="3" y2="12" />
               </svg>
-              Iniciar sesión
+              {dict.authMenu.login}
             </Link>
             <Link
               href="/register"
@@ -117,7 +119,7 @@ export default function AuthMenu({ onClose }: { onClose: () => void }) {
                 <line x1="20" y1="8" x2="20" y2="14" />
                 <line x1="23" y1="11" x2="17" y2="11" />
               </svg>
-              Registrarse
+              {dict.authMenu.register}
             </Link>
           </>
         )}
@@ -129,12 +131,12 @@ export default function AuthMenu({ onClose }: { onClose: () => void }) {
           onClick={() => setPrefsOpen(true)}
           className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white hover:border-neon-blue/50 hover:text-neon-blue font-header font-bold text-sm transition-all active:scale-95"
         >
-          <SettingsIcon /> Preferencias locales
+          <SettingsIcon /> {dict.authMenu.localPrefs}
         </button>
       </div>
 
       {/* Modal centrado de preferencias (Radix), con X de cierre */}
-      <PreferencesModal open={prefsOpen} onOpenChange={setPrefsOpen} title="Preferencias locales">
+      <PreferencesModal open={prefsOpen} onOpenChange={setPrefsOpen} title={dict.authMenu.localPrefs}>
         <PreferencesPanel />
       </PreferencesModal>
     </div>

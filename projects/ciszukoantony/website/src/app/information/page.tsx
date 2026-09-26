@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
+import { cookies } from 'next/headers';
+import { getDict, parseLang } from '@/lib/i18n';
 import { assetResolver } from '@ciszunetwork/cdn';
 import {
   Icon,
@@ -415,7 +417,10 @@ function SectionHeading({
   );
 }
 
-export default function InformationPage() {
+export default async function InformationPage() {
+  const lang = parseLang((await cookies()).get('ciszu_lang')?.value);
+  const dict = getDict(lang);
+
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />
@@ -441,9 +446,9 @@ export default function InformationPage() {
         <section id="hero" className="scroll-mt-28">
           <InfoHero
             icon="info"
-            title="Information"
-            kicker="Ciszuko Antony · Ciszu Network"
-            subtitle="Identidad visual, colorología, iconografía, misión y stack tecnológico del portfolio personal de Ciszuko Antony: la marca, la obra y la ingeniería en una sola página."
+            title={dict.nav.information}
+            kicker={dict.information.heroKicker}
+            subtitle={dict.information.heroSubtitle}
             theme={THEME}
           />
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -465,8 +470,8 @@ export default function InformationPage() {
         <section id="identidad" className="scroll-mt-28 space-y-10">
           <SectionHeading
             icon="palette"
-            title="Identidad Visual"
-            kicker="Marca personal"
+            title={dict.information.identity}
+            kicker={dict.information.identityKicker}
             tone="text-neon-blue"
             toneBg="bg-neon-blue/10"
             toneBorder="border-neon-blue/30"
@@ -478,26 +483,24 @@ export default function InformationPage() {
                 <div className="relative h-28 w-28 shrink-0 animate-float">
                   <Image
                     src={ISOTYPE}
-                    alt="Isotipo de Ciszuko Antony"
+                    alt={dict.information.isotypeAlt}
                     fill
                     sizes="112px"
                     className="object-contain drop-shadow-neon-blue"
                   />
                 </div>
                 <div className="flex-1 space-y-4 text-center xl:text-left">
-                  <h3 className="text-xl font-header font-black uppercase italic text-white">Isotipo Maestro</h3>
+                  <h3 className="text-xl font-header font-black uppercase italic text-white">{dict.information.isotypeTitle}</h3>
                   <div className="rounded-2xl border-l-4 border-neon-blue/40 bg-black/40 p-4 text-left">
-                    <p className="mb-1 text-[10px] font-black uppercase text-neon-blue">Visión artística</p>
+                    <p className="mb-1 text-[10px] font-black uppercase text-neon-blue">{dict.information.artVision}</p>
                     <p className="text-xs font-bold leading-relaxed text-white/60">
-                      Las iniciales de Ciszuko Antony talladas en vectores: una marca limpia, reconocible y legible
-                      incluso al tamaño de un favicon.
+                      {dict.information.artVisionBody}
                     </p>
                   </div>
                   <div className="rounded-2xl border-l-4 border-neon-purple/40 bg-black/40 p-4 text-left">
-                    <p className="mb-1 text-[10px] font-black uppercase text-neon-purple">Especificación técnica</p>
+                    <p className="mb-1 text-[10px] font-black uppercase text-neon-purple">{dict.information.techSpec}</p>
                     <p className="text-xs font-bold leading-relaxed text-white/60">
-                      Disponible en versiones outline, gradient y monocroma, con relleno blanco o color, en SVG listo
-                      para web y PNG de alta resolución.
+                      {dict.information.techSpecBody}
                     </p>
                   </div>
                 </div>
@@ -509,19 +512,18 @@ export default function InformationPage() {
                 <div className="relative h-28 w-full max-w-[300px] shrink-0">
                   <Image
                     src={LOGOTYPE}
-                    alt="Logotipo de Ciszuko Antony"
+                    alt={dict.information.logotypeAlt}
                     fill
                     sizes="300px"
                     className="object-contain"
                   />
                 </div>
                 <div className="w-full space-y-4">
-                  <h3 className="text-xl font-header font-black uppercase italic text-white">Logotipo</h3>
+                  <h3 className="text-xl font-header font-black uppercase italic text-white">{dict.information.logotypeTitle}</h3>
                   <div className="rounded-2xl border-l-4 border-neon-cyan/40 bg-black/40 p-4 text-left">
-                    <p className="mb-1 text-[10px] font-black uppercase text-neon-cyan">Diseño aerodinámico</p>
+                    <p className="mb-1 text-[10px] font-black uppercase text-neon-cyan">{dict.information.aeroDesign}</p>
                     <p className="text-xs font-bold leading-relaxed text-white/60">
-                      Tipografía display en mayúsculas con trazo firme, pensada para convivir con el isotipo en el
-                      navbar, el footer y las piezas audiovisuales.
+                      {dict.information.aeroDesignBody}
                     </p>
                   </div>
                 </div>
@@ -536,22 +538,22 @@ export default function InformationPage() {
             <div className="relative flex flex-col lg:flex-row items-center gap-10">
               <div className="flex flex-col items-center gap-4">
                 <div className="relative h-24 w-24 animate-float">
-                  <Image src={ISOTYPE} alt="Isotipo" fill sizes="96px" className="object-contain" />
+                  <Image src={ISOTYPE} alt={dict.information.isotypeAlt} fill sizes="96px" className="object-contain" />
                 </div>
                 <div className="relative h-14 w-64">
-                  <Image src={LOGOTYPE} alt="Logotipo" fill sizes="256px" className="object-contain" />
+                  <Image src={LOGOTYPE} alt={dict.information.logotypeAlt} fill sizes="256px" className="object-contain" />
                 </div>
                 <div className="relative h-14 w-14 overflow-hidden rounded-full ring-2 ring-brand/40">
-                  <Image src={CIRCLE} alt="Avatar de Ciszuko Antony" fill sizes="56px" className="object-cover" />
+                  <Image src={CIRCLE} alt={dict.information.avatarAlt} fill sizes="56px" className="object-cover" />
                 </div>
               </div>
               <div className="flex-1 space-y-6">
                 <div className="space-y-2 text-center lg:text-left">
                   <h3 className="text-2xl md:text-4xl font-header font-black uppercase italic tracking-tight text-white">
-                    Composición Maestra
+                    {dict.information.masterComposition}
                   </h3>
                   <p className="text-[10px] font-black uppercase tracking-[0.5em] text-neon-cyan">
-                    El sello del portfolio
+                    {dict.information.portfolioSeal}
                   </p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -592,8 +594,8 @@ export default function InformationPage() {
         <section id="color" className="scroll-mt-28 space-y-10">
           <SectionHeading
             icon="palette"
-            title="Colorología de Marca"
-            kicker="Toca un valor para copiarlo"
+            title={dict.information.colorTitle}
+            kicker={dict.information.colorKicker}
             tone="text-neon-pink"
             toneBg="bg-neon-pink/10"
             toneBorder="border-neon-pink/30"
@@ -604,8 +606,8 @@ export default function InformationPage() {
         <section id="formatos" className="scroll-mt-28 space-y-10">
           <SectionHeading
             icon="file-text"
-            title="Formatos de Archivo"
-            kicker="Assets disponibles"
+            title={dict.information.formatsTitle}
+            kicker={dict.information.formatsKicker}
             tone="text-neon-purple"
             toneBg="bg-neon-purple/10"
             toneBorder="border-neon-purple/30"
@@ -643,8 +645,8 @@ export default function InformationPage() {
         <section id="mision" className="scroll-mt-28 space-y-10">
           <SectionHeading
             icon="target"
-            title="Nuestra Misión"
-            kicker="Declaración central"
+            title={dict.information.missionTitle}
+            kicker={dict.information.missionKicker}
             tone="text-neon-pink"
             toneBg="bg-neon-pink/10"
             toneBorder="border-neon-pink/30"
@@ -653,11 +655,10 @@ export default function InformationPage() {
             <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-neon-pink/5 blur-3xl" />
             <div className="relative space-y-6">
               <p className="text-[10px] font-black uppercase tracking-[0.5em] text-neon-pink">
-                · Marca personal ·
+                {dict.information.personalBrand}
               </p>
               <blockquote className="text-xl md:text-3xl font-header font-black uppercase italic leading-snug text-white">
-                &quot;Mostrar al mundo lo que Ciszuko Antony construye: proyectos, certificados, música y documentación
-                con identidad visual propia e ingeniería verificable.&quot;
+                &quot;{dict.information.missionQuote}&quot;
               </blockquote>
               <div className="grid grid-cols-1 gap-4 border-t border-white/10 pt-6 sm:grid-cols-3">
                 {MISSION_STATS.map((stat) => (
@@ -675,8 +676,8 @@ export default function InformationPage() {
         <section id="vision" className="scroll-mt-28 space-y-10">
           <SectionHeading
             icon="globe"
-            title="Visión de Futuro"
-            kicker="Horizontes de la marca"
+            title={dict.information.visionTitle}
+            kicker={dict.information.visionKicker}
             tone="text-neon-blue"
             toneBg="bg-neon-blue/10"
             toneBorder="border-neon-blue/30"
@@ -687,8 +688,8 @@ export default function InformationPage() {
         <section id="objetivos" className="scroll-mt-28 space-y-10">
           <SectionHeading
             icon="chart-bar"
-            title="Objetivos"
-            kicker="Macro estrategia y micro táctica"
+            title={dict.information.objectivesTitle}
+            kicker={dict.information.objectivesKicker}
             tone="text-neon-green"
             toneBg="bg-neon-green/10"
             toneBorder="border-neon-green/30"
@@ -701,9 +702,9 @@ export default function InformationPage() {
                 </span>
                 <div>
                   <h3 className="text-lg font-header font-black uppercase italic text-neon-green">
-                    Objetivos Generales
+                    {dict.information.generalObjectives}
                   </h3>
-                  <p className="text-[9px] font-black uppercase tracking-widest text-white/40">Macro estrategia</p>
+                  <p className="text-[9px] font-black uppercase tracking-widest text-white/40">{dict.information.macroStrategy}</p>
                 </div>
               </div>
               <ul className="space-y-3">
@@ -724,9 +725,9 @@ export default function InformationPage() {
                 </span>
                 <div>
                   <h3 className="text-lg font-header font-black uppercase italic text-neon-cyan">
-                    Objetivos Específicos
+                    {dict.information.specificObjectives}
                   </h3>
-                  <p className="text-[9px] font-black uppercase tracking-widest text-white/40">Micro táctica</p>
+                  <p className="text-[9px] font-black uppercase tracking-widest text-white/40">{dict.information.microTactic}</p>
                 </div>
               </div>
               <ul className="space-y-3">
@@ -746,8 +747,8 @@ export default function InformationPage() {
         <section id="ideologia" className="scroll-mt-28 space-y-10">
           <SectionHeading
             icon="heart"
-            title="Ideología"
-            kicker="Los cuatro pilares"
+            title={dict.information.ideologyTitle}
+            kicker={dict.information.ideologyKicker}
             tone="text-neon-purple"
             toneBg="bg-neon-purple/10"
             toneBorder="border-neon-purple/30"
@@ -773,8 +774,8 @@ export default function InformationPage() {
         <section id="filosofia" className="scroll-mt-28 space-y-10">
           <SectionHeading
             icon="moon"
-            title="Filosofía"
-            kicker="Razón de ser"
+            title={dict.information.philosophyTitle}
+            kicker={dict.information.philosophyKicker}
             tone="text-neon-cyan"
             toneBg="bg-neon-cyan/10"
             toneBorder="border-neon-cyan/30"
@@ -783,13 +784,12 @@ export default function InformationPage() {
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-neon-blue/5 via-transparent to-neon-purple/5" />
             <div className="relative grid grid-cols-1 gap-10 lg:grid-cols-3">
               <div className="flex flex-col justify-center space-y-4 border-white/10 lg:border-r lg:pr-10">
-                <p className="text-[9px] font-black uppercase tracking-[0.5em] text-neon-cyan">Razón de ser</p>
+                <p className="text-[9px] font-black uppercase tracking-[0.5em] text-neon-cyan">{dict.information.reasonToBe}</p>
                 <h3 className="text-2xl md:text-3xl font-header font-black uppercase italic leading-tight text-white">
-                  La marca es el mensaje
+                  {dict.information.brandIsMessage}
                 </h3>
                 <p className="text-sm font-bold leading-relaxed text-white/50">
-                  Antes de leer una línea de código o escuchar una nota, el visitante ve una identidad. Cuidarla es
-                  parte del trabajo, no un extra.
+                  {dict.information.brandIsMessageBody}
                 </p>
               </div>
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:col-span-2">
@@ -815,8 +815,8 @@ export default function InformationPage() {
         <section id="libreria" className="scroll-mt-28 space-y-10">
           <SectionHeading
             icon="star"
-            title="Librería de Iconos Maestra"
-            kicker="Propiedad intelectual Ciszuko Antony"
+            title={dict.information.iconsTitle}
+            kicker={dict.information.iconsKicker}
             tone="text-neon-blue"
             toneBg="bg-neon-blue/10"
             toneBorder="border-neon-blue/30"
@@ -833,8 +833,8 @@ export default function InformationPage() {
         <section id="ecosistema" className="scroll-mt-28 space-y-10">
           <SectionHeading
             icon="server"
-            title="Ecosistema Tecnológico"
-            kicker="La infraestructura del portfolio"
+            title={dict.information.techTitle}
+            kicker={dict.information.techKicker}
             tone="text-neon-cyan"
             toneBg="bg-neon-cyan/10"
             toneBorder="border-neon-cyan/30"
@@ -870,13 +870,13 @@ export default function InformationPage() {
                   </div>
                   <div className="border-t border-white/10 pt-4">
                     <p className="text-[11px] font-bold leading-relaxed text-white/50">
-                      <span className="mb-1 block text-neon-cyan">Uso en el proyecto:</span>
+                      <span className="mb-1 block text-neon-cyan">{dict.information.projectUse}</span>
                       {tech.use}
                     </p>
                   </div>
                 </div>
                 <div className="relative mt-auto flex items-center gap-2 pt-4 text-[10px] font-black uppercase italic text-white/40 transition-colors group-hover:text-white">
-                  Documentación oficial
+                  {dict.information.officialDocs}
                   <Icon name="arrow-right" size={12} />
                 </div>
               </Link>
@@ -887,8 +887,8 @@ export default function InformationPage() {
         <section id="explora" className="scroll-mt-28 space-y-10">
           <SectionHeading
             icon="home"
-            title="Explora el Proyecto"
-            kicker="Todas las secciones del portfolio"
+            title={dict.information.exploreTitle}
+            kicker={dict.information.exploreKicker}
             tone="text-neon-blue"
             toneBg="bg-neon-blue/10"
             toneBorder="border-neon-blue/30"
@@ -899,8 +899,8 @@ export default function InformationPage() {
         <section id="origenes" className="scroll-mt-28 space-y-10">
           <SectionHeading
             icon="user"
-            title="Orígenes & Arquitectura"
-            kicker="Quién está detrás"
+            title={dict.information.originsTitle}
+            kicker={dict.information.originsKicker}
             tone="text-neon-purple"
             toneBg="bg-neon-purple/10"
             toneBorder="border-neon-purple/30"
@@ -916,9 +916,9 @@ export default function InformationPage() {
                   <Icon name="user" size={34} />
                 </span>
                 <div>
-                  <h4 className="text-sm font-black uppercase italic text-white">Conocer al autor</h4>
+                  <h4 className="text-sm font-black uppercase italic text-white">{dict.information.meetAuthor}</h4>
                   <p className="text-[10px] font-bold uppercase tracking-widest text-white/40">
-                    Biografía de Ciszuko Antony
+                    {dict.information.authorBio}
                   </p>
                 </div>
               </div>
@@ -935,9 +935,9 @@ export default function InformationPage() {
                   <Icon name="team" size={34} />
                 </span>
                 <div>
-                  <h4 className="text-sm font-black uppercase italic text-white">Matriz organizativa</h4>
+                  <h4 className="text-sm font-black uppercase italic text-white">{dict.information.orgMatrix}</h4>
                   <p className="text-[10px] font-bold uppercase tracking-widest text-white/40">
-                    Equipo y roles del ecosistema
+                    {dict.information.orgMatrixBody}
                   </p>
                 </div>
               </div>

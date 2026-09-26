@@ -20,9 +20,11 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { isTauri } from '@/lib/isTauri';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useT } from '@/hooks/useT';
 
 export default function HomeContent() {
   usePageTitle('HOME');
+  const t = useT();
   const router = useRouter();
   const { isMusicPlaying,  playGlobalMusic } = useAppStore();
   const { toast } = useToast();
@@ -69,7 +71,7 @@ export default function HomeContent() {
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden">
-        <h1 className="sr-only">MuzicMania — El Juego de Ritmo Definitivo en la Web</h1>
+        <h1 className="sr-only">{t.pages.home.title}</h1>
         {/* Deep radial glow */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_50%,rgba(40,0,90,0.45)_0%,rgba(0,10,30,0.2)_60%,transparent_100%)] pointer-events-none" />
 
@@ -137,7 +139,7 @@ export default function HomeContent() {
           </div>
 
           <p className="text-xl md:text-2xl text-neon-sky font-accent mb-4 text-shadow-neon-cyan">
-            Música, neón y precisión competitiva. Domina el bit en la dimensión definitiva donde cada nota cuenta.
+            {t.pages.home.tagline}
           </p>
 
           <div className="flex gap-4 flex-wrap justify-center mb-5">
@@ -146,13 +148,13 @@ export default function HomeContent() {
               className="flex items-center gap-2 px-8 py-4 bg-green-950/40 text-white font-black rounded-lg border-2 border-green-500 hover:bg-green-800 hover:scale-105 transition-all text-lg font-header shadow-[0_0_20px_rgba(0,255,100,0.3)] hover:shadow-[0_0_30px_rgba(0,255,100,0.5)]"
             >
               <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              JUGAR COMO INVITADO
+              {t.pages.home.playGuest.toUpperCase()}
             </Link>
             <Link href="/register"
               className="flex items-center gap-2 px-8 py-4 bg-red-950/40 text-white font-black rounded-lg border-2 border-red-500 hover:bg-red-800 hover:scale-105 transition-all text-lg font-header shadow-[0_0_20px_rgba(255,0,80,0.3)] hover:shadow-[0_0_30px_rgba(255,0,80,0.5)]"
             >
               <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
-              REGISTRARSE O INGRESAR
+              {t.pages.home.registerOrLogin.toUpperCase()}
             </Link>
           </div>
 
@@ -169,7 +171,7 @@ export default function HomeContent() {
                   <polyline points="7 10 12 15 17 10" />
                   <line x1="12" y1="15" x2="12" y2="3" />
                 </svg>
-                <span className="relative z-10 tracking-[0.15em]">DESCARGAR MUZICMANIA</span>
+                <span className="relative z-10 tracking-[0.15em]">{t.pages.home.download.toUpperCase()}</span>
               </Link>
             </div>
           )}

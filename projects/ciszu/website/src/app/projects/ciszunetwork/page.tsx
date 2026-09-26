@@ -5,6 +5,7 @@ import { InfoHero, type InfoTheme } from "@ciszu/ui";
 import PageAmbience from "@/components/layout/PageAmbience";
 import PageReveal from "@/components/layout/PageReveal";
 import QuickDocks from "@/components/molecules/QuickDocks";
+import { getServerI18n } from "@/lib/i18n-server";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -36,7 +37,8 @@ const sites = [
   { name: 'Ciszuko Antony', href: EXTERNAL_LINKS.ciszukoantony, external: true },
 ];
 
-export default function CiszuNetworkPage() {
+export default async function CiszuNetworkPage() {
+  const { t } = await getServerI18n();
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />
@@ -67,13 +69,13 @@ export default function CiszuNetworkPage() {
             </div>
             <div className="text-center">
               <Link href="/contact" className="inline-flex items-center gap-2 px-6 py-3 bg-brand/20 border border-brand/40 text-brand-light rounded-xl font-bold text-sm hover:bg-brand hover:text-white transition-all">
-                Trabaja con Nosotros <ArrowRight className="w-4 h-4" />
+                {t.projectPages.ciszunetwork.workWithUs} <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
 
           <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10">
-            <h2 className="text-2xl font-header font-bold text-white mb-6">Stack tecnológico</h2>
+            <h2 className="text-2xl font-header font-bold text-white mb-6">{t.projectPages.stack}</h2>
             <div className="flex flex-wrap gap-2 mb-8">
               {stack.map((s) => (
                 <span key={s} className="px-3 py-1.5 rounded-full bg-brand/10 border border-brand/30 text-brand-light text-[10px] font-bold uppercase tracking-wider">
@@ -81,7 +83,7 @@ export default function CiszuNetworkPage() {
                 </span>
               ))}
             </div>
-            <h3 className="text-sm font-header font-bold text-white mb-3">Proyectos del ecosistema</h3>
+            <h3 className="text-sm font-header font-bold text-white mb-3">{t.projectPages.ciszunetwork.ecosystemProjects}</h3>
             <div className="flex flex-wrap gap-3">
               {sites.map((s) => (
                 <Link key={s.name} href={s.href} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/15 text-white text-xs font-bold hover:border-brand-light/60 hover:text-brand-light transition-all">
@@ -97,7 +99,7 @@ export default function CiszuNetworkPage() {
 
           <div className="text-center">
             <Link href="/projects" className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/10 transition-all">
-              Ver todos los proyectos <ArrowRight className="w-4 h-4" />
+              {t.projectPages.viewAll} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
