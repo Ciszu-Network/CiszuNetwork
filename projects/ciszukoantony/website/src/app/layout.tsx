@@ -12,6 +12,7 @@ import FeedbackFab from "@/components/layout/FeedbackFab";
 import { CookiesBanner } from "@/components/layout/CookiesBanner";
 import AuthProvider from "@/components/providers/AuthProvider";
 import AdsWithUser from "@/components/providers/AdsWithUser";
+import { I18nProvider } from "@/components/providers/I18nProvider";
 import { metadataForPath } from "@/lib/page-metadata";
 import "./globals.scss";
 
@@ -86,6 +87,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <GoogleScripts />
       </head>
       <body className="min-h-screen font-sans flex flex-col">
+        <I18nProvider lang={lang} dict={dict}>
         <AuthProvider>
           <DisclaimerProvider>
             <ToastProvider>
@@ -124,6 +126,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         {process.env.NODE_ENV === 'production' && (
           <script defer type="module" data-cookie-consent="optional" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
         )}
+        </I18nProvider>
       </body>
     </html>
   );

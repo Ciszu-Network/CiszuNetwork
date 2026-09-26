@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
+import { getDict, parseLang } from '@/lib/i18n';
 import { LegalDocument, type LegalArticle, type InfoTheme } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
@@ -95,14 +97,16 @@ const ARTICLES: LegalArticle[] = [
   },
 ];
 
-export default function PolicyPage() {
+export default async function PolicyPage() {
+  const lang = parseLang((await cookies()).get('ciszu_lang')?.value);
+  const dict = getDict(lang);
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />
       <PageReveal className="relative mx-auto max-w-screen-xl">
         <LegalDocument
           icon="lock"
-          title="POLÍTICA"
+          title={dict.policy.title}
           subtitle="Privacidad, datos y transparencia"
           docLabel="Política Oficial de Ciszuko Antony"
           articles={ARTICLES}

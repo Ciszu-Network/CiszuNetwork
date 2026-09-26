@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
+import { getDict, parseLang } from '@/lib/i18n';
 import { CreditsRoll, type CreditSection, type InfoTheme } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
@@ -57,14 +59,16 @@ const SECTIONS: CreditSection[] = [
   },
 ];
 
-export default function CreditsPage() {
+export default async function CreditsPage() {
+  const lang = parseLang((await cookies()).get('ciszu_lang')?.value);
+  const dict = getDict(lang);
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />
       <PageReveal className="relative mx-auto max-w-screen-xl">
         <CreditsRoll
           icon="trophy"
-          title="Créditos y contribuciones"
+          title={dict.credits.title}
           subtitle="Autoría y desarrollo del portfolio"
           sections={SECTIONS}
           closing={{

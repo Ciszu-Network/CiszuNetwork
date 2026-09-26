@@ -3,6 +3,8 @@
 import { useMemo, useState, useRef, useEffect } from "react";
 import { BookOpen, ExternalLink, Globe, Clock, Award, Search, Filter, BookMarked, Target, Layers } from "lucide-react";
 import { usePageTitle } from "@/lib/usePageTitle";
+import { useDict } from "@/lib/useDict";
+import { fillTemplate } from "@/lib/i18n";
 import QuickDocks from "@/components/molecules/QuickDocks";
 import PageAmbience from "@/components/layout/PageAmbience";
 import PageReveal from "@/components/layout/PageReveal";
@@ -120,6 +122,7 @@ function FilterSelect({ icon, label, options, value, onChange }: { icon: React.R
 
 export default function CoursesPage() {
   usePageTitle('COURSES');
+  const t = useDict();
   const [category, setCategory] = useState("All");
   const [level, setLevel] = useState("All");
   const [sort, setSort] = useState<"recent" | "name" | "duration">("recent");
@@ -160,7 +163,7 @@ export default function CoursesPage() {
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search course…"
+                placeholder={t.coursesPage.searchPlaceholder}
                 className="w-full rounded-xl bg-[#0b0e1a]/80 border border-white/10 pl-9 pr-3 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-brand-light/40 outline-none transition-colors"
               />
             </div>
@@ -174,13 +177,15 @@ export default function CoursesPage() {
 
         {/* Results */}
         <div className="mb-3 text-xs text-gray-500 font-bold uppercase tracking-widest">
-          {filtered.length} course{filtered.length !== 1 ? "s" : ""}
+          {filtered.length === 1
+            ? fillTemplate(t.coursesPage.countOne, { n: filtered.length })
+            : fillTemplate(t.coursesPage.countMany, { n: filtered.length })}
         </div>
 
         {filtered.length === 0 ? (
           <div className="text-center py-20 rounded-2xl bg-brand/5 border border-brand/20">
             <BookOpen className="w-10 h-10 text-gray-600 mx-auto mb-3" />
-            <p className="text-gray-400 text-sm">No courses match the filters.</p>
+            <p className="text-gray-400 text-sm">{t.coursesPage.noResults}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

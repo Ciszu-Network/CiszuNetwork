@@ -25,7 +25,6 @@ import {
   DISBOARD_SERVER,
   type Dict,
   type Lang,
-  isEsLang,
 } from '@/lib/i18n';
 
 const IcoDiscord = () => (
@@ -78,7 +77,7 @@ interface FooterProps {
   dict: Dict;
 }
 
-export default function Footer({ lang, dict }: FooterProps) {
+export default function Footer({ dict }: FooterProps) {
   const { setIsMenuOpen, setSidebarView } = useAppStore();
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href;
@@ -150,7 +149,7 @@ export default function Footer({ lang, dict }: FooterProps) {
             >
               <CiszugamensLogo size={18} />
               <IcoDiscord />
-              <span>Servidor de Discord · Ciszugamens</span>
+              <span>{dict.footer.communityServer}</span>
             </a>
 
             {/* Open Source — repositorio del ecosistema */}
@@ -161,7 +160,7 @@ export default function Footer({ lang, dict }: FooterProps) {
               className="w-full group flex items-center justify-center gap-2 rounded-xl bg-card border border-border text-muted hover:text-neon-blue hover:border-neon-blue/60 px-8 py-3 font-header font-bold text-sm transition-all duration-300 hover:scale-[1.02] active:scale-95 mb-8"
             >
               <IcoGithub />
-              <span>Open Source · Repositorio en GitHub</span>
+              <span>{dict.footer.openSource}</span>
             </a>
 
             {/* Social icons */}
@@ -197,16 +196,16 @@ export default function Footer({ lang, dict }: FooterProps) {
                   { href: '/downloads', label: dict.nav.downloads, icon: 'download' },
                   { href: '/invite', label: dict.nav.invite, icon: 'discord' },
                   { href: '/feedback', label: dict.nav.feedback, icon: 'message' },
-                  { href: '/changelog', label: 'Changelog', icon: 'history' },
-                  { href: '/reviews', label: 'Reviews', icon: 'star' },
-                  { href: '/leaderboard', label: 'Leaderboard', icon: 'trophy' },
-                  { href: '/forum', label: 'Forum', icon: 'message' },
-                  { href: '/contact', label: 'Contact', icon: 'mail' },
+                  { href: '/changelog', label: dict.nav.changelog, icon: 'history' },
+                  { href: '/reviews', label: dict.nav.reviews, icon: 'star' },
+                  { href: '/leaderboard', label: dict.nav.leaderboard, icon: 'trophy' },
+                  { href: '/forum', label: dict.nav.forum, icon: 'message' },
+                  { href: '/contact', label: dict.nav.contact, icon: 'mail' },
                   { href: '/dashboard', label: dict.nav.dashboard, icon: 'server' },
-                  { href: '/documentation', label: 'Documentation', icon: 'file' },
-                  { href: '/about', label: 'About', icon: 'info' },
-                  { href: '/team', label: 'Team', icon: 'users' },
-                  { href: '/help', label: 'Help', icon: 'help' },
+                  { href: '/documentation', label: dict.nav.documentation, icon: 'file' },
+                  { href: '/about', label: dict.nav.about, icon: 'info' },
+                  { href: '/team', label: dict.nav.team, icon: 'users' },
+                  { href: '/help', label: dict.nav.help, icon: 'help' },
                   { href: '/donate', label: dict.nav.donate, icon: 'heart' },
                 ].map((l) => {
                   const active = isActive(l.href);
@@ -265,8 +264,8 @@ export default function Footer({ lang, dict }: FooterProps) {
                 <span>
                   {dict.footer.slash}: <code className="text-neon-blue bg-neon-blue/10 border border-neon-blue/30 px-1.5 py-0.5 rounded">/commands</code>
                 </span>
-                <span>20 comandos · 4 categorías</span>
-                <span>7 listas de bots</span>
+                <span>{dict.commandsSection.kicker}</span>
+                <span>{dict.supportPage.listsTitle}</span>
               </div>
             </div>
 
@@ -278,11 +277,11 @@ export default function Footer({ lang, dict }: FooterProps) {
                 {[
                   { href: '/terms', label: dict.footer.terms, icon: <FileText className="w-4 h-4" /> },
                   { href: '/privacy', label: dict.footer.privacy, icon: <Shield className="w-4 h-4" /> },
-                  { href: '/policy', label: 'Policy', icon: <FileText className="w-4 h-4" /> },
-                  { href: '/guidelines', label: 'Guidelines', icon: <FileText className="w-4 h-4" /> },
-                  { href: '/rules', label: 'Rules', icon: <Shield className="w-4 h-4" /> },
-                  { href: '/license', label: 'License', icon: <Scale className="w-4 h-4" /> },
-                  { href: '/credits', label: 'Credits', icon: <FileText className="w-4 h-4" /> },
+                  { href: '/policy', label: dict.nav.policy, icon: <FileText className="w-4 h-4" /> },
+                  { href: '/guidelines', label: dict.nav.guidelines, icon: <FileText className="w-4 h-4" /> },
+                  { href: '/rules', label: dict.nav.rules, icon: <Shield className="w-4 h-4" /> },
+                  { href: '/license', label: dict.nav.license, icon: <Scale className="w-4 h-4" /> },
+                  { href: '/credits', label: dict.nav.credits, icon: <FileText className="w-4 h-4" /> },
                 ].map((l) => {
                   const active = isActive(l.href);
                   return (
@@ -329,8 +328,8 @@ export default function Footer({ lang, dict }: FooterProps) {
               className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group ${
                 isDark ? 'bg-surface border-border hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
               }`}
-              aria-label="Toggle theme"
-              title="Toggle theme"
+              aria-label={dict.nav.toggleTheme}
+              title={dict.nav.toggleTheme}
             >
               {isDark ? (
                 <svg className="w-5 h-5 text-ink transition-transform duration-500 group-hover:rotate-12" viewBox="0 0 24 24" fill="currentColor">
@@ -347,7 +346,7 @@ export default function Footer({ lang, dict }: FooterProps) {
             <button
               onClick={() => { setIsMenuOpen(true); setSidebarView('lang'); }}
               className="group flex items-center gap-3 px-4 py-2 bg-card hover:bg-muted/15 border border-border hover:border-neon-blue rounded-full transition-all duration-300 shadow-lg cursor-pointer"
-              title={isEsLang(lang) ? 'Cambiar idioma' : 'Change language'}
+              title={dict.prefs.changeLanguage}
             >
               <svg className="w-5 h-5 transition-transform duration-500 group-hover:rotate-12 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                 <circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
@@ -373,7 +372,7 @@ export default function Footer({ lang, dict }: FooterProps) {
                 className="text-neon-blue font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(0,212,255,0.8)]">
                 Ciszuko Antony
               </a>{' '}
-              &middot; respaldado por{' '}
+              &middot; {dict.footer.backedBy}{' '}
               <a href={CISZU_NETWORK} target="_blank" rel="noopener noreferrer"
                 className="text-neon-blue font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(0,212,255,0.8)]">
                 CISZU NETWORK

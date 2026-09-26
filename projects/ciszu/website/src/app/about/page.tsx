@@ -7,6 +7,8 @@ import { InfoHero, type InfoTheme } from "@ciszu/ui";
 import QuickDocks from "@/components/molecules/QuickDocks";
 import PageAmbience from "@/components/layout/PageAmbience";
 import PageReveal from "@/components/layout/PageReveal";
+import { getServerI18n } from "@/lib/i18n-server";
+import { fillTemplate } from "@/lib/i18n";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -23,16 +25,17 @@ const THEME: InfoTheme = {
   gradient: 'from-brand-light to-brand-accent',
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const { t } = await getServerI18n();
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />
       <PageReveal className="relative mx-auto max-w-screen-xl">
         <InfoHero
           icon="info"
-          title="Sobre Nosotros"
-          subtitle={`Misión, visión y compañía de ${CISZU_NETWORK.name}: tecnología de alto rendimiento con una estética inconfundible.`}
-          kicker="Compañía"
+          title={t.aboutPage.heroTitle}
+          subtitle={fillTemplate(t.aboutPage.heroSubtitle, { site: CISZU_NETWORK.name })}
+          kicker={t.aboutPage.kicker}
           theme={THEME}
         />
 
@@ -49,42 +52,36 @@ export default function AboutPage() {
               {CISZU_NETWORK.name}
             </h2>
             <p className="text-gray-300 leading-relaxed mb-4">
-              Somos una compañía de innovación digital fundada por {CISZUKO_ANTONY.name}. 
-              Desarrollamos soluciones tecnológicas de alto rendimiento: desarrollo web con Next.js y React, 
-              infraestructura cloud, experiencias de usuario, bots, servidores de juego y más.
+              {fillTemplate(t.aboutPage.intro1, { ceo: CISZUKO_ANTONY.name })}
             </p>
             <p className="text-gray-300 leading-relaxed mb-4">
-              Nuestra filosofía se centra en combinar tecnología de punta con una estética inconfundible. 
-              Cada proyecto refleja nuestro compromiso con la calidad, el rendimiento y la experiencia de usuario.
+              {t.aboutPage.intro2}
             </p>
             <p className="text-gray-300 leading-relaxed">
-              Con sede en Coro, Falcón, Venezuela, operamos 24/7 para ofrecer soluciones globales 
-              con un toque latinoamericano.
+              {t.aboutPage.intro3}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="p-6 rounded-2xl bg-brand/5 border border-brand/20">
-              <h3 className="text-lg font-header font-bold text-white mb-3">Misión</h3>
+              <h3 className="text-lg font-header font-bold text-white mb-3">{t.aboutPage.missionTitle}</h3>
               <p className="text-gray-400 text-sm leading-relaxed">
-                Democratizar la tecnología de alto rendimiento, ofreciendo soluciones digitales 
-                accesibles, escalables y con diseño de primer nivel.
+                {t.aboutPage.mission}
               </p>
             </div>
             <div className="p-6 rounded-2xl bg-brand/5 border border-brand/20">
-              <h3 className="text-lg font-header font-bold text-white mb-3">Visión</h3>
+              <h3 className="text-lg font-header font-bold text-white mb-3">{t.aboutPage.visionTitle}</h3>
               <p className="text-gray-400 text-sm leading-relaxed">
-                Ser referente en innovación digital desde Latinoamérica, creando un ecosistema 
-                de proyectos que inspiren y transformen.
+                {t.aboutPage.vision}
               </p>
             </div>
           </div>
 
           <div className="text-center">
-            <p className="text-gray-400 text-sm mb-6">¿Quieres saber más?</p>
+            <p className="text-gray-400 text-sm mb-6">{t.aboutPage.more}</p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link href="/contact" className="inline-flex items-center gap-2 px-6 py-3 bg-brand/20 border border-brand/40 text-brand-light rounded-xl font-bold text-sm hover:bg-brand hover:text-white transition-all">
-                Contáctanos <ArrowRight className="w-4 h-4" />
+                {t.aboutPage.contact} <ArrowRight className="w-4 h-4" />
               </Link>
               <a href={CISZU_NETWORK.social.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/10 transition-all">
                 <ExternalLink className="w-4 h-4" /> GitHub

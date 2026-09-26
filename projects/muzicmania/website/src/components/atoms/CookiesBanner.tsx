@@ -37,14 +37,14 @@ export function CookiesBanner({ lang, dict }: { lang: string; dict: Record<strin
     setCookieConsent('accepted');
     setHasAcceptedCookies(true);
     setShow(false);
-    toast('Cookies aceptadas. Gracias por apoyar a MuzicMania.', 'info');
+    toast(`[SISTEMA]: ${dict.system.cookiesAccepted}`, 'info');
   };
 
   const handleReject = () => {
     setCookieConsent('rejected');
     setHasAcceptedCookies(false);
     setShow(false);
-    toast('Cookies rechazadas: los servicios opcionales están desactivados.', 'info');
+    toast(`[SISTEMA]: ${dict.system.cookiesRejected}`, 'info');
   };
 
   return (
@@ -62,12 +62,12 @@ export function CookiesBanner({ lang, dict }: { lang: string; dict: Record<strin
                 <svg viewBox="0 0 24 24" className="w-5 h-5 text-yellow-500" fill="currentColor">
                   <path d="M12 2a10 10 0 0 0-6.88 17.26c1.89 1.74 4.3 2.74 6.88 2.74 5.52 0 10-4.48 10-10 0-2.58-1-5-2.74-6.88C17.52 3 15 2 12 2zm1 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm-4-3a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm6-2a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm-3-4a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
                 </svg>
-                {(lang === 'es-latam' || lang === 'es-es') ? dict.cookies.title : dict.cookiesEn.title}
+                {dict.cookies.title}
               </h3>
               <p className="text-gray-400 text-xs md:text-sm font-bold leading-relaxed">
-                {(lang === 'es-latam' || lang === 'es-es') ? dict.cookies.text : dict.cookiesEn.text}
+                {dict.cookies.text}
                 <Link href="/terms" className="text-neon-cyan hover:text-neon-blue underline transition-colors">
-                  {(lang === 'es-latam' || lang === 'es-es') ? dict.cookies.privacyLink : dict.cookiesEn.privacyLink}
+                  {dict.cookies.privacyLink}
                 </Link>
                 .
               </p>
@@ -78,13 +78,13 @@ export function CookiesBanner({ lang, dict }: { lang: string; dict: Record<strin
                 onClick={handleReject}
                 className="w-full md:w-auto px-6 py-3 bg-white/5 text-gray-300 font-black uppercase text-sm rounded-full hover:bg-white/10 hover:text-white active:scale-95 transition-all border border-white/20"
               >
-                {(lang === 'es-latam' || lang === 'es-es') ? dict.cookies.reject : dict.cookiesEn.reject}
+                {dict.cookies.reject}
               </button>
               <button
                 onClick={handleAccept}
                 className="w-full md:w-auto px-8 py-3 bg-gradient-to-r from-neon-blue to-neon-purple text-white font-black uppercase text-sm rounded-full hover:scale-105 active:scale-95 transition-all shadow-lg border border-white/10"
               >
-                {(lang === 'es-latam' || lang === 'es-es') ? dict.cookies.accept : dict.cookiesEn.accept}
+                {dict.cookies.accept}
               </button>
             </div>
           </div>

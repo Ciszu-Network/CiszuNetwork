@@ -7,6 +7,7 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useT } from '@/hooks/useT';
 
 // --- Icons ---
 const I = {
@@ -34,6 +35,7 @@ interface LeaderboardEntry {
 
 export default function LeaderboardPage() {
   usePageTitle('LEADERBOARD');
+  const t = useT();
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -96,11 +98,11 @@ export default function LeaderboardPage() {
                    {I.trophy}
                 </div>
                 <h1 className="text-4xl md:text-8xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-neon-yellow via-white to-neon-orange bg-clip-text text-transparent [-webkit-text-stroke:1px_black]">
-                  RANKINGS
+                  {t.pages.leaderboard.title}
                 </h1>
              </div>
              <p className="text-neon-yellow font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-               La Élite de la Transmisión — Datos en Tiempo Real
+               {t.pages.leaderboard.subtitle}
              </p>
           </div>
         </motion.header>

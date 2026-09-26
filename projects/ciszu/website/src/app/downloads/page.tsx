@@ -6,6 +6,8 @@ import { FabRestore, InfoHero, type InfoTheme } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
+import { getServerI18n } from '@/lib/i18n-server';
+import { fillTemplate } from '@/lib/i18n';
 
 export const metadata: Metadata = {
   title: 'Ciszu Network | DESCARGAS',
@@ -21,34 +23,36 @@ const THEME: InfoTheme = {
   gradient: 'from-brand-light to-brand-accent',
 };
 
-const steps = [
-  {
-    icon: MonitorDown,
-    title: 'Abrir en un navegador compatible',
-    content: 'Microsoft Edge y Chrome instalan la PDWA de forma nativa desde el icono de la barra de direcciones o desde el botón "Instalar PDWA" que encontrarás aquí abajo. Opera usa un método alternativo (acceso directo con --app=URL), explicado en el propio botón.',
-  },
-  {
-    icon: Smartphone,
-    title: 'En móvil (iOS / Android)',
-    content: 'Abre la web en Safari o Chrome: menú Compartir → "Añadir a pantalla de inicio". Se crea un acceso directo tipo app con tu logo.',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Segura y sin cuentas',
-    content: `${CISZU_NETWORK.name} funciona 100% en tu navegador. La PDWA no requiere registro ni instala archivos en el sistema: solo crea una ventana de app.`,
-  },
-];
+export default async function DescargasPage() {
+  const { t } = await getServerI18n();
 
-export default function DescargasPage() {
+  const steps = [
+    {
+      icon: MonitorDown,
+      title: t.downloadsPage.step1Title,
+      content: t.downloadsPage.step1Content,
+    },
+    {
+      icon: Smartphone,
+      title: t.downloadsPage.step2Title,
+      content: t.downloadsPage.step2Content,
+    },
+    {
+      icon: ShieldCheck,
+      title: t.downloadsPage.step3Title,
+      content: fillTemplate(t.downloadsPage.step3Content, { site: CISZU_NETWORK.name }),
+    },
+  ];
+
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />
       <PageReveal className="relative mx-auto max-w-screen-xl">
         <InfoHero
           icon="download"
-          title="Descargas"
-          subtitle={`Instala ${CISZU_NETWORK.name} como App de Escritorio Progresiva (PDWA) en tu PC o móvil, sin pestañas ni barra de dirección.`}
-          kicker="PDWA"
+          title={t.downloadsPage.heroTitle}
+          subtitle={fillTemplate(t.downloadsPage.heroSubtitle, { site: CISZU_NETWORK.name })}
+          kicker={t.downloadsPage.kicker}
           theme={THEME}
         />
 
@@ -68,18 +72,18 @@ export default function DescargasPage() {
 
         <div className="p-8 md:p-10 rounded-[2rem] bg-gradient-to-br from-brand/20 via-brand-dark/10 to-transparent border border-brand/30 text-center">
           <h2 className="text-2xl md:text-3xl font-header font-black text-white uppercase tracking-tighter mb-4">
-            Instalar {CISZU_NETWORK.name} como PDWA
+            {fillTemplate(t.downloadsPage.installTitle, { site: CISZU_NETWORK.name })}
           </h2>
           <p className="text-gray-400 text-sm mb-8 max-w-lg mx-auto">
-            Tu web favorita sin pestañas, con tu logo y acceso directo desde el escritorio o el menú de inicio.
+            {t.downloadsPage.installDesc}
           </p>
           <InstallPdwaCta site={CISZU_NETWORK.name} />
         </div>
 
         <div className="mt-10 p-6 rounded-2xl bg-brand/5 border border-brand/20 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            <p className="text-white font-header font-bold text-sm mb-1">¿Cerraste el botón flotante?</p>
-            <p className="text-gray-400 text-xs">El botón "Instalar PDWA" de abajo a la izquierda se puede volver a mostrar cuando quieras.</p>
+            <p className="text-white font-header font-bold text-sm mb-1">{t.downloadsPage.fabQuestion}</p>
+            <p className="text-gray-400 text-xs">{t.downloadsPage.fabHint}</p>
           </div>
           <FabRestore accent="#22d3ee" keys={['ciszu-pdwa-dismissed']} />
         </div>

@@ -8,29 +8,31 @@ import { SmartImage, EcosystemSection } from '@ciszu/ui';
 import { assetResolver } from '@ciszunetwork/cdn';
 import { SOCIALS, I } from '@/config/navigation';
 import { usePageTitle } from '@/lib/usePageTitle';
-
-const projects = [
-  { name: 'MuzicMania', desc: 'Web-based rhythm game with neon futuristic aesthetic.', href: 'https://muzicmania.vercel.app', color: 'from-pink-500 to-rose-700' },
-  { name: 'Ciszuko CLI', desc: 'CLI tool to automate development and deployment workflows.', href: '#', color: 'from-brand-300 to-neon-cyan' },
-  { name: 'Open Source', desc: 'Open source contributions & projects for the community.', href: 'https://github.com/Ciszu-Network', color: 'from-neon-pink to-neon-orange' },
-];
-
-const featuredProjects = [
-  { name: 'Minecraft Network', desc: 'Minecraft server with unique modes, economy & active community.', tag: 'Minecraft', color: 'from-green-500 to-green-700' },
-  { name: 'Discord Bot', desc: 'Multi-purpose bot with moderation, music & games.', tag: 'Discord', color: 'from-indigo-500 to-purple-700' },
-  { name: 'WhatsApp Bot', desc: 'Smart automation & tools for WhatsApp.', tag: 'WhatsApp', color: 'from-green-400 to-emerald-600' },
-  { name: 'Telegram Bot', desc: 'Admin system & entertainment Telegram bot.', tag: 'Telegram', color: 'from-blue-400 to-cyan-600' },
-];
-
-const stats = [
-  { label: 'Projects', value: '15+', icon: I.projects },
-  { label: 'Users', value: '1K+', icon: I.team },
-  { label: 'Repos', value: '20+', icon: I.certificates },
-  { label: 'Years Exp.', value: '3+', icon: I.about },
-];
+import { useDict } from '@/components/providers/I18nProvider';
 
 export default function HomeContent() {
   usePageTitle('HOME');
+  const dict = useDict();
+
+  const projects = [
+    { name: 'MuzicMania', desc: dict.home.pMuzicMania, href: 'https://muzicmania.vercel.app', color: 'from-pink-500 to-rose-700' },
+    { name: 'Ciszuko CLI', desc: dict.home.pCli, href: '#', color: 'from-brand-300 to-neon-cyan' },
+    { name: 'Open Source', desc: dict.home.pOpenSource, href: 'https://github.com/Ciszu-Network', color: 'from-neon-pink to-neon-orange' },
+  ];
+
+  const featuredProjects = [
+    { name: 'Minecraft Network', desc: dict.home.fMinecraft, tag: 'Minecraft', color: 'from-green-500 to-green-700' },
+    { name: 'Discord Bot', desc: dict.home.fDiscordBot, tag: 'Discord', color: 'from-indigo-500 to-purple-700' },
+    { name: 'WhatsApp Bot', desc: dict.home.fWhatsappBot, tag: 'WhatsApp', color: 'from-green-400 to-emerald-600' },
+    { name: 'Telegram Bot', desc: dict.home.fTelegramBot, tag: 'Telegram', color: 'from-blue-400 to-cyan-600' },
+  ];
+
+  const stats = [
+    { label: dict.home.statProjects, value: '15+', icon: I.projects },
+    { label: dict.home.statUsers, value: '1K+', icon: I.team },
+    { label: dict.home.statRepos, value: '20+', icon: I.certificates },
+    { label: dict.home.statYears, value: '3+', icon: I.about },
+  ];
   return (
     <div className="min-h-screen">
       <section className="relative min-h-[90vh] flex items-center justify-center text-center px-4 overflow-hidden">
@@ -65,22 +67,22 @@ export default function HomeContent() {
             </Link>
 
             <p className="text-xl md:text-2xl text-gray-300 mb-2">
-              CEO & Founder of{' '}
+              {dict.home.role}{' '}
               <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="text-brand font-bold hover:text-brand-200 transition-colors">
                 Ciszuko Network
               </a>
             </p>
             <p className="text-gray-500 max-w-2xl mx-auto mb-8 text-sm uppercase tracking-widest">
-              Innovation · Development · Technology
+              {dict.home.tagline}
             </p>
             <div className="flex gap-4 justify-center flex-wrap">
               <Link href="/projects" className="group px-8 py-4 bg-brand/10 border-2 border-brand/50 text-brand font-bold rounded-xl hover:bg-brand hover:text-white transition-all hover:scale-105 flex items-center gap-2">
                 {I.projects}
-                <span>VIEW PROJECTS</span>
+                <span>{dict.home.viewProjects}</span>
               </Link>
               <Link href="/contact" className="group px-8 py-4 bg-white/5 border-2 border-white/20 text-white font-bold rounded-xl hover:bg-white hover:text-black transition-all hover:scale-105 flex items-center gap-2">
                 {I.contact}
-                <span>CONTACT</span>
+                <span>{dict.home.contact}</span>
               </Link>
             </div>
           </motion.div>
@@ -107,9 +109,9 @@ export default function HomeContent() {
         <div className="max-w-6xl mx-auto">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-14">
             <h2 className="text-3xl md:text-4xl font-header font-black tracking-tighter bg-gradient-to-r from-brand to-brand-200 bg-clip-text text-transparent uppercase">
-              Featured Projects
+              {dict.home.featured}
             </h2>
-            <p className="text-gray-500 text-sm uppercase tracking-widest mt-4">Exploring new frontiers</p>
+            <p className="text-gray-500 text-sm uppercase tracking-widest mt-4">{dict.home.featuredSub}</p>
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -134,9 +136,9 @@ export default function HomeContent() {
         <div className="max-w-6xl mx-auto">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-14">
             <h2 className="text-3xl md:text-4xl font-header font-black tracking-tighter bg-gradient-to-r from-brand-dark to-brand bg-clip-text text-transparent uppercase">
-              Projects
+              {dict.home.projectsTitle}
             </h2>
-            <p className="text-gray-500 text-sm uppercase tracking-widest mt-4">Building the future, one project at a time</p>
+            <p className="text-gray-500 text-sm uppercase tracking-widest mt-4">{dict.home.projectsSub}</p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -154,7 +156,7 @@ export default function HomeContent() {
 
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mt-10">
             <Link href="/projects" className="group inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/20 text-gray-300 font-bold rounded-xl hover:bg-white hover:text-black transition-all hover:scale-105 text-sm">
-              <span>View all projects</span>
+              <span>{dict.home.viewAllProjects}</span>
               <span className="group-hover:translate-x-1 transition-transform">{I.chevronRight}</span>
             </Link>
           </motion.div>
@@ -165,7 +167,7 @@ export default function HomeContent() {
         <div className="max-w-5xl mx-auto">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-10">
             <h2 className="text-3xl md:text-4xl font-header font-black tracking-tighter bg-gradient-to-r from-brand-dark to-brand bg-clip-text text-transparent uppercase">
-              About Me
+              {dict.home.aboutTitle}
             </h2>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
@@ -179,16 +181,14 @@ export default function HomeContent() {
             />
             <div className="text-center md:text-left">
               <p className="text-gray-300 text-lg leading-relaxed mb-6">
-                I&apos;m <span className="text-brand font-bold">Ciszuko Antony</span> (Francisco Garcia Antonio M. / y8), 
-                CEO & Founder of{' '}
+                {dict.home.aboutBefore} <span className="text-brand font-bold">Ciszuko Antony</span> (Francisco Garcia Antonio M. / y8),{' '}
+                {dict.home.aboutRole}{' '}
                 <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="text-brand font-bold hover:text-brand-200 transition-colors">
                   Ciszuko Network
-                </a>. 
-                Passionate about technology, software development, and creating innovative digital experiences. 
-                I lead projects that merge creativity, code, and community to build the future of the web.
+                </a>{dict.home.aboutAfter}
               </p>
               <Link href="/about" className="group inline-flex items-center gap-2 px-6 py-3 bg-brand/10 border-2 border-brand/50 text-brand font-bold rounded-xl hover:bg-brand hover:text-white transition-all hover:scale-105 text-sm">
-                <span>More about me</span>
+                <span>{dict.home.moreAbout}</span>
                 <span className="group-hover:translate-x-1 transition-transform">{I.chevronRight}</span>
               </Link>
             </div>
@@ -200,9 +200,9 @@ export default function HomeContent() {
         <div className="max-w-4xl mx-auto text-center">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
             <h2 className="text-3xl md:text-4xl font-header font-black tracking-tighter bg-gradient-to-r from-brand to-brand-200 bg-clip-text text-transparent uppercase mb-8">
-              Connect With Me
+              {dict.home.connect}
             </h2>
-            <p className="text-gray-500 text-sm uppercase tracking-widest mb-8">Follow me on social media</p>
+            <p className="text-gray-500 text-sm uppercase tracking-widest mb-8">{dict.home.connectSub}</p>
             <div className="flex flex-wrap justify-center gap-4">
               {SOCIALS.map((s) => (
                 <a key={s.name} href={s.href} target="_blank" rel="noopener noreferrer"
@@ -218,8 +218,8 @@ export default function HomeContent() {
       </section>
 
       <EcosystemSection
-        title="Project provided by CiszuNetwork"
-        description="This project is part of the Ciszu Network ecosystem. Discover more projects and tools built by Ciszuko Antony."
+        title={dict.home.ecosystemTitle}
+        description={dict.home.ecosystemBody}
         visitHref="https://ciszunetwork.vercel.app"
         projectsHref="/projects"
       />

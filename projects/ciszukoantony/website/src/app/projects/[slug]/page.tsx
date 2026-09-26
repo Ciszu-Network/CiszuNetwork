@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Icon, InfoCardGrid, InfoCtaRow, InfoHero, SmartImage, type InfoTheme } from '@ciszu/ui';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useDict } from '@/components/providers/I18nProvider';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
@@ -20,6 +21,7 @@ const THEME: InfoTheme = {
 };
 
 export default function ProjectDetailPage() {
+  const dict = useDict();
   const params = useParams<{ slug: string }>();
   const slug = Array.isArray(params?.slug) ? params.slug[0] : params?.slug;
   const project = useMemo(() => (slug ? getProject(slug) : undefined), [slug]);
@@ -33,7 +35,7 @@ export default function ProjectDetailPage() {
         <PageReveal className="relative mx-auto max-w-screen-xl text-center">
           <InfoHero
             icon="warning"
-            title="Proyecto no encontrado"
+            title={dict.projects.notFound}
             subtitle="El proyecto que buscas no existe o cambió de nombre. Explora el índice completo del ecosistema."
             kicker="404"
             theme={THEME}
@@ -42,7 +44,7 @@ export default function ProjectDetailPage() {
             href="/projects"
             className="inline-flex items-center gap-2 px-6 py-3 bg-neon-blue/20 border border-neon-blue/40 text-neon-blue rounded-xl font-bold text-sm hover:bg-neon-blue hover:text-white transition-all"
           >
-            <Icon name="chevronRight" size={16} /> Volver a Projects
+            <Icon name="chevronRight" size={16} /> {dict.common.backToProjects}
           </Link>
         </PageReveal>
       </div>
@@ -87,7 +89,7 @@ export default function ProjectDetailPage() {
 
         <div className="mb-12">
           <InfoCardGrid
-            title="Qué incluye"
+            title={dict.projects.includes}
             items={project.features.map((feature) => ({
               icon: feature.icon,
               title: feature.title,
@@ -100,7 +102,7 @@ export default function ProjectDetailPage() {
 
         <section className="p-8 rounded-[2rem] bg-white/5 border border-white/10 mb-10">
           <h2 className={`text-[11px] font-black uppercase tracking-[0.3em] mb-5 ${THEME.accent}`}>
-            Stack y plataformas
+            {dict.projects.stack}
           </h2>
           <div className="flex flex-wrap gap-2">
             {project.stack.map((tech) => (
@@ -129,7 +131,7 @@ export default function ProjectDetailPage() {
 
         <div className="mt-16 pt-8 border-t border-white/5">
           <h2 className={`text-[11px] font-black uppercase tracking-[0.3em] mb-5 ${THEME.accent}`}>
-            Otros proyectos
+            {dict.projects.others}
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
             {PROJECTS.filter((item) => item.slug !== project.slug).map((item) => (

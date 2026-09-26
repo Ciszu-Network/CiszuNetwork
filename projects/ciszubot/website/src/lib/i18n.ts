@@ -79,6 +79,26 @@ const es = {
     rules: 'Reglas',
     license: 'Licencia',
     policy: 'Política',
+    menu: 'Menú',
+    languages: 'Idiomas',
+    navigation: 'Navegación',
+    accountSection: 'Cuenta',
+    account: 'Cuenta',
+    signIn: 'Iniciar sesión',
+    signUp: 'Registrarse',
+    signOut: 'Cerrar sesión',
+    continueDiscord: 'Continuar con Discord',
+    signInDiscord: 'Iniciar sesión con Discord',
+    dashboardControl: 'Panel de control',
+    guestNotice: 'Estás navegando como invitado',
+    localPreferences: 'Preferencias locales',
+    inviteHint: 'Añade a CiszuBot a tu servidor de Discord',
+    unavailable: 'No disponible',
+    resetSearch: 'Reiniciar búsqueda',
+    toggleTheme: 'Cambiar tema',
+    themeDarkOn: 'Modo oscuro activado',
+    themeLightOn: 'Modo claro activado',
+    langChanged: 'Idioma cambiado a {lang}',
   },
   hero: {
     online: 'En línea',
@@ -128,7 +148,7 @@ const es = {
     title: 'Estado en vivo',
     subtitle: 'El bot envía un heartbeat cada 60 segundos. La web se actualiza automáticamente.',
     online: 'Bot en línea',
-    offline: 'Bot offline',
+    offline: 'Bot desconectado',
     servers: 'Servidores',
     commands: 'Comandos',
     uptime: 'Uptime',
@@ -152,11 +172,57 @@ const es = {
         desc: 'Portfolio personal: logos, medios y música del creador.',
       },
     ],
+    providedTitle: 'Proyecto ofrecido por Ciszu Network',
+    providedDesc:
+      'CiszuBot forma parte del ecosistema de Ciszu Network. Descubre más proyectos y herramientas creadas por Ciszuko Antony.',
   },
   cta: {
     title: '¿Listo para probarlo?',
     description: 'Invita a CiszuBot a tu servidor en menos de un minuto. Gratis y rápido.',
     button: 'Invitar ahora',
+  },
+  quickDocks: {
+    subtitle: 'Acceso rápido a todas las secciones',
+  },
+  prefs: {
+    title: 'Preferencias locales',
+    language: 'Idioma',
+    changeLanguage: 'Cambiar idioma',
+    lightMode: 'Modo claro',
+    darkMode: 'Modo oscuro',
+    zoomOut: 'Quitar zoom',
+    zoomIn: 'Sumar zoom',
+    muteTab: 'Silenciar pestaña',
+    muted: 'Pestaña silenciada',
+    unmuted: 'Pestaña restaurada',
+    cookies: 'Cookies',
+    cookiesAccepted: 'Aceptadas',
+    cookiesRejected: 'Rechazadas',
+    cookiesUndecided: 'Sin decidir',
+    rejectCookies: 'Rechazar cookies',
+    acceptCookies: 'Aceptar cookies',
+    reappearCookies: 'Reaparecer aviso de cookies',
+    cookiesRejectedToast: 'Cookies rechazadas: los servicios opcionales están desactivados.',
+    cookiesAcceptedToast: 'Cookies aceptadas. Gracias por apoyar a CiszuBot.',
+    cookiesReappearToast: 'El aviso de cookies volverá a aparecer.',
+    navigation: 'Navegación',
+    redirectGuard: 'Aviso de redirección',
+    redirectGuardTitle: 'Aviso azul al salir a otra web',
+    redirectGuardOn: 'Aviso de redirección activado',
+    redirectGuardOff: 'Aviso de redirección desactivado',
+    activityGuard: 'Proteger acciones',
+    activityGuardTitle: 'Aviso rojo si vas a perder progreso al navegar',
+    activityGuardOn: 'Protección de acciones activada',
+    activityGuardOff: 'Protección de acciones desactivada',
+    help: 'Ayuda y soporte',
+  },
+  feedbackFab: {
+    report: 'Reportar un problema',
+    dismissedTitle: 'Feedback ocultado',
+    dismissedHint:
+      'Has ocultado el botón de reporte. Puedes reactivarlo desde la página de Feedback.',
+    reactivate: 'Reactivar en Feedback',
+    dontShow: 'No volver a mostrar',
   },
   footer: {
     explore: 'Explorar',
@@ -169,6 +235,9 @@ const es = {
     prefix: 'Prefijo',
     slash: 'Slash',
     discordServer: 'Ciszugamens',
+    communityServer: 'Servidor de Discord · Ciszugamens',
+    openSource: 'Open Source · Repositorio en GitHub',
+    backedBy: 'respaldado por',
     rights: 'Todos los derechos reservados.',
     madeBy: 'Hecho con amor por',
   },
@@ -338,7 +407,7 @@ const es = {
         p: 'Para preguntas sobre estos términos, únete al servidor de soporte de Discord.',
       },
       {
-        h: 'anuncios',
+        h: 'Anuncios',
         p: 'CiszuBot muestra anuncios propios (promoción del ecosistema Ciszu Network) y, en el futuro, de terceros. Todos los anuncios son opcionales y cerrables, con temporizador visible y enlace a estas políticas. Las impresiones, clics y cierres se miden de forma agregada (Google Analytics 4) para mejorar la relevancia; nunca vinculamos anuncios a datos sensibles. Puedes gestionar o bloquear las cookies de análisis desde tu navegador.',
       },
       {
@@ -446,7 +515,7 @@ const es = {
     items: [
       { q: '¿Cómo invito a CiszuBot a mi servidor?', a: 'Usa el botón «Invitar» en la página principal y elige el servidor. Necesitas permisos de «Gestionar servidor» en Discord.' },
       { q: '¿Cuál es el prefijo del bot?', a: 'El prefijo es cz!. También puedes usar los slash commands escribiendo / en Discord.' },
-      { q: '¿CiszuBot es gratis?', a: 'Sí, el bot es completamente gratuito. En el futuro puede haber donaciones opcionales para apoyar el desarrollo.' },
+      { q: '¿CiszuBot es gratis?', a: 'Sí, el bot es completamente gratis. En el futuro puede haber donaciones opcionales para apoyar el desarrollo.' },
       { q: '¿Qué datos almacena el bot?', a: 'Solo registra un contador de comandos ejecutados y el estado de conexión. No se almacenan mensajes ni datos personales. Ver la política de privacidad.' },
       { q: '¿Puedo reportar un bug o pedir un comando?', a: 'Sí. Entra al servidor de Discord y usa el canal de soporte con una descripción del problema o tu idea.' },
       { q: '¿Cómo cambio el idioma del bot?', a: 'CiszuBot detecta el idioma del servidor automáticamente. Actualmente soporta español latino, español España, inglés US y inglés UK.' },
@@ -598,7 +667,7 @@ const en = {
     explore: 'Explore',
     search: 'Search page…',
     searchHint: 'What do you need to find',
-    dashboard: 'Panel',
+    dashboard: 'Dashboard',
     privacidad: 'Privacy',
     terminos: 'Terms',
     changelog: 'Changelog',
@@ -618,6 +687,26 @@ const en = {
     rules: 'Rules',
     license: 'License',
     policy: 'Policy',
+    menu: 'Menu',
+    languages: 'Languages',
+    navigation: 'Navigation',
+    accountSection: 'Account',
+    account: 'Account',
+    signIn: 'Sign in',
+    signUp: 'Sign up',
+    signOut: 'Sign out',
+    continueDiscord: 'Continue with Discord',
+    signInDiscord: 'Sign in with Discord',
+    dashboardControl: 'Control panel',
+    guestNotice: 'You are browsing as a guest',
+    localPreferences: 'Local preferences',
+    inviteHint: 'Add CiszuBot to your Discord server',
+    unavailable: 'Unavailable',
+    resetSearch: 'Reset search',
+    toggleTheme: 'Toggle theme',
+    themeDarkOn: 'Dark mode enabled',
+    themeLightOn: 'Light mode enabled',
+    langChanged: 'Language changed to {lang}',
   },
   hero: {
     online: 'Online',
@@ -691,11 +780,57 @@ const en = {
         desc: "Personal portfolio: creator's logos, media and music.",
       },
     ],
+    providedTitle: 'Project provided by Ciszu Network',
+    providedDesc:
+      'CiszuBot is part of the Ciszu Network ecosystem. Discover more projects and tools built by Ciszuko Antony.',
   },
   cta: {
     title: 'Ready to try it?',
     description: 'Invite CiszuBot to your server in less than a minute. Free and fast.',
     button: 'Invite now',
+  },
+  quickDocks: {
+    subtitle: 'Quick access to every section',
+  },
+  prefs: {
+    title: 'Local preferences',
+    language: 'Language',
+    changeLanguage: 'Change language',
+    lightMode: 'Light mode',
+    darkMode: 'Dark mode',
+    zoomOut: 'Zoom out',
+    zoomIn: 'Zoom in',
+    muteTab: 'Mute tab',
+    muted: 'Tab muted',
+    unmuted: 'Tab restored',
+    cookies: 'Cookies',
+    cookiesAccepted: 'Accepted',
+    cookiesRejected: 'Rejected',
+    cookiesUndecided: 'Undecided',
+    rejectCookies: 'Reject cookies',
+    acceptCookies: 'Accept cookies',
+    reappearCookies: 'Show cookie banner again',
+    cookiesRejectedToast: 'Cookies rejected: optional services are now disabled.',
+    cookiesAcceptedToast: 'Cookies accepted. Thank you for supporting CiszuBot.',
+    cookiesReappearToast: 'The cookie banner will appear again.',
+    navigation: 'Navigation',
+    redirectGuard: 'Redirect warning',
+    redirectGuardTitle: 'Blue warning when leaving to another site',
+    redirectGuardOn: 'Redirect warning enabled',
+    redirectGuardOff: 'Redirect warning disabled',
+    activityGuard: 'Protect actions',
+    activityGuardTitle: 'Red warning if you are about to lose progress',
+    activityGuardOn: 'Action protection enabled',
+    activityGuardOff: 'Action protection disabled',
+    help: 'Help and support',
+  },
+  feedbackFab: {
+    report: 'Report a problem',
+    dismissedTitle: 'Feedback hidden',
+    dismissedHint:
+      'You have hidden the report button. You can restore it from the Feedback page.',
+    reactivate: 'Restore in Feedback',
+    dontShow: 'Do not show again',
   },
   footer: {
     explore: 'Explore',
@@ -708,6 +843,9 @@ const en = {
     prefix: 'Prefix',
     slash: 'Slash',
     discordServer: 'Ciszugamens',
+    communityServer: 'Discord server · Ciszugamens',
+    openSource: 'Open source · GitHub repository',
+    backedBy: 'backed by',
     rights: 'All rights reserved.',
     madeBy: 'Made with love by',
   },
@@ -777,7 +915,7 @@ const en = {
     ],
     contactTitle: 'Contact',
     contactDesc:
-      'For legal matters, press or collaborations write to:',
+      'For legal matters, press or collaborations, write to:',
     contactCta: 'Send email',
     donateTitle: 'Support the project',
     donateDesc:
@@ -876,7 +1014,7 @@ const en = {
         p: 'For questions about these terms, join the Discord support server.',
       },
       {
-        h: 'anuncios',
+        h: 'Ads',
         p: 'CiszuBot displays its own ads (promotion of the Ciszu Network ecosystem) and, in the future, third-party ads. All ads are optional and closable, with a visible countdown timer and a link to these policies. Impressions, clicks and dismissals are measured in aggregate (Google Analytics 4) to improve relevance; we never link ads to sensitive data. You can manage or block analytics cookies from your browser.',
       },
       {
@@ -1157,6 +1295,14 @@ const esEs: typeof es = {
   supportPage: {
     ...es.supportPage,
     contactDesc: 'Para asuntos legales, prensa o colaboraciones escríbenos a:',
+    faq: es.supportPage.faq.map((f, i) =>
+      i === 2
+        ? {
+            ...f,
+            a: 'Sí, el bot es completamente gratuito. En el futuro puede haber donaciones opcionales para apoyar el desarrollo.',
+          }
+        : { ...f }
+    ),
   },
   descargasPage: {
     ...es.descargasPage,
@@ -1171,7 +1317,14 @@ const esEs: typeof es = {
   },
   faqPage: {
     ...es.faqPage,
-    items: es.faqPage.items.map((f) => ({ ...f })),
+    items: es.faqPage.items.map((f, i) =>
+      i === 2
+        ? {
+            ...f,
+            a: 'Sí, el bot es completamente gratuito. En el futuro puede haber donaciones opcionales para apoyar el desarrollo.',
+          }
+        : { ...f }
+    ),
   },
 };
 
@@ -1181,14 +1334,25 @@ const esEs: typeof es = {
  * Se deriva de en-us con el dialecto británico compartido (ortografía -our/-re,
  * -ise y licence) más la terminología propia del Reino Unido.
  */
+const enUkDialect = applyDialect(en, 'en-uk');
+
 const enUk: typeof en = {
-  ...applyDialect(en, 'en-uk'),
-  cookiesBanner: {
-    ...en.cookiesBanner,
+  ...enUkDialect,
+  hero: {
+    ...enUkDialect.hero,
+    ctaInvite: 'Add to Discord',
+  },
+  supportPage: {
+    ...enUkDialect.supportPage,
+    contactDesc: 'For legal matters, press or collaborations, get in touch at:',
+  },
+  invitePage: {
+    ...enUkDialect.invitePage,
+    kicker: 'Discord · Official authorisation',
   },
   legalPage: {
-    ...en.legalPage,
-    sections: en.legalPage.sections.map((s) =>
+    ...enUkDialect.legalPage,
+    sections: enUkDialect.legalPage.sections.map((s) =>
       s.h === '3. Intellectual property'
         ? {
             ...s,
@@ -1198,8 +1362,8 @@ const enUk: typeof en = {
     ),
   },
   faqPage: {
-    ...en.faqPage,
-    items: en.faqPage.items.map((f) => ({ ...f })),
+    ...enUkDialect.faqPage,
+    items: enUkDialect.faqPage.items.map((f) => ({ ...f })),
   },
 };
 
@@ -1229,9 +1393,19 @@ export function parseLang(raw: string | undefined | null): Lang {
 /** true si el idioma es una variante de español (latam o españa). */
 export const isEsLang = (lang: Lang): boolean => lang === 'es-latam' || lang === 'es-es';
 
+/**
+ * Idioma activo leído de la cookie en cliente. Los componentes que no reciben
+ * `dict` por props (docks, FABs) lo usan tras montar; en SSR devuelve la base.
+ */
+export function readCookieLang(): Lang {
+  if (typeof document === 'undefined') return 'es-latam';
+  const match = document.cookie.match(/(?:^|;\s*)ciszubot_lang=([^;]+)/);
+  return parseLang(match?.[1] ? decodeURIComponent(match[1]) : undefined);
+}
+
 export const LANGS: { code: Lang; label: string; flag: string }[] = [
   { code: 'es-latam', label: 'ES-LA', flag: 'es' },
   { code: 'es-es', label: 'ES-ES', flag: 'es' },
-  { code: 'en-us', label: 'EN-US', flag: 'gb' },
+  { code: 'en-us', label: 'EN-US', flag: 'us' },
   { code: 'en-uk', label: 'EN-UK', flag: 'gb' },
 ];

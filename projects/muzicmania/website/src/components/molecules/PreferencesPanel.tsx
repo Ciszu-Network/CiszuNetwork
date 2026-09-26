@@ -16,9 +16,11 @@ import {
   reloadAfterPrefChange,
 } from '@/lib/preferences';
 import { useToast, getCookieConsent, setCookieConsent, clearCookieConsent, useCookieConsent, LanguagesModal, LANGUAGE_OPTIONS, markVoluntaryReload } from '@ciszu/ui';
+import { useT } from '@/hooks/useT';
 
 export default function PreferencesPanel() {
   const { lang, setLang, darkMode, setDarkMode, user } = useAppStore();
+  const t = useT();
   const { toast } = useToast();
   const [zoom, setZoom] = useState<number>(100);
   const [muted, setMuted] = useState<boolean>(false);
@@ -71,19 +73,19 @@ export default function PreferencesPanel() {
 
   const applyLang = (code: string, label: string) => {
     if (!isLangAvailable(code)) {
-      toast(`[SISTEMA]: El idioma ${label} no está disponible aún.`, 'error');
+      toast(`[SISTEMA]: ${t.prefs.unavailable.replace('{label}', label)}`, 'error');
       return;
     }
     setLang(code as 'es-latam' | 'es-es' | 'en-us' | 'en-uk');
     updatePreferences({ lang: code as 'es-latam' | 'es-es' | 'en-us' | 'en-uk' });
-    reloadAfterPrefChange(`[SISTEMA]: Idioma cambiado a ${label}.`);
+    reloadAfterPrefChange(`[SISTEMA]: ${t.system.langChanged.replace('{label}', label)}`);
   };
 
   const applyTheme = () => {
     const next = !darkMode;
     setDarkMode(next);
     updatePreferences({ theme: next ? 'dark' : 'light' });
-    reloadAfterPrefChange(next ? '[SISTEMA]: Modo oscuro activado.' : '[SISTEMA]: Modo claro activado.');
+    reloadAfterPrefChange(next ? `[SISTEMA]: ${t.system.darkOn}` : `[SISTEMA]: ${t.system.lightOn}`);
   };
 
   const changeZoom = (delta: number) => {
@@ -98,12 +100,12 @@ export default function PreferencesPanel() {
     setMuted(next);
     setMuteTab(next);
     updatePreferences({ muteTab: next });
-    toast(next ? '[SISTEMA]: Pestaña silenciada.' : '[SISTEMA]: Pestaña restaurada.');
+    toast(next ? `[SISTEMA]: ${t.prefs.muteTab}.` : `[SISTEMA]: ${t.prefs.muteTab}`, 'info');
   };
 
   // ── Cookies: el usuario SIEMPRE puede rechazar o reaparecer el aviso. ──
   const cookieConsent = useCookieConsent();
-  const cookieStateLabel = cookieConsent === 'accepted' ? 'Aceptadas' : cookieConsent === 'rejected' ? 'Rechazadas' : 'Sin decidir';
+  const cookieStateLabel = cookieConsent === 'accepted' ? t.prefs.cookieAccepted : cookieConsent === 'rejected' ? t.prefs.cookieRejected : t.prefs.cookieUndecided;
   const cookieStateCls = cookieConsent === 'accepted'
     ? 'bg-green-500/10 border-green-500/40 text-green-400'
     : cookieConsent === 'rejected'
@@ -112,21 +114,21 @@ export default function PreferencesPanel() {
 
   const handleCookieReject = () => {
     setCookieConsent('rejected');
-    toast('Cookies rechazadas: los servicios opcionales están desactivados.', 'info');
+    toast(`[SISTEMA]: ${t.system.cookiesRejected}`, 'info');
     // Recarga voluntaria (acción de la UI): se marca para que el AdBlockerGuard
     // no la trate como un F5 manual y no vuelva a aparecer.
     window.setTimeout(() => { markVoluntaryReload(); window.location.reload(); }, 1800);
   };
   const handleCookieAccept = () => {
     setCookieConsent('accepted');
-    toast('Cookies aceptadas. Gracias por apoyar a MuzicMania.', 'info');
+    toast(`[SISTEMA]: ${t.system.cookiesAccepted}`, 'info');
     // Recarga voluntaria (acción de la UI): se marca para que el AdBlockerGuard
     // no la trate como un F5 manual y no vuelva a aparecer.
     window.setTimeout(() => { markVoluntaryReload(); window.location.reload(); }, 1800);
   };
   const handleCookieReappear = () => {
     clearCookieConsent();
-    toast('El aviso de cookies volverá a aparecer.', 'info');
+    toast(`[SISTEMA]: ${t.system.cookiesReappear}`, 'info');
     // Recarga voluntaria (acción de la UI): se marca para que el AdBlockerGuard
     // no la trate como un F5 manual y no vuelva a aparecer.
     window.setTimeout(() => { markVoluntaryReload(); window.location.reload(); }, 1800);
@@ -142,7 +144,7 @@ export default function PreferencesPanel() {
           className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group ${
             darkMode ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
           }`}
-          title={darkMode ? 'Modo Claro' : 'Modo Oscuro'}
+          title={darkMode ? t.common.lightMode : t.common.darkMode}
         >
           {darkMode ? (
             <svg className="w-5 h-5 text-black transition-transform duration-500 group-hover:rotate-12" viewBox="0 0 24 24" fill="currentColor">
@@ -160,7 +162,7 @@ export default function PreferencesPanel() {
         <button
           onClick={() => setLangOpen(true)}
           className="flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white hover:border-neon-cyan/50 hover:text-neon-cyan transition-all active:scale-95"
-          title="Seleccionar idioma"
+          title={t.menu.selectLanguage}
         >
           <span className="flex items-center gap-2 text-xs font-header font-bold uppercase tracking-widest">
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -168,7 +170,7 @@ export default function PreferencesPanel() {
               <line x1="2" y1="12" x2="22" y2="12" />
               <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
             </svg>
-            Idioma
+            {t.prefs.language}
           </span>
           <span className="flex items-center gap-2">
             <span className="w-6 h-6 rounded-full overflow-hidden shadow-inner border border-white/10 shrink-0">
@@ -183,14 +185,14 @@ export default function PreferencesPanel() {
 
       {/* Zoom */}
       <div>
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-2">Zoom</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-2">{t.prefs.zoom}</p>
         <div className="flex items-center gap-3">
           <button
             onClick={() => changeZoom(-ZOOM_STEP)}
             disabled={zoom <= ZOOM_MIN}
             className="w-9 h-9 shrink-0 rounded-lg bg-white/5 border border-white/10 text-white hover:border-neon-blue/50 hover:text-neon-cyan transition-all active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed inline-flex items-center justify-center"
-            title="Quitar zoom"
-            aria-label="Quitar zoom"
+            title={t.prefs.zoomOut}
+            aria-label={t.prefs.zoomOut}
           >
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8" />
@@ -211,8 +213,8 @@ export default function PreferencesPanel() {
             onClick={() => changeZoom(ZOOM_STEP)}
             disabled={zoom >= ZOOM_MAX}
             className="w-9 h-9 shrink-0 rounded-lg bg-white/5 border border-white/10 text-white hover:border-neon-blue/50 hover:text-neon-cyan transition-all active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed inline-flex items-center justify-center"
-            title="Sumar zoom"
-            aria-label="Sumar zoom"
+            title={t.prefs.zoomIn}
+            aria-label={t.prefs.zoomIn}
           >
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8" />
@@ -232,7 +234,7 @@ export default function PreferencesPanel() {
             ? 'bg-red-500/10 border-red-500/40 text-red-400 hover:bg-red-500/20'
             : 'bg-white/5 border-white/10 text-white/80 hover:border-neon-purple/50 hover:text-neon-purple'
         }`}
-        title="Silenciar pestaña"
+        title={t.prefs.muteTab}
       >
         <span className="flex items-center gap-2 font-header font-bold text-xs uppercase tracking-widest">
           <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -250,7 +252,7 @@ export default function PreferencesPanel() {
               </g>
             )}
           </svg>
-          Silenciar pestaña
+          {t.prefs.muteTab}
         </span>
         <span className={`w-9 h-5 rounded-full relative transition-colors ${muted ? 'bg-red-500/70' : 'bg-white/15'}`}>
           <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${muted ? 'left-4' : 'left-0.5'}`} />
@@ -259,13 +261,13 @@ export default function PreferencesPanel() {
 
       {/* Cookies: rechazar en cualquier momento o reaparecer el aviso */}
       <div>
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-2">Cookies</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-2">{t.prefs.cookies}</p>
         <div className={`flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg border ${cookieStateCls}`}>
           <span className="flex items-center gap-2 font-header font-bold text-xs uppercase tracking-widest">
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 2a10 10 0 0 0-6.88 17.26c1.89 1.74 4.3 2.74 6.88 2.74 5.52 0 10-4.48 10-10 0-2.58-1-5-2.74-6.88C17.52 3 15 2 12 2zm1 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm-4-3a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm6-2a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm-3-4a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
             </svg>
-            Cookies
+            {t.prefs.cookies}
           </span>
           <span className="text-[10px] font-black uppercase tracking-widest">{cookieStateLabel}</span>
         </div>
@@ -278,7 +280,7 @@ export default function PreferencesPanel() {
               <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M18 6 6 18" /><path d="m6 6 12 12" />
               </svg>
-              Rechazar cookies
+              {t.prefs.rejectCookies}
             </button>
           )}
           {cookieConsent !== 'accepted' && (
@@ -289,7 +291,7 @@ export default function PreferencesPanel() {
               <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20 6 9 17l-5-5" />
               </svg>
-              Aceptar cookies
+              {t.prefs.acceptCookies}
             </button>
           )}
           <button
@@ -299,22 +301,22 @@ export default function PreferencesPanel() {
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
               <path d="M1 4v6h6" /><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
             </svg>
-            Reaparecer aviso de cookies
+            {t.prefs.reappearCookies}
           </button>
         </div>
       </div>
 
       {/* Navegación segura */}
       <div>
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-2">Navegación</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-2">{t.prefs.safeNavigation}</p>
         <button
-          onClick={() => { const next = !redirectGuard; setRedirectGuard(next); updatePreferences({ redirectGuard: next }); toast(next ? 'Aviso de redirección activado' : 'Aviso de redirección desactivado'); }}
+          onClick={() => { const next = !redirectGuard; setRedirectGuard(next); updatePreferences({ redirectGuard: next }); toast(next ? t.system.redirectOn : t.system.redirectOff, 'info'); }}
           className={`w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg border transition-all active:scale-95 ${
             redirectGuard
               ? 'bg-blue-500/10 border-blue-500/40 text-blue-300 hover:bg-blue-500/20'
               : 'bg-white/5 border-white/10 text-white/80 hover:border-blue-400/50 hover:text-blue-300'
           }`}
-          title="Aviso de redirección"
+          title={t.prefs.redirectNotice}
         >
           <span className="flex items-center gap-2 font-header font-bold text-xs uppercase tracking-widest">
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -322,20 +324,20 @@ export default function PreferencesPanel() {
               <polyline points="15 3 21 3 21 9" />
               <line x1="10" y1="14" x2="21" y2="3" />
             </svg>
-            Aviso de redirección
+            {t.prefs.redirectNotice}
           </span>
           <span className={`w-9 h-5 rounded-full relative transition-colors ${redirectGuard ? 'bg-blue-500/70' : 'bg-white/15'}`}>
             <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${redirectGuard ? 'left-4' : 'left-0.5'}`} />
           </span>
         </button>
         <button
-          onClick={() => { const next = !activityGuard; setActivityGuard(next); updatePreferences({ activityGuard: next }); toast(next ? 'Protección de acciones activada' : 'Protección de acciones desactivada'); }}
+          onClick={() => { const next = !activityGuard; setActivityGuard(next); updatePreferences({ activityGuard: next }); toast(next ? t.system.protectionOn : t.system.protectionOff, 'info'); }}
           className={`w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg border transition-all active:scale-95 mt-2 ${
             activityGuard
               ? 'bg-red-500/10 border-red-500/40 text-red-300 hover:bg-red-500/20'
               : 'bg-white/5 border-white/10 text-white/80 hover:border-red-400/50 hover:text-red-300'
           }`}
-          title="Protección de acciones no recuperables"
+          title={t.prefs.protectActions}
         >
           <span className="flex items-center gap-2 font-header font-bold text-xs uppercase tracking-widest">
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -343,7 +345,7 @@ export default function PreferencesPanel() {
               <path d="M12 9v4" />
               <path d="M12 17h.01" />
             </svg>
-            Proteger acciones
+            {t.prefs.protectActions}
           </span>
           <span className={`w-9 h-5 rounded-full relative transition-colors ${activityGuard ? 'bg-red-500/70' : 'bg-white/15'}`}>
             <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${activityGuard ? 'left-4' : 'left-0.5'}`} />
@@ -353,13 +355,13 @@ export default function PreferencesPanel() {
 
       {/* Ayuda */}
       <div>
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-2">Ayuda</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-2">{t.prefs.help}</p>
         <div className="grid grid-cols-1 gap-1">
           {[
-            { href: '/help', label: 'Centro de Ayuda' },
-            { href: '/faq', label: 'Preguntas Frecuentes' },
-            { href: '/support', label: 'Soporte Técnico' },
-            { href: '/rules', label: 'Normas del Juego' },
+            { href: '/help', label: t.prefs.helpCenter },
+            { href: '/faq', label: t.prefs.faq },
+            { href: '/support', label: t.prefs.support },
+            { href: '/rules', label: t.prefs.gameRules },
           ].map((item) => (
             <Link
               key={item.href}
@@ -375,13 +377,13 @@ export default function PreferencesPanel() {
 
       {user && (
         <p className="text-[9px] text-gray-600 font-bold uppercase tracking-widest text-center">
-          Preferencias sincronizadas con tu cuenta
+          {t.prefs.synced}
         </p>
       )}
 
       <LanguagesModal
         open={langOpen}
-        title="Seleccionar idioma"
+        title={t.menu.selectLanguage}
         current={lang}
         onSelect={handleLangSelect}
         onClose={() => setLangOpen(false)}

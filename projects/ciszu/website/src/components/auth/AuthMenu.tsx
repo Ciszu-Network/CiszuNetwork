@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAppStore } from '@/store';
+import { useDict } from '@/lib/useDict';
 import { supabase } from '@/config/supabase';
 import { getGuestName } from '@/lib/guest';
 import PreferencesPanel from '@/components/auth/PreferencesPanel';
@@ -57,6 +58,7 @@ const SettingsIcon = () => (
  * Las preferencias locales viven en un MODAL centrado separado (PreferencesModal).
  */
 export default function AuthMenu({ open, onToggle, onClose, lang, dict }: { open: boolean; onToggle: () => void; onClose: () => void; lang: string; dict: Record<string, any> }) {
+  const t = useDict();
   const { user, isHydrated, setUser } = useAppStore();
   const { toast } = useToast();
   const [prefsOpen, setPrefsOpen] = useState(false);
@@ -148,7 +150,7 @@ export default function AuthMenu({ open, onToggle, onClose, lang, dict }: { open
                   {isHydrated ? (user ? displayName : guest) : '…'}
                 </p>
                 <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest truncate">
-                  {isHydrated ? (user ? user.email : 'Guest local') : 'Cargando…'}
+                  {isHydrated ? (user ? user.email : t.authWarning.guest) : t.common.loading}
                 </p>
               </div>
             </div>
@@ -164,7 +166,7 @@ export default function AuthMenu({ open, onToggle, onClose, lang, dict }: { open
                   className="w-full flex items-center justify-center gap-2 bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20"
                 >
                   <LogoutIcon />
-                  {loggingOut ? 'Cerrando sesión…' : 'Cerrar sesión'}
+                  {loggingOut ? t.auth.loggingOut : t.auth.logout}
                 </Button>
               </div>
             ) : (
@@ -174,14 +176,14 @@ export default function AuthMenu({ open, onToggle, onClose, lang, dict }: { open
                   onClick={() => onClose()}
                   className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-brand-light/10 border border-brand-light/30 text-brand-light text-xs font-bold hover:bg-brand-light hover:text-black transition-all cursor-pointer active:scale-95"
                 >
-                  <LoginIcon /> Iniciar sesión
+                  <LoginIcon /> {t.auth.login}
                 </Link>
                 <Link
                   href="/register"
                   onClick={() => onClose()}
                   className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-xs font-bold hover:border-brand-accent/50 hover:text-brand-accent transition-all cursor-pointer active:scale-95"
                 >
-                  <RegisterIcon /> Registrarse
+                  <RegisterIcon /> {t.auth.register}
                 </Link>
               </div>
             )}
@@ -194,7 +196,7 @@ export default function AuthMenu({ open, onToggle, onClose, lang, dict }: { open
                 onPress={() => { setPrefsOpen(true); }}
                 className="w-full flex items-center justify-center gap-2"
               >
-                <SettingsIcon /> Preferencias locales
+                <SettingsIcon /> {t.prefs.title}
               </Button>
             </div>
           </div>
@@ -202,7 +204,7 @@ export default function AuthMenu({ open, onToggle, onClose, lang, dict }: { open
       )}
 
       {/* Modal centrado de preferencias (Radix), con X de cierre */}
-      <PreferencesModal open={prefsOpen} onOpenChange={setPrefsOpen} title="Preferencias locales">
+      <PreferencesModal open={prefsOpen} onOpenChange={setPrefsOpen} title={t.prefs.title}>
         <PreferencesPanel />
       </PreferencesModal>
     </div>

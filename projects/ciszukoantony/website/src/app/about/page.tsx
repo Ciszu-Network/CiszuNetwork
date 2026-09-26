@@ -7,6 +7,7 @@ import { assetResolver } from '@ciszunetwork/cdn';
 import { InfoHero, type InfoTheme } from '@ciszu/ui';
 import { RichText, type RichPart } from '@/components/RichText';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useDict } from '@/components/providers/I18nProvider';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
@@ -40,6 +41,7 @@ const THEME: InfoTheme = {
 };
 
 export default function AboutPage() {
+  const dict = useDict();
   usePageTitle('ABOUT');
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
@@ -47,7 +49,7 @@ export default function AboutPage() {
       <PageReveal className="relative mx-auto max-w-screen-xl">
         <InfoHero
           icon="info"
-          title="About Me"
+          title={dict.about.title}
           subtitle="Learn more about Ciszuko Antony (Francisco Garcia Antonio M. / y8)"
           theme={THEME}
         />

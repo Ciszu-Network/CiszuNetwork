@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { InfoHero, type InfoTheme } from '@ciszu/ui';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useDict } from '@/components/providers/I18nProvider';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
@@ -26,6 +27,7 @@ const STATS = [
 ];
 
 export default function ProjectsPage() {
+  const dict = useDict();
   usePageTitle('PROJECTS');
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
@@ -56,7 +58,7 @@ export default function ProjectsPage() {
         </div>
 
         <div className="mt-14 text-center p-8 rounded-[2rem] bg-gradient-to-br from-neon-blue/10 to-transparent border border-neon-blue/30">
-          <h2 className="text-xl font-header font-bold text-white mb-3">¿Quieres saber más?</h2>
+          <h2 className="text-xl font-header font-bold text-white mb-3">{dict.projects.wantMore}</h2>
           <p className="text-white/50 text-sm mb-6 max-w-xl mx-auto">
             Explora el portfolio visual, revisa los certificados verificables o escríbeme para
             colaboraciones y comisiones.
@@ -66,7 +68,7 @@ export default function ProjectsPage() {
               href="/portfolio"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-neon-blue/20 border border-neon-blue/40 text-neon-blue rounded-xl font-bold text-sm hover:bg-neon-blue hover:text-white transition-all"
             >
-              Ver portfolio
+              {dict.projects.viewPortfolio}
             </Link>
             <Link
               href="/commissions"

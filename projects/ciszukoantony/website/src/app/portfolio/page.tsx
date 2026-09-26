@@ -4,6 +4,7 @@ import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { InfoCardGrid, InfoCtaRow, InfoHero, type InfoTheme } from '@ciszu/ui';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useDict } from '@/components/providers/I18nProvider';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
@@ -19,18 +20,19 @@ const THEME: InfoTheme = {
   gradient: 'from-brand-dark to-brand',
 };
 
-const AREAS = [
-  { icon: 'globe', title: 'Desarrollo web', body: 'Webs y aplicaciones Next.js/React con diseño responsive y rendimiento medido.' },
-  { icon: 'robot', title: 'Bots y automatización', body: 'Bots de Discord, WhatsApp y Telegram, scripts y herramientas internas.' },
-  { icon: 'gamepad', title: 'Juegos y experiencias', body: 'Juego de ritmo MuzicMania, web y app de escritorio para Windows.' },
-  { icon: 'palette', title: 'Identidad visual', body: 'Logos, paletas, iconografía y sistemas de diseño para cada proyecto.' },
-];
-
 type Filter = 'Todos' | ProjectCategory;
 
 export default function PortfolioPage() {
   usePageTitle('PORTFOLIO');
+  const dict = useDict();
   const [filter, setFilter] = useState<Filter>('Todos');
+
+  const areas = [
+    { icon: 'globe', title: dict.portfolio.areaWeb, body: dict.portfolio.areaWebBody },
+    { icon: 'robot', title: dict.portfolio.areaBots, body: dict.portfolio.areaBotsBody },
+    { icon: 'gamepad', title: dict.portfolio.areaGames, body: dict.portfolio.areaGamesBody },
+    { icon: 'palette', title: dict.portfolio.areaBrand, body: dict.portfolio.areaBrandBody },
+  ];
 
   const filters: Filter[] = ['Todos', ...PROJECT_CATEGORIES];
   const projects = useMemo(
@@ -45,8 +47,8 @@ export default function PortfolioPage() {
         <InfoHero
           icon="palette"
           title="Portfolio"
-          subtitle="Trabajos y proyectos de Ciszuko Antony: webs, bots, juego, comunidad, contenido y herramientas. Filtra por categoría y explora cada caso."
-          kicker="Trabajos"
+          subtitle={dict.portfolio.subtitle}
+          kicker={dict.portfolio.kicker}
           theme={THEME}
         />
 
@@ -63,7 +65,7 @@ export default function PortfolioPage() {
                     : 'bg-white/5 border-white/10 text-white/50 hover:text-white hover:border-white/30'
                 }`}
               >
-                {item}
+                {item === 'Todos' ? dict.portfolio.all : item}
               </button>
             );
           })}
@@ -76,23 +78,23 @@ export default function PortfolioPage() {
         </div>
 
         <div className="mt-16 mb-16">
-          <InfoCardGrid title="Áreas de trabajo" items={AREAS} theme={THEME} columns={4} />
+          <InfoCardGrid title={dict.portfolio.areas} items={areas} theme={THEME} columns={4} />
         </div>
 
         <InfoCtaRow
           theme={THEME}
           actions={[
-            { label: 'Comisiones abiertas', href: '/commissions', icon: 'money' },
-            { label: 'Certificados', href: '/certificates', icon: 'certificates' },
-            { label: 'Contacto', href: '/contact', icon: 'mail', variant: 'ghost' },
+            { label: dict.portfolio.ctaCommissions, href: '/commissions', icon: 'money' },
+            { label: dict.portfolio.ctaCertificates, href: '/certificates', icon: 'certificates' },
+            { label: dict.portfolio.ctaContact, href: '/contact', icon: 'mail', variant: 'ghost' },
             { label: 'GitHub', href: 'https://github.com/Ciszu-Network/CiszuNetwork', icon: 'external', variant: 'ghost', external: true },
           ]}
         />
 
         <p className="text-center text-white/30 text-xs mt-8">
-          ¿Buscas el índice técnico de todo el ecosistema?{' '}
+          {dict.portfolio.seekIndex}{' '}
           <Link href="/projects" className="text-neon-blue hover:text-white transition-colors">
-            Ver Projects
+            {dict.portfolio.goProjects}
           </Link>
         </p>
       </PageReveal>

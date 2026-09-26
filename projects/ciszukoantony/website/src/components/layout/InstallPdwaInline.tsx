@@ -10,6 +10,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { detectPdwaBrowser, useToast } from '@ciszu/ui';
+import { useDict } from '@/components/providers/I18nProvider';
+import { t } from '@/lib/i18n';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -17,6 +19,7 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export default function InstallPdwaInline() {
+  const dict = useDict();
   const { toast } = useToast();
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
   const [installed, setInstalled] = useState(false);
@@ -48,7 +51,7 @@ export default function InstallPdwaInline() {
   }, []);
 
   const handleClick = useCallback(async () => {
-    toast('¡Gracias por instalar Ciszuko Antony! Gracias por apoyar Ciszu Network.', 'success');
+    toast(dict.downloads.thanksToast, 'success');
     if (deferred) {
       const promptEvent = deferred;
       await promptEvent.prompt();
@@ -64,7 +67,7 @@ export default function InstallPdwaInline() {
     return (
       <div className="p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/40 text-center">
         <p className="text-emerald-400 font-header font-bold">
-          <span className="mr-2">✓</span>Ya tienes Ciszuko Antony instalada como app en este dispositivo.
+          <span className="mr-2">✓</span>{dict.downloads.installedThanks}
         </p>
       </div>
     );
@@ -72,14 +75,14 @@ export default function InstallPdwaInline() {
 
   const b = mounted ? browser : null;
   const hasNative = b !== null && (b.nativa || deferred !== null);
-  const label = hasNative ? 'Instalar PDWA' : b?.id === 'opera-gx' ? 'Alternativa PDWA (GX)' : 'Instalar PDWA';
+  const label = hasNative ? dict.downloads.installPdwa : b?.id === 'opera-gx' ? dict.downloads.installAlt : dict.downloads.installPdwa;
 
   return (
     <div className="p-8 rounded-2xl bg-gradient-to-r from-neon-blue/10 via-[#6600ff]/10 to-neon-pink/10 border border-neon-blue/30 text-center">
       <p className="text-gray-300 text-sm leading-relaxed mb-2">
         {b?.nativa || deferred
-          ? `Tu navegador (${b?.label ?? 'compatible'}) permite instalarla directamente.`
-          : 'Pulsa el botón y sigue los pasos de la sección de arriba para instalarla según tu navegador.'}
+          ? t(dict.downloads.nativeAllowed, { browser: b?.label ?? 'compatible' })
+          : dict.downloads.manualSteps}
       </p>
       <button
         type="button"

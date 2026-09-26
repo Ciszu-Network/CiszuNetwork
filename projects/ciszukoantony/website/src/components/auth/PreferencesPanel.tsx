@@ -15,6 +15,8 @@ import {
 } from '@/lib/preferences';
 import { I } from '@/config/navigation';
 import { LanguagesModal, useToast, LANGUAGE_OPTIONS, isLangAvailable, LANG_BLOCKED_MESSAGE, setCookieConsent, clearCookieConsent, useCookieConsent, markVoluntaryReload } from '@ciszu/ui';
+import { useDict } from '@/components/providers/I18nProvider';
+import { navLabel, t } from '@/lib/i18n';
 
 const MoonIcon = ({ className = 'w-5 h-5' }: { className?: string }) => (
   <svg viewBox="0 0 24 24" className={className} fill="currentColor">
@@ -74,6 +76,7 @@ const HELP_LINKS = [
  * y recargan la página (el store programa la recarga diferida).
  */
 export default function PreferencesPanel() {
+  const dict = useDict();
   const { user, theme, setTheme, language, setLanguage } = useAppStore();
   const { toast } = useToast();
   const [prefs, setPrefs] = useState(() => getPreferences());
@@ -88,7 +91,7 @@ export default function PreferencesPanel() {
     updatePreferences({ theme: next });
     syncToProfile();
     setTheme(next);
-    toast(next === 'dark' ? 'Modo oscuro activado' : 'Modo claro activado', 'info');
+    toast(next === 'dark' ? dict.common.darkEnabled : dict.common.lightEnabled, 'info');
   };
 
   const handleLangSelect = (code: string) => {
@@ -103,7 +106,7 @@ export default function PreferencesPanel() {
     setPrefs((p) => ({ ...p, lang: code as never }));
     syncToProfile();
     setLanguage(code as never);
-    toast(`Idioma cambiado a ${LANGUAGE_OPTIONS.find((l) => l.code === code)?.label ?? code}`, 'info');
+    toast(t(dict.nav.languageChanged, { lang: LANGUAGE_OPTIONS.find((l) => l.code === code)?.label ?? code }), 'info');
   };
 
   const currentLang = LANGUAGE_OPTIONS.find((l) => l.code === language) ?? LANGUAGE_OPTIONS[0];
@@ -117,7 +120,11 @@ export default function PreferencesPanel() {
 
   // ── Cookies: el usuario SIEMPRE puede rechazar o reaparecer el aviso. ──
   const cookieConsent = useCookieConsent();
-  const cookieStateLabel = cookieConsent === 'accepted' ? 'Aceptadas' : cookieConsent === 'rejected' ? 'Rechazadas' : 'Sin decidir';
+  const cookieStateLabel = cookieConsent === 'accepted'
+    ? dict.prefs.cookieAccepted
+    : cookieConsent === 'rejected'
+      ? dict.prefs.cookieRejected
+      : dict.prefs.cookieUndecided;
   const cookieStateCls = cookieConsent === 'accepted'
     ? 'bg-green-500/10 border-green-500/40 text-green-400'
     : cookieConsent === 'rejected'
@@ -126,21 +133,21 @@ export default function PreferencesPanel() {
 
   const handleCookieReject = () => {
     setCookieConsent('rejected');
-    toast('Cookies rechazadas: los servicios opcionales están desactivados.', 'info');
+    toast(dict.prefs.cookieRejectedToast, 'info');
     // Recarga voluntaria (acción de la UI): se marca para que el AdBlockerGuard
     // no la trate como un F5 manual y no vuelva a aparecer.
     window.setTimeout(() => { markVoluntaryReload(); window.location.reload(); }, 1800);
   };
   const handleCookieAccept = () => {
     setCookieConsent('accepted');
-    toast('Cookies aceptadas. Gracias por apoyar a Ciszuko Antony.', 'info');
+    toast(dict.prefs.cookieAcceptedToast, 'info');
     // Recarga voluntaria (acción de la UI): se marca para que el AdBlockerGuard
     // no la trate como un F5 manual y no vuelva a aparecer.
     window.setTimeout(() => { markVoluntaryReload(); window.location.reload(); }, 1800);
   };
   const handleCookieReappear = () => {
     clearCookieConsent();
-    toast('El aviso de cookies volverá a aparecer.', 'info');
+    toast(dict.prefs.cookieReappearToast, 'info');
     // Recarga voluntaria (acción de la UI): se marca para que el AdBlockerGuard
     // no la trate como un F5 manual y no vuelva a aparecer.
     window.setTimeout(() => { markVoluntaryReload(); window.location.reload(); }, 1800);
@@ -160,7 +167,7 @@ export default function PreferencesPanel() {
     setPrefs(updated);
     applyMuted(next);
     syncToProfile();
-    toast(next ? 'Pestaña silenciada' : 'Pestaña restaurada', 'info');
+    toast(next ? dict.prefs.mutedToast : dict.prefs.unmutedToast, 'info');
   };
 
   const toggleRedirectGuard = () => {
@@ -168,7 +175,7 @@ export default function PreferencesPanel() {
     const updated = updatePreferences({ redirectGuard: next });
     setPrefs(updated);
     syncToProfile();
-    toast(next ? 'Aviso de redirección activado' : 'Aviso de redirección desactivado', 'info');
+    toast(next ? dict.prefs.redirectOn : dict.prefs.redirectOff, 'info');
   };
 
   const toggleActivityGuard = () => {
@@ -176,7 +183,7 @@ export default function PreferencesPanel() {
     const updated = updatePreferences({ activityGuard: next });
     setPrefs(updated);
     syncToProfile();
-    toast(next ? 'Protección de acciones activada' : 'Protección de acciones desactivada', 'info');
+    toast(next ? dict.prefs.protectOn : dict.prefs.protectOff, 'info');
   };
 
   const switchCls = (on: boolean, onTrack: string) =>
@@ -188,8 +195,8 @@ export default function PreferencesPanel() {
       <div className="flex items-center justify-between gap-2">
         <button
           onClick={toggleTheme}
-          aria-label={isDark ? 'Modo claro' : 'Modo oscuro'}
-          title={isDark ? 'Modo claro' : 'Modo oscuro'}
+          aria-label={isDark ? dict.prefs.lightMode : dict.prefs.darkMode}
+          title={isDark ? dict.prefs.lightMode : dict.prefs.darkMode}
           className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group shrink-0 ${
             isDark ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
           }`}
@@ -209,7 +216,7 @@ export default function PreferencesPanel() {
               ? 'bg-white/5 border-white/10 text-white hover:border-neon-cyan/60'
               : 'bg-black/5 border-black/10 text-black hover:border-neon-cyan/80'
           }`}
-          title="Cambiar idioma"
+          title={dict.common.changeLanguage}
         >
           <span className="flex items-center gap-2">
             <svg viewBox="0 0 24 24" className="w-4 h-4 text-neon-cyan" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -217,7 +224,7 @@ export default function PreferencesPanel() {
               <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
               <path d="M2 12h20" />
             </svg>
-            Idioma
+            {dict.prefs.language}
           </span>
           <span className="flex items-center gap-1.5 text-[11px]">
             <span className="shrink-0 w-6 h-6 rounded-full overflow-hidden border border-white/10">{currentLang.flag}</span>
@@ -238,15 +245,15 @@ export default function PreferencesPanel() {
             <line x1="11" y1="8" x2="11" y2="14" />
             <line x1="8" y1="11" x2="14" y2="11" />
           </svg>
-          Zoom
+          {dict.prefs.zoom}
         </p>
         <div className="flex items-center gap-3">
           <button
             onClick={() => changeZoom(-FONT_SIZE_STEP)}
             disabled={prefs.fontSize <= FONT_SIZE_MIN}
             className={`p-2 rounded-lg border transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed shrink-0 cursor-pointer ${surfaceBtn}`}
-            title="Quitar zoom"
-            aria-label="Quitar zoom"
+            title={dict.prefs.zoomOut}
+            aria-label={dict.prefs.zoomOut}
           >
             <IcoZoomMinus />
           </button>
@@ -265,8 +272,8 @@ export default function PreferencesPanel() {
             onClick={() => changeZoom(FONT_SIZE_STEP)}
             disabled={prefs.fontSize >= FONT_SIZE_MAX}
             className={`p-2 rounded-lg border transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed shrink-0 cursor-pointer ${surfaceBtn}`}
-            title="Sumar zoom"
-            aria-label="Sumar zoom"
+            title={dict.prefs.zoomIn}
+            aria-label={dict.prefs.zoomIn}
           >
             <IcoZoomPlus />
           </button>
@@ -281,11 +288,11 @@ export default function PreferencesPanel() {
             ? 'border-neon-pink bg-neon-pink/10 text-neon-pink hover:bg-neon-pink/20'
             : surfaceBtn
         }`}
-        title="Silenciar pestaña"
+        title={dict.prefs.muteTab}
       >
         <span className="flex items-center gap-2 font-header font-bold text-xs uppercase tracking-widest">
           {prefs.muted ? <VolumeMuteIcon /> : <VolumeIcon />}
-          Silenciar pestaña
+          {dict.prefs.muteTab}
         </span>
         <span className={switchCls(prefs.muted, 'bg-neon-pink')}>
           <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${prefs.muted ? 'left-4' : 'left-0.5'}`} />
@@ -294,13 +301,13 @@ export default function PreferencesPanel() {
 
       {/* Cookies: rechazar en cualquier momento o reaparecer el aviso */}
       <div>
-        <p className={sectionTitleCls}>Cookies</p>
+        <p className={sectionTitleCls}>{dict.prefs.cookies}</p>
         <div className={`flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg border ${cookieStateCls}`}>
           <span className="flex items-center gap-2 font-header font-bold text-xs uppercase tracking-widest">
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 2a10 10 0 0 0-6.88 17.26c1.89 1.74 4.3 2.74 6.88 2.74 5.52 0 10-4.48 10-10 0-2.58-1-5-2.74-6.88C17.52 3 15 2 12 2zm1 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm-4-3a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm6-2a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm-3-4a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
             </svg>
-            Cookies
+            {dict.prefs.cookies}
           </span>
           <span className="text-[10px] font-black uppercase tracking-widest">{cookieStateLabel}</span>
         </div>
@@ -313,7 +320,7 @@ export default function PreferencesPanel() {
               <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M18 6 6 18" /><path d="m6 6 12 12" />
               </svg>
-              Rechazar cookies
+              {dict.prefs.rejectCookies}
             </button>
           )}
           {cookieConsent !== 'accepted' && (
@@ -324,7 +331,7 @@ export default function PreferencesPanel() {
               <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20 6 9 17l-5-5" />
               </svg>
-              Aceptar cookies
+              {dict.prefs.acceptCookies}
             </button>
           )}
           <button
@@ -334,14 +341,14 @@ export default function PreferencesPanel() {
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
               <path d="M1 4v6h6" /><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
             </svg>
-            Reaparecer aviso de cookies
+            {dict.prefs.revisitCookies}
           </button>
         </div>
       </div>
 
       {/* Navegación segura */}
       <div>
-        <p className={sectionTitleCls}>Navegación</p>
+        <p className={sectionTitleCls}>{dict.prefs.navigation}</p>
         <button
           onClick={toggleRedirectGuard}
           className={`w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg border transition-all active:scale-95 ${
@@ -349,7 +356,7 @@ export default function PreferencesPanel() {
               ? 'bg-blue-500/10 border-blue-500/40 text-blue-300 hover:bg-blue-500/20'
               : surfaceBtn
           }`}
-          title="Aviso de redirección"
+          title={dict.prefs.redirectNotice}
         >
           <span className="flex items-center gap-2 font-header font-bold text-xs uppercase tracking-widest">
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -357,7 +364,7 @@ export default function PreferencesPanel() {
               <polyline points="15 3 21 3 21 9" />
               <line x1="10" y1="14" x2="21" y2="3" />
             </svg>
-            Aviso de redirección
+            {dict.prefs.redirectNotice}
           </span>
           <span className={switchCls(prefs.redirectGuard, 'bg-blue-500/70')}>
             <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${prefs.redirectGuard ? 'left-4' : 'left-0.5'}`} />
@@ -370,7 +377,7 @@ export default function PreferencesPanel() {
               ? 'bg-red-500/10 border-red-500/40 text-red-300 hover:bg-red-500/20'
               : surfaceBtn
           }`}
-          title="Protección de acciones no recuperables"
+          title={dict.prefs.protectActionsTitle}
         >
           <span className="flex items-center gap-2 font-header font-bold text-xs uppercase tracking-widest">
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -378,7 +385,7 @@ export default function PreferencesPanel() {
               <path d="M12 9v4" />
               <path d="M12 17h.01" />
             </svg>
-            Proteger acciones
+            {dict.prefs.protectActions}
           </span>
           <span className={switchCls(prefs.activityGuard, 'bg-red-500/70')}>
             <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${prefs.activityGuard ? 'left-4' : 'left-0.5'}`} />
@@ -389,7 +396,7 @@ export default function PreferencesPanel() {
       {/* Ayuda */}
       <div>
         <p className={`${sectionTitleCls} flex items-center gap-1.5 text-neon-pink`}>
-          <span>{I.help}</span> Ayuda
+          <span>{I.help}</span> {dict.prefs.help}
         </p>
         <div className="grid grid-cols-2 gap-1.5">
           {HELP_LINKS.map((l) => (
@@ -403,19 +410,19 @@ export default function PreferencesPanel() {
               }`}
             >
               <span className="opacity-70 shrink-0">{l.icon}</span>
-              {l.name}
+              {navLabel(dict, l.href)}
             </Link>
           ))}
         </div>
       </div>
 
       <p className={`text-[9px] font-bold text-center ${isDark ? 'text-gray-600' : 'text-gray-500'}`}>
-        Preferencias guardadas en este dispositivo{user ? ' y sincronizadas a tu perfil' : ''}.
+        {t(dict.prefs.saved, { profile: user ? dict.prefs.savedProfile : '' })}
       </p>
 
       <LanguagesModal
         open={langOpen}
-        title="Seleccionar idioma"
+        title={dict.prefs.selectLanguage}
         current={language}
         onSelect={handleLangSelect}
         onClose={() => setLangOpen(false)}

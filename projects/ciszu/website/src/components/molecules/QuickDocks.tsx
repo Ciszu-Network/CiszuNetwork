@@ -3,9 +3,10 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useDict } from '@/lib/useDict';
 
 type DockItem = {
-  label: string;
+  labelKey: 'home' | 'about' | 'team' | 'donate' | 'faq' | 'contact' | 'support' | 'policies';
   href: string;
   color: string;
   icon: React.ReactNode;
@@ -13,7 +14,7 @@ type DockItem = {
 
 const DOCK_ITEMS: DockItem[] = [
   {
-    label: 'Home',
+    labelKey: 'home',
     href: '/',
     color: 'cyan',
     icon: (
@@ -24,7 +25,7 @@ const DOCK_ITEMS: DockItem[] = [
     ),
   },
   {
-    label: 'About',
+    labelKey: 'about',
     href: '/about',
     color: 'blue',
     icon: (
@@ -35,7 +36,7 @@ const DOCK_ITEMS: DockItem[] = [
     ),
   },
   {
-    label: 'Team',
+    labelKey: 'team',
     href: '/team',
     color: 'pink',
     icon: (
@@ -48,7 +49,7 @@ const DOCK_ITEMS: DockItem[] = [
     ),
   },
   {
-    label: 'Donate',
+    labelKey: 'donate',
     href: '/donate',
     color: 'red',
     icon: (
@@ -58,7 +59,7 @@ const DOCK_ITEMS: DockItem[] = [
     ),
   },
   {
-    label: 'FAQ',
+    labelKey: 'faq',
     href: '/faq',
     color: 'cyan',
     icon: (
@@ -69,7 +70,7 @@ const DOCK_ITEMS: DockItem[] = [
     ),
   },
   {
-    label: 'Contact',
+    labelKey: 'contact',
     href: '/contact',
     color: 'green',
     icon: (
@@ -80,7 +81,7 @@ const DOCK_ITEMS: DockItem[] = [
     ),
   },
   {
-    label: 'Support',
+    labelKey: 'support',
     href: '/support',
     color: 'orange',
     icon: (
@@ -92,7 +93,7 @@ const DOCK_ITEMS: DockItem[] = [
     ),
   },
   {
-    label: 'Policies',
+    labelKey: 'policies',
     href: '/policy',
     color: 'red',
     icon: (
@@ -105,6 +106,7 @@ const DOCK_ITEMS: DockItem[] = [
 
 export default function QuickDocks() {
   const pathname = usePathname();
+  const t = useDict();
 
   const HOVER_COLORS: Record<string, string> = {
     cyan: '#68cfff', purple: '#4800ff', pink: '#ff33cc',
@@ -132,10 +134,10 @@ export default function QuickDocks() {
         <div className="relative z-10">
           <div className="flex flex-col items-center mb-10 text-center">
             <h3 className="text-4xl font-header font-black text-white uppercase tracking-[0.3em] leading-none mb-2">
-              Quick Docks
+              {t.docks.title}
             </h3>
             <p className="text-white/30 text-[10px] uppercase tracking-widest font-bold">
-              Acceso rápido a todas las secciones
+              {t.docks.subtitle}
             </p>
           </div>
 
@@ -167,7 +169,7 @@ export default function QuickDocks() {
                     {doc.icon}
                   </div>
                   <span className={`text-[8px] font-black uppercase tracking-[0.15em] transition-colors text-center leading-tight ${isActive ? style.text : `text-white/40 group-hover:text-white`}`}>
-                    {doc.label}
+                    {doc.labelKey === 'policies' ? t.docks.policies : t.nav[doc.labelKey]}
                   </span>
                 </Link>
               );

@@ -6,6 +6,7 @@ import Script from 'next/script';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
 import { useAppStore } from '@/store';
+import { useDict } from '@/components/providers/I18nProvider';
 import { supabase } from '@/config/supabase';
 import {
   REVIEWS_PAGE_SIZE,
@@ -324,6 +325,7 @@ function Shell({ children }: { children: React.ReactNode }) {
  * ---------------------------------------------------------- */
 
 export default function ReviewsPage() {
+  const dict = useDict();
   const storeUser = useAppStore((state: { user?: unknown }) => state.user) as unknown as SessionUser;
   const userId = storeUser?.id && UUID_RE.test(storeUser.id) ? storeUser.id : null;
 
@@ -622,7 +624,7 @@ export default function ReviewsPage() {
               className="bg-clip-text font-header text-4xl font-black uppercase leading-none tracking-tighter text-transparent md:text-6xl"
               style={{ backgroundImage: `linear-gradient(to right, ${accent}, ${tokens.ink})` }}
             >
-              RESEÑAS
+              {dict.reviews.kicker}
             </h1>
           </div>
           <p
@@ -660,7 +662,7 @@ export default function ReviewsPage() {
                   : 'Sin reseñas todavía · Baseline 5.0'}
               </p>
               <p className="mx-auto max-w-md text-xs text-white/35">
-                Solo mostramos reseñas reales de usuarios registrados. No generamos ni publicamos reseñas de ejemplo.
+                {dict.reviews.disclaimer}
               </p>
             </div>
             <div>
@@ -683,8 +685,8 @@ export default function ReviewsPage() {
               type="search"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Buscar por comentario, nombre o @usuario…"
-              aria-label="Buscar reseñas"
+              placeholder={dict.reviews.searchPlaceholder}
+              aria-label={dict.reviews.searchLabel}
               className="h-11 min-w-[240px] flex-1 rounded-2xl border border-white/10 bg-black px-4 text-sm text-white placeholder:text-white/25 focus:border-white/30 focus:outline-none"
             />
             <button
@@ -734,14 +736,14 @@ export default function ReviewsPage() {
               </Chip>
             ))}
             <Chip active={maxRating === 2} onClick={() => { setMinRating(null); setMaxRating(maxRating === 2 ? null : 2); }} accent={accent} tokens={tokens}>
-              2★ o menos
+              {dict.reviews.filterLow}
             </Chip>
             <Chip active={onlyLikes} onClick={() => setOnlyLikes((prev) => !prev)} accent={accent} tokens={tokens}>
-              Con likes
+              {dict.reviews.filterLiked}
             </Chip>
             {userId && (
               <Chip active={onlyMine} onClick={() => setOnlyMine((prev) => !prev)} accent={accent} tokens={tokens}>
-                Solo las mías
+                {dict.reviews.filterMine}
               </Chip>
             )}
             {activeFilters > 0 && (
@@ -780,12 +782,12 @@ export default function ReviewsPage() {
         <section className="space-y-6">
           {loading ? (
             <div className="py-24 text-center text-sm font-black uppercase tracking-[0.4em] text-white/40">
-              Sincronizando reseñas…
+              {dict.reviews.loading}
             </div>
           ) : error ? (
             <div className="rounded-[3rem] border-2 border-dashed border-amber-400/30 bg-black p-12 text-center">
               <h2 className="font-header text-2xl font-black uppercase tracking-tight text-white">
-                No se pudieron cargar las reseñas
+                {dict.reviews.errorTitle}
               </h2>
               <p className="mt-3 text-sm text-white/45">{error}</p>
               <button
@@ -825,7 +827,7 @@ export default function ReviewsPage() {
                     onClick={clearFilters}
                     className="rounded-2xl border border-white/15 px-6 py-3 text-xs font-black uppercase tracking-widest text-white/60"
                   >
-                    Limpiar filtros
+                    {dict.reviews.clearFilters}
                   </button>
                 )}
               </div>
@@ -879,8 +881,8 @@ export default function ReviewsPage() {
                           <h3 className="font-header text-sm font-black uppercase tracking-widest text-white">{name}</h3>
                           {(review.is_verified || reviewTags.includes('verified')) && (
                             <span
-                              title="Reseña verificada"
-                              aria-label="Reseña verificada"
+                              title={dict.reviews.verified}
+                              aria-label={dict.reviews.verified}
                               className="inline-flex h-4 w-4 items-center justify-center rounded-full"
                               style={{ background: tokens.verified }}
                             >
@@ -984,14 +986,14 @@ export default function ReviewsPage() {
 
         {/* PAGINACIÓN (abajo, estilo índice) */}
         {!loading && !error && (
-          <nav className="flex flex-wrap items-center justify-center gap-2" aria-label="Paginación de reseñas">
+          <nav className="flex flex-wrap items-center justify-center gap-2" aria-label={dict.reviews.pagination}>
             {pageWindow.showFirst && (
               <button
                 type="button"
                 onClick={() => setPage(0)}
                 className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white/50 transition-colors hover:text-white"
-                aria-label="Primera página"
-                title="Primera página"
+                aria-label={dict.reviews.firstPage}
+                title={dict.reviews.firstPage}
               >
                 <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
                   <path d="m11 17-5-5 5-5" />
@@ -1004,7 +1006,7 @@ export default function ReviewsPage() {
               onClick={() => setPage((prev) => Math.max(0, prev - 1))}
               disabled={!pageWindow.hasPrev}
               className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white/50 transition-colors hover:text-white disabled:opacity-25"
-              aria-label="Página anterior"
+              aria-label={dict.reviews.prevPage}
             >
               <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
                 <path d="m15 18-6-6 6-6" />
@@ -1036,7 +1038,7 @@ export default function ReviewsPage() {
               onClick={() => setPage((prev) => Math.min(pageWindow.totalPages - 1, prev + 1))}
               disabled={!pageWindow.hasNext}
               className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white/50 transition-colors hover:text-white disabled:opacity-25"
-              aria-label="Página siguiente"
+              aria-label={dict.reviews.nextPage}
             >
               <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
                 <path d="m9 18 6-6-6-6" />
@@ -1047,8 +1049,8 @@ export default function ReviewsPage() {
                 type="button"
                 onClick={() => setPage(pageWindow.totalPages - 1)}
                 className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white/50 transition-colors hover:text-white"
-                aria-label="Última página"
-                title="Última página"
+                aria-label={dict.reviews.lastPage}
+                title={dict.reviews.lastPage}
               >
                 <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
                   <path d="m13 17 5-5-5-5" />
@@ -1065,7 +1067,7 @@ export default function ReviewsPage() {
         <section className="space-y-6 rounded-[3rem] border border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent p-10 text-center">
           <div className="space-y-2">
             <h2 className="font-header text-2xl font-black uppercase tracking-tight text-white">
-              Confianza y Verificación
+              {dict.reviews.trustTitle}
             </h2>
             <p className="mx-auto max-w-xl text-sm text-white/45">
               {SITE.entity} forma parte de Ciszu Network. Verifica nuestra reputación en plataformas independientes:
@@ -1109,7 +1111,7 @@ export default function ReviewsPage() {
           </div>
 
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/25">
-            Verified by community · Trusted by users · Powered by Ciszuko Antony
+            {dict.reviews.trustTagline}
           </p>
         </section>
       </div>
@@ -1134,7 +1136,7 @@ export default function ReviewsPage() {
                   {myReview ? 'Actualizar reseña' : 'Nueva reseña'}
                 </h2>
                 <p className="mt-1 text-[10px] font-black uppercase tracking-[0.3em] text-white/30">
-                  Solo se permite una reseña por usuario
+                  {dict.reviews.onePerUser}
                 </p>
               </div>
               <button
@@ -1152,20 +1154,20 @@ export default function ReviewsPage() {
 
             <div className="space-y-6">
               <div className="space-y-3 rounded-[2rem] border border-white/10 bg-white/[0.02] p-6 text-center">
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/35">Calificación final</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/35">{dict.reviews.finalRating}</p>
                 <p className="font-header text-3xl font-black italic" style={{ color: ratingColor(formRating, isLight) }}>
                   {formatRating(formRating)} <span className="text-lg text-white/25">/ 5.0</span>
                 </p>
                 <RatingPicker value={formRating} onChange={setFormRating} light={isLight} />
                 <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/25">
-                  Puedes elegir medias estrellas (2.5, 3.5, 4.5…)
+                  {dict.reviews.halfStars}
                 </p>
               </div>
 
               <textarea
                 value={formComment}
                 onChange={(event) => setFormComment(event.target.value)}
-                placeholder="Cuenta tu experiencia con el proyecto…"
+                placeholder={dict.reviews.experiencePlaceholder}
                 rows={6}
                 className="w-full resize-none rounded-[2rem] border-2 border-white/10 bg-white/[0.02] p-6 text-sm text-white placeholder:text-white/20 focus:border-white/25 focus:outline-none"
               />

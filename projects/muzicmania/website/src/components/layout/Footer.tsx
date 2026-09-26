@@ -31,7 +31,7 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
     const next = !darkMode;
     setDarkMode(next);
     updatePreferences({ theme: next ? 'dark' : 'light' });
-    reloadAfterPrefChange(next ? '[SISTEMA]: Modo oscuro activado.' : '[SISTEMA]: Modo claro activado.');
+    reloadAfterPrefChange(next ? `[SISTEMA]: ${dict.system.darkOn}` : `[SISTEMA]: ${dict.system.lightOn}`);
   };
 
   return (
@@ -91,7 +91,7 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
               className="w-full flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-neon-blue text-white hover:text-neon-blue px-6 py-3.5 rounded-2xl transition-all duration-300 shadow-lg mb-8"
             >
               <IcoGithub />
-              <span className="text-sm font-bold tracking-wide">Open Source · Repositorio en GitHub</span>
+              <span className="text-sm font-bold tracking-wide">{dict.footer.openSource}</span>
             </a>
 
             {/* Community Connectors (WhatsApp & Discord) */}
@@ -105,7 +105,7 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
               >
                 <IcoPhone />
                 <div className="flex flex-col items-start gap-0.5">
-                  <span className="text-[10px] font-black uppercase tracking-widest opacity-80 group-hover:opacity-100">WhatsApp Directo</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest opacity-80 group-hover:opacity-100">{dict.footer.whatsapp}</span>
                   <span className="text-base font-bold tracking-tight leading-none group-hover:text-white">+58 412 6858111</span>
                 </div>
               </a>
@@ -132,7 +132,7 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
                 </div>
                 <div className="flex flex-col items-start leading-none">
                   <span className="font-header font-black tracking-tighter text-lg uppercase italic">Ciszugamens</span>
-                  <span className="text-[9px] font-bold uppercase tracking-widest opacity-80">Discord Server</span>
+                  <span className="text-[9px] font-bold uppercase tracking-widest opacity-80">{dict.footer.discordServer}</span>
                 </div>
               </a>
             </div>
@@ -174,12 +174,12 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
           {/* Ecosystem link */}
           <div className="flex flex-col items-center sm:items-start">
             <h4 className="text-neon-blue text-[10px] font-black uppercase tracking-[0.3em] mb-4 drop-shadow-[0_0_8px_rgba(0,212,255,0.5)]">
-              Ecosystem
+              {dict.footer.ecosystem}
             </h4>
             <div className="flex flex-col gap-1.5 w-full">
               <a href="https://ciszunetwork.vercel.app/courses" target="_blank" rel="noopener noreferrer"
                 className="flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border border-transparent text-ink font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]">
-                <span className="tracking-wide">Courses</span>
+                <span className="tracking-wide">{dict.footer.courses}</span>
               </a>
             </div>
           </div>
@@ -218,7 +218,7 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
               <svg className="w-5 h-5 transition-transform duration-500 group-hover:rotate-12 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                 <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
               </svg>
-              <span className="text-gray-400 group-hover:text-white uppercase tracking-widest text-xs font-bold">LANG</span>
+              <span className="text-gray-400 group-hover:text-white uppercase tracking-widest text-xs font-bold">{dict.footer.lang}</span>
             </button>
           </div>
 

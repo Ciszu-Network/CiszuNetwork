@@ -13,6 +13,7 @@ import {
 } from '@/data/changelog';
 import { I, TAG_CONFIG } from '@/config/changelogIcons';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useDict } from '@/components/providers/I18nProvider';
 import { useAppStore } from '@/store';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
@@ -80,6 +81,7 @@ const Section = ({ children, className = '' }: { children: React.ReactNode; clas
 
 export default function ChangelogPage() {
   usePageTitle('CHANGELOG');
+  const dict = useDict();
   const { user } = useAppStore();
   const { toast } = useToast();
   const likes = useChangelogLikes();
@@ -168,7 +170,7 @@ export default function ChangelogPage() {
                 {CHANGELOG_STATUS.headline}
               </h2>
               <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">
-                Estado actual de despliegue
+                {dict.changelog.currentState}
               </p>
             </div>
             <div className="text-4xl font-header font-black text-brand-light italic">
@@ -181,7 +183,7 @@ export default function ChangelogPage() {
             aria-valuenow={CHANGELOG_STATUS.progress}
             aria-valuemin={0}
             aria-valuemax={100}
-            aria-label="Progreso del despliegue actual"
+            aria-label={dict.changelog.deploymentProgress}
           >
             <motion.div
               initial={{ width: 0 }}
@@ -203,7 +205,7 @@ export default function ChangelogPage() {
               {I.code}
             </div>
             <div>
-              <div className="text-[8px] font-black text-white/20 uppercase tracking-widest">Versión</div>
+              <div className="text-[8px] font-black text-white/20 uppercase tracking-widest">{dict.changelog.version}</div>
               <div className="text-sm font-header font-black text-white uppercase italic">{CHANGELOG_STATUS.version}</div>
             </div>
           </div>
@@ -235,10 +237,10 @@ export default function ChangelogPage() {
           <div className="p-10 bg-black/60 border border-white/10 rounded-[3rem] space-y-10 relative overflow-hidden">
             <div className="text-center space-y-2 relative z-10">
               <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">
-                PRÓXIMOS NODOS
+                {dict.changelog.upcoming}
               </h2>
               <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.3em]">
-                Despliegue arquitectónico de Ciszu Network
+                {dict.changelog.upcomingBody}
               </p>
             </div>
 
@@ -302,8 +304,8 @@ export default function ChangelogPage() {
                 setSearchQuery(e.target.value);
                 setCurrentPage(1);
               }}
-              placeholder="BUSCAR VERSIÓN, CÓDIGO, PARCHE O NODO..."
-              aria-label="Buscar en el registro de cambios"
+              placeholder={dict.changelog.searchPlaceholder}
+              aria-label={dict.changelog.searchLabel}
               className="w-full bg-white/5 border border-white/10 rounded-full py-6 pl-20 pr-8 text-white font-header font-black uppercase italic tracking-[0.2em] focus:outline-none focus:border-brand-light focus:ring-4 focus:ring-brand-light/10 transition-all placeholder:text-white/10 text-sm"
             />
           </div>
@@ -332,7 +334,7 @@ export default function ChangelogPage() {
                   onClick={clearAll}
                   className="text-[10px] font-black text-brand-300 uppercase tracking-widest hover:underline"
                 >
-                  LIMPIAR TODO
+                  {dict.changelog.clearAll}
                 </button>
               )}
             </div>
@@ -411,9 +413,9 @@ export default function ChangelogPage() {
                 <div className="p-10 bg-black/60 border border-white/5 rounded-[3.5rem] space-y-6 shadow-2xl">
                   <div className="space-y-6">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-2">
-                      <h4 className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em]">SISTEMA DE ETIQUETADO</h4>
+                      <h4 className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em]">{dict.changelog.taggingTitle}</h4>
                       <p className="text-[9px] font-bold text-white/10 uppercase tracking-widest italic">
-                        Selecciona una etiqueta para filtrar los resultados
+                        {dict.changelog.taggingBody}
                       </p>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
@@ -441,16 +443,16 @@ export default function ChangelogPage() {
                 <div className="w-8 h-8">{I.alert}</div>
               </div>
               <div className="space-y-2">
-                <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-tighter">SIN RESULTADOS</h3>
+                <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-tighter">{dict.changelog.noResults}</h3>
                 <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.3em]">
-                  Ninguna entrada coincide con tu búsqueda
+                  {dict.changelog.noResultsBody}
                 </p>
               </div>
               <button
                 onClick={clearAll}
                 className="px-8 py-3 bg-brand-light text-black font-header font-black uppercase italic tracking-widest rounded-2xl hover:shadow-lg hover:shadow-brand-light/20 transition-all"
               >
-                REINICIAR BÚSQUEDA
+                {dict.changelog.resetSearch}
               </button>
             </div>
           ) : (
@@ -572,7 +574,7 @@ export default function ChangelogPage() {
           <button
             onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
             disabled={page.page === 1}
-            aria-label="Página anterior"
+            aria-label={dict.changelog.prevPage}
             className="w-12 h-12 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-white/20 hover:text-white disabled:opacity-0 transition-all"
           >
             <div className="w-5 h-5 rotate-180">{I.arrow}</div>
@@ -594,7 +596,7 @@ export default function ChangelogPage() {
           <button
             onClick={() => setCurrentPage((prev) => Math.min(page.totalPages, prev + 1))}
             disabled={page.page === page.totalPages}
-            aria-label="Página siguiente"
+            aria-label={dict.changelog.nextPage}
             className="w-12 h-12 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-white/20 hover:text-white disabled:opacity-0 transition-all"
           >
             <div className="w-5 h-5">{I.arrow}</div>
@@ -607,16 +609,16 @@ export default function ChangelogPage() {
             <div className="space-y-2 text-center md:text-left">
               <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter flex items-center justify-center md:justify-start gap-3">
                 <div className="w-8 h-8 text-brand-300">{I.target}</div>
-                HOJA DE RUTA
+                {dict.changelog.roadmap}
               </h2>
               <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.3em]">
-                El futuro de Ciszu Network en construcción
+                {dict.changelog.roadmapBody}
               </p>
             </div>
             <div className="px-6 py-3 rounded-full bg-white/5 border border-white/10 flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-brand-light animate-pulse" />
-                <span className="text-[10px] font-black text-white/60 tracking-widest uppercase">Progreso Global</span>
+                <span className="text-[10px] font-black text-white/60 tracking-widest uppercase">{dict.changelog.globalProgress}</span>
               </div>
               <div className="text-brand-light font-black">{globalProgress}%</div>
             </div>
@@ -706,9 +708,9 @@ export default function ChangelogPage() {
         {/* --- GLOSARIO --- */}
         <Section className="p-12 bg-black/40 border border-white/5 rounded-[4rem] space-y-12 relative overflow-hidden mb-20">
           <div className="text-center space-y-2 relative z-10">
-            <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">GLOSARIO DE NODOS</h2>
+            <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">{dict.changelog.glossary}</h2>
             <p className="text-[10px] text-white/20 font-black uppercase tracking-[0.3em]">
-              Diccionario técnico de actualizaciones
+              {dict.changelog.glossaryBody}
             </p>
           </div>
 
@@ -740,7 +742,7 @@ export default function ChangelogPage() {
             <div className="absolute inset-0 bg-brand/5 animate-pulse pointer-events-none" />
             <div className="relative space-y-6">
               <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">
-                ¿SISTEMA EN EVOLUCIÓN?
+                {dict.changelog.evolving}
               </h2>
               <p className="text-gray-500 font-bold uppercase text-xs tracking-widest max-w-md mx-auto italic">
                 Antes de iniciar un dock rápido, revisa los protocolos de documentación: arquitectura, convenciones y
@@ -750,7 +752,7 @@ export default function ChangelogPage() {
                 href="/documentation"
                 className="inline-flex items-center gap-3 text-brand-light font-black uppercase text-[10px] tracking-[0.4em] pb-1 border-b-2 border-brand-light/30 hover:border-brand-light hover:gap-6 transition-all group"
               >
-                VER PROTOCOLOS
+                {dict.changelog.viewProtocols}
                 <div className="w-4 h-4">{I.arrow}</div>
               </Link>
             </div>

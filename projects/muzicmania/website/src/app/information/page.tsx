@@ -9,6 +9,7 @@ import MainLayout from '@/components/templates/MainLayout';
 import ScrollSpy from '@/components/molecules/ScrollSpy';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useT } from '@/hooks/useT';
 
 /**
  * Color de marca para usarlo como TEXTO sobre el tema activo.
@@ -203,6 +204,7 @@ const Keycap = ({ label, color, isPressed }: { label: string; color: string; isP
 
 export default function InformationPage() {
   usePageTitle('INFORMATION');
+  const t = useT();
   const [fontWeight, setFontWeight] = useState('font-normal');
   const [fontStyle, setFontStyle] = useState('not-italic');
   const [selectedIconKey, setSelectedIconKey] = useState<keyof typeof I>('home');
@@ -260,11 +262,11 @@ export default function InformationPage() {
                   {I.info}
                 </div>
                 <h1 className="text-5xl md:text-8xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-neon-purple to-neon-blue bg-clip-text text-transparent [-webkit-text-stroke:1px_black]">
-                  SOBRE MUZICMANIA
+                  {t.pages.information.title}
                 </h1>
              </div>
              <p className="text-neon-cyan font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-               Explorando el Núcleo de MuzicMania
+               {t.pages.information.subtitle}
              </p>
           </div>
           

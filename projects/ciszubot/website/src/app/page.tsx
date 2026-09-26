@@ -345,8 +345,8 @@ export default async function Home() {
 
       {/* ═══ PROJECT PROVIDED BY CISZU NETWORK ═══ */}
       <EcosystemSection
-        title="Project provided by CiszuNetwork"
-        description="CiszuBot is part of the Ciszu Network ecosystem. Discover more projects and tools built by Ciszuko Antony."
+        title={t.ecosystem.providedTitle}
+        description={t.ecosystem.providedDesc}
         visitHref="https://ciszunetwork.vercel.app"
         projectsHref="https://ciszunetwork.vercel.app/projects"
       />

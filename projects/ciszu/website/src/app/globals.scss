@@ -451,6 +451,17 @@
 .light :is(.bg-brand-accent.text-white, .bg-brand-accent:has(.text-white)) { background-color: #3f6ad9 !important; }
 .light :is(.bg-neon-red.text-white, .bg-neon-red:has(.text-white)) { background-color: #e50000 !important; }
 
+/* CTA con `bg-brand` sólido: no estaba en la lista de exclusiones de arriba y
+   la tinta oscura quedaba sobre azul de marca (1.9:1). Conserva el blanco. */
+.light :is(.bg-brand).text-white,
+.light :is(.bg-brand) :is(.text-white) { color: #ffffff !important; }
+/* Botones `bg-brand/20` que se rellenan en hover: en claro el relleno sólido
+   dejaría tinta oscura sobre azul; el hover se queda en tinte de marca. */
+.light .hover\:bg-brand:hover { background-color: rgba(35, 63, 146, 0.18) !important; }
+/* Títulos con degradado recortado que arrancan en blanco: sobre fondo claro el
+   primer tramo desaparecía; arrancan en tinta oscura. */
+.light [class*="bg-clip-text"][class*="from-white"] { --tw-gradient-from: #0d1526 !important; }
+
 /* Utilidades propias y cromo del navegador (barra de desplazamiento,
    selección, vidrio y degradado de cards) en su versión clara. */
 .light .glass { background: rgba(255, 255, 255, 0.78); border-color: rgba(30, 50, 96, 0.18) !important; }

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { Icon, SmartImage } from '@ciszu/ui';
+import { useDict } from '@/components/providers/I18nProvider';
 import type { Project } from '@/data/projects';
 
 /**
@@ -9,6 +10,7 @@ import type { Project } from '@/data/projects';
  * preview, categorías, stack, descripción y enlaces.
  */
 export default function ProjectCard({ project }: { project: Project }) {
+  const dict = useDict();
   return (
     <article className="group flex flex-col rounded-3xl bg-white/5 border border-white/10 hover:border-neon-blue/50 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
       <Link
@@ -58,7 +60,7 @@ export default function ProjectCard({ project }: { project: Project }) {
             href={`/projects/${project.slug}`}
             className="inline-flex items-center gap-2 text-xs font-bold text-neon-blue hover:text-white transition-colors"
           >
-            Ver proyecto <Icon name="chevronRight" size={14} />
+            {dict.common.viewProject} <Icon name="chevronRight" size={14} />
           </Link>
           <div className="flex items-center gap-2">
             {project.links

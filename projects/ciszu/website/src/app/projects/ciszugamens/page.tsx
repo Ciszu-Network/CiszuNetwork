@@ -5,6 +5,7 @@ import { InfoHero, type InfoTheme } from "@ciszu/ui";
 import PageAmbience from "@/components/layout/PageAmbience";
 import PageReveal from "@/components/layout/PageReveal";
 import QuickDocks from "@/components/molecules/QuickDocks";
+import { getServerI18n } from "@/lib/i18n-server";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -71,7 +72,8 @@ const communityLinks = [
   { name: 'Discord Bot List', href: CISZUBOT_LINKS.discordBotListServer },
 ];
 
-export default function CiszugamensPage() {
+export default async function CiszugamensPage() {
+  const { t } = await getServerI18n();
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />
@@ -86,7 +88,7 @@ export default function CiszugamensPage() {
 
         <div className="space-y-8">
           <div className="p-8 rounded-[2rem] bg-brand/5 border border-brand/20">
-            <h2 className="text-2xl font-header font-bold text-white mb-4">Únete a la comunidad</h2>
+            <h2 className="text-2xl font-header font-bold text-white mb-4">{t.projectPages.ciszugamens.join}</h2>
             <p className="text-gray-300 leading-relaxed mb-6">
               Ciszugamens es el servidor de la comunidad de {CISZU_NETWORK.name}: el mismo espacio
               en Discord, WhatsApp y Telegram. Elige tu plataforma favorita y forma parte de la
@@ -122,7 +124,7 @@ export default function CiszugamensPage() {
           </div>
 
           <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10">
-            <h2 className="text-2xl font-header font-bold text-white mb-6">Dónde encontrarnos</h2>
+            <h2 className="text-2xl font-header font-bold text-white mb-6">{t.projectPages.ciszugamens.where}</h2>
             <div className="flex flex-wrap gap-3 mb-8">
               {communityLinks.map((l) => (
                 <a key={l.name} href={l.href} target="_blank" rel="noopener noreferrer"
@@ -131,7 +133,7 @@ export default function CiszugamensPage() {
                 </a>
               ))}
             </div>
-            <h3 className="text-sm font-header font-bold text-white mb-3">Stack de la comunidad</h3>
+            <h3 className="text-sm font-header font-bold text-white mb-3">{t.projectPages.ciszugamens.communityStack}</h3>
             <div className="flex flex-wrap gap-2">
               {stack.map((s) => (
                 <span key={s} className="px-3 py-1.5 rounded-full bg-brand/10 border border-brand/30 text-brand-light text-[10px] font-bold uppercase tracking-wider">
@@ -143,7 +145,7 @@ export default function CiszugamensPage() {
 
           <div className="text-center">
             <Link href="/projects" className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/10 transition-all">
-              Ver todos los proyectos <ArrowRight className="w-4 h-4" />
+              {t.projectPages.viewAll} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>

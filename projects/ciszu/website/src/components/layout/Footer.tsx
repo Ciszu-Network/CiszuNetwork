@@ -305,8 +305,8 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
               className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transition-all duration-500 cursor-pointer border group ${
                 theme === 'dark' ? 'bg-[#0a0a14]/98 border-white/10 hover:rotate-12' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
               }`}
-              aria-label="Toggle theme"
-              title="Toggle theme"
+              aria-label={dict.common.toggleTheme}
+              title={dict.common.toggleTheme}
             >
               {theme === 'dark' ? (
                 <svg className="w-5 h-5 text-ink transition-transform duration-500 group-hover:rotate-12" viewBox="0 0 24 24" fill="currentColor">
@@ -337,7 +337,7 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
               2024-{new Date().getFullYear()}{' '}
               <a href={EXTERNAL_LINKS.ciszunetwork} target="_blank" rel="noopener noreferrer"
                 className="text-brand-light font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(58,107,240,0.8)]">
-                CISZU NETWORK
+                {CISZU_NETWORK.name.toUpperCase()}
               </a>{' '}
               &amp; TODOS LOS DERECHOS RESERVADOS.
             </p>

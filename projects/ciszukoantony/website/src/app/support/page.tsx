@@ -9,6 +9,7 @@ import { SOCIALS } from '@/config/navigation';
 import Link from 'next/link';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useAppStore } from '@/store';
+import { useDict } from '@/components/providers/I18nProvider';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
@@ -82,6 +83,7 @@ const THEME: InfoTheme = {
 
 export default function SupportPage() {
   usePageTitle('SUPPORT');
+  const dict = useDict();
   const { user } = useAppStore();
   const { toast } = useToast();
   const [tickets, setTickets] = useState<any[]>([]);
@@ -213,8 +215,8 @@ export default function SupportPage() {
 
         <InfoHero
           icon="support"
-          title="SOPORTE"
-          subtitle="Estamos aquí para ayudarte"
+          title={dict.support.title}
+          subtitle={dict.support.subtitle}
           theme={THEME}
         />
 
@@ -225,7 +227,7 @@ export default function SupportPage() {
                 activeTab === 'new' ? 'bg-brand-light text-white' : 'bg-white/5 text-gray-500 hover:bg-white/10'
               }`}
             >
-              Nuevo Ticket
+              {dict.support.newTicket}
             </button>
             <button
               onClick={() => setActiveTab('list')}
@@ -233,7 +235,7 @@ export default function SupportPage() {
                 activeTab === 'list' ? 'bg-brand-light text-white' : 'bg-white/5 text-gray-500 hover:bg-white/10'
               }`}
             >
-              Mis Tickets {tickets.length > 0 && `(${tickets.length})`}
+              {dict.support.myTickets} {tickets.length > 0 && `(${tickets.length})`}
             </button>
          </div>
 
@@ -249,8 +251,8 @@ export default function SupportPage() {
                          <div className="flex flex-col items-center text-center gap-4">
                             <div className="w-14 h-14 text-brand-light group-hover/card:scale-110 transition-transform">{I.help}</div>
                             <div className="space-y-1">
-                               <h4 className="text-[12px] font-black text-white uppercase tracking-widest italic">Centro de Ayuda</h4>
-                               <p className="text-[9px] text-brand-light/60 font-bold uppercase tracking-[0.2em]">Guías y Protocolos</p>
+                               <h4 className="text-[12px] font-black text-white uppercase tracking-widest italic">{dict.support.helpCenter}</h4>
+                               <p className="text-[9px] text-brand-light/60 font-bold uppercase tracking-[0.2em]">{dict.support.guides}</p>
                             </div>
                          </div>
                       </Link>
@@ -258,8 +260,8 @@ export default function SupportPage() {
                          <div className="flex flex-col items-center text-center gap-4">
                             <div className="w-14 h-14 text-brand-light group-hover/card:scale-110 transition-transform">{I.contact}</div>
                             <div className="space-y-1">
-                               <h4 className="text-[12px] font-black text-white uppercase tracking-widest italic">Contacto</h4>
-                               <p className="text-[9px] text-brand-light/60 font-bold uppercase tracking-[0.2em]">Canales Directos</p>
+                               <h4 className="text-[12px] font-black text-white uppercase tracking-widest italic">{dict.nav.contact}</h4>
+                               <p className="text-[9px] text-brand-light/60 font-bold uppercase tracking-[0.2em]">{dict.support.directChannels}</p>
                             </div>
                          </div>
                       </Link>
@@ -267,8 +269,8 @@ export default function SupportPage() {
                          <div className="flex flex-col items-center text-center gap-4">
                             <div className="w-14 h-14 text-brand-light group-hover/card:scale-110 transition-transform">{I.info}</div>
                             <div className="space-y-1">
-                               <h4 className="text-[12px] font-black text-white uppercase tracking-widest italic">Información</h4>
-                               <p className="text-[9px] text-brand-light/60 font-bold uppercase tracking-[0.2em]">Acerca del Proyecto</p>
+                               <h4 className="text-[12px] font-black text-white uppercase tracking-widest italic">{dict.support.info}</h4>
+                               <p className="text-[9px] text-brand-light/60 font-bold uppercase tracking-[0.2em]">{dict.support.aboutProject}</p>
                             </div>
                          </div>
                       </Link>
@@ -279,17 +281,17 @@ export default function SupportPage() {
                         <div className="absolute top-0 right-0 p-12 opacity-[0.03] text-brand-light font-black text-9xl italic uppercase tracking-tighter">STOP</div>
                         <div className="w-24 h-24 text-brand-light mx-auto animate-pulse">{I.alert}</div>
                         <div className="space-y-3">
-                           <h2 className="text-4xl md:text-5xl font-header font-black text-white uppercase italic tracking-tighter leading-none">AUTENTICACIÓN REQUERIDA</h2>
+                           <h2 className="text-4xl md:text-5xl font-header font-black text-white uppercase italic tracking-tighter leading-none">{dict.support.authRequired}</h2>
                            <p className="text-gray-500 font-bold text-sm md:text-base uppercase tracking-widest max-w-md mx-auto">
-                               Para garantizar la integridad y el seguimiento de tu ticket, debes estar autenticado en CISZU ID.
+                               {dict.support.authBody}
                            </p>
                         </div>
                         <div className="pt-6 flex flex-col sm:flex-row justify-center gap-6">
                            <Link href="/login" className="px-16 py-6 bg-white text-black font-black uppercase text-xs tracking-[0.2em] rounded-3xl hover:bg-brand-light hover:scale-105 transition-all shadow-2xl flex items-center justify-center gap-4 group/btn">
-                              <div className="w-5 h-5 group-hover/btn:scale-110 transition-transform">{I.login}</div> ACCEDER
+                              <div className="w-5 h-5 group-hover/btn:scale-110 transition-transform">{I.login}</div> {dict.nav.login.toUpperCase()}
                            </Link>
                            <Link href="/register" className="px-16 py-6 bg-transparent border-2 border-brand-light text-brand-light font-black uppercase text-xs tracking-[0.2em] rounded-3xl hover:bg-brand-light/10 hover:scale-105 transition-all flex items-center justify-center gap-4 group/reg">
-                              <div className="w-5 h-5 group-hover/reg:scale-110 transition-transform">{I.userPlus}</div> REGISTRARSE
+                              <div className="w-5 h-5 group-hover/reg:scale-110 transition-transform">{I.userPlus}</div> {dict.nav.register.toUpperCase()}
                            </Link>
                         </div>
                      </div>
@@ -298,9 +300,9 @@ export default function SupportPage() {
                        <div className="bg-black/40 border border-white/5 p-6 rounded-3xl flex items-start gap-4">
                           <div className="w-8 h-8 text-brand-light shrink-0 mt-1">{I.info}</div>
                           <div className="space-y-1">
-                             <h4 className="text-xs font-black text-white uppercase tracking-widest">Protocolo de Asistencia</h4>
+                             <h4 className="text-xs font-black text-white uppercase tracking-widest">{dict.support.protocolTitle}</h4>
                              <p className="text-[10px] text-gray-500 font-bold leading-relaxed uppercase">
-                                ¿No encontraste solución en los recursos anteriores? Genera un ticket a continuación. Garantizamos respuesta en menos de 24h.
+                                {dict.support.protocolBody}
                              </p>
                           </div>
                        </div>
@@ -309,25 +311,25 @@ export default function SupportPage() {
                           <div className="space-y-8">
                             <div className="flex items-center gap-3 border-b border-white/5 pb-2">
                                <div className="w-4 h-4 text-brand-light">{I.user}</div>
-                               <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Identidad del Remitente</h3>
+                               <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">{dict.support.identity}</h3>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                <div className="space-y-2">
-                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Nombre de usuario</label>
+                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">{dict.support.username}</label>
                                   <input type="text" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="@usuario" />
                                </div>
                                <div className="space-y-2">
-                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Nombre completo</label>
+                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">{dict.support.fullName}</label>
                                   <input type="text" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="Nombre" />
                                </div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                <div className="space-y-2">
-                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Apellido</label>
+                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">{dict.support.lastName}</label>
                                   <input type="text" value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="Apellido" />
                                </div>
                                <div className="space-y-2">
-                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Email de Contacto</label>
+                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">{dict.support.contactEmail}</label>
                                   <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="tu@email.com" />
                                </div>
                             </div>
@@ -336,17 +338,17 @@ export default function SupportPage() {
                           <div className="space-y-6 pt-4">
                             <div className="flex items-center gap-3 border-b border-white/5 pb-2">
                                <div className="w-4 h-4 text-brand-accent">{I.tag}</div>
-                               <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Naturaleza del Ticket</h3>
+                               <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">{dict.support.nature}</h3>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                <div className="space-y-2">
-                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Tipo de Contacto</label>
+                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">{dict.support.contactType}</label>
                                   <select value={formData.contactType} onChange={e => setFormData({...formData, contactType: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
                                      {CONTACT_TYPES.map(c => <option key={c} value={c}>{c}</option>)}
                                   </select>
                                </div>
                                <div className="space-y-2">
-                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Región de Origen</label>
+                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">{dict.support.originRegion}</label>
                                   <div className="relative">
                                      <select value={formData.region} onChange={e => setFormData({...formData, region: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl pl-12 pr-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
                                         {REGIONS.map(r => <option key={r.code} value={r.code}>{r.name}</option>)}
@@ -359,13 +361,13 @@ export default function SupportPage() {
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                <div className="space-y-2">
-                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Categoría</label>
+                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">{dict.support.category}</label>
                                   <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value, subCategory: Object.values(CATEGORIES)[0][0]})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
                                      {Object.keys(CATEGORIES).map(c => <option key={c} value={c}>{c}</option>)}
                                   </select>
                                </div>
                                <div className="space-y-2">
-                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Subcategoría</label>
+                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">{dict.support.subcategory}</label>
                                   <select value={formData.subCategory} onChange={e => setFormData({...formData, subCategory: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
                                      {CATEGORIES[formData.category as keyof typeof CATEGORIES]?.map(s => <option key={s} value={s}>{s}</option>)}
                                   </select>
@@ -376,26 +378,26 @@ export default function SupportPage() {
                           <div className="space-y-6 pt-4">
                             <div className="flex items-center gap-3 border-b border-white/5 pb-2">
                                <div className="w-4 h-4 text-brand-light">{I.msg}</div>
-                               <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Detalles del Requerimiento</h3>
+                               <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">{dict.support.details}</h3>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                <div className="space-y-2">
-                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Teléfono (opcional)</label>
+                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">{dict.support.phone}</label>
                                   <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="+58 412 685 8111" />
                                </div>
                                <div className="space-y-2">
-                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Dispositivo</label>
+                                  <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">{dict.support.device}</label>
                                   <input type="text" value={formData.device} onChange={e => setFormData({...formData, device: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="PC / Móvil / Tablet" />
                                </div>
                             </div>
                             <div className="space-y-2">
-                               <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Mensaje / Descripción</label>
-                               <textarea value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} rows={5} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all resize-none" placeholder="Describe tu situación detalladamente..." />
+                               <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">{dict.support.message}</label>
+                               <textarea value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} rows={5} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all resize-none" placeholder={dict.support.messagePlaceholder} />
                             </div>
                           </div>
 
                           <button type="submit" disabled={submitting} className="w-full py-5 bg-brand-light text-black font-black uppercase text-xs tracking-[0.2em] rounded-2xl hover:shadow-lg hover:shadow-brand-light/20 transition-all disabled:opacity-50 flex items-center justify-center gap-3">
-                             <div className="w-5 h-5">{I.send}</div> {submitting ? 'ENVIANDO...' : 'ENVIAR TICKET'}
+                             <div className="w-5 h-5">{I.send}</div> {submitting ? dict.support.sending : dict.support.send}
                           </button>
                        </form>
                      </>
@@ -406,7 +408,7 @@ export default function SupportPage() {
                   {loading ? (
                     <div className="p-20 bg-white/5 border border-white/5 rounded-[4rem] text-center">
                       <div className="w-12 h-12 border-2 border-brand-light border-t-transparent rounded-full animate-spin mx-auto mb-6" />
-                      <p className="text-white/40 text-[10px] font-black uppercase tracking-widest">Cargando tickets...</p>
+                      <p className="text-white/40 text-[10px] font-black uppercase tracking-widest">{dict.support.loadingTickets}</p>
                     </div>
                   ) : tickets.length === 0 ? (
                     <div className="p-20 bg-white/5 border border-white/5 rounded-[4rem] text-center space-y-6">
@@ -414,11 +416,11 @@ export default function SupportPage() {
                         {I.msg}
                       </div>
                       <div className="space-y-2">
-                         <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-tighter">SIN TICKETS</h3>
-                         <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.3em]">No has enviado ninguna solicitud aún</p>
+                         <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-tighter">{dict.support.noTickets}</h3>
+                         <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.3em]">{dict.support.noTicketsBody}</p>
                       </div>
                       <button onClick={() => setActiveTab('new')} className="px-8 py-3 bg-brand-light text-black font-header font-black uppercase italic tracking-widest rounded-2xl hover:shadow-lg hover:shadow-brand-light/20 transition-all">
-                         CREAR PRIMER TICKET
+                         {dict.support.createFirst}
                       </button>
                     </div>
                   ) : (
@@ -437,8 +439,8 @@ export default function SupportPage() {
                           <h4 className="text-white font-header font-bold text-sm mb-1">{ticket.contact_type} — {ticket.category}</h4>
                           <p className="text-white/40 text-xs leading-relaxed line-clamp-2">{ticket.message}</p>
                           <div className="flex gap-3 mt-4">
-                            <button onClick={() => handleStatusUpdate(ticket.id, 'closed')} className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-black text-white uppercase tracking-widest hover:bg-neon-green hover:text-black transition-all">CERRAR</button>
-                            <button onClick={() => handleDelete(ticket.id)} className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-black text-white uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all flex items-center gap-2"><div className="w-3 h-3">{I.trash}</div> ELIMINAR</button>
+                            <button onClick={() => handleStatusUpdate(ticket.id, 'closed')} className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-black text-white uppercase tracking-widest hover:bg-neon-green hover:text-black transition-all">{dict.support.closeTicket}</button>
+                            <button onClick={() => handleDelete(ticket.id)} className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-black text-white uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all flex items-center gap-2"><div className="w-3 h-3">{I.trash}</div> {dict.support.deleteTicket}</button>
                           </div>
                         </div>
                       ))}
@@ -457,17 +459,17 @@ export default function SupportPage() {
                       {I.lifebuoy}
                    </div>
                    <div>
-                      <h3 className="text-xs font-black text-white uppercase tracking-widest">Receptor del Ticket</h3>
+                      <h3 className="text-xs font-black text-white uppercase tracking-widest">{dict.support.receiverTitle}</h3>
                       <p className="text-[10px] text-brand-light font-black uppercase tracking-[0.2em]">Ciszuko Antony</p>
                    </div>
                 </div>
                 <p className="text-[10px] text-gray-500 font-bold leading-relaxed uppercase">
-                   Tu requerimiento será procesado directamente por el Equipo de Ciszuko Antony. Los datos se sincronizan con:
+                   {dict.support.receiverBody}
                 </p>
                 <div className="flex items-center gap-3">
                    <a href="mailto:fplayersoffcial@gmail.com" className="text-white underline text-sm lowercase">fplayersoffcial@gmail.com</a>
                    <button onClick={copyEmail} className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-colors">
-                     {copied ? 'COPIADO' : 'COPIAR'}
+                     {copied ? dict.support.copied : dict.support.copy}
                    </button>
                 </div>
              </div>
@@ -476,22 +478,22 @@ export default function SupportPage() {
                 <div className="absolute top-0 right-0 p-4 opacity-5 text-neon-green font-black text-6xl italic pointer-events-none">24/7</div>
                 <div className="w-16 h-16 text-neon-green mx-auto animate-pulse">{I.pulse}</div>
                 <div className="space-y-1">
-                   <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-tighter">NÚCLEO OPERATIVO</h3>
-                   <p className="text-neon-green font-black text-[9px] uppercase tracking-[0.4em]">Soporte Global Activo</p>
+                   <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-tighter">{dict.support.core}</h3>
+                   <p className="text-neon-green font-black text-[9px] uppercase tracking-[0.4em]">{dict.support.supportActive}</p>
                 </div>
                 <p className="text-[10px] text-gray-500 font-bold leading-relaxed uppercase">
-                   Atendemos requerimientos las 24 horas, priorizando la estabilidad del ecosistema Ciszuko Antony.
+                   {dict.support.supportActiveBody}
                 </p>
              </div>
 
              <div className="p-8 bg-doc-dark border border-white/5 rounded-[3rem] space-y-6">
-                <h3 className="text-xs font-black text-white uppercase tracking-[0.4em] border-b border-white/10 pb-4">Niveles de Prioridad</h3>
+                <h3 className="text-xs font-black text-white uppercase tracking-[0.4em] border-b border-white/10 pb-4">{dict.support.priorityLevels}</h3>
                 <div className="space-y-4">
                    {[
-                     { label: 'Crítica', desc: 'Fallos de sistema o seguridad.', color: 'text-neon-pink' },
-                     { label: 'Alta', desc: 'Problemas de cuenta o pagos.', color: 'text-neon-purple' },
-                     { label: 'Normal', desc: 'Bugs menores o consultas.', color: 'text-neon-blue' },
-                     { label: 'Baja', desc: 'Sugerencias y recomendaciones.', color: 'text-gray-500' },
+                     { label: dict.support.priorityCritical, desc: dict.support.priorityCriticalDesc, color: 'text-neon-pink' },
+                     { label: dict.support.priorityHigh, desc: dict.support.priorityHighDesc, color: 'text-neon-purple' },
+                     { label: dict.support.priorityNormal, desc: dict.support.priorityNormalDesc, color: 'text-neon-blue' },
+                     { label: dict.support.priorityLow, desc: dict.support.priorityLowDesc, color: 'text-gray-500' },
                    ].map(p => (
                      <div key={p.label} className="flex gap-4 items-start group">
                         <div className={`w-1 h-8 rounded-full bg-current ${p.color} opacity-40 group-hover:opacity-100 transition-all`} />
@@ -510,15 +512,15 @@ export default function SupportPage() {
            <div className="text-center space-y-2 mb-12">
              <div className="flex items-center justify-center gap-4 text-brand-light mb-4">
                 <div className="w-8 h-8">{I.globe}</div>
-                <h3 className="text-4xl font-header font-black text-white uppercase italic tracking-tighter">REDES OFICIALES</h3>
+                <h3 className="text-4xl font-header font-black text-white uppercase italic tracking-tighter">{dict.support.socialNetworks}</h3>
              </div>
-             <p className="text-gray-500 font-black text-[10px] uppercase tracking-[0.5em] flex items-center justify-center gap-2">CANALES EXCLUSIVOS DE CISZUKO ANTONY</p>
+             <p className="text-gray-500 font-black text-[10px] uppercase tracking-[0.5em] flex items-center justify-center gap-2">{dict.support.exclusiveChannels}</p>
            </div>
 
            <div className="space-y-10">
               <div className="flex items-center gap-4">
                  <div className="h-[1px] flex-1 bg-brand/10" />
-                 <span className="text-brand-light font-black text-[10px] uppercase tracking-widest px-4">Sincronización Social Unificada</span>
+                  <span className="text-brand-light font-black text-[10px] uppercase tracking-widest px-4">{dict.support.socialSync}</span>
                  <div className="h-[1px] flex-1 bg-brand/10" />
               </div>
               <div className="flex flex-wrap justify-center gap-4">

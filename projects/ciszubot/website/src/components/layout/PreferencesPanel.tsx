@@ -13,6 +13,7 @@ import {
   ZOOM_STEP,
 } from '@/lib/preferences';
 import type { Lang } from '@/lib/i18n';
+import { getDict } from '@/lib/i18n';
 import { LanguagesModal, useToast, LANGUAGE_OPTIONS, isLangAvailable, LANG_BLOCKED_MESSAGE, setCookieConsent, clearCookieConsent, useCookieConsent, markVoluntaryReload } from '@ciszu/ui';
 
 interface PreferencesPanelProps {
@@ -87,6 +88,7 @@ const IcoHelp = () => (
  */
 export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onToggleTheme }: PreferencesPanelProps) {
   const { toast } = useToast();
+  const t = getDict(lang);
   const [langOpen, setLangOpen] = useState(false);
   const [zoom, setZoomState] = useState<number>(100);
   const [muteTab, setMuteTabState] = useState<boolean>(false);
@@ -120,21 +122,21 @@ export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onTo
     setMuteTabState(next);
     setMuteTab(next);
     persist({ muteTab: next });
-    toast(next ? 'Pestaña silenciada' : 'Pestaña restaurada', 'info');
+    toast(next ? t.prefs.muted : t.prefs.unmuted, 'info');
   };
 
   const toggleRedirectGuard = () => {
     const next = !redirectGuard;
     setRedirectGuardState(next);
     persist({ redirectGuard: next });
-    toast(next ? 'Aviso de redirección activado' : 'Aviso de redirección desactivado', 'info');
+    toast(next ? t.prefs.redirectGuardOn : t.prefs.redirectGuardOff, 'info');
   };
 
   const toggleActivityGuard = () => {
     const next = !activityGuard;
     setActivityGuardState(next);
     persist({ activityGuard: next });
-    toast(next ? 'Protección de acciones activada' : 'Protección de acciones desactivada', 'info');
+    toast(next ? t.prefs.activityGuardOn : t.prefs.activityGuardOff, 'info');
   };
 
   const handleLangSelect = (code: string) => {
@@ -158,7 +160,7 @@ export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onTo
 
   // ── Cookies: el usuario SIEMPRE puede rechazar o reaparecer el aviso. ──
   const cookieConsent = useCookieConsent();
-  const cookieStateLabel = cookieConsent === 'accepted' ? 'Aceptadas' : cookieConsent === 'rejected' ? 'Rechazadas' : 'Sin decidir';
+  const cookieStateLabel = cookieConsent === 'accepted' ? t.prefs.cookiesAccepted : cookieConsent === 'rejected' ? t.prefs.cookiesRejected : t.prefs.cookiesUndecided;
   const cookieStateCls = cookieConsent === 'accepted'
     ? 'bg-green-500/10 border-green-500/40 text-green-400'
     : cookieConsent === 'rejected'
@@ -167,17 +169,17 @@ export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onTo
 
   const handleCookieReject = () => {
     setCookieConsent('rejected');
-    toast('Cookies rechazadas: los servicios opcionales están desactivados.', 'info');
+    toast(t.prefs.cookiesRejectedToast, 'info');
     window.setTimeout(() => { markVoluntaryReload(); window.location.reload(); }, 1800);
   };
   const handleCookieAccept = () => {
     setCookieConsent('accepted');
-    toast('Cookies aceptadas. Gracias por apoyar a CiszuBot.', 'info');
+    toast(t.prefs.cookiesAcceptedToast, 'info');
     window.setTimeout(() => { markVoluntaryReload(); window.location.reload(); }, 1800);
   };
   const handleCookieReappear = () => {
     clearCookieConsent();
-    toast('El aviso de cookies volverá a aparecer.', 'info');
+    toast(t.prefs.cookiesReappearToast, 'info');
     window.setTimeout(() => { markVoluntaryReload(); window.location.reload(); }, 1800);
   };
 
@@ -193,8 +195,8 @@ export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onTo
       <div className="flex items-center justify-between gap-2">
         <button
           onClick={handleTheme}
-          aria-label="Cambiar tema"
-          title={isDark ? 'Modo claro' : 'Modo oscuro'}
+          aria-label={t.nav.toggleTheme}
+          title={isDark ? t.prefs.lightMode : t.prefs.darkMode}
           className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group shrink-0 ${
             isDark ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
           }`}
@@ -210,7 +212,7 @@ export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onTo
           type="button"
           onClick={() => setLangOpen(true)}
           className="flex-1 flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-card border border-border text-ink hover:border-neon-blue/60 transition-all active:scale-95 cursor-pointer"
-          title="Cambiar idioma"
+          title={t.prefs.changeLanguage}
         >
           <span className="flex items-center gap-2 text-xs font-header font-bold uppercase tracking-widest">
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -218,7 +220,7 @@ export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onTo
               <path d="M2 12h20" />
               <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
             </svg>
-            Idioma
+            {t.prefs.language}
           </span>
           <span className="flex items-center gap-2">
             <span className="w-6 h-6 rounded-full overflow-hidden shadow-inner border border-border shrink-0">{currentLang.flag}</span>
@@ -237,7 +239,7 @@ export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onTo
           <button
             onClick={() => setZoom(-ZOOM_STEP)}
             disabled={zoom <= ZOOM_MIN}
-            aria-label="Quitar zoom"
+            aria-label={t.prefs.zoomOut}
             className="p-1.5 rounded-md bg-card border border-border text-ink hover:border-neon-blue hover:text-neon-blue disabled:opacity-30 disabled:cursor-not-allowed transition shrink-0 cursor-pointer"
           >
             <IcoZoomMinus />
@@ -254,7 +256,7 @@ export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onTo
           <button
             onClick={() => setZoom(ZOOM_STEP)}
             disabled={zoom >= ZOOM_MAX}
-            aria-label="Sumar zoom"
+            aria-label={t.prefs.zoomIn}
             className="p-1.5 rounded-md bg-card border border-border text-ink hover:border-neon-blue hover:text-neon-blue disabled:opacity-30 disabled:cursor-not-allowed transition shrink-0 cursor-pointer"
           >
             <IcoZoomPlus />
@@ -264,10 +266,10 @@ export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onTo
 
       {/* Silenciar pestaña */}
       <div className="flex items-center justify-between gap-3">
-        <span className={rowLabel}>Silenciar pestaña</span>
+        <span className={rowLabel}>{t.prefs.muteTab}</span>
         <button
           onClick={toggleMuteTab}
-          aria-label="Silenciar pestaña"
+          aria-label={t.prefs.muteTab}
           className={iconBtn(muteTab, 'bg-[#5865F2]/15 border-[#5865F2]/50 text-[#5865F2]')}
         >
           {muteTab ? <IcoVolumeOff /> : <IcoVolume />}
@@ -276,13 +278,13 @@ export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onTo
 
       {/* Cookies: rechazar en cualquier momento o reaparecer el aviso */}
       <div>
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-faint mb-1.5">Cookies</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-faint mb-1.5">{t.prefs.cookies}</p>
         <div className={`flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg border ${cookieStateCls}`}>
           <span className="flex items-center gap-2 text-xs font-bold">
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 2a10 10 0 0 0-6.88 17.26c1.89 1.74 4.3 2.74 6.88 2.74 5.52 0 10-4.48 10-10 0-2.58-1-5-2.74-6.88C17.52 3 15 2 12 2zm1 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm-4-3a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm6-2a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm-3-4a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
             </svg>
-            Cookies
+            {t.prefs.cookies}
           </span>
           <span className="text-[10px] font-black uppercase tracking-widest">{cookieStateLabel}</span>
         </div>
@@ -295,7 +297,7 @@ export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onTo
               <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M18 6 6 18" /><path d="m6 6 12 12" />
               </svg>
-              Rechazar cookies
+              {t.prefs.rejectCookies}
             </button>
           )}
           {cookieConsent !== 'accepted' && (
@@ -306,7 +308,7 @@ export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onTo
               <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20 6 9 17l-5-5" />
               </svg>
-              Aceptar cookies
+              {t.prefs.acceptCookies}
             </button>
           )}
           <button
@@ -316,20 +318,20 @@ export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onTo
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
               <path d="M1 4v6h6" /><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
             </svg>
-            Reaparecer aviso de cookies
+            {t.prefs.reappearCookies}
           </button>
         </div>
       </div>
 
       {/* Navegación segura */}
       <div>
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-faint mb-1.5">Navegación</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-faint mb-1.5">{t.prefs.navigation}</p>
         <div className="flex items-center justify-between gap-3">
-          <span className={rowLabel}>Aviso de redirección</span>
+          <span className={rowLabel}>{t.prefs.redirectGuard}</span>
           <button
             onClick={toggleRedirectGuard}
-            aria-label="Aviso de redirección"
-            title="Aviso azul al salir a otra web"
+            aria-label={t.prefs.redirectGuard}
+            title={t.prefs.redirectGuardTitle}
             className={iconBtn(redirectGuard, 'bg-blue-500/15 border-blue-500/50 text-blue-400')}
           >
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -340,11 +342,11 @@ export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onTo
           </button>
         </div>
         <div className="flex items-center justify-between gap-3 mt-2">
-          <span className={rowLabel}>Proteger acciones</span>
+          <span className={rowLabel}>{t.prefs.activityGuard}</span>
           <button
             onClick={toggleActivityGuard}
-            aria-label="Protección de acciones no recuperables"
-            title="Aviso rojo si vas a perder progreso al navegar"
+            aria-label={t.prefs.activityGuard}
+            title={t.prefs.activityGuardTitle}
             className={iconBtn(activityGuard, 'bg-red-500/15 border-red-500/50 text-red-400')}
           >
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -362,13 +364,13 @@ export default function PreferencesPanel({ lang, isDark, userId, onSetLang, onTo
           href="/support"
           className="flex items-center gap-2 text-xs font-bold text-ink/85 hover:text-neon-blue transition"
         >
-          <IcoHelp /> Ayuda y soporte
+          <IcoHelp /> {t.prefs.help}
         </Link>
       </div>
 
       <LanguagesModal
         open={langOpen}
-        title="Seleccionar idioma"
+        title={t.prefs.changeLanguage}
         current={lang}
         onSelect={handleLangSelect}
         onClose={() => setLangOpen(false)}

@@ -30,6 +30,7 @@ import { supabase } from '@/config/supabase';
 import { CHANGELOG_DATA } from '@/data/changelog';
 import { TAG_CONFIG as CHANGELOG_TAGS, I as CHANGELOG_I } from '@/config/changelogIcons';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useT } from '@/hooks/useT';
 import { getGuestId, getGuestName } from '@/lib/guest';
 import { updatePreferences, isLangAvailable, reloadAfterPrefChange } from '@/lib/preferences';
 import { useToast, useActivityGuard, LANGUAGE_OPTIONS } from '@ciszu/ui';
@@ -185,6 +186,7 @@ function PlayPageContent() {
     lang,
     setLang
   } = useAppStore();
+  const t = useT();
   const [selectedTrack, setSelectedTrack] = useState<Track | null>(null);
   const [accentColors, setAccentColors] = useState<Record<string, string>>({});
   const [countdown, setCountdown] = useState<number | null>(null);
@@ -1684,9 +1686,9 @@ function PlayPageContent() {
               <div className="bg-black/60 backdrop-blur-2xl border border-white/10 rounded-[3rem] p-10 md:p-16 shadow-2xl relative overflow-hidden space-y-8">
               <div className="text-center space-y-4">
                 <h1 className="text-4xl md:text-6xl font-header font-black uppercase italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-neon-blue to-neon-cyan">
-                  CONFIGURA TU TERMINAL
+                  {t.pages.play.setupTitle.toUpperCase()}
                 </h1>
-                <p className="text-gray-400 uppercase tracking-widest text-xs font-bold">Paso 1 de 1 - Preferencias Táctiles</p>
+                <p className="text-gray-400 uppercase tracking-widest text-xs font-bold">{t.pages.play.setupStep}</p>
               </div>
 
               <div className="grid md:grid-cols-3 gap-6">
@@ -3508,8 +3510,8 @@ function PlayPageContent() {
                 {activeGameState.isPaused && selectedTrack && resumeCountdown === null && (
                   <div className="absolute inset-0 bg-black/85 backdrop-blur-xl z-40 flex flex-col items-center justify-center pointer-events-auto overflow-y-auto">
                     <div className="max-w-2xl w-full mx-auto px-6 py-8">
-                      <motion.h1 initial={{y:-30,opacity:0}} animate={{y:0,opacity:1}} className="text-4xl md:text-6xl font-header font-black uppercase italic tracking-tighter text-white drop-shadow-[0_0_50px_rgba(255,255,255,0.3)] text-center mb-1">PAUSA</motion.h1>
-                      <p className="text-gray-500 uppercase tracking-[0.4em] font-bold text-xs text-center mb-6">Partida suspendida temporalmente</p>
+                      <motion.h1 initial={{y:-30,opacity:0}} animate={{y:0,opacity:1}} className="text-4xl md:text-6xl font-header font-black uppercase italic tracking-tighter text-white drop-shadow-[0_0_50px_rgba(255,255,255,0.3)] text-center mb-1">{t.pages.play.paused.toUpperCase()}</motion.h1>
+                      <p className="text-gray-500 uppercase tracking-[0.4em] font-bold text-xs text-center mb-6">{t.pages.play.pausedHint}</p>
 
                       {/* Track Info Compact */}
                       <motion.div initial={{y:20,opacity:0}} animate={{y:0,opacity:1}} transition={{delay:0.1}}

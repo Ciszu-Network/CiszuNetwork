@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useT } from '@/hooks/useT';
 
 // --- Pure SVG Icon Library ---
 const I = {
@@ -148,6 +149,7 @@ const HELP_DOCKS = [
 
 export default function HelpCenterPage() {
   usePageTitle('HELP');
+  const t = useT();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDock, setSelectedDock] = useState<typeof HELP_DOCKS[0] | null>(null);
 
@@ -179,11 +181,11 @@ export default function HelpCenterPage() {
                    {I.lifeBuoy}
                 </div>
                 <h1 className="text-4xl md:text-8xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-neon-blue via-white to-neon-purple bg-clip-text text-transparent [-webkit-text-stroke:1px_black]">
-                  AYUDA
+                  {t.pages.help.title}
                 </h1>
              </div>
              <p className="text-neon-cyan font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-               Optimización y Soporte Maestro
+               {t.pages.help.subtitle}
              </p>
           </div>
         </motion.header>

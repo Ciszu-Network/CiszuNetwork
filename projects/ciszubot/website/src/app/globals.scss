@@ -68,6 +68,23 @@
   --ui-panel: rgba(255, 255, 255, 0.92);
   --ui-panel-border: rgba(35, 63, 146, 0.16);
   --ui-track: rgba(35, 63, 146, 0.12);
+  /* Variables que consumen los componentes de @ciszu/ui (modales, guards,
+     docks y FABs). Sin definirlas aquí, en claro usaban los fallbacks oscuros
+     del paquete y se veían paneles negros con texto oscuro. */
+  --bg-card: #ffffff;
+  --overlay: rgba(27, 34, 52, 0.45);
+  --shadow-modal: 0 25px 60px rgba(27, 34, 52, 0.18);
+  --hover: rgba(35, 63, 146, 0.06);
+  --ink-faint: #66708a;
+  --ink-muted: #5a6478;
+  --accent: #0c7795;
+  --accent-border: rgba(12, 119, 149, 0.35);
+  --accent-soft: rgba(12, 119, 149, 0.1);
+  --blocked-soft: rgba(27, 34, 52, 0.03);
+  --blocked-hover: rgba(27, 34, 52, 0.07);
+  --btn-accent: #0675b1;
+  --btn-accent-hover: #3f6fd6;
+  --pdwa-accent: #0c7795;
   /* Porcentaje de color de marca que conserva el texto de las redes sociales
      (100 = color puro, como en oscuro; 70 = oscurecido lo justo para AA). */
   --brand-ink-mix: 70%;
@@ -113,6 +130,20 @@
   --ui-panel: rgba(9, 9, 14, 0.80);
   --ui-panel-border: rgba(255, 255, 255, 0.14);
   --ui-track: rgba(255, 255, 255, 0.12);
+  --bg-card: #1a1d25;
+  --overlay: rgba(0, 0, 0, 0.7);
+  --shadow-modal: 0 25px 60px rgba(0, 0, 0, 0.45);
+  --hover: rgba(255, 255, 255, 0.08);
+  --ink-faint: #6d7689;
+  --ink-muted: #9aa3b8;
+  --accent: #22d3ee;
+  --accent-border: rgba(34, 211, 238, 0.3);
+  --accent-soft: rgba(34, 211, 238, 0.1);
+  --blocked-soft: rgba(255, 255, 255, 0.03);
+  --blocked-hover: rgba(255, 255, 255, 0.07);
+  --btn-accent: #00d4ff;
+  --btn-accent-hover: #22d3ee;
+  --pdwa-accent: #22d3ee;
   --brand-ink-mix: 100%;
   --card: #20232d;
   --border: rgba(255, 255, 255, 0.09);
@@ -195,6 +226,21 @@ html:not(.dark) .bg-\[\#21262d\] { background-color: #e8ebf0 !important; }
 html:not(.dark) [class*="bg-[#21262d]/"] { background-color: #e8ebf0 !important; }
 html:not(.dark) .bg-\[\#30363d\] { background-color: #dce1e8 !important; }
 html:not(.dark) [class*="bg-[#30363d]/"] { background-color: #dce1e8 !important; }
+html:not(.dark) .bg-\[\#0a0a14\] { background-color: #ffffff !important; }
+html:not(.dark) [class*="bg-[#0a0a14]/"] { background-color: rgba(250, 251, 255, 0.97) !important; }
+html:not(.dark) .bg-\[\#0b1020\] { background-color: #eef1f8 !important; }
+html:not(.dark) [class*="bg-[#0b1020]/"] { background-color: #eef1f8 !important; }
+html:not(.dark) .bg-gray-800 { background-color: #e8ebf0 !important; }
+
+/* Gradientes oscuros puntuales (cards de contacto): el fondo debe aclararse o
+   el texto, que en claro pasa a tinta oscura, quedaría ilegible. */
+html:not(.dark) .to-black { --tw-gradient-to: #f0f3fa !important; }
+html:not(.dark) .from-black { --tw-gradient-from: #f0f3fa !important; }
+html:not(.dark) .from-gray-700,
+html:not(.dark) .from-gray-800 { --tw-gradient-from: #dce1e8 !important; }
+html:not(.dark) .to-zinc-900 { --tw-gradient-to: #eef1f8 !important; }
+html:not(.dark) .to-gray-600 { --tw-gradient-to: #c8cfdb !important; }
+html:not(.dark) [class*="from-indigo-950"] { --tw-gradient-from: rgba(35, 63, 146, 0.1) !important; }
 
 html:not(.dark) .bg-white\/5 { background-color: rgba(35, 63, 146, 0.05) !important; }
 html:not(.dark) .bg-white\/10 { background-color: rgba(35, 63, 146, 0.08) !important; }
@@ -230,9 +276,11 @@ html:not(.dark) .text-white\/60 { color: rgba(27, 34, 52, 0.62) !important; }
 html:not(.dark) .text-white\/55 { color: rgba(27, 34, 52, 0.55) !important; }
 html:not(.dark) .text-white\/50 { color: rgba(27, 34, 52, 0.52) !important; }
 html:not(.dark) .text-white\/45 { color: rgba(27, 34, 52, 0.45) !important; }
-html:not(.dark) .text-white\/40 { color: rgba(27, 34, 52, 0.42) !important; }
-html:not(.dark) .text-white\/35 { color: rgba(27, 34, 52, 0.35) !important; }
-html:not(.dark) .text-white\/30 { color: rgba(27, 34, 52, 0.32) !important; }
+/* Etiquetas del slidebar/menú: los valores originales quedaban en 2.5:1
+   sobre el panel claro; se refuerzan para cruzar AA. */
+html:not(.dark) .text-white\/40 { color: rgba(27, 34, 52, 0.65) !important; }
+html:not(.dark) .text-white\/35 { color: rgba(27, 34, 52, 0.6) !important; }
+html:not(.dark) .text-white\/30 { color: rgba(27, 34, 52, 0.55) !important; }
 html:not(.dark) .text-white\/25 { color: rgba(27, 34, 52, 0.25) !important; }
 html:not(.dark) .text-white\/20 { color: rgba(27, 34, 52, 0.2) !important; }
 html:not(.dark) .text-white\/15 { color: rgba(27, 34, 52, 0.15) !important; }
@@ -241,13 +289,20 @@ html:not(.dark) .text-white\/5 { color: rgba(27, 34, 52, 0.05) !important; }
 
 html:not(.dark) .text-gray-300 { color: #2e3a54 !important; }
 html:not(.dark) .text-gray-400 { color: #5a6478 !important; }
-html:not(.dark) .text-gray-500 { color: #7b879e !important; }
-html:not(.dark) .text-gray-600 { color: #8b93a7 !important; }
-html:not(.dark) .text-gray-700 { color: #9aa5bb !important; }
-html:not(.dark) .text-gray-800 { color: #aab3c5 !important; }
-html:not(.dark) .placeholder\:text-gray-700 { color: #9aa5bb !important; }
-html:not(.dark) .placeholder\:text-gray-600 { color: #8b93a7 !important; }
-html:not(.dark) .placeholder\:text-gray-500 { color: #7b879e !important; }
+html:not(.dark) .text-gray-500 { color: #66708a !important; }
+html:not(.dark) .text-gray-600 { color: #66708a !important; }
+html:not(.dark) .text-gray-700 { color: #5a6478 !important; }
+html:not(.dark) .text-gray-800 { color: #4c5670 !important; }
+html:not(.dark) .placeholder\:text-gray-700 { color: #5a6478 !important; }
+html:not(.dark) .placeholder\:text-gray-600 { color: #66708a !important; }
+html:not(.dark) .placeholder\:text-gray-500 { color: #66708a !important; }
+
+/* Colores de acento demasiado luminosos para fondo claro (TikTok cian,
+   estados verde/amarillo de los docks): se oscurecen lo justo para AA. */
+html:not(.dark) .text-\[\#00F2FE\] { color: #0e7490 !important; }
+html:not(.dark) .border-\[\#00F2FE\] { border-color: #0e7490 !important; }
+html:not(.dark) .text-green-400 { color: #15803d !important; }
+html:not(.dark) .text-yellow-400 { color: #a16207 !important; }
 
 /* Common modal/dropdown/card/pill/bar backgrounds */
 html:not(.dark) .bg-black\/50 { background-color: rgba(27, 34, 52, 0.16) !important; }

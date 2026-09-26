@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import { useDict } from '@/components/providers/I18nProvider';
 
 /**
  * 404 de Ciszuko Antony — estética de "pérdida de señal / portfolio fuera de
@@ -25,6 +26,7 @@ const JOKES = [
 ];
 
 export default function NotFound() {
+  const dict = useDict();
   const [losses, setLosses] = useState(0);
   const [jokeIndex, setJokeIndex] = useState(0);
   const [certificateOpen, setCertificateOpen] = useState(false);
@@ -150,7 +152,7 @@ export default function NotFound() {
       <div className="pointer-events-none absolute inset-x-0 top-0 cztv-band" aria-hidden />
       <div className="pointer-events-none absolute inset-x-0 top-0 cztv-band" style={{ animationDelay: '2.8s' }} aria-hidden />
       <div
-        className="pointer-events-none absolute inset-0"
+        className="cztv-vignette pointer-events-none absolute inset-0"
         aria-hidden
         style={{ background: 'radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.9) 100%)' }}
       />
@@ -160,7 +162,7 @@ export default function NotFound() {
         <div className="mb-10 inline-flex items-center gap-3 rounded-full border border-neon-pink/40 bg-neon-pink/10 px-5 py-2">
           <span className="cztv-blink h-2 w-2 rounded-full bg-neon-pink" aria-hidden />
           <span className="font-mono text-[10px] font-bold uppercase tracking-[0.4em] text-neon-pink">
-            Transmisión interrumpida
+            {dict.notFound.title}
           </span>
         </div>
 
@@ -168,7 +170,7 @@ export default function NotFound() {
         <h1
           className="cztv-glitch cztv-static font-header text-[6rem] font-black uppercase leading-none tracking-tighter text-white md:text-[10rem]"
           data-text="404"
-          aria-label="Error 404"
+          aria-label={dict.notFound.errorCode}
         >
           404
         </h1>
@@ -176,20 +178,19 @@ export default function NotFound() {
         <div className="mt-6 inline-flex items-center gap-3 border border-white/15 bg-white/5 px-5 py-2 font-mono text-[10px] uppercase tracking-[0.35em] text-white/60">
           <span className="text-neon-pink">SIG_LOST_404</span>
           <span aria-hidden>{'//'}</span>
-          <span>sin operador</span>
+          <span>{dict.notFound.noOperator}</span>
         </div>
 
         <h2 className="mt-8 font-header text-2xl font-black uppercase tracking-tighter text-white md:text-4xl">
-          Portfolio fuera de línea
+          {dict.notFound.offline}
         </h2>
         <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-white/50">
-          La señal de esta ruta se perdió entre el ruido: el enlace no forma parte del portafolio o fue movido de
-          frecuencia. Reestablece la conexión para volver a la emisión principal.
+          {dict.notFound.body}
         </p>
 
         {/* Coordenadas y último ping */}
         <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.3em] text-white/35">
-          {COORDINATES} <span className="mx-2 text-neon-pink/70">|</span> último ping: hace 404 s
+          {COORDINATES} <span className="mx-2 text-neon-pink/70">|</span> {dict.notFound.lastPing}
         </p>
 
         {/* Barras de señal fluctuando */}
@@ -203,7 +204,7 @@ export default function NotFound() {
           ))}
         </div>
         <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.4em] text-neon-pink/70">
-          Reconectando<span className="cztv-blink">...</span>
+          {dict.notFound.reconnecting}<span className="cztv-blink">...</span>
         </p>
 
         {/* Acciones */}
@@ -215,7 +216,7 @@ export default function NotFound() {
             <span aria-hidden className="font-mono">
               &#9679;
             </span>
-            Reestablecer señal
+            {dict.notFound.restore}
           </Link>
           <button
             type="button"
@@ -224,7 +225,7 @@ export default function NotFound() {
             aria-controls="cztv-certificate"
             className="inline-flex items-center gap-3 rounded-xl border border-white/15 bg-white/5 px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-white/60 transition-all hover:border-neon-pink/60 hover:text-neon-pink"
           >
-            ¿Perdiste algo?
+            {dict.notFound.lostSomething}
           </button>
         </div>
 
@@ -237,16 +238,16 @@ export default function NotFound() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-neon-pink/70">
-                  Certificado oficial de pérdida de señal
+                  {dict.notFound.certificate}
                 </p>
                 <p className="mt-1 font-header text-lg font-black uppercase tracking-tight text-white">
                   Serie CK-404-{rely}
                 </p>
               </div>
               <span className="flex h-14 w-14 shrink-0 rotate-12 items-center justify-center rounded-full border-2 border-neon-pink/70 text-center font-mono text-[8px] font-black uppercase leading-tight text-neon-pink/80">
-                Pérdida
+                {dict.notFound.loss}
                 <br />
-                oficial
+                {dict.notFound.official}
               </span>
             </div>
 
@@ -259,11 +260,11 @@ export default function NotFound() {
                 onClick={registerLoss}
                 className="self-start rounded-lg border border-neon-pink/40 px-4 py-2 font-bold text-neon-pink/80 transition-all hover:bg-neon-pink/10 hover:text-neon-pink sm:self-auto"
               >
-                Regenerar certificado
+                {dict.notFound.regenerate}
               </button>
             </div>
             <p className="mt-3 font-mono text-[9px] uppercase tracking-[0.25em] text-white/25">
-              Válido únicamente en esta frecuencia.
+              {dict.notFound.valid}
             </p>
           </div>
         ) : null}

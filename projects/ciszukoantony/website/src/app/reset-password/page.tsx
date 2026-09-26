@@ -20,6 +20,7 @@ import { useRouter } from 'next/navigation';
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import { supabase } from '@/config/supabase';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useDict } from '@/components/providers/I18nProvider';
 import {
   PasswordStrengthBar,
   RecoveryNotice,
@@ -49,6 +50,7 @@ const SITE_NAME = 'Ciszuko Antony';
 
 export default function ResetPasswordPage() {
   usePageTitle('RESET_PASSWORD');
+  const dict = useDict();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -176,7 +178,7 @@ export default function ResetPasswordPage() {
       await supabase.auth.signOut().catch(() => {});
       clearRecoveryMarkers();
       setDone(true);
-      toast('Contraseña actualizada. Vuelve a iniciar sesión con la nueva.', 'success');
+      toast(dict.auth.updatedToast, 'success');
       window.setTimeout(() => router.replace('/login'), 2600);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo actualizar la contraseña.');
@@ -197,8 +199,8 @@ export default function ResetPasswordPage() {
 
       <div className="max-w-md mx-auto px-4 relative">
         <div className="text-center mb-6 space-y-1">
-          <h1 className="text-white font-black uppercase tracking-widest text-sm">CISZU ID</h1>
-          <p className="text-gray-400 text-[11px] font-bold">Recupera el acceso a tu cuenta de Ciszuko Antony</p>
+          <h1 className="text-white font-black uppercase tracking-widest text-sm">{dict.auth.loginTitle}</h1>
+          <p className="text-gray-400 text-[11px] font-bold">{dict.auth.resetSubtitle}</p>
         </div>
 
         <div className="relative">
@@ -207,14 +209,14 @@ export default function ResetPasswordPage() {
             {checking ? (
               <div className="text-center space-y-3 py-6">
                 <div className="w-10 h-10 mx-auto border-2 border-white/20 border-t-neon-blue rounded-full animate-spin" />
-                <p className="text-gray-400 text-[11px] font-bold">Comprobando el enlace…</p>
+                <p className="text-gray-400 text-[11px] font-bold">{dict.auth.checkingLink}</p>
               </div>
             ) : done ? (
               <RecoveryNotice
                 tone="success"
-                title="Contraseña actualizada"
-                message="Tu contraseña ha sido restablecida y por seguridad cerramos la sesión. Inicia sesión con tu contraseña nueva."
-                actionLabel="Ir al login"
+                title={dict.auth.passwordUpdated}
+                message={dict.auth.updatedMessage}
+                actionLabel={dict.auth.goToLogin}
                 onAction={() => router.replace('/login')}
               />
             ) : status && !status.canSetPassword ? (
@@ -232,14 +234,14 @@ export default function ResetPasswordPage() {
               <form onSubmit={handleSubmit} className="space-y-5">
                 <RecoveryNotice
                   tone="info"
-                  title="Enlace verificado"
-                  message="Establece tu contraseña nueva. El enlace es de un solo uso y la sesión se cerrará al guardarla."
+                  title={dict.auth.linkVerified}
+                  message={dict.auth.verifiedMessage}
                   className="!p-4"
                 />
 
                 <div className="space-y-1">
                   <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 ml-1">
-                    Nueva contraseña
+                    {dict.auth.newPassword}
                   </label>
                   <input
                     type="password"
@@ -255,7 +257,7 @@ export default function ResetPasswordPage() {
 
                 <div className="space-y-1">
                   <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 ml-1">
-                    Repetir contraseña
+                    {dict.auth.repeatPassword}
                   </label>
                   <input
                     type="password"
@@ -269,7 +271,7 @@ export default function ResetPasswordPage() {
                 </div>
 
                 <p className="text-[10px] font-bold text-gray-500 leading-relaxed">
-                  Mínimo 8 caracteres. No puede ser igual a tu contraseña anterior.
+                  {dict.auth.passwordHint}
                 </p>
 
                 {error && <p className="text-red-400 text-[11px] font-bold">{error}</p>}

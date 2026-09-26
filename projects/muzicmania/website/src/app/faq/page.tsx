@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useT } from '@/hooks/useT';
 
 // --- Icons Library ---
 const I = {
@@ -114,6 +115,7 @@ const faqData = [
 
 export default function FAQPage() {
   usePageTitle('FAQ');
+  const t = useT();
   const [searchTerm, setSearchTerm] = useState('');
   const [openId, setOpenId] = useState<number | null>(null);
 
@@ -148,11 +150,11 @@ export default function FAQPage() {
                    {I.help}
                 </div>
                 <h1 className="text-4xl md:text-8xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-neon-cyan via-white to-neon-cyan bg-clip-text text-transparent [-webkit-text-stroke:1px_black]">
-                  FAQ
+                  {t.pages.faq.title}
                 </h1>
              </div>
              <p className="text-neon-cyan font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-               Preguntas Frecuentes · Centro de Ayuda
+               {t.pages.faq.subtitle}
              </p>
           </div>
         </motion.header>

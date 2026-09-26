@@ -8,6 +8,7 @@ import { assetResolver } from '@ciszunetwork/cdn';
 import { supabase } from '@/config/supabase';
 import { useAppStore } from '@/store';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useDict } from '@/components/providers/I18nProvider';
 import {
   AuthBenefitsPanel,
   AuthField,
@@ -89,6 +90,7 @@ const ANTONY_ISOTYPE = assetResolver.resolve('projects/ciszukoantony/content/log
 
 export default function LoginPage() {
   usePageTitle('LOGIN');
+  const dict = useDict();
   const user = useAppStore((s) => s.user);
   const router = useRouter();
   const { begin: beginActivity, end: endActivity } = useActivityGuard();
@@ -264,7 +266,7 @@ export default function LoginPage() {
           ciszuHref="https://ciszunetwork.vercel.app"
           appHref="/"
           title="CISZU ID"
-          subtitle="Inicia sesión en Ciszuko Antony con CISZU ID"
+          subtitle={dict.auth.loginSubtitleFull}
         />
       </div>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-6 lg:gap-10 items-start">
@@ -274,28 +276,28 @@ export default function LoginPage() {
             {forgot ? (
               <form onSubmit={handleForgotSubmit} className="space-y-5">
                 <div className="text-center space-y-2">
-                  <h3 className="text-white font-black uppercase tracking-widest text-sm">Recuperar identidad</h3>
-                  <p className="text-gray-400 text-[10px] font-bold">Enviaremos un enlace temporal de un solo uso a tu email. Revisa tu bandeja o spam.</p>
+                  <h3 className="text-white font-black uppercase tracking-widest text-sm">{dict.auth.resetTitle}</h3>
+                  <p className="text-gray-400 text-[10px] font-bold">{dict.auth.resetSubtitle}</p>
                 </div>
                 <AuthField
-                  label="Email de la cuenta"
+                  label={dict.auth.emailLabel}
                   name="email"
                   icon={<span className="w-full h-full text-neon-blue"><IconMail /></span>}
                   type="email"
-                  placeholder="tu@email.com"
+                  placeholder={dict.auth.emailPlaceholder}
                   required
                   autoComplete="email"
                   value={forgotEmail}
                   onChange={(e) => { setForgotEmail(e.target.value); setErrors(prev => ({ ...prev, email: '' })); }}
                   error={errors.email}
-                  requirements={['Formato de email válido (p. ej. nombre@dominio.com)', 'Debe ser la cuenta CISZU ID registrada']}
+                  requirements={[dict.auth.reqFormat, dict.auth.reqRegistered]}
                 />
                 <RecoveryOneUseNotice />
                 {localError && <p className="text-red-400 text-[11px] font-bold">{localError}</p>}
                 {sent ? (
                   <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-center">
-                    <p className="text-emerald-400 text-xs font-bold">Enlace enviado</p>
-                    <p className="text-gray-400 text-[10px] font-bold mt-1">Revisa tu bandeja de entrada o spam. El enlace es de un solo uso.</p>
+                    <p className="text-emerald-400 text-xs font-bold">{dict.auth.linkSent}</p>
+                    <p className="text-gray-400 text-[10px] font-bold mt-1">{dict.auth.linkSentBody}</p>
                   </div>
                 ) : (
                   <button
@@ -308,7 +310,7 @@ export default function LoginPage() {
                 )}
                 <button type="button" onClick={() => { setForgot(false); setSent(false); setLocalError(null); }}
                   className="w-full text-[10px] text-gray-500 font-bold uppercase tracking-widest hover:text-white transition-all cursor-pointer">
-                  ← Volver al acceso normal
+                  {dict.auth.backToLogin}
                 </button>
               </form>
             ) : (
@@ -319,7 +321,7 @@ export default function LoginPage() {
                     name="email"
                     icon={<span className="w-full h-full text-neon-blue"><IconMail /></span>}
                     type="email"
-                    placeholder="tu@email.com"
+                    placeholder={dict.auth.emailPlaceholder}
                     required
                     autoComplete="email"
                     value={form.email}
@@ -328,7 +330,7 @@ export default function LoginPage() {
                     requirements={['Formato de email válido (p. ej. nombre@dominio.com)']}
                   />
                   <AuthField
-                    label="Contraseña"
+                    label={dict.auth.passwordLabel}
                     name="password"
                     icon={<span className="w-full h-full text-neon-blue"><IconLock /></span>}
                     type="password"
@@ -338,7 +340,7 @@ export default function LoginPage() {
                     value={form.password}
                     onChange={handleChange}
                     error={errors.password}
-                    requirements={['Mínimo 8 caracteres', 'Al menos 1 mayúscula', 'Al menos 1 minúscula', 'Al menos 1 número y 1 símbolo']}
+                    requirements={[dict.auth.reqMin8, dict.auth.reqUpper, dict.auth.reqLower, dict.auth.reqNumber]}
                   />
 
                   {localError && <p className="text-red-400 text-[11px] font-bold">{localError}</p>}
@@ -386,7 +388,7 @@ export default function LoginPage() {
         {/* Página derecha: beneficios */}
         <AuthBenefitsPanel
           badge="CISZU ID"
-          title="¿Por qué iniciar sesión?"
+          title={dict.auth.whyLogin}
           items={LOGIN_BENEFITS}
           footerNote={LOGIN_FOOTER}
           accent="#3b6ee2"

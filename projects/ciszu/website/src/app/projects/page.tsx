@@ -7,6 +7,8 @@ import PageAmbience from "@/components/layout/PageAmbience";
 import PageReveal from "@/components/layout/PageReveal";
 import QuickDocks from "@/components/molecules/QuickDocks";
 import { CISZU_NETWORK, GITHUB_REPO } from "@/config/site";
+import { getServerI18n } from "@/lib/i18n-server";
+import { fillTemplate } from "@/lib/i18n";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -95,16 +97,17 @@ const projects: Project[] = [
   },
 ];
 
-export default function ProjectsPage() {
+export default async function ProjectsPage() {
+  const { t } = await getServerI18n();
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />
       <PageReveal className="relative mx-auto max-w-screen-xl">
         <InfoHero
           icon="rocket"
-          title="Proyectos"
-          subtitle={`Cada proyecto de ${CISZU_NETWORK.name}: comunidad, bots, juegos, desarrollo y contenido. Un ecosistema, una sola identidad.`}
-          kicker="Ecosistema"
+          title={t.projectsPage.heroTitle}
+          subtitle={fillTemplate(t.projectsPage.heroSubtitle, { site: CISZU_NETWORK.name })}
+          kicker={t.projectsPage.kicker}
           theme={THEME}
         />
 
@@ -156,10 +159,9 @@ export default function ProjectsPage() {
         </div>
 
         <div className="mt-14 text-center p-8 rounded-[2rem] bg-gradient-to-br from-brand/10 to-transparent border border-brand/30">
-          <h2 className="text-xl font-header font-bold text-white mb-3">Construido en abierto</h2>
+          <h2 className="text-xl font-header font-bold text-white mb-3">{t.projectsPage.builtTitle}</h2>
           <p className="text-gray-400 text-sm mb-6 max-w-xl mx-auto">
-            Todo el ecosistema vive en un monorepo pnpm: 4 webs Next.js, el bot de Discord, el juego y los
-            paquetes compartidos. Explora el código o escríbenos para colaborar.
+            {t.projectsPage.builtDesc}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
@@ -168,13 +170,13 @@ export default function ProjectsPage() {
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/10 transition-all"
             >
-              <ExternalLink className="w-4 h-4" /> Repositorio GitHub
+              <ExternalLink className="w-4 h-4" /> {t.projectsPage.githubRepo}
             </a>
             <Link
               href="/contact"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-brand/20 border border-brand/40 text-brand-light rounded-xl font-bold text-sm hover:bg-brand hover:text-white transition-all"
             >
-              Trabaja con nosotros <ArrowRight className="w-4 h-4" />
+              {t.projectsPage.workWithUs} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>

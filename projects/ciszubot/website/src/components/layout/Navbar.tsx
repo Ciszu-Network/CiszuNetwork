@@ -304,7 +304,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
     setIsDark(next === 'dark');
     const prefs = updatePreferences({ theme: next });
     if (activeUserId) void syncPreferencesToProfile(activeUserId, prefs);
-    toast(next === 'dark' ? 'Modo oscuro activado' : 'Modo claro activado', 'info');
+    toast(next === 'dark' ? dict.nav.themeDarkOn : dict.nav.themeLightOn, 'info');
     scheduleReload();
   };
 
@@ -316,7 +316,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
     } else {
       updatePreferences({ lang: code });
     }
-    toast(`Idioma cambiado a ${getLangLabel(code)}`, 'info');
+    toast(dict.nav.langChanged.replace('{lang}', getLangLabel(code)), 'info');
     scheduleReload();
   };
 
@@ -452,7 +452,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                   `w-3 h-3 transition-transform duration-200 ${openDropdown === 'Information' ? 'rotate-180' : ''}`
                 } />
               </Link>                {openDropdown === 'Information' && (
-                <div className="absolute top-full left-0 pt-2 w-56 z-50 animate-fade-in-down origin-top drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)]">
+                <div className="absolute top-full left-0 pt-2 w-56 z-50 animate-fade-in-down origin-top drop-shadow-2xl">
                   <div className="bg-[#0a0a14]/98 backdrop-blur-2xl border border-border rounded-xl py-2 shadow-2xl max-h-[70vh] overflow-y-auto">
                     <div className="px-4 py-2 text-xs font-black text-neon-blue/80 uppercase tracking-widest">Information</div>
                     <div className="h-px bg-white/10 mx-2" />
@@ -505,7 +505,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                   <Icon name="external" size={15} /> {dict.nav.invite}
                 </a>
                 <p className="border-t border-border px-4 py-2.5 text-[11px] text-muted">
-                  Añade a CiszuBot a tu servidor de Discord
+                  {dict.nav.inviteHint}
                 </p>
                 </div>
               )}
@@ -535,7 +535,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                   ? 'bg-neon-blue border-neon-blue text-black'
                   : 'bg-card border-border text-ink hover:border-neon-blue'
               }`}
-              aria-label="Menu"
+              aria-label={dict.nav.menu}
             >
               {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5 stroke-[2.5]" />}
             </button>
@@ -546,7 +546,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                 <button
                   onClick={() => { setAuthOpen(!authOpen); setSearchOpen(false); setInviteOpen(false); setIsMenuOpen(false); }}
                   className="flex items-center gap-2 rounded-full border border-border bg-card p-1 pr-2.5 transition hover:border-[#5865F2] hover:bg-muted/15 cursor-pointer"
-                  aria-label="Cuenta"
+                  aria-label={dict.nav.account}
                   aria-expanded={authOpen}
                 >
                   <img
@@ -567,7 +567,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                       ? 'bg-[#5865F2]/15 border-[#5865F2] text-[#5865F2]'
                       : 'bg-card border-border text-ink hover:border-[#5865F2] hover:shadow-[0_0_10px_rgba(88,101,242,0.25)]'
                   }`}
-                  aria-label="Cuenta de invitado"
+                  aria-label={dict.nav.account}
                   aria-expanded={authOpen}
                   title={mounted ? getGuestName() : 'Guest'}
                 >
@@ -602,14 +602,14 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                           onClick={() => setAuthOpen(false)}
                           className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-ink/85 transition hover:bg-muted/15 hover:text-neon-blue"
                         >
-                          <Icon name="server" size={15} /> Panel de control
+                          <Icon name="server" size={15} /> {dict.nav.dashboardControl}
                         </Link>
                         <button
                           type="button"
                           onClick={handleSignOut}
                           className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-red-400 transition hover:bg-muted/15 text-left cursor-pointer"
                         >
-                          <Icon name="close" size={15} /> Cerrar sesión
+                          <Icon name="close" size={15} /> {dict.nav.signOut}
                         </button>
                       </div>
                     </div>
@@ -621,7 +621,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                         </span>
                         <div className="min-w-0">
                           <p className="truncate text-sm font-bold text-ink">{mounted ? getGuestName() : 'Guest'}</p>
-                          <p className="text-[11px] text-muted">Estás navegando como invitado</p>
+                          <p className="text-[11px] text-muted">{dict.nav.guestNotice}</p>
                         </div>
                       </div>
                       <div className="mt-3 flex flex-col gap-1.5">
@@ -630,21 +630,21 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                           onClick={() => setAuthOpen(false)}
                           className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-bold text-ink/85 border border-border transition hover:border-neon-blue hover:text-neon-blue"
                         >
-                          Iniciar sesión
+                          {dict.nav.signIn}
                         </Link>
                         <Link
                           href="/register"
                           onClick={() => setAuthOpen(false)}
                           className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-bold text-ink/85 border border-border transition hover:border-neon-blue hover:text-neon-blue"
                         >
-                          Registrarse
+                          {dict.nav.signUp}
                         </Link>
                         <a
                           href="/api/auth/discord"
                           className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-bold bg-[#5865F2] text-white transition hover:bg-[#4752c4] active:scale-95"
                         >
                           <Icon name="discord" size={16} className="[&>g]:fill-current" />
-                          Continuar con Discord
+                          {dict.nav.continueDiscord}
                         </a>
                       </div>
                     </div>
@@ -655,7 +655,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                       onClick={() => setPrefsOpen(true)}
                       className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-bold text-ink/85 border border-border bg-card transition hover:border-neon-blue hover:text-neon-blue cursor-pointer"
                     >
-                      <Icon name="settings" size={15} /> Preferencias locales
+                      <Icon name="settings" size={15} /> {dict.nav.localPreferences}
                     </button>
                   </div>
                 </div>
@@ -665,7 +665,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
         </div>
       </div>
 
-      <PreferencesModal open={prefsOpen} onOpenChange={setPrefsOpen} title="Preferencias locales" contentClassName="border border-white/10 bg-[#0a0a14]/98">
+      <PreferencesModal open={prefsOpen} onOpenChange={setPrefsOpen} title={dict.nav.localPreferences} contentClassName="border border-white/10 bg-[#0a0a14]/98">
         <PreferencesPanel
           lang={lang}
           isDark={isDark}
@@ -720,7 +720,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                   onClick={() => setQuery('')}
                   className="mt-3 px-6 py-2 rounded-full text-[10px] uppercase tracking-widest font-header font-bold bg-neon-blue/20 border border-neon-blue/40 text-neon-blue hover:bg-neon-blue hover:text-black transition-all active:scale-95 cursor-pointer"
                 >
-                  {lang === 'es-latam' || lang === 'es-es' ? 'Reiniciar búsqueda' : 'Reset search'}
+                  {dict.nav.resetSearch}
                 </button>
               </div>
             )}
@@ -741,8 +741,8 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                 className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transition-all duration-500 cursor-pointer border group ${
                   isDark ? 'bg-[#0a0a14]/98 border-white/10 hover:rotate-12' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
                 }`}
-              aria-label="Toggle theme"
-              title="Toggle theme"
+              aria-label={dict.nav.toggleTheme}
+              title={dict.nav.toggleTheme}
             >
               {isDark ? (
                 <svg className="w-5 h-5 text-ink transition-transform duration-500 group-hover:rotate-12" viewBox="0 0 24 24" fill="currentColor">
@@ -757,13 +757,13 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
             </button>
 
             <h2 className="text-neon-blue text-base font-header font-black tracking-widest drop-shadow-[0_0_8px_rgba(0,212,255,0.5)]">
-              {sidebarView === 'main' ? (lang === 'es-latam' || lang === 'es-es' ? 'MENÚ' : 'MENU') : 'IDIOMAS'}
+              {sidebarView === 'main' ? dict.nav.menu : dict.nav.languages}
             </h2>
 
             <button
               onClick={() => setSidebarView(sidebarView === 'main' ? 'lang' : 'main')}
               className="group flex items-center gap-3 px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all duration-300 shadow-lg cursor-pointer"
-              title="Idioma"
+              title={dict.nav.languages}
             >
               <svg className={`w-5 h-5 transition-transform duration-500 ${sidebarView === 'lang' ? 'rotate-90 text-neon-blue' : 'group-hover:rotate-12 text-white/70'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                 <circle cx="12" cy="12" r="10" />
@@ -779,7 +779,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
             {sidebarView === 'main' ? (
               <>
                 <div className="mb-4">
-                  <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">{lang === 'es-latam' || lang === 'es-es' ? 'NAVEGACIÓN' : 'NAVIGATION'}</p>
+                  <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">{dict.nav.navigation}</p>
                   {NAV_PAGES.map((link) => (
                     <Link
                       key={link.href}
@@ -803,7 +803,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                   ))}
 
                   <div className="h-px bg-white/10 my-4" />
-                  <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">{lang === 'es-latam' || lang === 'es-es' ? 'INFORMACIÓN' : 'INFORMATION'}
+                  <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">{dict.nav.information}
                   </p>
                   {INFO_PAGES.map((link) => (
                     <Link
@@ -829,7 +829,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                 </div>
 
                 <div className="h-px bg-white/10 my-4" />
-                <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">{lang === 'es-latam' || lang === 'es-es' ? 'CUENTA' : 'ACCOUNT'}</p>
+                <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">{dict.nav.accountSection}</p>
                 {activeUser ? (
                   <Link
                     href="/dashboard"
@@ -837,7 +837,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                     className="w-full flex items-center justify-center gap-2 py-3 bg-neon-blue/10 border border-neon-blue/30 text-neon-blue rounded-xl font-header font-bold hover:bg-neon-blue/20 hover:text-white text-xs shadow-[0_4px_15px_rgba(0,212,255,0.1)] transition-all"
                   >
                     <Icon name="server" size={16} className="[&>g]:fill-current" />
-                    <span>Panel</span>
+                    <span>{dict.nav.dashboard}</span>
                   </Link>
                 ) : (
                   <a
@@ -845,7 +845,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                     className="w-full flex items-center justify-center gap-2 py-3 bg-[#5865F2] text-white rounded-xl font-header font-bold hover:bg-[#4752c4] text-xs transition-all"
                   >
                     <Icon name="discord" size={16} className="[&>g]:fill-current" />
-                    <span>{lang === 'es-latam' || lang === 'es-es' ? 'Iniciar sesión con Discord' : 'Sign in with Discord'}</span>
+                    <span>{dict.nav.signInDiscord}</span>
                   </a>
                 )}
 
@@ -883,7 +883,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                       <span className="flex-1 text-left">{l.label}</span>
                       {!l.available && (
                         <span className="text-[9px] font-black uppercase tracking-widest text-white/30 bg-white/5 border border-white/10 rounded-full px-2 py-0.5 shrink-0">
-                          No disponible
+                          {dict.nav.unavailable}
                         </span>
                       )}
                       {active && (

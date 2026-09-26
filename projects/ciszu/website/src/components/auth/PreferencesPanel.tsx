@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAppStore } from '@/store';
+import { useDict } from '@/lib/useDict';
+import { fillTemplate } from '@/lib/i18n';
 import { LanguagesModal, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE, setCookieConsent, clearCookieConsent, useCookieConsent, markVoluntaryReload } from '@ciszu/ui';
 import { Button } from '@heroui/react';
 import {
@@ -33,18 +35,19 @@ const IcoZoomPlus = () => (
 );
 
 const HELP_LINKS = [
-  { href: '/support', label: 'Centro de Soporte', icon: (
+  { href: '/support', labelKey: 'supportCenter' as const, icon: (
     <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
   ) },
-  { href: '/faq', label: 'Preguntas Frecuentes', icon: (
+  { href: '/faq', labelKey: 'faq' as const, icon: (
     <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
   ) },
-  { href: '/contact', label: 'Contacto', icon: (
+  { href: '/contact', labelKey: 'contact' as const, icon: (
     <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
   ) },
 ];
 
 export default function PreferencesPanel() {
+  const t = useDict();
   const { theme, setTheme, language, setLanguage, zoom, setZoom, tabMuted, setTabMuted, user } = useAppStore();
   const { toast } = useToast();
   const [langOpen, setLangOpen] = useState(false);
@@ -70,14 +73,14 @@ export default function PreferencesPanel() {
     if (code === language) return;
     // Los 4 idiomas son individuales: se guarda el código exacto.
     setLanguage(code as any);
-    toast(`Idioma cambiado a ${getLangLabel(code)}`, 'info');
+    toast(fillTemplate(t.prefs.langChanged, { lang: getLangLabel(code) }), 'info');
     syncToProfile();
   };
 
   const handleThemeChange = () => {
     const next = theme === 'dark' ? 'light' : 'dark';
     setTheme(next);
-    toast(next === 'dark' ? 'Modo oscuro activado' : 'Modo claro activado', 'info');
+    toast(next === 'dark' ? t.prefs.themeDark : t.prefs.themeLight, 'info');
     syncToProfile();
   };
 
@@ -94,7 +97,7 @@ export default function PreferencesPanel() {
     setTabMuted(next);
     setMuteTab(next);
     updatePreferences({ tabMuted: next });
-    toast(next ? 'Pestaña silenciada' : 'Pestaña restaurada', 'info');
+    toast(next ? t.prefs.tabMuted : t.prefs.tabRestored, 'info');
     syncToProfile();
   };
 
@@ -106,7 +109,7 @@ export default function PreferencesPanel() {
     const next = !redirectGuard;
     setRedirectGuardPref(next);
     updatePreferences({ redirectGuard: next });
-    toast(next ? 'Aviso de redirección activado' : 'Aviso de redirección desactivado', 'info');
+    toast(next ? t.prefs.redirectOn : t.prefs.redirectOff, 'info');
     syncToProfile();
   };
 
@@ -114,7 +117,7 @@ export default function PreferencesPanel() {
     const next = !activityGuard;
     setActivityGuardPref(next);
     updatePreferences({ activityGuard: next });
-    toast(next ? 'Protección de acciones activada' : 'Protección de acciones desactivada', 'info');
+    toast(next ? t.prefs.activityOn : t.prefs.activityOff, 'info');
     syncToProfile();
   };
 
@@ -132,7 +135,7 @@ export default function PreferencesPanel() {
 
   // ── Cookies: el usuario SIEMPRE puede rechazar o reaparecer el aviso. ──
   const cookieConsent = useCookieConsent();
-  const cookieStateLabel = cookieConsent === 'accepted' ? 'Aceptadas' : cookieConsent === 'rejected' ? 'Rechazadas' : 'Sin decidir';
+  const cookieStateLabel = cookieConsent === 'accepted' ? t.prefs.accepted : cookieConsent === 'rejected' ? t.prefs.rejected : t.prefs.undecided;
   const cookieStateCls = cookieConsent === 'accepted'
     ? 'bg-green-500/10 border-green-500/40 text-green-400'
     : cookieConsent === 'rejected'
@@ -141,21 +144,21 @@ export default function PreferencesPanel() {
 
   const handleCookieReject = () => {
     setCookieConsent('rejected');
-    toast('Cookies rechazadas: los servicios opcionales están desactivados.', 'info');
+    toast(t.prefs.cookiesRejectedToast, 'info');
     // Recarga voluntaria (acción de la UI): se marca para que el AdBlockerGuard
     // no la trate como un F5 manual y no vuelva a aparecer.
     window.setTimeout(() => { markVoluntaryReload(); window.location.reload(); }, 1800);
   };
   const handleCookieAccept = () => {
     setCookieConsent('accepted');
-    toast('Cookies aceptadas. Gracias por apoyar a Ciszu Network.', 'info');
+    toast(t.prefs.cookiesAcceptedToast, 'info');
     // Recarga voluntaria (acción de la UI): se marca para que el AdBlockerGuard
     // no la trate como un F5 manual y no vuelva a aparecer.
     window.setTimeout(() => { markVoluntaryReload(); window.location.reload(); }, 1800);
   };
   const handleCookieReappear = () => {
     clearCookieConsent();
-    toast('El aviso de cookies volverá a aparecer.', 'info');
+    toast(t.prefs.cookiesReappearToast, 'info');
     // Recarga voluntaria (acción de la UI): se marca para que el AdBlockerGuard
     // no la trate como un F5 manual y no vuelva a aparecer.
     window.setTimeout(() => { markVoluntaryReload(); window.location.reload(); }, 1800);
@@ -198,7 +201,7 @@ export default function PreferencesPanel() {
               <path d="M2 12h20" />
               <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
             </svg>
-            Idioma
+            {t.prefs.language}
           </span>
           <span className="flex items-center gap-2">
             <span className="w-6 h-6 rounded-full overflow-hidden shadow-inner border" style={{ borderColor: 'var(--border, rgba(255,255,255,0.1))' }}>{currentLang.flag}</span>
@@ -211,7 +214,7 @@ export default function PreferencesPanel() {
 
       {/* Zoom (barra con botones −/+ en extremos; inicia en 100%) */}
       <div>
-        <p className={sectionTitleCls}>Zoom</p>
+        <p className={sectionTitleCls}>{t.prefs.zoom}</p>
         <div className="flex items-center gap-3">
           <Button
             onPress={() => changeZoom(-ZOOM_STEP)}
@@ -269,7 +272,7 @@ export default function PreferencesPanel() {
               </g>
             )}
           </svg>
-          Silenciar pestaña
+          {t.prefs.muteTab}
         </span>
         <span className={`w-9 h-5 rounded-full relative transition-colors ${tabMuted ? 'bg-red-500/70' : isDark ? 'bg-white/15' : 'bg-black/15'}`}>
           <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${tabMuted ? 'left-4' : 'left-0.5'}`} />
@@ -278,13 +281,13 @@ export default function PreferencesPanel() {
 
       {/* Cookies: rechazar en cualquier momento o reaparecer el aviso */}
       <div>
-        <p className={sectionTitleCls}>Cookies</p>
+        <p className={sectionTitleCls}>{t.prefs.cookies}</p>
         <div className={`flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg border ${cookieStateCls}`}>
           <span className="flex items-center gap-2 font-header font-bold text-xs uppercase tracking-widest">
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 2a10 10 0 0 0-6.88 17.26c1.89 1.74 4.3 2.74 6.88 2.74 5.52 0 10-4.48 10-10 0-2.58-1-5-2.74-6.88C17.52 3 15 2 12 2zm1 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm-4-3a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm6-2a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm-3-4a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
             </svg>
-            Cookies
+            {t.prefs.cookies}
           </span>
           <span className="text-[10px] font-black uppercase tracking-widest">{cookieStateLabel}</span>
         </div>
@@ -298,7 +301,7 @@ export default function PreferencesPanel() {
               <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M18 6 6 18" /><path d="m6 6 12 12" />
               </svg>
-              Rechazar cookies
+              {t.prefs.rejectCookies}
             </Button>
           )}
           {cookieConsent !== 'accepted' && (
@@ -310,7 +313,7 @@ export default function PreferencesPanel() {
               <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20 6 9 17l-5-5" />
               </svg>
-              Aceptar cookies
+              {t.prefs.acceptCookies}
             </Button>
           )}
           <Button
@@ -321,14 +324,14 @@ export default function PreferencesPanel() {
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
               <path d="M1 4v6h6" /><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
             </svg>
-            Reaparecer aviso de cookies
+            {t.prefs.reappearCookies}
           </Button>
         </div>
       </div>
 
       {/* Navegación segura */}
       <div>
-        <p className={sectionTitleCls}>Navegación</p>
+        <p className={sectionTitleCls}>{t.prefs.navigation}</p>
         {/* Guard azul: aviso de redirección a otras webs */}
         <Button
           onPress={toggleRedirectGuard}
@@ -345,7 +348,7 @@ export default function PreferencesPanel() {
               <polyline points="15 3 21 3 21 9" />
               <line x1="10" y1="14" x2="21" y2="3" />
             </svg>
-            Aviso de redirección
+            {t.prefs.redirectGuard}
           </span>
           <span className={`w-9 h-5 rounded-full relative transition-colors ${redirectGuard ? 'bg-blue-500/70' : isDark ? 'bg-white/15' : 'bg-black/15'}`}>
             <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${redirectGuard ? 'left-4' : 'left-0.5'}`} />
@@ -367,7 +370,7 @@ export default function PreferencesPanel() {
               <path d="M12 9v4" />
               <path d="M12 17h.01" />
             </svg>
-            Proteger acciones
+            {t.prefs.activityGuard}
           </span>
           <span className={`w-9 h-5 rounded-full relative transition-colors ${activityGuard ? 'bg-red-500/70' : isDark ? 'bg-white/15' : 'bg-black/15'}`}>
             <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${activityGuard ? 'left-4' : 'left-0.5'}`} />
@@ -377,7 +380,7 @@ export default function PreferencesPanel() {
 
       {/* Ayuda */}
       <div>
-        <p className={sectionTitleCls}>Ayuda</p>
+        <p className={sectionTitleCls}>{t.prefs.help}</p>
         <div className="grid grid-cols-1 gap-1">
           {HELP_LINKS.map((item) => (
             <Link
@@ -388,7 +391,7 @@ export default function PreferencesPanel() {
               }`}
             >
               <span className="text-brand-light/70">{item.icon}</span>
-              {item.label}
+              {t.prefs[item.labelKey]}
             </Link>
           ))}
         </div>
@@ -396,13 +399,13 @@ export default function PreferencesPanel() {
 
       {user && (
         <p className={`text-[9px] font-bold uppercase tracking-widest text-center ${isDark ? 'text-gray-600' : 'text-gray-500'}`}>
-          Preferencias sincronizadas con tu cuenta
+          {t.prefs.synced}
         </p>
       )}
 
       <LanguagesModal
         open={langOpen}
-        title="Seleccionar idioma"
+        title={t.prefs.selectLanguage}
         current={language}
         onSelect={(code: string) => handleLangSelect(code as any)}
         onClose={() => setLangOpen(false)}
