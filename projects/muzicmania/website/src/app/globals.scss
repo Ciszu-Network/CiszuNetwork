@@ -703,3 +703,17 @@ body.focus-mode [data-focus-container] {
 .light ::-webkit-scrollbar-thumb { background: rgba(35, 63, 146, 0.35) !important; }
 .light ::selection { background: rgba(35, 63, 146, 0.22); color: #0d1526 !important; }
 /* !!END LIGHT-AUDIT!! */
+
+/* ── Modo claro: acentos de texto (morado y estados hover) ──────────────
+   El bloque LIGHT-AUDIT fija los tonos base de `text-neon-*`, pero no
+   incluye el morado —acento de la columna "Comunidad y ayuda" del footer—
+   ni los estados `hover:text-neon-*` de sus enlaces. Sin estas reglas, en
+   modo claro el hover mostraba el tono saturado del modo oscuro (p. ej.
+   cian #68cfff) sobre fondo blanco: contraste insuficiente. */
+.light .text-neon-purple { color: #5b2fbf !important; }
+.light .hover\:text-neon-blue:hover { color: #2f5d88 !important; }
+.light .hover\:text-neon-cyan:hover { color: #315f7d !important; }
+.light .hover\:text-neon-pink:hover { color: #9e278a !important; }
+.light .hover\:text-neon-green:hover { color: #086748 !important; }
+.light .hover\:text-neon-yellow:hover { color: #625a19 !important; }
+.light .hover\:text-neon-purple:hover { color: #5b2fbf !important; }
