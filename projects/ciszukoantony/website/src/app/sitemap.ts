@@ -21,6 +21,7 @@ const ROUTES = [
   'projects',
   'portfolio',
   'socials',
+  'musicboard',
   'commissions',
   'support',
   'team',

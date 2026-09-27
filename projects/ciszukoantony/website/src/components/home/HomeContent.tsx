@@ -2,11 +2,14 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { SmartImage, Icon, EcosystemSection, captureEvent } from '@ciszu/ui';
+import { Icon, EcosystemSection, captureEvent } from '@ciszu/ui';
 import { PROJECTS } from '@/data/projects';
 import { CERTIFICATES } from '@/data/certificates';
 import { CHANGELOG_DATA } from '@/data/changelog';
 import { SOCIAL_ENTRIES, getSocial } from '@/data/socials';
+import { MUZICMANIA_ALBUMS, REAL_ALBUMS } from '@/data/music';
+import MusicCover from '@/components/music/MusicCover';
+import CdnImage from '@/components/shared/CdnImage';
 import SocialGlyph from '@/components/socials/SocialGlyph';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { supabase } from '@/config/supabase';
@@ -29,12 +32,9 @@ const PERSONAL_SLUGS = ['ciszukoantony', 'portfolio'];
 const PERSONAL_PROJECTS = PROJECTS.filter((project) => PERSONAL_SLUGS.includes(project.slug));
 const NETWORK_PROJECTS = PROJECTS.filter((project) => !PERSONAL_SLUGS.includes(project.slug));
 
-const GENESIS_TRACKS = [
-  { id: 'cyber_beat', name: 'Cyber Beat', cover: 'projects/muzicmania/content/music/albums/genesis_neon/cyber_beat/cover.png' },
-  { id: 'digital_soul', name: 'Digital Soul', cover: 'projects/muzicmania/content/music/albums/genesis_neon/digital_soul/cover.png' },
-  { id: 'neon_dreams', name: 'Neon Dreams', cover: 'projects/muzicmania/content/music/albums/genesis_neon/neon_dreams/cover.png' },
-  { id: 'oled_darkness', name: 'OLED Darkness', cover: 'projects/muzicmania/content/music/albums/genesis_neon/oled_darkness/cover.png' },
-];
+/** Obra propia (musicboard) primero; repertorio del juego después. */
+const REAL_ALBUM = REAL_ALBUMS[0];
+const GAME_ALBUM = MUZICMANIA_ALBUMS[0];
 
 const MONTHS = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 const fmtDate = (iso?: string) => {
@@ -204,23 +204,23 @@ export default function HomeContent() {
 
         <div className="relative z-10 max-w-4xl mx-auto">
           <div className="flex items-center justify-center gap-4 md:gap-7 mb-8 flex-wrap">
-            <SmartImage
-              src="projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png"
+            <CdnImage
+              src="projects/ciszukoantony/content/logos/images/not-outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zcolor_ccolor.png"
               alt="Isotipo de Ciszuko Antony"
               width={96}
               height={86}
               fetchPriority="high"
               className="animate-float drop-shadow-[0_0_25px_rgba(90,130,232,0.55)]"
             />
-            <SmartImage
-              src="projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png"
+            <CdnImage
+              src="projects/ciszukoantony/content/logos/images/not-outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png"
               alt="Logotipo de Ciszuko Antony"
               width={300}
               height={75}
               fetchPriority="high"
               className="animate-float-delayed max-w-[62vw] drop-shadow-[0_0_30px_rgba(61,106,223,0.5)]"
             />
-            <SmartImage
+            <CdnImage
               src="projects/ciszukoantony/content/logos/images/samples/circle/circle_1_yt.png"
               alt="Ciszuko Antony — canal de YouTube"
               width={96}
@@ -278,9 +278,8 @@ export default function HomeContent() {
           href="#sobre-mi"
           aria-label="Bajar al contenido"
           onClick={() => track('scroll_down')}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-neon-blue hover:text-neon-pink transition-colors"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center text-neon-blue hover:text-neon-pink transition-colors"
         >
-          <span className="text-[9px] font-black uppercase tracking-[0.4em]">Scroll</span>
           <span className="w-10 h-10 rounded-full border-2 border-current flex items-center justify-center animate-bounce">
             <Icon name="chevronRight" size={18} className="rotate-90" />
           </span>
@@ -337,7 +336,7 @@ export default function HomeContent() {
           </Reveal>
           <Reveal delay={100}>
             <div className="flex flex-col md:flex-row items-center gap-8 p-8 md:p-10 rounded-[2.5rem] bg-black/40 border border-white/10">
-              <SmartImage
+              <CdnImage
                 src="shared/images/francisco_selfie/IMG_20251207_001632@893898207.jpg"
                 alt="Retrato de Ciszuko Antony"
                 width={160}
@@ -400,80 +399,167 @@ export default function HomeContent() {
             <SectionTitle icon="music" kicker="Discografía" title="Música" tone="text-neon-purple" />
           </Reveal>
 
-          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1.4fr] gap-8 items-stretch">
-            <Reveal delay={80} className="h-full">
-              <div className="h-full p-6 md:p-8 rounded-[2.5rem] bg-gradient-to-br from-neon-purple/15 via-transparent to-transparent border border-neon-purple/30 flex flex-col">
-                <SmartImage
-                  src="projects/muzicmania/content/music/albums/genesis_neon/cover.png"
-                  alt="Portada del álbum Genesis Neon"
-                  width={420}
-                  height={420}
-                  className="w-full max-w-[320px] mx-auto rounded-3xl border border-white/10 shadow-[0_0_45px_rgba(128,0,255,0.35)]"
-                />
-                <div className="mt-6 text-center">
-                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-neon-purple">Álbum original</p>
-                  <h3 className="text-2xl font-header font-black uppercase italic text-white mt-1">Genesis Neon</h3>
-                  <p className="text-gray-400 text-sm leading-relaxed mt-3">
-                    Compuesto y producido por Ciszuko Antony para MuzicMania: el álbum que da banda sonora al juego de
-                    ritmo del ecosistema, con cuatro pistas y su propio arte.
-                  </p>
-                  <div className="flex flex-wrap justify-center gap-3 mt-6">
-                    <a
-                      href="https://muzicmania.vercel.app/library"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => track('music_library')}
-                      className="inline-flex items-center gap-2 px-5 py-3 bg-neon-purple/20 border border-neon-purple/50 text-neon-purple font-header font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-neon-purple hover:text-white transition-all"
-                    >
-                      <Icon name="play" size={16} />
-                      Escuchar en MuzicMania
-                    </a>
-                    <a
-                      href="https://open.spotify.com/user/317nxlvcrrlwfxjogyirixsqjmfi?si=50c43b75eb6e47db"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => track('music_spotify')}
-                      className="inline-flex items-center gap-2 px-5 py-3 bg-white/5 border border-white/20 text-white font-header font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-white/10 transition-all"
-                    >
-                      <Icon name="globe" size={16} />
-                      Spotify
-                    </a>
+          {/* Obra propia (musicboard): primero y con sus enlaces reales */}
+          {REAL_ALBUM ? (
+            <>
+              <Reveal>
+                <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+                  <h3 className="flex items-center gap-3 text-xs font-black uppercase tracking-[0.3em] text-neon-pink">
+                    <Icon name="star" size={16} />
+                    Obra propia · {REAL_ALBUM.title}
+                  </h3>
+                  <Link
+                    href="/musicboard"
+                    onClick={() => track('music_musicboard')}
+                    className="inline-flex items-center gap-2 text-[10px] font-header font-black uppercase tracking-widest text-neon-pink hover:text-white transition-colors"
+                  >
+                    Ver musicboard
+                    <Icon name="chevronRight" size={13} />
+                  </Link>
+                </div>
+              </Reveal>
+              <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1.4fr] gap-8 items-stretch">
+                <Reveal delay={80} className="h-full">
+                  <div className="h-full p-6 md:p-8 rounded-[2.5rem] bg-gradient-to-br from-neon-pink/15 via-transparent to-transparent border border-neon-pink/30 flex flex-col">
+                    <MusicCover
+                      src={REAL_ALBUM.cover}
+                      alt={`Portada de ${REAL_ALBUM.title}`}
+                      width={420}
+                      height={420}
+                      className="w-full max-w-[320px] mx-auto rounded-3xl border border-white/10 shadow-[0_0_45px_rgba(255,51,204,0.28)]"
+                    />
+                    <div className="mt-6 text-center">
+                      <p className="text-[10px] font-black uppercase tracking-[0.4em] text-neon-pink">
+                        {REAL_ALBUM.kind} · {REAL_ALBUM.year}
+                      </p>
+                      <h3 className="text-2xl font-header font-black uppercase italic text-white mt-1">
+                        {REAL_ALBUM.title}
+                      </h3>
+                      <p className="text-gray-400 text-sm leading-relaxed mt-3">{REAL_ALBUM.description}</p>
+                      <div className="flex flex-wrap justify-center gap-3 mt-6">
+                        {REAL_ALBUM.links.map((link) => (
+                          <a
+                            key={link.href}
+                            href={link.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => track(`music_real_${link.label.toLowerCase()}`)}
+                            className="inline-flex items-center gap-2 px-5 py-3 bg-neon-pink/15 border border-neon-pink/50 text-neon-pink font-header font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-neon-pink hover:text-white transition-all"
+                          >
+                            <Icon name={link.icon} size={16} />
+                            {link.label}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
                   </div>
+                </Reveal>
+
+                <Reveal delay={160} className="h-full">
+                  <div className="h-full grid grid-cols-2 gap-4">
+                    {REAL_ALBUM.tracks.map((song) => (
+                      <a
+                        key={song.id}
+                        href={song.links[0].href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => track(`music_real_track_${song.id}`)}
+                        className="group p-4 rounded-[1.75rem] bg-white/5 border border-white/10 hover:border-neon-pink/50 transition-all hover:-translate-y-1"
+                      >
+                        <MusicCover
+                          src={song.cover}
+                          alt={`Portada de ${song.title}`}
+                          width={200}
+                          height={200}
+                          className="w-full aspect-square object-cover rounded-2xl border border-white/10 group-hover:scale-[1.02] transition-transform"
+                        />
+                        <div className="mt-3 flex items-center gap-2">
+                          <Icon name="music" size={14} className="text-neon-pink" />
+                          <span className="text-xs font-header font-bold text-white truncate">{song.title}</span>
+                        </div>
+                        <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">
+                          Escuchar en {song.links[0].label}
+                        </span>
+                      </a>
+                    ))}
+                  </div>
+                </Reveal>
+              </div>
+            </>
+          ) : null}
+
+          {/* Repertorio de MuzicMania: después de la obra propia */}
+          {GAME_ALBUM ? (
+            <Reveal delay={200}>
+              <div className="mt-14 grid grid-cols-1 lg:grid-cols-[1.1fr_1.4fr] gap-8 items-stretch">
+                <div className="p-6 md:p-8 rounded-[2.5rem] bg-gradient-to-br from-neon-purple/15 via-transparent to-transparent border border-neon-purple/30 flex flex-col">
+                  <MusicCover
+                    src={GAME_ALBUM.cover}
+                    alt={`Portada de ${GAME_ALBUM.title}`}
+                    width={420}
+                    height={420}
+                    className="w-full max-w-[280px] mx-auto rounded-3xl border border-white/10 shadow-[0_0_45px_rgba(128,0,255,0.35)]"
+                  />
+                  <div className="mt-6 text-center">
+                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-neon-purple">
+                      {GAME_ALBUM.kind} · MuzicMania
+                    </p>
+                    <h3 className="text-2xl font-header font-black uppercase italic text-white mt-1">
+                      {GAME_ALBUM.title}
+                    </h3>
+                    <p className="text-gray-400 text-sm leading-relaxed mt-3">{GAME_ALBUM.description}</p>
+                    <div className="flex flex-wrap justify-center gap-3 mt-6">
+                      {GAME_ALBUM.links.map((link) => (
+                        <a
+                          key={link.href}
+                          href={link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => track(`music_game_${link.label.toLowerCase()}`)}
+                          className="inline-flex items-center gap-2 px-5 py-3 bg-neon-purple/20 border border-neon-purple/50 text-neon-purple font-header font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-neon-purple hover:text-white transition-all"
+                        >
+                          <Icon name={link.icon} size={16} />
+                          {link.label}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  {GAME_ALBUM.tracks.map((song) => (
+                    <a
+                      key={song.id}
+                      href={song.links[0].href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => track(`music_track_${song.id}`)}
+                      className="group p-4 rounded-[1.75rem] bg-white/5 border border-white/10 hover:border-neon-purple/50 transition-all hover:-translate-y-1"
+                    >
+                      <MusicCover
+                        src={song.cover}
+                        alt={`Portada de ${song.title}`}
+                        width={200}
+                        height={200}
+                        className="w-full aspect-square object-cover rounded-2xl border border-white/10 group-hover:scale-[1.02] transition-transform"
+                      />
+                      <div className="mt-3 flex items-center gap-2">
+                        <Icon name="music" size={14} className="text-neon-purple" />
+                        <span className="text-xs font-header font-bold text-white truncate">{song.title}</span>
+                      </div>
+                      <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">
+                        {GAME_ALBUM.title}
+                      </span>
+                    </a>
+                  ))}
                 </div>
               </div>
             </Reveal>
+          ) : null}
 
-            <Reveal delay={160} className="h-full">
-              <div className="h-full grid grid-cols-2 gap-4">
-                {GENESIS_TRACKS.map((song) => (
-                  <a
-                    key={song.id}
-                    href={`https://muzicmania.vercel.app/library?track=${song.id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => track(`music_track_${song.id}`)}
-                    className="group p-4 rounded-[1.75rem] bg-white/5 border border-white/10 hover:border-neon-purple/50 transition-all hover:-translate-y-1"
-                  >
-                    <SmartImage
-                      src={song.cover}
-                      alt={`Portada de ${song.name}`}
-                      width={200}
-                      height={200}
-                      className="w-full aspect-square object-cover rounded-2xl border border-white/10 group-hover:scale-[1.02] transition-transform"
-                    />
-                    <div className="mt-3 flex items-center gap-2">
-                      <Icon name="music" size={14} className="text-neon-purple" />
-                      <span className="text-xs font-header font-bold text-white truncate">{song.name}</span>
-                    </div>
-                    <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">Genesis Neon</span>
-                  </a>
-                ))}
-              </div>
-            </Reveal>
-          </div>
-
-          <Reveal delay={220}>
-            <div className="mt-6 flex flex-wrap justify-center gap-3">
+          {/* Canales reales de música */}
+          <Reveal delay={240}>
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
               <a
                 href="https://www.youtube.com/@CiszukoAntony"
                 target="_blank"
@@ -483,6 +569,16 @@ export default function HomeContent() {
               >
                 {youtube ? <SocialGlyph social={youtube} size={18} /> : null}
                 <span className="text-xs font-header font-bold text-white">YouTube</span>
+              </a>
+              <a
+                href="https://soundcloud.com/ciszuko-antony"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => track('music_soundcloud')}
+                className="inline-flex items-center gap-2 px-5 py-3 bg-white/5 border border-white/10 rounded-2xl hover:border-orange-500/50 transition-all"
+              >
+                <Icon name="music" size={16} className="text-orange-500" />
+                <span className="text-xs font-header font-bold text-white">SoundCloud</span>
               </a>
               <a
                 href="https://www.twitch.tv/ciszukoantony_"
@@ -495,17 +591,26 @@ export default function HomeContent() {
                 <span className="text-xs font-header font-bold text-white">Twitch</span>
               </a>
               <Link
+                href="/musicboard"
+                onClick={() => track('music_musicboard')}
+                className="inline-flex items-center gap-2 px-5 py-3 bg-white/5 border border-white/10 rounded-2xl hover:border-neon-pink/50 transition-all"
+              >
+                <Icon name="music" size={16} className="text-neon-pink" />
+                <span className="text-xs font-header font-bold text-white">Musicboard completo</span>
+              </Link>
+              <Link
                 href="/socials/spotify"
                 onClick={() => track('music_social_page')}
                 className="inline-flex items-center gap-2 px-5 py-3 bg-white/5 border border-white/10 rounded-2xl hover:border-neon-green/50 transition-all"
               >
-                <Icon name="external" size={16} className="text-neon-green" />
+                <Icon name="headset" size={16} className="text-neon-green" />
                 <span className="text-xs font-header font-bold text-white">Página de Spotify</span>
               </Link>
             </div>
           </Reveal>
         </div>
       </section>
+
 
       {/* ── REDES / PLATAFORMAS ──────────────────────────────── */}
       <section className="py-20 px-4 bg-white/[0.015] border-y border-white/5">
@@ -567,7 +672,7 @@ export default function HomeContent() {
               <Reveal key={project.slug} delay={i * 80}>
                 <article className="group h-full p-6 rounded-[2.25rem] bg-white/5 border border-white/10 hover:border-neon-cyan/40 transition-all hover:-translate-y-1 flex flex-col">
                   <div className="flex items-start gap-4 mb-4">
-                    <SmartImage
+                    <CdnImage
                       src={project.logo}
                       alt={`Logo de ${project.name}`}
                       width={56}
@@ -610,7 +715,7 @@ export default function HomeContent() {
             {NETWORK_PROJECTS.map((project, i) => (
               <Reveal key={project.slug} delay={i * 60}>
                 <article className="group h-full p-5 rounded-[1.75rem] bg-white/5 border border-white/10 hover:border-neon-pink/40 transition-all hover:-translate-y-1 flex flex-col">
-                  <SmartImage
+                  <CdnImage
                     src={project.logo}
                     alt={`Logo de ${project.name}`}
                     width={44}

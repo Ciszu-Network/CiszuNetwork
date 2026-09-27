@@ -6,7 +6,7 @@ import {
   DISCORD_BOT_LIST_SERVER,
   DISCORD_SERVER,
   DISBOARD_SERVER,
-  LOGO_ISOTIPO,
+  LOGO_ISOTIPO_CIRCLE,
   TOP_GG_BOT,
   TOP_GG_BOT_VOTE,
   TOP_GG_SERVER,
@@ -231,7 +231,7 @@ export default function PlatformsSection({ dict }: PlatformsSectionProps) {
             <div className="relative flex flex-col md:flex-row items-center justify-between gap-8">
               <div className="flex items-center gap-5 text-center md:text-left flex-col md:flex-row">
                 <SmartImage
-                  src={LOGO_ISOTIPO}
+                  src={LOGO_ISOTIPO_CIRCLE}
                   alt="CiszuBot"
                   width={72}
                   height={72}

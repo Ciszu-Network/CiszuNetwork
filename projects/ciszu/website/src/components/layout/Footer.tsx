@@ -237,7 +237,7 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
             <Link href="/" className="flex flex-col items-center gap-4 cursor-pointer group hover:scale-105 active:scale-95 transition-all duration-300 mb-6">
               <Image
                 data-logo-white="true"
-                src={assetResolver.resolve('projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg')}
+                src={assetResolver.resolve('projects/ciszu/content/logos/images/outline/isotype/gradient/color/ciszu_logo_isotipo_outline_degradado_zwhite_ccolor.svg')}
                 alt={CISZU_NETWORK.name}
                 width={72}
                 height={72}

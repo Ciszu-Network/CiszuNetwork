@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { Icon, SmartImage } from '@ciszu/ui';
+import { Icon } from '@ciszu/ui';
+import CdnImage from '@/components/shared/CdnImage';
 import { useDict } from '@/components/providers/I18nProvider';
 import type { Project } from '@/data/projects';
 
@@ -17,7 +18,7 @@ export default function ProjectCard({ project }: { project: Project }) {
         href={`/projects/${project.slug}`}
         className="relative block aspect-video bg-gradient-to-br from-white/5 via-transparent to-neon-blue/5 overflow-hidden"
       >
-        <SmartImage
+        <CdnImage
           src={project.preview}
           alt={project.name}
           className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"

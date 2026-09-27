@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { SmartImage, ScrollNavButton, useToast, CiszugamensLogo } from '@ciszu/ui';
+import { ScrollNavButton, useToast, CiszugamensLogo } from '@ciszu/ui';
+import CdnImage from '@/components/shared/CdnImage';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { I, FOOTER_SECTIONS } from '@/config/navigation';
@@ -47,8 +48,9 @@ export default function Footer({ dict }: { lang: string; dict: Dict }) {
     if (href === '/help') return dict.footer.helpCenter;
     const translated = navLabel(dict, href);
     // navLabel devuelve el propio href cuando la ruta no tiene clave de idioma
-    // (p. ej. /socials/github): en ese caso manda el nombre declarado.
-    return translated.startsWith('/') ? name : translated;
+    // (p. ej. /socials/github o un enlace externo): en ese caso manda el nombre
+    // declarado en la configuración.
+    return translated.startsWith('/') || translated.startsWith('http') ? name : translated;
   };
 
   // Título e icono de cada columna. El icono usa el acento de la sección (no
@@ -56,6 +58,7 @@ export default function Footer({ dict }: { lang: string; dict: Dict }) {
   const sectionMeta: Record<string, { label: string; accent: string }> = {
     Navigate: { label: dict.footer.navigate, accent: 'text-neon-blue' },
     Explore: { label: dict.footer.explore, accent: 'text-neon-pink' },
+    Music: { label: dict.footer.music, accent: 'text-neon-purple' },
     Socials: { label: dict.footer.socials, accent: 'text-neon-cyan' },
     Support: { label: dict.footer.support, accent: 'text-neon-green' },
     Legal: { label: dict.footer.legal, accent: 'text-neon-yellow' },
@@ -104,17 +107,17 @@ export default function Footer({ dict }: { lang: string; dict: Dict }) {
           {/* LEFT: Brand + socials with glow */}
           <div className="flex flex-col items-center text-center lg:w-[38%] gap-7 border-b lg:border-b-0 lg:border-r border-white/10 pb-8 lg:pb-0 lg:pr-8">
             <Link href="/" className="flex items-center justify-center gap-3 group active:scale-95 transition-all duration-300">
-              <SmartImage
-                src="projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png"
+              <CdnImage
+                src="projects/ciszukoantony/content/logos/images/not-outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zcolor_ccolor.png"
                 alt="Ciszuko" width={28} height={25}
                 className="drop-shadow-brand group-hover:drop-shadow-[0_0_15px_rgba(61,106,223,0.8)] transition-all duration-300"
               />
-              <SmartImage
-                src="projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png"
+              <CdnImage
+                src="projects/ciszukoantony/content/logos/images/not-outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png"
                 alt="Ciszuko Antony" width={140} height={32}
                 className="opacity-80 group-hover:opacity-100 group-hover:drop-shadow-[0_0_15px_rgba(61,106,223,0.8)] transition-all duration-300"
               />
-              <SmartImage
+              <CdnImage
                 src="projects/ciszukoantony/content/logos/images/samples/circle/circle_1_yt.png"
                 alt="Ciszuko Antony YouTube"
                 width={34} height={34}

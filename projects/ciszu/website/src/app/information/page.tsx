@@ -87,7 +87,7 @@ type AccentKey = keyof typeof ACCENTS;
 
 /** Rutas reales de los logos en el CDN (mismas que usan navbar, footer y home). */
 const LOGO_ISOTYPE =
-  'projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg';
+  'projects/ciszu/content/logos/images/outline/isotype/gradient/color/ciszu_logo_isotipo_outline_degradado_zwhite_ccolor.svg';
 const LOGO_WORDMARK =
   'projects/ciszu/content/logos/images/outline/logotype/color/ciszu_logotipo_outline_zcolor_cwhite_short.svg';
 const LOGO_MASTER =

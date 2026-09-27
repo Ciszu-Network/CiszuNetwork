@@ -42,7 +42,7 @@ export default async function AboutPage() {
         <div className="space-y-12">
           <div className="p-8 md:p-10 rounded-[2rem] bg-gradient-to-br from-brand/10 via-brand-dark/5 to-transparent border border-brand/20">
             <Image
-              src={assetResolver.resolve("projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg")}
+              src={assetResolver.resolve("projects/ciszu/content/logos/images/outline/isotype/gradient/color/ciszu_logo_isotipo_outline_degradado_zwhite_ccolor.svg")}
               alt={CISZU_NETWORK.name}
               width={60}
               height={60}

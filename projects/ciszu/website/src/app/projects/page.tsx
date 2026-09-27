@@ -81,7 +81,7 @@ const projects: Project[] = [
     href: '/projects/ciszunetwork',
     icon: Building,
     gradient: 'from-brand via-brand-light to-neon-blue',
-    logo: 'projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg',
+    logo: 'projects/ciszu/content/logos/images/outline/isotype/gradient/color/ciszu_logo_isotipo_outline_degradado_zwhite_ccolor.svg',
     stack: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Supabase', 'Vercel', 'Turborepo'],
   },
   {
