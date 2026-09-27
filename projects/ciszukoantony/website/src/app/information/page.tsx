@@ -320,8 +320,8 @@ const GROUPS: InfoLinkGroup[] = [
     items: [
       { name: 'Home', href: '/', icon: 'home', desc: 'Portada y proyectos destacados' },
       { name: 'Projects', href: '/projects', icon: 'rocket', desc: 'Todos los proyectos de Ciszuko Antony' },
-      { name: 'Portfolio', href: '/portfolio', icon: 'palette', desc: 'Galería visual de trabajos y proyectos' },
-      { name: 'Curriculum', href: '/curriculum', icon: 'certificates', desc: 'Formación, experiencia y habilidades' },
+      { name: 'Portfolio & CV', href: '/portfolio', icon: 'palette', desc: 'Trabajos, formación, experiencia y habilidades' },
+      { name: 'Socials', href: '/socials', icon: 'share', desc: 'Índice de redes oficiales, con una página por red' },
       { name: 'Commissions', href: '/commissions', icon: 'money', desc: 'Servicios, proceso y términos' },
       { name: 'Certificates', href: '/certificates', icon: 'certificates', desc: 'Catálogo de certificados y logros' },
       { name: 'Documentation', href: '/documentation', icon: 'policies', desc: 'Guías técnicas y referencia' },

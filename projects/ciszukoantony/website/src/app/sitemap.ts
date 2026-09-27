@@ -1,5 +1,6 @@
 import { CHANGELOG_DATA } from '@/data/changelog';
 import { PROJECTS } from '@/data/projects';
+import { SOCIAL_IDS } from '@/data/socials';
 
 export const dynamic = 'force-static';
 
@@ -10,7 +11,7 @@ const ROUTES = [
   'about',
   'certificates',
   'contact',
-  'descargas',
+  'downloads',
   'donate',
   'faq',
   'feedback',
@@ -19,15 +20,21 @@ const ROUTES = [
   'policies',
   'projects',
   'portfolio',
-  'curriculum',
+  'socials',
   'commissions',
   'support',
   'team',
   'changelog',
+  'reviews',
+  'stats',
+  'forum',
+  'documentation',
   // Una URL por proyecto (página interna de detalle de /projects).
   ...PROJECTS.map((project) => `projects/${project.slug}`),
   // Una URL por entrada del registro de cambios (página interna de detalle).
   ...CHANGELOG_DATA.map((item) => `changelog/${item.id}`),
+  // Una URL por red social real (subpáginas de /socials).
+  ...SOCIAL_IDS.map((id) => `socials/${id}`),
 ];
 
 export default function sitemap() {

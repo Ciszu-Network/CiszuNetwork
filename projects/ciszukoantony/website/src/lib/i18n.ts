@@ -83,6 +83,8 @@ const es = {
     legalNotice: 'Aviso Legal',
     helpCenter: 'Centro de Ayuda',
     reportIssue: 'Reportar Problema',
+    explore: 'Explorar',
+    socials: 'Redes sociales',
   },
   common: {
     back: 'Volver',
@@ -825,6 +827,8 @@ const en: typeof es = {
     legalNotice: 'Legal Notice',
     helpCenter: 'Help Centre',
     reportIssue: 'Report Issue',
+    explore: 'Explore',
+    socials: 'Social media',
   },
   common: {
     back: 'Back',
@@ -1590,7 +1594,7 @@ export const NAV_KEYS: Record<string, keyof Dict['nav']> = {
   '/about': 'about',
   '/projects': 'projects',
   '/portfolio': 'portfolio',
-  '/curriculum': 'curriculum',
+  '/socials': 'social',
   '/commissions': 'commissions',
   '/certificates': 'certificates',
   '/changelog': 'changelog',

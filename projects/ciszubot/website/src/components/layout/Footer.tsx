@@ -8,24 +8,29 @@ import { Shield, Scale, FileText } from 'lucide-react';
 import { useAppStore } from '@/store';
 import { updatePreferences } from '@/lib/preferences';
 import {
+  BOT_PREFIX,
+  BOT_VERSION,
   CISZUKO_ANTONY,
   CISZU_NETWORK,
+  DISCORD_BOT_LIST_BOT,
   DISCORD_SERVER,
+  DISBOARD_SERVER,
   FACEBOOK,
-  GITHUB_ORG,
+  GITHUB_REPO,
   INSTAGRAM,
   INVITE_URL,
   LOGO_ISOTIPO,
   LOGO_LOGOTIPO,
+  TOP_GG_BOT,
   X_SOCIAL,
   YOUTUBE,
-  BOT_PREFIX,
-  TOP_GG_BOT,
-  DISCORD_BOT_LIST_BOT,
-  DISBOARD_SERVER,
   type Dict,
   type Lang,
 } from '@/lib/i18n';
+
+/** Enlaces del ecosistema (webs reales desplegadas). */
+const MUZICMANIA = 'https://muzicmania.vercel.app';
+const COURSES = 'https://ciszunetwork.vercel.app/courses';
 
 const IcoDiscord = () => (
   <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
@@ -63,21 +68,42 @@ const IcoX = () => (
   </svg>
 );
 
+/**
+ * Redes sociales del ecosistema. Discord vive en la píldora de comunidad y
+ * GitHub en el botón de repositorio: aquí no se repiten para no duplicar.
+ */
 const SOCIALS = [
-  { Ico: IcoDiscord, href: DISCORD_SERVER, label: 'Discord', glow: 'hover:border-[#5865F2] hover:text-[#5865F2] hover:shadow-[0_0_15px_rgba(88,101,242,0.5)]' },
-  { Ico: IcoGithub, href: GITHUB_ORG, label: 'GitHub', glow: 'hover:border-ink hover:text-ink hover:shadow-[0_0_15px_rgba(0,0,0,0.3)]' },
   { Ico: IcoYoutube, href: YOUTUBE, label: 'YouTube', glow: 'hover:border-[#FF0000] hover:text-[#FF0000] hover:shadow-[0_0_15px_rgba(255,0,0,0.5)]' },
   { Ico: IcoFacebook, href: FACEBOOK, label: 'Facebook', glow: 'hover:border-[#1877F2] hover:text-[#1877F2] hover:shadow-[0_0_15px_rgba(24,119,242,0.5)]' },
   { Ico: IcoInstagram, href: INSTAGRAM, label: 'Instagram', glow: 'hover:border-[#E4405F] hover:text-[#E4405F] hover:shadow-[0_0_15px_rgba(228,64,95,0.5)]' },
   { Ico: IcoX, href: X_SOCIAL, label: 'X', glow: 'hover:border-ink hover:text-ink hover:shadow-[0_0_15px_rgba(0,0,0,0.3)]' },
 ];
 
+interface FooterLink {
+  href: string;
+  label: string;
+  icon: string;
+}
+
+interface FooterGroup {
+  title: string;
+  icon: string;
+  /** Clases literales: Tailwind las escanea en el código fuente. */
+  headClass: string;
+  iconClass: string;
+  hoverClass: string;
+  activeClass: string;
+  links: FooterLink[];
+}
+
 interface FooterProps {
   lang: Lang;
   dict: Dict;
+  /** Nº real de comandos (COMMANDS.length), calculado en el layout servidor. */
+  commandCount?: number;
 }
 
-export default function Footer({ dict }: FooterProps) {
+export default function Footer({ dict, commandCount = 0 }: FooterProps) {
   const { setIsMenuOpen, setSidebarView } = useAppStore();
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href;
@@ -95,6 +121,88 @@ export default function Footer({ dict }: FooterProps) {
     setIsDark(next === 'dark');
     updatePreferences({ theme: next });
   };
+
+  const GROUPS: FooterGroup[] = [
+    {
+      title: dict.footer.explore,
+      icon: 'globe',
+      headClass: 'text-neon-blue drop-shadow-[0_0_8px_rgba(0,212,255,0.5)]',
+      iconClass: 'text-neon-blue',
+      hoverClass: 'hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]',
+      activeClass: 'border-neon-blue bg-neon-blue/20 shadow-[0_0_15px_rgba(0,212,255,0.3)] text-neon-blue',
+      links: [
+        { href: '/', label: dict.nav.home, icon: 'home' },
+        { href: '/commands', label: dict.nav.commands, icon: 'gamepad' },
+        { href: '/stats', label: dict.nav.status, icon: 'signal' },
+        { href: '/explore', label: dict.nav.explore, icon: 'search' },
+        { href: '/downloads', label: dict.nav.downloads, icon: 'download' },
+      ],
+    },
+    {
+      title: dict.nav.navigation,
+      icon: 'users',
+      headClass: 'text-neon-pink drop-shadow-[0_0_8px_rgba(255,51,204,0.5)]',
+      iconClass: 'text-neon-pink',
+      hoverClass: 'hover:border-neon-pink hover:bg-neon-pink/15 hover:text-neon-pink hover:shadow-[0_0_10px_rgba(255,51,204,0.2)]',
+      activeClass: 'border-neon-pink bg-neon-pink/20 shadow-[0_0_15px_rgba(255,51,204,0.3)] text-neon-pink',
+      links: [
+        { href: '/support', label: dict.nav.support, icon: 'life-ring' },
+        { href: '/leaderboard', label: dict.nav.leaderboard, icon: 'trophy' },
+        { href: '/forum', label: dict.nav.forum, icon: 'message' },
+        { href: '/reviews', label: dict.nav.reviews, icon: 'star' },
+        { href: '/changelog', label: dict.nav.changelog, icon: 'history' },
+        { href: '/feedback', label: dict.nav.feedback, icon: 'comment' },
+      ],
+    },
+    {
+      title: dict.nav.information,
+      icon: 'settings',
+      headClass: 'text-neon-purple drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]',
+      iconClass: 'text-neon-purple',
+      hoverClass: 'hover:border-neon-purple hover:bg-neon-purple/15 hover:text-neon-purple hover:shadow-[0_0_10px_rgba(168,85,247,0.2)]',
+      activeClass: 'border-neon-purple bg-neon-purple/20 shadow-[0_0_15px_rgba(168,85,247,0.3)] text-neon-purple',
+      links: [
+        { href: '/dashboard', label: dict.nav.dashboard, icon: 'server' },
+        { href: '/documentation', label: dict.nav.documentation, icon: 'terminal' },
+        { href: '/about', label: dict.nav.about, icon: 'info' },
+        { href: '/team', label: dict.nav.team, icon: 'people' },
+        { href: '/help', label: dict.nav.help, icon: 'help' },
+        { href: '/faq', label: dict.nav.faq, icon: 'comment' },
+        { href: '/contact', label: dict.nav.contact, icon: 'mail' },
+        { href: '/donate', label: dict.nav.donate, icon: 'heart' },
+      ],
+    },
+    {
+      title: dict.footer.projects,
+      icon: 'rocket',
+      headClass: 'text-neon-cyan drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]',
+      iconClass: 'text-neon-cyan',
+      hoverClass: 'hover:border-neon-cyan hover:bg-neon-cyan/15 hover:text-neon-cyan hover:shadow-[0_0_10px_rgba(34,211,238,0.2)]',
+      activeClass: 'border-neon-cyan bg-neon-cyan/20 shadow-[0_0_15px_rgba(34,211,238,0.3)] text-neon-cyan',
+      links: [
+        { href: CISZU_NETWORK, label: 'Ciszu Network', icon: 'globe' },
+        { href: CISZUKO_ANTONY, label: 'Ciszuko Antony', icon: 'user' },
+        { href: MUZICMANIA, label: 'MuzicMania', icon: 'music' },
+        { href: COURSES, label: 'Courses', icon: 'target' },
+      ],
+    },
+  ];
+
+  const LEGAL: { href: string; label: string; Ico: typeof FileText }[] = [
+    { href: '/terms', label: dict.footer.terms, Ico: FileText },
+    { href: '/privacy', label: dict.footer.privacy, Ico: Shield },
+    { href: '/policy', label: dict.nav.policy, Ico: FileText },
+    { href: '/guidelines', label: dict.nav.guidelines, Ico: FileText },
+    { href: '/rules', label: dict.nav.rules, Ico: Shield },
+    { href: '/license', label: dict.nav.license, Ico: Scale },
+    { href: '/credits', label: dict.nav.credits, Ico: FileText },
+  ];
+
+  const BOT_LISTS = [
+    { href: TOP_GG_BOT, label: 'Top.gg', glow: 'hover:border-neon-pink hover:text-neon-pink' },
+    { href: DISCORD_BOT_LIST_BOT, label: 'DBL', glow: 'hover:border-neon-blue hover:text-neon-blue' },
+    { href: DISBOARD_SERVER, label: 'Disboard', glow: 'hover:border-neon-purple hover:text-neon-purple' },
+  ];
 
   return (
     <footer className="relative bg-bg border-t border-border pt-12 pb-6 px-4 md:px-8 overflow-hidden">
@@ -124,9 +232,6 @@ export default function Footer({ dict }: FooterProps) {
                 height={32}
                 className="h-[32px] w-auto group-hover:drop-shadow-[0_0_20px_rgba(0,212,255,0.8)] transition-all duration-300"
               />
-              <span className="text-[10px] text-faint font-bold uppercase tracking-[0.25em]">
-                {dict.nav.invite} · <code className="text-neon-blue bg-neon-blue/10 border border-neon-blue/30 px-1.5 py-0.5 rounded font-bold">{BOT_PREFIX}</code>
-              </span>
             </Link>
 
             {/* Community Connector (Discord invite) — mismo estilo que el botón del header */}
@@ -134,7 +239,7 @@ export default function Footer({ dict }: FooterProps) {
               href={INVITE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full group flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white px-8 py-3.5 font-header font-bold text-sm transition-all duration-300 shadow-[0_4px_15px_rgba(0,212,255,0.2)] hover:scale-[1.02] hover:shadow-[0_10px_28px_-8px_rgba(0,212,255,0.8)] active:scale-95 mb-8"
+              className="w-full group flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white px-8 py-3.5 font-header font-bold text-sm transition-all duration-300 shadow-[0_4px_15px_rgba(0,212,255,0.2)] hover:scale-[1.02] hover:shadow-[0_10px_28px_-8px_rgba(0,212,255,0.8)] active:scale-95 mb-4"
             >
               <Icon name="discord" size={16} className="[&>g]:fill-current" />
               <span>{dict.nav.invite}</span>
@@ -145,7 +250,7 @@ export default function Footer({ dict }: FooterProps) {
               href={DISCORD_SERVER}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full group flex items-center justify-center gap-2 rounded-full bg-[#5865F2]/10 border border-[#5865F2]/40 text-[#7289DA] hover:bg-gradient-to-tr hover:from-[#5865F2] hover:to-[#7289da] hover:text-white px-8 py-3 font-header font-bold text-sm transition-all duration-300 shadow-[0_4px_15px_rgba(88,101,242,0.15)] hover:scale-[1.02] active:scale-95 mb-8"
+              className="w-full group flex items-center justify-center gap-2 rounded-full bg-[#5865F2]/10 border border-[#5865F2]/40 text-[#7289DA] hover:bg-gradient-to-tr hover:from-[#5865F2] hover:to-[#7289da] hover:text-white px-8 py-3 font-header font-bold text-sm transition-all duration-300 shadow-[0_4px_15px_rgba(88,101,242,0.15)] hover:scale-[1.02] active:scale-95 mb-4"
             >
               <CiszugamensLogo size={18} />
               <IcoDiscord />
@@ -154,20 +259,51 @@ export default function Footer({ dict }: FooterProps) {
 
             {/* Open Source — repositorio del ecosistema */}
             <a
-              href="https://github.com/Ciszu-Network/CiszuNetwork"
+              href={GITHUB_REPO}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full group flex items-center justify-center gap-2 rounded-xl bg-card border border-border text-muted hover:text-neon-blue hover:border-neon-blue/60 px-8 py-3 font-header font-bold text-sm transition-all duration-300 hover:scale-[1.02] active:scale-95 mb-8"
+              className="w-full group flex items-center justify-center gap-2 rounded-xl bg-card border border-border text-muted hover:text-neon-blue hover:border-neon-blue/60 px-8 py-3 font-header font-bold text-sm transition-all duration-300 hover:scale-[1.02] active:scale-95 mb-6"
             >
               <IcoGithub />
               <span>{dict.footer.openSource}</span>
             </a>
 
-            {/* Social icons */}
+            {/* El Bot — datos reales de configuración */}
+            <div className="w-full rounded-xl bg-surface border border-border px-5 py-4 mb-6 text-left">
+              <h4 className="text-[10px] font-black uppercase tracking-[0.3em] mb-3 text-neon-cyan">
+                {dict.footer.bot}
+              </h4>
+              <dl className="grid grid-cols-2 gap-3 text-xs">
+                <div>
+                  <dt className="text-faint font-bold uppercase tracking-widest text-[9px] mb-1">{dict.footer.prefix}</dt>
+                  <dd className="font-header font-black text-ink">
+                    <code className="text-neon-blue bg-neon-blue/10 border border-neon-blue/30 px-1.5 py-0.5 rounded">{BOT_PREFIX}</code>
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-faint font-bold uppercase tracking-widest text-[9px] mb-1">{dict.footer.slash}</dt>
+                  <dd className="font-header font-black text-ink">
+                    <code className="text-neon-purple bg-neon-purple/10 border border-neon-purple/30 px-1.5 py-0.5 rounded">/commands</code>
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-faint font-bold uppercase tracking-widest text-[9px] mb-1">{dict.stats.commands}</dt>
+                  <dd className="font-header font-black text-ink tabular-nums">
+                    {commandCount > 0 ? commandCount : '—'}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-faint font-bold uppercase tracking-widest text-[9px] mb-1">{dict.statusSection.version}</dt>
+                  <dd className="font-header font-black text-ink">{BOT_VERSION}</dd>
+                </div>
+              </dl>
+            </div>
+
+            {/* Social icons (sin duplicar Discord/GitHub: ya están arriba) */}
             <div className="flex flex-wrap justify-center gap-3">
-              {SOCIALS.map(({ Ico, href, label, glow }, i) => (
+              {SOCIALS.map(({ Ico, href, label, glow }) => (
                 <a
-                  key={i}
+                  key={label}
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -182,137 +318,42 @@ export default function Footer({ dict }: FooterProps) {
 
           {/* RIGHT: Footer Nav Layout */}
           <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center sm:text-left content-start">
-            <div className="flex flex-col items-center sm:items-start">
-              <h4 className="text-neon-blue text-[10px] font-black uppercase tracking-[0.3em] mb-4 drop-shadow-[0_0_8px_rgba(0,212,255,0.5)]">
-                {dict.footer.explore}
-              </h4>
-              <div className="flex flex-col gap-1.5 w-full">
-                {[
-                  { href: '/', label: dict.nav.home, icon: 'home' },
-                  { href: '/commands', label: dict.nav.commands, icon: 'gamepad' },
-                  { href: '/explore', label: dict.nav.explore, icon: 'globe' },
-                  { href: '/stats', label: dict.nav.status, icon: 'chart-bar' },
-                  { href: '/support', label: dict.nav.support, icon: 'life-ring' },
-                  { href: '/downloads', label: dict.nav.downloads, icon: 'download' },
-                  { href: '/invite', label: dict.nav.invite, icon: 'discord' },
-                  { href: '/feedback', label: dict.nav.feedback, icon: 'message' },
-                  { href: '/changelog', label: dict.nav.changelog, icon: 'history' },
-                  { href: '/reviews', label: dict.nav.reviews, icon: 'star' },
-                  { href: '/leaderboard', label: dict.nav.leaderboard, icon: 'trophy' },
-                  { href: '/forum', label: dict.nav.forum, icon: 'message' },
-                  { href: '/contact', label: dict.nav.contact, icon: 'mail' },
-                  { href: '/dashboard', label: dict.nav.dashboard, icon: 'server' },
-                  { href: '/documentation', label: dict.nav.documentation, icon: 'file' },
-                  { href: '/about', label: dict.nav.about, icon: 'info' },
-                  { href: '/team', label: dict.nav.team, icon: 'users' },
-                  { href: '/help', label: dict.nav.help, icon: 'help' },
-                  { href: '/donate', label: dict.nav.donate, icon: 'heart' },
-                ].map((l) => {
-                  const active = isActive(l.href);
-                  return (
-                    <Link
-                      key={l.href}
-                      href={l.href}
-                      className={`flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 group ${
-                        active
-                          ? 'border-neon-blue bg-neon-blue/20 shadow-[0_0_15px_rgba(0,212,255,0.3)] text-neon-blue hover:text-ink'
-                          : 'border-transparent text-ink hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]'
-                      }`}
-                    >
-                      <span className="transition-colors duration-300 shrink-0">
-                        <Icon name={l.icon} size={14} className="opacity-70" />
-                      </span>
-                      <span className="tracking-wide">{l.label}</span>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center sm:items-start">
-              <h4 className="text-neon-blue text-[10px] font-black uppercase tracking-[0.3em] mb-4 drop-shadow-[0_0_8px_rgba(0,212,255,0.5)]">
-                {dict.footer.projects}
-              </h4>
-              <div className="flex flex-col gap-1.5 w-full">
-                <a href={CISZU_NETWORK} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border border-transparent text-ink font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]">
-                  <span className="tracking-wide">Ciszu Network</span>
-                </a>
-                <a href={CISZUKO_ANTONY} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border border-transparent text-ink font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]">
-                  <span className="tracking-wide">Ciszuko Antony</span>
-                </a>
-                <a href={GITHUB_ORG} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border border-transparent text-ink font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]">
-                  <span className="tracking-wide">GitHub</span>
-                </a>
-                <a href="https://ciszunetwork.vercel.app/courses" target="_blank" rel="noopener noreferrer"
-                  className="flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border border-transparent text-ink font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]">
-                  <span className="tracking-wide">Courses</span>
-                </a>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center sm:items-start">
-              <h4 className="text-neon-blue text-[10px] font-black uppercase tracking-[0.3em] mb-4 drop-shadow-[0_0_8px_rgba(0,212,255,0.5)]">
-                {dict.footer.bot}
-              </h4>
-              <div className="flex flex-col gap-1.5 w-full text-sm text-muted text-center sm:text-left">
-                <span>
-                  {dict.footer.prefix}: <code className="text-neon-blue bg-neon-blue/10 border border-neon-blue/30 px-1.5 py-0.5 rounded">{BOT_PREFIX}</code>
-                </span>
-                <span>
-                  {dict.footer.slash}: <code className="text-neon-blue bg-neon-blue/10 border border-neon-blue/30 px-1.5 py-0.5 rounded">/commands</code>
-                </span>
-                <span>{dict.commandsSection.kicker}</span>
-                <span>{dict.supportPage.listsTitle}</span>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center sm:items-start">
-              <h4 className="text-neon-blue text-[10px] font-black uppercase tracking-[0.3em] mb-4 drop-shadow-[0_0_8px_rgba(0,212,255,0.5)]">
-                {dict.footer.legal}
-              </h4>
-              <div className="flex flex-col gap-1.5 w-full">
-                {[
-                  { href: '/terms', label: dict.footer.terms, icon: <FileText className="w-4 h-4" /> },
-                  { href: '/privacy', label: dict.footer.privacy, icon: <Shield className="w-4 h-4" /> },
-                  { href: '/policy', label: dict.nav.policy, icon: <FileText className="w-4 h-4" /> },
-                  { href: '/guidelines', label: dict.nav.guidelines, icon: <FileText className="w-4 h-4" /> },
-                  { href: '/rules', label: dict.nav.rules, icon: <Shield className="w-4 h-4" /> },
-                  { href: '/license', label: dict.nav.license, icon: <Scale className="w-4 h-4" /> },
-                  { href: '/credits', label: dict.nav.credits, icon: <FileText className="w-4 h-4" /> },
-                ].map((l) => {
-                  const active = isActive(l.href);
-                  return (
-                    <Link
-                      key={l.href}
-                      href={l.href}
-                      className={`flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 ${
-                        active
-                          ? 'border-neon-blue bg-neon-blue/20 shadow-[0_0_15px_rgba(0,212,255,0.3)] text-neon-blue hover:text-ink'
-                          : 'border-transparent text-ink hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]'
-                      }`}
-                    >
-                      <span className="transition-colors duration-300 shrink-0 opacity-70">{l.icon}</span>
-                      <span className="tracking-wide">{l.label}</span>
-                    </Link>
-                  );
-                })}
-                <div className="flex flex-wrap justify-center sm:justify-start gap-2 mt-2">
-                  {[
-                    { href: TOP_GG_BOT, label: 'Top.gg', glow: 'hover:border-[#FF3366] hover:text-[#FF3366]' },
-                    { href: DISCORD_BOT_LIST_BOT, label: 'DBL', glow: 'hover:border-neon-blue hover:text-neon-blue' },
-                    { href: DISBOARD_SERVER, label: 'Disboard', glow: 'hover:border-neon-purple hover:text-neon-purple' },
-                  ].map((s) => (
-                    <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
-                      className={`px-2.5 py-1 rounded-lg text-[11px] font-bold bg-card border border-border text-muted transition-all ${s.glow}`}>
-                      {s.label}
-                    </a>
-                  ))}
+            {GROUPS.map((group) => (
+              <div key={group.title} className="flex flex-col items-center sm:items-start">
+                <h4 className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] mb-4 ${group.headClass}`}>
+                  <Icon name={group.icon} size={14} className={group.iconClass} />
+                  {group.title}
+                </h4>
+                <div className="flex flex-col gap-1.5 w-full">
+                  {group.links.map((l) => {
+                    const external = /^https?:/.test(l.href);
+                    const active = !external && isActive(l.href);
+                    const className = `flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 ${
+                      active
+                        ? group.activeClass
+                        : `border-transparent text-ink ${group.hoverClass}`
+                    }`;
+                    const content = (
+                      <>
+                        <span className={`transition-colors duration-300 shrink-0 ${group.iconClass}`}>
+                          <Icon name={l.icon} size={14} />
+                        </span>
+                        <span className="tracking-wide">{l.label}</span>
+                      </>
+                    );
+                    return external ? (
+                      <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer" className={className}>
+                        {content}
+                      </a>
+                    ) : (
+                      <Link key={l.href} href={l.href} className={className}>
+                        {content}
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
-            </div>
+            ))}
           </div>
         </div>
 
@@ -320,6 +361,43 @@ export default function Footer({ dict }: FooterProps) {
         <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent my-8" />
 
         <div className="flex flex-col items-center justify-center gap-8 pb-2 text-center">
+
+          {/* Legal — fila horizontal */}
+          <nav aria-label={dict.footer.legal} className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+            {LEGAL.map(({ href, label, Ico }) => {
+              const active = isActive(href);
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className={`inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors ${
+                    active ? 'text-neon-cyan' : 'text-muted hover:text-neon-cyan'
+                  }`}
+                >
+                  <span className="text-neon-cyan shrink-0"><Ico className="w-3.5 h-3.5" /></span>
+                  {label}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Listas de bots */}
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-faint">
+              {dict.supportPage.listsTitle}
+            </span>
+            {BOT_LISTS.map((s) => (
+              <a
+                key={s.label}
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`px-2.5 py-1 rounded-lg text-[11px] font-bold bg-card border border-border text-muted transition-all ${s.glow}`}
+              >
+                {s.label}
+              </a>
+            ))}
+          </div>
 
           {/* Toggles de tema e idioma — pill LANG abre el sidebar en vista idiomas */}
           <div className="flex flex-wrap items-center justify-center gap-4">
@@ -357,7 +435,7 @@ export default function Footer({ dict }: FooterProps) {
 
           {/* Copyright — siempre al final */}
           <div className="text-center space-y-2">
-            <p className="text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-widest leading-loose">
+            <p className="text-ink text-[10px] sm:text-[11px] font-bold uppercase tracking-widest leading-loose">
               <span className="text-neon-blue">&copy;</span>{' '}
               2024-{new Date().getFullYear()}{' '}
               <a href={CISZU_NETWORK} target="_blank" rel="noopener noreferrer"
@@ -366,7 +444,7 @@ export default function Footer({ dict }: FooterProps) {
               </a>{' '}
               &amp; CISZUBOT. {dict.footer.rights}
             </p>
-            <p className="text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-widest leading-loose">
+            <p className="text-ink text-[10px] sm:text-[11px] font-bold uppercase tracking-widest leading-loose">
               {dict.footer.madeBy}{' '}
               <a href={CISZUKO_ANTONY} target="_blank" rel="noopener noreferrer"
                 className="text-neon-blue font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(0,212,255,0.8)]">
