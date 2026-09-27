@@ -3,7 +3,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { SmartImage, useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, LANG_BLOCKED_MESSAGE } from '@ciszu/ui';
+import { useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, LANG_BLOCKED_MESSAGE } from '@ciszu/ui';
+import CdnImage from '@/components/shared/CdnImage';
 import { NAV_MAIN, SOCIALS, I, ALL_PAGES, SEARCH_INDEX, type NavGroup, type NavItem } from '@/config/navigation';
 import { useAppStore } from '@/store';
 import AuthMenu, { GuestIcon } from '@/components/auth/AuthMenu';
@@ -42,11 +43,24 @@ const SunIcon = () => (
 // (es-latam, es-es, en-us, en-uk) son INDIVIDUALES entre sí; el resto está
 // bloqueado (atenuado + toast de error al hacer click).
 
+/** Nombre de cada grupo del header → clave de `dict.nav.groups`. */
+const GROUP_LABEL_KEYS: Record<string, keyof Dict['nav']['groups']> = {
+  Projects: 'projects',
+  Information: 'information',
+  Music: 'music',
+  Socials: 'socials',
+};
+
 export default function Navbar({ lang, dict }: { lang: string; dict: Dict }) {
   const pathname = usePathname();
   const pageLabel = (href: string) => navLabel(dict, href);
-  const groupLabel = (name: string) =>
-    name === 'Information' ? dict.nav.groups.information : dict.nav.groups.projects;
+  /** Etiqueta de un enlace de menú: traduce las rutas internas y conserva el
+   *  nombre declarado en las externas (navLabel devuelve el propio href). */
+  const itemLabel = (item: NavItem) => {
+    const translated = pageLabel(item.href);
+    return translated.startsWith('/') || translated.startsWith('http') ? item.name : translated;
+  };
+  const groupTitle = (name: string) => dict.nav.groups[GROUP_LABEL_KEYS[name] ?? 'projects'];
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -149,12 +163,7 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Dict }) {
 
   const closeSearch = () => { setSearchOpen(false); setSearchQuery(''); };
 
-  const infoItems = (NAV_MAIN.find(n => 'items' in n && n.name === 'Information') as NavGroup)?.items || [];
-  const groupTitle = (name: string) =>
-    name === 'Information' ? dict.nav.groups.information : dict.nav.groups.projects;
-
   const isActive = (href: string) => pathname === href;
-  const infoActiveHref = infoItems.find(i => isActive(i.href))?.href ?? '/information';
 
   const q = searchQuery.trim().toLowerCase();
   const suggestions = q.length > 0
@@ -255,18 +264,18 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Dict }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className={`flex items-center justify-between ${floating ? 'h-14' : 'h-16'} gap-3`}>
             <Link href="/" className="flex items-center gap-2 group shrink-0 active:scale-95 transition-all duration-300">
-              <SmartImage
-                src="projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png"
+              <CdnImage
+                src="projects/ciszukoantony/content/logos/images/not-outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zcolor_ccolor.png"
                 alt="Ciszuko" width={28} height={25}
                 data-logo-white="true"
                 className="drop-shadow-brand group-hover:drop-shadow-[0_0_15px_rgba(61,106,223,0.8)] transition-all duration-300"
               />
-              <SmartImage
-                src="projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png"
+              <CdnImage
+                src="projects/ciszukoantony/content/logos/images/not-outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png"
                 alt="Ciszuko Antony" width={120} height={28}
                 className="hidden sm:block group-hover:drop-shadow-[0_0_15px_rgba(61,106,223,0.8)] transition-all duration-300"
               />
-              <SmartImage
+              <CdnImage
                 src="projects/ciszukoantony/content/logos/images/samples/circle/circle_1_yt.png"
                 alt="Ciszuko Antony — Canal de YouTube" width={34} height={34}
                 className="hidden sm:block rounded-full ring-2 ring-brand/40 shadow-[0_0_15px_rgba(167,139,250,0.35)] shrink-0"
@@ -279,48 +288,55 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Dict }) {
                {NAV_MAIN.map((item) => {
                  if ('items' in item) {
                    const group = item as NavGroup;
-                   const isInfo = group.name === 'Information';
                    const isOpen = openGroup === group.name;
                    const groupActive = group.items.some((sub) => isActive(sub.href));
-                   const groupHref = isInfo
-                     ? infoActiveHref
-                     : (group.items.find((sub) => isActive(sub.href))?.href ?? group.items[0].href);
+                   const activeItem = group.items.find((sub) => isActive(sub.href));
+                   const groupHref = activeItem?.href ?? group.href ?? group.items[0].href;
+                   const headerInner = (
+                     <>
+                       <span className="opacity-80 shrink-0">{group.icon}</span>
+                       <span className={navLabelCls(groupHref)}>{groupTitle(group.name)}</span>
+                       <span className={`opacity-70 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>{I.chevronDown}</span>
+                     </>
+                   );
+                   const subCls = (active: boolean) =>
+                     `flex items-center gap-3 px-4 py-2 text-sm font-header font-bold transition-all cursor-pointer ${
+                       active ? 'text-neon-blue bg-neon-blue/5 hover:text-white' : 'text-white hover:text-neon-blue hover:bg-white/5'
+                     }`;
                    return (
                      <div key={group.name} className="relative flex" data-nav-group={group.name}
                        onMouseEnter={() => hoverOpenGroup(group.name)}
                        onMouseLeave={hoverCloseGroup}>
-                         {isInfo ? (
-                           <Link href="/information" className={navLinkCls(groupHref)}>
-                             <span className="opacity-80 shrink-0">{group.icon}</span>
-                             <span className={navLabelCls(groupActive ? groupHref : '/information')}>{groupTitle(group.name)}</span>
-                             <span className={`opacity-70 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>{I.chevronDown}</span>
-                           </Link>
+                         {group.href ? (
+                           <Link href={group.href} className={navLinkCls(groupHref)}>{headerInner}</Link>
                          ) : (
-                          <button onClick={() => setOpenGroup(isOpen ? null : group.name)} className={navLinkCls(groupHref)}>
-                            <span className="opacity-80 shrink-0">{group.icon}</span>
-                            <span className={navLabelCls(groupActive ? groupHref : '/projects')}>{groupTitle(group.name)}</span>
-                            <span className={`opacity-70 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>{I.chevronDown}</span>
-                          </button>
-                        )}
-                      {isOpen && (
-                        <div className="absolute top-full left-0 pt-2 w-56 z-50 animate-fade-in-down origin-top drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)]">
-                          <div className="bg-[#0a0a14]/98 backdrop-blur-2xl border border-white/10 rounded-xl py-2 shadow-2xl max-h-[70vh] overflow-y-auto">
-                            <div className="px-4 py-2 text-xs font-black text-neon-blue/80 uppercase tracking-widest">{groupTitle(group.name)}</div>
-                            <div className="h-px bg-white/10 mx-2" />
-                            {group.items.map((sub) => (
-                              <Link key={sub.href} href={sub.href} onClick={() => setOpenGroup(null)}
-                                className={`flex items-center gap-3 px-4 py-2 text-sm font-header font-bold transition-all cursor-pointer ${
-                                  isActive(sub.href) ? 'text-neon-blue bg-neon-blue/5 hover:text-white' : 'text-white hover:text-neon-blue hover:bg-white/5'
-                                }`}>
-                                <span className="opacity-70 w-4 h-4 shrink-0">{sub.icon}</span>{pageLabel(sub.href)}
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                }
+                           <button onClick={() => setOpenGroup(isOpen ? null : group.name)} className={navLinkCls(groupHref)}>
+                             {headerInner}
+                           </button>
+                         )}
+                       {isOpen && (
+                         <div className="absolute top-full left-0 pt-2 w-56 z-50 animate-fade-in-down origin-top drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)]">
+                           <div className="bg-[#0a0a14]/98 backdrop-blur-2xl border border-white/10 rounded-xl py-2 shadow-2xl max-h-[70vh] overflow-y-auto">
+                             <div className="px-4 py-2 text-xs font-black text-neon-blue/80 uppercase tracking-widest">{groupTitle(group.name)}</div>
+                             <div className="h-px bg-white/10 mx-2" />
+                             {group.items.map((sub) =>
+                               sub.external ? (
+                                 <a key={sub.href} href={sub.href} target="_blank" rel="noopener noreferrer"
+                                   onClick={() => setOpenGroup(null)} className={subCls(false)}>
+                                   <span className="opacity-70 w-4 h-4 shrink-0">{sub.icon}</span>{itemLabel(sub)}
+                                 </a>
+                               ) : (
+                                 <Link key={sub.href} href={sub.href} onClick={() => setOpenGroup(null)} className={subCls(isActive(sub.href))}>
+                                   <span className="opacity-70 w-4 h-4 shrink-0">{sub.icon}</span>{itemLabel(sub)}
+                                 </Link>
+                               ),
+                             )}
+                           </div>
+                         </div>
+                       )}
+                     </div>
+                   );
+                 }
                 const link = item as NavItem;
                 const active = isActive(link.href);
                 const { name } = link;

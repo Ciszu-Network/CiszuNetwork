@@ -36,7 +36,7 @@ export const KO_FI = 'https://ko-fi.com/ciszukoantony';
 export const BUY_ME_A_COFFEE = 'https://buymeacoffee.com/ciszukoantony';
 
 export const LOGO_ISOTIPO =
-  'projects/ciszubot/content/logos/images/samples/circle/ciszubot_logo_isotipo_color_circle.png';
+  'projects/ciszubot/content/logos/images/not-outline/isotype/color/ciszubot_logo_isotipo_color.png';
 export const LOGO_ISOTIPO_CIRCLE =
   'projects/ciszubot/content/logos/images/samples/circle/ciszubot_logo_isotipo_color_circle.png';
 export const LOGO_LOGOTIPO =

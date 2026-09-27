@@ -37,6 +37,10 @@ const META: Record<string, { title: string; description: string }> = {
     title: `Socials | ${SITE_NAME}`,
     description: 'Official social networks of Ciszuko Antony: YouTube, Twitch, GitHub, Discord, X, Instagram, TikTok, Facebook, Spotify, LinkedIn, Pinterest and WhatsApp.',
   },
+  '/musicboard': {
+    title: `Musicboard | ${SITE_NAME}`,
+    description: 'Music by Ciszuko Antony: the studio album FL Studio Track Practice 2024 (own work) and the Genesis Neon soundtrack for MuzicMania, with real links to SoundCloud, YouTube, Spotify and the game library.',
+  },
   '/commissions': {
     title: `Commissions | ${SITE_NAME}`,
     description: 'Commission Ciszuko Antony: web development, bots, games, visual identity and automation.',

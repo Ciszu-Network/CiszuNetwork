@@ -113,7 +113,7 @@ export const ECOSYSTEM_PROJECTS: EcosystemProject[] = [
     href: '/projects/ciszunetwork',
     external: false,
     logo: assetResolver.resolve(
-      'projects/ciszu/content/logos/images/outline/isotype/gradient/color/ciszu_logo_isotipo_outline_degradado_zcolor_ccolor.svg',
+      'projects/ciszu/content/logos/images/outline/isotype/gradient/color/ciszu_logo_isotipo_outline_degradado_zwhite_ccolor.svg',
     ),
     icon: Building,
     accent: 'brand',
@@ -284,9 +284,13 @@ export interface FeaturedProject {
   name: string;
   href: string;
   external: boolean;
-  /** Imagen real del proyecto (portada/banner subido al CDN). */
+  /** Imagen real del proyecto (banner/arte subido al CDN). Nunca un cover de canción sin tratar. */
   image: string;
   imageAlt: string;
+  /** Logo del proyecto superpuesto sobre la imagen (cuando la base es una portada/arte). */
+  logo?: string;
+  /** Difumina la imagen base para que el logo superpuesto resalte. */
+  blurBackdrop?: boolean;
   /** Clave del diccionario para la descripción. */
   descKey: EcosystemProject['descKey'];
   accent: EcosystemAccent;
@@ -294,7 +298,7 @@ export interface FeaturedProject {
   hrefLabel: string;
 }
 
-/** Vitrina con imágenes reales del CDN (portadas y banners ya publicados). */
+/** Vitrina con imágenes reales del CDN (banners y artes ya publicados). */
 export const FEATURED_PROJECTS: FeaturedProject[] = [
   {
     id: 'muzicmania',
@@ -302,7 +306,11 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     href: 'https://muzicmania.vercel.app/',
     external: true,
     image: assetResolver.resolve('projects/muzicmania/content/music/albums/genesis_neon/cyber_beat/cover.png'),
-    imageAlt: 'Portada del álbum Genesis Neon de MuzicMania',
+    imageAlt: 'Arte del álbum Genesis Neon de MuzicMania',
+    logo: assetResolver.resolve(
+      'projects/muzicmania/content/logos/images/not-outline/logotype/gradient/color/muzicmania_logotipo_degradado_color.png',
+    ),
+    blurBackdrop: true,
     descKey: 'descMuzicmania',
     accent: 'cyan',
     icon: Music,
@@ -325,12 +333,27 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     name: 'CiszuBot',
     href: '/projects/ciszubot',
     external: false,
-    image: assetResolver.resolve('projects/ciszubot/content/thumbnails/images/thumbnail.png'),
-    imageAlt: 'Thumbnail oficial de CiszuBot',
+    image: assetResolver.resolve('projects/ciszubot/content/banners/banner.png'),
+    imageAlt: 'Arte oficial de CiszuBot',
+    logo: assetResolver.resolve(
+      'projects/ciszubot/content/logos/images/not-outline/logotype/gradient/color/ciszubot_logotipo_outline_color.png',
+    ),
     descKey: 'descCiszubot',
     accent: 'discord',
     icon: Bot,
     hrefLabel: '/projects/ciszubot',
+  },
+  {
+    id: 'ciszukoantony',
+    name: 'Ciszuko Antony',
+    href: 'https://ciszukoantony.vercel.app/',
+    external: true,
+    image: assetResolver.resolve('projects/ciszukoantony/content/thumbnails/images/thumbnail.png'),
+    imageAlt: 'Arte oficial del canal de Ciszuko Antony',
+    descKey: 'descAntony',
+    accent: 'pink',
+    icon: User,
+    hrefLabel: 'ciszukoantony.vercel.app',
   },
 ];
 

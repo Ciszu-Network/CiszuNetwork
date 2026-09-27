@@ -362,7 +362,7 @@ export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<strin
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2.5 group shrink-0 cursor-pointer hover:scale-110 active:scale-95 transition-all duration-300">
               <Image
-                src={assetResolver.resolve('projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg')}
+                src={assetResolver.resolve('projects/ciszu/content/logos/images/outline/isotype/gradient/color/ciszu_logo_isotipo_outline_degradado_zwhite_ccolor.svg')}
                 alt={CISZU_NETWORK.name}
                 width={34}
                 height={34}

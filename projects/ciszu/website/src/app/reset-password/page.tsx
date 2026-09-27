@@ -42,7 +42,7 @@ import {
   type RecoveryLinkStatus,
 } from '@ciszunetwork/utils';
 
-const CISZU_ISOTYPE = 'projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg';
+const CISZU_ISOTYPE = 'projects/ciszu/content/logos/images/outline/isotype/gradient/color/ciszu_logo_isotipo_outline_degradado_zwhite_ccolor.svg';
 
 
 const SITE_NAME = 'Ciszu Network';

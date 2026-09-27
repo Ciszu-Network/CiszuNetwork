@@ -17,7 +17,7 @@ import { metadataForPath } from "@/lib/page-metadata";
 import "./globals.scss";
 
 const PROFILE_PIC = assetResolver.resolve("projects/ciszukoantony/content/logos/images/samples/circle/circle_1_yt.png");
-const OG_IMAGE = assetResolver.resolve("projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png");
+const OG_IMAGE = assetResolver.resolve("projects/ciszukoantony/content/logos/images/not-outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zcolor_ccolor.png");
 
 const exo2 = Exo_2({
   subsets: ["latin"],

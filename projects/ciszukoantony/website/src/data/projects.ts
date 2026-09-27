@@ -139,7 +139,7 @@ export const PROJECTS: Project[] = [
     description:
       'El proyecto artístico y de entretenimiento del CEO de Ciszu Network: contenido gaming, música, tecnología y desarrollo para la comunidad.',
     icon: 'star',
-    logo: 'projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png',
+    logo: 'projects/ciszukoantony/content/logos/images/not-outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zcolor_ccolor.png',
     preview: 'shared/images/francisco_selfie/IMG_20251207_001627@869886661.jpg',
     categories: ['Contenido'],
     stack: ['YouTube', 'Twitch', 'TikTok', 'Instagram', 'Spotify'],
@@ -163,7 +163,7 @@ export const PROJECTS: Project[] = [
       'El portfolio personal construido sobre el monorepo: certificados verificables, proyectos, documentación y app de escritorio (PDWA), con CISZU ID y CDN propio.',
     icon: 'palette',
     logo: 'projects/ciszukoantony/content/logos/images/samples/circle/circle_1_yt.png',
-    preview: 'projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png',
+    preview: 'projects/ciszukoantony/content/logos/images/not-outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png',
     categories: ['Web', 'Portfolio'],
     stack: ['Next.js 15', 'React 19', 'Tailwind CSS 4', 'Supabase (CISZU ID)', 'Puck', 'Vercel'],
     features: [

@@ -11,7 +11,7 @@ import { getGuestName } from '@/lib/guest';
 import { syncPreferencesToProfile, updatePreferences, loadPreferences } from '@/lib/preferences';
 import PreferencesPanel from '@/components/layout/PreferencesPanel';
 import { PreferencesModal } from '@ciszu/ui';
-import { INVITE_URL, LOGO_ISOTIPO, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
+import { INVITE_URL, LOGO_ISOTIPO_CIRCLE, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
 
 // Header = solo lo esencial. TODO lo demás se indexa en el desplegable
 // "Information" (un único punto de entrada) para no duplicar enlaces en el
@@ -396,7 +396,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
         <div className={`flex items-center ${floating ? 'h-14' : 'h-[64px]'} gap-3`}>
           <Link href="/" className="flex items-center gap-2.5 shrink-0 group cursor-pointer">
             <SmartImage
-              src={LOGO_ISOTIPO}
+              src={LOGO_ISOTIPO_CIRCLE}
               alt="CiszuBot"
               width={36}
               height={36}

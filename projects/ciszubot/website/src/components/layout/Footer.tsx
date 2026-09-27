@@ -19,7 +19,7 @@ import {
   GITHUB_REPO,
   INSTAGRAM,
   INVITE_URL,
-  LOGO_ISOTIPO,
+  LOGO_ISOTIPO_CIRCLE,
   LOGO_LOGOTIPO,
   TOP_GG_BOT,
   X_SOCIAL,
@@ -73,10 +73,10 @@ const IcoX = () => (
  * GitHub en el botón de repositorio: aquí no se repiten para no duplicar.
  */
 const SOCIALS = [
-  { Ico: IcoYoutube, href: YOUTUBE, label: 'YouTube', glow: 'hover:border-[#FF0000] hover:text-[#FF0000] hover:shadow-[0_0_15px_rgba(255,0,0,0.5)]' },
-  { Ico: IcoFacebook, href: FACEBOOK, label: 'Facebook', glow: 'hover:border-[#1877F2] hover:text-[#1877F2] hover:shadow-[0_0_15px_rgba(24,119,242,0.5)]' },
-  { Ico: IcoInstagram, href: INSTAGRAM, label: 'Instagram', glow: 'hover:border-[#E4405F] hover:text-[#E4405F] hover:shadow-[0_0_15px_rgba(228,64,95,0.5)]' },
-  { Ico: IcoX, href: X_SOCIAL, label: 'X', glow: 'hover:border-ink hover:text-ink hover:shadow-[0_0_15px_rgba(0,0,0,0.3)]' },
+  { Ico: IcoYoutube, href: YOUTUBE, label: 'YouTube', brand: 'text-[#FF0000]', glow: 'hover:border-[#FF0000] hover:text-[#FF0000] hover:shadow-[0_0_15px_rgba(255,0,0,0.5)]' },
+  { Ico: IcoFacebook, href: FACEBOOK, label: 'Facebook', brand: 'text-[#1877F2]', glow: 'hover:border-[#1877F2] hover:text-[#1877F2] hover:shadow-[0_0_15px_rgba(24,119,242,0.5)]' },
+  { Ico: IcoInstagram, href: INSTAGRAM, label: 'Instagram', brand: 'text-[#E4405F]', glow: 'hover:border-[#E4405F] hover:text-[#E4405F] hover:shadow-[0_0_15px_rgba(228,64,95,0.5)]' },
+  { Ico: IcoX, href: X_SOCIAL, label: 'X', brand: 'text-ink', glow: 'hover:border-ink hover:text-ink hover:shadow-[0_0_15px_rgba(0,0,0,0.3)]' },
 ];
 
 interface FooterLink {
@@ -219,7 +219,7 @@ export default function Footer({ dict, commandCount = 0 }: FooterProps) {
           <div className="flex flex-col items-center text-center xl:w-2/5 border-b xl:border-b-0 xl:border-r border-border pb-8 xl:pb-0 xl:pr-10">
             <Link href="/" className="flex flex-col items-center gap-4 cursor-pointer group hover:scale-105 active:scale-95 transition-all duration-300 mb-6">
               <SmartImage
-                src={LOGO_ISOTIPO}
+                src={LOGO_ISOTIPO_CIRCLE}
                 alt="CiszuBot"
                 width={64}
                 height={64}
@@ -301,14 +301,15 @@ export default function Footer({ dict, commandCount = 0 }: FooterProps) {
 
             {/* Social icons (sin duplicar Discord/GitHub: ya están arriba) */}
             <div className="flex flex-wrap justify-center gap-3">
-              {SOCIALS.map(({ Ico, href, label, glow }) => (
+              {SOCIALS.map(({ Ico, href, label, brand, glow }) => (
                 <a
                   key={label}
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
                   title={label}
-                  className={`w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center text-muted transition-all duration-300 hover:scale-110 ${glow}`}
+                  aria-label={label}
+                  className={`w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center transition-all duration-300 hover:scale-110 ${brand} ${glow}`}
                 >
                   <Ico />
                 </a>

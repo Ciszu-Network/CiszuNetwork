@@ -8,7 +8,7 @@ import {
   DISBOARD_SERVER,
   GITHUB_REPO,
   INVITE_URL,
-  LOGO_ISOTIPO,
+  LOGO_ISOTIPO_CIRCLE,
   LOGO_LOGOTIPO,
   TOP_GG_BOT,
   type Dict,
@@ -113,7 +113,7 @@ export default function HeroBanner({ dict, status, serverNow }: HeroBannerProps)
         {/* Logos reales del CDN */}
         <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10 mb-6">
           <SmartImage
-            src={LOGO_ISOTIPO}
+            src={LOGO_ISOTIPO_CIRCLE}
             alt="CiszuBot isotipo"
             width={128}
             height={128}
@@ -213,9 +213,8 @@ export default function HeroBanner({ dict, status, serverNow }: HeroBannerProps)
         <a
           href="#estado"
           aria-label="Scroll down"
-          className="group inline-flex flex-col items-center gap-2 text-muted hover:text-neon-blue transition-colors"
+          className="group inline-flex flex-col items-center text-muted hover:text-neon-blue transition-colors"
         >
-          <span className="text-[9px] font-black uppercase tracking-[0.4em]">Scroll</span>
           <span className="relative flex items-center justify-center w-11 h-11 rounded-full border-2 border-current animate-bounce">
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
               <path d="m6 9 6 6 6-6" />

@@ -163,7 +163,7 @@ function SocialRow({ socials }: { socials: [string, string][] }) {
 
 export default function TeamPage() {
   const logo = assetResolver.resolve(
-    'projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg',
+    'projects/ciszu/content/logos/images/outline/isotype/gradient/color/ciszu_logo_isotipo_outline_degradado_zwhite_ccolor.svg',
   );
 
   return (

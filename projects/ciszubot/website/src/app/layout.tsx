@@ -7,7 +7,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import FeedbackFab from "@/components/layout/FeedbackFab";
 import { CookiesBanner } from "@/components/layout/CookiesBanner";
-import { getDict, parseLang } from "@/lib/i18n";
+import { getDict, parseLang, LOGO_ISOTIPO_CIRCLE } from "@/lib/i18n";
 import { COMMANDS } from "@/data/commands";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
@@ -39,7 +39,7 @@ const themeScript = `
 })();
 `;
 
-const LOGO_ISOTIPO_CIRCLE = assetResolver.resolve('projects/ciszubot/content/logos/images/samples/circle/ciszubot_logo_isotipo_color_circle.png');
+const GUARD_LOGO = assetResolver.resolve(LOGO_ISOTIPO_CIRCLE);
 
 export const viewport = {
   themeColor: "#12141a",
@@ -54,8 +54,8 @@ export const metadata: Metadata = {
     google: "9jc8qVjHjC3ZpZ7gpgbIpHrloar3kaeNIEy0EnR2uc0",
   },
   icons: {
-    icon: "/favicon.ico?v=2",
-    shortcut: "/favicon.ico?v=2",
+    icon: "/favicon.ico?v=3",
+    shortcut: "/favicon.ico?v=3",
     apple: "/pwa/icon-192.png",
   },
 };
@@ -82,8 +82,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       </head>
       <body className="bg-bg text-ink min-h-screen font-sans flex flex-col">
         <QueryProvider>
-           <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={LOGO_ISOTIPO_CIRCLE} title="CiszuBot" subtitle="CiszuBot Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszubot">
-             <AdBlockerGuard site="ciszubot" logo={LOGO_ISOTIPO_CIRCLE} title="CiszuBot" accent="#38bdf8" accentAlt="#ff33cc" donateHref="https://ciszubot.vercel.app/donate">
+           <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={GUARD_LOGO} title="CiszuBot" subtitle="CiszuBot Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszubot">
+             <AdBlockerGuard site="ciszubot" logo={GUARD_LOGO} title="CiszuBot" accent="#38bdf8" accentAlt="#ff33cc" donateHref="https://ciszubot.vercel.app/donate">
             <AuthProvider>
               <ToastProvider>
               <ActivityGuardProvider>

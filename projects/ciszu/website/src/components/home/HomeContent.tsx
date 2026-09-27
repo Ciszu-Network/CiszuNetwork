@@ -171,6 +171,7 @@ export default function HomeContent() {
   }, [reviews]);
 
   const featured = FEATURED_PROJECTS.find((project) => project.id === activeFeatured) ?? FEATURED_PROJECTS[0];
+  const featuredEcosystem = ECOSYSTEM_PROJECTS.find((project) => project.id === featured.id);
 
   const socialItems = Object.entries(CISZU_NETWORK.social) as [SocialPlatform, string][];
 
@@ -210,34 +211,24 @@ export default function HomeContent() {
         <div className="relative z-10 mx-auto max-w-5xl">
           <h1 className="sr-only">{CISZU_NETWORK.name}</h1>
 
-          <div className="mb-6 flex items-center justify-center gap-6 group">
+          <Link
+            href="/"
+            aria-label={CISZU_NETWORK.name}
+            className="group mb-6 flex items-center justify-center"
+          >
             <Image
               src={assetResolver.resolve(
-                'projects/ciszu/content/logos/images/outline/isotype/gradient/color/ciszu_logo_isotipo_outline_degradado_zcolor_ccolor.svg',
+                'projects/ciszu/content/logos/images/outline/logotype/gradient/color/ciszu_logotipo_outline_zcolor_cwhite_full.svg',
               )}
-              alt={`Isotipo de ${CISZU_NETWORK.name}`}
-              width={104}
-              height={104}
+              alt={CISZU_NETWORK.name}
+              width={420}
+              height={227}
               priority
-              className="h-auto w-20 md:w-26 drop-shadow-brand transition-all duration-500 group-hover:drop-shadow-[0_0_40px_rgba(58,107,240,0.9)] animate-float"
+              className="h-auto w-[min(420px,80vw)] drop-shadow-brand transition-all duration-500 group-hover:drop-shadow-[0_0_40px_rgba(58,107,240,0.9)] animate-float"
             />
-            <Image
-              src={assetResolver.resolve(
-                'projects/ciszu/content/logos/images/outline/isotype/gradient/color/ciszu_logo_isotipo_outline_degradado_zwhite_ccolor.svg',
-              )}
-              alt=""
-              width={72}
-              height={72}
-              priority
-              className="hidden h-auto w-16 md:block md:w-20 opacity-80 drop-shadow-brand transition-all duration-500 group-hover:opacity-100 animate-float-delayed"
-            />
-          </div>
+          </Link>
 
-          <p className="bg-gradient-to-r from-white via-brand-light to-brand-accent bg-clip-text font-header text-4xl font-black uppercase leading-none tracking-tighter text-transparent md:text-6xl">
-            {CISZU_NETWORK.name}
-          </p>
-
-          <div className="mt-4 mb-5 flex justify-center">
+          <div className="mb-5 flex justify-center">
             <Image
               data-logo-white="true"
               src={assetResolver.resolve('projects/ciszu/content/logos/images/outline/tagline/tagline_white.svg') + '?v=2'}
@@ -589,15 +580,45 @@ export default function HomeContent() {
           </div>
 
           <div className="mx-auto grid max-w-6xl overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/5 lg:grid-cols-2">
-            <div className="relative min-h-[260px] w-full">
-              <Image
-                src={featured.image}
-                alt={featured.imageAlt}
-                fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+            <div className="relative min-h-[260px] w-full overflow-hidden">
+              {/* Todos los banners se renderizan apilados y se alternan con opacidad:
+                  al cambiar de pestaña no hay montaje/desmontaje ni carga diferida. */}
+              {FEATURED_PROJECTS.map((project, index) => (
+                <Image
+                  key={project.id}
+                  src={project.image}
+                  alt={project.imageAlt}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  priority={index === 0}
+                  loading={index === 0 ? undefined : 'eager'}
+                  className={`object-cover transition-opacity duration-500 ${
+                    project.id === featured.id ? 'opacity-100' : 'opacity-0'
+                  } ${project.blurBackdrop ? 'scale-110 blur-md' : ''}`}
+                />
+              ))}
+
+              {/* Logo del proyecto sobre la imagen (portadas/artes de base). */}
+              {FEATURED_PROJECTS.filter((project) => project.logo).map((project) => (
+                <div
+                  key={`${project.id}-logo`}
+                  aria-hidden
+                  className={`pointer-events-none absolute inset-0 flex items-center justify-center p-8 transition-opacity duration-500 ${
+                    project.id === featured.id ? 'opacity-100' : 'opacity-0'
+                  }`}
+                >
+                  <Image
+                    src={project.logo as string}
+                    alt=""
+                    width={420}
+                    height={210}
+                    loading="eager"
+                    className="h-auto max-h-40 w-auto max-w-[75%] object-contain drop-shadow-[0_0_30px_rgba(0,0,0,0.85)]"
+                  />
+                </div>
+              ))}
+
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
               <span className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full border border-white/20 bg-black/60 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-white backdrop-blur">
                 <featured.icon className="h-3.5 w-3.5" />
                 {featured.name}
@@ -605,13 +626,18 @@ export default function HomeContent() {
             </div>
 
             <div className="flex flex-col justify-center p-8 md:p-10">
-              <h3 className={`mb-3 font-header text-3xl font-black uppercase tracking-tight ${ACCENT_STYLES[featured.accent].text}`}>
+              <h3 className={`mb-2 font-header text-3xl font-black uppercase tracking-tight ${ACCENT_STYLES[featured.accent].text}`}>
                 {featured.name}
               </h3>
+              {featuredEcosystem ? (
+                <p className={`mb-3 text-[10px] font-black uppercase tracking-[0.3em] ${ACCENT_STYLES[featured.accent].text}`}>
+                  {t.homePage[featuredEcosystem.taglineKey]}
+                </p>
+              ) : null}
               <p className="mb-6 text-sm leading-relaxed text-gray-400">{t.homePage[featured.descKey]}</p>
 
               <div className="mb-6 flex flex-wrap gap-2">
-                {(ECOSYSTEM_PROJECTS.find((project) => project.id === featured.id)?.tech ?? []).map((tech) => (
+                {(featuredEcosystem?.tech ?? []).map((tech) => (
                   <span
                     key={tech}
                     className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-gray-400"

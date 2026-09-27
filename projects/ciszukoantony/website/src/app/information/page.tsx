@@ -28,10 +28,10 @@ export const metadata: Metadata = {
 };
 
 const ISOTYPE = assetResolver.resolve(
-  'projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png'
+  'projects/ciszukoantony/content/logos/images/not-outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zcolor_ccolor.png'
 );
 const LOGOTYPE = assetResolver.resolve(
-  'projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png'
+  'projects/ciszukoantony/content/logos/images/not-outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png'
 );
 const CIRCLE = assetResolver.resolve(
   'projects/ciszukoantony/content/logos/images/samples/circle/circle_1_yt.png'
@@ -322,6 +322,7 @@ const GROUPS: InfoLinkGroup[] = [
       { name: 'Projects', href: '/projects', icon: 'rocket', desc: 'Todos los proyectos de Ciszuko Antony' },
       { name: 'Portfolio & CV', href: '/portfolio', icon: 'palette', desc: 'Trabajos, formación, experiencia y habilidades' },
       { name: 'Socials', href: '/socials', icon: 'share', desc: 'Índice de redes oficiales, con una página por red' },
+      { name: 'Musicboard', href: '/musicboard', icon: 'music', desc: 'Álbumes, soundtracks y enlaces de escucha' },
       { name: 'Commissions', href: '/commissions', icon: 'money', desc: 'Servicios, proceso y términos' },
       { name: 'Certificates', href: '/certificates', icon: 'certificates', desc: 'Catálogo de certificados y logros' },
       { name: 'Documentation', href: '/documentation', icon: 'policies', desc: 'Guías técnicas y referencia' },

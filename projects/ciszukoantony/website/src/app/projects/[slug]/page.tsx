@@ -3,7 +3,8 @@
 import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { Icon, InfoCardGrid, InfoCtaRow, InfoHero, SmartImage, type InfoTheme } from '@ciszu/ui';
+import { Icon, InfoCardGrid, InfoCtaRow, InfoHero, type InfoTheme } from '@ciszu/ui';
+import CdnImage from '@/components/shared/CdnImage';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useDict } from '@/components/providers/I18nProvider';
 import QuickDocks from '@/components/molecules/QuickDocks';
@@ -66,7 +67,7 @@ export default function ProjectDetailPage() {
         <div className="p-8 rounded-[2rem] bg-gradient-to-br from-neon-blue/10 via-transparent to-transparent border border-neon-blue/20 mb-10">
           <div className="flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
             <div className="w-32 h-32 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center p-4 shrink-0">
-              <SmartImage src={project.logo} alt={project.name} className="w-full h-full object-contain" />
+              <CdnImage src={project.logo} alt={project.name} className="w-full h-full object-contain" />
             </div>
             <div className="flex-1">
               <div className="flex flex-wrap justify-center md:justify-start gap-2 mb-4">
