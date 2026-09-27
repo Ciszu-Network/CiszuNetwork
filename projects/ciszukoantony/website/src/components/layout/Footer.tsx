@@ -1,10 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { SmartImage, ScrollNavButton, useToast, CiszugamensLogo } from '@ciszu/ui';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { SOCIALS, I, FOOTER_SECTIONS } from '@/config/navigation';
+import { I, FOOTER_SECTIONS } from '@/config/navigation';
+import { SOCIAL_ENTRIES } from '@/data/socials';
+import SocialGlyph from '@/components/socials/SocialGlyph';
 import { useAppStore } from '@/store';
 import { navLabel, type Dict } from '@/lib/i18n';
 
@@ -22,7 +24,7 @@ const SunIcon = () => (
 );
 
 const IcoPhone = () => (
-  <svg viewBox="0 0 24 24" className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" strokeWidth={2}>
+  <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#25D366]" fill="none" stroke="currentColor" strokeWidth={2}>
     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
   </svg>
 );
@@ -41,12 +43,32 @@ export default function Footer({ dict }: { lang: string; dict: Dict }) {
     if (anchor === 'privacy') return dict.footer.privacyPolicy;
     if (anchor === 'cookies') return dict.footer.cookiePolicy;
     if (anchor === 'legal') return dict.footer.legalNotice;
-    if (href.startsWith('/support')) return dict.footer.reportIssue;
+    if (href === '/support#report') return dict.footer.reportIssue;
     if (href === '/help') return dict.footer.helpCenter;
-    return navLabel(dict, href) || name;
+    const translated = navLabel(dict, href);
+    // navLabel devuelve el propio href cuando la ruta no tiene clave de idioma
+    // (p. ej. /socials/github): en ese caso manda el nombre declarado.
+    return translated.startsWith('/') ? name : translated;
+  };
+
+  // Título e icono de cada columna. El icono usa el acento de la sección (no
+  // gris translúcido) para que se lea igual en tema oscuro y claro.
+  const sectionMeta: Record<string, { label: string; accent: string }> = {
+    Navigate: { label: dict.footer.navigate, accent: 'text-neon-blue' },
+    Explore: { label: dict.footer.explore, accent: 'text-neon-pink' },
+    Socials: { label: dict.footer.socials, accent: 'text-neon-cyan' },
+    Support: { label: dict.footer.support, accent: 'text-neon-green' },
+    Legal: { label: dict.footer.legal, accent: 'text-neon-yellow' },
   };
   const { setIsMenuOpen, setSidebarView, theme, setTheme } = useAppStore();
   const { toast } = useToast();
+  // El tema real vive en localStorage; en SSR el store usa el valor por
+  // defecto. Hasta montar, el botón se pinta como oscuro (el valor del
+  // servidor) y después se sincroniza: sin esto, un usuario con tema claro
+  // guardado provocaba un error de hidratación en el icono del toggle.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const isDarkTheme = mounted ? theme === 'dark' : true;
 
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
@@ -101,16 +123,16 @@ export default function Footer({ dict }: { lang: string; dict: Dict }) {
             </Link>
 
             <div className="flex flex-wrap justify-center gap-3">
-              {SOCIALS.map((s) => (
-                <a key={s.name} href={s.href} target="_blank" rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 transition-all duration-300 hover:scale-110 hover:text-neon-blue hover:border-neon-blue/60 hover:shadow-[0_0_15px_rgba(61,106,223,0.5)] hover:bg-gradient-to-tr hover:from-neon-blue/30 hover:to-transparent"
-                  title={s.name}>
-                  {s.icon}
+              {SOCIAL_ENTRIES.map((social) => (
+                <a key={social.id} href={social.href} target="_blank" rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:border-white/30 hover:shadow-[0_0_15px_rgba(61,106,223,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-blue"
+                  title={`${social.name} · ${social.handle}`}>
+                  <SocialGlyph social={social} size={19} />
                 </a>
               ))}
             </div>
 
-            {/* Community Connectors (WhatsApp & Discord) — estilo MuzicMania */}
+            {/* Repositorio open source del ecosistema */}
             <a
               href="https://github.com/Ciszu-Network/CiszuNetwork"
               target="_blank"
@@ -162,35 +184,34 @@ export default function Footer({ dict }: { lang: string; dict: Dict }) {
 
           {/* RIGHT: Nav columns with muzicmania-style pills */}
           <div className="flex-1 grid grid-cols-2 md:grid-cols-3 gap-6">
-            {FOOTER_SECTIONS.map((section) => (
-              <div key={section.label}>
-                <h4 className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
-                  <span className="w-4 h-4 shrink-0">{section.icon}</span>
-                  {section.label === 'Navigate'
-                    ? dict.footer.navigate
-                    : section.label === 'Support'
-                      ? dict.footer.support
-                      : dict.footer.legal}
-                </h4>
-                <ul className="space-y-1.5">
-                  {section.links.map((link) => (
-                    <li key={link.name}>
-                      {link.href.startsWith('http') ? (
-                        <a href={link.href} target="_blank" rel="noopener noreferrer" className={pillCls(false)}>
-                          <span className="opacity-70 shrink-0">{link.icon}</span>
-                          <span className="tracking-wide whitespace-nowrap">{footerLinkLabel(link.name, link.href)}</span>
-                        </a>
-                      ) : (
-                        <Link href={link.href} className={pillCls(isActive(link.href))}>
-                          <span className="opacity-70 shrink-0">{link.icon}</span>
-                          <span className="tracking-wide whitespace-nowrap">{footerLinkLabel(link.name, link.href)}</span>
-                        </Link>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            {FOOTER_SECTIONS.map((section) => {
+              const meta = sectionMeta[section.label] ?? { label: section.label, accent: 'text-neon-blue' };
+              return (
+                <div key={section.label}>
+                  <h4 className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
+                    <span className={`w-4 h-4 shrink-0 ${meta.accent}`}>{section.icon}</span>
+                    {meta.label}
+                  </h4>
+                  <ul className="space-y-1.5">
+                    {section.links.map((link) => (
+                      <li key={`${section.label}-${link.href}`}>
+                        {link.href.startsWith('http') ? (
+                          <a href={link.href} target="_blank" rel="noopener noreferrer" className={pillCls(false)}>
+                            <span className={`shrink-0 ${meta.accent}`}>{link.icon}</span>
+                            <span className="tracking-wide whitespace-nowrap">{footerLinkLabel(link.name, link.href)}</span>
+                          </a>
+                        ) : (
+                          <Link href={link.href} className={pillCls(isActive(link.href))}>
+                            <span className={`shrink-0 ${meta.accent}`}>{link.icon}</span>
+                            <span className="tracking-wide whitespace-nowrap">{footerLinkLabel(link.name, link.href)}</span>
+                          </Link>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -201,10 +222,10 @@ export default function Footer({ dict }: { lang: string; dict: Dict }) {
           <div className="flex items-center gap-4">
             <button onClick={toggleTheme}
               className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 cursor-pointer shadow-md border group ${
-                theme === 'dark' ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
+                isDarkTheme ? 'bg-white border-gray-100 hover:scale-110' : 'bg-yellow-400 border-yellow-500 hover:scale-110'
               }`}
-                             title={dict.common[theme === 'dark' ? 'lightMode' : 'darkMode']}>
-              {theme === 'dark' ? <MoonIcon /> : <SunIcon />}
+                             title={dict.common[isDarkTheme ? 'lightMode' : 'darkMode']}>
+              {isDarkTheme ? <MoonIcon /> : <SunIcon />}
             </button>
 
             <button onClick={openLangMenu}

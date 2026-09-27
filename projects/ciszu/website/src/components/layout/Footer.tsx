@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { assetResolver } from '@ciszunetwork/cdn';
-import { ScrollNavButton, useToast, SocialIcon, SOCIAL_COLORS } from '@ciszu/ui';
+import { ScrollNavButton, useToast, SocialIcon } from '@ciszu/ui';
 import { useAppStore } from '@/store';
 import { CISZU_NETWORK, CISZUKO_ANTONY, EXTERNAL_LINKS, GITHUB_REPO } from '@/config/site';
 import {
@@ -13,7 +13,6 @@ import {
   ExternalLink,
   HelpCircle,
   FileText,
-  Sparkles,
   LifeBuoy,
   Users,
   Home,
@@ -21,7 +20,6 @@ import {
   Mail,
   Music,
   User,
-  MessageSquareWarning,
   Download,
   Heart,
   GraduationCap,
@@ -37,25 +35,79 @@ import {
   Shield,
   Scale,
   Lock,
+  Sparkles,
+  Compass,
+  Cpu,
+  Triangle,
+  Atom,
+  FileCode,
+  Wind,
+  Database,
+  Cloud,
+  Hexagon,
+  Package,
 } from 'lucide-react';
 
-const IcoPhone = () => (
-  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}>
-    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-  </svg>
-);
-const IcoDiscord = () => (
-  <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
-    <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.013.043.03.053a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
-  </svg>
-);
-
 interface FooterLink { name: string; href: string; icon: React.ReactNode; }
-interface FooterColumn { title: string; links: FooterLink[]; }
+interface FooterColumn {
+  title: string;
+  icon: React.ReactNode;
+  accent: keyof typeof SECTION_ACCENTS;
+  links: FooterLink[];
+}
 
-const FOOTER_SECTIONS = (dict: Record<string, any>) => [
+/**
+ * Acentos por sección del footer.
+ *
+ * Antes TODOS los iconos de enlace usaban `text-brand-light/70` sin importar la
+ * sección: el footer se veía monocromo y el icono no se distinguía del texto.
+ * Ahora cada columna tiene su acento, y todos los tonos usados existen en el
+ * bloque claro de `globals.scss` (`.light .text-neon-*`), así que siguen siendo
+ * legibles en modo claro y oscuro.
+ */
+const SECTION_ACCENTS = {
+  brand: {
+    heading: 'text-brand-light',
+    dot: 'bg-brand-light',
+    active: 'border-brand-light bg-brand-light/15 text-brand-light',
+    hover:
+      'hover:border-brand-light hover:bg-brand-light/10 hover:text-brand-light hover:shadow-[0_0_10px_rgba(58,107,240,0.25)]',
+  },
+  cyan: {
+    heading: 'text-neon-cyan',
+    dot: 'bg-neon-cyan',
+    active: 'border-neon-cyan bg-neon-cyan/15 text-neon-cyan',
+    hover:
+      'hover:border-neon-cyan hover:bg-neon-cyan/10 hover:text-neon-cyan hover:shadow-[0_0_10px_rgba(104,207,255,0.25)]',
+  },
+  pink: {
+    heading: 'text-neon-pink',
+    dot: 'bg-neon-pink',
+    active: 'border-neon-pink bg-neon-pink/15 text-neon-pink',
+    hover:
+      'hover:border-neon-pink hover:bg-neon-pink/10 hover:text-neon-pink hover:shadow-[0_0_10px_rgba(255,51,204,0.25)]',
+  },
+  yellow: {
+    heading: 'text-neon-yellow',
+    dot: 'bg-neon-yellow',
+    active: 'border-neon-yellow bg-neon-yellow/15 text-neon-yellow',
+    hover:
+      'hover:border-neon-yellow hover:bg-neon-yellow/10 hover:text-neon-yellow hover:shadow-[0_0_10px_rgba(255,217,0,0.25)]',
+  },
+  green: {
+    heading: 'text-neon-green',
+    dot: 'bg-neon-green',
+    active: 'border-neon-green bg-neon-green/15 text-neon-green',
+    hover:
+      'hover:border-neon-green hover:bg-neon-green/10 hover:text-neon-green hover:shadow-[0_0_10px_rgba(0,255,136,0.25)]',
+  },
+} as const;
+
+const FOOTER_SECTIONS = (dict: Record<string, any>): FooterColumn[] => [
   {
     title: dict.footer.brand,
+    icon: <Building className="w-4 h-4" />,
+    accent: 'brand',
     links: [
       { name: dict.nav.home, href: '/', icon: <Home className="w-4 h-4" /> },
       { name: dict.nav.about, href: '/about', icon: <Info className="w-4 h-4" /> },
@@ -63,26 +115,30 @@ const FOOTER_SECTIONS = (dict: Record<string, any>) => [
       { name: dict.nav.contact, href: '/contact', icon: <Mail className="w-4 h-4" /> },
     ],
   },
-{
-      title: dict.footer.explore,
-      links: [
-        { name: dict.nav.faq, href: '/faq', icon: <HelpCircle className="w-4 h-4" /> },
-        { name: 'Policies', href: '/policy', icon: <FileText className="w-4 h-4" /> },
-        { name: dict.nav.support, href: '/support', icon: <LifeBuoy className="w-4 h-4" /> },
-        { name: dict.nav.documentation, href: '/documentation', icon: <FileText className="w-4 h-4" /> },
-        { name: dict.nav.help, href: '/help', icon: <HelpCircle className="w-4 h-4" /> },
-        { name: dict.nav.changelog, href: '/changelog', icon: <History className="w-4 h-4" /> },
-        { name: dict.nav.reviews, href: '/reviews', icon: <Star className="w-4 h-4" /> },
-        { name: dict.nav.stats, href: '/stats', icon: <BarChart3 className="w-4 h-4" /> },
-        { name: 'Courses', href: '/courses', icon: <BookOpen className="w-4 h-4" /> },
-        { name: dict.nav.forum, href: '/forum', icon: <MessageSquare className="w-4 h-4" /> },
-        { name: dict.nav.donate, href: '/donate', icon: <Heart className="w-4 h-4" /> },
-      ],
-    },
+  {
+    title: dict.footer.explore,
+    icon: <Compass className="w-4 h-4" />,
+    accent: 'cyan',
+    links: [
+      { name: dict.nav.faq, href: '/faq', icon: <HelpCircle className="w-4 h-4" /> },
+      { name: dict.nav.support, href: '/support', icon: <LifeBuoy className="w-4 h-4" /> },
+      { name: dict.nav.documentation, href: '/documentation', icon: <FileText className="w-4 h-4" /> },
+      { name: dict.nav.help, href: '/help', icon: <BookOpen className="w-4 h-4" /> },
+      { name: dict.nav.changelog, href: '/changelog', icon: <History className="w-4 h-4" /> },
+      { name: dict.nav.reviews, href: '/reviews', icon: <Star className="w-4 h-4" /> },
+      { name: dict.nav.stats, href: '/stats', icon: <BarChart3 className="w-4 h-4" /> },
+      { name: dict.nav.courses, href: '/courses', icon: <GraduationCap className="w-4 h-4" /> },
+      { name: dict.nav.forum, href: '/forum', icon: <MessageSquare className="w-4 h-4" /> },
+      { name: dict.nav.download, href: '/downloads', icon: <Download className="w-4 h-4" /> },
+      { name: dict.nav.donate, href: '/donate', icon: <Heart className="w-4 h-4" /> },
+    ],
+  },
   {
     title: dict.footer.projects,
+    icon: <LayoutGrid className="w-4 h-4" />,
+    accent: 'pink',
     links: [
-      { name: 'Todos los Proyectos', href: '/projects', icon: <LayoutGrid className="w-4 h-4" /> },
+      { name: dict.nav.projects, href: '/projects', icon: <LayoutGrid className="w-4 h-4" /> },
       { name: 'Ciszugamens', href: '/projects/ciszugamens', icon: <Gamepad2 className="w-4 h-4" /> },
       { name: dict.nav.ciszubot, href: '/projects/ciszubot', icon: <Bot className="w-4 h-4" /> },
       { name: dict.nav.muzicmania, href: EXTERNAL_LINKS.muzicmania, icon: <Music className="w-4 h-4" /> },
@@ -91,13 +147,30 @@ const FOOTER_SECTIONS = (dict: Record<string, any>) => [
     ],
   },
   {
-    title: 'Legal',
+    title: dict.footer.legal,
+    icon: <Scale className="w-4 h-4" />,
+    accent: 'yellow',
     links: [
       { name: 'Guidelines', href: '/guidelines', icon: <FileText className="w-4 h-4" /> },
       { name: 'Rules', href: '/rules', icon: <Shield className="w-4 h-4" /> },
       { name: 'License', href: '/license', icon: <Scale className="w-4 h-4" /> },
       { name: 'Policy', href: '/policy', icon: <Lock className="w-4 h-4" /> },
-      { name: 'Credits', href: '/credits', icon: <FileText className="w-4 h-4" /> },
+      { name: 'Credits', href: '/credits', icon: <Sparkles className="w-4 h-4" /> },
+    ],
+  },
+  {
+    title: dict.footer.technology,
+    icon: <Cpu className="w-4 h-4" />,
+    accent: 'green',
+    links: [
+      { name: 'Next.js', href: 'https://nextjs.org', icon: <Triangle className="w-4 h-4" /> },
+      { name: 'React', href: 'https://react.dev', icon: <Atom className="w-4 h-4" /> },
+      { name: 'TypeScript', href: 'https://www.typescriptlang.org', icon: <FileCode className="w-4 h-4" /> },
+      { name: 'Tailwind CSS', href: 'https://tailwindcss.com', icon: <Wind className="w-4 h-4" /> },
+      { name: 'Supabase', href: 'https://supabase.com', icon: <Database className="w-4 h-4" /> },
+      { name: 'Vercel', href: 'https://vercel.com', icon: <Cloud className="w-4 h-4" /> },
+      { name: 'Node.js', href: 'https://nodejs.org', icon: <Hexagon className="w-4 h-4" /> },
+      { name: 'pnpm', href: 'https://pnpm.io', icon: <Package className="w-4 h-4" /> },
     ],
   },
 ];
@@ -112,25 +185,33 @@ const SOCIAL_ITEMS = [
   { platform: 'tiktok' as const, url: CISZU_NETWORK.social.tiktok },
 ];
 
-// Literal Tailwind hover glow classes per platform (source-present so they get generated).
+/**
+ * Glow y color de cada red social al pasar el cursor.
+ *
+ * `x`, `github` y `tiktok` usaban `hover:border-white`: en modo claro el borde
+ * blanco desaparecía sobre el panel claro. Ahora usan el acento de marca, que
+ * tiene variante legible en ambos temas.
+ */
 const SOCIAL_GLOWS: Record<string, string> = {
-  youtube: 'hover:border-[#FF0000] hover:shadow-[0_0_15px_rgba(255,0,0,0.5)]',
-  facebook: 'hover:border-[#1877F2] hover:shadow-[0_0_15px_rgba(24,119,242,0.5)]',
-  instagram: 'hover:border-[#E4405F] hover:shadow-[0_0_15px_rgba(228,64,95,0.5)]',
-  x: 'hover:border-white hover:shadow-[0_0_15px_rgba(255,255,255,0.4)]',
-  github: 'hover:border-white hover:shadow-[0_0_15px_rgba(255,255,255,0.4)]',
-  discord: 'hover:border-[#5865F2] hover:shadow-[0_0_15px_rgba(88,101,242,0.5)]',
-  tiktok: 'hover:border-white hover:shadow-[0_0_15px_rgba(255,255,255,0.4)]',
+  youtube: 'hover:border-[#FF0000] hover:text-[#FF0000] hover:shadow-[0_0_15px_rgba(255,0,0,0.5)]',
+  facebook: 'hover:border-[#1877F2] hover:text-[#1877F2] hover:shadow-[0_0_15px_rgba(24,119,242,0.5)]',
+  instagram: 'hover:border-[#E4405F] hover:text-[#E4405F] hover:shadow-[0_0_15px_rgba(228,64,95,0.5)]',
+  x: 'hover:border-brand-accent hover:text-brand-accent hover:shadow-[0_0_15px_rgba(74,125,255,0.4)]',
+  github: 'hover:border-brand-accent hover:text-brand-accent hover:shadow-[0_0_15px_rgba(74,125,255,0.4)]',
+  discord: 'hover:border-[#5865F2] hover:text-[#5865F2] hover:shadow-[0_0_15px_rgba(88,101,242,0.5)]',
+  tiktok: 'hover:border-brand-accent hover:text-brand-accent hover:shadow-[0_0_15px_rgba(74,125,255,0.4)]',
 };
 
-const TECH_LINKS = [
-  { name: 'Next.js', url: 'https://nextjs.org' },
-  { name: 'Vercel', url: 'https://vercel.com' },
-  { name: 'Tailwind CSS', url: 'https://tailwindcss.com' },
-  { name: 'IBM Plex Sans', url: 'https://fonts.google.com/specimen/IBM+Plex+Sans' },
-  { name: 'Lucide', url: 'https://lucide.dev' },
-  { name: 'Zustand', url: 'https://zustand-demo.pmnd.rs' },
-];
+const IcoPhone = () => (
+  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}>
+    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+  </svg>
+);
+const IcoDiscord = () => (
+  <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
+    <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.013.043.03.053a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+  </svg>
+);
 
 export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any> }) => {
   const { theme, setTheme, language, setIsMenuOpen, setSidebarView } = useAppStore();
@@ -155,6 +236,7 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
           <div className="flex flex-col items-center text-center xl:w-2/5 border-b xl:border-b-0 xl:border-r border-white/10 pb-8 xl:pb-0 xl:pr-10">
             <Link href="/" className="flex flex-col items-center gap-4 cursor-pointer group hover:scale-105 active:scale-95 transition-all duration-300 mb-6">
               <Image
+                data-logo-white="true"
                 src={assetResolver.resolve('projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg')}
                 alt={CISZU_NETWORK.name}
                 width={72}
@@ -162,6 +244,7 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
                 className="drop-shadow-brand group-hover:drop-shadow-[0_0_25px_rgba(58,107,240,0.9)] transition-all duration-300"
               />
               <Image
+                data-logo-white="true"
                 src={assetResolver.resolve('projects/ciszu/content/logos/images/outline/logotype/monochrome/ciszu_logotipo_outline_zwhite_cwhite_simple.svg')}
                 alt={CISZU_NETWORK.name}
                 width={200}
@@ -169,6 +252,7 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
                 className="group-hover:drop-shadow-[0_0_20px_rgba(58,107,240,0.7)] transition-all duration-300"
               />
               <Image
+                data-logo-white="true"
                 src={assetResolver.resolve('projects/ciszu/content/logos/images/outline/tagline/tagline_white.svg') + '?v=2'}
                 alt={CISZU_NETWORK.tagline}
                 width={220}
@@ -193,7 +277,7 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
               ))}
             </div>
 
-            {/* Community Connectors (WhatsApp & Discord) */}
+            {/* Open source repository */}
             <a
               href={GITHUB_REPO}
               target="_blank"
@@ -207,7 +291,7 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
               <ExternalLink className="w-3 h-3 opacity-60 shrink-0" />
             </a>
 
-            {/* Community Connectors (WhatsApp & Discord) */}
+            {/* Community connectors (WhatsApp & Discord) */}
             <div className="flex flex-col sm:flex-row items-stretch gap-4 w-full max-w-3xl">
               <a
                 href={`https://wa.me/${CISZU_NETWORK.phone.replace(/\D/g, '')}`}
@@ -252,40 +336,44 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
 
           {/* RIGHT: Footer Nav Layout */}
           <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-center sm:text-left content-start">
-            {FOOTER_SECTIONS(dict).map((section) => (
-              <div key={section.title} className="flex flex-col items-center sm:items-start">
-                <span className="text-brand-light text-[10px] font-black uppercase tracking-[0.3em] mb-4 drop-shadow-[0_0_8px_rgba(58,107,240,0.5)]">
-                  {section.title}
-                </span>
-                <div className="flex flex-col gap-1.5 w-full">
-                  {section.links.map((link) => {
-                    const external = link.href.startsWith('http');
-                    const Comp = external ? 'a' : Link;
-                    const props = external
-                      ? { href: link.href, target: '_blank', rel: 'noopener noreferrer' }
-                      : { href: link.href };
-                    const active = !external && isActive(link.href);
-                    return (
-                      <Comp
-                        key={link.name}
-                        {...props}
-                        className={`flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 ${
-                          active
-                            ? 'border-brand-light bg-brand-light/20 shadow-[0_0_15px_rgba(58,107,240,0.3)] text-brand-light hover:text-white'
-                            : 'border-transparent text-white hover:border-brand-light hover:bg-brand-light/15 hover:text-brand-light hover:shadow-[0_0_10px_rgba(58,107,240,0.2)]'
-                        }`}
-                      >
-                        <span className="shrink-0 text-brand-light/70 transition-colors duration-300 group-hover:text-brand-light">
-                          {link.icon}
-                        </span>
-                        <span className="tracking-wide">{link.name}</span>
-                        {external && <ExternalLink className="w-3 h-3 opacity-50 shrink-0" />}
-                      </Comp>
-                    );
-                  })}
+            {FOOTER_SECTIONS(dict).map((section) => {
+              const accent = SECTION_ACCENTS[section.accent];
+              return (
+                <div key={section.title} className="flex flex-col items-center sm:items-start">
+                  <span className={`flex items-center gap-2 ${accent.heading} text-[10px] font-black uppercase tracking-[0.3em] mb-4`}>
+                    <span className={`inline-flex ${accent.heading}`} aria-hidden="true">{section.icon}</span>
+                    {section.title}
+                  </span>
+                  <div className="flex flex-col gap-1.5 w-full">
+                    {section.links.map((link) => {
+                      const external = link.href.startsWith('http');
+                      const Comp = external ? 'a' : Link;
+                      const props = external
+                        ? { href: link.href, target: '_blank', rel: 'noopener noreferrer' }
+                        : { href: link.href };
+                      const active = !external && isActive(link.href);
+                      return (
+                        <Comp
+                          key={link.name}
+                          {...props}
+                          className={`group flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 ${
+                            active
+                              ? `${accent.active} hover:text-white`
+                              : `border-transparent text-white ${accent.hover}`
+                          }`}
+                        >
+                          <span className={`shrink-0 ${accent.heading} opacity-80 transition-opacity duration-300 group-hover:opacity-100`}>
+                            {link.icon}
+                          </span>
+                          <span className="tracking-wide">{link.name}</span>
+                          {external && <ExternalLink className="w-3 h-3 opacity-50 shrink-0" />}
+                        </Comp>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
@@ -294,7 +382,7 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
 
         <div className="flex flex-col items-center justify-center gap-6 pb-6 text-center">
 
-          {/* LEFT: Theme + Language triggers */}
+          {/* Theme + Language triggers */}
           <div className="flex items-center gap-4">
             <button
               onClick={() => {
@@ -330,7 +418,7 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
             </button>
           </div>
 
-          {/* RIGHT: Copyright */}
+          {/* Copyright */}
           <div className="text-center space-y-2">
             <p className="text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-widest leading-loose">
               <span className="text-brand-light">&copy;</span>{' '}
@@ -369,16 +457,6 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
               )}
             </p>
           </div>
-        </div>
-
-        {/* Tech stack credits */}
-        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-4 pb-2">
-          {TECH_LINKS.map((tech) => (
-            <a key={tech.name} href={tech.url} target="_blank" rel="noopener noreferrer"
-              className="text-[9px] text-gray-600 hover:text-brand-light uppercase tracking-wider transition-colors">
-              {tech.name}
-            </a>
-          ))}
         </div>
       </div>
     </footer>

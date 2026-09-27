@@ -483,3 +483,99 @@ html:not(.dark) {
   from { transform: translateX(100%); opacity: 0; }
   to   { transform: translateX(0); opacity: 1; }
 }
+
+/* ── HOME (CiszuBot) — ambiente animado y microinteracciones ─────────────
+   Prefijo `cb-` para no colisionar con las utilidades globales del sitio. */
+
+/* Línea de rejilla adaptada al tema activo (claro/oscuro). */
+:root { --cb-grid-line: rgba(35, 63, 146, 0.10); }
+.dark { --cb-grid-line: rgba(0, 212, 255, 0.12); }
+
+@keyframes cb-grid-shift {
+  0%   { background-position: 0 0; }
+  100% { background-position: 48px 48px; }
+}
+@keyframes cb-blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(22px, -18px) scale(1.06); }
+  66%       { transform: translate(-16px, 16px) scale(0.96); }
+}
+@keyframes cb-scanline {
+  0%   { transform: translateY(0); opacity: 0; }
+  12%  { opacity: 0.7; }
+  88%  { opacity: 0.7; }
+  100% { transform: translateY(620px); opacity: 0; }
+}
+@keyframes cb-shine {
+  from { transform: translateX(-130%); }
+  to   { transform: translateX(240%); }
+}
+@keyframes cb-bounce-x {
+  0%, 100% { transform: translateX(0); }
+  50%       { transform: translateX(6px); }
+}
+@keyframes cb-float-delayed {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%       { transform: translateY(-10px) rotate(3deg); }
+}
+@keyframes cb-visualizer {
+  0%   { transform: scaleY(0.35); opacity: 0.25; }
+  50%  { transform: scaleY(1);    opacity: 0.7; }
+  100% { transform: scaleY(0.5);  opacity: 0.4; }
+}
+@keyframes cb-pulse-ring {
+  0%   { transform: scale(0.85); opacity: 0.65; }
+  100% { transform: scale(1.7);  opacity: 0; }
+}
+@keyframes cb-ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@layer utilities {
+  .animate-cb-grid        { animation: cb-grid-shift 10s linear infinite; }
+  .animate-cb-blob        { animation: cb-blob 12s ease-in-out infinite; }
+  .animate-cb-scanline    { animation: cb-scanline 9s linear infinite; }
+  .animate-cb-shine       { animation: cb-shine 1.6s ease-in-out infinite; }
+  .animate-cb-bounce-x    { animation: cb-bounce-x 1.4s ease-in-out infinite; }
+  .animate-cb-float-delayed { animation: cb-float-delayed 8s ease-in-out infinite; }
+  .animate-cb-visualizer  { animation: cb-visualizer 2s ease-in-out infinite; transform-origin: bottom; }
+  .animate-cb-pulse-ring  { animation: cb-pulse-ring 2.4s ease-out infinite; }
+  .animate-cb-ticker      { animation: cb-ticker 32s linear infinite; }
+
+  .cb-delay-1 { animation-delay: 1s; }
+  .cb-delay-2 { animation-delay: 2s; }
+  .cb-delay-3 { animation-delay: 3s; }
+  .cb-delay-4 { animation-delay: 4s; }
+  .cb-delay-6 { animation-delay: 6s; }
+
+  /* Entrada de sección al hacer scroll (IntersectionObserver + clase is-visible). */
+  .cb-reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity .7s ease, transform .7s cubic-bezier(.16, 1, .3, 1);
+  }
+  .cb-reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-cb-grid,
+  .animate-cb-blob,
+  .animate-cb-scanline,
+  .animate-cb-shine,
+  .animate-cb-bounce-x,
+  .animate-cb-float-delayed,
+  .animate-cb-visualizer,
+  .animate-cb-pulse-ring,
+  .animate-cb-ticker {
+    animation: none !important;
+  }
+  .cb-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}

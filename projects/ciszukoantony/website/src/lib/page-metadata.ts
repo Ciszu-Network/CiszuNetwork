@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { SOCIAL_ENTRIES } from '@/data/socials';
 
 /**
  * Metadata SSR por ruta (Ciszuko Antony portfolio).
@@ -29,12 +30,12 @@ const META: Record<string, { title: string; description: string }> = {
     description: 'Explore the projects of Ciszuko Antony: web apps, bots, games and open source.',
   },
   '/portfolio': {
-    title: `Portfolio | ${SITE_NAME}`,
-    description: 'Visual portfolio of Ciszuko Antony: web, bots, game, community, content and tools.',
+    title: `Portfolio & CV | ${SITE_NAME}`,
+    description: 'Portfolio and interactive CV of Ciszuko Antony: projects, experience, education, skills, languages and certifications.',
   },
-  '/curriculum': {
-    title: `Curriculum | ${SITE_NAME}`,
-    description: 'CV of Ciszuko Antony: education, certifications, experience and technical skills.',
+  '/socials': {
+    title: `Socials | ${SITE_NAME}`,
+    description: 'Official social networks of Ciszuko Antony: YouTube, Twitch, GitHub, Discord, X, Instagram, TikTok, Facebook, Spotify, LinkedIn, Pinterest and WhatsApp.',
   },
   '/commissions': {
     title: `Commissions | ${SITE_NAME}`,
@@ -105,6 +106,14 @@ const META: Record<string, { title: string; description: string }> = {
     description: 'Create your Ciszuko ID account.',
   },
 };
+
+// Metadata SSR por red real (misma fuente que /socials: src/data/socials.ts).
+for (const social of SOCIAL_ENTRIES) {
+  META[`/socials/${social.id}`] = {
+    title: `${social.name} | ${SITE_NAME}`,
+    description: `${social.name} (${social.handle}) — ${social.tagline}. ${social.about}`,
+  };
+}
 
 const FALLBACK: { title: string; description: string } = {
   title: SITE_NAME,

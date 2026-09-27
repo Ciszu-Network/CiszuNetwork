@@ -8,6 +8,7 @@ import Footer from "@/components/layout/Footer";
 import FeedbackFab from "@/components/layout/FeedbackFab";
 import { CookiesBanner } from "@/components/layout/CookiesBanner";
 import { getDict, parseLang } from "@/lib/i18n";
+import { COMMANDS } from "@/data/commands";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
@@ -98,7 +99,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
               <DisclaimerDebug site="ciszubot" />
               <GlobalDisclaimer site="ciszubot" />
               <main className={isEdit ? "flex-grow" : "flex-grow pt-[60px]"}>{children}</main>
-              {!isEdit && <Footer lang={lang} dict={dict} />}
+              {!isEdit && <Footer lang={lang} dict={dict} commandCount={COMMANDS.length} />}
               {!isEdit && <CookiesBanner lang={lang} dict={dict} />}
               </DisclaimerProvider>
               </AdsWithUser>

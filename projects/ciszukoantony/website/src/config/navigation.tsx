@@ -1,4 +1,5 @@
 import React from 'react';
+import { SOCIAL_ENTRIES, socialHref } from '@/data/socials';
 
 export const I = {
   home: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
@@ -39,6 +40,10 @@ export const I = {
   robot: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2M20 14h2M15 13v2M9 13v2" /></svg>,
   gamepad: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><line x1="6" x2="10" y1="12" y2="12" /><line x1="8" x2="8" y1="10" y2="14" /><line x1="15" x2="15.01" y1="13" y2="13" /><line x1="18" x2="18.01" y1="11" y2="11" /><rect width="20" height="12" x="2" y="6" rx="2" /></svg>,
   music: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></svg>,
+  socials: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></svg>,
+  briefcase: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /></svg>,
+  graduation: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><path d="M22 10 12 5 2 10l10 5 10-5z" /><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5" /></svg>,
+  code: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>,
   server: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><rect width="20" height="8" x="2" y="2" rx="2" ry="2" /><rect width="20" height="8" x="2" y="14" rx="2" ry="2" /><line x1="6" x2="6.01" y1="6" y2="6" /><line x1="6" x2="6.01" y1="18" y2="18" /></svg>,
   user: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>,
   edit: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path d="m15 5 4 4" /></svg>,
@@ -69,8 +74,7 @@ export const NAV_MAIN: (NavItem | NavGroup)[] = [
     name: 'Projects', icon: I.projects,
     items: [
       { name: 'Projects', href: '/projects', icon: I.projects },
-      { name: 'Portfolio', href: '/portfolio', icon: I.palette },
-      { name: 'Curriculum', href: '/curriculum', icon: I.certificates },
+      { name: 'Portfolio & CV', href: '/portfolio', icon: I.palette },
       { name: 'Commissions', href: '/commissions', icon: I.money },
       { name: 'CiszuBot', href: '/projects/ciszubot', icon: I.robot },
       { name: 'MuzicMania', href: '/projects/muzicmania', icon: I.music },
@@ -81,6 +85,7 @@ export const NAV_MAIN: (NavItem | NavGroup)[] = [
     ],
   } as NavGroup,
   { name: 'Certificates', href: '/certificates', icon: I.certificates, hideCls: 'hidden min-[520px]:flex' },
+  { name: 'Socials', href: '/socials', icon: I.socials, hideCls: 'hidden min-[820px]:flex' },
   { name: 'Changelog', href: '/changelog', icon: I.history, hideCls: 'hidden min-[900px]:flex' },
   { name: 'Reviews', href: '/reviews', icon: I.star, hideCls: 'hidden min-[980px]:flex' },
   { name: 'Stats', href: '/stats', icon: I.barChart, hideCls: 'hidden min-[1140px]:flex' },
@@ -109,6 +114,13 @@ export const NAV_MAIN: (NavItem | NavGroup)[] = [
   } as NavGroup,
 ];
 
+/** Subpáginas de redes reales (una por plataforma de `src/data/socials.ts`). */
+export const SOCIAL_PAGES: NavItem[] = SOCIAL_ENTRIES.map((social) => ({
+  name: social.name,
+  href: socialHref(social.id),
+  icon: I.socials,
+}));
+
 export const ALL_PAGES: NavItem[] = [
   { name: 'Home', href: '/', icon: I.home },
   { name: 'Information', href: '/information', icon: I.info },
@@ -130,9 +142,8 @@ export const ALL_PAGES: NavItem[] = [
   { name: 'Stats', href: '/stats', icon: I.barChart },
   { name: 'Forum', href: '/forum', icon: I.messageSquare },
   { name: 'Projects', href: '/projects', icon: I.projects },
-  { name: 'Portfolio', href: '/portfolio', icon: I.palette },
+  { name: 'Portfolio & CV', href: '/portfolio', icon: I.palette },
   { name: 'Portfolio Web', href: '/projects/portfolio', icon: I.edit },
-  { name: 'Curriculum', href: '/curriculum', icon: I.certificates },
   { name: 'Commissions', href: '/commissions', icon: I.money },
   { name: 'CiszuBot', href: '/projects/ciszubot', icon: I.robot },
   { name: 'MuzicMania', href: '/projects/muzicmania', icon: I.music },
@@ -140,6 +151,8 @@ export const ALL_PAGES: NavItem[] = [
   { name: 'Ciszu Network', href: '/projects/ciszunetwork', icon: I.server },
   { name: 'Ciszuko Antony', href: '/projects/ciszukoantony', icon: I.user },
   { name: 'Certificates', href: '/certificates', icon: I.certificates },
+  { name: 'Socials', href: '/socials', icon: I.socials },
+  ...SOCIAL_PAGES,
   { name: 'Feedback', href: '/feedback', icon: I.feedback },
   { name: 'Downloads', href: '/downloads', icon: I.download },
   { name: 'Donar', href: '/donate', icon: I.heart },
@@ -160,27 +173,54 @@ export const SOCIALS = [
   { name: 'Spotify', href: 'https://open.spotify.com/user/317nxlvcrrlwfxjogyirixsqjmfi?si=50c43b75eb6e47db', icon: <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg> },
 ];
 
+/**
+ * Columnas del footer. Cada enlace vive en UNA sola sección: antes el footer
+ * repetía help/faq/contact/feedback/downloads/donate/credits en dos columnas a
+ * la vez y la columna "Navigate" cargaba con las 37 rutas del sitio.
+ */
 export const FOOTER_SECTIONS = [
-  { label: 'Navigate', icon: I.home, links: ALL_PAGES },
-  { label: 'Legal', icon: I.terms, links: [
-    { name: 'Guidelines', href: '/guidelines', icon: I.policies },
-    { name: 'Rules', href: '/rules', icon: I.shield },
-    { name: 'License', href: '/license', icon: I.certificates },
-    { name: 'Policy', href: '/policy', icon: I.lock },
+  { label: 'Navigate', icon: I.home, links: [
+    { name: 'Home', href: '/', icon: I.home },
+    { name: 'Projects', href: '/projects', icon: I.projects },
+    { name: 'Portfolio & CV', href: '/portfolio', icon: I.palette },
+    { name: 'Certificates', href: '/certificates', icon: I.certificates },
+    { name: 'Changelog', href: '/changelog', icon: I.history },
+    { name: 'Reviews', href: '/reviews', icon: I.star },
+    { name: 'Stats', href: '/stats', icon: I.barChart },
+    { name: 'Commissions', href: '/commissions', icon: I.money },
+  ]},
+  { label: 'Explore', icon: I.info, links: [
+    { name: 'Information', href: '/information', icon: I.info },
+    { name: 'About', href: '/about', icon: I.about },
+    { name: 'Team', href: '/team', icon: I.team },
+    { name: 'Documentation', href: '/documentation', icon: I.file },
+    { name: 'Downloads', href: '/downloads', icon: I.download },
+    { name: 'Forum', href: '/forum', icon: I.messageSquare },
     { name: 'Créditos', href: '/credits', icon: I.credits },
-    { name: 'Terms & Conditions', href: '/policies#terms', icon: I.terms },
-    { name: 'Privacy Policy', href: '/policies#privacy', icon: I.policies },
-    { name: 'Cookie Policy', href: '/policies#cookies', icon: I.policies },
-    { name: 'Legal Notice', href: '/policies#legal', icon: I.terms },
+    { name: 'Donar', href: '/donate', icon: I.heart },
+  ]},
+  { label: 'Socials', icon: I.socials, links: [
+    { name: 'Socials', href: '/socials', icon: I.socials },
+    ...SOCIAL_PAGES,
   ]},
   { label: 'Support', icon: I.support, links: [
     { name: 'Help Center', href: '/help', icon: I.help },
     { name: 'FAQ', href: '/faq', icon: I.faq },
+    { name: 'Support', href: '/support', icon: I.support },
     { name: 'Contact', href: '/contact', icon: I.contact },
     { name: 'Feedback', href: '/feedback', icon: I.feedback },
-    { name: 'Downloads', href: '/downloads', icon: I.download },
     { name: 'Report Issue', href: '/support#report', icon: I.support },
-    { name: 'Donar', href: '/donate', icon: I.heart },
+  ]},
+  { label: 'Legal', icon: I.terms, links: [
+    { name: 'Policies', href: '/policies', icon: I.policies },
+    { name: 'Guidelines', href: '/guidelines', icon: I.policies },
+    { name: 'Rules', href: '/rules', icon: I.shield },
+    { name: 'License', href: '/license', icon: I.certificates },
+    { name: 'Policy', href: '/policy', icon: I.lock },
+    { name: 'Terms & Conditions', href: '/policies#terms', icon: I.terms },
+    { name: 'Privacy Policy', href: '/policies#privacy', icon: I.policies },
+    { name: 'Cookie Policy', href: '/policies#cookies', icon: I.policies },
+    { name: 'Legal Notice', href: '/policies#legal', icon: I.terms },
   ]},
 ];
 
@@ -188,8 +228,8 @@ export const PAGE_TITLES: Record<string, { title: string; desc: string }> = {
   '/': { title: 'Ciszuko Antony | CEO of Ciszuko Network', desc: 'Official portfolio of Ciszuko Antony — CEO & Founder of Ciszuko Network.' },
   '/about': { title: 'About | Ciszuko Antony', desc: 'Learn more about Ciszuko Antony (Francisco Garcia Antonio M.), CEO & Founder of Ciszuko Network.' },
   '/projects': { title: 'Projects | Ciszuko Antony', desc: 'Explore all projects by Ciszuko Antony — CiszuBot, MuzicMania, Ciszugamens, Ciszu Network and more.' },
-  '/portfolio': { title: 'Portfolio | Ciszuko Antony', desc: 'Visual portfolio of Ciszuko Antony: web, bots, game, community, content and tools.' },
-  '/curriculum': { title: 'Curriculum | Ciszuko Antony', desc: 'CV of Ciszuko Antony: education, certifications, experience and technical skills.' },
+  '/portfolio': { title: 'Portfolio & CV | Ciszuko Antony', desc: 'Portfolio and CV of Ciszuko Antony: web, bots, game, community, content and tools, plus experience, education, skills, languages and certifications.' },
+  '/socials': { title: 'Socials | Ciszuko Antony', desc: 'Official social networks of Ciszuko Antony: YouTube, Twitch, GitHub, Discord, X, Instagram, TikTok, Facebook, Spotify, LinkedIn, Pinterest and WhatsApp.' },
   '/commissions': { title: 'Commissions | Ciszuko Antony', desc: 'Commission Ciszuko Antony: web development, bots, games, visual identity and automation.' },
   '/projects/ciszubot': { title: 'CiszuBot | Ciszuko Antony', desc: 'CiszuBot: the official Discord bot of the Ciszu Network ecosystem.' },
   '/projects/muzicmania': { title: 'MuzicMania | Ciszuko Antony', desc: 'MuzicMania: the rhythm game developed by Ciszu Network.' },
@@ -211,6 +251,16 @@ export const PAGE_TITLES: Record<string, { title: string; desc: string }> = {
   '/forum': { title: 'Forum | Ciszuko Antony', desc: 'Community discussions and forum for Ciszuko Network.' },
   '/documentation': { title: 'Documentation | Ciszuko Antony', desc: 'Official documentation and guides for Ciszuko Network projects.' },
   '/help': { title: 'Help | Ciszuko Antony', desc: 'Help center and support resources for Ciszuko Network.' },
+  // Una entrada de metadata por red real (misma fuente: src/data/socials.ts).
+  ...Object.fromEntries(
+    SOCIAL_ENTRIES.map((social) => [
+      `/socials/${social.id}`,
+      {
+        title: `${social.name} | Ciszuko Antony`,
+        desc: `${social.name} (${social.handle}) — ${social.tagline}. ${social.about}`,
+      },
+    ]),
+  ),
 };
 
 export const SEARCH_INDEX = ALL_PAGES.map(p => ({
