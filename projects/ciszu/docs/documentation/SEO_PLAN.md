@@ -623,7 +623,7 @@ export function getOrganizationSchema() {
         name: 'Ciszu Network',
         url: 'https://ciszunetwork.vercel.app',
         logo: 'https://ciszunetwork.vercel.app/logo.png',
-        sameAs: ['https://github.com/Ciszu-Network', 'https://twitter.com/ciszukoantony'],
+        sameAs: ['https://github.com/Ciszu-Network', 'https://x.com/CiszukoAntony'],
         founder: {
             '@type': 'Person',
             name: 'Francisco Garcia',

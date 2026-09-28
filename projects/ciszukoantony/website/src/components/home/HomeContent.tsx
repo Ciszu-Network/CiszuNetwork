@@ -7,7 +7,7 @@ import { PROJECTS } from '@/data/projects';
 import { CERTIFICATES } from '@/data/certificates';
 import { CHANGELOG_DATA } from '@/data/changelog';
 import { SOCIAL_ENTRIES, getSocial } from '@/data/socials';
-import { MUZICMANIA_ALBUMS, REAL_ALBUMS } from '@/data/music';
+import { MUZICMANIA_ALBUMS, MUSIC_PLATFORMS, REAL_ALBUMS } from '@/data/music';
 import MusicCover from '@/components/music/MusicCover';
 import CdnImage from '@/components/shared/CdnImage';
 import SocialGlyph from '@/components/socials/SocialGlyph';
@@ -571,7 +571,7 @@ export default function HomeContent() {
                 <span className="text-xs font-header font-bold text-white">YouTube</span>
               </a>
               <a
-                href="https://soundcloud.com/ciszuko-antony"
+                href={MUSIC_PLATFORMS.soundcloud}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => track('music_soundcloud')}
@@ -579,6 +579,16 @@ export default function HomeContent() {
               >
                 <Icon name="music" size={16} className="text-orange-500" />
                 <span className="text-xs font-header font-bold text-white">SoundCloud</span>
+              </a>
+              <a
+                href={MUSIC_PLATFORMS.ytmusic}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => track('music_ytmusic')}
+                className="inline-flex items-center gap-2 px-5 py-3 bg-white/5 border border-white/10 rounded-2xl hover:border-neon-red/50 transition-all"
+              >
+                <Icon name="headset" size={16} className="text-neon-red" />
+                <span className="text-xs font-header font-bold text-white">YouTube Music</span>
               </a>
               <a
                 href="https://www.twitch.tv/ciszukoantony_"

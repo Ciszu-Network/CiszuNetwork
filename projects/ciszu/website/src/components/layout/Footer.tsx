@@ -112,6 +112,7 @@ const FOOTER_SECTIONS = (dict: Record<string, any>): FooterColumn[] => [
       { name: dict.nav.home, href: '/', icon: <Home className="w-4 h-4" /> },
       { name: dict.nav.about, href: '/about', icon: <Info className="w-4 h-4" /> },
       { name: dict.nav.team, href: '/team', icon: <Users className="w-4 h-4" /> },
+      { name: 'Servicios', href: '/services', icon: <Sparkles className="w-4 h-4" /> },
       { name: dict.nav.contact, href: '/contact', icon: <Mail className="w-4 h-4" /> },
     ],
   },
@@ -186,20 +187,16 @@ const SOCIAL_ITEMS = [
 ];
 
 /**
- * Glow y color de cada red social al pasar el cursor.
- *
- * `x`, `github` y `tiktok` usaban `hover:border-white`: en modo claro el borde
- * blanco desaparecía sobre el panel claro. Ahora usan el acento de marca, que
- * tiene variante legible en ambos temas.
+ * Color de marca por red social, aplicado por defecto y con glow al hover.
  */
-const SOCIAL_GLOWS: Record<string, string> = {
-  youtube: 'hover:border-[#FF0000] hover:text-[#FF0000] hover:shadow-[0_0_15px_rgba(255,0,0,0.5)]',
-  facebook: 'hover:border-[#1877F2] hover:text-[#1877F2] hover:shadow-[0_0_15px_rgba(24,119,242,0.5)]',
-  instagram: 'hover:border-[#E4405F] hover:text-[#E4405F] hover:shadow-[0_0_15px_rgba(228,64,95,0.5)]',
-  x: 'hover:border-brand-accent hover:text-brand-accent hover:shadow-[0_0_15px_rgba(74,125,255,0.4)]',
-  github: 'hover:border-brand-accent hover:text-brand-accent hover:shadow-[0_0_15px_rgba(74,125,255,0.4)]',
-  discord: 'hover:border-[#5865F2] hover:text-[#5865F2] hover:shadow-[0_0_15px_rgba(88,101,242,0.5)]',
-  tiktok: 'hover:border-brand-accent hover:text-brand-accent hover:shadow-[0_0_15px_rgba(74,125,255,0.4)]',
+const SOCIAL_STYLES: Record<string, string> = {
+  youtube: 'text-[#FF0000] border-[#FF0000]/40 hover:border-[#FF0000] hover:text-[#FF0000] hover:shadow-[0_0_15px_rgba(255,0,0,0.5)]',
+  facebook: 'text-[#1877F2] border-[#1877F2]/40 hover:border-[#1877F2] hover:text-[#1877F2] hover:shadow-[0_0_15px_rgba(24,119,242,0.5)]',
+  instagram: 'text-[#E4405F] border-[#E4405F]/40 hover:border-[#E4405F] hover:text-[#E4405F] hover:shadow-[0_0_15px_rgba(228,64,95,0.5)]',
+  x: 'text-[#74A9FF] border-[#74A9FF]/40 hover:border-[#74A9FF] hover:text-[#74A9FF] hover:shadow-[0_0_15px_rgba(74,125,255,0.5)]',
+  github: 'text-[#74A9FF] border-[#74A9FF]/40 hover:border-[#74A9FF] hover:text-[#74A9FF] hover:shadow-[0_0_15px_rgba(74,125,255,0.5)]',
+  discord: 'text-[#5865F2] border-[#5865F2]/40 hover:border-[#5865F2] hover:text-[#5865F2] hover:shadow-[0_0_15px_rgba(88,101,242,0.5)]',
+  tiktok: 'text-[#00F2FE] border-[#00F2FE]/40 hover:border-[#00F2FE] hover:text-[#00F2FE] hover:shadow-[0_0_15px_rgba(0,242,254,0.5)]',
 };
 
 const IcoPhone = () => (
@@ -262,20 +259,20 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
             </Link>
 
             {/* Social icons with hover glow */}
-            <div className="flex flex-wrap justify-center gap-3 mb-8">
-              {SOCIAL_ITEMS.map((s) => (
-                <a
-                  key={s.platform}
-                  href={s.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title={s.platform}
-                  className={`w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center transition-all duration-300 hover:scale-110 ${SOCIAL_GLOWS[s.platform]}`}
-                >
-                  <SocialIcon platform={s.platform} size={18} colored={false} />
-                </a>
-              ))}
-            </div>
+             <div className="flex flex-wrap justify-center gap-3 mb-8">
+               {SOCIAL_ITEMS.map((s) => (
+                 <a
+                   key={s.platform}
+                   href={s.url}
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   title={s.platform}
+                   className={`w-10 h-10 rounded-full bg-white/5 border flex items-center justify-center transition-all duration-300 hover:scale-110 ${SOCIAL_STYLES[s.platform]}`}
+                 >
+                   <SocialIcon platform={s.platform} size={18} colored={true} />
+                 </a>
+               ))}
+             </div>
 
             {/* Open source repository */}
             <a
@@ -379,6 +376,28 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
 
         {/* Global Controls & Bottom Bar */}
         <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent my-8" />
+
+        {/* MINI NAVBAR inferior: fila de enlaces rápidos (estilo footer de ciszubot/muzicmania) */}
+        <nav aria-label={dict.footer.legal} className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mb-6">
+          {FOOTER_SECTIONS(dict).find(s => s.title === dict.footer.legal)?.links.map((link) => {
+            const external = link.href.startsWith('http');
+            const active = !external && isActive(link.href);
+            return (
+              <Link
+                key={link.name}
+                href={link.href}
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold uppercase tracking-widest transition-all duration-300 ${
+                  active
+                    ? 'border-brand-light/60 bg-brand-light/15 text-brand-light'
+                    : 'border-transparent text-white/70 hover:border-brand-light/40 hover:bg-brand-light/10 hover:text-brand-light'
+                }`}
+              >
+                <span className="text-brand-light shrink-0">{link.icon}</span>
+                {link.name}
+              </Link>
+            );
+          })}
+        </nav>
 
         <div className="flex flex-col items-center justify-center gap-6 pb-6 text-center">
 

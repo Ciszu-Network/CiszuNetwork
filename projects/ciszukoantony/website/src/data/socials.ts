@@ -273,16 +273,16 @@ export const SOCIAL_ENTRIES: SocialEntry[] = [
     accentAlt: '#00ff88',
     tagline: 'Música en streaming',
     about:
-      'El perfil de Spotify donde se publica la escucha de la música del ecosistema, con los álbumes de MuzicMania y las listas del estudio.',
+      'El perfil oficial de Ciszuko Antony en Spotify. Las canciones aún no están subidas a la plataforma: por ahora el enlace lleva solo al perfil, y la escucha completa vive en SoundCloud, YouTube Music y el musicboard.',
     publishes: [
-      { icon: 'music', title: 'Álbumes', desc: 'Genesis Neon y demás material musical producido para MuzicMania.' },
-      { icon: 'headset', title: 'Escuchas', desc: 'Listas y actividad pública del perfil de streaming.' },
-      { icon: 'play', title: 'Reproducción', desc: 'Enlace directo para escuchar la obra sin salir del ecosistema.' },
+      { icon: 'music', title: 'Álbumes (próximamente)', desc: 'Genesis Neon y la obra del estudio se publicarán en el perfil cuando estén subidos.' },
+      { icon: 'headset', title: 'Perfil', desc: 'Cuenta oficial de streaming, con la actividad pública del artista.' },
+      { icon: 'play', title: 'Escucha', desc: 'Mientras el catálogo no esté subido, la música se escucha en el musicboard, SoundCloud y YouTube Music.' },
     ],
     facts: [
       { label: 'Perfil', value: 'Público en Spotify' },
-      { label: 'Álbum', value: 'Genesis Neon (MuzicMania)' },
-      { label: 'Escucha', value: 'MuzicMania · /socials/spotify' },
+      { label: 'Canciones', value: 'Aún no publicadas' },
+      { label: 'Escucha', value: '/musicboard · SoundCloud · YouTube Music' },
     ],
     cta: {
       label: 'Escuchar en Spotify',
