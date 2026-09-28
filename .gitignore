@@ -572,3 +572,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# CVs/PDFs personales: solo local (se sirven desde el CDN, nunca al repo publico)
+shared/docs/cv/*.pdf

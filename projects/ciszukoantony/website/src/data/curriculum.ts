@@ -8,6 +8,8 @@
  * perfil, experiencia, formación, habilidades e idiomas.
  */
 
+import { assetUrl } from '@ciszunetwork/cdn';
+
 export type CvProfile = {
   name: string;
   legalName: string;
@@ -43,13 +45,63 @@ export type CvLanguage = {
   body: string;
 };
 
+export type CvDocument = {
+  id: string;
+  label: string;
+  description: string;
+  /** URL pública en el CDN (ciszu-cdn), ruta espejo de `shared/docs/cv/`. */
+  href: string;
+  /** Tamaño legible del archivo. */
+  size: string;
+  pages: number;
+  type: 'pdf';
+};
+
 export type CurriculumData = {
   profile: CvProfile;
   experience: CvExperience[];
   education: CvEducation[];
   skills: CvSkill[];
   languages: CvLanguage[];
+  documents: CvDocument[];
 };
+
+/**
+ * CVs en PDF subidos al CDN (ciszu-cdn → shared/docs/cv/). Los archivos viven
+ * fuera del repo git; aquí solo los metadatos y la URL pública de descarga.
+ */
+export const CV_DOCUMENTS: CvDocument[] = [
+  {
+    id: 'completo',
+    label: 'CV completo',
+    description:
+      'Currículum extendido: datos personales, perfil, experiencia, formación, habilidades e idiomas.',
+    href: assetUrl('shared/docs/cv/curriculum2.pdf'),
+    size: '190 KB',
+    pages: 7,
+    type: 'pdf',
+  },
+  {
+    id: 'resumido',
+    label: 'CV resumido',
+    description:
+      'Versión breve del currículum, pensada para procesos de selección rápidos y lectura directa.',
+    href: assetUrl('shared/docs/cv/curriculum1.pdf'),
+    size: '110 KB',
+    pages: 5,
+    type: 'pdf',
+  },
+  {
+    id: 'linkedin',
+    label: 'CV LinkedIn',
+    description:
+      'Perfil exportado de LinkedIn: aptitudes principales, extracto profesional y datos de contacto.',
+    href: assetUrl('shared/docs/cv/curriculum linkedin.pdf'),
+    size: '43 KB',
+    pages: 2,
+    type: 'pdf',
+  },
+];
 
 export const CURRICULUM: CurriculumData = {
   profile: {
@@ -125,6 +177,7 @@ export const CURRICULUM: CurriculumData = {
     { icon: 'comment', title: 'Español', body: 'Idioma nativo. Documentación y comunicación profesional.' },
     { icon: 'globe', title: 'Inglés — B1 (Intermedio)', body: 'EF SET 43/100, certificado verificable. Inglés técnico de desarrollo.' },
   ],
+  documents: CV_DOCUMENTS,
 };
 
 /** Fusiona un CV externo (p. ej. `shared/docs/curriculum/curriculum.json`) sin perder datos locales. */
@@ -136,5 +189,6 @@ export function mergeCurriculum(partial: Partial<CurriculumData> | null | undefi
     education: partial.education?.length ? partial.education : CURRICULUM.education,
     skills: partial.skills?.length ? partial.skills : CURRICULUM.skills,
     languages: partial.languages?.length ? partial.languages : CURRICULUM.languages,
+    documents: partial.documents?.length ? partial.documents : CURRICULUM.documents,
   };
 }
