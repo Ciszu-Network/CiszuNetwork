@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { InfoCardGrid, InfoCtaRow, InfoHero, Icon, captureEvent, type InfoTheme } from '@ciszu/ui';
+import { InfoCardGrid, InfoCtaRow, InfoHero, Icon, Modal, captureEvent, type InfoTheme } from '@ciszu/ui';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useDict } from '@/components/providers/I18nProvider';
 import QuickDocks from '@/components/molecules/QuickDocks';
@@ -11,7 +11,7 @@ import PageReveal from '@/components/layout/PageReveal';
 import ProjectCard from '@/components/projects/ProjectCard';
 import { PROJECTS, PROJECT_CATEGORIES, type ProjectCategory } from '@/data/projects';
 import { CERTIFICATES } from '@/data/certificates';
-import type { CurriculumData } from '@/data/curriculum';
+import type { CvDocument, CurriculumData } from '@/data/curriculum';
 
 const THEME: InfoTheme = {
   accent: 'text-neon-blue',
@@ -43,6 +43,7 @@ export default function PortfolioContent({ cv }: { cv: CurriculumData }) {
   const dict = useDict();
   const [tab, setTab] = useState<Tab>('work');
   const [filter, setFilter] = useState<Filter>('Todos');
+  const [previewDoc, setPreviewDoc] = useState<CvDocument | null>(null);
 
   const areas = [
     { icon: 'globe', title: dict.portfolio.areaWeb, body: dict.portfolio.areaWebBody },
@@ -217,6 +218,60 @@ export default function PortfolioContent({ cv }: { cv: CurriculumData }) {
               </div>
             </div>
 
+            {/* Currículum en PDF (CDN) */}
+            <section>
+              <h2 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.3em] text-neon-blue mb-5">
+                <Icon name="download" size={15} />
+                Currículum (PDF)
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {cv.documents.map((doc) => (
+                  <article
+                    key={doc.id}
+                    className="flex flex-col p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-neon-blue/40 transition-all"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <h3 className="font-header font-bold text-white">{doc.label}</h3>
+                      <span className="shrink-0 text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-full bg-neon-blue/10 border border-neon-blue/40 text-neon-blue">
+                        {doc.type}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-400 leading-relaxed mt-3 flex-1">{doc.description}</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mt-4 mb-4">
+                      PDF · {doc.pages} páginas · {doc.size}
+                    </p>
+                    <div className="flex flex-wrap gap-2 print:hidden">
+                      <a
+                        href={doc.href}
+                        download
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => captureEvent('portfolio_cv_download', { id: doc.id })}
+                        className="inline-flex flex-1 items-center justify-center gap-2 px-4 py-2.5 bg-neon-blue/20 border border-neon-blue/40 text-neon-blue rounded-xl font-bold text-xs hover:bg-neon-blue hover:text-white transition-all active:scale-95"
+                      >
+                        <Icon name="download" size={15} />
+                        Descargar
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPreviewDoc(doc);
+                          captureEvent('portfolio_cv_preview', { id: doc.id });
+                        }}
+                        className="inline-flex flex-1 items-center justify-center gap-2 px-4 py-2.5 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-xs hover:bg-white/10 transition-all active:scale-95 cursor-pointer"
+                      >
+                        <Icon name="eye" size={15} />
+                        Previsualizar
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+              <p className="text-center text-white/30 text-xs mt-6">
+                Documentos PDF {cv.documents.length} · descarga directa desde el CDN de Ciszu Network.
+              </p>
+            </section>
+
             {/* Stats del CV */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {cvStats.map((stat) => (
@@ -333,6 +388,56 @@ export default function PortfolioContent({ cv }: { cv: CurriculumData }) {
                 { label: dict.portfolio.ctaContact, href: '/contact', icon: 'mail', variant: 'ghost' },
               ]}
             />
+
+            {/* Vista previa de los CVs (PDF del CDN) */}
+            <Modal
+              open={previewDoc !== null}
+              onOpenChange={(open) => {
+                if (!open) setPreviewDoc(null);
+              }}
+              title={previewDoc?.label ?? 'Currículum'}
+              description={
+                previewDoc
+                  ? `Vista previa · PDF · ${previewDoc.pages} páginas · ${previewDoc.size}`
+                  : undefined
+              }
+              size="lg"
+              className="max-w-4xl!"
+            >
+              {previewDoc ? (
+                <div className="space-y-4">
+                  <iframe
+                    src={previewDoc.href}
+                    title={`Vista previa de ${previewDoc.label}`}
+                    className="w-full h-[70vh] rounded-xl border border-white/10 bg-white"
+                  />
+                  <div className="flex flex-wrap justify-end gap-2">
+                    <a
+                      href={previewDoc.href}
+                      download
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2.5 bg-neon-blue/20 border border-neon-blue/40 text-neon-blue rounded-xl font-bold text-xs hover:bg-neon-blue hover:text-white transition-all"
+                    >
+                      <Icon name="download" size={15} />
+                      Descargar PDF
+                    </a>
+                    <a
+                      href={previewDoc.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2.5 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-xs hover:bg-white/10 transition-all"
+                    >
+                      <Icon name="external" size={15} />
+                      Abrir en pestaña nueva
+                    </a>
+                  </div>
+                  <p className="text-center text-white/30 text-[10px] uppercase tracking-widest">
+                    Formato PDF · servido desde el CDN de Ciszu Network
+                  </p>
+                </div>
+              ) : null}
+            </Modal>
           </div>
         )}
       </PageReveal>
