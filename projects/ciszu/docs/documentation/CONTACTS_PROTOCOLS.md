@@ -1,8 +1,8 @@
 ﻿# CONTACTS_PROTOCOLS — Protocolos de Contacto (redes, números, correos, nombres)
 
-Versión: 2.0.0
-Actualización: 2026-08-13
-Identificador: CONTACTS_PROTOCOLS_V2.0.0_2026_08_13_ciszunetwork
+Versión: 2.1.0
+Actualización: 2026-09-27
+Identificador: CONTACTS_PROTOCOLS_V2.1.0_2026_09_27_ciszunetwork
 
 > Directorio de contacto oficial de Ciszu Network / Ciszuko Antony. Los valores provienen de
 > las configs reales de las webs (`navigation.tsx`, páginas de soporte/contacto). Mantener
@@ -33,6 +33,8 @@ Identificador: CONTACTS_PROTOCOLS_V2.0.0_2026_08_13_ciszunetwork
 | LinkedIn | `https://linkedin.com/in/ciszuko` |
 | Telegram | `https://t.me/CiszukoNetwork` |
 | Spotify | `https://open.spotify.com/user/317nxlvcrrlwfxjogyirixsqjmfi?si=50c43b75eb6e47db` |
+| SoundCloud | `https://soundcloud.com/ciszukoantony` |
+| YouTube Music | `https://music.youtube.com/@CiszukoAntony` |
 
 ### 2.1 Propósito por red
 
@@ -45,7 +47,9 @@ Identificador: CONTACTS_PROTOCOLS_V2.0.0_2026_08_13_ciszunetwork
 | Twitch | Streaming (Minecraft, dev, MuzicMania) |
 | LinkedIn | Perfil profesional `in/ciszuko` |
 | Telegram | Canal de la comunidad / avisos |
-| Spotify | Perfil de artista/música de Ciszuko |
+| Spotify | Perfil de artista/música de Ciszuko (solo perfil: canciones aún no subidas) |
+| SoundCloud | Música propia de Ciszuko (`ciszukoantony`, sin guion) |
+| YouTube Music | Música, podcast y playlists oficiales de Ciszuko |
 | Facebook | Página de marca |
 
 ## 3. Contacto directo
@@ -62,7 +66,7 @@ Identificador: CONTACTS_PROTOCOLS_V2.0.0_2026_08_13_ciszunetwork
 | Producto | Dónde se exponen los contactos |
 |---|---|
 | **MuzicMania** | `projects/muzicmania/website/src/config/navigation.tsx` y Footer |
-| **CiszukoAntony** | `projects/ciszukoantony/website/src/config/navigation.tsx` (página soporte/contacto con WhatsApp y email) |
+| **CiszukoAntony** | `projects/ciszukoantony/website/src/config/navigation.tsx` + `src/data/socials.ts` (fuente canónica de las 12 redes) y `/musicboard` (música: reproductor, SoundCloud, YouTube Music, Spotify y playlists) |
 | **CiszuBot** | Página de invitación (OAuth2 scope `bot applications.commands`) — ver `AGENTS.md` |
 | **CiszuNetwork** | Página principal con redes |
 | **CiszuGamens** | Comunidad gaming (discord/torneos) |
@@ -129,7 +133,9 @@ Para añadir un contacto nuevo, rellenar esta ficha en la tabla correspondiente:
 ## 9. Contactos por proyecto
 
 - **Ciszu Network** → redes de marca: Discord, Instagram, TikTok, YouTube, WhatsApp.
-- **Ciszuko Antony** → canal YouTube `@CiszukoAntony`, redes del artista, contacto musical.
+- **Ciszuko Antony** → canal YouTube `@CiszukoAntony`, canal YouTube Music `@CiszukoAntony` (música,
+  podcast y playlists), SoundCloud `ciszukoantony` (sin guion), perfil de Spotify, redes del artista y
+  hub de música `/musicboard` (`https://ciszukoantony.vercel.app/musicboard`).
 - **MuzicMania** → redes del juego, Discord del juego, soporte.
 - **CiszuBot** → Discord del bot, estado en vivo, invite.
 
@@ -197,5 +203,5 @@ Para añadir un contacto nuevo, rellenar esta ficha en la tabla correspondiente:
 - **Discord**: las invitaciones pueden caducar — revisarlas si el enlace deja de funcionar.
 - **Telegram**: `t.me/<handle>`; distinguir canal vs chat personal por el prefijo del handle.
 
-_Última revisión: 13 ago 2026._ Relacionado: `ONLINE_SERVICES_SYSTEM.md`, `VAULT_SYSTEM.md`,
-`PROJECTS_SYSTEM.md`, `AGENTS.md`.
+_Última revisión: 27 sep 2026._ Relacionado: `ONLINE_SERVICES_SYSTEM.md`, `VAULT_SYSTEM.md`,
+`SOCIAL_NETWORK_PROTOCOLS.md`, `PROJECTS_SYSTEM.md`, `AGENTS.md`.

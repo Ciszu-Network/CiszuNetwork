@@ -39,7 +39,8 @@ const META: Record<string, { title: string; description: string }> = {
   },
   '/musicboard': {
     title: `Musicboard | ${SITE_NAME}`,
-    description: 'Music by Ciszuko Antony: the studio album FL Studio Track Practice 2024 (own work) and the Genesis Neon soundtrack for MuzicMania, with real links to SoundCloud, YouTube, Spotify and the game library.',
+    description:
+      'Music by Ciszuko Antony with an integrated player and sidebar: the studio album FL Studio Track Practice 2024 (own work), the Genesis Neon soundtrack for MuzicMania, and the official podcast and playlists, with real links to SoundCloud, YouTube Music, Spotify and the game library.',
   },
   '/commissions': {
     title: `Commissions | ${SITE_NAME}`,
@@ -64,10 +65,6 @@ const META: Record<string, { title: string; description: string }> = {
   '/projects/ciszukoantony': {
     title: `Ciszuko Antony | ${SITE_NAME}`,
     description: 'Ciszuko Antony: youtuber, streamer and developer.',
-  },
-  '/projects/portfolio': {
-    title: `Portfolio Web | ${SITE_NAME}`,
-    description: 'The personal portfolio web built on the Ciszu Network monorepo.',
   },
   '/contact': {
     title: `Contact | ${SITE_NAME}`,

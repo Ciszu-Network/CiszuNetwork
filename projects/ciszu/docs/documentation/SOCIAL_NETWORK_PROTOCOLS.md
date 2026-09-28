@@ -1,10 +1,10 @@
 # SOCIAL_NETWORK_PROTOCOLS — Redes Sociales Oficiales (Ciszu Network)
 
-Versión: 1.0.0
-Actualización: 2026-08-30
-Identificador: SOCIAL_NETWORK_PROTOCOLS_V1.0.0_2026_08_30_ciszunetwork
+Versión: 1.1.0
+Actualización: 2026-09-27
+Identificador: SOCIAL_NETWORK_PROTOCOLS_V1.1.0_2026_09_27_ciszunetwork
 
-> **Definición**: registro canónico de todas las cuentas oficiales del ecosistema Ciszu Network, guidelines de uso, governance y protocolos de publicación cruzada.
+> **Definición**: registro canónico de todas las cuentas oficiales del ecosistema Ciszu Network, guidelines de uso, governance y protocolos de publicación cruzada. Las URLs de las cuentas de Ciszuko Antony se contrastan contra la fuente real del portfolio: `projects/ciszukoantony/website/src/data/socials.ts` + `src/config/navigation.tsx`.
 
 ---
 
@@ -25,15 +25,24 @@ Identificador: SOCIAL_NETWORK_PROTOCOLS_V1.0.0_2026_08_30_ciszunetwork
 
 | Plataforma | Handle / URL | Estado | Uso principal |
 |---|---|---|---|
-| **Twitter/X** | `@CiszukoAntony` | ✅ Activo | Personal, devlogs, opiniones, comunidad |
-| **YouTube** | `Ciszuko Antony` | ✅ Activo | Devlogs, art timelapses, tutorials |
-| **TikTok** | `@ciszukoantony` | ✅ Activo | Shorts: art process, dev tips |
-| **Instagram** | `@ciszukoantony` | ✅ Activo | Art portfolio, behind-the-scenes |
-| **Twitch** | `ciszukoantony` | 🚧 Intermitente | Live coding, art streams |
-| **GitHub** | `Ciszuko` | ✅ Activo | Personal repos, gists |
+| **Twitter/X** | `@CiszukoAntony` — `https://x.com/CiszukoAntony` | ✅ Activo | Personal, devlogs, opiniones, comunidad |
+| **YouTube** | `@CiszukoAntony` — `https://www.youtube.com/@CiszukoAntony` | ✅ Activo | Devlogs, art timelapses, tutorials |
+| **YouTube Music** | `@CiszukoAntony` — `https://music.youtube.com/@CiszukoAntony` | ✅ Activo | Música, podcast y playlists del artista |
+| **SoundCloud** | `ciszukoantony` — `https://soundcloud.com/ciszukoantony` (SIN guion) | ✅ Activo | Música propia; pistas con slug verificado |
+| **Spotify** | `https://open.spotify.com/user/317nxlvcrrlwfxjogyirixsqjmfi` | ✅ Perfil activo | Perfil público; canciones aún no subidas |
+| **TikTok** | `@ciszukoantonY` — `https://www.tiktok.com/@ciszukoantonY` | ✅ Activo | Shorts: art process, dev tips |
+| **Instagram** | `@itz.ciszukoant0nyz` — `https://www.instagram.com/itz.ciszukoant0nyz/` | ✅ Activo | Art portfolio, behind-the-scenes |
+| **Twitch** | `ciszukoantony_` — `https://www.twitch.tv/ciszukoantony_` | 🚧 Intermitente | Live coding, art streams |
+| **GitHub** | `CiszukoAntony` — `https://github.com/CiszukoAntony` | ✅ Activo | Personal repos, gists |
+| **Facebook** | `ciszukoantony` — `https://www.facebook.com/ciszukoantony` | ✅ Activo | Página oficial del artista |
+| **Pinterest** | `ciszukoantony` — `https://es.pinterest.com/ciszukoantony` | ✅ Activo | Referencia visual |
+| **LinkedIn** | `in/ciszuko` — `https://linkedin.com/in/ciszuko` | ✅ Activo | Perfil profesional |
+| **WhatsApp** | `+58 412 6858111` — `https://wa.me/584126858111` | ✅ Activo | Contacto directo |
 | **ArtStation** | `ciszukoantony` | ✅ Activo | Professional art portfolio |
 | **Behance** | `ciszukoantony` | ✅ Activo | Case studies, branding |
-| **Discord** | `Ciszuko Antony` (user) | ✅ Activo | DMs, comunidad cercana |
+| **Discord** | `ciszukoantony_` (user) | ✅ Activo | DMs, comunidad cercana |
+
+> Música: el hub del artista es `/musicboard` (`https://ciszukoantony.vercel.app/musicboard`) con reproductor, obra propia (FL Studio Track Practice 2024), el repertorio de MuzicMania y el podcast/playlists de YouTube Music. Las pistas enlazan a su URL de SoundCloud solo cuando el slug está verificado; si no, al perfil.
 
 ### 1.3 MuzicMania (Juego)
 
@@ -169,4 +178,4 @@ Identificador: SOCIAL_NETWORK_PROTOCOLS_V1.0.0_2026_08_30_ciszunetwork
 
 ---
 
-_Última revisión: 30 ago 2026._
+_Última revisión: 27 sep 2026._

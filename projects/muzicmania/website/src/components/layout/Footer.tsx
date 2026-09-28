@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
-import { ScrollNavButton } from '@ciszu/ui';
+import { ScrollNavButton, Icon } from '@ciszu/ui';
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store';
 import { updatePreferences, reloadAfterPrefChange } from '@/lib/preferences';
@@ -76,9 +76,39 @@ interface FooterGroup {
   links: FooterLink[];
 }
 
+/** Redes extra que no viven en `SOCIALS`: plataformas de apoyo al proyecto,
+ *  con las URLs reales de la config de `/donate`. Los iconos de marca salen de
+ *  `Icon` de @ciszu/ui (mismo mecanismo que la página de donaciones). */
+const EXTRA_SOCIALS = [
+  {
+    name: 'Ko-fi',
+    href: 'https://ko-fi.com/ciszukoantony',
+    textCol: 'text-[#FF5E5B]',
+    borderCol: 'border-[#FF5E5B]/40',
+    bgCol: 'bg-[#FF5E5B]/10',
+    hoverBg: 'hover:bg-gradient-to-tr hover:from-[#FF5E5B] hover:to-[#e04a47]',
+    hoverColor: 'hover:text-white',
+    icon: <Icon name="kofi" style="brand" size={20} />,
+  },
+  {
+    name: 'Patreon',
+    href: 'https://www.patreon.com/cw/ciszukoantony',
+    textCol: 'text-[#FF424D]',
+    borderCol: 'border-[#FF424D]/40',
+    bgCol: 'bg-[#FF424D]/10',
+    hoverBg: 'hover:bg-gradient-to-tr hover:from-[#FF424D] hover:to-[#d92b35]',
+    hoverColor: 'hover:text-white',
+    icon: <Icon name="patreon" style="brand" size={20} />,
+  },
+];
+
 /** Redes con color de marca propio. Discord y GitHub no se repiten aquí:
- *  ya viven en el botón de comunidad y en el de repositorio. */
-const BRAND_SOCIALS = SOCIALS.filter((s) => !['Discord', 'GitHub'].includes(s.name));
+ *  ya viven en el botón de comunidad y en el de repositorio. WhatsApp tampoco:
+ *  vive en el CTA de teléfono. Ko-fi y Patreon se suman desde la config real. */
+const BRAND_SOCIALS = [
+  ...SOCIALS.filter((s) => !['Discord', 'GitHub'].includes(s.name)),
+  ...EXTRA_SOCIALS,
+];
 
 export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any> }) => {
   const pathname = usePathname();
@@ -158,7 +188,7 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
               />
             </Link>
 
-            {/* Socials: cada icono con el color de su marca (X, YouTube, Instagram, TikTok, Facebook) */}
+            {/* Socials: cada icono con el color de su marca (X, YouTube, Instagram, TikTok, Facebook, Ko-fi, Patreon) */}
             <div className="flex flex-wrap justify-center gap-3 mb-8">
               {BRAND_SOCIALS.map((social) => (
                 <a

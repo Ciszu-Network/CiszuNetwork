@@ -12,6 +12,7 @@ export const YOUTUBE = 'https://www.youtube.com/@CiszuNetwork';
 export const FACEBOOK = 'https://www.facebook.com/profile.php?id=61572023767657';
 export const INSTAGRAM = 'https://www.instagram.com/ciszunetwork/';
 export const X_SOCIAL = 'https://x.com/CiszukoAntony';
+export const TIKTOK = 'https://www.tiktok.com/@ciszunetwork';
 export const CISZU_NETWORK = 'https://ciszunetwork.vercel.app';
 export const CISZUKO_ANTONY = 'https://ciszukoantony.vercel.app';
 

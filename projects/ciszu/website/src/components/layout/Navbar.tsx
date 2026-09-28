@@ -9,6 +9,7 @@ import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store';
 import { applyTheme } from '@/lib/preferences';
 import { CISZU_NETWORK } from '@/config/site';
+import { SERVICES } from '@/data/services';
 import AuthMenu from '@/components/auth/AuthMenu';
 import {
   Search,
@@ -81,6 +82,19 @@ const NAV_ITEMS: NavEntry[] = [
   { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" /> },
   { name: 'Courses', href: '/courses', icon: <GraduationCap className="w-4 h-4" /> },
   {
+    name: 'Servicios',
+    icon: <Sparkles className="w-4 h-4" />,
+    keywords: ['servicios', 'services', 'catalogo', 'flyers', 'precios', 'presupuesto', 'cotizacion'],
+    links: [
+      { name: 'Todos los servicios', href: '/services', icon: <Sparkles className="w-4 h-4" /> },
+      ...SERVICES.map((service) => ({
+        name: service.name,
+        href: `/services/${service.slug}`,
+        icon: <service.icon className="w-4 h-4" />,
+      })),
+    ],
+  },
+  {
     name: 'Information',
     icon: <Info className="w-4 h-4" />,
     keywords: ['about', 'team', 'faq', 'documentation', 'help', 'contact', 'support', 'info', 'about us', 'forum', 'donate', 'policies', 'policy', 'credits', 'guidelines', 'rules', 'license', 'legal'],
@@ -140,6 +154,13 @@ const ALL_PAGES: { name: string; href: string; icon: React.ReactNode; keywords: 
   { name: 'Donate', href: '/donate', icon: <Heart className="w-4 h-4" />, keywords: ['donar', 'donation', 'donacion', 'apoyar', 'apoyo', 'ko-fi', 'patreon'] },
   { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" />, keywords: ['feedback', 'opiniones', 'sugerencias', 'reporte', 'bug', 'quejas'] },
   { name: 'Courses', href: '/courses', icon: <GraduationCap className="w-4 h-4" />, keywords: ['courses', 'cursos', 'formacion', 'formación', 'educacion', 'educación', 'learning', 'clases'] },
+  { name: 'Servicios', href: '/services', icon: <Sparkles className="w-4 h-4" />, keywords: ['servicios', 'services', 'catalogo', 'flyers', 'precios', 'presupuesto', 'cotizacion'] },
+  ...SERVICES.map((service) => ({
+    name: service.name,
+    href: `/services/${service.slug}`,
+    icon: <service.icon className="w-4 h-4" />,
+    keywords: [service.slug, 'servicio', 'services', service.tagline.toLowerCase()],
+  })),
   { name: 'Projects', href: '/projects', icon: <Zap className="w-4 h-4" />, keywords: ['proyectos', 'projects', 'ecosistema', 'portfolio', 'apps'] },
   { name: 'Ciszugamens', href: '/projects/ciszugamens', icon: <Gamepad2 className="w-4 h-4" />, keywords: ['ciszugamens', 'gamens', 'discord', 'servidor', 'comunidad'] },
   { name: 'CiszuBot', href: '/projects/ciszubot', icon: <Bot className="w-4 h-4" />, keywords: ['ciszubot', 'bot', 'discord', 'comandos'] },

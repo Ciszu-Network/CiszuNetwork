@@ -6,7 +6,7 @@
  * públicos verificados) para no duplicar contenido entre páginas.
  */
 
-export type ProjectCategory = 'Web' | 'Bots' | 'Gaming' | 'Comunidad' | 'Contenido' | 'Portfolio';
+export type ProjectCategory = 'Web' | 'Bots' | 'Gaming' | 'Comunidad' | 'Contenido';
 
 export type ProjectLink = {
   label: string;
@@ -44,8 +44,8 @@ export const PROJECTS: Project[] = [
     description:
       'El bot oficial del ecosistema Ciszu Network: moderación, música, economía, juegos y automatización, con web propia, estado en vivo y soporte.',
     icon: 'robot',
-    logo: 'projects/ciszubot/content/logos/images/not-outline/isotype/color/ciszubot_logo_isotipo_color.png',
-    preview: 'projects/ciszubot/content/thumbnails/images/thumbnail.png',
+    logo: 'projects/ciszubot/content/logos/images/samples/circle/ciszubot_logo_isotipo_color_circle.png',
+    preview: 'projects/ciszubot/content/banners/banner.png',
     categories: ['Bots', 'Web'],
     stack: ['Discord.js', 'TypeScript', 'Node.js', 'Docker', 'Supabase'],
     features: [
@@ -69,8 +69,8 @@ export const PROJECTS: Project[] = [
     description:
       'Juego de ritmo en la web con estética futurista y álbumes originales, además de app de escritorio con instalador para Windows.',
     icon: 'music',
-    logo: 'projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.png',
-    preview: 'projects/muzicmania/content/music/albums/genesis_neon/cyber_beat/cover.png',
+    logo: 'projects/muzicmania/content/logos/images/not-outline/logotype/gradient/color/muzicmania_logotipo_degradado_color.png',
+    preview: 'projects/muzicmania/content/logos/images/not-outline/logotype/gradient/color/muzicmania_logotipo_degradado_color.png',
     categories: ['Gaming', 'Web'],
     stack: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Web Audio', 'Supabase', 'Tauri'],
     features: [
@@ -116,9 +116,9 @@ export const PROJECTS: Project[] = [
     description:
       'El núcleo del ecosistema: desarrollo web, infraestructura cloud, UI/UX, bots y soluciones digitales de alto rendimiento, fundada por Ciszuko Antony.',
     icon: 'server',
-    logo: 'projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zcolor_ccolor.png',
+    logo: 'projects/ciszu/content/logos/images/outline/isotype/gradient/color/ciszu_logo_isotipo_outline_degradado_zwhite_ccolor.png',
     preview: 'projects/ciszu/content/logos/images/outline/logotype/gradient/color/ciszu_logotipo_outline_zcolor_cwhite_full.png',
-    categories: ['Web', 'Portfolio'],
+    categories: ['Web'],
     stack: ['Next.js 15', 'React 19', 'TypeScript', 'Tailwind CSS 4', 'Supabase', 'Vercel', 'Turborepo'],
     features: [
       { icon: 'globe', title: '4 webs Next.js', desc: 'Ciszu Network, Ciszuko Antony, MuzicMania y CiszuBot.' },
@@ -139,8 +139,8 @@ export const PROJECTS: Project[] = [
     description:
       'El proyecto artístico y de entretenimiento del CEO de Ciszu Network: contenido gaming, música, tecnología y desarrollo para la comunidad.',
     icon: 'star',
-    logo: 'projects/ciszukoantony/content/logos/images/not-outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zcolor_ccolor.png',
-    preview: 'shared/images/francisco_selfie/IMG_20251207_001627@869886661.jpg',
+    logo: 'projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png',
+    preview: 'projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png',
     categories: ['Contenido'],
     stack: ['YouTube', 'Twitch', 'TikTok', 'Instagram', 'Spotify'],
     features: [
@@ -155,29 +155,6 @@ export const PROJECTS: Project[] = [
     ],
     status: 'Activo',
   },
-  {
-    slug: 'portfolio',
-    name: 'Portfolio Web',
-    tagline: 'Este sitio, en abierto',
-    description:
-      'El portfolio personal construido sobre el monorepo: certificados verificables, proyectos, documentación y app de escritorio (PDWA), con CISZU ID y CDN propio.',
-    icon: 'palette',
-    logo: 'projects/ciszukoantony/content/logos/images/samples/circle/circle_1_yt.png',
-    preview: 'projects/ciszukoantony/content/logos/images/not-outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png',
-    categories: ['Web', 'Portfolio'],
-    stack: ['Next.js 15', 'React 19', 'Tailwind CSS 4', 'Supabase (CISZU ID)', 'Puck', 'Vercel'],
-    features: [
-      { icon: 'certificates', title: 'Certificados', desc: 'Catálogo de documentos verificables con enlaces oficiales.' },
-      { icon: 'download', title: 'PDWA', desc: 'Instalación como app de escritorio (PWA/PDWA).' },
-      { icon: 'edit', title: 'Editor visual', desc: 'Páginas editables con Puck sobre componentes propios.' },
-    ],
-    links: [
-      { label: 'Ver portfolio', href: '/portfolio', icon: 'palette' },
-      { label: 'Certificados', href: '/certificates', icon: 'certificates' },
-      { label: 'GitHub', href: 'https://github.com/Ciszu-Network/CiszuNetwork', icon: 'external', external: true },
-    ],
-    status: 'En producción',
-  },
 ];
 
 export const PROJECT_CATEGORIES: ProjectCategory[] = [
@@ -186,7 +163,6 @@ export const PROJECT_CATEGORIES: ProjectCategory[] = [
   'Gaming',
   'Comunidad',
   'Contenido',
-  'Portfolio',
 ];
 
 export const getProject = (slug: string): Project | undefined =>

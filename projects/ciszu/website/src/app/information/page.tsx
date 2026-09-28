@@ -376,6 +376,7 @@ const GROUPS: InfoLinkGroup[] = [
     title: 'Producto',
     items: [
       { name: 'Inicio', href: '/', icon: 'home', desc: 'Portada, ecosistema y proyectos destacados' },
+      { name: 'Servicios', href: '/services', icon: 'star', desc: 'Catálogo con flyers, proceso y precios negociables' },
       { name: 'Productos', href: '/projects', icon: 'rocket', desc: 'CiszuGamens, CiszuBot, MuzicMania y más' },
       { name: 'Courses', href: '/courses', icon: 'certificates', desc: 'Formación y recursos de aprendizaje' },
       { name: 'Documentación', href: '/documentation', icon: 'policies', desc: 'Guías técnicas y referencia de API' },

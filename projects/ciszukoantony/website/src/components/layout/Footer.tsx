@@ -108,12 +108,12 @@ export default function Footer({ dict }: { lang: string; dict: Dict }) {
           <div className="flex flex-col items-center text-center lg:w-[38%] gap-7 border-b lg:border-b-0 lg:border-r border-white/10 pb-8 lg:pb-0 lg:pr-8">
             <Link href="/" className="flex items-center justify-center gap-3 group active:scale-95 transition-all duration-300">
               <CdnImage
-                src="projects/ciszukoantony/content/logos/images/not-outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zcolor_ccolor.png"
+                src="projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png"
                 alt="Ciszuko" width={28} height={25}
                 className="drop-shadow-brand group-hover:drop-shadow-[0_0_15px_rgba(61,106,223,0.8)] transition-all duration-300"
               />
               <CdnImage
-                src="projects/ciszukoantony/content/logos/images/not-outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png"
+                src="projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png"
                 alt="Ciszuko Antony" width={140} height={32}
                 className="opacity-80 group-hover:opacity-100 group-hover:drop-shadow-[0_0_15px_rgba(61,106,223,0.8)] transition-all duration-300"
               />
@@ -219,6 +219,27 @@ export default function Footer({ dict }: { lang: string; dict: Dict }) {
         </div>
 
         <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent my-8" />
+
+        {/* MINI NAVBAR inferior: fila de enlaces rápidos (estilo footer de ciszubot/muzicmania) */}
+        <nav aria-label={dict.footer.legal} className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mb-8">
+          {FOOTER_SECTIONS.find(s => s.label === 'Legal')?.links.map((link) => {
+            const active = isActive(link.href);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold uppercase tracking-widest transition-all duration-300 ${
+                  active
+                    ? 'border-neon-blue/60 bg-neon-blue/15 text-neon-blue'
+                    : 'border-transparent text-white/70 hover:border-neon-blue/40 hover:bg-neon-blue/10 hover:text-neon-blue'
+                }`}
+              >
+                <span className="text-neon-blue shrink-0">{link.icon}</span>
+                {footerLinkLabel(link.name, link.href)}
+              </Link>
+            );
+          })}
+        </nav>
 
         <div className="flex flex-col items-center justify-center gap-8 pb-4 text-center">
           {/* Theme + Language controls */}

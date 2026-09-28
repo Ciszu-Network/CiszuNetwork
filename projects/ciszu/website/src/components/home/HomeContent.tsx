@@ -37,6 +37,7 @@ import { assetResolver } from '@ciszunetwork/cdn';
 import PageAmbience from '@/components/layout/PageAmbience';
 import { AnimatedSection } from '@/components/shared/AnimatedSection';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import ServicesShowcase from '@/components/home/ServicesShowcase';
 import { CountUp } from '@/components/home/CountUp';
 import { TAG_CONFIG } from '@/config/changelogIcons';
 import { useDict } from '@/lib/useDict';
@@ -488,6 +489,9 @@ export default function HomeContent() {
           </div>
         </div>
       </section>
+
+      {/* ═══════════════════ CATÁLOGO DE SERVICIOS (FLYERS) ═══════════════════ */}
+      <ServicesShowcase />
 
       {/* ═══════════════════ STACK ═══════════════════ */}
       <section id="stack" className="scroll-mt-24 border-t border-white/5 py-24">

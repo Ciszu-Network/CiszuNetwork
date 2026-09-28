@@ -24,6 +24,7 @@ import {
   TOP_GG_BOT,
   X_SOCIAL,
   YOUTUBE,
+  TIKTOK,
   type Dict,
   type Lang,
 } from '@/lib/i18n';
@@ -68,6 +69,12 @@ const IcoX = () => (
   </svg>
 );
 
+const IcoTiktok = () => (
+  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.75a8.26 8.26 0 0 0 4.83 1.55V6.87a4.85 4.85 0 0 1-1.06-.18z"/>
+  </svg>
+);
+
 /**
  * Redes sociales del ecosistema. Discord vive en la píldora de comunidad y
  * GitHub en el botón de repositorio: aquí no se repiten para no duplicar.
@@ -77,6 +84,7 @@ const SOCIALS = [
   { Ico: IcoFacebook, href: FACEBOOK, label: 'Facebook', brand: 'text-[#1877F2]', glow: 'hover:border-[#1877F2] hover:text-[#1877F2] hover:shadow-[0_0_15px_rgba(24,119,242,0.5)]' },
   { Ico: IcoInstagram, href: INSTAGRAM, label: 'Instagram', brand: 'text-[#E4405F]', glow: 'hover:border-[#E4405F] hover:text-[#E4405F] hover:shadow-[0_0_15px_rgba(228,64,95,0.5)]' },
   { Ico: IcoX, href: X_SOCIAL, label: 'X', brand: 'text-ink', glow: 'hover:border-ink hover:text-ink hover:shadow-[0_0_15px_rgba(0,0,0,0.3)]' },
+  { Ico: IcoTiktok, href: TIKTOK, label: 'TikTok', brand: 'text-[#00F2FE]', glow: 'hover:border-[#00F2FE] hover:text-[#00F2FE] hover:shadow-[0_0_15px_rgba(0,242,254,0.5)]' },
 ];
 
 interface FooterLink {

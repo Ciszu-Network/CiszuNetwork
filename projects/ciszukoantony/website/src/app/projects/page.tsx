@@ -71,12 +71,6 @@ export default function ProjectsPage() {
               {dict.projects.viewPortfolio}
             </Link>
             <Link
-              href="/commissions"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/10 transition-all"
-            >
-              Comisiones
-            </Link>
-            <Link
               href="/contact"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/10 transition-all"
             >
