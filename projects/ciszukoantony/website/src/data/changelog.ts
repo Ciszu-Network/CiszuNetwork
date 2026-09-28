@@ -25,6 +25,23 @@ export type {
 
 export const CHANGELOG_DATA: ChangelogItem[] = [
   {
+    id: 'patch-v2.7.1',
+    version: 'PATCH V2.7.1',
+    code: 'P-271-CM',
+    title: 'Catálogo de Comisiones Personales',
+    description: 'Las comisiones se rellenan con los 13 servicios reales de Ciszu Network, planteados en primera persona y con sus flyers oficiales.',
+    date: '2026-09-28',
+    author: 'CiszukoAntony',
+    types: ['feat', 'ui', 'add'],
+    likes: 0,
+    details: [
+      { text: 'El catálogo de comisiones pasa de 6 servicios genéricos a los 13 reales de Ciszu Network, con flyer, herramientas e incluye por servicio.', type: 'feat' },
+      { text: 'Cada servicio tiene su propio color de acento y se agrupa por familia: diseño, documentos, seguridad, presencia digital y experiencias.', type: 'ui' },
+      { text: 'Al pulsar un servicio se abre un subpanel con descripción, herramientas, qué incluye, cómo se trabaja, entregables y contacto por WhatsApp.', type: 'add' },
+      { text: 'Marco personal: los servicios los atiende Ciszuko Antony y se propagan a través de Ciszu Network, con enlace al catálogo oficial de la empresa.', type: 'ux' },
+    ],
+  },
+  {
     id: 'patch-v2.7.0',
     version: 'PATCH V2.7.0',
     code: 'P-270-CV',
