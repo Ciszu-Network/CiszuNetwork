@@ -26,6 +26,22 @@ export type {
 
 export const CHANGELOG_DATA: ChangelogItem[] = [
   {
+    id: 'patch-v2.6.0',
+    version: 'PATCH V2.6.0',
+    code: 'P-260-NV',
+    title: 'Navegación y Accesos Rápidos Renovados',
+    description: 'El navbar reordena sus catálogos, Projects estrena icono de cuadrícula y los QuickDocks cubren todo el sitio.',
+    date: '2026-09-28',
+    author: 'CiszukoAntony',
+    types: ['ui', 'ux', 'add'],
+    likes: 0,
+    details: [
+      { text: 'El icono de Projects pasa del rayo genérico a la cuadrícula de cuatro cuadrados (mejor lectura de catálogo).', type: 'ui' },
+      { text: 'Servicios se mueve inmediatamente después de Projects en el navbar: ambos son catálogos.', type: 'ux' },
+      { text: 'QuickDocks ampliados con Projects, Courses, Documentation, Changelog, Reviews, Stats, Downloads, Feedback, Forum e Information.', type: 'add' },
+    ],
+  },
+  {
     id: 'patch-v2.5.0',
     version: 'PATCH V2.5.0',
     code: 'P-250-CL',

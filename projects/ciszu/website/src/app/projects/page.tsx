@@ -59,7 +59,7 @@ const projects: Project[] = [
     href: '/projects/ciszubot',
     icon: Bot,
     gradient: 'from-[#5865F2] via-[#7289DA] to-[#4752C4]',
-    logo: 'projects/ciszubot/content/logos/images/not-outline/isotype/color/ciszubot_logo_isotipo_color.png',
+    logo: 'projects/ciszubot/content/logos/images/samples/circle/ciszubot_logo_isotipo_color_circle.png',
     stack: ['Discord.js', 'TypeScript', 'Node.js', 'Docker', 'Supabase', 'Top.gg'],
   },
   {

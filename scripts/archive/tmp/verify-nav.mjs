@@ -4,6 +4,25 @@ import { chromium } from '@playwright/test';
 
 const MOVED = ['/reviews', '/stats', '/leaderboard', '/downloads', '/download', '/changelog', '/feedback'];
 
+/**
+ * Hosts cuyo ruido de consola se ignora. Se compara el hostname real de las
+ * URLs del mensaje (nunca un substring), para no descartar errores de otros
+ * orígenes que solo contengan ese texto.
+ */
+const NOISE_HOSTS = ['cloudflareinsights.com'];
+
+function referencesNoiseHost(text) {
+  const urls = text.match(/https?:\/\/[^\s"'`)]+/g) ?? [];
+  return urls.some((raw) => {
+    try {
+      const { hostname } = new URL(raw);
+      return NOISE_HOSTS.some((host) => hostname === host || hostname.endsWith(`.${host}`));
+    } catch {
+      return false;
+    }
+  });
+}
+
 const results = [];
 const check = (ok, label, detail = '') => {
   results.push({ ok, label, detail });
@@ -44,7 +63,7 @@ for (const [name, base] of [
     // Ruido esperado al servir un build de producción en localhost:
     //  · CDN local (localhost:8788) fuera de la CSP de producción
     //  · el beacon de Cloudflare rechaza el origen localhost por CORS
-    if (text.includes('localhost:8788') || text.includes('cloudflareinsights.com')) return;
+    if (text.includes('localhost:8788') || referencesNoiseHost(text)) return;
     // Ruido del entorno local: assets del CDN local bloqueados y llamadas a
     // Supabase sin sesión (401/404). No son errores de la página.
     if (text.startsWith('Failed to load resource')) return;

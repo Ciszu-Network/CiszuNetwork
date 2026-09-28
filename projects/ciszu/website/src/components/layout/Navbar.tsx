@@ -20,7 +20,6 @@ import {
   User,
   Home,
   Shield,
-  Zap,
   Users,
   Mail,
   Info,
@@ -51,6 +50,20 @@ const IcoDiscord = () => (
   </svg>
 );
 
+/**
+ * Icono de PROYECTOS: cuadrícula de cuatro cuadrados. Se toma del patrón de
+ * Ciszuko Antony porque representa mejor un catálogo de proyectos que el rayo
+ * genérico que se usaba antes.
+ */
+const IcoProjects = () => (
+  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}>
+    <rect x="3" y="3" width="7" height="7" />
+    <rect x="14" y="3" width="7" height="7" />
+    <rect x="14" y="14" width="7" height="7" />
+    <rect x="3" y="14" width="7" height="7" />
+  </svg>
+);
+
 interface NavSubLink { name: string; href: string; icon: React.ReactNode; }
 interface NavEntry {
   name: string;
@@ -65,22 +78,15 @@ interface NavEntry {
 // "Information" para lo institucional/legal. Sin duplicados entre ambos.
 const NAV_ITEMS: NavEntry[] = [
   { name: 'Home', href: '/', icon: <Home className="w-4 h-4" /> },
-  { name: 'Projects', href: '/projects', icon: <Zap className="w-4 h-4" />, keywords: ['ciszugamens', 'discord', 'whatsapp', 'telegram', 'ciszubot', 'muzicmania', 'ciszu network', 'ciszuko antony'], links: [
-      { name: 'Todos los proyectos', href: '/projects', icon: <Zap className="w-4 h-4" /> },
+  { name: 'Projects', href: '/projects', icon: <IcoProjects />, keywords: ['ciszugamens', 'discord', 'whatsapp', 'telegram', 'ciszubot', 'muzicmania', 'ciszu network', 'ciszuko antony'], links: [
+      { name: 'Todos los proyectos', href: '/projects', icon: <IcoProjects /> },
       { name: 'Ciszugamens', href: '/projects/ciszugamens', icon: <Gamepad2 className="w-4 h-4" /> },
       { name: 'CiszuBot', href: '/projects/ciszubot', icon: <Bot className="w-4 h-4" /> },
       { name: 'MuzicMania', href: '/projects/muzicmania', icon: <Music className="w-4 h-4" /> },
       { name: 'Ciszu Network', href: '/projects/ciszunetwork', icon: <Building className="w-4 h-4" /> },
       { name: 'Ciszuko Antony', href: '/projects/ciszukoantony', icon: <User className="w-4 h-4" /> },
     ] },
-  // Secciones vivas del sitio: son navegación primaria, NO van dentro de
-  // "Information" (que queda solo para lo institucional y legal).
-  { name: 'Changelog', href: '/changelog', icon: <History className="w-4 h-4" /> },
-  { name: 'Reviews', href: '/reviews', icon: <Star className="w-4 h-4" /> },
-  { name: 'Stats', href: '/stats', icon: <BarChart3 className="w-4 h-4" /> },
-  { name: 'Downloads', href: '/downloads', icon: <Download className="w-4 h-4" /> },
-  { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" /> },
-  { name: 'Courses', href: '/courses', icon: <GraduationCap className="w-4 h-4" /> },
+  // Servicios se sitúa inmediatamente después de Projects: ambos son catálogos.
   {
     name: 'Servicios',
     icon: <Sparkles className="w-4 h-4" />,
@@ -94,6 +100,14 @@ const NAV_ITEMS: NavEntry[] = [
       })),
     ],
   },
+  // Secciones vivas del sitio: son navegación primaria, NO van dentro de
+  // "Information" (que queda solo para lo institucional y legal).
+  { name: 'Changelog', href: '/changelog', icon: <History className="w-4 h-4" /> },
+  { name: 'Reviews', href: '/reviews', icon: <Star className="w-4 h-4" /> },
+  { name: 'Stats', href: '/stats', icon: <BarChart3 className="w-4 h-4" /> },
+  { name: 'Downloads', href: '/downloads', icon: <Download className="w-4 h-4" /> },
+  { name: 'Feedback', href: '/feedback', icon: <MessageSquareWarning className="w-4 h-4" /> },
+  { name: 'Courses', href: '/courses', icon: <GraduationCap className="w-4 h-4" /> },
   {
     name: 'Information',
     icon: <Info className="w-4 h-4" />,
@@ -161,7 +175,7 @@ const ALL_PAGES: { name: string; href: string; icon: React.ReactNode; keywords: 
     icon: <service.icon className="w-4 h-4" />,
     keywords: [service.slug, 'servicio', 'services', service.tagline.toLowerCase()],
   })),
-  { name: 'Projects', href: '/projects', icon: <Zap className="w-4 h-4" />, keywords: ['proyectos', 'projects', 'ecosistema', 'portfolio', 'apps'] },
+  { name: 'Projects', href: '/projects', icon: <IcoProjects />, keywords: ['proyectos', 'projects', 'ecosistema', 'portfolio', 'apps'] },
   { name: 'Ciszugamens', href: '/projects/ciszugamens', icon: <Gamepad2 className="w-4 h-4" />, keywords: ['ciszugamens', 'gamens', 'discord', 'servidor', 'comunidad'] },
   { name: 'CiszuBot', href: '/projects/ciszubot', icon: <Bot className="w-4 h-4" />, keywords: ['ciszubot', 'bot', 'discord', 'comandos'] },
   { name: 'MuzicMania', href: '/projects/muzicmania', icon: <Music className="w-4 h-4" />, keywords: ['muzicmania', 'musica', 'juego', 'ritmo'] },

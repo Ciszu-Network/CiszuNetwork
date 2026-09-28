@@ -1,4 +1,5 @@
 import React from 'react';
+import { assetUrl } from '@ciszunetwork/cdn';
 import { SOCIAL_ENTRIES, socialHref } from '@/data/socials';
 import { MUSIC_PLATFORMS } from '@/data/music';
 import SocialGlyph from '@/components/socials/SocialGlyph';
@@ -53,6 +54,9 @@ export const I = {
   whatsapp: <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>,
   discord: <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor"><path d="M20.317 4.3698a19.7913 19.7913 0 0 0-4.8851-1.5152.0741.0741 0 0 0-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 0 0-.0785-.037 19.7363 19.7363 0 0 0-4.8852 1.515.0699.0699 0 0 0-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 0 0 .0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 0 0 .0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 0 0-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 0 1-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 0 1 .0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 0 1 .0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 0 1-.0066.1276 12.2986 12.2986 0 0 1-1.873.8914.0766.0766 0 0 0-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 0 0 .0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 0 0 .0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 0 0-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg>,
   soundcloud: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><path d="M23.999 14.165c-.052 1.796-1.612 3.169-3.4 3.169h-8.18a.68.68 0 0 1-.675-.683V7.862a.747.747 0 0 1 .452-.724s.75-.513 2.333-.513a5.364 5.364 0 0 1 2.763.755 5.433 5.433 0 0 1 2.57 3.54c.282-.08.574-.121.868-.12.884 0 1.73.358 2.347.992s.948 1.49.922 2.373ZM10.721 8.421c.247 2.98.427 5.697 0 8.672a.264.264 0 0 1-.53 0c-.395-2.946-.22-5.718 0-8.672a.264.264 0 0 1 .53 0ZM9.072 9.448c.285 2.659.37 4.986-.006 7.655a.277.277 0 0 1-.55 0c-.331-2.63-.256-5.02 0-7.655a.277.277 0 0 1 .556 0Zm-1.663-.257c.27 2.726.39 5.171 0 7.904a.266.266 0 0 1-.532 0c-.38-2.69-.257-5.21 0-7.904a.266.266 0 0 1 .532 0Zm-1.647.77a26.108 26.108 0 0 1-.008 7.147.272.272 0 0 1-.542 0 27.955 27.955 0 0 1 0-7.147.275.275 0 0 1 .55 0Zm-1.67 1.769c.421 1.865.228 3.5-.029 5.388a.257.257 0 0 1-.514 0c-.21-1.858-.398-3.549 0-5.389a.272.272 0 0 1 .543 0Zm-1.655-.273c.388 1.897.26 3.508-.01 5.412-.026.28-.514.283-.54 0-.244-1.878-.347-3.54-.01-5.412a.283.283 0 0 1 .56 0Zm-1.668.911c.4 1.268.257 2.292-.026 3.572a.257.257 0 0 1-.514 0c-.241-1.262-.354-2.312-.023-3.572a.283.283 0 0 1 .563 0Z"/></svg>,
+  // Isotipo oficial de MuzicMania en gris: usado para la BIBLIOTECA del juego
+  // (deja de usar el icono de play genérico en la sección de música).
+  muzicmania: <img src={assetUrl('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} alt="" aria-hidden className="w-4 h-4 object-contain grayscale opacity-80" />,
 };
 
 export type NavItem = {
@@ -93,8 +97,6 @@ export const NAV_MAIN: (NavItem | NavGroup)[] = [
     name: 'Projects', icon: I.projects,
     items: [
       { name: 'Projects', href: '/projects', icon: I.projects },
-      { name: 'Portfolio & CV', href: '/portfolio', icon: I.palette },
-      { name: 'Commissions', href: '/commissions', icon: I.money },
       { name: 'CiszuBot', href: '/projects/ciszubot', icon: I.robot },
       { name: 'MuzicMania', href: '/projects/muzicmania', icon: I.music },
       { name: 'Ciszugamens', href: '/projects/ciszugamens', icon: I.gamepad },
@@ -102,12 +104,15 @@ export const NAV_MAIN: (NavItem | NavGroup)[] = [
       { name: 'Ciszuko Antony', href: '/projects/ciszukoantony', icon: I.user },
     ],
   } as NavGroup,
+  { name: 'Portfolio', href: '/portfolio', icon: I.palette },
+  { name: 'Curriculum', href: '/curriculum', icon: I.graduation },
+  { name: 'Commissions', href: '/commissions', icon: I.money },
   {
     name: 'Music', icon: I.music, href: '/musicboard',
     items: [
       { name: 'Musicboard', href: '/musicboard', icon: I.music },
       { name: 'MuzicMania', href: '/projects/muzicmania', icon: I.gamepad },
-      { name: 'Biblioteca MuzicMania', href: MUSIC_PLATFORMS.muzicmania, icon: I.play, external: true },
+      { name: 'Biblioteca MuzicMania', href: MUSIC_PLATFORMS.muzicmania, icon: I.muzicmania, external: true },
       { name: 'SoundCloud', href: MUSIC_PLATFORMS.soundcloud, icon: I.soundcloud, external: true },
       { name: 'YouTube', href: MUSIC_PLATFORMS.youtube, icon: I.play, external: true },
       { name: 'YouTube Music', href: MUSIC_PLATFORMS.ytmusic, icon: I.music, external: true },
@@ -171,7 +176,8 @@ export const ALL_PAGES: NavItem[] = [
   { name: 'Stats', href: '/stats', icon: I.barChart },
   { name: 'Forum', href: '/forum', icon: I.messageSquare },
   { name: 'Projects', href: '/projects', icon: I.projects },
-  { name: 'Portfolio & CV', href: '/portfolio', icon: I.palette },
+  { name: 'Portfolio', href: '/portfolio', icon: I.palette },
+  { name: 'Curriculum', href: '/curriculum', icon: I.graduation },
   { name: 'Commissions', href: '/commissions', icon: I.money },
   { name: 'CiszuBot', href: '/projects/ciszubot', icon: I.robot },
   { name: 'MuzicMania', href: '/projects/muzicmania', icon: I.music },
@@ -211,7 +217,8 @@ export const FOOTER_SECTIONS = [
   { label: 'Navigate', icon: I.home, links: [
     { name: 'Home', href: '/', icon: I.home },
     { name: 'Projects', href: '/projects', icon: I.projects },
-    { name: 'Portfolio & CV', href: '/portfolio', icon: I.palette },
+    { name: 'Portfolio', href: '/portfolio', icon: I.palette },
+    { name: 'Curriculum', href: '/curriculum', icon: I.graduation },
     { name: 'Certificates', href: '/certificates', icon: I.certificates },
     { name: 'Changelog', href: '/changelog', icon: I.history },
     { name: 'Reviews', href: '/reviews', icon: I.star },
@@ -236,7 +243,7 @@ export const FOOTER_SECTIONS = [
     { name: 'YouTube', href: MUSIC_PLATFORMS.youtube, icon: I.play },
     { name: 'YouTube Music', href: MUSIC_PLATFORMS.ytmusic, icon: I.music },
     { name: 'Spotify', href: MUSIC_PLATFORMS.spotify, icon: I.music },
-    { name: 'Biblioteca MuzicMania', href: MUSIC_PLATFORMS.muzicmania, icon: I.play },
+    { name: 'Biblioteca MuzicMania', href: MUSIC_PLATFORMS.muzicmania, icon: I.muzicmania },
   ]},
   { label: 'Socials', icon: I.socials, links: [
     { name: 'Socials', href: '/socials', icon: I.socials },
@@ -267,7 +274,8 @@ export const PAGE_TITLES: Record<string, { title: string; desc: string }> = {
   '/': { title: 'Ciszuko Antony | CEO of Ciszuko Network', desc: 'Official portfolio of Ciszuko Antony — CEO & Founder of Ciszuko Network.' },
   '/about': { title: 'About | Ciszuko Antony', desc: 'Learn more about Ciszuko Antony (Francisco Garcia Antonio M.), CEO & Founder of Ciszuko Network.' },
   '/projects': { title: 'Projects | Ciszuko Antony', desc: 'Explore all projects by Ciszuko Antony — CiszuBot, MuzicMania, Ciszugamens, Ciszu Network and more.' },
-  '/portfolio': { title: 'Portfolio & CV | Ciszuko Antony', desc: 'Portfolio and CV of Ciszuko Antony: web, bots, game, community, content and tools, plus experience, education, skills, languages and certifications.' },
+  '/portfolio': { title: 'Portfolio | Ciszuko Antony', desc: 'Portfolio of Ciszuko Antony: web, bots, game, community, content and tools.' },
+  '/curriculum': { title: 'Curriculum | Ciszuko Antony', desc: 'Curriculum of Ciszuko Antony: the 3 CVs in PDF with on-screen preview, plus experience, education, skills, languages and certifications.' },
   '/socials': { title: 'Socials | Ciszuko Antony', desc: 'Official social networks of Ciszuko Antony: YouTube, Twitch, GitHub, Discord, X, Instagram, TikTok, Facebook, Spotify, LinkedIn, Pinterest and WhatsApp.' },
   '/musicboard': { title: 'Musicboard | Ciszuko Antony', desc: 'Music by Ciszuko Antony: integrated player with sidebar for the studio album FL Studio Track Practice 2024 (own work) and the Genesis Neon soundtrack for MuzicMania, plus the official podcast and playlists, with real links to SoundCloud, YouTube Music, Spotify and the game library.' },
   '/commissions': { title: 'Commissions | Ciszuko Antony', desc: 'Commission Ciszuko Antony: web development, bots, games, visual identity and automation.' },

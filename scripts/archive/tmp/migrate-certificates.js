@@ -75,13 +75,7 @@ migrated = migrated.replace(
   `  { id: 'category', label: 'Category', fn: (a, b) => catLabel(a.categories[0]).localeCompare(catLabel(b.categories[0])) },`
 );
 
-// 9. Actualizar buildCatalogRefs para usar categories
-migrated = migrated.replace(
-  `const year = (d.date || '0000').slice(0, 4);\n  const base = \`\${issuerCode(d)}-\${year}\`;`,
-  `const year = (d.date || '0000').slice(0, 4);\n  const base = \`\${issuerCode(d)}-\${year}\`;`
-);
-
-// 10. Agregar helper principalCategory
+// 9. Agregar helper principalCategory
 migrated = migrated.replace(
   `export const catalogRef = (c: Certificate): string => CATALOG_REFS[c.id] || c.id;`,
   `export const catalogRef = (c: Certificate): string => CATALOG_REFS[c.id] || c.id;

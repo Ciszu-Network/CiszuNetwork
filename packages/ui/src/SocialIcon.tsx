@@ -13,10 +13,10 @@ export const SOCIAL_COLORS: Record<SocialPlatform, string> = {
   youtube: '#FF0000',
   facebook: '#1877F2',
   instagram: '#E4405F',
-  x: '#000000',
-  github: '#333333',
+  x: '#74A9FF',
+  github: '#74A9FF',
   discord: '#5865F2',
-  tiktok: '#000000',
+  tiktok: '#00F2FE',
 };
 
 /**

@@ -127,7 +127,7 @@ export const ECOSYSTEM_PROJECTS: EcosystemProject[] = [
     href: '/projects/ciszubot',
     external: false,
     logo: assetResolver.resolve(
-      'projects/ciszubot/content/logos/images/not-outline/isotype/color/ciszubot_logo_isotipo_color.png',
+      'projects/ciszubot/content/logos/images/samples/circle/ciszubot_logo_isotipo_color_circle.png',
     ),
     icon: Bot,
     accent: 'discord',
@@ -143,6 +143,7 @@ export const ECOSYSTEM_PROJECTS: EcosystemProject[] = [
     logo: assetResolver.resolve(
       'projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg',
     ),
+    wide: false,
     icon: Music,
     accent: 'cyan',
     taglineKey: 'tagMuzicmania',

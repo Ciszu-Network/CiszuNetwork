@@ -25,6 +25,38 @@ export type {
 
 export const CHANGELOG_DATA: ChangelogItem[] = [
   {
+    id: 'patch-v2.6.5',
+    version: 'PATCH V2.6.5',
+    code: 'P-265-IV',
+    title: 'Landing de Invitación y Explorador de Comandos',
+    description: 'La página /invite se reconstruye como una landing centrada en invitar al bot y /commands estrena colores por comando, secciones por categoría y subpanel de detalle.',
+    date: '2026-09-28',
+    author: 'CiszukoAntony',
+    types: ['feat', 'ui', 'ux'],
+    likes: 0,
+    details: [
+      { text: '/invite pasa a ser una landing con hero, módulos, permisos y pasos alrededor de un único botón de invitación, indexada en los navbars.', type: 'feat' },
+      { text: 'Al invitar, el botón felicita al usuario, abre la autorización oficial de Discord en una pestaña nueva y luego pide confirmar para volver al inicio con cuenta atrás.', type: 'ux' },
+      { text: 'Cada comando de /commands tiene su propio color, agrupación por categoría con icono y chip de color, y código de catálogo CZB-<CAT>-<NNN>.', type: 'ui' },
+      { text: 'El subpanel de cada comando muestra descripción, sintaxis con copiar, ejemplo, alias y comandos relacionados navegables dentro del propio panel.', type: 'add' },
+    ],
+  },
+  {
+    id: 'patch-v2.6.0',
+    version: 'PATCH V2.6.0',
+    code: 'P-260-QD',
+    title: 'QuickDocks Completos',
+    description: 'Los accesos rápidos del bot incorporan las páginas que faltaban del sitio.',
+    date: '2026-09-28',
+    author: 'CiszukoAntony',
+    types: ['ux', 'add', 'ui'],
+    likes: 0,
+    details: [
+      { text: 'QuickDocks ampliados con Explore, Invite, Changelog, Donate, Credits, Guidelines, Rules y License.', type: 'add' },
+      { text: 'Cada acceso conserva su icono y su etiqueta traducida en los 4 idiomas.', type: 'ux' },
+    ],
+  },
+  {
     id: 'patch-v2.5.0',
     version: 'PATCH V2.5.0',
     code: 'P-250-CL',
