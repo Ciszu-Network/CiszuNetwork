@@ -25,6 +25,24 @@ export type {
 
 export const CHANGELOG_DATA: ChangelogItem[] = [
   {
+    id: 'patch-v2.7.0',
+    version: 'PATCH V2.7.0',
+    code: 'P-270-CV',
+    title: 'Página de Currículum Independiente',
+    description: 'El portfolio se enfoca en los trabajos y el currículum estrena página propia con los 3 CV previsualizados en pantalla.',
+    date: '2026-09-28',
+    author: 'CiszukoAntony',
+    types: ['feat', 'ui', 'ux'],
+    likes: 0,
+    details: [
+      { text: 'Nueva página /curriculum: previsualización completa de los 3 CV en PDF, con descarga y pantalla completa.', type: 'feat' },
+      { text: 'La vista previa se adapta a la orientación del archivo (vertical u horizontal) para no recortar el documento.', type: 'ui' },
+      { text: 'El portfolio deja el currículum y se centra en los trabajos, con un acceso directo a /curriculum.', type: 'ux' },
+      { text: 'QuickDocks ampliados con Portfolio, Curriculum, Commissions, Musicboard, Socials, Changelog, Reviews, Stats, Downloads, Information, Forum, Donate, Credits y Feedback.', type: 'add' },
+      { text: 'El icono de la Biblioteca MuzicMania usa el isotipo de MuzicMania en gris.', type: 'ui' },
+    ],
+  },
+  {
     id: 'patch-v2.6.0',
     version: 'PATCH V2.6.0',
     code: 'P-260-CL',

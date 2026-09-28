@@ -205,7 +205,7 @@ export default function HomeContent() {
         <div className="relative z-10 max-w-4xl mx-auto">
           <div className="flex items-center justify-center gap-4 md:gap-7 mb-8 flex-wrap">
             <CdnImage
-              src="projects/ciszukoantony/content/logos/images/not-outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zcolor_ccolor.png"
+              src="projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png"
               alt="Isotipo de Ciszuko Antony"
               width={96}
               height={86}
@@ -213,7 +213,7 @@ export default function HomeContent() {
               className="animate-float drop-shadow-[0_0_25px_rgba(90,130,232,0.55)]"
             />
             <CdnImage
-              src="projects/ciszukoantony/content/logos/images/not-outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png"
+              src="projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png"
               alt="Logotipo de Ciszuko Antony"
               width={300}
               height={75}

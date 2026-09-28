@@ -55,6 +55,11 @@ export type CvDocument = {
   size: string;
   pages: number;
   type: 'pdf';
+  /**
+   * Orientación del documento: define cómo se adapta su vista previa.
+   * Un CV vertical (A4/Letter) llena un marco alto; uno horizontal, uno ancho.
+   */
+  orientation: 'portrait' | 'landscape';
 };
 
 export type CurriculumData = {
@@ -80,6 +85,7 @@ export const CV_DOCUMENTS: CvDocument[] = [
     size: '190 KB',
     pages: 7,
     type: 'pdf',
+    orientation: 'portrait',
   },
   {
     id: 'resumido',
@@ -90,6 +96,7 @@ export const CV_DOCUMENTS: CvDocument[] = [
     size: '110 KB',
     pages: 5,
     type: 'pdf',
+    orientation: 'portrait',
   },
   {
     id: 'linkedin',
@@ -100,6 +107,7 @@ export const CV_DOCUMENTS: CvDocument[] = [
     size: '43 KB',
     pages: 2,
     type: 'pdf',
+    orientation: 'portrait',
   },
 ];
 

@@ -20,6 +20,7 @@ const ROUTES = [
   'policies',
   'projects',
   'portfolio',
+  'curriculum',
   'socials',
   'musicboard',
   'commissions',

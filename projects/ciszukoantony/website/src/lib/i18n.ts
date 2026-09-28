@@ -1598,6 +1598,7 @@ export const NAV_KEYS: Record<string, keyof Dict['nav']> = {
   '/about': 'about',
   '/projects': 'projects',
   '/portfolio': 'portfolio',
+  '/curriculum': 'curriculum',
   '/socials': 'social',
   '/commissions': 'commissions',
   '/certificates': 'certificates',

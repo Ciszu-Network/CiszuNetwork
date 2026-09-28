@@ -28,10 +28,10 @@ export const metadata: Metadata = {
 };
 
 const ISOTYPE = assetResolver.resolve(
-  'projects/ciszukoantony/content/logos/images/not-outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zcolor_ccolor.png'
+  'projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png'
 );
 const LOGOTYPE = assetResolver.resolve(
-  'projects/ciszukoantony/content/logos/images/not-outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png'
+  'projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png'
 );
 const CIRCLE = assetResolver.resolve(
   'projects/ciszukoantony/content/logos/images/samples/circle/circle_1_yt.png'

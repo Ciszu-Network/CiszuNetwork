@@ -265,13 +265,13 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Dict }) {
           <div className={`flex items-center justify-between ${floating ? 'h-14' : 'h-16'} gap-3`}>
             <Link href="/" className="flex items-center gap-2 group shrink-0 active:scale-95 transition-all duration-300">
               <CdnImage
-                src="projects/ciszukoantony/content/logos/images/not-outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zcolor_ccolor.png"
+                src="projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png"
                 alt="Ciszuko" width={28} height={25}
                 data-logo-white="true"
                 className="drop-shadow-brand group-hover:drop-shadow-[0_0_15px_rgba(61,106,223,0.8)] transition-all duration-300"
               />
               <CdnImage
-                src="projects/ciszukoantony/content/logos/images/not-outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png"
+                src="projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png"
                 alt="Ciszuko Antony" width={120} height={28}
                 className="hidden sm:block group-hover:drop-shadow-[0_0_15px_rgba(61,106,223,0.8)] transition-all duration-300"
               />

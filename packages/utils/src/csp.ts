@@ -100,7 +100,10 @@ export function buildCsp(opts: CspOptions = {}): string {
     // frame-src: AdSense abre iframes de verificación de tráfico en
     // ep1/ep2.adtrafficquality.google (antes solo estaban en script/connect-src,
     // así que el marco se bloqueaba con "Framing ... violates frame-src").
-    ['frame-src', ["'self'", 'https://challenges.cloudflare.com', GOOGLE_TAG_MANAGER_ORIGIN, GOOGLE_DOUBLECLICK_ORIGIN, GOOGLE_ADSENSE_ORIGIN, GOOGLE_AD_CREATIVE_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN_2, 'https://www.google.com', ...(opts.frameSrc ?? [])]],
+    // Incluye `local` (solo dev): las previsualizaciones de PDF (p.ej. los CV
+    // del portfolio) se sirven desde el CDN local (localhost:8788) durante el
+    // desarrollo; sin este origen el iframe quedaba bloqueado y no se veía.
+    ['frame-src', ["'self'", 'https://challenges.cloudflare.com', GOOGLE_TAG_MANAGER_ORIGIN, GOOGLE_DOUBLECLICK_ORIGIN, GOOGLE_ADSENSE_ORIGIN, GOOGLE_AD_CREATIVE_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN_2, 'https://www.google.com', ...local, ...(opts.frameSrc ?? [])]],
     // worker-src explícito: PostHog recording crea workers desde blob: URLs;
     // sin esta directiva cae a script-src y se bloquea (paridad en las 4 webs).
     ['worker-src', ["'self'", 'blob:', ...(opts.workerSrc ?? [])]],

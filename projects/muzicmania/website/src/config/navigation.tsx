@@ -1,4 +1,5 @@
 import React from 'react';
+import { assetUrl } from '@ciszunetwork/cdn';
 
 // ── Icons Dictionary (SVGs Inline) ─────────────────────────────────────────
 export const I = {
@@ -27,6 +28,9 @@ export const I = {
   terms:       <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>,
   reviews:     <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
   music:       <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>,
+  // Isotipo oficial de MuzicMania en gris: representa la BIBLIOTECA del juego
+  // (mejor que una nota musical genérica, que ya se usa en otras secciones).
+  library:     <img src={assetUrl('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} alt="" aria-hidden className="w-4 h-4 object-contain grayscale opacity-80" />,
   user:        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
   handshake:   <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08v0c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"/><path d="m18 15-2-2"/><path d="m15 18-2-2"/></svg>,
   download:    <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>,
@@ -39,7 +43,7 @@ export const I = {
 export const MAIN_NAV_LINKS = [
   { name: 'Home',        href: '/',            icon: I.home,        hideCls: 'hidden min-[300px]:flex', keywords: ['inicio', 'index', 'main', 'muzicmania', 'logo'] },
   { name: 'Play',        href: '/play',         icon: I.play,        hideCls: 'hidden min-[350px]:flex', keywords: ['jugar', 'game', 'start', 'empezar', 'partida'] },
-  { name: 'Library',     href: '/library',      icon: I.music,       hideCls: 'hidden min-[400px]:flex', keywords: ['biblioteca', 'songs', 'canciones', 'musica', 'music', 'tracks', 'maps'] },
+  { name: 'Library',     href: '/library',      icon: I.library,     hideCls: 'hidden min-[400px]:flex', keywords: ['biblioteca', 'songs', 'canciones', 'musica', 'music', 'tracks', 'maps'] },
   { name: 'Leaderboard', href: '/leaderboard',  icon: I.leaderboard, hideCls: 'hidden min-[450px]:flex', keywords: ['ranking', 'top', 'leaderboard', 'clasificacion', 'mundial', 'global'] },
   { name: 'Stats',       href: '/stats',        icon: I.stats,       hideCls: 'hidden min-[500px]:flex', keywords: ['estadisticas', 'stats', 'perfil', 'analisis', 'rendimiento', 'server'] },
   { name: 'Forum',       href: '/forum',        icon: I.faq,         hideCls: 'hidden min-[550px]:flex', keywords: ['foro', 'comunidad', 'community', 'discusión', 'discussion', 'posts'] },

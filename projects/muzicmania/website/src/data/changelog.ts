@@ -26,6 +26,21 @@ export interface ChangelogItem {
 
 export const CHANGELOG_DATA: ChangelogItem[] = [
   {
+    id: 'patch-v2.7.0',
+    version: 'PATCH V2.7.0',
+    code: 'P-270-LB',
+    title: 'Icono de Biblioteca con Identidad Propia',
+    description: 'La Biblioteca deja la nota musical genérica y usa el isotipo de MuzicMania en gris.',
+    date: '2026-09-28',
+    author: 'CiszukoAntony',
+    types: ['ui', 'ux'],
+    likes: 0,
+    details: [
+      { text: 'El enlace Biblioteca del navbar y del footer usa el isotipo de MuzicMania en gris en lugar de la nota musical.', type: 'ui' },
+      { text: 'El icono se resuelve por el CDN del ecosistema, con la misma estrategia que el resto de assets.', type: 'ux' },
+    ],
+  },
+  {
     id: 'patch-v2.6.0',
     version: 'PATCH V2.6.0',
     code: 'P-260-MX',
