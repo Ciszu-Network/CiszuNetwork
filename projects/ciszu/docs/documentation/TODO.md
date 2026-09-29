@@ -1,7 +1,5 @@
 # To Do List — Ciszu Network
 
-> Este archivo solo puede ser editado por Ciszuko Antony.
-
 ### Cambios Generales:
 
 #5 Crear sistema de anuncios: Google Adsense, GA4, GTM, Tag y Analytics pack completo.
@@ -36,34 +34,26 @@
 - [ ] Terminar paginas de proyectos y por cada proyecto, crearlos si hace falta e indexarlos.
 - [ ] Terminar idiomas en español LATAM.
 - [ ] Terminar idiomas en español España.
-- [ ] Arreglar footers, supervisar paginas, dividir secciones, corregir colores de iconos etc.
-- [ ] Arreglar pagina de home.
 
 **Ciszubot Website:**
 
 - [ ] Terminar idiomas en ingles UK.
 - [ ] Terminar idiomas en ingles USA.
-- [ ] Terminar paginas de dashboard (auth), crearlos si hace falta e indexarlos.
-- [ ] Terminar paginas de invite (pagina de invitacion exclusiva, al invitar agradecer al usuario), crearlos si hace falta e indexarlos.
-- [ ] Terminar paginas de explorar (vinculacion directa con otras webs de invitacion, como top.gg, widgets, disboard, el servidor propio, discordbots etc.), crearlos si hace falta e indexarlos.
+- [ ] Terminar paginas de dashboard (auth).
+- [X] Terminar paginas de invite (pagina de invitacion exclusiva, al invitar agradecer al usuario), crearlos si hace falta e indexarlos. (Ya creada solo falta indexarlo con vinculacion al boton de invitacion del header o footer.)
+- [X] Terminar paginas de explorar (vinculacion directa con otras webs de invitacion, como top.gg, widgets, disboard, el servidor propio, discordbots etc.), crearlos si hace falta e indexarlos.  (Ya creado solo falta vincular.)
 - [ ] Terminar idiomas en español LATAM.
 - [ ] Terminar idiomas en español España.
-- [ ] Arreglar footers, supervisar paginas, dividir secciones, corregir colores de iconos etc.
-- [ ] Arreglar pagina de home.
 
-  **Ciszuko Antony Website:**
+**Ciszuko Antony Website:**
+
 - [ ] Terminar paginas de portfolio, crearlos si hace falta e indexarlos.
 - [ ] Terminar paginas de curriculum, crearlos si hace falta e indexarlos.
-- [ ] Terminar paginas de comisiones, crearlos si hace falta e indexarlos.
 - [ ] Terminar paginas de proyectos y por cada proyecto, crearlos si hace falta e indexarlos.
 - [ ] Terminar idiomas en ingles UK.
 - [ ] Terminar idiomas en ingles USA.
 - [ ] Terminar idiomas en español LATAM.
 - [ ] Terminar idiomas en español España.
-- [ ] Arreglar footers, supervisar paginas, dividir secciones, corregir colores de iconos etc.
-- [ ] Arreglar pagina de home.
-- [ ] Terminar pagina seccion de redes y por cada red una pagina, crearlos si hace falta e indexarlos.
-- [ ] Terminar paginas musicboard, crearlos si hace falta e indexarlos.
 
 **MuzicMania Website:**
 
