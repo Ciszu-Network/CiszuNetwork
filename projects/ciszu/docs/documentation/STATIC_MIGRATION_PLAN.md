@@ -684,14 +684,15 @@ el acumulado. Objetivos diarios equivalentes: **CPU ≤3 min/día** (1,5 h/30 d)
 
 ## 14. Pendientes declarados (post-Fase 4)
 
-| Pendiente | Detalle | Seguimiento |
+| Pendiente | Estado | Seguimiento |
 |---|---|---|
-| `ƒ` por diseño | auth/2FA/sesión, dashboards, editores, CMS, `changelog/[id]`, `projects/[slug]` de ciszu, `profile/[id]` | Fuera de alcance; no entran en la migración (§5) |
-| Delta de `/youareanidiot` | Queda fuera del estático por usar scripts en `<head>`; el resto de la web sí migró | Evaluar mover los scripts a componente cliente para hacerla estática |
-| CiszuBot sin fallback SSR de sesión | El estado de sesión se resuelve solo en cliente; no hay SSR de respaldo | Revisar si requiere fallback o mantener como decisión de diseño |
-| ISR de `/donate` con env en runtime | La página lee configuración de entorno al revalidar; el ISR depende de que el env esté presente en runtime | Revisar si conviene fijar el valor en build o mantener runtime |
-| `lib/i18n-server.ts` de ciszu sin uso | Tras Fase 3/4 quedó sin consumidores | Candidato a borrar en limpieza futura (con grep previo) |
-| `#418` preexistentes | Errores de hidratación React previos a la migración (no ligados a F3/F4) | Investigar aparte; F3 verificó 0 hidrataciones nuevas |
+| `changelog/[id]` (×4 webs) y `projects/[slug]` (antony) | **Resuelto (35761b58)**: pasan de `ƒ` a `●` SSG con `generateStaticParams` (revalidate 1 h en changelog; `dynamicParams=false` en antony); render movido a `client.tsx`; builds 4/4 OK | - |
+| `lib/i18n-server.ts` de ciszu sin uso | **Resuelto (35761b58)**: eliminado (grep sin referencias) | - |
+| `ƒ` por diseño | Activo: auth/2FA/sesión, dashboards, editores, CMS y `profile/[id]` (muzicmania, datos por usuario) | Fuera de alcance; no entran en la migración (§5) |
+| Delta de `/youareanidiot` | Activo: queda fuera del estático por usar scripts en `<head>`; el resto de la web sí migró | Evaluar mover los scripts a componente cliente para hacerla estática |
+| CiszuBot sin fallback SSR de sesión | Activo: el estado de sesión se resuelve solo en cliente; no hay SSR de respaldo | Revisar si requiere fallback o mantener como decisión de diseño |
+| ISR de `/donate` con env en runtime | Activo: la página lee configuración de entorno al revalidar; el ISR depende de que el env esté presente en runtime | Revisar si conviene fijar el valor en build o mantener runtime |
+| `#418` preexistentes | Activo: hidratación React previa a la migración (no ligada a F3/F4), documentada para ciszubot en `NAVIGATION_SYSTEM.md` | Investigar aparte; F3 verificó 0 hidrataciones nuevas |
 
 _Última revisión: 2026-09-29._ Relacionado: `PROJECT_STATE.md`, `PROJECT_HISTORY.md`,
 `FRAMEWORKS_SYSTEM.md`, `FRONTEND_SYSTEM.md`, `STYLES_SYSTEM.md`, `CACHING_SYSTEM.md`,
