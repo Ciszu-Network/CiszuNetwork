@@ -9,7 +9,7 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import ProjectCard from '@/components/projects/ProjectCard';
-import { ALL_PROJECTS, NETWORK_PROJECTS, PROJECTS } from '@/data/projects';
+import { PROJECTS } from '@/data/projects';
 
 const THEME: InfoTheme = {
   accent: 'text-neon-blue',
@@ -21,9 +21,9 @@ const THEME: InfoTheme = {
 };
 
 const STATS = [
-  { value: `${ALL_PROJECTS.length}`, label: 'Proyectos', sub: 'Propios y de Ciszu Network' },
-  { value: '4', label: 'Webs Next.js', sub: 'Un solo monorepo' },
+  { value: `${PROJECTS.length}`, label: 'Proyectos', sub: 'Solo personales' },
   { value: '100%', label: 'Autoría propia', sub: 'Código, diseño y arte' },
+  { value: '2022', label: 'Desde', sub: 'Creando contenido' },
 ];
 
 export default function ProjectsPage() {
@@ -36,7 +36,7 @@ export default function ProjectsPage() {
         <InfoHero
           icon="rocket"
           title="Projects"
-          subtitle="Proyectos personales de Ciszuko Antony y proyectos de Ciszu Network: webs, bots, juego, comunidad y contenido. Un ecosistema construido desde cero."
+          subtitle="Los proyectos personales de Ciszuko Antony: contenido, música y desarrollo. Obra propia construida desde cero."
           kicker="Portfolio"
           theme={THEME}
         />
@@ -57,16 +57,6 @@ export default function ProjectsPage() {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {PROJECTS.map((project) => (
-            <ProjectCard key={project.slug} project={project} />
-          ))}
-        </div>
-
-        <h2 className="flex items-center gap-3 text-xs font-black uppercase tracking-[0.3em] text-neon-pink mt-14 mb-6">
-          <Icon name="server" size={16} />
-          Proyectos de Ciszu Network
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {NETWORK_PROJECTS.map((project) => (
             <ProjectCard key={project.slug} project={project} />
           ))}
         </div>

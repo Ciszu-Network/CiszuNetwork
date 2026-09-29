@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Icon, EcosystemSection, captureEvent } from '@ciszu/ui';
-import { ALL_PROJECTS, NETWORK_PROJECTS, PROJECTS as PERSONAL_PROJECTS } from '@/data/projects';
+import { PROJECTS } from '@/data/projects';
 import { CERTIFICATES } from '@/data/certificates';
 import { CHANGELOG_DATA } from '@/data/changelog';
 import { SOCIAL_ENTRIES, getSocial } from '@/data/socials';
@@ -168,7 +168,7 @@ export default function HomeContent() {
 
   const stats = [
     { value: `${CERTIFICATES.length}`, label: 'Certificados', icon: 'certificates', tone: 'text-neon-blue' },
-    { value: `${ALL_PROJECTS.length}`, label: dict.home.statProjects, icon: 'rocket', tone: 'text-neon-pink' },
+    { value: `${PROJECTS.length}`, label: dict.home.statProjects, icon: 'rocket', tone: 'text-neon-pink' },
     { value: `${SOCIAL_ENTRIES.length}`, label: 'Redes', icon: 'share', tone: 'text-neon-cyan' },
     { value: '2022', label: 'Desde', icon: 'history', tone: 'text-neon-green' },
   ];
@@ -289,13 +289,13 @@ export default function HomeContent() {
             <div key={copy} className="flex items-center shrink-0">
               {[
                 `${CERTIFICATES.length} CERTIFICADOS`,
-                `${ALL_PROJECTS.length} PROYECTOS`,
+                `${PROJECTS.length} PROYECTOS`,
                 `${SOCIAL_ENTRIES.length} REDES OFICIALES`,
                 'CISZU NETWORK',
-                'MUZICMANIA',
-                'CISZUBOT',
+                'CISZUKO ANTONY',
+                'GAMING · STREAMING',
                 'GENESIS NEON',
-                'CISZUGAMENS',
+                'MÚSICA',
                 'NEXT.JS · TYPESCRIPT · SUPABASE',
               ].map((word) => (
                 <span key={`${copy}-${word}`} className="mx-6 text-[11px] font-header font-black uppercase tracking-[0.35em] text-gray-500 whitespace-nowrap">
@@ -664,7 +664,7 @@ export default function HomeContent() {
       <section className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
           <Reveal>
-            <SectionTitle icon="rocket" kicker="Ecosistema" title={dict.home.projectsTitle} tone="text-neon-blue" />
+            <SectionTitle icon="rocket" kicker="Portfolio" title={dict.home.projectsTitle} tone="text-neon-blue" />
           </Reveal>
 
           <Reveal>
@@ -674,7 +674,7 @@ export default function HomeContent() {
             </h3>
           </Reveal>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-14">
-            {PERSONAL_PROJECTS.map((project, i) => (
+            {PROJECTS.map((project, i) => (
               <Reveal key={project.slug} delay={i * 80}>
                 <article className="group h-full p-6 rounded-[2.25rem] bg-white/5 border border-white/10 hover:border-neon-cyan/40 transition-all hover:-translate-y-1 flex flex-col">
                   <div className="flex items-start gap-4 mb-4">
@@ -705,39 +705,6 @@ export default function HomeContent() {
                   >
                     {dict.common.viewProject}
                     <Icon name="chevronRight" size={14} />
-                  </Link>
-                </article>
-              </Reveal>
-            ))}
-          </div>
-
-          <Reveal>
-            <h3 className="flex items-center gap-3 text-xs font-black uppercase tracking-[0.3em] text-neon-pink mb-6">
-              <Icon name="server" size={16} />
-              Proyectos de Ciszu Network
-            </h3>
-          </Reveal>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {NETWORK_PROJECTS.map((project, i) => (
-              <Reveal key={project.slug} delay={i * 60}>
-                <article className="group h-full p-5 rounded-[1.75rem] bg-white/5 border border-white/10 hover:border-neon-pink/40 transition-all hover:-translate-y-1 flex flex-col">
-                  <CdnImage
-                    src={project.logo}
-                    alt={`Logo de ${project.name}`}
-                    width={44}
-                    height={44}
-                    className="h-11 w-11 object-contain mb-3 group-hover:scale-110 transition-transform"
-                  />
-                  <h4 className="text-sm font-header font-black uppercase italic text-white">{project.name}</h4>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-neon-pink mb-2">{project.tagline}</p>
-                  <p className="text-xs text-gray-400 leading-relaxed flex-1">{project.description}</p>
-                  <Link
-                    href={`/projects/${project.slug}`}
-                    onClick={() => track(`project_${project.slug}`)}
-                    className="inline-flex items-center gap-1.5 mt-4 text-neon-blue hover:text-white text-[10px] font-header font-bold uppercase tracking-widest transition-colors"
-                  >
-                    {dict.common.viewProject}
-                    <Icon name="chevronRight" size={12} />
                   </Link>
                 </article>
               </Reveal>

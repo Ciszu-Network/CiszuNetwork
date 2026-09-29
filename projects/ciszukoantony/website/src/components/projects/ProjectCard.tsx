@@ -26,11 +26,6 @@ export default function ProjectCard({ project }: { project: Project }) {
         <span className="absolute top-3 right-3 px-3 py-1 rounded-full bg-black/70 border border-white/10 text-[9px] font-black uppercase tracking-widest text-neon-green">
           {project.status}
         </span>
-        {project.scope === 'network' ? (
-          <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/70 border border-neon-pink/40 text-[9px] font-black uppercase tracking-widest text-neon-pink">
-            Ciszu Network
-          </span>
-        ) : null}
       </Link>
 
       <div className="flex flex-col flex-1 p-6">
