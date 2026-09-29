@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import { supabase } from '@/config/supabase';
 import { useAppStore } from '@/store';
-import { applyFontSize, applyMuted, getPreferences, savePreferences, pushPreferencesToProfile } from '@/lib/preferences';
+import { applyFontSize, applyMuted, getEffectiveLang, getPreferences, savePreferences, pushPreferencesToProfile } from '@/lib/preferences';
 
 interface ProfileRow {
   username?: string | null;
@@ -59,8 +59,11 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   //    después de cargar ("se actualiza antes del guard"), en cada visita.
   useEffect(() => {
     const prefs = getPreferences();
+    // El idioma se resuelve cookie-first y SIEMPRE antes de setTheme: setTheme
+    // persiste preferencias (updatePreferences) y, con localStorage vacío,
+    // escribiría el default es-latam en la cookie antes de poder leerla.
+    setLanguage(getEffectiveLang(), true);
     setTheme(prefs.theme, true);
-    setLanguage(prefs.lang, true);
     applyFontSize(prefs.fontSize);
     if (prefs.muted) applyMuted(true);
   }, [setTheme, setLanguage]);

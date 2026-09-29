@@ -25,9 +25,8 @@ import {
   X_SOCIAL,
   YOUTUBE,
   TIKTOK,
-  type Dict,
-  type Lang,
 } from '@/lib/i18n';
+import { useClientI18n } from '@/hooks/useClientI18n';
 
 /** Enlaces del ecosistema (webs reales desplegadas). */
 const MUZICMANIA = 'https://muzicmania.vercel.app';
@@ -105,13 +104,13 @@ interface FooterGroup {
 }
 
 interface FooterProps {
-  lang: Lang;
-  dict: Dict;
   /** Nº real de comandos (COMMANDS.length), calculado en el layout servidor. */
   commandCount?: number;
 }
 
-export default function Footer({ dict, commandCount = 0 }: FooterProps) {
+export default function Footer({ commandCount = 0 }: FooterProps) {
+  // El idioma real se resuelve en cliente (Fase 3 §4.4); el SSR pinta la base.
+  const { dict } = useClientI18n();
   const { setIsMenuOpen, setSidebarView } = useAppStore();
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href;

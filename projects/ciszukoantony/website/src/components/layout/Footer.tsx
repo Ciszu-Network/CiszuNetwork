@@ -9,7 +9,8 @@ import { I, FOOTER_SECTIONS } from '@/config/navigation';
 import { SOCIAL_ENTRIES } from '@/data/socials';
 import SocialGlyph from '@/components/socials/SocialGlyph';
 import { useAppStore } from '@/store';
-import { navLabel, type Dict } from '@/lib/i18n';
+import { navLabel } from '@/lib/i18n';
+import { useDict } from '@/components/providers/I18nProvider';
 
 const MoonIcon = () => (
   <svg className="w-5 h-5 text-black transition-transform duration-500 group-hover:rotate-12" viewBox="0 0 24 24" fill="currentColor">
@@ -36,7 +37,9 @@ const IcoDiscord = () => (
   </svg>
 );
 
-export default function Footer({ dict }: { lang: string; dict: Dict }) {
+export default function Footer() {
+  // El SSR pinta la base es-latam; el provider resuelve la cookie en cliente.
+  const dict = useDict();
   const pathname = usePathname();
   const footerLinkLabel = (name: string, href: string) => {
     const anchor = href.split('#')[1];

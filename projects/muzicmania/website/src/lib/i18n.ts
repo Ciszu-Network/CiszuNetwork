@@ -498,6 +498,20 @@ export function parseLang(raw: string | undefined | null): Lang {
 
 export const isEsLang = (lang: Lang): boolean => lang === 'es-latam' || lang === 'es-es';
 
+/** Cookie de idioma (compatible con el resto de webs del ecosistema). */
+export const LANG_COOKIE = 'ciszu_lang';
+
+/**
+ * Idioma de la cookie en cliente, o null si no hay cookie. El layout raíz ya no
+ * la lee (Fase 3 §4.4): Navbar la usa para hidratar el store y cae a
+ * localStorage cuando falta. En SSR devuelve null.
+ */
+export function readCookieLang(): Lang | null {
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${LANG_COOKIE}=([^;]+)`));
+  return match?.[1] ? parseLang(decodeURIComponent(match[1])) : null;
+}
+
 export const LANGS = [
   { code: 'es-latam' as const, label: 'ES-LA', flag: 'es' },
   { code: 'es-es' as const, label: 'ES-ES', flag: 'es' },

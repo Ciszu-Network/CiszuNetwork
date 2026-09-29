@@ -8,6 +8,7 @@ import { ScrollNavButton, Icon } from '@ciszu/ui';
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store';
 import { updatePreferences, reloadAfterPrefChange } from '@/lib/preferences';
+import { useT } from '@/hooks/useT';
 
 import {
   I,
@@ -110,7 +111,10 @@ const BRAND_SOCIALS = [
   ...EXTRA_SOCIALS,
 ];
 
-export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any> }) => {
+export const Footer = () => {
+  // El SSR pinta la base es-latam; Navbar hidrata el idioma real en el store
+  // (Fase 3 §4.4) y useT() reacciona a ese cambio.
+  const dict = useT();
   const pathname = usePathname();
   const { isNavigating, setIsMenuOpen, setSidebarView, darkMode, setDarkMode } = useAppStore();
 

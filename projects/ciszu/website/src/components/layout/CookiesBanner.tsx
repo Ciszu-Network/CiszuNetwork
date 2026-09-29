@@ -4,12 +4,16 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useAppStore } from '@/store';
+import { useDict } from '@/lib/useDict';
 import { getCookieConsent, setCookieConsent, useToast } from '@ciszu/ui';
 import { Button } from '@heroui/react';
 
-export function CookiesBanner({ lang, dict }: { lang: string; dict: Record<string, any> }) {
+export function CookiesBanner() {
   const [show, setShow] = useState(false);
-  const { hasAcceptedCookies, setHasAcceptedCookies } = useAppStore();
+  const { hasAcceptedCookies, setHasAcceptedCookies, language } = useAppStore();
+  // Idioma del store hidratado en cliente (LangSync); el SSR pinta la base.
+  const lang = language;
+  const dict = useDict();
   const { toast } = useToast();
 
   useEffect(() => {

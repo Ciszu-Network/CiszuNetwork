@@ -6,8 +6,11 @@ import Link from 'next/link';
 import { useAppStore } from '@/store/useAppStore';
 import { isTauri } from '@/lib/isTauri';
 import { getCookieConsent, setCookieConsent, useToast } from '@ciszu/ui';
+import { useT } from '@/hooks/useT';
 
-export function CookiesBanner({ lang, dict }: { lang: string; dict: Record<string, any> }) {
+export function CookiesBanner() {
+  // El SSR pinta la base es-latam; Navbar hidrata el idioma real en el store.
+  const dict = useT();
   const [show, setShow] = useState(false);
   const { hasAcceptedCookies, setHasAcceptedCookies } = useAppStore();
   const { toast } = useToast();

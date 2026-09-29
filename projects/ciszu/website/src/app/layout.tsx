@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { headers, cookies } from "next/headers";
+import { headers } from "next/headers";
 import Script from "next/script";
 import { IBM_Plex_Sans, IBM_Plex_Sans_Condensed } from "next/font/google";
-import { getDict, parseLang } from "@/lib/i18n";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
@@ -14,6 +13,7 @@ import { CookiesBanner } from "@/components/layout/CookiesBanner";
 import FeedbackFab from "@/components/layout/FeedbackFab";
 import AuthProvider from "@/components/providers/AuthProvider";
 import AdsWithUser from "@/components/providers/AdsWithUser";
+import LangSync from "@/components/providers/LangSync";
 import { CISZU_NETWORK } from "@/config/site";
 import "./globals.scss";
 
@@ -72,9 +72,9 @@ const themeScript = `
 
 export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   const store = await headers();
-  const cookieStore = await cookies();
-  const lang = parseLang(cookieStore.get("ciszu_lang")?.value);
-  const dict = getDict(lang);
+  // Fase 3 (STATIC_MIGRATION_PLAN §4.4): el layout no lee la cookie de idioma.
+  // El SSR sale siempre en el idioma base y LangSync lo corrige en cliente.
+  const lang = "es-latam";
   const isEdit = store.get("x-is-edit") === "1";
   const isBare = store.get("x-is-bare") === "1";
 
@@ -104,6 +104,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <GoogleScripts />
       </head>
       <body className="min-h-screen font-sans flex flex-col">
+        <LangSync />
         <AuthProvider>
           <ToastProvider>
           <ActivityGuardProvider>
@@ -115,13 +116,13 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
               <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={ICON_SVG} title="Ciszu Network" subtitle="Ciszu Network Security • Cloudflare" accent="#22d3ee" storageKey="cf_verified_ciszu">
                 <AdBlockerGuard site="ciszu" logo={ICON_SVG} title="Ciszu Network" accent="#22d3ee" accentAlt="#f472b6" donateHref="https://ciszunetwork.vercel.app/donate">
                 {!isEdit && <ZoomWarning />}
-                {!isEdit && <Navbar lang={lang} dict={dict} />}
+                {!isEdit && <Navbar />}
                 {!isEdit && <DisclaimerStack headerHeight={64} />}
                 <DisclaimerDebug site="ciszu" />
                 <GlobalDisclaimer site="ciszu" />
                 <main className="flex-grow pt-16">{children}</main>
-                {!isEdit && <Footer lang={lang} dict={dict} />}
-                {!isEdit && <CookiesBanner lang={lang} dict={dict} />}
+                {!isEdit && <Footer />}
+                {!isEdit && <CookiesBanner />}
                 </AdBlockerGuard>
               </CloudflareGuard>
             </DisclaimerProvider>

@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { headers, cookies } from "next/headers";
+import { headers } from "next/headers";
 import { Exo_2, Rajdhani } from "next/font/google";
-import { getDict, parseLang } from "@/lib/i18n";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
@@ -68,9 +67,9 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   const store = await headers();
-  const cookieStore = await cookies();
-  const lang = parseLang(cookieStore.get("ciszu_lang")?.value);
-  const dict = getDict(lang);
+  // Fase 3 (STATIC_MIGRATION_PLAN §4.4): el layout no lee la cookie de idioma.
+  // El SSR sale siempre en la base y el I18nProvider la resuelve en cliente.
+  const lang = "es-latam";
   const isEdit = store.get("x-is-edit") === "1";
 
   return (
@@ -88,7 +87,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <GoogleScripts />
       </head>
       <body className="min-h-screen font-sans flex flex-col">
-        <I18nProvider lang={lang} dict={dict}>
+        <I18nProvider lang={lang}>
         <AuthProvider>
           <DisclaimerProvider>
             <ToastProvider>
@@ -100,14 +99,14 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={PROFILE_PIC} title="Ciszuko Antony" subtitle="Ciszuko Antony Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszukoantony">
               <AdBlockerGuard site="ciszukoantony" logo={PROFILE_PIC} title="Ciszuko Antony" accent="#a78bfa" accentAlt="#ff33cc" donateHref="https://ciszukoantony.vercel.app/donate">
               {/* BetaDisclaimer removido: ahora usa el sistema de push global (GlobalDisclaimer) */}
-              {!isEdit && <Navbar lang={lang} dict={dict} />}
+              {!isEdit && <Navbar />}
               {!isEdit && <ZoomWarning />}
               {!isEdit && <DisclaimerStack headerHeight={64} />}
               <DisclaimerDebug site="ciszukoantony" />
               <GlobalDisclaimer site="ciszukoantony" />
               <main className="flex-grow pt-16">{children}</main>
-              {!isEdit && <Footer lang={lang} dict={dict} />}
-              {!isEdit && <CookiesBanner lang={lang} dict={dict} />}
+              {!isEdit && <Footer />}
+              {!isEdit && <CookiesBanner />}
               </AdBlockerGuard>
             </CloudflareGuard>
             </AdsWithUser>

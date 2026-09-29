@@ -24,6 +24,7 @@ interface AppState {
   setTheme: (val: Theme, skipReload?: boolean) => void;
   language: Language;
   setLanguage: (val: Language, skipReload?: boolean) => void;
+  hydrateLanguage: (val: Language) => void;
   searchQuery: string;
   setSearchQuery: (val: string) => void;
   hasAcceptedCookies: boolean;
@@ -56,7 +57,7 @@ export const useAppStore = create<AppState>((set) => ({
     // una acción del usuario, no un F5 manual.
     if (!skipReload) reloadPage(1500);
   },
-  language: persisted?.lang ?? 'es-latam',
+  language: 'es-latam',
   setLanguage: (val: Language) => {
     set({ language: val });
     const prefs = loadPreferences();
@@ -70,6 +71,9 @@ export const useAppStore = create<AppState>((set) => ({
     }
     reloadPage(1200);
   },
+  // Solo estado: lo usa LangSync al hidratar la cookie/localStorage en cliente.
+  // No persiste ni recarga (setLanguage es la acción del usuario).
+  hydrateLanguage: (val: Language) => set({ language: val }),
   searchQuery: '',
   setSearchQuery: (val: string) => set({ searchQuery: val }),
   hasAcceptedCookies: false,

@@ -8,6 +8,7 @@ import { useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAva
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store';
 import { applyTheme } from '@/lib/preferences';
+import { getDict } from '@/lib/i18n';
 import { CISZU_NETWORK } from '@/config/site';
 import { SERVICES } from '@/data/services';
 import AuthMenu from '@/components/auth/AuthMenu';
@@ -200,9 +201,13 @@ const ALL_PAGES: { name: string; href: string; icon: React.ReactNode; keywords: 
 // (es-latam, es-es, en-us, en-uk) son INDIVIDUALES entre sí; el resto se
 // muestra atenuado y bloqueado (toast de error al hacer click).
 
-export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<string, any> }) => {
+export const NavbarContent = () => {
   const pathname = usePathname();
   const { isMenuOpen, setIsMenuOpen, theme, setTheme, language, setLanguage, searchQuery, setSearchQuery, sidebarView, setSidebarView } = useAppStore();
+  // El idioma llega del store (hidratado en cliente por LangSync desde la cookie
+  // `ciszu_lang`); el SSR pinta la base es-latam y esto lo corrige al montar.
+  const lang = language;
+  const dict = getDict(language);
   const [scrolled, setScrolled] = useState(false);
   const [isSearchOpen, setShowSearch] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -763,10 +768,10 @@ export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<strin
   );
 };
 
-const Navbar = ({ lang, dict }: { lang: string; dict: Record<string, any> }) => {
+const Navbar = () => {
   return (
     <React.Suspense fallback={<div className="h-16 bg-black/50 animate-pulse" />}>
-      <NavbarContent lang={lang} dict={dict} />
+      <NavbarContent />
     </React.Suspense>
   );
 };
