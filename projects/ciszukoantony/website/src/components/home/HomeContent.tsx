@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Icon, EcosystemSection, captureEvent } from '@ciszu/ui';
-import { PROJECTS } from '@/data/projects';
+import { ALL_PROJECTS, NETWORK_PROJECTS, PROJECTS as PERSONAL_PROJECTS } from '@/data/projects';
 import { CERTIFICATES } from '@/data/certificates';
 import { CHANGELOG_DATA } from '@/data/changelog';
 import { SOCIAL_ENTRIES, getSocial } from '@/data/socials';
@@ -27,10 +27,6 @@ const FEATURED_CERTS = [...CERTIFICATES]
   .slice(0, 6);
 
 const PROVIDER_COUNT = new Set(CERTIFICATES.map((cert) => cert.provider)).size;
-
-const PERSONAL_SLUGS = ['ciszukoantony', 'portfolio'];
-const PERSONAL_PROJECTS = PROJECTS.filter((project) => PERSONAL_SLUGS.includes(project.slug));
-const NETWORK_PROJECTS = PROJECTS.filter((project) => !PERSONAL_SLUGS.includes(project.slug));
 
 /** Obra propia (musicboard) primero; repertorio del juego después. */
 const REAL_ALBUM = REAL_ALBUMS[0];
@@ -172,7 +168,7 @@ export default function HomeContent() {
 
   const stats = [
     { value: `${CERTIFICATES.length}`, label: 'Certificados', icon: 'certificates', tone: 'text-neon-blue' },
-    { value: `${PROJECTS.length}`, label: dict.home.statProjects, icon: 'rocket', tone: 'text-neon-pink' },
+    { value: `${ALL_PROJECTS.length}`, label: dict.home.statProjects, icon: 'rocket', tone: 'text-neon-pink' },
     { value: `${SOCIAL_ENTRIES.length}`, label: 'Redes', icon: 'share', tone: 'text-neon-cyan' },
     { value: '2022', label: 'Desde', icon: 'history', tone: 'text-neon-green' },
   ];
@@ -293,7 +289,7 @@ export default function HomeContent() {
             <div key={copy} className="flex items-center shrink-0">
               {[
                 `${CERTIFICATES.length} CERTIFICADOS`,
-                `${PROJECTS.length} PROYECTOS`,
+                `${ALL_PROJECTS.length} PROYECTOS`,
                 `${SOCIAL_ENTRIES.length} REDES OFICIALES`,
                 'CISZU NETWORK',
                 'MUZICMANIA',

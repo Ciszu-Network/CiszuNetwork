@@ -319,7 +319,7 @@ const GROUPS: InfoLinkGroup[] = [
     title: 'Producto',
     items: [
       { name: 'Home', href: '/', icon: 'home', desc: 'Portada y proyectos destacados' },
-      { name: 'Projects', href: '/projects', icon: 'rocket', desc: 'Todos los proyectos de Ciszuko Antony' },
+      { name: 'Projects', href: '/projects', icon: 'rocket', desc: 'Proyectos personales y proyectos de Ciszu Network' },
       { name: 'Portfolio & CV', href: '/portfolio', icon: 'palette', desc: 'Trabajos, formación, experiencia y habilidades' },
       { name: 'Socials', href: '/socials', icon: 'share', desc: 'Índice de redes oficiales, con una página por red' },
       { name: 'Musicboard', href: '/musicboard', icon: 'music', desc: 'Álbumes, soundtracks y enlaces de escucha' },

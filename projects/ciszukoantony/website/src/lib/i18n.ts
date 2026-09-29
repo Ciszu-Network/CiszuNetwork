@@ -201,7 +201,7 @@ const es = {
     ecosystemTitle: 'Proyecto provisto por CiszuNetwork',
     ecosystemBody:
       'Este proyecto forma parte del ecosistema Ciszu Network. Descubre más proyectos y herramientas creadas por Ciszuko Antony.',
-    pMuzicMania: 'Juego de ritmo para web con estética neón futurista.',
+    pMuzicMania: 'Juego de ritmo de Ciszu Network para web con estética neón futurista.',
     pCli: 'Herramienta de línea de comandos para automatizar flujos de desarrollo y despliegue.',
     pOpenSource: 'Contribuciones y proyectos de código abierto para la comunidad.',
     fMinecraft: 'Servidor de Minecraft con modos únicos, economía y comunidad activa.',
@@ -947,7 +947,7 @@ const en: typeof es = {
     ecosystemTitle: 'Project provided by CiszuNetwork',
     ecosystemBody:
       'This project is part of the Ciszu Network ecosystem. Discover more projects and tools built by Ciszuko Antony.',
-    pMuzicMania: 'Web-based rhythm game with a neon futuristic aesthetic.',
+    pMuzicMania: 'Web-based rhythm game by Ciszu Network with a neon futuristic aesthetic.',
     pCli: 'CLI tool to automate development and deployment workflows.',
     pOpenSource: 'Open source contributions and projects for the community.',
     fMinecraft: 'Minecraft server with unique modes, economy and an active community.',
