@@ -961,7 +961,7 @@ export function fillTemplate(
   );
 }
 
-/** Cookie donde el servidor guarda el idioma elegido (la lee `i18n-server`). */
+/** Cookie del idioma elegido (la escribe el cliente; el SSR la ignora desde Fase 3). */
 export const LANG_COOKIE = 'ciszu_lang';
 
 export const LANGS = [
