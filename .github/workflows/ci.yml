@@ -220,6 +220,12 @@ jobs:
   security-e2e:
     name: Security E2E (DAST interactivo)
     needs: [unit-tests]
+    # Solo en el schedule (06:00 UTC) o por workflow_dispatch. Antes corría en
+    # cada push/PR: el spec dispara ~80-100 requests a producción por run
+    # (XSS/SQLi/paths de escáner + reintentos por el deploy de Vercel), y con
+    # el repo público eso escala con cada commit. La cobertura se mantiene en
+    # la ejecución diaria programada (y manual cuando haga falta).
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ${{ vars.PREFERRED_RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 20
     env:

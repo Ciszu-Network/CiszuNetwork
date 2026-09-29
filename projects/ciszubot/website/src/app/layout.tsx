@@ -110,7 +110,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             </AdBlockerGuard>
           </CloudflareGuard>
           <GlobalAdvisor site="ciszubot" />
-          <GlobalAdvisorConfirm site="ciszubot" />
+          {process.env.VERCEL !== '1' && <GlobalAdvisorConfirm site="ciszubot" />}
           <SpeedInsights />
           <PwaRegister />
           <FabStackProvider>

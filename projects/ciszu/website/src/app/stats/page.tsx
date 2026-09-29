@@ -83,7 +83,8 @@ export default function StatsPage() {
     // 1) Disponibilidad + latencia de la propia web (medición real).
     try {
       const t0 = performance.now();
-      const res = await fetch(`${window.location.origin}/`, { method: 'HEAD', cache: 'no-store' });
+      // HEAD a un recurso estático del CDN (sitemap): mide disponibilidad sin invocar función.
+      const res = await fetch(`${window.location.origin}/sitemap.xml`, { method: 'HEAD', cache: 'no-store' });
       measured = Math.round(performance.now() - t0);
       webTone = res.ok ? 'ok' : 'warn';
     } catch {

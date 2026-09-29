@@ -460,6 +460,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                       <Link
                         key={sub.href}
                         href={sub.href}
+                        prefetch={false}
                         onClick={() => setOpenDropdown(null)}
                         className={
                           `flex items-center gap-3 px-4 py-2 text-sm font-header font-bold transition-all cursor-pointer ${
@@ -599,6 +600,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                       <div className="mt-3 flex flex-col gap-1">
                         <Link
                           href="/dashboard"
+                          prefetch={false}
                           onClick={() => setAuthOpen(false)}
                           className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-ink/85 transition hover:bg-muted/15 hover:text-neon-blue"
                         >
@@ -702,6 +704,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                   <Link
                     key={p.href}
                     href={p.href}
+                    prefetch={false}
                     onClick={() => { setSearchOpen(false); setQuery(''); }}
                     className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/5 text-white text-xs font-header font-bold hover:border-neon-blue/50 hover:text-neon-blue hover:shadow-[0_0_12px_rgba(0,212,255,0.2)] transition-all"
                   >
@@ -809,6 +812,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                     <Link
                       key={link.href}
                       href={link.href}
+                      prefetch={false}
                       onClick={() => { setIsMenuOpen(false); setSidebarView('main'); }}
                       className={`flex justify-start items-center px-4 py-3 rounded-2xl transition-all font-header font-bold text-[15px] group mb-1 active:scale-95 border ${
                         isActive(link.href)
@@ -833,6 +837,7 @@ export default function Navbar({ lang, dict, account }: NavbarProps) {
                 {activeUser ? (
                   <Link
                     href="/dashboard"
+                    prefetch={false}
                     onClick={() => { setIsMenuOpen(false); setSidebarView('main'); }}
                     className="w-full flex items-center justify-center gap-2 py-3 bg-neon-blue/10 border border-neon-blue/30 text-neon-blue rounded-xl font-header font-bold hover:bg-neon-blue/20 hover:text-white text-xs shadow-[0_4px_15px_rgba(0,212,255,0.1)] transition-all"
                   >

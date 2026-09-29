@@ -324,6 +324,7 @@ export const NavbarContent = () => {
                        <div className="h-px bg-white/10 mx-2" />
                        {INFO_LINKS.map((s) => (
                          <Link key={s.name} href={s.href}
+                           prefetch={false}
                            className={`flex items-center gap-3 px-4 py-2 text-sm font-header font-bold transition-all cursor-pointer ${isActive(s.href) ? 'text-neon-blue bg-neon-blue/5 hover:text-white' : 'text-white hover:text-neon-blue hover:bg-white/5'}`}
                          >
                            <span className="opacity-70">{s.icon}</span>{s.name}
@@ -434,10 +435,10 @@ export const NavbarContent = () => {
 
                       {user ? (
                         <div className="p-2 border-b border-white/5 space-y-1">
-                          <Link href={`/profile/@${user.username}`} className="flex items-center gap-3 px-4 py-2 text-white/70 hover:text-neon-cyan hover:bg-white/5 rounded-lg transition-all font-header font-bold text-xs">
+                          <Link href={`/profile/@${user.username}`} prefetch={false} className="flex items-center gap-3 px-4 py-2 text-white/70 hover:text-neon-cyan hover:bg-white/5 rounded-lg transition-all font-header font-bold text-xs">
                             {I.user} {dict.menu.myProfile}
                           </Link>
-                          <Link href="/profile/settings" className="flex items-center gap-3 px-4 py-2 text-white/70 hover:text-neon-purple hover:bg-white/5 rounded-lg transition-all font-header font-bold text-xs">
+                          <Link href="/profile/settings" prefetch={false} className="flex items-center gap-3 px-4 py-2 text-white/70 hover:text-neon-purple hover:bg-white/5 rounded-lg transition-all font-header font-bold text-xs">
                             {I.policy} {dict.menu.settings}
                           </Link>
                           <button
@@ -537,6 +538,7 @@ export const NavbarContent = () => {
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mt-3 animate-fade-in-down">
                   {suggestions.map((p) => (
                     <Link key={p.href} href={p.href}
+                      prefetch={false}
                       onClick={() => setIsSearchOpen(false)}
                       className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/5 hover:border-neon-blue/50 hover:text-neon-blue text-white text-xs font-header font-bold transition-all cursor-pointer"
                     >
@@ -635,7 +637,7 @@ export const NavbarContent = () => {
                   <div className="mb-4">
                     <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">{dict.menu.infoSupport}</p>
                     {INFO_LINKS.map((link) => (
-                      <Link key={link.name} href={link.href} onClick={() => setIsMenuOpen(false)}
+                      <Link key={link.name} href={link.href} prefetch={false} onClick={() => setIsMenuOpen(false)}
                         className={`flex justify-start items-center px-4 py-3 rounded-2xl transition-all font-header font-bold text-[14px] group mb-1 active:scale-95 ${isActive(link.href) ? 'bg-neon-blue/10 border border-neon-blue/30 text-neon-cyan shadow-[inset_0_0_15px_rgba(0,212,255,0.1)] hover:text-white' : 'border border-transparent text-white hover:text-neon-cyan hover:bg-neon-blue/5 hover:border-neon-blue/20'}`}
                       >
                          <div className="flex items-center gap-4">

@@ -204,7 +204,7 @@ export default function Footer({ dict }: { lang: string; dict: Dict }) {
                             <span className="tracking-wide whitespace-nowrap">{footerLinkLabel(link.name, link.href)}</span>
                           </a>
                         ) : (
-                          <Link href={link.href} className={pillCls(isActive(link.href))}>
+                          <Link href={link.href} prefetch={link.href === '/' ? undefined : false} className={pillCls(isActive(link.href))}>
                             <span className={`shrink-0 ${meta.accent}`}>{link.icon}</span>
                             <span className="tracking-wide whitespace-nowrap">{footerLinkLabel(link.name, link.href)}</span>
                           </Link>
@@ -228,6 +228,7 @@ export default function Footer({ dict }: { lang: string; dict: Dict }) {
               <Link
                 key={link.href}
                 href={link.href}
+                prefetch={false}
                 className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold uppercase tracking-widest transition-all duration-300 ${
                   active
                     ? 'border-neon-blue/60 bg-neon-blue/15 text-neon-blue'

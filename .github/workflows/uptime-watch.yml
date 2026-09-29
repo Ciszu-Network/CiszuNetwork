@@ -2,12 +2,15 @@ name: uptime-watch
 
 # Vigía de UptimeRobot → ntfy (ver scripts/uptime-watch.js).
 # El plan free de UptimeRobot no permite webhook contacts, así que este cron
-# consulta la API v3 cada 5 min y publica en ntfy SOLO los cambios de estado.
+# consulta la API v3 y publica en ntfy SOLO los cambios de estado.
 # El estado previo se conserva entre runs con el cache de GitHub Actions.
+# Cadencia 30 min (antes 5): los monitores de UptimeRobot ahora chequean cada
+# 30 min (interval=1800), así que consultar más seguido solo gasta runs/API sin
+# ganar detección. Mantiene el aviso dentro de la misma ventana del monitor.
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '*/30 * * * *'
   workflow_dispatch:
 
 permissions:
