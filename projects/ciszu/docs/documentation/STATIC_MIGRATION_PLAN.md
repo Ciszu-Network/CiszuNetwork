@@ -1,8 +1,8 @@
 # STATIC_MIGRATION_PLAN — Migración a render estático (SSG/ISR/PPR) y reducción del consumo de Vercel
 
-Versión: 2.0.0
-Actualización: 2026-09-28
-Identificador: STATIC_MIGRATION_PLAN_V2.0.0_2026_09_28_ciszunetwork
+Versión: 3.0.0
+Actualización: 2026-09-29
+Identificador: STATIC_MIGRATION_PLAN_V3.0.0_2026_09_29_ciszunetwork
 
 > **Definición**: plan completo y ejecutable para devolver las 4 webs del ecosistema
 > (CiszuNetwork, CiszukoAntony, MuzicMania, CiszuBot) a terreno seguro en el fair-use de
@@ -10,11 +10,13 @@ Identificador: STATIC_MIGRATION_PLAN_V2.0.0_2026_09_28_ciszunetwork
 > experiencia**: quick wins medibles, migración a render estático/ISR, i18n en cliente sin
 > rutas, verificación de cada fase y blindaje permanente.
 >
-> **Estado: EN ESPERA DE APROBACIÓN.** Decisión vigente del dueño (28 sep 2026): **no se
-> despliega nada hasta nuevo aviso.** Ninguna fase de este plan se ejecuta sin autorización
-> explícita de Ciszuko Antony. La cuenta ya no está bloqueada (402 levantado), pero el uso
-> sigue por encima de los límites incluidos: sin reducción real, un nuevo bloqueo es
-> cuestión de tiempo.
+> **Estado: EJECUTADO (29 sep 2026).** Las Fases 0-4 están desplegadas y commiteadas
+> (`dec44c46` → `cee03153`); el reporte de ejecución está en §11. La **Fase 5** queda
+> activa como protocolo de verificación post-deploy 24/48/72 h (§12), alertas y
+> presupuesto (§13), con los pendientes declarados en §14. La ventana de no-deploy quedó
+> cerrada por la autorización de ejecución del dueño; la cortesía 3× sigue reservada como
+> colchón (§1.4). La cuenta ya no está bloqueada (402 levantado), pero el uso sigue por
+> encima de los límites incluidos: la reducción debe confirmarse en la verificación (§12).
 
 ---
 
@@ -577,8 +579,121 @@ Decisiones explícitas pendientes (ninguna se ejecuta sin respuesta):
 | 1.0.0 | 2026-09-28 | Plan inicial: migración a estático + i18n sin rutas. |
 | 1.1.0 | 2026-09-28 | Añadidos §13 diagnóstico real y §14 plan priorizado quick wins → estructural. |
 | 2.0.0 | 2026-09-28 | Consolidación completa: estado actual (cuenta desbloqueada, uso excedido), cortesía 3×, Fases 0-5 con checklists ejecutables, estimaciones consolidadas, riesgos/rollback y aprobaciones pendientes; decisión vigente de no-deploy. |
+| 3.0.0 | 2026-09-29 | Fases 0-4 ejecutadas y desplegadas. Añadidos: reporte de ejecución (§11), protocolo de verificación post-deploy 24/48/72 h (§12), alertas y presupuesto de CPU (§13), pendientes declarados (§14). Estado del plan: ejecutado (Fase 5 activa). |
 
-_Última revisión: 2026-09-28._ Relacionado: `PROJECT_STATE.md`, `PROJECT_HISTORY.md`,
+## 11. Reporte de ejecución (Fases 0-4)
+
+> **Nota de alcance**: esta sección documenta la ejecución real (28-29 sep 2026). Los
+> checklists `- [ ]` de §4.1-§4.5 quedan como registro del plan original; lo ejecutado
+> consta aquí. La Fase 5 se protocoliza en §12-§14.
+
+| Fase | Qué se hizo | Commits | Evidencia | Impacto estimado |
+|---|---|---|---|---|
+| **0 — Baseline y medición** | `@vercel/speed-insights@2.0.0` en CiszuNetwork, CiszuBot y CiszukoAntony (no en MuzicMania); baseline de uso y top de rutas en Observability; reducciones operativas de auditores (§6). | `dec44c46` | 7 archivos: dependencia + `<SpeedInsights/>` en los 3 `layout.tsx`; build local OK. | Medición (0 CPU); habilita CWV y el protocolo §12. |
+| **1 — Quick wins** | `/api/ads/push` con guard dev-only (fin del sondeo de 1,5 s en prod); `s-maxage` CDN en `/api/leaderboard`; prefetch selectivo en navbars/footers; `HEAD /` → `/sitemap.xml` en `/stats` (3 webs); `GlobalAdvisorConfirm` fuera del render (no-op en Vercel); auditoría de intervalos (CI `security-e2e`, Lighthouse, uptime-watch). | `024c0961` | 27 archivos; `s-maxage=60` verificable con `curl -I`; auditores ya en schedule (§6). | −40/60% inv · −15/30% CPU · −15/30% FOT (estimado §7). |
+| **2 — Edge/infra** | CSP precomputada a nivel de módulo (`packages/utils/src/csp.ts`; resultado idéntico byte a byte); matcher estrechado en los 4 `middleware.ts` (excluye estáticos/API); 13 `loading.tsx` (ciszu 3 · ciszubot 4 · antony 3 · muzicmania 3). | `2177f138` | 18 archivos; CSP byte a byte idéntica verificada; 13 skeletons; build local OK. | −20/40% CPU **edge** (no Fluid); habilita F3/F4. |
+| **3 — i18n en cliente** | `cookies()`/`headers()` fuera de los 4 layouts raíz; idioma resuelto en cliente (`LangSync`/`I18nProvider`/`useClientI18n` + preferencia persistida) sin parpadeo; cabeceras de navegación al cliente. | `0b7561b9` | 23 archivos; verificación Playwright: 95 checks, 0 errores de hidratación; build marca rutas de contenido `○`/`●`. | −60/80% CPU (acumulado; desbloquea el estático). |
+| **4 — Estático/ISR** | **~152 rutas públicas `ƒ` → `○`/`●`/ISR**: ciszu 42 + 1 SSG + 1 ISR · antony 37 + 1 SSG · muzicmania 36 · ciszubot 34 + 1 ISR. Layouts sin `headers()`; middleware sin `x-pathname`/`x-is-edit`/`x-is-bare` (sustituidos por `usePathname()`/`BareGate`/`HideOnEdit` en cliente); 44 layouts de metadata por segmento; `GlobalAdvisorConfirm` fuera del árbol; `.gitignore` de `downloads/` corregido. | `cee03153` | Salida de `next build` de las 4 webs (conteo `○`/`●`/ISR; sin `ƒ` en rutas públicas); los `ƒ` restantes son por diseño (§14). | **−85/92% CPU** e invocaciones del contenido público; apunta a CPU <1,5 h · FOT <4 GB · inv <300 K en la ventana. |
+
+Estado por web tras Fase 4: las 4 webs sirven su contenido público desde CDN; el render
+dinámico queda reducido a auth/dashboard/editores/CMS y a las revalidaciones ISR.
+
+## 12. Protocolo de verificación post-deploy (Fase 5)
+
+**Clave de interpretación**: el medidor de Hobby es una **ventana rodante de 30 días**
+(§2.5); el total de Usage **no bajará de inmediato** aunque hoy no se consuma nada,
+porque los días viejos siguen contando hasta salir de la ventana. La medición válida
+durante la verificación es el **consumo diario nuevo** en Observability (Last 24 h), no
+el acumulado. Objetivos diarios equivalentes: **CPU ≤3 min/día** (1,5 h/30 d) ·
+**FOT ≤133 MB/día** (4 GB/30 d) · **invocaciones ≤10 K/día** (300 K/30 d).
+
+### 12.1 Checklist 24/48/72 h
+
+**A las 24 h**
+- [ ] Observability (Functions, Last 24 h) por web: CPU nueva ≤3 min/día · inv ≤10 K/día · ratio medio ≤10 ms/invocación.
+- [ ] Renders de página pública = 0; las únicas invocaciones de contenido son revalidaciones ISR.
+- [ ] `curl -I` a una muestra (home, about, faq, `socials/[platform]`, `/api/leaderboard`): HTML con `x-vercel-cache: HIT`; APIs públicas con `s-maxage` + `stale-while-revalidate`.
+- [ ] Sin 5xx nuevos en logs; Speed Insights sin caída de CWV; E2E/`security-e2e` (cuando corran) en verde.
+
+**A las 48 h**
+- [ ] Tendencia estable 2 días seguidos bajo los objetivos diarios.
+- [ ] Top 10 de Functions por invocaciones: ninguna ruta pública sin cachear (auditar paths).
+- [ ] Revalidaciones ISR acotadas: home CiszuBot ≤1/min · `/donate` ≤1/5 min · detalles paramétricos solo por tag/on-demand.
+- [ ] Middleware edge: CPU media ≤2 ms/request (presupuesto §4.6).
+
+**A las 72 h**
+- [ ] 3 días consecutivos bajo objetivos; comparativa baseline (§2.1) vs post publicada en §11.
+- [ ] QA manual sin regresiones: login/2FA, dashboards, editores, ads, cambio de idioma, reviews/feedback.
+- [ ] Umbral de congelación 90% (§13.1): si la ventana acumulada sigue >90%, pausar auditores externos y abrir revisión (es memoria de la ventana vieja, no fallo de F4).
+
+### 12.2 Cómo medir
+
+| Qué | Dónde | Cómo |
+|---|---|---|
+| CPU/invocaciones por función y path | Vercel → project → Observability → Functions | Filtrar Last 24 h / 7 d; ordenar por invocaciones y CPU; agrupar por ruta |
+| Consumo acumulado de la ventana | Dashboard → team `ciszunetwork` → Usage (Last 30 days) | CPU, FOT e invocaciones por proyecto |
+| Fallback CLI | `vercel usage` (raíz del repo) | Volcado de la ventana; si Hobby no expone alertas, este output alimenta el job `pnpm notify` |
+| Estado de caché del HTML | `curl -I https://<web>/<ruta>` | `x-vercel-cache: HIT` y `Cache-Control` con `s-maxage` |
+| Revalidaciones ISR | Logs de runtime del proyecto | Buscar revalidaciones tras `revalidate`/tags; contar por ruta |
+| CWV | Vercel Speed Insights | Comparar contra la línea base de Fase 0 |
+
+### 12.3 Si los números no bajan (orden de diagnóstico)
+
+1. **Detalles paramétricos mal clasificados**: auditar el build por `ƒ` inesperados y los
+   paths del top de Functions; completar `generateStaticParams`/`dynamicParams`.
+2. **Revalidaciones**: `revalidate` demasiado corto o revalidaciones por tag en exceso;
+   agrupar tags y subir a 300-600 s donde la frescura no sea crítica.
+3. **Pollings cliente**: cualquier intervalo golpeando APIs de Vercel (buscar `/api/*` en el
+   top de invocaciones) → guard dev-only, `document.hidden` o `s-maxage`.
+4. **Prefetch**: volumen RSC alto → `prefetch={false}` en enlaces secundarios.
+5. **Middleware**: matcher filtrando estáticos o CSP recomputándose por request (verificar
+   memoización por instancia).
+6. **Último recurso**: usar la cortesía 3× como colchón (§1.4) y reabrir la fase implicada;
+   no usarla para tapar una regresión identificable.
+
+## 13. Alertas y presupuesto
+
+### 13.1 Alertas de uso
+
+- **Configuración**: Vercel → Settings → Notifications (team `ciszunetwork`) → activar
+  avisos de **Usage al 80%** para Fluid Active CPU, Fast Origin Transfer y Function
+  Invocations, con el email del team; confirmar que llega un correo de prueba.
+- **Fallback local**: si Hobby no ofrece alertas por email, job programado con
+  `vercel usage` + `pnpm notify "Uso Vercel al X%"`, mismo umbral 80%.
+- **Umbral 90% (congelación)**: pausar auditorías externas (UptimeRobot ya a 1800 s; CI
+  `security-e2e` y Lighthouse ya en schedule) y abrir revisión antes de acercarse al límite.
+
+### 13.2 Presupuesto de CPU por tipo de ruta
+
+| Tipo de ruta | Ejemplo | Frecuencia de render | Presupuesto |
+|---|---|---|---|
+| Estática `○` servida de CDN | legales, about, faq, projects | 0 (sin función) | 0 ms/visita |
+| ISR home CiszuBot `●` | home con estado del bot | 1 revalidación/min máx (`revalidate=60`) | ~1,3 min CPU/día máx |
+| ISR `/donate` | contenido con env en runtime | 1 revalidación/5 min | acotado (§14) |
+| ISR detalles paramétricos | `projects/[slug]`, `socials/[platform]` | 1 por ruta publicada + tags | acotado a publicación |
+| APIs públicas con CDN | `/api/leaderboard`, `/api/ads/push` | 1 origen/60 s (`s-maxage`) | ≤5 ms/invocación no cacheada |
+| APIs de escritura (rate limit) | `/api/ads/impression` | por evento legítimo | ≤20 ms |
+| Auth/dashboard/editores `ƒ` | login, dashboard, Puck/Plasmic | por request (diseño) | ≤50 ms p95 |
+
+### 13.3 Regla de diseño permanente
+
+**Toda página nueva debe ser estática (`○`) o ISR (`●`) salvo justificación explícita**
+(cookies, sesión, editor o datos por usuario); en ese caso el segmento va `force-dynamic`,
+**nunca** el layout raíz. Regla anti-regresión asociada: **ningún layout raíz lee
+`cookies()`/`headers()`** (§4.6 5.6); se revisa en cada PR/build (grep = 0).
+
+## 14. Pendientes declarados (post-Fase 4)
+
+| Pendiente | Detalle | Seguimiento |
+|---|---|---|
+| `ƒ` por diseño | auth/2FA/sesión, dashboards, editores, CMS, `changelog/[id]`, `projects/[slug]` de ciszu, `profile/[id]` | Fuera de alcance; no entran en la migración (§5) |
+| Delta de `/youareanidiot` | Queda fuera del estático por usar scripts en `<head>`; el resto de la web sí migró | Evaluar mover los scripts a componente cliente para hacerla estática |
+| CiszuBot sin fallback SSR de sesión | El estado de sesión se resuelve solo en cliente; no hay SSR de respaldo | Revisar si requiere fallback o mantener como decisión de diseño |
+| ISR de `/donate` con env en runtime | La página lee configuración de entorno al revalidar; el ISR depende de que el env esté presente en runtime | Revisar si conviene fijar el valor en build o mantener runtime |
+| `lib/i18n-server.ts` de ciszu sin uso | Tras Fase 3/4 quedó sin consumidores | Candidato a borrar en limpieza futura (con grep previo) |
+| `#418` preexistentes | Errores de hidratación React previos a la migración (no ligados a F3/F4) | Investigar aparte; F3 verificó 0 hidrataciones nuevas |
+
+_Última revisión: 2026-09-29._ Relacionado: `PROJECT_STATE.md`, `PROJECT_HISTORY.md`,
 `FRAMEWORKS_SYSTEM.md`, `FRONTEND_SYSTEM.md`, `STYLES_SYSTEM.md`, `CACHING_SYSTEM.md`,
 `SECURITY_PROTOCOLS.md`, `ACTIONS_RUNNERS_SYSTEM.md`, `MONITORING_SYSTEM.md`, `TODO.md`,
 `DOCUMENTATION_SYSTEM.md`.
