@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Icon, InfoHero, captureEvent, type InfoTheme } from '@ciszu/ui';
 import {
   MUSIC_ALBUMS,
+  MUSIC_PLATFORMS,
   MUSIC_PLAYLISTS,
   MUSIC_PLATFORM_LINKS,
   MUSIC_QUEUE,
@@ -225,8 +226,10 @@ export default function MusicboardPage() {
                 onOpen={() => captureEvent('musicboard_playlist_open', { playlist: playlist.id })}
               />
             ))}
-            <Link
-              href="/projects/muzicmania"
+            <a
+              href={MUSIC_PLATFORMS.muzicmania}
+              target="_blank"
+              rel="noopener noreferrer"
               onClick={() => captureEvent('musicboard_project_open', { project: 'muzicmania' })}
               className="group flex flex-col h-full p-6 md:p-7 rounded-[2rem] bg-white/5 border border-white/10 hover:border-neon-purple/50 hover:-translate-y-1 transition-all"
             >
@@ -251,14 +254,16 @@ export default function MusicboardPage() {
                 Ir al juego
                 <Icon name="chevronRight" size={11} />
               </span>
-            </Link>
+            </a>
           </div>
         </section>
 
         {/* Vuelta al ecosistema musical */}
         <section className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Link
-            href="/projects/muzicmania"
+          <a
+            href={MUSIC_PLATFORMS.muzicmania}
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={() => captureEvent('musicboard_project_open', { project: 'muzicmania' })}
             className="group p-6 rounded-[2rem] bg-white/5 border border-white/10 hover:border-neon-purple/50 hover:-translate-y-1 transition-all"
           >
@@ -269,7 +274,7 @@ export default function MusicboardPage() {
             <p className="text-xs text-gray-400 leading-relaxed mt-1">
               El juego de ritmo del ecosistema y su álbum Genesis Neon, jugable en la biblioteca.
             </p>
-          </Link>
+          </a>
           <Link
             href="/socials"
             onClick={() => captureEvent('musicboard_socials_index')}

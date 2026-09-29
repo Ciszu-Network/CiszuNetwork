@@ -28,7 +28,7 @@ const META: Record<string, { title: string; description: string }> = {
   '/projects': {
     title: `Projects | ${SITE_NAME}`,
     description:
-      'Personal projects of Ciszuko Antony and the projects of Ciszu Network: web, bots, rhythm game, community and content.',
+      'Personal projects of Ciszuko Antony: content, music and development.',
   },
   '/portfolio': {
     title: `Portfolio & CV | ${SITE_NAME}`,
@@ -46,22 +46,6 @@ const META: Record<string, { title: string; description: string }> = {
   '/commissions': {
     title: `Commissions | ${SITE_NAME}`,
     description: 'Commission Ciszuko Antony: web development, bots, games, visual identity and automation.',
-  },
-  '/projects/ciszubot': {
-    title: `CiszuBot | ${SITE_NAME}`,
-    description: 'CiszuBot: the official Discord bot of the Ciszu Network ecosystem.',
-  },
-  '/projects/muzicmania': {
-    title: `MuzicMania | ${SITE_NAME}`,
-    description: 'MuzicMania: the rhythm game developed by Ciszu Network.',
-  },
-  '/projects/ciszugamens': {
-    title: `Ciszugamens | ${SITE_NAME}`,
-    description: 'Ciszugamens: the community of Ciszu Network on Discord, WhatsApp and Telegram.',
-  },
-  '/projects/ciszunetwork': {
-    title: `Ciszu Network | ${SITE_NAME}`,
-    description: 'Ciszu Network: digital innovation company founded by Ciszuko Antony.',
   },
   '/projects/ciszukoantony': {
     title: `Ciszuko Antony | ${SITE_NAME}`,
