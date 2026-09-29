@@ -7,6 +7,7 @@ import { getDict, parseLang } from "@/lib/i18n";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CookiesBanner } from "@/components/layout/CookiesBanner";
@@ -130,6 +131,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           <GlobalAdvisor site="ciszu" />
         </AuthProvider>
         <GlobalAdvisorConfirm site="ciszu" />
+        <SpeedInsights />
         <PwaRegister />
         <FabStackProvider>
           {!isEdit && <InstallPdwaButton site="Ciszu Network" accent="#22d3ee" accentAlt="#f472b6" />}

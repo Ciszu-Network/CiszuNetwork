@@ -12,6 +12,7 @@ import { COMMANDS } from "@/data/commands";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { getSessionData } from "@/lib/auth";
 import QueryProvider from "@/components/layout/QueryProvider";
 import AuthProvider from "@/components/providers/AuthProvider";
@@ -110,6 +111,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           </CloudflareGuard>
           <GlobalAdvisor site="ciszubot" />
           <GlobalAdvisorConfirm site="ciszubot" />
+          <SpeedInsights />
           <PwaRegister />
           <FabStackProvider>
             {!isEdit && <InstallPdwaButton site="CiszuBot" accent="#22d3ee" accentAlt="#a78bfa" />}
