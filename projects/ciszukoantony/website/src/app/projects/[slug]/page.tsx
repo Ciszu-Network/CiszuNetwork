@@ -10,7 +10,7 @@ import { useDict } from '@/components/providers/I18nProvider';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
-import { getProject, PROJECTS } from '@/data/projects';
+import { ALL_PROJECTS, getProject } from '@/data/projects';
 
 const THEME: InfoTheme = {
   accent: 'text-neon-blue',
@@ -74,6 +74,11 @@ export default function ProjectDetailPage() {
                 <span className="px-3 py-1 rounded-full bg-neon-green/10 border border-neon-green/30 text-neon-green text-[10px] font-black uppercase tracking-widest">
                   {project.status}
                 </span>
+                {project.scope === 'network' ? (
+                  <span className="px-3 py-1 rounded-full bg-neon-pink/10 border border-neon-pink/30 text-neon-pink text-[10px] font-black uppercase tracking-widest">
+                    Proyecto de Ciszu Network
+                  </span>
+                ) : null}
                 {project.categories.map((category) => (
                   <span
                     key={category}
@@ -135,7 +140,7 @@ export default function ProjectDetailPage() {
             {dict.projects.others}
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-            {PROJECTS.filter((item) => item.slug !== project.slug).map((item) => (
+            {ALL_PROJECTS.filter((item) => item.slug !== project.slug).map((item) => (
               <Link
                 key={item.slug}
                 href={`/projects/${item.slug}`}

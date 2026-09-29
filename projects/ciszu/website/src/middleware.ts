@@ -98,6 +98,8 @@ export async function middleware(request: NextRequest) {
         'https://ko-fi.com',
         'https://www.trustpilot.com',
         'https://widget.trustpilot.com',
+        'https://discord.com',
+        'https://top.gg',
       ],
       connectSrc: ['https://widget.trustpilot.com', 'https://images.trustpilot.com', 'https://storage.ko-fi.com'],
       styleSrc: ['https://rsms.me', 'https://storage.ko-fi.com', 'https://ko-fi.com'],

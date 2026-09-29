@@ -109,7 +109,7 @@ export const puckConfig: Config<PuckComponents> = {
       defaultProps: {
         title: "Proyectos",
         projects: [
-          { name: "MuzicMania", description: "Juego de ritmo con estética futurista neon." },
+          { name: "Ciszu Network", description: "Ecosistema digital: webs, bot y juego de ritmo." },
           { name: "Ciszuko CLI", description: "Herramienta CLI para automatizar desarrollo y deploys." },
           { name: "Open Source", description: "Contribuciones y proyectos para la comunidad." },
         ],

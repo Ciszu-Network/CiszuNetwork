@@ -28,6 +28,7 @@ export const TOP_GG_BOT = 'https://top.gg/bot/1395532235872141312';
 export const TOP_GG_BOT_VOTE = 'https://top.gg/bot/1395532235872141312/vote';
 export const TOP_GG_SERVER = 'https://top.gg/es/discord/servers/871620279188504576';
 export const DISCORD_BOT_LIST_BOT = 'https://discordbotlist.com/bots/ciszubot';
+export const DISCORD_BOT_LIST_BOT_VOTE = 'https://discordbotlist.com/bots/ciszubot/upvote';
 export const DISCORD_BOT_LIST_SERVER = 'https://discordbotlist.com/servers/ciszugamens';
 export const DISBOARD_SERVER = 'https://disboard.org/es/server/1215544133142450187';
 export const TOP_GG_WIDGET_BOT = 'https://top.gg/api/widget/1395532235872141312.svg';
@@ -638,6 +639,10 @@ const es = {
       'CiszuBot y Ciszu Network en los principales directorios de Discord: vota, deja tu reseña o únete a la comunidad.',
     kicker: 'Top.gg · Discord Bot List · Disboard',
     platformsTitle: 'Plataformas',
+    viewAll: 'Ver todas las plataformas',
+    botsTitle: 'CiszuBot en las listas',
+    serversTitle: 'Ciszugamens en las listas',
+    communityTitle: 'Comunidad y soporte',
     visit: 'Visitar',
     vote: 'Votar',
     join: 'Unirme',
@@ -672,6 +677,14 @@ const es = {
       'Inserta el estado en vivo de CiszuBot en tu web o úsalo como firma. Se actualiza automáticamente.',
     widgetBotAlt: 'Widget de CiszuBot en Top.gg',
     widgetServerAlt: 'Widget del servidor Ciszugamens en Top.gg',
+    codeTitle: 'Código embebible',
+    codeDesc:
+      'Copia el HTML y pega el widget en tu web, foro o README. El estado se actualiza solo.',
+    copyWidgetBot: 'Copiar código del widget del bot',
+    copyWidgetServer: 'Copiar código del widget del servidor',
+    copied: '¡Copiado!',
+    botIdLabel: 'ID del bot',
+    botIdHint: 'Úsalo en listas, widgets y autorizaciones oficiales.',
     ctaTitle: '¿Aún no tienes el bot?',
     ctaDesc: 'Invítalo a tu servidor y empieza a usar sus comandos en segundos.',
     ctaButton: 'Invitar a CiszuBot',
@@ -1268,6 +1281,10 @@ const en = {
       'CiszuBot and Ciszu Network on the main Discord directories: vote, leave a review or join the community.',
     kicker: 'Top.gg · Discord Bot List · Disboard',
     platformsTitle: 'Platforms',
+    viewAll: 'View all platforms',
+    botsTitle: 'CiszuBot on the lists',
+    serversTitle: 'Ciszugamens on the lists',
+    communityTitle: 'Community and support',
     visit: 'Visit',
     vote: 'Vote',
     join: 'Join',
@@ -1302,6 +1319,14 @@ const en = {
       'Embed CiszuBot’s live status on your site or use it as a signature. It updates automatically.',
     widgetBotAlt: 'CiszuBot widget on Top.gg',
     widgetServerAlt: 'Ciszugamens server widget on Top.gg',
+    codeTitle: 'Embed code',
+    codeDesc:
+      'Copy the HTML and paste the widget on your site, forum or README. The status updates by itself.',
+    copyWidgetBot: 'Copy bot widget code',
+    copyWidgetServer: 'Copy server widget code',
+    copied: 'Copied!',
+    botIdLabel: 'Bot ID',
+    botIdHint: 'Use it in listings, widgets and official authorizations.',
     ctaTitle: 'Don’t have the bot yet?',
     ctaDesc: 'Invite it to your server and start using its commands in seconds.',
     ctaButton: 'Invite CiszuBot',

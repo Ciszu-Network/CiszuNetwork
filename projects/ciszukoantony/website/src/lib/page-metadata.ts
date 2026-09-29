@@ -27,7 +27,8 @@ const META: Record<string, { title: string; description: string }> = {
   },
   '/projects': {
     title: `Projects | ${SITE_NAME}`,
-    description: 'Explore the projects of Ciszuko Antony: web apps, bots, games and open source.',
+    description:
+      'Personal projects of Ciszuko Antony and the projects of Ciszu Network: web, bots, rhythm game, community and content.',
   },
   '/portfolio': {
     title: `Portfolio & CV | ${SITE_NAME}`,

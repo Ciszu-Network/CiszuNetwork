@@ -585,6 +585,7 @@ export const LINK_GROUPS: LinkGroupData[] = [
       { navKey: 'documentation', href: '/documentation', icon: 'policies', body: 'Guías técnicas y API' },
       { navKey: 'downloads', href: '/downloads', icon: 'download', body: 'Apps de escritorio y recursos' },
       { navKey: 'dashboard', href: '/dashboard', icon: 'server', body: 'Panel de control por servidor' },
+      { navKey: 'explore', href: '/explore', icon: 'globe', body: 'CiszuBot en los directorios: vota y copia los widgets' },
     ],
   },
   {

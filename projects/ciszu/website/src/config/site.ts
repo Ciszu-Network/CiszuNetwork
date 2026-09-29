@@ -55,6 +55,13 @@ export const CISZUBOT_LINKS = {
   disboardServer: 'https://disboard.org/es/server/1215544133142450187',
 };
 
+/** Servidor de Discord de la comunidad Ciszugamens (widget público habilitado). */
+export const CISZUGAMENS = {
+  guildId: '1215544133142450187',
+  inviteUrl: 'https://discord.com/invite/W3kMtMMj6E',
+  widgetUrl: 'https://discord.com/widget?id=1215544133142450187&theme=dark',
+} as const;
+
 export const DONATION_LINKS = {
   // Cuentas canónicas de Ciszu Network (ciszukoantony es la única con perfil
   // real en Ko-fi/Patreon; ciszunetwork/ciszubot redirigen a la home → 404).

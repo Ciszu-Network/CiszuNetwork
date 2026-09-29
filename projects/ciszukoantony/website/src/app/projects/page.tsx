@@ -2,14 +2,14 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { InfoHero, type InfoTheme } from '@ciszu/ui';
+import { Icon, InfoHero, type InfoTheme } from '@ciszu/ui';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useDict } from '@/components/providers/I18nProvider';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import ProjectCard from '@/components/projects/ProjectCard';
-import { PROJECTS } from '@/data/projects';
+import { ALL_PROJECTS, NETWORK_PROJECTS, PROJECTS } from '@/data/projects';
 
 const THEME: InfoTheme = {
   accent: 'text-neon-blue',
@@ -21,7 +21,7 @@ const THEME: InfoTheme = {
 };
 
 const STATS = [
-  { value: `${PROJECTS.length}`, label: 'Proyectos', sub: 'Web, bots, juego y comunidad' },
+  { value: `${ALL_PROJECTS.length}`, label: 'Proyectos', sub: 'Propios y de Ciszu Network' },
   { value: '4', label: 'Webs Next.js', sub: 'Un solo monorepo' },
   { value: '100%', label: 'Autoría propia', sub: 'Código, diseño y arte' },
 ];
@@ -36,7 +36,7 @@ export default function ProjectsPage() {
         <InfoHero
           icon="rocket"
           title="Projects"
-          subtitle="Todos los proyectos de Ciszuko Antony y Ciszu Network: webs, bots, juego, comunidad y contenido. Un ecosistema construido desde cero."
+          subtitle="Proyectos personales de Ciszuko Antony y proyectos de Ciszu Network: webs, bots, juego, comunidad y contenido. Un ecosistema construido desde cero."
           kicker="Portfolio"
           theme={THEME}
         />
@@ -51,8 +51,22 @@ export default function ProjectsPage() {
           ))}
         </div>
 
+        <h2 className="flex items-center gap-3 text-xs font-black uppercase tracking-[0.3em] text-neon-cyan mb-6">
+          <Icon name="user" size={16} />
+          Proyectos personales de Ciszuko Antony
+        </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {PROJECTS.map((project) => (
+            <ProjectCard key={project.slug} project={project} />
+          ))}
+        </div>
+
+        <h2 className="flex items-center gap-3 text-xs font-black uppercase tracking-[0.3em] text-neon-pink mt-14 mb-6">
+          <Icon name="server" size={16} />
+          Proyectos de Ciszu Network
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {NETWORK_PROJECTS.map((project) => (
             <ProjectCard key={project.slug} project={project} />
           ))}
         </div>

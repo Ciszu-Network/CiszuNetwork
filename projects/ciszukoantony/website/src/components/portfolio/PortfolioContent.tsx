@@ -9,7 +9,7 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import ProjectCard from '@/components/projects/ProjectCard';
-import { PROJECTS, PROJECT_CATEGORIES, type ProjectCategory } from '@/data/projects';
+import { NETWORK_PROJECTS, PROJECTS, PROJECT_CATEGORIES, type ProjectCategory } from '@/data/projects';
 import { CERTIFICATES } from '@/data/certificates';
 
 const THEME: InfoTheme = {
@@ -43,6 +43,13 @@ export default function PortfolioContent() {
   const filters: Filter[] = ['Todos', ...PROJECT_CATEGORIES];
   const projects = useMemo(
     () => (filter === 'Todos' ? PROJECTS : PROJECTS.filter((project) => project.categories.includes(filter))),
+    [filter],
+  );
+  const networkProjects = useMemo(
+    () =>
+      filter === 'Todos'
+        ? NETWORK_PROJECTS
+        : NETWORK_PROJECTS.filter((project) => project.categories.includes(filter)),
     [filter],
   );
 
@@ -80,11 +87,29 @@ export default function PortfolioContent() {
           })}
         </div>
 
+        <h2 className="flex items-center gap-3 text-xs font-black uppercase tracking-[0.3em] text-neon-cyan mb-6">
+          <Icon name="user" size={16} />
+          Proyectos personales de Ciszuko Antony
+        </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((project) => (
             <ProjectCard key={project.slug} project={project} />
           ))}
         </div>
+
+        {networkProjects.length > 0 ? (
+          <>
+            <h2 className="flex items-center gap-3 text-xs font-black uppercase tracking-[0.3em] text-neon-pink mt-14 mb-6">
+              <Icon name="server" size={16} />
+              Proyectos de Ciszu Network
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {networkProjects.map((project) => (
+                <ProjectCard key={project.slug} project={project} />
+              ))}
+            </div>
+          </>
+        ) : null}
 
         <div className="mt-16 mb-16">
           <InfoCardGrid title={dict.portfolio.areas} items={areas} theme={THEME} columns={4} />
