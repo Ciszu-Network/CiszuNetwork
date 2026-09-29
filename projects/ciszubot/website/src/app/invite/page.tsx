@@ -1,5 +1,5 @@
-import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
+'use client';
+
 import {
   Icon,
   InfoHero,
@@ -10,26 +10,19 @@ import {
   type InfoStepGroup,
 } from '@ciszu/ui';
 import InviteButton from './InviteButton';
-import { BOT_VERSION, DISCORD_SERVER, getDict, parseLang } from '@/lib/i18n';
+import { BOT_VERSION, DISCORD_SERVER } from '@/lib/i18n';
+import { useClientI18n } from '@/hooks/useClientI18n';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import Reveal from '@/components/home/Reveal';
 import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 
-export const metadata: Metadata = {
-  title: 'CiszuBot | INVITE',
-  description:
-    'Invita a CiszuBot a tu servidor de Discord: autorización oficial en un clic, permisos, pasos de instalación y soporte. Gratis y sin registro.',
-};
-
 const PERMISSION_ICONS = ['settings', 'message', 'security', 'music', 'group', 'globe'];
 const MODULE_ICONS = ['terminal', 'music', 'money', 'shield', 'star', 'gamepad'];
 
-export default async function InvitePage() {
-  const store = await cookies();
-  const lang = parseLang(store.get('ciszubot_lang')?.value);
-  const t = getDict(lang);
+export default function InvitePage() {
+  const { dict: t } = useClientI18n();
 
   const permissions: InfoCardItem[] = t.invitePage.permissions.map((permission, index) => ({
     icon: PERMISSION_ICONS[index] ?? 'check',

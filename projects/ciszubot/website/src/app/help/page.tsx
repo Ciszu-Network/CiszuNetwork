@@ -1,25 +1,16 @@
-import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
+'use client';
+
 import { InfoHero, InfoCtaRow } from '@ciszu/ui';
-import { getDict, parseLang, DISCORD_SERVER } from '@/lib/i18n';
+import { DISCORD_SERVER } from '@/lib/i18n';
+import { useClientI18n } from '@/hooks/useClientI18n';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 import HelpCenter from './HelpCenter';
 
-export const revalidate = 60;
-
-export const metadata: Metadata = {
-  title: 'CiszuBot | HELP',
-  description:
-    'Centro de ayuda de CiszuBot: invitar el bot, comandos, permisos, música, economía, moderación y solución de problemas.',
-};
-
-export default async function HelpPage() {
-  const store = await cookies();
-  const lang = parseLang(store.get('ciszubot_lang')?.value);
-  const t = getDict(lang);
+export default function HelpPage() {
+  const { dict: t } = useClientI18n();
 
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">

@@ -1,17 +1,13 @@
+'use client';
+
 import { CISZU_NETWORK } from '@/config/site';
-import type { Metadata } from 'next';
 import { FeedbackForm } from '@/components/feedback/FeedbackForm';
 import { FabRestore, InfoHero, type InfoTheme } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
-import { getServerI18n } from '@/lib/i18n-server';
+import { useDict } from '@/lib/useDict';
 import { fillTemplate } from '@/lib/i18n';
-
-export const metadata: Metadata = {
-  title: 'Ciszu Network | FEEDBACK',
-  description: 'Envíanos tu opinión, reporta un problema o abre el reporte de seguridad. Tus comentarios hacen crecer Ciszu Network.',
-};
 
 const THEME: InfoTheme = {
   accent: 'text-brand-light',
@@ -22,8 +18,8 @@ const THEME: InfoTheme = {
   gradient: 'from-brand-light to-brand-accent',
 };
 
-export default async function FeedbackPage() {
-  const { t } = await getServerI18n();
+export default function FeedbackPage() {
+  const t = useDict();
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />

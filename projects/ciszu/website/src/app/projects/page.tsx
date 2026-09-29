@@ -1,3 +1,5 @@
+'use client';
+
 import Image from "next/image";
 import Link from "next/link";
 import { assetResolver } from "@ciszunetwork/cdn";
@@ -7,15 +9,8 @@ import PageAmbience from "@/components/layout/PageAmbience";
 import PageReveal from "@/components/layout/PageReveal";
 import QuickDocks from "@/components/molecules/QuickDocks";
 import { CISZU_NETWORK, GITHUB_REPO } from "@/config/site";
-import { getServerI18n } from "@/lib/i18n-server";
+import { useDict } from "@/lib/useDict";
 import { fillTemplate } from "@/lib/i18n";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: 'Ciszu Network | PROJECTS',
-  description:
-    'Todos los proyectos de Ciszu Network: CiszuGamens, CiszuBot, MuzicMania, Ciszu Network y Ciszuko Antony. Comunidad, bots, juegos y desarrollo.',
-};
 
 const THEME: InfoTheme = {
   accent: 'text-brand-light',
@@ -97,8 +92,8 @@ const projects: Project[] = [
   },
 ];
 
-export default async function ProjectsPage() {
-  const { t } = await getServerI18n();
+export default function ProjectsPage() {
+  const t = useDict();
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />

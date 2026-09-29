@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { headers } from "next/headers";
 import { Exo_2, Rajdhani } from "next/font/google";
 import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -10,7 +9,8 @@ import AdsWithUser from "@/components/providers/AdsWithUser";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
-import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
+import HideOnEdit from "@/components/layout/HideOnEdit";
+import SiteMain from "@/components/layout/SiteMain";
 
 const exo2 = Exo_2({
   subsets: ["latin"],
@@ -28,44 +28,46 @@ export const viewport = {
   themeColor: "#000000",
 };
 
-/** Metadata SSR por ruta (SEO): las páginas son client components y no pueden
- *  exportar `export const metadata`; se resuelve aquí desde el pathname que
- *  inyecta el middleware (header x-pathname). */
-export async function generateMetadata(): Promise<Metadata> {
-  const h = await headers();
-  const pathname = h.get("x-pathname") ?? "/";
-  return {
-    ...metadataForPath(pathname),
-    appleWebApp: { capable: true, title: "MuzicMania", statusBarStyle: "black-translucent" },
-    manifest: "/manifest.webmanifest",
-    verification: {
-      google: "9jc8qVjHjC3ZpZ7gpgbIpHrloar3kaeNIEy0EnR2uc0",
-    },
-    icons: {
-      icon: "/favicon.ico?v=2",
-      shortcut: "/favicon.ico?v=2",
-      apple: "/pwa/icon-192.png",
-    },
-  };
-}
+/**
+ * Metadata base del sitio (Fase 4, STATIC_MIGRATION_PLAN §4.5).
+ *
+ * Antes el layout raíz resolvía el pathname por el header `x-pathname` del
+ * middleware (`generateMetadata` + `headers()`), lo que hacía dinámica toda la
+ * web. Ahora la metadata por ruta vive en el `layout.tsx` de cada segmento
+ * (`metadataForPath`), y esta base actúa de fallback: coincide con la metadata
+ * del home, que es lo que `metadataForPath` devolvía para cualquier ruta sin
+ * entrada propia (el helper cae al prefijo `/`).
+ */
+export const metadata: Metadata = {
+  title: "MuzicMania | HOME",
+  description: "El Juego de Ritmo Definitivo en la Web. Domina el beat en una dimensión online con estética futurista.",
+  appleWebApp: { capable: true, title: "MuzicMania", statusBarStyle: "black-translucent" },
+  manifest: "/manifest.webmanifest",
+  verification: {
+    google: "9jc8qVjHjC3ZpZ7gpgbIpHrloar3kaeNIEy0EnR2uc0",
+  },
+  icons: {
+    icon: "/favicon.ico?v=2",
+    shortcut: "/favicon.ico?v=2",
+    apple: "/pwa/icon-192.png",
+  },
+};
 
 import { CookiesBanner } from "@/components/atoms/CookiesBanner";
 import { CloudflareGuard } from "@/components/layout/CloudflareGuard";
 import { ConnectivityBanner } from "@/components/layout/ConnectivityBanner";
 import FeedbackFab from "@/components/layout/FeedbackFab";
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
-import { metadataForPath } from '@/lib/page-metadata';
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: ReactNode;
 }>) {
-  const store = await headers();
-  // Fase 3 (STATIC_MIGRATION_PLAN §4.4): el layout no lee la cookie de idioma.
-  // El SSR sale siempre en la base y el cliente la resuelve (Navbar → store).
+  // Fase 3/4 (STATIC_MIGRATION_PLAN §4.4-4.5): el layout no lee `headers()`.
+  // El SSR sale siempre en la base y el cliente la resuelve (Navbar → store);
+  // el chrome del editor (`/edit/*`) se oculta con `usePathname()` (HideOnEdit).
   const lang = "es-latam";
-  const isEdit = store.get("x-is-edit") === "1";
 
   return (
     <html lang={lang} className={`${exo2.variable} ${rajdhani.variable}`} suppressHydrationWarning>
@@ -94,19 +96,19 @@ export default async function RootLayout({
             <CloudflareGuard>
               <AdBlockerGuard site="muzicmania" logo={assetResolver.resolve('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} title="MuzicMania" accent="#c026d3" accentAlt="#ff33cc" donateHref="https://muzicmania.vercel.app/donate">
               {/* BetaDisclaimer removido: ahora usa el sistema de push global (GlobalDisclaimer) */}
-              {!isEdit && <Navbar />}
-              {!isEdit && <ZoomWarning />}
-              {!isEdit && <DisclaimerStack headerHeight={60} />}
+              <HideOnEdit><Navbar /></HideOnEdit>
+              <HideOnEdit><ZoomWarning /></HideOnEdit>
+              <HideOnEdit><DisclaimerStack headerHeight={60} /></HideOnEdit>
           <DisclaimerDebug site="muzicmania" />
           <GlobalDisclaimer site="muzicmania" />
-              {!isEdit && <ConnectivityBanner />}
-              <main className={isEdit ? "flex-grow" : "flex-grow pt-20"}>
+              <HideOnEdit><ConnectivityBanner /></HideOnEdit>
+              <SiteMain>
                 <NuqsAdapter>
                   {children}
                 </NuqsAdapter>
-              </main>
-              {!isEdit && <Footer />}
-              {!isEdit && <CookiesBanner />}
+              </SiteMain>
+              <HideOnEdit><Footer /></HideOnEdit>
+              <HideOnEdit><CookiesBanner /></HideOnEdit>
               </AdBlockerGuard>
             </CloudflareGuard>
           </DisclaimerProvider>
@@ -115,12 +117,11 @@ export default async function RootLayout({
           </ToastProvider>
         </AuthProvider>
         <GlobalAdvisor site="muzicmania" />
-        {process.env.VERCEL !== '1' && <GlobalAdvisorConfirm site="muzicmania" />}
         <SpeedInsights />
         <PwaRegister />
         <FabStackProvider>
-          {!isEdit && <InstallPdwaButton site="MuzicMania" accent="#00f0ff" accentAlt="#ff33cc" desktopAppHref="/download" />}
-          {!isEdit && <FeedbackFab />}
+          <HideOnEdit><InstallPdwaButton site="MuzicMania" accent="#00f0ff" accentAlt="#ff33cc" desktopAppHref="/download" /></HideOnEdit>
+          <HideOnEdit><FeedbackFab /></HideOnEdit>
         </FabStackProvider>
         <PostHogAnalytics app="muzicmania" />
         <GoogleAnalytics app="muzicmania" />
@@ -131,5 +132,3 @@ export default async function RootLayout({
     </html>
   );
 }
-
-

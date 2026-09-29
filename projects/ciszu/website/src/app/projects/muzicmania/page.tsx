@@ -1,3 +1,5 @@
+'use client';
+
 import Link from "next/link";
 import { EXTERNAL_LINKS, CISZU_NETWORK, GITHUB_REPO } from "@/config/site";
 import { ArrowRight, ExternalLink, Gamepad2, Star, Sparkles } from "lucide-react";
@@ -5,13 +7,8 @@ import { InfoHero, type InfoTheme } from "@ciszu/ui";
 import PageAmbience from "@/components/layout/PageAmbience";
 import PageReveal from "@/components/layout/PageReveal";
 import QuickDocks from "@/components/molecules/QuickDocks";
-import { getServerI18n } from "@/lib/i18n-server";
-import type { Metadata } from "next";
+import { useDict } from "@/lib/useDict";
 
-export const metadata: Metadata = {
-  title: 'Ciszu Network | PROJECTS — MUZICMANIA',
-  description: 'MuzicMania, el juego de ritmo definitivo desarrollado por Ciszu Network.',
-};
 
 const THEME: InfoTheme = {
   accent: 'text-brand-light',
@@ -30,8 +27,8 @@ const features = [
 
 const stack = ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Web Audio', 'Supabase', 'Tauri'];
 
-export default async function MuzicManiaPage() {
-  const { t } = await getServerI18n();
+export default function MuzicManiaPage() {
+  const t = useDict();
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />

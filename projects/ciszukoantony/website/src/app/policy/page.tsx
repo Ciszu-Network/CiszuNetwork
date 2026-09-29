@@ -1,16 +1,10 @@
-import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
-import { getDict, parseLang } from '@/lib/i18n';
+'use client';
+
 import { LegalDocument, type LegalArticle, type InfoTheme } from '@ciszu/ui';
+import { useDict } from '@/components/providers/I18nProvider';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
-
-export const metadata: Metadata = {
-  title: 'Ciszuko Antony | POLICY',
-  description:
-    'Política de privacidad, datos, cookies y anuncios del portfolio de Ciszuko Antony: transparencia y compromiso con tu identidad digital.',
-};
 
 const CONTACT_EMAIL = 'ciszunetwork@outlook.com';
 
@@ -97,9 +91,8 @@ const ARTICLES: LegalArticle[] = [
   },
 ];
 
-export default async function PolicyPage() {
-  const lang = parseLang((await cookies()).get('ciszu_lang')?.value);
-  const dict = getDict(lang);
+export default function PolicyPage() {
+  const dict = useDict();
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />

@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { headers } from "next/headers";
 import Script from "next/script";
 import { IBM_Plex_Sans, IBM_Plex_Sans_Condensed } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
-import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CookiesBanner } from "@/components/layout/CookiesBanner";
 import FeedbackFab from "@/components/layout/FeedbackFab";
+import HideOnEdit from "@/components/layout/HideOnEdit";
+import BareGate from "@/components/layout/BareGate";
 import AuthProvider from "@/components/providers/AuthProvider";
 import AdsWithUser from "@/components/providers/AdsWithUser";
 import LangSync from "@/components/providers/LangSync";
@@ -70,24 +70,12 @@ const themeScript = `
 })();
 `;
 
-export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
-  const store = await headers();
-  // Fase 3 (STATIC_MIGRATION_PLAN §4.4): el layout no lee la cookie de idioma.
-  // El SSR sale siempre en el idioma base y LangSync lo corrige en cliente.
+export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+  // Fase 3/4 (STATIC_MIGRATION_PLAN §4.4-4.5): el layout no lee `cookies()` ni
+  // `headers()`. El SSR sale siempre en el idioma base y LangSync lo corrige en
+  // cliente; el editor se oculta con `usePathname()` (HideOnEdit) y el modo
+  // "desnudo" de /youareanidiot se resuelve en cliente (BareGate).
   const lang = "es-latam";
-  const isEdit = store.get("x-is-edit") === "1";
-  const isBare = store.get("x-is-bare") === "1";
-
-  if (isBare) {
-    return (
-      <html lang={lang} className={`${ibmPlex.variable} ${ibmPlexCondensed.variable}`} suppressHydrationWarning>
-        <head>
-          <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-        </head>
-        <body className="m-0 p-0 min-h-screen">{children}</body>
-      </html>
-    );
-  }
 
   return (
     <html lang={lang} className={`${ibmPlex.variable} ${ibmPlexCondensed.variable}`} suppressHydrationWarning>
@@ -105,6 +93,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       </head>
       <body className="min-h-screen font-sans flex flex-col">
         <LangSync />
+        <BareGate fallback={<main className="m-0 p-0 min-h-screen">{children}</main>}>
         <AuthProvider>
           <ToastProvider>
           <ActivityGuardProvider>
@@ -115,14 +104,14 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             <DisclaimerProvider>
               <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={ICON_SVG} title="Ciszu Network" subtitle="Ciszu Network Security • Cloudflare" accent="#22d3ee" storageKey="cf_verified_ciszu">
                 <AdBlockerGuard site="ciszu" logo={ICON_SVG} title="Ciszu Network" accent="#22d3ee" accentAlt="#f472b6" donateHref="https://ciszunetwork.vercel.app/donate">
-                {!isEdit && <ZoomWarning />}
-                {!isEdit && <Navbar />}
-                {!isEdit && <DisclaimerStack headerHeight={64} />}
+                <HideOnEdit><ZoomWarning /></HideOnEdit>
+                <HideOnEdit><Navbar /></HideOnEdit>
+                <HideOnEdit><DisclaimerStack headerHeight={64} /></HideOnEdit>
                 <DisclaimerDebug site="ciszu" />
                 <GlobalDisclaimer site="ciszu" />
                 <main className="flex-grow pt-16">{children}</main>
-                {!isEdit && <Footer />}
-                {!isEdit && <CookiesBanner />}
+                <HideOnEdit><Footer /></HideOnEdit>
+                <HideOnEdit><CookiesBanner /></HideOnEdit>
                 </AdBlockerGuard>
               </CloudflareGuard>
             </DisclaimerProvider>
@@ -131,12 +120,12 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           </ToastProvider>
           <GlobalAdvisor site="ciszu" />
         </AuthProvider>
-        {process.env.VERCEL !== '1' && <GlobalAdvisorConfirm site="ciszu" />}
+        </BareGate>
         <SpeedInsights />
         <PwaRegister />
         <FabStackProvider>
-          {!isEdit && <InstallPdwaButton site="Ciszu Network" accent="#22d3ee" accentAlt="#f472b6" />}
-          {!isEdit && <FeedbackFab />}
+          <HideOnEdit><InstallPdwaButton site="Ciszu Network" accent="#22d3ee" accentAlt="#f472b6" /></HideOnEdit>
+          <HideOnEdit><FeedbackFab /></HideOnEdit>
         </FabStackProvider>
         <PostHogAnalytics app="ciszunetwork" />
         <GoogleAnalytics app="ciszunetwork" />

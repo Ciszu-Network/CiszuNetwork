@@ -376,6 +376,11 @@ wheels/
 #  "Module not found: Can't resolve '@/lib/...'").
 !projects/*/website/src/lib/
 !projects/*/website/src/lib/**
+# Excepción: projects/*/website/src/app/downloads/ es una RUTA de las webs
+# Next.js (la regla Python `downloads/` ignoraba sus layout.tsx nuevos de la
+# Fase 4 de STATIC_MIGRATION_PLAN, que aportan la metadata por ruta).
+!projects/*/website/src/app/downloads/
+!projects/*/website/src/app/downloads/**
 share/python-wheels/
 *.egg-info/
 .installed.cfg

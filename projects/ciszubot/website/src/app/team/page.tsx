@@ -1,6 +1,6 @@
-import type { Metadata } from 'next';
+'use client';
+
 import Image from 'next/image';
-import { cookies } from 'next/headers';
 import { assetResolver } from '@ciszunetwork/cdn';
 import {
   InfoHero,
@@ -15,8 +15,6 @@ import {
   type SocialPlatform,
 } from '@ciszu/ui';
 import {
-  getDict,
-  parseLang,
   DISCORD_SERVER,
   GITHUB_ORG,
   GITHUB_REPO,
@@ -28,18 +26,11 @@ import {
   CISZU_NETWORK,
   CISZUKO_ANTONY,
 } from '@/lib/i18n';
+import { useClientI18n } from '@/hooks/useClientI18n';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
-
-export const revalidate = 60;
-
-export const metadata: Metadata = {
-  title: 'CiszuBot | TEAM',
-  description:
-    'Equipo detrás de CiszuBot: quién lo crea, qué roles existen y cómo colaborar en Ciszu Network.',
-};
 
 const MUZICMANIA = 'https://muzicmania.vercel.app';
 
@@ -161,10 +152,8 @@ const STEPS: InfoStepGroup[] = [
   },
 ];
 
-export default async function TeamPage() {
-  const store = await cookies();
-  const lang = parseLang(store.get('ciszubot_lang')?.value);
-  const t = getDict(lang);
+export default function TeamPage() {
+  const { dict: t } = useClientI18n();
   const portrait = assetResolver.resolve('shared/images/francisco_selfie/IMG_20251207_001632@893898207.jpg');
 
   return (

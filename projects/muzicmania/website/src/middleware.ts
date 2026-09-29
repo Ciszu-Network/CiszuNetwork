@@ -44,16 +44,10 @@ const CSP = buildCsp({
   ],
 });
 
-/** Cabecera interna que marca las rutas /edit/* para que el layout oculte el chrome del sitio. */
-const EDIT_HEADER = 'x-is-edit';
-/** Cabecera interna con el pathname, para metadata SSR por ruta (SEO). */
-const PATHNAME_HEADER = 'x-pathname';
-const withIsEditHeader = (request: NextRequest, pathname: string): Headers => {
-  const headers = new Headers(request.headers);
-  headers.set(EDIT_HEADER, pathname === '/edit' || pathname.startsWith('/edit/') ? '1' : '0');
-  headers.set(PATHNAME_HEADER, pathname);
-  return headers;
-};
+/** Cabeceras internas retiradas en Fase 4 (STATIC_MIGRATION_PLAN §2.4/§4.5):
+ *  el layout raíz ya no lee `x-is-edit` ni `x-pathname` (eso hacía dinámica
+ *  toda la web). El editor se resuelve en cliente (`usePathname()`) y la
+ *  metadata por ruta vive en el `layout.tsx` de cada segmento. */
 
 /**
  * Middleware de Next.js (MuzicMania Security Layer).
@@ -99,9 +93,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  const response = NextResponse.next({
-    request: { headers: withIsEditHeader(request, pathname) },
-  });
+  const response = NextResponse.next();
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');

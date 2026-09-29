@@ -1,24 +1,17 @@
-import type { Metadata } from 'next';
+'use client';
+
 import Link from 'next/link';
-import { cookies } from 'next/headers';
 import { Icon, FabRestore, InfoHero } from '@ciszu/ui';
 import FeedbackForm, { OpenReportButton } from '@/components/FeedbackForm';
-import { DISCORD_SERVER, FEEDBACK_EMAIL, getDict, parseLang } from '@/lib/i18n';
+import { DISCORD_SERVER, FEEDBACK_EMAIL } from '@/lib/i18n';
+import { useClientI18n } from '@/hooks/useClientI18n';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 
-export const metadata: Metadata = {
-  title: 'CiszuBot | FEEDBACK',
-  description:
-    'Envía feedback, reporta errores o sugiere comandos para CiszuBot. Formulario, email y reporte de problemas.',
-};
-
-export default async function FeedbackPage() {
-  const store = await cookies();
-  const lang = parseLang(store.get('ciszubot_lang')?.value);
-  const t = getDict(lang);
+export default function FeedbackPage() {
+  const { dict: t } = useClientI18n();
 
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">

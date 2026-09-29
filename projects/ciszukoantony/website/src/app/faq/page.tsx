@@ -1,6 +1,5 @@
-import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
-import { getDict, parseLang } from '@/lib/i18n';
+'use client';
+
 import {
   InfoHero,
   InfoFaqExplorer,
@@ -12,15 +11,11 @@ import {
   type InfoFaqCopy,
   type InfoCardItem,
 } from '@ciszu/ui';
+import { useDict } from '@/components/providers/I18nProvider';
+import type { Dict } from '@/lib/i18n';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
-
-export const metadata: Metadata = {
-  title: 'Ciszuko Antony | FAQ',
-  description:
-    'Preguntas frecuentes sobre Ciszuko Antony, Ciszu Network, sus proyectos, certificados y formas de contacto.',
-};
 
 const THEME: InfoTheme = {
   accent: 'text-neon-blue',
@@ -243,7 +238,7 @@ const TOPICS: InfoCardItem[] = [
   },
 ];
 
-const CATEGORY_KEYS: Record<string, keyof ReturnType<typeof getDict>['faq']['categories']> = {
+const CATEGORY_KEYS: Record<string, keyof Dict['faq']['categories']> = {
   perfil: 'profile',
   proyectos: 'projects',
   certificados: 'certificates',
@@ -252,9 +247,8 @@ const CATEGORY_KEYS: Record<string, keyof ReturnType<typeof getDict>['faq']['cat
   soporte: 'support',
 };
 
-export default async function FAQPage() {
-  const lang = parseLang((await cookies()).get('ciszu_lang')?.value);
-  const dict = getDict(lang);
+export default function FAQPage() {
+  const dict = useDict();
 
   const categories = CATEGORIES.map((category) => ({
     ...category,

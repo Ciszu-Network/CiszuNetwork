@@ -1,6 +1,6 @@
-import type { Metadata } from 'next';
+'use client';
+
 import Image from 'next/image';
-import { cookies } from 'next/headers';
 import { assetResolver } from '@ciszunetwork/cdn';
 import {
   Icon,
@@ -12,7 +12,8 @@ import {
   type InfoLinkGroup,
   type InfoCardItem,
 } from '@ciszu/ui';
-import { getDict, parseLang, DISCORD_SERVER, BOT_PREFIX } from '@/lib/i18n';
+import { DISCORD_SERVER, BOT_PREFIX } from '@/lib/i18n';
+import { useClientI18n } from '@/hooks/useClientI18n';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
@@ -36,12 +37,9 @@ import {
   ORIGINS,
   LINK_GROUPS,
   CTA,
-  PAGE_META,
   type AccentKey,
   type Note,
 } from './content';
-
-export const metadata: Metadata = PAGE_META;
 
 const ACCENTS: Record<
   AccentKey,
@@ -146,10 +144,8 @@ function NoteCard({ note }: { note: Note }) {
   );
 }
 
-export default async function InformationPage() {
-  const store = await cookies();
-  const lang = parseLang(store.get('ciszubot_lang')?.value);
-  const dict = getDict(lang);
+export default function InformationPage() {
+  const { dict } = useClientI18n();
 
   const groups: InfoLinkGroup[] = LINK_GROUPS.map((group) => ({
     title: group.title,

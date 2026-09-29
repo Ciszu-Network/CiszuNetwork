@@ -1,3 +1,5 @@
+'use client';
+
 import Image from "next/image";
 import Link from "next/link";
 import { assetResolver } from "@ciszunetwork/cdn";
@@ -5,15 +7,10 @@ import { SocialIcon, SOCIAL_COLORS, InfoHero, type InfoTheme } from '@ciszu/ui';
 import PageAmbience from "@/components/layout/PageAmbience";
 import PageReveal from "@/components/layout/PageReveal";
 import QuickDocks from "@/components/molecules/QuickDocks";
-import { getServerI18n } from "@/lib/i18n-server";
+import { useDict } from "@/lib/useDict";
 import { CISZUKO_ANTONY, CISZU_NETWORK } from "@/config/site";
 import { ArrowRight, ExternalLink, Music, Gamepad2, Mic, Video } from "lucide-react";
-import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: 'Ciszu Network | PROJECTS — CISZUKO ANTONY',
-  description: 'Proyecto artístico de Ciszuko Antony: contenido gaming, música y tecnología.',
-};
 
 const THEME: InfoTheme = {
   accent: 'text-brand-light',
@@ -32,8 +29,8 @@ const contentTypes = [
 
 const platforms = ['YouTube', 'Twitch', 'TikTok', 'Instagram', 'Spotify', 'X'];
 
-export default async function CiszukoAntonyPage() {
-  const { t } = await getServerI18n();
+export default function CiszukoAntonyPage() {
+  const t = useDict();
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />

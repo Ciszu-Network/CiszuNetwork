@@ -1,18 +1,17 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { headers } from "next/headers";
 import { Inter, Space_Grotesk } from "next/font/google";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import FeedbackFab from "@/components/layout/FeedbackFab";
+import HideOnEdit from "@/components/layout/HideOnEdit";
+import SiteMain from "@/components/layout/SiteMain";
 import { CookiesBanner } from "@/components/layout/CookiesBanner";
 import { LOGO_ISOTIPO_CIRCLE } from "@/lib/i18n";
 import { COMMANDS } from "@/data/commands";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
-import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { getSessionData } from "@/lib/auth";
 import QueryProvider from "@/components/layout/QueryProvider";
 import AuthProvider from "@/components/providers/AuthProvider";
 import AdsWithUser from "@/components/providers/AdsWithUser";
@@ -60,13 +59,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({ children }: { children: ReactNode }) {
-  // Fase 3 (STATIC_MIGRATION_PLAN §4.4): el layout ya no lee la cookie de
-  // idioma; el SSR sale en la base `es-latam` y el cliente (useClientI18n)
-  // aplica el idioma real tras montar. La sesión y x-is-edit siguen aquí.
-  const session = await getSessionData();
-  const headerStore = await headers();
-  const isEdit = headerStore.get("x-is-edit") === "1";
+export default function RootLayout({ children }: { children: ReactNode }) {
+  // Fase 3/4 (STATIC_MIGRATION_PLAN §4.4-4.5): el layout raíz ya no lee
+  // `cookies()` ni `headers()`. El SSR sale en la base `es-latam` y el cliente
+  // (useClientI18n) aplica el idioma real; la sesión la hidrata AuthProvider en
+  // cliente (antes había un fallback SSR de Discord que forzaba render dinámico)
+  // y el chrome del editor se oculta con `usePathname()` (HideOnEdit/SiteMain).
   /** Idioma base del SSR; el cliente corrige tras montar (Fase 3 §4.4). */
   const lang = "es-latam";
 
@@ -95,14 +93,14 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
                <RedirectGuard debug={true} />
               <DisclaimerProvider>
               {/* BetaDisclaimer removido: ahora usa el sistema de push global (GlobalDisclaimer) */}
-              {!isEdit && <Navbar account={session} />}
-              {!isEdit && <ZoomWarning />}
-              {!isEdit && <DisclaimerStack headerHeight={64} />}
+              <HideOnEdit><Navbar /></HideOnEdit>
+              <HideOnEdit><ZoomWarning /></HideOnEdit>
+              <HideOnEdit><DisclaimerStack headerHeight={64} /></HideOnEdit>
               <DisclaimerDebug site="ciszubot" />
               <GlobalDisclaimer site="ciszubot" />
-              <main className={isEdit ? "flex-grow" : "flex-grow pt-[60px]"}>{children}</main>
-              {!isEdit && <Footer commandCount={COMMANDS.length} />}
-              {!isEdit && <CookiesBanner />}
+              <SiteMain>{children}</SiteMain>
+              <HideOnEdit><Footer commandCount={COMMANDS.length} /></HideOnEdit>
+              <HideOnEdit><CookiesBanner /></HideOnEdit>
               </DisclaimerProvider>
               </AdsWithUser>
               </ActivityGuardProvider>
@@ -111,12 +109,11 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             </AdBlockerGuard>
           </CloudflareGuard>
           <GlobalAdvisor site="ciszubot" />
-          {process.env.VERCEL !== '1' && <GlobalAdvisorConfirm site="ciszubot" />}
           <SpeedInsights />
           <PwaRegister />
           <FabStackProvider>
-            {!isEdit && <InstallPdwaButton site="CiszuBot" accent="#22d3ee" accentAlt="#a78bfa" />}
-            {!isEdit && <FeedbackFab accent="#22d3ee" accentAlt="#a78bfa" />}
+            <HideOnEdit><InstallPdwaButton site="CiszuBot" accent="#22d3ee" accentAlt="#a78bfa" /></HideOnEdit>
+            <HideOnEdit><FeedbackFab accent="#22d3ee" accentAlt="#a78bfa" /></HideOnEdit>
           </FabStackProvider>
           <PostHogAnalytics app="ciszubot" />
           <GoogleAnalytics app="ciszubot" />

@@ -1,3 +1,5 @@
+'use client';
+
 import Link from "next/link";
 import { CISZU_NETWORK, CISZUKO_ANTONY, EXTERNAL_LINKS, GITHUB_REPO } from "@/config/site";
 import { ArrowRight, Code, Cloud, ExternalLink, Palette } from "lucide-react";
@@ -5,13 +7,8 @@ import { InfoHero, type InfoTheme } from "@ciszu/ui";
 import PageAmbience from "@/components/layout/PageAmbience";
 import PageReveal from "@/components/layout/PageReveal";
 import QuickDocks from "@/components/molecules/QuickDocks";
-import { getServerI18n } from "@/lib/i18n-server";
-import type { Metadata } from "next";
+import { useDict } from "@/lib/useDict";
 
-export const metadata: Metadata = {
-  title: 'Ciszu Network | PROJECTS — CISZU NETWORK',
-  description: 'Ciszu Network: compañía de innovación digital con desarrollo web, cloud y UI/UX.',
-};
 
 const THEME: InfoTheme = {
   accent: 'text-brand-light',
@@ -37,8 +34,8 @@ const sites = [
   { name: 'Ciszuko Antony', href: EXTERNAL_LINKS.ciszukoantony, external: true },
 ];
 
-export default async function CiszuNetworkPage() {
-  const { t } = await getServerI18n();
+export default function CiszuNetworkPage() {
+  const t = useDict();
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />

@@ -1,16 +1,12 @@
-import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
-import { getDict, parseLang, type Dict } from '@/lib/i18n';
+'use client';
+
+import type { Dict } from '@/lib/i18n';
+import { useDict } from '@/components/providers/I18nProvider';
 import InstallPdwaInline from '@/components/layout/InstallPdwaInline';
 import { FabRestore, InfoHero, type InfoTheme } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
-
-export const metadata: Metadata = {
-  title: 'Ciszuko Antony | DOWNLOADS',
-  description: 'Download and install Ciszuko Antony as a desktop app (PDWA): what it is and installation steps.',
-};
 
 const THEME: InfoTheme = {
   accent: 'text-neon-blue',
@@ -43,9 +39,8 @@ const DownloadIcon = () => (
   </svg>
 );
 
-export default async function DownloadsPage() {
-  const lang = parseLang((await cookies()).get('ciszu_lang')?.value);
-  const dict = getDict(lang);
+export default function DownloadsPage() {
+  const dict = useDict();
   const whatIs = whatIsFor(dict);
   const steps = stepsFor(dict);
 
