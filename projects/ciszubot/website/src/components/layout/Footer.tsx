@@ -142,6 +142,7 @@ export default function Footer({ commandCount = 0 }: FooterProps) {
         { href: '/commands', label: dict.nav.commands, icon: 'gamepad' },
         { href: '/stats', label: dict.nav.status, icon: 'signal' },
         { href: '/explore', label: dict.nav.explore, icon: 'search' },
+        { href: '/invite', label: dict.nav.invite, icon: 'discord' },
         { href: '/downloads', label: dict.nav.downloads, icon: 'download' },
       ],
     },
