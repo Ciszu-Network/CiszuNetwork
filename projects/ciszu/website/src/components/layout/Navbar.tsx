@@ -459,6 +459,7 @@ export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<strin
                               <Link
                                 key={sub.href}
                                 href={sub.href}
+                                prefetch={false}
                                 onClick={() => setOpenDropdown(null)}
                                 className={`flex items-center gap-3 px-4 py-2 text-sm font-header font-bold transition-all cursor-pointer ${
                                   isActive(sub.href) ? 'text-brand-light bg-brand-light/5 hover:text-white' : 'text-white hover:text-brand-light hover:bg-white/5'
@@ -573,6 +574,7 @@ export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<strin
                     <Link
                       key={p.href}
                       href={p.href}
+                      prefetch={false}
                       onClick={() => setShowSearch(false)}
                       className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/5 hover:border-brand-light/50 hover:text-brand-light text-white text-xs font-header font-bold transition-all cursor-pointer"
                     >
@@ -657,6 +659,7 @@ export const NavbarContent = ({ lang, dict }: { lang: string; dict: Record<strin
                               <Link
                                 key={sub.href}
                                 href={sub.href}
+                                prefetch={false}
                                 onClick={() => setIsMenuOpen(false)}
                                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-95 ${
                                   isActive(sub.href) ? 'bg-brand-light/15 text-brand-light border border-brand-light/30' : 'text-white/70 hover:text-brand-light hover:bg-white/5 border border-transparent'

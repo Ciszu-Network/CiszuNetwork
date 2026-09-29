@@ -116,7 +116,7 @@ export default async function RootLayout({
           </ToastProvider>
         </AuthProvider>
         <GlobalAdvisor site="muzicmania" />
-        <GlobalAdvisorConfirm site="muzicmania" />
+        {process.env.VERCEL !== '1' && <GlobalAdvisorConfirm site="muzicmania" />}
         <SpeedInsights />
         <PwaRegister />
         <FabStackProvider>

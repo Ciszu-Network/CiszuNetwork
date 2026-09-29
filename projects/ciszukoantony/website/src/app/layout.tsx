@@ -116,7 +116,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           </DisclaimerProvider>
         </AuthProvider>
         <GlobalAdvisor site="ciszukoantony" />
-        <GlobalAdvisorConfirm site="ciszukoantony" />
+        {process.env.VERCEL !== '1' && <GlobalAdvisorConfirm site="ciszukoantony" />}
         <SpeedInsights />
         <PwaRegister />
         <FabStackProvider>

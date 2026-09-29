@@ -344,27 +344,29 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
                   <div className="flex flex-col gap-1.5 w-full">
                     {section.links.map((link) => {
                       const external = link.href.startsWith('http');
-                      const Comp = external ? 'a' : Link;
-                      const props = external
-                        ? { href: link.href, target: '_blank', rel: 'noopener noreferrer' }
-                        : { href: link.href };
                       const active = !external && isActive(link.href);
-                      return (
-                        <Comp
-                          key={link.name}
-                          {...props}
-                          className={`group flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 ${
-                            active
-                              ? `${accent.active} hover:text-white`
-                              : `border-transparent text-white ${accent.hover}`
-                          }`}
-                        >
+                      const className = `group flex items-center justify-center sm:justify-start gap-3 px-4 py-1.5 rounded-lg border font-header text-sm font-bold transition-all duration-300 cursor-pointer hover:-translate-y-0.5 active:scale-95 ${
+                        active
+                          ? `${accent.active} hover:text-white`
+                          : `border-transparent text-white ${accent.hover}`
+                      }`;
+                      const content = (
+                        <>
                           <span className={`shrink-0 ${accent.heading} opacity-80 transition-opacity duration-300 group-hover:opacity-100`}>
                             {link.icon}
                           </span>
                           <span className="tracking-wide">{link.name}</span>
                           {external && <ExternalLink className="w-3 h-3 opacity-50 shrink-0" />}
-                        </Comp>
+                        </>
+                      );
+                      return external ? (
+                        <a key={link.name} href={link.href} target="_blank" rel="noopener noreferrer" className={className}>
+                          {content}
+                        </a>
+                      ) : (
+                        <Link key={link.name} href={link.href} prefetch={link.href === '/' ? undefined : false} className={className}>
+                          {content}
+                        </Link>
                       );
                     })}
                   </div>
@@ -386,6 +388,7 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
               <Link
                 key={link.name}
                 href={link.href}
+                prefetch={false}
                 className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold uppercase tracking-widest transition-all duration-300 ${
                   active
                     ? 'border-brand-light/60 bg-brand-light/15 text-brand-light'

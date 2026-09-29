@@ -290,7 +290,7 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
                           {content}
                         </a>
                       ) : (
-                        <Link key={link.href} href={link.href} className={className}>
+                        <Link key={link.href} href={link.href} prefetch={link.href === '/' ? undefined : false} className={className}>
                           {content}
                         </Link>
                       );
@@ -315,6 +315,7 @@ export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any>
                 <Link
                   key={link.href}
                   href={link.href}
+                  prefetch={false}
                   className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold uppercase tracking-widest transition-all duration-300 ${
                     active
                       ? 'border-neon-pink/60 bg-neon-pink/15 text-neon-pink'

@@ -326,7 +326,7 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Dict }) {
                                    <span className="opacity-70 w-4 h-4 shrink-0">{sub.icon}</span>{itemLabel(sub)}
                                  </a>
                                ) : (
-                                 <Link key={sub.href} href={sub.href} onClick={() => setOpenGroup(null)} className={subCls(isActive(sub.href))}>
+                                 <Link key={sub.href} href={sub.href} prefetch={false} onClick={() => setOpenGroup(null)} className={subCls(isActive(sub.href))}>
                                    <span className="opacity-70 w-4 h-4 shrink-0">{sub.icon}</span>{itemLabel(sub)}
                                  </Link>
                                ),
@@ -434,7 +434,7 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Dict }) {
               {q.length > 0 && suggestions.length > 0 && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mt-3 animate-fade-in-down">
                   {suggestions.map((p) => (
-                    <Link key={p.href} href={p.href} onClick={closeSearch}
+                    <Link key={p.href} href={p.href} prefetch={false} onClick={closeSearch}
                       className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/5 hover:border-neon-blue/50 hover:text-neon-blue text-white text-xs font-header font-bold transition-all cursor-pointer">
                       <span className="opacity-70 shrink-0">{pageIcon(p.href)}</span>
                       <span className="truncate">{p.title}</span>

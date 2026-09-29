@@ -355,7 +355,7 @@ export default function Footer({ dict, commandCount = 0 }: FooterProps) {
                         {content}
                       </a>
                     ) : (
-                      <Link key={l.href} href={l.href} className={className}>
+                      <Link key={l.href} href={l.href} prefetch={l.href === '/' ? undefined : false} className={className}>
                         {content}
                       </Link>
                     );
@@ -379,6 +379,7 @@ export default function Footer({ dict, commandCount = 0 }: FooterProps) {
                 <Link
                   key={href}
                   href={href}
+                  prefetch={false}
                   className={`inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors ${
                     active ? 'text-neon-cyan' : 'text-muted hover:text-neon-cyan'
                   }`}

@@ -732,6 +732,11 @@ const dKey = `ciszu_ads_${site}_dismissed`;
     if (ad) setCurrent(ad);
   };
   useEffect(() => {
+    // /api/ads/push solo existe en desarrollo (devcon local); en producción
+    // responde enabled:false. Sondearlo cada 1.5s provocaba una invocación de
+    // función por sondeo en Vercel: se omite fuera de desarrollo. Los pushes
+    // globales llegan por el efecto de Supabase de más abajo.
+    if (process.env.NODE_ENV !== 'development') return;
     const poll = () => {
       fetch('/api/ads/push', { cache: 'no-store' })
         .then((r) => (r.ok ? r.json() : null))

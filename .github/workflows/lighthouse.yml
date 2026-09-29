@@ -1,10 +1,13 @@
 name: Lighthouse CI
 
 on:
-  push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
+  # Semanal (lunes 07:00 UTC) + manual. Antes corría en cada push/PR y cada run
+  # hace 4 auditorías Lighthouse completas contra producción (full load con
+  # todos los recursos y requests de auditoría). Con el fair-use de Vercel
+  # (Fluid CPU/Edge Requests) esto era un golpe recurrente y desproporcionado
+  # para detectar regresiones que un chequeo semanal ya cubre.
+  schedule:
+    - cron: '0 7 * * 1'
   workflow_dispatch:
 
 concurrency:

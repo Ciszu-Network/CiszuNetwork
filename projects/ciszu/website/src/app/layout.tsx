@@ -130,7 +130,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           </ToastProvider>
           <GlobalAdvisor site="ciszu" />
         </AuthProvider>
-        <GlobalAdvisorConfirm site="ciszu" />
+        {process.env.VERCEL !== '1' && <GlobalAdvisorConfirm site="ciszu" />}
         <SpeedInsights />
         <PwaRegister />
         <FabStackProvider>
