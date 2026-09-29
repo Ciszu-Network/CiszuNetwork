@@ -5,9 +5,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useAppStore } from '@/store';
 import { getCookieConsent, setCookieConsent, useToast } from '@ciszu/ui';
-import type { Dict } from '@/lib/i18n';
+import { useDict } from '@/components/providers/I18nProvider';
 
-export function CookiesBanner({ dict }: { lang: string; dict: Dict }) {
+export function CookiesBanner() {
+  // El SSR pinta la base es-latam; el provider resuelve la cookie en cliente.
+  const dict = useDict();
   const [show, setShow] = useState(false);
   const { hasAcceptedCookies, setHasAcceptedCookies } = useAppStore();
   const { toast } = useToast();

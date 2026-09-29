@@ -3,17 +3,15 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAppStore } from '@/store';
-import { type Dict, type Lang, isEsLang } from '@/lib/i18n';
+import { isEsLang } from '@/lib/i18n';
+import { useClientI18n } from '@/hooks/useClientI18n';
 import { getCookieConsent, setCookieConsent, useToast } from '@ciszu/ui';
 
-interface CookiesBannerProps {
-  lang: Lang;
-  dict: Dict;
-}
-
-export function CookiesBanner({ lang, dict }: CookiesBannerProps) {
+export function CookiesBanner() {
   const [show, setShow] = useState(false);
   const { hasAcceptedCookies, setHasAcceptedCookies } = useAppStore();
+  // El idioma real se resuelve en cliente (Fase 3 §4.4); el SSR pinta la base.
+  const { lang, dict } = useClientI18n();
   const { toast } = useToast();
 
   useEffect(() => {

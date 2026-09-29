@@ -2,12 +2,11 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { headers } from "next/headers";
 import { Inter, Space_Grotesk } from "next/font/google";
-import { cookies } from "next/headers";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import FeedbackFab from "@/components/layout/FeedbackFab";
 import { CookiesBanner } from "@/components/layout/CookiesBanner";
-import { getDict, parseLang, LOGO_ISOTIPO_CIRCLE } from "@/lib/i18n";
+import { LOGO_ISOTIPO_CIRCLE } from "@/lib/i18n";
 import { COMMANDS } from "@/data/commands";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
@@ -62,12 +61,14 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
-  const store = await cookies();
-  const lang = parseLang(store.get("ciszubot_lang")?.value);
-  const dict = getDict(lang);
+  // Fase 3 (STATIC_MIGRATION_PLAN §4.4): el layout ya no lee la cookie de
+  // idioma; el SSR sale en la base `es-latam` y el cliente (useClientI18n)
+  // aplica el idioma real tras montar. La sesión y x-is-edit siguen aquí.
   const session = await getSessionData();
   const headerStore = await headers();
   const isEdit = headerStore.get("x-is-edit") === "1";
+  /** Idioma base del SSR; el cliente corrige tras montar (Fase 3 §4.4). */
+  const lang = "es-latam";
 
   return (
     <html lang={lang} className={`${inter.variable} ${spaceGrotesk.variable}`} suppressHydrationWarning>
@@ -94,14 +95,14 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
                <RedirectGuard debug={true} />
               <DisclaimerProvider>
               {/* BetaDisclaimer removido: ahora usa el sistema de push global (GlobalDisclaimer) */}
-              {!isEdit && <Navbar lang={lang} dict={dict} account={session} />}
+              {!isEdit && <Navbar account={session} />}
               {!isEdit && <ZoomWarning />}
               {!isEdit && <DisclaimerStack headerHeight={64} />}
               <DisclaimerDebug site="ciszubot" />
               <GlobalDisclaimer site="ciszubot" />
               <main className={isEdit ? "flex-grow" : "flex-grow pt-[60px]"}>{children}</main>
-              {!isEdit && <Footer lang={lang} dict={dict} commandCount={COMMANDS.length} />}
-              {!isEdit && <CookiesBanner lang={lang} dict={dict} />}
+              {!isEdit && <Footer commandCount={COMMANDS.length} />}
+              {!isEdit && <CookiesBanner />}
               </DisclaimerProvider>
               </AdsWithUser>
               </ActivityGuardProvider>

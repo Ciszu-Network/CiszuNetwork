@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { assetResolver } from '@ciszunetwork/cdn';
 import { ScrollNavButton, useToast, SocialIcon } from '@ciszu/ui';
 import { useAppStore } from '@/store';
+import { getDict } from '@/lib/i18n';
 import { CISZU_NETWORK, CISZUKO_ANTONY, EXTERNAL_LINKS, GITHUB_REPO } from '@/config/site';
 import {
   Globe,
@@ -210,8 +211,10 @@ const IcoDiscord = () => (
   </svg>
 );
 
-export const Footer = ({ lang, dict }: { lang: string; dict: Record<string, any> }) => {
+export const Footer = () => {
   const { theme, setTheme, language, setIsMenuOpen, setSidebarView } = useAppStore();
+  // Mismo patrón que Navbar: idioma del store hidratado en cliente (LangSync).
+  const dict = getDict(language);
   const { toast } = useToast();
   const pathname = usePathname();
 

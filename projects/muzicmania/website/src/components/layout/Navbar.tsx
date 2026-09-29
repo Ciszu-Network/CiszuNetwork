@@ -16,7 +16,7 @@ import { I, HEADER_NAV_LINKS as NAV_LINKS, INFO_DROPDOWN_LINKS, COMMUNITY_LINKS,
 import { isTauri } from '@/lib/isTauri';
 import { getGuestName } from '@/lib/guest';
 import { loadPreferences, applyZoom, setMuteTab, updatePreferences, consumeReloadToastMsg, reloadAfterPrefChange } from '@/lib/preferences';
-import { fill, getDict, parseLang } from '@/lib/i18n';
+import { fill, getDict, parseLang, readCookieLang } from '@/lib/i18n';
 import PreferencesPanel from '@/components/molecules/PreferencesPanel';
 import { LANGUAGE_OPTIONS, isLangAvailable } from '@ciszu/ui';
 
@@ -80,7 +80,8 @@ export const NavbarContent = () => {
     const prefs = loadPreferences();
     applyZoom(prefs.zoom);
     setMuteTab(prefs.muteTab);
-    setLang(prefs.lang);
+    // Idioma real: cookie `ciszu_lang` (si existe) → localStorage → base.
+    setLang(readCookieLang() ?? prefs.lang);
     setDarkMode(prefs.theme === 'dark');
 
     // Tras una recarga por cambio de idioma/tema, avisar con toast azul
@@ -89,6 +90,11 @@ export const NavbarContent = () => {
       setTimeout(() => toast(pendingMsg, 'info'), 350);
     }
   }, []);
+
+  // <html lang> con el idioma real hidratado (Fase 3 §4.4); el SSR sale base.
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
 
   const floating = scrolled && !isSearchOpen && !isMenuOpen && !isAccederOpen && !isZoomWarning;
 

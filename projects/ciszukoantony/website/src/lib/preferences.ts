@@ -94,6 +94,25 @@ export function updatePreferences(patch: Partial<Preferences>): Preferences {
   return next;
 }
 
+/**
+ * Idioma efectivo del dispositivo: cookie `ciszu_lang` (fuente canónica desde
+ * que el layout dejó de leerla en servidor) → localStorage → default.
+ *
+ * Se usa al hidratar preferencias en el cliente para no pisar con el default
+ * una cookie ya establecida (p. ej. localStorage vacío pero cookie en-us).
+ */
+export function getEffectiveLang(): PreferenceLang {
+  if (typeof document !== 'undefined') {
+    try {
+      const match = document.cookie.match(/(?:^|;\s*)ciszu_lang=([^;]+)/);
+      if (match?.[1]) return normalizeLang(decodeURIComponent(match[1]));
+    } catch {
+      // cookie bloqueada — se cae a localStorage
+    }
+  }
+  return getPreferences().lang;
+}
+
 /** Aplica el zoom al documento raíz (persistido). 100% limpia el inline style. */
 export function applyFontSize(size: number): void {
   if (typeof window === 'undefined') return;

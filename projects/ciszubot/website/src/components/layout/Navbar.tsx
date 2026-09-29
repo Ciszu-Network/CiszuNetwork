@@ -12,6 +12,7 @@ import { syncPreferencesToProfile, updatePreferences, loadPreferences } from '@/
 import PreferencesPanel from '@/components/layout/PreferencesPanel';
 import { PreferencesModal } from '@ciszu/ui';
 import { INVITE_URL, LOGO_ISOTIPO_CIRCLE, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
+import { useClientI18n } from '@/hooks/useClientI18n';
 
 // Header = solo lo esencial. TODO lo demás se indexa en el desplegable
 // "Information" (un único punto de entrada) para no duplicar enlaces en el
@@ -133,12 +134,11 @@ const renderIcon = (name: string, size: number) => {
 };
 
 interface NavbarProps {
-  lang: Lang;
-  dict: Dict;
   account?: { id: string; name: string | null; avatar: string | null } | null;
 }
 
-export default function Navbar({ lang, dict, account }: NavbarProps) {
+export default function Navbar({ account }: NavbarProps) {
+  const { lang, dict } = useClientI18n();
   const pathname = usePathname();
   const { isMenuOpen, setIsMenuOpen, sidebarView, setSidebarView, user, setUser, isHydrated } = useAppStore();
   const { toast } = useToast();

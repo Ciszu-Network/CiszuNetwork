@@ -10,6 +10,7 @@ import { useAppStore } from '@/store';
 import AuthMenu, { GuestIcon } from '@/components/auth/AuthMenu';
 import { getGuestName } from '@/lib/guest';
 import { navLabel, t, type Dict } from '@/lib/i18n';
+import { useI18n } from '@/components/providers/I18nProvider';
 
 const UserIcon = () => (
   <svg viewBox="0 0 24 24" className="w-[20px] h-[20px]" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -51,8 +52,10 @@ const GROUP_LABEL_KEYS: Record<string, keyof Dict['nav']['groups']> = {
   Socials: 'socials',
 };
 
-export default function Navbar({ lang, dict }: { lang: string; dict: Dict }) {
+export default function Navbar() {
   const pathname = usePathname();
+  // El SSR pinta la base es-latam; el provider resuelve la cookie en cliente.
+  const { lang, dict } = useI18n();
   const pageLabel = (href: string) => navLabel(dict, href);
   /** Etiqueta de un enlace de menú: traduce las rutas internas y conserva el
    *  nombre declarado en las externas (navLabel devuelve el propio href). */
@@ -68,7 +71,7 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Dict }) {
   const { toast } = useToast();
   const [accOpen, setAccOpen] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
-  const { isMenuOpen, setIsMenuOpen, theme, setTheme, language, setLanguage, sidebarView, setSidebarView, searchQuery, setSearchQuery, user } = useAppStore();
+  const { isMenuOpen, setIsMenuOpen, theme, setTheme, setLanguage, sidebarView, setSidebarView, searchQuery, setSearchQuery, user } = useAppStore();
   const firstRender = useRef(true);
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -175,15 +178,15 @@ export default function Navbar({ lang, dict }: { lang: string; dict: Dict }) {
 
   const pageIcon = (href: string) => ALL_PAGES.find(p => p.href === href)?.icon;
 
-  // Los 4 idiomas son individuales: language ya es el código canónico.
-  const currentLangCode = language;
+  // Los 4 idiomas son individuales: lang del provider ya es el código canónico.
+  const currentLangCode = lang;
 
   const handleLangSelect = (code: string) => {
     if (!isLangAvailable(code)) {
       toast(LANG_BLOCKED_MESSAGE, 'error');
       return;
     }
-    if (code !== language) {
+    if (code !== lang) {
       toast(t(dict.nav.languageChanged, { lang: LANGUAGE_OPTIONS.find((l) => l.code === code)?.label ?? code }), 'info');
       setLanguage(code as any);
     }
