@@ -1,3 +1,5 @@
+'use client';
+
 import Link from "next/link";
 import { CISZU_NETWORK, CISZUBOT_LINKS } from "@/config/site";
 import { ArrowRight, ExternalLink, Shield, Music, Coins, Settings } from "lucide-react";
@@ -5,13 +7,8 @@ import { InfoHero, type InfoTheme } from "@ciszu/ui";
 import PageAmbience from "@/components/layout/PageAmbience";
 import PageReveal from "@/components/layout/PageReveal";
 import QuickDocks from "@/components/molecules/QuickDocks";
-import { getServerI18n } from "@/lib/i18n-server";
-import type { Metadata } from "next";
+import { useDict } from "@/lib/useDict";
 
-export const metadata: Metadata = {
-  title: 'Ciszu Network | PROJECTS — CISZUBOT',
-  description: 'CiszuBot: el bot inteligente de Discord del ecosistema. Moderación, música, juegos, economía y automatización.',
-};
 
 const THEME: InfoTheme = {
   accent: 'text-brand-light',
@@ -37,8 +34,8 @@ const directories = [
   { name: 'Discord Bot List', href: CISZUBOT_LINKS.discordBotListBot },
 ];
 
-export default async function CiszubotPage() {
-  const { t } = await getServerI18n();
+export default function CiszubotPage() {
+  const t = useDict();
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />

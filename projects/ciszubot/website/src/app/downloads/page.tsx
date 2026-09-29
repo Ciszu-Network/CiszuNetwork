@@ -1,24 +1,16 @@
-import type { Metadata } from 'next';
+'use client';
+
 import Link from 'next/link';
-import { cookies } from 'next/headers';
 import { Icon, FabRestore, InfoHero } from '@ciszu/ui';
 import InstallPdwaCta from '@/components/InstallPdwaCta';
-import { getDict, parseLang } from '@/lib/i18n';
+import { useClientI18n } from '@/hooks/useClientI18n';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 
-export const metadata: Metadata = {
-  title: 'CiszuBot | DESCARGAS',
-  description:
-    'Descarga CiszuBot como PDWA (App de Escritorio Progresiva): instalación sin pestañas, con icono propio en tu escritorio y barra de tareas.',
-};
-
-export default async function DescargasPage() {
-  const store = await cookies();
-  const lang = parseLang(store.get('ciszubot_lang')?.value);
-  const t = getDict(lang);
+export default function DescargasPage() {
+  const { dict: t } = useClientI18n();
 
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">

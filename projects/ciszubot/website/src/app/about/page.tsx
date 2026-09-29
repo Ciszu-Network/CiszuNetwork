@@ -1,6 +1,6 @@
-import type { Metadata } from 'next';
+'use client';
+
 import Image from 'next/image';
-import { cookies } from 'next/headers';
 import { assetResolver } from '@ciszunetwork/cdn';
 import {
   InfoHero,
@@ -10,19 +10,12 @@ import {
   type InfoCardItem,
   type InfoStepGroup,
 } from '@ciszu/ui';
-import { getDict, parseLang, INVITE_URL, DISCORD_SERVER, BOT_PREFIX, BOT_VERSION } from '@/lib/i18n';
+import { INVITE_URL, DISCORD_SERVER, BOT_PREFIX, BOT_VERSION } from '@/lib/i18n';
+import { useClientI18n } from '@/hooks/useClientI18n';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
-
-export const revalidate = 60;
-
-export const metadata: Metadata = {
-  title: 'CiszuBot | ABOUT',
-  description:
-    'Acerca de CiszuBot: qué es, cómo funciona, su stack técnico y cómo empezar a usarlo.',
-};
 
 const WHAT: InfoCardItem[] = [
   {
@@ -83,10 +76,8 @@ const STEPS: InfoStepGroup[] = [
   },
 ];
 
-export default async function AboutPage() {
-  const store = await cookies();
-  const lang = parseLang(store.get('ciszubot_lang')?.value);
-  const t = getDict(lang);
+export default function AboutPage() {
+  const { dict: t } = useClientI18n();
   const portrait = assetResolver.resolve('shared/images/francisco_selfie/IMG_20251207_001627@869886661.jpg');
 
   return (

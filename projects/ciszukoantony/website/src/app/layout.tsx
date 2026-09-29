@@ -1,19 +1,17 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { headers } from "next/headers";
 import { Exo_2, Rajdhani } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
-import { GlobalAdvisorConfirm } from "@ciszu/ui/server";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import FeedbackFab from "@/components/layout/FeedbackFab";
+import HideOnEdit from "@/components/layout/HideOnEdit";
 import { CookiesBanner } from "@/components/layout/CookiesBanner";
 import AuthProvider from "@/components/providers/AuthProvider";
 import AdsWithUser from "@/components/providers/AdsWithUser";
 import { I18nProvider } from "@/components/providers/I18nProvider";
-import { metadataForPath } from "@/lib/page-metadata";
 import "./globals.scss";
 
 const PROFILE_PIC = assetResolver.resolve("projects/ciszukoantony/content/logos/images/samples/circle/circle_1_yt.png");
@@ -33,44 +31,49 @@ const rajdhani = Rajdhani({
 export const viewport = {
   themeColor: "#000000",
 };
-/** Metadata SSR por ruta (SEO): las páginas son client components y no pueden
- *  exportar `export const metadata`; se resuelve aquí desde el pathname que
- *  inyecta el middleware (header x-pathname). */
-export async function generateMetadata(): Promise<Metadata> {
-  const h = await headers();
-  const pathname = h.get("x-pathname") ?? "/";
-  return {
-    metadataBase: new URL("https://ciszukoantony.vercel.app"),
-    ...metadataForPath(pathname),
-    keywords: ["Ciszuko Antony", "Ciszuko Network", "portfolio", "developer", "Venezuela", "CEO", "technology"],
-    icons: {
-      icon: PROFILE_PIC,
-      shortcut: PROFILE_PIC,
-      apple: "/pwa/icon-192.png",
-    },
-    appleWebApp: { capable: true, title: "Ciszuko Antony", statusBarStyle: "black-translucent" },
-    manifest: "/manifest.webmanifest",
-    openGraph: {
-      title: "Ciszuko Antony",
-      description: "Official portfolio of Ciszuko Antony (Francisco Garcia Antonio M. / y8) — CEO & Founder of Ciszuko Network.",
-      url: "https://ciszukoantony.vercel.app",
-      siteName: "Ciszuko Antony",
-      images: [{ url: OG_IMAGE, width: 132, height: 118 }],
-      locale: "en_US",
-      type: "website",
-    },
-    verification: {
-      google: "9jc8qVjHjC3ZpZ7gpgbIpHrloar3kaeNIEy0EnR2uc0",
-    },
-  };
-}
 
-export default async function RootLayout({ children }: { children: ReactNode }) {
-  const store = await headers();
-  // Fase 3 (STATIC_MIGRATION_PLAN §4.4): el layout no lee la cookie de idioma.
-  // El SSR sale siempre en la base y el I18nProvider la resuelve en cliente.
+/**
+ * Metadata base del sitio (Fase 4, STATIC_MIGRATION_PLAN §4.5).
+ *
+ * Antes el layout raíz resolvía el pathname por el header `x-pathname` del
+ * middleware (`generateMetadata` + `headers()`), lo que hacía dinámica toda la
+ * web. Ahora la metadata por ruta vive en el `layout.tsx` de cada segmento
+ * (`metadataForPath`), y esta base actúa de fallback: coincide con la metadata
+ * del home, que es lo que `metadataForPath` devolvía para cualquier ruta sin
+ * entrada propia (el helper cae al prefijo `/`).
+ */
+export const metadata: Metadata = {
+  metadataBase: new URL("https://ciszukoantony.vercel.app"),
+  title: "Ciszuko Antony | HOME",
+  description:
+    "Official portfolio of Ciszuko Antony (Francisco Garcia Antonio M. / y8) — CEO & Founder of Ciszuko Network. Innovation, development and technology.",
+  keywords: ["Ciszuko Antony", "Ciszuko Network", "portfolio", "developer", "Venezuela", "CEO", "technology"],
+  icons: {
+    icon: PROFILE_PIC,
+    shortcut: PROFILE_PIC,
+    apple: "/pwa/icon-192.png",
+  },
+  appleWebApp: { capable: true, title: "Ciszuko Antony", statusBarStyle: "black-translucent" },
+  manifest: "/manifest.webmanifest",
+  openGraph: {
+    title: "Ciszuko Antony",
+    description: "Official portfolio of Ciszuko Antony (Francisco Garcia Antonio M. / y8) — CEO & Founder of Ciszuko Network.",
+    url: "https://ciszukoantony.vercel.app",
+    siteName: "Ciszuko Antony",
+    images: [{ url: OG_IMAGE, width: 132, height: 118 }],
+    locale: "en_US",
+    type: "website",
+  },
+  verification: {
+    google: "9jc8qVjHjC3ZpZ7gpgbIpHrloar3kaeNIEy0EnR2uc0",
+  },
+};
+
+export default function RootLayout({ children }: { children: ReactNode }) {
+  // Fase 3/4 (STATIC_MIGRATION_PLAN §4.4-4.5): el layout no lee `headers()`.
+  // El SSR sale siempre en la base y el I18nProvider la resuelve en cliente;
+  // el chrome del editor (`/edit/*`) se oculta con `usePathname()` (HideOnEdit).
   const lang = "es-latam";
-  const isEdit = store.get("x-is-edit") === "1";
 
   return (
     <html lang={lang} className={`${exo2.variable} ${rajdhani.variable}`} suppressHydrationWarning>
@@ -99,14 +102,14 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={PROFILE_PIC} title="Ciszuko Antony" subtitle="Ciszuko Antony Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszukoantony">
               <AdBlockerGuard site="ciszukoantony" logo={PROFILE_PIC} title="Ciszuko Antony" accent="#a78bfa" accentAlt="#ff33cc" donateHref="https://ciszukoantony.vercel.app/donate">
               {/* BetaDisclaimer removido: ahora usa el sistema de push global (GlobalDisclaimer) */}
-              {!isEdit && <Navbar />}
-              {!isEdit && <ZoomWarning />}
-              {!isEdit && <DisclaimerStack headerHeight={64} />}
+              <HideOnEdit><Navbar /></HideOnEdit>
+              <HideOnEdit><ZoomWarning /></HideOnEdit>
+              <HideOnEdit><DisclaimerStack headerHeight={64} /></HideOnEdit>
               <DisclaimerDebug site="ciszukoantony" />
               <GlobalDisclaimer site="ciszukoantony" />
               <main className="flex-grow pt-16">{children}</main>
-              {!isEdit && <Footer />}
-              {!isEdit && <CookiesBanner />}
+              <HideOnEdit><Footer /></HideOnEdit>
+              <HideOnEdit><CookiesBanner /></HideOnEdit>
               </AdBlockerGuard>
             </CloudflareGuard>
             </AdsWithUser>
@@ -115,12 +118,11 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           </DisclaimerProvider>
         </AuthProvider>
         <GlobalAdvisor site="ciszukoantony" />
-        {process.env.VERCEL !== '1' && <GlobalAdvisorConfirm site="ciszukoantony" />}
         <SpeedInsights />
         <PwaRegister />
         <FabStackProvider>
-          {!isEdit && <InstallPdwaButton site="Ciszuko Antony" accent="#a78bfa" accentAlt="#22d3ee" />}
-          {!isEdit && <FeedbackFab />}
+          <HideOnEdit><InstallPdwaButton site="Ciszuko Antony" accent="#a78bfa" accentAlt="#22d3ee" /></HideOnEdit>
+          <HideOnEdit><FeedbackFab /></HideOnEdit>
         </FabStackProvider>
         <PostHogAnalytics app="ciszukoantony" />
         <GoogleAnalytics app="ciszukoantony" />

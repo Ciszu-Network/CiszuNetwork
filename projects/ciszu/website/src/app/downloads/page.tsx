@@ -1,18 +1,14 @@
+'use client';
+
 import { MonitorDown, Smartphone, ShieldCheck } from 'lucide-react';
 import { CISZU_NETWORK } from '@/config/site';
-import type { Metadata } from 'next';
 import { InstallPdwaCta } from '@/components/descargas/InstallPdwaCta';
 import { FabRestore, InfoHero, type InfoTheme } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
-import { getServerI18n } from '@/lib/i18n-server';
+import { useDict } from '@/lib/useDict';
 import { fillTemplate } from '@/lib/i18n';
-
-export const metadata: Metadata = {
-  title: 'Ciszu Network | DESCARGAS',
-  description: 'Instala Ciszu Network como PDWA (App de Escritorio Progresiva) en tu PC o móvil, sin pestañas ni barra de dirección.',
-};
 
 const THEME: InfoTheme = {
   accent: 'text-brand-light',
@@ -23,8 +19,8 @@ const THEME: InfoTheme = {
   gradient: 'from-brand-light to-brand-accent',
 };
 
-export default async function DescargasPage() {
-  const { t } = await getServerI18n();
+export default function DescargasPage() {
+  const t = useDict();
 
   const steps = [
     {

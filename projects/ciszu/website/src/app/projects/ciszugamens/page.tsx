@@ -1,3 +1,5 @@
+'use client';
+
 import Link from "next/link";
 import { CISZU_NETWORK, CISZUBOT_LINKS, CISZUGAMENS, WIDGETS } from "@/config/site";
 import { ArrowRight, CalendarDays, ExternalLink, Gamepad2, Shield, Swords, Users } from "lucide-react";
@@ -6,13 +8,8 @@ import PageAmbience from "@/components/layout/PageAmbience";
 import PageReveal from "@/components/layout/PageReveal";
 import QuickDocks from "@/components/molecules/QuickDocks";
 import WidgetCode from "./WidgetCode";
-import { getServerI18n } from "@/lib/i18n-server";
-import type { Metadata } from "next";
+import { useDict } from "@/lib/useDict";
 
-export const metadata: Metadata = {
-  title: 'Ciszu Network | PROJECTS — CISZUGAMENS',
-  description: 'Ciszugamens: el servidor de la comunidad de Ciszu Network en Discord, WhatsApp y Telegram. Torneos, salas multijuego y comunidad hispanohablante.',
-};
 
 const THEME: InfoTheme = {
   accent: 'text-brand-light',
@@ -108,8 +105,8 @@ const widgetSnippets = [
   },
 ];
 
-export default async function CiszugamensPage() {
-  const { t } = await getServerI18n();
+export default function CiszugamensPage() {
+  const t = useDict();
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />

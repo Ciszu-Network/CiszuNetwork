@@ -1,8 +1,7 @@
-import type { Metadata } from 'next';
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
-import { cookies } from 'next/headers';
-import { getDict, parseLang } from '@/lib/i18n';
 import { assetResolver } from '@ciszunetwork/cdn';
 import {
   Icon,
@@ -15,17 +14,12 @@ import {
   type InfoLinkGroup,
   type InfoTheme,
 } from '@ciszu/ui';
+import { useDict } from '@/components/providers/I18nProvider';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import ColorSwatches, { type BrandColor } from '@/components/information/ColorSwatches';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import IconShowcase from './IconShowcase';
-
-export const metadata: Metadata = {
-  title: 'Information | Ciszuko Antony',
-  description:
-    'Identidad visual, colorología, iconografía y stack tecnológico del portfolio de Ciszuko Antony: la marca personal de Ciszu Network en una sola página.',
-};
 
 const ISOTYPE = assetResolver.resolve(
   'projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png'
@@ -418,9 +412,8 @@ function SectionHeading({
   );
 }
 
-export default async function InformationPage() {
-  const lang = parseLang((await cookies()).get('ciszu_lang')?.value);
-  const dict = getDict(lang);
+export default function InformationPage() {
+  const dict = useDict();
 
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">

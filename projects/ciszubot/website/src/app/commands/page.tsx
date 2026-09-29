@@ -1,23 +1,16 @@
-import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
+'use client';
+
 import { InfoHero } from '@ciszu/ui';
 import CommandExplorer from '@/components/CommandExplorer';
-import { BOT_PREFIX, getDict, parseLang } from '@/lib/i18n';
+import { BOT_PREFIX } from '@/lib/i18n';
+import { useClientI18n } from '@/hooks/useClientI18n';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 
-export const metadata: Metadata = {
-  title: 'CiszuBot | COMMANDS',
-  description:
-    'Todos los comandos de CiszuBot con descripción, uso y aliases. Diversión, información, social y utilidad.',
-};
-
-export default async function CommandsPage() {
-  const store = await cookies();
-  const lang = parseLang(store.get('ciszubot_lang')?.value);
-  const t = getDict(lang);
+export default function CommandsPage() {
+  const { dict: t } = useClientI18n();
 
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">

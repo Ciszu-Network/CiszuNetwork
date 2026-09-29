@@ -1,5 +1,5 @@
-import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
+'use client';
+
 import {
   CopyWithButton,
   Icon,
@@ -18,21 +18,14 @@ import {
   TOP_GG_SERVER,
   TOP_GG_WIDGET_BOT,
   TOP_GG_WIDGET_SERVER,
-  getDict,
-  parseLang,
   type Dict,
 } from '@/lib/i18n';
+import { useClientI18n } from '@/hooks/useClientI18n';
 import { BOT_ID } from '@/lib/botStatus';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
-
-export const metadata: Metadata = {
-  title: 'CiszuBot | EXPLORE',
-  description:
-    'Todas las plataformas oficiales de CiszuBot y Ciszu Network (Top.gg, Discord Bot List, Disboard y Ciszugamens): vota, deja tu reseña, únete a la comunidad y copia los widgets de estado.',
-};
 
 type PlatformKey = keyof Dict['explorePage']['platforms'];
 type ActionKey = 'visit' | 'vote' | 'join';
@@ -221,10 +214,8 @@ function WidgetCard({
   );
 }
 
-export default async function ExplorePage() {
-  const store = await cookies();
-  const lang = parseLang(store.get('ciszubot_lang')?.value);
-  const t = getDict(lang);
+export default function ExplorePage() {
+  const { dict: t } = useClientI18n();
 
   const ctaLabel: Record<ActionKey, string> = {
     visit: t.explorePage.visit,

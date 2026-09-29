@@ -1,4 +1,6 @@
-﻿import Link from "next/link";
+﻿'use client';
+
+import Link from "next/link";
 import Image from "next/image";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { CISZU_NETWORK, CISZUKO_ANTONY } from "@/config/site";
@@ -7,14 +9,8 @@ import { InfoHero, type InfoTheme } from "@ciszu/ui";
 import QuickDocks from "@/components/molecules/QuickDocks";
 import PageAmbience from "@/components/layout/PageAmbience";
 import PageReveal from "@/components/layout/PageReveal";
-import { getServerI18n } from "@/lib/i18n-server";
+import { useDict } from "@/lib/useDict";
 import { fillTemplate } from "@/lib/i18n";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: 'Ciszu Network | ABOUT',
-  description: 'Conoce a Ciszu Network: nuestra misión, visión y compañía de innovación digital.',
-};
 
 const THEME: InfoTheme = {
   accent: 'text-brand-light',
@@ -25,8 +21,8 @@ const THEME: InfoTheme = {
   gradient: 'from-brand-light to-brand-accent',
 };
 
-export default async function AboutPage() {
-  const { t } = await getServerI18n();
+export default function AboutPage() {
+  const t = useDict();
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />

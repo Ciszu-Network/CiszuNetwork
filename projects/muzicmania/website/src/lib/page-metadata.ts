@@ -131,14 +131,6 @@ const FALLBACK: { title: string; description: string } = {
   description: 'El Juego de Ritmo Definitivo en la Web. Domina el beat en una dimensión online con estética futurista.',
 };
 
-/** Genera metadata SSR a partir del pathname de la request (header x-pathname). */
-export function pageMetadataFromHeader(): Metadata {
-  // El layout raíz ya lee headers(); este helper espera el header x-pathname
-  // inyectado por el middleware. Si no está, devuelve el fallback genérico.
-  // Se sobrescribe en el layout con el valor real.
-  return FALLBACK;
-}
-
 /** Busca metadata por ruta exacta o prefix (/changelog/xxx → /changelog). */
 export function metadataForPath(pathname: string): Metadata {
   if (META[pathname]) return META[pathname];

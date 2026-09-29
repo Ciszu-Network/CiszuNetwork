@@ -1,6 +1,4 @@
-import { cookies } from 'next/headers';
 import HomeContent from '@/components/home/HomeContent';
-import { getDict, parseLang } from '@/lib/i18n';
 import type { BotStatus } from '@/lib/botStatus';
 
 export const revalidate = 60;
@@ -30,11 +28,7 @@ async function getBotStatus(): Promise<BotStatus | null> {
 }
 
 export default async function Home() {
-  const store = await cookies();
-  const lang = parseLang(store.get('ciszubot_lang')?.value);
-  const t = getDict(lang);
-
   const status = await getBotStatus();
 
-  return <HomeContent lang={lang} dict={t} status={status} serverNow={Date.now()} />;
+  return <HomeContent status={status} serverNow={Date.now()} />;
 }

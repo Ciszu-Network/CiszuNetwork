@@ -1,16 +1,10 @@
-import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
-import { getDict, parseLang } from '@/lib/i18n';
+'use client';
+
 import { CreditsRoll, type CreditSection, type InfoTheme } from '@ciszu/ui';
+import { useDict } from '@/components/providers/I18nProvider';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
-
-export const metadata: Metadata = {
-  title: 'Ciszuko Antony | CREDITS',
-  description:
-    'Créditos del portfolio de Ciszuko Antony: autoría y dirección, tecnologías base y proyectos del ecosistema Ciszu Network.',
-};
 
 const THEME: InfoTheme = {
   accent: 'text-neon-blue',
@@ -59,9 +53,8 @@ const SECTIONS: CreditSection[] = [
   },
 ];
 
-export default async function CreditsPage() {
-  const lang = parseLang((await cookies()).get('ciszu_lang')?.value);
-  const dict = getDict(lang);
+export default function CreditsPage() {
+  const dict = useDict();
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />
