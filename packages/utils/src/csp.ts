@@ -70,8 +70,43 @@ const ADS_API_ORIGIN = 'https://ciszunetwork.vercel.app';
 // CDN local del ecosistema (scripts/serve-cdn.js) solo en desarrollo.
 const LOCAL_CDN_ORIGINS = ['http://localhost:8788', 'http://127.0.0.1:8788'];
 
+/**
+ * Caché por configuración: el CSP de cada web es estático durante todo el
+ * ciclo de vida de la instancia (edge isolate o proceso Node). La clave es un
+ * JSON estable de las opciones + el modo dev resuelto, así que en el
+ * middleware basta con llamar a `buildCsp(opts)` una vez a nivel de módulo.
+ */
+const cspCache = new Map<string, string>();
+/** Cota de seguridad: si un consumidor genera claves efímeras, no crecer sin límite. */
+const CSP_CACHE_MAX = 64;
+
+function cspCacheKey(opts: CspOptions, dev: boolean): string {
+  // El orden de cada array se conserva (la política resultante depende de él).
+  return JSON.stringify([
+    dev,
+    opts.scriptSrc,
+    opts.imgSrc,
+    opts.connectSrc,
+    opts.fontSrc,
+    opts.styleSrc,
+    opts.frameSrc,
+    opts.workerSrc,
+  ]);
+}
+
 export function buildCsp(opts: CspOptions = {}): string {
   const dev = opts.dev ?? process.env.NODE_ENV !== 'production';
+  const key = cspCacheKey(opts, dev);
+  const cached = cspCache.get(key);
+  if (cached !== undefined) return cached;
+
+  const csp = buildCspUncached(opts, dev);
+  if (cspCache.size >= CSP_CACHE_MAX) cspCache.clear();
+  cspCache.set(key, csp);
+  return csp;
+}
+
+function buildCspUncached(opts: CspOptions, dev: boolean): string {
   const local = dev ? LOCAL_CDN_ORIGINS : [];
   const directives: Array<[string, string[]]> = [
     // default-src 'self': todo lo no listado cae a self.

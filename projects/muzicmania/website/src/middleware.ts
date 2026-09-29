@@ -5,6 +5,45 @@ import { cookieEqualsToken } from '@/lib/edit-auth';
 
 const iast = createIast('muzicmania');
 
+/**
+ * CSP precomputada a nivel de módulo (una vez por instancia edge): la política
+ * depende solo de NODE_ENV y de los orígenes de esta web, no del request.
+ * `buildCsp` además memoiza por configuración (packages/utils/src/csp.ts), así
+ * que ninguna ruta la reconstruye por request.
+ */
+const CSP = buildCsp({
+  imgSrc: [
+    'https://cdn.discordapp.com',
+    'https://www.google.com',
+    'https://www.google.co.ve',
+    'https://www.google-analytics.com',
+    'https://analytics.google.com',
+    'https://pagead2.googlesyndication.com',
+    'https://nowpayments.io',
+    'https://ko-fi.com',
+    'https://storage.ko-fi.com',
+    'https://www.trustpilot.com',
+    'https://widget.trustpilot.com',
+    'https://images.trustpilot.com',
+  ],
+  connectSrc: [
+    'wss://obwzzmbvkrcscqwptlqo.supabase.co',
+    'https://stats.g.doubleclick.net',
+    'https://widget.trustpilot.com',
+    'https://images.trustpilot.com',
+    'https://storage.ko-fi.com',
+  ],
+  styleSrc: ['https://rsms.me', 'https://storage.ko-fi.com', 'https://ko-fi.com'],
+  fontSrc: ['https://rsms.me'],
+  scriptSrc: ['https://widget.trustpilot.com', 'https://www.trustpilot.com', 'https://storage.ko-fi.com'],
+  frameSrc: [
+    'https://nowpayments.io',
+    'https://ko-fi.com',
+    'https://www.trustpilot.com',
+    'https://widget.trustpilot.com',
+  ],
+});
+
 /** Cabecera interna que marca las rutas /edit/* para que el layout oculte el chrome del sitio. */
 const EDIT_HEADER = 'x-is-edit';
 /** Cabecera interna con el pathname, para metadata SSR por ruta (SEO). */
@@ -66,41 +105,7 @@ export async function middleware(request: NextRequest) {
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
-  response.headers.set(
-    'Content-Security-Policy',
-    buildCsp({
-      imgSrc: [
-        'https://cdn.discordapp.com',
-        'https://www.google.com',
-        'https://www.google.co.ve',
-        'https://www.google-analytics.com',
-        'https://analytics.google.com',
-        'https://pagead2.googlesyndication.com',
-        'https://nowpayments.io',
-        'https://ko-fi.com',
-        'https://storage.ko-fi.com',
-        'https://www.trustpilot.com',
-        'https://widget.trustpilot.com',
-        'https://images.trustpilot.com',
-      ],
-      connectSrc: [
-        'wss://obwzzmbvkrcscqwptlqo.supabase.co',
-        'https://stats.g.doubleclick.net',
-        'https://widget.trustpilot.com',
-        'https://images.trustpilot.com',
-        'https://storage.ko-fi.com',
-      ],
-      styleSrc: ['https://rsms.me', 'https://storage.ko-fi.com', 'https://ko-fi.com'],
-      fontSrc: ['https://rsms.me'],
-      scriptSrc: ['https://widget.trustpilot.com', 'https://www.trustpilot.com', 'https://storage.ko-fi.com'],
-      frameSrc: [
-        'https://nowpayments.io',
-        'https://ko-fi.com',
-        'https://www.trustpilot.com',
-        'https://widget.trustpilot.com',
-      ],
-    })
-  );
+  response.headers.set('Content-Security-Policy', CSP);
 
   // ── Sensor IAST (runtime): detecta payloads maliciosos, solo observa ────────
   const params: Record<string, string> = {};
@@ -113,5 +118,13 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next|static|favicon.ico|sitemap.xml|robots.txt|images|icons|audio|logos|fonts).*)'],
+  // Matcher estrechado (Fase 2, STATIC_MIGRATION_PLAN §4.3):
+  // - árboles estáticos de public/ (docs/, pwa/, shared/, music/, tech/) y assets
+  //   por extensión: no necesitan headers de seguridad ni IAST (los sirve el CDN).
+  // - api/ads/{push,clear,debug}: endpoints dev-only (en prod responden vacío).
+  // El resto (HTML/RSC y API reales) sí pasa por el middleware para conservar
+  // cabeceras + IAST.
+  matcher: [
+    '/((?!_next|static|favicon.ico|sitemap.xml|robots.txt|manifest.webmanifest|sw.js|ads.txt|docs/|pwa/|shared/|music/|tech/|images|icons|audio|logos|fonts|api/ads/(?:push|clear|debug)$|.*\\.(?:svg|png|jpe?g|gif|webp|avif|bmp|ico|woff2?|ttf|otf|eot|mp3|mp4|webm|mov|ogg|oga|opus|wav|flac|pdf|zip|docx?|xlsx?|pptx?|csv|txt|md|xml|json|map|html?)$).*)',
+  ],
 };
