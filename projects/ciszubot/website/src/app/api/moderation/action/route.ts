@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 /** Jerarquía: owner > admin > mod = bot. Rango igual o mayor no se modera (el owner sí a owner). */
 const RANK: Record<string, number> = { owner: 100, admin: 50, mod: 30, bot: 30 };
 const SITE = 'ciszubot';
-const ACTIONS = ['ban', 'mute', 'unban', 'unmute', 'delete_review', 'edit_bio'] as const;
+const ACTIONS = ['ban', 'mute', 'unban', 'unmute', 'delete_review', 'edit_bio', 'revoke_sessions'] as const;
 
 /**
  * Acciones de moderación desde la web (vista de staff). Todo pasa por RBAC
@@ -194,6 +194,31 @@ export async function POST(request: Request) {
       }
       await logAction({ text });
       return NextResponse.json({ success: true });
+    }
+
+    if (action === 'revoke_sessions') {
+      // Contención por seguridad: revoca TODAS las sesiones/refresh tokens del
+      // objetivo (la función RPC corre como definer y solo la ejecuta el service role).
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+      let revoked = 0;
+      if (supabaseUrl && serviceKey) {
+        const res = await fetch(`${supabaseUrl}/rest/v1/rpc/revoke_user_sessions`, {
+          method: 'POST',
+          headers: {
+            apikey: serviceKey,
+            Authorization: `Bearer ${serviceKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ p_user_id: targetId }),
+        });
+        if (res.ok) {
+          const value = await res.json().catch(() => 0);
+          revoked = typeof value === 'number' ? value : 0;
+        }
+      }
+      await logAction({ revoked });
+      return NextResponse.json({ success: true, revoked });
     }
 
     return NextResponse.json({ success: false, error: 'Acción no soportada.' }, { status: 400 });
