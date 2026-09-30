@@ -167,8 +167,10 @@ el correo queda vinculado al UUID para siempre.
   actor, acción, motivo, details, fecha, expiración).
 - **Vista de staff (web)**: el toggle del panel (persistido por usuario y web) muestra en
   el perfil el panel de moderación: banear/mutear, levantar sanciones, eliminar todas las
-  reviews del usuario y editar bio (admin+). API: `/api/moderation/action` (BotID; aplica
-  RBAC + jerarquía + auditoría).
+  reviews del usuario y editar bio (admin+). **Toda acción exige una sesión step-up**
+  (código de un solo uso generado en la devcon → elevación de 45 min firmada con HMAC;
+  sin ella la API responde `step_up_required`). API: `/api/moderation/action` (BotID;
+  RBAC + jerarquía + auditoría + detección de anomalías con alertas ntfy).
 - **Devcon**: sección "GESTIÓN DE USUARIOS" con las mismas acciones + `ip-ban`; el actor
   es la identidad validada de la consola (persona real) y todo se registra también en el
   log de auditoría de la devcon. Lo aplicado se refleja en la web al instante (mismas
@@ -186,6 +188,8 @@ el correo queda vinculado al UUID para siempre.
 | `scripts/roles.js` | `list [web]` · `grant <web> <username> <rol> [actor]` · `revoke <web> <username>`. |
 | `scripts/bot-accounts.js` | Crea/actualiza las cuentas bot y su rol. |
 | `scripts/moderation.js` | `status/ban/mute/unban/unmute/delete-reviews/edit-bio/ip-ban` con `--actor` obligatorio y auditoría (uso devcon). |
+| `scripts/staff-elevate.js` | Genera claves step-up de un solo uso (admin/owner requieren `--owner-approved`). |
+| `scripts/site-control.js` | Kill switch por web (`status` / `on` / `off`) con motivo y actor. |
 | devcon (`test/website/debug/dev_console.ps1`) | Sección **ROLES / ETIQUETAS**: otorgar (web + username exacto + rol), quitar, listar. Registra `actor` en el log de auditoría. |
 
 ## 10. Seguridad (RLS y límites)
