@@ -118,6 +118,8 @@ export default function LoginPage() {
   const v3ExecutorRef = React.useRef<(() => Promise<string | null>) | null>(null);
   // Sesión a medio autenticar: la contraseña ya es válida pero falta la clave 2FA.
   const [twoFactor, setTwoFactor] = useState<{ token: string; email: string } | null>(null);
+  // Cuenta en suspensión de eliminación: se bloquea hasta aceptar (o rechazar y salir).
+  const [recovery, setRecovery] = useState<{ token: string; email: string } | null>(null);
   const { toast } = useToast();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -176,6 +178,18 @@ export default function LoginPage() {
       // sesión no se da por buena todavía: se pide la clave antes de entrar.
       const accessToken = data.session?.access_token;
       if (accessToken) {
+        // ¿Cuenta en suspensión de eliminación? Se bloquea hasta aceptar la recuperación.
+        const { data: ownDeletion } = await supabase
+          .schema('public')
+          .from('account_deletions')
+          .select('status')
+          .eq('user_id', data.user?.id ?? '')
+          .maybeSingle();
+        if ((ownDeletion as { status?: string } | null)?.status === 'pending') {
+          setRecovery({ token: accessToken, email: data.user?.email ?? '' });
+          return;
+        }
+
         const twoFactorStatus = await fetch('/api/auth/2fa/status', {
           headers: { Authorization: `Bearer ${accessToken}` },
         })
@@ -229,6 +243,69 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  /** Acepta la recuperación (no podrá eliminar en 30 días) y entra. */
+  const acceptRecovery = async () => {
+    if (!recovery) return;
+    setLocalError(null);
+    try {
+      const res = await fetch('/api/auth/account/recovery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${recovery.token}` },
+        body: JSON.stringify({ accept: true }),
+      });
+      const payload = (await res.json().catch(() => ({}))) as { success?: boolean; error?: string };
+      if (!res.ok || payload.success !== true) throw new Error(payload.error || 'No pudimos recuperar la cuenta.');
+      setRecovery(null);
+      router.replace('/');
+    } catch (err: any) {
+      setLocalError(err?.message || 'No pudimos recuperar la cuenta.');
+      setRecovery(null);
+      void supabase.auth.signOut();
+    }
+  };
+
+  /** Rechaza la recuperación: no se otorga y se cierra la sesión. */
+  const rejectRecovery = async () => {
+    setRecovery(null);
+    await supabase.auth.signOut().catch(() => {});
+    setLocalError('No recuperaste la cuenta. Vuelve a iniciar sesión si cambias de opinión (dentro de los 15 días).');
+  };
+
+  // Cuenta eliminada: se bloquea hasta confirmar (o rechazar) la recuperación.
+  if (recovery) {
+    return (
+      <div className="min-h-screen pt-28 pb-20 px-4 relative overflow-hidden">
+        <div className="max-w-md mx-auto relative">
+          <div className="p-6 md:p-8 bg-surface border border-red-500/30 rounded-[2rem] shadow-2xl backdrop-blur-3xl text-center space-y-4">
+            <p className="font-header text-lg font-black uppercase tracking-wide text-red-400">Cuenta eliminada</p>
+            <p className="text-sm text-muted leading-relaxed">
+              Esta cuenta está en suspensión de eliminación. Puedes recuperarla ahora: al recuperarla
+              aceptas que <strong className="text-ink">no podrás volver a eliminarla durante 30 días</strong>.
+              Si rechazas, no se te otorga la recuperación y se cierra la sesión.
+            </p>
+            {localError && <p className="text-red-400 text-[11px] font-bold">{localError}</p>}
+            <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
+              <button
+                type="button"
+                onClick={acceptRecovery}
+                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-white"
+              >
+                Recuperar mi cuenta
+              </button>
+              <button
+                type="button"
+                onClick={rejectRecovery}
+                className="inline-flex items-center justify-center rounded-xl border border-border px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-muted hover:text-ink"
+              >
+                No, cerrar sesión
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Pantalla de verificación en dos pasos: sustituye al formulario de acceso.
   if (twoFactor) {
