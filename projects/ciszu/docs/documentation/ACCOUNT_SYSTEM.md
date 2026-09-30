@@ -156,6 +156,27 @@ el correo queda vinculado al UUID para siempre.
   `scripts/bot-accounts.js` (password aleatoria desconocida — nadie puede iniciar sesión
   con ellas), email interno `bot+<username>@ciszunetwork.com` y rol `bot` en su web.
 
+## 8.5. Moderación (staff en la web y devcon)
+
+- **Modelo**: RBAC por website (`user_roles`) + jerarquía `owner > admin > mod = bot`,
+  con **protecciones**: owner y cuentas bot solo los toca el owner; nadie modera rango
+  igual o superior (el owner sí a owner); sin auto-moderación. `edit_bio` requiere admin+.
+- **Sanciones**: `ban`/`mute` (temporal con horas o permanente) con **motivo obligatorio**;
+  viven en `sanctions` (con autor `staff:<quién>` y expiración) y se levantan con
+  unban/unmute. Toda acción queda auditada en **`moderation_actions`** (website, objetivo,
+  actor, acción, motivo, details, fecha, expiración).
+- **Vista de staff (web)**: el toggle del panel (persistido por usuario y web) muestra en
+  el perfil el panel de moderación: banear/mutear, levantar sanciones, eliminar todas las
+  reviews del usuario y editar bio (admin+). API: `/api/moderation/action` (BotID; aplica
+  RBAC + jerarquía + auditoría).
+- **Devcon**: sección "GESTIÓN DE USUARIOS" con las mismas acciones + `ip-ban`; el actor
+  es la identidad validada de la consola (persona real) y todo se registra también en el
+  log de auditoría de la devcon. Lo aplicado se refleja en la web al instante (mismas
+  tablas).
+- **Pendiente declarado**: el *efecto* del mute bloqueando escrituras por feature (hoy:
+  sanción visible + registro); edición de "cantidad de amigos" cuando exista el sistema de
+  amistades; detalle por sector en el panel de moderación.
+
 ## 9. Operación (scripts y consolas)
 
 | Herramienta | Uso |
@@ -164,6 +185,7 @@ el correo queda vinculado al UUID para siempre.
 | `scripts/finalize-deletions.js` | Finaliza eliminaciones vencidas (cron diario). |
 | `scripts/roles.js` | `list [web]` · `grant <web> <username> <rol> [actor]` · `revoke <web> <username>`. |
 | `scripts/bot-accounts.js` | Crea/actualiza las cuentas bot y su rol. |
+| `scripts/moderation.js` | `status/ban/mute/unban/unmute/delete-reviews/edit-bio/ip-ban` con `--actor` obligatorio y auditoría (uso devcon). |
 | devcon (`test/website/debug/dev_console.ps1`) | Sección **ROLES / ETIQUETAS**: otorgar (web + username exacto + rol), quitar, listar. Registra `actor` en el log de auditoría. |
 
 ## 10. Seguridad (RLS y límites)
