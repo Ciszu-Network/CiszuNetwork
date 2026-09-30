@@ -121,8 +121,6 @@ export default function LoginPage() {
   const v3ExecutorRef = useRef<(() => Promise<string | null>) | null>(null);
   // Sesión a medio autenticar: la contraseña ya es válida pero falta la clave 2FA.
   const [twoFactor, setTwoFactor] = useState<{ token: string; email: string } | null>(null);
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [acceptedMarketing, setAcceptedMarketing] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -386,38 +384,6 @@ export default function LoginPage() {
                   />
 
                   {error && <p className="text-red-400 text-[11px] font-bold px-1">{error}</p>}
-
-                  <div className="flex items-start gap-3">
-                    <div className="relative flex items-center justify-center shrink-0 w-5 h-5 mt-0.5">
-                      <input
-                        type="checkbox"
-                        checked={acceptedTerms}
-                        onChange={(e) => setAcceptedTerms(e.target.checked)}
-                        className="peer appearance-none w-full h-full border-2 border-white/20 rounded bg-black/50 checked:bg-neon-blue checked:border-neon-blue transition-all"
-                      />
-                      <svg viewBox="0 0 24 24" className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    </div>
-                    <p className="text-[11px] text-gray-400 font-bold leading-relaxed">
-                      Acepto los <a href="/terms" className="text-neon-blue hover:underline">Términos de Servicio</a> y la <a href="/privacy" className="text-neon-blue hover:underline">Política de Privacidad</a>.
-                    </p>
-                  </div>
-                  {errors.terms && <p className="text-red-400 text-[11px] font-bold px-1">{errors.terms}</p>}
-
-                  <div className="flex items-start gap-3">
-                    <div className="relative flex items-center justify-center shrink-0 w-5 h-5 mt-0.5">
-                      <input
-                        type="checkbox"
-                        checked={acceptedMarketing}
-                        onChange={(e) => setAcceptedMarketing(e.target.checked)}
-                        className="peer appearance-none w-full h-full border-2 border-white/20 rounded bg-black/50 checked:bg-neon-blue checked:border-neon-blue transition-all"
-                      />
-                      <svg viewBox="0 0 24 24" className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    </div>
-                    <p className="text-[11px] text-gray-400 font-bold leading-relaxed">
-                      Acepto recibir comunicaciones de <a href="/terms" className="text-neon-blue hover:underline">CiszuBot</a> (novedades, actualizaciones, ofertas). <strong className="text-neon-pink">No es publicidad de terceros.</strong>
-                    </p>
-                  </div>
-                  {errors.marketing && <p className="text-red-400 text-[11px] font-bold px-1">{errors.marketing}</p>}
 
                   <RecaptchaGate
                     siteKeyV2={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_CISZUBOT || ''}
