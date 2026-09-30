@@ -116,7 +116,7 @@ function buildCspUncached(opts: CspOptions, dev: boolean): string {
     // 'unsafe-eval' SOLO en desarrollo: el cliente de Next.js dev lo exige.
     [
       'script-src',
-      ["'self'", "'unsafe-inline'", ...(dev ? ["'unsafe-eval'"] : []), 'https://challenges.cloudflare.com', 'https://static.cloudflareinsights.com', 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://va.vercel-scripts.com', GOOGLE_TAG_MANAGER_ORIGIN, GOOGLE_ADSENSE_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN_2, GOOGLE_AD_CREATIVE_ORIGIN, GOOGLE_AD_PARTNER_ORIGIN, ...(opts.scriptSrc ?? [])],
+      ["'self'", "'unsafe-inline'", ...(dev ? ["'unsafe-eval'"] : []), 'https://challenges.cloudflare.com', 'https://static.cloudflareinsights.com', 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://va.vercel-scripts.com', 'https://www.google.com', GOOGLE_STATIC_ORIGIN, GOOGLE_TAG_MANAGER_ORIGIN, GOOGLE_ADSENSE_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN_2, GOOGLE_AD_CREATIVE_ORIGIN, GOOGLE_AD_PARTNER_ORIGIN, ...(opts.scriptSrc ?? [])],
     ],
     // Estilos inline de la v3 PDWA y utilidades CSS en línea del ecosistema.
     // styleSrc extra: hoja de estilos remota del editor Puck (inter.css de rsms.me).
@@ -131,14 +131,14 @@ function buildCspUncached(opts: CspOptions, dev: boolean): string {
     // eventos por beacon a www.google-analytics.com, *.google-analytics.com
     // (region1/2) y analytics.google.com. El noscript de GTM abre un iframe de
     // ns.html en googletagmanager.com (frame-src más abajo).
-    ['connect-src', ["'self'", SUPABASE_ORIGIN, 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://static.cloudflareinsights.com', 'https://cloudflareinsights.com', 'https://challenges.cloudflare.com', 'https://va.vercel-scripts.com', 'https://*.ingest.us.sentry.io', GOOGLE_TAG_MANAGER_ORIGIN, GOOGLE_ADSENSE_ORIGIN, GOOGLE_ADSENSE_WILDCARD, ADS_API_ORIGIN, 'https://www.google-analytics.com', 'https://*.google-analytics.com', 'https://analytics.google.com', GOOGLE_DOUBLECLICK_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN_2, GOOGLE_ANALYTICS_STATS_ORIGIN, ...local, ...(opts.connectSrc ?? [])]],
+    ['connect-src', ["'self'", SUPABASE_ORIGIN, 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://static.cloudflareinsights.com', 'https://cloudflareinsights.com', 'https://challenges.cloudflare.com', 'https://va.vercel-scripts.com', 'https://www.google.com', 'https://*.ingest.us.sentry.io', GOOGLE_TAG_MANAGER_ORIGIN, GOOGLE_ADSENSE_ORIGIN, GOOGLE_ADSENSE_WILDCARD, ADS_API_ORIGIN, 'https://www.google-analytics.com', 'https://*.google-analytics.com', 'https://analytics.google.com', GOOGLE_DOUBLECLICK_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN_2, GOOGLE_ANALYTICS_STATS_ORIGIN, ...local, ...(opts.connectSrc ?? [])]],
     // frame-src: AdSense abre iframes de verificación de tráfico en
     // ep1/ep2.adtrafficquality.google (antes solo estaban en script/connect-src,
     // así que el marco se bloqueaba con "Framing ... violates frame-src").
     // Incluye `local` (solo dev): las previsualizaciones de PDF (p.ej. los CV
     // del portfolio) se sirven desde el CDN local (localhost:8788) durante el
     // desarrollo; sin este origen el iframe quedaba bloqueado y no se veía.
-    ['frame-src', ["'self'", 'https://challenges.cloudflare.com', GOOGLE_TAG_MANAGER_ORIGIN, GOOGLE_DOUBLECLICK_ORIGIN, GOOGLE_ADSENSE_ORIGIN, GOOGLE_AD_CREATIVE_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN_2, 'https://www.google.com', ...local, ...(opts.frameSrc ?? [])]],
+    ['frame-src', ["'self'", 'https://challenges.cloudflare.com', GOOGLE_TAG_MANAGER_ORIGIN, GOOGLE_DOUBLECLICK_ORIGIN, GOOGLE_ADSENSE_ORIGIN, GOOGLE_AD_CREATIVE_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN_2, 'https://www.google.com', 'https://recaptcha.google.com', ...local, ...(opts.frameSrc ?? [])]],
     // worker-src explícito: PostHog recording crea workers desde blob: URLs;
     // sin esta directiva cae a script-src y se bloquea (paridad en las 4 webs).
     ['worker-src', ["'self'", 'blob:', ...(opts.workerSrc ?? [])]],

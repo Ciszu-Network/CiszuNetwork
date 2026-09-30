@@ -1,4 +1,6 @@
+import { Suspense } from 'react';
 import HomeContent from '@/components/home/HomeContent';
+import AuthErrorNotice from '@/components/auth/AuthErrorNotice';
 import type { BotStatus } from '@/lib/botStatus';
 
 export const revalidate = 60;
@@ -30,5 +32,13 @@ async function getBotStatus(): Promise<BotStatus | null> {
 export default async function Home() {
   const status = await getBotStatus();
 
-  return <HomeContent status={status} serverNow={Date.now()} />;
+  return (
+    <>
+      {/* ?auth=error → modal de aviso (sin romper el ISR de la home). */}
+      <Suspense fallback={null}>
+        <AuthErrorNotice />
+      </Suspense>
+      <HomeContent status={status} serverNow={Date.now()} />
+    </>
+  );
 }
