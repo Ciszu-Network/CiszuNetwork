@@ -5,6 +5,73 @@ import { cookieEqualsToken } from '@/lib/edit-auth';
 
 const iast = createIast('ciszunetwork');
 
+// ── Kill switch (site_controls) ─────────────────────────────────────────────
+// Si la web esta en mantenimiento, TODA pagina responde 503 con una pantalla
+// propia (las rutas /api/* quedan libres para no romper integraciones). La
+// bandera vive en Supabase (lectura publica) y se cachea 60s en el edge para
+// no consultar en cada request. Ante cualquier fallo: fail-open (la web sigue).
+const SITE = 'ciszunetwork';
+const SITE_NAME = 'Ciszu Network';
+
+type SiteControl = { maintenance: boolean; message: string; reason: string; until: string | null };
+let controlCache: { at: number; value: SiteControl | null } | null = null;
+
+async function getSiteControl(): Promise<SiteControl | null> {
+  if (controlCache && Date.now() - controlCache.at < 60_000) return controlCache.value;
+  try {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!url || !key) return null;
+    const res = await fetch(
+      `${url}/rest/v1/site_controls?website=eq.${SITE}&select=maintenance,message,reason,until`,
+      {
+        headers: { apikey: key, Authorization: `Bearer ${key}`, 'Accept-Profile': 'public' },
+        cache: 'no-store',
+      },
+    );
+    const rows = (await res.json().catch(() => [])) as Array<Record<string, unknown>>;
+    const row = res.ok && Array.isArray(rows) ? rows[0] : null;
+    const value: SiteControl | null = row
+      ? {
+          maintenance: row.maintenance === true,
+          message: typeof row.message === 'string' ? row.message : '',
+          reason: typeof row.reason === 'string' ? row.reason : '',
+          until: typeof row.until === 'string' ? row.until : null,
+        }
+      : null;
+    controlCache = { at: Date.now(), value };
+    return value;
+  } catch {
+    return null;
+  }
+}
+
+function maintenanceResponse(message: string, reason: string, until: string | null): Response {
+  const esc = (v: string) =>
+    v.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  const html =
+    '<!doctype html><html lang="es"><head><meta charset="utf-8">' +
+    '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<meta name="robots" content="noindex">' +
+    `<title>Mantenimiento — ${SITE_NAME}</title>` +
+    '<style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;' +
+    'background:#05050a;color:#e8e8f0;font-family:system-ui,sans-serif;text-align:center;padding:24px}' +
+    'main{max-width:520px}h1{font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:#22d3ee;margin:14px 0}' +
+    'p{color:#9aa;line-height:1.6;font-size:14px}' +
+    '.tag{display:inline-block;padding:6px 12px;border:1px solid #ff33cc55;border-radius:999px;' +
+    'color:#ff33cc;font-size:11px;letter-spacing:.15em;text-transform:uppercase}</style></head>' +
+    `<body><main><div class="tag">Ciszu Network · ${SITE_NAME}</div>` +
+    '<h1>Sitio en mantenimiento</h1>' +
+    `<p>${esc(message || 'Estamos realizando una intervencion. Volvemos pronto.')}</p>` +
+    (reason ? `<p><strong>Motivo:</strong> ${esc(reason)}</p>` : '') +
+    (until ? `<p><strong>Estimado:</strong> ${esc(new Date(until).toLocaleString('es-VE'))}</p>` : '') +
+    '</main></body></html>';
+  return new Response(html, {
+    status: 503,
+    headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'retry-after': '300' },
+  });
+}
+
 /**
  * CSP precomputada a nivel de módulo (una vez por instancia edge): la política
  * depende solo de NODE_ENV y de los orígenes de esta web, no del request.
@@ -54,6 +121,15 @@ const CSP = buildCsp({
  */
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // ── Kill switch: si la web esta en mantenimiento, 503 con pantalla propia.
+  //    (Las rutas /api/* se excluyen para no romper integraciones.)
+  if (!pathname.startsWith('/api/')) {
+    const control = await getSiteControl();
+    if (control?.maintenance && (!control.until || Date.parse(control.until) > Date.now())) {
+      return maintenanceResponse(control.message, control.reason, control.until);
+    }
+  }
 
   // ── Protección del editor visual (Puck) ────────────────────────────────────
   const isEditPage = pathname === '/edit' || pathname.startsWith('/edit/');
