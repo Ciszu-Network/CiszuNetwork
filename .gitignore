@@ -579,3 +579,11 @@ __marimo__/
 .streamlit/secrets.toml
 
 
+
+# ===== Interno (no publicar) =====
+# Consola de desarrollo (TUI) - nunca publica.
+test/website/debug/
+# Migraciones/schema de Supabase - internas.
+services/supabase/
+# Scripts de operacion (migraciones, roles, moderacion, bots...) - internos.
+scripts/
