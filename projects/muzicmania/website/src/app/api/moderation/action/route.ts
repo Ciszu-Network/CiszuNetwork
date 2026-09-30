@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { checkBotId } from 'botid/server';
-import { adminClient, authenticate } from '../../auth/2fa/_lib';
+import { adminClient, authenticate, verifyStaffElevation } from '../../auth/2fa/_lib';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -59,6 +59,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: 'Sin permisos de moderación.' }, { status: 403 });
     }
 
+    // Step-up obligatorio: sesión de elevación temporal (código generado en devcon).
+    if (!verifyStaffElevation(user.userId, request.headers.get('x-staff-elevation'))) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'step_up_required',
+          message: 'Necesitas una sesión step-up: genera una clave en la devcon y verifícala en Configuración.',
+        },
+        { status: 401 },
+      );
+    }
+
     const targetRows = await admin
       .schema('public')
       .from('user_roles')
@@ -95,6 +107,35 @@ export async function POST(request: Request) {
         : null;
     const actor = `staff:${user.email}`;
 
+    // Alertas push (ntfy) y detección de anomalías: picos de acciones del actor.
+    const notify = (text: string) => {
+      const topic = process.env.NOTIFY_TOPIC;
+      if (topic) void fetch(`https://ntfy.sh/${topic}`, { method: 'POST', body: text }).catch(() => {});
+    };
+    try {
+      const recent = await admin
+        .schema('public')
+        .from('moderation_actions')
+        .select('created_at')
+        .eq('actor', actor)
+        .order('created_at', { ascending: false })
+        .limit(10);
+      const recentRows = (recent.data as Array<{ created_at: string }> | null) ?? [];
+      const last10 = recentRows.filter((r) => Date.now() - Date.parse(r.created_at) < 10 * 60 * 1000).length;
+      if (last10 >= 6) {
+        notify(`[ALERTA] ${SITE}: ${actor} supero el limite de acciones (${last10} en 10 min). Bloqueado.`);
+        return NextResponse.json(
+          { success: false, error: 'Demasiadas acciones seguidas. Espera unos minutos (quedó registrado).' },
+          { status: 429 },
+        );
+      }
+      if (last10 >= 3) {
+        notify(`[aviso] ${SITE}: ${actor} acumula ${last10} acciones de moderación en 10 min.`);
+      }
+    } catch {
+      /* la detección nunca debe bloquear una operación legítima por un fallo */
+    }
+
     const logAction = async (details: Record<string, unknown> = {}) => {
       await admin.schema('public').from('moderation_actions').insert({
         website: SITE,
@@ -105,6 +146,7 @@ export async function POST(request: Request) {
         details,
         expires_at: expiresAt,
       });
+      notify(`[moderación] ${SITE}: ${action} sobre ${targetId} por ${actor}${reason ? ' · ' + reason : ''}`);
     };
 
     if (action === 'ban' || action === 'mute') {

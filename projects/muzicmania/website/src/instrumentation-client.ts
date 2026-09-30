@@ -59,6 +59,7 @@ initBotId({
     { path: '/api/auth/account/privacy', method: 'POST' },
     { path: '/api/auth/register/guard', method: 'POST' },
     { path: '/api/moderation/action', method: 'POST' },
+    { path: '/api/staff/elevate', method: 'POST' },
   ],
 });
 

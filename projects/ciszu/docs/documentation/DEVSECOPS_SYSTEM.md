@@ -211,5 +211,61 @@ En esos casos abrir incidente según el playbook (§12) en vez de esperar a la a
 | ¿Dónde están las reglas RLS? | `SECURITY_PROTOCOLS.md` (no negociables) |
 | ¿Y los falsos positivos? | Se documentan con `--no-verify` justificado; se revisan en auditoría |
 
-_Última revisión: 13 ago 2026._ Relacionado: `SECURITY_PROTOCOLS.md`, `CODE_PRINCIPLES_PROTOCOLS.md`,
-`VAULT_SYSTEM.md`, `TESTING_SYSTEM.md`.
+## 19. Medidas aplicadas — reporte seguridad_escalabilidad (30 sep 2026)
+
+Aplicación real del reporte `report/seguridad_escalabilidad_report-2026-09-30.md`,
+adaptada al entorno (owner único aceptado; llaves físicas FIDO2 diferidas).
+
+### 19.1 Contraseña del devcon
+
+- Rotada a una clave autogenerada de 38 caracteres (`CISZU-` + 32 alfanuméricos
+  aleatorios); vive SOLO en el vault cifrado (`services/supabase/.env` +
+  `.env.age`) y en Bitwarden. La consola la lee del vault en cada arranque.
+- Politica: nunca reutilizarla en otro sitio; rotar ante cualquier sospecha
+  (`vault.ps1 crypt` + `verify` tras el cambio).
+
+### 19.2 Step-up de staff (sub-login adaptado)
+
+- En lugar de llaves fisicas (diferidas): códigos de elevación de un solo uso
+  generados desde la **devcon** (sección STEP-UP): hash SHA-256, caducan (30 min
+  por defecto) y producen una **sesión de elevación de 45 min** firmada con HMAC
+  (`STAFF_ELEVATION_SECRET`, sin estado) que habilita las acciones de
+  moderación en la web.
+- Generar para rangos admin/owner exige **aprobación del owner**
+  (`--owner-approved`), registrada en auditoría (`staff_elevate`).
+- La vista de staff de la web exige la sesión step-up para ejecutar acciones;
+  sin ella la API responde `step_up_required` (401).
+
+### 19.3 Detección de anomalías y alertas
+
+- Contador por actor: >=3 acciones de moderación en 10 min → aviso push ntfy;
+  >=6 → bloqueo temporal (429) + alerta. Todo registrado en auditoría.
+- ntfy en acciones criticas: moderación (web y devcon), kill switch y claves
+  step-up. Requiere `NOTIFY_TOPIC` (ya en GitHub Secrets; para alertas web debe
+  anadirse tambien a los 4 proyectos de Vercel).
+
+### 19.4 Kill switch (contención)
+
+- `site_controls` + middleware de las 4 webs: pantalla 503 con motivo y ETA en
+  todas las páginas; `/api/*` libres; caché 60s; fail-open. Control por
+  `scripts/site-control.js` y sección CONTROL DE SITIOS en la devcon.
+
+### 19.5 4-eyes adaptado
+
+- Las acciones destructivas requieren dos factores humanos: la cuenta staff +
+  la clave step-up emitida por otra persona desde la devcon (o por el owner
+  aprobando al generarla). Todo queda auditado (`moderation_actions`).
+
+### 19.6 Aceptado / diferido (declarado)
+
+- **Owner único**: riesgo aceptado por diseño (no hay Co-owner); mitigado con
+  step-up, auditoría y separación de superficies.
+- **Llaves físicas FIDO2**: diferidas hasta escalabilidad (el step-up cubre el
+  caso de uso inmediato).
+- **Purga de historial git** (tooling interno retirado que sigue en commits
+  antiguos): pendiente de ejecución coordinada con el owner (destructiva).
+- **Simulacro de restore de backup**: pendiente de agendar.
+
+_Última revisión: 30 sep 2026._ Relacionado: `SECURITY_PROTOCOLS.md`, `CODE_PRINCIPLES_PROTOCOLS.md`,
+`VAULT_SYSTEM.md`, `TESTING_SYSTEM.md`, `report/seguridad_escalabilidad_report-2026-09-30.md`,
+`ACCOUNT_SYSTEM.md`.
