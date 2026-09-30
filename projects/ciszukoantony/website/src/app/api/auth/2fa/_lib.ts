@@ -39,6 +39,7 @@ interface DbQuery extends PromiseLike<DbResult> {
   upsert(values: Record<string, unknown>, options?: Record<string, unknown>): DbQuery;
   eq(column: string, value: unknown): DbQuery;
   ilike(column: string, pattern: string): DbQuery;
+  delete(): DbQuery;
   order(column: string, options?: Record<string, unknown>): DbQuery;
   limit(count: number): DbQuery;
   single(): Promise<DbResult>;

@@ -35,6 +35,13 @@ export default function DynamicProfilePage() {
   const [banInfo, setBanInfo] = useState<{ actor: string } | null>(null);
   // Privacidad del perfil (public | friends | private).
   const [visibility, setVisibility] = useState<'public' | 'friends' | 'private'>('public');
+  // Vista de staff: rango del VISITANTE en esta web + toggle persistido.
+  const [viewerRank, setViewerRank] = useState<string | null>(null);
+  const [staffViewOn, setStaffViewOn] = useState(false);
+  const [modReason, setModReason] = useState('');
+  const [modHours, setModHours] = useState('24');
+  const [modMsg, setModMsg] = useState<string | null>(null);
+  const [modBusy, setModBusy] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -75,6 +82,22 @@ export default function DynamicProfilePage() {
             ]);
             const privacy = ((privacyRes.data as { visibility?: string } | null)?.visibility) ?? 'public';
             if (privacy === 'friends' || privacy === 'private') setVisibility(privacy);
+            // Vista de staff: rol del visitante en esta web + toggle persistido.
+            if (currentUser?.id && currentUser.id !== data.id) {
+              const ownRoleRes = await publicDb
+                .from('user_roles')
+                .select('role')
+                .eq('user_id', currentUser.id)
+                .eq('website', 'muzicmania')
+                .maybeSingle();
+              const ownRole = (ownRoleRes.data as { role?: string } | null)?.role ?? null;
+              setViewerRank(
+                ownRole && ['owner', 'admin', 'mod', 'bot'].includes(ownRole) ? ownRole : null,
+              );
+              setStaffViewOn(
+                window.localStorage.getItem(`ciszu-staff-view:muzicmania:${currentUser.id}`) === 'on',
+              );
+            }
             setUserRole(((roleRes.data as { role?: string } | null)?.role) ?? null);
             setAccountStatus(((statusRes.data as { status?: string } | null)?.status) ?? null);
             const bans = (banRes.data as Array<{ actor?: string; expires_at?: string | null }> | null) ?? [];
@@ -92,7 +115,7 @@ export default function DynamicProfilePage() {
     };
 
     if (identifier) fetchProfile();
-  }, [identifier]);
+  }, [identifier, currentUser?.id]);
 
   const isOwnProfile = currentUser?.id === profile?.id;
 
@@ -100,6 +123,45 @@ export default function DynamicProfilePage() {
   // historial, logros, amistades, comentarios). El sistema de amigos aún no
   // existe: por ahora solo el dueño ve el detalle completo.
   const restricted = !!profile && !isOwnProfile && (visibility === 'private' || visibility === 'friends');
+
+  // Moderación (vista de staff): requiere rango en esta web + toggle activado.
+  const canModerate = !!viewerRank && staffViewOn && !isOwnProfile && !!profile;
+
+  const runModeration = async (action: string, extra: Record<string, unknown> = {}) => {
+    if (!profile?.id) return;
+    setModBusy(true);
+    setModMsg(null);
+    try {
+      const { data: sess } = await supabase.auth.getSession();
+      const token = sess.session?.access_token;
+      const res = await fetch('/api/moderation/action', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          action,
+          targetId: profile.id,
+          reason: modReason.trim(),
+          hours: modHours ? Number(modHours) : 0,
+          ...extra,
+        }),
+      });
+      const data = (await res.json().catch(() => ({}))) as { success?: boolean; error?: string };
+      if (!res.ok || data.success !== true) {
+        setModMsg(data.error ?? 'La acción falló.');
+        return;
+      }
+      toast(`Moderación aplicada: ${action}. Queda registrada con tu identidad.`, 'success');
+      setModReason('');
+      setTimeout(() => window.location.reload(), 700);
+    } catch {
+      setModMsg('No pudimos aplicar la acción.');
+    } finally {
+      setModBusy(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -236,6 +298,73 @@ export default function DynamicProfilePage() {
             </div>
           </div>
         </section>
+
+        {canModerate && (
+          <section className="rounded-[2rem] border border-orange-500/30 bg-orange-500/5 p-6 space-y-4" data-testid="staff-moderation">
+            <h3 className="font-header text-sm font-black uppercase tracking-widest text-orange-400">
+              Moderación — {viewerRank} (visible solo para staff; toda acción queda auditada)
+            </h3>
+            <div className="flex flex-wrap gap-2 items-center">
+              <input
+                value={modReason}
+                onChange={(e) => setModReason(e.target.value)}
+                placeholder="Motivo / caso (obligatorio para ban y mute)"
+                className="rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-xs text-white min-w-[240px] outline-none focus:border-orange-400/60"
+              />
+              <select
+                value={modHours}
+                onChange={(e) => setModHours(e.target.value)}
+                className="rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-xs text-white outline-none"
+              >
+                <option value="1">1 hora</option>
+                <option value="24">24 horas</option>
+                <option value="168">7 días</option>
+                <option value="720">30 días</option>
+                <option value="">Permanente</option>
+              </select>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <button type="button" disabled={modBusy} onClick={() => void runModeration('ban')} className="rounded-xl bg-red-500/90 px-4 py-2 font-header text-[11px] font-black uppercase tracking-widest text-white hover:bg-red-500 disabled:opacity-50">
+                Banear
+              </button>
+              <button type="button" disabled={modBusy} onClick={() => void runModeration('mute')} className="rounded-xl bg-orange-500/90 px-4 py-2 font-header text-[11px] font-black uppercase tracking-widest text-white hover:bg-orange-500 disabled:opacity-50">
+                Mutear
+              </button>
+              <button type="button" disabled={modBusy} onClick={() => void runModeration('unban')} className="rounded-xl border border-white/15 px-4 py-2 font-header text-[11px] font-black uppercase tracking-widest text-white/80 hover:text-white disabled:opacity-50">
+                Levantar ban
+              </button>
+              <button type="button" disabled={modBusy} onClick={() => void runModeration('unmute')} className="rounded-xl border border-white/15 px-4 py-2 font-header text-[11px] font-black uppercase tracking-widest text-white/80 hover:text-white disabled:opacity-50">
+                Levantar mute
+              </button>
+              <button
+                type="button"
+                disabled={modBusy}
+                onClick={() => {
+                  if (window.confirm('¿Eliminar TODAS las reviews de este usuario en MuzicMania?')) {
+                    void runModeration('delete_review');
+                  }
+                }}
+                className="rounded-xl border border-white/15 px-4 py-2 font-header text-[11px] font-black uppercase tracking-widest text-white/80 hover:text-white disabled:opacity-50"
+              >
+                Eliminar reviews
+              </button>
+              {(viewerRank === 'owner' || viewerRank === 'admin') && (
+                <button
+                  type="button"
+                  disabled={modBusy}
+                  onClick={() => {
+                    const text = window.prompt('Nueva bio (vacío para borrarla):', '');
+                    if (text !== null) void runModeration('edit_bio', { text });
+                  }}
+                  className="rounded-xl border border-white/15 px-4 py-2 font-header text-[11px] font-black uppercase tracking-widest text-white/80 hover:text-white disabled:opacity-50"
+                >
+                  Editar bio
+                </button>
+              )}
+            </div>
+            {modMsg && <p className="text-[11px] font-bold text-orange-300">{modMsg}</p>}
+          </section>
+        )}
 
         {!restricted ? (
           <>

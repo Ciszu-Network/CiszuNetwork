@@ -56,6 +56,7 @@ initBotId({
     { path: '/api/auth/account/reclaim', method: 'POST' },
     { path: '/api/auth/account/privacy', method: 'POST' },
     { path: '/api/auth/register/guard', method: 'POST' },
+    { path: '/api/moderation/action', method: 'POST' },
   ],
 });
 
