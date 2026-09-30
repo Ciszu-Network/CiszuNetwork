@@ -10,7 +10,7 @@ import { supabase } from '@/config/supabase';
 import { getGuestName } from '@/lib/guest';
 import { syncPreferencesToProfile, updatePreferences, loadPreferences } from '@/lib/preferences';
 import PreferencesPanel from '@/components/layout/PreferencesPanel';
-import { PreferencesModal } from '@ciszu/ui';
+import { PreferencesModal, RememberSessionPrompt } from '@ciszu/ui';
 import { LOGO_ISOTIPO_CIRCLE, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
 import { useClientI18n } from '@/hooks/useClientI18n';
 
@@ -710,6 +710,8 @@ export default function Navbar({ account }: NavbarProps) {
         </div>
       )}
 
+      {/* Modal opcional: recordar sesión (solo en el index, tras login/registro). */}
+      <RememberSessionPrompt site="ciszubot" siteName="CiszuBot" userId={user?.id ?? null} />
       </nav>
 
     {isMenuOpen && (
