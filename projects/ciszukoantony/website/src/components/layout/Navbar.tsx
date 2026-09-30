@@ -514,10 +514,16 @@ export default function Navbar() {
               <div className="h-px bg-white/10 my-4" />
               <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">{dict.nav.account}</p>
               {user ? (
+                <>
+                <Link href="/settings"
+                  className="mb-2 w-full flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 text-white/80 rounded-xl font-header font-bold hover:bg-white/10 hover:text-white text-xs transition-all">
+                  Configuración de cuenta
+                </Link>
                 <button onClick={async () => { const { supabase } = await import('@/config/supabase'); await supabase.auth.signOut(); window.location.href = '/'; }}
                   className="w-full flex items-center justify-center gap-2 py-3 bg-neon-pink/10 border border-neon-pink/30 text-neon-pink rounded-xl font-header font-bold hover:bg-neon-pink/20 hover:text-white text-xs shadow-[0_4px_15px_rgba(255,51,204,0.1)] transition-all">
                   <SignOutIcon /> {dict.nav.signOut} ({user.display_name || user.username})
                 </button>
+                </>
               ) : (
                 <Link href="/login"
                   className="w-full flex items-center justify-center gap-2 py-3 bg-neon-blue/10 border border-neon-blue/30 text-neon-blue rounded-xl font-header font-bold hover:bg-neon-blue/20 hover:text-white text-xs shadow-[0_4px_15px_rgba(61,106,223,0.1)] transition-all">
