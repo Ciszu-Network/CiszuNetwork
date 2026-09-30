@@ -213,6 +213,10 @@ export type { AuthCodePanelProps, AuthCodePanelState } from './auth/AuthCodePane
 // 2FA por email: pantalla completa lista para conectar a /api/auth/2fa
 export { default as TwoFactorGate } from './auth/TwoFactorGate';
 export type { TwoFactorGateProps } from './auth/TwoFactorGate';
+// Recordar sesión: modal opcional post-login + persistencia por website
+export { default as RememberSessionPrompt } from './auth/RememberSessionPrompt';
+export type { RememberSessionPromptProps } from './auth/RememberSessionPrompt';
+export { createRememberStorage, isRememberEnabled, setRememberEnabled } from './auth/rememberSession';
 export { default as PreferencesModal } from './auth/PreferencesModal';
 export type { PreferencesModalProps } from './auth/PreferencesModal';
 // LanguagesModal: selector de idioma en modal centrado (preferencias locales, misma lista que el hamburguesa)

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, LANG_BLOCKED_MESSAGE } from '@ciszu/ui';
+import { useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, LANG_BLOCKED_MESSAGE, RememberSessionPrompt } from '@ciszu/ui';
 import CdnImage from '@/components/shared/CdnImage';
 import { NAV_MAIN, SOCIALS, I, ALL_PAGES, SEARCH_INDEX, type NavGroup, type NavItem } from '@/config/navigation';
 import { useAppStore } from '@/store';
@@ -448,6 +448,8 @@ export default function Navbar() {
             </div>
           </div>
         )}
+      {/* Modal opcional: recordar sesión (solo en el index, tras login/registro). */}
+      <RememberSessionPrompt site="ciszukoantony" siteName="Ciszuko Antony" userId={user?.id ?? null} />
       </nav>
 
       {/* Slide-right contextual menu (sidebar) */}

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { assetResolver } from '@ciszunetwork/cdn';
-import { useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE } from '@ciszu/ui';
+import { useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE, RememberSessionPrompt } from '@ciszu/ui';
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store';
 import { applyTheme } from '@/lib/preferences';
@@ -203,7 +203,7 @@ const ALL_PAGES: { name: string; href: string; icon: React.ReactNode; keywords: 
 
 export const NavbarContent = () => {
   const pathname = usePathname();
-  const { isMenuOpen, setIsMenuOpen, theme, setTheme, language, setLanguage, searchQuery, setSearchQuery, sidebarView, setSidebarView } = useAppStore();
+  const { isMenuOpen, setIsMenuOpen, theme, setTheme, language, setLanguage, searchQuery, setSearchQuery, sidebarView, setSidebarView, user } = useAppStore();
   // El idioma llega del store (hidratado en cliente por LangSync desde la cookie
   // `ciszu_lang`); el SSR pinta la base es-latam y esto lo corrige al montar.
   const lang = language;
@@ -592,6 +592,8 @@ export const NavbarContent = () => {
             </div>
           </div>
         )}
+      {/* Modal opcional: recordar sesión (solo en el index, tras login/registro). */}
+      <RememberSessionPrompt site="ciszunetwork" siteName="Ciszu Network" userId={user?.id ?? null} />
       </nav>
 
       {/* Slide-Right Contextual Menu (Sidebar) */}

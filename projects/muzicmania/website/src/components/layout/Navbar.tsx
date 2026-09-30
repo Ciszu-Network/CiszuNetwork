@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
 import { useZoomStatus, publishHeaderMode, useToast } from '@ciszu/ui';
-import { PreferencesModal } from '@ciszu/ui';
+import { PreferencesModal, RememberSessionPrompt } from '@ciszu/ui';
 import { usePathname, useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import { useAppStore } from '@/store';
@@ -557,6 +557,8 @@ export const NavbarContent = () => {
             </div>
           </div>
         )}
+      {/* Modal opcional: recordar sesión (solo en el index, tras login/registro). */}
+      <RememberSessionPrompt site="muzicmania" siteName="MuzicMania" userId={user?.id ?? null} />
       </nav>
 
       {/* Slide-Right Contextual Menu (Sidebar) Fix: Fixed positioning to avoid clipping */}
