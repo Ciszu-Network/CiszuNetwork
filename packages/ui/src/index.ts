@@ -217,6 +217,9 @@ export type { TwoFactorGateProps } from './auth/TwoFactorGate';
 export { default as RememberSessionPrompt } from './auth/RememberSessionPrompt';
 export type { RememberSessionPromptProps } from './auth/RememberSessionPrompt';
 export { createRememberStorage, isRememberEnabled, setRememberEnabled } from './auth/rememberSession';
+// Configuración de cuenta compartida (perfil/seguridad/sesión/notificaciones/debug)
+export { default as AccountSettingsPanel } from './auth/AccountSettingsPanel';
+export type { AccountSettingsPanelProps, AccountSettingsSupabase } from './auth/AccountSettingsPanel';
 export { default as PreferencesModal } from './auth/PreferencesModal';
 export type { PreferencesModalProps } from './auth/PreferencesModal';
 // LanguagesModal: selector de idioma en modal centrado (preferencias locales, misma lista que el hamburguesa)

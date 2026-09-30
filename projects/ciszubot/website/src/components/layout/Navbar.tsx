@@ -585,6 +585,14 @@ export default function Navbar({ account }: NavbarProps) {
                         >
                           <Icon name="server" size={15} /> {dict.nav.dashboardControl}
                         </Link>
+                        <Link
+                          href="/settings"
+                          prefetch={false}
+                          onClick={() => setAuthOpen(false)}
+                          className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-ink/85 transition hover:bg-muted/15 hover:text-neon-blue"
+                        >
+                          <Icon name="lock" size={15} /> Configuración
+                        </Link>
                         <button
                           type="button"
                           onClick={handleSignOut}

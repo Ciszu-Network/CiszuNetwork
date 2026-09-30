@@ -447,6 +447,9 @@ export const NavbarContent = () => {
                           <Link href="/profile/settings" prefetch={false} className="flex items-center gap-3 px-4 py-2 text-white/70 hover:text-neon-purple hover:bg-white/5 rounded-lg transition-all font-header font-bold text-xs">
                             {I.policy} {dict.menu.settings}
                           </Link>
+                          <Link href="/settings" prefetch={false} className="flex items-center gap-3 px-4 py-2 text-white/70 hover:text-neon-cyan hover:bg-white/5 rounded-lg transition-all font-header font-bold text-xs">
+                            {I.policy} Cuenta CISZU ID
+                          </Link>
                           <button
                             onClick={() => {
                               // Deslogueo optimista para evitar bloqueos si Supabase no responde
