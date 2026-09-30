@@ -20,6 +20,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { isRememberEnabled, setRememberEnabled } from './rememberSession';
 
 export interface AccountSettingsSupabase {
+  /** Acceso al schema public para roles/estado (opcional; el cliente real lo trae). */
+  schema?(name: string): { from(table: string): any } | any;
   auth: {
     getUser(): Promise<{
       data: { user: { id: string; email?: string | null; user_metadata?: Record<string, unknown> | null } | null };
@@ -107,6 +109,8 @@ export default function AccountSettingsPanel({
   const [notifMsg, setNotifMsg] = useState<string | null>(null);
   const [debugOpen, setDebugOpen] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [myRole, setMyRole] = useState<string | null>(null);
+  const [staffView, setStaffView] = useState(false);
   const [delPw, setDelPw] = useState('');
   const [delUser, setDelUser] = useState('');
   const [delPhrase, setDelPhrase] = useState('');
@@ -152,6 +156,20 @@ export default function AccountSettingsPanel({
           setDisplayName(typeof metadata.display_name === 'string' ? metadata.display_name : '');
           setEmailNotif(metadata.email_notifications !== false);
           setOtpReminder(metadata.otp_reminder !== false);
+          // Rol global en ESTA web (tag de perfil / paneles por rango).
+          try {
+            const publicDb = supabase.schema?.('public');
+            const res = await publicDb
+              .from('user_roles')
+              .select('role')
+              .eq('user_id', data.user.id)
+              .eq('website', site)
+              .maybeSingle();
+            const role = (res?.data as { role?: string } | null)?.role;
+            setMyRole(role ?? null);
+          } catch {
+            /* sin rol */
+          }
         }
       } catch {
         /* sesión no disponible */
@@ -456,10 +474,31 @@ export default function AccountSettingsPanel({
 {`userId: ${user.id}
 email: ${user.email}
 website: ${site} (${siteName})
+rol: ${myRole ?? 'usuario'}${myRole && ['owner', 'admin', 'mod', 'bot'].includes(myRole) ? ' [con permisos de staff]' : ''}
 otp: ${otpEnabled === null ? 'desconocido' : otpEnabled ? 'activado' : 'desactivado'}
 remember: ${remember ? 'on' : 'off'}
 build: ${typeof window !== 'undefined' ? window.location.host : ''}`}
           </pre>
+        )}
+
+        {myRole && ['owner', 'admin', 'mod', 'bot'].includes(myRole) && (
+          <label className="flex items-center gap-3 cursor-pointer pt-2">
+            <input
+              type="checkbox"
+              checked={staffView}
+              onChange={(e) => setStaffView(e.target.checked)}
+              className="h-4 w-4 accent-[#ff33cc]"
+            />
+            <span className="text-xs font-bold text-ink">
+              Vista de staff en perfiles ({staffView ? 'activada' : 'desactivada'})
+            </span>
+          </label>
+        )}
+        {myRole && ['owner', 'admin', 'mod', 'bot'].includes(myRole) && (
+          <p className="text-[10px] font-bold text-muted">
+            Panel de {myRole}: las acciones de moderación quedan marcadas con tu identidad (auditoría) y se
+            habilitarán por rangos en la siguiente iteración (owner completo &gt; admin &gt; mod &gt; bot).
+          </p>
         )}
       </Section>
 

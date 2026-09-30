@@ -29,6 +29,10 @@ export default function DynamicProfilePage() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  // Rol global (tags), marca pública de eliminación y ban activo (con autor).
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [accountStatus, setAccountStatus] = useState<string | null>(null);
+  const [banInfo, setBanInfo] = useState<{ actor: string } | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -58,6 +62,22 @@ export default function DynamicProfilePage() {
           setError(true);
         } else {
           setProfile(data);
+          // Rol global (tags), marca pública de eliminación y ban activo.
+          try {
+            const publicDb = supabase.schema('public');
+            const [roleRes, statusRes, banRes] = await Promise.all([
+              publicDb.from('user_roles').select('role').eq('user_id', data.id).eq('website', 'muzicmania').maybeSingle(),
+              publicDb.from('account_public_status').select('status').eq('user_id', data.id).maybeSingle(),
+              publicDb.from('sanctions').select('type, actor, expires_at').eq('user_id', data.id).eq('type', 'ban'),
+            ]);
+            setUserRole(((roleRes.data as { role?: string } | null)?.role) ?? null);
+            setAccountStatus(((statusRes.data as { status?: string } | null)?.status) ?? null);
+            const bans = (banRes.data as Array<{ actor?: string; expires_at?: string | null }> | null) ?? [];
+            const activeBan = bans.find((b) => !b.expires_at || Date.parse(b.expires_at) > Date.now());
+            setBanInfo(activeBan ? { actor: activeBan.actor ?? 'staff' } : null);
+          } catch {
+            /* sin filas públicas */
+          }
         }
       } catch (err) {
         setError(true);
@@ -117,11 +137,11 @@ export default function DynamicProfilePage() {
             <div className="relative group">
               <div className="absolute -inset-1 bg-gradient-to-br from-neon-blue via-neon-purple to-neon-pink rounded-full blur opacity-40 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
               <div className="relative w-44 h-44 rounded-full bg-black border-4 border-black flex items-center justify-center overflow-hidden shadow-inner">
-                 {profile.avatar_url ? (
+                 {!accountStatus && profile.avatar_url ? (
                    <Image src={profile.avatar_url} alt={profile.display_name} fill className="object-cover transition-transform group-hover:scale-110 duration-500" />
                  ) : (
                    <div className="w-full h-full bg-gradient-to-tr from-neon-blue/20 to-neon-purple/20 flex items-center justify-center text-7xl font-header font-black text-neon-cyan drop-shadow-neon-blue">
-                     {profile.display_name?.charAt(0).toUpperCase()}
+                     {accountStatus ? '?' : profile.display_name?.charAt(0).toUpperCase()}
                    </div>
                  )}
               </div>
@@ -140,7 +160,35 @@ export default function DynamicProfilePage() {
                 <p className="text-neon-cyan font-black tracking-widest text-sm opacity-80 uppercase italic">
                   @{profile.username}
                 </p>
-                {profile.bio && (
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 pt-2">
+                  {accountStatus && (
+                    <span className="rounded-full border border-red-500/40 bg-red-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-red-400">
+                      Cuenta eliminada
+                    </span>
+                  )}
+                  {banInfo && (
+                    <span className="rounded-full border border-orange-500/40 bg-orange-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-orange-400">
+                      Baneado por {banInfo.actor}
+                    </span>
+                  )}
+                  {userRole && (
+                    <>
+                      <span className="rounded-full border border-neon-cyan/40 bg-neon-cyan/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-neon-cyan">
+                        {userRole}
+                      </span>
+                      {['owner', 'admin', 'mod'].includes(userRole) && (
+                        <span className="rounded-full border border-neon-pink/40 bg-neon-pink/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-neon-pink">
+                          STAFF
+                        </span>
+                      )}
+                    </>
+                  )}
+                </div>
+                {accountStatus ? (
+                  <p className="text-gray-500 font-bold text-sm max-w-md leading-relaxed mt-4 bg-white/5 p-4 rounded-xl border border-white/10">
+                    Esta cuenta ha sido eliminada.
+                  </p>
+                ) : profile.bio && (
                   <p className="text-gray-300 font-bold text-sm max-w-md leading-relaxed mt-4 bg-white/5 p-4 rounded-xl border border-white/10">
                     {profile.bio}
                   </p>
