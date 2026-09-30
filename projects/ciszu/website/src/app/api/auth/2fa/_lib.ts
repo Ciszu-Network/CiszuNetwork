@@ -46,7 +46,15 @@ interface DbQuery extends PromiseLike<DbResult> {
 
 interface Db {
   from(table: string): DbQuery;
-  auth: { getUser(token: string): Promise<{ data: { user: { id: string; email?: string } | null }; error: { message: string } | null }> };
+  auth: {
+    getUser(token: string): Promise<{ data: { user: { id: string; email?: string } | null }; error: { message: string } | null }>;
+    admin: {
+      updateUserById(
+        id: string,
+        attributes: Record<string, unknown>,
+      ): Promise<{ data: unknown; error: { message: string } | null }>;
+    };
+  };
 }
 
 /** Cliente admin (service_role). Bajo demanda para no romper `next build`. */

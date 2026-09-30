@@ -21,6 +21,7 @@ import {
   AuthBenefitsPanel,
   useActivityGuard,
   RecaptchaGate,
+  TwoFactorGate,
 } from '@ciszu/ui';
 
 const IconMail = () => (
@@ -123,7 +124,7 @@ export default function RegisterPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
-  const [created, setCreated] = useState(false);
+  const [pending, setPending] = useState<{ token: string; email: string } | null>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   // Cada envío fallido quema el token de v2 (es de un solo uso): se reinicia el widget.
   const [captchaResetKey, setCaptchaResetKey] = useState(0);
@@ -205,10 +206,23 @@ export default function RegisterPage() {
         throw new Error('Este email ya está registrado. Intenta iniciar sesión o recuperar tu contraseña.');
       }
 
-      // Tras registrarse hay que INICIAR SESIÓN de nuevo: supabase-js deja una
-      // sesión creada al vuelo y entrar directo saltaba la verificación.
+      const token = data.session?.access_token;
+      if (!token) throw new Error('No pudimos iniciar la verificación del registro.');
+
+      // Código C-XXX XXX al email (servicio 2FA compartido: límites, 3 h, reenvíos).
+      const startRes = await fetch('/api/auth/2fa/generate', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const startData = await startRes.json().catch(() => ({}));
+      if (!startRes.ok || startData.success === false) {
+        throw new Error(startData.error || 'No pudimos enviar la clave de verificación.');
+      }
+
+      // La sesión se cierra hasta verificar: sin verificación la cuenta queda
+      // sin confirmar y no podrá iniciar sesión (no existe de forma utilizable).
       await supabase.auth.signOut().catch(() => {});
-      setCreated(true);
+      setPending({ token, email: form.email.trim() });
     } catch (err: any) {
       console.error('[REGISTER ERROR]:', err);
       setLocalError(err.message || 'Error desconocido al registrarse.');
@@ -218,7 +232,38 @@ export default function RegisterPage() {
     }
   };
 
-  if (created) {
+  /** Código verificado: confirma el email, activa el OTP de la web y entra. */
+  const handleVerified = async () => {
+    if (!pending) return;
+    try {
+      const res = await fetch('/api/auth/register/complete', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${pending.token}` },
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || data.success === false) {
+        throw new Error(data.error || 'No pudimos completar el registro.');
+      }
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: pending.email,
+        password: form.password,
+      });
+      if (signInError) throw signInError;
+      setPending(null);
+      router.replace('/');
+    } catch (err: any) {
+      setPending(null);
+      setLocalError(err?.message || 'No pudimos completar el registro.');
+    }
+  };
+
+  /** Sin verificación no hay cuenta: se vuelve al formulario con aviso. */
+  const handleCancelVerify = () => {
+    setPending(null);
+    setLocalError('Verificación pendiente: reenvía el formulario para pedir otra clave.');
+  };
+
+  if (pending) {
     return (
       <div className="min-h-screen pt-28 pb-20 px-4 relative overflow-hidden flex items-center justify-center">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-md w-full">
@@ -232,20 +277,15 @@ export default function RegisterPage() {
               subtitle="Ciszuko Antony · CISZU ID"
             />
           </div>
-          <div className="rounded-3xl border border-emerald-500/30 bg-emerald-500/10 p-8 text-center shadow-2xl">
-            <p className="text-emerald-400 font-header font-black uppercase tracking-widest text-sm mb-2">
-              {dict.auth.checkEmail}
-            </p>
-            <p className="text-gray-400 text-xs font-bold leading-relaxed">
-              {dict.auth.checkEmailBody} <span className="text-white">{form.email}</span>.{' '}
-              {dict.auth.confirmEmail}
-            </p>
-            <button
-              onClick={() => router.push('/login')}
-              className="mt-6 px-8 py-3 rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white font-header font-black uppercase tracking-widest text-xs shadow-[0_0_20px_rgba(61,106,223,0.35)] hover:shadow-[0_0_30px_rgba(255,51,204,0.4)] transition-all active:scale-95 cursor-pointer"
-            >
-              {dict.auth.checkEmailAction}
-            </button>
+          <div className="rounded-3xl border border-white/10 bg-[#070710]/95 p-6 shadow-2xl" data-testid="register-verification">
+            <TwoFactorGate
+              accessToken={pending.token}
+              email={pending.email}
+              siteName="Ciszuko Antony"
+              force
+              onVerified={handleVerified}
+              onCancel={handleCancelVerify}
+            />
           </div>
         </motion.div>
       </div>

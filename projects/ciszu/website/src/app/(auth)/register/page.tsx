@@ -17,6 +17,7 @@ import {
   useToast,
   useActivityGuard,
   RecaptchaGate,
+  TwoFactorGate,
 } from '@ciszu/ui';
 import { Button } from '@heroui/react';
 
@@ -113,6 +114,9 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const [emailSent, setEmailSent] = useState(false);
+  // Registro pendiente de verificación C-XXX XXX: guarda el token de la sesión
+  // recién creada (la sesión se cierra hasta completar la verificación).
+  const [pending, setPending] = useState<{ token: string; email: string } | null>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   // El token de v2 es de un solo uso: cada envío fallido reinicia el widget.
   const [captchaResetKey, setCaptchaResetKey] = useState(0);
@@ -204,12 +208,23 @@ export default function RegisterPage() {
       }
 
       if (data.user) {
-        // Tras registrarse hay que iniciar sesión otra vez: supabase-js deja una
-        // sesión abierta al vuelo y entrar directo saltaba la verificación.
+        const token = data.session?.access_token;
+        if (!token) throw new Error('No pudimos iniciar la verificación del registro.');
+
+        // Código C-XXX XXX al email (servicio 2FA compartido: límites, 3 h, reenvíos).
+        const startRes = await fetch('/api/auth/2fa/generate', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const startData = await startRes.json().catch(() => ({}));
+        if (!startRes.ok || startData.success === false) {
+          throw new Error(startData.error || 'No pudimos enviar la clave de verificación.');
+        }
+
+        // La sesión se cierra hasta verificar: sin verificación la cuenta queda
+        // sin confirmar y no podrá iniciar sesión (no existe de forma utilizable).
         await supabase.auth.signOut().catch(() => {});
-        setEmailSent(true);
-        toast('Cuenta creada. Revisa tu email y vuelve a iniciar sesión.', 'success');
-        router.push('/login');
+        setPending({ token, email: form.email.trim() });
       }
     } catch (err: any) {
       setLocalError(err.message || 'Error desconocido al registrarse');
@@ -217,6 +232,39 @@ export default function RegisterPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  /** Código verificado: confirma el email, activa el OTP de la web y entra. */
+  const handleVerified = async () => {
+    if (!pending) return;
+    setLocalError('');
+    try {
+      const res = await fetch('/api/auth/register/complete', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${pending.token}` },
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || data.success === false) {
+        throw new Error(data.error || 'No pudimos completar el registro.');
+      }
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: pending.email,
+        password: form.password,
+      });
+      if (signInError) throw signInError;
+      setPending(null);
+      toast('Cuenta verificada. ¡Bienvenido a Ciszu Network!', 'success');
+      router.replace('/');
+    } catch (err: any) {
+      setPending(null);
+      setLocalError(err?.message || 'No pudimos completar el registro.');
+    }
+  };
+
+  /** Sin verificación no hay cuenta: se vuelve al formulario con aviso. */
+  const handleCancelVerify = () => {
+    setPending(null);
+    toast('Verificación pendiente: reenvía el formulario para pedir otra clave.', 'error');
   };
 
   return (
@@ -248,7 +296,18 @@ export default function RegisterPage() {
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-neon-pink to-brand-light rounded-[2.5rem] blur opacity-20 transition duration-500" />
             <div className="relative bg-[#070710]/95 border border-white/10 rounded-[2.5rem] p-8 md:p-10 space-y-6 backdrop-blur-2xl shadow-2xl">
-            {emailSent ? (
+            {pending ? (
+              <div className="space-y-4" data-testid="register-verification">
+                <TwoFactorGate
+                  accessToken={pending.token}
+                  email={pending.email}
+                  siteName="Ciszu Network"
+                  force
+                  onVerified={handleVerified}
+                  onCancel={handleCancelVerify}
+                />
+              </div>
+            ) : emailSent ? (
               <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center space-y-3">
                 <p className="text-emerald-400 font-black uppercase tracking-widest text-sm">Verifica tu correo</p>
                 <p className="text-gray-400 text-xs font-bold leading-relaxed">
