@@ -256,15 +256,32 @@ adaptada al entorno (owner único aceptado; llaves físicas FIDO2 diferidas).
   la clave step-up emitida por otra persona desde la devcon (o por el owner
   aprobando al generarla). Todo queda auditado (`moderation_actions`).
 
-### 19.6 Aceptado / diferido (declarado)
-
-- **Owner único**: riesgo aceptado por diseño (no hay Co-owner); mitigado con
+### 19.6 Aceptado / diferido (declarado)- **Owner único**: riesgo aceptado por diseño (no hay Co-owner); mitigado con
   step-up, auditoría y separación de superficies.
 - **Llaves físicas FIDO2**: diferidas hasta escalabilidad (el step-up cubre el
   caso de uso inmediato).
 - **Purga de historial git** (tooling interno retirado que sigue en commits
   antiguos): pendiente de ejecución coordinada con el owner (destructiva).
 - **Simulacro de restore de backup**: pendiente de agendar.
+
+### 19.7 Procedimiento break-glass (peor escenario)
+
+Cuando no hay acceso normal (owner bloqueado, devcon inaccesible o credenciales
+comprometidas):
+
+1. **Contener**: activar el kill switch de las webs afectadas
+   (`node scripts/site-control.js on <website> --actor=... --reason="incidente"`).
+2. **Rotar**: cambiar `DEVCON_PASSWORD` y `STAFF_ELEVATION_SECRET` en el vault
+   (`vault.ps1 crypt` + `verify`) y redesplegar los 4 proyectos (los envs de
+   Vercel para el secreto de elevacion); invalidar sesiones staff (los tokens
+   HMAC mueren solos en <=45 min; para cortar antes, rotar el secreto).
+3. **Recuperar cuenta owner**: "Recuperar clave" con el correo del owner (C-XXX
+   XXX) o, en el peor caso, reset via Management API con `SUPABASE_ACCESS_TOKEN`
+   del vault; verificar 2FA/OTP al volver.
+4. **Revisar auditoria**: `moderation_actions` + `site_controls` + logs de la
+   devcon (`tools/consoles/local-logs/`) para identificar al actor.
+5. **Restaurar**: reactivar webs (`site-control off`), desplegar de nuevo desde
+   `main` y confirmar CI en verde.
 
 _Última revisión: 30 sep 2026._ Relacionado: `SECURITY_PROTOCOLS.md`, `CODE_PRINCIPLES_PROTOCOLS.md`,
 `VAULT_SYSTEM.md`, `TESTING_SYSTEM.md`, `report/seguridad_escalabilidad_report-2026-09-30.md`,
