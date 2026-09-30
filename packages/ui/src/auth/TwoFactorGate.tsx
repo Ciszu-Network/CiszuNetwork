@@ -36,6 +36,11 @@ export interface TwoFactorGateProps {
   onCancel?: () => void;
   /** Ruta base de la API, por si alguna web la monta en otro sitio. */
   apiBase?: string;
+  /**
+   * Exige la verificación aunque el 2FA esté DESACTIVADO en la web (registro:
+   * el código C-XXX XXX se pide siempre antes de crear la cuenta).
+   */
+  force?: boolean;
 }
 
 interface StatusPayload {
@@ -58,6 +63,7 @@ export default function TwoFactorGate({
   onVerified,
   onCancel,
   apiBase = '/api/auth/2fa',
+  force = false,
 }: TwoFactorGateProps) {
   const [code, setCode] = useState('');
   const [state, setState] = useState<AuthCodePanelState>('valid');
@@ -104,7 +110,7 @@ export default function TwoFactorGate({
         const status = await call('/status', { method: 'GET' });
         if (cancelled) return;
 
-        if (!status.enabled) {
+        if (!status.enabled && !force) {
           verifiedRef.current = true;
           onVerified();
           return;
@@ -131,7 +137,7 @@ export default function TwoFactorGate({
     return () => {
       cancelled = true;
     };
-  }, [call, applyStatus, onVerified]);
+  }, [call, applyStatus, onVerified, force]);
 
   const handleVerify = useCallback(
     async (value: string) => {
