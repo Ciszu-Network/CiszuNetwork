@@ -53,6 +53,8 @@ initBotId({
     { path: '/api/auth/account/delete-request', method: 'POST' },
     { path: '/api/auth/account/recovery', method: 'POST' },
     { path: '/api/auth/account/reclaim', method: 'POST' },
+    { path: '/api/auth/account/privacy', method: 'POST' },
+    { path: '/api/auth/register/guard', method: 'POST' },
     { path: '/api/dashboard/*', method: 'POST' },
   ],
 });

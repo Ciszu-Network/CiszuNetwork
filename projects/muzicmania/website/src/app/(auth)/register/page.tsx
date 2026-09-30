@@ -290,6 +290,14 @@ export default function RegisterPage() {
 
       setFeedback({ isVisible: true, type: 'loading', title: 'Registrando', message: 'Creando tu cuenta en el sistema MuzicMania...' });
 
+      // Guardia por IP: no se crean cuentas desde orígenes sancionados.
+      const guard = (await fetch('/api/auth/register/guard', { method: 'POST' })
+        .then((r) => r.json())
+        .catch(() => null)) as { blocked?: boolean } | null;
+      if (guard?.blocked) {
+        throw new Error('No podemos crear cuentas desde esta conexión (origen sancionado). Contacta con soporte.');
+      }
+
       const { data, error } = await supabase.auth.signUp({
         email: form.email,
         password: form.password,
