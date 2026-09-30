@@ -2831,6 +2831,73 @@ function Show-RolesSection {
     }
 }
 
+function Show-UsersSection {
+    while ($true) {
+        $opts = @(
+            @{ ic = '📊'; l = "Estado de usuario (rol, sanciones, acciones)"; key = 'status' },
+            @{ ic = '🔨'; l = "Banear (temporal o permanente)"; key = 'ban' },
+            @{ ic = '🔇'; l = "Mutear (temporal o permanente)"; key = 'mute' },
+            @{ ic = '✅'; l = "Levantar ban"; key = 'unban' },
+            @{ ic = '🔊'; l = "Levantar mute"; key = 'unmute' },
+            @{ ic = '🗑'; l = "Eliminar TODAS las reviews del usuario"; key = 'delete-reviews' },
+            @{ ic = '✏'; l = "Editar bio (requiere admin en la web)"; key = 'edit-bio' },
+            @{ ic = '🌐'; l = "Banear IP"; key = 'ip-ban' },
+            @{ ic = '🚪'; l = "Volver"; key = 'back' }
+        )
+        $sel = Show-Menu -Title "GESTIÓN DE USUARIOS (reflejado en la web)" -Options $opts
+        if ($sel -lt 0 -or $opts[$sel].key -eq 'back') { return }
+        $cmd = $opts[$sel].key
+
+        if ($cmd -eq 'ip-ban') {
+            Write-Host ""
+            $ip = Read-Host "IP a banear"
+            if ([string]::IsNullOrWhiteSpace($ip)) { continue }
+            $reason = Read-Host "Motivo"
+            $hours = Read-Host "Horas (vacio = permanente)"
+            $nodeArgs = @('ip-ban', $ip, "--actor=$script:devIdentity", "--reason=$reason")
+            if ($hours) { $nodeArgs += "--hours=$hours" }
+            Clear-Host
+            & node (Join-Path $root 'scripts\moderation.js') @nodeArgs 2>&1 | Out-Host
+            Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=mod-ip-ban ip=$ip hours=$hours"
+            Press-Continue
+            continue
+        }
+
+        $siteIdx = Show-Menu -Title "¿EN QUE WEBSITE?" -Options @(
+            @{ ic = '▪'; l = "ciszunetwork" },
+            @{ ic = '▪'; l = "ciszubot" },
+            @{ ic = '▪'; l = "ciszukoantony" },
+            @{ ic = '▪'; l = "muzicmania" }
+        )
+        if ($siteIdx -lt 0) { continue }
+        $siteArg = @('ciszunetwork', 'ciszubot', 'ciszukoantony', 'muzicmania')[$siteIdx]
+
+        Write-Host ""
+        $uname = Read-Host "Username completo exacto (sin @)"
+        if ([string]::IsNullOrWhiteSpace($uname)) { continue }
+
+        $nodeArgs = @($cmd, $siteArg, $uname)
+        if ($cmd -eq 'ban' -or $cmd -eq 'mute' -or $cmd -eq 'delete-reviews') {
+            $reason = Read-Host "Motivo / caso"
+            $hours = Read-Host "Horas (vacio = permanente; no aplica a delete-reviews)"
+            $nodeArgs += "--actor=$script:devIdentity"
+            $nodeArgs += "--reason=$reason"
+            if ($hours -and ($cmd -eq 'ban' -or $cmd -eq 'mute')) { $nodeArgs += "--hours=$hours" }
+        } elseif ($cmd -eq 'unban' -or $cmd -eq 'unmute') {
+            $nodeArgs += "--actor=$script:devIdentity"
+        } elseif ($cmd -eq 'edit-bio') {
+            $text = Read-Host "Nueva bio (vacio = borrar)"
+            $nodeArgs += "--actor=$script:devIdentity"
+            $nodeArgs += "--text=$text"
+        }
+
+        Clear-Host
+        & node (Join-Path $root 'scripts\moderation.js') @nodeArgs 2>&1 | Out-Host
+        Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=mod-$cmd site=$siteArg user=$uname"
+        Press-Continue
+    }
+}
+
 function Show-Tools {
     $opts = @(
         @{ ic = '🧹'; l = "Limpiar logs (test/website/debug/local-logs)";  act = { Remove-Item "$LOG_DIR\*" -Force -ErrorAction SilentlyContinue; Write-Host "${c_green}Logs limpiados.${c_reset}"; Press-Continue } },
@@ -3052,6 +3119,7 @@ while (-not $script:quitRequested) {
         @{ ic = '📢'; l = "ADVISOR"; key = '__section_advisor' },
         @{ ic = '📝'; l = "CHANGELOGS"; key = '__section_changelogs' },
         @{ ic = '🏷'; l = "ROLES / ETIQUETAS"; key = '__section_roles' },
+        @{ ic = '🛡'; l = "GESTIÓN DE USUARIOS (moderación)"; key = '__section_users' },
         @{ ic = '🔧'; l = "HERRAMIENTAS"; key = '__tools' },
         @{ ic = '👥'; l = "Staff Console (STAFFCON)"; key = '__tools_staffcon' },
         @{ ic = '🛒'; l = "Customers Console (CUSTOMERSCON)"; key = '__tools_customerscon' },
@@ -3113,6 +3181,7 @@ while (-not $script:quitRequested) {
         '__section_advisor' { Show-AdvisorSection }
         '__section_changelogs' { Show-ChangelogsSection }
         '__section_roles' { Show-RolesSection }
+        '__section_users' { Show-UsersSection }
         '__tools' { Show-Tools }
         '__tools_staffcon' { Start-Process powershell.exe -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $root 'tools\consoles\staffcon.ps1'); Write-Host "${c_green}STAFFCON abierta en ventana separada.${c_reset}"; Press-Continue }
         '__tools_customerscon' { Start-Process powershell.exe -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $root 'tools\consoles\customerscon.ps1'); Write-Host "${c_green}CUSTOMERSCON abierta en ventana separada.${c_reset}"; Press-Continue }
