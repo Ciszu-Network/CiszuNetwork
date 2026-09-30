@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { randomInt } from 'crypto';
 import { createClient } from '@supabase/supabase-js';
 import { checkBotId } from 'botid/server';
 import { adminClient, authenticate } from '../../2fa/_lib';
@@ -107,9 +108,7 @@ export async function POST(request: Request) {
     if (insertError) throw insertError;
 
     // Anonimización pública (el respaldo permite restaurarla al recuperar).
-    const suffix = Math.floor(Math.random() * 1e12)
-      .toString()
-      .padStart(12, '0');
+    const suffix = randomInt(0, 1_000_000_000_000).toString().padStart(12, '0');
     const deletedUsername = `deleted-account-${suffix}`;
     const { error: updateError } = await admin.auth.admin.updateUserById(user.userId, {
       data: { ...metadata, display_name: 'Deleted Account', username: deletedUsername },
