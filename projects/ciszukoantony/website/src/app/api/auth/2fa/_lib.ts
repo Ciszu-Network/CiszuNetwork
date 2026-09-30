@@ -38,6 +38,7 @@ interface DbQuery extends PromiseLike<DbResult> {
   update(values: Record<string, unknown>): DbQuery;
   upsert(values: Record<string, unknown>, options?: Record<string, unknown>): DbQuery;
   eq(column: string, value: unknown): DbQuery;
+  ilike(column: string, pattern: string): DbQuery;
   order(column: string, options?: Record<string, unknown>): DbQuery;
   limit(count: number): DbQuery;
   single(): Promise<DbResult>;
@@ -46,6 +47,8 @@ interface DbQuery extends PromiseLike<DbResult> {
 
 interface Db {
   from(table: string): DbQuery;
+  /** Cliente ligado a otro schema (p. ej. `public`) para tablas compartidas. */
+  schema(name: string): { from(table: string): DbQuery };
   auth: {
     getUser(token: string): Promise<{ data: { user: { id: string; email?: string } | null }; error: { message: string } | null }>;
     admin: {

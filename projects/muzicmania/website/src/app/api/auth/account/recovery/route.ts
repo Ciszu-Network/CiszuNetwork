@@ -70,6 +70,15 @@ export async function POST(request: Request) {
     });
     if (restoreError) throw restoreError;
 
+    // Restaura el perfil público de la web (nombre/usuario respaldados).
+    const profileRestore: Record<string, unknown> = {};
+    if (typeof backup.display_name === 'string') profileRestore.display_name = backup.display_name;
+    if (typeof backup.username === 'string') profileRestore.username = backup.username;
+    if (typeof backup.avatar_url === 'string' && backup.avatar_url) profileRestore.avatar_url = backup.avatar_url;
+    if (Object.keys(profileRestore).length > 0) {
+      await admin.schema('muzicmania').from('profiles').update(profileRestore).eq('id', user.userId);
+    }
+
     return NextResponse.json({ success: true, recovered: true });
   } catch (err) {
     return NextResponse.json(
