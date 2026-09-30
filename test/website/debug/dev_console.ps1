@@ -2766,6 +2766,71 @@ function Show-ChangelogsSection {
     }
 }
 
+function Show-RolesSection {
+    while ($true) {
+        $opts = @(
+            @{ ic = '🏷'; l = "Otorgar rol a un usuario (username exacto)"; key = 'grant' },
+            @{ ic = '🗑'; l = "Quitar rol a un usuario"; key = 'revoke' },
+            @{ ic = '📋'; l = "Listar roles"; key = 'list' },
+            @{ ic = '🚪'; l = "Volver"; key = 'back' }
+        )
+        $sel = Show-Menu -Title "ROLES / ETIQUETAS (global por website)" -Options $opts
+        if ($sel -lt 0 -or $opts[$sel].key -eq 'back') { return }
+
+        if ($opts[$sel].key -eq 'list') {
+            $siteIdx = Show-Menu -Title "¿QUE WEBSITE?" -Options @(
+                @{ ic = '▪'; l = "Todos" },
+                @{ ic = '▪'; l = "ciszunetwork" },
+                @{ ic = '▪'; l = "ciszubot" },
+                @{ ic = '▪'; l = "ciszukoantony" },
+                @{ ic = '▪'; l = "muzicmania" }
+            )
+            if ($siteIdx -lt 0) { continue }
+            $siteArg = @('', 'ciszunetwork', 'ciszubot', 'ciszukoantony', 'muzicmania')[$siteIdx]
+            Clear-Host
+            & node (Join-Path $root 'scripts\roles.js') list $siteArg 2>&1 | Out-Host
+            Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=roles-list site=$siteArg"
+            Press-Continue
+            continue
+        }
+
+        $siteIdx = Show-Menu -Title "¿EN QUE WEBSITE?" -Options @(
+            @{ ic = '▪'; l = "ciszunetwork" },
+            @{ ic = '▪'; l = "ciszubot" },
+            @{ ic = '▪'; l = "ciszukoantony" },
+            @{ ic = '▪'; l = "muzicmania" }
+        )
+        if ($siteIdx -lt 0) { continue }
+        $siteArg = @('ciszunetwork', 'ciszubot', 'ciszukoantony', 'muzicmania')[$siteIdx]
+
+        Write-Host ""
+        $uname = Read-Host "Username completo exacto (sin @)"
+        if ([string]::IsNullOrWhiteSpace($uname)) { continue }
+
+        if ($opts[$sel].key -eq 'grant') {
+            $roleIdx = Show-Menu -Title "¿QUE ROL?" -Options @(
+                @{ ic = '👑'; l = "owner" },
+                @{ ic = '🛡'; l = "admin" },
+                @{ ic = '🔨'; l = "mod" },
+                @{ ic = '🤖'; l = "bot" },
+                @{ ic = '💎'; l = "vip" },
+                @{ ic = '🧪'; l = "betatesting" },
+                @{ ic = '🎧'; l = "support" }
+            )
+            if ($roleIdx -lt 0) { continue }
+            $roleArg = @('owner', 'admin', 'mod', 'bot', 'vip', 'betatesting', 'support')[$roleIdx]
+            Clear-Host
+            & node (Join-Path $root 'scripts\roles.js') grant $siteArg $uname $roleArg $script:devIdentity 2>&1 | Out-Host
+            Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=roles-grant site=$siteArg user=$uname role=$roleArg"
+        } else {
+            Clear-Host
+            & node (Join-Path $root 'scripts\roles.js') revoke $siteArg $uname 2>&1 | Out-Host
+            Write-DevconLog "session=$script:devSession actor=$script:devIdentity accion=roles-revoke site=$siteArg user=$uname"
+        }
+        Press-Continue
+    }
+}
+
 function Show-Tools {
     $opts = @(
         @{ ic = '🧹'; l = "Limpiar logs (test/website/debug/local-logs)";  act = { Remove-Item "$LOG_DIR\*" -Force -ErrorAction SilentlyContinue; Write-Host "${c_green}Logs limpiados.${c_reset}"; Press-Continue } },
@@ -2986,6 +3051,7 @@ while (-not $script:quitRequested) {
         @{ ic = '📋'; l = "DISCLAIMERS"; key = '__section_disclaimers' },
         @{ ic = '📢'; l = "ADVISOR"; key = '__section_advisor' },
         @{ ic = '📝'; l = "CHANGELOGS"; key = '__section_changelogs' },
+        @{ ic = '🏷'; l = "ROLES / ETIQUETAS"; key = '__section_roles' },
         @{ ic = '🔧'; l = "HERRAMIENTAS"; key = '__tools' },
         @{ ic = '👥'; l = "Staff Console (STAFFCON)"; key = '__tools_staffcon' },
         @{ ic = '🛒'; l = "Customers Console (CUSTOMERSCON)"; key = '__tools_customerscon' },
@@ -3046,6 +3112,7 @@ while (-not $script:quitRequested) {
         '__section_disclaimers' { Show-DisclaimersSection }
         '__section_advisor' { Show-AdvisorSection }
         '__section_changelogs' { Show-ChangelogsSection }
+        '__section_roles' { Show-RolesSection }
         '__tools' { Show-Tools }
         '__tools_staffcon' { Start-Process powershell.exe -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $root 'tools\consoles\staffcon.ps1'); Write-Host "${c_green}STAFFCON abierta en ventana separada.${c_reset}"; Press-Continue }
         '__tools_customerscon' { Start-Process powershell.exe -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $root 'tools\consoles\customerscon.ps1'); Write-Host "${c_green}CUSTOMERSCON abierta en ventana separada.${c_reset}"; Press-Continue }
