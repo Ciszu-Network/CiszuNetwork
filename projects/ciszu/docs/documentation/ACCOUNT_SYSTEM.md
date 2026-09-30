@@ -131,8 +131,19 @@ el correo queda vinculado al UUID para siempre.
 - Comentarios/reviews se mantienen públicos; lo personal (bio, gustos, historial) se
   oculta solo en eliminaciones.
 
-## 8. Roles y tags (globales por website)
+## 7.5. Privacidad del perfil (visibility)
 
+- `public.account_privacy` (por usuario): `visibility` = `public` (por defecto) | `friends` |
+  `private` (+ `sections` jsonb reservado para restricciones por sector). Lectura pública del
+  nivel; escritura solo service-role vía `/api/auth/account/privacy` (sesión + BotID).
+- Efecto: en `friends`/`private` los datos **detallados** (records, historial, logros,
+  amistades, comentarios) se limitan; los datos **básicos** (nombre, foto, bio) siguen
+  visibles. Aplicado especialmente al perfil público de muzicmania (aviso "Perfil privado /
+  para amigos").
+- El modo `friends` quedará plenamente operativo cuando exista el sistema de
+  amistades/seguidores; hasta entonces solo el dueño ve el detalle.
+
+## 8. Roles y tags (globales por website)
 - `public.user_roles`: **un rol por usuario y web** (`owner`, `admin`, `mod`, `bot`, `vip`,
   `betatesting`, `support`), `granted_by` y fecha. Lectura pública para tags de perfil;
   escritura solo service-role/Management API.
@@ -177,11 +188,13 @@ el correo queda vinculado al UUID para siempre.
 ## 12. Estado y pendientes declarados
 
 - **Implementado**: §2–§4, §6.1–§6.4, §7 (visualización de ban/eliminada en perfil), §8–§10.
-- **Pendiente de siguiente fase**: endpoint de **reclaim** al re-registrar un correo de
-  cuenta eliminada + disclaimer en el register; anonimización por web más allá de
-  muzicmania (avatar/bio en schemas restantes cuando existan esos campos públicos);
-  acciones de moderación completas por rango (hoy: visualización + toggle con auditoría);
-  detección de ban por IP; limpieza de cuentas bot si se cambian sus emails internos.
+- **Implementado también**: endpoint de **reclaim** (re-registro de correo eliminado con
+  disclaimer), anonimización por web (metadata + perfil: nombre/usuario/avatar con respaldo
+  y restauración), **privacidad de perfil** (public/friends/private) y **detección de ban
+  por IP** (`banned_ips` + `sanctions.ip`; guardia en register y reclaim).
+- **Pendiente de siguiente fase**: acciones de moderación completas por rango (hoy:
+  visualización + toggle con auditoría), sistema de amistades/seguidores (habilita del todo
+  el modo `friends`) y perfiles públicos en las demás webs.
 
 ---
 
