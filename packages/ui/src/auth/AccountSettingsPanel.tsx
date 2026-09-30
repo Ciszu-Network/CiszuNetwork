@@ -177,6 +177,10 @@ export default function AccountSettingsPanel({
               .maybeSingle();
             const vis = (privacyRes?.data as { visibility?: string } | null)?.visibility;
             if (vis === 'friends' || vis === 'private' || vis === 'public') setVisibility(vis);
+            // Vista de staff persistida por usuario y web (la lee el perfil público).
+            setStaffView(
+              window.localStorage.getItem(`ciszu-staff-view:${site}:${data.user.id}`) === 'on',
+            );
           } catch {
             /* sin rol */
           }
@@ -521,7 +525,17 @@ build: ${typeof window !== 'undefined' ? window.location.host : ''}`}
             <input
               type="checkbox"
               checked={staffView}
-              onChange={(e) => setStaffView(e.target.checked)}
+              onChange={(e) => {
+                setStaffView(e.target.checked);
+                try {
+                  window.localStorage.setItem(
+                    `ciszu-staff-view:${site}:${user?.id ?? ''}`,
+                    e.target.checked ? 'on' : 'off',
+                  );
+                } catch {
+                  /* almacenamiento no disponible */
+                }
+              }}
               className="h-4 w-4 accent-[#ff33cc]"
             />
             <span className="text-xs font-bold text-ink">
