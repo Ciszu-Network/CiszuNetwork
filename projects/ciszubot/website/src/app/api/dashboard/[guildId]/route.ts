@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { checkBotId } from 'botid/server';
 import { z } from 'zod';
 import { getSessionUserId, isGuildAdmin, getGuildsForUser } from '@/lib/auth';
 import { db, ciszubotSchema, eq } from '@/lib/db';
@@ -75,6 +76,11 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ gui
 }
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ guildId: string }> }) {
+  const verification = await checkBotId();
+  if (verification.isBot) {
+    return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+  }
+
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
   const rl = postLimiter.allow(ip);
   if (!rl.allowed) {

@@ -2,6 +2,7 @@ import type { NextConfig } from 'next';
 import path from 'path';
 import { fileURLToPath } from 'node:url';
 import { withSentryConfig } from '@sentry/nextjs';
+import { withBotId } from 'botid/next/config';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -57,13 +58,15 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withSentryConfig(nextConfig, {
-  org: 'ciszu-network',
-  project: 'muzicmania',
-  silent: true,
-  // Source maps: se suben en build cuando exista SENTRY_AUTH_TOKEN (production).
-  sourcemaps: {
-    disable: !process.env.SENTRY_AUTH_TOKEN,
-    filesToDeleteAfterUpload: ['.next/static/**/*.map'],
-  },
-});
+export default withBotId(
+  withSentryConfig(nextConfig, {
+    org: 'ciszu-network',
+    project: 'muzicmania',
+    silent: true,
+    // Source maps: se suben en build cuando exista SENTRY_AUTH_TOKEN (production).
+    sourcemaps: {
+      disable: !process.env.SENTRY_AUTH_TOKEN,
+      filesToDeleteAfterUpload: ['.next/static/**/*.map'],
+    },
+  })
+);

@@ -116,9 +116,11 @@ export const config = {
   // - árboles estáticos de public/ (docs/, pwa/, shared/) y assets por extensión:
   //   no necesitan headers de seguridad ni IAST (los sirve el CDN de Vercel).
   // - api/ads/{push,clear,debug}: endpoints dev-only (en prod responden vacío).
+  // - 149e9513-.../: proxy del challenge de Vercel BotID (rewrite de withBotId);
+  //   sus cabeceras las gestiona next.config, no el middleware.
   // El resto (HTML/RSC y API reales) sí pasa por el middleware para conservar
   // cabeceras + IAST.
   matcher: [
-    '/((?!_next|static|favicon.ico|sitemap.xml|robots.txt|manifest.webmanifest|sw.js|ads.txt|docs/|pwa/|shared/|images|icons|audio|logos|fonts|api/ads/(?:push|clear|debug)$|.*\\.(?:svg|png|jpe?g|gif|webp|avif|bmp|ico|woff2?|ttf|otf|eot|mp3|mp4|webm|mov|ogg|oga|opus|wav|flac|pdf|zip|docx?|xlsx?|pptx?|csv|txt|md|xml|json|map|html?)$).*)',
+    '/((?!_next|149e9513-01fa-4fb0-aad4-566afd725d1b/|static|favicon.ico|sitemap.xml|robots.txt|manifest.webmanifest|sw.js|ads.txt|docs/|pwa/|shared/|images|icons|audio|logos|fonts|api/ads/(?:push|clear|debug)$|.*\\.(?:svg|png|jpe?g|gif|webp|avif|bmp|ico|woff2?|ttf|otf|eot|mp3|mp4|webm|mov|ogg|oga|opus|wav|flac|pdf|zip|docx?|xlsx?|pptx?|csv|txt|md|xml|json|map|html?)$).*)',
   ],
 };
