@@ -18,7 +18,6 @@ import {
   FACEBOOK,
   GITHUB_REPO,
   INSTAGRAM,
-  INVITE_URL,
   LOGO_ISOTIPO_CIRCLE,
   LOGO_LOGOTIPO,
   TOP_GG_BOT,
@@ -242,16 +241,14 @@ export default function Footer({ commandCount = 0 }: FooterProps) {
               />
             </Link>
 
-            {/* Community Connector (Discord invite) — mismo estilo que el botón del header */}
-            <a
-              href={INVITE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+            {/* Community Connector — lleva a la página /invite (flujo exclusivo) */}
+            <Link
+              href="/invite"
               className="w-full group flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white px-8 py-3.5 font-header font-bold text-sm transition-all duration-300 shadow-[0_4px_15px_rgba(0,212,255,0.2)] hover:scale-[1.02] hover:shadow-[0_10px_28px_-8px_rgba(0,212,255,0.8)] active:scale-95 mb-4"
             >
               <Icon name="discord" size={16} className="[&>g]:fill-current" />
               <span>{dict.nav.invite}</span>
-            </a>
+            </Link>
 
             {/* Píldora: servidor de Discord de la comunidad (Ciszugamens) */}
             <a

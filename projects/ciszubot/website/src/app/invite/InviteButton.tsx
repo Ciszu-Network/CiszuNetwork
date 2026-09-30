@@ -26,8 +26,9 @@ const COUNTDOWN = 10;
 /**
  * Flujo central de invitación de `/invite`.
  *
- *  1. El usuario pulsa el botón → se le FELICITA (toast) y se abre Discord en
- *     una pestaña nueva con la autorización oficial.
+ *  1. El usuario pulsa el botón → se le FELICITA (toast) y, tras 3 s (para
+ *     que alcance a verlo), se abre Discord en una pestaña nueva con la
+ *     autorización oficial.
  *  2. Se le pide confirmar que terminó la invitación (acción del usuario).
  *  3. Al confirmar empieza una cuenta atrás; al llegar a 0 se redirige al
  *     inicio (o antes, si pulsa «Ir al inicio ahora»).
@@ -51,14 +52,30 @@ export default function InviteButton({
   const [step, setStep] = useState<Step>('idle');
   const [seconds, setSeconds] = useState(COUNTDOWN);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const openTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const redirected = useRef(false);
 
-  /** Abre la invitación oficial y felicita al usuario. */
+  /**
+   * Felicita al usuario y abre la invitación oficial con 3 s de retardo: si la
+   * pestaña nueva se abriera de inmediato, el agradecimiento (toast y panel)
+   * no se vería porque el navegador pasa el foco a la otra pestaña.
+   */
   const startInvite = () => {
     toast(thanks, 'success');
-    window.open(INVITE_URL, '_blank', 'noopener,noreferrer');
     setStep('awaiting');
+    if (openTimerRef.current) clearTimeout(openTimerRef.current);
+    openTimerRef.current = setTimeout(() => {
+      window.open(INVITE_URL, '_blank', 'noopener,noreferrer');
+    }, 3000);
   };
+
+  // Limpia el temporizador de apertura si el componente se desmonta.
+  useEffect(
+    () => () => {
+      if (openTimerRef.current) clearTimeout(openTimerRef.current);
+    },
+    [],
+  );
 
   // Cuenta atrás (solo en el paso 'countdown').
   useEffect(() => {

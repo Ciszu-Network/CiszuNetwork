@@ -11,7 +11,7 @@ import { getGuestName } from '@/lib/guest';
 import { syncPreferencesToProfile, updatePreferences, loadPreferences } from '@/lib/preferences';
 import PreferencesPanel from '@/components/layout/PreferencesPanel';
 import { PreferencesModal } from '@ciszu/ui';
-import { INVITE_URL, LOGO_ISOTIPO_CIRCLE, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
+import { LOGO_ISOTIPO_CIRCLE, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
 import { useClientI18n } from '@/hooks/useClientI18n';
 
 // Header = solo lo esencial. TODO lo demás se indexa en el desplegable
@@ -24,13 +24,13 @@ import { useClientI18n } from '@/hooks/useClientI18n';
 const NAV_PAGES: { href: string; key: keyof Dict['nav']; icon: string }[] = [
   { href: '/', key: 'home', icon: 'home' },
   { href: '/commands', key: 'commands', icon: 'gamepad' },
+  { href: '/explore', key: 'explore', icon: 'globe' },
+  { href: '/invite', key: 'invite', icon: 'discord' },
   { href: '/stats', key: 'stats', icon: 'chart-bar' },
   { href: '/changelog', key: 'changelog', icon: 'history' },
   { href: '/reviews', key: 'reviews', icon: 'star' },
   { href: '/downloads', key: 'downloads', icon: 'download' },
   { href: '/feedback', key: 'feedback', icon: 'message' },
-  { href: '/explore', key: 'explore', icon: 'globe' },
-  { href: '/invite', key: 'invite', icon: 'discord' },
 ];
 
 const INFO_PAGES: { href: string; key: keyof Dict['nav']; icon: string }[] = [
@@ -146,7 +146,7 @@ export default function Navbar({ account }: NavbarProps) {
   const [query, setQuery] = useState('');
   const [authOpen, setAuthOpen] = useState(false);
   const [prefsOpen, setPrefsOpen] = useState(false);
-  const [inviteOpen, setInviteOpen] = useState(false);
+  const [, setInviteOpen] = useState(false);
   const [isDark, setIsDark] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -479,38 +479,17 @@ export default function Navbar({ account }: NavbarProps) {
           </div>
 
           <div className="flex items-center gap-2 ml-auto shrink-0">
-            {/* Invitar — botón con texto */}
-            <div className="relative hidden sm:block" ref={inviteRef}>
-              <button
-                onClick={() => { setInviteOpen(!inviteOpen); setAuthOpen(false); setSearchOpen(false); setIsMenuOpen(false); }}
-                className={`flex items-center gap-2 rounded-xl px-3 py-2 transition-all duration-300 cursor-pointer shadow-md border group font-header font-bold text-sm ${
-                  inviteOpen
-                    ? 'bg-neon-blue border-neon-blue text-black'
-                    : 'bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white hover:scale-105 hover:shadow-[0_10px_28px_-8px_rgba(0,212,255,0.8)]'
-                } active:scale-95`}
-                aria-label={dict.nav.invite}
-                title={dict.nav.invite}
-                aria-expanded={inviteOpen}
-              >
-                <Icon name="discord" size={16} className="[&>g]:fill-current" />
-                <span>{dict.nav.invite}</span>
-              </button>
-              {inviteOpen && (
-                <div className="absolute right-0 top-12 w-56 overflow-hidden rounded-xl border border-white/10 bg-[#0a0a14]/98 shadow-2xl animate-fade-in-down">
-                <a
-                  href={INVITE_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-ink transition hover:bg-muted/15 hover:text-neon-blue"
-                >
-                  <Icon name="external" size={15} /> {dict.nav.invite}
-                </a>
-                <p className="border-t border-border px-4 py-2.5 text-[11px] text-muted">
-                  {dict.nav.inviteHint}
-                </p>
-                </div>
-              )}
-            </div>
+            {/* Invitar — botón con texto: navega a la página /invite (flujo exclusivo) */}
+            <Link
+              href="/invite"
+              onClick={() => { setAuthOpen(false); setSearchOpen(false); setIsMenuOpen(false); setInviteOpen(false); }}
+              className="hidden sm:flex items-center gap-2 rounded-xl px-3 py-2 transition-all duration-300 cursor-pointer shadow-md border group font-header font-bold text-sm bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white hover:scale-105 hover:shadow-[0_10px_28px_-8px_rgba(0,212,255,0.8)] active:scale-95"
+              aria-label={dict.nav.invite}
+              title={dict.nav.invite}
+            >
+              <Icon name="discord" size={16} className="[&>g]:fill-current" />
+              <span>{dict.nav.invite}</span>
+            </Link>
 
             {/* Buscador — toggle (panel full-width bajo el nav) */}
             <div className="relative">
@@ -855,16 +834,14 @@ export default function Navbar({ account }: NavbarProps) {
                 )}
 
                 <div className="h-px bg-white/10 my-4" />
-                <a
-                  href={INVITE_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  href="/invite"
                   onClick={() => { setIsMenuOpen(false); setSidebarView('main'); }}
                   className="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white rounded-xl font-header font-bold text-sm shadow-[0_4px_15px_rgba(0,212,255,0.2)] hover:shadow-[0_4px_25px_rgba(0,212,255,0.5)] transition-all"
                 >
                   <Icon name="discord" size={16} className="[&>g]:fill-current" />
                   <span>{dict.nav.invite}</span>
-                </a>
+                </Link>
               </>
             ) : (
               <div className="grid grid-cols-1 gap-1 animate-fade-in-up pb-10">
