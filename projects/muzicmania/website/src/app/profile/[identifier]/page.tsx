@@ -33,6 +33,8 @@ export default function DynamicProfilePage() {
   const [userRole, setUserRole] = useState<string | null>(null);
   const [accountStatus, setAccountStatus] = useState<string | null>(null);
   const [banInfo, setBanInfo] = useState<{ actor: string } | null>(null);
+  // Privacidad del perfil (public | friends | private).
+  const [visibility, setVisibility] = useState<'public' | 'friends' | 'private'>('public');
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -65,11 +67,14 @@ export default function DynamicProfilePage() {
           // Rol global (tags), marca pública de eliminación y ban activo.
           try {
             const publicDb = supabase.schema('public');
-            const [roleRes, statusRes, banRes] = await Promise.all([
+            const [roleRes, statusRes, banRes, privacyRes] = await Promise.all([
               publicDb.from('user_roles').select('role').eq('user_id', data.id).eq('website', 'muzicmania').maybeSingle(),
               publicDb.from('account_public_status').select('status').eq('user_id', data.id).maybeSingle(),
               publicDb.from('sanctions').select('type, actor, expires_at').eq('user_id', data.id).eq('type', 'ban'),
+              publicDb.from('account_privacy').select('visibility').eq('user_id', data.id).maybeSingle(),
             ]);
+            const privacy = ((privacyRes.data as { visibility?: string } | null)?.visibility) ?? 'public';
+            if (privacy === 'friends' || privacy === 'private') setVisibility(privacy);
             setUserRole(((roleRes.data as { role?: string } | null)?.role) ?? null);
             setAccountStatus(((statusRes.data as { status?: string } | null)?.status) ?? null);
             const bans = (banRes.data as Array<{ actor?: string; expires_at?: string | null }> | null) ?? [];
@@ -90,6 +95,11 @@ export default function DynamicProfilePage() {
   }, [identifier]);
 
   const isOwnProfile = currentUser?.id === profile?.id;
+
+  // Privacidad: 'friends' y 'private' limitan los datos detallados (records,
+  // historial, logros, amistades, comentarios). El sistema de amigos aún no
+  // existe: por ahora solo el dueño ve el detalle completo.
+  const restricted = !!profile && !isOwnProfile && (visibility === 'private' || visibility === 'friends');
 
   if (loading) {
     return (
@@ -227,6 +237,8 @@ export default function DynamicProfilePage() {
           </div>
         </section>
 
+        {!restricted ? (
+          <>
         {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
           <StatCard label="Puntuación Máxima" value={(profile.high_score || 0).toLocaleString()} color="text-neon-blue" icon={<Icon name="trophy" size={16} />} />
@@ -305,7 +317,20 @@ export default function DynamicProfilePage() {
             </div>
           </aside>
         </div>
-        
+          </>
+        ) : (
+          <div className="rounded-[3rem] border border-white/10 bg-white/5 p-12 text-center space-y-3">
+            <p className="text-neon-cyan font-header font-black uppercase tracking-widest text-xs">
+              {visibility === 'private' ? 'Perfil privado' : 'Perfil para amigos'}
+            </p>
+            <p className="text-gray-500 text-xs font-bold uppercase tracking-widest leading-relaxed">
+              {visibility === 'private'
+                ? 'Este usuario limita su información detallada (records, historial, logros, amistades y comentarios).'
+                : 'La información detallada (records, historial, logros, amistades y comentarios) es solo para amigos de este usuario.'}
+            </p>
+          </div>
+        )}
+
         <QuickDocks />
       </main>
     </MainLayout>

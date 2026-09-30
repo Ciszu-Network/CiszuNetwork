@@ -39,6 +39,31 @@ export async function POST(request: Request) {
 
     const admin = adminClient();
 
+    // Ban por IP: si el origen está sancionado no se permite re-crear cuentas.
+    const requestIp = (request.headers.get('x-forwarded-for') ?? '').split(',')[0]?.trim() ?? '';
+    if (requestIp) {
+      const [ipRow, ipSanction] = await Promise.all([
+        admin.schema('public').from('banned_ips').select('ip, expires_at').eq('ip', requestIp).maybeSingle(),
+        admin
+          .schema('public')
+          .from('sanctions')
+          .select('id, expires_at')
+          .eq('type', 'ban')
+          .eq('ip', requestIp)
+          .limit(1)
+          .maybeSingle(),
+      ]);
+      const nowIp = Date.now();
+      const activeIp = (row: { expires_at?: string | null } | null) =>
+        !!row && (!row.expires_at || Date.parse(row.expires_at) > nowIp);
+      if (
+        activeIp(ipRow as { expires_at?: string | null } | null) ||
+        activeIp(ipSanction as { expires_at?: string | null } | null)
+      ) {
+        return NextResponse.json({ success: false, state: 'banned' });
+      }
+    }
+
     const { data: profile } = await admin
       .schema('muzicmania')
       .from('profiles')

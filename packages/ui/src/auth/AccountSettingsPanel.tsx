@@ -117,6 +117,9 @@ export default function AccountSettingsPanel({
   const [delOpen, setDelOpen] = useState(false);
   const [delBusy, setDelBusy] = useState(false);
   const [delMsg, setDelMsg] = useState<string | null>(null);
+  // Privacidad del perfil (aplicada especialmente en muzicmania).
+  const [visibility, setVisibility] = useState<'public' | 'friends' | 'private'>('public');
+  const [visibilityMsg, setVisibilityMsg] = useState<string | null>(null);
 
   const api = useCallback(
     async (path: string, init?: RequestInit) => {
@@ -167,6 +170,13 @@ export default function AccountSettingsPanel({
               .maybeSingle();
             const role = (res?.data as { role?: string } | null)?.role;
             setMyRole(role ?? null);
+            const privacyRes = await publicDb
+              .from('account_privacy')
+              .select('visibility')
+              .eq('user_id', data.user.id)
+              .maybeSingle();
+            const vis = (privacyRes?.data as { visibility?: string } | null)?.visibility;
+            if (vis === 'friends' || vis === 'private' || vis === 'public') setVisibility(vis);
           } catch {
             /* sin rol */
           }
@@ -335,6 +345,31 @@ export default function AccountSettingsPanel({
     }
   };
 
+  /** Guarda la privacidad del perfil (aplicada especialmente en muzicmania). */
+  const saveVisibility = async (value: 'public' | 'friends' | 'private') => {
+    setVisibility(value);
+    setVisibilityMsg(null);
+    try {
+      const accountBase = apiBase.replace(/\/2fa$/, '/account');
+      const { data } = await supabase.auth.getSession();
+      const token = data.session?.access_token;
+      const res = await fetch(`${accountBase}/privacy`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ visibility: value }),
+      });
+      const result = (await res.json().catch(() => ({}))) as { success?: boolean; error?: string };
+      setVisibilityMsg(
+        result.success === true ? 'Privacidad actualizada.' : (result.error ?? 'No pudimos guardarla.'),
+      );
+    } catch {
+      setVisibilityMsg('No pudimos guardar la privacidad.');
+    }
+  };
+
   if (loading) {
     return (
       <div className="py-10 text-center">
@@ -500,6 +535,25 @@ build: ${typeof window !== 'undefined' ? window.location.host : ''}`}
             habilitarán por rangos en la siguiente iteración (owner completo &gt; admin &gt; mod &gt; bot).
           </p>
         )}
+      </Section>
+
+      <Section
+        title="Privacidad del perfil"
+        description="Público: todo visible. Amigos: los datos detallados (records, historial, logros, amistades y comentarios) solo los ven tus amigos (cuando exista el sistema de amistades) — por ahora solo tú. Privado: solo tú. El nombre, la foto y la bio siguen visibles en todos los niveles. Se aplica especialmente en el perfil público de muzicmania."
+      >
+        {visibilityMsg && <p className="text-[11px] font-bold text-muted">{visibilityMsg}</p>}
+        <div className="flex flex-wrap gap-2">
+          {(['public', 'friends', 'private'] as const).map((level) => (
+            <button
+              key={level}
+              type="button"
+              onClick={() => void saveVisibility(level)}
+              className={visibility === level ? btnPrimary : btnGhost}
+            >
+              {level === 'public' ? 'Público' : level === 'friends' ? 'Amigos' : 'Privado'}
+            </button>
+          ))}
+        </div>
       </Section>
 
       <Section
