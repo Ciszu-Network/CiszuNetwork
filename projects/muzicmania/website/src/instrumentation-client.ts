@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/nextjs';
+import { initBotId } from 'botid/client/core';
 
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
@@ -37,6 +38,20 @@ Sentry.init({
       formTitle: '¿Algo no funciona?',
       messagePlaceholder: 'Cuéntanos qué ocurrió…',
     }),
+  ],
+});
+
+// Rutas POST con fetch same-origin desde nuestras páginas (login/registro, 2FA y
+// resolución de @username del login).
+initBotId({
+  protect: [
+    { path: '/api/verify-recaptcha', method: 'POST' },
+    { path: '/api/auth/resolve-username', method: 'POST' },
+    { path: '/api/auth/2fa/disable', method: 'POST' },
+    { path: '/api/auth/2fa/enable', method: 'POST' },
+    { path: '/api/auth/2fa/generate', method: 'POST' },
+    { path: '/api/auth/2fa/resend', method: 'POST' },
+    { path: '/api/auth/2fa/verify', method: 'POST' },
   ],
 });
 

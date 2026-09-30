@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { checkBotId } from 'botid/server';
 import { z } from 'zod';
 import { db, muzicmaniaSchema, eq, sql } from '@ciszunetwork/db';
 import { createRateLimiter, parseJsonBody, firstZodMessage } from '@ciszunetwork/utils';
@@ -20,6 +21,11 @@ const resolveUsernameSchema = z.object({
 const limiter = createRateLimiter({ windowMs: 60_000, max: 10 });
 
 export async function POST(request: NextRequest) {
+  const verification = await checkBotId();
+  if (verification.isBot) {
+    return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+  }
+
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
   const rl = limiter.allow(ip);
   if (!rl.allowed) {

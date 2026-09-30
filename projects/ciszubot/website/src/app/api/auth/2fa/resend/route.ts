@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { checkBotId } from 'botid/server';
 import { authenticate } from '../_lib';
 
 export const runtime = 'nodejs';
@@ -6,6 +7,11 @@ export const dynamic = 'force-dynamic';
 
 /** Reenvía el código respetando enfriamiento y tope (2 reenvíos). */
 export async function POST(request: Request) {
+  const verification = await checkBotId();
+  if (verification.isBot) {
+    return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+  }
+
   const user = await authenticate(request);
   if (!user) {
     return NextResponse.json({ success: false, error: 'No autorizado.' }, { status: 401 });

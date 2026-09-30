@@ -1,5 +1,6 @@
 import type { NextConfig } from 'next';
 import { withSentryConfig } from '@sentry/nextjs';
+import { withBotId } from 'botid/next/config';
 import path from 'path';
 import { fileURLToPath } from 'node:url';
 
@@ -30,12 +31,14 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withSentryConfig(nextConfig, {
-  org: 'ciszu-network',
-  project: 'ciszunetwork',
-  silent: true,
-  sourcemaps: {
-    disable: !process.env.SENTRY_AUTH_TOKEN,
-    filesToDeleteAfterUpload: ['.next/static/**/*.map'],
-  },
-});
+export default withBotId(
+  withSentryConfig(nextConfig, {
+    org: 'ciszu-network',
+    project: 'ciszunetwork',
+    silent: true,
+    sourcemaps: {
+      disable: !process.env.SENTRY_AUTH_TOKEN,
+      filesToDeleteAfterUpload: ['.next/static/**/*.map'],
+    },
+  })
+);
