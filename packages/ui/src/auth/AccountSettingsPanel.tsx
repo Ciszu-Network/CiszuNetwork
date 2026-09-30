@@ -111,6 +111,10 @@ export default function AccountSettingsPanel({
   const [msg, setMsg] = useState<string | null>(null);
   const [myRole, setMyRole] = useState<string | null>(null);
   const [staffView, setStaffView] = useState(false);
+  // Step-up: sesión de elevación temporal (token en sessionStorage, 45 min).
+  const [elevCode, setElevCode] = useState('');
+  const [elevMsg, setElevMsg] = useState<string | null>(null);
+  const [elevatedUntil, setElevatedUntil] = useState<number | null>(null);
   const [delPw, setDelPw] = useState('');
   const [delUser, setDelUser] = useState('');
   const [delPhrase, setDelPhrase] = useState('');
@@ -181,6 +185,12 @@ export default function AccountSettingsPanel({
             setStaffView(
               window.localStorage.getItem(`ciszu-staff-view:${site}:${data.user.id}`) === 'on',
             );
+            // Step-up: restaura el estado de la sesión de elevación vigente.
+            const elevToken = window.sessionStorage.getItem(`ciszu-staff-elevation:${site}`);
+            if (elevToken) {
+              const exp = Number(elevToken.split('.')[0]);
+              if (Number.isFinite(exp) && exp > Date.now()) setElevatedUntil(exp);
+            }
           } catch {
             /* sin rol */
           }
@@ -305,6 +315,44 @@ export default function AccountSettingsPanel({
     setRememberEnabled(site, value);
     setRemember(value);
     setMsg(value ? 'Sesión recordada en este dispositivo.' : 'La sesión ya no se recordará en este dispositivo.');
+  };
+
+  /** Verifica un código step-up (generado en la devcon) y activa 45 min de elevación. */
+  const verifyStepUp = async () => {
+    setElevMsg(null);
+    const code = elevCode.trim();
+    if (code.length < 8) {
+      setElevMsg('Código inválido.');
+      return;
+    }
+    try {
+      const { data } = await supabase.auth.getSession();
+      const token = data.session?.access_token;
+      const res = await fetch('/api/staff/elevate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ code }),
+      });
+      const result = (await res.json().catch(() => ({}))) as {
+        success?: boolean;
+        token?: string;
+        expiresAt?: string;
+        error?: string;
+      };
+      if (!res.ok || result.success !== true || !result.token) {
+        setElevMsg(result.error ?? 'No pudimos verificar el código.');
+        return;
+      }
+      window.sessionStorage.setItem(`ciszu-staff-elevation:${site}`, result.token);
+      setElevatedUntil(Date.parse(result.expiresAt ?? '') || Date.now() + 45 * 60 * 1000);
+      setElevCode('');
+      setElevMsg('Sesión step-up activa.');
+    } catch {
+      setElevMsg('No pudimos verificar el código.');
+    }
   };
 
   const logout = async () => {
@@ -545,10 +593,30 @@ build: ${typeof window !== 'undefined' ? window.location.host : ''}`}
         )}
         {myRole && ['owner', 'admin', 'mod', 'bot'].includes(myRole) && (
           <p className="text-[10px] font-bold text-muted">
-            Panel de {myRole}: las acciones de moderación quedan marcadas con tu identidad (auditoría) y se
-            habilitarán por rangos en la siguiente iteración (owner completo &gt; admin &gt; mod &gt; bot).
+            Panel de {myRole}: las acciones de moderación quedan marcadas con tu identidad (auditoría).
+            Para ejecutarlas necesitas una <strong className="text-ink">sesión step-up</strong>: pide/genera
+            una clave en la devcon (GESTIÓN DE USUARIOS → STEP-UP) y verifícala aquí.
           </p>
         )}
+        {staffView && myRole && ['owner', 'admin', 'mod', 'bot'].includes(myRole) && elevatedUntil === null && (
+          <div className="flex w-full flex-wrap items-center gap-2 pt-1">
+            <input
+              className={`${inputCls} max-w-[260px]`}
+              placeholder="Código step-up (devcon)"
+              value={elevCode}
+              onChange={(e) => setElevCode(e.target.value)}
+            />
+            <button type="button" className={btnPrimary} onClick={() => void verifyStepUp()}>
+              Verificar
+            </button>
+          </div>
+        )}
+        {staffView && elevatedUntil !== null && (
+          <p className="text-[10px] font-bold text-emerald-400">
+            Sesión step-up activa hasta las {new Date(elevatedUntil).toLocaleTimeString()}.
+          </p>
+        )}
+        {elevMsg && <p className="text-[11px] font-bold text-muted">{elevMsg}</p>}
       </Section>
 
       <Section

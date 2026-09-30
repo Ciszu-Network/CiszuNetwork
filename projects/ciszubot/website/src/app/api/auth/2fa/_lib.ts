@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { createHmac } from 'crypto';
 import {
   createTwoFactorService,
   sendBrandedEmail,
@@ -201,6 +202,28 @@ export async function authenticate(request: Request): Promise<AuthedUser | null>
   if (error || !data.user) return null;
 
   return { userId: data.user.id, email: data.user.email ?? '', token };
+}
+
+/**
+ * Sesión de elevación de staff (step-up): token sin estado firmado con HMAC.
+ * El código de un solo uso se genera en la devcon (staff_elevations) y aquí
+ * solo se firma/verifica la sesión temporal resultante.
+ */
+export function signStaffElevation(userId: string, expMs: number): string | null {
+  const secret = process.env.STAFF_ELEVATION_SECRET;
+  if (!secret) return null;
+  const sig = createHmac('sha256', secret).update(`${userId}:${expMs}`).digest('base64url');
+  return `${expMs}.${sig}`;
+}
+
+export function verifyStaffElevation(userId: string, token: string | null): boolean {
+  const secret = process.env.STAFF_ELEVATION_SECRET;
+  if (!secret || !token) return false;
+  const [expStr, sig] = token.split('.');
+  const expMs = Number(expStr);
+  if (!Number.isFinite(expMs) || expMs < Date.now() || !sig) return false;
+  const expected = createHmac('sha256', secret).update(`${userId}:${expMs}`).digest('base64url');
+  return sig === expected;
 }
 
 /** ¿El usuario tiene el 2FA activo en ESTA web? */

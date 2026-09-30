@@ -139,6 +139,8 @@ export default function DynamicProfilePage() {
         headers: {
           'Content-Type': 'application/json',
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          'x-staff-elevation':
+            window.sessionStorage.getItem('ciszu-staff-elevation:muzicmania') ?? '',
         },
         body: JSON.stringify({
           action,
@@ -148,7 +150,11 @@ export default function DynamicProfilePage() {
           ...extra,
         }),
       });
-      const data = (await res.json().catch(() => ({}))) as { success?: boolean; error?: string };
+      const data = (await res.json().catch(() => ({}))) as { success?: boolean; error?: string; message?: string };
+      if (res.status === 401 && data.error === 'step_up_required') {
+        setModMsg('Necesitas una sesión step-up: genera una clave en la devcon y verifícala en tu configuración de cuenta.');
+        return;
+      }
       if (!res.ok || data.success !== true) {
         setModMsg(data.error ?? 'La acción falló.');
         return;
