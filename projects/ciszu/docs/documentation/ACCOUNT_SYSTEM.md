@@ -1,8 +1,8 @@
 # ACCOUNT_SYSTEM — Ciclo de vida de cuentas, verificación, sanciones y roles
 
-**Versión:** 1.0.0
+**Versión:** 1.1.0
 **Actualización:** 2026-09-30
-**Identificador:** ACCOUNT_SYSTEM_V1.0.0_2026_09_30_ciszunetwork
+**Identificador:** ACCOUNT_SYSTEM_V1.1.0_2026_09_30_ciszunetwork
 **Definición:** Sistema unificado de cuentas del ecosistema (CISZU ID): registro con
 verificación obligatoria C-XXX XXX, OTP de acceso, sesiones recordadas por dispositivo,
 configuración de cuenta compartida, Danger Zone con ciclo de eliminación de 15 días,
