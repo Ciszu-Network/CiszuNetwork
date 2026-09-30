@@ -33,7 +33,7 @@ declare module 'zustand' {
 }
 
 declare module '@supabase/supabase-js' {
-  export function createClient(url: string, key: string): any;
+  export function createClient(url: string, key: string, options?: Record<string, unknown>): any;
   export type Session = any;
   export type AuthChangeEvent = any;
 }
