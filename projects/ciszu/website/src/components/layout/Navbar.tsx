@@ -4,9 +4,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { assetResolver } from '@ciszunetwork/cdn';
-import { useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE, RememberSessionPrompt } from '@ciszu/ui';
+import { useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE, RememberSessionPrompt, SanctionNotice } from '@ciszu/ui';
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store';
+import { supabase } from '@/config/supabase';
 import { applyTheme } from '@/lib/preferences';
 import { getDict } from '@/lib/i18n';
 import { CISZU_NETWORK } from '@/config/site';
@@ -594,6 +595,7 @@ export const NavbarContent = () => {
         )}
       {/* Modal opcional: recordar sesión (solo en el index, tras login/registro). */}
       <RememberSessionPrompt site="ciszunetwork" siteName="Ciszu Network" userId={user?.id ?? null} />
+      <SanctionNotice supabase={supabase} site="ciszunetwork" siteName="Ciszu Network" />
       </nav>
 
       {/* Slide-Right Contextual Menu (Sidebar) */}

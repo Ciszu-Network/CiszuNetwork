@@ -217,6 +217,9 @@ export type { TwoFactorGateProps } from './auth/TwoFactorGate';
 export { default as RememberSessionPrompt } from './auth/RememberSessionPrompt';
 export type { RememberSessionPromptProps } from './auth/RememberSessionPrompt';
 export { createRememberStorage, isRememberEnabled, setRememberEnabled } from './auth/rememberSession';
+// Aviso de sanciones activas (ban/mute) para la cuenta afectada
+export { default as SanctionNotice } from './auth/SanctionNotice';
+export type { SanctionNoticeProps, SanctionNoticeSupabase } from './auth/SanctionNotice';
 // Configuración de cuenta compartida (perfil/seguridad/sesión/notificaciones/debug)
 export { default as AccountSettingsPanel } from './auth/AccountSettingsPanel';
 export type { AccountSettingsPanelProps, AccountSettingsSupabase } from './auth/AccountSettingsPanel';

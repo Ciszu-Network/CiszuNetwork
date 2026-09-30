@@ -3,10 +3,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, LANG_BLOCKED_MESSAGE, RememberSessionPrompt } from '@ciszu/ui';
+import { useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, LANG_BLOCKED_MESSAGE, RememberSessionPrompt, SanctionNotice } from '@ciszu/ui';
 import CdnImage from '@/components/shared/CdnImage';
 import { NAV_MAIN, SOCIALS, I, ALL_PAGES, SEARCH_INDEX, type NavGroup, type NavItem } from '@/config/navigation';
 import { useAppStore } from '@/store';
+import { supabase } from '@/config/supabase';
 import AuthMenu, { GuestIcon } from '@/components/auth/AuthMenu';
 import { getGuestName } from '@/lib/guest';
 import { navLabel, t, type Dict } from '@/lib/i18n';
@@ -450,6 +451,7 @@ export default function Navbar() {
         )}
       {/* Modal opcional: recordar sesión (solo en el index, tras login/registro). */}
       <RememberSessionPrompt site="ciszukoantony" siteName="Ciszuko Antony" userId={user?.id ?? null} />
+      <SanctionNotice supabase={supabase} site="ciszukoantony" siteName="Ciszuko Antony" />
       </nav>
 
       {/* Slide-right contextual menu (sidebar) */}
