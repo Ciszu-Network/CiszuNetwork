@@ -50,6 +50,8 @@ initBotId({
     { path: '/api/auth/2fa/resend', method: 'POST' },
     { path: '/api/auth/2fa/verify', method: 'POST' },
     { path: '/api/auth/register/complete', method: 'POST' },
+    { path: '/api/auth/account/delete-request', method: 'POST' },
+    { path: '/api/auth/account/recovery', method: 'POST' },
   ],
 });
 

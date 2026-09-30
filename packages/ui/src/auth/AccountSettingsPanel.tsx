@@ -107,6 +107,12 @@ export default function AccountSettingsPanel({
   const [notifMsg, setNotifMsg] = useState<string | null>(null);
   const [debugOpen, setDebugOpen] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [delPw, setDelPw] = useState('');
+  const [delUser, setDelUser] = useState('');
+  const [delPhrase, setDelPhrase] = useState('');
+  const [delOpen, setDelOpen] = useState(false);
+  const [delBusy, setDelBusy] = useState(false);
+  const [delMsg, setDelMsg] = useState<string | null>(null);
 
   const api = useCallback(
     async (path: string, init?: RequestInit) => {
@@ -279,6 +285,38 @@ export default function AccountSettingsPanel({
     if (error) setMsg(error.message);
   };
 
+  /** Danger Zone: solicita la eliminación (15 días de suspensión, datos guardados). */
+  const requestDeletion = async () => {
+    setDelMsg(null);
+    if (!delPw || !delUser.trim() || delPhrase.trim().toUpperCase() !== 'ELIMINAR') {
+      setDelMsg('Completa contraseña, tu usuario exacto y escribe ELIMINAR.');
+      return;
+    }
+    setDelBusy(true);
+    try {
+      const accountBase = apiBase.replace(/\/2fa$/, '/account');
+      const { data } = await supabase.auth.getSession();
+      const token = data.session?.access_token;
+      const res = await fetch(`${accountBase}/delete-request`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ password: delPw, username: delUser.trim(), phrase: delPhrase }),
+      });
+      const result = (await res.json().catch(() => ({}))) as { success?: boolean; error?: string };
+      if (!res.ok || result.success !== true) {
+        setDelMsg(result.error ?? 'No pudimos procesar la eliminación.');
+        return;
+      }
+      await supabase.auth.signOut().catch(() => {});
+      window.location.href = '/';
+    } finally {
+      setDelBusy(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="py-10 text-center">
@@ -422,6 +460,61 @@ otp: ${otpEnabled === null ? 'desconocido' : otpEnabled ? 'activado' : 'desactiv
 remember: ${remember ? 'on' : 'off'}
 build: ${typeof window !== 'undefined' ? window.location.host : ''}`}
           </pre>
+        )}
+      </Section>
+
+      <Section
+        title="Danger Zone"
+        description="Eliminar tu cuenta CISZU ID: pasa a suspensión de 15 días (desindexada y anonimizada públicamente; tus datos se conservan). Podrás recuperarla iniciando sesión en ese plazo; al recuperarla no podrás eliminarla de nuevo durante 30 días."
+      >
+        {delMsg && <p className="text-[11px] font-bold text-red-400">{delMsg}</p>}
+        {delOpen ? (
+          <div className="space-y-3 text-left">
+            <Field label="Contraseña actual">
+              <input
+                type="password"
+                className={inputCls}
+                value={delPw}
+                onChange={(e) => setDelPw(e.target.value)}
+                autoComplete="current-password"
+              />
+            </Field>
+            <Field label="Escribe tu nombre de usuario exacto">
+              <input className={inputCls} value={delUser} onChange={(e) => setDelUser(e.target.value)} />
+            </Field>
+            <Field label="Escribe ELIMINAR para confirmar (advertencia final)">
+              <input
+                className={inputCls}
+                value={delPhrase}
+                onChange={(e) => setDelPhrase(e.target.value)}
+                placeholder="ELIMINAR"
+              />
+            </Field>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                disabled={delBusy}
+                onClick={requestDeletion}
+                className="inline-flex items-center justify-center rounded-xl bg-red-500/90 px-4 py-2.5 font-header text-[11px] font-black uppercase tracking-widest text-white transition hover:bg-red-500 disabled:opacity-50"
+              >
+                Eliminar mi cuenta
+              </button>
+              <button
+                type="button"
+                className={btnGhost}
+                onClick={() => {
+                  setDelOpen(false);
+                  setDelMsg(null);
+                }}
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button type="button" className={btnGhost} onClick={() => setDelOpen(true)}>
+            Eliminar cuenta…
+          </button>
         )}
       </Section>
     </div>
