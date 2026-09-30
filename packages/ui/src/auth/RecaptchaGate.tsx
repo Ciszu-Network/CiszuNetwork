@@ -192,24 +192,30 @@ export default function RecaptchaGate({
   }, [v3ExecutorRef, siteKeyV3, ready, action, onV3Token]);
 
   return (
-    <div className={`flex flex-col items-center gap-2 ${className}`}>
+    /**
+     * Stacking: `relative isolate z-10` crea un contexto propio por encima de
+     * las decoraciones de pagina (gradientes/paneles absolutos sin z) pero por
+     * DEBAJO del chrome de layout (navbar, FABs, docks: z-40/50). Asi el widget
+     * siempre es interactivo sin tapar la UI de la app.
+     */
+    <div className={`relative isolate z-10 flex flex-col items-center gap-2 ${className}`}>
       {siteKeyV2 ? (
         <div ref={containerRef} data-testid="recaptcha-v2" />
       ) : (
-        <p className="text-amber-400 text-[10px] font-bold text-center max-w-[260px]">
+        <p className="pointer-events-none text-amber-400 text-[10px] font-bold text-center max-w-[260px]">
           reCAPTCHA sin configurar (falta la site key de esta web). Contacta con soporte.
         </p>
       )}
       {scriptError && (
-        <p className="text-amber-400 text-[10px] font-bold text-center max-w-[260px]">
+        <p className="pointer-events-none text-amber-400 text-[10px] font-bold text-center max-w-[260px]">
           No se pudo cargar reCAPTCHA. Revisa tu conexión o desactiva el bloqueador de scripts.
         </p>
       )}
       {siteKeyV2 && !token && !scriptError && (
-        <span className="text-gray-500 text-[10px] font-bold">{hint}</span>
+        <span className="pointer-events-none text-gray-500 text-[10px] font-bold">{hint}</span>
       )}
       {siteKeyV3 && (
-        <span className="text-[9px] text-faint font-bold uppercase tracking-widest">
+        <span className="pointer-events-none select-none text-[9px] text-faint font-bold uppercase tracking-widest">
           Protegido con reCAPTCHA v2 + v3
         </span>
       )}
