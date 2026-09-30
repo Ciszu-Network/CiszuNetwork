@@ -212,6 +212,44 @@ export default function RegisterPage() {
 
       if (signUpError) {
         if (signUpError.message.toLowerCase().includes('already registered')) {
+          // ¿Correo de una cuenta ELIMINADA? Puede re-crearse (con aviso) reemplazando datos.
+          const rc = await fetch('/api/auth/account/reclaim', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: form.email.trim(),
+              password: form.password,
+              username: form.username.trim().toLowerCase(),
+              display_name: form.display_name.trim() || form.username.trim(),
+            }),
+          });
+          const rd = (await rc.json().catch(() => ({}))) as { success?: boolean; state?: string };
+          if (rd.state === 'reclaimed') {
+            const { data: s } = await supabase.auth.signInWithPassword({
+              email: form.email.trim(),
+              password: form.password,
+            });
+            const token = s.session?.access_token;
+            if (!token) throw new Error('Este correo perteneció a una cuenta eliminada: verifica tu correo para entrar.');
+            const gen = await fetch('/api/auth/2fa/generate', {
+              method: 'POST',
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            const genData = await gen.json().catch(() => ({}));
+            if (!gen.ok || genData.success === false) {
+              throw new Error(genData.error || 'No pudimos enviar la clave de verificación.');
+            }
+            toast('Este correo perteneció a una cuenta eliminada y fue reutilizado. Verifica el código.', 'success');
+            await supabase.auth.signOut().catch(() => {});
+            setPending({ token, email: form.email.trim() });
+            return;
+          }
+          if (rd.state === 'pending') {
+            throw new Error('Este correo tiene una cuenta en suspensión de eliminación: inicia sesión para recuperarla.');
+          }
+          if (rd.state === 'banned') {
+            throw new Error('Este correo está vinculado a una cuenta sancionada.');
+          }
           throw new Error('Este email ya está registrado. Inicia sesión o usa "Recuperar clave".');
         }
         throw signUpError;

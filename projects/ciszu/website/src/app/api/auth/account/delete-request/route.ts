@@ -79,6 +79,12 @@ export async function POST(request: Request) {
     const now = Date.now();
     const expiresAt = new Date(now + 15 * 24 * 60 * 60 * 1000).toISOString();
 
+    const { data: profileRow } = await admin
+      .schema('ciszunetwork')
+      .from('profiles')
+      .select('avatar_url')
+      .eq('id', user.userId)
+      .maybeSingle();
     const { error: insertError } = await admin
       .from('account_deletions')
       .upsert(
@@ -92,6 +98,7 @@ export async function POST(request: Request) {
           backup: {
             display_name: metadata.display_name ?? null,
             username: storedUsername,
+            avatar_url: (profileRow as { avatar_url?: string | null } | null)?.avatar_url ?? null,
             removed_public_at: new Date(now).toISOString(),
           },
         },
@@ -103,10 +110,19 @@ export async function POST(request: Request) {
     const suffix = Math.floor(Math.random() * 1e12)
       .toString()
       .padStart(12, '0');
+    const deletedUsername = `deleted-account-${suffix}`;
     const { error: updateError } = await admin.auth.admin.updateUserById(user.userId, {
-      data: { ...metadata, display_name: 'Deleted Account', username: `deleted-account-${suffix}` },
+      data: { ...metadata, display_name: 'Deleted Account', username: deletedUsername },
     });
     if (updateError) throw updateError;
+
+    // El perfil público de la web también se anonimiza (nombre/usuario/avatar).
+    const { error: profileError } = await admin
+      .schema('ciszunetwork')
+      .from('profiles')
+      .update({ display_name: 'Deleted Account', username: deletedUsername, avatar_url: null })
+      .eq('id', user.userId);
+    if (profileError && !String(profileError.message).includes('avatar_url')) throw profileError;
 
     return NextResponse.json({ success: true, expiresAt });
   } catch (err) {
