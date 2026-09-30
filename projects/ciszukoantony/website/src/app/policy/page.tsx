@@ -67,6 +67,12 @@ const ARTICLES: LegalArticle[] = [
       'Este sitio utiliza cookies esenciales para el funcionamiento básico y para recordar tus preferencias (tema, idioma). Además, usamos cookies de analítica (Google Analytics 4, PostHog y Cloudflare Web Analytics) para medir el tráfico y el rendimiento de los anuncios. Las cookies de terceros solo se activan con tu consentimiento; puedes gestionarlas o rechazarlas desde las preferencias del sitio o tu navegador.',
   },
   {
+    id: 90,
+    title: 'CUENTAS: VERIFICACIÓN, ELIMINACIÓN Y RETENCIÓN',
+    content:
+      'El registro exige verificación por código temporal (C-XXX XXX) enviado a tu correo: sin completarla, la cuenta no se activa; cada código expira en 3 horas y los reenvíos están limitados por seguridad. Cada inicio de sesión puede exigir un código temporal, desactivable desde la configuración de tu cuenta. Eliminar la cuenta (Danger Zone) NO borra los datos: suspende la cuenta 15 días (deindexada y anonimizada públicamente, con respaldo) y podrás recuperarla iniciando sesión en ese plazo (al recuperarla, no podrás eliminarla de nuevo durante 30 días). Si no la recuperas, pasados los 15 días se eliminan credenciales y validación de acceso, pero el identificador (UUID), el correo, el contenido y las sanciones permanecen vinculados internamente por seguridad y trazabilidad; el correo podrá reutilizarse para una cuenta nueva con un aviso. Datos no personales (puntuaciones, logros, guardados) pueden permanecer visibles según tu configuración. Las sanciones (baneos, mutes) permanecen ligadas al identificador aunque se elimine la cuenta. Borrado definitivo de contenido concreto: ciszunetwork@outlook.com.',
+  },
+  {
     id: 9,
     title: 'ENLACES EXTERNOS',
     content:
