@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
-import { Button, useToast, useActivityGuard, AuthBenefitsPanel, AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders, setCookieConsent, RecaptchaGate } from '@ciszu/ui';
+import { Button, useToast, useActivityGuard, AuthBenefitsPanel, AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders, setCookieConsent, RecaptchaGate, TwoFactorGate } from '@ciszu/ui';
 import CountrySelect from '@/components/atoms/CountrySelect';
 import DateSelect from '@/components/atoms/DateSelect';
 import { useAppStore } from '@/store/useAppStore';
@@ -105,6 +105,9 @@ export default function RegisterPage() {
   const { begin: beginActivity, end: endActivity } = useActivityGuard();
   const { setHasAcceptedCookies,  user } = useAppStore();
   const { toast } = useToast();
+  // Registro pendiente de verificación C-XXX XXX: guarda el token de la sesión
+  // recién creada (la sesión se cierra hasta completar la verificación).
+  const [pending, setPending] = useState<{ token: string; email: string } | null>(null);
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState<{ isVisible: boolean; type: 'success' | 'error' | 'loading' | 'info'; title: string; message: string }>({
@@ -319,20 +322,24 @@ export default function RegisterPage() {
           throw new Error('Este email ya está registrado. Intenta iniciar sesión o recuperar tu contraseña.');
         }
 
-        // Tras registrarse hay que INICIAR SESIÓN de nuevo: supabase-js deja una
-        // sesión creada al vuelo y entrar directo saltaba la verificación.
-        await supabase.auth.signOut().catch(() => {});
+        const token = data.session?.access_token;
+        if (!token) throw new Error('No pudimos iniciar la verificación del registro.');
 
-        setFeedback({ 
-          isVisible: true, 
-          type: 'success', 
-          title: 'Registro Exitoso', 
-          message: 'Tu cuenta ha sido creada. Serás redirigido al login para acceder.' 
+        // Código C-XXX XXX al email (servicio 2FA compartido: límites, 3 h, reenvíos).
+        const startRes = await fetch('/api/auth/2fa/generate', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
         });
-        
-        setTimeout(() => {
-          router.push('/login');
-        }, 2500);
+        const startData = await startRes.json().catch(() => ({}));
+        if (!startRes.ok || startData.success === false) {
+          throw new Error(startData.error || 'No pudimos enviar la clave de verificación.');
+        }
+
+        // La sesión se cierra hasta verificar: sin verificación la cuenta queda
+        // sin confirmar y no podrá iniciar sesión (no existe de forma utilizable).
+        await supabase.auth.signOut().catch(() => {});
+        setFeedback({ isVisible: false, type: 'success', title: '', message: '' });
+        setPending({ token, email: form.email });
       }
     } catch (err: any) {
       setFeedback({ 
@@ -345,6 +352,38 @@ export default function RegisterPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  /** Código verificado: confirma el email, activa el OTP de la web y entra. */
+  const handleVerified = async () => {
+    if (!pending) return;
+    try {
+      const res = await fetch('/api/auth/register/complete', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${pending.token}` },
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || data.success === false) {
+        throw new Error(data.error || 'No pudimos completar el registro.');
+      }
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: pending.email,
+        password: form.password,
+      });
+      if (signInError) throw signInError;
+      setPending(null);
+      toast('Cuenta verificada. ¡Bienvenido a MuzicMania!', 'success');
+      router.replace('/');
+    } catch (err: any) {
+      setPending(null);
+      setFeedback({ isVisible: true, type: 'error', title: 'Verificación', message: err?.message || 'No pudimos completar el registro.' });
+    }
+  };
+
+  /** Sin verificación no hay cuenta: se vuelve al formulario con aviso. */
+  const handleCancelVerify = () => {
+    setPending(null);
+    toast('Verificación pendiente: reenvía el formulario para pedir otra clave.', 'error');
   };
 
   return (
@@ -381,7 +420,19 @@ export default function RegisterPage() {
           <div className="relative group">
           <div className="absolute -inset-1 bg-gradient-to-r from-neon-purple to-neon-pink rounded-[3rem] blur opacity-20 transition duration-500" />
           <div className="relative p-6 md:p-10 bg-doc-dark border border-white/10 rounded-[3rem] shadow-2xl space-y-6 backdrop-blur-3xl">
-            <form onSubmit={handleSubmit} className="space-y-6">
+                          {pending && (
+                <div className="space-y-4" data-testid="register-verification">
+                  <TwoFactorGate
+                    accessToken={pending.token}
+                    email={pending.email}
+                    siteName="MuzicMania"
+                    force
+                    onVerified={handleVerified}
+                    onCancel={handleCancelVerify}
+                  />
+                </div>
+              )}
+              <form onSubmit={handleSubmit} className={pending ? 'hidden' : 'space-y-6'}>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <InputField label="Nombre de Usuario" name="username" icon={I.user} placeholder="CapaSinNombre" maxLength={20} required value={form.username} error={errors.username} onChange={handleChange} onBlur={() => validateField('username', form.username)} />

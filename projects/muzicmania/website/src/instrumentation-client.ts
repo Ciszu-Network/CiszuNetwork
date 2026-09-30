@@ -52,6 +52,7 @@ initBotId({
     { path: '/api/auth/2fa/generate', method: 'POST' },
     { path: '/api/auth/2fa/resend', method: 'POST' },
     { path: '/api/auth/2fa/verify', method: 'POST' },
+    { path: '/api/auth/register/complete', method: 'POST' },
   ],
 });
 
