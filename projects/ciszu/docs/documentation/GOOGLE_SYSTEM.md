@@ -207,3 +207,21 @@ GOOGLE_ADS_CUSTOMER_ID=...          # ID de cliente Ads (si se usa API)
 GOOGLE_ADS_DEVELOPER_TOKEN=...      # Developer token (si se usa API)
 ```
 Actualmente no se usa API; todo es manual/CSV. Ver `VAULT_SYSTEM.md`.
+
+## 10. Google Cloud Console (proyectos de reCAPTCHA)
+
+- Los **4 proyectos** de Google Cloud se crearon al registrar las claves reCAPTCHA
+  (v2 y v3) de cada web. Hoy lo único en uso es **reCAPTCHA v2+v3** (claves en el
+  vault/Vercel; verificación server-side en `@ciszunetwork/utils`).
+- **Sin facturación activa**: todo en tier gratuito (objetivo coste 0).
+- **Oportunidades evaluadas** (reporte completo:
+  `report/google_cloud_report-2026-10-01.md`):
+  1. Cloud Monitoring (uptime checks gratis + alertas, redundancia con UptimeRobot).
+  2. GA4 → BigQuery export (gratis) para dashboards en Looker Studio.
+  3. reCAPTCHA Enterprise (10k evaluaciones/mes gratis; scores avanzados + WAF).
+  4. Vertex AI/Gemini (tier limitado) para features IA acotadas.
+  5. Firebase Spark (Crashlytics/Remote Config) para MuzicMania desktop (Tauri).
+- **Pendiente de decisión**: activar (1) y (2) primero (0 €, reversibles); Enterprise
+  solo tras prueba en ciszubot. Toda clave nueva va al vault + Bitwarden (repo público).
+- **Tag de protección reCAPTCHA**: el badge "Protegido con reCAPTCHA v2 + v3"
+  (RecaptchaGate, píldora con escudo al lateral) es requisito visual de Google.
