@@ -195,7 +195,12 @@ jobs:
           } elseif ($env:GITHUB_EVENT_NAME -eq 'push' -and "${{ github.event.before }}" -eq '0000000000000000000000000000000000000000') {
             $LOG_OPTS = 'HEAD~5..HEAD'
           } elseif ($env:GITHUB_EVENT_NAME -eq 'push') {
-            $LOG_OPTS = "${{ github.event.before }}..${{ github.sha }}"
+            git rev-parse --verify "${{ github.event.before }}^{commit}" 2>$null | Out-Null
+            if ($LASTEXITCODE -eq 0) {
+              $LOG_OPTS = "${{ github.event.before }}..${{ github.sha }}"
+            } else {
+              $LOG_OPTS = 'HEAD~5..HEAD'
+            }
           } else {
             $LOG_OPTS = 'HEAD~5..HEAD'
           }
@@ -209,7 +214,7 @@ jobs:
             LOG_OPTS="${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
           elif [ "$GITHUB_EVENT_NAME" = "push" ] && [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
             LOG_OPTS="HEAD~5..HEAD"
-          elif [ "$GITHUB_EVENT_NAME" = "push" ]; then
+          elif [ "$GITHUB_EVENT_NAME" = "push" ] && git rev-parse --verify "${{ github.event.before }}^{commit}" >/dev/null 2>&1; then
             LOG_OPTS="${{ github.event.before }}..${{ github.sha }}"
           else
             LOG_OPTS="HEAD~5..HEAD"
