@@ -22,7 +22,7 @@
     "discord.js": "^14.27.0",
     "discordbotlist": "^1.1.1",
     "dotenv": "^16.6.1",
-    "fastify": "^5.12.3",
+    "fastify": "^5.12.5",
     "play-dl": "^1.9.7",
     "reflect-metadata": "^0.2.2"
   },
