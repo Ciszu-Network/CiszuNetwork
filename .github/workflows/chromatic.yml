@@ -56,3 +56,7 @@ jobs:
           onlyChanged: true
           # Especifica el script que buildea Storybook (default: build-storybook)
           buildScriptName: build-storybook
+          # No esperar el resultado del build de Chromatic: con TurboSnap/reporting
+          # a GitHub, un "system error" transitorio de su plataforma no debe
+          # tumbar nuestro CI (recomendacion oficial del propio CLI).
+          exitOnceUploaded: true
