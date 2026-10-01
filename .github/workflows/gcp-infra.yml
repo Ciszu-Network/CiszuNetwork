@@ -1,0 +1,76 @@
+name: GCP Infra (Cloud ops)
+
+# Operaciones de Google Cloud sin claves (Workload Identity Federation).
+# Ejecuta las tareas del reporte google_cloud_report-2026-10-01:
+#  - habilita APIs (Monitoring, BigQuery)
+#  - crea/verifica 4 uptime checks (las 4 webs)
+#  - crea el dataset `analytics` para el export GA4->BigQuery
+#
+# Configuración previa (1 vez, en la consola):
+#  - Workload Identity Pool + provider OIDC de GitHub (ver repo/docs)
+#  - SA con roles Monitoring Admin, BigQuery Admin, Service Usage Admin,
+#    Logs Viewer, y `roles/iam.workloadIdentityUser` sobre el pool.
+#  - Secrets del repo:
+#      GCP_WORKLOAD_IDENTITY_PROVIDER  (projects/<N>/locations/global/workloadIdentityPools/<pool>/providers/<prov>)
+#      GCP_SERVICE_ACCOUNT             (<sa>@<project>.iam.gserviceaccount.com)
+#      GCP_PROJECT_ID                  (ciszunetwork)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 3 * * 1'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  gcp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Autenticar con Google Cloud (WIF, sin claves)
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: APIs, uptime checks y dataset BigQuery (idempotente)
+        env:
+          PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        run: |
+          set -e
+          echo "Habilitando APIs..."
+          gcloud services enable monitoring.googleapis.com bigquery.googleapis.com --project "$PROJECT_ID"
+
+          echo "Uptime checks (idempotente)..."
+          for web in ciszunetwork.vercel.app ciszubot.vercel.app ciszukoantony.vercel.app muzicmania.vercel.app; do
+            short="${web%%.*}"
+            if gcloud monitoring uptime-check-configs list --project "$PROJECT_ID" --format="value(displayName)" 2>/dev/null | grep -qx "Uptime ${web}"; then
+              echo "  existe: ${web}"
+            else
+              gcloud monitoring uptime-check-configs create --project "$PROJECT_ID" \
+                --display-name="Uptime ${web}" \
+                --http-check-url="https://${web}" \
+                --http-check-method=GET \
+                --timeout=10s \
+                --period=5m \
+                --description="Uptime check de ${web} (Ciszu Network)" \
+                --checker-regions=asia-northeast1,us-central1,europe-west1 || true
+              echo "  creado: ${web}"
+            fi
+          done
+
+          echo "Dataset BigQuery..."
+          if gcloud bigquery datasets describe analytics --project "$PROJECT_ID" >/dev/null 2>&1; then
+            echo "  analytics ya existe"
+          else
+            gcloud bigquery datasets create analytics --project "$PROJECT_ID" \
+              --location=US --description="Analitica Ciszu (export GA4->BigQuery)" || true
+          fi
+
+          echo "GCP infra listo."
