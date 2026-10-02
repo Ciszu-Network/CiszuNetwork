@@ -136,9 +136,8 @@ export default function RegisterPage() {
     nationality: '',
     acceptedTerms: false,
     acceptedMarketing: false,
-    captchaToken: null as string | null
   });
-  // El token de v2 es de un solo uso: cada envío fallido reinicia el widget.
+  // El token de reCAPTCHA es de un solo uso: cada envío fallido reinicia el widget.
   const [captchaResetKey, setCaptchaResetKey] = React.useState(0);
   const v3ExecutorRef = React.useRef<(() => Promise<string | null>) | null>(null);
 
@@ -256,10 +255,6 @@ export default function RegisterPage() {
       if (err) newErrors[key] = err;
     });
     
-    if (!form.captchaToken) {
-      newErrors.captcha = 'Debes completar el reCAPTCHA';
-    }
-    
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       setLoading(false);
@@ -268,12 +263,16 @@ export default function RegisterPage() {
 
     setFeedback({ isVisible: true, type: 'loading', title: 'Registrando', message: 'Verificando disponibilidad de cuenta...' });
     try {
-      // Token de v3 fresco: caduca en 2 minutos, se pide justo antes de enviar.
-      const v3Token = (await v3ExecutorRef.current?.()) ?? null;
+      // Token de reCAPTCHA fresco (caduca en 2 minutos): se pide justo antes
+      // de enviar. En Enterprise el executor es el que genera el token.
+      const captcha = (await v3ExecutorRef.current?.()) ?? null;
+      if (!captcha) {
+        throw new Error('Debes completar el reCAPTCHA');
+      }
       const verifyRes = await fetch('/api/verify-recaptcha', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ v2Token: form.captchaToken, v3Token, action: 'register' }),
+        body: JSON.stringify({ token: captcha, action: 'register' }),
       });
       const verifyData = await verifyRes.json().catch(() => ({}));
       if (!verifyData.success) {
@@ -576,14 +575,9 @@ export default function RegisterPage() {
 
                 <div className="pt-2 flex flex-col items-center gap-2">
                   <RecaptchaGate
-                    siteKeyV2={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_MUZIC || ''}
-                    siteKeyV3={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_MUZIC || ''}
+                    siteKey={process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY_MUZIC || ''}
                     action="register"
                     theme="dark"
-                    onV2Token={(val) => {
-                      setForm(prev => ({ ...prev, captchaToken: val }));
-                      setErrors(prev => ({ ...prev, captcha: '' }));
-                    }}
                     v3ExecutorRef={v3ExecutorRef}
                     resetKey={captchaResetKey}
                   />

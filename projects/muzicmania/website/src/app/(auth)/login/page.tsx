@@ -95,7 +95,6 @@ export default function LoginPage() {
     password: '',
     confirmPassword: '',
     twoFactor: '',
-    captchaToken: null as string | null
   });
 
   // Guard de acciones no recuperables: login con contenido → no navegar sin aviso.
@@ -173,22 +172,21 @@ export default function LoginPage() {
     e.preventDefault();
     Object.keys(form).forEach(key => validateField(key, form[key as keyof typeof form] as string));
     
-    if (!form.captchaToken) {
-      setErrors(prev => ({ ...prev, captcha: 'Debes completar el reCAPTCHA' }));
-      return;
-    }
-
     const hasErrors = Object.values(errors).some(err => err !== '');
     if (hasErrors) return;
 
     setFeedback({ isVisible: true, type: 'loading', title: 'Verificando', message: 'Iniciando sesión en el sistema...' });
     try {
-      // Token de v3 fresco: caduca en 2 minutos, se pide justo antes de enviar.
-      const v3Token = (await v3ExecutorRef.current?.()) ?? null;
+      // Token de reCAPTCHA fresco (caduca en 2 minutos): se pide justo antes
+      // de enviar. En Enterprise el executor es el que genera el token.
+      const captcha = (await v3ExecutorRef.current?.()) ?? null;
+      if (!captcha) {
+        throw new Error('Debes completar el reCAPTCHA');
+      }
       const verifyRes = await fetch('/api/verify-recaptcha', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ v2Token: form.captchaToken, v3Token, action: 'login' }),
+        body: JSON.stringify({ token: captcha, action: 'login' }),
       });
       const verifyData = await verifyRes.json().catch(() => ({}));
       if (!verifyData.success) {
@@ -326,11 +324,6 @@ export default function LoginPage() {
     e.preventDefault();
     setErrors({});
     
-    if (!form.captchaToken) {
-      setErrors({ captcha: 'Por favor, verifica que eres humano' });
-      return;
-    }
-
     // Hay que esperar 12 horas si se piden demasiados enlaces seguidos.
     const policy = evaluateRecoveryRequest({ timestamps: readRequestTimestamps() });
     if (!policy.allowed) {
@@ -539,14 +532,9 @@ export default function LoginPage() {
 
               <div className="pt-2 flex flex-col items-center gap-2">
                 <RecaptchaGate
-                  siteKeyV2={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_MUZIC || ''}
-                  siteKeyV3={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_MUZIC || ''}
+                  siteKey={process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY_MUZIC || ''}
                   action="login"
                   theme="dark"
-                  onV2Token={(val) => {
-                    setForm(prev => ({ ...prev, captchaToken: val }));
-                    if (val) setErrors(prev => ({ ...prev, captcha: '' }));
-                  }}
                   v3ExecutorRef={v3ExecutorRef}
                   resetKey={captchaResetKey}
                 />

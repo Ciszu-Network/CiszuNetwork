@@ -47,24 +47,29 @@ recaptcha 14, recoveryClient 8, twoFactor 11, emailBranding 11).
 
 ---
 
-## 3. reCAPTCHA v2 + v3 (registro e inicio de sesión)
+## 3. reCAPTCHA Enterprise (registro e inicio de sesión)
 
-- Componente único `RecaptchaGate` (`@ciszu/ui`): carga `api.js` **una sola vez**
-  con `?render=<site key v3>` y monta el widget de v2 con `grecaptcha.render`.
-  Cargarlo dos veces (una por versión) era la razón de que no apareciera.
-- El token de v3 se pide **justo antes de enviar** (caduca en 2 min y es de un
-  solo uso) mediante `v3ExecutorRef`. El de v2 se reinicia con `resetKey` en cada
-  envío fallido, porque también se consume.
-- Ruta `/api/verify-recaptcha` unificada en las 4 webs: un wrapper de 10 líneas
-  sobre `createRecaptchaHandler`. Acepta `{ v2Token, v3Token }` y el formato
-  legado `{ token, version }`.
-- Política: **v2 es el requisito duro** (el usuario resolvió el reto); v3 aporta
-  señal y un score bajo no bloquea si el v2 fue válido, para no dejar al usuario
-  sin salida si Google no devuelve score.
-- Variables por web:
-  `NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_<WEB>`, `..._V3_<WEB>`,
-  `RECAPTCHA_SECRET_KEY_V2_<WEB>`, `RECAPTCHA_SECRET_KEY_V3_<WEB>`
+- Componente único `RecaptchaGate` (`@ciszu/ui`): **modo Enterprise** (default)
+  carga `enterprise.js` **una sola vez** con `?render=<site key>` y ejecuta
+  `grecaptcha.enterprise.execute(siteKey, { action })` bajo demanda.
+- El token se pide **justo antes de enviar** (caduca en 2 min y es de un solo
+  uso) mediante `v3ExecutorRef`; se reinicia con `resetKey` en cada envío
+  fallido porque también se consume.
+- Ruta `/api/verify-recaptcha` unificada en las 4 webs: un wrapper sobre
+  `createRecaptchaHandler`. En Enterprise valida el token vía la API REST de
+  **assessments** (risk analysis + score) usando una **API key de GCP por
+  proyecto**, sin secretos de site key. Acepta `{ token, action }`.
+- Política Enterprise: `tokenProperties.valid` + `action` esperada + `score >=
+  0.5` + hostname autorizado.
+- Variables por web (Enterprise):
+  - Cliente: `NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY_<WEB>`
+  - Servidor: `RECAPTCHA_ENTERPRISE_API_KEY_<WEB>`, `RECAPTCHA_ENTERPRISE_PROJECT_ID_<WEB>`
   (`<WEB>` = `CISZU`, `CISZUBOT`, `CISZUKOANTONY`, `MUZIC`).
+- Modo clásico (v2+v3 con secretos) se mantiene en `@ciszunetwork/utils/recaptcha`
+  por compatibilidad, pero las webs usan Enterprise.
+- Las claves Enterprise y las API keys se gestionan por API en los proyectos GCP
+  `ciszunetwork`, `ciszubot`, `ciszukoantony`, `muzicmania-1779157973357`
+  (gratis hasta 1M evaluaciones/mes).
 
 ---
 

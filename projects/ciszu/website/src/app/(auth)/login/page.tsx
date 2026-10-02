@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -105,7 +105,6 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   // El token de v2 es de un solo uso: cada envío fallido reinicia el widget.
   const [captchaResetKey, setCaptchaResetKey] = useState(0);
   const v3ExecutorRef = React.useRef<(() => Promise<string | null>) | null>(null);
@@ -137,7 +136,6 @@ export default function LoginPage() {
     if (!form.email.trim()) next.email = 'Este campo es obligatorio';
     else if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) next.email = 'Formato de email inválido (requiere @)';
     if (!form.password) next.password = 'La contraseña es obligatoria';
-    if (!captchaToken) next.captcha = 'Debes completar el reCAPTCHA';
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -148,11 +146,16 @@ export default function LoginPage() {
     if (!validate()) return;
     setLoading(true);
     try {
-      const v3Token = (await v3ExecutorRef.current?.()) ?? null;
+      // Token de reCAPTCHA fresco (caduca en 2 minutos): se pide justo antes
+      // de enviar. En Enterprise el executor es el que genera el token.
+      const captcha = (await v3ExecutorRef.current?.()) ?? null;
+      if (!captcha) {
+        throw new Error('Debes completar el reCAPTCHA');
+      }
       const verifyRes = await fetch('/api/verify-recaptcha', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ v2Token: captchaToken, v3Token, action: 'login' }),
+        body: JSON.stringify({ token: captcha, action: 'login' }),
       });
       const verifyData = await verifyRes.json().catch(() => ({}));
       if (!verifyData.success) {
@@ -448,10 +451,8 @@ export default function LoginPage() {
                     {localError && <p className="text-red-400 text-[11px] font-bold">{localError}</p>}
 
                     <RecaptchaGate
-                      siteKeyV2={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_CISZU || ''}
-                      siteKeyV3={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_CISZU || ''}
+                      siteKey={process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY_CISZU || ''}
                       action="login"
-                      onV2Token={setCaptchaToken}
                       v3ExecutorRef={v3ExecutorRef}
                       resetKey={captchaResetKey}
                     />

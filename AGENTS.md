@@ -33,6 +33,7 @@ Monorepo pnpm con 4 webs Next.js, un bot de Discord, un juego de música y paque
 | **CiszukoAntony** | `ciszukoantony.vercel.app` | `projects/ciszukoantony/` | Portfolio personal (logos, medios, música)                            |
 | **MuzicMania**    | `muzicmania.vercel.app`    | `projects/muzicmania/`    | Juego de ritmo — scores en schema`muzicmania`, auth, app Tauri + NSIS |
 | **CiszuBot**      | `ciszubot.vercel.app`      | `projects/ciszubot/`      | Landing del bot + estado en vivo (`ciszubot.bot_status`)              |
+| **CiszuAI**       | (no Vercel)                | `projects/ciszuai/`        | Capa de IA: permisos de modelos Gemini para los agentes. Proyecto GCP `gen-lang-client-0885445248` |
 
 > **Nota de nombre**: la carpeta del portfolio se transcribe mal desde la terminal (nombre
 > ambiguo). Resuélvela SIEMPRE en runtime: `Get-ChildItem projects -Directory | Where-Object { $_.Name -match 'antony' }`. No la escribas a mano.
@@ -122,7 +123,7 @@ matriz completa de qué se replica a qué proyecto está en `DOCUMENTATION_SYSTE
 
 ```
 E:\Ciszu Network\
-├── projects/            # Aplicaciones: ciszu, ciszukoantony, muzicmania, ciszubot, ciszugamens
+├── projects/            # Aplicaciones: ciszu, ciszukoantony, muzicmania, ciszubot, ciszugamens, ciszuai
 ├── packages/            # Paquetes compartidos: cdn, config, db, email, payments, ui, utils
 ├── services/            # Infraestructura: supabase (migraciones), vercel
 ├── shared/              # Assets compartidos: fonts, icons, etc.

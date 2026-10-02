@@ -1,28 +1,37 @@
 /**
- * Verificación de reCAPTCHA v2 + v3 en el servidor.
+ * Verificación de reCAPTCHA en el servidor.
  *
  * POR QUÉ EXISTE ESTE MÓDULO: cada web tenía su propia copia de la ruta
  * `/api/verify-recaptcha` con el site key→secret hardcodeado y su propio
- * rate-limiter. Las copias divergían (una aceptaba v3 y otra la rechazaba por
- * score) y el diagnostico era imposible. Aquí está la única implementación.
+ * rate-limiter. Las copias divergían y el diagnostico era imposible. Aquí está
+ * la única implementación, compartida por las 4 webs.
  *
- * REGLAS:
- *  - v2: basta con `success: true` de Google (el usuario resolvió el reto).
- *  - v3: además exige `action` esperada y `score >= minScore`.
- *  - Si un token no se envía, se informa el motivo en vez de fallar en silencio.
- *  - `hostname` de la respuesta se comprueba contra los dominios permitidos
- *    cuando se pasan, para que una site key filtrada no sirva desde otro sitio.
+ * DOS MODOS (Enterprise es el actual):
+ *  - Enterprise (`verifyEnterpriseAssessment`): llama a la API de reCAPTCHA
+ *    Enterprise (REST `assessments`) con una API key por proyecto. No requiere
+ *    secretos de site key; usa `riskAnalysis.score`, `tokenProperties.action`
+ *    y `tokenProperties.hostname`. Gratis hasta 1M evaluaciones/mes.
+ *  - Clásico (`verifyRecaptchaToken`): `siteverify` con secretos. Se mantiene
+ *    por compatibilidad, pero los formularios de las webs usan Enterprise.
+ *
+ * REGLAS (Enterprise):
+ *  - `tokenProperties.valid` debe ser true.
+ *  - La acción del token debe coincidir con la esperada (`register`, `login`…).
+ *  - `riskAnalysis.score >= minScore` (Google recomienda 0.5 como umbral).
+ *  - El hostname del token se comprueba contra los dominios permitidos cuando
+ *    se pasan, para que una site key filtrada no sirva desde otro sitio.
  */
 
 export const RECAPTCHA_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify';
+export const RECAPTCHA_ENTERPRISE_URL = 'https://recaptchaenterprise.googleapis.com/v1';
 
-/** Score mínimo por defecto para v3 (Google recomienda 0.5 como umbral). */
+/** Score mínimo por defecto (Google recomienda 0.5 como umbral). */
 export const RECAPTCHA_DEFAULT_MIN_SCORE = 0.5;
 
 export interface RecaptchaVerifyOptions {
-  /** Actúas esperada para v3 (p. ej. `register`, `login`, `support`). */
+  /** Acción esperada (p. ej. `register`, `login`, `support`). */
   expectedAction?: string;
-  /** Score mínimo para v3. */
+  /** Score mínimo. */
   minScore?: number;
   /** Hostnames admitidos en la respuesta de Google. */
   allowedHostnames?: string[];
@@ -59,8 +68,9 @@ function fail(reason: string, message: string, extra: Partial<RecaptchaVerifyRes
 }
 
 /**
- * Verifica UN token. No asume la versión: si la respuesta trae `score` es v3 y
- * se aplican sus reglas; si no, es v2.
+ * Verifica UN token (modo clásico). No asume la versión: si la respuesta trae
+ * `score` es v3 y se aplican sus reglas; si no, es v2. Se mantiene por
+ * compatibilidad; las webs usan Enterprise.
  */
 export async function verifyRecaptchaToken(
   token: string,
@@ -144,14 +154,151 @@ export async function verifyRecaptchaToken(
   };
 }
 
+/* ---------------------------------------------------------------------------
+ * Modo Enterprise (el actual)
+ * ------------------------------------------------------------------------- */
+
+export interface EnterpriseAssessmentOptions {
+  /** Site key de reCAPTCHA Enterprise de la web. */
+  siteKey?: string;
+  /** API key del proyecto (restringida a recaptchaenterprise.googleapis.com). */
+  apiKey?: string;
+  /** ID del proyecto GCP (`ciszunetwork`, `ciszubot`…). */
+  projectId?: string;
+  /** Acción esperada (p. ej. `login`, `register`). */
+  expectedAction?: string;
+  /** Score mínimo. */
+  minScore?: number;
+  /** Hostnames admitidos. Con lista vacía no se comprueba. */
+  allowedHostnames?: string[];
+  /** Inyectable para tests. */
+  fetchImpl?: typeof fetch;
+}
+
+export interface EnterpriseAssessmentResult extends RecaptchaVerifyResult {
+  /** Score de riesgo de Google (0-1). */
+  score?: number;
+  /** Razón de token inválido (cruda, para diagnóstico). */
+  invalidReason?: string;
+  /** Acción reportada por Google. */
+  action?: string;
+}
+
+function enterpriseFail(
+  reason: string,
+  message: string,
+  extra: Partial<EnterpriseAssessmentResult> = {},
+): EnterpriseAssessmentResult {
+  return { success: false, reason, message, ...extra };
+}
+
+/**
+ * Verifica un token de reCAPTCHA Enterprise vía REST `assessments`.
+ *
+ * La API key de autenticación es una API key de GCP (NO una clave de cuenta de
+ * servicio), por lo que no la bloquea la política de la organización.
+ */
+export async function verifyEnterpriseAssessment(
+  token: string,
+  opts: EnterpriseAssessmentOptions = {},
+): Promise<EnterpriseAssessmentResult> {
+  if (!token) return enterpriseFail('missing-token', 'Falta el token de reCAPTCHA.');
+  if (!opts.apiKey) return enterpriseFail('missing-secret', 'reCAPTCHA Enterprise sin API key configurada.');
+  if (!opts.projectId) return enterpriseFail('missing-secret', 'reCAPTCHA Enterprise sin proyecto configurado.');
+  if (!opts.siteKey) return enterpriseFail('missing-secret', 'reCAPTCHA Enterprise sin site key configurada.');
+
+  const doFetch = opts.fetchImpl ?? fetch;
+  const url = `${RECAPTCHA_ENTERPRISE_URL}/projects/${encodeURIComponent(opts.projectId)}/assessments?key=${encodeURIComponent(opts.apiKey)}`;
+
+  const body = JSON.stringify({
+    event: {
+      token,
+      siteKey: opts.siteKey,
+      expectedAction: opts.expectedAction,
+    },
+  });
+
+  let payload: {
+    tokenProperties?: { valid?: boolean; invalidReason?: string; hostname?: string; action?: string };
+    riskAnalysis?: { score?: number; reasons?: string[] };
+    error?: { code?: number; status?: string; message?: string };
+  };
+  try {
+    const res = await doFetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body });
+    payload = (await res.json()) as typeof payload;
+  } catch {
+    return enterpriseFail('network-error', 'No pudimos contactar con reCAPTCHA. Intenta de nuevo.');
+  }
+
+  // Errores de la API (p. ej. API key inválida o proyecto equivocado).
+  if (payload.error) {
+    return enterpriseFail('api-error', 'reCAPTCHA Enterprise devolvió un error de API.', {
+      errorCodes: [payload.error.status ?? 'API_ERROR', payload.error.message ?? ''],
+    });
+  }
+
+  const tokenProperties = payload.tokenProperties ?? {};
+  const riskAnalysis = payload.riskAnalysis ?? {};
+
+  if (!tokenProperties.valid) {
+    const invalidReason = tokenProperties.invalidReason ?? 'UNKNOWN';
+    if (invalidReason === 'EXPIRED' || invalidReason === 'DUPE') {
+      return enterpriseFail(
+        'expired',
+        'El reCAPTCHA caducó o ya se usó. Vuelve a completarlo.',
+        { invalidReason, errorCodes: [invalidReason] },
+      );
+    }
+    return enterpriseFail('invalid', 'El reCAPTCHA no es válido. Complétalo otra vez.', {
+      invalidReason,
+      errorCodes: [invalidReason],
+    });
+  }
+
+  if (opts.allowedHostnames && opts.allowedHostnames.length > 0 && tokenProperties.hostname) {
+    if (!opts.allowedHostnames.includes(tokenProperties.hostname)) {
+      return enterpriseFail('bad-hostname', 'El reCAPTCHA se resolvió desde un dominio no autorizado.', {
+        errorCodes: ['BAD_HOSTNAME'],
+        hostname: tokenProperties.hostname,
+      });
+    }
+  }
+
+  const score = typeof riskAnalysis.score === 'number' ? riskAnalysis.score : undefined;
+  const action = tokenProperties.action;
+
+  if (opts.expectedAction && action && action !== opts.expectedAction) {
+    return enterpriseFail('bad-action', 'El reCAPTCHA corresponde a otra acción.', {
+      score,
+      action,
+      errorCodes: ['BAD_ACTION'],
+    });
+  }
+
+  const minScore = opts.minScore ?? RECAPTCHA_DEFAULT_MIN_SCORE;
+  if (typeof score === 'number' && score < minScore) {
+    return enterpriseFail(
+      'low-score',
+      'La verificación automática no pudo confirmar que eres humano. Vuelve a intentarlo.',
+      { score, action, errorCodes: ['LOW_SCORE'] },
+    );
+  }
+
+  return {
+    success: true,
+    reason: 'ok',
+    message: 'Verificado.',
+    score,
+    action,
+    hostname: tokenProperties.hostname,
+    errorCodes: [],
+  };
+}
+
 export interface RecaptchaPairInput {
-  /** Token del widget v2 (checkbox). */
   v2Token?: string | null;
-  /** Secreto de v2. */
   v2Secret?: string | null;
-  /** Token invisible de v3. */
   v3Token?: string | null;
-  /** Secreto de v3. */
   v3Secret?: string | null;
   expectedAction?: string;
   minScore?: number;
@@ -167,7 +314,7 @@ export interface RecaptchaPairResult extends RecaptchaVerifyResult {
 }
 
 /**
- * Verifica el par v2 + v3.
+ * Verifica el par v2 + v3 (modo clásico).
  *
  * Política: si el cliente envía un token v2, ese es el requisito duro (el
  * usuario resolvió el reto). El v3 aporta señal adicional y se RECHAZA si su

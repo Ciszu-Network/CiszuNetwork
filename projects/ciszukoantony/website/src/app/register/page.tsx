@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import Image from 'next/image';
@@ -125,7 +125,6 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const [pending, setPending] = useState<{ token: string; email: string } | null>(null);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   // Cada envío fallido quema el token de v2 (es de un solo uso): se reinicia el widget.
   const [captchaResetKey, setCaptchaResetKey] = useState(0);
   const v3ExecutorRef = React.useRef<(() => Promise<string | null>) | null>(null);
@@ -170,19 +169,21 @@ export default function RegisterPage() {
     });
     if (!acceptedTerms) errs.terms = 'Debes aceptar los términos y condiciones';
     if (!acceptedMarketing) errs.marketing = 'Debes aceptar el tratamiento de datos para comunicaciones';
-    if (!captchaToken) errs.captcha = 'Debes completar el reCAPTCHA';
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
 
     setLoading(true);
     setLocalError(null);
     try {
-      // Se pide un token de v3 JUSTO antes de enviar: caduca en 2 minutos y es
-      // de un solo uso, así que pedirlo al montar el formulario no sirve.
-      const v3Token = (await v3ExecutorRef.current?.()) ?? null;
+      // Token de reCAPTCHA fresco (caduca en 2 minutos): se pide justo antes
+      // de enviar. En Enterprise el executor es el que genera el token.
+      const captcha = (await v3ExecutorRef.current?.()) ?? null;
+      if (!captcha) {
+        throw new Error('Debes completar el reCAPTCHA');
+      }
       const verifyRes = await fetch('/api/verify-recaptcha', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ v2Token: captchaToken, v3Token, action: 'register' }),
+        body: JSON.stringify({ token: captcha, action: 'register' }),
       });
       const verifyData = await verifyRes.json().catch(() => ({}));
       if (!verifyData.success) {
@@ -452,10 +453,8 @@ export default function RegisterPage() {
               )}
 
               <RecaptchaGate
-                siteKeyV2={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_CISZUKOANTONY || ''}
-                siteKeyV3={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_CISZUKOANTONY || ''}
+                siteKey={process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY_CISZUKOANTONY || ''}
                 action="register"
-                onV2Token={setCaptchaToken}
                 v3ExecutorRef={v3ExecutorRef}
                 resetKey={captchaResetKey}
               />

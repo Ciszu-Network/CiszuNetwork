@@ -249,12 +249,13 @@ Todas las webs muestran los mismos controles, con el ESTILO del control por-web 
 
 - **Gate global**: Cloudflare Turnstile (`CloudflareGuard` de `@ciszu/ui`) ya cubre todas las
   webs (solo en producción, `storageKey` por web). Se mantiene.
-- **Captcha por formulario**: login y registro deben incluir **reCAPTCHA v2 invisible/tick**
-  (Google, `react-google-recaptcha`, `NEXT_PUBLIC_RECAPTCHA_SITE_KEY`), igual que muzicmania.
-  Es obligatorio completarlo antes de enviar; si no, error "Debes completar el reCAPTCHA".
-  Se verifica el token en servidor (ruta `POST /api/verify-recaptcha` o similar con
-  `RECAPTCHA_SECRET_KEY`) en todos los entornos salvo bypass local dev.
-- Flux: Cloudflare primero (gate de entrada) → reCAPTCHA en el formulario antes de enviar.
+- **Captcha por formulario**: login y registro incluyen **reCAPTCHA Enterprise** (Google,
+  `RecaptchaGate` de `@ciszu/ui`, integración INVISIBLE, `NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY_<WEB>`).
+  Es obligatorio obtener el token antes de enviar; si no, error "Debes completar el reCAPTCHA".
+  El token se valida en servidor (ruta `POST /api/verify-recaptcha`) vía la API REST de
+  **assessments** de reCAPTCHA Enterprise (sin secretos: usa `RECAPTCHA_ENTERPRISE_API_KEY_<WEB>`
+  + `RECAPTCHA_ENTERPRISE_PROJECT_ID_<WEB>`) en todos los entornos salvo bypass local dev.
+- Flux: Cloudflare primero (gate de entrada) → reCAPTCHA Enterprise en el formulario antes de enviar.
 
 ---
 

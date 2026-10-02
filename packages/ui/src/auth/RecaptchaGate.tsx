@@ -1,22 +1,22 @@
 'use client';
 
 /**
- * RecaptchaGate — doble protección reCAPTCHA v2 + v3 en los formularios de auth.
+ * RecaptchaGate — protección reCAPTCHA de los formularios de auth.
  *
- * POR QUÉ LOS DOS:
- *  - v2 (checkbox visible) es la prueba que el usuario resuelve y que Google
- *    necesita para aprobar los sitios; además hace el bloqueo evidente.
- *  - v3 (invisible) corre en segundo plano en cada envío y aporta una
- *    puntuación de riesgo sin interacción.
+ * MODO ACTUAL (Enterprise): una sola site key Enterprise con integración
+ * INVISIBLE. En cada envío se ejecuta `grecaptcha.enterprise.execute(siteKey,
+ * { action })` y el token se valida en el servidor vía la API de assessments
+ * (risk analysis + score). No usa secretos en el servidor.
  *
- * DETALLE IMPORTANTE DEL SCRIPT: `api.js` solo se puede cargar UNA vez por
- * página. Para habilitar v3 hay que cargarlo con `?render=<site key v3>`; a
- * partir de ahí el widget de v2 se monta con `grecaptcha.render(...)` explícito.
- * Cargarlo dos veces (una por versión) hacía que el widget no apareciera: ese
- * era el motivo de "no aparecen los reCAPTCHA en el register".
+ * MODO CLÁSICO (legado): v2 (checkbox visible) + v3 (invisible) con
+ * `api.js`. Se mantiene la compatibilidad de props por si alguna web vuelve a
+ * necesitarlo, pero las 4 webs usan Enterprise.
  *
- * El token de v3 es de UN SOLO USO y caduca en 2 minutos, por eso no se pide al
- * montar: se pide justo antes de enviar, con `v3ExecutorRef`.
+ * DETALLE DEL SCRIPT: `enterprise.js` (o `api.js`) solo puede cargarse UNA vez
+ * por página. En modo clásico hay que cargarlo con `?render=<site key v3>` para
+ * habilitar v3 y montar el widget v2 con `grecaptcha.render(...)` explícito.
+ * El token es de UN SOLO USO y caduca en 2 minutos, por eso no se pide al
+ * montar: se pide justo antes de enviar, con `executorRef`.
  *
  * Componente autónomo (sin dependencias internas del monorepo) para poder
  * consumirse desde las 4 webs sin acoplar paquetes.
@@ -31,19 +31,31 @@ declare global {
       render: (el: HTMLElement, opts: Record<string, unknown>) => number;
       execute: (siteKey: string, opts: { action: string }) => Promise<string>;
       reset: (id?: number) => void;
+      enterprise?: {
+        ready: (cb: () => void) => void;
+        execute: (siteKey: string, opts: { action: string }) => Promise<string>;
+      };
     };
   }
 }
 
 const SCRIPT_ID = 'ciszu-recaptcha-api';
+const ENTERPRISE_SCRIPT_BASE = 'https://www.google.com/recaptcha/enterprise.js';
 const SCRIPT_BASE = 'https://www.google.com/recaptcha/api.js';
 
 let scriptPromise: Promise<void> | null = null;
 
-/** Carga `api.js` una sola vez (idempotente y compartida entre componentes). */
-export function loadRecaptcha(v3SiteKey?: string): Promise<void> {
+/**
+ * Carga el script de reCAPTCHA una sola vez (idempotente y compartido entre
+ * componentes). `enterprise` elige la API Enterprise; en ese caso `siteKey` se
+ * usa como `render` para habilitar la ejecución invisible.
+ */
+export function loadRecaptcha(
+  opts: { siteKey?: string; enterprise?: boolean } = {},
+): Promise<void> {
   if (typeof window === 'undefined') return Promise.resolve();
-  if (window.grecaptcha) return Promise.resolve();
+  if (opts.enterprise && window.grecaptcha?.enterprise) return Promise.resolve();
+  if (!opts.enterprise && window.grecaptcha) return Promise.resolve();
   if (scriptPromise) return scriptPromise;
 
   scriptPromise = new Promise<void>((resolve, reject) => {
@@ -57,10 +69,12 @@ export function loadRecaptcha(v3SiteKey?: string): Promise<void> {
     script.id = SCRIPT_ID;
     script.async = true;
     script.defer = true;
-    // `render=<v3 key>` habilita v3; si no hay v3 se usa render=explicit para v2.
-    script.src = v3SiteKey
-      ? `${SCRIPT_BASE}?render=${encodeURIComponent(v3SiteKey)}`
-      : `${SCRIPT_BASE}?render=explicit`;
+    // `render=<site key>` habilita la ejecución invisible; sin ella se usa
+    // render=explicit (modo clásico v2).
+    const base = opts.enterprise ? ENTERPRISE_SCRIPT_BASE : SCRIPT_BASE;
+    script.src = opts.siteKey
+      ? `${base}?render=${encodeURIComponent(opts.siteKey)}`
+      : `${base}?render=explicit`;
     script.onload = () => resolve();
     script.onerror = () => {
       scriptPromise = null;
@@ -73,32 +87,38 @@ export function loadRecaptcha(v3SiteKey?: string): Promise<void> {
 }
 
 export interface RecaptchaGateProps {
-  /** Site key de reCAPTCHA v2 (checkbox). */
-  siteKeyV2: string;
-  /** Site key de reCAPTCHA v3 (invisible). Opcional pero recomendado. */
+  /** Site key Enterprise (modo actual) o site key v2 (modo clásico). */
+  siteKey?: string;
+  /** Site key de reCAPTCHA v3 (invisible). Solo modo clásico. */
+  siteKeyV2?: string;
+  /** Site key de reCAPTCHA v3 (invisible). Solo modo clásico. */
   siteKeyV3?: string;
-  /** Acción reportada a Google en el token de v3. */
+  /** Modo Enterprise (default: true). Si es false, usa v2+v3 clásico. */
+  enterprise?: boolean;
+  /** Acción reportada a Google en el token. */
   action?: string;
   theme?: 'dark' | 'light';
-  /** Token de v2 (null mientras no se resuelve o si caduca). */
+  /** Token listo para enviar. En Enterprise llega bajo demanda. */
   onV2Token?: (token: string | null) => void;
-  /** Token de v3 listo para enviar (se pide bajo demanda). */
+  /** Token de v3 listo para enviar (clásico). */
   onV3Token?: (token: string | null) => void;
   /**
-   * Ref donde se publica el ejecutor de v3. El formulario lo llama justo antes
-   * de enviar: `const v3 = await v3ExecutorRef.current?.()`.
+   * Ref donde se publica el ejecutor. El formulario lo llama justo antes de
+   * enviar: `const token = await executorRef.current?.()`.
    */
   v3ExecutorRef?: React.MutableRefObject<(() => Promise<string | null>) | null>;
-  /** Cambiar este número reinicia el widget de v2 (tras un envío fallido). */
+  /** Cambiar este número reinicia el widget (tras un envío fallido). */
   resetKey?: number;
-  /** Texto de aviso mostrado si falta completar el v2. */
+  /** Texto de aviso mostrado si falta completar el reto visible. */
   hint?: string;
   className?: string;
 }
 
 export default function RecaptchaGate({
+  siteKey,
   siteKeyV2,
   siteKeyV3,
+  enterprise = true,
   action = 'submit',
   theme = 'dark',
   onV2Token,
@@ -114,6 +134,11 @@ export default function RecaptchaGate({
   const [scriptError, setScriptError] = useState(false);
   const [ready, setReady] = useState(false);
 
+  // En Enterprise el "token visible" se pide bajo demanda; publicamos el estado
+  // como listo sin esperar a que el usuario toque el checkbox.
+  const effectiveSiteKey = siteKey || siteKeyV2 || '';
+  const effectiveV3 = enterprise ? siteKey : siteKeyV3;
+
   const publish = useCallback(
     (value: string | null) => {
       setToken(value);
@@ -122,11 +147,11 @@ export default function RecaptchaGate({
     [onV2Token],
   );
 
-  // 1) Cargar api.js (una vez) con el site key de v3.
+  // 1) Cargar el script (una vez) con la site key correcta.
   useEffect(() => {
-    if (!siteKeyV2) return;
+    if (!effectiveSiteKey) return;
     let cancelled = false;
-    loadRecaptcha(siteKeyV3)
+    loadRecaptcha({ siteKey: enterprise ? siteKey : siteKeyV3, enterprise })
       .then(() => {
         if (!cancelled) setReady(true);
       })
@@ -136,11 +161,11 @@ export default function RecaptchaGate({
     return () => {
       cancelled = true;
     };
-  }, [siteKeyV2, siteKeyV3]);
+  }, [effectiveSiteKey, siteKey, siteKeyV3, enterprise]);
 
-  // 2) Montar el widget de v2 en cuanto el script esté listo.
+  // 2) Modo clásico: montar el widget v2 en cuanto el script esté listo.
   useEffect(() => {
-    if (!ready || !siteKeyV2 || !containerRef.current || widgetId.current !== null) return;
+    if (enterprise || !ready || !siteKeyV2 || !containerRef.current || widgetId.current !== null) return;
     const g = window.grecaptcha;
     if (!g) return;
     g.ready(() => {
@@ -153,9 +178,9 @@ export default function RecaptchaGate({
         'error-callback': () => publish(null),
       });
     });
-  }, [ready, siteKeyV2, theme, publish]);
+  }, [enterprise, ready, siteKeyV2, theme, publish]);
 
-  // 3) Reinicio del widget (token de v2 quemado tras un envío fallido).
+  // 3) Reinicio del widget (token quemado tras un envío fallido).
   useEffect(() => {
     if (!ready || widgetId.current === null) return;
     if (resetKey === 0) return;
@@ -167,24 +192,27 @@ export default function RecaptchaGate({
     publish(null);
   }, [resetKey, ready, publish]);
 
-  // 4) Publicar el ejecutor de v3 (token fresco y de un solo uso).
+  // 4) Publicar el ejecutor del token (Enterprise o v3 clásico).
   useEffect(() => {
     if (!v3ExecutorRef) return;
-    if (!siteKeyV3 || !ready) {
+    if (!effectiveV3 || !ready) {
       v3ExecutorRef.current = null;
       return;
     }
+    const exec = (g: NonNullable<Window['grecaptcha']>, key: string) =>
+      enterprise ? g.enterprise?.execute(key, { action }) : g.execute(key, { action });
     v3ExecutorRef.current = async () => {
       const g = window.grecaptcha;
       if (!g) return null;
       try {
         // Salvavidas: si Google no responde (key mal configurada, bloqueadores…)
-        // no se permite que el submit quede colgado; a los 5s se sigue sin v3.
+        // no se permite que el submit quede colgado; a los 5s se sigue sin token.
         const fresh = await Promise.race([
-          g.execute(siteKeyV3, { action }),
+          Promise.resolve(exec(g, effectiveV3)).then((t) => t ?? null),
           new Promise<string | null>((resolve) => setTimeout(() => resolve(null), 5000)),
         ]);
         onV3Token?.(fresh);
+        if (enterprise) onV2Token?.(fresh);
         return fresh;
       } catch {
         onV3Token?.(null);
@@ -194,7 +222,7 @@ export default function RecaptchaGate({
     return () => {
       v3ExecutorRef.current = null;
     };
-  }, [v3ExecutorRef, siteKeyV3, ready, action, onV3Token]);
+  }, [v3ExecutorRef, effectiveV3, ready, action, onV3Token, onV2Token, enterprise]);
 
   return (
     /**
@@ -204,7 +232,12 @@ export default function RecaptchaGate({
      * siempre es interactivo sin tapar la UI de la app.
      */
     <div className={`relative isolate z-10 flex flex-col items-center gap-2 ${className}`}>
-      {siteKeyV2 ? (
+      {enterprise ? (
+        // Enterprise: sin widget visible; el badge lo pinta Google.
+        <span className="pointer-events-none select-none text-[9px] text-faint font-bold uppercase tracking-widest">
+          Protegido con reCAPTCHA Enterprise
+        </span>
+      ) : siteKeyV2 ? (
         <div ref={containerRef} data-testid="recaptcha-v2" />
       ) : (
         <p className="pointer-events-none text-amber-400 text-[10px] font-bold text-center max-w-[260px]">
@@ -216,10 +249,10 @@ export default function RecaptchaGate({
           No se pudo cargar reCAPTCHA. Revisa tu conexión o desactiva el bloqueador de scripts.
         </p>
       )}
-      {siteKeyV2 && !token && !scriptError && (
+      {!enterprise && siteKeyV2 && !token && !scriptError && (
         <span className="pointer-events-none text-gray-500 text-[10px] font-bold">{hint}</span>
       )}
-      {siteKeyV3 && (
+      {!enterprise && siteKeyV3 && (
         <span className="pointer-events-none select-none text-[9px] text-faint font-bold uppercase tracking-widest">
           Protegido con reCAPTCHA v2 + v3
         </span>

@@ -10,12 +10,13 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 /**
- * Verificación de reCAPTCHA v2 + v3 (implementación única en @ciszunetwork/utils).
- * Acepta el formato nuevo `{ v2Token, v3Token }` y el legado `{ token, version }`.
+ * Verificación de reCAPTCHA Enterprise (implementación única en @ciszunetwork/utils).
+ * Valida el token vía assessments (API key por proyecto, sin secretos).
  */
 const handler = createRecaptchaHandler({
-  v2Secret: process.env.RECAPTCHA_SECRET_KEY_V2_CISZU ?? process.env.RECAPTCHA_SECRET_KEY_V2 ?? '',
-  v3Secret: process.env.RECAPTCHA_SECRET_KEY_V3_CISZU ?? process.env.RECAPTCHA_SECRET_KEY_V3 ?? '',
+  siteKey: process.env.RECAPTCHA_ENTERPRISE_SITE_KEY_CISZU ?? '',
+  apiKey: process.env.RECAPTCHA_ENTERPRISE_API_KEY_CISZU ?? '',
+  projectId: process.env.RECAPTCHA_ENTERPRISE_PROJECT_ID_CISZU ?? 'ciszunetwork',
   minScore: 0.5,
   windowMs: 60_000,
   max: 30,

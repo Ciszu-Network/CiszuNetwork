@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
@@ -112,7 +112,6 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   // El token de v2 es de un solo uso: cada envío fallido reinicia el widget.
   const [captchaResetKey, setCaptchaResetKey] = useState(0);
   const v3ExecutorRef = React.useRef<(() => Promise<string | null>) | null>(null);
@@ -145,18 +144,18 @@ export default function LoginPage() {
     e.preventDefault();
     setLocalError(null);
     if (!validate()) return;
-    if (!captchaToken) {
-      setLocalError('Debes completar el reCAPTCHA');
-      return;
-    }
     setLoading(true);
     try {
-      // Token de v3 fresco: caduca en 2 minutos, se pide justo antes de enviar.
-      const v3Token = (await v3ExecutorRef.current?.()) ?? null;
+      // Token de reCAPTCHA fresco (caduca en 2 minutos): se pide justo antes
+      // de enviar. En Enterprise el executor es el que genera el token.
+      const captcha = (await v3ExecutorRef.current?.()) ?? null;
+      if (!captcha) {
+        throw new Error('Debes completar el reCAPTCHA');
+      }
       const verifyRes = await fetch('/api/verify-recaptcha', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ v2Token: captchaToken, v3Token, action: 'login' }),
+        body: JSON.stringify({ token: captcha, action: 'login' }),
       });
       const verifyData = await verifyRes.json().catch(() => ({}));
       if (!verifyData.success) {
@@ -423,10 +422,8 @@ export default function LoginPage() {
                   {localError && <p className="text-red-400 text-[11px] font-bold">{localError}</p>}
 
                   <RecaptchaGate
-                    siteKeyV2={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_CISZUKOANTONY || ''}
-                    siteKeyV3={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_CISZUKOANTONY || ''}
+                    siteKey={process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY_CISZUKOANTONY || ''}
                     action="login"
-                    onV2Token={setCaptchaToken}
                     v3ExecutorRef={v3ExecutorRef}
                     resetKey={captchaResetKey}
                   />

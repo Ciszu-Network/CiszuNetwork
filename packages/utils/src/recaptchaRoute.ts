@@ -10,16 +10,26 @@
  */
 
 import { createRateLimiter } from './rateLimit';
-import { verifyRecaptchaPair, type RecaptchaPairResult } from './recaptcha';
+import {
+  verifyEnterpriseAssessment,
+  verifyRecaptchaPair,
+  type RecaptchaPairResult,
+} from './recaptcha';
 
 export interface RecaptchaHandlerOptions {
-  /** Secreto de reCAPTCHA v2 (checkbox). */
+  /** Modo Enterprise (actual). Site key de reCAPTCHA Enterprise de la web. */
+  siteKey?: string;
+  /** Modo Enterprise. API key del proyecto (restringida a recaptchaenterprise). */
+  apiKey?: string;
+  /** Modo Enterprise. ID del proyecto GCP. */
+  projectId?: string;
+  /** Secreto de reCAPTCHA v2 (checkbox). Solo modo clásico. */
   v2Secret?: string;
-  /** Secreto de reCAPTCHA v3 (invisible). */
+  /** Secreto de reCAPTCHA v3 (invisible). Solo modo clásico. */
   v3Secret?: string;
-  /** Acción esperada del token v3 (`register`, `login`, `contact`...). */
+  /** Acción esperada del token (`register`, `login`, `contact`...). */
   expectedAction?: string;
-  /** Score mínimo exigido a v3. Por defecto 0.5. */
+  /** Score mínimo exigido. Por defecto 0.5. */
   minScore?: number;
   /** Hostnames admitidos. Con lista vacía no se comprueba. */
   allowedHostnames?: string[];
@@ -71,15 +81,52 @@ export function createRecaptchaHandler(opts: RecaptchaHandlerOptions) {
     const v2Token = (payload.v2Token ?? (payload.version === 'v2' ? payload.token : '')) || '';
     const v3Token = (payload.v3Token ?? (payload.version === 'v3' ? payload.token : '')) || '';
     const expectedAction = payload.action ?? opts.expectedAction;
+    const token = payload.token || v3Token || v2Token;
 
-    if (!v2Token && !v3Token) {
+    if (!v2Token && !v3Token && !token) {
       return {
         status: 400,
         body: { success: false, reason: 'missing-token', error: 'Falta el token de reCAPTCHA.' },
       };
     }
-    if (v2Token.length > MAX_PAYLOAD_CHARS || v3Token.length > MAX_PAYLOAD_CHARS) {
+    if (v2Token.length > MAX_PAYLOAD_CHARS || v3Token.length > MAX_PAYLOAD_CHARS || token.length > MAX_PAYLOAD_CHARS) {
       return { status: 400, body: { success: false, reason: 'invalid', error: 'Token inválido.' } };
+    }
+
+    // Modo Enterprise: un solo token validado vía assessments (API key, sin secretos).
+    if (opts.siteKey && opts.apiKey && opts.projectId) {
+      const enterpriseResult = await verifyEnterpriseAssessment(token, {
+        siteKey: opts.siteKey,
+        apiKey: opts.apiKey,
+        projectId: opts.projectId,
+        expectedAction,
+        minScore: opts.minScore,
+        allowedHostnames: opts.allowedHostnames,
+        fetchImpl: opts.fetchImpl,
+      });
+
+      if (!enterpriseResult.success) {
+        const status = enterpriseResult.reason.startsWith('missing-secret') ? 500 : 403;
+        return {
+          status,
+          body: {
+            success: false,
+            reason: enterpriseResult.reason,
+            error: enterpriseResult.message,
+            score: enterpriseResult.score,
+          },
+        };
+      }
+
+      return {
+        status: 200,
+        body: {
+          success: true,
+          score: enterpriseResult.score,
+          checked: ['v3'],
+          risk: enterpriseResult.reason === 'low-score' ? 'low-score' : 'ok',
+        },
+      };
     }
 
     const result: RecaptchaPairResult = await verifyRecaptchaPair({
