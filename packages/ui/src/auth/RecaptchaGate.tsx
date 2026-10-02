@@ -205,11 +205,14 @@ export default function RecaptchaGate({
       const g = window.grecaptcha;
       if (!g) return null;
       try {
-        // Salvavidas: si Google no responde (key mal configurada, bloqueadores…)
-        // no se permite que el submit quede colgado; a los 5s se sigue sin token.
+        // Salvavidas: si Google no responde (key mal configurada, bloqueadores,
+        // challenge interactivo de Enterprise…) no se permite que el submit quede
+        // colgado. Enterprise INVISIBLE puede mostrar un reto y tardar, por eso se
+        // dan 10s; a los 10s se sigue sin token.
+        const timeoutMs = enterprise ? 10000 : 5000;
         const fresh = await Promise.race([
           Promise.resolve(exec(g, effectiveV3)).then((t) => t ?? null),
-          new Promise<string | null>((resolve) => setTimeout(() => resolve(null), 5000)),
+          new Promise<string | null>((resolve) => setTimeout(() => resolve(null), timeoutMs)),
         ]);
         onV3Token?.(fresh);
         if (enterprise) onV2Token?.(fresh);
