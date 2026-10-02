@@ -210,18 +210,24 @@ Actualmente no se usa API; todo es manual/CSV. Ver `VAULT_SYSTEM.md`.
 
 ## 10. Google Cloud Console (proyectos de reCAPTCHA)
 
-- Los **4 proyectos** de Google Cloud se crearon al registrar las claves reCAPTCHA
-  (v2 y v3) de cada web. Hoy lo único en uso es **reCAPTCHA v2+v3** (claves en el
-  vault/Vercel; verificación server-side en `@ciszunetwork/utils`).
+- **4 proyectos GCP del ecosistema** (todos ACTIVE, sin billing, coste 0):
+  `ciszunetwork`, `ciszubot`, `ciszukoantony`, `muzicmania-1779157973357` +
+  `gen-lang-client-0885445248` (CiszuAI, capa de IA Gemini — ver
+  `projects/ciszuai/docs/documentation/PROJECT_STATE.md`).
+- **reCAPTCHA Enterprise (ACTIVO desde 02 oct 2026)**: las 4 webs validan tokens vía la
+  API REST `assessments` (risk analysis + score, gratis hasta 1M evaluaciones/mes). Se
+  eliminan los secretos de site key del flujo (la API key de GCP por proyecto autentica).
+  - Cliente: `RecaptchaGate` carga `enterprise.js` + `grecaptcha.enterprise.execute`.
+  - Servidor: `@ciszunetwork/utils/recaptcha` → `verifyEnterpriseAssessment`.
+  - Claves Enterprise y API keys creadas por API (ver `AUTH_HARDENING_SYSTEM.md` §3).
 - **Sin facturación activa**: todo en tier gratuito (objetivo coste 0).
-- **Oportunidades evaluadas** (reporte completo:
-  `report/google_cloud_report-2026-10-01.md`):
-  1. Cloud Monitoring (uptime checks gratis + alertas, redundancia con UptimeRobot).
-  2. GA4 → BigQuery export (gratis) para dashboards en Looker Studio.
-  3. reCAPTCHA Enterprise (10k evaluaciones/mes gratis; scores avanzados + WAF).
-  4. Vertex AI/Gemini (tier limitado) para features IA acotadas.
-  5. Firebase Spark (Crashlytics/Remote Config) para MuzicMania desktop (Tauri).
-- **Pendiente de decisión**: activar (1) y (2) primero (0 €, reversibles); Enterprise
-  solo tras prueba en ciszubot. Toda clave nueva va al vault + Bitwarden (repo público).
-- **Tag de protección reCAPTCHA**: el badge "Protegido con reCAPTCHA v2 + v3"
-  (RecaptchaGate, píldora con escudo al lateral) es requisito visual de Google.
+- **Estado de lo evaluado** (reporte previo: `report/google_cloud_report-2026-10-01.md`):
+  1. Cloud Monitoring (uptime checks): **requiere billing** → pendiente de decisión
+     (alternativa gratis activa: UptimeRobot + alertas propias).
+  2. GA4 → BigQuery: datasets `analytics` **creados en los 4 proyectos**; falta el enlace
+     final desde GA4 (Admin → Propiedad → BigQuery links → `ciszunetwork/analytics`, etc.).
+  3. reCAPTCHA Enterprise: **activo** (migración completa en las 4 webs).
+  4. Vertex AI/Gemini: tier limitado, evaluar si se necesita.
+  5. Firebase Spark: opcional para MuzicMania desktop.
+- **Tag de protección reCAPTCHA**: el badge "Protegido con reCAPTCHA Enterprise"
+  (RecaptchaGate) es el requisito visual de Google.
