@@ -47,12 +47,16 @@
       Google). No requiere acción; verificar en unos días en la UI de AdSense.
 
   ANALYTICS — CONFIGURADO POR API (03 oct 2026, acceso OAuth):
-  - Audiencias creadas (3): Usuarios que hicieron scroll, Usuarios que enviaron formulario,
-    Usuarios con engagement (todas 30 días, evento-based).
-  - Conversión añadida: `form_submit` (ya existía `purchase`).
+  - Audiencias creadas (5): Usuarios que hicieron scroll, Usuarios que enviaron formulario,
+    Usuarios con engagement (30 días, evento-based) + All Users + Purchasers. Todas con
+    `adsPersonalizationEnabled=true` → exportables a Google Ads (cuenta vinculada 7969562321).
+  - Conversiones creadas (6): `purchase`, `form_submit`, `sign_up`, `login`, `first_visit`,
+    `form_start`.
   - Measurement Protocol: acknowledgement de datos atestiguado + 4 secrets creados por data
     stream (guardados en el vault como `GA4_MEASUREMENT_PROTOCOL_SECRET_*`).
-  - User-ID: IMPLEMENTADO en código (ver abajo). Google Signals: revisar en UI si se quiere.
+  - User-ID: IMPLEMENTADO en código (ver abajo). `reportingIdentity=BLENDED` y Google Signals
+    ENABLED + CONSENTED → ya activo a nivel de propiedad.
+  - Orientar anuncios a audiencias: listo (audiencias exportables + Google Ads vinculado).
 
   GTM — ACTIVADO DE VERDAD (03 oct 2026):
   - GoogleScripts ahora SOLO carga el contenedor GTM (GA4 y AdSense viven en tags GTM).
@@ -70,8 +74,8 @@
         `gtag('set', {user_id})` al dataLayer.
   - [X] Los 4 AuthProviders llaman `setGaUserId(user.id)` al cargar sesión y en
         SIGNED_IN/USER_UPDATED/TOKEN_REFRESHED; `setGaUserId(null)` en SIGNED_OUT.
-  - [ ] Activar User-ID en GA4 → Admin → Configuración de datos → User-ID (manual, 1 clic)
-        para que el user_id se use en los informes de multiplataforma.
+  - [X] Activado a nivel de propiedad: `reportingIdentity=BLENDED` + Google Signals
+        ENABLED + CONSENTED (verificado por API, 03 oct 2026).
 - [ ] Los emails actualmente que se envian no estan customizados, los envia "supabase" lo cual puede confundir siempre debe ser ciszunetwork | (pagina en cuestion) ademas de un diseño interno diferente con botones y diseño. Terminos y condiciones y aclaracion de que este email no es de patrocinamiento o anuncio. Los que si son siempre se debe recalcar.
 - [X] Actualmente el sistema de creacion y registro de cuentas falla. Probe con ciszubot, al registrarme con "ciszukoantony" como user, al intentar logearme dice que no existe. Parece ser que al registrarse, le indica la usuario que debe aceptar algo en su email. El gran problema es que ese correo nunca aparece, y peor aun, no da tiempo a leer lo que dice, se actualiza rapidamente hacia el login. Debes hacer que al registrar una cuenta y todo esta bien (Cloudflare, recaptcha, credenciales, seguridad de contraseña, cuenta repetida, relleno de obligacion, rate limits etc), si es una cuenta nueva SIEMPRE se debe pedir una verificacion para terminar para la creacion, se usara el modelo de ciszunetwork es decir, C-XXX-XXX, 6 campos de digitos o numeros aleatorios, con su rate limits, sus experiaciones, su tiempos para volver a mandar en el mismo modal, su campo de verificacion etc. Si el usuario NO procede con la verificacion, simplemente NO se crea la cuenta, en caso de que si, la cuenta se configura automaticamente con la autentificacion del email que se vinculo, asi en proximos logeos siempre se le mandara una verificacion OTP. Algo que podra desactivar en su configuracion de cuenta personal si quiere. Tanto para login o registro, los codigos son temporales, expirable en 3 horas e indicar, unico por website, indicar si ya expiro y posibilidad de reenviar otro codigo con limites, al tercer limite se suspende temporalmente y localmente por que no logro iniciar sesion o registrarse correctamente. Finalmente, cuando el usuario se registra o se logea, debe aparece un modal opcional en el index, para indicarle y recordarle que pueda activar la opcion de "recordar contraseña" por lo proximos 30  dias. De esta manera se fuerza la sesion y no se pierde luego de por ejemplo apagar la pc o cosas asi.  Este modal es opcional y lo puede cerrar en caso de que lo ignore o cierre no se tomara en cuenta si se recordara la sesion o no. Ademas se podra tambien activar luego en la configuracion de la cuenta.
 - [X] Estas implementaciones requieren de terminar algunas cosas de paridad, es cierto que muzicmania es la unica que de verdad requiera cuentas, por eso tiene mas opciones de perfil o configuracion. Pero especificamente la pestaña de configuracion despues de un usuario iniciar sesion y seleccionarlo en el header. Es algo muy importante, necesito que repliques este sistema, actuales con las peticiones para todas las websites. Puedes excluir ciertas configuraciones como las de perfil, pero los de cambiado de nombre display, otp recordatorio, emails notif, camibar password, auth, cerrar sesion segura, debug, dispositivos sesiones, entre muchas otras lo requieren las demas websites.
