@@ -39,15 +39,10 @@
 - [ ] **AdSense — crear unidades de anuncio** (manual, en la UI de AdSense → Anuncios →
       Unidad de anuncio → *Anuncio adaptable*): no se puede por API (solo AdSense for
       Platforms). Crear una por web cuando los sitios pasen de GETTING_READY a aprobados.
-- [ ] **Publicar container GTM de MuzicMania** (manual, 1 min): el agente no tiene permiso de
-      publish en ese container (los otros 3 se publicaron por API). Los tags GA4 + AdSense ya
-      están en el workspace de muzicmania; falta: tagmanager.google.com → container
-      `muzicmania.vercel.app` → Enviar/Publicar.
-      ESTADO 03 oct: SIGUE SIN PUBLICAR (live = Empty Container). La publicación anterior
-      quedó en vista previa. Pasos exactos: abrir el container → botón "Enviar" arriba a la
-      derecha → en el diálogo clic en "Enviar" de nuevo → luego "Publicar" (confirmar la
-      versión). Si no aparece el botón Publicar, el envío quedó como borrador: ir a la pestaña
-      "Enviar" → "Publicar ahora".
+- [X] **Publicar container GTM de MuzicMania** (RESUELTO 03 oct): el error de validación era
+      "variable desconocida GA4 Measurement ID" en el tag GA4. El agente corrigió el tag a
+      measurement ID literal y publicó por API (live v2). Los 4 contenedores GTM están
+      publicados con GA4 + AdSense. Verificado en producción: muzicmania dispara AdSense vía GTM.
 - [ ] **Aprobar sitios AdSense**: los 4 sitios están en GETTING_READY (revisión automática de
       Google). No requiere acción; verificar en unos días en la UI de AdSense.
   - ads.txt: VERIFICADO correcto en las 4 webs (03 oct). El aviso "No encontrado" de AdSense
