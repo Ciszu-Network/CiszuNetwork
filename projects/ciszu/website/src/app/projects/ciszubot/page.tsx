@@ -1,112 +1,313 @@
 'use client';
 
-import Link from "next/link";
-import { CISZU_NETWORK, CISZUBOT_LINKS } from "@/config/site";
-import { ArrowRight, ExternalLink, Shield, Music, Coins, Settings } from "lucide-react";
-import { InfoHero, type InfoTheme } from "@ciszu/ui";
-import PageAmbience from "@/components/layout/PageAmbience";
-import PageReveal from "@/components/layout/PageReveal";
-import QuickDocks from "@/components/molecules/QuickDocks";
-import { useDict } from "@/lib/useDict";
-
+import Image from 'next/image';
+import Link from 'next/link';
+import { assetResolver } from '@ciszunetwork/cdn';
+import { Icon, InfoCtaRow, type InfoTheme } from '@ciszu/ui';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
+import QuickDocks from '@/components/molecules/QuickDocks';
+import ProjectSlider from '@/components/projects/ProjectSlider';
+import Reveal, { Floating, GlowOrb } from '@/components/projects/Reveal';
+import { CISZUBOT_LINKS, GITHUB_REPO } from '@/config/site';
+import { getProject } from '@/data/projects';
+import { useDict } from '@/lib/useDict';
 
 const THEME: InfoTheme = {
-  accent: 'text-brand-light',
-  accentBg: 'bg-brand/10',
-  accentBorder: 'border-brand/40',
+  accent: 'text-[#8b93f8]',
+  accentBg: 'bg-[#5865F2]/10',
+  accentBorder: 'border-[#5865F2]/40',
   card: 'bg-white/5',
   border: 'border-white/10',
-  gradient: 'from-brand-light to-brand-accent',
+  gradient: 'from-[#5865F2] via-[#8b93f8] to-[#4752C4]',
 };
 
-const features = [
-  { icon: Shield, title: "Moderación", desc: "Anti-spam, filtros, roles y herramientas de gestión para tu servidor." },
-  { icon: Music, title: "Música", desc: "Reproduce música de calidad directamente en tus canales de voz." },
-  { icon: Coins, title: "Economía", desc: "Sistema de monedas, niveles, inventario y tiendas configurables." },
-  { icon: Settings, title: "Automatización", desc: "Bienvenidas, tickets, logs y comandos personalizados." },
+const project = getProject('ciszubot')!;
+
+/** Comandos reales del bot, agrupados por categoría. */
+const COMMAND_GROUPS = [
+  {
+    id: 'moderacion',
+    icon: 'shield',
+    title: 'Moderación',
+    desc: 'Orden y control del servidor con sanciones y paneles.',
+    commands: ['ban', 'kick', 'mute', 'close', 'closeprivate', 'panel'],
+  },
+  {
+    id: 'musica',
+    icon: 'music',
+    title: 'Música',
+    desc: 'Reproducción en canales de voz con control total.',
+    commands: ['play', 'pause', 'loop', 'cancion', 'duracion'],
+  },
+  {
+    id: 'economia',
+    icon: 'money',
+    title: 'Economía',
+    desc: 'Monedas, recompensas diarias, tienda y ranking.',
+    commands: ['balance', 'daily', 'deposit', 'buy', 'item', 'gamble', 'leaderboard'],
+  },
+  {
+    id: 'diversion',
+    icon: 'dice',
+    title: 'Diversión',
+    desc: 'Minijuegos y respuestas para animar el chat.',
+    commands: ['8ball', 'dice', 'animal', 'confess', 'hi', 'bye'],
+  },
+  {
+    id: 'utilidad',
+    icon: 'key',
+    title: 'Utilidad',
+    desc: 'Perfil, información y ayuda al alcance de todos.',
+    commands: ['help', 'ping', 'avatar', 'id', 'profile', 'rank', 'invite', 'links', 'estado'],
+  },
+  {
+    id: 'automatizacion',
+    icon: 'robot',
+    title: 'Automatización',
+    desc: 'Sorteos, embeds y configuración por servidor.',
+    commands: ['giveaway', 'embed', 'say', 'directsay', 'comando', 'prefijo', 'canal', 'color', 'idioma'],
+  },
 ];
 
-const stack = ['Discord.js', 'TypeScript', 'Node.js', 'Docker', 'Supabase', 'Top.gg'];
+const STEPS = [
+  { icon: 'robot', title: 'Invita el bot', desc: 'Entra con tu cuenta de Discord y autoriza a CiszuBot en tu servidor con un clic.' },
+  { icon: 'help', title: 'Escribe /help', desc: 'Consulta el panel de ayuda para ver todos los comandos disponibles y sus opciones.' },
+  { icon: 'settings', title: 'Configura el servidor', desc: 'Ajusta prefijo, canal de logs, roles y mensajes de bienvenida a tu gusto.' },
+  { icon: 'trophy', title: 'Sube de nivel', desc: 'Usa la economía, participa en sorteos y escala posiciones en el ranking del servidor.' },
+];
 
-const directories = [
-  { name: 'Top.gg', href: CISZUBOT_LINKS.topggBot },
-  { name: 'Votar en Top.gg', href: CISZUBOT_LINKS.topggBotVote },
-  { name: 'Discord Bot List', href: CISZUBOT_LINKS.discordBotListBot },
+const DIRECTORIES = [
+  { name: 'Top.gg', href: CISZUBOT_LINKS.topggBot, icon: 'trophy' },
+  { name: 'Votar en Top.gg', href: CISZUBOT_LINKS.topggBotVote, icon: 'heart' },
+  { name: 'Discord Bot List', href: CISZUBOT_LINKS.discordBotListBot, icon: 'flag' },
 ];
 
 export default function CiszubotPage() {
   const t = useDict();
   return (
-    <div className="relative min-h-screen pt-24 pb-20 px-4">
+    <div className="relative min-h-screen overflow-hidden px-4 pb-20 pt-24">
       <PageAmbience />
+      {/* Fondo único de CiszuBot: azul Discord y rejilla técnica. */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <GlowOrb color="#5865F233" className="left-1/3 top-20 h-[28rem] w-[28rem]" duration={7} />
+        <div
+          className="absolute inset-0 opacity-[0.07]"
+          style={{
+            backgroundImage:
+              'linear-gradient(rgba(139,147,248,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(139,147,248,0.5) 1px, transparent 1px)',
+            backgroundSize: '42px 42px',
+          }}
+        />
+      </div>
+
       <PageReveal className="relative mx-auto max-w-screen-xl">
-        <InfoHero
-          icon="terminal"
-          title="CiszuBot"
-          subtitle="El bot oficial del ecosistema · Discord"
-          kicker="Proyecto"
+        {/* Héroe con isotipo real */}
+        <header className="mb-16 text-center">
+          <Floating className="mx-auto w-fit" amplitude={10}>
+            <Image
+              src={assetResolver.resolve(project.logo)}
+              alt="Isotipo oficial de CiszuBot"
+              width={160}
+              height={160}
+              className="h-28 w-28 object-contain drop-shadow-[0_0_45px_rgba(88,101,242,0.55)]"
+              priority
+            />
+          </Floating>
+          <p className="mt-6 text-[10px] font-black uppercase tracking-[0.4em] text-[#8b93f8]">
+            Bot · Discord · Automatización
+          </p>
+          <h1 className="mt-3 bg-gradient-to-r from-[#5865F2] via-[#8b93f8] to-[#68cfff] bg-clip-text font-header text-4xl font-black uppercase tracking-tighter text-transparent md:text-6xl">
+            El bot todo-en-uno
+          </h1>
+          <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-white/60">
+            {project.longDescription}
+          </p>
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <a
+              href={CISZUBOT_LINKS.invite}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl bg-[#5865F2] px-7 py-3.5 font-header text-sm font-black uppercase tracking-widest text-white shadow-[0_0_30px_rgba(88,101,242,0.45)] transition-all hover:scale-105 hover:brightness-110"
+            >
+              <Icon name="robot" size={16} />
+              {t.projectPages.ciszubot.invite}
+            </a>
+            <a
+              href={CISZUBOT_LINKS.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl border border-[#5865F2]/50 bg-[#5865F2]/10 px-6 py-3.5 text-sm font-bold text-[#8b93f8] transition-all hover:bg-[#5865F2]/20"
+            >
+              <Icon name="globe" size={16} />
+              {t.projectPages.ciszubot.officialWeb}
+            </a>
+          </div>
+        </header>
+
+        {/* Cifras del bot */}
+        <div className="mb-16 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          {project.stats.map((stat, index) => (
+            <Reveal key={stat.label} delay={index * 0.08}>
+              <div className="rounded-[1.75rem] border border-[#5865F2]/25 bg-[#5865F2]/5 p-6 text-center">
+                <span className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl border border-[#5865F2]/40 bg-[#5865F2]/10 text-[#8b93f8]">
+                  <Icon name={stat.icon} size={20} />
+                </span>
+                <p className="font-header text-2xl font-black text-white">{stat.value}</p>
+                <p className="mt-1 text-[9px] uppercase tracking-widest text-white/45">{stat.label}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+
+        {/* Funcionalidades */}
+        <section className="mb-16" aria-labelledby="ciszubot-features">
+          <h2 id="ciszubot-features" className="mb-6 flex items-center gap-3 font-header text-3xl font-black text-white">
+            <Icon name="star" size={26} />
+            Funcionalidades
+          </h2>
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+            {project.features.map((feature) => (
+              <div key={feature.title} className="rounded-[1.75rem] border border-white/10 bg-white/[0.03] p-6">
+                <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-[#5865F2]/40 bg-[#5865F2]/10 text-[#8b93f8]">
+                  <Icon name={feature.icon} size={20} />
+                </span>
+                <h3 className="font-header text-sm font-bold text-white">{feature.title}</h3>
+                <p className="mt-2 text-xs leading-relaxed text-white/50">{feature.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Comandos reales por categoría */}
+        <section className="mb-16" aria-labelledby="ciszubot-commands">
+          <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h2 id="ciszubot-commands" className="flex items-center gap-3 font-header text-3xl font-black text-white">
+                <Icon name="terminal" size={26} />
+                Comandos
+              </h2>
+              <p className="mt-2 flex items-center gap-2 text-xs uppercase tracking-widest text-white/40">
+                <Icon name="key" size={14} />
+                Más de 60 comandos reales agrupados en 6 categorías
+              </p>
+            </div>
+            <a
+              href={CISZUBOT_LINKS.discordServer}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-white/70 transition-all hover:border-[#5865F2]/50 hover:text-[#8b93f8]"
+            >
+              <Icon name="comment" size={13} />
+              Probar en Discord
+            </a>
+          </div>
+
+          <ProjectSlider ariaLabel="Categorías de comandos de CiszuBot" itemClassName="w-[19rem] sm:w-[22rem]">
+            {COMMAND_GROUPS.map((group) => (
+              <article key={group.id} className="h-full rounded-[1.75rem] border border-[#5865F2]/25 bg-[#5865F2]/5 p-6 transition-all hover:-translate-y-1 hover:border-[#5865F2]/60">
+                <div className="mb-4 flex items-center gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#5865F2]/40 bg-[#5865F2]/10 text-[#8b93f8]">
+                    <Icon name={group.icon} size={19} />
+                  </span>
+                  <div>
+                    <h3 className="font-header text-sm font-black text-white">{group.title}</h3>
+                    <p className="text-[10px] text-white/40">{group.desc}</p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {group.commands.map((command) => (
+                    <code
+                      key={command}
+                      className="inline-flex items-center gap-1 rounded-lg border border-white/10 bg-black/50 px-2.5 py-1 font-mono text-[11px] text-[#8b93f8]"
+                    >
+                      <span className="text-white/30">/</span>
+                      {command}
+                    </code>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </ProjectSlider>
+        </section>
+
+        {/* Cómo se usa */}
+        <section className="mb-16" aria-labelledby="ciszubot-how">
+          <h2 id="ciszubot-how" className="mb-6 flex items-center gap-3 font-header text-3xl font-black text-white">
+            <Icon name="signal" size={26} />
+            Cómo se usa
+          </h2>
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+            {STEPS.map((step, index) => (
+              <Reveal key={step.title} delay={index * 0.08}>
+                <div className="relative h-full rounded-[1.75rem] border border-white/10 bg-white/[0.03] p-6 transition-all hover:-translate-y-1 hover:border-[#5865F2]/50">
+                  <span className="absolute right-5 top-5 font-header text-3xl font-black text-white/10">{index + 1}</span>
+                  <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-[#5865F2]/40 bg-[#5865F2]/10 text-[#8b93f8]">
+                    <Icon name={step.icon} size={20} />
+                  </span>
+                  <h3 className="font-header text-sm font-bold text-white">{step.title}</h3>
+                  <p className="mt-2 text-xs leading-relaxed text-white/50">{step.desc}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+
+        {/* Stack, directorios y comunidad */}
+        <section className="mb-16 rounded-[2rem] border border-white/10 bg-white/[0.03] p-8">
+          <h2 className={`mb-5 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.3em] ${THEME.accent}`}>
+            <Icon name="terminal" size={15} />
+            {t.projectPages.stack}
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {project.stack.map((tech) => (
+              <span
+                key={tech}
+                className="inline-flex items-center gap-1.5 rounded-full border border-[#5865F2]/30 bg-[#5865F2]/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-[#8b93f8]"
+              >
+                <Icon name="check" size={11} />
+                {tech}
+              </span>
+            ))}
+          </div>
+          <h3 className="mb-3 mt-8 flex items-center gap-2 text-sm font-header font-bold text-white">
+            <Icon name="trophy" size={16} />
+            {t.projectPages.ciszubot.directories}
+          </h3>
+          <div className="flex flex-wrap gap-3">
+            {DIRECTORIES.map((directory) => (
+              <a
+                key={directory.name}
+                href={directory.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-xs font-bold text-white transition-all hover:border-[#5865F2]/60 hover:text-[#8b93f8]"
+              >
+                <Icon name={directory.icon} size={14} />
+                {directory.name}
+                <Icon name="external" size={12} />
+              </a>
+            ))}
+          </div>
+        </section>
+
+        {/* CTA */}
+        <InfoCtaRow
           theme={THEME}
+          actions={[
+            { label: 'Invitar a mi servidor', href: CISZUBOT_LINKS.invite, icon: 'robot', external: true, variant: 'primary' },
+            { label: 'Servidor de soporte', href: CISZUBOT_LINKS.discordServer, icon: 'discord', external: true, variant: 'ghost' },
+            { label: 'GitHub del monorepo', href: GITHUB_REPO, icon: 'external', external: true, variant: 'ghost' },
+            { label: t.projectPages.viewAll, href: '/projects', icon: 'rocket', variant: 'ghost' },
+          ]}
         />
 
-        <div className="space-y-8">
-          <div className="p-8 rounded-[2rem] bg-brand/5 border border-brand/20">
-            <h2 className="text-2xl font-header font-bold text-white mb-4">Funcionalidades</h2>
-            <p className="text-gray-300 leading-relaxed mb-6">
-              CiszuBot es el bot oficial de {CISZU_NETWORK.name}: un bot todo-en-uno para
-              moderar, entretener y automatizar tu servidor de Discord.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {features.map((f, i) => (
-                <div key={i} className="p-6 rounded-2xl bg-white/5 border border-white/10">
-                  <f.icon className="w-8 h-8 text-[#5865F2] mb-4" />
-                  <h3 className="text-white font-bold font-header text-sm mb-2">{f.title}</h3>
-                  <p className="text-gray-400 text-xs leading-relaxed">{f.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10">
-            <h2 className="text-2xl font-header font-bold text-white mb-6">{t.projectPages.stack}</h2>
-            <div className="flex flex-wrap gap-2 mb-8">
-              {stack.map((s) => (
-                <span key={s} className="px-3 py-1.5 rounded-full bg-[#5865F2]/10 border border-[#5865F2]/30 text-[#8b93f8] text-[10px] font-bold uppercase tracking-wider">
-                  {s}
-                </span>
-              ))}
-            </div>
-            <h3 className="text-sm font-header font-bold text-white mb-3">{t.projectPages.ciszubot.directories}</h3>
-            <div className="flex flex-wrap gap-3">
-              {directories.map((d) => (
-                <a key={d.name} href={d.href} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/15 text-white text-xs font-bold hover:border-[#5865F2]/60 hover:text-[#8b93f8] transition-all">
-                  {d.name} <ExternalLink className="w-3 h-3" />
-                </a>
-              ))}
-            </div>
-          </div>
-
-          <div className="text-center p-8 rounded-[2rem] bg-gradient-to-br from-[#5865F2]/10 to-transparent border border-[#5865F2]/30">
-            <h2 className="text-xl font-header font-bold text-white mb-4">{t.projectPages.ciszubot.addTitle}</h2>
-            <p className="text-gray-400 text-sm mb-6">{t.projectPages.ciszubot.addDesc}</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href={CISZUBOT_LINKS.invite} target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#5865F2]/20 border border-[#5865F2]/40 text-[#5865F2] rounded-xl font-bold text-sm hover:bg-[#5865F2] hover:text-white transition-all">
-                {t.projectPages.ciszubot.invite} <ArrowRight className="w-4 h-4" />
-              </a>
-              <a href={CISZUBOT_LINKS.website} target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/10 transition-all">
-                {t.projectPages.ciszubot.officialWeb} <ArrowRight className="w-4 h-4" />
-              </a>
-            </div>
-          </div>
-
-          <div className="text-center">
-            <Link href="/projects" className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/10 transition-all">
-              {t.projectPages.viewAll} <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </div>
+        <p className="mt-8 text-center">
+          <Link href="/projects" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/40 transition-colors hover:text-white">
+            <Icon name="rocket" size={13} />
+            {t.projectPages.viewAll}
+          </Link>
+        </p>
       </PageReveal>
 
       <QuickDocks />

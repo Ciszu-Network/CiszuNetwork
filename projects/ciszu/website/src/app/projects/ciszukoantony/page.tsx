@@ -1,116 +1,273 @@
 'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import { assetResolver } from "@ciszunetwork/cdn";
-import { SocialIcon, SOCIAL_COLORS, InfoHero, type InfoTheme } from '@ciszu/ui';
-import PageAmbience from "@/components/layout/PageAmbience";
-import PageReveal from "@/components/layout/PageReveal";
-import QuickDocks from "@/components/molecules/QuickDocks";
-import { useDict } from "@/lib/useDict";
-import { CISZUKO_ANTONY, CISZU_NETWORK } from "@/config/site";
-import { ArrowRight, ExternalLink, Music, Gamepad2, Mic, Video } from "lucide-react";
-
+import Image from 'next/image';
+import Link from 'next/link';
+import { assetResolver } from '@ciszunetwork/cdn';
+import { Icon, InfoCtaRow, SocialIcon, SOCIAL_COLORS, type InfoTheme } from '@ciszu/ui';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
+import ProjectSlider from '@/components/projects/ProjectSlider';
+import Reveal, { Floating, GlowOrb } from '@/components/projects/Reveal';
+import QuickDocks from '@/components/molecules/QuickDocks';
+import { CISZUKO_ANTONY } from '@/config/site';
+import { getProject } from '@/data/projects';
+import { useDict } from '@/lib/useDict';
 
 const THEME: InfoTheme = {
-  accent: 'text-brand-light',
-  accentBg: 'bg-brand/10',
-  accentBorder: 'border-brand/40',
+  accent: 'text-[#68cfff]',
+  accentBg: 'bg-[#4a7dff]/10',
+  accentBorder: 'border-[#4a7dff]/40',
   card: 'bg-white/5',
   border: 'border-white/10',
-  gradient: 'from-brand-light to-brand-accent',
+  gradient: 'from-[#4a7dff] via-[#68cfff] to-[#ff33cc]',
 };
 
-const contentTypes = [
-  { icon: Gamepad2, title: "Gaming", desc: "Gameplays, streams y contenido de videojuegos variado." },
-  { icon: Music, title: "Música", desc: "Producción musical y proyectos de audio originales." },
-  { icon: Mic, title: "Tech", desc: "Tutoriales, desarrollo y contenido tecnológico." },
+const project = getProject('ciszukoantony')!;
+
+const PILLARS = [
+  { icon: 'gamepad', title: 'Gaming', desc: 'Gameplays, streams y contenido de videojuegos variado para la comunidad.' },
+  { icon: 'music', title: 'Música', desc: 'Producción musical original: álbum Genesis Neon, soundtracks y el musicboard.' },
+  { icon: 'terminal', title: 'Tech y desarrollo', desc: 'Tutoriales y la tecnología detrás de cada proyecto del ecosistema.' },
+  { icon: 'certificates', title: 'Portfolio y CV', desc: 'Web oficial con portfolio visual, currículums en PDF y certificados verificables.' },
 ];
 
-const platforms = ['YouTube', 'Twitch', 'TikTok', 'Instagram', 'Spotify', 'X'];
+const MUSIC_HIGHLIGHTS = [
+  { icon: 'music', title: 'Genesis Neon', desc: 'Álbum original que da vida a MuzicMania, compuesto por el propio artista.' },
+  { icon: 'headset', title: 'SoundCloud', desc: 'Pistas y experimentos publicados en el perfil oficial del artista.' },
+  { icon: 'play', title: 'YouTube Music', desc: 'Playlists oficiales, canal musical y el podcast del artista.' },
+];
+
+const SELFIE = 'shared/images/francisco_selfie/IMG_20251207_001627@869886661.jpg';
 
 export default function CiszukoAntonyPage() {
   const t = useDict();
   return (
-    <div className="relative min-h-screen pt-24 pb-20 px-4">
+    <div className="relative min-h-screen overflow-hidden px-4 pb-20 pt-24">
       <PageAmbience />
+      {/* Fondo único de Ciszuko Antony: azul y rosa neón. */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <GlowOrb color="rgba(74,125,255,0.2)" className="left-1/4 top-24 h-[26rem] w-[26rem]" />
+        <GlowOrb color="rgba(255,51,204,0.16)" className="right-1/4 top-[40rem] h-[26rem] w-[26rem]" duration={8} />
+      </div>
+
       <PageReveal className="relative mx-auto max-w-screen-xl">
-        <InfoHero
-          icon="star"
-          title={CISZUKO_ANTONY.name}
-          subtitle="Youtuber • Streamer • Desarrollador"
-          kicker="Proyecto"
-          theme={THEME}
-        />
+        {/* Héroe: logo oficial + retrato + plataformas */}
+        <header className="mb-16 text-center">
+          <Floating className="mx-auto w-fit">
+            <Image
+              src={assetResolver.resolve(project.logo)}
+              alt="Logo oficial de Ciszuko Antony"
+              width={260}
+              height={260}
+              className="h-24 w-auto object-contain drop-shadow-[0_0_45px_rgba(74,125,255,0.5)] md:h-32"
+              priority
+            />
+          </Floating>
+          <p className="mt-6 text-[10px] font-black uppercase tracking-[0.4em] text-[#68cfff]">
+            Contenido · Entretenimiento
+          </p>
+          <h1 className="mt-3 bg-gradient-to-r from-[#4a7dff] via-[#68cfff] to-[#ff33cc] bg-clip-text font-header text-4xl font-black uppercase tracking-tighter text-transparent md:text-6xl">
+            Youtuber, streamer y desarrollador
+          </h1>
+          <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-white/60">
+            {project.longDescription}
+          </p>
 
-        <div className="space-y-8">
-          <div className="p-8 rounded-[2rem] bg-gradient-to-br from-brand/10 via-brand-dark/5 to-transparent border border-brand/20 text-center">
-            <div className="w-28 h-28 rounded-full bg-gradient-to-br from-neon-blue via-brand-accent to-neon-pink mx-auto mb-6 flex items-center justify-center p-1">
-              <Image
-                src={assetResolver.resolve("shared/images/francisco_selfie/IMG_20251207_001627@869886661.jpg")}
-                alt={CISZUKO_ANTONY.name}
-                width={108}
-                height={108}
-                className="rounded-full object-cover w-full h-full"
-              />
-            </div>
-            <p className="text-gray-300 max-w-2xl mx-auto leading-relaxed mb-6">
-              {CISZUKO_ANTONY.name} es el proyecto artístico y de entretenimiento del CEO de {CISZU_NETWORK.name}. 
-              Como youtuber y streamer, crea contenido gaming, música y tecnología. 
-              También es el desarrollador principal detrás de todos los proyectos de {CISZU_NETWORK.name}.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              {contentTypes.map((c, i) => (
-                <div key={i} className="p-6 rounded-2xl bg-white/5 border border-white/10">
-                  <c.icon className="w-8 h-8 text-brand-light mx-auto mb-3" />
-                  <h3 className="text-white font-bold font-header text-sm mb-2">{c.title}</h3>
-                  <p className="text-gray-400 text-xs leading-relaxed">{c.desc}</p>
+          <div className="mt-10 flex justify-center">
+            <Floating className="relative" amplitude={6} duration={6}>
+              <div className="h-32 w-32 rounded-full bg-gradient-to-br from-[#4a7dff] via-[#68cfff] to-[#ff33cc] p-1 md:h-36 md:w-36">
+                <Image
+                  src={assetResolver.resolve(SELFIE)}
+                  alt="Retrato de Francisco García (Ciszuko Antony)"
+                  width={144}
+                  height={144}
+                  className="h-full w-full rounded-full object-cover"
+                />
+              </div>
+              <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/10 bg-black/80 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-[#68cfff]">
+                Francisco García
+              </span>
+            </Floating>
+          </div>
+
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <a
+              href={CISZUKO_ANTONY.portfolio}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl bg-[#4a7dff] px-7 py-3.5 font-header text-sm font-black uppercase tracking-widest text-white shadow-[0_0_30px_rgba(74,125,255,0.45)] transition-all hover:scale-105 hover:brightness-110"
+            >
+              <Icon name="globe" size={16} />
+              Página oficial
+            </a>
+            <a
+              href={CISZUKO_ANTONY.social.youtube}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl border border-[#ff33cc]/50 bg-[#ff33cc]/10 px-6 py-3.5 text-sm font-bold text-[#ff66dd] transition-all hover:bg-[#ff33cc]/20"
+            >
+              <Icon name="play" size={16} />
+              YouTube
+            </a>
+          </div>
+        </header>
+
+        {/* Cifras del proyecto */}
+        <div className="mb-16 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          {project.stats.map((stat, index) => (
+            <Reveal key={stat.label} delay={index * 0.08}>
+              <div className="h-full rounded-[1.75rem] border border-[#4a7dff]/25 bg-[#4a7dff]/5 p-6 text-center transition-all hover:-translate-y-1 hover:border-[#4a7dff]/50">
+                <span className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl border border-[#4a7dff]/40 bg-[#4a7dff]/10 text-[#68cfff]">
+                  <Icon name={stat.icon} size={20} />
+                </span>
+                <p className="font-header text-2xl font-black text-white">{stat.value}</p>
+                <p className="mt-1 text-[9px] uppercase tracking-widest text-white/45">{stat.label}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+
+        {/* Pilares de contenido */}
+        <section className="mb-16" aria-labelledby="ciszukoantony-pillars">
+          <h2 id="ciszukoantony-pillars" className="mb-6 flex items-center gap-3 font-header text-3xl font-black text-white">
+            <Icon name="star" size={26} />
+            Pilares de contenido
+          </h2>
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+            {PILLARS.map((pillar, index) => (
+              <Reveal key={pillar.title} delay={index * 0.08}>
+                <div className="h-full rounded-[1.75rem] border border-white/10 bg-white/[0.03] p-6 transition-all hover:-translate-y-1 hover:border-[#4a7dff]/40">
+                  <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-[#4a7dff]/40 bg-[#4a7dff]/10 text-[#68cfff]">
+                    <Icon name={pillar.icon} size={20} />
+                  </span>
+                  <h3 className="font-header text-sm font-bold text-white">{pillar.title}</h3>
+                  <p className="mt-2 text-xs leading-relaxed text-white/50">{pillar.desc}</p>
                 </div>
-              ))}
-            </div>
+              </Reveal>
+            ))}
+          </div>
+        </section>
 
-            <div className="flex flex-wrap justify-center gap-3 mb-6">
-              {Object.entries(CISZUKO_ANTONY.social).filter(([k]) => k !== 'discordTag').map(([platform, url]) => (
-                <a key={platform} href={url} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-brand/30 transition-all text-sm font-medium text-white"
-                  style={{ borderColor: `${SOCIAL_COLORS[platform as keyof typeof SOCIAL_COLORS]}40` }}
+        {/* Música del artista */}
+        <section className="mb-16 rounded-[2rem] border border-[#ff33cc]/25 bg-gradient-to-br from-[#4a7dff]/10 via-transparent to-[#ff33cc]/10 p-8" aria-labelledby="ciszukoantony-music">
+          <h2 id="ciszukoantony-music" className="mb-2 flex items-center gap-3 font-header text-3xl font-black text-white">
+            <Icon name="music" size={26} />
+            Música
+          </h2>
+          <p className="mb-6 max-w-2xl text-xs leading-relaxed text-white/50">
+            Obra original compuesta y producida por Ciszuko Antony, incluyendo el álbum que se juega en MuzicMania.
+          </p>
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+            {MUSIC_HIGHLIGHTS.map((item, index) => (
+              <Reveal key={item.title} delay={index * 0.08}>
+                <div className="h-full rounded-[1.75rem] border border-white/10 bg-black/30 p-6 transition-all hover:-translate-y-1 hover:border-[#ff33cc]/40">
+                  <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-[#ff33cc]/40 bg-[#ff33cc]/10 text-[#ff66dd]">
+                    <Icon name={item.icon} size={20} />
+                  </span>
+                  <h3 className="font-header text-sm font-bold text-white">{item.title}</h3>
+                  <p className="mt-2 text-xs leading-relaxed text-white/50">{item.desc}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              href="/projects/muzicmania"
+              className="inline-flex items-center gap-2 rounded-xl border border-[#ff33cc]/40 bg-[#ff33cc]/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-[#ff66dd] transition-all hover:bg-[#ff33cc]/20"
+            >
+              <Icon name="gamepad" size={13} />
+              MuzicMania · Genesis Neon
+            </Link>
+            <a
+              href={CISZUKO_ANTONY.portfolio}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-white/70 transition-all hover:border-white/40 hover:text-white"
+            >
+              <Icon name="external" size={13} />
+              Musicboard oficial
+            </a>
+          </div>
+        </section>
+
+        {/* Plataformas y redes */}
+        <section className="mb-16" aria-labelledby="ciszukoantony-platforms">
+          <h2 id="ciszukoantony-platforms" className="mb-6 flex items-center gap-3 font-header text-3xl font-black text-white">
+            <Icon name="share" size={26} />
+            Plataformas y redes
+          </h2>
+          <ProjectSlider ariaLabel="Plataformas y redes de Ciszuko Antony" itemClassName="w-60 sm:w-64">
+            {Object.entries(CISZUKO_ANTONY.social)
+              .filter(([platform]) => platform !== 'discordTag')
+              .map(([platform, url]) => (
+                <a
+                  key={platform}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-full flex-col justify-between gap-4 rounded-[1.75rem] border bg-white/[0.03] p-5 transition-all hover:-translate-y-1 hover:brightness-125"
+                  style={{
+                    borderColor: `${SOCIAL_COLORS[platform as keyof typeof SOCIAL_COLORS]}40`,
+                    background: `${SOCIAL_COLORS[platform as keyof typeof SOCIAL_COLORS]}10`,
+                  }}
                 >
-                  <SocialIcon platform={platform as keyof typeof SOCIAL_COLORS} size={16} />
-                  <span className="capitalize">{platform === 'x' ? 'X' : platform}</span>
+                  <span className="flex items-center gap-3">
+                    <span
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border"
+                      style={{
+                        background: `${SOCIAL_COLORS[platform as keyof typeof SOCIAL_COLORS]}22`,
+                        borderColor: `${SOCIAL_COLORS[platform as keyof typeof SOCIAL_COLORS]}55`,
+                      }}
+                    >
+                      <SocialIcon platform={platform as keyof typeof SOCIAL_COLORS} size={20} />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block truncate font-header text-sm font-bold capitalize text-white">
+                        {platform === 'x' ? 'X' : platform}
+                      </span>
+                      <span className="text-[10px] uppercase tracking-wider text-white/40">Perfil oficial</span>
+                    </span>
+                  </span>
+                  <span
+                    className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest"
+                    style={{ color: SOCIAL_COLORS[platform as keyof typeof SOCIAL_COLORS] }}
+                  >
+                    <Icon name="external" size={12} />
+                    Visitar
+                  </span>
                 </a>
               ))}
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href={CISZUKO_ANTONY.social.youtube} target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-brand/20 border border-brand/40 text-brand-light rounded-xl font-bold text-sm hover:bg-brand hover:text-white transition-all"
+          </ProjectSlider>
+          <div className="mt-6 flex flex-wrap gap-2">
+            {project.stack.map((platform) => (
+              <span
+                key={platform}
+                className="inline-flex items-center gap-1.5 rounded-full border border-[#4a7dff]/30 bg-[#4a7dff]/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-[#68cfff]"
               >
-                <Video className="w-4 h-4" /> YouTube
-              </a>
-              <a href={CISZUKO_ANTONY.portfolio} target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/10 transition-all"
-              >
-                <ExternalLink className="w-4 h-4" /> Portafolio
-              </a>
-            </div>
+                <Icon name="check" size={11} />
+                {platform}
+              </span>
+            ))}
           </div>
+        </section>
 
-          <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10">
-            <h2 className="text-2xl font-header font-bold text-white mb-6">Plataformas</h2>
-            <div className="flex flex-wrap gap-2 mb-8">
-              {platforms.map((p) => (
-                <span key={p} className="px-3 py-1.5 rounded-full bg-brand/10 border border-brand/30 text-brand-light text-[10px] font-bold uppercase tracking-wider">
-                  {p}
-                </span>
-              ))}
-            </div>
-            <div className="text-center">
-              <Link href="/projects" className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/10 transition-all">
-                {t.projectPages.viewAll} <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-        </div>
+        {/* CTA */}
+        <InfoCtaRow
+          theme={THEME}
+          actions={[
+            { label: 'Web oficial', href: CISZUKO_ANTONY.portfolio, icon: 'globe', external: true, variant: 'primary' },
+            { label: 'YouTube', href: CISZUKO_ANTONY.social.youtube, icon: 'play', external: true, variant: 'ghost' },
+            { label: 'Ciszugamens', href: CISZUKO_ANTONY.social.discord, icon: 'discord', external: true, variant: 'ghost' },
+            { label: t.projectPages.viewAll, href: '/projects', icon: 'rocket', variant: 'ghost' },
+          ]}
+        />
+
+        <p className="mt-8 text-center">
+          <Link href="/projects" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/40 transition-colors hover:text-white">
+            <Icon name="rocket" size={13} />
+            {t.projectPages.viewAll}
+          </Link>
+        </p>
       </PageReveal>
 
       <QuickDocks />

@@ -90,7 +90,7 @@ export default function SocialsPage() {
             actions={[
               { label: dict.portfolio.ctaContact, href: '/contact', icon: 'mail' },
               { label: dict.portfolio.ctaCommissions, href: '/commissions', icon: 'money' },
-              { label: 'Portfolio & CV', href: '/portfolio', icon: 'palette', variant: 'ghost' },
+              { label: 'Portfolio & CV', href: '/portfolio', icon: 'portfolio', variant: 'ghost' },
             ]}
           />
         </div>

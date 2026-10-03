@@ -7,6 +7,8 @@ import SocialGlyph from '@/components/socials/SocialGlyph';
 export const I = {
   home: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
   projects: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>,
+  // Portfolio: maletín (icono real de trabajos; reemplaza oficialmente la paleta de pintura).
+  portfolio: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-2 .89-2 2v11c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>,
   about: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>,
   info: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>,
   faq: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/></svg>,
@@ -94,13 +96,16 @@ export const SOCIAL_PAGES: NavItem[] = SOCIAL_ENTRIES.map((social) => ({
 export const NAV_MAIN: (NavItem | NavGroup)[] = [
   { name: 'Home', href: '/', icon: I.home, hideCls: 'flex' },
   {
-    name: 'Projects', icon: I.projects,
+    name: 'Projects', icon: I.projects, href: '/projects',
     items: [
-      { name: 'Projects', href: '/projects', icon: I.projects },
+      { name: 'Todos los proyectos', href: '/projects', icon: I.projects },
       { name: 'Ciszuko Antony', href: '/projects/ciszukoantony', icon: I.user },
+      { name: 'MusicBoard', href: '/projects/musicboard', icon: I.music },
+      { name: 'Francisco García', href: '/projects/francisco-garcia', icon: I.team },
+      { name: 'Ciszu Network', href: '/projects/ciszunetwork', icon: I.portfolio },
     ],
   } as NavGroup,
-  { name: 'Portfolio', href: '/portfolio', icon: I.palette },
+  { name: 'Portfolio', href: '/portfolio', icon: I.portfolio },
   { name: 'Curriculum', href: '/curriculum', icon: I.graduation },
   { name: 'Commissions', href: '/commissions', icon: I.money },
   {
@@ -171,10 +176,13 @@ export const ALL_PAGES: NavItem[] = [
   { name: 'Stats', href: '/stats', icon: I.barChart },
   { name: 'Forum', href: '/forum', icon: I.messageSquare },
   { name: 'Projects', href: '/projects', icon: I.projects },
-  { name: 'Portfolio', href: '/portfolio', icon: I.palette },
+  { name: 'Portfolio', href: '/portfolio', icon: I.portfolio },
   { name: 'Curriculum', href: '/curriculum', icon: I.graduation },
   { name: 'Commissions', href: '/commissions', icon: I.money },
   { name: 'Ciszuko Antony', href: '/projects/ciszukoantony', icon: I.user },
+  { name: 'MusicBoard (proyecto musical)', href: '/projects/musicboard', icon: I.music },
+  { name: 'Francisco García (persona)', href: '/projects/francisco-garcia', icon: I.team },
+  { name: 'Ciszu Network (empresa)', href: '/projects/ciszunetwork', icon: I.portfolio },
   { name: 'Musicboard', href: '/musicboard', icon: I.music },
   { name: 'Certificates', href: '/certificates', icon: I.certificates },
   { name: 'Socials', href: '/socials', icon: I.socials },
@@ -208,7 +216,7 @@ export const FOOTER_SECTIONS = [
   { label: 'Navigate', icon: I.home, links: [
     { name: 'Home', href: '/', icon: I.home },
     { name: 'Projects', href: '/projects', icon: I.projects },
-    { name: 'Portfolio', href: '/portfolio', icon: I.palette },
+    { name: 'Portfolio', href: '/portfolio', icon: I.portfolio },
     { name: 'Curriculum', href: '/curriculum', icon: I.graduation },
     { name: 'Certificates', href: '/certificates', icon: I.certificates },
     { name: 'Changelog', href: '/changelog', icon: I.history },
@@ -270,6 +278,9 @@ export const PAGE_TITLES: Record<string, { title: string; desc: string }> = {
   '/musicboard': { title: 'Musicboard | Ciszuko Antony', desc: 'Music by Ciszuko Antony: integrated player with sidebar for the studio album FL Studio Track Practice 2024 (own work) and the Genesis Neon soundtrack for MuzicMania, plus the official podcast and playlists, with real links to SoundCloud, YouTube Music, Spotify and the game library.' },
   '/commissions': { title: 'Commissions | Ciszuko Antony', desc: 'Commission Ciszuko Antony: web development, bots, games, visual identity and automation.' },
   '/projects/ciszukoantony': { title: 'Ciszuko Antony | Ciszuko Antony', desc: 'Ciszuko Antony: youtuber, streamer and developer.' },
+  '/projects/musicboard': { title: 'MusicBoard | Ciszuko Antony', desc: 'MusicBoard: the music project of Ciszuko Antony — studio album FL Studio Track Practice 2024 and the Genesis Neon soundtrack.' },
+  '/projects/francisco-garcia': { title: 'Francisco García | Ciszuko Antony', desc: 'Francisco García: the person behind the artist — 3 CVs, verifiable certificates and professional trajectory.' },
+  '/projects/ciszunetwork': { title: 'Ciszu Network | Ciszuko Antony', desc: 'Ciszu Network: the digital innovation company founded by Ciszuko Antony — four websites, Discord bot and rhythm game.' },
   '/team': { title: 'Team | Ciszuko Antony', desc: 'Meet the team behind Ciszuko Network.' },
   '/contact': { title: 'Contact | Ciszuko Antony', desc: 'Get in touch with Ciszuko Antony and the Ciszuko Network team.' },
   '/faq': { title: 'FAQ | Ciszuko Antony', desc: 'Frequently asked questions about Ciszuko Network and its projects.' },

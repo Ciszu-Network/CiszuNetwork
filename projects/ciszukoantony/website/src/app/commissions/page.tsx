@@ -470,7 +470,7 @@ export default function CommissionsPage() {
           actions={[
             { label: 'Contacto', href: '/contact', icon: 'mail' },
             { label: 'WhatsApp', href: COMMISSIONS_WHATSAPP_URL, icon: 'comment', external: true },
-            { label: 'Portfolio', href: '/portfolio', icon: 'palette', variant: 'ghost' },
+            { label: 'Portfolio', href: '/portfolio', icon: 'portfolio', variant: 'ghost' },
             { label: 'Proyectos', href: '/projects', icon: 'rocket', variant: 'ghost' },
           ]}
         />

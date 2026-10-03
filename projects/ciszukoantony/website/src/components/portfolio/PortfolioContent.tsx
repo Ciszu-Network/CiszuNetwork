@@ -51,7 +51,7 @@ export default function PortfolioContent() {
       <PageAmbience />
       <PageReveal className="relative mx-auto max-w-screen-xl">
         <InfoHero
-          icon="palette"
+          icon="portfolio"
           title="Portfolio"
           subtitle={dict.portfolio.subtitle}
           kicker={dict.portfolio.kicker}

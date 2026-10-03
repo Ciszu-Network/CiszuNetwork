@@ -1,13 +1,18 @@
 'use client';
 
+import Image from "next/image";
 import Link from "next/link";
+import { assetResolver } from "@ciszunetwork/cdn";
 import { CISZU_NETWORK, CISZUBOT_LINKS, CISZUGAMENS, WIDGETS } from "@/config/site";
 import { ArrowRight, CalendarDays, ExternalLink, Gamepad2, Shield, Swords, Users } from "lucide-react";
-import { InfoHero, type InfoTheme } from "@ciszu/ui";
+import { Icon, type InfoTheme } from "@ciszu/ui";
 import PageAmbience from "@/components/layout/PageAmbience";
 import PageReveal from "@/components/layout/PageReveal";
 import QuickDocks from "@/components/molecules/QuickDocks";
 import WidgetCode from "./WidgetCode";
+import ProjectSlider from "@/components/projects/ProjectSlider";
+import Reveal, { Floating, GlowOrb } from "@/components/projects/Reveal";
+import { getProject } from "@/data/projects";
 import { useDict } from "@/lib/useDict";
 
 
@@ -105,19 +110,54 @@ const widgetSnippets = [
   },
 ];
 
+const gamensProject = getProject('ciszugamens')!;
+
 export default function CiszugamensPage() {
   const t = useDict();
   return (
-    <div className="relative min-h-screen pt-24 pb-20 px-4">
+    <div className="relative min-h-screen overflow-hidden pt-24 pb-20 px-4">
       <PageAmbience />
+      {/* Fondo único de Ciszugamens: púrpura y cian neón pulsantes. */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <GlowOrb color="rgba(168,85,247,0.18)" className="left-1/4 top-24 h-[26rem] w-[26rem]" />
+        <GlowOrb color="rgba(34,211,238,0.12)" className="right-1/4 top-[52rem] h-[24rem] w-[24rem]" duration={8} />
+      </div>
       <PageReveal className="relative mx-auto max-w-screen-xl">
-        <InfoHero
-          icon="gamepad"
-          title="Ciszugamens"
-          subtitle="Servidor de la Comunidad · Discord · WhatsApp · Telegram"
-          kicker="Proyecto"
-          theme={THEME}
-        />
+        {/* Héroe con el isotipo real de la comunidad */}
+        <header className="mb-14 text-center">
+          <Floating className="mx-auto w-fit">
+            <Image
+              src={assetResolver.resolve(gamensProject.logo)}
+              alt="Isotipo oficial de Ciszugamens"
+              width={220}
+              height={220}
+              className="h-28 w-28 object-contain drop-shadow-[0_0_45px_rgba(168,85,247,0.5)]"
+              priority
+            />
+          </Floating>
+          <p className="mt-6 text-[10px] font-black uppercase tracking-[0.4em] text-[#c084fc]">Comunidad · Gaming</p>
+          <h1 className="mt-3 bg-gradient-to-r from-[#a855f7] via-[#3b82f6] to-[#22d3ee] bg-clip-text font-header text-4xl font-black uppercase tracking-tighter text-transparent md:text-6xl">
+            Servidor de la comunidad
+          </h1>
+          <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-white/60">
+            Discord · WhatsApp · Telegram. Torneos por rondas, salas multijuego y una comunidad hispanohablante activa.
+          </p>
+        </header>
+
+        {/* Cifras de la comunidad */}
+        <div className="mb-14 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          {gamensProject.stats.map((stat, index) => (
+            <Reveal key={stat.label} delay={index * 0.08}>
+              <div className="h-full rounded-[1.75rem] border border-[#a855f7]/25 bg-[#a855f7]/5 p-6 text-center transition-all hover:-translate-y-1 hover:border-[#a855f7]/50">
+                <span className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl border border-[#a855f7]/40 bg-[#a855f7]/10 text-[#c084fc]">
+                  <Icon name={stat.icon} size={20} />
+                </span>
+                <p className="font-header text-2xl font-black text-white">{stat.value}</p>
+                <p className="mt-1 text-[9px] uppercase tracking-widest text-white/45">{stat.label}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
 
         <div className="space-y-8">
           <div className="p-8 md:p-12 rounded-[2rem] bg-brand/5 border border-brand/20">
@@ -160,11 +200,13 @@ export default function CiszugamensPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {features.map((f, i) => (
-              <div key={i} className="p-6 rounded-2xl bg-white/5 border border-white/10">
-                <f.icon className="w-8 h-8 text-[#a855f7] mb-4" />
-                <h3 className="text-white font-bold font-header text-sm mb-2">{f.title}</h3>
-                <p className="text-gray-400 text-xs leading-relaxed">{f.desc}</p>
-              </div>
+              <Reveal key={i} delay={i * 0.08}>
+                <div className="h-full p-6 rounded-2xl bg-white/5 border border-white/10 transition-all hover:-translate-y-1 hover:border-[#a855f7]/40">
+                  <f.icon className="w-8 h-8 text-[#a855f7] mb-4" />
+                  <h3 className="text-white font-bold font-header text-sm mb-2">{f.title}</h3>
+                  <p className="text-gray-400 text-xs leading-relaxed">{f.desc}</p>
+                </div>
+              </Reveal>
             ))}
           </div>
 
@@ -231,23 +273,23 @@ export default function CiszugamensPage() {
               en Discord, WhatsApp y Telegram. Elige tu plataforma favorita y forma parte de la
               familia gamer y digital del ecosistema.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <ProjectSlider ariaLabel="Plataformas de la comunidad Ciszugamens" itemClassName="w-[19rem] sm:w-[21rem]">
               {channels.map((c, i) => (
                 <a key={i} href={c.href} target="_blank" rel="noopener noreferrer"
-                  className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-white/30 transition-all group hover:-translate-y-1">
+                  className="flex h-full flex-col p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-white/30 transition-all group hover:-translate-y-1">
                   <div className="flex items-center gap-3 mb-3" style={{ color: c.color }}>
                     <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: `${c.color}22`, border: `1px solid ${c.color}44` }}>
                       {c.icon}
                     </div>
                     <h3 className="text-white font-bold font-header text-sm">{c.name}</h3>
                   </div>
-                  <p className="text-gray-400 text-xs leading-relaxed">{c.desc}</p>
+                  <p className="flex-1 text-gray-400 text-xs leading-relaxed">{c.desc}</p>
                   <span className="inline-flex items-center gap-1 mt-4 text-xs font-bold uppercase tracking-widest transition-all group-hover:gap-2" style={{ color: c.color }}>
                     Unirme <ArrowRight className="w-3 h-3" />
                   </span>
                 </a>
               ))}
-            </div>
+            </ProjectSlider>
           </div>
 
           <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10">

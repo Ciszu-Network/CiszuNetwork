@@ -432,7 +432,21 @@ export const NavbarContent = () => {
                   // Los desplegables (Projects / Information) SIEMPRE visibles:
                   // son el índice completo del sitio, no un extra responsive.
                   const responsiveClass = item.links ? 'flex' : groupActive ? 'flex' : (NAV_HIDE_CLS[idx] ?? 'flex');
-                  const isInfo = item.name === 'Information';
+                  // Si el encabezado del grupo declara `href`, el clic NAVEGA a
+                  // su página índice (Projects → /projects, Information →
+                  // /information); si no, solo despliega. El desplegable sigue
+                  // abriéndose al pasar el cursor.
+                  const parentHref = item.href;
+                  const parentActiveHref = groupActive
+                    ? item.links.find((s) => isActive(s.href))?.href ?? parentHref ?? item.links[0].href
+                    : parentHref ?? item.links[0].href;
+                  const headerInner = (
+                    <>
+                      <span className="flex items-center justify-center shrink-0">{item.icon}</span>
+                      <span className={navLabelCls(parentActiveHref)}>{item.name}</span>
+                      <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                    </>
+                  );
                   return (
                     <div
                       key={item.name}
@@ -440,20 +454,16 @@ export const NavbarContent = () => {
                       onMouseEnter={() => hoverOpen(setOpenDropdown, dropdownTimer, item.name)}
                       onMouseLeave={() => hoverClose(setOpenDropdown, dropdownTimer)}
                     >
-                      {isInfo ? (
-                        <Link href="/information" className={navLinkCls(groupActive ? item.links.find((s) => isActive(s.href))?.href ?? '/information' : '/information')}>
-                          <span className="flex items-center justify-center shrink-0">{item.icon}</span>
-                          <span className={navLabelCls(groupActive ? item.links.find((s) => isActive(s.href))?.href ?? '/information' : '/information')}>{item.name}</span>
-                          <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                      {parentHref ? (
+                        <Link href={parentHref} className={navLinkCls(parentActiveHref)}>
+                          {headerInner}
                         </Link>
                       ) : (
                         <button
                           onClick={() => setOpenDropdown(isOpen ? null : item.name)}
-                          className={navLinkCls(groupActive ? item.links.find((s) => isActive(s.href))?.href ?? item.links[0].href : item.links[0].href)}
+                          className={navLinkCls(parentActiveHref)}
                         >
-                          <span className="flex items-center justify-center shrink-0">{item.icon}</span>
-                          <span className={navLabelCls(groupActive ? item.links.find((s) => isActive(s.href))?.href ?? item.links[0].href : item.links[0].href)}>{item.name}</span>
-                          <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                          {headerInner}
                         </button>
                       )}
                       {isOpen && (

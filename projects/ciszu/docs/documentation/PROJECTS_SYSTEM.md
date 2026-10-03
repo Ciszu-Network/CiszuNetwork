@@ -1,8 +1,8 @@
 # PROJECTS_SYSTEM — Sistema de Proyectos del Ecosistema (Ciszu Network)
 
-Versión: 2.0.1
-Actualización: 2026-08-17
-Identificador: PROJECTS_SYSTEM_V2.0.1_2026_08_17_ciszunetwork
+Versión: 2.1.0
+Actualización: 2026-10-03
+Identificador: PROJECTS_SYSTEM_V2.1.0_2026_10_03_ciszunetwork
 
 > **Definición**: documento maestro de los proyectos de Ciszu Network. Fusiona la vista
 > general (Projects), el estado detallado (Project State) y el historial cronológico
@@ -148,6 +148,41 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 
 > Este historial absorbe `PROJECT_HISTORY.md` (eliminado 13 ago 2026). Añadir aquí los
 > nuevos hitos al cierre de sesión.
+
+### 3 de Octubre, 2026 — Páginas de proyectos completas en CiszuNetwork y CiszukoAntony
+
+- **CiszuNetwork /projects**: índice reconstruido como explorador — búsqueda por texto,
+  filtros por categoría, orden (recientes/antiguos/A-Z/Z-A), cards únicas con isotipo real y
+  fondo del color de cada marca, y modal por proyecto con ficha completa (propietario,
+  comunidad, página oficial) y botón directo a su página. Catálogo central en
+  `projects/ciszu/website/src/data/projects.ts` (5 proyectos).
+- **Navegación**: el ítem "Projects" del navbar de ciszunetwork ahora es un Link a `/projects`
+  (antes solo desplegaba el menú). El grupo "Projects" de ciszukoantony también navega a
+  `/projects`.
+- **Páginas internas enriquecidas (ciszunetwork)**: MuzicMania con biblioteca Genesis Neon
+  (4 pistas con portadas, BPM, dificultad y récords reales), cómo se juega y modos;
+  CiszuBot con 6 categorías de comandos reales (60+), cómo se usa y directorios; Ciszuko
+  Antony con pilares, selfie y plataformas; Ciszu Network con áreas, ecosistema y valores;
+  Ciszugamens con héroe, isotipo y cifras.
+- **CiszukoAntony /projects**: catálogo ampliado a los 4 mundos (Ciszuko Antony, MusicBoard,
+  Francisco García y Ciszu Network) con el mismo explorador (búsqueda, filtros, orden y
+  modal) y páginas de detalle únicas: discografía real y playlists en MusicBoard, retrato +
+  certificados en Francisco García, redes reales en la marca y ecosistema/comisiones en la
+  empresa.
+- **Icono oficial de portfolio**: nuevo SVG `portfolio` (maletín) en `shared/icons/svg/outline`
+  + registro regenerado (212 iconos); reemplaza la paleta de pintura en nav, footer, hero de
+  `/portfolio` y CTAs relacionados.
+- **Sliders y animaciones (fase 2)**: componentes reutilizables `ProjectSlider` (carrusel
+  horizontal con scroll-snap, flechas con estado real y fundidos laterales) y
+  `Reveal`/`Floating`/`GlowOrb` (framer-motion) en ambas webs. Aplicados a todas las páginas
+  de proyecto: MuzicMania (pistas de Genesis Neon en slider), CiszuBot (6 categorías de
+  comandos en slider), Ciszuko Antony (plataformas reales en slider), Ciszu Network
+  (ecosistema en slider) y Ciszugamens (canales en slider); en ciszukoantony: playlists,
+  certificados, redes y ecosistema en sliders y reveals escalonados en stats, features y
+  cards. Logos/isotipos con flotación suave y fondos con orbes pulsantes. Sin librerías
+  nuevas (framer-motion ya estaba en ambas webs).
+- **Verificación**: `tsc --noEmit`, ESLint y `next build` OK en ambas webs tras la fase 2
+  (SSG de los 4 slugs en ciszukoantony; 5 rutas `/projects/*` estáticas en ciszunetwork).
 
 ### 20 de Agosto, 2026 — Tema oscuro/claro en las 4 webs (infraestructura)
 
@@ -570,5 +605,5 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 3. **Pendientes (§3)**: mover a historial cuando se resuelva, añadir nuevos bloqueos.
 4. Marcar "Última actualización" y actualizar `STATUS_SYSTEM.md` y `STATISTICS_SYSTEM.md`.
 
-_Última revisión: 20 ago 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
+_Última revisión: 3 oct 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
 `ARCHITECTURE.md`, `WORKFLOW_SYSTEM.md`, `AGENTS.md`.

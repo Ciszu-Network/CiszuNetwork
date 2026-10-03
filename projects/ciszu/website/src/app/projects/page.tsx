@@ -1,16 +1,16 @@
 'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import { assetResolver } from "@ciszunetwork/cdn";
-import { ArrowRight, Bot, Building, ExternalLink, Gamepad2, Music, User } from "lucide-react";
-import { InfoHero, type InfoTheme } from "@ciszu/ui";
-import PageAmbience from "@/components/layout/PageAmbience";
-import PageReveal from "@/components/layout/PageReveal";
-import QuickDocks from "@/components/molecules/QuickDocks";
-import { CISZU_NETWORK, GITHUB_REPO } from "@/config/site";
-import { useDict } from "@/lib/useDict";
-import { fillTemplate } from "@/lib/i18n";
+import Link from 'next/link';
+import { ArrowRight, ExternalLink } from 'lucide-react';
+import { Icon, InfoHero, type InfoTheme } from '@ciszu/ui';
+import PageAmbience from '@/components/layout/PageAmbience';
+import PageReveal from '@/components/layout/PageReveal';
+import QuickDocks from '@/components/molecules/QuickDocks';
+import ProjectsExplorer from '@/components/projects/ProjectsExplorer';
+import { CISZU_NETWORK, GITHUB_REPO } from '@/config/site';
+import { PROJECTS, PROJECT_CATEGORIES, PROJECT_STACK_COUNT } from '@/data/projects';
+import { useDict } from '@/lib/useDict';
+import { fillTemplate } from '@/lib/i18n';
 
 const THEME: InfoTheme = {
   accent: 'text-brand-light',
@@ -21,77 +21,21 @@ const THEME: InfoTheme = {
   gradient: 'from-brand-light to-brand-accent',
 };
 
-type Project = {
-  id: string;
-  title: string;
-  tagline: string;
-  desc: string;
-  href: string;
-  external?: boolean;
-  icon: typeof Gamepad2;
-  gradient: string;
-  logo: string;
-  stack: string[];
-};
-
-const projects: Project[] = [
-  {
-    id: 'ciszugamens',
-    title: 'Ciszugamens',
-    tagline: 'Servidor de la Comunidad',
-    desc: 'La comunidad gamer y digital del ecosistema: eventos, partidas, soporte y bots, unida en Discord, WhatsApp y Telegram.',
-    href: '/projects/ciszugamens',
-    icon: Gamepad2,
-    gradient: 'from-[#a855f7] via-[#3b82f6] to-[#22d3ee]',
-    logo: 'projects/ciszugamens/content/logos/images/outline/isotype/gradient/color/ciszugamens_logo_isotipo_degradado_outline_color_cpurple_zblue.svg',
-    stack: ['Discord', 'WhatsApp', 'Telegram', 'Top.gg'],
-  },
-  {
-    id: 'ciszubot',
-    title: 'CiszuBot',
-    tagline: 'Bot Inteligente de Discord',
-    desc: 'El bot oficial: moderación, música, economía, juegos y automatización, con web propia, estado en vivo y soporte.',
-    href: '/projects/ciszubot',
-    icon: Bot,
-    gradient: 'from-[#5865F2] via-[#7289DA] to-[#4752C4]',
-    logo: 'projects/ciszubot/content/logos/images/samples/circle/ciszubot_logo_isotipo_color_circle.png',
-    stack: ['Discord.js', 'TypeScript', 'Node.js', 'Docker', 'Supabase', 'Top.gg'],
-  },
-  {
-    id: 'muzicmania',
-    title: 'MuzicMania',
-    tagline: 'Juego de Ritmo Definitivo',
-    desc: 'Juego de ritmo en la web con estética futurista, álbumes originales y app de escritorio. Compuesto y programado desde cero.',
-    href: '/projects/muzicmania',
-    icon: Music,
-    gradient: 'from-brand via-brand-light to-brand-accent',
-    logo: 'projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.png',
-    stack: ['Next.js', 'React', 'TypeScript', 'Web Audio', 'Supabase', 'Tauri'],
-  },
-  {
-    id: 'ciszunetwork',
-    title: 'Ciszu Network',
-    tagline: 'Compañía de Innovación Digital',
-    desc: 'El núcleo del ecosistema: desarrollo web, infraestructura cloud, UI/UX, bots y soluciones digitales de alto rendimiento.',
-    href: '/projects/ciszunetwork',
-    icon: Building,
-    gradient: 'from-brand via-brand-light to-neon-blue',
-    logo: 'projects/ciszu/content/logos/images/outline/isotype/gradient/color/ciszu_logo_isotipo_outline_degradado_zwhite_ccolor.svg',
-    stack: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Supabase', 'Vercel', 'Turborepo'],
-  },
-  {
-    id: 'ciszukoantony',
-    title: 'Ciszuko Antony',
-    tagline: 'Youtuber & Streamer',
-    desc: 'El proyecto artístico y de entretenimiento del CEO: contenido gaming, música, tecnología y desarrollo para toda la comunidad.',
-    href: '/projects/ciszukoantony',
-    icon: User,
-    gradient: 'from-neon-blue via-brand-accent to-neon-pink',
-    logo: 'projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png',
-    stack: ['YouTube', 'Twitch', 'TikTok', 'Instagram', 'Spotify'],
-  },
+const STATS = [
+  { icon: 'rocket', value: `${PROJECTS.length}`, label: 'Proyectos', sub: 'Del ecosistema' },
+  { icon: 'flag', value: `${PROJECT_CATEGORIES.length}`, label: 'Categorías', sub: 'Para filtrar' },
+  { icon: 'terminal', value: `${PROJECT_STACK_COUNT}`, label: 'Tecnologías', sub: 'En los stacks' },
+  { icon: 'heart', value: '100%', label: 'Autoría propia', sub: 'Código, arte y música' },
 ];
 
+/**
+ * `/projects` — índice gigante del ecosistema.
+ *
+ * Cada proyecto es un mundo: card con su isotipo, sus colores, su tagline y
+ * su stack; el explorador añade búsqueda por texto, filtros por categoría y
+ * orden ascendente/descendente. Al abrir una card se muestra su ficha en un
+ * modal personalizado con el botón directo a su página.
+ */
 export default function ProjectsPage() {
   const t = useDict();
   return (
@@ -106,59 +50,29 @@ export default function ProjectsPage() {
           theme={THEME}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((p) => {
-            const Comp = p.external ? 'a' : Link;
-            const props = p.external
-              ? { href: p.href, target: '_blank', rel: 'noopener noreferrer' as const }
-              : { href: p.href };
-            return (
-              <Comp
-                key={p.id}
-                {...props}
-                className="group relative flex flex-col p-6 rounded-[2rem] bg-white/5 border border-white/10 hover:border-brand-light/50 hover:-translate-y-1 transition-all duration-300"
-              >
-                <div className="flex items-center gap-4 mb-4">
-                  <span className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${p.gradient} flex items-center justify-center shrink-0 shadow-lg group-hover:scale-110 transition-transform`}>
-                    <p.icon className="w-6 h-6 text-white" />
-                  </span>
-                  <Image
-                    src={assetResolver.resolve(p.logo)}
-                    alt={p.title}
-                    width={40}
-                    height={40}
-                    className="w-10 h-10 object-contain ml-auto opacity-80 group-hover:opacity-100 transition-opacity"
-                  />
-                </div>
-                <h2 className="text-xl font-header font-bold text-white group-hover:text-brand-light transition-colors">
-                  {p.title}
-                </h2>
-                <p className="text-brand-light text-[10px] font-bold uppercase tracking-[0.2em] mt-1 mb-3">
-                  {p.tagline}
-                </p>
-                <p className="text-gray-400 text-xs leading-relaxed flex-grow">{p.desc}</p>
-                <div className="flex flex-wrap gap-1.5 mt-4">
-                  {p.stack.map((t) => (
-                    <span key={t} className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[9px] font-bold text-gray-500 uppercase tracking-wider">
-                      {t}
-                    </span>
-                  ))}
-                </div>
-                <div className="flex items-center gap-1.5 text-brand-light text-[10px] font-bold uppercase tracking-widest mt-5 group-hover:gap-2.5 transition-all">
-                  {p.external ? 'Visitar' : 'Explorar'}
-                  {p.external ? <ExternalLink className="w-3 h-3" /> : <ArrowRight className="w-3 h-3" />}
-                </div>
-              </Comp>
-            );
-          })}
+        {/* Cifras reales del catálogo */}
+        <div className="mb-14 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          {STATS.map((stat) => (
+            <div key={stat.label} className="rounded-[1.75rem] border border-white/10 bg-white/[0.03] p-6 text-center">
+              <span className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl border border-brand/30 bg-brand/10 text-brand-light">
+                <Icon name={stat.icon} size={20} />
+              </span>
+              <p className="font-header text-3xl font-black text-white">{stat.value}</p>
+              <p className="mt-1 font-header text-xs font-bold text-brand-light">{stat.label}</p>
+              <p className="mt-0.5 text-[9px] uppercase tracking-widest text-white/35">{stat.sub}</p>
+            </div>
+          ))}
         </div>
 
-        <div className="mt-14 text-center p-8 rounded-[2rem] bg-gradient-to-br from-brand/10 to-transparent border border-brand/30">
-          <h2 className="text-xl font-header font-bold text-white mb-3">{t.projectsPage.builtTitle}</h2>
-          <p className="text-gray-400 text-sm mb-6 max-w-xl mx-auto">
-            {t.projectsPage.builtDesc}
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <ProjectsExplorer />
+
+        <div className="mt-16 rounded-[2rem] border border-brand/30 bg-gradient-to-br from-brand/10 to-transparent p-8 text-center">
+          <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-brand/30 bg-brand/10 text-brand-light">
+            <Icon name="terminal" size={22} />
+          </span>
+          <h2 className="mb-3 font-header text-xl font-bold text-white">{t.projectsPage.builtTitle}</h2>
+          <p className="mx-auto mb-6 max-w-xl text-sm text-gray-400">{t.projectsPage.builtDesc}</p>
+          <div className="flex flex-col justify-center gap-4 sm:flex-row">
             <a
               href={GITHUB_REPO}
               target="_blank"
