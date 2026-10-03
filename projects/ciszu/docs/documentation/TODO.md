@@ -16,6 +16,7 @@
 - [X] Verificar en producción que no hay errores 400/500 en impresiones de ads ni bloqueos de CSP.
 
   ESTADO VERIFICADO (02 oct 2026, acceso OAuth completo):
+
   - GA4: 1 propiedad (`properties/551642504`, "Ciszu Network") con los 4 data streams
     (G-TQH12LRZK6, G-V6E1QC7GQM, G-GQ197GD1RH, G-Y3X7RSM2J3). Tráfico real confirmado
     (Home de las 4 webs: 1795/576/522/456 views desde sep 2026). Realtime OK.
@@ -31,27 +32,28 @@
     cargan). Los ERR_ABORTED de doubleclick son flujo normal sin sitios aprobados aún.
   - GA4→BigQuery: datasets `analytics` listos en los 4 proyectos GCP; el ENLACE se hace en
     la UI de GA4 (no hay API). Looker Studio: sin API, se arma en la UI.
-- [ ] **Enlace GA4 → BigQuery** (manual, por cada propiedad GA4): GA4 → Admin → Propiedad → Enlaces
-      de BigQuery → Vincular → elegir el proyecto GCP (`ciszunetwork`, `ciszubot`,
-      `ciszukoantony`, `muzicmania-1779157973357`) y el dataset **`analytics`** (ya creado) →
-      flujo *Transmitir*. Los datos llegan en 24-48h.
+- [X] **Enlace GA4 → BigQuery** (HECHO 03 oct 2026): vinculado por la UI de GA4. El enlace
+      exporta los 4 data streams al dataset `analytics` del proyecto `231298418565`
+      (datasetLocation US, flujo streaming). Los datos llegan en 24-48h desde la creación.
+- [ ] **Esperar tablas de BigQuery**: Google crea `analytics.events_*` en 24-48h desde el
+      enlace (03 oct 05:16). Revisar en ~2 días; cuando existan, Looker Studio las detecta.
 - [ ] **Looker Studio**: conectar BigQuery → crear dashboard (gratis) con las fuentes GA4.
-- [ ] **AdSense — crear unidades de anuncio** (manual, en la UI de AdSense → Anuncios →
-      Unidad de anuncio → *Anuncio adaptable*): no se puede por API (solo AdSense for
-      Platforms). Crear una por web cuando los sitios pasen de GETTING_READY a aprobados.
+      (Se puede hacer cuando existan las tablas de BigQuery.)
+- [X] **AdSense — unidades de anuncio** (HECHO 03 oct): 7 unidades creadas y activas por el
+      usuario (infeed 8922388572, multiplex-v 3252268656, multiplex-h 7856718919,
+      article 6200022314, square 7696936819, vertical 6369297297, horizontal 9757877968).
+      El agente las leyó por API (no requieren pasarse). Solo esperan aprobación de sitios.
 - [X] **Publicar container GTM de MuzicMania** (RESUELTO 03 oct): el error de validación era
       "variable desconocida GA4 Measurement ID" en el tag GA4. El agente corrigió el tag a
       measurement ID literal y publicó por API (live v2). Los 4 contenedores GTM están
       publicados con GA4 + AdSense. Verificado en producción: muzicmania dispara AdSense vía GTM.
-- [ ] **Aprobar sitios AdSense**: los 4 sitios están en GETTING_READY (revisión automática de
-      Google). No requiere acción; verificar en unos días en la UI de AdSense.
+- [ ] **Aprobar sitios AdSense (ESPERA)**: los 4 sitios están en GETTING_READY (revisión
+      automática de Google, no se acelera). Verificar en unos días en la UI de AdSense.
   - ads.txt: VERIFICADO correcto en las 4 webs (03 oct). El aviso "No encontrado" de AdSense
     era del 21 sept (antes de servir ads.txt); se corregirá en el próximo escaneo de AdSense.
-  - Unidades de anuncio: 7 creadas y activas (leídas por API, no hay que pasármelas):
-    infeed 8922388572, multiplex-v 3252268656, multiplex-h 7856718919, article 6200022314,
-    square 7696936819, vertical 6369297297, horizontal 9757877968.
 
   ANALYTICS — CONFIGURADO POR API (03 oct 2026, acceso OAuth):
+
   - Audiencias creadas (5): Usuarios que hicieron scroll, Usuarios que enviaron formulario,
     Usuarios con engagement (30 días, evento-based) + All Users + Purchasers. Todas con
     `adsPersonalizationEnabled=true` → exportables a Google Ads (cuenta vinculada 7969562321).
@@ -64,6 +66,7 @@
   - Orientar anuncios a audiencias: listo (audiencias exportables + Google Ads vinculado).
 
   GTM — ACTIVADO DE VERDAD (03 oct 2026):
+
   - GoogleScripts ahora SOLO carga el contenedor GTM (GA4 y AdSense viven en tags GTM).
   - Tags creados por API en los 4 contenedores: "GA4 - Configuración" (gaawc/googtag,
     send_page_view=false) + "AdSense - Head" (custom HTML), trigger All Pages.
@@ -75,12 +78,13 @@
     (adsbygoogle) disparan via GTM en ciszunetwork/ciszubot/antony.
 
   USER-ID — IMPLEMENTADO (03 oct 2026):
+
   - [X] `setGaUserId()` en `GoogleAnalytics` (exportado de @ciszu/ui): hace
-        `gtag('set', {user_id})` al dataLayer.
+    `gtag('set', {user_id})` al dataLayer.
   - [X] Los 4 AuthProviders llaman `setGaUserId(user.id)` al cargar sesión y en
-        SIGNED_IN/USER_UPDATED/TOKEN_REFRESHED; `setGaUserId(null)` en SIGNED_OUT.
+    SIGNED_IN/USER_UPDATED/TOKEN_REFRESHED; `setGaUserId(null)` en SIGNED_OUT.
   - [X] Activado a nivel de propiedad: `reportingIdentity=BLENDED` + Google Signals
-        ENABLED + CONSENTED (verificado por API, 03 oct 2026).
+    ENABLED + CONSENTED (verificado por API, 03 oct 2026).
 - [ ] Los emails actualmente que se envian no estan customizados, los envia "supabase" lo cual puede confundir siempre debe ser ciszunetwork | (pagina en cuestion) ademas de un diseño interno diferente con botones y diseño. Terminos y condiciones y aclaracion de que este email no es de patrocinamiento o anuncio. Los que si son siempre se debe recalcar.
 - [X] Actualmente el sistema de creacion y registro de cuentas falla. Probe con ciszubot, al registrarme con "ciszukoantony" como user, al intentar logearme dice que no existe. Parece ser que al registrarse, le indica la usuario que debe aceptar algo en su email. El gran problema es que ese correo nunca aparece, y peor aun, no da tiempo a leer lo que dice, se actualiza rapidamente hacia el login. Debes hacer que al registrar una cuenta y todo esta bien (Cloudflare, recaptcha, credenciales, seguridad de contraseña, cuenta repetida, relleno de obligacion, rate limits etc), si es una cuenta nueva SIEMPRE se debe pedir una verificacion para terminar para la creacion, se usara el modelo de ciszunetwork es decir, C-XXX-XXX, 6 campos de digitos o numeros aleatorios, con su rate limits, sus experiaciones, su tiempos para volver a mandar en el mismo modal, su campo de verificacion etc. Si el usuario NO procede con la verificacion, simplemente NO se crea la cuenta, en caso de que si, la cuenta se configura automaticamente con la autentificacion del email que se vinculo, asi en proximos logeos siempre se le mandara una verificacion OTP. Algo que podra desactivar en su configuracion de cuenta personal si quiere. Tanto para login o registro, los codigos son temporales, expirable en 3 horas e indicar, unico por website, indicar si ya expiro y posibilidad de reenviar otro codigo con limites, al tercer limite se suspende temporalmente y localmente por que no logro iniciar sesion o registrarse correctamente. Finalmente, cuando el usuario se registra o se logea, debe aparece un modal opcional en el index, para indicarle y recordarle que pueda activar la opcion de "recordar contraseña" por lo proximos 30  dias. De esta manera se fuerza la sesion y no se pierde luego de por ejemplo apagar la pc o cosas asi.  Este modal es opcional y lo puede cerrar en caso de que lo ignore o cierre no se tomara en cuenta si se recordara la sesion o no. Ademas se podra tambien activar luego en la configuracion de la cuenta.
 - [X] Estas implementaciones requieren de terminar algunas cosas de paridad, es cierto que muzicmania es la unica que de verdad requiera cuentas, por eso tiene mas opciones de perfil o configuracion. Pero especificamente la pestaña de configuracion despues de un usuario iniciar sesion y seleccionarlo en el header. Es algo muy importante, necesito que repliques este sistema, actuales con las peticiones para todas las websites. Puedes excluir ciertas configuraciones como las de perfil, pero los de cambiado de nombre display, otp recordatorio, emails notif, camibar password, auth, cerrar sesion segura, debug, dispositivos sesiones, entre muchas otras lo requieren las demas websites.
