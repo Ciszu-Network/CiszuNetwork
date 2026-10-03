@@ -154,8 +154,8 @@ export const PROJECTS: Project[] = [
     longDescription:
       'MusicBoard es el hogar musical de Ciszuko Antony: un reproductor integrado en la web con la obra propia, desde el álbum de práctica de estudio FL Studio Track Practice 2024 (compuesto y producido durante 2024) hasta Genesis Neon, la banda sonora que se juega en MuzicMania. Incluye además las playlists y el podcast oficiales en YouTube Music, y los canales donde publica su música en SoundCloud y Spotify.',
     icon: 'music',
-    logo: '/musicboard/covers/fl-studio-track-practice-2024.png',
-    preview: '/musicboard/covers/fl-studio-track-practice-2024.png',
+    logo: 'projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png',
+    preview: 'projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png',
     categories: ['Música'],
     stack: ['FL Studio', 'SoundCloud', 'YouTube Music', 'Spotify', 'MuzicMania'],
     features: [

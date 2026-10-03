@@ -26,6 +26,24 @@ export type {
 
 export const CHANGELOG_DATA: ChangelogItem[] = [
   {
+    id: 'patch-v2.7.0',
+    version: 'PATCH V2.7.0',
+    code: 'P-270-GTM',
+    title: 'GTM de verdad, reCAPTCHA Enterprise y anuncios',
+    description: 'Ciszu Network migra todo el tracking de Google a GTM, actualiza reCAPTCHA a Enterprise sin secretos, y los banners inferiores ganan su botón de acción.',
+    date: '2026-10-03',
+    author: 'CiszuNetwork',
+    types: ['feat', 'sec', 'ui', 'add'],
+    likes: 0,
+    details: [
+      { text: 'Google Analytics y AdSense ahora viven en los contenedores de GTM de las 4 webs; GoogleScripts solo carga el contenedor.', type: 'feat' },
+      { text: 'reCAPTCHA migrado a Enterprise: validación por API de assessments con risk score y sin claves secretas por web.', type: 'sec' },
+      { text: 'User-ID de GA4 implementado: las 4 webs envían el identificador del usuario autenticado para informes multiplataforma.', type: 'add' },
+      { text: 'Los banners inferiores de anuncios muestran su botón de acción (p. ej. "Crear cuenta CISZU ID") en todas las webs.', type: 'ui' },
+      { text: 'Corregida la vista de Supabase account_public_status (security_invoker) para el linter de seguridad.', type: 'sec' },
+    ],
+  },
+  {
     id: 'patch-v2.6.0',
     version: 'PATCH V2.6.0',
     code: 'P-260-NV',

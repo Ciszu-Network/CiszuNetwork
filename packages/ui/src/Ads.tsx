@@ -1332,6 +1332,28 @@ function SingleAdCard({ ad, onDone, compact, site }: { ad: AdConfig; onDone: () 
             <p className="truncate text-xs font-bold text-white">{c.title}</p>
             <p className="truncate text-[11px] text-neutral-400">{c.description}</p>
           </div>
+          {/* Botón de acción: el banner inferior también debe permitir accionar.
+              `href` es obligatorio en el catálogo; sin él no se pinta el botón. */}
+          {!c.placeholder && c.href && c.href !== '#' && (
+            <a
+              href={c.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => {
+                if (isAdBlockContinue()) {
+                  e.preventDefault();
+                  trackEvent('ad_blocked_click', { ad_id: ad.id, site });
+                  window.dispatchEvent(new CustomEvent('ciszu:adblock-click'));
+                  return;
+                }
+                trackEvent('ad_click', { ad_id: ad.id, ad_type: ad.type, href: c.href });
+              }}
+              className="shrink-0 rounded-lg px-3 py-1.5 text-xs font-semibold text-black hover:brightness-110 active:scale-95 transition-transform"
+              style={{ background: c.accent || '#22d3ee' }}
+            >
+              {c.cta || 'Ver más'}
+            </a>
+          )}
         </div>
         <div className="mt-1.5 w-full">
           <CountdownBar total={timer.total} remaining={timer.remaining} />
@@ -1428,6 +1450,27 @@ const item = items[idx];
             <p className="truncate text-xs font-bold text-white">{item.title}</p>
             <p className="truncate text-[11px] text-neutral-400">{item.description}</p>
           </div>
+          {/* Botón de acción del banner inferior (carousel). */}
+          {!item.placeholder && item.href && item.href !== '#' && (
+            <a
+              href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => {
+                if (isAdBlockContinue()) {
+                  e.preventDefault();
+                  trackEvent('ad_blocked_click', { ad_id: ad.id, site });
+                  window.dispatchEvent(new CustomEvent('ciszu:adblock-click'));
+                  return;
+                }
+                trackEvent('ad_click', { ad_id: ad.id, ad_type: ad.type, href: item.href });
+              }}
+              className="shrink-0 rounded-lg px-3 py-1.5 text-xs font-semibold text-black hover:brightness-110 active:scale-95 transition-transform"
+              style={{ background: item.accent || ad.content.accent || '#22d3ee' }}
+            >
+              {item.cta || 'Ver más'}
+            </a>
+          )}
         </div>
         <div className="mt-1.5 w-full">
           <CountdownBar total={AD_TIMING.carouselItemSec} remaining={remaining} />

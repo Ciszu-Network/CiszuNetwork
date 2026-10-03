@@ -25,6 +25,25 @@ export type {
 
 export const CHANGELOG_DATA: ChangelogItem[] = [
   {
+    id: 'patch-v2.8.0',
+    version: 'PATCH V2.8.0',
+    code: 'P-280-PORT',
+    title: 'Portfolio Profesional y Datos Reales',
+    description: 'El portfolio se actualiza con datos reales de Ciszuko Antony: habilidades técnicas por lenguaje con iconos y porcentajes autodeclarados, búsqueda, filtros y ordenamiento, y un perfil más completo y profesional para búsqueda de trabajo.',
+    date: '2026-10-03',
+    author: 'CiszukoAntony',
+    types: ['feat', 'ui', 'ux', 'add'],
+    likes: 0,
+    details: [
+      { text: 'Sección de habilidades reorganizada por familias (Lenguajes, Frontend, Backend, Bases de datos, DevOps, Herramientas) con el icono de cada tecnología y el porcentaje real.', type: 'feat' },
+      { text: 'El portfolio añade buscador por nombre, stack y palabras clave, más ordenamiento por Recientes, A-Z y Por stack.', type: 'add' },
+      { text: 'Datos reales del perfil: 17 años, 11 de noviembre, UPTAG (Falcón), fundador de Ciszu Network, y roles de programador, publisher, diseñador, editor e ilustrador.', type: 'add' },
+      { text: 'Experiencia ampliada con diseño/edición (Adobe, Affinity, Corel, DaVinci, Filmora, CapCut) y contenido gaming (tutoriales, mods, servidores y bots de Discord).', type: 'add' },
+      { text: 'El proyecto MusicBoard usa el isotipo de Ciszuko Antony en lugar de una portada de álbum como icono.', type: 'ui' },
+      { text: 'Los banners inferiores de anuncios ahora muestran su botón de acción (p. ej. "Crear cuenta") en todas las webs.', type: 'ux' },
+    ],
+  },
+  {
     id: 'patch-v2.7.1',
     version: 'PATCH V2.7.1',
     code: 'P-271-CM',

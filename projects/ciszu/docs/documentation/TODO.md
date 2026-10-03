@@ -83,28 +83,6 @@
 
 - [ ] Terminar idiomas en ingles UK.
 - [ ] Terminar idiomas en ingles USA.
-- [ ] Terminar paginas de proyectos y por cada proyecto.
-  Actualmente al darle click a la seccion de proyectos NO va a la pagina de proyectos, deberia ser dinamico y tambien al darle click al proyectos ir a todos los proyectos.
-
-  Debe existir un search, filtradores y ordenamiento segun ascendente o descendente. Para buscar y filtrar los proyectos.
-
-  Las cards de cada proyectos deben ser mas unicos e especiales menos genericos, quita ese icono generico por cada card, y usa sus logotipos o isotipos, fondos diferentes segun el color del logo.
-
-  Utiliza banners, flayers, herotitles o taglines. Al darle click al proyecto un modal personalizado y alli adentro un boton para ir al proyecto especificamente.
-
-  Es decir trata hacer que esta pagina este mas completa, que cada proyecto sea un mundo diferente, que tenga suficiente espacio sin juntarlos. Como un index o home gigante.
-
-  Por cada proyecto:
-
-  Utiliza dentro de cada proyecto, logos, isotipos banneres, flayers, taglines herotitles entre muchas otras cosas agrega mucho informacion. Secciones, corrige los widgets y sus tamaños. Docks, modales, cards. sliders, animaciones, cada pagina con un background diferente, cambios de tipogragia. Hipervinculos, enlaces, no te pido que todo sea generico o compartido debe ser unico. Interactivos, responsivo.
-
-  Por ejemplo muzicmania esta demasiado vacio, necesito que por cada proyecto agreges secciones unicas segun el proecty por ejemplo muzicmania y su library, ciszubot y sus comandos. Entre otras cosas. Ademas cada tag, titulo, seccion, dock o card debe tener iconos.
-
-  Obviamente debe tener cosas como el stack tecnologico, informacion, que es, como se usa, propietarios, comunidad, redes sociales e incluso la pagina oficial si es que posee por ejemplo ciszukoantony tiene pagina oficial.
-
-  Puedes usar sistemas de otras webs, o imagenes especificas por ejemplo ciszukoantony puedes usar mis selfies o certificados.
-
-  Recuerda todo esto dentro de ciszunetwork.
 - [ ] Terminar idiomas en español LATAM.
 - [ ] Terminar idiomas en español España.
 
@@ -120,33 +98,10 @@
 
 **Ciszuko Antony Website:**
 
-- [ ] Terminar paginas de portfolio, crearlos si hace falta e indexarlos.
-  El icono actual es una paleta de pintura, nada que ver con un portfolio cambialo oficialmente con un svg real.
-- [ ] Terminar paginas de curriculum, crearlos si hace falta e indexarlos.
-  - [ ] Terminar paginas de proyectos y por cada proyecto
-
-Actualmente al darle click a la seccion de proyectos NO va a la pagina de proyectos, deberia ser dinamico y tambien al darle click al proyectos ir a todos los proyectos.
-
-Debe existir un search, filtradores y ordenamiento segun ascendente o descendente. Para buscar y filtrar los proyectos.
-
-Las cards de cada proyectos deben ser mas unicos e especiales menos genericos, quita ese icono generico por cada card, y usa sus logotipos o isotipos, fondos diferentes segun el color del logo.
-
-Utiliza banners, flayers, herotitles o taglines. Al darle click al proyecto un modal personalizado y alli adentro un boton para ir al proyecto especificamente.
-
-Es decir trata hacer que esta pagina este mas completa, que cada proyecto sea un mundo diferente, que tenga suficiente espacio sin juntarlos. Como un index o home gigante.
-
-Por cada proyecto:
-
-Utiliza dentro de cada proyecto, logos, isotipos banneres, flayers, taglines herotitles entre muchas otras cosas agrega mucho informacion. Secciones, corrige los widgets y sus tamaños. Docks, modales, cards. sliders, animaciones, cada pagina con un background diferente, cambios de tipogragia. Hipervinculos, enlaces, no te pido que todo sea generico o compartido debe ser unico. Interactivos, responsivo. Entre otras cosas. Ademas cada tag, titulo, seccion, dock o card debe tener iconos.
-
-Obviamente debe tener cosas como el stack tecnologico, informacion, que es, como se usa, propietarios, comunidad, redes sociales e incluso la pagina oficial si es que posee por ejemplo ciszukoantony tiene pagina oficial.
-
-Puedes usar sistemas de otras webs, o imagenes especificas por ejemplo ciszukoantony puedes usar mis selfies o certificados.
-
-Recuerda todo esto dentro de ciszukoantony.
-
-Recuerda que los proyectos de ciszukoantony, es asi mismo, musicboard (proyecto musical de ciszukoantony), Francisco Garcia" (persona), ciszunetwork (como empresa)
-
+- [ ] Terminar paginas de portfolio, crearlos si hace falta e indexarlos. (Actualizar con toda la info dada a la IA)
+- [ ] En general cambiar las paginas para mostrar datos personales , profesionales. (Actualizar con toda la info dada a la IA)
+- [ ] Terminar paginas de curriculum, necesito cambiar los curriculums e actualizarlos para mostrar informacion actual
+- [ ] Cambiar icono del proyecto de musicboard dentro de proyectos por algo que no sea el cover de un album.
 - [ ] Terminar idiomas en ingles UK.
 - [ ] Terminar idiomas en ingles USA.
 - [ ] Terminar idiomas en español LATAM.

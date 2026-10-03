@@ -37,6 +37,10 @@ export type CvSkill = {
   name: string;
   /** Nivel autodeclarado (0-100). */
   level: number;
+  /** Icono del lenguaje/tecnología (registro de @ciszu/ui). */
+  icon?: string;
+  /** Familia agrupadora (Lenguaje, Frontend, Backend, Bases de datos, DevOps, Herramientas, Otros). */
+  family?: string;
 };
 
 export type CvLanguage = {
@@ -115,11 +119,11 @@ export const CURRICULUM: CurriculumData = {
   profile: {
     name: 'Ciszuko Antony',
     legalName: 'Francisco Antonio García Menolascina',
-    role: 'CEO & Fundador de Ciszu Network',
+    role: 'CEO & Fundador de Ciszu Network · Full-stack y artista digital',
     location: 'Coro, Falcón, Venezuela',
     email: 'ciszunetwork@outlook.com',
     summary:
-      'Desarrollador full-stack, artista digital y fundador de Ciszu Network. Construyo webs, bots, juegos y herramientas sobre un monorepo propio con Next.js, TypeScript y Supabase, con identidad visual y documentación de ingeniería verificable.',
+      'Desarrollador full-stack y fundador de Ciszu Network. Construyo webs, bots, juegos y herramientas sobre un monorepo propio con Next.js, TypeScript, Python y Supabase, con identidad visual y documentación de ingeniería verificable. Cumplo años el 11 de noviembre, soy de Venezuela y trabajo como programador, publisher, diseñador, editor e ilustrador.',
   },
   experience: [
     {
@@ -134,21 +138,33 @@ export const CURRICULUM: CurriculumData = {
       period: '2022 — Presente',
       role: 'Desarrollo full-stack',
       org: 'Proyectos propios',
-      desc: 'Aplicaciones web, bots de Discord/WhatsApp/Telegram, servidores de Minecraft, scripts de automatización y herramientas internas.',
+      desc: 'Aplicaciones web, bots de Discord, servidores, scripts de automatización (.bat/.ps1), librerías propias publicadas con Pip (CiszuPy) y herramientas internas.',
     },
     {
       icon: 'play',
       period: '2024 — Presente',
       role: 'Creador de contenido',
       org: 'Ciszuko Antony',
-      desc: 'YouTube, Twitch y redes: contenido gaming, música y tecnología para la comunidad del ecosistema.',
+      desc: 'YouTube y Twitch: contenido gaming variado, tutoriales, mods y texturas de juegos, servidores y bots de Discord para la comunidad.',
+    },
+    {
+      icon: 'palette',
+      period: '2024 — Presente',
+      role: 'Diseñador, editor e ilustrador',
+      org: 'Multiplataforma',
+      desc: 'Suite completa de Adobe, Affinity y Corel para diseño; Davinci Resolve, Filmora y CapCut para edición; ilustración digital para el ecosistema.',
     },
   ],
   education: [
     {
       icon: 'medal',
       title: 'Bachillerato — Diploma de graduación',
-      body: 'Institución educativa. Documento de graduación archivado en el catálogo de certificados.',
+      body: 'Graduado entre los mejores estudiantes. Documento de graduación archivado en el catálogo de certificados.',
+    },
+    {
+      icon: 'graduation',
+      title: 'Universidad — UPTAG (Falcón)',
+      body: 'Estudiante universitario orientado a Ingeniería de Información y Sistemas, centrado en full-stack de WebApps, UI/UX, análisis de datos, bases de datos, testing y pentesting.',
     },
     {
       icon: 'globe',
@@ -172,14 +188,40 @@ export const CURRICULUM: CurriculumData = {
     },
   ],
   skills: [
-    { name: 'TypeScript', level: 90 },
-    { name: 'Node.js', level: 85 },
-    { name: 'Next.js / React', level: 80 },
-    { name: 'Python', level: 75 },
-    { name: 'Java', level: 65 },
-    { name: 'MongoDB / Postgres', level: 80 },
-    { name: 'Docker / Linux', level: 70 },
-    { name: 'UI/UX y diseño', level: 75 },
+    { name: 'Python', level: 80, icon: 'python', family: 'Lenguajes' },
+    { name: 'JavaScript', level: 20, icon: 'javascript', family: 'Lenguajes' },
+    { name: 'TypeScript', level: 25, icon: 'typescript', family: 'Lenguajes' },
+    { name: 'HTML', level: 85, icon: 'html', family: 'Frontend' },
+    { name: 'CSS', level: 85, icon: 'css', family: 'Frontend' },
+    { name: 'XML', level: 30, icon: 'xml', family: 'Frontend' },
+    { name: 'SASS', level: 70, icon: 'sass', family: 'Frontend' },
+    { name: 'React', level: 35, icon: 'react', family: 'Frontend' },
+    { name: 'Java', level: 10, icon: 'java', family: 'Lenguajes' },
+    { name: 'C', level: 10, icon: 'c', family: 'Lenguajes' },
+    { name: 'C++', level: 10, icon: 'cpp', family: 'Lenguajes' },
+    { name: 'C#', level: 10, icon: 'csharp', family: 'Lenguajes' },
+    { name: 'Lua / Luau', level: 25, icon: 'lua', family: 'Lenguajes' },
+    { name: 'Julia', level: 60, icon: 'julia', family: 'Lenguajes' },
+    { name: 'Ruby', level: 7, icon: 'ruby', family: 'Lenguajes' },
+    { name: 'Perl', level: 7, icon: 'perl', family: 'Lenguajes' },
+    { name: 'R', level: 7, icon: 'rlang', family: 'Lenguajes' },
+    { name: 'Rust', level: 7, icon: 'rust', family: 'Lenguajes' },
+    { name: 'ASM', level: 7, icon: 'asm', family: 'Lenguajes' },
+    { name: 'Kotlin', level: 5, icon: 'kotlin', family: 'Lenguajes' },
+    { name: 'Swift', level: 5, icon: 'swift', family: 'Lenguajes' },
+    { name: 'SQL (SQLite)', level: 60, icon: 'sql', family: 'Bases de datos' },
+    { name: 'Node.js', level: 40, icon: 'nodejs', family: 'Backend' },
+    { name: 'Express.js', level: 30, icon: 'express', family: 'Backend' },
+    { name: 'Django', level: 35, icon: 'django', family: 'Backend' },
+    { name: 'Next.js', level: 40, icon: 'nextjs', family: 'Backend' },
+    { name: 'Git / GitHub', level: 90, icon: 'github', family: 'Herramientas' },
+    { name: 'npm / pnpm', level: 70, icon: 'npm', family: 'Herramientas' },
+    { name: 'Docker', level: 10, icon: 'docker', family: 'DevOps' },
+    { name: 'Linux / Bash', level: 25, icon: 'linux', family: 'DevOps' },
+    { name: 'Prettier', level: 75, icon: 'prettier', family: 'Herramientas' },
+    { name: 'ESLint', level: 70, icon: 'eslint', family: 'Herramientas' },
+    { name: 'Ruff', level: 70, icon: 'ruff', family: 'Herramientas' },
+    { name: 'TOML / JSON / YAML', level: 70, icon: 'config', family: 'Herramientas' },
   ],
   languages: [
     { icon: 'comment', title: 'Español', body: 'Idioma nativo. Documentación y comunicación profesional.' },

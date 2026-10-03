@@ -32,6 +32,8 @@ export default function PortfolioContent() {
   usePageTitle('PORTFOLIO');
   const dict = useDict();
   const [filter, setFilter] = useState<Filter>('Todos');
+  const [query, setQuery] = useState('');
+  const [sort, setSort] = useState<'recent' | 'az' | 'stack'>('recent');
 
   const areas = [
     { icon: 'globe', title: dict.portfolio.areaWeb, body: dict.portfolio.areaWebBody },
@@ -41,10 +43,25 @@ export default function PortfolioContent() {
   ];
 
   const filters: Filter[] = ['Todos', ...PROJECT_CATEGORIES];
-  const projects = useMemo(
-    () => (filter === 'Todos' ? PROJECTS : PROJECTS.filter((project) => project.categories.includes(filter))),
-    [filter],
-  );
+
+  const projects = useMemo(() => {
+    let list = filter === 'Todos' ? [...PROJECTS] : PROJECTS.filter((project) => project.categories.includes(filter));
+    const q = query.trim().toLowerCase();
+    if (q) {
+      list = list.filter(
+        (project) =>
+          project.name.toLowerCase().includes(q) ||
+          project.tagline.toLowerCase().includes(q) ||
+          project.description.toLowerCase().includes(q) ||
+          project.stack.some((s) => s.toLowerCase().includes(q)) ||
+          project.keywords.some((k) => k.toLowerCase().includes(q)),
+      );
+    }
+    if (sort === 'az') list.sort((a, b) => a.name.localeCompare(b.name));
+    else if (sort === 'stack') list.sort((a, b) => b.stack.length - a.stack.length);
+    else list.sort((a, b) => a.name.localeCompare(b.name));
+    return list;
+  }, [filter, query, sort]);
 
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
@@ -57,6 +74,59 @@ export default function PortfolioContent() {
           kicker={dict.portfolio.kicker}
           theme={THEME}
         />
+
+        <div className="flex flex-col md:flex-row md:items-center gap-4 mb-8">
+          <div className="relative flex-1">
+            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
+              <Icon name="search" size={16} />
+            </span>
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                captureEvent('portfolio_search', { q: e.target.value });
+              }}
+              placeholder="Buscar por nombre, stack o palabra clave…"
+              className="w-full py-3 pl-11 pr-4 rounded-2xl bg-white/5 border border-white/10 text-sm text-white placeholder:text-gray-600 outline-none focus:border-neon-blue/60 focus:bg-white/[0.07] transition-all"
+            />
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery('')}
+                aria-label="Limpiar búsqueda"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors cursor-pointer"
+              >
+                <Icon name="close" size={16} />
+              </button>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            {(
+              [
+                { id: 'recent', label: 'Recientes', icon: 'clock' },
+                { id: 'az', label: 'A-Z', icon: 'sort' },
+                { id: 'stack', label: 'Por stack', icon: 'stack' },
+              ] as const
+            ).map((opt) => (
+              <button
+                key={opt.id}
+                onClick={() => {
+                  setSort(opt.id);
+                  captureEvent('portfolio_sort', { sort: opt.id });
+                }}
+                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
+                  sort === opt.id
+                    ? 'bg-neon-blue/20 border-neon-blue/60 text-neon-blue shadow-[0_0_15px_rgba(61,106,223,0.3)]'
+                    : 'bg-white/5 border-white/10 text-white/50 hover:text-white hover:border-white/30'
+                }`}
+              >
+                <Icon name={opt.icon} size={12} />
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
 
         <div className="flex flex-wrap justify-center gap-2 mb-12">
           {filters.map((item) => {
@@ -83,12 +153,24 @@ export default function PortfolioContent() {
         <h2 className="flex items-center gap-3 text-xs font-black uppercase tracking-[0.3em] text-neon-cyan mb-6">
           <Icon name="user" size={16} />
           Proyectos personales de Ciszuko Antony
+          <span className="ml-auto inline-flex items-center gap-1.5 text-[10px] text-gray-500 normal-case tracking-normal">
+            <Icon name="stack" size={12} />
+            {projects.length} de {PROJECTS.length}
+          </span>
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((project) => (
-            <ProjectCard key={project.slug} project={project} />
-          ))}
-        </div>
+        {projects.length === 0 ? (
+          <div className="p-12 rounded-[2rem] bg-white/[0.03] border border-dashed border-white/15 text-center">
+            <p className="text-3xl mb-3">🔎</p>
+            <p className="text-white font-header font-black uppercase tracking-widest">Sin resultados</p>
+            <p className="text-gray-500 text-sm mt-2">No hay proyectos que coincidan con «{query}». Prueba otra búsqueda.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {projects.map((project) => (
+              <ProjectCard key={project.slug} project={project} />
+            ))}
+          </div>
+        )}
 
         <div className="mt-16 mb-16">
           <InfoCardGrid title={dict.portfolio.areas} items={areas} theme={THEME} columns={4} />
