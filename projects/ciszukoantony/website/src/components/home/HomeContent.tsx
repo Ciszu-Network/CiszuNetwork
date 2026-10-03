@@ -10,11 +10,22 @@ import { SOCIAL_ENTRIES, getSocial } from '@/data/socials';
 import { MUZICMANIA_ALBUMS, MUSIC_PLATFORMS, REAL_ALBUMS } from '@/data/music';
 import MusicCover from '@/components/music/MusicCover';
 import CdnImage from '@/components/shared/CdnImage';
+import SkillLogo from '@/components/shared/SkillLogo';
 import SocialGlyph from '@/components/socials/SocialGlyph';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { supabase } from '@/config/supabase';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useDict } from '@/components/providers/I18nProvider';
+import {
+  PROFILE,
+  PROFILE_FACTS,
+  PROFILE_ROLES,
+  PROFILE_TOOLS,
+  PROFILE_INTERESTS,
+  PROFILE_ASPIRATIONS,
+  PROFILE_SKILLS,
+  PROFILE_FAMILIES,
+} from '@/data/profile';
 
 /* ────────────────────────────────────────────────────────────────
  * Datos REALES del portfolio. Nada de métricas inventadas:
@@ -226,7 +237,7 @@ export default function HomeContent() {
             />
           </div>
 
-          <p className="text-xl md:text-2xl text-gray-300 mb-2">
+<p className="text-xl md:text-2xl text-gray-300 mb-2">
             {dict.home.role}{' '}
             <a
               href="https://ciszunetwork.vercel.app"
@@ -240,6 +251,15 @@ export default function HomeContent() {
           <p className="text-gray-500 max-w-2xl mx-auto mb-9 text-xs uppercase tracking-[0.3em]">
             {dict.home.tagline}
           </p>
+
+          {/* Chips de datos reales */}
+          <div className="flex flex-wrap justify-center gap-2 mb-9">
+            {['Venezuela', '17 años', 'Full-stack', 'UPTAG Falcón', 'CEO · Ciszu Network', 'Desde 2022'].map((chip) => (
+              <span key={chip} className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                {chip}
+              </span>
+            ))}
+          </div>
 
           <div className="flex gap-4 justify-center flex-wrap">
             <Link
@@ -330,7 +350,7 @@ export default function HomeContent() {
           <Reveal>
             <SectionTitle icon="user" kicker="Perfil" title={dict.home.aboutTitle} tone="text-neon-blue" />
           </Reveal>
-          <Reveal delay={100}>
+<Reveal delay={100}>
             <div className="flex flex-col md:flex-row items-center gap-8 p-8 md:p-10 rounded-[2.5rem] bg-black/40 border border-white/10">
               <CdnImage
                 src="shared/images/francisco_selfie/IMG_20251207_001632@893898207.jpg"
@@ -339,7 +359,7 @@ export default function HomeContent() {
                 height={160}
                 className="rounded-full object-cover shrink-0 ring-2 ring-neon-blue/40 shadow-[0_0_35px_rgba(61,106,223,0.35)]"
               />
-              <div className="text-center md:text-left">
+              <div className="text-center md:text-left flex-1">
                 <h3 className="text-2xl font-header font-black uppercase italic text-white mb-2">
                   Ciszuko Antony
                   <span className="block text-[10px] tracking-[0.4em] text-neon-blue not-italic mt-1">
@@ -385,6 +405,45 @@ export default function HomeContent() {
               </div>
             </div>
           </Reveal>
+
+          {/* Datos personales reales */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mt-8">
+            {PROFILE_FACTS.map((fact, i) => (
+              <Reveal key={fact.label} delay={i * 40}>
+                <div className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-white/[0.04] border border-white/10 hover:border-neon-blue/40 transition-all hover:-translate-y-0.5">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-neon-blue/10 border border-neon-blue/30 text-neon-blue">
+                    <Icon name={fact.icon} size={16} />
+                  </span>
+                  <div className="text-center">
+                    <p className="text-[8px] font-black uppercase tracking-widest text-gray-500">{fact.label}</p>
+                    <p className="text-xs text-gray-200 font-medium truncate max-w-[9rem]">{fact.value}</p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+</div>
+      </section>
+
+      {/* ── QUÉ HAGO / ROLES ───────────────────────────────── */}
+      <section className="py-20 px-4 bg-white/[0.015] border-y border-white/5">
+        <div className="max-w-6xl mx-auto">
+          <Reveal>
+            <SectionTitle icon="terminal" kicker="Multidisciplinar" title="Qué hago" tone="text-neon-cyan" />
+          </Reveal>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {PROFILE_ROLES.map((role, i) => (
+              <Reveal key={role.title} delay={i * 60}>
+                <div className="group h-full p-5 rounded-[1.75rem] bg-white/5 border border-white/10 hover:border-neon-cyan/40 transition-all hover:-translate-y-1">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan mb-3 group-hover:scale-110 transition-transform">
+                    <Icon name={role.icon} size={20} />
+                  </span>
+                  <h3 className="text-white font-header font-bold mb-1">{role.title}</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">{role.desc}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -764,9 +823,94 @@ export default function HomeContent() {
                 onClick={() => track('certificates_all')}
                 className="inline-flex items-center gap-2 px-7 py-4 bg-neon-green/15 border-2 border-neon-green/50 text-neon-green font-header font-black uppercase tracking-widest text-xs rounded-xl hover:bg-neon-green hover:text-white transition-all hover:scale-105"
               >
-                <Icon name="check" size={16} />
+<Icon name="check" size={16} />
                 Ver catálogo completo
               </Link>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ── HABILIDADES + ASPIRACIONES ──────────────────────── */}
+      <section className="py-20 px-4">
+        <div className="max-w-6xl mx-auto">
+          <Reveal>
+            <SectionTitle icon="target" kicker="Stack técnico" title="Habilidades y futuro" tone="text-neon-purple" />
+          </Reveal>
+
+          <Reveal>
+            <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6 mb-8">
+              <div className="p-7 rounded-[2rem] bg-gradient-to-br from-neon-purple/10 via-transparent to-transparent border border-neon-purple/30">
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-neon-purple mb-4">Stack principal</p>
+                <div className="space-y-5">
+                  {PROFILE_FAMILIES.map((family) => {
+                    const list = PROFILE_SKILLS.filter((s) => s.family === family).slice(0, 6);
+                    if (!list.length) return null;
+                    return (
+                      <div key={family}>
+                        <p className="text-[9px] font-black uppercase tracking-[0.25em] text-gray-500 mb-2">{family}</p>
+                        <div className="flex flex-wrap gap-2">
+                          {list.map((s) => (
+                            <span key={s.name} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] text-gray-200 hover:border-neon-purple/50 transition-colors">
+                              <SkillLogo icon={s.icon} className="h-4 w-4" />
+                              {s.name}
+                              <span className="text-neon-purple font-bold">{s.level}%</span>
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="p-7 rounded-[2rem] bg-gradient-to-br from-neon-pink/10 via-transparent to-transparent border border-neon-pink/30">
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-neon-pink mb-4">Aspiraciones</p>
+                <ul className="space-y-3">
+                  {PROFILE_ASPIRATIONS.map((a, i) => (
+                    <Reveal key={a} delay={i * 60}>
+                      <li className="flex items-start gap-2.5 text-sm text-gray-300">
+                        <Icon name="check" size={16} className="text-neon-pink mt-0.5 shrink-0" />
+                        {a}
+                      </li>
+                    </Reveal>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </Reveal>
+
+          {/* Intereses + herramientas */}
+          <Reveal delay={120}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/10">
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500 mb-4">Intereses y hobbies</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {PROFILE_INTERESTS.map((it, i) => (
+                    <Reveal key={it.label} delay={i * 40}>
+                      <div className="flex items-center gap-2 p-3 rounded-xl bg-white/5 border border-white/10 hover:border-white/30 transition-colors">
+                        <Icon name={it.icon} size={16} className="text-neon-cyan shrink-0" />
+                        <span className="text-xs text-gray-300 font-medium">{it.label}</span>
+                      </div>
+                    </Reveal>
+                  ))}
+                </div>
+              </div>
+              <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/10">
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500 mb-4">Herramientas y ecosistema</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {PROFILE_TOOLS.map((t, i) => (
+                    <Reveal key={t.name} delay={i * 40}>
+                      <div className="flex items-center gap-2 p-3 rounded-xl bg-white/5 border border-white/10 hover:border-white/30 transition-colors">
+                        <Icon name={t.icon} size={16} className="text-neon-cyan shrink-0" />
+                        <div className="min-w-0">
+                          <p className="text-xs text-gray-200 font-medium truncate">{t.name}</p>
+                        </div>
+                      </div>
+                    </Reveal>
+                  ))}
+                </div>
+              </div>
             </div>
           </Reveal>
         </div>
