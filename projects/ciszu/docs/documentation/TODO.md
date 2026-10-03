@@ -39,9 +39,10 @@
 - [ ] **AdSense — crear unidades de anuncio** (manual, en la UI de AdSense → Anuncios →
       Unidad de anuncio → *Anuncio adaptable*): no se puede por API (solo AdSense for
       Platforms). Crear una por web cuando los sitios pasen de GETTING_READY a aprobados.
-- [ ] **Decidir GTM**: los 4 contenedores están vacíos. Recomendado dejarlos así (GA4/AdSense
-      ya cargan directo). Si se quiere usar GTM, mover la carga directa de `GoogleScripts` a
-      tags GTM (para no duplicar medición).
+- [ ] **Publicar container GTM de MuzicMania** (manual, 1 min): el agente no tiene permiso de
+      publish en ese container (los otros 3 se publicaron por API). Los tags GA4 + AdSense ya
+      están en el workspace de muzicmania; falta: tagmanager.google.com → container
+      `muzicmania.vercel.app` → Enviar/Publicar.
 - [ ] **Aprobar sitios AdSense**: los 4 sitios están en GETTING_READY (revisión automática de
       Google). No requiere acción; verificar en unos días en la UI de AdSense.
 
@@ -51,12 +52,26 @@
   - Conversión añadida: `form_submit` (ya existía `purchase`).
   - Measurement Protocol: acknowledgement de datos atestiguado + 4 secrets creados por data
     stream (guardados en el vault como `GA4_MEASUREMENT_PROTOCOL_SECRET_*`).
-  - User-ID: PENDIENTE de código (ver abajo). Google Signals: revisar en UI si se quiere.
+  - User-ID: IMPLEMENTADO en código (ver abajo). Google Signals: revisar en UI si se quiere.
 
-  USER-ID (requiere código, pendiente):
-  - [ ] Enviar `user_id` con los eventos de las 4 webs cuando el usuario está autenticado
-        (p. ej. `gtag('set', { user_id: supabaseUser.id })` antes de config).
-        Requiere activar User-ID en GA4 → Admin → Configuración de datos → User-ID.
+  GTM — ACTIVADO DE VERDAD (03 oct 2026):
+  - GoogleScripts ahora SOLO carga el contenedor GTM (GA4 y AdSense viven en tags GTM).
+  - Tags creados por API en los 4 contenedores: "GA4 - Configuración" (gaawc/googtag,
+    send_page_view=false) + "AdSense - Head" (custom HTML), trigger All Pages.
+  - Publicados (3): ciszunetwork, ciszubot, ciszukoantony. MuzicMania pendiente (manual).
+  - GTM IDs corregidos en Vercel production + `.env.local` de las 4 webs:
+    ciszunetwork `GTM-N7Q8DGX5`, ciszubot `GTM-T9LG9N6C`, ciszukoantony `GTM-WNDXGD63`,
+    muzicmania `GTM-N2SXL2FN` (antes tenían IDs clásicos incorrectos GT-*).
+  - Verificado en producción: las 4 webs cargan su GTM correcto; GA4 (g/collect) y AdSense
+    (adsbygoogle) disparan via GTM en ciszunetwork/ciszubot/antony.
+
+  USER-ID — IMPLEMENTADO (03 oct 2026):
+  - [X] `setGaUserId()` en `GoogleAnalytics` (exportado de @ciszu/ui): hace
+        `gtag('set', {user_id})` al dataLayer.
+  - [X] Los 4 AuthProviders llaman `setGaUserId(user.id)` al cargar sesión y en
+        SIGNED_IN/USER_UPDATED/TOKEN_REFRESHED; `setGaUserId(null)` en SIGNED_OUT.
+  - [ ] Activar User-ID en GA4 → Admin → Configuración de datos → User-ID (manual, 1 clic)
+        para que el user_id se use en los informes de multiplataforma.
 - [ ] Los emails actualmente que se envian no estan customizados, los envia "supabase" lo cual puede confundir siempre debe ser ciszunetwork | (pagina en cuestion) ademas de un diseño interno diferente con botones y diseño. Terminos y condiciones y aclaracion de que este email no es de patrocinamiento o anuncio. Los que si son siempre se debe recalcar.
 - [X] Actualmente el sistema de creacion y registro de cuentas falla. Probe con ciszubot, al registrarme con "ciszukoantony" como user, al intentar logearme dice que no existe. Parece ser que al registrarse, le indica la usuario que debe aceptar algo en su email. El gran problema es que ese correo nunca aparece, y peor aun, no da tiempo a leer lo que dice, se actualiza rapidamente hacia el login. Debes hacer que al registrar una cuenta y todo esta bien (Cloudflare, recaptcha, credenciales, seguridad de contraseña, cuenta repetida, relleno de obligacion, rate limits etc), si es una cuenta nueva SIEMPRE se debe pedir una verificacion para terminar para la creacion, se usara el modelo de ciszunetwork es decir, C-XXX-XXX, 6 campos de digitos o numeros aleatorios, con su rate limits, sus experiaciones, su tiempos para volver a mandar en el mismo modal, su campo de verificacion etc. Si el usuario NO procede con la verificacion, simplemente NO se crea la cuenta, en caso de que si, la cuenta se configura automaticamente con la autentificacion del email que se vinculo, asi en proximos logeos siempre se le mandara una verificacion OTP. Algo que podra desactivar en su configuracion de cuenta personal si quiere. Tanto para login o registro, los codigos son temporales, expirable en 3 horas e indicar, unico por website, indicar si ya expiro y posibilidad de reenviar otro codigo con limites, al tercer limite se suspende temporalmente y localmente por que no logro iniciar sesion o registrarse correctamente. Finalmente, cuando el usuario se registra o se logea, debe aparece un modal opcional en el index, para indicarle y recordarle que pueda activar la opcion de "recordar contraseña" por lo proximos 30  dias. De esta manera se fuerza la sesion y no se pierde luego de por ejemplo apagar la pc o cosas asi.  Este modal es opcional y lo puede cerrar en caso de que lo ignore o cierre no se tomara en cuenta si se recordara la sesion o no. Ademas se podra tambien activar luego en la configuracion de la cuenta.
 - [X] Estas implementaciones requieren de terminar algunas cosas de paridad, es cierto que muzicmania es la unica que de verdad requiera cuentas, por eso tiene mas opciones de perfil o configuracion. Pero especificamente la pestaña de configuracion despues de un usuario iniciar sesion y seleccionarlo en el header. Es algo muy importante, necesito que repliques este sistema, actuales con las peticiones para todas las websites. Puedes excluir ciertas configuraciones como las de perfil, pero los de cambiado de nombre display, otp recordatorio, emails notif, camibar password, auth, cerrar sesion segura, debug, dispositivos sesiones, entre muchas otras lo requieren las demas websites.
