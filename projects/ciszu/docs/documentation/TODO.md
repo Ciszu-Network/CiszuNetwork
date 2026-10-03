@@ -90,3 +90,35 @@
 - [ ] Terminar idiomas en español LATAM.
 - [ ] Terminar idiomas en español España.
 - [ ] Seguir con el desarollo del videojuego en su muzicmania TODO.md
+
+### Google Cloud — pasos manuales (02 oct 2026)
+
+Todo lo automatizable de Google Cloud quedó hecho (ver `GOOGLE_SYSTEM.md` §10 y
+`AUTH_HARDENING_SYSTEM.md` §3): reCAPTCHA Enterprise activo en las 4 webs (keys INVISIBLE +
+API keys restringidas, sin secretos), datasets `analytics` creados en los 4 proyectos,
+APIs habilitadas. Lo siguiente requiere acciones tuyas en la consola (no las puede hacer
+el agente):
+
+- [ ] **Enlace GA4 → BigQuery** (por cada propiedad GA4): GA4 → Admin → Propiedad → Enlaces
+      de BigQuery → Vincular → elegir el proyecto GCP (`ciszunetwork`, `ciszubot`,
+      `ciszukoantony`, `muzicmania-1779157973357`) y el dataset **`analytics`** (ya creado) →
+      flujo *Transmitir*. Los datos llegan en 24-48h.
+- [ ] **Looker Studio**: conectar BigQuery → crear dashboard (gratis) con las fuentes GA4.
+- [ ] **Decidir sobre uptime checks**: los de Cloud Monitoring requieren **billing activado**
+      (proyectos sin facturación). Mientras tanto seguimos con UptimeRobot (activo). Si algún
+      día activas billing, el workflow `gcp-infra.yml` (GitHub Actions, manual) los crea solo.
+- [ ] **Borrar el proyecto huérfano `utilitarian-utility-94jp1`** (sin nombre, con la cuenta de
+      billing `01400A-193CC1-29BA63` ligada): el agente no tiene rol `owner`/deleter en él
+      (API da 404). Bórralo desde la consola → IAM → *seleccionar proyecto* → *Eliminar*
+      (solo tú tienes los permisos de org). La cuenta de billing queda intacta.
+- [ ] **reCAPTCHA clásico**: las claves v2/v3 clásicas de las webs quedaron sin uso tras la
+      migración a Enterprise. Puedes eliminarlas en `https://www.google.com/recaptcha/admin`
+      (no afecta a Enterprise), o mantenerlas como respaldo.
+- [ ] **(Opcional) Workload Identity Federation**: el workflow `gcp-infra.yml` quedó preparado
+      para operar GCP desde CI sin claves. Si quieres que GitHub Actions haga operaciones de
+      GCP (uptime checks, etc.), hay que crear el pool/provider OIDC en la consola
+      (ver comentarios del propio workflow). Hoy se opera con `gcloud auth application-default`
+      desde este PC, que ya funciona.
+- [ ] **(Opcional) CiszuAI**: el proyecto `gen-lang-client-0885445248` está documentado en
+      `projects/ciszuai/` (capa de IA Gemini). Decidir si se le añade BigQuery/datasets o se
+      queda solo con Generative Language.
