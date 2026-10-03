@@ -43,8 +43,18 @@
       publish en ese container (los otros 3 se publicaron por API). Los tags GA4 + AdSense ya
       están en el workspace de muzicmania; falta: tagmanager.google.com → container
       `muzicmania.vercel.app` → Enviar/Publicar.
+      ESTADO 03 oct: SIGUE SIN PUBLICAR (live = Empty Container). La publicación anterior
+      quedó en vista previa. Pasos exactos: abrir el container → botón "Enviar" arriba a la
+      derecha → en el diálogo clic en "Enviar" de nuevo → luego "Publicar" (confirmar la
+      versión). Si no aparece el botón Publicar, el envío quedó como borrador: ir a la pestaña
+      "Enviar" → "Publicar ahora".
 - [ ] **Aprobar sitios AdSense**: los 4 sitios están en GETTING_READY (revisión automática de
       Google). No requiere acción; verificar en unos días en la UI de AdSense.
+  - ads.txt: VERIFICADO correcto en las 4 webs (03 oct). El aviso "No encontrado" de AdSense
+    era del 21 sept (antes de servir ads.txt); se corregirá en el próximo escaneo de AdSense.
+  - Unidades de anuncio: 7 creadas y activas (leídas por API, no hay que pasármelas):
+    infeed 8922388572, multiplex-v 3252268656, multiplex-h 7856718919, article 6200022314,
+    square 7696936819, vertical 6369297297, horizontal 9757877968.
 
   ANALYTICS — CONFIGURADO POR API (03 oct 2026, acceso OAuth):
   - Audiencias creadas (5): Usuarios que hicieron scroll, Usuarios que enviaron formulario,
