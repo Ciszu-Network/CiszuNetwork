@@ -6,6 +6,11 @@ name: GCP Infra (Cloud ops)
 #  - crea/verifica 4 uptime checks (las 4 webs)
 #  - crea el dataset `analytics` para el export GA4->BigQuery
 #
+# NOTA (02 oct 2026): actualmente las operaciones de GCP se ejecutan localmente
+# con ADC (`gcloud auth application-default login`) del agente; este workflow
+# queda como alternativa para CI cuando se configure WIF. Por eso SOLO se lanza
+# manualmente (workflow_dispatch), sin schedule.
+#
 # Configuración previa (1 vez, en la consola):
 #  - Workload Identity Pool + provider OIDC de GitHub (ver repo/docs)
 #  - SA con roles Monitoring Admin, BigQuery Admin, Service Usage Admin,
@@ -17,8 +22,6 @@ name: GCP Infra (Cloud ops)
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '23 3 * * 1'
 
 permissions:
   id-token: write
