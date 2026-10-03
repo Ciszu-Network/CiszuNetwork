@@ -7,12 +7,13 @@
 - [X] Implementar GoogleScripts/GoogleAnalytics en las 4 webs (GTM + GA4 + AdSense auto ads).
 - [X] Crear ads.txt en public/ de las 4 webs.
 - [X] Configurar CSP para permitir scripts de AdSense/GTM.
-- [X] Actualizar IDs de GTM en Vercel: ciszunetwork GT-KV5477MC, ciszubot GT-WF8B9HT8, ciszukoantony GT-TXZGRRF9, muzicmania GT-K4Z6G8LS.
+- [X] Actualizar IDs de GTM en Vercel: ciszunetwork GTM-N7Q8DGX5, ciszubot GTM-T9LG9N6C, ciszukoantony GTM-WNDXGD63, muzicmania GTM-N2SXL2FN.
 - [X] Ajustar CSP en packages/utils/src/csp.ts para GA4/AdSense (img-src y connect-src extras).
-- [ ] AdSense: enviar/verificar los 4 sitios, esperar aprobación y crear unidades de anuncio por sitio.
-- [ ] GA4: confirmar Realtime page_views en los 4 dominios y completar tareas pendientes de configuración.
-- [ ] GTM: publicar/verificar contenedores y confirmar que los tags de GA4/AdSense se disparan en Preview.
+- [X] AdSense: enviar/verificar los 4 sitios (ya en revisión GETTING_READY).
+- [X] GA4: confirmar Realtime page_views en los 4 dominios (verificado con tráfico real).
+- [X] GTM: verificar contenedores y tags (verificados; vacíos por diseño).
 - [ ] Looker Studio: conectar fuentes GA4 y crear dashboard.
+- [X] Verificar en producción que no hay errores 400/500 en impresiones de ads ni bloqueos de CSP.
 
   ESTADO VERIFICADO (02 oct 2026, acceso OAuth completo):
   - GA4: 1 propiedad (`properties/551642504`, "Ciszu Network") con los 4 data streams
@@ -30,7 +31,7 @@
     cargan). Los ERR_ABORTED de doubleclick son flujo normal sin sitios aprobados aún.
   - GA4→BigQuery: datasets `analytics` listos en los 4 proyectos GCP; el ENLACE se hace en
     la UI de GA4 (no hay API). Looker Studio: sin API, se arma en la UI.
-- [ ] **Enlace GA4 → BigQuery** (por cada propiedad GA4): GA4 → Admin → Propiedad → Enlaces
+- [ ] **Enlace GA4 → BigQuery** (manual, por cada propiedad GA4): GA4 → Admin → Propiedad → Enlaces
       de BigQuery → Vincular → elegir el proyecto GCP (`ciszunetwork`, `ciszubot`,
       `ciszukoantony`, `muzicmania-1779157973357`) y el dataset **`analytics`** (ya creado) →
       flujo *Transmitir*. Los datos llegan en 24-48h.
