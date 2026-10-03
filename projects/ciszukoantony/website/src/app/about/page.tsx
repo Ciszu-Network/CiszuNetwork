@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import { motion } from 'framer-motion';
@@ -6,11 +6,26 @@ import Image from 'next/image';
 import { assetResolver } from '@ciszunetwork/cdn';
 import { InfoHero, Icon, type InfoTheme } from '@ciszu/ui';
 import { RichText, type RichPart } from '@/components/RichText';
+import SkillLogo from '@/components/shared/SkillLogo';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useDict } from '@/components/providers/I18nProvider';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
+import {
+  PROFILE,
+  PROFILE_FACTS,
+  PROFILE_ROLES,
+  PROFILE_TOOLS,
+  PROFILE_BROWSERS,
+  PROFILE_AI,
+  PROFILE_INTERESTS,
+  PROFILE_ASPIRATIONS,
+  PROFILE_PLATFORMS,
+  PROFILE_SKILLS,
+  PROFILE_TIMELINE,
+  PROFILE_FAMILIES,
+} from '@/data/profile';
 
 const THEME: InfoTheme = {
   accent: 'text-neon-blue',
@@ -21,94 +36,16 @@ const THEME: InfoTheme = {
   gradient: 'from-brand-dark to-brand',
 };
 
-const timeline = [
-  { year: '2021', event: [{ text: 'Empecé en el mundo de los juegos y la creación: Roblox y Lua/Luau, primeros mods y texturas.' }] as RichPart[] },
-  { year: '2022', event: [{ text: 'Inicié desarrollo de software y proyectos propios: Python, HTML/CSS y scripts de automatización.' }] as RichPart[] },
-  { year: '2023', event: [{ text: 'Fundé ' }, { link: 'Ciszu Network', href: 'https://ciszunetwork.vercel.app' }, { text: '. Primeros bots de Discord y herramientas digitales.' }] as RichPart[] },
-  { year: '2024', event: [{ text: 'Expandí el ecosistema: MuzicMania, bots, servidores y contenido gaming. Creé librerías propias con Pip (CiszuPy).' }] as RichPart[] },
-  { year: '2025', event: [{ text: 'Lancé ' }, { link: 'MuzicMania', href: 'https://muzicmania.vercel.app' }, { text: ' como juego de ritmo y crecí la comunidad.' }] as RichPart[] },
-  { year: '2026', event: [{ text: 'Consolidado como CEO y full-stack. Estudio en la UPTAG (Falcón) orientado a Ingeniería de Información y Sistemas.' }] as RichPart[] },
-];
-
-/** Logos de lenguajes/tecnologías para la sección de habilidades. */
-const LOGO: Record<string, string> = {
-  python: 'M6.6 20.3c0-.3 0-.6.1-.9L11 5.9c.2-.8.5-1.2 1-1.2.5 0 .8.4 1 1.2l4.3 13.5c0 .3.1.6.1.9 0 .4-.1.8-.3 1.1l.9-.5 2.6 1.6c.7.4 1.2.9 1.5 1.4-1.2 1.5-3.4 2.4-5.7 2.4-1.3 0-2.5-.3-3.6-.8-.9-.4-1.8-.9-2.6-1.5l-1.1.7c-.4.2-.8.4-1.2.4-.8 0-1.4-.5-1.4-1.3zm1-1.1c0 .2.1.4.3.5.2.2.4.2.7.2.3 0 .5-.1.8-.2l1-.6-.5-.3-2.3 1.4v1zm5.4-7.4c.3.3.7.5 1.2.5.5 0 .9-.2 1.2-.5l-2.4 2.9-2.4-2.9c.3.3.7.5 1.2.5.5 0 .9-.2 1.2-.5zm3.6 8.5l-.2.1-1.5.9 1.2.7c.3.2.6.2.9.2.3 0 .5-.1.7-.2.2-.2.3-.4.3-.6 0-.3-.1-.5-.4-.7l-1-.4zM4.4 19.8c.1.1.2.1.3.1.2 0 .3-.1.5-.3l.1-.1-.3-.2-1 .6.4-.1z',
-  javascript: 'M0 0h24v24H0V0zm19.1 20.4c.7-1.1 1.4-2.5 1.4-3.7 0-.9-.4-1.4-1.1-1.4-.8 0-1.9 1-2.8 2.1l-.9-.6c.8-1.1 2-2.8 2-4.3 0-2.1-1.5-3.6-3.9-3.6-1.5 0-2.8.6-3.7 1.4l.8 1c.6-.6 1.4-1.1 2.4-1.1 1.1 0 1.8.6 1.8 1.6 0 1.3-1.1 2.8-2.6 4.3l2.9 1.9-.9 1.4-3.3-2.1c-.2.2-.4.4-.7.6l1 2.9c.9 1.4 2.4 1.7 3.8 1.7 1.8 0 3.3-.9 4.3-2.4z',
-  typescript: 'M0 0h24v24H0V0zm15.3 12.7c.8 1.2 2 2 3.7 2 1.5 0 2.5-.7 2.5-1.8 0-1-.6-1.6-2-2l-1-.3c-1.2-.4-2-1-2-2 0-1.2 1.1-2.1 2.8-2.1 1.3 0 2.3.4 3 1.2l-1.3 1.2c-.5-.5-1-.8-1.7-.8-.8 0-1.3.4-1.3 1 0 .6.5 1 1.7 1.3l1 .3c1.5.5 2.4 1.1 2.4 2.3 0 1.4-1.2 2.3-3.1 2.3-1.7 0-3-.7-3.7-1.7l1.7-1.5zM3.5 12.4h4l1-1.4H1.5v1.4h3.2v7h1.8v-7z',
-  html: 'M0 0h24v24H0V0zm3.5 2l1.5 16 7 2 7-2L20.5 2h-17zm5.2 6.6l.1 1H15l-.3 3.4H8.7l.1 1H14.7l-.4 3.6-5.1 1.4H9l-3.7-1-.3-3h1.3l.2 1.9 2.5.7v-.1l2.5-.7.3-3.4H6l-.4-4.6H16l.1-1.1h-7.4z',
-  css: 'M0 0h24v24H0V0zm3.5 2l1.5 16 7 2 7-2L20.5 2h-17zm6 11l-.4-4h2.3l.4 4 1.7.7L9.5 11h-3l3 2 3.5 1.2 1.6 3.4 1.9 1.9L15.9 19l-2.2-5.2-2.6 1.5z',
-  xml: 'M0 0h24v24H0V0zm9.9 6.8l-3.5 5.2 3.5 5.2 1.2-1.3-3.5-3.9 3.5-3.9-1.2-1.3zm4.2 0l-1.2 1.3 3.5 3.9-3.5 3.9 1.2 1.3 3.5-5.2-3.5-5.2z',
-  sass: 'M0 0h24v24H0V0zm12 2c-5.5 0-10 3.6-10 8 0 4.4 4.5 8 10 8 5.5 0 10-3.6 10-8 0-4.4-4.5-8-10-8zm0 2c1.3 0 2.5.6 3.4 1.7 1.3 1.7 2 4.1 2.6 4.1.2 0 2-2 2-2-1.6-2.8-4.5-5.3-8-5.3-4.4 0-8 2.7-8 6 0 1.6 1.1 3.1 2.7 4.1-.1-.2-.2-.4-.3-.6-.7-1.5-.7-3.6 1.2-6.2.8-1.1 2-2.5 2.9-3.5-.7 1.7-1.1 3.4-.7 4.7.4 1.2 1.4 1.9 1.4 1.9s.6 2.6 1.5 3.4c.9.8 2 .6 2.5.2 0 0 .1.6.7.7.6.1.9-.4.9-.4s1.7-1.5 2.3-2.3c.5-.7-.1-1.3-.9-1.1-1.3.3-1.3-.8-1.4-1.3-.2-1.7-.2-2.8-.2-2.8.3-2.3-.6-3.9-2.3-5.1-.6-.5-1.3-.7-2-.7z',
-  react: 'M0 0h24v24H0V0zm12 9.9c-.6 0-1.1.5-1.1 1.1s.5 1.1 1.1 1.1 1.1-.5 1.1-1.1-.5-1.1-1.1-1.1zm0-2.9c1.8 0 3.4.4 4.7 1.1 1.4.7 2.3 1.7 2.3 2.8s-.9 2.1-2.3 2.8c-1.3.7-2.9 1.1-4.7 1.1s-3.4-.4-4.7-1.1C6 13.9 5.1 12.9 5.1 11.8s.9-2.1 2.2-2.8c1.3-.7 2.9-1.1 4.7-1.1zm-3.2 4.2c.5 1.2 1.2 2.3 2 3.2-1.6-.2-2.9-.7-3.9-1.4-.7-.5-1.2-1.1-1.2-1.8s.5-1.3 1.2-1.8c.4-.3.9-.6 1.4-.8-.4.9-.6 1.8-.5 2.6zm6.4 0c.1-.8-.1-1.7-.5-2.6.5.2 1 .5 1.4.8.7.5 1.2 1.1 1.2 1.8s-.5 1.3-1.2 1.8c-1 .7-2.3 1.2-3.9 1.4.8-.9 1.5-2 2-3.2zm-3.2 2.6c-1.6 0-2.9-.3-4-1 .8-.4 1.6-.6 2.4-.7.5.6 1.1 1.1 1.6 1.6v.1zm.2-1.7c-.6-.4-1.1-.9-1.6-1.5.5.1 1.1.2 1.6.2s1.1-.1 1.6-.2c-.5.6-1 1.1-1.6 1.5z',
-  nodejs: 'M0 0h24v24H0V0zm12 2c-.3 0-.6.1-.8.2l-7 4c-.4.2-.7.7-.7 1.2v9.2c0 .5.3 1 .7 1.2l7 4c.2.1.5.2.8.2s.6-.1.8-.2l7-4c.4-.2.7-.7.7-1.2V7.4c0-.5-.3-1-.7-1.2l-7-4c-.2-.1-.5-.2-.8-.2zm0 3.2c.5 0 1 .1 1.4.3l4.3 2.5c.4.2.6.6.6 1v5c0 .4-.2.8-.6 1l-4.3 2.5c-.4.2-.9.3-1.4.3s-1-.1-1.4-.3l-4.3-2.5c-.4-.2-.6-.6-.6-1v-5c0-.4.2-.8.6-1l4.3-2.5c.4-.2.9-.3 1.4-.3zm0 2.3c-.3 0-.6.2-.6.6v3.1c0 .3.3.6.6.6h1.6v-4.3H12zm5 0c-.3 0-.6.2-.6.6v4.1c0 .3.3.6.6.6.2 0 .3 0 .4-.1l2-1.2v1.6c0 .3.2.6.6.6.2 0 .4-.1.6-.3l-2.5-1.4c-.1-.1-.1-.2-.1-.3v-4.2c0-.3-.3-.6-.6-.6h-.6zm-4.4.6v3.7c0 .3.3.6.6.6h1.7c.3 0 .6-.3.6-.6v-3.1c0-.3-.3-.6-.6-.6h-1.7c-.3 0-.6.3-.6.6z',
-  sql: 'M0 0h24v24H0V0zm12 2c-4.4 0-8 1.6-8 3.5v13c0 1.9 3.6 3.5 8 3.5s8-1.6 8-3.5v-13C20 3.6 16.4 2 12 2zm0 2c3.9 0 6 1.3 6 1.5S15.9 7 12 7 6 5.7 6 5.5 8.1 4 12 4zm6 13.5c0 .2-2.1 1.5-6 1.5s-6-1.3-6-1.5v-2c1.5.9 3.6 1.5 6 1.5s4.5-.6 6-1.5v2zm0-5c0 .2-2.1 1.5-6 1.5s-6-1.3-6-1.5v-2c1.5.9 3.6 1.5 6 1.5s4.5-.6 6-1.5v2z',
-  github: 'M0 0h24v24H0V0zm12 2C6.5 2 2 6.5 2 12c0 4.4 2.9 8.2 6.8 9.5.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.3-3.4-1.3-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.4-1.1.6-1.3-2.2-.3-4.5-1.1-4.5-4.9 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1 .8-.2 1.6-.3 2.5-.3s1.7.1 2.5.3c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.8-2.3 4.6-4.5 4.9.4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5 4-1.3 6.9-5.1 6.9-9.5C22 6.5 17.5 2 12 2z',
-  npm: 'M0 0h24v24H0V0zm3 5h18v14h-9v-11h-9v11H3V5zm4 4v6h2v-6h1v6h2v-8H7v2zm5 0v10h4v-2h4V9h-8zm2 2h2v6h-2v-6z',
-  docker: 'M0 0h24v24H0V0zm14.5 6c.9 0 1.7.3 2.4.8-.1 1.4-1.2 2.4-2.6 2.7 0 0-.2 1.5-1.8 1.5-.3 0-.6 0-.9-.1 0 0-.2.6-.8.6h-7.2c-.6 0-.8-.5-.8-1 0-2.9 2.1-4.5 4.7-4.5h6.5zm-6.5 1c-.3 0-.5.2-.5.5s.2.5.5.5.5-.2.5-.5-.2-.5-.5-.5zm2 0c-.3 0-.5.2-.5.5s.2.5.5.5.5-.2.5-.5-.2-.5-.5-.5zm2 0c-.3 0-.5.2-.5.5s.2.5.5.5.5-.2.5-.5-.2-.5-.5-.5zm0 0c-.3 0-.5.2-.5.5s.2.5.5.5.5-.2.5-.5-.2-.5-.5-.5zm4.5 0c-.3 0-.5.2-.5.5s.2.5.5.5.5-.2.5-.5-.2-.5-.5-.5zm-1.5-1.5c-.3 0-.5.2-.5.5s.2.5.5.5.5-.2.5-.5-.2-.5-.5-.5zm-2.9 4.2c.3 0 .5-.2.5-.5s-.5-.5-.5-.5-.5.2-.5.5.2.5.5.5zm3.9 2.1c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2z',
-  linux: 'M0 0h24v24H0V0zm9.6 2.3c-.6 0-1 .5-1 1.1v2c-1 .3-1.8 1-1.8 2 0 .6.3 1.1.8 1.5-.6.2-1 .7-1 1.3 0 .9.8 1.6 1.8 1.8v1.5c0 .6.5 1.1 1.1 1.1s1.1-.5 1.1-1.1v-1.5c1-.2 1.8-.9 1.8-1.8 0-.6-.4-1.1-1-1.3.5-.4.8-.9.8-1.5 0-1-.8-1.7-1.8-2v-2c0-.6-.4-1.1-1.1-1.1zm0 3.2c.3 0 .5.2.5.5v2.2c0 .3-.2.5-.5.5s-.5-.2-.5-.5V6c0-.3.2-.5.5-.5zm0 3.8c.4 0 .7.3.7.7s-.3.7-.7.7-.7-.3-.7-.7.3-.7.7-.7zm0 2.7c.5 0 .8.4.8.8s-.4.8-.8.8-.8-.4-.8-.8.4-.8.8-.8z',
-  java: 'M0 0h24v24H0V0zm8.8 13.1s-.5 1.1 1.1 1.2c1.6.1 2.4-.9 2.4-.9s-.9-.3-1.8-.7c-1.1-.5-1.7-1.9-1.7-1.9s-.9 1.3.8 1.9zm-2.2 1.6s.9 1.3 2.6 1.3c1.7 0 2.6-1.1 2.6-1.1s-.9-.5-2.2-.9c-1.5-.5-2-1.3-2-1.3s-.3 1.3 1 2zm6.9-3.4c1 .8 1.6 1.5 1.6 2.5 0 1.2-1 2.2-1 2.2s.9-.6.9-1.9c0-1.2-1.2-2.1-2.2-3-.7-.6-1.6-1.3-1.6-1.3s.9-.2 2.3 1.5zM9.5 9.9c.3.6 1.3 1.1 1.3 1.1s-.5-.5-.9-1.3c-.4-.8-1-1.7-1-1.7s.3.7.6 1.9zm3.9-1.6c.9 1 1.9 1.7 1.9 2.7 0 1.1-1.2 1.6-1.2 1.6s1-.3 1-1.6c0-1.1-1-2-2.1-3-.9-.8-1.9-1.5-1.9-1.5s.7-.2 2.3 1.8zM12.6 3.7s3 1.1 3 4.5c0 2.2-1.2 3.6-2.1 4.3.4-.9.2-2.3-1.4-3.7-1.1-1-2-1.8-2-2.6 0-.9.8-2.5 2.5-2.5z',
-  lua: 'M0 0h24v24H0V0zm8.9 4c-3.4 0-6.4 2.4-6.4 6.3 0 1.9.7 3.5 2.1 4.8.4.4 1.1.9 1.1 1.6 0 .5-.2.9-.5 1.3-.4.5-.9.7-1.4.5-.7-.2-1.1-.8-1.4-1.4-.4-.7-.8-1-1.5-.8-.6.2-.9.7-.7 1.2.4 1.2 1.1 2.1 2.4 2.5 2 .7 4.4-.7 5.3-2.6.5-1.1.4-2.4-.2-3.4-1-1.5-2.4-2.4-2.4-4.5 0-2.3 2.1-3.8 4.2-3.8 2.7 0 4.4 2 4.4 4.6 0 2.6-1.5 4.9-4.6 4.9-.8 0-1.5-.2-1.5-.2v-1c1 .1 1.7-.8 1.7-2.1 0-1.2-.8-2.2-2-2.2z',
-  julia: 'M0 0h24v24H0V0zm7.9 4.7c-.4 0-.7.3-.7.7 0 .4.3.7.7.7.4 0 .7-.3.7-.7 0-.4-.3-.7-.7-.7zm4.1 0c-.4 0-.7.3-.7.7 0 .4.3.7.7.7.4 0 .7-.3.7-.7 0-.4-.3-.7-.7-.7zm4.1 0c-.4 0-.7.3-.7.7 0 .4.3.7.7.7.4 0 .7-.3.7-.7 0-.4-.3-.7-.7-.7zM4.9 8.6c.4.4.8.6 1.5.6.7 0 1.3-.2 1.7-.6-.4-.4-.8-.6-1.5-.6-.7 0-1.3.2-1.7.6zm5.5 0c.4.4.8.6 1.5.6.7 0 1.3-.2 1.7-.6-.4-.4-.8-.6-1.5-.6-.7 0-1.3.2-1.7.6zm5.5 0c.4.4.8.6 1.5.6.7 0 1.3-.2 1.7-.6-.4-.4-.8-.6-1.5-.6-.7 0-1.3.2-1.7.6zm-9.3 3.8c.4.4.8.6 1.5.6.7 0 1.3-.2 1.7-.6-.4-.4-.8-.6-1.5-.6-.7 0-1.3.2-1.7.6zm5.5 0c.4.4.8.6 1.5.6.7 0 1.3-.2 1.7-.6-.4-.4-.8-.6-1.5-.6-.7 0-1.3.2-1.7.6zm5.5 0c.4.4.8.6 1.5.6.7 0 1.3-.2 1.7-.6-.4-.4-.8-.6-1.5-.6-.7 0-1.3.2-1.7.6zM8 16.1c.4.4.8.6 1.5.6.7 0 1.3-.2 1.7-.6-.4-.4-.8-.6-1.5-.6-.7 0-1.3.2-1.7.6zm5.5 0c.4.4.8.6 1.5.6.7 0 1.3-.2 1.7-.6-.4-.4-.8-.6-1.5-.6-.7 0-1.3.2-1.7.6z',
-  csharp: 'M0 0h24v24H0V0zm12 2.5c-.5 0-1 .1-1.4.2L5 4.9c-.6.2-1 .7-1 1.3V17.8c0 .6.4 1.1 1 1.3l5.6 2.2c.4.2 1 .2 1.4 0L18 19.1c.6-.2 1-.7 1-1.3V6.2c0-.6-.4-1.1-1-1.3l-4.6-2.2c-.4-.1-.8-.2-1.4-.2zm0 4.5c1.7 0 3.2.9 4.1 2.2l-2.1 1.2c-.5-.8-1.4-1.4-2-1.4-.8 0-1.5.7-1.5 1.5s.7 1.5 1.5 1.5c.6 0 1.5-.6 2-1.4l2.1 1.2c-.9 1.3-2.4 2.2-4.1 2.2-2.8 0-5-2.2-5-5s2.2-5 5-5zm5.5 3.2c.4 0 .7.3.7.7v.3h1.5v-1.5h1v1.5H21v1h-1.5v1.5H21v1h-1.3v1.5h-1v-1.5H16v-1.5h1.5v-1.5H16v-1h1.5V11c0-.4.3-.7.7-.7h-.5zm-8 3.6v1h1v-1h-1zm2 0v1h1v-1h-1z',
-  kotlin: 'M0 0h24v24H0V0zm3.8 4.2L12 12l-4 3.8h13.2V4.2H3.8zm0 15.6l5.9-5.6L15.5 19.8H3.8z',
-  swift: 'M0 0h24v24H0V0zm4.2 3.5c.5-.4 1-.7 1.5-1 .6-.4 1.3-.7 2.1-.9-1.1 1.1-1.8 2.4-2.1 3.9-.4 1.9.1 3.8 1.4 5.4.3.4.7.8 1.1 1.2-.4-.1-.8-.3-1.2-.5-1.7-.9-2.8-2.3-3.3-4.1-.3-1.1-.3-2.3.5-4zm6.9 1.9c.7.7 1.1 1.5 1.2 2.4 0 .6-.2 1.2-.6 1.7-2.7 3.4-6.7 5.4-11.2 5.9 1 1.3 2.4 2.1 4 2.5 3.1.7 6.2-.2 8.7-2.2 1.4-1.1 2.6-2.4 3.4-4 .8 1.7.8 3.6-.1 5.3-1.2 2.4-3.6 4-6.3 4.5-1.8.3-3.6.1-5.2-.7-.5-.2-.9-.5-1.4-.8-.4.1-.9.2-1.3.2 1.1.8 2.4 1.3 3.7 1.4 3 .4 6-.5 8.3-2.4 2.3-1.9 3.6-4.5 3.7-7.4l-2.9 1c1.4-1.6 2.1-3.4 2-5.3-3.4 2.1-7.2 2.5-11 .8z',
-  ruby: 'M0 0h24v24H0V0zm8.1 3.4L3.4 12l4.7 8.6h7.8L20.6 12l-4.7-8.6H8.1zm1.3 1.4h5.2l3.9 7.2-3.9 7.2H9.4l-3.9-7.2 3.9-7.2zm2.6 4.9c-1.2 0-2.2 1-2.2 2.2s1 2.2 2.2 2.2 2.2-1 2.2-2.2-1-2.2-2.2-2.2z',
-  rust: 'M0 0h24v24H0V0zm10.2 2.1c-.8 0-1.5.4-2.1 1.1-.3.4-.6.9-.8 1.5-.5.1-1 .3-1.5.5l-1.4-1-1.3 1.3 1 1.4c-.2.5-.4 1-.5 1.5-.6.2-1.1.5-1.5.8-.7.6-1.1 1.3-1.1 2.1s.4 1.5 1.1 2.1c.4.3.9.6 1.5.8.1.5.3 1 .5 1.5l-1 1.4 1.3 1.3 1.4-1c.5.2 1 .4 1.5.5.2.6.5 1.1.8 1.5.6.7 1.3 1.1 2.1 1.1s1.5-.4 2.1-1.1c.3-.4.6-.9.8-1.5.5-.1 1-.3 1.5-.5l1.4 1 1.3-1.3-1-1.4c.2-.5.4-1 .5-1.5.6-.2 1.1-.5 1.5-.8.7-.6 1.1-1.3 1.1-2.1s-.4-1.5-1.1-2.1c-.4-.3-.9-.6-1.5-.8-.1-.5-.3-1-.5-1.5l1-1.4-1.3-1.3-1.4 1c-.5-.2-1-.4-1.5-.5-.2-.6-.5-1.1-.8-1.5-.6-.7-1.3-1.1-2.1-1.1zm0 1.5c.3 0 .5.2.8.4.2.3.4.7.5 1.1-.4.1-.8.2-1.2.4l-1.5-1.1c.4-.4.9-.8 1.4-.8zm-4.8 4.9c.1-.5.3-.9.5-1.2l1.1 1.5c-.2.4-.3.8-.4 1.2-.4.1-.8.2-1.2.4-.1-.5-.1-.9 0-1.9zm9.6 0c.1 1 0 1.4 0 1.9-.4-.2-.8-.3-1.2-.4-.1-.4-.2-.8-.4-1.2l1.1-1.5c.2.3.4.7.5 1.2zm-4.8 1.4c1.5 0 2.7 1.2 2.7 2.7s-1.2 2.7-2.7 2.7-2.7-1.2-2.7-2.7 1.2-2.7 2.7-2.7zm0 1c-1 0-1.8.8-1.8 1.8s.8 1.8 1.8 1.8 1.8-.8 1.8-1.8-.8-1.8-1.8-1.8z',
-  perl: 'M0 0h24v24H0V0zm9.7 3c-2.4 0-4.4.6-5.6 1.9-.6.6-.9 1.4-.9 2.3 0 2.6 2 4.3 4.6 4.3 1 0 1.8-.2 2.5-.5.4.9.6 1.9.6 2.9 0 1.6-.5 2.9-1.4 3.8-.6.6-1.3.9-2.1 1l1.4-2.7c.2-.4 0-.9-.4-1.1-.4-.2-.9 0-1.1.4l-2.1 4c-.4.8-.1 1.7.7 2.1.3.1.6.2 1 .2.6 0 1.2-.2 1.7-.5 1.5-.8 2.5-2.3 2.9-4.2.2-.9.3-1.9.2-2.9.2 1 .5 1.9 1 2.7.5 1 1.2 1.9 2.1 2.7l-1.5-4.3c-.2-.5-.7-.8-1.2-.6-.5.2-.8.7-.6 1.2l.3.8c-.5-.5-1-1.1-1.4-1.7-.6-.9-1-1.9-1.2-3.1.4.2.8.3 1.2.4.3.1.6.1 1 .1 2 0 3.5-.8 4.1-2.1.3-.7.2-1.5-.4-2.1-1.1-1.2-2.9-1.8-5.2-1.8zm0 3.5c.9 0 1.7.2 2.3.5.5.3.8.7.8 1.2 0 .7-.6 1.2-1.6 1.2-.8 0-1.5-.3-2-.9-.4-.5-.6-1-.6-1.6 0-.4.1-.7.2-.9.3-.2.6-.5 1-.5h-.1z',
-  config: 'M0 0h24v24H0V0zm12 3.5c-.9 0-1.7.6-1.9 1.5l-.1.6c-.2.1-.4.2-.6.3l-.6-.3c-.7-.4-1.7-.2-2.2.5-.5.7-.4 1.7.3 2.2l.6.4v.6l-.6.4c-.7.5-.8 1.5-.3 2.2.5.7 1.5.9 2.2.4l.6-.3c.2.1.4.2.6.3l.1.6c.2.9 1 1.5 1.9 1.5s1.7-.6 1.9-1.5l.1-.6c.2-.1.4-.2.6-.3l.6.3c.7.5 1.7.3 2.2-.4.5-.7.4-1.7-.3-2.2l-.6-.4v-.6l.6-.4c.7-.5.8-1.5.3-2.2-.5-.7-1.5-.9-2.2-.4l-.6.3c-.2-.1-.4-.2-.6-.3l-.1-.6c-.2-.9-1-1.5-1.9-1.5zm0 3.5c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z',
-  c: 'M0 0h24v24H0V0zm12 2.5c-.5 0-1 .1-1.4.2L5 4.9c-.6.2-1 .7-1 1.3V17.8c0 .6.4 1.1 1 1.3l5.6 2.2c.4.2 1 .2 1.4 0L18 19.1c.6-.2 1-.7 1-1.3V6.2c0-.6-.4-1.1-1-1.3l-4.6-2.2c-.4-.1-.8-.2-1.4-.2zm0 4.5c1.7 0 3.2.9 4.1 2.2l-2.1 1.2c-.5-.8-1.4-1.4-2-1.4-.8 0-1.5.7-1.5 1.5s.7 1.5 1.5 1.5c.6 0 1.5-.6 2-1.4l2.1 1.2c-.9 1.3-2.4 2.2-4.1 2.2-2.8 0-5-2.2-5-5s2.2-5 5-5z',
-  cpp: 'M0 0h24v24H0V0zm12 2.5c-.5 0-1 .1-1.4.2L5 4.9c-.6.2-1 .7-1 1.3V17.8c0 .6.4 1.1 1 1.3l5.6 2.2c.4.2 1 .2 1.4 0L18 19.1c.6-.2 1-.7 1-1.3V6.2c0-.6-.4-1.1-1-1.3l-4.6-2.2c-.4-.1-.8-.2-1.4-.2zm0 4.5c1.7 0 3.2.9 4.1 2.2l-2.1 1.2c-.5-.8-1.4-1.4-2-1.4-.8 0-1.5.7-1.5 1.5s.7 1.5 1.5 1.5c.6 0 1.5-.6 2-1.4l2.1 1.2c-.9 1.3-2.4 2.2-4.1 2.2-2.8 0-5-2.2-5-5s2.2-5 5-5zm5.5 3.2c.4 0 .7.3.7.7v.3h1.5v-1.5h1v1.5H21v1h-1.5v1.5H21v1h-1.3v1.5h-1v-1.5H16v-1.5h1.5v-1.5H16v-1h1.5V11c0-.4.3-.7.7-.7h-.5z',
-  django: 'M0 0h24v24H0V0zm11 3c-3.6 0-6.5 1.8-6.5 4.5 0 1.6.9 3 2.4 3.8v2.4c0 1.8 2.3 3.3 5.2 3.3 3 0 5.4-1.5 5.4-3.3V5.6c0-1.5-1.6-2.6-6.5-2.6zm0 3.1c1.2 0 2 .4 2 1.1 0 .7-.8 1.1-2 1.1-1.3 0-2-.4-2-1.1 0-.7.7-1.1 2-1.1zm5.3 5.4c-.6.4-1.6.7-2.8.7h-2.1c1.2.7 2.1 1.6 2.1 2.5 0 .9-1.3 1.7-3.1 1.7-1.7 0-3.1-.7-3.1-1.7 0-.9.8-1.7 2-2.4v2.1c.3.1.7.2 1.1.2 1.2 0 2-.4 2-1 .3-.3.5-.7.5-1.2v-1.8c.2 0 .3-.1.4-.1h2.5v-2.4H9.5v-1.6h10v2.4h-3.2z',
-  express: 'M0 0h24v24H0V0zm12 3c-1.9 0-3.5.6-4.7 1.7-1.2 1.1-1.8 2.6-1.8 4.6 0 2 1.6 3.6 3.5 3.9l.4-1.2c-1.3-.3-2.3-1.4-2.3-2.7 0-1.5 1.3-2.7 2.9-2.7h3.9c1.6 0 2.9 1.2 2.9 2.7 0 1.5-1.3 2.7-2.9 2.7h-.6v1.3h.6c2.3 0 4.1-1.8 4.1-4s-1.8-4-4.1-4h-3.9z',
-  nextjs: 'M0 0h24v24H0V0zm12 2.5c-5.2 0-9.5 4.3-9.5 9.5s4.3 9.5 9.5 9.5c2.2 0 4.2-.7 5.9-2l-6.7-9.7v7.3c0 1-.8 1.8-1.8 1.8-1 0-1.8-.8-1.8-1.8v-3.4c0-1 .8-1.8 1.8-1.8.3 0 .6.1.9.2l-2.2-3.2c-2.7.3-4.7 2.6-4.7 5.3 0 3 2.4 5.4 5.4 5.4 3 0 5.4-2.4 5.4-5.4v-9.4c1.4 1.2 2.4 3 2.4 4.8 0 4.5-3.7 8.2-8.2 8.2-4.5 0-8.2-3.7-8.2-8.2 0-4.5 3.7-8.2 8.2-8.2z',
-};
-
-const skills = [
-  { name: 'Python', level: 80, icon: 'python', family: 'Lenguajes' },
-  { name: 'JavaScript', level: 20, icon: 'javascript', family: 'Lenguajes' },
-  { name: 'TypeScript', level: 25, icon: 'typescript', family: 'Lenguajes' },
-  { name: 'HTML', level: 85, icon: 'html', family: 'Frontend' },
-  { name: 'CSS', level: 85, icon: 'css', family: 'Frontend' },
-  { name: 'SASS', level: 70, icon: 'sass', family: 'Frontend' },
-  { name: 'React', level: 35, icon: 'react', family: 'Frontend' },
-  { name: 'Node.js', level: 40, icon: 'nodejs', family: 'Backend' },
-  { name: 'SQL', level: 60, icon: 'sql', family: 'Datos' },
-  { name: 'Java', level: 10, icon: 'java', family: 'Lenguajes' },
-  { name: 'C / C++ / C#', level: 10, icon: 'csharp', family: 'Lenguajes' },
-  { name: 'Lua / Luau', level: 25, icon: 'lua', family: 'Lenguajes' },
-  { name: 'Julia', level: 60, icon: 'julia', family: 'Lenguajes' },
-  { name: 'Ruby / Perl / R / Rust / ASM', level: 7, icon: 'rust', family: 'Lenguajes' },
-  { name: 'Kotlin / Swift', level: 5, icon: 'swift', family: 'Lenguajes' },
-  { name: 'Git / GitHub', level: 90, icon: 'github', family: 'Herramientas' },
-  { name: 'npm / pnpm', level: 70, icon: 'npm', family: 'Herramientas' },
-  { name: 'Docker', level: 10, icon: 'docker', family: 'DevOps' },
-  { name: 'Linux / Bash', level: 25, icon: 'linux', family: 'DevOps' },
-  { name: 'TOML / JSON / YAML', level: 70, icon: 'config', family: 'Herramientas' },
-];
-
-const personal = [
-  { icon: 'calendar', label: 'Cumpleaños', value: '11 de noviembre' },
-  { icon: 'globe', label: 'País', value: 'Venezuela (Coro, Falcón)' },
-  { icon: 'user', label: 'Edad', value: '17 años' },
-  { icon: 'graduation', label: 'Universidad', value: 'UPTAG Falcón' },
-  { icon: 'server', label: 'Empresa', value: 'Ciszu Network (fundador)' },
-  { icon: 'palette', label: 'Roles', value: 'Programador · Publisher · Diseñador · Editor · Ilustrador' },
-];
-
-const roles = [
-  { icon: 'terminal', title: 'Full-stack', desc: 'WebApps completas, CLI, bots y herramientas sobre monorepo propio.' },
-  { icon: 'palette', title: 'Diseñador & Editor', desc: 'Suite de Adobe, Affinity y Corel; DaVinci Resolve, Filmora y CapCut.' },
-  { icon: 'play', title: 'Creador de contenido', desc: 'Gaming, tutoriales, mods, texturas, servidores y bots de Discord.' },
-  { icon: 'music', title: 'Músico', desc: 'Producción musical con FL Studio: álbum de práctica 2024 y banda sonora Genesis Neon.' },
-  { icon: 'money', title: 'Publisher & Marketing', desc: 'Publicación de apps, diseño de marca y presencia digital multiplataforma.' },
-  { icon: 'share', title: 'Comunidad', desc: 'Gestión de servidores, comunidades y documentación de ingeniería.' },
-];
+const timeline: { year: string; event: RichPart[] }[] = PROFILE_TIMELINE.map((t) => ({
+  year: t.year,
+  event: [{ text: t.text }] as RichPart[],
+}));
 
 export default function AboutPage() {
   const dict = useDict();
   usePageTitle('ABOUT');
 
-  const families = ['Lenguajes', 'Frontend', 'Backend', 'Datos', 'DevOps', 'Herramientas'];
+  const families = PROFILE_FAMILIES;
 
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
@@ -133,15 +70,13 @@ export default function AboutPage() {
               className="rounded-full object-cover shrink-0 border-2 border-brand/30"
             />
             <div>
-              <h2 className="text-2xl font-header font-bold text-white mb-3">Ciszuko Antony (Francisco García)</h2>
+              <h2 className="text-2xl font-header font-bold text-white mb-3">{PROFILE.name} ({PROFILE.shortName})</h2>
               <p className="text-gray-300 leading-relaxed mb-4">
-                CEO y fundador de{' '}
+                {PROFILE.role} de{' '}
                 <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="text-brand font-bold hover:text-brand-200 transition-colors">
                   Ciszu Network
                 </a>
-                . Full-stack apasionado por la tecnología, el diseño y la creación de experiencias digitales
-                únicas. Construyo webs, bots, juegos y herramientas sobre un monorepo propio con Next.js,
-                TypeScript, Python y Supabase, con identidad visual y documentación de ingeniería verificable.
+                . {PROFILE.summary}
               </p>
               <p className="text-gray-400 leading-relaxed">
                 Soy de Venezuela (Coro, Falcón), tengo 17 años y estudio en la UPTAG orientado a
@@ -160,7 +95,7 @@ export default function AboutPage() {
             Sobre mí
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {personal.map((p, i) => (
+            {PROFILE_FACTS.map((p, i) => (
               <motion.div key={p.label} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
                 className="flex items-center gap-3 p-4 rounded-2xl bg-white/[0.04] border border-white/10 hover:border-brand/40 transition-colors"
               >
@@ -183,7 +118,7 @@ export default function AboutPage() {
             Qué hago
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {roles.map((r, i) => (
+            {PROFILE_ROLES.map((r, i) => (
               <motion.div key={r.title} initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
                 className="group p-5 rounded-2xl bg-white/[0.04] border border-white/10 hover:border-brand/40 hover:bg-white/[0.06] transition-all"
               >
@@ -205,7 +140,7 @@ export default function AboutPage() {
           </h2>
           <div className="space-y-8">
             {families.map((family) => {
-              const list = skills.filter((s) => s.family === family);
+              const list = PROFILE_SKILLS.filter((s) => s.family === family);
               if (!list.length) return null;
               return (
                 <div key={family}>
@@ -215,15 +150,9 @@ export default function AboutPage() {
                       <motion.div key={s.name} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
                         className="flex items-center gap-3 p-4 rounded-2xl bg-white/[0.04] border border-white/10 hover:border-brand/40 transition-colors"
                       >
-                        {LOGO[s.icon] ? (
-                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/[0.04] border border-white/10">
-                            <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor"><path d={LOGO[s.icon]} /></svg>
-                          </span>
-                        ) : (
-                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/10 border border-brand/30 text-brand">
-                            <Icon name="terminal" size={18} />
-                          </span>
-                        )}
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/[0.04] border border-white/10">
+                          <SkillLogo icon={s.icon} className="h-6 w-6" />
+                        </span>
                         <div className="flex-1">
                           <div className="flex justify-between text-sm mb-1.5">
                             <span className="text-gray-200 font-medium">{s.name}</span>
@@ -243,6 +172,78 @@ export default function AboutPage() {
                 </div>
               );
             })}
+          </div>
+        </motion.div>
+
+        {/* Herramientas */}
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-12">
+          <h2 className="text-2xl font-header font-bold text-white mb-8 flex items-center gap-3">
+            <span className="w-2 h-2 rounded-full bg-brand" />
+            Herramientas y ecosistema
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {PROFILE_TOOLS.map((t, i) => (
+              <motion.div key={t.name} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
+                className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 hover:border-brand/40 transition-colors"
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand/10 border border-brand/30 text-brand">
+                    <Icon name={t.icon} size={16} />
+                  </span>
+                  <span className="text-white font-header font-bold text-sm">{t.name}</span>
+                </div>
+                <p className="text-[11px] text-gray-500 leading-relaxed">{t.note}</p>
+              </motion.div>
+            ))}
+          </div>
+          <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[
+              { label: 'Navegadores', items: PROFILE_BROWSERS },
+              { label: 'Asistentes IA', items: PROFILE_AI },
+              { label: 'Plataformas y servicios', items: PROFILE_PLATFORMS.map((p) => ({ name: p, icon: 'globe' as string })) },
+            ].map((group, gi) => (
+              <div key={group.label} className="p-5 rounded-2xl bg-white/[0.03] border border-white/10">
+                <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 mb-3">{group.label}</h3>
+                <div className="flex flex-wrap gap-2">
+                  {group.items.map((item) => (
+                    <span key={item.name} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold text-gray-300">
+                      <Icon name={item.icon} size={12} className="text-brand" />
+                      {item.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Intereses y aspiraciones */}
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="p-6 rounded-2xl bg-white/[0.04] border border-white/10">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 mb-4">Intereses y hobbies</h3>
+              <div className="grid grid-cols-2 gap-3">
+                {PROFILE_INTERESTS.map((it, i) => (
+                  <div key={it.label} className="flex items-center gap-2 p-3 rounded-xl bg-white/5 border border-white/10">
+                    <Icon name={it.icon} size={16} className="text-brand" />
+                    <span className="text-xs text-gray-300 font-medium">{it.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-brand/10 via-transparent to-transparent border border-brand/30">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-brand mb-4">Aspiraciones profesionales</h3>
+              <ul className="space-y-2.5">
+                {PROFILE_ASPIRATIONS.map((a, i) => (
+                  <motion.li key={a} initial={{ opacity: 0, x: 10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
+                    className="flex items-start gap-2 text-sm text-gray-300"
+                  >
+                    <Icon name="check" size={16} className="text-brand mt-0.5 shrink-0" />
+                    {a}
+                  </motion.li>
+                ))}
+              </ul>
+            </div>
           </div>
         </motion.div>
 

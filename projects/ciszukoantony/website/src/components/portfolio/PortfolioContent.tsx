@@ -9,8 +9,10 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import ProjectCard from '@/components/projects/ProjectCard';
+import SkillLogo from '@/components/shared/SkillLogo';
 import { PROJECTS, PROJECT_CATEGORIES, type ProjectCategory } from '@/data/projects';
 import { CERTIFICATES } from '@/data/certificates';
+import { PROFILE, PROFILE_ROLES, PROFILE_ASPIRATIONS, PROFILE_FACTS } from '@/data/profile';
 
 const THEME: InfoTheme = {
   accent: 'text-neon-blue',
@@ -74,6 +76,55 @@ export default function PortfolioContent() {
           kicker={dict.portfolio.kicker}
           theme={THEME}
         />
+
+        {/* Perfil profesional + datos clave */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-6 mb-12">
+          <div className="p-7 rounded-[2rem] bg-gradient-to-br from-neon-blue/10 via-transparent to-transparent border border-neon-blue/30">
+            <p className="text-[10px] font-black uppercase tracking-[0.35em] text-neon-blue mb-3">Perfil profesional</p>
+            <h2 className="text-2xl font-header font-black uppercase italic text-white mb-3">
+              {PROFILE.name}
+            </h2>
+            <p className="text-gray-400 text-sm leading-relaxed mb-5">{PROFILE.summary}</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {PROFILE_FACTS.map((fact) => (
+                <div key={fact.label} className="flex items-center gap-2 p-3 rounded-xl bg-white/[0.04] border border-white/10">
+                  <Icon name={fact.icon} size={15} className="text-neon-blue shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-[8px] font-black uppercase tracking-widest text-gray-500">{fact.label}</p>
+                    <p className="text-xs text-gray-200 font-medium truncate">{fact.value}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="p-7 rounded-[2rem] bg-gradient-to-br from-neon-pink/10 via-transparent to-transparent border border-neon-pink/30">
+            <p className="text-[10px] font-black uppercase tracking-[0.35em] text-neon-pink mb-4">Qué hago</p>
+            <div className="space-y-3">
+              {PROFILE_ROLES.slice(0, 4).map((role) => (
+                <div key={role.title} className="flex items-start gap-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-neon-pink/10 border border-neon-pink/30 text-neon-pink">
+                    <Icon name={role.icon} size={16} />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-sm text-white font-header font-bold">{role.title}</p>
+                    <p className="text-[11px] text-gray-500 leading-snug">{role.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Aspiraciones */}
+        <div className="flex flex-wrap items-center gap-2 p-6 rounded-2xl bg-white/[0.03] border border-white/10 mb-12">
+          <Icon name="target" size={16} className="text-neon-green shrink-0" />
+          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-neon-green mr-2">Aspiraciones</span>
+          {PROFILE_ASPIRATIONS.map((asp) => (
+            <span key={asp} className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] text-gray-300">
+              {asp}
+            </span>
+          ))}
+        </div>
 
         <div className="flex flex-col md:flex-row md:items-center gap-4 mb-8">
           <div className="relative flex-1">
