@@ -98,10 +98,9 @@
 
 **Ciszuko Antony Website:**
 
-- [ ] Terminar paginas de portfolio, crearlos si hace falta e indexarlos. (Actualizar con toda la info dada a la IA)
+- [ ] Terminar paginas de portfolio (Actualizar con toda la info dada a la IA)
 - [ ] En general cambiar las paginas para mostrar datos personales , profesionales. (Actualizar con toda la info dada a la IA)
 - [ ] Terminar paginas de curriculum, necesito cambiar los curriculums e actualizarlos para mostrar informacion actual
-- [ ] Cambiar icono del proyecto de musicboard dentro de proyectos por algo que no sea el cover de un album.
 - [ ] Terminar idiomas en ingles UK.
 - [ ] Terminar idiomas en ingles USA.
 - [ ] Terminar idiomas en español LATAM.
