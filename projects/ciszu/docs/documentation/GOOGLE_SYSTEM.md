@@ -231,3 +231,29 @@ Actualmente no se usa API; todo es manual/CSV. Ver `VAULT_SYSTEM.md`.
   5. Firebase Spark: opcional para MuzicMania desktop.
 - **Tag de protección reCAPTCHA**: el badge "Protegido con reCAPTCHA Enterprise"
   (RecaptchaGate) es el requisito visual de Google.
+
+## 11. Acceso OAuth a productos de Google (02 oct 2026)
+
+El agente opera GA4, GTM, AdSense y Search Console vía la API con un **OAuth Client de
+escritorio** (`ciszu-ops`, proyecto GCP del OAuth client) + refresh token en el vault
+(`GOOGLE_OAUTH_CLIENT_ID/SECRET/REFRESH_TOKEN`). Scopes: analytics.readonly+edit,
+tagmanager.readonly+edit.containers, webmasters.readonly, adsense.readonly+adsense,
+bigquery, cloud-platform. **Sin claves de SA** (la política de claves sigue intacta).
+
+Estado verificado (02 oct 2026):
+
+- **GA4**: 1 propiedad (`properties/551642504`, "Ciszu Network", 4 data streams:
+  `G-TQH12LRZK6`, `G-V6E1QC7GQM`, `G-GQ197GD1RH`, `G-Y3X7RSM2J3`). Tráfico real confirmado
+  en las 4 webs (Home: 1795/576/522/456 views desde sep 2026). Realtime y reportes OK.
+- **GTM**: cuenta `accounts/6373411045`; 4 contenedores (`GTM-N7Q8DGX5`, `GTM-WNDXGD63`,
+  `GTM-T9LG9N6C`, `GTM-N2SXL2FN`) **vacíos** (0 tags). GA4/AdSense cargan directo en
+  `GoogleScripts` (SSR). Decisión recomendada: dejar GTM vacío para no duplicar medición.
+- **AdSense**: cuenta READY (`pub-3471969072198962`); 4 sitios en GETTING_READY (revisión
+  automática). `ads.txt` servido con el `ca-pub` correcto en las 4 webs. **Crear ad units por
+  API no está permitido** (solo AdSense for Platforms) → se crean en la UI.
+- **Search Console**: 4 sitios verificados (siteOwner, URL-prefix). Datos incipientes.
+- **Producción**: cero errores de consola ni bloqueos CSP (verificado con Playwright);
+  GTM+GA4+AdSense cargan en las 4 webs.
+
+Revocación: `gcloud auth application-default revoke` o Google → Seguridad → *Terceros con
+acceso* → quitar "Ciszu Network Ops".
