@@ -43,7 +43,7 @@ export type { SmartImageProps } from './SmartImage';
 // Analíticas: PostHog (product analytics compartido; NO pisa Cloudflare Web Analytics)
 export { default as PostHogAnalytics, captureEvent } from './PostHogAnalytics';
 // Analíticas: Google Analytics 4 (GA4, gtag.js) + eventos de anuncios
-export { default as GoogleAnalytics, trackEvent } from './GoogleAnalytics';
+export { default as GoogleAnalytics, trackEvent, setGaUserId } from './GoogleAnalytics';
 export type { GoogleAnalyticsProps } from './GoogleAnalytics';
 // Google: scripts estáticos (GTM + GA4 + AdSense) renderizados en SSR para crawlers/verificación
 export { GoogleScripts } from './GoogleScripts';

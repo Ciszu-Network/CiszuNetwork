@@ -1,13 +1,17 @@
 /**
  * GoogleScripts — renderiza los scripts de Google de forma ESTÁTICA (SSR).
  *
- * Server component (sin 'use client'): inyecta en el HTML inicial las etiquetas
- * de GTM, GA4 y AdSense para que los crawlers de Google las vean y la
- * VERIFICACIÓN de AdSense funcione (un script inyectado solo con JS no es
- * detectado por el rastreador).
+ * Server component (sin 'use client'): inyecta en el HTML inicial el loader de
+ * GTM para que los crawlers de Google lo vean y la VERIFICACIÓN de AdSense
+ * funcione (un script inyectado solo con JS no es detectado por el rastreador).
  *
- * Env (por web): NEXT_PUBLIC_GTM_ID, NEXT_PUBLIC_GA4_MEASUREMENT_ID,
- * NEXT_PUBLIC_ADSENSE_CLIENT. Sin env → no renderiza nada.
+ * DESDE oct 2026, TODO el tracking vive en GTM (tags en los contenedores):
+ *   - GA4: tag "GA4 - Configuración" (gtag) con send_page_view=false.
+ *   - AdSense: tag "AdSense - Head" (custom HTML).
+ * Aquí solo se carga el contenedor GTM (más el guard de consentimiento).
+ *
+ * Env (por web): NEXT_PUBLIC_GTM_ID. Sin env → no renderiza el loader (solo el
+ * guard). GA4/AdSense ya no se cargan directo; los gestiona GTM.
  *
  * Uso (en cada layout, justo después de abrir <body>):
  *   <GoogleScripts />
@@ -20,22 +24,19 @@
  * window.__ciszuCookieConsent). Así Google Analytics, GTM y AdSense quedan
  * DESACTIVADOS sin romper nada (degradación segura).
  *
- * OJO con los atributos de los scripts EXTERNOS: el tag de AdSense NO lleva
- * `data-cookie-consent` a propósito. adsbygoogle.js inspecciona su propio tag y
- * avisa en consola ("AdSense head tag doesn't support data-cookie-consent
- * attribute"). Los externos se matan por PATRÓN DE URL desde el guard
- * (pagead2.googlesyndication.com / googletagmanager.com / google-analytics.com);
- * el atributo se reserva a los scripts INLINE de configuración, que no se pueden
- * identificar por src.
+ * OJO con los atributos de los scripts EXTERNOS: los externos se matan por
+ * PATRÓN DE URL desde el guard (googletagmanager.com, pagead2.googlesyndication
+ * .com, google-analytics.com); el atributo data-cookie-consent se reserva a los
+ * scripts INLINE de configuración, que no se pueden identificar por src.
  */
 
 import { COOKIE_CONSENT_GUARD_JS } from './cookieConsent';
 
 /**
- * Limpia IDs de env (GTM/GA4/AdSense): si el valor se pegó desde un editor o
- * un .env guardado en Windows/UTF-8 con BOM, puede arrastrar un U+FEFF inicial
- * (se ve como %EF%BB%BF en la URL) o espacios; eso rompe el ID de Google y
- * dispara bloqueos de CSP al cargar con client=%EF%BB%BFca-pub-….
+ * Limpia IDs de env (GTM): si el valor se pegó desde un editor o un .env
+ * guardado en Windows/UTF-8 con BOM, puede arrastrar un U+FEFF inicial (se ve
+ * como %EF%BB%BF en la URL) o espacios; eso rompe el ID de Google y dispara
+ * bloqueos de CSP al cargar con id=%EF%BB%BFGTM-….
  */
 function cleanId(v: string | undefined): string {
   return (v ?? '').replace(/^\uFEFF+/, '').trim();
@@ -48,11 +49,9 @@ function consentInline(body: string): string {
 
 export function GoogleScripts() {
   const gtm = cleanId(process.env.NEXT_PUBLIC_GTM_ID);
-  const ga = cleanId(process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID);
-  const ads = cleanId(process.env.NEXT_PUBLIC_ADSENSE_CLIENT);
-  if (!gtm && !ga && !ads) {
-    // Sin env no hay scripts de Google, pero el guard igual define la variable
-    // global para el resto del ecosistema (PostHog, beacon de Cloudflare…).
+  if (!gtm) {
+    // Sin env no hay GTM, pero el guard igual define la variable global para el
+    // resto del ecosistema (PostHog, beacon de Cloudflare…).
     return (
       <script
         suppressHydrationWarning
@@ -64,50 +63,21 @@ export function GoogleScripts() {
   return (
     <>
       <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: COOKIE_CONSENT_GUARD_JS }} />
-      {ads && (
-        // Sin data-cookie-consent: adsbygoogle.js avisa en consola si ve atributos
-        // que no soporta en su propio tag. El guard lo elimina por patrón de URL.
-        <script
-          suppressHydrationWarning
-          async
-          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(ads)}`}
-          crossOrigin="anonymous"
-        />
-      )}
-      {gtm && (
-        <script
-          suppressHydrationWarning
-          data-cookie-consent="optional"
-          dangerouslySetInnerHTML={{
-            __html: consentInline(
-              `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtm}');`,
-            ),
-          }}
-        />
-      )}
-      {gtm && (
-        <noscript
-          suppressHydrationWarning
-          dangerouslySetInnerHTML={{
-            __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=${encodeURIComponent(gtm)}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`,
-          }}
-        />
-      )}
-      {ga && (
-        <>
-          {/* Externo: el guard lo mata por patrón de URL (googletagmanager.com). */}
-          <script suppressHydrationWarning async src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(ga)}`} />
-          <script
-            suppressHydrationWarning
-            data-cookie-consent="optional"
-            dangerouslySetInnerHTML={{
-              __html: consentInline(
-                `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${ga}',{send_page_view:false});`,
-              ),
-            }}
-          />
-        </>
-      )}
+      <script
+        suppressHydrationWarning
+        data-cookie-consent="optional"
+        dangerouslySetInnerHTML={{
+          __html: consentInline(
+            `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtm}');`,
+          ),
+        }}
+      />
+      <noscript
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=${encodeURIComponent(gtm)}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`,
+        }}
+      />
     </>
   );
 }

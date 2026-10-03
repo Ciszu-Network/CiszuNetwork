@@ -3,13 +3,13 @@
 /**
  * GoogleAnalytics — tracking de Google Analytics 4 (GA4) en el cliente.
  *
- * Los SCRIPTS se renderizan de forma ESTÁTICA vía <GoogleScripts/> (server
- * component, en cada layout) para que los crawlers los vean (verificación de
- * AdSense/GA4). Este componente solo hace el tracking client-side:
+ * Los SCRIPTS viven en GTM (GoogleScripts solo carga el contenedor). Este
+ * componente solo hace el tracking client-side:
  *   - page_view manual por ruta (App Router no recarga).
  *   - trackEvent() para eventos custom (anuncios, etc.).
+ *   - setGaUserId() para el User-ID de GA4 (identidad multiplataforma).
  *
- * Degradación segura: si no hay gtag definido (sin GA4/GTM) no hace nada.
+ * Degradación segura: si no hay gtag/dataLayer definido (sin GTM) no hace nada.
  *
  * Uso (en cada layout):
  *   <GoogleScripts />
@@ -42,6 +42,23 @@ function ensureGtag(): (...args: unknown[]) => void {
     };
   }
   return w.gtag!;
+}
+
+/**
+ * Define el User-ID de GA4 para la sesión (identidad cruzada de dispositivos).
+ * Debe llamarse cuando el usuario está autenticado; null lo limpia (logout).
+ * El comando `gtag('set', {'user_id': id})` va al dataLayer y el tag GA4 de GTM
+ * lo aplica a todos los eventos posteriores.
+ */
+export function setGaUserId(userId: string | null) {
+  if (typeof window === 'undefined') return;
+  if (getCookieConsent() === 'rejected') return;
+  const gtag = ensureGtag();
+  if (userId) {
+    gtag('set', { user_id: userId });
+  } else {
+    gtag('set', { user_id: undefined });
+  }
 }
 
 /** Evento custom de GA4: no-op si gtag no está cargado o si el usuario rechazó cookies */

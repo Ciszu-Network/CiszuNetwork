@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import type { Session, AuthChangeEvent } from '@supabase/supabase-js';
+import { setGaUserId } from '@ciszu/ui';
 import { supabase } from '@/config/supabase';
 import { useAppStore, type AppUser } from '@/store';
 
@@ -33,12 +34,14 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         if (!active.current) return;
 
         if (session?.user) {
+          setGaUserId(session.user.id);
           await syncSupabaseUser(session.user.id, session.user.email ?? '');
         } else {
           const res = await fetch('/api/auth/session', { cache: 'no-store' });
           const data = (await res.json()) as { session: DiscordSessionPayload | null };
           if (!active.current) return;
           if (data.session) {
+            setGaUserId(data.session.id);
             setUser({
               id: data.session.id,
               name: data.session.name,
@@ -48,6 +51,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
               display_name: data.session.name ?? undefined,
               provider: 'discord',
             });
+          } else {
+            setGaUserId(null);
           }
         }
       } catch {
@@ -63,8 +68,10 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       async (event: AuthChangeEvent, session: Session | null) => {
         if (!active.current) return;
         if ((event === 'SIGNED_IN' || event === 'USER_UPDATED' || event === 'TOKEN_REFRESHED') && session?.user) {
+          setGaUserId(session.user.id);
           await syncSupabaseUser(session.user.id, session.user.email ?? '');
         } else if (event === 'SIGNED_OUT') {
+          setGaUserId(null);
           setUser(null);
         }
       }

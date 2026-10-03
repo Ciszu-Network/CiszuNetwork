@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import type { Session, AuthChangeEvent } from '@supabase/supabase-js';
+import { setGaUserId } from '@ciszu/ui';
 import { supabase } from '@/config/supabase';
 import { useAppStore } from '@/store/useAppStore';
 
@@ -18,7 +19,10 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const loadSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
+        setGaUserId(session.user.id);
         await syncUserToStore(session.user.id, session.user.email ?? '');
+      } else {
+        setGaUserId(null);
       }
       setIsHydrated(true);
     };
@@ -28,10 +32,13 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     // 2. Suscribirse a cambios futuros de auth (login, logout, token refresh, email confirm)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
       if ((event === 'SIGNED_IN' || event === 'USER_UPDATED') && session?.user) {
+        setGaUserId(session.user.id);
         await syncUserToStore(session.user.id, session.user.email ?? '');
       } else if (event === 'SIGNED_OUT') {
+        setGaUserId(null);
         setUser(null);
       } else if (event === 'TOKEN_REFRESHED' && session?.user) {
+        setGaUserId(session.user.id);
         await syncUserToStore(session.user.id, session.user.email ?? '');
       }
     });
