@@ -66,7 +66,15 @@ Hasta que exista dominio + `RESEND_API_KEY`, este paquete lanza error claro. Los
 
 ## 3. Supabase Auth (emails de verificación/reset) — HOY
 
-**Sin configuración adicional**: Supabase sirve los emails de auth con su SMTP por defecto (sender `no-reply@supabase.co`). Esto ya cubre verificación de email, reset de contraseña y OTP en las webs que tengan auth (muzicmania).
+**Customizados con marca Ciszu Network (04 oct 2026)**: los 5 templates de auth (confirmation, recovery, magic_link, email_change, invite) están personalizados vía la Management API (`PATCH /v1/projects/{ref}/config/auth`) con:
+
+- **Subjects**: `Confirma tu cuenta | Ciszu Network`, `Restablece tu contraseña | Ciszu Network`, `Tu enlace mágico | Ciszu Network`, `Confirma tu nuevo correo | Ciszu Network`, `Invitación a Ciszu Network`.
+- **HTML**: diseño neon (degradado azul→rosa), botón de acción, aviso "Este correo NO es de patrocinio ni un anuncio", y enlaces a Términos (`/terms`) y Política de Privacidad (`/policy`) de ciszunetwork.vercel.app.
+- El sender sigue siendo `no-reply@supabase.co` (SMTP por defecto); para remitente propio se requiere dominio + custom SMTP (Fase B).
+
+**Aplicación automatizada**: `scripts/apply-email-templates.js` (lee `SUPABASE_ACCESS_TOKEN` del vault `services/supabase/.env`; usa solo variables válidas `{{ .ConfirmationURL }}` — nunca `.Subject`/`.ButtonText`, que la API rechaza con 400). Plantilla fuente: `projects/ciszu/docs/email/template-auth.html`.
+
+> Las webs comparten el proyecto Supabase (`obwzzmbvkrcscqwptlqo`), por eso el subject usa la marca genérica "Ciszu Network" (no el nombre de cada web). Si en el futuro cada web tuviera su propio proyecto, se diferenciaría el subject por proyecto.
 
 Para mejorar entregabilidad cuando exista dominio (Fase B): Dashboard → Authentication → SMTP Settings → **Enable custom SMTP** con `smtp.resend.com:465/587`, usuario `resend`, password = API key, sender = `no-reply@<dominio-verificado>`.
 
