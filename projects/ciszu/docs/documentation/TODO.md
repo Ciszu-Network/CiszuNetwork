@@ -102,8 +102,6 @@
 - [ ] Terminar idiomas en ingles USA.
 - [ ] Terminar idiomas en español LATAM.
 - [ ] Terminar idiomas en español España.
-- [ ] Corregir iconos faltantes de stack o lenguajes de programacion que siguen sin ser correctos o no aparecen. (Los que fallan son Rugg, Git, GithubR, Perl, el de Java no es el de Java, El de C# no es el de C#, El de C no es el de C, El de ASM no es el de ASM, El TOML, JSON O YAML esta usando el de XML. Sin sentido) Ademas deberias DIVIDIR no JUNTAR, divide cada uno de las propiedades lenguajes o herramientas siempre, no combines, con el fin de usar todos sus iconos correctamente, descargar oficiales de svg y subirlos a los iconos del CDN. Sin error ni alusinaciones. Completos todos. Cambiar paginas relacionadas.
-- [ ] Corregir el icono del boton de trabajos dentro de curriculum y cambiarlo por un icono mas relacion a trabajos.
 
 **MuzicMania Website:**
 

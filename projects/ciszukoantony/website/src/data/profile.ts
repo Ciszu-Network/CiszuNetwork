@@ -19,6 +19,18 @@ export type ProfileRole = { icon: string; title: string; desc: string };
 export type ProfileTool = { icon: string; name: string; note: string };
 export type ProfileFact = { icon: string; label: string; value: string };
 
+/** Marca/herramienta/programa con nivel, degradado dinámico y tags. */
+export type ProfileBrand = {
+  icon: string;
+  name: string;
+  /** Nivel autodeclarado de dominio (0-100). */
+  level: number;
+  /** Clases Tailwind del degradado de la barra (dinámico por marca). */
+  gradient: string;
+  /** Tags cortos de lo que se hace con ella. */
+  tags: string[];
+};
+
 export const PROFILE = {
   name: 'Ciszuko Antony',
   legalName: 'Francisco Antonio García Menolascina',
@@ -53,31 +65,31 @@ export const PROFILE_ROLES: ProfileRole[] = [
   { icon: 'share', title: 'Gestor de comunidad', desc: 'Servidores de Discord, comunidades gaming y documentación técnica del ecosistema.' },
 ];
 
-export const PROFILE_TOOLS: ProfileTool[] = [
-  { icon: 'palette', name: 'Suite Adobe', note: 'Photoshop, Illustrator, After Effects…' },
-  { icon: 'palette', name: 'Affinity', note: 'Photo, Designer y Publisher.' },
-  { icon: 'palette', name: 'Corel', note: 'CorelDRAW y suite de diseño.' },
-  { icon: 'play', name: 'DaVinci Resolve', note: 'Edición y color profesional.' },
-  { icon: 'play', name: 'Filmora', note: 'Edición de vídeo.' },
-  { icon: 'play', name: 'CapCut', note: 'Edición rápida y vertical.' },
-  { icon: 'globe', name: 'Office', note: 'Word, Excel, PowerPoint y la suite de Google Docs.' },
-  { icon: 'terminal', name: 'VS Code', note: 'Editor principal para JS/TS.' },
+export const PROFILE_TOOLS: ProfileBrand[] = [
+  { icon: 'adobe', name: 'Suite Adobe', level: 80, gradient: 'from-red-600 via-rose-500 to-orange-400', tags: ['Photoshop', 'Illustrator', 'After Effects'] },
+  { icon: 'affinity', name: 'Affinity', level: 70, gradient: 'from-sky-600 via-blue-500 to-cyan-400', tags: ['Photo', 'Designer', 'Publisher'] },
+  { icon: 'coreldraw', name: 'CorelDRAW', level: 75, gradient: 'from-emerald-600 via-green-500 to-lime-400', tags: ['Vector', 'Diseño', 'Suite Corel'] },
+  { icon: 'davinciresolve', name: 'DaVinci Resolve', level: 60, gradient: 'from-zinc-700 via-zinc-500 to-zinc-300', tags: ['Edición', 'Color', 'Profesional'] },
+  { icon: 'filmora', name: 'Filmora', level: 65, gradient: 'from-indigo-600 via-violet-500 to-purple-400', tags: ['Edición', 'Vídeo', 'Transiciones'] },
+  { icon: 'capcut', name: 'CapCut', level: 75, gradient: 'from-slate-800 via-slate-600 to-slate-400', tags: ['Edición rápida', 'Vertical', 'Mobile'] },
+  { icon: 'microsoftoffice', name: 'Office', level: 70, gradient: 'from-red-600 via-orange-500 to-amber-400', tags: ['Word', 'Excel', 'PowerPoint'] },
+  { icon: 'visualstudiocode', name: 'VS Code', level: 85, gradient: 'from-sky-600 via-blue-500 to-indigo-400', tags: ['Editor', 'JS/TS', 'Extensiones'] },
 ];
 
-export const PROFILE_BROWSERS = [
-  { name: 'Tor', icon: 'lock' },
-  { name: 'Brave', icon: 'shield' },
-  { name: 'Opera GX', icon: 'gamepad' },
-  { name: 'Chrome', icon: 'globe' },
-  { name: 'Firefox', icon: 'flame' },
-  { name: 'Edge', icon: 'globe' },
+export const PROFILE_BROWSERS: ProfileBrand[] = [
+  { icon: 'torproject', name: 'Tor', level: 55, gradient: 'from-purple-700 via-violet-500 to-indigo-400', tags: ['Privacidad', 'Anonimato'] },
+  { icon: 'brave', name: 'Brave', level: 60, gradient: 'from-orange-600 via-amber-500 to-yellow-400', tags: ['Seguro', 'Ads bloqueados'] },
+  { icon: 'operagx', name: 'Opera GX', level: 85, gradient: 'from-rose-600 via-red-500 to-orange-400', tags: ['Principal', 'Gaming', 'GX'] },
+  { icon: 'googlechrome', name: 'Chrome', level: 70, gradient: 'from-green-600 via-emerald-500 to-teal-400', tags: ['Pruebas', 'DevTools'] },
+  { icon: 'firefox', name: 'Firefox', level: 65, gradient: 'from-orange-600 via-amber-500 to-yellow-500', tags: ['Pruebas', 'Privacidad'] },
+  { icon: 'microsoftedge', name: 'Edge', level: 60, gradient: 'from-cyan-600 via-sky-500 to-blue-400', tags: ['Default', 'Lectura'] },
 ];
 
-export const PROFILE_AI = [
-  { name: 'Gemini', icon: 'star' },
-  { name: 'DeepSeek', icon: 'chip' },
-  { name: 'Claude', icon: 'sparkles' },
-  { name: 'ChatGPT', icon: 'comment' },
+export const PROFILE_AI: ProfileBrand[] = [
+  { icon: 'googlegemini', name: 'Gemini', level: 85, gradient: 'from-blue-600 via-cyan-500 to-violet-500', tags: ['Google', 'Multimodal', 'Principal'] },
+  { icon: 'deepseek', name: 'DeepSeek', level: 80, gradient: 'from-blue-700 via-indigo-500 to-violet-400', tags: ['Razonamiento', 'Código'] },
+  { icon: 'anthropic', name: 'Claude', level: 75, gradient: 'from-orange-700 via-amber-600 to-yellow-500', tags: ['Análisis', 'Escritura'] },
+  { icon: 'openai', name: 'ChatGPT', level: 80, gradient: 'from-teal-600 via-emerald-500 to-green-400', tags: ['Generalista', 'Productividad'] },
 ];
 
 export const PROFILE_INTERESTS = [
@@ -98,9 +110,15 @@ export const PROFILE_ASPIRATIONS = [
   'Videojuegos',
 ];
 
-export const PROFILE_PLATFORMS = [
-  'Vercel (deploy)', 'Supabase (backend)', 'GitHub Pages', 'Cloudflare', 'Next.js', 'VPS',
-  'Google Cloud', 'Notion', 'Trello',
+export const PROFILE_PLATFORMS: ProfileBrand[] = [
+  { icon: 'vercel', name: 'Vercel', level: 80, gradient: 'from-zinc-700 via-zinc-500 to-zinc-300', tags: ['Deploy'] },
+  { icon: 'supabase', name: 'Supabase', level: 75, gradient: 'from-emerald-700 via-green-500 to-teal-400', tags: ['Backend', 'DB'] },
+  { icon: 'github', name: 'GitHub Pages', level: 70, gradient: 'from-gray-700 via-gray-500 to-gray-300', tags: ['Static', 'Deploy'] },
+  { icon: 'cloudflare', name: 'Cloudflare', level: 65, gradient: 'from-orange-700 via-amber-500 to-yellow-400', tags: ['CDN', 'Turnstile'] },
+  { icon: 'nextdotjs', name: 'Next.js', level: 75, gradient: 'from-slate-800 via-slate-600 to-slate-400', tags: ['Framework'] },
+  { icon: 'googledocs', name: 'Google Cloud', level: 60, gradient: 'from-sky-700 via-blue-500 to-indigo-400', tags: ['Cloud', 'GCP'] },
+  { icon: 'notion', name: 'Notion', level: 70, gradient: 'from-gray-800 via-gray-600 to-gray-400', tags: ['Docs', 'Plan'] },
+  { icon: 'trello', name: 'Trello', level: 65, gradient: 'from-sky-700 via-blue-500 to-cyan-400', tags: ['Kanban', 'Tareas'] },
 ];
 
 export const PROFILE_SKILLS: ProfileSkill[] = [

@@ -7,6 +7,7 @@ import { assetResolver } from '@ciszunetwork/cdn';
 import { InfoHero, Icon, type InfoTheme } from '@ciszu/ui';
 import { RichText, type RichPart } from '@/components/RichText';
 import SkillLogo from '@/components/shared/SkillLogo';
+import BrandCard from '@/components/shared/BrandCard';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useDict } from '@/components/providers/I18nProvider';
 import QuickDocks from '@/components/molecules/QuickDocks';
@@ -175,44 +176,50 @@ export default function AboutPage() {
           </div>
         </motion.div>
 
-        {/* Herramientas */}
+        {/* Herramientas y ecosistema: iconos reales + barras + tags */}
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-12">
           <h2 className="text-2xl font-header font-bold text-white mb-8 flex items-center gap-3">
             <span className="w-2 h-2 rounded-full bg-brand" />
             Herramientas y ecosistema
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+          {/* Herramientas de diseño, edición y productividad */}
+          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 mb-3">Diseño · Edición · Productividad</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {PROFILE_TOOLS.map((t, i) => (
-              <motion.div key={t.name} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
-                className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 hover:border-brand/40 transition-colors"
-              >
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand/10 border border-brand/30 text-brand">
-                    <Icon name={t.icon} size={16} />
-                  </span>
-                  <span className="text-white font-header font-bold text-sm">{t.name}</span>
-                </div>
-                <p className="text-[11px] text-gray-500 leading-relaxed">{t.note}</p>
+              <motion.div key={t.name} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
+                <BrandCard brand={t} />
               </motion.div>
             ))}
           </div>
-          <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {[
-              { label: 'Navegadores', items: PROFILE_BROWSERS },
-              { label: 'Asistentes IA', items: PROFILE_AI },
-              { label: 'Plataformas y servicios', items: PROFILE_PLATFORMS.map((p) => ({ name: p, icon: 'globe' as string })) },
-            ].map((group, gi) => (
-              <div key={group.label} className="p-5 rounded-2xl bg-white/[0.03] border border-white/10">
-                <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 mb-3">{group.label}</h3>
-                <div className="flex flex-wrap gap-2">
-                  {group.items.map((item) => (
-                    <span key={item.name} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold text-gray-300">
-                      <Icon name={item.icon} size={12} className="text-brand" />
-                      {item.name}
-                    </span>
-                  ))}
-                </div>
-              </div>
+
+          {/* Navegadores */}
+          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 mb-3">Navegadores</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+            {PROFILE_BROWSERS.map((b, i) => (
+              <motion.div key={b.name} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
+                <BrandCard brand={b} />
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Asistentes IA */}
+          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 mb-3">Asistentes IA</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            {PROFILE_AI.map((a, i) => (
+              <motion.div key={a.name} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
+                <BrandCard brand={a} />
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Plataformas y servicios */}
+          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 mb-3">Plataformas y servicios</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {PROFILE_PLATFORMS.map((p, i) => (
+              <motion.div key={p.name} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
+                <BrandCard brand={p} />
+              </motion.div>
             ))}
           </div>
         </motion.div>

@@ -10,7 +10,9 @@ import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import CvPreview from '@/components/curriculum/CvPreview';
 import SkillLogo from '@/components/shared/SkillLogo';
+import BrandCard from '@/components/shared/BrandCard';
 import { CERTIFICATES } from '@/data/certificates';
+import { PROFILE_TOOLS, PROFILE_BROWSERS, PROFILE_AI } from '@/data/profile';
 import { CV_CUSTOM_SUMMARY } from '@/data/cvSummary';
 import type { CvDocument, CurriculumData } from '@/data/curriculum';
 
@@ -377,6 +379,26 @@ export default function CurriculumContent({ cv }: { cv: CurriculumData }) {
               </div>
             );
           })()}
+        </section>
+
+        {/* Herramientas y ecosistema (iconos reales + barras + tags) */}
+        <section className="mb-14">
+          <h2 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.3em] text-neon-purple mb-5">
+            <Icon name="stack" size={15} />
+            Herramientas y ecosistema
+          </h2>
+          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 mb-3">Diseño · Edición · Productividad</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+            {PROFILE_TOOLS.map((t) => <BrandCard key={t.name} brand={t} />)}
+          </div>
+          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 mb-3">Navegadores</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-8">
+            {PROFILE_BROWSERS.map((b) => <BrandCard key={b.name} brand={b} />)}
+          </div>
+          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 mb-3">Asistentes IA</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+            {PROFILE_AI.map((a) => <BrandCard key={a.name} brand={a} />)}
+          </div>
         </section>
 
         {/* Idiomas */}

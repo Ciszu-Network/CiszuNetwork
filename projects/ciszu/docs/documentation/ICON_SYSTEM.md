@@ -1,8 +1,8 @@
 # ICON_SYSTEM — Sistema de Iconos (Ciszu Network)
 
-Versión: 2.0.0
-Actualización: 2026-08-13
-Identificador: ICON_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
+Versión: 2.0.1
+Actualización: 2026-10-04
+Identificador: ICON_SYSTEM_V2.0.1_2026_10_04_ciszunetwork
 
 > Documenta los dos sistemas de iconos en uso, sus diferencias, ventajas/desventajas
 > y el plan de migración hacia el sistema unificado.
@@ -98,10 +98,15 @@ Los iconos son componentes React pre-compilados de un vendor confiable → JSX r
 | **Outline** | `shared/icons/svg/outline/` | Iconos Material 24x24 de trazo fino |
 | **Filled** | `shared/icons/svg/filled/` | Iconos Material 24x24 rellenos |
 | **Flags** | `shared/icons/svg/flags/` | Banderas (ve, us, co...) |
+| **Brands** | `shared/icons/svg/brands/` | Logos oficiales de lenguajes/herramientas y plataformas (Simple Icons, devicon, c-language.org) |
 
 - El registro (`icon-registry.ts`) se genera con `node scripts/generate-icon-registry.js`
   (lista curada `ICON_LIST`; añadir nombres nuevos ahí).
 - **Nunca duplicar SVGs en las apps**: los iconos viven solo en `shared/icons/svg`.
+- Los logos de marca se descargan con `node scripts/fetch-brand-icons.js` (fuentes oficiales;
+  cada icono declara su URL y se documenta en el propio script), se copian a las webs con
+  `node scripts/sync-brand-icons.js` y se suben al CDN con `node scripts/upload-brand-icons.js`.
+  Los iconos sin logo de marca (ASM → `chip`, SQL → `database`) usan los iconos UI del registro.
 
 ## Cómo añadir un icono (protocolo actualizado)
 
@@ -198,5 +203,5 @@ Los iconos son componentes React pre-compilados de un vendor confiable → JSX r
 - `TOOLS_SYSTEM.md` — script `generate-icon-registry.js` y demás generadores.
 - `SECURITY_PROTOCOLS.md` — regla `dangerouslySetInnerHTML` + DOMPurify / guard SSR.
 
-_Última revisión: 13 ago 2026._ Relacionado: `MATERIAL_ICONS_PROTOCOLS.md`, `MEDIA_FORMATS_SYSTEM.md`,
+_Última revisión: 4 oct 2026._ Relacionado: `MATERIAL_ICONS_PROTOCOLS.md`, `MEDIA_FORMATS_SYSTEM.md`,
 `CDN_SYSTEM.md`, `TOOLS_SYSTEM.md`.
