@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <title>Ciszu Network</title>
+    <!-- Fuente Geomanist no disponible por email; se usa Arial/Helvetica. -->
+  </head>
+  <body style="margin:0;padding:0;background:#05050a;color:#e8e8f0;font-family:Arial,Helvetica,sans-serif;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#05050a;padding:24px 0;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="background:#0d1118;border:1px solid #1e293b;border-radius:16px;overflow:hidden;">
+            <!-- Encabezado -->
+            <tr>
+              <td style="padding:28px 32px 20px;background:linear-gradient(135deg,#0d1118 0%,#1a2332 100%);border-bottom:2px solid #3d6adf;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td style="font-size:0;line-height:0;">
+                      <span style="color:#3d6adf;font-size:26px;font-weight:bold;letter-spacing:1px;">CISZU</span>
+                      <span style="color:#ff33cc;font-size:26px;font-weight:bold;letter-spacing:1px;">NETWORK</span>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <!-- Cuerpo -->
+            <tr>
+              <td style="padding:28px 32px 12px;">
+                <h1 style="margin:0 0 16px;color:#ffffff;font-size:20px;line-height:1.3;font-weight:bold;">{{ .Subject }}</h1>
+                <p style="margin:0 0 20px;color:#b6c2d4;font-size:14px;line-height:1.6;">Hola. Recibes este correo porque se ha solicitado una acción en el ecosistema de <strong style="color:#68cfff;">Ciszu Network</strong>.</p>
+                <table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px 0;">
+                  <tr>
+                    <td>
+                      <a href="{{ .ConfirmationURL }}" style="display:inline-block;padding:14px 32px;background:linear-gradient(135deg,#3d6adf,#ff33cc);color:#ffffff;font-size:14px;font-weight:bold;text-decoration:none;border-radius:10px;">{{ .ButtonText }}</a>
+                    </td>
+                  </tr>
+                </table>
+                <p style="margin:16px 0 0;color:#8a97ad;font-size:13px;line-height:1.6;">Si el botón no funciona, copia y pega este enlace en tu navegador:<br /><a href="{{ .ConfirmationURL }}" style="color:#3d6adf;word-break:break-all;">{{ .ConfirmationURL }}</a></p>
+                <p style="margin:20px 0 0;color:#8a97ad;font-size:12px;line-height:1.6;">Este enlace es temporal y expira en poco tiempo. Si no lo solicitaste tú, puedes ignorar este correo con total tranquilidad.</p>
+              </td>
+            </tr>
+            <!-- Aviso legal -->
+            <tr>
+              <td style="padding:12px 32px 20px;border-top:1px solid #1e293b;background:#0a0e15;">
+                <p style="margin:0 0 8px;color:#5a6879;font-size:11px;line-height:1.6;">
+                  <strong style="color:#7dd3fc;">Este correo NO es de patrocinio ni un anuncio.</strong> Es un mensaje transaccional del ecosistema Ciszu Network, enviado automáticamente por seguridad de tu cuenta.
+                </p>
+                <p style="margin:0;color:#5a6879;font-size:11px;line-height:1.6;">
+                  Al usar nuestros servicios aceptas los
+                  <a href="https://ciszunetwork.vercel.app/terms" style="color:#68cfff;text-decoration:none;">Términos de Servicio</a> y la
+                  <a href="https://ciszunetwork.vercel.app/policy" style="color:#68cfff;text-decoration:none;">Política de Privacidad</a> de Ciszu Network.
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
