@@ -68,6 +68,8 @@ export type CvDocument = {
   updated?: string;
   /** true = versión destacada/prioritaria (se muestra primero y resaltada). */
   featured?: boolean;
+  /** Formatos de descarga disponibles (además del PDF). */
+  downloads?: { label: string; ext: string; href: string; size?: string }[];
 };
 
 export type CurriculumData = {
@@ -99,6 +101,12 @@ export const CV_DOCUMENTS: CvDocument[] = [
     orientation: 'portrait',
     updated: '2026-10-03',
     featured: true,
+    downloads: [
+      { label: 'PDF', ext: 'pdf', href: assetUrl('shared/docs/cv/CV-Curriculum-Custom-Francisco_Garcia_Menolascina_Antonio-2026-Oficial.pdf'), size: '1.2 MB' },
+      { label: 'Presentación (PPTX)', ext: 'pptx', href: assetUrl('shared/docs/cv/CV-Curriculum-Custom-Francisco_Garcia_Menolascina_Antonio-2026-Oficial.pptx'), size: '1.0 MB' },
+      { label: 'Comprimido (RAR/ZIP)', ext: 'zip', href: assetUrl('shared/docs/cv/CV-Curriculum-Custom-Francisco_Garcia_Menolascina_Antonio-2026-Oficial.zip'), size: '1.8 MB' },
+      { label: 'Imagen (PNG)', ext: 'png', href: assetUrl('shared/docs/cv/1.png'), size: '665 KB' },
+    ],
   },
   {
     id: 'linkedin',

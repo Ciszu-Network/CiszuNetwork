@@ -148,8 +148,8 @@ const NAV_HIDE_CLS: string[] = [
   'hidden min-[1060px]:flex',
   'hidden min-[1140px]:flex',
   'hidden min-[1220px]:flex',
-  'hidden min-[1300px]:flex',
-  'hidden min-[1380px]:flex',
+  'hidden min-[1280px]:flex',
+  'hidden min-[1180px]:flex',
 ];
 
 // Massive page catalog for the global search (references the same routes as the nav).

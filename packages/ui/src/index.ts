@@ -5,7 +5,7 @@
  */
 
 // Componentes de Iconos (inline-first con fallback CDN)
-export { Icon, IconButton, IconList, iconUtils } from './Icon';
+export { Icon, IconButton, IconList, iconUtils, getIcon } from './Icon';
 export type { IconProps, IconButtonProps, IconListProps } from './Icon';
 
 

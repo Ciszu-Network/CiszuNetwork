@@ -44,7 +44,7 @@ export default function CvPreview({
 
   return (
     <div className={`relative overflow-hidden rounded-2xl border border-white/10 bg-white ${className}`}>
-      <div className={`relative mx-auto w-full ${ASPECT[orientation]} ${frameClassName}`}>
+      <div className={`relative mx-auto w-full max-w-full ${ASPECT[orientation]} ${frameClassName}`}>
         <iframe
           src={src}
           title={`Vista previa de ${label}`}

@@ -11,6 +11,7 @@ import PageReveal from '@/components/layout/PageReveal';
 import CvPreview from '@/components/curriculum/CvPreview';
 import SkillLogo from '@/components/shared/SkillLogo';
 import { CERTIFICATES } from '@/data/certificates';
+import { CV_CUSTOM_SUMMARY } from '@/data/cvSummary';
 import type { CvDocument, CurriculumData } from '@/data/curriculum';
 
 const THEME: InfoTheme = {
@@ -45,6 +46,12 @@ export default function CurriculumContent({ cv }: { cv: CurriculumData }) {
   usePageTitle('CURRICULUM');
   const dict = useDict();
   const [fullscreen, setFullscreen] = useState<CvDocument | null>(null);
+  const [downloadAd, setDownloadAd] = useState<CvDocument | null>(null);
+
+  const sortedDocs = useMemo(
+    () => [...cv.documents].sort((a, b) => Number(b.featured ?? false) - Number(a.featured ?? false)),
+    [cv.documents],
+  );
 
   const featuredCerts = useMemo(
     () =>
@@ -77,7 +84,7 @@ export default function CurriculumContent({ cv }: { cv: CurriculumData }) {
       <PageReveal className="relative mx-auto max-w-screen-xl">
         <div className="print:hidden">
           <InfoHero
-            icon="certificates"
+            icon="file-text"
             title="Currículum"
             subtitle={`Los ${cv.documents.length} currículums de ${cv.profile.name} en pantalla completa: previsualización directa de cada PDF, trayectoria, formación, habilidades, idiomas y certificaciones verificables.`}
             kicker="CV · Trayectoria profesional"
@@ -133,7 +140,7 @@ export default function CurriculumContent({ cv }: { cv: CurriculumData }) {
         <section className="mb-14">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
             <h2 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.3em] text-neon-purple">
-              <Icon name="certificates" size={15} />
+              <Icon name="file-text" size={15} />
               Currículums ({cv.documents.length})
             </h2>
             <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-gray-500">
@@ -141,27 +148,27 @@ export default function CurriculumContent({ cv }: { cv: CurriculumData }) {
               Última actualización: oct 2026
             </span>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {[...cv.documents]
-              .sort((a, b) => Number(b.featured ?? false) - Number(a.featured ?? false))
-              .map((doc) => (
+          <div className="flex flex-col gap-8">
+            {sortedDocs.map((doc, idx) => {
+              const featured = !!doc.featured;
+              return (
                 <article
                   key={doc.id}
-                  className={`relative flex flex-col p-5 rounded-[2rem] border transition-all ${
-                    doc.featured
+                  className={`relative flex flex-col rounded-[2rem] border p-5 md:p-7 transition-all ${
+                    featured
                       ? 'bg-gradient-to-br from-neon-purple/15 via-transparent to-transparent border-neon-purple/50 shadow-[0_0_30px_rgba(72,0,255,0.15)]'
                       : 'bg-white/5 border-white/10 hover:border-neon-purple/40'
                   }`}
                 >
-                  {doc.featured && (
-                    <span className="absolute -top-2.5 right-4 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-neon-purple text-white text-[9px] font-black uppercase tracking-widest shadow-lg">
+                  {featured && (
+                    <span className="absolute -top-2.5 right-5 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-neon-purple text-white text-[9px] font-black uppercase tracking-widest shadow-lg">
                       <Icon name="star" size={10} />
-                      Recomendado
+                      Versión principal
                     </span>
                   )}
                   <div className="flex items-start justify-between gap-3 mb-4">
                     <div>
-                      <h3 className="font-header font-bold text-white">{doc.label}</h3>
+                      <h3 className="font-header font-bold text-white text-lg">{doc.label}</h3>
                       <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mt-1">
                         PDF · {doc.pages} páginas · {doc.size}
                         {doc.updated ? ` · Actualizado ${doc.updated.slice(0, 7)}` : ''}
@@ -172,45 +179,101 @@ export default function CurriculumContent({ cv }: { cv: CurriculumData }) {
                     </span>
                   </div>
 
-                <CvPreview
-                  href={doc.href}
-                  label={doc.label}
-                  orientation={doc.orientation}
-                  frameClassName="max-w-[22rem]"
-                  className="mb-4"
-                />
+                  {/* Vista previa: el principal ocupa más ancho, el secundario se ve más compacto */}
+                  <div className={`${featured ? 'md:px-4' : 'md:px-8'}`}>
+                    <CvPreview
+                      href={doc.href}
+                      label={doc.label}
+                      orientation={doc.orientation}
+                      frameClassName={featured ? 'max-w-[min(100%,38rem)]' : 'max-w-[min(100%,24rem)]'}
+                      className={`mx-auto mb-4 ${featured ? '' : 'opacity-90'}`}
+                    />
+                  </div>
 
-                <p className="text-sm text-gray-400 leading-relaxed flex-1">{doc.description}</p>
-                <div className="flex flex-wrap gap-2 mt-4 print:hidden">
-                  <a
-                    href={doc.href}
-                    download
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => captureEvent('curriculum_cv_download', { id: doc.id })}
-                    className="inline-flex flex-1 items-center justify-center gap-2 px-4 py-2.5 bg-neon-purple/20 border border-neon-purple/40 text-neon-purple rounded-xl font-bold text-xs hover:bg-neon-purple hover:text-white transition-all active:scale-95"
-                  >
-                    <Icon name="download" size={15} />
-                    Descargar
-                  </a>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setFullscreen(doc);
-                      captureEvent('curriculum_cv_fullscreen', { id: doc.id });
-                    }}
-                    className="inline-flex flex-1 items-center justify-center gap-2 px-4 py-2.5 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-xs hover:bg-white/10 transition-all active:scale-95 cursor-pointer"
-                  >
-                    <Icon name="eye" size={15} />
-                    Pantalla completa
-                  </button>
-                </div>
-              </article>
-            ))}
+                  <p className="text-sm text-gray-400 leading-relaxed flex-1 text-center md:text-left px-2">
+                    {doc.description}
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 mt-5 print:hidden justify-center md:justify-start">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setDownloadAd(doc);
+                        captureEvent('curriculum_cv_download_modal', { id: doc.id });
+                      }}
+                      className="inline-flex flex-1 max-w-[10rem] items-center justify-center gap-2 px-4 py-2.5 bg-neon-purple/20 border border-neon-purple/40 text-neon-purple rounded-xl font-bold text-xs hover:bg-neon-purple hover:text-white transition-all active:scale-95 cursor-pointer"
+                    >
+                      <Icon name="download" size={15} />
+                      Descargar
+                    </button>
+                    <a
+                      href={doc.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => captureEvent('curriculum_cv_open', { id: doc.id })}
+                      className="inline-flex flex-1 max-w-[10rem] items-center justify-center gap-2 px-4 py-2.5 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-xs hover:bg-white/10 transition-all active:scale-95"
+                    >
+                      <Icon name="external" size={15} />
+                      Inspeccionar
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFullscreen(doc);
+                        captureEvent('curriculum_cv_fullscreen', { id: doc.id });
+                      }}
+                      className="inline-flex flex-1 max-w-[10rem] items-center justify-center gap-2 px-4 py-2.5 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-xs hover:bg-white/10 transition-all active:scale-95 cursor-pointer"
+                    >
+                      <Icon name="eye" size={15} />
+                      Pantalla completa
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
           </div>
           <p className="text-center text-white/30 text-xs mt-6">
             Documentos PDF {cv.documents.length} · previsualización y descarga directa desde el CDN de Ciszu Network.
           </p>
+        </section>
+
+        {/* Resumen validado del CV */}
+        <section className="mb-14">
+          <h2 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.3em] text-neon-purple mb-5">
+            <Icon name="file-text" size={15} />
+            Resumen del CV
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {CV_CUSTOM_SUMMARY.map((block) => (
+              <div
+                key={block.id}
+                className={`p-5 rounded-2xl bg-white/[0.04] border border-white/10 ${
+                  block.tone === 'purple'
+                    ? 'hover:border-neon-purple/40'
+                    : block.tone === 'pink'
+                      ? 'hover:border-neon-pink/40'
+                      : block.tone === 'cyan'
+                        ? 'hover:border-neon-cyan/40'
+                        : 'hover:border-neon-green/40'
+                } transition-colors`}
+              >
+                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500 mb-3">{block.title}</h3>
+                <div className="space-y-3">
+                  {block.highlights.map((hl) => (
+                    <div key={hl.label} className="flex items-start gap-3">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-neon-purple/10 border border-neon-purple/30 text-neon-purple">
+                        <Icon name={hl.icon} size={16} />
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-xs text-white font-header font-bold">{hl.label}</p>
+                        <p className="text-[11px] text-gray-400 leading-snug">{hl.body}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
 
         {/* Stats del CV */}
@@ -376,7 +439,6 @@ export default function CurriculumContent({ cv }: { cv: CurriculumData }) {
             fullscreen ? `Vista previa · PDF · ${fullscreen.pages} páginas · ${fullscreen.size}` : undefined
           }
           size="lg"
-          className="max-w-5xl!"
         >
           {fullscreen ? (
             <div className="space-y-4">
@@ -385,7 +447,7 @@ export default function CurriculumContent({ cv }: { cv: CurriculumData }) {
                 label={fullscreen.label}
                 orientation={fullscreen.orientation}
                 hideToolbar={false}
-                frameClassName="max-w-[min(100%,52rem)]"
+                frameClassName="max-w-[min(100%,42rem)]"
               />
               <div className="flex flex-wrap justify-end gap-2">
                 <a
@@ -408,6 +470,49 @@ export default function CurriculumContent({ cv }: { cv: CurriculumData }) {
                   Abrir en pestaña nueva
                 </a>
               </div>
+            </div>
+          ) : null}
+        </Modal>
+
+        {/* Modal de descarga: múltiples formatos */}
+        <Modal
+          open={downloadAd !== null}
+          onOpenChange={(open) => {
+            if (!open) setDownloadAd(null);
+          }}
+          title={`Descargar ${downloadAd?.label ?? 'CV'}`}
+          description="Elige el formato que prefieras para descargar el currículum."
+          size="md"
+        >
+          {downloadAd ? (
+            <div className="space-y-3">
+              {([
+                { label: 'PDF', ext: 'pdf', href: downloadAd.href, size: downloadAd.size, desc: 'Para imprimir o enviar directamente.' },
+                ...(downloadAd.downloads ?? []),
+              ] as { label: string; ext: string; href: string; size?: string; desc?: string }[]).map((opt) => (
+                <a
+                  key={opt.ext}
+                  href={opt.href}
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => captureEvent('curriculum_cv_download', { id: downloadAd.id, ext: opt.ext })}
+                  className="group flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-neon-purple/50 transition-all"
+                >
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-neon-purple/10 border border-neon-purple/30 text-neon-purple group-hover:scale-110 transition-transform">
+                    <Icon name={opt.ext === 'pdf' ? 'file-text' : opt.ext === 'pptx' ? 'presentation' : opt.ext === 'png' ? 'image' : 'archive'} size={20} />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm text-white font-header font-bold uppercase tracking-wide">
+                      {opt.label}
+                    </span>
+                    <span className="block text-[11px] text-gray-500">{opt.desc ?? `${opt.ext.toUpperCase()} · ${opt.size ?? ''}`}</span>
+                  </span>
+                  <span className="shrink-0 text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-full bg-white/5 border border-white/10 text-gray-400">
+                    {opt.size ?? opt.ext}
+                  </span>
+                </a>
+              ))}
             </div>
           ) : null}
         </Modal>

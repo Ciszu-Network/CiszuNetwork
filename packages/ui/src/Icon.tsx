@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import { resolveIcon, type IconStyle, type IconFormat } from '@ciszunetwork/cdn';
 import { getIcon, iconRegistry } from './generated/icon-registry';
 
+export { getIcon };
+
 export interface IconProps extends Omit<React.HTMLAttributes<HTMLElement>, 'style' | 'color' | 'className'> {
   /** Nombre del icono */
   name: string;
