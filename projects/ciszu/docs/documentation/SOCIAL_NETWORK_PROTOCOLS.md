@@ -1,4 +1,4 @@
-# SOCIAL_NETWORK_PROTOCOLS — Redes Sociales Oficiales (Ciszu Network)
+﻿# SOCIAL_NETWORK_PROTOCOLS — Redes Sociales Oficiales (Ciszu Network)
 
 Versión: 1.1.0
 Actualización: 2026-09-27
@@ -36,7 +36,7 @@ Identificador: SOCIAL_NETWORK_PROTOCOLS_V1.1.0_2026_09_27_ciszunetwork
 | **GitHub** | `CiszukoAntony` — `https://github.com/CiszukoAntony` | ✅ Activo | Personal repos, gists |
 | **Facebook** | `ciszukoantony` — `https://www.facebook.com/ciszukoantony` | ✅ Activo | Página oficial del artista |
 | **Pinterest** | `ciszukoantony` — `https://es.pinterest.com/ciszukoantony` | ✅ Activo | Referencia visual |
-| **LinkedIn** | `in/ciszuko` — `https://linkedin.com/in/ciszuko` | ✅ Activo | Perfil profesional |
+| **LinkedIn** | `in/ciszukoantony` — `https://linkedin.com/in/ciszukoantony` | ✅ Activo | Perfil profesional |
 | **WhatsApp** | `+58 412 6858111` — `https://wa.me/584126858111` | ✅ Activo | Contacto directo |
 | **ArtStation** | `ciszukoantony` | ✅ Activo | Professional art portfolio |
 | **Behance** | `ciszukoantony` | ✅ Activo | Case studies, branding |

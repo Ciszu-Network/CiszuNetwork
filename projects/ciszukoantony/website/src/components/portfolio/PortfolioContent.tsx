@@ -227,7 +227,7 @@ export default function PortfolioContent() {
           <InfoCardGrid title={dict.portfolio.areas} items={areas} theme={THEME} columns={4} />
         </div>
 
-        {/* Puente al currículum (página independiente con los 3 CV) */}
+        {/* Puente al currículum (página independiente con las 2 versiones) */}
         <Link
           href="/curriculum"
           onClick={() => captureEvent('portfolio_curriculum_open')}
@@ -238,11 +238,12 @@ export default function PortfolioContent() {
           </span>
           <div className="flex-1">
             <h2 className="text-lg font-header font-black uppercase italic text-white">
-              Currículum · {CERTIFICATES.length} documentos verificables
+              Currículum actualizado · {CERTIFICATES.length} documentos verificables
             </h2>
             <p className="text-sm text-gray-400 leading-relaxed mt-1">
-              Los 3 currículums en PDF con previsualización en pantalla, experiencia, formación, habilidades, idiomas y
-              certificaciones. La trayectoria completa vive en su propia página.
+              2 versiones oficiales (Custom y LinkedIn) en PDF con previsualización en pantalla, actualizadas a
+              octubre 2026, más experiencia, formación, habilidades y certificaciones. La trayectoria completa vive
+              en su propia página.
             </p>
           </div>
           <span className="inline-flex items-center gap-2 text-[11px] font-header font-black uppercase tracking-widest text-neon-purple shrink-0">

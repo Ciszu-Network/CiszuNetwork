@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Catálogo de proyectos personales de Ciszuko Antony.
  *
  * Fuente de verdad de `/projects`, `/projects/[slug]` y `/portfolio`.
@@ -207,7 +207,7 @@ export const PROJECTS: Project[] = [
     name: 'Francisco García',
     tagline: 'La persona detrás del artista',
     description:
-      'El perfil profesional de Francisco García: 3 currículums en PDF, certificados verificables y la trayectoria real que sostiene cada proyecto.',
+      'El perfil profesional de Francisco García: 2 versiones del CV (Custom y LinkedIn) en PDF, certificados verificables y la trayectoria real que sostiene cada proyecto.',
     longDescription:
       'Detrás de Ciszuko Antony está Francisco García, desarrollador y profesional autodidacta. Esta página reúne su identidad profesional: los tres currículums en PDF con previsualización, los certificados verificables de instituciones y plataformas reales (Cisco, Microsoft, IBM, EF SET y más) y las áreas técnicas y personales que estudia y aplica a diario en el ecosistema.',
     icon: 'user',
@@ -216,7 +216,7 @@ export const PROJECTS: Project[] = [
     categories: ['Persona'],
     stack: ['Currículum', 'Certificaciones', 'Desarrollo', 'Idiomas'],
     features: [
-      { icon: 'terms', title: 'Currículums', desc: '3 CV en PDF con previsualización completa, orientación y datos verificables.' },
+      { icon: 'terms', title: 'Currículums', desc: '2 versiones del CV (Custom y LinkedIn) en PDF con previsualización completa, orientación y datos verificables.' },
       { icon: 'certificates', title: 'Certificaciones', desc: 'Documentos reales con enlace de verificación cuando la institución lo ofrece.' },
       { icon: 'terminal', title: 'Áreas técnicas', desc: 'Programación, datos, web, cloud, IA y diseño aplicadas a los proyectos.' },
       { icon: 'language', title: 'Idiomas', desc: 'Español nativo e inglés certificado (EF SET), en mejora continua.' },
@@ -224,7 +224,7 @@ export const PROJECTS: Project[] = [
     links: [
       { label: 'Currículum', href: '/curriculum', icon: 'certificates' },
       { label: 'Certificados', href: '/certificates', icon: 'certificates' },
-      { label: 'LinkedIn', href: 'https://linkedin.com/in/ciszuko', icon: 'external', external: true },
+      { label: 'LinkedIn', href: 'https://linkedin.com/in/ciszukoantony', icon: 'external', external: true },
       { label: 'GitHub', href: 'https://github.com/CiszukoAntony', icon: 'external', external: true },
     ],
     stats: [

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { Icon, InfoHero, type InfoTheme } from '@ciszu/ui';
@@ -67,7 +67,7 @@ export default function ProjectsPage() {
           <h2 className="mb-3 font-header text-xl font-bold text-white">Explora el portfolio visual</h2>
           <p className="mx-auto mb-6 max-w-xl text-sm text-white/50">
             Además de estas páginas, el portfolio reúne los trabajos con galería visual y el currículum
-            vive con sus 3 CV en PDF y certificados verificables.
+            vive con sus 2 versiones del CV (Custom y LinkedIn) en PDF y certificados verificables.
           </p>
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
             <Link

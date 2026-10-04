@@ -64,6 +64,10 @@ export type CvDocument = {
    * Un CV vertical (A4/Letter) llena un marco alto; uno horizontal, uno ancho.
    */
   orientation: 'portrait' | 'landscape';
+  /** Fecha ISO (yyyy-mm-dd) de la última actualización del documento. */
+  updated?: string;
+  /** true = versión destacada/prioritaria (se muestra primero y resaltada). */
+  featured?: boolean;
 };
 
 export type CurriculumData = {
@@ -78,40 +82,35 @@ export type CurriculumData = {
 /**
  * CVs en PDF subidos al CDN (ciszu-cdn → shared/docs/cv/). Los archivos viven
  * fuera del repo git; aquí solo los metadatos y la URL pública de descarga.
+ *
+ * SOLO 2 versiones oficiales (03 oct 2026): la Custom (prioritaria, primera) y
+ * la de LinkedIn. Las versiones antiguas viven en `shared/docs/cv/olds-cvs/`.
  */
 export const CV_DOCUMENTS: CvDocument[] = [
   {
-    id: 'completo',
-    label: 'CV completo',
+    id: 'custom',
+    label: 'CV Oficial',
     description:
-      'Currículum extendido: datos personales, perfil, experiencia, formación, habilidades e idiomas.',
-    href: assetUrl('shared/docs/cv/curriculum2.pdf'),
-    size: '190 KB',
-    pages: 7,
+      'Currículum profesional customizado: perfil completo, experiencia, formación, habilidades con logos, FODA y todo el ecosistema Ciszu Network.',
+    href: assetUrl('shared/docs/cv/CV-Curriculum-Custom-Francisco_Garcia_Menolascina_Antonio-2026-Oficial.pdf'),
+    size: '1.2 MB',
+    pages: 2,
     type: 'pdf',
     orientation: 'portrait',
-  },
-  {
-    id: 'resumido',
-    label: 'CV resumido',
-    description:
-      'Versión breve del currículum, pensada para procesos de selección rápidos y lectura directa.',
-    href: assetUrl('shared/docs/cv/curriculum1.pdf'),
-    size: '110 KB',
-    pages: 5,
-    type: 'pdf',
-    orientation: 'portrait',
+    updated: '2026-10-03',
+    featured: true,
   },
   {
     id: 'linkedin',
     label: 'CV LinkedIn',
     description:
-      'Perfil exportado de LinkedIn: aptitudes principales, extracto profesional y datos de contacto.',
-    href: assetUrl('shared/docs/cv/curriculum linkedin.pdf'),
-    size: '43 KB',
+      'Versión exportada del perfil de LinkedIn (actualizada): aptitudes principales, extracto profesional y datos de contacto.',
+    href: assetUrl('shared/docs/cv/CV-Curriculum-LinkedinFrancisco_Garcia_Menolascina_Antonio-2026-Oficial.pdf'),
+    size: '47 KB',
     pages: 2,
     type: 'pdf',
     orientation: 'portrait',
+    updated: '2026-10-03',
   },
 ];
 

@@ -30,7 +30,7 @@ Identificador: CONTACTS_PROTOCOLS_V2.1.0_2026_09_27_ciszunetwork
 | X (Twitter) | `https://x.com/CiszukoAntony` |
 | TikTok | `https://www.tiktok.com/@ciszunetwork` |
 | Twitch | `https://www.twitch.tv/ciszukoantony_` |
-| LinkedIn | `https://linkedin.com/in/ciszuko` |
+| LinkedIn | `https://linkedin.com/in/ciszukoantony` |
 | Telegram | `https://t.me/CiszukoNetwork` |
 | Spotify | `https://open.spotify.com/user/317nxlvcrrlwfxjogyirixsqjmfi?si=50c43b75eb6e47db` |
 | SoundCloud | `https://soundcloud.com/ciszukoantony` |

@@ -145,7 +145,7 @@ usan, qué versiones, para qué y con qué reglas. Sirve para:
 | GitHub | `github.com/CiszukoAntony` | Código |
 | X | `x.com/CiszukoAntony` | Red social |
 | Discord | Comunidad de Ciszu Network | Soporte/comunidad |
-| LinkedIn | `linkedin.com/in/ciszuko` | Perfil profesional |
+| LinkedIn | `linkedin.com/in/ciszukoantony` | Perfil profesional |
 | WhatsApp | WhatsApp personal de contacto | Contacto directo |
 | Spotify | Perfil musical | Música |
 

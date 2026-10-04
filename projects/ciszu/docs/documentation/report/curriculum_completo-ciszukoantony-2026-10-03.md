@@ -13,34 +13,34 @@ Identificador: CV_CISZUKO_V1.0.0_2026_10_03
 
 ## 1. Datos personales
 
-| Campo | Valor |
-| --- | --- |
-| Nombre | Ciszuko Antony |
-| Nombre legal | Francisco Antonio García Menolascina |
-| Edad | 17 años |
-| Cumpleaños | 11 de noviembre |
-| País | Venezuela (Coro, Falcón) |
-| Zona horaria | GMT-4 |
-| Email | `ciszunetwork@outlook.com` |
-| Empresa | Ciszu Network (fundador y CEO) |
-| Universidad | UPTAG — Falcón (Ingeniería de Información y Sistemas) |
-| Web | `https://ciszukoantony.vercel.app` |
-| Desde | 2022 (desarrollo), 2023 (Ciszu Network) |
+| Campo        | Valor                                                     |
+| ------------ | --------------------------------------------------------- |
+| Nombre       | Ciszuko Antony                                            |
+| Nombre legal | Francisco Antonio García Menolascina                     |
+| Edad         | 17 años                                                  |
+| Cumpleaños  | 11 de noviembre                                           |
+| País        | Venezuela (Coro, Falcón)                                 |
+| Zona horaria | GMT-4                                                     |
+| Email        | `ciszunetwork@outlook.com`                              |
+| Empresa      | Ciszu Network (fundador y CEO)                            |
+| Universidad  | UPTAG — Falcón (Ingeniería de Información y Sistemas) |
+| Web          | `https://ciszukoantony.vercel.app`                      |
+| Desde        | 2022 (desarrollo), 2023 (Ciszu Network)                   |
 
 ### Redes oficiales (verificables)
 
-| Red | Usuario | URL |
-| --- | --- | --- |
-| YouTube | `@CiszukoAntony` | https://www.youtube.com/@CiszukoAntony |
-| Twitch | `ciszukoantony_` | https://www.twitch.tv/ciszukoantony_ |
-| GitHub | `CiszukoAntony` | https://github.com/CiszukoAntony |
-| Discord (comunidad) | Ciszugamens | https://discord.com/invite/W3kMtMMj6E |
-| X | `@CiszukoAntony` | https://x.com/CiszukoAntony |
-| Instagram | `@itz.ciszukoant0nyz` | https://www.instagram.com/itz.ciszukoant0nyz/ |
-| TikTok | `@ciszukoantonY` | https://www.tiktok.com/@ciszukoantonY |
-| Facebook | `ciszukoantony` | https://www.facebook.com/ciszukoantony |
-| Spotify | CiszukoAntony | https://open.spotify.com/user/317nxlvcrrlwfxjogyirixsqjmfi |
-| SoundCloud | ciszukoantony | https://soundcloud.com/ciszukoantony |
+| Red                 | Usuario                 | URL                                                        |
+| ------------------- | ----------------------- | ---------------------------------------------------------- |
+| YouTube             | `@CiszukoAntony`      | https://www.youtube.com/@CiszukoAntony                     |
+| Twitch              | `ciszukoantony_`      | https://www.twitch.tv/ciszukoantony_                       |
+| GitHub              | `CiszukoAntony`       | https://github.com/CiszukoAntony                           |
+| Discord (comunidad) | Ciszugamens             | https://discord.com/invite/W3kMtMMj6E                      |
+| X                   | `@CiszukoAntony`      | https://x.com/CiszukoAntony                                |
+| Instagram           | `@itz.ciszukoant0nyz` | https://www.instagram.com/itz.ciszukoant0nyz/              |
+| TikTok              | `@ciszukoantonY`      | https://www.tiktok.com/@ciszukoantonY                      |
+| Facebook            | `ciszukoantony`       | https://www.facebook.com/ciszukoantony                     |
+| Spotify             | CiszukoAntony           | https://open.spotify.com/user/317nxlvcrrlwfxjogyirixsqjmfi |
+| SoundCloud          | ciszukoantony           | https://soundcloud.com/ciszukoantony                       |
 
 ---
 
@@ -65,12 +65,14 @@ de WebApps**, **UI/UX**, **análisis de datos**, **bases de datos**, **testing**
 ## 3. Experiencia
 
 ### CEO y fundador — Ciszu Network (2023 — presente)
+
 Dirección de un ecosistema digital completo: **4 webs Next.js** (ciszunetwork, ciszubot,
 ciszukoantony, muzicmania), **bot de Discord**, **juego MuzicMania**, paquetes compartidos
 (`@ciszu/ui`, `@ciszunetwork/utils`, `@ciszunetwork/db`, `@ciszunetwork/cdn`) e infraestructura
 en **Vercel** y **Supabase**.
 
 Logros verificables:
+
 - Sistema de **anuncios** propio (banner inferior, esquina, modal, reward) compartido por las 4 webs.
 - **CI/CD** con GitHub Actions: CI (lint/test/semgrep/audit/gitleaks), CodeQL, DAST semanal, deploys ×4, uptime-watch.
 - **Seguridad**: RLS en toda tabla, rate limit en endpoints, CSP + IAST, step-up de staff, bans por IP, kill switch.
@@ -79,6 +81,7 @@ Logros verificables:
 - **Google Cloud**: reCAPTCHA Enterprise, BigQuery (export GA4), GTM con GA4+AdSense, proyectos documentados.
 
 ### Desarrollador full-stack — Proyectos propios (2022 — presente)
+
 - Aplicaciones web con Next.js, React, TypeScript y Supabase.
 - Bots de Discord y automatización con Python y scripts `.bat`/`.ps1`.
 - Librerías propias publicadas con **Pip** (CiszuPy).
@@ -86,11 +89,13 @@ Logros verificables:
 - Gestión de servidores y bots de Discord para comunidades.
 
 ### Creador de contenido — YouTube/Twitch (2024 — presente)
+
 - Contenido **gaming variado** (canal centrado en juegos).
 - Tutoriales, mods y texturas de juegos.
 - Producción musical con **FL Studio**: álbum de práctica 2024 y banda sonora **Genesis Neon**.
 
 ### Diseñador, editor e ilustrador — Multiplataforma (2024 — presente)
+
 - Identidad visual con **Adobe, Affinity y Corel**.
 - Edición de vídeo con **DaVinci Resolve, Filmora y CapCut**.
 - Ilustración digital para el ecosistema.
@@ -100,16 +105,19 @@ Logros verificables:
 ## 4. Formación
 
 ### Educación formal
+
 - **Bachillerato** — Diploma de graduación (graduado entre los mejores estudiantes).
 - **Universidad UPTAG** (Falcón) — Ingeniería de Información y Sistemas (en curso).
 
 ### Inglés
+
 - **EF SET English Certificate — B1** (43/100, verificable en `cert.efset.org`, ID `WMJgBe`).
 - **English Fundamentals** — University of Pennsylvania · Penn ELP (ID `OA-2026-0903003148449`).
 - **Spoken English Course** (ID `10686381`).
 - **Business English, Part 1** — SimpleLearn (ID `OA-2026-0904003152939`).
 
 ### Programación y datos (Cisco, IBM, Microsoft, HP)
+
 - **Cisco Networking Academy**: HTML Essentials, CSS Essentials, Python Essentials 1 y 2,
   Introduction to Modern AI, Digital Awareness (jun–jul 2026).
 - **IBM SkillsBuild**: What is Open Source?, Introduction to IT (Codecademy),
@@ -127,6 +135,7 @@ Logros verificables:
   Edición de Vídeos, YouTube, Monetizar canal automatizado de YouTube, Finanzas personales (abr 2026).
 
 ### Perfil de personalidad
+
 - **16Personalities — Arquitecto (INTJ-A)** (abr 2026).
 
 ---
@@ -134,56 +143,62 @@ Logros verificables:
 ## 5. Habilidades técnicas (niveles autodeclarados)
 
 ### Lenguajes
-| Tecnología | Nivel |
-| --- | --- |
-| Python | 80% |
-| JavaScript | 20% |
-| TypeScript | 25% |
-| Java | 10% |
-| C / C++ / C# | 10% |
-| Lua / Luau | 25% |
-| Julia | 60% |
-| Ruby / Perl / R / Rust / ASM | 7% |
-| Kotlin / Swift | 5% |
+
+| Tecnología                  | Nivel |
+| ---------------------------- | ----- |
+| Python                       | 80%   |
+| JavaScript                   | 20%   |
+| TypeScript                   | 25%   |
+| Java                         | 10%   |
+| C / C++ / C#                 | 10%   |
+| Lua / Luau                   | 25%   |
+| Julia                        | 60%   |
+| Ruby / Perl / R / Rust / ASM | 7%    |
+| Kotlin / Swift               | 5%    |
 
 ### Frontend
+
 | Tecnología | Nivel |
-| --- | --- |
-| HTML | 85% |
-| CSS | 85% |
-| XML | 30% |
-| SASS | 70% |
-| React | 35% |
+| ----------- | ----- |
+| HTML        | 85%   |
+| CSS         | 85%   |
+| XML         | 30%   |
+| SASS        | 70%   |
+| React       | 35%   |
 
 ### Backend
+
 | Tecnología | Nivel |
-| --- | --- |
-| Node.js | 40% |
-| Express.js | 30% |
-| Django | 35% |
-| Next.js | 40% |
+| ----------- | ----- |
+| Node.js     | 40%   |
+| Express.js  | 30%   |
+| Django      | 35%   |
+| Next.js     | 40%   |
 
 ### Datos
-| Tecnología | Nivel |
-| --- | --- |
-| SQL (SQLite) | 60% |
-| (CRUD, índices, consultas) | |
+
+| Tecnología                 | Nivel |
+| --------------------------- | ----- |
+| SQL (SQLite)                | 60%   |
+| (CRUD, índices, consultas) |       |
 
 ### DevOps
-| Tecnología | Nivel |
-| --- | --- |
-| Docker | 10% |
-| Linux / Bash | 25% |
+
+| Tecnología  | Nivel |
+| ------------ | ----- |
+| Docker       | 10%   |
+| Linux / Bash | 25%   |
 
 ### Herramientas y plataformas
-| Herramienta | Nivel |
-| --- | --- |
-| Git / GitHub (CI/CD, Actions, wikis, repos, PRs) | 90% |
-| npm / pnpm | 70% |
-| TOML / JSON / YAML | 70% |
-| Prettier / ESLint / Ruff | 70% |
-| Vercel, Supabase, GitHub Pages, Cloudflare | Uso diario |
-| Google Cloud, Notion, Trello | Uso diario |
+
+| Herramienta                                      | Nivel      |
+| ------------------------------------------------ | ---------- |
+| Git / GitHub (CI/CD, Actions, wikis, repos, PRs) | 90%        |
+| npm / pnpm                                       | 70%        |
+| TOML / JSON / YAML                               | 70%        |
+| Prettier / ESLint / Ruff                         | 70%        |
+| Vercel, Supabase, GitHub Pages, Cloudflare       | Uso diario |
+| Google Cloud, Notion, Trello                     | Uso diario |
 
 ---
 
@@ -203,21 +218,26 @@ Logros verificables:
 ## 7. Proyectos del ecosistema
 
 ### Ciszu Network (empresa) — `ciszunetwork.vercel.app`
+
 Web principal del ecosistema: marca, redes, ecosistema y **centro de documentación**
 (62+ docs). Sistema de anuncios, CISZU ID, seguridad completa.
 
 ### Ciszuko Antony (marca personal) — `ciszukoantony.vercel.app`
+
 Portfolio personal: logos, medios, música, certificados verificables, curriculum, comisiones.
 
 ### MuzicMania (juego de ritmo) — `muzicmania.vercel.app`
+
 Juego de música con scores en schema `muzicmania`, auth, app Tauri + NSIS. Banda sonora
 **Genesis Neon** producida por el artista.
 
 ### CiszuBot (bot de Discord) — `ciszubot.vercel.app`
+
 Bot Discord.js con 72 comandos (economía, niveles, música, tickets, moderación) + landing web
 con estado en vivo.
 
 ### MusicBoard
+
 Reproductor propio con la obra musical del artista: álbum de práctica **FL Studio Track
 Practice 2024** y **Genesis Neon**. Distribución en SoundCloud, YouTube Music y Spotify.
 
@@ -243,6 +263,7 @@ presencia digital, bots, automatización, etc.
 ## 10. Análisis FODA
 
 ### Fortalezas (internas)
+
 - **Multidisciplinario**: desarrollo + diseño + edición + música + contenido — un solo
   profesional cubre toda la cadena del proyecto.
 - **Proyecto real verificable**: monorepo completo, CI/CD, seguridad, documentación — no es
@@ -254,6 +275,7 @@ presencia digital, bots, automatización, etc.
 - **GitHub avanzado**: CI/CD, Actions, workflows, wikis, releases — automatización real.
 
 ### Oportunidades (externas)
+
 - **UPTAG y carrera universitaria**: formación formal en Ingeniería de Información y Sistemas.
 - **Mercado full-stack**: alta demanda de desarrolladores con portfolio de producto real.
 - **Ecosistema Google Cloud**: reCAPTCHA Enterprise, BigQuery/GA4, GTM — monetización y
@@ -263,6 +285,7 @@ presencia digital, bots, automatización, etc.
   (dart, golang, tsx que quiere aprender).
 
 ### Debilidades (internas)
+
 - **JavaScript/TypeScript** aún en nivel inicial (20-25%): el stack principal de las webs
   depende en parte de la IA que creó el código base.
 - **Docker, Linux/Bash y VPS** en nivel bajo (10-25%): despliegue avanzado y operación 24/7
@@ -273,6 +296,7 @@ presencia digital, bots, automatización, etc.
 - **Red/Internet inestable** en la ubicación actual, que afecta despliegues y pruebas locales.
 
 ### Amenazas (externas)
+
 - **Competencia**: mercado full-stack saturado; se distingue por el portfolio real.
 - **Dependencia de plataformas**: Vercel/Supabase gratis con límites; sin billing, funciones
   como uptime checks de Cloud Monitoring quedan bloqueadas.

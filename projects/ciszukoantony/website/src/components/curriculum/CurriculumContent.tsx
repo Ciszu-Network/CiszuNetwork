@@ -128,29 +128,49 @@ export default function CurriculumContent({ cv }: { cv: CurriculumData }) {
           </div>
         </div>
 
-        {/* Currículums: previsualización SIEMPRE visible, adaptada a la orientación */}
+        {/* Currículums: previsualización SIEMPRE visible, adaptada a la orientación.
+              La versión destacada (featured) va primero y resaltada. */}
         <section className="mb-14">
-          <h2 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.3em] text-neon-purple mb-5">
-            <Icon name="certificates" size={15} />
-            Currículums ({cv.documents.length})
-          </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {cv.documents.map((doc) => (
-              <article
-                key={doc.id}
-                className="flex flex-col p-5 rounded-[2rem] bg-white/5 border border-white/10 hover:border-neon-purple/40 transition-all"
-              >
-                <div className="flex items-start justify-between gap-3 mb-4">
-                  <div>
-                    <h3 className="font-header font-bold text-white">{doc.label}</h3>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mt-1">
-                      PDF · {doc.pages} páginas · {doc.size}
-                    </p>
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
+            <h2 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.3em] text-neon-purple">
+              <Icon name="certificates" size={15} />
+              Currículums ({cv.documents.length})
+            </h2>
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-gray-500">
+              <Icon name="clock" size={13} />
+              Última actualización: oct 2026
+            </span>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {[...cv.documents]
+              .sort((a, b) => Number(b.featured ?? false) - Number(a.featured ?? false))
+              .map((doc) => (
+                <article
+                  key={doc.id}
+                  className={`relative flex flex-col p-5 rounded-[2rem] border transition-all ${
+                    doc.featured
+                      ? 'bg-gradient-to-br from-neon-purple/15 via-transparent to-transparent border-neon-purple/50 shadow-[0_0_30px_rgba(72,0,255,0.15)]'
+                      : 'bg-white/5 border-white/10 hover:border-neon-purple/40'
+                  }`}
+                >
+                  {doc.featured && (
+                    <span className="absolute -top-2.5 right-4 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-neon-purple text-white text-[9px] font-black uppercase tracking-widest shadow-lg">
+                      <Icon name="star" size={10} />
+                      Recomendado
+                    </span>
+                  )}
+                  <div className="flex items-start justify-between gap-3 mb-4">
+                    <div>
+                      <h3 className="font-header font-bold text-white">{doc.label}</h3>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mt-1">
+                        PDF · {doc.pages} páginas · {doc.size}
+                        {doc.updated ? ` · Actualizado ${doc.updated.slice(0, 7)}` : ''}
+                      </p>
+                    </div>
+                    <span className="shrink-0 text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-full bg-neon-purple/10 border border-neon-purple/40 text-neon-purple">
+                      {doc.type}
+                    </span>
                   </div>
-                  <span className="shrink-0 text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-full bg-neon-purple/10 border border-neon-purple/40 text-neon-purple">
-                    {doc.type}
-                  </span>
-                </div>
 
                 <CvPreview
                   href={doc.href}
