@@ -1,0 +1,121 @@
+CURRICULUM PROFESIONAL - CISZUKO ANTONY
+Version 1.0.0 - 03 oct 2026
+Identificador: CV_CISZUKO_V1.0.0_2026_10_03
+
+Francisco Antonio Garcia Menolascina (Ciszuko Antony)
+17 anos - 11 de noviembre - Coro, Falcon, Venezuela (GMT-4)
+Email: ciszunetwork@outlook.com
+Web: https://ciszukoantony.vercel.app
+Empresa: Ciszu Network (fundador y CEO)
+Universidad: UPTAG Falcon (Ingenieria de Informacion y Sistemas)
+Desde: 2022 (desarrollo) - 2023 (Ciszu Network)
+
+REDES OFICIALES
+YouTube @CiszukoAntony | Twitch ciszukoantony_ | GitHub CiszukoAntony
+Discord Ciszugamens | X @CiszukoAntony | Instagram @itz.ciszukoant0nyz
+TikTok @ciszukoantonY | Facebook ciszukoantony | Spotify CiszukoAntony
+SoundCloud ciszukoantony
+
+PERFIL PROFESIONAL
+Desarrollador full-stack y artista digital. Construyo webs, bots, juegos y
+herramientas sobre un monorepo propio con Next.js, TypeScript, Python y Supabase,
+con identidad visual y documentacion de ingenieria verificable. Fundador y CEO de
+Ciszu Network: 4 webs Next.js, bot de Discord, juego MuzicMania, paquetes
+compartidos e infraestructura en Vercel, Supabase y Google Cloud. Ademas: diseno
+(Adobe, Affinity, Corel), edicion (DaVinci, Filmora, CapCut), musica (FL Studio)
+y contenido (YouTube gaming, mods, servidores y bots).
+
+Objetivo: Ingeniero de Informacion y Sistemas, especializado en full-stack de
+WebApps, UI/UX, analisis de datos, bases de datos, testing y pentesting.
+
+EXPERIENCIA
+CEO y fundador - Ciszu Network (2023-presente)
+- 4 webs Next.js, bot Discord, juego MuzicMania, paquetes compartidos.
+- Sistema de anuncios propio compartido por las 4 webs.
+- CI/CD con GitHub Actions: CI, CodeQL, DAST, deploys x4, uptime-watch.
+- Seguridad: RLS, rate limit, CSP+IAST, step-up de staff, bans por IP, kill switch.
+- reCAPTCHA Enterprise y User-ID de GA4 en las 4 webs.
+- Autenticacion CISZU ID (C-XXX-XXX, 2FA, recuperacion, eliminacion 15 dias).
+- Google Cloud: reCAPTCHA, BigQuery (GA4), GTM con GA4+AdSense.
+
+Desarrollador full-stack - Proyectos propios (2022-presente)
+- Web con Next.js, React, TypeScript, Supabase.
+- Bots de Discord y automatizacion (Python, scripts .bat/.ps1).
+- Librerias propias con Pip (CiszuPy).
+- Servidores de Minecraft, mods y texturas.
+
+Creador de contenido - YouTube/Twitch (2024-presente)
+- Gaming, tutoriales, mods, texturas.
+- Musica con FL Studio: album 2024 y Genesis Neon.
+
+Disenador, editor e ilustrador (2024-presente)
+- Adobe, Affinity, Corel; DaVinci, Filmora, CapCut; ilustracion.
+
+FORMACION
+- Bachillerato (graduado entre los mejores).
+- Universidad UPTAG Falcon - Ingenieria de Informacion y Sistemas (en curso).
+- Ingles: EF SET B1 (43/100, ID WMJgBe); Penn ELP English Fundamentals;
+  Spoken English; Business English (SimpleLearn).
+- Cisco: HTML, CSS, Python 1 y 2, Modern AI, Digital Awareness.
+- IBM SkillsBuild: Open Source, Intro to IT, UX Basics, Digital Marketing.
+- Microsoft Learn: servicios en la nube (4 modulos).
+- HP LIFE: Ciencia de Datos, Comunicacion, Marketing Social, Financiamiento,
+  Destrezas Digitales, Ciberseguridad, Planificacion IA, Experiencia Cliente.
+- Online ES: Python, Ciencia de Datos, Ciberseguridad, Storytelling, Ads Social,
+  Agile/Proyectos, Excel, Publicidad digital, Pensamiento creativo/critico, SEO.
+- SimpleLearn: Python for Beginners, React.
+- Cursos: ChatGPT, IA, Python, ingles, Photoshop, CapCut, Edicion, YouTube,
+  Monetizar canal, Finanzas personales.
+- 16Personalities: Arquitecto (INTJ-A).
+
+HABILIDADES (niveles autodeclarados)
+Lenguajes: Python 80 | JavaScript 20 | TypeScript 25 | Java 10 | C/C++/C# 10 |
+Lua/Luau 25 | Julia 60 | Ruby/Perl/R/Rust/ASM 7 | Kotlin/Swift 5
+Frontend: HTML 85 | CSS 85 | XML 30 | SASS 70 | React 35
+Backend: Node.js 40 | Express.js 30 | Django 35 | Next.js 40
+Datos: SQL (SQLite) 60
+DevOps: Docker 10 | Linux/Bash 25
+Herramientas: Git/GitHub 90 | npm/pnpm 70 | TOML/JSON/YAML 70 |
+Prettier/ESLint/Ruff 70 | Vercel/Supabase/GCP uso diario
+
+HERRAMIENTAS
+Adobe, Affinity, Corel, DaVinci Resolve, Filmora, CapCut, Office, Google Docs,
+VS Code. Navegadores: Tor, Brave, Opera GX, Chrome, Firefox, Edge.
+IA: Gemini, DeepSeek, Claude, ChatGPT.
+
+PROYECTOS
+Ciszu Network (ciszunetwork.vercel.app) - web principal + centro de documentacion.
+Ciszuko Antony (ciszukoantony.vercel.app) - portfolio, certificados, curriculum.
+MuzicMania (muzicmania.vercel.app) - juego de ritmo, app Tauri+NSIS.
+CiszuBot (ciszubot.vercel.app) - bot Discord 72 comandos + landing.
+MusicBoard - reproductor propio: FL Studio 2024 + Genesis Neon.
+
+MUSICA
+FL Studio Track Practice 2024 (album de practica, 4 pistas).
+Genesis Neon (banda sonora de MuzicMania).
+Plataformas: SoundCloud, YouTube Music, Spotify.
+
+COMISIONES
+13 servicios reales de Ciszu Network (diseno, documentos, seguridad, presencia
+digital, experiencias). Atencion directa, facturacion via Ciszu Network.
+
+ANALISIS FODA
+FORTALEZAS: multidisciplinario; proyecto real verificable (monorepo + CI/CD +
+seguridad); 55+ certificados reales; gestion de producto; dominio de IA;
+GitHub avanzado.
+OPORTUNIDADES: formacion universitaria; mercado full-stack; ecosistema Google
+Cloud desplegado; monetizacion AdSense; expansion (CiszuPy, mas frameworks).
+DEBILIDADES: JS/TS inicial (20-25%); Docker/Linux/VPS bajos (10-25%);
+Java/C/C++/C# basicos; PostgreSQL avanzado en desarrollo; internet inestable.
+AMENAZAS: competencia; dependencia de Vercel/Supabase gratis; AdSense en
+revision; coste de infraestructura; repo publico (riesgo de secretos).
+
+IDIOMAS
+Espanol (nativo). Ingles (B1, EF SET 43/100, certificado).
+
+OTROS
+INTJ-A (Arquitecto). Intereses: peliculas, comer, gaming, tutoriales/mods,
+musica, servidores y bots. Quiere aprender: Dart, Golang, TSX.
+XML: uso parcial (30%).
+
+Ultima revision: 03 oct 2026.
