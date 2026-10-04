@@ -121,7 +121,7 @@ export default function CurriculumContent({ cv }: { cv: CurriculumData }) {
                 href="/portfolio"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/10 transition-all"
               >
-                <Icon name="palette" size={16} />
+                <Icon name="briefcase" size={16} />
                 {dict.portfolio.kicker}
               </Link>
               <Link

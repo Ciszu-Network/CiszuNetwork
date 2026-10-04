@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Exo_2, Rajdhani } from "next/font/google";
+import { buildSeoMetadata, seoJsonLdString } from "@ciszunetwork/utils/seo";
 import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import "./globals.scss";
@@ -39,8 +40,15 @@ export const viewport = {
  * entrada propia (el helper cae al prefijo `/`).
  */
 export const metadata: Metadata = {
-  title: "MuzicMania | HOME",
-  description: "El Juego de Ritmo Definitivo en la Web. Domina el beat en una dimensión online con estética futurista.",
+  ...buildSeoMetadata({
+    title: 'MuzicMania | El Juego de Ritmo Definitivo en la Web',
+    description:
+      'El Juego de Ritmo Definitivo en la Web. Domina el beat en una dimensión online con estética futurista y la banda sonora Genesis Neon de Ciszuko Antony.',
+    url: 'https://muzicmania.vercel.app/',
+    siteName: 'MuzicMania',
+    keywords: ['muzicmania', 'juego ritmo', 'rhythm game', 'genesis neon', 'ciszu network', 'música'],
+    image: 'https://muzicmania.vercel.app/pwa/icon-512.png',
+  }),
   appleWebApp: { capable: true, title: "MuzicMania", statusBarStyle: "black-translucent" },
   manifest: "/manifest.webmanifest",
   verification: {
@@ -79,6 +87,18 @@ export default function RootLayout({
           suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=JSON.parse(localStorage.getItem('ciszu_preferences')||'{}');if(t&&t.theme==='light')document.documentElement.classList.add('light');}catch(e){}})();`,
+          }}
+        />
+        <script
+          type="application/ld+json"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{
+            __html: seoJsonLdString(
+              'MuzicMania',
+              'https://muzicmania.vercel.app/',
+              'El Juego de Ritmo Definitivo en la Web con la banda sonora Genesis Neon.',
+              'https://muzicmania.vercel.app/pwa/icon-512.png',
+            ),
           }}
         />
         <GoogleScripts />

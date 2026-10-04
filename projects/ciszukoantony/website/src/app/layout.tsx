@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Exo_2, Rajdhani } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
+import { buildSeoMetadata, seoJsonLdString } from "@ciszunetwork/utils/seo";
 import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Navbar from "@/components/layout/Navbar";
@@ -43,11 +44,17 @@ export const viewport = {
  * entrada propia (el helper cae al prefijo `/`).
  */
 export const metadata: Metadata = {
+  ...buildSeoMetadata({
+    title: "Ciszuko Antony | Portfolio",
+    description:
+      "Official portfolio of Ciszuko Antony (Francisco Antonio García Menolascina) — CEO & Founder of Ciszu Network. Innovation, development, design and technology.",
+    url: "https://ciszukoantony.vercel.app/",
+    siteName: "Ciszuko Antony",
+    keywords: ["Ciszuko Antony", "Ciszu Network", "portfolio", "developer", "Venezuela", "CEO", "technology"],
+    image: OG_IMAGE,
+    author: "Ciszuko Antony",
+  }),
   metadataBase: new URL("https://ciszukoantony.vercel.app"),
-  title: "Ciszuko Antony | HOME",
-  description:
-    "Official portfolio of Ciszuko Antony (Francisco Garcia Antonio M. / y8) — CEO & Founder of Ciszuko Network. Innovation, development and technology.",
-  keywords: ["Ciszuko Antony", "Ciszuko Network", "portfolio", "developer", "Venezuela", "CEO", "technology"],
   icons: {
     icon: PROFILE_PIC,
     shortcut: PROFILE_PIC,
@@ -57,11 +64,11 @@ export const metadata: Metadata = {
   manifest: "/manifest.webmanifest",
   openGraph: {
     title: "Ciszuko Antony",
-    description: "Official portfolio of Ciszuko Antony (Francisco Garcia Antonio M. / y8) — CEO & Founder of Ciszuko Network.",
+    description: "Official portfolio of Ciszuko Antony (Francisco García Menolascina) — CEO & Founder of Ciszu Network.",
     url: "https://ciszukoantony.vercel.app",
     siteName: "Ciszuko Antony",
-    images: [{ url: OG_IMAGE, width: 132, height: 118 }],
-    locale: "en_US",
+    images: [{ url: OG_IMAGE, width: 1200, height: 630 }],
+    locale: "es_ES",
     type: "website",
   },
   verification: {
@@ -85,6 +92,18 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=JSON.parse(localStorage.getItem('ciszu_preferences')||'{}');if(t&&t.theme==='light')document.documentElement.classList.add('light');}catch(e){}})();`,
+          }}
+        />
+        <script
+          type="application/ld+json"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{
+            __html: seoJsonLdString(
+              'Ciszuko Antony',
+              'https://ciszukoantony.vercel.app/',
+              'Portfolio oficial de Ciszuko Antony (Francisco Antonio García Menolascina) — CEO y fundador de Ciszu Network.',
+              'https://ciszukoantony.vercel.app/pwa/icon-512.png',
+            ),
           }}
         />
         <GoogleScripts />

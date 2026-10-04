@@ -16,6 +16,7 @@
     "./auth-recovery": "./src/authRecovery.ts",
     "./recaptcha": "./src/recaptcha.ts",
     "./recaptcha-route": "./src/recaptchaRoute.ts",
+    "./seo": "./src/seo.ts",
     "./recovery-client": "./src/recoveryClient.ts",
     "./two-factor": "./src/twoFactor.ts",
     "./i18n-audit": "./src/i18nAudit.ts",

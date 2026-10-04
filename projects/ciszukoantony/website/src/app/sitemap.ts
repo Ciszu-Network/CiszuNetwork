@@ -11,12 +11,16 @@ const ROUTES = [
   'about',
   'certificates',
   'contact',
+  'credits',
   'downloads',
   'donate',
   'faq',
   'feedback',
+  'guidelines',
   'help',
   'information',
+  'license',
+  'policy',
   'policies',
   'projects',
   'portfolio',
@@ -31,6 +35,7 @@ const ROUTES = [
   'stats',
   'forum',
   'documentation',
+  'rules',
   // Una URL por proyecto personal con página de detalle.
   ...PROJECTS.map((project) => `projects/${project.slug}`),
   // Una URL por entrada del registro de cambios (página interna de detalle).
@@ -43,7 +48,7 @@ export default function sitemap() {
   return ROUTES.map((route) => ({
     url: `${BASE}/${route}`,
     lastModified: new Date(),
-    changeFrequency: 'monthly',
-    priority: route === '' ? 1 : 0.7,
+    changeFrequency: 'monthly' as const,
+    priority: route === '' ? 1 : route === 'portfolio' || route === 'curriculum' || route === 'musicboard' ? 0.9 : 0.6,
   }));
 }

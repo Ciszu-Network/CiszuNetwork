@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import Script from "next/script";
 import { IBM_Plex_Sans, IBM_Plex_Sans_Condensed } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
+import { buildSeoMetadata, seoJsonLdString } from "@ciszunetwork/utils/seo";
 import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Navbar from "@/components/layout/Navbar";
@@ -35,9 +36,14 @@ export const viewport = {
   themeColor: "#000000",
 };
 export const metadata: Metadata = {
-  title: "Ciszu Network — Innovación Digital",
-  description: "Ciszu Network desarrolla soluciones digitales de alto rendimiento. Liderados por Ciszuko Antony, CEO. Proyectos: MuzicMania, Minecraft, Discord, WhatsApp, Telegram y más.",
-  keywords: ["Ciszu Network", "Ciszuko Antony", "MuzicMania", "desarrollo web", "Next.js", "Venezuela"],
+  ...buildSeoMetadata({
+    title: "Ciszu Network — Innovación Digital",
+    description: "Ciszu Network desarrolla soluciones digitales de alto rendimiento. Liderados por Ciszuko Antony, CEO. Proyectos: MuzicMania, Minecraft, Discord, WhatsApp, Telegram y más.",
+    url: "https://ciszunetwork.vercel.app/",
+    siteName: CISZU_NETWORK.name,
+    keywords: ["Ciszu Network", "Ciszuko Antony", "MuzicMania", "desarrollo web", "Next.js", "Venezuela", "innovación digital"],
+    image: "https://ciszunetwork.vercel.app/pwa/icon-512.png",
+  }),
   icons: {
     icon: ICON_SVG,
     shortcut: ICON_SVG,
@@ -45,13 +51,6 @@ export const metadata: Metadata = {
   },
   appleWebApp: { capable: true, title: "Ciszu Network", statusBarStyle: "black-translucent" },
   manifest: "/manifest.webmanifest",
-  openGraph: {
-    title: "Ciszu Network — Innovación Digital",
-    description: "Bright Future Promised. Desarrollo web, infraestructura cloud y experiencias digitales.",
-    siteName: CISZU_NETWORK.name,
-    locale: "es_ES",
-    type: "website",
-  },
   verification: {
     google: "9jc8qVjHjC3ZpZ7gpgbIpHrloar3kaeNIEy0EnR2uc0",
   },
@@ -81,6 +80,18 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
     <html lang={lang} className={`${ibmPlex.variable} ${ibmPlexCondensed.variable}`} suppressHydrationWarning>
       <head suppressHydrationWarning>
         <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script
+          type="application/ld+json"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{
+            __html: seoJsonLdString(
+              'Ciszu Network',
+              'https://ciszunetwork.vercel.app/',
+              'Ciszu Network desarrolla soluciones digitales de alto rendimiento, lideradas por Ciszuko Antony.',
+              'https://ciszunetwork.vercel.app/pwa/icon-512.png',
+            ),
+          }}
+        />
         <Script
           id="kofi-widget"
           src="https://storage.ko-fi.com/cdn/scripts/overlay-widget.js"

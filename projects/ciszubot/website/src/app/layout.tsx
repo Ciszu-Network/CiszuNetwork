@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Inter, Space_Grotesk } from "next/font/google";
+import { buildSeoMetadata, seoJsonLdString } from "@ciszunetwork/utils/seo";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import FeedbackFab from "@/components/layout/FeedbackFab";
@@ -44,9 +45,15 @@ export const viewport = {
   themeColor: "#12141a",
 };
 export const metadata: Metadata = {
-  title: "CiszuBot | HOME",
-  description:
-    "El bot de Discord de Ciszu Network. Comandos divertidos, de información y utilidad con prefijo cz! y slash commands. Moderno, rápido y en español.",
+  ...buildSeoMetadata({
+    title: 'CiszuBot | El bot de Discord de Ciszu Network',
+    description:
+      'El bot de Discord de Ciszu Network. Comandos divertidos, de información y utilidad con prefijo cz! y slash commands. Moderno, rápido y en español.',
+    url: 'https://ciszubot.vercel.app/',
+    siteName: 'CiszuBot',
+    keywords: ['ciszubot', 'bot discord', 'discord bot', 'ciszu network', 'comandos', 'slash commands'],
+    image: 'https://ciszubot.vercel.app/pwa/icon-512.png',
+  }),
   appleWebApp: { capable: true, title: "CiszuBot", statusBarStyle: "black-translucent" },
   manifest: "/manifest.webmanifest",
   verification: {
@@ -75,6 +82,18 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           Es una mutación legítima de un tercero: se silencia el aviso, no el bug. */}
       <head suppressHydrationWarning>
         <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script
+          type="application/ld+json"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{
+            __html: seoJsonLdString(
+              'CiszuBot',
+              'https://ciszubot.vercel.app/',
+              'El bot de Discord de Ciszu Network. Comandos divertidos, de información y utilidad con prefijo cz! y slash commands.',
+              'https://ciszubot.vercel.app/pwa/icon-512.png',
+            ),
+          }}
+        />
         {process.env.NODE_ENV === 'production' && (
           <script defer type="module" data-cookie-consent="optional" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
         )}

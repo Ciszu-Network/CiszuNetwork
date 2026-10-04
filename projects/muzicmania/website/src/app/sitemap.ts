@@ -13,6 +13,7 @@ const ROUTES = [
   'donate',
   'download',
   'faq',
+  'fddp2026',
   'feedback',
   'forum',
   'guidelines',
@@ -36,7 +37,7 @@ export default function sitemap() {
   return ROUTES.map((route) => ({
     url: `${BASE}/${route}`,
     lastModified: new Date(),
-    changeFrequency: 'monthly',
-    priority: route === '' ? 1 : 0.7,
+    changeFrequency: 'monthly' as const,
+    priority: route === '' ? 1 : route === 'library' || route === 'play' ? 0.8 : 0.6,
   }));
 }
