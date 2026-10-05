@@ -26,7 +26,7 @@
  * vez de fingir éxito.
  */
 
-import { EMAIL_SITE_ISOTYPES } from './emailSites.generated';
+import { EMAIL_SITE_ISOTYPES, EMAIL_CISZU_WORDMARK } from './emailSites.generated';
 
 export const EMAIL_BRAND_NAME = 'Ciszu Network';
 
@@ -269,6 +269,8 @@ export function renderBrandedEmail(input: BrandedEmailInput): RenderedEmail {
     : `Este correo es una notificación de seguridad de tu cuenta y <strong style="color:#e9ebf2;">no es publicidad ni patrocinio</strong>. No respondas a este mensaje: la bandeja no se atiende.`;
 
   const isotipo = EMAIL_SITE_ISOTYPES[site.key] ?? EMAIL_SITE_ISOTYPES.ciszu;
+  const isotipoSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${isotipo.viewBox}" width="38" height="38" preserveAspectRatio="xMidYMid meet" style="vertical-align:middle;"><g>${isotipo.inner}</g></svg>`;
+  const wordmarkSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${EMAIL_CISZU_WORDMARK.viewBox}" width="150" height="51" preserveAspectRatio="xMidYMid meet" style="vertical-align:middle;"><g>${EMAIL_CISZU_WORDMARK.inner}</g></svg>`;
 
   const html = `<!doctype html>
 <html lang="es">
@@ -280,13 +282,11 @@ export function renderBrandedEmail(input: BrandedEmailInput): RenderedEmail {
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
             <tr>
               <td align="left" style="font-size:0;line-height:0;">
-                <span style="color:#ffffff;font-size:16px;font-weight:800;letter-spacing:1px;">${EMAIL_BRAND_NAME}</span>
-                <div style="color:rgba(255,255,255,0.85);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-top:2px;">${escapeHtml(site.name)}</div>
+                ${wordmarkSvg}
+                <div style="color:rgba(255,255,255,0.9);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-top:4px;">${escapeHtml(site.name)}</div>
               </td>
               <td align="right" style="font-size:0;line-height:0;">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="40" height="40" style="vertical-align:middle;">
-                  <g transform="translate(12 12) scale(0.14) translate(-12 -12)">${isotipo.replace(/<\/?svg[^>]*>/g, '')}</g>
-                </svg>
+                ${isotipoSvg}
               </td>
             </tr>
           </table>
