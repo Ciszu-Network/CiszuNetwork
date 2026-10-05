@@ -161,7 +161,7 @@ function createMailer(): TwoFactorMailer {
   return {
     async send({ to, code, siteName, expiresAt }) {
       const minutes = Math.max(1, Math.round((expiresAt - Date.now()) / 60000));
-      const mail = twoFactorEmail({ siteName, code, expiresInMinutes: minutes, maxAttempts: 3 });
+      const mail = twoFactorEmail({ siteKey: SITE, siteName, code, expiresInMinutes: minutes, maxAttempts: 3 });
       const result = await sendBrandedEmail({
         to,
         subject: mail.subject,

@@ -107,6 +107,12 @@ export default function AccountSettingsPanel({
   const [emailNotif, setEmailNotif] = useState(true);
   const [otpReminder, setOtpReminder] = useState(true);
   const [notifMsg, setNotifMsg] = useState<string | null>(null);
+  // Preferencias de notificación/patrocinio (ecosistema).
+  const [sponsorship, setSponsorship] = useState(false);
+  const [accountAlerts, setAccountAlerts] = useState(true);
+  const [siteNotifs, setSiteNotifs] = useState(true);
+  const [newsletter, setNewsletter] = useState(false);
+  const [prefsBusy, setPrefsBusy] = useState(false);
   const [debugOpen, setDebugOpen] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [myRole, setMyRole] = useState<string | null>(null);
@@ -163,6 +169,35 @@ export default function AccountSettingsPanel({
           setDisplayName(typeof metadata.display_name === 'string' ? metadata.display_name : '');
           setEmailNotif(metadata.email_notifications !== false);
           setOtpReminder(metadata.otp_reminder !== false);
+          // Preferencias de notificación/patrocinio del ecosistema (tabla RLS).
+          try {
+            const prefsBase = apiBase.replace(/\/2fa$/, '');
+            const session = await supabase.auth.getSession();
+            const prefsRes = await fetch(`${prefsBase}/account/preferences`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${session.data.session?.access_token ?? ''}`,
+              },
+            });
+            const prefsJson = (await prefsRes.json().catch(() => ({}))) as {
+              preferences?: {
+                sponsorship_enabled?: boolean;
+                account_alerts_enabled?: boolean;
+                site_notifications_enabled?: boolean;
+                newsletter_enabled?: boolean;
+              };
+            };
+            const p = prefsJson.preferences;
+            if (p) {
+              setSponsorship(p.sponsorship_enabled === true);
+              setAccountAlerts(p.account_alerts_enabled !== false);
+              setSiteNotifs(p.site_notifications_enabled !== false);
+              setNewsletter(p.newsletter_enabled === true);
+            }
+          } catch {
+            /* preferencias no disponibles */
+          }
           // Rol global en ESTA web (tag de perfil / paneles por rango).
           try {
             const publicDb = supabase.schema?.('public');
@@ -309,6 +344,30 @@ export default function AccountSettingsPanel({
     setNotifMsg(null);
     const { error } = await supabase.auth.updateUser({ data: patch });
     setNotifMsg(error ? error.message : 'Preferencias guardadas.');
+  };
+
+  /** Guarda una preferencia del ecosistema (patrocinios, avisos, notificaciones, boletín). */
+  const savePreference = async (key: string, value: boolean) => {
+    setPrefsBusy(true);
+    setNotifMsg(null);
+    try {
+      const prefsBase = apiBase.replace(/\/2fa$/, '');
+      const session = await supabase.auth.getSession();
+      const res = await fetch(`${prefsBase}/account/preferences`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.data.session?.access_token ?? ''}`,
+        },
+        body: JSON.stringify({ [key]: value }),
+      });
+      const json = (await res.json().catch(() => ({}))) as { success?: boolean; error?: string };
+      setNotifMsg(json.success ? 'Preferencia guardada.' : (json.error ?? 'No se pudo guardar.'));
+    } catch {
+      setNotifMsg('No se pudo guardar la preferencia.');
+    } finally {
+      setPrefsBusy(false);
+    }
   };
 
   const changeRemember = (value: boolean) => {
@@ -524,7 +583,59 @@ export default function AccountSettingsPanel({
         </div>
       </Section>
 
-      <Section title="Notificaciones" description="Correos del ecosistema (nunca publicidad de terceros).">
+      <Section title="Notificaciones" description="Correos del ecosistema. Los patrocinios son anuncios propios de Ciszu Network (nunca de terceros) que puedes activar o desactivar cuando quieras.">
+        <label className="flex items-center gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={sponsorship}
+            onChange={(e) => {
+              setSponsorship(e.target.checked);
+              void savePreference('sponsorship_enabled', e.target.checked);
+            }}
+            disabled={prefsBusy}
+            className="h-4 w-4 accent-[#ff33cc]"
+          />
+          <span className="text-xs font-bold text-ink">Patrocinios y anuncios del ecosistema</span>
+        </label>
+        <label className="flex items-center gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={accountAlerts}
+            onChange={(e) => {
+              setAccountAlerts(e.target.checked);
+              void savePreference('account_alerts_enabled', e.target.checked);
+            }}
+            disabled={prefsBusy}
+            className="h-4 w-4 accent-[#22d3ee]"
+          />
+          <span className="text-xs font-bold text-ink">Avisos de seguridad de la cuenta</span>
+        </label>
+        <label className="flex items-center gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={siteNotifs}
+            onChange={(e) => {
+              setSiteNotifs(e.target.checked);
+              void savePreference('site_notifications_enabled', e.target.checked);
+            }}
+            disabled={prefsBusy}
+            className="h-4 w-4 accent-[#22d3ee]"
+          />
+          <span className="text-xs font-bold text-ink">Notificaciones de {siteName}</span>
+        </label>
+        <label className="flex items-center gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={newsletter}
+            onChange={(e) => {
+              setNewsletter(e.target.checked);
+              void savePreference('newsletter_enabled', e.target.checked);
+            }}
+            disabled={prefsBusy}
+            className="h-4 w-4 accent-[#22d3ee]"
+          />
+          <span className="text-xs font-bold text-ink">Novedades y boletín del ecosistema</span>
+        </label>
         <label className="flex items-center gap-3 cursor-pointer">
           <input
             type="checkbox"

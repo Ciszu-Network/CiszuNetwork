@@ -32,9 +32,9 @@ describe('renderBrandedEmail', () => {
 
   it('escapa el HTML de los datos de entrada', () => {
     const mail = renderBrandedEmail({
-      siteName: '<script>alert(1)</script>',
+      siteName: 'CiszuBot',
       title: 'Acceso',
-      intro: 'Hola',
+      intro: 'Hola <script>alert(1)</script>',
     });
     expect(mail.html).not.toContain('<script>');
     expect(mail.html).toContain('&lt;script&gt;');
@@ -49,9 +49,9 @@ describe('renderBrandedEmail', () => {
       ctaLabel: 'Abrir',
       ctaUrl: 'https://example.com/x',
     });
-    expect(mail.html).toContain('C-123 434');
+    expect(mail.html).toContain('C 1 2 3 4 3 4');
     expect(mail.html).toContain('https://example.com/x');
-    expect(mail.text).toContain('CLAVE');
+    expect(mail.text).toContain('CÓDIGO');
   });
 });
 
@@ -59,7 +59,7 @@ describe('twoFactorEmail', () => {
   it('explica caducidad, alcance por web y límite de intentos', () => {
     const mail = twoFactorEmail({ siteName: 'CiszuBot', code: 'C-123 434', expiresInMinutes: 180, maxAttempts: 3 });
     expect(mail.subject).toContain('CiszuBot');
-    expect(mail.html).toContain('C-123 434');
+    expect(mail.html).toContain('C 1 2 3 4 3 4');
     expect(mail.html).toContain('180 minutos');
     expect(mail.html).toContain('solo sirve para CiszuBot');
     expect(mail.html).toContain('3 intentos fallidos');

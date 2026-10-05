@@ -235,3 +235,70 @@ que SÍ lo son, si el mensaje es promocional).
 - Queda pendiente personalizar en el Dashboard de Supabase las plantillas de
   confirmación y recuperación con el mismo diseño y remitente: ver
   `AUTH_HARDENING_SYSTEM.md` §6.
+
+## Ecosistema completo de emails (05 oct 2026)
+
+### Branding por web (`emailBranding.ts` + `emailSites.generated.ts`)
+
+Cada web tiene su propia versión del email: **isotipo real** de la web incrustado
+inline (generado con `scripts/build-email-sites.js` desde
+`projects/<web>/content/logos/`), colores de marca por web (botones, cabecera),
+redes sociales con **logos reales** (SVG de simple-icons: youtube, instagram, x,
+discord, github, tiktok, facebook), enlace a Soporte y a Preferencias de cuenta.
+
+- Config por web: `EMAIL_SITES` (nombre, url, acento, gradiente del botón,
+  settingsUrl, redes). Keys: `ciszu`, `ciszukoantony`, `muzicmania`, `ciszubot`.
+- `resolveSite(siteKey, siteName)` resuelve la web; fallback a `ciszu`.
+- **Cabecera**: logotipo Ciszu Network + isotipo de la web con su degradado.
+- **Botón de acción centrado**.
+- **Código estilo Steam**: centrado, separación de caracteres (`C-123 434` →
+  `C 1 2 3 4 3 4`) en bloque monoespaciado, seleccionable.
+- **Pie**: redes sociales con logos reales, términos, privacidad, soporte,
+  preferencias, y la declaración "no es publicidad" (o el aviso promocional).
+
+### Plantillas disponibles
+
+| Plantilla | Función |
+| --- | --- |
+| `twoFactorEmail` | Código OTP de acceso (usado por el 2FA de las 4 webs) |
+| `welcomeEmail` | Bienvenida tras verificar la cuenta |
+| `notificationEmail` | Notificaciones transaccionales de cada web |
+| `sponsorshipEmail` | Patrocinio/anuncio de un proyecto (marketing, avisa cómo desactivar) |
+| `accountWarningEmail` | Aviso de seguridad de la cuenta |
+| `passwordChangedEmail` | Confirmación de cambio de contraseña |
+
+### Preferencias de notificación (`notification_preferences`)
+
+Tabla RLS por usuario (migración `20261005000001_notification_preferences.sql`):
+`sponsorship_enabled`, `account_alerts_enabled`, `site_notifications_enabled`,
+`newsletter_enabled`. Políticas separadas por comando (SELECT/INSERT/UPDATE/DELETE),
+solo dueño (`auth.uid()`). Se gestionan desde la sección **Notificaciones** del
+`AccountSettingsPanel` (casillas) vía el endpoint
+`/api/auth/account/preferences` (GET/POST, con rate limit, en las 4 webs).
+
+### Patrocinios diarios
+
+- Endpoint `POST /api/sponsorship/dispatch` (solo ciszu): recorre los usuarios
+  con `sponsorship_enabled=true` y envía un patrocinio rotativo de un proyecto
+  del ecosistema (cambia cada día). Protegido con `SPONSORSHIP_CRON_SECRET`.
+- Cron: `.github/workflows/sponsorship-cron.yml` (08:00 UTC diario) llama al
+  endpoint con el secret. Sin `RESEND_API_KEY` los envíos fallan con motivo.
+- Los emails de patrocinio recuerdan que se pueden desactivar en la cuenta.
+
+### Sender propio (cómo cambiar el email del emisor)
+
+El email de Supabase Auth sale de `noreply@mail.app.supabase.io` por el SMTP por
+defecto. Para usar un remitente propio **se necesita un dominio** (no se puede
+con `*.vercel.app`). Vías:
+
+| Vía | Qué hacer | Cuándo |
+| --- | --- | --- |
+| **Custom SMTP en Supabase** | Dashboard → Authentication → SMTP Settings → Enable custom SMTP (ej. `smtp.resend.com:587`, usuario `resend`, password = API key, sender `no-reply@tudominio.com`) | Con dominio (Fase B) |
+| **Envío propio (ya implementado)** | `sendBrandedEmail` usa `EMAIL_FROM_RESEND` = `Ciszu Network <no-reply@tudominio.com>` para 2FA, welcome, sponsorship, etc. | Con dominio (Fase B) |
+| **Sin dominio** | Imposible: todos los proveedores (Resend, MailerSend, SES, Postmark) exigen dominio verificado para SPF/DKIM | Hoy no aplica |
+
+**Recomendación**: comprar el dominio (`DOMAINS_SYSTEM.md`, ~$11/año con
+Cloudflare/Porkbun) → verificar en Resend (SPF/DKIM automáticos) → activar
+custom SMTP de Supabase con Resend para que los emails de auth también salgan
+con el dominio propio. Resend sigue siendo el proveedor recomendado (3.000/mes
+free, mejor entregabilidad).
