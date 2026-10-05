@@ -125,6 +125,7 @@ Windows sin firma).
 | Disclaimers: debug local | Configura disclaimers en local (webs, tipo, duración, fecha, cierre, imagen, resumen/eliminar/modificar) |
 | Advisor: enviar mensaje global | Envía mensajes a las webs (GlobalAdvisor) |
 | Advisor: kill switch | Activa/desactiva los mensajes globales |
+| Emails (debug) | Genera/previsualiza/envía los emails del ecosistema (webs × tipos con casillas; GLOBAL salta el menú; plantilla de diagnóstico). Sin rate limit |
 | Staff Console / Customers Console | Abre las consolas de empleados/clientes |
 | Estado CDN local / Reiniciar CDN | Estado y reinicio del CDN local `:8788` |
 | Abrir carpeta de logs / Versiones / Git status / Disco | Utilidades rápidas |
@@ -237,6 +238,26 @@ Replica el sistema de advisors para disclaimers de cabecera a nivel ecosistema:
   - Se puede repetir `--action` para añadir varios botones al mismo disclaimer.
 - **Devcon**: opciones "Disclaimers: GLOBAL (enviar)", "Disclaimers: activar/desactivar
   globales (kill switch)" y "Disclaimers: borrar globales" en Herramientas.
+
+### 4.7 Debug de emails (opción "EMAILS (debug)")
+
+Genera los emails del ecosistema para **previsualizarlos y/o enviarlos sin pasar por
+la API de las webs** (por tanto **sin rate limit**). Usa `scripts/email-debug.mts`
+(ejecutado con `tsx`), que importa `packages/utils/src/emailBranding.ts` y el
+template de Supabase Auth (`projects/ciszu/docs/email/template-auth.html`).
+
+- **Selección con casillas**: webs destino (como las demás operativas) y **12 tipos**
+  de email (`confirmation`, `recovery`, `magic_link`, `email_change`, `invite`,
+  `twofactor`, `welcome`, `notification`, `sponsorship`, `accountwarning`,
+  `passwordchanged`, `debug`).
+- **GLOBAL**: salta el menú de webs y aplica a las 4.
+- **Previsualizar**: escribe los HTML/TXT en `test/website/debug/local-logs/emails/`
+  y abre la **galería** `index.html` (iframes con todas las combinaciones a la vez).
+- **Enviar**: pide destino (default `DEV_EMAIL` del vault, o `MEGA_EMAIL`). Requiere
+  `RESEND_API_KEY` + dominio; sin ellos solo previsualiza (no finge el envío).
+- **Plantilla de DEBUG**: `debugEmail()` en `emailBranding.ts`; muestra de golpe los
+  isotipos de las 4 webs, los iconos de redes, el código, el botón, los avisos y el
+  disclaimer de proveedor. Solo se usa desde la devcon.
 
 ## 5. Modo CLI no interactivo
 

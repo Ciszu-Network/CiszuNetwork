@@ -191,6 +191,9 @@ export interface BrandedEmailInput {
   securityNote?: string;
   /** Texto adicional del pie (p. ej. recordatorio de preferencias). */
   footerNote?: string;
+  /** HTML extra NO escapado, insertado tras el bloque de seguridad. Solo para
+   * la plantilla de debug de la devcon (contenido controlado, nunca input de usuario). */
+  extraHtml?: string;
 }
 
 export interface RenderedEmail {
@@ -296,6 +299,7 @@ export function renderBrandedEmail(input: BrandedEmailInput): RenderedEmail {
           ${ctaBlock}
           ${noteBlock}
           ${securityBlock}
+          ${input.extraHtml ?? ''}
         </td>
       </tr>
       <!-- Pie: redes, soporte, legal -->
@@ -467,6 +471,61 @@ export function passwordChangedEmail(input: {
     intro: `La contraseña de tu cuenta en ${site.name} se cambió correctamente.`,
     securityNote:
       'Si no fuiste tú quien cambió la contraseña, recupera tu cuenta desde la web y avísanos desde Soporte de inmediato.',
+  });
+}
+
+/**
+ * Plantilla de DEBUG (solo devcon): muestra de golpe varias cosas del sistema
+ * de emails (logos de las 4 webs, código, botón, redes, avisos, disclaimers)
+ * para previsualizar el diseño sin entrar a las páginas. NO se usa en producción.
+ */
+export function debugEmail(input: {
+  siteKey?: string;
+  testEmail?: string;
+}): RenderedEmail {
+  const site = resolveSite(input.siteKey);
+
+  // Galería de isotipos de las 4 webs para comparar cómo se ve cada marca.
+  const gallery = Object.entries(EMAIL_SITE_ISOTYPES)
+    .map(([key, logo]) => {
+      const cfg = EMAIL_SITES[key];
+      return `<td style="padding:10px;text-align:center;vertical-align:top;">
+        <img src="${logo.dataUri}" width="${logo.width}" height="${logo.height}" alt="${escapeHtml(cfg?.name ?? key)}" style="display:inline-block;border:0;" />
+        <div style="margin-top:6px;font-size:10px;color:#8a97ad;">${escapeHtml(cfg?.name ?? key)}</div>
+        <div style="margin-top:2px;font-size:9px;color:#5a5f75;">${escapeHtml(cfg?.accent ?? '')} / ${escapeHtml(cfg?.accent2 ?? '')}</div>
+      </td>`;
+    })
+    .join('');
+
+  const socialGallery = Object.entries(EMAIL_SOCIAL_ICONS)
+    .map(
+      ([key, logo]) =>
+        `<td style="padding:4px;text-align:center;"><img src="${logo.dataUri}" width="${logo.width}" height="${logo.height}" alt="${escapeHtml(key)}" style="display:inline-block;border:0;" /><div style="font-size:9px;color:#5a5f75;">${escapeHtml(key)}</div></td>`,
+    )
+    .join('');
+
+  const extraHtml = `
+    <div style="margin:24px 0 0;padding:16px;border-radius:12px;background:#101020;border:1px dashed #3a3a55;">
+      <div style="font-size:12px;font-weight:700;color:#7dd3fc;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">🧪 Plantilla de DEBUG (solo devcon)</div>
+      <p style="margin:0 0 10px;font-size:11px;color:#a8adbd;">Isotipos de las 4 webs del ecosistema:</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>${gallery}</tr></table>
+      <p style="margin:16px 0 6px;font-size:11px;color:#a8adbd;">Iconos de redes:</p>
+      <table role="presentation" cellpadding="0" cellspacing="0"><tr>${socialGallery}</tr></table>
+      <p style="margin:16px 0 0;font-size:10px;color:#5a5f75;">Diagnóstico: site=<strong style="color:#c9ccd6;">${escapeHtml(site.key)}</strong> · destino=${escapeHtml(input.testEmail ?? '(no indicado)')} · proveedor=${process.env.RESEND_API_KEY ? 'Resend' : 'no configurado (preview)'}</p>
+    </div>`;
+
+  return renderBrandedEmail({
+    siteKey: site.key,
+    title: 'Plantilla de DEBUG de emails',
+    intro:
+      'Esta es la plantilla de diagnóstico de la devcon. Muestra de una vez los elementos del sistema de emails: cabecera con logotipo e isotipo, código, botón, redes sociales, avisos legales y el disclaimer de proveedor.',
+    code: 'C-123 434',
+    ctaLabel: 'Botón de ejemplo',
+    ctaUrl: site.url,
+    note: 'Nota de ejemplo: así se ve el bloque de caducidad/avisos.',
+    securityNote: 'Aviso de seguridad de ejemplo: si no fuiste tú, ignora este mensaje.',
+    footerNote: 'Plantilla de debug generada por la devcon (test/website/debug). No se envía en producción.',
+    extraHtml,
   });
 }
 

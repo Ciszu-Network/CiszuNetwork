@@ -308,3 +308,21 @@ Cloudflare/Porkbun) → verificar en Resend (SPF/DKIM automáticos) → activar
 custom SMTP de Supabase con Resend para que los emails de auth también salgan
 con el dominio propio. Resend sigue siendo el proveedor recomendado (3.000/mes
 free, mejor entregabilidad).
+
+### Debug de emails (devcon)
+
+La consola de desarrollo tiene un apartado **EMAILS (debug)** (`test/website/debug/dev_console.ps1`)
+que genera los emails del ecosistema para previsualizarlos/enviarlos sin pasar por
+la API de las webs (sin rate limit):
+
+- Script `scripts/email-debug.mts` (con `tsx`): importa `emailBranding.ts` y el
+  template de Supabase Auth; genera HTML/TXT por combinación web × tipo.
+- Selección con **casillas** (webs y 12 tipos) y opción **GLOBAL** que salta el
+  menú de webs (aplica a las 4).
+- **Galería** `test/website/debug/local-logs/emails/index.html` con todas las
+  combinaciones a la vez.
+- **Plantilla `debugEmail()`**: muestra de golpe los isotipos de las 4 webs, los
+  iconos de redes, el código, el botón, avisos y el disclaimer de proveedor.
+- Destino default: `DEV_EMAIL` del vault (fallback `MEGA_EMAIL`). Sin
+  `RESEND_API_KEY` + dominio solo previsualiza.
+- Detalle: `DEV_CONSOLE_SYSTEM.md` §4.7.
