@@ -240,21 +240,27 @@ que SÍ lo son, si el mensaje es promocional).
 
 ### Branding por web (`emailBranding.ts` + `emailSites.generated.ts`)
 
-Cada web tiene su propia versión del email: **isotipo real** de la web incrustado
-inline (generado con `scripts/build-email-sites.js` desde
-`projects/<web>/content/logos/`), colores de marca por web (botones, cabecera),
-redes sociales con **logos reales** (SVG de simple-icons: youtube, instagram, x,
-discord, github, tiktok, facebook), enlace a Soporte y a Preferencias de cuenta.
+Cada web tiene su propia versión del email. Los logos (logotipo completo de
+Ciszu Network + isotipo de la web) y los iconos de redes sociales se incrustan
+como **PNG en base64 (data URI)**, generados con `scripts/build-email-sites.js`
+(rasteriza los SVG de `projects/<web>/content/logos/` con Playwright). Se usa
+PNG y no SVG inline porque **Gmail y Outlook no renderizan SVG inline**: con
+data URI los logos se ven en todos los clientes.
 
 - Config por web: `EMAIL_SITES` (nombre, url, acento, gradiente del botón,
   settingsUrl, redes). Keys: `ciszu`, `ciszukoantony`, `muzicmania`, `ciszubot`.
 - `resolveSite(siteKey, siteName)` resuelve la web; fallback a `ciszu`.
-- **Cabecera**: logotipo Ciszu Network + isotipo de la web con su degradado.
+- **Cabecera**: logotipo real de Ciszu Network (PNG) + isotipo real de la web
+  (PNG) con su degradado. **Sin texto representando logos**.
 - **Botón de acción centrado**.
 - **Código estilo Steam**: centrado, separación de caracteres (`C-123 434` →
   `C 1 2 3 4 3 4`) en bloque monoespaciado, seleccionable.
-- **Pie**: redes sociales con logos reales, términos, privacidad, soporte,
+- **Pie**: redes sociales con **logos reales** (PNG: youtube, instagram, x,
+  discord, github, tiktok, facebook), términos, privacidad, soporte,
   preferencias, y la declaración "no es publicidad" (o el aviso promocional).
+- **Disclaimer de proveedor**: todos los correos aclaran que se envían a través
+  de **Supabase** (proveedor de autenticación) porque Ciszu Network aún no tiene
+  dominio de correo propio; al adquirirlo, saldrán de un remitente oficial.
 
 ### Plantillas disponibles
 
