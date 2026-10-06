@@ -4,16 +4,32 @@
 
 #5 Crear sistema de anuncios: Google Adsense, GA4, GTM, Tag y Analytics pack completo.
 
+  REVISIÓN 05 oct 2026 (2 días después): enlaces de la API verificados.
+
 - [ ] Looker Studio: conectar fuentes GA4 y crear dashboard.
-- [ ] **Esperar tablas de BigQuery**: Google crea `analytics.events_*` en 24-48h desde el
-  enlace (03 oct 05:16). Revisar en ~2 días; cuando existan, Looker Studio las detecta.
-- [ ] **Looker Studio**: conectar BigQuery → crear dashboard (gratis) con las fuentes GA4.
-  (Se puede hacer cuando existan las tablas de BigQuery.)
-- [ ] **Aprobar sitios AdSense (ESPERA)**: los 4 sitios están en GETTING_READY (revisión
-  automática de Google, no se acelera). Verificar en unos días en la UI de AdSense.
+  PENDIENTE de las tablas de BigQuery; además la creación de dashboards de
+  Looker Studio NO tiene API (se crea manual en la UI). Cuando existan las
+  tablas se conecta BigQuery y se monta el dashboard a mano.
+- [ ] **Esperar tablas de BigQuery**: enlace VERIFICADO OK por API (05 oct):
+  `properties/551642504/bigQueryLinks/yGFvijtXSdO5rW2I4KfTLw` →
+  proyecto `231298418565`, dataset `analytics`, 4 data streams, región US
+  (creado 03 oct 05:16). El dataset ya EXISTE pero sigue VACÍO (0 tablas):
+  Google aún no ha emitido `analytics.events_*`. Requiere tráfico en las
+  webs + el procesamiento diario; se generará la primera `events_YYYYMMDD`.
+  Revisar de nuevo en unos días.
+- [ ] **Looker Studio**: conectar BigQuery → crear dashboard (gratis).
+  (Depende de las tablas anteriores; creación manual en la UI.)
+- [ ] **Aprobar sitios AdSense (ESPERA)**: verificado por API (05 oct) que la
+  cuenta está en `state: NEEDS_ATTENTION` (revisión automática de Google, no se
+  acelera). Los 4 sitios siguen en revisión. Verificar en la UI de AdSense en
+  unos días.
 
   - ads.txt: VERIFICADO correcto en las 4 webs (03 oct). El aviso "No encontrado" de AdSense
     era del 21 sept (antes de servir ads.txt); se corregirá en el próximo escaneo de AdSense.
+  - Verificación de prod (05 oct): las 4 webs cargan su contenedor GTM;
+    AdSense (adsbygoogle) dispara vía GTM. GA4 (g/collect) depende del
+    consentimiento del usuario (consent mode), por lo que no se emite en
+    navegadores sin consentir (correcto, no es un fallo).
 
   ANALYTICS — CONFIGURADO POR API (03 oct 2026, acceso OAuth):
 
@@ -34,6 +50,9 @@
   - Tags creados por API en los 4 contenedores: "GA4 - Configuración" (gaawc/googtag,
     send_page_view=false) + "AdSense - Head" (custom HTML), trigger All Pages.
   - Publicados (3): ciszunetwork, ciszubot, ciszukoantony. MuzicMania pendiente (manual).
+  ✓ Verificado en prod (05 oct): muzicmania ya carga su GTM (GTM-N2SXL2FN) y el tag
+  AdSense dispara, así que su contenedor publicado incluye los tags correctos.
+  GA4 (g/collect) se emite según el consentimiento (consent mode).
   - GTM IDs corregidos en Vercel production + `.env.local` de las 4 webs:
     ciszunetwork `GTM-N7Q8DGX5`, ciszubot `GTM-T9LG9N6C`, ciszukoantony `GTM-WNDXGD63`,
     muzicmania `GTM-N2SXL2FN` (antes tenían IDs clásicos incorrectos GT-*).
