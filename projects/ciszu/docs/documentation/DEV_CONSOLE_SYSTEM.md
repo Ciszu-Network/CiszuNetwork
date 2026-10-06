@@ -126,6 +126,9 @@ Windows sin firma).
 | Advisor: enviar mensaje global | Envía mensajes a las webs (GlobalAdvisor) |
 | Advisor: kill switch | Activa/desactiva los mensajes globales |
 | Emails (debug) | Genera/previsualiza/envía los emails del ecosistema (webs × tipos con casillas; GLOBAL salta el menú; plantilla de diagnóstico). Sin rate limit |
+| Mi perfil / Sesiones activas | Resumen del perfil (subcargos + tiempo de sesión) y cierre remoto de sesiones (admin/owner). Ver `CONSOLE_SECURITY_SYSTEM.md` |
+| Testing Accounts | Cuentas temporales de prueba (crear/listar/modificar/eliminar) con caducidad y websites multicasilla. Ver `CONSOLE_SECURITY_SYSTEM.md` |
+| Proyectos (owner) | Registrar/enlazar/desenlazar/resumir proyectos (plantilla de la devcon). Solo owner |
 | Staff Console / Customers Console | Abre las consolas de empleados/clientes |
 | Estado CDN local / Reiniciar CDN | Estado y reinicio del CDN local `:8788` |
 | Abrir carpeta de logs / Versiones / Git status / Disco | Utilidades rápidas |
