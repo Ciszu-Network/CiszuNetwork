@@ -241,23 +241,37 @@ Replica el sistema de advisors para disclaimers de cabecera a nivel ecosistema:
 
 ### 4.7 Debug de emails (opción "EMAILS (debug)")
 
-Genera los emails del ecosistema para **previsualizarlos y/o enviarlos sin pasar por
-la API de las webs** (por tanto **sin rate limit**). Usa `scripts/email-debug.mts`
-(ejecutado con `tsx`), que importa `packages/utils/src/emailBranding.ts` y el
-template de Supabase Auth (`projects/ciszu/docs/email/template-auth.html`).
+Genera los emails del ecosistema para **previsualizarlos y enviarlos de verdad sin
+pasar por la API de las webs** (por tanto **sin rate limit**). Usa
+`scripts/email-debug.mts` (ejecutado con `tsx`), que importa
+`packages/utils/src/emailBranding.ts`.
 
-- **Selección con casillas**: webs destino (como las demás operativas) y **12 tipos**
-  de email (`confirmation`, `recovery`, `magic_link`, `email_change`, `invite`,
-  `twofactor`, `welcome`, `notification`, `sponsorship`, `accountwarning`,
-  `passwordchanged`, `debug`).
-- **GLOBAL**: salta el menú de webs y aplica a las 4.
-- **Previsualizar**: escribe los HTML/TXT en `test/website/debug/local-logs/emails/`
-  y abre la **galería** `index.html` (iframes con todas las combinaciones a la vez).
-- **Enviar**: pide destino (default `DEV_EMAIL` del vault, o `MEGA_EMAIL`). Requiere
-  `RESEND_API_KEY` + dominio; sin ellos solo previsualiza (no finge el envío).
-- **Plantilla de DEBUG**: `debugEmail()` en `emailBranding.ts`; muestra de golpe los
-  isotipos de las 4 webs, los iconos de redes, el código, el botón, los avisos y el
-  disclaimer de proveedor. Solo se usa desde la devcon.
+Opciones del submenú:
+
+- **Previsualizar** (webs con casillas + tipos con casillas) o **GLOBAL** (salta el
+  menú de webs y aplica a las 4). Escribe HTML/TXT en
+  `test/website/debug/local-logs/emails/` y abre la **galería** `index.html`
+  (iframes con todas las combinaciones a la vez).
+- **ENVIAR de verdad** (o **GLOBAL**): pide el **correo destino** (default
+  `DEV_EMAIL`/`MEGA_EMAIL` del vault) y opcionalmente el **correo de datos**
+  (`--as`). Envía con cooldown de 1s por correo.
+- **13 tipos**: los 5 de Supabase Auth (`confirmation`, `recovery`, `magic_link`,
+  `email_change`, `invite`) + `twofactor`, `welcome`, `notification`,
+  `sponsorship`, `accountwarning`, `passwordchanged`, `support_ticket`, `debug`.
+- **Datos del receptor**: sin `--as` usa datos ficticios `Usuario @usuario
+  (usuario@email.com)`. Con `--as <correo>` consulta Supabase y rellena con
+  display name/username reales; si el correo **no está vinculado**, muestra la
+  plantilla de **error** (`unlinkedEmail`) para los tipos que requieren cuenta.
+- **Plantilla de DEBUG**: `debugEmail()`; muestra isotipos, redes, iconos de
+  categoría, código, botón y disclaimers.
+- **Aplicar plantillas de auth a Supabase**: sube las 5 plantillas generadas con
+  `emailBranding.ts` (mismo diseño que la app).
+- **Tag devcon**: los emails llevan la franja "Enviado por la DEVCON" y el asunto
+  `[DEVCON]` (versión de devcon distinguible de la real).
+
+**Envío real**: intenta **Resend** (`RESEND_API_KEY`) y, si no, **Gmail API**
+(scope `gmail.send`). Hoy no hay ninguna de las dos credenciales en el vault, así
+que solo previsualiza; para activarlo, ver `EMAILS_SYSTEM.md` (Debug de emails).
 
 ## 5. Modo CLI no interactivo
 

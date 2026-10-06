@@ -240,27 +240,44 @@ que SÍ lo son, si el mensaje es promocional).
 
 ### Branding por web (`emailBranding.ts` + `emailSites.generated.ts`)
 
-Cada web tiene su propia versión del email. Los logos (logotipo completo de
-Ciszu Network + isotipo de la web) y los iconos de redes sociales se incrustan
-como **PNG en base64 (data URI)**, generados con `scripts/build-email-sites.js`
-(rasteriza los SVG de `projects/<web>/content/logos/` con Playwright). Se usa
-PNG y no SVG inline porque **Gmail y Outlook no renderizan SVG inline**: con
-data URI los logos se ven en todos los clientes.
+Cada web tiene su propia versión del email. Todos los assets (logotipos,
+isotipos, iconos de categoría, redes y UI) se incrustan como **PNG en base64
+(data URI)**, generados con `scripts/build-email-sites.js` (rasteriza los SVG de
+`projects/<web>/content/logos/` y los iconos lucide con Playwright). Se usa PNG
+y no SVG inline porque **Gmail y Outlook no renderizan SVG inline**.
 
-- Config por web: `EMAIL_SITES` (nombre, url, acento, gradiente del botón,
-  settingsUrl, redes). Keys: `ciszu`, `ciszukoantony`, `muzicmania`, `ciszubot`.
-- `resolveSite(siteKey, siteName)` resuelve la web; fallback a `ciszu`.
-- **Cabecera**: logotipo real de Ciszu Network (PNG) + isotipo real de la web
-  (PNG) con su degradado. **Sin texto representando logos**.
-- **Botón de acción centrado**.
-- **Código estilo Steam**: centrado, separación de caracteres (`C-123 434` →
-  `C 1 2 3 4 3 4`) en bloque monoespaciado, seleccionable.
-- **Pie**: redes sociales con **logos reales** (PNG: youtube, instagram, x,
-  discord, github, tiktok, facebook), términos, privacidad, soporte,
-  preferencias, y la declaración "no es publicidad" (o el aviso promocional).
-- **Disclaimer de proveedor**: todos los correos aclaran que se envían a través
-  de **Supabase** (proveedor de autenticación) porque Ciszu Network aún no tiene
-  dominio de correo propio; al adquirirlo, saldrán de un remitente oficial.
+- **Logos a color/degradado** (no blancos): `EMAIL_CISZU_WORDMARK` y
+  `EMAIL_SITE_ISOTYPES` usan las variantes `gradient/color` de cada web.
+- Config por web: `EMAIL_SITES` (nombre, url, acento, acento2, degradado del
+  botón, **fondo oscuro propio `bg`**, fondo de tarjeta `cardBg`, settingsUrl,
+  redes). Cada web tiene un fondo oscuro distinto y su degradado superior según
+  el logotipo. `resolveSite(siteKey, siteName)` con fallback a `ciszu`.
+- **Cabecera**: logotipo de Ciszu Network (izq.) + isotipo de la web (der.).
+- **Icono de categoría** junto al título (verificación, llave, magia, candado,
+  ticket...) con color semántico (`EMAIL_CATEGORY_ICONS`).
+- **Botón centrado con flecha** (`EMAIL_UI_ICONS.arrow_right`).
+- **Código estilo Steam**: `C-` **fijo** + dígitos separados (`C-1 2 3 4 3 4`)
+  y **botón de copiar** al lado (`EMAIL_UI_ICONS.copy`). El prefijo `C-` es
+  plantilla: solo se verifica el número; el botón copia los dígitos.
+- **Sección de redes** (siempre presente, aparte) con **logos a color de marca**
+  (youtube rojo, instagram, x, discord, github, tiktok, facebook...).
+- **Emisor**: "Enviado por Ciszu Network · ciszunetwork@gmail.com · Página:
+  <web> (url)".
+- **Receptor**: saludo tras el título (ver abajo).
+- **Aviso legal** ("no es publicidad" o el promocional) con **icono de aviso**, y
+  **disclaimer de proveedor** con **icono de Supabase**: el correo se envía a
+  través de Supabase mientras no haya dominio propio.
+
+### Saludo al receptor (privacidad)
+
+`renderBrandedEmail` recibe un `EmailRecipient` (`email`, `displayName`,
+`username`) y un flag `loggedIn`:
+
+| Contexto | Saludo |
+| --- | --- |
+| **Sin sesión** (verificación, recovery, magic link, cambio de correo, invitación) | `¡Hola, usuario@email.com!` (solo el correo, por privacidad). |
+| **Con sesión** (ticket de soporte, avisos, notificaciones, patrocinios) | `¡Bienvenido Nombre @usuario (usuario@email.com)!` |
+| Cuenta sin display name ni username | `¡Bienvenido (usuario@email.com)!` (solo el correo). |
 
 ### Plantillas disponibles
 
@@ -272,6 +289,10 @@ data URI los logos se ven en todos los clientes.
 | `sponsorshipEmail` | Patrocinio/anuncio de un proyecto (marketing, avisa cómo desactivar) |
 | `accountWarningEmail` | Aviso de seguridad de la cuenta |
 | `passwordChangedEmail` | Confirmación de cambio de contraseña |
+| `supportTicketEmail` | Ticket de soporte creado (con sesión: muestra usuario) |
+| `unlinkedEmail` | **Correo no vinculado**: no existe cuenta; sin enlaces, ofrece crear cuenta |
+| `authConfirmationEmail` / `authRecoveryEmail` / `authMagicLinkEmail` / `authEmailChangeEmail` / `authInviteEmail` | Plantillas de Supabase Auth (botón con `{{ .ConfirmationURL }}`) |
+| `debugEmail` | Plantilla de diagnóstico (solo devcon) |
 
 ### Preferencias de notificación (`notification_preferences`)
 
@@ -312,17 +333,33 @@ free, mejor entregabilidad).
 ### Debug de emails (devcon)
 
 La consola de desarrollo tiene un apartado **EMAILS (debug)** (`test/website/debug/dev_console.ps1`)
-que genera los emails del ecosistema para previsualizarlos/enviarlos sin pasar por
-la API de las webs (sin rate limit):
+que genera los emails para previsualizarlos y **enviarlos de verdad**, sin pasar
+por la API de las webs (sin rate limit):
 
-- Script `scripts/email-debug.mts` (con `tsx`): importa `emailBranding.ts` y el
-  template de Supabase Auth; genera HTML/TXT por combinación web × tipo.
-- Selección con **casillas** (webs y 12 tipos) y opción **GLOBAL** que salta el
-  menú de webs (aplica a las 4).
+- Script `scripts/email-debug.mts` (con `tsx`): genera HTML/TXT por combinación
+  web × tipo (13 tipos: los 5 de Supabase Auth + 8 de app, incluido `support_ticket`).
+- Menú de **casillas** (webs y tipos); opción **GLOBAL** que salta el menú de webs.
 - **Galería** `test/website/debug/local-logs/emails/index.html` con todas las
-  combinaciones a la vez.
-- **Plantilla `debugEmail()`**: muestra de golpe los isotipos de las 4 webs, los
-  iconos de redes, el código, el botón, avisos y el disclaimer de proveedor.
-- Destino default: `DEV_EMAIL` del vault (fallback `MEGA_EMAIL`). Sin
-  `RESEND_API_KEY` + dominio solo previsualiza.
+  combinaciones a la vez (iframes).
+- **Correo destino** (se pide siempre; default `DEV_EMAIL`/`MEGA_EMAIL` del vault).
+- **Datos del receptor** (`--as <correo>`): rellena la plantilla con esa cuenta
+  (display name/username reales consultando Supabase). Si el correo **no está
+  vinculado**, sale la plantilla de **error** (`unlinkedEmail`) para los tipos que
+  requieren cuenta. Sin `--as`, datos ficticios `Usuario @usuario (usuario@email.com)`.
+- **Envío real** (`--send`, cooldown de 1s por correo): intenta **Resend**
+  (`RESEND_API_KEY`) y, si no, **Gmail API** (scope `gmail.send`). Sin ninguna de
+  las dos, avisa y solo previsualiza (no hay proveedor).
+- **Tag devcon**: los emails generados/enviados por la devcon llevan la franja
+  "Enviado por la DEVCON" y el asunto `[DEVCON]`, así que la versión de devcon es
+  distinguible de la real.
+- **Plantilla `debugEmail()`**: muestra de golpe isotipos, redes, iconos de
+  categoría, código, botón, avisos y disclaimer.
+- Opción **Aplicar plantillas de auth a Supabase** (`--apply-supabase`): sube las
+  5 plantillas de auth generadas con `emailBranding.ts` (mismo diseño que la app).
 - Detalle: `DEV_CONSOLE_SYSTEM.md` §4.7.
+
+> **Envío real — credencial pendiente**: hoy no hay `RESEND_API_KEY` en el vault ni
+> el scope `gmail.send` en el OAuth, así que la devcon **solo previsualiza**. Para
+> activar el envío: crear una API key gratuita en Resend (`onboarding@resend.dev`
+> envía a tu propio correo sin dominio) y ponerla como `RESEND_API_KEY`, o añadir
+> el scope `gmail.send` al OAuth de Google y regenerar el refresh token.

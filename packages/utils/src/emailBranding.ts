@@ -1,36 +1,36 @@
 /**
  * Ecosistema de emails de Ciszu Network.
  *
- * POR QUÉ: los correos de autenticación salían con el remitente "Supabase" y el
- * diseño por defecto, lo que hacía que parecieran phishing precisamente en los
- * emails que piden una acción de seguridad. Además no llevaban ni términos ni
- * la aclaración de que no son publicidad (y los de marketing deben decir lo
- * contrario de forma explícita).
+ * Reglas de diseño:
+ *   - Remitente y asunto siempre `Ciszu Network | <web> — <título>`.
+ *   - Cabecera con el logotipo de Ciszu Network + el isotipo de la web (a color,
+ *     PNG embebido: renderiza en todos los clientes, Gmail/Outlook incluidos).
+ *   - Cada web tiene su fondo oscuro propio y su degradado superior según el
+ *     logotipo, para distinguirse.
+ *   - Icono de categoría junto al título (verificación, llave, candado...).
+ *   - Código estilo Steam: `C-` fijo + dígitos separados + botón de copiar.
+ *   - Botón de acción centrado con flecha.
+ *   - Sección de redes sociales (logos con color de marca) en TODOS los emails.
+ *   - Emisor claro (quién envía: Ciszu Network, su correo y la web) y saludo al
+ *     receptor según si el email se manda con sesión iniciada o no.
+ *   - Aviso legal "no es publicidad" (o el contrario si es marketing) y
+ *     disclaimer del proveedor (Supabase) mientras no haya dominio propio.
  *
- * Reglas que aplica este módulo:
- *   - Remitente y asunto siempre `Ciszu Network | <web>`.
- *   - Cabecera con el logotipo de Ciszu Network + el isotipo de la web que envía
- *     (cada web tiene su versión: fondo, colores e isotipo propios).
- *   - Diseño propio (tabla + estilos en línea: es lo único que respetan todos
- *     los clientes de correo, Outlook incluido).
- *   - Códigos centrados estilo Steam: separación de caracteres y botón de copiar.
- *   - Botón de acción centrado.
- *   - Pie con términos, privacidad, soporte, redes sociales con logos reales y
- *     "esto no es publicidad" (o el aviso contrario si el mensaje SÍ es de
- *     marketing/patrocinio, recordando cómo desactivarlo).
- *
- * El transporte es Resend por HTTP directo a propósito: añadir
- * `@ciszunetwork/email` como dependencia de las 4 webs obligaba a rehacer la
- * instalación del monorepo, y este paquete no debe arrastrar dependencias
- * nuevas. Sin `RESEND_API_KEY` el envío devuelve `sent: false` con el motivo en
- * vez de fingir éxito.
+ * El transporte es Resend por HTTP directo. Sin `RESEND_API_KEY` el envío
+ * devuelve `sent: false` con el motivo en vez de fingir éxito.
  */
 
-import { EMAIL_SITE_ISOTYPES, EMAIL_CISZU_WORDMARK, EMAIL_SOCIAL_ICONS } from './emailSites.generated';
+import {
+  EMAIL_SITE_ISOTYPES,
+  EMAIL_CISZU_WORDMARK,
+  EMAIL_SOCIAL_ICONS,
+  EMAIL_CATEGORY_ICONS,
+  EMAIL_UI_ICONS,
+} from './emailSites.generated';
 
 export const EMAIL_BRAND_NAME = 'Ciszu Network';
+export const EMAIL_BRAND_EMAIL = 'ciszunetwork@gmail.com';
 
-/** Enlaces legales canónicos: los mismos que usa la web. */
 export const EMAIL_LEGAL_LINKS = {
   terms: 'https://ciszunetwork.vercel.app/terms',
   privacy: 'https://ciszunetwork.vercel.app/privacy',
@@ -38,23 +38,23 @@ export const EMAIL_LEGAL_LINKS = {
   home: 'https://ciszunetwork.vercel.app',
 } as const;
 
-/** Config de cada web del ecosistema para el branding de sus emails. */
 export interface EmailSiteConfig {
   key: string;
   name: string;
   url: string;
-  /** Color de acento principal de la web (botones, barra). */
+  /** Acento principal (botones, detalles). */
   accent: string;
-  /** Color secundario para el degradado del header. */
+  /** Segundo color del degradado. */
   accent2: string;
-  /** Acento de texto (para enlaces y detalles). */
+  /** Color de enlaces de texto. */
   textAccent: string;
-  /** Gradiente del botón (dos colores). */
+  /** Fondo oscuro propio de la web. */
+  bg: string;
+  /** Fondo de la tarjeta (un tono por encima del fondo). */
+  cardBg: string;
   buttonFrom: string;
   buttonTo: string;
-  /** URL de ajustes/preferencias de la cuenta. */
   settingsUrl: string;
-  /** Redes sociales de la web (o de Ciszu Network si no tiene propias). */
   social: { platform: string; url: string }[];
 }
 
@@ -63,9 +63,11 @@ export const EMAIL_SITES: Record<string, EmailSiteConfig> = {
     key: 'ciszu',
     name: 'Ciszu Network',
     url: 'https://ciszunetwork.vercel.app',
-    accent: '#3a6bf0',
-    accent2: '#ff33cc',
+    accent: '#233f92',
+    accent2: '#4800ff',
     textAccent: '#68cfff',
+    bg: '#04040d',
+    cardBg: '#0a0a1c',
     buttonFrom: '#3a6bf0',
     buttonTo: '#ff33cc',
     settingsUrl: 'https://ciszunetwork.vercel.app/settings',
@@ -82,9 +84,11 @@ export const EMAIL_SITES: Record<string, EmailSiteConfig> = {
     key: 'ciszukoantony',
     name: 'Ciszuko Antony',
     url: 'https://ciszukoantony.vercel.app',
-    accent: '#3d6adf',
+    accent: '#1a2f6e',
     accent2: '#ff33cc',
     textAccent: '#5a82e8',
+    bg: '#0a0612',
+    cardBg: '#150d22',
     buttonFrom: '#3d6adf',
     buttonTo: '#ff33cc',
     settingsUrl: 'https://ciszukoantony.vercel.app/settings',
@@ -93,7 +97,7 @@ export const EMAIL_SITES: Record<string, EmailSiteConfig> = {
       { platform: 'instagram', url: 'https://www.instagram.com/itz.ciszukoant0nyz/' },
       { platform: 'x', url: 'https://x.com/CiszukoAntony' },
       { platform: 'discord', url: 'https://discord.com/invite/W3kMtMMj6E' },
-      { platform: 'github', url: 'https://github.com/CiszukoAntony' },
+      { platform: 'tiktok', url: 'https://www.tiktok.com/@ciszunetwork' },
     ],
   },
   muzicmania: {
@@ -103,6 +107,8 @@ export const EMAIL_SITES: Record<string, EmailSiteConfig> = {
     accent: '#293eff',
     accent2: '#a900df',
     textAccent: '#57eeff',
+    bg: '#050310',
+    cardBg: '#0e0a20',
     buttonFrom: '#293eff',
     buttonTo: '#a900df',
     settingsUrl: 'https://muzicmania.vercel.app/settings',
@@ -110,6 +116,7 @@ export const EMAIL_SITES: Record<string, EmailSiteConfig> = {
       { platform: 'youtube', url: 'https://www.youtube.com/@CiszuNetwork' },
       { platform: 'discord', url: 'https://discord.com/invite/W3kMtMMj6E' },
       { platform: 'x', url: 'https://x.com/CiszukoAntony' },
+      { platform: 'instagram', url: 'https://www.instagram.com/ciszunetwork/' },
     ],
   },
   ciszubot: {
@@ -119,6 +126,8 @@ export const EMAIL_SITES: Record<string, EmailSiteConfig> = {
     accent: '#3f6fd6',
     accent2: '#a855f7',
     textAccent: '#22d3ee',
+    bg: '#060a15',
+    cardBg: '#0d1224',
     buttonFrom: '#3f6fd6',
     buttonTo: '#a855f7',
     settingsUrl: 'https://ciszubot.vercel.app/settings',
@@ -126,29 +135,12 @@ export const EMAIL_SITES: Record<string, EmailSiteConfig> = {
       { platform: 'discord', url: 'https://discord.com/invite/W3kMtMMj6E' },
       { platform: 'x', url: 'https://x.com/CiszukoAntony' },
       { platform: 'youtube', url: 'https://www.youtube.com/@CiszuNetwork' },
+      { platform: 'github', url: 'https://github.com/Ciszu-Network' },
     ],
   },
 };
 
 export const EMAIL_DEFAULT_SITE = 'ciszu';
-
-
-/**
- * Construye el bloque de código estilo Steam: centrado, separación de
- * caracteres y botón de copiar (que el usuario pulsa para copiar al
- * portapapeles — los clientes de correo bloquean JS, así que además se
- * muestra el código en texto plano seleccionable).
- */
-function codeBlock(code: string): string {
-  const spaced = code.replace(/[-\s]/g, '').split('').join(' ');
-  return `
-  <div style="margin:22px 0;text-align:center;">
-    <div style="display:inline-block;padding:16px 26px;border-radius:12px;background:#0d0d18;border:1px solid #2a2a45;">
-      <div style="font-family:'Consolas','Courier New',monospace;font-size:26px;font-weight:700;letter-spacing:8px;color:#ffffff;mso-text-raise:0;">${escapeHtml(spaced)}</div>
-    </div>
-    <div style="margin-top:10px;font-size:11px;color:#7c8196;text-align:center;">Copia este código y pégalo en la web para continuar.</div>
-  </div>`;
-}
 
 const escapeHtml = (value: string): string =>
   value
@@ -157,43 +149,39 @@ const escapeHtml = (value: string): string =>
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 
-/** Iconos de redes sociales como PNG embebido (renderizan en todos los clientes). */
-function socialRow(site: EmailSiteConfig): string {
-  const icons = site.social
-    .map((s) => {
-      const icon = EMAIL_SOCIAL_ICONS[s.platform];
-      if (!icon) return '';
-      return `<a href="${escapeHtml(s.url)}" style="display:inline-block;margin:0 4px;text-decoration:none;vertical-align:middle;"><img src="${icon.dataUri}" width="${icon.width}" height="${icon.height}" alt="${escapeHtml(s.platform)}" style="display:inline-block;border:0;outline:none;text-decoration:none;" /></a>`;
-    })
-    .join('');
-  return icons;
+/** Datos del receptor del email (para el saludo). */
+export interface EmailRecipient {
+  email: string;
+  displayName?: string | null;
+  username?: string | null;
 }
 
 export interface BrandedEmailInput {
-  /** Clave de la web (ciszu, ciszukoantony, muzicmania, ciszubot). */
   siteKey?: string;
-  /** Nombre de la web que envía (CiszuBot, MuzicMania...). Compatibilidad. */
   siteName?: string;
-  /** Título visible, en mayúsculas cortas ("Verifica tu identidad"). */
+  /** Icono de categoría junto al título (confirmation, recovery, ...). */
+  category?: string;
   title: string;
-  /** Párrafo(s) de introducción. Se acepta texto plano. */
   intro: string;
-  /** Código a mostrar en grande (p. ej. `C-123 434`) estilo Steam. */
+  /** Receptor: si se indica, se añade el saludo correspondiente. */
+  recipient?: EmailRecipient;
+  /** true = el email se manda con sesión iniciada (muestra usuario/correo);
+   *  false/omitido = sin sesión (solo el correo, por privacidad). */
+  loggedIn?: boolean;
+  /** Código a mostrar (`C-123 456`). El prefijo `C-` es fijo. */
   code?: string;
-  /** Botón de acción (centrado). */
   ctaLabel?: string;
   ctaUrl?: string;
-  /** Línea destacada bajo el botón (caducidad, límites...). */
   note?: string;
-  /** Si el mensaje es promocional, el pie lo declara en vez de negarlo. */
   marketing?: boolean;
-  /** Aviso de seguridad extra (p. ej. "si no fuiste tú, ..."). */
   securityNote?: string;
-  /** Texto adicional del pie (p. ej. recordatorio de preferencias). */
   footerNote?: string;
-  /** HTML extra NO escapado, insertado tras el bloque de seguridad. Solo para
-   * la plantilla de debug de la devcon (contenido controlado, nunca input de usuario). */
+  /** HTML extra NO escapado; solo para la plantilla de debug de la devcon. */
   extraHtml?: string;
+  /** Marca el email como enviado por la devcon (franja + asunto). */
+  devcon?: boolean;
+  /** Asunto exacto (para las plantillas de Supabase Auth). */
+  subjectOverride?: string;
 }
 
 export interface RenderedEmail {
@@ -202,7 +190,6 @@ export interface RenderedEmail {
   text: string;
 }
 
-/** Resuelve la config de la web según siteKey o siteName. */
 export function resolveSite(siteKey?: string, siteName?: string): EmailSiteConfig {
   if (siteKey && EMAIL_SITES[siteKey]) return EMAIL_SITES[siteKey];
   if (siteName) {
@@ -214,32 +201,88 @@ export function resolveSite(siteKey?: string, siteName?: string): EmailSiteConfi
   return EMAIL_SITES[EMAIL_DEFAULT_SITE];
 }
 
-/**
- * Construye el email.
- *
- * El asunto SIEMPRE empieza por `Ciszu Network | ` porque los filtros de spam
- * penalizan asuntos genéricos y porque es la forma de que el usuario reconozca
- * el origen de un correo que le pide un código.
- */
+/** Saludo del receptor según el contexto (con o sin sesión). */
+export function buildGreeting(recipient: EmailRecipient | undefined, loggedIn: boolean): string {
+  if (!recipient || !recipient.email) return '';
+  if (loggedIn) {
+    const parts: string[] = [];
+    if (recipient.displayName) parts.push(recipient.displayName);
+    if (recipient.username) parts.push(`@${recipient.username}`);
+    return parts.length
+      ? `¡Bienvenido ${parts.join(' ')} (${recipient.email})!`
+      : `¡Bienvenido (${recipient.email})!`;
+  }
+  return `¡Hola, ${recipient.email}!`;
+}
+
+/** Bloque de código estilo Steam: `C-` fijo + dígitos separados + copiar. */
+function codeBlock(code: string): string {
+  const raw = code.replace(/[^A-Za-z0-9]/g, '');
+  const digits = raw.startsWith('C') || raw.startsWith('c') ? raw.slice(1) : raw;
+  const spaced = digits.split('').join(' ');
+  const copyIcon = EMAIL_UI_ICONS.copy;
+  return `
+  <div style="margin:22px 0;text-align:center;">
+    <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;">
+      <tr>
+        <td style="padding:14px 20px;border-radius:12px;background:#0b0b16;border:1px solid #2a2a45;">
+          <span style="font-family:'Consolas','Courier New',monospace;font-size:26px;font-weight:700;color:#ffffff;letter-spacing:8px;">C-${escapeHtml(spaced)}</span>
+        </td>
+        <td style="padding-left:10px;vertical-align:middle;">
+          <a href="#" onclick="try{navigator.clipboard.writeText('${escapeHtml(digits)}')}catch(e){};return false;" title="Copiar número" style="text-decoration:none;">
+            <img src="${copyIcon.dataUri}" width="${copyIcon.width}" height="${copyIcon.height}" alt="Copiar" style="display:block;border:0;" />
+          </a>
+        </td>
+      </tr>
+    </table>
+    <div style="margin-top:10px;font-size:11px;color:#7c8196;text-align:center;">El prefijo <strong>C-</strong> es fijo; solo se verifica el número. Pulsa el icono para copiarlo.</div>
+  </div>`;
+}
+
+/** Fila de iconos de redes sociales (con color de marca). */
+function socialRow(site: EmailSiteConfig): string {
+  return site.social
+    .map((s) => {
+      const icon = EMAIL_SOCIAL_ICONS[s.platform];
+      if (!icon) return '';
+      return `<a href="${escapeHtml(s.url)}" style="display:inline-block;margin:0 5px;text-decoration:none;vertical-align:middle;"><img src="${icon.dataUri}" width="${icon.width}" height="${icon.height}" alt="${escapeHtml(s.platform)}" style="display:inline-block;border:0;" /></a>`;
+    })
+    .join('');
+}
+
+function icon(name: string | undefined, alt: string): string {
+  if (!name) return '';
+  const ic = EMAIL_CATEGORY_ICONS[name];
+  if (!ic) return '';
+  return `<img src="${ic.dataUri}" width="${ic.width}" height="${ic.height}" alt="${escapeHtml(alt)}" style="display:inline-block;border:0;vertical-align:middle;" />`;
+}
+
+/** Construye el HTML del email. */
 export function renderBrandedEmail(input: BrandedEmailInput): RenderedEmail {
   const site = resolveSite(input.siteKey, input.siteName);
-  const subject = `${EMAIL_BRAND_NAME} | ${site.name} — ${input.title}`;
+  const subject = input.subjectOverride
+    ? (input.devcon ? `[DEVCON] ${input.subjectOverride}` : input.subjectOverride)
+    : `${EMAIL_BRAND_NAME} | ${site.name} — ${input.title}`;
+  const finalSubject = input.subjectOverride ? subject : (input.devcon ? `[DEVCON] ${subject}` : subject);
 
   const introHtml = input.intro
     .split('\n')
     .filter((line) => line.trim().length > 0)
-    .map(
-      (line) =>
-        `<p style="margin:0 0 14px;font-size:14px;line-height:22px;color:#c9ccd6;">${escapeHtml(line)}</p>`,
-    )
+    .map((line) => `<p style="margin:0 0 14px;font-size:14px;line-height:22px;color:#c9ccd6;">${escapeHtml(line)}</p>`)
     .join('');
+
+  const greeting = buildGreeting(input.recipient, input.loggedIn === true);
+  const greetingHtml = greeting
+    ? `<p style="margin:0 0 16px;font-size:15px;line-height:22px;color:#ffffff;font-weight:700;">${escapeHtml(greeting)}</p>`
+    : '';
 
   const codeBlockHtml = input.code ? codeBlock(input.code) : '';
 
+  const arrowIcon = EMAIL_UI_ICONS.arrow_right;
   const ctaBlock =
     input.ctaUrl && input.ctaLabel
       ? `<div style="margin:26px 0 10px;text-align:center;">
-           <a href="${escapeHtml(input.ctaUrl)}" style="display:inline-block;padding:14px 26px;border-radius:12px;background:linear-gradient(135deg,${site.buttonFrom},${site.buttonTo});color:#ffffff;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-decoration:none;">${escapeHtml(input.ctaLabel)}</a>
+           <a href="${escapeHtml(input.ctaUrl)}" style="display:inline-block;padding:14px 26px;border-radius:12px;background:linear-gradient(135deg,${site.buttonFrom},${site.buttonTo});color:#ffffff;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-decoration:none;">${escapeHtml(input.ctaLabel)} <img src="${arrowIcon.dataUri}" width="${arrowIcon.width}" height="${arrowIcon.height}" alt="→" style="display:inline-block;border:0;vertical-align:middle;margin-left:6px;" /></a>
          </div>
          <p style="margin:0 0 8px;font-size:11px;color:#7c8196;text-align:center;word-break:break-all;">Si el botón no funciona, copia este enlace: ${escapeHtml(input.ctaUrl)}</p>`
       : '';
@@ -258,42 +301,42 @@ export function renderBrandedEmail(input: BrandedEmailInput): RenderedEmail {
 
   const marketingLine = input.marketing
     ? `Recibes este correo porque aceptaste comunicaciones de ${escapeHtml(site.name)}. <strong style="color:#e9ebf2;">Este mensaje SÍ es una comunicación promocional.</strong> Puedes desactivar los patrocinios y anuncios desde la configuración de tu cuenta.`
-    : `Este correo es una notificación de seguridad de tu cuenta y <strong style="color:#e9ebf2;">no es publicidad ni patrocinio</strong>. No respondas a este mensaje: la bandeja no se atiende.`;
+    : `Este correo es una notificación de ${escapeHtml(site.name)} y <strong style="color:#e9ebf2;">no es publicidad ni patrocinio</strong>. No respondas a este mensaje: la bandeja no se atiende.`;
 
-  // Logos reales como PNG embebido (data URI): renderizan en todos los
-  // clientes de correo, a diferencia del SVG inline.
-  const isotipo = EMAIL_SITE_ISOTYPES[site.key] ?? EMAIL_SITE_ISOTYPES.ciszu;
-  const isotipoImg = `<img src="${isotipo.dataUri}" width="${isotipo.width}" height="${isotipo.height}" alt="${escapeHtml(site.name)}" style="display:block;border:0;outline:none;text-decoration:none;" />`;
-  const wordmarkImg = `<img src="${EMAIL_CISZU_WORDMARK.dataUri}" width="${EMAIL_CISZU_WORDMARK.width}" height="${EMAIL_CISZU_WORDMARK.height}" alt="${EMAIL_BRAND_NAME}" style="display:block;border:0;outline:none;text-decoration:none;" />`;
-
-  // Disclaimer de proveedor: hoy no hay dominio propio, así que los correos de
-  // Supabase Auth salen de noreply@mail.app.supabase.io. Es obligatorio
-  // aclararlo para evitar que parezca phishing.
   const providerDisclaimer = `Este correo se ha enviado a través de <strong style="color:#a8adbd;">Supabase</strong> (proveedor de autenticación del ecosistema) porque ${EMAIL_BRAND_NAME} aún no dispone de un dominio de correo propio. En cuanto se adquiera, los correos saldrán desde un remitente oficial de ${EMAIL_BRAND_NAME}.`;
+
+  const isotipo = EMAIL_SITE_ISOTYPES[site.key] ?? EMAIL_SITE_ISOTYPES.ciszu;
+  const isotipoImg = `<img src="${isotipo.dataUri}" width="${isotipo.width}" height="${isotipo.height}" alt="${escapeHtml(site.name)}" style="display:block;border:0;" />`;
+  const wordmarkImg = `<img src="${EMAIL_CISZU_WORDMARK.dataUri}" width="${EMAIL_CISZU_WORDMARK.width}" height="${EMAIL_CISZU_WORDMARK.height}" alt="${EMAIL_BRAND_NAME}" style="display:block;border:0;" />`;
+  const categoryIcon = icon(input.category, input.title);
+
+  const devconBanner = input.devcon
+    ? `<tr><td style="padding:8px 26px;background:#7f1d1d;color:#fecaca;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-align:center;">⚙ Enviado por la DEVCON (plantilla de prueba)</td></tr>`
+    : '';
 
   const html = `<!doctype html>
 <html lang="es">
-  <body style="margin:0;padding:24px 12px;background:#05050a;font-family:Arial,Helvetica,sans-serif;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#0d0d18;border:1px solid #1e1e2e;border-radius:18px;overflow:hidden;">
-      <!-- Cabecera con logotipo de Ciszu Network + isotipo de la web -->
+  <body style="margin:0;padding:24px 12px;background:${site.bg};font-family:Arial,Helvetica,sans-serif;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:${site.cardBg};border:1px solid #1e1e2e;border-radius:18px;overflow:hidden;">
+      ${devconBanner}
       <tr>
         <td style="padding:22px 26px;background:linear-gradient(135deg,${site.accent},${site.accent2});">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
             <tr>
-              <td align="left" style="font-size:0;line-height:0;">
-                ${wordmarkImg}
-              </td>
-              <td align="right" style="font-size:0;line-height:0;vertical-align:middle;">
-                ${isotipoImg}
-              </td>
+              <td align="left" style="font-size:0;line-height:0;">${wordmarkImg}</td>
+              <td align="right" style="font-size:0;line-height:0;vertical-align:middle;">${isotipoImg}</td>
             </tr>
           </table>
         </td>
       </tr>
-      <!-- Cuerpo -->
       <tr>
         <td style="padding:26px;">
-          <h1 style="margin:0 0 16px;font-size:18px;color:#ffffff;letter-spacing:.5px;">${escapeHtml(input.title)}</h1>
+          <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+            <td style="padding-right:10px;vertical-align:middle;">${categoryIcon}</td>
+            <td style="vertical-align:middle;"><h1 style="margin:0;font-size:18px;color:#ffffff;letter-spacing:.5px;">${escapeHtml(input.title)}</h1></td>
+          </tr></table>
+          <div style="height:14px;"></div>
+          ${greetingHtml}
           ${introHtml}
           ${codeBlockHtml}
           ${ctaBlock}
@@ -302,25 +345,22 @@ export function renderBrandedEmail(input: BrandedEmailInput): RenderedEmail {
           ${input.extraHtml ?? ''}
         </td>
       </tr>
-      <!-- Pie: redes, soporte, legal -->
       <tr>
-        <td style="padding:20px 26px;background:#0a0a12;border-top:1px solid #1e1e2e;">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-            <tr>
-              <td style="font-size:0;line-height:0;padding-bottom:10px;">${socialRow(site)}</td>
-            </tr>
-          </table>
-          <p style="margin:0 0 10px;font-size:11px;line-height:17px;color:#7c8196;">${marketingLine}</p>
+        <td style="padding:18px 26px;background:rgba(0,0,0,0.35);border-top:1px solid #1e1e2e;">
+          <p style="margin:0 0 4px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#5a5f75;text-align:center;">Síguenos</p>
+          <div style="text-align:center;font-size:0;line-height:0;margin-bottom:14px;">${socialRow(site)}</div>
+          <p style="margin:0 0 10px;font-size:11px;line-height:17px;color:#7c8196;text-align:center;"><strong style="color:#c9ccd6;">Enviado por ${EMAIL_BRAND_NAME}</strong> · ${EMAIL_BRAND_EMAIL} · Página: <a href="${escapeHtml(site.url)}" style="color:${site.textAccent};text-decoration:none;">${escapeHtml(site.name)}</a></p>
+          <p style="margin:0 0 10px;font-size:11px;line-height:17px;color:#7c8196;text-align:center;"><img src="${EMAIL_CATEGORY_ICONS.disclaimer.dataUri}" width="14" height="14" alt="Aviso" style="display:inline-block;border:0;vertical-align:middle;margin-right:6px;" />${marketingLine}</p>
           ${footerNoteBlock}
-          <p style="margin:0;font-size:11px;line-height:17px;color:#7c8196;">
-            <a href="${escapeHtml(site.url)}" style="color:${site.textAccent};text-decoration:none;">${escapeHtml(site.name)}</a> ·
+          <p style="margin:0;font-size:11px;line-height:17px;color:#7c8196;text-align:center;">
             <a href="${EMAIL_LEGAL_LINKS.terms}" style="color:${site.textAccent};text-decoration:none;">Términos de Servicio</a> ·
             <a href="${EMAIL_LEGAL_LINKS.privacy}" style="color:${site.textAccent};text-decoration:none;">Privacidad</a> ·
             <a href="${EMAIL_LEGAL_LINKS.support}" style="color:${site.textAccent};text-decoration:none;">Soporte</a> ·
             <a href="${escapeHtml(site.settingsUrl)}" style="color:${site.textAccent};text-decoration:none;">Preferencias</a>
           </p>
-          <p style="margin:10px 0 0;font-size:10px;color:#5a5f75;">Enviado por ${EMAIL_BRAND_NAME} en nombre de ${escapeHtml(site.name)}. Si no reconoces este mensaje, ignóralo y avísanos desde Soporte.</p>
-          <p style="margin:10px 0 0;padding:10px 12px;border-radius:8px;background:#151522;border:1px solid #24243a;font-size:10px;line-height:16px;color:#8a97ad;">${providerDisclaimer}</p>
+          <p style="margin:12px 0 0;padding:10px 12px;border-radius:8px;background:#151522;border:1px solid #24243a;font-size:10px;line-height:16px;color:#8a97ad;text-align:center;">
+            <img src="${EMAIL_CATEGORY_ICONS.supabase.dataUri}" width="14" height="14" alt="Supabase" style="display:inline-block;border:0;vertical-align:middle;margin-right:6px;" />${providerDisclaimer}
+          </p>
         </td>
       </tr>
     </table>
@@ -331,9 +371,10 @@ export function renderBrandedEmail(input: BrandedEmailInput): RenderedEmail {
     `${EMAIL_BRAND_NAME} | ${site.name}`,
     '',
     input.title,
+    greeting ? `\n${greeting}` : '',
     '',
     input.intro,
-    input.code ? `\nCÓDIGO: ${input.code}` : '',
+    input.code ? `\nCÓDIGO: C-${input.code.replace(/[^A-Za-z0-9]/g, '').replace(/^C/i, '')} (el prefijo C- es fijo; solo se verifica el número)` : '',
     input.ctaUrl ? `\n${input.ctaLabel ?? 'Enlace'}: ${input.ctaUrl}` : '',
     input.note ? `\n${input.note}` : '',
     input.securityNote ? `\n${input.securityNote}` : '',
@@ -341,204 +382,238 @@ export function renderBrandedEmail(input: BrandedEmailInput): RenderedEmail {
     '',
     input.marketing
       ? `Este mensaje SÍ es una comunicación promocional de ${site.name}. Puedes desactivarla desde: ${site.settingsUrl}`
-      : 'Este correo es una notificación de seguridad y NO es publicidad ni patrocinio.',
+      : 'Este correo es una notificación y NO es publicidad ni patrocinio.',
+    `Enviado por ${EMAIL_BRAND_NAME} (${EMAIL_BRAND_EMAIL}) · Página: ${site.name} (${site.url})`,
     `Términos: ${EMAIL_LEGAL_LINKS.terms} · Privacidad: ${EMAIL_LEGAL_LINKS.privacy} · Soporte: ${EMAIL_LEGAL_LINKS.support}`,
     '',
-    `Aviso: este correo se ha enviado a través de Supabase (proveedor de autenticación) porque ${EMAIL_BRAND_NAME} aún no dispone de un dominio de correo propio.`,
+    `Aviso: enviado a través de Supabase (proveedor de autenticación) porque ${EMAIL_BRAND_NAME} aún no dispone de un dominio propio.`,
   ]
     .filter((line) => line !== '')
     .join('\n');
 
-  return { subject, html, text };
+  return { subject: finalSubject, html, text };
 }
 
-/** Email del código 2FA, ya con las reglas del contrato. */
+/* ------------------------------ Plantillas ------------------------------ */
+
 export function twoFactorEmail(input: {
-  siteKey?: string;
-  siteName?: string;
-  code: string;
-  expiresInMinutes: number;
-  maxAttempts: number;
+  siteKey?: string; siteName?: string; code: string; expiresInMinutes: number; maxAttempts: number;
+  recipient?: EmailRecipient; devcon?: boolean;
 }): RenderedEmail {
   const site = resolveSite(input.siteKey, input.siteName);
   return renderBrandedEmail({
-    siteKey: site.key,
-    title: 'Tu clave de acceso',
-    intro:
-      `Alguien (esperamos que tú) está iniciando sesión en ${site.name} y tu cuenta tiene verificación en dos pasos activada.\n` +
-      'Introduce esta clave para continuar:',
-    code: input.code,
+    siteKey: site.key, category: 'twofactor', title: 'Tu clave de acceso',
+    intro: `Alguien (esperamos que tú) está iniciando sesión en ${site.name} y tu cuenta tiene verificación en dos pasos activada.\nIntroduce esta clave para continuar:`,
+    code: input.code, recipient: input.recipient, loggedIn: false, devcon: input.devcon,
     note: `La clave caduca en ${input.expiresInMinutes} minutos y solo sirve para ${site.name}. Tras ${input.maxAttempts} intentos fallidos el acceso se suspende temporalmente.`,
-    securityNote:
-      'Si no has intentado iniciar sesión, no introduzcas la clave: cambia tu contraseña desde la web y avísanos desde Soporte.',
+    securityNote: 'Si no has intentado iniciar sesión, no introduzcas la clave: cambia tu contraseña desde la web y avísanos desde Soporte.',
   });
 }
 
-/** Bienvenida tras completar el registro y verificar la cuenta. */
 export function welcomeEmail(input: {
-  siteKey?: string;
-  siteName?: string;
-  username: string;
+  siteKey?: string; siteName?: string; username: string; recipient?: EmailRecipient; devcon?: boolean;
 }): RenderedEmail {
   const site = resolveSite(input.siteKey, input.siteName);
   return renderBrandedEmail({
-    siteKey: site.key,
-    title: '¡Bienvenido a ' + site.name + '!',
-    intro:
-      `Hola, ${input.username}.\n\n` +
-      `Tu cuenta en ${site.name} está verificada y lista para usar. Ya formas parte del ecosistema ${EMAIL_BRAND_NAME}.`,
-    ctaLabel: 'Explorar ' + site.name,
-    ctaUrl: site.url,
+    siteKey: site.key, category: 'welcome', title: `¡Bienvenido a ${site.name}!`,
+    intro: `Tu cuenta en ${site.name} está verificada y lista para usar. Ya formas parte del ecosistema ${EMAIL_BRAND_NAME}.`,
+    recipient: input.recipient ?? { email: '', username: input.username }, loggedIn: true,
+    ctaLabel: `Explorar ${site.name}`, ctaUrl: site.url, devcon: input.devcon,
     note: 'Desde la configuración de tu cuenta puedes elegir qué notificaciones quieres recibir.',
-    footerNote: `Puedes ajustar tus preferencias de notificación y patrocinios en cualquier momento: ${site.settingsUrl}`,
+    footerNote: `Ajusta tus preferencias de notificación y patrocinios en cualquier momento: ${site.settingsUrl}`,
   });
 }
 
-/** Notificación transaccional general (logros, avisos de la web, novedades). */
 export function notificationEmail(input: {
-  siteKey?: string;
-  siteName?: string;
-  title: string;
-  intro: string;
-  ctaLabel?: string;
-  ctaUrl?: string;
-  note?: string;
+  siteKey?: string; siteName?: string; title: string; intro: string; ctaLabel?: string; ctaUrl?: string; note?: string;
+  recipient?: EmailRecipient; devcon?: boolean;
 }): RenderedEmail {
   const site = resolveSite(input.siteKey, input.siteName);
   return renderBrandedEmail({
-    siteKey: site.key,
-    title: input.title,
-    intro: input.intro,
-    ctaLabel: input.ctaLabel,
-    ctaUrl: input.ctaUrl,
-    note: input.note,
+    siteKey: site.key, category: 'notification', title: input.title, intro: input.intro,
+    recipient: input.recipient, loggedIn: true, ctaLabel: input.ctaLabel, ctaUrl: input.ctaUrl, note: input.note, devcon: input.devcon,
     footerNote: `Recibes esta notificación según tus preferencias de cuenta. Puedes cambiarlas aquí: ${site.settingsUrl}`,
   });
 }
 
-/** Patrocinio/anuncio de un proyecto del ecosistema (marketing). */
 export function sponsorshipEmail(input: {
-  siteKey?: string;
-  siteName?: string;
-  project: string;
-  headline: string;
-  intro: string;
-  ctaLabel: string;
-  ctaUrl: string;
+  siteKey?: string; siteName?: string; project: string; headline: string; intro: string; ctaLabel: string; ctaUrl: string;
+  recipient?: EmailRecipient; devcon?: boolean;
 }): RenderedEmail {
   const site = resolveSite(input.siteKey, input.siteName);
   return renderBrandedEmail({
-    siteKey: site.key,
-    title: input.headline,
-    intro:
-      `Hoy te presentamos ${input.project} del ecosistema ${EMAIL_BRAND_NAME}.\n\n` + input.intro,
-    ctaLabel: input.ctaLabel,
-    ctaUrl: input.ctaUrl,
-    marketing: true,
-    footerNote:
-      `Recibes este patrocinio porque lo tienes activado en tus preferencias. Puedes desactivarlo (o volver a activarlo) en cualquier momento: ${site.settingsUrl}`,
+    siteKey: site.key, category: 'sponsorship', title: input.headline,
+    intro: `Hoy te presentamos ${input.project} del ecosistema ${EMAIL_BRAND_NAME}.\n\n${input.intro}`,
+    recipient: input.recipient, loggedIn: true, ctaLabel: input.ctaLabel, ctaUrl: input.ctaUrl, marketing: true, devcon: input.devcon,
+    footerNote: `Recibes este patrocinio porque lo tienes activado en tus preferencias. Puedes desactivarlo (o volver a activarlo) en cualquier momento: ${site.settingsUrl}`,
   });
 }
 
-/** Aviso de seguridad de la cuenta (intento fallido, cambio de datos, etc.). */
 export function accountWarningEmail(input: {
-  siteKey?: string;
-  siteName?: string;
-  title: string;
-  intro: string;
-  securityNote: string;
+  siteKey?: string; siteName?: string; title: string; intro: string; securityNote: string;
+  recipient?: EmailRecipient; devcon?: boolean;
 }): RenderedEmail {
   const site = resolveSite(input.siteKey, input.siteName);
   return renderBrandedEmail({
-    siteKey: site.key,
-    title: input.title,
-    intro: input.intro,
-    securityNote: input.securityNote,
-    ctaLabel: 'Revisar mi cuenta',
-    ctaUrl: site.settingsUrl,
+    siteKey: site.key, category: 'accountwarning', title: input.title, intro: input.intro,
+    recipient: input.recipient, loggedIn: true, securityNote: input.securityNote,
+    ctaLabel: 'Revisar mi cuenta', ctaUrl: site.settingsUrl, devcon: input.devcon,
   });
 }
 
-/** Confirmación de cambio de contraseña. */
 export function passwordChangedEmail(input: {
-  siteKey?: string;
-  siteName?: string;
+  siteKey?: string; siteName?: string; recipient?: EmailRecipient; devcon?: boolean;
 }): RenderedEmail {
   const site = resolveSite(input.siteKey, input.siteName);
   return renderBrandedEmail({
-    siteKey: site.key,
-    title: 'Contraseña actualizada',
+    siteKey: site.key, category: 'passwordchanged', title: 'Contraseña actualizada',
     intro: `La contraseña de tu cuenta en ${site.name} se cambió correctamente.`,
-    securityNote:
-      'Si no fuiste tú quien cambió la contraseña, recupera tu cuenta desde la web y avísanos desde Soporte de inmediato.',
+    recipient: input.recipient, loggedIn: true,
+    securityNote: 'Si no fuiste tú quien cambió la contraseña, recupera tu cuenta desde la web y avísanos desde Soporte de inmediato.',
+    devcon: input.devcon,
+  });
+}
+
+/** Ticket de soporte (el usuario debe haber iniciado sesión: muestra usuario). */
+export function supportTicketEmail(input: {
+  siteKey?: string; siteName?: string; ticketId: string; subject: string; message: string;
+  recipient?: EmailRecipient; devcon?: boolean;
+}): RenderedEmail {
+  const site = resolveSite(input.siteKey, input.siteName);
+  return renderBrandedEmail({
+    siteKey: site.key, category: 'support_ticket', title: `Ticket ${input.ticketId} recibido`,
+    intro: `Hemos recibido tu solicitud de soporte en ${site.name}.\n\nAsunto: ${input.subject}\n\n"${input.message}"\n\nTe responderemos a la brevedad. Guarda el número de ticket.`,
+    recipient: input.recipient, loggedIn: true, devcon: input.devcon,
+    note: `Número de ticket: ${input.ticketId}`,
+    ctaLabel: 'Ver el ticket', ctaUrl: `${site.url}/support`,
+    footerNote: `Puedes seguir el estado de tu ticket desde tu cuenta: ${site.url}`,
   });
 }
 
 /**
- * Plantilla de DEBUG (solo devcon): muestra de golpe varias cosas del sistema
- * de emails (logos de las 4 webs, código, botón, redes, avisos, disclaimers)
- * para previsualizar el diseño sin entrar a las páginas. NO se usa en producción.
+ * Correo no vinculado: la cuenta no existe para esa web. Sin enlaces de acción
+ * (el error es claro); ofrece crear cuenta, explicación y soporte.
  */
-export function debugEmail(input: {
-  siteKey?: string;
-  testEmail?: string;
+export function unlinkedEmail(input: {
+  siteKey?: string; siteName?: string; email: string; action?: string; devcon?: boolean;
 }): RenderedEmail {
-  const site = resolveSite(input.siteKey);
+  const site = resolveSite(input.siteKey, input.siteName);
+  const action = input.action ? ` para ${input.action}` : '';
+  return renderBrandedEmail({
+    siteKey: site.key, category: 'error', title: 'Correo no vinculado',
+    intro:
+      `No hemos encontrado ninguna cuenta asociada a ${input.email} en ${site.name}${action}.\n\n` +
+      'Si creías tener una cuenta con este correo, comprueba que sea el correcto o crea una nueva. Si el problema persiste, contacta con Soporte.',
+    recipient: { email: input.email }, loggedIn: false,
+    note: 'Por seguridad, no generamos ningún enlace de acción para correos que no están vinculados a una cuenta.',
+    securityNote: 'Si otra persona usó tu correo sin permiso, avísanos desde Soporte.',
+    ctaLabel: 'Crear una cuenta', ctaUrl: `${site.url}/register`,
+    footerNote: '¿Necesitas ayuda? Soporte y redes del ecosistema están abajo.',
+    devcon: input.devcon,
+  });
+}
 
-  // Galería de isotipos de las 4 webs para comparar cómo se ve cada marca.
+/** Plantilla de DEBUG (solo devcon). */
+export function debugEmail(input: { siteKey?: string; testEmail?: string; recipient?: EmailRecipient; devcon?: boolean }): RenderedEmail {
+  const site = resolveSite(input.siteKey);
   const gallery = Object.entries(EMAIL_SITE_ISOTYPES)
     .map(([key, logo]) => {
       const cfg = EMAIL_SITES[key];
-      return `<td style="padding:10px;text-align:center;vertical-align:top;">
-        <img src="${logo.dataUri}" width="${logo.width}" height="${logo.height}" alt="${escapeHtml(cfg?.name ?? key)}" style="display:inline-block;border:0;" />
-        <div style="margin-top:6px;font-size:10px;color:#8a97ad;">${escapeHtml(cfg?.name ?? key)}</div>
-        <div style="margin-top:2px;font-size:9px;color:#5a5f75;">${escapeHtml(cfg?.accent ?? '')} / ${escapeHtml(cfg?.accent2 ?? '')}</div>
-      </td>`;
+      return `<td style="padding:10px;text-align:center;vertical-align:top;"><img src="${logo.dataUri}" width="${logo.width}" height="${logo.height}" alt="${escapeHtml(cfg?.name ?? key)}" style="display:inline-block;border:0;" /><div style="margin-top:6px;font-size:10px;color:#8a97ad;">${escapeHtml(cfg?.name ?? key)}</div></td>`;
     })
     .join('');
-
   const socialGallery = Object.entries(EMAIL_SOCIAL_ICONS)
-    .map(
-      ([key, logo]) =>
-        `<td style="padding:4px;text-align:center;"><img src="${logo.dataUri}" width="${logo.width}" height="${logo.height}" alt="${escapeHtml(key)}" style="display:inline-block;border:0;" /><div style="font-size:9px;color:#5a5f75;">${escapeHtml(key)}</div></td>`,
-    )
+    .map(([key, logo]) => `<td style="padding:4px;text-align:center;"><img src="${logo.dataUri}" width="${logo.width}" height="${logo.height}" alt="${escapeHtml(key)}" style="display:inline-block;border:0;" /><div style="font-size:9px;color:#5a5f75;">${escapeHtml(key)}</div></td>`)
+    .join('');
+  const catGallery = Object.entries(EMAIL_CATEGORY_ICONS)
+    .map(([key, ic]) => `<td style="padding:4px;text-align:center;"><img src="${ic.dataUri}" width="${ic.width}" height="${ic.height}" alt="${escapeHtml(key)}" style="display:inline-block;border:0;" /><div style="font-size:8px;color:#5a5f75;">${escapeHtml(key)}</div></td>`)
     .join('');
 
   const extraHtml = `
     <div style="margin:24px 0 0;padding:16px;border-radius:12px;background:#101020;border:1px dashed #3a3a55;">
       <div style="font-size:12px;font-weight:700;color:#7dd3fc;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">🧪 Plantilla de DEBUG (solo devcon)</div>
-      <p style="margin:0 0 10px;font-size:11px;color:#a8adbd;">Isotipos de las 4 webs del ecosistema:</p>
+      <p style="margin:0 0 10px;font-size:11px;color:#a8adbd;">Isotipos de las 4 webs:</p>
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>${gallery}</tr></table>
-      <p style="margin:16px 0 6px;font-size:11px;color:#a8adbd;">Iconos de redes:</p>
+      <p style="margin:16px 0 6px;font-size:11px;color:#a8adbd;">Redes:</p>
       <table role="presentation" cellpadding="0" cellspacing="0"><tr>${socialGallery}</tr></table>
-      <p style="margin:16px 0 0;font-size:10px;color:#5a5f75;">Diagnóstico: site=<strong style="color:#c9ccd6;">${escapeHtml(site.key)}</strong> · destino=${escapeHtml(input.testEmail ?? '(no indicado)')} · proveedor=${process.env.RESEND_API_KEY ? 'Resend' : 'no configurado (preview)'}</p>
+      <p style="margin:16px 0 6px;font-size:11px;color:#a8adbd;">Iconos de categoría:</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>${catGallery}</tr></table>
+      <p style="margin:16px 0 0;font-size:10px;color:#5a5f75;">Diagnóstico: site=<strong style="color:#c9ccd6;">${escapeHtml(site.key)}</strong> · destino=${escapeHtml(input.testEmail ?? '(no indicado)')} · proveedor=${process.env.RESEND_API_KEY ? 'Resend' : 'preview'}</p>
     </div>`;
 
   return renderBrandedEmail({
-    siteKey: site.key,
-    title: 'Plantilla de DEBUG de emails',
-    intro:
-      'Esta es la plantilla de diagnóstico de la devcon. Muestra de una vez los elementos del sistema de emails: cabecera con logotipo e isotipo, código, botón, redes sociales, avisos legales y el disclaimer de proveedor.',
-    code: 'C-123 434',
-    ctaLabel: 'Botón de ejemplo',
-    ctaUrl: site.url,
-    note: 'Nota de ejemplo: así se ve el bloque de caducidad/avisos.',
-    securityNote: 'Aviso de seguridad de ejemplo: si no fuiste tú, ignora este mensaje.',
-    footerNote: 'Plantilla de debug generada por la devcon (test/website/debug). No se envía en producción.',
-    extraHtml,
+    siteKey: site.key, category: 'debug', title: 'Plantilla de DEBUG de emails',
+    intro: 'Esta es la plantilla de diagnóstico de la devcon. Muestra cabecera, icono de categoría, saludo, código con copiar, botón con flecha, redes y avisos.',
+    recipient: input.recipient ?? { email: 'usuario@email.com', displayName: 'Usuario', username: 'usuario' },
+    loggedIn: true, code: 'C-123 434', ctaLabel: 'Botón de ejemplo', ctaUrl: site.url,
+    note: 'Nota de ejemplo.', securityNote: 'Aviso de seguridad de ejemplo.',
+    footerNote: 'Plantilla de debug generada por la devcon. No se envía en producción.',
+    extraHtml, devcon: input.devcon,
   });
 }
+
+/* -------------------------- Plantillas Supabase Auth -------------------------- */
+// El botón usa la variable literal de Supabase `{{ .ConfirmationURL }}`; el
+// resto del diseño es idéntico al de la app. `apply` las sube a Supabase.
+
+const SUPABASE_URL_VAR = '{{ .ConfirmationURL }}';
+
+export function authConfirmationEmail(recipient?: EmailRecipient): RenderedEmail {
+  return renderBrandedEmail({
+    siteKey: 'ciszu', category: 'confirmation', title: 'Confirma tu cuenta',
+    intro: 'Recibes este correo porque alguien (esperamos que tú) se registró en el ecosistema de Ciszu Network.',
+    recipient, loggedIn: false, ctaLabel: 'Confirmar mi correo', ctaUrl: SUPABASE_URL_VAR,
+    subjectOverride: 'Confirma tu cuenta | Ciszu Network',
+  });
+}
+
+export function authRecoveryEmail(recipient?: EmailRecipient): RenderedEmail {
+  return renderBrandedEmail({
+    siteKey: 'ciszu', category: 'recovery', title: 'Restablece tu contraseña',
+    intro: 'Recibes este correo porque se solicitó restablecer la contraseña de tu cuenta en Ciszu Network.',
+    recipient, loggedIn: false, ctaLabel: 'Restablecer contraseña', ctaUrl: SUPABASE_URL_VAR,
+    securityNote: 'Si no lo solicitaste, ignora este correo: tu contraseña no cambiará.',
+    subjectOverride: 'Restablece tu contraseña | Ciszu Network',
+  });
+}
+
+export function authMagicLinkEmail(recipient?: EmailRecipient): RenderedEmail {
+  return renderBrandedEmail({
+    siteKey: 'ciszu', category: 'magic_link', title: 'Tu enlace mágico',
+    intro: 'Usa este enlace para iniciar sesión en tu cuenta de Ciszu Network de forma segura.',
+    recipient, loggedIn: false, ctaLabel: 'Entrar con enlace mágico', ctaUrl: SUPABASE_URL_VAR,
+    subjectOverride: 'Tu enlace mágico | Ciszu Network',
+  });
+}
+
+export function authEmailChangeEmail(recipient?: EmailRecipient): RenderedEmail {
+  return renderBrandedEmail({
+    siteKey: 'ciszu', category: 'email_change', title: 'Confirma tu nuevo correo',
+    intro: 'Recibes este correo para confirmar el cambio de dirección de correo de tu cuenta en Ciszu Network.',
+    recipient, loggedIn: false, ctaLabel: 'Confirmar nuevo correo', ctaUrl: SUPABASE_URL_VAR,
+    subjectOverride: 'Confirma tu nuevo correo | Ciszu Network',
+  });
+}
+
+export function authInviteEmail(recipient?: EmailRecipient): RenderedEmail {
+  return renderBrandedEmail({
+    siteKey: 'ciszu', category: 'invite', title: 'Te han invitado a Ciszu Network',
+    intro: 'Te han invitado a unirte al ecosistema de Ciszu Network.',
+    recipient, loggedIn: false, ctaLabel: 'Aceptar invitación', ctaUrl: SUPABASE_URL_VAR,
+    subjectOverride: 'Invitación a Ciszu Network',
+  });
+}
+
+/* ------------------------------ Transporte ------------------------------ */
 
 export interface SendEmailInput {
   to: string;
   subject: string;
   html: string;
   text: string;
-  /** Remitente; por defecto `Ciszu Network | <site> <no-reply@…>`. */
   from?: string;
   apiKey?: string;
   fetchImpl?: typeof fetch;
-  /** En local se permite no enviar y devolver la vista previa. */
   allowPreview?: boolean;
 }
 
@@ -549,14 +624,6 @@ export interface SendEmailResult {
   previewOnly?: boolean;
 }
 
-/**
- * Envía un email por Resend.
- *
- * Sin `RESEND_API_KEY` no se puede enviar (Resend exige dominio verificado), así
- * que devuelve el motivo en vez de decir que sí. Con `EMAIL_ALLOW_PREVIEW=1`
- * (solo desarrollo) se marca `previewOnly` y quien llama puede mostrar el
- * código en pantalla para poder probar el flujo sin proveedor.
- */
 export async function sendBrandedEmail(input: SendEmailInput): Promise<SendEmailResult> {
   const apiKey = input.apiKey ?? process.env.RESEND_API_KEY;
   const from = input.from ?? process.env.EMAIL_FROM_RESEND ?? process.env.EMAIL_FROM;
@@ -564,9 +631,7 @@ export async function sendBrandedEmail(input: SendEmailInput): Promise<SendEmail
 
   if (!apiKey || !from) {
     const missing = !apiKey ? 'RESEND_API_KEY' : 'EMAIL_FROM_RESEND';
-    if (allowPreview) {
-      return { sent: false, previewOnly: true, error: `Vista previa local: falta ${missing}.` };
-    }
+    if (allowPreview) return { sent: false, previewOnly: true, error: `Vista previa local: falta ${missing}.` };
     return { sent: false, error: `No hay proveedor de email configurado (falta ${missing}).` };
   }
 
@@ -574,27 +639,18 @@ export async function sendBrandedEmail(input: SendEmailInput): Promise<SendEmail
   try {
     const res = await doFetch('https://api.resend.com/emails', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        from,
-        to: [input.to],
-        subject: input.subject,
-        html: input.html,
-        text: input.text,
-      }),
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+      body: JSON.stringify({ from, to: [input.to], subject: input.subject, html: input.html, text: input.text }),
     });
-
     if (!res.ok) {
       const detail = await res.text().catch(() => '');
       return { sent: false, error: `El proveedor rechazó el envío (HTTP ${res.status}): ${detail.slice(0, 200)}` };
     }
-
     const data = (await res.json().catch(() => ({}))) as { id?: string };
     return { sent: true, providerId: data.id };
   } catch (err) {
     return { sent: false, error: err instanceof Error ? err.message : 'Fallo de red al enviar el email.' };
   }
 }
+
+export { EMAIL_SITE_ISOTYPES, EMAIL_CISZU_WORDMARK, EMAIL_SOCIAL_ICONS, EMAIL_CATEGORY_ICONS, EMAIL_UI_ICONS };
