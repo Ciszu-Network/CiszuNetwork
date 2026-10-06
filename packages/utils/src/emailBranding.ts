@@ -26,6 +26,9 @@ import {
   EMAIL_SOCIAL_ICONS,
   EMAIL_CATEGORY_ICONS,
   EMAIL_UI_ICONS,
+  EMAIL_SITE_HEADER_EXTRAS,
+  EMAIL_FOOTER_ISOTYPE,
+  EMAIL_CROSSOVER,
 } from './emailSites.generated';
 
 export const EMAIL_BRAND_NAME = 'Ciszu Network';
@@ -226,7 +229,7 @@ function codeBlock(code: string): string {
     <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;">
       <tr>
         <td style="padding:14px 20px;border-radius:12px;background:#0b0b16;border:1px solid #2a2a45;">
-          <span style="font-family:'Consolas','Courier New',monospace;font-size:26px;font-weight:700;color:#ffffff;letter-spacing:8px;">C-${escapeHtml(spaced)}</span>
+          <span style="font-family:'Consolas','Courier New',monospace;font-size:24px;font-weight:700;color:#3b82f6;letter-spacing:2px;">C-</span><span style="font-family:'Consolas','Courier New',monospace;font-size:26px;font-weight:700;color:#ffffff;letter-spacing:8px;">${escapeHtml(spaced)}</span>
         </td>
         <td style="padding-left:10px;vertical-align:middle;">
           <a href="#" onclick="try{navigator.clipboard.writeText('${escapeHtml(digits)}')}catch(e){};return false;" title="Copiar número" style="text-decoration:none;">
@@ -235,7 +238,7 @@ function codeBlock(code: string): string {
         </td>
       </tr>
     </table>
-    <div style="margin-top:10px;font-size:11px;color:#7c8196;text-align:center;">El prefijo <strong>C-</strong> es fijo; solo se verifica el número. Pulsa el icono para copiarlo.</div>
+    <div style="margin-top:10px;font-size:11px;color:#7c8196;text-align:center;">El prefijo <strong style="color:#8ab4ff;">C-</strong> es fijo y no se copia; solo se verifica el número. Pulsa el icono para copiarlo.</div>
   </div>`;
 }
 
@@ -306,9 +309,27 @@ export function renderBrandedEmail(input: BrandedEmailInput): RenderedEmail {
   const providerDisclaimer = `Este correo se ha enviado a través de <strong style="color:#a8adbd;">Supabase</strong> (proveedor de autenticación del ecosistema) porque ${EMAIL_BRAND_NAME} aún no dispone de un dominio de correo propio. En cuanto se adquiera, los correos saldrán desde un remitente oficial de ${EMAIL_BRAND_NAME}.`;
 
   const isotipo = EMAIL_SITE_ISOTYPES[site.key] ?? EMAIL_SITE_ISOTYPES.ciszu;
-  const isotipoImg = `<img src="${isotipo.dataUri}" width="${isotipo.width}" height="${isotipo.height}" alt="${escapeHtml(site.name)}" style="display:block;border:0;" />`;
-  const wordmarkImg = `<img src="${EMAIL_CISZU_WORDMARK.dataUri}" width="${EMAIL_CISZU_WORDMARK.width}" height="${EMAIL_CISZU_WORDMARK.height}" alt="${EMAIL_BRAND_NAME}" style="display:block;border:0;" />`;
+  // Logotipo maestro (con engranaje) escalado para el header.
+  const masterW = 170;
+  const masterR = EMAIL_CISZU_WORDMARK.height / EMAIL_CISZU_WORDMARK.width;
+  const wordmarkImg = `<img src="${EMAIL_CISZU_WORDMARK.dataUri}" width="${Math.round(masterW)}" height="${Math.round(masterW * masterR)}" alt="${EMAIL_BRAND_NAME}" style="display:block;border:0;" />`;
+  // Extras de cabecera por web (isotipo redondeado del bot, logotipo de
+  // muzicmania, isotipos + youtube de ciszukoantony...).
+  const headerExtras = (EMAIL_SITE_HEADER_EXTRAS[site.key] ?? [])
+    .map((e) => `<img src="${e.dataUri}" width="${e.width}" height="${e.height}" alt="${escapeHtml(site.name)}" style="display:inline-block;border:0;vertical-align:middle;margin:0 3px;" />`)
+    .join('');
+  // ciszu: logotipo full centrado (el isotipo de la derecha sería redundante).
+  const headerCells = site.key === 'ciszu'
+    ? `<td align="center" style="font-size:0;line-height:0;">${wordmarkImg}</td>`
+    : `<td align="left" style="font-size:0;line-height:0;">${wordmarkImg}</td><td align="right" style="font-size:0;line-height:0;vertical-align:middle;">${headerExtras}</td>`;
   const categoryIcon = icon(input.category, input.title);
+
+  // Bloque del ecosistema en el footer: [isotipo ciszu outline] × [isotipo web].
+  const footIso = `<img src="${EMAIL_FOOTER_ISOTYPE.dataUri}" width="${EMAIL_FOOTER_ISOTYPE.width}" height="${EMAIL_FOOTER_ISOTYPE.height}" alt="${EMAIL_BRAND_NAME}" style="display:inline-block;border:0;vertical-align:middle;" />`;
+  const crossoverImg = `<img src="${EMAIL_CROSSOVER.dataUri}" width="${EMAIL_CROSSOVER.width}" height="${EMAIL_CROSSOVER.height}" alt="×" style="display:inline-block;border:0;vertical-align:middle;margin:0 12px;" />`;
+  const webIso = `<img src="${isotipo.dataUri}" width="${isotipo.width}" height="${isotipo.height}" alt="${escapeHtml(site.name)}" style="display:inline-block;border:0;vertical-align:middle;" />`;
+  const ecoBlock = `<div style="text-align:center;font-size:0;line-height:0;margin-bottom:10px;">${footIso}${crossoverImg}${webIso}</div>`;
+  const copyright = `© ${new Date().getFullYear()} ${escapeHtml(site.name)} · Todos los derechos reservados · Desarrollado por ${EMAIL_BRAND_NAME}.`;
 
   const devconBanner = input.devcon
     ? `<tr><td style="padding:8px 26px;background:#7f1d1d;color:#fecaca;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-align:center;">⚙ Enviado por la DEVCON (plantilla de prueba)</td></tr>`
@@ -322,10 +343,7 @@ export function renderBrandedEmail(input: BrandedEmailInput): RenderedEmail {
       <tr>
         <td style="padding:22px 26px;background:linear-gradient(135deg,${site.accent},${site.accent2});">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-            <tr>
-              <td align="left" style="font-size:0;line-height:0;">${wordmarkImg}</td>
-              <td align="right" style="font-size:0;line-height:0;vertical-align:middle;">${isotipoImg}</td>
-            </tr>
+            <tr>${headerCells}</tr>
           </table>
         </td>
       </tr>
@@ -349,6 +367,7 @@ export function renderBrandedEmail(input: BrandedEmailInput): RenderedEmail {
         <td style="padding:18px 26px;background:rgba(0,0,0,0.35);border-top:1px solid #1e1e2e;">
           <p style="margin:0 0 4px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#5a5f75;text-align:center;">Síguenos</p>
           <div style="text-align:center;font-size:0;line-height:0;margin-bottom:14px;">${socialRow(site)}</div>
+          ${ecoBlock}
           <p style="margin:0 0 10px;font-size:11px;line-height:17px;color:#7c8196;text-align:center;"><strong style="color:#c9ccd6;">Enviado por ${EMAIL_BRAND_NAME}</strong> · ${EMAIL_BRAND_EMAIL} · Página: <a href="${escapeHtml(site.url)}" style="color:${site.textAccent};text-decoration:none;">${escapeHtml(site.name)}</a></p>
           <p style="margin:0 0 10px;font-size:11px;line-height:17px;color:#7c8196;text-align:center;"><img src="${EMAIL_CATEGORY_ICONS.disclaimer.dataUri}" width="14" height="14" alt="Aviso" style="display:inline-block;border:0;vertical-align:middle;margin-right:6px;" />${marketingLine}</p>
           ${footerNoteBlock}
@@ -361,6 +380,7 @@ export function renderBrandedEmail(input: BrandedEmailInput): RenderedEmail {
           <p style="margin:12px 0 0;padding:10px 12px;border-radius:8px;background:#151522;border:1px solid #24243a;font-size:10px;line-height:16px;color:#8a97ad;text-align:center;">
             <img src="${EMAIL_CATEGORY_ICONS.supabase.dataUri}" width="14" height="14" alt="Supabase" style="display:inline-block;border:0;vertical-align:middle;margin-right:6px;" />${providerDisclaimer}
           </p>
+          <p style="margin:12px 0 0;font-size:10px;line-height:15px;color:#5a5f75;text-align:center;">${copyright}</p>
         </td>
       </tr>
     </table>
@@ -710,4 +730,4 @@ export async function sendBrandedEmail(input: SendEmailInput): Promise<SendEmail
   return { sent: false, error: `No hay transporte de email disponible: falta RESEND_API_KEY · ${gmail.error}. La credencial de envío es del sistema (vault/Vercel).` };
 }
 
-export { EMAIL_SITE_ISOTYPES, EMAIL_CISZU_WORDMARK, EMAIL_SOCIAL_ICONS, EMAIL_CATEGORY_ICONS, EMAIL_UI_ICONS };
+export { EMAIL_SITE_ISOTYPES, EMAIL_CISZU_WORDMARK, EMAIL_SOCIAL_ICONS, EMAIL_CATEGORY_ICONS, EMAIL_UI_ICONS, EMAIL_SITE_HEADER_EXTRAS, EMAIL_FOOTER_ISOTYPE, EMAIL_CROSSOVER };

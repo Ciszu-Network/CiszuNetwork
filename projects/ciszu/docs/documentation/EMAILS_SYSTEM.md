@@ -240,11 +240,13 @@ que SÍ lo son, si el mensaje es promocional).
 
 ### Branding por web (`emailBranding.ts` + `emailSites.generated.ts`)
 
-Cada web tiene su propia versión del email. Todos los assets (logotipos,
-isotipos, iconos de categoría, redes y UI) se incrustan como **PNG en base64
-(data URI)**, generados con `scripts/build-email-sites.js` (rasteriza los SVG de
-`projects/<web>/content/logos/` y los iconos lucide con Playwright). Se usa PNG
-y no SVG inline porque **Gmail y Outlook no renderizan SVG inline**.
+Cada web tiene su propia versión del email. Los assets (logotipos, isotipos,
+extras de cabecera, iconos de categoría, redes y UI) se sirven desde el **CDN de
+Supabase** (`ciszu-cdn/shared/icons/email/`) como **URLs https**, porque Gmail y
+Outlook no cargan bien los `data: URI`. El generador de assets también usa
+`scripts/build-email-sites.js` (rasteriza los SVG de
+`projects/<web>/content/logos/` y los iconos lucide con Playwright, y sube los
+PNG al CDN).
 
 - **Logos a color/degradado** (no blancos): `EMAIL_CISZU_WORDMARK` y
   `EMAIL_SITE_ISOTYPES` usan las variantes `gradient/color` de cada web.
@@ -252,7 +254,14 @@ y no SVG inline porque **Gmail y Outlook no renderizan SVG inline**.
   botón, **fondo oscuro propio `bg`**, fondo de tarjeta `cardBg`, settingsUrl,
   redes). Cada web tiene un fondo oscuro distinto y su degradado superior según
   el logotipo. `resolveSite(siteKey, siteName)` con fallback a `ciszu`.
-- **Cabecera**: logotipo de Ciszu Network (izq.) + isotipo de la web (der.).
+- **Cabecera**: **logotipo maestro de Ciszu Network (con engranaje)** en todas
+  las webs + extras por web a la derecha (isotipo redondeado del bot en ciszubot,
+  logotipo de muzicmania, isotipos + youtube en ciszukoantony). En ciszu el
+  logotipo maestro va centrado (sin isotipo redundante).
+- **Pie**: sección de **redes** (siempre, con color de marca) + bloque del
+  ecosistema **`[isotipo ciszunetwork] × [isotipo web]`** con la **X crossover**
+  (isotipo de ciszunetwork monocromo outline blanco) y **copyright** por web y de
+  Ciszu Network.
 - **Icono de categoría** junto al título (verificación, llave, magia, candado,
   ticket...) con color semántico (`EMAIL_CATEGORY_ICONS`).
 - **Botón centrado con flecha** (`EMAIL_UI_ICONS.arrow_right`).
