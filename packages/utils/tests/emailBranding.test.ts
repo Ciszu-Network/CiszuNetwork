@@ -30,9 +30,9 @@ describe('renderBrandedEmail', () => {
     expect(mail.html).toContain(EMAIL_LEGAL_LINKS.support);
   });
 
-  it('usa logos reales (CDN) en vez de texto y declara el proveedor', () => {
+  it('usa logos reales (data URI) en vez de texto y declara el proveedor', () => {
     const mail = renderBrandedEmail({ siteName: 'CiszuBot', title: 'Acceso', intro: 'Hola.' });
-    expect(mail.html).toContain('/ciszu-cdn/shared/icons/email/');
+    expect(mail.html).toContain('data:image/png;base64,');
     expect(mail.html).toContain('alt="Ciszu Network"');
     expect(mail.html).toContain('Supabase');
     // No debe usar SVG inline para los logos.

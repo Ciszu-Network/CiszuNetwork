@@ -29,6 +29,7 @@ import {
   EMAIL_SITE_HEADER_EXTRAS,
   EMAIL_FOOTER_ISOTYPE,
   EMAIL_CROSSOVER,
+  type EmailLogo,
 } from './emailSites.generated';
 
 export const EMAIL_BRAND_NAME = 'Ciszu Network';
@@ -78,9 +79,11 @@ export const EMAIL_SITES: Record<string, EmailSiteConfig> = {
       { platform: 'youtube', url: 'https://www.youtube.com/@CiszuNetwork' },
       { platform: 'instagram', url: 'https://www.instagram.com/ciszunetwork/' },
       { platform: 'x', url: 'https://x.com/CiszukoAntony' },
+      { platform: 'facebook', url: 'https://www.facebook.com/profile.php?id=61572023767657' },
       { platform: 'discord', url: 'https://discord.com/invite/W3kMtMMj6E' },
       { platform: 'github', url: 'https://github.com/Ciszu-Network' },
       { platform: 'tiktok', url: 'https://www.tiktok.com/@ciszunetwork' },
+      { platform: 'whatsapp', url: 'https://wa.me/584126858111' },
     ],
   },
   ciszukoantony: {
@@ -99,8 +102,11 @@ export const EMAIL_SITES: Record<string, EmailSiteConfig> = {
       { platform: 'youtube', url: 'https://www.youtube.com/@CiszukoAntony' },
       { platform: 'instagram', url: 'https://www.instagram.com/itz.ciszukoant0nyz/' },
       { platform: 'x', url: 'https://x.com/CiszukoAntony' },
+      { platform: 'facebook', url: 'https://www.facebook.com/ciszukoantony' },
       { platform: 'discord', url: 'https://discord.com/invite/W3kMtMMj6E' },
       { platform: 'tiktok', url: 'https://www.tiktok.com/@ciszunetwork' },
+      { platform: 'whatsapp', url: 'https://wa.me/584126858111' },
+      { platform: 'github', url: 'https://github.com/CiszukoAntony' },
     ],
   },
   muzicmania: {
@@ -120,6 +126,9 @@ export const EMAIL_SITES: Record<string, EmailSiteConfig> = {
       { platform: 'discord', url: 'https://discord.com/invite/W3kMtMMj6E' },
       { platform: 'x', url: 'https://x.com/CiszukoAntony' },
       { platform: 'instagram', url: 'https://www.instagram.com/ciszunetwork/' },
+      { platform: 'tiktok', url: 'https://www.tiktok.com/@ciszunetwork' },
+      { platform: 'facebook', url: 'https://www.facebook.com/profile.php?id=61572023767657' },
+      { platform: 'whatsapp', url: 'https://wa.me/584126858111' },
     ],
   },
   ciszubot: {
@@ -139,6 +148,10 @@ export const EMAIL_SITES: Record<string, EmailSiteConfig> = {
       { platform: 'x', url: 'https://x.com/CiszukoAntony' },
       { platform: 'youtube', url: 'https://www.youtube.com/@CiszuNetwork' },
       { platform: 'github', url: 'https://github.com/Ciszu-Network' },
+      { platform: 'instagram', url: 'https://www.instagram.com/ciszunetwork/' },
+      { platform: 'tiktok', url: 'https://www.tiktok.com/@ciszunetwork' },
+      { platform: 'facebook', url: 'https://www.facebook.com/profile.php?id=61572023767657' },
+      { platform: 'whatsapp', url: 'https://wa.me/584126858111' },
     ],
   },
 };
@@ -211,11 +224,17 @@ export function buildGreeting(recipient: EmailRecipient | undefined, loggedIn: b
     const parts: string[] = [];
     if (recipient.displayName) parts.push(recipient.displayName);
     if (recipient.username) parts.push(`@${recipient.username}`);
-    return parts.length
-      ? `¡Bienvenido ${parts.join(' ')} (${recipient.email})!`
-      : `¡Bienvenido (${recipient.email})!`;
+    return parts.length ? `¡Bienvenido ${parts.join(' ')} (${recipient.email})!` : `¡Bienvenido (${recipient.email})!`;
   }
   return `¡Hola, ${recipient.email}!`;
+}
+
+/** Escala un logo a una altura objetivo manteniendo la proporción (con ancho máx). */
+function fitH(logo: EmailLogo, targetH: number, maxW?: number): { w: number; h: number } {
+  let h = targetH;
+  let w = Math.round(targetH * (logo.width / logo.height));
+  if (maxW && w > maxW) { w = maxW; h = Math.round(maxW * (logo.height / logo.width)); }
+  return { w, h };
 }
 
 /** Bloque de código estilo Steam: `C-` fijo + dígitos separados + copiar. */
@@ -309,14 +328,15 @@ export function renderBrandedEmail(input: BrandedEmailInput): RenderedEmail {
   const providerDisclaimer = `Este correo se ha enviado a través de <strong style="color:#a8adbd;">Supabase</strong> (proveedor de autenticación del ecosistema) porque ${EMAIL_BRAND_NAME} aún no dispone de un dominio de correo propio. En cuanto se adquiera, los correos saldrán desde un remitente oficial de ${EMAIL_BRAND_NAME}.`;
 
   const isotipo = EMAIL_SITE_ISOTYPES[site.key] ?? EMAIL_SITE_ISOTYPES.ciszu;
-  // Logotipo maestro (con engranaje) escalado para el header.
-  const masterW = 170;
-  const masterR = EMAIL_CISZU_WORDMARK.height / EMAIL_CISZU_WORDMARK.width;
-  const wordmarkImg = `<img src="${EMAIL_CISZU_WORDMARK.dataUri}" width="${Math.round(masterW)}" height="${Math.round(masterW * masterR)}" alt="${EMAIL_BRAND_NAME}" style="display:block;border:0;" />`;
-  // Extras de cabecera por web (isotipo redondeado del bot, logotipo de
-  // muzicmania, isotipos + youtube de ciszukoantony...).
+  // Logotipo maestro FULL (index) escalado conservando la proporción.
+  const wm = fitH(EMAIL_CISZU_WORDMARK, 92, 210);
+  const wordmarkImg = `<img src="${EMAIL_CISZU_WORDMARK.dataUri}" width="${wm.w}" height="${wm.h}" alt="${EMAIL_BRAND_NAME}" style="display:block;border:0;" />`;
+  // Extras de cabecera por web, escalados a altura uniforme (proporción correcta).
   const headerExtras = (EMAIL_SITE_HEADER_EXTRAS[site.key] ?? [])
-    .map((e) => `<img src="${e.dataUri}" width="${e.width}" height="${e.height}" alt="${escapeHtml(site.name)}" style="display:inline-block;border:0;vertical-align:middle;margin:0 3px;" />`)
+    .map((e) => {
+      const r = fitH(e, 48, 190);
+      return `<img src="${e.dataUri}" width="${r.w}" height="${r.h}" alt="${escapeHtml(site.name)}" style="display:inline-block;border:0;vertical-align:middle;margin:0 4px;" />`;
+    })
     .join('');
   // ciszu: logotipo full centrado (el isotipo de la derecha sería redundante).
   const headerCells = site.key === 'ciszu'
@@ -324,11 +344,17 @@ export function renderBrandedEmail(input: BrandedEmailInput): RenderedEmail {
     : `<td align="left" style="font-size:0;line-height:0;">${wordmarkImg}</td><td align="right" style="font-size:0;line-height:0;vertical-align:middle;">${headerExtras}</td>`;
   const categoryIcon = icon(input.category, input.title);
 
-  // Bloque del ecosistema en el footer: [isotipo ciszu outline] × [isotipo web].
-  const footIso = `<img src="${EMAIL_FOOTER_ISOTYPE.dataUri}" width="${EMAIL_FOOTER_ISOTYPE.width}" height="${EMAIL_FOOTER_ISOTYPE.height}" alt="${EMAIL_BRAND_NAME}" style="display:inline-block;border:0;vertical-align:middle;" />`;
+  // Bloque del ecosistema en el footer. Para ciszu: solo el isotipo blanco
+  // (no "ciszu x ciszu"). Para el resto: [isotipo ciszu] × [isotipo web],
+  // ambos del MISMO tamaño.
+  const fi = fitH(EMAIL_FOOTER_ISOTYPE, 60, 64);
+  const footIso = `<img src="${EMAIL_FOOTER_ISOTYPE.dataUri}" width="${fi.w}" height="${fi.h}" alt="${EMAIL_BRAND_NAME}" style="display:inline-block;border:0;vertical-align:middle;" />`;
   const crossoverImg = `<img src="${EMAIL_CROSSOVER.dataUri}" width="${EMAIL_CROSSOVER.width}" height="${EMAIL_CROSSOVER.height}" alt="×" style="display:inline-block;border:0;vertical-align:middle;margin:0 12px;" />`;
-  const webIso = `<img src="${isotipo.dataUri}" width="${isotipo.width}" height="${isotipo.height}" alt="${escapeHtml(site.name)}" style="display:inline-block;border:0;vertical-align:middle;" />`;
-  const ecoBlock = `<div style="text-align:center;font-size:0;line-height:0;margin-bottom:10px;">${footIso}${crossoverImg}${webIso}</div>`;
+  const wi = fitH(isotipo, 60, 64);
+  const webIso = `<img src="${isotipo.dataUri}" width="${wi.w}" height="${wi.h}" alt="${escapeHtml(site.name)}" style="display:inline-block;border:0;vertical-align:middle;" />`;
+  const ecoBlock = site.key === 'ciszu'
+    ? `<div style="text-align:center;font-size:0;line-height:0;margin-bottom:10px;">${footIso}</div>`
+    : `<div style="text-align:center;font-size:0;line-height:0;margin-bottom:10px;">${footIso}${crossoverImg}${webIso}</div>`;
   const copyright = `© ${new Date().getFullYear()} ${escapeHtml(site.name)} · Todos los derechos reservados · Desarrollado por ${EMAIL_BRAND_NAME}.`;
 
   const devconBanner = input.devcon

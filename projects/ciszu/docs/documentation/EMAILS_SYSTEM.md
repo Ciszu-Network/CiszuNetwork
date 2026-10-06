@@ -241,12 +241,13 @@ que SÍ lo son, si el mensaje es promocional).
 ### Branding por web (`emailBranding.ts` + `emailSites.generated.ts`)
 
 Cada web tiene su propia versión del email. Los assets (logotipos, isotipos,
-extras de cabecera, iconos de categoría, redes y UI) se sirven desde el **CDN de
-Supabase** (`ciszu-cdn/shared/icons/email/`) como **URLs https**, porque Gmail y
-Outlook no cargan bien los `data: URI`. El generador de assets también usa
-`scripts/build-email-sites.js` (rasteriza los SVG de
-`projects/<web>/content/logos/` y los iconos lucide con Playwright, y sube los
-PNG al CDN).
+extras de cabecera, iconos de categoría, redes y UI) se incrustan como **PNG en
+`data: URI`** para que Gmail los muestre **sin pedir "Mostrar imágenes"** (con
+imágenes externas Gmail las bloquea por defecto). El generador
+`scripts/build-email-sites.js` rasteriza los SVG de
+`projects/<web>/content/logos/` y los iconos lucide con Playwright y los embebe
+como base64, re-rasterizando los PNG de origen grandes para no superar el límite
+de Gmail (~102 KB).
 
 - **Logos a color/degradado** (no blancos): `EMAIL_CISZU_WORDMARK` y
   `EMAIL_SITE_ISOTYPES` usan las variantes `gradient/color` de cada web.
