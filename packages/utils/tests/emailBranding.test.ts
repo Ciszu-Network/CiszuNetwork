@@ -82,7 +82,7 @@ describe('sendBrandedEmail', () => {
       { to: 'a@b.com', subject: 's', html: 'h', text: 't', apiKey: '', from: '' },
       );
     expect(res.sent).toBe(false);
-    expect(res.error).toMatch(/no hay proveedor de email configurado/i);
+    expect(res.error).toMatch(/no hay transporte de email disponible/i);
   });
 
   it('marca previewOnly en local en vez de fingir un envío', async () => {

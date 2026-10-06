@@ -270,8 +270,9 @@ Opciones del submenú:
   `[DEVCON]` (versión de devcon distinguible de la real).
 
 **Envío real**: intenta **Resend** (`RESEND_API_KEY`) y, si no, **Gmail API**
-(scope `gmail.send`). Hoy no hay ninguna de las dos credenciales en el vault, así
-que solo previsualiza; para activarlo, ver `EMAILS_SYSTEM.md` (Debug de emails).
+(OAuth del sistema con `gmail.send`, ya activo → envía de verdad). La credencial
+es **del sistema** (vault local; en producción, env vars de Vercel), no del
+empleado: sin credencial la devcon solo previsualiza y avisa.
 
 ## 5. Modo CLI no interactivo
 

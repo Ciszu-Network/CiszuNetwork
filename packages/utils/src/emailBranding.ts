@@ -622,35 +622,92 @@ export interface SendEmailResult {
   error?: string;
   providerId?: string;
   previewOnly?: boolean;
+  via?: 'Resend' | 'Gmail';
 }
 
+/**
+ * Envía por Gmail API (OAuth del sistema). Requiere las env vars
+ * GOOGLE_OAUTH_CLIENT_ID / SECRET / REFRESH_TOKEN (en el vault / Vercel).
+ * Es la credencial DEL SISTEMA (sender central), no del empleado.
+ */
+export async function sendViaGmail(input: SendEmailInput): Promise<SendEmailResult> {
+  const clientId = process.env.GOOGLE_OAUTH_CLIENT_ID;
+  const clientSecret = process.env.GOOGLE_OAUTH_CLIENT_SECRET;
+  const refresh = process.env.GOOGLE_OAUTH_REFRESH_TOKEN;
+  const allowPreview = input.allowPreview ?? process.env.EMAIL_ALLOW_PREVIEW === '1';
+  if (!clientId || !clientSecret || !refresh) {
+    if (allowPreview) return { sent: false, previewOnly: true, error: 'Vista previa local: falta OAuth de Gmail.' };
+    return { sent: false, error: 'No hay credencial OAuth de Gmail del sistema (faltan GOOGLE_OAUTH_*).' };
+  }
+  try {
+    const doFetch = input.fetchImpl ?? fetch;
+    const tr = await doFetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ client_id: clientId, client_secret: clientSecret, refresh_token: refresh, grant_type: 'refresh_token' }),
+    });
+    if (!tr.ok) return { sent: false, error: `OAuth: token ${tr.status}` };
+    const { access_token } = (await tr.json()) as { access_token?: string };
+    if (!access_token) return { sent: false, error: 'OAuth: sin access_token' };
+    let accountEmail = EMAIL_BRAND_EMAIL;
+    try {
+      const ui = await doFetch('https://www.googleapis.com/oauth2/v2/userinfo', { headers: { Authorization: `Bearer ${access_token}` } });
+      if (ui.ok) { const u = (await ui.json()) as { email?: string }; if (u.email) accountEmail = u.email; }
+    } catch { /* usa el por defecto */ }
+    const rfc = `From: Ciszu Network <${accountEmail}>\r\nTo: ${input.to}\r\nSubject: =?UTF-8?B?${Buffer.from(input.subject).toString('base64')}?=\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n${input.html}`;
+    const raw = Buffer.from(rfc).toString('base64url');
+    const sr = await doFetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${access_token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ raw }),
+    });
+    if (!sr.ok) { const t = await sr.text(); return { sent: false, error: `Gmail ${sr.status}: ${t.slice(0, 120)}` }; }
+    const data = (await sr.json().catch(() => ({}))) as { id?: string };
+    return { sent: true, providerId: data.id, via: 'Gmail' };
+  } catch (err) {
+    return { sent: false, error: err instanceof Error ? err.message : 'Fallo de red al enviar por Gmail.' };
+  }
+}
+
+/**
+ * Envía un email. Orden de transporte: Resend (si hay `RESEND_API_KEY`) y, si
+ * no, Gmail API (OAuth del sistema). Sin ninguna de las dos, devuelve el motivo
+ * en vez de fingir éxito. Con `EMAIL_ALLOW_PREVIEW=1` marca `previewOnly`.
+ */
 export async function sendBrandedEmail(input: SendEmailInput): Promise<SendEmailResult> {
   const apiKey = input.apiKey ?? process.env.RESEND_API_KEY;
   const from = input.from ?? process.env.EMAIL_FROM_RESEND ?? process.env.EMAIL_FROM;
   const allowPreview = input.allowPreview ?? process.env.EMAIL_ALLOW_PREVIEW === '1';
-
-  if (!apiKey || !from) {
-    const missing = !apiKey ? 'RESEND_API_KEY' : 'EMAIL_FROM_RESEND';
-    if (allowPreview) return { sent: false, previewOnly: true, error: `Vista previa local: falta ${missing}.` };
-    return { sent: false, error: `No hay proveedor de email configurado (falta ${missing}).` };
-  }
-
   const doFetch = input.fetchImpl ?? fetch;
-  try {
-    const res = await doFetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
-      body: JSON.stringify({ from, to: [input.to], subject: input.subject, html: input.html, text: input.text }),
-    });
-    if (!res.ok) {
+
+  // 1) Resend si hay key: su error es informativo (se reporta tal cual).
+  if (apiKey && from) {
+    try {
+      const res = await doFetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+        body: JSON.stringify({ from, to: [input.to], subject: input.subject, html: input.html, text: input.text }),
+      });
+      if (res.ok) {
+        const data = (await res.json().catch(() => ({}))) as { id?: string };
+        return { sent: true, providerId: data.id, via: 'Resend' };
+      }
       const detail = await res.text().catch(() => '');
-      return { sent: false, error: `El proveedor rechazó el envío (HTTP ${res.status}): ${detail.slice(0, 200)}` };
+      if (allowPreview) return { sent: false, previewOnly: true, error: `Vista previa local (Resend ${res.status}).` };
+      return { sent: false, error: `Resend HTTP ${res.status}: ${detail.slice(0, 200)}` };
+    } catch (err) {
+      if (allowPreview) return { sent: false, previewOnly: true, error: 'Vista previa local: fallo de Resend.' };
+      return { sent: false, error: err instanceof Error ? err.message : 'Fallo de red al enviar por Resend.' };
     }
-    const data = (await res.json().catch(() => ({}))) as { id?: string };
-    return { sent: true, providerId: data.id };
-  } catch (err) {
-    return { sent: false, error: err instanceof Error ? err.message : 'Fallo de red al enviar el email.' };
   }
+
+  // 2) Sin Resend: Gmail API (OAuth del sistema), hasta que haya dominio.
+  const gmail = await sendViaGmail(input);
+  if (gmail.sent) return gmail;
+  if (gmail.previewOnly) return gmail;
+  if (allowPreview) return { sent: false, previewOnly: true, error: 'Vista previa local: falta RESEND_API_KEY o el OAuth de Gmail.' };
+
+  return { sent: false, error: `No hay transporte de email disponible: falta RESEND_API_KEY · ${gmail.error}. La credencial de envío es del sistema (vault/Vercel).` };
 }
 
 export { EMAIL_SITE_ISOTYPES, EMAIL_CISZU_WORDMARK, EMAIL_SOCIAL_ICONS, EMAIL_CATEGORY_ICONS, EMAIL_UI_ICONS };

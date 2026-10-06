@@ -321,8 +321,14 @@ con `*.vercel.app`). Vías:
 | Vía | Qué hacer | Cuándo |
 | --- | --- | --- |
 | **Custom SMTP en Supabase** | Dashboard → Authentication → SMTP Settings → Enable custom SMTP (ej. `smtp.resend.com:587`, usuario `resend`, password = API key, sender `no-reply@tudominio.com`) | Con dominio (Fase B) |
-| **Envío propio (ya implementado)** | `sendBrandedEmail` usa `EMAIL_FROM_RESEND` = `Ciszu Network <no-reply@tudominio.com>` para 2FA, welcome, sponsorship, etc. | Con dominio (Fase B) |
-| **Sin dominio** | Imposible: todos los proveedores (Resend, MailerSend, SES, Postmark) exigen dominio verificado para SPF/DKIM | Hoy no aplica |
+| **Envío propio (Gmail hoy)** | `sendBrandedEmail` usa **Resend** (si `RESEND_API_KEY`) y, si no, **Gmail API** (OAuth del sistema con `gmail.send`). Remitente = la cuenta del sender central (`fplayersoffcial@gmail.com`). Cubre 2FA, welcome, sponsorship, support, etc. | Hoy (hasta el dominio) |
+| **Resend con dominio** | `EMAIL_FROM_RESEND` = `Ciszu Network <no-reply@tudominio.com>`; pasa a ser el transporte preferido y Gmail queda de fallback | Fase B |
+
+> **Nota multi-empleado**: la credencial de envío (OAuth de Gmail / Resend) es
+> **del sistema**, no personal. En producción la usa el backend (env vars de
+> Vercel: `GOOGLE_OAUTH_CLIENT_ID/SECRET/REFRESH_TOKEN` o `RESEND_API_KEY`);
+> los empleados nunca la tocan. En la devcon se lee del vault local; sin credencial
+> la devcon solo previsualiza (aviso claro).
 
 **Recomendación**: comprar el dominio (`DOMAINS_SYSTEM.md`, ~$11/año con
 Cloudflare/Porkbun) → verificar en Resend (SPF/DKIM automáticos) → activar
@@ -358,8 +364,10 @@ por la API de las webs (sin rate limit):
   5 plantillas de auth generadas con `emailBranding.ts` (mismo diseño que la app).
 - Detalle: `DEV_CONSOLE_SYSTEM.md` §4.7.
 
-> **Envío real — credencial pendiente**: hoy no hay `RESEND_API_KEY` en el vault ni
-> el scope `gmail.send` en el OAuth, así que la devcon **solo previsualiza**. Para
-> activar el envío: crear una API key gratuita en Resend (`onboarding@resend.dev`
-> envía a tu propio correo sin dominio) y ponerla como `RESEND_API_KEY`, o añadir
-> el scope `gmail.send` al OAuth de Google y regenerar el refresh token.
+> **Envío real (OAuth de Gmail, activo)**: el sistema envía **por Gmail API** con
+> el OAuth del sender central (`GOOGLE_OAUTH_CLIENT_ID/SECRET/REFRESH_TOKEN`, scope
+> `gmail.send`; la cuenta es `fplayersoffcial@gmail.com`). Es una **credencial del
+> SISTEMA**, no de un empleado: en producción la usa el backend (env vars de
+> Vercel); en la devcon se lee del vault. Cuando se compre el dominio, se pasa a
+> **Resend** (`RESEND_API_KEY`), que es el transporte preferido y queda como
+> fallback automático (ver `sendBrandedEmail`).
