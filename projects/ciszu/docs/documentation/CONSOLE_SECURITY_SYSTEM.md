@@ -98,13 +98,29 @@ A partir de ahora el rango de un staff puede estar acotado a proyectos:
 - Son **multiequipables**: si están todos, son todos los subcargos.
 - Los customers también llevan `proyecto` (los 2 reales son de `ciszunetwork`).
 
-### Estado de la Fase 2 (pendiente)
+### Fase 2 implementada (06 oct 2026)
 
-La **enforcement** completa de permisos por proyecto (deploy/gestión limitada al proyecto del
-subcargo, etiquetas por web, subdivisión de carpetas `archives/staff/<proyecto>/…` y
-`archives/customers/<proyecto>/…`) queda como **siguiente paso** (ver `TODO.md`): el modelo de datos
-y la visualización ya están listos; falta aplicar filtros por proyecto en cada acción de las
-consolas y reflejar los subcargos en las etiquetas de perfil de las websites.
+- **Enforcement por proyecto (opción D: etiqueta + denegación)**: las acciones con alcance de
+  proyecto muestran **todas** las opciones con la etiqueta `SIN PERMISO` cuando no corresponden al
+  subcargo del actor, y **deniegan** al ejecutar:
+  - **Deploy a Vercel** (devcon): cada web se etiqueta; las sin permiso se deniegan.
+  - **Testing Accounts** (devcon): las websites sin permiso se deniegan al crear.
+  - **Roles / Etiquetas** (devcon): otorgar/quitar rol en una web se deniega si el actor no tiene
+    subcargo en ese proyecto.
+- **staffcon — acción `subcargos`**: `node scripts/staffcon.js subcargos --actor … --id … --subcargos "proyecto:Cargo1/Cargo2|…"`
+  (formato `*` = todos). El actor **solo puede otorgar proyectos de su alcance** (si no, `DENIED`).
+  La UI tiene la opción **“Subcargos por proyecto (alcance)”**.
+- **Carpetas subdivididas por proyecto**:
+  - Staff: `archives/staff/proyectos/<proyecto>/<subcargo>/<EMPLEADO>/` (con `subcargo.md/json`
+    y `content/`), además de las ramas de cargo globales.
+  - Customers: `archives/customers/proyectos/<proyecto>/<CLIENTE>/` (con `cliente.md/json`).
+- **Etiquetas en las webs**: la etiqueta de perfil de cada web se rinde desde `user_roles` de **esa**
+  web; como los roles solo se pueden otorgar en los proyectos del alcance del actor, un staff con
+  subcargo únicamente en `ciszunetwork` **solo** tendrá su tag staff/admin en `ciszunetwork` y
+  ninguno en las demás.
+
+> El modelo de datos (`staff.json → subcargos`, `customers.json → proyecto`) y la visualización
+> (identidad, Mi perfil, ramas de carpetas) quedan completos.
 
 ## 9. Relación con otros sistemas
 
