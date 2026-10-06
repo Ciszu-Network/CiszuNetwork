@@ -558,49 +558,49 @@ export function debugEmail(input: { siteKey?: string; testEmail?: string; recipi
 
 const SUPABASE_URL_VAR = '{{ .ConfirmationURL }}';
 
-export function authConfirmationEmail(recipient?: EmailRecipient): RenderedEmail {
+export function authConfirmationEmail(recipient?: EmailRecipient, devcon?: boolean): RenderedEmail {
   return renderBrandedEmail({
     siteKey: 'ciszu', category: 'confirmation', title: 'Confirma tu cuenta',
     intro: 'Recibes este correo porque alguien (esperamos que tú) se registró en el ecosistema de Ciszu Network.',
     recipient, loggedIn: false, ctaLabel: 'Confirmar mi correo', ctaUrl: SUPABASE_URL_VAR,
-    subjectOverride: 'Confirma tu cuenta | Ciszu Network',
+    subjectOverride: 'Confirma tu cuenta | Ciszu Network', devcon,
   });
 }
 
-export function authRecoveryEmail(recipient?: EmailRecipient): RenderedEmail {
+export function authRecoveryEmail(recipient?: EmailRecipient, devcon?: boolean): RenderedEmail {
   return renderBrandedEmail({
     siteKey: 'ciszu', category: 'recovery', title: 'Restablece tu contraseña',
     intro: 'Recibes este correo porque se solicitó restablecer la contraseña de tu cuenta en Ciszu Network.',
     recipient, loggedIn: false, ctaLabel: 'Restablecer contraseña', ctaUrl: SUPABASE_URL_VAR,
     securityNote: 'Si no lo solicitaste, ignora este correo: tu contraseña no cambiará.',
-    subjectOverride: 'Restablece tu contraseña | Ciszu Network',
+    subjectOverride: 'Restablece tu contraseña | Ciszu Network', devcon,
   });
 }
 
-export function authMagicLinkEmail(recipient?: EmailRecipient): RenderedEmail {
+export function authMagicLinkEmail(recipient?: EmailRecipient, devcon?: boolean): RenderedEmail {
   return renderBrandedEmail({
     siteKey: 'ciszu', category: 'magic_link', title: 'Tu enlace mágico',
     intro: 'Usa este enlace para iniciar sesión en tu cuenta de Ciszu Network de forma segura.',
     recipient, loggedIn: false, ctaLabel: 'Entrar con enlace mágico', ctaUrl: SUPABASE_URL_VAR,
-    subjectOverride: 'Tu enlace mágico | Ciszu Network',
+    subjectOverride: 'Tu enlace mágico | Ciszu Network', devcon,
   });
 }
 
-export function authEmailChangeEmail(recipient?: EmailRecipient): RenderedEmail {
+export function authEmailChangeEmail(recipient?: EmailRecipient, devcon?: boolean): RenderedEmail {
   return renderBrandedEmail({
     siteKey: 'ciszu', category: 'email_change', title: 'Confirma tu nuevo correo',
     intro: 'Recibes este correo para confirmar el cambio de dirección de correo de tu cuenta en Ciszu Network.',
     recipient, loggedIn: false, ctaLabel: 'Confirmar nuevo correo', ctaUrl: SUPABASE_URL_VAR,
-    subjectOverride: 'Confirma tu nuevo correo | Ciszu Network',
+    subjectOverride: 'Confirma tu nuevo correo | Ciszu Network', devcon,
   });
 }
 
-export function authInviteEmail(recipient?: EmailRecipient): RenderedEmail {
+export function authInviteEmail(recipient?: EmailRecipient, devcon?: boolean): RenderedEmail {
   return renderBrandedEmail({
     siteKey: 'ciszu', category: 'invite', title: 'Te han invitado a Ciszu Network',
     intro: 'Te han invitado a unirte al ecosistema de Ciszu Network.',
     recipient, loggedIn: false, ctaLabel: 'Aceptar invitación', ctaUrl: SUPABASE_URL_VAR,
-    subjectOverride: 'Invitación a Ciszu Network',
+    subjectOverride: 'Invitación a Ciszu Network', devcon,
   });
 }
 
