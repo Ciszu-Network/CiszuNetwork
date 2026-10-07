@@ -228,7 +228,10 @@ Windows: `Win+R` → `taskschd.msc` → *Crear tarea básica* → nombre `Ciszu 
 → disparador *Diariamente* → acción *Iniciar programa*:
 
 - Programa: `C:\Program Files\Git\bin\bash.exe`
-- Argumentos: `-lc "cd /c/Users/<TU_USUARIO>/CiszuNetwork && bash scripts/backup-cloud.sh"`
+- Argumentos: `-lc "cd '/e/Ciszu Network' && bash scripts/backup-cloud.sh"`
+  - ⚠️ Git Bash monta la unidad E: como `/e/` (NO `/mnt/e/`, que es WSL y hace
+    fallar la tarea con código 2). La ruta del monorepo lleva espacio, por eso va
+    entre comillas simples dentro del `-lc`.
 
 Linux/macOS: cron `0 4 * * * cd /ruta/a/CiszuNetwork && bash scripts/backup-cloud.sh >> /tmp/ciszu-backup.log 2>&1`
 
@@ -252,3 +255,33 @@ Linux/macOS: cron `0 4 * * * cd /ruta/a/CiszuNetwork && bash scripts/backup-clou
 > - ✅ Script `scripts/backup-cloud.sh` funcional (ruta Windows corregida, rclone path fix).
 > - ✅ Exclusiones aplicadas: node_modules, .env*, builds, logs, caches, archives/, downloads/, clones/, .opencode/, etc.
 > - ✅ Papelera con fecha (`CiszuNetwork-trash/<fecha>/`) configurada via `--backup-dir`.
+
+---
+
+## Revisión 07 oct 2026 — corrección de la tarea automática y estado
+
+**Bug corregido**: la tarea programada `Ciszu Cloud Backup` usaba `cd /mnt/e/Ciszu Network`
+(ruta de **WSL**) con **Git Bash**, que monta la unidad como `/e/`. Resultado: la tarea
+**fallaba siempre** con código `2` (no encontraba la carpeta). Ya está corregida a
+`cd '/e/Ciszu Network'`.
+
+**Resumen de los backups automáticos de la tarea de Windows**:
+
+| Fecha | Qué pasó |
+| --- | --- |
+| 05 sep 2026 | Tarea `Ciszu Cloud Backup` creada (diaria 04:00, usuario `fplay`, *Solo interactivo*). |
+| 06 sep 2026 | Backup real exitoso documentado: **1.04 GiB / 3,735 objetos** (ejecución manual; la tarea nunca llegó a completar por el bug de ruta). |
+| 06 oct 2026 10:23 | Último intento de la tarea → **error 2** (bug `/mnt/e`). |
+| 07 oct 2026 04:00 | Ejecución **omitida** (`NumberOfMissedRuns = 1`: la PC estaba apagada; la tarea es *Solo interactivo*). |
+| 07 oct 2026 13:49 | **Backup manual en curso** tras el fix: remoto ya con ~8.0k objetos / ~3.16 GB (creciendo). |
+
+**Notas / mejoras**:
+- El evento de historial del Programador de tareas (`Microsoft-Windows-TaskScheduler/Operational`)
+  está **deshabilitado**, por eso el historial detallado no es consultable; el script ahora sí
+  escribe log en `.opencode/temp/backup-cloud.log` (antes solo lo imprimía por pantalla).
+- La tarea es *Solo interactivo*: si la PC está apagada o sin sesión a las 04:00 **no corre**
+  (cuenta como omitida). Para un backup fiable, activar en la tarea **"Ejecutar aunque el usuario
+  no haya iniciado sesión"** y **"Ejecutar en cuanto sea posible tras una ejecución omitida"**.
+- El backup es incremental: si una ejecución se corta, la siguiente continúa (rclone `sync`).
+- Comandos útiles: `bash scripts/backup-cloud.sh --dry-run` (vista previa),
+  `--check` (verificar integridad), `rclone size ciszu-backup:CiszuNetwork --json` (progreso).
