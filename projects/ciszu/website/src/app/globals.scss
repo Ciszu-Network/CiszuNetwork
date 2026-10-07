@@ -502,3 +502,28 @@
 .light ::-webkit-scrollbar-thumb { background: rgba(35, 63, 146, 0.35) !important; }
 .light ::selection { background: rgba(35, 63, 146, 0.22); color: #0d1526 !important; }
 /* !!END LIGHT-AUDIT!! */
+
+/* ============================================================
+   Repaso de themes (07 oct 2026): texto blanco en modo claro.
+   Antes, `text-white` (cientos de usos en todas las páginas) se quedaba
+   blanco sobre el fondo claro → invisible. Aquí se remapea a la tinta;
+   se conserva blanco cuando el propio elemento lleva fondo de marca
+   (botones/badges con gradiente, bg-brand o bg-neon) o es hijo de uno.
+   ============================================================ */
+.light .text-white { color: var(--ink, #0d1526) !important; }
+.light .text-white\/90 { color: color-mix(in srgb, var(--ink, #0d1526) 90%, transparent) !important; }
+.light .text-white\/80 { color: color-mix(in srgb, var(--ink, #0d1526) 80%, transparent) !important; }
+.light .text-white\/70 { color: color-mix(in srgb, var(--ink, #0d1526) 70%, transparent) !important; }
+.light .text-white\/60 { color: color-mix(in srgb, var(--ink, #0d1526) 60%, transparent) !important; }
+.light .text-white\/50 { color: color-mix(in srgb, var(--ink, #0d1526) 50%, transparent) !important; }
+.light .text-white\/40 { color: color-mix(in srgb, var(--ink, #0d1526) 40%, transparent) !important; }
+.light .text-white\/30 { color: color-mix(in srgb, var(--ink, #0d1526) 30%, transparent) !important; }
+.light .text-white\/20 { color: color-mix(in srgb, var(--ink, #0d1526) 20%, transparent) !important; }
+.light .text-white\/10 { color: color-mix(in srgb, var(--ink, #0d1526) 10%, transparent) !important; }
+/* Blancos legítimos: fondo de marca en el mismo elemento o en un ancestro. */
+.light .text-white[class*="bg-gradient"],
+.light [class*="bg-gradient"] .text-white,
+.light .text-white[class*="bg-brand"],
+.light [class*="bg-brand"] .text-white,
+.light .text-white[class*="bg-neon"],
+.light [class*="bg-neon"] .text-white { color: #ffffff !important; }
