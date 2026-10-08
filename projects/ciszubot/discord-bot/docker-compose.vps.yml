@@ -1,0 +1,21 @@
+# Docker Compose para el VPS 24/7 (Oracle Cloud Free Tier u otro).
+# El PC ya no es el servidor: el bot corre aquí y se reinicia solo.
+#
+# Uso en el VPS:
+#   docker compose -f docker-compose.vps.yml up -d --build
+#   docker logs -f ciszu-bot
+#
+# Requisitos: Docker + Docker Compose v2 (ver VPS_PLAN.md) y el archivo `.env`
+# copiado al VPS por canal seguro (NUNCA desde git).
+services:
+  ciszu-bot:
+    build: .
+    container_name: ciszu-bot
+    restart: unless-stopped
+    env_file: .env
+    mem_limit: 1g
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'

@@ -22,6 +22,8 @@ interface GuildConfig {
   tickets_role_id?: string | null;
   private_channels?: boolean;
   private_category_id?: string | null;
+  music_channel_id?: string | null;
+  mute_role_id?: string | null;
   automod_enabled?: boolean;
 }
 
@@ -88,6 +90,11 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon }: 
         tickets_enabled: cfg?.tickets_enabled ?? false,
         private_channels: cfg?.private_channels ?? false,
         automod_enabled: cfg?.automod_enabled ?? false,
+        tickets_category_id: cfg?.tickets_category_id ?? null,
+        tickets_role_id: cfg?.tickets_role_id ?? null,
+        private_category_id: cfg?.private_category_id ?? null,
+        music_channel_id: cfg?.music_channel_id ?? null,
+        mute_role_id: cfg?.mute_role_id ?? null,
       } as GuildConfig;
     },
   });
@@ -295,6 +302,48 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon }: 
                   <p className="text-xs text-white/50">Protección básica de spam</p>
                 </div>
                 <Toggle on={Boolean(config.automod_enabled)} onChange={(v) => setConfig({ ...config, automod_enabled: v })} />
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Field label="Categoría de tickets (ID)" hint="Donde se crean los canales de ticket">
+                  <input
+                    className={inputCls}
+                    placeholder="ID de categoría"
+                    value={config.tickets_category_id ?? ''}
+                    onChange={(e) => setConfig({ ...config, tickets_category_id: e.target.value || null })}
+                  />
+                </Field>
+                <Field label="Rol de staff de tickets (ID)" hint="Quién puede ver y cerrar tickets">
+                  <input
+                    className={inputCls}
+                    placeholder="ID de rol"
+                    value={config.tickets_role_id ?? ''}
+                    onChange={(e) => setConfig({ ...config, tickets_role_id: e.target.value || null })}
+                  />
+                </Field>
+                <Field label="Categoría de canales privados (ID)" hint="Para el sistema de canales privados">
+                  <input
+                    className={inputCls}
+                    placeholder="ID de categoría"
+                    value={config.private_category_id ?? ''}
+                    onChange={(e) => setConfig({ ...config, private_category_id: e.target.value || null })}
+                  />
+                </Field>
+                <Field label="Canal de música (ID)" hint="Canal de voz/texto para el reproductor">
+                  <input
+                    className={inputCls}
+                    placeholder="ID del canal"
+                    value={config.music_channel_id ?? ''}
+                    onChange={(e) => setConfig({ ...config, music_channel_id: e.target.value || null })}
+                  />
+                </Field>
+                <Field label="Rol de mute (ID)" hint="Rol aplicado por la auto-moderación">
+                  <input
+                    className={inputCls}
+                    placeholder="ID de rol"
+                    value={config.mute_role_id ?? ''}
+                    onChange={(e) => setConfig({ ...config, mute_role_id: e.target.value || null })}
+                  />
+                </Field>
               </div>
               <Field label="Canal de logs (ID)">
                 <input
