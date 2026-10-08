@@ -736,15 +736,41 @@ function gdPersistSeen(site: string, ids: Set<number>) {
   } catch { /* no romper */ }
 }
 
-/** Resuelve el mensaje multi-idioma: i18n > fallback TEXT. */
+/** Idioma activo de la WEB (no del navegador): <html lang> (LangSync) → preferencias → navegador. */
+function currentSiteLang(): string {
+  if (typeof document === 'undefined') return '';
+  const fromHtml = (document.documentElement.lang || '').toLowerCase();
+  if (fromHtml) return fromHtml;
+  try {
+    const raw = window.localStorage.getItem('ciszu_preferences');
+    if (raw) {
+      const parsed = JSON.parse(raw) as { lang?: string };
+      if (parsed.lang) return String(parsed.lang).toLowerCase();
+    }
+  } catch { /* sin preferencias */ }
+  return (typeof navigator !== 'undefined' ? navigator.language || '' : '').toLowerCase();
+}
+
+/** Resuelve el mensaje multi-idioma: i18n (según el idioma de la web) > fallback TEXT. */
 function resolveMessage(row: GlobalDisclaimerRow): string {
   if (row.message_i18n && typeof row.message_i18n === 'object') {
-    const lang = (typeof navigator !== 'undefined' ? navigator.language || 'es' : 'es').toLowerCase();
+    const lang = currentSiteLang();
     const map: Record<string, string> = row.message_i18n;
-    if (map[lang]) return map[lang];
-    if (lang.startsWith('en') && map['en']) return map['en'];
-    if (lang.startsWith('en') && map['en-uk']) return map['en-uk'];
-    if (map['es']) return map['es'];
+    if (lang && map[lang]) return map[lang];
+    const short = lang.split('-')[0];
+    if (short === 'en') {
+      if (map['en-us']) return map['en-us'];
+      if (map['en-uk']) return map['en-uk'];
+      if (map['en']) return map['en'];
+    }
+    if (short === 'es') {
+      if (map['es-latam']) return map['es-latam'];
+      if (map['es-es']) return map['es-es'];
+      if (map['es']) return map['es'];
+    }
+    // Fallbacks fijos para no enseñar un idioma aleatorio.
+    if (map['en-us']) return map['en-us'];
+    if (map['es-latam']) return map['es-latam'];
     const first = Object.values(map)[0];
     if (typeof first === 'string') return first;
   }

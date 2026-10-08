@@ -25,7 +25,7 @@ const LANG_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 export const SITE_NAME = 'Ciszuko Antony';
 
 export const DEFAULT_PREFERENCES: Preferences = {
-  lang: 'es-latam',
+  lang: 'en-us',
   theme: 'dark',
   fontSize: 100,
   muted: false,

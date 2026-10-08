@@ -1587,7 +1587,7 @@ export function parseLang(raw: string | undefined | null): Lang {
   if (raw === 'es-es' || raw === 'en-us' || raw === 'en-uk') return raw;
   if (raw === 'es' || raw === 'es-latam') return 'es-latam';
   if (raw === 'en') return 'en-us';
-  return 'es-latam';
+  return 'en-us';
 }
 
 export const isEsLang = (lang: Lang): boolean => lang === 'es-latam' || lang === 'es-es';

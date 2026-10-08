@@ -13,7 +13,7 @@ export interface Preferences {
 }
 
 export const PREFS_DEFAULTS: Preferences = {
-  lang: 'es-latam',
+  lang: 'en-us',
   theme: 'dark',
   zoom: 100,
   muteTab: false,

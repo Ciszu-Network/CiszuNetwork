@@ -17,7 +17,7 @@ export interface CiszuPreferences {
 export const PREFS_STORAGE_KEY = 'ciszu_preferences';
 
 export const DEFAULT_PREFERENCES: CiszuPreferences = {
-  lang: 'es-latam',
+  lang: 'en-us',
   theme: 'dark',
   zoom: 100,
   tabMuted: false,
