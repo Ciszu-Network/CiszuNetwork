@@ -219,3 +219,39 @@ Supabase cloud (no local). El VPS solo corre el proceso del bot.
 
 _Última revisión: 13 ago 2026._ Relacionado: `MONITORING_SYSTEM.md`, `REMOTE_CONTROL_SYSTEM.md`,
 `DOCKER_SYSTEM.md`, `SCHEDULE_PROTOCOLS.md`.
+
+---
+
+## Plan B sin tarjeta (panel gratuito) — 08 oct 2026
+
+Se descarta Oracle (pide tarjeta). Alternativas sin tarjeta, 24/7 e independientes del PC:
+
+| Opción | Hardware | Límites | Notas |
+| --- | --- | --- | --- |
+| **Panel gratuito de bots** (bot-hosting.net / Katabump / Discloud) | Ninguno | 256-512 MB RAM | Login con correo/GitHub, sin tarjeta. Subir ZIP y arrancar |
+| **Termux en Android viejo** | Un Android | Los del teléfono | 100% gratis, sin panel ni tarjeta; el teléfono debe quedar encendido |
+
+### Paquete standalone (listo)
+
+`node scripts/build-bot-standalone.mjs` genera `deploy/ciszubot-standalone.zip` (no versionado):
+
+- Incluye el bot + los paquetes `@ciszunetwork/db` y `@ciszunetwork/utils` con `tsconfig` de `paths`
+  (los imports del monorepo se compilan como require relativos; **0 dependencias del workspace**).
+- `package.json` con las dependencias reales (sin `workspace:*`) y scripts:
+  - `npm run setup` → `npm install --omit=dev --ignore-scripts && npm run build`
+  - `npm start` → `node dist/src/index.js`
+- `.env.example` con las variables necesarias (BOT_TOKEN, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SENTRY_DSN…).
+
+### Pasos en el panel (bot-hosting.net u otro Pterodactyl)
+
+1. Crear cuenta (correo/GitHub) y un servidor **Node.js** (asignar la máxima RAM gratuita).
+2. Subir `ciszubot-standalone.zip` (File Manager) y extraerlo en la raíz.
+3. Crear `.env` desde `.env.example` con los valores del vault.
+4. En la consola: `npm run setup && npm start` (o configurar el arranque con ese comando).
+5. Verificar en logs: `Client ready` / login OK.
+
+### Pasos en Termux (alternativa sin panel)
+
+1. Instalar Termux (F-Droid) y ejecutar: `pkg update && pkg install nodejs-lts git -y`.
+2. Copiar el ZIP (por storage/USB/nube), descomprimir y `cd` a la carpeta.
+3. `npm run setup && npm start` (o usar `termux-wake-lock` para que no se duerma).

@@ -587,3 +587,4 @@ test/website/debug/
 services/supabase/
 # Scripts de operacion (migraciones, roles, moderacion, bots...) - internos.
 scripts/
+deploy/
