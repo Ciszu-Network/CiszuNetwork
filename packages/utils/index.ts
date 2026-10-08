@@ -14,3 +14,4 @@ export * from './src/twoFactor';
 export * from './src/emailBranding';
 export * from './src/i18nAudit';
 export * from './src/i18nCoverage';
+export * from './src/anticheat';

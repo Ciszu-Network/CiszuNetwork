@@ -879,6 +879,28 @@ function PlayPageContent() {
         } catch (err) {
           console.error('Error saving score:', err);
         }
+
+        // Ciszu Anti-Cheat: ingesta de la partida. Es invisible para el jugador:
+        // el servidor reconstruye señales y solo actúa al cruzar el umbral.
+        try {
+          const { data: sessionData } = await supabase.auth.getSession();
+          const token = sessionData.session?.access_token;
+          if (token) {
+            void fetch('/api/anticheat/signals', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+              body: JSON.stringify({
+                trackId: selectedTrack.id,
+                score: activeGameState.score,
+                accuracy: activeGameState.accuracy,
+                maxCombo: activeGameState.maxCombo,
+                difficulty: (selectedTrack as { difficulty?: string | null }).difficulty ?? null,
+              }),
+            }).catch(() => {});
+          }
+        } catch {
+          /* el anticheat nunca debe romper el guardado de la partida */
+        }
       }
 
       const storedBest = localStorage.getItem(`record_${selectedTrack.id}`);
