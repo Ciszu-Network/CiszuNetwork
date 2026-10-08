@@ -200,12 +200,12 @@ El schema `anticheat` **no se expone por PostgREST** (revocado a anon/authentica
 | Fase | Contenido | Estado |
 | --- | --- | --- |
 | 1 | Schema BD + documentación (este doc) | ✅ 09 oct 2026 |
-| 2 | Motor de señales/puntuación (módulo reutilizable + endpoint `POST /api/anticheat/signals`) y perfil de reglas de MuzicMania | ⏳ |
-| 3 | Cuenta bot `muzicmania_anticheat` (rango bot + tag `anticheat`, categorización de bots) | ⏳ |
-| 4 | UI: modal del anticheat, estado de cuenta (roadmap), strikes y cards, historial | ⏳ |
-| 5 | Soporte: categoría de apelación + selección de sanción (entrelazado con anticheat y manual) | ⏳ |
-| 6 | Sanciones automáticas escalonadas (warn→mute→ban→delete) + avisos por email | ⏳ |
-| 7 | Configuraciones de cuenta restantes (video y voz, novedades, notificaciones ampliadas…) | ⏳ |
+| 2 | Motor de señales/puntuación (módulo reutilizable + endpoint `POST /api/anticheat/signals`) y perfil de reglas de MuzicMania | ✅ 09 oct 2026 (8 tests) |
+| 3 | Cuenta bot `muzicmania_anticheat` (rango bot + `bot_category=anticheat` en metadata) | ✅ 09 oct 2026 |
+| 4 | UI: `AccountStatusPanel` (barra verde→rojo, roadmap, strikes + cards 0-3, sanciones con apelación, hechos/ignorados/reabrir) integrado en la configuración de cuenta de las 4 webs | ✅ 09 oct 2026 |
+| 5 | Soporte: `SanctionAppeal` + API `/api/support/appeal` (sanciones activas unificadas anticheat+manual, sirve sin sanciones) y página `/appeal` en las 4 webs | ✅ 09 oct 2026 |
+| 6 | Sanciones automáticas escalonadas (warn→mute→ban→delete) + strikes + aviso por email con marca | ✅ 09 oct 2026 |
+| 7 | Estado de cuenta integrado en `/settings` de las 4 webs ✅; resto de secciones (video y voz, novedades, notificaciones ampliadas) | ⏳ pendiente |
 
 ## 13. Relación con otros sistemas
 

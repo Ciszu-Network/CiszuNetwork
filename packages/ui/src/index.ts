@@ -222,6 +222,8 @@ export { default as SanctionNotice } from './auth/SanctionNotice';
 export type { SanctionNoticeProps, SanctionNoticeSupabase } from './auth/SanctionNotice';
 // Configuración de cuenta compartida (perfil/seguridad/sesión/notificaciones/debug)
 export { default as AccountSettingsPanel } from './auth/AccountSettingsPanel';
+export { AccountStatusPanel } from './auth/AccountStatusPanel';
+export { SanctionAppeal } from './auth/SanctionAppeal';
 export type { AccountSettingsPanelProps, AccountSettingsSupabase } from './auth/AccountSettingsPanel';
 export { default as PreferencesModal } from './auth/PreferencesModal';
 export type { PreferencesModalProps } from './auth/PreferencesModal';

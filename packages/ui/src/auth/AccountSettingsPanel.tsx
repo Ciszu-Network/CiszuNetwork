@@ -80,6 +80,8 @@ const btnPrimary =
 const btnGhost =
   'inline-flex items-center justify-center rounded-xl border border-border px-4 py-2.5 font-header text-[11px] font-black uppercase tracking-widest text-muted transition hover:text-ink disabled:opacity-50';
 
+import { AccountStatusPanel } from './AccountStatusPanel';
+
 export default function AccountSettingsPanel({
   supabase,
   site,
@@ -661,6 +663,10 @@ export default function AccountSettingsPanel({
           <span className="text-xs font-bold text-ink">Recordatorio de verificación OTP</span>
         </label>
         {notifMsg && <p className="text-[11px] font-bold text-muted">{notifMsg}</p>}
+      </Section>
+
+      <Section title="Estado de la cuenta" description="Roadmap de configuracion, strikes y sanciones activas (con apelacion).">
+        <AccountStatusPanel supabase={supabase} apiBase={apiBase} site={site} />
       </Section>
 
       <Section title="Debug" description="Información técnica de tu cuenta (útil para soporte).">

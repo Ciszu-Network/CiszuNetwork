@@ -8,6 +8,8 @@ import {
   MUZICMANIA_PROFILE,
   buildMuzicmaniaSignals,
   evaluate,
+  accountWarningEmail,
+  sendBrandedEmail,
   type MuzicScoreSample,
 } from '@ciszunetwork/utils';
 import { adminClient, authenticate } from '../../auth/2fa/_lib';
@@ -219,6 +221,26 @@ export async function POST(req: NextRequest) {
         },
         { onConflict: 'user_id,website,key' },
       );
+
+      // 5d) Aviso por email con marca (genérico: no revela las reglas).
+      try {
+        const to = user.email;
+        if (to) {
+          const mail = accountWarningEmail({
+            siteKey: 'muzicmania',
+            title: 'Aviso de Ciszu Anti-Cheat',
+            intro:
+              'Se detectó actividad anómala (puntuaciones o patrones fuera de lo normal) en tu cuenta del juego. ' +
+              'Esta es una notificación automática de seguridad del ecosistema Ciszu Network.',
+            securityNote:
+              'Puedes apelar esta decisión desde tu cuenta → Soporte → Apelación de sanciones. Si no fuiste tú, revisa la seguridad de tu cuenta.',
+            recipient: { email: to },
+          });
+          void sendBrandedEmail({ to, subject: mail.subject, html: mail.html, text: mail.text });
+        }
+      } catch {
+        /* el aviso nunca debe romper la ingesta */
+      }
     }
 
     // El usuario NUNCA recibe el score ni las reglas (invisible); solo el flujo normal.
