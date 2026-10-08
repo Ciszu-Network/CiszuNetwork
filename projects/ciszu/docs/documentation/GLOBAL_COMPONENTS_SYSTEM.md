@@ -440,3 +440,12 @@ publishHeaderMode('island' | 'full');
 
 _Última revisión: 24 ago 2026. Mantener este documento vivo._
 _Relacionados: UI_COMPONENTS_SYSTEM · STYLES_SYSTEM · AUTH_SYSTEM · PACKAGES_SYSTEM · GLOBAL_ADVISOR_SYSTEM · TODO.md_
+
+
+---
+
+## Revisión 08 oct 2026 — disclaimers multi-idioma + idioma por defecto
+
+- **Disclaimers**: el mensaje mostrado ya NO usa el idioma del navegador (`navigator.language`) sino **el idioma elegido en la web** (`<html lang>` que fija `LangSync`, con fallback a `ciszu_preferences`). Antes, con la web en inglés y el navegador en español, el disclaimer seguía saliendo en español.
+- **Traducción dinámica al enviar**: `scripts/disclaimer.js` (devcon/cron) **autotraduce** el mensaje español a inglés (MyMemory, gratis sin API key) y guarda las variantes en `message_i18n` (`es-latam`, `en-us`, `en-uk` con ortografía británica). Se pueden forzar idiomas con `--message-es/--message-en/--message-en-uk`. Corregido el bug que metía el objeto multi-idioma en la columna TEXT `message` (nunca en `message_i18n`).
+- **Idioma por defecto para usuarios nuevos**: sin preferencia guardada (caché/sesión limpia), las 4 webs arrancan en **inglés (EE. UU. — `en-us`)** en vez de español (`DEFAULT_PREFERENCES.lang` y fallback de `parseLang`).
