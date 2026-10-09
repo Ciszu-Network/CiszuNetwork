@@ -253,8 +253,11 @@ export async function POST(req: NextRequest) {
           .maybeSingle();
         const smsEnabled = (prefs.data as { sms_enabled?: boolean } | null)?.sms_enabled === true;
         if (smsEnabled) {
-          const authUser = await adminClient().auth.admin.getUserById(user.userId);
-          const phone = (authUser.data.user?.user_metadata as { phone?: string } | undefined)?.phone;
+          const authAdmin = adminClient() as unknown as {
+            auth: { admin: { getUserById(id: string): Promise<{ data: { user: { user_metadata?: Record<string, unknown> } | null } }> } };
+          };
+          const authUser = await authAdmin.auth.admin.getUserById(user.userId);
+          const phone = authUser.data.user?.user_metadata?.phone;
           if (typeof phone === 'string' && phone.startsWith('+')) {
             void sendSms({
               to: phone,
