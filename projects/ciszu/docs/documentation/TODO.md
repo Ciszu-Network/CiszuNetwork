@@ -127,7 +127,7 @@
 
 **MuzicMania Website:**
 
-- [ ] Terminar idiomas en ingles UK.
+- [ ] Terminar idiomas en ingles UK.Explica
 - [ ] Terminar idiomas en ingles USA.
 - [ ] Terminar idiomas en español LATAM.
 - [ ] Terminar idiomas en español España.
