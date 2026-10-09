@@ -385,9 +385,14 @@ Coste total del proyecto: **0 €** (las tres herramientas tienen plan gratis su
 
 **Estado aplicado (09 oct 2026)**: MFA activo (SSO Google), **device approval activo**, **ACL
 aplicada vía API** (backup previo en `.opencode/temp/tailscale-acl-backup.json`), dispositivo
-Android obsoleto eliminado. Referencias: tailnet `TJW3aBzHqG11CNTRL` · DNS
+Android del owner re-aprobado tras re-enrolarse (vía API). Referencias: tailnet `TJW3aBzHqG11CNTRL` · DNS
 `tailc7146e.ts.net`. Credenciales (`TAILSCALE_API_KEY`, `TAILSCALE_AUTH_KEY`,
 `TAILSCALE_TAILNET_ID`, `TAILSCALE_DNS_NAME`) en el vault cifrado.
+
+**Aprobar un dispositivo por API** (device approval): `POST /api/v2/device/{id}/authorized`
+con cuerpo `{"authorized": true}` (revocar con `false`). Verificado el 09 oct 2026 con el
+telefono del owner tras re-enrolarse. Listar pendientes: `GET /tailnet/{tailnet}/devices` y
+buscar `authorized=false`.
 
 Checklist en el panel de Tailscale (manual, con la cuenta del owner):
 
