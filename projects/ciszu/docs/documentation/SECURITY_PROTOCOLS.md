@@ -301,3 +301,18 @@ Regla operativa: datos de staff/clientes (`archives/`), consolas (`tools/`) y sc
 (`scripts/`) viven SOLO en local (gitignored). Nunca commitear datos personales, aunque no sean
 secretos.
 
+## ntfy (notificaciones push)
+
+- **Topic**: reservado en el vault como `NOTIFY_TOPIC` con nombre largo y no adivinable
+  (`CZ-ntfytask-<32 digitos>`). La publicacion debe usar `NOTIFY_TOKEN` una vez creada la
+  reserva en ntfy.sh: sin token, cualquiera que conozca el topic podria publicar avisos falsos
+  (spoofing).
+- **Politica de contenido**: por ntfy NUNCA se envian secretos, tokens, credenciales, datos
+  personales ni informacion sensible. Solo avisos operativos breves. Lo sensible va por email.
+- **Lectura**: en ntfy.sh la lectura es publica para quien conozca el nombre del topic; por eso
+  el nombre es aleatorio y el contenido se limita. La privacidad real (lectura con credenciales)
+  llegara con el ntfy self-hosted (VPS) con usuarios y ACL.
+- **Staff**: cada miembro suscribe el topic en su app ntfy; con el self-hosted pasaran a
+  usuario+token propios por rol.
+- **Rotacion**: si el topic se filtra, generar uno nuevo (`CZ-ntfytask-<32 digitos>`), actualizar
+  vault + `gh secret set NOTIFY_TOPIC` + re-suscribir a los staff.
