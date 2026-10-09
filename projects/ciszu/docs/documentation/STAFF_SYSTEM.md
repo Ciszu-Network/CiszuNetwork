@@ -306,4 +306,6 @@ Supabase (`internal.staff`, `internal.console_access`, `internal.staff_audit`). 
 ser export/vista. El guard de consolas valida contra DB en cada sesión y comando; editar el JSON
 local no cambia permisos (probado con un tamper simulado: denegado). `staff-sync` (solo owner)
 sincroniza JSON→DB y `staffcon.js` lo dispara automáticamente tras cada guardado. Umbrales:
-**staffcon ≤4**, devcon ≤6, customerscon ≤7. Detalle: `ACCESS_CONTROL_SYSTEM.md`.
+**staffcon ≤4**, devcon ≤6, customerscon ≤7. Ademas, staffcon incluye la accion **`accounts`**
+(cuentas externas por staff con secretos cifrados y reveal auditado solo-owner). Detalle:
+`ACCESS_CONTROL_SYSTEM.md`.

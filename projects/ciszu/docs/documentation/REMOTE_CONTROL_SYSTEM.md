@@ -394,7 +394,7 @@ Checklist en el panel de Tailscale (manual, con la cuenta del owner):
    {
      "tagOwners": { "tag:ciszu-host": ["autogroup:admin"] },
      "acls": [
-       { "action": "accept", "src": ["autogroup:member"], "dst": ["tag:ciszu-host:22,8080"] }
+       { "action": "accept", "src": ["autogroup:member"], "dst": ["tag:ciszu-host:22"] }
      ],
      "ssh": [
        { "action": "check", "src": ["autogroup:member"], "dst": ["tag:ciszu-host"], "users": ["fplay"] }
@@ -406,5 +406,7 @@ Checklist en el panel de Tailscale (manual, con la cuenta del owner):
 4. Revisar dispositivos autorizados y expulsar los que no uses (el Android con 32 días offline).
 5. Evaluar **Tailnet Lock** si se añaden dispositivos de terceros.
 
-Del lado del host ya está aplicado: firewall scoped a 100.64.0.0/10, sshd solo claves, y
-`Ciszu ntfy self-host` escuchando 8080 solo en Tailscale. Detalle: `SECURITY_PROTOCOLS.md`.
+Del lado del host ya está aplicado: firewall scoped a 100.64.0.0/10, sshd solo claves (con
+límites de intentos y sin forwarding), bloqueo entrante por defecto y log de descartes. El
+self-hosted de ntfy quedó descartado por decisión (canal único ntfy.sh). Detalle:
+`SECURITY_PROTOCOLS.md`.

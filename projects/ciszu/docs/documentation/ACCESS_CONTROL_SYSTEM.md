@@ -29,6 +29,7 @@
 | `staff_audit` | Auditoría: otp_verified, session_open/deny/revoke, staff_sync, level/subcargos_local_fallback, staff_upsert |
 | `sessions` / `otp_codes` | Sesiones de consola (60 min por defecto) y OTP por email |
 | `testing_accounts` / `projects` | Cuentas de prueba y registro de proyectos |
+| `external_accounts` | Cuentas de servicios externos por staff (ntfy, tailscale, github, vercel, …) con **secreto cifrado AES-256-GCM** (clave `ACCOUNTS_ENC_KEY` en el vault) |
 
 Rangos (staff.json → `roles`): CEO 0 · C-level 1 · Gerentes 2 · Supervisores 3 · Administradores
 4 · RRHH 4 · Ciberseguridad/DevOps 5 · Desarrollo/Diseño/QA 6 · Community/Soporte 7 ·
@@ -74,14 +75,25 @@ necesita credenciales de producción en su máquina.
 
 - Canal operativo: ntfy.sh con topic rotado (`CZ-ntfytask-<32 dígitos>`, vault) y política de
   no enviar información sensible. Reserva + token = publicación solo del owner.
-- Canal privado: **ntfy self-hosted** en el PC (solo Tailscale) con `deny-all`, usuarios con
-  ACL y credenciales en el vault — nadie sin credenciales lee ni escribe. Ver `NTFY_SYSTEM.md`.
+- Canal único: **ntfy.sh** con reserva del topic (publicación solo del owner vía `NOTIFY_TOKEN`)
+  y política de contenido estricta (nunca datos sensibles). El self-hosted quedó **descartado por
+  decisión** (sin dependencia del PC). Ver `NTFY_SYSTEM.md`.
 
-## 8. Roadmap
+## 8. Cuentas externas por staff (staffcon `accounts`)
 
-- Usuarios self-host por staff (rol/topics) al entrar personal.
+- Tabla `internal.external_accounts`: id, staff, servicio, identificador, secreto cifrado
+  (AES-256-GCM), estado, quién la creó/revocó y cuándo. Deny-all: solo service_role.
+- Comandos (guard): `accounts-add --by CZ-XXX --staff CZ-YYY --service ntfy --identifier X [--secret S] [--note] `,
+  `accounts-list [--staff] [--service]`, `accounts-revoke --id N --by`, y `accounts-reveal --id N --by`
+  (**solo owner**, queda auditado).
+- En staffcon: acción `accounts list|add|reveal|revoke ...` (valida actor y nivel ≤4; reveal solo owner).
+- La contraseña nunca se muestra en listados; solo `reveal` la descifra bajo auditoría.
+
+## 9. Roadmap
+
+- Tokens de publicación por rol cuando el staff necesite emitir avisos (ntfy.sh).
 - Vercel Project Members + Mega selectivo por carpeta (al entrar personal).
-- Migrar notificaciones internas del staff al canal self-hosted.
+- Cuentas externas por staff: extender `accounts` a más servicios y flujo interactivo completo en la consola.
 
 ---
 

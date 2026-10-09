@@ -310,10 +310,10 @@ secretos.
 - **Politica de contenido**: por ntfy NUNCA se envian secretos, tokens, credenciales, datos
   personales ni informacion sensible. Solo avisos operativos breves. Lo sensible va por email.
 - **Lectura**: en ntfy.sh la lectura es publica para quien conozca el nombre del topic; por eso
-  el nombre es aleatorio y el contenido se limita. La privacidad real (lectura con credenciales)
-  llegara con el ntfy self-hosted (VPS) con usuarios y ACL.
-- **Staff**: cada miembro suscribe el topic en su app ntfy; con el self-hosted pasaran a
-  usuario+token propios por rol.
+  el nombre es aleatorio y el contenido se limita. El self-hosted quedo **descartado por decision**
+  (canal unico ntfy.sh, sin dependencia del PC): la proteccion es reserva + token + politica.
+- **Staff**: cada miembro suscribe el topic en su app ntfy; si alguno necesita emitir avisos,
+  recibe su propio token de publicacion (nunca el del owner).
 - **Rotacion**: si el topic se filtra, generar uno nuevo (`CZ-ntfytask-<32 digitos>`), actualizar
   vault + `gh secret set NOTIFY_TOPIC` + re-suscribir a los staff.
 
@@ -325,12 +325,18 @@ secretos.
   `administrators_authorized_keys`; las conexiones remotas se hacen por Tailscale con clave.
 - **PostgreSQL**: `listen_addresses = 'localhost'` (antes `'*'`); pg_hba ya limitaba a local.
   Backup en `postgresql.conf.bak-20261009`.
-- **Firewall**: bloqueo explícito de 5432 entrante; SMB (445) bloqueado en redes Públicas;
-  puerto 8080 (ntfy self-hosted) permitido solo desde Tailscale + localhost.
+- **Firewall**: bloqueo entrante por defecto en los 3 perfiles + log de descartes
+  (`.opencode/temp/pfirewall.log`); 5432 bloqueado; SMB (445) bloqueado en Públicas; SMB1 apagado
+  y firma requerida. (El self-hosted de ntfy quedó descartado: sin regla 8080.)
 - **Detección**: tarea programada **"Ciszu SSH Login Alert"** (cada 5 min) alerta por ntfy ante
   nuevos logins SSH (Security 4624 con sshd).
 - **opencode**: sin servidor expuesto (TUI local); regla: `opencode serve` jamás en interfaces
   públicas (solo localhost/Tailscale). `.opencode/data/auth.json` contiene credenciales de
   proveedores del agente: tratar como secreto.
+- **Endpoint extra**: Defender con PUA + Network Protection; bloqueo al despertar (CONSOLELOCK) y
+  pantalla 10/15 min; ACL de `.opencode/data` (209 archivos) y vault solo fplay+SYSTEM; BitLocker
+  activo en E:. 
 - **Tailscale (pendiente manual en el panel)**: MFA en la cuenta, device approval, ACL de solo
   dispositivos propios, check mode para SSH. Ver `REMOTE_CONTROL_SYSTEM.md`.
+- **Cuentas externas**: `internal.external_accounts` con secretos cifrados (AES-GCM) y reveal
+  auditado solo-owner; gestión desde staffcon `accounts` (ver `ACCESS_CONTROL_SYSTEM.md` §8).

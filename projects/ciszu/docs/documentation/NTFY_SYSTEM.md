@@ -1,69 +1,54 @@
 # NTFY_SYSTEM
 
-> **Versión**: 1.0
+> **Versión**: 2.0
 > **Actualización**: 09 oct 2026
 > **Identificador**: NTFY_SYSTEM
-> **Definición**: Sistema de notificaciones push del ecosistema: canales (ntfy.sh y self-hosted), seguridad, suscripción, políticas de contenido y operación.
+> **Definición**: Sistema de notificaciones push del ecosistema: canal único ntfy.sh, seguridad (reserva + token), suscripción, política de contenido y rotación.
 
 ---
 
-## 1. Canales
+## 1. Canal único: ntfy.sh
 
-| Canal | Uso | Seguridad |
-| --- | --- | --- |
-| **ntfy.sh** (`NOTIFY_TOPIC`) | Avisos operativos 24/7 (aunque el PC esté apagado): consolas, moderación, uptime, agentes | Topic rotado `CZ-ntfytask-<32 dígitos>` (vault). Reserva en ntfy.sh pendiente para impedir publicación ajena; la lectura es pública por nombre ⇒ **nunca contenido sensible** |
-| **Self-hosted** (`NTFY_SELFHOST_URL`) | Canal privado para el staff y datos internos | `auth-default-access: deny-all` + usuarios con ACL; solo accesible por **Tailscale** (firewall limita 8080 a 100.64.0.0/10); credenciales en el vault |
+- **Decision (09 oct 2026)**: canal operativo único siempre disponible, **sin dependencia del PC**.
+  El self-hosted fue descartado (se eliminaron binario, tarea, regla de firewall y claves del vault).
+- Topic rotado y no adivinable: `CZ-ntfytask-<32 dígitos>` (vault: `NOTIFY_TOPIC`).
+- Los scripts (`ntfy-notif.js`, `moderation.js`, `uptime-watch.js`) leen `NOTIFY_TOPIC` del
+  vault; `uptime-watch` en CI usa el secret de GitHub `NOTIFY_TOPIC` (`gh secret set`).
 
-## 2. Self-hosted (PC, sin Docker ni VPS)
+## 2. Reserva del topic + token (recomendado, pendiente)
 
-- Binario: `tools/ntfy/ntfy.exe` (v2.29.0) + `tools/ntfy/server.yml`.
-- Config clave: `listen-http :8080`, `auth-default-access deny-all`, `auth-file user.db`,
-  `base-url http://100.75.124.72:8080`.
-- Arranque automático: tarea programada **"Ciszu ntfy self-host"** (al iniciar Windows).
-- Firewall: regla "Ciszu ntfy (Tailscale 8080)" → solo 100.64.0.0/10 + 127.0.0.1.
-- Usuario administrador: `ciszuko` (vault: `NTFY_USER`/`NTFY_PASS`); los usuarios nuevos se
-  crean con `NTFY_PASSWORD=... ntfy user --config server.yml add <usuario>` (no interactivo) y
-  su ACL con `ntfy access <usuario> <topic> read|write|read-write`.
-- Verificado (09 oct 2026): health 200; publicación/lectura anónima **403**; auth 200.
-
-### Operar
-
-```powershell
-# arrancar/parar manualmente
-Start-Process "E:\Ciszu Network\tools\ntfy\ntfy.exe" -ArgumentList 'serve --config "E:\Ciszu Network\tools\ntfy\server.yml"' -WindowStyle Hidden
-Stop-Process -Name ntfy
-# estado
-Invoke-WebRequest http://127.0.0.1:8080/v1/health
-```
+1. Crear cuenta en **ntfy.sh** (usuario/contraseña, sin email).
+2. En la app web (`ntfy.sh/app`), añadir el topic y usar **Reservar topic** (solo tu cuenta podrá
+   publicar; se elimina el spoofing).
+3. Settings → **Access tokens** → crear token con permisos **solo de publicación** sobre ese topic.
+4. Pasar el token por `SECRET_TEMP.env` como `NOTIFY_TOKEN` → se guarda en el vault cifrado.
+   La lectura del topic sigue siendo pública por nombre (limitación de ntfy.sh): por eso la
+   política de contenido es estricta.
 
 ## 3. Suscripción (móvil)
 
-- **ntfy.sh**: app ntfy → add subscription → servidor por defecto → topic del vault
-  (`CZ-ntfytask-...`). Si se filtra el nombre, rotar (ver §5).
-- **Self-hosted**: app ntfy → add subscription → URL `http://100.75.124.72:8080` → usuario
-  `ciszuko` (o el usuario propio del staff) con su contraseña. Requiere Tailscale activo en el
-  dispositivo.
+1. App **ntfy** (Play Store / App Store).
+2. Botón **+** → pegar el topic del vault → servidor por defecto (`ntfy.sh`) → Suscribir.
+3. Permisos de notificación + excluir ntfy de la optimización de batería.
 
 ## 4. Política de contenido
 
-- Por ntfy.sh **NUNCA**: secretos, tokens, credenciales, datos personales, detalles de
-  incidentes, información de clientes. Solo avisos operativos breves.
-- El contenido sensible va por email o por el canal self-hosted (con credenciales).
-- Los scripts (`ntfy-notif.js`, `moderation.js`, `uptime-watch.js`) leen `NOTIFY_TOPIC` del
-  vault; `NOTIFY_TOKEN`, si existe, se adjunta automáticamente.
+- **NUNCA** por ntfy: secretos, tokens, credenciales, datos personales, detalles de incidentes ni
+  información de clientes. Solo avisos operativos breves.
+- Lo sensible va por email (marca y control) o se consulta en el servidor.
 
-## 5. Rotación
+## 5. Operación y rotación
 
-1. Generar `CZ-ntfytask-<32 dígitos>` nuevos.
-2. Actualizar `NOTIFY_TOPIC` en el vault + `gh secret set NOTIFY_TOPIC` (uptime-watch en CI).
-3. `vault.ps1 crypt` + `verify` y re-suscribir a los staff.
-4. Registrar el cambio en `SECURITY_PROTOCOLS.md` (sección ntfy).
+- Enviar: `pnpm notify "Titulo" "Mensaje"` (soporta voz, prioridad, tags, imagen, delay, markdown).
+- Si el topic se filtra: generar `CZ-ntfytask-<32 dígitos>` nuevos → actualizar vault →
+  `gh secret set NOTIFY_TOPIC` → `vault.ps1 crypt` + `verify` → re-suscribir al staff.
+- Staff: cada miembro suscribe el topic; quien deba **emitir** avisos recibe su propio token de
+  publicación (nunca el del owner).
 
 ## 6. Roadmap
 
-- Reservar el topic en ntfy.sh + `NOTIFY_TOKEN` (cuenta del owner).
-- Usuarios self-host por rol del staff y migración de avisos internos al canal privado.
-- Evaluar ntfy self-hosted en un host 24/7 cuando exista (hoy: PC con Tailscale).
+- Reserva + `NOTIFY_TOKEN` (requiere cuenta del owner).
+- Tokens de publicación por rol cuando entre personal.
 
 ---
 

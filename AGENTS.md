@@ -90,7 +90,7 @@ Antes de codificar, lee el doc del área que tocas. Mapa por tipo de tarea:
   `CORS_SYSTEM` · `BUSINESS_SYSTEM` · `OPENCODE_SYSTEM` (voz + comandos) ·
   `MODELS_LLM_SYSTEM` (historial y facturación de modelos LLM) ·
   `MODELS_SKILLS_SYSTEM` (galería de skills del agente opencode: 34 instaladas en `.opencode/skills/`, MCP ausente) ·
-  `REMOTE_CONTROL_SYSTEM` (SSH/Tailscale/ciszu-ai) · `ACCESS_CONTROL_SYSTEM` (autorizacion: staff en DB, umbrales por consola, gobernanza GitHub) · `NTFY_SYSTEM` (notificaciones push: ntfy.sh + self-hosted) · `KNOWLEDGE_SYSTEM` (educación) ·
+  `REMOTE_CONTROL_SYSTEM` (SSH/Tailscale/ciszu-ai) · `ACCESS_CONTROL_SYSTEM` (autorizacion: staff en DB, umbrales por consola, gobernanza GitHub) · `NTFY_SYSTEM` (notificaciones push: ntfy.sh) · `KNOWLEDGE_SYSTEM` (educación) ·
   `INSTALLERS_SYSTEM` · `ONLINE_SERVICES_SYSTEM` · `STATISTICS_SYSTEM` ·
   `VISUAL_BUILDERS_SYSTEM` (editores visuales UI/UX: Puck-first) ·
   `PROJECTS_SYSTEM` · `STATUS_SYSTEM` · `ACTIONS_RUNNERS_SYSTEM` (CI/deploys locales sin GH Actions) ·

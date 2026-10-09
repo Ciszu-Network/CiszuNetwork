@@ -115,7 +115,7 @@
 - [ ] Terminar paginas de dashboard (auth).
 - [ ] Terminar idiomas en español LATAM.
 - [ ] Terminar idiomas en español España.
-- [ ] A	rreglar AUTH error, "[ciszubot.vercel.app/?auth=error](https://ciszubot.vercel.app/?auth=error)", debemos corregir el auth de discord.
+- [ ] Arreglar AUTH error, "[ciszubot.vercel.app/?auth=error](https://ciszubot.vercel.app/?auth=error)", debemos corregir el auth de discord.
 - [ ] Añadir VPS 24 7 AL BOT.
 
 **Ciszuko Antony Website:**
