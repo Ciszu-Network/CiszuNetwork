@@ -335,7 +335,7 @@ secretos.
   públicas (solo localhost/Tailscale). `.opencode/data/auth.json` contiene credenciales de
   proveedores del agente: tratar como secreto.
 - **Endpoint extra**: Defender con PUA + Network Protection; bloqueo al despertar (CONSOLELOCK) y
-  pantalla 10/15 min; ACL de `.opencode/data` (209 archivos) y vault solo fplay+SYSTEM; BitLocker **activo en C:, D: y E:** (09 oct 2026). 
+  pantalla 10/15 min; ACL de `.opencode/data` (209 archivos) y vault solo fplay+SYSTEM; BitLocker **activo en E:**; C: y D: sin cifrar (verificado 09 oct 2026). 
 - **Tailscale (pendiente manual en el panel)**: MFA en la cuenta, device approval, ACL de solo
   dispositivos propios, check mode para SSH. Ver `REMOTE_CONTROL_SYSTEM.md`.
 - **Cuentas externas**: `internal.external_accounts` con secretos cifrados (AES-GCM) y reveal
