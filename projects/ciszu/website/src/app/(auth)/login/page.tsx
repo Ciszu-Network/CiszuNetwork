@@ -7,6 +7,8 @@ import { supabase } from '@/config/supabase';
 import { useAppStore } from '@/store';
 import { syncPreferencesToProfile, loadPreferences } from '@/lib/preferences';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useDict } from '@/lib/useDict';
+import { fillTemplate } from '@/lib/i18n';
 import {
   AuthBenefitsPanel,
   AuthField,
@@ -71,32 +73,31 @@ const IconSparkles = () => (
   </svg>
 );
 
-const LOGIN_BENEFITS = [
-  {
-    icon: <span className="w-full h-full text-brand-light"><IconShield /></span>,
-    title: 'Menos anuncios',
-    description: 'Al iniciar sesión quitamos los anuncios de footer y reduce la frecuencia del resto. Tu navegación, más limpia.',
-  },
-  {
-    icon: <span className="w-full h-full text-neon-cyan"><IconCloud /></span>,
-    title: 'Tus datos, siempre contigo',
-    description: 'Preferencias, progreso y configuración guardados en la nube y sincronizados entre todos tus dispositivos.',
-  },
-  {
-    icon: <span className="w-full h-full text-neon-pink"><IconGift /></span>,
-    title: 'Recompensas y VIP futuro',
-    description: 'Los usuarios registrados podrán optar a recompensas y, próximamente, a un rango VIP que quita los anuncios.',
-  },
-];
-
-const LOGIN_FOOTER = 'Iniciar sesión es gratis. Usamos tus datos para personalizar anuncios y ofrecerte menos publicidad — consulta nuestras políticas en Ciszu Network.';
 
 const CISZU_ISOTYPE = assetResolver.resolve('projects/ciszu/content/logos/images/outline/isotype/gradient/color/ciszu_logo_isotipo_outline_degradado_zwhite_ccolor.svg');
 
 export default function LoginPage() {
   usePageTitle('LOGIN');
+  const t = useDict();
   const { setUser } = useAppStore();
   const { toast } = useToast();
+  const LOGIN_BENEFITS = [
+    {
+      icon: <span className="w-full h-full text-brand-light"><IconShield /></span>,
+      title: t.loginPage.benefits.lessAds.title,
+      description: t.loginPage.benefits.lessAds.desc,
+    },
+    {
+      icon: <span className="w-full h-full text-neon-cyan"><IconCloud /></span>,
+      title: t.loginPage.benefits.cloud.title,
+      description: t.loginPage.benefits.cloud.desc,
+    },
+    {
+      icon: <span className="w-full h-full text-neon-pink"><IconGift /></span>,
+      title: t.loginPage.benefits.rewards.title,
+      description: t.loginPage.benefits.rewards.desc,
+    },
+  ];
   const router = useRouter();
   const [form, setForm] = useState({ email: '', password: '' });
   const [forgot, setForgot] = useState(false);
@@ -133,9 +134,9 @@ export default function LoginPage() {
 
   const validate = () => {
     const next: Record<string, string> = {};
-    if (!form.email.trim()) next.email = 'Este campo es obligatorio';
-    else if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) next.email = 'Formato de email inválido (requiere @)';
-    if (!form.password) next.password = 'La contraseña es obligatoria';
+    if (!form.email.trim()) next.email = t.loginPage.errors.required;
+    else if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) next.email = t.loginPage.errors.invalidEmail;
+    if (!form.password) next.password = t.loginPage.errors.passwordRequired;
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -150,7 +151,7 @@ export default function LoginPage() {
       // de enviar. En Enterprise el executor es el que genera el token.
       const captcha = (await v3ExecutorRef.current?.()) ?? null;
       if (!captcha) {
-        throw new Error('Debes completar el reCAPTCHA');
+        throw new Error(t.loginPage.errors.captchaRequired);
       }
       const verifyRes = await fetch('/api/verify-recaptcha', {
         method: 'POST',
@@ -159,7 +160,7 @@ export default function LoginPage() {
       });
       const verifyData = await verifyRes.json().catch(() => ({}));
       if (!verifyData.success) {
-        throw new Error(verifyData.error || 'Verificación de reCAPTCHA fallida');
+        throw new Error(verifyData.error || t.loginPage.errors.captchaFailed);
       }
 
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -169,7 +170,7 @@ export default function LoginPage() {
 
       if (error) {
         throw new Error(error.message === 'Invalid login credentials'
-          ? 'Credenciales inválidas. Verifica tu email y contraseña.'
+          ? t.loginPage.errors.invalidCredentials
           : error.message);
       }
 
@@ -221,10 +222,10 @@ export default function LoginPage() {
         await syncPreferencesToProfile(data.user.id, loadPreferences());
       }
 
-      toast('Bienvenido de nuevo, ' + (profile?.display_name || data.user.email), 'success');
+      toast(fillTemplate(t.loginPage.welcome, { name: profile?.display_name || data.user.email || '' }), 'success');
       router.push('/');
     } catch (err: any) {
-      setLocalError(err.message || 'Error desconocido al iniciar sesión');
+      setLocalError(err.message || t.loginPage.errors.unknown);
       setCaptchaResetKey((k) => k + 1);
     } finally {
       setLoading(false);
@@ -235,13 +236,13 @@ export default function LoginPage() {
     e.preventDefault();
     setLocalError(null);
     if (!forgotEmail.trim() || !/^\S+@\S+\.\S+$/.test(forgotEmail.trim())) {
-      setErrors(prev => ({ ...prev, email: 'Introduce un email válido' }));
+      setErrors(prev => ({ ...prev, email: t.loginPage.errors.forgotInvalidEmail }));
       return;
     }
     // Hay que esperar 12 horas si se piden demasiados enlaces seguidos.
     const policy = evaluateRecoveryRequest({ timestamps: readRequestTimestamps() });
     if (!policy.allowed) {
-      setLocalError(`Demasiadas peticiones de enlace. Vuelve a intentarlo en ${describeDuration(policy.waitMs)}.`);
+      setLocalError(fillTemplate(t.loginPage.errors.recoveryTooMany, { wait: describeDuration(policy.waitMs) }));
       return;
     }
     setLoading(true);
@@ -256,7 +257,7 @@ export default function LoginPage() {
       writeRequestedAt();
       setSent(true);
     } catch (err: any) {
-      setLocalError(err.message || 'No se pudo enviar el enlace');
+      setLocalError(err.message || t.loginPage.errors.forgotSendFailed);
     } finally {
       setLoading(false);
     }
@@ -273,11 +274,11 @@ export default function LoginPage() {
         body: JSON.stringify({ accept: true }),
       });
       const payload = (await res.json().catch(() => ({}))) as { success?: boolean; error?: string };
-      if (!res.ok || payload.success !== true) throw new Error(payload.error || 'No pudimos recuperar la cuenta.');
+      if (!res.ok || payload.success !== true) throw new Error(payload.error || t.loginPage.errors.recoveryFailed);
       setRecovery(null);
       router.replace('/');
     } catch (err: any) {
-      setLocalError(err?.message || 'No pudimos recuperar la cuenta.');
+      setLocalError(err?.message || t.loginPage.errors.recoveryFailed);
       setRecovery(null);
       void supabase.auth.signOut();
     }
@@ -287,7 +288,7 @@ export default function LoginPage() {
   const rejectRecovery = async () => {
     setRecovery(null);
     await supabase.auth.signOut().catch(() => {});
-    setLocalError('No recuperaste la cuenta. Vuelve a iniciar sesión si cambias de opinión (dentro de los 15 días).');
+    setLocalError(t.loginPage.errors.recoveryRejected);
   };
 
   // Cuenta eliminada: se bloquea hasta confirmar (o rechazar) la recuperación.
@@ -296,11 +297,9 @@ export default function LoginPage() {
       <div className="min-h-screen pt-24 pb-20 px-4 relative overflow-hidden">
         <div className="max-w-md mx-auto relative">
           <div className="p-6 md:p-8 bg-surface border border-red-500/30 rounded-[2rem] shadow-2xl backdrop-blur-3xl text-center space-y-4">
-            <p className="font-header text-lg font-black uppercase tracking-wide text-red-400">Cuenta eliminada</p>
+            <p className="font-header text-lg font-black uppercase tracking-wide text-red-400">{t.loginPage.recovery.title}</p>
             <p className="text-sm text-muted leading-relaxed">
-              Esta cuenta está en suspensión de eliminación. Puedes recuperarla ahora: al recuperarla
-              aceptas que <strong className="text-ink">no podrás volver a eliminarla durante 30 días</strong>.
-              Si rechazas, no se te otorga la recuperación y se cierra la sesión.
+              {t.loginPage.recovery.body1}<strong className="text-ink">{t.loginPage.recovery.strong}</strong>{t.loginPage.recovery.body2}
             </p>
             {localError && <p className="text-red-400 text-[11px] font-bold">{localError}</p>}
             <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
@@ -309,14 +308,14 @@ export default function LoginPage() {
                 onClick={acceptRecovery}
                 className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-white"
               >
-                Recuperar mi cuenta
+                {t.loginPage.recovery.accept}
               </button>
               <button
                 type="button"
                 onClick={rejectRecovery}
                 className="inline-flex items-center justify-center rounded-xl border border-border px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-muted hover:text-ink"
               >
-                No, cerrar sesión
+                {t.loginPage.recovery.reject}
               </button>
             </div>
           </div>
@@ -339,7 +338,7 @@ export default function LoginPage() {
               onCancel={() => {
                 setTwoFactor(null);
                 void supabase.auth.signOut();
-                setLocalError('Verificación cancelada. Vuelve a iniciar sesión cuando tengas la clave.');
+                setLocalError(t.loginPage.twoFactor.cancelled);
               }}
             />
           </div>
@@ -368,7 +367,7 @@ export default function LoginPage() {
             ciszuHref="https://ciszunetwork.vercel.app"
             appHref="/"
             title="CISZU ID"
-            subtitle="Inicia sesión en Ciszu Network con CISZU ID"
+            subtitle={t.loginPage.brand.subtitle}
           />
         </div>
 
@@ -380,28 +379,28 @@ export default function LoginPage() {
               {forgot ? (
                 <form onSubmit={handleForgotSubmit} className="space-y-5">
                   <div className="text-center space-y-2">
-                    <h3 className="text-white font-black uppercase tracking-widest text-sm">Recuperar identidad</h3>
-                    <p className="text-gray-400 text-[10px] font-bold">Enviaremos un enlace temporal de un solo uso a tu email. Revisa tu bandeja o spam.</p>
+                    <h3 className="text-white font-black uppercase tracking-widest text-sm">{t.loginPage.forgot.title}</h3>
+                    <p className="text-gray-400 text-[10px] font-bold">{t.loginPage.forgot.description}</p>
                   </div>
                   <AuthField
-                    label="Email de la cuenta"
+                    label={t.loginPage.forgot.emailLabel}
                     name="email"
                     icon={<span className="w-full h-full text-brand-light"><IconMail /></span>}
                     type="email"
-                    placeholder="tu@email.com"
+                    placeholder={t.loginPage.emailPlaceholder}
                     required
                     autoComplete="email"
                     value={forgotEmail}
                     onChange={(e) => { setForgotEmail(e.target.value); setErrors(prev => ({ ...prev, email: '' })); }}
                     error={errors.email}
-                    requirements={['Formato de email válido (p. ej. nombre@dominio.com)', 'Debe ser la cuenta CISZU ID registrada']}
+                    requirements={[t.loginPage.forgot.emailReq1, t.loginPage.forgot.emailReq2]}
                   />
                   <RecoveryOneUseNotice />
                   {localError && <p className="text-red-400 text-[11px] font-bold">{localError}</p>}
                   {sent ? (
                     <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-center">
-                      <p className="text-emerald-400 text-xs font-bold">Enlace enviado</p>
-                      <p className="text-gray-400 text-[10px] font-bold mt-1">Revisa tu bandeja de entrada o spam. El enlace es de un solo uso.</p>
+                      <p className="text-emerald-400 text-xs font-bold">{t.loginPage.forgot.sentTitle}</p>
+                      <p className="text-gray-400 text-[10px] font-bold mt-1">{t.loginPage.forgot.sentDesc}</p>
                     </div>
                   ) : (
                     <Button
@@ -411,18 +410,18 @@ export default function LoginPage() {
                       isDisabled={loading}
                       className="w-full font-header font-black uppercase tracking-widest text-sm"
                     >
-                      {loading ? 'ENVIANDO…' : 'ENVIAR ENLACE'}
+                      {loading ? t.loginPage.forgot.submitting : t.loginPage.forgot.submit}
                     </Button>
                   )}
                   <Button type="button" variant="secondary" size="sm" onPress={() => { setForgot(false); setSent(false); setLocalError(null); }} className="w-full text-[10px] font-bold uppercase tracking-widest">
-                    ← Volver al acceso normal
+                    {t.loginPage.forgot.back}
                   </Button>
                 </form>
               ) : (
                 <>
                   <form onSubmit={handleSubmit} className="space-y-5">
                     <AuthField
-                      label="Email"
+                      label={t.loginPage.form.emailLabel}
                       name="email"
                       icon={<span className="w-full h-full text-brand-light"><IconMail /></span>}
                       type="email"
@@ -432,20 +431,20 @@ export default function LoginPage() {
                       value={form.email}
                       onChange={handleChange}
                       error={errors.email}
-                      requirements={['Formato de email válido (p. ej. nombre@dominio.com)']}
+                      requirements={[t.loginPage.form.emailReq]}
                     />
                     <AuthField
-                      label="Contraseña"
+                      label={t.loginPage.form.passwordLabel}
                       name="password"
                       icon={<span className="w-full h-full text-brand-light"><IconLock /></span>}
                       type="password"
-                      placeholder="••••••••"
+                      placeholder={t.loginPage.form.passwordPlaceholder}
                       required
                       autoComplete="current-password"
                       value={form.password}
                       onChange={handleChange}
                       error={errors.password}
-                      requirements={['Mínimo 8 caracteres', 'Al menos 1 mayúscula', 'Al menos 1 minúscula', 'Al menos 1 número y 1 símbolo']}
+                      requirements={[t.loginPage.form.pwReq1, t.loginPage.form.pwReq2, t.loginPage.form.pwReq3, t.loginPage.form.pwReq4]}
                     />
 
                     {localError && <p className="text-red-400 text-[11px] font-bold">{localError}</p>}
@@ -465,12 +464,12 @@ export default function LoginPage() {
                        isDisabled={loading}
                        className="w-full font-header font-black uppercase tracking-widest text-sm"
                      >
-                       {loading ? 'PROCESANDO…' : 'INICIAR SESIÓN'}
+                       {loading ? t.loginPage.form.submitting : t.loginPage.form.submit}
                      </Button>
                   </form>
 
                   <OAuthProviders
-                    onSelect={(p) => toast(`OAuth de ${p} disponible en futura versión beta`, 'warning')}
+                    onSelect={(p) => toast(fillTemplate(t.loginPage.oauthSoon, { provider: p }), 'warning')}
                   />
 
                   <AuthSecondaryActions
@@ -494,9 +493,9 @@ export default function LoginPage() {
           {/* Página derecha: beneficios */}
           <AuthBenefitsPanel
             badge="CISZU ID"
-            title="¿Por qué iniciar sesión?"
+            title={t.loginPage.benefitsTitle}
             items={LOGIN_BENEFITS}
-            footerNote={LOGIN_FOOTER}
+            footerNote={t.loginPage.footerNote}
             accent="#3a6bf0"
             accentAlt="#f472b6"
           />
