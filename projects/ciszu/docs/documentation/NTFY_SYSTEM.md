@@ -15,15 +15,15 @@
 - Los scripts (`ntfy-notif.js`, `moderation.js`, `uptime-watch.js`) leen `NOTIFY_TOPIC` del
   vault; `uptime-watch` en CI usa el secret de GitHub `NOTIFY_TOPIC` (`gh secret set`).
 
-## 2. Reserva del topic + token (recomendado, pendiente)
+## 2. Token de publicación (ACTIVO) y reserva (Pro)
 
-1. Crear cuenta en **ntfy.sh** (usuario/contraseña, sin email).
-2. En la app web (`ntfy.sh/app`), añadir el topic y usar **Reservar topic** (solo tu cuenta podrá
-   publicar; se elimina el spoofing).
-3. Settings → **Access tokens** → crear token con permisos **solo de publicación** sobre ese topic.
-4. Pasar el token por `SECRET_TEMP.env` como `NOTIFY_TOKEN` → se guarda en el vault cifrado.
-   La lectura del topic sigue siendo pública por nombre (limitación de ntfy.sh): por eso la
-   política de contenido es estricta.
+- **Token activo**: cuenta ntfy.sh del owner + access token de publicación guardado en el vault
+  (`NOTIFY_TOKEN`, verificado 200 el 09 oct 2026). Los scripts lo adjuntan automáticamente.
+- **Reserva del topic**: requiere **ntfy Pro** (de pago). Decisión actual: sin Pro. Consecuencia:
+  sin reserva, quien conozca el nombre del topic aún puede publicar (spoofing) y leer; por eso
+  rigen el nombre aleatorio (`CZ-ntfytask-<32 dígitos>`) y la política de contenido estricta.
+- Alternativas si algún día se quiere eliminar el spoofing: ntfy Pro o self-host (descartado por
+  dependencia del PC).
 
 ## 3. Suscripción (móvil)
 
@@ -47,7 +47,7 @@
 
 ## 6. Roadmap
 
-- Reserva + `NOTIFY_TOKEN` (requiere cuenta del owner).
+- Evaluar ntfy Pro si el spoofing pasa a ser inaceptable.
 - Tokens de publicación por rol cuando entre personal.
 
 ---

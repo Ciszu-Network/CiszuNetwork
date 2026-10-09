@@ -303,17 +303,18 @@ secretos.
 
 ## ntfy (notificaciones push)
 
-- **Topic**: reservado en el vault como `NOTIFY_TOPIC` con nombre largo y no adivinable
-  (`CZ-ntfytask-<32 digitos>`). La publicacion debe usar `NOTIFY_TOKEN` una vez creada la
-  reserva en ntfy.sh: sin token, cualquiera que conozca el topic podria publicar avisos falsos
-  (spoofing).
+- **Topic + token**: `NOTIFY_TOPIC` (nombre largo no adivinable) y `NOTIFY_TOKEN` (token de
+  publicacion del owner) en el vault cifrado; los scripts publican autenticados. La reserva del
+  topic requiere ntfy Pro (decidido no contratar): mientras tanto, terceros que conozcan el
+  nombre podrian publicar/leer → politica de contenido estricta y rotacion ante fuga.
 - **Politica de contenido**: por ntfy NUNCA se envian secretos, tokens, credenciales, datos
   personales ni informacion sensible. Solo avisos operativos breves. Lo sensible va por email.
 - **Lectura**: en ntfy.sh la lectura es publica para quien conozca el nombre del topic; por eso
   el nombre es aleatorio y el contenido se limita. El self-hosted quedo **descartado por decision**
   (canal unico ntfy.sh, sin dependencia del PC): la proteccion es reserva + token + politica.
 - **Staff**: cada miembro suscribe el topic en su app ntfy; si alguno necesita emitir avisos,
-  recibe su propio token de publicacion (nunca el del owner).
+  recibe su propio token de publicacion (nunca el del owner). Los tokens por rol se registran en
+  `staffcon accounts` (cifrados, reveal solo-owner).
 - **Rotacion**: si el topic se filtra, generar uno nuevo (`CZ-ntfytask-<32 digitos>`), actualizar
   vault + `gh secret set NOTIFY_TOPIC` + re-suscribir a los staff.
 
