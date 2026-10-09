@@ -383,6 +383,12 @@ Coste total del proyecto: **0 €** (las tres herramientas tienen plan gratis su
 
 ## Hardening Tailscale (09 oct 2026)
 
+**Estado aplicado (09 oct 2026)**: MFA activo (SSO Google), **device approval activo**, **ACL
+aplicada vía API** (backup previo en `.opencode/temp/tailscale-acl-backup.json`), dispositivo
+Android obsoleto eliminado. Referencias: tailnet `TJW3aBzHqG11CNTRL` · DNS
+`tailc7146e.ts.net`. Credenciales (`TAILSCALE_API_KEY`, `TAILSCALE_AUTH_KEY`,
+`TAILSCALE_TAILNET_ID`, `TAILSCALE_DNS_NAME`) en el vault cifrado.
+
 Checklist en el panel de Tailscale (manual, con la cuenta del owner):
 
 1. **MFA** activado en la cuenta (passkey/TOTP) — es la llave de entrada a la tailnet.
