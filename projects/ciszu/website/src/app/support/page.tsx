@@ -16,6 +16,7 @@ import { useAppStore } from '@/store';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useToast } from '@ciszu/ui';
 import { FlagIcon } from '@ciszu/ui';
+import { useDict } from '@/lib/useDict';
 
 const THEME: InfoTheme = {
   accent: 'text-brand-light',
@@ -106,6 +107,7 @@ const supportChannels = [
 
 export default function SupportPage() {
   usePageTitle('SUPPORT');
+  const t = useDict();
   const { user } = useAppStore();
   const { toast } = useToast();
   const [tickets, setTickets] = useState<any[]>([]);
@@ -116,9 +118,9 @@ export default function SupportPage() {
   const [copied, setCopied] = useState(false);
 
   const copyEmail = async () => {
-    await navigator.clipboard.writeText('ciszunetwork@gmail.com');
+    await navigator.clipboard.writeText(CISZU_NETWORK.email);
     setCopied(true);
-    toast('Email copiado al portapapeles', 'success');
+    toast(t.supportPage.emailCopied, 'success');
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -168,7 +170,7 @@ export default function SupportPage() {
 
     const activeTicketsCount = tickets.filter(t => t.status !== 'closed').length;
     if (activeTicketsCount >= 3) {
-      showToast('Límite excedido: Máximo 3 tickets activos permitidos.', 'error');
+      showToast(t.supportPage.limitError, 'error');
       return;
     }
 
@@ -191,9 +193,9 @@ export default function SupportPage() {
     }]).select();
 
     if (error) {
-      showToast('Falla en la transmisión: ' + error.message, 'error');
+      showToast(t.supportPage.syncError + error.message, 'error');
     } else {
-      showToast('Ticket sincronizado. ID: #' + data[0].id.slice(0, 8).toUpperCase(), 'success');
+      showToast(t.supportPage.syncOk + data[0].id.slice(0, 8).toUpperCase(), 'success');
       setFormData({ ...formData, message: '' });
       fetchUserAndTickets();
       setActiveTab('list');
@@ -207,19 +209,19 @@ export default function SupportPage() {
       .update({ status })
       .eq('id', id);
 
-    if (error) showToast('Error de actualización: ' + error.message, 'error');
+    if (error) showToast(t.supportPage.updateError + error.message, 'error');
     else {
-      showToast('Estado de ticket actualizado.', 'success');
+      showToast(t.supportPage.updateOk, 'success');
       fetchUserAndTickets();
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('¿Seguro que deseas eliminar este ticket? Esta acción no se puede deshacer.')) return;
+    if (!confirm(t.supportPage.confirmDelete)) return;
     const { error } = await supabase.from('ciszunetwork_tickets').delete().eq('id', id);
-    if (error) showToast('Error de eliminación: ' + error.message, 'error');
+    if (error) showToast(t.supportPage.deleteError + error.message, 'error');
     else {
-      showToast('Ticket eliminado satisfactoriamente.', 'success');
+      showToast(t.supportPage.deleteOk, 'success');
       fetchUserAndTickets();
     }
   };
@@ -239,9 +241,9 @@ export default function SupportPage() {
         {/* --- HERO --- */}
         <InfoHero
           icon="support"
-          title="Soporte"
-          subtitle="Estamos aquí para ayudarte: abre una incidencia con seguimiento o revisa tus tickets."
-          kicker="Atención"
+          title={t.supportPage.heroTitle}
+          subtitle={t.supportPage.heroSubtitle}
+          kicker={t.supportPage.heroKicker}
           theme={THEME}
         />
 
@@ -253,7 +255,7 @@ export default function SupportPage() {
                 activeTab === 'new' ? 'bg-brand-light text-white' : 'bg-white/5 text-gray-500 hover:bg-white/10'
               }`}
             >
-              Nuevo Ticket
+              {t.supportPage.tabNew}
             </button>
             <button
               onClick={() => setActiveTab('list')}
@@ -261,7 +263,7 @@ export default function SupportPage() {
                 activeTab === 'list' ? 'bg-brand-light text-white' : 'bg-white/5 text-gray-500 hover:bg-white/10'
               }`}
             >
-              Mis Tickets {tickets.length > 0 && `(${tickets.length})`}
+              {t.supportPage.tabList} {tickets.length > 0 && `(${tickets.length})`}
             </button>
          </div>
 
@@ -279,8 +281,8 @@ export default function SupportPage() {
                          <div className="flex flex-col items-center text-center gap-4">
                             <div className="w-14 h-14 text-brand-light group-hover/card:scale-110 transition-transform">{I.help}</div>
                             <div className="space-y-1">
-                               <h4 className="text-[12px] font-black text-white uppercase tracking-widest italic">Centro de Ayuda</h4>
-                               <p className="text-[9px] text-brand-light/60 font-bold uppercase tracking-[0.2em]">Guías y Protocolos</p>
+                               <h4 className="text-[12px] font-black text-white uppercase tracking-widest italic">{t.supportPage.resources.help}</h4>
+                               <p className="text-[9px] text-brand-light/60 font-bold uppercase tracking-[0.2em]">{t.supportPage.resources.helpDesc}</p>
                             </div>
                          </div>
                       </Link>
@@ -288,8 +290,8 @@ export default function SupportPage() {
                          <div className="flex flex-col items-center text-center gap-4">
                             <div className="w-14 h-14 text-brand-light group-hover/card:scale-110 transition-transform">{I.contact}</div>
                             <div className="space-y-1">
-                               <h4 className="text-[12px] font-black text-white uppercase tracking-widest italic">Contacto</h4>
-                               <p className="text-[9px] text-brand-light/60 font-bold uppercase tracking-[0.2em]">Canales Directos</p>
+                               <h4 className="text-[12px] font-black text-white uppercase tracking-widest italic">{t.supportPage.resources.contact}</h4>
+                               <p className="text-[9px] text-brand-light/60 font-bold uppercase tracking-[0.2em]">{t.supportPage.resources.contactDesc}</p>
                             </div>
                          </div>
                       </Link>
@@ -297,8 +299,8 @@ export default function SupportPage() {
                          <div className="flex flex-col items-center text-center gap-4">
                             <div className="w-14 h-14 text-brand-light group-hover/card:scale-110 transition-transform">{I.info}</div>
                             <div className="space-y-1">
-                               <h4 className="text-[12px] font-black text-white uppercase tracking-widest italic">Información</h4>
-                               <p className="text-[9px] text-brand-light/60 font-bold uppercase tracking-[0.2em]">Acerca del Proyecto</p>
+                               <h4 className="text-[12px] font-black text-white uppercase tracking-widest italic">{t.supportPage.resources.info}</h4>
+                               <p className="text-[9px] text-brand-light/60 font-bold uppercase tracking-[0.2em]">{t.supportPage.resources.infoDesc}</p>
                             </div>
                          </div>
                       </Link>
@@ -309,17 +311,17 @@ export default function SupportPage() {
                         <div className="absolute top-0 right-0 p-12 opacity-[0.03] text-brand-light font-black text-9xl italic uppercase tracking-tighter">STOP</div>
                         <div className="w-24 h-24 text-brand-light mx-auto animate-pulse">{I.alert}</div>
                         <div className="space-y-3">
-                           <h2 className="text-4xl md:text-5xl font-header font-black text-white uppercase italic tracking-tighter leading-none">AUTENTICACIÓN REQUERIDA</h2>
+                           <h2 className="text-4xl md:text-5xl font-header font-black text-white uppercase italic tracking-tighter leading-none">{t.supportPage.authTitle}</h2>
                            <p className="text-gray-500 font-bold text-sm md:text-base uppercase tracking-widest max-w-md mx-auto">
-                               Para garantizar la integridad y el seguimiento de tu ticket, debes estar autenticado en Ciszu ID.
+                               {t.supportPage.authText}
                            </p>
                         </div>
                         <div className="pt-6 flex flex-col sm:flex-row justify-center gap-6">
                            <Link href="/login" className="px-16 py-6 bg-white text-black font-black uppercase text-xs tracking-[0.2em] rounded-3xl hover:bg-brand-light hover:scale-105 transition-all shadow-2xl flex items-center justify-center gap-4 group/btn">
-                              <div className="w-5 h-5 group-hover/btn:scale-110 transition-transform">{I.login}</div> ACCEDER
+                              <div className="w-5 h-5 group-hover/btn:scale-110 transition-transform">{I.login}</div> {t.supportPage.authLogin}
                            </Link>
                            <Link href="/register" className="px-16 py-6 bg-transparent border-2 border-brand-light text-brand-light font-black uppercase text-xs tracking-[0.2em] rounded-3xl hover:bg-brand-light/10 hover:scale-105 transition-all flex items-center justify-center gap-4 group/reg">
-                              <div className="w-5 h-5 group-hover/reg:scale-110 transition-transform">{I.userPlus}</div> REGISTRARSE
+                              <div className="w-5 h-5 group-hover/reg:scale-110 transition-transform">{I.userPlus}</div> {t.supportPage.authRegister}
                            </Link>
                         </div>
                      </div>
@@ -329,9 +331,9 @@ export default function SupportPage() {
                         <div className="bg-black/40 border border-white/5 p-6 rounded-3xl flex items-start gap-4">
                            <div className="w-8 h-8 text-brand-light shrink-0 mt-1">{I.info}</div>
                            <div className="space-y-1">
-                              <h4 className="text-xs font-black text-white uppercase tracking-widest">Protocolo de Asistencia</h4>
+                              <h4 className="text-xs font-black text-white uppercase tracking-widest">{t.supportPage.protocolTitle}</h4>
                               <p className="text-[10px] text-gray-500 font-bold leading-relaxed uppercase">
-                                 ¿No encontraste solución en los recursos anteriores? Genera un ticket a continuación. Garantizamos respuesta en menos de 24h.
+                                 {t.supportPage.protocolText}
                               </p>
                            </div>
                         </div>
@@ -340,26 +342,26 @@ export default function SupportPage() {
                            <div className="space-y-6">
                              <div className="flex items-center gap-3 border-b border-white/5 pb-2">
                                 <div className="w-4 h-4 text-brand-light">{I.user}</div>
-                                <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Identidad del Remitente</h3>
+                                <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">{t.supportPage.sectionIdentity}</h3>
                              </div>
                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Nombre de usuario</label>
-                                   <input type="text" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="@usuario" />
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">{t.supportPage.fieldUsername}</label>
+                                   <input type="text" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder={t.supportPage.phUsername} />
                                 </div>
                                 <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Nombre completo</label>
-                                   <input type="text" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="Nombre" />
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">{t.supportPage.fieldFullName}</label>
+                                   <input type="text" value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder={t.supportPage.phFullName} />
                                 </div>
                              </div>
                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Apellido</label>
-                                   <input type="text" value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="Apellido" />
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">{t.supportPage.fieldLastName}</label>
+                                   <input type="text" value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder={t.supportPage.phLastName} />
                                 </div>
                                 <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Email de Contacto</label>
-                                   <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="tu@email.com" />
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">{t.supportPage.fieldEmail}</label>
+                                   <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder={t.supportPage.phEmail} />
                                 </div>
                              </div>
                            </div>
@@ -367,17 +369,17 @@ export default function SupportPage() {
                            <div className="space-y-6 pt-4">
                              <div className="flex items-center gap-3 border-b border-white/5 pb-2">
                                 <div className="w-4 h-4 text-brand-accent">{I.tag}</div>
-                                <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Naturaleza del Ticket</h3>
+                                <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">{t.supportPage.sectionNature}</h3>
                              </div>
                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Tipo de Contacto</label>
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">{t.supportPage.fieldContactType}</label>
                                    <select value={formData.contactType} onChange={e => setFormData({...formData, contactType: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
                                       {CONTACT_TYPES.map(c => <option key={c} value={c}>{c}</option>)}
                                    </select>
                                 </div>
                                 <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Región de Origen</label>
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">{t.supportPage.fieldRegion}</label>
                                    <div className="relative">
                                       <select value={formData.region} onChange={e => setFormData({...formData, region: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl pl-12 pr-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
                                          {REGIONS.map(r => <option key={r.code} value={r.code}>{r.name}</option>)}
@@ -390,13 +392,13 @@ export default function SupportPage() {
                              </div>
                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Categoría</label>
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">{t.supportPage.fieldCategory}</label>
                                    <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value, subCategory: Object.values(CATEGORIES)[0][0]})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
                                       {Object.keys(CATEGORIES).map(c => <option key={c} value={c}>{c}</option>)}
                                    </select>
                                 </div>
                                 <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Subcategoría</label>
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">{t.supportPage.fieldSubCategory}</label>
                                    <select value={formData.subCategory} onChange={e => setFormData({...formData, subCategory: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all">
                                       {CATEGORIES[formData.category as keyof typeof CATEGORIES]?.map(s => <option key={s} value={s}>{s}</option>)}
                                    </select>
@@ -407,26 +409,26 @@ export default function SupportPage() {
                            <div className="space-y-6 pt-4">
                              <div className="flex items-center gap-3 border-b border-white/5 pb-2">
                                 <div className="w-4 h-4 text-brand-light">{I.msg}</div>
-                                <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Detalles del Requerimiento</h3>
+                                <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">{t.supportPage.sectionDetails}</h3>
                              </div>
                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Teléfono (opcional)</label>
-                                   <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="+58 412 685 8111" />
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">{t.supportPage.fieldPhone}</label>
+                                   <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder={t.supportPage.phPhone} />
                                 </div>
                                 <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Dispositivo</label>
-                                   <input type="text" value={formData.device} onChange={e => setFormData({...formData, device: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="PC / Móvil / Tablet" />
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">{t.supportPage.fieldDevice}</label>
+                                   <input type="text" value={formData.device} onChange={e => setFormData({...formData, device: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder={t.supportPage.phDevice} />
                                 </div>
                              </div>
                              <div className="space-y-2">
-                                <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">Mensaje / Descripción</label>
-                                <textarea value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} rows={5} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all resize-none" placeholder="Describe tu situación detalladamente..." />
+                                <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">{t.supportPage.fieldMessage}</label>
+                                <textarea value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} rows={5} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all resize-none" placeholder={t.supportPage.phMessage} />
                              </div>
                            </div>
 
                            <button type="submit" disabled={submitting} className="w-full py-5 bg-brand-light text-black font-black uppercase text-xs tracking-[0.2em] rounded-2xl hover:shadow-lg hover:shadow-brand-light/20 transition-all disabled:opacity-50 flex items-center justify-center gap-3">
-                              <div className="w-5 h-5">{I.send}</div> {submitting ? 'ENVIANDO...' : 'ENVIAR TICKET'}
+                              <div className="w-5 h-5">{I.send}</div> {submitting ? t.supportPage.submitting : t.supportPage.submit}
                            </button>
                         </form>
                      </>
@@ -437,7 +439,7 @@ export default function SupportPage() {
                   {loading ? (
                     <div className="p-20 bg-white/5 border border-white/5 rounded-[4rem] text-center">
                       <div className="w-12 h-12 border-2 border-brand-light border-t-transparent rounded-full animate-spin mx-auto mb-6" />
-                      <p className="text-white/40 text-[10px] font-black uppercase tracking-widest">Cargando tickets...</p>
+                      <p className="text-white/40 text-[10px] font-black uppercase tracking-widest">{t.supportPage.loadingTickets}</p>
                     </div>
                   ) : tickets.length === 0 ? (
                     <div className="p-20 bg-white/5 border border-white/5 rounded-[4rem] text-center space-y-6">
@@ -445,11 +447,11 @@ export default function SupportPage() {
                         {I.msg}
                       </div>
                       <div className="space-y-2">
-                        <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-tighter">SIN TICKETS</h3>
-                        <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.3em]">No has enviado ninguna solicitud aún</p>
+                        <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-tighter">{t.supportPage.emptyTitle}</h3>
+                        <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.3em]">{t.supportPage.emptyHint}</p>
                       </div>
                       <button onClick={() => setActiveTab('new')} className="px-8 py-3 bg-brand-light text-black font-header font-black uppercase italic tracking-widest rounded-2xl hover:shadow-lg hover:shadow-brand-light/20 transition-all">
-                         CREAR PRIMER TICKET
+                         {t.supportPage.createFirst}
                       </button>
                     </div>
                   ) : (
@@ -468,8 +470,8 @@ export default function SupportPage() {
                           <h4 className="text-white font-header font-bold text-sm mb-1">{ticket.contact_type} — {ticket.category}</h4>
                           <p className="text-white/40 text-xs leading-relaxed line-clamp-2">{ticket.message}</p>
                           <div className="flex gap-3 mt-4">
-                            <button onClick={() => handleStatusUpdate(ticket.id, 'closed')} className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-black text-white uppercase tracking-widest hover:bg-neon-green hover:text-black transition-all">CERRAR</button>
-                            <button onClick={() => handleDelete(ticket.id)} className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-black text-white uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all flex items-center gap-2"><div className="w-3 h-3">{I.trash}</div> ELIMINAR</button>
+                            <button onClick={() => handleStatusUpdate(ticket.id, 'closed')} className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-black text-white uppercase tracking-widest hover:bg-neon-green hover:text-black transition-all">{t.supportPage.close}</button>
+                            <button onClick={() => handleDelete(ticket.id)} className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-black text-white uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all flex items-center gap-2"><div className="w-3 h-3">{I.trash}</div> {t.supportPage.delete}</button>
                           </div>
                         </div>
                       ))}
@@ -490,17 +492,17 @@ export default function SupportPage() {
                        {I.lifebuoy}
                     </div>
                     <div>
-                       <h3 className="text-xs font-black text-white uppercase tracking-widest">Receptor del Ticket</h3>
-                       <p className="text-[10px] text-brand-light font-black uppercase tracking-[0.2em]">Ciszu Network Support</p>
+                       <h3 className="text-xs font-black text-white uppercase tracking-widest">{t.supportPage.receiverTitle}</h3>
+                       <p className="text-[10px] text-brand-light font-black uppercase tracking-[0.2em]">{t.supportPage.receiverName}</p>
                     </div>
                  </div>
                  <p className="text-[10px] text-gray-500 font-bold leading-relaxed uppercase">
-                    Tu requerimiento será procesado directamente por el **Equipo de Asistencia de Ciszu Network**, bajo la supervisión de **Ciszuko Antony**. Los datos se sincronizan con:
+                    {t.supportPage.receiverText}
                  </p>
                  <div className="flex items-center gap-3">
-                    <a href="mailto:ciszunetwork@gmail.com" className="text-white underline text-sm lowercase">ciszunetwork@gmail.com</a>
+                    <a href={`mailto:${CISZU_NETWORK.email}`} className="text-white underline text-sm lowercase">ciszunetwork@gmail.com</a>
                     <button onClick={copyEmail} className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-colors">
-                      {copied ? 'COPIADO' : 'COPIAR'}
+                      {copied ? t.supportPage.copied : t.supportPage.copy}
                     </button>
                  </div>
               </div>
@@ -509,22 +511,22 @@ export default function SupportPage() {
                 <div className="absolute top-0 right-0 p-4 opacity-5 text-neon-green font-black text-6xl italic pointer-events-none">24/7</div>
                 <div className="w-16 h-16 text-neon-green mx-auto animate-pulse">{I.pulse}</div>
                 <div className="space-y-1">
-                   <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-tighter">NÚCLEO OPERATIVO</h3>
-                   <p className="text-neon-green font-black text-[9px] uppercase tracking-[0.4em]">Soporte Global Activo</p>
+                   <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-tighter">{t.supportPage.nucleusTitle}</h3>
+                   <p className="text-neon-green font-black text-[9px] uppercase tracking-[0.4em]">{t.supportPage.nucleusSub}</p>
                 </div>
                 <p className="text-[10px] text-gray-500 font-bold leading-relaxed uppercase">
-                   Atendemos requerimientos las 24 horas, priorizando la estabilidad del ecosistema Ciszu Network.
+                   {t.supportPage.nucleusText}
                 </p>
              </div>
 
              <div className="p-8 bg-doc-dark border border-white/5 rounded-[3rem] space-y-6">
-                <h3 className="text-xs font-black text-white uppercase tracking-[0.4em] border-b border-white/10 pb-4">Niveles de Prioridad</h3>
+                <h3 className="text-xs font-black text-white uppercase tracking-[0.4em] border-b border-white/10 pb-4">{t.supportPage.prioritiesTitle}</h3>
                 <div className="space-y-4">
                    {[
-                     { label: 'Crítica', desc: 'Fallos de sistema o seguridad.', color: 'text-neon-pink' },
-                     { label: 'Alta', desc: 'Problemas de cuenta o pagos.', color: 'text-neon-purple' },
-                     { label: 'Normal', desc: 'Bugs menores o consultas.', color: 'text-neon-blue' },
-                     { label: 'Baja', desc: 'Sugerencias y recomendaciones.', color: 'text-gray-500' },
+                     { label: t.supportPage.prioCritical, desc: t.supportPage.prioCriticalDesc, color: 'text-neon-pink' },
+                     { label: t.supportPage.prioHigh, desc: t.supportPage.prioHighDesc, color: 'text-neon-purple' },
+                     { label: t.supportPage.prioNormal, desc: t.supportPage.prioNormalDesc, color: 'text-neon-blue' },
+                     { label: t.supportPage.prioLow, desc: t.supportPage.prioLowDesc, color: 'text-gray-500' },
                    ].map(p => (
                      <div key={p.label} className="flex gap-4 items-start group">
                         <div className={`w-1 h-8 rounded-full bg-current ${p.color} opacity-40 group-hover:opacity-100 transition-all`} />
@@ -544,15 +546,15 @@ export default function SupportPage() {
            <div className="text-center space-y-2 mb-12">
              <div className="flex items-center justify-center gap-4 text-brand-light mb-4">
                 <div className="w-8 h-8">{I.globe}</div>
-                <h3 className="text-4xl font-header font-black text-white uppercase italic tracking-tighter">REDES OFICIALES</h3>
+                <h3 className="text-4xl font-header font-black text-white uppercase italic tracking-tighter">{t.supportPage.socialTitle}</h3>
              </div>
-             <p className="text-gray-500 font-black text-[10px] uppercase tracking-[0.5em] flex items-center justify-center gap-2">CANALES EXCLUSIVOS DE CISZU NETWORK</p>
+             <p className="text-gray-500 font-black text-[10px] uppercase tracking-[0.5em] flex items-center justify-center gap-2">{t.supportPage.socialSubtitle}</p>
            </div>
 
            <div className="space-y-10">
               <div className="flex items-center gap-4">
                  <div className="h-[1px] flex-1 bg-brand/10" />
-                 <span className="text-brand-light font-black text-[10px] uppercase tracking-widest px-4">Sincronización Social Unificada</span>
+                 <span className="text-brand-light font-black text-[10px] uppercase tracking-widest px-4">{t.supportPage.socialSync}</span>
                  <div className="h-[1px] flex-1 bg-brand/10" />
               </div>
                <div className="flex flex-wrap justify-center gap-4">
