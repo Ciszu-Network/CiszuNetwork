@@ -10,6 +10,7 @@ import { InfoHero, useToast, type InfoTheme } from '@ciszu/ui';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import Link from 'next/link';
+import { useDict } from '@/lib/useDict';
 
 const THEME: InfoTheme = {
   accent: 'text-brand-light',
@@ -139,6 +140,7 @@ const DISCORD_IDS: Record<string, string> = {
 
 export default function ContactPage() {
   usePageTitle('CONTACT');
+  const t = useDict();
   const { } = useAppStore();
   const { toast } = useToast();
   const [selectedDiscord, setSelectedDiscord] = useState<string | null>(null);
@@ -165,9 +167,9 @@ export default function ContactPage() {
           {/* --- HERO --- */}
           <InfoHero
             icon="mail"
-            title="Contacto"
-            subtitle="Núcleo de asistencia y canales de comunicación de Ciszu Network: correo, WhatsApp, ubicación y redes oficiales."
-            kicker="Canales oficiales"
+            title={t.contactPage.heroTitle}
+            subtitle={t.contactPage.heroSubtitle}
+            kicker={t.contactPage.heroKicker}
             theme={THEME}
           />
 
@@ -178,19 +180,19 @@ export default function ContactPage() {
             <div className="p-10 md:p-14 bg-doc-dark border border-white/5 rounded-[3rem] space-y-8 relative overflow-hidden group">
               <div className="absolute -top-10 -right-10 w-40 h-40 bg-brand-accent/10 rounded-full blur-3xl pointer-events-none" />
               <h2 className="text-4xl md:text-5xl font-header font-black text-white uppercase italic tracking-tighter leading-none">
-                ¿TIENES DUDAS?
+                {t.contactPage.heading}
               </h2>
               <p className="text-white/80 font-bold text-xl md:text-2xl leading-relaxed tracking-tight group-hover:text-white transition-colors">
-                Establece una conexión directa con nuestra matriz corporativa. Estamos listos para sincronizar soluciones y responder a tus requerimientos globales.
+                {t.contactPage.intro}
               </p>
 
               <div className="pt-10 border-t border-white/5 space-y-6">
-                <CopyField label="Email de Consulta Primaria" value="ciszunetwork@gmail.com" icon={I.mail} theme="blue" />
-                <CopyField label="Localidad de Operaciones" value="Coro, Falcón" subValue="Venezuela" icon={I.map} theme="purple" />
-                <CopyField label="Línea Directa WhatsApp" value="+58 412 6858111" subValue="Venezuela" icon={I.phone} theme="green" showWhatsApp={true} />
+                <CopyField label={t.contactPage.labelEmailPrimary} value="ciszunetwork@gmail.com" icon={I.mail} theme="blue" />
+                <CopyField label={t.contactPage.labelLocation} value="Coro, Falcón" subValue="Venezuela" icon={I.map} theme="purple" />
+                <CopyField label={t.contactPage.labelWhatsAppLine} value="+58 412 6858111" subValue="Venezuela" icon={I.phone} theme="green" showWhatsApp={true} />
 
                 <div className="space-y-4 pt-4">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-neon-purple/70 pl-2">Emails secundarios</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-neon-purple/70 pl-2">{t.contactPage.secondaryEmails}</p>
                   <div className="grid grid-cols-1 gap-4">
                     <CopyField label="Outlook" value="ciszunetwork@outlook.com" icon={I.mail} theme="purple" />
                     <CopyField label="Hotmail" value="ciszunetwork@hotmail.com" icon={I.mail} theme="purple" />
@@ -208,18 +210,18 @@ export default function ContactPage() {
                    </div>
                    <div className="space-y-4">
                       <h3 className="text-4xl md:text-5xl font-header font-black text-white uppercase italic tracking-tighter">
-                         Nuestra Localidad
+                         {t.contactPage.locationTitle}
                       </h3>
                       <p className="text-xl font-header font-black text-brand-accent italic uppercase tracking-tighter">
                          Coro, Falcón
                       </p>
                       <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest max-w-md">
-                         Base de Operaciones Suramericana - Venezuela (GMT-4)
+                         {t.contactPage.locationBase}
                       </p>
                    </div>
                    <div className="flex flex-wrap justify-center gap-4 pt-8">
-                      <CopyField label="Email de Consulta" value="ciszunetwork@gmail.com" icon={I.mail} theme="blue" />
-                      <CopyField label="WhatsApp Directo" value="+58 412 6858111" icon={I.phone} theme="green" showWhatsApp={true} />
+                      <CopyField label={t.contactPage.labelEmail} value="ciszunetwork@gmail.com" icon={I.mail} theme="blue" />
+                      <CopyField label={t.contactPage.labelWhatsAppDirect} value="+58 412 6858111" icon={I.phone} theme="green" showWhatsApp={true} />
                    </div>
                 </div>
              </div>
@@ -234,11 +236,11 @@ export default function ContactPage() {
                 <div className="absolute -top-1 -right-1 w-4 h-4 bg-neon-green rounded-full border-2 border-black animate-pulse" />
               </div>
               <div className="space-y-2">
-                 <h3 className="text-3xl font-header font-black text-white italic uppercase tracking-tighter">DISPONIBILIDAD 24/7</h3>
-                 <p className="text-neon-green font-black text-xs uppercase tracking-[0.5em] opacity-80 flex items-center justify-center gap-2">ONLINE AHORA</p>
+                 <h3 className="text-3xl font-header font-black text-white italic uppercase tracking-tighter">{t.contactPage.availabilityTitle}</h3>
+                 <p className="text-neon-green font-black text-xs uppercase tracking-[0.5em] opacity-80 flex items-center justify-center gap-2">{t.contactPage.onlineNow}</p>
               </div>
               <p className="text-gray-400 font-bold text-sm leading-relaxed max-w-sm uppercase tracking-widest italic flex items-center justify-center flex-wrap gap-2 text-center">
-                Atención ininterrumpida los 365 días del año en horario <span className="text-white">Venezuela (GMT-4)</span>.
+                {t.contactPage.attendanceA}<span className="text-white">Venezuela (GMT-4)</span>{t.contactPage.attendanceB}
               </p>
            </div>
            <div className="p-10 bg-black/40 border-2 border-brand-accent/20 rounded-[3rem] space-y-6 flex flex-col items-center text-center group hover:border-brand-accent transition-all">
@@ -246,7 +248,7 @@ export default function ContactPage() {
                 <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
               </div>
               <div className="space-y-2">
-                 <h3 className="text-3xl font-header font-black text-white italic uppercase tracking-tighter">ESTRUCTURA TÉCNICA</h3>
+                 <h3 className="text-3xl font-header font-black text-white italic uppercase tracking-tighter">{t.contactPage.structureTitle}</h3>
                  <p className="text-brand-accent font-black text-xs uppercase tracking-[0.5em] opacity-80">Codex Digital Architecture</p>
               </div>
               <div className="flex flex-wrap justify-center gap-2">
@@ -268,19 +270,19 @@ export default function ContactPage() {
                   <div>
                     <h3 className="text-5xl md:text-7xl font-header font-black text-white italic tracking-tighter uppercase leading-none">CISZUKO ANTONY</h3>
                     <p className="text-brand-light font-black tracking-[0.6em] uppercase text-xs md:text-sm pt-2 flex items-center justify-center md:justify-start gap-3">
-                       CEO & CREADOR · NÚCLEO CISZU
+                       {t.contactPage.ceoRole}
                     </p>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-3xl">
-                     <CopyField label="Email Personal" value="fplayersoffcial@gmail.com" icon={I.mail} theme="blue" />
-                     <CopyField label="WhatsApp Personal" value="+58 412 6858111" subValue="Venezuela" icon={I.phone} theme="green" showWhatsApp={true} />
+                     <CopyField label={t.contactPage.labelPersonalEmail} value="fplayersoffcial@gmail.com" icon={I.mail} theme="blue" />
+                     <CopyField label={t.contactPage.labelPersonalWhatsApp} value="+58 412 6858111" subValue="Venezuela" icon={I.phone} theme="green" showWhatsApp={true} />
                   </div>
                   <div className="flex flex-col sm:flex-row gap-5 pt-6">
                     <button onClick={() => window.open('https://ciszukoantony.vercel.app', '_blank')} className="px-8 py-4 bg-white text-black font-black uppercase text-xs tracking-[0.2em] rounded-3xl hover:bg-brand-light hover:text-black hover:scale-105 transition-all shadow-xl flex items-center justify-center gap-4">
-                      <div className="w-4 h-4">{I.globe}</div> Portafolio Personal
+                      <div className="w-4 h-4">{I.globe}</div> {t.contactPage.btnPortfolio}
                     </button>
                     <Link href="/team#ceo" className="px-8 py-4 bg-transparent border-2 border-brand-light text-brand-light font-black uppercase text-xs tracking-[0.2em] rounded-3xl hover:bg-brand-light hover:text-black hover:scale-105 transition-all shadow-xl flex items-center justify-center gap-4 group">
-                       <div className="w-4 h-4 group-hover:scale-110 transition-transform">{I.team}</div> Perfil Completo
+                       <div className="w-4 h-4 group-hover:scale-110 transition-transform">{I.team}</div> {t.contactPage.btnProfile}
                     </Link>
                   </div>
                </div>
@@ -290,14 +292,14 @@ export default function ContactPage() {
         {/* --- SOCIAL GALAXY --- */}
         <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={sectionVariants} className="space-y-12 bg-black/40 p-12 md:p-20 rounded-[5rem] border border-white/5">
            <div className="text-center space-y-2 mb-12">
-             <h3 className="text-4xl font-header font-black text-white uppercase italic tracking-tighter">SISTEMA SOCIAL UNIFICADO</h3>
-             <p className="text-white/40 font-black text-[10px] uppercase tracking-[0.5em] flex items-center justify-center gap-2">Conexión Global</p>
+             <h3 className="text-4xl font-header font-black text-white uppercase italic tracking-tighter">{t.contactPage.socialTitle}</h3>
+             <p className="text-white/40 font-black text-[10px] uppercase tracking-[0.5em] flex items-center justify-center gap-2">{t.contactPage.socialSubtitle}</p>
            </div>
 
            <div className="space-y-16">
               <div className="space-y-6">
                 <div className="flex items-center gap-4">
-                   <div className="h-[1px] flex-1 bg-neon-cyan/10" /><span className="text-neon-cyan font-black text-[10px] uppercase tracking-widest px-4">Ecosistema MuzicMania</span><div className="h-[1px] flex-1 bg-neon-cyan/10" />
+                   <div className="h-[1px] flex-1 bg-neon-cyan/10" /><span className="text-neon-cyan font-black text-[10px] uppercase tracking-widest px-4">{t.contactPage.groupMuzicmania}</span><div className="h-[1px] flex-1 bg-neon-cyan/10" />
                 </div>
                    <div className="flex flex-wrap justify-center gap-4">
                     {MUZICMANIA_SOCIALS.filter(s => s.name !== 'GitHub').map(s => {
@@ -313,7 +315,7 @@ export default function ContactPage() {
 
               <div className="space-y-6">
                 <div className="flex items-center gap-4">
-                   <div className="h-[1px] flex-1 bg-brand-light/10" /><span className="text-brand-light font-black text-[10px] uppercase tracking-widest px-4">Corporación Ciszu Network</span><div className="h-[1px] flex-1 bg-brand-light/10" />
+                   <div className="h-[1px] flex-1 bg-brand-light/10" /><span className="text-brand-light font-black text-[10px] uppercase tracking-widest px-4">{t.contactPage.groupCiszu}</span><div className="h-[1px] flex-1 bg-brand-light/10" />
                 </div>
                 <div className="flex flex-wrap justify-center gap-4">
                    {CISZUNETWORK_SOCIALS.filter(s => s.name !== 'GitHub').map(s => {
@@ -328,7 +330,7 @@ export default function ContactPage() {
 
               <div className="space-y-6">
                 <div className="flex items-center gap-4">
-                   <div className="h-[1px] flex-1 bg-white/5" /><span className="text-white font-black text-[10px] uppercase tracking-widest px-4">Portafolio Ciszuko Antony</span><div className="h-[1px] flex-1 bg-white/5" />
+                   <div className="h-[1px] flex-1 bg-white/5" /><span className="text-white font-black text-[10px] uppercase tracking-widest px-4">{t.contactPage.groupAntony}</span><div className="h-[1px] flex-1 bg-white/5" />
                 </div>
                 <div className="flex flex-wrap justify-center gap-4">
                    {CISZUKO_ANTONY_SOCIALS.map(s => {
@@ -372,10 +374,10 @@ export default function ContactPage() {
                 </div>
                 <div className="w-full bg-black/60 rounded-3xl p-6 border border-white/5 space-y-4">
                   <div className="text-3xl font-header font-black text-white tracking-widest">{selectedDiscord}</div>
-                  <button onClick={() => { navigator.clipboard.writeText(selectedDiscord); toast('[ÉXITO]: Discord ID copiado al portapapeles.', 'success'); setSelectedDiscord(null); }}
+                  <button onClick={() => { navigator.clipboard.writeText(selectedDiscord); toast('[ÉXITO]: ' + t.contactPage.discordCopied, 'success'); setSelectedDiscord(null); }}
                     className="w-full py-4 bg-neon-green/20 border border-neon-green/40 text-neon-green font-black uppercase text-xs rounded-2xl flex items-center justify-center gap-3 hover:bg-neon-green hover:text-black transition-all"
                   >
-                    <div className="w-4 h-4">{I.copy}</div> Sincronizar ID
+                    <div className="w-4 h-4">{I.copy}</div> {t.contactPage.syncId}
                   </button>
                 </div>
               </div>
