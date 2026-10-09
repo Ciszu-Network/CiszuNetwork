@@ -90,7 +90,7 @@ Antes de codificar, lee el doc del área que tocas. Mapa por tipo de tarea:
   `CORS_SYSTEM` · `BUSINESS_SYSTEM` · `OPENCODE_SYSTEM` (voz + comandos) ·
   `MODELS_LLM_SYSTEM` (historial y facturación de modelos LLM) ·
   `MODELS_SKILLS_SYSTEM` (galería de skills del agente opencode: 34 instaladas en `.opencode/skills/`, MCP ausente) ·
-  `REMOTE_CONTROL_SYSTEM` (SSH/Tailscale/ciszu-ai) · `KNOWLEDGE_SYSTEM` (educación) ·
+  `REMOTE_CONTROL_SYSTEM` (SSH/Tailscale/ciszu-ai) · `ACCESS_CONTROL_SYSTEM` (autorizacion: staff en DB, umbrales por consola, gobernanza GitHub) · `NTFY_SYSTEM` (notificaciones push: ntfy.sh + self-hosted) · `KNOWLEDGE_SYSTEM` (educación) ·
   `INSTALLERS_SYSTEM` · `ONLINE_SERVICES_SYSTEM` · `STATISTICS_SYSTEM` ·
   `VISUAL_BUILDERS_SYSTEM` (editores visuales UI/UX: Puck-first) ·
   `PROJECTS_SYSTEM` · `STATUS_SYSTEM` · `ACTIONS_RUNNERS_SYSTEM` (CI/deploys locales sin GH Actions) ·
@@ -142,7 +142,7 @@ La consola de dev local vive en `test/website/debug/` (TUI `dev_console.ps1` + g
 
 **STAFFCON** (Staff Console, `tools/consoles/staffcon.ps1`) gestiona los empleados reales de
 la organización: estructura `archives/staff/` (general → cargo → empleado, 5 formatos por nivel),
-fuente de verdad `archives/staff/data/staff.json`, motor `scripts/staffcon.js` + generador
+autoridad en DB (`internal.staff` + `internal.console_access`; `staff.json` es export/vista), motor `scripts/staffcon.js` + generador
 `scripts/staffgen.js`. Detalle: `STAFF_SYSTEM.md` y `EMPLOYEES_SYSTEM.md`.
 
 **CUSTOMERSCON** (Customers Console, `tools/consoles/customerscon.ps1`) gestiona los
@@ -150,8 +150,7 @@ clientes reales: estructura `archives/customers/` (global → cliente, 5 formato
 carpeta `asunto/`), fuente de verdad `archives/customers/data/customers.json`, motor
 `scripts/customerscon.js` + generador `scripts/customersgen.js`. Detalle: `CUSTOMERS_SYSTEM.md`.
 Ambas consolas se lanzan desde el perfil de PowerShell con `staffcon` y `customerscon` (wrapper
-`tools/consoles/devcon.ps1` para el devcon), piden identidad (ID de empresa) y validan el rango
-de acceso (`staff.json` → `org.accesos`: devcon ≤6, customerscon ≤7); el operador queda
+`tools/consoles/devcon.ps1` para el devcon), piden identidad (ID de empresa) y validan el rango de acceso (`internal.console_access` en DB: staffcon ≤4, devcon ≤6, customerscon ≤7; `staff.json` solo vista); el operador queda
 registrado como `actor` en los logs de sesión (`tools/consoles/local-logs/`).
 
 ### 4.1 Workspaces pnpm y entry points
@@ -504,15 +503,17 @@ Normas para mantenerlo correcto:
 
 ## 9. Límite de contexto de sesión (opencode)
 
-Cerca de **120k tokens** el modelo se vuelve muy lento. Reglas:
+Referencia orientativa: cerca de **180k tokens** el rendimiento empieza a degradarse en modelos
+estándar. Es una **recomendación, no un límite obligatorio**: el usuario decide si continúa o
+cambia de sesión, y con modelos más potentes el umbral efectivo es mayor. Reglas:
 
-1. Al llegar al umbral (~110-120k): avisar por push (`pnpm notify`) y proponer cambiar de sesión.
-2. Antes de cambiar: commitear el trabajo, actualizar AGENTS.md, guardar estado del to-do,
-   dejar resumen del próximo paso.
+1. Al acercarse al umbral (~180k): avisar por push (`pnpm notify`) y **proponer** cambiar de
+   sesión, sin bloquear el trabajo.
+2. Si se decide cambiar de sesión: commitear el trabajo, actualizar AGENTS.md, guardar estado
+   del to-do y dejar resumen del próximo paso.
 3. La nueva sesión empieza con "continúa" + resumen guardado.
-4. No escribir código nuevo tras el umbral salvo trivial — priorizar guardar estado.
-
-Una sesión normal rinde ~60-90k tokens; con muchos outputs de tools llega antes.
+4. Pasado el umbral, priorizar guardar estado/cerrar frentes sobre implementaciones enormes;
+   lo trivial y lo urgente puede seguir sin problema.
 
 ---
 

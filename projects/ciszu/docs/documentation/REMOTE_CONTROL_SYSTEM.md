@@ -380,3 +380,31 @@ El PC (ciszu-pc) expone **opencode nativo de Windows** (la IA que trabaja en el 
 **Pendiente solo del usuario**: ninguno — el acceso remoto con sesión en vivo está operativo y probado desde el móvil.
 
 Coste total del proyecto: **0 €** (las tres herramientas tienen plan gratis suficiente).
+
+## Hardening Tailscale (09 oct 2026)
+
+Checklist en el panel de Tailscale (manual, con la cuenta del owner):
+
+1. **MFA** activado en la cuenta (passkey/TOTP) — es la llave de entrada a la tailnet.
+2. **Device approval** activado: ningún dispositivo nuevo entra sin aprobación.
+3. **ACL**: permitir SSH (22) y ntfy (8080) solo desde tus dispositivos hacia `ciszu-pc`;
+   nada más por defecto. Ejemplo de política:
+
+   ```json
+   {
+     "tagOwners": { "tag:ciszu-host": ["autogroup:admin"] },
+     "acls": [
+       { "action": "accept", "src": ["autogroup:member"], "dst": ["tag:ciszu-host:22,8080"] }
+     ],
+     "ssh": [
+       { "action": "check", "src": ["autogroup:member"], "dst": ["tag:ciszu-host"], "users": ["fplay"] }
+     ]
+   }
+   ```
+
+   (`check` = re-autenticación periódica; subir a `accept` solo si molesta.)
+4. Revisar dispositivos autorizados y expulsar los que no uses (el Android con 32 días offline).
+5. Evaluar **Tailnet Lock** si se añaden dispositivos de terceros.
+
+Del lado del host ya está aplicado: firewall scoped a 100.64.0.0/10, sshd solo claves, y
+`Ciszu ntfy self-host` escuchando 8080 solo en Tailscale. Detalle: `SECURITY_PROTOCOLS.md`.

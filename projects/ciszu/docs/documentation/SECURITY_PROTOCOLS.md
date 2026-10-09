@@ -316,3 +316,21 @@ secretos.
   usuario+token propios por rol.
 - **Rotacion**: si el topic se filtra, generar uno nuevo (`CZ-ntfytask-<32 digitos>`), actualizar
   vault + `gh secret set NOTIFY_TOPIC` + re-suscribir a los staff.
+
+## Hardening del endpoint (PC) — 09 oct 2026
+
+- **SSH**: reglas de firewall de OpenSSH acotadas a `100.64.0.0/10` (Tailscale) + `127.0.0.1`;
+  `sshd_config`: `PubkeyAuthentication yes`, `PasswordAuthentication no`, `AllowUsers fplay`
+  (backup en `sshd_config.bak-20261009`). La llave pública vive en
+  `administrators_authorized_keys`; las conexiones remotas se hacen por Tailscale con clave.
+- **PostgreSQL**: `listen_addresses = 'localhost'` (antes `'*'`); pg_hba ya limitaba a local.
+  Backup en `postgresql.conf.bak-20261009`.
+- **Firewall**: bloqueo explícito de 5432 entrante; SMB (445) bloqueado en redes Públicas;
+  puerto 8080 (ntfy self-hosted) permitido solo desde Tailscale + localhost.
+- **Detección**: tarea programada **"Ciszu SSH Login Alert"** (cada 5 min) alerta por ntfy ante
+  nuevos logins SSH (Security 4624 con sshd).
+- **opencode**: sin servidor expuesto (TUI local); regla: `opencode serve` jamás en interfaces
+  públicas (solo localhost/Tailscale). `.opencode/data/auth.json` contiene credenciales de
+  proveedores del agente: tratar como secreto.
+- **Tailscale (pendiente manual en el panel)**: MFA en la cuenta, device approval, ACL de solo
+  dispositivos propios, check mode para SSH. Ver `REMOTE_CONTROL_SYSTEM.md`.

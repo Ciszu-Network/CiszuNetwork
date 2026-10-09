@@ -298,3 +298,12 @@ en cada uso de la consola.
 ---
 
 _Última revisión: 25 ago 2026._ Relacionado: `EMPLOYEES_SYSTEM.md`, `ORGANIZATIONAL_SCALABILITY_PLAN.md`, `BUSINESS_SYSTEM.md`.
+
+## Autoridad en DB (09 oct 2026)
+
+La fuente de verdad del staff ya no es `staff.json`: los niveles, subcargos y umbrales viven en
+Supabase (`internal.staff`, `internal.console_access`, `internal.staff_audit`). El JSON pasa a
+ser export/vista. El guard de consolas valida contra DB en cada sesión y comando; editar el JSON
+local no cambia permisos (probado con un tamper simulado: denegado). `staff-sync` (solo owner)
+sincroniza JSON→DB y `staffcon.js` lo dispara automáticamente tras cada guardado. Umbrales:
+**staffcon ≤4**, devcon ≤6, customerscon ≤7. Detalle: `ACCESS_CONTROL_SYSTEM.md`.
