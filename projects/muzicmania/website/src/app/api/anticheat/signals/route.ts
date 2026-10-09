@@ -10,6 +10,7 @@ import {
   evaluate,
   accountWarningEmail,
   sendBrandedEmail,
+  sendSms,
   type MuzicScoreSample,
 } from '@ciszunetwork/utils';
 import { adminClient, authenticate } from '../../auth/2fa/_lib';
@@ -240,6 +241,29 @@ export async function POST(req: NextRequest) {
         }
       } catch {
         /* el aviso nunca debe romper la ingesta */
+      }
+
+      // 5e) Aviso por SMS si el usuario lo activo y dejo telefono (Textbelt).
+      try {
+        const prefs = await admin()
+          .schema('public')
+          .from('notification_preferences')
+          .select('sms_enabled')
+          .eq('user_id', user.userId)
+          .maybeSingle();
+        const smsEnabled = (prefs.data as { sms_enabled?: boolean } | null)?.sms_enabled === true;
+        if (smsEnabled) {
+          const authUser = await adminClient().auth.admin.getUserById(user.userId);
+          const phone = (authUser.data.user?.user_metadata as { phone?: string } | undefined)?.phone;
+          if (typeof phone === 'string' && phone.startsWith('+')) {
+            void sendSms({
+              to: phone,
+              text: 'Ciszu Anti-Cheat: actividad anomala detectada en tu cuenta de MuzicMania. Revisa tu correo y apela desde Soporte si crees que es un error.',
+            });
+          }
+        }
+      } catch {
+        /* el SMS nunca debe romper la ingesta */
       }
     }
 
