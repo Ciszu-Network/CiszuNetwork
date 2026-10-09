@@ -224,7 +224,12 @@ El ecosistema deja preparado el canal SMS sin depender de un proveedor concreto:
 
 - **Utilidad**: `sendSms({ to, text })` en `packages/utils/src/sms.ts` (exportada por `@ciszunetwork/utils`, server-only). Usa las env `SMS_API_URL`, `SMS_API_KEY` y `SMS_FROM` (proveedor HTTP tipo Twilio-compatible); si no están configuradas devuelve `{ sent: false, error }` sin romper el flujo. Nunca lanza excepciones.
 - **Preferencia**: columna `sms_enabled` en `public.notification_preferences` (migración `20261009000002_notification_sms.sql`), editable desde "Notificaciones" del panel de cuenta de las 4 webs, junto a un campo de **teléfono** guardado en `user_metadata.phone`.
-- **Activación**: cuando exista proveedor (p.ej. Twilio), añadir las 3 env al vault (`services/supabase/.env`) + proyectos Vercel y llamar `sendSms()` desde los flujos que lo requieran (p. ej. avisos anticheat o seguridad).
+- **Proveedores gratuitos (investigación 09 oct 2026)**: **Textbelt** — implementado en `sendSms()`
+  con `SMS_PROVIDER=textbelt` (key gratuita literal `textbelt` = 1 SMS/día; key de pago para más
+  volumen). Alternativas: trials con crédito (Twilio/Vonage, requieren tarjeta) y email-to-SMS de
+  los carrier gateways (gratis vía el email existente, cobertura irregular en Venezuela).
+- **Activación**: añadir al vault + Vercel `SMS_PROVIDER` (y `SMS_API_KEY` si no es Textbelt) y
+  llamar `sendSms()` desde los flujos que lo requieran (p. ej. avisos anticheat o seguridad).
 
 _Última revisión: 13 ago 2026._ Relacionado: `DOMAINS_SYSTEM.md`, `PAYMENTS_SYSTEM.md`,
 `CLOUDFLARE_SYSTEM.md`, `VAULT_SYSTEM.md`.

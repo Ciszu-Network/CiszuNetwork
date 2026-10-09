@@ -5,6 +5,9 @@
 - [ ] Activar canal SMS para avisos de cuenta (código listo: `sendSms()` en `@ciszunetwork/utils`,
   preferencia `sms_enabled` en `notification_preferences` y teléfono en el panel; falta contratar
   un proveedor externo y poner sus credenciales en el vault + Vercel).
+  INVESTIGACIÓN (09 oct 2026): **Textbelt** implementado en `sendSms()` (`SMS_PROVIDER=textbelt`,
+  key gratuita = 1 SMS/día); alternativas: trials con crédito (Twilio/Vonage) y email-to-SMS
+  carrier gateways (gratis, cobertura irregular). Activar cuando se decida el proveedor.
 - [ ] Migración i18n de literales por lotes (deuda actual: ciszu 379 · ciszubot 326 ·
   antony 246 · muzicmania 937; ratchet `pnpm verify:i18n`).
   PILOTO HECHO (09 oct 2026): página de **login de ciszu** migrada completa (patrón `useDict()` +
@@ -103,16 +106,6 @@
 - [X] En la devcon se debe crar una nueva opcion para otorgar etiquetas o roles a un usuario en concreto, siempre sera global, nunca sera multicasillas esta vez, sera por cada website, y debe ser el username completo exacto, luego se escribe el rol a dar, los roles y tags apareceran en el perfil y activaran nueva funciones dependiendo del rol al hacer click en su perfil en el header, admin, mod, owner, bot, vip, betatesting, support, los ultimos 3 no son de staff, bot tampoco pero si tiene permisos de staff y sera otorgada a cuentas bots recreadas por cada website es decir, @ciszubot, @muzicmania y @ciszunetwork seran cuentas creadas por bots sin contraseña, son perfiles especiales. Finalmente owner, mod y admin si son staff y aparte de esa tag en el perfil debe aparecer la tag de staff. Cada uno tendra un panel diferente, opciones de debug entre mas grande el rango. El owner debe tener todos. Configuracion de debug, entre muchas otras cosas, como vista de staff en perfiles con activacion toggle, para eliminar ciertas cosas o cambiar ciertas cosas. Simepre con marca.
 - [X] Se debe crear un metodo de cierre de sesion remoto utilizado para cerrar sesion a cierta persona, este metodo solo lo podran ejecutar los moderadores, admins y owners. Con el fin de cerrar alguna sesion incluso de una cuenta por cada rango, es decir un mod no puede cerrar la sesion de un admin. Esto por seguridad de hackeos a cuentas. Esta opcion debe estar tanto para la GUI de cada website segun el debug y cuenta, y para la devconsole.
 - [X] Se debe crear un modal cuando una cuenta es baneada, el usuario automaticamente se redirecionara asu profile y aparecera un modal de su cuenta fue baneada e informacion del baneo. Razon fecha provocante etc. Lo mismo con los mutes.
-- [X] El sistema de autotraduccion en los discleimers segun el lenguaje seleccionado por website no se esta viendo reflejado parece que no funcione, siempre mantiene el idioma original (español) lo cual esta mal, debemos de alguna manera traducir lo que dice el discleimer, como no es un texto fijo es decir es dinamico dependiendo del mensaje que se envie, hay que planear el sistema de traduccion dinamica.
-  HECHO (09 oct 2026): API `POST /api/disclaimers/translate` en las 4 webs (traduce con MyMemory y
-  persiste en `message_i18n`), caché en memoria + reactividad al idioma de la web, backfill de la
-  fila existente. Detalle: `GLOBAL_COMPONENTS_SYSTEM.md` §3.4.
-- [X] Arreglar vulnerabilidad:
-
-  # Rustls: TLS 1.3 handshake messages incorrectly accepted across encryption level boundaries **#109**
-
-  HECHO (09 oct 2026): RUSTSEC-2026-0285; rustls actualizado 0.23.43 → **0.23.45** en el lock del
-  launcher; `cargo audit` sin vulnerabilidades.
 
 ### Cambios por Website
 
@@ -130,10 +123,7 @@
 - [ ] Terminar paginas de dashboard (auth).
 - [ ] Terminar idiomas en español LATAM.
 - [ ] Terminar idiomas en español España.
-- [X] Arreglar AUTH error, "[ciszubot.vercel.app/?auth=error](https://ciszubot.vercel.app/?auth=error)", debemos corregir el auth de discord.
-  HECHO (09 oct 2026): secret de Discord regenerado y sincronizado en Vercel (production+preview),
-  `DATABASE_URL` añadida (rol dedicado `ciszubot_app` con BYPASSRLS y grants), validación de `state`
-  OAuth + logs de error. Deploy verificado.
+- [ ] Corregir la configuracion de la cuenta para permite doble login, usuario logeado con ciszu ID puede configurar su cuenta, usuario logeado con discord accede a dasboard, usuario logeado en ambos control total.
 - [ ] Añadir VPS 24 7 AL BOT. (Tarea normal: desplegar el bot en un host 24/7 — panel gratuito
   tipo bot-hosting.net con `deploy/ciszubot-standalone.zip`, o VPS genérico; requiere cuenta y/o pago.)
 
