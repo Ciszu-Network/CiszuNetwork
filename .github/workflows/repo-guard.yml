@@ -1,0 +1,27 @@
+name: Repo Guard
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  repo-guard:
+    name: repo-guard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verificar paths prohibidos en el repo publico
+        run: |
+          set -e
+          bad=$(git ls-files | grep -E '^(archives/|tools/|scripts/|clones/|services/)' || true)
+          envs=$(git ls-files | grep -E '(^|/)\.env($|\.)|\.env\.age$' || true)
+          if [ -n "$bad$envs" ]; then
+            echo "::error::Archivos prohibidos trackeados (repo publico):"
+            printf '%s\n' "$bad" "$envs"
+            exit 1
+          fi
+          echo "OK: sin paths prohibidos trackeados"

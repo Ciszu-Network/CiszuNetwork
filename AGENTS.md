@@ -249,6 +249,16 @@ Pipeline de documentación: `node scripts/txt2md.js` (txt→md) · `node scripts
 - Commits en español, descriptivos, una línea, **sin emojis**. Trabajo directo en `main`.
 - **No commitear ni pushear sin solicitud explícita.** Trabajo directo en `main`; el push
   puede hacerse desde este PC.
+- **Convención de comandos (branch protection activa desde 09 oct 2026)**: `push` = commitear y
+  empujar la rama actual (la cuenta de Ciszuko conserva el push directo a `main` vía bypass).
+  `PR` = crear una rama + Pull Request. Si un push a `main` es **rechazado por GitHub**, el
+  agente debe convertir automáticamente el trabajo a rama + PR y avisarlo. Colaboradores y
+  contratistas: SIEMPRE rama (o fork) + PR; nunca reciben secretos, tokens ni el vault.
+- **Gobernanza GitHub**: `main` está protegida (PR + 1 aprobación de CODEOWNERS + CI verde +
+  conversaciones resueltas; force-push y borrado bloqueados). Rutas: `.github/CODEOWNERS`.
+  Team `ciszubot-admins` (Org `Ciszu-Network`) para el admin exclusivo de ciszubot. Guard de
+  repo público: workflow `repo-guard.yml` falla si `archives/`, `tools/`, `scripts/`, `clones/`,
+  `services/` o `.env*` quedan trackeados.
 - ⚠️ **Repo PÚBLICO**: antes de cada commit, revisar `git status`/`git diff` y confirmar que
   NO se stagean `.env*`, tokens, keys, URLs con credenciales ni datos personales. Los pre-commit
   hooks (secretlint + gitleaks) bloquean `--staged`, pero el agente debe verificar proactivamente.

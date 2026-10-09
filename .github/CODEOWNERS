@@ -1,0 +1,10 @@
+# CODEOWNERS — propietarios por ruta del monorepo.
+# La revisión de los propietarios es obligatoria en Pull Requests (branch protection de main).
+# Cuando entre un admin exclusivo de ciszubot, añadir su usuario en la línea de esa ruta.
+
+* @CiszukoAntony
+
+/projects/ciszubot/ @CiszukoAntony
+/packages/ @CiszukoAntony
+/services/ @CiszukoAntony
+/.github/ @CiszukoAntony
