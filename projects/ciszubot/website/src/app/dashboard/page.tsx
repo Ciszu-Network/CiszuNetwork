@@ -10,6 +10,7 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
+import { DualLoginCard } from '@/components/dashboard/DualLoginCard';
 
 export const metadata: Metadata = {
   title: 'CiszuBot | DASHBOARD',
@@ -83,6 +84,7 @@ export default async function DashboardPage() {
                 {me?.displayName ?? me?.username ?? 'CiszuBot'}
               </h1>
               <p className="text-sm text-muted">{t.dashboardPage.subtitle}</p>
+              <DualLoginCard discordUsername={me?.username ?? null} />
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-400">
                   <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
