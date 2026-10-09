@@ -665,6 +665,23 @@ export default function AccountSettingsPanel({
         {notifMsg && <p className="text-[11px] font-bold text-muted">{notifMsg}</p>}
       </Section>
 
+      <Section title="Información de la cuenta" description="Datos básicos de tu cuenta en esta web.">
+        <div className="grid gap-1.5 text-xs text-muted">
+          <p>ID de cuenta: <span className="font-bold text-ink">{user.id}</span></p>
+          <p>Correo: <span className="font-bold text-ink">{user.email}</span></p>
+          <p>Web: <span className="font-bold text-ink">{siteName} ({site})</span></p>
+        </div>
+      </Section>
+
+      <Section title="Novedades" description="Cambios y novedades del ecosistema.">
+        <a
+          href="/changelog"
+          className="inline-flex items-center justify-center rounded-xl border border-border px-4 py-2.5 font-header text-[11px] font-black uppercase tracking-widest text-muted transition hover:text-ink"
+        >
+          Ver el changelog de {siteName}
+        </a>
+      </Section>
+
       <Section title="Estado de la cuenta" description="Roadmap de configuracion, strikes y sanciones activas (con apelacion).">
         <AccountStatusPanel supabase={supabase} apiBase={apiBase} site={site} />
       </Section>
