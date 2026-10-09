@@ -205,7 +205,7 @@ El schema `anticheat` **no se expone por PostgREST** (revocado a anon/authentica
 | 4 | UI: `AccountStatusPanel` (barra verde→rojo, roadmap, strikes + cards 0-3, sanciones con apelación, hechos/ignorados/reabrir) integrado en la configuración de cuenta de las 4 webs | ✅ 09 oct 2026 |
 | 5 | Soporte: `SanctionAppeal` + API `/api/support/appeal` (sanciones activas unificadas anticheat+manual, sirve sin sanciones) y página `/appeal` en las 4 webs | ✅ 09 oct 2026 |
 | 6 | Sanciones automáticas escalonadas (warn→mute→ban→delete) + strikes + aviso por email con marca | ✅ 09 oct 2026 |
-| 7 | Estado de cuenta integrado en `/settings` de las 4 webs ✅; resto de secciones (video y voz, novedades, notificaciones ampliadas) | ⏳ pendiente |
+| 7 | Secciones de cuenta: Estado de la cuenta ✅, Información de la cuenta ✅ y Novedades ✅ en las 4 webs. Pendiente: "Video y voz" y "notificaciones por teléfono" (requieren el sistema de audio del juego y un canal SMS, respectivamente; se harán cuando existan) | ✅ (parcial) |
 
 ## 13. Relación con otros sistemas
 
