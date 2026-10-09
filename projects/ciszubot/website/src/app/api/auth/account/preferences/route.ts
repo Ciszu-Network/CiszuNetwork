@@ -13,6 +13,7 @@ const KEYS = [
   'account_alerts_enabled',
   'site_notifications_enabled',
   'newsletter_enabled',
+  'sms_enabled',
 ] as const;
 
 type PreferenceKey = (typeof KEYS)[number];
@@ -50,6 +51,7 @@ export async function GET(request: Request) {
       account_alerts_enabled: true,
       site_notifications_enabled: true,
       newsletter_enabled: false,
+      sms_enabled: false,
     };
 
     return NextResponse.json({ success: true, preferences: prefs });

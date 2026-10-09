@@ -224,6 +224,7 @@ export type { SanctionNoticeProps, SanctionNoticeSupabase } from './auth/Sanctio
 export { default as AccountSettingsPanel } from './auth/AccountSettingsPanel';
 export { AccountStatusPanel } from './auth/AccountStatusPanel';
 export { SanctionAppeal } from './auth/SanctionAppeal';
+export { VideoVoicePanel } from './auth/VideoVoicePanel';
 export type { AccountSettingsPanelProps, AccountSettingsSupabase } from './auth/AccountSettingsPanel';
 export { default as PreferencesModal } from './auth/PreferencesModal';
 export type { PreferencesModalProps } from './auth/PreferencesModal';

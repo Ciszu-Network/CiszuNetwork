@@ -205,7 +205,7 @@ El schema `anticheat` **no se expone por PostgREST** (revocado a anon/authentica
 | 4 | UI: `AccountStatusPanel` (barra verde→rojo, roadmap, strikes + cards 0-3, sanciones con apelación, hechos/ignorados/reabrir) integrado en la configuración de cuenta de las 4 webs | ✅ 09 oct 2026 |
 | 5 | Soporte: `SanctionAppeal` + API `/api/support/appeal` (sanciones activas unificadas anticheat+manual, sirve sin sanciones) y página `/appeal` en las 4 webs | ✅ 09 oct 2026 |
 | 6 | Sanciones automáticas escalonadas (warn→mute→ban→delete) + strikes + aviso por email con marca | ✅ 09 oct 2026 |
-| 7 | Secciones de cuenta: Estado de la cuenta ✅, Información de la cuenta ✅ y Novedades ✅ en las 4 webs. Pendiente: "Video y voz" y "notificaciones por teléfono" (requieren el sistema de audio del juego y un canal SMS, respectivamente; se harán cuando existan) | ✅ (parcial) |
+| 7 | Secciones de cuenta COMPLETAS: Estado de la cuenta ✅, Información de la cuenta ✅, Novedades ✅ y **Video y voz ✅** (solo MuzicMania: volumen de música/efectos sincronizado BD ↔ juego vía `settings_controls.video_voice` + claves `audio_music_vol`/`audio_sfx_vol`; API `/api/auth/account/audio`). **SMS ✅ (preparado)**: teléfono en la cuenta (`user_metadata.phone`), preferencia `sms_enabled` en `notification_preferences`, abstracción `sendSms()` en `@ciszunetwork/utils` (env `SMS_API_URL`/`SMS_API_KEY`/`SMS_FROM`); envía cuando se configure un proveedor | ✅ (parcial) |
 
 ## 13. Relación con otros sistemas
 

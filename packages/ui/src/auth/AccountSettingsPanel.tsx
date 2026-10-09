@@ -81,6 +81,7 @@ const btnGhost =
   'inline-flex items-center justify-center rounded-xl border border-border px-4 py-2.5 font-header text-[11px] font-black uppercase tracking-widest text-muted transition hover:text-ink disabled:opacity-50';
 
 import { AccountStatusPanel } from './AccountStatusPanel';
+import { VideoVoicePanel } from './VideoVoicePanel';
 
 export default function AccountSettingsPanel({
   supabase,
@@ -114,6 +115,9 @@ export default function AccountSettingsPanel({
   const [accountAlerts, setAccountAlerts] = useState(true);
   const [siteNotifs, setSiteNotifs] = useState(true);
   const [newsletter, setNewsletter] = useState(false);
+  const [phone, setPhone] = useState('');
+  const [savedPhone, setSavedPhone] = useState('');
+  const [smsEnabled, setSmsEnabled] = useState(false);
   const [prefsBusy, setPrefsBusy] = useState(false);
   const [debugOpen, setDebugOpen] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
@@ -169,6 +173,8 @@ export default function AccountSettingsPanel({
           const metadata = (data.user.user_metadata ?? {}) as Record<string, unknown>;
           setUser({ id: data.user.id, email: data.user.email ?? '', metadata });
           setDisplayName(typeof metadata.display_name === 'string' ? metadata.display_name : '');
+          setPhone(typeof metadata.phone === 'string' ? metadata.phone : '');
+          setSavedPhone(typeof metadata.phone === 'string' ? metadata.phone : '');
           setEmailNotif(metadata.email_notifications !== false);
           setOtpReminder(metadata.otp_reminder !== false);
           // Preferencias de notificación/patrocinio del ecosistema (tabla RLS).
@@ -187,6 +193,7 @@ export default function AccountSettingsPanel({
                 sponsorship_enabled?: boolean;
                 account_alerts_enabled?: boolean;
                 site_notifications_enabled?: boolean;
+    sms_enabled?: boolean;
                 newsletter_enabled?: boolean;
               };
             };
@@ -195,6 +202,7 @@ export default function AccountSettingsPanel({
               setSponsorship(p.sponsorship_enabled === true);
               setAccountAlerts(p.account_alerts_enabled !== false);
               setSiteNotifs(p.site_notifications_enabled !== false);
+              setSmsEnabled(p.sms_enabled === true);
               setNewsletter(p.newsletter_enabled === true);
             }
           } catch {
@@ -346,6 +354,17 @@ export default function AccountSettingsPanel({
     setNotifMsg(null);
     const { error } = await supabase.auth.updateUser({ data: patch });
     setNotifMsg(error ? error.message : 'Preferencias guardadas.');
+  };
+
+  const savePhone = async (value: string) => {
+    setNotifMsg(null);
+    const { error } = await supabase.auth.updateUser({ data: { phone: value } });
+    if (error) {
+      setNotifMsg(error.message);
+      return;
+    }
+    setSavedPhone(value);
+    setNotifMsg('Teléfono guardado.');
   };
 
   /** Guarda una preferencia del ecosistema (patrocinios, avisos, notificaciones, boletín). */
@@ -662,6 +681,31 @@ export default function AccountSettingsPanel({
           />
           <span className="text-xs font-bold text-ink">Recordatorio de verificación OTP</span>
         </label>
+        <div className="space-y-2 rounded-xl border border-border p-3">
+          <p className="text-xs font-bold text-ink">Avisos por teléfono (SMS)</p>
+          <p className="text-[11px] text-muted">Guardamos tu número en la cuenta; los SMS se activarán cuando el proveedor SMS esté configurado.</p>
+          <input
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            onBlur={(e) => { const v = e.target.value.trim(); if (v !== savedPhone) void savePhone(v); }}
+            placeholder="+58 412 000 0000"
+            className="w-full rounded-xl border border-border bg-transparent px-3 py-2 text-xs text-ink outline-none"
+          />
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={smsEnabled}
+              onChange={(e) => {
+                setSmsEnabled(e.target.checked);
+                void savePreference('sms_enabled', e.target.checked);
+              }}
+              disabled={prefsBusy}
+              className="h-4 w-4 accent-[#22d3ee]"
+            />
+            <span className="text-xs font-bold text-ink">Recibir avisos por SMS en este número</span>
+          </label>
+        </div>
         {notifMsg && <p className="text-[11px] font-bold text-muted">{notifMsg}</p>}
       </Section>
 
@@ -681,6 +725,12 @@ export default function AccountSettingsPanel({
           Ver el changelog de {siteName}
         </a>
       </Section>
+
+      {site === 'muzicmania' && (
+        <Section title="Video y voz" description="Volumen del juego sincronizado con tu cuenta.">
+          <VideoVoicePanel supabase={supabase} apiBase={apiBase} />
+        </Section>
+      )}
 
       <Section title="Estado de la cuenta" description="Roadmap de configuracion, strikes y sanciones activas (con apelacion).">
         <AccountStatusPanel supabase={supabase} apiBase={apiBase} site={site} />

@@ -218,6 +218,14 @@ con DNS externo puede tardar más según el TTL de los registros.
 - [ ] Guardar `RESEND_API_KEY` en vault + `.env.local` + Vercel.
 - [ ] Probar un envío real y revisar los logs en Resend.
 
+## SMS (preparado, proveedor pendiente)
+
+El ecosistema deja preparado el canal SMS sin depender de un proveedor concreto:
+
+- **Utilidad**: `sendSms({ to, text })` en `packages/utils/src/sms.ts` (exportada por `@ciszunetwork/utils`, server-only). Usa las env `SMS_API_URL`, `SMS_API_KEY` y `SMS_FROM` (proveedor HTTP tipo Twilio-compatible); si no están configuradas devuelve `{ sent: false, error }` sin romper el flujo. Nunca lanza excepciones.
+- **Preferencia**: columna `sms_enabled` en `public.notification_preferences` (migración `20261009000002_notification_sms.sql`), editable desde "Notificaciones" del panel de cuenta de las 4 webs, junto a un campo de **teléfono** guardado en `user_metadata.phone`.
+- **Activación**: cuando exista proveedor (p.ej. Twilio), añadir las 3 env al vault (`services/supabase/.env`) + proyectos Vercel y llamar `sendSms()` desde los flujos que lo requieran (p. ej. avisos anticheat o seguridad).
+
 _Última revisión: 13 ago 2026._ Relacionado: `DOMAINS_SYSTEM.md`, `PAYMENTS_SYSTEM.md`,
 `CLOUDFLARE_SYSTEM.md`, `VAULT_SYSTEM.md`.
 
