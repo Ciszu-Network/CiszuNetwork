@@ -5,8 +5,11 @@
 - [ ] Activar canal SMS para avisos de cuenta (código listo: `sendSms()` en `@ciszunetwork/utils`,
   preferencia `sms_enabled` en `notification_preferences` y teléfono en el panel; falta contratar
   un proveedor externo y poner sus credenciales en el vault + Vercel).
-- [ ] Migración i18n de literales por lotes (1,883 pendientes; plan por fases: piloto de una página,
-  luego lotes por web con el ratchet de `pnpm verify:i18n`).
+- [ ] Migración i18n de literales por lotes (deuda actual: ciszu 379 · ciszubot 326 ·
+  antony 246 · muzicmania 937; ratchet `pnpm verify:i18n`).
+  PILOTO HECHO (09 oct 2026): página de **login de ciszu** migrada completa (patrón `useDict()` +
+  claves `loginPage` en `es`/`en` + `fillTemplate`; ciszu pasó de 390 → 379).
+  Próximos lotes por impacto: support/reviews/contact de ciszu, y luego ciszubot/antony/muzicmania.
 
 #5 Crear sistema de anuncios: Google Adsense, GA4, GTM, Tag y Analytics pack completo.
 
