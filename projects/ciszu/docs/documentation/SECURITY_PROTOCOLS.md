@@ -287,3 +287,17 @@ Principio rector: **acceso de rol mínimo** — no dar acceso de infra a quien n
 - **Secret scanning**: gitleaks en CI (diff) + secretlint pre-commit local + auditoría manual
   del bundle compilado tras cada build.
 
+## Guard del repositorio público
+
+El repo es público: cualquier archivo trackeado es visible para el mundo. Dos capas lo protegen:
+
+1. **Workflow `repo-guard.yml`** (CI, en cada PR y push a main): falla si `git ls-files`
+   incluye rutas prohibidas — `archives/`, `tools/`, `scripts/`, `clones/`, `services/` o
+   `.env*`/archivos del vault. Detecta un `git add -f` despistado antes de que se publique.
+2. **Pre-commit hooks** (secretlint + gitleaks) sobre lo staged; no sustituyen al guard porque
+   el hook es local y se puede omitir.
+
+Regla operativa: datos de staff/clientes (`archives/`), consolas (`tools/`) y scripts internos
+(`scripts/`) viven SOLO en local (gitignored). Nunca commitear datos personales, aunque no sean
+secretos.
+

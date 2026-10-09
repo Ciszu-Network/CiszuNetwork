@@ -224,3 +224,20 @@ powershell -File scripts\vault.ps1 backup
 | 14 ago 2026 | **+2 secrets en vault**: `TANSTACK_API_KEY` (submissions de TanStack, pendiente de revisión; sin uso activo) y `CHROMATIC_PROJECT_TOKEN` (build 1 de Chromatic publicado). `crypt` + `backup` + `verify` OK |
 | 18 ago 2026 | **+3 secrets SimpleLogin en vault** (`SIMPLELOGIN_API_KEY`, `SIMPLELOGIN_EMAIL`, `SIMPLELOGIN_RECOVERY_CODES`): API verificada (cuenta `fplayersoffcial@proton.me`, 2 aliases activos, 4 dominios). `crypt` + `backup` + `verify` OK |
 | 18 ago 2026 | **Puente SECRET_TEMP (3.7 ✅)**: `SECRET_TEMP.env` gitignored creado; secretos del `TODO.md` (SimpleLogin + Plasmic/Puck/Subframe) movidos fuera de los MDs → referencias por variable; regla documentada en §3.7, AGENTS.md §6.5 y este historial |
+
+## Envs scopeados (reparto selectivo)
+
+Además del vault oficial (`services/supabase/.env` + `.env.age`, **solo producción completa,
+nunca se reparte**), existe `services/supabase/scoped/<proyecto>/<rol>.env`:
+
+- **Qué es**: archivos por proyecto y rol con **solo lo que ese rol necesita** (por defecto
+  valores públicos: URL de Supabase, anon key, URL local) y placeholders para credenciales
+  propias (app de pruebas de Discord, secretos de sesión de dev).
+- **Regla dura**: los scoped nunca incluyen `SUPABASE_SERVICE_ROLE_KEY`, `DATABASE_URL`,
+  `VERCEL_TOKEN`, `SUPABASE_ACCESS_TOKEN`, `GOOGLE_OAUTH_*` ni secretos de producción.
+- **Reparto**: se entrega copiando el archivo del rol (Mega selectivo o canal directo); los
+  deploys van por PR + CI, así nadie necesita tokens de producción.
+- **Roles actuales**: `ciszu/dev`, `ciszukoantony/dev`, `muzicmania/dev`,
+  `ciszubot/website-dev`, `ciszubot/bot-dev`, `ciszubot/admin-dev` (ver
+  `services/supabase/scoped/README.md`, local). Está gitignored (bajo `services/`).
+
