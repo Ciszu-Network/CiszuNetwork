@@ -124,7 +124,10 @@ export async function exchangeCode(code: string): Promise<{ access_token: string
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body,
     });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.error('[auth] Discord token exchange failed', res.status, (await res.text()).slice(0, 300));
+      return null;
+    }
     const json = (await res.json()) as { access_token: string; refresh_token: string; expires_in: number };
     return json;
   } catch {
@@ -155,7 +158,10 @@ export async function refreshAccessToken(refreshToken: string): Promise<{ access
 export async function fetchDiscordUser(accessToken: string): Promise<DiscordUser | null> {
   try {
     const res = await fetch(`${API_BASE}/users/@me`, { headers: { Authorization: `Bearer ${accessToken}` } });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.error('[auth] Discord user fetch failed', res.status);
+      return null;
+    }
     return (await res.json()) as DiscordUser;
   } catch {
     return null;

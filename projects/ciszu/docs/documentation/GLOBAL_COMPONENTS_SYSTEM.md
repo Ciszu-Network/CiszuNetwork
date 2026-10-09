@@ -112,6 +112,22 @@ Referencia (ciszu, la más completa):
 > `DisclaimerProvider`, llamar `useDisclaimer().push({ id, kind, message, onClose })`. El stack
 > lo muestra automáticamente en la posición correcta. No hay que tocar Navbar/Footer.
 
+### 3.4 Multi-idioma y traducción dinámica
+
+Los avisos globales llevan **texto variable** (hoy los envía el devcon/CLI), así que no caben en
+los diccionarios i18n: se traducen por dato, en dos momentos.
+
+1. **Al enviar** (`scripts/disclaimer.js`): autotraduce es→en con MyMemory y guarda
+   `message_i18n = { 'es-latam', 'en-us', 'en-uk' }` junto al mensaje original.
+2. **Al mostrar** (`Disclaimer.tsx`): `resolveMessage()` usa el idioma activo de la web
+   (`<html lang>`, con observación reactiva de cambios de idioma) y, si la fila no tiene esa
+   variante, llama a `POST /api/disclaimers/translate` (existe en las 4 webs) con caché en
+   memoria por `id:lang`. El servidor traduce (MyMemory), **persiste el resultado en
+   `message_i18n`** (queda cacheado para todos los usuarios y no se repite la llamada) y
+   devuelve el texto. Si MyMemory no responde, se muestra el texto original sin romper nada.
+3. La fuente de verdad es `ciszunetwork.global_disclaimers.message_i18n` (JSONB). Las filas
+   históricas sin i18n se pueden rellenar (backfill) sin reenviar el aviso.
+
 ---
 
 ## 4. Sistema de Zoom

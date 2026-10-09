@@ -17,6 +17,13 @@ export async function GET(req: NextRequest) {
   const url = new URL(req.url);
   const code = url.searchParams.get('code');
   const error = url.searchParams.get('error');
+  const state = url.searchParams.get('state');
+  const expectedState = req.cookies.get('ciszubot_oauth_state')?.value;
+
+  if (!state || !expectedState || state !== expectedState) {
+    await logAudit({ event: 'login_failed', ip, detail: { reason: 'state_mismatch' } });
+    return NextResponse.redirect(new URL('/?auth=error', req.url));
+  }
 
   if (error || !code) {
     await logAudit({ event: 'login_failed', ip, detail: { reason: error ?? 'missing_code' } });

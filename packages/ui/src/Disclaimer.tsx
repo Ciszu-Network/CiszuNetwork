@@ -751,10 +751,53 @@ function currentSiteLang(): string {
   return (typeof navigator !== 'undefined' ? navigator.language || '' : '').toLowerCase();
 }
 
-/** Resuelve el mensaje multi-idioma: i18n (según el idioma de la web) > fallback TEXT. */
-function resolveMessage(row: GlobalDisclaimerRow): string {
+/** Caché de traducciones dinámicas (gd:<id>:<lang> → texto) y peticiones en vuelo. */
+const gdTranslationCache = new Map<string, string>();
+const gdPendingTranslations = new Set<string>();
+
+/** true si el mensaje no tiene NINGUNA variante en la familia del idioma activo. */
+function gdNeedsTranslation(row: GlobalDisclaimerRow, lang: string): boolean {
+  if (!lang) return false;
+  const cacheKey = `gd:${row.id}:${lang}`;
+  if (gdTranslationCache.has(cacheKey)) return false;
+  const map = (row.message_i18n ?? {}) as Record<string, string>;
+  if (map[lang]) return false;
+  const short = lang.split('-')[0];
+  return !Object.keys(map).some((k) => k === short || k.startsWith(`${short}-`));
+}
+
+/** Pide al servidor la traducción dinámica (el server traduce y la persiste en message_i18n). */
+async function gdRequestTranslation(row: GlobalDisclaimerRow, lang: string): Promise<string | null> {
+  const cacheKey = `gd:${row.id}:${lang}`;
+  if (gdTranslationCache.has(cacheKey)) return gdTranslationCache.get(cacheKey) ?? null;
+  if (gdPendingTranslations.has(cacheKey)) return null;
+  gdPendingTranslations.add(cacheKey);
+  try {
+    const res = await fetch('/api/disclaimers/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: row.id, lang }),
+    });
+    if (!res.ok) return null;
+    const json = (await res.json()) as { success?: boolean; text?: string };
+    if (!json.success || typeof json.text !== 'string') return null;
+    gdTranslationCache.set(cacheKey, json.text);
+    return json.text;
+  } catch {
+    return null;
+  } finally {
+    gdPendingTranslations.delete(cacheKey);
+  }
+}
+
+/** Resuelve el mensaje multi-idioma: i18n (según el idioma de la web) > caché dinámica > TEXT. */
+function resolveMessage(row: GlobalDisclaimerRow, langOverride?: string): string {
+  const lang = (langOverride ?? currentSiteLang()).toLowerCase();
+  if (lang) {
+    const cached = gdTranslationCache.get(`gd:${row.id}:${lang}`);
+    if (cached) return cached;
+  }
   if (row.message_i18n && typeof row.message_i18n === 'object') {
-    const lang = currentSiteLang();
     const map: Record<string, string> = row.message_i18n;
     if (lang && map[lang]) return map[lang];
     const short = lang.split('-')[0];
@@ -783,6 +826,8 @@ export function GlobalDisclaimer({ site, pollInterval, disabled = false }: Globa
   const { push, remove } = useDisclaimer();
   const seenRef = useRef<Set<number>>(new Set());
   const [rows, setRows] = useState<GlobalDisclaimerRow[]>([]);
+  const [lang, setLang] = useState(() => currentSiteLang());
+  const [translationTick, setTranslationTick] = useState(0);
 
   useEffect(() => {
     seenRef.current = gdLoadSeen(site);
@@ -837,6 +882,19 @@ export function GlobalDisclaimer({ site, pollInterval, disabled = false }: Globa
     return () => { cancelled = true; window.clearInterval(iv); };
   }, [site, effectiveInterval]);
 
+  // Idioma en vivo: reacciona a cambios de <html lang> de las webs (LangSync/I18nProvider/Navbar).
+  useEffect(() => {
+    const sync = () => setLang(currentSiteLang());
+    sync();
+    const obs = new MutationObserver(sync);
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+    window.addEventListener('storage', sync);
+    return () => {
+      obs.disconnect();
+      window.removeEventListener('storage', sync);
+    };
+  }, []);
+
   // Inyecta los disclaimers globales en el stack.
   // Regla: si el usuario cerró el disclaimer con la X (visto), NO vuelve a
   // aparecer (localStorage por web), igual que el disclaimer beta default.
@@ -851,11 +909,17 @@ export function GlobalDisclaimer({ site, pollInterval, disabled = false }: Globa
       if (seenRef.current.has(row.id)) {
         continue;
       }
+      if (lang && gdNeedsTranslation(row, lang)) {
+        void gdRequestTranslation(row, lang).then((text) => {
+          if (text) setTranslationTick((t) => t + 1);
+        });
+      }
+      const localized = resolveMessage(row, lang);
       active.add(key);
       push({
         id: key,
         kind: row.kind,
-        message: isDevcon ? `[DEVCON] ${resolveMessage(row)}` : resolveMessage(row),
+        message: isDevcon ? `[DEVCON] ${localized}` : localized,
         dismissible: row.dismissible,
         expiresAt: row.expires_at,
         startsAt: row.starts_at ?? undefined,
@@ -870,7 +934,7 @@ export function GlobalDisclaimer({ site, pollInterval, disabled = false }: Globa
     }
     return () => { for (const id of active) remove(id); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows, push, remove, site]);
+  }, [rows, push, remove, site, lang, translationTick]);
 
   return null;
 }
