@@ -276,12 +276,12 @@ export default function Navbar() {
               />
               <CdnImage
                 src="projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png"
-                alt="Ciszuko Antony" width={120} height={28}
+                alt={dict.nav.founderName} width={120} height={28}
                 className="hidden sm:block group-hover:drop-shadow-[0_0_15px_rgba(61,106,223,0.8)] transition-all duration-300"
               />
               <CdnImage
                 src="projects/ciszukoantony/content/logos/images/samples/circle/circle_1_yt.png"
-                alt="Ciszuko Antony — Canal de YouTube" width={34} height={34}
+                alt={dict.nav.youtubeAlt} width={34} height={34}
                 className="hidden sm:block rounded-full ring-2 ring-brand/40 shadow-[0_0_15px_rgba(167,139,250,0.35)] shrink-0"
               />
             </Link>
@@ -324,7 +324,8 @@ export default function Navbar() {
                              <div className="px-4 py-2 text-xs font-black text-neon-blue/80 uppercase tracking-widest">{groupTitle(group.name)}</div>
                              <div className="h-px bg-white/10 mx-2" />
                              {group.items.map((sub) =>
-                               sub.external ? (
+                               sub
+        .external ? (
                                  <a key={sub.href} href={sub.href} target="_blank" rel="noopener noreferrer"
                                    onClick={() => setOpenGroup(null)} className={subCls(false)}>
                                    <span className="opacity-70 w-4 h-4 shrink-0">{sub.icon}</span>{itemLabel(sub)}
@@ -519,7 +520,7 @@ export default function Navbar() {
                 <>
                 <Link href="/settings"
                   className="mb-2 w-full flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 text-white/80 rounded-xl font-header font-bold hover:bg-white/10 hover:text-white text-xs transition-all">
-                  Configuración de cuenta
+                  {dict.nav.accountSettings}
                 </Link>
                 <button onClick={async () => { const { supabase } = await import('@/config/supabase'); await supabase.auth.signOut(); window.location.href = '/'; }}
                   className="w-full flex items-center justify-center gap-2 py-3 bg-neon-pink/10 border border-neon-pink/30 text-neon-pink rounded-xl font-header font-bold hover:bg-neon-pink/20 hover:text-white text-xs shadow-[0_4px_15px_rgba(255,51,204,0.1)] transition-all">

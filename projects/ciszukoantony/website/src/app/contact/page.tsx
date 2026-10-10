@@ -357,7 +357,7 @@ export default function ContactPage() {
                 </div>
                 <div className="space-y-1">
                   <h4 className="text-2xl font-header font-black text-white uppercase italic">{dict.contact.discordId}</h4>
-                  <p className="text-[#5865F2] font-black uppercase tracking-[0.4em] text-[10px]">Ciszuko Antony</p>
+                  <p className="text-[#5865F2] font-black uppercase tracking-[0.4em] text-[10px]">{"Ciszuko Antony"}</p>
                 </div>
                 <div className="w-full bg-black/60 rounded-3xl p-6 border border-white/5 space-y-4">
                   <div className="text-3xl font-header font-black text-white tracking-widest">{selectedDiscord}</div>

@@ -315,8 +315,8 @@ export default function RegisterPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-md w-full">
           <div className="text-center mb-8">
             <CiszuIdBrand
-              ciszuIsotype={<Image src={CISZU_ISOTYPE} alt="Ciszu ID" width={40} height={40} className="w-9 h-9" />}
-              appIsotype={<Image src={ANTONY_ISOTYPE} alt="Ciszuko Antony" width={40} height={40} className="w-9 h-9" />}
+              ciszuIsotype={<Image src={CISZU_ISOTYPE} alt={dict.auth.brandId} width={40} height={40} className="w-9 h-9" />}
+              appIsotype={<Image src={ANTONY_ISOTYPE} alt={dict.auth.appName} width={40} height={40} className="w-9 h-9" />}
               ciszuHref="https://ciszunetwork.vercel.app"
               appHref="/"
               title={dict.auth.accountCreated}
@@ -342,14 +342,14 @@ export default function RegisterPage() {
       <div className="mb-10">
         <CiszuIdBrand
           ciszuIsotype={
-            <Image src={CISZU_ISOTYPE} alt="Ciszu ID" width={40} height={40} className="w-9 h-9" />
+            <Image src={CISZU_ISOTYPE} alt={dict.auth.brandId} width={40} height={40} className="w-9 h-9" />
           }
           appIsotype={
-            <Image src={ANTONY_ISOTYPE} alt="Ciszuko Antony" width={40} height={40} className="w-9 h-9" />
+            <Image src={ANTONY_ISOTYPE} alt={dict.auth.appName} width={40} height={40} className="w-9 h-9" />
           }
           ciszuHref="https://ciszunetwork.vercel.app"
           appHref="/"
-          title="CISZU ID"
+          title={dict.auth.brandIdUpper}
           subtitle={dict.auth.registerSubtitleFull}
         />
       </div>
@@ -443,7 +443,7 @@ export default function RegisterPage() {
                   <svg viewBox="0 0 24 24" className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
                 <p className="text-[11px] text-gray-400 font-bold leading-relaxed">
-                  {dict.auth.marketingAccept} <a href="/terms" className="text-neon-cyan hover:underline">Ciszuko Antony</a> {dict.auth.marketingBody}{' '}
+                  {dict.auth.marketingAccept} <a href="/terms" className="text-neon-cyan hover:underline">{dict.auth.appName}</a> {dict.auth.marketingBody}{' '}
                   <strong className="text-neon-pink">{dict.auth.marketingStrong}</strong>
                 </p>
               </div>

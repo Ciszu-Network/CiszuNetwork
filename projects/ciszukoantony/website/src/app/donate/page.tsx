@@ -1,6 +1,7 @@
 "use client";
 
 import QuickDocks from "@/components/molecules/QuickDocks";
+import { useDict } from '@/components/providers/I18nProvider';
 import { Icon, InfoHero, KoFiEmbed, type InfoTheme } from '@ciszu/ui';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
@@ -46,6 +47,7 @@ const THEME: InfoTheme = {
 };
 
 export default function DonatePage() {
+  const dict = useDict();
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />
@@ -79,12 +81,12 @@ export default function DonatePage() {
             único embed que Ko-fi autoriza incrustar. Se usa KoFiEmbed directo
             para que el iframe esté SIEMPRE presente, independientemente del panel. */}
         <section className="rounded-2xl bg-brand/5 border border-brand/20 p-4">
-          <h3 className="text-white font-bold font-header text-sm mb-3 text-center">Apoya en Ko-fi</h3>
-          <KoFiEmbed handle="ciszukoantony" title="Apoya a Ciszuko Antony en Ko-fi" />
+          <h3 className="text-white font-bold font-header text-sm mb-3 text-center">{dict.donate.kofiLabel}</h3>
+          <KoFiEmbed handle="ciszukoantony" title={dict.donate.kofiCta} />
         </section>
 
         <div className="rounded-2xl bg-brand/5 border border-brand/20 p-4">
-          <h3 className="text-white font-bold font-header text-sm mb-3 text-center">Cripto (NOWPayments)</h3>
+          <h3 className="text-white font-bold font-header text-sm mb-3 text-center">{dict.donate.cryptoLabel}</h3>
           <iframe
             src="https://nowpayments.io/embeds/donation-widget?api_key=739f2096-6c64-40d6-a2a1-635784185dfb"
             width="100%"
@@ -92,7 +94,7 @@ export default function DonatePage() {
             frameBorder="0"
             scrolling="no"
             style={{ overflowY: "hidden", border: "none" }}
-            title="Donaciones en cripto (NOWPayments)"
+            title={dict.donate.cryptoCta}
             allow="payment"
             sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
           />
@@ -101,9 +103,7 @@ export default function DonatePage() {
         <div className="text-center mt-12">
           <p className="text-gray-500 text-xs">
             ¿Prefieres apoyar de otra forma? Escríbenos a{" "}
-            <a href="mailto:ciszunetwork@gmail.com" className="text-brand-light underline">
-              ciszunetwork@gmail.com
-            </a>
+            <a href="mailto:ciszunetwork@gmail.com" className="text-brand-light underline">{"ciszunetwork@gmail.com"}</a>
           </p>
         </div>
       </PageReveal>

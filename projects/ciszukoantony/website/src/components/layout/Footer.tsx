@@ -117,12 +117,12 @@ export default function Footer() {
               />
               <CdnImage
                 src="projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png"
-                alt="Ciszuko Antony" width={140} height={32}
+                alt={dict.footer.altFounder} width={140} height={32}
                 className="opacity-80 group-hover:opacity-100 group-hover:drop-shadow-[0_0_15px_rgba(61,106,223,0.8)] transition-all duration-300"
               />
               <CdnImage
                 src="projects/ciszukoantony/content/logos/images/samples/circle/circle_1_yt.png"
-                alt="Ciszuko Antony YouTube"
+                alt={dict.footer.altYoutube}
                 width={34} height={34}
                 className="rounded-full shadow-[0_0_15px_rgba(167,139,250,0.35)] group-hover:shadow-[0_0_15px_rgba(61,106,223,0.8)] transition-all duration-300"
               />
@@ -267,11 +267,11 @@ export default function Footer() {
           {/* Copyright */}
           <p className="text-white text-xs text-center leading-relaxed">
             <span className="text-neon-blue">&copy;</span> 2024-{new Date().getFullYear()}{' '}
-            <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="text-neon-blue hover:text-neon-cyan transition-colors">Ciszu Network</a> &amp; Ciszuko Antony. {dict.footer.rights}
+            <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="text-neon-blue hover:text-neon-cyan transition-colors">{dict.footer.org}</a> &amp; Ciszuko Antony. {dict.footer.rights}
             <br />
             {dict.footer.madeBy}{' '}
-            <Link href="/" className="text-neon-blue hover:text-neon-cyan transition-colors">Ciszuko Antony</Link> · {dict.footer.backedBy}{' '}
-            <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="text-neon-blue hover:text-neon-cyan transition-colors">Ciszu Network</a>.
+            <Link href="/" className="text-neon-blue hover:text-neon-cyan transition-colors">{dict.footer.brand}</Link> · {dict.footer.backedBy}{' '}
+            <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="text-neon-blue hover:text-neon-cyan transition-colors">{dict.footer.org}</a>.
             <br />
             {dict.footer.trademark}
           </p>

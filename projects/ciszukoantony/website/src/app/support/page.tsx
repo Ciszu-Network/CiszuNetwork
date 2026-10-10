@@ -330,7 +330,7 @@ export default function SupportPage() {
                                </div>
                                <div className="space-y-2">
                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">{dict.support.contactEmail}</label>
-                                  <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="tu@email.com" />
+                                  <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder={dict.support.phEmail} />
                                </div>
                             </div>
                           </div>
@@ -387,7 +387,7 @@ export default function SupportPage() {
                                </div>
                                <div className="space-y-2">
                                   <label className="text-[9px] font-black uppercase tracking-widest text-white/40 ml-2">{dict.support.device}</label>
-                                  <input type="text" value={formData.device} onChange={e => setFormData({...formData, device: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder="PC / Móvil / Tablet" />
+                                  <input type="text" value={formData.device} onChange={e => setFormData({...formData, device: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-sm focus:outline-none focus:border-brand-light transition-all" placeholder={dict.support.phDevice} />
                                </div>
                             </div>
                             <div className="space-y-2">
@@ -410,7 +410,8 @@ export default function SupportPage() {
                       <div className="w-12 h-12 border-2 border-brand-light border-t-transparent rounded-full animate-spin mx-auto mb-6" />
                       <p className="text-white/40 text-[10px] font-black uppercase tracking-widest">{dict.support.loadingTickets}</p>
                     </div>
-                  ) : tickets.length === 0 ? (
+                  ) :
+                  tickets.length === 0 ? (
                     <div className="p-20 bg-white/5 border border-white/5 rounded-[4rem] text-center space-y-6">
                       <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto text-white/10">
                         {I.msg}
@@ -460,14 +461,14 @@ export default function SupportPage() {
                    </div>
                    <div>
                       <h3 className="text-xs font-black text-white uppercase tracking-widest">{dict.support.receiverTitle}</h3>
-                      <p className="text-[10px] text-brand-light font-black uppercase tracking-[0.2em]">Ciszuko Antony</p>
+                      <p className="text-[10px] text-brand-light font-black uppercase tracking-[0.2em]">{dict.support.creatorName}</p>
                    </div>
                 </div>
                 <p className="text-[10px] text-gray-500 font-bold leading-relaxed uppercase">
                    {dict.support.receiverBody}
                 </p>
                 <div className="flex items-center gap-3">
-                   <a href="mailto:fplayersoffcial@gmail.com" className="text-white underline text-sm lowercase">fplayersoffcial@gmail.com</a>
+                   <a href="mailto:fplayersoffcial@gmail.com" className="text-white underline text-sm lowercase">{"fplayersoffcial@gmail.com"}</a>
                    <button onClick={copyEmail} className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-colors">
                      {copied ? dict.support.copied : dict.support.copy}
                    </button>

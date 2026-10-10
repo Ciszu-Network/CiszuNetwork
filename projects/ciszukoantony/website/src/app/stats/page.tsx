@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { InfoHero, type InfoTheme } from '@ciszu/ui';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useDict } from '@/components/providers/I18nProvider';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 
@@ -64,6 +65,7 @@ function ToneDot({ tone }: { tone: Tone }) {
 }
 
 export default function StatsPage() {
+  const dict = useDict();
   usePageTitle('STATS');
   const [checks, setChecks] = useState<Check[]>([]);
   const [services, setServices] = useState<Service[]>([]);
@@ -203,11 +205,11 @@ export default function StatsPage() {
           <motion.section initial="hidden" animate="visible" variants={sectionVariants} className="lg:col-span-7 space-y-6">
             <div className="flex items-center gap-4">
               <div className="w-9 h-9 text-neon-green">{I.shield}</div>
-              <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">Seguridad y red</h2>
+              <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">{dict.stats.security}</h2>
             </div>
             <div className="bg-doc-dark border border-white/10 rounded-[3rem] divide-y divide-white/5 overflow-hidden">
               {checks.length === 0 && (
-                <p className="p-8 text-center text-[10px] font-black uppercase tracking-widest text-white/40">Sin datos todavía…</p>
+                <p className="p-8 text-center text-[10px] font-black uppercase tracking-widest text-white/40">{dict.stats.noData}</p>
               )}
               {checks.map((c) => (
                 <div key={c.label} className="flex items-center justify-between gap-6 px-8 py-5">
@@ -242,7 +244,7 @@ export default function StatsPage() {
               ))}
               {services.length === 0 && (
                 <div className="bg-doc-dark border border-dashed border-white/10 p-8 rounded-3xl text-center text-[10px] font-black uppercase tracking-widest text-white/40">
-                  Sin datos todavía…
+                  {dict.stats.noData}
                 </div>
               )}
             </div>
@@ -255,7 +257,7 @@ export default function StatsPage() {
                 </span>
               </div>
               <p className="text-[9px] font-black uppercase tracking-widest text-white/30 leading-relaxed">
-                Las métricas se miden desde tu navegador contra los servicios reales. Los valores no disponibles se muestran como “Sin datos”.
+                {dict.stats.metricsNote}
               </p>
             </div>
           </motion.section>
@@ -265,13 +267,13 @@ export default function StatsPage() {
         <motion.section initial="hidden" animate="visible" variants={sectionVariants} className="space-y-6">
           <div className="flex items-center gap-4">
             <div className="w-9 h-9 text-neon-yellow">{I.warning}</div>
-            <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">Incidentes y mantenimiento</h2>
+            <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">{dict.stats.incidents}</h2>
           </div>
           <div className="bg-doc-dark border-2 border-dashed border-white/10 rounded-[3rem] p-14 text-center space-y-4">
             <div className="w-14 h-14 mx-auto text-neon-green">{I.check}</div>
-            <h3 className="text-2xl font-header font-black text-white uppercase tracking-tighter">Sin incidentes registrados</h3>
+            <h3 className="text-2xl font-header font-black text-white uppercase tracking-tighter">{dict.stats.noIncidents}</h3>
             <p className="text-white/40 text-[10px] font-black uppercase tracking-widest">
-              No hay interrupciones ni mantenimientos programados en este momento.
+              {dict.stats.noIncidentsBody}
             </p>
           </div>
         </motion.section>
@@ -279,7 +281,7 @@ export default function StatsPage() {
         <div className="flex items-center justify-center gap-4 pt-4 opacity-40">
           <div className="w-6 h-6 text-neon-blue">{I.globe}</div>
           <p className="text-[9px] font-black uppercase tracking-[0.4em] text-white/60">
-            Plataforma · Ciszu Network
+            {dict.stats.platform}
           </p>
           <div className="w-6 h-6 text-neon-green">{I.lock}</div>
         </div>

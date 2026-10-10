@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useDict } from '@/components/providers/I18nProvider';
 import { Icon } from '@ciszu/ui';
 import CdnImage from '@/components/shared/CdnImage';
 import type { Project } from '@/data/projects';
@@ -29,6 +30,7 @@ export default function ProjectCard({
   project: Project;
   onOpen?: (project: Project) => void;
 }) {
+  const dict = useDict();
   const openButton = onOpen ? (
     <button
       type="button"
@@ -44,7 +46,7 @@ export default function ProjectCard({
       className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-white transition-all hover:scale-105 hover:brightness-150 ${project.accent.chipBg} ${project.accent.chipBorder}`}
     >
       <Icon name="chevronRight" size={13} />
-      Ver proyecto
+      {dict.projects.viewProject}
     </Link>
   );
 

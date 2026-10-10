@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Icon, InfoHero, type InfoTheme } from '@ciszu/ui';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useDict } from '@/components/providers/I18nProvider';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
@@ -32,6 +33,7 @@ const STATS = [
  * directo al proyecto; el explorador añade búsqueda, filtros y orden.
  */
 export default function ProjectsPage() {
+  const dict = useDict();
   usePageTitle('PROJECTS');
   return (
     <div className="relative min-h-screen px-4 pb-20 pt-24">
@@ -64,7 +66,7 @@ export default function ProjectsPage() {
           <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-neon-blue/30 bg-neon-blue/10 text-neon-blue">
             <Icon name="portfolio" size={22} />
           </span>
-          <h2 className="mb-3 font-header text-xl font-bold text-white">Explora el portfolio visual</h2>
+          <h2 className="mb-3 font-header text-xl font-bold text-white">{dict.projects.exploreVisual}</h2>
           <p className="mx-auto mb-6 max-w-xl text-sm text-white/50">
             Además de estas páginas, el portfolio reúne los trabajos con galería visual y el currículum
             vive con sus 2 versiones del CV (Custom y LinkedIn) en PDF y certificados verificables.
@@ -75,14 +77,14 @@ export default function ProjectsPage() {
               className="inline-flex items-center justify-center gap-2 rounded-xl border border-neon-blue/40 bg-neon-blue/20 px-6 py-3 text-sm font-bold text-neon-blue transition-all hover:bg-neon-blue hover:text-white"
             >
               <Icon name="camera" size={16} />
-              Ir al portfolio
+              {dict.projects.goPortfolio}
             </Link>
             <Link
               href="/curriculum"
               className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/5 px-6 py-3 text-sm font-bold text-white transition-all hover:bg-white/10"
             >
               <Icon name="terms" size={16} />
-              Ver currículum
+              {dict.projects.viewCurriculum}
             </Link>
           </div>
         </div>
