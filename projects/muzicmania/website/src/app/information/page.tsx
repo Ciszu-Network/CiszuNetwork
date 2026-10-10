@@ -59,7 +59,7 @@ const I = {
   mail:        <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>,
   terminal:    <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>,
   database:    <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>,
-  nextjs:      <img src="/tech/nextjs.svg" alt="Next.js" className="w-full h-full object-contain" />,
+  nextjs:      <img src="/tech/nextjs.svg" alt={t.pages.information.attrNext} className="w-full h-full object-contain" />,
   typescript:  <img src="/tech/typescript.svg" alt="TypeScript" className="w-full h-full object-contain" />,
   tailwind:    <svg viewBox="0 0 24 24" className="w-full h-full" fill="currentColor"><path d="M12.001,4.8c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c0.913,0.228,1.565,0.89,2.288,1.639C13.679,10.65,15.115,12,18.001,12c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.639C16.323,6.15,14.887,4.8,12.001,4.8z M6.001,12c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c0.913,0.228,1.565,0.89,2.288,1.639c1.191,1.214,2.627,2.661,5.513,2.661c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.639C10.323,13.35,8.887,12,6.001,12z"/></svg>,
   image:       <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>,
@@ -149,7 +149,7 @@ const ColorProfile = ({ profile }: { profile: typeof BRAND_COLORS[0] }) => {
     <div className="flex flex-col md:flex-row gap-6 p-8 bg-doc-dark border-2 border-white/5 rounded-[3rem] group hover:border-white/20 transition-all">
       <div className="w-full md:w-1/3 flex flex-col gap-4">
           <div className="h-40 rounded-3xl relative overflow-hidden flex flex-col items-center justify-center shadow-lg border-2 border-white/10 transition-colors duration-500" style={{ backgroundColor: current.hex }}>
-            <span className="text-[10px] font-black text-black/40 uppercase mix-blend-difference">Preview Principal</span>
+            <span className="text-[10px] font-black text-black/40 uppercase mix-blend-difference">{t.pages.information.previewMain}</span>
           </div>
           <div className="flex gap-2 h-10">
             {profile.shades.map((s, i) => (
@@ -236,7 +236,7 @@ export default function InformationPage() {
 
       <ScrollSpy items={[
         { id: 'hero', label: 'Inicio' },
-        { id: 'tutorial', label: 'Cómo Jugar' },
+        { id: 'tutorial', label: '{t.pages.information.howToPlay}' },
         { id: 'identidad', label: 'Identidad' },
         { id: 'color', label: 'Colorología' },
         { id: 'eslogan', label: 'Eslogan' },
@@ -244,8 +244,8 @@ export default function InformationPage() {
         { id: 'mision', label: 'Misión' },
         { id: 'vision', label: 'Visión' },
         { id: 'objetivos', label: 'Objetivos' },
-        { id: 'ideologia', label: 'Ideología' },
-        { id: 'filosofia', label: 'Filosofía' },
+        { id: 'ideologia', label: '{t.pages.information.ideology}' },
+        { id: 'filosofia', label: '{t.pages.information.philosophy}' },
         { id: 'libreria', label: 'Iconos' },
         { id: 'caracteristicas', label: 'Atributos' },
         { id: 'ecosistema', label: 'Tecnologías' },
@@ -272,7 +272,7 @@ export default function InformationPage() {
           
           <div className="max-w-4xl mx-auto text-center border-l-4 border-neon-blue/30 pl-8 py-2">
              <p className="text-gray-300 font-header font-bold text-lg md:text-xl leading-snug uppercase">
-                MuzicMania nace en <span className="text-neon-blue underline decoration-neon-blue/30 underline-offset-8">Ciszu Network</span> como respuesta a la necesidad de un motor de ritmo web de alto rendimiento. 
+                {t.pages.information.bornIn} <span className="text-neon-blue underline decoration-neon-blue/30 underline-offset-8">{t.pages.information.ciszuNetwork}</span> como respuesta a la necesidad de un motor de ritmo web de alto rendimiento. 
                 Nuestra historia se escribe con código, latencia cero y una pasión inquebrantable por la sincronización digital.
              </p>
           </div>
@@ -284,7 +284,7 @@ export default function InformationPage() {
           
           <div className="flex items-center gap-4 justify-center relative">
             <div className="w-8 h-8 text-neon-pink">{I.play}</div>
-            <h2 className="text-2xl font-header font-black text-white uppercase italic tracking-widest drop-shadow-neon-pink">Cómo Jugar</h2>
+            <h2 className="text-2xl font-header font-black text-white uppercase italic tracking-widest drop-shadow-neon-pink">{t.pages.information.howToPlay}</h2>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative">
@@ -294,7 +294,7 @@ export default function InformationPage() {
                 onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.3)'; }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.05)'; }}
             >
-               <h3 className="text-xl font-header font-black text-neon-cyan uppercase italic tracking-wide">Flujo de Secuencia</h3>
+               <h3 className="text-xl font-header font-black text-neon-cyan uppercase italic tracking-wide">{t.pages.information.seqFlow}</h3>
                <div className="space-y-6">
                  {[
                    { step: '01', desc: 'Dirígete a la Terminal PLAY e inicializa el simulador.', color: '#00F0FF' },
@@ -316,9 +316,9 @@ export default function InformationPage() {
                 onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.05)'; e.currentTarget.style.boxShadow = 'none'; }}
             >
                <div className="space-y-3">
-                 <h3 className="text-xl font-header font-black text-neon-pink uppercase italic tracking-wide">Hardware Matrix</h3>
+                 <h3 className="text-xl font-header font-black text-neon-pink uppercase italic tracking-wide">{t.pages.information.hwMatrix}</h3>
                  <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between border-b border-white/5 pb-4">
-                   <p className="text-[10px] text-gray-500 font-black tracking-[0.2em] uppercase">Pulsa las teclas en tiempo real</p>
+                   <p className="text-[10px] text-gray-500 font-black tracking-[0.2em] uppercase">{t.pages.information.pressKeys}</p>
                    <div className="bg-black/80 flex gap-1 p-1 rounded-xl border border-white/10 shadow-inner">
                      <button onClick={() => setControlLayout('wasd')} className={`px-4 py-1.5 text-[10px] uppercase font-black rounded-lg transition-colors ${controlLayout === 'wasd' ? 'bg-white/10 text-white' : 'text-gray-500 hover:text-white'}`}>WASD</button>
                      <button onClick={() => setControlLayout('arrows')} className={`px-4 py-1.5 text-[10px] uppercase font-black rounded-lg transition-colors ${controlLayout === 'arrows' ? 'bg-white/10 text-white' : 'text-gray-500 hover:text-white'}`}>Flechas</button>
@@ -359,7 +359,7 @@ export default function InformationPage() {
         <motion.section id="identidad" data-scrollspy initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={sectionVariants} className="space-y-12">
           <div className="flex items-center gap-4 justify-center">
             <div className="w-8 h-8 text-neon-purple">{I.identity}</div>
-            <h2 className="text-2xl font-header font-black text-white uppercase italic tracking-widest">Identidad Visual</h2>
+            <h2 className="text-2xl font-header font-black text-white uppercase italic tracking-widest">{t.pages.information.visualIdentity}</h2>
           </div>
 
           <div className="space-y-8">
@@ -371,15 +371,15 @@ export default function InformationPage() {
                        <Image src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} alt="Isotipo" fill className="object-contain drop-shadow-neon-blue" />
                     </div>
                     <div className="flex-1 space-y-4">
-                       <h3 className="text-2xl font-header font-black text-white uppercase italic">Isotipo Maestro</h3>
+                       <h3 className="text-2xl font-header font-black text-white uppercase italic">{t.pages.information.masterIsotype}</h3>
                        <div className="space-y-3">
                           <div className="bg-black/40 p-4 rounded-2xl border-l-4 border-neon-blue/40">
-                             <p className="text-[10px] font-black text-neon-blue uppercase mb-1">Visión Artística</p>
-                             <p className="text-xs text-gray-400 leading-relaxed font-bold">Un diamante tallado por vectores de ritmo. Representa la precisión matemática y la dureza de un motor optimizado para la competición.</p>
+                             <p className="text-[10px] font-black text-neon-blue uppercase mb-1">{t.pages.information.artisticVision}</p>
+                             <p className="text-xs text-gray-400 leading-relaxed font-bold">{t.pages.information.artisticVisionDesc}</p>
                           </div>
                           <div className="bg-black/40 p-4 rounded-2xl border-l-4 border-neon-purple/40">
-                             <p className="text-[10px] font-black text-neon-purple uppercase mb-1">Especificación Técnica</p>
-                             <p className="text-xs text-gray-400 leading-relaxed font-bold">Forma poligonal de 4 puntos con degradado axial. Optimizada para visibilidad crítica en resoluciones mínimas.</p>
+                             <p className="text-[10px] font-black text-neon-purple uppercase mb-1">{t.pages.information.techSpec}</p>
+                             <p className="text-xs text-gray-400 leading-relaxed font-bold">{t.pages.information.techSpecDesc}</p>
                           </div>
                        </div>
                     </div>
@@ -396,8 +396,8 @@ export default function InformationPage() {
                        <h3 className="text-2xl font-header font-black text-white uppercase italic">Logotipo</h3>
                        <div className="space-y-3">
                           <div className="bg-black/40 p-4 rounded-2xl border-l-4 border-neon-cyan/40 text-left">
-                             <p className="text-[10px] font-black text-neon-cyan uppercase mb-1">Diseño Aerodinámico</p>
-                             <p className="text-xs text-gray-400 leading-relaxed font-bold">Tipografía personalizada con ángulos de 45° que sugieren inercia y velocidad constante.</p>
+                             <p className="text-[10px] font-black text-neon-cyan uppercase mb-1">{t.pages.information.aeroDesign}</p>
+                             <p className="text-xs text-gray-400 leading-relaxed font-bold">{t.pages.information.aeroDesignDesc}</p>
                           </div>
                        </div>
                     </div>
@@ -415,14 +415,14 @@ export default function InformationPage() {
                   </div>
                   <div className="flex-1 space-y-8">
                      <div className="space-y-2 text-center lg:text-left">
-                        <h3 className="text-4xl font-header font-black text-white uppercase italic tracking-tight">Composición Maestra</h3>
-                        <p className="text-neon-cyan font-black text-[10px] uppercase tracking-[0.5em]">El zen del diseño digital</p>
+                        <h3 className="text-4xl font-header font-black text-white uppercase italic tracking-tight">{t.pages.information.masterComposition}</h3>
+                        <p className="text-neon-cyan font-black text-[10px] uppercase tracking-[0.5em]">{t.pages.information.zenDesign}</p>
                      </div>
                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {[
                           { title: 'Sincronía Visual', icon: I.vision, color: 'blue', desc: 'Reconocimiento instantáneo de marca mediante el balance visual.' },
                           { title: 'Estructura Técnica', icon: I.identity, color: 'purple', desc: 'Respetando márgenes de seguridad áureos en cada activo.' },
-                          { title: 'Filosofía Diseño', icon: I.mission, color: 'pink', desc: 'Simboliza la integridad y el fluir de la música digital.' }
+                          { title: '{t.pages.information.philosophy} Diseño', icon: I.mission, color: 'pink', desc: 'Simboliza la integridad y el fluir de la música digital.' }
                         ].map(f => (
                           <div key={f.title} className="p-6 bg-black/50 rounded-3xl border border-white/5 space-y-3">
                              <div className={`w-8 h-8 text-neon-${f.color}`}>{f.icon}</div>
@@ -441,7 +441,7 @@ export default function InformationPage() {
         <motion.section id="color" data-scrollspy initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={sectionVariants} className="space-y-10">
            <div className="flex items-center gap-4 justify-center">
             <div className="w-8 h-8 text-neon-blue">{I.contact}</div>
-            <h2 className="text-2xl font-header font-black text-white uppercase italic tracking-widest">Colorología de Marca</h2>
+            <h2 className="text-2xl font-header font-black text-white uppercase italic tracking-widest">{t.pages.information.brandColors}</h2>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {BRAND_COLORS.map(profile => <ColorProfile key={profile.name} profile={profile} />)}
@@ -452,7 +452,7 @@ export default function InformationPage() {
         <motion.section id="eslogan" data-scrollspy initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={sectionVariants} className="space-y-0 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-neon-purple/10 via-neon-blue/5 to-neon-cyan/10 rounded-[4rem]" />
           <div className="relative p-16 rounded-[4rem] border border-neon-purple/20 text-center space-y-6">
-            <p className="text-[10px] font-black text-neon-purple uppercase tracking-[0.6em]">Eslogan Oficial · Ciszu Network</p>
+            <p className="text-[10px] font-black text-neon-purple uppercase tracking-[0.6em]">{t.pages.information.sloganTitle}</p>
             <h2 className="text-4xl md:text-7xl font-header font-black uppercase italic leading-none">
               <span className="bg-gradient-to-r from-neon-purple via-neon-blue to-neon-cyan bg-clip-text text-transparent">
                 &quot;Donde el ritmo
@@ -466,7 +466,7 @@ export default function InformationPage() {
               <div className="h-px w-24 bg-gradient-to-l from-transparent to-neon-cyan/50" />
             </div>
             <p className="text-gray-400 font-bold text-sm max-w-xl mx-auto">
-              Cada nota es una decisión. Cada beat, una victoria. MuzicMania no es un juego — es una <span className="text-neon-cyan italic">declaración sonora.</span>
+              {t.pages.information.everyNote} <span className="text-neon-cyan italic">{t.pages.information.sonoraDecl}</span>
             </p>
           </div>
         </motion.section>
@@ -479,7 +479,7 @@ export default function InformationPage() {
         <motion.section id="formatos" data-scrollspy initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={sectionVariants} className="space-y-8">
           <div className="flex items-center gap-4 justify-center">
             <div className="w-8 h-8 text-neon-green">{I.database}</div>
-            <h2 className="text-2xl font-header font-black text-white uppercase italic tracking-widest">Formatos de Archivo</h2>
+            <h2 className="text-2xl font-header font-black text-white uppercase italic tracking-widest">{t.pages.information.fileFormats}</h2>
           </div>
           <div className="p-8 rounded-[3rem] bg-doc-dark border border-white/5 space-y-4">
             {([
@@ -517,14 +517,14 @@ export default function InformationPage() {
         <motion.section id="mision" data-scrollspy initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={sectionVariants} className="space-y-8">
           <div className="flex items-center gap-4 justify-center">
             <div className="w-8 h-8 text-neon-pink">{I.mission}</div>
-            <h2 className="text-2xl font-header font-black text-white uppercase italic tracking-widest">Nuestra Misión</h2>
+            <h2 className="text-2xl font-header font-black text-white uppercase italic tracking-widest">{t.pages.information.ourMission}</h2>
           </div>
           <div className="relative p-12 rounded-[3rem] bg-doc-dark border-l-4 border-neon-pink overflow-hidden group hover:bg-white/5 transition-all duration-500">
             <div className="absolute top-0 right-0 w-64 h-64 bg-neon-pink/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-neon-pink/10 transition-all duration-700" />
             <div className="relative space-y-6">
-              <p className="text-[10px] font-black text-neon-pink uppercase tracking-[0.5em]">· Declaración Central ·</p>
+              <p className="text-[10px] font-black text-neon-pink uppercase tracking-[0.5em]">{t.pages.information.centralDecl}</p>
               <blockquote className="text-2xl md:text-3xl font-header font-black text-white uppercase italic leading-snug">
-                &quot;Democratizar la experiencia del ritmo digital, creando un motor de juego musical que sea accesible, competitivo y artísticamente poderoso para cualquier persona en el mundo.&quot;
+                {t.pages.information.missionQuote}
               </blockquote>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-white/5">
                 {[
@@ -547,7 +547,7 @@ export default function InformationPage() {
         <motion.section id="vision" data-scrollspy initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={sectionVariants} className="space-y-8">
           <div className="flex items-center gap-4 justify-center">
             <div className="w-8 h-8 text-neon-blue">{I.vision}</div>
-            <h2 className="text-2xl font-header font-black text-white uppercase italic tracking-widest">Visión de Futuro</h2>
+            <h2 className="text-2xl font-header font-black text-white uppercase italic tracking-widest">{t.pages.information.futureVision}</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {([
@@ -599,8 +599,8 @@ export default function InformationPage() {
                   <div className="w-5 h-5 text-neon-green">{I.mission}</div>
                 </div>
                 <div>
-                  <h3 className="text-lg font-header font-black text-neon-green uppercase italic">Objetivos Generales</h3>
-                  <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest">Macro Estrategia</p>
+                  <h3 className="text-lg font-header font-black text-neon-green uppercase italic">{t.pages.information.generalGoals}</h3>
+                  <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest">{t.pages.information.macroStrategy}</p>
                 </div>
               </div>
               <ul className="space-y-3">
@@ -624,8 +624,8 @@ export default function InformationPage() {
                   <div className="w-5 h-5 text-neon-cyan">{I.settings}</div>
                 </div>
                 <div>
-                  <h3 className="text-lg font-header font-black text-neon-cyan uppercase italic">Objetivos Específicos</h3>
-                  <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest">Micro Táctica</p>
+                  <h3 className="text-lg font-header font-black text-neon-cyan uppercase italic">{t.pages.information.specificGoals}</h3>
+                  <p className="text-[9px] text-gray-500 font-black uppercase tracking-widest">{t.pages.information.microTactic}</p>
                 </div>
               </div>
               <ul className="space-y-3">
@@ -649,7 +649,7 @@ export default function InformationPage() {
         <motion.section id="ideologia" data-scrollspy initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={sectionVariants} className="space-y-8">
           <div className="flex items-center gap-4 justify-center">
             <div className="w-8 h-8 text-neon-purple">{I.heart}</div>
-            <h2 className="text-2xl font-header font-black text-white uppercase italic tracking-widest">Ideología</h2>
+            <h2 className="text-2xl font-header font-black text-white uppercase italic tracking-widest">{t.pages.information.ideology}</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {([
@@ -676,16 +676,16 @@ export default function InformationPage() {
         <motion.section id="filosofia" data-scrollspy initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={sectionVariants} className="space-y-8">
           <div className="flex items-center gap-4 justify-center">
             <div className="w-8 h-8 text-neon-cyan">{I.moon}</div>
-            <h2 className="text-2xl font-header font-black text-white uppercase italic tracking-widest">Filosofía</h2>
+            <h2 className="text-2xl font-header font-black text-white uppercase italic tracking-widest">{t.pages.information.philosophy}</h2>
           </div>
           <div className="relative p-12 rounded-[4rem] bg-doc-dark border border-white/5 overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-neon-blue/5 via-transparent to-neon-purple/5 pointer-events-none" />
             <div className="relative grid grid-cols-1 lg:grid-cols-3 gap-10">
               <div className="lg:col-span-1 flex flex-col justify-center space-y-4 border-r border-white/5 pr-10">
-                <p className="text-[9px] font-black text-neon-cyan uppercase tracking-[0.5em]">Nuestra Razón de Ser</p>
-                <h3 className="text-3xl font-header font-black text-white uppercase italic leading-tight">El Código es el Lienzo</h3>
+                <p className="text-[9px] font-black text-neon-cyan uppercase tracking-[0.5em]">{t.pages.information.ourReason}</p>
+                <h3 className="text-3xl font-header font-black text-white uppercase italic leading-tight">{t.pages.information.codeCanvas}</h3>
                 <p className="text-gray-400 font-bold text-sm leading-relaxed">
-                  Creemos que la tecnología, cuando se une a la música, produce algo más que software. Produce <span className="text-neon-cyan italic">cultura</span>.
+                  {t.pages.information.codeCanvasDesc} <span className="text-neon-cyan italic">cultura</span>.
                 </p>
               </div>
               <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -712,8 +712,8 @@ export default function InformationPage() {
 
         <motion.section id="libreria" data-scrollspy initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={sectionVariants} className="space-y-10">
           <div className="text-center space-y-2">
-            <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-wider">Librería de Iconos Maestro</h3>
-            <p className="text-gray-500 text-[10px] font-bold uppercase tracking-[0.4em]">Propiedad Intelectual MuzicMania v2.0</p>
+            <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-wider">{t.pages.information.masterIcons}</h3>
+            <p className="text-gray-500 text-[10px] font-bold uppercase tracking-[0.4em]">{t.pages.information.ipTitle}</p>
           </div>
           <div className="p-4 rounded-[3rem] bg-doc-dark border border-white/5 shadow-inner">
              <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
@@ -740,8 +740,8 @@ export default function InformationPage() {
         {/* --- CARACTERÍSTICAS ÚNICAS --- */}
         <motion.section id="caracteristicas" data-scrollspy initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={sectionVariants} className="space-y-10">
           <div className="text-center space-y-2">
-            <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-widest">Características Únicas</h3>
-            <p className="text-gray-500 text-[10px] font-bold uppercase tracking-[0.5em]">Ingeniería de Grado Superior</p>
+            <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-widest">{t.pages.information.uniqueFeats}</h3>
+            <p className="text-gray-500 text-[10px] font-bold uppercase tracking-[0.5em]">{t.pages.information.highEngineering}</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
@@ -766,8 +766,8 @@ export default function InformationPage() {
         {/* --- ECOSISTEMA TECNOLÓGICO --- */}
         <motion.section id="ecosistema" data-scrollspy initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={sectionVariants} className="space-y-12">
             <div className="text-center space-y-2">
-               <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-widest">Ecosistema Tecnológico</h3>
-               <p className="text-gray-500 text-[10px] font-bold uppercase tracking-[0.5em]">La infraestructura que sostiene el ritmo</p>
+               <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-widest">{t.pages.information.techEcosystem}</h3>
+               <p className="text-gray-500 text-[10px] font-bold uppercase tracking-[0.5em]">{t.pages.information.techEcoDesc}</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                {[
@@ -787,13 +787,13 @@ export default function InformationPage() {
                        </div>
                        <div className="pt-4 border-t border-white/5">
                           <p className="text-[11px] text-gray-400 font-bold leading-relaxed">
-                            <span className="text-neon-cyan block mb-1">USO EN PROYECTO:</span>
+                            <span className="text-neon-cyan block mb-1">{t.pages.information.projectUse}</span>
                             {tech.use}
                           </p>
                        </div>
                     </div>
                     <div className="mt-auto pt-4 flex items-center gap-2 text-[10px] font-black text-gray-500 group-hover:text-white transition-colors uppercase italic">
-                      Ver Documentación Oficial <div className="w-3 h-3">{I.arrow}</div>
+                      {t.pages.information.viewDocs} <div className="w-3 h-3">{I.arrow}</div>
                     </div>
                  </Link>
                ))}
@@ -803,8 +803,8 @@ export default function InformationPage() {
         {/* --- EXPLORA EL PROYECTO --- */}
         <motion.section id="explora" data-scrollspy initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={sectionVariants} className="space-y-12">
           <div className="text-center space-y-2">
-            <h2 className="text-5xl font-header font-black text-white uppercase italic tracking-tighter">Explora el Proyecto</h2>
-            <p className="text-[10px] text-neon-cyan font-black uppercase tracking-[0.4em] opacity-60">Ecosistema MuzicMania</p>
+            <h2 className="text-5xl font-header font-black text-white uppercase italic tracking-tighter">{t.pages.information.exploreProject}</h2>
+            <p className="text-[10px] text-neon-cyan font-black uppercase tracking-[0.4em] opacity-60">{t.pages.information.ecosystemTitle}</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
@@ -821,7 +821,7 @@ export default function InformationPage() {
                    <div className={`w-8 h-8 text-neon-${link.color} transform group-hover:scale-110 transition-transform`}>{link.icon}</div>
                    <div className="space-y-1">
                       <h4 className="text-white font-black uppercase text-sm italic">{link.name}</h4>
-                      <p className="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Portal Oficial</p>
+                      <p className="text-[9px] text-gray-500 font-bold uppercase tracking-widest">{t.pages.information.officialPortal}</p>
                    </div>
                 </div>
                 <div className="w-6 h-6 text-white opacity-0 transform translate-x-4 group-hover:translate-x-0 group-hover:opacity-100 transition-all italic">{I.arrow}</div>
@@ -843,17 +843,17 @@ export default function InformationPage() {
 
                 <div className="flex-1 text-center sm:text-left space-y-1.5">
                    <h3 className="text-xl font-header font-black text-white uppercase italic tracking-widest drop-shadow-md">
-                     Orígenes & Arquitectura
+                     {t.pages.information.originsArch}
                    </h3>
                    <p className="text-[10px] sm:text-[11px] font-bold text-gray-400 uppercase tracking-widest leading-relaxed">
-                     Explora la matriz creadora detrás del ecosistema. Identifica a <strong>Ciszuko Antony</strong> (CEO) y los cimientos de <strong>Ciszu Network</strong>.
+                     {t.pages.information.exploresMatrix} <strong>{t.pages.information.creatorName}</strong> {t.pages.information.ceoTag} <strong>{t.pages.information.ciszuNetwork}</strong>.
                    </p>
                 </div>
 
                 {/* Botón Acción Lateral */}
                 <div className="shrink-0">
                    <span className="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 text-white hover:text-black text-[10px] font-black uppercase tracking-[0.2em] rounded-full group-hover:bg-neon-cyan group-hover:border-transparent group-hover:shadow-[0_0_20px_rgba(0,240,255,0.6)] transition-all">
-                      Ingresar a The Team
+                      {t.pages.information.enterTeam}
                       <div className="w-3 h-3 group-hover:translate-x-1 transition-transform">
                         {I.arrow}
                       </div>
