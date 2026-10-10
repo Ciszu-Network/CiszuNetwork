@@ -23,6 +23,8 @@ export interface SaveDockLabels {
 interface Props {
   dirty: boolean;
   status: SaveStatus;
+  /** Aviso extra (p. ej. bot desconectado) dentro del panel. */
+  note?: string | null;
   busy: boolean;
   autoSave: boolean;
   canUndo: boolean;
@@ -44,6 +46,7 @@ const chip =
  * tras guardar y bloquea la interacción mientras la petición está en vuelo.
  */
 export function SaveDock({
+  note,
   dirty,
   status,
   busy,
@@ -99,6 +102,12 @@ export function SaveDock({
           {status === 'idle' && dirty && <span className="h-2 w-2 rounded-full bg-amber-400" />}
           <span className="max-w-[180px] truncate">{statusText}</span>
         </span>
+
+        {note && (
+          <span className="max-w-[230px] text-left text-[10px] font-bold leading-snug text-amber-300/90">
+            {note}
+          </span>
+        )}
 
         <button type="button" onClick={onUndo} disabled={!canUndo || busy} className={chip} title={labels.undo}>
           ↶ <span className="hidden sm:inline">{labels.undo}</span>

@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { getSessionUserId, getGuildsForUser, isGuildAdmin, getBotGuildIds } from '@/lib/auth';
 import { INVITE_URL } from '@/lib/i18n';
 import DashboardShell from '@/components/dashboard/DashboardShell';
+import BotOfflineModal from '@/components/status/BotOfflineModal';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,6 +30,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <DashboardShell guilds={adminGuilds} lang={lang} inviteUrl={INVITE_URL}>
+      <BotOfflineModal />
       {children}
     </DashboardShell>
   );

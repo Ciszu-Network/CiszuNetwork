@@ -7,6 +7,8 @@ import { Icon } from '@ciszu/ui';
 import { getDict, readCookieLang, type Dict } from '@/lib/i18n';
 import type { GuildInfo } from '@/lib/discordGuild';
 import { SaveDock, type SaveStatus } from '@/components/dashboard/SaveDock';
+import useLiveBotStatus from '@/components/home/useLiveBotStatus';
+import { resolveBotStatus } from '@/lib/botStatus';
 
 interface GuildConfig {
   prefix?: string;
@@ -228,6 +230,20 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   });
   const guildData = liveGuild ?? guildInfo ?? null;
 
+  // Estado real del bot (heartbeat/modo manual) para avisos y bloqueos suaves.
+  const liveStatus = useLiveBotStatus(null);
+  const resolved = resolveBotStatus(liveStatus, Date.now());
+  const offline = liveStatus !== null && !resolved.online;
+  const offlineReasonKey = resolved.reason ?? 'unknown';
+  const botOnlineNow = liveStatus ? resolved.online : Boolean(guildData);
+  const offlineRef = useRef(false);
+  offlineRef.current = offline;
+  const dictRef = useRef(dict);
+  dictRef.current = dict;
+  const liveStatusRef = useRef(liveStatus);
+  liveStatusRef.current = liveStatus;
+  const botStatusDict = () => dictRef.current.botStatus;
+
   const dirty = useMemo(
     () => Boolean(config) && JSON.stringify(config) !== baseline,
     [config, baseline]
@@ -311,6 +327,10 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
       setBaseline(JSON.stringify(variables));
       void queryClient.invalidateQueries({ queryKey: ['guild-config', guildId] });
       setStatus('ok');
+      if (offlineRef.current) {
+        setFlash(botStatusDict().saveOfflineNote.replace('{reason}', botStatusDict().reasons[resolveBotStatus(liveStatusRef.current, Date.now()).reason ?? 'unknown']));
+        setTimeout(() => setFlash(null), 4500);
+      }
       if (okTimer.current) clearTimeout(okTimer.current);
       okTimer.current = setTimeout(() => setStatus('idle'), 1200);
     },
@@ -518,9 +538,14 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
             </div>
             <div className="rounded-xl border border-white/10 bg-black/25 px-3 py-2.5">
               <p className="text-[10px] font-black uppercase tracking-widest text-white/40">{t.botLabel}</p>
-              <p className={`text-lg font-bold ${guildData ? 'text-emerald-400' : 'text-red-400'}`}>
-                {guildData ? t.botOnline : t.botOffline}
+              <p className={`text-lg font-bold ${botOnlineNow ? 'text-emerald-400' : 'text-red-400'}`}>
+                {botOnlineNow ? t.botOnline : t.botOffline}
               </p>
+              {!botOnlineNow && liveStatus !== null && (
+                <p className="mt-0.5 text-[9px] font-bold uppercase tracking-widest text-amber-400/90">
+                  {dict.botStatus.reasons[offlineReasonKey]}
+                </p>
+              )}
             </div>
           </div>
           <p className="mt-2 text-[10px] text-white/35">{t.refreshHint}</p>
@@ -530,6 +555,20 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
             {t.betaNote}
           </div>
         </div>
+
+        {offline && (
+          <div className="mt-6 rounded-2xl border border-amber-400/40 bg-amber-400/10 px-4 py-3">
+            <p className="text-[10px] font-black uppercase tracking-[0.25em] text-amber-400">
+              {dict.botStatus.bannerTitle}
+            </p>
+            <p className="mt-1 text-xs text-white/70">
+              {dict.botStatus.bannerBody.replace('{reason}', dict.botStatus.reasons[offlineReasonKey])}
+            </p>
+            <p className="mt-1 text-[11px] text-white/45">
+              {dict.botStatus.disabledNote} {dict.botStatus.refreshHint}
+            </p>
+          </div>
+        )}
 
         <div aria-busy={busy} className={`mt-8 space-y-6 ${muted}`}>
           {/* General */}
@@ -941,6 +980,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
       </div>
 
       <SaveDock
+        note={offline ? dict.botStatus.saveOfflineNote.replace('{reason}', dict.botStatus.reasons[offlineReasonKey]) : null}
         dirty={dirty}
         status={status}
         busy={busy}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { BotStatus } from '@/lib/botStatus';
+import { BOT_STATUS_SELECT, type BotStatus } from '@/lib/botStatus';
 
 const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://obwzzmbvkrcscqwptlqo.supabase.co';
 const SB_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -26,7 +26,7 @@ export default function useLiveBotStatus(initial: BotStatus | null): BotStatus |
     const load = async () => {
       try {
         const res = await fetch(
-          `${SB_URL}/rest/v1/bot_status?select=online,last_seen,started_at,version,guilds,commands_total,prefix&id=eq.1`,
+          `${SB_URL}/rest/v1/bot_status?select=${BOT_STATUS_SELECT}&id=eq.1`,
           {
             headers: {
               apikey: SB_KEY,

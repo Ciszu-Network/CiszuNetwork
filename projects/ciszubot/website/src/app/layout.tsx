@@ -14,6 +14,7 @@ import { assetResolver } from "@ciszunetwork/cdn";
 import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import QueryProvider from "@/components/layout/QueryProvider";
+import BotOfflineDisclaimer from "@/components/status/BotOfflineDisclaimer";
 import AuthProvider from "@/components/providers/AuthProvider";
 import AdsWithUser from "@/components/providers/AdsWithUser";
 import "./globals.scss";
@@ -112,6 +113,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                <RedirectGuard debug={true} />
               <DisclaimerProvider>
               {/* BetaDisclaimer removido: ahora usa el sistema de push global (GlobalDisclaimer) */}
+              <BotOfflineDisclaimer />
               <HideOnEdit><Navbar /></HideOnEdit>
               <HideOnEdit><ZoomWarning /></HideOnEdit>
               <HideOnEdit><DisclaimerStack headerHeight={64} /></HideOnEdit>

@@ -11,6 +11,7 @@ import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 import { DualLoginCard } from '@/components/dashboard/DualLoginCard';
+import { BOT_STATUS_SELECT, resolveBotStatus, type BotStatus } from '@/lib/botStatus';
 
 export const metadata: Metadata = {
   title: 'CiszuBot | DASHBOARD',
@@ -32,6 +33,25 @@ const USEFUL_LINKS: { key: LinkKey; href: string; icon: string }[] = [
 ];
 
 const USER_INSTALL_URL = `https://discord.com/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&scope=applications.commands&integration_type=1`;
+
+const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://obwzzmbvkrcscqwptlqo.supabase.co';
+const SB_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
+/** Lee el estado real del bot (público) con revalidación de 60s. */
+async function getBotStatusRow(): Promise<BotStatus | null> {
+  if (!SB_KEY) return null;
+  try {
+    const res = await fetch(`${SB_URL}/rest/v1/bot_status?select=${BOT_STATUS_SELECT}&id=eq.1`, {
+      headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, 'Accept-Profile': 'ciszubot' },
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) return null;
+    const rows = (await res.json()) as BotStatus[];
+    return rows[0] ?? null;
+  } catch {
+    return null;
+  }
+}
 
 export default async function DashboardPage() {
   const store = await cookies();
@@ -56,6 +76,9 @@ export default async function DashboardPage() {
   const me = meRows[0];
 
   const [guilds, botGuilds] = await Promise.all([getGuildsForUser(userId), getBotGuildIds()]);
+  const botRow = await getBotStatusRow();
+  const bot = resolveBotStatus(botRow, Date.now());
+  const botReason = t.botStatus.reasons[bot.reason ?? 'unknown'];
 
   const manageable = guilds.filter((g) => isGuildAdmin(g));
   const activeCount = manageable.filter((g) => botGuilds.has(g.id)).length;
@@ -339,6 +362,40 @@ export default async function DashboardPage() {
               ))}
             </div>
           </div>
+        </section>
+
+        {/* Estado del bot (global, antes de QuickDocks) */}
+        <section className={`mt-12 rounded-3xl border p-6 ${THEME.border} ${THEME.card}`}>
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="flex items-center gap-2 font-header text-lg font-black text-ink">
+              <Icon name="chart-bar" size={18} className={THEME.accent} />
+              {t.botStatus.title}
+            </h2>
+            <span
+              className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-widest ${bot.online ? 'border-emerald-400/40 bg-emerald-400/10 text-emerald-400' : 'border-amber-400/40 bg-amber-400/10 text-amber-400'}`}
+            >
+              <span className={`h-1.5 w-1.5 rounded-full ${bot.online ? 'animate-pulse bg-emerald-400' : 'bg-amber-400'}`} />
+              {bot.online ? t.botStatus.online : t.botStatus.offline}
+            </span>
+            <span className="rounded-full border border-border bg-bg px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-muted">
+              {t.botStatus.live}
+            </span>
+          </div>
+          {!bot.online && (
+            <div className="mt-3 space-y-1">
+              <p className="text-sm text-muted">
+                {t.botStatus.bannerBody.replace('{reason}', botReason)}
+              </p>
+              <p className="text-xs text-muted/80">
+                {t.botStatus.disabledNote} {t.botStatus.refreshHint}
+              </p>
+              {bot.since && (
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted/70">
+                  {t.botStatus.since.replace('{time}', new Date(bot.since).toLocaleString())}
+                </p>
+              )}
+            </div>
+          )}
         </section>
 
         {/* CTA final */}
