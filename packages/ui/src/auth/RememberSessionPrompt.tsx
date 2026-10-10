@@ -14,6 +14,7 @@
  */
 
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { isRememberEnabled, setRememberEnabled } from './rememberSession';
 
 export interface RememberSessionPromptProps {
@@ -35,6 +36,12 @@ export default function RememberSessionPrompt({
 }: RememberSessionPromptProps) {
   const [open, setOpen] = useState(false);
   const [decided, setDecided] = useState(false);
+  // Portal: los navbars usan transform (fixed crea containing block) y el modal
+  // se anclaba arriba; montarlo en <body> lo centra siempre en el viewport.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!userId) return;
@@ -59,9 +66,9 @@ export default function RememberSessionPrompt({
     setOpen(false);
   };
 
-  if (!open || decided) return null;
+  if (!open || decided || !mounted) return null;
 
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
@@ -114,6 +121,7 @@ export default function RememberSessionPrompt({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

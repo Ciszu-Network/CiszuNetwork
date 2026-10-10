@@ -10,6 +10,7 @@
  */
 
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 export interface SanctionNoticeSupabase {
   schema?(name: string): any;
@@ -44,6 +45,11 @@ export default function SanctionNotice({
   profileUrl,
 }: SanctionNoticeProps) {
   const [sanction, setSanction] = useState<Sanction | null>(null);
+  // Portal a <body>: los navbars usan transform y `fixed` se anclaba arriba.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -97,10 +103,10 @@ export default function SanctionNotice({
     };
   }, [supabase, site, profileUrl]);
 
-  if (!sanction) return null;
+  if (!sanction || !mounted) return null;
 
   const isBan = sanction.type === 'ban';
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
@@ -151,6 +157,7 @@ export default function SanctionNotice({
           Entendido
         </button>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

@@ -1,6 +1,7 @@
 ﻿'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { SmartImage } from '@ciszu/ui';
 import { supabase } from '@/config/supabase';
@@ -151,8 +152,8 @@ export default function LoginPage() {
             {discord ? `${dict.dashboardPage.discordConnected}: ${discord.name ?? 'Discord'}` : dict.dashboardPage.discordNotConnected}
           </div>
           <div className="flex flex-col gap-2">
-            <a href="/dashboard" className="flex items-center justify-center rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-white">{dict.dashboardPage.openDashboard}</a>
-            <a href="/settings" className="flex items-center justify-center rounded-xl border border-border px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-muted hover:text-ink">{dict.dashboardPage.openSettings}</a>
+            <Link href="/dashboard" className="flex items-center justify-center rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-white">{dict.dashboardPage.openDashboard}</Link>
+            <Link href="/settings" className="flex items-center justify-center rounded-xl border border-border px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-muted hover:text-ink">{dict.dashboardPage.openSettings}</Link>
             {!discord && (
               <a href="/api/auth/discord" className="flex items-center justify-center rounded-xl bg-[#5865F2] px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-white">{dict.dashboardPage.connectDiscord}</a>
             )}
