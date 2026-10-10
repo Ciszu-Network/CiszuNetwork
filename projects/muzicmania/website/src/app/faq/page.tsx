@@ -114,8 +114,8 @@ const faqData = [
 ];
 
 export default function FAQPage() {
-  usePageTitle('FAQ');
   const t = useT();
+  usePageTitle('FAQ');
   const [searchTerm, setSearchTerm] = useState('');
   const [openId, setOpenId] = useState<number | null>(null);
 
@@ -168,7 +168,7 @@ export default function FAQPage() {
             </div>
             <input 
               type="text" 
-              placeholder="Busca una pregunta (ej: bug, cuenta, móvil)..."
+              placeholder={t.pages.misc.phFaq}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="flex-1 bg-transparent border-none outline-none px-4 text-white font-header font-bold placeholder:text-gray-700 transition-all"
@@ -233,14 +233,14 @@ export default function FAQPage() {
                      {I.help}
                    </div>
                    <div className="space-y-2">
-                     <p className="text-gray-500 font-header font-black uppercase italic text-xl tracking-widest">No se encontraron resultados</p>
-                     <p className="text-xs text-gray-700 font-black uppercase tracking-[0.3em]">Intenta con otros términos o reinicia la búsqueda</p>
+                     <p className="text-gray-500 font-header font-black uppercase italic text-xl tracking-widest">{t.pages.misc.faqNoResults}</p>
+                     <p className="text-xs text-gray-700 font-black uppercase tracking-[0.3em]">{t.pages.misc.faqNoResultsHint}</p>
                    </div>
                    <button 
                      onClick={() => setSearchTerm('')}
                      className="px-10 py-4 bg-neon-cyan/20 border border-neon-cyan/40 text-neon-cyan rounded-xl font-header font-black uppercase tracking-widest text-xs hover:bg-neon-cyan hover:text-black transition-all"
                    >
-                     Reiniciar búsqueda
+                     {t.pages.misc.faqReset}
                    </button>
                 </motion.div>
               )}

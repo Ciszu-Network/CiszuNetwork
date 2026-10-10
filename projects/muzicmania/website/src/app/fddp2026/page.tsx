@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useT } from '@/hooks/useT';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePageTitle } from '@/lib/usePageTitle';
 
@@ -37,6 +38,7 @@ function FloatingIcon({ x, delay, duration, opacity, children }: { x: number; de
 }
 
 export default function FddpPage() {
+  const t = useT();
   usePageTitle('FDDP 2026');
   const [stars, setStars] = useState<{ id: number; x: number; y: number; size: number; delay: number; duration: number }[]>([]);
   const [floatIcons, setFloatIcons] = useState<{ id: number; x: number; size: number; delay: number; duration: number; opacity: number; icon: 'star' | 'trophy' | 'zap' }[]>([]);
@@ -201,7 +203,7 @@ export default function FddpPage() {
             transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
             whileHover={{ scale: 1.04, filter: 'drop-shadow(0 0 40px rgba(59,130,246,0.6))', transition: { duration: 0.3 } }}
           >
-            Feliz D&iacute;a del Padre
+            {t.pages.misc.fddpTitle}
           </motion.h1>
 
           {/* Decorative line */}
@@ -239,7 +241,7 @@ export default function FddpPage() {
               transition={{ delay: 0.3, duration: 0.8 }}
               whileHover={{ color: '#f97316', transition: { duration: 0.3 } }}
             >
-              Gracias pap&aacute; por todo tu apoyo, tu esfuerzo y cada enseñanza que me has dado.
+              {t.pages.misc.fddpA}
             </motion.p>
             <motion.p
               className="text-sm sm:text-base font-medium leading-relaxed text-white/50 cursor-default"
@@ -248,7 +250,7 @@ export default function FddpPage() {
               transition={{ delay: 0.6, duration: 0.8 }}
               whileHover={{ color: '#60a5fa', transition: { duration: 0.3 } }}
             >
-              Eres mi ejemplo a seguir, mi gu&iacute;a y mi mayor inspiraci&oacute;n. Este proyecto lleva tu apoyo en cada l&iacute;nea de c&oacute;digo.
+              {t.pages.misc.fddpB}
             </motion.p>
             <motion.p
               className="text-sm sm:text-base font-medium leading-relaxed text-white/50 cursor-default"
@@ -257,7 +259,7 @@ export default function FddpPage() {
               transition={{ delay: 0.9, duration: 0.8 }}
               whileHover={{ color: '#60a5fa', transition: { duration: 0.3 } }}
             >
-              Te amo con todo mi coraz&oacute;n. Feliz D&iacute;a del Padre.
+              {t.pages.misc.fddpC}
             </motion.p>
           </div>
 
@@ -277,7 +279,7 @@ export default function FddpPage() {
               }}
               whileHover={{ scale: 1.05, filter: 'drop-shadow(0 0 20px rgba(249,115,22,0.5))', transition: { duration: 0.3 } }}
             >
-              — Tu hijo —
+              {t.pages.misc.fddpSign}
             </motion.p>
             <motion.p
               className="text-[10px] text-white/20 font-black uppercase tracking-[0.5em] mt-2"

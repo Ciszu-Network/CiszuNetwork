@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { useT } from '@/hooks/useT';
 import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -22,6 +23,7 @@ const entryIcon = (item: { icon?: string; types: string[] }) =>
   I.history;
 
 export default function ChangelogDetail() {
+  const t = useT();
   usePageTitle('CHANGELOG');
   const { id } = useParams();
 const { toast } = useToast();
@@ -43,8 +45,8 @@ const { toast } = useToast();
     return (
       <MainLayout>
         <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-center space-y-6">
-          <h1 className="text-4xl font-header font-black text-white uppercase italic tracking-tighter">VERSIÓN NO ENCONTRADA</h1>
-          <Link href="/changelog" className="text-neon-blue font-black tracking-widest uppercase text-xs pb-1 border-b border-neon-blue/40 hover:border-neon-blue transition-all">Volver al Registro Maestro</Link>
+          <h1 className="text-4xl font-header font-black text-white uppercase italic tracking-tighter">{t.pages.misc.cidNotFound}</h1>
+          <Link href="/changelog" className="text-neon-blue font-black tracking-widest uppercase text-xs pb-1 border-b border-neon-blue/40 hover:border-neon-blue transition-all">{t.pages.misc.cidBackMaster}</Link>
         </div>
       </MainLayout>
     );
@@ -71,7 +73,7 @@ const { toast } = useToast();
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pt-8">
            <Link href="/changelog" className={`inline-flex items-center gap-4 font-black uppercase text-[10px] tracking-[0.4em] group ${primaryTag.color}`}>
               <div className="w-6 h-6 group-hover:-translate-x-2 transition-transform">{I.back || I.arrow}</div>
-              VOLVER AL REGISTRO
+              {t.pages.misc.cidBackLog}
            </Link>
         </motion.div>
 
@@ -162,7 +164,7 @@ const { toast } = useToast();
               <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${primaryTag.gradient} opacity-40`} />
               <div className="flex items-center gap-5">
                  <div className={`w-10 h-10 ${primaryTag.color}`}>{I.code}</div>
-                 <h3 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">BITÁCORA TÉCNICA</h3>
+                 <h3 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">{t.pages.misc.cidTechLog}</h3>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">

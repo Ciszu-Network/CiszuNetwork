@@ -1,6 +1,7 @@
 'use client';
 
 import * as Sentry from '@sentry/nextjs';
+import { useT } from '@/hooks/useT';
 import { useEffect } from 'react';
 
 export default function GlobalError({
@@ -8,6 +9,7 @@ export default function GlobalError({
 }: {
   error: Error & { digest?: string };
 }) {
+  const t = useT();
   useEffect(() => {
     Sentry.captureException(error);
   }, [error]);
@@ -28,9 +30,9 @@ export default function GlobalError({
         }}
       >
         <div>
-          <h1 style={{ fontSize: '3rem', margin: 0 }}>¡Ups!</h1>
+          <h1 style={{ fontSize: '3rem', margin: 0 }}>{t.pages.misc.errTitle}</h1>
           <p style={{ opacity: 0.8 }}>
-            Algo salió mal cargando esta página. Intenta recargar en unos segundos.
+            {t.pages.misc.errDesc}
           </p>
         </div>
       </body>

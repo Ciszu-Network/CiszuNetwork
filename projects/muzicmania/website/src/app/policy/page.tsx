@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useT } from '@/hooks/useT';
 import { motion } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
@@ -35,6 +36,7 @@ const POLICY_ARTICLES = [
 ];
 
 export default function PolicyPage() {
+  const t = useT();
   usePageTitle('PRIVACY');
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -68,7 +70,7 @@ export default function PolicyPage() {
                 </h1>
              </div>
              <p className="text-neon-pink font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-               Protección de tu Identidad Digital
+               {t.pages.misc.policyHero}
              </p>
           </div>
         </motion.header>
@@ -88,7 +90,7 @@ export default function PolicyPage() {
             
             <div className="flex items-center gap-4 pb-8 border-b border-white/5 opacity-50">
                <div className="w-8 h-8 text-white/20">{I.eye}</div>
-               <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">Protocolo de Privacidad de la Red Ciszu</span>
+               <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">{t.pages.misc.policyDoc}</span>
             </div>
 
             <div className="space-y-10">
@@ -120,8 +122,8 @@ export default function PolicyPage() {
             {/* Footer Sign-off */}
             <div className="pt-16 mt-16 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 opacity-40">
                <div className="space-y-1 text-center md:text-left">
-                 <p className="text-[10px] font-black uppercase tracking-widest text-white">Seguridad de Datos de MuzicMania</p>
-                 <p className="text-[9px] font-bold text-gray-500 italic">Actualizado 2026-04-18</p>
+                 <p className="text-[10px] font-black uppercase tracking-widest text-white">{t.pages.misc.policySection}</p>
+                 <p className="text-[9px] font-bold text-gray-500 italic">{t.pages.misc.policyUpdated}</p>
                </div>
                <div className="w-24 h-1 bg-neon-pink/50 rounded-full" />
             </div>

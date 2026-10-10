@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useT } from '@/hooks/useT';
 import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
 import MainLayout from '@/components/templates/MainLayout';
@@ -8,6 +9,7 @@ import { usePageTitle } from '@/lib/usePageTitle';
 import { useToast } from '@ciszu/ui';
 
 export default function ProfileRedirect() {
+  const t = useT();
   usePageTitle('PROFILE');
   const router = useRouter();
   const { user } = useAppStore();
@@ -27,7 +29,7 @@ export default function ProfileRedirect() {
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
         <div className="w-16 h-16 border-4 border-neon-cyan border-t-transparent rounded-full animate-spin shadow-neon-blue" />
         <p className="text-neon-cyan font-header font-black uppercase tracking-widest text-xs animate-pulse">
-          Redirigiendo...
+          {t.pages.misc.redirecting}
         </p>
       </div>
     </MainLayout>

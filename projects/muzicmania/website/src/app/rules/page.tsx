@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useT } from '@/hooks/useT';
 import { motion } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
@@ -38,6 +39,7 @@ const RULES_ARTICLES = [
   };
 
 export default function RulesPage() {
+  const t = useT();
   usePageTitle('RULES');
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -71,7 +73,7 @@ export default function RulesPage() {
                 </h1>
              </div>
              <p className="text-neon-red font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-               Código de Conducta y Fair Play
+               {t.pages.misc.rulesHero}
              </p>
           </div>
         </motion.header>
@@ -91,7 +93,7 @@ export default function RulesPage() {
             
             <div className="flex items-center gap-4 pb-8 border-b border-white/5 opacity-50">
                <div className="w-8 h-8 text-white/20">{I.seal}</div>
-               <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">Reglamento Oficial de MuzicMania</span>
+               <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">{t.pages.misc.rulesDoc}</span>
             </div>
 
             <div className="space-y-10">
@@ -123,8 +125,8 @@ export default function RulesPage() {
             {/* Footer Sign-off */}
             <div className="pt-16 mt-16 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 opacity-40">
                <div className="space-y-1 text-center md:text-left">
-                 <p className="text-[10px] font-black uppercase tracking-widest text-white">Jurisdicción de la Red Ciszu</p>
-                 <p className="text-[9px] font-bold text-gray-500 italic">Actualizado 10/06/2026</p>
+                 <p className="text-[10px] font-black uppercase tracking-widest text-white">{t.pages.misc.rulesJuris}</p>
+                 <p className="text-[9px] font-bold text-gray-500 italic">{t.pages.misc.rulesUpdated}</p>
                </div>
                <div className="w-24 h-1 bg-neon-red/50 rounded-full" />
             </div>

@@ -34,8 +34,8 @@ interface LeaderboardEntry {
 }
 
 export default function LeaderboardPage() {
-  usePageTitle('LEADERBOARD');
   const t = useT();
+  usePageTitle('LEADERBOARD');
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -115,7 +115,7 @@ export default function LeaderboardPage() {
                 <input 
                   value={search}
                   onChange={(e) => setSearch(e.target.value.replace(/\s/g, ''))}
-                  placeholder="LOCALIZAR_USUARIO..." 
+                  placeholder={t.pages.misc.phFindUser} 
                   className="flex-1 bg-transparent border-none outline-none text-white font-header font-bold text-xl uppercase tracking-widest placeholder:text-white/5"
                 />
                 <button onClick={fetchLeaderboard} className="w-14 h-14 bg-white/5 text-white/40 rounded-full flex items-center justify-center hover:bg-neon-yellow hover:text-black transition-all">
@@ -132,15 +132,15 @@ export default function LeaderboardPage() {
               <div className="flex items-center gap-5">
                  <div className="w-12 h-12 text-neon-yellow drop-shadow-neon-yellow">{I.trophy}</div>
                  <div className="space-y-0.5">
-                    <span className="font-header font-black uppercase tracking-[0.2em] text-xl italic text-white">Filtro de Élite</span>
-                    <p className="text-[9px] text-white/20 font-black uppercase tracking-widest">Sincronización por Parámetros</p>
+                    <span className="font-header font-black uppercase tracking-[0.2em] text-xl italic text-white">{t.pages.misc.lbFilter}</span>
+                    <p className="text-[9px] text-white/20 font-black uppercase tracking-widest">{t.pages.misc.lbSync}</p>
                  </div>
               </div>
 
               <div className="flex gap-3 overflow-x-auto flex-nowrap pb-2 justify-center w-full max-w-full scrollbar-hide">
                  {[
                    { id: 'highest_score', label: 'SCORE', icon: I.trophy, color: 'yellow' },
-                   { id: 'accuracy', label: 'PRECISIÓN', icon: I.target, color: 'blue' },
+                   { id: 'accuracy', label: '{t.pages.misc.lbAccuracy}', icon: I.target, color: 'blue' },
                    { id: 'max_multiplier', label: 'COMBO', icon: I.zap, color: 'pink' },
                    { id: 'total_playtime_minutes', label: 'TIEMPO', icon: I.clock, color: 'cyan' },
                  ].map(filter => (
@@ -172,10 +172,10 @@ export default function LeaderboardPage() {
            <div className="grid grid-cols-12 gap-4 px-12 text-[10px] font-black uppercase tracking-[0.5em] text-white/20 mb-4">
               <div className="col-span-1 text-center">RANK</div>
               <div className="col-span-5">USUARIO</div>
-              <div className="col-span-2 text-right">PUNTUACIÓN</div>
+              <div className="col-span-2 text-right">{t.pages.misc.lbScore}</div>
               <div className="col-span-1 text-right">COMBO</div>
               <div className="col-span-1 text-right">TIEMPO</div>
-              <div className="col-span-2 text-right">PRECISIÓN</div>
+              <div className="col-span-2 text-right">{t.pages.misc.lbAccuracy}</div>
            </div>
 
            <div className="space-y-4">

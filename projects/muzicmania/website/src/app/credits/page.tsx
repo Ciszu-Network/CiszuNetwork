@@ -1,6 +1,7 @@
 'use client';
 
 import MainLayout from '@/components/templates/MainLayout';
+import { useT } from '@/hooks/useT';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { motion } from 'framer-motion';
 import { usePageTitle } from '@/lib/usePageTitle';
@@ -37,6 +38,7 @@ const CreditSection = ({ title, credits }: { title: string, credits: { role: str
 );
 
 export default function CreditsPage() {
+  const t = useT();
   usePageTitle('CREDITS');
   const devCredits = [
     { role: 'Fundador & Director General', name: 'Ciszuko Antony (Francisco Garcia)' },
@@ -76,10 +78,10 @@ export default function CreditsPage() {
           className="text-center mb-32"
         >
           <h1 className="text-4xl md:text-8xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-neon-blue to-white bg-clip-text text-transparent [-webkit-text-stroke:1px_black]">
-            CRÉDITOS Y <span className="text-white [-webkit-text-stroke:0px]">CONTRIBUCIONES</span>
+            {t.pages.misc.creditsTitle} <span className="text-white [-webkit-text-stroke:0px]">CONTRIBUCIONES</span>
           </h1>
           <p className="mt-6 text-xs md:text-sm text-gray-500 font-bold uppercase tracking-[0.5em]">
-            Desarrollo del Ecosistema MuzicMania
+            {t.pages.misc.creditsSub}
           </p>
         </motion.div>
 
@@ -90,17 +92,17 @@ export default function CreditsPage() {
            transition={{ duration: 2, delay: 0.5 }}
            className="w-full"
         >
-           <CreditSection title="Desarrollo Principal" credits={devCredits} />
+           <CreditSection title={t.pages.misc.creditsDevAria} credits={devCredits} />
            
-           <CreditSection title="Motores y Tecnologías Base" credits={techCredits} />
+           <CreditSection title={t.pages.misc.creditsTechAria} credits={techCredits} />
 
            <div className="space-y-8 mt-40">
              <div className="flex flex-col items-center gap-6">
                 <span className="text-[10px] md:text-xs font-bold text-white/40 tracking-[0.3em] uppercase max-w-lg text-center leading-loose">
-                  Este es un proyecto dedicado a la fusión del ritmo interactivo y arte visual retrofuturista. Desarrollado y forjado línea por línea desde cero.
+                  {t.pages.misc.creditsDesc}
                 </span>
                 <span className="text-xl md:text-3xl font-black text-white italic tracking-tighter uppercase mt-12">
-                  &quot;Keep the Rhythm Alive&quot;
+                  {t.pages.misc.creditsQuote}
                 </span>
              </div>
            </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useT } from '@/hooks/useT';
 import { motion } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
@@ -35,6 +36,7 @@ const LICENSE_ARTICLES = [
   };
 
 export default function LicensePage() {
+  const t = useT();
   usePageTitle('LICENSE');
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -68,7 +70,7 @@ export default function LicensePage() {
                 </h1>
              </div>
              <p className="text-neon-cyan font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-               Open Source & Transparencia
+               {t.pages.misc.licenseHero}
              </p>
           </div>
         </motion.header>
@@ -88,7 +90,7 @@ export default function LicensePage() {
             
             <div className="flex items-center gap-4 pb-8 border-b border-white/5 opacity-50">
                <div className="w-8 h-8 text-white/20">{I.verified}</div>
-               <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">Documento de Validez Tecnográfica</span>
+               <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">{t.pages.misc.licenseDoc}</span>
             </div>
 
             <div className="space-y-10">
@@ -126,8 +128,8 @@ export default function LicensePage() {
             {/* Footer Sign-off */}
             <div className="pt-16 mt-16 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 opacity-40">
                <div className="space-y-1 text-center md:text-left">
-                 <p className="text-[10px] font-black uppercase tracking-widest text-white">Declaración de Libertad de Software</p>
-                 <p className="text-[9px] font-bold text-gray-500 italic">Red Ciszu - MuzicMania 2026</p>
+                 <p className="text-[10px] font-black uppercase tracking-widest text-white">{t.pages.misc.licenseDecl}</p>
+                 <p className="text-[9px] font-bold text-gray-500 italic">{t.pages.misc.licenseFooter}</p>
                </div>
                <div className="w-24 h-1 bg-neon-cyan/50 rounded-full" />
             </div>
