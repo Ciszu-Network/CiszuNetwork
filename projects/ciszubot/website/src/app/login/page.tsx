@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { SmartImage } from '@ciszu/ui';
 import { supabase } from '@/config/supabase';
-import { useAppStore } from '@/store';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useClientI18n } from '@/hooks/useClientI18n';
 import {
@@ -98,7 +97,6 @@ const BOT_ISOTYPE = 'projects/ciszubot/content/logos/images/samples/circle/ciszu
 export default function LoginPage() {
   usePageTitle('LOGIN');
   const router = useRouter();
-  const { user } = useAppStore();
   const { dict } = useClientI18n();
   const t = dict.loginPage;
   const { begin: beginActivity, end: endActivity } = useActivityGuard();
@@ -128,6 +126,9 @@ export default function LoginPage() {
   const [recovery, setRecovery] = useState<{ token: string; email: string } | null>(null);
   const { toast } = useToast();
 
+  // Sesiones duales e INDEPENDIENTES: cada una se verifica contra su propia
+  // fuente (Discord = cookie HMAC vía API; CISZU ID = Supabase). Antes se
+  // mostraba "CISZU ID conectado" con solo la sesión de Discord (falso positivo).
   const [discord, setDiscord] = useState<{ name: string | null } | null>(null);
   useEffect(() => {
     let cancelled = false;
@@ -140,29 +141,24 @@ export default function LoginPage() {
     return () => { cancelled = true; };
   }, []);
 
-  if (user) {
-    return (
-      <div className="min-h-screen pt-24 pb-20 px-4 relative overflow-hidden">
-        <div className="max-w-md mx-auto space-y-4">
-          <div className="rounded-[2rem] border border-emerald-500/30 bg-emerald-500/10 p-6 text-center space-y-2">
-            <p className="font-header text-lg font-black uppercase tracking-wide text-emerald-400">{dict.dashboardPage.ciszuConnected}</p>
-            <p className="text-xs text-muted">{dict.dashboardPage.ciszuConnectedDesc}: {user.email}</p>
-          </div>
-          <div className={`rounded-2xl border p-4 text-center text-xs font-bold ${discord ? 'border-[#5865F2]/40 bg-[#5865F2]/10 text-[#8ea1ff]' : 'border-amber-400/30 bg-amber-400/10 text-amber-400'}`}>
-            {discord ? `${dict.dashboardPage.discordConnected}: ${discord.name ?? 'Discord'}` : dict.dashboardPage.discordNotConnected}
-          </div>
-          <div className="flex flex-col gap-2">
-            <Link href="/dashboard" className="flex items-center justify-center rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-white">{dict.dashboardPage.openDashboard}</Link>
-            <Link href="/settings" className="flex items-center justify-center rounded-xl border border-border px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-muted hover:text-ink">{dict.dashboardPage.openSettings}</Link>
-            {!discord && (
-              <a href="/api/auth/discord" className="flex items-center justify-center rounded-xl bg-[#5865F2] px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-white">{dict.dashboardPage.connectDiscord}</a>
-            )}
-            <button type="button" onClick={() => void supabase.auth.signOut()} className="flex items-center justify-center rounded-xl border border-red-500/30 px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-red-400">{dict.dashboardPage.signOutCiszu}</button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const [ciszuEmail, setCiszuEmail] = useState<string | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    void supabase.auth.getSession().then(({ data }) => {
+      if (!cancelled) setCiszuEmail(data.session?.user?.email ?? null);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      setCiszuEmail(session?.user?.email ?? null);
+    });
+    return () => {
+      cancelled = true;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+
+  const discordConnected = Boolean(discord);
+  const ciszuConnected = Boolean(ciszuEmail);
+  const bothConnected = discordConnected && ciszuConnected;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -405,7 +401,61 @@ export default function LoginPage() {
         <div className="relative group">
           <div className="absolute -inset-1 bg-gradient-to-r from-[#5865F2] to-neon-blue rounded-[2rem] blur opacity-20 transition duration-500" />
           <div className="relative p-6 md:p-8 bg-surface border border-border rounded-[2rem] shadow-2xl space-y-6 backdrop-blur-3xl">
-            {forgot ? (
+            {/* Paneles de sesión duales (estado real de cada una) */}
+            <div className="mb-1 grid gap-2 sm:grid-cols-2">
+              <div
+                className={`rounded-xl border px-3 py-2.5 text-[11px] font-bold ${discordConnected ? 'border-[#5865F2]/40 bg-[#5865F2]/10 text-[#8ea1ff]' : 'border-amber-400/30 bg-amber-400/10 text-amber-400'}`}
+              >
+                <span className="block text-[9px] font-black uppercase tracking-widest opacity-70">
+                  {t.discordPanelTitle}
+                </span>
+                {discordConnected
+                  ? t.discordConnectedChip.replace('{name}', discord?.name ?? 'Discord')
+                  : t.discordPanelDesc}
+              </div>
+              <div
+                className={`rounded-xl border px-3 py-2.5 text-[11px] font-bold ${ciszuConnected ? 'border-emerald-400/40 bg-emerald-400/10 text-emerald-400' : 'border-amber-400/30 bg-amber-400/10 text-amber-400'}`}
+              >
+                <span className="block text-[9px] font-black uppercase tracking-widest opacity-70">
+                  {t.ciszuPanelTitle}
+                </span>
+                {ciszuConnected ? `${t.ciszuConnectedAs} ${ciszuEmail}` : t.ciszuPanelDesc}
+              </div>
+            </div>
+            {bothConnected && (
+              <div className="rounded-xl border border-emerald-400/40 bg-emerald-400/10 px-3 py-2 text-center text-[11px] font-black uppercase tracking-widest text-emerald-400">
+                {t.controlTotal}
+              </div>
+            )}
+
+            {ciszuConnected ? (
+              <div className="space-y-3">
+                <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-center">
+                  <p className="text-emerald-400 text-xs font-bold">
+                    {t.ciszuConnectedAs} {ciszuEmail}
+                  </p>
+                </div>
+                <Link
+                  href="/settings"
+                  className="flex items-center justify-center rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-white"
+                >
+                  {dict.dashboardPage.openSettings}
+                </Link>
+                <Link
+                  href="/dashboard"
+                  className="flex items-center justify-center rounded-xl border border-border px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-muted hover:text-ink"
+                >
+                  {dict.dashboardPage.openDashboard}
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => void supabase.auth.signOut()}
+                  className="flex w-full items-center justify-center rounded-xl border border-red-500/30 px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-red-400"
+                >
+                  {dict.dashboardPage.signOutCiszu}
+                </button>
+              </div>
+            ) : forgot ? (
               <form onSubmit={handleForgotSubmit} className="space-y-5">
                 <div className="text-center space-y-2">
                   <h3 className="text-white font-black uppercase tracking-widest text-sm">{t.recoverIdentity}</h3>
@@ -452,7 +502,12 @@ export default function LoginPage() {
               <>
                 <OAuthProviders
                   showDiscord
-                  renderDiscord={() => (
+                  renderDiscord={() =>
+                    discordConnected ? (
+                      <div className="w-full rounded-xl border border-[#5865F2]/40 bg-[#5865F2]/10 px-4 py-3 text-center text-xs font-bold text-[#8ea1ff]">
+                        {t.discordConnectedChip.replace('{name}', discord?.name ?? 'Discord')}
+                      </div>
+                    ) : (
                     <a
                       href="/api/auth/discord"
                       className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl bg-[#5865F2] text-white font-header font-bold text-sm hover:bg-[#4752c4] hover:-translate-y-0.5 transition-all shadow-[0_8px_22px_-8px_rgba(88,101,242,0.7)] active:scale-95"
@@ -464,7 +519,8 @@ export default function LoginPage() {
                       </span>
                       {t.continueDiscord}
                     </a>
-                  )}
+                    )
+                  }
                   onSelect={(p) => toast(`${p} estará disponible en la beta soon. Usa Discord o CISZU ID por ahora.`, 'warning')}
                 />
 
