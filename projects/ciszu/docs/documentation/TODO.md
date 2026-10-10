@@ -9,6 +9,7 @@
   `SMS_PROVIDER`/`SMS_API_KEY` en el vault + los 4 proyectos Vercel, y aviso por SMS cableado en
   las sanciones del anti-cheat (MuzicMania) cuando el usuario activó `sms_enabled` y dejó teléfono.
   Para volumen real: key de pago de Textbelt o Twilio/Vonage (trials con crédito).
+- [ ] Agregar nuevos documentos a CERFS (12axis) y usarlos en el portfolio.
 - [ ] Migración i18n de literales por lotes (deuda actual: ciszu 379 · ciszubot 326 ·
   antony 246 · muzicmania 937; ratchet `pnpm verify:i18n`).
   PILOTO HECHO (09 oct 2026): página de **login de ciszu** migrada completa (patrón `useDict()` +
@@ -135,6 +136,7 @@
 - [ ] Terminar idiomas en ingles USA.
 - [ ] Terminar idiomas en español LATAM.
 - [ ] Terminar idiomas en español España.
+- [ ] Agregar nuevos documentos a cerfs (12axis) y usarlos para el portfolio.
 
 **MuzicMania Website:**
 
