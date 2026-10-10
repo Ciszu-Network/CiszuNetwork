@@ -87,7 +87,9 @@ const DownloadIcon = () => (
   </svg>
 );
 
-const DownloadOverlay = ({ onClose }: { onClose: () => void }) => (
+const DownloadOverlay = ({ onClose }: { onClose: () => void }) => {
+  const t = useT();
+  return (
   <motion.div
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
@@ -114,7 +116,7 @@ const DownloadOverlay = ({ onClose }: { onClose: () => void }) => (
         transition={{ delay: 0.4 }}
         className="text-4xl md:text-6xl font-header font-black uppercase tracking-tighter bg-gradient-to-r from-neon-blue via-neon-purple to-neon-pink bg-clip-text text-transparent"
       >
-        GRACIAS POR DESCARGAR
+        {t.pages.download.thanksTitle}
       </motion.h2>
       <motion.p
         initial={{ y: 20, opacity: 0 }}
@@ -122,7 +124,7 @@ const DownloadOverlay = ({ onClose }: { onClose: () => void }) => (
         transition={{ delay: 0.6 }}
         className="text-neon-cyan font-black tracking-[0.3em] uppercase text-xs"
       >
-        MUZICMANIA SE ESTÁ PREPARANDO...
+        {t.pages.download.preparing}
       </motion.p>
       <motion.p
         initial={{ y: 20, opacity: 0 }}
@@ -130,11 +132,12 @@ const DownloadOverlay = ({ onClose }: { onClose: () => void }) => (
         transition={{ delay: 0.8 }}
         className="text-gray-600 font-bold tracking-[0.2em] uppercase text-[10px]"
       >
-        HAZ CLIC EN CUALQUIER PARTE PARA CERRAR
+        {t.pages.download.clickAnywhere}
       </motion.p>
     </motion.div>
   </motion.div>
-);
+  );
+};
 
 const InfoCard = ({ title, desc, icon, glowClass, iconClass }: { title: string; desc: string; icon: React.ReactNode; glowClass: string; iconClass: string }) => (
   <div className="bg-white/5 border border-white/10 rounded-3xl p-8 hover:border-white/20 transition-all flex gap-6 items-start relative group overflow-hidden">
@@ -267,17 +270,17 @@ export default function DownloadPage() {
                     <WindowsIcon />
                   </div>
                   <div>
-                    <h2 className="text-xl font-header font-black text-white italic uppercase tracking-tight">WINDOWS EDITION</h2>
-                    <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest block mt-0.5">Compatibilidad total x86 • x64 • ARM64</span>
+                    <h2 className="text-xl font-header font-black text-white italic uppercase tracking-tight">{t.pages.download.windowsEdition}</h2>
+                    <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest block mt-0.5">{t.pages.download.compat}</span>
                   </div>
                 </div>
 
                 <p className="text-gray-300 font-bold text-xs leading-relaxed">
-                  Experiencia nativa con tasa de refresco desbloqueada (soporte 144Hz+), aislamiento total de atajos de teclado y la menor latencia de audio por hardware.
+                  {t.pages.download.nativeDesc}
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                  {/* WINDOWS 10 - MSI */}
+                  {/* {t.pages.download.win10} - MSI */}
                   <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4">
                     <div className="flex items-center gap-3">
                       <div className="text-neon-blue shrink-0">
@@ -286,8 +289,8 @@ export default function DownloadPage() {
                         </svg>
                       </div>
                       <div>
-                        <h3 className="font-header font-black text-white uppercase tracking-tight text-sm italic">WINDOWS 10</h3>
-                        <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">Instalador MSI</span>
+                        <h3 className="font-header font-black text-white uppercase tracking-tight text-sm italic">{t.pages.download.win10}</h3>
+                        <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{t.pages.download.msiBtn}</span>
                       </div>
                     </div>
                     <div className="space-y-2">
@@ -309,14 +312,14 @@ export default function DownloadPage() {
                               DESCARGAR
                             </button>
                           ) : (
-                            <span className="text-[9px] font-black text-rose-700 uppercase tracking-widest">NO COMPILADO</span>
+                            <span className="text-[9px] font-black text-rose-700 uppercase tracking-widest">{t.pages.download.notCompiled}</span>
                           )}
                         </div>
                       )})}
                     </div>
                   </div>
 
-                  {/* WINDOWS 11 - EXE */}
+                  {/* {t.pages.download.win11} - EXE */}
                   <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4">
                     <div className="flex items-center gap-3">
                       <div className="text-neon-cyan shrink-0">
@@ -328,8 +331,8 @@ export default function DownloadPage() {
                         </svg>
                       </div>
                       <div>
-                        <h3 className="font-header font-black text-white uppercase tracking-tight text-sm italic">WINDOWS 11</h3>
-                        <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">Instalador EXE</span>
+                        <h3 className="font-header font-black text-white uppercase tracking-tight text-sm italic">{t.pages.download.win11}</h3>
+                        <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{t.pages.download.exeBtn}</span>
                       </div>
                     </div>
                     <div className="space-y-2">
@@ -351,7 +354,7 @@ export default function DownloadPage() {
                               DESCARGAR
                             </button>
                           ) : (
-                            <span className="text-[9px] font-black text-rose-700 uppercase tracking-widest">NO COMPILADO</span>
+                            <span className="text-[9px] font-black text-rose-700 uppercase tracking-widest">{t.pages.download.notCompiled}</span>
                           )}
                         </div>
                       )})}
@@ -371,19 +374,19 @@ export default function DownloadPage() {
                     <AppleIcon />
                   </div>
                   <div>
-                    <h2 className="text-xl font-header font-black text-gray-400 italic uppercase tracking-tight">MACOS EDITION</h2>
+                    <h2 className="text-xl font-header font-black text-gray-400 italic uppercase tracking-tight">{t.pages.download.macosEdition}</h2>
                     <span className="text-[8px] font-bold text-rose-500 uppercase tracking-widest bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20 block mt-0.5 w-fit">CERRADO</span>
                   </div>
                 </div>
 
                 <p className="text-gray-500 font-bold text-xs leading-relaxed">
-                  Compilado nativo optimizado tanto para procesadores Apple Silicon (M1/M2/M3) como Intel Core. Actualmente disponible solo para beta testers autorizados.
+                  {t.pages.download.macosDesc}
                 </p>
 
                 <div className="space-y-2 text-[10px] text-gray-600 font-black uppercase tracking-widest border-t border-white/5 pt-4">
-                  <div className="flex justify-between"><span>VERSIÓN:</span><span>v1.0.0</span></div>
-                  <div className="flex justify-between"><span>TAMAÑO:</span><span>~ 4.2 MB</span></div>
-                  <div className="flex justify-between"><span>FORMATO:</span><span>Paquete (.DMG)</span></div>
+                  <div className="flex justify-between"><span>{t.pages.download.versionLabel}</span><span>{t.pages.download.versionValue}</span></div>
+                  <div className="flex justify-between"><span>{t.pages.download.sizeLabel}</span><span>{t.pages.download.sizeMac}</span></div>
+                  <div className="flex justify-between"><span>{t.pages.download.formatLabel}</span><span>{t.pages.download.formatMac}</span></div>
                 </div>
               </div>
 
@@ -393,7 +396,7 @@ export default function DownloadPage() {
                   className="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-gray-500 hover:text-white rounded-xl font-header font-black uppercase tracking-widest text-xs hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer relative"
                 >
                   <LockBadge />
-                  UNIRSE A LA BETA
+                  {t.pages.download.joinBeta}
                 </button>
               </div>
             </div>
@@ -408,19 +411,19 @@ export default function DownloadPage() {
                     <LinuxIcon />
                   </div>
                   <div>
-                    <h2 className="text-xl font-header font-black text-gray-400 italic uppercase tracking-tight">LINUX EDITION</h2>
+                    <h2 className="text-xl font-header font-black text-gray-400 italic uppercase tracking-tight">{t.pages.download.linuxEdition}</h2>
                     <span className="text-[8px] font-bold text-rose-500 uppercase tracking-widest bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20 block mt-0.5 w-fit">CERRADO</span>
                   </div>
                 </div>
 
                 <p className="text-gray-500 font-bold text-xs leading-relaxed">
-                  Formato de empaquetado universal para todas las distribuciones principales (Ubuntu, Debian, Fedora, Arch). Seguridad y ligereza máxima en sandboxing.
+                  {t.pages.download.linuxDesc}
                 </p>
 
                 <div className="space-y-2 text-[10px] text-gray-600 font-black uppercase tracking-widest border-t border-white/5 pt-4">
-                  <div className="flex justify-between"><span>VERSIÓN:</span><span>v1.0.0</span></div>
-                  <div className="flex justify-between"><span>TAMAÑO:</span><span>~ 3.9 MB</span></div>
-                  <div className="flex justify-between"><span>FORMATO:</span><span>AppImage / .DEB</span></div>
+                  <div className="flex justify-between"><span>{t.pages.download.versionLabel}</span><span>{t.pages.download.versionValue}</span></div>
+                  <div className="flex justify-between"><span>{t.pages.download.sizeLabel}</span><span>{t.pages.download.sizeLinux}</span></div>
+                  <div className="flex justify-between"><span>{t.pages.download.formatLabel}</span><span>{t.pages.download.formatLinux}</span></div>
                 </div>
               </div>
 
@@ -430,7 +433,7 @@ export default function DownloadPage() {
                   className="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-gray-500 hover:text-white rounded-xl font-header font-black uppercase tracking-widest text-xs hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer relative"
                 >
                   <LockBadge />
-                  UNIRSE A LA BETA
+                  {t.pages.download.joinBeta}
                 </button>
               </div>
             </div>
@@ -450,7 +453,7 @@ export default function DownloadPage() {
                 <MobileIcon />
               </div>
               <h2 className="text-2xl font-header font-black text-neon-pink italic uppercase tracking-tight">
-                EDICIONES MÓVILES
+                {t.pages.download.mobileEditions}
               </h2>
             </div>
             <div className="h-[1px] flex-grow bg-white/5" />
@@ -465,9 +468,9 @@ export default function DownloadPage() {
                   <AndroidIcon />
                 </div>
                 <div className="space-y-1">
-                  <h3 className="font-header font-black text-lg text-white uppercase italic">ANDROID MOBILE SHIELD</h3>
+                  <h3 className="font-header font-black text-lg text-white uppercase italic">{t.pages.download.androidShield}</h3>
                   <p className="text-gray-400 text-xs font-bold leading-relaxed max-w-md">
-                    Descarga directa de APK optimizado para pantallas táctiles y tasa de respuesta de Hz adaptable.
+                    {t.pages.download.androidDesc}
                   </p>
                 </div>
               </div>
@@ -476,7 +479,7 @@ export default function DownloadPage() {
                 className="w-full md:w-auto px-8 py-3.5 bg-white/5 hover:bg-white/10 text-gray-500 hover:text-white rounded-xl border border-white/10 font-header font-black text-xs uppercase tracking-widest shrink-0 transition-all cursor-pointer relative flex items-center justify-center gap-2"
               >
                 <LockBadge />
-                COMPRAR ALPHA
+                {t.pages.download.buyAlpha}
               </button>
             </div>
 
@@ -488,9 +491,9 @@ export default function DownloadPage() {
                   <AppleIcon />
                 </div>
                 <div className="space-y-1">
-                  <h3 className="font-header font-black text-lg text-white uppercase italic">IOS MOBILE EDITION</h3>
+                  <h3 className="font-header font-black text-lg text-white uppercase italic">{t.pages.download.iosEdition}</h3>
                   <p className="text-gray-400 text-xs font-bold leading-relaxed max-w-md">
-                    Instalador para iPhones y iPads distribuido a través de Apple TestFlight.
+                    {t.pages.download.iosDesc}
                   </p>
                 </div>
               </div>
@@ -499,7 +502,7 @@ export default function DownloadPage() {
                 className="w-full md:w-auto px-8 py-3.5 bg-white/5 hover:bg-white/10 text-gray-500 hover:text-white rounded-xl border border-white/10 font-header font-black text-xs uppercase tracking-widest shrink-0 transition-all cursor-pointer relative flex items-center justify-center gap-2"
               >
                 <LockBadge />
-                COMPRAR ALPHA
+                {t.pages.download.buyAlpha}
               </button>
             </div>
           </div>
@@ -518,7 +521,7 @@ export default function DownloadPage() {
                 <WrenchIcon />
               </div>
               <h2 className="text-2xl md:text-3xl font-header font-black text-white italic uppercase tracking-tight">
-                MEJORAS DE ARQUITECTURA DE ESCRITORIO
+                {t.pages.download.desktopImprovements}
               </h2>
             </div>
             <div className="h-[1px] flex-grow bg-white/5 hidden md:block" />
@@ -526,21 +529,21 @@ export default function DownloadPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <InfoCard 
-              title="Prioridad del Proceso" 
+              title={t.pages.download.prioAria} 
               desc="Al ejecutarse en un proceso aislado a través del núcleo de Tauri en Rust, MuzicMania recibe prioridad sobre otros subprocesos de Windows, garantizando cero congelamientos."
               icon={<MonitorIcon />}
               glowClass="bg-neon-blue/5 group-hover:bg-neon-blue/10"
               iconClass="text-neon-blue"
             />
             <InfoCard 
-              title="Aislamiento del Teclado" 
+              title={t.pages.download.keyboardAria} 
               desc="Se interceptan y bloquean atajos de navegador conflictivos (F5, F11, Alt+D, Spacebar scroll). Tus controles y combos permanecen 100% seguros y estables."
               icon={<TerminalIcon />}
               glowClass="bg-neon-purple/5 group-hover:bg-neon-purple/10"
               iconClass="text-neon-purple"
             />
             <InfoCard 
-              title="Motor Gráfico WebView2" 
+              title={t.pages.download.gpuEngineAria} 
               desc="Se utiliza el SDK nativo de Windows Chromium con aceleración directa por GPU y asignación de buffer independiente para mantener frames óptimos (144 fps)."
               icon={<LayersIcon />}
               glowClass="bg-neon-pink/5 group-hover:bg-neon-pink/10"
@@ -559,28 +562,28 @@ export default function DownloadPage() {
           <div className="bg-[#05050a]/90 border border-white/10 rounded-[3rem] p-10 shadow-2xl relative overflow-hidden group space-y-8">
             <div className="absolute top-0 right-0 w-32 h-32 bg-neon-blue/5 blur-3xl group-hover:bg-neon-blue/10 transition-all pointer-events-none" />
             <h3 className="font-header font-black tracking-tighter text-xl text-neon-blue italic uppercase border-b border-white/5 pb-4">
-              REQUISITOS MÍNIMOS DE SISTEMA
+              {t.pages.download.minReqs}
             </h3>
             <ul className="text-gray-400 text-xs font-bold space-y-4 uppercase tracking-wider">
-              <li className="flex justify-between border-b border-white/5 pb-2"><span>SISTEMA OPERATIVO:</span><span className="text-white">Windows 10 (64-bits)</span></li>
-              <li className="flex justify-between border-b border-white/5 pb-2"><span>PROCESADOR:</span><span className="text-white">Intel Core i3 o AMD equivalente</span></li>
-              <li className="flex justify-between border-b border-white/5 pb-2"><span>MEMORIA RAM:</span><span className="text-white">4 GB RAM</span></li>
-              <li className="flex justify-between border-b border-white/5 pb-2"><span>GRÁFICOS:</span><span className="text-white">Gráficos integrados Intel HD</span></li>
-              <li className="flex justify-between pb-2"><span>ESPACIO EN DISCO:</span><span className="text-white">15 MB disponibles</span></li>
+              <li className="flex justify-between border-b border-white/5 pb-2"><span>{t.pages.download.osLabel}</span><span className="text-white">{t.pages.download.osWin10}</span></li>
+              <li className="flex justify-between border-b border-white/5 pb-2"><span>{t.pages.download.procLabel}</span><span className="text-white">{t.pages.download.cpuMin}</span></li>
+              <li className="flex justify-between border-b border-white/5 pb-2"><span>{t.pages.download.ramLabel}</span><span className="text-white">{t.pages.download.ram4}</span></li>
+              <li className="flex justify-between border-b border-white/5 pb-2"><span>{t.pages.download.gpuLabel}</span><span className="text-white">{t.pages.download.gpuIntel}</span></li>
+              <li className="flex justify-between pb-2"><span>{t.pages.download.diskLabel}</span><span className="text-white">{t.pages.download.disk15}</span></li>
             </ul>
           </div>
 
           <div className="bg-[#05050a]/90 border border-white/10 rounded-[3rem] p-10 shadow-2xl relative overflow-hidden group space-y-8">
             <div className="absolute top-0 right-0 w-32 h-32 bg-neon-pink/5 blur-3xl group-hover:bg-neon-pink/10 transition-all pointer-events-none" />
             <h3 className="font-header font-black tracking-tighter text-xl text-neon-pink italic uppercase border-b border-white/5 pb-4">
-              REQUISITOS RECOMENDADOS
+              {t.pages.download.recoReqs}
             </h3>
             <ul className="text-gray-400 text-xs font-bold space-y-4 uppercase tracking-wider">
-              <li className="flex justify-between border-b border-white/5 pb-2"><span>SISTEMA OPERATIVO:</span><span className="text-white">Windows 11 (64-bits)</span></li>
-              <li className="flex justify-between border-b border-white/5 pb-2"><span>PROCESADOR:</span><span className="text-white">Intel Core i5 / AMD Ryzen 5</span></li>
-              <li className="flex justify-between border-b border-white/5 pb-2"><span>MEMORIA RAM:</span><span className="text-white">8 GB RAM o superior</span></li>
-              <li className="flex justify-between border-b border-white/5 pb-2"><span>TASA DE REFRESCO:</span><span className="text-white">Pantalla de 144Hz o superior</span></li>
-              <li className="flex justify-between pb-2"><span>MOTOR DE RENDER:</span><span className="text-white">WebView2 Runtime Instalado</span></li>
+              <li className="flex justify-between border-b border-white/5 pb-2"><span>{t.pages.download.osLabel}</span><span className="text-white">{t.pages.download.osWin11}</span></li>
+              <li className="flex justify-between border-b border-white/5 pb-2"><span>{t.pages.download.procLabel}</span><span className="text-white">{t.pages.download.cpuReco}</span></li>
+              <li className="flex justify-between border-b border-white/5 pb-2"><span>{t.pages.download.ramLabel}</span><span className="text-white">{t.pages.download.ram8}</span></li>
+              <li className="flex justify-between border-b border-white/5 pb-2"><span>{t.pages.download.refreshLabel}</span><span className="text-white">{t.pages.download.refresh144}</span></li>
+              <li className="flex justify-between pb-2"><span>{t.pages.download.renderLabel}</span><span className="text-white">{t.pages.download.webview2}</span></li>
             </ul>
           </div>
         </motion.section>
@@ -598,7 +601,7 @@ export default function DownloadPage() {
                 <VersionIcon />
               </div>
               <h2 className="text-2xl font-header font-black text-white italic uppercase tracking-tight">
-                CENTRO DE VERSIONES
+                {t.pages.download.versionsCenter}
               </h2>
             </div>
             <div className="h-[1px] flex-grow bg-white/5" />
@@ -608,7 +611,7 @@ export default function DownloadPage() {
             <table className="w-full text-left font-header text-xs text-gray-400 uppercase tracking-widest border-collapse">
               <thead>
                 <tr className="bg-black/60 text-white border-b border-white/10">
-                  <th className="p-5 font-black">Versión</th>
+                  <th className="p-5 font-black">{t.pages.download.versionCol}</th>
                   <th className="p-5 font-black">Plataforma</th>
                   <th className="p-5 font-black">Fecha</th>
                   <th className="p-5 font-black">Peso</th>
@@ -617,25 +620,25 @@ export default function DownloadPage() {
               </thead>
               <tbody className="divide-y divide-white/5">
                 <tr className="hover:bg-white/5 transition-all">
-                  <td className="p-5 font-black text-white">v1.0.0</td>
-                  <td className="p-5 font-bold">Windows 10 x64 (.MSI)</td>
+                  <td className="p-5 font-black text-white">{t.pages.download.versionValue}</td>
+                  <td className="p-5 font-bold">{t.pages.download.win10x64Msi}</td>
                   <td className="p-5 font-bold">31/05/2026</td>
-                  <td className="p-5 font-bold">~ 1.6 MB</td>
-                  <td className="p-5 font-black text-neon-blue">ACTIVO / ESTABLE</td>
+                  <td className="p-5 font-bold">{t.pages.download.size16}</td>
+                  <td className="p-5 font-black text-neon-blue">{t.pages.download.activeStable}</td>
                 </tr>
                 <tr className="hover:bg-white/5 transition-all">
-                  <td className="p-5 font-black text-white">v1.0.0</td>
-                  <td className="p-5 font-bold">Windows 11 x64 (.EXE)</td>
+                  <td className="p-5 font-black text-white">{t.pages.download.versionValue}</td>
+                  <td className="p-5 font-bold">{t.pages.download.win11x64Exe}</td>
                   <td className="p-5 font-bold">10/06/2026</td>
-                  <td className="p-5 font-bold">~ 1.2 MB</td>
-                  <td className="p-5 font-black text-neon-cyan">ACTIVO / ESTABLE</td>
+                  <td className="p-5 font-bold">{t.pages.download.size12}</td>
+                  <td className="p-5 font-black text-neon-cyan">{t.pages.download.activeStable}</td>
                 </tr>
                 <tr className="hover:bg-white/5 transition-all opacity-50">
-                  <td className="p-5 font-black">v1.0.0</td>
-                  <td className="p-5 font-bold">macOS / Linux (DMG / AppImage)</td>
-                  <td className="p-5 font-bold">Próximamente</td>
+                  <td className="p-5 font-black">{t.pages.download.versionValue}</td>
+                  <td className="p-5 font-bold">{t.pages.download.macLinuxRow}</td>
+                  <td className="p-5 font-bold">{t.pages.download.comingSoon}</td>
                   <td className="p-5 font-bold">—</td>
-                  <td className="p-5 font-bold text-rose-500">BETA CERRADA</td>
+                  <td className="p-5 font-bold text-rose-500">{t.pages.download.closedBeta}</td>
                 </tr>
               </tbody>
             </table>
@@ -645,7 +648,7 @@ export default function DownloadPage() {
               href="/changelog" 
               className="inline-flex items-center gap-2 text-neon-blue/60 hover:text-neon-blue transition-colors font-header font-black text-xs uppercase tracking-widest"
             >
-              VER HISTORIAL COMPLETO
+              {t.pages.play.viewFullHistory}
               <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="5" y1="12" x2="19" y2="12" />
                 <polyline points="12 5 19 12 12 19" />
@@ -672,17 +675,17 @@ export default function DownloadPage() {
               </div>
               <div>
                 <h2 className="text-2xl md:text-3xl font-header font-black text-white italic uppercase tracking-tight leading-none">
-                  PDWA · APP DE ESCRITORIO PROGRESIVA
+                  {t.pages.download.pdwaTitle}
                 </h2>
                 <p className="text-neon-cyan font-black tracking-[0.4em] uppercase text-[9px] mt-2">
-                  SIN DESCARGAR NADA · DESDE EL NAVEGADOR
+                  {t.pages.download.pdwaNoDownload}
                 </p>
               </div>
             </div>
             <div className="h-[1px] flex-grow bg-white/5 hidden md:block" />
             <div className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-neon-cyan/10 border border-neon-cyan/30 rounded-full text-neon-cyan text-[9px] font-black uppercase tracking-widest">
               <span className="w-2 h-2 bg-neon-cyan rounded-full animate-pulse" />
-              Nativa en Chrome · Edge · alternativa en Opera
+              {t.pages.download.pdwaBrowsers}
             </div>
           </div>
 
@@ -691,19 +694,19 @@ export default function DownloadPage() {
               <div className="absolute top-0 right-0 w-32 h-32 bg-neon-cyan/5 blur-3xl group-hover:bg-neon-cyan/10 transition-all pointer-events-none" />
               <h3 className="font-header font-black tracking-tighter text-xl text-neon-cyan italic uppercase border-b border-white/5 pb-4 flex items-center gap-3">
                 <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>
-                ¿QUÉ ES LA PDWA?
+                {t.pages.download.whatIsPdwa}
               </h3>
               <p className="text-gray-400 text-xs font-bold leading-relaxed">
-                La <span className="text-white">PDWA (App de Escritorio Progresiva)</span> es MuzicMania instalada como una <span className="text-white">ventana de aplicación independiente</span>: sin pestañas, sin barra de direcciones, con tu propio icono en el escritorio y la barra de tareas.
+                La <span className="text-white">{t.pages.download.pdwaName}</span> {t.pages.download.pdwaIs} <span className="text-white">{t.pages.download.pdwaWindow}</span>{t.pages.download.pdwaRest}
               </p>
               <p className="text-gray-400 text-xs font-bold leading-relaxed">
-                Usa el mismo motor del navegador (Chromium/WebView2), por lo que <span className="text-white">no ocupa espacio extra</span> ni requiere instalar nada: se descarga al instante y se actualiza sola.
+                {t.pages.download.engineA} <span className="text-white">{t.pages.download.noSpace}</span> {t.pages.download.noSpaceB}
               </p>
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-gray-300 text-[10px] font-black uppercase tracking-widest pt-2">
-                <li className="flex items-center gap-2"><span className="text-neon-cyan">◆</span> Funciona sin Internet tras cachear</li>
-                <li className="flex items-center gap-2"><span className="text-neon-cyan">◆</span> Icono propio en Escritorio</li>
-                <li className="flex items-center gap-2"><span className="text-neon-cyan">◆</span> Cero espacio en disco adicional</li>
-                <li className="flex items-center gap-2"><span className="text-neon-cyan">◆</span> Actualización automática</li>
+                <li className="flex items-center gap-2"><span className="text-neon-cyan">◆</span> {t.pages.download.offlineOk}</li>
+                <li className="flex items-center gap-2"><span className="text-neon-cyan">◆</span> {t.pages.download.ownIcon}</li>
+                <li className="flex items-center gap-2"><span className="text-neon-cyan">◆</span> {t.pages.download.noDisk}</li>
+                <li className="flex items-center gap-2"><span className="text-neon-cyan">◆</span> {t.pages.download.autoUpdate}</li>
               </ul>
             </div>
 
@@ -711,28 +714,28 @@ export default function DownloadPage() {
               <div className="absolute top-0 right-0 w-32 h-32 bg-neon-pink/5 blur-3xl group-hover:bg-neon-pink/10 transition-all pointer-events-none" />
               <h3 className="font-header font-black tracking-tighter text-xl text-neon-pink italic uppercase border-b border-white/5 pb-4 flex items-center gap-3">
                 <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                ¿CÓMO SE INSTALA?
+                {t.pages.download.howInstall}
               </h3>
               <ol className="space-y-4">
                   <li className="flex gap-4 items-start">
                     <span className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-neon-pink/10 border border-neon-pink/30 text-neon-pink font-header font-black text-xs">1</span>
                     <div className="space-y-1">
-                      <p className="text-gray-300 text-xs font-black uppercase tracking-widest">Abre la web en el botón inferior izquierdo</p>
-                      <p className="text-gray-500 text-[10px] font-bold leading-relaxed">Pulsa el botón flotante <span className="text-neon-cyan">&quot;Instalar PDWA&quot;</span> que aparece en la esquina inferior izquierda de la página.</p>
+                      <p className="text-gray-300 text-xs font-black uppercase tracking-widest">{t.pages.download.step1Title}</p>
+                      <p className="text-gray-500 text-[10px] font-bold leading-relaxed">{t.pages.download.step2A} <span className="text-neon-cyan">{t.pages.download.step2B}</span> {t.pages.download.step2C}</p>
                     </div>
                   </li>
                   <li className="flex gap-4 items-start">
                     <span className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-neon-pink/10 border border-neon-pink/30 text-neon-pink font-header font-black text-xs">2</span>
                     <div className="space-y-1">
-                      <p className="text-gray-300 text-xs font-black uppercase tracking-widest">Confirma la instalación del navegador</p>
-                      <p className="text-gray-500 text-[10px] font-bold leading-relaxed">Chrome/Edge muestran un diálogo <span className="text-neon-cyan">Instalar</span>: acéptalo. En Opera, el propio botón te explica el método alternativo (acceso directo + <span className="text-white">--app=</span>), porque Opera no instala PDWA de forma nativa.</p>
+                      <p className="text-gray-300 text-xs font-black uppercase tracking-widest">{t.pages.download.step3Title}</p>
+                      <p className="text-gray-500 text-[10px] font-bold leading-relaxed">{t.pages.download.step3A} <span className="text-neon-cyan">Instalar</span>{t.pages.download.step3B} <span className="text-white">--app=</span>{t.pages.download.step3C}</p>
                     </div>
                   </li>
                   <li className="flex gap-4 items-start">
                     <span className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-neon-pink/10 border border-neon-pink/30 text-neon-pink font-header font-black text-xs">3</span>
                     <div className="space-y-1">
-                      <p className="text-gray-300 text-xs font-black uppercase tracking-widest">Usa MuzicMania como app de escritorio</p>
-                      <p className="text-gray-500 text-[10px] font-bold leading-relaxed">Se crea un icono en Inicio/Escritorio. Al abrirlo verás MuzicMania en una ventana independiente, sin pestañas.</p>
+                      <p className="text-gray-300 text-xs font-black uppercase tracking-widest">{t.pages.download.step4Title}</p>
+                      <p className="text-gray-500 text-[10px] font-bold leading-relaxed">{t.pages.download.step4Desc}</p>
                     </div>
                   </li>
                 </ol>
@@ -749,9 +752,9 @@ export default function DownloadPage() {
                 <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
               </div>
               <div className="space-y-1">
-                <h4 className="text-sm font-header font-black text-white uppercase italic tracking-tight">¿PDWA O APP NATIVA?</h4>
+                <h4 className="text-sm font-header font-black text-white uppercase italic tracking-tight">{t.pages.download.comparisonTitle}</h4>
                 <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest max-w-lg">
-                  La PDWA es para uso general de navegador. La <a href="#hero" className="text-neon-blue hover:text-neon-cyan transition-colors">app nativa (Tauri/.exe)</a> de arriba es para máxima latencia, tasa de refresco 144Hz+ y aislamiento de teclado.
+                  {t.pages.download.compA} <a href="#hero" className="text-neon-blue hover:text-neon-cyan transition-colors">{t.pages.download.compB}</a> {t.pages.download.compC}
                 </p>
               </div>
             </div>
@@ -761,14 +764,14 @@ export default function DownloadPage() {
                 className="inline-flex items-center gap-3 px-6 py-3.5 bg-neon-cyan/15 border border-neon-cyan/30 text-neon-cyan font-header font-black uppercase tracking-widest text-[10px] rounded-2xl hover:bg-neon-cyan hover:text-black hover:scale-105 transition-all"
               >
                 <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 6 6 12l7 6"/></svg>
-                IR AL INSTALADOR PDWA
+                {t.pages.download.goPdwa}
               </Link>
               <Link
                 href="/feedback"
                 className="inline-flex items-center gap-3 px-6 py-3.5 bg-white/5 border border-white/10 text-gray-300 font-header font-black uppercase tracking-widest text-[10px] rounded-2xl hover:bg-white hover:text-black hover:scale-105 transition-all"
               >
                 <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/></svg>
-                ¿ALGÚN COMENTARIO? → FEEDBACK
+                {t.pages.download.feedbackCta}
               </Link>
             </div>
           </div>
@@ -784,9 +787,9 @@ export default function DownloadPage() {
           className="flex flex-col md:flex-row items-center justify-between gap-6 p-8 bg-black/40 border border-white/5 rounded-[2.5rem]"
         >
           <div className="space-y-1 text-center md:text-left">
-            <h4 className="text-sm font-header font-black text-white uppercase italic tracking-tight">¿Cerraste el botón flotante?</h4>
+            <h4 className="text-sm font-header font-black text-white uppercase italic tracking-tight">{t.pages.download.fabReopenTitle}</h4>
             <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest max-w-xl">
-              Los botones de instalación (PDWA) y feedback de abajo a la izquierda se pueden volver a mostrar cuando quieras.
+              {t.pages.download.fabReopenDesc}
             </p>
           </div>
           <FabRestore accent="#00f0ff" keys={['ciszu-pdwa-dismissed']} />
