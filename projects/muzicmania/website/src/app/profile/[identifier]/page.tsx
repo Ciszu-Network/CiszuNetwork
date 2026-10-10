@@ -317,7 +317,7 @@ export default function DynamicProfilePage() {
               <input
                 value={modReason}
                 onChange={(e) => setModReason(e.target.value)}
-                placeholder="{t.pages.profile.phReason}"
+                placeholder={t.pages.profile.phReason}
                 className="rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-xs text-white min-w-[240px] outline-none focus:border-orange-400/60"
               />
               <select
@@ -391,10 +391,10 @@ export default function DynamicProfilePage() {
           <>
         {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-          <StatCard label="{t.pages.profile.maxScore}" value={(profile.high_score || 0).toLocaleString()} color="text-neon-blue" icon={<Icon name="trophy" size={16} />} />
+          <StatCard label={t.pages.profile.maxScore} value={(profile.high_score || 0).toLocaleString()} color="text-neon-blue" icon={<Icon name="trophy" size={16} />} />
           <StatCard label="Partidas" value={profile.games_played || 0} color="text-neon-purple" icon={<Icon name="gamepad" size={16} />} />
-          <StatCard label="{t.pages.profile.avgAccuracy}" value={`${profile.accuracy || 0}%`} color="text-neon-cyan" icon={<Icon name="target" size={16} />} />
-          <StatCard label="{t.pages.profile.globalRank}" value={`#${profile.rank || '--'}`} color="text-neon-pink" icon={<Icon name="star" size={16} />} />
+          <StatCard label={t.pages.profile.avgAccuracy} value={`${profile.accuracy || 0}%`} color="text-neon-cyan" icon={<Icon name="target" size={16} />} />
+          <StatCard label={t.pages.profile.globalRank} value={`#${profile.rank || '--'}`} color="text-neon-pink" icon={<Icon name="star" size={16} />} />
         </div>
 
         {/* Achievements & Activity */}
