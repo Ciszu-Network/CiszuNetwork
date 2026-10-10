@@ -12,6 +12,7 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 import { CISZU_NETWORK, EXTERNAL_LINKS, GITHUB_REPO } from '@/config/site';
 import { getProject, PROJECTS } from '@/data/projects';
 import { useDict } from '@/lib/useDict';
+import { fillTemplate } from '@/lib/i18n';
 
 const THEME: InfoTheme = {
   accent: 'text-[#59b4ff]',
@@ -24,10 +25,10 @@ const THEME: InfoTheme = {
 
 const project = getProject('ciszunetwork')!;
 
-const VALUES = [
-  { icon: 'eye', title: 'Transparencia', desc: 'Documentación pública de cada sistema, changelogs verificables y código auditable.' },
-  { icon: 'target', title: 'Rendimiento', desc: 'Webs rápidas, accesibles y con Core Web Vitals cuidados en cada despliegue.' },
-  { icon: 'shield', title: 'Seguridad', desc: 'RLS, rate limiting, CSP, análisis SAST/DAST y auditorías continuas en CI.' },
+const valuesOf = (t: ReturnType<typeof useDict>) => [
+  { icon: 'eye', ...t.ciszunetworkPage.values[0] },
+  { icon: 'target', ...t.ciszunetworkPage.values[1] },
+  { icon: 'shield', ...t.ciszunetworkPage.values[2] },
 ];
 
 export default function CiszuNetworkPage() {
@@ -54,7 +55,7 @@ export default function CiszuNetworkPage() {
           <Floating className="mx-auto w-fit">
             <Image
               src={assetResolver.resolve(project.logo)}
-              alt="Logotipo oficial de Ciszu Network"
+              alt={t.ciszunetworkPage.title}
               width={320}
               height={200}
               className="h-24 w-auto object-contain drop-shadow-[0_0_45px_rgba(58,107,240,0.5)] md:h-32"
@@ -62,10 +63,10 @@ export default function CiszuNetworkPage() {
             />
           </Floating>
           <p className="mt-6 text-[10px] font-black uppercase tracking-[0.4em] text-[#59b4ff]">
-            Empresa · Ecosistema · Bright Future Promised
+            {t.ciszunetworkPage.kicker}
           </p>
           <h1 className="mt-3 bg-gradient-to-r from-[#3a6bf0] via-[#59b4ff] to-[#68cfff] bg-clip-text font-header text-4xl font-black uppercase tracking-tighter text-transparent md:text-6xl">
-            Compañía de innovación digital
+            {t.ciszunetworkPage.title}
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-white/60">
             {project.longDescription}
@@ -76,14 +77,14 @@ export default function CiszuNetworkPage() {
               className="inline-flex items-center gap-2 rounded-xl bg-[#3a6bf0] px-7 py-3.5 font-header text-sm font-black uppercase tracking-widest text-white shadow-[0_0_30px_rgba(58,107,240,0.45)] transition-all hover:scale-105 hover:brightness-110"
             >
               <Icon name="palette" size={16} />
-              Ver servicios
+              {t.ciszunetworkPage.viewServices}
             </Link>
             <Link
               href="/contact"
               className="inline-flex items-center gap-2 rounded-xl border border-[#3a6bf0]/50 bg-[#3a6bf0]/10 px-6 py-3.5 text-sm font-bold text-[#59b4ff] transition-all hover:bg-[#3a6bf0]/20"
             >
               <Icon name="mail" size={16} />
-              Trabajemos juntos
+              {t.ciszunetworkPage.workTogether}
             </Link>
           </div>
         </header>
@@ -107,7 +108,7 @@ export default function CiszuNetworkPage() {
         <section className="mb-16" aria-labelledby="ciszunetwork-areas">
           <h2 id="ciszunetwork-areas" className="mb-6 flex items-center gap-3 font-header text-3xl font-black text-white">
             <Icon name="target" size={26} />
-            Áreas de trabajo
+            {t.ciszunetworkPage.areasTitle}
           </h2>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
             {project.features.map((feature, index) => (
@@ -129,7 +130,7 @@ export default function CiszuNetworkPage() {
           <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
             <h2 id="ciszunetwork-ecosystem" className="flex items-center gap-3 font-header text-3xl font-black text-white">
               <Icon name="rocket" size={26} />
-              Proyectos del ecosistema
+              {t.ciszunetworkPage.ecosystemTitle}
             </h2>
             <Link
               href="/projects"
@@ -139,7 +140,7 @@ export default function CiszuNetworkPage() {
               {t.projectPages.viewAll}
             </Link>
           </div>
-          <ProjectSlider ariaLabel="Proyectos del ecosistema Ciszu Network" itemClassName="w-[16rem] sm:w-[18rem]">
+          <ProjectSlider ariaLabel={t.ciszunetworkPage.sliderAria} itemClassName="w-[16rem] sm:w-[18rem]">
             {PROJECTS.filter((item) => item.id !== 'ciszunetwork').map((item) => (
               <Link
                 key={item.id}
@@ -149,7 +150,7 @@ export default function CiszuNetworkPage() {
                 <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border ${item.accent.chipBg} ${item.accent.chipBorder}`}>
                   <Image
                     src={assetResolver.resolve(item.logo)}
-                    alt={`Isotipo de ${item.name}`}
+                    alt={fillTemplate(t.ciszunetworkPage.isoAlt, { name: item.name })}
                     width={32}
                     height={32}
                     className="h-8 w-8 object-contain"
@@ -172,10 +173,10 @@ export default function CiszuNetworkPage() {
         <section className="mb-16" aria-labelledby="ciszunetwork-values">
           <h2 id="ciszunetwork-values" className="mb-6 flex items-center gap-3 font-header text-3xl font-black text-white">
             <Icon name="verified" size={26} />
-            Cómo trabajamos
+            {t.ciszunetworkPage.valuesTitle}
           </h2>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-            {VALUES.map((value, index) => (
+            {valuesOf(t).map((value, index) => (
               <Reveal key={value.title} delay={index * 0.08}>
                 <div className="h-full rounded-[1.75rem] border border-white/10 bg-gradient-to-br from-[#3a6bf0]/10 to-transparent p-6 transition-all hover:-translate-y-1 hover:border-[#3a6bf0]/40">
                   <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-[#68cfff]/40 bg-[#68cfff]/10 text-[#68cfff]">
@@ -220,8 +221,8 @@ export default function CiszuNetworkPage() {
         <InfoCtaRow
           theme={THEME}
           actions={[
-            { label: 'Web principal', href: EXTERNAL_LINKS.ciszunetwork, icon: 'globe', external: true, variant: 'primary' },
-            { label: 'Servicios', href: '/services', icon: 'palette', variant: 'ghost' },
+            { label: t.ciszunetworkPage.ctaWeb, href: EXTERNAL_LINKS.ciszunetwork, icon: 'globe', external: true, variant: 'primary' },
+            { label: t.ciszunetworkPage.ctaServices, href: '/services', icon: 'palette', variant: 'ghost' },
             { label: 'GitHub', href: GITHUB_REPO, icon: 'external', external: true, variant: 'ghost' },
             { label: t.projectPages.viewAll, href: '/projects', icon: 'rocket', variant: 'ghost' },
           ]}

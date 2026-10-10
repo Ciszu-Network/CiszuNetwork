@@ -25,56 +25,50 @@ const THEME: InfoTheme = {
 const project = getProject('ciszubot')!;
 
 /** Comandos reales del bot, agrupados por categoría. */
-const COMMAND_GROUPS = [
+const commandGroupsOf = (t: ReturnType<typeof useDict>) => [
   {
     id: 'moderacion',
     icon: 'shield',
-    title: 'Moderación',
-    desc: 'Orden y control del servidor con sanciones y paneles.',
+    ...t.ciszubotPage.commandGroups[0],
     commands: ['ban', 'kick', 'mute', 'close', 'closeprivate', 'panel'],
   },
   {
     id: 'musica',
     icon: 'music',
-    title: 'Música',
-    desc: 'Reproducción en canales de voz con control total.',
+    ...t.ciszubotPage.commandGroups[1],
     commands: ['play', 'pause', 'loop', 'cancion', 'duracion'],
   },
   {
     id: 'economia',
     icon: 'money',
-    title: 'Economía',
-    desc: 'Monedas, recompensas diarias, tienda y ranking.',
+    ...t.ciszubotPage.commandGroups[2],
     commands: ['balance', 'daily', 'deposit', 'buy', 'item', 'gamble', 'leaderboard'],
   },
   {
     id: 'diversion',
     icon: 'dice',
-    title: 'Diversión',
-    desc: 'Minijuegos y respuestas para animar el chat.',
+    ...t.ciszubotPage.commandGroups[3],
     commands: ['8ball', 'dice', 'animal', 'confess', 'hi', 'bye'],
   },
   {
     id: 'utilidad',
     icon: 'key',
-    title: 'Utilidad',
-    desc: 'Perfil, información y ayuda al alcance de todos.',
+    ...t.ciszubotPage.commandGroups[4],
     commands: ['help', 'ping', 'avatar', 'id', 'profile', 'rank', 'invite', 'links', 'estado'],
   },
   {
     id: 'automatizacion',
     icon: 'robot',
-    title: 'Automatización',
-    desc: 'Sorteos, embeds y configuración por servidor.',
+    ...t.ciszubotPage.commandGroups[5],
     commands: ['giveaway', 'embed', 'say', 'directsay', 'comando', 'prefijo', 'canal', 'color', 'idioma'],
   },
 ];
 
-const STEPS = [
-  { icon: 'robot', title: 'Invita el bot', desc: 'Entra con tu cuenta de Discord y autoriza a CiszuBot en tu servidor con un clic.' },
-  { icon: 'help', title: 'Escribe /help', desc: 'Consulta el panel de ayuda para ver todos los comandos disponibles y sus opciones.' },
-  { icon: 'settings', title: 'Configura el servidor', desc: 'Ajusta prefijo, canal de logs, roles y mensajes de bienvenida a tu gusto.' },
-  { icon: 'trophy', title: 'Sube de nivel', desc: 'Usa la economía, participa en sorteos y escala posiciones en el ranking del servidor.' },
+const stepsOf = (t: ReturnType<typeof useDict>) => [
+  { icon: 'robot', ...t.ciszubotPage.steps[0] },
+  { icon: 'help', ...t.ciszubotPage.steps[1] },
+  { icon: 'settings', ...t.ciszubotPage.steps[2] },
+  { icon: 'trophy', ...t.ciszubotPage.steps[3] },
 ];
 
 const DIRECTORIES = [
@@ -107,7 +101,7 @@ export default function CiszubotPage() {
           <Floating className="mx-auto w-fit" amplitude={10}>
             <Image
               src={assetResolver.resolve(project.logo)}
-              alt="Isotipo oficial de CiszuBot"
+              alt={t.ciszubotPage.isoAlt}
               width={160}
               height={160}
               className="h-28 w-28 object-contain drop-shadow-[0_0_45px_rgba(88,101,242,0.55)]"
@@ -115,10 +109,10 @@ export default function CiszubotPage() {
             />
           </Floating>
           <p className="mt-6 text-[10px] font-black uppercase tracking-[0.4em] text-[#8b93f8]">
-            Bot · Discord · Automatización
+            {t.ciszubotPage.kicker}
           </p>
           <h1 className="mt-3 bg-gradient-to-r from-[#5865F2] via-[#8b93f8] to-[#68cfff] bg-clip-text font-header text-4xl font-black uppercase tracking-tighter text-transparent md:text-6xl">
-            El bot todo-en-uno
+            {t.ciszubotPage.title}
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-white/60">
             {project.longDescription}
@@ -164,7 +158,7 @@ export default function CiszubotPage() {
         <section className="mb-16" aria-labelledby="ciszubot-features">
           <h2 id="ciszubot-features" className="mb-6 flex items-center gap-3 font-header text-3xl font-black text-white">
             <Icon name="star" size={26} />
-            Funcionalidades
+            {t.ciszubotPage.featuresTitle}
           </h2>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
             {project.features.map((feature) => (
@@ -185,11 +179,11 @@ export default function CiszubotPage() {
             <div>
               <h2 id="ciszubot-commands" className="flex items-center gap-3 font-header text-3xl font-black text-white">
                 <Icon name="terminal" size={26} />
-                Comandos
+                {t.ciszubotPage.commandsTitle}
               </h2>
               <p className="mt-2 flex items-center gap-2 text-xs uppercase tracking-widest text-white/40">
                 <Icon name="key" size={14} />
-                Más de 60 comandos reales agrupados en 6 categorías
+                {t.ciszubotPage.commandsSub}
               </p>
             </div>
             <a
@@ -199,12 +193,12 @@ export default function CiszubotPage() {
               className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-white/70 transition-all hover:border-[#5865F2]/50 hover:text-[#8b93f8]"
             >
               <Icon name="comment" size={13} />
-              Probar en Discord
+              {t.ciszubotPage.testDiscord}
             </a>
           </div>
 
-          <ProjectSlider ariaLabel="Categorías de comandos de CiszuBot" itemClassName="w-[19rem] sm:w-[22rem]">
-            {COMMAND_GROUPS.map((group) => (
+          <ProjectSlider ariaLabel={t.ciszubotPage.sliderAria} itemClassName="w-[19rem] sm:w-[22rem]">
+            {commandGroupsOf(t).map((group) => (
               <article key={group.id} className="h-full rounded-[1.75rem] border border-[#5865F2]/25 bg-[#5865F2]/5 p-6 transition-all hover:-translate-y-1 hover:border-[#5865F2]/60">
                 <div className="mb-4 flex items-center gap-3">
                   <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#5865F2]/40 bg-[#5865F2]/10 text-[#8b93f8]">
@@ -235,10 +229,10 @@ export default function CiszubotPage() {
         <section className="mb-16" aria-labelledby="ciszubot-how">
           <h2 id="ciszubot-how" className="mb-6 flex items-center gap-3 font-header text-3xl font-black text-white">
             <Icon name="signal" size={26} />
-            Cómo se usa
+            {t.ciszubotPage.howTitle}
           </h2>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {STEPS.map((step, index) => (
+            {stepsOf(t).map((step, index) => (
               <Reveal key={step.title} delay={index * 0.08}>
                 <div className="relative h-full rounded-[1.75rem] border border-white/10 bg-white/[0.03] p-6 transition-all hover:-translate-y-1 hover:border-[#5865F2]/50">
                   <span className="absolute right-5 top-5 font-header text-3xl font-black text-white/10">{index + 1}</span>
@@ -295,9 +289,9 @@ export default function CiszubotPage() {
         <InfoCtaRow
           theme={THEME}
           actions={[
-            { label: 'Invitar a mi servidor', href: CISZUBOT_LINKS.invite, icon: 'robot', external: true, variant: 'primary' },
-            { label: 'Servidor de soporte', href: CISZUBOT_LINKS.discordServer, icon: 'discord', external: true, variant: 'ghost' },
-            { label: 'GitHub del monorepo', href: GITHUB_REPO, icon: 'external', external: true, variant: 'ghost' },
+            { label: t.ciszubotPage.ctaInvite, href: CISZUBOT_LINKS.invite, icon: 'robot', external: true, variant: 'primary' },
+            { label: t.ciszubotPage.ctaSupport, href: CISZUBOT_LINKS.discordServer, icon: 'discord', external: true, variant: 'ghost' },
+            { label: t.ciszubotPage.ctaRepo, href: GITHUB_REPO, icon: 'external', external: true, variant: 'ghost' },
             { label: t.projectPages.viewAll, href: '/projects', icon: 'rocket', variant: 'ghost' },
           ]}
         />
