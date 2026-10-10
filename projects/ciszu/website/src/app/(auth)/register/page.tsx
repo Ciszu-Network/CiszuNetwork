@@ -20,6 +20,8 @@ import {
   TwoFactorGate,
 } from '@ciszu/ui';
 import { Button } from '@heroui/react';
+import { useDict } from '@/lib/useDict';
+import { fillTemplate } from '@/lib/i18n';
 
 const IconUser = () => (
   <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -72,36 +74,35 @@ const IconKey = () => (
   </svg>
 );
 
-const REGISTER_BENEFITS = [
-  {
-    icon: <span className="w-full h-full text-neon-pink"><IconShield /></span>,
-    title: 'Menos anuncios',
-    description: 'Al registrarte quitamos los anuncios de footer y reducimos la frecuencia del resto. Menos publicidad, mejor experiencia.',
-  },
-  {
-    icon: <span className="w-full h-full text-neon-cyan"><IconCloud /></span>,
-    title: 'Guarda tus datos',
-    description: 'Tu progreso, preferencias y configuración se guardan en la nube y se sincronizan en todos tus dispositivos.',
-  },
-  {
-    icon: <span className="w-full h-full text-neon-pink"><IconGift /></span>,
-    title: 'Recompensas y VIP futuro',
-    description: 'Acceso a recompensas y, próximamente, a un rango VIP que quita los anuncios por completo.',
-  },
-  {
-    icon: <span className="w-full h-full text-neon-cyan"><IconKey /></span>,
-    title: 'Un solo CISZU ID',
-    description: 'Una cuenta para todas las webs del ecosistema: Ciszu Network, CiszukoAntony, MuzicMania y CiszuBot.',
-  },
-];
-
-const REGISTER_FOOTER = 'Crear tu cuenta es gratis. Usamos tus datos para personalizar anuncios y darte menos publicidad — consulta nuestras políticas en Ciszu Network.';
 
 const CISZU_ISOTYPE = assetResolver.resolve('projects/ciszu/content/logos/images/outline/isotype/gradient/color/ciszu_logo_isotipo_outline_degradado_zwhite_ccolor.svg');
 
 export default function RegisterPage() {
   usePageTitle('REGISTER');
+  const t = useDict();
   const { toast } = useToast();
+  const REGISTER_BENEFITS = [
+    {
+      icon: <span className="w-full h-full text-neon-pink"><IconShield /></span>,
+      title: t.registerPage.benefits.lessAds.title,
+      description: t.registerPage.benefits.lessAds.desc,
+    },
+    {
+      icon: <span className="w-full h-full text-neon-cyan"><IconCloud /></span>,
+      title: t.registerPage.benefits.data.title,
+      description: t.registerPage.benefits.data.desc,
+    },
+    {
+      icon: <span className="w-full h-full text-neon-pink"><IconGift /></span>,
+      title: t.registerPage.benefits.rewards.title,
+      description: t.registerPage.benefits.rewards.desc,
+    },
+    {
+      icon: <span className="w-full h-full text-neon-cyan"><IconKey /></span>,
+      title: t.registerPage.benefits.single.title,
+      description: t.registerPage.benefits.single.desc,
+    },
+  ];
   const router = useRouter();
   const [form, setForm] = useState({
     username: '',
@@ -144,25 +145,25 @@ export default function RegisterPage() {
   const validate = () => {
     const next: Record<string, string> = {};
     const u = form.username.trim();
-    if (!u) next.username = 'Este campo es obligatorio';
-    else if (u.includes(' ')) next.username = 'No se permiten espacios';
-    else if (u.length < 3) next.username = 'Mínimo 3 caracteres';
-    else if (u.length > 20) next.username = 'Máximo 20 caracteres';
+    if (!u) next.username = t.registerPage.errRequired;
+    else if (u.includes(' ')) next.username = t.registerPage.errNoSpaces;
+    else if (u.length < 3) next.username = t.registerPage.errMin3;
+    else if (u.length > 20) next.username = t.registerPage.errMax20;
 
-    if (!form.displayName.trim()) next.displayName = 'Este campo es obligatorio';
-    else if (form.displayName.trim().length > 30) next.displayName = 'Máximo 30 caracteres';
+    if (!form.displayName.trim()) next.displayName = t.registerPage.errRequired;
+    else if (form.displayName.trim().length > 30) next.displayName = t.registerPage.errMax30;
 
-    if (!form.email.trim()) next.email = 'Este campo es obligatorio';
-    else if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) next.email = 'Formato de email inválido (requiere @)';
+    if (!form.email.trim()) next.email = t.registerPage.errRequired;
+    else if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) next.email = t.registerPage.errInvalidEmail;
 
-    if (!form.password) next.password = 'La contraseña es obligatoria';
+    if (!form.password) next.password = t.registerPage.errPasswordRequired;
     else if (!passwordMeetsMinimum(form.password))
-      next.password = 'La contraseña no cumple el nivel mínimo de seguridad CISZU ID (al menos 1 mayúscula, 1 minúscula, 1 número y 1 símbolo)';
+      next.password = t.registerPage.errPasswordWeak;
 
-    if (!form.confirmPassword) next.confirmPassword = 'Este campo es obligatorio';
-    else if (form.confirmPassword !== form.password) next.confirmPassword = 'Las contraseñas no coinciden';
+    if (!form.confirmPassword) next.confirmPassword = t.registerPage.errRequired;
+    else if (form.confirmPassword !== form.password) next.confirmPassword = t.registerPage.errPasswordsDiffer;
 
-    if (!acceptedTerms) next.terms = 'Debes aceptar los términos y condiciones';
+    if (!acceptedTerms) next.terms = t.registerPage.errTerms;
 
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -179,7 +180,7 @@ export default function RegisterPage() {
       // de enviar. En Enterprise el executor es el que genera el token.
       const captcha = (await v3ExecutorRef.current?.()) ?? null;
       if (!captcha) {
-        throw new Error('Debes completar el reCAPTCHA');
+        throw new Error(t.registerPage.errCaptchaRequired);
       }
       const verifyRes = await fetch('/api/verify-recaptcha', {
         method: 'POST',
@@ -188,7 +189,7 @@ export default function RegisterPage() {
       });
       const verifyData = await verifyRes.json().catch(() => ({}));
       if (!verifyData.success) {
-        throw new Error(verifyData.error || 'Verificación de reCAPTCHA fallida');
+        throw new Error(verifyData.error || t.registerPage.errCaptchaFailed);
       }
 
       // Guardia por IP: no se crean cuentas desde orígenes sancionados.
@@ -196,7 +197,7 @@ export default function RegisterPage() {
         .then((r) => r.json())
         .catch(() => null)) as { blocked?: boolean } | null;
       if (guard?.blocked) {
-        throw new Error('No podemos crear cuentas desde esta conexión (origen sancionado). Contacta con soporte.');
+        throw new Error(t.registerPage.errIpBlocked);
       }
 
       const { data, error } = await supabase.auth.signUp({
@@ -230,34 +231,34 @@ export default function RegisterPage() {
               password: form.password,
             });
             const token = s.session?.access_token;
-            if (!token) throw new Error('Este correo perteneció a una cuenta eliminada: verifica tu correo para entrar.');
+            if (!token) throw new Error(t.registerPage.errReclaimLogin);
             const gen = await fetch('/api/auth/2fa/generate', {
               method: 'POST',
               headers: { Authorization: `Bearer ${token}` },
             });
             const genData = await gen.json().catch(() => ({}));
             if (!gen.ok || genData.success === false) {
-              throw new Error(genData.error || 'No pudimos enviar la clave de verificación.');
+              throw new Error(genData.error || t.registerPage.errSendKey);
             }
-            toast('Este correo perteneció a una cuenta eliminada y fue reutilizado. Verifica el código.', 'success');
+            toast(t.registerPage.toastReclaimed, 'success');
             await supabase.auth.signOut().catch(() => {});
             setPending({ token, email: form.email.trim() });
             return;
           }
           if (rd.state === 'pending') {
-            throw new Error('Este correo tiene una cuenta en suspensión de eliminación: inicia sesión para recuperarla.');
+            throw new Error(t.registerPage.errReclaimPending);
           }
           if (rd.state === 'banned') {
-            throw new Error('Este correo está vinculado a una cuenta sancionada.');
+            throw new Error(t.registerPage.errReclaimBanned);
           }
-          throw new Error('Este email ya está registrado. ¿Olvidaste tu contraseña? Ve a login y pulsa RECUPÉRALA.');
+          throw new Error(t.registerPage.errAlreadyRegistered);
         }
         throw new Error(error.message);
       }
 
       if (data.user) {
         const token = data.session?.access_token;
-        if (!token) throw new Error('No pudimos iniciar la verificación del registro.');
+        if (!token) throw new Error(t.registerPage.errStartVerify);
 
         // Código C-XXX XXX al email (servicio 2FA compartido: límites, 3 h, reenvíos).
         const startRes = await fetch('/api/auth/2fa/generate', {
@@ -266,7 +267,7 @@ export default function RegisterPage() {
         });
         const startData = await startRes.json().catch(() => ({}));
         if (!startRes.ok || startData.success === false) {
-          throw new Error(startData.error || 'No pudimos enviar la clave de verificación.');
+          throw new Error(startData.error || t.registerPage.errSendKey);
         }
 
         // La sesión se cierra hasta verificar: sin verificación la cuenta queda
@@ -275,7 +276,7 @@ export default function RegisterPage() {
         setPending({ token, email: form.email.trim() });
       }
     } catch (err: any) {
-      setLocalError(err.message || 'Error desconocido al registrarse');
+      setLocalError(err.message || t.registerPage.errUnknown);
       setCaptchaResetKey((k) => k + 1);
     } finally {
       setLoading(false);
@@ -293,7 +294,7 @@ export default function RegisterPage() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || data.success === false) {
-        throw new Error(data.error || 'No pudimos completar el registro.');
+        throw new Error(data.error || t.registerPage.errComplete);
       }
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email: pending.email,
@@ -301,18 +302,18 @@ export default function RegisterPage() {
       });
       if (signInError) throw signInError;
       setPending(null);
-      toast('Cuenta verificada. ¡Bienvenido a Ciszu Network!', 'success');
+      toast(t.registerPage.toastVerified, 'success');
       router.replace('/');
     } catch (err: any) {
       setPending(null);
-      setLocalError(err?.message || 'No pudimos completar el registro.');
+      setLocalError(err?.message || t.registerPage.errComplete);
     }
   };
 
   /** Sin verificación no hay cuenta: se vuelve al formulario con aviso. */
   const handleCancelVerify = () => {
     setPending(null);
-    toast('Verificación pendiente: reenvía el formulario para pedir otra clave.', 'error');
+    toast(t.registerPage.toastVerifyCancelled, 'error');
   };
 
   return (
@@ -335,7 +336,7 @@ export default function RegisterPage() {
             ciszuHref="https://ciszunetwork.vercel.app"
             appHref="/"
             title="CISZU ID"
-            subtitle="Crea tu cuenta en Ciszu Network con CISZU ID"
+            subtitle={t.registerPage.subtitle}
           />
         </div>
 
@@ -357,10 +358,9 @@ export default function RegisterPage() {
               </div>
             ) : emailSent ? (
               <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center space-y-3">
-                <p className="text-emerald-400 font-black uppercase tracking-widest text-sm">Verifica tu correo</p>
+                <p className="text-emerald-400 font-black uppercase tracking-widest text-sm">{t.registerPage.verifyTitle}</p>
                 <p className="text-gray-400 text-xs font-bold leading-relaxed">
-                  Te hemos enviado un email de confirmación. Puedes seguir usando Ciszu Network y
-                  completar la verificación cuando quieras desde la configuración de tu cuenta.
+                  {t.registerPage.verifyText}
                 </p>
               </div>
             ) : (
@@ -368,65 +368,65 @@ export default function RegisterPage() {
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <AuthField
-                      label="Nombre de Usuario"
+                      label={t.registerPage.labelUsername}
                       name="username"
                       icon={<span className="w-full h-full text-neon-pink"><IconUser /></span>}
-                      placeholder="tunickname"
+                      placeholder={t.registerPage.phUsername}
                       required
                       maxLength={20}
                       autoComplete="username"
                       value={form.username}
                       onChange={handleChange}
                       error={errors.username}
-                      requirements={['3–20 caracteres', 'Sin espacios', 'Sin símbolos especiales']}
+                      requirements={[t.registerPage.reqUsername1, t.registerPage.reqUsername2, t.registerPage.reqUsername3]}
                     />
                     <AuthField
-                      label="Nombre a Mostrar"
+                      label={t.registerPage.labelDisplayName}
                       name="displayName"
                       icon={<span className="w-full h-full text-neon-pink"><IconUser /></span>}
-                      placeholder="Tu nombre"
+                      placeholder={t.registerPage.phDisplayName}
                       required
                       maxLength={30}
                       value={form.displayName}
                       onChange={handleChange}
                       error={errors.displayName}
-                      requirements={['3–30 caracteres', 'Nombre visible para los demás']}
+                      requirements={[t.registerPage.reqDisplay1, t.registerPage.reqDisplay2]}
                     />
                   </div>
 
                   <AuthField
-                    label="Dirección Email"
+                    label={t.registerPage.labelEmail}
                     name="email"
                     icon={<span className="w-full h-full text-neon-pink"><IconMail /></span>}
                     type="email"
-                    placeholder="tu@email.com"
+                    placeholder={t.registerPage.phEmail}
                     required
                     autoComplete="email"
                     value={form.email}
                     onChange={handleChange}
                     error={errors.email}
-                    requirements={['Formato de email válido (p. ej. nombre@dominio.com)']}
+                    requirements={[t.registerPage.reqEmail1]}
                   />
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div className="space-y-1">
                       <AuthField
-                        label="Contraseña"
+                        label={t.registerPage.labelPassword}
                         name="password"
                         icon={<span className="w-full h-full text-neon-pink"><IconLock /></span>}
                         type="password"
-                        placeholder="••••••••"
+                        placeholder={t.registerPage.phPassword}
                         required
                         autoComplete="new-password"
                         value={form.password}
                         onChange={handleChange}
                         error={errors.password}
-                        requirements={['Mínimo 8 caracteres', 'Al menos 1 mayúscula', 'Al menos 1 minúscula', 'Al menos 1 número y 1 símbolo', 'Nivel mínimo: Media (3/5 en la barra)']}
+                        requirements={[t.registerPage.reqPassword1, t.registerPage.reqPassword2, t.registerPage.reqPassword3, t.registerPage.reqPassword4, t.registerPage.reqPassword5]}
                       />
                       <PasswordStrengthBar password={form.password} />
                     </div>
                     <AuthField
-                      label="Confirmar Contraseña"
+                      label={t.registerPage.labelConfirm}
                       name="confirmPassword"
                       icon={<span className="w-full h-full text-neon-pink"><IconLock /></span>}
                       type="password"
@@ -436,7 +436,7 @@ export default function RegisterPage() {
                       value={form.confirmPassword}
                       onChange={handleChange}
                       error={errors.confirmPassword}
-                      requirements={['Debe ser idéntica al campo "Contraseña"']}
+                      requirements={[t.registerPage.reqConfirm1]}
                     />
                   </div>
 
@@ -451,7 +451,7 @@ export default function RegisterPage() {
                         <svg viewBox="0 0 24 24" className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                       </div>
                       <p className="text-[11px] text-gray-400 font-bold leading-relaxed">
-                        Acepto los <a href="/terms" className="text-neon-cyan hover:underline">Términos de Servicio</a> y la <a href="/privacy" className="text-neon-cyan hover:underline">Política de Privacidad</a>.
+                        {t.registerPage.termsA}<a href="/terms" className="text-neon-cyan hover:underline">{t.registerPage.termsLink}</a>{t.registerPage.termsB}<a href="/privacy" className="text-neon-cyan hover:underline">{t.registerPage.privacyLink}</a>{t.registerPage.termsC}
                       </p>
                     </div>
                     {errors.terms && <p className="text-red-400 text-[11px] font-bold">{errors.terms}</p>}
@@ -467,7 +467,7 @@ export default function RegisterPage() {
                         <svg viewBox="0 0 24 24" className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                       </div>
                       <p className="text-[11px] text-gray-400 font-bold leading-relaxed">
-                        Acepto recibir comunicaciones de <a href="/terms" className="text-neon-cyan hover:underline">Ciszu Network</a> (novedades, actualizaciones, ofertas). <strong className="text-neon-pink">No es publicidad de terceros.</strong>
+                        {t.registerPage.marketingA}<a href="/terms" className="text-neon-cyan hover:underline">Ciszu Network</a>{t.registerPage.marketingB}<strong className="text-neon-pink">{t.registerPage.marketingStrong}</strong>
                       </p>
                     </div>
                     {errors.marketing && <p className="text-red-400 text-[11px] font-bold">{errors.marketing}</p>}
@@ -489,20 +489,20 @@ export default function RegisterPage() {
                     isDisabled={loading}
                     className="w-full font-header font-black uppercase tracking-widest text-sm"
                   >
-                    {loading ? 'PROCESANDO…' : 'CREAR CUENTA'}
+                    {loading ? t.registerPage.submitting : t.registerPage.submit}
                   </Button>
                 </form>
 
                 <OAuthProviders
-                  onSelect={(p) => toast(`OAuth de ${p} disponible en futura versión beta`, 'warning')}
+                  onSelect={(p) => toast(fillTemplate(t.registerPage.oauthSoon, { provider: p }), 'warning')}
                 />
 
                 <div className="pt-3">
                   <p className="text-center text-[9px] text-white/30 font-bold uppercase tracking-[0.25em]">
-                    ¿Sin cuenta en Ciszu Network?
+                    {t.registerPage.noAccount}
                   </p>
                   <p className="text-center text-[10px] text-gray-500 font-bold mt-1">
-                    Crea tu cuenta y úsala en todas nuestras apps con un solo{' '}
+                    {t.registerPage.createWith}
                     <a href="https://ciszunetwork.vercel.app/register" className="text-neon-cyan hover:underline">CISZU ID</a>.
                   </p>
                 </div>
@@ -527,9 +527,9 @@ export default function RegisterPage() {
           {/* Página derecha: beneficios */}
           <AuthBenefitsPanel
             badge="CISZU ID"
-            title="¿Por qué crear tu cuenta?"
+            title={t.registerPage.benefitsTitle}
             items={REGISTER_BENEFITS}
-            footerNote={REGISTER_FOOTER}
+            footerNote={t.registerPage.footerNote}
             accent="#ff33cc"
             accentAlt="#3a6bf0"
           />
