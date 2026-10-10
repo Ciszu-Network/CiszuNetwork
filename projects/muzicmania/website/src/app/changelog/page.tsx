@@ -259,7 +259,7 @@ const { toast } = useToast();
                 type="text" 
                 value={searchQuery}
                 onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-                placeholder="{t.pages.changelog.phSearch}"
+                placeholder={t.pages.changelog.phSearch}
                 className="w-full bg-white/5 border border-white/10 rounded-full py-6 pl-20 pr-8 text-white font-header font-black uppercase italic tracking-[0.2em] focus:outline-none focus:border-neon-blue focus:ring-4 focus:ring-neon-blue/10 transition-all placeholder:text-white/10 text-sm"
               />
            </div>
