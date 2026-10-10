@@ -1,0 +1,69 @@
+name: Ensure Production Deploys
+
+# Auto-recuperación de deploys: el plan gratis de Vercel limita a 100
+# deployments/día por cuenta ("api-deployments-free-per-day"). Con muchos
+# pushes seguidos los workflows de deploy fallan aunque el código esté bien.
+#
+# Este job corre cada hora y, por cada web, comprueba si el commit actual de
+# main tiene ya un deploy EXITOSO; si no (falló o no existe) y no hay otro en
+# curso, relanza el workflow de deploy. Tras el reinicio diario de la cuota
+# (00:00 UTC) los relanzamientos empiezan a funcionar y la producción queda
+# sincronizada sola, sin quemar cuota cuando ya está todo desplegado.
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  ensure:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        workflow:
+          - deploy-ciszunetwork-website.yml
+          - deploy-ciszubot-website.yml
+          - deploy-ciszukoantony-website.yml
+          - deploy-muzicmania-website.yml
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Comprobar y relanzar deploy si falta
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WF: ${{ matrix.workflow }}
+        run: |
+          SHA=$(git rev-parse HEAD)
+          echo "Workflow: $WF · main: $SHA"
+          RUNS=$(gh run list --workflow "$WF" --branch main --limit 10 \
+            --json headSha,status,conclusion)
+          INFO=$(echo "$RUNS" | jq -c --arg sha "$SHA" '[.[] | select(.headSha == $sha)] | first // empty')
+          if [ -z "$INFO" ]; then
+            STATUS="none"; CONCLUSION="none"
+          else
+            STATUS=$(echo "$INFO" | jq -r '.status')
+            CONCLUSION=$(echo "$INFO" | jq -r '.conclusion // "none"')
+          fi
+          echo "Estado para este SHA: status=$STATUS conclusion=$CONCLUSION"
+
+          if [ "$CONCLUSION" = "success" ]; then
+            echo "OK: este commit ya está desplegado."
+            exit 0
+          fi
+          case "$STATUS" in
+            in_progress|queued|requested|pending|waiting)
+              echo "Hay un deploy en curso para este SHA; se espera a que termine."
+              exit 0
+              ;;
+          esac
+
+          echo "Relanzando $WF para $SHA (deploy previo: $CONCLUSION)"
+          gh workflow run "$WF"
+          echo "Lanzado. Si Vercel sigue con la cuota diaria agotada, se reintentará en la próxima pasada."
