@@ -5,10 +5,17 @@
 #5 Crear sistema de anuncios: Google Adsense, GA4, GTM, Tag y Analytics pack completo.
 
   REVISIÓN 05 oct 2026 (2 días después): enlaces de la API verificados.
-  REVISIÓN 10 oct 2026 (por API con OAuth del vault): AdSense sigue en `NEEDS_ATTENTION` (revisión
-  automática de Google); el enlace GA4→BigQuery EXISTE y está activo (`properties/551642504/   bigQueryLinks/yGFvijtXSdO5rW2I4KfTLw`, US — el endpoint que responde es v1alpha, v1beta da 404);
-  el dataset `analytics` sigue con 0 tablas: Google aún no emite `analytics.events_*` (requiere
-  tráfico + export diario). Ambas cosas son esperas externas, nada que ejecutar localmente.
+  REVISIÓN 10 oct 2026 (tarde, por API con OAuth del vault — `node scripts/google-status.mjs`):
+  · AdSense cuenta: `READY` (ya no NEEDS_ATTENTION: cuenta configurada a nivel de cuenta).
+  · Sitios: ciszunetwork/ciszubot/ciszukoantony en `REQUIRES_REVIEW`; muzicmania `GETTING_READY`;
+    AutoAds ACTIVADO en los 4. ads.txt re-verificado hoy (200 + `ca-pub-3471969072198962` en las 4).
+  · Único alert: política de contenido Ucrania (informativo).
+  · ACCIÓN SOLO-USUARIO (UI AdSense, sin API): **añadir datos de pago** (titular/banco/dirección/
+    teléfono) y, si Google lo pide, **verificación de identidad** (desde jun-2026, plazo 45 días).
+  · GA4→BigQuery: enlace activo (`properties/551642504/bigQueryLinks/yGFvijtXSdO5rW2I4KfTLw`, US;
+    responde por v1alpha, v1beta da 404). Dataset `analytics`: sigue con 0 tablas (Google aún no
+    emite `analytics.events_*`).
+  Nada más ejecutable localmente; el resto son esperas/revisiones.
 
 - [ ] Looker Studio: conectar fuentes GA4 y crear dashboard.
   PENDIENTE de las tablas de BigQuery; además la creación de dashboards de
