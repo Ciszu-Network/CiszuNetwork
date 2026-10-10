@@ -193,10 +193,10 @@ export default function HomeContent() {
           <div className="inline-flex items-center justify-center gap-6 mb-2">
             <Icon name="star" size={64} className="text-neon-blue drop-shadow-neon-blue shrink-0" />
             <h2 className="text-4xl md:text-5xl font-header font-black tracking-tighter bg-gradient-to-r from-neon-blue via-neon-purple to-neon-pink bg-clip-text text-transparent py-2 uppercase leading-none whitespace-nowrap flex items-center justify-center gap-4">
-              El Ecosistema Rítmico
+              {t.pages.homeBody.ecoRhythm}
             </h2>
           </div>
-          <p className="text-white max-w-2xl mx-auto opacity-90 uppercase text-xs tracking-widest">Descubre un mundo diseñado para los amantes de la música y la estética retro-futurista.</p>
+          <p className="text-white max-w-2xl mx-auto opacity-90 uppercase text-xs tracking-widest">{t.pages.homeBody.ecoRhythmDesc}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -236,14 +236,14 @@ export default function HomeContent() {
               <div className="p-4 bg-neon-blue/10 rounded-2xl drop-shadow-neon-blue">
                 <Icon name="target" size={40} />
               </div>
-              Nuestra Misión
+              {t.pages.homeBody.missionTitle}
             </h2>
             <div className="space-y-6">
               <p className="text-gray-200 text-lg leading-relaxed text-center italic">
               En MuzicMania, el ritmo es el lenguaje universal del alma digital. Una plataforma de alto rendimiento diseñada por **Ciszu Network**, donde la precisión técnica y el arte visual convergen en una experiencia audiovisual definitiva.
               </p>
               <p className="text-gray-400 leading-relaxed text-center uppercase text-[10px] tracking-widest opacity-60">
-                Optimizamos cada milisegundo de respuesta para que tu pulso sea uno con el beat.
+                {t.pages.homeBody.missionDesc}
               </p>
             </div>
           </div>
@@ -253,11 +253,11 @@ export default function HomeContent() {
               <div className="p-4 bg-neon-pink/10 rounded-2xl drop-shadow-neon-pink">
                 <Icon name="users" size={40} />
               </div>
-              Nexo de la Comunidad
+              {t.pages.homeBody.communityTitle}
             </h2>
             <div className="space-y-6 text-center">
               <p className="text-gray-200 text-lg leading-relaxed italic">
-                MuzicMania es alimentado por una comunidad global de ritmistas, desarrolladores y artistas. Tu feedback directo moldea el futuro de cada innovación que liberamos.
+                {t.pages.homeBody.communityDesc}
               </p>
               <div className="flex flex-wrap justify-center gap-4 pt-6">
                 {[
@@ -273,7 +273,7 @@ export default function HomeContent() {
               </div>
               <div className="pt-8 border-t border-white/5 mt-8 flex justify-center">
                 <Link href="/about" className="block w-full text-center py-4 bg-electric-blue text-white font-black rounded-xl shadow-lg hover-glow-blue hover:scale-105 active:scale-95 transition-all uppercase tracking-[0.2em] text-xs max-w-sm mx-auto flex items-center justify-center gap-3">
-                  VER MÁS INFORMACIÓN
+                  {t.pages.homeBody.moreInfo}
                   <Icon name="arrow-right" size={20} />
                 </Link>
               </div>
@@ -291,7 +291,7 @@ export default function HomeContent() {
                 <div className="p-2 bg-neon-purple/10 rounded-lg text-neon-purple drop-shadow-neon-purple">
                   <Icon name="history" size={32} />
                 </div>
-                Nuevas Innovaciones
+                {t.pages.homeBody.newInnovations}
               </h2>
             </div>
             
@@ -352,7 +352,7 @@ export default function HomeContent() {
 
             <Link href="/changelog" className="group relative flex items-center justify-center gap-4 w-full py-6 bg-doc-dark border-2 border-neon-blue/30 rounded-[2rem] text-white font-header font-black uppercase tracking-[0.3em] text-[10px] overflow-hidden hover:border-neon-blue hover:shadow-neon-blue/20 transition-all">
               <div className="absolute inset-0 bg-neon-blue/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-              <span className="relative z-10">EXPLORAR REGISTRO COMPLETO</span>
+              <span className="relative z-10">{t.pages.homeBody.exploreLog}</span>
               <Icon name="arrow-right" size={16} className="relative z-10 group-hover:translate-x-2 transition-transform" />
             </Link>
           </div>
@@ -362,7 +362,7 @@ export default function HomeContent() {
               <div className="p-2 bg-neon-cyan/10 rounded-lg text-neon-cyan drop-shadow-neon-cyan">
                 <Icon name="music" size={32} />
               </div>
-              Trending Tracks
+              {t.pages.homeBody.trendingTracks}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
               {TRACKS_DATA.slice(0, 4).map((track, i) => (
@@ -384,13 +384,13 @@ export default function HomeContent() {
                     </Link>
                     <div className="flex items-center gap-x-1.5">
                       <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 shrink-0 text-gray-500" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                      <span className="text-gray-400 font-black uppercase text-[7px] tracking-wider">Autor:</span>
-                      <Link href="/profile/@ciszukoantony_" className="text-white font-bold text-[7px] tracking-wider normal-case hover:text-neon-cyan transition-colors">Ciszuko Antony</Link>
+                      <span className="text-gray-400 font-black uppercase text-[7px] tracking-wider">{t.pages.homeBody.authorLabel}</span>
+                      <Link href="/profile/@ciszukoantony_" className="text-white font-bold text-[7px] tracking-wider normal-case hover:text-neon-cyan transition-colors">{t.pages.homeBody.creatorName}</Link>
                       <div className="w-2 h-2 text-blue-400 shrink-0">{I.verified}</div>
                     </div>
                     <div className="flex items-center gap-x-1.5">
                       <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 shrink-0 text-gray-500" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                      <span className="text-gray-400 font-black uppercase text-[7px] tracking-wider">Subido Por:</span>
+                      <span className="text-gray-400 font-black uppercase text-[7px] tracking-wider">{t.pages.homeBody.uploadedByLabel}</span>
                       <Link href="/profile/@muzicmania" className="text-white font-bold text-[7px] tracking-wider normal-case hover:text-neon-cyan transition-colors">MuzicMania</Link>
                       <div className="w-2 h-2 text-blue-400 shrink-0">{I.verified}</div>
                     </div>
@@ -410,7 +410,7 @@ export default function HomeContent() {
             </div>
             <Link href="/library" className="group relative inline-flex items-center justify-center gap-3 w-full py-5 bg-neon-pink rounded-xl text-white font-black uppercase text-sm tracking-[0.2em] shadow-[0_0_30px_rgba(255,0,128,0.3)] hover:shadow-[0_0_50px_rgba(255,0,128,0.6)] transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shine" />
-              <span className="relative z-10">VER TODAS LAS CANCIONES</span>
+              <span className="relative z-10">{t.pages.homeBody.viewAllSongs}</span>
               <Icon name="arrow-right" size={20} className="relative z-10 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
@@ -420,15 +420,15 @@ export default function HomeContent() {
         <div className="mt-12 p-12 rounded-[2.5rem] bg-doc-dark border-2 border-white/5 text-center space-y-6 relative overflow-hidden group hover:border-neon-blue/50 transition-all hover-glow-blue">
           <div className="absolute top-0 right-0 w-64 h-64 bg-neon-blue/5 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2"></div>
           <svg viewBox="0 0 24 24" className="w-16 h-16 mx-auto text-neon-blue drop-shadow-neon-blue mb-4 animate-bounce" fill="none" stroke="currentColor" strokeWidth={2}><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4.5c1.1-1.1 2.54-1.5 4.5-1.5"/><path d="M15 5s.3 3.4 2 5c1.1 1.1 2.54 1.5 4.5 1.5"/><path d="M11.5 15.5 10 17l-1-1 1-1.5.5-1.5Z"/></svg>
-          <h2 className="text-4xl font-header font-black text-white uppercase tracking-tighter italic">¿TIENES UNA IDEA REVOLUCIONARIA?</h2>
+          <h2 className="text-4xl font-header font-black text-white uppercase tracking-tighter italic">{t.pages.homeBody.ideaTitle}</h2>
           <p className="text-gray-400 max-w-2xl mx-auto font-medium leading-relaxed uppercase text-[10px] tracking-widest opacity-80">
-            MuzicMania no solo evoluciona por nuestro código, sino por vuestra visión. Si tienes una propuesta de mecánica o un reto para el motor rítmico, queremos escucharte.
+            {t.pages.homeBody.ideaDesc}
           </p>
           <div className="flex items-center justify-center gap-6">
             <Icon name="star" size={24} className="text-neon-cyan animate-spin-slow opacity-40" />
             <Icon name="star" size={16} className="text-neon-cyan animate-pulse opacity-20" />
             <Link href="/reviews" className="inline-block px-12 py-5 bg-white text-black font-black rounded-2xl hover:bg-neon-cyan hover:scale-105 transition-all active-depth uppercase tracking-[0.3em] text-sm shadow-xl">
-              DEJAR UNA RESEÑA
+              {t.pages.homeBody.leaveReview}
             </Link>
             <Icon name="star" size={16} className="text-neon-cyan animate-pulse opacity-20" />
             <Icon name="star" size={24} className="text-neon-cyan animate-spin-slow opacity-40" />
@@ -440,14 +440,14 @@ export default function HomeContent() {
           <svg viewBox="0 0 24 24" className="absolute -top-10 -right-10 w-96 h-96 text-neon-purple/5 pointer-events-none rotate-12" fill="none" stroke="currentColor" strokeWidth={1}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
           <div className="relative z-10 max-w-3xl">
             <h2 className="text-5xl md:text-6xl font-header font-black mb-8 bg-gradient-to-r from-white via-neon-purple to-neon-pink bg-clip-text text-transparent uppercase tracking-tighter italic">
-              El Futuro es Ahora
+              {t.pages.homeBody.futureNow}
             </h2>
             <p className="text-xl text-gray-300 leading-relaxed mb-10 font-medium uppercase text-xs tracking-[0.2em]">
-              MuzicMania representa la evolución de los juegos de ritmo en el navegador. Con tecnología de punta y una estética synthwave inigualable.
+              {t.pages.homeBody.futureNowDesc}
             </p>
             <div className="flex flex-wrap gap-6 justify-center lg:justify-start">
               <Link href="/play" className="inline-flex items-center gap-3 px-10 py-5 bg-neon-purple text-white font-black rounded-2xl shadow-neon-purple hover:scale-105 active-depth transition-all uppercase tracking-widest border-2 border-white/20">
-                EMPEZAR AHORA
+                {t.pages.homeBody.startNow}
                 <Icon name="arrow-right" size={24} className="animate-bounce-x" />
               </Link>
             </div>
@@ -462,9 +462,9 @@ export default function HomeContent() {
 
         <div className="container mx-auto px-4 text-center relative z-10">
           <h2 className="text-6xl md:text-8xl font-header font-black tracking-tighter bg-gradient-to-r from-neon-blue via-neon-purple to-neon-pink bg-clip-text text-transparent py-4 mb-4 uppercase leading-none italic">
-            El Portal
+            {t.pages.homeBody.thePortal}
           </h2>
-          <p className="text-neon-cyan font-black mb-16 uppercase tracking-[0.6em] text-xs drop-shadow-neon-cyan opacity-80">Transciende las dimensiones rítmicas</p>
+          <p className="text-neon-cyan font-black mb-16 uppercase tracking-[0.6em] text-xs drop-shadow-neon-cyan opacity-80">{t.pages.homeBody.portalSub}</p>
 
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
             {([
@@ -575,8 +575,8 @@ export default function HomeContent() {
         <QuickDocks />
 
       <EcosystemSection
-        title="Project provided by CiszuNetwork"
-        description="MuzicMania is part of the Ciszu Network ecosystem. Discover more projects and tools built by Ciszuko Antony."
+        title={t.pages.homeBody.attrProvided}
+        description={t.pages.homeBody.attrPartOf}
         visitHref="https://ciszunetwork.vercel.app"
         projectsHref="/projects"
       />
