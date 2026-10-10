@@ -185,9 +185,12 @@
   nomenclatura clara (opción/servidor/fecha/usuario); etiquetas FREE / PREMIUM · BETA TRIAL FREE; aviso BETA
   TRIAL FREE en dashboard y panel; acceso solo admins server-side ya activo; secciones pre-QuickDocks (ayuda,
   cómo usar, autopatrocinio con integración de perfil e invitación, directorios "próximamente").
-  QUEDA de este spec: campos de texto con editor Markdown de Discord; sub-sidebar por opción con preview
-  del servidor en el resumen global; UI de listas dedicadas de roles/canales; revisar duplicidad hero
-  (layout vs cliente) en polish final; etiquetar FREE/PREMIUM cualquier opción nueva futura.
+  ▸ [10 oct 2026] SPEC COMPLETO (commit 2bef4e78): sub-sidebar por opción en el servidor (Resumen por
+  defecto, persistente; rail en desktop y chips en móvil); resumen con listas dedicadas de roles (color
+  real de Discord) y canales agrupados por categoría; editor Markdown de Discord para bienvenida/despedida
+  (negrita/itálica/subrayado/tachado/código/spoiler + vista previa en vivo + variables {user} {guild}
+  {members}); además, sistema de estado del bot auto/manual con modal offline, disclaimer obligatorio y
+  sección devcon (commits 502c1413). Pendiente menor de polish: revisar duplicidad hero (layout vs cliente).
 - [ ] Añadir VPS 24 7 AL BOT. (Tarea normal: desplegar el bot en un host 24/7 — panel gratuito
   tipo bot-hosting.net con `deploy/ciszubot-standalone.zip`, o VPS genérico; requiere cuenta y/o pago.)
 
