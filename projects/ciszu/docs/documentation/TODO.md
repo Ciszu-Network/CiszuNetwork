@@ -17,6 +17,11 @@
 #5 Crear sistema de anuncios: Google Adsense, GA4, GTM, Tag y Analytics pack completo.
 
   REVISIÓN 05 oct 2026 (2 días después): enlaces de la API verificados.
+  REVISIÓN 10 oct 2026 (por API con OAuth del vault): AdSense sigue en `NEEDS_ATTENTION` (revisión
+  automática de Google); el enlace GA4→BigQuery EXISTE y está activo (`properties/551642504/
+  bigQueryLinks/yGFvijtXSdO5rW2I4KfTLw`, US — el endpoint que responde es v1alpha, v1beta da 404);
+  el dataset `analytics` sigue con 0 tablas: Google aún no emite `analytics.events_*` (requiere
+  tráfico + export diario). Ambas cosas son esperas externas, nada que ejecutar localmente.
 
 - [ ] Looker Studio: conectar fuentes GA4 y crear dashboard.
   PENDIENTE de las tablas de BigQuery; además la creación de dashboards de
