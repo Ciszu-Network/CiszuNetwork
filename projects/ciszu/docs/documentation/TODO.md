@@ -2,24 +2,11 @@
 
 ### Cambios Generales:
 
-- [X] Migración i18n de literales por lotes — COMPLETA en las 4 webs (ciszu 0 · ciszubot 0 ·
-  antony 0 · muzicmania 0; ratchet `pnpm verify:i18n` verde, baseline en 0).
-  PILOTO HECHO (09 oct 2026): página de **login de ciszu** migrada completa (patrón `useDict()` +
-  claves `loginPage` en `es`/`en` + `fillTemplate`; ciszu pasó de 390 → 379).
-  LOTES HECHOS: login (390→379) y support (379→340). LOTES HECHOS EN CISZU (09 oct 2026): 390 → 66 en 15 tandas: login, support, contact, register, reviews,
-  changelog, not-found, reset-password, team (refactor), information (refactor), proyectos (ciszugamens/
-  antony/muzicmania/ciszunetwork/ciszubot), documentation, ProjectsExplorer, forum, stats + cola brandTerms.
-  REFACTOR SERVER→CLIENT ya resuelto para team e information (patrón wrapper + XContent.tsx).
-  COLA PENDIENTE ciszu: services/page, services/[slug], faq (server→client), changelog/[id]/client,
-  Navbar, appeal, settings, admin-login-form, ServicesShowcase (importar useDict/hook y migrar restos).
-  DESPUÉS: ciszubot (330) · antony (246) · muzicmania (937).
-
 #5 Crear sistema de anuncios: Google Adsense, GA4, GTM, Tag y Analytics pack completo.
 
   REVISIÓN 05 oct 2026 (2 días después): enlaces de la API verificados.
   REVISIÓN 10 oct 2026 (por API con OAuth del vault): AdSense sigue en `NEEDS_ATTENTION` (revisión
-  automática de Google); el enlace GA4→BigQuery EXISTE y está activo (`properties/551642504/
-  bigQueryLinks/yGFvijtXSdO5rW2I4KfTLw`, US — el endpoint que responde es v1alpha, v1beta da 404);
+  automática de Google); el enlace GA4→BigQuery EXISTE y está activo (`properties/551642504/   bigQueryLinks/yGFvijtXSdO5rW2I4KfTLw`, US — el endpoint que responde es v1alpha, v1beta da 404);
   el dataset `analytics` sigue con 0 tablas: Google aún no emite `analytics.events_*` (requiere
   tráfico + export diario). Ambas cosas son esperas externas, nada que ejecutar localmente.
 
@@ -36,10 +23,8 @@
   Revisar de nuevo en unos días.
 - [ ] **Looker Studio**: conectar BigQuery → crear dashboard (gratis).
   (Depende de las tablas anteriores; creación manual en la UI.)
-- [ ] **Aprobar sitios AdSense (ESPERA)**: verificado por API (05 oct) que la
-  cuenta está en `state: NEEDS_ATTENTION` (revisión automática de Google, no se
-  acelera). Los 4 sitios siguen en revisión. Verificar en la UI de AdSense en
-  unos días.
+- [ ] **Aprobar sitios AdSense (ESPERA)**: cuenta `READY` (10 oct); los 4 sitios añadidos y en
+  revisión (3 REQUIRES_REVIEW + muzicmania GETTING_READY, AutoAds ON). Falta datos de pago (UI).
 
   - ads.txt: VERIFICADO correcto en las 4 webs (03 oct). El aviso "No encontrado" de AdSense
     era del 21 sept (antes de servir ads.txt); se corregirá en el próximo escaneo de AdSense.
@@ -113,37 +98,18 @@
 - [X] Se debe crear un modal cuando una cuenta es baneada, el usuario automaticamente se redirecionara asu profile y aparecera un modal de su cuenta fue baneada e informacion del baneo. Razon fecha provocante etc. Lo mismo con los mutes.
 - [X] Username de guests @guestNNNN en las 4 webs: ciszubot ya lo tenía (`getGuestId`), añadido en ciszu (`getGuestUsername` + AuthMenu), antony (strip de espacios + AuthMenu) y muzicmania ya cumplía.
 
-### Cambios por Website
-
-**Ciszu Network Website:**
-
-- [X] Terminar idiomas en ingles UK.
-- [X] Terminar idiomas en ingles USA.
-- [X] Terminar idiomas en español LATAM.
-- [X] Terminar idiomas en español España.
-
 **Ciszubot Website:**
 
-- [X] Terminar idiomas en ingles UK.
-- [X] Terminar idiomas en ingles USA.
-- [X] Terminar paginas de dashboard (auth) — spec completo (commits 21813eca/2bef4e78).
-- [X] Terminar idiomas en español LATAM.
-- [X] Terminar idiomas en español España.
-- [X] Corregir la configuracion de la cuenta para permite doble login, usuario logeado con ciszu ID puede configurar su cuenta, usuario logeado con discord accede a dasboard, usuario logeado en ambos control total.
+- [X] Terminar paginas de dashboard (auth). Corregir la configuracion de la cuenta para permite doble login, usuario logeado con ciszu ID puede configurar su cuenta, usuario logeado con discord accede a dasboard, usuario logeado en ambos control total. Actualmente existe un problema claro, si ingreso al login luego de logearme con discord, dice que "CISZU ID ALREADY CONNECTED" lo cual es falso, por al ingresar en configuracion sigue pidiendo ingresar a CISZU ID. Esto se debe por que nunca se logea a ciszu ID.
 
-  ▸ [10 oct 2026] Fase 1 HECHA: sin bucle en /login (panel dinámico según sesión), username @ real de Discord (nunca el ID), icono engranaje en Configuración, botones Invitar/Configurar por servidor con atenuado y aviso individual, QuickDocks compactos/colapsables y estáticos al final, sidebar del dashboard por categorías con accesos (FAQ/ayuda/perfil/config/idioma/tema). Pendiente de este bloque: lo de la línea del spec del dashboard (158).
+  El panel de auth de login y register deben ser inteligentes, si inicio con ciszu ID o me regsitro con ciszu ID obligatoriamente para usar el dashboard debo iniciar sesion a discord, y si quiero usar la config de la cuenta debo logearme o registrarme en ciszu ID. Es decir, el Discord OAuth y CiszuID no son obligatorios entre si, pero son duales y independientes.  De esta manera los paneles paginas de auth register y login quitan la zona de discord o quitan la zona de ciszu ID dependiendo de si el usuario esta o no esta logeado a ese panel. Es decir el auth de ciszubot es especial y se debe cambiar las pagians de auth para dividirlo entre el panel de discord y el panel de ciszu ID. Se debe reforzar la verificacion de ambas sesiones para que no de falsos positivos como ahora.
 
-  Actualmente cuando inicio con discord y luego voy a iniciar sesion con ciszu ID, no me deja, al ingresar al login me redirecciona hacia atras, deberias arreglar esto. Ademas´si el usuario ya esta ingresado en discord o ya esta ingresado en ciszu ID desactivar dinamica y inteligentemente.
+  El quickdocks actual no me gusta me gustaba mas el anterior, el problema no era si es retaible o no. El problema es que esta incrustado dentro de la zona de la derecha del slidebar. En vez de estar debajo del todo. Para que me entiendas mejor, tanto los quickdocks como el las secciones prequickdocks, deben estar fijados debajo de toda la "zona" de configuracion resuemenes o slidebar, muy parecido a la pagina de documentation, puedes basarte de alli.
 
-  Ademas cuando ingreso a ver la info de mi cuenta, utiliza un serial de digitos aleatorio para mi username, en vez de mi username de discord (sin ciszu id), solamente aparece mi displayname correctamente. (acabo de ver que el serial es el ID de la cuenta, aparte del ID deberia mostrar el username @)
+  Por cada servidor no invitado siempre exitir un boton para invitar a ese servidor, y un boton de "configurar" que siempre dara error en caso de que no este invitado. El servidor debe estar con un efecto apagado cuando no este invitado y advertir de antes individualmente. Actualmente si se cumple, pero solo para el slidebar, tambien se debe aplicar para la zona de servidores de resumen global.
 
-  Se debe cambiar el icono de la configuracion de la cuenta a un engranaje.
-
-  Por cada servidor no invitado siempre exitir un boton para invitar a ese servidor, y un boton de "configurar" que siempre dara error en caso de que no este invitado. El servidor debe estar con un efecto apagado cuando no este invitado y advertir de antes individualmente.
-
-  Los quickdocs son muy molesto, intenta siempre que esten hacia abajo de la pagina, y no en la zona de scrolls, es decir estatico debajo de todo.
-
-  Agrega mas reactividad, interactividad, iconos svg, degradados, opciones demas, utilidades, accesos directos en el slidebar dashboard como faq o ayuda, configuracion de la cuenta, perfil, cambio de idioma e tema,
+  Cuando se mencione la palabra o tag OFFLINE debe estar en rojo, con animacion de un punto en live en rojo, no un tag amarillo.
+  El slidebar actual tiene un problema claro. Todo esta muy amontonado. Y usa no se reutiliza los compontentes. Primero que nada el slidebar debe ser mas grande, mas ancho, ademas de estar mas pegado a la izquierda, es decir tiene demasiado margin actualmente.
 
   Los servidores en el sliderbard deben estar dentro de una categoria del sliderbard, como servers. Al no tener seleccionado nada el usuario solo vera el resumen, al seleccionar aparecera un segundo slidebard a la derecha o una extension para las categorias por opcion de configuracion, por defecto el resumen dentro del servidor. Con un hero title banner y preview resumen entero del servidor, y luego por cada opcion iconos etc, al seleccionar aparece las opciones.
 
@@ -197,19 +163,4 @@
   {members}); además, sistema de estado del bot auto/manual con modal offline, disclaimer obligatorio y
   sección devcon (commits 502c1413). Pulido final revisado (10 oct): el DashboardShell no renderiza hero — sin duplicidad layout/cliente; cada página tiene un único hero.
 - [ ] Añadir VPS 24 7 AL BOT. (Tarea normal: desplegar el bot en un host 24/7 — panel gratuito
-  tipo bot-hosting.net con `deploy/ciszubot-standalone.zip`, o VPS genérico; requiere cuenta y/o pago.)
-
-**Ciszuko Antony Website:**
-
-- [X] Terminar idiomas en ingles UK.
-- [X] Terminar idiomas en ingles USA.
-- [X] Terminar idiomas en español LATAM.
-- [X] Terminar idiomas en español España.
-
-**MuzicMania Website:**
-
-- [X] Terminar idiomas en ingles UK.
-- [X] Terminar idiomas en ingles USA.
-- [X] Terminar idiomas en español LATAM.
-- [X] Terminar idiomas en español España.
-- [ ] Seguir con el desarollo del videojuego en su muzicmania TODO.md
+  tipo bot-hosting.net con `deploy/ciszubot-standalone.zip`, o VPS genérico; requiere cuenta y/o pago.
