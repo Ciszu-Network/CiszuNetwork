@@ -1,5 +1,7 @@
 'use client';
 
+import { useClientI18n } from '@/hooks/useClientI18n';
+
 import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -23,6 +25,8 @@ import {
 
 
 export default function ChangelogDetailPage() {
+  const { dict } = useClientI18n();
+  const t = dict.changelogPage;
   usePageTitle('CHANGELOG');
   const params = useParams<{ id: string }>();
   const idParam = Array.isArray(params?.id) ? params.id[0] : params?.id;
@@ -65,16 +69,16 @@ export default function ChangelogDetailPage() {
           <div className="max-w-4xl mx-auto min-h-[60vh] flex flex-col items-center justify-center text-center space-y-6">
             <div className="w-16 h-16 text-white/20">{I.alert}</div>
             <h1 className="text-4xl font-header font-black text-white uppercase italic tracking-tighter">
-              VERSIÓN NO ENCONTRADA
+              {t.fallbackTitle}
             </h1>
             <p className="text-white/30 text-[10px] font-black uppercase tracking-[0.3em]">
-              La entrada solicitada no existe en el registro
+              {t.fallbackText}
             </p>
             <Link
               href="/changelog"
               className="text-neon-blue font-black tracking-widest uppercase text-xs pb-1 border-b border-neon-blue/40 hover:border-neon-blue transition-all"
             >
-              Volver al registro maestro
+              {t.fallbackBack}
             </Link>
           </div>
         </div>
@@ -97,7 +101,7 @@ export default function ChangelogDetailPage() {
             className={`inline-flex items-center gap-3 font-black uppercase text-[10px] tracking-[0.4em] group ${primaryTag.color}`}
           >
             <div className="w-5 h-5 group-hover:-translate-x-2 transition-transform">{I.back}</div>
-            VOLVER AL REGISTRO
+            {t.backLink}
           </Link>
         </motion.div>
 
@@ -154,7 +158,7 @@ export default function ChangelogDetailPage() {
           </div>
         </div>
 
-        {/* --- BITÁCORA TÉCNICA --- */}
+        {/* --- {t.techLogTitle} --- */}
         <motion.section
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -165,7 +169,7 @@ export default function ChangelogDetailPage() {
           <div className="flex items-center gap-5">
             <div className={`w-10 h-10 ${primaryTag.color}`}>{I.code}</div>
             <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">
-              BITÁCORA TÉCNICA
+              {t.techLogTitle}
             </h2>
           </div>
 
@@ -192,7 +196,7 @@ export default function ChangelogDetailPage() {
           </div>
         </motion.section>
 
-        {/* --- INFO ENLAZADA --- */}
+        {/* --- {t.linkedTitle} --- */}
         {related.length > 0 && (
           <motion.section
             initial={{ opacity: 0, y: 30 }}
@@ -203,7 +207,7 @@ export default function ChangelogDetailPage() {
             <div className="flex items-center gap-4">
               <div className="w-8 h-8 text-neon-cyan">{I.layers}</div>
               <h2 className="text-2xl font-header font-black text-white uppercase italic tracking-tighter">
-                INFO ENLAZADA
+                {t.linkedTitle}
               </h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -239,16 +243,16 @@ export default function ChangelogDetailPage() {
             <div className="absolute inset-0 bg-neon-blue/5 animate-pulse pointer-events-none" />
             <div className="relative space-y-6">
               <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">
-                ¿NECESITAS EL CONTEXTO COMPLETO?
+                {t.docsTitle}
               </h2>
               <p className="text-gray-500 font-bold uppercase text-xs tracking-widest max-w-md mx-auto italic">
-                Los protocolos de documentación explican la arquitectura y el flujo de despliegue detrás de cada entrada.
+                {t.docsText}
               </p>
               <Link
                 href="/documentation"
                 className="inline-flex items-center gap-3 text-neon-blue font-black uppercase text-[10px] tracking-[0.4em] pb-1 border-b-2 border-neon-blue/30 hover:border-neon-blue hover:gap-6 transition-all group"
               >
-                VER PROTOCOLOS
+                {t.ctaBtn}
                 <div className="w-4 h-4">{I.arrow}</div>
               </Link>
             </div>

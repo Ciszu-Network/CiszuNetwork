@@ -20,6 +20,7 @@ import { useRouter } from 'next/navigation';
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import { supabase } from '@/config/supabase';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useClientI18n } from '@/hooks/useClientI18n';
 import {
   PasswordStrengthBar,
   RecoveryNotice,
@@ -48,6 +49,8 @@ const CISZU_ISOTYPE = 'projects/ciszu/content/logos/images/outline/isotype/color
 const SITE_NAME = 'CiszuBot';
 
 export default function ResetPasswordPage() {
+  const { dict } = useClientI18n();
+  const t = dict.resetPage;
   usePageTitle('RESET_PASSWORD');
   const router = useRouter();
   const { toast } = useToast();
@@ -191,14 +194,14 @@ export default function ResetPasswordPage() {
       <div className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full bg-neon-purple/10 blur-[140px] pointer-events-none" />
 
       <div className="pt-14 mb-8 px-4 flex items-center justify-center gap-3">
-        <SmartImage src={CISZU_ISOTYPE} alt="Ciszu ID" width={40} height={40} className="w-9 h-9" />
+        <SmartImage src={CISZU_ISOTYPE} alt={t.brandId} width={40} height={40} className="w-9 h-9" />
 
       </div>
 
       <div className="max-w-md mx-auto px-4 relative">
         <div className="text-center mb-6 space-y-1">
-          <h1 className="text-white font-black uppercase tracking-widest text-sm">CISZU ID</h1>
-          <p className="text-gray-400 text-[11px] font-bold">Recupera el acceso a tu cuenta de CiszuBot</p>
+          <h1 className="text-white font-black uppercase tracking-widest text-sm">{t.brandIdUpper}</h1>
+          <p className="text-gray-400 text-[11px] font-bold">{t.subtitle}</p>
         </div>
 
         <div className="relative">
@@ -207,17 +210,19 @@ export default function ResetPasswordPage() {
             {checking ? (
               <div className="text-center space-y-3 py-6">
                 <div className="w-10 h-10 mx-auto border-2 border-white/20 border-t-neon-blue rounded-full animate-spin" />
-                <p className="text-gray-400 text-[11px] font-bold">Comprobando el enlace…</p>
+                <p className="text-gray-400 text-[11px] font-bold">{t.checking}</p>
               </div>
-            ) : done ? (
+            ) :
+            done ? (
               <RecoveryNotice
                 tone="success"
-                title="Contraseña actualizada"
+                title={t.updatedTitle}
                 message="Tu contraseña ha sido restablecida y por seguridad cerramos la sesión. Inicia sesión con tu contraseña nueva."
                 actionLabel="Ir al login"
                 onAction={() => router.replace('/login')}
               />
-            ) : status && !status.canSetPassword ? (
+            ) :
+            status && !status.canSetPassword ? (
               <RecoveryNotice
                 tone="warning"
                 title={status.title}
@@ -232,14 +237,14 @@ export default function ResetPasswordPage() {
               <form onSubmit={handleSubmit} className="space-y-5">
                 <RecoveryNotice
                   tone="info"
-                  title="Enlace verificado"
+                  title={t.verifiedTitle}
                   message="Establece tu contraseña nueva. El enlace es de un solo uso y la sesión se cerrará al guardarla."
                   className="!p-4"
                 />
 
                 <div className="space-y-1">
                   <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 ml-1">
-                    Nueva contraseña
+                    {t.newPassword}
                   </label>
                   <input
                     type="password"
@@ -255,7 +260,7 @@ export default function ResetPasswordPage() {
 
                 <div className="space-y-1">
                   <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 ml-1">
-                    Repetir contraseña
+                    {t.repeatPassword}
                   </label>
                   <input
                     type="password"
@@ -269,7 +274,7 @@ export default function ResetPasswordPage() {
                 </div>
 
                 <p className="text-[10px] font-bold text-gray-500 leading-relaxed">
-                  Mínimo 8 caracteres. No puede ser igual a tu contraseña anterior.
+                  {t.minCharsHint}
                 </p>
 
                 {error && <p className="text-red-400 text-[11px] font-bold">{error}</p>}

@@ -4,6 +4,7 @@ import { FormEvent, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Bot, BotOff, Terminal, Command, CornerDownLeft } from 'lucide-react';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import { useClientI18n } from '@/hooks/useClientI18n';
 
 type Tone = 'system' | 'ok' | 'warn' | 'err' | 'muted' | 'echo';
 
@@ -96,6 +97,8 @@ function runCommand(raw: string): CommandResult {
 }
 
 export default function NotFound() {
+  const { dict } = useClientI18n();
+  const t = dict.notFoundPage;
   const [awake, setAwake] = useState(false);
   const [lines, setLines] = useState<ConsoleLine[]>(BOOT_LOG);
   const [input, setInput] = useState('');
@@ -199,16 +202,16 @@ export default function NotFound() {
         <div className="mt-8 flex items-center gap-3 bg-surface/80 border border-neon-cyan/30 px-6 py-2 backdrop-blur">
           <Terminal className="w-5 h-5 text-neon-cyan animate-pulse" />
           <p className="text-neon-cyan font-bold tracking-[0.4em] uppercase text-xs md:text-sm">
-            COMANDO NO ENCONTRADO
+            {t.cmdNotFound}
           </p>
         </div>
 
         <div className="mt-5 max-w-xl space-y-2">
           <p className="text-ink/90 text-sm md:text-base font-semibold uppercase tracking-wider">
-            ERROR 404: LA RUTA SOLICITADA NO EXISTE.
+            {t.error404}
           </p>
           <p className="text-muted text-xs md:text-sm uppercase tracking-widest">
-            Comprueba el comando e inténtalo de nuevo. Si creíste encontrar algo aquí, se ha purgado del sistema.
+            {t.hint}
           </p>
         </div>
 
@@ -220,7 +223,7 @@ export default function NotFound() {
             <span className="absolute inset-0 bg-neon-cyan translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
             <span className="relative flex items-center gap-2 whitespace-nowrap">
               <Command className="w-5 h-5 shrink-0" />
-              VOLVER AL HOME
+              {t.backHome}
             </span>
           </Link>
         </div>
@@ -241,7 +244,7 @@ export default function NotFound() {
                 ciszubot consola · {awake ? 'en línea' : 'offline'}
               </span>
               <span className="ml-auto hidden sm:inline font-mono text-[9px] uppercase tracking-widest text-white/30">
-                cz!sys_log
+                {"cz!sys_log"}
               </span>
             </div>
 
@@ -259,14 +262,14 @@ export default function NotFound() {
             <div className="flex items-center gap-2 border-t border-white/10 px-4 py-2.5">
               <CornerDownLeft className="w-4 h-4 shrink-0 text-neon-cyan/70" aria-hidden />
               <label htmlFor="czbot-command" className="sr-only">
-                Comando para ciszubot
+                {t.commandFor}
               </label>
               <input
                 ref={inputRef}
                 id="czbot-command"
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
-                placeholder="escribe cz!help"
+                placeholder={t.phHelp}
                 autoComplete="off"
                 spellCheck={false}
                 className="w-full bg-transparent font-mono text-xs text-ink placeholder:text-white/25 outline-none"
@@ -289,7 +292,7 @@ export default function NotFound() {
         className="absolute bottom-6 left-6 z-20 hidden md:flex items-center gap-2 text-muted transition-colors hover:text-neon-cyan"
       >
         <Bot className="w-4 h-4 text-neon-purple/60" />
-        <span className="text-[10px] uppercase font-bold tracking-widest">cz!sys_log · ciszubot core</span>
+        <span className="text-[10px] uppercase font-bold tracking-widest">{"cz!sys_log · ciszubot core"}</span>
       </button>
     </div>
     <QuickDocks />

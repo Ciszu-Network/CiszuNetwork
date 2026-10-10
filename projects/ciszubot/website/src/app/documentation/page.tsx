@@ -9,6 +9,7 @@ import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useClientI18n } from '@/hooks/useClientI18n';
 
 const I = {
   book: <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>,
@@ -69,6 +70,8 @@ const PKG_COLOR: Record<string, { bg: string; border: string; hover: string; tex
 };
 
 export default function DocumentationPortal() {
+  const { dict } = useClientI18n();
+  const t = dict.documentationPage;
   usePageTitle('DOCUMENTATION');
   const { toast } = useToast();
   const [selectedDoc, setSelectedDoc] = useState('DOCUMENTATION');
@@ -153,7 +156,7 @@ export default function DocumentationPortal() {
       <PageReveal className="relative pt-12">
         <InfoHero
           icon="policies"
-          title="Documentación"
+          title={t.title}
           subtitle="Sistema de documentación oficial V2.5.5"
           theme={THEME}
         />
@@ -169,7 +172,7 @@ export default function DocumentationPortal() {
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-neon-blue transition-colors">{I.search}</div>
                   <input
                     type="text"
-                    placeholder="FILTRAR NODOS..."
+                    placeholder={t.filterNodes}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full bg-black/60 border border-white/10 rounded-2xl pl-12 pr-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] focus:border-neon-blue/50 outline-none transition-all placeholder:text-gray-700"
@@ -199,7 +202,7 @@ export default function DocumentationPortal() {
 
               <div className="mt-8 pt-8 border-t border-white/5 space-y-5">
                 <h3 className="text-[10px] font-black text-white/40 uppercase tracking-[0.4em] flex items-center gap-2">
-                  <div className="w-3 h-3 text-neon-blue">{I.terminal}</div> PROGRAMAS DE USO RECOMENDADOS
+                  <div className="w-3 h-3 text-neon-blue">{I.terminal}</div> {t.toolsTitle}
                 </h3>
                 <div className="grid grid-cols-2 gap-3">
                   {SOFTWARE_TOOLS.map(sw => (
@@ -218,18 +221,18 @@ export default function DocumentationPortal() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-5 h-5 text-neon-purple" style={{ filter: 'drop-shadow(0 0 8px rgba(168,85,247,0.5))' }}>{I.info}</div>
-                  <h3 className="text-[11px] font-black text-white uppercase tracking-[0.2em]">DETALLES DEL ARCHIVO</h3>
+                  <h3 className="text-[11px] font-black text-white uppercase tracking-[0.2em]">{t.fileDetails}</h3>
                 </div>
                 <div className="w-2.5 h-2.5 rounded-full bg-neon-purple animate-pulse" style={{ boxShadow: '0 0 15px #a855f7' }} />
               </div>
 
               <div className="space-y-4 pt-2">
                 <div className="flex justify-between border-b border-white/5 pb-2">
-                  <span className="text-[9px] font-black text-gray-600 uppercase">Ruta Física</span>
+                  <span className="text-[9px] font-black text-gray-600 uppercase">{t.filePath}</span>
                   <span className="text-[9px] font-black text-white">/docs/{format}/{selectedDoc}.{format}</span>
                 </div>
                 <div className="flex justify-between border-b border-white/5 pb-2">
-                  <span className="text-[9px] font-black text-gray-600 uppercase">MIME Type</span>
+                  <span className="text-[9px] font-black text-gray-600 uppercase">{t.mimeType}</span>
                   <span className="text-[9px] font-black text-white">{format === 'txt' ? 'text/plain' : 'text/markdown'}</span>
                 </div>
                 <div className="flex justify-between border-b border-white/5 pb-2">
@@ -243,7 +246,7 @@ export default function DocumentationPortal() {
               </div>
 
               <p className="text-[9px] text-gray-600 font-bold leading-relaxed uppercase italic">
-                Este documento utiliza codificación UTF-8 verificada para garantizar la compatibilidad con caracteres especiales y nomenclatura dinámica.
+                {t.utf8Desc}
               </p>
             </div>
           </div>
@@ -276,7 +279,7 @@ export default function DocumentationPortal() {
             <div className="px-12 py-8 border-b border-white/5 bg-black/50 flex items-center justify-between backdrop-blur-xl">
               <div className="flex items-center gap-4">
                 <div className="w-5 h-5 text-neon-blue animate-pulse" style={{ filter: 'drop-shadow(0 0 8px rgba(0,212,255,0.5))' }}>{I.terminal}</div>
-                <span className="text-[11px] font-black text-white uppercase tracking-[0.3em] italic">Visor de Documentos</span>
+                <span className="text-[11px] font-black text-white uppercase tracking-[0.3em] italic">{t.viewerTitle}</span>
               </div>
               <div className="flex gap-2 bg-black/80 p-2 rounded-2xl border border-white/10 shadow-inner">
                 {(['txt', 'md'] as const).map(f => (
@@ -298,7 +301,7 @@ export default function DocumentationPortal() {
                 <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-xl z-20">
                   <div className="flex flex-col items-center gap-6">
                     <div className="w-16 h-16 border-4 border-neon-blue/10 border-t-neon-blue rounded-full animate-spin" />
-                    <p className="text-[11px] font-black text-neon-blue uppercase tracking-[0.5em] animate-pulse">Sincronizando Nodo...</p>
+                    <p className="text-[11px] font-black text-neon-blue uppercase tracking-[0.5em] animate-pulse">{t.syncingNode}</p>
                   </div>
                 </div>
               ) : (
@@ -320,8 +323,8 @@ export default function DocumentationPortal() {
               <div className="flex items-center gap-6">
                 <div className="w-12 h-12 text-neon-blue" style={{ filter: 'drop-shadow(0 0 8px rgba(0,212,255,0.5))' }}>{I.download}</div>
                 <div>
-                  <h3 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">CENTRO DE DESCARGAS</h3>
-                  <p className="text-[11px] text-gray-500 font-bold uppercase tracking-[0.3em]">Protocolos de Nomenclatura Dinámica v2.5</p>
+                  <h3 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">{t.downloadsTitle}</h3>
+                  <p className="text-[11px] text-gray-500 font-bold uppercase tracking-[0.3em]">{t.namingProtocols}</p>
                 </div>
               </div>
             </div>
@@ -367,7 +370,7 @@ export default function DocumentationPortal() {
                     <div className={`w-12 h-12 ${pc.text} group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>{pkg.icon}</div>
                     <div className="text-left space-y-1">
                       <span className="block text-[12px] font-black text-white uppercase tracking-widest italic">PAQUETE {pkg.ext.toUpperCase()}</span>
-                      <span className="block text-[10px] text-gray-500 font-bold uppercase tracking-widest">Compresión Dinámica</span>
+                      <span className="block text-[10px] text-gray-500 font-bold uppercase tracking-widest">{t.dynamicCompression}</span>
                     </div>
                   </button>
                 );

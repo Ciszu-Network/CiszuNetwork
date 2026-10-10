@@ -7,6 +7,7 @@ import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useClientI18n } from '@/hooks/useClientI18n';
 import Link from 'next/link';
 
 // --- Pure SVG Icon Library ---
@@ -22,6 +23,8 @@ const I = {
 };
 
 export default function ForumPage() {
+  const { dict } = useClientI18n();
+  const t = dict.forumPage;
   usePageTitle('FORUM');
   const categories = [
     { title: 'General', desc: 'Charlas generales sobre CiszuBot y el ecosistema.', count: 124, icon: I.messageSquare, color: 'blue' },
@@ -54,11 +57,11 @@ export default function ForumPage() {
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500">
                     {I.search}
                   </div>
-                  <input type="text" disabled placeholder="BUSCAR DISCUSIÓN..." className="w-full bg-doc-dark border border-white/10 rounded-2xl py-5 pl-12 pr-4 text-xs font-black uppercase tracking-widest outline-none" />
+                  <input type="text" disabled placeholder={t.searchPh} className="w-full bg-doc-dark border border-white/10 rounded-2xl py-5 pl-12 pr-4 text-xs font-black uppercase tracking-widest outline-none" />
                 </div>
               </div>
               <button disabled className="px-8 py-5 bg-gradient-to-r from-neon-blue to-neon-cyan text-black font-black rounded-2xl uppercase tracking-[0.2em] text-[10px] flex items-center gap-3">
-                NUEVO TEMA
+                {t.newTopic}
                 <div className="w-4 h-4">{I.zap}</div>
               </button>
             </div>
@@ -104,16 +107,16 @@ export default function ForumPage() {
                </h2>
                <div className="h-1 w-32 bg-gradient-to-r from-neon-blue to-neon-purple mx-auto rounded-full" />
                <p className="text-white/60 font-bold uppercase text-base leading-relaxed tracking-[0.25em] max-w-md mx-auto">
-                 El sistema de foros comunitarios <span className="text-white">no estará disponible</span> durante esta fase de la Beta.
+                 {t.descA} <span className="text-white">{t.descB}</span> {t.descC}
                </p>
-               <p className="text-neon-blue font-black uppercase text-[10px] tracking-[0.8em] animate-pulse">Desarrollo en curso</p>
+               <p className="text-neon-blue font-black uppercase text-[10px] tracking-[0.8em] animate-pulse">{t.inProgress}</p>
             </div>
 
             <div className="flex flex-col gap-6 pt-6 relative z-10">
                <Link href="/" className="w-full h-20 bg-neon-blue text-black rounded-[2.5rem] font-header font-black uppercase tracking-[0.3em] text-xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-[0_0_40px_rgba(39,158,255,0.3)]">
-                  REGRESAR AL INICIO
+                  {t.backHome}
                </Link>
-               <p className="text-white/20 font-black uppercase text-[9px] tracking-[0.5em]">Estado del Sistema: Hibernación Beta v0.9.0</p>
+               <p className="text-white/20 font-black uppercase text-[9px] tracking-[0.5em]">{t.systemStatus}</p>
             </div>
          </div>
       </div>
