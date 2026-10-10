@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useT } from '@/hooks/useT';
 
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
@@ -17,7 +18,7 @@ const I = {
   supabase:    <svg viewBox="0 0 24 24" className="w-full h-full" fill="currentColor"><path d="M21.362 9.354H12V.5L2.638 10.646H12V19.5z"/></svg>,
   react:       <svg viewBox="-11.5 -10.23174 23 20.46348" className="w-full h-full" fill="none" stroke="currentColor"><circle r="2.05" fill="currentColor"/><g strokeWidth="1"><ellipse rx="11" ry="4.2"/><ellipse rx="11" ry="4.2" transform="rotate(60)"/><ellipse rx="11" ry="4.2" transform="rotate(120)"/></g></svg>,
   tailwind:    <svg viewBox="0 0 24 24" className="w-full h-full" fill="currentColor"><path d="M12.001,4.8c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c0.913,0.228,1.565,0.89,2.288,1.639C13.679,10.65,15.115,12,18.001,12c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.639C16.323,6.15,14.887,4.8,12.001,4.8z M6.001,12c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c0.913,0.228,1.565,0.89,2.288,1.639c1.191,1.214,2.627,2.661,5.513,2.661c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.639C10.323,13.35,8.887,12,6.001,12z"/></svg>,
-  nextjs:      <img src="/tech/nextjs.svg" alt="Next.js" className="w-full h-full object-contain" />,
+  nextjs:      <img src="/tech/nextjs.svg" alt={"Next.js"} className="w-full h-full object-contain" />,
   typescript:  <img src="/tech/typescript.svg" alt="TypeScript" className="w-full h-full object-contain" />,
   vscode:      <svg viewBox="0 0 24 24" className="w-full h-full" fill="currentColor"><path d="M23.15 2.587L18.21.21a1.494 1.494 0 0 0-1.705.29l-9.46 8.63-4.12-3.128a.999.999 0 0 0-1.276.057L.327 7.261A1 1 0 0 0 .326 8.74L3.899 12 .326 15.26a1 1 0 0 0 .001 1.479L1.65 17.94a.999.999 0 0 0 1.276.057l4.12-3.128 9.46 8.63a1.492 1.492 0 0 0 1.704.29l4.942-2.377A1.5 1.5 0 0 0 24 20.06V3.939a1.5 1.5 0 0 0-.85-1.352zm-5.146 14.861L10.826 12l7.178-5.448v10.896z"/></svg>,
   figma:       <svg viewBox="0 0 24 24" className="w-full h-full" fill="currentColor"><path d="M8 3.99A3.99 3.99 0 0 1 12 0h4a4 4 0 1 1 0 8H8V3.99zm8 4A3.99 3.99 0 0 1 12 12V8h4zm-4 4v4H8a4 4 0 1 1 0-8h4v4zm0 4h-4a4 4 0 1 0 4 4v-4z"/></svg>,
@@ -81,6 +82,7 @@ function CopyField({ value, label, subValue, icon, theme = 'blue', showWhatsApp 
 }
 
 export default function TeamPage() {
+  const t = useT();
   usePageTitle('TEAM');
   const {  } = useAppStore();
   const { toast } = useToast();
@@ -119,7 +121,7 @@ export default function TeamPage() {
                 </h1>
              </div>
              <p className="text-neon-cyan font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-               La Mente Detrás del Ritmo
+               {t.pages.team.heroSubtitle}
              </p>
           </div>
         </motion.header>
@@ -132,21 +134,21 @@ export default function TeamPage() {
               
               <div className="relative z-10">
                 <div className="w-40 h-40 mx-auto rounded-[2rem] overflow-hidden transform group-hover:scale-110 transition-transform duration-700 shadow-[0_0_40px_rgba(0,240,255,0.4)] border-2 border-neon-blue/30">
-                    <img src={resolveAssetPath('shared/images/francisco_selfie/IMG_20251207_001627@869886661.jpg')} alt="Ciszuko Antony" className="w-full h-full object-cover" />
+                    <img src={resolveAssetPath('shared/images/francisco_selfie/IMG_20251207_001627@869886661.jpg')} alt={t.pages.team.attrCreator} className="w-full h-full object-cover" />
                 </div>
                 
                 <div className="mt-8 space-y-4">
                    <h3 className="text-5xl md:text-8xl font-header font-black text-white italic tracking-tighter uppercase leading-none drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
-                      CISZUKO ANTONY
+                      {t.pages.team.ceoName}
                    </h3>
                     <p className="text-neon-cyan text-xs md:text-sm font-black tracking-[0.5em] uppercase drop-shadow-[0_0_10px_rgba(0,240,255,1)] flex items-center justify-center gap-3">
-                       CEO & CREADOR · CISZU NETWORK
+                       {t.pages.team.ceoRole}
                     </p>
                 </div>
 
                 <div className="pt-10 border-t border-white/10 mt-10 max-w-6xl mx-auto space-y-10">
                    <p className="text-gray-200 text-xs font-bold leading-relaxed uppercase tracking-widest bg-black/80 px-8 py-5 rounded-3xl border border-neon-blue/30 inline-block shadow-inner">
-                      MuzicMania es un esfuerzo colosal desarrollado en su totalidad por una sola persona.
+                      {t.pages.team.soloEffort}
                    </p>
                    
                    <div className="flex flex-wrap justify-center gap-3">
@@ -158,13 +160,13 @@ export default function TeamPage() {
                    </div>
 
                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto pt-4">
-                      <CopyField label="Email Personal" value="fplayersoffcial@gmail.com" icon={I.mail} theme="blue" />
-                      <CopyField label="WhatsApp Personal" value="+58 412 6858111" subValue="Venezuela" icon={I.phone} theme="green" showWhatsApp={true} />
+                      <CopyField label={t.pages.team.attrEmailPersonal} value="fplayersoffcial@gmail.com" icon={I.mail} theme="blue" />
+                      <CopyField label={t.pages.team.attrWhatsAppPersonal} value="+58 412 6858111" subValue="Venezuela" icon={I.phone} theme="green" showWhatsApp={true} />
                    </div>
 
                    {/* Social Buttons Extended logic */}
                     <div className="pt-12 flex flex-col items-center gap-8 border-t border-white/10 relative">
-                        <p className="text-neon-cyan font-black text-[10px] tracking-[0.4em] uppercase flex items-center gap-3">CONECTAR CON EL NÚCLEO</p>
+                        <p className="text-neon-cyan font-black text-[10px] tracking-[0.4em] uppercase flex items-center gap-3">{t.pages.team.connectCore}</p>
                        
                        <div className="flex flex-wrap justify-center gap-4">
                         {SOCIALS.map((s) => {
@@ -186,7 +188,7 @@ export default function TeamPage() {
                                     {showDiscordPopup && (
                                       <motion.div initial={{ opacity: 0, scale: 0.9, y: 10 }} animate={{ opacity: 1, scale: 1, y: -10 }} exit={{ opacity: 0, scale: 0.9, y: 10 }} className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 p-4 bg-black border border-neon-blue rounded-3xl shadow-2xl backdrop-blur-xl z-[100] min-w-[200px]">
                                          <div className="flex flex-col gap-3">
-                                            <span className="text-[10px] font-black text-neon-blue uppercase tracking-widest text-left">Discord ID</span>
+                                            <span className="text-[10px] font-black text-neon-blue uppercase tracking-widest text-left">{t.pages.team.discordId}</span>
                                             <div className="bg-white/5 border border-white/10 px-3 py-2 rounded-xl flex items-center justify-between gap-4">
                                                <span className="text-white font-header font-bold text-sm tracking-wider">ciszukoantony_</span>
                                                <button onClick={handleCopyDiscord} className={`p-2 rounded-lg ${copied ? 'text-neon-green' : 'text-white'}`}>
@@ -212,11 +214,11 @@ export default function TeamPage() {
                        <div className="flex flex-col sm:flex-row gap-5 w-full justify-center pt-8">
                         <a href="https://ciszukoantony.vercel.app" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3 px-10 py-5 rounded-3xl bg-white text-black font-black uppercase text-xs tracking-[0.2em] hover:bg-neon-cyan hover:shadow-[0_0_30px_rgba(0,240,255,0.6)] hover:scale-105 transition-all shadow-xl">
                            <div className="w-5 h-5">{I.link}</div>
-                           Portal Oficial
+                           {t.pages.team.officialPortal}
                         </a>
                          <Link href="/contact" className="flex items-center justify-center gap-3 px-10 py-5 rounded-3xl bg-transparent border-2 border-neon-blue text-neon-blue font-black uppercase text-xs tracking-[0.2em] hover:bg-neon-blue hover:text-white hover:shadow-[0_0_30px_rgba(0,180,255,0.4)] hover:scale-105 transition-all group shadow-xl">
                             <div className="w-5 h-5 group-hover:scale-110 transition-transform">{I.contact}</div>
-                            Contacto Directo
+                            {t.pages.team.directContact}
                          </Link>
                        </div>
                     </div>
@@ -232,13 +234,11 @@ export default function TeamPage() {
               <div className="flex flex-col gap-8 w-full relative z-10">
                 <div className="flex flex-col md:flex-row items-center gap-6 justify-center md:justify-start">
                     <div className="w-20 h-20 rounded-3xl bg-black flex items-center justify-center border border-white/10 shrink-0 p-2 overflow-hidden">
-                        <img src={resolveAssetPath('projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.svg')} alt="Ciszu Network" className="w-full h-full object-contain" />
+                        <img src={resolveAssetPath('projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.svg')} alt={t.pages.team.ciszuNetwork} className="w-full h-full object-contain" />
                     </div>
                      <div className="space-y-1 text-center md:text-left">
-                        <h3 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter flex items-center justify-center md:justify-start gap-3">
-                           Ciszu Network
-                        </h3>
-                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.3em]">La Matriz de Proyectos Globales</p>
+                        <h3 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter flex items-center justify-center md:justify-start gap-3">{t.pages.team.ciszuNetwork}</h3>
+                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-[0.3em]">{t.pages.team.globalMatrix}</p>
                      </div>
                  </div>
 
@@ -249,9 +249,9 @@ export default function TeamPage() {
                  </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6">
-                    <CopyField label="Email Primario" value="ciszunetwork@gmail.com" icon={I.mail} theme="blue" />
-                    <CopyField label="Email Secundario" value="ciszunetwork@outlook.com" icon={I.mail} theme="purple" />
-                    <CopyField label="Email Corporativo" value="ciszunetwork@hotmail.com" icon={I.mail} theme="purple" />
+                    <CopyField label={t.pages.team.attrEmailPrimary} value="ciszunetwork@gmail.com" icon={I.mail} theme="blue" />
+                    <CopyField label={t.pages.team.attrEmailSecondary} value="ciszunetwork@outlook.com" icon={I.mail} theme="purple" />
+                    <CopyField label={t.pages.team.attrEmailCorp} value="ciszunetwork@hotmail.com" icon={I.mail} theme="purple" />
                  </div>
 
                 <div className="flex flex-wrap justify-center md:justify-start gap-4">
@@ -281,7 +281,7 @@ export default function TeamPage() {
               </div>
                <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="shrink-0 px-10 py-5 bg-white/5 border border-white/20 rounded-3xl text-sm font-black uppercase tracking-[0.2em] text-white hover:bg-neon-purple/20 hover:border-neon-purple hover:shadow-[0_0_30px_rgba(180,0,255,0.3)] transition-all z-10 whitespace-nowrap flex items-center justify-center gap-3 shadow-xl">
                    <div className="w-5 h-5">{I.link}</div>
-                    Web Oficial
+                    {t.pages.team.officialWeb}
                 </a>
            </div>
         </motion.section>
