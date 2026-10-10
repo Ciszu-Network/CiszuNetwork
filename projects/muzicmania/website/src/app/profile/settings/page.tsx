@@ -11,6 +11,7 @@ import { Icon, useToast } from '@ciszu/ui';
 import AvatarUploadModal from '@/components/profile/AvatarUploadModal';
 import Image from 'next/image';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useT } from '@/hooks/useT';
 
 
 export default function ProfileSettingsPage() {
@@ -153,7 +154,7 @@ export default function ProfileSettingsPage() {
                     <button className="px-6 py-3 bg-white/10 text-white font-bold text-xs uppercase rounded-xl border border-white/20 hover:bg-white/20 transition-all">{t.pages.profileSettings.verifyNew}</button>
                   </div>
                   <div className="flex gap-4 items-center">
-                    <input type="tel" placeholder="{t.pages.profileSettings.addBtn} teléfono para mayor seguridad" disabled className="flex-1 bg-black/80 border border-white/10 rounded-xl px-5 py-3 text-white font-header font-bold placeholder:text-gray-700" />
+                    <input type="tel" placeholder={t.pages.profileSettings.phAddPhone} disabled className="flex-1 bg-black/80 border border-white/10 rounded-xl px-5 py-3 text-white font-header font-bold placeholder:text-gray-700" />
                     <button className="px-6 py-3 bg-white/10 text-white font-bold text-xs uppercase rounded-xl border border-white/20 hover:bg-white/20 transition-all">{t.pages.profileSettings.addBtn}</button>
                   </div>
                 </div>
