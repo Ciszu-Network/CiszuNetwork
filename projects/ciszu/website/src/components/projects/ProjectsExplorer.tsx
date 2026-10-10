@@ -7,14 +7,16 @@ import { assetResolver } from '@ciszunetwork/cdn';
 import { Icon, Modal, captureEvent } from '@ciszu/ui';
 import ProjectCard from '@/components/projects/ProjectCard';
 import { PROJECTS, PROJECT_CATEGORIES, getProject, type Project } from '@/data/projects';
+import { useDict } from '@/lib/useDict';
+import { fillTemplate } from '@/lib/i18n';
 
 type SortKey = 'recientes' | 'antiguos' | 'az' | 'za';
 
-const SORT_OPTIONS: { id: SortKey; label: string; icon: string }[] = [
-  { id: 'recientes', label: 'Más recientes', icon: 'clock' },
-  { id: 'antiguos', label: 'Más antiguos', icon: 'history' },
-  { id: 'az', label: 'Nombre A-Z', icon: 'signal' },
-  { id: 'za', label: 'Nombre Z-A', icon: 'signal' },
+const SORT_OPTIONS_OF = (t: ReturnType<typeof useDict>): { id: SortKey; label: string; icon: string }[] => [
+  { id: 'recientes', label: t.projectsExplorer.sortRecent, icon: 'clock' },
+  { id: 'antiguos', label: t.projectsExplorer.sortOld, icon: 'history' },
+  { id: 'az', label: t.projectsExplorer.sortAz, icon: 'signal' },
+  { id: 'za', label: t.projectsExplorer.sortZa, icon: 'signal' },
 ];
 
 /** Texto de búsqueda de un proyecto: nombre, tagline, stack, categorías y keywords. */
@@ -37,6 +39,7 @@ function searchableText(project: Project): string {
 }
 
 export default function ProjectsExplorer() {
+  const t = useDict();
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<string>('Todos');
   const [sort, setSort] = useState<SortKey>('recientes');
@@ -73,13 +76,13 @@ export default function ProjectsExplorer() {
   };
 
   return (
-    <section aria-label="Explorador de proyectos">
+    <section aria-label={t.projectsExplorer.ariaLabel}>
       {/* Panel de control: búsqueda + filtros + orden. */}
       <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-6 md:p-8">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
           {/* Búsqueda */}
           <label className="relative block">
-            <span className="sr-only">Buscar proyectos</span>
+            <span className="sr-only">{t.projectsExplorer.srSearch}</span>
             <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-brand-light">
               <Icon name="search" size={18} />
             </span>
@@ -87,7 +90,7 @@ export default function ProjectsExplorer() {
               type="search"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Buscar por nombre, tecnología, categoría o palabra clave…"
+              placeholder={t.projectsExplorer.searchPh}
               className="w-full rounded-2xl border border-white/10 bg-black/40 py-3.5 pl-12 pr-4 text-sm text-white placeholder:text-white/30 outline-none transition-all focus:border-brand-light/60 focus:shadow-[0_0_25px_rgba(89,180,255,0.15)]"
             />
           </label>
@@ -96,10 +99,10 @@ export default function ProjectsExplorer() {
           <div className="flex items-center gap-3">
             <span className="inline-flex shrink-0 items-center gap-2 text-[10px] font-black uppercase tracking-[0.25em] text-white/40">
               <Icon name="signal" size={14} />
-              Orden
+              {t.projectsExplorer.sortLabel}
             </span>
             <div className="flex flex-wrap gap-2">
-              {SORT_OPTIONS.map((option) => {
+              {SORT_OPTIONS_OF(t).map((option) => {
                 const active = option.id === sort;
                 return (
                   <button
@@ -128,7 +131,7 @@ export default function ProjectsExplorer() {
         <div className="mt-6 border-t border-white/5 pt-5">
           <div className="mb-3 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.25em] text-white/40">
             <Icon name="target" size={14} />
-            Categorías
+            {t.projectsExplorer.categoriesLabel}
           </div>
           <div className="flex flex-wrap gap-2">
             {['Todos', ...PROJECT_CATEGORIES].map((item) => {
@@ -148,7 +151,7 @@ export default function ProjectsExplorer() {
                   }`}
                 >
                   <Icon name={item === 'Todos' ? 'globe' : 'flag'} size={12} />
-                  {item}
+                  {item === 'Todos' ? t.projectsExplorer.all : item}
                 </button>
               );
             })}
@@ -157,7 +160,7 @@ export default function ProjectsExplorer() {
 
         <p className="mt-5 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/35">
           <Icon name="info" size={13} />
-          Mostrando {results.length} de {PROJECTS.length} proyectos del ecosistema
+          {fillTemplate(t.projectsExplorer.showing, { n: String(results.length), total: String(PROJECTS.length) })}
         </p>
       </div>
 
@@ -173,10 +176,9 @@ export default function ProjectsExplorer() {
           <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-white/40">
             <Icon name="search" size={24} />
           </span>
-          <h3 className="font-header text-lg font-bold text-white">Sin resultados</h3>
+          <h3 className="font-header text-lg font-bold text-white">{t.projectsExplorer.noResults}</h3>
           <p className="mx-auto mt-2 max-w-md text-sm text-white/50">
-            No hay proyectos que coincidan con “{query}” en la categoría “{category}”. Prueba con otra
-            palabra o limpia los filtros.
+            {fillTemplate(t.projectsExplorer.noResultsBody, { query, category })}
           </p>
           <button
             type="button"
@@ -187,7 +189,7 @@ export default function ProjectsExplorer() {
             className="mt-6 inline-flex cursor-pointer items-center gap-2 rounded-xl border border-brand/40 bg-brand/10 px-5 py-2.5 text-xs font-bold text-brand-light transition-all hover:bg-brand/20"
           >
             <Icon name="refresh" size={14} />
-            Limpiar filtros
+            {t.projectsExplorer.clearFilters}
           </button>
         </div>
       )}
@@ -207,6 +209,7 @@ function ProjectModal({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const t = useDict();
   if (!project) {
     return null;
   }
@@ -228,7 +231,7 @@ function ProjectModal({
             <div className={`flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border ${project.accent.chipBorder} ${project.accent.chipBg}`}>
               <Image
                 src={assetResolver.resolve(project.logo)}
-                alt={`Logo de ${project.name}`}
+                alt={fillTemplate(t.projectsExplorer.logoAlt, { name: project.name })}
                 width={64}
                 height={64}
                 className="h-14 w-14 object-contain"
@@ -272,7 +275,7 @@ function ProjectModal({
         <div>
           <h3 className={`mb-3 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] ${project.accent.text}`}>
             <Icon name="star" size={13} />
-            Qué incluye
+            {t.projectsExplorer.includes}
           </h3>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {project.features.map((feature) => (
@@ -293,7 +296,7 @@ function ProjectModal({
         <div>
           <h3 className={`mb-3 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] ${project.accent.text}`}>
             <Icon name="terminal" size={13} />
-            Stack tecnológico
+            {t.projectsExplorer.stack}
           </h3>
           <div className="flex flex-wrap gap-2">
             {project.stack.map((tech) => (
@@ -312,7 +315,7 @@ function ProjectModal({
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-xs text-white/55">
           <span className="inline-flex items-center gap-2">
             <Icon name="user" size={14} />
-            Propietario:
+            {t.projectsExplorer.ownerLabel}
             <strong className="font-bold text-white">{project.owner}</strong>
           </span>
           {project.official ? (
@@ -323,7 +326,7 @@ function ProjectModal({
               className="inline-flex items-center gap-2 transition-colors hover:text-white"
             >
               <Icon name="globe" size={14} />
-              Página oficial
+              {t.projectsExplorer.officialPage}
             </a>
           ) : null}
           {project.community ? (
@@ -334,7 +337,7 @@ function ProjectModal({
               className="inline-flex items-center gap-2 transition-colors hover:text-white"
             >
               <Icon name="discord" size={14} />
-              Comunidad
+              {t.projectsExplorer.community}
             </a>
           ) : null}
         </div>
@@ -347,7 +350,7 @@ function ProjectModal({
             className={`inline-flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3.5 font-header text-sm font-black uppercase tracking-widest text-white transition-all hover:brightness-125 ${project.accent.solid}`}
           >
             <Icon name="rocket" size={16} />
-            Ir al proyecto
+            {t.projectsExplorer.goProject}
           </Link>
           <div className="flex flex-wrap gap-2">
             {project.actions
@@ -369,7 +372,7 @@ function ProjectModal({
               className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-white/70 transition-all hover:border-white/40 hover:text-white"
             >
               <Icon name="menu" size={13} />
-              Todos los proyectos
+              {t.projectsExplorer.allProjects}
             </Link>
           </div>
         </div>
