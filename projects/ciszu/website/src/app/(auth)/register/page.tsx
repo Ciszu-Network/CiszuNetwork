@@ -356,7 +356,8 @@ export default function RegisterPage() {
                   onCancel={handleCancelVerify}
                 />
               </div>
-            ) : emailSent ? (
+            ) :
+            emailSent ? (
               <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center space-y-3">
                 <p className="text-emerald-400 font-black uppercase tracking-widest text-sm">{t.registerPage.verifyTitle}</p>
                 <p className="text-gray-400 text-xs font-bold leading-relaxed">

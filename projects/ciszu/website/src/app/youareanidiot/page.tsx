@@ -147,7 +147,7 @@ export default function YouAreAnIdiotPage() {
     spawn();
     const iv = window.setInterval(spawn, 500);
     const cleanup = window.setInterval(() => {
-      setSpam((prev) => prev.filter((m) => Date.now() - m.id * 1000 < 4000));
+      setSpam((prev) => prev.filter((m) => 4000 > Date.now() - m.id * 1000));
     }, 1000);
     return () => { window.clearInterval(iv); window.clearInterval(cleanup); };
   }, []);
@@ -283,7 +283,7 @@ export default function YouAreAnIdiotPage() {
               fontWeight: 700,
             }}
           >
-            YouAreAnIdiot.exe
+            {"YouAreAnIdiot.exe"}
           </div>
         </div>
       ))}

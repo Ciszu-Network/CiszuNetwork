@@ -6,6 +6,7 @@ import DonateButtons from "./DonateButtons";
 import QuickDocks from "@/components/molecules/QuickDocks";
 import PageAmbience from "@/components/layout/PageAmbience";
 import PageReveal from "@/components/layout/PageReveal";
+import { CISZU_NETWORK } from "@/config/site";
 import { useDict } from "@/lib/useDict";
 import { fillTemplate } from "@/lib/i18n";
 
@@ -65,8 +66,8 @@ export default function DonateContent({ methods }: { methods: DonationMethod[] }
         <div className="text-center mt-12">
           <p className="text-gray-500 text-xs">
             {t.donatePage.otherQuestion}{" "}
-            <a href="mailto:ciszunetwork@gmail.com" className="text-brand-light underline">
-              ciszunetwork@gmail.com
+            <a href={`mailto:${CISZU_NETWORK.email}`} className="text-brand-light underline">
+              {CISZU_NETWORK.email}
             </a>
           </p>
         </div>

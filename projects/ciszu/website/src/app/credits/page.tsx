@@ -4,6 +4,8 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import { CISZU_NETWORK } from '@/config/site';
+import { cookies } from 'next/headers';
+import { getDict, parseLang } from '@/lib/i18n';
 
 export const metadata: Metadata = {
   title: 'Ciszu Network | CREDITS',
@@ -57,14 +59,15 @@ const SECTIONS: CreditSection[] = [
   },
 ];
 
-export default function CreditsPage() {
+export default async function CreditsPage() {
+  const t = getDict(parseLang((await cookies()).get('ciszu_lang')?.value));
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />
       <PageReveal className="relative mx-auto max-w-4xl">
         <CreditsRoll
           icon="users"
-          title="CRÉDITOS Y CONTRIBUCIONES"
+          title={t.legalPages.creditsTitle}
           subtitle="Desarrollo del Ecosistema Ciszu Network"
           sections={SECTIONS}
           closing={{

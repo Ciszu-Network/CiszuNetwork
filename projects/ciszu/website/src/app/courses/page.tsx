@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useRef, useEffect } from "react";
 import { BookOpen, ExternalLink, Globe, Clock, Award, Search, Filter, BookMarked, Target, Layers } from "lucide-react";
+import { CISZU_NETWORK } from "@/config/site";
 import { usePageTitle } from "@/lib/usePageTitle";
 import { useDict } from "@/lib/useDict";
 import { fillTemplate } from "@/lib/i18n";
@@ -236,7 +237,7 @@ export default function CoursesPage() {
         <div className="text-center mt-12">
           <p className="text-gray-500 text-xs">
             Want a course? Write us at{" "}
-            <a href="mailto:ciszunetwork@gmail.com" className="text-brand-light underline">ciszunetwork@gmail.com</a>
+            <a href={`mailto:${CISZU_NETWORK.email}`} className="text-brand-light underline">{CISZU_NETWORK.email}</a>
           </p>
         </div>
 

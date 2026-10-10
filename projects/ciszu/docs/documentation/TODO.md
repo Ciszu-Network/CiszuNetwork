@@ -2,13 +2,6 @@
 
 ### Cambios Generales:
 
-- [X] Activar canal SMS para avisos de cuenta (código listo: `sendSms()` en `@ciszunetwork/utils`,
-  preferencia `sms_enabled` en `notification_preferences` y teléfono en el panel; falta contratar
-  un proveedor externo y poner sus credenciales en el vault + Vercel).
-  ACTIVADO (09 oct 2026): **Textbelt** con key gratuita (1 SMS/día) — soporte en `sendSms()`,
-  `SMS_PROVIDER`/`SMS_API_KEY` en el vault + los 4 proyectos Vercel, y aviso por SMS cableado en
-  las sanciones del anti-cheat (MuzicMania) cuando el usuario activó `sms_enabled` y dejó teléfono.
-  Para volumen real: key de pago de Textbelt o Twilio/Vonage (trials con crédito).
 - [ ] Migración i18n de literales por lotes (deuda actual: ciszu 379 · ciszubot 326 ·
   antony 246 · muzicmania 937; ratchet `pnpm verify:i18n`).
   PILOTO HECHO (09 oct 2026): página de **login de ciszu** migrada completa (patrón `useDict()` +
@@ -113,6 +106,7 @@
 - [X] En la devcon se debe crar una nueva opcion para otorgar etiquetas o roles a un usuario en concreto, siempre sera global, nunca sera multicasillas esta vez, sera por cada website, y debe ser el username completo exacto, luego se escribe el rol a dar, los roles y tags apareceran en el perfil y activaran nueva funciones dependiendo del rol al hacer click en su perfil en el header, admin, mod, owner, bot, vip, betatesting, support, los ultimos 3 no son de staff, bot tampoco pero si tiene permisos de staff y sera otorgada a cuentas bots recreadas por cada website es decir, @ciszubot, @muzicmania y @ciszunetwork seran cuentas creadas por bots sin contraseña, son perfiles especiales. Finalmente owner, mod y admin si son staff y aparte de esa tag en el perfil debe aparecer la tag de staff. Cada uno tendra un panel diferente, opciones de debug entre mas grande el rango. El owner debe tener todos. Configuracion de debug, entre muchas otras cosas, como vista de staff en perfiles con activacion toggle, para eliminar ciertas cosas o cambiar ciertas cosas. Simepre con marca.
 - [X] Se debe crear un metodo de cierre de sesion remoto utilizado para cerrar sesion a cierta persona, este metodo solo lo podran ejecutar los moderadores, admins y owners. Con el fin de cerrar alguna sesion incluso de una cuenta por cada rango, es decir un mod no puede cerrar la sesion de un admin. Esto por seguridad de hackeos a cuentas. Esta opcion debe estar tanto para la GUI de cada website segun el debug y cuenta, y para la devconsole.
 - [X] Se debe crear un modal cuando una cuenta es baneada, el usuario automaticamente se redirecionara asu profile y aparecera un modal de su cuenta fue baneada e informacion del baneo. Razon fecha provocante etc. Lo mismo con los mutes.
+- [ ] Me he dado cuenta que los usernames de los guest estan mal, te pedi que los guest tengan un username que se base en su minuscula y con su arroba es decir si el guest displayname Guest3848 su username es @guest3848. Esto solo se esta cumplien en muzicmania en los demas no.
 
 ### Cambios por Website
 
@@ -161,29 +155,25 @@
   Los JSON debe tener una nomenclatura clara, segun por opcion, fecha, usuario, indicar que es un backup de ciszubot etc.
 
   La verdad no se que mas decir, te dejo la libertad de mejorar el dashboard como quieras, animaciones, interacciones para el usuario por ejemplo ocultar o esconder los slidebards, o retraerlos, o etc. Incluso funciones o cosas que tangan otros bots de discord famosos.
-- [X] Dual Login ciszubot (09 oct 2026): /login ya no redirige en bucle — muestra panel dinámico
-  (CISZU ID conectado / Discord conectado / conectar Discord / dashboard / configuración / cerrar sesión).
-  Username real de Discord con @ en la cuenta (session route + AuthProvider + Navbar) e icono engranaje
-  en Configuración.
 - [ ] DASHBOARD CISZUBOT — gran mejora (spec del 09 oct 2026):
   · Sidebar por categorías (Servers como categoría; al no seleccionar nada solo resumen; al seleccionar abre
-    sub-sidebar por opciones; resumen por defecto con hero banner + preview completa del servidor).
+  sub-sidebar por opciones; resumen por defecto con hero banner + preview completa del servidor).
   · Accesos directos en el sidebar: FAQ, ayuda, configuración de cuenta, perfil, cambio de idioma y tema.
   · Más reactividad/animaciones (ocultar/retraer sidebars), fondo por servidor, aprovechar features de Discord.
   · Guardado con panel flotante sticky (undo/redo, auto-guardado configurable ON por defecto; solo si hay
-    cambios sin guardar; animación guardando→éxito/error; se oculta 1s tras guardar; bloquear cambios hasta
-    terminar el guardado anterior).
+  cambios sin guardar; animación guardando→éxito/error; se oculta 1s tras guardar; bloquear cambios hasta
+  terminar el guardado anterior).
   · Datos dinámicos del servidor: botón flotante de recarga + auto-recarga periódica (roles/canales frescos).
   · Acceso solo admins del servidor (verificación discord server-side, denegar al instante).
   · Secciones antes de QuickDocks: soporte, ayuda, cómo usar, autopatrocinio (invitar bot, integrarlo en el
-    perfil, perfiles en Disboard/DiscordBotList/Top.gg) + disclaimer BETA TRIAL FREE.
+  perfil, perfiles en Disboard/DiscordBotList/Top.gg) + disclaimer BETA TRIAL FREE.
   · Etiquetas FREE en todas las opciones; marcar algunas como PREMIUM con badge "BETA TRIAL FREE"
-    (todo gratis durante la beta; el premium real llegará después).
+  (todo gratis durante la beta; el premium real llegará después).
   · Resumen por servidor: info de CiszuBot + info del servidor (listas de roles, canales), campos de texto
-    con Markdown de Discord, y carga/exportación por JSON (plantillas universales) desde cada opción y desde
-    el resumen global — nomenclatura clara: opción/fecha/usuario/backup-ciszubot.
+  con Markdown de Discord, y carga/exportación por JSON (plantillas universales) desde cada opción y desde
+  el resumen global — nomenclatura clara: opción/fecha/usuario/backup-ciszubot.
   · Botón "Invitar" por servidor no invitado + botón "Configurar" que da error si no está invitado;
-    servidor en efecto apagado + advertencia individual previa.
+  servidor en efecto apagado + advertencia individual previa.
   · QuickDocks: moverlos siempre al final de la página (fuera de la zona de scroll, estáticos abajo).
 - [ ] Añadir VPS 24 7 AL BOT. (Tarea normal: desplegar el bot en un host 24/7 — panel gratuito
   tipo bot-hosting.net con `deploy/ciszubot-standalone.zip`, o VPS genérico; requiere cuenta y/o pago.)

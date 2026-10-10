@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { cookies } from 'next/headers';
 import {
   CheckCircle2,
   ChevronRight,
@@ -28,6 +29,7 @@ import {
   serviceWhatsappUrl,
 } from '@/data/services';
 import { CISZU_NETWORK } from '@/config/site';
+import { getDict, parseLang } from '@/lib/i18n';
 
 export const dynamicParams = false;
 
@@ -41,6 +43,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+  const t = getDict(parseLang((await cookies()).get('ciszu_lang')?.value));
   const service = getService(slug);
   if (!service) {
     return { title: 'Servicio no encontrado | Ciszu Network' };
@@ -127,6 +130,7 @@ export default async function ServiceDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const t = getDict(parseLang((await cookies()).get('ciszu_lang')?.value));
   const service = getService(slug);
   if (!service) notFound();
 
@@ -169,7 +173,7 @@ export default async function ServiceDetailPage({
       />
 
       <div className="relative mx-auto max-w-screen-xl space-y-16">
-        <nav aria-label="Migas de pan" className="flex flex-wrap items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-gray-500">
+        <nav aria-label={t.servicesPage.breadcrumbAria} className="flex flex-wrap items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-gray-500">
           <Link href="/" className="transition-colors hover:text-brand-light">
             Inicio
           </Link>
@@ -184,7 +188,7 @@ export default async function ServiceDetailPage({
         <section className="grid items-start gap-10 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="order-2 lg:order-1">
             <span className={`inline-flex rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-widest ${badge}`}>
-              Servicio oficial
+              {t.servicesPage.officialBadge}
             </span>
             <h1 className={`mt-5 font-header text-4xl font-black uppercase leading-none tracking-tighter md:text-6xl ${accent.text}`}>
               {service.name}
@@ -231,7 +235,7 @@ export default async function ServiceDetailPage({
                 className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#25D366]/40 bg-[#25D366]/15 px-5 py-3 text-sm font-bold text-[#25D366] transition-all hover:bg-[#25D366] hover:text-black"
               >
                 <MessageCircle className="h-4 w-4" />
-                Consultar por WhatsApp
+                {t.servicesPage.whatsappCta}
               </a>
             </div>
 
@@ -259,7 +263,7 @@ export default async function ServiceDetailPage({
         <section>
           <SectionHeading
             icon={<CheckCircle2 className="h-5 w-5" />}
-            title="Qué incluye"
+            title={t.servicesPage.includesTitle}
             kicker="Alcance del servicio"
             accent={service.accent}
           />
@@ -313,7 +317,7 @@ export default async function ServiceDetailPage({
         <section>
           <SectionHeading
             icon={<Sparkles className="h-5 w-5" />}
-            title="Otros servicios"
+            title={t.servicesPage.otherServicesTitle}
             kicker="Sigue explorando el catálogo"
             accent={service.accent}
           />
@@ -344,7 +348,7 @@ export default async function ServiceDetailPage({
                       {other.tagline}
                     </span>
                     <span className="mt-2 flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-white/50 transition-all group-hover:gap-2 group-hover:text-white">
-                      Ver servicio <ChevronRight className="h-3 w-3" />
+                      {t.servicesPage.viewService} <ChevronRight className="h-3 w-3" />
                     </span>
                   </span>
                 </Link>

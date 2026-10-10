@@ -763,7 +763,8 @@ export default function HomeContent() {
                 <div className="rounded-3xl border border-white/10 bg-white/5 p-8 text-center text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">
                   {t.common.loading}
                 </div>
-              ) : reviewSummary === null ? (
+              ) :
+              reviewSummary === null ? (
                 <AnimatedSection animation="fade-in-up">
                   <div className="rounded-3xl border-2 border-dashed border-white/15 bg-white/5 p-8 text-center">
                     <Star className="mx-auto mb-4 h-10 w-10 text-neon-pink/60" />

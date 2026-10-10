@@ -18,6 +18,7 @@ import LangSync from "@/components/providers/LangSync";
 import { CISZU_NETWORK } from "@/config/site";
 import "./globals.scss";
 
+const SITE_NAME = CISZU_NETWORK.name;
 const ICON_SVG = assetResolver.resolve("projects/ciszu/content/logos/images/outline/isotype/gradient/color/ciszu_logo_isotipo_outline_degradado_zwhite_ccolor.svg");
 
 const ibmPlex = IBM_Plex_Sans({
@@ -113,8 +114,8 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
             <AdPill placement="body" />
             <RedirectGuard debug={true} />
             <DisclaimerProvider>
-              <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={ICON_SVG} title="Ciszu Network" subtitle="Ciszu Network Security • Cloudflare" accent="#22d3ee" storageKey="cf_verified_ciszu">
-                <AdBlockerGuard site="ciszu" logo={ICON_SVG} title="Ciszu Network" accent="#22d3ee" accentAlt="#f472b6" donateHref="https://ciszunetwork.vercel.app/donate">
+              <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={ICON_SVG} title={SITE_NAME} subtitle="Ciszu Network Security • Cloudflare" accent="#22d3ee" storageKey="cf_verified_ciszu">
+                <AdBlockerGuard site="ciszu" logo={ICON_SVG} title={SITE_NAME} accent="#22d3ee" accentAlt="#f472b6" donateHref="https://ciszunetwork.vercel.app/donate">
                 <HideOnEdit><ZoomWarning /></HideOnEdit>
                 <HideOnEdit><Navbar /></HideOnEdit>
                 <HideOnEdit><DisclaimerStack headerHeight={64} /></HideOnEdit>

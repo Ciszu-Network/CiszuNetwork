@@ -89,7 +89,8 @@ export function InstallPdwaCta({ site }: InstallPdwaCtaProps) {
               <li>{t.installPdwa.stepConfirm}</li>
               <li>{t.installPdwa.stepHome}</li>
             </ul>
-          ) : browser?.id === 'opera-gx' || browser?.id === 'opera' ? (
+          ) :
+          browser?.id === 'opera-gx' || browser?.id === 'opera' ? (
             <ul className="list-disc pl-5 text-gray-400 space-y-1.5 text-sm">
               <li>{t.installPdwa.opera1}</li>
               <li>
@@ -97,7 +98,8 @@ export function InstallPdwaCta({ site }: InstallPdwaCtaProps) {
               </li>
               <li>{t.installPdwa.opera3}</li>
             </ul>
-          ) : browser?.id === 'safari' ? (
+          ) :
+          browser?.id === 'safari' ? (
             <ul className="list-disc pl-5 text-gray-400 space-y-1.5 text-sm">
               <li>{t.installPdwa.safari1}</li>
               <li>{t.installPdwa.safari2}</li>

@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { ArrowRight, MessageCircle, Sparkles } from 'lucide-react';
 import { captureEvent, trackEvent } from '@ciszu/ui';
 import { AnimatedSection } from '@/components/shared/AnimatedSection';
+import { useDict } from '@/lib/useDict';
 import { ACCENT_STYLES } from '@/data/ecosystem';
 import {
   FLYER_HEIGHT,
@@ -32,6 +33,7 @@ const BADGE_ACCENTS = {
 } as const;
 
 export function ServicesShowcase() {
+  const dict = useDict();
   return (
     <section id="catalogo-servicios" className="scroll-mt-24 border-t border-white/5 py-24">
       <div className="container mx-auto px-4">
@@ -40,7 +42,7 @@ export function ServicesShowcase() {
             <div className="mb-3 inline-flex items-center gap-3">
               <Sparkles className="h-8 w-8 text-neon-pink drop-shadow-neon-pink" />
               <h2 className="bg-gradient-to-r from-neon-pink via-brand-accent to-neon-cyan bg-clip-text font-header text-4xl font-black uppercase leading-none tracking-tighter text-transparent md:text-5xl">
-                Catálogo de Servicios
+                {dict.servicesPage.showcaseTitle}
               </h2>
             </div>
             <p className="mx-auto max-w-2xl text-xs uppercase tracking-widest text-gray-400">
@@ -85,7 +87,7 @@ export function ServicesShowcase() {
                           {service.description}
                         </span>
                         <span className={`mt-2 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest ${accent.text}`}>
-                          Ver servicio
+                          {dict.servicesPage.viewService}
                           <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
                         </span>
                       </div>
@@ -118,10 +120,10 @@ export function ServicesShowcase() {
                   <ArrowRight className="h-8 w-8" />
                 </span>
                 <span className="font-header text-xl font-black uppercase tracking-tight text-white">
-                  Ver todos los servicios
+                  {dict.servicesPage.viewAll}
                 </span>
                 <span className="text-xs leading-relaxed text-gray-400">
-                  Catálogo completo con flyers, proceso, entregables y precios negociables.
+                  {dict.servicesPage.viewAllDesc}
                 </span>
               </Link>
             </div>
@@ -139,7 +141,7 @@ export function ServicesShowcase() {
               onClick={() => track('home_cta_click', { target: 'services_catalog' })}
               className="inline-flex items-center gap-2 rounded-xl border-2 border-brand/50 bg-brand/20 px-8 py-4 font-header text-sm font-black uppercase tracking-widest text-white transition-all hover:scale-105 hover:bg-brand"
             >
-              Explorar el catálogo <ArrowRight className="h-4 w-4" />
+              {dict.servicesPage.exploreCatalog} <ArrowRight className="h-4 w-4" />
             </Link>
             <a
               href={SERVICES_WHATSAPP_URL}
@@ -148,7 +150,7 @@ export function ServicesShowcase() {
               onClick={() => track('home_cta_click', { target: 'services_whatsapp' })}
               className="inline-flex items-center gap-2 rounded-xl border-2 border-[#25D366]/40 bg-[#25D366]/10 px-8 py-4 font-header text-sm font-black uppercase tracking-widest text-[#25D366] transition-all hover:scale-105 hover:bg-[#25D366] hover:text-black"
             >
-              <MessageCircle className="h-4 w-4" /> Consultar por WhatsApp
+              <MessageCircle className="h-4 w-4" /> {dict.servicesPage.whatsappCta}
             </a>
           </div>
         </AnimatedSection>

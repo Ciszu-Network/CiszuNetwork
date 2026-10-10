@@ -441,7 +441,8 @@ export default function SupportPage() {
                       <div className="w-12 h-12 border-2 border-brand-light border-t-transparent rounded-full animate-spin mx-auto mb-6" />
                       <p className="text-white/40 text-[10px] font-black uppercase tracking-widest">{t.supportPage.loadingTickets}</p>
                     </div>
-                  ) : tickets.length === 0 ? (
+                  ) :
+                  tickets.length === 0 ? (
                     <div className="p-20 bg-white/5 border border-white/5 rounded-[4rem] text-center space-y-6">
                       <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto text-white/10">
                         {I.msg}
@@ -500,7 +501,7 @@ export default function SupportPage() {
                     {t.supportPage.receiverText}
                  </p>
                  <div className="flex items-center gap-3">
-                    <a href={`mailto:${CISZU_NETWORK.email}`} className="text-white underline text-sm lowercase">ciszunetwork@gmail.com</a>
+                    <a href={`mailto:${CISZU_NETWORK.email}`} className="text-white underline text-sm lowercase">{CISZU_NETWORK.email}</a>
                     <button onClick={copyEmail} className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-colors">
                       {copied ? t.supportPage.copied : t.supportPage.copy}
                     </button>

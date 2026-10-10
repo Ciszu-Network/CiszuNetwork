@@ -57,7 +57,8 @@ const SettingsIcon = () => (
  * hamburguesa, el Navbar cierra este dropdown (exclusividad mútua).
  * Las preferencias locales viven en un MODAL centrado separado (PreferencesModal).
  */
-export default function AuthMenu({ open, onToggle, onClose, lang, dict }: { open: boolean; onToggle: () => void; onClose: () => void; lang: string; dict: Record<string, any> }) {
+type AuthDict = Record<string, any>;
+export default function AuthMenu({ open, onToggle, onClose, lang, dict }: { open: boolean; onToggle: () => void; onClose: () => void; lang: string; dict: AuthDict }) {
   const t = useDict();
   const { user, isHydrated, setUser } = useAppStore();
   const { toast } = useToast();
@@ -163,7 +164,7 @@ export default function AuthMenu({ open, onToggle, onClose, lang, dict }: { open
                   onClick={() => onClose()}
                   className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-xs font-bold hover:border-brand-light/50 hover:text-brand-light transition-all cursor-pointer active:scale-95"
                 >
-                  <SettingsIcon /> Configuración de cuenta
+                  <SettingsIcon /> {t.settingsPage.title}
                 </Link>
                 <Button
                   variant="outline"

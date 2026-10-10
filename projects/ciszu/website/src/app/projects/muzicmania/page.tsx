@@ -138,7 +138,7 @@ export default function MuzicManiaPage() {
           <Floating className="mx-auto w-fit">
             <Image
               src={assetResolver.resolve(project.logo)}
-              alt="Logotipo oficial de MuzicMania"
+              alt={t.muzicmaniaPage.logoAlt}
               width={420}
               height={160}
               className="h-24 w-auto object-contain drop-shadow-[0_0_45px_rgba(255,51,204,0.45)] md:h-32"

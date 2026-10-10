@@ -12,6 +12,8 @@ import { applyTheme } from '@/lib/preferences';
 import { getDict } from '@/lib/i18n';
 import { CISZU_NETWORK } from '@/config/site';
 import { SERVICES } from '@/data/services';
+
+type TimeoutRef = React.MutableRefObject<ReturnType<typeof setTimeout> | null>;
 import AuthMenu from '@/components/auth/AuthMenu';
 import {
   Search,
@@ -349,12 +351,12 @@ export const NavbarContent = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const hoverOpen = (s: (v: string | null) => void, t: React.MutableRefObject<ReturnType<typeof setTimeout> | null>, name: string) => {
+  const hoverOpen = (s: (v: string | null) => void, t: TimeoutRef, name: string) => {
     if (t.current) clearTimeout(t.current);
     s(name);
   };
 
-  const hoverClose = (s: (v: string | null) => void, t: React.MutableRefObject<ReturnType<typeof setTimeout> | null>) => {
+  const hoverClose = (s: (v: string | null) => void, t: TimeoutRef) => {
     t.current = setTimeout(() => s(null), 180);
   };
 
@@ -570,7 +572,7 @@ export const NavbarContent = () => {
                 />
               </div>
 
-              {searchQuery.trim().length > 0 && suggestions.length === 0 && (
+              {0 < searchQuery.trim().length && suggestions.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-6 animate-fade-in-down space-y-3">
                   <p className="text-gray-500 font-header font-black uppercase text-xs tracking-widest italic">
                     {dict.nav.searchNoResults.replace('{q}', searchQuery)}
@@ -731,7 +733,7 @@ export const NavbarContent = () => {
                     className="flex items-center gap-4 px-4 py-3 rounded-2xl text-sm font-header font-bold border border-transparent text-gray-300 hover:text-white hover:bg-[#5865F2]/10 hover:border-[#5865F2]/30 transition-all active:scale-95"
                   >
                     <span className="w-8 h-8 rounded-full bg-black/40 text-white/70 flex items-center justify-center"><IcoDiscord /></span>
-                    Ciszugamens · Discord
+                    {dict.brandTerms.ciszugamensDiscord}
                   </a>
                 </div>
               ) : (

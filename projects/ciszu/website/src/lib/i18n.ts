@@ -389,6 +389,9 @@ const es = {
   },
   projectsPage: {
     heroTitle: 'Proyectos',
+    exploreProject: 'Explorar proyecto',
+    antonyName: 'Francisco García',
+    antonyPortraitAlt: 'Retrato de Francisco García (Ciszuko Antony)',
     heroSubtitle:
       'Cada proyecto de {site}: comunidad, bots, juegos, desarrollo y contenido. Un ecosistema, una sola identidad.',
     kicker: 'Ecosistema',
@@ -830,6 +833,54 @@ const es = {
     ctaTitle: '¿SISTEMA EN EVOLUCIÓN?',
     ctaText: 'Antes de iniciar un dock rápido, revisa los protocolos de documentación: arquitectura, convenciones y flujo de despliegue del ecosistema.',
     ctaBtn: 'VER PROTOCOLOS',
+    fallbackTitle: 'VERSIÓN NO ENCONTRADA',
+    fallbackText: 'La entrada solicitada no existe en el registro',
+    fallbackBack: 'Volver al registro maestro',
+    backLink: 'VOLVER AL REGISTRO',
+    techLogTitle: 'BITÁCORA TÉCNICA',
+    linkedTitle: 'INFO ENLAZADA',
+    docsTitle: '¿NECESITAS EL CONTEXTO COMPLETO?',
+    docsText:
+      'Los protocolos de documentación explican la arquitectura y el flujo de despliegue detrás de cada entrada.',
+  },
+  servicesPage: {
+    showcaseTitle: 'Catálogo de Servicios',
+    viewService: 'Ver servicio',
+    viewAll: 'Ver todos los servicios',
+    viewAllDesc: 'Catálogo completo con flyers, proceso, entregables y precios negociables.',
+    exploreCatalog: 'Explorar el catálogo',
+    whatsappCta: 'Consultar por WhatsApp',
+    readyTitle: '¿Listo para empezar?',
+    howWeWork: 'Cómo trabajamos',
+    officialBadge: 'Servicio oficial',
+    includesTitle: 'Qué incluye',
+    otherServicesTitle: 'Otros servicios',
+    breadcrumbAria: 'Migas de pan',
+  },
+  settingsPage: {
+    title: 'Configuración de cuenta',
+    subtitleA: 'Tu cuenta CISZU ID en',
+    subtitleB: 'Ciszu Network',
+  },
+  editAdminPage: {
+    title: 'Acceso de administración',
+    subtitle:
+      'Visual Builder de Puck · editor reservado a administración. Introduce el token de acceso.',
+    tokenPlaceholder: 'Token de acceso',
+  },
+  faqPage: {
+    title: 'Preguntas frecuentes',
+    relatedTitle: 'Temas relacionados',
+  },
+  appealPage: {
+    title: 'Apelación de sanciones',
+    subtitle:
+      'Revisa tus sanciones activas y envía una apelación al equipo. También sirve si no tienes sanciones.',
+  },
+  legalPages: {
+    creditsTitle: 'CRÉDITOS Y CONTRIBUCIONES',
+    policyTitle: 'POLÍTICA',
+    termsTitle: 'TÉRMINOS',
   },
   notFoundPage: {
     kwCiszu: '[OK] ACCESO CONCEDIDO — bienvenido de vuelta, operador.',
@@ -1146,6 +1197,7 @@ const es = {
     ctaWeb: 'Web oficial',
   },
   muzicmaniaPage: {
+    logoAlt: 'Logotipo oficial de MuzicMania',
     kicker: 'Juego · Música · Web',
     title: 'El juego de ritmo definitivo',
     viewLibrary: 'Ver la biblioteca completa',
@@ -1746,6 +1798,9 @@ const en = {
   },
   projectsPage: {
     heroTitle: 'Projects',
+    exploreProject: 'Explore project',
+    antonyName: 'Francisco García',
+    antonyPortraitAlt: 'Portrait of Francisco García (Ciszuko Antony)',
     heroSubtitle:
       'Every {site} project: community, bots, games, development and content. One ecosystem, one identity.',
     kicker: 'Ecosystem',
@@ -2187,6 +2242,54 @@ const en = {
     ctaTitle: 'SYSTEM EVOLVING?',
     ctaText: 'Before starting a quick dock, review the documentation protocols: architecture, conventions and the ecosystem deployment flow.',
     ctaBtn: 'VIEW PROTOCOLS',
+    fallbackTitle: 'VERSION NOT FOUND',
+    fallbackText: 'The requested entry does not exist in the log',
+    fallbackBack: 'Back to the master log',
+    backLink: 'BACK TO THE LOG',
+    techLogTitle: 'TECHNICAL LOG',
+    linkedTitle: 'LINKED INFO',
+    docsTitle: 'NEED THE FULL CONTEXT?',
+    docsText:
+      'The documentation protocols explain the architecture and deployment flow behind every entry.',
+  },
+  servicesPage: {
+    showcaseTitle: 'Services Catalog',
+    viewService: 'View service',
+    viewAll: 'View all services',
+    viewAllDesc: 'Full catalog with flyers, process, deliverables and negotiable prices.',
+    exploreCatalog: 'Explore the catalog',
+    whatsappCta: 'Ask on WhatsApp',
+    readyTitle: 'Ready to start?',
+    howWeWork: 'How we work',
+    officialBadge: 'Official service',
+    includesTitle: 'What it includes',
+    otherServicesTitle: 'Other services',
+    breadcrumbAria: 'Breadcrumbs',
+  },
+  settingsPage: {
+    title: 'Account settings',
+    subtitleA: 'Your CISZU ID account at',
+    subtitleB: 'Ciszu Network',
+  },
+  editAdminPage: {
+    title: 'Admin access',
+    subtitle:
+      'Puck Visual Builder · editor restricted to administration. Enter the access token.',
+    tokenPlaceholder: 'Access token',
+  },
+  faqPage: {
+    title: 'Frequently asked questions',
+    relatedTitle: 'Related topics',
+  },
+  appealPage: {
+    title: 'Sanction appeal',
+    subtitle:
+      'Review your active sanctions and send an appeal to the team. It also works if you have no sanctions.',
+  },
+  legalPages: {
+    creditsTitle: 'CREDITS & CONTRIBUTIONS',
+    policyTitle: 'POLICY',
+    termsTitle: 'TERMS',
   },
   notFoundPage: {
     kwCiszu: '[OK] ACCESS GRANTED — welcome back, operator.',
@@ -2503,6 +2606,7 @@ const en = {
     ctaWeb: 'Official website',
   },
   muzicmaniaPage: {
+    logoAlt: 'Official MuzicMania logo',
     kicker: 'Game · Music · Web',
     title: 'The ultimate rhythm game',
     viewLibrary: 'View the full library',

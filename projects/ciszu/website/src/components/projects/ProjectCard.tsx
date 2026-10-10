@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { assetResolver } from '@ciszunetwork/cdn';
+import { useDict } from '@/lib/useDict';
 import { Icon } from '@ciszu/ui';
 import type { Project } from '@/data/projects';
 
@@ -23,6 +24,7 @@ export default function ProjectCard({
   project: Project;
   onOpen: (project: Project) => void;
 }) {
+  const t = useDict();
   return (
     <article
       className={`group relative flex flex-col overflow-hidden rounded-[2.5rem] border ${project.accent.border} bg-[#05060c]/80 transition-all duration-500 hover:-translate-y-2 ${project.accent.glow}`}
@@ -109,7 +111,7 @@ export default function ProjectCard({
             className={`relative z-20 inline-flex cursor-pointer items-center gap-2 rounded-xl border px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-white transition-all hover:scale-105 hover:brightness-150 ${project.accent.chipBg} ${project.accent.chipBorder}`}
           >
             <Icon name="search" size={13} />
-            Explorar proyecto
+            {t.projectsPage.exploreProject}
           </button>
           <div className="relative z-20 flex items-center gap-2">
             {project.official ? (

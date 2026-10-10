@@ -78,14 +78,14 @@ export default function CiszukoAntonyPage() {
               <div className="h-32 w-32 rounded-full bg-gradient-to-br from-[#4a7dff] via-[#68cfff] to-[#ff33cc] p-1 md:h-36 md:w-36">
                 <Image
                   src={assetResolver.resolve(SELFIE)}
-                  alt="Retrato de Francisco García (Ciszuko Antony)"
+                  alt={t.projectsPage.antonyPortraitAlt}
                   width={144}
                   height={144}
                   className="h-full w-full rounded-full object-cover"
                 />
               </div>
               <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/10 bg-black/80 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-[#68cfff]">
-                Francisco García
+                {t.projectsPage.antonyName}
               </span>
             </Floating>
           </div>

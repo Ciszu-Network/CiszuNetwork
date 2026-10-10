@@ -189,7 +189,7 @@ export default function NotFound() {
               <span className="w-2.5 h-2.5 rounded-full bg-neon-green/70" />
             </span>
             <span className="font-mono text-[10px] md:text-xs uppercase tracking-[0.25em] text-neon-cyan/70 truncate">
-              ciszunetwork // node-404 — /bin/resolve
+              {"ciszunetwork // node-404 — /bin/resolve"}
             </span>
             <span className="ml-auto hidden sm:inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-neon-yellow/80">
               <span className="w-1.5 h-1.5 rounded-full bg-neon-yellow cz404-cursor" aria-hidden />

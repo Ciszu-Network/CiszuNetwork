@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -27,6 +28,7 @@ import {
 } from '@/data/services';
 import { ACCENT_STYLES } from '@/data/ecosystem';
 import { CISZU_NETWORK } from '@/config/site';
+import { getDict, parseLang, type Dict } from '@/lib/i18n';
 
 export const metadata: Metadata = {
   title: 'Ciszu Network | SERVICIOS',
@@ -132,7 +134,7 @@ function SectionHeading({
   );
 }
 
-function ServiceCard({ service }: { service: Service }) {
+function ServiceCard({ service, t }: { service: Service; t: Dict }) {
   const accent = ACCENT_STYLES[service.accent];
   const priceColor =
     service.accent === 'brand'
@@ -194,14 +196,15 @@ function ServiceCard({ service }: { service: Service }) {
         </div>
 
         <span className={`mt-5 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest transition-all group-hover:gap-2.5 ${accent.text}`}>
-          Ver servicio <ChevronRight className="h-3.5 w-3.5" />
+          {t.servicesPage.viewService} <ChevronRight className="h-3.5 w-3.5" />
         </span>
       </div>
     </Link>
   );
 }
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const t = getDict(parseLang((await cookies()).get('ciszu_lang')?.value));
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />
@@ -237,13 +240,13 @@ export default function ServicesPage() {
         <section id="catalogo" className="scroll-mt-28">
           <SectionHeading
             icon={<Sparkles className="h-5 w-5" />}
-            title="Catálogo de Servicios"
+            title={t.servicesPage.showcaseTitle}
             kicker={`${SERVICES.length} servicios · Flyers oficiales`}
             accent="pink"
           />
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {SERVICES.map((service) => (
-              <ServiceCard key={service.slug} service={service} />
+              <ServiceCard key={service.slug} service={service} t={t} />
             ))}
           </div>
         </section>
@@ -289,7 +292,7 @@ export default function ServicesPage() {
         <section id="proceso" className="scroll-mt-28">
           <SectionHeading
             icon={<Clock className="h-5 w-5" />}
-            title="Cómo trabajamos"
+            title={t.servicesPage.howWeWork}
             kicker="De la idea a la entrega"
             accent="cyan"
           />
@@ -313,7 +316,7 @@ export default function ServicesPage() {
           <div className="rounded-3xl border border-white/10 bg-white/5 p-8 text-center md:p-12">
             <MessageSquare className="mx-auto mb-5 h-10 w-10 text-brand-light" />
             <h2 className="bg-gradient-to-r from-brand-light via-brand-accent to-neon-cyan bg-clip-text font-header text-3xl font-black uppercase tracking-tighter text-transparent md:text-4xl">
-              ¿Listo para empezar?
+              {t.servicesPage.readyTitle}
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-sm text-gray-400">
               Cuéntanos qué necesitas y te respondemos con una propuesta a tu medida. Atención directa de {CISZU_NETWORK.name}.

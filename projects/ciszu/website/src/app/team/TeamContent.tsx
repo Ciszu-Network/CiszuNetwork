@@ -193,7 +193,7 @@ export default function TeamContent() {
             <h2 className="text-3xl font-header font-black text-white uppercase tracking-tight">
               {CISZUKO_ANTONY.name}
             </h2>
-            <p className="text-[11px] text-gray-500 mt-1">Francisco Antonio García Menolascina</p>
+            <p className="text-[11px] text-gray-500 mt-1">{"Francisco Antonio García Menolascina"}</p>
             <p className={`text-xs font-black uppercase tracking-[0.35em] mt-3 mb-6 ${THEME.accent}`}>
               {CISZUKO_ANTONY.role}
             </p>
