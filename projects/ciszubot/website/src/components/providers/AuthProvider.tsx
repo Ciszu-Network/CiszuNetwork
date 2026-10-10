@@ -11,6 +11,7 @@ interface DiscordSessionPayload {
   name: string | null;
   avatar: string | null;
   provider: 'discord';
+  username?: string | null;
 }
 
 /**
@@ -47,7 +48,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
               name: data.session.name,
               avatar: data.session.avatar,
               email: null,
-              username: data.session.name ?? undefined,
+              username: data.session.username ?? data.session.name ?? undefined,
               display_name: data.session.name ?? undefined,
               provider: 'discord',
             });

@@ -6,6 +6,7 @@ import { SmartImage } from '@ciszu/ui';
 import { supabase } from '@/config/supabase';
 import { useAppStore } from '@/store';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useClientI18n } from '@/hooks/useClientI18n';
 import {
   AuthField,
   AuthSecondaryActions,
@@ -97,6 +98,7 @@ export default function LoginPage() {
   usePageTitle('LOGIN');
   const router = useRouter();
   const { user } = useAppStore();
+  const { dict } = useClientI18n();
   const { begin: beginActivity, end: endActivity } = useActivityGuard();
   const [form, setForm] = useState({ identifier: '', password: '' });
   const [forgot, setForgot] = useState(false);
@@ -124,9 +126,41 @@ export default function LoginPage() {
   const [recovery, setRecovery] = useState<{ token: string; email: string } | null>(null);
   const { toast } = useToast();
 
+  const [discord, setDiscord] = useState<{ name: string | null } | null>(null);
   useEffect(() => {
-    if (user) router.replace('/dashboard');
-  }, [user, router]);
+    let cancelled = false;
+    fetch('/api/auth/session', { cache: 'no-store' })
+      .then((r) => r.json())
+      .then((j: { session?: { name?: string | null } | null }) => {
+        if (!cancelled) setDiscord(j.session ? { name: j.session.name ?? null } : null);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
+  if (user) {
+    return (
+      <div className="min-h-screen pt-24 pb-20 px-4 relative overflow-hidden">
+        <div className="max-w-md mx-auto space-y-4">
+          <div className="rounded-[2rem] border border-emerald-500/30 bg-emerald-500/10 p-6 text-center space-y-2">
+            <p className="font-header text-lg font-black uppercase tracking-wide text-emerald-400">{dict.dashboardPage.ciszuConnected}</p>
+            <p className="text-xs text-muted">{dict.dashboardPage.ciszuConnectedDesc}: {user.email}</p>
+          </div>
+          <div className={`rounded-2xl border p-4 text-center text-xs font-bold ${discord ? 'border-[#5865F2]/40 bg-[#5865F2]/10 text-[#8ea1ff]' : 'border-amber-400/30 bg-amber-400/10 text-amber-400'}`}>
+            {discord ? `${dict.dashboardPage.discordConnected}: ${discord.name ?? 'Discord'}` : dict.dashboardPage.discordNotConnected}
+          </div>
+          <div className="flex flex-col gap-2">
+            <a href="/dashboard" className="flex items-center justify-center rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-white">{dict.dashboardPage.openDashboard}</a>
+            <a href="/settings" className="flex items-center justify-center rounded-xl border border-border px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-muted hover:text-ink">{dict.dashboardPage.openSettings}</a>
+            {!discord && (
+              <a href="/api/auth/discord" className="flex items-center justify-center rounded-xl bg-[#5865F2] px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-white">{dict.dashboardPage.connectDiscord}</a>
+            )}
+            <button type="button" onClick={() => void supabase.auth.signOut()} className="flex items-center justify-center rounded-xl border border-red-500/30 px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-red-400">{dict.dashboardPage.signOutCiszu}</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

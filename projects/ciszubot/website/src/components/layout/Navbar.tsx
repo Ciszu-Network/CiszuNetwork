@@ -134,7 +134,7 @@ const renderIcon = (name: string, size: number) => {
 };
 
 interface NavbarProps {
-  account?: { id: string; name: string | null; avatar: string | null } | null;
+  account?: { id: string; name: string | null; avatar: string | null; username?: string | null } | null;
 }
 
 export default function Navbar({ account }: NavbarProps) {
@@ -162,7 +162,7 @@ export default function Navbar({ account }: NavbarProps) {
   // Usuario activo: prioridad al store sincronizado (CISZU ID o Discord vía
   // AuthProvider); antes de la hidratación fallback a la sesión Discord SSR.
   const activeUser: AppUser | null =
-    user ?? (isHydrated ? null : account ? { ...account, email: null, provider: 'discord' as const } : null);
+    user ?? (isHydrated ? null : account ? { ...account, username: account.username ?? undefined, email: null, provider: 'discord' as const } : null);
   const activeUserId = activeUser?.id ?? null;
 
   // Fallback de avatar para cuentas Discord sin avatar propio
@@ -573,7 +573,7 @@ export default function Navbar({ account }: NavbarProps) {
                         />
                         <div className="min-w-0">
                           <p className="truncate text-sm font-bold text-ink">{activeUser.name ?? 'Cuenta'}</p>
-                          <p className="truncate text-[11px] text-muted">{activeUser.email ?? activeUser.id}</p>
+                          <p className="truncate text-[11px] text-muted">{activeUser.email ?? (activeUser.username ? `@${activeUser.username}` : (activeUser.name ?? ''))}</p>
                         </div>
                       </div>
                       <div className="mt-3 flex flex-col gap-1">
@@ -591,7 +591,7 @@ export default function Navbar({ account }: NavbarProps) {
                           onClick={() => setAuthOpen(false)}
                           className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-ink/85 transition hover:bg-muted/15 hover:text-neon-blue"
                         >
-                          <Icon name="lock" size={15} /> Configuración
+                          <Icon name="settings" size={15} /> Configuración
                         </Link>
                         <button
                           type="button"
