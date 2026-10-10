@@ -17,10 +17,13 @@ import { mergeChangelogSources } from '@ciszunetwork/utils/changelog';
  
 
 /** Icono de una entrada: usa el icono publicado (devcon) si existe. */
-const entryIcon = (item: { icon?: string; types: string[] }) =>
-  (item.icon && (I as Record<string, React.ReactNode>)[item.icon]) ||
-  TAG_CONFIG[item.types[0] as keyof typeof TAG_CONFIG]?.icon ||
-  I.history;
+function entryIcon(item: { icon?: string; types: string[] }) {
+  return (
+    (item.icon && (I as Record<string, React.ReactNode>)[item.icon]) ||
+    TAG_CONFIG[item.types[0] as keyof typeof TAG_CONFIG]?.icon ||
+    I.history
+  );
+}
 
 export default function ChangelogDetail() {
   const t = useT();

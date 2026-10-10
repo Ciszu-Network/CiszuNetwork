@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useT } from '@/hooks/useT';
 import { motion } from 'framer-motion';
 
 interface SortOption {
@@ -26,11 +27,12 @@ export const ListControls = ({
   options,
   color = 'neon-yellow'
 }: ListControlsProps) => {
+  const t = useT();
   return (
     <div className="w-full flex flex-wrap items-center gap-6 bg-black/60 backdrop-blur-3xl border border-white/10 p-6 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
       {/* Criteria Tags */}
       <div className="flex flex-wrap items-center gap-3">
-        <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] ml-2">Filtrar Transmisiones:</span>
+        <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] ml-2">{t.pages.misc.filterTransmissions}</span>
         <div className="flex flex-wrap gap-2">
           {options.map((opt) => (
             <button
@@ -56,7 +58,7 @@ export const ListControls = ({
 
       {/* Direction / Sort By label */}
       <div className="flex items-center gap-4 ml-auto">
-        <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">Orden:</span>
+        <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">{t.pages.misc.sortBy}</span>
         <button
           onClick={onOrderToggle}
           className={`relative w-12 h-12 flex items-center justify-center bg-black border-2 border-white/10 rounded-2xl group active:scale-90 transition-all hover:border-${color} hover:shadow-[0_0_20px_rgba(255,217,0,0.2)]`}

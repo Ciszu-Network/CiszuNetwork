@@ -9,6 +9,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useT } from '@/hooks/useT';
 import { detectPdwaBrowser, useToast } from '@ciszu/ui';
 
 interface BeforeInstallPromptEvent extends Event {
@@ -17,6 +18,7 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export default function InstallPdwaInline() {
+  const t = useT();
   const { toast } = useToast();
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
   const [installed, setInstalled] = useState(false);
@@ -74,7 +76,7 @@ export default function InstallPdwaInline() {
     return (
       <div className="p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/40 text-center">
         <p className="text-emerald-400 font-header font-black uppercase tracking-widest text-xs">
-          <span className="mr-2">✓</span>Ya tienes MuzicMania instalada como app en este dispositivo.
+          <span className="mr-2">✓</span>{t.pages.misc.installedInline}
         </p>
       </div>
     );

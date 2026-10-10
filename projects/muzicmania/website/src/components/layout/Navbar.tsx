@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+
+type TimeoutRef = React.MutableRefObject<ReturnType<typeof setTimeout> | null>;
 import Link from 'next/link';
 import Image from 'next/image';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
@@ -239,8 +241,8 @@ export const NavbarContent = () => {
     setIsAccederOpen(v => !v);
   };
 
-  const hoverOpen  = (s: (v:boolean)=>void, t: React.MutableRefObject<ReturnType<typeof setTimeout>|null>) => { if(t.current) clearTimeout(t.current); s(true); };
-  const hoverClose = (s: (v:boolean)=>void, t: React.MutableRefObject<ReturnType<typeof setTimeout>|null>) => { t.current = setTimeout(()=>s(false), 180); };
+  const hoverOpen  = (s: (v:boolean)=>void, t: TimeoutRef) => { if(t.current) clearTimeout(t.current); s(true); };
+  const hoverClose = (s: (v:boolean)=>void, t: TimeoutRef) => { t.current = setTimeout(()=>s(false), 180); };
 
   return (
     <>
@@ -251,12 +253,12 @@ export const NavbarContent = () => {
           : 'translate-y-10 opacity-0 pointer-events-none border-neon-blue/50 text-neon-blue'
       }`}>
         {isNavigating === 'navigating' ? (
-          // Icono Cambio de página -> Flechas tipo "Fast Forward" brillando
+          // Icono Cambio de página -> {dict.pages.misc.ffTooltip}
           <svg className="w-8 h-8 animate-pulse text-emerald-400 drop-shadow-[0_0_10px_rgba(52,211,153,0.8)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
             <path d="M13 5l7 7-7 7M5 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         ) : (
-          // Icono Refresh/Reload -> Flecha circular gruesa girando
+          // Icono Refresh/Reload -> {dict.pages.misc.spinTooltip}
           <svg className="w-8 h-8 animate-spin text-emerald-400 drop-shadow-[0_0_10px_rgba(52,211,153,0.8)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
             <path d="M21 12a9 9 0 11-9-9c2.52 0 4.93 1 6.74 2.74L21 8" strokeLinecap="round" strokeLinejoin="round"/>
             <path d="M21 3v5h-5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -530,7 +532,7 @@ export const NavbarContent = () => {
               </div>
               
               {/* Reset search button ONLY when no results and there is a query */}
-              {query.trim().length > 0 && suggestions.length === 0 && (
+              {0 < query.trim().length && suggestions.length === 0 && (
                  <div className="flex flex-col items-center justify-center py-6 animate-fade-in-down space-y-3">
                     <p className="text-gray-500 font-header font-black uppercase text-xs tracking-widest italic">{fill(dict.search.noResults, { query })}</p>
                     <button 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback, useRef } from 'react';
+import { useT } from '@/hooks/useT';
 import { isTauri } from '@/lib/isTauri';
 import { DesktopConfirmDialog } from './DesktopConfirmDialog';
 
@@ -28,6 +29,7 @@ async function setSettings(s: DesktopSettings) {
 }
 
 export function DesktopGuard({ children }: { children: React.ReactNode }) {
+  const t = useT();
   const [closeDialog, setCloseDialog] = useState(false);
   const [linkDialog, setLinkDialog] = useState<{ url: string } | null>(null);
   const [settings, setSettingsState] = useState<DesktopSettings>(DEFAULT_SETTINGS);
@@ -148,7 +150,7 @@ export function DesktopGuard({ children }: { children: React.ReactNode }) {
       const shift = e.shiftKey;
 
       // Bloquear F-keys: F1-F12 (ayuda, buscar, recargar, devtools, etc)
-      if (key.startsWith('F') && key.length >= 2 && key.length <= 3) {
+      if (key.startsWith('F') && 2 <= key.length && key.length <= 3) {
         e.preventDefault();
         e.stopPropagation();
         return;
@@ -221,19 +223,19 @@ export function DesktopGuard({ children }: { children: React.ReactNode }) {
       {children}
       <DesktopConfirmDialog
         open={closeDialog}
-        title="CERRAR MUZICMANIA"
+        title={t.pages.misc.closeMuzicmania}
         message="¿Estás seguro de que deseas salir de MuzicMania? Se perderá tu partida actual."
         confirmLabel="SALIR"
-        cancelLabel="SEGUIR JUGANDO"
+        cancelLabel={t.pages.misc.keepPlaying}
         showDontAsk={true}
         onConfirm={(d) => handleCloseConfirm(d)}
         onCancel={handleCloseCancel}
       />
       <DesktopConfirmDialog
         open={linkDialog !== null}
-        title="SALIR DE MUZICMANIA"
+        title={t.pages.misc.exitMuzicmania}
         message={`Se abrirá un enlace externo en tu navegador. ¿Deseas continuar?`}
-        confirmLabel="ABRIR ENLACE"
+        confirmLabel={t.pages.misc.openLink}
         cancelLabel="CANCELAR"
         showDontAsk={true}
         onConfirm={(d) => linkDialog && handleLinkConfirm(d, linkDialog.url)}

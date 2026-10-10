@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useT } from '@/hooks/useT';
 import { COUNTRIES } from "@/utils/countries";
 import { motion, AnimatePresence } from "framer-motion";
 import { Icon } from '@ciszu/ui';
@@ -12,6 +13,7 @@ interface CountrySelectProps {
 }
 
 export default function CountrySelect({ value, onChange, error }: CountrySelectProps) {
+  const t = useT();
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -46,7 +48,7 @@ export default function CountrySelect({ value, onChange, error }: CountrySelectP
             <span className="truncate">{selectedCountry.name}</span>
           </div>
         ) : (
-          <span className="text-gray-700">Selecciona tu país</span>
+          <span className="text-gray-700">{t.pages.misc.selectCountry}</span>
         )}
         <svg viewBox="0 0 24 24" className={`w-4 h-4 text-gray-500 transition-transform ${isOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
           <polyline points="6 9 12 15 18 9" />
@@ -67,7 +69,7 @@ export default function CountrySelect({ value, onChange, error }: CountrySelectP
                 type="text"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                placeholder="Buscar país..."
+                placeholder={t.pages.misc.phSearchCountry}
                 className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-xs font-bold focus:border-neon-pink/50 outline-none"
                 onClick={e => e.stopPropagation()}
               />
@@ -93,7 +95,7 @@ export default function CountrySelect({ value, onChange, error }: CountrySelectP
               ))}
               {filteredCountries.length === 0 && (
                 <div className="p-4 text-center text-gray-500 text-xs font-bold">
-                  No se encontraron países
+                  {t.pages.misc.noCountries}
                 </div>
               )}
             </div>

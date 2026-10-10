@@ -369,13 +369,13 @@ export const Footer = () => {
           <div className="text-center space-y-2">
             <p className="text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-widest leading-loose">
               <span className="text-neon-cyan">&copy;</span> 2024-{new Date().getFullYear()}{' '}
-              <a href={CISZU_NETWORK_URL} target="_blank" rel="noopener noreferrer" className="hover:text-neon-cyan transition-colors cursor-pointer uppercase font-black">CISZU NETWORK</a> &amp; MUZICMANIA. {dict.footer.rights.toUpperCase()}
+              <a href={CISZU_NETWORK_URL} target="_blank" rel="noopener noreferrer" className="hover:text-neon-cyan transition-colors cursor-pointer uppercase font-black">{dict.pages.misc.ciszuNetworkUpper}</a> &amp; MUZICMANIA. {dict.footer.rights.toUpperCase()}
             </p>
             <p className="text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-widest leading-loose">
               {dict.footer.madeBy.toUpperCase()}{' '}
-              <a href={CISZUKO_ANTONY_URL} target="_blank" rel="noopener noreferrer" className="text-neon-cyan font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(0,240,255,0.8)]">CISZUKO ANTONY</a>{' '}
+              <a href={CISZUKO_ANTONY_URL} target="_blank" rel="noopener noreferrer" className="text-neon-cyan font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(0,240,255,0.8)]">{dict.pages.misc.ciszukoUpper}</a>{' '}
               · {dict.common.learnMore.toUpperCase()}{' '}
-              <a href={CISZU_NETWORK_URL} target="_blank" rel="noopener noreferrer" className="text-neon-cyan font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(0,240,255,0.8)]">CISZU NETWORK</a>
+              <a href={CISZU_NETWORK_URL} target="_blank" rel="noopener noreferrer" className="text-neon-cyan font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(0,240,255,0.8)]">{dict.pages.misc.ciszuNetworkUpper}</a>
             </p>
           </div>
         </div>

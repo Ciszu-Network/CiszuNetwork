@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useT } from '@/hooks/useT';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -185,6 +186,7 @@ const DOCK_ITEMS: DockItem[] = [
 ];
 
 export default function QuickDocks() {
+  const t = useT();
   const pathname = usePathname();
   const [open, setOpen] = useState(true);
   useEffect(() => {
@@ -208,10 +210,10 @@ export default function QuickDocks() {
         <div className="relative z-10">
           <div className="flex flex-col items-center mb-6 text-center">
             <h3 className="text-4xl font-header font-black text-white uppercase tracking-[0.3em] leading-none mb-2">
-              Quick Docks
+              {t.pages.misc.quickDocksTitle}
             </h3>
             <p className="text-white/30 text-[10px] uppercase tracking-widest font-bold">
-              Acceso rápido a todas las secciones del ecosistema
+              {t.pages.misc.quickDocksDesc}
             </p>
           </div>
 
@@ -263,10 +265,10 @@ export default function QuickDocks() {
                 </div>
                 <div className="text-left space-y-1">
                   <h4 className="text-white font-black text-base uppercase tracking-tight drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">
-                    ¿Necesitas ayuda urgente?
+                    {t.pages.misc.urgentHelp}
                   </h4>
                   <p className="text-red-300/80 text-[9px] font-medium uppercase tracking-[0.1em]">
-                    Centro de operaciones activo. Reporta anomalías ahora.
+                    {t.pages.misc.urgentHelpDesc}
                   </p>
                 </div>
               </div>
@@ -274,7 +276,7 @@ export default function QuickDocks() {
                 href="/support"
                 className="flex items-center gap-3 px-10 py-4 bg-gradient-to-r from-red-600 to-orange-600 text-white text-sm font-black rounded-xl shadow-[0_0_20px_rgba(239,68,68,0.5)] transition-all whitespace-nowrap uppercase tracking-[0.2em] hover:scale-105 active:scale-95 hover:shadow-[0_0_30px_rgba(239,68,68,0.8)]"
               >
-                IR AL SOPORTE
+                {t.pages.misc.goSupport2}
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="w-5 h-5">
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>

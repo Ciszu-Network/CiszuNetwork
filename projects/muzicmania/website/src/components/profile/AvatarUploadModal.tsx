@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { useT } from '@/hooks/useT';
 import Cropper from 'react-easy-crop';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/config/supabase';
@@ -18,6 +19,7 @@ interface AvatarUploadModalProps {
 }
 
 export default function AvatarUploadModal({ isOpen, onClose, userId, onUploadSuccess }: AvatarUploadModalProps) {
+  const t = useT();
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -139,7 +141,7 @@ export default function AvatarUploadModal({ isOpen, onClose, userId, onUploadSuc
           className="bg-[#0a0a0a] border border-white/10 rounded-3xl p-6 w-full max-w-lg shadow-2xl space-y-6"
         >
           <div className="flex justify-between items-center">
-            <h3 className="font-header font-black italic uppercase text-2xl text-neon-blue">Foto de Perfil</h3>
+            <h3 className="font-header font-black italic uppercase text-2xl text-neon-blue">{t.pages.misc.profilePhoto}</h3>
             <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors">
               <X className="w-6 h-6" />
             </button>
@@ -160,8 +162,8 @@ export default function AvatarUploadModal({ isOpen, onClose, userId, onUploadSuc
                 className="absolute inset-0 opacity-0 cursor-pointer"
               />
               <Upload className="w-12 h-12 text-gray-500 mx-auto mb-4" />
-              <p className="font-header font-bold uppercase tracking-widest text-sm text-white">Haz click o arrastra tu imagen</p>
-              <p className="text-[10px] text-gray-500 mt-2 font-bold uppercase">JPG, PNG, WEBP (Max 5MB)</p>
+              <p className="font-header font-bold uppercase tracking-widest text-sm text-white">{t.pages.misc.uploadHint2}</p>
+              <p className="text-[10px] text-gray-500 mt-2 font-bold uppercase">{t.pages.misc.formatsHint}</p>
             </div>
           ) : (
             <div className="space-y-6">
@@ -195,7 +197,7 @@ export default function AvatarUploadModal({ isOpen, onClose, userId, onUploadSuc
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] uppercase font-black text-gray-400 tracking-widest">Rotación</label>
+                  <label className="text-[10px] uppercase font-black text-gray-400 tracking-widest">{t.pages.misc.rotation}</label>
                   <input 
                     type="range" 
                     value={rotation} 

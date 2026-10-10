@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useT } from '@/hooks/useT';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 
 export function ConnectivityBanner() {
+  const t = useT();
   const { isOnline, isChecking, retryCount, checkConnection, startRetry, stopRetry, lastError } = useNetworkStatus();
   const [visible, setVisible] = useState(false);
   const [bannerType, setBannerType] = useState<'offline' | 'reconnecting' | 'restored'>('offline');
@@ -49,9 +51,10 @@ export function ConnectivityBanner() {
           {bannerType === 'restored' ? (
             <>
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              Conexión restaurada
+              {t.pages.misc.connRestored}
             </>
-          ) : bannerType === 'reconnecting' ? (
+          ) :
+          bannerType === 'reconnecting' ? (
             <>
               <svg className="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
               Reconectando{retryCount > 0 ? ` (intento ${retryCount})` : ''}...

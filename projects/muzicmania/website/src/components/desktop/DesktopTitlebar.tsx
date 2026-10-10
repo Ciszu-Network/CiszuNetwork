@@ -1,11 +1,13 @@
 ﻿'use client';
 
 import { useState, useCallback } from 'react';
+import { useT } from '@/hooks/useT';
 import { isTauri } from '@/lib/isTauri';
 import { DesktopSettings } from './DesktopSettings';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
 
 export function DesktopTitlebar() {
+  const t = useT();
   const [showSettings, setShowSettings] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
 
@@ -58,7 +60,7 @@ export function DesktopTitlebar() {
             className="w-5 h-5"
           />
           <span className="text-[10px] font-header font-black text-white uppercase tracking-widest">
-            MuzicMania Desktop
+            {t.pages.misc.desktopTitle}
           </span>
         </div>
         <div className="flex items-center h-full">
@@ -69,7 +71,7 @@ export function DesktopTitlebar() {
               }
             }}
             className="w-11 h-full flex items-center justify-center text-gray-500 hover:text-neon-green hover:bg-white/5 transition-all"
-            title="Modo concentración (ocultar interfaz)"
+            title={t.pages.misc.focusMode}
           >
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
@@ -78,7 +80,7 @@ export function DesktopTitlebar() {
           <button
             onClick={() => setShowSettings(true)}
             className="w-11 h-full flex items-center justify-center text-gray-500 hover:text-neon-cyan hover:bg-white/5 transition-all"
-            title="Ajustes de escritorio"
+            title={t.pages.misc.desktopSettingsAria}
           >
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="3" />

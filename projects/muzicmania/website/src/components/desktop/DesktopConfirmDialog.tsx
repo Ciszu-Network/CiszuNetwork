@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useT } from '@/hooks/useT';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ConfirmDialogProps {
@@ -17,6 +18,7 @@ interface ConfirmDialogProps {
 export function DesktopConfirmDialog({
   open, title, message, confirmLabel, cancelLabel, showDontAsk, onConfirm, onCancel
 }: ConfirmDialogProps) {
+  const t = useT();
   const [dontAsk, setDontAsk] = useState(false);
 
   return (
@@ -53,7 +55,7 @@ export function DesktopConfirmDialog({
                   )}
                 </div>
                 <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest group-hover:text-gray-300 transition-all">
-                  No volver a preguntar
+                  {t.pages.misc.noAskAgain}
                 </span>
               </label>
             )}

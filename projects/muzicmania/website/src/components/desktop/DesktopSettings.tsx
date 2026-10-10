@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useT } from '@/hooks/useT';
 import { motion, AnimatePresence } from 'framer-motion';
 import { isTauri } from '@/lib/isTauri';
 
@@ -26,6 +27,7 @@ async function setSettings(s: DesktopSettings) {
 }
 
 export function DesktopSettings({ onClose }: { onClose: () => void }) {
+  const t = useT();
   const [closeConfirm, setCloseConfirmState] = useState(true);
   const [linkConfirm, setLinkConfirmState] = useState(true);
 
@@ -78,19 +80,19 @@ export function DesktopSettings({ onClose }: { onClose: () => void }) {
               </svg>
             </div>
             <h2 className="text-xl font-header font-black text-white uppercase tracking-tight italic">
-              AJUSTES DE ESCRITORIO
+              {t.pages.misc.desktopSettingsTitle}
             </h2>
           </div>
 
           <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest">
-            Preferencias exclusivas para la versión compilada de MuzicMania.
+            {t.pages.misc.desktopSettingsDesc}
           </p>
 
           <div className="space-y-4">
             <label className="flex items-center justify-between bg-white/5 border border-white/10 rounded-2xl px-5 py-4 cursor-pointer hover:bg-white/[0.07] transition-all">
               <div>
-                <span className="text-xs font-header font-black text-white uppercase tracking-wider">Confirmar al cerrar</span>
-                <p className="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">Mostrar advertencia al salir del programa</p>
+                <span className="text-xs font-header font-black text-white uppercase tracking-wider">{t.pages.misc.confirmOnClose}</span>
+                <p className="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">{t.pages.misc.confirmOnCloseDesc}</p>
               </div>
               <div
                 onClick={toggleCloseConfirm}
@@ -102,8 +104,8 @@ export function DesktopSettings({ onClose }: { onClose: () => void }) {
 
             <label className="flex items-center justify-between bg-white/5 border border-white/10 rounded-2xl px-5 py-4 cursor-pointer hover:bg-white/[0.07] transition-all">
               <div>
-                <span className="text-xs font-header font-black text-white uppercase tracking-wider">Confirmar enlaces externos</span>
-                <p className="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">Advertir antes de abrir un enlace en el navegador</p>
+                <span className="text-xs font-header font-black text-white uppercase tracking-wider">{t.pages.misc.confirmExternal}</span>
+                <p className="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">{t.pages.misc.confirmExternalDesc}</p>
               </div>
               <div
                 onClick={toggleLinkConfirm}
@@ -118,7 +120,7 @@ export function DesktopSettings({ onClose }: { onClose: () => void }) {
             onClick={onClose}
             className="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-header font-black uppercase tracking-widest text-gray-400 hover:text-white transition-all cursor-pointer"
           >
-            CERRAR AJUSTES
+            {t.pages.misc.closeSettings}
           </button>
         </motion.div>
       </motion.div>

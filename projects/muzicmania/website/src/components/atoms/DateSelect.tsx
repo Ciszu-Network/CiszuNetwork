@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useMemo } from "react";
+import { useT } from '@/hooks/useT';
 import { motion, AnimatePresence } from "framer-motion";
 
 interface DateSelectProps {
@@ -18,6 +19,7 @@ const MONTHS = [
 const DAYS_SHORT = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá', 'Do'];
 
 export default function DateSelect({ value, onChange, error, name = "birthDate" }: DateSelectProps) {
+  const t = useT();
   const [isOpen, setIsOpen] = useState(false);
   const [viewMode, setViewMode] = useState<"days" | "months" | "years">("days");
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -114,7 +116,7 @@ export default function DateSelect({ value, onChange, error, name = "birthDate" 
         {displayValue ? (
           <span className="text-white tracking-widest">{displayValue}</span>
         ) : (
-          <span className="text-gray-700">DD / MM / YYYY</span>
+          <span className="text-gray-700">{t.pages.misc.datePlaceholder}</span>
         )}
         <div className="w-4 h-4 text-gray-500">
           <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -236,7 +238,7 @@ export default function DateSelect({ value, onChange, error, name = "birthDate" 
                 }}
                 className="text-[9px] font-black uppercase tracking-[0.2em] text-neon-cyan hover:text-white transition-colors"
               >
-                IR A HOY
+                {t.pages.misc.goToday}
               </button>
             </div>
           </motion.div>

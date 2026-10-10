@@ -1,5 +1,5 @@
 /**
- * FeedbackFab — botón flotante "Reportar un problema" (esquina inferior-izquierda,
+ * FeedbackFab — botón flotante {t.pages.misc.reportProblem} (esquina inferior-izquierda,
  * debajo del botón PDWA de @ciszu/ui).
  *
  * - CSS 100% autocontenido (inline styles + <style> con prefijo fbx-): no depende
@@ -16,6 +16,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useT } from '@/hooks/useT';
 import type { CSSProperties } from 'react';
 import { useFabStack, useFabRestore, FabDismissHint } from '@ciszu/ui';
 import { isTauri } from '@/lib/isTauri';
@@ -24,6 +25,7 @@ const STORAGE_KEY = 'muzicmania-feedback-dismissed';
 const ACCENT = '#ff33cc';
 
 export default function FeedbackFab() {
+  const t = useT();
   const [isDesktop, setIsDesktop] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const [notice, setNotice] = useState(false);
@@ -90,7 +92,7 @@ export default function FeedbackFab() {
         <FabDismissHint
           slotId="feedback"
           accent={ACCENT}
-          title="Feedback ocultado"
+          title={t.pages.misc.feedbackHidden}
           message="Has ocultado el botón de reporte. Puedes reactivarlo desde la página de Feedback."
           href="/feedback"
           linkLabel="Reactivar en Feedback"
@@ -105,7 +107,7 @@ export default function FeedbackFab() {
             <button
               type="button"
               onClick={handleOpen}
-              aria-label="Reportar un problema"
+              aria-label={t.pages.misc.reportProblem}
               aria-expanded={false}
               onMouseEnter={() => setExpanded(true)}
               onMouseLeave={() => setExpanded(false)}
@@ -137,16 +139,16 @@ export default function FeedbackFab() {
                     : { opacity: 0, transform: 'translateX(-8px)', pointerEvents: 'none' }),
                 }}
               >
-                Reportar un problema
+                {t.pages.misc.reportProblem}
               </span>
             </button>
 
             <button
               type="button"
-              aria-label="No volver a mostrar"
+              aria-label={t.pages.misc.noShowAgain}
               onClick={handleDismiss}
               style={dismissStyle}
-              title="No volver a mostrar"
+              title={t.pages.misc.noShowAgain}
             >
               ✕
             </button>
