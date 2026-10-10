@@ -395,7 +395,7 @@ export default function SupportPage() {
                                    </select>
                                 </div>
                                 <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">Sub-{t.pages.support.categoryLabel}</label>
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">{t.pages.support.subCategoryLabel}</label>
                                    <select value={formData.subCategory} onChange={e => setFormData({...formData, subCategory: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-6 py-4 text-sm font-bold outline-none">
                                       {CATEGORIES[formData.category as keyof typeof CATEGORIES].map(sc => <option key={sc} value={sc} className="bg-doc-dark">{sc}</option>)}
                                    </select>
