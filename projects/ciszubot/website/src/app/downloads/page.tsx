@@ -107,8 +107,8 @@ export default function DescargasPage() {
         {/* Restaurar botones flotantes */}
         <div className="max-w-3xl mx-auto mt-8 soft-card rounded-2xl p-7 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div>
-            <p className="font-bold text-sm text-ink mb-1">¿Cerraste el botón flotante?</p>
-            <p className="text-xs text-muted">Los botones de instalación y feedback de abajo a la izquierda se pueden volver a mostrar cuando quieras.</p>
+            <p className="font-bold text-sm text-ink mb-1">{t.descargasPage.fabReopenTitle}</p>
+            <p className="text-xs text-muted">{t.descargasPage.fabReopenDesc}</p>
           </div>
           <FabRestore accent="#22d3ee" keys={['ciszu-pdwa-dismissed']} />
         </div>

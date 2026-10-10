@@ -627,7 +627,7 @@ export default function InformationPage() {
                       {tech.detail}
                     </p>
                     <span className="relative mt-auto flex items-center gap-2 pt-4 text-[10px] font-black uppercase tracking-widest text-faint transition-colors group-hover:text-ink">
-                      Documentación oficial
+                      {dict.informationPage.officialDocs}
                       <Icon name="arrow-right" size={12} />
                     </span>
                   </a>

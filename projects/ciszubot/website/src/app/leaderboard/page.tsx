@@ -9,6 +9,7 @@ import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useClientI18n } from '@/hooks/useClientI18n';
 
 interface LeaderboardEntry {
   userId: string;
@@ -43,6 +44,8 @@ const Section = ({ children, className = '' }: { children: React.ReactNode; clas
 );
 
 export default function LeaderboardPage() {
+  const { dict } = useClientI18n();
+  const t = dict.leaderboardPage;
   usePageTitle('LEADERBOARD');
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -112,7 +115,7 @@ export default function LeaderboardPage() {
               <input
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                placeholder="LOCALIZAR_USUARIO..."
+                placeholder={t.searchPh}
                 className="flex-1 bg-transparent text-white font-header font-bold text-xl uppercase outline-none"
               />
               <button onClick={fetchLeaderboard} className="w-14 h-14 bg-white/5 rounded-full flex items-center justify-center text-white hover:bg-white/10 transition-colors">
@@ -148,9 +151,10 @@ export default function LeaderboardPage() {
         {/* --- LEADERBOARD --- */}
         <Section>
           {loading ? (
-            <div className="text-center py-20 text-muted">Cargando ranking...</div>
-          ) : entries.length === 0 ? (
-            <div className="text-center py-20 text-muted">Sin resultados</div>
+            <div className="text-center py-20 text-muted">{t.loading}</div>
+          ) :
+          entries.length === 0 ? (
+            <div className="text-center py-20 text-muted">{t.noResults}</div>
           ) : (
             <div className="space-y-4">
               {/* Header */}

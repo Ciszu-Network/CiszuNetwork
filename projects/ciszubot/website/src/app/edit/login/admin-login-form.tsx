@@ -2,8 +2,10 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useClientI18n } from '@/hooks/useClientI18n';
 
 export default function AdminLoginForm({ from }: { from: Promise<string> }) {
+  const { dict } = useClientI18n();
   const router = useRouter();
   const [token, setToken] = useState('');
   const [error, setError] = useState('');
@@ -41,16 +43,16 @@ export default function AdminLoginForm({ from }: { from: Promise<string> }) {
         className="w-full max-w-sm border-2 border-brand-500/50 bg-surface rounded-xl p-8 space-y-4 shadow-lg"
       >
         <h1 className="text-xl font-black uppercase tracking-tighter text-ink text-center">
-          Acceso de administración
+          {dict.editAdminPage.title}
         </h1>
         <p className="text-sm text-muted text-center">
-          Visual Builder de Puck · editor reservado a administración. Introduce el token de acceso.
+          {dict.editAdminPage.subtitle}
         </p>
         <input
           type="password"
           value={token}
           onChange={(e) => setToken(e.target.value)}
-          placeholder="Token de acceso"
+          placeholder={dict.editAdminPage.tokenPlaceholder}
           autoComplete="current-password"
           className="w-full rounded-lg border border-border bg-card px-4 py-2 text-ink focus:border-brand-500 outline-none"
         />

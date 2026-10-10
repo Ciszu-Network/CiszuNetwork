@@ -114,14 +114,14 @@ export default function HeroBanner({ dict, status, serverNow }: HeroBannerProps)
         <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10 mb-6">
           <SmartImage
             src={LOGO_ISOTIPO_CIRCLE}
-            alt="CiszuBot isotipo"
+            alt={dict.hero.isotipoAlt}
             width={128}
             height={128}
             className="w-24 h-24 md:w-32 md:h-32 rounded-full ring-2 ring-neon-blue/40 shadow-[0_0_35px_rgba(0,212,255,0.35)] animate-float object-contain"
           />
           <SmartImage
             src={LOGO_LOGOTIPO}
-            alt="CiszuBot logotipo"
+            alt={dict.hero.logotipoAlt}
             width={420}
             height={90}
             className="w-[260px] md:w-[400px] h-auto animate-cb-float-delayed drop-shadow-[0_0_25px_rgba(0,212,255,0.35)]"
@@ -147,14 +147,14 @@ export default function HeroBanner({ dict, status, serverNow }: HeroBannerProps)
           </span>
           <CopyWithButton
             value={BOT_ID}
-            label="Copiar ID del bot"
+            label={dict.hero.copyBotId}
             copiedLabel="ID copiado"
             size="sm"
             className="rounded-full bg-card border border-border px-4 py-2"
           >
             <span className="inline-flex items-center gap-2 text-xs font-bold text-ink">
               <Icon name="copy" size={14} className="text-neon-purple" />
-              BOT ID: <code className="text-neon-purple tabular-nums">{BOT_ID}</code>
+              {dict.hero.botIdLabel} <code className="text-neon-purple tabular-nums">{BOT_ID}</code>
             </span>
           </CopyWithButton>
         </div>
@@ -212,7 +212,7 @@ export default function HeroBanner({ dict, status, serverNow }: HeroBannerProps)
         {/* Botón bajar */}
         <a
           href="#estado"
-          aria-label="Scroll down"
+          aria-label={dict.hero.scrollDown}
           className="group inline-flex flex-col items-center text-muted hover:text-neon-blue transition-colors"
         >
           <span className="relative flex items-center justify-center w-11 h-11 rounded-full border-2 border-current animate-bounce">

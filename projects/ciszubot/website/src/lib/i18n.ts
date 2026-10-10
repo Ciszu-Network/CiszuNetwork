@@ -86,6 +86,7 @@ const es = {
     navigation: 'Navegación',
     accountSection: 'Cuenta',
     account: 'Cuenta',
+    settings: 'Configuración',
     signIn: 'Iniciar sesión',
     signUp: 'Registrarse',
     signOut: 'Cerrar sesión',
@@ -103,6 +104,13 @@ const es = {
     langChanged: 'Idioma cambiado a {lang}',
   },
   hero: {
+    isotipoAlt: 'CiszuBot isotipo',
+    logotipoAlt: 'CiszuBot logotipo',
+    copyBotId: 'Copiar ID del bot',
+    botIdLabel: 'BOT ID:',
+    scrollDown: 'Desplazar hacia abajo',
+    copyWidgetBot: 'Copiar widget del bot',
+    copyWidgetServer: 'Copiar widget del servidor',
     online: 'En línea',
     offline: 'Desconectado',
     tagline: 'El bot de Discord de Ciszu Network',
@@ -227,6 +235,8 @@ const es = {
     dontShow: 'No volver a mostrar',
   },
   footer: {
+    brandUpper: 'CISZU NETWORK',
+    founder: 'Ciszuko Antony',
     explore: 'Explorar',
     projects: 'Proyectos',
     bot: 'El Bot',
@@ -380,6 +390,8 @@ const es = {
     phMessage: 'Describe tu situación detalladamente...',
   },
   feedbackPage: {
+    fabReopenTitle: '¿Cerraste el botón flotante?',
+    fabReopenDesc: 'El botón de reporte rápido de abajo a la izquierda se puede volver a mostrar cuando quieras.',
     title: 'Feedback',
     subtitle:
       'Tu opinión es importante. Reporta errores, pide comandos o comparte tus ideas para mejorar CiszuBot.',
@@ -408,6 +420,8 @@ const es = {
     back: 'Volver al inicio',
   },
   descargasPage: {
+    fabReopenTitle: '¿Cerraste el botón flotante?',
+    fabReopenDesc: 'Los botones de instalación y feedback de abajo a la izquierda se pueden volver a mostrar cuando quieras.',
     title: 'Descargas',
     subtitle:
       'Lleva CiszuBot a tu escritorio con la PDWA (App de Escritorio Progresiva): sin pestañas, sin barra de direcciones y con tu logo.',
@@ -438,6 +452,8 @@ const es = {
     back: 'Volver al inicio',
   },
   legalPage: {
+    creditsTitle: 'CRÉDITOS Y CONTRIBUCIONES',
+    policyTitle: 'POLÍTICA',
     updated: 'Última actualización: 2 de agosto de 2026',
     back: 'Volver',
     sections: [
@@ -619,6 +635,38 @@ const es = {
     noIncidentsDesc: 'No hay interrupciones ni mantenimientos programados en este momento.',
     platform: 'Plataforma · Ciszu Network',
   },
+  donatePage: {
+    kofiLabel: 'Apoya en Ko-fi',
+    kofiCta: 'Apoya a CiszuBot en Ko-fi',
+    cryptoLabel: 'Cripto (NOWPayments)',
+    cryptoCta: 'Donaciones en cripto (NOWPayments)',
+  },
+  settingsPage: {
+    title: 'Configuración de cuenta',
+    subtitleA: 'Tu cuenta CISZU ID en',
+    dualLogin: 'Dual Login:',
+    checking: 'Comprobando sesión…',
+    needLogin: 'Necesitas iniciar sesión con CISZU ID',
+    loginCta: 'Iniciar con CISZU ID',
+  },
+  authNotice: {
+    title: 'No se pudo iniciar sesión',
+    ariaLabel: 'Error de inicio de sesión',
+    continueAsGuest: 'CONTINUAR COMO INVITADO',
+    signIn: 'INICIAR SESIÓN',
+  },
+  appealPage: {
+    title: 'Apelación de sanciones',
+    subtitle: 'Revisa tus sanciones activas y envía una apelación al equipo. También sirve si no tienes sanciones.',
+  },
+  editAdminPage: {
+    title: 'Acceso de administración',
+    subtitle: 'Visual Builder de Puck · editor reservado a administración. Introduce el token de acceso.',
+    tokenPlaceholder: 'Token de acceso',
+  },
+  informationPage: {
+    officialDocs: 'Documentación oficial',
+  },
   reviewsPage: {
     title: 'Reseñas',
     subtitle: 'Opiniones y valoraciones de usuarios sobre CiszuBot.',
@@ -648,6 +696,9 @@ const es = {
     lastPage: 'Última página',
   },
   leaderboardPage: {
+    loading: 'Cargando ranking...',
+    noResults: 'Sin resultados',
+    searchPh: 'LOCALIZAR_USUARIO...',
     title: 'Ranking',
     subtitle: 'Top usuarios por economía de CiszuBot.',
     comingSoon: 'Próximamente: clasificación por comandos usados, niveles y servidores.',
@@ -730,6 +781,7 @@ const es = {
     back: 'Volver al inicio',
   },
   teamPage: {
+    supportServer: 'Servidor oficial de soporte',
     title: 'Equipo',
     subtitle: 'Personas detrás de CiszuBot y Ciszu Network.',
     comingSoon: 'Próximamente: perfiles del equipo, colaboradores y cómo participar.',
@@ -742,6 +794,8 @@ const es = {
     back: 'Volver al inicio',
   },
   faqPage: {
+    infoTitle: 'Preguntas frecuentes',
+    relatedTitle: 'Temas relacionados',
     title: 'Preguntas Frecuentes',
     subtitle: 'Respuestas rápidas a las dudas más comunes sobre CiszuBot.',
     back: 'Volver al inicio',
@@ -1058,6 +1112,7 @@ const en = {
     navigation: 'Navigation',
     accountSection: 'Account',
     account: 'Account',
+    settings: 'Settings',
     signIn: 'Sign in',
     signUp: 'Sign up',
     signOut: 'Sign out',
@@ -1075,6 +1130,13 @@ const en = {
     langChanged: 'Language changed to {lang}',
   },
   hero: {
+    isotipoAlt: 'CiszuBot isotype',
+    logotipoAlt: 'CiszuBot logotype',
+    copyBotId: 'Copy bot ID',
+    botIdLabel: 'BOT ID:',
+    scrollDown: 'Scroll down',
+    copyWidgetBot: 'Copy bot widget',
+    copyWidgetServer: 'Copy server widget',
     online: 'Online',
     offline: 'Offline',
     tagline: "Ciszu Network's Discord bot",
@@ -1199,6 +1261,8 @@ const en = {
     dontShow: 'Do not show again',
   },
   footer: {
+    brandUpper: 'CISZU NETWORK',
+    founder: 'Ciszuko Antony',
     explore: 'Explore',
     projects: 'Projects',
     bot: 'The Bot',
@@ -1352,6 +1416,8 @@ const en = {
     phMessage: 'Describe your situation in detail...',
   },
   feedbackPage: {
+    fabReopenTitle: 'Did you close the floating button?',
+    fabReopenDesc: 'The quick report button at the bottom left can be shown again whenever you want.',
     title: 'Feedback',
     subtitle:
       'Your opinion matters. Report bugs, request commands or share your ideas to improve CiszuBot.',
@@ -1379,6 +1445,8 @@ const en = {
     back: 'Back to home',
   },
   descargasPage: {
+    fabReopenTitle: 'Did you close the floating button?',
+    fabReopenDesc: 'The install and feedback buttons at the bottom left can be shown again whenever you want.',
     title: 'Downloads',
     subtitle:
       'Bring CiszuBot to your desktop with the PDWA (Progressive Desktop Web App): no tabs, no address bar and with your logo.',
@@ -1409,6 +1477,8 @@ const en = {
     back: 'Back to home',
   },
   legalPage: {
+    creditsTitle: 'CREDITS & CONTRIBUTIONS',
+    policyTitle: 'POLICY',
     updated: 'Last updated: August 2, 2026',
     back: 'Back',
     sections: [
@@ -1590,6 +1660,38 @@ const en = {
     noIncidentsDesc: 'There are no interruptions or scheduled maintenance at this moment.',
     platform: 'Platform · Ciszu Network',
   },
+  donatePage: {
+    kofiLabel: 'Support on Ko-fi',
+    kofiCta: 'Support CiszuBot on Ko-fi',
+    cryptoLabel: 'Crypto (NOWPayments)',
+    cryptoCta: 'Crypto donations (NOWPayments)',
+  },
+  settingsPage: {
+    title: 'Account settings',
+    subtitleA: 'Your CISZU ID account at',
+    dualLogin: 'Dual Login:',
+    checking: 'Checking session…',
+    needLogin: 'You need to sign in with CISZU ID',
+    loginCta: 'Sign in with CISZU ID',
+  },
+  authNotice: {
+    title: 'Could not sign in',
+    ariaLabel: 'Sign-in error',
+    continueAsGuest: 'CONTINUE AS GUEST',
+    signIn: 'SIGN IN',
+  },
+  appealPage: {
+    title: 'Sanction appeal',
+    subtitle: 'Review your active sanctions and send an appeal to the team. It also works if you have no sanctions.',
+  },
+  editAdminPage: {
+    title: 'Admin access',
+    subtitle: 'Puck Visual Builder · editor restricted to administration. Enter the access token.',
+    tokenPlaceholder: 'Access token',
+  },
+  informationPage: {
+    officialDocs: 'Official documentation',
+  },
   reviewsPage: {
     title: 'Reviews',
     subtitle: 'User reviews and ratings for CiszuBot.',
@@ -1619,6 +1721,9 @@ const en = {
     lastPage: 'Last page',
   },
   leaderboardPage: {
+    loading: 'Loading ranking...',
+    noResults: 'No results',
+    searchPh: 'FIND_USER...',
     title: 'Leaderboard',
     subtitle: 'Most active users and servers of CiszuBot.',
     comingSoon: 'Coming soon: rankings by commands run, levels and servers.',
@@ -1701,6 +1806,7 @@ const en = {
     back: 'Back to home',
   },
   teamPage: {
+    supportServer: 'Official support server',
     title: 'Team',
     subtitle: 'People behind CiszuBot and Ciszu Network.',
     comingSoon: 'Coming soon: team profiles, collaborators and how to contribute.',
@@ -1713,6 +1819,8 @@ const en = {
     back: 'Back to home',
   },
   faqPage: {
+    infoTitle: 'Frequently asked questions',
+    relatedTitle: 'Related topics',
     title: 'Frequently Asked Questions',
     subtitle: 'Quick answers to the most common questions about CiszuBot.',
     back: 'Back to home',

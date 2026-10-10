@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useClientI18n } from '@/hooks/useClientI18n';
 
 /**
  * Aviso de error de autenticación: `api/auth/discord/callback` redirige a
@@ -11,6 +12,7 @@ import { useSearchParams } from 'next/navigation';
  * fuera de alcance por ahora): solo lo controla y lo hace visible.
  */
 export default function AuthErrorNotice() {
+  const { dict } = useClientI18n();
   const params = useSearchParams();
   const [open, setOpen] = useState(false);
 
@@ -28,7 +30,7 @@ export default function AuthErrorNotice() {
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Error de inicio de sesión"
+      aria-label={dict.authNotice.ariaLabel}
       className="fixed inset-0 z-[110] flex items-center justify-center bg-black/70 p-4"
     >
       <div className="w-full max-w-md rounded-2xl border border-red-500/40 bg-card p-6 text-center shadow-[0_0_40px_-10px_rgba(255,0,80,0.6)]">
@@ -36,7 +38,7 @@ export default function AuthErrorNotice() {
           !
         </div>
         <h3 className="font-header text-lg font-black uppercase tracking-wide text-ink">
-          No se pudo iniciar sesión
+          {dict.authNotice.title}
         </h3>
         <p className="mt-2 text-sm text-muted leading-relaxed">
           Discord no completó la autorización (cancelada, expirada o con un error temporal).

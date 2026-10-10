@@ -1,5 +1,7 @@
 "use client";
 
+import { useClientI18n } from "@/hooks/useClientI18n";
+
 import QuickDocks from "@/components/molecules/QuickDocks";
 import { Icon, InfoHero, KoFiEmbed } from '@ciszu/ui';
 import PageAmbience from '@/components/layout/PageAmbience';
@@ -39,7 +41,10 @@ const METHODS = [
   { label: "Cripto (NOWPayments)", href: DONATION_LINKS.nowPayments, note: "Bitcoin, USDT, ETH y más · sin KYC", color: "#6B21A8", logo: <NowPaymentsLogo /> },
 ];
 
+const SUPPORT_EMAIL = 'ciszunetwork@gmail.com';
+
 export default function DonatePage() {
+  const { dict: t } = useClientI18n();
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />
@@ -81,13 +86,13 @@ export default function DonatePage() {
             único embed que Ko-fi autoriza incrustar. Se usa KoFiEmbed directo
             para que el iframe esté SIEMPRE presente, independientemente del panel. */}
         <section className="rounded-2xl bg-card border border-border p-4">
-          <h3 className="text-white font-bold font-header text-sm mb-3 text-center">Apoya en Ko-fi</h3>
-          <KoFiEmbed handle="ciszukoantony" title="Apoya a CiszuBot en Ko-fi" />
+          <h3 className="text-white font-bold font-header text-sm mb-3 text-center">{t.donatePage.kofiLabel}</h3>
+          <KoFiEmbed handle="ciszukoantony" title={t.donatePage.kofiCta} />
         </section>
 
         {/* NOWPayments */}
         <div className="rounded-2xl bg-card border border-border p-4">
-          <h3 className="text-white font-bold font-header text-sm mb-3 text-center">Cripto (NOWPayments)</h3>
+          <h3 className="text-white font-bold font-header text-sm mb-3 text-center">{t.donatePage.cryptoLabel}</h3>
           <iframe
             src="https://nowpayments.io/embeds/donation-widget?api_key=739f2096-6c64-40d6-a2a1-635784185dfb"
             width="100%"
@@ -95,7 +100,7 @@ export default function DonatePage() {
             frameBorder="0"
             scrolling="no"
             style={{ overflowY: "hidden", border: "none" }}
-            title="Donaciones en cripto (NOWPayments)"
+            title={t.donatePage.cryptoCta}
             allow="payment"
             sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
           />
@@ -104,9 +109,7 @@ export default function DonatePage() {
         <div className="text-center mt-12">
           <p className="text-gray-500 text-xs">
             ¿Prefieres apoyar de otra forma? Escríbenos a{" "}
-            <a href="mailto:ciszunetwork@gmail.com" className="text-neon-blue underline">
-              ciszunetwork@gmail.com
-            </a>
+            <a href="mailto:ciszunetwork@gmail.com" className="text-neon-blue underline">{SUPPORT_EMAIL}</a>
           </p>
         </div>
       </div>

@@ -6,6 +6,8 @@ import { usePathname } from 'next/navigation'
 import { Icon, SmartImage, useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE, markVoluntaryReload } from '@ciszu/ui'
 import { Menu, X, Search, ChevronDown } from 'lucide-react'
 import { useAppStore, type AppUser } from '@/store';
+
+type TimeoutRef = React.MutableRefObject<ReturnType<typeof setTimeout> | null>;
 import { supabase } from '@/config/supabase';
 import { getGuestName } from '@/lib/guest';
 import { syncPreferencesToProfile, updatePreferences, loadPreferences } from '@/lib/preferences';
@@ -178,12 +180,12 @@ export default function Navbar({ account }: NavbarProps) {
       )
     : [];
 
-  const hoverOpen = (s: (v: string | null) => void, t: React.MutableRefObject<ReturnType<typeof setTimeout> | null>, name: string) => {
+  const hoverOpen = (s: (v: string | null) => void, t: TimeoutRef, name: string) => {
     if (t.current) clearTimeout(t.current);
     s(name);
   };
 
-  const hoverClose = (s: (v: string | null) => void, t: React.MutableRefObject<ReturnType<typeof setTimeout> | null>) => {
+  const hoverClose = (s: (v: string | null) => void, t: TimeoutRef) => {
     t.current = setTimeout(() => s(null), 180);
   };
 
@@ -591,7 +593,7 @@ export default function Navbar({ account }: NavbarProps) {
                           onClick={() => setAuthOpen(false)}
                           className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-ink/85 transition hover:bg-muted/15 hover:text-neon-blue"
                         >
-                          <Icon name="settings" size={15} /> Configuración
+                          <Icon name="settings" size={15} /> {dict.nav.settings}
                         </Link>
                         <button
                           type="button"
@@ -703,7 +705,7 @@ export default function Navbar({ account }: NavbarProps) {
                 ))}
               </div>
             )}
-            {query.trim().length > 0 && suggestions.length === 0 && (
+            {0 < query.trim().length && suggestions.length === 0 && (
               <div className="flex flex-col items-center justify-center py-8 animate-fade-in-down">
                 <p className="text-gray-500 font-header font-black uppercase text-xs tracking-widest italic animate-pulse">{dict.nav.searchHint}</p>
                 <button

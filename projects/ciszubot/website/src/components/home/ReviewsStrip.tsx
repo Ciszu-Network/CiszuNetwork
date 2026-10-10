@@ -158,7 +158,8 @@ export default function ReviewsStrip({ dict, lang }: ReviewsStripProps) {
               <p className="py-10 text-center text-xs font-black uppercase tracking-[0.3em] text-faint">
                 {dict.reviewsPage.title}…
               </p>
-            ) : total === 0 ? (
+            ) :
+              total === 0 ? (
               <div className="rounded-3xl border-2 border-dashed border-border bg-card p-10 text-center">
                 <Icon name="star" size={28} className="mx-auto mb-3 text-warn" />
                 <p className="text-sm font-bold text-muted">

@@ -375,7 +375,7 @@ export default function QuickDocks() {
         <div className="relative z-10">
           <div className="flex flex-col items-center mb-6 text-center">
             <h3 className="text-4xl font-header font-black text-white uppercase tracking-[0.3em] leading-none mb-2">
-              Quick Docks
+              {"Quick Docks"}
             </h3>
             <p className="text-white/30 text-[10px] uppercase tracking-widest font-bold">
               {dict.quickDocks.subtitle}

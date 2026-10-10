@@ -231,8 +231,10 @@ export default function ExplorePage() {
 
   // Mismos snippets canónicos de shared/widgets/topgg-{bot,server}.html: se
   // copian tal cual para que cualquiera los pegue en su web, foro o README.
-  const widgetBotCode = `<a href="${TOP_GG_BOT}">\n  <img src="${TOP_GG_WIDGET_BOT}" alt="${t.explorePage.widgetBotAlt}" />\n</a>`;
-  const widgetServerCode = `<a href="${TOP_GG_SERVER}">\n  <img src="${TOP_GG_WIDGET_SERVER}" alt="${t.explorePage.widgetServerAlt}" />\n</a>`;
+  const altBot = t.explorePage.widgetBotAlt;
+  const altSrv = t.explorePage.widgetServerAlt;
+  const widgetBotCode = `<a href="${TOP_GG_BOT}">\n  <img src="${TOP_GG_WIDGET_BOT}" alt="${altBot}" />\n</a>`;
+  const widgetServerCode = `<a href="${TOP_GG_SERVER}">\n  <img src="${TOP_GG_WIDGET_SERVER}" alt="${altSrv}" />\n</a>`;
 
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">

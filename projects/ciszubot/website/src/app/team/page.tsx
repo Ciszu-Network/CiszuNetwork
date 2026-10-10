@@ -248,7 +248,7 @@ export default function TeamPage() {
                   </span>
                   <div className="min-w-0 text-left">
                     <p className="text-[9px] font-black uppercase tracking-widest text-white/40">Discord</p>
-                    <span className="text-xs font-bold text-white truncate md:text-sm">Servidor oficial de soporte</span>
+                    <span className="text-xs font-bold text-white truncate md:text-sm">{t.teamPage.supportServer}</span>
                   </div>
                 </div>
                 <span className={`${THEME.accent}`}>

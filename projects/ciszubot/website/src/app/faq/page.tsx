@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
 import {
   InfoHero,
   InfoFaqExplorer,
@@ -13,7 +14,7 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
-import { INVITE_URL } from '@/lib/i18n';
+import { INVITE_URL, getDict, parseLang } from '@/lib/i18n';
 
 export const metadata: Metadata = {
   title: 'CiszuBot | FAQ',
@@ -253,7 +254,8 @@ const TOPICS: InfoCardItem[] = [
   },
 ];
 
-export default function FAQPage() {
+export default async function FAQPage() {
+  const t = getDict(parseLang((await cookies()).get('ciszubot_lang')?.value));
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />
@@ -261,7 +263,7 @@ export default function FAQPage() {
         <PageReveal>
           <InfoHero
             icon="faq"
-            title="Preguntas frecuentes"
+            title={t.faqPage.infoTitle}
             subtitle="Respuestas rápidas a las dudas más comunes sobre CiszuBot: invitación, comandos, dashboard, idiomas, privacidad y soporte."
             kicker="FAQ"
             theme={THEME}
@@ -270,7 +272,7 @@ export default function FAQPage() {
 
         <div className="space-y-14">
           <InfoFaqExplorer items={FAQS} categories={CATEGORIES} theme={THEME} copy={FAQ_COPY} />
-          <InfoCardGrid title="Temas relacionados" items={TOPICS} theme={THEME} columns={4} />
+          <InfoCardGrid title={t.faqPage.relatedTitle} items={TOPICS} theme={THEME} columns={4} />
         </div>
 
         <InfoCtaRow

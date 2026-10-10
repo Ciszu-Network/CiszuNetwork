@@ -162,7 +162,7 @@ export default function PlatformsSection({ dict }: PlatformsSectionProps) {
                 </a>
                 <CopyWithButton
                   value={widgetBotCode}
-                  label="Copiar widget del bot"
+                  label={dict.hero.copyWidgetBot}
                   copiedLabel="Widget copiado"
                   size="sm"
                   className="max-w-full rounded-xl border border-border bg-surface px-3 py-2"
@@ -187,7 +187,7 @@ export default function PlatformsSection({ dict }: PlatformsSectionProps) {
                 </a>
                 <CopyWithButton
                   value={widgetServerCode}
-                  label="Copiar widget del servidor"
+                  label={dict.hero.copyWidgetServer}
                   copiedLabel="Widget copiado"
                   size="sm"
                   className="max-w-full rounded-xl border border-border bg-surface px-3 py-2"
@@ -201,14 +201,14 @@ export default function PlatformsSection({ dict }: PlatformsSectionProps) {
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <CopyWithButton
                 value={BOT_ID}
-                label="Copiar ID del bot"
+                label={dict.hero.copyBotId}
                 copiedLabel="ID copiado"
                 size="sm"
                 className="rounded-full border border-border bg-surface px-4 py-2"
               >
                 <span className="inline-flex items-center gap-2 text-xs font-bold text-ink">
                   <Icon name="copy" size={13} className="text-neon-purple" />
-                  BOT ID: <code className="text-neon-purple tabular-nums">{BOT_ID}</code>
+                  {dict.hero.botIdLabel} <code className="text-neon-purple tabular-nums">{BOT_ID}</code>
                 </span>
               </CopyWithButton>
               <a
@@ -227,7 +227,7 @@ export default function PlatformsSection({ dict }: PlatformsSectionProps) {
                 className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-xs font-bold text-muted transition-all hover:-translate-y-0.5 hover:text-neon-blue hover:border-neon-blue/60"
               >
                 <Icon name="rocket" size={13} className="text-neon-blue" />
-                DBL Server
+                {"DBL Server"}
               </a>
             </div>
           </div>

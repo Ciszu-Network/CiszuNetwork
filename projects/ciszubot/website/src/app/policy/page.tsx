@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
+import { getDict, parseLang } from '@/lib/i18n';
 import { LegalDocument, type LegalArticle } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
@@ -92,7 +94,8 @@ const ARTICLES: LegalArticle[] = [
   },
 ];
 
-export default function PolicyPage() {
+export default async function PolicyPage() {
+  const dict = getDict(parseLang((await cookies()).get('ciszubot_lang')?.value));
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />
@@ -101,7 +104,7 @@ export default function PolicyPage() {
           <PageReveal>
             <LegalDocument
               icon="lock"
-              title="POLÍTICA"
+              title={dict.legalPage.policyTitle}
               subtitle="Privacidad, datos y transparencia"
               docLabel="Política Oficial de CiszuBot"
               articles={ARTICLES}

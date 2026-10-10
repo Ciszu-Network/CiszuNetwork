@@ -16,7 +16,7 @@ export default function GlobalError({
   return (
     <html lang="es">
       <body>
-        <NextError statusCode={500} title="Error inesperado" />
+        <NextError statusCode={500} title={"Error inesperado"} />
       </body>
     </html>
   );

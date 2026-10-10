@@ -447,7 +447,7 @@ export default function Footer({ commandCount = 0 }: FooterProps) {
               2024-{new Date().getFullYear()}{' '}
               <a href={CISZU_NETWORK} target="_blank" rel="noopener noreferrer"
                 className="text-neon-blue font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(0,212,255,0.8)]">
-                CISZU NETWORK
+                {dict.footer.brandUpper}
               </a>{' '}
               &amp; CISZUBOT. {dict.footer.rights}
             </p>
@@ -455,12 +455,12 @@ export default function Footer({ commandCount = 0 }: FooterProps) {
               {dict.footer.madeBy}{' '}
               <a href={CISZUKO_ANTONY} target="_blank" rel="noopener noreferrer"
                 className="text-neon-blue font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(0,212,255,0.8)]">
-                Ciszuko Antony
+                {dict.footer.founder}
               </a>{' '}
               &middot; {dict.footer.backedBy}{' '}
               <a href={CISZU_NETWORK} target="_blank" rel="noopener noreferrer"
                 className="text-neon-blue font-black transition-colors cursor-pointer hover:drop-shadow-[0_0_10px_rgba(0,212,255,0.8)]">
-                CISZU NETWORK
+                {dict.footer.brandUpper}
               </a>
             </p>
           </div>

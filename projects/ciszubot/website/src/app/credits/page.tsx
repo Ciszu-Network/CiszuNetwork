@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
+import { getDict, parseLang } from '@/lib/i18n';
 import { CreditsRoll, type CreditSection } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
@@ -50,7 +52,8 @@ const SECTIONS: CreditSection[] = [
   },
 ];
 
-export default function CreditsPage() {
+export default async function CreditsPage() {
+  const dict = getDict(parseLang((await cookies()).get('ciszubot_lang')?.value));
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />
@@ -59,7 +62,7 @@ export default function CreditsPage() {
           <PageReveal>
             <CreditsRoll
               icon="users"
-              title="CRÉDITOS Y CONTRIBUCIONES"
+              title={dict.legalPage.creditsTitle}
               subtitle="Desarrollo de CiszuBot · Ecosistema Ciszu Network"
               sections={SECTIONS}
               closing={{
