@@ -31,6 +31,7 @@ interface GuildConfig {
 }
 
 type SectionKey = 'general' | 'levels' | 'welcome' | 'extras';
+type PartialConfig = Partial<GuildConfig>;
 
 const SECTION_KEYS: Record<SectionKey, (keyof GuildConfig)[]> = {
   general: ['prefix', 'lang'],
@@ -364,7 +365,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
       const data =
         scope === 'all'
           ? config
-          : (Object.fromEntries(SECTION_KEYS[scope].map((k) => [k, config[k]])) as Partial<GuildConfig>);
+          : (Object.fromEntries(SECTION_KEYS[scope].map((k) => [k, config[k]])) as PartialConfig);
       const d = new Date();
       const pad = (n: number) => String(n).padStart(2, '0');
       const stamp = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}`;
@@ -404,7 +405,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         const raw =
           parsed && typeof parsed === 'object' && 'config' in parsed && parsed.config
             ? parsed.config
-            : (parsed as Partial<GuildConfig>);
+            : (parsed as PartialConfig);
         const clean: Partial<GuildConfig> = {};
         for (const key of Object.keys(raw)) {
           if ((ALL_KEYS as string[]).includes(key)) {
@@ -544,7 +545,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 title={t.exportSection}
                 className="ml-auto text-xs font-semibold text-white/40 transition hover:text-neon-blue"
               >
-                ⬇ JSON
+                ⬇ <span className="hidden sm:inline">JSON</span>
               </button>
             </div>
             <p className="mb-4 text-xs text-white/45">{t.generalHint}</p>
@@ -563,7 +564,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                   value={config.lang ?? 'es'}
                   onChange={(e) => update({ lang: e.target.value })}
                 >
-                  <option value="es" className="bg-[#0a0a14]">Español</option>
+                  <option value="es" className="bg-[#0a0a14]">{'Español'}</option>
                   <option value="en" className="bg-[#0a0a14]">English</option>
                 </select>
               </Field>
@@ -583,7 +584,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 title={t.exportSection}
                 className="ml-auto text-xs font-semibold text-white/40 transition hover:text-neon-blue"
               >
-                ⬇ JSON
+                ⬇ <span className="hidden sm:inline">JSON</span>
               </button>
             </div>
             <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
@@ -645,7 +646,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 title={t.exportSection}
                 className="ml-auto text-xs font-semibold text-white/40 transition hover:text-neon-blue"
               >
-                ⬇ JSON
+                ⬇ <span className="hidden sm:inline">JSON</span>
               </button>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -789,7 +790,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 title={t.exportSection}
                 className="ml-auto text-xs font-semibold text-white/40 transition hover:text-neon-blue"
               >
-                ⬇ JSON
+                ⬇ <span className="hidden sm:inline">JSON</span>
               </button>
             </div>
             <div className="space-y-3">
