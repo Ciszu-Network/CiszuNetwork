@@ -4,6 +4,7 @@ import { getSessionUserId, getGuildsForUser, isGuildAdmin, getBotGuildIds } from
 import { INVITE_URL } from '@/lib/i18n';
 import DashboardShell from '@/components/dashboard/DashboardShell';
 import BotOfflineModal from '@/components/status/BotOfflineModal';
+import InviteThanksModal from '@/components/dashboard/InviteThanksModal';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,7 +20,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const botGuildIds = await getBotGuildIds();
   const adminGuilds = guilds
     .filter((g) => isGuildAdmin(g))
-    .map((g) => ({ id: g.id, name: g.name, icon: g.icon ?? null, invited: botGuildIds.has(g.id) }));
+    .map((g) => ({
+      id: g.id,
+      name: g.name,
+      icon: g.icon ?? null,
+      invited: botGuildIds === null ? null : botGuildIds.has(g.id),
+    }));
 
   const store = await cookies();
   const lang: 'es' | 'en' = (store.get('ciszubot_lang')?.value ?? '')
@@ -31,6 +37,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <DashboardShell guilds={adminGuilds} lang={lang} inviteUrl={INVITE_URL}>
       <BotOfflineModal />
+      <InviteThanksModal />
       {children}
     </DashboardShell>
   );

@@ -4,12 +4,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Icon, LANGUAGE_OPTIONS } from '@ciszu/ui';
+import InviteLink from './InviteLink';
 
 export interface ShellGuild {
   id: string;
   name: string;
   icon: string | null;
-  invited?: boolean;
+  invited?: boolean | null;
 }
 
 interface Props {
@@ -217,7 +218,7 @@ export default function DashboardShell({ guilds, lang, inviteUrl, children }: Pr
                       </span>
                     </div>
                     <div className="mt-1.5 flex gap-1.5">
-                      <a
+                      <InviteLink
                         href={`${inviteUrl}${inviteUrl.includes('?') ? '&' : '?'}guild_id=${g.id}`}
                         target="_blank"
                         rel="noreferrer"
@@ -225,7 +226,7 @@ export default function DashboardShell({ guilds, lang, inviteUrl, children }: Pr
                       >
                         <Icon name="discord" size={12} />
                         {t.inviteBtn}
-                      </a>
+                      </InviteLink>
                       <button
                         type="button"
                         onClick={() => setWarnId(warnId === g.id ? null : g.id)}

@@ -11,6 +11,7 @@ import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 import { DualLoginCard } from '@/components/dashboard/DualLoginCard';
+import InviteLink from '@/components/dashboard/InviteLink';
 import { BOT_STATUS_SELECT, resolveBotStatus, type BotStatus } from '@/lib/botStatus';
 
 export const metadata: Metadata = {
@@ -81,7 +82,8 @@ export default async function DashboardPage() {
   const botReason = t.botStatus.reasons[bot.reason ?? 'unknown'];
 
   const manageable = guilds.filter((g) => isGuildAdmin(g));
-  const activeCount = manageable.filter((g) => botGuilds.has(g.id)).length;
+  const hasBotGuild = (id: string) => (botGuilds === null ? true : botGuilds.has(id));
+  const activeCount = manageable.filter((g) => hasBotGuild(g.id)).length;
   const icon = (guild: DiscordGuild) =>
     guild.icon
       ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`
@@ -200,7 +202,7 @@ export default async function DashboardPage() {
                 {t.dashboardPage.noServersHint}
               </p>
               <div className="mt-6 flex flex-wrap justify-center gap-3">
-                <a
+                <InviteLink
                   href={INVITE_URL}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -208,7 +210,7 @@ export default async function DashboardPage() {
                 >
                   <Icon name="discord" size={16} className="[&>g]:fill-current" />
                   {t.dashboardPage.inviteCta}
-                </a>
+                </InviteLink>
                 <a
                   href={DISCORD_SERVER}
                   target="_blank"
@@ -223,7 +225,7 @@ export default async function DashboardPage() {
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {manageable.map((guild) => {
-                const hasBot = botGuilds.has(guild.id);
+                const hasBot = hasBotGuild(guild.id);
                 const iconUrl = icon(guild);
                 return (
                   <div
@@ -338,7 +340,7 @@ export default async function DashboardPage() {
                 <Icon name="discord" size={14} className="[&>g]:fill-current" />
                 {t.dashboardPage.sponsorProfile}
               </a>
-              <a
+              <InviteLink
                 href={INVITE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -346,7 +348,7 @@ export default async function DashboardPage() {
               >
                 <Icon name="server" size={14} />
                 {t.dashboardPage.inviteBot}
-              </a>
+              </InviteLink>
             </div>
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <span className="text-[10px] font-black uppercase tracking-widest text-muted/70">

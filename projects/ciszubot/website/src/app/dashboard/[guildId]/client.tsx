@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Icon } from '@ciszu/ui';
-import { getDict, readCookieLang, type Dict } from '@/lib/i18n';
+import { getDict, readCookieLang, INVITE_URL, type Dict } from '@/lib/i18n';
+import InviteLink from '@/components/dashboard/InviteLink';
 import type { GuildInfo } from '@/lib/discordGuild';
 import { SaveDock, type SaveStatus } from '@/components/dashboard/SaveDock';
 import DiscordMarkdownField from '@/components/dashboard/DiscordMarkdownField';
@@ -60,6 +61,57 @@ const SECTION_KEYS: Record<SectionKey, (keyof GuildConfig)[]> = {
 };
 
 const ALL_KEYS: (keyof GuildConfig)[] = Object.values(SECTION_KEYS).flat();
+
+/** Permisos clave del bot (bitfields de Discord). */
+const PERMS: { key: string; bit: number }[] = [
+  { key: 'permManageGuild', bit: 32 },
+  { key: 'permManageRoles', bit: 268435456 },
+  { key: 'permManageChannels', bit: 16 },
+  { key: 'permManageMessages', bit: 8192 },
+  { key: 'permKick', bit: 2 },
+  { key: 'permBan', bit: 4 },
+];
+
+/** ¿El bitfield del bot incluye el permiso? null = no se pudo verificar. */
+function hasPerm(bitfield: string | null | undefined, bit: number): boolean | null {
+  if (!bitfield) return null;
+  try {
+    const value = BigInt(bitfield);
+    const admin = BigInt(8);
+    if ((value & admin) === admin) return true;
+    const needed = BigInt(bit);
+    return (value & needed) === needed;
+  } catch {
+    return null;
+  }
+}
+
+/** Aviso de permiso faltante con enlace de re-invitación. */
+function PermWarning({
+  perms,
+  bit,
+  label,
+  missing,
+  href,
+}: {
+  perms: string | null | undefined;
+  bit: number;
+  label: string;
+  missing: string;
+  href: string;
+}) {
+  if (hasPerm(perms, bit) !== false) return null;
+  return (
+    <InviteLink
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      className="inline-flex items-center gap-1 rounded-full border border-amber-400/50 bg-amber-400/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-amber-400 transition hover:bg-amber-400/20"
+    >
+      ⚠ {missing.replace('{perm}', label)}
+    </InviteLink>
+  );
+}
 
 interface Props {
   guildId: string;
@@ -573,6 +625,30 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               )}
             </div>
           </div>
+          {guildData?.botPermissions && (
+            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+              <span className="text-[10px] font-black uppercase tracking-widest text-white/40">
+                {t.permsTitle}
+              </span>
+              {PERMS.map((perm) => {
+                const ok = hasPerm(guildData.botPermissions, perm.bit);
+                if (ok === null) return null;
+                return (
+                  <span
+                    key={perm.key}
+                    className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[9px] font-bold ${
+                      ok
+                        ? 'border-emerald-400/40 bg-emerald-400/10 text-emerald-400'
+                        : 'border-red-400/40 bg-red-400/10 text-red-400'
+                    }`}
+                  >
+                    <span className={`h-1.5 w-1.5 rounded-full ${ok ? 'bg-emerald-400' : 'bg-red-400'}`} />
+                    {(t[perm.key as keyof typeof t] as string) ?? perm.key}
+                  </span>
+                );
+              })}
+            </div>
+          )}
           <p className="mt-2 text-[10px] text-white/35">{t.refreshHint}</p>
           {flash && <p className="mt-2 text-xs font-semibold text-emerald-400">{flash}</p>}
           {error && status !== 'error' && <p className="mt-2 text-xs font-semibold text-red-400">{error}</p>}
@@ -725,6 +801,13 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 <Icon name="star" size={18} className="text-neon-pink" /> {t.levelsTitle}
               </h2>
               <Badge kind="free" dict={dict} />
+              <PermWarning
+                perms={guildData?.botPermissions}
+                bit={268435456}
+                label={t.permManageRoles}
+                missing={t.permMissing}
+                href={`${INVITE_URL}&guild_id=${guildId}`}
+              />
               <button
                 type="button"
                 onClick={() => exportScope('levels')}
@@ -788,6 +871,13 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 <Icon name="heart" size={18} className="text-neon-pink" /> {t.welcomeTitle}
               </h2>
               <Badge kind="free" dict={dict} />
+              <PermWarning
+                perms={guildData?.botPermissions}
+                bit={268435456}
+                label={t.permManageRoles}
+                missing={t.permMissing}
+                href={`${INVITE_URL}&guild_id=${guildId}`}
+              />
               <button
                 type="button"
                 onClick={() => exportScope('welcome')}
@@ -949,6 +1039,13 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 <Icon name="support" size={18} className="text-neon-blue" /> {t.extrasTitle}
               </h2>
               <Badge kind="premium" dict={dict} />
+              <PermWarning
+                perms={guildData?.botPermissions}
+                bit={16}
+                label={t.permManageChannels}
+                missing={t.permMissing}
+                href={`${INVITE_URL}&guild_id=${guildId}`}
+              />
               <button
                 type="button"
                 onClick={() => exportScope('extras')}

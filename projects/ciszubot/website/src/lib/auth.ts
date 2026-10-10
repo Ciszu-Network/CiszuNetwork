@@ -229,23 +229,48 @@ export function isGuildAdmin(guild: DiscordGuild): boolean {
   }
 }
 
-/** Guilds donde el bot está presente (usando el token del bot) */
-export async function getBotGuildIds(): Promise<Set<string>> {
+export interface BotGuildInfo {
+  id: string;
+  name: string;
+}
+
+/**
+ * Guilds donde está el bot, con su nombre (GET /users/@me/guilds con token de
+ * bot — el endpoint correcto; /applications/@me/guilds NO existe y devolvía
+ * 404, lo que marcaba todos los servidores como "se necesita invitar").
+ *
+ * Devuelve null si NO se pudo verificar (sin token, API caída, red): la UI
+ * debe distinguir "no invitado" (false) de "desconocido" (null) y nunca marcar
+ * como no-invitado por un fallo de red.
+ */
+export async function getBotGuilds(): Promise<BotGuildInfo[] | null> {
   const { cacheStore } = await import('./cacheStore');
-  const ids = await cacheStore.getOrSet<string[]>('discord:bot-guilds', 60_000, async () => {
+  return cacheStore.getOrSet<BotGuildInfo[] | null>('discord:bot-guilds-v2', 60_000, async () => {
     const botToken = process.env.DISCORD_BOT_TOKEN;
-    if (!botToken) return [];
+    if (!botToken) return null;
     try {
-      const res = await fetch(`${API_BASE}/applications/@me/guilds`, {
+      const res = await fetch(`${API_BASE}/users/@me/guilds`, {
         headers: { Authorization: `Bot ${botToken}` },
         cache: 'no-store',
       });
-      if (!res.ok) return [];
-      const guilds = (await res.json()) as Array<{ id: string }>;
-      return guilds.map((g) => g.id);
+      if (!res.ok) return null;
+      const guilds = (await res.json()) as Array<{ id: string; name?: string }>;
+      return guilds.map((g) => ({ id: g.id, name: g.name ?? '' }));
     } catch {
-      return [];
+      return null;
     }
   });
-  return new Set(ids);
+}
+
+/** Set de ids de guilds del bot, o null si no se pudo verificar. */
+export async function getBotGuildIds(): Promise<Set<string> | null> {
+  const guilds = await getBotGuilds();
+  return guilds === null ? null : new Set(guilds.map((g) => g.id));
+}
+
+/** Invalida la caché de guilds del bot (tras una invitación, p. ej.). */
+export async function invalidateBotGuildsCache(): Promise<void> {
+  const { cacheStore } = await import('./cacheStore');
+  await cacheStore.del('discord:bot-guilds-v2');
+  cacheStore.clearMemory();
 }
