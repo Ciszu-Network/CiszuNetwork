@@ -8,6 +8,8 @@ import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import { InfoHero, type InfoTheme } from '@ciszu/ui';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useDict } from '@/lib/useDict';
+import { fillTemplate } from '@/lib/i18n';
 
 const THEME: InfoTheme = {
   accent: 'text-brand-light',
@@ -66,6 +68,7 @@ function ToneDot({ tone }: { tone: Tone }) {
 
 export default function StatsPage() {
   usePageTitle('STATS');
+  const t = useDict();
   const [checks, setChecks] = useState<Check[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [latency, setLatency] = useState<number | null>(null);
@@ -117,27 +120,27 @@ export default function StatsPage() {
     } catch { storageOk = false; }
 
     setChecks([
-      { label: 'Conexión de red', detail: online ? 'Dispositivo en línea' : 'Sin conexión', tone: online ? 'ok' : 'warn' },
-      { label: 'Conexión cifrada (HTTPS)', detail: https ? 'TLS activo' : 'Conexión no cifrada', tone: https ? 'ok' : 'warn' },
-      { label: 'Contexto seguro', detail: secureContext ? 'Secure Context disponible' : 'No disponible', tone: secureContext ? 'ok' : 'warn' },
-      { label: 'Almacenamiento local', detail: storageOk ? 'Habilitado' : 'Bloqueado por el navegador', tone: storageOk ? 'ok' : 'warn' },
-      { label: 'Cookies', detail: navigator.cookieEnabled ? 'Habilitadas' : 'Bloqueadas', tone: navigator.cookieEnabled ? 'ok' : 'warn' },
-      { label: 'Service Worker (PWA)', detail: 'serviceWorker' in navigator ? 'Soportado' : 'No soportado', tone: 'serviceWorker' in navigator ? 'ok' : 'unknown' },
-      { label: 'Base de datos', detail: dbTone === 'ok' ? 'Responde correctamente' : dbTone === 'warn' ? 'Sin respuesta' : 'Sin datos', tone: dbTone },
+      { label: t.statsPage.netLabel, detail: online ? t.statsPage.netOk : t.statsPage.netBad, tone: online ? 'ok' : 'warn' },
+      { label: t.statsPage.httpsLabel, detail: https ? t.statsPage.httpsOk : t.statsPage.httpsBad, tone: https ? 'ok' : 'warn' },
+      { label: t.statsPage.ctxLabel, detail: secureContext ? t.statsPage.ctxOk : t.statsPage.ctxBad, tone: secureContext ? 'ok' : 'warn' },
+      { label: t.statsPage.storageLabel, detail: storageOk ? t.statsPage.storageOk : t.statsPage.storageBad, tone: storageOk ? 'ok' : 'warn' },
+      { label: t.statsPage.cookiesLabel, detail: navigator.cookieEnabled ? t.statsPage.cookiesOk : t.statsPage.cookiesBad, tone: navigator.cookieEnabled ? 'ok' : 'warn' },
+      { label: t.statsPage.swLabel, detail: 'serviceWorker' in navigator ? t.statsPage.swOk : t.statsPage.swBad, tone: 'serviceWorker' in navigator ? 'ok' : 'unknown' },
+      { label: t.statsPage.dbLabel, detail: dbTone === 'ok' ? t.statsPage.dbOk : dbTone === 'warn' ? t.statsPage.dbBad : t.statsPage.noData, tone: dbTone },
     ]);
 
     setServices([
-      { name: 'Aplicación web', detail: measured !== null ? `${measured} ms` : 'Sin datos', tone: webTone },
-      { name: 'Base de datos', detail: dbMeasured !== null ? `${dbMeasured} ms` : 'Sin datos', tone: dbTone },
-      { name: 'Red de entrega (CDN)', detail: 'Assets servidos vía CDN', tone: 'unknown' },
-      { name: 'Correo transaccional', detail: 'Sin datos', tone: 'unknown' },
+      { name: t.statsPage.svcWeb, detail: measured !== null ? `${measured} ms` : t.statsPage.noData, tone: webTone },
+      { name: t.statsPage.svcDb, detail: dbMeasured !== null ? `${dbMeasured} ms` : t.statsPage.noData, tone: dbTone },
+      { name: t.statsPage.svcCdn, detail: t.statsPage.svcCdnDetail, tone: 'unknown' },
+      { name: t.statsPage.svcMail, detail: t.statsPage.noData, tone: 'unknown' },
     ]);
 
     setLatency(measured);
     setDbLatency(dbMeasured);
     setLastCheck(new Date());
     setChecking(false);
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     runChecks();
@@ -150,10 +153,10 @@ export default function StatsPage() {
   const overallTone: Tone = checks.length === 0 ? 'unknown' : healthPct >= 80 ? 'ok' : 'warn';
 
   const tiles = [
-    { label: 'Estado general', value: checks.length === 0 ? '—' : healthPct >= 80 ? 'OPERATIVO' : 'REVISAR', tone: overallTone },
-    { label: 'Latencia web', value: latency !== null ? `${latency} ms` : '—', tone: latency !== null && latency < 800 ? 'ok' : 'unknown' as Tone },
-    { label: 'Latencia DB', value: dbLatency !== null ? `${dbLatency} ms` : '—', tone: dbLatency !== null && dbLatency < 800 ? 'ok' : 'unknown' as Tone },
-    { label: 'Comprobaciones OK', value: checks.length > 0 ? `${okCount}/${checks.length}` : '—', tone: 'unknown' as Tone },
+    { label: t.statsPage.tileOverall, value: checks.length === 0 ? '—' : healthPct >= 80 ? t.statsPage.valueOperational : t.statsPage.valueReview, tone: overallTone },
+    { label: t.statsPage.tileWeb, value: latency !== null ? `${latency} ms` : '—', tone: latency !== null && latency < 800 ? 'ok' : 'unknown' as Tone },
+    { label: t.statsPage.tileDb, value: dbLatency !== null ? `${dbLatency} ms` : '—', tone: dbLatency !== null && dbLatency < 800 ? 'ok' : 'unknown' as Tone },
+    { label: t.statsPage.tileChecks, value: checks.length > 0 ? `${okCount}/${checks.length}` : '—', tone: 'unknown' as Tone },
   ];
 
   const sectionVariants = {
@@ -169,9 +172,9 @@ export default function StatsPage() {
         {/* --- HERO --- */}
         <InfoHero
           icon="signal"
-          title="Estado"
-          subtitle="Servidor, red y seguridad de la infraestructura de Ciszu Network, medidos en tiempo real desde tu navegador."
-          kicker="Monitorización"
+          title={t.statsPage.heroTitle}
+          subtitle={t.statsPage.heroSubtitle}
+          kicker={t.statsPage.heroKicker}
           theme={THEME}
         />
 
@@ -182,7 +185,7 @@ export default function StatsPage() {
             className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-black border border-neon-blue/30 text-neon-blue font-header font-black uppercase tracking-widest text-[10px] hover:bg-neon-blue hover:text-black transition-all disabled:opacity-40"
           >
             <span className={`w-4 h-4 ${checking ? 'animate-spin' : ''}`}>{I.refresh}</span>
-            {checking ? 'Comprobando…' : 'Actualizar estado'}
+            {checking ? t.statsPage.checking : t.statsPage.refresh}
           </button>
         </div>
 
@@ -204,11 +207,11 @@ export default function StatsPage() {
           <motion.section initial="hidden" animate="visible" variants={sectionVariants} className="lg:col-span-7 space-y-6">
             <div className="flex items-center gap-4">
               <div className="w-9 h-9 text-neon-green">{I.shield}</div>
-              <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">Seguridad y red</h2>
+              <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">{t.statsPage.secTitle}</h2>
             </div>
             <div className="bg-doc-dark border border-white/10 rounded-[3rem] divide-y divide-white/5 overflow-hidden">
               {checks.length === 0 && (
-                <p className="p-8 text-center text-[10px] font-black uppercase tracking-widest text-white/40">Sin datos todavía…</p>
+                <p className="p-8 text-center text-[10px] font-black uppercase tracking-widest text-white/40">{t.statsPage.noDataYet}</p>
               )}
               {checks.map((c) => (
                 <div key={c.label} className="flex items-center justify-between gap-6 px-8 py-5">
@@ -226,7 +229,7 @@ export default function StatsPage() {
           <motion.section initial="hidden" animate="visible" variants={sectionVariants} className="lg:col-span-5 space-y-6">
             <div className="flex items-center gap-4">
               <div className="w-9 h-9 text-neon-blue">{I.activity}</div>
-              <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">Servicios</h2>
+              <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">{t.statsPage.svcTitle}</h2>
             </div>
             <div className="space-y-4">
               {services.map((s) => (
@@ -243,7 +246,7 @@ export default function StatsPage() {
               ))}
               {services.length === 0 && (
                 <div className="bg-doc-dark border border-dashed border-white/10 p-8 rounded-3xl text-center text-[10px] font-black uppercase tracking-widest text-white/40">
-                  Sin datos todavía…
+                  {t.statsPage.noDataYet}
                 </div>
               )}
             </div>
@@ -252,11 +255,11 @@ export default function StatsPage() {
               <div className="flex items-center gap-3 text-neon-yellow">
                 <div className="w-5 h-5">{I.clock}</div>
                 <span className="text-[9px] font-black uppercase tracking-widest">
-                  Última verificación: {lastCheck ? lastCheck.toLocaleTimeString() : '—'}
+                  {fillTemplate(t.statsPage.lastCheck, { time: lastCheck ? lastCheck.toLocaleTimeString() : '—' })}
                 </span>
               </div>
               <p className="text-[9px] font-black uppercase tracking-widest text-white/30 leading-relaxed">
-                Las métricas se miden desde tu navegador contra los servicios reales. Los valores no disponibles se muestran como “Sin datos”.
+                {t.statsPage.metricsNote}
               </p>
             </div>
           </motion.section>
@@ -266,13 +269,13 @@ export default function StatsPage() {
         <motion.section initial="hidden" animate="visible" variants={sectionVariants} className="space-y-6">
           <div className="flex items-center gap-4">
             <div className="w-9 h-9 text-neon-yellow">{I.warning}</div>
-            <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">Incidentes y mantenimiento</h2>
+            <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">{t.statsPage.incidentsTitle}</h2>
           </div>
           <div className="bg-doc-dark border-2 border-dashed border-white/10 rounded-[3rem] p-14 text-center space-y-4">
             <div className="w-14 h-14 mx-auto text-neon-green">{I.check}</div>
-            <h3 className="text-2xl font-header font-black text-white uppercase tracking-tighter">Sin incidentes registrados</h3>
+            <h3 className="text-2xl font-header font-black text-white uppercase tracking-tighter">{t.statsPage.noIncidents}</h3>
             <p className="text-white/40 text-[10px] font-black uppercase tracking-widest">
-              No hay interrupciones ni mantenimientos programados en este momento.
+              {t.statsPage.noIncidentsBody}
             </p>
           </div>
         </motion.section>
@@ -280,7 +283,7 @@ export default function StatsPage() {
         <div className="flex items-center justify-center gap-4 pt-4 opacity-40">
           <div className="w-6 h-6 text-neon-blue">{I.globe}</div>
           <p className="text-[9px] font-black uppercase tracking-[0.4em] text-white/60">
-            Plataforma · Ciszu Network
+            {t.statsPage.platform}
           </p>
           <div className="w-6 h-6 text-neon-green">{I.lock}</div>
         </div>

@@ -8,6 +8,8 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useDict } from '@/lib/useDict';
+import { fillTemplate } from '@/lib/i18n';
 
 const THEME: InfoTheme = {
   accent: 'text-brand-light',
@@ -32,11 +34,12 @@ const I = {
 
 export default function ForumPage() {
   usePageTitle('FORUM');
+  const t = useDict();
   const categories = [
-    { title: 'General', desc: 'Discusión general sobre Ciszu Network.', count: 124, icon: I.messageSquare, color: 'blue' },
-    { title: 'Soporte Técnico', desc: 'Ayuda con proyectos, webs y servicios.', count: 42, icon: I.users, color: 'pink' },
-    { title: 'Proyectos', desc: 'Colaboraciones, ideas y feedback.', count: 67, icon: I.star, color: 'cyan' },
-    { title: 'Off-Topic', desc: 'Temas libres fuera del ecosistema.', count: 31, icon: I.zap, color: 'purple' },
+    { count: 124, icon: I.messageSquare, color: 'blue', ...t.forumPage.categories[0] },
+    { count: 42, icon: I.users, color: 'pink', ...t.forumPage.categories[1] },
+    { count: 67, icon: I.star, color: 'cyan', ...t.forumPage.categories[2] },
+    { count: 31, icon: I.zap, color: 'purple', ...t.forumPage.categories[3] },
   ];
 
   return (
@@ -47,9 +50,9 @@ export default function ForumPage() {
         <PageReveal className="relative mx-auto max-w-screen-xl px-4 pt-24 pb-20 space-y-20">
           <InfoHero
             icon="comment"
-            title="Foro"
-            subtitle="El epicentro de la comunidad de Ciszu Network."
-            kicker="Comunidad"
+            title={t.forumPage.heroTitle}
+            subtitle={t.forumPage.heroSubtitle}
+            kicker={t.forumPage.heroKicker}
             theme={THEME}
           />
 
@@ -61,11 +64,11 @@ export default function ForumPage() {
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500">
                     {I.search}
                   </div>
-                  <input type="text" disabled placeholder="BUSCAR DISCUSIÓN..." className="w-full bg-doc-dark border border-white/10 rounded-2xl py-5 pl-12 pr-4 text-xs font-black uppercase tracking-widest outline-none" />
+                  <input type="text" disabled placeholder={t.forumPage.searchPh} className="w-full bg-doc-dark border border-white/10 rounded-2xl py-5 pl-12 pr-4 text-xs font-black uppercase tracking-widest outline-none" />
                 </div>
               </div>
               <button disabled className="px-8 py-5 bg-gradient-to-r from-neon-blue to-neon-cyan text-black font-black rounded-2xl uppercase tracking-[0.2em] text-[10px] flex items-center gap-3">
-                NUEVO TEMA
+                {t.forumPage.newTopic}
                 <div className="w-4 h-4">{I.zap}</div>
               </button>
             </div>
@@ -80,7 +83,7 @@ export default function ForumPage() {
                     <div className="flex-1">
                       <div className="flex items-start justify-between mb-3">
                         <h3 className="text-2xl font-header font-black italic uppercase tracking-tighter text-white/20">{cat.title}</h3>
-                        <span className="text-[9px] font-black text-white/10 uppercase tracking-[0.1em] mt-1">{cat.count} TEMAS</span>
+                        <span className="text-[9px] font-black text-white/10 uppercase tracking-[0.1em] mt-1">{fillTemplate(t.forumPage.topicsCount, { n: String(cat.count) })}</span>
                       </div>
                       <p className="text-white/10 text-sm font-bold mb-8 leading-relaxed italic">{cat.desc}</p>
                     </div>
@@ -112,20 +115,20 @@ export default function ForumPage() {
 
             <div className="space-y-6 relative z-10">
                <h2 className="text-5xl md:text-7xl font-header font-black text-white uppercase italic tracking-tighter">
-                 ACCESO <span className="text-neon-blue drop-shadow-neon-blue">RESTRINGIDO</span>
+                 {t.forumPage.accessA}<span className="text-neon-blue drop-shadow-neon-blue">{t.forumPage.accessB}</span>
                </h2>
                <div className="h-1 w-32 bg-gradient-to-r from-neon-blue to-neon-purple mx-auto rounded-full" />
                <p className="text-white/60 font-bold uppercase text-base leading-relaxed tracking-[0.25em] max-w-md mx-auto">
-                 El sistema de foros comunitarios <span className="text-white">no estará disponible</span> durante esta fase de la Beta.
+                 {t.forumPage.bodyA}<span className="text-white">{t.forumPage.bodyStrong}</span>{t.forumPage.bodyB}
                </p>
-               <p className="text-neon-blue font-black uppercase text-[10px] tracking-[0.8em] animate-pulse">Desarrollo en curso</p>
+               <p className="text-neon-blue font-black uppercase text-[10px] tracking-[0.8em] animate-pulse">{t.forumPage.inProgress}</p>
             </div>
 
             <div className="flex flex-col gap-6 pt-6 relative z-10">
                <Link href="/" className="w-full h-20 bg-neon-blue text-black rounded-[2.5rem] font-header font-black uppercase tracking-[0.3em] text-xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-[0_0_40px_rgba(39,158,255,0.3)]">
-                  REGRESAR AL INICIO
+                  {t.forumPage.backHome}
                </Link>
-               <p className="text-white/20 font-black uppercase text-[9px] tracking-[0.5em]">Estado del Sistema: Hibernación Beta v0.9.0</p>
+               <p className="text-white/20 font-black uppercase text-[9px] tracking-[0.5em]">{t.forumPage.systemStatus}</p>
             </div>
          </motion.div>
       </div>
