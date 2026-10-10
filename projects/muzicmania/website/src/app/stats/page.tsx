@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { useT } from '@/hooks/useT';
 import { motion, AnimatePresence } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
@@ -29,6 +30,7 @@ const I = {
 };
 
 export default function StatsPage() {
+  const t = useT();
   usePageTitle('STATS');
   const [search, setSearch] = useState('');
   const [selectedUser, setSelectedUser] = useState<any>(null);
@@ -117,11 +119,11 @@ export default function StatsPage() {
                    {I.stats}
                 </div>
                 <h1 className="text-5xl md:text-8xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-neon-blue via-neon-green to-neon-blue bg-clip-text text-transparent [-webkit-text-stroke:1px_black]">
-                  ESTADÍSTICAS
+                  {t.pages.stats.statsTitle}
                 </h1>
              </div>
              <p className="text-neon-blue font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-               Sincronización Regional Activa
+               {t.pages.stats.regionalSync}
              </p>
           </div>
         </motion.header>
@@ -153,7 +155,7 @@ export default function StatsPage() {
                      className="absolute top-full left-0 w-full mt-4 bg-doc-dark border-2 border-neon-blue/30 rounded-[2.5rem] overflow-hidden z-50 shadow-2xl backdrop-blur-3xl"
                    >
                       <div className="p-4 border-b border-white/5 flex justify-between items-center px-8">
-                         <span className="text-[10px] font-black text-neon-green uppercase tracking-widest">Coincidencias de Red</span>
+                         <span className="text-[10px] font-black text-neon-green uppercase tracking-widest">{t.pages.stats.networkMatches}</span>
                          <button onClick={resetSearch} className="text-white/20 hover:text-neon-red transition-colors">{I.refresh}</button>
                       </div>
                       {searchResults.map((user) => (
@@ -170,7 +172,7 @@ export default function StatsPage() {
                               <p className="text-[9px] text-neon-blue font-black tracking-widest uppercase">@{user.username}</p>
                            </div>
                            <div className="px-4 py-2 bg-black/40 rounded-xl border border-white/5 group-hover:border-neon-green/30 transition-all">
-                              <span className="text-[10px] font-black text-white italic uppercase">VER STATS</span>
+                              <span className="text-[10px] font-black text-white italic uppercase">{t.pages.stats.viewStats}</span>
                            </div>
                         </button>
                       ))}
@@ -178,8 +180,8 @@ export default function StatsPage() {
                  )}
                  {search && searchResults.length === 0 && !isSearching && selectedUser === null && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute top-full left-0 w-full mt-4 text-center p-8 bg-black/60 rounded-[2.5rem] border border-neon-red/20">
-                       <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] mb-4">No se encontraron ciudadanos</p>
-                       <button onClick={resetSearch} className="px-6 py-3 bg-neon-blue/10 border border-neon-blue/30 rounded-xl text-[9px] font-black text-neon-blue hover:bg-neon-blue hover:text-black transition-all">REINICIAR BÚSQUEDA</button>
+                       <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] mb-4">{t.pages.stats.noCitizens}</p>
+                       <button onClick={resetSearch} className="px-6 py-3 bg-neon-blue/10 border border-neon-blue/30 rounded-xl text-[9px] font-black text-neon-blue hover:bg-neon-blue hover:text-black transition-all">{t.pages.stats.resetSearch}</button>
                     </motion.div>
                  )}
               </AnimatePresence>
@@ -230,7 +232,7 @@ export default function StatsPage() {
                          <div className="bg-doc-dark border border-white/10 p-8 rounded-[3rem] flex flex-col sm:flex-row items-center justify-between gap-6">
                             <div className="flex items-center gap-4">
                                <div className="w-10 h-10 text-neon-blue drop-shadow-neon-blue">{I.zap}</div>
-                               <span className="font-header font-black uppercase tracking-widest text-lg italic">Filtro Maestro</span>
+                               <span className="font-header font-black uppercase tracking-widest text-lg italic">{t.pages.stats.masterFilter}</span>
                             </div>
                             <div className="flex flex-wrap gap-3 justify-center">
                                {['Usuarios', 'Tracks', 'Puntajes', 'Registros'].map(m => (
@@ -250,7 +252,7 @@ export default function StatsPage() {
                        <div className="bg-doc-dark border-2 border-white/5 p-12 rounded-[4rem] relative overflow-hidden group shadow-2xl">
                           <div className="absolute top-0 right-0 w-80 h-80 bg-neon-green/5 rounded-full blur-[100px]" />
                           <div className="relative z-10 space-y-10">
-                             <h2 className="text-4xl font-header font-black text-white italic uppercase tracking-tighter">ANÁLISIS DE TRANSMISIÓN</h2>
+                             <h2 className="text-4xl font-header font-black text-white italic uppercase tracking-tighter">{t.pages.stats.transmissionAnalysis}</h2>
                              
                              <div className="h-80 w-full bg-black/40 rounded-[3rem] border border-white/5 p-6">
                                 <ResponsiveContainer width="100%" height="100%">
@@ -300,8 +302,8 @@ export default function StatsPage() {
                  {activeTab === 'server' && (
                     <motion.div key="server" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-12">
                        <div className="flex flex-col items-center gap-4 text-center">
-                          <h2 className="text-4xl font-header font-black text-white uppercase italic tracking-tighter">NODO REGIONAL</h2>
-                          <p className="text-neon-green font-black uppercase text-[10px] tracking-[0.5em] opacity-40">Unica Instancia Activa en la Red</p>
+                          <h2 className="text-4xl font-header font-black text-white uppercase italic tracking-tighter">{t.pages.stats.regionalNode}</h2>
+                          <p className="text-neon-green font-black uppercase text-[10px] tracking-[0.5em] opacity-40">{t.pages.stats.singleInstance}</p>
                        </div>
                        
                        <div className="flex justify-center">
@@ -317,7 +319,7 @@ export default function StatsPage() {
                                </div>
                                <div className="space-y-4">
                                   <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
-                                     <span className="text-white/40">Sincronización Supabase</span>
+                                     <span className="text-white/40">{t.pages.stats.supabaseSync}</span>
                                      <span className="text-neon-green font-black">ACTIVA</span>
                                   </div>
                                   <div className="h-4 bg-black rounded-full overflow-hidden border border-white/5 p-1">
@@ -326,12 +328,12 @@ export default function StatsPage() {
                                 </div>
                                <div className="grid grid-cols-2 gap-6 pt-6 border-t border-white/5">
                                   <div className="space-y-1">
-                                     <p className="text-[8px] text-gray-600 font-black uppercase tracking-widest">Latencia de Red</p>
+                                     <p className="text-[8px] text-gray-600 font-black uppercase tracking-widest">{t.pages.stats.netLatency}</p>
                                      <p className="text-3xl font-header font-black text-neon-green">{srv.latency_ms}ms</p>
                                   </div>
                                   <div className="space-y-1">
-                                     <p className="text-[8px] text-gray-600 font-black uppercase tracking-widest">Integridad DB</p>
-                                     <p className="text-3xl font-header font-black text-white">ÓPTIMA</p>
+                                     <p className="text-[8px] text-gray-600 font-black uppercase tracking-widest">{t.pages.stats.dbIntegrity}</p>
+                                     <p className="text-3xl font-header font-black text-white">{t.pages.stats.optimal}</p>
                                   </div>
                                </div>
                             </div>
@@ -345,9 +347,9 @@ export default function StatsPage() {
                        <div className="w-24 h-24 bg-neon-green/10 border-2 border-neon-green rounded-full flex items-center justify-center mx-auto text-neon-green animate-pulse">
                           <div className="w-12 h-12">{I.lock}</div>
                        </div>
-                       <h3 className="text-4xl font-header font-black text-white uppercase italic tracking-tighter">SINCRONIZACIÓN REQUERIDA</h3>
+                       <h3 className="text-4xl font-header font-black text-white uppercase italic tracking-tighter">{t.pages.stats.syncRequired}</h3>
                        <Link href="/login" className="inline-block">
-                          <Button className="!bg-neon-blue !text-black !rounded-2xl px-12 h-16 font-header font-black uppercase tracking-widest italic">INICIAR SESIÓN</Button>
+                          <Button className="!bg-neon-blue !text-black !rounded-2xl px-12 h-16 font-header font-black uppercase tracking-widest italic">{t.pages.stats.loginBtn}</Button>
                        </Link>
                     </motion.div>
                  )}
@@ -380,9 +382,9 @@ export default function StatsPage() {
                        </div>
 
                        <div className="grid grid-cols-2 gap-4">
-                          <StatBox label="Máx Score" value={selectedUser.highest_score?.toLocaleString() || '---'} color="green" />
+                          <StatBox label={t.pages.stats.attrMaxScore} value={selectedUser.highest_score?.toLocaleString() || '---'} color="green" />
                           <StatBox label="Rango" value={`#${selectedUser.global_rank || '---'}`} color="blue" />
-                          <StatBox label="Mult." value={`x${selectedUser.max_multiplier || '1.0'}`} color="green" />
+                          <StatBox label={t.pages.stats.attrMult} value={`x${selectedUser.max_multiplier || '1.0'}`} color="green" />
                           <StatBox label="Tiempo" value={`${Math.floor((selectedUser.total_playtime_minutes || 0) / 60)}h`} color="blue" />
                        </div>
 
@@ -395,14 +397,14 @@ export default function StatsPage() {
                           </div>
                           <div className="grid grid-cols-1 gap-4 pt-4">
                              <button onClick={() => navigator.clipboard.writeText(selectedUser.id)} className="w-full h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-between px-8 text-white/40 hover:text-white hover:bg-white/10 transition-all text-[11px] font-black uppercase tracking-widest group">
-                                <span className="opacity-50">IDENTIFICADOR (UUID)</span>
+                                <span className="opacity-50">{t.pages.stats.uuidLabel}</span>
                                 <div className="flex items-center gap-3">
                                    <span className="text-white font-mono">{selectedUser.id.slice(0,8)}...</span>
                                    <div className="w-5 h-5 group-hover:scale-110 transition-transform">{I.copy}</div>
                                 </div>
                              </button>
                              <button onClick={() => navigator.clipboard.writeText(selectedUser.username)} className="w-full h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-between px-8 text-white/40 hover:text-white hover:bg-white/10 transition-all text-[11px] font-black uppercase tracking-widest group">
-                                <span className="opacity-50">NOMBRE DE USUARIO</span>
+                                <span className="opacity-50">{t.pages.stats.usernameLabel}</span>
                                 <div className="flex items-center gap-3">
                                    <span className="text-white font-mono">{selectedUser.username}</span>
                                    <div className="w-5 h-5 group-hover:scale-110 transition-transform">{I.copy}</div>
@@ -416,7 +418,7 @@ export default function StatsPage() {
                        <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto text-white/20">
                           {I.users}
                        </div>
-                       <p className="text-[10px] font-black uppercase tracking-[0.4em] max-w-[12rem] mx-auto">Selecciona un ciudadano de los resultados para desplegar métricas</p>
+                       <p className="text-[10px] font-black uppercase tracking-[0.4em] max-w-[12rem] mx-auto">{t.pages.stats.selectCitizen}</p>
                     </div>
                  )}
               </AnimatePresence>
