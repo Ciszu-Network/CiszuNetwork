@@ -150,13 +150,15 @@ function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void 
 function Badge({ kind, dict }: { kind: 'free' | 'premium'; dict: Dict }) {
   if (kind === 'free') {
     return (
-      <span className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-emerald-400">
+      <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-emerald-400">
+        <span aria-hidden>✔</span>
         {dict.guildPage.free}
       </span>
     );
   }
   return (
-    <span className="rounded-full border border-neon-pink/50 bg-neon-pink/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-neon-pink">
+    <span className="inline-flex items-center gap-1 rounded-full border border-neon-pink/50 bg-neon-pink/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-neon-pink">
+      <span aria-hidden>★</span>
       {dict.guildPage.premium} · {dict.guildPage.betaBadge}
     </span>
   );

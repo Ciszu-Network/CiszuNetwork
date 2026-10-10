@@ -11,6 +11,7 @@ import PageReveal from '@/components/layout/PageReveal';
 import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 import { DualLoginCard } from '@/components/dashboard/DualLoginCard';
 import InviteLink from '@/components/dashboard/InviteLink';
+import ServersGrid from '@/components/dashboard/ServersGrid';
 import { BOT_STATUS_SELECT, resolveBotStatus, type BotStatus } from '@/lib/botStatus';
 
 export const metadata: Metadata = {
@@ -187,59 +188,15 @@ export default async function DashboardPage() {
               </div>
             </div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {manageable.map((guild) => {
-                const hasBot = hasBotGuild(guild.id);
-                const iconUrl = icon(guild);
-                return (
-                  <div
-                    key={guild.id}
-                    className={`group relative overflow-hidden rounded-2xl border p-5 transition ${
-                      hasBot
-                        ? `${THEME.border} ${THEME.card} hover:border-neon-blue/70`
-                        : 'pointer-events-none border-border bg-card opacity-60'
-                    }`}
-                  >
-                    {hasBot ? (
-                      <Link
-                        href={`/dashboard/${guild.id}`}
-                        className="absolute inset-0 z-10"
-                        aria-label={guild.name}
-                      />
-                    ) : null}
-                    <div className="flex items-center gap-3">
-                      {iconUrl ? (
-                        <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full">
-                          <img src={iconUrl} alt="" className="h-full w-full object-cover" />
-                        </div>
-                      ) : (
-                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-neon-blue to-neon-purple font-bold text-white">
-                          {guild.name.charAt(0).toUpperCase()}
-                        </div>
-                      )}
-                      <div className="min-w-0">
-                        <p className="truncate font-bold text-ink">{guild.name}</p>
-                        {hasBot ? (
-                          <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-400">
-                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />{' '}
-                            {t.dashboardPage.botActive}
-                          </span>
-                        ) : (
-                          <span className="text-xs text-muted">{t.dashboardPage.botMissing}</span>
-                        )}
-                      </div>
-                      {hasBot && (
-                        <Icon
-                          name="arrow-right"
-                          size={18}
-                          className="ml-auto text-muted transition group-hover:translate-x-1 group-hover:text-neon-blue"
-                        />
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <ServersGrid
+              guilds={manageable.map((g) => ({
+                id: g.id,
+                name: g.name,
+                icon: g.icon ?? null,
+                invited: hasBotGuild(g.id),
+              }))}
+              inviteUrl={INVITE_URL}
+            />
           )}
         </section>
 

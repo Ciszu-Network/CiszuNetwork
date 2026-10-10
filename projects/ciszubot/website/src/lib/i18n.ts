@@ -919,6 +919,10 @@ const es = {
     howStep4Title: 'Guarda o autoguarda',
     howStep4Desc: 'El panel flotante guarda con undo/redo y autoguardado; verás el estado real del bot.',
     sponsorDirsLabel: 'Directorios de bots',
+    configureShort: 'Configurar',
+    summaryShort: 'Resumen',
+    inviteShort: 'Invitar',
+    notInvitedMsgShort: 'Invita a CiszuBot a este servidor para poder configurarlo.',
   },
   guildPage: {
     back: 'Volver',
@@ -2017,6 +2021,10 @@ const en = {
     howStep4Title: 'Save or autosave',
     howStep4Desc: 'The floating panel saves with undo/redo and autosave; you will see the real bot status.',
     sponsorDirsLabel: 'Bot directories',
+    configureShort: 'Configure',
+    summaryShort: 'Summary',
+    inviteShort: 'Invite',
+    notInvitedMsgShort: 'Invite CiszuBot to this server before configuring it.',
   },
   guildPage: {
     back: 'Back',
