@@ -24,17 +24,17 @@ const THEME: InfoTheme = {
 
 const project = getProject('ciszukoantony')!;
 
-const PILLARS = [
-  { icon: 'gamepad', title: 'Gaming', desc: 'Gameplays, streams y contenido de videojuegos variado para la comunidad.' },
-  { icon: 'music', title: 'Música', desc: 'Producción musical original: álbum Genesis Neon, soundtracks y el musicboard.' },
-  { icon: 'terminal', title: 'Tech y desarrollo', desc: 'Tutoriales y la tecnología detrás de cada proyecto del ecosistema.' },
-  { icon: 'certificates', title: 'Portfolio y CV', desc: 'Web oficial con portfolio visual, currículums en PDF y certificados verificables.' },
+const PILLARS_OF = (t: ReturnType<typeof useDict>) => [
+  { icon: 'gamepad', ...t.antonyPage.pillars[0] },
+  { icon: 'music', ...t.antonyPage.pillars[1] },
+  { icon: 'terminal', ...t.antonyPage.pillars[2] },
+  { icon: 'certificates', ...t.antonyPage.pillars[3] },
 ];
 
-const MUSIC_HIGHLIGHTS = [
-  { icon: 'music', title: 'Genesis Neon', desc: 'Álbum original que da vida a MuzicMania, compuesto por el propio artista.' },
-  { icon: 'headset', title: 'SoundCloud', desc: 'Pistas y experimentos publicados en el perfil oficial del artista.' },
-  { icon: 'play', title: 'YouTube Music', desc: 'Playlists oficiales, canal musical y el podcast del artista.' },
+const MUSIC_OF = (t: ReturnType<typeof useDict>) => [
+  { icon: 'music', ...t.antonyPage.musicHighlights[0] },
+  { icon: 'headset', ...t.antonyPage.musicHighlights[1] },
+  { icon: 'play', ...t.antonyPage.musicHighlights[2] },
 ];
 
 const SELFIE = 'shared/images/francisco_selfie/IMG_20251207_001627@869886661.jpg';
@@ -56,7 +56,7 @@ export default function CiszukoAntonyPage() {
           <Floating className="mx-auto w-fit">
             <Image
               src={assetResolver.resolve(project.logo)}
-              alt="Logo oficial de Ciszuko Antony"
+              alt={t.antonyPage.kicker}
               width={260}
               height={260}
               className="h-24 w-auto object-contain drop-shadow-[0_0_45px_rgba(74,125,255,0.5)] md:h-32"
@@ -64,10 +64,10 @@ export default function CiszukoAntonyPage() {
             />
           </Floating>
           <p className="mt-6 text-[10px] font-black uppercase tracking-[0.4em] text-[#68cfff]">
-            Contenido · Entretenimiento
+            {t.antonyPage.kicker}
           </p>
           <h1 className="mt-3 bg-gradient-to-r from-[#4a7dff] via-[#68cfff] to-[#ff33cc] bg-clip-text font-header text-4xl font-black uppercase tracking-tighter text-transparent md:text-6xl">
-            Youtuber, streamer y desarrollador
+            {t.antonyPage.title}
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-white/60">
             {project.longDescription}
@@ -98,7 +98,7 @@ export default function CiszukoAntonyPage() {
               className="inline-flex items-center gap-2 rounded-xl bg-[#4a7dff] px-7 py-3.5 font-header text-sm font-black uppercase tracking-widest text-white shadow-[0_0_30px_rgba(74,125,255,0.45)] transition-all hover:scale-105 hover:brightness-110"
             >
               <Icon name="globe" size={16} />
-              Página oficial
+              {t.antonyPage.officialPage}
             </a>
             <a
               href={CISZUKO_ANTONY.social.youtube}
@@ -131,10 +131,10 @@ export default function CiszukoAntonyPage() {
         <section className="mb-16" aria-labelledby="ciszukoantony-pillars">
           <h2 id="ciszukoantony-pillars" className="mb-6 flex items-center gap-3 font-header text-3xl font-black text-white">
             <Icon name="star" size={26} />
-            Pilares de contenido
+            {t.antonyPage.pillarsTitle}
           </h2>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {PILLARS.map((pillar, index) => (
+            {PILLARS_OF(t).map((pillar, index) => (
               <Reveal key={pillar.title} delay={index * 0.08}>
                 <div className="h-full rounded-[1.75rem] border border-white/10 bg-white/[0.03] p-6 transition-all hover:-translate-y-1 hover:border-[#4a7dff]/40">
                   <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-[#4a7dff]/40 bg-[#4a7dff]/10 text-[#68cfff]">
@@ -152,13 +152,13 @@ export default function CiszukoAntonyPage() {
         <section className="mb-16 rounded-[2rem] border border-[#ff33cc]/25 bg-gradient-to-br from-[#4a7dff]/10 via-transparent to-[#ff33cc]/10 p-8" aria-labelledby="ciszukoantony-music">
           <h2 id="ciszukoantony-music" className="mb-2 flex items-center gap-3 font-header text-3xl font-black text-white">
             <Icon name="music" size={26} />
-            Música
+            {t.antonyPage.musicTitle}
           </h2>
           <p className="mb-6 max-w-2xl text-xs leading-relaxed text-white/50">
-            Obra original compuesta y producida por Ciszuko Antony, incluyendo el álbum que se juega en MuzicMania.
+            {t.antonyPage.musicBody}
           </p>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-            {MUSIC_HIGHLIGHTS.map((item, index) => (
+            {MUSIC_OF(t).map((item, index) => (
               <Reveal key={item.title} delay={index * 0.08}>
                 <div className="h-full rounded-[1.75rem] border border-white/10 bg-black/30 p-6 transition-all hover:-translate-y-1 hover:border-[#ff33cc]/40">
                   <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-[#ff33cc]/40 bg-[#ff33cc]/10 text-[#ff66dd]">
@@ -176,7 +176,7 @@ export default function CiszukoAntonyPage() {
               className="inline-flex items-center gap-2 rounded-xl border border-[#ff33cc]/40 bg-[#ff33cc]/10 px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-[#ff66dd] transition-all hover:bg-[#ff33cc]/20"
             >
               <Icon name="gamepad" size={13} />
-              MuzicMania · Genesis Neon
+              {t.antonyPage.linkMuzicmania}
             </Link>
             <a
               href={CISZUKO_ANTONY.portfolio}
@@ -185,7 +185,7 @@ export default function CiszukoAntonyPage() {
               className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-white/70 transition-all hover:border-white/40 hover:text-white"
             >
               <Icon name="external" size={13} />
-              Musicboard oficial
+              {t.antonyPage.musicboard}
             </a>
           </div>
         </section>
@@ -194,7 +194,7 @@ export default function CiszukoAntonyPage() {
         <section className="mb-16" aria-labelledby="ciszukoantony-platforms">
           <h2 id="ciszukoantony-platforms" className="mb-6 flex items-center gap-3 font-header text-3xl font-black text-white">
             <Icon name="share" size={26} />
-            Plataformas y redes
+            {t.antonyPage.platformsTitle}
           </h2>
           <ProjectSlider ariaLabel="Plataformas y redes de Ciszuko Antony" itemClassName="w-60 sm:w-64">
             {Object.entries(CISZUKO_ANTONY.social)
@@ -225,7 +225,7 @@ export default function CiszukoAntonyPage() {
                       <span className="block truncate font-header text-sm font-bold capitalize text-white">
                         {platform === 'x' ? 'X' : platform}
                       </span>
-                      <span className="text-[10px] uppercase tracking-wider text-white/40">Perfil oficial</span>
+                      <span className="text-[10px] uppercase tracking-wider text-white/40">{t.antonyPage.profileOfficial}</span>
                     </span>
                   </span>
                   <span
@@ -233,7 +233,7 @@ export default function CiszukoAntonyPage() {
                     style={{ color: SOCIAL_COLORS[platform as keyof typeof SOCIAL_COLORS] }}
                   >
                     <Icon name="external" size={12} />
-                    Visitar
+                    {t.antonyPage.visit}
                   </span>
                 </a>
               ))}
@@ -255,7 +255,7 @@ export default function CiszukoAntonyPage() {
         <InfoCtaRow
           theme={THEME}
           actions={[
-            { label: 'Web oficial', href: CISZUKO_ANTONY.portfolio, icon: 'globe', external: true, variant: 'primary' },
+            { label: t.antonyPage.ctaWeb, href: CISZUKO_ANTONY.portfolio, icon: 'globe', external: true, variant: 'primary' },
             { label: 'YouTube', href: CISZUKO_ANTONY.social.youtube, icon: 'play', external: true, variant: 'ghost' },
             { label: 'Ciszugamens', href: CISZUKO_ANTONY.social.discord, icon: 'discord', external: true, variant: 'ghost' },
             { label: t.projectPages.viewAll, href: '/projects', icon: 'rocket', variant: 'ghost' },

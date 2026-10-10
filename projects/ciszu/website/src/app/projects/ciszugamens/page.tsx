@@ -14,6 +14,7 @@ import ProjectSlider from "@/components/projects/ProjectSlider";
 import Reveal, { Floating, GlowOrb } from "@/components/projects/Reveal";
 import { getProject } from "@/data/projects";
 import { useDict } from "@/lib/useDict";
+import { fillTemplate } from "@/lib/i18n";
 
 
 const THEME: InfoTheme = {
@@ -25,18 +26,11 @@ const THEME: InfoTheme = {
   gradient: 'from-brand-light to-brand-accent',
 };
 
-const inviteSnippet = [
-  {
-    label: 'Invitación oficial · nunca expira',
-    code: CISZUGAMENS.inviteUrl,
-  },
-];
-
-const channels = [
+const channelsOf = (t: ReturnType<typeof useDict>) => [
   {
     name: "Discord",
     href: CISZUGAMENS.inviteUrl,
-    desc: "El servidor principal: torneos, salas de voz multijuego, soporte por tickets y la comunidad en vivo.",
+    desc: t.ciszugamensPage.channelsDesc[0],
     color: "#5865F2",
     icon: (
       <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
@@ -47,7 +41,7 @@ const channels = [
   {
     name: "WhatsApp",
     href: `https://wa.me/${CISZU_NETWORK.phone.replace(/\D/g, '')}`,
-    desc: "El canal directo de la comunidad: anuncios, ayuda rápida y contacto con el equipo.",
+    desc: t.ciszugamensPage.channelsDesc[1],
     color: "#25D366",
     icon: (
       <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
@@ -58,7 +52,7 @@ const channels = [
   {
     name: "Telegram",
     href: "https://t.me/CiszukoNetwork",
-    desc: "Canal de Telegram: novedades, bots y una comunidad activa al instante.",
+    desc: t.ciszugamensPage.channelsDesc[2],
     color: "#26A5E4",
     icon: (
       <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
@@ -68,22 +62,22 @@ const channels = [
   },
 ];
 
-const features = [
-  { icon: Swords, title: "Torneos", desc: "Torneos de la comunidad con formato de rondas: Ronda 1, Ronda 2, Semifinal y Final, con tabla de puntuación oficial y plantilla de hasta 16 participantes." },
-  { icon: Gamepad2, title: "Multijuego", desc: "Salas de voz dedicadas a Roblox, Minecraft, Fortnite, Left 4 Dead 2 y otros juegos, además de canales de música para acompañar la partida." },
-  { icon: Users, title: "Comunidad", desc: "Comunidad gaming hispanohablante (14+), competitiva y casual, con canales de texto, voz, eventos y soporte por tickets." },
+const featuresOf = (t: ReturnType<typeof useDict>) => [
+  { icon: Swords, ...t.ciszugamensPage.features[0] },
+  { icon: Gamepad2, ...t.ciszugamensPage.features[1] },
+  { icon: Users, ...t.ciszugamensPage.features[2] },
 ];
 
-const modalities = ["Roblox", "Minecraft", "Fortnite", "Left 4 Dead 2", "Otros juegos", "Música y charlas"];
+const modalitiesOf = (t: ReturnType<typeof useDict>) => t.ciszugamensPage.modalities;
 
-const tournamentRounds = ["Ronda 1", "Ronda 2", "Semifinal", "Final"];
+const roundsOf = (t: ReturnType<typeof useDict>) => t.ciszugamensPage.rounds;
 
-const rules = [
-  "Respeto entre usuarios: nada de toxicidad, odio, contenido +18 ni acoso en texto o voz.",
-  "Sin spam ni exceso de menciones: cada canal tiene su función y las actividades van en los canales permitidos.",
-  "Prohibida la suplantación de identidad y las polémicas (política, creencias, dramas).",
-  "Se aplican los Términos y Normas de Discord, además de las normativas internas del servidor.",
-  "Las sanciones quedan a juicio del Staff presente; dudas, sugerencias y reportes se atienden por tickets.",
+const rulesOf = (t: ReturnType<typeof useDict>) => [
+  t.ciszugamensPage.rules[0],
+  t.ciszugamensPage.rules[1],
+  t.ciszugamensPage.rules[2],
+  t.ciszugamensPage.rules[3],
+  t.ciszugamensPage.rules[4],
 ];
 
 const communityLinks = [
@@ -95,17 +89,17 @@ const communityLinks = [
 
 const stack = ['Discord', 'WhatsApp', 'Telegram', 'Top.gg', 'Disboard', 'Discord Bot List'];
 
-const widgetSnippets = [
+const widgetSnippetsOf = (t: ReturnType<typeof useDict>) => [
   {
-    label: 'Discord · Servidor en vivo',
+    label: t.ciszugamensPage.widgetsLabels[0],
     code: `<iframe src="${CISZUGAMENS.widgetUrl}" width="350" height="500" title="Ciszugamens en Discord"></iframe>`,
   },
   {
-    label: 'Top.gg · Bot CiszuBot',
+    label: t.ciszugamensPage.widgetsLabels[1],
     code: `<iframe src="${WIDGETS.topggBot}" width="300" height="300" title="CiszuBot en Top.gg"></iframe>`,
   },
   {
-    label: 'Top.gg · Servidor Ciszugamens',
+    label: t.ciszugamensPage.widgetsLabels[2],
     code: `<iframe src="${WIDGETS.topggServer}" width="500" height="236" title="Ciszugamens en Top.gg"></iframe>`,
   },
 ];
@@ -128,19 +122,19 @@ export default function CiszugamensPage() {
           <Floating className="mx-auto w-fit">
             <Image
               src={assetResolver.resolve(gamensProject.logo)}
-              alt="Isotipo oficial de Ciszugamens"
+              alt={t.ciszugamensPage.title}
               width={220}
               height={220}
               className="h-28 w-28 object-contain drop-shadow-[0_0_45px_rgba(168,85,247,0.5)]"
               priority
             />
           </Floating>
-          <p className="mt-6 text-[10px] font-black uppercase tracking-[0.4em] text-[#c084fc]">Comunidad · Gaming</p>
+          <p className="mt-6 text-[10px] font-black uppercase tracking-[0.4em] text-[#c084fc]">{t.ciszugamensPage.kicker}</p>
           <h1 className="mt-3 bg-gradient-to-r from-[#a855f7] via-[#3b82f6] to-[#22d3ee] bg-clip-text font-header text-4xl font-black uppercase tracking-tighter text-transparent md:text-6xl">
-            Servidor de la comunidad
+            {t.ciszugamensPage.title}
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-white/60">
-            Discord · WhatsApp · Telegram. Torneos por rondas, salas multijuego y una comunidad hispanohablante activa.
+            {t.ciszugamensPage.subtitle}
           </p>
         </header>
 
@@ -163,27 +157,25 @@ export default function CiszugamensPage() {
           <div className="p-8 md:p-12 rounded-[2rem] bg-brand/5 border border-brand/20">
             <div className="max-w-3xl mx-auto text-center">
               <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#5865F2]/15 border border-[#5865F2]/40 text-[10px] font-bold uppercase tracking-widest text-[#8ea1e1]">
-                Invitación oficial · nunca expira
+                {t.ciszugamensPage.inviteBadge}
               </span>
               <h2 className="mt-5 text-3xl md:text-4xl font-header font-bold text-white">✩₊ CiszuGamens ⊹✦</h2>
               <p className="mt-4 text-gray-300 leading-relaxed">
-                Servidor de Discord de la comunidad gaming de {CISZU_NETWORK.name}: torneos por rondas,
-                salas de voz multijuego y una comunidad hispanohablante activa. El enlace oficial es
-                permanente: úsalo para invitar, compartir y promocionar el servidor.
+                {fillTemplate(t.ciszugamensPage.aboutBody, { site: CISZU_NETWORK.name })}
               </p>
               <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
                 <a href={CISZUGAMENS.inviteUrl} target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-[#5865F2] text-white font-bold text-sm hover:bg-[#4752C4] transition-all hover:-translate-y-0.5">
-                  Unirse al servidor <ArrowRight className="w-4 h-4" />
+                  {t.ciszugamensPage.joinServer} <ArrowRight className="w-4 h-4" />
                 </a>
                 <a href={CISZUBOT_LINKS.topggServer} target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl bg-white/5 border border-white/15 text-white text-sm font-bold hover:border-[#a855f7]/60 hover:text-[#c084fc] transition-all">
-                  Votar en Top.gg <ExternalLink className="w-3.5 h-3.5" />
+                  {t.ciszugamensPage.voteTopgg} <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               </div>
             </div>
             <div className="mt-8 max-w-xl mx-auto">
-              <WidgetCode snippets={inviteSnippet} />
+              <WidgetCode snippets={[{ label: t.ciszugamensPage.inviteBadge, code: CISZUGAMENS.inviteUrl }]} />
             </div>
             <div className="mt-8">
               <iframe
@@ -199,7 +191,7 @@ export default function CiszugamensPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {features.map((f, i) => (
+            {featuresOf(t).map((f, i) => (
               <Reveal key={i} delay={i * 0.08}>
                 <div className="h-full p-6 rounded-2xl bg-white/5 border border-white/10 transition-all hover:-translate-y-1 hover:border-[#a855f7]/40">
                   <f.icon className="w-8 h-8 text-[#a855f7] mb-4" />
@@ -214,11 +206,11 @@ export default function CiszugamensPage() {
             <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10">
               <div className="flex items-center gap-3 mb-4">
                 <Gamepad2 className="w-6 h-6 text-neon-cyan" />
-                <h2 className="text-xl font-header font-bold text-white">Dentro del servidor</h2>
+                <h2 className="text-xl font-header font-bold text-white">{t.ciszugamensPage.insideTitle}</h2>
               </div>
-              <h3 className="text-xs font-bold uppercase tracking-widest text-white/50 mb-3">Salas y modalidades</h3>
+              <h3 className="text-xs font-bold uppercase tracking-widest text-white/50 mb-3">{t.ciszugamensPage.roomsTitle}</h3>
               <div className="flex flex-wrap gap-2 mb-6">
-                {modalities.map((m) => (
+                {modalitiesOf(t).map((m) => (
                   <span key={m} className="px-3 py-1.5 rounded-full bg-[#22d3ee]/10 border border-[#22d3ee]/30 text-[#67e8f9] text-[10px] font-bold uppercase tracking-wider">
                     {m}
                   </span>
@@ -226,19 +218,18 @@ export default function CiszugamensPage() {
               </div>
               <div className="flex items-center gap-3 mb-3">
                 <CalendarDays className="w-5 h-5 text-[#a855f7]" />
-                <h3 className="text-xs font-bold uppercase tracking-widest text-white/50">Torneos y eventos</h3>
+                <h3 className="text-xs font-bold uppercase tracking-widest text-white/50">{t.ciszugamensPage.eventsTitle}</h3>
               </div>
               <p className="text-gray-300 text-xs leading-relaxed mb-4">
-                Torneos de la comunidad con tabla oficial de puntuación por rondas y eliminación directa
-                (plantilla de hasta 16 participantes):
+                {t.ciszugamensPage.eventsBody}
               </p>
               <div className="flex flex-wrap items-center gap-2">
-                {tournamentRounds.map((r, i) => (
+                {roundsOf(t).map((r, i) => (
                   <span key={r} className="inline-flex items-center gap-2">
                     <span className="px-3 py-1.5 rounded-lg bg-[#a855f7]/10 border border-[#a855f7]/30 text-[#c084fc] text-[10px] font-bold uppercase tracking-wider">
                       {r}
                     </span>
-                    {i < tournamentRounds.length - 1 && <ArrowRight className="w-3 h-3 text-white/30" />}
+                    {i < roundsOf(t).length - 1 && <ArrowRight className="w-3 h-3 text-white/30" />}
                   </span>
                 ))}
               </div>
@@ -247,10 +238,10 @@ export default function CiszugamensPage() {
             <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10">
               <div className="flex items-center gap-3 mb-4">
                 <Shield className="w-6 h-6 text-brand-light" />
-                <h2 className="text-xl font-header font-bold text-white">Reglas de la comunidad</h2>
+                <h2 className="text-xl font-header font-bold text-white">{t.ciszugamensPage.rulesTitle}</h2>
               </div>
               <ul className="space-y-3">
-                {rules.map((rule, i) => (
+                {rulesOf(t).map((rule, i) => (
                   <li key={i} className="flex gap-3 text-xs text-gray-400 leading-relaxed">
                     <span className="shrink-0 mt-0.5 w-5 h-5 rounded-md bg-brand/10 border border-brand/30 text-brand-light text-[10px] font-bold flex items-center justify-center">
                       {i + 1}
@@ -260,8 +251,7 @@ export default function CiszugamensPage() {
                 ))}
               </ul>
               <p className="mt-5 text-[10px] text-gray-500 leading-relaxed">
-                Normativas completas disponibles dentro del servidor y en los documentos oficiales
-                (reglas v4.2.0.0 + directrices de staff).
+                {t.ciszugamensPage.rulesNote}
               </p>
             </div>
           </div>
@@ -269,12 +259,10 @@ export default function CiszugamensPage() {
           <div className="p-8 rounded-[2rem] bg-brand/5 border border-brand/20">
             <h2 className="text-2xl font-header font-bold text-white mb-4">{t.projectPages.ciszugamens.join}</h2>
             <p className="text-gray-300 leading-relaxed mb-6">
-              Ciszugamens es el servidor de la comunidad de {CISZU_NETWORK.name}: el mismo espacio
-              en Discord, WhatsApp y Telegram. Elige tu plataforma favorita y forma parte de la
-              familia gamer y digital del ecosistema.
+              {fillTemplate(t.ciszugamensPage.communityIntro, { site: CISZU_NETWORK.name })}
             </p>
             <ProjectSlider ariaLabel="Plataformas de la comunidad Ciszugamens" itemClassName="w-[19rem] sm:w-[21rem]">
-              {channels.map((c, i) => (
+              {channelsOf(t).map((c, i) => (
                 <a key={i} href={c.href} target="_blank" rel="noopener noreferrer"
                   className="flex h-full flex-col p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-white/30 transition-all group hover:-translate-y-1">
                   <div className="flex items-center gap-3 mb-3" style={{ color: c.color }}>
@@ -285,7 +273,7 @@ export default function CiszugamensPage() {
                   </div>
                   <p className="flex-1 text-gray-400 text-xs leading-relaxed">{c.desc}</p>
                   <span className="inline-flex items-center gap-1 mt-4 text-xs font-bold uppercase tracking-widest transition-all group-hover:gap-2" style={{ color: c.color }}>
-                    Unirme <ArrowRight className="w-3 h-3" />
+                    {t.ciszugamensPage.join} <ArrowRight className="w-3 h-3" />
                   </span>
                 </a>
               ))}
@@ -310,12 +298,12 @@ export default function CiszugamensPage() {
                 </span>
               ))}
             </div>
-            <h3 className="text-sm font-header font-bold text-white mb-2">Widgets para tu web</h3>
+            <h3 className="text-sm font-header font-bold text-white mb-2">{t.ciszugamensPage.widgetsTitle}</h3>
             <p className="text-gray-400 text-xs leading-relaxed mb-4">
-              Copia y pega estos snippets para mostrar el servidor y sus listados en cualquier web.
+              {t.ciszugamensPage.widgetsDesc}
             </p>
             <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-6 items-start">
-              <WidgetCode snippets={widgetSnippets} />
+              <WidgetCode snippets={widgetSnippetsOf(t)} />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <iframe
                   title="Widget de Top.gg del bot CiszuBot"

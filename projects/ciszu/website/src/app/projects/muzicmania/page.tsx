@@ -12,6 +12,7 @@ import Reveal, { Floating, GlowOrb } from '@/components/projects/Reveal';
 import { EXTERNAL_LINKS, GITHUB_REPO } from '@/config/site';
 import { getProject } from '@/data/projects';
 import { useDict } from '@/lib/useDict';
+import { fillTemplate } from '@/lib/i18n';
 
 const THEME: InfoTheme = {
   accent: 'text-[#ff66dd]',
@@ -29,9 +30,9 @@ const ALBUM = {
   artist: 'CiszukoAntony',
   year: '2026',
   cover: 'projects/muzicmania/content/music/albums/genesis_neon/cover.png',
-  description:
-    'El álbum que da vida al juego: synthwave, neon y pulsos electrónicos compuestos desde cero para convertirse en niveles jugables.',
 };
+
+const albumDescOf = (t: ReturnType<typeof useDict>) => t.muzicmaniaPage.albumDesc;
 
 type Track = {
   id: string;
@@ -48,7 +49,7 @@ type Track = {
   difficultyCls: string;
 };
 
-const TRACKS: Track[] = [
+const tracksOf = (t: ReturnType<typeof useDict>): Track[] => [
   {
     id: 'oled_darkness',
     name: 'OLED Darkness',
@@ -60,7 +61,7 @@ const TRACKS: Track[] = [
     record: 1250000,
     recordUser: 'CiszuMaster',
     cover: 'projects/muzicmania/content/music/albums/genesis_neon/oled_darkness/cover.png',
-    description: 'Texturas atmosféricas y líneas de bajo profundas para empezar a jugar.',
+    description: t.muzicmaniaPage.tracksDesc[0],
     difficultyCls: 'text-neon-green border-neon-green/40 bg-neon-green/10',
   },
   {
@@ -74,7 +75,7 @@ const TRACKS: Track[] = [
     record: 2450000,
     recordUser: 'NeonRider',
     cover: 'projects/muzicmania/content/music/albums/genesis_neon/neon_dreams/cover.png',
-    description: 'Una odisea synthwave a través de una metrópolis digital.',
+    description: t.muzicmaniaPage.tracksDesc[1],
     difficultyCls: 'text-neon-cyan border-neon-cyan/40 bg-neon-cyan/10',
   },
   {
@@ -88,7 +89,7 @@ const TRACKS: Track[] = [
     record: 3100000,
     recordUser: 'DigiGod',
     cover: 'projects/muzicmania/content/music/albums/genesis_neon/digital_soul/cover.png',
-    description: 'El corazón pulsante de la máquina: melódico, emocional y exigente.',
+    description: t.muzicmaniaPage.tracksDesc[2],
     difficultyCls: 'text-neon-orange border-neon-orange/40 bg-neon-orange/10',
   },
   {
@@ -102,34 +103,22 @@ const TRACKS: Track[] = [
     record: 4500000,
     recordUser: 'CyberPhantom',
     cover: 'projects/muzicmania/content/music/albums/genesis_neon/cyber_beat/cover.png',
-    description: 'Energía rítmica de alta precisión para máxima concentración.',
+    description: t.muzicmaniaPage.tracksDesc[3],
     difficultyCls: 'text-neon-pink border-neon-pink/40 bg-neon-pink/10',
   },
 ];
 
-const STEPS = [
-  { icon: 'globe', title: 'Abre el juego', desc: 'Entra desde el navegador en cualquier equipo: no hace falta instalar nada para empezar.' },
-  { icon: 'music', title: 'Elige tu pista', desc: 'Recorre la biblioteca de Genesis Neon y selecciona la canción y dificultad a tu nivel.' },
-  { icon: 'target', title: 'Sincroniza las notas', desc: 'Pulsa al ritmo: cada pista tiene su propio BPM, patrones y curva de dificultad real.' },
-  { icon: 'trophy', title: 'Rompe el récord', desc: 'Sube tu puntuación al leaderboard global y compite por el mejor registro de cada pista.' },
+const stepsOf = (t: ReturnType<typeof useDict>) => [
+  { icon: 'globe', ...t.muzicmaniaPage.steps[0] },
+  { icon: 'music', ...t.muzicmaniaPage.steps[1] },
+  { icon: 'target', ...t.muzicmaniaPage.steps[2] },
+  { icon: 'trophy', ...t.muzicmaniaPage.steps[3] },
 ];
 
-const MODES = [
-  {
-    icon: 'monitor',
-    title: 'Web (cualquier equipo)',
-    desc: 'Next.js + Web Audio: juega al instante desde el navegador, con tu cuenta y tus puntuaciones sincronizadas.',
-  },
-  {
-    icon: 'download',
-    title: 'App de escritorio',
-    desc: 'Instalador de Windows (Tauri + NSIS) para partidas con mayor rendimiento y menor latencia.',
-  },
-  {
-    icon: 'trophy',
-    title: 'Leaderboard global',
-    desc: 'Cada pista guarda la mejor puntuación y su jugador. Los récords se ven dentro del propio juego.',
-  },
+const modesOf = (t: ReturnType<typeof useDict>) => [
+  { icon: 'monitor', ...t.muzicmaniaPage.modes[0] },
+  { icon: 'download', ...t.muzicmaniaPage.modes[1] },
+  { icon: 'trophy', ...t.muzicmaniaPage.modes[2] },
 ];
 
 export default function MuzicManiaPage() {
@@ -157,10 +146,10 @@ export default function MuzicManiaPage() {
             />
           </Floating>
           <p className="mt-6 text-[10px] font-black uppercase tracking-[0.4em] text-[#ff66dd]">
-            Juego · Música · Web
+            {t.muzicmaniaPage.kicker}
           </p>
           <h1 className="mt-3 bg-gradient-to-r from-[#4800ff] via-[#ff33cc] to-[#68cfff] bg-clip-text font-header text-4xl font-black uppercase tracking-tighter text-transparent md:text-6xl">
-            El juego de ritmo definitivo
+            {t.muzicmaniaPage.title}
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-white/60">
             {project.longDescription}
@@ -182,7 +171,7 @@ export default function MuzicManiaPage() {
               className="inline-flex items-center gap-2 rounded-xl border border-[#ff33cc]/50 bg-[#ff33cc]/10 px-6 py-3.5 text-sm font-bold text-[#ff66dd] transition-all hover:bg-[#ff33cc]/20"
             >
               <Icon name="music" size={16} />
-              Ver la biblioteca completa
+              {t.muzicmaniaPage.viewLibrary}
             </a>
           </div>
         </header>
@@ -208,11 +197,11 @@ export default function MuzicManiaPage() {
             <div>
               <h2 id="muzicmania-library" className="flex items-center gap-3 font-header text-3xl font-black text-white">
                 <Icon name="music" size={26} />
-                Biblioteca · Genesis Neon
+                {t.muzicmaniaPage.libraryTitle}
               </h2>
               <p className="mt-2 flex items-center gap-2 text-xs uppercase tracking-widest text-white/40">
                 <Icon name="camera" size={14} />
-                Álbum original de {ALBUM.artist} · {ALBUM.year}
+                {fillTemplate(t.muzicmaniaPage.albumBy, { artist: ALBUM.artist, year: ALBUM.year })}
               </p>
             </div>
             <a
@@ -222,7 +211,7 @@ export default function MuzicManiaPage() {
               className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-white/70 transition-all hover:border-[#ff33cc]/50 hover:text-[#ff66dd]"
             >
               <Icon name="external" size={13} />
-              Abrir en el juego
+              {t.muzicmaniaPage.openInGame}
             </a>
           </div>
 
@@ -238,20 +227,20 @@ export default function MuzicManiaPage() {
               />
               <h3 className="mt-5 font-header text-xl font-black text-white">{ALBUM.title}</h3>
               <p className="text-[10px] uppercase tracking-[0.3em] text-[#ff66dd]">{ALBUM.artist}</p>
-              <p className="mt-3 text-xs leading-relaxed text-white/50">{ALBUM.description}</p>
+              <p className="mt-3 text-xs leading-relaxed text-white/50">{albumDescOf(t)}</p>
               <div className="mt-4 flex flex-wrap justify-center gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/40 px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-white/60">
-                  <Icon name="music" size={11} /> 4 pistas jugables
+                  <Icon name="music" size={11} /> {t.muzicmaniaPage.playableTracks}
                 </span>
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/40 px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-white/60">
-                  <Icon name="clock" size={11} /> 16:26 en total
+                  <Icon name="clock" size={11} /> {t.muzicmaniaPage.totalTime}
                 </span>
               </div>
             </div>
 
             {/* Pistas jugables en slider horizontal */}
             <ProjectSlider ariaLabel="Pistas del álbum Genesis Neon" itemClassName="w-[19rem] sm:w-[21rem]">
-              {TRACKS.map((track) => (
+              {tracksOf(t).map((track) => (
                 <article
                   key={track.id}
                   className="flex h-full flex-col rounded-[1.75rem] border border-white/10 bg-white/[0.03] p-5 transition-all hover:-translate-y-1 hover:border-[#ff33cc]/40 hover:bg-[#ff33cc]/5"
@@ -279,20 +268,20 @@ export default function MuzicManiaPage() {
                       <Icon name="signal" size={12} /> {track.bpm} BPM
                     </span>
                     <span className="inline-flex items-center gap-1.5">
-                      <Icon name="star" size={12} /> {track.stars} estrellas
+                      <Icon name="star" size={12} /> {track.stars} {t.muzicmaniaPage.stars}
                     </span>
                     <span className="inline-flex items-center gap-1.5">
-                      <Icon name="play" size={12} /> {track.plays.toLocaleString('es-VE')} partidas
+                      <Icon name="play" size={12} /> {track.plays.toLocaleString('es-VE')} {t.muzicmaniaPage.plays}
                     </span>
                   </div>
                   <div className="mt-4 rounded-2xl border border-white/10 bg-black/40 p-3 text-center">
                     <p className="flex items-center justify-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-white/40">
-                      <Icon name="trophy" size={11} /> Récord global
+                      <Icon name="trophy" size={11} /> {t.muzicmaniaPage.globalRecord}
                     </p>
                     <p className="mt-1 font-header text-lg font-black text-[#ff66dd]">
                       {track.record.toLocaleString('es-VE')}
                     </p>
-                    <p className="text-[9px] uppercase tracking-wider text-white/40">por {track.recordUser}</p>
+                    <p className="text-[9px] uppercase tracking-wider text-white/40">{fillTemplate(t.muzicmaniaPage.byUser, { user: track.recordUser })}</p>
                   </div>
                 </article>
               ))}
@@ -304,10 +293,10 @@ export default function MuzicManiaPage() {
         <section className="mb-16" aria-labelledby="muzicmania-how">
           <h2 id="muzicmania-how" className="mb-6 flex items-center gap-3 font-header text-3xl font-black text-white">
             <Icon name="target" size={26} />
-            Cómo se juega
+            {t.muzicmaniaPage.howTitle}
           </h2>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {STEPS.map((step, index) => (
+            {stepsOf(t).map((step, index) => (
               <Reveal key={step.title} delay={index * 0.08}>
                 <div className="relative h-full rounded-[1.75rem] border border-white/10 bg-white/[0.03] p-6 transition-all hover:-translate-y-1 hover:border-[#ff33cc]/40">
                   <span className="absolute right-5 top-5 font-header text-3xl font-black text-white/10">
@@ -328,10 +317,10 @@ export default function MuzicManiaPage() {
         <section className="mb-16" aria-labelledby="muzicmania-modes">
           <h2 id="muzicmania-modes" className="mb-6 flex items-center gap-3 font-header text-3xl font-black text-white">
             <Icon name="monitor" size={26} />
-            Web y escritorio
+            {t.muzicmaniaPage.modesTitle}
           </h2>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-            {MODES.map((mode, index) => (
+            {modesOf(t).map((mode, index) => (
               <Reveal key={mode.title} delay={index * 0.1}>
                 <div className="h-full rounded-[1.75rem] border border-white/10 bg-gradient-to-br from-[#4800ff]/10 to-transparent p-6 transition-all hover:-translate-y-1 hover:border-[#68cfff]/40">
                   <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl border border-[#68cfff]/40 bg-[#68cfff]/10 text-[#68cfff]">
@@ -371,8 +360,8 @@ export default function MuzicManiaPage() {
         <InfoCtaRow
           theme={THEME}
           actions={[
-            { label: 'Jugar MuzicMania', href: EXTERNAL_LINKS.muzicmania, icon: 'play', external: true, variant: 'primary' },
-            { label: 'GitHub del monorepo', href: GITHUB_REPO, icon: 'external', external: true, variant: 'ghost' },
+            { label: t.muzicmaniaPage.ctaPlay, href: EXTERNAL_LINKS.muzicmania, icon: 'play', external: true, variant: 'primary' },
+            { label: t.muzicmaniaPage.ctaRepo, href: GITHUB_REPO, icon: 'external', external: true, variant: 'ghost' },
             { label: t.projectPages.viewAll, href: '/projects', icon: 'rocket', variant: 'ghost' },
           ]}
         />
