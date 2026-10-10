@@ -2,20 +2,22 @@
 
 ### Cambios Generales:
 
+> **Deploys y cuota de Vercel (10 oct 2026)**: el plan gratis limita a **100 deployments/día por
+> cuenta**; con ~25 pushes × 4 webs se agotó y los últimos deploys fallaron con
+> `api-deployments-free-per-day` (NO era el código). Solución automática: workflow
+> **`ensure-deploys.yml`** (cada hora, con detección por SHA) relanza los deploys que falten; se
+> recupera solo tras el reinicio diario (00:00 UTC) sin quemar cuota cuando ya está desplegado.
+> Recomendación: **agrupar pushes** (cada push dispara 4 deploys) o valorar Vercel Pro si se
+> vuelve frecuente.
+
+
 #5 Crear sistema de anuncios: Google Adsense, GA4, GTM, Tag y Analytics pack completo.
 
   REVISIÓN 05 oct 2026 (2 días después): enlaces de la API verificados.
-  REVISIÓN 10 oct 2026 (tarde, por API con OAuth del vault — `node scripts/google-status.mjs`):
-  · AdSense cuenta: `READY` (ya no NEEDS_ATTENTION: cuenta configurada a nivel de cuenta).
-  · Sitios: ciszunetwork/ciszubot/ciszukoantony en `REQUIRES_REVIEW`; muzicmania `GETTING_READY`;
-    AutoAds ACTIVADO en los 4. ads.txt re-verificado hoy (200 + `ca-pub-3471969072198962` en las 4).
-  · Único alert: política de contenido Ucrania (informativo).
-  · ACCIÓN SOLO-USUARIO (UI AdSense, sin API): **añadir datos de pago** (titular/banco/dirección/
-    teléfono) y, si Google lo pide, **verificación de identidad** (desde jun-2026, plazo 45 días).
-  · GA4→BigQuery: enlace activo (`properties/551642504/bigQueryLinks/yGFvijtXSdO5rW2I4KfTLw`, US;
-    responde por v1alpha, v1beta da 404). Dataset `analytics`: sigue con 0 tablas (Google aún no
-    emite `analytics.events_*`).
-  Nada más ejecutable localmente; el resto son esperas/revisiones.
+  REVISIÓN 10 oct 2026 (por API con OAuth del vault): AdSense sigue en `NEEDS_ATTENTION` (revisión
+  automática de Google); el enlace GA4→BigQuery EXISTE y está activo (`properties/551642504/   bigQueryLinks/yGFvijtXSdO5rW2I4KfTLw`, US — el endpoint que responde es v1alpha, v1beta da 404);
+  el dataset `analytics` sigue con 0 tablas: Google aún no emite `analytics.events_*` (requiere
+  tráfico + export diario). Ambas cosas son esperas externas, nada que ejecutar localmente.
 
 - [ ] Looker Studio: conectar fuentes GA4 y crear dashboard.
   PENDIENTE de las tablas de BigQuery; además la creación de dashboards de
@@ -30,8 +32,10 @@
   Revisar de nuevo en unos días.
 - [ ] **Looker Studio**: conectar BigQuery → crear dashboard (gratis).
   (Depende de las tablas anteriores; creación manual en la UI.)
-- [ ] **Aprobar sitios AdSense (ESPERA)**: cuenta `READY` (10 oct); los 4 sitios añadidos y en
-  revisión (3 REQUIRES_REVIEW + muzicmania GETTING_READY, AutoAds ON). Falta datos de pago (UI).
+- [ ] **Aprobar sitios AdSense (ESPERA)**: verificado por API (05 oct) que la
+  cuenta está en `state: NEEDS_ATTENTION` (revisión automática de Google, no se
+  acelera). Los 4 sitios siguen en revisión. Verificar en la UI de AdSense en
+  unos días.
 
   - ads.txt: VERIFICADO correcto en las 4 webs (03 oct). El aviso "No encontrado" de AdSense
     era del 21 sept (antes de servir ads.txt); se corregirá en el próximo escaneo de AdSense.
@@ -107,7 +111,7 @@
 
 **Ciszubot Website:**
 
-- [X] Terminar paginas de dashboard (auth). Corregir la configuracion de la cuenta para permite doble login, usuario logeado con ciszu ID puede configurar su cuenta, usuario logeado con discord accede a dasboard, usuario logeado en ambos control total. Actualmente existe un problema claro, si ingreso al login luego de logearme con discord, dice que "CISZU ID ALREADY CONNECTED" lo cual es falso, por al ingresar en configuracion sigue pidiendo ingresar a CISZU ID. Esto se debe por que nunca se logea a ciszu ID.
+- [ ] Terminar paginas de dashboard (auth). Corregir la configuracion de la cuenta para permite doble login, usuario logeado con ciszu ID puede configurar su cuenta, usuario logeado con discord accede a dasboard, usuario logeado en ambos control total. Actualmente existe un problema claro, si ingreso al login luego de logearme con discord, dice que "CISZU ID ALREADY CONNECTED" lo cual es falso, por al ingresar en configuracion sigue pidiendo ingresar a CISZU ID. Esto se debe por que nunca se logea a ciszu ID.
 
   El panel de auth de login y register deben ser inteligentes, si inicio con ciszu ID o me regsitro con ciszu ID obligatoriamente para usar el dashboard debo iniciar sesion a discord, y si quiero usar la config de la cuenta debo logearme o registrarme en ciszu ID. Es decir, el Discord OAuth y CiszuID no son obligatorios entre si, pero son duales y independientes.  De esta manera los paneles paginas de auth register y login quitan la zona de discord o quitan la zona de ciszu ID dependiendo de si el usuario esta o no esta logeado a ese panel. Es decir el auth de ciszubot es especial y se debe cambiar las pagians de auth para dividirlo entre el panel de discord y el panel de ciszu ID. Se debe reforzar la verificacion de ambas sesiones para que no de falsos positivos como ahora.
 
@@ -116,58 +120,25 @@
   Por cada servidor no invitado siempre exitir un boton para invitar a ese servidor, y un boton de "configurar" que siempre dara error en caso de que no este invitado. El servidor debe estar con un efecto apagado cuando no este invitado y advertir de antes individualmente. Actualmente si se cumple, pero solo para el slidebar, tambien se debe aplicar para la zona de servidores de resumen global.
 
   Cuando se mencione la palabra o tag OFFLINE debe estar en rojo, con animacion de un punto en live en rojo, no un tag amarillo.
-  El slidebar actual tiene un problema claro. Todo esta muy amontonado. Y usa no se reutiliza los compontentes. Primero que nada el slidebar debe ser mas grande, mas ancho, ademas de estar mas pegado a la izquierda, es decir tiene demasiado margin actualmente.
+  El slidebar actual tiene un problema claro. Todo esta muy amontonado. Y usa no se reutiliza los compontentes. Primero que nada el slidebar debe ser mas grande, mas ancho, ademas de estar mas pegado a la izquierda, es decir tiene demasiado margin o padding actualmente. Cambia la seccion de AYUDA por ATAJOS y lleva la opcion de idiomas y temas hacia alli. Mueve la seccion de cuenta hacia arriba del todo antes de resumen y utiliza como icono de perfil el icono de perfil de discord del usuario y no un default a menos que no tenga. Cada opcion debe tener colores hover o degradados unicos al seleccionar. Algo muy importante es que la opcion de tema y la opcion de idiomas NO deben ser opciones con un componente nuevo, es decir, debes reutilizar el compontente de idiomas y el componente de temas. Extrae desde el modal de preferencias locales el de tema y el de idioma y llevalos hacia ese slidebar de manera vertical y adaptada con minimodales emergentes si hace falta por ejemplo para mostrar los idiomas. Cuando se mencione o un tag de invite o boton de invite utiliza el degradado de invite del header. Finalmente cambia la seccion de servidores por una seccion desplegable. No como una lista, si no como un mosaico dentro de un modal popover o popup que aperezca estilo toggle, es una seccion importante y unica, especial por que al seleccionar apareceran los servidores. La seccion debe estar asignada sin nung servidor al inicio (dafault global) al seleccionar una opcion es cuando cambia al servidor seleccionado. Solo se puede seleccionar 1 servidor, no es multicheck es un cambio de servidor. Cuando esta en un servidor en especifoc debe aparecer una banda o seccion arriba del todo mo un herotitle que diga el servidor actual para saber en donde se estan aplicando los cambios, ademas de cambiar la seccion dentro del slidebar. En la opcion de perfil debe aparecerse los 2 nombres de la cuenta aparte del perfil. Debe ser una subseccion al seleccionarlo toggle flechita aparece un modal pegado el slidebar popup o popover que ahora si aparezca las opciones de configuracion o de perfil.
+  Los useful links quitalos del resumen, es innecesario ya teniendo los quickdocks.
 
-  Los servidores en el sliderbard deben estar dentro de una categoria del sliderbard, como servers. Al no tener seleccionado nada el usuario solo vera el resumen, al seleccionar aparecera un segundo slidebard a la derecha o una extension para las categorias por opcion de configuracion, por defecto el resumen dentro del servidor. Con un hero title banner y preview resumen entero del servidor, y luego por cada opcion iconos etc, al seleccionar aparece las opciones.
+  Agranda la seccion de tus servidores en el resumen, agrega quick acts acciones rapidas, mas informacion, animaciones y mas. Despues de eso seria la seccion de prequickdocks que ya dije no deberia estar alli si no fuera de esa zona de config.
 
   Intenta aprovechar el espacio, cambia el fondo por cada servidor. Aprovecha caracteristicas de discord.
+  Agrega mas iconos por ejemplo para marcar funciones premimum o beta, la zona de beta trial entre otros.
+
+  Actualmente el discleimer de ciszubot esta mas o menos bien pero me gustaria que el icono fuera rojo, que el discleimer sea mas inponente si falta crear un nuevo tipo de discleimer. Finalmente actualmente la razon es no reason specified ya te dije que selecciones el de mantenimiento.
+  Finalmente, agrega mas informacion y botones a las secciones de prequickdocks, agrega mas info en how to use ciszubot, ademas en la zona de patrocinio utiliza los widgets, utiliza los iconos y eso de cooming soon no me gusta terminalo usa links reales, cambia el color por cada boton funcional, etc. Agranda la secciones para que no sean cards en fila si no secciones grandes.
+
+  El error mas gigante actual es que actualmente el bot YA esta invitado en 2 servidores donde YO tengo acceso a admin, pero en el dashboard no lo detecta y sigue diciendo que "se necesita invitar", talvez por que el bot este apagado o no lo se, intenta reforzar el sistema de verificacion si un bot esta o no adentro de un servidor y sus permisos. Si el bot necesita permisos por accion o por opcion pedir o discleimer modal emergente. Aclarar si hubo un error al invitar, redireccion fallback despues de una invitacion. Autoactualizacion, modal de gracias por invitar en dashboard. Guardar informacion del servidor como su ID o nombre. Mejorar el sistema de comprobacion de staff del servidor, y si el bot esta apagado y es necesario para sincronizar el servidor y su invitacion aclarar dentro del error la razon (por que esta offline.)
 
   Las acciones del usuario no son guardables hasta que le de a un boton de guardar dentro de un panel flotante que aparecera solamente cuando se registra cambios no guardados, tambein existira la opcion de guardado automatico configurable activado por defacto, y la opcion deshacer o rehacer dentro de ese panel. Aparece con animacion fluida inferior sticky, Al guardar hacer animacion de guardando, al finalizar correctamente el guardado y aplicaciones reales mostrar que todo esta correcto de lo contrario error. Y quitar autoamticamente el panel a los 1 segundo. El usuario solo puede hacer cambios despues de terminar el guardado anterior. Los datos del servidor se debe actualizar constantemente, es decir, si un usuario crea un rol, y en algunas de las opciones se requiere seleccionar roles del servidor, si el usuario no recargo la pagina puede recargar la pagina, recargar con un boton flotante para recargar datos del servidor o esperar un periodo de tiempo re recarge automatico, es decir paginas dinamicas.
-
-  Finalmente ten en cuenta que el dashboard solo es accesible para admins del servidor, si se detecta via discord que el usuario no es admin del servidor denegar acceso inmediato.
-
-  Tambien en dashboard antes de los quickdocks, crea varias secciones. Como soporte, auda, como usar, e incluso autopatrocinio como invitar el bot a otros servidores, integrarlo en el perfil, ver perfiles de disboard, discordbot y top gg entre otros.
 
   Finalmente, todas las opciones deben tener etiquetas de FREE, pero algunas que TU consideres PREMIUM. Agregalas pero alado de esa etiqueta agrega que sera por BETA TRIAL FREE, es decir todas son FREE, el sistema premium se agregara despues, incluso. En las secciones prequickdocks agrega un discleimer de que las opciones de BETA TRIAL FREE cambiaran a premium en cualquier momento, y que se debe aprovechar este momento.
 
   Por cada servidor en su resumen ademas de info de ciszubot agrega info del servidor. Crea UI para listas de roles, canales, crea campos de textos que permitan markdown de discord, por cada opcion has que la configuracion se peuda cargar atravez de JSONs, algo asi como plantillas universales para que por cada opcion o desde el resumen (global desde el servidor) exportar o importar guardados (backups) que cargan y segun la config aplica los cambios.
 
   Los JSON debe tener una nomenclatura clara, segun por opcion, fecha, usuario, indicar que es un backup de ciszubot etc.
-
-  La verdad no se que mas decir, te dejo la libertad de mejorar el dashboard como quieras, animaciones, interacciones para el usuario por ejemplo ocultar o esconder los slidebards, o retraerlos, o etc. Incluso funciones o cosas que tangan otros bots de discord famosos.
-- [X] DASHBOARD CISZUBOT — gran mejora (spec del 09 oct 2026):
-  · Sidebar por categorías (Servers como categoría; al no seleccionar nada solo resumen; al seleccionar abre
-  sub-sidebar por opciones; resumen por defecto con hero banner + preview completa del servidor).
-  · Accesos directos en el sidebar: FAQ, ayuda, configuración de cuenta, perfil, cambio de idioma y tema.
-  · Más reactividad/animaciones (ocultar/retraer sidebars), fondo por servidor, aprovechar features de Discord.
-  · Guardado con panel flotante sticky (undo/redo, auto-guardado configurable ON por defecto; solo si hay
-  cambios sin guardar; animación guardando→éxito/error; se oculta 1s tras guardar; bloquear cambios hasta
-  terminar el guardado anterior).
-  · Datos dinámicos del servidor: botón flotante de recarga + auto-recarga periódica (roles/canales frescos).
-  · Acceso solo admins del servidor (verificación discord server-side, denegar al instante).
-  · Secciones antes de QuickDocks: soporte, ayuda, cómo usar, autopatrocinio (invitar bot, integrarlo en el
-  perfil, perfiles en Disboard/DiscordBotList/Top.gg) + disclaimer BETA TRIAL FREE.
-  · Etiquetas FREE en todas las opciones; marcar algunas como PREMIUM con badge "BETA TRIAL FREE"
-  (todo gratis durante la beta; el premium real llegará después).
-  · Resumen por servidor: info de CiszuBot + info del servidor (listas de roles, canales), campos de texto
-  con Markdown de Discord, y carga/exportación por JSON (plantillas universales) desde cada opción y desde
-  el resumen global — nomenclatura clara: opción/fecha/usuario/backup-ciszubot.
-  · Botón "Invitar" por servidor no invitado + botón "Configurar" que da error si no está invitado;
-  servidor en efecto apagado + advertencia individual previa.
-  · QuickDocks: moverlos siempre al final de la página (fuera de la zona de scroll, estáticos abajo).
-  ▸ [10 oct 2026] FASE 2 HECHA (commit 21813eca): panel flotante de guardado (undo/redo, autosave ON por
-  defecto configurable, animación guardando→éxito/error, se oculta 1s, bloqueo durante guardado, Ctrl+Z/Y);
-  datos dinámicos del servidor (API con roles/canales/miembros del bot, auto-recarga 60s, botón flotante de
-  recarga); selects con nombres reales (canales/categorías/roles) con fallback manual; resumen del servidor
-  con hero + fondo por servidor (hue del guild) + info de Discord; backups JSON por sección y global con
-  nomenclatura clara (opción/servidor/fecha/usuario); etiquetas FREE / PREMIUM · BETA TRIAL FREE; aviso BETA
-  TRIAL FREE en dashboard y panel; acceso solo admins server-side ya activo; secciones pre-QuickDocks (ayuda,
-  cómo usar, autopatrocinio con integración de perfil e invitación, directorios "próximamente").
-  ▸ [10 oct 2026] SPEC COMPLETO (commit 2bef4e78): sub-sidebar por opción en el servidor (Resumen por
-  defecto, persistente; rail en desktop y chips en móvil); resumen con listas dedicadas de roles (color
-  real de Discord) y canales agrupados por categoría; editor Markdown de Discord para bienvenida/despedida
-  (negrita/itálica/subrayado/tachado/código/spoiler + vista previa en vivo + variables {user} {guild}
-  {members}); además, sistema de estado del bot auto/manual con modal offline, disclaimer obligatorio y
-  sección devcon (commits 502c1413). Pulido final revisado (10 oct): el DashboardShell no renderiza hero — sin duplicidad layout/cliente; cada página tiene un único hero.
 - [ ] Añadir VPS 24 7 AL BOT. (Tarea normal: desplegar el bot en un host 24/7 — panel gratuito
   tipo bot-hosting.net con `deploy/ciszubot-standalone.zip`, o VPS genérico; requiere cuenta y/o pago.
