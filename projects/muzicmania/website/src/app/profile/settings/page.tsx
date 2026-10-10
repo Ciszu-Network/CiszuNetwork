@@ -14,6 +14,7 @@ import { usePageTitle } from '@/lib/usePageTitle';
 
 
 export default function ProfileSettingsPage() {
+  const t = useT();
   usePageTitle('SETTINGS');
   const { user,  setUser,  isHydrated } = useAppStore();
   const { toast } = useToast();
@@ -69,14 +70,14 @@ export default function ProfileSettingsPage() {
         return (
           <div className="space-y-10 relative z-10">
             <div>
-              <h2 className="text-2xl font-header font-black text-neon-blue italic tracking-tighter">DATOS DE CUENTA</h2>
-              <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mt-1">Configuración base de tu identidad.</p>
+              <h2 className="text-2xl font-header font-black text-neon-blue italic tracking-tighter">{t.pages.profileSettings.accountData}</h2>
+              <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mt-1">{t.pages.profileSettings.accountDataDesc}</p>
             </div>
             
             <div className="space-y-6">
               
               <div className="bg-white/5 p-6 rounded-2xl border border-white/10 space-y-4">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white">Foto de Perfil</label>
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white">{t.pages.profileSettings.profilePic}</label>
                 <div className="flex items-center gap-6">
                   <div className="relative w-24 h-24 rounded-full bg-black border-2 border-white/20 overflow-hidden group">
                     {profileData.avatar_url ? (
@@ -95,10 +96,10 @@ export default function ProfileSettingsPage() {
                   </div>
                   <div className="space-y-2">
                     <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest max-w-xs">
-                      Sube una imagen para personalizar tu identidad. La imagen se recortará a un círculo.
+                      {t.pages.profileSettings.uploadHint}
                     </p>
                     <button onClick={() => setIsAvatarModalOpen(true)} className="px-4 py-2 bg-white/10 text-white font-bold text-xs uppercase rounded-lg border border-white/20 hover:bg-white/20 transition-all">
-                      Cambiar Foto
+                      {t.pages.profileSettings.changePhoto}
                     </button>
                   </div>
                 </div>
@@ -106,8 +107,8 @@ export default function ProfileSettingsPage() {
 
               <div className="bg-white/5 p-6 rounded-2xl border border-white/10 space-y-4">
                 <div className="flex justify-between items-center">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white">Nombre de Usuario</label>
-                  <span className="text-[9px] font-bold text-gray-500 bg-black/50 px-3 py-1 rounded-full border border-white/10">Cambiable en 14 días</span>
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white">{t.pages.profileSettings.usernameLabel}</label>
+                  <span className="text-[9px] font-bold text-gray-500 bg-black/50 px-3 py-1 rounded-full border border-white/10">{t.pages.profileSettings.usernameCooldown}</span>
                 </div>
                 <div className="flex gap-4">
                   <input type="text" defaultValue={`@${user.username}`} disabled className="w-full bg-black/80 border border-white/10 rounded-xl px-5 py-3 text-white font-header font-bold opacity-50" />
@@ -117,14 +118,14 @@ export default function ProfileSettingsPage() {
 
               <div className="bg-white/5 p-6 rounded-2xl border border-white/10 space-y-4">
                 <div className="flex justify-between items-center">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white">Biografía</label>
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white">{t.pages.profileSettings.bioLabel}</label>
                   <span className="text-[9px] font-bold text-gray-500">{bio.length}/160</span>
                 </div>
                 <textarea 
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
                   maxLength={160}
-                  placeholder="Cuéntale a la comunidad sobre ti..."
+                  placeholder={t.pages.profileSettings.phBio}
                   className="w-full bg-black/80 border border-white/10 rounded-xl px-5 py-3 text-white font-bold resize-none h-24 placeholder:text-gray-700"
                 />
                 <div className="flex justify-end">
@@ -135,25 +136,25 @@ export default function ProfileSettingsPage() {
                       await supabase.from('profiles').update({ bio }).eq('id', user.id);
                       setProfileData({ ...profileData, bio });
                       setIsSavingBio(false);
-                      toast('[SISTEMA]: Biografía actualizada.', 'success');
+                      toast('[SISTEMA]: {t.pages.profileSettings.bioLabel} actualizada.', 'success');
                     }}
                     className="px-6 py-2 bg-neon-blue/20 text-neon-blue font-bold text-xs uppercase rounded-lg border border-neon-blue/30 hover:bg-neon-blue hover:text-black transition-all disabled:opacity-50 flex items-center gap-2"
                   >
-                    <Icon name="check" size={16} /> {isSavingBio ? 'Guardando' : 'Guardar Biografía'}
+                    <Icon name="check" size={16} /> {isSavingBio ? 'Guardando' : 'Guardar {t.pages.profileSettings.bioLabel}'}
                   </button>
                 </div>
               </div>
 
               <div className="bg-white/5 p-6 rounded-2xl border border-white/10 space-y-4">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white">Email & Teléfono</label>
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white">{t.pages.profileSettings.emailPhone}</label>
                 <div className="space-y-3">
                   <div className="flex gap-4 items-center">
                     <input type="email" defaultValue={user.email} disabled className="flex-1 bg-black/80 border border-white/10 rounded-xl px-5 py-3 text-white font-header font-bold" />
-                    <button className="px-6 py-3 bg-white/10 text-white font-bold text-xs uppercase rounded-xl border border-white/20 hover:bg-white/20 transition-all">Verificar Nuevo</button>
+                    <button className="px-6 py-3 bg-white/10 text-white font-bold text-xs uppercase rounded-xl border border-white/20 hover:bg-white/20 transition-all">{t.pages.profileSettings.verifyNew}</button>
                   </div>
                   <div className="flex gap-4 items-center">
-                    <input type="tel" placeholder="Añadir teléfono para mayor seguridad" disabled className="flex-1 bg-black/80 border border-white/10 rounded-xl px-5 py-3 text-white font-header font-bold placeholder:text-gray-700" />
-                    <button className="px-6 py-3 bg-white/10 text-white font-bold text-xs uppercase rounded-xl border border-white/20 hover:bg-white/20 transition-all">Añadir</button>
+                    <input type="tel" placeholder="{t.pages.profileSettings.addBtn} teléfono para mayor seguridad" disabled className="flex-1 bg-black/80 border border-white/10 rounded-xl px-5 py-3 text-white font-header font-bold placeholder:text-gray-700" />
+                    <button className="px-6 py-3 bg-white/10 text-white font-bold text-xs uppercase rounded-xl border border-white/20 hover:bg-white/20 transition-all">{t.pages.profileSettings.addBtn}</button>
                   </div>
                 </div>
               </div>
@@ -177,34 +178,34 @@ export default function ProfileSettingsPage() {
           <div className="space-y-10 relative z-10">
             <div>
               <h2 className="text-2xl font-header font-black text-neon-cyan italic tracking-tighter">SEGURIDAD</h2>
-              <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mt-1">Protege tu cuenta de accesos no autorizados.</p>
+              <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mt-1">{t.pages.profileSettings.secureDesc}</p>
             </div>
 
             <div className="space-y-6">
               <div className="bg-white/5 p-6 rounded-2xl border border-white/10 space-y-4">
                 <div className="flex items-center gap-3 text-white mb-2">
                   <Icon name="key" size={20} className="text-neon-cyan" />
-                  <h3 className="font-header font-black uppercase text-sm">Cambiar Contraseña</h3>
+                  <h3 className="font-header font-black uppercase text-sm">{t.pages.profileSettings.changePassword}</h3>
                 </div>
                 <div className="space-y-3">
-                  <input type="password" placeholder="Contraseña Antigua" className="w-full bg-black/80 border border-white/10 rounded-xl px-5 py-3 text-white font-header font-bold" />
-                  <input type="password" placeholder="Nueva Contraseña" className="w-full bg-black/80 border border-white/10 rounded-xl px-5 py-3 text-white font-header font-bold" />
-                  <input type="password" placeholder="Repetir Nueva Contraseña" className="w-full bg-black/80 border border-white/10 rounded-xl px-5 py-3 text-white font-header font-bold" />
-                  <button className="w-full py-3 bg-neon-cyan/20 text-neon-cyan font-bold text-xs uppercase rounded-xl border border-neon-cyan/30 hover:bg-neon-cyan hover:text-black transition-all">Actualizar Contraseña</button>
+                  <input type="password" placeholder={t.pages.profileSettings.phOldPassword} className="w-full bg-black/80 border border-white/10 rounded-xl px-5 py-3 text-white font-header font-bold" />
+                  <input type="password" placeholder={t.pages.profileSettings.phNewPassword} className="w-full bg-black/80 border border-white/10 rounded-xl px-5 py-3 text-white font-header font-bold" />
+                  <input type="password" placeholder={t.pages.profileSettings.phRepeatPassword} className="w-full bg-black/80 border border-white/10 rounded-xl px-5 py-3 text-white font-header font-bold" />
+                  <button className="w-full py-3 bg-neon-cyan/20 text-neon-cyan font-bold text-xs uppercase rounded-xl border border-neon-cyan/30 hover:bg-neon-cyan hover:text-black transition-all">{t.pages.profileSettings.updatePassword}</button>
                 </div>
               </div>
 
               <div className="bg-white/5 p-6 rounded-2xl border border-white/10 flex items-center justify-between">
                 <div>
-                  <h3 className="font-header font-black uppercase text-sm text-white mb-1">Autenticación de 2 Factores (2FA)</h3>
-                  <p className="text-[10px] text-gray-500 font-bold">Añade una capa extra de seguridad vía Email o SMS.</p>
+                  <h3 className="font-header font-black uppercase text-sm text-white mb-1">{t.pages.profileSettings.twoFactor}</h3>
+                  <p className="text-[10px] text-gray-500 font-bold">{t.pages.profileSettings.twoFactorDesc}</p>
                 </div>
                 <button className="px-6 py-3 bg-white/10 text-white font-bold text-xs uppercase rounded-xl border border-white/20 hover:bg-white/20 transition-all">Activar</button>
               </div>
 
               <div className="bg-white/5 p-6 rounded-2xl border border-white/10 space-y-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-header font-black uppercase text-sm text-white">Dispositivos Conectados</h3>
+                  <h3 className="font-header font-black uppercase text-sm text-white">{t.pages.profileSettings.connectedDevices}</h3>
                   <button 
                     onClick={async () => {
                       await supabase.auth.signOut({ scope: 'others' });
@@ -212,7 +213,7 @@ export default function ProfileSettingsPage() {
                     }}
                     className="text-[10px] font-black uppercase tracking-widest text-red-400 hover:text-red-300 hover:underline transition-all"
                   >
-                    Cerrar otras sesiones
+                    {t.pages.profileSettings.closeOtherSessions}
                   </button>
                 </div>
                 
@@ -222,10 +223,10 @@ export default function ProfileSettingsPage() {
                   <div className="flex items-center gap-4 relative z-10">
                     <Icon name="monitor" size={32} className="text-neon-cyan drop-shadow-sm" />
                     <div>
-                      <div className="text-white font-black text-sm uppercase">Este Dispositivo</div>
+                      <div className="text-white font-black text-sm uppercase">{t.pages.profileSettings.thisDevice}</div>
                       <div className="text-neon-cyan text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 mt-1">
                         <span className="w-2 h-2 rounded-full bg-neon-cyan animate-pulse" />
-                        Sesión Actual (Navegador)
+                        {t.pages.profileSettings.currentSession}
                       </div>
                     </div>
                   </div>
@@ -236,12 +237,12 @@ export default function ProfileSettingsPage() {
                   <div className="flex items-center gap-4 opacity-50 group-hover:opacity-100 transition-opacity">
                     <Icon name="smartphone" size={32} className="text-gray-500 group-hover:text-white transition-colors" />
                     <div>
-                      <div className="text-gray-300 font-black text-sm uppercase">Dispositivo Móvil</div>
-                      <div className="text-gray-600 text-[10px] font-bold uppercase tracking-widest">Requiere configuración backend para listar historiales</div>
+                      <div className="text-gray-300 font-black text-sm uppercase">{t.pages.profileSettings.mobileDevice}</div>
+                      <div className="text-gray-600 text-[10px] font-bold uppercase tracking-widest">{t.pages.profileSettings.mobileDeviceDesc}</div>
                     </div>
                   </div>
                   <button 
-                    onClick={() => toast('[SISTEMA]: Utiliza "Cerrar otras sesiones" para forzar la desconexión.')}
+                    onClick={() => toast('[SISTEMA]: Utiliza "{t.pages.profileSettings.closeOtherSessions}" para forzar la desconexión.')}
                     className="px-4 py-2 bg-red-500/10 text-red-400 font-bold text-[10px] uppercase rounded-lg hover:bg-red-500 hover:text-white transition-all"
                   >
                     Desconectar
@@ -257,17 +258,17 @@ export default function ProfileSettingsPage() {
           <div className="space-y-10 relative z-10">
             <div>
               <h2 className="text-2xl font-header font-black text-neon-purple italic tracking-tighter">PRIVACIDAD</h2>
-              <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mt-1">Controla quién puede ver tu actividad.</p>
+              <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mt-1">{t.pages.profileSettings.privacyDesc}</p>
             </div>
             <div className="space-y-4">
               <div className="bg-white/5 p-6 rounded-2xl border border-white/10 space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="font-header font-black uppercase text-sm text-white mb-1">Visibilidad de Cuenta</h3>
-                    <p className="text-[10px] text-gray-500 font-bold">Las cuentas privadas no aparecen en las leaderboards ni buscadores.</p>
+                    <h3 className="font-header font-black uppercase text-sm text-white mb-1">{t.pages.profileSettings.visibilityTitle}</h3>
+                    <p className="text-[10px] text-gray-500 font-bold">{t.pages.profileSettings.visibilityDesc}</p>
                   </div>
                   <select disabled className="bg-black border border-white/20 rounded-xl px-4 py-2 text-white font-header font-bold text-xs outline-none cursor-not-allowed opacity-50">
-                    <option>Pública (Obligatorio en Beta)</option>
+                    <option>{t.pages.profileSettings.visibilityPublic}</option>
                     <option>Privada</option>
                   </select>
                 </div>
@@ -276,8 +277,8 @@ export default function ProfileSettingsPage() {
               <div className="bg-white/5 p-6 rounded-2xl border border-white/10 space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="font-header font-black uppercase text-sm text-white mb-1">Privacidad de Fecha de Nacimiento</h3>
-                    <p className="text-[10px] text-gray-500 font-bold">Elige quién puede ver tu edad en el perfil público.</p>
+                    <h3 className="font-header font-black uppercase text-sm text-white mb-1">{t.pages.profileSettings.birthPrivacy}</h3>
+                    <p className="text-[10px] text-gray-500 font-bold">{t.pages.profileSettings.birthPrivacyDesc}</p>
                   </div>
                   <select 
                     value={profileData.birth_privacy || 'private'} 
@@ -289,9 +290,9 @@ export default function ProfileSettingsPage() {
                     }}
                     className="bg-black border border-white/20 rounded-xl px-4 py-2 text-white font-header font-bold text-xs outline-none hover:border-white/40 focus:border-neon-purple transition-all"
                   >
-                    <option value="public">Público</option>
-                    <option value="friends">Solo Amigos</option>
-                    <option value="private">Nadie (Privado)</option>
+                    <option value="public">{t.pages.profileSettings.publicOpt}</option>
+                    <option value="friends">{t.pages.profileSettings.friendsOnly}</option>
+                    <option value="private">{t.pages.profileSettings.noOne}</option>
                   </select>
                 </div>
               </div>
@@ -304,7 +305,7 @@ export default function ProfileSettingsPage() {
           <div className="space-y-10 relative z-10">
             <div>
               <h2 className="text-2xl font-header font-black text-yellow-500 italic tracking-tighter">NOTIFICACIONES</h2>
-              <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mt-1">Mantente al tanto de la comunidad.</p>
+              <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mt-1">{t.pages.profileSettings.communityDesc}</p>
             </div>
             <div className="space-y-2">
               {['Noticias y Actualizaciones (Push)', 'Nuevos retos y canciones (Email)', 'Alertas de Seguridad (Ambos)'].map((item, i) => (
@@ -321,24 +322,24 @@ export default function ProfileSettingsPage() {
         return (
           <div className="space-y-10 relative z-10">
             <div>
-              <h2 className="text-2xl font-header font-black text-white italic tracking-tighter">INFORMACIÓN DETALLADA</h2>
-              <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mt-1">Datos técnicos de tu identidad digital.</p>
+              <h2 className="text-2xl font-header font-black text-white italic tracking-tighter">{t.pages.profileSettings.detailedInfo}</h2>
+              <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mt-1">{t.pages.profileSettings.detailedInfoDesc}</p>
             </div>
             
             <div className="bg-white/5 p-6 rounded-2xl border border-white/10 space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-[9px] text-gray-500 font-black uppercase tracking-widest block mb-1">Fecha de Creación</label>
-                  <div className="text-white font-bold text-sm">Registrado hace poco (Fase Beta)</div>
+                  <label className="text-[9px] text-gray-500 font-black uppercase tracking-widest block mb-1">{t.pages.profileSettings.creationDate}</label>
+                  <div className="text-white font-bold text-sm">{t.pages.profileSettings.registeredBeta}</div>
                 </div>
                 <div>
-                  <label className="text-[9px] text-gray-500 font-black uppercase tracking-widest block mb-1">Estado de Cuenta</label>
-                  <div className="text-neon-green font-bold text-sm uppercase">Activa & Verificada</div>
+                  <label className="text-[9px] text-gray-500 font-black uppercase tracking-widest block mb-1">{t.pages.profileSettings.accountStatus}</label>
+                  <div className="text-neon-green font-bold text-sm uppercase">{t.pages.profileSettings.activeVerified}</div>
                 </div>
               </div>
 
               <div>
-                <label className="text-[9px] text-gray-500 font-black uppercase tracking-widest block mb-2">Identificador Único (UUID)</label>
+                <label className="text-[9px] text-gray-500 font-black uppercase tracking-widest block mb-2">{t.pages.profileSettings.uuidLabel}</label>
                 <div className="flex gap-4 items-center">
                   <div className="flex-1 bg-black/80 border border-white/10 rounded-xl px-5 py-3 text-gray-400 font-mono text-sm tracking-widest">
                     {showUUID ? user.id : '••••••••-••••-••••-••••-••••••••••••'}
@@ -353,8 +354,8 @@ export default function ProfileSettingsPage() {
             <button className="w-full flex items-center justify-center gap-3 p-6 rounded-2xl border-2 border-dashed border-white/20 text-white hover:border-white/50 hover:bg-white/5 transition-all">
               <Icon name="download" size={24} />
               <div>
-                <div className="font-header font-black uppercase tracking-widest">Solicitar Descarga de Datos</div>
-                <div className="text-[10px] text-gray-400">Recibe un archivo con todo tu historial, scores y configuraciones.</div>
+                <div className="font-header font-black uppercase tracking-widest">{t.pages.profileSettings.requestData}</div>
+                <div className="text-[10px] text-gray-400">{t.pages.profileSettings.requestDataDesc}</div>
               </div>
             </button>
           </div>
@@ -364,14 +365,14 @@ export default function ProfileSettingsPage() {
         return (
           <div className="space-y-10 relative z-10">
             <div>
-              <h2 className="text-2xl font-header font-black text-neon-blue italic tracking-tighter">AYUDA Y SOPORTE</h2>
-              <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mt-1">Recursos y políticas de MuzicMania.</p>
+              <h2 className="text-2xl font-header font-black text-neon-blue italic tracking-tighter">{t.pages.profileSettings.helpSupport}</h2>
+              <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mt-1">{t.pages.profileSettings.helpSupportDesc}</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {['Términos de Servicio', 'Política de Privacidad', 'FAQ del Juego', 'Contactar al Soporte', 'Manual de Atajos', 'Reportar un Bug'].map((item, i) => (
                 <button key={i} className="p-6 bg-white/5 border border-white/10 rounded-xl text-left hover:bg-white/10 hover:border-neon-blue/50 transition-all group">
                   <div className="text-white font-header font-black uppercase text-sm group-hover:text-neon-blue">{item}</div>
-                  <div className="text-[10px] text-gray-500 mt-2">Leer artículo completo →</div>
+                  <div className="text-[10px] text-gray-500 mt-2">{t.pages.profileSettings.readArticle}</div>
                 </button>
               ))}
             </div>
@@ -382,16 +383,16 @@ export default function ProfileSettingsPage() {
         return (
           <div className="space-y-10 relative z-10">
             <div>
-              <h2 className="text-2xl font-header font-black text-red-500 italic tracking-tighter">ZONA DE PELIGRO</h2>
-              <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mt-1">Acciones destructivas para tu cuenta.</p>
+              <h2 className="text-2xl font-header font-black text-red-500 italic tracking-tighter">{t.pages.profileSettings.dangerZone}</h2>
+              <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest mt-1">{t.pages.profileSettings.dangerDesc}</p>
             </div>
             
             <div className="space-y-4">
               <div className="p-6 border border-red-500/20 bg-red-500/5 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                  <h3 className="text-red-400 font-header font-black uppercase">Desactivar Cuenta</h3>
+                  <h3 className="text-red-400 font-header font-black uppercase">{t.pages.profileSettings.deactivate}</h3>
                   <p className="text-gray-500 text-[10px] uppercase font-bold mt-1 max-w-sm">
-                    Oculta tu perfil y récords. Puedes reactivarla iniciando sesión nuevamente.
+                    {t.pages.profileSettings.deactivateDesc}
                   </p>
                 </div>
                 <button className="px-6 py-3 bg-red-500/20 text-red-500 border border-red-500/30 rounded-xl font-bold text-xs uppercase hover:bg-red-500 hover:text-white transition-all whitespace-nowrap">
@@ -401,13 +402,13 @@ export default function ProfileSettingsPage() {
 
               <div className="p-6 border border-red-500/50 bg-red-500/10 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                  <h3 className="text-red-500 font-header font-black uppercase text-lg">Eliminar Cuenta Permanentemente</h3>
+                  <h3 className="text-red-500 font-header font-black uppercase text-lg">{t.pages.profileSettings.deletePermanent}</h3>
                   <p className="text-gray-400 text-[10px] uppercase font-bold mt-1 max-w-sm">
-                    Tus datos se borrarán, pero se conservará tu ID (UUID) anónimamente por integridad de la base de datos. Tienes 1 semana para deshacer esta acción si te arrepientes.
+                    {t.pages.profileSettings.deleteDesc}
                   </p>
                 </div>
                 <button className="px-6 py-3 bg-red-500 text-white font-black text-xs uppercase rounded-xl hover:bg-red-600 transition-all whitespace-nowrap shadow-[0_0_20px_rgba(239,68,68,0.4)]">
-                  Borrar Cuenta
+                  {t.pages.profileSettings.deleteBtn}
                 </button>
               </div>
             </div>
@@ -437,10 +438,10 @@ export default function ProfileSettingsPage() {
             </div>
             <div>
               <h1 className="text-3xl md:text-5xl font-header font-black uppercase tracking-tighter text-white">
-                CONFIGURACIÓN
+                {t.pages.profileSettings.configTitle}
               </h1>
               <p className="text-neon-cyan font-black tracking-[0.2em] uppercase text-[10px]">
-                Ajustes del Ecosistema MuzicMania
+                {t.pages.profileSettings.configDesc}
               </p>
             </div>
           </div>
@@ -473,7 +474,7 @@ export default function ProfileSettingsPage() {
                 className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-header font-black uppercase tracking-widest text-xs bg-red-500/5 text-red-400 hover:bg-red-500 hover:text-white transition-all shadow-lg active:scale-95 border border-red-500/20"
               >
                 <Icon name="logout" size={16} />
-                CERRAR SESIÓN
+                {t.pages.profileSettings.logoutBtn}
               </button>
             </div>
           </aside>
