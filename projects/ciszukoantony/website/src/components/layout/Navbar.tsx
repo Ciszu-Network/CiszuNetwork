@@ -425,7 +425,7 @@ export default function Navbar() {
                 />
               </div>
 
-              {q.length > 0 && suggestions.length === 0 && (
+              {0 < q.length && suggestions.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-6 animate-fade-in-down space-y-3">
                   <p className="text-gray-500 font-header font-black uppercase text-xs tracking-widest italic">{dict.nav.noResults} &quot;{searchQuery.trim()}&quot;</p>
                   <button onClick={() => setSearchQuery('')}

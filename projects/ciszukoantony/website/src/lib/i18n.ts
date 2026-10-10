@@ -677,6 +677,19 @@ const es = {
     title: 'Sobre Mí',
     name: 'Ciszuko Antony (Francisco Garcia Antonio M. / y8)',
   },
+  settingsPage: {
+    title: 'Configuración de cuenta',
+    subtitleA: 'Tu cuenta CISZU ID en',
+  },
+  editAdminPage: {
+    title: 'Acceso de administración',
+    subtitle: 'Visual Builder de Puck · editor reservado a administración. Introduce el token de acceso.',
+    tokenPlaceholder: 'Token de acceso',
+  },
+  appealPage: {
+    title: 'Apelación de sanciones',
+    subtitle: 'Revisa tus sanciones activas y envía una apelación al equipo. También sirve si no tienes sanciones.',
+  },
   projects: {
     title: 'Proyectos',
     wantMore: '¿Quieres saber más?',
@@ -1422,6 +1435,19 @@ const en: typeof es = {
   about: {
     title: 'About Me',
     name: 'Ciszuko Antony (Francisco Garcia Antonio M. / y8)',
+  },
+  settingsPage: {
+    title: 'Account settings',
+    subtitleA: 'Your CISZU ID account at',
+  },
+  editAdminPage: {
+    title: 'Admin access',
+    subtitle: 'Puck Visual Builder · editor restricted to administration. Enter the access token.',
+    tokenPlaceholder: 'Access token',
+  },
+  appealPage: {
+    title: 'Sanction appeal',
+    subtitle: 'Review your active sanctions and send an appeal to the team. It also works if you have no sanctions.',
   },
   projects: {
     title: 'Projects',

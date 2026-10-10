@@ -15,6 +15,7 @@ import AdsWithUser from "@/components/providers/AdsWithUser";
 import { I18nProvider } from "@/components/providers/I18nProvider";
 import "./globals.scss";
 
+const SITE_NAME = 'Ciszuko Antony';
 const PROFILE_PIC = assetResolver.resolve("projects/ciszukoantony/content/logos/images/samples/circle/circle_1_yt.png");
 const OG_IMAGE = assetResolver.resolve("projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png");
 
@@ -118,8 +119,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <AdFloat placement="corner" side="bottom-right" />
             <AdPill placement="body" />
             <RedirectGuard debug={true} />
-            <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={PROFILE_PIC} title="Ciszuko Antony" subtitle="Ciszuko Antony Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszukoantony">
-              <AdBlockerGuard site="ciszukoantony" logo={PROFILE_PIC} title="Ciszuko Antony" accent="#a78bfa" accentAlt="#ff33cc" donateHref="https://ciszukoantony.vercel.app/donate">
+            <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={PROFILE_PIC} title={SITE_NAME} subtitle="Ciszuko Antony Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszukoantony">
+              <AdBlockerGuard site="ciszukoantony" logo={PROFILE_PIC} title={SITE_NAME} accent="#a78bfa" accentAlt="#ff33cc" donateHref="https://ciszukoantony.vercel.app/donate">
               {/* BetaDisclaimer removido: ahora usa el sistema de push global (GlobalDisclaimer) */}
               <HideOnEdit><Navbar /></HideOnEdit>
               <HideOnEdit><ZoomWarning /></HideOnEdit>

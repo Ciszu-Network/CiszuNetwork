@@ -12,7 +12,8 @@ export function RichText({ parts, className, linkClassName = 'text-brand hover:t
   return (
     <p className={className}>
       {parts.map((part, i) =>
-        'link' in part ? (
+        'link'
+        in part ? (
           <a key={i} href={part.href} target="_blank" rel="noopener noreferrer" className={linkClassName}>
             {part.link}
           </a>

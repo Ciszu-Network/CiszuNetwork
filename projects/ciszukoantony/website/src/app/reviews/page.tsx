@@ -784,7 +784,8 @@ export default function ReviewsPage() {
             <div className="py-24 text-center text-sm font-black uppercase tracking-[0.4em] text-white/40">
               {dict.reviews.loading}
             </div>
-          ) : error ? (
+          ) :
+          error ? (
             <div className="rounded-[3rem] border-2 border-dashed border-amber-400/30 bg-black p-12 text-center">
               <h2 className="font-header text-2xl font-black uppercase tracking-tight text-white">
                 {dict.reviews.errorTitle}
@@ -799,7 +800,8 @@ export default function ReviewsPage() {
                 Reintentar
               </button>
             </div>
-          ) : sorted.length === 0 ? (
+          ) :
+          sorted.length === 0 ? (
             <div className="rounded-[3rem] border-2 border-dashed border-white/15 bg-black p-12 text-center">
               <div className="mx-auto mb-5 h-14 w-14">
                 <Star fill={1} color={`${accent}80`} size={56} />

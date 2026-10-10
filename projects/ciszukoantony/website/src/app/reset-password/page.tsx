@@ -211,7 +211,8 @@ export default function ResetPasswordPage() {
                 <div className="w-10 h-10 mx-auto border-2 border-white/20 border-t-neon-blue rounded-full animate-spin" />
                 <p className="text-gray-400 text-[11px] font-bold">{dict.auth.checkingLink}</p>
               </div>
-            ) : done ? (
+            ) :
+            done ? (
               <RecoveryNotice
                 tone="success"
                 title={dict.auth.passwordUpdated}
@@ -219,7 +220,8 @@ export default function ResetPasswordPage() {
                 actionLabel={dict.auth.goToLogin}
                 onAction={() => router.replace('/login')}
               />
-            ) : status && !status.canSetPassword ? (
+            ) :
+            status && !status.canSetPassword ? (
               <RecoveryNotice
                 tone="warning"
                 title={status.title}

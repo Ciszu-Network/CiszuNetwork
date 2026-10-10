@@ -63,7 +63,7 @@ export default function DownloadsPage() {
           <p className="text-gray-400 text-sm leading-relaxed mb-6">
             {dict.downloads.pdwaBefore}<strong className="text-white">{dict.downloads.pdwaFull}</strong>{dict.downloads.pdwaAfter}{' '}
             <a href="https://ciszukoantony.vercel.app" target="_blank" rel="noopener noreferrer" className="text-brand font-bold hover:text-brand-200 transition-colors">
-              ciszukoantony.vercel.app
+              {"ciszukoantony.vercel.app"}
             </a>
             .
           </p>

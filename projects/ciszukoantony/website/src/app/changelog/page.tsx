@@ -43,10 +43,13 @@ const THEME: InfoTheme = {
 };
 
 /** Icono de una entrada: usa el icono publicado (devcon) si existe. */
-const entryIcon = (item: { icon?: string; types: ChangelogType[] }) =>
-  (item.icon && (I as Record<string, React.ReactNode>)[item.icon]) ||
-  TAG_CONFIG[item.types[0]]?.icon ||
-  I.history;
+function entryIcon(item: { icon?: string; types: ChangelogType[] }) {
+  return (
+    (item.icon && (I as Record<string, React.ReactNode>)[item.icon]) ||
+    TAG_CONFIG[item.types[0]]?.icon ||
+    I.history
+  );
+}
 
 const NODE_ICON: Record<ChangelogNode['status'], React.ReactNode> = {
   done: I.check,
