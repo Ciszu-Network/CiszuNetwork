@@ -2662,7 +2662,7 @@ const en = {
       { title: 'Music', desc: 'Playback in voice channels with full control.' },
       { title: 'Economy', desc: 'Coins, daily rewards, shop and ranking.' },
       { title: 'Fun', desc: 'Minigames and replies to liven up the chat.' },
-      { title: 'Utility', desc: 'Profile, information and help within everyone's reach.' },
+      { title: 'Utility', desc: "Profile, information and help within everyone's reach." },
       { title: 'Automation', desc: 'Giveaways, embeds and per-server configuration.' },
     ],
     steps: [
