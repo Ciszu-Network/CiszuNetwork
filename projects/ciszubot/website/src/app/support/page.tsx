@@ -14,6 +14,9 @@ import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useClientI18n } from '@/hooks/useClientI18n';
+
+const SUPPORT_EMAIL = 'ciszunetwork@gmail.com';
 
 const I = {
   // Icono de soporte: boya salvavidas circular (Lucide life-buoy), no auriculares.
@@ -89,6 +92,8 @@ const SOCIALS = [
 
 export default function SupportPage() {
   usePageTitle('SUPPORT');
+  const { dict } = useClientI18n();
+  const t = dict.supportPage;
   const { user } = useAppStore();
   const { toast } = useToast();
   const [tickets, setTickets] = useState<any[]>([]);
@@ -99,7 +104,7 @@ export default function SupportPage() {
   const [copied, setCopied] = useState(false);
 
   const copyEmail = async () => {
-    await navigator.clipboard.writeText('ciszunetwork@gmail.com');
+    await navigator.clipboard.writeText(SUPPORT_EMAIL);
     setCopied(true);
     toast('Email copiado al portapapeles', 'success');
     setTimeout(() => setCopied(false), 2000);
@@ -237,7 +242,7 @@ export default function SupportPage() {
                 activeTab === 'new' ? 'bg-neon-pink text-black' : 'bg-white/5 text-gray-500 hover:bg-white/10'
               }`}
             >
-              Nuevo Ticket
+              {t.newTicket}
             </button>
             <button
               onClick={() => setActiveTab('list')}
@@ -263,8 +268,8 @@ export default function SupportPage() {
                          <div className="flex flex-col items-center text-center gap-4">
                             <div className="w-14 h-14 text-neon-cyan drop-shadow-neon-cyan group-hover/card:scale-110 transition-transform">{I.help}</div>
                             <div className="space-y-1">
-                               <h4 className="text-[12px] font-black text-white uppercase tracking-widest italic">Centro de Ayuda</h4>
-                               <p className="text-[9px] text-neon-cyan/60 font-bold uppercase tracking-[0.2em]">Guías y Protocolos</p>
+                               <h4 className="text-[12px] font-black text-white uppercase tracking-widest italic">{t.helpCenter}</h4>
+                               <p className="text-[9px] text-neon-cyan/60 font-bold uppercase tracking-[0.2em]">{t.guidesProtocols}</p>
                             </div>
                          </div>
                       </Link>
@@ -273,7 +278,7 @@ export default function SupportPage() {
                             <div className="w-14 h-14 text-neon-purple drop-shadow-neon-purple group-hover/card:scale-110 transition-transform">{I.contact}</div>
                             <div className="space-y-1">
                                <h4 className="text-[12px] font-black text-white uppercase tracking-widest italic">Contacto</h4>
-                               <p className="text-[9px] text-neon-purple/60 font-bold uppercase tracking-[0.2em]">Canales Directos</p>
+                               <p className="text-[9px] text-neon-purple/60 font-bold uppercase tracking-[0.2em]">{t.directChannels}</p>
                             </div>
                          </div>
                       </Link>
@@ -281,8 +286,8 @@ export default function SupportPage() {
                          <div className="flex flex-col items-center text-center gap-4">
                             <div className="w-14 h-14 text-neon-pink drop-shadow-neon-pink group-hover/card:scale-110 transition-transform">{I.info}</div>
                             <div className="space-y-1">
-                               <h4 className="text-[12px] font-black text-white uppercase tracking-widest italic">Información</h4>
-                               <p className="text-[9px] text-neon-pink/60 font-bold uppercase tracking-[0.2em]">Acerca del Proyecto</p>
+                               <h4 className="text-[12px] font-black text-white uppercase tracking-widest italic">{t.infoLabel}</h4>
+                               <p className="text-[9px] text-neon-pink/60 font-bold uppercase tracking-[0.2em]">{t.aboutProject}</p>
                             </div>
                          </div>
                       </Link>
@@ -293,9 +298,9 @@ export default function SupportPage() {
                         <div className="absolute top-0 right-0 p-12 opacity-[0.03] text-neon-cyan font-black text-9xl italic uppercase tracking-tighter">STOP</div>
                         <div className="w-24 h-24 text-neon-cyan mx-auto drop-shadow-neon-cyan animate-pulse">{I.alert}</div>
                         <div className="space-y-3">
-                           <h2 className="text-4xl md:text-5xl font-header font-black text-white uppercase italic tracking-tighter leading-none">AUTENTICACIÓN REQUERIDA</h2>
+                           <h2 className="text-4xl md:text-5xl font-header font-black text-white uppercase italic tracking-tighter leading-none">{t.authRequired}</h2>
                            <p className="text-gray-500 font-bold text-sm md:text-base uppercase tracking-widest max-w-md mx-auto">
-                               Para garantizar la integridad y el seguimiento de tu ticket, debes estar autenticado.
+                               {t.authRequiredDesc}
                            </p>
                         </div>
                         <div className="pt-6 flex flex-col sm:flex-row justify-center gap-6">
@@ -313,9 +318,9 @@ export default function SupportPage() {
                         <div className="bg-black/40 border border-white/5 p-6 rounded-3xl flex items-start gap-4">
                            <div className="w-8 h-8 text-neon-blue shrink-0 mt-1">{I.info}</div>
                            <div className="space-y-1">
-                              <h4 className="text-xs font-black text-white uppercase tracking-widest">Protocolo de Asistencia</h4>
+                              <h4 className="text-xs font-black text-white uppercase tracking-widest">{t.assistanceProtocol}</h4>
                               <p className="text-[10px] text-gray-500 font-bold leading-relaxed uppercase">
-                                 ¿No encontraste solución en los recursos anteriores? Genera un ticket a continuación. Garantizamos respuesta en menos de 24h.
+                                 {t.assistanceDesc}
                               </p>
                            </div>
                         </div>
@@ -326,16 +331,16 @@ export default function SupportPage() {
                            <div className="space-y-8">
                              <div className="flex items-center gap-3 border-b border-white/5 pb-2">
                                 <div className="w-4 h-4 text-neon-pink">{I.user}</div>
-                                <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Identidad del Remitente</h3>
+                                <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">{t.senderIdentity}</h3>
                              </div>
                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">Display Name</label>
-                                   <input required value={formData.displayName} onChange={e => setFormData({...formData, displayName: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-6 py-4 text-sm font-bold focus:border-neon-pink/50 outline-none transition-all" placeholder="Ej: Ciszu Master" />
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">{t.displayNameLabel}</label>
+                                   <input required value={formData.displayName} onChange={e => setFormData({...formData, displayName: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-6 py-4 text-sm font-bold focus:border-neon-pink/50 outline-none transition-all" placeholder={t.phDisplayName} />
                                 </div>
                                 <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">Username (@)</label>
-                                   <input required value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-6 py-4 text-sm font-bold focus:border-neon-pink/50 outline-none transition-all" placeholder="Ej: antony_ciszu" />
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">{t.usernameLabel}</label>
+                                   <input required value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-6 py-4 text-sm font-bold focus:border-neon-pink/50 outline-none transition-all" placeholder={t.phUsername} />
                                 </div>
                              </div>
                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -349,25 +354,25 @@ export default function SupportPage() {
                                 </div>
                              </div>
                              <div className="space-y-2">
-                                <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">Email de Contacto</label>
-                                <input type="email" required value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-6 py-4 text-sm font-bold focus:border-neon-blue/50 outline-none transition-all" placeholder="tu-email@servidor.com" />
+                                <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">{t.contactEmailLabel}</label>
+                                <input type="email" required value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-6 py-4 text-sm font-bold focus:border-neon-blue/50 outline-none transition-all" placeholder={t.phEmail} />
                              </div>
                            </div>
 
                            <div className="space-y-8 pt-4">
                              <div className="flex items-center gap-3 border-b border-white/5 pb-2">
                                 <div className="w-4 h-4 text-neon-purple">{I.tag}</div>
-                                <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Naturaleza del Ticket</h3>
+                                <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">{t.ticketNature}</h3>
                              </div>
                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">Tipo de Contacto</label>
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">{t.contactTypeLabel}</label>
                                    <select value={formData.contactType} onChange={e => setFormData({...formData, contactType: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-6 py-4 text-sm font-bold outline-none cursor-pointer">
                                       {CONTACT_TYPES.map(t => <option key={t} value={t} className="bg-doc-dark">{t}</option>)}
                                    </select>
                                 </div>
                                 <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">Región de Origen</label>
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">{t.regionLabel}</label>
                                    <div className="relative">
                                       <select value={formData.region} onChange={e => setFormData({...formData, region: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl pl-12 pr-6 py-4 text-sm font-bold outline-none cursor-pointer">
                                          {REGIONS.map(r => <option key={r.code} value={r.code} className="bg-doc-dark">{r.name}</option>)}
@@ -380,13 +385,13 @@ export default function SupportPage() {
                              </div>
                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">Categoría</label>
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">{t.categoryLabel}</label>
                                    <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value as any, subCategory: CATEGORIES[e.target.value as keyof typeof CATEGORIES][0]})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-6 py-4 text-sm font-bold outline-none">
                                       {Object.keys(CATEGORIES).map(c => <option key={c} value={c} className="bg-doc-dark">{c}</option>)}
                                    </select>
                                 </div>
                                 <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">Sub-Categoría</label>
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">{t.subCategoryLabel}</label>
                                    <select value={formData.subCategory} onChange={e => setFormData({...formData, subCategory: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-6 py-4 text-sm font-bold outline-none">
                                       {CATEGORIES[formData.category as keyof typeof CATEGORIES].map(sc => <option key={sc} value={sc} className="bg-doc-dark">{sc}</option>)}
                                    </select>
@@ -397,21 +402,21 @@ export default function SupportPage() {
                            <div className="space-y-8 pt-4">
                              <div className="flex items-center gap-3 border-b border-white/5 pb-2">
                                 <div className="w-4 h-4 text-neon-blue">{I.msg}</div>
-                                <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Detalles del Requerimiento</h3>
+                                <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">{t.requestDetails}</h3>
                              </div>
                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">Teléfono (Opcional)</label>
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">{t.phoneOptional}</label>
                                    <input value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-6 py-4 text-sm font-bold outline-none" placeholder="+58 ..." />
                                 </div>
                                 <div className="space-y-2">
-                                   <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">Dispositivo / Sistema</label>
-                                   <input value={formData.device} onChange={e => setFormData({...formData, device: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-6 py-4 text-sm font-bold outline-none" placeholder="Ej: PC Windows 11, Chrome" />
+                                   <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">{t.deviceLabel}</label>
+                                   <input value={formData.device} onChange={e => setFormData({...formData, device: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-2xl px-6 py-4 text-sm font-bold outline-none" placeholder={t.phDevice} />
                                 </div>
                              </div>
                              <div className="space-y-2">
-                                <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">Mensaje / Descripción</label>
-                                <textarea required rows={5} value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-3xl px-6 py-5 text-sm font-bold outline-none resize-none placeholder:text-gray-800" placeholder="Describe tu situación detalladamente..." />
+                                <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">{t.messageLabel}</label>
+                                <textarea required rows={5} value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} className="w-full bg-black/60 border border-white/10 rounded-3xl px-6 py-5 text-sm font-bold outline-none resize-none placeholder:text-gray-800" placeholder={t.phMessage} />
                              </div>
                            </div>
 
@@ -434,8 +439,8 @@ export default function SupportPage() {
                 <motion.div key="list" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6 min-h-[600px]">
                    <div className="flex items-center justify-between mb-8">
                       <div className="space-y-1">
-                         <h2 className="text-3xl font-header font-black text-white italic tracking-tighter uppercase">HISTORIAL DE ASISTENCIA</h2>
-                         <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Visualización Privada de tus Requerimientos</p>
+                         <h2 className="text-3xl font-header font-black text-white italic tracking-tighter uppercase">{t.historyTitle}</h2>
+                         <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">{t.historyDesc}</p>
                       </div>
                       <div className="px-4 py-2 bg-white/5 rounded-full border border-white/10 text-[9px] font-black uppercase text-gray-400">
                          {tickets.length} TICKETS TOTALES
@@ -445,16 +450,17 @@ export default function SupportPage() {
                    {loading ? (
                      <div className="flex flex-col items-center justify-center py-32 gap-4">
                         <div className="w-12 h-12 border-4 border-neon-purple/20 border-t-neon-purple rounded-full animate-spin" />
-                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">Sincronizando con la Base de Datos...</p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">{t.syncing}</p>
                      </div>
-                   ) : tickets.length === 0 ? (
+                   ) :
+                  tickets.length === 0 ? (
                      <div className="text-center py-32 space-y-6 bg-black/40 border border-white/5 rounded-[4rem]">
                         <div className="w-20 h-20 text-gray-800 mx-auto">{I.msg}</div>
                         <div className="space-y-1">
-                           <h3 className="text-xl font-header font-black text-white uppercase italic">SIN TICKETS ACTIVOS</h3>
-                           <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">No tienes registros pendientes en el sistema.</p>
+                           <h3 className="text-xl font-header font-black text-white uppercase italic">{t.noTickets}</h3>
+                           <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">{t.noTicketsDesc}</p>
                         </div>
-                        <Button onClick={() => setActiveTab('new')} className="px-10">GENERAR PRIMER TICKET</Button>
+                        <Button onClick={() => setActiveTab('new')} className="px-10">{t.createFirstTicket}</Button>
                      </div>
                    ) : (
                      <div className="grid grid-cols-1 gap-6">
@@ -509,16 +515,16 @@ export default function SupportPage() {
                       {I.support}
                    </div>
                    <div>
-                      <h3 className="text-xs font-black text-white uppercase tracking-widest">Receptor del Ticket</h3>
-                      <p className="text-[10px] text-neon-blue font-black uppercase tracking-[0.2em]">Ciszu Network Support</p>
+                      <h3 className="text-xs font-black text-white uppercase tracking-widest">{t.receiverTitle}</h3>
+                      <p className="text-[10px] text-neon-blue font-black uppercase tracking-[0.2em]">{t.receiverName}</p>
                    </div>
                 </div>
                  <div className="space-y-3">
                     <p className="text-[10px] text-gray-500 font-bold leading-relaxed">
-                       Tu requerimiento será procesado directamente por el **Equipo de Asistencia de CiszuBot**, bajo la supervisión de **Ciszuko Antony**.
+                       {t.receiverDesc}
                     </p>
                     <div className="flex items-center gap-3">
-                       <a href="mailto:ciszunetwork@gmail.com" className="text-white underline text-sm lowercase">ciszunetwork@gmail.com</a>
+                       <a href="mailto:ciszunetwork@gmail.com" className="text-white underline text-sm lowercase">{SUPPORT_EMAIL}</a>
                        <button onClick={copyEmail} className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-colors">
                          {copied ? 'COPIADO' : 'COPIAR'}
                        </button>
@@ -530,16 +536,16 @@ export default function SupportPage() {
                 <div className="absolute top-0 right-0 p-4 opacity-5 text-neon-green font-black text-6xl italic pointer-events-none">24/7</div>
                 <div className="w-16 h-16 text-neon-green mx-auto animate-pulse">{I.pulse}</div>
                 <div className="space-y-1">
-                   <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-tighter">NÚCLEO OPERATIVO</h3>
-                   <p className="text-neon-green font-black text-[9px] uppercase tracking-[0.4em]">Soporte Global Activo</p>
+                   <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-tighter">{t.operatingCore}</h3>
+                   <p className="text-neon-green font-black text-[9px] uppercase tracking-[0.4em]">{t.globalSupportActive}</p>
                 </div>
                 <p className="text-[10px] text-gray-500 font-bold leading-relaxed uppercase">
-                   Atendemos requerimientos las 24 horas, priorizando la estabilidad del ecosistema CiszuBot.
+                   {t.globalSupportDesc}
                 </p>
              </div>
 
              <div className="p-8 bg-doc-dark border border-white/5 rounded-[3rem] space-y-6">
-                <h3 className="text-xs font-black text-white uppercase tracking-[0.4em] border-b border-white/10 pb-4">Niveles de Prioridad</h3>
+                <h3 className="text-xs font-black text-white uppercase tracking-[0.4em] border-b border-white/10 pb-4">{t.priorityLevels}</h3>
                 <div className="space-y-4">
                    {[
                      { label: 'Crítica', desc: 'Fallos de sistema o seguridad.', color: 'text-neon-pink' },
@@ -565,15 +571,15 @@ export default function SupportPage() {
            <div className="text-center space-y-2 mb-12">
              <div className="flex items-center justify-center gap-4 text-neon-blue mb-4">
                 <div className="w-8 h-8">{I.globe}</div>
-                <h3 className="text-4xl font-header font-black text-white uppercase italic tracking-tighter">REDES OFICIALES</h3>
+                <h3 className="text-4xl font-header font-black text-white uppercase italic tracking-tighter">{t.officialNetworks}</h3>
              </div>
-             <p className="text-gray-500 font-black text-[10px] uppercase tracking-[0.5em] flex items-center justify-center gap-2">CANALES EXCLUSIVOS DE CISZUBOT</p>
+             <p className="text-gray-500 font-black text-[10px] uppercase tracking-[0.5em] flex items-center justify-center gap-2">{t.exclusiveChannels}</p>
            </div>
 
            <div className="space-y-10">
               <div className="flex items-center gap-4">
                  <div className="h-[1px] flex-1 bg-neon-cyan/10" />
-                 <span className="text-neon-cyan font-black text-[10px] uppercase tracking-widest px-4">Sincronización Social Unificada</span>
+                 <span className="text-neon-cyan font-black text-[10px] uppercase tracking-widest px-4">{t.socialSync}</span>
                  <div className="h-[1px] flex-1 bg-neon-cyan/10" />
               </div>
                 <div className="flex flex-wrap justify-center gap-4">
