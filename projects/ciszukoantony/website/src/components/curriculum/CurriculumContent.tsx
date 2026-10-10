@@ -87,7 +87,7 @@ export default function CurriculumContent({ cv }: { cv: CurriculumData }) {
         <div className="print:hidden">
           <InfoHero
             icon="file-text"
-            title="Currículum"
+            title={dict.curriculum.titleAria}
             subtitle={`Los ${cv.documents.length} currículums de ${cv.profile.name} en pantalla completa: previsualización directa de cada PDF, trayectoria, formación, habilidades, idiomas y certificaciones verificables.`}
             kicker="CV · Trayectoria profesional"
             theme={THEME}
@@ -291,7 +291,7 @@ export default function CurriculumContent({ cv }: { cv: CurriculumData }) {
 
         {/* Áreas */}
         <div className="mb-16">
-          <InfoCardGrid title="Áreas de trayectoria" items={areas} theme={THEME} columns={4} />
+          <InfoCardGrid title={dict.curriculum.careerAreas} items={areas} theme={THEME} columns={4} />
         </div>
 
         {/* Formación */}
@@ -503,7 +503,7 @@ export default function CurriculumContent({ cv }: { cv: CurriculumData }) {
             if (!open) setDownloadAd(null);
           }}
           title={`Descargar ${downloadAd?.label ?? 'CV'}`}
-          description="Elige el formato que prefieras para descargar el currículum."
+          description={dict.curriculum.formatHint}
           size="md"
         >
           {downloadAd ? (

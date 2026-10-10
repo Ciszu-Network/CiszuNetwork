@@ -66,7 +66,7 @@ export default function AboutPage() {
           <div className="flex flex-col md:flex-row items-center gap-8">
             <Image
               src={assetResolver.resolve('shared/images/francisco_selfie/IMG_20251207_001627@869886661.jpg')}
-              alt="Ciszuko Antony"
+              alt={dict.about.founderAria}
               width={128} height={128}
               className="rounded-full object-cover shrink-0 border-2 border-brand/30"
             />
@@ -74,9 +74,7 @@ export default function AboutPage() {
               <h2 className="text-2xl font-header font-bold text-white mb-3">{PROFILE.name} ({PROFILE.shortName})</h2>
               <p className="text-gray-300 leading-relaxed mb-4">
                 {PROFILE.role} de{' '}
-                <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="text-brand font-bold hover:text-brand-200 transition-colors">
-                  Ciszu Network
-                </a>
+                <a href="https://ciszunetwork.vercel.app" target="_blank" rel="noopener noreferrer" className="text-brand font-bold hover:text-brand-200 transition-colors">{dict.about.network}</a>
                 . {PROFILE.summary}
               </p>
               <p className="text-gray-400 leading-relaxed">
@@ -93,7 +91,7 @@ export default function AboutPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-12">
           <h2 className="text-2xl font-header font-bold text-white mb-8 flex items-center gap-3">
             <span className="w-2 h-2 rounded-full bg-brand" />
-            Sobre mí
+            {dict.about.aboutMe}
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {PROFILE_FACTS.map((p, i) => (
@@ -116,7 +114,7 @@ export default function AboutPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-12">
           <h2 className="text-2xl font-header font-bold text-white mb-8 flex items-center gap-3">
             <span className="w-2 h-2 rounded-full bg-brand" />
-            Qué hago
+            {dict.about.whatIDo}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {PROFILE_ROLES.map((r, i) => (
@@ -176,15 +174,15 @@ export default function AboutPage() {
           </div>
         </motion.div>
 
-        {/* Herramientas y ecosistema: iconos reales + barras + tags */}
+        {/* {dict.about.toolsEcosystem}: iconos reales + barras + tags */}
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-12">
           <h2 className="text-2xl font-header font-bold text-white mb-8 flex items-center gap-3">
             <span className="w-2 h-2 rounded-full bg-brand" />
-            Herramientas y ecosistema
+            {dict.about.toolsEcosystem}
           </h2>
 
           {/* Herramientas de diseño, edición y productividad */}
-          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 mb-3">Diseño · Edición · Productividad</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 mb-3">{dict.about.designEdition}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {PROFILE_TOOLS.map((t, i) => (
               <motion.div key={t.name} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
@@ -203,8 +201,8 @@ export default function AboutPage() {
             ))}
           </div>
 
-          {/* Asistentes IA */}
-          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 mb-3">Asistentes IA</p>
+          {/* {dict.about.aiAssistants} */}
+          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 mb-3">{dict.about.aiAssistants}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {PROFILE_AI.map((a, i) => (
               <motion.div key={a.name} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
@@ -213,8 +211,8 @@ export default function AboutPage() {
             ))}
           </div>
 
-          {/* Plataformas y servicios */}
-          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 mb-3">Plataformas y servicios</p>
+          {/* {dict.about.platformsServices} */}
+          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 mb-3">{dict.about.platformsServices}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {PROFILE_PLATFORMS.map((p, i) => (
               <motion.div key={p.name} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
@@ -228,7 +226,7 @@ export default function AboutPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="p-6 rounded-2xl bg-white/[0.04] border border-white/10">
-              <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 mb-4">Intereses y hobbies</h3>
+              <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 mb-4">{dict.about.interestsHobbies}</h3>
               <div className="grid grid-cols-2 gap-3">
                 {PROFILE_INTERESTS.map((it, i) => (
                   <div key={it.label} className="flex items-center gap-2 p-3 rounded-xl bg-white/5 border border-white/10">
@@ -239,7 +237,7 @@ export default function AboutPage() {
               </div>
             </div>
             <div className="p-6 rounded-2xl bg-gradient-to-br from-brand/10 via-transparent to-transparent border border-brand/30">
-              <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-brand mb-4">Aspiraciones profesionales</h3>
+              <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-brand mb-4">{dict.about.aspirations}</h3>
               <ul className="space-y-2.5">
                 {PROFILE_ASPIRATIONS.map((a, i) => (
                   <motion.li key={a} initial={{ opacity: 0, x: 10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}

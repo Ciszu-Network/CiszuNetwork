@@ -191,7 +191,7 @@ export default function HomeContent() {
     <div className="min-h-screen">
       {/* ── HERO ─────────────────────────────────────────────── */}
       <section className="relative min-h-[92vh] flex flex-col items-center justify-center text-center px-4 overflow-hidden">
-        <h1 className="sr-only">Ciszuko Antony — CEO y fundador de Ciszu Network</h1>
+        <h1 className="sr-only">{dict.home.subTagline}</h1>
 
         {/* Fondo animado (CSS puro) */}
         <div aria-hidden className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -213,7 +213,7 @@ export default function HomeContent() {
           <div className="flex items-center justify-center gap-4 md:gap-7 mb-8 flex-wrap">
             <CdnImage
               src="projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png"
-              alt="Isotipo de Ciszuko Antony"
+              alt={dict.home.isotipoAlt}
               width={96}
               height={86}
               fetchPriority="high"
@@ -221,7 +221,7 @@ export default function HomeContent() {
             />
             <CdnImage
               src="projects/ciszukoantony/content/logos/images/outline/logotype/gradient/color/ciszuko_logotipo_outline_degradado_color_full.png"
-              alt="Logotipo de Ciszuko Antony"
+              alt={dict.home.logotipoAlt}
               width={300}
               height={75}
               fetchPriority="high"
@@ -229,7 +229,7 @@ export default function HomeContent() {
             />
             <CdnImage
               src="projects/ciszukoantony/content/logos/images/samples/circle/circle_1_yt.png"
-              alt="Ciszuko Antony — canal de YouTube"
+              alt={dict.home.youtubeAlt}
               width={96}
               height={96}
               fetchPriority="high"
@@ -244,9 +244,7 @@ export default function HomeContent() {
               target="_blank"
               rel="noopener noreferrer"
               className="text-neon-blue font-bold hover:text-white transition-colors"
-            >
-              Ciszu Network
-            </a>
+            >{dict.home.brand}</a>
           </p>
           <p className="text-gray-500 max-w-2xl mx-auto mb-9 text-xs uppercase tracking-[0.3em]">
             {dict.home.tagline}
@@ -292,7 +290,7 @@ export default function HomeContent() {
         {/* Scroll down */}
         <a
           href="#sobre-mi"
-          aria-label="Bajar al contenido"
+          aria-label={dict.home.scrollDown}
           onClick={() => track('scroll_down')}
           className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center text-neon-blue hover:text-neon-pink transition-colors"
         >
@@ -354,28 +352,24 @@ export default function HomeContent() {
             <div className="flex flex-col md:flex-row items-center gap-8 p-8 md:p-10 rounded-[2.5rem] bg-black/40 border border-white/10">
               <CdnImage
                 src="shared/images/francisco_selfie/IMG_20251207_001632@893898207.jpg"
-                alt="Retrato de Ciszuko Antony"
+                alt={dict.home.portraitAlt}
                 width={160}
                 height={160}
                 className="rounded-full object-cover shrink-0 ring-2 ring-neon-blue/40 shadow-[0_0_35px_rgba(61,106,223,0.35)]"
               />
               <div className="text-center md:text-left flex-1">
-                <h3 className="text-2xl font-header font-black uppercase italic text-white mb-2">
-                  Ciszuko Antony
-                  <span className="block text-[10px] tracking-[0.4em] text-neon-blue not-italic mt-1">
-                    FRANCISCO ANTONIO GARCÍA MENOLASCINA
+                <h3 className="text-2xl font-header font-black uppercase italic text-white mb-2">{dict.home.creator}<span className="block text-[10px] tracking-[0.4em] text-neon-blue not-italic mt-1">
+                    {dict.home.fullName}
                   </span>
                 </h3>
                 <p className="text-gray-300 leading-relaxed mb-4">
-                  {dict.home.aboutBefore} <span className="text-neon-blue font-bold">Ciszuko Antony</span>, {dict.home.aboutRole}{' '}
+                  {dict.home.aboutBefore} <span className="text-neon-blue font-bold">{dict.home.creator}</span>, {dict.home.aboutRole}{' '}
                   <a
                     href="https://ciszunetwork.vercel.app"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-neon-blue font-bold hover:text-white transition-colors"
-                  >
-                    Ciszu Network
-                  </a>
+                  >{dict.home.brand}</a>
                   {dict.home.aboutAfter}
                 </p>
                 <div className="flex flex-wrap justify-center md:justify-start gap-2 mb-5">
@@ -392,7 +386,7 @@ export default function HomeContent() {
                     className="inline-flex items-center gap-2 px-5 py-3 bg-neon-blue/15 border border-neon-blue/50 text-neon-blue font-header font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-neon-blue hover:text-white transition-all"
                   >
                     <Icon name="palette" size={16} />
-                    Portfolio &amp; CV
+                    {dict.home.portfolioCv}
                   </Link>
                   <Link
                     href="/about"
@@ -429,7 +423,7 @@ export default function HomeContent() {
       <section className="py-20 px-4 bg-white/[0.015] border-y border-white/5">
         <div className="max-w-6xl mx-auto">
           <Reveal>
-            <SectionTitle icon="terminal" kicker="Multidisciplinar" title="Qué hago" tone="text-neon-cyan" />
+            <SectionTitle icon="terminal" kicker="Multidisciplinar" title={dict.home.whatIDo} tone="text-neon-cyan" />
           </Reveal>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {PROFILE_ROLES.map((role, i) => (
@@ -451,7 +445,7 @@ export default function HomeContent() {
       <section className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
           <Reveal>
-            <SectionTitle icon="music" kicker="Discografía" title="Música" tone="text-neon-purple" />
+            <SectionTitle icon="music" kicker="Discografía" title={dict.home.music} tone="text-neon-purple" />
           </Reveal>
 
           {/* Obra propia (musicboard): primero y con sus enlaces reales */}
@@ -468,7 +462,7 @@ export default function HomeContent() {
                     onClick={() => track('music_musicboard')}
                     className="inline-flex items-center gap-2 text-[10px] font-header font-black uppercase tracking-widest text-neon-pink hover:text-white transition-colors"
                   >
-                    Ver musicboard
+                    {dict.home.viewMusicboard}
                     <Icon name="chevronRight" size={13} />
                   </Link>
                 </div>
@@ -643,7 +637,7 @@ export default function HomeContent() {
                 className="inline-flex items-center gap-2 px-5 py-3 bg-white/5 border border-white/10 rounded-2xl hover:border-neon-red/50 transition-all"
               >
                 <Icon name="headset" size={16} className="text-neon-red" />
-                <span className="text-xs font-header font-bold text-white">YouTube Music</span>
+                <span className="text-xs font-header font-bold text-white">{dict.home.youTubeMusic}</span>
               </a>
               <a
                 href="https://www.twitch.tv/ciszukoantony_"
@@ -661,7 +655,7 @@ export default function HomeContent() {
                 className="inline-flex items-center gap-2 px-5 py-3 bg-white/5 border border-white/10 rounded-2xl hover:border-neon-pink/50 transition-all"
               >
                 <Icon name="music" size={16} className="text-neon-pink" />
-                <span className="text-xs font-header font-bold text-white">Musicboard completo</span>
+                <span className="text-xs font-header font-bold text-white">{dict.home.musicboardFull}</span>
               </Link>
               <Link
                 href="/socials/spotify"
@@ -669,7 +663,7 @@ export default function HomeContent() {
                 className="inline-flex items-center gap-2 px-5 py-3 bg-white/5 border border-white/10 rounded-2xl hover:border-neon-green/50 transition-all"
               >
                 <Icon name="headset" size={16} className="text-neon-green" />
-                <span className="text-xs font-header font-bold text-white">Página de Spotify</span>
+                <span className="text-xs font-header font-bold text-white">{dict.home.spotifyPage}</span>
               </Link>
             </div>
           </Reveal>
@@ -712,7 +706,7 @@ export default function HomeContent() {
                 className="inline-flex items-center gap-2 px-7 py-4 bg-neon-pink/15 border-2 border-neon-pink/50 text-neon-pink font-header font-black uppercase tracking-widest text-xs rounded-xl hover:bg-neon-pink hover:text-white transition-all hover:scale-105"
               >
                 <Icon name="external" size={16} />
-                Ver todas las redes
+                {dict.home.viewAllSocials}
               </Link>
             </div>
           </Reveal>
@@ -729,7 +723,7 @@ export default function HomeContent() {
           <Reveal>
             <h3 className="flex items-center gap-3 text-xs font-black uppercase tracking-[0.3em] text-neon-cyan mb-6">
               <Icon name="user" size={16} />
-              Proyectos personales de Ciszuko Antony
+              {dict.home.personalProjects}
             </h3>
           </Reveal>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-14">
@@ -824,7 +818,7 @@ export default function HomeContent() {
                 className="inline-flex items-center gap-2 px-7 py-4 bg-neon-green/15 border-2 border-neon-green/50 text-neon-green font-header font-black uppercase tracking-widest text-xs rounded-xl hover:bg-neon-green hover:text-white transition-all hover:scale-105"
               >
 <Icon name="check" size={16} />
-                Ver catálogo completo
+                {dict.home.viewFullCatalog}
               </Link>
             </div>
           </Reveal>
@@ -835,13 +829,13 @@ export default function HomeContent() {
       <section className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
           <Reveal>
-            <SectionTitle icon="target" kicker="Stack técnico" title="Habilidades y futuro" tone="text-neon-purple" />
+            <SectionTitle icon="target" kicker="Stack técnico" title={dict.home.skillsFuture} tone="text-neon-purple" />
           </Reveal>
 
           <Reveal>
             <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6 mb-8">
               <div className="p-7 rounded-[2rem] bg-gradient-to-br from-neon-purple/10 via-transparent to-transparent border border-neon-purple/30">
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-neon-purple mb-4">Stack principal</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-neon-purple mb-4">{dict.home.mainStack}</p>
                 <div className="space-y-5">
                   {PROFILE_FAMILIES.map((family) => {
                     const list = PROFILE_SKILLS.filter((s) => s.family === family).slice(0, 6);
@@ -884,7 +878,7 @@ export default function HomeContent() {
           <Reveal delay={120}>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/10">
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500 mb-4">Intereses y hobbies</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500 mb-4">{dict.home.interests}</p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {PROFILE_INTERESTS.map((it, i) => (
                     <Reveal key={it.label} delay={i * 40}>
@@ -897,7 +891,7 @@ export default function HomeContent() {
                 </div>
               </div>
               <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/10">
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500 mb-4">Herramientas y ecosistema</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500 mb-4">{dict.home.toolsEcosystem}</p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {PROFILE_TOOLS.map((t, i) => (
                     <Reveal key={t.name} delay={i * 40}>
@@ -921,7 +915,7 @@ export default function HomeContent() {
         <section className="py-20 px-4">
           <div className="max-w-5xl mx-auto">
             <Reveal>
-              <SectionTitle icon="star" kicker={dict.reviews.kicker} title="Reseñas de la comunidad" tone="text-neon-yellow" />
+              <SectionTitle icon="star" kicker={dict.reviews.kicker} title={dict.home.communityReviews} tone="text-neon-yellow" />
             </Reveal>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {reviews.map((review, i) => (
@@ -994,7 +988,7 @@ export default function HomeContent() {
                 className="inline-flex items-center gap-2 px-7 py-4 bg-neon-cyan/15 border-2 border-neon-cyan/50 text-neon-cyan font-header font-black uppercase tracking-widest text-xs rounded-xl hover:bg-neon-cyan hover:text-white transition-all hover:scale-105"
               >
                 <Icon name="history" size={16} />
-                Registro completo
+                {dict.home.fullResume}
               </Link>
             </div>
           </Reveal>
@@ -1010,7 +1004,7 @@ export default function HomeContent() {
               <Icon name="mail" size={28} />
             </span>
             <h2 className="text-3xl md:text-4xl font-header font-black uppercase italic text-white mb-4">
-              ¿Trabajamos juntos?
+              {dict.home.workTogether}
             </h2>
             <p className="text-gray-400 max-w-xl mx-auto mb-8 text-sm leading-relaxed">
               Comisiones de desarrollo web, bots, automatización, identidad visual y música. Atención directa por

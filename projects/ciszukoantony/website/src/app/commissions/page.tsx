@@ -378,7 +378,7 @@ export default function CommissionsPage() {
 
         <div className="mb-10 rounded-2xl border border-neon-green/30 bg-neon-green/5 p-6 text-center">
           <p className="font-header text-sm font-bold uppercase tracking-widest text-neon-green">
-            Comisiones abiertas
+            {dict.commissions.open}
           </p>
           <p className="mt-2 text-xs text-white/50">
             {dict.commissions.openBody}
@@ -388,7 +388,7 @@ export default function CommissionsPage() {
         {/* Familias de servicios */}
         <div className="mb-14">
           <InfoCardGrid
-            title="Qué ofrezco"
+            title={dict.commissions.offerAria}
             items={COMMISSION_GROUPS.map((group) => ({
               icon: group.icon,
               title: group.label,
@@ -441,7 +441,7 @@ export default function CommissionsPage() {
         </div>
 
         <div className="mb-14">
-          <InfoSteps title="Proceso de una comisión" steps={PROCESS} theme={THEME} />
+          <InfoSteps title={dict.commissions.processAria} steps={PROCESS} theme={THEME} />
         </div>
 
         <section className="mb-14 rounded-[2rem] border border-white/10 bg-white/5 p-8">

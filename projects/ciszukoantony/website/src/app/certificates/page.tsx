@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo, useState, useEffect } from 'react';
+import { useDict } from '@/components/providers/I18nProvider';
 import { motion, AnimatePresence } from 'framer-motion';
 import { InfoHero, type InfoTheme, useToast } from '@ciszu/ui';
 import { usePageTitle } from '@/lib/usePageTitle';
@@ -272,7 +273,7 @@ const COMPANIES = [
 ];
 
 function FilterDropdown({ label, icon, options, value, onChange, colorMap, getLabel, multiple = false, optionIcon }: {
-  label: string; icon: React.ReactNode; options: { id: string; label: string }[]; value: string | string[]; onChange: (v: string | string[]) => void; colorMap?: Record<string, string>; getLabel?: (id: string) => string; multiple?: boolean; optionIcon?: (id: string) => React.ReactNode;
+  label: string; icon: React.ReactNode; options: { id: string; label: string }[]; value: string | string[]; colorMap?: Record<string, string>; onChange: (v: string | string[]) => void; getLabel?: (id: string) => string; multiple?: boolean; optionIcon?: (id: string) => React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const ref = React.useRef<HTMLDivElement>(null);
@@ -439,6 +440,7 @@ function SortDropdown({ value, onChange }: { value: string; onChange: (v: string
 
 
 function OwnershipBadge({ compact = false }: { compact?: boolean }) {
+  const dict = useDict();
   return (
     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border w-fit"
       style={{
@@ -446,11 +448,11 @@ function OwnershipBadge({ compact = false }: { compact?: boolean }) {
         backgroundColor: '#fef3c7',
         borderColor: '#fbbf24',
       }}
-      title="Verificado contra el documento original"
+      title={dict.certificates.verifiedAria}
     >
       <IconShieldCheck className="w-3 h-3 shrink-0" />
       Owned by FRANCISCO ANTONIO GARCIA MENOLASCINA
-      {!compact && <span aria-hidden>· Verified holder</span>}
+      {!compact && <span aria-hidden>{dict.certificates.verifiedHolder}</span>}
     </span>
   );
 }
@@ -464,6 +466,7 @@ function CertificateCard({
   onOpen: (c: Certificate) => void;
   index: number;
 }) {
+  const dict = useDict();
   const color = catColor(principalCategory(cert));
   const providerGroup = getProviderGroup(cert);
   const provider = PROVIDER_OPTIONS.find((p) => p.id === providerGroup);
@@ -511,10 +514,11 @@ function CertificateCard({
                   <div className="absolute inset-0 flex items-center justify-center bg-white/5">
                     <div className="w-8 h-8 border-2 border-neon-cyan/50 border-t-transparent rounded-full animate-spin" />
                   </div>
-                ) : imageError ? (
+                ) :
+                imageError ? (
                   <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-500/10 gap-1">
                     <IconAlert className="w-10 h-10 text-red-400" />
-                    <p className="text-[10px] text-red-300 font-bold uppercase tracking-wider">Preview failed to load</p>
+                    <p className="text-[10px] text-red-300 font-bold uppercase tracking-wider">{dict.certificates.previewFailed}</p>
                   </div>
                 ) : (
                   <img
@@ -528,7 +532,8 @@ function CertificateCard({
                   />
                 )}
               </div>
-            ) : isPdf ? (
+            ) :
+                isPdf ? (
               <div className="absolute inset-0 flex items-center justify-center">
                 <svg viewBox="0 0 24 24" className="w-12 h-12 text-white/40" fill="none" stroke="currentColor" strokeWidth={2}>
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -638,7 +643,7 @@ function CertificateCard({
         <div className="mt-2 flex flex-wrap items-center gap-1.5">
           <span
             className="font-mono text-[10px] tracking-tight text-neon-cyan bg-neon-cyan/5 border border-neon-cyan/25 rounded-md px-1.5 py-0.5"
-            title="Referencia interna de catálogo"
+            title={dict.certificates.catalogRef}
           >
             {catalogRef(cert)}
           </span>
@@ -660,6 +665,7 @@ function DetailModal({
   onClose: () => void;
   onPick: (c: Certificate) => void;
 }) {
+  const dict = useDict();
   const providerGroup = getProviderGroup(cert);
   const provider = PROVIDER_OPTIONS.find((p) => p.id === providerGroup);
   const { toast } = useToast();
@@ -793,14 +799,14 @@ function DetailModal({
               </svg>
               {fmtDate(cert.date)}
             </span>
-            <span className="flex items-center gap-1.5 font-mono text-neon-cyan" title="Referencia interna de catálogo">
+            <span className="flex items-center gap-1.5 font-mono text-neon-cyan" title={dict.certificates.catalogRef}>
               {catalogRef(cert)}
             </span>
             {cert.level && <span>{cert.level}</span>}
             {cert.credentialId && (
               <button
                 onClick={copyId}
-                title="Copy credential ID"
+                title={dict.certificates.copyCredential}
                 className="flex items-center gap-1.5 text-neon-cyan hover:underline cursor-pointer font-mono"
               >
                 {copied === 'id' ? 'Copied ✓' : cert.credentialLabel || 'ID'}:
@@ -839,7 +845,7 @@ function DetailModal({
         <div className="border-t border-white/10">
           <div className="flex items-center justify-between px-6 sm:px-8 pt-4">
             <p className="text-[11px] font-black uppercase tracking-widest text-gray-500">
-              Document preview
+              {dict.certificates.documentPreview}
             </p>
             <div className="flex gap-1 bg-white/5 rounded-lg p-0.5">
               <button
@@ -878,11 +884,12 @@ function DetailModal({
                       />
                       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
                         <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">
-                          Image preview
+                          {dict.certificates.imagePreview}
                         </span>
                       </div>
                     </div>
-                   ) : isPdf ? (
+                   ) :
+                isPdf ? (
                     <div className="relative">
                       {hasRealPreview ? (
                         <img
@@ -922,8 +929,8 @@ function DetailModal({
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                         <polyline points="14 2 14 8 20 8" />
                       </svg>
-                      <p className="text-sm text-white/60 mt-3">Preview not available</p>
-                      <p className="text-xs text-white/40 mt-1">Use the files section to view the document</p>
+                      <p className="text-sm text-white/60 mt-3">{dict.certificates.previewNotAvailable}</p>
+                      <p className="text-xs text-white/40 mt-1">{dict.certificates.useFiles}</p>
                     </div>
                   )
                 ) : (
@@ -932,8 +939,8 @@ function DetailModal({
                       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                       <polyline points="14 2 14 8 20 8" />
                     </svg>
-                    <p className="text-sm text-white/60 mt-3">No preview available</p>
-                    <p className="text-xs text-white/40 mt-1">Use the files section to view the document</p>
+                    <p className="text-sm text-white/60 mt-3">{dict.certificates.noPreview}</p>
+                    <p className="text-xs text-white/40 mt-1">{dict.certificates.useFiles}</p>
                   </div>
                 )}
               </div>
@@ -1030,6 +1037,7 @@ function DetailModal({
 }
 
 export default function CertificatesPage() {
+  const dict = useDict();
   usePageTitle('Certificates & Documents');
   const [category, setCategory] = useState<string[]>([]);
   const [provider, setProvider] = useState<string[]>([]);
@@ -1084,7 +1092,7 @@ const relatedOf = (c: Certificate) =>
       <PageReveal className="relative mx-auto max-w-screen-xl">
         <InfoHero
           icon="certificates"
-          title="Certificates & Documents"
+          title={dict.certificates.title}
           subtitle={`${ALL_DOCS.length} total documents · ${CERTIFICATES.length} certificates · ${OTHER_DOCS.length} supporting docs · catalog CKO-*`}
           theme={THEME}
         />
@@ -1108,7 +1116,7 @@ const relatedOf = (c: Certificate) =>
               optionIcon={(id) => <CategoryIcon id={id} className="w-4 h-4" />}
             />
             <FilterDropdown
-              label="University / Provider"
+              label={dict.certificates.universityProvider}
               icon={<svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="M22 10v6M2 10l10-5 10 5-10 5z" /><path d="M6 12v5l6 3 6-3v-5" /></svg>}
               options={PROVIDER_OPTIONS}
               value={provider}
@@ -1131,7 +1139,7 @@ const relatedOf = (c: Certificate) =>
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by course, provider, category, catalog ref…"
+              placeholder={dict.certificates.searchPh}
               className="w-full pl-11 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-gray-600 outline-none focus:border-neon-blue transition-all"
             />
           </div>
@@ -1140,7 +1148,7 @@ const relatedOf = (c: Certificate) =>
             <span className="text-[11px] font-black uppercase tracking-widest text-gray-500">
               Showing {filtered.length} of {ALL_DOCS.length}
             </span>
-            {(category.length > 0 || provider.length > 0 || query || sort !== 'date-desc') && (
+            {(0 < category.length || 0 < provider.length || query || sort !== 'date-desc') && (
               <button
                 onClick={() => { setCategory([]); setProvider([]); setQuery(''); setSort('date-desc'); }}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-black uppercase tracking-widest border border-neon-pink/40 text-neon-pink hover:bg-neon-pink/10 transition-all cursor-pointer"
@@ -1148,7 +1156,7 @@ const relatedOf = (c: Certificate) =>
                 <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5}>
                   <path d="M18 6 6 18M6 6l12 12" />
                 </svg>
-                Clear filters
+                {dict.certificates.clearFilters}
               </button>
             )}
           </div>
@@ -1196,7 +1204,7 @@ const relatedOf = (c: Certificate) =>
         ) : (
           <div className="text-center py-16">
             <IconInfo className="w-10 h-10 text-gray-600 mx-auto mb-3" />
-            <p className="text-gray-400 text-sm font-bold">No documents match your filters.</p>
+            <p className="text-gray-400 text-sm font-bold">{dict.certificates.noMatches}</p>
             <p className="text-gray-600 text-xs mt-1">
               {filtered.length} of {ALL_DOCS.length} documents shown
             </p>
@@ -1209,7 +1217,7 @@ const relatedOf = (c: Certificate) =>
               }}
               className="mt-4 px-4 py-2 rounded-lg text-xs font-bold border border-white/15 text-gray-300 hover:text-white hover:border-white/40 transition-all cursor-pointer"
             >
-              Clear all filters
+              {dict.certificates.clearAllFilters}
             </button>
           </div>
         )}
@@ -1221,7 +1229,7 @@ const relatedOf = (c: Certificate) =>
           className="mt-16"
         >
           <h2 className="font-header font-black text-2xl text-white text-center mb-6">
-            Official Verification Links
+            {dict.certificates.officialLinks}
           </h2>
           <div className="flex flex-wrap items-center justify-center gap-2">
             {OFFICIAL_LINKS.map((l) => (
@@ -1248,7 +1256,7 @@ const relatedOf = (c: Certificate) =>
           className="mt-10"
         >
           <h2 className="font-header font-black text-2xl text-white text-center mb-6">
-            External Resources & Platforms
+            {dict.certificates.externalResources}
           </h2>
           <div className="flex flex-wrap items-center justify-center gap-2">
             {EXTERNAL_LINKS.map((l) => (
@@ -1273,10 +1281,10 @@ const relatedOf = (c: Certificate) =>
           className="mt-10"
         >
           <h2 className="font-header font-black text-2xl text-white text-center mb-6">
-            Organizations & Platforms Referenced
+            {dict.certificates.organizations}
           </h2>
           <p className="text-center text-xs text-gray-500 uppercase tracking-widest mb-6">
-            Companies, academies, and platforms mentioned across certificates
+            {dict.certificates.mentionedAcross}
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {COMPANIES.map((c) => (
@@ -1311,17 +1319,17 @@ const relatedOf = (c: Certificate) =>
           <div className="flex gap-3">
             <IconScale className="w-5 h-5 text-neon-pink shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-bold text-white">Fair use — honest portfolio display</p>
+              <p className="text-sm font-bold text-white">{dict.certificates.fairUse}</p>
               <p className="mt-1 text-xs text-gray-400 leading-relaxed">
                 All documents on this page belong to their respective issuers and are shown for
                 portfolio purposes only, under fair use and with full authority of the holder. They
                 are never modified or falsified, and they never impersonate any institution. Each
                 credential is labeled with the real data extracted from the original file; when the
                 issuer or date is not stated in the document, it is explicitly noted. The complete
-                legal terms are available on the <a href="/policies" className="text-neon-blue hover:underline">Policies</a> page.
+                legal terms are available on the <a href="/policies" className="text-neon-blue hover:underline">Policies</a> {'page.'}
               </p>
               <p className="mt-2 text-xs text-gray-500 italic">
-                Holder: <span className="font-bold text-white">FRANCISCO ANTONIO GARCIA MENOLASCINA</span>
+                {dict.certificates.holder} <span className="font-bold text-white">{dict.certificates.fullName}</span>
               </p>
             </div>
           </div>
@@ -1335,7 +1343,7 @@ const relatedOf = (c: Certificate) =>
         >
           <OwnershipBadge />
           <p className="mt-3 text-xs text-gray-600">
-            Documents stored in the Ciszu Network CDN and verified against the original files.
+            {dict.certificates.cdnNote}
           </p>
         </motion.div>
       </PageReveal>

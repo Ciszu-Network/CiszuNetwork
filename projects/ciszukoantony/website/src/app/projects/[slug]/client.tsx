@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useDict } from '@/components/providers/I18nProvider';
 import { useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import { Icon, InfoCtaRow, SocialIcon, type InfoTheme } from '@ciszu/ui';
@@ -45,6 +46,7 @@ function ProjectImage({ src, alt, className }: { src: string; alt: string; class
 }
 
 export default function ProjectDetailPage() {
+  const dict = useDict();
   const params = useParams<{ slug: string }>();
   const slug = Array.isArray(params?.slug) ? params.slug[0] : params?.slug;
   const project = useMemo(() => (slug ? getProject(slug) : undefined), [slug]);
@@ -60,17 +62,17 @@ export default function ProjectDetailPage() {
             <Icon name="warning" size={30} />
           </span>
           <h1 className="font-header text-4xl font-black uppercase tracking-tighter text-white">
-            Proyecto no encontrado
+            {dict.projects.notFoundTitle}
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-sm text-white/50">
-            El proyecto que buscas no existe o cambió de nombre. Explora el índice de proyectos personales.
+            {dict.projects.notFoundDesc}
           </p>
           <Link
             href="/projects"
             className="mt-8 inline-flex items-center gap-2 rounded-xl border border-neon-blue/40 bg-neon-blue/20 px-6 py-3 text-sm font-bold text-neon-blue transition-all hover:bg-neon-blue hover:text-white"
           >
             <Icon name="rocket" size={16} />
-            Todos los proyectos
+            {dict.projects.allProjects}
           </Link>
         </PageReveal>
       </div>
@@ -132,7 +134,7 @@ export default function ProjectDetailPage() {
               className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-6 py-3.5 text-sm font-bold text-white/70 transition-all hover:border-white/40 hover:text-white"
             >
               <Icon name="menu" size={16} />
-              Todos los proyectos
+              {dict.projects.allProjects}
             </Link>
           </div>
         </header>
@@ -158,11 +160,11 @@ export default function ProjectDetailPage() {
         {project.slug === 'ciszukoantony' ? <BrandSections project={project} /> : null}
         {project.slug === 'ciszunetwork' ? <CompanySections project={project} /> : null}
 
-        {/* Qué incluye (común a todos, con iconos) */}
+        {/* {dict.projects.includes} (común a todos, con iconos) */}
         <section className="mb-14" aria-labelledby="project-features">
           <h2 id="project-features" className={`mb-6 flex items-center gap-3 font-header text-2xl font-black text-white`}>
             <Icon name="star" size={22} />
-            Qué incluye
+            {dict.projects.includes}
           </h2>
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
             {project.features.map((feature, index) => (
@@ -183,7 +185,7 @@ export default function ProjectDetailPage() {
         <section className="mb-14 rounded-[2rem] border border-white/10 bg-white/[0.03] p-8">
           <h2 className={`mb-5 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.3em] ${project.accent.text}`}>
             <Icon name="terminal" size={15} />
-            Stack y herramientas
+            {dict.projects.stackTools}
           </h2>
           <div className="flex flex-wrap gap-2">
             {project.stack.map((tech) => (
@@ -208,7 +210,7 @@ export default function ProjectDetailPage() {
               icon: action.icon,
               external: action.external,
             })),
-            { label: 'Todos los proyectos', href: '/projects', icon: 'menu', variant: 'ghost' as const },
+            { label: '{dict.projects.allProjects}', href: '/projects', icon: 'menu', variant: 'ghost' as const },
           ]}
         />
 
@@ -216,7 +218,7 @@ export default function ProjectDetailPage() {
         <section className="mt-16 border-t border-white/5 pt-10" aria-labelledby="other-projects">
           <h2 id="other-projects" className={`mb-6 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.3em] ${project.accent.text}`}>
             <Icon name="rocket" size={14} />
-            Otros proyectos de Ciszuko Antony
+            {dict.projects.othersTitle}
           </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {others.map((item, index) => (
@@ -251,12 +253,13 @@ export default function ProjectDetailPage() {
 
 /** MusicBoard: álbumes reales, playlists oficiales y plataformas de escucha. */
 function MusicboardSections({ project }: { project: Project }) {
+  const dict = useDict();
   return (
     <>
       <section className="mb-14" aria-labelledby="musicboard-albums">
         <h2 id="musicboard-albums" className="mb-6 flex items-center gap-3 font-header text-2xl font-black text-white">
           <Icon name="music" size={22} />
-          Discografía
+          {dict.projects.discography}
         </h2>
         <div className="space-y-6">
           {REAL_ALBUMS.map((album) => (
@@ -315,9 +318,9 @@ function MusicboardSections({ project }: { project: Project }) {
       <section className="mb-14" aria-labelledby="musicboard-playlists">
         <h2 id="musicboard-playlists" className="mb-6 flex items-center gap-3 font-header text-2xl font-black text-white">
           <Icon name="headset" size={22} />
-          Podcast y playlists oficiales
+          {dict.projects.podcastPlaylists}
         </h2>
-        <ProjectSlider ariaLabel="Podcast y playlists oficiales" itemClassName="w-[19rem] sm:w-[21rem]">
+        <ProjectSlider ariaLabel="{dict.projects.podcastPlaylists}" itemClassName="w-[19rem] sm:w-[21rem]">
           {MUSIC_PLAYLISTS.map((playlist) => (
             <a
               key={playlist.id}
@@ -357,8 +360,9 @@ function MusicboardSections({ project }: { project: Project }) {
   );
 }
 
-/** Francisco García: la persona — currículums y certificados verificables. */
+/** {dict.projects.franciscoGarcia}: la persona — currículums y certificados verificables. */
 function PersonSections({ project }: { project: Project }) {
+  const dict = useDict();
   const featured = useMemo(
     () =>
       [...CERTIFICATES]
@@ -373,10 +377,10 @@ function PersonSections({ project }: { project: Project }) {
       <section className="mb-14 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,18rem)_minmax(0,1fr)]" aria-labelledby="person-identity">
         <div className={`rounded-[2rem] border p-6 text-center ${project.accent.border} ${project.accent.chipBg}`}>
           <div className={`mx-auto h-40 w-40 overflow-hidden rounded-full border-4 p-1 ${project.accent.border}`}>
-            <ProjectImage src={SELFIE} alt="Retrato de Francisco García" className="h-full w-full rounded-full object-cover" />
+            <ProjectImage src={SELFIE} alt={dict.projects.portraitFrancisco} className="h-full w-full rounded-full object-cover" />
           </div>
-          <h3 className="mt-4 font-header text-lg font-black text-white">Francisco García</h3>
-          <p className={`text-[10px] uppercase tracking-[0.3em] ${project.accent.text}`}>Ciszuko Antony</p>
+          <h3 className="mt-4 font-header text-lg font-black text-white">{dict.projects.franciscoGarcia}</h3>
+          <p className={`text-[10px] uppercase tracking-[0.3em] ${project.accent.text}`}>{dict.projects.ciszukoAntony}</p>
           <p className="mt-3 text-xs leading-relaxed text-white/55">
             Desarrollador y creador de contenido. Esta identidad profesional sostiene los tres proyectos
             del ecosistema.
@@ -385,7 +389,7 @@ function PersonSections({ project }: { project: Project }) {
         <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-8">
           <h2 id="person-identity" className="mb-4 flex items-center gap-3 font-header text-2xl font-black text-white">
             <Icon name="terms" size={22} />
-            Trayectoria verificable
+            {dict.projects.verifiable}
           </h2>
           <p className="text-sm leading-relaxed text-white/55">
             Los currículums reúnen experiencia, formación, habilidades e idiomas; los certificados se
@@ -417,9 +421,9 @@ function PersonSections({ project }: { project: Project }) {
       <section className="mb-14" aria-labelledby="person-certs">
         <h2 id="person-certs" className="mb-6 flex items-center gap-3 font-header text-2xl font-black text-white">
           <Icon name="certificates" size={22} />
-          Certificados recientes
+          {dict.projects.recentCertificates}
         </h2>
-        <ProjectSlider ariaLabel="Certificados recientes de Francisco García" itemClassName="w-[17rem] sm:w-[19rem]">
+        <ProjectSlider ariaLabel="{dict.projects.recentCertificates} de {dict.projects.franciscoGarcia}" itemClassName="w-[17rem] sm:w-[19rem]">
           {featured.map((cert) => (
             <div key={cert.id} className="h-full rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition-all hover:-translate-y-1 hover:border-white/25">
               <p className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white/40">
@@ -440,7 +444,7 @@ function PersonSections({ project }: { project: Project }) {
             className={`inline-flex items-center gap-2 rounded-xl border px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest transition-all hover:brightness-150 ${project.accent.chipBorder} ${project.accent.chipBg} ${project.accent.text}`}
           >
             <Icon name="certificates" size={13} />
-            Ver todos los certificados
+            {dict.projects.viewAllCertificates}
           </Link>
         </p>
       </section>
@@ -450,13 +454,14 @@ function PersonSections({ project }: { project: Project }) {
 
 /** Ciszuko Antony (marca): pilares, redes reales y contenido. */
 function BrandSections({ project }: { project: Project }) {
+  const dict = useDict();
   const socials = SOCIAL_ENTRIES.slice(0, 8);
   return (
     <>
       <section className="mb-14" aria-labelledby="brand-socials">
         <h2 id="brand-socials" className="mb-6 flex items-center gap-3 font-header text-2xl font-black text-white">
           <Icon name="share" size={22} />
-          Dónde publica
+          {dict.projects.wherePublishes}
         </h2>
         <ProjectSlider ariaLabel="Redes de Ciszuko Antony" itemClassName="w-[15rem] sm:w-[17rem]">
           {socials.map((social) => (
@@ -482,15 +487,15 @@ function BrandSections({ project }: { project: Project }) {
 
       <section className="mb-14 grid grid-cols-1 items-center gap-8 rounded-[2rem] border border-white/10 bg-white/[0.03] p-8 md:grid-cols-[minmax(0,14rem)_minmax(0,1fr)]">
         <div className={`mx-auto h-48 w-48 overflow-hidden rounded-[2rem] border-4 p-1 ${project.accent.border}`}>
-          <ProjectImage src={SELFIE} alt="Retrato de Ciszuko Antony" className="h-full w-full rounded-[1.6rem] object-cover" />
+          <ProjectImage src={SELFIE} alt={dict.projects.portraitCiszuko} className="h-full w-full rounded-[1.6rem] object-cover" />
         </div>
         <div>
           <h2 className="flex items-center gap-3 font-header text-2xl font-black text-white">
             <Icon name="user" size={22} />
-            El creador
+            {dict.projects.theCreator}
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-white/55">
-            Ciszuko Antony es el nombre artístico de Francisco García, CEO y fundador de Ciszu Network.
+            Ciszuko Antony es el nombre artístico de {dict.projects.franciscoGarcia}, CEO y fundador de Ciszu Network.
             Todo el contenido, la música y el desarrollo del ecosistema sale de su trabajo, y esta web es
             su portfolio oficial.
           </p>
@@ -513,12 +518,13 @@ function BrandSections({ project }: { project: Project }) {
 
 /** Ciszu Network (empresa): ecosistema real y comisiones. */
 function CompanySections({ project }: { project: Project }) {
+  const dict = useDict();
   return (
     <>
       <section className="mb-14" aria-labelledby="company-ecosystem">
         <h2 id="company-ecosystem" className="mb-6 flex items-center gap-3 font-header text-2xl font-black text-white">
           <Icon name="rocket" size={22} />
-          El ecosistema que construye
+          {dict.projects.ecosystemBuilds}
         </h2>
         <ProjectSlider ariaLabel="Ecosistema Ciszu Network" itemClassName="w-[15rem] sm:w-[17rem]">
           {ECOSYSTEM.map((site) => (
@@ -542,7 +548,7 @@ function CompanySections({ project }: { project: Project }) {
       <section className={`mb-14 rounded-[2rem] border p-8 ${project.accent.border} ${project.accent.chipBg}`}>
         <h2 className="flex items-center gap-3 font-header text-2xl font-black text-white">
           <Icon name="money" size={22} />
-          Servicios y comisiones
+          {dict.projects.servicesCommissions}
         </h2>
         <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/55">
           La empresa acepta encargos de desarrollo web, bots, identidad visual y automatización. Las
@@ -553,7 +559,7 @@ function CompanySections({ project }: { project: Project }) {
           className={`mt-6 inline-flex items-center gap-2 rounded-xl border px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest transition-all hover:brightness-150 ${project.accent.chipBorder} ${project.accent.chipBg} ${project.accent.text}`}
         >
           <Icon name="money" size={13} />
-          Ver comisiones
+          {dict.projects.viewCommissions}
         </Link>
       </section>
     </>
