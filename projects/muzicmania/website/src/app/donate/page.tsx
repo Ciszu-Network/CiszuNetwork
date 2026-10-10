@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useT } from '@/hooks/useT';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { Icon, KoFiEmbed } from '@ciszu/ui';
@@ -59,6 +60,7 @@ const METHODS: Method[] = [
 ];
 
 export default function DonationPage() {
+  const t = useT();
   return (
     <MainLayout>
       <div className="relative min-h-screen px-4 pb-24 pt-24">
@@ -76,7 +78,7 @@ export default function DonationPage() {
               Donar
             </h1>
             <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/45">
-              Apoya el ecosistema de MuzicMania
+              {t.pages.donateExt.heroSubtitle}
             </p>
             <p className="mx-auto max-w-2xl pt-2 text-sm leading-relaxed text-white/45">
               Tus donaciones mantienen las webs, el bot de Discord, MuzicMania y la comunidad
@@ -112,13 +114,13 @@ export default function DonationPage() {
               único embed que Ko-fi autoriza incrustar. Se usa KoFiEmbed directo
               para que el iframe esté SIEMPRE presente, independientemente del panel. */}
           <section className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
-            <h2 className="mb-3 text-center font-header text-sm font-bold text-white">Apoya en Ko-fi</h2>
-            <KoFiEmbed handle="ciszukoantony" title="Apoya a MuzicMania en Ko-fi" background="#f9f9f9" />
+            <h2 className="mb-3 text-center font-header text-sm font-bold text-white">{t.pages.donateExt.kofiLabel}</h2>
+            <KoFiEmbed handle="ciszukoantony" title={t.pages.donateExt.kofiCta} background="#f9f9f9" />
           </section>
 
           <section className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
             <h2 className="mb-3 text-center font-header text-sm font-bold text-white">
-              Cripto (NOWPayments)
+              {t.pages.donateExt.cryptoLabel}
             </h2>
             <iframe
               src="https://nowpayments.io/embeds/donation-widget?api_key=739f2096-6c64-40d6-a2a1-635784185dfb"
@@ -126,7 +128,7 @@ export default function DonationPage() {
               height="623"
               scrolling="no"
               style={{ overflowY: 'hidden', border: 'none' }}
-              title="Donaciones en cripto (NOWPayments)"
+              title={t.pages.donateExt.cryptoCta}
               allow="payment"
               sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
             />
@@ -135,15 +137,13 @@ export default function DonationPage() {
           <div className="mt-12 text-center">
             <p className="text-xs text-white/40">
               ¿Prefieres apoyar de otra forma? Escríbenos a{' '}
-              <a href="mailto:ciszunetwork@gmail.com" className="lowercase text-neon-yellow underline">
-                ciszunetwork@gmail.com
-              </a>
+              <a href="mailto:ciszunetwork@gmail.com" className="lowercase text-neon-yellow underline">{"ciszunetwork@gmail.com"}</a>
             </p>
             <Link
               href="/support"
               className="mt-6 inline-block rounded-2xl border border-white/15 px-6 py-3 text-[10px] font-black uppercase tracking-widest text-white/60 transition-colors hover:text-white"
             >
-              Ir a soporte
+              {t.pages.donateExt.goSupport}
             </Link>
           </div>
         </div>

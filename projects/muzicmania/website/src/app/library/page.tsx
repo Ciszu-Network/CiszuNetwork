@@ -362,7 +362,7 @@ function LibraryContent() {
               </div>
               {tracks.length === 0 && (
                 <div className="text-center py-12">
-                  <p className="text-white/20 font-black uppercase text-[10px] tracking-[0.5em] italic">No hay tracks disponibles</p>
+                  <p className="text-white/20 font-black uppercase text-[10px] tracking-[0.5em] italic">{t.pages.libraryExt.noTracks}</p>
                 </div>
               )}
 
@@ -393,12 +393,12 @@ function LibraryContent() {
                       </p>
                       <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-1">
                         <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 shrink-0 text-gray-500" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                        <span className="text-gray-500 font-black uppercase text-[7px] tracking-wider">Autor:</span>
-                        <Link href="/profile/@ciszukoantony_" className="text-white font-bold text-[8px] normal-case hover:text-neon-cyan transition-colors">Ciszuko Antony</Link>
+                        <span className="text-gray-500 font-black uppercase text-[7px] tracking-wider">{t.pages.libraryExt.authorLabel}</span>
+                        <Link href="/profile/@ciszukoantony_" className="text-white font-bold text-[8px] normal-case hover:text-neon-cyan transition-colors">{t.pages.libraryExt.creatorName}</Link>
                         <div className="w-2.5 h-2.5 text-blue-400 shrink-0">{I.verified}</div>
                         <span className="text-gray-600 text-[6px]">|</span>
                         <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 shrink-0 text-gray-500" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                        <span className="text-gray-500 font-black uppercase text-[7px] tracking-wider">Subido Por:</span>
+                        <span className="text-gray-500 font-black uppercase text-[7px] tracking-wider">{t.pages.libraryExt.uploadedByLabel}</span>
                         <Link href="/profile/@muzicmania" className="text-white font-bold text-[8px] normal-case hover:text-neon-cyan transition-colors">MuzicMania</Link>
                         <div className="w-2.5 h-2.5 text-blue-400 shrink-0">{I.verified}</div>
                       </div>
@@ -421,7 +421,7 @@ function LibraryContent() {
                  ))}
               </div>
               <div className="mt-12 text-center">
-                 <p className="text-white/10 font-black uppercase text-[10px] tracking-[0.5em] italic">Más canciones próximamente en la red</p>
+                 <p className="text-white/10 font-black uppercase text-[10px] tracking-[0.5em] italic">{t.pages.libraryExt.moreSoon}</p>
               </div>
             </div>
 
@@ -433,7 +433,7 @@ function LibraryContent() {
               className="w-full p-6 rounded-[2.5rem] bg-orange-600/10 border border-orange-500/20 hover:border-orange-500/50 transition-all flex items-center justify-center gap-4 group"
             >
                <div className="w-8 h-8 text-orange-500">{I.soundcloud}</div>
-               <span className="text-xs font-black text-white uppercase italic tracking-tighter">Seguir en SoundCloud</span>
+               <span className="text-xs font-black text-white uppercase italic tracking-tighter">{t.pages.libraryExt.followSoundcloud}</span>
             </a>
           </div>
 
@@ -454,13 +454,13 @@ function LibraryContent() {
                  <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 mb-6">
                    <div className="flex items-center gap-1">
                      <svg viewBox="0 0 24 24" className="w-3 h-3 shrink-0 text-gray-500" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                     <span className="text-gray-500 font-black uppercase text-[7px] tracking-wider">Autor:</span>
-                     <Link href="/profile/@ciszukoantony_" className="text-white font-bold text-[8px] normal-case hover:text-neon-cyan transition-colors">Ciszuko Antony</Link>
+                     <span className="text-gray-500 font-black uppercase text-[7px] tracking-wider">{t.pages.libraryExt.authorLabel}</span>
+                     <Link href="/profile/@ciszukoantony_" className="text-white font-bold text-[8px] normal-case hover:text-neon-cyan transition-colors">{t.pages.libraryExt.creatorName}</Link>
                      <div className="w-2.5 h-2.5 text-blue-400 shrink-0">{I.verified}</div>
                    </div>
                    <div className="flex items-center gap-1">
                      <svg viewBox="0 0 24 24" className="w-3 h-3 shrink-0 text-gray-500" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                     <span className="text-gray-500 font-black uppercase text-[7px] tracking-wider">Subido Por:</span>
+                     <span className="text-gray-500 font-black uppercase text-[7px] tracking-wider">{t.pages.libraryExt.uploadedByLabel}</span>
                      <Link href="/profile/@muzicmania" className="text-white font-bold text-[8px] normal-case hover:text-neon-cyan transition-colors">MuzicMania</Link>
                      <div className="w-2.5 h-2.5 text-blue-400 shrink-0">{I.verified}</div>
                    </div>
@@ -509,10 +509,10 @@ function LibraryContent() {
 
                    <div className="flex flex-col gap-3">
                       <Link href={`/play?track=${selectedTrack.id}`} className="w-full h-16 bg-neon-blue text-black rounded-2xl flex items-center justify-center gap-4 font-header font-black uppercase tracking-widest italic shadow-neon-blue/20 hover:scale-[1.02] active:scale-95 transition-all">
-                         <div className="w-6 h-6">{I.play}</div> JUGAR AHORA
+                         <div className="w-6 h-6">{I.play}</div> {t.pages.libraryExt.playNow}
                       </Link>
                        <button onClick={() => handleDownload(selectedTrack)} className="w-full h-14 bg-white/5 border border-white/10 text-white/40 rounded-2xl flex items-center justify-center gap-4 text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all">
-                         <div className="w-5 h-5">{I.download}</div> DESCARGAR TRACK
+                         <div className="w-5 h-5">{I.download}</div> {t.pages.libraryExt.downloadTrack}
                        </button>
                       <button 
                          onClick={() => {
@@ -524,7 +524,7 @@ function LibraryContent() {
                          }}
                          className="w-full h-14 bg-orange-600/10 border border-orange-500/20 text-orange-500 rounded-2xl flex items-center justify-center gap-4 text-[10px] font-black uppercase tracking-widest hover:bg-orange-600 hover:text-white transition-all group"
                        >
-                          <div className="w-5 h-5 group-hover:scale-110 transition-transform">{I.soundcloud}</div> VER EN SOUNDCLOUD
+                          <div className="w-5 h-5 group-hover:scale-110 transition-transform">{I.soundcloud}</div> {t.pages.libraryExt.viewSoundcloud}
                        </button>
                    </div>
                 </div>
@@ -612,6 +612,7 @@ function LibraryContent() {
 }
 
 export default function Library() {
+  const t = useT();
   usePageTitle('LIBRARY');
   return (
     <React.Suspense fallback={<div className="min-h-screen bg-black" />}>

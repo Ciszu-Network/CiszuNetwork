@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useT } from '@/hooks/useT';
 import { motion, AnimatePresence } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
@@ -71,6 +72,7 @@ const PKG_COLOR: Record<string, { bg: string; border: string; hover: string; tex
 };
 
 export default function DocumentationPortal() {
+  const t = useT();
   usePageTitle('DOCUMENTATION');
   const { toast } = useToast();
   const [selectedDoc, setSelectedDoc] = useState('DOCUMENTATION');
@@ -100,8 +102,8 @@ export default function DocumentationPortal() {
         const text = await res.text();
         const identifier = `${selectedDoc}_V${meta.version}_${meta.lastUpdate.replace(/-/g, '_')}_MUZICMANIA`;
         const header = format === 'txt' ? `DOCUMENTATION - MUZICMANIA PORTAL\nDOC_ID: ${selectedDoc}\nIDENTIFIER: ${identifier}\n------------------------------------------------\n\n` : '';
-        const cleanText = text.replace(/^MUZICMANIA - DOCUMENTACIÓN OFICIAL[\s\S]*?------------------------------------------------\n\n/, '')
-                             .replace(/^# MUZICMANIA - DOCUMENTACIÓN OFICIAL[\s\S]*?---\n\n/, '');
+        const cleanText = text.replace(/^MUZICMANIA - {t.pages.documentation.heroTitle} OFICIAL[\s\S]*?------------------------------------------------\n\n/, '')
+                             .replace(/^# MUZICMANIA - {t.pages.documentation.heroTitle} OFICIAL[\s\S]*?---\n\n/, '');
         setContent(header + cleanText);
       } else {
         setContent('ERROR_DOC_NOT_FOUND: Nodo no localizado en el repositorio: ' + selectedDoc);
@@ -191,11 +193,11 @@ export default function DocumentationPortal() {
                     {I.bookOpen}
                  </div>
                  <h1 className="text-4xl md:text-8xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-neon-blue via-white to-neon-purple bg-clip-text text-transparent [-webkit-text-stroke:1px_black]">
-                   DOCUMENTACIÓN
+                   {t.pages.documentation.heroTitle}
                  </h1>
               </div>
               <p className="text-neon-cyan font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-                SISTEMA DE ASSETS DE ALTA FIDELIDAD V2.0.0
+                {t.pages.documentation.assetsTitle}
               </p>
            </div>
         </motion.header>
@@ -211,7 +213,7 @@ export default function DocumentationPortal() {
                          <div className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-neon-blue transition-colors">{I.search}</div>
                          <input 
                            type="text" 
-                           placeholder="FILTRAR NODOS..." 
+                           placeholder={t.pages.documentation.filterNodes} 
                            value={searchQuery}
                            onChange={(e) => setSearchQuery(e.target.value)}
                            className="w-full bg-black/60 border border-white/10 rounded-2xl pl-12 pr-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] focus:border-neon-blue/50 outline-none transition-all placeholder:text-gray-700"
@@ -242,7 +244,7 @@ export default function DocumentationPortal() {
                    {/* SOFTWARE RECOMMENDATIONS */}
                    <div className="mt-8 pt-8 border-t border-white/5 space-y-5">
                       <h3 className="text-[10px] font-black text-white/40 uppercase tracking-[0.4em] flex items-center gap-2">
-                        <div className="w-3 h-3 text-neon-blue">{I.terminal}</div> PROGRAMAS DE USO RECOMENDADOS
+                        <div className="w-3 h-3 text-neon-blue">{I.terminal}</div> {t.pages.documentation.toolsTitle}
                       </h3>
                       <div className="grid grid-cols-2 gap-3">
                          {SOFTWARE_TOOLS.map(sw => (
@@ -262,18 +264,18 @@ export default function DocumentationPortal() {
                    <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                          <div className="w-5 h-5 text-neon-purple drop-shadow-neon-purple">{I.info}</div>
-                         <h3 className="text-[11px] font-black text-white uppercase tracking-[0.2em]">DETALLES DEL ARCHIVO</h3>
+                         <h3 className="text-[11px] font-black text-white uppercase tracking-[0.2em]">{t.pages.documentation.fileDetails}</h3>
                       </div>
                       <div className="w-2.5 h-2.5 rounded-full bg-neon-purple animate-pulse shadow-[0_0_15px_#BF00FF]" />
                    </div>
                    
                    <div className="space-y-4 pt-2">
                       <div className="flex justify-between border-b border-white/5 pb-2">
-                         <span className="text-[9px] font-black text-gray-600 uppercase">Ruta Física</span>
+                         <span className="text-[9px] font-black text-gray-600 uppercase">{t.pages.documentation.filePath}</span>
                          <span className="text-[9px] font-black text-white">/docs/{format}/{selectedDoc}.{format}</span>
                       </div>
                       <div className="flex justify-between border-b border-white/5 pb-2">
-                         <span className="text-[9px] font-black text-gray-600 uppercase">MIME Type</span>
+                         <span className="text-[9px] font-black text-gray-600 uppercase">{t.pages.documentation.mimeType}</span>
                          <span className="text-[9px] font-black text-white">{format === 'txt' ? 'text/plain' : 'text/markdown'}</span>
                       </div>
                       <div className="flex justify-between border-b border-white/5 pb-2">
@@ -287,7 +289,7 @@ export default function DocumentationPortal() {
                    </div>
 
                    <p className="text-[9px] text-gray-600 font-bold leading-relaxed uppercase italic">
-                      Este documento utiliza codificación UTF-8 verificada para garantizar la compatibilidad con caracteres especiales y nomenclatura dinámica.
+                      {t.pages.documentation.utf8Desc}
                    </p>
                 </div>
              </div>
@@ -323,7 +325,7 @@ export default function DocumentationPortal() {
                 <div className="px-12 py-8 border-b border-white/5 bg-black/50 flex items-center justify-between backdrop-blur-xl">
                    <div className="flex items-center gap-4">
                       <div className="w-5 h-5 text-neon-blue drop-shadow-neon-blue animate-pulse">{I.terminal}</div>
-                      <span className="text-[11px] font-black text-white uppercase tracking-[0.3em] italic">Visor de Datos de Alta Fidelidad</span>
+                      <span className="text-[11px] font-black text-white uppercase tracking-[0.3em] italic">{t.pages.documentation.viewerTitle}</span>
                    </div>
                    <div className="flex gap-2 bg-black/80 p-2 rounded-2xl border border-white/10 shadow-inner">
                       {(['txt', 'md'] as const).map(f => (
@@ -345,7 +347,7 @@ export default function DocumentationPortal() {
                      <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-xl z-20">
                         <div className="flex flex-col items-center gap-6">
                            <div className="w-16 h-16 border-4 border-neon-blue/10 border-t-neon-blue rounded-full animate-spin" />
-                           <p className="text-[11px] font-black text-neon-blue uppercase tracking-[0.5em] animate-pulse">Sincronizando Nodo...</p>
+                           <p className="text-[11px] font-black text-neon-blue uppercase tracking-[0.5em] animate-pulse">{t.pages.documentation.syncingNode}</p>
                         </div>
                      </div>
                    ) : (
@@ -380,8 +382,8 @@ export default function DocumentationPortal() {
                    <div className="flex items-center gap-6">
                       <div className="w-12 h-12 text-neon-blue drop-shadow-neon-blue">{I.download}</div>
                       <div>
-                         <h3 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">CENTRO DE DESCARGAS</h3>
-                         <p className="text-[11px] text-gray-500 font-bold uppercase tracking-[0.3em]">Protocolos de Nomenclatura Dinámica v2.0</p>
+                         <h3 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">{t.pages.documentation.downloadsTitle}</h3>
+                         <p className="text-[11px] text-gray-500 font-bold uppercase tracking-[0.3em]">{t.pages.documentation.namingProtocols}</p>
                       </div>
                    </div>
                 </div>
@@ -429,7 +431,7 @@ export default function DocumentationPortal() {
                          <div className={`w-12 h-12 ${pc.text} group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>{pkg.icon}</div>
                          <div className="text-left space-y-1">
                            <span className="block text-[12px] font-black text-white uppercase tracking-widest italic">PAQUETE {pkg.ext.toUpperCase()}</span>
-                           <span className="block text-[10px] text-gray-500 font-bold uppercase tracking-widest">Compresión Dinámica</span>
+                           <span className="block text-[10px] text-gray-500 font-bold uppercase tracking-widest">{t.pages.documentation.dynamicCompression}</span>
                          </div>
                        </button>
                      );

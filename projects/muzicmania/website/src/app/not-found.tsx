@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useT } from '@/hooks/useT';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import QuickDocks from '@/components/molecules/QuickDocks';
@@ -9,6 +10,7 @@ const GhostIcon = (props: React.SVGProps<SVGSVGElement>) => (<svg xmlns="http://
 const TerminalIcon = (props: React.SVGProps<SVGSVGElement>) => (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>);
 
 export default function NotFound() {
+  const t = useT();
   const [showLog, setShowLog] = useState(false);
 
   return (
@@ -83,7 +85,7 @@ export default function NotFound() {
           >
              <TerminalIcon className="w-5 h-5 text-red-500 animate-pulse" />
              <p className="text-red-500 font-black tracking-[0.5em] uppercase text-sm md:text-base">
-                INFRACCIÓN DE SISTEMA
+                {t.pages.notFoundExt.title}
              </p>
           </motion.div>
           
@@ -92,10 +94,10 @@ export default function NotFound() {
             className="text-gray-300 max-w-xl mx-auto space-y-2 mt-2"
           >
             <p className="text-sm md:text-lg font-bold leading-relaxed uppercase tracking-wider text-center">
-              FATAL ERROR. ESTÁS NAVEGANDO EN CÓDIGO MUERTO.
+              {t.pages.notFoundExt.fatal1}
             </p>
             <p className="text-xs md:text-sm font-bold leading-relaxed uppercase tracking-widest text-center text-red-500/70">
-              LA RUTA SOLICITADA HA SIDO PURGADA DEL NÚCLEO.
+              {t.pages.notFoundExt.fatal2}
             </p>
           </motion.div>
         </div>
@@ -108,7 +110,7 @@ export default function NotFound() {
           <Link href="/">
             <button className="relative group overflow-hidden bg-black border-2 border-red-600 px-10 py-4 font-black text-red-500 uppercase tracking-[0.3em] text-lg lg:text-xl transition-all hover:text-white hover:border-white shadow-[0_0_10px_rgba(220,38,38,0.2)] hover:shadow-[0_0_30px_rgba(255,255,255,0.6)]">
                <span className="absolute inset-0 bg-red-600 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out -z-10" />
-               VOLVER A ZONA SEGURA
+               {t.pages.notFoundExt.backSafe}
             </button>
           </Link>
         </motion.div>
@@ -130,10 +132,10 @@ export default function NotFound() {
             className="p-5 bg-red-950/90 border border-red-600/50 shadow-[0_0_20px_rgba(220,38,38,0.3)] backdrop-blur-md max-w-sm"
           >
             <p className="text-red-400 font-mono text-[9px] md:text-xs uppercase tracking-[0.2em] font-bold leading-relaxed">
-              &gt; LOG_SYS: ERROR_UNAUTHORIZED.<br/><br/>
-              &gt; SI ESTÁS BUSCANDO UNA VULNERABILIDAD, BUG O PUERTO ABIERTO...<br/>
-              &gt; TE EQUIVOCASTE DE VECTOR.<br/>
-              &gt; EL PERÍMETRO ESTÁ ASEGURADO. RETÍRATE INMEDIATAMENTE.<br/>
+              {t.pages.notFoundExt.logA}<br/><br/>
+              {t.pages.notFoundExt.logB}<br/>
+              {t.pages.notFoundExt.logC}<br/>
+              {t.pages.notFoundExt.logD}<br/>
               <span className="animate-pulse inline-block mt-2 text-red-600">_</span>
             </p>
           </motion.div>

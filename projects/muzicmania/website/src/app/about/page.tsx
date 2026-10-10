@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useT } from '@/hooks/useT';
 import MainLayout from '@/components/templates/MainLayout';
 import { Icon } from '@ciszu/ui';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
@@ -8,6 +9,7 @@ import { usePageTitle } from '@/lib/usePageTitle';
 
 
 export default function AboutPage() {
+  const t = useT();
   usePageTitle('ABOUT');
   return (
     <MainLayout>
@@ -20,11 +22,11 @@ export default function AboutPage() {
                    <Icon name="info" size={48} />
                 </div>
                 <h1 className="text-4xl md:text-8xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-neon-blue via-neon-purple to-neon-pink bg-clip-text text-transparent [-webkit-text-stroke:1px_black]">
-                  SOBRE NOSOTROS
+                  {t.pages.aboutExt.heroTitle}
                 </h1>
              </div>
              <p className="text-neon-blue font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-               EL FUTURO DEL RITMO WEB
+               {t.pages.aboutExt.futureTitle}
              </p>
           </div>
         </header>
@@ -32,7 +34,7 @@ export default function AboutPage() {
         <section className="flex flex-col md:flex-row gap-8 items-center">
           <div className="flex-1 space-y-4">
             <p className="text-xl text-white font-semibold">
-              <span className="text-neon-blue">MuzicMania</span> no es solo un simulador de ritmo; es una oda a la era digital, la estética neón y la precisión técnica.
+              <span className="text-neon-blue">MuzicMania</span> {t.pages.aboutExt.descSegment}
             </p>
             <p>
               Nacido como un proyecto independiente, busca fusionar la fluidez de los juegos arcade clásicos con las capacidades modernas de la web. Nuestra misión es democratizar el acceso a la música y el arte visual cyberpunk.
@@ -41,7 +43,7 @@ export default function AboutPage() {
           <div className="relative w-48 h-48 shrink-0 rounded-3xl overflow-hidden bg-gradient-to-br from-neon-blue via-neon-purple to-neon-pink flex items-center justify-center shadow-neon-blue/50 shadow-2xl">
             <Image
               src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')}
-              alt="Isotipo de MuzicMania"
+              alt={t.pages.aboutExt.altIsotipo}
               fill
               sizes="192px"
               className="object-contain p-8 drop-shadow-neon-blue"
@@ -63,13 +65,13 @@ export default function AboutPage() {
         </section>
 
         <section className="space-y-6">
-          <h2 className="text-2xl font-header font-black text-neon-pink">CÓMO JUGAR</h2>
+          <h2 className="text-2xl font-header font-black text-neon-pink">{t.pages.aboutExt.howTitle}</h2>
           <div className="bg-neon-blue/10 border-2 border-neon-blue rounded-3xl p-8">
             <ol className="list-decimal list-inside space-y-4 text-lg font-medium">
-              <li>Selecciona una canción de la lista en el modo <span className="text-neon-blue">Jugar</span>.</li>
-              <li>Las flechas caerán desde arriba sincronizadas con la música.</li>
-              <li>Presiona la tecla correspondiente (<span className="text-neon-cyan">Flechas o WASD</span>) cuando la flecha llegue a la zona de hit.</li>
-              <li>Acumula combos para multiplicar tu puntuación y alcanzar el Top Global.</li>
+              <li>{t.pages.aboutExt.stepA} <span className="text-neon-blue">Jugar</span>.</li>
+              <li>{t.pages.aboutExt.step2}</li>
+              <li>{t.pages.aboutExt.step3A}<span className="text-neon-cyan">{t.pages.aboutExt.step3B}</span>{t.pages.aboutExt.step3C}</li>
+              <li>{t.pages.aboutExt.step4}</li>
             </ol>
           </div>
         </section>

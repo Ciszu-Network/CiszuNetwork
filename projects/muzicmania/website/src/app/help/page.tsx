@@ -41,7 +41,7 @@ const HELP_DOCKS = [
     tags: "teclado controls keyboard mouse raton controles pad mando joystick configuracion teclas setup mapping"
   },
   { 
-    id: 4, title: "Optimización de FPS", category: "Técnico", color: "neon-cyan", icon: I.cpu, href: "/information#ecosistema",
+    id: 4, title: "{t.pages.helpExt.optOf} FPS", category: "Técnico", color: "neon-cyan", icon: I.cpu, href: "/information#ecosistema",
     desc: "Guía técnica para maximizar el rendimiento de tu navegador. Evita el stuttering y las caídas de frames durante las canciones de alto BPM.",
     tags: "fps lag rendimiento performance optimizacion frames monitor hardware gpu cpu fluidez"
   },
@@ -148,8 +148,8 @@ const HELP_DOCKS = [
 ];
 
 export default function HelpCenterPage() {
-  usePageTitle('HELP');
   const t = useT();
+  usePageTitle('HELP');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDock, setSelectedDock] = useState<typeof HELP_DOCKS[0] | null>(null);
 
@@ -191,7 +191,7 @@ export default function HelpCenterPage() {
         </motion.header>
 
           <p className="max-w-2xl mx-auto text-gray-400 font-bold text-lg md:text-xl selection:bg-neon-blue/30">
-            Explora nuestra base de conocimientos inteligente o busca un tema específico para mejorar tu flujo de juego.
+            {t.pages.helpExt.intro}
           </p>
 
           {/* Search Bar */}
@@ -207,7 +207,7 @@ export default function HelpCenterPage() {
               </div>
               <input 
                 type="text" 
-                placeholder="Busca un tema de ayuda..."
+                placeholder={t.pages.helpExt.phSearch}
                 className="flex-1 bg-transparent border-none outline-none px-4 text-white font-header font-bold placeholder:text-gray-600"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -219,7 +219,7 @@ export default function HelpCenterPage() {
         <section className="space-y-10">
           <div className="flex items-center justify-between border-b border-white/5 pb-4">
              <h2 className="text-2xl font-header font-black uppercase tracking-widest text-white">
-               Categorías <span className="text-neon-blue">Inteligentes</span>
+               {t.pages.helpExt.categories} <span className="text-neon-blue">Inteligentes</span>
              </h2>
              <span className="text-xs font-mono text-gray-600">{filteredDocks.length} Temas</span>
           </div>
@@ -271,7 +271,7 @@ export default function HelpCenterPage() {
                  {I.alertCircle}
                </div>
                <p className="text-gray-500 font-bold">Sin resultados para &quot;{searchQuery}&quot;</p>
-               <button onClick={() => setSearchQuery('')} className="text-neon-blue font-bold hover:underline font-header">Reiniciar búsqueda</button>
+               <button onClick={() => setSearchQuery('')} className="text-neon-blue font-bold hover:underline font-header">{t.pages.helpExt.resetSearch}</button>
             </motion.div>
           )}
         </section>
@@ -318,10 +318,10 @@ export default function HelpCenterPage() {
 
                   <div className="flex flex-col sm:flex-row gap-4 pt-6">
                      <Link href={selectedDock.href} className={`flex-1 px-8 py-5 bg-${selectedDock.color} text-black font-header font-black uppercase tracking-widest rounded-2xl text-center hover:scale-[1.02] transition-all shadow-lg`}>
-                        Ir a la fuente
+                        {t.pages.helpExt.goSource}
                      </Link>
                      <button onClick={() => setSelectedDock(null)} className="px-8 py-5 bg-white/5 border border-white/10 text-white font-header font-black uppercase tracking-widest rounded-2xl hover:bg-white/10 transition-all">
-                        Cerrar Previa
+                        {t.pages.helpExt.closePreview}
                      </button>
                   </div>
                </motion.div>
@@ -333,7 +333,7 @@ export default function HelpCenterPage() {
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center border-t border-white/5 pt-20">
            <div className="space-y-8">
               <h2 className="text-3xl md:text-5xl font-header font-black uppercase text-white leading-tight">
-                Optimización de <span className="text-neon-cyan">Sistema</span>
+                {t.pages.helpExt.optOf} <span className="text-neon-cyan">Sistema</span>
               </h2>
               <div className="space-y-6">
                  {[
@@ -353,9 +353,9 @@ export default function HelpCenterPage() {
            </div>
 
            <div className="relative p-10 bg-doc-dark border border-white/5 rounded-[3rem] space-y-6">
-              <h3 className="text-2xl font-header font-black text-white uppercase tracking-tight italic">Calibración de Latencia</h3>
+              <h3 className="text-2xl font-header font-black text-white uppercase tracking-tight italic">{t.pages.helpExt.latencyCal}</h3>
               <p className="text-gray-400 font-medium leading-relaxed font-bold">
-                Si notas que las notas llegan antes o después del beat, ajusta el <span className="text-neon-cyan">Global Offset</span>. Un valor de +20ms a +40ms suele corregir el retraso visual.
+                {t.pages.helpExt.tipA} <span className="text-neon-cyan">{t.pages.helpExt.tipB}</span>{t.pages.helpExt.tipC}
               </p>
               <Link href="/information#tutorial" className="inline-flex items-center gap-2 text-neon-cyan font-black uppercase text-xs tracking-widest hover:underline font-header">
                 Ir al tutorial de calibración {I.chevronRight}
@@ -369,10 +369,10 @@ export default function HelpCenterPage() {
           <div className="relative p-12 md:p-16 bg-black/60 border-2 border-neon-green/10 rounded-[4rem] text-center space-y-10 backdrop-blur-3xl">
             <div className="space-y-4">
               <h2 className="text-3xl md:text-6xl font-header font-black uppercase text-white tracking-tighter">
-                ¿NECESITAS MÁS <span className="text-neon-green">AYUDA</span>?
+                {t.pages.helpExt.needMore} <span className="text-neon-green">AYUDA</span>?
               </h2>
               <p className="max-w-xl mx-auto text-gray-500 font-bold uppercase text-xs tracking-[0.2em]">
-                Nuestro equipo está listo para asistirte de forma personalizada.
+                {t.pages.helpExt.needMoreDesc}
               </p>
             </div>
             <div className="flex flex-wrap justify-center gap-6">
