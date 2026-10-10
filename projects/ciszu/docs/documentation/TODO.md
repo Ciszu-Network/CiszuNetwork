@@ -106,25 +106,25 @@
 - [X] En la devcon se debe crar una nueva opcion para otorgar etiquetas o roles a un usuario en concreto, siempre sera global, nunca sera multicasillas esta vez, sera por cada website, y debe ser el username completo exacto, luego se escribe el rol a dar, los roles y tags apareceran en el perfil y activaran nueva funciones dependiendo del rol al hacer click en su perfil en el header, admin, mod, owner, bot, vip, betatesting, support, los ultimos 3 no son de staff, bot tampoco pero si tiene permisos de staff y sera otorgada a cuentas bots recreadas por cada website es decir, @ciszubot, @muzicmania y @ciszunetwork seran cuentas creadas por bots sin contraseña, son perfiles especiales. Finalmente owner, mod y admin si son staff y aparte de esa tag en el perfil debe aparecer la tag de staff. Cada uno tendra un panel diferente, opciones de debug entre mas grande el rango. El owner debe tener todos. Configuracion de debug, entre muchas otras cosas, como vista de staff en perfiles con activacion toggle, para eliminar ciertas cosas o cambiar ciertas cosas. Simepre con marca.
 - [X] Se debe crear un metodo de cierre de sesion remoto utilizado para cerrar sesion a cierta persona, este metodo solo lo podran ejecutar los moderadores, admins y owners. Con el fin de cerrar alguna sesion incluso de una cuenta por cada rango, es decir un mod no puede cerrar la sesion de un admin. Esto por seguridad de hackeos a cuentas. Esta opcion debe estar tanto para la GUI de cada website segun el debug y cuenta, y para la devconsole.
 - [X] Se debe crear un modal cuando una cuenta es baneada, el usuario automaticamente se redirecionara asu profile y aparecera un modal de su cuenta fue baneada e informacion del baneo. Razon fecha provocante etc. Lo mismo con los mutes.
-- [ ] Me he dado cuenta que los usernames de los guest estan mal, te pedi que los guest tengan un username que se base en su minuscula y con su arroba es decir si el guest displayname Guest3848 su username es @guest3848. Esto solo se esta cumplien en muzicmania en los demas no.
+- [X] Username de guests @guestNNNN en las 4 webs: ciszubot ya lo tenía (`getGuestId`), añadido en ciszu (`getGuestUsername` + AuthMenu), antony (strip de espacios + AuthMenu) y muzicmania ya cumplía.
 
 ### Cambios por Website
 
 **Ciszu Network Website:**
 
-- [ ] Terminar idiomas en ingles UK.
-- [ ] Terminar idiomas en ingles USA.
-- [ ] Terminar idiomas en español LATAM.
-- [ ] Terminar idiomas en español España.
+- [X] Terminar idiomas en ingles UK.
+- [X] Terminar idiomas en ingles USA.
+- [X] Terminar idiomas en español LATAM.
+- [X] Terminar idiomas en español España.
 
 **Ciszubot Website:**
 
-- [ ] Terminar idiomas en ingles UK.
-- [ ] Terminar idiomas en ingles USA.
-- [ ] Terminar paginas de dashboard (auth).
-- [ ] Terminar idiomas en español LATAM.
-- [ ] Terminar idiomas en español España.
-- [ ] Corregir la configuracion de la cuenta para permite doble login, usuario logeado con ciszu ID puede configurar su cuenta, usuario logeado con discord accede a dasboard, usuario logeado en ambos control total.
+- [X] Terminar idiomas en ingles UK.
+- [X] Terminar idiomas en ingles USA.
+- [X] Terminar paginas de dashboard (auth) — spec completo (commits 21813eca/2bef4e78).
+- [X] Terminar idiomas en español LATAM.
+- [X] Terminar idiomas en español España.
+- [X] Corregir la configuracion de la cuenta para permite doble login, usuario logeado con ciszu ID puede configurar su cuenta, usuario logeado con discord accede a dasboard, usuario logeado en ambos control total.
 
   ▸ [10 oct 2026] Fase 1 HECHA: sin bucle en /login (panel dinámico según sesión), username @ real de Discord (nunca el ID), icono engranaje en Configuración, botones Invitar/Configurar por servidor con atenuado y aviso individual, QuickDocks compactos/colapsables y estáticos al final, sidebar del dashboard por categorías con accesos (FAQ/ayuda/perfil/config/idioma/tema). Pendiente de este bloque: lo de la línea del spec del dashboard (158).
 
@@ -157,7 +157,7 @@
   Los JSON debe tener una nomenclatura clara, segun por opcion, fecha, usuario, indicar que es un backup de ciszubot etc.
 
   La verdad no se que mas decir, te dejo la libertad de mejorar el dashboard como quieras, animaciones, interacciones para el usuario por ejemplo ocultar o esconder los slidebards, o retraerlos, o etc. Incluso funciones o cosas que tangan otros bots de discord famosos.
-- [ ] DASHBOARD CISZUBOT — gran mejora (spec del 09 oct 2026):
+- [X] DASHBOARD CISZUBOT — gran mejora (spec del 09 oct 2026):
   · Sidebar por categorías (Servers como categoría; al no seleccionar nada solo resumen; al seleccionar abre
   sub-sidebar por opciones; resumen por defecto con hero banner + preview completa del servidor).
   · Accesos directos en el sidebar: FAQ, ayuda, configuración de cuenta, perfil, cambio de idioma y tema.
@@ -190,21 +190,21 @@
   real de Discord) y canales agrupados por categoría; editor Markdown de Discord para bienvenida/despedida
   (negrita/itálica/subrayado/tachado/código/spoiler + vista previa en vivo + variables {user} {guild}
   {members}); además, sistema de estado del bot auto/manual con modal offline, disclaimer obligatorio y
-  sección devcon (commits 502c1413). Pendiente menor de polish: revisar duplicidad hero (layout vs cliente).
+  sección devcon (commits 502c1413). Pulido final revisado (10 oct): el DashboardShell no renderiza hero — sin duplicidad layout/cliente; cada página tiene un único hero.
 - [ ] Añadir VPS 24 7 AL BOT. (Tarea normal: desplegar el bot en un host 24/7 — panel gratuito
   tipo bot-hosting.net con `deploy/ciszubot-standalone.zip`, o VPS genérico; requiere cuenta y/o pago.)
 
 **Ciszuko Antony Website:**
 
-- [ ] Terminar idiomas en ingles UK.
-- [ ] Terminar idiomas en ingles USA.
-- [ ] Terminar idiomas en español LATAM.
-- [ ] Terminar idiomas en español España.
+- [X] Terminar idiomas en ingles UK.
+- [X] Terminar idiomas en ingles USA.
+- [X] Terminar idiomas en español LATAM.
+- [X] Terminar idiomas en español España.
 
 **MuzicMania Website:**
 
-- [ ] Terminar idiomas en ingles UK.Explica
-- [ ] Terminar idiomas en ingles USA.
-- [ ] Terminar idiomas en español LATAM.
-- [ ] Terminar idiomas en español España.
+- [X] Terminar idiomas en ingles UK.
+- [X] Terminar idiomas en ingles USA.
+- [X] Terminar idiomas en español LATAM.
+- [X] Terminar idiomas en español España.
 - [ ] Seguir con el desarollo del videojuego en su muzicmania TODO.md

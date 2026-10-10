@@ -9,7 +9,7 @@ import { useAppStore, type AppUser } from '@/store';
 
 type TimeoutRef = React.MutableRefObject<ReturnType<typeof setTimeout> | null>;
 import { supabase } from '@/config/supabase';
-import { getGuestName } from '@/lib/guest';
+import { getGuestName, getGuestId } from '@/lib/guest';
 import { syncPreferencesToProfile, updatePreferences, loadPreferences } from '@/lib/preferences';
 import PreferencesPanel from '@/components/layout/PreferencesPanel';
 import { PreferencesModal, RememberSessionPrompt, SanctionNotice } from '@ciszu/ui';
@@ -612,6 +612,7 @@ export default function Navbar({ account }: NavbarProps) {
                         </span>
                         <div className="min-w-0">
                           <p className="truncate text-sm font-bold text-ink">{mounted ? getGuestName() : 'Guest'}</p>
+                          <p className="truncate font-mono text-[11px] text-muted">{mounted ? getGuestId() : '@guest'}</p>
                           <p className="text-[11px] text-muted">{dict.nav.guestNotice}</p>
                         </div>
                       </div>

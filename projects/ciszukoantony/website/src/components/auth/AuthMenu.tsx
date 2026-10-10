@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useAppStore } from '@/store';
-import { getGuestName } from '@/lib/guest';
+import { getGuestName, getGuestUsername } from '@/lib/guest';
 import { supabase } from '@/config/supabase';
 import PreferencesPanel from '@/components/auth/PreferencesPanel';
 import { PreferencesModal } from '@ciszu/ui';
@@ -74,7 +74,7 @@ export default function AuthMenu({ onClose }: { onClose: () => void }) {
             </div>
             <div className="min-w-0">
               <p className="text-white font-header font-bold text-sm truncate">{guestName}</p>
-              <p className="text-gray-400 text-[10px] uppercase tracking-widest font-bold">{dict.authMenu.guestSession}</p>
+              <p className="text-gray-400 text-[10px] uppercase tracking-widest font-bold">{getGuestUsername()}</p>
             </div>
           </>
         )}

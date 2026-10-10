@@ -31,3 +31,8 @@ export function getGuestName(): string {
     return `Guest ${randomDigits()}`;
   }
 }
+/** Username público del invitado: @guest3848 (minúsculas, sin espacios). */
+export function getGuestUsername(): string {
+  const name = getGuestName().replace(/\s+/g, '').toLowerCase();
+  return `@${name || 'guest'}`;
+}

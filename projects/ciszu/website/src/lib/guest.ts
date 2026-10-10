@@ -46,3 +46,7 @@ export function getGuestName(): string {
   }
   return name;
 }
+/** Username público del invitado: @guest3848 (minúsculas, sin espacios). */
+export function getGuestUsername(): string {
+  return `@${getGuestName().replace(/\s+/g, '').toLowerCase()}`;
+}

@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useAppStore } from '@/store';
 import { useDict } from '@/lib/useDict';
 import { supabase } from '@/config/supabase';
-import { getGuestName } from '@/lib/guest';
+import { getGuestName, getGuestUsername } from '@/lib/guest';
 import PreferencesPanel from '@/components/auth/PreferencesPanel';
 import { PreferencesModal, useToast } from '@ciszu/ui';
 import { Button } from '@heroui/react';
@@ -151,7 +151,7 @@ export default function AuthMenu({ open, onToggle, onClose, lang, dict }: { open
                   {isHydrated ? (user ? displayName : guest) : '…'}
                 </p>
                 <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest truncate">
-                  {isHydrated ? (user ? user.email : t.authWarning.guest) : t.common.loading}
+                  {isHydrated ? (user ? user.email : getGuestUsername()) : t.common.loading}
                 </p>
               </div>
             </div>
