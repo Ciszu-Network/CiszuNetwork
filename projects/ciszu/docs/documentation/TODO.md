@@ -14,8 +14,9 @@
   antony 246 · muzicmania 937; ratchet `pnpm verify:i18n`).
   PILOTO HECHO (09 oct 2026): página de **login de ciszu** migrada completa (patrón `useDict()` +
   claves `loginPage` en `es`/`en` + `fillTemplate`; ciszu pasó de 390 → 379).
-  LOTES HECHOS: login (390→379) y support (379→340). Próximos por impacto: reviews/contact/
-  changelog/information de ciszu, y luego ciszubot/antony/muzicmania.
+  LOTES HECHOS: login (390→379) y support (379→340). LOTES HECHOS: login, support, contact, register, reviews, changelog y not-found (ciszu 390→231).
+  SIGUIENTE: `information` de ciszu requiere refactor server→client (tiene `metadata`: mover contenido a un
+  componente cliente). Después: páginas de projects/team/documentation, y luego ciszubot/antony/muzicmania.
 
 #5 Crear sistema de anuncios: Google Adsense, GA4, GTM, Tag y Analytics pack completo.
 

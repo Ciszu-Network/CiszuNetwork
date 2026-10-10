@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import { useDict } from '@/lib/useDict';
 
 /**
  * 404 de Ciszu Network — estética de "error de sistema / terminal corporativa".
@@ -14,21 +15,21 @@ import QuickDocks from '@/components/molecules/QuickDocks';
  *  - Botón oculto en la barra de estado que abre el diagnóstico del nodo.
  */
 
-const KEYWORDS: { key: string; line: string }[] = [
-  { key: 'ciszu', line: '[OK] ACCESO CONCEDIDO — bienvenido de vuelta, operador.' },
-  { key: 'sudo', line: '[DENIED] privilegios insuficientes: incidente registrado en /var/log/ciszu.log' },
-  { key: 'help', line: '[CMD] comandos disponibles: ciszu · sudo · ping · home · help' },
-  { key: 'ping', line: '[NET] pong — 12ms · nodo ciszunetwork: estable.' },
-];
-
-const BOOT_LOG = [
-  '[OK] núcleo ciszunetwork v2026 — arranque verificado',
-  '[OK] cdn ciszu-cdn — assets sincronizados',
-  '[WARN] ruta solicitada no indexada en la tabla de rutas',
-  '[ERR] ERR_CISZU_404 — recurso inexistente o retirado',
-];
 
 export default function NotFound() {
+  const t = useDict();
+  const KEYWORDS: { key: string; line: string }[] = [
+    { key: 'ciszu', line: t.notFoundPage.kwCiszu },
+    { key: 'sudo', line: t.notFoundPage.kwSudo },
+    { key: 'help', line: t.notFoundPage.kwHelp },
+    { key: 'ping', line: t.notFoundPage.kwPing },
+  ];
+  const BOOT_LOG = [
+    t.notFoundPage.boot1,
+    t.notFoundPage.boot2,
+    t.notFoundPage.boot3,
+    t.notFoundPage.boot4,
+  ];
   const pathname = usePathname();
   const router = useRouter();
   const bufferRef = useRef('');
@@ -57,13 +58,13 @@ export default function NotFound() {
       }
       if (bufferRef.current.endsWith('home')) {
         bufferRef.current = '';
-        pushLog('[ROUTE] redirigiendo al inicio del nodo...');
+        pushLog(t.notFoundPage.routeHome);
         router.push('/');
       }
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [pushLog, router]);
+  }, [pushLog, router, t]);
 
   return (
     <>
@@ -203,14 +204,14 @@ export default function NotFound() {
                 <span className="text-neon-green">$</span> ciszu --resolve{' '}
                 <span className="text-white">{pathname ?? '/???'}</span>
               </p>
-              <p className="text-neon-yellow/90">&gt; ERR_CISZU_404: recurso no indexado en la red.</p>
+              <p className="text-neon-yellow/90">{t.notFoundPage.errLine}</p>
             </div>
 
             <div className="text-center space-y-5">
               <h1
                 className="cz404-glitch font-header font-black text-[6rem] leading-none md:text-[10rem] tracking-tighter text-white"
                 data-text="404"
-                aria-label="Error 404"
+                aria-label={t.notFoundPage.errorAria}
               >
                 404
               </h1>
@@ -221,11 +222,10 @@ export default function NotFound() {
               </p>
 
               <h2 className="font-header font-black text-xl md:text-3xl uppercase tracking-tighter text-white">
-                Página no encontrada
+                {t.notFoundPage.title}
               </h2>
               <p className="mx-auto max-w-md text-sm text-white/50 leading-relaxed">
-                El nodo está operativo, pero esta ruta no existe o fue retirada del sistema. Revisa la dirección o
-                vuelve al inicio para restablecer la sesión.
+                {t.notFoundPage.body}
               </p>
             </div>
 
@@ -237,7 +237,7 @@ export default function NotFound() {
                 <span aria-hidden className="font-mono">
                   &gt;_
                 </span>
-                Volver al inicio
+                {t.notFoundPage.backHome}
               </Link>
               <button
                 type="button"
@@ -246,7 +246,7 @@ export default function NotFound() {
                 aria-controls="cz404-diagnostics"
                 className="inline-flex items-center gap-3 rounded-xl border border-white/15 bg-white/5 px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-white/60 transition-all hover:border-neon-cyan/60 hover:text-neon-cyan"
               >
-                {diagnosticsOpen ? 'Cerrar diagnóstico' : 'Abrir diagnóstico'}
+                {diagnosticsOpen ? t.notFoundPage.closeDiag : t.notFoundPage.openDiag}
               </button>
             </div>
 
@@ -265,8 +265,7 @@ export default function NotFound() {
                   </p>
                 ))}
                 <p className="pt-2 text-white/40">
-                  pista: escribe <span className="text-neon-cyan">ciszu</span>, <span className="text-neon-cyan">help</span>{' '}
-                  o <span className="text-neon-cyan">home</span>
+                  {t.notFoundPage.hintA}<span className="text-neon-cyan">ciszu</span>{t.notFoundPage.hintB}<span className="text-neon-cyan">help</span>{t.notFoundPage.hintC}<span className="text-neon-cyan">home</span>
                   <span className="cz404-cursor inline-block ml-1 text-neon-cyan" aria-hidden>
                     _
                   </span>
@@ -277,12 +276,12 @@ export default function NotFound() {
 
           {/* Barra de estado */}
           <div className="flex items-center gap-4 border-t border-neon-cyan/20 bg-neon-cyan/5 px-4 py-2.5 font-mono text-[9px] md:text-[10px] uppercase tracking-[0.2em] text-white/40">
-            <span className="truncate">sistema: ciszunetwork v2026</span>
-            <span className="hidden md:inline truncate">sesión: anónima</span>
+            <span className="truncate">{t.notFoundPage.systemLine}</span>
+            <span className="hidden md:inline truncate">{t.notFoundPage.sessionAnon}</span>
             <button
               type="button"
               onClick={() => setDiagnosticsOpen((open) => !open)}
-              aria-label="Activar consola de diagnóstico oculta"
+              aria-label={t.notFoundPage.diagAria}
               className="ml-auto shrink-0 text-neon-cyan/30 transition-colors hover:text-neon-cyan"
               title=">_"
             >
