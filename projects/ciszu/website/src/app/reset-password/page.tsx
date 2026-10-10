@@ -20,6 +20,8 @@ import { useRouter } from 'next/navigation';
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import { supabase } from '@/config/supabase';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useDict } from '@/lib/useDict';
+import { fillTemplate } from '@/lib/i18n';
 import {
   PasswordStrengthBar,
   RecoveryNotice,
@@ -49,6 +51,7 @@ const SITE_NAME = 'Ciszu Network';
 
 export default function ResetPasswordPage() {
   usePageTitle('RESET_PASSWORD');
+  const t = useDict();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -147,7 +150,7 @@ export default function ResetPasswordPage() {
       return;
     }
     if (!passwordMeetsMinimum(password)) {
-      setError('La contraseña no alcanza el nivel mínimo de seguridad (Media).');
+      setError(t.resetPage.weak);
       return;
     }
 
@@ -165,7 +168,7 @@ export default function ResetPasswordPage() {
         if (!probeError && probe.session) {
           await supabase.auth.signOut().catch(() => {});
           clearRecoveryMarkers();
-          throw new Error('La contraseña nueva no puede ser igual a la anterior. Puedes volver a intentarlo desde el correo.');
+          throw new Error(t.resetPage.sameAsOld);
         }
       }
 
@@ -176,10 +179,10 @@ export default function ResetPasswordPage() {
       await supabase.auth.signOut().catch(() => {});
       clearRecoveryMarkers();
       setDone(true);
-      toast('Contraseña actualizada. Vuelve a iniciar sesión con la nueva.', 'success');
+      toast(t.resetPage.updatedToast, 'success');
       window.setTimeout(() => router.replace('/login'), 2600);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo actualizar la contraseña.');
+      setError(err instanceof Error ? err.message : t.resetPage.updateFailed);
     } finally {
       setLoading(false);
     }
@@ -198,7 +201,7 @@ export default function ResetPasswordPage() {
       <div className="max-w-md mx-auto px-4 relative">
         <div className="text-center mb-6 space-y-1">
           <h1 className="text-white font-black uppercase tracking-widest text-sm">CISZU ID</h1>
-          <p className="text-gray-400 text-[11px] font-bold">Recupera el acceso a tu CISZU ID</p>
+          <p className="text-gray-400 text-[11px] font-bold">{t.resetPage.subtitle}</p>
         </div>
 
         <div className="relative">
@@ -207,14 +210,14 @@ export default function ResetPasswordPage() {
             {checking ? (
               <div className="text-center space-y-3 py-6">
                 <div className="w-10 h-10 mx-auto border-2 border-white/20 border-t-neon-blue rounded-full animate-spin" />
-                <p className="text-gray-400 text-[11px] font-bold">Comprobando el enlace…</p>
+                <p className="text-gray-400 text-[11px] font-bold">{t.resetPage.checking}</p>
               </div>
             ) : done ? (
               <RecoveryNotice
                 tone="success"
-                title="Contraseña actualizada"
-                message="Tu contraseña ha sido restablecida y por seguridad cerramos la sesión. Inicia sesión con tu contraseña nueva."
-                actionLabel="Ir al login"
+                title={t.resetPage.doneTitle}
+                message={t.resetPage.doneMsg}
+                actionLabel={t.resetPage.goLogin}
                 onAction={() => router.replace('/login')}
               />
             ) : status && !status.canSetPassword ? (
@@ -223,23 +226,23 @@ export default function ResetPasswordPage() {
                 title={status.title}
                 message={status.message}
                 invalidFor={invalidFor}
-                actionLabel="Pedir un enlace nuevo"
+                actionLabel={t.resetPage.requestNew}
                 onAction={() => router.replace('/login?forgot=1')}
-                secondaryLabel="Volver al login"
+                secondaryLabel={t.resetPage.backLogin}
                 onSecondary={() => router.replace('/login')}
               />
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
                 <RecoveryNotice
                   tone="info"
-                  title="Enlace verificado"
-                  message="Establece tu contraseña nueva. El enlace es de un solo uso y la sesión se cerrará al guardarla."
+                  title={t.resetPage.verifiedTitle}
+                  message={t.resetPage.verifiedMsg}
                   className="!p-4"
                 />
 
                 <div className="space-y-1">
                   <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 ml-1">
-                    Nueva contraseña
+                    {t.resetPage.newPassword}
                   </label>
                   <input
                     type="password"
@@ -255,7 +258,7 @@ export default function ResetPasswordPage() {
 
                 <div className="space-y-1">
                   <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 ml-1">
-                    Repetir contraseña
+                    {t.resetPage.repeatPassword}
                   </label>
                   <input
                     type="password"
@@ -269,7 +272,7 @@ export default function ResetPasswordPage() {
                 </div>
 
                 <p className="text-[10px] font-bold text-gray-500 leading-relaxed">
-                  Mínimo 8 caracteres. No puede ser igual a tu contraseña anterior.
+                  {t.resetPage.rules}
                 </p>
 
                 {error && <p className="text-red-400 text-[11px] font-bold">{error}</p>}
@@ -279,14 +282,13 @@ export default function ResetPasswordPage() {
                   disabled={loading}
                   className="w-full py-3.5 rounded-xl btn-primary font-header font-black uppercase tracking-widest text-xs disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
                 >
-                  {loading ? 'Procesando…' : 'Restablecer contraseña'}
+                  {loading ? t.resetPage.submitting : t.resetPage.submit}
                 </button>
               </form>
             )}
 
             <p className="text-[10px] text-faint font-bold leading-relaxed text-center">
-              Los enlaces de recuperación caducan {Math.round(RECOVERY_LINK_TTL_MS / 60000)} minutos después de pedirlos.
-              Este proceso se aplica a {SITE_NAME}.
+              {fillTemplate(t.resetPage.expiry, { min: String(Math.round(RECOVERY_LINK_TTL_MS / 60000)), site: SITE_NAME })}
             </p>
           </div>
         </div>
