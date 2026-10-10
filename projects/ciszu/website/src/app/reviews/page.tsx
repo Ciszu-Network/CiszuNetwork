@@ -7,6 +7,8 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
 import { useAppStore } from '@/store';
 import { supabase } from '@/config/supabase';
+import { useDict } from '@/lib/useDict';
+import { fillTemplate } from '@/lib/i18n';
 import {
   REVIEWS_PAGE_SIZE,
   averageRating,
@@ -158,9 +160,9 @@ function tagColor(tag: ReviewTag, tokens: Tokens): string {
 /** `useLayoutEffect` no existe en el servidor; en SSR cae a `useEffect`. */
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
-function displayNameOf(review: ReviewRecord): string {
-  if (review.is_anonymous) return 'CIUDADANO ANÓNIMO';
-  return review.user_profile?.display_name?.trim() || 'USUARIO ANÓNIMO';
+function displayNameOf(review: ReviewRecord, anonymousLabel: string, fallbackLabel: string): string {
+  if (review.is_anonymous) return anonymousLabel;
+  return review.user_profile?.display_name?.trim() || fallbackLabel;
 }
 
 function usernameOf(review: ReviewRecord): string | null {
@@ -181,12 +183,6 @@ function formatReviewDate(iso: string): string {
   if (!Number.isFinite(ts)) return '—';
   return new Date(ts).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
 }
-
-const TAG_LABELS: Record<ReviewTag, string> = {
-  verified: 'Verificada',
-  positive: 'Sentimiento positivo',
-  negative: 'Sentimiento negativo',
-};
 
 /* ------------------------------------------------------------
  * Piezas de UI
@@ -324,6 +320,7 @@ function Shell({ children }: { children: React.ReactNode }) {
  * ---------------------------------------------------------- */
 
 export default function ReviewsPage() {
+  const t = useDict();
   const storeUser = useAppStore((state: { user?: unknown }) => state.user) as unknown as SessionUser;
   const userId = storeUser?.id && UUID_RE.test(storeUser.id) ? storeUser.id : null;
 
@@ -350,6 +347,11 @@ export default function ReviewsPage() {
   const accent = isLight ? SITE.accentLight : SITE.accent;
   const accentSoft = isLight ? SITE.accentSoftLight : SITE.accentSoft;
   const isAdmin = String(storeUser?.role ?? '').toLowerCase() === 'admin';
+  const TAG_LABELS: Record<ReviewTag, string> = {
+    verified: t.reviewsPage.tagVerified,
+    positive: t.reviewsPage.tagPositive,
+    negative: t.reviewsPage.tagNegative,
+  };
 
   const [reviews, setReviews] = useState<ReviewRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -419,7 +421,7 @@ export default function ReviewsPage() {
       setError(
         fetchError instanceof Error && fetchError.message
           ? fetchError.message
-          : 'No se pudieron cargar las reseñas. Inténtalo de nuevo.',
+          : t.reviewsPage.loadError,
       );
     } finally {
       setNow(Date.now());
@@ -522,7 +524,7 @@ export default function ReviewsPage() {
   const handleLike = useCallback(
     async (reviewId: string) => {
       if (!userId) {
-        requireAuth('dar me gusta a una reseña');
+        requireAuth(t.reviewsPage.authLike);
         return;
       }
       setActionError(null);
@@ -537,13 +539,13 @@ export default function ReviewsPage() {
       await loadReviews();
       await loadMine(userId);
     },
-    [userId, likedIds, requireAuth, loadReviews, loadMine],
+    [userId, likedIds, requireAuth, loadReviews, loadMine, t],
   );
 
   const handleDelete = useCallback(
     async (reviewId: string) => {
       if (!userId) {
-        requireAuth('eliminar una reseña');
+        requireAuth(t.reviewsPage.authDelete);
         return;
       }
       setActionError(null);
@@ -556,17 +558,17 @@ export default function ReviewsPage() {
       await loadReviews();
       await loadMine(userId);
     },
-    [userId, requireAuth, loadReviews, loadMine],
+    [userId, requireAuth, loadReviews, loadMine, t],
   );
 
   const handleSubmit = useCallback(async () => {
     if (!userId) {
       setIsModalOpen(false);
-      requireAuth('publicar una reseña');
+      requireAuth(t.reviewsPage.authPublish);
       return;
     }
     if (formComment.trim().length < 10) {
-      setFormError('El comentario debe tener al menos 10 caracteres.');
+      setFormError(t.reviewsPage.commentMin);
       return;
     }
     setSubmitting(true);
@@ -589,11 +591,11 @@ export default function ReviewsPage() {
     setIsModalOpen(false);
     await loadReviews();
     await loadMine(userId);
-  }, [userId, formComment, formRating, formAnon, myReview, requireAuth, loadReviews, loadMine]);
+  }, [userId, formComment, formRating, formAnon, myReview, requireAuth, loadReviews, loadMine, t]);
 
   const openComposer = () => {
     if (!userId) {
-      requireAuth('publicar una reseña');
+      requireAuth(t.reviewsPage.authPublish);
       return;
     }
     setFormError(null);
@@ -622,7 +624,7 @@ export default function ReviewsPage() {
               className="bg-clip-text font-header text-4xl font-black uppercase leading-none tracking-tighter text-transparent md:text-6xl"
               style={{ backgroundImage: `linear-gradient(to right, ${accent}, ${tokens.ink})` }}
             >
-              RESEÑAS
+              {t.reviewsPage.title}
             </h1>
           </div>
           <p
@@ -656,11 +658,11 @@ export default function ReviewsPage() {
               </div>
               <p className="text-[11px] font-black uppercase tracking-[0.3em] text-white/45">
                 {hasRealReviews
-                  ? `Baseline 5.0 + ${totalReviews} ${totalReviews === 1 ? 'reseña real' : 'reseñas reales'}`
-                  : 'Sin reseñas todavía · Baseline 5.0'}
+                  ? fillTemplate(t.reviewsPage.baselineReal, { n: String(totalReviews), label: totalReviews === 1 ? t.reviewsPage.resReal1 : t.reviewsPage.resRealN })
+                  : t.reviewsPage.baselineNone}
               </p>
               <p className="mx-auto max-w-md text-xs text-white/35">
-                Solo mostramos reseñas reales de usuarios registrados. No generamos ni publicamos reseñas de ejemplo.
+                {t.reviewsPage.onlyReal}
               </p>
             </div>
             <div>
@@ -670,7 +672,7 @@ export default function ReviewsPage() {
                 className="rounded-2xl border-2 px-8 py-4 font-header text-sm font-black uppercase tracking-[0.2em] transition-transform hover:scale-105 active:scale-95"
                 style={{ borderColor: `${accent}66`, color: accent, background: tokens.surfaceSolid }}
               >
-                {myReview ? 'Editar mi reseña' : 'Escribir reseña'}
+                {myReview ? t.reviewsPage.writeEdit : t.reviewsPage.writeNew}
               </button>
             </div>
           </div>
@@ -683,32 +685,32 @@ export default function ReviewsPage() {
               type="search"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Buscar por comentario, nombre o @usuario…"
-              aria-label="Buscar reseñas"
+              placeholder={t.reviewsPage.searchPh}
+              aria-label={t.reviewsPage.searchLabel}
               className="h-11 min-w-[240px] flex-1 rounded-2xl border border-white/10 bg-black px-4 text-sm text-white placeholder:text-white/25 focus:border-white/30 focus:outline-none"
             />
             <button
               type="button"
               onClick={() => setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
               className="flex h-11 items-center gap-2 rounded-2xl border border-white/10 bg-black px-4 text-[11px] font-black uppercase tracking-widest text-white/60 transition-colors hover:text-white"
-              title={sortOrder === 'asc' ? 'Orden ascendente' : 'Orden descendente'}
+              title={sortOrder === 'asc' ? t.reviewsPage.sortAscTitle : t.reviewsPage.sortDescTitle}
             >
               <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" className={sortOrder === 'desc' ? '' : 'rotate-180'}>
                 <path d="M12 5v14" />
                 <path d="m19 12-7 7-7-7" />
               </svg>
-              {sortOrder === 'asc' ? 'Ascendente' : 'Descendente'}
+              {sortOrder === 'asc' ? t.reviewsPage.ascLabel : t.reviewsPage.descLabel}
             </button>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30">Orden</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30">{t.reviewsPage.sortLabel}</span>
             {(  [
-              { key: 'relevance', label: 'Relevancia' },
-              { key: 'recent', label: 'Recientes' },
-              { key: 'rating', label: 'Estrellas' },
-              { key: 'likes', label: 'Likes' },
-              { key: 'popularity', label: 'Popularidad' },
+              { key: 'relevance', label: t.reviewsPage.optRelevance },
+              { key: 'recent', label: t.reviewsPage.optRecent },
+              { key: 'rating', label: t.reviewsPage.optRating },
+              { key: 'likes', label: t.reviewsPage.optLikes },
+              { key: 'popularity', label: t.reviewsPage.optPopularity },
             ] as { key: ReviewSortKey; label: string }[]
             ).map((option) => (
               <Chip key={option.key} active={sortKey === option.key} onClick={() => setSortKey(option.key)} accent={accent} tokens={tokens}>
@@ -718,7 +720,7 @@ export default function ReviewsPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30">Filtros</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30">{t.reviewsPage.filtersLabel}</span>
             {(Object.keys(TAG_LABELS) as ReviewTag[]).map((tag) => (
               <Chip key={tag} active={tags.includes(tag)} onClick={() => toggleTag(tag)} accent={accent} tokens={tokens}>
                 {TAG_LABELS[tag]}
@@ -726,22 +728,22 @@ export default function ReviewsPage() {
             ))}
             {[
               { value: 5, label: '5★' },
-              { value: 4, label: '4★ o más' },
-              { value: 3, label: '3★ o más' },
+              { value: 4, label: t.reviewsPage.star4plus },
+              { value: 3, label: t.reviewsPage.star3plus },
             ].map((option) => (
               <Chip key={option.value} active={minRating === option.value} onClick={() => toggleStarFilter(option.value)} accent={accent} tokens={tokens}>
                 {option.label}
               </Chip>
             ))}
             <Chip active={maxRating === 2} onClick={() => { setMinRating(null); setMaxRating(maxRating === 2 ? null : 2); }} accent={accent} tokens={tokens}>
-              2★ o menos
+              {t.reviewsPage.star2minus}
             </Chip>
             <Chip active={onlyLikes} onClick={() => setOnlyLikes((prev) => !prev)} accent={accent} tokens={tokens}>
-              Con likes
+              {t.reviewsPage.withLikes}
             </Chip>
             {userId && (
               <Chip active={onlyMine} onClick={() => setOnlyMine((prev) => !prev)} accent={accent} tokens={tokens}>
-                Solo las mías
+                {t.reviewsPage.onlyMine}
               </Chip>
             )}
             {activeFilters > 0 && (
@@ -750,7 +752,7 @@ export default function ReviewsPage() {
                 onClick={clearFilters}
                 className="rounded-full border border-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-white/40 transition-colors hover:text-white"
               >
-                Limpiar todo ({activeFilters})
+                {fillTemplate(t.reviewsPage.clearAll, { n: String(activeFilters) })}
               </button>
             )}
           </div>
@@ -758,13 +760,13 @@ export default function ReviewsPage() {
           <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/5 pt-4">
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/35">
               {loading
-                ? 'Cargando reseñas…'
+                ? t.reviewsPage.loadingList
                 : sorted.length === 0
-                  ? 'Sin resultados'
-                  : `Mostrando ${paged.from}–${paged.to} de ${paged.totalItems}`}
+                  ? t.reviewsPage.noResults
+                  : fillTemplate(t.reviewsPage.showing, { from: String(paged.from), to: String(paged.to), total: String(paged.totalItems) })}
             </p>
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/25">
-              {paged.totalPages} {paged.totalPages === 1 ? 'página' : 'páginas'} · 10 por página
+              {paged.totalPages} {paged.totalPages === 1 ? t.reviewsPage.pageOne : t.reviewsPage.pageMany}{t.reviewsPage.perPage}
             </p>
           </div>
         </section>
@@ -780,12 +782,12 @@ export default function ReviewsPage() {
         <section className="space-y-6">
           {loading ? (
             <div className="py-24 text-center text-sm font-black uppercase tracking-[0.4em] text-white/40">
-              Sincronizando reseñas…
+              {t.reviewsPage.syncing}
             </div>
           ) : error ? (
             <div className="rounded-[3rem] border-2 border-dashed border-amber-400/30 bg-black p-12 text-center">
               <h2 className="font-header text-2xl font-black uppercase tracking-tight text-white">
-                No se pudieron cargar las reseñas
+                {t.reviewsPage.loadErrorTitle}
               </h2>
               <p className="mt-3 text-sm text-white/45">{error}</p>
               <button
@@ -794,7 +796,7 @@ export default function ReviewsPage() {
                 className="mt-6 rounded-2xl border-2 px-6 py-3 text-xs font-black uppercase tracking-widest"
                 style={{ borderColor: `${accent}66`, color: accent }}
               >
-                Reintentar
+                {t.reviewsPage.retry}
               </button>
             </div>
           ) : sorted.length === 0 ? (
@@ -803,12 +805,12 @@ export default function ReviewsPage() {
                 <Star fill={1} color={`${accent}80`} size={56} />
               </div>
               <h2 className="font-header text-2xl font-black uppercase tracking-tight text-white">
-                {totalReviews === 0 ? 'Ninguna reseña subida aún' : 'Ninguna reseña coincide con los filtros'}
+                {totalReviews === 0 ? t.reviewsPage.emptyNone : t.reviewsPage.emptyFilter}
               </h2>
               <p className="mx-auto mt-3 max-w-lg text-sm text-white/45">
                 {totalReviews === 0
-                  ? `Sé el primero en reseñar ${SITE.entity}.`
-                  : 'Prueba a limpiar los filtros o cambiar la búsqueda.'}
+                  ? fillTemplate(t.reviewsPage.firstToReview, { site: SITE.entity })
+                  : t.reviewsPage.emptyHint}
               </p>
               <div className="mt-6 flex flex-wrap justify-center gap-3">
                 <button
@@ -817,7 +819,7 @@ export default function ReviewsPage() {
                   className="rounded-2xl px-6 py-3 text-xs font-black uppercase tracking-widest"
                   style={{ background: accent, color: tokens.onAccent }}
                 >
-                  {totalReviews === 0 ? 'Escribir la primera reseña' : 'Escribir reseña'}
+                  {totalReviews === 0 ? t.reviewsPage.writeFirst : t.reviewsPage.writeNew}
                 </button>
                 {activeFilters > 0 && (
                   <button
@@ -825,7 +827,7 @@ export default function ReviewsPage() {
                     onClick={clearFilters}
                     className="rounded-2xl border border-white/15 px-6 py-3 text-xs font-black uppercase tracking-widest text-white/60"
                   >
-                    Limpiar filtros
+                    {t.reviewsPage.clearFilters}
                   </button>
                 )}
               </div>
@@ -837,7 +839,7 @@ export default function ReviewsPage() {
               const href = profileHrefOf(review);
               const liked = likedIds.has(review.id);
               const anonymous = !!review.is_anonymous;
-              const name = displayNameOf(review);
+              const name = displayNameOf(review, t.reviewsPage.anonCitizen, t.reviewsPage.anonUser);
               const username = usernameOf(review);
 
               const avatar = (
@@ -868,7 +870,7 @@ export default function ReviewsPage() {
                   <div className="flex flex-col gap-6 md:flex-row">
                     <div className="flex shrink-0 flex-col items-center gap-3 md:w-44">
                       {href ? (
-                        <Link href={href} className="transition-transform hover:scale-105" aria-label={`Ver perfil de ${name}`}>
+                        <Link href={href} className="transition-transform hover:scale-105" aria-label={fillTemplate(t.reviewsPage.viewProfile, { name })}>
                           {avatar}
                         </Link>
                       ) : (
@@ -879,8 +881,8 @@ export default function ReviewsPage() {
                           <h3 className="font-header text-sm font-black uppercase tracking-widest text-white">{name}</h3>
                           {(review.is_verified || reviewTags.includes('verified')) && (
                             <span
-                              title="Reseña verificada"
-                              aria-label="Reseña verificada"
+                              title={t.reviewsPage.verifiedTag}
+                              aria-label={t.reviewsPage.verifiedTag}
                               className="inline-flex h-4 w-4 items-center justify-center rounded-full"
                               style={{ background: tokens.verified }}
                             >
@@ -918,7 +920,7 @@ export default function ReviewsPage() {
                           ))}
                           {review.is_edited && (
                             <span className="rounded-full border border-white/10 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-white/35">
-                              Editada
+                              {t.reviewsPage.edited}
                             </span>
                           )}
                         </div>
@@ -943,7 +945,7 @@ export default function ReviewsPage() {
                           <svg viewBox="0 0 24 24" width={14} height={14} fill={liked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                           </svg>
-                          {review.likes_count ?? 0} likes
+                          {fillTemplate(t.reviewsPage.likes, { n: String(review.likes_count ?? 0) })}
                         </button>
 
                         {canDelete(review) &&
@@ -954,14 +956,14 @@ export default function ReviewsPage() {
                                 onClick={() => void handleDelete(review.id)}
                                 className="rounded-2xl border border-red-500/50 bg-red-500/15 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-red-300"
                               >
-                                Confirmar
+                                {t.reviewsPage.confirm}
                               </button>
                               <button
                                 type="button"
                                 onClick={() => setConfirmDeleteId(null)}
                                 className="rounded-2xl border border-white/10 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-white/40"
                               >
-                                Cancelar
+                                {t.reviewsPage.cancel}
                               </button>
                             </span>
                           ) : (
@@ -970,7 +972,7 @@ export default function ReviewsPage() {
                               onClick={() => setConfirmDeleteId(review.id)}
                               className="rounded-2xl border border-white/10 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-white/35 transition-colors hover:border-red-500/40 hover:text-red-300"
                             >
-                              {isAdmin && review.user_id !== userId ? 'Eliminar (admin)' : 'Eliminar'}
+                              {isAdmin && review.user_id !== userId ? t.reviewsPage.deleteAdmin : t.reviewsPage.delete}
                             </button>
                           ))}
                       </div>
@@ -984,14 +986,14 @@ export default function ReviewsPage() {
 
         {/* PAGINACIÓN (abajo, estilo índice) */}
         {!loading && !error && (
-          <nav className="flex flex-wrap items-center justify-center gap-2" aria-label="Paginación de reseñas">
+          <nav className="flex flex-wrap items-center justify-center gap-2" aria-label={t.reviewsPage.pagination}>
             {pageWindow.showFirst && (
               <button
                 type="button"
                 onClick={() => setPage(0)}
                 className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white/50 transition-colors hover:text-white"
-                aria-label="Primera página"
-                title="Primera página"
+                aria-label={t.reviewsPage.firstPage}
+                title={t.reviewsPage.firstPage}
               >
                 <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
                   <path d="m11 17-5-5 5-5" />
@@ -1004,7 +1006,7 @@ export default function ReviewsPage() {
               onClick={() => setPage((prev) => Math.max(0, prev - 1))}
               disabled={!pageWindow.hasPrev}
               className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white/50 transition-colors hover:text-white disabled:opacity-25"
-              aria-label="Página anterior"
+              aria-label={t.reviewsPage.prevPage}
             >
               <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
                 <path d="m15 18-6-6 6-6" />
@@ -1036,7 +1038,7 @@ export default function ReviewsPage() {
               onClick={() => setPage((prev) => Math.min(pageWindow.totalPages - 1, prev + 1))}
               disabled={!pageWindow.hasNext}
               className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white/50 transition-colors hover:text-white disabled:opacity-25"
-              aria-label="Página siguiente"
+              aria-label={t.reviewsPage.nextPage}
             >
               <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
                 <path d="m9 18 6-6-6-6" />
@@ -1047,8 +1049,8 @@ export default function ReviewsPage() {
                 type="button"
                 onClick={() => setPage(pageWindow.totalPages - 1)}
                 className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white/50 transition-colors hover:text-white"
-                aria-label="Última página"
-                title="Última página"
+                aria-label={t.reviewsPage.lastPage}
+                title={t.reviewsPage.lastPage}
               >
                 <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
                   <path d="m13 17 5-5-5-5" />
@@ -1065,11 +1067,10 @@ export default function ReviewsPage() {
         <section className="space-y-6 rounded-[3rem] border border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent p-10 text-center">
           <div className="space-y-2">
             <h2 className="font-header text-2xl font-black uppercase tracking-tight text-white">
-              Confianza y Verificación
+              {t.reviewsPage.trustTitle}
             </h2>
             <p className="mx-auto max-w-xl text-sm text-white/45">
-              {SITE.entity} forma parte de Ciszu Network. Verifica nuestra reputación en plataformas independientes:
-              los botones abren el perfil real de cada plataforma.
+              {fillTemplate(t.reviewsPage.trustText, { site: SITE.entity })}
             </p>
           </div>
 
@@ -1109,7 +1110,7 @@ export default function ReviewsPage() {
           </div>
 
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/25">
-            Verified by community · Trusted by users · Powered by Ciszuko Antony
+            {t.reviewsPage.trustFooter}
           </p>
         </section>
       </div>
@@ -1125,22 +1126,22 @@ export default function ReviewsPage() {
           <div
             role="dialog"
             aria-modal="true"
-            aria-label={myReview ? 'Editar reseña' : 'Nueva reseña'}
+            aria-label={myReview ? t.reviewsPage.modalEditAria : t.reviewsPage.modalNewAria}
             className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-[2.5rem] border-2 border-white/10 bg-black p-8 shadow-2xl"
           >
             <div className="mb-6 flex items-start justify-between gap-4">
               <div>
                 <h2 className="font-header text-2xl font-black uppercase italic tracking-tight text-white">
-                  {myReview ? 'Actualizar reseña' : 'Nueva reseña'}
+                  {myReview ? t.reviewsPage.modalUpdate : t.reviewsPage.modalNew}
                 </h2>
                 <p className="mt-1 text-[10px] font-black uppercase tracking-[0.3em] text-white/30">
-                  Solo se permite una reseña por usuario
+                  {t.reviewsPage.onePerUser}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                aria-label="Cerrar"
+                aria-label={t.reviewsPage.close}
                 className="rounded-xl border border-white/10 p-2 text-white/40 transition-colors hover:text-white"
               >
                 <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round">
@@ -1152,20 +1153,20 @@ export default function ReviewsPage() {
 
             <div className="space-y-6">
               <div className="space-y-3 rounded-[2rem] border border-white/10 bg-white/[0.02] p-6 text-center">
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/35">Calificación final</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/35">{t.reviewsPage.finalRating}</p>
                 <p className="font-header text-3xl font-black italic" style={{ color: ratingColor(formRating, isLight) }}>
                   {formatRating(formRating)} <span className="text-lg text-white/25">/ 5.0</span>
                 </p>
                 <RatingPicker value={formRating} onChange={setFormRating} light={isLight} />
                 <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/25">
-                  Puedes elegir medias estrellas (2.5, 3.5, 4.5…)
+                  {t.reviewsPage.halfStars}
                 </p>
               </div>
 
               <textarea
                 value={formComment}
                 onChange={(event) => setFormComment(event.target.value)}
-                placeholder="Cuenta tu experiencia con el proyecto…"
+                placeholder={t.reviewsPage.commentPh}
                 rows={6}
                 className="w-full resize-none rounded-[2rem] border-2 border-white/10 bg-white/[0.02] p-6 text-sm text-white placeholder:text-white/20 focus:border-white/25 focus:outline-none"
               />
@@ -1181,7 +1182,7 @@ export default function ReviewsPage() {
                     color: formAnon ? accent : tokens.inkSubtle,
                   }}
                 >
-                  {formAnon ? 'Publicando como anónimo' : 'Publicar como anónimo'}
+                  {formAnon ? t.reviewsPage.anonOn : t.reviewsPage.anonOff}
                 </button>
                 <button
                   type="button"
@@ -1190,7 +1191,7 @@ export default function ReviewsPage() {
                   className="rounded-2xl px-8 py-3 text-xs font-black uppercase tracking-widest transition-transform hover:scale-105 disabled:opacity-40"
                   style={{ background: accent, color: tokens.onAccent }}
                 >
-                  {submitting ? 'Guardando…' : myReview ? 'Guardar cambios' : 'Publicar reseña'}
+                  {submitting ? t.reviewsPage.saving : myReview ? t.reviewsPage.saveChanges : t.reviewsPage.publish}
                 </button>
               </div>
 
@@ -1207,7 +1208,7 @@ export default function ReviewsPage() {
       <AuthWarningModal
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
-        message={`Necesitas una cuenta CISZU ID para ${authAction || 'interactuar en esta sección'}.`}
+        message={fillTemplate(t.reviewsPage.authMessage, { action: authAction || t.reviewsPage.authDefault })}
       />
 
       <Script src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js" strategy="afterInteractive" />
