@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useT } from '@/hooks/useT';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
@@ -73,7 +74,8 @@ const InputField = ({ label, name, icon, type = "text", placeholder, maxLength, 
       
       {type === 'select' ? (
         <CountrySelect value={value} onChange={onChange} error={error} />
-      ) : type === 'date' ? (
+      ) :
+      type === 'date' ? (
         <DateSelect value={value} onChange={onChange} error={error} name={name} />
       ) : (
         <input 
@@ -101,6 +103,7 @@ const InputField = ({ label, name, icon, type = "text", placeholder, maxLength, 
 };
 
 export default function RegisterPage() {
+  const t = useT();
   usePageTitle('REGISTER');
   const { begin: beginActivity, end: endActivity } = useActivityGuard();
   const { setHasAcceptedCookies,  user } = useAppStore();
@@ -188,21 +191,21 @@ export default function RegisterPage() {
     switch (name) {
       case 'username':
         if (value.includes(' ')) error = 'No se permiten espacios';
-        else if (value.length > 0 && value.length < 3) error = 'Mínimo 3 caracteres';
+        else if (0 < value.length && value.length < 3) error = 'Mínimo 3 caracteres';
         else if (value.length > 20) error = 'Máximo 20 caracteres';
         break;
       case 'displayName':
-        if (value.length > 0 && value.length < 3) error = 'Mínimo 3 caracteres';
+        if (0 < value.length && value.length < 3) error = 'Mínimo 3 caracteres';
         else if (value.length > 30) error = 'Máximo 30 caracteres';
         break;
       case 'email':
-        if (value.length > 0 && !/^\S+@\S+\.\S+$/.test(value)) error = 'Formato de email inválido (requiere @)';
+        if (0 < value.length && !/^\S+@\S+\.\S+$/.test(value)) error = 'Formato de email inválido (requiere @)';
         break;
       case 'password':
-        if (value.length > 0 && value.length < 8) error = 'Mínimo 8 caracteres';
+        if (0 < value.length && value.length < 8) error = 'Mínimo 8 caracteres';
         break;
       case 'confirmPassword':
-        if (value.length > 0 && value !== form.password) error = 'Las contraseñas no coinciden';
+        if (0 < value.length && value !== form.password) error = 'Las contraseñas no coinciden';
         break;
       case 'birthDate':
         if (value) {
@@ -446,11 +449,11 @@ export default function RegisterPage() {
         >
           <div className="mb-10">
             <CiszuIdBrand
-              ciszuIsotype={<img src={resolveAssetPath('projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg')} alt="Ciszu ID" width={36} height={36} />}
+              ciszuIsotype={<img src={resolveAssetPath('projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg')} alt={t.pages.register.brandId} width={36} height={36} />}
               appIsotype={<img src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} alt="MuzicMania" width={36} height={36} />}
               ciszuHref="https://ciszunetwork.vercel.app"
               appHref="/"
-              title="CISZU ID"
+              title={t.pages.register.brandIdUpper}
               subtitle="Crea tu cuenta en MuzicMania con CISZU ID"
             />
           </div>
@@ -480,18 +483,18 @@ export default function RegisterPage() {
               <form onSubmit={handleSubmit} className={pending ? 'hidden' : 'space-y-6'}>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <InputField label="Nombre de Usuario" name="username" icon={I.user} placeholder="CapaSinNombre" maxLength={20} required value={form.username} error={errors.username} onChange={handleChange} onBlur={() => validateField('username', form.username)} />
-                <InputField label="Nombre a Mostrar" name="displayName" icon={I.badge} placeholder="Capa Heroica" maxLength={30} required value={form.displayName} error={errors.displayName} onChange={handleChange} onBlur={() => validateField('displayName', form.displayName)} />
+                <InputField label={t.pages.register.userLabel} name="username" icon={I.user} placeholder="CapaSinNombre" maxLength={20} required value={form.username} error={errors.username} onChange={handleChange} onBlur={() => validateField('username', form.username)} />
+                <InputField label={t.pages.register.displayLabel} name="displayName" icon={I.badge} placeholder={t.pages.register.phHeroic} maxLength={30} required value={form.displayName} error={errors.displayName} onChange={handleChange} onBlur={() => validateField('displayName', form.displayName)} />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <InputField label="Dirección Email" name="email" icon={I.mail} type="email" placeholder="tu@email.com" required value={form.email} error={errors.email} onChange={handleChange} onBlur={() => validateField('email', form.email)} />
-                <InputField label="Fecha de Nacimiento" name="birthDate" icon={I.calendar} type="date" required value={form.birthDate} error={errors.birthDate} onChange={handleChange} onBlur={() => validateField('birthDate', form.birthDate)} />
+                <InputField label={t.pages.register.emailLabel} name="email" icon={I.mail} type="email" placeholder={t.pages.register.phEmail} required value={form.email} error={errors.email} onChange={handleChange} onBlur={() => validateField('email', form.email)} />
+                <InputField label={t.pages.register.birthLabel} name="birthDate" icon={I.calendar} type="date" required value={form.birthDate} error={errors.birthDate} onChange={handleChange} onBlur={() => validateField('birthDate', form.birthDate)} />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-1 relative">
-                  <InputField label="Contraseña" name="password" icon={I.lock} type="password" placeholder="••••••••" required value={form.password} error={errors.password} onChange={handleChange} onBlur={() => validateField('password', form.password)} />
+                  <InputField label={t.pages.register.passwordLabel} name="password" icon={I.lock} type="password" placeholder="••••••••" required value={form.password} error={errors.password} onChange={handleChange} onBlur={() => validateField('password', form.password)} />
                   {/* Password Strength Bar */}
                   {form.password.length > 0 && (
                     <div className="mt-2 space-y-1">
@@ -501,13 +504,13 @@ export default function RegisterPage() {
                         ))}
                       </div>
                       <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-widest">
-                        <span className="text-gray-500">Seguridad:</span>
+                        <span className="text-gray-500">{t.pages.register.securityLabel}</span>
                         <span className={passwordStrength.color.replace('bg-', 'text-')}>{passwordStrength.text}</span>
                       </div>
                     </div>
                   )}
                 </div>
-                <InputField label="Confirmar Contraseña" name="confirmPassword" icon={I.lock} type="password" placeholder="••••••••" required value={form.confirmPassword} error={errors.confirmPassword} onChange={handleChange} onBlur={() => validateField('confirmPassword', form.confirmPassword)} />
+                <InputField label={t.pages.register.confirmLabel} name="confirmPassword" icon={I.lock} type="password" placeholder="••••••••" required value={form.confirmPassword} error={errors.confirmPassword} onChange={handleChange} onBlur={() => validateField('confirmPassword', form.confirmPassword)} />
               </div>
 
               {/* Extras Opcionales Toggle */}
@@ -527,10 +530,10 @@ export default function RegisterPage() {
                     style={{ overflow: 'hidden' }}
                   >
                     <div className="pt-4 grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-white/10 mt-2">
-                      <InputField label="Nombres Reales" name="realName" icon={I.user} placeholder="John" isOptional value={form.realName} error={errors.realName} onChange={handleChange} onBlur={() => validateField('realName', form.realName)} />
-                      <InputField label="Apellidos Reales" name="realLastName" icon={I.user} placeholder="Doe" isOptional value={form.realLastName} error={errors.realLastName} onChange={handleChange} onBlur={() => validateField('realLastName', form.realLastName)} />
-                      <InputField label="Nacionalidad" name="nationality" icon={I.globe} type="select" placeholder="Selecciona tu país" isOptional value={form.nationality} error={errors.nationality} onChange={handleChange} onBlur={() => validateField('nationality', form.nationality)} />
-                      <InputField label="Número Teléfono (Para 2FA)" name="phone" icon={I.phone} type="tel" placeholder="+1 234 567 8900" isOptional value={form.phone} error={errors.phone} onChange={handleChange} onBlur={() => validateField('phone', form.phone)} />
+                      <InputField label={t.pages.register.firstNameLabel} name="realName" icon={I.user} placeholder="John" isOptional value={form.realName} error={errors.realName} onChange={handleChange} onBlur={() => validateField('realName', form.realName)} />
+                      <InputField label={t.pages.register.lastNameLabel} name="realLastName" icon={I.user} placeholder="Doe" isOptional value={form.realLastName} error={errors.realLastName} onChange={handleChange} onBlur={() => validateField('realLastName', form.realLastName)} />
+                      <InputField label="Nacionalidad" name="nationality" icon={I.globe} type="select" placeholder={t.pages.register.phCountry} isOptional value={form.nationality} error={errors.nationality} onChange={handleChange} onBlur={() => validateField('nationality', form.nationality)} />
+                      <InputField label={t.pages.register.phoneLabel} name="phone" icon={I.phone} type="tel" placeholder="+1 234 567 8900" isOptional value={form.phone} error={errors.phone} onChange={handleChange} onBlur={() => validateField('phone', form.phone)} />
                     </div>
                   </motion.div>
                 )}
@@ -550,7 +553,7 @@ export default function RegisterPage() {
                     <svg viewBox="0 0 24 24" className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                   </div>
                   <p className="text-[11px] text-gray-400 font-bold leading-relaxed">
-                    Acepto los <Link href="/terms" className="text-neon-cyan hover:underline">Términos de Servicio</Link>, la Política de Privacidad y consiento el uso de <span className="text-white">Cookies</span> obligatorias.
+                    {t.pages.register.acceptTermsA} <Link href="/terms" className="text-neon-cyan hover:underline">{t.pages.register.termsService}</Link>{t.pages.register.acceptTermsB} <span className="text-white">Cookies</span> {t.pages.register.mandatoryCookies}
                   </p>
                 </label>
                 {errors.acceptedTerms && <span className="text-red-500 text-[10px] font-bold ml-8">{errors.acceptedTerms}</span>}
@@ -568,7 +571,7 @@ export default function RegisterPage() {
                     <svg viewBox="0 0 24 24" className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                   </div>
                   <p className="text-[11px] text-gray-400 font-bold leading-relaxed">
-                    Acepto recibir comunicaciones de <Link href="/terms" className="text-neon-cyan hover:underline">MuzicMania</Link> (novedades, actualizaciones, ofertas). <strong className="text-neon-pink">No es publicidad de terceros.</strong>
+                    {t.pages.register.acceptCommsA} <Link href="/terms" className="text-neon-cyan hover:underline">MuzicMania</Link> {t.pages.register.acceptCommsB} <strong className="text-neon-pink">{t.pages.register.acceptCommsC}</strong>
                   </p>
                 </label>
                 {errors.acceptedMarketing && <span className="text-red-500 text-[10px] font-bold ml-8">{errors.acceptedMarketing}</span>}
@@ -587,7 +590,7 @@ export default function RegisterPage() {
 
               <div className="pt-4">
                 <Button type="submit" variant="neon" fullWidth size="lg" className="!bg-neon-purple shadow-neon-purple hover:scale-[1.02] active:scale-[0.98] transition-all">
-                  ALTA DE USUARIO
+                  {t.pages.register.submitTitle}
                 </Button>
               </div>
             </form>
@@ -612,7 +615,7 @@ export default function RegisterPage() {
           {/* Página derecha: beneficios */}
           <AuthBenefitsPanel
             badge="CISZU ID"
-            title="¿Por qué crear tu cuenta?"
+            title={t.pages.register.whyCreate}
             items={REGISTER_BENEFITS}
             footerNote={REGISTER_FOOTER}
             accent="#a855f7"
