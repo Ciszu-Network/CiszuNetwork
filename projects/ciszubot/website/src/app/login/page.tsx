@@ -99,6 +99,7 @@ export default function LoginPage() {
   const router = useRouter();
   const { user } = useAppStore();
   const { dict } = useClientI18n();
+  const t = dict.loginPage;
   const { begin: beginActivity, end: endActivity } = useActivityGuard();
   const [form, setForm] = useState({ identifier: '', password: '' });
   const [forgot, setForgot] = useState(false);
@@ -321,17 +322,17 @@ export default function LoginPage() {
     setError('No recuperaste la cuenta. Vuelve a iniciar sesión si cambias de opinión (dentro de los 15 días).');
   };
 
-  // Cuenta eliminada: se bloquea hasta confirmar (o rechazar) la recuperación.
+  // {t.accountDeleted}: se bloquea hasta confirmar (o rechazar) la recuperación.
   if (recovery) {
     return (
       <div className="bg-bg min-h-[calc(100vh-60px)] relative overflow-hidden pb-24">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full bg-red-500/10 blur-[160px] pointer-events-none" />
         <div className="max-w-md mx-auto px-4 pt-24 relative">
           <div className="p-6 md:p-8 bg-surface border border-red-500/30 rounded-[2rem] shadow-2xl backdrop-blur-3xl text-center space-y-4">
-            <p className="font-header text-lg font-black uppercase tracking-wide text-red-400">Cuenta eliminada</p>
+            <p className="font-header text-lg font-black uppercase tracking-wide text-red-400">{t.accountDeleted}</p>
             <p className="text-sm text-muted leading-relaxed">
               Esta cuenta está en suspensión de eliminación. Puedes recuperarla ahora: al recuperarla
-              aceptas que <strong className="text-ink">no podrás volver a eliminarla durante 30 días</strong>.
+              aceptas que <strong className="text-ink">{t.deleteWarning}</strong>.
               Si rechazas, no se te otorga la recuperación y se cierra la sesión.
             </p>
             {error && <p className="text-red-400 text-[11px] font-bold">{error}</p>}
@@ -342,7 +343,7 @@ export default function LoginPage() {
                 disabled={loading}
                 className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-white disabled:opacity-50"
               >
-                Recuperar mi cuenta
+                {t.recoverMyAccount}
               </button>
               <button
                 type="button"
@@ -350,7 +351,7 @@ export default function LoginPage() {
                 disabled={loading}
                 className="inline-flex items-center justify-center rounded-xl border border-border px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-muted hover:text-ink disabled:opacity-50"
               >
-                No, cerrar sesión
+                {t.noSignOut}
               </button>
             </div>
           </div>
@@ -390,11 +391,11 @@ export default function LoginPage() {
 
       <div className="pt-14 mb-10 px-4">
         <CiszuIdBrand
-          ciszuIsotype={<SmartImage src={CISZU_ISOTYPE} alt="Ciszu ID" width={40} height={40} className="w-9 h-9" />}
+          ciszuIsotype={<SmartImage src={CISZU_ISOTYPE} alt={t.brandId} width={40} height={40} className="w-9 h-9" />}
           appIsotype={<SmartImage src={BOT_ISOTYPE} alt="CiszuBot" width={40} height={40} className="w-9 h-9 rounded-full" />}
           ciszuHref="https://ciszunetwork.vercel.app"
           appHref="/"
-          title="CISZU ID"
+          title={t.brandIdUpper}
           subtitle="Inicia sesión en CiszuBot con CISZU ID"
         />
       </div>
@@ -406,15 +407,15 @@ export default function LoginPage() {
             {forgot ? (
               <form onSubmit={handleForgotSubmit} className="space-y-5">
                 <div className="text-center space-y-2">
-                  <h3 className="text-white font-black uppercase tracking-widest text-sm">Recuperar identidad</h3>
-                  <p className="text-gray-400 text-[10px] font-bold">Enviaremos un enlace temporal de un solo uso a tu email. Revisa tu bandeja o spam.</p>
+                  <h3 className="text-white font-black uppercase tracking-widest text-sm">{t.recoverIdentity}</h3>
+                  <p className="text-gray-400 text-[10px] font-bold">{t.recoverDesc}</p>
                 </div>
                 <AuthField
-                  label="Email de la cuenta"
+                  label={t.emailLabel}
                   name="email"
                   icon={<span className="w-full h-full text-neon-blue"><IconMail /></span>}
                   type="email"
-                  placeholder="tu@email.com"
+                  placeholder={t.phEmail}
                   required
                   autoComplete="email"
                   value={forgotEmail}
@@ -426,8 +427,8 @@ export default function LoginPage() {
                 {error && <p className="text-red-400 text-[11px] font-bold">{error}</p>}
                 {sent ? (
                   <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-center">
-                    <p className="text-emerald-400 text-xs font-bold">Enlace enviado</p>
-                    <p className="text-gray-400 text-[10px] font-bold mt-1">Revisa tu bandeja de entrada o spam. El enlace es de un solo uso.</p>
+                    <p className="text-emerald-400 text-xs font-bold">{t.linkSent}</p>
+                    <p className="text-gray-400 text-[10px] font-bold mt-1">{t.linkSentDesc}</p>
                   </div>
                 ) : (
                   <button
@@ -443,7 +444,7 @@ export default function LoginPage() {
                   onClick={() => { setForgot(false); setSent(false); setError(null); }}
                   className="w-full text-[10px] text-gray-500 font-bold uppercase tracking-widest hover:text-white transition-all cursor-pointer"
                 >
-                  ← Volver al acceso normal
+                  {t.backToLogin}
                 </button>
               </form>
             ) : (
@@ -460,7 +461,7 @@ export default function LoginPage() {
                           <path d="M20.317 4.3698a19.7913 19.7913 0 0 0-4.8851-1.5152.0741.0741 0 0 0-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 0 0-.0785-.037 19.7363 19.7363 0 0 0-4.8852 1.515.0699.0699 0 0 0-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 0 0 .0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 0 0 .0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 0 0-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 0 1-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 0 1 .0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 0 1 .0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 0 1-.0066.1276 12.2986 12.2986 0 0 1-1.873.8914.0766.0766 0 0 0-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 0 0 .0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 0 0 .0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 0 0-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z" />
                         </svg>
                       </span>
-                      Continuar con Discord
+                      {t.continueDiscord}
                     </a>
                   )}
                   onSelect={(p) => toast(`${p} estará disponible en la beta soon. Usa Discord o CISZU ID por ahora.`, 'warning')}
@@ -468,17 +469,17 @@ export default function LoginPage() {
 
                 <div className="flex items-center gap-3">
                   <span className="h-px flex-1 bg-border" />
-                  <span className="text-[9px] font-black uppercase tracking-widest text-faint">o con CISZU ID</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-faint">{t.orWithCiszuId}</span>
                   <span className="h-px flex-1 bg-border" />
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <AuthField
-                    label="Email o usuario"
+                    label={t.emailOrUser}
                     name="identifier"
                     icon={<span className="w-full h-full text-neon-blue"><IconUser /></span>}
                     type="text"
-                    placeholder="tu@email.com o @usuario"
+                    placeholder={t.phEmailOrUser}
                     autoComplete="username"
                     required
                     value={form.identifier}
@@ -487,7 +488,7 @@ export default function LoginPage() {
                     requirements={['Email de la cuenta o nombre de usuario precedido de @', 'El usuario se resuelve automáticamente a su email']}
                   />
                   <AuthField
-                    label="Contraseña"
+                    label={t.passwordLabel}
                     name="password"
                     icon={<span className="w-full h-full text-neon-blue"><IconLock /></span>}
                     type="password"
@@ -542,7 +543,7 @@ export default function LoginPage() {
         {/* Página derecha: beneficios */}
         <AuthBenefitsPanel
           badge="CISZU ID"
-          title="¿Por qué iniciar sesión?"
+          title={t.whyLogin}
           items={LOGIN_BENEFITS}
           footerNote={LOGIN_FOOTER}
           accent="#38bdf8"
