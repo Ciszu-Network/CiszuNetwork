@@ -6,6 +6,7 @@ import { SmartImage } from '@ciszu/ui';
 import { supabase } from '@/config/supabase';
 import { useAppStore } from '@/store';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { useClientI18n } from '@/hooks/useClientI18n';
 import {
   AuthField,
   AuthSecondaryActions,
@@ -112,6 +113,8 @@ const BOT_ISOTYPE = 'projects/ciszubot/content/logos/images/samples/circle/ciszu
 
 export default function RegisterPage() {
   usePageTitle('REGISTER');
+  const { dict } = useClientI18n();
+  const t = dict.registerPage;
   const router = useRouter();
   const { user } = useAppStore();
   const { begin: beginActivity, end: endActivity } = useActivityGuard();
@@ -328,11 +331,11 @@ export default function RegisterPage() {
 
       <div className="pt-14 mb-10 px-4">
         <CiszuIdBrand
-          ciszuIsotype={<SmartImage src={CISZU_ISOTYPE} alt="Ciszu ID" width={40} height={40} className="w-9 h-9" />}
+          ciszuIsotype={<SmartImage src={CISZU_ISOTYPE} alt={t.brandId} width={40} height={40} className="w-9 h-9" />}
           appIsotype={<SmartImage src={BOT_ISOTYPE} alt="CiszuBot" width={40} height={40} className="w-9 h-9 rounded-full" />}
           ciszuHref="https://ciszunetwork.vercel.app"
           appHref="/"
-          title="CISZU ID"
+          title={t.brandIdUpper}
           subtitle="Crea tu cuenta en CiszuBot con CISZU ID"
         />
       </div>
@@ -353,7 +356,7 @@ export default function RegisterPage() {
                       <path d="M20.317 4.3698a19.7913 19.7913 0 0 0-4.8851-1.5152.0741.0741 0 0 0-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 0 0-.0785-.037 19.7363 19.7363 0 0 0-4.8852 1.515.0699.0699 0 0 0-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 0 0 .0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 0 0 .0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 0 0-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 0 1-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 0 1 .0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 0 1 .0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 0 1-.0066.1276 12.2986 12.2986 0 0 1-1.873.8914.0766.0766 0 0 0-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 0 0 .0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 0 0 .0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 0 0-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z" />
                     </svg>
                   </span>
-                  Registrarse con Discord
+                  {t.discordSignup}
                 </a>
               )}
               onSelect={(p) => toast(`${p} estará disponible en la beta soon. Usa Discord o CISZU ID por ahora.`, 'warning')}
@@ -361,7 +364,7 @@ export default function RegisterPage() {
 
             <div className="flex items-center gap-3">
               <span className="h-px flex-1 bg-border" />
-              <span className="text-[9px] font-black uppercase tracking-widest text-faint">o crea un CISZU ID</span>
+              <span className="text-[9px] font-black uppercase tracking-widest text-faint">{t.orCreate}</span>
               <span className="h-px flex-1 bg-border" />
             </div>
 
@@ -383,7 +386,7 @@ export default function RegisterPage() {
                 name="username"
                 icon={<span className="w-full h-full text-neon-purple"><IconUser /></span>}
                 type="text"
-                placeholder="El nombre de tu cuenta"
+                placeholder={t.phAccountName}
                 autoComplete="username"
                 required
                 maxLength={20}
@@ -393,11 +396,11 @@ export default function RegisterPage() {
                 requirements={['Mínimo 3 caracteres', 'Máximo 20 caracteres', 'Sin espacios']}
               />
               <AuthField
-                label="Nombre a mostrar"
+                label={t.displayNameLabel}
                 name="display_name"
                 icon={<span className="w-full h-full text-neon-purple"><IconBadge /></span>}
                 type="text"
-                placeholder="Cómo te verán los demás"
+                placeholder={t.phHowOthersSee}
                 isOptional
                 value={form.display_name}
                 onChange={handleChange}
@@ -407,7 +410,7 @@ export default function RegisterPage() {
                 name="email"
                 icon={<span className="w-full h-full text-neon-purple"><IconMail /></span>}
                 type="email"
-                placeholder="tu@email.com"
+                placeholder={t.phEmail}
                 autoComplete="email"
                 required
                 value={form.email}
@@ -416,11 +419,11 @@ export default function RegisterPage() {
                 requirements={['Formato de email válido (p. ej. nombre@dominio.com)']}
               />
               <AuthField
-                label="Contraseña"
+                label={t.passwordLabel}
                 name="password"
                 icon={<span className="w-full h-full text-neon-purple"><IconLock /></span>}
                 type="password"
-                placeholder="Mínimo 8 caracteres"
+                placeholder={t.phPassword}
                 autoComplete="new-password"
                 required
                 allowPaste={false}
@@ -431,7 +434,7 @@ export default function RegisterPage() {
               />
               <PasswordStrengthBar password={form.password} />
               <AuthField
-                label="Repetir contraseña"
+                label={t.confirmPasswordLabel}
                 name="confirm_password"
                 icon={<span className="w-full h-full text-neon-purple"><IconLock /></span>}
                 type="password"
@@ -458,7 +461,7 @@ export default function RegisterPage() {
                   <svg viewBox="0 0 24 24" className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
                 <p className="text-[11px] text-gray-400 font-bold leading-relaxed">
-                  Acepto los <a href="/terms" className="text-neon-blue hover:underline">Términos de Servicio</a> y la <a href="/privacy" className="text-neon-blue hover:underline">Política de Privacidad</a>.
+                  {t.acceptTermsA} <a href="/terms" className="text-neon-blue hover:underline">{t.termsService}</a> {t.andThe} <a href="/privacy" className="text-neon-blue hover:underline">{t.privacyPolicy}</a>.
                 </p>
               </div>
               {errors.terms && <p className="text-red-400 text-[11px] font-bold px-1">{errors.terms}</p>}
@@ -474,7 +477,7 @@ export default function RegisterPage() {
                   <svg viewBox="0 0 24 24" className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
                 <p className="text-[11px] text-gray-400 font-bold leading-relaxed">
-                  Acepto recibir comunicaciones de <a href="/terms" className="text-neon-blue hover:underline">CiszuBot</a> (novedades, actualizaciones, ofertas). <strong className="text-neon-pink">No es publicidad de terceros.</strong>
+                  {t.acceptCommsA} <a href="/terms" className="text-neon-blue hover:underline">CiszuBot</a> {t.acceptCommsB} <strong className="text-neon-pink">{t.acceptCommsC}</strong>
                 </p>
               </div>
               {errors.marketing && <p className="text-red-400 text-[11px] font-bold px-1">{errors.marketing}</p>}
@@ -496,8 +499,8 @@ export default function RegisterPage() {
 
               <p className="text-[10px] text-faint font-bold leading-relaxed px-1">
                 Al registrarte aceptas los{' '}
-                <a href="/terms" className="text-neon-blue hover:underline">Términos de Servicio</a> y la{' '}
-                <a href="/privacy" className="text-neon-blue hover:underline">Política de Privacidad</a>.
+                <a href="/terms" className="text-neon-blue hover:underline">{t.termsService}</a> y la{' '}
+                <a href="/privacy" className="text-neon-blue hover:underline">{t.privacyPolicy}</a>.
               </p>
             </form>
 
@@ -523,7 +526,7 @@ export default function RegisterPage() {
         {/* Página derecha: beneficios */}
         <AuthBenefitsPanel
           badge="CISZU ID"
-          title="¿Por qué crear tu cuenta?"
+          title={t.whyCreate}
           items={REGISTER_BENEFITS}
           footerNote={REGISTER_FOOTER}
           accent="#ff33cc"
