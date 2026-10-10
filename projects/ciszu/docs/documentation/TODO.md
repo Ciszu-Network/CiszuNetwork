@@ -2,21 +2,24 @@
 
 ### Cambios Generales:
 
-- [ ] Activar canal SMS para avisos de cuenta (código listo: `sendSms()` en `@ciszunetwork/utils`,
+- [X] Activar canal SMS para avisos de cuenta (código listo: `sendSms()` en `@ciszunetwork/utils`,
   preferencia `sms_enabled` en `notification_preferences` y teléfono en el panel; falta contratar
   un proveedor externo y poner sus credenciales en el vault + Vercel).
   ACTIVADO (09 oct 2026): **Textbelt** con key gratuita (1 SMS/día) — soporte en `sendSms()`,
   `SMS_PROVIDER`/`SMS_API_KEY` en el vault + los 4 proyectos Vercel, y aviso por SMS cableado en
   las sanciones del anti-cheat (MuzicMania) cuando el usuario activó `sms_enabled` y dejó teléfono.
   Para volumen real: key de pago de Textbelt o Twilio/Vonage (trials con crédito).
-- [X] Agregar nuevos documentos a CERFS (12axis) y usarlos en el portfolio. HECHO (09 oct 2026): reporte 12axes (Technocracy, 2026-10-08) agregado a OTHER_DOCS del portfolio con PDF completo + resumen PNG, previews generados y subidos al CDN.
 - [ ] Migración i18n de literales por lotes (deuda actual: ciszu 379 · ciszubot 326 ·
   antony 246 · muzicmania 937; ratchet `pnpm verify:i18n`).
   PILOTO HECHO (09 oct 2026): página de **login de ciszu** migrada completa (patrón `useDict()` +
   claves `loginPage` en `es`/`en` + `fillTemplate`; ciszu pasó de 390 → 379).
-  LOTES HECHOS: login (390→379) y support (379→340). LOTES HECHOS: login, support, contact, register, reviews, changelog y not-found (ciszu 390→231).
-  SIGUIENTE: `information` de ciszu requiere refactor server→client (tiene `metadata`: mover contenido a un
-  componente cliente). Después: páginas de projects/team/documentation, y luego ciszubot/antony/muzicmania.
+  LOTES HECHOS: login (390→379) y support (379→340). LOTES HECHOS EN CISZU (09 oct 2026): 390 → 66 en 15 tandas: login, support, contact, register, reviews,
+  changelog, not-found, reset-password, team (refactor), information (refactor), proyectos (ciszugamens/
+  antony/muzicmania/ciszunetwork/ciszubot), documentation, ProjectsExplorer, forum, stats + cola brandTerms.
+  REFACTOR SERVER→CLIENT ya resuelto para team e information (patrón wrapper + XContent.tsx).
+  COLA PENDIENTE ciszu: services/page, services/[slug], faq (server→client), changelog/[id]/client,
+  Navbar, appeal, settings, admin-login-form, ServicesShowcase (importar useDict/hook y migrar restos).
+  DESPUÉS: ciszubot (330) · antony (246) · muzicmania (937).
 
 #5 Crear sistema de anuncios: Google Adsense, GA4, GTM, Tag y Analytics pack completo.
 
@@ -128,6 +131,60 @@
 - [ ] Terminar idiomas en español LATAM.
 - [ ] Terminar idiomas en español España.
 - [ ] Corregir la configuracion de la cuenta para permite doble login, usuario logeado con ciszu ID puede configurar su cuenta, usuario logeado con discord accede a dasboard, usuario logeado en ambos control total.
+
+  Actualmente cuando inicio con discord y luego voy a iniciar sesion con ciszu ID, no me deja, al ingresar al login me redirecciona hacia atras, deberias arreglar esto. Ademas´si el usuario ya esta ingresado en discord o ya esta ingresado en ciszu ID desactivar dinamica y inteligentemente.
+
+  Ademas cuando ingreso a ver la info de mi cuenta, utiliza un serial de digitos aleatorio para mi username, en vez de mi username de discord (sin ciszu id), solamente aparece mi displayname correctamente. (acabo de ver que el serial es el ID de la cuenta, aparte del ID deberia mostrar el username @)
+
+  Se debe cambiar el icono de la configuracion de la cuenta a un engranaje.
+
+  Por cada servidor no invitado siempre exitir un boton para invitar a ese servidor, y un boton de "configurar" que siempre dara error en caso de que no este invitado. El servidor debe estar con un efecto apagado cuando no este invitado y advertir de antes individualmente.
+
+  Los quickdocs son muy molesto, intenta siempre que esten hacia abajo de la pagina, y no en la zona de scrolls, es decir estatico debajo de todo.
+
+  Agrega mas reactividad, interactividad, iconos svg, degradados, opciones demas, utilidades, accesos directos en el slidebar dashboard como faq o ayuda, configuracion de la cuenta, perfil, cambio de idioma e tema,
+
+  Los servidores en el sliderbard deben estar dentro de una categoria del sliderbard, como servers. Al no tener seleccionado nada el usuario solo vera el resumen, al seleccionar aparecera un segundo slidebard a la derecha o una extension para las categorias por opcion de configuracion, por defecto el resumen dentro del servidor. Con un hero title banner y preview resumen entero del servidor, y luego por cada opcion iconos etc, al seleccionar aparece las opciones.
+
+  Intenta aprovechar el espacio, cambia el fondo por cada servidor. Aprovecha caracteristicas de discord.
+
+  Las acciones del usuario no son guardables hasta que le de a un boton de guardar dentro de un panel flotante que aparecera solamente cuando se registra cambios no guardados, tambein existira la opcion de guardado automatico configurable activado por defacto, y la opcion deshacer o rehacer dentro de ese panel. Aparece con animacion fluida inferior sticky, Al guardar hacer animacion de guardando, al finalizar correctamente el guardado y aplicaciones reales mostrar que todo esta correcto de lo contrario error. Y quitar autoamticamente el panel a los 1 segundo. El usuario solo puede hacer cambios despues de terminar el guardado anterior. Los datos del servidor se debe actualizar constantemente, es decir, si un usuario crea un rol, y en algunas de las opciones se requiere seleccionar roles del servidor, si el usuario no recargo la pagina puede recargar la pagina, recargar con un boton flotante para recargar datos del servidor o esperar un periodo de tiempo re recarge automatico, es decir paginas dinamicas.
+
+  Finalmente ten en cuenta que el dashboard solo es accesible para admins del servidor, si se detecta via discord que el usuario no es admin del servidor denegar acceso inmediato.
+
+  Tambien en dashboard antes de los quickdocks, crea varias secciones. Como soporte, auda, como usar, e incluso autopatrocinio como invitar el bot a otros servidores, integrarlo en el perfil, ver perfiles de disboard, discordbot y top gg entre otros.
+
+  Finalmente, todas las opciones deben tener etiquetas de FREE, pero algunas que TU consideres PREMIUM. Agregalas pero alado de esa etiqueta agrega que sera por BETA TRIAL FREE, es decir todas son FREE, el sistema premium se agregara despues, incluso. En las secciones prequickdocks agrega un discleimer de que las opciones de BETA TRIAL FREE cambiaran a premium en cualquier momento, y que se debe aprovechar este momento.
+
+  Por cada servidor en su resumen ademas de info de ciszubot agrega info del servidor. Crea UI para listas de roles, canales, crea campos de textos que permitan markdown de discord, por cada opcion has que la configuracion se peuda cargar atravez de JSONs, algo asi como plantillas universales para que por cada opcion o desde el resumen (global desde el servidor) exportar o importar guardados (backups) que cargan y segun la config aplica los cambios.
+
+  Los JSON debe tener una nomenclatura clara, segun por opcion, fecha, usuario, indicar que es un backup de ciszubot etc.
+
+  La verdad no se que mas decir, te dejo la libertad de mejorar el dashboard como quieras, animaciones, interacciones para el usuario por ejemplo ocultar o esconder los slidebards, o retraerlos, o etc. Incluso funciones o cosas que tangan otros bots de discord famosos.
+- [X] Dual Login ciszubot (09 oct 2026): /login ya no redirige en bucle — muestra panel dinámico
+  (CISZU ID conectado / Discord conectado / conectar Discord / dashboard / configuración / cerrar sesión).
+  Username real de Discord con @ en la cuenta (session route + AuthProvider + Navbar) e icono engranaje
+  en Configuración.
+- [ ] DASHBOARD CISZUBOT — gran mejora (spec del 09 oct 2026):
+  · Sidebar por categorías (Servers como categoría; al no seleccionar nada solo resumen; al seleccionar abre
+    sub-sidebar por opciones; resumen por defecto con hero banner + preview completa del servidor).
+  · Accesos directos en el sidebar: FAQ, ayuda, configuración de cuenta, perfil, cambio de idioma y tema.
+  · Más reactividad/animaciones (ocultar/retraer sidebars), fondo por servidor, aprovechar features de Discord.
+  · Guardado con panel flotante sticky (undo/redo, auto-guardado configurable ON por defecto; solo si hay
+    cambios sin guardar; animación guardando→éxito/error; se oculta 1s tras guardar; bloquear cambios hasta
+    terminar el guardado anterior).
+  · Datos dinámicos del servidor: botón flotante de recarga + auto-recarga periódica (roles/canales frescos).
+  · Acceso solo admins del servidor (verificación discord server-side, denegar al instante).
+  · Secciones antes de QuickDocks: soporte, ayuda, cómo usar, autopatrocinio (invitar bot, integrarlo en el
+    perfil, perfiles en Disboard/DiscordBotList/Top.gg) + disclaimer BETA TRIAL FREE.
+  · Etiquetas FREE en todas las opciones; marcar algunas como PREMIUM con badge "BETA TRIAL FREE"
+    (todo gratis durante la beta; el premium real llegará después).
+  · Resumen por servidor: info de CiszuBot + info del servidor (listas de roles, canales), campos de texto
+    con Markdown de Discord, y carga/exportación por JSON (plantillas universales) desde cada opción y desde
+    el resumen global — nomenclatura clara: opción/fecha/usuario/backup-ciszubot.
+  · Botón "Invitar" por servidor no invitado + botón "Configurar" que da error si no está invitado;
+    servidor en efecto apagado + advertencia individual previa.
+  · QuickDocks: moverlos siempre al final de la página (fuera de la zona de scroll, estáticos abajo).
 - [ ] Añadir VPS 24 7 AL BOT. (Tarea normal: desplegar el bot en un host 24/7 — panel gratuito
   tipo bot-hosting.net con `deploy/ciszubot-standalone.zip`, o VPS genérico; requiere cuenta y/o pago.)
 
@@ -137,7 +194,6 @@
 - [ ] Terminar idiomas en ingles USA.
 - [ ] Terminar idiomas en español LATAM.
 - [ ] Terminar idiomas en español España.
-- [X] Agregar nuevos documentos a cerfs (12axis) y usarlos para el portfolio. HECHO (09 oct 2026): ver entrada 12axes en certificates.ts (OTHER_DOCS) + CDN.
 
 **MuzicMania Website:**
 
