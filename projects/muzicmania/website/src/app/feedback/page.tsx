@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useT } from '@/hooks/useT';
 import { motion } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
@@ -26,6 +27,7 @@ const I = {
 const FEEDBACK_EMAIL = 'ciszunetwork@gmail.com';
 
 export default function FeedbackPage() {
+  const t = useT();
   usePageTitle('FEEDBACK');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -89,7 +91,7 @@ export default function FeedbackPage() {
               </h1>
             </div>
             <p className="text-neon-pink font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-              Tu opinión impulsa el ritmo de MuzicMania
+              {t.pages.feedback.slogan}
             </p>
           </div>
         </motion.header>
@@ -100,19 +102,19 @@ export default function FeedbackPage() {
             <div className="absolute top-0 right-0 p-8 opacity-5 text-neon-green font-black text-9xl italic uppercase tracking-tighter pointer-events-none">DONE</div>
             <div className="w-20 h-20 text-neon-green mx-auto drop-shadow-[0_0_30px_rgba(16,185,129,0.4)]">{I.check}</div>
             <div className="space-y-3">
-              <h2 className="text-4xl md:text-5xl font-header font-black text-white uppercase italic tracking-tighter leading-none">¡SEÑAL RECIBIDA!</h2>
-              <p className="text-neon-green font-black text-xs uppercase tracking-[0.4em]">Transmisión preparada</p>
+              <h2 className="text-4xl md:text-5xl font-header font-black text-white uppercase italic tracking-tighter leading-none">{t.pages.feedback.signalReceived}</h2>
+              <p className="text-neon-green font-black text-xs uppercase tracking-[0.4em]">{t.pages.feedback.broadcastReady}</p>
             </div>
             <p className="text-gray-400 font-bold text-sm leading-relaxed max-w-xl mx-auto uppercase tracking-widest">
               Se ha abierto tu cliente de correo con el mensaje listo. Envíalo desde allí a{' '}
-              <span className="text-white">{FEEDBACK_EMAIL}</span> para completar la transmisión.
+              <span className="text-white">{FEEDBACK_EMAIL}</span> {t.pages.feedback.toComplete}
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-5 pt-4">
               <button onClick={() => setSent(false)} className="px-8 py-4 bg-white text-black font-black uppercase text-xs tracking-[0.2em] rounded-3xl hover:bg-neon-cyan hover:scale-105 transition-all shadow-xl flex items-center justify-center gap-4">
-                <div className="w-4 h-4">{I.msg}</div> ENVIAR OTRO MENSAJE
+                <div className="w-4 h-4">{I.msg}</div> {t.pages.feedback.sendAnother}
               </button>
               <Link href="/download" className="px-8 py-4 bg-transparent border-2 border-neon-cyan text-neon-cyan font-black uppercase text-xs tracking-[0.2em] rounded-3xl hover:bg-neon-cyan hover:text-black hover:scale-105 transition-all flex items-center justify-center gap-4">
-                <div className="w-4 h-4">{I.download}</div> IR A DESCARGAS
+                <div className="w-4 h-4">{I.download}</div> {t.pages.feedback.goDownloads}
               </Link>
             </div>
           </motion.div>
@@ -127,16 +129,16 @@ export default function FeedbackPage() {
                 <div className="space-y-2">
                   <div className="flex items-center gap-3 border-b border-white/5 pb-2">
                     <div className="w-4 h-4 text-neon-cyan">{I.feedback}</div>
-                    <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">Tu señal</h3>
+                    <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white">{t.pages.feedback.yourSignal}</h3>
                   </div>
                   <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest pl-2">
-                    Opinión, sugerencia o reporte de bug. El mensaje es obligatorio.
+                    {t.pages.feedback.signalDesc}
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">Nombre (Opcional)</label>
+                    <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">{t.pages.feedback.nameOptional}</label>
                     <div className="relative">
                       <div className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600">
                         {I.user}
@@ -145,13 +147,13 @@ export default function FeedbackPage() {
                         value={name}
                         onChange={e => setName(e.target.value)}
                         className="w-full bg-black/60 border border-white/10 rounded-2xl pl-12 pr-6 py-4 text-sm font-bold focus:border-neon-cyan/50 outline-none transition-all"
-                        placeholder="Ej: Ciszu Master"
+                        placeholder={t.pages.feedback.phName}
                         maxLength={60}
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">Email (Opcional)</label>
+                    <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">{t.pages.feedback.emailOptional}</label>
                     <div className="relative">
                       <div className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600">
                         {I.mail}
@@ -161,18 +163,18 @@ export default function FeedbackPage() {
                         value={email}
                         onChange={e => setEmail(e.target.value)}
                         className={`w-full bg-black/60 border rounded-2xl pl-12 pr-6 py-4 text-sm font-bold focus:border-neon-blue/50 outline-none transition-all ${email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? 'border-neon-pink/60' : 'border-white/10'}`}
-                        placeholder="tu-email@servidor.com"
+                        placeholder={t.pages.feedback.phEmail}
                         maxLength={120}
                       />
                     </div>
                     {email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && (
-                      <p className="text-[9px] font-black uppercase tracking-widest text-neon-pink pl-2">Formato de email inválido</p>
+                      <p className="text-[9px] font-black uppercase tracking-widest text-neon-pink pl-2">{t.pages.feedback.invalidEmail}</p>
                     )}
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">Mensaje *</label>
+                  <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">{t.pages.feedback.messageLabel}</label>
                   <div className="relative">
                     <div className={`absolute left-5 top-5 w-4 h-4 ${message.trim() ? 'text-neon-cyan' : 'text-gray-600'}`}>
                       {I.msg}
@@ -183,7 +185,7 @@ export default function FeedbackPage() {
                       value={message}
                       onChange={e => setMessage(e.target.value)}
                       className={`w-full bg-black/60 border rounded-3xl pl-12 pr-6 py-4 text-sm font-bold outline-none resize-none placeholder:text-gray-800 transition-all ${error ? 'border-neon-pink/60' : 'border-white/10 focus:border-neon-pink/50'}`}
-                      placeholder="Describe tu opinión, sugerencia o el problema que encontraste..."
+                      placeholder={t.pages.feedback.phMessage}
                       maxLength={2000}
                     />
                   </div>
@@ -200,7 +202,7 @@ export default function FeedbackPage() {
                   className="w-full py-6 rounded-3xl bg-gradient-to-r from-neon-cyan via-neon-blue to-neon-pink border-none shadow-[0_0_30px_rgba(0,240,255,0.2)] hover:shadow-[0_0_50px_rgba(255,51,204,0.4)] hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-4 text-sm font-black italic tracking-widest text-black"
                 >
                   <div className="w-5 h-5">{I.send}</div>
-                  <span>ENVIAR FEEDBACK AL NÚCLEO</span>
+                  <span>{t.pages.feedback.sendFeedback}</span>
                 </button>
               </form>
             </motion.div>
@@ -214,16 +216,16 @@ export default function FeedbackPage() {
                   {I.report}
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-xl font-header font-black text-white uppercase italic tracking-tighter">¿ENCONTRASTE UN BUG?</h3>
+                  <h3 className="text-xl font-header font-black text-white uppercase italic tracking-tighter">{t.pages.feedback.foundBug}</h3>
                   <p className="text-[10px] text-gray-500 font-bold leading-relaxed uppercase">
-                    Abre el reporte técnico de problemas. Se adjuntan automáticamente detalles del navegador y la sesión para diagnosticar el fallo más rápido.
+                    {t.pages.feedback.foundBugDesc}
                   </p>
                 </div>
                 <button
                   onClick={openSentryReport}
                   className="w-full px-6 py-4 bg-neon-pink text-black font-black uppercase text-[10px] tracking-[0.2em] rounded-3xl hover:bg-neon-cyan hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-[0_0_25px_rgba(255,51,204,0.35)]"
                 >
-                  <div className="w-4 h-4">{I.report}</div> ABRIR EL REPORTE DE PROBLEMAS
+                  <div className="w-4 h-4">{I.report}</div> {t.pages.feedback.openReport}
                 </button>
               </div>
 
@@ -235,7 +237,7 @@ export default function FeedbackPage() {
                     {I.mail}
                   </div>
                   <div>
-                    <h3 className="text-xs font-black text-white uppercase tracking-widest">Canal Alternativo</h3>
+                    <h3 className="text-xs font-black text-white uppercase tracking-widest">{t.pages.feedback.altChannel}</h3>
                     <p className="text-[10px] text-neon-blue font-black uppercase tracking-[0.2em] break-all">{FEEDBACK_EMAIL}</p>
                   </div>
                 </div>
@@ -243,33 +245,33 @@ export default function FeedbackPage() {
                   onClick={() => window.location.href = `mailto:${FEEDBACK_EMAIL}?subject=${encodeURIComponent('MuzicMania Feedback')}`}
                   className="w-full px-6 py-3.5 bg-white/5 border border-neon-blue/30 text-neon-blue font-black uppercase text-[10px] tracking-[0.2em] rounded-2xl hover:bg-neon-blue hover:text-black hover:scale-[1.02] transition-all flex items-center justify-center gap-3"
                 >
-                  <div className="w-4 h-4">{I.send}</div> ESCRIBIR DIRECTAMENTE
+                  <div className="w-4 h-4">{I.send}</div> {t.pages.feedback.writeDirectly}
                 </button>
               </div>
 
               {/* CHANNELS */}
               <div className="p-8 bg-doc-dark border border-white/5 rounded-[3rem] space-y-6">
-                <h3 className="text-xs font-black text-white uppercase tracking-[0.4em] border-b border-white/10 pb-4">Canales de Asistencia</h3>
+                <h3 className="text-xs font-black text-white uppercase tracking-[0.4em] border-b border-white/10 pb-4">{t.pages.feedback.assistChannels}</h3>
                 <div className="space-y-4">
                   <Link href="/contact" className="flex gap-4 items-start group p-3 -m-3 rounded-2xl hover:bg-white/5 transition-all">
                     <div className="w-1 h-8 rounded-full bg-current text-neon-cyan opacity-40 group-hover:opacity-100 transition-all" />
                     <div>
                       <p className="text-[10px] font-black uppercase tracking-widest text-neon-cyan">Contacto</p>
-                      <p className="text-[9px] text-gray-500 font-bold uppercase mt-1">Canales directos de comunicación</p>
+                      <p className="text-[9px] text-gray-500 font-bold uppercase mt-1">{t.pages.feedback.directComm}</p>
                     </div>
                   </Link>
                   <Link href="/support" className="flex gap-4 items-start group p-3 -m-3 rounded-2xl hover:bg-white/5 transition-all">
                     <div className="w-1 h-8 rounded-full bg-current text-neon-purple opacity-40 group-hover:opacity-100 transition-all" />
                     <div>
                       <p className="text-[10px] font-black uppercase tracking-widest text-neon-purple">Soporte</p>
-                      <p className="text-[9px] text-gray-500 font-bold uppercase mt-1">Tickets de asistencia técnica</p>
+                      <p className="text-[9px] text-gray-500 font-bold uppercase mt-1">{t.pages.feedback.supportTickets}</p>
                     </div>
                   </Link>
                   <Link href="/download" className="flex gap-4 items-start group p-3 -m-3 rounded-2xl hover:bg-white/5 transition-all">
                     <div className="w-1 h-8 rounded-full bg-current text-neon-pink opacity-40 group-hover:opacity-100 transition-all" />
                     <div>
                       <p className="text-[10px] font-black uppercase tracking-widest text-neon-pink">Descargas</p>
-                      <p className="text-[9px] text-gray-500 font-bold uppercase mt-1">App nativa Tauri y PDWA</p>
+                      <p className="text-[9px] text-gray-500 font-bold uppercase mt-1">{t.pages.feedback.appTauri}</p>
                     </div>
                   </Link>
                 </div>
@@ -282,18 +284,18 @@ export default function FeedbackPage() {
         <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={sectionVariants} className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="p-8 bg-black/40 border-2 border-neon-cyan/20 rounded-[3rem] text-center space-y-4 hover:border-neon-cyan transition-all group">
             <div className="w-14 h-14 text-neon-cyan mx-auto p-3 bg-neon-cyan/5 rounded-2xl border border-neon-cyan/20 group-hover:scale-110 transition-transform">{I.msg}</div>
-            <h3 className="text-sm font-header font-black text-white uppercase italic tracking-tight">Sugerencias de Funciones</h3>
-            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-relaxed">Cada mapa, canción o mecánica que sueñas puede convertirse en realidad.</p>
+            <h3 className="text-sm font-header font-black text-white uppercase italic tracking-tight">{t.pages.feedback.featureSugg}</h3>
+            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-relaxed">{t.pages.feedback.featureSuggDesc}</p>
           </div>
           <div className="p-8 bg-black/40 border-2 border-neon-pink/20 rounded-[3rem] text-center space-y-4 hover:border-neon-pink transition-all group">
             <div className="w-14 h-14 text-neon-pink mx-auto p-3 bg-neon-pink/5 rounded-2xl border border-neon-pink/20 group-hover:scale-110 transition-transform">{I.alert}</div>
-            <h3 className="text-sm font-header font-black text-white uppercase italic tracking-tight">Reportes de Error</h3>
-            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-relaxed">Detecta un fallo y ayúdanos a corregirlo antes de que afecte a más jugadores.</p>
+            <h3 className="text-sm font-header font-black text-white uppercase italic tracking-tight">{t.pages.feedback.bugReports}</h3>
+            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-relaxed">{t.pages.feedback.bugReportsDesc}</p>
           </div>
           <div className="p-8 bg-black/40 border-2 border-neon-blue/20 rounded-[3rem] text-center space-y-4 hover:border-neon-blue transition-all group">
             <div className="w-14 h-14 text-neon-blue mx-auto p-3 bg-neon-blue/5 rounded-2xl border border-neon-blue/20 group-hover:scale-110 transition-transform">{I.feedback}</div>
-            <h3 className="text-sm font-header font-black text-white uppercase italic tracking-tight">Opinión General</h3>
-            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-relaxed">Dinos qué amas y qué cambiarías del ecosistema MuzicMania.</p>
+            <h3 className="text-sm font-header font-black text-white uppercase italic tracking-tight">{t.pages.feedback.generalOpinion}</h3>
+            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-relaxed">{t.pages.feedback.generalOpinionDesc}</p>
           </div>
         </motion.section>
 
@@ -307,9 +309,9 @@ export default function FeedbackPage() {
           className="flex flex-col md:flex-row items-center justify-between gap-6 p-8 bg-black/40 border border-white/5 rounded-[2.5rem]"
         >
           <div className="space-y-1 text-center md:text-left">
-            <h4 className="text-sm font-header font-black text-white uppercase italic tracking-tight">¿Cerraste el botón flotante?</h4>
+            <h4 className="text-sm font-header font-black text-white uppercase italic tracking-tight">{t.pages.feedback.fabReopenTitle}</h4>
             <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest max-w-xl">
-              El botón de reporte rápido de abajo a la izquierda se puede volver a mostrar cuando quieras.
+              {t.pages.feedback.fabReopenDesc}
             </p>
           </div>
           <FabRestore accent="#ff33cc" keys={['muzicmania-feedback-dismissed']} />
