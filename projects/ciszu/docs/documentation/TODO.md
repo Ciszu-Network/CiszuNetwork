@@ -2,8 +2,8 @@
 
 ### Cambios Generales:
 
-- [ ] Migración i18n de literales por lotes (deuda actual: ciszu 379 · ciszubot 326 ·
-  antony 246 · muzicmania 937; ratchet `pnpm verify:i18n`).
+- [ ] Migración i18n de literales por lotes (deuda actual: ciszu 0 ✓ completa ·
+  ciszubot 294 · antony 246 · muzicmania 937; ratchet `pnpm verify:i18n`).
   PILOTO HECHO (09 oct 2026): página de **login de ciszu** migrada completa (patrón `useDict()` +
   claves `loginPage` en `es`/`en` + `fillTemplate`; ciszu pasó de 390 → 379).
   LOTES HECHOS: login (390→379) y support (379→340). LOTES HECHOS EN CISZU (09 oct 2026): 390 → 66 en 15 tandas: login, support, contact, register, reviews,
@@ -126,6 +126,8 @@
 - [ ] Terminar idiomas en español España.
 - [ ] Corregir la configuracion de la cuenta para permite doble login, usuario logeado con ciszu ID puede configurar su cuenta, usuario logeado con discord accede a dasboard, usuario logeado en ambos control total.
 
+  ▸ [10 oct 2026] Fase 1 HECHA: sin bucle en /login (panel dinámico según sesión), username @ real de Discord (nunca el ID), icono engranaje en Configuración, botones Invitar/Configurar por servidor con atenuado y aviso individual, QuickDocks compactos/colapsables y estáticos al final, sidebar del dashboard por categorías con accesos (FAQ/ayuda/perfil/config/idioma/tema). Pendiente de este bloque: lo de la línea del spec del dashboard (158).
+
   Actualmente cuando inicio con discord y luego voy a iniciar sesion con ciszu ID, no me deja, al ingresar al login me redirecciona hacia atras, deberias arreglar esto. Ademas´si el usuario ya esta ingresado en discord o ya esta ingresado en ciszu ID desactivar dinamica y inteligentemente.
 
   Ademas cuando ingreso a ver la info de mi cuenta, utiliza un serial de digitos aleatorio para mi username, en vez de mi username de discord (sin ciszu id), solamente aparece mi displayname correctamente. (acabo de ver que el serial es el ID de la cuenta, aparte del ID deberia mostrar el username @)
@@ -175,6 +177,17 @@
   · Botón "Invitar" por servidor no invitado + botón "Configurar" que da error si no está invitado;
   servidor en efecto apagado + advertencia individual previa.
   · QuickDocks: moverlos siempre al final de la página (fuera de la zona de scroll, estáticos abajo).
+  ▸ [10 oct 2026] FASE 2 HECHA (commit 21813eca): panel flotante de guardado (undo/redo, autosave ON por
+  defecto configurable, animación guardando→éxito/error, se oculta 1s, bloqueo durante guardado, Ctrl+Z/Y);
+  datos dinámicos del servidor (API con roles/canales/miembros del bot, auto-recarga 60s, botón flotante de
+  recarga); selects con nombres reales (canales/categorías/roles) con fallback manual; resumen del servidor
+  con hero + fondo por servidor (hue del guild) + info de Discord; backups JSON por sección y global con
+  nomenclatura clara (opción/servidor/fecha/usuario); etiquetas FREE / PREMIUM · BETA TRIAL FREE; aviso BETA
+  TRIAL FREE en dashboard y panel; acceso solo admins server-side ya activo; secciones pre-QuickDocks (ayuda,
+  cómo usar, autopatrocinio con integración de perfil e invitación, directorios "próximamente").
+  QUEDA de este spec: campos de texto con editor Markdown de Discord; sub-sidebar por opción con preview
+  del servidor en el resumen global; UI de listas dedicadas de roles/canales; revisar duplicidad hero
+  (layout vs cliente) en polish final; etiquetar FREE/PREMIUM cualquier opción nueva futura.
 - [ ] Añadir VPS 24 7 AL BOT. (Tarea normal: desplegar el bot en un host 24/7 — panel gratuito
   tipo bot-hosting.net con `deploy/ciszubot-standalone.zip`, o VPS genérico; requiere cuenta y/o pago.)
 
