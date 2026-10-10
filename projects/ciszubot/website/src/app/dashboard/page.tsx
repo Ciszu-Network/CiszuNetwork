@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { Icon } from '@ciszu/ui';
-import { getSessionUserId, getGuildsForUser, getBotGuildIds, isGuildAdmin, type DiscordGuild } from '@/lib/auth';
+import { getSessionUserId, getGuildsForUser, getBotGuildIds, isGuildAdmin, DISCORD_CLIENT_ID, type DiscordGuild } from '@/lib/auth';
 import { db, ciszubotSchema, eq } from '@/lib/db';
 import { BOT_PREFIX, DISCORD_SERVER, INVITE_URL, getDict, parseLang, type Dict } from '@/lib/i18n';
 import QuickDocks from '@/components/molecules/QuickDocks';
@@ -30,6 +30,8 @@ const USEFUL_LINKS: { key: LinkKey; href: string; icon: string }[] = [
   { key: 'explore', href: '/explore', icon: 'globe' },
   { key: 'download', href: '/downloads', icon: 'download' },
 ];
+
+const USER_INSTALL_URL = `https://discord.com/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&scope=applications.commands&integration_type=1`;
 
 export default async function DashboardPage() {
   const store = await cookies();
@@ -121,6 +123,14 @@ export default async function DashboardPage() {
             </div>
           </div>
         </PageReveal>
+
+        {/* Aviso beta trial */}
+        <div className="mt-6 flex flex-wrap items-center gap-3 rounded-2xl border border-neon-pink/30 bg-neon-pink/5 px-5 py-3">
+          <span className="rounded-full border border-neon-pink/50 bg-neon-pink/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-neon-pink">
+            {t.dashboardPage.betaBadge}
+          </span>
+          <p className="min-w-0 flex-1 text-xs text-ink/70">{t.dashboardPage.betaNote}</p>
+        </div>
 
         {/* Enlaces útiles */}
         <section className="mt-12">
@@ -242,6 +252,93 @@ export default async function DashboardPage() {
               })}
             </div>
           )}
+        </section>
+
+        {/* Ayuda, cómo usar y autopatrocinio */}
+        <section className="mt-12 grid gap-4 lg:grid-cols-3">
+          <div className={`flex flex-col rounded-3xl border p-6 ${THEME.border} ${THEME.card}`}>
+            <h2 className="flex items-center gap-2 font-header text-base font-black text-ink">
+              <Icon name="life-ring" size={18} className={THEME.accent} />
+              {t.dashboardPage.helpTitle}
+            </h2>
+            <p className="mt-2 flex-1 text-sm text-muted">{t.dashboardPage.helpDesc}</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <a
+                href={DISCORD_SERVER}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2 text-xs font-bold text-muted transition hover:border-neon-blue/60 hover:text-ink"
+              >
+                <Icon name="support" size={14} />
+                {t.dashboardPage.helpCta}
+              </a>
+              <Link
+                href="/documentation"
+                className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2 text-xs font-bold text-muted transition hover:border-neon-blue/60 hover:text-ink"
+              >
+                <Icon name="file-text" size={14} />
+                {t.dashboardPage.docsCta}
+              </Link>
+            </div>
+          </div>
+
+          <div className={`flex flex-col rounded-3xl border p-6 ${THEME.border} ${THEME.card}`}>
+            <h2 className="flex items-center gap-2 font-header text-base font-black text-ink">
+              <Icon name="gamepad" size={18} className={THEME.accent} />
+              {t.dashboardPage.howToTitle}
+            </h2>
+            <p className="mt-2 flex-1 text-sm text-muted">{t.dashboardPage.howToDesc}</p>
+            <div className="mt-4">
+              <Link
+                href="/commands"
+                className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2 text-xs font-bold text-muted transition hover:border-neon-blue/60 hover:text-ink"
+              >
+                <Icon name="gamepad" size={14} />
+                {t.dashboardPage.howToCta}
+              </Link>
+            </div>
+          </div>
+
+          <div className={`flex flex-col rounded-3xl border p-6 ${THEME.border} ${THEME.card}`}>
+            <h2 className="flex items-center gap-2 font-header text-base font-black text-ink">
+              <Icon name="star" size={18} className={THEME.accent} />
+              {t.dashboardPage.sponsorTitle}
+            </h2>
+            <p className="mt-2 flex-1 text-sm text-muted">{t.dashboardPage.sponsorDesc}</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <a
+                href={USER_INSTALL_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink px-4 py-2 text-xs font-bold text-white transition hover:scale-105 active:scale-95"
+              >
+                <Icon name="discord" size={14} className="[&>g]:fill-current" />
+                {t.dashboardPage.sponsorProfile}
+              </a>
+              <a
+                href={INVITE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2 text-xs font-bold text-muted transition hover:border-neon-blue/60 hover:text-ink"
+              >
+                <Icon name="server" size={14} />
+                {t.dashboardPage.inviteBot}
+              </a>
+            </div>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span className="text-[10px] font-black uppercase tracking-widest text-muted/70">
+                {t.dashboardPage.sponsorDirs}
+              </span>
+              {['Disboard', 'Top.gg', 'DiscordBotList'].map((dir) => (
+                <span
+                  key={dir}
+                  className="rounded-full border border-border bg-bg px-2.5 py-1 text-[10px] font-bold text-muted/80"
+                >
+                  {dir} · {t.dashboardPage.comingSoon}
+                </span>
+              ))}
+            </div>
+          </div>
         </section>
 
         {/* CTA final */}
