@@ -474,7 +474,7 @@ export default function InformationContent() {
                 <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-black/30 p-3 transition-transform duration-300 group-hover:scale-105">
                   <Image
                     src={assetResolver.resolve(LOGO_ISOTYPE)}
-                    alt="Isotipo de Ciszu Network"
+                    alt={t.brandTerms.isotipoAlt}
                     width={112}
                     height={116}
                     className="object-contain drop-shadow-brand"
@@ -505,7 +505,7 @@ export default function InformationContent() {
                 <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-black/30 p-5 transition-transform duration-300 group-hover:scale-[1.02]">
                   <Image
                     src={assetResolver.resolve(LOGO_WORDMARK)}
-                    alt="Logotipo de Ciszu Network"
+                    alt={t.brandTerms.logotipoAlt}
                     width={356}
                     height={108}
                     className="w-full h-auto"
@@ -532,7 +532,7 @@ export default function InformationContent() {
               <div className="w-full max-w-md shrink-0 rounded-2xl border border-white/10 bg-black/30 p-5 transition-transform duration-300 group-hover:scale-[1.02]">
                 <Image
                   src={assetResolver.resolve(LOGO_MASTER)}
-                  alt="Composición maestra de Ciszu Network: isotipo y logotipo"
+                  alt={t.brandTerms.composicionAlt}
                   width={342}
                   height={183}
                   className="w-full h-auto drop-shadow-brand"
@@ -758,7 +758,7 @@ export default function InformationContent() {
                 <blockquote
                   className={`bg-gradient-to-r bg-clip-text font-header text-2xl font-black uppercase leading-tight text-transparent md:text-4xl ${THEME.gradient}`}
                 >
-                  Bright Future Promised
+                  {t.brandTerms.taglineEn}
                 </blockquote>
                 <p className="mt-4 max-w-3xl text-sm leading-relaxed text-white/60">
                   {t.informationPage.philosophyBody}

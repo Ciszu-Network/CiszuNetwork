@@ -359,14 +359,14 @@ export default function LoginPage() {
             solo
             soloSize="w-24 h-24"
             ciszuIsotype={
-              <SmartImage src={CISZU_ISOTYPE} alt="Ciszu ID" width={72} height={72} className="w-full h-full" />
+              <SmartImage src={CISZU_ISOTYPE} alt={t.brandTerms.ciszuIdBrand} width={72} height={72} className="w-full h-full" />
             }
             appIsotype={
-              <SmartImage src={CISZU_ISOTYPE} alt="Ciszu Network" width={72} height={72} className="w-full h-full" />
+              <SmartImage src={CISZU_ISOTYPE} alt={t.brandTerms.ciszuNetwork} width={72} height={72} className="w-full h-full" />
             }
             ciszuHref="https://ciszunetwork.vercel.app"
             appHref="/"
-            title="CISZU ID"
+            title={t.brandTerms.ciszuId}
             subtitle={t.loginPage.brand.subtitle}
           />
         </div>
@@ -425,7 +425,7 @@ export default function LoginPage() {
                       name="email"
                       icon={<span className="w-full h-full text-brand-light"><IconMail /></span>}
                       type="email"
-                      placeholder="tu@email.com"
+                      placeholder={t.loginPage.emailPlaceholder}
                       required
                       autoComplete="email"
                       value={form.email}

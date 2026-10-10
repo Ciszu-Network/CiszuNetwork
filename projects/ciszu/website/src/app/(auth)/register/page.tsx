@@ -328,14 +328,14 @@ export default function RegisterPage() {
             solo
             soloSize="w-24 h-24"
             ciszuIsotype={
-              <SmartImage src={CISZU_ISOTYPE} alt="Ciszu ID" width={72} height={72} className="w-full h-full" />
+              <SmartImage src={CISZU_ISOTYPE} alt={t.brandTerms.ciszuIdBrand} width={72} height={72} className="w-full h-full" />
             }
             appIsotype={
-              <SmartImage src={CISZU_ISOTYPE} alt="Ciszu Network" width={72} height={72} className="w-full h-full" />
+              <SmartImage src={CISZU_ISOTYPE} alt={t.brandTerms.ciszuNetwork} width={72} height={72} className="w-full h-full" />
             }
             ciszuHref="https://ciszunetwork.vercel.app"
             appHref="/"
-            title="CISZU ID"
+            title={t.brandTerms.ciszuId}
             subtitle={t.registerPage.subtitle}
           />
         </div>
@@ -467,7 +467,7 @@ export default function RegisterPage() {
                         <svg viewBox="0 0 24 24" className="absolute w-3.5 h-3.5 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                       </div>
                       <p className="text-[11px] text-gray-400 font-bold leading-relaxed">
-                        {t.registerPage.marketingA}<a href="/terms" className="text-neon-cyan hover:underline">Ciszu Network</a>{t.registerPage.marketingB}<strong className="text-neon-pink">{t.registerPage.marketingStrong}</strong>
+                        {t.registerPage.marketingA}<a href="/terms" className="text-neon-cyan hover:underline">{t.brandTerms.ciszuNetwork}</a>{t.registerPage.marketingB}<strong className="text-neon-pink">{t.registerPage.marketingStrong}</strong>
                       </p>
                     </div>
                     {errors.marketing && <p className="text-red-400 text-[11px] font-bold">{errors.marketing}</p>}
@@ -503,7 +503,7 @@ export default function RegisterPage() {
                   </p>
                   <p className="text-center text-[10px] text-gray-500 font-bold mt-1">
                     {t.registerPage.createWith}
-                    <a href="https://ciszunetwork.vercel.app/register" className="text-neon-cyan hover:underline">CISZU ID</a>.
+                    <a href="https://ciszunetwork.vercel.app/register" className="text-neon-cyan hover:underline">{t.brandTerms.ciszuId}</a>.
                   </p>
                 </div>
 

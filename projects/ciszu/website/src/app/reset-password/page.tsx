@@ -194,13 +194,13 @@ export default function ResetPasswordPage() {
       <div className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full bg-neon-purple/10 blur-[140px] pointer-events-none" />
 
       <div className="pt-14 mb-8 px-4 flex items-center justify-center gap-3">
-        <SmartImage src={CISZU_ISOTYPE} alt="Ciszu ID" width={40} height={40} className="w-9 h-9" />
+        <SmartImage src={CISZU_ISOTYPE} alt={t.brandTerms.ciszuIdBrand} width={40} height={40} className="w-9 h-9" />
 
       </div>
 
       <div className="max-w-md mx-auto px-4 relative">
         <div className="text-center mb-6 space-y-1">
-          <h1 className="text-white font-black uppercase tracking-widest text-sm">CISZU ID</h1>
+          <h1 className="text-white font-black uppercase tracking-widest text-sm">{t.brandTerms.ciszuId}</h1>
           <p className="text-gray-400 text-[11px] font-bold">{t.resetPage.subtitle}</p>
         </div>
 

@@ -92,15 +92,15 @@ const stack = ['Discord', 'WhatsApp', 'Telegram', 'Top.gg', 'Disboard', 'Discord
 const widgetSnippetsOf = (t: ReturnType<typeof useDict>) => [
   {
     label: t.ciszugamensPage.widgetsLabels[0],
-    code: `<iframe src="${CISZUGAMENS.widgetUrl}" width="350" height="500" title="Ciszugamens en Discord"></iframe>`,
+    code: `<iframe src="${CISZUGAMENS.widgetUrl}" width="350" height="500" title={t.ciszugamensPage.iframeDiscord}></iframe>`,
   },
   {
     label: t.ciszugamensPage.widgetsLabels[1],
-    code: `<iframe src="${WIDGETS.topggBot}" width="300" height="300" title="CiszuBot en Top.gg"></iframe>`,
+    code: `<iframe src="${WIDGETS.topggBot}" width="300" height="300" title={t.ciszugamensPage.iframeBotTopgg}></iframe>`,
   },
   {
     label: t.ciszugamensPage.widgetsLabels[2],
-    code: `<iframe src="${WIDGETS.topggServer}" width="500" height="236" title="Ciszugamens en Top.gg"></iframe>`,
+    code: `<iframe src="${WIDGETS.topggServer}" width="500" height="236" title={t.ciszugamensPage.iframeServerTopgg}></iframe>`,
   },
 ];
 
@@ -159,7 +159,7 @@ export default function CiszugamensPage() {
               <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#5865F2]/15 border border-[#5865F2]/40 text-[10px] font-bold uppercase tracking-widest text-[#8ea1e1]">
                 {t.ciszugamensPage.inviteBadge}
               </span>
-              <h2 className="mt-5 text-3xl md:text-4xl font-header font-bold text-white">✩₊ CiszuGamens ⊹✦</h2>
+              <h2 className="mt-5 text-3xl md:text-4xl font-header font-bold text-white">{t.brandTerms.ciszugamensStyled}</h2>
               <p className="mt-4 text-gray-300 leading-relaxed">
                 {fillTemplate(t.ciszugamensPage.aboutBody, { site: CISZU_NETWORK.name })}
               </p>
@@ -179,7 +179,7 @@ export default function CiszugamensPage() {
             </div>
             <div className="mt-8">
               <iframe
-                title="Widget en vivo del servidor de Discord CiszuGamens"
+                title={t.ciszugamensPage.iframeLive}
                 src={CISZUGAMENS.widgetUrl}
                 width={350}
                 height={500}
@@ -306,7 +306,7 @@ export default function CiszugamensPage() {
               <WidgetCode snippets={widgetSnippetsOf(t)} />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <iframe
-                  title="Widget de Top.gg del bot CiszuBot"
+                  title={t.ciszugamensPage.iframeBotW}
                   src={WIDGETS.topggBot}
                   width={300}
                   height={300}
@@ -314,7 +314,7 @@ export default function CiszugamensPage() {
                   className="rounded-2xl border-0 mx-auto"
                 />
                 <iframe
-                  title="Widget de Top.gg del servidor Ciszugamens"
+                  title={t.ciszugamensPage.iframeServerW}
                   src={WIDGETS.topggServer}
                   width={500}
                   height={236}
