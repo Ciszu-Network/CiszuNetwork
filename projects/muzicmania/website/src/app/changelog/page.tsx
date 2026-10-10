@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { useT } from '@/hooks/useT';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import MainLayout from '@/components/templates/MainLayout';
@@ -30,16 +31,20 @@ const TypeTag = ({ type, active = false, onClick }: { type: ChangelogType, activ
 
 
 /** Icono de una entrada: usa el icono publicado (devcon) si existe. */
-const entryIcon = (item: { icon?: string; types: ChangelogType[] }) =>
-  (item.icon && (I as Record<string, React.ReactNode>)[item.icon]) ||
-  TAG_CONFIG[item.types[0]]?.icon ||
-  I.history;
+function entryIcon(item: { icon?: string; types: ChangelogType[] }) {
+  return (
+    (item.icon && (I as Record<string, React.ReactNode>)[item.icon]) ||
+    TAG_CONFIG[item.types[0]]?.icon ||
+    I.history
+  );
+}
 
 const TypeLabel = ({ type }: { type: ChangelogType }) => {
   return TAG_CONFIG[type]?.label || type.toUpperCase();
 };
 
 export default function ChangelogIndex() {
+  const t = useT();
   usePageTitle('CHANGELOG');
   const [filters, setFilters] = useState<ChangelogType[]>([]);
   const [sortBy, setSortBy] = useState<'date' | 'likes'>('date');
@@ -117,11 +122,11 @@ const { toast } = useToast();
                    {I.history}
                 </div>
                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-header font-black uppercase tracking-tighter leading-none transition-all group-hover:tracking-normal bg-gradient-to-r from-neon-blue via-neon-purple to-neon-pink bg-clip-text text-transparent [-webkit-text-stroke:1px_black] whitespace-nowrap">
-                  REGISTRO DE CAMBIOS
+                  {t.pages.changelog.registryTitle}
                 </h1>
              </div>
              <p className="text-neon-cyan font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
-               Evolución Detallada del Nexo v2.0
+               {t.pages.changelog.heroSubtitle}
              </p>
           </div>
         </motion.header>
@@ -131,9 +136,9 @@ const { toast } = useToast();
              <div className="flex items-center justify-between relative z-10">
                 <div className="space-y-1">
                    <h3 className="text-xl font-header font-black text-white uppercase italic tracking-tighter flex items-center gap-3">
-                      <div className="w-5 h-5 text-neon-pink drop-shadow-neon-pink">{I.zap}</div> BETA PÚBLICA V2.0
+                      <div className="w-5 h-5 text-neon-pink drop-shadow-neon-pink">{I.zap}</div> {t.pages.changelog.betaPublic}
                    </h3>
-                   <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Estado actual de despliegue</p>
+                   <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">{t.pages.changelog.statusDeploy}</p>
                 </div>
                 <div className="text-4xl font-header font-black text-neon-blue drop-shadow-neon-blue italic">89%</div>
              </div>
@@ -146,8 +151,8 @@ const { toast } = useToast();
                 />
              </div>
              <div className="flex justify-between text-[8px] font-black uppercase tracking-widest text-white/20">
-                <span>Iniciando Fase 3</span>
-                <span>Despliegue Final</span>
+                <span>{t.pages.changelog.phase3}</span>
+                <span>{t.pages.changelog.finalDeploy}</span>
              </div>
           </div>
 
@@ -156,8 +161,8 @@ const { toast } = useToast();
              <div className="p-6 bg-white/5 border border-white/5 rounded-3xl flex items-center gap-4">
                 <div className="w-10 h-10 rounded-xl bg-neon-blue/10 flex items-center justify-center text-neon-blue">{I.code}</div>
                 <div>
-                   <div className="text-[8px] font-black text-white/20 uppercase tracking-widest">Versión</div>
-                   <div className="text-sm font-header font-black text-white uppercase italic">v2.2.8</div>
+                   <div className="text-[8px] font-black text-white/20 uppercase tracking-widest">{t.pages.changelog.versionLabel}</div>
+                   <div className="text-sm font-header font-black text-white uppercase italic">{t.pages.changelog.versionValue}</div>
                 </div>
              </div>
              <div className="p-6 bg-white/5 border border-white/5 rounded-3xl flex items-center gap-4">
@@ -166,7 +171,7 @@ const { toast } = useToast();
                    <div className="text-[8px] font-black text-white/20 uppercase tracking-widest">Servidores</div>
                    <div className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full bg-neon-green animate-pulse" />
-                      <div className="text-sm font-header font-black text-white uppercase italic">OPERATIVO / SUPABASE</div>
+                      <div className="text-sm font-header font-black text-white uppercase italic">{t.pages.changelog.operational}</div>
                    </div>
                 </div>
              </div>
@@ -188,10 +193,10 @@ const { toast } = useToast();
                 
                 <div className="text-center space-y-2 relative z-10">
                    <h3 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">
-                      PRÓXIMOS NODOS
+                      {t.pages.changelog.nextNodes}
                    </h3>
                    <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.3em]">
-                      Despliegue arquitectónico de MuzicMania
+                      {t.pages.changelog.nextNodesSub}
                    </p>
                 </div>
 
@@ -254,7 +259,7 @@ const { toast } = useToast();
                 type="text" 
                 value={searchQuery}
                 onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-                placeholder="BUSCAR VERSIÓN, PARCHE O NODO..."
+                placeholder="{t.pages.changelog.phSearch}"
                 className="w-full bg-white/5 border border-white/10 rounded-full py-6 pl-20 pr-8 text-white font-header font-black uppercase italic tracking-[0.2em] focus:outline-none focus:border-neon-blue focus:ring-4 focus:ring-neon-blue/10 transition-all placeholder:text-white/10 text-sm"
               />
            </div>
@@ -269,7 +274,7 @@ const { toast } = useToast();
                    className={`flex items-center gap-4 px-8 py-4 rounded-2xl border transition-all font-black text-[12px] tracking-[0.2em] group ${showTagSelector ? 'bg-neon-purple border-neon-purple text-white shadow-neon-purple' : 'bg-black/40 border-white/10 text-white/40'}`}
                  >
                     <div className="w-5 h-5 group-hover:rotate-180 transition-transform duration-500">{I.filter}</div>
-                    GESTIONAR FILTROS
+                    {t.pages.changelog.manageFilters}
                  </button>
 
                   {filters.length > 0 && (
@@ -336,8 +341,8 @@ const { toast } = useToast();
                        {/* UNIFIED TAGS SECTION */}
                        <div className="space-y-6">
                           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-2">
-                             <h4 className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em]">SISTEMA DE ETIQUETADO</h4>
-                             <p className="text-[9px] font-bold text-white/10 uppercase tracking-widest italic">Selecciona una etiqueta para filtrar los resultados</p>
+                             <h4 className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em]">{t.pages.changelog.tagSystem}</h4>
+                             <p className="text-[9px] font-bold text-white/10 uppercase tracking-widest italic">{t.pages.changelog.tagSystemHint}</p>
                           </div>
                           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                               {Object.entries(TAG_CONFIG).map(([key, config]) => (
@@ -367,14 +372,14 @@ const { toast } = useToast();
                     {I.alert}
                  </div>
                  <div className="space-y-2">
-                    <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-tighter">SIN RESULTADOS</h3>
-                    <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.3em]">No hay innovaciones que coincidan con tu búsqueda</p>
+                    <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-tighter">{t.pages.changelog.noResults}</h3>
+                    <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.3em]">{t.pages.changelog.noResultsHint}</p>
                  </div>
                   <button 
                     onClick={() => { setSearchQuery(''); setFilters([]); setCurrentPage(1); }}
                     className="px-8 py-3 bg-neon-blue text-black font-header font-black uppercase italic tracking-widest rounded-2xl hover:shadow-neon-blue transition-all"
                   >
-                     REINICIAR BÚSQUEDA
+                     {t.pages.changelog.resetSearch}
                   </button>
               </div>
            ) : (
@@ -515,28 +520,28 @@ const { toast } = useToast();
               <div className="space-y-2 text-center md:text-left">
                  <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter flex items-center justify-center md:justify-start gap-3">
                     <div className="w-8 h-8 text-neon-pink">{I.target}</div>
-                    HOJA DE RUTA
+                    {t.pages.changelog.roadmap}
                  </h2>
-                 <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.3em]">El Futuro del Nexo en Construcción</p>
+                 <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.3em]">{t.pages.changelog.roadmapSub}</p>
               </div>
               <div className="px-6 py-3 rounded-full bg-white/5 border border-white/10 flex items-center gap-4">
                  <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-neon-cyan animate-pulse" />
-                    <span className="text-[10px] font-black text-white/60 tracking-widest uppercase">Progreso Global</span>
+                    <span className="text-[10px] font-black text-white/60 tracking-widest uppercase">{t.pages.changelog.globalProgress}</span>
                  </div>
                  <div className="text-neon-cyan font-black">89%</div>
               </div>
            </div>
 
            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* BETA V2.1 */}
+              {/* {t.pages.changelog.beta21} */}
               <div className="p-8 rounded-[2.5rem] bg-gradient-to-br from-neon-blue/10 to-transparent border border-neon-blue/20 relative overflow-hidden group">
                  <div className="absolute top-0 right-0 w-32 h-32 bg-neon-blue/10 blur-[50px] group-hover:bg-neon-blue/20 transition-colors" />
                  
                  <div className="flex justify-between items-start mb-6 relative z-10">
                     <div>
-                       <h3 className="text-2xl font-header font-black text-white uppercase italic">BETA V2.1</h3>
-                       <span className="text-[10px] font-black text-neon-blue tracking-[0.3em] uppercase">En Desarrollo</span>
+                       <h3 className="text-2xl font-header font-black text-white uppercase italic">{t.pages.changelog.beta21}</h3>
+                       <span className="text-[10px] font-black text-neon-blue tracking-[0.3em] uppercase">{t.pages.changelog.inProgress}</span>
                     </div>
                     <div className="w-10 h-10 rounded-xl bg-neon-blue/20 flex items-center justify-center text-neon-blue">
                        <div className="w-5 h-5">{I.settings}</div>
@@ -566,11 +571,11 @@ const { toast } = useToast();
                  </div>
               </div>
 
-              {/* BETA V2.2 */}
+              {/* {t.pages.changelog.beta22} */}
               <div className="p-8 rounded-[2.5rem] bg-white/5 border border-white/5 relative overflow-hidden group hover:border-neon-purple/30 transition-colors">
                  <div className="flex justify-between items-start mb-6 relative z-10">
                     <div>
-                       <h3 className="text-2xl font-header font-black text-white/40 uppercase italic group-hover:text-white transition-colors">BETA V2.2</h3>
+                       <h3 className="text-2xl font-header font-black text-white/40 uppercase italic group-hover:text-white transition-colors">{t.pages.changelog.beta22}</h3>
                        <span className="text-[10px] font-black text-white/20 tracking-[0.3em] uppercase group-hover:text-neon-purple transition-colors">Planificado</span>
                     </div>
                     <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-white/20 group-hover:text-neon-purple group-hover:bg-neon-purple/20 transition-all">
@@ -607,8 +612,8 @@ const { toast } = useToast();
         <motion.section initial="hidden" animate="visible" variants={sectionVariants} className="p-12 bg-black/40 border border-white/5 rounded-[4rem] space-y-12 relative overflow-hidden">
            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-neon-purple/5 to-transparent pointer-events-none" />
            <div className="text-center space-y-2 relative z-10">
-              <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">GLOSARIO DE NODOS</h2>
-              <p className="text-[10px] text-white/20 font-black uppercase tracking-[0.3em]">Diccionario Técnico de Actualizaciones</p>
+              <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">{t.pages.changelog.glossary}</h2>
+              <p className="text-[10px] text-white/20 font-black uppercase tracking-[0.3em]">{t.pages.changelog.glossarySub}</p>
            </div>
 
            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
@@ -643,12 +648,12 @@ const { toast } = useToast();
            <div className="bg-black/60 p-12 rounded-[3.9rem] text-center border border-white/5 relative overflow-hidden backdrop-blur-3xl">
               <div className="absolute inset-0 bg-neon-blue/5 animate-pulse" />
               <div className="relative space-y-6">
-                 <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">¿SISTEMA EN EVOLUCIÓN?</h2>
+                 <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">{t.pages.changelog.ctaTitle}</h2>
                  <p className="text-gray-500 font-bold uppercase text-xs tracking-widest max-w-md mx-auto italic">
-                    Explora la documentación profunda de nodos y protocolos del Nexo.
+                    {t.pages.changelog.ctaText}
                  </p>
                  <Link href="/documentation" className="inline-flex items-center gap-3 text-neon-cyan font-black uppercase text-[10px] tracking-[0.4em] pb-1 border-b-2 border-neon-cyan/30 hover:border-neon-cyan hover:gap-6 transition-all group">
-                    VER PROTOCOLOS
+                    {t.pages.changelog.ctaBtn}
                     <div className="w-4 h-4">{I.arrow}</div>
                  </Link>
               </div>
