@@ -150,9 +150,12 @@ export default function AuthMenu({ open, onToggle, onClose, lang, dict }: { open
                 <p className="text-sm font-header font-black text-white truncate">
                   {isHydrated ? (user ? displayName : guest) : '…'}
                 </p>
-                <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest truncate">
+                <p className="text-[10px] font-bold text-white/40 normal-case tracking-widest truncate">
                   {isHydrated ? (user ? user.email : getGuestUsername()) : t.common.loading}
                 </p>
+                {isHydrated && !user && (
+                  <p className="text-[10px] font-bold text-amber-400/80">{t.nav.guestNotice}</p>
+                )}
               </div>
             </div>
 

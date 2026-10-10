@@ -74,7 +74,8 @@ export default function AuthMenu({ onClose }: { onClose: () => void }) {
             </div>
             <div className="min-w-0">
               <p className="text-white font-header font-bold text-sm truncate">{guestName}</p>
-              <p className="text-gray-400 text-[10px] uppercase tracking-widest font-bold">{getGuestUsername()}</p>
+              <p className="text-gray-400 text-[10px] normal-case tracking-widest font-bold">{getGuestUsername()}</p>
+              <p className="text-amber-400/80 text-[10px] font-bold">{dict.nav.guestNotice}</p>
             </div>
           </>
         )}

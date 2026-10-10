@@ -93,5 +93,7 @@ export function resolveBotStatus(status: BotStatus | null, now: number): Resolve
     };
   }
   const online = Boolean(status.online) && isHeartbeatFresh(status.last_seen, now);
-  return { online, mode, reason: online ? null : 'unknown', since: status.last_seen };
+  // Sin VPS 24/7: si el bot cae en modo automático, la razón por defecto es
+  // mantenimiento (decisión de producto del 10 oct 2026).
+  return { online, mode, reason: online ? null : 'maintenance', since: status.last_seen };
 }

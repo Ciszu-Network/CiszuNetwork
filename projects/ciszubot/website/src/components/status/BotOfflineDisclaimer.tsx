@@ -30,7 +30,7 @@ export default function BotOfflineDisclaimer() {
     const body = dict.botStatus.bannerBody.replace('{reason}', reason);
     push({
       id: 'ciszubot-offline',
-      kind: 'warning',
+      kind: 'critical',
       dismissible: false,
       onClose: () => {
         /* Obligatorio: sin cierre manual. Se retira solo al reconectar. */

@@ -20,7 +20,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 import { useSyncExternalStore } from 'react';
 import { useZoomWarningActive } from './zoomStore';
 
-export type DisclaimerKind = 'info' | 'basic' | 'warning';
+export type DisclaimerKind = 'info' | 'basic' | 'warning' | 'critical';
 
 export interface DisclaimerAction {
   label: string;
@@ -138,6 +138,13 @@ const ICONS: Record<DisclaimerKind, React.ReactNode> = {
       <path d="M12 17h.01" />
     </svg>
   ),
+  critical: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M7.86 2h8.28L22 7.86v8.28L16.14 22H7.86L2 16.14V7.86L7.86 2Z" />
+      <path d="M12 8v5" />
+      <path d="M12 16.5h.01" />
+    </svg>
+  ),
 };
 
 function XIcon() {
@@ -205,6 +212,16 @@ const DISCLAIMER_CSS = `
   color: var(--accent, #22d3ee);
 }
 .disclaimer-item.warning .disc-icon { color: var(--warn, #f59e0b); }
+/* Crítico: banda roja imponente (bot offline obligatorio, etc.) */
+.disclaimer-item.critical {
+  border-color: rgba(248, 113, 113, 0.55);
+  background: linear-gradient(90deg, rgba(127, 29, 29, 0.6), rgba(10, 10, 15, 0.94));
+  box-shadow: inset 0 0 0 1px rgba(248, 113, 113, 0.25), 0 10px 34px -12px rgba(248, 113, 113, 0.6);
+  font-size: 12.5px;
+  letter-spacing: 0.03em;
+}
+.disclaimer-item.critical .disc-icon { color: #f87171; width: 16px; height: 16px; }
+.disclaimer-item.critical .disc-text { font-weight: 900; }
 .disclaimer-item .disc-body {
   display: flex;
   align-items: center;
@@ -703,7 +720,7 @@ export interface GlobalDisclaimerRow {
   source: string;
   message: string;
   message_i18n: Record<string, string> | null;
-  kind: 'info' | 'basic' | 'warning';
+  kind: 'info' | 'basic' | 'warning' | 'critical';
   target: string;
   dismissible: boolean;
   expires_at: string | null;

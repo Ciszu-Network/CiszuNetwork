@@ -11,6 +11,7 @@ export const GITHUB_REPO = 'https://github.com/Ciszu-Network/CiszuNetwork';
 const es = {
   nav: {
     home: 'Inicio',
+    guestNotice: 'Estás en modo invitado: algunas funciones están limitadas.',
     information: 'Información',
     about: 'Acerca de',
     team: 'Equipo',
@@ -1421,6 +1422,7 @@ const es = {
 const en = {
   nav: {
     home: 'Home',
+    guestNotice: 'You are in guest mode: some features are limited.',
     information: 'Information',
     about: 'About',
     team: 'Team',

@@ -21,6 +21,7 @@ export function t(text: string, vars?: Record<string, string | number>): string 
 const es = {
   nav: {
     accountSettings: 'Configuración de cuenta',
+    guestNotice: 'Estás en modo invitado: algunas funciones están limitadas.',
     founderName: 'Ciszuko Antony',
     youtubeAlt: 'Ciszuko Antony — Canal de YouTube',
     home: 'Inicio',
@@ -943,6 +944,7 @@ const es = {
 const en: typeof es = {
   nav: {
     accountSettings: 'Account settings',
+    guestNotice: 'You are in guest mode: some features are limited.',
     founderName: 'Ciszuko Antony',
     youtubeAlt: 'Ciszuko Antony — YouTube channel',
     home: 'Home',

@@ -55,11 +55,12 @@ export default function BotOfflineModal() {
       aria-label={dict.botStatus.modalTitle}
       className="fixed inset-0 z-[120] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
     >
-      <div className="w-full max-w-lg rounded-3xl border border-amber-400/40 bg-[#0a0a14] p-7 text-center shadow-[0_0_60px_-12px_rgba(251,191,36,0.5)]">
+      <div className="w-full max-w-lg rounded-3xl border border-red-400/40 bg-[#0a0a14] p-7 text-center shadow-[0_0_60px_-12px_rgba(248,113,113,0.5)]">
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-amber-400/50 bg-amber-400/10 text-2xl">
           ⚠️
         </div>
-        <h2 className="font-header text-xl font-black uppercase tracking-wide text-amber-400">
+        <h2 className="flex items-center justify-center gap-2 font-header text-xl font-black uppercase tracking-wide text-red-400">
+          <span className="h-2 w-2 animate-pulse rounded-full bg-red-400" />
           {dict.botStatus.modalTitle}
         </h2>
         <p className="mt-3 text-sm leading-relaxed text-white/70">

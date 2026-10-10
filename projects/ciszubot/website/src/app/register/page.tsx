@@ -435,7 +435,7 @@ export default function RegisterPage() {
             <>
             <OAuthProviders
               showDiscord
-              renderDiscord={() =>
+              renderDiscord={() => (
                 discordConnected ? (
                   <div className="w-full rounded-xl border border-[#5865F2]/40 bg-[#5865F2]/10 px-4 py-3 text-center text-xs font-bold text-[#8ea1ff]">
                     {dict.loginPage.discordConnectedChip.replace('{name}', discord?.name ?? 'Discord')}
@@ -452,6 +452,7 @@ export default function RegisterPage() {
                   </span>
                   {t.discordSignup}
                 </a>
+                )
                 )
               }
               onSelect={(p) => toast(`${p} estará disponible en la beta soon. Usa Discord o CISZU ID por ahora.`, 'warning')}

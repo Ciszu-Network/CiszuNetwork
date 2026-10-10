@@ -455,7 +455,8 @@ export default function LoginPage() {
                   {dict.dashboardPage.signOutCiszu}
                 </button>
               </div>
-            ) : forgot ? (
+            ) :
+            forgot ? (
               <form onSubmit={handleForgotSubmit} className="space-y-5">
                 <div className="text-center space-y-2">
                   <h3 className="text-white font-black uppercase tracking-widest text-sm">{t.recoverIdentity}</h3>
@@ -502,7 +503,7 @@ export default function LoginPage() {
               <>
                 <OAuthProviders
                   showDiscord
-                  renderDiscord={() =>
+                  renderDiscord={() => (
                     discordConnected ? (
                       <div className="w-full rounded-xl border border-[#5865F2]/40 bg-[#5865F2]/10 px-4 py-3 text-center text-xs font-bold text-[#8ea1ff]">
                         {t.discordConnectedChip.replace('{name}', discord?.name ?? 'Discord')}
@@ -519,6 +520,7 @@ export default function LoginPage() {
                       </span>
                       {t.continueDiscord}
                     </a>
+                    )
                     )
                   }
                   onSelect={(p) => toast(`${p} estará disponible en la beta soon. Usa Discord o CISZU ID por ahora.`, 'warning')}

@@ -619,7 +619,8 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 {botOnlineNow ? t.botOnline : t.botOffline}
               </p>
               {!botOnlineNow && liveStatus !== null && (
-                <p className="mt-0.5 text-[9px] font-bold uppercase tracking-widest text-amber-400/90">
+                <p className="mt-0.5 flex items-center gap-1 text-[9px] font-bold uppercase tracking-widest text-red-400">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-400" />
                   {dict.botStatus.reasons[offlineReasonKey]}
                 </p>
               )}
@@ -658,8 +659,9 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         </div>
 
         {offline && (
-          <div className="mt-6 rounded-2xl border border-amber-400/40 bg-amber-400/10 px-4 py-3">
-            <p className="text-[10px] font-black uppercase tracking-[0.25em] text-amber-400">
+          <div className="mt-6 rounded-2xl border border-red-400/40 bg-red-400/10 px-4 py-3">
+            <p className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.25em] text-red-400">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-400" />
               {dict.botStatus.bannerTitle}
             </p>
             <p className="mt-1 text-xs text-white/70">
