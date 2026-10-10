@@ -7,6 +7,7 @@ import { Icon } from '@ciszu/ui';
 import { getDict, readCookieLang, type Dict } from '@/lib/i18n';
 import type { GuildInfo } from '@/lib/discordGuild';
 import { SaveDock, type SaveStatus } from '@/components/dashboard/SaveDock';
+import DiscordMarkdownField from '@/components/dashboard/DiscordMarkdownField';
 import useLiveBotStatus from '@/components/home/useLiveBotStatus';
 import { resolveBotStatus } from '@/lib/botStatus';
 
@@ -165,6 +166,29 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   useEffect(() => {
     setAutoSave(localStorage.getItem('cz-dash-autosave') !== '0');
   }, []);
+
+  // Sub-sidebar por opción: resumen por defecto (spec del dashboard).
+  type GuildView = 'summary' | 'general' | 'levels' | 'welcome' | 'extras';
+  const [view, setView] = useState<GuildView>('summary');
+  useEffect(() => {
+    const saved = localStorage.getItem('cz-dash-view') as GuildView | null;
+    if (saved && ['summary', 'general', 'levels', 'welcome', 'extras'].includes(saved)) setView(saved);
+  }, []);
+  const changeView = useCallback((next: GuildView) => {
+    setView(next);
+    try {
+      localStorage.setItem('cz-dash-view', next);
+    } catch {
+      /* sin storage */
+    }
+  }, []);
+  const SUBNAV = [
+    { key: 'summary', icon: 'server', label: 'subnavSummary' },
+    { key: 'general', icon: 'settings', label: 'subnavGeneral' },
+    { key: 'levels', icon: 'star', label: 'subnavLevels' },
+    { key: 'welcome', icon: 'heart', label: 'subnavWelcome' },
+    { key: 'extras', icon: 'support', label: 'subnavExtras' },
+  ] as const satisfies ReadonlyArray<{ key: GuildView; icon: string; label: keyof Dict['guildPage'] }>;
 
   const setAutoSavePref = useCallback((value: boolean) => {
     setAutoSave(value);
@@ -367,6 +391,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     .filter((c) => c.type === 4)
     .map((c) => ({ id: c.id, label: `📁 ${c.name}` }));
   const roleOptions = roles.map((r) => ({ id: r.id, label: `@${r.name}` }));
+  const categories = channels.filter((c) => c.type === 4);
 
   const slug = useMemo(
     () =>
@@ -570,8 +595,90 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           </div>
         )}
 
-        <div aria-busy={busy} className={`mt-8 space-y-6 ${muted}`}>
-          {/* General */}
+        <div className="mt-8 lg:flex lg:items-start lg:gap-6">
+          <nav className="mb-4 flex gap-1.5 overflow-x-auto pb-1 lg:mb-0 lg:w-44 lg:shrink-0 lg:flex-col lg:overflow-visible lg:pb-0">
+            {SUBNAV.map((item) => (
+              <button
+                key={item.key}
+                type="button"
+                onClick={() => changeView(item.key)}
+                className={`inline-flex shrink-0 items-center gap-2 rounded-xl border px-3 py-2 text-xs font-bold transition ${
+                  view === item.key
+                    ? 'border-neon-blue/60 bg-neon-blue/10 text-white'
+                    : 'border-white/10 bg-white/5 text-white/60 hover:border-white/25 hover:text-white'
+                }`}
+              >
+                <Icon name={item.icon} size={14} className="text-neon-blue" />
+                {t[item.label]}
+              </button>
+            ))}
+          </nav>
+
+          <div aria-busy={busy} className={`min-w-0 flex-1 space-y-6 ${muted}`}>
+          {/* Resumen del servidor */}
+          {view === 'summary' && (
+            <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
+              <div className="mb-4 flex flex-wrap items-center gap-2">
+                <h2 className="flex items-center gap-2 font-bold text-white">
+                  <Icon name="server" size={18} className="text-neon-blue" /> {t.serverInfoTitle}
+                </h2>
+                <Badge kind="free" dict={dict} />
+              </div>
+              <div className="grid gap-4 lg:grid-cols-2">
+                <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                  <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-white/45">
+                    {t.rolesListTitle} · {roles.length}
+                  </p>
+                  <div className="flex max-h-56 flex-wrap gap-1.5 overflow-y-auto">
+                    {roles.map((role) => (
+                      <span
+                        key={role.id}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-bold text-white/75"
+                      >
+                        <span
+                          className="h-2.5 w-2.5 rounded-full"
+                          style={{ backgroundColor: role.color ? `#${role.color.toString(16).padStart(6, '0')}` : '#99aab5' }}
+                        />
+                        {role.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                  <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-white/45">
+                    {t.channelsListTitle} · {channels.length}
+                  </p>
+                  <div className="max-h-56 space-y-2 overflow-y-auto">
+                    {categories.map((cat) => (
+                      <div key={cat.id}>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-white/40">📁 {cat.name}</p>
+                        <div className="mt-1 flex flex-wrap gap-1.5">
+                          {channels
+                            .filter((c) => c.parentId === cat.id)
+                            .map((c) => (
+                              <span key={c.id} className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-white/70">
+                                {c.type === 2 || c.type === 13 ? '🔊' : c.type === 5 ? '📢' : '#'} {c.name}
+                              </span>
+                            ))}
+                        </div>
+                      </div>
+                    ))}
+                    <div className="flex flex-wrap gap-1.5">
+                      {channels
+                        .filter((c) => !c.parentId && c.type !== 4)
+                        .map((c) => (
+                          <span key={c.id} className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-white/70">
+                            {c.type === 2 || c.type === 13 ? '🔊' : c.type === 5 ? '📢' : '#'} {c.name}
+                          </span>
+                        ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {view === 'general' && (
           <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
             <div className="mb-4 flex flex-wrap items-center gap-2">
               <h2 className="flex items-center gap-2 font-bold text-white">
@@ -609,8 +716,9 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               </Field>
             </div>
           </section>
+          )}
 
-          {/* Niveles */}
+          {view === 'levels' && (
           <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
             <div className="mb-4 flex flex-wrap items-center gap-2">
               <h2 className="flex items-center gap-2 font-bold text-white">
@@ -671,8 +779,9 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               </div>
             )}
           </section>
+          )}
 
-          {/* Bienvenidas */}
+          {view === 'welcome' && (
           <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
             <div className="mb-4 flex flex-wrap items-center gap-2">
               <h2 className="flex items-center gap-2 font-bold text-white">
@@ -727,22 +836,38 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               )}
             </div>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <Field label={t.welcomeMessageLabel} hint={t.varsHint}>
-                <textarea
-                  className={inputCls}
-                  rows={2}
-                  value={config.welcome_message ?? ''}
-                  onChange={(e) => update({ welcome_message: e.target.value })}
-                />
-              </Field>
-              <Field label={t.goodbyeMessageLabel} hint={t.varsHint}>
-                <textarea
-                  className={inputCls}
-                  rows={2}
-                  value={config.goodbye_message ?? ''}
-                  onChange={(e) => update({ goodbye_message: e.target.value })}
-                />
-              </Field>
+              <DiscordMarkdownField
+                label={t.welcomeMessageLabel}
+                hint={t.varsHint}
+                value={config.welcome_message ?? ''}
+                onChange={(v) => update({ welcome_message: v })}
+                labels={{
+                  bold: t.mdBold,
+                  italic: t.mdItalic,
+                  underline: t.mdUnderline,
+                  spoiler: t.mdSpoiler,
+                  code: t.mdCode,
+                  preview: t.mdPreview,
+                  edit: t.mdEdit,
+                  vars: t.mdVars,
+                }}
+              />
+              <DiscordMarkdownField
+                label={t.goodbyeMessageLabel}
+                hint={t.varsHint}
+                value={config.goodbye_message ?? ''}
+                onChange={(v) => update({ goodbye_message: v })}
+                labels={{
+                  bold: t.mdBold,
+                  italic: t.mdItalic,
+                  underline: t.mdUnderline,
+                  spoiler: t.mdSpoiler,
+                  code: t.mdCode,
+                  preview: t.mdPreview,
+                  edit: t.mdEdit,
+                  vars: t.mdVars,
+                }}
+              />
             </div>
             {hasGuildData ? (
               <div className="mt-4">
@@ -815,8 +940,9 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               </div>
             )}
           </section>
+          )}
 
-          {/* Tickets y extras */}
+          {view === 'extras' && (
           <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
             <div className="mb-4 flex flex-wrap items-center gap-2">
               <h2 className="flex items-center gap-2 font-bold text-white">
@@ -976,6 +1102,8 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               )}
             </div>
           </section>
+          )}
+          </div>
         </div>
       </div>
 
