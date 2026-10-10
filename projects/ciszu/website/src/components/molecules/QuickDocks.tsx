@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useDict } from '@/lib/useDict';
@@ -241,6 +241,12 @@ const DOCK_ITEMS: DockItem[] = [
 
 export default function QuickDocks() {
   const pathname = usePathname();
+  const [open, setOpen] = useState(true);
+  useEffect(() => {
+    try {
+      if (window.localStorage.getItem('quickdocks-open') === '0') setOpen(false);
+    } catch { /* noop */ }
+  }, []);
   const t = useDict();
 
   const HOVER_COLORS: Record<string, string> = {
@@ -261,13 +267,13 @@ export default function QuickDocks() {
   };
 
   return (
-    <div className="container mx-auto px-4 mt-24 mb-16 relative z-20">
-      <div className="relative bg-black border-2 border-white/10 rounded-[3.5rem] p-8 md:p-14 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden">
+    <div className="container mx-auto px-4 mt-16 mb-12 relative z-20">
+      <div className="relative bg-black border-2 border-white/10 rounded-[2.5rem] p-6 md:p-10 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-neon-blue/5 blur-[100px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/2" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-neon-purple/5 blur-[100px] rounded-full pointer-events-none translate-y-1/2 -translate-x-1/2" />
 
         <div className="relative z-10">
-          <div className="flex flex-col items-center mb-10 text-center">
+          <div className="flex flex-col items-center mb-6 text-center">
             <h3 className="text-4xl font-header font-black text-white uppercase tracking-[0.3em] leading-none mb-2">
               {t.docks.title}
             </h3>
@@ -276,7 +282,7 @@ export default function QuickDocks() {
             </p>
           </div>
 
-          <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-8 gap-3">
+          <div className={`grid grid-cols-4 gap-3 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-8 ${open ? '' : 'hidden'}`}>
             {DOCK_ITEMS.map((doc, i) => {
               const isActive = pathname === doc.href;
               const style = colorMaps[doc.color];
