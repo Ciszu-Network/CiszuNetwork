@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useT } from '@/hooks/useT';
 import { motion, AnimatePresence } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import { Button, useToast, useActivityGuard, AuthBenefitsPanel, AuthSecondaryActions, CiszuIdBrand, OAuthProviders as SharedOAuthProviders, RecaptchaGate, RecoveryOneUseNotice, TwoFactorGate } from '@ciszu/ui';
@@ -88,6 +89,7 @@ const InputField = ({ label, name, icon, type = "text", placeholder, maxLength, 
 };
 
 export default function LoginPage() {
+  const t = useT();
   usePageTitle('LOGIN');
   const { begin: beginActivity, end: endActivity } = useActivityGuard();
   const [form, setForm] = useState({
@@ -402,16 +404,16 @@ export default function LoginPage() {
     });
   };
 
-  // Cuenta eliminada: se bloquea hasta confirmar (o rechazar) la recuperación.
+  // {t.pages.login.accountDeleted}: se bloquea hasta confirmar (o rechazar) la recuperación.
   if (recovery) {
     return (
       <MainLayout>
         <div className="max-w-md mx-auto px-4 pt-16 pb-24 relative">
           <div className="p-6 md:p-8 bg-surface border border-red-500/30 rounded-[2rem] shadow-2xl backdrop-blur-3xl text-center space-y-4">
-            <p className="font-header text-lg font-black uppercase tracking-wide text-red-400">Cuenta eliminada</p>
+            <p className="font-header text-lg font-black uppercase tracking-wide text-red-400">{t.pages.login.accountDeleted}</p>
             <p className="text-sm text-muted leading-relaxed">
               Esta cuenta está en suspensión de eliminación. Puedes recuperarla ahora: al recuperarla
-              aceptas que <strong className="text-ink">no podrás volver a eliminarla durante 30 días</strong>.
+              aceptas que <strong className="text-ink">{t.pages.login.deleteWarning}</strong>.
               Si rechazas, no se te otorga la recuperación y se cierra la sesión.
             </p>
             <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
@@ -420,14 +422,14 @@ export default function LoginPage() {
                 onClick={acceptRecovery}
                 className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-white"
               >
-                Recuperar mi cuenta
+                {t.pages.login.recoverMyAccount}
               </button>
               <button
                 type="button"
                 onClick={rejectRecovery}
                 className="inline-flex items-center justify-center rounded-xl border border-border px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-muted hover:text-ink"
               >
-                No, cerrar sesión
+                {t.pages.login.noSignOut}
               </button>
             </div>
           </div>
@@ -474,11 +476,11 @@ export default function LoginPage() {
         >
           <div className="mb-10">
             <CiszuIdBrand
-              ciszuIsotype={<img src={resolveAssetPath('projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg')} alt="Ciszu ID" width={36} height={36} />}
+              ciszuIsotype={<img src={resolveAssetPath('projects/ciszu/content/logos/images/outline/isotype/color/ciszu_logo_isotipo_outline_zwhite_ccolor.svg')} alt={t.pages.login.brandId} width={36} height={36} />}
               appIsotype={<img src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} alt="MuzicMania" width={36} height={36} />}
               ciszuHref="https://ciszunetwork.vercel.app"
               appHref="/"
-              title="CISZU ID"
+              title={t.pages.login.brandIdUpper}
               subtitle="Inicia sesión en MuzicMania con CISZU ID"
             />
           </div>
@@ -500,32 +502,33 @@ export default function LoginPage() {
                   <motion.div key="forgot" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-6">
                     <div className="text-center space-y-2 mb-4">
                       <div className="w-10 h-10 mx-auto text-neon-blue">{I.lock}</div>
-                      <h3 className="text-white font-black uppercase tracking-widest text-sm">Recuperar Identidad</h3>
-                      <p className="text-gray-400 text-[10px] font-bold">Enviaremos un código de 6 dígitos a tu email.</p>
+                      <h3 className="text-white font-black uppercase tracking-widest text-sm">{t.pages.login.recoverIdentity}</h3>
+                      <p className="text-gray-400 text-[10px] font-bold">{t.pages.login.recoverEmailDesc}</p>
                     </div>
                     {!forgotStep2 ? (
-                      <InputField label="Email de la cuenta" name="identifier" icon={I.mail} placeholder="tu@email.com" required value={form.identifier} error={errors.identifier} onChange={handleChange} onBlur={() => validateField('identifier', form.identifier)} />
+                      <InputField label={t.pages.login.emailLabel} name="identifier" icon={I.mail} placeholder={t.pages.login.phEmail} required value={form.identifier} error={errors.identifier} onChange={handleChange} onBlur={() => validateField('identifier', form.identifier)} />
                     ) : (
                       <>
-                        <InputField label="Código de 6 dígitos" name="twoFactor" icon={I.shield} type="text" placeholder="123456" maxLength={6} required value={form.twoFactor} error={errors.twoFactor} onChange={handleChange} />
-                        <InputField label="Nueva Contraseña" name="password" icon={I.lock} type="password" placeholder="••••••••" required value={form.password} error={errors.password} onChange={handleChange} />
-                        <InputField label="Repetir Contraseña" name="confirmPassword" icon={I.lock} type="password" placeholder="••••••••" required value={form.confirmPassword} error={errors.confirmPassword} onChange={handleChange} />
+                        <InputField label={t.pages.login.code6Label} name="twoFactor" icon={I.shield} type="text" placeholder="123456" maxLength={6} required value={form.twoFactor} error={errors.twoFactor} onChange={handleChange} />
+                        <InputField label={t.pages.login.newPasswordLabel} name="password" icon={I.lock} type="password" placeholder="••••••••" required value={form.password} error={errors.password} onChange={handleChange} />
+                        <InputField label={t.pages.login.repeatPasswordLabel} name="confirmPassword" icon={I.lock} type="password" placeholder="••••••••" required value={form.confirmPassword} error={errors.confirmPassword} onChange={handleChange} />
                       </>
                     )}
                   </motion.div>
-                ) : !needs2FA ? (
+                ) :
+            !needs2FA ? (
                   <motion.div key="credentials" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-6">
-                    <InputField label="Usuario o Email" name="identifier" icon={I.user} placeholder="CapaSinNombre o tu@email.com" required value={form.identifier} error={errors.identifier} onChange={handleChange} onBlur={() => validateField('identifier', form.identifier)} />
-                    <InputField label="Contraseña" name="password" icon={I.lock} type="password" placeholder="••••••••" required value={form.password} error={errors.password} onChange={handleChange} onBlur={() => validateField('password', form.password)} />
+                    <InputField label={t.pages.login.userOrEmailLabel} name="identifier" icon={I.user} placeholder={t.pages.login.phUserOrEmail} required value={form.identifier} error={errors.identifier} onChange={handleChange} onBlur={() => validateField('identifier', form.identifier)} />
+                    <InputField label={t.pages.login.passwordLabel} name="password" icon={I.lock} type="password" placeholder="••••••••" required value={form.password} error={errors.password} onChange={handleChange} onBlur={() => validateField('password', form.password)} />
                   </motion.div>
                 ) : (
                   <motion.div key="2fa" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
                     <div className="text-center space-y-2 mb-4">
                       <div className="w-10 h-10 mx-auto text-neon-cyan">{I.shield}</div>
-                      <h3 className="text-white font-black uppercase tracking-widest text-sm">Autenticación de 2 Factores</h3>
-                      <p className="text-gray-400 text-[10px] font-bold">Ingresa el código de 6 dígitos (expira tras un solo uso)</p>
+                      <h3 className="text-white font-black uppercase tracking-widest text-sm">{t.pages.login.twoFactorTitle}</h3>
+                      <p className="text-gray-400 text-[10px] font-bold">{t.pages.login.twoFactorDesc}</p>
                     </div>
-                    <InputField label="Código 2FA" name="twoFactor" icon={I.shield} type="text" placeholder="123456" maxLength={6} required value={form.twoFactor} error={errors.twoFactor} onChange={handleChange} onBlur={() => validateField('twoFactor', form.twoFactor)} />
+                    <InputField label={t.pages.login.code2faLabel} name="twoFactor" icon={I.shield} type="text" placeholder="123456" maxLength={6} required value={form.twoFactor} error={errors.twoFactor} onChange={handleChange} onBlur={() => validateField('twoFactor', form.twoFactor)} />
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -547,7 +550,7 @@ export default function LoginPage() {
                 </Button>
                 {isForgotPassword && (
                   <button type="button" onClick={() => { setIsForgotPassword(false); setForgotStep2(false); }} className="w-full mt-4 text-[10px] text-gray-500 font-bold uppercase tracking-widest hover:text-white transition-all">
-                    ← Volver al Acceso Normal
+                    {t.pages.login.backToLogin}
                   </button>
                 )}
               </div>
@@ -578,7 +581,7 @@ export default function LoginPage() {
           {/* Página derecha: beneficios */}
           <AuthBenefitsPanel
             badge="CISZU ID"
-            title="¿Por qué iniciar sesión?"
+            title={t.pages.login.whyLogin}
             items={LOGIN_BENEFITS}
             footerNote={LOGIN_FOOTER}
             accent="#22d3ee"
