@@ -59,7 +59,7 @@ const I = {
   mail:        <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>,
   terminal:    <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>,
   database:    <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>,
-  nextjs:      <img src="/tech/nextjs.svg" alt={t.pages.information.attrNext} className="w-full h-full object-contain" />,
+  nextjs:      <img src="/tech/nextjs.svg" alt={"Next.js"} className="w-full h-full object-contain" />,
   typescript:  <img src="/tech/typescript.svg" alt="TypeScript" className="w-full h-full object-contain" />,
   tailwind:    <svg viewBox="0 0 24 24" className="w-full h-full" fill="currentColor"><path d="M12.001,4.8c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c0.913,0.228,1.565,0.89,2.288,1.639C13.679,10.65,15.115,12,18.001,12c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.639C16.323,6.15,14.887,4.8,12.001,4.8z M6.001,12c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c0.913,0.228,1.565,0.89,2.288,1.639c1.191,1.214,2.627,2.661,5.513,2.661c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.639C10.323,13.35,8.887,12,6.001,12z"/></svg>,
   image:       <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth={2}><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>,
@@ -142,6 +142,7 @@ const BRAND_COLORS = [
 ];
 
 const ColorProfile = ({ profile }: { profile: typeof BRAND_COLORS[0] }) => {
+  const t = useT();
   const [activeIdx, setActiveIdx] = useState(0);
   const current = profile.shades[activeIdx];
 
@@ -455,10 +456,10 @@ export default function InformationPage() {
             <p className="text-[10px] font-black text-neon-purple uppercase tracking-[0.6em]">{t.pages.information.sloganTitle}</p>
             <h2 className="text-4xl md:text-7xl font-header font-black uppercase italic leading-none">
               <span className="bg-gradient-to-r from-neon-purple via-neon-blue to-neon-cyan bg-clip-text text-transparent">
-                &quot;Donde el ritmo
+                {t.pages.information.sloganA}
               </span>
               <br />
-              <span className="text-white">se convierte en arte.&quot;</span>
+              <span className="text-white">{t.pages.information.sloganB}</span>
             </h2>
             <div className="flex items-center justify-center gap-3">
               <div className="h-px w-24 bg-gradient-to-r from-transparent to-neon-purple/50" />
