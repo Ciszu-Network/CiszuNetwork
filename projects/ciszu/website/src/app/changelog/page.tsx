@@ -16,6 +16,8 @@ import {
 import { I, TAG_CONFIG } from '@/config/changelogIcons';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useAppStore } from '@/store';
+import { useDict } from '@/lib/useDict';
+import { fillTemplate } from '@/lib/i18n';
 import { InfoHero, useChangelogLikes, usePublishedChangelogs, useToast, type InfoTheme } from '@ciszu/ui';
 import {
   CHANGELOG_PAGE_SIZE,
@@ -81,6 +83,7 @@ const Section = ({ children, className = '' }: { children: React.ReactNode; clas
 
 export default function ChangelogPage() {
   usePageTitle('CHANGELOG');
+  const t = useDict();
   const { user } = useAppStore();
   const { toast } = useToast();
   const likes = useChangelogLikes();
@@ -144,7 +147,7 @@ export default function ChangelogPage() {
     }
     likes.toggleLike(id);
     if (!likes.isLiked(id)) {
-      toast('Like guardado en este dispositivo.', 'info');
+      toast(t.changelogPage.likeSaved, 'info');
     }
   };
 
@@ -156,8 +159,8 @@ export default function ChangelogPage() {
         <InfoHero
           icon="history"
           title="Changelog"
-          subtitle="Historial de actualizaciones / Update History"
-          kicker="Versiones"
+          subtitle={t.changelogPage.heroSubtitle}
+          kicker={t.changelogPage.heroKicker}
           theme={THEME}
         />
 
@@ -170,7 +173,7 @@ export default function ChangelogPage() {
                 {CHANGELOG_STATUS.headline}
               </h2>
               <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">
-                Estado actual de despliegue
+                {t.changelogPage.statusDeploy}
               </p>
             </div>
             <div className="text-4xl font-header font-black text-brand-light italic">
@@ -183,7 +186,7 @@ export default function ChangelogPage() {
             aria-valuenow={CHANGELOG_STATUS.progress}
             aria-valuemin={0}
             aria-valuemax={100}
-            aria-label="Progreso del despliegue actual"
+            aria-label={t.changelogPage.progressAria}
           >
             <motion.div
               initial={{ width: 0 }}
@@ -205,7 +208,7 @@ export default function ChangelogPage() {
               {I.code}
             </div>
             <div>
-              <div className="text-[8px] font-black text-white/20 uppercase tracking-widest">Versión</div>
+              <div className="text-[8px] font-black text-white/20 uppercase tracking-widest">{t.changelogPage.version}</div>
               <div className="text-sm font-header font-black text-white uppercase italic">{CHANGELOG_STATUS.version}</div>
             </div>
           </div>
@@ -214,7 +217,7 @@ export default function ChangelogPage() {
               {I.server}
             </div>
             <div>
-              <div className="text-[8px] font-black text-white/20 uppercase tracking-widest">Servidores</div>
+              <div className="text-[8px] font-black text-white/20 uppercase tracking-widest">{t.changelogPage.servers}</div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-neon-green animate-pulse" />
                 <div className="text-sm font-header font-black text-white uppercase italic">{CHANGELOG_STATUS.deploy}</div>
@@ -237,10 +240,10 @@ export default function ChangelogPage() {
           <div className="p-10 bg-black/60 border border-white/10 rounded-[3rem] space-y-10 relative overflow-hidden">
             <div className="text-center space-y-2 relative z-10">
               <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">
-                PRÓXIMOS NODOS
+                {t.changelogPage.nextNodesTitle}
               </h2>
               <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.3em]">
-                Despliegue arquitectónico de Ciszu Network
+                {t.changelogPage.nextNodesSub}
               </p>
             </div>
 
@@ -263,7 +266,7 @@ export default function ChangelogPage() {
                     <div className="w-8 h-8">{NODE_ICON[step.status]}</div>
                     {step.status === 'next' && (
                       <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-light text-black text-[8px] font-black px-3 py-1 rounded-full animate-bounce z-20">
-                        ACTUAL
+                        {t.changelogPage.nodeCurrent}
                       </div>
                     )}
                   </div>
@@ -282,7 +285,7 @@ export default function ChangelogPage() {
                         step.status === 'done' ? 'text-brand-light' : step.status === 'next' ? 'text-brand-accent' : 'text-white/20'
                       }`}
                     >
-                      {step.status === 'done' ? 'Completado' : step.status === 'next' ? 'En Despliegue' : 'Codificado'}
+                      {step.status === 'done' ? t.changelogPage.statusDone : step.status === 'next' ? t.changelogPage.statusDeploying : t.changelogPage.statusCoded}
                     </div>
                   </div>
                 </div>
@@ -304,8 +307,8 @@ export default function ChangelogPage() {
                 setSearchQuery(e.target.value);
                 setCurrentPage(1);
               }}
-              placeholder="BUSCAR VERSIÓN, CÓDIGO, PARCHE O NODO..."
-              aria-label="Buscar en el registro de cambios"
+              placeholder={t.changelogPage.searchPh}
+              aria-label={t.changelogPage.searchLabel}
               className="w-full bg-white/5 border border-white/10 rounded-full py-6 pl-20 pr-8 text-white font-header font-black uppercase italic tracking-[0.2em] focus:outline-none focus:border-brand-light focus:ring-4 focus:ring-brand-light/10 transition-all placeholder:text-white/10 text-sm"
             />
           </div>
@@ -323,7 +326,7 @@ export default function ChangelogPage() {
                 }`}
               >
                 <div className="w-5 h-5 group-hover:rotate-180 transition-transform duration-500">{I.filter}</div>
-                GESTIONAR FILTROS
+                {t.changelogPage.manageFilters}
                 {filters.length > 0 && (
                   <span className="px-2 py-0.5 rounded-full bg-black/40 text-[9px]">{filters.length}</span>
                 )}
@@ -334,7 +337,7 @@ export default function ChangelogPage() {
                   onClick={clearAll}
                   className="text-[10px] font-black text-brand-accent uppercase tracking-widest hover:underline"
                 >
-                  LIMPIAR TODO
+                  {t.changelogPage.clearAll}
                 </button>
               )}
             </div>
@@ -349,7 +352,7 @@ export default function ChangelogPage() {
                   }`}
                 >
                   <div className="w-3.5 h-3.5">{I.clock}</div>
-                  RECIENTES
+                  {t.changelogPage.recent}
                 </button>
                 <button
                   onClick={() => setSortBy('likes')}
@@ -359,13 +362,13 @@ export default function ChangelogPage() {
                   }`}
                 >
                   <div className="w-3.5 h-3.5 text-yellow-500">{I.star}</div>
-                  VALORADOS
+                  {t.changelogPage.valued}
                 </button>
               </div>
 
               <button
                 onClick={() => setSortDir(sortDir === 'asc' ? 'desc' : 'asc')}
-                aria-label={sortDir === 'asc' ? 'Orden ascendente' : 'Orden descendente'}
+                aria-label={sortDir === 'asc' ? t.changelogPage.sortAsc : t.changelogPage.sortDesc}
                 className="p-4 rounded-xl bg-white/5 border border-white/10 text-white/40 hover:text-white transition-all hover:border-white/30"
               >
                 <div className={`w-6 h-6 transition-transform duration-500 ${sortDir === 'asc' ? 'rotate-180' : ''}`}>
@@ -399,7 +402,7 @@ export default function ChangelogPage() {
           </div>
 
           <div className="px-6 text-[10px] font-black uppercase tracking-[0.3em] text-white/30">
-            Mostrando {page.start}–{page.end} de {page.totalItems} {page.totalItems === 1 ? 'entrada' : 'entradas'}
+            {fillTemplate(t.changelogPage.showingA, { from: String(page.start), to: String(page.end), total: String(page.totalItems), label: page.totalItems === 1 ? t.changelogPage.entryOne : t.changelogPage.entryMany })}
           </div>
 
           <AnimatePresence>
@@ -413,9 +416,9 @@ export default function ChangelogPage() {
                 <div className="p-10 bg-black/60 border border-white/5 rounded-[3.5rem] space-y-6 shadow-2xl">
                   <div className="space-y-6">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-2">
-                      <h4 className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em]">SISTEMA DE ETIQUETADO</h4>
+                      <h4 className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em]">{t.changelogPage.tagSystemTitle}</h4>
                       <p className="text-[9px] font-bold text-white/10 uppercase tracking-widest italic">
-                        Selecciona una etiqueta para filtrar los resultados
+                        {t.changelogPage.tagSystemHint}
                       </p>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
@@ -443,16 +446,16 @@ export default function ChangelogPage() {
                 <div className="w-8 h-8">{I.alert}</div>
               </div>
               <div className="space-y-2">
-                <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-tighter">SIN RESULTADOS</h3>
+                <h3 className="text-2xl font-header font-black text-white uppercase italic tracking-tighter">{t.changelogPage.noResultsTitle}</h3>
                 <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.3em]">
-                  Ninguna entrada coincide con tu búsqueda
+                  {t.changelogPage.noResultsHint}
                 </p>
               </div>
               <button
                 onClick={clearAll}
                 className="px-8 py-3 bg-brand-light text-white font-header font-black uppercase italic tracking-widest rounded-2xl hover:shadow-lg hover:shadow-brand-light/20 transition-all"
               >
-                REINICIAR BÚSQUEDA
+                {t.changelogPage.resetSearch}
               </button>
             </div>
           ) : (
@@ -465,7 +468,7 @@ export default function ChangelogPage() {
                   {item.id === mostRecentId && (
                     <div className="absolute top-0 left-0 w-32 h-32 overflow-hidden pointer-events-none">
                       <div className="absolute top-0 left-0 w-full h-8 bg-green-500 text-black text-[9px] font-black flex items-center justify-center uppercase tracking-[0.3em] rotate-[-45deg] translate-x-[-30%] translate-y-[40%] shadow-lg shadow-green-500/20">
-                        NUEVO
+                        {t.changelogPage.newBadge}
                       </div>
                     </div>
                   )}
@@ -544,14 +547,14 @@ export default function ChangelogPage() {
                         href={`/changelog/${item.id}`}
                         className="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black text-white uppercase tracking-widest hover:bg-brand-light hover:text-white hover:border-brand-light transition-all group/btn flex items-center gap-3"
                       >
-                        DETALLES
+                        {t.changelogPage.detailsBtn}
                         <div className="w-4 h-4 group-hover/btn:translate-x-2 transition-transform">{I.arrow}</div>
                       </Link>
 
                       <button
                         onClick={() => handleLike(item.id)}
                         aria-pressed={likes.isLiked(item.id)}
-                        aria-label={`Me gusta de ${item.version}`}
+                        aria-label={fillTemplate(t.changelogPage.likeOf, { version: item.version })}
                         className={`flex flex-col items-center gap-1 group/like p-2 transition-colors ${
                           likes.isLiked(item.id) ? 'text-brand-accent' : 'hover:text-brand-accent'
                         }`}
@@ -574,7 +577,7 @@ export default function ChangelogPage() {
           <button
             onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
             disabled={page.page === 1}
-            aria-label="Página anterior"
+            aria-label={t.changelogPage.prevPage}
             className="w-12 h-12 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-white/20 hover:text-white disabled:opacity-0 transition-all"
           >
             <div className="w-5 h-5 rotate-180">{I.arrow}</div>
@@ -596,7 +599,7 @@ export default function ChangelogPage() {
           <button
             onClick={() => setCurrentPage((prev) => Math.min(page.totalPages, prev + 1))}
             disabled={page.page === page.totalPages}
-            aria-label="Página siguiente"
+            aria-label={t.changelogPage.nextPage}
             className="w-12 h-12 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-white/20 hover:text-white disabled:opacity-0 transition-all"
           >
             <div className="w-5 h-5">{I.arrow}</div>
@@ -609,16 +612,16 @@ export default function ChangelogPage() {
             <div className="space-y-2 text-center md:text-left">
               <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter flex items-center justify-center md:justify-start gap-3">
                 <div className="w-8 h-8 text-brand-accent">{I.target}</div>
-                HOJA DE RUTA
+                {t.changelogPage.roadmapTitle}
               </h2>
               <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.3em]">
-                El futuro de Ciszu Network en construcción
+                {t.changelogPage.roadmapSub}
               </p>
             </div>
             <div className="px-6 py-3 rounded-full bg-white/5 border border-white/10 flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-brand-light animate-pulse" />
-                <span className="text-[10px] font-black text-white/60 tracking-widest uppercase">Progreso Global</span>
+                <span className="text-[10px] font-black text-white/60 tracking-widest uppercase">{t.changelogPage.globalProgress}</span>
               </div>
               <div className="text-brand-light font-black">{globalProgress}%</div>
             </div>
@@ -647,7 +650,7 @@ export default function ChangelogPage() {
                           isCurrent ? 'text-brand-light' : 'text-white/20 group-hover:text-brand-accent'
                         } transition-colors`}
                       >
-                        {isCurrent ? 'En Desarrollo' : 'Planificado'}
+                        {isCurrent ? t.changelogPage.inProgress : t.changelogPage.planned}
                       </span>
                     </div>
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isCurrent ? 'bg-brand-light/20 text-brand-light' : 'bg-white/5 text-white/20'}`}>
@@ -662,7 +665,7 @@ export default function ChangelogPage() {
                       aria-valuenow={progress}
                       aria-valuemin={0}
                       aria-valuemax={100}
-                      aria-label={`Progreso de ${phase.name}`}
+                      aria-label={fillTemplate(t.changelogPage.phaseProgress, { name: phase.name })}
                     >
                       <div
                         className={`h-1.5 rounded-full ${isCurrent ? 'bg-brand-light' : 'bg-white/20'}`}
@@ -700,7 +703,7 @@ export default function ChangelogPage() {
 
           {currentPhase && (
             <p className="text-center text-[10px] font-black uppercase tracking-[0.3em] text-white/30">
-              Fase activa: {currentPhase.name} · {getPhaseProgress(currentPhase)}%
+              {fillTemplate(t.changelogPage.activePhase, { name: currentPhase.name, pct: String(getPhaseProgress(currentPhase)) })}
             </p>
           )}
         </Section>
@@ -708,9 +711,9 @@ export default function ChangelogPage() {
         {/* --- GLOSARIO --- */}
         <Section className="p-12 bg-black/40 border border-white/5 rounded-[4rem] space-y-12 relative overflow-hidden mb-20">
           <div className="text-center space-y-2 relative z-10">
-            <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">GLOSARIO DE NODOS</h2>
+            <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">{t.changelogPage.glossaryTitle}</h2>
             <p className="text-[10px] text-white/20 font-black uppercase tracking-[0.3em]">
-              Diccionario técnico de actualizaciones
+              {t.changelogPage.glossarySub}
             </p>
           </div>
 
@@ -742,17 +745,16 @@ export default function ChangelogPage() {
             <div className="absolute inset-0 bg-brand/5 animate-pulse pointer-events-none" />
             <div className="relative space-y-6">
               <h2 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">
-                ¿SISTEMA EN EVOLUCIÓN?
+                {t.changelogPage.ctaTitle}
               </h2>
               <p className="text-gray-500 font-bold uppercase text-xs tracking-widest max-w-md mx-auto italic">
-                Antes de iniciar un dock rápido, revisa los protocolos de documentación: arquitectura, convenciones y
-                flujo de despliegue del ecosistema.
+                {t.changelogPage.ctaText}
               </p>
               <Link
                 href="/documentation"
                 className="inline-flex items-center gap-3 text-brand-light font-black uppercase text-[10px] tracking-[0.4em] pb-1 border-b-2 border-brand-light/30 hover:border-brand-light hover:gap-6 transition-all group"
               >
-                VER PROTOCOLOS
+                {t.changelogPage.ctaBtn}
                 <div className="w-4 h-4">{I.arrow}</div>
               </Link>
             </div>
