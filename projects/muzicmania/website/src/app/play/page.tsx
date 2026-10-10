@@ -523,7 +523,7 @@ function PlayPageContent() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Handle track selection from URL param (e.g., from library "JUGAR AHORA")
+  // Handle track selection from URL param (e.g., from library "{t.pages.play.playNow}")
   useEffect(() => {
     const param = trackParam;
     if (param) {
@@ -1244,7 +1244,7 @@ function PlayPageContent() {
                   ? 'border-neon-pink text-neon-pink bg-neon-pink/10 shadow-[0_0_15px_rgba(255,0,128,0.3)]'
                   : 'border-white/20 text-gray-400 hover:border-white/50 hover:text-white hover:bg-white/5'
               }`}
-              title="Calificar track"
+              title={t.pages.play.ariaRateTrack}
             >
               <div className="w-5 h-5">{I.heart}</div>
             </button>
@@ -1253,7 +1253,7 @@ function PlayPageContent() {
               <div className="relative group/plist">
                 <button
                   className="p-2 rounded-full text-gray-700 hover:text-neon-cyan transition-all"
-                  title="Añadir a playlist"
+                  title={t.pages.play.ariaAddPlaylist}
                 >
                   <div className="w-3 h-3">{I.album}</div>
                 </button>
@@ -1327,7 +1327,7 @@ function PlayPageContent() {
                 className="w-1/2 h-full bg-gradient-to-r from-neon-cyan to-neon-purple shadow-[0_0_15px_rgba(0,212,255,0.8)]"
               />
             </div>
-            <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.3em]">Inicializando Protocolos de Sincronización...</p>
+            <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.3em]">{t.pages.play.initProto}</p>
           </div>
         </div>
       </div>
@@ -1440,7 +1440,7 @@ function PlayPageContent() {
                           {Array.from({length:5}).map((_,ci)=>(
                             <span key={ci} className="flex items-center gap-3 mx-12 shrink-0 h-[85%]">
                               <img src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')}
-                                alt="MuzicMania Isotipo" className="h-full w-auto brightness-0 invert"
+                                alt={t.pages.play.altIsotipo} className="h-full w-auto brightness-0 invert"
                               />
                               <img src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/logotype/gradient/color/muzicmania_logotipo_degradado_color.svg')}
                                 alt="MuzicMania" className="h-[55%] w-auto brightness-0 invert"
@@ -1489,20 +1489,20 @@ function PlayPageContent() {
                     />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-[7px] text-neon-cyan font-black uppercase tracking-[0.2em]">SONANDO AHORA...</div>
+                    <div className="text-[7px] text-neon-cyan font-black uppercase tracking-[0.2em]">{t.pages.play.nowPlayingDots}</div>
                     <div className="text-white font-header font-black text-xs uppercase italic tracking-wider leading-tight truncate max-w-[180px] flex items-center gap-1.5 cursor-pointer hover:text-neon-cyan" onClick={() => router.push(`/library?track=${selectedTrack?.id || titleTrack.id}`)}>
                       <svg viewBox="0 0 24 24" className="w-3 h-3 shrink-0 text-neon-cyan" fill="none" stroke="currentColor" strokeWidth={2}><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
                       {titleTrack.name}
                     </div>
                     <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 mt-1">
                       <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 shrink-0 text-gray-500" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                      <span className="text-gray-400 font-black uppercase text-[8px] tracking-wider">Autor:</span>
-                      <Link href="/profile/@ciszukoantony_" className="text-white font-bold text-[8px] tracking-wider hover:text-neon-blue">Ciszuko Antony</Link>
+                      <span className="text-gray-400 font-black uppercase text-[8px] tracking-wider">{t.pages.play.authorLabel}</span>
+                      <Link href="/profile/@ciszukoantony_" className="text-white font-bold text-[8px] tracking-wider hover:text-neon-blue">{t.pages.play.creatorName}</Link>
                       <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 text-blue-400 shrink-0" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
                     </div>
                     <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
                       <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 shrink-0 text-gray-500" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                      <span className="text-gray-400 font-black uppercase text-[8px] tracking-wider">Subido Por:</span>
+                      <span className="text-gray-400 font-black uppercase text-[8px] tracking-wider">{t.pages.play.uploadedByLabel}</span>
                       <Link href="/profile/@muzicmania" className="text-white font-bold text-[8px] tracking-wider hover:text-neon-cyan">MuzicMania</Link>
                       <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 text-blue-400 shrink-0" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
                     </div>
@@ -1573,7 +1573,7 @@ function PlayPageContent() {
                   >
                     <NextImage 
                       src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} 
-                      alt="MuzicMania Isotipo" 
+                      alt={t.pages.play.altIsotipo} 
                       fill 
                       className="object-contain"
                       priority
@@ -1587,7 +1587,7 @@ function PlayPageContent() {
                   >
                     <NextImage 
                       src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/logotype/gradient/color/muzicmania_logotipo_degradado_color.svg')} 
-                      alt="MuzicMania Logotipo" 
+                      alt={t.pages.play.altLogotipo} 
                       fill 
                       className="object-contain"
                       priority
@@ -1598,7 +1598,7 @@ function PlayPageContent() {
                 {/* Central Action Area */}
                 <div className="flex flex-col items-center gap-6 w-full max-w-lg shrink-0">
                   <p className="text-xs md:text-sm text-neon-sky font-accent text-center text-shadow-neon-cyan tracking-widest uppercase animate-pulse">
-                    Domina el bit en la dimensión definitiva.
+                    {t.pages.play.heroTagline2}
                   </p>
                   
                   <div className="flex flex-col gap-4 w-full px-4">
@@ -1609,7 +1609,7 @@ function PlayPageContent() {
                       <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-1000 skew-x-12" />
                       <span className="relative z-10 flex items-center justify-center gap-3">
                           <svg viewBox="0 0 24 24" className="w-7 h-7 md:w-9 md:h-9" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
-                          EMPEZAR A JUGAR
+                          {t.pages.play.startGame}
                         </span>
                     </button>
 
@@ -1618,7 +1618,7 @@ function PlayPageContent() {
                         onClick={() => handleStartClick(false)}
                         className="text-[10px] font-black text-gray-500 uppercase tracking-[0.4em] hover:text-neon-cyan transition-all py-3 px-6 border border-white/5 rounded-full bg-white/5 hover:border-neon-cyan/30 hover:bg-neon-cyan/5 relative z-50"
                       >
-                        IGNORAR PANTALLA COMPLETA
+                        {t.pages.play.ignoreFullscreen}
                       </button>
                     </div>
                   </div>
@@ -1629,11 +1629,11 @@ function PlayPageContent() {
                    <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full">
                       <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
                       <span className="text-[9px] text-red-400 font-black uppercase tracking-widest">
-                        Sesión Local: Datos temporales. Usa Login para guardar récords.
+                        {t.pages.play.localSessionNote}
                       </span>
                    </div>
                    <p className="text-[9px] text-gray-600 uppercase tracking-[0.5em] font-black">
-                     &copy; 2026 CiszuNetwork. Todos los derechos reservados.
+                     {t.pages.play.copyrightLine}
                    </p>
 
                 </div>
@@ -1655,7 +1655,7 @@ function PlayPageContent() {
                 <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-white/30 shadow-xl transition-all">
                   <div className="w-5 h-5">{I.arrowLeft}</div>
                 </div>
-                <span>VOLVER AL INICIO</span>
+                <span>{t.pages.play.backHome}</span>
               </motion.button>
               <div className="p-8 md:p-12 bg-black/60 backdrop-blur-2xl border border-white/10 rounded-[3rem] shadow-2xl relative overflow-hidden text-center">
                 <button onClick={() => setPhase('welcome')} className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors z-10">
@@ -1666,16 +1666,16 @@ function PlayPageContent() {
                 </div>
                 <h3 className="text-2xl font-header font-black text-white uppercase tracking-tighter mb-3">Invitado</h3>
                 <p className="text-white/40 font-bold uppercase text-[10px] leading-relaxed tracking-widest px-4 mb-8">
-                  Estás a punto de jugar como invitado. Tus r&eacute;cords se guardar&aacute;n de forma local.
+                  {t.pages.play.guestNotice}
                 </p>
                 <div className="flex flex-col gap-3 max-w-sm mx-auto">
                   <Button onClick={handleAcceptDisclaimer} className="w-full py-4 rounded-2xl font-header font-black uppercase tracking-widest text-sm bg-white/10 text-white border border-white/20 hover:bg-white/20 transition-all">
-                    CONTINUAR COMO INVITADO
+                    {t.pages.play.continueGuest}
                   </Button>
                   <div className="flex gap-3">
                     <Link href="/login" className="flex-1">
                       <Button className="w-full h-12 bg-gradient-to-r from-neon-purple to-neon-pink text-white rounded-2xl font-header font-black uppercase tracking-widest text-[10px] flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-lg shadow-neon-pink/20">
-                        INICIAR SESIÓN
+                        {t.pages.play.loginBtn}
                       </Button>
                     </Link>
                     <Link href="/register" className="flex-1">
@@ -1702,7 +1702,7 @@ function PlayPageContent() {
                 <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-white/30 shadow-xl transition-all">
                   <div className="w-5 h-5">{I.arrowLeft}</div>
                 </div>
-                <span>VOLVER AL INICIO</span>
+                <span>{t.pages.play.backHome}</span>
               </motion.button>
               
               <div className="bg-black/60 backdrop-blur-2xl border border-white/10 rounded-[3rem] p-10 md:p-16 shadow-2xl relative overflow-hidden space-y-8">
@@ -1719,7 +1719,7 @@ function PlayPageContent() {
                   onClick={() => saveInputMode('arrows')}
                   className={`p-8 rounded-[3rem] border transition-all text-center flex flex-col items-center gap-6 ${inputMode === 'arrows' ? 'bg-neon-blue/10 border-neon-blue shadow-neon-blue/20 transform scale-105' : 'bg-black/50 border-white/5 hover:border-white/20 hover:bg-white/5'}`}
                 >
-                  <div className={`text-xl font-header font-black italic uppercase ${inputMode === 'arrows' ? 'text-neon-blue drop-shadow-neon-blue' : 'text-gray-500'}`}>CLÁSICO (FLECHAS)</div>
+                  <div className={`text-xl font-header font-black italic uppercase ${inputMode === 'arrows' ? 'text-neon-blue drop-shadow-neon-blue' : 'text-gray-500'}`}>{t.pages.play.classicControls}</div>
                   <div className="flex gap-2">
                     {['←', '↓', '↑', '→'].map((k, i) => (
                       <div key={i} className={`w-12 h-12 flex items-center justify-center rounded-xl border-2 font-black text-xl transition-all ${inputMode === 'arrows' ? 'border-neon-blue text-white bg-neon-blue/20 drop-shadow-neon-blue' : 'border-white/10 text-gray-500'}`}>{k}</div>
@@ -1732,7 +1732,7 @@ function PlayPageContent() {
                   onClick={() => saveInputMode('wasd')}
                   className={`p-8 rounded-[3rem] border transition-all text-center flex flex-col items-center gap-6 ${inputMode === 'wasd' ? 'bg-neon-pink/10 border-neon-pink shadow-neon-pink/20 transform scale-105' : 'bg-black/50 border-white/5 hover:border-white/20 hover:bg-white/5'}`}
                 >
-                  <div className={`text-xl font-header font-black italic uppercase ${inputMode === 'wasd' ? 'text-neon-pink drop-shadow-neon-pink' : 'text-gray-500'}`}>GAMER (W A S D)</div>
+                  <div className={`text-xl font-header font-black italic uppercase ${inputMode === 'wasd' ? 'text-neon-pink drop-shadow-neon-pink' : 'text-gray-500'}`}>{t.pages.play.gamerControls}</div>
                   <div className="flex gap-2">
                     {['A', 'S', 'W', 'D'].map((k, i) => (
                       <div key={i} className={`w-12 h-12 flex items-center justify-center rounded-xl border-2 font-black text-xl transition-all ${inputMode === 'wasd' ? 'border-neon-pink text-white bg-neon-pink/20 drop-shadow-neon-pink' : 'border-white/10 text-gray-500'}`}>{k}</div>
@@ -1769,7 +1769,7 @@ function PlayPageContent() {
                   </div>
                   {inputMode === 'custom' && (
                     <div className="text-[10px] text-gray-400 font-bold tracking-widest uppercase mt-2 animate-pulse">
-                      Toca un cuadro para cambiar tecla
+                      {t.pages.play.tapToChangeKey}
                       </div>
                   )}
               </div>
@@ -1777,7 +1777,7 @@ function PlayPageContent() {
 
               <div className="flex justify-center pt-8">
                 <Button onClick={handleFinishIntro} size="lg" className="!bg-white text-black font-black px-12 py-6 text-lg hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.4)]">
-                  CONFIRMAR E IR A SELECCIÓN DE CANCIONES
+                  {t.pages.play.confirmToSongs}
                 </Button>
               </div>
               </div>
@@ -1900,7 +1900,7 @@ function PlayPageContent() {
                     {/* Mode Options */}
                     <div className="flex flex-col gap-0.5 px-3 pt-5">
                     {[
-                      { id: 'historia', label: 'MODO HISTORIA', icon: I.book, desc: 'Descubre la historia de MuzicMania', locked: true, lockReason: 'beta', pronto: true },
+                      { id: 'historia', label: '{t.pages.play.storyMode}', icon: I.book, desc: 'Descubre la historia de MuzicMania', locked: true, lockReason: 'beta', pronto: true },
                       { id: 'solo', label: 'MODO SOLO', icon: I.music, desc: 'Juega partidas individuales con 4 dificultades y canciones variadas' },
                       { id: 'multijugador', label: 'MULTIJUGADOR', icon: I.radio, desc: 'Compite contra otros jugadores', soon: true, lockReason: 'beta' },
                       { id: 'crear', label: 'CREAR', icon: I.customize, desc: 'Crea y comparte tus propios niveles', locked: true, lockReason: 'account' },
@@ -1959,7 +1959,7 @@ function PlayPageContent() {
                         { id: 'inventario', label: 'INVENTARIO', icon: I.backpack, color: 'text-yellow-500', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20', hoverBg: 'hover:bg-yellow-500/20', onClick: () => { setHubSidebarView('main'); setIsInventarioOpen(true); } },
                         { id: 'ayuda', label: 'AYUDA', icon: I.help, color: 'text-neon-cyan', bg: 'bg-neon-cyan/10', border: 'border-neon-cyan/20', hoverBg: 'hover:bg-neon-cyan/20', onClick: () => { setHubSidebarView('main'); setIsHelpOpen(true); } },
                         { id: 'info', label: 'INFO', icon: I.about, color: 'text-neon-blue', bg: 'bg-neon-blue/10', border: 'border-neon-blue/20', hoverBg: 'hover:bg-neon-blue/20', onClick: () => { setHubSidebarView('main'); setIsInfoOpen(true); } },
-                        { id: 'creditos', label: 'CRÉDITOS', icon: I.starOutline, color: 'text-neon-pink', bg: 'bg-neon-pink/10', border: 'border-neon-pink/20', hoverBg: 'hover:bg-neon-pink/20', onClick: () => { setHubSidebarView('main'); setIsCreditsOpen(true); } },
+                        { id: 'creditos', label: '{t.pages.play.creditsLabel}', icon: I.starOutline, color: 'text-neon-pink', bg: 'bg-neon-pink/10', border: 'border-neon-pink/20', hoverBg: 'hover:bg-neon-pink/20', onClick: () => { setHubSidebarView('main'); setIsCreditsOpen(true); } },
                         { id: 'leaderboard', label: 'LEADERBOARD', icon: I.trophy, color: 'text-yellow-500', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20', hoverBg: 'hover:bg-yellow-500/20', onClick: () => { window.open('/leaderboard', '_blank'); } },
                         { id: 'forum', label: 'FORUM', icon: I.forum, color: 'text-neon-cyan', bg: 'bg-neon-cyan/10', border: 'border-neon-cyan/20', hoverBg: 'hover:bg-neon-cyan/20', onClick: () => { window.open('/forum', '_blank'); } },
                         { id: 'redes', label: 'REDES', icon: I.discord, color: 'text-neon-green', bg: 'bg-neon-green/10', border: 'border-neon-green/20', hoverBg: 'hover:bg-neon-green/20', onClick: () => { setHubSidebarView('main'); setIsRedesOpen(true); } },
@@ -2013,7 +2013,7 @@ function PlayPageContent() {
                           </div>
                           <div className="flex gap-1.5">
                             <Link href="/login" className="px-3 py-1.5 bg-gradient-to-r from-neon-cyan/30 to-neon-blue/30 border border-neon-cyan/40 rounded-xl text-[7px] font-black uppercase tracking-widest text-neon-cyan hover:from-neon-cyan/50 hover:to-neon-blue/50 transition-all shadow-lg shadow-neon-cyan/5 shrink-0">
-                              INICIAR SESIÓN
+                              {t.pages.play.loginBtn}
                             </Link>
                             <Link href="/register" className="px-3 py-1.5 bg-white/5 border border-white/20 rounded-xl text-[7px] font-black uppercase tracking-widest text-gray-400 hover:text-white hover:bg-white/10 transition-all shrink-0">
                               REGISTRARSE
@@ -2056,7 +2056,7 @@ function PlayPageContent() {
                       >
                         <motion.img 
                           src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} 
-                          alt="MuzicMania Isotipo" className="w-20 h-auto md:w-28"
+                          alt={t.pages.play.altIsotipo} className="w-20 h-auto md:w-28"
                           whileHover={{ rotate: [0, -5, 5, -5, 0], transition: { duration: 0.5 } }}
                           onClick={() => {
                             setLogoClicks(prev => prev + 1);
@@ -2074,7 +2074,7 @@ function PlayPageContent() {
                         animate={{ opacity: hubHoveredMode || hubSelectedOption ? 0 : 1 }}
                         transition={{ duration: 0.2 }}
                       >
-                        Selecciona un modo para comenzar
+                        {t.pages.play.selectModePrompt}
                       </motion.p>
                     </div>
 
@@ -2082,7 +2082,7 @@ function PlayPageContent() {
                     {!user && !hubHoveredMode && !hubSelectedOption && (
                       <motion.div initial={{opacity:0,y:5}} animate={{opacity:1,y:0}} className="mt-4 px-4 py-2 rounded-lg bg-red-500/10 border border-red-500/20 inline-flex items-center gap-2 z-[2]">
                         <svg viewBox="0 0 24 24" className="w-3 h-3 shrink-0 text-red-500" fill="none" stroke="currentColor" strokeWidth={2}><path d="M12 9v2m0 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>
-                        <span className="text-[8px] text-red-400 font-black uppercase tracking-widest">CUENTA INVITADO — inicia sesión para desbloquear todas las funciones</span>
+                        <span className="text-[8px] text-red-400 font-black uppercase tracking-widest">{t.pages.play.guestAccountNote}</span>
                       </motion.div>
                     )}
 
@@ -2090,7 +2090,7 @@ function PlayPageContent() {
                     <AnimatePresence>
                     {hubHoveredMode && (() => {
                       const previews: Record<string,{icon:React.ReactNode,title:string,color:string,bg:string,desc:string,stats:{label:string,value:string}[]}> = {
-                        historia: {icon:I.book,title:'MODO HISTORIA',color:'from-gray-500 via-white to-gray-600',bg:'from-white/5 to-white/5',desc:'Sumérgete en la historia de MuzicMania. Descubre secretos, desbloquea canciones y avanza por capítulos.',stats:[{label:'CAPÍTULOS',value:'Sin definir'},{label:'SECRETOS',value:'Por descubrir'},{label:'CANON',value:'Historia principal'}]},
+                        historia: {icon:I.book,title:'{t.pages.play.storyMode}',color:'from-gray-500 via-white to-gray-600',bg:'from-white/5 to-white/5',desc:'Sumérgete en la historia de MuzicMania. Descubre secretos, desbloquea canciones y avanza por capítulos.',stats:[{label:'CAPÍTULOS',value:'Sin definir'},{label:'SECRETOS',value:'Por descubrir'},{label:'CANON',value:'Historia principal'}]},
                         solo: {icon:I.music,title:'MODO SOLO',color:'from-neon-cyan via-white to-neon-blue',bg:'from-neon-cyan/20 to-neon-blue/20',desc:'Demuestra tu habilidad rítmica en partidas individuales. Elige entre 4 dificultades y completa cada canción al ritmo perfecto.',stats:[{label:'ESTILO',value:'Individual'},{label:'PRECISIÓN',value:'Descripción'},{label:'SUPERVIVENCIA',value:'Descripción'}]},
                         multijugador: {icon:I.radio,title:'MULTIJUGADOR',color:'from-neon-pink via-white to-neon-purple',bg:'from-neon-pink/20 to-neon-purple/20',desc:'Compite en tiempo real contra otros jugadores. Sube en el ranking global y conviértete en leyenda.',stats:[{label:'ESTILO',value:'Competitivo'},{label:'MULTI-OPCIONES',value:'Próximamente'},{label:'ESTADO',value:'Próximamente'}]},
                         crear: {icon:I.customize,title:'CREAR',color:'from-emerald-500 via-white to-teal-500',bg:'from-emerald-500/20 to-teal-500/20',desc:'Diseña tus propios niveles con nuestro editor integrado. Comparte tus creaciones con la comunidad.',stats:[{label:'EDITOR',value:'Editor visual de niveles'},{label:'PUBLICAR',value:'Comparte con la comunidad'},{label:'SELECTORES',value:'Aparece en selectores'}]},
@@ -2133,13 +2133,13 @@ function PlayPageContent() {
                         inventario: {icon:I.backpack,title:'INVENTARIO',color:'text-yellow-500',desc:'Gestiona tus skins, efectos y objetos coleccionables'},
                         ayuda: {icon:I.help,title:'AYUDA',color:'text-neon-cyan',desc:'Guía de controles, puntuación y mecánicas del juego'},
                         info: {icon:I.about,title:'INFORMACIÓN',color:'text-neon-blue',desc:'Información general sobre MuzicMania'},
-                        creditos: {icon:I.starOutline,title:'CRÉDITOS',color:'text-neon-pink',desc:'Conoce al equipo detrás de MuzicMania'},
+                        creditos: {icon:I.starOutline,title:'{t.pages.play.creditsLabel}',color:'text-neon-pink',desc:'Conoce al equipo detrás de MuzicMania'},
                         leaderboard: {icon:I.trophy,title:'LEADERBOARD',color:'text-yellow-500',desc:'Clasificación global de los mejores jugadores'},
                         forum: {icon:I.forum,title:'FORUM',color:'text-neon-cyan',desc:'Comunidad, discusiones y contenido del equipo'},
                         redes: {icon:I.discord,title:'REDES',color:'text-neon-green',desc:'Síguenos en todas las plataformas'},
-                        changelog: {icon:I.clock,title:'CHANGELOG',color:'text-orange-500',desc:'Últimas actualizaciones y cambios del juego'},
+                        changelog: {icon:I.clock,title:'CHANGELOG',color:'text-orange-500',desc:'{t.pages.play.latestUpdates2} y cambios del juego'},
                         otros: {icon:I.sliders,title:'OTROS',color:'text-neon-purple',desc:'Enlaces rápidos a otras secciones de la plataforma'},
-                        config: {icon:I.settings,title:'CONFIGURACIÓN',color:'text-neon-purple',desc:'Ajusta la configuración del juego, audio, controles y apariencia'},
+                        config: {icon:I.settings,title:'{t.pages.play.settingsLabel}',color:'text-neon-purple',desc:'Ajusta la configuración del juego, audio, controles y apariencia'},
                       };
                       const op = optionPreviews[hubSelectedOption];
                       if (!op) return null;
@@ -2154,7 +2154,7 @@ function PlayPageContent() {
                               <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-orange-500/20 to-amber-500/10 border border-orange-500/20 flex items-center justify-center">
                                 <div className="w-7 h-7 text-orange-400">{I.clock}</div>
                               </div>
-                              <h2 className="text-xl font-header font-black uppercase tracking-tighter text-white mb-3">ÚLTIMAS ACTUALIZACIONES</h2>
+                              <h2 className="text-xl font-header font-black uppercase tracking-tighter text-white mb-3">{t.pages.play.latestUpdates}</h2>
                               <div className="space-y-2.5 text-left max-w-md mx-auto">
                                 {top3.map((item, idx) => {
                                   const primaryType = item.types[0];
@@ -2193,7 +2193,7 @@ function PlayPageContent() {
                               </div>
                               <Link href="/changelog"
                                 className="inline-flex items-center gap-1.5 mt-3 px-4 py-1.5 bg-white/5 border border-white/10 rounded-xl text-[7px] font-black uppercase tracking-widest text-gray-500 hover:text-white hover:bg-white/10 transition-all"
-                              ><div className="w-2.5 h-2.5">{I.clock}</div> VER HISTORIAL COMPLETO <div className="w-2.5 h-2.5">{I.arrowRight}</div></Link>
+                              ><div className="w-2.5 h-2.5">{I.clock}</div> {t.pages.play.viewFullHistory} <div className="w-2.5 h-2.5">{I.arrowRight}</div></Link>
                             </div>
                           </motion.div>
                         ) : null;
@@ -2226,20 +2226,20 @@ function PlayPageContent() {
                         />
                       </div>
                       <div className="min-w-0">
-                        <div className="text-[6px] text-neon-cyan font-black uppercase tracking-[0.15em]">SONANDO AHORA</div>
+                        <div className="text-[6px] text-neon-cyan font-black uppercase tracking-[0.15em]">{t.pages.play.nowPlaying}</div>
                         <div className="text-white font-header font-black text-[10px] uppercase italic tracking-wider leading-tight truncate max-w-[140px] flex items-center gap-1 cursor-pointer hover:text-neon-cyan" onClick={() => router.push(`/library?track=${titleTrack.id}`)}>
                           <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 shrink-0 text-neon-cyan" fill="none" stroke="currentColor" strokeWidth={2}><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
                           {titleTrack.name}
                         </div>
                         <div className="flex flex-wrap items-center gap-x-1 gap-y-0 mt-0.5">
                           <svg viewBox="0 0 24 24" className="w-2 h-2 shrink-0 text-gray-500" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                          <span className="text-gray-500 font-black uppercase text-[6px] tracking-wider">Autor:</span>
-                          <Link href="/profile/@ciszukoantony_" className="text-white font-bold text-[7px] tracking-wider hover:text-neon-blue">Ciszuko Antony</Link>
+                          <span className="text-gray-500 font-black uppercase text-[6px] tracking-wider">{t.pages.play.authorLabel}</span>
+                          <Link href="/profile/@ciszukoantony_" className="text-white font-bold text-[7px] tracking-wider hover:text-neon-blue">{t.pages.play.creatorName}</Link>
                           <svg viewBox="0 0 24 24" className="w-2 h-2 text-blue-400 shrink-0" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
                         </div>
                         <div className="flex flex-wrap items-center gap-x-1 gap-y-0">
                           <svg viewBox="0 0 24 24" className="w-2 h-2 shrink-0 text-gray-500" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                          <span className="text-gray-500 font-black uppercase text-[6px] tracking-wider">Subido Por:</span>
+                          <span className="text-gray-500 font-black uppercase text-[6px] tracking-wider">{t.pages.play.uploadedByLabel}</span>
                           <Link href="/profile/@muzicmania" className="text-white font-bold text-[7px] tracking-wider hover:text-neon-cyan">MuzicMania</Link>
                           <svg viewBox="0 0 24 24" className="w-2 h-2 text-blue-400 shrink-0" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
                         </div>
@@ -2263,7 +2263,7 @@ function PlayPageContent() {
                       <button onClick={() => handleExternalLink('https://www.youtube.com/@CiszuNetwork')} title="YouTube" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-[#FF0000] hover:border-[#FF0000]/50 transition-all shadow-lg hover:scale-110">
                         <div className="w-5 h-5">{I.youtube}</div>
                       </button>
-                      <button onClick={() => handleExternalLink('https://x.com/CiszukoAntony')} title="X (Twitter)" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:border-white/50 transition-all shadow-lg hover:scale-110">
+                      <button onClick={() => handleExternalLink('https://x.com/CiszukoAntony')} title={t.pages.play.ariaTwitter} className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:border-white/50 transition-all shadow-lg hover:scale-110">
                         <div className="w-5 h-5">{I.x}</div>
                       </button>
                       <Link href="/" title="Inicio" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-neon-cyan hover:border-neon-cyan/50 transition-all shadow-lg hover:scale-110">
@@ -2276,21 +2276,21 @@ function PlayPageContent() {
                   <div className="flex items-center justify-center px-8 py-3 border-t border-white/5">
                     <div className="text-center">
                       <p className="text-white text-[9px] sm:text-[10px] font-bold uppercase tracking-widest leading-loose">
-                        &copy; 2026 <span className="hover:text-neon-cyan transition-colors cursor-pointer uppercase font-black">CISZU NETWORK</span> & MUZICMANIA.
-                        <br className="hidden sm:block" />                         HECHO CON ❤️ POR <button onClick={() => handleExternalLink('https://ciszukoantony.vercel.app')} className="text-neon-cyan font-black transition-colors hover:drop-shadow-[0_0_10px_rgba(0,240,255,0.8)] cursor-pointer">CISZUKO ANTONY</button>.
+                        {t.pages.play.copyrightShort} <span className="hover:text-neon-cyan transition-colors cursor-pointer uppercase font-black">{t.pages.play.ciszuNetworkUpper}</span> {t.pages.play.andMuzicmania}
+                        <br className="hidden sm:block" />                         {t.pages.play.madeWithBy} <button onClick={() => handleExternalLink('https://ciszukoantony.vercel.app')} className="text-neon-cyan font-black transition-colors hover:drop-shadow-[0_0_10px_rgba(0,240,255,0.8)] cursor-pointer">{t.pages.play.ciszukoUpper}</button>.
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
                       <button onClick={() => { setHubError({title:'FUNCIÓN BETA',desc:'El cambio de tema no está disponible en esta versión. Por defecto el juego está en modo oscuro.'}); }}
                         className="group flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all duration-300"
-                        title="Cambiar Tema (No disponible)"
+                        title={t.pages.play.ariaTheme}
                       >
                         <div className={`w-4 h-4 transition-colors text-gray-400 group-hover:text-neon-cyan`}>{I.moon}</div>
-                        <span className="text-[8px] text-gray-500 group-hover:text-white font-black uppercase tracking-widest">AUTOMÁTICO</span>
+                        <span className="text-[8px] text-gray-500 group-hover:text-white font-black uppercase tracking-widest">{t.pages.play.autoLabel}</span>
                       </button>
                       <button onClick={() => setHubSidebarView(hubSidebarView === 'main' ? 'lang' : 'main')}
                         className="group flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all duration-300"
-                        title="Cambiar Idioma"
+                        title={t.pages.play.ariaLang}
                       >
                         <svg className={`w-4 h-4 transition-all duration-500 ${hubSidebarView === 'lang' ? 'rotate-90 text-neon-cyan' : 'text-gray-400 group-hover:rotate-12'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                           <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
@@ -2314,10 +2314,10 @@ function PlayPageContent() {
                   <div className="w-12 h-12 text-neon-pink">{I.radio}</div>
                 </div>
                 <h2 className="text-4xl font-header font-black uppercase tracking-tighter bg-gradient-to-r from-neon-pink via-white to-neon-purple bg-clip-text text-transparent mb-4">MULTIJUGADOR</h2>
-                <p className="text-xs text-gray-500 font-bold uppercase tracking-[0.3em] mb-8">Próximamente - Modo multijugador en desarrollo</p>
+                <p className="text-xs text-gray-500 font-bold uppercase tracking-[0.3em] mb-8">{t.pages.play.soonMultiplayer}</p>
                 <button onClick={() => setPhase('hub')}
                   className="px-8 py-3 bg-white/10 border border-white/20 rounded-2xl text-[10px] font-black uppercase tracking-widest text-white hover:bg-white/20 transition-all"
-                >VOLVER AL MENÚ</button>
+                >{t.pages.play.backToMenu}</button>
               </div>
             </motion.div>
           )}
@@ -2333,10 +2333,10 @@ function PlayPageContent() {
                   <div className="w-12 h-12 text-yellow-500">{I.store}</div>
                 </div>
                 <h2 className="text-4xl font-header font-black uppercase tracking-tighter bg-gradient-to-r from-yellow-500 via-white to-purple-500 bg-clip-text text-transparent mb-4">TIENDA</h2>
-                <p className="text-xs text-gray-500 font-bold uppercase tracking-[0.3em] mb-8">Consigue nuevos ítems y personaliza tu experiencia</p>
+                <p className="text-xs text-gray-500 font-bold uppercase tracking-[0.3em] mb-8">{t.pages.play.customizePrompt}</p>
                 <button onClick={() => setPhase('hub')}
                   className="px-8 py-3 bg-white/10 border border-white/20 rounded-2xl text-[10px] font-black uppercase tracking-widest text-white hover:bg-white/20 transition-all"
-                >VOLVER AL MENÚ</button>
+                >{t.pages.play.backToMenu}</button>
               </div>
             </motion.div>
           )}
@@ -2352,10 +2352,10 @@ function PlayPageContent() {
                   <div className="w-12 h-12 text-orange-500">{I.trophy}</div>
                 </div>
                 <h2 className="text-4xl font-header font-black uppercase tracking-tighter bg-gradient-to-r from-orange-500 via-white to-red-500 bg-clip-text text-transparent mb-4">EVENTOS</h2>
-                <p className="text-xs text-gray-500 font-bold uppercase tracking-[0.3em] mb-8">Eventos por tiempo limitado - Próximamente</p>
+                <p className="text-xs text-gray-500 font-bold uppercase tracking-[0.3em] mb-8">{t.pages.play.soonEvents}</p>
                 <button onClick={() => setPhase('hub')}
                   className="px-8 py-3 bg-white/10 border border-white/20 rounded-2xl text-[10px] font-black uppercase tracking-widest text-white hover:bg-white/20 transition-all"
-                >VOLVER AL MENÚ</button>
+                >{t.pages.play.backToMenu}</button>
               </div>
             </motion.div>
           )}
@@ -2369,11 +2369,11 @@ function PlayPageContent() {
                 <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
                   <div className="w-10 h-10 text-gray-600">{I.lock}</div>
                 </div>
-                <h2 className="text-3xl font-header font-black uppercase tracking-tighter text-gray-600 mb-2">MODO HISTORIA</h2>
-                <p className="text-[10px] text-gray-700 font-bold uppercase tracking-[0.3em] mb-6">Bloqueado - Próximamente</p>
+                <h2 className="text-3xl font-header font-black uppercase tracking-tighter text-gray-600 mb-2">{t.pages.play.storyMode}</h2>
+                <p className="text-[10px] text-gray-700 font-bold uppercase tracking-[0.3em] mb-6">{t.pages.play.lockedSoon}</p>
                 <button onClick={() => setPhase('hub')}
                   className="px-6 py-2.5 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-all"
-                >VOLVER AL MENÚ</button>
+                >{t.pages.play.backToMenu}</button>
               </div>
             </motion.div>
           )}
@@ -2396,7 +2396,7 @@ function PlayPageContent() {
                       className="flex items-center gap-2 px-3 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest text-gray-400 hover:text-white hover:bg-white/10 transition-all active:scale-95 border border-transparent hover:border-white/10"
                     >
                       <div className="w-3.5 h-3.5">{I.menu}</div>
-                      MENÚ
+                      {t.pages.play.menuLabel}
                     </button>
                     <AnimatePresence>
                       {isMenuOpen && (
@@ -2421,7 +2421,7 @@ function PlayPageContent() {
                           </button>
                           <button onClick={() => { setIsCreditsOpen(true); setIsMenuOpen(false); }} className="w-full flex items-center gap-3 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-neon-pink hover:bg-white/5 transition-all">
                             <div className="w-4 h-4 text-neon-pink">{I.starOutline}</div>
-                            CRÉDITOS
+                            {t.pages.play.creditsLabel}
                           </button>
                           <div className="h-px bg-white/5 mx-4 my-1" />
                           <button onClick={() => { window.open('/leaderboard', '_blank'); setIsMenuOpen(false); }} className="w-full flex items-center gap-3 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-white hover:bg-white/5 transition-all">
@@ -2448,7 +2448,7 @@ function PlayPageContent() {
                           </button>
                           <button onClick={() => { setIsConfigOpen(true); setIsMenuOpen(false); }} className="w-full flex items-center gap-3 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-white hover:bg-white/5 transition-all">
                             <div className="w-4 h-4 text-neon-purple">{I.settings}</div>
-                            CONFIGURACIÓN
+                            {t.pages.play.settingsLabel}
                           </button>
                         </motion.div>
                       )}
@@ -2462,7 +2462,7 @@ function PlayPageContent() {
                     </div>
                     <input 
                       type="text" 
-                      placeholder="BUSCAR..." 
+                      placeholder={t.pages.play.phSearch} 
                       value={searchQuery}
                       onChange={e => setSearchQuery(e.target.value)}
                       className="w-full bg-black/40 border border-white/10 rounded-xl py-2 pl-9 pr-4 text-[10px] font-bold text-white placeholder-gray-700 focus:outline-none focus:border-neon-cyan/50 transition-all"
@@ -2563,7 +2563,7 @@ function PlayPageContent() {
                                       className="w-full flex items-center gap-3 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white hover:bg-white/5 transition-all"
                                     >
                                       <div className="w-4 h-4">{I.album}</div>
-                                      + GESTIONAR
+                                      {t.pages.play.manageBtn}
                                     </button>
                                   </>
                                 )}
@@ -2687,7 +2687,7 @@ function PlayPageContent() {
                           <div className="px-3 pb-2">
                             <input
                               type="text"
-                              placeholder="BUSCAR ÁLBUM..."
+                              placeholder={t.pages.play.phSearchAlbum}
                               value={albumSearch}
                               onChange={e => setAlbumSearch(e.target.value)}
                               className="w-full bg-black/40 border border-white/10 rounded-xl py-2 px-3 text-[10px] font-bold text-white placeholder-gray-700 focus:outline-none focus:border-neon-cyan/50 transition-all"
@@ -2779,7 +2779,7 @@ function PlayPageContent() {
                                    <div className="w-1 h-4 bg-neon-cyan/50 rounded-full shrink-0" />
                                    {album}
                                  </h4>
-                                 <p className="text-[8px] text-gray-600 font-bold mt-0.5">Álbum recopilatorio</p>
+                                 <p className="text-[8px] text-gray-600 font-bold mt-0.5">{t.pages.play.compilationAlbum}</p>
                                  <div className="flex items-center gap-3 mt-1 text-[8px] text-gray-500 font-bold">
                                    <span className="flex items-center gap-1">
                                      <div className="w-2.5 h-2.5">{I.heart}</div>
@@ -2813,7 +2813,7 @@ function PlayPageContent() {
                          onClick={() => { setSearchQuery(''); setFilterCategory('all'); setSelectedDifficulties([]); }}
                          className="px-6 py-2 bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan rounded-full font-header font-black text-[10px] uppercase tracking-widest hover:bg-neon-cyan hover:text-black transition-all"
                        >
-                         REINICIAR BÚSQUEDA
+                         {t.pages.play.resetSearch}
                        </button>
                      </div>
                    )}
@@ -2843,7 +2843,7 @@ function PlayPageContent() {
                            if (endPage < totalPages - 1) pages.push('...');
                            pages.push(totalPages);
                          }
-                         return pages.map((page, idx) =>
+                         return pages.map((page, idx) => (
                            typeof page === 'string' ? (
                              <span key={`ellipsis-${idx}`} className="text-[8px] text-gray-600 font-black px-1">...</span>
                            ) : (
@@ -2858,6 +2858,7 @@ function PlayPageContent() {
                              >
                                {page}
                              </button>
+                           )
                            )
                          );
                        })()}
@@ -2933,7 +2934,7 @@ function PlayPageContent() {
                                 <div className="flex items-center gap-2 mb-0.5">
                                   <div className="w-3 h-3 text-gray-500">{I.user}</div>
                                   <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest flex items-center gap-1">
-                                     Subido por <Link href="/profile/@muzicmania" className="text-neon-cyan hover:underline normal-case">{currentLevel?.config.uploadedBy ?? 'MuzicMania'}</Link>
+                                     {t.pages.play.uploaderLower} <Link href="/profile/@muzicmania" className="text-neon-cyan hover:underline normal-case">{currentLevel?.config.uploadedBy ?? 'MuzicMania'}</Link>
                                     <div className="w-3 h-3 text-blue-400 shrink-0">{I.verified}</div>
                                   </span>
                                 </div>
@@ -2947,7 +2948,7 @@ function PlayPageContent() {
                                 <div className="flex items-center gap-2 mb-0.5">
                                   <div className="w-3 h-3 text-gray-500">{I.disc}</div>
                                    <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest flex items-center gap-1">
-                                      Autor: <Link href="/profile/@ciszukoantony_" className="text-neon-blue hover:underline normal-case">Ciszuko Antony</Link>
+                                      {t.pages.play.authorLabel} <Link href="/profile/@ciszukoantony_" className="text-neon-blue hover:underline normal-case">{t.pages.play.creatorName}</Link>
                                      <div className="w-3 h-3 text-blue-400 shrink-0">{I.verified}</div>
                                    </span>
                                 </div>
@@ -2985,7 +2986,7 @@ function PlayPageContent() {
                               </div>
                             </div>
                             <div className="flex-1 bg-white/5 py-2 px-3 rounded-xl border border-white/5">
-                              <div className="text-[8px] uppercase tracking-widest text-gray-500 font-black">Duración</div>
+                              <div className="text-[8px] uppercase tracking-widest text-gray-500 font-black">{t.pages.play.durationLabel}</div>
                               <div className="text-sm font-header text-white flex items-center gap-1">
                                 <div className="w-3 h-3 text-gray-400">{I.clock}</div>
                                 {selectedTrack.duration}
@@ -2998,12 +2999,12 @@ function PlayPageContent() {
                           <div className="bg-white/5 border border-white/10 p-5 rounded-2xl relative overflow-hidden group">
                              <div className="flex flex-col gap-4 relative z-10">
                                 <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                                   <div className="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-black">Record Personal</div>
+                                   <div className="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-black">{t.pages.play.personalBest}</div>
                                    <div className="text-xl font-header font-black text-white">{getRecord(selectedTrack.id).toLocaleString()}</div>
                                 </div>
                                 <div className="flex justify-between items-center">
                                    <div>
-                                      <div className="text-[10px] uppercase tracking-[0.2em] text-neon-cyan font-black">Record Global</div>
+                                      <div className="text-[10px] uppercase tracking-[0.2em] text-neon-cyan font-black">{t.pages.play.globalBest}</div>
                                       <div className="text-[8px] text-gray-600 font-bold uppercase">{globalRecord?.user || 'Sin Record'}</div>
                                    </div>
                                    <div className="text-2xl font-header font-black text-neon-cyan drop-shadow-neon-cyan">{(globalRecord?.score || 0).toLocaleString()}</div>
@@ -3018,7 +3019,7 @@ function PlayPageContent() {
                                           <div className="w-3.5 h-3.5">{I.history}</div>
                                         </div>
                                         <div>
-                                          <div className="text-[7px] uppercase tracking-widest text-neon-purple font-black">Última</div>
+                                          <div className="text-[7px] uppercase tracking-widest text-neon-purple font-black">{t.pages.play.lastPlay}</div>
                                           <div className="text-base font-header font-black text-white">{getLastMatch(selectedTrack.id).score.toLocaleString()}</div>
                                         </div>
                                       </div>
@@ -3033,7 +3034,7 @@ function PlayPageContent() {
                                         <div className="text-white font-bold font-header">{getLastMatch(selectedTrack.id).maxCombo}x</div>
                                       </div>
                                       <div className="bg-black/30 rounded p-1.5 text-center">
-                                        <div className="text-gray-500 uppercase tracking-wider flex items-center justify-center gap-0.5"><div className="w-2 h-2 text-neon-cyan">{I.target}</div>Precisión</div>
+                                        <div className="text-gray-500 uppercase tracking-wider flex items-center justify-center gap-0.5"><div className="w-2 h-2 text-neon-cyan">{I.target}</div>{t.pages.play.accuracy}</div>
                                         <div className="text-neon-cyan font-bold font-header">{getLastMatch(selectedTrack.id).accuracy}%</div>
                                       </div>
                                       <div className="bg-black/30 rounded p-1.5 text-center">
@@ -3064,7 +3065,7 @@ function PlayPageContent() {
                                   )}
 
                                 <Link href="/leaderboard" className="block w-full mt-1 py-2 bg-neon-cyan/10 border border-neon-cyan/20 rounded-xl text-[8px] font-black uppercase tracking-widest text-neon-cyan hover:bg-neon-cyan/20 transition-all text-center">
-                                  VER LEADERBOARD COMPLETO
+                                  {t.pages.play.viewFullLeaderboard}
                                 </Link>
                              </div>
                           </div>
@@ -3078,7 +3079,7 @@ function PlayPageContent() {
                               <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
                               <span className="relative z-10 flex items-center justify-center gap-3" style={{ textShadow: '0 0 10px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.8)' }}>
                                 <div className="w-6 h-6 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{I.play}</div>
-                                JUGAR AHORA
+                                {t.pages.play.playNow}
                               </span>
                             </Button>
                          </div>
@@ -3102,7 +3103,7 @@ function PlayPageContent() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, ease: 'easeOut' }}
                             className="text-3xl md:text-5xl font-header font-black uppercase tracking-[0.15em] text-transparent bg-clip-text bg-gradient-to-r from-neon-blue via-white to-neon-purple mb-6 drop-shadow-[0_0_20px_rgba(0,212,255,0.5)]"
-                          >SOLO MODE</motion.div>
+                          >{t.pages.play.soloMode}</motion.div>
                           <motion.div className="w-32 h-auto mb-4 drop-shadow-2xl"
                             whileHover={{ scale: 1.08, filter: 'drop-shadow(0 0 30px rgba(0,212,255,0.8))' }}
                             animate={{ y: [0, -6, 0] }}
@@ -3118,10 +3119,10 @@ function PlayPageContent() {
                             <img src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/logotype/gradient/color/muzicmania_logotipo_degradado_color.svg')} alt="MuzicMania" className="w-full h-full object-contain" />
                           </motion.div>
                           <h1 className="text-2xl md:text-4xl font-header font-black uppercase tracking-tighter leading-none bg-gradient-to-r from-neon-blue via-white to-neon-purple bg-clip-text text-transparent">
-                            SELECCIONA TU NIVEL PARA INICIAR
+                            {t.pages.play.selectLevelPrompt}
                           </h1>
                           <p className="mt-4 text-[10px] text-white/50 font-bold uppercase tracking-[0.3em]">
-                            Elige una canción para comenzar
+                            {t.pages.play.pickSongPrompt}
                           </p>
                         </div>
                       </motion.div>
@@ -3138,7 +3139,7 @@ function PlayPageContent() {
                     className="absolute top-0 right-0 bottom-0 z-50 w-80 bg-[#0a0a0a] border-l border-white/10 shadow-2xl flex flex-col"
                   >
                     <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
-                      <h3 className="text-xs font-header font-black uppercase tracking-tight text-white">ÚLTIMOS CAMBIOS</h3>
+                      <h3 className="text-xs font-header font-black uppercase tracking-tight text-white">{t.pages.play.latestChanges}</h3>
                       <button onClick={() => setShowRightPanel(false)} className="w-7 h-7 rounded-lg bg-white/5 flex items-center justify-center text-gray-500 hover:text-white transition-all">{I.close}</button>
                     </div>
                     <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
@@ -3292,20 +3293,20 @@ function PlayPageContent() {
                          />
                        </div>
                        <div className="min-w-0">
-                         <div className="text-[7px] text-neon-cyan font-black uppercase tracking-[0.2em]">SONANDO AHORA...</div>
+                         <div className="text-[7px] text-neon-cyan font-black uppercase tracking-[0.2em]">{t.pages.play.nowPlayingDots}</div>
                          <div className="text-white font-header font-black text-xs uppercase italic tracking-wider truncate leading-tight flex items-center gap-1.5 cursor-pointer hover:text-neon-cyan" onClick={() => router.push(`/library?track=${selectedTrack.id}`)}>
                            <svg viewBox="0 0 24 24" className="w-3 h-3 shrink-0 text-neon-cyan" fill="none" stroke="currentColor" strokeWidth={2}><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
                            {selectedTrack.name}
                          </div>
                          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 mt-1">
                            <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 shrink-0 text-gray-500" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                           <span className="text-gray-400 font-black uppercase text-[8px] tracking-wider">Autor:</span>
-                           <Link href="/profile/@ciszukoantony_" className="text-white font-bold text-[8px] tracking-wider hover:text-neon-blue">Ciszuko Antony</Link>
+                           <span className="text-gray-400 font-black uppercase text-[8px] tracking-wider">{t.pages.play.authorLabel}</span>
+                           <Link href="/profile/@ciszukoantony_" className="text-white font-bold text-[8px] tracking-wider hover:text-neon-blue">{t.pages.play.creatorName}</Link>
                            <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 text-blue-400 shrink-0" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
                          </div>
                          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
                            <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 shrink-0 text-gray-500" fill="none" stroke="currentColor" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                           <span className="text-gray-400 font-black uppercase text-[8px] tracking-wider">Subido Por:</span>
+                           <span className="text-gray-400 font-black uppercase text-[8px] tracking-wider">{t.pages.play.uploadedByLabel}</span>
                            <Link href="/profile/@muzicmania" className="text-white font-bold text-[8px] tracking-wider hover:text-neon-cyan">MuzicMania</Link>
                            <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 text-blue-400 shrink-0" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
                          </div>
@@ -3374,7 +3375,7 @@ function PlayPageContent() {
                      <div>
                         <div className="text-[8px] uppercase text-white/70 font-black tracking-widest mb-0.5 flex items-center gap-1.5">
                           <div className="w-3 h-3 text-neon-cyan">{I.target}</div>
-                          Precisión
+                          {t.pages.play.accuracy}
                         </div>
                        <div className="text-3xl font-header font-black transition-colors" style={{color: getAccuracyColor(activeGameState.accuracy)}}>{activeGameState.accuracy}%</div>
                     </div>
@@ -3469,7 +3470,7 @@ function PlayPageContent() {
                          <div>
                            <div className="text-[8px] uppercase text-yellow-500 font-black tracking-widest flex items-center gap-1.5">
                              <div className="w-3 h-3 text-yellow-500">{I.trophy}</div>
-                             Récord Personal
+                             {t.pages.play.personalRecord}
                            </div>
                            <div className="text-md font-header font-black text-white">{getRecord(selectedTrack.id).toLocaleString()}</div>
                          </div>
@@ -3500,7 +3501,7 @@ function PlayPageContent() {
                         animate={{ rotate: 360 }} transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
                         className="w-16 h-16 border-t-2 border-r-2 border-neon-cyan rounded-full mb-6"
                       />
-                      <p className="text-lg font-header font-black text-white uppercase tracking-[0.3em] animate-pulse">CARGANDO NIVEL...</p>
+                      <p className="text-lg font-header font-black text-white uppercase tracking-[0.3em] animate-pulse">{t.pages.play.loadingLevel}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -3513,7 +3514,7 @@ function PlayPageContent() {
                     >
                       <div className="max-w-md text-center space-y-6 p-8">
                         <div className="w-20 h-20 mx-auto text-red-500">{I.fileText}</div>
-                        <h3 className="text-2xl font-header font-black text-red-500 uppercase tracking-wider">Error de Carga</h3>
+                        <h3 className="text-2xl font-header font-black text-red-500 uppercase tracking-wider">{t.pages.play.loadError}</h3>
                         <p className="text-gray-400 text-sm leading-relaxed">{loadError}</p>
                         <div className="flex gap-4 justify-center pt-4">
                           <Button onClick={() => handleStartGame(selectedTrack)} size="lg" className="!bg-white text-black font-black px-8 py-4 text-sm">
@@ -3574,13 +3575,13 @@ function PlayPageContent() {
                             <div className="w-3 h-3 text-gray-500">{I.user}</div>
                             <div className="min-w-0">
                               <div className="text-[7px] uppercase tracking-widest text-gray-500 font-black">Autor</div>
-                              <Link href="/profile/@ciszukoantony_" className="text-[10px] font-header text-white truncate hover:text-neon-blue transition-colors flex items-center gap-1">Ciszuko Antony<div className="w-2.5 h-2.5 text-neon-cyan shrink-0">{I.verified}</div></Link>
+                              <Link href="/profile/@ciszukoantony_" className="text-[10px] font-header text-white truncate hover:text-neon-blue transition-colors flex items-center gap-1">{t.pages.play.creatorName}<div className="w-2.5 h-2.5 text-neon-cyan shrink-0">{I.verified}</div></Link>
                             </div>
                           </div>
                           <div className="bg-white/5 p-2.5 rounded-xl border border-white/5 flex items-center gap-2">
                             <div className="w-3 h-3 text-gray-500">{I.upload}</div>
                             <div className="min-w-0">
-                              <div className="text-[7px] uppercase tracking-widest text-gray-500 font-black">Subido por</div>
+                              <div className="text-[7px] uppercase tracking-widest text-gray-500 font-black">{t.pages.play.uploaderLower}</div>
                               <Link href="/profile/@muzicmania" className="text-[10px] font-header text-white truncate hover:text-neon-blue transition-colors flex items-center gap-1">MuzicMania<div className="w-2.5 h-2.5 text-neon-cyan shrink-0">{I.verified}</div></Link>
                             </div>
                           </div>
@@ -3594,7 +3595,7 @@ function PlayPageContent() {
                           <div className="bg-white/5 p-2.5 rounded-xl border border-white/5 flex items-center gap-2">
                             <div className="w-3 h-3 text-gray-500">{I.heart}</div>
                             <div>
-                              <div className="text-[7px] uppercase tracking-widest text-gray-500 font-black">Valoración</div>
+                              <div className="text-[7px] uppercase tracking-widest text-gray-500 font-black">{t.pages.play.ratingLabel}</div>
                               <div className="text-[10px] font-header text-white">{selectedTrack.likes}</div>
                             </div>
                           </div>
@@ -3627,8 +3628,8 @@ function PlayPageContent() {
                   <div className="absolute inset-0 bg-black/90 backdrop-blur-xl z-50 flex flex-col items-center justify-center pointer-events-auto">
                     <motion.div initial={{scale:0.8,opacity:0}} animate={{scale:1,opacity:1}} className="flex flex-col items-center gap-4 text-center max-w-md px-6">
                       <svg className="w-16 h-16 text-red-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M18.364 5.636a9 9 0 010 12.728m-2.829-2.829a5 5 0 000-7.07m-4.243 4.243a1 1 0 010-1.414"/></svg>
-                      <h2 className="text-4xl font-header font-black uppercase italic text-red-500">Sin Conexión</h2>
-                      <p className="text-gray-400 text-sm">Se ha perdido la conexión a internet. La partida se ha pausado.</p>
+                      <h2 className="text-4xl font-header font-black uppercase italic text-red-500">{t.pages.play.offlineTitle}</h2>
+                      <p className="text-gray-400 text-sm">{t.pages.play.offlineDesc}</p>
                       <div className="flex items-center gap-2 text-yellow-400 text-xs font-bold mt-2">
                         <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                         Reconectando... intento {disconnectRetryCount}/{disconnectMaxRetries}
@@ -3705,7 +3706,7 @@ function PlayPageContent() {
                   </div>
                 </div>
 
-                {/* Barra de Duración (abajo) */}
+                {/* Barra de {t.pages.play.durationLabel} (abajo) */}
                 <div className="absolute bottom-0 left-0 right-0 z-20 bg-white/5 backdrop-blur-xl border-t border-white/10 px-4 py-1.5 flex items-center gap-3">
                   <div className="flex items-center gap-1.5 text-gray-400">
                     <div className="w-3 h-3">{I.clock}</div>
@@ -3728,24 +3729,24 @@ function PlayPageContent() {
                   initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
                   className="text-6xl md:text-8xl font-header font-black uppercase italic tracking-tighter text-red-600 drop-shadow-[0_0_30px_rgba(255,0,0,0.5)]"
                 >
-                  GAME OVER
+                  {t.pages.play.gameOver}
                 </motion.h1>
-                <p className="text-gray-500 uppercase tracking-[0.4em] font-bold text-sm">Protocolo de seguridad activado: Fallo Crítico</p>
+                <p className="text-gray-500 uppercase tracking-[0.4em] font-bold text-sm">{t.pages.play.securityProtocol}</p>
               </div>
 
               <div className="bg-red-600/10 border border-red-600/30 p-12 rounded-[3rem] backdrop-blur-md relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-b from-red-600/5 to-transparent" />
                 <div className="relative z-10 grid md:grid-cols-2 gap-8">
                   <div className="text-left space-y-2">
-                    <div className="text-[10px] text-gray-500 uppercase font-black tracking-widest">Puntuación Final</div>
+                    <div className="text-[10px] text-gray-500 uppercase font-black tracking-widest">{t.pages.play.finalScore}</div>
                     <div className="text-5xl font-header font-black text-white">{activeGameState.score.toLocaleString()}</div>
                   </div>
                   <div className="text-right space-y-2">
-                    <div className="text-[10px] text-gray-500 uppercase font-black tracking-widest">Errores Registrados</div>
+                    <div className="text-[10px] text-gray-500 uppercase font-black tracking-widest">{t.pages.play.registeredErrors}</div>
                     <div className="text-5xl font-header font-black text-red-500">{activeGameState.mistakes}</div>
                   </div>
                   <div className="col-span-2 pt-8 border-t border-red-600/20">
-                    <p className="text-gray-400 text-sm italic">&quot;Tu conexión con el Nexo se ha degradado por debajo de los niveles operativos.&quot;</p>
+                    <p className="text-gray-400 text-sm italic">{t.pages.play.degradedMsg}</p>
                   </div>
                 </div>
               </div>
@@ -3753,11 +3754,11 @@ function PlayPageContent() {
               <div className="flex flex-col md:flex-row justify-center gap-6 pt-8">
                 <Button onClick={() => handleStartGame(selectedTrack)} size="lg" className="!bg-white text-black font-black px-12 py-5 text-lg hover:scale-105 transition-all flex items-center gap-3">
                   <div className="w-5 h-5">{I.refresh}</div>
-                  REINTENTAR SIMULACIÓN
+                  {t.pages.play.retrySim}
                 </Button>
                 <Button onClick={handleAbortGame} variant="outline" size="lg" className="border-white/20 text-white font-black px-12 py-5 text-lg hover:bg-white/5 transition-all flex items-center gap-3">
                   <div className="w-5 h-5">{I.menu}</div>
-                  VOLVER AL MENÚ
+                  {t.pages.play.backToMenu}
                 </Button>
               </div>
             </motion.div>
@@ -3789,7 +3790,7 @@ function PlayPageContent() {
                      {[
                        { label: 'Score', val: activeGameState.score.toLocaleString(), cls: 'text-white', icon: I.stats, iconCls: 'text-neon-cyan' },
                        { label: 'Max Combo', val: `${activeGameState.maxCombo}x`, cls: 'text-neon-pink', icon: I.trophy, iconCls: 'text-yellow-500' },
-                       { label: 'Precisión', val: `${activeGameState.accuracy}%`, cls: 'text-neon-cyan', icon: I.target, iconCls: 'text-neon-cyan' },
+                       { label: '{t.pages.play.accuracy}', val: `${activeGameState.accuracy}%`, cls: 'text-neon-cyan', icon: I.target, iconCls: 'text-neon-cyan' },
                        { label: 'Errores', val: activeGameState.hits.miss, cls: 'text-red-500', icon: I.circleX, iconCls: 'text-red-400' },
                        { label: 'Punt. Máx', val: activeGameState.maxPotentialScore.toLocaleString(), cls: 'text-gray-300', icon: I.star, iconCls: 'text-yellow-400' },
                        { label: 'KPS', val: `${activeGameState.kps}`, cls: 'text-neon-green', icon: I.zap, iconCls: 'text-neon-green' },
@@ -3854,7 +3855,7 @@ function PlayPageContent() {
                      </Button>
                      <Button onClick={handleAbortGame} size="lg" className="!bg-white text-black font-black px-4 py-3 text-xs shadow-[0_0_30px_rgba(255,255,255,0.4)] hover:scale-105 transition-all flex items-center gap-2 flex-1 md:flex-initial">
                        <div className="w-4 h-4">{I.album}</div>
-                       SELECCIÓN
+                       {t.pages.play.selectLabel}
                      </Button>
                    </div>
                  </div>
@@ -3876,7 +3877,7 @@ function PlayPageContent() {
                   onClick={(e: React.MouseEvent) => e.stopPropagation()}
                 >
                   <div className="flex items-center justify-between mb-6 px-4">
-                    <h3 className="text-lg font-header font-black uppercase tracking-tight text-white">SELECCIONAR IDIOMA</h3>
+                    <h3 className="text-lg font-header font-black uppercase tracking-tight text-white">{t.pages.play.selectLanguage}</h3>
                     <button onClick={() => setHubSidebarView('main')} className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-gray-500 hover:text-white transition-all">{I.close}</button>
                   </div>
                   <div className="grid grid-cols-1 gap-1 max-h-[60vh] overflow-y-auto px-4">
@@ -3986,9 +3987,9 @@ function PlayPageContent() {
                         <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-neon-cyan/20 to-neon-purple/20 flex items-center justify-center">
                           <div className="w-7 h-7 text-neon-cyan">{I.settings}</div>
                         </div>
-                        <h4 className="text-lg font-header font-black text-white uppercase tracking-tight mb-2">Preferencias Generales</h4>
+                        <h4 className="text-lg font-header font-black text-white uppercase tracking-tight mb-2">{t.pages.play.generalPrefs}</h4>
                         <p className="text-[9px] text-gray-500 font-bold uppercase tracking-widest leading-relaxed max-w-sm mx-auto">
-                          Configura tu experiencia en MuzicMania. Ajusta pantalla, idioma y apariencia a tu gusto.
+                          {t.pages.play.generalPrefsDesc}
                         </p>
                       </div>
                       {/* Fullscreen Toggle */}
@@ -4053,7 +4054,7 @@ function PlayPageContent() {
                             className="w-full py-4 text-sm font-black uppercase tracking-widest rounded-xl border border-neon-cyan/30 bg-neon-cyan/10 text-neon-cyan flex items-center justify-center gap-3 cursor-default"
                           >
                             <div className="w-4 h-4">{I.moon}</div>
-                            Automático (oscuro)
+                            {t.pages.play.autoDark}
                             <svg className="w-4 h-4 text-neon-cyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
                               <polyline points="20 6 9 17 4 12"/>
                             </svg>
@@ -4074,7 +4075,7 @@ function PlayPageContent() {
                         <div>
                           <div className="flex items-center gap-2 text-[10px] text-gray-500 uppercase font-black tracking-widest mb-3">
                             <div className="w-4 h-4">{I.fingerprint}</div>
-                            <span>Modo Daltonismo</span>
+                            <span>{t.pages.play.colorblindMode}</span>
                           </div>
                           <div className="flex flex-wrap gap-1.5">
                             {[
@@ -4100,14 +4101,14 @@ function PlayPageContent() {
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2 text-[10px] text-gray-500 uppercase font-black tracking-widest">
                               <div className="w-4 h-4">{I.contrast}</div>
-                              <span>Alto Contraste</span>
+                              <span>{t.pages.play.highContrast}</span>
                             </div>
                             <button onClick={() => { setHighContrast(!highContrast); localStorage.setItem('display_high_contrast', String(!highContrast)); }}
                               className={`relative w-12 h-6 rounded-full transition-all border ${highContrast ? 'bg-yellow-500 border-yellow-400' : 'bg-white/10 border-white/20'}`}>
                               <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-md transition-all ${highContrast ? 'left-[26px]' : 'left-[1px]'}`} />
                             </button>
                           </div>
-                          <p className="mt-2 text-[9px] text-gray-600 leading-relaxed">Aumenta el contraste de colores para mejorar la legibilidad de notas y elementos del juego.</p>
+                          <p className="mt-2 text-[9px] text-gray-600 leading-relaxed">{t.pages.play.highContrastDesc}</p>
                         </div>
 
                       </div>
@@ -4120,7 +4121,7 @@ function PlayPageContent() {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2 text-[10px] text-gray-500 uppercase font-black tracking-widest">
                             <div className="w-4 h-4">{I.bug}</div>
-                            <span>Modo Debug</span>
+                            <span>{t.pages.play.debugMode}</span>
                           </div>
                           <button onClick={() => {
                             const next = !showDebug;
@@ -4131,14 +4132,14 @@ function PlayPageContent() {
                             <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-md transition-all ${showDebug ? 'left-[26px]' : 'left-[1px]'}`} />
                           </button>
                         </div>
-                        <p className="text-[8px] text-gray-600 font-bold uppercase tracking-wider">Activa el panel de informaci&oacute;n superpuesto en pantalla</p>
+                        <p className="text-[8px] text-gray-600 font-bold uppercase tracking-wider">{t.pages.play.debugModeDesc}</p>
 
                         {showDebug && (
                           <>
                             <div className="border-t border-white/5 pt-5 space-y-4">
                               <div className="flex items-center gap-2 text-[10px] text-neon-cyan uppercase font-black tracking-widest">
                                 <div className="w-4 h-4">{I.sliders}</div>
-                                <span>Mostrar en Panel</span>
+                                <span>{t.pages.play.showInPanel}</span>
                               </div>
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2 text-[9px] text-gray-400">
@@ -4177,7 +4178,7 @@ function PlayPageContent() {
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2 text-[10px] text-gray-500 uppercase font-black tracking-widest">
                                   <div className="w-4 h-4">{I.monitor}</div>
-                                  <span>Panel Superpuesto</span>
+                                  <span>{t.pages.play.overlayPanel}</span>
                                 </div>
                                 <button onClick={() => setDebugShowInfoPanel(!debugShowInfoPanel)}
                                   className={`px-3 py-1.5 text-[8px] font-black uppercase tracking-widest rounded-lg border transition-all flex items-center gap-1.5 ${debugShowInfoPanel ? 'bg-neon-cyan/20 border-neon-cyan text-neon-cyan' : 'bg-white/5 border-transparent text-gray-400 hover:bg-white/10'}`}>
@@ -4185,7 +4186,7 @@ function PlayPageContent() {
                                   {debugShowInfoPanel ? 'ACTIVO' : 'INACTIVO'}
                                 </button>
                               </div>
-                              <p className="text-[8px] text-gray-600 font-bold uppercase tracking-wider mt-2">Panel arrastrable con la informaci&oacute;n seleccionada</p>
+                              <p className="text-[8px] text-gray-600 font-bold uppercase tracking-wider mt-2">{t.pages.play.overlayPanelDesc}</p>
                             </div>
 
                             {/* Staff options */}
@@ -4193,12 +4194,12 @@ function PlayPageContent() {
                               <div className="border-t border-white/5 pt-5 space-y-4">
                                 <div className="flex items-center gap-2 text-[10px] text-neon-cyan uppercase font-black tracking-widest">
                                   <div className="w-4 h-4">{I.shield}</div>
-                                  <span>Staff — Opciones Avanzadas</span>
+                                  <span>{t.pages.play.staffAdvanced}</span>
                                 </div>
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-2 text-[9px] text-gray-400">
                                     <div className="w-3 h-3">{I.grid}</div>
-                                    <span>Overlay de Colisi&oacute;n</span>
+                                    <span>{t.pages.play.collisionOverlay}</span>
                                   </div>
                                   <button className={`relative w-12 h-6 rounded-full transition-all border bg-white/10 border-white/20`}>
                                     <div className="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-md left-[1px]" />
@@ -4207,7 +4208,7 @@ function PlayPageContent() {
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-2 text-[9px] text-gray-400">
                                     <div className="w-3 h-3">{I.fileText}</div>
-                                    <span>Log de Eventos</span>
+                                    <span>{t.pages.play.eventLog}</span>
                                   </div>
                                   <button className={`relative w-12 h-6 rounded-full transition-all border bg-white/10 border-white/20`}>
                                     <div className="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-md left-[1px]" />
@@ -4216,7 +4217,7 @@ function PlayPageContent() {
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-2 text-[9px] text-gray-400">
                                     <div className="w-3 h-3">{I.zap}</div>
-                                    <span>Simular Lag</span>
+                                    <span>{t.pages.play.simulateLag}</span>
                                   </div>
                                   <button className={`relative w-12 h-6 rounded-full transition-all border bg-white/10 border-white/20`}>
                                     <div className="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-md left-[1px]" />
@@ -4231,7 +4232,7 @@ function PlayPageContent() {
                                 localStorage.removeItem('debug_enabled');
                               }} className="w-full py-2.5 text-[9px] font-black uppercase tracking-widest rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-all flex items-center justify-center gap-2">
                                 <div className="w-3 h-3">{I.trash}</div>
-                                DESACTIVAR DEBUG
+                                {t.pages.play.disableDebug}
                               </button>
                             </div>
                           </>
@@ -4246,7 +4247,7 @@ function PlayPageContent() {
                           <div className="flex justify-between text-xs font-bold text-white mb-2">
                             <div className="flex items-center gap-2">
                               <div className="w-4 h-4">{I.music}</div>
-                              <span>M&uacute;sica</span>
+                              <span>{t.pages.play.musicLabel}</span>
                             </div>
                             <span className="text-neon-cyan">{musicVol}%</span>
                           </div>
@@ -4266,7 +4267,7 @@ function PlayPageContent() {
                           <div className="flex justify-between text-xs font-bold text-white mb-2">
                             <div className="flex items-center gap-2">
                               <div className="w-4 h-4">{I.volume}</div>
-                              <span>Efectos (SFX)</span>
+                              <span>{t.pages.play.sfxLabel}</span>
                             </div>
                             <span className="text-neon-pink">{sfxVol}%</span>
                           </div>
@@ -4281,13 +4282,13 @@ function PlayPageContent() {
                         <div>
                           <div className="flex items-center gap-2 text-[10px] text-gray-500 uppercase font-black tracking-widest mb-3">
                             <div className="w-4 h-4">{I.mic}</div>
-                            <span>1. Entrada de Audio (Micr&oacute;fono)</span>
+                            <span>{t.pages.play.audioInput}</span>
                           </div>
                           <div className="space-y-3">
                             {/* Volumen micrófono */}
                             <div className="space-y-1.5">
                               <div className="flex items-center justify-between text-[9px] text-gray-500 uppercase font-black tracking-widest">
-                                <span>Volumen Micr&oacute;fono</span>
+                                <span>{t.pages.play.micVolume}</span>
                                 <span className={!audioInputDevice ? 'text-gray-600' : 'text-neon-cyan'}>{micVolume}%</span>
                               </div>
                               <input type="range" min="0" max="100" value={micVolume}
@@ -4296,7 +4297,7 @@ function PlayPageContent() {
                                 className={`w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-neon-cyan ${!audioInputDevice ? 'opacity-30 cursor-not-allowed' : ''}`}
                               />
                               {!audioInputDevice && (
-                                <p className="text-[7px] text-gray-600 font-bold uppercase tracking-wider">Selecciona un micr&oacute;fono para ajustar el volumen</p>
+                                <p className="text-[7px] text-gray-600 font-bold uppercase tracking-wider">{t.pages.play.selectMic}</p>
                               )}
                             </div>
                             <div className="relative">
@@ -4310,7 +4311,7 @@ function PlayPageContent() {
                                 <div className="absolute z-20 mt-1 w-full bg-[#1a1a2e] border border-white/10 rounded-xl overflow-hidden shadow-xl max-h-48 overflow-y-auto">
                                   {inputDeviceList.length === 0 ? (
                                     <div className="px-4 py-3 text-[9px] text-gray-500 text-center space-y-2">
-                                      <p>No se detectaron micr&oacute;fonos</p>
+                                      <p>{t.pages.play.noMics}</p>
                                       <button onClick={async () => {
                                         try {
                                           await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -4318,7 +4319,7 @@ function PlayPageContent() {
                                           setInputDeviceList(devices.filter(d => d.kind === 'audioinput'));
                                         } catch { setHubError({title:'ERROR DE PERMISOS',desc:'No se pudo acceder al micrófono. Verifica los permisos del navegador.'}); }
                                       }} className="mt-2 text-neon-cyan hover:underline flex items-center justify-center gap-1">
-                                        <div className="w-3 h-3">{I.refresh}</div> Solicitar permisos
+                                        <div className="w-3 h-3">{I.refresh}</div> {t.pages.play.requestPermissions}
                                       </button>
                                     </div>
                                   ) : (
@@ -4348,11 +4349,11 @@ function PlayPageContent() {
                             </div>
                           </div>
                         </div>
-                        {/* 2. Salida de Audio */}
+                        {/* {t.pages.play.audioOutput} */}
                         <div className="border-t border-white/5 pt-4">
                           <div className="flex items-center gap-2 text-[10px] text-gray-500 uppercase font-black tracking-widest mb-3">
                             <div className="w-4 h-4">{I.monitorSpeaker}</div>
-                            <span>2. Salida de Audio</span>
+                            <span>{t.pages.play.audioOutput}</span>
                           </div>
                           <div className="space-y-3">
                             <div className="flex gap-2">
@@ -4362,7 +4363,7 @@ function PlayPageContent() {
                                     ? 'bg-neon-cyan/20 border-neon-cyan text-neon-cyan' : 'bg-white/5 border-transparent text-gray-400 hover:bg-white/10'
                                 }`}>
                                 <div className="w-4 h-4">{I.radio}</div>
-                                Est&eacute;reo
+                                {t.pages.play.stereo}
                               </button>
                               <button onClick={() => { setAudioOutput('mono'); localStorage.setItem('audio_output', 'mono'); }}
                                 className={`flex-1 py-3 text-xs font-bold uppercase rounded-xl border transition-all flex items-center justify-center gap-2 ${
@@ -4374,7 +4375,7 @@ function PlayPageContent() {
                               </button>
                             </div>
                             <div className="relative">
-                              <div className="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-2">Dispositivo de Salida</div>
+                              <div className="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-2">{t.pages.play.outputDevice}</div>
                               <button onClick={() => setShowAudioDeviceDropdown(!showAudioDeviceDropdown)}
                                 className="w-full py-3 text-[9px] font-black uppercase tracking-widest rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 text-gray-400 transition-all flex items-center justify-center gap-2">
                                 <div className="w-4 h-4">{I.monitorSpeaker}</div>
@@ -4385,7 +4386,7 @@ function PlayPageContent() {
                                 <div className="absolute z-20 mt-1 w-full bg-[#1a1a2e] border border-white/10 rounded-xl overflow-hidden shadow-xl max-h-48 overflow-y-auto">
                                   {audioDeviceList.length === 0 ? (
                                     <div className="px-4 py-3 text-[9px] text-gray-500 text-center space-y-2">
-                                      <p>No se detectaron dispositivos de salida</p>
+                                      <p>{t.pages.play.noOutputs}</p>
                                       <button onClick={async () => {
                                         try {
                                           const devices = await navigator.mediaDevices.enumerateDevices();
@@ -4421,12 +4422,12 @@ function PlayPageContent() {
                             </div>
                           </div>
                         </div>
-                        {/* Sonido de Acierto */}
+                        {/* {t.pages.play.hitSound} */}
                         <div className="border-t border-white/5 pt-4">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2 text-[10px] text-gray-500 uppercase font-black tracking-widest">
                               <div className="w-4 h-4">{I.zap}</div>
-                              <span>Sonido de Acierto</span>
+                              <span>{t.pages.play.hitSound}</span>
                             </div>
                             <button onClick={() => {
                               setHitSound(!hitSound);
@@ -4434,7 +4435,7 @@ function PlayPageContent() {
                               <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-md transition-all ${hitSound ? 'left-[26px]' : 'left-[1px]'}`} />
                             </button>
                           </div>
-                          <p className="text-[8px] text-gray-600 font-bold uppercase tracking-wider mt-2">Al activarse, sonar&aacute; un &quot;tick&quot; al acertar una nota</p>
+                          <p className="text-[8px] text-gray-600 font-bold uppercase tracking-wider mt-2">{t.pages.play.hitSoundDesc}</p>
                         </div>
                       </div>
                     </motion.div>
@@ -4444,13 +4445,13 @@ function PlayPageContent() {
                     <motion.div key="controls" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
                       <div className="bg-white/5 p-5 rounded-xl border border-white/5 space-y-4">
                         <div>
-                          <div className="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-3">Tipo de Input</div>
+                          <div className="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-3">{t.pages.play.inputType}</div>
                           <div className="flex gap-2">
                             <button onClick={() => saveInputMode('arrows')} className={`flex-1 py-3 text-xs font-bold uppercase rounded-xl border transition-all ${inputMode === 'arrows' ? 'bg-neon-cyan/20 border-neon-cyan text-neon-cyan shadow-neon-cyan/20' : 'bg-white/5 border-transparent text-gray-400 hover:bg-white/10'}`}>
                               Flechas
                             </button>
                             <button onClick={() => saveInputMode('wasd')} className={`flex-1 py-3 text-xs font-bold uppercase rounded-xl border transition-all ${inputMode === 'wasd' ? 'bg-neon-pink/20 border-neon-pink text-neon-pink shadow-neon-pink/20' : 'bg-white/5 border-transparent text-gray-400 hover:bg-white/10'}`}>
-                              W A S D
+                              {t.pages.play.wasdKeys}
                             </button>
                             <button onClick={() => saveInputMode('custom')} className={`flex-1 py-3 text-xs font-bold uppercase rounded-xl border transition-all ${inputMode === 'custom' ? 'bg-neon-purple/20 border-neon-purple text-neon-purple shadow-neon-purple/20' : 'bg-white/5 border-transparent text-gray-400 hover:bg-white/10'}`}>
                               Custom
@@ -4471,14 +4472,14 @@ function PlayPageContent() {
                                   {editingKeyIndex === i ? '...' : key.replace('Key', '').replace('Arrow', '').toUpperCase()}
                                 </button>
                               ))}
-                              <p className="col-span-4 text-[9px] text-gray-500 uppercase text-center mt-2 font-bold tracking-widest">Haz clic en un carril para reasignar tecla</p>
+                              <p className="col-span-4 text-[9px] text-gray-500 uppercase text-center mt-2 font-bold tracking-widest">{t.pages.play.clickToRebind}</p>
                             </motion.div>
                           )}
                         </div>
                         <div className="border-t border-white/5 pt-4">
                           <div className="flex items-center gap-2 text-[10px] text-gray-500 uppercase font-black tracking-widest mb-3">
                             <div className="w-4 h-4">{I.smartphone}</div>
-                            <span>Controles T&aacute;ctiles</span>
+                            <span>{t.pages.play.touchControls}</span>
                           </div>
                           <button onClick={() => { setTactileControls(!tactileControls); localStorage.setItem('display_tactile', String(!tactileControls)); }}
                             className={`w-full py-3 text-[9px] font-black uppercase tracking-widest rounded-xl border transition-all flex items-center justify-center gap-2 ${
@@ -4498,7 +4499,7 @@ function PlayPageContent() {
                         <div>
                           <div className="flex items-center gap-2 text-[10px] text-gray-500 uppercase font-black tracking-widest mb-3">
                             <div className="w-4 h-4">{I.target}</div>
-                            <span>Zonas de Acierto</span>
+                            <span>{t.pages.play.hitzones}</span>
                           </div>
                           <button
                             onClick={() => { setShowHitZoneVisuals(!showHitZoneVisuals); activeSetShowHitZones(!showHitZoneVisuals); }}
@@ -4515,7 +4516,7 @@ function PlayPageContent() {
                         <div>
                           <div className="flex items-center gap-2 text-[10px] text-gray-500 uppercase font-black tracking-widest mb-3">
                             <div className="w-4 h-4">{I.clock}</div>
-                            <span>Precisi&oacute;n MS</span>
+                            <span>{t.pages.play.precisionMs}</span>
                           </div>
                           <button
                             onClick={() => setShowPrecisionMSState(!showPrecisionMS)}
@@ -4533,7 +4534,7 @@ function PlayPageContent() {
                         <div className="border-t border-white/5 pt-5">
                           <div className="flex items-center gap-2 text-[10px] text-gray-500 uppercase font-black tracking-widest mb-3">
                             <div className="w-4 h-4">{I.layers}</div>
-                            <span>Calidad Gr&aacute;fica</span>
+                            <span>{t.pages.play.graphicsQuality}</span>
                           </div>
                           <div className="space-y-4">
                             <div className="flex flex-wrap gap-1.5">
@@ -4586,7 +4587,7 @@ function PlayPageContent() {
                           </div>
                           <div className="flex items-center gap-2 text-[10px] text-gray-500 uppercase font-black tracking-widest mb-2">
                             <div className="w-4 h-4">{I.monitor}</div>
-                            <span>Motor de Renderizado</span>
+                            <span>{t.pages.play.renderEngine}</span>
                           </div>
                            <div className="flex gap-1.5">
                              {[
@@ -4611,7 +4612,7 @@ function PlayPageContent() {
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2 text-[10px] text-gray-500 uppercase font-black tracking-widest">
                               <div className="w-4 h-4">{I.sparkles}</div>
-                              <span>Efectos Glow</span>
+                              <span>{t.pages.play.glowEffects}</span>
                             </div>
                             <button onClick={() => { setDisableGlow(!disableGlow); localStorage.setItem('graphics_disable_glow', String(!disableGlow)); }}
                               className={`relative w-12 h-6 rounded-full transition-all border ${!disableGlow ? 'bg-neon-cyan border-neon-cyan' : 'bg-white/10 border-white/20'}`}>
@@ -4621,7 +4622,7 @@ function PlayPageContent() {
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2 text-[10px] text-gray-500 uppercase font-black tracking-widest">
                               <div className="w-4 h-4">{I.grid}</div>
-                              <span>Efectos de Fondo</span>
+                              <span>{t.pages.play.bgEffects}</span>
                             </div>
                             <button onClick={() => { setDisableBgEffects(!disableBgEffects); localStorage.setItem('graphics_disable_bg', String(!disableBgEffects)); }}
                               className={`relative w-12 h-6 rounded-full transition-all border ${!disableBgEffects ? 'bg-neon-purple border-neon-purple' : 'bg-white/10 border-white/20'}`}>
@@ -4631,7 +4632,7 @@ function PlayPageContent() {
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2 text-[10px] text-gray-500 uppercase font-black tracking-widest">
                               <div className="w-4 h-4">{I.star}</div>
-                              <span>Iconos Flotantes</span>
+                              <span>{t.pages.play.floatingIcons}</span>
                             </div>
                             <button onClick={() => { setDisableFloatingIcons(!disableFloatingIcons); localStorage.setItem('graphics_disable_floating', String(!disableFloatingIcons)); }}
                               className={`relative w-12 h-6 rounded-full transition-all border ${!disableFloatingIcons ? 'bg-neon-pink border-neon-pink' : 'bg-white/10 border-white/20'}`}>
@@ -4649,7 +4650,7 @@ function PlayPageContent() {
                         <div className="flex items-center justify-between">
                           <span className="text-[10px] text-gray-500 uppercase font-black tracking-widest flex items-center gap-2">
                             <div className="w-4 h-4">{I.zap}</div>
-                            Indicador Early / Late
+                            {t.pages.play.earlyLate}
                           </span>
                           <button
                             onClick={() => setShowEarlyLateState(!showEarlyLate)}
@@ -4669,7 +4670,7 @@ function PlayPageContent() {
                             <div>
                               <div className="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-2 flex items-center gap-2">
                                 <div className="w-4 h-4">{I.radio}</div>
-                                Prueba de Audio
+                                {t.pages.play.audioTest}
                               </div>
                               <button
                                 onClick={() => {
@@ -4692,15 +4693,15 @@ function PlayPageContent() {
                                 className="w-full py-3 text-[9px] font-black uppercase tracking-widest rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 text-gray-400 transition-all flex items-center justify-center gap-2"
                               >
                                 <div className="w-4 h-4">{I.headphones}</div>
-                                PROBAR TONO DE REFERENCIA (440Hz)
+                                {t.pages.play.testTone}
                               </button>
                             </div>
                             <div>
                               <div className="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-2 flex items-center gap-2">
                                 <div className="w-4 h-4">{I.sliders}</div>
-                                Calibraci&oacute;n de Offset
+                                {t.pages.play.offsetCalibration}
                               </div>
-                              <p className="text-[8px] text-gray-600 font-bold uppercase tracking-wider mb-3">Presiona la barra espaciadora al ritmo del pulso visual para calibrar tu offset autom&aacute;ticamente</p>
+                              <p className="text-[8px] text-gray-600 font-bold uppercase tracking-wider mb-3">{t.pages.play.offsetDesc}</p>
                               <button
                                 onClick={() => {
                                   setCalibrationHits(0);
@@ -4711,19 +4712,19 @@ function PlayPageContent() {
                                 className="w-full py-4 text-[10px] font-black uppercase tracking-widest rounded-xl border border-neon-purple/30 bg-neon-purple/10 hover:bg-neon-purple/20 text-neon-purple transition-all flex items-center justify-center gap-2"
                               >
                                 <div className="w-4 h-4">{I.zap}</div>
-                                INICIAR CALIBRACI&Oacute;N
+                                {t.pages.play.startCalibration}
                               </button>
                             </div>
                             {detectedOffset !== null && (
                               <div className="bg-neon-cyan/10 border border-neon-cyan/30 rounded-xl p-4 space-y-3">
                                 <div className="text-center">
-                                  <div className="text-[9px] text-gray-500 uppercase font-black tracking-widest mb-1">Offset detectado</div>
+                                  <div className="text-[9px] text-gray-500 uppercase font-black tracking-widest mb-1">{t.pages.play.offsetDetected}</div>
                                   <div className="text-xl font-header font-black text-neon-cyan">{detectedOffset > 0 ? `+${detectedOffset}` : detectedOffset} ms</div>
                                 </div>
                                 <div>
                                   <div className="text-[8px] text-gray-500 uppercase font-black tracking-widest mb-1 flex items-center gap-1">
                                     <div className="w-3 h-3">{I.sliders}</div>
-                                    Ajuste manual
+                                    {t.pages.play.manualAdjust}
                                   </div>
                                   <input
                                     type="range"
@@ -4759,7 +4760,7 @@ function PlayPageContent() {
                             <div className="text-center">
                               <div className="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-2 flex items-center justify-center gap-2">
                                 <div className="w-4 h-4">{I.zap}</div>
-                                Calibrando... Presiona ESPACIO al ritmo del pulso
+                                {t.pages.play.calibrating}
                               </div>
                               <div className="flex justify-center gap-1 mb-4">
                                 {[0,1,2,3,4].map(i => (
@@ -4827,7 +4828,7 @@ function PlayPageContent() {
                               onClick={() => setIsCalibrating(false)}
                               className="w-full py-2 text-[8px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-all"
                             >
-                              CANCELAR CALIBRACI&Oacute;N
+                              {t.pages.play.cancelCalibration}
                             </button>
                           </div>
                         )}
@@ -4856,9 +4857,9 @@ function PlayPageContent() {
                   </button>
                   <div className="text-center space-y-4 mb-8">
                     <h2 className="text-2xl font-header font-black uppercase italic tracking-tighter text-white">
-                      GU&Iacute;A DE <span className="text-neon-cyan">MUZICMANIA</span>
+                      {t.pages.play.guideOf} <span className="text-neon-cyan">MUZICMANIA</span>
                     </h2>
-                    <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest max-w-xl mx-auto">Domina el ritmo y alcanza la sincronizaci&oacute;n perfecta.</p>
+                    <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest max-w-xl mx-auto">{t.pages.play.guideSub}</p>
                   </div>
                   <div className="space-y-6">
                     <div className="bg-white/5 p-5 rounded-2xl border border-white/5">
@@ -4880,11 +4881,11 @@ function PlayPageContent() {
                           </div>
                         ))}
                       </div>
-                      <div className="mt-3 text-[9px] text-gray-500 font-bold text-center">Usa FLECHAS o WASD para golpear las notas. Mant&eacute;n presionado para notas largas (holds).</div>
+                      <div className="mt-3 text-[9px] text-gray-500 font-bold text-center">{t.pages.play.guideHow}</div>
                     </div>
                     <div className="bg-white/5 p-5 rounded-2xl border border-white/5">
                       <h3 className="text-sm font-header font-black text-white uppercase italic tracking-tight mb-3 flex items-center gap-2">
-                        <div className="w-4 h-4 text-neon-purple">{I.target}</div> Puntuaci&oacute;n
+                        <div className="w-4 h-4 text-neon-purple">{I.target}</div> {t.pages.play.scoreLabel}
                       </h3>
                       <div className="space-y-2">
                         {[
@@ -4902,17 +4903,17 @@ function PlayPageContent() {
                       <div className="mt-3 grid grid-cols-2 gap-2 text-[9px]">
                         <div className="p-2 rounded-lg bg-black/30 border border-white/5 text-center">
                           <span className="text-neon-cyan font-black">Combo</span>
-                          <p className="text-gray-500 font-bold">Multiplica tu puntuaci&oacute;n por hasta 8x</p>
+                          <p className="text-gray-500 font-bold">{t.pages.play.scoreMult}</p>
                         </div>
                         <div className="p-2 rounded-lg bg-black/30 border border-white/5 text-center">
                           <span className="text-neon-pink font-black">KPS</span>
-                          <p className="text-gray-500 font-bold">Notas por segundo — mide tu velocidad</p>
+                          <p className="text-gray-500 font-bold">{t.pages.play.npsLabel}</p>
                         </div>
                       </div>
                     </div>
                     <Link href="/help"
                       className="block w-full text-center px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-white hover:bg-white/10 hover:border-white/20 transition-all"
-                    >BUSCAR M&Aacute;S AYUDA</Link>
+                    >{t.pages.play.searchMoreHelp}</Link>
                   </div>
                 </motion.div>
               </div>
@@ -4935,28 +4936,28 @@ function PlayPageContent() {
                   <div className="w-16 h-16 bg-neon-pink/10 rounded-full flex items-center justify-center text-neon-pink mx-auto mb-6 shadow-[0_0_30px_rgba(255,0,255,0.1)]">
                     <div className="w-8 h-8">{I.starOutline}</div>
                   </div>
-                  <h2 className="text-3xl font-header font-black italic uppercase tracking-tighter text-white mb-1">Créditos</h2>
-                  <p className="text-neon-pink text-[9px] font-black uppercase tracking-[0.4em] mb-8 italic">EL EQUIPO DETRÁS DEL BIT</p>
+                  <h2 className="text-3xl font-header font-black italic uppercase tracking-tighter text-white mb-1">{t.pages.play.creditsSection}</h2>
+                  <p className="text-neon-pink text-[9px] font-black uppercase tracking-[0.4em] mb-8 italic">{t.pages.play.teamBehind}</p>
                   <div className="space-y-6 mb-8">
                     <div>
-                      <h3 className="text-gray-500 text-[8px] font-black uppercase tracking-widest mb-1">Fundador & Desarrollador Principal</h3>
-                      <p className="text-white font-bold text-lg">Ciszuko Antony</p>
+                      <h3 className="text-gray-500 text-[8px] font-black uppercase tracking-widest mb-1">{t.pages.play.founderRole}</h3>
+                      <p className="text-white font-bold text-lg">{t.pages.play.creatorName}</p>
                     </div>
                     <div>
-                      <h3 className="text-gray-500 text-[8px] font-black uppercase tracking-widest mb-1">Diseño & UI/UX</h3>
-                      <p className="text-white font-bold text-sm">CiszuNetwork Studio</p>
+                      <h3 className="text-gray-500 text-[8px] font-black uppercase tracking-widest mb-1">{t.pages.play.designUiux}</h3>
+                      <p className="text-white font-bold text-sm">{t.pages.play.studioName}</p>
                     </div>
                     <div>
-                      <h3 className="text-gray-500 text-[8px] font-black uppercase tracking-widest mb-1">Motor de Juego</h3>
-                      <p className="text-white font-bold text-sm">Custom Canvas Engine v2.0</p>
+                      <h3 className="text-gray-500 text-[8px] font-black uppercase tracking-widest mb-1">{t.pages.play.gameEngine}</h3>
+                      <p className="text-white font-bold text-sm">{t.pages.play.engineName}</p>
                     </div>
                     <div className="pt-4 border-t border-white/5">
-                      <p className="text-[9px] text-gray-600 font-black uppercase tracking-widest">&copy; 2026 CiszuNetwork. MuzicMania.</p>
+                      <p className="text-[9px] text-gray-600 font-black uppercase tracking-widest">{t.pages.play.copyrightMuzic}</p>
                     </div>
                   </div>
                   <Link href="/credits"
                     className="block w-full text-center px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-white hover:bg-white/10 hover:border-white/20 transition-all"
-                  >VER CRÉDITOS COMPLETOS</Link>
+                  >{t.pages.play.viewFullCredits}</Link>
                 </motion.div>
               </div>
             )}
@@ -4976,7 +4977,7 @@ function PlayPageContent() {
                     <div className="w-5 h-5">{I.circleX}</div>
                   </button>
                   <h3 className="text-lg font-header font-black text-white italic uppercase flex items-center gap-2 mb-6 justify-center">
-                    <div className="w-5 h-5 text-neon-green">{I.discord}</div> Redes Sociales
+                    <div className="w-5 h-5 text-neon-green">{I.discord}</div> {t.pages.play.socialNetworks}
                   </h3>
                   <div className="flex flex-wrap justify-center gap-4">
                       {[
@@ -4996,7 +4997,7 @@ function PlayPageContent() {
                       </a>
                     ))}
                   </div>
-                  <p className="text-center text-[8px] text-gray-700 font-bold uppercase tracking-widest mt-6">&iexcl;S&iacute;guenos en todas las plataformas!</p>
+                  <p className="text-center text-[8px] text-gray-700 font-bold uppercase tracking-widest mt-6">{t.pages.play.followUs}</p>
                   <Link href="/contact"
                     className="block w-full text-center mt-4 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-white hover:bg-white/10 hover:border-white/20 transition-all"
                   >CONTACTO</Link>
@@ -5021,8 +5022,8 @@ function PlayPageContent() {
                       <div className="w-7 h-7">{I.about}</div>
                     </div>
                     <div>
-                      <h2 className="text-2xl font-header font-black italic uppercase tracking-tighter text-white">Acerca de</h2>
-                      <p className="text-neon-blue text-[9px] font-black uppercase tracking-widest italic">MUZICMANIA v2.0</p>
+                      <h2 className="text-2xl font-header font-black italic uppercase tracking-tighter text-white">{t.pages.play.aboutSection}</h2>
+                      <p className="text-neon-blue text-[9px] font-black uppercase tracking-widest italic">{t.pages.play.versionTitle}</p>
                     </div>
                   </div>
 
@@ -5030,26 +5031,26 @@ function PlayPageContent() {
                     <p>MuzicMania es un juego r&iacute;tmico desarrollado por CiszuNetwork que combina m&uacute;sica electr&oacute;nica con mec&aacute;nicas de ritmo precisas. Inspirado en los cl&aacute;sicos del g&eacute;nero, ofrece una experiencia &uacute;nica con skins personalizables, part&iacute;culas din&aacute;micas y un sistema de puntuaci&oacute;n avanzado.</p>
                     <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-2">
                       <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-tighter">
-                        <span className="text-gray-500">Versi&oacute;n</span>
+                        <span className="text-gray-500">{t.pages.play.versionLabel}</span>
                         <span className="text-white">2.0.0</span>
                       </div>
                       <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-tighter">
                         <span className="text-gray-500">Plataforma</span>
-                        <span className="text-white">Web / PDWA</span>
+                        <span className="text-white">{t.pages.play.techWeb}</span>
                       </div>
                       <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-tighter">
                         <span className="text-gray-500">Motor</span>
-                        <span className="text-white">Next.js + Canvas</span>
+                        <span className="text-white">{t.pages.play.techStack}</span>
                       </div>
                       <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-tighter">
-                        <span className="text-gray-500">Base de Datos</span>
+                        <span className="text-gray-500">{t.pages.play.techDb}</span>
                         <span className="text-neon-cyan">Supabase</span>
                       </div>
                     </div>
                   </div>
                   <Link href="/information"
                     className="block w-full text-center px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-white hover:bg-white/10 hover:border-white/20 transition-all"
-                  >M&Aacute;S INFORMACI&Oacute;N</Link>
+                  >{t.pages.play.moreInfo}</Link>
                 </motion.div>
               </div>
             )}
@@ -5064,7 +5065,7 @@ function PlayPageContent() {
                     <div className="w-5 h-5">{I.circleX}</div>
                   </button>
                   <h3 className="text-lg font-header font-black text-white italic uppercase flex items-center gap-2 mb-4">
-                    <div className="w-5 h-5 text-neon-green">{I.album}</div> Mis Playlists
+                    <div className="w-5 h-5 text-neon-green">{I.album}</div> {t.pages.play.myPlaylists}
                   </h3>
 
                   {/* Create new playlist */}
@@ -5073,7 +5074,7 @@ function PlayPageContent() {
                       type="text"
                       value={newPlaylistName}
                       onChange={e => setNewPlaylistName(e.target.value)}
-                      placeholder="NOMBRE DE PLAYLIST"
+                      placeholder={t.pages.play.phPlaylistName}
                       className="flex-1 bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-[10px] font-bold text-white placeholder-gray-700 focus:outline-none focus:border-neon-green/50 uppercase tracking-widest"
                       onKeyDown={e => { if (e.key === 'Enter') createPlaylist(newPlaylistName); }}
                     />
@@ -5089,7 +5090,7 @@ function PlayPageContent() {
                   {/* Playlist list */}
                   <div className="space-y-2 max-h-64 overflow-y-auto custom-scrollbar">
                     {playlists.length === 0 ? (
-                      <p className="text-center text-[10px] text-gray-600 font-bold uppercase py-8">No hay playlists aún</p>
+                      <p className="text-center text-[10px] text-gray-600 font-bold uppercase py-8">{t.pages.play.noPlaylists}</p>
                     ) : (
                       playlists.map(pl => (
                         <div key={pl.name} className="flex items-center justify-between bg-white/5 rounded-xl px-4 py-3 border border-white/5 group/pl">
@@ -5132,7 +5133,7 @@ function PlayPageContent() {
                   {leaderboardData.length === 0 ? (
                     <div className="text-center py-8">
                       <div className="w-12 h-12 mx-auto mb-3 text-gray-700">{I.trophy}</div>
-                      <p className="text-[10px] text-gray-600 font-bold uppercase tracking-widest">Sin puntuaciones registradas</p>
+                      <p className="text-[10px] text-gray-600 font-bold uppercase tracking-widest">{t.pages.play.noScores}</p>
                     </div>
                   ) : (
                     <div className="space-y-2">
@@ -5175,7 +5176,7 @@ function PlayPageContent() {
                   className="bg-[#0a0a1a] border border-white/10 rounded-2xl p-6 max-w-md w-full shadow-2xl"
                 >
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-sm uppercase tracking-widest font-black text-neon-purple">Detalles de Última Partida</h3>
+                    <h3 className="text-sm uppercase tracking-widest font-black text-neon-purple">{t.pages.play.lastMatchDetails}</h3>
                     <button onClick={() => setShowLastMatchDetail(null)} className="w-7 h-7 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-gray-400 transition-all">
                       <div className="w-3 h-3">{I.close}</div>
                     </button>
@@ -5183,13 +5184,13 @@ function PlayPageContent() {
                   <div className="grid grid-cols-2 gap-3">
                     {(() => {
                       const lm = getLastMatch(selectedTrack.id);
-                      const modalIcons: Record<string, React.ReactNode> = { 'Puntuación': I.stats, 'Punt. Máxima': I.star, 'Max Combo': I.trophy, 'Precisión': I.target, 'Errores': I.circleX, 'KPS': I.zap, 'Vida Final': I.heart, 'Progreso': I.clock, 'Muertes': I.flame };
-                      const modalIconColors: Record<string, string> = { 'Puntuación': 'text-neon-cyan', 'Punt. Máxima': 'text-yellow-400', 'Max Combo': 'text-yellow-500', 'Precisión': 'text-neon-cyan', 'Errores': 'text-red-400', 'KPS': 'text-neon-green', 'Vida Final': 'text-green-400', 'Progreso': 'text-neon-purple', 'Muertes': 'text-red-500' };
+                      const modalIcons: Record<string, React.ReactNode> = { 'Puntuación': I.stats, 'Punt. Máxima': I.star, 'Max Combo': I.trophy, '{t.pages.play.accuracy}': I.target, 'Errores': I.circleX, 'KPS': I.zap, 'Vida Final': I.heart, 'Progreso': I.clock, 'Muertes': I.flame };
+                      const modalIconColors: Record<string, string> = { 'Puntuación': 'text-neon-cyan', 'Punt. Máxima': 'text-yellow-400', 'Max Combo': 'text-yellow-500', '{t.pages.play.accuracy}': 'text-neon-cyan', 'Errores': 'text-red-400', 'KPS': 'text-neon-green', 'Vida Final': 'text-green-400', 'Progreso': 'text-neon-purple', 'Muertes': 'text-red-500' };
                       return [
                         { label: 'Puntuación', val: lm.score.toLocaleString(), cls: 'text-white' },
                         { label: 'Punt. Máxima', val: lm.maxPotentialScore?.toLocaleString() || '-', cls: 'text-yellow-400' },
                         { label: 'Max Combo', val: `${lm.maxCombo}x`, cls: 'text-white' },
-                        { label: 'Precisión', val: `${lm.accuracy}%`, cls: 'text-neon-cyan' },
+                        { label: '{t.pages.play.accuracy}', val: `${lm.accuracy}%`, cls: 'text-neon-cyan' },
                         { label: 'Errores', val: lm.mistakes, cls: 'text-neon-pink' },
                         { label: 'KPS', val: lm.kps, cls: 'text-neon-green' },
                         { label: 'Vida Final', val: `${lm.life}%`, cls: lm.life > 50 ? 'text-green-400' : 'text-red-400' },
@@ -5208,7 +5209,7 @@ function PlayPageContent() {
                   </div>
                   {getLastMatch(selectedTrack.id).hits && (
                     <div className="mt-3 bg-black/30 rounded-xl p-3">
-                      <div className="text-[7px] uppercase tracking-widest text-gray-500 font-black mb-2">Aciertos por tipo</div>
+                      <div className="text-[7px] uppercase tracking-widest text-gray-500 font-black mb-2">{t.pages.play.hitsByType}</div>
                       <div className="grid grid-cols-7 gap-1 text-center">
                         {(['perfect','great','good','meh','bad','veryBad','miss'] as const).map(k => {
                           const dColors: Record<string, string> = { perfect: 'text-neon-cyan', great: 'text-neon-purple', good: 'text-green-400', meh: 'text-yellow-400', bad: 'text-orange-400', veryBad: 'text-red-400', miss: 'text-red-600' };
@@ -5258,7 +5259,7 @@ function PlayPageContent() {
                     <div>
                       <div className="flex items-center gap-2 text-[10px] text-gray-500 uppercase font-black tracking-widest mb-3">
                         <div className="w-4 h-4">{I.chevronUp}</div>
-                        <span>Skin de Flechas</span>
+                        <span>{t.pages.play.arrowSkin}</span>
                       </div>
                       <div className="grid grid-cols-3 gap-2">
                         {(user ? getSkinList() : getSkinList().filter(s => s.id === 'default')).map(skin => (
@@ -5279,7 +5280,7 @@ function PlayPageContent() {
                     <div>
                       <div className="flex items-center gap-2 text-[10px] text-gray-500 uppercase font-black tracking-widest mb-3">
                         <div className="w-4 h-4">{I.sparkles}</div>
-                        <span>Skin de Partículas</span>
+                        <span>{t.pages.play.particleSkin}</span>
                       </div>
                       <div className="grid grid-cols-3 gap-2">
                         {(user ? getParticleSkinList() : getParticleSkinList().filter(s => s.id === 'default')).map(skin => (
@@ -5300,24 +5301,24 @@ function PlayPageContent() {
                     <div>
                       <div className="flex items-center gap-2 text-[10px] text-gray-500 uppercase font-black tracking-widest mb-3">
                         <div className="w-4 h-4">{I.user}</div>
-                        <span>Skin de Personajes</span>
+                        <span>{t.pages.play.charSkin}</span>
                       </div>
                       <div className="bg-white/5 rounded-xl p-6 text-center text-[10px] text-gray-600 font-bold uppercase tracking-widest">
-                        Próximamente — Consigue skins exclusivas en eventos y la tienda.
+                        {t.pages.play.charSkinSoon}
                       </div>
                     </div>
                     {user ? (
                       <Link href="/profile"
                         className="block w-full text-center px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-white hover:bg-white/10 hover:border-white/20 transition-all"
-                      >IR AL INVENTARIO COMPLETO</Link>
+                      >{t.pages.play.goInventory}</Link>
                     ) : (
                       <>
                         <div className="px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-center">
-                          <p className="text-[9px] text-red-400 font-black uppercase tracking-widest">MODO INVITADO — Solo tienes acceso a la skin Clásica</p>
-                          <p className="text-[8px] text-gray-500 font-bold mt-1">Regístrate o inicia sesión para desbloquear más skins y personalización.</p>
+                          <p className="text-[9px] text-red-400 font-black uppercase tracking-widest">{t.pages.play.guestSkinNote}</p>
+                          <p className="text-[8px] text-gray-500 font-bold mt-1">{t.pages.play.guestSkinDesc}</p>
                         </div>
                         <div className="flex gap-3">
-                          <Link href="/login" className="flex-1 px-5 py-3 bg-gradient-to-r from-neon-cyan/30 to-neon-blue/30 border border-neon-cyan/40 rounded-2xl text-[9px] font-black uppercase tracking-widest text-neon-cyan hover:from-neon-cyan/50 hover:to-neon-blue/50 transition-all text-center">INICIAR SESIÓN</Link>
+                          <Link href="/login" className="flex-1 px-5 py-3 bg-gradient-to-r from-neon-cyan/30 to-neon-blue/30 border border-neon-cyan/40 rounded-2xl text-[9px] font-black uppercase tracking-widest text-neon-cyan hover:from-neon-cyan/50 hover:to-neon-blue/50 transition-all text-center">{t.pages.play.loginBtn}</Link>
                           <Link href="/register" className="flex-1 px-5 py-3 bg-white/10 border border-white/20 rounded-2xl text-[9px] font-black uppercase tracking-widest text-white hover:bg-white/15 transition-all text-center">REGISTRARSE</Link>
                         </div>
                       </>
@@ -5346,8 +5347,8 @@ function PlayPageContent() {
                         <div className="w-4 h-4 text-orange-400">{I.clock}</div>
                       </div>
                       <div>
-                        <h3 className="text-sm font-header font-black text-white italic uppercase tracking-wider">Registro de Cambios</h3>
-                        <p className="text-[7px] text-gray-600 font-bold uppercase tracking-widest">Últimas actualizaciones</p>
+                        <h3 className="text-sm font-header font-black text-white italic uppercase tracking-wider">{t.pages.play.changelogLog}</h3>
+                        <p className="text-[7px] text-gray-600 font-bold uppercase tracking-widest">{t.pages.play.latestUpdates2}</p>
                       </div>
                     </div>
                     <button onClick={() => setIsChangelogOpen(false)}
@@ -5361,7 +5362,7 @@ function PlayPageContent() {
                     const sorted = [...CHANGELOG_DATA].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
                     const top3 = sorted.slice(0, 3);
                     const latest = top3[0];
-                    if (!latest) return <div className="p-6 text-[9px] text-gray-500 text-center font-bold">No hay cambios registrados</div>;
+                    if (!latest) return <div className="p-6 text-[9px] text-gray-500 text-center font-bold">{t.pages.play.noChanges}</div>;
 
                     return (
                       <div className="p-6 space-y-5">
@@ -5371,7 +5372,7 @@ function PlayPageContent() {
                           <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-orange-500/10 blur-[60px] pointer-events-none" />
                           <div className="relative p-5">
                             <div className="flex items-center gap-2 mb-3">
-                              <span className="text-[7px] font-black uppercase tracking-[0.2em] text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded-full border border-orange-500/20">MÁS RECIENTE</span>
+                              <span className="text-[7px] font-black uppercase tracking-[0.2em] text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded-full border border-orange-500/20">{t.pages.play.mostRecent}</span>
                               <span className="text-[7px] text-gray-600 font-bold">{latest.date}</span>
                             </div>
                             <div className="flex items-start gap-4">
@@ -5408,7 +5409,7 @@ function PlayPageContent() {
                                 </ul>
                                 <Link href={`/changelog/${latest.id}`}
                                   className="inline-flex items-center gap-1.5 mt-3 px-3 py-1.5 bg-gradient-to-r from-orange-500/20 to-amber-500/10 border border-orange-500/30 rounded-xl text-[7px] font-black uppercase tracking-widest text-orange-300 hover:text-orange-200 hover:from-orange-500/30 transition-all"
-                                ><div className="w-2.5 h-2.5">{CHANGELOG_I.eye}</div> EXPLORAR ESTA VERSIÓN <div className="w-2.5 h-2.5">{I.arrowRight}</div></Link>
+                                ><div className="w-2.5 h-2.5">{CHANGELOG_I.eye}</div> {t.pages.play.exploreVersion} <div className="w-2.5 h-2.5">{I.arrowRight}</div></Link>
                               </div>
                             </div>
                           </div>
@@ -5418,7 +5419,7 @@ function PlayPageContent() {
                         <div>
                           <div className="flex items-center gap-2 text-[8px] text-gray-500 uppercase font-black tracking-widest mb-3">
                             <div className="w-3 h-3">{I.clock}</div>
-                            <span>Actualizaciones Anteriores</span>
+                            <span>{t.pages.play.olderUpdates}</span>
                           </div>
                           <div className="space-y-2">
                             {top3.slice(1).map((item) => {
@@ -5461,7 +5462,7 @@ function PlayPageContent() {
                         {/* CTA to full changelog */}
                         <Link href="/changelog"
                           className="block w-full text-center py-3 bg-white/5 border border-white/10 rounded-2xl text-[8px] font-black uppercase tracking-widest text-gray-400 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all"
-                        ><div className="flex items-center justify-center gap-2"><div className="w-3 h-3">{I.clock}</div> VER HISTORIAL COMPLETO <div className="w-3 h-3">{I.arrowRight}</div></div></Link>
+                        ><div className="flex items-center justify-center gap-2"><div className="w-3 h-3">{I.clock}</div> {t.pages.play.viewFullHistory} <div className="w-3 h-3">{I.arrowRight}</div></div></Link>
                       </div>
                     );
                   })()}
@@ -5484,7 +5485,7 @@ function PlayPageContent() {
                     <div className="w-5 h-5">{I.circleX}</div>
                   </button>
                   <h3 className="text-lg font-header font-black text-white italic uppercase flex items-center gap-2 mb-6 justify-center">
-                    <div className="w-5 h-5 text-neon-purple">{I.sliders}</div> Otras Secciones
+                    <div className="w-5 h-5 text-neon-purple">{I.sliders}</div> {t.pages.play.otherSections}
                   </h3>
                   <div className="grid grid-cols-2 gap-3">
                     {[
@@ -5529,8 +5530,8 @@ function PlayPageContent() {
                   <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
                 </svg>
               </div>
-              <h3 className="text-lg font-header font-black text-white uppercase italic tracking-tight mb-2">ENLACE EXTERNO</h3>
-              <p className="text-[10px] text-gray-400 font-bold mb-2">Vas a salir de MuzicMania hacia:</p>
+              <h3 className="text-lg font-header font-black text-white uppercase italic tracking-tight mb-2">{t.pages.play.externalLink}</h3>
+              <p className="text-[10px] text-gray-400 font-bold mb-2">{t.pages.play.externalLinkDesc}</p>
               <p className="text-[9px] text-neon-cyan font-black truncate max-w-full mb-6 px-4 py-2 bg-white/5 rounded-xl border border-white/5">{externalLinkUrl}</p>
               <div className="flex gap-3">
                 <button onClick={() => setExternalLinkUrl(null)}
