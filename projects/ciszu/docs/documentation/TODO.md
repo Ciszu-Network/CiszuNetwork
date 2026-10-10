@@ -3,7 +3,7 @@
 ### Cambios Generales:
 
 - [ ] Migración i18n de literales por lotes (deuda actual: ciszu 0 ✓ completa ·
-  ciszubot 0 ✓ completa · antony 226 · muzicmania 937; ratchet `pnpm verify:i18n`).
+  ciszubot 0 ✓ completa · antony 0 ✓ completa · muzicmania 628; ratchet `pnpm verify:i18n`).
   PILOTO HECHO (09 oct 2026): página de **login de ciszu** migrada completa (patrón `useDict()` +
   claves `loginPage` en `es`/`en` + `fillTemplate`; ciszu pasó de 390 → 379).
   LOTES HECHOS: login (390→379) y support (379→340). LOTES HECHOS EN CISZU (09 oct 2026): 390 → 66 en 15 tandas: login, support, contact, register, reviews,
