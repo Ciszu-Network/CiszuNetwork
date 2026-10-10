@@ -8,6 +8,8 @@ export const PREVIEWS_BY_FILE: Record<string, string> = {
   '109_fplayersoffcial@gmail.com.pdf': '109_fplayersoffcial@gmail.com-preview.jpg',
   '1108_fplayersoffcial@gmail.com.pdf': '1108_fplayersoffcial@gmail.com-preview.jpg',
   '1141_fplayersoffcial@gmail.com.pdf': '1141_fplayersoffcial@gmail.com-preview.jpg',
+  '12axes-report-2026-10-08-Francisco-Garcia-full.pdf': '12axes-report-2026-10-08-Francisco-Garcia-full-preview.jpg',
+  '12axes-report-2026-10-08-Francisco-Garcia-short.png': '12axes-report-2026-10-08-Francisco-Garcia-short-preview.jpg',
   '171_fplayersoffcial@gmail.com.pdf': '171_fplayersoffcial@gmail.com-preview.jpg',
   '1852_fplayersoffcial@gmail.com.pdf': '1852_fplayersoffcial@gmail.com-preview.jpg',
   '3030_fplayersoffcial@gmail.com.pdf': '3030_fplayersoffcial@gmail.com-preview.jpg',

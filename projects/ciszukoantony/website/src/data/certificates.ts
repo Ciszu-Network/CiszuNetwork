@@ -969,6 +969,25 @@ export const OTHER_DOCS: Certificate[] = [
     files: [{ name: 'react_simplelearn.pdf', label: 'React Course Certificate', kind: 'certificate' }],
     previewType: 'pdf',
     holderName: 'FRANCISCO ANTONIO GARCIA MENOLASCINA',
+  },
+
+  {
+    id: '12axes-technocracy-report',
+    title: '12axes — Ideological Profile: Technocracy',
+    provider: '12axes',
+    providerUrl: 'https://12axes.vercel.app',
+    categories: ['personal'],
+    date: '2026-10-08',
+    summary:
+      'Full report generated on 8 oct 2026 (240 questions, 12 axes). Top match: Technocracy (91.8%); closest figure: Linus Torvalds (94%); closest country: France (89%).',
+    note: 'The document does not include an institutional credential ID; it is a generated 12axes report.',
+    collection: { id: 'personal-assessments', name: 'Personal assessments' },
+    files: [
+      { name: '12axes-report-2026-10-08-Francisco-Garcia-full.pdf', label: 'Full report', kind: 'report' },
+      { name: '12axes-report-2026-10-08-Francisco-Garcia-short.png', label: 'Result summary', kind: 'image' },
+    ],
+    previewType: 'image',
+    holderName: 'FRANCISCO GARCIA',
   }
 ];
 
