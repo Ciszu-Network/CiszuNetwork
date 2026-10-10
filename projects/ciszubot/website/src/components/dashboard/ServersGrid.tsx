@@ -50,7 +50,6 @@ export default function ServersGrid({ guilds, inviteUrl }: { guilds: GridGuild[]
             />
             <div className="relative flex items-center gap-3">
               {guild.icon ? (
-                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={`https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`}
                   alt=""
