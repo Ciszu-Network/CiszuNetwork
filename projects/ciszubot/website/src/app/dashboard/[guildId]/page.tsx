@@ -4,7 +4,6 @@ import { getSessionUserId, getGuildsForUser, isGuildAdmin } from '@/lib/auth';
 import { db, ciszubotSchema, eq } from '@/lib/db';
 import { fetchGuildInfo } from '@/lib/discordGuild';
 import DashboardGuildClient from './client';
-import QuickDocks from '@/components/molecules/QuickDocks';
 
 export const metadata: Metadata = {
   title: 'CiszuBot | DASHBOARD',
@@ -36,7 +35,6 @@ export default async function DashboardGuildPage({ params }: { params: Promise<{
 
   return (
     <div className="bg-bg min-h-screen">
-      <QuickDocks />
       <DashboardGuildClient
         guildId={guildId}
         guildName={guild.name}

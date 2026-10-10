@@ -1,10 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { Icon, LANGUAGE_OPTIONS } from '@ciszu/ui';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { Icon, LanguagesModal, LANGUAGE_OPTIONS, isLangAvailable, LANG_BLOCKED_MESSAGE, useToast } from '@ciszu/ui';
+import { updatePreferences } from '@/lib/preferences';
 import InviteLink from './InviteLink';
+import QuickDocks from '@/components/molecules/QuickDocks';
 
 export interface ShellGuild {
   id: string;
@@ -13,10 +15,19 @@ export interface ShellGuild {
   invited?: boolean | null;
 }
 
+export interface ShellMe {
+  username: string | null;
+  displayName: string | null;
+  avatarUrl: string | null;
+}
+
 interface Props {
   guilds: ShellGuild[];
   lang: 'es' | 'en';
   inviteUrl: string;
+  me: ShellMe | null;
+  /** Secciones pre-QuickDocks (fuera de la zona de configuración, ancho completo). */
+  footer?: React.ReactNode;
   children: React.ReactNode;
 }
 
@@ -24,7 +35,8 @@ const L: Record<'es' | 'en', Record<string, string>> = {
   es: {
     overview: 'Resumen',
     servers: 'Servidores',
-    select: 'Selecciona un servidor',
+    global: 'Global (sin servidor)',
+    select: 'Cambiar de servidor',
     noServers: 'No administras ningún servidor con CiszuBot todavía.',
     invite: 'Invitar a mi servidor',
     menu: 'Servidores',
@@ -35,7 +47,7 @@ const L: Record<'es' | 'en', Record<string, string>> = {
     theme: 'Tema',
     dark: 'Oscuro',
     light: 'Claro',
-    helpSection: 'Ayuda',
+    shortcuts: 'Atajos',
     faq: 'Preguntas frecuentes',
     help: 'Centro de ayuda',
     support: 'Soporte',
@@ -46,11 +58,15 @@ const L: Record<'es' | 'en', Record<string, string>> = {
     collapse: 'Ocultar panel',
     expand: 'Mostrar panel',
     panel: 'Panel',
+    configuringIn: 'Configurando',
+    changeServer: 'Cambiar servidor',
+    accountHint: 'Gestiona tu cuenta',
   },
   en: {
     overview: 'Overview',
     servers: 'Servers',
-    select: 'Select a server',
+    global: 'Global (no server)',
+    select: 'Switch server',
     noServers: 'You do not manage any server with CiszuBot yet.',
     invite: 'Invite to my server',
     menu: 'Servers',
@@ -61,7 +77,7 @@ const L: Record<'es' | 'en', Record<string, string>> = {
     theme: 'Theme',
     dark: 'Dark',
     light: 'Light',
-    helpSection: 'Help',
+    shortcuts: 'Shortcuts',
     faq: 'FAQ',
     help: 'Help center',
     support: 'Support',
@@ -72,8 +88,23 @@ const L: Record<'es' | 'en', Record<string, string>> = {
     collapse: 'Hide panel',
     expand: 'Show panel',
     panel: 'Panel',
+    configuringIn: 'Configuring',
+    changeServer: 'Switch server',
+    accountHint: 'Manage your account',
   },
 };
+
+/** Gradientes únicos por opción (hover + seleccionado). */
+const ACCENTS: { hover: string; active: string; icon: string }[] = [
+  { hover: 'hover:border-neon-blue/60 hover:bg-neon-blue/10', active: 'border-neon-blue/50 bg-gradient-to-r from-neon-blue/20 to-transparent', icon: 'text-neon-blue' },
+  { hover: 'hover:border-neon-pink/60 hover:bg-neon-pink/10', active: 'border-neon-pink/50 bg-gradient-to-r from-neon-pink/20 to-transparent', icon: 'text-neon-pink' },
+  { hover: 'hover:border-neon-purple/60 hover:bg-neon-purple/10', active: 'border-neon-purple/50 bg-gradient-to-r from-neon-purple/20 to-transparent', icon: 'text-neon-purple' },
+  { hover: 'hover:border-neon-cyan/60 hover:bg-neon-cyan/10', active: 'border-neon-cyan/50 bg-gradient-to-r from-neon-cyan/20 to-transparent', icon: 'text-neon-cyan' },
+  { hover: 'hover:border-emerald-400/60 hover:bg-emerald-400/10', active: 'border-emerald-400/50 bg-gradient-to-r from-emerald-400/20 to-transparent', icon: 'text-emerald-400' },
+  { hover: 'hover:border-amber-400/60 hover:bg-amber-400/10', active: 'border-amber-400/50 bg-gradient-to-r from-amber-400/20 to-transparent', icon: 'text-amber-400' },
+];
+
+const INVITE_GRADIENT = 'bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white';
 
 function GuildAvatar({ guild, size = 32 }: { guild: ShellGuild; size?: number }) {
   if (guild.icon) {
@@ -99,21 +130,33 @@ function GuildAvatar({ guild, size = 32 }: { guild: ShellGuild; size?: number })
 }
 
 /**
- * Shell del dashboard de CiszuBot: sidebar por categorías (Panel, Servidores,
- * Cuenta, Ayuda) con lista de servidores donde el usuario es admin, acciones de
- * invitar/configurar por servidor (los no invitados salen atenuados y no se
- * pueden configurar), accesos directos de cuenta (perfil, idioma, tema) y
- * retracción del panel en escritorio. Responsive: en móvil se abre como panel.
+ * Shell del dashboard de CiszuBot (rediseño 10 oct 2026):
+ *  · Cuenta ARRIBA con avatar real de Discord y ambos nombres + popover de perfil.
+ *  · Servidores como MOSAICO en popover (selección única; Global por defecto).
+ *  · Banda superior con el servidor actual cuando se está dentro de uno.
+ *  · ATAJOS con idioma (LanguagesModal compartido) y tema (misma lógica de
+ *    preferencias), FAQ/ayuda/soporte e invitación con el degradado del header.
+ *  · Gradientes hover/selección únicos por opción; sidebar más ancho y pegado
+ *    a la izquierda; retraíble.
  */
-export default function DashboardShell({ guilds, lang, inviteUrl, children }: Props) {
+export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, children }: Props) {
   const t = L[lang];
+  const router = useRouter();
   const pathname = usePathname() ?? '';
   const activeId = pathname.split('/')[2] || null;
+  const activeGuild = activeId ? guilds.find((g) => g.id === activeId) ?? null : null;
+  const { toast } = useToast();
+
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [serversOpen, setServersOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
   const [warnId, setWarnId] = useState<string | null>(null);
   const [dark, setDark] = useState(false);
   const [langCode, setLangCode] = useState('es-latam');
+  const [langOpen, setLangOpen] = useState(false);
+  const serversRef = useRef<HTMLDivElement | null>(null);
+  const accountRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     try {
@@ -124,6 +167,16 @@ export default function DashboardShell({ guilds, lang, inviteUrl, children }: Pr
     } catch {
       /* noop */
     }
+  }, []);
+
+  useEffect(() => {
+    const onDown = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (serversRef.current && !serversRef.current.contains(target)) setServersOpen(false);
+      if (accountRef.current && !accountRef.current.contains(target)) setAccountOpen(false);
+    };
+    document.addEventListener('mousedown', onDown);
+    return () => document.removeEventListener('mousedown', onDown);
   }, []);
 
   const toggleCollapsed = () => {
@@ -138,199 +191,282 @@ export default function DashboardShell({ guilds, lang, inviteUrl, children }: Pr
     });
   };
 
+  /** Tema: misma lógica de preferencias que el panel local (persistencia + clase). */
   const toggleTheme = () => {
     const root = document.documentElement;
     const next = root.classList.contains('dark') ? 'light' : 'dark';
     root.classList.toggle('dark', next === 'dark');
     setDark(next === 'dark');
-    void (async () => {
+    try {
+      updatePreferences({ theme: next });
+    } catch {
       try {
-        const mod = (await import('@/lib/preferences')) as unknown as {
-          savePreferences?: (patch: Record<string, unknown>) => void;
-        };
-        mod.savePreferences?.({ theme: next });
+        window.localStorage.setItem('ciszubot-theme', next);
       } catch {
-        try {
-          window.localStorage.setItem('ciszubot-theme', next);
-        } catch {
-          /* noop */
-        }
+        /* noop */
       }
-    })();
+    }
+    toast(next === 'dark' ? t.dark : t.light, 'info');
   };
 
-  const changeLang = (code: string) => {
-    document.cookie = `ciszubot_lang=${code}; path=/; max-age=31536000`;
-    setLangCode(code);
-    window.location.reload();
+  /** Idioma: mismo LanguagesModal compartido y mismas reglas que preferencias. */
+  const handleLangSelect = (code: string) => {
+    if (!isLangAvailable(code)) {
+      toast(LANG_BLOCKED_MESSAGE, 'error');
+      return;
+    }
+    if (code !== langCode) {
+      try {
+        updatePreferences({ lang: code as Parameters<typeof updatePreferences>[0]['lang'] });
+      } catch {
+        /* noop */
+      }
+      document.cookie = `ciszubot_lang=${code}; path=/; max-age=31536000`;
+      setLangCode(code);
+      setLangOpen(false);
+      window.location.reload();
+    }
   };
 
-  const itemBase =
-    'flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-semibold transition border';
-  const itemIdle = 'border-transparent text-white/70 hover:bg-white/5 hover:text-white';
-  const itemActive = 'border-white/15 bg-white/10 text-white';
+  const selectServer = (id: string | null) => {
+    setServersOpen(false);
+    setOpen(false);
+    router.push(id ? `/dashboard/${id}` : '/dashboard');
+  };
+
+  const itemBase = 'flex w-full items-center gap-2.5 rounded-xl border px-3 py-2.5 text-sm font-semibold transition';
+  const itemIdle = 'border-transparent text-white/70 hover:text-white';
   const sectionTitle = 'px-3 pb-1 pt-4 text-[10px] font-black uppercase tracking-[0.25em] text-white/40';
+
+  const initials = (me?.displayName ?? me?.username ?? 'C').charAt(0).toUpperCase();
 
   const nav = (
     <nav
-      className="h-full w-full max-w-xs overflow-y-auto rounded-2xl border border-white/10 bg-black/40 p-3 backdrop-blur-xl lg:max-w-none"
+      className="h-full w-full max-w-xs overflow-y-auto rounded-2xl border border-white/10 bg-black/50 p-3 backdrop-blur-xl lg:max-w-none"
       onClick={(e) => e.stopPropagation()}
     >
+      {/* ─── CUENTA (arriba del todo) ─── */}
+      <div className="relative" ref={accountRef}>
+        <button
+          type="button"
+          onClick={() => setAccountOpen((v) => !v)}
+          aria-expanded={accountOpen}
+          className={`${itemBase} ${accountOpen ? ACCENTS[0].active : itemIdle} ${ACCENTS[0].hover} gap-3`}
+        >
+          {me?.avatarUrl ? (
+            <img src={me.avatarUrl} alt="" width={36} height={36} className="h-9 w-9 shrink-0 rounded-full border border-white/15" />
+          ) : (
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-neon-blue to-neon-purple text-sm font-black text-white">
+              {initials}
+            </span>
+          )}
+          <span className="min-w-0 flex-1 text-left">
+            <span className="block truncate text-sm font-bold text-white">{me?.displayName ?? me?.username ?? t.account}</span>
+            <span className="block truncate font-mono text-[10px] normal-case text-white/45">
+              {me?.username ? `@${me.username}` : t.accountHint}
+            </span>
+          </span>
+          <Icon name="arrow-right" size={13} className={`shrink-0 text-white/40 transition-transform ${accountOpen ? 'rotate-90' : ''}`} />
+        </button>
+        {accountOpen && (
+          <div className="absolute left-0 right-0 top-full z-50 mt-2 space-y-1 rounded-2xl border border-white/15 bg-[#0a0a14]/98 p-2 shadow-2xl backdrop-blur-xl">
+            <Link
+              href="/settings"
+              onClick={() => setAccountOpen(false)}
+              className={`${itemBase} ${itemIdle} ${ACCENTS[0].hover} text-xs`}
+            >
+              <Icon name="settings" size={14} className={ACCENTS[0].icon} />
+              {t.settings}
+            </Link>
+            <Link
+              href="/dashboard"
+              onClick={() => setAccountOpen(false)}
+              className={`${itemBase} ${itemIdle} ${ACCENTS[2].hover} text-xs`}
+            >
+              <Icon name="server" size={14} className={ACCENTS[2].icon} />
+              {t.profile}
+            </Link>
+          </div>
+        )}
+      </div>
+
+      {/* ─── PANEL ─── */}
       <p className={sectionTitle}>{t.panel}</p>
       <Link
         href="/dashboard"
-        className={`${itemBase} ${!activeId ? itemActive : itemIdle}`}
+        className={`${itemBase} ${!activeId ? ACCENTS[1].active : itemIdle} ${ACCENTS[1].hover}`}
         onClick={() => setOpen(false)}
       >
-        <Icon name="chart-bar" size={16} className={!activeId ? 'text-neon-blue' : ''} />
+        <Icon name="chart-bar" size={16} className={!activeId ? ACCENTS[1].icon : ''} />
         {t.overview}
       </Link>
 
+      {/* ─── SERVIDORES (mosaico en popover, selección única) ─── */}
       <p className={sectionTitle}>{t.servers}</p>
-      {guilds.length === 0 ? (
-        <p className="px-3 py-2 text-xs leading-relaxed text-white/50">{t.noServers}</p>
-      ) : (
-        <ul className="space-y-1">
-          {guilds.map((g) => {
-            const active = activeId === g.id;
-            const invited = g.invited !== false;
-            return (
-              <li key={g.id}>
-                {invited ? (
-                  <Link
-                    href={`/dashboard/${g.id}`}
-                    className={`${itemBase} ${active ? itemActive : itemIdle}`}
-                    onClick={() => setOpen(false)}
-                    title={g.name}
-                  >
-                    <GuildAvatar guild={g} size={26} />
-                    <span className="truncate">{g.name}</span>
-                  </Link>
-                ) : (
-                  <div className="rounded-xl border border-white/5 bg-white/[0.02] p-2 opacity-60 transition hover:opacity-90">
-                    <div className="flex items-center gap-2.5 px-1 py-1" title={t.notInvitedMsg}>
-                      <GuildAvatar guild={g} size={26} />
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-semibold text-white/70">{g.name}</span>
-                        <span className="text-[9px] font-black uppercase tracking-widest text-amber-400/90">
-                          {t.notInvited}
-                        </span>
-                      </span>
-                    </div>
-                    <div className="mt-1.5 flex gap-1.5">
-                      <InviteLink
-                        href={`${inviteUrl}${inviteUrl.includes('?') ? '&' : '?'}guild_id=${g.id}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-[#5865F2]/40 bg-[#5865F2]/15 px-2 py-1.5 text-[10px] font-black uppercase tracking-widest text-[#8ea1ff] transition hover:bg-[#5865F2]/25"
-                      >
-                        <Icon name="discord" size={12} />
-                        {t.inviteBtn}
-                      </InviteLink>
+      <div className="relative" ref={serversRef}>
+        <button
+          type="button"
+          onClick={() => setServersOpen((v) => !v)}
+          aria-expanded={serversOpen}
+          className={`${itemBase} ${activeGuild ? ACCENTS[3].active : itemIdle} ${ACCENTS[3].hover} gap-3`}
+        >
+          {activeGuild ? (
+            <GuildAvatar guild={activeGuild} size={26} />
+          ) : (
+            <span className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/5">
+              <Icon name="globe" size={13} className={ACCENTS[3].icon} />
+            </span>
+          )}
+          <span className="min-w-0 flex-1 truncate text-left text-sm">
+            {activeGuild ? activeGuild.name : t.global}
+          </span>
+          <Icon name="arrow-right" size={13} className={`shrink-0 text-white/40 transition-transform ${serversOpen ? 'rotate-90' : ''}`} />
+        </button>
+        {serversOpen && (
+          <div className="absolute left-0 right-0 top-full z-50 mt-2 rounded-2xl border border-white/15 bg-[#0a0a14]/98 p-3 shadow-2xl backdrop-blur-xl">
+            <p className="mb-2 text-[9px] font-black uppercase tracking-[0.25em] text-white/40">{t.select}</p>
+            {guilds.length === 0 ? (
+              <p className="text-xs leading-relaxed text-white/50">{t.noServers}</p>
+            ) : (
+              <div className="grid max-h-72 grid-cols-3 gap-2 overflow-y-auto">
+                {/* Global */}
+                <button
+                  type="button"
+                  onClick={() => selectServer(null)}
+                  className={`flex flex-col items-center gap-1.5 rounded-xl border p-2.5 transition ${
+                    !activeId ? ACCENTS[3].active : `border-white/10 ${ACCENTS[3].hover}`
+                  }`}
+                  title={t.global}
+                >
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5">
+                    <Icon name="globe" size={16} className={ACCENTS[3].icon} />
+                  </span>
+                  <span className="w-full truncate text-center text-[9px] font-bold text-white/75">{t.overview}</span>
+                </button>
+                {guilds.map((g) => {
+                  const invited = g.invited !== false;
+                  const active = activeId === g.id;
+                  return (
+                    <div key={g.id} className="relative">
                       <button
                         type="button"
-                        onClick={() => setWarnId(warnId === g.id ? null : g.id)}
-                        className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-white/10 bg-white/5 px-2 py-1.5 text-[10px] font-black uppercase tracking-widest text-white/50 transition hover:border-amber-400/40 hover:text-amber-400"
-                        title={t.notInvitedMsg}
+                        onClick={() => {
+                          if (invited) selectServer(g.id);
+                          else setWarnId(warnId === g.id ? null : g.id);
+                        }}
+                        title={g.name}
+                        className={`flex w-full flex-col items-center gap-1.5 rounded-xl border p-2.5 transition ${
+                          active
+                            ? ACCENTS[4].active
+                            : invited
+                              ? `border-white/10 ${ACCENTS[4].hover}`
+                              : 'border-white/5 opacity-50 hover:opacity-80'
+                        }`}
                       >
-                        <Icon name="settings" size={12} />
-                        {t.configure}
+                        <GuildAvatar guild={g} size={40} />
+                        <span className="w-full truncate text-center text-[9px] font-bold text-white/75">{g.name}</span>
+                        {!invited && (
+                          <span className="rounded-full bg-amber-400/15 px-1.5 py-0.5 text-[7px] font-black uppercase tracking-widest text-amber-400">
+                            {t.notInvited}
+                          </span>
+                        )}
                       </button>
+                      {!invited && (
+                        <div className="mt-1 flex gap-1">
+                          <InviteLink
+                            href={`${inviteUrl}${inviteUrl.includes('?') ? '&' : '?'}guild_id=${g.id}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className={`flex flex-1 items-center justify-center gap-1 rounded-lg px-1.5 py-1 text-[8px] font-black uppercase tracking-widest transition hover:scale-[1.03] active:scale-95 ${INVITE_GRADIENT}`}
+                          >
+                            <Icon name="discord" size={10} className="[&>g]:fill-current" />
+                            {t.inviteBtn}
+                          </InviteLink>
+                          <button
+                            type="button"
+                            onClick={() => setWarnId(warnId === g.id ? null : g.id)}
+                            className="flex-1 rounded-lg border border-white/15 px-1.5 py-1 text-[8px] font-black uppercase tracking-widest text-white/60 transition hover:border-neon-pink/60 hover:text-white"
+                          >
+                            {t.configure}
+                          </button>
+                        </div>
+                      )}
+                      {warnId === g.id && !invited && (
+                        <p className="mt-1 rounded-lg border border-amber-400/40 bg-amber-400/10 px-2 py-1 text-[9px] font-bold leading-snug text-amber-400">
+                          {t.notInvitedMsg}
+                        </p>
+                      )}
                     </div>
-                    {warnId === g.id && (
-                      <p className="mt-1.5 rounded-lg border border-amber-400/30 bg-amber-400/10 px-2 py-1.5 text-[10px] font-bold text-amber-300">
-                        {t.notInvitedMsg}
-                      </p>
-                    )}
-                  </div>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      )}
-
-      <a
-        href={`${inviteUrl}${inviteUrl.includes('?') ? '&' : '?'}scope=bot%20applications.commands`}
-        target="_blank"
-        rel="noreferrer"
-        className="mt-4 flex items-center gap-2.5 rounded-xl border border-neon-blue/30 bg-neon-blue/10 px-3 py-2 text-sm font-semibold text-neon-blue transition hover:bg-neon-blue/20"
-      >
-        <Icon name="discord" size={16} />
-        {t.invite}
-      </a>
-
-      <p className={sectionTitle}>{t.account}</p>
-      <Link href="/settings" className={`${itemBase} ${itemIdle}`} onClick={() => setOpen(false)}>
-        <Icon name="user" size={16} />
-        {t.profile}
-      </Link>
-      <Link href="/settings" className={`${itemBase} ${itemIdle}`} onClick={() => setOpen(false)}>
-        <Icon name="settings" size={16} />
-        {t.settings}
-      </Link>
-      <div className={`${itemBase} ${itemIdle} cursor-default`}>
-        <Icon name="globe" size={16} />
-        <span className="flex-1">{t.language}</span>
-        <span className="flex gap-1">
-          {LANGUAGE_OPTIONS.slice(0, 4).map((l) => (
-            <button
-              key={l.code}
-              type="button"
-              onClick={() => changeLang(l.code)}
-              className={`rounded-md border px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest transition ${
-                langCode === l.code
-                  ? 'border-neon-blue/50 bg-neon-blue/15 text-neon-blue'
-                  : 'border-white/10 text-white/45 hover:text-white'
-              }`}
+                  );
+                })}
+              </div>
+            )}
+            <InviteLink
+              href={inviteUrl}
+              target="_blank"
+              rel="noreferrer"
+              className={`mt-3 flex items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-[10px] font-black uppercase tracking-widest transition hover:scale-[1.02] active:scale-95 ${INVITE_GRADIENT}`}
             >
-              {l.label}
-            </button>
-          ))}
-        </span>
+              <Icon name="discord" size={13} className="[&>g]:fill-current" />
+              {t.invite}
+            </InviteLink>
+          </div>
+        )}
       </div>
-      <button
-        type="button"
-        onClick={toggleTheme}
-        className={`${itemBase} ${itemIdle} w-full text-left`}
-      >
-        <Icon name={dark ? 'moon' : 'sun'} size={16} />
-        {t.theme}: <span className="text-white/45">{dark ? t.dark : t.light}</span>
-      </button>
 
-      <p className={sectionTitle}>{t.helpSection}</p>
-      <Link href="/faq" className={`${itemBase} ${itemIdle}`} onClick={() => setOpen(false)}>
-        <Icon name="help" size={16} />
-        {t.faq}
-      </Link>
-      <Link href="/help" className={`${itemBase} ${itemIdle}`} onClick={() => setOpen(false)}>
-        <Icon name="life-ring" size={16} />
-        {t.help}
-      </Link>
-      <Link href="/support" className={`${itemBase} ${itemIdle}`} onClick={() => setOpen(false)}>
-        <Icon name="support" size={16} />
-        {t.support}
-      </Link>
+      {/* ─── ATAJOS ─── */}
+      <p className={sectionTitle}>{t.shortcuts}</p>
+      <div className="space-y-1">
+        <Link href="/faq" className={`${itemBase} ${itemIdle} ${ACCENTS[0].hover}`} onClick={() => setOpen(false)}>
+          <Icon name="help" size={15} className={ACCENTS[0].icon} />
+          {t.faq}
+        </Link>
+        <Link href="/help" className={`${itemBase} ${itemIdle} ${ACCENTS[2].hover}`} onClick={() => setOpen(false)}>
+          <Icon name="life-ring" size={15} className={ACCENTS[2].icon} />
+          {t.help}
+        </Link>
+        <Link href="/support" className={`${itemBase} ${itemIdle} ${ACCENTS[4].hover}`} onClick={() => setOpen(false)}>
+          <Icon name="support" size={15} className={ACCENTS[4].icon} />
+          {t.support}
+        </Link>
+        <button
+          type="button"
+          onClick={() => setLangOpen(true)}
+          className={`${itemBase} ${itemIdle} ${ACCENTS[3].hover}`}
+        >
+          <Icon name="globe" size={15} className={ACCENTS[3].icon} />
+          {t.language}
+          <span className="ml-auto font-mono text-[9px] uppercase text-white/40">{langCode.split('-')[0]}</span>
+        </button>
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className={`${itemBase} ${itemIdle} ${ACCENTS[5].hover}`}
+        >
+          <Icon name="star" size={15} className={ACCENTS[5].icon} />
+          {t.theme}
+          <span className="ml-auto text-[9px] font-black uppercase tracking-widest text-white/40">
+            {dark ? t.dark : t.light}
+          </span>
+        </button>
+      </div>
+
+      <LanguagesModal
+        open={langOpen}
+        langs={LANGUAGE_OPTIONS}
+        current={langCode}
+        onSelect={handleLangSelect}
+        onClose={() => setLangOpen(false)}
+      />
     </nav>
   );
 
   return (
     <div className="min-h-screen bg-bg">
-      <div className="mx-auto flex max-w-6xl gap-6 px-4 pt-6">
+      <div className="mx-auto flex max-w-[1500px] gap-4 px-2 pt-3 sm:px-3">
         {!collapsed && (
-          <aside className="hidden w-64 shrink-0 lg:block">
-            <div className="sticky top-6">
-              <button
-                type="button"
-                onClick={toggleCollapsed}
-                className="mb-2 flex w-full items-center justify-end gap-1 rounded-lg px-2 py-1 text-[9px] font-black uppercase tracking-widest text-white/35 transition hover:text-white"
-                title={t.collapse}
-              >
-                <Icon name="arrow-right" size={12} className="rotate-180" />
-                {t.collapse}
-              </button>
-              {nav}
-            </div>
+          <aside className="hidden w-80 shrink-0 lg:block">
+            <div className="sticky top-3">{nav}</div>
           </aside>
         )}
         {collapsed && (
@@ -354,18 +490,66 @@ export default function DashboardShell({ guilds, lang, inviteUrl, children }: Pr
         )}
 
         <main className="min-w-0 flex-1 pb-24">
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            className="mb-4 flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm font-semibold text-white/80 lg:hidden"
-            aria-label={t.select}
-          >
-            <Icon name="menu" size={16} />
-            {t.menu}
-          </button>
+          <div className="mb-3 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm font-semibold text-white/80 lg:hidden"
+              aria-label={t.menu}
+            >
+              <Icon name="menu" size={16} />
+              {t.menu}
+            </button>
+            {!collapsed && (
+              <button
+                type="button"
+                onClick={toggleCollapsed}
+                className="hidden items-center gap-1 rounded-lg px-2 py-1 text-[9px] font-black uppercase tracking-widest text-white/35 transition hover:text-white lg:flex"
+                title={t.collapse}
+              >
+                <Icon name="arrow-right" size={12} className="rotate-180" />
+                {t.collapse}
+              </button>
+            )}
+          </div>
+
+          {/* Banda superior: servidor actual (hero band) */}
+          {activeGuild && (
+            <div className="mb-4 flex flex-wrap items-center gap-3 rounded-2xl border border-white/10 bg-gradient-to-r from-white/[0.06] to-transparent px-4 py-3">
+              <GuildAvatar guild={activeGuild} size={34} />
+              <div className="min-w-0 flex-1">
+                <p className="text-[9px] font-black uppercase tracking-[0.3em] text-white/40">{t.configuringIn}</p>
+                <p className="truncate font-header text-base font-black text-white">{activeGuild.name}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setServersOpen(true)}
+                className="rounded-xl border border-white/15 px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-white/60 transition hover:border-neon-blue/60 hover:text-white"
+              >
+                {t.changeServer}
+              </button>
+              {activeGuild.invited === false && (
+                <InviteLink
+                  href={`${inviteUrl}${inviteUrl.includes('?') ? '&' : '?'}guild_id=${activeGuild.id}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`rounded-xl px-3 py-1.5 text-[9px] font-black uppercase tracking-widest transition hover:scale-[1.03] active:scale-95 ${INVITE_GRADIENT}`}
+                >
+                  {t.inviteBtn}
+                </InviteLink>
+              )}
+            </div>
+          )}
+
           {children}
         </main>
       </div>
+
+      {/* Fuera de la zona de configuración: secciones pre-QuickDocks + docks */}
+      <footer className="mx-auto mt-12 w-full max-w-[1500px] px-2 sm:px-3">
+        {footer}
+      </footer>
+      <QuickDocks />
     </div>
   );
 }
