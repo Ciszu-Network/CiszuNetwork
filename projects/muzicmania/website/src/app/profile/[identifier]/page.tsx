@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, type ReactNode } from 'react';
+import { useT } from '@/hooks/useT';
 import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { supabase } from '@/config/supabase';
@@ -21,6 +22,7 @@ const ACHIEVEMENTS = [
 ];
 
 export default function DynamicProfilePage() {
+  const t = useT();
   usePageTitle('PROFILE');
   const { identifier } = useParams();
   const router = useRouter();
@@ -175,7 +177,7 @@ export default function DynamicProfilePage() {
         <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
           <div className="w-16 h-16 border-4 border-neon-cyan border-t-transparent rounded-full animate-spin shadow-neon-blue" />
           <p className="text-neon-cyan font-header font-black uppercase tracking-widest text-xs animate-pulse">
-            Sincronizando Identidad...
+            {t.pages.profile.syncingIdentity}
           </p>
         </div>
       </MainLayout>
@@ -188,14 +190,14 @@ export default function DynamicProfilePage() {
         <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6">
           <h1 className="text-8xl font-header font-black text-white/10 select-none">404</h1>
           <div className="text-center space-y-2">
-            <h2 className="text-2xl font-header font-black text-neon-pink uppercase italic">Perfil Inexistente</h2>
-            <p className="text-gray-500 text-xs font-bold uppercase tracking-widest">El usuario que buscas no reside en este sistema.</p>
+            <h2 className="text-2xl font-header font-black text-neon-pink uppercase italic">{t.pages.profile.notFoundTitle}</h2>
+            <p className="text-gray-500 text-xs font-bold uppercase tracking-widest">{t.pages.profile.notFoundDesc}</p>
           </div>
           <button 
             onClick={() => router.push('/')}
             className="px-8 py-3 bg-neon-pink/10 border border-neon-pink/30 text-neon-pink rounded-xl font-header font-bold hover:bg-neon-pink hover:text-white transition-all active:scale-95 shadow-lg"
           >
-            VOLVER AL HOME
+            {t.pages.profile.backHome}
           </button>
         </div>
       </MainLayout>
@@ -241,7 +243,7 @@ export default function DynamicProfilePage() {
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 pt-2">
                   {accountStatus && (
                     <span className="rounded-full border border-red-500/40 bg-red-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-red-400">
-                      Cuenta eliminada
+                      {t.pages.profile.accountDeleted}
                     </span>
                   )}
                   {banInfo && (
@@ -264,9 +266,10 @@ export default function DynamicProfilePage() {
                 </div>
                 {accountStatus ? (
                   <p className="text-gray-500 font-bold text-sm max-w-md leading-relaxed mt-4 bg-white/5 p-4 rounded-xl border border-white/10">
-                    Esta cuenta ha sido eliminada.
+                    {t.pages.profile.accountDeletedDesc}
                   </p>
-                ) : profile.bio && (
+                ) :
+              profile.bio && (
                   <p className="text-gray-300 font-bold text-sm max-w-md leading-relaxed mt-4 bg-white/5 p-4 rounded-xl border border-white/10">
                     {profile.bio}
                   </p>
@@ -284,7 +287,7 @@ export default function DynamicProfilePage() {
                 </div>
                 <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/5">
                   <Icon name="star" size={16} className="text-neon-pink" />
-                  VIP ACCESS
+                  {t.pages.profile.vipAccess}
                 </div>
               </div>
 
@@ -296,7 +299,7 @@ export default function DynamicProfilePage() {
                       className="flex items-center gap-3 px-8 py-3 bg-neon-purple/20 border border-neon-purple/40 rounded-2xl text-xs font-black tracking-widest text-white hover:bg-neon-purple hover:text-white transition-all shadow-lg active:scale-95"
                     >
                       <Icon name="settings" size={16} />
-                      CONFIGURAR CUENTA
+                      {t.pages.profile.configureAccount}
                     </button>
                   </>
                 )}
@@ -314,7 +317,7 @@ export default function DynamicProfilePage() {
               <input
                 value={modReason}
                 onChange={(e) => setModReason(e.target.value)}
-                placeholder="Motivo / caso (obligatorio para ban y mute)"
+                placeholder="{t.pages.profile.phReason}"
                 className="rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-xs text-white min-w-[240px] outline-none focus:border-orange-400/60"
               />
               <select
@@ -322,10 +325,10 @@ export default function DynamicProfilePage() {
                 onChange={(e) => setModHours(e.target.value)}
                 className="rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-xs text-white outline-none"
               >
-                <option value="1">1 hora</option>
-                <option value="24">24 horas</option>
-                <option value="168">7 días</option>
-                <option value="720">30 días</option>
+                <option value="1">{t.pages.profile.dur1h}</option>
+                <option value="24">{t.pages.profile.dur24h}</option>
+                <option value="168">{t.pages.profile.dur7d}</option>
+                <option value="720">{t.pages.profile.dur30d}</option>
                 <option value="">Permanente</option>
               </select>
             </div>
@@ -337,10 +340,10 @@ export default function DynamicProfilePage() {
                 Mutear
               </button>
               <button type="button" disabled={modBusy} onClick={() => void runModeration('unban')} className="rounded-xl border border-white/15 px-4 py-2 font-header text-[11px] font-black uppercase tracking-widest text-white/80 hover:text-white disabled:opacity-50">
-                Levantar ban
+                {t.pages.profile.liftBan}
               </button>
               <button type="button" disabled={modBusy} onClick={() => void runModeration('unmute')} className="rounded-xl border border-white/15 px-4 py-2 font-header text-[11px] font-black uppercase tracking-widest text-white/80 hover:text-white disabled:opacity-50">
-                Levantar mute
+                {t.pages.profile.liftMute}
               </button>
               <button
                 type="button"
@@ -352,7 +355,7 @@ export default function DynamicProfilePage() {
                 }}
                 className="rounded-xl border border-red-400/40 px-4 py-2 font-header text-[11px] font-black uppercase tracking-widest text-red-300 hover:text-red-200 disabled:opacity-50"
               >
-                Cerrar sesiones
+                {t.pages.profile.closeSessions}
               </button>
               <button
                 type="button"
@@ -364,7 +367,7 @@ export default function DynamicProfilePage() {
                 }}
                 className="rounded-xl border border-white/15 px-4 py-2 font-header text-[11px] font-black uppercase tracking-widest text-white/80 hover:text-white disabled:opacity-50"
               >
-                Eliminar reviews
+                {t.pages.profile.deleteReviews}
               </button>
               {(viewerRank === 'owner' || viewerRank === 'admin') && (
                 <button
@@ -376,7 +379,7 @@ export default function DynamicProfilePage() {
                   }}
                   className="rounded-xl border border-white/15 px-4 py-2 font-header text-[11px] font-black uppercase tracking-widest text-white/80 hover:text-white disabled:opacity-50"
                 >
-                  Editar bio
+                  {t.pages.profile.editBio}
                 </button>
               )}
             </div>
@@ -388,10 +391,10 @@ export default function DynamicProfilePage() {
           <>
         {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-          <StatCard label="Puntuación Máxima" value={(profile.high_score || 0).toLocaleString()} color="text-neon-blue" icon={<Icon name="trophy" size={16} />} />
+          <StatCard label="{t.pages.profile.maxScore}" value={(profile.high_score || 0).toLocaleString()} color="text-neon-blue" icon={<Icon name="trophy" size={16} />} />
           <StatCard label="Partidas" value={profile.games_played || 0} color="text-neon-purple" icon={<Icon name="gamepad" size={16} />} />
-          <StatCard label="Precisión Promedio" value={`${profile.accuracy || 0}%`} color="text-neon-cyan" icon={<Icon name="target" size={16} />} />
-          <StatCard label="Posición Global" value={`#${profile.rank || '--'}`} color="text-neon-pink" icon={<Icon name="star" size={16} />} />
+          <StatCard label="{t.pages.profile.avgAccuracy}" value={`${profile.accuracy || 0}%`} color="text-neon-cyan" icon={<Icon name="target" size={16} />} />
+          <StatCard label="{t.pages.profile.globalRank}" value={`#${profile.rank || '--'}`} color="text-neon-pink" icon={<Icon name="star" size={16} />} />
         </div>
 
         {/* Achievements & Activity */}
@@ -400,7 +403,7 @@ export default function DynamicProfilePage() {
             <section className="space-y-8">
               <h2 className="text-3xl font-header font-black italic tracking-tighter text-neon-blue flex items-center gap-3 uppercase">
                 <Icon name="medal" size={32} />
-                LOGROS DESBLOQUEADOS
+                {t.pages.profile.achievements}
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
                 {ACHIEVEMENTS.map((achievement) => (
@@ -425,14 +428,14 @@ export default function DynamicProfilePage() {
               <div className="flex items-center justify-between">
                 <h2 className="text-3xl font-header font-black italic tracking-tighter text-neon-purple flex items-center gap-3 uppercase">
                   <Icon name="message-square" size={32} />
-                  REVIEWS Y FEEDBACK
+                  {t.pages.profile.reviewsFeedback}
                 </h2>
                 <div className="h-px flex-1 bg-white/5 mx-6 hidden md:block" />
               </div>
               <div className="rounded-[3rem] border border-white/10 bg-white/5 p-16 text-center space-y-4">
-                <p className="text-gray-500 font-black uppercase tracking-[0.3em] italic text-xs">No hay actividad registrada.</p>
+                <p className="text-gray-500 font-black uppercase tracking-[0.3em] italic text-xs">{t.pages.profile.noActivity}</p>
                 {isOwnProfile && (
-                  <p className="text-gray-600 text-[10px] font-bold uppercase tracking-widest">Tus interacciones con el ecosistema aparecerán aquí.</p>
+                  <p className="text-gray-600 text-[10px] font-bold uppercase tracking-widest">{t.pages.profile.noActivityDesc}</p>
                 )}
               </div>
             </section>
@@ -441,7 +444,7 @@ export default function DynamicProfilePage() {
           <aside className="space-y-8">
             <div className="p-10 rounded-[3rem] bg-[#050505] border-2 border-white/5 shadow-2xl relative overflow-hidden group">
                <div className="absolute top-0 right-0 w-40 h-40 bg-neon-blue/5 blur-[50px] group-hover:bg-neon-blue/10 transition-all" />
-               <h3 className="font-header font-black tracking-tighter text-2xl mb-8 text-neon-blue italic uppercase">MEJORES CANCIONES</h3>
+               <h3 className="font-header font-black tracking-tighter text-2xl mb-8 text-neon-blue italic uppercase">{t.pages.profile.bestSongs}</h3>
                <div className="space-y-4">
                  {[1, 2, 3].map((i) => (
                    <div key={i} className="flex justify-between items-center p-4 rounded-2xl hover:bg-white/5 border border-transparent hover:border-white/5 transition-all group cursor-pointer">
@@ -450,13 +453,13 @@ export default function DynamicProfilePage() {
                          {i}
                        </div>
                        <div>
-                         <div className="text-sm font-black uppercase tracking-tight text-white group-hover:text-neon-cyan transition-colors">Neon Nights</div>
-                         <div className="text-[9px] text-gray-600 uppercase font-black tracking-widest">Dificultad: HARD</div>
+                         <div className="text-sm font-black uppercase tracking-tight text-white group-hover:text-neon-cyan transition-colors">{t.pages.profile.neonNights}</div>
+                         <div className="text-[9px] text-gray-600 uppercase font-black tracking-widest">{t.pages.profile.difficultyHard}</div>
                        </div>
                      </div>
                      <div className="text-right">
                         <div className="text-base font-header font-black text-neon-purple italic">742,000</div>
-                        <div className="text-[9px] text-gray-600 font-black uppercase tracking-widest">High Score</div>
+                        <div className="text-[9px] text-gray-600 font-black uppercase tracking-widest">{t.pages.profile.highScoreLabel}</div>
                      </div>
                    </div>
                  ))}
