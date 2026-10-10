@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useDict } from '@/components/providers/I18nProvider';
 import { Icon, captureEvent } from '@ciszu/ui';
 import MusicCover from '@/components/music/MusicCover';
 import MusicLinkPill from '@/components/music/MusicLinkPill';
@@ -89,6 +90,7 @@ export default function MusicPlayer({
   onSeek,
   onVolume,
 }: MusicPlayerProps) {
+  const dict = useDict();
   if (!item) return null;
 
   const { track, album } = item;
@@ -154,7 +156,7 @@ export default function MusicPlayer({
             value={progress}
             disabled={status !== 'ready'}
             onChange={(event) => onSeek(Number(event.target.value) / 100)}
-            aria-label="Progreso de la pista"
+            aria-label={dict.music.trackProgress}
             className="w-full h-1.5 bg-white/10 rounded-full appearance-none cursor-pointer accent-neon-cyan disabled:opacity-40 disabled:cursor-not-allowed"
           />
         </div>
@@ -163,7 +165,7 @@ export default function MusicPlayer({
           <button
             type="button"
             onClick={onPrev}
-            aria-label="Pista anterior"
+            aria-label={dict.music.prevTrack}
             className="w-12 h-12 p-3.5 rounded-2xl bg-white/5 border border-white/10 text-white hover:bg-neon-cyan/15 hover:border-neon-cyan/50 hover:text-neon-cyan transition-all"
           >
             {I.prev}
@@ -184,7 +186,7 @@ export default function MusicPlayer({
           <button
             type="button"
             onClick={onNext}
-            aria-label="Pista siguiente"
+            aria-label={dict.music.nextTrack}
             className="w-12 h-12 p-3.5 rounded-2xl bg-white/5 border border-white/10 text-white hover:bg-neon-cyan/15 hover:border-neon-cyan/50 hover:text-neon-cyan transition-all"
           >
             {I.next}
@@ -209,10 +211,10 @@ export default function MusicPlayer({
           <div className="mt-6 p-4 rounded-2xl bg-neon-pink/5 border border-neon-pink/30">
             <p className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neon-pink">
               <span className="w-4 h-4 shrink-0">{I.unavailable}</span>
-              Audio no disponible localmente
+              {dict.music.audioUnavailable}
             </p>
             <p className="text-[11px] text-gray-400 leading-relaxed mt-2">
-              Esta pista no se pudo cargar desde el CDN del ecosistema. Escúchala en los canales oficiales:
+              {dict.music.audioUnavailableDesc}
             </p>
           </div>
         ) : null}

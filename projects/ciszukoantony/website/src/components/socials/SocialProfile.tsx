@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useDict } from '@/components/providers/I18nProvider';
 import Link from 'next/link';
 import { Icon, captureEvent } from '@ciszu/ui';
 import { SOCIAL_ENTRIES, getSocial, type SocialEntry } from '@/data/socials';
@@ -17,6 +18,7 @@ import { usePageTitle } from '@/lib/usePageTitle';
  * `src/data/socials.ts`.
  */
 export default function SocialProfile({ social }: { social: SocialEntry }) {
+  const dict = useDict();
   usePageTitle(social.name.toUpperCase());
   const ink = socialTone(social);
   const related = social.related
@@ -74,7 +76,7 @@ export default function SocialProfile({ social }: { social: SocialEntry }) {
                   className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white/5 border border-white/20 text-white font-header font-black uppercase tracking-widest text-[11px] hover:bg-white/10 transition-all"
                 >
                   <Icon name="chevronRight" size={14} className="rotate-180" />
-                  Todas las redes
+                  {dict.common.allNetworks}
                 </Link>
               </div>
             </div>
@@ -107,7 +109,7 @@ export default function SocialProfile({ social }: { social: SocialEntry }) {
         <section className="mb-14">
           <h2 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.3em] mb-5" style={{ color: ink }}>
             <Icon name="info" size={15} />
-            Datos de la cuenta
+            {dict.common.accountData}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {social.facts.map((fact) => (
@@ -124,7 +126,7 @@ export default function SocialProfile({ social }: { social: SocialEntry }) {
           <section className="mb-14">
             <h2 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.3em] mb-5" style={{ color: ink }}>
               <Icon name="share" size={15} />
-              Sigue explorando
+              {dict.common.keepExploring}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {related.map((entry) => (

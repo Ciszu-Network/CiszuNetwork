@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useDict } from '@/components/providers/I18nProvider';
 import { motion } from 'framer-motion';
 import { DOCS_METADATA, DocMetadata } from '@/config/docs';
 import QuickDocks from '@/components/molecules/QuickDocks';
@@ -76,6 +77,7 @@ const THEME: InfoTheme = {
 };
 
 export default function DocumentationPortal() {
+  const dict = useDict();
   usePageTitle('DOCUMENTATION');
   const { toast } = useToast();
   const [selectedDoc, setSelectedDoc] = useState('DOCUMENTATION');
@@ -160,7 +162,7 @@ export default function DocumentationPortal() {
 
       <InfoHero
         icon="file-text"
-        title="DOCUMENTACIÓN"
+        title={dict.documentation.heading}
         subtitle="SISTEMA DE DOCUMENTACIÓN OFICIAL V2.0.0"
         theme={THEME}
       />
@@ -175,7 +177,7 @@ export default function DocumentationPortal() {
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-neon-blue transition-colors">{I.search}</div>
                   <input
                     type="text"
-                    placeholder="FILTRAR NODOS..."
+                    placeholder={dict.documentation.filter}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full bg-black/60 border border-white/10 rounded-2xl pl-12 pr-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] focus:border-neon-blue/50 outline-none transition-all placeholder:text-gray-700"
@@ -205,7 +207,7 @@ export default function DocumentationPortal() {
 
               <div className="mt-8 pt-8 border-t border-white/5 space-y-5">
                 <h3 className="text-[10px] font-black text-white/40 uppercase tracking-[0.4em] flex items-center gap-2">
-                  <div className="w-3 h-3 text-neon-blue">{I.terminal}</div> PROGRAMAS DE USO RECOMENDADOS
+                  <div className="w-3 h-3 text-neon-blue">{I.terminal}</div> {dict.documentation.recommended}
                 </h3>
                 <div className="grid grid-cols-2 gap-3">
                   {SOFTWARE_TOOLS.map(sw => (
@@ -224,18 +226,18 @@ export default function DocumentationPortal() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-5 h-5 text-neon-purple" style={{ filter: 'drop-shadow(0 0 8px rgba(128,0,255,0.5))' }}>{I.info}</div>
-                  <h3 className="text-[11px] font-black text-white uppercase tracking-[0.2em]">DETALLES DEL ARCHIVO</h3>
+                  <h3 className="text-[11px] font-black text-white uppercase tracking-[0.2em]">{dict.documentation.fileDetails}</h3>
                 </div>
                 <div className="w-2.5 h-2.5 rounded-full bg-neon-purple animate-pulse" style={{ boxShadow: '0 0 15px #8000ff' }} />
               </div>
 
               <div className="space-y-4 pt-2">
                 <div className="flex justify-between border-b border-white/5 pb-2">
-                  <span className="text-[9px] font-black text-gray-600 uppercase">Ruta Física</span>
+                  <span className="text-[9px] font-black text-gray-600 uppercase">{dict.documentation.physicalPath}</span>
                   <span className="text-[9px] font-black text-white">/docs/{format}/{selectedDoc}.{format}</span>
                 </div>
                 <div className="flex justify-between border-b border-white/5 pb-2">
-                  <span className="text-[9px] font-black text-gray-600 uppercase">MIME Type</span>
+                  <span className="text-[9px] font-black text-gray-600 uppercase">{dict.documentation.mimeType}</span>
                   <span className="text-[9px] font-black text-white">{format === 'txt' ? 'text/plain' : 'text/markdown'}</span>
                 </div>
                 <div className="flex justify-between border-b border-white/5 pb-2">
@@ -249,7 +251,7 @@ export default function DocumentationPortal() {
               </div>
 
               <p className="text-[9px] text-gray-600 font-bold leading-relaxed uppercase italic">
-                Este documento utiliza codificación UTF-8 verificada para garantizar la compatibilidad con caracteres especiales y nomenclatura dinámica.
+                {dict.documentation.utf8}
               </p>
             </div>
           </div>
@@ -282,7 +284,7 @@ export default function DocumentationPortal() {
             <div className="px-12 py-8 border-b border-white/5 bg-black/50 flex items-center justify-between backdrop-blur-xl">
               <div className="flex items-center gap-4">
                 <div className="w-5 h-5 text-neon-blue animate-pulse" style={{ filter: 'drop-shadow(0 0 8px rgba(61,106,223,0.5))' }}>{I.terminal}</div>
-                <span className="text-[11px] font-black text-white uppercase tracking-[0.3em] italic">Visor de Documentos</span>
+                <span className="text-[11px] font-black text-white uppercase tracking-[0.3em] italic">{dict.documentation.viewer}</span>
               </div>
               <div className="flex gap-2 bg-black/80 p-2 rounded-2xl border border-white/10 shadow-inner">
                 {(['txt', 'md'] as const).map(f => (
@@ -304,7 +306,7 @@ export default function DocumentationPortal() {
                 <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-xl z-20">
                   <div className="flex flex-col items-center gap-6">
                     <div className="w-16 h-16 border-4 border-neon-blue/10 border-t-neon-blue rounded-full animate-spin" />
-                    <p className="text-[11px] font-black text-neon-blue uppercase tracking-[0.5em] animate-pulse">Sincronizando Nodo...</p>
+                    <p className="text-[11px] font-black text-neon-blue uppercase tracking-[0.5em] animate-pulse">{dict.documentation.syncing}</p>
                   </div>
                 </div>
               ) : (
@@ -326,8 +328,8 @@ export default function DocumentationPortal() {
               <div className="flex items-center gap-6">
                 <div className="w-12 h-12 text-neon-blue" style={{ filter: 'drop-shadow(0 0 8px rgba(61,106,223,0.5))' }}>{I.download}</div>
                 <div>
-                  <h3 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">CENTRO DE DESCARGAS</h3>
-                  <p className="text-[11px] text-gray-500 font-bold uppercase tracking-[0.3em]">Protocolos de Nomenclatura Dinámica v2.0</p>
+                  <h3 className="text-3xl font-header font-black text-white uppercase italic tracking-tighter">{dict.documentation.downloads}</h3>
+                  <p className="text-[11px] text-gray-500 font-bold uppercase tracking-[0.3em]">{dict.documentation.naming}</p>
                 </div>
               </div>
             </div>
@@ -373,7 +375,7 @@ export default function DocumentationPortal() {
                     <div className={`w-12 h-12 ${pc.text} group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>{pkg.icon}</div>
                     <div className="text-left space-y-1">
                       <span className="block text-[12px] font-black text-white uppercase tracking-widest italic">PAQUETE {pkg.ext.toUpperCase()}</span>
-                      <span className="block text-[10px] text-gray-500 font-bold uppercase tracking-widest">Compresión Dinámica</span>
+                      <span className="block text-[10px] text-gray-500 font-bold uppercase tracking-widest">{dict.documentation.compression}</span>
                     </div>
                   </button>
                 );

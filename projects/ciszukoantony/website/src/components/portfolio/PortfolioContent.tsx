@@ -77,10 +77,10 @@ export default function PortfolioContent() {
           theme={THEME}
         />
 
-        {/* Perfil profesional + datos clave */}
+        {/* {dict.projects.professionalProfile} + datos clave */}
         <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-6 mb-12">
           <div className="p-7 rounded-[2rem] bg-gradient-to-br from-neon-blue/10 via-transparent to-transparent border border-neon-blue/30">
-            <p className="text-[10px] font-black uppercase tracking-[0.35em] text-neon-blue mb-3">Perfil profesional</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.35em] text-neon-blue mb-3">{dict.projects.professionalProfile}</p>
             <h2 className="text-2xl font-header font-black uppercase italic text-white mb-3">
               {PROFILE.name}
             </h2>
@@ -98,7 +98,7 @@ export default function PortfolioContent() {
             </div>
           </div>
           <div className="p-7 rounded-[2rem] bg-gradient-to-br from-neon-pink/10 via-transparent to-transparent border border-neon-pink/30">
-            <p className="text-[10px] font-black uppercase tracking-[0.35em] text-neon-pink mb-4">Qué hago</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.35em] text-neon-pink mb-4">{dict.projects.whatIDo}</p>
             <div className="space-y-3">
               {PROFILE_ROLES.slice(0, 4).map((role) => (
                 <div key={role.title} className="flex items-start gap-3">
@@ -138,14 +138,14 @@ export default function PortfolioContent() {
                 setQuery(e.target.value);
                 captureEvent('portfolio_search', { q: e.target.value });
               }}
-              placeholder="Buscar por nombre, stack o palabra clave…"
+              placeholder={dict.projects.searchStackPh}
               className="w-full py-3 pl-11 pr-4 rounded-2xl bg-white/5 border border-white/10 text-sm text-white placeholder:text-gray-600 outline-none focus:border-neon-blue/60 focus:bg-white/[0.07] transition-all"
             />
             {query && (
               <button
                 type="button"
                 onClick={() => setQuery('')}
-                aria-label="Limpiar búsqueda"
+                aria-label={dict.projects.clearSearch}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors cursor-pointer"
               >
                 <Icon name="close" size={16} />
@@ -203,7 +203,7 @@ export default function PortfolioContent() {
 
         <h2 className="flex items-center gap-3 text-xs font-black uppercase tracking-[0.3em] text-neon-cyan mb-6">
           <Icon name="user" size={16} />
-          Proyectos personales de Ciszuko Antony
+          {dict.projects.personalProjects}
           <span className="ml-auto inline-flex items-center gap-1.5 text-[10px] text-gray-500 normal-case tracking-normal">
             <Icon name="stack" size={12} />
             {projects.length} de {PROJECTS.length}
@@ -212,7 +212,7 @@ export default function PortfolioContent() {
         {projects.length === 0 ? (
           <div className="p-12 rounded-[2rem] bg-white/[0.03] border border-dashed border-white/15 text-center">
             <p className="text-3xl mb-3">🔎</p>
-            <p className="text-white font-header font-black uppercase tracking-widest">Sin resultados</p>
+            <p className="text-white font-header font-black uppercase tracking-widest">{dict.projects.noResults}</p>
             <p className="text-gray-500 text-sm mt-2">No hay proyectos que coincidan con «{query}». Prueba otra búsqueda.</p>
           </div>
         ) : (
@@ -247,7 +247,7 @@ export default function PortfolioContent() {
             </p>
           </div>
           <span className="inline-flex items-center gap-2 text-[11px] font-header font-black uppercase tracking-widest text-neon-purple shrink-0">
-            Ver currículum
+            {dict.projects.viewCurriculum}
             <Icon name="chevronRight" size={13} />
           </span>
         </Link>

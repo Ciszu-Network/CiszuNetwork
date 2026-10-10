@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useDict } from '@/components/providers/I18nProvider';
 import { motion } from 'framer-motion';
 import {
   InfoAccordion,
@@ -112,6 +113,7 @@ function ServiceCard({
   index: number;
   onOpen: (service: CommissionService) => void;
 }) {
+  const dict = useDict();
   const color = service.color;
   return (
     <motion.button
@@ -180,7 +182,7 @@ function ServiceCard({
           className="mt-5 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest transition-all group-hover:gap-2.5"
           style={{ color }}
         >
-          Ver detalles
+          {dict.commissions.viewDetails}
           <Icon name="chevronRight" size={14} />
         </span>
       </span>
@@ -193,6 +195,7 @@ function ServiceCard({
 /* -------------------------------------------------------------------------- */
 
 function ServiceDetail({ service }: { service: CommissionService }) {
+  const dict = useDict();
   const color = service.color;
   return (
     <div className="space-y-6">
@@ -245,7 +248,7 @@ function ServiceDetail({ service }: { service: CommissionService }) {
 
           <div>
             <p className="mb-2 text-[10px] font-black uppercase tracking-[0.3em] text-white/40">
-              Qué incluye
+              {dict.commissions.includes}
             </p>
             <ul className="grid gap-1.5">
               {service.includes.map((item) => (
@@ -262,7 +265,7 @@ function ServiceDetail({ service }: { service: CommissionService }) {
       <div className="grid gap-6 lg:grid-cols-2">
         <div>
           <p className="mb-3 text-[10px] font-black uppercase tracking-[0.3em] text-white/40">
-            Cómo lo trabajo
+            {dict.commissions.howIWork}
           </p>
           <ol className="space-y-3">
             {service.process.map((step, stepIndex) => (
@@ -314,7 +317,7 @@ function ServiceDetail({ service }: { service: CommissionService }) {
           className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-[#25D366]/40 bg-[#25D366]/15 px-5 py-3 text-sm font-bold text-[#25D366] transition-all hover:bg-[#25D366] hover:text-black"
         >
           <Icon name="comment" size={16} />
-          Consultar por WhatsApp
+          {dict.commissions.whatsappCta}
         </a>
       </div>
     </div>
@@ -324,6 +327,7 @@ function ServiceDetail({ service }: { service: CommissionService }) {
 /* -------------------------------------------------------------------------- */
 
 export default function CommissionsPage() {
+  const dict = useDict();
   usePageTitle('COMMISSIONS');
   const [selected, setSelected] = useState<CommissionService | null>(null);
 
@@ -343,7 +347,7 @@ export default function CommissionsPage() {
         <div className="mb-10 grid gap-4 rounded-[2rem] border border-neon-blue/25 bg-neon-blue/5 p-6 sm:p-8 lg:grid-cols-[1.4fr_0.6fr] lg:items-center">
           <div>
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-neon-blue">
-              Servicios personales, respaldo de empresa
+              {dict.commissions.personalAndCompany}
             </p>
             <p className="mt-3 text-sm leading-relaxed text-white/70">
               Soy <span className="font-bold text-white">{COMMISSIONS_CONTACT.name}</span>. Cada comisión la atiendo
@@ -364,7 +368,7 @@ export default function CommissionsPage() {
           <div className="rounded-2xl border border-white/10 bg-black/30 p-5 text-center">
             <p className="font-header text-3xl font-black text-white">{COMMISSIONS.length}</p>
             <p className="mt-1 text-[10px] font-black uppercase tracking-[0.3em] text-white/40">
-              Servicios disponibles
+              {dict.commissions.availableServices}
             </p>
             <p className="mt-3 text-xs leading-relaxed text-white/50">
               Precios {PRICE_LABEL.toLowerCase()} y {PRICE_TAG.toLowerCase()}: se ajustan a tu proyecto.
@@ -377,7 +381,7 @@ export default function CommissionsPage() {
             Comisiones abiertas
           </p>
           <p className="mt-2 text-xs text-white/50">
-            Cupos limitados por mes para garantizar dedicación. Respuesta habitual en 24-48 horas.
+            {dict.commissions.openBody}
           </p>
         </div>
 
@@ -443,7 +447,7 @@ export default function CommissionsPage() {
         <section className="mb-14 rounded-[2rem] border border-white/10 bg-white/5 p-8">
           <h2 className={`mb-5 text-[11px] font-black uppercase tracking-[0.3em] ${THEME.accent}`}>Tarifas</h2>
           <p className="mb-6 text-sm leading-relaxed text-white/60">
-            No publico precios fijos porque cada proyecto es distinto. La cotización se calcula según:
+            {dict.commissions.noFixedPrices}
           </p>
           <ul className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {PRICE_FACTORS.map((item) => (
@@ -454,13 +458,13 @@ export default function CommissionsPage() {
             ))}
           </ul>
           <p className="text-xs text-white/40">
-            Pago en dos partes: 50% de anticipo y 50% contra entrega. Presupuesto cerrado por escrito antes de empezar.
+            {dict.commissions.paymentTerms}
           </p>
         </section>
 
         <section className="mb-14">
           <h2 className={`mb-5 text-[11px] font-black uppercase tracking-[0.3em] ${THEME.accent}`}>
-            Términos y condiciones (resumen)
+            {dict.commissions.termsTitle}
           </h2>
           <InfoAccordion items={TERMS} theme={THEME} />
         </section>

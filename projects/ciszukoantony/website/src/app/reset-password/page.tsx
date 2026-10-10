@@ -193,8 +193,8 @@ export default function ResetPasswordPage() {
       <div className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full bg-neon-purple/10 blur-[140px] pointer-events-none" />
 
       <div className="pt-14 mb-8 px-4 flex items-center justify-center gap-3">
-        <SmartImage src={CISZU_ISOTYPE} alt="Ciszu ID" width={40} height={40} className="w-9 h-9" />
-        <SmartImage src={ANTONY_ISOTYPE} alt="Ciszuko Antony" width={40} height={40} className="w-9 h-9" />
+        <SmartImage src={CISZU_ISOTYPE} alt={dict.auth.brandId} width={40} height={40} className="w-9 h-9" />
+        <SmartImage src={ANTONY_ISOTYPE} alt={dict.auth.appName} width={40} height={40} className="w-9 h-9" />
       </div>
 
       <div className="max-w-md mx-auto px-4 relative">

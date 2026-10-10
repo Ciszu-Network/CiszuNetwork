@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useDict } from '@/components/providers/I18nProvider';
 
 /**
  * Fallback estático para certificados sin preview generado (no usa pdfjs:
@@ -8,6 +9,7 @@ import React from 'react';
  * que rasteriza la página 1 a PNG en `shared/docs/certificados/previews/`).
  */
 const PdfThumbnail = ({ alt = 'PDF preview' }: { alt?: string }) => {
+  const dict = useDict();
   return (
     <div className="w-full h-full flex items-center justify-center bg-white/5" role="img" aria-label={alt}>
       <div className="text-center">
@@ -15,7 +17,7 @@ const PdfThumbnail = ({ alt = 'PDF preview' }: { alt?: string }) => {
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
           <polyline points="14 2 14 8 20 8" />
         </svg>
-        <p className="text-[10px] text-white/60 font-bold uppercase tracking-wider">Preview unavailable</p>
+        <p className="text-[10px] text-white/60 font-bold uppercase tracking-wider">{dict.certificates.previewUnavailable}</p>
       </div>
     </div>
   );

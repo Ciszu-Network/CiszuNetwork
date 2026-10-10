@@ -66,7 +66,7 @@ export default function SocialsPage() {
                   onClick={() => captureEvent('socials_index_open', { platform: social.id })}
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-neon-pink/15 border border-neon-pink/40 text-neon-pink text-[10px] font-header font-black uppercase tracking-widest hover:bg-neon-pink hover:text-white transition-all"
                 >
-                  Ver página
+                  {dict.common.viewPage}
                   <Icon name="chevronRight" size={12} />
                 </Link>
                 <a

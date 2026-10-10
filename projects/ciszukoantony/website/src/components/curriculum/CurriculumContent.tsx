@@ -147,7 +147,7 @@ export default function CurriculumContent({ cv }: { cv: CurriculumData }) {
             </h2>
             <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-gray-500">
               <Icon name="clock" size={13} />
-              Última actualización: oct 2026
+              {dict.curriculum.lastUpdate}
             </span>
           </div>
           <div className="flex flex-col gap-8">
@@ -165,7 +165,7 @@ export default function CurriculumContent({ cv }: { cv: CurriculumData }) {
                   {featured && (
                     <span className="absolute -top-2.5 right-5 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-neon-purple text-white text-[9px] font-black uppercase tracking-widest shadow-lg">
                       <Icon name="star" size={10} />
-                      Versión principal
+                      {dict.curriculum.mainVersion}
                     </span>
                   )}
                   <div className="flex items-start justify-between gap-3 mb-4">
@@ -227,7 +227,7 @@ export default function CurriculumContent({ cv }: { cv: CurriculumData }) {
                       className="inline-flex flex-1 max-w-[10rem] items-center justify-center gap-2 px-4 py-2.5 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-xs hover:bg-white/10 transition-all active:scale-95 cursor-pointer"
                     >
                       <Icon name="eye" size={15} />
-                      Pantalla completa
+                      {dict.curriculum.fullscreen}
                     </button>
                   </div>
                 </article>
@@ -243,7 +243,7 @@ export default function CurriculumContent({ cv }: { cv: CurriculumData }) {
         <section className="mb-14">
           <h2 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.3em] text-neon-purple mb-5">
             <Icon name="file-text" size={15} />
-            Resumen del CV
+            {dict.curriculum.cvSummary}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {CV_CUSTOM_SUMMARY.map((block) => (
@@ -381,13 +381,13 @@ export default function CurriculumContent({ cv }: { cv: CurriculumData }) {
           })()}
         </section>
 
-        {/* Herramientas y ecosistema (iconos reales + barras + tags) */}
+        {/* {dict.curriculum.toolsEcosystem} (iconos reales + barras + tags) */}
         <section className="mb-14">
           <h2 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.3em] text-neon-purple mb-5">
             <Icon name="stack" size={15} />
-            Herramientas y ecosistema
+            {dict.curriculum.toolsEcosystem}
           </h2>
-          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 mb-3">Diseño · Edición · Productividad</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 mb-3">{dict.curriculum.designEdition}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
             {PROFILE_TOOLS.map((t) => <BrandCard key={t.name} brand={t} />)}
           </div>
@@ -395,7 +395,7 @@ export default function CurriculumContent({ cv }: { cv: CurriculumData }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-8">
             {PROFILE_BROWSERS.map((b) => <BrandCard key={b.name} brand={b} />)}
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 mb-3">Asistentes IA</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 mb-3">{dict.curriculum.aiAssistants}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
             {PROFILE_AI.map((a) => <BrandCard key={a.name} brand={a} />)}
           </div>
@@ -435,7 +435,7 @@ export default function CurriculumContent({ cv }: { cv: CurriculumData }) {
           <p className="text-center text-white/30 text-xs mt-6">
             Catálogo completo con documentos y verificación en{' '}
             <Link href="/certificates" className="text-neon-purple hover:text-white transition-colors">
-              /certificates
+              {"/certificates"}
             </Link>
           </p>
         </section>
@@ -480,7 +480,7 @@ export default function CurriculumContent({ cv }: { cv: CurriculumData }) {
                   className="inline-flex items-center gap-2 px-4 py-2.5 bg-neon-purple/20 border border-neon-purple/40 text-neon-purple rounded-xl font-bold text-xs hover:bg-neon-purple hover:text-white transition-all"
                 >
                   <Icon name="download" size={15} />
-                  Descargar PDF
+                  {dict.curriculum.downloadPdf}
                 </a>
                 <a
                   href={fullscreen.href}
@@ -489,7 +489,7 @@ export default function CurriculumContent({ cv }: { cv: CurriculumData }) {
                   className="inline-flex items-center gap-2 px-4 py-2.5 bg-white/5 border border-white/20 text-white rounded-xl font-bold text-xs hover:bg-white/10 transition-all"
                 >
                   <Icon name="external" size={15} />
-                  Abrir en pestaña nueva
+                  {dict.curriculum.openNewTab}
                 </a>
               </div>
             </div>

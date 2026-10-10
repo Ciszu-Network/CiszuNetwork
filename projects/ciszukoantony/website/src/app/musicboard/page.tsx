@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useDict } from '@/components/providers/I18nProvider';
 import Link from 'next/link';
 import { Icon, InfoHero, captureEvent, type InfoTheme } from '@ciszu/ui';
 import {
@@ -50,6 +51,7 @@ function PlaylistCard({
   icon: string;
   onOpen: () => void;
 }) {
+  const dict = useDict();
   return (
     <a
       href={href}
@@ -71,7 +73,7 @@ function PlaylistCard({
       </div>
       <p className="text-sm text-gray-400 leading-relaxed flex-1">{description}</p>
       <span className="inline-flex items-center gap-2 mt-5 text-[10px] font-header font-black uppercase tracking-widest text-neon-purple">
-        Abrir en YouTube Music
+        {dict.musicboard.openYtMusic}
         <Icon name="external" size={11} />
       </span>
     </a>
@@ -87,6 +89,7 @@ function PlaylistCard({
  * ecosistema y, si una pista no carga, el reproductor lo dice sin inventar.
  */
 export default function MusicboardPage() {
+  const dict = useDict();
   usePageTitle('MUSICBOARD');
   const player = useMusicPlayer(MUSIC_QUEUE);
   const realCount = MUSIC_ALBUMS.find((album) => album.source === 'musicboard')?.tracks.length ?? 0;
@@ -107,7 +110,7 @@ export default function MusicboardPage() {
         <section className="mb-12">
           <h2 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.3em] text-neon-cyan mb-4">
             <Icon name="headset" size={15} />
-            Dónde escuchar
+            {dict.musicboard.whereListen}
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
             {MUSIC_PLATFORM_LINKS.map((platform) => (
@@ -125,7 +128,7 @@ export default function MusicboardPage() {
                 <span className="min-w-0">
                   <span className="block text-sm font-header font-black text-white truncate">{platform.label}</span>
                   <span className="block text-[9px] font-bold uppercase tracking-widest text-gray-500">
-                    Canal oficial
+                    {dict.musicboard.officialChannel}
                   </span>
                 </span>
               </a>
@@ -239,10 +242,10 @@ export default function MusicboardPage() {
                 </span>
                 <div className="min-w-0">
                   <h3 className="text-lg font-header font-black uppercase italic text-white truncate">
-                    Biblioteca MuzicMania
+                    {dict.musicboard.muzicmaniaLibrary}
                   </h3>
                   <p className="text-[9px] font-black uppercase tracking-widest text-gray-500">
-                    Playlist interactiva · juego de ritmo
+                    {dict.musicboard.muzicmaniaDesc}
                   </p>
                 </div>
               </div>
@@ -251,7 +254,7 @@ export default function MusicboardPage() {
                 juego.
               </p>
               <span className="inline-flex items-center gap-2 mt-5 text-[10px] font-header font-black uppercase tracking-widest text-neon-purple">
-                Ir al juego
+                {dict.musicboard.goGame}
                 <Icon name="chevronRight" size={11} />
               </span>
             </a>
@@ -272,7 +275,7 @@ export default function MusicboardPage() {
             </span>
             <h3 className="text-sm font-header font-black uppercase italic text-white">MuzicMania</h3>
             <p className="text-xs text-gray-400 leading-relaxed mt-1">
-              El juego de ritmo del ecosistema y su álbum Genesis Neon, jugable en la biblioteca.
+              {dict.musicboard.muzicmaniaLong}
             </p>
           </a>
           <Link
@@ -285,7 +288,7 @@ export default function MusicboardPage() {
             </span>
             <h3 className="text-sm font-header font-black uppercase italic text-white">Redes</h3>
             <p className="text-xs text-gray-400 leading-relaxed mt-1">
-              El índice completo de redes oficiales, con una página por plataforma y su enlace directo.
+              {dict.musicboard.socialsIndex}
             </p>
           </Link>
           <Link
@@ -312,7 +315,7 @@ export default function MusicboardPage() {
             </span>
             <div className="flex-1">
               <h3 className="text-sm font-header font-black uppercase italic text-white">
-                Audio desde el CDN del ecosistema
+                {dict.musicboard.audioCdn}
               </h3>
               <p className="text-xs text-gray-400 leading-relaxed mt-1">
                 Las pistas se reproducen desde el CDN propio; si alguna no está disponible, el reproductor lo

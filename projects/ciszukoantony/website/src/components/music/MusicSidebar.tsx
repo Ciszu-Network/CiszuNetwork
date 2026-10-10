@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useDict } from '@/components/providers/I18nProvider';
 import { Icon, captureEvent } from '@ciszu/ui';
 import MusicCover from '@/components/music/MusicCover';
 import MusicLinkPill from '@/components/music/MusicLinkPill';
@@ -75,6 +76,7 @@ export default function MusicSidebar({
   status,
   onSelectTrack,
 }: MusicSidebarProps) {
+  const dict = useDict();
   const trackCount = albums.reduce((total, album) => total + album.tracks.length, 0);
 
   return (
@@ -206,7 +208,7 @@ export default function MusicSidebar({
       <section className="mt-10 pt-8 border-t border-white/10">
         <h2 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.3em] text-neon-purple mb-4">
           <Icon name="headset" size={15} />
-          Podcast y playlists
+          {dict.music.podcast}
         </h2>
         <ul className="space-y-2">
           {playlists.map((playlist) => (

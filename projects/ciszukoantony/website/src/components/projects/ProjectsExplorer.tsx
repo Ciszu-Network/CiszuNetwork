@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useDict } from '@/components/providers/I18nProvider';
 import Link from 'next/link';
 import { Icon, Modal, captureEvent } from '@ciszu/ui';
 import ProjectCard from '@/components/projects/ProjectCard';
@@ -40,6 +41,7 @@ function thumbSrc(src: string) {
 }
 
 export default function ProjectsExplorer() {
+  const dict = useDict();
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<Filter>('Todos');
   const [sort, setSort] = useState<SortKey>('az');
@@ -68,11 +70,11 @@ export default function ProjectsExplorer() {
   };
 
   return (
-    <section aria-label="Explorador de proyectos">
+    <section aria-label={dict.projects.explorerAria}>
       <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-6 md:p-8">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
           <label className="relative block">
-            <span className="sr-only">Buscar proyectos</span>
+            <span className="sr-only">{dict.projects.searchProjects}</span>
             <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-neon-blue">
               <Icon name="search" size={18} />
             </span>
@@ -80,7 +82,7 @@ export default function ProjectsExplorer() {
               type="search"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Buscar por nombre, categoría, tecnología o palabra clave…"
+              placeholder={dict.projects.searchPh}
               className="w-full rounded-2xl border border-white/10 bg-black/40 py-3.5 pl-12 pr-4 text-sm text-white placeholder:text-white/30 outline-none transition-all focus:border-neon-blue/60 focus:shadow-[0_0_25px_rgba(61,106,223,0.18)]"
             />
           </label>
@@ -119,7 +121,7 @@ export default function ProjectsExplorer() {
         <div className="mt-6 border-t border-white/5 pt-5">
           <div className="mb-3 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.25em] text-white/40">
             <Icon name="target" size={14} />
-            Categorías
+            {dict.projects.categories}
           </div>
           <div className="flex flex-wrap gap-2">
             {(['Todos', ...PROJECT_CATEGORIES] as Filter[]).map((item) => {
@@ -163,7 +165,7 @@ export default function ProjectsExplorer() {
           <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-white/40">
             <Icon name="search" size={24} />
           </span>
-          <h3 className="font-header text-lg font-bold text-white">Sin resultados</h3>
+          <h3 className="font-header text-lg font-bold text-white">{dict.projects.noResults}</h3>
           <p className="mx-auto mt-2 max-w-md text-sm text-white/50">
             No hay proyectos que coincidan con “{query}” en la categoría “{category}”. Prueba con otra
             palabra o limpia los filtros.
@@ -177,7 +179,7 @@ export default function ProjectsExplorer() {
             className="mt-6 inline-flex cursor-pointer items-center gap-2 rounded-xl border border-neon-blue/40 bg-neon-blue/10 px-5 py-2.5 text-xs font-bold text-neon-blue transition-all hover:bg-neon-blue/20"
           >
             <Icon name="refresh" size={14} />
-            Limpiar filtros
+            {dict.projects.clearFilters}
           </button>
         </div>
       )}
@@ -201,6 +203,7 @@ function ProjectModal({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const dict = useDict();
   if (!project) {
     return null;
   }
@@ -249,7 +252,7 @@ function ProjectModal({
         <div>
           <h3 className={`mb-3 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] ${project.accent.text}`}>
             <Icon name="star" size={13} />
-            Qué incluye
+            {dict.projects.includes}
           </h3>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {project.features.map((feature) => (
@@ -291,7 +294,7 @@ function ProjectModal({
             className={`inline-flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3.5 font-header text-sm font-black uppercase tracking-widest text-white transition-all hover:brightness-125 ${project.accent.solid}`}
           >
             <Icon name="rocket" size={16} />
-            Ir al proyecto
+            {dict.projects.goToProject}
           </Link>
           <div className="flex flex-wrap gap-2">
             {project.actions
@@ -313,7 +316,7 @@ function ProjectModal({
               className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-white/70 transition-all hover:border-white/40 hover:text-white"
             >
               <Icon name="menu" size={13} />
-              Todos los proyectos
+              {dict.projects.allProjects}
             </Link>
           </div>
         </div>
