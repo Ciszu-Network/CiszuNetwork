@@ -34,6 +34,8 @@ interface GuildConfig {
   music_channel_id?: string | null;
   mute_role_id?: string | null;
   automod_enabled?: boolean;
+  leaderboard_enabled?: boolean;
+  leaderboard_slug?: string | null;
   /** Toggles por servidor de funciones del bot (slug → enabled). */
   features?: Record<string, boolean>;
 }
@@ -225,6 +227,19 @@ const FloppyMini = ({ size = 11 }: { size?: number }) => (
   </svg>
 );
 
+/** Etiqueta de sub-opción Premium (gratis durante la beta). */
+function PremiumTag({ label, betaNote }: { label: string; betaNote: string }) {
+  return (
+    <span
+      title={betaNote}
+      className="inline-flex items-center gap-1 rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-amber-400"
+    >
+      <Icon name="crown" size={9} />
+      {label}
+    </span>
+  );
+}
+
 /**
  * Import/Export JSON de una sección: botones junto al título de la opción.
  * Solo funcionan con el estado guardado (sin cambios pendientes) y avisan
@@ -304,6 +319,8 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   const [serverHistory, setServerHistory] = useState<
     { id: number; createdAt: string; actorId: string | null; detail: { fields?: string[]; features?: Record<string, boolean> } | null }[] | null
   >(null);
+  const [resetAsk, setResetAsk] = useState(false);
+  const [resetBusy, setResetBusy] = useState(false);
 
   useEffect(() => {
     setAutoSave(localStorage.getItem('cz-dash-autosave') === '1');
@@ -420,6 +437,8 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         private_category_id: cfg?.private_category_id ?? null,
         music_channel_id: cfg?.music_channel_id ?? null,
         mute_role_id: cfg?.mute_role_id ?? null,
+        leaderboard_enabled: cfg?.leaderboard_enabled ?? false,
+        leaderboard_slug: cfg?.leaderboard_slug ?? null,
         features: json.features ?? {},
       } as GuildConfig;
     },
@@ -551,7 +570,10 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(patch),
       });
-      if (!res.ok) throw new Error('save_failed');
+      if (!res.ok) {
+        const body = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(body.error === 'slug_taken' ? 'slug_taken' : 'save_failed');
+      }
       return res.json();
     },
     onMutate: () => {
@@ -591,9 +613,9 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
       if (okTimer.current) clearTimeout(okTimer.current);
       okTimer.current = setTimeout(() => setStatus('idle'), 1200);
     },
-    onError: () => {
+    onError: (err: unknown) => {
       setStatus('error');
-      setError(t.saveError);
+      setError(err instanceof Error && err.message === 'slug_taken' ? t.slugTaken : t.saveError);
     },
   });
 
@@ -770,6 +792,27 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     const n = parseInt(guildId.slice(-6), 10);
     return Number.isFinite(n) ? n % 360 : 210;
   }, [guildId]);
+
+  const copyLeaderboardUrl = useCallback(() => {
+    const slugOrId = config?.leaderboard_slug || guildId;
+    void navigator.clipboard
+      .writeText(`https://ciszubot.vercel.app/leaderboard/${slugOrId}`)
+      .then(() => toast(t.lbCopied, 'success'));
+  }, [config?.leaderboard_slug, guildId, toast, t.lbCopied]);
+
+  const resetLeaderboard = useCallback(async () => {
+    setResetBusy(true);
+    try {
+      const res = await fetch(`/api/dashboard/${guildId}/leaderboard/reset`, { method: 'POST' });
+      if (!res.ok) throw new Error('reset');
+      toast(t.lbResetDone, 'success');
+      setResetAsk(false);
+    } catch {
+      toast(t.lbResetError, 'error');
+    } finally {
+      setResetBusy(false);
+    }
+  }, [guildId, toast, t.lbResetDone, t.lbResetError]);
 
   if (isPending) {
     return (
@@ -1230,6 +1273,100 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 )}
               </div>
             )}
+
+            {/* Leaderboard público: sub-opciones premium marcadas (gratis en beta). */}
+            <div className="mt-6 rounded-xl border border-white/10 bg-black/20 p-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="flex items-center gap-2 text-sm font-bold text-white">
+                  <Icon name="trophy" size={15} className="text-neon-blue" /> {t.lbTitle}
+                </p>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={config.leaderboard_enabled === true}
+                  aria-label={t.lbTitle}
+                  onClick={() => update({ leaderboard_enabled: !(config.leaderboard_enabled === true) })}
+                  className={`relative ml-auto h-6 w-11 shrink-0 rounded-full transition ${
+                    config.leaderboard_enabled ? 'bg-gradient-to-r from-emerald-500 to-green-600' : 'bg-white/15'
+                  }`}
+                >
+                  <span
+                    className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${
+                      config.leaderboard_enabled ? 'left-[22px]' : 'left-0.5'
+                    }`}
+                  />
+                </button>
+              </div>
+              <p className="mt-1 text-[11px] text-white/45">{t.lbHint}</p>
+
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <code className="rounded-lg border border-white/10 bg-black/30 px-3 py-1.5 text-[11px] text-neon-blue">
+                  ciszubot.vercel.app/leaderboard/{config.leaderboard_slug || guildId}
+                </code>
+                <button
+                  type="button"
+                  onClick={copyLeaderboardUrl}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 px-3 py-1.5 text-[10px] font-bold text-white/60 transition hover:border-neon-blue/60 hover:text-white"
+                >
+                  <Icon name="copy" size={11} /> {t.lbCopy}
+                </button>
+                <a
+                  href={`/leaderboard/${config.leaderboard_slug || guildId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 px-3 py-1.5 text-[10px] font-bold text-white/60 transition hover:border-neon-blue/60 hover:text-white"
+                >
+                  <Icon name="external" size={11} /> {t.lbOpen}
+                </a>
+              </div>
+
+              <label className="mt-4 block">
+                <span className="flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white/45">
+                  {t.lbCustom}
+                  <PremiumTag label={t.featPremiumTag} betaNote={t.premiumFreeNote} />
+                </span>
+                <input
+                  className={`${inputCls} mt-1`}
+                  placeholder="mi-servidor"
+                  value={config.leaderboard_slug ?? ''}
+                  onChange={(e) =>
+                    update({ leaderboard_slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') || null })
+                  }
+                />
+                <span className="mt-1 block text-[10px] text-white/35">{t.lbCustomHint}</span>
+              </label>
+
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <PremiumTag label={t.featPremiumTag} betaNote={t.premiumFreeNote} />
+                {resetAsk ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => void resetLeaderboard()}
+                      disabled={resetBusy}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-red-400/50 bg-red-400/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-red-300 transition hover:bg-red-400/20 disabled:opacity-50"
+                    >
+                      {resetBusy ? '…' : t.lbResetConfirm}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setResetAsk(false)}
+                      className="text-[10px] font-bold uppercase tracking-widest text-white/40 transition hover:text-white/70"
+                    >
+                      {t.cancel}
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setResetAsk(true)}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 px-3 py-1.5 text-[10px] font-bold text-white/60 transition hover:border-red-400/50 hover:text-red-300"
+                  >
+                    <Icon name="history" size={11} /> {t.lbReset}
+                  </button>
+                )}
+              </div>
+            </div>
           </section>
           )}
 

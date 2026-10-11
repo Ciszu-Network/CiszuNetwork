@@ -3,6 +3,7 @@ import { checkBotId } from 'botid/server';
 import { z } from 'zod';
 import { getSessionUserId, isGuildAdmin, getGuildsForUser } from '@/lib/auth';
 import { db, ciszubotSchema, eq } from '@/lib/db';
+import { sql } from '@ciszunetwork/db';
 import { logAudit } from '@/lib/audit';
 import { createRateLimiter, parseJsonBody, firstZodMessage } from '@ciszunetwork/utils';
 
@@ -30,6 +31,14 @@ const guildConfigPatchSchema = z.object({
   mute_role_id: z.string().min(1).nullable().optional(),
   /** Toggles por servidor de funciones del bot (slug → enabled). */
   features: z.record(z.string(), z.boolean()).optional(),
+  leaderboard_enabled: z.boolean().optional(),
+  leaderboard_slug: z
+    .string()
+    .min(3)
+    .max(32)
+    .regex(/^[a-z0-9-]+$/)
+    .nullable()
+    .optional(),
 });
 
 /** Funciones configurables por servidor (mismas que los flags globales del bot). */
@@ -59,6 +68,8 @@ interface GuildConfig {
   automod_enabled: boolean;
   mute_role_id: string | null;
   features?: Record<string, boolean>;
+  leaderboard_enabled?: boolean;
+  leaderboard_slug?: string | null;
 }
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ guildId: string }> }) {
@@ -83,10 +94,20 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ gui
     .from(ciszubotSchema.guildFeatureFlags)
     .where(eq(ciszubotSchema.guildFeatureFlags.guildId, guildId));
   const features = Object.fromEntries(featureRows.map((r) => [r.feature, r.enabled]));
+  const premiumRows = await db
+    .select({ status: ciszubotSchema.premiumGuilds.status, expiresAt: ciszubotSchema.premiumGuilds.expiresAt })
+    .from(ciszubotSchema.premiumGuilds)
+    .where(eq(ciszubotSchema.premiumGuilds.guildId, guildId))
+    .limit(1);
+  const premiumRow = premiumRows[0];
+  const premium = Boolean(
+    premiumRow && premiumRow.status === 'active' && (!premiumRow.expiresAt || premiumRow.expiresAt.getTime() > Date.now())
+  );
   return NextResponse.json({
     guild: { id: guild.id, name: guild.name, icon: guild.icon },
     config: rows[0] ?? null,
     features,
+    premium,
   });
 }
 
@@ -141,6 +162,25 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
       ? body.autorole_ids
       : String(body.autorole_ids).split(',').map((s) => s.trim()).filter(Boolean);
   }
+  if (body.leaderboard_slug !== undefined) {
+    allowed.leaderboard_slug = body.leaderboard_slug === null ? (null as never) : String(body.leaderboard_slug).toLowerCase();
+  }
+  if (body.leaderboard_enabled !== undefined) {
+    allowed.leaderboard_enabled = Boolean(body.leaderboard_enabled);
+  }
+
+  // Slug del leaderboard único (case-insensitive) entre servidores.
+  if (typeof allowed.leaderboard_slug === 'string') {
+    const slug = allowed.leaderboard_slug;
+    const existing = await db
+      .select({ guildId: ciszubotSchema.guildConfigs.guildId })
+      .from(ciszubotSchema.guildConfigs)
+      .where(sql`lower(${ciszubotSchema.guildConfigs.leaderboardSlug}) = ${slug}`)
+      .limit(1);
+    if (existing[0] && existing[0].guildId !== guildId) {
+      return NextResponse.json({ error: 'slug_taken' }, { status: 409 });
+    }
+  }
 
   // Toggles de funciones por servidor (solo slugs conocidos).
   const featurePatch: Record<string, boolean> = {};
@@ -170,6 +210,8 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     automod_enabled: 'automodEnabled',
     xp_rate: 'xpRate',
     autorole_ids: 'autoroleIds',
+    leaderboard_enabled: 'leaderboardEnabled',
+    leaderboard_slug: 'leaderboardSlug',
   };
   const values: Record<string, unknown> = { guildId };
   for (const [key, value] of Object.entries(allowed)) {

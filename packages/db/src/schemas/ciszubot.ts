@@ -59,6 +59,8 @@ export const guildConfigs = ciszubot.table(
     musicChannelId: text('music_channel_id'),
     automodEnabled: boolean('automod_enabled').notNull().default(false),
     muteRoleId: text('mute_role_id'),
+    leaderboardEnabled: boolean('leaderboard_enabled').notNull().default(false),
+    leaderboardSlug: text('leaderboard_slug'),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   }
 );
