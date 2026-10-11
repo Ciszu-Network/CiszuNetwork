@@ -94,7 +94,7 @@ Identificador: PROJECTS_SYSTEM_V2.1.0_2026_10_03_ciszunetwork
 | Sistema de formatos (avif/webp/opus) | ✅ Implementado (8 ago 2026) + `SmartImage` en las webs |
 | PWA (manifest + sw + botón instalar) | ✅ Las 4 webs |
 | Auth Supabase (MuzicMania) | ✅ REST corregido, RLS activo |
-| Bot de Discord | ✅ v3.2.0, 72 comandos, Supabase conectado (heartbeat `bot_status`) |
+| Bot de Discord | ✅ v3.2.0, 73 comandos, Supabase conectado (heartbeat `bot_status`) + feature flags globales y Premium beta (10 oct 2026) |
 | Caché multi-tienda | ✅ Implementado (9 ago 2026) — memoria → KV Upstash (`upstash-kv-ciszunetwork`) → Postgres `ciszu.cache` |
 | Monitoreo externo | ✅ UptimeRobot 5 monitores + watcher ntfy (10 ago 2026) |
 | Cloudflare (standalone) | ✅ Web Analytics + Turnstile en las 4 webs |
@@ -148,6 +148,28 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 
 > Este historial absorbe `PROJECT_HISTORY.md` (eliminado 13 ago 2026). Añadir aquí los
 > nuevos hitos al cierre de sesión.
+
+### 10 de Octubre, 2026 — Feature flags + sistema Premium (beta) + hosting del bot
+
+- **Feature flags globales** (`ciszubot.feature_flags`, migración 58): kill switches por
+  función (música, búsqueda, minijuegos, economía, ayuda…) con motivo visible al usuario,
+  control en tiempo real desde la devcon (sección `FEATURES DEL BOT`; gate doble: devcon
+  + subcargo `ciszubot` + cargo admin) y override por deploy (`FEATURES_OFF`).
+- **Interceptor del bot**: bloquea funciones desactivadas con embed de motivo; sistema
+  Premium con interceptación (beta ⇒ aviso `⭐` + disclaimer `🧪` y gratis; post-beta ⇒
+  bloqueo real con CTA), tabla `premium_guilds`, comando `cz!premium` y ayuda con marcas
+  `⛔`/`⭐`.
+- **Web**: página `/premium` (beneficios + suscripción "por definir" + modal bloqueante
+  de beta con gating futuro cableado), promos en home/dashboard/explore y términos
+  (`/terms`) con compras, reembolsos y cancelación.
+- **Hosting 24/7 investigado**: Sillydev primario (sin renovaciones ni tarjeta);
+  Bot-Hosting.net respaldo (4 días + 3 de gracia ⇒ borra si no renuevas); Falix
+  descartado (gratis solo EEUU/Canadá/UE/UK/Australia/NZ).
+- **Standalone arreglado y verificado**: postbuild de aliases `@ciszunetwork/*`,
+  `typescript`/`@types` en dependencies, `DATABASE_URL` y `FEATURES_OFF` en
+  `.env.example`, rutas layout-agnósticas (config/public) y smoke test de arranque OK.
+- Verificación: `pnpm typecheck` ✅ · lint/build ciszubot-website ✅ · `verify:i18n`
+  (0 deuda) ✅ · migración aplicada ✅ · CLI de flags probado ✅.
 
 ### 3 de Octubre, 2026 — Páginas de proyectos completas en CiszuNetwork y CiszukoAntony
 
@@ -605,5 +627,5 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 3. **Pendientes (§3)**: mover a historial cuando se resuelva, añadir nuevos bloqueos.
 4. Marcar "Última actualización" y actualizar `STATUS_SYSTEM.md` y `STATISTICS_SYSTEM.md`.
 
-_Última revisión: 3 oct 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
+_Última revisión: 10 oct 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
 `ARCHITECTURE.md`, `WORKFLOW_SYSTEM.md`, `AGENTS.md`.

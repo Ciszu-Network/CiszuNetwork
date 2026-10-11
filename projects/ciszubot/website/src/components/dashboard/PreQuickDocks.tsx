@@ -114,6 +114,31 @@ export default function PreQuickDocks() {
         </div>
       </section>
 
+      {/* Premium (promo) */}
+      <section className="rounded-3xl border border-neon-purple/40 bg-gradient-to-r from-neon-blue/10 via-[#6600ff]/10 to-neon-pink/10 p-7">
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-neon-purple/40 bg-neon-purple/10">
+            <Icon name="crown" size={20} className="text-neon-purple" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <h2 className="font-header text-xl font-black text-ink">{dict.premiumPromo.title}</h2>
+            <p className="text-sm text-muted">{dict.premiumPromo.desc}</p>
+          </div>
+          <span className="rounded-full border border-neon-pink/50 bg-neon-pink/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-neon-pink">
+            {dict.premiumPromo.beta}
+          </span>
+        </div>
+        <div className="mt-5">
+          <Link
+            href="/premium"
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink px-5 py-3 text-sm font-bold text-white transition hover:scale-[1.02] active:scale-95"
+          >
+            <Icon name="star" size={16} />
+            {dict.premiumPromo.cta}
+          </Link>
+        </div>
+      </section>
+
       {/* Autopatrocinio */}
       <section className="rounded-3xl border border-border bg-card p-7">
         <div className="flex flex-wrap items-center gap-3">

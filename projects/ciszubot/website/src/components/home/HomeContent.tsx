@@ -9,6 +9,7 @@ import type { BotStatus } from '@/lib/botStatus';
 import HeroBanner from './HeroBanner';
 import StatsStrip from './StatsStrip';
 import FeaturesSection from './FeaturesSection';
+import PremiumSection from './PremiumSection';
 import CommandTabs from './CommandTabs';
 import PlatformsSection from './PlatformsSection';
 import ChangelogStrip from './ChangelogStrip';
@@ -41,6 +42,7 @@ export default function HomeContent({ status, serverNow }: HomeContentProps) {
         <HeroBanner dict={dict} status={status} serverNow={serverNow} />
         <StatsStrip dict={dict} lang={lang} status={status} serverNow={serverNow} />
         <FeaturesSection dict={dict} />
+        <PremiumSection dict={dict} />
         <CommandTabs dict={dict} prefix={prefix} />
         <PlatformsSection dict={dict} />
         <ChangelogStrip dict={dict} />

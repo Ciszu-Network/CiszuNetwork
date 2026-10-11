@@ -268,6 +268,29 @@ export const snipes = ciszubot.table(
   (t) => [index('idx_snipes_channel').on(t.channelId, t.deletedAt.desc())]
 );
 
+export const featureFlags = ciszubot.table(
+  'feature_flags',
+  {
+    feature: text('feature').primaryKey(),
+    enabled: boolean('enabled').notNull().default(true),
+    reason: text('reason'),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedBy: text('updated_by'),
+  }
+);
+
+export const premiumGuilds = ciszubot.table(
+  'premium_guilds',
+  {
+    guildId: text('guild_id').primaryKey(),
+    plan: text('plan').notNull().default('beta'),
+    status: text('status').notNull().default('active'),
+    expiresAt: timestamp('expires_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  }
+);
+
 export const auditLog = ciszubot.table(
   'audit_log',
   {

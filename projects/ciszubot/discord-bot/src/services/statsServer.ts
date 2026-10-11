@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import fastifyStatic from '@fastify/static';
+import fs from 'fs';
 import path from 'path';
 import type { Server } from 'http';
 import type { Client } from 'discord.js';
@@ -28,8 +29,18 @@ export async function setupStatsServer(client?: Client): Promise<Server> {
   app.enableShutdownHooks();
   app.enableCors({ origin: false });
 
-  const publicDir = path.join(__dirname, '..', '..', 'public');
-  await app.register(fastifyStatic as never, { root: publicDir });
+  // Layout-agnóstico: raíz del paquete, cwd del panel o dist/ (si se copia).
+  const publicCandidates = [
+    path.join(__dirname, '..', '..', '..', 'public'),
+    path.join(process.cwd(), 'public'),
+    path.join(__dirname, '..', '..', 'public'),
+  ];
+  const publicDir = publicCandidates.find((candidate) => fs.existsSync(candidate));
+  if (publicDir) {
+    await app.register(fastifyStatic as never, { root: publicDir });
+  } else {
+    logger.warn('No se encontró la carpeta public/; los statics quedan deshabilitados.');
+  }
 
   const port = Number(process.env.PORT || 5000);
   await app.listen(port, '0.0.0.0');

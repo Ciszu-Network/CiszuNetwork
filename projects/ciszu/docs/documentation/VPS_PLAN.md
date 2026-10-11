@@ -222,36 +222,62 @@ _Última revisión: 13 ago 2026._ Relacionado: `MONITORING_SYSTEM.md`, `REMOTE_C
 
 ---
 
-## Plan B sin tarjeta (panel gratuito) — 08 oct 2026
+## Plan B sin tarjeta (panel gratuito) — 08 oct 2026 · investigado 10 oct 2026
 
-Se descarta Oracle (pide tarjeta). Alternativas sin tarjeta, 24/7 e independientes del PC:
+Se descarta Oracle (pide tarjeta). Alternativas sin tarjeta, 24/7 e independientes del PC.
 
-| Opción | Hardware | Límites | Notas |
-| --- | --- | --- | --- |
-| **Panel gratuito de bots** (bot-hosting.net / Katabump / Discloud) | Ninguno | 256-512 MB RAM | Login con correo/GitHub, sin tarjeta. Subir ZIP y arrancar |
-| **Termux en Android viejo** | Un Android | Los del teléfono | 100% gratis, sin panel ni tarjeta; el teléfono debe quedar encendido |
+### Investigación de renovaciones (10 oct 2026, fuentes primarias)
 
-### Paquete standalone (listo)
+| Servicio | Free | Renovación | Si no renuevas | Extras |
+| --- | --- | --- | --- | --- |
+| **Sillydev** | 256 MB / 25% CPU / 512 MB disco | **Ninguna** | Solo se borra un servidor **nunca usado** en sus primeros 7 días (avisan por email; iniciarlo o abrir consola cuenta como uso) o si queda suspendido por AUP (avisan con fecha). Sin tarjeta, 13+ | Auto-restart incluido; 2 DBs MariaDB/Postgres gratis; sin restricción de país |
+| **Bot-Hosting.net** | 256 MB / 25% / 512 MB | Cada **4 días** | 4 días activos + **3 de gracia** (sigue corriendo) ⇒ si no renuevas: **borra el deploy** (backup final restaurable 30 días; avisos a 6/4/2/1 días). Anuncios en el panel free; 15+ | MySQL/Redis 1-click, SFTP/GitHub, Lavalink 1-click (ocupa slot) |
+| **Falix** | 512 MB / 25% / 2 GB | Semanal | — | **NO elegible desde Venezuela**: su User Agreement limita los servicios gratis a EEUU/Canadá/UE/UK/Australia/NZ. Sin auto-restart en free (solo Premium). Descartado |
+
+**Decisión**: **Sillydev primario** (cero renovaciones, sin tarjeta, auto-restart).
+Bot-Hosting.net como respaldo. Falix queda fuera por país. Nota Sillydev: la música no
+sobrevive en 256 MB ("will not survive contact with a busy voice channel") y no hay
+ffmpeg en el host ⇒ probar sin Lavalink y, si falla, apagar con el feature flag
+(`FEATURE_FLAGS_SYSTEM.md` §7).
+
+### Paquete standalone (verificado 10 oct 2026)
 
 `node scripts/build-bot-standalone.mjs` genera `deploy/ciszubot-standalone.zip` (no versionado):
 
-- Incluye el bot + los paquetes `@ciszunetwork/db` y `@ciszunetwork/utils` con `tsconfig` de `paths`
-  (los imports del monorepo se compilan como require relativos; **0 dependencias del workspace**).
-- `package.json` con las dependencias reales (sin `workspace:*`) y scripts:
+- Incluye el bot + los paquetes `@ciszunetwork/db` y `@ciszunetwork/utils` con `tsconfig`
+  de `paths`; el **postbuild** (`scripts/standalone-postbuild.mjs` → `scripts/postbuild.mjs`
+  del paquete) reescribe los `require("@ciszunetwork/*")` a rutas relativas del `dist`,
+  porque **tsc no reescribe los aliases** (sin esto, `node dist/src/index.js` falla con
+  MODULE_NOT_FOUND). **0 dependencias del workspace.**
+- `package.json` con dependencias reales (sin `workspace:*`), `typescript` y `@types/*` en
+  `dependencies` (el panel instala con `--omit=dev` y compila allí), y scripts:
   - `npm run setup` → `npm install --omit=dev --ignore-scripts && npm run build`
   - `npm start` → `node dist/src/index.js`
-- `.env.example` con las variables necesarias (BOT_TOKEN, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SENTRY_DSN…).
+- Rutas layout-agnósticas: `bot-config.json` y `public/` se resuelven desde la raíz del
+  paquete, el cwd o `dist/` (arreglado para Docker/standalone/local).
+- `.env.example` con: `BOT_TOKEN`, **`DATABASE_URL`** (pooler Supabase; sin ella el bot no
+  consulta la DB), `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SENTRY_DSN`,
+  `TOP_GG_TOKEN`, `DISCORDBOTLIST_TOKEN`, `NODE_ENV`, `PORT` y **`FEATURES_OFF`**
+  (kill switch por deploy, p. ej. `music`).
+- Verificación local: `npm run setup && npm start` carga los 73 comandos, arranca el
+  servidor HTTP en `:5000` y solo falla el login con token vacío (esperado sin `.env`).
 
-### Pasos en el panel (bot-hosting.net u otro Pterodactyl)
+### Pasos en Sillydev (panel gratuito)
 
-1. Crear cuenta (correo/GitHub) y un servidor **Node.js** (asignar la máxima RAM gratuita).
-2. Subir `ciszubot-standalone.zip` (File Manager) y extraerlo en la raíz.
-3. Crear `.env` desde `.env.example` con los valores del vault.
-4. En la consola: `npm run setup && npm start` (o configurar el arranque con ese comando).
-5. Verificar en logs: `Client ready` / login OK.
+1. Crear cuenta en `sillydev.co.uk` (sin tarjeta) y un servidor **Node.js**.
+2. Subir `ciszubot-standalone.zip` (File Manager/SFTP) y extraerlo en la raíz.
+3. Crear `.env` desde `.env.example` con los valores del vault (`vault.ps1 show <KEY>`).
+4. En la consola/startup: `npm run setup && npm start` (o fijar ese comando de arranque).
+5. Verificar en logs: comandos cargados + `Client ready`; comprobar heartbeat en la web
+   (`ciszubot.bot_status`) y `node scripts/botstatus.mjs status`.
+6. Probar `cz!play`: si la música rompe en 256 MB, apagarla con
+   `node scripts/features.mjs disable music "…"` (o `FEATURES_OFF=music`).
 
 ### Pasos en Termux (alternativa sin panel)
 
 1. Instalar Termux (F-Droid) y ejecutar: `pkg update && pkg install nodejs-lts git -y`.
 2. Copiar el ZIP (por storage/USB/nube), descomprimir y `cd` a la carpeta.
 3. `npm run setup && npm start` (o usar `termux-wake-lock` para que no se duerma).
+
+_Última revisión: 10 oct 2026._ Relacionado: `FEATURE_FLAGS_SYSTEM.md`, `DOCKER_SYSTEM.md`,
+`MONITORING_SYSTEM.md`, `REMOTE_CONTROL_SYSTEM.md`, `SCHEDULE_PROTOCOLS.md`.

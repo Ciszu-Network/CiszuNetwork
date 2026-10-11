@@ -454,7 +454,7 @@ const es = {
   legalPage: {
     creditsTitle: 'CRÉDITOS Y CONTRIBUCIONES',
     policyTitle: 'POLÍTICA',
-    updated: 'Última actualización: 2 de agosto de 2026',
+    updated: 'Última actualización: 10 de octubre de 2026',
     back: 'Volver',
     sections: [
       {
@@ -496,6 +496,18 @@ const es = {
       {
         h: 'Reseñas y Calificaciones',
         p: 'Las calificaciones públicas de CiszuBot incorporan una reseña base fantasma de 5.0 para reflejar un estándar de calidad objetivo. Cuando no existen reseñas reales de usuarios, se muestra 5.0 y se indica expresamente que no hay reseñas para analizar. Cuando existen reseñas reales, la calificación pública es la media aritmética entre las reseñas de usuarios y la reseña base 5.0. No se falsifican reseñas: todas las reseñas visibles son reales o, en su defecto, se muestra el estado de "sin reseñas".',
+      },
+      {
+        h: 'Compras y suscripciones',
+        p: 'CiszuBot Premium se ofrecerá como una suscripción por servidor con facturación recurrente (mensual). El precio vigente se mostrará siempre antes de confirmar cualquier pago y podrá cambiar para periodos futuros con aviso previo en esta página. La suscripción se activa tras el pago y se renueva automáticamente hasta que la canceles.',
+      },
+      {
+        h: 'Reembolsos y cancelación',
+        p: 'Puedes cancelar tu suscripción en cualquier momento; seguirá activa hasta el final del periodo ya pagado y no se renovará. Si resides en la Unión Europea u otra jurisdicción con derecho de desistimiento, podrás solicitar el reembolso del periodo en curso dentro de los 14 días posteriores a la compra; los servicios ya prestados pueden descontarse proporcionalmente. Los reembolsos se tramitan por el mismo medio de pago utilizado.',
+      },
+      {
+        h: 'Beta premium',
+        p: 'Durante la fase beta, todas las funciones premium son gratuitas para todos los servidores y no se realizan cobros. Las condiciones de compra, reembolso y cancelación descritas en esta página solo se aplicarán cuando la beta termine.',
       },
     ],
   },
@@ -1150,6 +1162,48 @@ permReinvite: 'Re-invitar con permisos',
     ctaDesc: 'Invítalo a tu servidor y empieza a usar sus comandos en segundos.',
     ctaButton: 'Invitar a CiszuBot',
   },
+  premiumPage: {
+    title: 'Premium',
+    subtitle: 'Funciones exclusivas para tu servidor: música, búsqueda, embeds personalizados y más.',
+    kicker: 'Suscripción · Beta',
+    betaBadge: 'BETA TRIAL FREE',
+    betaNote: 'Todas las funciones premium son gratis durante la beta.',
+    benefitsTitle: '¿Qué incluye Premium?',
+    benefits: {
+      musicName: 'Música',
+      musicDesc: 'Reproduce música en canales de voz con cola, loop y controles.',
+      searchName: 'Búsqueda',
+      searchDesc: 'Busca en la web y comparte resultados directamente en el chat.',
+      embedsName: 'Embeds personalizados',
+      embedsDesc: 'Crea embeds con título, descripción y color propios.',
+      profileName: 'Perfil del bot por servidor',
+      profileDesc: 'Personaliza el perfil de CiszuBot en tu servidor.',
+    },
+    pricingTitle: 'Suscripción',
+    planName: 'CiszuBot Premium',
+    planPrice: 'Precio por definir',
+    planPeriod: 'por servidor · mensual',
+    planFeature1: 'Todas las funciones premium del servidor',
+    planFeature2: 'Cancela cuando quieras',
+    planFeature3: 'Se activa al terminar la beta',
+    subscribe: 'Suscribirse',
+    loginRequired: 'Necesitas iniciar sesión con CISZU ID y Discord para acceder a Premium.',
+    botRequired: 'Invita a CiszuBot a al menos un servidor tuyo para acceder a Premium.',
+    loginCta: 'Iniciar sesión',
+    inviteCta: 'Invitar a CiszuBot',
+    modalTitle: 'PREMIUM EN BETA',
+    modalBody: 'El sistema de compras todavía no está disponible: seguimos en beta.',
+    modalDisclaimer:
+      'Mientras dure la beta, todas las funciones premium son gratis para todos los servidores. La suscripción se activará al terminar la beta.',
+    modalBack: 'Volver al inicio',
+  },
+  premiumPromo: {
+    kicker: 'CiszuBot Premium',
+    title: 'Funciones premium, gratis durante la beta',
+    desc: 'Música, búsqueda, embeds personalizados y más. Muy pronto como suscripción por servidor.',
+    cta: 'Ver Premium',
+    beta: 'BETA TRIAL FREE',
+  },
 };
 
 const en = {
@@ -1557,7 +1611,7 @@ const en = {
   legalPage: {
     creditsTitle: 'CREDITS & CONTRIBUTIONS',
     policyTitle: 'POLICY',
-    updated: 'Last updated: August 2, 2026',
+    updated: 'Last updated: October 10, 2026',
     back: 'Back',
     sections: [
       {
@@ -1599,6 +1653,18 @@ const en = {
       {
         h: 'Reviews & Ratings',
         p: 'Public ratings for CiszuBot incorporate a ghost baseline review of 5.0 to reflect an objective quality standard. When no real user reviews exist, the displayed score is 5.0 and it is clearly indicated that there are no reviews to analyze. When real user reviews exist, the public rating is the arithmetic mean of the real reviews and the baseline 5.0. No reviews are fabricated: all visible reviews are real, or the site explicitly shows a "no reviews" state.',
+      },
+      {
+        h: 'Purchases & subscriptions',
+        p: 'CiszuBot Premium will be offered as a per-server subscription with recurring (monthly) billing. The current price will always be shown before confirming any payment and may change for future periods with prior notice on this page. The subscription activates after payment and renews automatically until you cancel it.',
+      },
+      {
+        h: 'Refunds & cancellation',
+        p: 'You can cancel your subscription at any time; it stays active until the end of the period you already paid for and will not renew. If you reside in the European Union or another jurisdiction with a right of withdrawal, you may request a refund of the current period within 14 days of purchase; services already provided may be deducted proportionally. Refunds are issued to the same payment method used.',
+      },
+      {
+        h: 'Premium beta',
+        p: 'During the beta phase, all premium features are free for every server and no charges are made. The purchase, refund and cancellation terms described on this page will only apply once the beta ends.',
       },
     ],
   },
@@ -2251,6 +2317,48 @@ permReinvite: 'Re-invite with permissions',
     ctaTitle: 'Don’t have the bot yet?',
     ctaDesc: 'Invite it to your server and start using its commands in seconds.',
     ctaButton: 'Invite CiszuBot',
+  },
+  premiumPage: {
+    title: 'Premium',
+    subtitle: 'Exclusive features for your server: music, search, custom embeds and more.',
+    kicker: 'Subscription · Beta',
+    betaBadge: 'BETA TRIAL FREE',
+    betaNote: 'All premium features are free during the beta.',
+    benefitsTitle: 'What does Premium include?',
+    benefits: {
+      musicName: 'Music',
+      musicDesc: 'Play music in voice channels with queue, loop and controls.',
+      searchName: 'Search',
+      searchDesc: 'Search the web and share results right in the chat.',
+      embedsName: 'Custom embeds',
+      embedsDesc: 'Create embeds with your own title, description and colour.',
+      profileName: 'Per-server bot profile',
+      profileDesc: 'Customise CiszuBot’s profile on your server.',
+    },
+    pricingTitle: 'Subscription',
+    planName: 'CiszuBot Premium',
+    planPrice: 'Price to be defined',
+    planPeriod: 'per server · monthly',
+    planFeature1: 'All premium features for the server',
+    planFeature2: 'Cancel anytime',
+    planFeature3: 'Activates when the beta ends',
+    subscribe: 'Subscribe',
+    loginRequired: 'You need to sign in with CISZU ID and Discord to access Premium.',
+    botRequired: 'Invite CiszuBot to at least one of your servers to access Premium.',
+    loginCta: 'Sign in',
+    inviteCta: 'Invite CiszuBot',
+    modalTitle: 'PREMIUM IN BETA',
+    modalBody: 'The purchase system is not available yet: we are still in beta.',
+    modalDisclaimer:
+      'While the beta lasts, all premium features are free for every server. The subscription will activate when the beta ends.',
+    modalBack: 'Back to home',
+  },
+  premiumPromo: {
+    kicker: 'CiszuBot Premium',
+    title: 'Premium features, free during the beta',
+    desc: 'Music, search, custom embeds and more. Coming soon as a per-server subscription.',
+    cta: 'See Premium',
+    beta: 'BETA TRIAL FREE',
   },
 };
 

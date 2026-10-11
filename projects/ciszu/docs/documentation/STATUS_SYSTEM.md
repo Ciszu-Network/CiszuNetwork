@@ -164,6 +164,19 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 - Frontend: fases 1–11 del to-do frontend completadas y verificadas (ver `TODO.md`).
 - CDN limpio (7.353 objetos) y tests en 171.
 
+### 10 oct 2026 — Feature flags + Premium beta (CiszuBot)
+
+- **Kill switches globales** en tiempo real (`ciszubot.feature_flags`, migración 58): bot
+  + devcon (sección FEATURES, gate admin de ciszubot) + `scripts/features.mjs`; override
+  por deploy `FEATURES_OFF`. Doc: `FEATURE_FLAGS_SYSTEM.md`.
+- **Premium beta**: interceptación en el bot (aviso gratis en beta / bloqueo real al
+  salir de beta), página `/premium` con modal bloqueante, promos y términos actualizados.
+- **Hosting del bot**: investigación de renovaciones y decisión Sillydev; standalone
+  regenerado y verificado (postbuild de aliases, deps de tipos, `.env` con
+  `DATABASE_URL`/`FEATURES_OFF`, smoke test OK).
+- Verificación: `pnpm typecheck` ✅ · lint/build ciszubot ✅ · `verify:i18n` 0 deuda ✅ ·
+  migración 58 aplicada ✅.
+
 ## Leyenda de estados
 
 - **Operativo**: funciona en producción y verificado.

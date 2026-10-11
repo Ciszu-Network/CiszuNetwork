@@ -16,6 +16,9 @@ import { logCommand, updateBotStatus } from './services/supabase';
 import { registerListeners, handleButton } from './listeners';
 import { scheduleStatsPosting } from './services/botlists';
 import { initErrorTracking, captureError } from './services/sentry';
+import { gateCommand } from './utils/commandGate';
+import { resolveFeatureForCommand, isPremiumCommand } from './config/features';
+import { getFeatureState, isPremiumBeta } from './services/featureFlags';
 
 initErrorTracking();
 
@@ -148,6 +151,15 @@ client.on(Events.InteractionCreate, async (interaction) => {
         delete: async () => undefined,
       };
 
+      const allowed = await gateCommand({
+        command,
+        guildId: interaction.guildId ?? null,
+        tag: interaction.user.tag,
+        iconURL: interaction.user.displayAvatarURL(),
+        send: (content) => interaction.followUp(content as never),
+      });
+      if (!allowed) return;
+
       await command.execute(simulatedMessage as never, args);
       incrementCommands();
       logCommand(
@@ -181,9 +193,13 @@ client.on(Events.InteractionCreate, async (interaction) => {
         await interaction.followUp({ content: '❌ ¡Categoría no encontrada!', ephemeral: true }).catch(() => undefined);
         return;
       }
+      const sample = cmds[0];
+      const catSlug = sample ? resolveFeatureForCommand(sample) : null;
+      const catState = catSlug ? await getFeatureState(catSlug) : null;
+      const catDisabled = Boolean(catState && !catState.enabled);
       const catEmbed = new EmbedBuilder()
         .setColor(config.colors.primary as `#${string}`)
-        .setTitle(`📁 ${cat} — ${cmds.length} comandos`)
+        .setTitle(`📁 ${cat} — ${cmds.length} comandos${catDisabled ? ' · ⛔ desactivada' : ''}`)
         .setDescription(cmds.map((c) => `\`${config.prefix}${c.name}\` - ${c.description || 'Sin descripción'}`).join('\n').slice(0, 4096))
         .setFooter({ text: `CiszuBot • Solicitado por ${interaction.user.tag}`, iconURL: interaction.user.displayAvatarURL() })
         .setTimestamp();
@@ -206,6 +222,19 @@ client.on(Events.InteractionCreate, async (interaction) => {
       );
     if (command.aliases.length > 0) {
       embed.addFields({ name: '🔗 Aliases', value: command.aliases.map((a) => `\`${a}\``).join(', '), inline: false });
+    }
+    const detailSlug = resolveFeatureForCommand(command);
+    const detailState = detailSlug ? await getFeatureState(detailSlug) : null;
+    if (detailState && !detailState.enabled) {
+      embed.addFields({ name: '⛔ Desactivada', value: detailState.reason ?? 'Sin motivo especificado', inline: false });
+    }
+    if (isPremiumCommand(command)) {
+      const beta = await isPremiumBeta();
+      embed.addFields({
+        name: '⭐ Premium',
+        value: beta ? 'Gratis durante la beta' : 'Requiere Premium del servidor',
+        inline: false,
+      });
     }
     embed.setFooter({
       text: `CiszuBot • Solicitado por ${interaction.user.tag}`,
@@ -288,6 +317,14 @@ client.on('messageCreate', async (message) => {
 
     try {
       logger.info(`Comando '${commandName}' ejecutado por ${message.author.tag} en ${message.guild?.name || 'DM'}`);
+      const allowed = await gateCommand({
+        command,
+        guildId: message.guild?.id ?? null,
+        tag: message.author.tag,
+        iconURL: message.author.displayAvatarURL(),
+        send: (content) => message.reply(content as never),
+      });
+      if (!allowed) return;
       await command.execute(message as never, args);
       incrementCommands();
       logCommand(message.guild?.id ?? 'DM', message.author.id, commandName, args);

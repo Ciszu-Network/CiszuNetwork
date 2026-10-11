@@ -1,6 +1,8 @@
 import { ActionRowBuilder, EmbedBuilder, SlashCommandBuilder, StringSelectMenuBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { LINKS } from '../config/links';
+import { resolveFeatureForCommand, isPremiumCommand } from '../config/features';
+import { getFeatureState, isPremiumBeta } from '../services/featureFlags';
 
 const emojiMap: Record<string, string> = {
   ping: '🏓', pong: '🏓', help: '📖', say: '💬', directsay: '💬', confess: '🤫',
@@ -56,6 +58,19 @@ const command: BotCommand = {
       if (found.aliases.length > 0) {
         embed.addFields({ name: '🔗 Aliases', value: found.aliases.map((a) => `\`${a}\``).join(', '), inline: false });
       }
+      const detailSlug = resolveFeatureForCommand(found);
+      const detailState = detailSlug ? await getFeatureState(detailSlug) : null;
+      if (detailState && !detailState.enabled) {
+        embed.addFields({ name: '⛔ Desactivada', value: detailState.reason ?? 'Sin motivo especificado', inline: false });
+      }
+      if (isPremiumCommand(found)) {
+        const beta = await isPremiumBeta();
+        embed.addFields({
+          name: '⭐ Premium',
+          value: beta ? 'Gratis durante la beta' : 'Requiere Premium del servidor',
+          inline: false,
+        });
+      }
       embed.setFooter({
         text: `CiszuBot • Solicitado por ${message.author.tag}`,
         iconURL: message.client.user?.displayAvatarURL(),
@@ -83,7 +98,11 @@ const command: BotCommand = {
       (categories[cat] ??= []).push(`\`cz!${cmd.name}\` - ${cmd.description || 'Sin descripción'}`);
     }
     for (const [cat, list] of Object.entries(categories)) {
-      embed.addFields({ name: `📁 ${cat}`, value: list.join('\n'), inline: false });
+      const sample = allCommands.find((c) => (c.category || 'General') === cat);
+      const catSlug = sample ? resolveFeatureForCommand(sample) : null;
+      const catState = catSlug ? await getFeatureState(catSlug) : null;
+      const mark = catState && !catState.enabled ? ' · ⛔ desactivada' : '';
+      embed.addFields({ name: `📁 ${cat}${mark}`, value: list.join('\n'), inline: false });
     }
 
     embed.addFields(
