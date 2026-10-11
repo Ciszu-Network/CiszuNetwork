@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { Icon, FlagIcon, LanguagesModal, LANGUAGE_OPTIONS, isLangAvailable, LANG_BLOCKED_MESSAGE, useToast } from '@ciszu/ui';
+import { Icon, LanguagesModal, LANGUAGE_OPTIONS, isLangAvailable, LANG_BLOCKED_MESSAGE, useToast } from '@ciszu/ui';
 import { updatePreferences } from '@/lib/preferences';
 import InviteLink from './InviteLink';
 import QuickDocks from '@/components/molecules/QuickDocks';
@@ -117,8 +117,18 @@ const ACCENTS: { hover: string; active: string; icon: string }[] = [
 
 const INVITE_GRADIENT = 'bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white';
 
-/** Bandera del idioma activo para el preview del sidebar. */
-const LANG_FLAGS: Record<string, string> = { 'es-latam': 'es', 'es-es': 'es', 'en-us': 'us', 'en-uk': 'gb' };
+/** Iconos del toggle de tema: los MISMOS SVGs que el Navbar de las webs. */
+const ThemeMoon = () => (
+  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+  </svg>
+);
+const ThemeSun = () => (
+  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth={1} aria-hidden>
+    <circle cx="12" cy="12" r="4" />
+    <path d="M12 1v3m0 16v3M4.22 4.22l2.12 2.12m11.32 11.32l2.12 2.12M1 12h3m16 0h3M4.22 19.78l2.12-2.12M19.78 4.22l-2.12 2.12" strokeLinecap="round" />
+  </svg>
+);
 
 function GuildAvatar({ guild, size = 32 }: { guild: ShellGuild; size?: number }) {
   if (guild.icon) {
@@ -345,7 +355,7 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
           type="button"
           onClick={() => setServersOpen((v) => !v)}
           aria-expanded={serversOpen}
-          className={`${itemBase} ${activeGuild ? ACCENTS[3].active : itemIdle} ${ACCENTS[3].hover} gap-3`}
+          className={`${itemBase} ${serversOpen || activeGuild ? ACCENTS[3].active : itemIdle} ${ACCENTS[3].hover} gap-3 ${serversOpen ? 'ring-1 ring-neon-cyan/40' : ''}`}
         >
           {activeGuild ? (
             <GuildAvatar guild={activeGuild} size={26} />
@@ -380,12 +390,16 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
                   </span>
                   <span className="w-full truncate text-center text-[9px] font-bold text-white/75">{t.overview}</span>
                 </button>
-                {guilds.map((g) => {
+                {guilds.map((g, index) => {
                   const invited = g.invited !== false;
                   const unknown = g.invited == null;
                   const active = activeId === g.id;
                   return (
-                    <div key={g.id} className="relative">
+                    <div
+                      key={g.id}
+                      className="animate-fade-in-down relative"
+                      style={{ animationDelay: `${Math.min(index, 8) * 45}ms` }}
+                    >
                       <button
                         type="button"
                         onClick={() => {
@@ -460,23 +474,58 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
       {/* ─── ATAJOS ─── */}
       <p className={sectionTitle}>{t.shortcuts}</p>
       <div className="space-y-1">
-        <Link href="/faq" className={`${itemBase} ${itemIdle} ${ACCENTS[0].hover}`} onClick={() => setOpen(false)}>
+        <Link
+          href="/faq"
+          className={`${itemBase} ${itemIdle} ${ACCENTS[0].hover}`}
+          onClick={(e) => {
+            setOpen(false);
+            guardNav('/faq')(e);
+          }}
+        >
           <Icon name="help" size={15} className={ACCENTS[0].icon} />
           {t.faq}
         </Link>
-        <Link href="/help" className={`${itemBase} ${itemIdle} ${ACCENTS[2].hover}`} onClick={() => setOpen(false)}>
+        <Link
+          href="/help"
+          className={`${itemBase} ${itemIdle} ${ACCENTS[2].hover}`}
+          onClick={(e) => {
+            setOpen(false);
+            guardNav('/help')(e);
+          }}
+        >
           <Icon name="life-ring" size={15} className={ACCENTS[2].icon} />
           {t.help}
         </Link>
-        <Link href="/support" className={`${itemBase} ${itemIdle} ${ACCENTS[4].hover}`} onClick={() => setOpen(false)}>
+        <Link
+          href="/support"
+          className={`${itemBase} ${itemIdle} ${ACCENTS[4].hover}`}
+          onClick={(e) => {
+            setOpen(false);
+            guardNav('/support')(e);
+          }}
+        >
           <Icon name="support" size={15} className={ACCENTS[4].icon} />
           {t.support}
         </Link>
-        <Link href="/changelog" className={`${itemBase} ${itemIdle} ${ACCENTS[3].hover}`} onClick={() => setOpen(false)}>
+        <Link
+          href="/changelog"
+          className={`${itemBase} ${itemIdle} ${ACCENTS[3].hover}`}
+          onClick={(e) => {
+            setOpen(false);
+            guardNav('/changelog')(e);
+          }}
+        >
           <Icon name="history" size={15} className={ACCENTS[3].icon} />
           {t.changelog}
         </Link>
-        <Link href="/stats" className={`${itemBase} ${itemIdle} ${ACCENTS[0].hover}`} onClick={() => setOpen(false)}>
+        <Link
+          href="/stats"
+          className={`${itemBase} ${itemIdle} ${ACCENTS[0].hover}`}
+          onClick={(e) => {
+            setOpen(false);
+            guardNav('/stats')(e);
+          }}
+        >
           <Icon name="chart-bar" size={15} className={ACCENTS[0].icon} />
           {t.stats}
         </Link>
@@ -485,6 +534,12 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
           target="_blank"
           rel="noopener noreferrer"
           className={`${itemBase} ${itemIdle} ${ACCENTS[4].hover}`}
+          onClick={(e) => {
+            if (dashboardGuard.isDirty()) {
+              e.preventDefault();
+              dashboardGuard.requestNav('https://ciszunetwork.vercel.app');
+            }
+          }}
         >
           <Icon name="globe" size={15} className={ACCENTS[4].icon} />
           {t.news}
@@ -497,7 +552,9 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
           <Icon name="globe" size={15} className={ACCENTS[3].icon} />
           {t.language}
           <span className="ml-auto inline-flex items-center gap-1.5">
-            <FlagIcon code={LANG_FLAGS[langCode] ?? 'es'} className="h-3.5 w-5 rounded-[3px] shadow" />
+            <span className="inline-flex h-5 w-5 items-center justify-center overflow-hidden rounded-full [&>svg]:h-full [&>svg]:w-full">
+              {LANGUAGE_OPTIONS.find((o) => o.code === langCode)?.flag ?? LANGUAGE_OPTIONS[0].flag}
+            </span>
             <span className="font-mono text-[9px] uppercase text-white/40">{langCode.split('-')[0]}</span>
           </span>
         </button>
@@ -508,8 +565,8 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
         >
           <Icon name="palette" size={15} className={ACCENTS[5].icon} />
           {t.theme}
-          <span className="ml-auto inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-white/40">
-            <Icon name={dark ? 'moon' : 'sun'} size={11} className={ACCENTS[5].icon} />
+          <span className="ml-auto inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-white/40">
+            <span className={ACCENTS[5].icon}>{dark ? <ThemeMoon /> : <ThemeSun />}</span>
             {dark ? t.dark : t.light}
           </span>
         </button>

@@ -2,7 +2,7 @@ import { EmbedBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { LINKS, BOT_COLORS, BOT_FOOTER } from '../config/links';
 import { resolveFeatureForCommand, isPremiumCommand } from '../config/features';
-import { getFeatureState, isPremiumBeta, isPremiumGuild } from '../services/featureFlags';
+import { getFeatureState, getGuildFeatureOverride, isPremiumBeta, isPremiumGuild } from '../services/featureFlags';
 
 /**
  * Interceptor global previo a `command.execute` (prefijo y slash):
@@ -75,6 +75,13 @@ export async function gateCommand(ctx: GateContext): Promise<boolean> {
     if (!state.enabled) {
       await send({ embeds: [disabledEmbed(state.reason, tag, iconURL)] });
       return false;
+    }
+    if (guildId) {
+      const guildOverride = await getGuildFeatureOverride(guildId, slug);
+      if (guildOverride === false) {
+        await send({ embeds: [disabledEmbed('Desactivada en este servidor', tag, iconURL)] });
+        return false;
+      }
     }
   }
 

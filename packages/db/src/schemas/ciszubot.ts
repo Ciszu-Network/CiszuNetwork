@@ -279,6 +279,18 @@ export const featureFlags = ciszubot.table(
   }
 );
 
+export const guildFeatureFlags = ciszubot.table(
+  'guild_feature_flags',
+  {
+    guildId: text('guild_id').notNull(),
+    feature: text('feature').notNull(),
+    enabled: boolean('enabled').notNull().default(true),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedBy: text('updated_by'),
+  },
+  (t) => [primaryKey({ columns: [t.guildId, t.feature] })]
+);
+
 export const premiumGuilds = ciszubot.table(
   'premium_guilds',
   {

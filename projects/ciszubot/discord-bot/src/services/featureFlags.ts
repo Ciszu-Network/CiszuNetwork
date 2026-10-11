@@ -20,6 +20,35 @@ interface FlagsSnapshot {
 let cache: FlagsSnapshot | null = null;
 let inflight: Promise<FlagsSnapshot> | null = null;
 
+/** Overrides por servidor (ciszubot.guild_feature_flags) con TTL corto. */
+const GUILD_TTL_MS = 20_000;
+const guildCache = new Map<string, { flags: Map<string, boolean>; at: number }>();
+
+async function fetchGuildFlags(guildId: string): Promise<Map<string, boolean>> {
+  const rows = await db
+    .select({ feature: ciszubotSchema.guildFeatureFlags.feature, enabled: ciszubotSchema.guildFeatureFlags.enabled })
+    .from(ciszubotSchema.guildFeatureFlags)
+    .where(eq(ciszubotSchema.guildFeatureFlags.guildId, guildId));
+  return new Map(rows.map((r) => [r.feature, r.enabled]));
+}
+
+/** Override del servidor: null = sin override (usa el global). */
+export async function getGuildFeatureOverride(guildId: string, slug: string): Promise<boolean | null> {
+  const cached = guildCache.get(guildId);
+  if (!cached || Date.now() - cached.at >= GUILD_TTL_MS) {
+    try {
+      const flags = await fetchGuildFlags(guildId);
+      guildCache.set(guildId, { flags, at: Date.now() });
+    } catch (error) {
+      logger.warn('No se pudieron leer los flags del servidor:', error);
+      if (!cached) return null;
+      return cached.flags.get(slug) ?? null;
+    }
+  }
+  const entry = guildCache.get(guildId);
+  return entry ? (entry.flags.get(slug) ?? null) : null;
+}
+
 const deployOff = new Set(
   (process.env.FEATURES_OFF ?? '')
     .split(',')

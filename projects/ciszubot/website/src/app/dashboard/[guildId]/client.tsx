@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Icon } from '@ciszu/ui';
+import { Icon, useToast } from '@ciszu/ui';
 import { getDict, readCookieLang, INVITE_URL, type Dict } from '@/lib/i18n';
 import InviteLink from '@/components/dashboard/InviteLink';
 import type { GuildInfo } from '@/lib/discordGuild';
@@ -34,6 +34,8 @@ interface GuildConfig {
   music_channel_id?: string | null;
   mute_role_id?: string | null;
   automod_enabled?: boolean;
+  /** Toggles por servidor de funciones del bot (slug → enabled). */
+  features?: Record<string, boolean>;
 }
 
 type SectionKey = 'general' | 'levels' | 'welcome' | 'extras';
@@ -63,6 +65,20 @@ const SECTION_KEYS: Record<SectionKey, (keyof GuildConfig)[]> = {
 };
 
 const ALL_KEYS: (keyof GuildConfig)[] = Object.values(SECTION_KEYS).flat();
+
+/** Funciones configurables por servidor (toggles del dashboard). */
+const FEATURE_ROWS: { slug: string; icon: string; labelKey: keyof Dict['guildPage']; descKey: keyof Dict['guildPage']; premium?: boolean }[] = [
+  { slug: 'music', icon: 'star', labelKey: 'featMusic', descKey: 'featMusicDesc', premium: true },
+  { slug: 'search', icon: 'search', labelKey: 'featSearch', descKey: 'featSearchDesc', premium: true },
+  { slug: 'minigames', icon: 'gamepad', labelKey: 'featMinigames', descKey: 'featMinigamesDesc' },
+  { slug: 'economy', icon: 'trophy', labelKey: 'featEconomy', descKey: 'featEconomyDesc' },
+  { slug: 'help', icon: 'help', labelKey: 'featHelp', descKey: 'featHelpDesc' },
+  { slug: 'utility', icon: 'settings', labelKey: 'featUtility', descKey: 'featUtilityDesc' },
+  { slug: 'moderation', icon: 'shield', labelKey: 'featModeration', descKey: 'featModerationDesc' },
+  { slug: 'setup', icon: 'palette', labelKey: 'featSetup', descKey: 'featSetupDesc' },
+  { slug: 'levels', icon: 'chart-bar', labelKey: 'featLevels', descKey: 'featLevelsDesc' },
+  { slug: 'social', icon: 'users', labelKey: 'featSocial', descKey: 'featSocialDesc' },
+];
 
 /** Permisos clave del bot (bitfields de Discord). */
 const PERMS: { key: string; bit: number }[] = [
@@ -237,11 +253,13 @@ function SectionJson({
       <button type="button" disabled={disabled} onClick={onExport} className={btn} title={exportLabel}>
         <FloppyMini />
         <Icon name="json" size={11} />
+        <span className="hidden sm:inline">{exportLabel}</span>
         <span>↓</span>
       </button>
       <button type="button" disabled={disabled} onClick={() => fileRef.current?.click()} className={btn} title={importLabel}>
         <FloppyMini />
         <Icon name="json" size={11} />
+        <span className="hidden sm:inline">{importLabel}</span>
         <span>↑</span>
       </button>
       <input
@@ -261,6 +279,7 @@ function SectionJson({
 
 export default function DashboardGuildClient({ guildId, guildName, guildIcon, username, guildInfo, hasBotGuild = null }: Props) {
   const router = useRouter();
+  const { toast } = useToast();
   const queryClient = useQueryClient();
   const [dict, setDict] = useState<Dict>(() => getDict('es-latam'));
   useEffect(() => {
@@ -288,11 +307,11 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   }, []);
 
   // Sub-sidebar por opción: resumen por defecto (spec del dashboard).
-  type GuildView = 'summary' | 'general' | 'levels' | 'welcome' | 'extras';
+  type GuildView = 'summary' | 'general' | 'features' | 'levels' | 'welcome' | 'extras';
   const [view, setView] = useState<GuildView>('summary');
   useEffect(() => {
     const saved = localStorage.getItem('cz-dash-view') as GuildView | null;
-    if (saved && ['summary', 'general', 'levels', 'welcome', 'extras'].includes(saved)) setView(saved);
+    if (saved && ['summary', 'general', 'features', 'levels', 'welcome', 'extras'].includes(saved)) setView(saved);
   }, []);
   const dirtyRef = useRef(false);
   const shakeDock = useCallback(() => {
@@ -339,6 +358,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   const SUBNAV = [
     { key: 'summary', icon: 'server', label: 'subnavSummary' },
     { key: 'general', icon: 'settings', label: 'subnavGeneral' },
+    { key: 'features', icon: 'sparkles', label: 'subnavFeatures' },
     { key: 'levels', icon: 'star', label: 'subnavLevels' },
     { key: 'welcome', icon: 'heart', label: 'subnavWelcome' },
     { key: 'extras', icon: 'support', label: 'subnavExtras' },
@@ -357,7 +377,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         window.location.href = '/dashboard';
         return null;
       }
-      const json = (await res.json()) as { config?: GuildConfig | null };
+      const json = (await res.json()) as { config?: GuildConfig | null; features?: Record<string, boolean> };
       const cfg = json.config;
       return {
         prefix: cfg?.prefix ?? 'cz!',
@@ -379,6 +399,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         private_category_id: cfg?.private_category_id ?? null,
         music_channel_id: cfg?.music_channel_id ?? null,
         mute_role_id: cfg?.mute_role_id ?? null,
+        features: json.features ?? {},
       } as GuildConfig;
     },
   });
@@ -568,6 +589,8 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
       }
       setLeavePrompt(null);
       if (prompt.kind === 'view') {
+        if (action === 'save') toast(t.leaveSaved, 'success');
+        else toast(t.leaveDiscarded, 'info');
         setView(prompt.target);
         try {
           localStorage.setItem('cz-dash-view', prompt.target);
@@ -575,10 +598,15 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           /* sin storage */
         }
       } else {
-        router.push(prompt.href);
+        toast(action === 'save' ? t.leaveSaved : t.leaveDiscarded, action === 'save' ? 'success' : 'info');
+        if (/^https?:\/\//.test(prompt.href)) {
+          window.open(prompt.href, '_blank', 'noopener,noreferrer');
+        } else {
+          router.push(prompt.href);
+        }
       }
     },
-    [leavePrompt, config, baseline, hasBotGuild, saveMutation, router]
+    [leavePrompt, config, baseline, hasBotGuild, saveMutation, router, toast, t.leaveSaved, t.leaveDiscarded]
   );
 
   useEffect(() => {
@@ -723,7 +751,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         background: `radial-gradient(900px 380px at 15% -5%, hsla(${hue}, 90%, 60%, 0.16), transparent 60%), radial-gradient(700px 320px at 95% 10%, hsla(${(hue + 80) % 360}, 90%, 60%, 0.12), transparent 55%)`,
       }}
     >
-      <div className="mx-auto max-w-3xl px-4 pt-4">
+      <div className="mx-auto max-w-5xl px-4 pt-4">
         <Link
           href="/dashboard"
           className="inline-flex items-center gap-1.5 text-sm text-white/60 transition hover:text-neon-blue"
@@ -732,7 +760,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         </Link>
 
         {/* Hero del servidor */}
-        <div id="summary" className="mt-4 rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
+        <div id="summary" className="mt-4 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
           <div className="flex flex-wrap items-center gap-4">
             {guildIcon ? (
               <img
@@ -889,7 +917,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           <div id="config" aria-busy={busy} className={`min-w-0 flex-1 space-y-6 ${muted}`}>
           {/* Resumen del servidor */}
           {view === 'summary' && (
-            <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
+            <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
               <div className="mb-4 flex flex-wrap items-center gap-2">
                 <h2 className="flex items-center gap-2 font-bold text-white">
                   <Icon name="server" size={18} className="text-neon-blue" /> {t.serverInfoTitle}
@@ -957,7 +985,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           )}
 
           {view === 'general' && (
-          <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
             <div className="mb-4 flex flex-wrap items-center gap-2">
               <h2 className="flex items-center gap-2 font-bold text-white">
                 <Icon name="settings" size={18} className="text-neon-blue" /> {t.generalTitle}
@@ -966,15 +994,15 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               <SectionJson
                 disabled={dirty || busy}
                 disabledHint={t.jsonNeedSave}
-                exportLabel={t.exportSection}
-                importLabel={t.importJson}
+                exportLabel={t.jsonExport}
+                importLabel={t.jsonImport}
                 onExport={() => exportScope('general')}
                 onImport={(file) => void importFile(file, 'general')}
               />
             </div>
             <p className="mb-4 text-xs text-white/45">{t.generalHint}</p>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Field label={t.prefixLabel} hint={t.prefixHint}>
+              <div className="mt-5 grid gap-5">
+                <Field label={t.prefixLabel} hint={t.prefixHint}>
                 <input
                   className={inputCls}
                   value={config.prefix ?? 'cz!'}
@@ -996,8 +1024,66 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           </section>
           )}
 
+          {view === 'features' && (
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <h2 className="flex items-center gap-2 font-bold text-white">
+                <Icon name="sparkles" size={18} className="text-neon-blue" /> {t.featuresTitle}
+              </h2>
+              <Badge kind="free" dict={dict} />
+            </div>
+            <p className="mb-5 text-xs text-white/45">{t.featuresHint}</p>
+            <div className="grid gap-3">
+              {FEATURE_ROWS.map((f) => {
+                const enabled = config.features?.[f.slug] !== false;
+                return (
+                  <div
+                    key={f.slug}
+                    className="flex flex-wrap items-center gap-4 rounded-xl border border-white/10 bg-black/20 px-4 py-3.5"
+                  >
+                    <span
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 ${
+                        enabled ? 'text-emerald-400' : 'text-white/30'
+                      }`}
+                    >
+                      <Icon name={f.icon} size={17} />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="flex flex-wrap items-center gap-2 text-sm font-bold text-white">
+                        {t[f.labelKey]}
+                        {f.premium && (
+                          <span className="rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-amber-400">
+                            {t.featPremiumTag}
+                          </span>
+                        )}
+                      </p>
+                      <p className="mt-0.5 text-[11px] text-white/45">{t[f.descKey]}</p>
+                    </div>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={enabled}
+                      aria-label={t[f.labelKey]}
+                      onClick={() => update({ features: { ...(config.features ?? {}), [f.slug]: !enabled } })}
+                      className={`relative h-6 w-11 shrink-0 rounded-full transition ${
+                        enabled ? 'bg-gradient-to-r from-emerald-500 to-green-600' : 'bg-white/15'
+                      }`}
+                    >
+                      <span
+                        className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${
+                          enabled ? 'left-[22px]' : 'left-0.5'
+                        }`}
+                      />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+          )}
+
           {view === 'levels' && (
-          <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
             <div className="mb-4 flex flex-wrap items-center gap-2">
               <h2 className="flex items-center gap-2 font-bold text-white">
                 <Icon name="star" size={18} className="text-neon-pink" /> {t.levelsTitle}
@@ -1013,8 +1099,8 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               <SectionJson
                 disabled={dirty || busy}
                 disabledHint={t.jsonNeedSave}
-                exportLabel={t.exportSection}
-                importLabel={t.importJson}
+                exportLabel={t.jsonExport}
+                importLabel={t.jsonImport}
                 onExport={() => exportScope('levels')}
                 onImport={(file) => void importFile(file, 'levels')}
               />
@@ -1030,7 +1116,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               />
             </div>
             {config.leveling_enabled && (
-              <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <div className="mt-5 grid gap-5">
                 <Field label={t.xpRateLabel} hint={t.xpRateHint}>
                   <input
                     type="number"
@@ -1067,7 +1153,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           )}
 
           {view === 'welcome' && (
-          <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
             <div className="mb-4 flex flex-wrap items-center gap-2">
               <h2 className="flex items-center gap-2 font-bold text-white">
                 <Icon name="heart" size={18} className="text-neon-pink" /> {t.welcomeTitle}
@@ -1083,13 +1169,13 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               <SectionJson
                 disabled={dirty || busy}
                 disabledHint={t.jsonNeedSave}
-                exportLabel={t.exportSection}
-                importLabel={t.importJson}
+                exportLabel={t.jsonExport}
+                importLabel={t.jsonImport}
                 onExport={() => exportScope('welcome')}
                 onImport={(file) => void importFile(file, 'welcome')}
               />
             </div>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-5">
               {hasGuildData ? (
                 <SelectField
                   label={t.welcomeChannelLabel}
@@ -1127,7 +1213,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 </Field>
               )}
             </div>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div className="mt-5 grid gap-5">
               <DiscordMarkdownField
                 label={t.welcomeMessageLabel}
                 hint={t.varsHint}
@@ -1235,7 +1321,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           )}
 
           {view === 'extras' && (
-          <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
             <div className="mb-4 flex flex-wrap items-center gap-2">
               <h2 className="flex items-center gap-2 font-bold text-white">
                 <Icon name="support" size={18} className="text-neon-blue" /> {t.extrasTitle}
@@ -1251,8 +1337,8 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               <SectionJson
                 disabled={dirty || busy}
                 disabledHint={t.jsonNeedSave}
-                exportLabel={t.exportSection}
-                importLabel={t.importJson}
+                exportLabel={t.jsonExport}
+                importLabel={t.jsonImport}
                 onExport={() => exportScope('extras')}
                 onImport={(file) => void importFile(file, 'extras')}
               />
@@ -1288,7 +1374,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                   onChange={(v) => update({ automod_enabled: v })}
                 />
               </div>
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-5">
                 {hasGuildData ? (
                   <SelectField
                     label={t.ticketCategoryLabel}
@@ -1412,11 +1498,11 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           aria-modal="true"
           className="fixed inset-0 z-[125] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
         >
-          <div className="w-full max-w-md rounded-3xl border border-amber-400/50 bg-[#0a0a14] p-7 text-center">
-            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border border-amber-400/50 bg-amber-400/10 text-xl">
+          <div className="cz-shake w-full max-w-md rounded-3xl border border-red-500/60 bg-[#1a0509] p-7 text-center shadow-[0_0_60px_-12px_rgba(248,113,113,0.6)]">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border border-red-500/50 bg-red-500/15 text-xl">
               ⚠
             </div>
-            <h2 className="font-header text-lg font-black uppercase tracking-wide text-amber-400">{t.leaveTitle}</h2>
+            <h2 className="font-header text-lg font-black uppercase tracking-wide text-red-400">{t.leaveTitle}</h2>
             <p className="mt-2 text-sm leading-relaxed text-white/70">{t.leaveBody}</p>
             <div className="mt-6 flex flex-col gap-2">
               <button
@@ -1454,7 +1540,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         autoSave={autoSave}
         canUndo={history.length > 0}
         canRedo={future.length > 0}
-        blocked={blocked}
+        blocked={blocked || leavePrompt !== null}
         saveDisabled={hasBotGuild === false}
         onAutoSave={setAutoSavePref}
         onUndo={undo}

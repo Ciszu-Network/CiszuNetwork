@@ -10,13 +10,13 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 /**
- * Verificación de reCAPTCHA Enterprise (implementación única en @ciszunetwork/utils).
- * Valida el token vía assessments (API key por proyecto, sin secretos).
+ * Verificación de reCAPTCHA (implementación única en @ciszunetwork/utils).
+ * Modo clásico: checkbox v2 visible + score v3 invisible (el badge/checkbox
+ * se ve en el formulario, a diferencia del modo Enterprise invisible).
  */
 const handler = createRecaptchaHandler({
-  siteKey: process.env.RECAPTCHA_ENTERPRISE_SITE_KEY_CISZUBOT ?? '',
-  apiKey: process.env.RECAPTCHA_ENTERPRISE_API_KEY_CISZUBOT ?? '',
-  projectId: process.env.RECAPTCHA_ENTERPRISE_PROJECT_ID_CISZUBOT ?? 'ciszubot',
+  v2Secret: process.env.RECAPTCHA_SECRET_KEY_V2_CISZUBOT ?? '',
+  v3Secret: process.env.RECAPTCHA_SECRET_KEY_V3_CISZUBOT ?? '',
   minScore: 0.5,
   windowMs: 60_000,
   max: 30,

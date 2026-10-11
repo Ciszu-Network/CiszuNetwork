@@ -28,7 +28,12 @@ const guildConfigPatchSchema = z.object({
   music_channel_id: z.string().min(1).nullable().optional(),
   automod_enabled: z.boolean().optional(),
   mute_role_id: z.string().min(1).nullable().optional(),
+  /** Toggles por servidor de funciones del bot (slug → enabled). */
+  features: z.record(z.string(), z.boolean()).optional(),
 });
+
+/** Funciones configurables por servidor (mismas que los flags globales del bot). */
+const FEATURE_SLUGS = ['music', 'search', 'minigames', 'economy', 'help', 'utility', 'moderation', 'setup', 'levels', 'social'] as const;
 
 const postLimiter = createRateLimiter({ windowMs: 60_000, max: 10 });
 
@@ -53,6 +58,7 @@ interface GuildConfig {
   music_channel_id: string | null;
   automod_enabled: boolean;
   mute_role_id: string | null;
+  features?: Record<string, boolean>;
 }
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ guildId: string }> }) {
@@ -72,7 +78,16 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ gui
     .from(guildConfigs)
     .where(eq(guildConfigs.guildId, guildId))
     .limit(1);
-  return NextResponse.json({ guild: { id: guild.id, name: guild.name, icon: guild.icon }, config: rows[0] ?? null });
+  const featureRows = await db
+    .select({ feature: ciszubotSchema.guildFeatureFlags.feature, enabled: ciszubotSchema.guildFeatureFlags.enabled })
+    .from(ciszubotSchema.guildFeatureFlags)
+    .where(eq(ciszubotSchema.guildFeatureFlags.guildId, guildId));
+  const features = Object.fromEntries(featureRows.map((r) => [r.feature, r.enabled]));
+  return NextResponse.json({
+    guild: { id: guild.id, name: guild.name, icon: guild.icon },
+    config: rows[0] ?? null,
+    features,
+  });
 }
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ guildId: string }> }) {
@@ -127,6 +142,16 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
       : String(body.autorole_ids).split(',').map((s) => s.trim()).filter(Boolean);
   }
 
+  // Toggles de funciones por servidor (solo slugs conocidos).
+  const featurePatch: Record<string, boolean> = {};
+  if (body.features) {
+    for (const [slug, enabled] of Object.entries(body.features)) {
+      if ((FEATURE_SLUGS as readonly string[]).includes(slug) && typeof enabled === 'boolean') {
+        featurePatch[slug] = enabled;
+      }
+    }
+  }
+
   const snakeToCamel: Record<string, string> = {
     level_channel_id: 'levelChannelId',
     welcome_channel_id: 'welcomeChannelId',
@@ -165,12 +190,26 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
   } catch (err) {
     return NextResponse.json({ error: err instanceof Error ? err.message : 'db_error' }, { status: 500 });
   }
+
+  if (Object.keys(featurePatch).length > 0) {
+    const guildFeatureFlags = ciszubotSchema.guildFeatureFlags;
+    for (const [feature, enabled] of Object.entries(featurePatch)) {
+      await db
+        .insert(guildFeatureFlags)
+        .values({ guildId, feature, enabled, updatedAt: new Date(), updatedBy: userId })
+        .onConflictDoUpdate({
+          target: [guildFeatureFlags.guildId, guildFeatureFlags.feature],
+          set: { enabled, updatedAt: new Date(), updatedBy: userId },
+        });
+    }
+  }
+
   await logAudit({
     event: 'config_update',
     actorId: userId,
     target: guildId,
     ip,
-    detail: { fields: Object.keys(allowed) },
+    detail: { fields: Object.keys(allowed), features: featurePatch },
   });
   return NextResponse.json({ ok: true });
 }

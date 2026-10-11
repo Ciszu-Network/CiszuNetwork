@@ -165,11 +165,9 @@ export function SaveDock({
           <span className="hidden sm:inline">{labels.autoSaveLabel}</span>
         </button>
 
-        {dirty && (
-          <button type="button" onClick={onCancel} disabled={busy} className={chip}>
-            {labels.cancel}
-          </button>
-        )}
+        <button type="button" onClick={onCancel} disabled={busy || !dirty} className={chip}>
+          {labels.cancel}
+        </button>
 
         <button
           type="button"
