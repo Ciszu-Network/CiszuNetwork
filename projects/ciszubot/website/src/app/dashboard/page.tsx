@@ -70,15 +70,16 @@ export default async function DashboardPage() {
   const botReason = t.botStatus.reasons[bot.reason ?? 'unknown'];
 
   const manageable = guilds.filter((g) => isGuildAdmin(g));
-  const hasBotGuild = (id: string) => (botGuilds === null ? true : botGuilds.has(id));
-  const activeCount = manageable.filter((g) => hasBotGuild(g.id)).length;
+  // null = no se pudo verificar (nunca marcar como activo por un fallo de red).
+  const botPresence = (id: string): boolean | null => (botGuilds === null ? null : botGuilds.has(id));
+  const activeCount = manageable.filter((g) => botPresence(g.id) === true).length;
   const icon = (guild: DiscordGuild) =>
     guild.icon
       ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`
       : null;
 
   return (
-    <div className="relative min-h-screen pt-24 pb-20 px-4">
+    <div className="relative min-h-screen pt-4 pb-20 px-4">
       <PageAmbience />
       <div className="max-w-screen-xl mx-auto">
         <PageReveal>
@@ -102,6 +103,7 @@ export default async function DashboardPage() {
               <DualLoginCard discordUsername={me?.username ?? null} />
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-400">
+                  <Icon name="verified" size={11} />
                   <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
                   {t.dashboardPage.sessionActive}
                 </span>
@@ -114,13 +116,15 @@ export default async function DashboardPage() {
             <div className="flex w-full flex-col gap-3 sm:w-auto sm:min-w-[240px]">
               <dl className="rounded-2xl border border-border bg-bg px-4 py-3 text-xs">
                 <div className="flex items-center justify-between gap-4">
-                  <dt className="font-bold uppercase tracking-widest text-muted">
+                  <dt className="inline-flex items-center gap-1.5 font-bold uppercase tracking-widest text-muted">
+                    <Icon name="person" size={11} />
                     {t.dashboardPage.accountId}
                   </dt>
                   <dd className="truncate font-mono text-ink/80">{userId}</dd>
                 </div>
                 <div className="mt-2 flex items-center justify-between gap-4">
-                  <dt className="font-bold uppercase tracking-widest text-muted">
+                  <dt className="inline-flex items-center gap-1.5 font-bold uppercase tracking-widest text-muted">
+                    <Icon name="discord" size={11} className="[&>g]:fill-current" />
                     {t.dashboardPage.providerLabel}
                   </dt>
                   <dd className="text-ink/80">{t.dashboardPage.providerDiscord}</dd>
@@ -193,7 +197,7 @@ export default async function DashboardPage() {
                 id: g.id,
                 name: g.name,
                 icon: g.icon ?? null,
-                invited: hasBotGuild(g.id),
+                invited: botPresence(g.id),
               }))}
               inviteUrl={INVITE_URL}
             />

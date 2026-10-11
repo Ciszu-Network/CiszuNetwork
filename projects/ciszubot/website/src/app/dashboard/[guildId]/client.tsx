@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Icon } from '@ciszu/ui';
@@ -11,6 +12,7 @@ import { SaveDock, type SaveStatus } from '@/components/dashboard/SaveDock';
 import DiscordMarkdownField from '@/components/dashboard/DiscordMarkdownField';
 import useLiveBotStatus from '@/components/home/useLiveBotStatus';
 import { resolveBotStatus } from '@/lib/botStatus';
+import { dashboardGuard } from '@/lib/dashboardGuard';
 
 interface GuildConfig {
   prefix?: string;
@@ -119,6 +121,8 @@ interface Props {
   guildIcon: string | null;
   username: string | null;
   guildInfo: GuildInfo | null;
+  /** Presencia real del bot: true | false | null (no se pudo verificar). */
+  hasBotGuild?: boolean | null;
 }
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
@@ -199,7 +203,64 @@ function SelectField({
   );
 }
 
-export default function DashboardGuildClient({ guildId, guildName, guildIcon, username, guildInfo }: Props) {
+const FloppyMini = ({ size = 11 }: { size?: number }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" aria-hidden>
+    <path d="M5 3h11.2L21 7.8V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm2 2v5h8V5H7zm-1 9v5h12v-5H6z" />
+  </svg>
+);
+
+/**
+ * Import/Export JSON de una sección: botones junto al título de la opción.
+ * Solo funcionan con el estado guardado (sin cambios pendientes) y avisan
+ * por flash de éxito o error.
+ */
+function SectionJson({
+  disabled,
+  disabledHint,
+  exportLabel,
+  importLabel,
+  onExport,
+  onImport,
+}: {
+  disabled: boolean;
+  disabledHint: string;
+  exportLabel: string;
+  importLabel: string;
+  onExport: () => void;
+  onImport: (file: File) => void;
+}) {
+  const fileRef = useRef<HTMLInputElement | null>(null);
+  const btn =
+    'inline-flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-2 py-1 text-[10px] font-bold text-white/50 transition hover:border-neon-blue/60 hover:text-neon-blue disabled:cursor-not-allowed disabled:opacity-40';
+  return (
+    <span className="ml-auto inline-flex items-center gap-1.5" title={disabled ? disabledHint : undefined}>
+      <button type="button" disabled={disabled} onClick={onExport} className={btn} title={exportLabel}>
+        <FloppyMini />
+        <Icon name="json" size={11} />
+        <span>↓</span>
+      </button>
+      <button type="button" disabled={disabled} onClick={() => fileRef.current?.click()} className={btn} title={importLabel}>
+        <FloppyMini />
+        <Icon name="json" size={11} />
+        <span>↑</span>
+      </button>
+      <input
+        ref={fileRef}
+        type="file"
+        accept="application/json,.json"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) onImport(file);
+          e.target.value = '';
+        }}
+      />
+    </span>
+  );
+}
+
+export default function DashboardGuildClient({ guildId, guildName, guildIcon, username, guildInfo, hasBotGuild = null }: Props) {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const [dict, setDict] = useState<Dict>(() => getDict('es-latam'));
   useEffect(() => {
@@ -216,9 +277,14 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   const [future, setFuture] = useState<GuildConfig[]>([]);
   const [autoSave, setAutoSave] = useState(false);
   const okTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [leavePrompt, setLeavePrompt] = useState<
+    { kind: 'view'; target: GuildView } | { kind: 'nav'; href: string } | null
+  >(null);
+  const [blocked, setBlocked] = useState(false);
+  const blockedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    setAutoSave(localStorage.getItem('cz-dash-autosave') !== '0');
+    setAutoSave(localStorage.getItem('cz-dash-autosave') === '1');
   }, []);
 
   // Sub-sidebar por opción: resumen por defecto (spec del dashboard).
@@ -228,13 +294,47 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     const saved = localStorage.getItem('cz-dash-view') as GuildView | null;
     if (saved && ['summary', 'general', 'levels', 'welcome', 'extras'].includes(saved)) setView(saved);
   }, []);
-  const changeView = useCallback((next: GuildView) => {
-    setView(next);
-    try {
-      localStorage.setItem('cz-dash-view', next);
-    } catch {
-      /* sin storage */
+  const dirtyRef = useRef(false);
+  const shakeDock = useCallback(() => {
+    setBlocked(true);
+    if (blockedTimer.current) clearTimeout(blockedTimer.current);
+    blockedTimer.current = setTimeout(() => setBlocked(false), 900);
+  }, []);
+  const changeView = useCallback(
+    (next: GuildView) => {
+      if (dirtyRef.current) {
+        shakeDock();
+        setLeavePrompt({ kind: 'view', target: next });
+        return;
+      }
+      setView(next);
+      try {
+        localStorage.setItem('cz-dash-view', next);
+      } catch {
+        /* sin storage */
+      }
+    },
+    [shakeDock]
+  );
+
+  // Deep-links del resumen global: #summary (primera info) y #config (config real).
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash !== '#summary' && hash !== '#config') return;
+    if (hash === '#config') {
+      setView('general');
+      try {
+        localStorage.setItem('cz-dash-view', 'general');
+      } catch {
+        /* sin storage */
+      }
+    } else {
+      setView('summary');
     }
+    const id = setTimeout(() => {
+      document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 200);
+    return () => clearTimeout(id);
   }, []);
   const SUBNAV = [
     { key: 'summary', icon: 'server', label: 'subnavSummary' },
@@ -327,12 +427,27 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     [config, baseline]
   );
   const busy = status === 'saving';
+  dirtyRef.current = dirty;
+
+  // Guard compartido con el shell: bloquea el cambio de servidor con cambios
+  // pendientes (el shell llama requestNav → sacudida + modal aquí).
+  useEffect(() => {
+    dashboardGuard.setDirty(dirty);
+  }, [dirty]);
+  useEffect(() => {
+    const off = dashboardGuard.onShake(() => {
+      const href = dashboardGuard.consumePending();
+      shakeDock();
+      setLeavePrompt({ kind: 'nav', href: href ?? '/dashboard' });
+    });
+    return off;
+  }, [shakeDock]);
 
   const update = useCallback(
     (patch: Partial<GuildConfig>) => {
       setConfig((prev) => {
         if (!prev || status === 'saving') return prev;
-        setHistory((h) => [...h.slice(-99), prev]);
+        setHistory((h) => [...h.slice(-29), prev]);
         setFuture([]);
         return { ...prev, ...patch };
       });
@@ -426,6 +541,46 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     return () => clearTimeout(id);
   }, [autoSave, dirty, busy, config, saveMutation]);
 
+  /** Resolución del modal de salida: guardar / descartar / quedarse. */
+  const resolveLeave = useCallback(
+    async (action: 'save' | 'discard' | 'stay') => {
+      if (!leavePrompt) return;
+      const prompt = leavePrompt;
+      if (action === 'stay') {
+        setLeavePrompt(null);
+        return;
+      }
+      if (action === 'save') {
+        if (!config || hasBotGuild === false) {
+          setLeavePrompt(null);
+          return;
+        }
+        try {
+          await saveMutation.mutateAsync(config);
+        } catch {
+          setLeavePrompt(null);
+          return;
+        }
+      } else {
+        if (baseline) setConfig(JSON.parse(baseline) as GuildConfig);
+        setHistory([]);
+        setFuture([]);
+      }
+      setLeavePrompt(null);
+      if (prompt.kind === 'view') {
+        setView(prompt.target);
+        try {
+          localStorage.setItem('cz-dash-view', prompt.target);
+        } catch {
+          /* sin storage */
+        }
+      } else {
+        router.push(prompt.href);
+      }
+    },
+    [leavePrompt, config, baseline, hasBotGuild, saveMutation, router]
+  );
+
   useEffect(() => {
     return () => {
       if (okTimer.current) clearTimeout(okTimer.current);
@@ -461,6 +616,11 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   const exportScope = useCallback(
     (scope: SectionKey | 'all') => {
       if (!config) return;
+      if (dirty) {
+        setFlash(t.jsonNeedSave);
+        setTimeout(() => setFlash(null), 4000);
+        return;
+      }
       const data =
         scope === 'all'
           ? config
@@ -489,15 +649,20 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
       a.download = name;
       a.click();
       URL.revokeObjectURL(url);
-      setFlash(t.backupNote);
+      setFlash(t.exported);
       setTimeout(() => setFlash(null), 3500);
     },
-    [config, guildId, guildName, slug, username, t.backupNote]
+    [config, dirty, guildId, guildName, slug, username, t.backupNote, t.exported, t.jsonNeedSave]
   );
 
   const importFile = useCallback(
-    async (file: File) => {
+    async (file: File, scope?: SectionKey) => {
       if (!config) return;
+      if (dirty) {
+        setFlash(t.jsonNeedSave);
+        setTimeout(() => setFlash(null), 4000);
+        return;
+      }
       try {
         const text = await file.text();
         const parsed = JSON.parse(text) as { config?: Partial<GuildConfig> } | Partial<GuildConfig>;
@@ -505,14 +670,15 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           parsed && typeof parsed === 'object' && 'config' in parsed && parsed.config
             ? parsed.config
             : (parsed as PartialConfig);
+        const allowed: readonly string[] = scope ? SECTION_KEYS[scope] : ALL_KEYS;
         const clean: Partial<GuildConfig> = {};
         for (const key of Object.keys(raw)) {
-          if ((ALL_KEYS as string[]).includes(key)) {
+          if (allowed.includes(key)) {
             clean[key as keyof GuildConfig] = raw[key as keyof GuildConfig] as never;
           }
         }
         if (Object.keys(clean).length === 0) throw new Error('empty');
-        setHistory((h) => [...h.slice(-99), config]);
+        setHistory((h) => [...h.slice(-29), config]);
         setFuture([]);
         setConfig({ ...config, ...clean });
         setStatus('idle');
@@ -522,9 +688,11 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
       } catch {
         setStatus('error');
         setError(t.importError);
+        setFlash(t.importError);
+        setTimeout(() => setFlash(null), 4000);
       }
     },
-    [config, t.imported, t.importError]
+    [config, dirty, t.imported, t.importError, t.jsonNeedSave]
   );
 
   const hue = useMemo(() => {
@@ -555,7 +723,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         background: `radial-gradient(900px 380px at 15% -5%, hsla(${hue}, 90%, 60%, 0.16), transparent 60%), radial-gradient(700px 320px at 95% 10%, hsla(${(hue + 80) % 360}, 90%, 60%, 0.12), transparent 55%)`,
       }}
     >
-      <div className="mx-auto max-w-3xl px-4 pt-8">
+      <div className="mx-auto max-w-3xl px-4 pt-4">
         <Link
           href="/dashboard"
           className="inline-flex items-center gap-1.5 text-sm text-white/60 transition hover:text-neon-blue"
@@ -564,7 +732,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         </Link>
 
         {/* Hero del servidor */}
-        <div className="mt-4 rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
+        <div id="summary" className="mt-4 rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
           <div className="flex flex-wrap items-center gap-4">
             {guildIcon ? (
               <img
@@ -617,10 +785,16 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
             </div>
             <div className="rounded-xl border border-white/10 bg-black/25 px-3 py-2.5">
               <p className="text-[10px] font-black uppercase tracking-widest text-white/40">{t.botLabel}</p>
-              <p className={`text-lg font-bold ${botOnlineNow ? 'text-emerald-400' : 'text-red-400'}`}>
-                {botOnlineNow ? t.botOnline : t.botOffline}
+              <p className={`text-lg font-bold ${hasBotGuild === false || !botOnlineNow ? 'text-red-400' : 'text-emerald-400'}`}>
+                {hasBotGuild === false ? t.botNotInGuildShort : botOnlineNow ? t.botOnline : t.botOffline}
               </p>
-              {!botOnlineNow && liveStatus !== null && (
+              {hasBotGuild === false && (
+                <p className="mt-0.5 flex items-center gap-1 text-[9px] font-bold uppercase tracking-widest text-red-400">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-400" />
+                  {t.botNotInGuild}
+                </p>
+              )}
+              {hasBotGuild !== false && !botOnlineNow && liveStatus !== null && (
                 <p className="mt-0.5 flex items-center gap-1 text-[9px] font-bold uppercase tracking-widest text-red-400">
                   <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-400" />
                   {dict.botStatus.reasons[offlineReasonKey]}
@@ -675,6 +849,24 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           </div>
         )}
 
+        {hasBotGuild === false && (
+          <div className="mt-6 rounded-2xl border border-red-400/40 bg-red-400/10 px-4 py-4 text-center">
+            <p className="text-[10px] font-black uppercase tracking-[0.25em] text-red-400">
+              {t.botNotInGuildTitle}
+            </p>
+            <p className="mx-auto mt-1 max-w-xl text-xs text-white/70">{t.botNotInGuild}</p>
+            <div className="mt-3 flex justify-center">
+              <InviteLink
+                href={INVITE_URL}
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink px-5 py-2.5 text-sm font-bold text-white transition hover:scale-[1.02] active:scale-95"
+              >
+                <Icon name="discord" size={14} className="[&>g]:fill-current" />
+                {dict.dashboardPage.inviteCta}
+              </InviteLink>
+            </div>
+          </div>
+        )}
+
         <div className="mt-8 lg:flex lg:items-start lg:gap-6">
           <nav className="mb-4 flex gap-1.5 overflow-x-auto pb-1 lg:mb-0 lg:w-44 lg:shrink-0 lg:flex-col lg:overflow-visible lg:pb-0">
             {SUBNAV.map((item) => (
@@ -694,7 +886,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
             ))}
           </nav>
 
-          <div aria-busy={busy} className={`min-w-0 flex-1 space-y-6 ${muted}`}>
+          <div id="config" aria-busy={busy} className={`min-w-0 flex-1 space-y-6 ${muted}`}>
           {/* Resumen del servidor */}
           {view === 'summary' && (
             <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
@@ -704,6 +896,11 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 </h2>
                 <Badge kind="free" dict={dict} />
               </div>
+              {!hasGuildData ? (
+                <div className="rounded-xl border border-red-400/40 bg-red-400/10 px-4 py-3 text-sm text-red-300">
+                  {hasBotGuild === false ? t.botNotInGuild : t.noGuildData}
+                </div>
+              ) : (
               <div className="grid gap-4 lg:grid-cols-2">
                 <div className="rounded-xl border border-white/10 bg-black/20 p-4">
                   <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-white/45">
@@ -755,6 +952,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                   </div>
                 </div>
               </div>
+              )}
             </section>
           )}
 
@@ -765,14 +963,14 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 <Icon name="settings" size={18} className="text-neon-blue" /> {t.generalTitle}
               </h2>
               <Badge kind="free" dict={dict} />
-              <button
-                type="button"
-                onClick={() => exportScope('general')}
-                title={t.exportSection}
-                className="ml-auto text-xs font-semibold text-white/40 transition hover:text-neon-blue"
-              >
-                ⬇ <span className="hidden sm:inline">JSON</span>
-              </button>
+              <SectionJson
+                disabled={dirty || busy}
+                disabledHint={t.jsonNeedSave}
+                exportLabel={t.exportSection}
+                importLabel={t.importJson}
+                onExport={() => exportScope('general')}
+                onImport={(file) => void importFile(file, 'general')}
+              />
             </div>
             <p className="mb-4 text-xs text-white/45">{t.generalHint}</p>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -812,14 +1010,14 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 missing={t.permMissing}
                 href={`${INVITE_URL}&guild_id=${guildId}`}
               />
-              <button
-                type="button"
-                onClick={() => exportScope('levels')}
-                title={t.exportSection}
-                className="ml-auto text-xs font-semibold text-white/40 transition hover:text-neon-blue"
-              >
-                ⬇ <span className="hidden sm:inline">JSON</span>
-              </button>
+              <SectionJson
+                disabled={dirty || busy}
+                disabledHint={t.jsonNeedSave}
+                exportLabel={t.exportSection}
+                importLabel={t.importJson}
+                onExport={() => exportScope('levels')}
+                onImport={(file) => void importFile(file, 'levels')}
+              />
             </div>
             <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
               <div>
@@ -882,14 +1080,14 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 missing={t.permMissing}
                 href={`${INVITE_URL}&guild_id=${guildId}`}
               />
-              <button
-                type="button"
-                onClick={() => exportScope('welcome')}
-                title={t.exportSection}
-                className="ml-auto text-xs font-semibold text-white/40 transition hover:text-neon-blue"
-              >
-                ⬇ <span className="hidden sm:inline">JSON</span>
-              </button>
+              <SectionJson
+                disabled={dirty || busy}
+                disabledHint={t.jsonNeedSave}
+                exportLabel={t.exportSection}
+                importLabel={t.importJson}
+                onExport={() => exportScope('welcome')}
+                onImport={(file) => void importFile(file, 'welcome')}
+              />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               {hasGuildData ? (
@@ -1050,14 +1248,14 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 missing={t.permMissing}
                 href={`${INVITE_URL}&guild_id=${guildId}`}
               />
-              <button
-                type="button"
-                onClick={() => exportScope('extras')}
-                title={t.exportSection}
-                className="ml-auto text-xs font-semibold text-white/40 transition hover:text-neon-blue"
-              >
-                ⬇ <span className="hidden sm:inline">JSON</span>
-              </button>
+              <SectionJson
+                disabled={dirty || busy}
+                disabledHint={t.jsonNeedSave}
+                exportLabel={t.exportSection}
+                importLabel={t.importJson}
+                onExport={() => exportScope('extras')}
+                onImport={(file) => void importFile(file, 'extras')}
+              />
             </div>
             <div className="space-y-3">
               <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
@@ -1208,6 +1406,46 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         </div>
       </div>
 
+      {leavePrompt && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-[125] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+        >
+          <div className="w-full max-w-md rounded-3xl border border-amber-400/50 bg-[#0a0a14] p-7 text-center">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border border-amber-400/50 bg-amber-400/10 text-xl">
+              ⚠
+            </div>
+            <h2 className="font-header text-lg font-black uppercase tracking-wide text-amber-400">{t.leaveTitle}</h2>
+            <p className="mt-2 text-sm leading-relaxed text-white/70">{t.leaveBody}</p>
+            <div className="mt-6 flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={() => void resolveLeave('save')}
+                disabled={busy || hasBotGuild === false}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-white transition hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {t.leaveSave}
+              </button>
+              <button
+                type="button"
+                onClick={() => void resolveLeave('discard')}
+                className="inline-flex items-center justify-center rounded-xl border border-red-400/40 px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-red-300 transition hover:bg-red-400/10 active:scale-95"
+              >
+                {t.leaveDiscard}
+              </button>
+              <button
+                type="button"
+                onClick={() => void resolveLeave('stay')}
+                className="inline-flex items-center justify-center rounded-xl border border-white/15 px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-white/70 transition hover:border-neon-blue/60 hover:text-white active:scale-95"
+              >
+                {t.leaveStay}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <SaveDock
         note={offline ? dict.botStatus.saveOfflineNote.replace('{reason}', dict.botStatus.reasons[offlineReasonKey]) : null}
         dirty={dirty}
@@ -1216,12 +1454,19 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         autoSave={autoSave}
         canUndo={history.length > 0}
         canRedo={future.length > 0}
+        blocked={blocked}
+        saveDisabled={hasBotGuild === false}
         onAutoSave={setAutoSavePref}
         onUndo={undo}
         onRedo={redo}
         onSave={() => config && saveMutation.mutate(config)}
-        onExport={() => exportScope('all')}
-        onImport={(file) => void importFile(file)}
+        onCancel={() => {
+          if (baseline) setConfig(JSON.parse(baseline) as GuildConfig);
+          setHistory([]);
+          setFuture([]);
+          setStatus('idle');
+          setError(null);
+        }}
         labels={{
           save: t.save,
           saving: t.saving,
@@ -1231,11 +1476,10 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           autoSaveHint: t.autoSaveHint,
           undo: t.undo,
           redo: t.redo,
-          exportJson: t.exportJson,
-          importJson: t.importJson,
           unsaved: t.unsaved,
           allSaved: t.allSaved,
           backupNote: t.backupNote,
+          cancel: t.cancel,
         }}
       />
     </div>

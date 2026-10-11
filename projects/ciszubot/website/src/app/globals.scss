@@ -604,3 +604,19 @@ html:not(.dark) .text-white[class*="bg-brand"],
 html:not(.dark) [class*="bg-brand"] .text-white,
 html:not(.dark) .text-white[class*="bg-neon"],
 html:not(.dark) [class*="bg-neon"] .text-white { color: #ffffff !important; }
+
+/* ── Dashboard: sacudida de bloqueo + entrada de popovers ─────────────── */
+@keyframes cz-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-7px); }
+  40% { transform: translateX(7px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+}
+.cz-shake { animation: cz-shake 0.45s ease-in-out; }
+
+@keyframes cz-pop {
+  from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.cz-pop { animation: cz-pop 0.18s ease-out; transform-origin: top center; }

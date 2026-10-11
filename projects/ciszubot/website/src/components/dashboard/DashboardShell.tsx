@@ -3,10 +3,11 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { Icon, LanguagesModal, LANGUAGE_OPTIONS, isLangAvailable, LANG_BLOCKED_MESSAGE, useToast } from '@ciszu/ui';
+import { Icon, FlagIcon, LanguagesModal, LANGUAGE_OPTIONS, isLangAvailable, LANG_BLOCKED_MESSAGE, useToast } from '@ciszu/ui';
 import { updatePreferences } from '@/lib/preferences';
 import InviteLink from './InviteLink';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import { dashboardGuard } from '@/lib/dashboardGuard';
 
 export interface ShellGuild {
   id: string;
@@ -61,6 +62,11 @@ const L: Record<'es' | 'en', Record<string, string>> = {
     configuringIn: 'Configurando',
     changeServer: 'Cambiar servidor',
     accountHint: 'Gestiona tu cuenta',
+    signOut: 'Cerrar sesión',
+    changelog: 'Novedades',
+    stats: 'Estadísticas',
+    news: 'Redes y noticias',
+    verify: 'Sin verificar',
   },
   en: {
     overview: 'Overview',
@@ -91,6 +97,11 @@ const L: Record<'es' | 'en', Record<string, string>> = {
     configuringIn: 'Configuring',
     changeServer: 'Switch server',
     accountHint: 'Manage your account',
+    signOut: 'Sign out',
+    changelog: 'Changelog',
+    stats: 'Statistics',
+    news: 'Social & news',
+    verify: 'Unverified',
   },
 };
 
@@ -105,6 +116,9 @@ const ACCENTS: { hover: string; active: string; icon: string }[] = [
 ];
 
 const INVITE_GRADIENT = 'bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white';
+
+/** Bandera del idioma activo para el preview del sidebar. */
+const LANG_FLAGS: Record<string, string> = { 'es-latam': 'es', 'es-es': 'es', 'en-us': 'us', 'en-uk': 'gb' };
 
 function GuildAvatar({ guild, size = 32 }: { guild: ShellGuild; size?: number }) {
   if (guild.icon) {
@@ -229,9 +243,22 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
   };
 
   const selectServer = (id: string | null) => {
+    const href = id ? `/dashboard/${id}` : '/dashboard';
     setServersOpen(false);
     setOpen(false);
-    router.push(id ? `/dashboard/${id}` : '/dashboard');
+    if (dashboardGuard.isDirty()) {
+      dashboardGuard.requestNav(href);
+      return;
+    }
+    router.push(href);
+  };
+
+  /** Intercepta la navegación del sidebar cuando hay cambios sin guardar. */
+  const guardNav = (href: string) => (e: React.MouseEvent) => {
+    if (dashboardGuard.isDirty()) {
+      e.preventDefault();
+      dashboardGuard.requestNav(href);
+    }
   };
 
   const itemBase = 'flex w-full items-center gap-2.5 rounded-xl border px-3 py-2.5 text-sm font-semibold transition';
@@ -242,7 +269,7 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
 
   const nav = (
     <nav
-      className="h-full w-full max-w-xs overflow-y-auto rounded-2xl border border-white/10 bg-black/50 p-3 backdrop-blur-xl lg:max-w-none"
+      className="max-h-[calc(100vh-6rem)] w-full max-w-xs overflow-y-auto rounded-2xl border border-white/10 bg-black/50 p-3 backdrop-blur-xl lg:max-h-none lg:max-w-none lg:overflow-visible"
       onClick={(e) => e.stopPropagation()}
     >
       {/* ─── CUENTA (arriba del todo) ─── */}
@@ -269,7 +296,7 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
           <Icon name="arrow-right" size={13} className={`shrink-0 text-white/40 transition-transform ${accountOpen ? 'rotate-90' : ''}`} />
         </button>
         {accountOpen && (
-          <div className="absolute left-0 right-0 top-full z-50 mt-2 space-y-1 rounded-2xl border border-white/15 bg-[#0a0a14]/98 p-2 shadow-2xl backdrop-blur-xl">
+          <div className="cz-pop absolute left-0 right-0 top-full z-50 mt-2 space-y-1 rounded-2xl border border-white/15 bg-[#0a0a14]/98 p-2 shadow-2xl backdrop-blur-xl">
             <Link
               href="/settings"
               onClick={() => setAccountOpen(false)}
@@ -286,6 +313,13 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
               <Icon name="server" size={14} className={ACCENTS[2].icon} />
               {t.profile}
             </Link>
+            <a
+              href="/api/auth/logout"
+              className={`${itemBase} ${itemIdle} ${ACCENTS[1].hover} text-xs`}
+            >
+              <Icon name="logout" size={14} className={ACCENTS[1].icon} />
+              {t.signOut}
+            </a>
           </div>
         )}
       </div>
@@ -295,7 +329,10 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
       <Link
         href="/dashboard"
         className={`${itemBase} ${!activeId ? ACCENTS[1].active : itemIdle} ${ACCENTS[1].hover}`}
-        onClick={() => setOpen(false)}
+        onClick={(e) => {
+          setOpen(false);
+          guardNav('/dashboard')(e);
+        }}
       >
         <Icon name="chart-bar" size={16} className={!activeId ? ACCENTS[1].icon : ''} />
         {t.overview}
@@ -323,7 +360,7 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
           <Icon name="arrow-right" size={13} className={`shrink-0 text-white/40 transition-transform ${serversOpen ? 'rotate-90' : ''}`} />
         </button>
         {serversOpen && (
-          <div className="absolute left-0 right-0 top-full z-50 mt-2 rounded-2xl border border-white/15 bg-[#0a0a14]/98 p-3 shadow-2xl backdrop-blur-xl">
+          <div className="cz-pop absolute left-0 right-0 top-full z-50 mt-2 rounded-2xl border border-white/15 bg-[#0a0a14]/98 p-3 shadow-2xl backdrop-blur-xl">
             <p className="mb-2 text-[9px] font-black uppercase tracking-[0.25em] text-white/40">{t.select}</p>
             {guilds.length === 0 ? (
               <p className="text-xs leading-relaxed text-white/50">{t.noServers}</p>
@@ -345,6 +382,7 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
                 </button>
                 {guilds.map((g) => {
                   const invited = g.invited !== false;
+                  const unknown = g.invited == null;
                   const active = activeId === g.id;
                   return (
                     <div key={g.id} className="relative">
@@ -368,6 +406,11 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
                         {!invited && (
                           <span className="rounded-full bg-amber-400/15 px-1.5 py-0.5 text-[7px] font-black uppercase tracking-widest text-amber-400">
                             {t.notInvited}
+                          </span>
+                        )}
+                        {unknown && (
+                          <span className="rounded-full bg-white/10 px-1.5 py-0.5 text-[7px] font-black uppercase tracking-widest text-white/50">
+                            {t.verify}
                           </span>
                         )}
                       </button>
@@ -429,6 +472,23 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
           <Icon name="support" size={15} className={ACCENTS[4].icon} />
           {t.support}
         </Link>
+        <Link href="/changelog" className={`${itemBase} ${itemIdle} ${ACCENTS[3].hover}`} onClick={() => setOpen(false)}>
+          <Icon name="history" size={15} className={ACCENTS[3].icon} />
+          {t.changelog}
+        </Link>
+        <Link href="/stats" className={`${itemBase} ${itemIdle} ${ACCENTS[0].hover}`} onClick={() => setOpen(false)}>
+          <Icon name="chart-bar" size={15} className={ACCENTS[0].icon} />
+          {t.stats}
+        </Link>
+        <a
+          href="https://ciszunetwork.vercel.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`${itemBase} ${itemIdle} ${ACCENTS[4].hover}`}
+        >
+          <Icon name="globe" size={15} className={ACCENTS[4].icon} />
+          {t.news}
+        </a>
         <button
           type="button"
           onClick={() => setLangOpen(true)}
@@ -436,16 +496,20 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
         >
           <Icon name="globe" size={15} className={ACCENTS[3].icon} />
           {t.language}
-          <span className="ml-auto font-mono text-[9px] uppercase text-white/40">{langCode.split('-')[0]}</span>
+          <span className="ml-auto inline-flex items-center gap-1.5">
+            <FlagIcon code={LANG_FLAGS[langCode] ?? 'es'} className="h-3.5 w-5 rounded-[3px] shadow" />
+            <span className="font-mono text-[9px] uppercase text-white/40">{langCode.split('-')[0]}</span>
+          </span>
         </button>
         <button
           type="button"
           onClick={toggleTheme}
           className={`${itemBase} ${itemIdle} ${ACCENTS[5].hover}`}
         >
-          <Icon name="star" size={15} className={ACCENTS[5].icon} />
+          <Icon name="palette" size={15} className={ACCENTS[5].icon} />
           {t.theme}
-          <span className="ml-auto text-[9px] font-black uppercase tracking-widest text-white/40">
+          <span className="ml-auto inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-white/40">
+            <Icon name={dark ? 'moon' : 'sun'} size={11} className={ACCENTS[5].icon} />
             {dark ? t.dark : t.light}
           </span>
         </button>
@@ -463,10 +527,10 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
 
   return (
     <div className="min-h-screen bg-bg">
-      <div className="mx-auto flex max-w-[1500px] gap-4 px-2 pt-3 sm:px-3">
+      <div className="mx-auto flex max-w-[1500px] gap-4 px-2 pt-28 sm:px-3">
         {!collapsed && (
           <aside className="hidden w-80 shrink-0 lg:block">
-            <div className="sticky top-3">{nav}</div>
+            <div className="sticky top-28">{nav}</div>
           </aside>
         )}
         {collapsed && (
@@ -513,8 +577,8 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
             )}
           </div>
 
-          {/* Banda superior: servidor actual (hero band) */}
-          {activeGuild && (
+          {/* Banda superior: hero del dashboard (servidor actual o global) */}
+          {activeGuild ? (
             <div className="mb-4 flex flex-wrap items-center gap-3 rounded-2xl border border-white/10 bg-gradient-to-r from-white/[0.06] to-transparent px-4 py-3">
               <GuildAvatar guild={activeGuild} size={34} />
               <div className="min-w-0 flex-1">
@@ -538,6 +602,16 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
                   {t.inviteBtn}
                 </InviteLink>
               )}
+            </div>
+          ) : (
+            <div className="mb-4 flex flex-wrap items-center gap-3 rounded-2xl border border-white/10 bg-gradient-to-r from-white/[0.06] to-transparent px-4 py-3">
+              <span className="flex h-[34px] w-[34px] items-center justify-center rounded-full border border-white/15 bg-white/5">
+                <Icon name="chart-bar" size={16} className={ACCENTS[1].icon} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-[9px] font-black uppercase tracking-[0.3em] text-white/40">{t.panel}</p>
+                <p className="truncate font-header text-base font-black text-white">{t.overview}</p>
+              </div>
             </div>
           )}
 

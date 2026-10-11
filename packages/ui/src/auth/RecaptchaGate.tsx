@@ -58,28 +58,61 @@ export function loadRecaptcha(
   if (!opts.enterprise && window.grecaptcha) return Promise.resolve();
   if (scriptPromise) return scriptPromise;
 
+  const wantEnterprise = Boolean(opts.enterprise);
+  const globalReady = () =>
+    wantEnterprise ? Boolean(window.grecaptcha?.enterprise) : Boolean(window.grecaptcha);
+
   scriptPromise = new Promise<void>((resolve, reject) => {
+    let settled = false;
+    const done = () => {
+      if (settled) return;
+      settled = true;
+      resolve();
+    };
+    const fail = () => {
+      if (settled) return;
+      settled = true;
+      scriptPromise = null;
+      // El tag roto se retira: permite reintentar en la próxima llamada.
+      document.getElementById(SCRIPT_ID)?.remove();
+      reject(new Error('recaptcha-script-error'));
+    };
+
+    // Si el tag ya existe (SPA/remount), el evento load pudo haberse emitido
+    // antes: se sondea el global con watchdog en vez de depender solo del evento.
+    const waitForGlobal = (tries = 0) => {
+      if (globalReady()) return done();
+      if (tries >= 50) return fail(); // ~10 s
+      window.setTimeout(() => waitForGlobal(tries + 1), 200);
+    };
+
     const existing = document.getElementById(SCRIPT_ID) as HTMLScriptElement | null;
     if (existing) {
-      existing.addEventListener('load', () => resolve());
-      existing.addEventListener('error', () => reject(new Error('recaptcha-script-error')));
-      return;
+      const isEnterpriseScript = existing.src.includes('/recaptcha/enterprise.js');
+      if (isEnterpriseScript === wantEnterprise) {
+        existing.addEventListener('error', fail, { once: true });
+        waitForGlobal();
+        return;
+      }
+      // Tag de otro modo (v2 clásico vs Enterprise): se descarta y se recrea.
+      existing.remove();
     }
+
     const script = document.createElement('script');
     script.id = SCRIPT_ID;
     script.async = true;
     script.defer = true;
     // `render=<site key>` habilita la ejecución invisible; sin ella se usa
     // render=explicit (modo clásico v2).
-    const base = opts.enterprise ? ENTERPRISE_SCRIPT_BASE : SCRIPT_BASE;
+    const base = wantEnterprise ? ENTERPRISE_SCRIPT_BASE : SCRIPT_BASE;
     script.src = opts.siteKey
       ? `${base}?render=${encodeURIComponent(opts.siteKey)}`
       : `${base}?render=explicit`;
-    script.onload = () => resolve();
-    script.onerror = () => {
-      scriptPromise = null;
-      reject(new Error('recaptcha-script-error'));
+    script.onload = () => {
+      // `onload` no garantiza el global al 100% (async): confirmar con sondeo.
+      waitForGlobal();
     };
+    script.onerror = () => fail();
     document.head.appendChild(script);
   });
 
@@ -133,6 +166,7 @@ export default function RecaptchaGate({
   const [token, setToken] = useState<string | null>(null);
   const [scriptError, setScriptError] = useState(false);
   const [ready, setReady] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
 
   // En Enterprise el "token visible" se pide bajo demanda; publicamos el estado
   // como listo sin esperar a que el usuario toque el checkbox.
@@ -151,17 +185,35 @@ export default function RecaptchaGate({
   useEffect(() => {
     if (!effectiveSiteKey) return;
     let cancelled = false;
+    setScriptError(false);
+    // Watchdog: si en 12s no hay script listo (bloqueador, red, tag colgado),
+    // se muestra el error con botón de reintento en vez de quedar mudo.
+    const watchdog = window.setTimeout(() => {
+      if (!cancelled) {
+        const ok = enterprise ? Boolean(window.grecaptcha?.enterprise) : Boolean(window.grecaptcha);
+        if (!ok) setScriptError(true);
+      }
+    }, 12000);
     loadRecaptcha({ siteKey: enterprise ? siteKey : siteKeyV3, enterprise })
       .then(() => {
         if (!cancelled) setReady(true);
       })
       .catch(() => {
         if (!cancelled) setScriptError(true);
-      });
+      })
+      .finally(() => window.clearTimeout(watchdog));
     return () => {
       cancelled = true;
+      window.clearTimeout(watchdog);
     };
-  }, [effectiveSiteKey, siteKey, siteKeyV3, enterprise]);
+  }, [effectiveSiteKey, siteKey, siteKeyV3, enterprise, retryKey]);
+
+  const retryLoad = useCallback(() => {
+    document.getElementById('ciszu-recaptcha-api')?.remove();
+    setReady(false);
+    setScriptError(false);
+    setRetryKey((k) => k + 1);
+  }, []);
 
   // 2) Modo clásico: montar el widget v2 en cuanto el script esté listo.
   useEffect(() => {
@@ -237,9 +289,15 @@ export default function RecaptchaGate({
     <div className={`relative isolate z-10 flex flex-col items-center gap-2 ${className}`}>
       {enterprise ? (
         // Enterprise: sin widget visible; el badge lo pinta Google.
-        <span className="pointer-events-none select-none text-[9px] text-faint font-bold uppercase tracking-widest">
-          Protegido con reCAPTCHA Enterprise
-        </span>
+        ready ? (
+          <span className="pointer-events-none select-none text-[9px] text-faint font-bold uppercase tracking-widest">
+            Protegido con reCAPTCHA Enterprise
+          </span>
+        ) : !effectiveSiteKey ? (
+          <p className="pointer-events-none text-amber-400 text-[10px] font-bold text-center max-w-[260px]">
+            reCAPTCHA sin configurar (falta la site key de esta web). Contacta con soporte.
+          </p>
+        ) : null
       ) : siteKeyV2 ? (
         <div ref={containerRef} data-testid="recaptcha-v2" />
       ) : (
@@ -248,9 +306,18 @@ export default function RecaptchaGate({
         </p>
       )}
       {scriptError && (
-        <p className="pointer-events-none text-amber-400 text-[10px] font-bold text-center max-w-[260px]">
-          No se pudo cargar reCAPTCHA. Revisa tu conexión o desactiva el bloqueador de scripts.
-        </p>
+        <div className="flex flex-col items-center gap-1.5">
+          <p className="text-amber-400 text-[10px] font-bold text-center max-w-[260px]">
+            No se pudo cargar reCAPTCHA. Revisa tu conexión o desactiva el bloqueador de scripts.
+          </p>
+          <button
+            type="button"
+            onClick={retryLoad}
+            className="rounded-full border border-amber-400/50 bg-amber-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-amber-300 transition hover:bg-amber-400/20 active:scale-95"
+          >
+            Reintentar
+          </button>
+        </div>
       )}
       {!enterprise && siteKeyV2 && !token && !scriptError && (
         <span className="pointer-events-none text-gray-500 text-[10px] font-bold">{hint}</span>

@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
-import { getSessionUserId, getGuildsForUser, isGuildAdmin } from '@/lib/auth';
+import { getSessionUserId, getGuildsForUser, isGuildAdmin, getBotGuildIds } from '@/lib/auth';
 import { db, ciszubotSchema, eq } from '@/lib/db';
 import { fetchGuildInfo } from '@/lib/discordGuild';
 import DashboardGuildClient from './client';
@@ -24,14 +24,18 @@ export default async function DashboardGuildPage({ params }: { params: Promise<{
   }
 
   const discordUsers = ciszubotSchema.discordUsers;
-  const [meRows, guildInfo] = await Promise.all([
+  const [meRows, guildInfo, botGuildIds] = await Promise.all([
     db
       .select({ username: discordUsers.username })
       .from(discordUsers)
       .where(eq(discordUsers.id, userId))
       .limit(1),
     fetchGuildInfo(guildId),
+    getBotGuildIds(),
   ]);
+
+  // null = no se pudo verificar; la UI distingue "sin verificar" de "fuera".
+  const hasBotGuild = botGuildIds === null ? null : botGuildIds.has(guildId);
 
   return (
     <div className="bg-bg min-h-screen">
@@ -41,6 +45,7 @@ export default async function DashboardGuildPage({ params }: { params: Promise<{
         guildIcon={guild.icon ?? null}
         username={meRows[0]?.username ?? null}
         guildInfo={guildInfo}
+        hasBotGuild={hasBotGuild}
       />
     </div>
   );

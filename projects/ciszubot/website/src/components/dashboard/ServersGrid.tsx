@@ -30,7 +30,32 @@ export default function ServersGrid({ guilds, inviteUrl }: { guilds: GridGuild[]
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {guilds.map((guild, index) => {
         const invited = guild.invited !== false;
+        const unknown = guild.invited == null;
         const hue = Number.isFinite(parseInt(guild.id.slice(-6), 10)) ? parseInt(guild.id.slice(-6), 10) % 360 : 210;
+
+        let presenceChip: React.ReactNode;
+        if (unknown) {
+          presenceChip = (
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted">
+              <span className="h-1.5 w-1.5 rounded-full bg-white/40" />
+              {t.botUnverified}
+            </span>
+          );
+        } else if (invited) {
+          presenceChip = (
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+              {t.botActive}
+            </span>
+          );
+        } else {
+          presenceChip = (
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+              {t.botMissing}
+            </span>
+          );
+        }
         return (
           <div
             key={guild.id}
@@ -62,17 +87,7 @@ export default function ServersGrid({ guilds, inviteUrl }: { guilds: GridGuild[]
               )}
               <div className="min-w-0 flex-1">
                 <p className="truncate font-header text-base font-black text-ink">{guild.name}</p>
-                {invited ? (
-                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400">
-                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-                    {t.botActive}
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-400">
-                    <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
-                    {t.botMissing}
-                  </span>
-                )}
+                {presenceChip}
               </div>
             </div>
 
@@ -80,14 +95,14 @@ export default function ServersGrid({ guilds, inviteUrl }: { guilds: GridGuild[]
               {invited ? (
                 <>
                   <Link
-                    href={`/dashboard/${guild.id}`}
+                    href={`/dashboard/${guild.id}#config`}
                     className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-neon-blue/50 bg-neon-blue/10 px-4 py-2.5 text-xs font-bold text-neon-blue transition hover:scale-[1.03] hover:bg-neon-blue/20 active:scale-95"
                   >
                     <Icon name="settings" size={14} />
                     {t.configureShort}
                   </Link>
                   <Link
-                    href={`/dashboard/${guild.id}`}
+                    href={`/dashboard/${guild.id}#summary`}
                     className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-4 py-2.5 text-xs font-bold text-muted transition hover:border-neon-purple/60 hover:text-ink"
                   >
                     <Icon name="chart-bar" size={14} />

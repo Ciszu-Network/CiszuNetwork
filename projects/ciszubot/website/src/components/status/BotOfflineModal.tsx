@@ -56,14 +56,14 @@ export default function BotOfflineModal() {
       className="fixed inset-0 z-[120] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
     >
       <div className="w-full max-w-lg rounded-3xl border border-red-400/40 bg-[#0a0a14] p-7 text-center shadow-[0_0_60px_-12px_rgba(248,113,113,0.5)]">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-amber-400/50 bg-amber-400/10 text-2xl">
+        <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full border border-amber-400/50 bg-amber-400/10 text-2xl">
           ⚠️
         </div>
         <h2 className="flex items-center justify-center gap-2 font-header text-xl font-black uppercase tracking-wide text-red-400">
-          <span className="h-2 w-2 animate-pulse rounded-full bg-red-400" />
+          <span className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-red-400" />
           {dict.botStatus.modalTitle}
         </h2>
-        <p className="mt-3 text-sm leading-relaxed text-white/70">
+        <p className="mt-2 text-sm leading-relaxed text-white/70">
           {dict.botStatus.modalBody.replace('{reason}', reason)}
         </p>
         <p className="mt-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-[11px] text-white/50">
@@ -73,16 +73,16 @@ export default function BotOfflineModal() {
           <button
             type="button"
             onClick={continueInDashboard}
-            className="flex-1 rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-white transition hover:scale-[1.02] active:scale-95"
+            className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-white transition hover:scale-[1.02] active:scale-95"
           >
             {dict.botStatus.modalContinue}
           </button>
           <button
             type="button"
             onClick={() => router.push('/')}
-            className="flex-1 rounded-xl border border-white/20 px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-white/70 transition hover:border-neon-blue/60 hover:text-white"
+            className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/20 px-5 py-3 font-header text-xs font-black uppercase tracking-widest text-white/70 transition hover:border-neon-blue/60 hover:text-white"
           >
-            <Icon name="arrow-right" size={14} className="mr-2 inline rotate-180" />
+            <Icon name="arrow-right" size={14} className="rotate-180" />
             {dict.botStatus.modalHome}
           </button>
         </div>

@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { Icon } from '@ciszu/ui';
 import { useClientI18n } from '@/hooks/useClientI18n';
 import { BOT_ID } from '@/lib/botStatus';
@@ -20,11 +19,8 @@ const DISBOARD_BOT = `https://disboard.org/bot/${BOT_ID}`;
  * por botón funcional.
  */
 export default function PreQuickDocks() {
-  const pathname = usePathname();
   const { dict } = useClientI18n();
   const t = dict.dashboardPage;
-
-  if (pathname !== '/dashboard') return null;
 
   return (
     <div className="space-y-10 pb-24">
@@ -176,25 +172,79 @@ export default function PreQuickDocks() {
             href={TOP_GG_BOT}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-xl border border-neon-blue/50 bg-neon-blue/10 px-4 py-2 text-xs font-bold text-neon-blue transition hover:scale-[1.03] hover:bg-neon-blue/20 active:scale-95"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-neon-blue/50 bg-neon-blue/10 px-4 py-2 text-xs font-bold text-neon-blue transition hover:scale-[1.03] hover:bg-neon-blue/20 active:scale-95"
           >
+            <Icon name="trophy" size={12} />
             {'Top.gg'}
           </a>
           <a
             href={DISCORD_BOT_LIST_BOT}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-xl border border-neon-purple/50 bg-neon-purple/10 px-4 py-2 text-xs font-bold text-neon-purple transition hover:scale-[1.03] hover:bg-neon-purple/20 active:scale-95"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-neon-purple/50 bg-neon-purple/10 px-4 py-2 text-xs font-bold text-neon-purple transition hover:scale-[1.03] hover:bg-neon-purple/20 active:scale-95"
           >
+            <Icon name="robot" size={12} />
             DiscordBotList
           </a>
           <a
             href={DISBOARD_BOT}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-xl border border-neon-cyan/50 bg-neon-cyan/10 px-4 py-2 text-xs font-bold text-neon-cyan transition hover:scale-[1.03] hover:bg-neon-cyan/20 active:scale-95"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-neon-cyan/50 bg-neon-cyan/10 px-4 py-2 text-xs font-bold text-neon-cyan transition hover:scale-[1.03] hover:bg-neon-cyan/20 active:scale-95"
           >
+            <Icon name="search" size={12} />
             Disboard
+          </a>
+        </div>
+      </section>
+
+      {/* Redes de Ciszu Network */}
+      <section className="rounded-3xl border border-border bg-card p-7">
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-neon-cyan/40 bg-neon-cyan/10">
+            <Icon name="globe" size={20} className="text-neon-cyan" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <h2 className="font-header text-xl font-black text-ink">{t.socialTitle}</h2>
+            <p className="text-sm text-muted">{t.socialDesc}</p>
+          </div>
+        </div>
+        <div className="mt-5 flex flex-wrap gap-3">
+          <a
+            href="https://www.youtube.com/@CiszuNetwork"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-xl bg-[#FF0000] px-5 py-3 text-sm font-bold text-white transition hover:scale-[1.02] active:scale-95"
+          >
+            <Icon name="youtube" size={16} />
+            YouTube
+          </a>
+          <a
+            href="https://github.com/Ciszu-Network"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-xl bg-[#333333] px-5 py-3 text-sm font-bold text-white transition hover:scale-[1.02] active:scale-95"
+          >
+            <Icon name="github" size={16} />
+            GitHub
+          </a>
+          <a
+            href={DISCORD_SERVER}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-xl bg-[#5865F2] px-5 py-3 text-sm font-bold text-white transition hover:scale-[1.02] active:scale-95"
+          >
+            <Icon name="discord" size={16} className="[&>g]:fill-current" />
+            Discord
+          </a>
+          <a
+            href="https://ciszunetwork.vercel.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-xl border border-neon-blue/50 bg-neon-blue/10 px-5 py-3 text-sm font-bold text-neon-blue transition hover:scale-[1.02] hover:bg-neon-blue/20 active:scale-95"
+          >
+            <Icon name="globe" size={16} />
+            {t.socialSite}
           </a>
         </div>
       </section>

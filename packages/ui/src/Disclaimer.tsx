@@ -284,6 +284,33 @@ const DISCLAIMER_CSS = `
   text-overflow: ellipsis;
   opacity: 0.85;
 }
+.disclaimer-item .disc-text-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.disclaimer-item .disc-text.expanded {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+.disclaimer-item .disc-more {
+  flex-shrink: 0;
+  border: none;
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: rgba(255, 255, 255, 0.14);
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+.disclaimer-item .disc-more:hover { background: rgba(255, 255, 255, 0.26); }
+.disclaimer-item .disc-more:active { transform: scale(0.95); }
 .disclaimer-item .disc-decon-badge {
   flex-shrink: 0;
   display: inline-flex;
@@ -447,6 +474,32 @@ function CountdownClock({ expiresAt, startsAt }: { expiresAt: string; startsAt?:
   );
 }
 
+/**
+ * Texto del disclaimer. En mensajes largos se colapsa a una línea con botón
+ * "Leer más / Leer menos"; el hover (title) muestra el texto completo.
+ */
+function DiscText({ message }: { message: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const long = message.length > 130;
+  if (!long) return <span className="disc-text">{message}</span>;
+  const en = currentSiteLang().startsWith('en');
+  return (
+    <span className="disc-text-wrap">
+      <span className={`disc-text${expanded ? ' expanded' : ''}`} title={message}>
+        {message}
+      </span>
+      <button
+        type="button"
+        className="disc-more"
+        onClick={() => setExpanded((v) => !v)}
+        aria-expanded={expanded}
+      >
+        {expanded ? (en ? 'Read less' : 'Leer menos') : en ? 'Read more' : 'Leer más'}
+      </button>
+    </span>
+  );
+}
+
 export function DisclaimerStack({ headerHeight = 64, zoomShift = 32 }: DisclaimerStackProps) {
   const { items, remove } = useDisclaimer();
   const mode = useHeaderMode();
@@ -510,7 +563,7 @@ export function DisclaimerStack({ headerHeight = 64, zoomShift = 32 }: Disclaime
                     Devcon
                   </span>
                 )}
-                <span className="disc-text">{message}</span>
+                <DiscText message={message} />
                 {item.expiresAt && remaining > 0 && item.showCountdown !== false && (
                   <span className="disc-countdown" title={`${item.startsAt ? formatCdDate(item.startsAt) + ' - ' : ''}${formatCdDate(item.expiresAt)}`}>
                     {item.startsAt && (

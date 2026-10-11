@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import HomeContent from '@/components/home/HomeContent';
 import AuthErrorNotice from '@/components/auth/AuthErrorNotice';
+import AuthRequiredModal from '@/components/auth/AuthRequiredModal';
 import type { BotStatus } from '@/lib/botStatus';
 
 export const revalidate = 60;
@@ -34,9 +35,10 @@ export default async function Home() {
 
   return (
     <>
-      {/* ?auth=error → modal de aviso (sin romper el ISR de la home). */}
+      {/* ?auth=error → modal de aviso; ?auth=login → modal de sesión requerida. */}
       <Suspense fallback={null}>
         <AuthErrorNotice />
+        <AuthRequiredModal />
       </Suspense>
       <HomeContent status={status} serverNow={Date.now()} />
     </>
