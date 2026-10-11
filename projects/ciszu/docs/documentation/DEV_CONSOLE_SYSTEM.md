@@ -1,8 +1,8 @@
 # DEV_CONSOLE_SYSTEM — Consola de Desarrollo y Debugging Local (Ciszu Network)
 
-Versión: 1.4.0
-Actualización: 2026-08-17
-Identificador: DEV_CONSOLE_SYSTEM_V1.3.0_2026_08_17_ciszunetwork
+Versión: 1.5.0
+Actualización: 2026-10-10
+Identificador: DEV_CONSOLE_SYSTEM_V1.5.0_2026_10_10_ciszunetwork
 
 > **Definición**: sistema que documenta la consola interactiva (TUI) y el modo CLI
 > (`test/website/debug/dev_console.ps1`) para probar las 4 webs del monorepo en local:
@@ -125,6 +125,7 @@ Windows sin firma).
 | Disclaimers: debug local | Configura disclaimers en local (webs, tipo, duración, fecha, cierre, imagen, resumen/eliminar/modificar) |
 | Advisor: enviar mensaje global | Envía mensajes a las webs (GlobalAdvisor) |
 | Advisor: kill switch | Activa/desactiva los mensajes globales |
+| Control de sitios (kill switch) | Mantenimiento total por web (título y motivo default o personalizados), bloqueo de páginas individuales (exact/prefix), estado; permisos admin por proyecto + re-auth con la contraseña del devcon |
 | Emails (debug) | Genera/previsualiza/envía los emails del ecosistema (webs × tipos con casillas; GLOBAL salta el menú; plantilla de diagnóstico). Sin rate limit |
 | Mi perfil / Sesiones activas | Resumen del perfil (subcargos + tiempo de sesión) y cierre remoto de sesiones (admin/owner). Ver `CONSOLE_SECURITY_SYSTEM.md` |
 | Testing Accounts | Cuentas temporales de prueba (crear/listar/modificar/eliminar) con caducidad y websites multicasilla. Ver `CONSOLE_SECURITY_SYSTEM.md` |
@@ -432,4 +433,4 @@ Al tocar lógica del TUI, ejecutar siempre el runner antes de commitear.
 - Framework de tests global: `TESTING_SYSTEM.md`.
 - Comandos del agente: `OPENCODE_SYSTEM.md`.
 
-_Última revisión: 8 sep 2026._ Relacionado: `DEBUGGING_SYSTEM.md`, `LOCAL_TESTING_PROTOCOLS.md`, `TESTING_SYSTEM.md`.
+_Última revisión: 10 oct 2026._ Relacionado: `DEBUGGING_SYSTEM.md`, `LOCAL_TESTING_PROTOCOLS.md`, `TESTING_SYSTEM.md`.

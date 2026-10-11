@@ -5,55 +5,117 @@ import { cookieEqualsToken } from '@/lib/edit-auth';
 
 const iast = createIast('muzicmania');
 
-// ── Kill switch (site_controls) ─────────────────────────────────────────────
+// ── Kill switch (site_controls): mantenimiento total + paginas bloqueadas ──
 // Si la web esta en mantenimiento, TODA pagina responde 503 con una pantalla
-// propia (las rutas /api/* quedan libres para no romper integraciones). La
-// bandera vive en Supabase (lectura publica) y se cachea 60s en el edge para
-// no consultar en cada request. Ante cualquier fallo: fail-open (la web sigue).
+// propia; ademas se pueden bloquear rutas individuales (site_blocked_paths).
+// Las banderas viven en Supabase (lectura publica) y se cachean 60s en el edge
+// para no consultar en cada request. Las rutas /api/* quedan libres para no
+// romper integraciones. Ante cualquier fallo: fail-open (la web sigue).
 const SITE = 'muzicmania';
 const SITE_NAME = 'MuzicMania';
 
-type SiteControl = { maintenance: boolean; message: string; reason: string; until: string | null };
-let controlCache: { at: number; value: SiteControl | null } | null = null;
+type SiteControl = {
+  maintenance: boolean;
+  title: string;
+  message: string;
+  reason: string;
+  until: string | null;
+};
+type BlockedPath = {
+  path: string;
+  match: 'exact' | 'prefix';
+  title: string;
+  message: string;
+  reason: string;
+  until: string | null;
+};
+type Screens = { control: SiteControl | null; blocked: BlockedPath[] };
+let screensCache: { at: number; value: Screens } | null = null;
 
-async function getSiteControl(): Promise<SiteControl | null> {
-  if (controlCache && Date.now() - controlCache.at < 60_000) return controlCache.value;
+async function getScreens(): Promise<Screens> {
+  if (screensCache && Date.now() - screensCache.at < 60_000) return screensCache.value;
+  const empty: Screens = { control: null, blocked: [] };
   try {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    if (!url || !key) return null;
-    const res = await fetch(
-      `${url}/rest/v1/site_controls?website=eq.${SITE}&select=maintenance,message,reason,until`,
-      {
-        headers: { apikey: key, Authorization: `Bearer ${key}`, 'Accept-Profile': 'public' },
+    if (!url || !key) return empty;
+    const headers = { apikey: key, Authorization: `Bearer ${key}`, 'Accept-Profile': 'public' };
+    const [controlRes, blockedRes] = await Promise.all([
+      fetch(`${url}/rest/v1/site_controls?website=eq.${SITE}&select=maintenance,title,message,reason,until`, {
+        headers,
         cache: 'no-store',
-      },
-    );
-    const rows = (await res.json().catch(() => [])) as Array<Record<string, unknown>>;
-    const row = res.ok && Array.isArray(rows) ? rows[0] : null;
-    const value: SiteControl | null = row
+      }),
+      fetch(`${url}/rest/v1/site_blocked_paths?website=eq.${SITE}&select=path,match,title,message,reason,until`, {
+        headers,
+        cache: 'no-store',
+      }),
+    ]);
+    const controlRows = (await controlRes.json().catch(() => [])) as Array<Record<string, unknown>>;
+    const blockedRows = (await blockedRes.json().catch(() => [])) as Array<Record<string, unknown>>;
+    const row = controlRes.ok && Array.isArray(controlRows) ? controlRows[0] : null;
+    const control: SiteControl | null = row
       ? {
           maintenance: row.maintenance === true,
+          title: typeof row.title === 'string' ? row.title : '',
           message: typeof row.message === 'string' ? row.message : '',
           reason: typeof row.reason === 'string' ? row.reason : '',
           until: typeof row.until === 'string' ? row.until : null,
         }
       : null;
-    controlCache = { at: Date.now(), value };
+    const blocked: BlockedPath[] =
+      blockedRes.ok && Array.isArray(blockedRows)
+        ? blockedRows
+            .filter((r) => typeof r.path === 'string')
+            .map((r) => ({
+              path: r.path as string,
+              match: r.match === 'prefix' ? 'prefix' : 'exact',
+              title: typeof r.title === 'string' ? r.title : '',
+              message: typeof r.message === 'string' ? r.message : '',
+              reason: typeof r.reason === 'string' ? r.reason : '',
+              until: typeof r.until === 'string' ? r.until : null,
+            }))
+        : [];
+    const value: Screens = { control, blocked };
+    screensCache = { at: Date.now(), value };
     return value;
   } catch {
-    return null;
+    return empty;
   }
 }
 
-function maintenanceResponse(message: string, reason: string, until: string | null): Response {
+/** Normaliza una ruta para comparar (sin barra final; siempre con / inicial). */
+function normPath(p: string): string {
+  const t = (p || '/').replace(/\/+$/, '');
+  return t.startsWith('/') ? t || '/' : '/' + t;
+}
+
+/** Primera ruta bloqueada vigente que coincide con el pathname (null si no). */
+function matchBlocked(blocked: BlockedPath[], pathname: string): BlockedPath | null {
+  const here = normPath(pathname);
+  for (const b of blocked) {
+    if (b.until && Date.parse(b.until) <= Date.now()) continue;
+    const p = normPath(b.path);
+    if (p === '/') continue;
+    if (b.match === 'prefix' ? here === p || here.startsWith(p + '/') : here === p) return b;
+  }
+  return null;
+}
+
+/** Pantalla 503 unica (mantenimiento total o pagina no disponible). */
+function screenResponse(
+  title: string,
+  message: string,
+  reason: string,
+  until: string | null,
+  fallback: string,
+): Response {
   const esc = (v: string) =>
     v.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   const html =
     '<!doctype html><html lang="es"><head><meta charset="utf-8">' +
     '<meta name="viewport" content="width=device-width,initial-scale=1">' +
     '<meta name="robots" content="noindex">' +
-    `<title>Mantenimiento — ${SITE_NAME}</title>` +
+    `<title>${esc(title)} — ${SITE_NAME}</title>` +
     '<style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;' +
     'background:#05050a;color:#e8e8f0;font-family:system-ui,sans-serif;text-align:center;padding:24px}' +
     'main{max-width:520px}h1{font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:#22d3ee;margin:14px 0}' +
@@ -61,8 +123,8 @@ function maintenanceResponse(message: string, reason: string, until: string | nu
     '.tag{display:inline-block;padding:6px 12px;border:1px solid #ff33cc55;border-radius:999px;' +
     'color:#ff33cc;font-size:11px;letter-spacing:.15em;text-transform:uppercase}</style></head>' +
     `<body><main><div class="tag">Ciszu Network · ${SITE_NAME}</div>` +
-    '<h1>Sitio en mantenimiento</h1>' +
-    `<p>${esc(message || 'Estamos realizando una intervencion. Volvemos pronto.')}</p>` +
+    `<h1>${esc(title)}</h1>` +
+    `<p>${esc(message || fallback)}</p>` +
     (reason ? `<p><strong>Motivo:</strong> ${esc(reason)}</p>` : '') +
     (until ? `<p><strong>Estimado:</strong> ${esc(new Date(until).toLocaleString('es-VE'))}</p>` : '') +
     '</main></body></html>';
@@ -70,6 +132,26 @@ function maintenanceResponse(message: string, reason: string, until: string | nu
     status: 503,
     headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'retry-after': '300' },
   });
+}
+
+function maintenanceResponse(control: SiteControl): Response {
+  return screenResponse(
+    control.title || 'Sitio en mantenimiento',
+    control.message,
+    control.reason,
+    control.until,
+    'Estamos realizando una intervencion. Volvemos pronto.',
+  );
+}
+
+function unavailableResponse(blocked: BlockedPath): Response {
+  return screenResponse(
+    blocked.title || 'Esta pagina no esta disponible',
+    blocked.message,
+    blocked.reason,
+    blocked.until,
+    'Esta pagina no esta disponible por ahora. Intenta mas tarde.',
+  );
 }
 
 /**
@@ -127,13 +209,16 @@ const CSP = buildCsp({
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // ── Kill switch: si la web esta en mantenimiento, 503 con pantalla propia.
+  // ── Kill switch: mantenimiento total o pagina bloqueada -> 503 con pantalla.
   //    (Las rutas /api/* se excluyen para no romper integraciones.)
   if (!pathname.startsWith('/api/')) {
-    const control = await getSiteControl();
+    const screens = await getScreens();
+    const control = screens.control;
     if (control?.maintenance && (!control.until || Date.parse(control.until) > Date.now())) {
-      return maintenanceResponse(control.message, control.reason, control.until);
+      return maintenanceResponse(control);
     }
+    const blocked = matchBlocked(screens.blocked, pathname);
+    if (blocked) return unavailableResponse(blocked);
   }
 
   // ── Protección del editor visual (Puck) ────────────────────────────────────

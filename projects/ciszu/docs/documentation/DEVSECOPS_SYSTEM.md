@@ -1,8 +1,8 @@
 # 🛡️ DEVSECOPS_SYSTEM — Sistema de Seguridad Integrada (Ciszu Network)
 
-Versión: 2.0.0
-Actualización: 2026-08-13
-Identificador: DEVSECOPS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
+Versión: 2.1.0
+Actualización: 2026-10-10
+Identificador: DEVSECOPS_SYSTEM_V2.1.0_2026_10_10_ciszunetwork
 
 > Documentación para agentes de IA. Este documento define la filosofía, los métodos y las
 > herramientas de seguridad que Ciszu Network aplica en **todas** las fases del ciclo de vida
@@ -246,9 +246,16 @@ adaptada al entorno (owner único aceptado; llaves físicas FIDO2 diferidas).
 
 ### 19.4 Kill switch (contención)
 
-- `site_controls` + middleware de las 4 webs: pantalla 503 con motivo y ETA en
-  todas las páginas; `/api/*` libres; caché 60s; fail-open. Control por
-  `scripts/site-control.js` y sección CONTROL DE SITIOS en la devcon.
+- `site_controls` + middleware de las 4 webs: pantalla 503 con título, mensaje,
+  motivo y ETA en todas las páginas; `/api/*` libres; caché 60s; fail-open.
+- `site_blocked_paths`: bloqueo de páginas individuales por web (match exact o
+  prefix) con la pantalla "Esta página no está disponible" y caducidad opcional.
+- Control por `scripts/site-control.js` (status · on · off · block · unblock ·
+  blocked; razones default (`reasons`) y títulos (`titles`) elegibles, más texto
+  personalizado) y sección CONTROL DE SITIOS en la devcon.
+- Cada mutación exige actor + motivo, re-auth con la contraseña del devcon y
+  permiso de admin por website (`Test-ConsoleProjectAdmin`: subcargo del proyecto
+  + cargo admin); las denegaciones quedan auditadas (`sitecontrol-denied`).
 
 ### 19.5 4-eyes adaptado
 
@@ -283,6 +290,6 @@ comprometidas):
 5. **Restaurar**: reactivar webs (`site-control off`), desplegar de nuevo desde
    `main` y confirmar CI en verde.
 
-_Última revisión: 30 sep 2026._ Relacionado: `SECURITY_PROTOCOLS.md`, `CODE_PRINCIPLES_PROTOCOLS.md`,
+_Última revisión: 10 oct 2026._ Relacionado: `SECURITY_PROTOCOLS.md`, `CODE_PRINCIPLES_PROTOCOLS.md`,
 `VAULT_SYSTEM.md`, `TESTING_SYSTEM.md`, `report/seguridad_escalabilidad_report-2026-09-30.md`,
 `ACCOUNT_SYSTEM.md`.

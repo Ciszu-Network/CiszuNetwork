@@ -10,7 +10,6 @@
 > Recomendación: **agrupar pushes** (cada push dispara 4 deploys) o valorar Vercel Pro si se
 > vuelve frecuente.
 
-
 #5 Crear sistema de anuncios: Google Adsense, GA4, GTM, Tag y Analytics pack completo.
 
   REVISIÓN 05 oct 2026 (2 días después): enlaces de la API verificados.
@@ -108,6 +107,7 @@
 - [X] Se debe crear un metodo de cierre de sesion remoto utilizado para cerrar sesion a cierta persona, este metodo solo lo podran ejecutar los moderadores, admins y owners. Con el fin de cerrar alguna sesion incluso de una cuenta por cada rango, es decir un mod no puede cerrar la sesion de un admin. Esto por seguridad de hackeos a cuentas. Esta opcion debe estar tanto para la GUI de cada website segun el debug y cuenta, y para la devconsole.
 - [X] Se debe crear un modal cuando una cuenta es baneada, el usuario automaticamente se redirecionara asu profile y aparecera un modal de su cuenta fue baneada e informacion del baneo. Razon fecha provocante etc. Lo mismo con los mutes.
 - [X] Username de guests @guestNNNN en las 4 webs: ciszubot ya lo tenía (`getGuestId`), añadido en ciszu (`getGuestUsername` + AuthMenu), antony (strip de espacios + AuthMenu) y muzicmania ya cumplía.
+- [ ] Revisar si el sistema de guard o bloqueo personalizado por website desde la devcon existe, con su pagina de "esta pagina no esta disponible" y razon, ya sea razon personalizada o razon default o razones defaults elegibles, es decir desde la devcon bloquear cualquier pagina de la pagina redireccionando a una pagina temporal o home transformado o como sea de "Pagina de mantenimiento". 
 
 **Ciszubot Website:**
 
