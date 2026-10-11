@@ -204,9 +204,16 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     }
   }
 
+  const userRows = await db
+    .select({ username: ciszubotSchema.discordUsers.username })
+    .from(ciszubotSchema.discordUsers)
+    .where(eq(ciszubotSchema.discordUsers.id, userId))
+    .limit(1);
+
   await logAudit({
     event: 'config_update',
     actorId: userId,
+    actorName: userRows[0]?.username ?? null,
     target: guildId,
     ip,
     detail: { fields: Object.keys(allowed), features: featurePatch },

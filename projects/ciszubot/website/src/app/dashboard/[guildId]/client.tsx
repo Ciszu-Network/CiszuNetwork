@@ -301,17 +301,20 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   >(null);
   const [blocked, setBlocked] = useState(false);
   const blockedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [serverHistory, setServerHistory] = useState<
+    { id: number; createdAt: string; actorId: string | null; detail: { fields?: string[]; features?: Record<string, boolean> } | null }[] | null
+  >(null);
 
   useEffect(() => {
     setAutoSave(localStorage.getItem('cz-dash-autosave') === '1');
   }, []);
 
   // Sub-sidebar por opción: resumen por defecto (spec del dashboard).
-  type GuildView = 'summary' | 'general' | 'features' | 'levels' | 'welcome' | 'extras';
+  type GuildView = 'summary' | 'general' | 'features' | 'levels' | 'welcome' | 'extras' | 'history';
   const [view, setView] = useState<GuildView>('summary');
   useEffect(() => {
     const saved = localStorage.getItem('cz-dash-view') as GuildView | null;
-    if (saved && ['summary', 'general', 'features', 'levels', 'welcome', 'extras'].includes(saved)) setView(saved);
+    if (saved && ['summary', 'general', 'features', 'levels', 'welcome', 'extras', 'history'].includes(saved)) setView(saved);
   }, []);
   const dirtyRef = useRef(false);
   const shakeDock = useCallback(() => {
@@ -362,7 +365,25 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     { key: 'levels', icon: 'star', label: 'subnavLevels' },
     { key: 'welcome', icon: 'heart', label: 'subnavWelcome' },
     { key: 'extras', icon: 'support', label: 'subnavExtras' },
+    { key: 'history', icon: 'verified', label: 'subnavHistory' },
   ] as const satisfies ReadonlyArray<{ key: GuildView; icon: string; label: keyof Dict['guildPage'] }>;
+
+  // Historial del servidor (auditoría): se carga al entrar a la pestaña.
+  useEffect(() => {
+    if (view !== 'history' || serverHistory !== null) return;
+    let active = true;
+    fetch(`/api/dashboard/history?guildId=${guildId}`)
+      .then((r) => (r.ok ? r.json() : { entries: [] }))
+      .then((j) => {
+        if (active) setServerHistory(j.entries ?? []);
+      })
+      .catch(() => {
+        if (active) setServerHistory([]);
+      });
+    return () => {
+      active = false;
+    };
+  }, [view, serverHistory, guildId]);
 
   const setAutoSavePref = useCallback((value: boolean) => {
     setAutoSave(value);
@@ -541,6 +562,28 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
       setBaseline(JSON.stringify(variables));
       void queryClient.invalidateQueries({ queryKey: ['guild-config', guildId] });
       setStatus('ok');
+      try {
+        const entry = {
+          ts: Date.now(),
+          guildId,
+          guildName,
+          fields: Object.keys(variables).filter((k) => k !== 'features'),
+          features: variables.features ?? undefined,
+        };
+        const list = JSON.parse(localStorage.getItem('cz-dash-saves') ?? '[]') as unknown[];
+        list.unshift(entry);
+        localStorage.setItem('cz-dash-saves', JSON.stringify(list.slice(0, 30)));
+        localStorage.setItem(
+          'cz-dash-saves-total',
+          String(Number(localStorage.getItem('cz-dash-saves-total') ?? '0') + 1)
+        );
+        sessionStorage.setItem(
+          'cz-dash-saves-session',
+          String(Number(sessionStorage.getItem('cz-dash-saves-session') ?? '0') + 1)
+        );
+      } catch {
+        /* sin storage */
+      }
       if (offlineRef.current) {
         setFlash(botStatusDict().saveOfflineNote.replace('{reason}', botStatusDict().reasons[resolveBotStatus(liveStatusRef.current, Date.now()).reason ?? 'unknown']));
         setTimeout(() => setFlash(null), 4500);
@@ -1079,6 +1122,44 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 );
               })}
             </div>
+          </section>
+          )}
+
+          {view === 'history' && (
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div className="mb-2 flex flex-wrap items-center gap-2">
+              <h2 className="flex items-center gap-2 font-bold text-white">
+                <Icon name="verified" size={18} className="text-neon-blue" /> {t.historyTitle}
+              </h2>
+            </div>
+            <p className="mb-4 text-xs text-white/45">{t.historyHint}</p>
+            {serverHistory === null && <p className="text-xs text-white/40">…</p>}
+            {serverHistory !== null && serverHistory.length === 0 && (
+              <p className="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-xs text-white/45">{t.historyEmpty}</p>
+            )}
+            {serverHistory !== null && serverHistory.length > 0 && (
+              <ul className="grid gap-2">
+                {serverHistory.map((h) => (
+                  <li
+                    key={h.id}
+                    className="flex flex-wrap items-center gap-3 rounded-xl border border-white/10 bg-black/20 px-4 py-2.5 text-xs"
+                  >
+                    <span className="font-mono text-white/45">
+                      {new Date(h.createdAt).toLocaleString()}
+                    </span>
+                    <span className="min-w-0 flex-1 truncate text-white/70">
+                      {(h.detail?.fields ?? []).join(', ') || '—'}
+                      {h.detail?.features && Object.keys(h.detail.features).length > 0
+                        ? ` · ${Object.keys(h.detail.features).length} ${t.featuresLabel}`
+                        : ''}
+                    </span>
+                    <span className="text-[10px] text-white/40">
+                      {t.actorLabel}: <code className="font-mono">{h.actorId ?? '—'}</code>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </section>
           )}
 

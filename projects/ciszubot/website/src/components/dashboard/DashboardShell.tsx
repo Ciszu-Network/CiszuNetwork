@@ -63,6 +63,7 @@ const L: Record<'es' | 'en', Record<string, string>> = {
     changeServer: 'Cambiar servidor',
     accountHint: 'Gestiona tu cuenta',
     signOut: 'Cerrar sesión',
+    botPrefs: 'Preferencias del bot',
     changelog: 'Novedades',
     stats: 'Estadísticas',
     news: 'Redes y noticias',
@@ -98,6 +99,7 @@ const L: Record<'es' | 'en', Record<string, string>> = {
     changeServer: 'Switch server',
     accountHint: 'Manage your account',
     signOut: 'Sign out',
+    botPrefs: 'Bot preferences',
     changelog: 'Changelog',
     stats: 'Statistics',
     news: 'Social & news',
@@ -346,6 +348,17 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
       >
         <Icon name="chart-bar" size={16} className={!activeId ? ACCENTS[1].icon : ''} />
         {t.overview}
+      </Link>
+      <Link
+        href="/dashboard/bot"
+        className={`${itemBase} ${pathname === '/dashboard/bot' ? ACCENTS[5].active : itemIdle} ${ACCENTS[5].hover}`}
+        onClick={(e) => {
+          setOpen(false);
+          guardNav('/dashboard/bot')(e);
+        }}
+      >
+        <Icon name="crown" size={16} className={pathname === '/dashboard/bot' ? ACCENTS[5].icon : ''} />
+        {t.botPrefs}
       </Link>
 
       {/* ─── SERVIDORES (mosaico en popover, selección única) ─── */}
