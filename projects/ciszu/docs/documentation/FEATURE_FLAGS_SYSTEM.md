@@ -119,6 +119,16 @@ Comandos premium individuales adicionales: `embed` (`PREMIUM_COMMANDS`). La func
   promos y los embeds del bot.
 - **Pagos**: no implementados todavía (decisión de producto). `premium_guilds` queda
   lista para poblarse cuando exista la pasarela.
+- **Sub-opciones premium**: además de funciones completas (música, búsqueda), una
+  configuración puede tener sub-opciones premium marcadas con etiqueta (`PremiumTag`).
+  Durante la beta funcionan gratis (nota "Premium · gratis durante la beta"); al salir
+  de beta se bloquearán con el estado de `premium_guilds`.
+- **Leaderboard por servidor** (11 oct 2026): cada servidor puede activar un ranking
+  público de niveles en `/leaderboard/<guild_id>` (misma fórmula de XP que el bot).
+  La **URL personalizada** (`/leaderboard/<slug>`, único case-insensitive) y el
+  **reinicio** del leaderboard son sub-opciones premium (gratis en beta); el reinicio
+  se audita como `leaderboard_reset` y borra `ciszubot.levels` del servidor. Columnas
+  `leaderboard_enabled` / `leaderboard_slug` en `guild_configs` (migración 60).
 
 ## 7. Operación (caso música sin Lavalink)
 
