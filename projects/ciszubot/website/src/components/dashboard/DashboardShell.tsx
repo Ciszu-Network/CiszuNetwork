@@ -68,6 +68,13 @@ const L: Record<'es' | 'en', Record<string, string>> = {
     stats: 'Estadísticas',
     news: 'Redes y noticias',
     verify: 'Sin verificar',
+    searchPlaceholder: 'Buscar…',
+    filterAll: 'Todos',
+    filterInvited: 'Invitados',
+    filterUnverified: 'Sin verificar',
+    sortAsc: 'A-Z',
+    sortDesc: 'Z-A',
+    noResults: 'Sin resultados.',
   },
   en: {
     overview: 'Overview',
@@ -104,6 +111,13 @@ const L: Record<'es' | 'en', Record<string, string>> = {
     stats: 'Statistics',
     news: 'Social & news',
     verify: 'Unverified',
+    searchPlaceholder: 'Search…',
+    filterAll: 'All',
+    filterInvited: 'Invited',
+    filterUnverified: 'Unverified',
+    sortAsc: 'A-Z',
+    sortDesc: 'Z-A',
+    noResults: 'No results.',
   },
 };
 
@@ -176,6 +190,9 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [serversOpen, setServersOpen] = useState(false);
+  const [serverQuery, setServerQuery] = useState('');
+  const [serverFilter, setServerFilter] = useState<'all' | 'invited' | 'unknown'>('all');
+  const [serverSort, setServerSort] = useState<'asc' | 'desc'>('asc');
   const [accountOpen, setAccountOpen] = useState(false);
   const [warnId, setWarnId] = useState<string | null>(null);
   const [dark, setDark] = useState(false);
@@ -278,6 +295,16 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
   const sectionTitle = 'px-3 pb-1 pt-4 text-[10px] font-black uppercase tracking-[0.25em] text-white/40';
 
   const initials = (me?.displayName ?? me?.username ?? 'C').charAt(0).toUpperCase();
+
+  const visibleGuilds = guilds
+    .filter((g) => {
+      const q = serverQuery.trim().toLowerCase();
+      const matchQ = !q || g.name.toLowerCase().includes(q) || g.id.includes(q);
+      const matchF =
+        serverFilter === 'all' ? true : serverFilter === 'invited' ? g.invited === true : g.invited == null;
+      return matchQ && matchF;
+    })
+    .sort((a, b) => (serverSort === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)));
 
   const nav = (
     <nav
@@ -388,6 +415,39 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
             {guilds.length === 0 ? (
               <p className="text-xs leading-relaxed text-white/50">{t.noServers}</p>
             ) : (
+              <>
+              <input
+                value={serverQuery}
+                onChange={(e) => setServerQuery(e.target.value)}
+                placeholder={t.searchPlaceholder}
+                className="mb-2 w-full rounded-lg border border-white/15 bg-black/40 px-3 py-2 text-xs text-white outline-none placeholder:text-white/30 focus:border-neon-cyan/60"
+              />
+              <div className="mb-2 flex flex-wrap items-center gap-1.5">
+                {(['all', 'invited', 'unknown'] as const).map((f) => (
+                  <button
+                    key={f}
+                    type="button"
+                    onClick={() => setServerFilter(f)}
+                    className={`rounded-full border px-2.5 py-1 text-[9px] font-black uppercase tracking-widest transition ${
+                      serverFilter === f
+                        ? 'border-neon-cyan/60 bg-neon-cyan/10 text-neon-cyan'
+                        : 'border-white/15 text-white/50 hover:text-white'
+                    }`}
+                  >
+                    {f === 'all' ? t.filterAll : f === 'invited' ? t.filterInvited : t.filterUnverified}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setServerSort(serverSort === 'asc' ? 'desc' : 'asc')}
+                  className="ml-auto rounded-full border border-white/15 px-2.5 py-1 text-[9px] font-black uppercase tracking-widest text-white/50 transition hover:text-white"
+                >
+                  {serverSort === 'asc' ? t.sortAsc : t.sortDesc}
+                </button>
+              </div>
+              {visibleGuilds.length === 0 ? (
+                <p className="text-xs text-white/50">{t.noResults}</p>
+              ) : (
               <div className="grid max-h-72 grid-cols-3 gap-2 overflow-y-auto">
                 {/* Global */}
                 <button
@@ -403,7 +463,7 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
                   </span>
                   <span className="w-full truncate text-center text-[9px] font-bold text-white/75">{t.overview}</span>
                 </button>
-                {guilds.map((g, index) => {
+                {visibleGuilds.map((g, index) => {
                   const invited = g.invited !== false;
                   const unknown = g.invited == null;
                   const active = activeId === g.id;
@@ -470,6 +530,8 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
                   );
                 })}
               </div>
+              )}
+              </>
             )}
             <InviteLink
               href={inviteUrl}

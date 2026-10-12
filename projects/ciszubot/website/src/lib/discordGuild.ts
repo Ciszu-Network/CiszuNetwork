@@ -150,3 +150,56 @@ export const CHANNEL_VOICE = 2;
 export const CHANNEL_CATEGORY = 4;
 export const CHANNEL_ANNOUNCEMENT = 5;
 export const CHANNEL_STAGE = 13;
+
+export interface GuildSummary {
+  id: string;
+  name: string;
+  icon: string | null;
+  description: string | null;
+  memberCount: number | null;
+  presenceCount: number | null;
+  ownerId: string | null;
+  createdAt: string | null;
+  premiumTier: number | null;
+}
+
+/**
+ * Resumen ampliado de un servidor (para el overview): descripción, miembros
+ * aproximados y presencia (en línea/desconectados) con `with_counts=true`
+ * — no requiere el intent de presencias.
+ */
+export async function fetchGuildSummary(guildId: string): Promise<GuildSummary | null> {
+  const botToken = process.env.DISCORD_BOT_TOKEN;
+  if (!botToken) return null;
+  try {
+    const res = await fetch(`https://discord.com/api/v10/guilds/${guildId}?with_counts=true`, {
+      headers: { Authorization: `Bot ${botToken}` },
+      cache: 'no-store',
+    });
+    if (!res.ok) return null;
+    const g = (await res.json()) as {
+      id: string;
+      name: string;
+      icon: string | null;
+      description?: string | null;
+      approximate_member_count?: number;
+      approximate_presence_count?: number;
+      owner_id?: string;
+      premium_tier?: number;
+    };
+    const createdAt = new Date(Number((BigInt(g.id) >> BigInt(22)) + BigInt(1420070400000))).toISOString();
+    return {
+      id: g.id,
+      name: g.name,
+      icon: g.icon ?? null,
+      description: g.description ?? null,
+      memberCount: g.approximate_member_count ?? null,
+      presenceCount: g.approximate_presence_count ?? null,
+      ownerId: g.owner_id ?? null,
+      createdAt,
+      premiumTier: g.premium_tier ?? null,
+    };
+  } catch {
+    return null;
+  }
+}

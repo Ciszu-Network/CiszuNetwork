@@ -321,6 +321,9 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   >(null);
   const [resetAsk, setResetAsk] = useState(false);
   const [resetBusy, setResetBusy] = useState(false);
+  const [subnavQuery, setSubnavQuery] = useState('');
+  const [subnavFilter, setSubnavFilter] = useState<'all' | 'free' | 'premium'>('all');
+  const [subnavSort, setSubnavSort] = useState<'asc' | 'desc'>('asc');
 
   useEffect(() => {
     setAutoSave(localStorage.getItem('cz-dash-autosave') === '1');
@@ -398,6 +401,14 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   const activeFeature = view.startsWith('feat:')
     ? (FEATURE_ROWS.find((f) => `feat:${f.slug}` === view) ?? null)
     : null;
+
+  const searchUi = dict.dashboardPage.searchUi;
+  const visibleSubnav = SUBNAV.filter((item) => {
+    const q = subnavQuery.trim().toLowerCase();
+    const matchQ = !q || t[item.label].toLowerCase().includes(q);
+    const matchF = subnavFilter === 'all' ? true : subnavFilter === 'free' ? item.tag === 'free' : item.tag !== 'free';
+    return matchQ && matchF;
+  }).sort((a, b) => (subnavSort === 'asc' ? t[a.label].localeCompare(t[b.label]) : t[b.label].localeCompare(t[a.label])));
 
   // Historial del servidor (auditoría): se carga al entrar a la pestaña.
   useEffect(() => {
@@ -1011,7 +1022,38 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
 
         <div className="mt-8 lg:flex lg:items-start lg:gap-6">
           <nav className="mb-4 flex gap-1.5 overflow-x-auto pb-1 lg:mb-0 lg:w-44 lg:shrink-0 lg:flex-col lg:overflow-visible lg:pb-0">
-            {SUBNAV.map((item) => (
+            <div className="mb-2 w-full space-y-1.5 lg:w-44">
+              <input
+                value={subnavQuery}
+                onChange={(e) => setSubnavQuery(e.target.value)}
+                placeholder={searchUi.placeholder}
+                className="w-full rounded-lg border border-white/10 bg-black/30 px-3 py-1.5 text-[11px] text-white outline-none placeholder:text-white/30 focus:border-neon-blue/60"
+              />
+              <div className="flex flex-wrap gap-1">
+                {(['all', 'free', 'premium'] as const).map((f) => (
+                  <button
+                    key={f}
+                    type="button"
+                    onClick={() => setSubnavFilter(f)}
+                    className={`rounded-full border px-2 py-0.5 text-[8px] font-black uppercase tracking-widest transition ${
+                      subnavFilter === f
+                        ? 'border-neon-blue/60 bg-neon-blue/10 text-neon-blue'
+                        : 'border-white/15 text-white/45 hover:text-white'
+                    }`}
+                  >
+                    {f === 'all' ? searchUi.all : f === 'free' ? searchUi.free : searchUi.premium}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setSubnavSort(subnavSort === 'asc' ? 'desc' : 'asc')}
+                  className="ml-auto rounded-full border border-white/15 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-white/45 transition hover:text-white"
+                >
+                  {subnavSort === 'asc' ? searchUi.asc : searchUi.desc}
+                </button>
+              </div>
+            </div>
+            {visibleSubnav.map((item) => (
               <button
                 key={item.key}
                 type="button"
@@ -1024,23 +1066,25 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               >
                 <Icon name={item.icon} size={14} className="text-neon-blue" />
                 {t[item.label]}
-                {item.tag !== 'free' && (
-                  <span
-                    className={`inline-flex items-center gap-0.5 rounded-full border px-1.5 py-0.5 text-[7px] font-black uppercase tracking-widest ${
-                      item.tag === 'premium'
-                        ? 'border-amber-400/40 bg-amber-400/10 text-amber-400'
-                        : 'border-neon-pink/40 bg-neon-pink/10 text-neon-pink'
-                    }`}
-                  >
-                    {item.tag === 'premium' ? (
-                      <>
-                        <Icon name="crown" size={7} /> {t.featPremiumTag}
-                      </>
-                    ) : (
-                      t.tagMixed
-                    )}
-                  </span>
-                )}
+                <span
+                  className={`inline-flex items-center gap-0.5 rounded-full border px-1.5 py-0.5 text-[7px] font-black uppercase tracking-widest ${
+                    item.tag === 'premium'
+                      ? 'border-amber-400/40 bg-amber-400/10 text-amber-400'
+                      : item.tag === 'mixed'
+                        ? 'border-neon-pink/40 bg-neon-pink/10 text-neon-pink'
+                        : 'border-emerald-400/40 bg-emerald-400/10 text-emerald-400'
+                  }`}
+                >
+                  {item.tag === 'premium' ? (
+                    <>
+                      <Icon name="crown" size={7} /> {t.featPremiumTag}
+                    </>
+                  ) : item.tag === 'mixed' ? (
+                    t.tagMixed
+                  ) : (
+                    t.tagFree
+                  )}
+                </span>
               </button>
             ))}
           </nav>

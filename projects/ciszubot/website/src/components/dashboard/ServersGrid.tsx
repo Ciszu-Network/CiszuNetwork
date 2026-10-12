@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { Icon } from '@ciszu/ui';
 import { useClientI18n } from '@/hooks/useClientI18n';
+import type { GuildSummary } from '@/lib/discordGuild';
 import InviteLink from './InviteLink';
 
 export interface GridGuild {
@@ -21,14 +22,66 @@ const INVITE_GRADIENT = 'bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-p
  * animación de entrada escalonada, fondo por servidor (hue estable del id) y
  * el mismo comportamiento que el mosaico del sidebar.
  */
-export default function ServersGrid({ guilds, inviteUrl }: { guilds: GridGuild[]; inviteUrl: string }) {
+export default function ServersGrid({
+  guilds,
+  inviteUrl,
+  details,
+}: {
+  guilds: GridGuild[];
+  inviteUrl: string;
+  details?: Record<string, GuildSummary | null>;
+}) {
   const { dict } = useClientI18n();
   const t = dict.dashboardPage;
   const [warnId, setWarnId] = useState<string | null>(null);
+  const [query, setQuery] = useState('');
+  const [filter, setFilter] = useState<'all' | 'invited' | 'unknown'>('all');
+  const [sort, setSort] = useState<'asc' | 'desc'>('asc');
+
+  const visible = guilds
+    .filter((g) => {
+      const q = query.trim().toLowerCase();
+      const matchQ = !q || g.name.toLowerCase().includes(q) || g.id.includes(q);
+      const matchF = filter === 'all' ? true : filter === 'invited' ? g.invited === true : g.invited == null;
+      return matchQ && matchF;
+    })
+    .sort((a, b) => (sort === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)));
 
   return (
+    <>
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={t.searchUi.placeholder}
+          className="w-full max-w-xs rounded-xl border border-border bg-card px-3 py-2 text-xs text-ink outline-none placeholder:text-muted/60 focus:border-neon-blue/60"
+        />
+        {(['all', 'invited', 'unknown'] as const).map((f) => (
+          <button
+            key={f}
+            type="button"
+            onClick={() => setFilter(f)}
+            className={`rounded-full border px-3 py-1.5 text-[10px] font-black uppercase tracking-widest transition ${
+              filter === f ? 'border-neon-blue/60 bg-neon-blue/10 text-neon-blue' : 'border-border text-muted hover:text-ink'
+            }`}
+          >
+            {f === 'all' ? t.searchUi.all : f === 'invited' ? t.searchUi.invited : t.searchUi.unverified}
+          </button>
+        ))}
+        <button
+          type="button"
+          onClick={() => setSort(sort === 'asc' ? 'desc' : 'asc')}
+          className="ml-auto rounded-full border border-border px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-muted transition hover:text-ink"
+        >
+          {sort === 'asc' ? t.searchUi.asc : t.searchUi.desc}
+        </button>
+      </div>
+
+      {visible.length === 0 ? (
+        <p className="rounded-2xl border border-border bg-card px-5 py-6 text-center text-sm text-muted">{t.searchUi.noResults}</p>
+      ) : (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {guilds.map((guild, index) => {
+      {visible.map((guild, index) => {
         const invited = guild.invited !== false;
         const unknown = guild.invited == null;
         const hue = Number.isFinite(parseInt(guild.id.slice(-6), 10)) ? parseInt(guild.id.slice(-6), 10) % 360 : 210;
@@ -91,6 +144,41 @@ export default function ServersGrid({ guilds, inviteUrl }: { guilds: GridGuild[]
               </div>
             </div>
 
+            {(() => {
+              const d = details?.[guild.id];
+              if (!d) return null;
+              return (
+                <div className="relative mt-3 space-y-1 text-[10px] text-muted">
+                  {d.description && <p className="line-clamp-2">{d.description}</p>}
+                  <p className="font-mono text-[9px] text-muted/70">ID: {guild.id}</p>
+                  <p className="flex flex-wrap gap-x-3 gap-y-0.5">
+                    <span>
+                      {dict.guildPage.membersLabel}: {d.memberCount ?? '—'}
+                    </span>
+                    <span className="text-emerald-400">
+                      {d.presenceCount ?? '—'} {t.presenceOnline}
+                    </span>
+                    <span className="text-red-400">
+                      {d.memberCount != null && d.presenceCount != null ? d.memberCount - d.presenceCount : '—'}{' '}
+                      {t.presenceOffline}
+                    </span>
+                  </p>
+                  <p className="flex flex-wrap gap-x-3 gap-y-0.5">
+                    {d.createdAt && (
+                      <span>
+                        {t.createdLabel}: {new Date(d.createdAt).toLocaleDateString()}
+                      </span>
+                    )}
+                    {d.premiumTier != null && d.premiumTier > 0 && (
+                      <span>
+                        {t.boostLabel}: {d.premiumTier}
+                      </span>
+                    )}
+                  </p>
+                </div>
+              );
+            })()}
+
             <div className="relative mt-4 flex flex-wrap gap-2">
               {invited ? (
                 <>
@@ -139,5 +227,7 @@ export default function ServersGrid({ guilds, inviteUrl }: { guilds: GridGuild[]
         );
       })}
     </div>
+      )}
+    </>
   );
 }

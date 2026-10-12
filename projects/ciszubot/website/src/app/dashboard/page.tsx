@@ -5,6 +5,7 @@ import { cookies } from 'next/headers';
 import { Icon } from '@ciszu/ui';
 import { getSessionUserId, getGuildsForUser, getBotGuildIds, isGuildAdmin, DISCORD_CLIENT_ID, type DiscordGuild } from '@/lib/auth';
 import { db, ciszubotSchema, eq } from '@/lib/db';
+import { fetchGuildSummary, type GuildSummary } from '@/lib/discordGuild';
 import { BOT_PREFIX, DISCORD_SERVER, INVITE_URL, getDict, parseLang } from '@/lib/i18n';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
@@ -73,6 +74,13 @@ export default async function DashboardPage() {
   // null = no se pudo verificar (nunca marcar como activo por un fallo de red).
   const botPresence = (id: string): boolean | null => (botGuilds === null ? null : botGuilds.has(id));
   const activeCount = manageable.filter((g) => botPresence(g.id) === true).length;
+
+  // Detalles ampliados por servidor (descripción, miembros, presencia) vía bot.
+  const summaries = await Promise.all(manageable.map((g) => fetchGuildSummary(g.id).catch(() => null)));
+  const details: Record<string, GuildSummary | null> = {};
+  manageable.forEach((g, i) => {
+    details[g.id] = summaries[i];
+  });
   const icon = (guild: DiscordGuild) =>
     guild.icon
       ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`
@@ -201,6 +209,7 @@ export default async function DashboardPage() {
                 invited: botPresence(g.id),
               }))}
               inviteUrl={INVITE_URL}
+              details={details}
             />
           )}
         </section>

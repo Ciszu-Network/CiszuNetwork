@@ -14,10 +14,8 @@ export const dynamic = 'force-dynamic';
  * Valida el token vía assessments (API key por proyecto, sin secretos).
  */
 const handler = createRecaptchaHandler({
-  siteKey: process.env.RECAPTCHA_ENTERPRISE_SITE_KEY_MUZIC ?? '',
-  apiKey: process.env.RECAPTCHA_ENTERPRISE_API_KEY_MUZIC ?? '',
-  projectId:
-    process.env.RECAPTCHA_ENTERPRISE_PROJECT_ID_MUZIC ?? 'muzicmania-1779157973357',
+  v2Secret: process.env.RECAPTCHA_SECRET_KEY_V2_MUZIC ?? '',
+  v3Secret: process.env.RECAPTCHA_SECRET_KEY_V3_MUZIC ?? '',
   minScore: 0.5,
   windowMs: 60_000,
   max: 30,

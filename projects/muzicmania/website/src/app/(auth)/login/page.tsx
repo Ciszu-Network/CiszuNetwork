@@ -126,6 +126,7 @@ export default function LoginPage() {
   });
   // El token de v2 es de un solo uso: cada envío fallido reinicia el widget.
   const [captchaResetKey, setCaptchaResetKey] = useState(0);
+  const [captchaV2, setCaptchaV2] = useState<string | null>(null);
   const v3ExecutorRef = React.useRef<(() => Promise<string | null>) | null>(null);
   const [needs2FA, setNeeds2FA] = useState(false);
   // Sesión a medio autenticar: la contraseña ya es válida pero falta la clave 2FA.
@@ -181,14 +182,14 @@ export default function LoginPage() {
     try {
       // Token de reCAPTCHA fresco (caduca en 2 minutos): se pide justo antes
       // de enviar. En Enterprise el executor es el que genera el token.
-      const captcha = (await v3ExecutorRef.current?.()) ?? null;
-      if (!captcha) {
+      const v3Token = (await v3ExecutorRef.current?.()) ?? null;
+      if (!captchaV2) {
         throw new Error('Debes completar el reCAPTCHA');
       }
       const verifyRes = await fetch('/api/verify-recaptcha', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: captcha, action: 'login' }),
+        body: JSON.stringify({ v2Token: captchaV2, v3Token: v3Token ?? undefined, action: 'login' }),
       });
       const verifyData = await verifyRes.json().catch(() => ({}));
       if (!verifyData.success) {
@@ -535,10 +536,13 @@ export default function LoginPage() {
 
               <div className="pt-2 flex flex-col items-center gap-2">
                 <RecaptchaGate
-                  siteKey={process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY_MUZIC || ''}
+                  enterprise={false}
+                    siteKeyV2={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_MUZIC || ''}
+                    siteKeyV3={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_MUZIC || ''}
                   action="login"
                   theme="dark"
                   v3ExecutorRef={v3ExecutorRef}
+                  onV2Token={setCaptchaV2}
                   resetKey={captchaResetKey}
                 />
                 {errors.captcha && <span className="text-red-500 text-[10px] font-bold">{errors.captcha}</span>}

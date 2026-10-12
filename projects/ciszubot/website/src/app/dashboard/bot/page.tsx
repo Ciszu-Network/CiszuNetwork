@@ -45,6 +45,7 @@ export default function BotPreferencesPage() {
   const [me, setMe] = useState<{ id: string; name: string | null; username?: string | null; avatar: string | null } | null>(null);
   const [dark, setDark] = useState(false);
   const [autoSave, setAutoSave] = useState(false);
+  const [prefsQuery, setPrefsQuery] = useState('');
   const [jsonHistory, setJsonHistory] = useState<{ ts: number; guildName: string; kind: string; name: string }[]>([]);
 
   useEffect(() => {
@@ -82,8 +83,18 @@ export default function BotPreferencesPage() {
       .catch(() => setHistory([]));
   }, []);
 
-  const setLang = useCallback(
-    (code: string) => {
+  // Buscador de secciones (filtra por el título de cada tarjeta).
+  useEffect(() => {
+    const root = document.getElementById('bot-prefs-root');
+    if (!root) return;
+    const q = prefsQuery.trim().toLowerCase();
+    root.querySelectorAll('section').forEach((sec) => {
+      const title = sec.querySelector('h2')?.textContent?.toLowerCase() ?? '';
+      (sec as HTMLElement).style.display = !q || title.includes(q) ? '' : 'none';
+    });
+  }, [prefsQuery]);
+
+  const setLang = useCallback(    (code: string) => {
       document.cookie = `ciszubot_lang=${code}; path=/; max-age=31536000`;
       toast(t.langSaved, 'success');
       window.setTimeout(() => window.location.reload(), 350);
@@ -113,7 +124,13 @@ export default function BotPreferencesPage() {
   );
 
   return (
-    <div className="space-y-6 pb-16">
+    <div id="bot-prefs-root" className="space-y-6 pb-16">
+      <input
+        value={prefsQuery}
+        onChange={(e) => setPrefsQuery(e.target.value)}
+        placeholder={t.searchPlaceholder}
+        className="w-full max-w-xs rounded-xl border border-white/10 bg-black/30 px-4 py-2.5 text-xs text-white outline-none placeholder:text-white/30 focus:border-neon-blue/60"
+      />
       {/* Plan */}
       <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
         <div className="mb-4 flex flex-wrap items-center gap-2">

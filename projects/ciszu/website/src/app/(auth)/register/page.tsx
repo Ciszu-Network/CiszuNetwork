@@ -120,6 +120,7 @@ export default function RegisterPage() {
   const [pending, setPending] = useState<{ token: string; email: string } | null>(null);
   // El token de v2 es de un solo uso: cada envío fallido reinicia el widget.
   const [captchaResetKey, setCaptchaResetKey] = useState(0);
+  const [captchaV2, setCaptchaV2] = useState<string | null>(null);
   const v3ExecutorRef = React.useRef<(() => Promise<string | null>) | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [acceptedMarketing, setAcceptedMarketing] = useState(false);
@@ -178,14 +179,14 @@ export default function RegisterPage() {
     try {
       // Token de reCAPTCHA fresco (caduca en 2 minutos): se pide justo antes
       // de enviar. En Enterprise el executor es el que genera el token.
-      const captcha = (await v3ExecutorRef.current?.()) ?? null;
-      if (!captcha) {
+      const v3Token = (await v3ExecutorRef.current?.()) ?? null;
+      if (!captchaV2) {
         throw new Error(t.registerPage.errCaptchaRequired);
       }
       const verifyRes = await fetch('/api/verify-recaptcha', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: captcha, action: 'register' }),
+        body: JSON.stringify({ v2Token: captchaV2, v3Token: v3Token ?? undefined, action: 'register' }),
       });
       const verifyData = await verifyRes.json().catch(() => ({}));
       if (!verifyData.success) {
@@ -474,9 +475,12 @@ export default function RegisterPage() {
                     {errors.marketing && <p className="text-red-400 text-[11px] font-bold">{errors.marketing}</p>}
 
                     <RecaptchaGate
-                      siteKey={process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY_CISZU || ''}
+                      enterprise={false}
+                    siteKeyV2={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V2_CISZU || ''}
+                    siteKeyV3={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_V3_CISZU || ''}
                       action="register"
                       v3ExecutorRef={v3ExecutorRef}
+                      onV2Token={setCaptchaV2}
                       resetKey={captchaResetKey}
                     />
                     {errors.captcha && <p className="text-red-400 text-[11px] font-bold">{errors.captcha}</p>}
