@@ -427,7 +427,7 @@ export const NavbarContent = () => {
                           </div>
                         </div>
                       ) : (
-                        <div className="p-4 border-b border-white/5 bg-white/5 flex items-center gap-3">
+                        <div className="p-4 border-b border-white/5 bg-white/5 flex flex-wrap items-center gap-3">
                           <div className="relative w-10 h-10 rounded-full border-2 border-neon-pink/50 bg-gradient-to-br from-neon-blue/40 via-[#6600ff]/40 to-neon-pink/40 flex items-center justify-center shrink-0 overflow-hidden">
                             <svg viewBox="0 0 24 24" className="w-5 h-5 text-neon-cyan" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                               <circle cx="12" cy="8" r="4" />
@@ -438,6 +438,7 @@ export const NavbarContent = () => {
                             <p className="text-white font-black text-xs uppercase tracking-widest truncate">{guestName || dict.common.guest}</p>
                             <p className="text-gray-500 text-[10px] font-bold truncate">@{guestName.replace(/^Invitado/i, 'invitado').replace(/^Guest/i, 'guest').toLowerCase()}</p>
                           </div>
+                          <p className="mt-2 w-full text-[10px] font-bold text-amber-400/80">{dict.nav.guestNotice}</p>
                         </div>
                       )}
 

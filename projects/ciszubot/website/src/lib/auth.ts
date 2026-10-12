@@ -232,6 +232,7 @@ export function isGuildAdmin(guild: DiscordGuild): boolean {
 export interface BotGuildInfo {
   id: string;
   name: string;
+  icon?: string | null;
 }
 
 /**
@@ -254,8 +255,8 @@ export async function getBotGuilds(): Promise<BotGuildInfo[] | null> {
         cache: 'no-store',
       });
       if (!res.ok) return null;
-      const guilds = (await res.json()) as Array<{ id: string; name?: string }>;
-      return guilds.map((g) => ({ id: g.id, name: g.name ?? '' }));
+      const guilds = (await res.json()) as Array<{ id: string; name?: string; icon?: string | null }>;
+      return guilds.map((g) => ({ id: g.id, name: g.name ?? '', icon: g.icon ?? null }));
     } catch {
       return null;
     }

@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
-import { notFound } from 'next/navigation';
 import { db, ciszubotSchema, eq, desc, or, sql } from '@ciszunetwork/db';
 import { getBotGuilds } from '@/lib/auth';
+import { fetchGuildInfo } from '@/lib/discordGuild';
+import { Icon } from '@ciszu/ui';
 import { getDict, parseLang } from '@/lib/i18n';
 import QuickDocks from '@/components/molecules/QuickDocks';
 
@@ -54,7 +55,32 @@ export default async function ServerLeaderboardPage({ params }: { params: Promis
     .where(or(eq(configs.guildId, key), sql`lower(${configs.leaderboardSlug}) = ${key.toLowerCase()}`))
     .limit(1);
   const cfg = cfgRows[0];
-  if (!cfg || !cfg.enabled) notFound();
+
+  const store = await cookies();
+  const dict = getDict(parseLang(store.get('ciszubot_lang')?.value));
+  const t = dict.serverLeaderboard;
+
+  // Leaderboard desactivado (o servidor sin configurar): pantalla de privado.
+  if (!cfg || !cfg.enabled) {
+    return (
+      <div className="relative min-h-screen pt-24 pb-20 px-4">
+        <div className="mx-auto max-w-xl pt-10 text-center">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-amber-400/40 bg-amber-400/10">
+            <Icon name="lock" size={22} className="text-amber-400" />
+          </div>
+          <h1 className="font-header text-2xl font-black text-white">{t.privateTitle}</h1>
+          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-white/60">{t.privateBody}</p>
+          <a
+            href="https://ciszubot.vercel.app"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink px-5 py-2.5 text-sm font-bold text-white transition hover:scale-[1.02] active:scale-95"
+          >
+            <Icon name="globe" size={15} />
+            {t.privateCta}
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   const levels = ciszubotSchema.levels;
   const users = ciszubotSchema.discordUsers;
@@ -73,11 +99,11 @@ export default async function ServerLeaderboardPage({ params }: { params: Promis
     .limit(100);
 
   const botGuilds = await getBotGuilds();
-  const guildName = botGuilds?.find((g) => g.id === cfg.guildId)?.name ?? cfg.guildId;
-
-  const store = await cookies();
-  const dict = getDict(parseLang(store.get('ciszubot_lang')?.value));
-  const t = dict.serverLeaderboard;
+  const botGuild = botGuilds?.find((g) => g.id === cfg.guildId);
+  const guildName = botGuild?.name ?? cfg.guildId;
+  const guildIcon = botGuild?.icon ?? null;
+  const info = await fetchGuildInfo(cfg.guildId).catch(() => null);
+  const memberCount = info?.memberCount ?? null;
 
   const entries = rows.map((r) => {
     const xp = Number(r.xp ?? 0);
@@ -97,7 +123,28 @@ export default async function ServerLeaderboardPage({ params }: { params: Promis
         <div className="mx-auto max-w-3xl">
           <div className="text-center">
             <p className="text-[11px] font-black uppercase tracking-[0.3em] text-neon-blue">{t.kicker}</p>
-            <h1 className="mt-3 font-header text-3xl font-black text-white md:text-4xl">{guildName}</h1>
+            <div className="mt-4 flex flex-col items-center gap-3">
+              {guildIcon ? (
+                <img
+                  src={`https://cdn.discordapp.com/icons/${cfg.guildId}/${guildIcon}.png`}
+                  alt=""
+                  width={64}
+                  height={64}
+                  className="h-16 w-16 rounded-2xl border border-white/15"
+                />
+              ) : (
+                <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-neon-blue to-neon-purple text-2xl font-black text-white">
+                  {guildName.charAt(0).toUpperCase()}
+                </span>
+              )}
+              <h1 className="font-header text-3xl font-black text-white md:text-4xl">{guildName}</h1>
+              <p className="font-mono text-[11px] text-white/40">{cfg.guildId}</p>
+              {memberCount !== null && (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white/60">
+                  <Icon name="users" size={11} /> {memberCount} {t.members}
+                </span>
+              )}
+            </div>
             <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-white/60">{t.subtitle}</p>
             <span className="mt-4 inline-block rounded-full border border-neon-purple/50 bg-neon-purple/10 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-neon-purple">
               {t.badge}

@@ -180,8 +180,8 @@ function Badge({ kind, dict }: { kind: 'free' | 'premium'; dict: Dict }) {
   }
   return (
     <span className="inline-flex items-center gap-1 rounded-full border border-neon-pink/50 bg-neon-pink/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-neon-pink">
-      <span aria-hidden>★</span>
-      {dict.guildPage.premium} · {dict.guildPage.betaBadge}
+      <Icon name="crown" size={9} />
+      {dict.guildPage.premium} · <Icon name="clock" size={9} /> {dict.guildPage.betaBadge}
     </span>
   );
 }
@@ -742,6 +742,13 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
       a.download = name;
       a.click();
       URL.revokeObjectURL(url);
+      try {
+        const list = JSON.parse(localStorage.getItem('cz-dash-json-history') ?? '[]') as unknown[];
+        list.unshift({ ts: Date.now(), guildId, guildName, kind: 'export', name });
+        localStorage.setItem('cz-dash-json-history', JSON.stringify(list.slice(0, 30)));
+      } catch {
+        /* sin storage */
+      }
       setFlash(t.exported);
       setTimeout(() => setFlash(null), 3500);
     },
@@ -776,6 +783,13 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         setConfig({ ...config, ...clean });
         setStatus('idle');
         setError(null);
+        try {
+          const list = JSON.parse(localStorage.getItem('cz-dash-json-history') ?? '[]') as unknown[];
+          list.unshift({ ts: Date.now(), guildId, guildName, kind: 'import', name: file.name });
+          localStorage.setItem('cz-dash-json-history', JSON.stringify(list.slice(0, 30)));
+        } catch {
+          /* sin storage */
+        }
         setFlash(t.imported);
         setTimeout(() => setFlash(null), 4000);
       } catch {

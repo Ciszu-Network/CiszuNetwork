@@ -119,14 +119,14 @@ const ACCENTS: { hover: string; active: string; icon: string }[] = [
 
 const INVITE_GRADIENT = 'bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white';
 
-/** Iconos del toggle de tema: los MISMOS SVGs que el Navbar de las webs. */
+/** Iconos del toggle de tema: los MISMOS SVGs que el Navbar (luna blanca, sol amarillo). */
 const ThemeMoon = () => (
-  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+  <svg className="h-4 w-4 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
   </svg>
 );
 const ThemeSun = () => (
-  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth={1} aria-hidden>
+  <svg className="h-4 w-4 text-yellow-400" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth={1} aria-hidden>
     <circle cx="12" cy="12" r="4" />
     <path d="M12 1v3m0 16v3M4.22 4.22l2.12 2.12m11.32 11.32l2.12 2.12M1 12h3m16 0h3M4.22 19.78l2.12-2.12M19.78 4.22l-2.12 2.12" strokeLinecap="round" />
   </svg>
@@ -357,7 +357,7 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
           guardNav('/dashboard/bot')(e);
         }}
       >
-        <Icon name="crown" size={16} className={pathname === '/dashboard/bot' ? ACCENTS[5].icon : ''} />
+        <Icon name="settings" size={16} className={pathname === '/dashboard/bot' ? ACCENTS[5].icon : ''} />
         {t.botPrefs}
       </Link>
 
@@ -600,14 +600,27 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
       <div className="mx-auto flex max-w-[1500px] gap-4 px-2 pt-28 sm:px-3">
         {!collapsed && (
           <aside className="hidden w-80 shrink-0 lg:block">
-            <div className="sticky top-28">{nav}</div>
+            <div className="sticky top-28">
+              <div className="mb-2 flex items-center justify-end">
+                <button
+                  type="button"
+                  onClick={toggleCollapsed}
+                  className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[9px] font-black uppercase tracking-widest text-white/35 transition hover:text-white"
+                  title={t.collapse}
+                >
+                  <Icon name="arrow-right" size={12} className="rotate-180" />
+                  {t.collapse}
+                </button>
+              </div>
+              {nav}
+            </div>
           </aside>
         )}
         {collapsed && (
           <button
             type="button"
             onClick={toggleCollapsed}
-            className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-white/60 transition hover:text-white lg:flex"
+            className="cz-pop hidden h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-white/60 transition hover:text-white lg:flex"
             title={t.expand}
           >
             <Icon name="menu" size={16} />
@@ -634,17 +647,6 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
               <Icon name="menu" size={16} />
               {t.menu}
             </button>
-            {!collapsed && (
-              <button
-                type="button"
-                onClick={toggleCollapsed}
-                className="hidden items-center gap-1 rounded-lg px-2 py-1 text-[9px] font-black uppercase tracking-widest text-white/35 transition hover:text-white lg:flex"
-                title={t.collapse}
-              >
-                <Icon name="arrow-right" size={12} className="rotate-180" />
-                {t.collapse}
-              </button>
-            )}
           </div>
 
           {/* Banda superior: hero del dashboard (servidor actual o global) */}
@@ -680,7 +682,9 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
               </span>
               <div className="min-w-0 flex-1">
                 <p className="text-[9px] font-black uppercase tracking-[0.3em] text-white/40">{t.panel}</p>
-                <p className="truncate font-header text-base font-black text-white">{t.overview}</p>
+                <p className="truncate font-header text-base font-black text-white">
+                  {pathname === '/dashboard/bot' ? t.botPrefs : t.overview}
+                </p>
               </div>
             </div>
           )}

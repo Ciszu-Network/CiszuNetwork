@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { Icon, LANGUAGE_OPTIONS, useToast } from '@ciszu/ui';
 import { useClientI18n } from '@/hooks/useClientI18n';
 import { usePageTitle } from '@/lib/usePageTitle';
@@ -41,8 +42,10 @@ export default function BotPreferencesPage() {
   const [savesTotal, setSavesTotal] = useState(0);
   const [savesSession, setSavesSession] = useState(0);
   const [history, setHistory] = useState<HistoryEntry[] | null>(null);
-  const [me, setMe] = useState<{ id: string; name: string | null; avatar: string | null } | null>(null);
+  const [me, setMe] = useState<{ id: string; name: string | null; username?: string | null; avatar: string | null } | null>(null);
   const [dark, setDark] = useState(false);
+  const [autoSave, setAutoSave] = useState(false);
+  const [jsonHistory, setJsonHistory] = useState<{ ts: number; guildName: string; kind: string; name: string }[]>([]);
 
   useEffect(() => {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -63,6 +66,12 @@ export default function BotPreferencesPage() {
       /* sin storage */
     }
     setDark(document.documentElement.classList.contains('dark'));
+    setAutoSave(localStorage.getItem('cz-dash-autosave') === '1');
+    try {
+      setJsonHistory(JSON.parse(localStorage.getItem('cz-dash-json-history') ?? '[]'));
+    } catch {
+      /* sin storage */
+    }
     fetch('/api/auth/session')
       .then((r) => (r.ok ? r.json() : null))
       .then((j) => setMe(j?.session ?? null))
@@ -123,6 +132,14 @@ export default function BotPreferencesPage() {
           )}
           <p className="min-w-0 flex-1 text-xs text-white/60">{t.planBetaNote}</p>
         </div>
+        <p className="mt-3 text-xs text-white/50">{t.planFreeNote}</p>
+        <Link
+          href="/premium"
+          className="mt-4 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-2.5 text-sm font-bold text-white transition hover:scale-[1.02] active:scale-95"
+        >
+          <Icon name="crown" size={15} />
+          {t.planBuyCta}
+        </Link>
       </section>
 
       {/* Preferencias (idioma + tema) */}
@@ -161,6 +178,36 @@ export default function BotPreferencesPage() {
           <Icon name="palette" size={14} className="text-neon-blue" />
           {dark ? t.themeDark : t.themeLight}
         </button>
+        <p className="mb-3 mt-5 text-[10px] font-black uppercase tracking-widest text-white/40">{t.autoSaveLabel}</p>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={autoSave}
+          onClick={() => {
+            const next = !autoSave;
+            setAutoSave(next);
+            try {
+              localStorage.setItem('cz-dash-autosave', next ? '1' : '0');
+            } catch {
+              /* sin storage */
+            }
+            toast(t.autoSaveHint, 'info');
+          }}
+          className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-black/20 px-4 py-2.5 text-xs font-bold text-white/70 transition hover:border-neon-blue/60 hover:text-white"
+        >
+          <span
+            className={`relative h-4 w-7 shrink-0 rounded-full transition ${
+              autoSave ? 'bg-gradient-to-r from-neon-blue to-neon-pink' : 'bg-white/20'
+            }`}
+          >
+            <span
+              className={`absolute top-0.5 h-3 w-3 rounded-full bg-white transition-all ${
+                autoSave ? 'left-3.5' : 'left-0.5'
+              }`}
+            />
+          </span>
+          {autoSave ? 'ON' : 'OFF'}
+        </button>
       </section>
 
       {/* Cuenta */}
@@ -179,7 +226,10 @@ export default function BotPreferencesPage() {
             </span>
           )}
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-bold text-white">{me?.name ?? t.accountTitle}</p>
+            <p className="truncate text-sm font-bold text-white">
+              {me?.name ?? t.accountTitle}
+              {me?.username && <span className="ml-2 font-mono text-[11px] font-normal text-white/45">@{me.username}</span>}
+            </p>
             <p className="inline-flex items-center gap-1.5 font-mono text-[11px] text-white/45">
               <Icon name="discord" size={11} className="[&>g]:fill-current" />
               {me?.id ?? '—'}
@@ -254,6 +304,34 @@ export default function BotPreferencesPage() {
                 <span className="min-w-0 flex-1 truncate font-bold text-white/80">{s.guildName}</span>
                 <span className="text-[10px] text-white/40">
                   {(s.features ? Object.keys(s.features).length : 0) + (s.fields?.length ?? 0)} {t.fieldsLabel}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      {/* Historial de JSON importados/exportados */}
+      <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <h2 className="flex items-center gap-2 font-bold text-white">
+            <Icon name="json" size={18} className="text-neon-blue" /> {t.jsonHistoryTitle}
+          </h2>
+        </div>
+        {jsonHistory.length === 0 ? (
+          <p className="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-xs text-white/45">{t.jsonHistoryEmpty}</p>
+        ) : (
+          <ul className="grid gap-2">
+            {jsonHistory.map((j, i) => (
+              <li
+                key={`${j.ts}-${i}`}
+                className="flex flex-wrap items-center gap-3 rounded-xl border border-white/10 bg-black/20 px-4 py-2.5 text-xs"
+              >
+                <span className="font-mono text-white/45">{fmt(j.ts)}</span>
+                <span className="min-w-0 flex-1 truncate text-white/70">{j.name}</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-white/40">{j.guildName}</span>
+                <span className="rounded-full border border-white/15 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-white/50">
+                  {j.kind}
                 </span>
               </li>
             ))}

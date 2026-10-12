@@ -167,6 +167,7 @@ export default function RecaptchaGate({
   const [scriptError, setScriptError] = useState(false);
   const [ready, setReady] = useState(false);
   const [retryKey, setRetryKey] = useState(0);
+  const [expired, setExpired] = useState(false);
 
   // En Enterprise el "token visible" se pide bajo demanda; publicamos el estado
   // como listo sin esperar a que el usuario toque el checkbox.
@@ -225,12 +226,30 @@ export default function RecaptchaGate({
       widgetId.current = g.render(containerRef.current, {
         sitekey: siteKeyV2,
         theme,
-        callback: (t: string) => publish(t),
-        'expired-callback': () => publish(null),
+        callback: (t: string) => {
+          setExpired(false);
+          publish(t);
+        },
+        'expired-callback': () => {
+          setExpired(true);
+          publish(null);
+        },
         'error-callback': () => publish(null),
       });
     });
   }, [enterprise, ready, siteKeyV2, theme, publish]);
+
+  /** Refresca el reCAPTCHA a mano (token caducado o challenge viejo). */
+  const refreshCaptcha = useCallback(() => {
+    try {
+      if (widgetId.current !== null) window.grecaptcha?.reset(widgetId.current);
+    } catch {
+      /* sin widget que reiniciar */
+    }
+    publish(null);
+    setExpired(false);
+    if (!ready) retryLoad();
+  }, [publish, ready, retryLoad]);
 
   // 3) Reinicio del widget (token quemado tras un envío fallido).
   useEffect(() => {
@@ -288,10 +307,32 @@ export default function RecaptchaGate({
      */
     <div className={`relative isolate z-10 flex flex-col items-center gap-2 ${className}`}>
       {enterprise ? (
-        // Enterprise: sin widget visible; el badge lo pinta Google.
+        // Enterprise: sin checkbox de Google; widget propio visible + refresco manual.
         ready ? (
-          <span className="pointer-events-none select-none text-[9px] text-faint font-bold uppercase tracking-widest">
-            Protegido con reCAPTCHA Enterprise
+          <span className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-black/30 px-3 py-2 text-[10px] font-bold text-white/70">
+            <svg
+              viewBox="0 0 24 24"
+              width="13"
+              height="13"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2.2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-emerald-400"
+              aria-hidden
+            >
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              <path d="m9 12 2 2 4-4" />
+            </svg>
+            Protegido con reCAPTCHA
+            <button
+              type="button"
+              onClick={refreshCaptcha}
+              className="rounded-full border border-white/15 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-white/60 transition hover:border-neon-blue/60 hover:text-white"
+            >
+              Actualizar
+            </button>
           </span>
         ) : !effectiveSiteKey ? (
           <p className="pointer-events-none text-amber-400 text-[10px] font-bold text-center max-w-[260px]">
@@ -304,6 +345,18 @@ export default function RecaptchaGate({
         <p className="pointer-events-none text-amber-400 text-[10px] font-bold text-center max-w-[260px]">
           reCAPTCHA sin configurar (falta la site key de esta web). Contacta con soporte.
         </p>
+      )}
+      {expired && (
+        <div className="flex items-center gap-2 text-[10px] font-bold text-amber-300">
+          El reCAPTCHA caducó.
+          <button
+            type="button"
+            onClick={refreshCaptcha}
+            className="rounded-full border border-amber-400/50 bg-amber-400/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-widest text-amber-300 transition hover:bg-amber-400/20"
+          >
+            Actualizar
+          </button>
+        </div>
       )}
       {scriptError && (
         <div className="flex flex-col items-center gap-1.5">

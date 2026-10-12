@@ -27,6 +27,7 @@ export default function PreQuickDocks() {
       {/* Aviso BETA TRIAL FREE */}
       <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-neon-pink/30 bg-neon-pink/5 px-5 py-3">
         <span className="rounded-full border border-neon-pink/50 bg-neon-pink/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-neon-pink">
+          <Icon name="clock" size={10} className="mr-1 inline" />
           {t.betaBadge}
         </span>
         <p className="min-w-0 flex-1 text-xs text-ink/70">{t.betaNote}</p>
