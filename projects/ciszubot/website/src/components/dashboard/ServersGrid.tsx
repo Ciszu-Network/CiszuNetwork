@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Icon } from '@ciszu/ui';
 import { useClientI18n } from '@/hooks/useClientI18n';
 import type { GuildSummary } from '@/lib/discordGuild';
+import LocalDateTime from '@/components/shared/LocalDateTime';
 import InviteLink from './InviteLink';
 
 export interface GridGuild {
@@ -166,7 +167,7 @@ export default function ServersGrid({
                   <p className="flex flex-wrap gap-x-3 gap-y-0.5">
                     {d.createdAt && (
                       <span>
-                        {t.createdLabel}: {new Date(d.createdAt).toLocaleDateString()}
+                        {t.createdLabel}: <LocalDateTime value={d.createdAt} options={{ year: 'numeric', month: 'short', day: 'numeric' }} />
                       </span>
                     )}
                     {d.premiumTier != null && d.premiumTier > 0 && (

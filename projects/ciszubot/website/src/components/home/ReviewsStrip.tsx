@@ -6,6 +6,7 @@ import { Icon } from '@ciszu/ui';
 import { supabase } from '@/config/supabase';
 import { averageRating, formatRating, type ReviewRecord } from '@ciszunetwork/utils/reviews';
 import { isEsLang, type Dict, type Lang } from '@/lib/i18n';
+import LocalDateTime from '@/components/shared/LocalDateTime';
 import Reveal from './Reveal';
 import { track } from './track';
 
@@ -196,13 +197,12 @@ export default function ReviewsStrip({ dict, lang }: ReviewsStripProps) {
                         <span className="tabular-nums">{review.likes_count ?? 0}</span>
                       </span>
                     </div>
-                    <time className="mt-2 text-[9px] font-bold uppercase tracking-widest text-faint">
-                      {new Date(review.created_at).toLocaleDateString(locale, {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
-                    </time>
+                    <LocalDateTime
+                      className="mt-2 text-[9px] font-bold uppercase tracking-widest text-faint"
+                      value={review.created_at}
+                      locale={locale}
+                      options={{ day: '2-digit', month: 'short', year: 'numeric' }}
+                    />
                   </article>
                 ))}
               </div>

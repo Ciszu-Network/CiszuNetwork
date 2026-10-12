@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { checkBotId } from 'botid/server';
 import { adminClient, authenticate, setTwoFactorEnabled } from '../../2fa/_lib';
 
 export const runtime = 'nodejs';
@@ -16,11 +15,6 @@ export const dynamic = 'force-dynamic';
  * a existir de forma utilizable.
  */
 export async function POST(request: Request) {
-  const verification = await checkBotId();
-  if (verification.isBot) {
-    return NextResponse.json({ error: 'Access denied' }, { status: 403 });
-  }
-
   const user = await authenticate(request);
   if (!user) {
     return NextResponse.json({ success: false, error: 'No autorizado.' }, { status: 401 });

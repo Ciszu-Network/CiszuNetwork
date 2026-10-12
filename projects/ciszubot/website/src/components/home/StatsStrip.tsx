@@ -7,6 +7,7 @@ import { BOT_PREFIX, isEsLang, type Dict, type Lang } from '@/lib/i18n';
 import { COMMANDS } from '@/data/commands';
 import { formatUptime, isBotOnline, type BotStatus } from '@/lib/botStatus';
 import AnimatedCounter from './AnimatedCounter';
+import LocalDateTime from '@/components/shared/LocalDateTime';
 import Reveal from './Reveal';
 import useLiveBotStatus from './useLiveBotStatus';
 
@@ -129,9 +130,7 @@ export default function StatsStrip({ dict, lang, status, serverNow }: StatsStrip
               <Icon name="clock" size={14} className="text-neon-cyan" />
               {dict.statusSection.lastSeen}:{' '}
               <strong className="text-ink">
-                {live?.last_seen
-                  ? new Date(live.last_seen).toLocaleString(locale)
-                  : '—'}
+                <LocalDateTime value={live?.last_seen ?? null} locale={locale} />
               </strong>
             </span>
           </div>

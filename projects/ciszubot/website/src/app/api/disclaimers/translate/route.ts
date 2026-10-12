@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { checkBotId } from 'botid/server';
 import { createRateLimiter } from '@ciszunetwork/utils';
 import { adminClient } from '../../auth/2fa/_lib';
 
@@ -51,9 +50,6 @@ async function translateEsToEn(text: string): Promise<string | null> {
 }
 
 export async function POST(req: NextRequest) {
-  const verification = await checkBotId();
-  if (verification.isBot) return NextResponse.json({ error: 'Access denied' }, { status: 403 });
-
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
   const rl = limiter.allow(ip);
   if (!rl.allowed) return NextResponse.json({ success: false, error: 'Demasiadas peticiones.' }, { status: 429 });

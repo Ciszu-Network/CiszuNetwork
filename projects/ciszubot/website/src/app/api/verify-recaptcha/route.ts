@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { checkBotId } from 'botid/server';
 import {
   allowedHostnamesFromSiteUrl,
   createRecaptchaHandler,
@@ -30,11 +29,6 @@ const handler = createRecaptchaHandler({
 });
 
 export async function POST(request: NextRequest) {
-  const verification = await checkBotId();
-  if (verification.isBot) {
-    return NextResponse.json({ error: 'Access denied' }, { status: 403 });
-  }
-
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
   const payload = (await request.json().catch(() => ({}))) as RecaptchaPayload;
   const { status, body, headers } = await handler(payload, ip);

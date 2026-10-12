@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { createRateLimiter } from '@ciszunetwork/utils';
-import { checkBotId } from 'botid/server';
 import { adminClient, authenticate } from '../../2fa/_lib';
 
 export const runtime = 'nodejs';
@@ -20,9 +19,6 @@ type PreferenceKey = (typeof KEYS)[number];
 
 /** GET: devuelve las preferencias de notificación del usuario (defaults si no existen). */
 export async function GET(request: Request) {
-  const verification = await checkBotId();
-  if (verification.isBot) return NextResponse.json({ error: 'Access denied' }, { status: 403 });
-
   const user = await authenticate(request);
   if (!user) return NextResponse.json({ success: false, error: 'No autorizado.' }, { status: 401 });
 
@@ -65,9 +61,6 @@ export async function GET(request: Request) {
 
 /** POST: actualiza las preferencias (solo campos permitidos). */
 export async function POST(request: Request) {
-  const verification = await checkBotId();
-  if (verification.isBot) return NextResponse.json({ error: 'Access denied' }, { status: 403 });
-
   const user = await authenticate(request);
   if (!user) return NextResponse.json({ success: false, error: 'No autorizado.' }, { status: 401 });
 

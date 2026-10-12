@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { checkBotId } from 'botid/server';
 import { z } from 'zod';
 import { createRateLimiter, parseJsonBody, firstZodMessage } from '@ciszunetwork/utils';
 import { adminClient, authenticate } from '../../2fa/_lib';
@@ -45,9 +44,6 @@ interface StatusItem {
 }
 
 export async function GET(req: NextRequest) {
-  const verification = await checkBotId();
-  if (verification.isBot) return NextResponse.json({ error: 'Access denied' }, { status: 403 });
-
   const user = await authenticate(req);
   if (!user) return NextResponse.json({ success: false, error: 'No autorizado.' }, { status: 401 });
 
@@ -140,9 +136,6 @@ const patchSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const verification = await checkBotId();
-  if (verification.isBot) return NextResponse.json({ error: 'Access denied' }, { status: 403 });
-
   const user = await authenticate(req);
   if (!user) return NextResponse.json({ success: false, error: 'No autorizado.' }, { status: 401 });
 

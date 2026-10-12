@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { checkBotId } from 'botid/server';
 import { adminClient, authenticate } from '../../2fa/_lib';
 
 export const runtime = 'nodejs';
@@ -14,11 +13,6 @@ export const dynamic = 'force-dynamic';
  * cierra la sesión. Pasados los 15 días la recuperación ya no es posible.
  */
 export async function POST(request: Request) {
-  const verification = await checkBotId();
-  if (verification.isBot) {
-    return NextResponse.json({ error: 'Access denied' }, { status: 403 });
-  }
-
   const user = await authenticate(request);
   if (!user) {
     return NextResponse.json({ success: false, error: 'No autorizado.' }, { status: 401 });

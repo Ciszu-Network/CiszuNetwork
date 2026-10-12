@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { checkBotId } from 'botid/server';
 import { adminClient } from '../../2fa/_lib';
 
 export const runtime = 'nodejs';
@@ -20,11 +19,6 @@ export const dynamic = 'force-dynamic';
  * y completar la verificación C-XXX XXX).
  */
 export async function POST(request: Request) {
-  const verification = await checkBotId();
-  if (verification.isBot) {
-    return NextResponse.json({ error: 'Access denied' }, { status: 403 });
-  }
-
   try {
     const body = (await request.json().catch(() => ({}))) as {
       email?: string;
