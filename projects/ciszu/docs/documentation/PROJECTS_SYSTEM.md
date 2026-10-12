@@ -149,6 +149,30 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 > Este historial absorbe `PROJECT_HISTORY.md` (eliminado 13 ago 2026). Añadir aquí los
 > nuevos hitos al cierre de sesión.
 
+### 12 de Octubre, 2026 — Correos (PNG por https, Token y redes), hidratación ciszubot, BotID y entorno Vercel
+
+- **Correos con imágenes reales**: todos los assets de email pasaron de `data:` URI (bloqueados
+  por Gmail) a PNG alojados por https en `ciszu-cdn/email/` (44 assets + logo/isotipo de la
+  plantilla de Supabase); plantilla Supabase con fondos sólidos de respaldo (Gmail ignora los
+  gradientes), código `{{ .Token }}` para el flujo de consola y fila de redes sociales; botones
+  de copiar eliminados (Gmail borra el JavaScript). Script reejecutable `fix-email-assets.mjs`.
+- **Hidratación ciszubot (crítico)**: `last_seen` se formateaba con `toLocaleString` en SSR
+  (UTC) y en el cliente (zona local) ⇒ texto distinto ⇒ React rompía TODA la hidratación de la
+  home (ningún botón respondía, incluido el FAB de feedback). Nuevo `LocalDateTime` (render
+  local tras montar) aplicado a StatsStrip, ReviewsStrip y ServersGrid.
+- **BotID**: `checkBotId()` eliminado de las 68 rutas que NO están en la lista `protect`
+  (misconfiguration documentada por Vercel; se mantiene solo en moderation/action, staff/elevate
+  y dashboard/*). Corregido un `ReferenceError` latente en el audio de MuzicMania.
+- **Entorno de producción de Vercel reparado** (4 proyectos): `SUPABASE_SERVICE_ROLE_KEY`
+  ausente/vacía (causaba 500 + Sentry + sin email 2FA en `/api/auth/2fa/*`) y
+  `GOOGLE_OAUTH_*` vacías (sin transporte de email); valores restaurados desde el vault.
+- **Supabase Auth**: rate limit del mailer integrado (429 `over_email_send_rate_limit`) ⇒ el
+  flujo de consola cae al fallback Gmail; pendiente SMTP propio (credencial del usuario).
+- **Dashboard ciszubot**: tag `BETA TRIAL FREE` alineado y presente en cada tag Premium;
+  JSON EXPORT/IMPORT en TODAS las opciones (incluidas las funciones) con vista previa —
+  export muestra lo que se descargará e import muestra solo los cambios (con "sin cambios").
+- **Bot**: embed de bloqueo "⛔ Comando no activado" con la función concreta y enlace al panel.
+
 ### 10 de Octubre, 2026 — Feature flags + sistema Premium (beta) + hosting del bot
 
 - **Feature flags globales** (`ciszubot.feature_flags`, migración 58): kill switches por

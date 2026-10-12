@@ -164,6 +164,21 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 - Frontend: fases 1–11 del to-do frontend completadas y verificadas (ver `TODO.md`).
 - CDN limpio (7.353 objetos) y tests en 171.
 
+### 12 oct 2026 — Correos, hidratación ciszubot, BotID y entorno Vercel
+
+- **Emails**: PNG por https (CDN) en plantillas Supabase + branded; `{{ .Token }}` y redes en
+  la plantilla; sin botones de copiar; re-aplicadas las 5 plantillas de Supabase.
+- **ciszubot (crítico)**: hidratación de la home rota por `last_seen` con TZ servidor/cliente
+  ⇒ `LocalDateTime` (fix verificado con servidor en UTC + navegador en Caracas).
+- **BotID**: fuera de rutas no protegidas (68 rutas); solo moderation/staff/dashboard.
+- **Vercel (4 proyectos)**: `SUPABASE_SERVICE_ROLE_KEY` y `GOOGLE_OAUTH_*` restauradas en
+  producción (eran la causa del 500 + Sentry + email 2FA ausente). Aplican al próximo deploy.
+- **Supabase Auth**: mailer integrado con rate limit (429) ⇒ fallback Gmail en consola;
+  SMTP propio pendiente de credencial. `mailer_otp_exp`=10 min.
+- **Dashboard**: tag BETA TRIAL FREE alineado/en cada Premium; JSON EXPORT/IMPORT en todas
+  las opciones con vista previa de export y diff de import.
+- Verificación: tsc 4 webs + bot ✅ · `verify:i18n` 0 deuda ✅ · build ciszubot ✅ · CI verde ✅.
+
 ### 10 oct 2026 — Feature flags + Premium beta (CiszuBot)
 
 - **Kill switches globales** en tiempo real (`ciszubot.feature_flags`, migración 58): bot
