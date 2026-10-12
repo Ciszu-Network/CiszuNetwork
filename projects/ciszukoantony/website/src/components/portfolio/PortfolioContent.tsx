@@ -44,6 +44,90 @@ export default function PortfolioContent() {
     { icon: 'palette', title: dict.portfolio.areaBrand, body: dict.portfolio.areaBrandBody },
   ];
 
+  // Hub personal/profesional: el portfolio como centro digital de todo.
+  const HUB = [
+    {
+      icon: 'user',
+      href: '/about',
+      title: dict.portfolio.hubAbout,
+      desc: dict.portfolio.hubAboutDesc,
+      accent: 'text-neon-blue',
+      accentBg: 'bg-neon-blue/10',
+      border: 'border-neon-blue/30',
+      gradient: 'from-neon-blue/10 via-transparent to-transparent',
+    },
+    {
+      icon: 'certificates',
+      href: '/curriculum',
+      title: dict.portfolio.hubCurriculum,
+      desc: dict.portfolio.hubCurriculumDesc,
+      accent: 'text-neon-purple',
+      accentBg: 'bg-neon-purple/10',
+      border: 'border-neon-purple/30',
+      gradient: 'from-neon-purple/10 via-transparent to-transparent',
+    },
+    {
+      icon: 'trophy',
+      href: '/certificates',
+      title: dict.portfolio.ctaCertificates,
+      desc: dict.portfolio.hubCertificatesDesc,
+      accent: 'text-neon-green',
+      accentBg: 'bg-neon-green/10',
+      border: 'border-neon-green/30',
+      gradient: 'from-neon-green/10 via-transparent to-transparent',
+    },
+    {
+      icon: 'stack',
+      href: '/projects',
+      title: dict.portfolio.hubProjects,
+      desc: dict.portfolio.hubProjectsDesc,
+      accent: 'text-neon-cyan',
+      accentBg: 'bg-neon-cyan/10',
+      border: 'border-neon-cyan/30',
+      gradient: 'from-neon-cyan/10 via-transparent to-transparent',
+    },
+    {
+      icon: 'play',
+      href: '/musicboard',
+      title: dict.portfolio.hubMusic,
+      desc: dict.portfolio.hubMusicDesc,
+      accent: 'text-neon-pink',
+      accentBg: 'bg-neon-pink/10',
+      border: 'border-neon-pink/30',
+      gradient: 'from-neon-pink/10 via-transparent to-transparent',
+    },
+    {
+      icon: 'money',
+      href: '/commissions',
+      title: dict.portfolio.ctaCommissions,
+      desc: dict.portfolio.hubCommissionsDesc,
+      accent: 'text-amber-400',
+      accentBg: 'bg-amber-400/10',
+      border: 'border-amber-400/30',
+      gradient: 'from-amber-400/10 via-transparent to-transparent',
+    },
+    {
+      icon: 'share',
+      href: '/socials',
+      title: 'Socials',
+      desc: dict.portfolio.hubSocialsDesc,
+      accent: 'text-neon-blue',
+      accentBg: 'bg-neon-blue/10',
+      border: 'border-neon-blue/30',
+      gradient: 'from-neon-blue/10 via-transparent to-transparent',
+    },
+    {
+      icon: 'mail',
+      href: '/contact',
+      title: dict.portfolio.ctaContact,
+      desc: dict.portfolio.hubContactDesc,
+      accent: 'text-neon-purple',
+      accentBg: 'bg-neon-purple/10',
+      border: 'border-neon-purple/30',
+      gradient: 'from-neon-purple/10 via-transparent to-transparent',
+    },
+  ];
+
   const filters: Filter[] = ['Todos', ...PROJECT_CATEGORIES];
 
   const projects = useMemo(() => {
@@ -81,9 +165,10 @@ export default function PortfolioContent() {
         <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-6 mb-12">
           <div className="p-7 rounded-[2rem] bg-gradient-to-br from-neon-blue/10 via-transparent to-transparent border border-neon-blue/30">
             <p className="text-[10px] font-black uppercase tracking-[0.35em] text-neon-blue mb-3">{dict.projects.professionalProfile}</p>
-            <h2 className="text-2xl font-header font-black uppercase italic text-white mb-3">
+            <h2 className="text-2xl font-header font-black uppercase italic text-white mb-1">
               {PROFILE.name}
             </h2>
+            <p className="text-sm font-header font-bold text-neon-blue mb-3">{PROFILE.legalName}</p>
             <p className="text-gray-400 text-sm leading-relaxed mb-5">{PROFILE.summary}</p>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {PROFILE_FACTS.map((fact) => (
@@ -124,6 +209,39 @@ export default function PortfolioContent() {
               {asp}
             </span>
           ))}
+        </div>
+
+        {/* Hub: el portfolio como centro digital de todo lo personal/profesional */}
+        <div className="mb-14">
+          <h2 className="flex items-center gap-3 text-xs font-black uppercase tracking-[0.3em] text-neon-pink mb-2">
+            <Icon name="stack" size={16} />
+            {dict.portfolio.hubTitle}
+          </h2>
+          <p className="text-sm text-gray-400 mb-6 max-w-3xl leading-relaxed">{dict.portfolio.hubDesc}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {HUB.map((item) => (
+              <Link
+                key={`${item.href}-${item.title}`}
+                href={item.href}
+                onClick={() => captureEvent('portfolio_hub_open', { href: item.href })}
+                className={`group relative overflow-hidden p-6 rounded-[1.75rem] bg-gradient-to-br ${item.gradient} border ${item.border} hover:-translate-y-1 transition-all`}
+              >
+                <span
+                  className={`flex h-11 w-11 items-center justify-center rounded-2xl border ${item.border} ${item.accentBg} ${item.accent} mb-4 group-hover:scale-110 transition-transform`}
+                >
+                  <Icon name={item.icon} size={20} />
+                </span>
+                <h3 className="font-header font-black uppercase italic text-white text-sm mb-1">{item.title}</h3>
+                <p className="text-[11px] text-gray-400 leading-snug">{item.desc}</p>
+                <span
+                  className={`mt-4 inline-flex items-center gap-1.5 text-[10px] font-header font-black uppercase tracking-widest ${item.accent}`}
+                >
+                  {dict.portfolio.hubOpen}
+                  <Icon name="chevronRight" size={12} />
+                </span>
+              </Link>
+            ))}
+          </div>
         </div>
 
         <div className="flex flex-col md:flex-row md:items-center gap-4 mb-8">
