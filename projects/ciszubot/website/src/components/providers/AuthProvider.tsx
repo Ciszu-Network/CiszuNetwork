@@ -96,12 +96,18 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         console.error('[AuthProvider] Error buscando perfil:', error);
       }
 
-      const username = profile?.username || email.split('@')[0].toLowerCase();
-      const displayName = profile?.display_name || username;
+      // Sanitización defensiva: cuentas antiguas pueden tener el email como
+      // username o un avatar roto; nunca mostrar eso tal cual.
+      const rawUsername = (profile?.username ?? '').trim();
+      const emailLocal = email.split('@')[0]?.toLowerCase() ?? '';
+      const username = rawUsername && !rawUsername.includes('@') ? rawUsername : emailLocal;
+      const rawDisplay = (profile?.display_name ?? '').trim();
+      const displayName = rawDisplay && !rawDisplay.includes('@') ? rawDisplay : username;
+      const avatarUrl = (profile?.avatar_url ?? '').trim();
       const user: AppUser = {
         id: userId,
         name: displayName,
-        avatar: profile?.avatar_url ?? null,
+        avatar: /^https?:\/\//.test(avatarUrl) ? avatarUrl : null,
         email: profile?.email ?? email,
         username,
         display_name: displayName,

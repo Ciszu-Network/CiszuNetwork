@@ -327,11 +327,16 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   }, []);
 
   // Sub-sidebar por opción: resumen por defecto (spec del dashboard).
-  type GuildView = 'summary' | 'general' | 'features' | 'levels' | 'welcome' | 'extras' | 'history';
+  type GuildView = 'summary' | 'general' | 'levels' | 'welcome' | 'extras' | 'history' | `feat:${string}`;
   const [view, setView] = useState<GuildView>('summary');
   useEffect(() => {
     const saved = localStorage.getItem('cz-dash-view') as GuildView | null;
-    if (saved && ['summary', 'general', 'features', 'levels', 'welcome', 'extras', 'history'].includes(saved)) setView(saved);
+    if (
+      saved &&
+      (['summary', 'general', 'levels', 'welcome', 'extras', 'history'].includes(saved) || saved.startsWith('feat:'))
+    ) {
+      setView(saved);
+    }
   }, []);
   const dirtyRef = useRef(false);
   const shakeDock = useCallback(() => {
@@ -375,15 +380,24 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     }, 200);
     return () => clearTimeout(id);
   }, []);
-  const SUBNAV = [
-    { key: 'summary', icon: 'server', label: 'subnavSummary' },
-    { key: 'general', icon: 'settings', label: 'subnavGeneral' },
-    { key: 'features', icon: 'sparkles', label: 'subnavFeatures' },
-    { key: 'levels', icon: 'star', label: 'subnavLevels' },
-    { key: 'welcome', icon: 'heart', label: 'subnavWelcome' },
-    { key: 'extras', icon: 'support', label: 'subnavExtras' },
-    { key: 'history', icon: 'verified', label: 'subnavHistory' },
-  ] as const satisfies ReadonlyArray<{ key: GuildView; icon: string; label: keyof Dict['guildPage'] }>;
+  const SUBNAV: ReadonlyArray<{ key: GuildView; icon: string; label: keyof Dict['guildPage']; tag: 'free' | 'premium' | 'mixed' }> = [
+    { key: 'summary', icon: 'server', label: 'subnavSummary', tag: 'free' },
+    { key: 'general', icon: 'settings', label: 'subnavGeneral', tag: 'free' },
+    ...FEATURE_ROWS.map((f) => ({
+      key: `feat:${f.slug}` as GuildView,
+      icon: f.icon,
+      label: f.labelKey,
+      tag: f.premium ? ('premium' as const) : ('free' as const),
+    })),
+    { key: 'levels', icon: 'star', label: 'subnavLevels', tag: 'mixed' },
+    { key: 'welcome', icon: 'heart', label: 'subnavWelcome', tag: 'free' },
+    { key: 'extras', icon: 'support', label: 'subnavExtras', tag: 'free' },
+    { key: 'history', icon: 'verified', label: 'subnavHistory', tag: 'free' },
+  ];
+
+  const activeFeature = view.startsWith('feat:')
+    ? (FEATURE_ROWS.find((f) => `feat:${f.slug}` === view) ?? null)
+    : null;
 
   // Historial del servidor (auditoría): se carga al entrar a la pestaña.
   useEffect(() => {
@@ -1010,6 +1024,23 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               >
                 <Icon name={item.icon} size={14} className="text-neon-blue" />
                 {t[item.label]}
+                {item.tag !== 'free' && (
+                  <span
+                    className={`inline-flex items-center gap-0.5 rounded-full border px-1.5 py-0.5 text-[7px] font-black uppercase tracking-widest ${
+                      item.tag === 'premium'
+                        ? 'border-amber-400/40 bg-amber-400/10 text-amber-400'
+                        : 'border-neon-pink/40 bg-neon-pink/10 text-neon-pink'
+                    }`}
+                  >
+                    {item.tag === 'premium' ? (
+                      <>
+                        <Icon name="crown" size={7} /> {t.featPremiumTag}
+                      </>
+                    ) : (
+                      t.tagMixed
+                    )}
+                  </span>
+                )}
               </button>
             ))}
           </nav>
@@ -1124,60 +1155,53 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           </section>
           )}
 
-          {view === 'features' && (
+          {activeFeature && (
           <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
             <div className="mb-4 flex flex-wrap items-center gap-2">
               <h2 className="flex items-center gap-2 font-bold text-white">
-                <Icon name="sparkles" size={18} className="text-neon-blue" /> {t.featuresTitle}
+                <Icon name={activeFeature.icon} size={18} className="text-neon-blue" /> {t[activeFeature.labelKey]}
               </h2>
               <Badge kind="free" dict={dict} />
+              {activeFeature.premium && <PremiumTag label={t.featPremiumTag} betaNote={t.premiumFreeNote} />}
             </div>
-            <p className="mb-5 text-xs text-white/45">{t.featuresHint}</p>
-            <div className="grid gap-3">
-              {FEATURE_ROWS.map((f) => {
-                const enabled = config.features?.[f.slug] !== false;
-                return (
-                  <div
-                    key={f.slug}
-                    className="flex flex-wrap items-center gap-4 rounded-xl border border-white/10 bg-black/20 px-4 py-3.5"
-                  >
-                    <span
-                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 ${
-                        enabled ? 'text-emerald-400' : 'text-white/30'
-                      }`}
-                    >
-                      <Icon name={f.icon} size={17} />
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="flex flex-wrap items-center gap-2 text-sm font-bold text-white">
-                        {t[f.labelKey]}
-                        {f.premium && (
-                          <span className="rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-amber-400">
-                            {t.featPremiumTag}
-                          </span>
-                        )}
-                      </p>
-                      <p className="mt-0.5 text-[11px] text-white/45">{t[f.descKey]}</p>
-                    </div>
-                    <button
-                      type="button"
-                      role="switch"
-                      aria-checked={enabled}
-                      aria-label={t[f.labelKey]}
-                      onClick={() => update({ features: { ...(config.features ?? {}), [f.slug]: !enabled } })}
-                      className={`relative h-6 w-11 shrink-0 rounded-full transition ${
-                        enabled ? 'bg-gradient-to-r from-emerald-500 to-green-600' : 'bg-white/15'
-                      }`}
-                    >
-                      <span
-                        className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${
-                          enabled ? 'left-[22px]' : 'left-0.5'
-                        }`}
-                      />
-                    </button>
-                  </div>
-                );
-              })}
+            <p className="mb-5 text-xs text-white/45">{t[activeFeature.descKey]}</p>
+            <div className="flex flex-wrap items-center gap-4 rounded-xl border border-white/10 bg-black/20 px-4 py-4">
+              <span
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 ${
+                  config.features?.[activeFeature.slug] !== false ? 'text-emerald-400' : 'text-white/30'
+                }`}
+              >
+                <Icon name={activeFeature.icon} size={17} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-bold text-white">{t[activeFeature.labelKey]}</p>
+                <p className="mt-0.5 text-[11px] text-white/45">{t[activeFeature.descKey]}</p>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={config.features?.[activeFeature.slug] !== false}
+                aria-label={t[activeFeature.labelKey]}
+                onClick={() =>
+                  update({
+                    features: {
+                      ...(config.features ?? {}),
+                      [activeFeature.slug]: config.features?.[activeFeature.slug] === false,
+                    },
+                  })
+                }
+                className={`relative h-6 w-11 shrink-0 rounded-full transition ${
+                  config.features?.[activeFeature.slug] !== false
+                    ? 'bg-gradient-to-r from-emerald-500 to-green-600'
+                    : 'bg-white/15'
+                }`}
+              >
+                <span
+                  className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${
+                    config.features?.[activeFeature.slug] !== false ? 'left-[22px]' : 'left-0.5'
+                  }`}
+                />
+              </button>
             </div>
           </section>
           )}

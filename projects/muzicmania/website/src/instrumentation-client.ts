@@ -41,23 +41,12 @@ Sentry.init({
   ],
 });
 
-// Rutas POST con fetch same-origin desde nuestras páginas (login/registro, 2FA y
-// resolución de @username del login).
+// Rutas POST sensibles protegidas con BotID. El flujo de auth (login/register,
+// OAuth, reCAPTCHA, 2FA y cuenta) queda FUERA a propósito: el challenge de
+// BotID ahí resulta molesto (aparecía al pulsar los botones OAuth) y ese flujo
+// ya está protegido por reCAPTCHA + rate limits server-side.
 initBotId({
   protect: [
-    { path: '/api/verify-recaptcha', method: 'POST' },
-    { path: '/api/auth/resolve-username', method: 'POST' },
-    { path: '/api/auth/2fa/disable', method: 'POST' },
-    { path: '/api/auth/2fa/enable', method: 'POST' },
-    { path: '/api/auth/2fa/generate', method: 'POST' },
-    { path: '/api/auth/2fa/resend', method: 'POST' },
-    { path: '/api/auth/2fa/verify', method: 'POST' },
-    { path: '/api/auth/register/complete', method: 'POST' },
-    { path: '/api/auth/account/delete-request', method: 'POST' },
-    { path: '/api/auth/account/recovery', method: 'POST' },
-    { path: '/api/auth/account/reclaim', method: 'POST' },
-    { path: '/api/auth/account/privacy', method: 'POST' },
-    { path: '/api/auth/register/guard', method: 'POST' },
     { path: '/api/moderation/action', method: 'POST' },
     { path: '/api/staff/elevate', method: 'POST' },
   ],
