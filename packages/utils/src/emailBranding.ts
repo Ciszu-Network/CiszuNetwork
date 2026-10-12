@@ -237,27 +237,23 @@ function fitH(logo: EmailLogo, targetH: number, maxW?: number): { w: number; h: 
   return { w, h };
 }
 
-/** Bloque de código estilo Steam: `C-` fijo + dígitos separados + copiar. */
+/** Bloque de código: prefijo (CZ-/C-) + dígitos en un solo texto copiable. */
 function codeBlock(code: string): string {
-  const raw = code.replace(/[^A-Za-z0-9]/g, '');
-  const digits = raw.startsWith('C') || raw.startsWith('c') ? raw.slice(1) : raw;
-  const spaced = digits.split('').join(' ');
-  const copyIcon = EMAIL_UI_ICONS.copy;
+  const clean = code.trim().toUpperCase().replace(/\s+/g, '');
+  const m = clean.match(/^([A-Z]{1,3})-?(.+)$/);
+  const prefix = m ? `${m[1]}-` : '';
+  const digits = (m ? m[2] : clean).replace(/[^A-Za-z0-9]/g, '');
+  const full = `${prefix}${digits}`;
   return `
   <div style="margin:22px 0;text-align:center;">
     <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;">
       <tr>
         <td style="padding:14px 20px;border-radius:12px;background:#0b0b16;border:1px solid #2a2a45;">
-          <span style="font-family:'Consolas','Courier New',monospace;font-size:24px;font-weight:700;color:#3b82f6;letter-spacing:2px;">C-</span><span style="font-family:'Consolas','Courier New',monospace;font-size:26px;font-weight:700;color:#ffffff;letter-spacing:8px;">${escapeHtml(spaced)}</span>
-        </td>
-        <td style="padding-left:10px;vertical-align:middle;">
-          <a href="#" onclick="try{navigator.clipboard.writeText('${escapeHtml(digits)}')}catch(e){};return false;" title="Copiar número" style="text-decoration:none;">
-            <img src="${copyIcon.dataUri}" width="${copyIcon.width}" height="${copyIcon.height}" alt="Copiar" style="display:block;border:0;" />
-          </a>
+          <span style="font-family:'Consolas','Courier New',monospace;font-size:26px;font-weight:700;color:#ffffff;">${escapeHtml(full)}</span>
         </td>
       </tr>
     </table>
-    <div style="margin-top:10px;font-size:11px;color:#7c8196;text-align:center;">El prefijo <strong style="color:#8ab4ff;">C-</strong> es fijo y no se copia; solo se verifica el número. Pulsa el icono para copiarlo.</div>
+    <div style="margin-top:10px;font-size:11px;color:#7c8196;text-align:center;">Selecciona la clave completa <strong style="color:#8ab4ff;">${escapeHtml(full)}</strong> y cópiala tal cual. Caduca en pocos minutos.</div>
   </div>`;
 }
 
@@ -420,7 +416,7 @@ export function renderBrandedEmail(input: BrandedEmailInput): RenderedEmail {
     greeting ? `\n${greeting}` : '',
     '',
     input.intro,
-    input.code ? `\nCÓDIGO: C-${input.code.replace(/[^A-Za-z0-9]/g, '').replace(/^C/i, '')} (el prefijo C- es fijo; solo se verifica el número)` : '',
+    input.code ? `\nCÓDIGO: ${input.code.trim().toUpperCase()} (cópialo tal cual)` : '',
     input.ctaUrl ? `\n${input.ctaLabel ?? 'Enlace'}: ${input.ctaUrl}` : '',
     input.note ? `\n${input.note}` : '',
     input.securityNote ? `\n${input.securityNote}` : '',

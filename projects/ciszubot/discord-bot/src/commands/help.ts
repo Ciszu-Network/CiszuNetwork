@@ -84,7 +84,7 @@ const command: BotCommand = {
     const embed = new EmbedBuilder()
       .setColor('#4f46e5')
       .setTitle('🤖 CiszuBot - Ayuda y Comandos')
-      .setDescription(`¡Hola! Soy CiszuBot, un bot completamente en español. Tengo **${allCommands.length} comandos** disponibles y estoy sirviendo en **${totalServers} servidor(es)**.`)
+      .setDescription(`¡Hola! Soy CiszuBot, el bot todo en uno. Tengo **${allCommands.length} comandos** disponibles y estoy sirviendo en **${totalServers} servidor(es)**.`)
       .setThumbnail(message.client.user?.displayAvatarURL() ?? null)
       .setFooter({
         text: `CiszuBot • Solicitado por ${message.author.tag}`,

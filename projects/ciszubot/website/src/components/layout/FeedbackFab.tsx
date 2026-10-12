@@ -14,7 +14,6 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
-import * as Sentry from '@sentry/nextjs';
 import { useFabStack, useFabRestore, FabDismissHint } from '@ciszu/ui';
 import { getDict, readCookieLang, type Dict } from '@/lib/i18n';
 
@@ -29,10 +28,13 @@ const DEFAULT_ACCENT_ALT = '#a78bfa';
 
 const openFeedback = async () => {
   try {
-    const fb = Sentry.getFeedback();
-    if (!fb) return;
-    const form = await fb.createForm();
-    form.open();
+    // Import dinámico: garantiza que el SDK esté cargado/initializado antes de
+    // pedir el formulario (con el import estático `getFeedback()` podía no
+    // existir todavía y el botón no hacía nada — paridad con MuzicMania).
+    const mod = await import('@sentry/nextjs');
+    const feedback = mod.getFeedback?.();
+    const form = await feedback?.createForm?.();
+    form?.open();
   } catch {
     /* feedback no disponible */
   }

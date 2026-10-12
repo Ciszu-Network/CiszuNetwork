@@ -115,7 +115,7 @@ const es = {
     offline: 'Desconectado',
     tagline: 'El bot de Discord de Ciszu Network',
     description:
-      'Comandos divertidos, de información y utilidad, en español. Con prefijo cz! y slash commands.',
+      'El bot todo en uno: diversión, información y utilidad en 4 idiomas. Con prefijo cz! y slash commands.',
     ctaInvite: 'Invitar a Discord',
     ctaGithub: 'GitHub',
   },
@@ -130,7 +130,7 @@ const es = {
     subtitle: 'Todo lo que necesitas para tu servidor, sin complicaciones.',
     items: [
       { title: 'Rápido y ligero', desc: 'Respuesta instantánea a cada comando, sin demoras ni lag.' },
-      { title: '100% en español', desc: 'Todo el bot, sus comandos y mensajes están en tu idioma.' },
+      { title: 'Multi-idioma', desc: '4 idiomas soportados (ES-LA, ES-ES, EN-US, EN-UK); cada servidor usa el suyo.' },
       { title: 'Comandos variados', desc: 'Diversión, información, social y utilidad en un solo bot.' },
       { title: 'Privacidad primero', desc: 'No vendemos datos. Solo registramos el uso de comandos para mejorar.' },
     ],
@@ -1415,7 +1415,7 @@ const en = {
     offline: 'Offline',
     tagline: "Ciszu Network's Discord bot",
     description:
-      'Fun, informative and utility commands, in Spanish. With cz! prefix and slash commands.',
+      'The all-in-one bot: fun, info and utility commands in 4 languages. With cz! prefix and slash commands.',
     ctaInvite: 'Invite to Discord',
     ctaGithub: 'GitHub',
   },
@@ -1430,7 +1430,7 @@ const en = {
     subtitle: 'Everything you need for your server, without the hassle.',
     items: [
       { title: 'Fast & lightweight', desc: 'Instant response to every command, no lag.' },
-      { title: '100% Spanish', desc: 'The whole bot, its commands and messages are in your language.' },
+      { title: 'Multi-language', desc: '4 supported languages (ES-LA, ES-ES, EN-US, EN-UK); each server picks its own.' },
       { title: 'Varied commands', desc: 'Fun, info, social and utility in a single bot.' },
       { title: 'Privacy first', desc: 'We do not sell data. We only log command usage to improve.' },
     ],
