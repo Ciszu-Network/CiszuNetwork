@@ -10,6 +10,8 @@ import PageReveal from '@/components/layout/PageReveal';
 import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useClientI18n } from '@/hooks/useClientI18n';
+import useLiveBotStatus from '@/components/home/useLiveBotStatus';
+import { resolveBotStatus } from '@/lib/botStatus';
 
 // ---------------------------------------------------------------------------
 // STATS — Estado del servidor e infraestructura (ciszunetwork / ciszukoantony /
@@ -61,6 +63,8 @@ export default function StatsPage() {
   const { dict } = useClientI18n();
   const t = dict.statsPage;
   usePageTitle('STATS');
+  const liveStatus = useLiveBotStatus(null);
+  const resolved = resolveBotStatus(liveStatus, Date.now());
   const [checks, setChecks] = useState<Check[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [latency, setLatency] = useState<number | null>(null);
@@ -180,6 +184,53 @@ export default function StatsPage() {
             </button>
           </div>
         </PageReveal>
+
+        {/* --- ESTADO DEL BOT (CiszuBot) --- */}
+        <motion.section
+          initial="hidden"
+          animate="visible"
+          variants={sectionVariants}
+          className="bg-doc-dark border border-white/10 p-7 rounded-3xl"
+        >
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="font-header text-lg font-black text-white">{t.botStatusTitle}</h2>
+            <span
+              className={`inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest ${
+                resolved.online ? 'text-emerald-400' : 'text-red-400'
+              }`}
+            >
+              <span
+                className={`h-2.5 w-2.5 rounded-full ${resolved.online ? 'animate-pulse bg-emerald-400' : 'bg-red-400'}`}
+              />
+              {resolved.online ? dict.guildPage.botOnline : dict.guildPage.botOffline}
+            </span>
+            {!resolved.online && resolved.reason && (
+              <span className="text-[10px] font-bold uppercase tracking-widest text-white/50">
+                {dict.botStatus.reasons[resolved.reason]}
+              </span>
+            )}
+          </div>
+          <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <div>
+              <p className="text-[8px] font-black text-gray-600 uppercase tracking-widest">{t.botGuilds}</p>
+              <p className="text-xl font-header font-black text-white">{liveStatus?.guilds ?? '—'}</p>
+            </div>
+            <div>
+              <p className="text-[8px] font-black text-gray-600 uppercase tracking-widest">{t.botCommands}</p>
+              <p className="text-xl font-header font-black text-white">{liveStatus?.commands_total ?? '—'}</p>
+            </div>
+            <div>
+              <p className="text-[8px] font-black text-gray-600 uppercase tracking-widest">{t.botVersion}</p>
+              <p className="text-xl font-header font-black text-white">{liveStatus?.version ?? '—'}</p>
+            </div>
+            <div>
+              <p className="text-[8px] font-black text-gray-600 uppercase tracking-widest">{t.botLastSeen}</p>
+              <p className="text-sm font-header font-black text-white">
+                {liveStatus?.last_seen ? new Date(liveStatus.last_seen).toLocaleString() : '—'}
+              </p>
+            </div>
+          </div>
+        </motion.section>
 
         {/* --- OVERVIEW TILES --- */}
         <motion.section initial="hidden" animate="visible" variants={sectionVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-6">

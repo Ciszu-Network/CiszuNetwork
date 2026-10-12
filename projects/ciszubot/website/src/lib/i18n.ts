@@ -672,6 +672,11 @@ const es = {
   },
   statsPage: {
     securityTitle: 'Seguridad y red',
+    botStatusTitle: 'Estado de CiszuBot',
+    botGuilds: 'Servidores',
+    botCommands: 'Comandos',
+    botVersion: 'Versión',
+    botLastSeen: 'Último latido',
     noData: 'Sin datos todavía…',
     metricsNote: 'Las métricas se miden desde tu navegador contra los servicios reales. Los valores no disponibles se muestran como “Sin datos”.',
     incidentsTitle: 'Incidentes y mantenimiento',
@@ -1971,6 +1976,11 @@ const en = {
   },
   statsPage: {
     securityTitle: 'Security & network',
+    botStatusTitle: 'CiszuBot status',
+    botGuilds: 'Servers',
+    botCommands: 'Commands',
+    botVersion: 'Version',
+    botLastSeen: 'Last heartbeat',
     noData: 'No data yet…',
     metricsNote: 'Metrics are measured from your browser against the real services. Unavailable values are shown as “No data”.',
     incidentsTitle: 'Incidents & maintenance',
