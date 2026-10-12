@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Icon, useToast } from '@ciszu/ui';
+import { Icon, Modal, useToast } from '@ciszu/ui';
 import { getDict, readCookieLang, INVITE_URL, type Dict } from '@/lib/i18n';
 import InviteLink from '@/components/dashboard/InviteLink';
 import type { GuildInfo } from '@/lib/discordGuild';
@@ -40,10 +40,16 @@ interface GuildConfig {
   features?: Record<string, boolean>;
 }
 
-type SectionKey = 'general' | 'levels' | 'welcome' | 'extras';
+type SectionKey = 'general' | 'levels' | 'welcome' | 'extras' | `feat:${string}`;
 type PartialConfig = Partial<GuildConfig>;
 
-const SECTION_KEYS: Record<SectionKey, (keyof GuildConfig)[]> = {
+/** Payload de un export JSON (vista previa + descarga). */
+interface JsonPreviewPayload {
+  meta: Record<string, unknown>;
+  config: Record<string, unknown>;
+}
+
+const SECTION_KEYS: Record<'general' | 'levels' | 'welcome' | 'extras', (keyof GuildConfig)[]> = {
   general: ['prefix', 'lang'],
   levels: ['leveling_enabled', 'level_channel_id', 'xp_rate'],
   welcome: [
@@ -67,6 +73,11 @@ const SECTION_KEYS: Record<SectionKey, (keyof GuildConfig)[]> = {
 };
 
 const ALL_KEYS: (keyof GuildConfig)[] = Object.values(SECTION_KEYS).flat();
+
+/** Scope de una función (`feat:<slug>`): exporta/importa solo su toggle. */
+const featScope = (slug: string): SectionKey => `feat:${slug}`;
+const isFeatScope = (s: SectionKey): s is `feat:${string}` => s.startsWith('feat:');
+const featSlugOf = (s: SectionKey): string => s.slice('feat:'.length);
 
 /** Funciones configurables por servidor (toggles del dashboard). */
 const FEATURE_ROWS: { slug: string; icon: string; labelKey: keyof Dict['guildPage']; descKey: keyof Dict['guildPage']; premium?: boolean }[] = [
@@ -228,14 +239,25 @@ const FloppyMini = ({ size = 11 }: { size?: number }) => (
 );
 
 /** Etiqueta de sub-opción Premium (gratis durante la beta). */
-function PremiumTag({ label, betaNote }: { label: string; betaNote: string }) {
+function PremiumTag({ label, betaNote, betaLabel }: { label: string; betaNote: string; betaLabel?: string }) {
   return (
-    <span
-      title={betaNote}
-      className="inline-flex items-center gap-1 rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-amber-400"
-    >
-      <Icon name="crown" size={9} />
-      {label}
+    <span className="inline-flex flex-wrap items-center gap-1">
+      <span
+        title={betaNote}
+        className="inline-flex items-center gap-1 rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-amber-400"
+      >
+        <Icon name="crown" size={9} className="shrink-0" />
+        {label}
+      </span>
+      {betaLabel && (
+        <span
+          title={betaNote}
+          className="inline-flex items-center gap-1 rounded-full border border-neon-pink/50 bg-neon-pink/10 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-neon-pink"
+        >
+          <Icon name="clock" size={9} className="shrink-0" />
+          {betaLabel}
+        </span>
+      )}
     </span>
   );
 }
@@ -324,6 +346,17 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   const [subnavQuery, setSubnavQuery] = useState('');
   const [subnavFilter, setSubnavFilter] = useState<'all' | 'free' | 'premium'>('all');
   const [subnavSort, setSubnavSort] = useState<'asc' | 'desc'>('asc');
+  const [exportPreview, setExportPreview] = useState<{
+    name: string;
+    payload: JsonPreviewPayload;
+  } | null>(null);
+  const [importPreview, setImportPreview] = useState<{
+    fileName: string;
+    clean: PartialConfig;
+    changed: { key: string; from: unknown; to: unknown }[];
+    unchanged: string[];
+    ignored: string[];
+  } | null>(null);
 
   useEffect(() => {
     setAutoSave(localStorage.getItem('cz-dash-autosave') === '1');
@@ -742,12 +775,14 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
       const data =
         scope === 'all'
           ? config
-          : (Object.fromEntries(SECTION_KEYS[scope].map((k) => [k, config[k]])) as PartialConfig);
+          : isFeatScope(scope)
+            ? { features: { [featSlugOf(scope)]: config.features?.[featSlugOf(scope)] ?? true } }
+            : (Object.fromEntries(SECTION_KEYS[scope].map((k) => [k, config[k]])) as PartialConfig);
       const d = new Date();
       const pad = (n: number) => String(n).padStart(2, '0');
       const stamp = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}`;
       const user = (username ?? 'usuario').replace(/[^a-z0-9-_.]/gi, '') || 'usuario';
-      const name = `ciszubot_${scope}_${slug}_${stamp}_${user}.json`;
+      const name = `ciszubot_${scope.replace(':', '-')}_${slug}_${stamp}_${user}.json`;
       const payload = {
         meta: {
           app: 'CiszuBot',
@@ -760,25 +795,32 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         },
         config: data,
       };
-      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = name;
-      a.click();
-      URL.revokeObjectURL(url);
-      try {
-        const list = JSON.parse(localStorage.getItem('cz-dash-json-history') ?? '[]') as unknown[];
-        list.unshift({ ts: Date.now(), guildId, guildName, kind: 'export', name });
-        localStorage.setItem('cz-dash-json-history', JSON.stringify(list.slice(0, 30)));
-      } catch {
-        /* sin storage */
-      }
-      setFlash(t.exported);
-      setTimeout(() => setFlash(null), 3500);
+      setExportPreview({ name, payload: payload as unknown as JsonPreviewPayload });
     },
-    [config, dirty, guildId, guildName, slug, username, t.backupNote, t.exported, t.jsonNeedSave]
+    [config, dirty, guildId, guildName, slug, username, t.jsonNeedSave]
   );
+
+  /** Descarga real del export (tras la vista previa). */
+  const confirmExport = useCallback(() => {
+    if (!exportPreview) return;
+    const blob = new Blob([JSON.stringify(exportPreview.payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = exportPreview.name;
+    a.click();
+    URL.revokeObjectURL(url);
+    try {
+      const list = JSON.parse(localStorage.getItem('cz-dash-json-history') ?? '[]') as unknown[];
+      list.unshift({ ts: Date.now(), guildId, guildName, kind: 'export', name: exportPreview.name });
+      localStorage.setItem('cz-dash-json-history', JSON.stringify(list.slice(0, 30)));
+    } catch {
+      /* sin storage */
+    }
+    setExportPreview(null);
+    setFlash(t.exported);
+    setTimeout(() => setFlash(null), 3500);
+  }, [exportPreview, guildId, guildName, t.exported]);
 
   const importFile = useCallback(
     async (file: File, scope?: SectionKey) => {
@@ -795,28 +837,45 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           parsed && typeof parsed === 'object' && 'config' in parsed && parsed.config
             ? parsed.config
             : (parsed as PartialConfig);
-        const allowed: readonly string[] = scope ? SECTION_KEYS[scope] : ALL_KEYS;
+        const allowed: readonly string[] = scope
+          ? isFeatScope(scope)
+            ? ['features']
+            : SECTION_KEYS[scope]
+          : ALL_KEYS;
         const clean: Partial<GuildConfig> = {};
         for (const key of Object.keys(raw)) {
           if (allowed.includes(key)) {
             clean[key as keyof GuildConfig] = raw[key as keyof GuildConfig] as never;
           }
         }
-        if (Object.keys(clean).length === 0) throw new Error('empty');
-        setHistory((h) => [...h.slice(-29), config]);
-        setFuture([]);
-        setConfig({ ...config, ...clean });
-        setStatus('idle');
-        setError(null);
-        try {
-          const list = JSON.parse(localStorage.getItem('cz-dash-json-history') ?? '[]') as unknown[];
-          list.unshift({ ts: Date.now(), guildId, guildName, kind: 'import', name: file.name });
-          localStorage.setItem('cz-dash-json-history', JSON.stringify(list.slice(0, 30)));
-        } catch {
-          /* sin storage */
+        // Scope de función: solo el toggle de esa función.
+        if (scope && isFeatScope(scope)) {
+          const slugKey = featSlugOf(scope);
+          const feats = (clean.features ?? {}) as Record<string, unknown>;
+          const val = feats[slugKey];
+          if (typeof val !== 'boolean') throw new Error('empty');
+          clean.features = { [slugKey]: val };
         }
-        setFlash(t.imported);
-        setTimeout(() => setFlash(null), 4000);
+        if (Object.keys(clean).length === 0) throw new Error('empty');
+
+        // Vista previa: solo los cambios (y lo que queda sin cambios).
+        const changed: { key: string; from: unknown; to: unknown }[] = [];
+        const unchanged: string[] = [];
+        for (const [key, value] of Object.entries(clean)) {
+          if (key === 'features') {
+            for (const [s, v] of Object.entries((value ?? {}) as Record<string, unknown>)) {
+              const from = config.features?.[s] ?? true;
+              if (from === v) unchanged.push(`features.${s}`);
+              else changed.push({ key: `features.${s}`, from, to: v });
+            }
+            continue;
+          }
+          const from = config[key as keyof GuildConfig];
+          if (JSON.stringify(from) === JSON.stringify(value)) unchanged.push(key);
+          else changed.push({ key, from, to: value });
+        }
+        const ignored = Object.keys(raw).filter((k) => !allowed.includes(k));
+        setImportPreview({ fileName: file.name, clean, changed, unchanged, ignored });
       } catch {
         setStatus('error');
         setError(t.importError);
@@ -824,8 +883,28 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         setTimeout(() => setFlash(null), 4000);
       }
     },
-    [config, dirty, t.imported, t.importError, t.jsonNeedSave]
+    [config, dirty, t.importError, t.jsonNeedSave]
   );
+
+  /** Aplica el import tras la vista previa. */
+  const applyImport = useCallback(() => {
+    if (!importPreview || !config) return;
+    setHistory((h) => [...h.slice(-29), config]);
+    setFuture([]);
+    setConfig({ ...config, ...importPreview.clean });
+    setStatus('idle');
+    setError(null);
+    try {
+      const list = JSON.parse(localStorage.getItem('cz-dash-json-history') ?? '[]') as unknown[];
+      list.unshift({ ts: Date.now(), guildId, guildName, kind: 'import', name: importPreview.fileName });
+      localStorage.setItem('cz-dash-json-history', JSON.stringify(list.slice(0, 30)));
+    } catch {
+      /* sin storage */
+    }
+    setImportPreview(null);
+    setFlash(t.imported);
+    setTimeout(() => setFlash(null), 4000);
+  }, [importPreview, config, guildId, guildName, t.imported]);
 
   const hue = useMemo(() => {
     const n = parseInt(guildId.slice(-6), 10);
@@ -1077,7 +1156,9 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 >
                   {item.tag === 'premium' ? (
                     <>
-                      <Icon name="crown" size={7} /> {t.featPremiumTag}
+                      <Icon name="crown" size={7} className="shrink-0" /> {t.featPremiumTag}
+                      <span aria-hidden className="opacity-60">·</span>
+                      <Icon name="clock" size={7} className="shrink-0" /> {t.betaBadge}
                     </>
                   ) : item.tag === 'mixed' ? (
                     t.tagMixed
@@ -1206,7 +1287,15 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 <Icon name={activeFeature.icon} size={18} className="text-neon-blue" /> {t[activeFeature.labelKey]}
               </h2>
               <Badge kind="free" dict={dict} />
-              {activeFeature.premium && <PremiumTag label={t.featPremiumTag} betaNote={t.premiumFreeNote} />}
+              {activeFeature.premium && <PremiumTag label={t.featPremiumTag} betaNote={t.premiumFreeNote} betaLabel={t.betaBadge} />}
+              <SectionJson
+                disabled={dirty || !config}
+                disabledHint={t.jsonNeedSave}
+                exportLabel={t.jsonExport}
+                importLabel={t.jsonImport}
+                onExport={() => exportScope(featScope(activeFeature.slug))}
+                onImport={(file) => void importFile(file, featScope(activeFeature.slug))}
+              />
             </div>
             <p className="mb-5 text-xs text-white/45">{t[activeFeature.descKey]}</p>
             <div className="flex flex-wrap items-center gap-4 rounded-xl border border-white/10 bg-black/20 px-4 py-4">
@@ -1405,7 +1494,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               <label className="mt-4 block">
                 <span className="flex flex-wrap items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white/45">
                   {t.lbCustom}
-                  <PremiumTag label={t.featPremiumTag} betaNote={t.premiumFreeNote} />
+                  <PremiumTag label={t.featPremiumTag} betaNote={t.premiumFreeNote} betaLabel={t.betaBadge} />
                 </span>
                 <input
                   className={`${inputCls} mt-1`}
@@ -1419,7 +1508,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               </label>
 
               <div className="mt-4 flex flex-wrap items-center gap-2">
-                <PremiumTag label={t.featPremiumTag} betaNote={t.premiumFreeNote} />
+                <PremiumTag label={t.featPremiumTag} betaNote={t.premiumFreeNote} betaLabel={t.betaBadge} />
                 {resetAsk ? (
                   <>
                     <button
@@ -1831,6 +1920,112 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           </div>
         </div>
       )}
+
+      <Modal
+        open={exportPreview !== null}
+        onOpenChange={(open) => {
+          if (!open) setExportPreview(null);
+        }}
+        title={t.jsonExportTitle}
+        description={t.jsonExportDesc}
+        size="lg"
+      >
+        {exportPreview && (
+          <div className="space-y-3">
+            <p className="break-all rounded-lg border border-white/10 bg-black/30 px-3 py-2 font-mono text-[11px] text-white/50">
+              {exportPreview.name}
+            </p>
+            <div className="max-h-64 overflow-auto rounded-xl border border-white/10 bg-black/40 p-3 font-mono text-[11px]">
+              {Object.entries(exportPreview.payload.config).map(([k, v]) => (
+                <div key={k} className="flex gap-2 py-0.5">
+                  <span className="shrink-0 text-neon-blue">{k}:</span>
+                  <span className="truncate text-white/60">{JSON.stringify(v)}</span>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setExportPreview(null)}
+                className="rounded-xl border border-white/15 px-4 py-2 font-header text-[10px] font-black uppercase tracking-widest text-white/70 transition hover:border-white/40 hover:text-white"
+              >
+                {t.jsonCancel}
+              </button>
+              <button
+                type="button"
+                onClick={confirmExport}
+                className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-neon-blue to-neon-pink px-4 py-2 font-header text-[10px] font-black uppercase tracking-widest text-white transition hover:scale-[1.02] active:scale-95"
+              >
+                <Icon name="json" size={12} /> {t.jsonDownload}
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      <Modal
+        open={importPreview !== null}
+        onOpenChange={(open) => {
+          if (!open) setImportPreview(null);
+        }}
+        title={t.jsonImportTitle}
+        description={t.jsonImportDesc}
+        size="lg"
+      >
+        {importPreview && (
+          <div className="space-y-3">
+            <p className="break-all rounded-lg border border-white/10 bg-black/30 px-3 py-2 font-mono text-[11px] text-white/50">
+              {importPreview.fileName}
+            </p>
+            {importPreview.changed.length === 0 ? (
+              <p className="rounded-xl border border-white/10 bg-black/30 px-3 py-4 text-center text-xs text-white/50">
+                {t.jsonNoChanges}
+              </p>
+            ) : (
+              <div className="max-h-64 overflow-auto rounded-xl border border-white/10 bg-black/40 p-3 font-mono text-[11px]">
+                <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-amber-400">{t.jsonChanged}</p>
+                {importPreview.changed.map((c) => (
+                  <div key={c.key} className="flex flex-wrap items-center gap-2 py-0.5">
+                    <span className="shrink-0 text-neon-blue">{c.key}:</span>
+                    <span className="text-red-400/80 line-through">{JSON.stringify(c.from)}</span>
+                    <span className="text-white/40">→</span>
+                    <span className="text-emerald-400">{JSON.stringify(c.to)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            {importPreview.unchanged.length > 0 && (
+              <p className="text-[11px] text-white/40">
+                <span className="font-black uppercase tracking-widest text-white/50">{t.jsonUnchanged}:</span>{' '}
+                {importPreview.unchanged.join(', ')}
+              </p>
+            )}
+            {importPreview.ignored.length > 0 && (
+              <p className="text-[11px] text-white/40">
+                <span className="font-black uppercase tracking-widest text-white/50">{t.jsonIgnored}:</span>{' '}
+                {importPreview.ignored.join(', ')}
+              </p>
+            )}
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setImportPreview(null)}
+                className="rounded-xl border border-white/15 px-4 py-2 font-header text-[10px] font-black uppercase tracking-widest text-white/70 transition hover:border-white/40 hover:text-white"
+              >
+                {t.jsonCancel}
+              </button>
+              <button
+                type="button"
+                onClick={applyImport}
+                disabled={importPreview.changed.length === 0}
+                className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 px-4 py-2 font-header text-[10px] font-black uppercase tracking-widest text-white transition hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <Icon name="json" size={12} /> {t.jsonApply}
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
 
       <SaveDock
         note={offline ? dict.botStatus.saveOfflineNote.replace('{reason}', dict.botStatus.reasons[offlineReasonKey]) : null}
