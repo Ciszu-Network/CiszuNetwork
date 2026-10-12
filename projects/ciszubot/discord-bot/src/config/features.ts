@@ -56,3 +56,8 @@ export function isPremiumCommand(cmd: CommandLike): boolean {
   const slug = resolveFeatureForCommand(cmd);
   return slug !== null && Boolean(FEATURE_DEFS.find((d) => d.slug === slug)?.premium);
 }
+
+/** Etiqueta legible de un flag (para embeds de error). */
+export function featureLabel(slug: string): string | null {
+  return FEATURE_DEFS.find((d) => d.slug === slug)?.label ?? null;
+}

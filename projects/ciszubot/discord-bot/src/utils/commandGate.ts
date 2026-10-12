@@ -1,7 +1,7 @@
 import { EmbedBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { LINKS, BOT_COLORS, BOT_FOOTER } from '../config/links';
-import { resolveFeatureForCommand, isPremiumCommand } from '../config/features';
+import { resolveFeatureForCommand, isPremiumCommand, featureLabel } from '../config/features';
 import { getFeatureState, getGuildFeatureOverride, isPremiumBeta, isPremiumGuild } from '../services/featureFlags';
 
 /**
@@ -14,12 +14,15 @@ import { getFeatureState, getGuildFeatureOverride, isPremiumBeta, isPremiumGuild
 
 export const PREMIUM_URL = `${LINKS.website}/premium`;
 
-function disabledEmbed(reason: string | null, tag: string, iconURL?: string | null): EmbedBuilder {
+function disabledEmbed(reason: string | null, tag: string, iconURL?: string | null, feature?: string | null): EmbedBuilder {
+  const what = feature ? `La función **${feature}**` : 'Esta función';
   return new EmbedBuilder()
     .setColor(BOT_COLORS.danger)
-    .setTitle('⛔ Función desactivada')
+    .setTitle('⛔ Comando no activado')
     .setDescription(
-      'Esta función está **desactivada** en este momento.' + (reason ? `\n\n**Motivo:** ${reason}` : ''),
+      `${what} está **desactivada** en este momento: el comando no está configurado para usarse.\n` +
+        (reason ? `\n**Motivo:** ${reason}\n` : '') +
+        `\nPide a la administración que la active desde el panel: ${LINKS.website}/dashboard`,
     )
     .setFooter(BOT_FOOTER(tag, iconURL))
     .setTimestamp();
@@ -73,13 +76,13 @@ export async function gateCommand(ctx: GateContext): Promise<boolean> {
   if (slug) {
     const state = await getFeatureState(slug);
     if (!state.enabled) {
-      await send({ embeds: [disabledEmbed(state.reason, tag, iconURL)] });
+      await send({ embeds: [disabledEmbed(state.reason, tag, iconURL, featureLabel(slug))] });
       return false;
     }
     if (guildId) {
       const guildOverride = await getGuildFeatureOverride(guildId, slug);
       if (guildOverride === false) {
-        await send({ embeds: [disabledEmbed('Desactivada en este servidor', tag, iconURL)] });
+        await send({ embeds: [disabledEmbed('Desactivada en este servidor', tag, iconURL, featureLabel(slug))] });
         return false;
       }
     }
