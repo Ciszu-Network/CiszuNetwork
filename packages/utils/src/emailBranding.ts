@@ -4,11 +4,12 @@
  * Reglas de diseño:
  *   - Remitente y asunto siempre `Ciszu Network | <web> — <título>`.
  *   - Cabecera con el logotipo de Ciszu Network + el isotipo de la web (a color,
- *     PNG embebido: renderiza en todos los clientes, Gmail/Outlook incluidos).
+ *     PNG por https desde el CDN: Gmail bloquea los data: URIs y no renderiza SVG).
  *   - Cada web tiene su fondo oscuro propio y su degradado superior según el
  *     logotipo, para distinguirse.
  *   - Icono de categoría junto al título (verificación, llave, candado...).
- *   - Código estilo Steam: `C-` fijo + dígitos separados + botón de copiar.
+ *   - Clave de acceso (CZ-XXXXXX) en un solo texto copiable, sin botones JS
+ *     (Gmail elimina el JavaScript de los correos).
  *   - Botón de acción centrado con flecha.
  *   - Sección de redes sociales (logos con color de marca) en TODOS los emails.
  *   - Emisor claro (quién envía: Ciszu Network, su correo y la web) y saludo al

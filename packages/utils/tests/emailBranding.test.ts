@@ -30,9 +30,11 @@ describe('renderBrandedEmail', () => {
     expect(mail.html).toContain(EMAIL_LEGAL_LINKS.support);
   });
 
-  it('usa logos reales (data URI) en vez de texto y declara el proveedor', () => {
+  it('usa logos reales alojados por https (CDN) y declara el proveedor', () => {
     const mail = renderBrandedEmail({ siteName: 'CiszuBot', title: 'Acceso', intro: 'Hola.' });
-    expect(mail.html).toContain('data:image/png;base64,');
+    // Gmail bloquea los data URIs y no renderiza SVG: los PNG van por https.
+    expect(mail.html).toContain('/storage/v1/object/public/ciszu-cdn/email/assets/');
+    expect(mail.html).not.toContain('data:image/');
     expect(mail.html).toContain('alt="Ciszu Network"');
     expect(mail.html).toContain('Supabase');
     // No debe usar SVG inline para los logos.
@@ -58,10 +60,21 @@ describe('renderBrandedEmail', () => {
       ctaLabel: 'Abrir',
       ctaUrl: 'https://example.com/x',
     });
-    expect(mail.html).toContain('1 2 3 4 3 4');
+    expect(mail.html).toContain('C-123434');
     expect(mail.html).toContain('https://example.com/x');
-    expect(mail.html).toContain('>C-<');
+    expect(mail.html).toContain('>C-123434</span>');
     expect(mail.text).toContain('CÓDIGO');
+  });
+
+  it('normaliza la clave real CZ-XXXXXX al formato canónico', () => {
+    const mail = renderBrandedEmail({
+      siteName: 'CiszuBot',
+      title: 'Acceso',
+      intro: 'Hola',
+      code: 'CZ 822585',
+    });
+    expect(mail.html).toContain('CZ-822585');
+    expect(mail.html).not.toContain('C-Z822585');
   });
 });
 
@@ -69,7 +82,7 @@ describe('twoFactorEmail', () => {
   it('explica caducidad, alcance por web y límite de intentos', () => {
     const mail = twoFactorEmail({ siteName: 'CiszuBot', code: 'C-123 434', expiresInMinutes: 180, maxAttempts: 3 });
     expect(mail.subject).toContain('CiszuBot');
-    expect(mail.html).toContain('1 2 3 4 3 4');
+    expect(mail.html).toContain('C-123434');
     expect(mail.html).toContain('180 minutos');
     expect(mail.html).toContain('solo sirve para CiszuBot');
     expect(mail.html).toContain('3 intentos fallidos');

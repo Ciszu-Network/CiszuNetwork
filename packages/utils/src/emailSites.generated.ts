@@ -1,6 +1,7 @@
 // GENERADO por scripts/build-email-sites.js — NO editar a mano.
-// Assets de los emails como PNG en data: URI (Gmail los muestra sin pedir
-// "Mostrar imágenes"); evitamos URLs externas porque Gmail las bloquea.
+// Assets de los emails como PNG alojados por https en el CDN (ciszu-cdn/email/
+// assets). Gmail bloquea los data: URIs y no renderiza SVG, así que las
+// imágenes de email SIEMPRE van por URL https pública con alt text.
 export interface EmailLogo { dataUri: string; width: number; height: number; }
 
 /** Logotipo maestro FULL (el del index de ciszunetwork). */
