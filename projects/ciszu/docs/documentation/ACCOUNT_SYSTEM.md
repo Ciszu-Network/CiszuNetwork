@@ -222,6 +222,28 @@ el correo queda vinculado al UUID para siempre.
   visualización + toggle con auditoría), sistema de amistades/seguidores (habilita del todo
   el modo `friends`) y perfiles públicos en las demás webs.
 
+## Migración versionada de cuentas (11 oct 2026)
+
+Las cuentas antiguas (auth primitivo) se actualizan a un esquema **versionado** sin dañarlas:
+
+- **Tabla**: `ciszu.account_migrations` (user_id, version, migrated_at, details; deny-all,
+  solo service_role). Versión actual: **2**.
+- **Reglas v2** (solo cuando falta el dato):
+  - username presente y display ausente → display = `USERNAME` + 6 dígitos.
+  - display presente y username ausente → username = display en minúsculas + 8 dígitos.
+  - ninguno presente → derivados del email local (username = local; display = LOCAL + 6 dígitos).
+  - defaults de preferencias: `settings_lang='es-latam'`, `settings_theme='dark'`, `settings_controls='{}'`.
+- **Herramienta**: `scripts/accountmigrate.mjs` — `audit` (reporte), `run` (migra todas las
+  pendientes), `user <email>` (una cuenta) y `set <email> [--username|--display|--password|--avatar]`
+  (corrección manual; la contraseña usa la Admin API de Supabase). Sección **CUENTAS CISZU ID**
+  en la devcon (gate: subcargo de ciszunetwork + cargo admin).
+- **Aplicación a la cuenta del CEO** (11 oct 2026): username `ciszukoantony`, display
+  `Ciszuko Antony`, sin avatar y contraseña rotada, en los 4 schemas (`ciszubot`,
+  `ciszunetwork`, `ciszukoantony`, `muzicmania`) + `auth.users`.
+- **Saneamiento en runtime**: `AuthProvider` de ciszubot ignora usernames que parezcan
+  emails, no muestra emails como display y descarta avatares no-URL (cuentas antiguas sin
+  fila de perfil mostraban el email como nombre).
+
 ---
 
 _Última revisión: 2026-09-30._ Relacionado: `ACCOUNT_SYSTEM_PLAN.md` (plan y requisitos originales),
