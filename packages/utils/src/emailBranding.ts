@@ -301,7 +301,7 @@ export function renderBrandedEmail(input: BrandedEmailInput): RenderedEmail {
   const ctaBlock =
     input.ctaUrl && input.ctaLabel
       ? `<div style="margin:26px 0 10px;text-align:center;">
-           <a href="${escapeHtml(input.ctaUrl)}" style="display:inline-block;padding:14px 26px;border-radius:12px;background:linear-gradient(135deg,${site.buttonFrom},${site.buttonTo});color:#ffffff;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-decoration:none;">${escapeHtml(input.ctaLabel)} <img src="${arrowIcon.dataUri}" width="${arrowIcon.width}" height="${arrowIcon.height}" alt="→" style="display:inline-block;border:0;vertical-align:middle;margin-left:6px;" /></a>
+           <a href="${escapeHtml(input.ctaUrl)}" style="display:inline-block;padding:14px 26px;border-radius:12px;background-color:${site.buttonFrom};background-image:linear-gradient(135deg,${site.buttonFrom},${site.buttonTo});color:#ffffff;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-decoration:none;">${escapeHtml(input.ctaLabel)} <img src="${arrowIcon.dataUri}" width="${arrowIcon.width}" height="${arrowIcon.height}" alt="→" style="display:inline-block;border:0;vertical-align:middle;margin-left:6px;" /></a>
          </div>
          <p style="margin:0 0 8px;font-size:11px;color:#7c8196;text-align:center;word-break:break-all;">Si el botón no funciona, copia este enlace: ${escapeHtml(input.ctaUrl)}</p>`
       : '';
@@ -364,7 +364,7 @@ export function renderBrandedEmail(input: BrandedEmailInput): RenderedEmail {
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:${site.cardBg};border:1px solid #1e1e2e;border-radius:18px;overflow:hidden;">
       ${devconBanner}
       <tr>
-        <td style="padding:22px 26px;background:linear-gradient(135deg,${site.accent},${site.accent2});">
+        <td style="padding:22px 26px;background-color:${site.accent};background-image:linear-gradient(135deg,${site.accent},${site.accent2});">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
             <tr>${headerCells}</tr>
           </table>

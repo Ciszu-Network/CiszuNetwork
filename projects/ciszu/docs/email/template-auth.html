@@ -12,7 +12,7 @@
         <td align="center">
           <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="background:#0d1118;border:1px solid #1e293b;border-radius:16px;overflow:hidden;">
             <tr>
-              <td style="padding:26px 32px;background:linear-gradient(135deg,#233f92,#4800ff);">
+              <td style="padding:26px 32px;background-color:#26398f;background-image:linear-gradient(135deg,#233f92,#4800ff);">
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                   <tr>
                     <td align="center" style="font-size:0;line-height:0;">
@@ -29,12 +29,20 @@
                 <table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px auto;">
                   <tr>
                     <td>
-                      <a href="{{ .ConfirmationURL }}" style="display:inline-block;padding:14px 32px;background:linear-gradient(135deg,#3a6bf0,#ff33cc);color:#ffffff;font-size:14px;font-weight:bold;text-decoration:none;border-radius:10px;">Confirmar</a>
+                      <a href="{{ .ConfirmationURL }}" style="display:inline-block;padding:14px 32px;background-color:#3a6bf0;background-image:linear-gradient(135deg,#3a6bf0,#ff33cc);color:#ffffff;font-size:14px;font-weight:bold;text-decoration:none;border-radius:10px;">Confirmar</a>
                     </td>
                   </tr>
                 </table>
                 <p style="margin:16px 0 0;color:#8a97ad;font-size:13px;line-height:1.6;text-align:center;">Si el botón no funciona, copia y pega este enlace en tu navegador:<br /><a href="{{ .ConfirmationURL }}" style="color:#3d6adf;word-break:break-all;">{{ .ConfirmationURL }}</a></p>
-                <p style="margin:20px 0 0;color:#8a97ad;font-size:12px;line-height:1.6;text-align:center;">Este enlace es temporal y expira en poco tiempo. Si no lo solicitaste tú, puedes ignorar este correo con total tranquilidad.</p>
+                <p style="margin:22px 0 0;color:#8a97ad;font-size:13px;line-height:1.6;text-align:center;">¿No puedes usar el enlace? Introduce este código de un solo uso:</p>
+                <table role="presentation" cellpadding="0" cellspacing="0" style="margin:10px auto 0;">
+                  <tr>
+                    <td style="padding:12px 20px;border-radius:10px;background-color:#0b0b16;border:1px solid #2a2a45;">
+                      <span style="font-family:'Consolas','Courier New',monospace;font-size:26px;font-weight:700;color:#ffffff;">{{ .Token }}</span>
+                    </td>
+                  </tr>
+                </table>
+                <p style="margin:20px 0 0;color:#8a97ad;font-size:12px;line-height:1.6;text-align:center;">Este enlace y código son temporales y expiran en poco tiempo. Si no lo solicitaste tú, puedes ignorar este correo con total tranquilidad.</p>
               </td>
             </tr>
             <tr>
@@ -50,6 +58,17 @@
                 <p style="margin:0;padding:10px 12px;border-radius:8px;background:#151522;border:1px solid #24243a;color:#8a97ad;font-size:10px;line-height:16px;text-align:center;">
                   Aviso: este correo se ha enviado a través de <strong style="color:#a8adbd;">Supabase</strong> (proveedor de autenticación del ecosistema) porque <strong style="color:#a8adbd;">Ciszu Network aún no dispone de un dominio de correo propio</strong>. En cuanto se adquiera, los correos saldrán desde un remitente oficial de Ciszu Network.
                 </p>
+                <p style="margin:14px 0 4px;color:#5a6879;font-size:10px;letter-spacing:2px;text-transform:uppercase;text-align:center;">Síguenos</p>
+                <div style="text-align:center;font-size:0;line-height:0;margin-bottom:12px;">
+                  <a href="https://www.youtube.com/@CiszuNetwork" style="display:inline-block;margin:0 5px;text-decoration:none;"><img src="https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn/email/assets/asset-15.png" width="18" height="18" alt="YouTube" style="display:inline-block;border:0;outline:none;" /></a>
+                  <a href="https://www.instagram.com/ciszunetwork/" style="display:inline-block;margin:0 5px;text-decoration:none;"><img src="https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn/email/assets/asset-16.png" width="18" height="18" alt="Instagram" style="display:inline-block;border:0;outline:none;" /></a>
+                  <a href="https://x.com/CiszukoAntony" style="display:inline-block;margin:0 5px;text-decoration:none;"><img src="https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn/email/assets/asset-17.png" width="18" height="18" alt="X" style="display:inline-block;border:0;outline:none;" /></a>
+                  <a href="https://www.facebook.com/profile.php?id=61572023767657" style="display:inline-block;margin:0 5px;text-decoration:none;"><img src="https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn/email/assets/asset-21.png" width="18" height="18" alt="Facebook" style="display:inline-block;border:0;outline:none;" /></a>
+                  <a href="https://discord.com/invite/W3kMtMMj6E" style="display:inline-block;margin:0 5px;text-decoration:none;"><img src="https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn/email/assets/asset-18.png" width="18" height="18" alt="Discord" style="display:inline-block;border:0;outline:none;" /></a>
+                  <a href="https://github.com/Ciszu-Network" style="display:inline-block;margin:0 5px;text-decoration:none;"><img src="https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn/email/assets/asset-19.png" width="18" height="18" alt="GitHub" style="display:inline-block;border:0;outline:none;" /></a>
+                  <a href="https://www.tiktok.com/@ciszunetwork" style="display:inline-block;margin:0 5px;text-decoration:none;"><img src="https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn/email/assets/asset-20.png" width="18" height="18" alt="TikTok" style="display:inline-block;border:0;outline:none;" /></a>
+                  <a href="https://wa.me/584126858111" style="display:inline-block;margin:0 5px;text-decoration:none;"><img src="https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn/email/assets/asset-22.png" width="18" height="18" alt="WhatsApp" style="display:inline-block;border:0;outline:none;" /></a>
+                </div>
                 <p style="margin:10px 0 0;text-align:center;font-size:0;line-height:0;">
                   <img src="https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn/email/ciszu-isotipo-email-2.png" width="48" height="48" alt="Ciszu Network" style="display:inline-block;border:0;outline:none;opacity:0.85;" />
                 </p>
