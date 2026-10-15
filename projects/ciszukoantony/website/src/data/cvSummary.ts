@@ -46,7 +46,7 @@ export const CV_CUSTOM_SUMMARY: CvSummaryBlock[] = [
     title: 'Habilidades destacadas',
     tone: 'pink',
     highlights: [
-      { icon: 'chip', label: 'Stack', body: 'Python 80% · HTML/CSS 85% · Git/GitHub 90% · SQL 60% · React 35%.' },
+      { icon: 'chip', label: 'Stack', body: 'Python 80% · HTML/CSS 85% · Git/GitHub 90% · React 45% · SQL 60%.' },
       { icon: 'palette', label: 'Diseño', body: 'Adobe, Affinity, Corel, DaVinci Resolve, Filmora y CapCut.' },
       { icon: 'certificates', label: 'Certificados', body: '55+ documentos reales de Cisco, Microsoft, IBM, HP, EF SET, Penn y más.' },
     ],
