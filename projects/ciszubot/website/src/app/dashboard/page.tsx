@@ -151,8 +151,8 @@ export default async function DashboardPage() {
 
         {/* Aviso beta trial */}
         <div className="mt-6 flex flex-wrap items-center gap-3 rounded-2xl border border-neon-pink/30 bg-neon-pink/5 px-5 py-3">
-          <span className="rounded-full border border-neon-pink/50 bg-neon-pink/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-neon-pink">
-            <Icon name="clock" size={10} className="mr-1 inline" />
+          <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-neon-pink/50 bg-neon-pink/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-neon-pink">
+            <Icon name="clock" size={10} className="shrink-0" />
             {t.dashboardPage.betaBadge}
           </span>
           <p className="min-w-0 flex-1 text-xs text-ink/70">{t.dashboardPage.betaNote}</p>

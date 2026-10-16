@@ -81,7 +81,7 @@ const featSlugOf = (s: SectionKey): string => s.slice('feat:'.length);
 
 /** Funciones configurables por servidor (toggles del dashboard). */
 const FEATURE_ROWS: { slug: string; icon: string; labelKey: keyof Dict['guildPage']; descKey: keyof Dict['guildPage']; premium?: boolean }[] = [
-  { slug: 'music', icon: 'star', labelKey: 'featMusic', descKey: 'featMusicDesc', premium: true },
+  { slug: 'music', icon: 'music', labelKey: 'featMusic', descKey: 'featMusicDesc', premium: true },
   { slug: 'search', icon: 'search', labelKey: 'featSearch', descKey: 'featSearchDesc', premium: true },
   { slug: 'minigames', icon: 'gamepad', labelKey: 'featMinigames', descKey: 'featMinigamesDesc' },
   { slug: 'economy', icon: 'trophy', labelKey: 'featEconomy', descKey: 'featEconomyDesc' },
@@ -293,12 +293,14 @@ function SectionJson({
       <button type="button" disabled={disabled} onClick={onExport} className={btn} title={exportLabel}>
         <FloppyMini />
         <Icon name="json" size={11} />
+        <Icon name="clock" size={10} />
         <span className="hidden sm:inline">{exportLabel}</span>
         <span>↓</span>
       </button>
       <button type="button" disabled={disabled} onClick={() => fileRef.current?.click()} className={btn} title={importLabel}>
         <FloppyMini />
         <Icon name="json" size={11} />
+        <Icon name="clock" size={10} />
         <span className="hidden sm:inline">{importLabel}</span>
         <span>↑</span>
       </button>
@@ -1103,8 +1105,8 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         )}
 
         <div className="mt-8 lg:flex lg:items-start lg:gap-6">
-          <nav className="mb-4 flex gap-1.5 overflow-x-auto pb-1 lg:mb-0 lg:w-44 lg:shrink-0 lg:flex-col lg:overflow-visible lg:pb-0">
-            <div className="mb-2 w-full space-y-1.5 lg:w-44">
+          <nav className="mb-4 flex gap-1.5 overflow-x-auto pb-1 lg:mb-0 lg:w-72 lg:shrink-0 lg:flex-col lg:overflow-visible lg:pb-0">
+            <div className="mb-2 w-full space-y-1.5 lg:w-72">
               <input
                 value={subnavQuery}
                 onChange={(e) => setSubnavQuery(e.target.value)}
@@ -1149,7 +1151,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 <Icon name={item.icon} size={14} className="text-neon-blue" />
                 {t[item.label]}
                 <span
-                  className={`inline-flex items-center gap-0.5 rounded-full border px-1.5 py-0.5 text-[7px] font-black uppercase tracking-widest ${
+                  className={`inline-flex items-center gap-0.5 whitespace-nowrap rounded-full border px-1.5 py-0.5 text-[7px] font-black uppercase tracking-widest ${
                     item.tag === 'premium'
                       ? 'border-amber-400/40 bg-amber-400/10 text-amber-400'
                       : item.tag === 'mixed'
