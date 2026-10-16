@@ -28,7 +28,7 @@ Sentry.init({
   ],
   integrations: [
     Sentry.replayIntegration(),
-    Sentry.feedbackIntegration({
+    Sentry.feedbackSyncIntegration({
       colorScheme: 'system',
       showBranding: false,
       // Sin autoinjección del trigger flotante de Sentry: lo maneja FeedbackFab

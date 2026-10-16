@@ -28,7 +28,7 @@ Sentry.init({
   ],
   integrations: [
     Sentry.replayIntegration(),
-    Sentry.feedbackIntegration({
+    Sentry.feedbackSyncIntegration({
       colorScheme: 'system',
       // Sin trigger automático de Sentry: el botón "Reportar un problema" lo
       // maneja FeedbackFab (esquina inferior-izquierda) vía Sentry.getFeedback().
