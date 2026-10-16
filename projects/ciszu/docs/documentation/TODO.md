@@ -2,14 +2,6 @@
 
 ### Cambios Generales:
 
-> **Deploys y cuota de Vercel (10 oct 2026)**: el plan gratis limita a **100 deployments/día por
-> cuenta**; con ~25 pushes × 4 webs se agotó y los últimos deploys fallaron con
-> `api-deployments-free-per-day` (NO era el código). Solución automática: workflow
-> **`ensure-deploys.yml`** (cada hora, con detección por SHA) relanza los deploys que falten; se
-> recupera solo tras el reinicio diario (00:00 UTC) sin quemar cuota cuando ya está desplegado.
-> Recomendación: **agrupar pushes** (cada push dispara 4 deploys) o valorar Vercel Pro si se
-> vuelve frecuente.
-
 #5 Crear sistema de anuncios: Google Adsense, GA4, GTM, Tag y Analytics pack completo.
 
   REVISIÓN 05 oct 2026 (2 días después): enlaces de la API verificados.
@@ -18,23 +10,41 @@
   el dataset `analytics` sigue con 0 tablas: Google aún no emite `analytics.events_*` (requiere
   tráfico + export diario). Ambas cosas son esperas externas, nada que ejecutar localmente.
 
+  REVISIÓN 16 oct 2026 (token OAuth nuevo de ciszunetwork@gmail.com + permisos concedidos):
+  - AdSense: cuenta `pub-3471969072198962` en **READY** (aprobada). Sitios: ciszubot,
+    ciszukoantony y ciszunetwork en `REQUIRES_REVIEW`; muzicmania en `GETTING_READY` (espera
+    externa de Google).
+  - GA4 propiedad 551642504 y BigQuery: ciszunetwork@gmail.com ya tiene acceso (Editor GA4 +
+    Viewer del dataset). GTM: los 4 contenedores responden por API.
+  - BigQuery: el dataset `analytics` seguía con 0 tablas → se activaron **`dailyExportEnabled`
+    + `streamingExportEnabled`** en el enlace GA4→BigQuery (16 oct); el streaming creará
+    `events_intraday_*` con los primeros eventos reales y el diario `events_YYYYMMDD`.
+  - AdSense→BigQuery por Data Transfer: la API exige **billing** en el proyecto 231298418565
+    (no configurado) — pendiente decidir; mientras tanto Looker Studio puede usar el
+    **conector nativo de AdSense** (sin BigQuery).
+  - OAuth: el token de ciszunetwork@gmail.com caduca cada **7 días** (app en modo Prueba);
+    publicarla requiere dominio propio (vercel.app no vale como dominio autorizado).
+
 - [ ] Looker Studio: conectar fuentes GA4 y crear dashboard.
   PENDIENTE de las tablas de BigQuery; además la creación de dashboards de
   Looker Studio NO tiene API (se crea manual en la UI). Cuando existan las
   tablas se conecta BigQuery y se monta el dashboard a mano.
+  (16 oct: el conector NATIVO de AdSense en Looker ya se puede usar sin
+  BigQuery; el de GA4/BigQuery espera la primera tabla.)
 - [ ] **Esperar tablas de BigQuery**: enlace VERIFICADO OK por API (05 oct):
   `properties/551642504/bigQueryLinks/yGFvijtXSdO5rW2I4KfTLw` →
   proyecto `231298418565`, dataset `analytics`, 4 data streams, región US
   (creado 03 oct 05:16). El dataset ya EXISTE pero sigue VACÍO (0 tablas):
   Google aún no ha emitido `analytics.events_*`. Requiere tráfico en las
   webs + el procesamiento diario; se generará la primera `events_YYYYMMDD`.
-  Revisar de nuevo en unos días.
+  Revisar de nuevo en unos días. (16 oct: streaming+daily ACTIVADOS; con el
+  primer evento real aparecerá `events_intraday_*`.)
 - [ ] **Looker Studio**: conectar BigQuery → crear dashboard (gratis).
   (Depende de las tablas anteriores; creación manual en la UI.)
 - [ ] **Aprobar sitios AdSense (ESPERA)**: verificado por API (05 oct) que la
   cuenta está en `state: NEEDS_ATTENTION` (revisión automática de Google, no se
   acelera). Los 4 sitios siguen en revisión. Verificar en la UI de AdSense en
-  unos días.
+  unos días. (16 oct: la CUENTA ya está READY; quedan los sitios en revisión.)
 
   - ads.txt: VERIFICADO correcto en las 4 webs (03 oct). El aviso "No encontrado" de AdSense
     era del 21 sept (antes de servir ads.txt); se corregirá en el próximo escaneo de AdSense.
@@ -106,39 +116,48 @@
 - [X] En la devcon se debe crar una nueva opcion para otorgar etiquetas o roles a un usuario en concreto, siempre sera global, nunca sera multicasillas esta vez, sera por cada website, y debe ser el username completo exacto, luego se escribe el rol a dar, los roles y tags apareceran en el perfil y activaran nueva funciones dependiendo del rol al hacer click en su perfil en el header, admin, mod, owner, bot, vip, betatesting, support, los ultimos 3 no son de staff, bot tampoco pero si tiene permisos de staff y sera otorgada a cuentas bots recreadas por cada website es decir, @ciszubot, @muzicmania y @ciszunetwork seran cuentas creadas por bots sin contraseña, son perfiles especiales. Finalmente owner, mod y admin si son staff y aparte de esa tag en el perfil debe aparecer la tag de staff. Cada uno tendra un panel diferente, opciones de debug entre mas grande el rango. El owner debe tener todos. Configuracion de debug, entre muchas otras cosas, como vista de staff en perfiles con activacion toggle, para eliminar ciertas cosas o cambiar ciertas cosas. Simepre con marca.
 - [X] Se debe crear un metodo de cierre de sesion remoto utilizado para cerrar sesion a cierta persona, este metodo solo lo podran ejecutar los moderadores, admins y owners. Con el fin de cerrar alguna sesion incluso de una cuenta por cada rango, es decir un mod no puede cerrar la sesion de un admin. Esto por seguridad de hackeos a cuentas. Esta opcion debe estar tanto para la GUI de cada website segun el debug y cuenta, y para la devconsole.
 - [X] Se debe crear un modal cuando una cuenta es baneada, el usuario automaticamente se redirecionara asu profile y aparecera un modal de su cuenta fue baneada e informacion del baneo. Razon fecha provocante etc. Lo mismo con los mutes.
-- [X] Username de guests @guestNNNN en las 4 webs: ciszubot ya lo tenía (`getGuestId`), añadido en ciszu (`getGuestUsername` + AuthMenu), antony (strip de espacios + AuthMenu) y muzicmania ya cumplía.
-- [ ] Revisar si el sistema de guard o bloqueo personalizado por website desde la devcon existe, con su pagina de "esta pagina no esta disponible" y razon, ya sea razon personalizada o razon default o razones defaults elegibles, es decir desde la devcon bloquear cualquier pagina de la pagina redireccionando a una pagina temporal o home transformado o como sea de "Pagina de mantenimiento". 
 
 **Ciszubot Website:**
 
-- [ ] Terminar paginas de dashboard (auth). Corregir la configuracion de la cuenta para permite doble login, usuario logeado con ciszu ID puede configurar su cuenta, usuario logeado con discord accede a dasboard, usuario logeado en ambos control total. Actualmente existe un problema claro, si ingreso al login luego de logearme con discord, dice que "CISZU ID ALREADY CONNECTED" lo cual es falso, por al ingresar en configuracion sigue pidiendo ingresar a CISZU ID. Esto se debe por que nunca se logea a ciszu ID.
+- [X] Iconos que no se veían en los emails de Supabase (supabase, check verde, flecha del
+  botón, advertencia de correo): AÑADIDOS a la plantilla de Supabase (assets del CDN) +
+  fondos sólidos de respaldo (Gmail ignora gradientes). Re-aplicadas las 5 plantillas (16 oct).
+- [X] Logo de ciszukoantony estirado en las plantillas: era el raster forzado a 170x40
+  (fuente 1000x537 → ahora 170x91 proporcional); generador corregido (16 oct).
+- [X] Email de clave de devcon con plantilla equivocada ("regístrate en Ciszu ID"): la
+  consola ahora SIEMPRE envía el correo branded "Clave de acceso a la Devcon" con código
+  CZ-XXXXXX (SMTP de ciszunetwork@gmail.com).
+- [X] El `CZ-` siempre visible y exacto: la plantilla de Supabase muestra `CZ-{{ .Token }}`;
+  los correos branded ya llevan `CZ-XXXXXX` sin espacios.
+- [X] App Password de ciszunetwork@gmail.com: guardada en el vault (`GMAIL_SMTP_USER` /
+  `GMAIL_APP_PASSWORD`), **SMTP propio configurado en Supabase** (rate limit eliminado) y
+  transporte SMTP implementado en el código (web 2FA + consola + fallback). También en los
+  4 proyectos de Vercel.
+- [ ] **SPAM (nuevo, 16 oct)**: el correo de devcon llegó a Spam. Mitigado en la cuenta
+  receptora (marcar "No es spam" + filtro "No enviar nunca a Spam" + añadir a contactos);
+  de raíz se resuelve con dominio propio + DKIM/SPF/DMARC (depende de la tarea de dominio).
+- [X] Resumen de proyectos en la devcon ("1 proyecto demo" + `System.Object[]`): la lista se
+  SINCRONIZA con las carpetas reales de `projects/` (7 proyectos) y el parseo de PS 5.1
+  quedó corregido (desenrollado del array de ConvertFrom-Json) — también en features,
+  testing, catálogo de sitios y sesiones activas.
+- [X] Error "Website invalido" en el resumen de sitios: era una sesión de devcon antigua;
+  el comando actual funciona (`status`/`blocked` sin sitio). Reabrir la devcon para
+  recargar las funciones.
+- [X] Otorgar rol OWNER: corregido (metadata de auth actualizada + `roles.js` ahora resuelve
+  el usuario por las tablas de perfiles además de auth). Concedido **owner a @ciszukoantony
+  en las 4 webs** (16 oct).
+- [X] Estado del bot (`botstatus.mjs`): detección por heartbeat antes de actuar + disclaimer
+  de FORZADO (la devcon pide SI → `--force`, queda registrado en el log), mensajes claros
+  de aplicado/forzado y `status` muestra el heartbeat real. Reabrir la devcon para recargar.
+- [X] Icono beta desalineado en el panel de información + reloj en TODAS las tags beta +
+  iconos free (regalo verde) / premium (corona) / mixed (corazón): aplicado en todo el
+  dashboard (16 oct).
+- [X] Selector de idioma: botón único que abre el modal con TODOS los idiomas (11; 4 activos
+  + "Próximamente").
+- [ ] **FAB de feedback (ciszubot)**: causa encontrada — el modal de Sentry se cargaba LAZY y
+  nunca renderizaba (el click "no hacía nada"), más el banner de cookies interceptando el
+  primer click. Arreglado con `feedbackSyncIntegration` (modal incluido) en las 4 webs +
+  fallback a `/feedback`. **Pendiente tu verificación tras el deploy** (`ba9cf1fe`).
 
-  El panel de auth de login y register deben ser inteligentes, si inicio con ciszu ID o me regsitro con ciszu ID obligatoriamente para usar el dashboard debo iniciar sesion a discord, y si quiero usar la config de la cuenta debo logearme o registrarme en ciszu ID. Es decir, el Discord OAuth y CiszuID no son obligatorios entre si, pero son duales y independientes.  De esta manera los paneles paginas de auth register y login quitan la zona de discord o quitan la zona de ciszu ID dependiendo de si el usuario esta o no esta logeado a ese panel. Es decir el auth de ciszubot es especial y se debe cambiar las pagians de auth para dividirlo entre el panel de discord y el panel de ciszu ID. Se debe reforzar la verificacion de ambas sesiones para que no de falsos positivos como ahora.
-
-  El quickdocks actual no me gusta me gustaba mas el anterior, el problema no era si es retaible o no. El problema es que esta incrustado dentro de la zona de la derecha del slidebar. En vez de estar debajo del todo. Para que me entiendas mejor, tanto los quickdocks como el las secciones prequickdocks, deben estar fijados debajo de toda la "zona" de configuracion resuemenes o slidebar, muy parecido a la pagina de documentation, puedes basarte de alli.
-
-  Por cada servidor no invitado siempre exitir un boton para invitar a ese servidor, y un boton de "configurar" que siempre dara error en caso de que no este invitado. El servidor debe estar con un efecto apagado cuando no este invitado y advertir de antes individualmente. Actualmente si se cumple, pero solo para el slidebar, tambien se debe aplicar para la zona de servidores de resumen global.
-
-  Cuando se mencione la palabra o tag OFFLINE debe estar en rojo, con animacion de un punto en live en rojo, no un tag amarillo.
-  El slidebar actual tiene un problema claro. Todo esta muy amontonado. Y usa no se reutiliza los compontentes. Primero que nada el slidebar debe ser mas grande, mas ancho, ademas de estar mas pegado a la izquierda, es decir tiene demasiado margin o padding actualmente. Cambia la seccion de AYUDA por ATAJOS y lleva la opcion de idiomas y temas hacia alli. Mueve la seccion de cuenta hacia arriba del todo antes de resumen y utiliza como icono de perfil el icono de perfil de discord del usuario y no un default a menos que no tenga. Cada opcion debe tener colores hover o degradados unicos al seleccionar. Algo muy importante es que la opcion de tema y la opcion de idiomas NO deben ser opciones con un componente nuevo, es decir, debes reutilizar el compontente de idiomas y el componente de temas. Extrae desde el modal de preferencias locales el de tema y el de idioma y llevalos hacia ese slidebar de manera vertical y adaptada con minimodales emergentes si hace falta por ejemplo para mostrar los idiomas. Cuando se mencione o un tag de invite o boton de invite utiliza el degradado de invite del header. Finalmente cambia la seccion de servidores por una seccion desplegable. No como una lista, si no como un mosaico dentro de un modal popover o popup que aperezca estilo toggle, es una seccion importante y unica, especial por que al seleccionar apareceran los servidores. La seccion debe estar asignada sin nung servidor al inicio (dafault global) al seleccionar una opcion es cuando cambia al servidor seleccionado. Solo se puede seleccionar 1 servidor, no es multicheck es un cambio de servidor. Cuando esta en un servidor en especifoc debe aparecer una banda o seccion arriba del todo mo un herotitle que diga el servidor actual para saber en donde se estan aplicando los cambios, ademas de cambiar la seccion dentro del slidebar. En la opcion de perfil debe aparecerse los 2 nombres de la cuenta aparte del perfil. Debe ser una subseccion al seleccionarlo toggle flechita aparece un modal pegado el slidebar popup o popover que ahora si aparezca las opciones de configuracion o de perfil.
-  Los useful links quitalos del resumen, es innecesario ya teniendo los quickdocks.
-
-  Agranda la seccion de tus servidores en el resumen, agrega quick acts acciones rapidas, mas informacion, animaciones y mas. Despues de eso seria la seccion de prequickdocks que ya dije no deberia estar alli si no fuera de esa zona de config.
-
-  Intenta aprovechar el espacio, cambia el fondo por cada servidor. Aprovecha caracteristicas de discord.
-  Agrega mas iconos por ejemplo para marcar funciones premimum o beta, la zona de beta trial entre otros.
-
-  Actualmente el discleimer de ciszubot esta mas o menos bien pero me gustaria que el icono fuera rojo, que el discleimer sea mas inponente si falta crear un nuevo tipo de discleimer. Finalmente actualmente la razon es no reason specified ya te dije que selecciones el de mantenimiento.
-  Finalmente, agrega mas informacion y botones a las secciones de prequickdocks, agrega mas info en how to use ciszubot, ademas en la zona de patrocinio utiliza los widgets, utiliza los iconos y eso de cooming soon no me gusta terminalo usa links reales, cambia el color por cada boton funcional, etc. Agranda la secciones para que no sean cards en fila si no secciones grandes.
-
-  El error mas gigante actual es que actualmente el bot YA esta invitado en 2 servidores donde YO tengo acceso a admin, pero en el dashboard no lo detecta y sigue diciendo que "se necesita invitar", talvez por que el bot este apagado o no lo se, intenta reforzar el sistema de verificacion si un bot esta o no adentro de un servidor y sus permisos. Si el bot necesita permisos por accion o por opcion pedir o discleimer modal emergente. Aclarar si hubo un error al invitar, redireccion fallback despues de una invitacion. Autoactualizacion, modal de gracias por invitar en dashboard. Guardar informacion del servidor como su ID o nombre. Mejorar el sistema de comprobacion de staff del servidor, y si el bot esta apagado y es necesario para sincronizar el servidor y su invitacion aclarar dentro del error la razon (por que esta offline.)
-
-  Las acciones del usuario no son guardables hasta que le de a un boton de guardar dentro de un panel flotante que aparecera solamente cuando se registra cambios no guardados, tambein existira la opcion de guardado automatico configurable activado por defacto, y la opcion deshacer o rehacer dentro de ese panel. Aparece con animacion fluida inferior sticky, Al guardar hacer animacion de guardando, al finalizar correctamente el guardado y aplicaciones reales mostrar que todo esta correcto de lo contrario error. Y quitar autoamticamente el panel a los 1 segundo. El usuario solo puede hacer cambios despues de terminar el guardado anterior. Los datos del servidor se debe actualizar constantemente, es decir, si un usuario crea un rol, y en algunas de las opciones se requiere seleccionar roles del servidor, si el usuario no recargo la pagina puede recargar la pagina, recargar con un boton flotante para recargar datos del servidor o esperar un periodo de tiempo re recarge automatico, es decir paginas dinamicas.
-
-  Finalmente, todas las opciones deben tener etiquetas de FREE, pero algunas que TU consideres PREMIUM. Agregalas pero alado de esa etiqueta agrega que sera por BETA TRIAL FREE, es decir todas son FREE, el sistema premium se agregara despues, incluso. En las secciones prequickdocks agrega un discleimer de que las opciones de BETA TRIAL FREE cambiaran a premium en cualquier momento, y que se debe aprovechar este momento.
-
-  Por cada servidor en su resumen ademas de info de ciszubot agrega info del servidor. Crea UI para listas de roles, canales, crea campos de textos que permitan markdown de discord, por cada opcion has que la configuracion se peuda cargar atravez de JSONs, algo asi como plantillas universales para que por cada opcion o desde el resumen (global desde el servidor) exportar o importar guardados (backups) que cargan y segun la config aplica los cambios.
-
-  Los JSON debe tener una nomenclatura clara, segun por opcion, fecha, usuario, indicar que es un backup de ciszubot etc.
 - [ ] Añadir VPS 24 7 AL BOT. (Tarea normal: desplegar el bot en un host 24/7 — panel gratuito
   tipo bot-hosting.net con `deploy/ciszubot-standalone.zip`, o VPS genérico; requiere cuenta y/o pago.
