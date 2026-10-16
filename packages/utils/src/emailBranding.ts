@@ -665,7 +665,7 @@ export interface SendEmailResult {
   error?: string;
   providerId?: string;
   previewOnly?: boolean;
-  via?: 'Resend' | 'Gmail';
+  via?: 'Resend' | 'Gmail' | 'Gmail SMTP';
 }
 
 /**
@@ -713,9 +713,153 @@ export async function sendViaGmail(input: SendEmailInput): Promise<SendEmailResu
 }
 
 /**
- * Envía un email. Orden de transporte: Resend (si hay `RESEND_API_KEY`) y, si
- * no, Gmail API (OAuth del sistema). Sin ninguna de las dos, devuelve el motivo
- * en vez de fingir éxito. Con `EMAIL_ALLOW_PREVIEW=1` marca `previewOnly`.
+ * Envía por SMTP de Gmail con una App Password (GMAIL_SMTP_USER +
+ * GMAIL_APP_PASSWORD del vault). Es el transporte durable del sistema: no
+ * caduca como el refresh token de OAuth (la app OAuth en modo Testing caduca
+ * cada 7 días) y no lo limita el mailer de Supabase. Implementado a mano sobre
+ * `node:net`/`node:tls` (STARTTLS, AUTH LOGIN) para no añadir dependencias.
+ */
+export async function sendViaGmailSmtp(input: SendEmailInput): Promise<SendEmailResult> {
+  const user = process.env.GMAIL_SMTP_USER;
+  const pass = process.env.GMAIL_APP_PASSWORD;
+  const allowPreview = input.allowPreview ?? process.env.EMAIL_ALLOW_PREVIEW === '1';
+  if (!user || !pass) {
+    if (allowPreview) return { sent: false, previewOnly: true, error: 'Vista previa local: falta SMTP de Gmail.' };
+    return { sent: false, error: 'No hay credencial SMTP de Gmail (faltan GMAIL_SMTP_USER / GMAIL_APP_PASSWORD).' };
+  }
+  try {
+    // Sin `import('node:net')` estático ni dinámico: webpack no soporta el scheme
+    // `node:` en el grafo web (rompía `next build`). `process.getBuiltinModule`
+    // (Node 22.3+) devuelve el módulo nativo en runtime sin tocar el bundler.
+    type NetMod = typeof import('node:net');
+    type TlsMod = typeof import('node:tls');
+    const getBuiltin = (name: string): unknown =>
+      (process as unknown as { getBuiltinModule?: (n: string) => unknown }).getBuiltinModule?.(name);
+    const net = getBuiltin('node:net') as NetMod | undefined;
+    const tlsMod = getBuiltin('node:tls') as TlsMod | undefined;
+    if (!net || !tlsMod) {
+      return { sent: false, error: 'SMTP no disponible en este runtime (requiere Node).' };
+    }
+    const HOST = 'smtp.gmail.com';
+    const PORT = 587;
+
+    type SmtpSession = {
+      wait: () => Promise<{ code: number; text: string }>;
+      cmd: (line: string) => Promise<{ code: number; text: string }>;
+      detach: () => void;
+    };
+    const session = (sock: import('node:net').Socket): SmtpSession => {
+      let buffer = '';
+      let lines: string[] = [];
+      let resolver: ((v: { code: number; text: string }) => void) | null = null;
+      const onData = (chunk: string | Buffer) => {
+        buffer += chunk.toString('utf8');
+        let idx: number;
+        while ((idx = buffer.indexOf('\r\n')) !== -1) {
+          const line = buffer.slice(0, idx);
+          buffer = buffer.slice(idx + 2);
+          lines.push(line);
+          if (/^\d{3} /.test(line) && resolver) {
+            const code = Number(line.slice(0, 3));
+            const text = lines.join('\n');
+            lines = [];
+            const r = resolver;
+            resolver = null;
+            r({ code, text });
+          }
+        }
+      };
+      sock.setEncoding('utf8');
+      sock.on('data', onData);
+      const wait = () => new Promise<{ code: number; text: string }>((res) => { resolver = res; });
+      const cmd = async (line: string) => {
+        const p = wait();
+        sock.write(line + '\r\n');
+        return p;
+      };
+      return { wait, cmd, detach: () => sock.removeListener('data', onData) };
+    };
+
+    const fail = (what: string, r: { code: number; text: string }) =>
+      new Error(`SMTP ${what}: ${r.code} ${r.text.split('\n').pop()?.slice(0, 120) ?? ''}`);
+
+    let sock: import('node:net').Socket = net.connect({ host: HOST, port: PORT });
+    let s = session(sock);
+    let r = await s.wait();
+    if (r.code !== 220) throw fail('saludo', r);
+    r = await s.cmd('EHLO ciszu.network');
+    if (r.code !== 250) throw fail('EHLO', r);
+    r = await s.cmd('STARTTLS');
+    if (r.code !== 220) throw fail('STARTTLS', r);
+    s.detach();
+
+    sock = tlsMod.connect({ socket: sock, servername: HOST });
+    await new Promise<void>((res, rej) => {
+      sock.once('secureConnect', res);
+      sock.once('error', rej);
+    });
+    s = session(sock);
+    r = await s.cmd('EHLO ciszu.network');
+    if (r.code !== 250) throw fail('EHLO TLS', r);
+    r = await s.cmd('AUTH LOGIN');
+    if (r.code !== 334) throw fail('AUTH', r);
+    r = await s.cmd(Buffer.from(user, 'utf8').toString('base64'));
+    if (r.code !== 334) throw fail('AUTH user', r);
+    r = await s.cmd(Buffer.from(pass, 'utf8').toString('base64'));
+    if (r.code !== 235) throw new Error(`SMTP AUTH: ${r.code} (App Password incorrecta o cuenta sin 2FA)`);
+    r = await s.cmd(`MAIL FROM:<${user}>`);
+    if (r.code !== 250) throw fail('MAIL FROM', r);
+    r = await s.cmd(`RCPT TO:<${input.to}>`);
+    if (r.code !== 250 && r.code !== 251) throw fail('RCPT TO', r);
+    r = await s.cmd('DATA');
+    if (r.code !== 354) throw fail('DATA', r);
+
+    const boundary = `czb-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+    const headers = [
+      `From: Ciszu Network <${user}>`,
+      `To: ${input.to}`,
+      `Subject: =?UTF-8?B?${Buffer.from(input.subject, 'utf8').toString('base64')}?=`,
+      `Date: ${new Date().toUTCString()}`,
+      `Message-ID: <${Date.now().toString(36)}.${Math.random().toString(36).slice(2)}@ciszu.network>`,
+      'MIME-Version: 1.0',
+      `Content-Type: multipart/alternative; boundary="${boundary}"`,
+    ].join('\r\n');
+    const body = [
+      `--${boundary}`,
+      'Content-Type: text/plain; charset=UTF-8',
+      'Content-Transfer-Encoding: 8bit',
+      '',
+      input.text,
+      `--${boundary}`,
+      'Content-Type: text/html; charset=UTF-8',
+      'Content-Transfer-Encoding: 8bit',
+      '',
+      input.html,
+      `--${boundary}--`,
+      '',
+    ].join('\r\n');
+    const message = `${headers}\r\n\r\n${body}`;
+    const stuffed = message
+      .split('\r\n')
+      .map((l) => (l.startsWith('.') ? '.' + l : l))
+      .join('\r\n');
+    const done = s.wait();
+    sock.write(stuffed + '\r\n.\r\n');
+    r = await done;
+    if (r.code !== 250) throw fail('envío', r);
+    await s.cmd('QUIT');
+    sock.end();
+    return { sent: true, via: 'Gmail SMTP' };
+  } catch (err) {
+    return { sent: false, error: err instanceof Error ? err.message : 'Fallo de red al enviar por SMTP.' };
+  }
+}
+
+/**
+ * Envía un email. Orden de transporte: Resend (si hay `RESEND_API_KEY`), SMTP
+ * de Gmail (App Password del sistema) y, como último recurso, Gmail API (OAuth).
+ * Sin ninguna, devuelve el motivo en vez de fingir éxito. Con
+ * `EMAIL_ALLOW_PREVIEW=1` marca `previewOnly`.
  */
 export async function sendBrandedEmail(input: SendEmailInput): Promise<SendEmailResult> {
   const apiKey = input.apiKey ?? process.env.RESEND_API_KEY;
@@ -744,13 +888,18 @@ export async function sendBrandedEmail(input: SendEmailInput): Promise<SendEmail
     }
   }
 
-  // 2) Sin Resend: Gmail API (OAuth del sistema), hasta que haya dominio.
+  // 2) Sin Resend: SMTP de Gmail (App Password del sistema — transporte durable).
+  const smtp = await sendViaGmailSmtp(input);
+  if (smtp.sent) return smtp;
+  if (smtp.previewOnly) return smtp;
+
+  // 3) Último recurso: Gmail API (OAuth del sistema).
   const gmail = await sendViaGmail(input);
   if (gmail.sent) return gmail;
   if (gmail.previewOnly) return gmail;
-  if (allowPreview) return { sent: false, previewOnly: true, error: 'Vista previa local: falta RESEND_API_KEY o el OAuth de Gmail.' };
+  if (allowPreview) return { sent: false, previewOnly: true, error: 'Vista previa local: falta RESEND_API_KEY, el SMTP o el OAuth de Gmail.' };
 
-  return { sent: false, error: `No hay transporte de email disponible: falta RESEND_API_KEY · ${gmail.error}. La credencial de envío es del sistema (vault/Vercel).` };
+  return { sent: false, error: `No hay transporte de email disponible: ${smtp.error} · ${gmail.error}. La credencial de envío es del sistema (vault/Vercel).` };
 }
 
 export { EMAIL_SITE_ISOTYPES, EMAIL_CISZU_WORDMARK, EMAIL_SOCIAL_ICONS, EMAIL_CATEGORY_ICONS, EMAIL_UI_ICONS, EMAIL_SITE_HEADER_EXTRAS, EMAIL_FOOTER_ISOTYPE, EMAIL_CROSSOVER };

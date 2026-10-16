@@ -22,7 +22,7 @@ export const EMAIL_FOOTER_ISOTYPE: EmailLogo =   { dataUri: 'https://obwzzmbvkrc
 export const EMAIL_SITE_HEADER_EXTRAS: Record<string, EmailLogo[]> = {
   "ciszubot": [  { dataUri: 'https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn/email/assets/asset-07.png', width: 72, height: 72 },  { dataUri: 'https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn/email/assets/asset-08.png', width: 180, height: 33 }],
   "muzicmania": [  { dataUri: 'https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn/email/assets/asset-09.png', width: 80, height: 80 },  { dataUri: 'https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn/email/assets/asset-10.png', width: 170, height: 34 }],
-  "ciszukoantony": [  { dataUri: 'https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn/email/assets/asset-11.png', width: 80, height: 71 },  { dataUri: 'https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn/email/assets/asset-12.png', width: 170, height: 40 },  { dataUri: 'https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn/email/assets/asset-13.png', width: 46, height: 46 }],
+  "ciszukoantony": [  { dataUri: 'https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn/email/assets/asset-11.png', width: 80, height: 71 },  { dataUri: 'https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn/email/assets/asset-12.png', width: 170, height: 91 },  { dataUri: 'https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn/email/assets/asset-13.png', width: 46, height: 46 }],
   "ciszu": [],
 };
 

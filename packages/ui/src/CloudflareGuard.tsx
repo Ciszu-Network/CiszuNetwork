@@ -360,6 +360,7 @@ export default function CloudflareGuard({
     if (!el || typeof window === 'undefined') return;
     const seq = ++renderSeqRef.current;
     scriptStartRef.current = Date.now();
+    let watchdog: number | undefined;
     const tryRender = () => {
       // Si cambió el estado mientras esperábamos el script, ya no renderizamos
       if (seq !== renderSeqRef.current) return;
@@ -393,8 +394,19 @@ export default function CloudflareGuard({
         },
       });
       widgetIdRef.current = id;
+      // Watchdog: si el widget no pintó su iframe en 8s (render silencioso sin
+      // error-callback), reintentar en vez de dejar "Iniciando verificación…"
+      // para siempre (el usuario veía una página bloqueada sin salida).
+      watchdog = window.setTimeout(() => {
+        if (seq !== renderSeqRef.current) return;
+        const host = document.getElementById('cf-guard-widget');
+        if (host && !host.querySelector('iframe')) startAutoRetry();
+      }, 8000);
     };
     tryRender();
+    return () => {
+      if (watchdog !== undefined) window.clearTimeout(watchdog);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mounted, enabled, state, regen]);
 

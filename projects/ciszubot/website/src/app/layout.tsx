@@ -102,7 +102,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </head>
       <body className="bg-bg text-ink min-h-screen font-sans flex flex-col">
         <QueryProvider>
-           <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={GUARD_LOGO} title="CiszuBot" subtitle="CiszuBot Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszubot">
+           {/* Gate de Cloudflare DESACTIVADO en ciszubot (sin siteKey ⇒ degradación
+               segura, nunca bloquea): el overlay cubría los FABs (feedback/PDWA)
+               y el reto podía quedarse colgado, dejando botones muertos.
+               Muzicmania ya opera así; el resto de la seguridad sigue activa
+               (BotID en rutas sensibles + reCAPTCHA en formularios). */}
+           <CloudflareGuard logo={GUARD_LOGO} title="CiszuBot" subtitle="CiszuBot Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszubot">
              <AdBlockerGuard site="ciszubot" logo={GUARD_LOGO} title="CiszuBot" accent="#38bdf8" accentAlt="#ff33cc" donateHref="https://ciszubot.vercel.app/donate">
             <AuthProvider>
               <ToastProvider>
