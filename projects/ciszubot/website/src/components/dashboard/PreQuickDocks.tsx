@@ -134,7 +134,8 @@ export default function PreQuickDocks() {
             <h2 className="font-header text-xl font-black text-ink">{dict.premiumPromo.title}</h2>
             <p className="text-sm text-muted">{dict.premiumPromo.desc}</p>
           </div>
-          <span className="rounded-full border border-neon-pink/50 bg-neon-pink/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-neon-pink">
+          <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-neon-pink/50 bg-neon-pink/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-neon-pink">
+            <Icon name="clock" size={11} className="shrink-0" />
             {dict.premiumPromo.beta}
           </span>
         </div>

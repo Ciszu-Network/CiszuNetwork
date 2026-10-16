@@ -34,9 +34,15 @@ const openFeedback = async () => {
     const mod = await import('@sentry/nextjs');
     const feedback = mod.getFeedback?.();
     const form = await feedback?.createForm?.();
-    form?.open();
+    if (form) {
+      form.open();
+      return;
+    }
+    // Fallback: si Sentry no está disponible (bloqueado, init fallido), abrir
+    // la página interna de feedback para que el botón SIEMPRE haga algo.
+    window.location.href = '/feedback';
   } catch {
-    /* feedback no disponible */
+    window.location.href = '/feedback';
   }
 };
 

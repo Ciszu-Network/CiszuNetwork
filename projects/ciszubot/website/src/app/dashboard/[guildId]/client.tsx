@@ -183,8 +183,8 @@ function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void 
 function Badge({ kind, dict }: { kind: 'free' | 'premium'; dict: Dict }) {
   if (kind === 'free') {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-emerald-400">
-        <span aria-hidden>✔</span>
+      <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-emerald-400/40 bg-emerald-400/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-emerald-400">
+        <Icon name="gift" size={9} className="shrink-0" />
         {dict.guildPage.free}
       </span>
     );
@@ -1164,9 +1164,13 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                       <Icon name="clock" size={7} className="shrink-0" /> {t.betaBadge}
                     </>
                   ) : item.tag === 'mixed' ? (
-                    t.tagMixed
+                    <>
+                      <Icon name="favorite" size={7} className="shrink-0" /> {t.tagMixed}
+                    </>
                   ) : (
-                    t.tagFree
+                    <>
+                      <Icon name="gift" size={7} className="shrink-0" /> {t.tagFree}
+                    </>
                   )}
                 </span>
               </button>

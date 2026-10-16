@@ -140,7 +140,8 @@ export default function BotPreferencesPage() {
           </h2>
         </div>
         <div className="flex flex-wrap items-center gap-4 rounded-xl border border-white/10 bg-black/20 px-4 py-4">
-          <span className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-400">
+          <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-400">
+            <Icon name="gift" size={11} className="shrink-0" />
             {t.planFree}
           </span>
           {beta !== false && (

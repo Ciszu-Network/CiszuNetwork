@@ -341,7 +341,8 @@ export default function ExplorePage() {
               </p>
               <h2 className="mt-2 font-header text-2xl font-black text-white">{t.premiumPromo.title}</h2>
               <p className="mt-2 text-sm leading-relaxed text-white/60">{t.premiumPromo.desc}</p>
-              <span className="mt-4 inline-block rounded-full border border-neon-pink/50 bg-neon-pink/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-neon-pink">
+              <span className="mt-4 inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-neon-pink/50 bg-neon-pink/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-neon-pink">
+                <Icon name="clock" size={11} className="shrink-0" />
                 {t.premiumPromo.beta}
               </span>
             </div>
