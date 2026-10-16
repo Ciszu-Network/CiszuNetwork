@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Icon, LANGUAGE_OPTIONS, useToast } from '@ciszu/ui';
+import { Icon, LANGUAGE_OPTIONS, Modal, useToast } from '@ciszu/ui';
 import { useClientI18n } from '@/hooks/useClientI18n';
 import { usePageTitle } from '@/lib/usePageTitle';
 import InviteLink from '@/components/dashboard/InviteLink';
@@ -38,6 +38,7 @@ export default function BotPreferencesPage() {
   const t = dict.botPrefs;
   const { toast } = useToast();
   const [beta, setBeta] = useState<boolean | null>(null);
+  const [langModal, setLangModal] = useState(false);
   const [saves, setSaves] = useState<SaveEntry[]>([]);
   const [savesTotal, setSavesTotal] = useState(0);
   const [savesSession, setSavesSession] = useState(0);
@@ -143,7 +144,8 @@ export default function BotPreferencesPage() {
             {t.planFree}
           </span>
           {beta !== false && (
-            <span className="rounded-full border border-neon-pink/50 bg-neon-pink/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-neon-pink">
+            <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-neon-pink/50 bg-neon-pink/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-neon-pink">
+              <Icon name="clock" size={11} className="shrink-0" />
               {t.planBeta}
             </span>
           )}
@@ -167,25 +169,66 @@ export default function BotPreferencesPage() {
           </h2>
         </div>
         <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-white/40">{t.langLabel}</p>
-        <div className="flex flex-wrap gap-2">
-          {LANGUAGE_OPTIONS.filter((o) => o.available).map((o) => (
+        {/* Un solo botón → modal con TODOS los idiomas (4 activos + bloqueados
+            atenuados). Evita la fila de botones que se rompe al crecer la lista. */}
+        {(() => {
+          const current = LANGUAGE_OPTIONS.find((o) => o.code === lang) ?? LANGUAGE_OPTIONS[0];
+          return (
             <button
-              key={o.code}
               type="button"
-              onClick={() => setLang(o.code)}
-              className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-bold transition ${
-                lang === o.code
-                  ? 'border-neon-blue/60 bg-neon-blue/10 text-white'
-                  : 'border-white/10 bg-black/20 text-white/60 hover:border-white/25 hover:text-white'
-              }`}
+              onClick={() => setLangModal(true)}
+              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs font-bold text-white/80 transition hover:border-neon-blue/60 hover:text-white"
             >
               <span className="inline-flex h-5 w-5 items-center justify-center overflow-hidden rounded-full [&>svg]:h-full [&>svg]:w-full">
-                {o.flag}
+                {current.flag}
               </span>
-              {o.label}
+              {current.label}
+              <Icon name="chevronRight" size={13} className="shrink-0 text-white/40" />
             </button>
-          ))}
-        </div>
+          );
+        })()}
+        <Modal
+          open={langModal}
+          onOpenChange={setLangModal}
+          title={t.langModalTitle}
+          description={t.langModalDesc}
+          size="lg"
+        >
+          <div className="grid max-h-[60vh] grid-cols-1 gap-2 overflow-auto pr-1 sm:grid-cols-2">
+            {LANGUAGE_OPTIONS.map((o) => (
+              <button
+                key={o.code}
+                type="button"
+                disabled={!o.available}
+                onClick={() => {
+                  if (!o.available) return;
+                  setLang(o.code);
+                  setLangModal(false);
+                }}
+                className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-left text-xs font-bold transition ${
+                  o.available
+                    ? lang === o.code
+                      ? 'border-neon-blue/60 bg-neon-blue/10 text-white'
+                      : 'border-white/10 bg-black/20 text-white/60 hover:border-white/25 hover:text-white'
+                    : 'cursor-not-allowed border-white/5 bg-black/10 text-white/25'
+                }`}
+              >
+                <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden rounded-full [&>svg]:h-full [&>svg]:w-full">
+                  {o.flag}
+                </span>
+                <span className="min-w-0 flex-1 truncate">{o.label}</span>
+                {!o.available && (
+                  <span className="shrink-0 rounded-full border border-white/10 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest text-white/35">
+                    {t.langSoon}
+                  </span>
+                )}
+                {o.available && lang === o.code && (
+                  <Icon name="verified" size={12} className="shrink-0 text-neon-blue" />
+                )}
+              </button>
+            ))}
+          </div>
+        </Modal>
         <p className="mb-3 mt-5 text-[10px] font-black uppercase tracking-widest text-white/40">{t.themeLabel}</p>
         <button
           type="button"

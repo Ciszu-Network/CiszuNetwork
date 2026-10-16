@@ -76,7 +76,7 @@ export default function PremiumClient({ beta, hasBotInServer }: PremiumClientPro
               <h1 className="mt-3 font-header text-4xl font-black text-white md:text-5xl">{t.title}</h1>
               <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/60">{t.subtitle}</p>
               <span className="mt-5 inline-flex items-center gap-2 rounded-full border border-neon-pink/50 bg-neon-pink/10 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-neon-pink">
-                <Icon name="favorite" size={12} />
+                <Icon name="clock" size={12} className="shrink-0" />
                 {t.betaBadge} · {t.betaNote}
               </span>
             </div>

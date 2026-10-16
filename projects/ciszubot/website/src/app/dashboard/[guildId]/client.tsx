@@ -190,9 +190,12 @@ function Badge({ kind, dict }: { kind: 'free' | 'premium'; dict: Dict }) {
     );
   }
   return (
-    <span className="inline-flex items-center gap-1 rounded-full border border-neon-pink/50 bg-neon-pink/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-neon-pink">
-      <Icon name="crown" size={9} />
-      {dict.guildPage.premium} · <Icon name="clock" size={9} /> {dict.guildPage.betaBadge}
+    <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-neon-pink/50 bg-neon-pink/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-neon-pink">
+      <Icon name="crown" size={9} className="shrink-0" />
+      {dict.guildPage.premium}
+      <span aria-hidden className="opacity-60">·</span>
+      <Icon name="clock" size={9} className="shrink-0" />
+      {dict.guildPage.betaBadge}
     </span>
   );
 }
