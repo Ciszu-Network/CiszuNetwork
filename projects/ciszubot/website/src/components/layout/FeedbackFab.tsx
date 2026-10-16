@@ -33,15 +33,22 @@ const openFeedback = async () => {
     // existir todavía y el botón no hacía nada — paridad con MuzicMania).
     const mod = await import('@sentry/nextjs');
     const feedback = mod.getFeedback?.();
-    const form = await feedback?.createForm?.();
+    const form = (await feedback?.createForm?.()) as
+      | { appendToDom?: () => void; open?: () => void }
+      | undefined;
     if (form) {
-      form.open();
+      // API v10: createForm → appendToDom → open. SIN appendToDom el diálogo
+      // se crea pero NUNCA se inserta en el DOM (el click "no hacía nada").
+      form.appendToDom?.();
+      form.open?.();
       return;
     }
     // Fallback: si Sentry no está disponible (bloqueado, init fallido), abrir
     // la página interna de feedback para que el botón SIEMPRE haga algo.
+    console.error('[feedback] getFeedback/createForm no disponible', { hasFeedback: !!feedback });
     window.location.href = '/feedback';
-  } catch {
+  } catch (err) {
+    console.error('[feedback] error al abrir el panel:', err);
     window.location.href = '/feedback';
   }
 };

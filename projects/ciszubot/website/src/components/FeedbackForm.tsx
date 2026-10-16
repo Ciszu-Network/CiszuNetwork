@@ -52,8 +52,9 @@ export default function FeedbackForm({ t }: FeedbackFormProps) {
     try {
       const fb = Sentry.getFeedback();
       if (fb) {
-        const form = await fb.createForm();
-        form.open();
+        const form = (await fb.createForm()) as { appendToDom?: () => void; open?: () => void } | null;
+        form?.appendToDom?.();
+        form?.open?.();
       }
     } catch {
       /* feedback no disponible */
@@ -162,9 +163,12 @@ export function OpenReportButton({
     try {
       const fb = Sentry.getFeedback();
       if (fb) {
-        const form = await fb.createForm();
-        form.open();
-        return;
+        const form = (await fb.createForm()) as { appendToDom?: () => void; open?: () => void } | null;
+        if (form) {
+          form.appendToDom?.();
+          form.open?.();
+          return;
+        }
       }
       setUnavailable(true);
     } catch {
