@@ -1157,20 +1157,21 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                         : 'border-emerald-400/40 bg-emerald-400/10 text-emerald-400'
                   }`}
                 >
+                  <Icon
+                    name={item.tag === 'premium' ? 'crown' : item.tag === 'mixed' ? 'favorite' : 'gift'}
+                    size={7}
+                    className="shrink-0"
+                  />
                   {item.tag === 'premium' ? (
                     <>
-                      <Icon name="crown" size={7} className="shrink-0" /> {t.featPremiumTag}
+                      {t.featPremiumTag}
                       <span aria-hidden className="opacity-60">·</span>
                       <Icon name="clock" size={7} className="shrink-0" /> {t.betaBadge}
                     </>
                   ) : item.tag === 'mixed' ? (
-                    <>
-                      <Icon name="favorite" size={7} className="shrink-0" /> {t.tagMixed}
-                    </>
+                    t.tagMixed
                   ) : (
-                    <>
-                      <Icon name="gift" size={7} className="shrink-0" /> {t.tagFree}
-                    </>
+                    t.tagFree
                   )}
                 </span>
               </button>
