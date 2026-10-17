@@ -666,7 +666,27 @@ export interface SendEmailResult {
   providerId?: string;
   previewOnly?: boolean;
   via?: 'Resend' | 'Gmail' | 'Gmail SMTP';
+  /** true = Gmail rechazó por el cupo DIARIO de la cuenta (≈500/día). */
+  dailyLimit?: boolean;
 }
+
+/**
+ * Gmail rechaza con `550 5.4.5 Daily user sending limit exceeded` (o variantes
+ * de quota/rate) al agotar el cupo diario de la cuenta (~500 correos/día en
+ * Gmail normal, 2.000 en Workspace). No existe API para consultar el cupo
+ * restante: la única detección posible es al recibir el rechazo del servidor.
+ */
+export function isGmailDailyLimit(text: string): boolean {
+  return /5\.4\.5|daily user sending limit|sending limit exceeded|daily[^\n]{0,20}quota|quota exceeded|too many messages|rate limited/i.test(
+    text,
+  );
+}
+
+/** Mensaje accionable cuando se agota el cupo diario de Gmail. */
+export const GMAIL_DAILY_LIMIT_ERROR =
+  'Se alcanzó el LÍMITE DIARIO de envío de Gmail de la cuenta (≈500 correos/día; 2.000 en Workspace). ' +
+  'Los envíos se reanudan solos en ~24h (el cupo se reinicia a medianoche del Pacífico). ' +
+  'Mientras tanto los códigos OTP no se podrán enviar; para eliminarlo de raíz: Resend con dominio propio o credencial alternativa.';
 
 /**
  * Envía por Gmail API (OAuth del sistema). Requiere las env vars
@@ -780,8 +800,14 @@ export async function sendViaGmailSmtp(input: SendEmailInput): Promise<SendEmail
       return { wait, cmd, detach: () => sock.removeListener('data', onData) };
     };
 
-    const fail = (what: string, r: { code: number; text: string }) =>
-      new Error(`SMTP ${what}: ${r.code} ${r.text.split('\n').pop()?.slice(0, 120) ?? ''}`);
+    const fail = (what: string, r: { code: number; text: string }) => {
+      if (isGmailDailyLimit(r.text)) {
+        const e = new Error(GMAIL_DAILY_LIMIT_ERROR) as Error & { dailyLimit?: boolean };
+        e.dailyLimit = true;
+        return e;
+      }
+      return new Error(`SMTP ${what}: ${r.code} ${r.text.split('\n').pop()?.slice(0, 120) ?? ''}`);
+    };
 
     let sock: import('node:net').Socket = net.connect({ host: HOST, port: PORT });
     let s = session(sock);
@@ -851,7 +877,12 @@ export async function sendViaGmailSmtp(input: SendEmailInput): Promise<SendEmail
     sock.end();
     return { sent: true, via: 'Gmail SMTP' };
   } catch (err) {
-    return { sent: false, error: err instanceof Error ? err.message : 'Fallo de red al enviar por SMTP.' };
+    const e = err as Error & { dailyLimit?: boolean };
+    return {
+      sent: false,
+      error: e?.message ?? 'Fallo de red al enviar por SMTP.',
+      ...(e?.dailyLimit ? { dailyLimit: true } : {}),
+    };
   }
 }
 
@@ -892,6 +923,8 @@ export async function sendBrandedEmail(input: SendEmailInput): Promise<SendEmail
   const smtp = await sendViaGmailSmtp(input);
   if (smtp.sent) return smtp;
   if (smtp.previewOnly) return smtp;
+  // Cupo diario agotado: el OAuth usa la MISMA cuenta (mismo cupo) — no insistir.
+  if (smtp.dailyLimit) return smtp;
 
   // 3) Último recurso: Gmail API (OAuth del sistema).
   const gmail = await sendViaGmail(input);

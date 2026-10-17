@@ -1,10 +1,23 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
   EMAIL_LEGAL_LINKS,
+  isGmailDailyLimit,
   renderBrandedEmail,
   sendBrandedEmail,
   twoFactorEmail,
 } from '../src/emailBranding';
+
+describe('isGmailDailyLimit', () => {
+  it('detecta el rechazo por cupo diario de Gmail', () => {
+    expect(isGmailDailyLimit('550 5.4.5 Daily user sending limit exceeded. abc123 - gsmtp')).toBe(true);
+    expect(isGmailDailyLimit('421 4.7.0 Try again later, quota exceeded')).toBe(true);
+  });
+
+  it('no confunde otros rechazos con el cupo diario', () => {
+    expect(isGmailDailyLimit('550 5.1.1 The email account that you tried to reach does not exist')).toBe(false);
+    expect(isGmailDailyLimit('535 5.7.8 Username and Password not accepted')).toBe(false);
+  });
+});
 
 describe('renderBrandedEmail', () => {
   it('prefija el asunto con la marca y la web', () => {

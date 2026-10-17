@@ -7,6 +7,21 @@ Identificador: EMAILS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 > **Definición**: sistema de emails transaccionales del ecosistema. Estado: Supabase Auth
 > SMTP hoy (sin dominio), Resend como único proveedor cuando exista dominio. Brevo descartado.
 
+> **REVISIÓN 16 oct 2026 — transporte real en uso**: los correos salen por **Gmail SMTP**
+> de `ciszunetwork@gmail.com` (App Password del sistema, `GMAIL_SMTP_USER`/`GMAIL_APP_PASSWORD`
+> en el vault + Vercel) — tanto el transporte branded del código (2FA, consola/devcon)
+> como el **custom SMTP de Supabase** (recuperación, magic links, confirmaciones).
+> Cadena del código: Resend (si hubiera key) → **Gmail SMTP** → Gmail API (OAuth, último recurso).
+> Resend sigue pendiente de dominio propio.
+>
+> **LÍMITE DIARIO de Gmail (~500/día; 2.000 en Workspace)**: no existe API para consultar
+> el cupo restante → se **detecta al recibir el rechazo** del servidor (`550 5.4.5 Daily
+> user sending limit exceeded` y variantes de quota/rate) en `sendViaGmailSmtp`, que
+> devuelve un mensaje accionable (`GMAIL_DAILY_LIMIT_ERROR`) y marca `dailyLimit: true`
+> en el resultado (la cadena no insiste con OAuth: es la MISMA cuenta/cupo). La consola y
+> las webs muestran ese mensaje tal cual; el cupo se reinicia solo (~medianoche del Pacífico).
+> Helper testeable: `isGmailDailyLimit(text)`.
+
 **Estado (11 ago 2026)**: **Brevo DESCARTADO** — la cuenta quedó suspendida permanentemente ("la actividad de tu cuenta no cumplía nuestras Condiciones de uso") y crear una API key exige teléfono **no venezolano** → inviable desde VE. Plan revisado:
 - **HOY / sin dominio**: los emails de **AUTH de Supabase** (verificación, reset, OTP) usan el **SMTP nativo de Supabase** (gratis, sin configuración). El paquete `@ciszunetwork/email` **no tiene proveedor activo** hasta tener dominio.
 - **Fase B (con dominio Cloudflare)**: **Resend** como único proveedor transaccional (3.000/mes free, SPF/DKIM automáticos).
@@ -23,7 +38,7 @@ Comparación verificada (ago 2026), priorizando **free sin tarjeta**:
 | SendGrid | **DESCARTADO**: free nuevo = trial 60 días (100/día), luego se detiene; API/SMTP exigen dominio autenticado (single sender solo marketing → 403) | Sí | Era el candidato obvio hasta verificar el trial |
 | MailerSend | 12k/mes | Sí (obligatorio) | Requiere dominio desde el día 1 |
 | Mailgun / SES | trial/12 meses limitado | Sí | Requieren tarjeta |
-| Gmail SMTP | 500/día | — | Bloquea cuentas con uso transaccional; no apto |
+| Gmail SMTP | 500/día (2.000 Workspace) | — | **EN USO (16 oct 2026)** como transporte del sistema vía App Password mientras no haya dominio. Al agotar el cupo rechaza con `550 5.4.5` — **detectado y reportado** con mensaje claro (`isGmailDailyLimit` + `dailyLimit`); se reinicia solo |
 
 **Plan**: **SMTP nativo de Supabase** para todo el email funcional HOY → **Resend como único transaccional cuando exista el dominio** (SPF/DKIM nativos = mejor entregabilidad). Sin failover entre proveedores (solo habrá 1 configurado).
 
