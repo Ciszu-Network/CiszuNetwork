@@ -260,7 +260,11 @@ const warns = (): BotCommand => ({
       .setTitle(`⚠️ Avisos de ${target.tag} (${warnList.length})`)
       .setDescription(
         warnList.length > 0
-          ? warnList.map((w) => `\`#${w.id}\` — ${w.reason} (por <@${w.moderator}> • <t:${Math.floor(new Date(w.created_at).getTime() / 1000)}:R>)`).join('\n')
+          ? warnList
+              .slice(0, 40)
+              .map((w) => `\`#${w.id}\` — ${w.reason} (por <@${w.moderator}> • <t:${Math.floor(new Date(w.created_at).getTime() / 1000)}:R>)`)
+              .join('\n')
+              .slice(0, 4000) + (warnList.length > 40 ? `\n…y ${warnList.length - 40} más.` : '')
           : 'Sin avisos. 🎉'
       )
       .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })

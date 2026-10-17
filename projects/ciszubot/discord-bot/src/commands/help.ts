@@ -116,12 +116,58 @@ const command: BotCommand = {
       const cat = cmd.category || 'General';
       (categories[cat] ??= []).push(`\`cz!${cmd.name}\` - ${cmd.description || 'Sin descripción'}`);
     }
+
+    // Discord limita cada campo a 1024 caracteres, el embed a 25 campos y el
+    // total del embed a 6000 caracteres: con ~100 comandos una categoría puede
+    // pasarse y addFields LANZA ("Received one or more errors") tumbando el
+    // comando entero. Se trocea por líneas y se corta con aviso si no cabe.
+    const MAX_FIELD_VALUE = 1000;
+    const MAX_CATEGORY_FIELDS = 22; // deja hueco a los 3 campos informativos
+    const MAX_CATEGORY_CHARS = 5100; // margen bajo los 6000 totales del embed
+    const chunkLines = (lines: string[]): string[] => {
+      const chunks: string[] = [];
+      let current = '';
+      for (const line of lines) {
+        if (current && current.length + 1 + line.length > MAX_FIELD_VALUE) {
+          chunks.push(current);
+          current = line;
+        } else {
+          current = current ? `${current}\n${line}` : line;
+        }
+      }
+      if (current) chunks.push(current);
+      return chunks;
+    };
+
+    let usedFields = 0;
+    let usedChars = 0;
+    let omittedCommands = 0;
     for (const [cat, list] of Object.entries(categories)) {
       const sample = allCommands.find((c) => (c.category || 'General') === cat);
       const catSlug = sample ? resolveFeatureForCommand(sample) : null;
       const catState = catSlug ? await getFeatureState(catSlug) : null;
       const mark = catState && !catState.enabled ? ' · ⛔ desactivada' : '';
-      embed.addFields({ name: `${catEmoji(cat)} ${cat}${mark}`, value: list.join('\n'), inline: false });
+      const chunks = chunkLines(list);
+      for (const [i, chunk] of chunks.entries()) {
+        if (usedFields >= MAX_CATEGORY_FIELDS || usedChars + chunk.length > MAX_CATEGORY_CHARS) {
+          omittedCommands += chunk.split('\n').length;
+          continue;
+        }
+        embed.addFields({
+          name: `${catEmoji(cat)} ${cat}${mark}${i > 0 ? ' (cont.)' : ''}`,
+          value: chunk,
+          inline: false,
+        });
+        usedFields += 1;
+        usedChars += chunk.length;
+      }
+    }
+    if (omittedCommands > 0) {
+      embed.addFields({
+        name: '➕ Más comandos',
+        value: `Hay **${omittedCommands}** comandos más. Usa el menú de abajo o \`cz!help <categoría>\` para verlos, o la lista completa en ${LINKS.website}/commands`,
+        inline: false,
+      });
     }
 
     embed.addFields(
