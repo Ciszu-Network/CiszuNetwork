@@ -3,7 +3,7 @@ import type { BotCommand } from '../types/command';
 import { getGuildConfig, updateGuildConfig, AutomodConfig } from '../services/configService';
 import { isStaff, STAFF_ERROR } from '../utils/permissions';
 
-const FLAGS: Array<keyof Omit<AutomodConfig, 'words'>> = ['links', 'invites', 'caps', 'spam'];
+const FLAGS: Array<keyof Omit<AutomodConfig, 'words'>> = ['links', 'invites', 'caps', 'spam', 'flood'];
 
 const command: BotCommand = {
   name: 'automod',

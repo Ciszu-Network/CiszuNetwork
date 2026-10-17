@@ -213,6 +213,16 @@ export const COMMANDS: CommandInfo[] = [
   },
   {
     name: 'alliance',
+    description: 'Sistema de alianzas (canal, puntos, filtros, recompensas)',
+    aliases: ["alianzas","alianza"],
+    usage: 'cz!alliance [status|on|off|channel #canal|role @rol|notify @rol|cooldown h|oneper on|off|allow18 on|off|word add|remove x|block <id>|unblock <id>|sanction tipo min|embed success|error campo valor|reward pts [@rol] [dinero]|top]',
+    category: 'Social',
+    icon: 'people',
+    premium: false,
+    tags: ["social","alliance","sistema","alianzas","canal","puntos","filtros","recompensas"],
+  },
+  {
+    name: 'alliance',
     description: 'Forma una alianza con otro servidor',
     aliases: ["alianza"],
     usage: 'cz!alliance <invite del servidor>',
@@ -966,6 +976,16 @@ export const COMMANDS: CommandInfo[] = [
     icon: 'settings',
     premium: false,
     tags: ["configuración","starboard","configura","mensajes","destacados"],
+  },
+  {
+    name: 'tickets',
+    description: 'Configura el sistema de tickets por categorías',
+    aliases: ["ticket","ticketconfig"],
+    usage: 'cz!tickets [status|on|off|panel #canal|log #canal|autodelete h|category add id label|remove id|cat id campo valor]',
+    category: 'Configuración',
+    icon: 'settings',
+    premium: false,
+    tags: ["configuración","tickets","configura","sistema","categorias"],
   },
   {
     name: 'welcome',

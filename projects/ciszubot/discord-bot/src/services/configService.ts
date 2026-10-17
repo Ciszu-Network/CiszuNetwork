@@ -6,6 +6,7 @@ export interface AutomodConfig {
   invites: boolean;
   caps: boolean;
   spam: boolean;
+  flood: boolean;
   words: string[];
 }
 
@@ -28,6 +29,58 @@ export interface LevelRole {
 export interface InviteReward {
   invites: number;
   role_id: string;
+}
+
+export interface AllianceEmbedConfig {
+  title: string;
+  description: string;
+  color: string;
+}
+
+export interface AllianceReward {
+  points: number;
+  role_id?: string;
+  money?: number;
+  message?: string;
+}
+
+export interface AllianceConfig {
+  enabled: boolean;
+  channel_id: string | null;
+  role_id: string | null;
+  notify_role_id: string | null;
+  cooldown_hours: number;
+  one_per_server: boolean;
+  allow_nsfw: boolean;
+  blocked_words: string[];
+  blocked_servers: string[];
+  sanction: 'none' | 'mute' | 'kick' | 'ban';
+  sanction_minutes: number;
+  rewards: AllianceReward[];
+  embed_success: AllianceEmbedConfig;
+  embed_error: AllianceEmbedConfig;
+  error_delete_after: number;
+}
+
+export interface TicketCategory {
+  id: string;
+  label: string;
+  emoji: string;
+  description: string;
+  discord_category_id: string | null;
+  role_ids: string[];
+  grant_role_id: string | null;
+  form: string[];
+  welcome: string;
+  color: string;
+}
+
+export interface TicketConfig {
+  enabled: boolean;
+  panel_channel_id: string | null;
+  log_channel_id: string | null;
+  auto_delete_hours: number;
+  categories: TicketCategory[];
 }
 
 export interface GuildConfig {
@@ -68,9 +121,33 @@ export interface GuildConfig {
   private_vc_hub_id: string | null;
   secret_user_ids: string[];
   nitro_repost_enabled: boolean;
+  alliance_config: AllianceConfig;
+  ticket_config: TicketConfig;
 }
 
-const DEFAULT_AUTOMOD: AutomodConfig = { links: false, invites: false, caps: false, spam: false, words: [] };
+const DEFAULT_AUTOMOD: AutomodConfig = { links: false, invites: false, caps: false, spam: false, flood: false, words: [] };
+const DEFAULT_ALLIANCE: AllianceConfig = {
+  enabled: false,
+  channel_id: null,
+  role_id: null,
+  notify_role_id: null,
+  cooldown_hours: 24,
+  one_per_server: true,
+  allow_nsfw: false,
+  blocked_words: [],
+  blocked_servers: [],
+  sanction: 'none',
+  sanction_minutes: 1440,
+  rewards: [],
+  embed_success: {
+    title: '🤝 Nueva alianza',
+    description: '{user} publicó la alianza con **{server}** ({invite})',
+    color: '#22c55e',
+  },
+  embed_error: { title: '❌ Alianza no válida', description: '{reason}', color: '#ef4444' },
+  error_delete_after: 15,
+};
+const DEFAULT_TICKETS: TicketConfig = { enabled: false, panel_channel_id: null, log_channel_id: null, auto_delete_hours: 24, categories: [] };
 const DEFAULT_DROPS: DropsConfig = {
   enabled: false,
   channels: [],
@@ -119,6 +196,8 @@ const DEFAULTS: Omit<GuildConfig, 'guild_id'> = {
   private_vc_hub_id: null,
   secret_user_ids: [],
   nitro_repost_enabled: false,
+  alliance_config: DEFAULT_ALLIANCE,
+  ticket_config: DEFAULT_TICKETS,
 };
 
 const cache = new Map<string, GuildConfig>();
@@ -179,6 +258,8 @@ export async function getGuildConfig(guildId: string): Promise<GuildConfig> {
         private_vc_hub_id: data.privateVcHubId ?? DEFAULTS.private_vc_hub_id,
         secret_user_ids: asArray(data.secretUserIds, DEFAULTS.secret_user_ids),
         nitro_repost_enabled: data.nitroRepostEnabled ?? DEFAULTS.nitro_repost_enabled,
+        alliance_config: asObject(data.allianceConfig, DEFAULT_ALLIANCE),
+        ticket_config: asObject(data.ticketConfig, DEFAULT_TICKETS),
       };
       cache.set(guildId, cfg);
       return cfg;
@@ -236,6 +317,8 @@ export async function updateGuildConfig(
     privateVcHubId: merged.private_vc_hub_id,
     secretUserIds: merged.secret_user_ids,
     nitroRepostEnabled: merged.nitro_repost_enabled,
+    allianceConfig: merged.alliance_config,
+    ticketConfig: merged.ticket_config,
   };
   try {
     const guildConfigs = ciszubotSchema.guildConfigs;

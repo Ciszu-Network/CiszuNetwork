@@ -53,7 +53,53 @@ const guildConfigPatchSchema = z.object({
       invites: z.boolean(),
       caps: z.boolean(),
       spam: z.boolean(),
+      flood: z.boolean(),
       words: z.array(z.string().min(1).max(64)).max(100),
+    })
+    .optional(),
+  alliance_config: z
+    .object({
+      enabled: z.boolean(),
+      channel_id: z.string().min(1).nullable(),
+      role_id: z.string().min(1).nullable(),
+      notify_role_id: z.string().min(1).nullable(),
+      cooldown_hours: z.number().int().min(0).max(8760),
+      one_per_server: z.boolean(),
+      allow_nsfw: z.boolean(),
+      blocked_words: z.array(z.string().min(1).max(64)).max(200),
+      blocked_servers: z.array(z.string().min(1).max(32)).max(500),
+      sanction: z.enum(['none', 'mute', 'kick', 'ban']),
+      sanction_minutes: z.number().int().min(1).max(100000),
+      rewards: z
+        .array(z.object({ points: z.number().int().min(1), role_id: z.string().max(32).optional(), money: z.number().int().min(0).max(1_000_000).optional() }))
+        .max(50),
+      embed_success: z.object({ title: z.string().max(256), description: z.string().max(2000), color: z.string().max(32) }),
+      embed_error: z.object({ title: z.string().max(256), description: z.string().max(2000), color: z.string().max(32) }),
+      error_delete_after: z.number().int().min(0).max(3600),
+    })
+    .optional(),
+  ticket_config: z
+    .object({
+      enabled: z.boolean(),
+      panel_channel_id: z.string().min(1).nullable(),
+      log_channel_id: z.string().min(1).nullable(),
+      auto_delete_hours: z.number().int().min(0).max(720),
+      categories: z
+        .array(
+          z.object({
+            id: z.string().min(1).max(32),
+            label: z.string().min(1).max(100),
+            emoji: z.string().max(64),
+            description: z.string().max(100),
+            discord_category_id: z.string().min(1).nullable(),
+            role_ids: z.array(z.string().min(1).max(32)).max(10),
+            grant_role_id: z.string().min(1).nullable(),
+            form: z.array(z.string().min(1).max(200)).max(5),
+            welcome: z.string().max(1000),
+            color: z.string().max(32),
+          }),
+        )
+        .max(25),
     })
     .optional(),
   drops: z
@@ -127,6 +173,8 @@ interface GuildConfig {
   invite_points_per?: number;
   nitro_repost_enabled?: boolean;
   private_vc_hub_id?: string | null;
+  alliance_config?: Record<string, unknown>;
+  ticket_config?: Record<string, unknown>;
 }
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ guildId: string }> }) {
@@ -256,6 +304,12 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
       };
     }
   }
+  if (body.alliance_config !== undefined) {
+    allowed.alliance_config = body.alliance_config;
+  }
+  if (body.ticket_config !== undefined) {
+    allowed.ticket_config = body.ticket_config;
+  }
   if (body.autorole_ids !== undefined) {
     allowed.autorole_ids = Array.isArray(body.autorole_ids)
       ? body.autorole_ids
@@ -324,6 +378,8 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     invite_points_per: 'invitePointsPer',
     nitro_repost_enabled: 'nitroRepostEnabled',
     private_vc_hub_id: 'privateVcHubId',
+    alliance_config: 'allianceConfig',
+    ticket_config: 'ticketConfig',
   };
   const values: Record<string, unknown> = { guildId };
   for (const [key, value] of Object.entries(allowed)) {

@@ -77,6 +77,8 @@ export const guildConfigs = ciszubot.table(
     privateVcHubId: text('private_vc_hub_id'),
     secretUserIds: jsonb('secret_user_ids').notNull().default([]),
     nitroRepostEnabled: boolean('nitro_repost_enabled').notNull().default(false),
+    allianceConfig: jsonb('alliance_config').notNull().default({}),
+    ticketConfig: jsonb('ticket_config').notNull().default({}),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   }
 );
@@ -197,6 +199,12 @@ export const botTickets = ciszubot.table(
     userId: text('user_id').notNull(),
     topic: text('topic'),
     open: boolean('open').notNull().default(true),
+    category: text('category'),
+    claimedBy: text('claimed_by'),
+    answers: jsonb('answers'),
+    closedBy: text('closed_by'),
+    closedAt: timestamp('closed_at', { withTimezone: true }),
+    closeReason: text('close_reason'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index('idx_tickets_guild').on(t.guildId, t.open)]
@@ -237,9 +245,21 @@ export const alliances = ciszubot.table(
     partnerId: text('partner_id').notNull(),
     partnerName: text('partner_name'),
     partnerInvite: text('partner_invite'),
+    userId: text('user_id'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [uniqueIndex('alliances_guild_id_partner_id_key').on(t.guildId, t.partnerId)]
+);
+
+export const alliancePoints = ciszubot.table(
+  'alliance_points',
+  {
+    guildId: text('guild_id').notNull(),
+    userId: text('user_id').notNull(),
+    points: integer('points').notNull().default(0),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.guildId, t.userId] })]
 );
 
 export const discordUsers = ciszubot.table(

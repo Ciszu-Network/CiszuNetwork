@@ -15,6 +15,7 @@ import { CommandRegistry } from './utils/commandRegistry';
 import { incrementCommands, getTotalCommands, setupStatsServer, updateStats } from './services/statsServer';
 import { logCommand, updateBotStatus } from './services/supabase';
 import { registerListeners, handleButton } from './listeners';
+import { handleTicketOpen, handleTicketForm } from './services/tickets';
 import { scheduleStatsPosting } from './services/botlists';
 import { initErrorTracking, captureError } from './services/sentry';
 import { gateCommand } from './utils/commandGate';
@@ -250,6 +251,16 @@ client.on(Events.InteractionCreate, async (interaction) => {
     }).setTimestamp();
 
     await interaction.followUp({ embeds: [embed], ephemeral: true }).catch(() => undefined);
+  }
+
+  // Tickets por categorías: selector del panel + formularios (modales).
+  if (interaction.isStringSelectMenu() && interaction.customId === 'ticket_open') {
+    await interaction.deferUpdate().catch(() => undefined);
+    await handleTicketOpen(interaction).catch((error) => logger.error('handleTicketOpen:', error));
+  }
+
+  if (interaction.isModalSubmit() && interaction.customId.startsWith('ticket_form:')) {
+    await handleTicketForm(interaction).catch((error) => logger.error('handleTicketForm:', error));
   }
 
   if (interaction.isButton()) {

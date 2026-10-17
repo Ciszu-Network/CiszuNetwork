@@ -19,6 +19,8 @@ import { logger } from '../services/logger';
 import { resumeActiveGiveaways } from '../services/giveaways';
 import { tryClaimDrop, completeDrop, scheduleDrops } from '../services/drops';
 import { takeProposal } from '../services/proposals';
+import { processAllianceMessage, sendAllianceError } from '../services/alliances';
+import { handleTicketClaim, handleTicketClose } from '../services/tickets';
 import { BOT_COLORS, BOT_FOOTER } from '../config/links';
 
 /**
@@ -89,7 +91,7 @@ async function handleXp(message: Message): Promise<void> {
 
 // ─── Automod ───
 
-const spamTracker = new Map<string, number[]>();
+const spamTracker = new Map<string, { t: number; content: string }[]>();
 
 /** Devuelve la regla incumplida o null. */
 async function automodViolation(message: Message, cfg: GuildConfig): Promise<string | null> {
@@ -107,15 +109,19 @@ async function automodViolation(message: Message, cfg: GuildConfig): Promise<str
     const hit = am.words.find((w) => lower.includes(w));
     if (hit) return `palabra prohibida`;
   }
-  if (am.spam) {
+  if (am.spam || am.flood) {
     const key = `${message.author.id}:${message.guild.id}`;
     const now = Date.now();
-    const times = (spamTracker.get(key) ?? []).filter((t) => now - t < 6000);
-    times.push(now);
-    spamTracker.set(key, times);
-    if (times.length >= 5) {
+    const recent = (spamTracker.get(key) ?? []).filter((e) => now - e.t < 10_000);
+    recent.push({ t: now, content: content.trim().toLowerCase() });
+    spamTracker.set(key, recent);
+    if (am.spam && content.trim().length > 0 && recent.filter((e) => e.content === content.trim().toLowerCase()).length >= 3) {
       spamTracker.set(key, []);
-      return 'spam';
+      return 'spam (mensaje repetido)';
+    }
+    if (am.flood && recent.length >= 8) {
+      spamTracker.set(key, []);
+      return 'flood (demasiados mensajes seguidos)';
     }
   }
   return null;
@@ -506,6 +512,31 @@ export function registerListeners(client: Client): void {
     if (message.author.bot || !message.guild) return;
     void (async () => {
       const cfg = await getGuildConfig(message.guild!.id);
+
+      // Canal de alianzas: captura y validación ANTES de todo lo demás.
+      if (cfg.alliance_config.enabled && message.channelId === cfg.alliance_config.channel_id) {
+        const result = await processAllianceMessage(
+          client,
+          message.guild!,
+          message.member,
+          {
+            id: message.id,
+            content: message.content ?? '',
+            channelId: message.channelId,
+            delete: () => message.delete(),
+            authorId: message.author.id,
+            authorTag: message.author.tag,
+            iconURL: message.author.displayAvatarURL(),
+          },
+          cfg,
+        );
+        if (!result.ok) {
+          await message.delete().catch(() => undefined);
+          await sendAllianceError(message, cfg.alliance_config, result.reason ?? 'Alianza no válida', message.author.tag, message.author.displayAvatarURL());
+        }
+        return;
+      }
+
       if (await handleAutomod(message, cfg)) return;
       await handleNitroRepost(message, cfg);
       void getPrefix(message.guild!.id).then((prefix) => {
@@ -711,27 +742,11 @@ export async function handleButton(interaction: ButtonInteraction, client: Clien
   }
 
   if (customId === 'ticket_close') {
-    try {
-      const tickets = ciszubotSchema.botTickets;
-      const ticketRows = await db
-        .select()
-        .from(tickets)
-        .where(and(eq(tickets.channelId, interaction.channelId), eq(tickets.open, true)))
-        .limit(1);
-      const ticket = ticketRows[0];
-      if (ticket) {
-        await db.update(tickets).set({ open: false }).where(eq(tickets.id, ticket.id));
-      }
-      await interaction.followUp({ content: '🔒 Cerrando ticket...' }).catch(() => undefined);
-      setTimeout(() => {
-        const channel = guild.channels.cache.get(interaction.channelId);
-        if (channel && 'deletable' in channel && channel.deletable) {
-          void channel.delete('Ticket cerrado').catch(() => undefined);
-        }
-      }, 2000);
-    } catch (error) {
-      logger.error('ticket_close:', error);
-    }
+    await handleTicketClose(interaction);
+  }
+
+  if (customId === 'ticket_claim') {
+    await handleTicketClaim(interaction);
   }
 
   if (customId === 'private_channel_join') {

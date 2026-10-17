@@ -43,7 +43,7 @@ interface GuildConfig {
   staff_role_id?: string | null;
   level_message?: string;
   level_roles?: { level: number; role_id: string }[];
-  automod_config?: { links: boolean; invites: boolean; caps: boolean; spam: boolean; words: string[] };
+  automod_config?: { links: boolean; invites: boolean; caps: boolean; spam: boolean; flood: boolean; words: string[] };
   drops?: {
     enabled: boolean;
     channels: string[];
@@ -60,11 +60,46 @@ interface GuildConfig {
   invite_points_per?: number;
   nitro_repost_enabled?: boolean;
   private_vc_hub_id?: string | null;
+  alliance_config?: {
+    enabled: boolean;
+    channel_id: string | null;
+    role_id: string | null;
+    notify_role_id: string | null;
+    cooldown_hours: number;
+    one_per_server: boolean;
+    allow_nsfw: boolean;
+    blocked_words: string[];
+    blocked_servers: string[];
+    sanction: 'none' | 'mute' | 'kick' | 'ban';
+    sanction_minutes: number;
+    rewards: { points: number; role_id?: string; money?: number }[];
+    embed_success: { title: string; description: string; color: string };
+    embed_error: { title: string; description: string; color: string };
+    error_delete_after: number;
+  };
+  ticket_config?: {
+    enabled: boolean;
+    panel_channel_id: string | null;
+    log_channel_id: string | null;
+    auto_delete_hours: number;
+    categories: {
+      id: string;
+      label: string;
+      emoji: string;
+      description: string;
+      discord_category_id: string | null;
+      role_ids: string[];
+      grant_role_id: string | null;
+      form: string[];
+      welcome: string;
+      color: string;
+    }[];
+  };
   /** Toggles por servidor de funciones del bot (slug → enabled). */
   features?: Record<string, boolean>;
 }
 
-type SectionKey = 'general' | 'levels' | 'welcome' | 'economy' | 'community' | 'automod' | 'extras' | `feat:${string}`;
+type SectionKey = 'general' | 'levels' | 'welcome' | 'economy' | 'community' | 'automod' | 'alliance' | 'tickets' | 'extras' | `feat:${string}`;
 type PartialConfig = Partial<GuildConfig>;
 
 /** Payload de un export JSON (vista previa + descarga). */
@@ -73,7 +108,7 @@ interface JsonPreviewPayload {
   config: Record<string, unknown>;
 }
 
-const SECTION_KEYS: Record<'general' | 'levels' | 'welcome' | 'economy' | 'community' | 'automod' | 'extras', (keyof GuildConfig)[]> = {
+const SECTION_KEYS: Record<'general' | 'levels' | 'welcome' | 'economy' | 'community' | 'automod' | 'alliance' | 'tickets' | 'extras', (keyof GuildConfig)[]> = {
   general: ['prefix', 'lang'],
   levels: ['leveling_enabled', 'level_channel_id', 'xp_rate', 'level_message', 'level_roles'],
   welcome: [
@@ -86,6 +121,8 @@ const SECTION_KEYS: Record<'general' | 'levels' | 'welcome' | 'economy' | 'commu
   economy: ['coin_emoji', 'coin_name', 'drops', 'invite_points_per'],
   community: ['starboard_channel_id', 'starboard_emoji', 'starboard_min', 'nitro_repost_enabled', 'staff_role_id', 'private_vc_hub_id'],
   automod: ['automod_enabled', 'automod_config'],
+  alliance: ['alliance_config'],
+  tickets: ['ticket_config'],
   extras: [
     'tickets_enabled',
     'tickets_category_id',
@@ -403,6 +440,8 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     | 'economy'
     | 'community'
     | 'automod'
+    | 'alliance'
+    | 'tickets'
     | 'extras'
     | 'history'
     | `feat:${string}`;
@@ -411,7 +450,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     const saved = localStorage.getItem('cz-dash-view') as GuildView | null;
     if (
       saved &&
-      (['summary', 'general', 'levels', 'welcome', 'economy', 'community', 'automod', 'extras', 'history'].includes(saved) ||
+      (['summary', 'general', 'levels', 'welcome', 'economy', 'community', 'automod', 'alliance', 'tickets', 'extras', 'history'].includes(saved) ||
         saved.startsWith('feat:'))
     ) {
       setView(saved);
@@ -471,6 +510,8 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     { key: 'levels', icon: 'star', label: 'subnavLevels', tag: 'mixed' },
     { key: 'economy', icon: 'money', label: 'subnavEconomy', tag: 'free' },
     { key: 'community', icon: 'people', label: 'subnavCommunity', tag: 'mixed' },
+    { key: 'alliance', icon: 'users', label: 'subnavAlliance', tag: 'free' },
+    { key: 'tickets', icon: 'support', label: 'subnavTickets', tag: 'free' },
     { key: 'automod', icon: 'shield', label: 'subnavAutomod', tag: 'free' },
     { key: 'welcome', icon: 'heart', label: 'subnavWelcome', tag: 'free' },
     { key: 'extras', icon: 'support', label: 'subnavExtras', tag: 'free' },
@@ -810,8 +851,32 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     message: null as string | null,
     excluded_roles: [] as string[],
   };
-  const automodCfg = config?.automod_config ?? { links: false, invites: false, caps: false, spam: false, words: [] as string[] };
+  const automodCfg = config?.automod_config ?? { links: false, invites: false, caps: false, spam: false, flood: false, words: [] as string[] };
   const levelRoles = config?.level_roles ?? [];
+  const allianceCfg = config?.alliance_config ?? {
+    enabled: false,
+    channel_id: null as string | null,
+    role_id: null as string | null,
+    notify_role_id: null as string | null,
+    cooldown_hours: 24,
+    one_per_server: true,
+    allow_nsfw: false,
+    blocked_words: [] as string[],
+    blocked_servers: [] as string[],
+    sanction: 'none' as 'none' | 'mute' | 'kick' | 'ban',
+    sanction_minutes: 1440,
+    rewards: [] as { points: number; role_id?: string; money?: number }[],
+    embed_success: { title: '🤝 Nueva alianza', description: '{user} publicó la alianza con **{server}** ({invite})', color: '#22c55e' },
+    embed_error: { title: '❌ Alianza no válida', description: '{reason}', color: '#ef4444' },
+    error_delete_after: 15,
+  };
+  const ticketCfg = config?.ticket_config ?? {
+    enabled: false,
+    panel_channel_id: null as string | null,
+    log_channel_id: null as string | null,
+    auto_delete_hours: 24,
+    categories: [] as NonNullable<GuildConfig['ticket_config']>['categories'],
+  };
 
   const slug = useMemo(
     () =>
@@ -2132,6 +2197,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                       ['invites', t.automodWordInvites],
                       ['caps', t.automodWordCaps],
                       ['spam', t.automodWordSpam],
+                      ['flood', t.automodWordFlood],
                     ] as const
                   ).map(([key, label]) => (
                     <div key={key} className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-2.5">
@@ -2171,6 +2237,443 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               <p className="mt-1 text-[11px] text-white/45">{t.cooldownHint}</p>
             </div>
             <HelpZone title={SECTION_HELP.automod.title} commands={SECTION_HELP.automod.commands} note={SECTION_HELP.automod.note} />
+          </section>
+          )}
+
+          {view === 'alliance' && (
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <h2 className="flex items-center gap-2 font-bold text-white">
+                <Icon name="users" size={18} className="text-neon-blue" /> {t.allianceTitle}
+              </h2>
+              <QuickHelp title={SECTION_HELP.alliance.title} commands={SECTION_HELP.alliance.commands} note={SECTION_HELP.alliance.note} />
+              <Badge kind="free" dict={dict} />
+              <SectionJson
+                disabled={dirty || busy}
+                disabledHint={t.jsonNeedSave}
+                exportLabel={t.jsonExport}
+                importLabel={t.jsonImport}
+                onExport={() => exportScope('alliance')}
+                onImport={(file) => void importFile(file, 'alliance')}
+              />
+            </div>
+            <p className="mb-5 text-xs text-white/45">{t.allianceHint}</p>
+            <div className="grid gap-5">
+              <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
+                <div>
+                  <p className="text-sm font-semibold text-white/90">{t.allianceTitle}</p>
+                  <p className="text-xs text-white/50">{t.allianceHint}</p>
+                </div>
+                <Toggle on={allianceCfg.enabled} onChange={(v) => update({ alliance_config: { ...allianceCfg, enabled: v } })} />
+              </div>
+              {allianceCfg.enabled && (
+                <>
+                  <div className="grid gap-5 sm:grid-cols-3">
+                    {hasGuildData ? (
+                      <SelectField
+                        label={t.allianceChannelLabel}
+                        value={allianceCfg.channel_id}
+                        placeholder={t.pickChannel}
+                        options={textChannelOptions}
+                        onChange={(v) => update({ alliance_config: { ...allianceCfg, channel_id: v } })}
+                      />
+                    ) : (
+                      <Field label={t.allianceChannelLabel} hint={t.manualIdHint}>
+                        <input className={inputCls} value={allianceCfg.channel_id ?? ''} onChange={(e) => update({ alliance_config: { ...allianceCfg, channel_id: e.target.value || null } })} />
+                      </Field>
+                    )}
+                    {hasGuildData ? (
+                      <SelectField
+                        label={t.allianceRoleLabel}
+                        hint={t.allianceRoleHint}
+                        value={allianceCfg.role_id}
+                        placeholder={t.pickRole}
+                        options={roleOptions}
+                        onChange={(v) => update({ alliance_config: { ...allianceCfg, role_id: v } })}
+                      />
+                    ) : (
+                      <Field label={t.allianceRoleLabel} hint={t.manualIdHint}>
+                        <input className={inputCls} value={allianceCfg.role_id ?? ''} onChange={(e) => update({ alliance_config: { ...allianceCfg, role_id: e.target.value || null } })} />
+                      </Field>
+                    )}
+                    {hasGuildData ? (
+                      <SelectField
+                        label={t.allianceNotifyLabel}
+                        hint={t.allianceNotifyHint}
+                        value={allianceCfg.notify_role_id}
+                        placeholder={t.pickRole}
+                        options={roleOptions}
+                        onChange={(v) => update({ alliance_config: { ...allianceCfg, notify_role_id: v } })}
+                      />
+                    ) : (
+                      <Field label={t.allianceNotifyLabel} hint={t.manualIdHint}>
+                        <input className={inputCls} value={allianceCfg.notify_role_id ?? ''} onChange={(e) => update({ alliance_config: { ...allianceCfg, notify_role_id: e.target.value || null } })} />
+                      </Field>
+                    )}
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <Field label={t.allianceCooldownLabel} hint={t.allianceCooldownHint}>
+                      <input
+                        type="number"
+                        min={0}
+                        max={8760}
+                        className={inputCls}
+                        value={allianceCfg.cooldown_hours}
+                        onChange={(e) => update({ alliance_config: { ...allianceCfg, cooldown_hours: Math.max(0, Number(e.target.value) || 0) } })}
+                      />
+                    </Field>
+                    <div className="grid gap-3">
+                      <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-2.5">
+                        <p className="text-xs font-semibold text-white/80">{t.allianceOnePerLabel}</p>
+                        <Toggle on={allianceCfg.one_per_server} onChange={(v) => update({ alliance_config: { ...allianceCfg, one_per_server: v } })} />
+                      </div>
+                      <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-2.5">
+                        <p className="text-xs font-semibold text-white/80">{t.allianceNsfwLabel}</p>
+                        <Toggle on={allianceCfg.allow_nsfw} onChange={(v) => update({ alliance_config: { ...allianceCfg, allow_nsfw: v } })} />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <Field label={t.allianceWordsLabel} hint={t.allianceWordsHint}>
+                      <input
+                        className={inputCls}
+                        value={allianceCfg.blocked_words.join(', ')}
+                        onChange={(e) =>
+                          update({
+                            alliance_config: {
+                              ...allianceCfg,
+                              blocked_words: e.target.value.split(',').map((s) => s.trim().toLowerCase()).filter(Boolean).slice(0, 200),
+                            },
+                          })
+                        }
+                      />
+                    </Field>
+                    <Field label={t.allianceServersLabel} hint={t.allianceServersHint}>
+                      <input
+                        className={inputCls}
+                        value={allianceCfg.blocked_servers.join(', ')}
+                        onChange={(e) =>
+                          update({
+                            alliance_config: {
+                              ...allianceCfg,
+                              blocked_servers: e.target.value.split(',').map((s) => s.trim()).filter((s) => /^\d{17,20}$/.test(s)).slice(0, 500),
+                            },
+                          })
+                        }
+                      />
+                    </Field>
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <Field label={t.allianceSanctionLabel} hint={t.allianceSanctionHint}>
+                      <select
+                        className={inputCls}
+                        value={allianceCfg.sanction}
+                        onChange={(e) => update({ alliance_config: { ...allianceCfg, sanction: e.target.value as 'none' | 'mute' | 'kick' | 'ban' } })}
+                      >
+                        <option value="none">none</option>
+                        <option value="mute">mute</option>
+                        <option value="kick">kick</option>
+                        <option value="ban">ban</option>
+                      </select>
+                    </Field>
+                    <Field label={`${t.allianceSanctionLabel} — minutos`} hint="Solo para mute">
+                      <input
+                        type="number"
+                        min={1}
+                        className={inputCls}
+                        value={allianceCfg.sanction_minutes}
+                        onChange={(e) => update({ alliance_config: { ...allianceCfg, sanction_minutes: Math.max(1, Number(e.target.value) || 1440) } })}
+                      />
+                    </Field>
+                  </div>
+                  <Field label={t.allianceRewardsLabel} hint={t.allianceRewardsHint}>
+                    <input
+                      className={inputCls}
+                      placeholder="5:@RolAliado:500"
+                      value={allianceCfg.rewards.map((r) => `${r.points}:${r.role_id ?? ''}:${r.money ?? ''}`).join(', ')}
+                      onChange={(e) => {
+                        const rewards = e.target.value
+                          .split(',')
+                          .map((part) => {
+                            const [points, role, money] = part.split(':').map((s) => s.trim());
+                            const pts = parseInt(points ?? '', 10);
+                            if (isNaN(pts) || pts < 1) return null;
+                            const reward: { points: number; role_id?: string; money?: number } = { points: pts };
+                            if (role) reward.role_id = role;
+                            const moneyValue = money ? parseInt(money, 10) : NaN;
+                            if (!isNaN(moneyValue)) reward.money = moneyValue;
+                            return reward;
+                          })
+                          .filter((r): r is { points: number; role_id?: string; money?: number } => r !== null)
+                          .slice(0, 50);
+                        update({ alliance_config: { ...allianceCfg, rewards } });
+                      }}
+                    />
+                  </Field>
+                  <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                    <p className="mb-2 text-sm font-bold text-white">{t.allianceEmbedSuccessLabel}</p>
+                    <p className="mb-3 text-[10px] text-white/40">{t.allianceEmbedHint}</p>
+                    <div className="grid gap-3">
+                      <input
+                        className={inputCls}
+                        value={allianceCfg.embed_success.title}
+                        placeholder={t.allianceEmbedSuccessLabel}
+                        onChange={(e) => update({ alliance_config: { ...allianceCfg, embed_success: { ...allianceCfg.embed_success, title: e.target.value } } })}
+                      />
+                      <input
+                        className={inputCls}
+                        value={allianceCfg.embed_success.description}
+                        placeholder="descripción"
+                        onChange={(e) => update({ alliance_config: { ...allianceCfg, embed_success: { ...allianceCfg.embed_success, description: e.target.value } } })}
+                      />
+                    </div>
+                  </div>
+                  <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                    <p className="mb-2 text-sm font-bold text-white">{t.allianceEmbedErrorLabel}</p>
+                    <div className="grid gap-3">
+                      <input
+                        className={inputCls}
+                        value={allianceCfg.embed_error.title}
+                        placeholder={t.allianceEmbedErrorLabel}
+                        onChange={(e) => update({ alliance_config: { ...allianceCfg, embed_error: { ...allianceCfg.embed_error, title: e.target.value } } })}
+                      />
+                      <input
+                        className={inputCls}
+                        value={allianceCfg.embed_error.description}
+                        placeholder="{reason}"
+                        onChange={(e) => update({ alliance_config: { ...allianceCfg, embed_error: { ...allianceCfg.embed_error, description: e.target.value } } })}
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+            <HelpZone title={SECTION_HELP.alliance.title} commands={SECTION_HELP.alliance.commands} note={SECTION_HELP.alliance.note} />
+          </section>
+          )}
+
+          {view === 'tickets' && (
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <h2 className="flex items-center gap-2 font-bold text-white">
+                <Icon name="support" size={18} className="text-neon-blue" /> {t.ticketsTitle}
+              </h2>
+              <QuickHelp title={SECTION_HELP.tickets.title} commands={SECTION_HELP.tickets.commands} note={SECTION_HELP.tickets.note} />
+              <Badge kind="free" dict={dict} />
+              <SectionJson
+                disabled={dirty || busy}
+                disabledHint={t.jsonNeedSave}
+                exportLabel={t.jsonExport}
+                importLabel={t.jsonImport}
+                onExport={() => exportScope('tickets')}
+                onImport={(file) => void importFile(file, 'tickets')}
+              />
+            </div>
+            <p className="mb-5 text-xs text-white/45">{t.ticketsHint}</p>
+            <div className="grid gap-5">
+              <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
+                <div>
+                  <p className="text-sm font-semibold text-white/90">{t.ticketsTitle}</p>
+                  <p className="text-xs text-white/50">{t.ticketsHint}</p>
+                </div>
+                <Toggle on={ticketCfg.enabled} onChange={(v) => update({ ticket_config: { ...ticketCfg, enabled: v } })} />
+              </div>
+              <div className="grid gap-4 sm:grid-cols-3">
+                {hasGuildData ? (
+                  <SelectField
+                    label={t.ticketsPanelLabel}
+                    value={ticketCfg.panel_channel_id}
+                    placeholder={t.pickChannel}
+                    options={textChannelOptions}
+                    onChange={(v) => update({ ticket_config: { ...ticketCfg, panel_channel_id: v } })}
+                  />
+                ) : (
+                  <Field label={t.ticketsPanelLabel} hint={t.manualIdHint}>
+                    <input className={inputCls} value={ticketCfg.panel_channel_id ?? ''} onChange={(e) => update({ ticket_config: { ...ticketCfg, panel_channel_id: e.target.value || null } })} />
+                  </Field>
+                )}
+                {hasGuildData ? (
+                  <SelectField
+                    label={t.ticketsLogLabel}
+                    value={ticketCfg.log_channel_id}
+                    placeholder={t.pickChannel}
+                    options={textChannelOptions}
+                    onChange={(v) => update({ ticket_config: { ...ticketCfg, log_channel_id: v } })}
+                  />
+                ) : (
+                  <Field label={t.ticketsLogLabel} hint={t.manualIdHint}>
+                    <input className={inputCls} value={ticketCfg.log_channel_id ?? ''} onChange={(e) => update({ ticket_config: { ...ticketCfg, log_channel_id: e.target.value || null } })} />
+                  </Field>
+                )}
+                <Field label={t.ticketsAutoDeleteLabel}>
+                  <input
+                    type="number"
+                    min={0}
+                    max={720}
+                    className={inputCls}
+                    value={ticketCfg.auto_delete_hours}
+                    onChange={(e) => update({ ticket_config: { ...ticketCfg, auto_delete_hours: Math.max(0, Number(e.target.value) || 0) } })}
+                  />
+                </Field>
+              </div>
+
+              <div>
+                <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-white/45">{t.ticketsCategoriesLabel}</p>
+                <div className="grid gap-3">
+                  {ticketCfg.categories.map((cat, idx) => (
+                    <div key={cat.id} className="rounded-xl border border-white/10 bg-black/20 p-4">
+                      <div className="mb-3 flex flex-wrap items-center gap-2">
+                        <code className="rounded bg-black/40 px-2 py-1 text-[11px] font-bold text-neon-blue">{cat.id}</code>
+                        <button
+                          type="button"
+                          onClick={() => update({ ticket_config: { ...ticketCfg, categories: ticketCfg.categories.filter((c) => c.id !== cat.id) } })}
+                          className="ml-auto rounded-lg border border-white/15 px-3 py-1 text-[10px] font-bold text-white/60 transition hover:border-red-400/50 hover:text-red-300"
+                        >
+                          {t.removeRow}
+                        </button>
+                      </div>
+                      <div className="grid gap-3 sm:grid-cols-3">
+                        <Field label={t.ticketsCatLabel}>
+                          <input
+                            className={inputCls}
+                            value={cat.label}
+                            onChange={(e) => {
+                              const categories = ticketCfg.categories.map((c, i) => (i === idx ? { ...c, label: e.target.value } : c));
+                              update({ ticket_config: { ...ticketCfg, categories } });
+                            }}
+                          />
+                        </Field>
+                        <Field label={t.ticketsCatEmoji}>
+                          <input
+                            className={inputCls}
+                            value={cat.emoji}
+                            maxLength={64}
+                            onChange={(e) => {
+                              const categories = ticketCfg.categories.map((c, i) => (i === idx ? { ...c, emoji: e.target.value } : c));
+                              update({ ticket_config: { ...ticketCfg, categories } });
+                            }}
+                          />
+                        </Field>
+                        <Field label={t.ticketsCatColor}>
+                          <input
+                            className={inputCls}
+                            value={cat.color}
+                            onChange={(e) => {
+                              const categories = ticketCfg.categories.map((c, i) => (i === idx ? { ...c, color: e.target.value } : c));
+                              update({ ticket_config: { ...ticketCfg, categories } });
+                            }}
+                          />
+                        </Field>
+                      </div>
+                      <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                        {hasGuildData ? (
+                          <SelectField
+                            label={t.ticketsCatDiscordLabel}
+                            value={cat.discord_category_id}
+                            placeholder={t.pickCategory}
+                            options={categoryOptions}
+                            onChange={(v) => {
+                              const categories = ticketCfg.categories.map((c, i) => (i === idx ? { ...c, discord_category_id: v } : c));
+                              update({ ticket_config: { ...ticketCfg, categories } });
+                            }}
+                          />
+                        ) : (
+                          <Field label={t.ticketsCatDiscordLabel} hint={t.manualIdHint}>
+                            <input className={inputCls} value={cat.discord_category_id ?? ''} onChange={(e) => {
+                              const categories = ticketCfg.categories.map((c, i) => (i === idx ? { ...c, discord_category_id: e.target.value || null } : c));
+                              update({ ticket_config: { ...ticketCfg, categories } });
+                            }} />
+                          </Field>
+                        )}
+                        <Field label={t.ticketsCatRolesLabel} hint="IDs separados por coma">
+                          <input
+                            className={inputCls}
+                            value={cat.role_ids.join(', ')}
+                            onChange={(e) => {
+                              const roleIds = e.target.value.split(',').map((s) => s.trim()).filter((s) => /^\d{17,20}$/.test(s)).slice(0, 10);
+                              const categories = ticketCfg.categories.map((c, i) => (i === idx ? { ...c, role_ids: roleIds } : c));
+                              update({ ticket_config: { ...ticketCfg, categories } });
+                            }}
+                          />
+                        </Field>
+                        {hasGuildData ? (
+                          <SelectField
+                            label={t.ticketsCatGrantLabel}
+                            value={cat.grant_role_id}
+                            placeholder={t.pickRole}
+                            options={roleOptions}
+                            onChange={(v) => {
+                              const categories = ticketCfg.categories.map((c, i) => (i === idx ? { ...c, grant_role_id: v } : c));
+                              update({ ticket_config: { ...ticketCfg, categories } });
+                            }}
+                          />
+                        ) : (
+                          <Field label={t.ticketsCatGrantLabel} hint={t.manualIdHint}>
+                            <input className={inputCls} value={cat.grant_role_id ?? ''} onChange={(e) => {
+                              const categories = ticketCfg.categories.map((c, i) => (i === idx ? { ...c, grant_role_id: e.target.value || null } : c));
+                              update({ ticket_config: { ...ticketCfg, categories } });
+                            }} />
+                          </Field>
+                        )}
+                      </div>
+                      <div className="mt-3 grid gap-3">
+                        <Field label={t.ticketsCatFormLabel} hint="Vacío = apertura directa">
+                          <textarea
+                            className={`${inputCls} min-h-[70px]`}
+                            value={cat.form.join('\n')}
+                            onChange={(e) => {
+                              const form = e.target.value.split('\n').map((s) => s.trim()).filter(Boolean).slice(0, 5);
+                              const categories = ticketCfg.categories.map((c, i) => (i === idx ? { ...c, form } : c));
+                              update({ ticket_config: { ...ticketCfg, categories } });
+                            }}
+                          />
+                        </Field>
+                        <Field label={t.ticketsCatWelcomeLabel} hint="Variable: {user}">
+                          <input
+                            className={inputCls}
+                            value={cat.welcome}
+                            onChange={(e) => {
+                              const categories = ticketCfg.categories.map((c, i) => (i === idx ? { ...c, welcome: e.target.value } : c));
+                              update({ ticket_config: { ...ticketCfg, categories } });
+                            }}
+                          />
+                        </Field>
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const id = `cat${ticketCfg.categories.length + 1}`;
+                      update({
+                        ticket_config: {
+                          ...ticketCfg,
+                          categories: [
+                            ...ticketCfg.categories,
+                            {
+                              id,
+                              label: 'Nueva categoría',
+                              emoji: '🎫',
+                              description: '',
+                              discord_category_id: null,
+                              role_ids: [],
+                              grant_role_id: null,
+                              form: [],
+                              welcome: '¡Hola {user}! Cuéntanos tu caso y el equipo te atenderá pronto.',
+                              color: '#00d4ff',
+                            },
+                          ],
+                        },
+                      });
+                    }}
+                    className="w-fit rounded-lg border border-white/15 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-white/60 transition hover:border-neon-blue/60 hover:text-white"
+                  >
+                    + {t.ticketsAddCategory}
+                  </button>
+                </div>
+              </div>
+            </div>
+            <HelpZone title={SECTION_HELP.tickets.title} commands={SECTION_HELP.tickets.commands} note={SECTION_HELP.tickets.note} />
           </section>
           )}
 

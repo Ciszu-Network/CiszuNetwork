@@ -58,6 +58,16 @@ export const SECTION_HELP: Record<string, SectionHelp> = {
     commands: [...byNames(['automod', 'cooldown']), ...byCategory('Moderación')],
     note: 'El automod borra el mensaje y avisa; los cooldowns aplican "espera X segundos".',
   },
+  alliance: {
+    title: 'Comandos de alianzas',
+    commands: byNames(['alliance', 'invites']),
+    note: 'cz!alliance configura el sistema (canal, rol, filtros, sanciones, recompensas); el leaderboard es cz!alliance top.',
+  },
+  tickets: {
+    title: 'Comandos de tickets',
+    commands: byNames(['tickets', 'closechannels', 'logs']),
+    note: 'Publica el panel con cz!tickets panel; edita categorías con cz!tickets cat <id> ...',
+  },
   music: { title: 'Comandos de música', commands: byCategory('Música'), note: 'Función Premium (gratis durante la beta).' },
   search: { title: 'Comandos de búsqueda', commands: byCategory('Búsqueda'), note: 'Función Premium (gratis durante la beta).' },
   minigames: { title: 'Comandos de diversión', commands: byCategory('Diversión') },
