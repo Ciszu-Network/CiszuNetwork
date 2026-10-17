@@ -12,6 +12,11 @@
 
 name: Bot heartbeat watch
 
+# Permisos mínimos: el workflow solo lee Supabase y hace curl a ntfy.sh
+# (el cache de estado entre runs no requiere permisos del token).
+permissions:
+  contents: read
+
 on:
   schedule:
     - cron: '*/15 * * * *'

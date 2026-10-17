@@ -10,6 +10,10 @@
 
 name: Bot renewal reminder
 
+# Permisos mínimos: el workflow solo hace curl a ntfy.sh (no usa el token de GitHub).
+permissions:
+  contents: read
+
 on:
   schedule:
     # Días 1, 5, 9, 13, 17, 21, 25 y 29 del mes a las 12:00 UTC (~08:00 VE):
