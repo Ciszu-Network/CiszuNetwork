@@ -464,6 +464,186 @@ const CARDS: InfoHelpCard[] = [
     tags: 'contacto soporte discord correo equipo ayuda directo',
     cta: { label: 'Ir a contacto', href: '/contact' },
   },
+  {
+    title: 'Economía: monedas, banco y tienda',
+    category: 'economia',
+    icon: 'money',
+    summary: 'Cómo ganar monedas, dónde guardarlas y qué comprar.',
+    detail:
+      'La economía es por servidor: cz!work paga cada hora, cz!daily una vez al día, y también ganas con cz!gamble, cz!slot y los drops de dinero. Guarda tus monedas en el banco con cz!deposit para protegerlas de los robos de cz!gamble y revisa la tienda con cz!shop.',
+    steps: [
+      'Reclama con cz!work y cz!daily todos los días.',
+      'Guarda en el banco: cz!deposit 500 y consulta con cz!balance.',
+      'Compra roles y objetos en la tienda del servidor: cz!shop → cz!buy <ítem>.',
+    ],
+    tags: 'economia monedas work daily balance banco deposito retirar tienda shop comprar gamble slot',
+    cta: { label: 'Ver comandos de economía', href: '/commands' },
+  },
+  {
+    title: 'Drops de dinero: cómo reclamarlos',
+    category: 'economia',
+    icon: 'star',
+    summary: 'El dinero que cae solo y se reclama con un botón.',
+    detail:
+      'Si el servidor tiene los drops activados, cada cierto tiempo cae un monto de dinero en un canal con un botón «¡Reclamar!». El primero que pulse se lo lleva; si nadie lo reclama en 90 segundos, el drop expira. Los admins los configuran con cz!drops o desde el dashboard.',
+    steps: [
+      'Atento al canal: el drop aparece con un botón dorado.',
+      'Pulsa «¡Reclamar!» lo más rápido que puedas.',
+      'Consulta cuánto llevas hoy con cz!drops status (staff).',
+    ],
+    tags: 'drops dinero boton reclamar caidas expira rapido premio',
+    cta: { label: 'Ver todos los comandos', href: '/commands' },
+  },
+  {
+    title: 'Moneda personalizada del servidor',
+    category: 'economia',
+    icon: 'palette',
+    summary: 'Cambia el emoji y el nombre de la moneda en tu servidor.',
+    detail:
+      'La moneda por defecto es 🪙 monedas, pero cada servidor puede tener la suya: cz!coin emoji <emoji> y cz!coin name <nombre> la cambian en todos los comandos y en el dashboard (sección Economía). cz!coin reset vuelve al valor por defecto.',
+    steps: [
+      'Cambia el emoji: cz!coin emoji 💎',
+      'Cambia el nombre: cz!coin name gemas',
+      'Comprueba el resultado con cz!balance.',
+    ],
+    tags: 'moneda emoji nombre coin personalizar gemas dashboard economia',
+    cta: { label: 'Configurar en el dashboard', href: '/dashboard' },
+  },
+  {
+    title: 'Niveles: roles por nivel y mensaje de subida',
+    category: 'niveles',
+    icon: 'trophy',
+    summary: 'Recompensa la actividad con roles automáticos al subir de nivel.',
+    detail:
+      'Con el sistema de niveles activo, cada mensaje da XP y al subir el bot lo anuncia con un mensaje personalizable. Los admins pueden asignar roles por nivel (por ejemplo nivel 10 → @Activo) con cz!levelconfig role 10 @Activo; el rol se otorga solo al alcanzarlo.',
+    steps: [
+      'Consulta tu progreso con cz!rank y el ranking con cz!topxp.',
+      'Staff: activa niveles con cz!levelconfig on.',
+      'Staff: añade roles con cz!levelconfig role <nivel> @rol y personaliza el mensaje con cz!levelconfig message.',
+    ],
+    tags: 'niveles xp roles por nivel levelconfig rank topxp subir recompensa',
+    cta: { label: 'Configurar niveles', href: '/dashboard' },
+  },
+  {
+    title: 'Invitaciones: puntos y recompensas',
+    category: 'servidor',
+    icon: 'heart',
+    summary: 'El bot detecta quién invita y premia a los que traen miembros.',
+    detail:
+      'Cada miembro nuevo queda asociado a quien lo invitó. Los puntos por invitación (configurables) alimentan un ranking propio: cz!invites muestra lo tuyo, el top del servidor y las recompensas por umbral que configure el staff (por ejemplo 10 invitaciones → rol especial).',
+    steps: [
+      'Consulta tus puntos con cz!invites.',
+      'Mira el top con el mismo comando (sección «Top invitadores»).',
+      'Staff: ajusta los puntos con cz!invites points <n> y las recompensas con cz!invites reward 10 @rol.',
+    ],
+    tags: 'invitaciones invites puntos top invitador recompensas umbral rol',
+    cta: { label: 'Ver comando invites', href: '/commands' },
+  },
+  {
+    title: 'Alianzas: publicar y ganar puntos',
+    category: 'servidor',
+    icon: 'users',
+    summary: 'El canal donde publicas servidores aliados y ganas puntos.',
+    detail:
+      'En el canal de alianzas, los miembros con el rango correspondiente publican links de servidores. El bot valida la invitación y la convierte en una tarjeta con el nombre y los miembros del servidor, dándote un punto de alianza (cz!alliance top). Hay cooldown por usuario, no se repiten servidores y los filtros del staff (palabras, servidores bloqueados, +18) pueden rechazar el mensaje con un aviso autoeliminable.',
+    steps: [
+      'Pide el rango de alianzas a la administración si no lo tienes.',
+      'Publica un mensaje con el link del servidor: discord.gg/...',
+      'Si el bot lo rechaza, lee el motivo en el aviso (se borra solo).',
+    ],
+    tags: 'alianzas alliance publicar servidor puntos leaderboard cooldown filtros +18',
+    cta: { label: 'Configurar alianzas', href: '/dashboard' },
+  },
+  {
+    title: 'Tickets: abrir, reclamar y cerrar',
+    category: 'soporte',
+    icon: 'support',
+    summary: 'El sistema de soporte con categorías y formularios.',
+    detail:
+      'En el canal del panel eliges una categoría (soporte, postulación, reporte...) y, si tiene formulario, respondes unas preguntas. El bot crea un canal privado solo para ti y el equipo con dos botones: Reclamar (el staff lo toma) y Cerrar (queda registrado en los logs del staff y el canal se elimina). Algunas categorías otorgan un rol al abrir el ticket.',
+    steps: [
+      'Ve al canal del panel y abre el menú «Abrir un ticket».',
+      'Elige categoría y responde el formulario si aparece.',
+      'Atiende en tu canal privado; ciérralo con el botón Cerrar cuando termines.',
+    ],
+    tags: 'tickets soporte panel categorias formulario reclamar cerrar privado logs rol',
+    cta: { label: 'Ver comandos de tickets', href: '/commands' },
+  },
+  {
+    title: 'Starboard: mensajes destacados',
+    category: 'servidor',
+    icon: 'star',
+    summary: 'Los mensajes con más reacciones se destacan solos.',
+    detail:
+      'Cuando un mensaje recibe suficientes reacciones del emoji configurado (por defecto ⭐ y mínimo 3), el bot lo republica en el canal de starboard con un enlace al original. Se actualiza si llegan más reacciones y no destaca mensajes de bots.',
+    steps: [
+      'Reacciona con ⭐ a los mensajes que merezcan la pena.',
+      'Al alcanzar el mínimo, el bot lo publica en el starboard.',
+      'Staff: configura canal, emoji y mínimo con cz!starboard.',
+    ],
+    tags: 'starboard destacados reacciones estrella mensajes destacar minimo',
+    cta: { label: 'Configurar starboard', href: '/dashboard' },
+  },
+  {
+    title: 'Canales de voz privados (panel)',
+    category: 'servidor',
+    icon: 'music',
+    summary: 'Crea tu propio canal de voz privado al instante.',
+    detail:
+      'Si el servidor tiene el hub configurado, al unirte a ese canal de voz el bot crea tu canal privado y te mueve a él. Dentro tienes botones para bloquear, ocultar o eliminar el canal, y comandos para renombrarlo (cz!privatevc rename <nombre>) o limitar usuarios (cz!privatevc limit <n>). El canal se borra solo al quedarse vacío.',
+    steps: [
+      'Únete al canal hub del servidor.',
+      'Gestiona tu canal con el panel o con cz!privatevc.',
+      'Cierra el canal con el botón Eliminar o dejándolo vacío.',
+    ],
+    tags: 'canales voz privados hub privatevc bloquear ocultar eliminar rename limit',
+    cta: { label: 'Ver comando privatevc', href: '/commands' },
+  },
+  {
+    title: 'Automod: spam, flood y filtros',
+    category: 'moderacion',
+    icon: 'shield',
+    summary: 'Qué detecta la moderación automática y cómo activarla.',
+    detail:
+      'El automod borra mensajes que incumplen las reglas del servidor y avisa al autor: enlaces, invitaciones de Discord, MAYÚSCULAS excesivas, palabras prohibidas, spam (mismo mensaje repetido) y flood (mensajes seguidos sin parar). El staff lo configura con cz!automod o desde el dashboard (sección Automod).',
+    steps: [
+      'Staff: activa con cz!automod on y enciende las reglas que quieras.',
+      'Añade palabras prohibidas con cz!automod word add <palabra>.',
+      'Ajusta el anti-spam: reglas «spam» (repetidos) y «flood» (ráfaga de mensajes).',
+    ],
+    tags: 'automod spam flood enlaces invitaciones mayusculas palabras borrar moderacion',
+    cta: { label: 'Configurar automod', href: '/dashboard' },
+  },
+  {
+    title: 'Cooldowns por comando ("espera X segundos")',
+    category: 'comandos',
+    icon: 'clock',
+    summary: 'Limita el uso de comandos concretos en tu servidor.',
+    detail:
+      'El staff puede poner un tiempo de espera a cualquier comando: cz!cooldown set work 60 hace que cada persona solo pueda usarlo cada 60 segundos. Si alguien se adelanta, el bot responde con «espera X segundos». cz!cooldown list muestra todos los activos y cz!cooldown remove los quita.',
+    steps: [
+      'Staff: cz!cooldown set <comando> <segundos>.',
+      'Revisa la lista con cz!cooldown list.',
+      'Quita uno con cz!cooldown remove <comando>.',
+    ],
+    tags: 'cooldown rate limit espera segundos comando abuso limitar',
+    cta: { label: 'Ver comando cooldown', href: '/commands' },
+  },
+  {
+    title: 'Bienvenidas, despedidas y roles automáticos',
+    category: 'servidor',
+    icon: 'heart',
+    summary: 'Recibe a los nuevos miembros con mensajes y roles.',
+    detail:
+      'Configura el mensaje de bienvenida con variables ({user}, {username}, {guild}, {members}) y el canal donde se envía; lo mismo para las despedidas. Puedes probar el resultado con cz!welcome test sin esperar a que alguien entre, y los admins pueden dar roles automáticos a los nuevos.',
+    steps: [
+      'Staff: cz!welcome channel #bienvenidas.',
+      'Staff: cz!welcome message ¡Hola {user}! Bienvenido/a a {guild}.',
+      'Prueba con cz!welcome test y repite con cz!goodbye.',
+    ],
+    tags: 'bienvenidas despedidas welcome goodbye mensaje canal autorol variables test',
+    cta: { label: 'Configurar bienvenidas', href: '/dashboard' },
+  },
 ];
 
 export default function HelpCenter({ theme }: { theme: InfoTheme }) {

@@ -6,6 +6,7 @@ Identificador: ABOUT_V2.5.5_2026_07_28_ciszubot
 
 ---
 
+
 SOBRE CISZUBOT / ABOUT CISZUBOT
 
 [ESPAÑOL]
@@ -18,21 +19,21 @@ Discord, ofreciendo una experiencia completa y accesible para todos los
 servidores.
 
 COMANDOS DISPONIBLES (12):
-
 - Información: help, profile, serverinfo
 - Utilidad: ping, pong, test
 - Diversión: say, directsay, confess, 8ball
 - Social: hi, bye
 
 CARACTERÍSTICAS:
-
 - Prefijo: cz! (configurable)
 - Slash commands: Todos los comandos disponibles como /comando
 - Embeds con paleta de colores índigo y violeta
 - Panel de administración Express con estadísticas en vivo
 - Logging a consola y archivo
 
+
 ---
+
 
 [ENGLISH]
 Ciszubot is a Spanish-language Discord bot with 12 commands for information,
@@ -43,14 +44,12 @@ traditional cz! prefix and Discord's slash commands, offering a complete
 and accessible experience for all servers.
 
 AVAILABLE COMMANDS (12):
-
 - Information: help, profile, serverinfo
 - Utility: ping, pong, test
 - Fun: say, directsay, confess, 8ball
 - Social: hi, bye
 
 FEATURES:
-
 - Prefix: cz! (configurable)
 - Slash commands: All commands available as /command
 - Embeds with indigo and violet color palette
