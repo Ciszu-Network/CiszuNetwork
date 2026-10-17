@@ -3,6 +3,7 @@ import {
   EmbedBuilder,
   Events,
   GatewayIntentBits,
+  Partials,
   REST,
   Routes,
 } from 'discord.js';
@@ -28,7 +29,14 @@ const client = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMembers,
+    // Sin este intent Discord NUNCA informa en qué canal de voz está un
+    // miembro: `member.voice.channel` queda undefined y `cz!play` respondía
+    // "Únete a un canal de voz primero" aunque el usuario estuviera en uno.
+    GatewayIntentBits.GuildVoiceStates,
   ],
+  // Partials: necesarios para reacciones (starboard) y DMs en mensajes no
+  // cacheados — sin esto los eventos de reacción llegan incompletos.
+  partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
 
 client.commands = new CommandRegistry();
@@ -51,7 +59,7 @@ client.once(Events.ClientReady, async (readyClient) => {
         online: true,
         guilds: readyClient.guilds.cache.size,
         commandsTotal: getTotalCommands(),
-        version: 'v3.2.0',
+        version: `v${config.version}`,
         lastSeen: new Date(),
       });
     } catch (error) {
@@ -359,7 +367,7 @@ function gracefulShutdown(signal: string): void {
     online: false,
     guilds: client.guilds.cache.size,
     commandsTotal: getTotalCommands(),
-    version: 'v3.2.0',
+    version: `v${config.version}`,
     lastSeen: new Date(),
   }).catch(() => undefined);
   if (client.readyAt) client.destroy();

@@ -43,7 +43,7 @@ export const config: BotConfig = {
   activity: raw.activity ?? { name: 'cz!help', type: ActivityType.Playing },
   colors: raw.colors ?? { primary: '#4f46e5', secondary: '#8b5cf6' },
   prefix: process.env.PREFIX || raw.prefix || 'cz!',
-  version: raw.version ?? '3.2.0',
+  version: raw.version ?? '3.3.0',
 };
 
 export const BOT_TOKEN = process.env.BOT_TOKEN || '';

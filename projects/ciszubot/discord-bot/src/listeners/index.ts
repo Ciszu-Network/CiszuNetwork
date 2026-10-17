@@ -6,19 +6,25 @@ import {
   Message,
   PermissionsBitField,
   TextChannel,
+  VoiceChannel,
   ChannelType,
   EmbedBuilder,
   ButtonInteraction,
+  PartialMessage,
 } from 'discord.js';
-import { getGuildConfig, getPrefix } from '../services/configService';
+import { getGuildConfig, getPrefix, GuildConfig } from '../services/configService';
 import { addXp } from '../services/levels';
-import { db, ciszubotSchema, eq, and, sql } from '../services/supabase';
+import { db, ciszubotSchema, eq, and, desc } from '../services/supabase';
 import { logger } from '../services/logger';
 import { resumeActiveGiveaways } from '../services/giveaways';
+import { tryClaimDrop, completeDrop, scheduleDrops } from '../services/drops';
+import { takeProposal } from '../services/proposals';
+import { BOT_COLORS, BOT_FOOTER } from '../config/links';
 
 /**
- * Listeners del bot: XP/niveles, snipe, AFK, bienvenidas, autoroles,
- * contadores de canales, tickets y giveaways.
+ * Listeners del bot: XP/niveles (mensaje custom + roles), snipe, AFK,
+ * bienvenidas/despedidas, autoroles, contadores, tickets, giveaways,
+ * automod, invitaciones, starboard, VCs privados, logs y emojis Nitro.
  */
 
 const xpCooldowns = new Map<string, number>();
@@ -42,29 +48,133 @@ async function handleXp(message: Message): Promise<void> {
 
   const amount = Math.round(XP_AMOUNT * (cfg.xp_rate ?? 1));
   const result = await addXp(message.author.id, message.guild.id, amount);
-  if (result?.leveledUp) {
-    const embed = new EmbedBuilder()
-      .setColor('#ff33cc')
-      .setTitle(`🎉 ¡Subiste de nivel ${result.level}!`)
-      .setDescription(`Has alcanzado el **nivel ${result.level}** en **${message.guild.name}**.`)
-      .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() });
+  if (!result?.leveledUp) return;
 
-    if (cfg.level_channel_id) {
-      const channel = message.guild.channels.cache.get(cfg.level_channel_id) as TextChannel | undefined;
-      if (channel) {
-        await channel.send({ content: `<@${message.author.id}>`, embeds: [embed] }).catch(() => undefined);
-        return;
+  // Roles por nivel
+  const level = result.level;
+  if (Array.isArray(cfg.level_roles) && cfg.level_roles.length > 0 && message.member) {
+    for (const reward of cfg.level_roles) {
+      if (level >= reward.level) {
+        const role = message.guild.roles.cache.get(reward.role_id);
+        if (role && !message.member.roles.cache.has(role.id) && message.member.manageable) {
+          await message.member.roles.add(role).catch(() => undefined);
+        }
       }
     }
-    await message.reply({ embeds: [embed] }).catch(() => undefined);
+  }
+
+  const text = (cfg.level_message ?? '🎉 ¡{user} subió al nivel {level} en {guild}!')
+    .replaceAll('{user}', `<@${message.author.id}>`)
+    .replaceAll('{mention}', `<@${message.author.id}>`)
+    .replaceAll('{level}', String(level))
+    .replaceAll('{guild}', message.guild.name)
+    .replaceAll('{username}', message.author.username);
+
+  const embed = new EmbedBuilder()
+    .setColor('#ff33cc')
+    .setTitle(`🎉 ¡Nivel ${level}!`)
+    .setDescription(text)
+    .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
+    .setTimestamp();
+
+  if (cfg.level_channel_id) {
+    const channel = message.guild.channels.cache.get(cfg.level_channel_id) as TextChannel | undefined;
+    if (channel) {
+      await channel.send({ content: `<@${message.author.id}>`, embeds: [embed] }).catch(() => undefined);
+      return;
+    }
+  }
+  await message.reply({ embeds: [embed] }).catch(() => undefined);
+}
+
+// ─── Automod ───
+
+const spamTracker = new Map<string, number[]>();
+
+/** Devuelve la regla incumplida o null. */
+async function automodViolation(message: Message, cfg: GuildConfig): Promise<string | null> {
+  if (!cfg.automod_enabled || !message.guild) return null;
+  const am = cfg.automod_config;
+  const content = message.content ?? '';
+  if (am.links && /(https?:\/\/|www\.)\S+/i.test(content)) return 'links';
+  if (am.invites && /(discord\.gg\/|discord(app)?\.com\/invite\/)\S+/i.test(content)) return 'invitaciones';
+  if (am.caps) {
+    const letters = content.replace(/[^a-zA-Z]/g, '');
+    if (letters.length >= 10 && letters.replace(/[^A-Z]/g, '').length / letters.length > 0.7) return 'mayúsculas';
+  }
+  if (am.words.length > 0) {
+    const lower = content.toLowerCase();
+    const hit = am.words.find((w) => lower.includes(w));
+    if (hit) return `palabra prohibida`;
+  }
+  if (am.spam) {
+    const key = `${message.author.id}:${message.guild.id}`;
+    const now = Date.now();
+    const times = (spamTracker.get(key) ?? []).filter((t) => now - t < 6000);
+    times.push(now);
+    spamTracker.set(key, times);
+    if (times.length >= 5) {
+      spamTracker.set(key, []);
+      return 'spam';
+    }
+  }
+  return null;
+}
+
+async function handleAutomod(message: Message, cfg: GuildConfig): Promise<boolean> {
+  const violation = await automodViolation(message, cfg);
+  if (!violation) return false;
+  const me = message.guild?.members.me;
+  const textChannel = 'permissionsFor' in message.channel ? (message.channel as TextChannel) : null;
+  const deletable = me && textChannel ? textChannel.permissionsFor(me)?.has(PermissionsBitField.Flags.ManageMessages) : false;
+  if (deletable) await message.delete().catch(() => undefined);
+  await message
+    .reply(`❌ <@${message.author.id}>, tu mensaje fue eliminado por el **automod** (${violation}).`)
+    .then((reply) => setTimeout(() => reply.delete().catch(() => undefined), 6000))
+    .catch(() => undefined);
+  return true;
+}
+
+// ─── Emojis Nitro (reenvío por webhook) ───
+
+const EMOJI_RE = /<a?:(\w+):(\d+)>/g;
+
+async function handleNitroRepost(message: Message, cfg: GuildConfig): Promise<void> {
+  if (!cfg.nitro_repost_enabled || !message.guild || !message.content) return;
+  const external: string[] = [];
+  for (const match of message.content.matchAll(EMOJI_RE)) {
+    const id = match[2];
+    if (!message.guild.emojis.cache.has(id)) external.push(id);
+  }
+  if (external.length === 0) return;
+
+  const channel = message.channel as TextChannel;
+  if (typeof channel.fetchWebhooks !== 'function') return;
+  const me = message.guild.members.me;
+  if (!me || !channel.permissionsFor(me)?.has(PermissionsBitField.Flags.ManageWebhooks)) return;
+
+  try {
+    const hooks = await channel.fetchWebhooks();
+    let hook = hooks.find((h) => h.owner?.id === message.client.user?.id);
+    if (!hook) hook = await channel.createWebhook({ name: 'CiszuBot Nitro' });
+    await hook.send({
+      content: message.content,
+      username: message.member?.displayName ?? message.author.username,
+      avatarURL: message.author.displayAvatarURL({ size: 128 }),
+      allowedMentions: { parse: [] },
+    });
+    await message.delete().catch(() => undefined);
+  } catch (error) {
+    logger.warn('nitro repost:', error);
   }
 }
+
+// ─── AFK ───
 
 async function handleAfk(message: Message): Promise<void> {
   if (!message.guild) return;
   const afk = ciszubotSchema.afk;
   try {
-    // Quitar AFK propio si habla
     const own = await db
       .select({ reason: afk.reason, since: afk.since })
       .from(afk)
@@ -76,7 +186,6 @@ async function handleAfk(message: Message): Promise<void> {
         .reply(`👋 ¡Bienvenido de vuelta, <@${message.author.id}>! Te quité tu AFK.`).catch(() => undefined);
     }
 
-    // Avisar si menciona a alguien con AFK
     const mentions = message.mentions.users;
     if (mentions.size > 0) {
       for (const [userId] of mentions) {
@@ -101,12 +210,22 @@ async function handleAfk(message: Message): Promise<void> {
   }
 }
 
+// ─── Logs del servidor ───
+
+async function logEvent(guild: GuildMember['guild'], embed: EmbedBuilder): Promise<void> {
+  const cfg = await getGuildConfig(guild.id);
+  if (!cfg.logs_channel_id) return;
+  const channel = guild.channels.cache.get(cfg.logs_channel_id) as TextChannel | undefined;
+  if (channel) await channel.send({ embeds: [embed] }).catch(() => undefined);
+}
+
+// ─── Bienvenidas / despedidas / autoroles / contadores ───
+
 async function handleWelcome(member: GuildMember | PartialGuildMember): Promise<void> {
   const guild = member.guild;
   if (!guild) return;
   const cfg = await getGuildConfig(guild.id);
 
-  // Autorol
   if (cfg.autorole_ids.length > 0) {
     for (const roleId of cfg.autorole_ids) {
       const role = guild.roles.cache.get(roleId);
@@ -116,7 +235,6 @@ async function handleWelcome(member: GuildMember | PartialGuildMember): Promise<
     }
   }
 
-  // Mensaje de bienvenida
   if (cfg.welcome_channel_id) {
     const channel = guild.channels.cache.get(cfg.welcome_channel_id) as TextChannel | undefined;
     if (channel) {
@@ -129,6 +247,16 @@ async function handleWelcome(member: GuildMember | PartialGuildMember): Promise<
       await channel.send(text).catch(() => undefined);
     }
   }
+
+  await logEvent(
+    guild,
+    new EmbedBuilder()
+      .setColor(BOT_COLORS.success)
+      .setAuthor({ name: member.user.tag, iconURL: member.user.displayAvatarURL() })
+      .setDescription(`📥 **Entrada:** <@${member.id}>`)
+      .setFooter({ text: `Miembros: ${guild.memberCount}` })
+      .setTimestamp(),
+  );
 }
 
 async function handleGoodbye(member: GuildMember | PartialGuildMember): Promise<void> {
@@ -140,11 +268,21 @@ async function handleGoodbye(member: GuildMember | PartialGuildMember): Promise<
     if (channel) {
       const text = (cfg.goodbye_message ?? 'Adiós {user}, que te vaya bien!')
         .replaceAll('{user}', member.user.username)
+        .replaceAll('{username}', member.user.username)
         .replaceAll('{guild}', guild.name)
         .replaceAll('{members}', String(guild.memberCount));
       await channel.send(text).catch(() => undefined);
     }
   }
+  await logEvent(
+    guild,
+    new EmbedBuilder()
+      .setColor(BOT_COLORS.danger)
+      .setAuthor({ name: member.user.tag, iconURL: member.user.displayAvatarURL() })
+      .setDescription(`📤 **Salida:** ${member.user.tag}`)
+      .setFooter({ text: `Miembros: ${guild.memberCount}` })
+      .setTimestamp(),
+  );
 }
 
 async function updateCounters(member: GuildMember | PartialGuildMember): Promise<void> {
@@ -174,15 +312,209 @@ async function updateCounters(member: GuildMember | PartialGuildMember): Promise
   }
 }
 
+// ─── Invitaciones ───
+
+const inviteCache = new Map<string, Map<string, number>>();
+
+async function refreshInvites(client: Client, guildId: string): Promise<void> {
+  const guild = client.guilds.cache.get(guildId);
+  if (!guild) return;
+  const invites = await guild.invites.fetch().catch(() => null);
+  if (!invites) return;
+  const map = new Map<string, number>();
+  for (const [code, invite] of invites) map.set(code, invite.uses ?? 0);
+  inviteCache.set(guildId, map);
+}
+
+async function handleInviteJoin(member: GuildMember): Promise<void> {
+  const guild = member.guild;
+  const before = inviteCache.get(guild.id);
+  if (!before) {
+    await refreshInvites(member.client, guild.id);
+    return;
+  }
+  const invites = await guild.invites.fetch().catch(() => null);
+  if (!invites) return;
+
+  let usedCode: string | null = null;
+  let inviterId: string | null = null;
+  for (const [code, invite] of invites) {
+    const prev = before.get(code) ?? 0;
+    if ((invite.uses ?? 0) > prev) {
+      usedCode = code;
+      inviterId = invite.inviter?.id ?? null;
+      break;
+    }
+  }
+  await refreshInvites(member.client, guild.id);
+  if (!usedCode || !inviterId || inviterId === member.id) return;
+
+  try {
+    const cfg = await getGuildConfig(guild.id);
+    const points = Math.max(1, cfg.invite_points_per);
+    await db.insert(ciszubotSchema.invites).values({
+      guildId: guild.id,
+      inviterId,
+      invitedId: member.id,
+      code: usedCode,
+      points,
+    });
+
+    // Recompensas por umbral
+    if (cfg.invite_rewards.length > 0) {
+      const rows = await db
+        .select({ total: ciszubotSchema.invites.points })
+        .from(ciszubotSchema.invites)
+        .where(and(eq(ciszubotSchema.invites.guildId, guild.id), eq(ciszubotSchema.invites.inviterId, inviterId)));
+      const total = rows.reduce((sum, r) => sum + Number(r.total), 0);
+      const inviter = await guild.members.fetch(inviterId).catch(() => null);
+      if (inviter) {
+        for (const reward of cfg.invite_rewards) {
+          if (total >= reward.invites) {
+            const role = guild.roles.cache.get(reward.role_id);
+            if (role && !inviter.roles.cache.has(role.id)) {
+              await inviter.roles.add(role).catch(() => undefined);
+            }
+          }
+        }
+      }
+    }
+  } catch (error) {
+    logger.warn('handleInviteJoin:', error);
+  }
+}
+
+// ─── Starboard ───
+
+async function handleStarboard(reactionMessage: Message | PartialMessage, add: boolean): Promise<void> {
+  if (!reactionMessage.guild) return;
+  const cfg = await getGuildConfig(reactionMessage.guild.id);
+  if (!cfg.starboard_channel_id) return;
+
+  const starReaction = reactionMessage.reactions.cache.get(cfg.starboard_emoji);
+  const stars = starReaction?.count ?? 0;
+  if (stars < cfg.starboard_min) return;
+  if (!reactionMessage.author || reactionMessage.author.bot) return;
+
+  const posts = ciszubotSchema.starboardPosts;
+  const rows = await db
+    .select()
+    .from(posts)
+    .where(and(eq(posts.messageId, reactionMessage.id), eq(posts.guildId, reactionMessage.guild.id)))
+    .limit(1);
+  const existing = rows[0];
+  const starboardChannel = reactionMessage.guild.channels.cache.get(cfg.starboard_channel_id) as TextChannel | undefined;
+  if (!starboardChannel) return;
+
+  const embed = new EmbedBuilder()
+    .setColor('#fbbf24')
+    .setAuthor({ name: reactionMessage.author.tag, iconURL: reactionMessage.author.displayAvatarURL() })
+    .setDescription(reactionMessage.content?.slice(0, 4000) || '*Sin texto (adjunto)*')
+    .addFields({ name: 'Original', value: `[Ir al mensaje](${reactionMessage.url})` })
+    .setFooter({ text: `${cfg.starboard_emoji} ${stars}` })
+    .setTimestamp(reactionMessage.createdAt);
+
+  const image = reactionMessage.attachments?.first()?.url;
+  if (image) embed.setImage(image);
+
+  try {
+    if (existing) {
+      if (!add && stars < cfg.starboard_min) return;
+      const starboardMessage = await starboardChannel.messages.fetch(existing.starboardMessageId).catch(() => null);
+      if (starboardMessage) {
+        await starboardMessage.edit({ embeds: [embed] });
+        await db.update(posts).set({ stars }).where(and(eq(posts.messageId, reactionMessage.id), eq(posts.guildId, reactionMessage.guild.id)));
+      }
+      return;
+    }
+    const sent = await starboardChannel.send({ content: `<#${reactionMessage.channelId}>`, embeds: [embed] });
+    await db.insert(posts).values({
+      messageId: reactionMessage.id,
+      guildId: reactionMessage.guild.id,
+      channelId: reactionMessage.channelId,
+      starboardMessageId: sent.id,
+      stars,
+    });
+  } catch (error) {
+    logger.warn('starboard:', error);
+  }
+}
+
+// ─── Canales de voz privados ───
+
+async function handlePrivateVcJoin(member: GuildMember, channelId: string): Promise<void> {
+  const guild = member.guild;
+  const cfg = await getGuildConfig(guild.id);
+  if (!cfg.private_vc_hub_id || channelId !== cfg.private_vc_hub_id) return;
+
+  try {
+    const channel = await guild.channels.create({
+      name: `🔒 ${member.user.username}`.slice(0, 90),
+      type: ChannelType.GuildVoice,
+      parent: cfg.private_category_id ?? undefined,
+      userLimit: 0,
+      permissionOverwrites: [
+        { id: guild.id, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.Connect] },
+        { id: member.id, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.Connect, PermissionsBitField.Flags.ManageChannels, PermissionsBitField.Flags.MoveMembers] },
+      ],
+    });
+    await db.insert(ciszubotSchema.privateChannels).values({ channelId: channel.id, guildId: guild.id, ownerId: member.id });
+    await member.voice.setChannel(channel).catch(() => undefined);
+    await channel
+      .send({
+        content: `🔒 Canal privado de <@${member.id}>. Usa el panel o \`cz!privatevc rename/limit/delete\`.`,
+        components: [
+          {
+            type: 1,
+            components: [
+              { type: 2, style: 2, label: 'Bloquear', custom_id: 'private_vc_lock' },
+              { type: 2, style: 2, label: 'Ocultar', custom_id: 'private_vc_hide' },
+              { type: 2, style: 4, label: 'Eliminar', custom_id: 'private_vc_delete' },
+            ],
+          },
+        ],
+      })
+      .catch(() => undefined);
+  } catch (error) {
+    logger.warn('handlePrivateVcJoin:', error);
+  }
+}
+
+async function handlePrivateVcLeave(channelId: string, client: Client): Promise<void> {
+  const rows = await db
+    .select()
+    .from(ciszubotSchema.privateChannels)
+    .where(eq(ciszubotSchema.privateChannels.channelId, channelId))
+    .limit(1);
+  const row = rows[0];
+  if (!row) return;
+  const guild = client.guilds.cache.get(row.guildId);
+  const channel = guild?.channels.cache.get(channelId) as VoiceChannel | undefined;
+  if (!guild || !channel) return;
+  if (channel.members.size === 0) {
+    await db.delete(ciszubotSchema.privateChannels).where(eq(ciszubotSchema.privateChannels.channelId, channelId));
+    await channel.delete('Canal privado vacío').catch(() => undefined);
+  }
+}
+
+// ─── Registro de listeners ───
+
 export function registerListeners(client: Client): void {
+  scheduleDrops(client);
+
   client.on(Events.MessageCreate, (message) => {
     if (message.author.bot || !message.guild) return;
-    void getPrefix(message.guild.id).then((prefix) => {
-      if (!message.content.startsWith(prefix) && !message.content.startsWith(`<@${client.user?.id}>`)) {
-        void handleXp(message);
-      }
-    });
-    void handleAfk(message);
+    void (async () => {
+      const cfg = await getGuildConfig(message.guild!.id);
+      if (await handleAutomod(message, cfg)) return;
+      await handleNitroRepost(message, cfg);
+      void getPrefix(message.guild!.id).then((prefix) => {
+        if (!message.content.startsWith(prefix) && !message.content.startsWith(`<@${client.user?.id}>`)) {
+          void handleXp(message);
+        }
+      });
+      void handleAfk(message);
+    })();
   });
 
   client.on(Events.MessageDelete, async (message) => {
@@ -196,14 +528,57 @@ export function registerListeners(client: Client): void {
         content: message.content ?? null,
         attachment: message.attachments.first()?.url ?? null,
       });
+      await logEvent(
+        message.guild,
+        new EmbedBuilder()
+          .setColor(BOT_COLORS.danger)
+          .setTitle('🗑️ Mensaje eliminado')
+          .setDescription(
+            `**Autor:** <@${message.author.id}>\n**Canal:** <#${message.channel.id}>\n**Contenido:** ${(message.content ?? '*adjunto*').slice(0, 1000)}`,
+          )
+          .setTimestamp(),
+      );
     } catch (error) {
       logger.warn('snipes upsert:', error);
     }
   });
 
+  client.on(Events.MessageUpdate, async (oldMessage, newMessage) => {
+    if (!newMessage.guild || !newMessage.author || newMessage.author.bot) return;
+    if (oldMessage.content === newMessage.content) return;
+    await logEvent(
+      newMessage.guild,
+      new EmbedBuilder()
+        .setColor('#fbbf24')
+        .setTitle('✏️ Mensaje editado')
+        .setDescription(
+          `**Autor:** <@${newMessage.author.id}>\n**Canal:** <#${newMessage.channel.id}>\n` +
+            `**Antes:** ${(oldMessage.content ?? '—').slice(0, 500)}\n**Después:** ${(newMessage.content ?? '—').slice(0, 500)}`,
+        )
+        .setTimestamp(),
+    );
+  });
+
+  client.on(Events.MessageReactionAdd, (reaction) => {
+    if (reaction.partial) {
+      void reaction.fetch().then(() => handleStarboard(reaction.message, true)).catch(() => undefined);
+      return;
+    }
+    void handleStarboard(reaction.message, true);
+  });
+
+  client.on(Events.MessageReactionRemove, (reaction) => {
+    if (reaction.partial) {
+      void reaction.fetch().then(() => handleStarboard(reaction.message, false)).catch(() => undefined);
+      return;
+    }
+    void handleStarboard(reaction.message, false);
+  });
+
   client.on(Events.GuildMemberAdd, (member) => {
     void handleWelcome(member);
     void updateCounters(member);
+    void handleInviteJoin(member as GuildMember);
   });
 
   client.on(Events.GuildMemberRemove, (member) => {
@@ -211,18 +586,53 @@ export function registerListeners(client: Client): void {
     void updateCounters(member);
   });
 
+  client.on(Events.GuildBanAdd, (ban) => {
+    void logEvent(
+      ban.guild,
+      new EmbedBuilder()
+        .setColor(BOT_COLORS.danger)
+        .setTitle('🔨 Usuario baneado')
+        .setDescription(`**${ban.user.tag}** (\`${ban.user.id}\`)${ban.reason ? `\n**Razón:** ${ban.reason}` : ''}`)
+        .setTimestamp(),
+    );
+  });
+
+  client.on(Events.VoiceStateUpdate, (oldState, newState) => {
+    const member = newState.member;
+    if (member && !member.user.bot && newState.channelId && newState.channelId !== oldState.channelId) {
+      void handlePrivateVcJoin(member, newState.channelId);
+    }
+    if (oldState.channelId && oldState.channelId !== newState.channelId) {
+      setTimeout(() => void handlePrivateVcLeave(oldState.channelId!, client), 1500);
+    }
+  });
+
+  client.on(Events.InviteCreate, (invite) => {
+    if (!invite.guild) return;
+    const map = inviteCache.get(invite.guild.id) ?? new Map<string, number>();
+    map.set(invite.code, invite.uses ?? 0);
+    inviteCache.set(invite.guild.id, map);
+  });
+
+  client.on(Events.InviteDelete, (invite) => {
+    if (!invite.guild) return;
+    inviteCache.get(invite.guild.id)?.delete(invite.code);
+  });
+
   client.on(Events.GuildCreate, (guild) => {
     void resumeActiveGiveaways(guild);
+    void refreshInvites(client, guild.id);
   });
 
   client.once(Events.ClientReady, (readyClient) => {
     for (const guild of readyClient.guilds.cache.values()) {
       void resumeActiveGiveaways(guild);
+      void refreshInvites(readyClient, guild.id);
     }
   });
 }
 
-// ─── Botones de sistemas (tickets, canales privados) ───
+// ─── Botones de sistemas (tickets, canales privados, drops, matrimonio) ───
 
 export async function handleButton(interaction: ButtonInteraction, client: Client): Promise<void> {
   const { customId } = interaction;
@@ -347,6 +757,116 @@ export async function handleButton(interaction: ButtonInteraction, client: Clien
       await interaction.followUp({ content: `✅ Canal privado creado: <#${channel.id}>`, ephemeral: true }).catch(() => undefined);
     } catch (error) {
       logger.error('private_channel_join:', error);
+    }
+  }
+
+  // ─── Drops ───
+  if (customId === 'drop_claim') {
+    const memberRoles = interaction.member && 'roles' in interaction.member
+      ? [...(interaction.member.roles as { cache: Map<string, unknown> }).cache.keys()]
+      : [];
+    const result = await tryClaimDrop(guild.id, interaction.message.id, interaction.user.id, memberRoles);
+    if (!result.ok) {
+      await interaction.followUp({ content: `❌ ${result.reason ?? 'No se pudo reclamar.'}`, ephemeral: true }).catch(() => undefined);
+      return;
+    }
+    completeDrop(guild.id);
+    const cfg = await getGuildConfig(guild.id);
+    await interaction.message
+      .edit({
+        embeds: [
+          new EmbedBuilder()
+            .setColor('#22c55e')
+            .setTitle('💎 ¡Drop reclamado!')
+            .setDescription(`<@${interaction.user.id}> se llevó **${(result.amount ?? 0).toLocaleString('es-ES')} ${cfg.coin_emoji}**.`)
+            .setTimestamp(),
+        ],
+        components: [],
+      })
+      .catch(() => undefined);
+  }
+
+  // ─── Matrimonio ───
+  if (customId === 'marry_accept' || customId === 'marry_decline') {
+    const proposal = takeProposal(interaction.user.id, guild.id);
+    if (!proposal) {
+      await interaction.followUp({ content: '❌ Esta propuesta ya expiró.', ephemeral: true }).catch(() => undefined);
+      return;
+    }
+    if (customId === 'marry_decline') {
+      await interaction.message.edit({
+        embeds: [
+          new EmbedBuilder()
+            .setColor('#6b7280')
+            .setTitle('💔 Propuesta rechazada')
+            .setDescription(`**${proposal.proposerTag}** se quedó con el corazón roto...`)
+            .setTimestamp(),
+        ],
+        components: [],
+      }).catch(() => undefined);
+      return;
+    }
+    await db.insert(ciszubotSchema.marriages).values({
+      guildId: guild.id,
+      userId: proposal.proposer,
+      partnerId: interaction.user.id,
+      active: true,
+    });
+    await interaction.message.edit({
+      embeds: [
+        new EmbedBuilder()
+          .setColor('#ff69b4')
+          .setTitle('💍 ¡Boda!')
+          .setDescription(`<@${proposal.proposer}> y <@${interaction.user.id}> ahora están casados. ¡Felicidades! 🎉`)
+          .setTimestamp(),
+      ],
+      components: [],
+    }).catch(() => undefined);
+  }
+
+  // ─── Canales de voz privados (panel) ───
+  if (customId.startsWith('private_vc_')) {
+    const rows = await db
+      .select()
+      .from(ciszubotSchema.privateChannels)
+      .where(eq(ciszubotSchema.privateChannels.channelId, interaction.channelId))
+      .limit(1);
+    const row = rows[0];
+    if (!row) {
+      await interaction.followUp({ content: '❌ Este canal no es un canal privado gestionado.', ephemeral: true }).catch(() => undefined);
+      return;
+    }
+    const isOwner = row.ownerId === interaction.user.id;
+    const isAdmin = 'permissions' in interaction.member! && (interaction.member!.permissions as { has(p: bigint): boolean }).has(PermissionsBitField.Flags.ManageChannels);
+    if (!isOwner && !isAdmin) {
+      await interaction.followUp({ content: '❌ Solo el dueño del canal puede usar el panel.', ephemeral: true }).catch(() => undefined);
+      return;
+    }
+    const channel = guild.channels.cache.get(interaction.channelId);
+    if (!channel || channel.type !== ChannelType.GuildVoice) return;
+    const voice = channel as VoiceChannel;
+
+    if (customId === 'private_vc_lock' || customId === 'private_vc_hide') {
+      const currentlyDenied =
+        customId === 'private_vc_lock'
+          ? voice.permissionOverwrites.cache.get(guild.id)?.deny.has(PermissionsBitField.Flags.Connect)
+          : voice.permissionOverwrites.cache.get(guild.id)?.deny.has(PermissionsBitField.Flags.ViewChannel);
+      if (customId === 'private_vc_lock') {
+        await voice.permissionOverwrites.edit(guild.id, { Connect: currentlyDenied ? null : false });
+      } else {
+        await voice.permissionOverwrites.edit(guild.id, { ViewChannel: currentlyDenied ? null : false });
+      }
+      await interaction.followUp({
+        content: currentlyDenied ? '✅ Canal desbloqueado/visible.' : '✅ Canal bloqueado/oculto.',
+        ephemeral: true,
+      }).catch(() => undefined);
+      return;
+    }
+
+    if (customId === 'private_vc_delete') {
+      await db.delete(ciszubotSchema.privateChannels).where(eq(ciszubotSchema.privateChannels.channelId, channel.id));
+      await interaction.followUp({ content: '🔒 Eliminando canal...', ephemeral: true }).catch(() => undefined);
+      await voice.delete('Canal privado eliminado por su dueño').catch(() => undefined);
     }
   }
 }

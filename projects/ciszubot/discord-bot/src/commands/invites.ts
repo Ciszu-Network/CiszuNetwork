@@ -1,0 +1,144 @@
+import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import type { BotCommand, SimulatedMessage } from '../types/command';
+import { getGuildConfig, updateGuildConfig } from '../services/configService';
+import { isStaff, STAFF_ERROR } from '../utils/permissions';
+import { db, ciszubotSchema, eq, and, desc, sql } from '../services/supabase';
+
+async function countInvites(guildId: string, userId: string): Promise<number> {
+  const rows = await db
+    .select({ total: sql<number>`coalesce(sum(${ciszubotSchema.invites.points}), 0)` })
+    .from(ciszubotSchema.invites)
+    .where(and(eq(ciszubotSchema.invites.guildId, guildId), eq(ciszubotSchema.invites.inviterId, userId)));
+  return Number(rows[0]?.total ?? 0);
+}
+
+async function topInvites(guildId: string, limit = 10): Promise<Array<{ userId: string; total: number }>> {
+  const rows = await db
+    .select({
+      userId: ciszubotSchema.invites.inviterId,
+      total: sql<number>`coalesce(sum(${ciszubotSchema.invites.points}), 0)`,
+    })
+    .from(ciszubotSchema.invites)
+    .where(eq(ciszubotSchema.invites.guildId, guildId))
+    .groupBy(ciszubotSchema.invites.inviterId)
+    .orderBy(desc(sql`coalesce(sum(${ciszubotSchema.invites.points}), 0)`))
+    .limit(limit);
+  return rows.map((r) => ({ userId: r.userId, total: Number(r.total) }));
+}
+
+const command: BotCommand = {
+  name: 'invites',
+  description: 'Muestra tus invitaciones (y las de otros)',
+  aliases: ['invitaciones', 'invitacionescontador'],
+  usage: 'cz!invites [@usuario | points N | reward N @rol | reset @usuario]',
+  category: 'Social',
+  slashCommand: new SlashCommandBuilder()
+    .setName('invites')
+    .setDescription('Muestra tus invitaciones')
+    .addUserOption((o) => o.setName('usuario').setDescription('Usuario').setRequired(false)),
+
+  async execute(message, args) {
+    if (!message.guild) return;
+    const guildId = message.guild.id;
+    const cfg = await getGuildConfig(guildId);
+    const sub = (args[0] ?? '').toLowerCase();
+
+    if (sub === 'points') {
+      if (!(await isStaff(message))) {
+        await message.reply(STAFF_ERROR);
+        return;
+      }
+      const points = parseInt(args[1] ?? '', 10);
+      if (isNaN(points) || points < 1 || points > 100) {
+        await message.reply('❌ Uso: `cz!invites points <1-100>` (puntos por invitación válida).');
+        return;
+      }
+      await updateGuildConfig(guildId, { invite_points_per: points });
+      await message.reply(`✅ Cada invitación válida dará **${points} punto(s)** al invitador.`);
+      return;
+    }
+
+    if (sub === 'reward') {
+      if (!(await isStaff(message))) {
+        await message.reply(STAFF_ERROR);
+        return;
+      }
+      if ((args[1] ?? '').toLowerCase() === 'remove') {
+        const threshold = parseInt(args[2] ?? '', 10);
+        if (isNaN(threshold)) {
+          await message.reply('❌ Uso: `cz!invites reward remove <n>`.');
+          return;
+        }
+        const rewards = cfg.invite_rewards.filter((r) => r.invites !== threshold);
+        await updateGuildConfig(guildId, { invite_rewards: rewards });
+        await message.reply(`✅ Recompensa de **${threshold}** invitaciones eliminada.`);
+        return;
+      }
+      const threshold = parseInt(args[1] ?? '', 10);
+      const roleId = message.mentions?.roles?.first()?.id;
+      if (isNaN(threshold) || threshold < 1 || !roleId) {
+        await message.reply('❌ Uso: `cz!invites reward <n> @rol` (ej: `cz!invites reward 10 @Activo`).');
+        return;
+      }
+      const rewards = [...cfg.invite_rewards.filter((r) => r.invites !== threshold), { invites: threshold, role_id: roleId }];
+      await updateGuildConfig(guildId, { invite_rewards: rewards });
+      await message.reply(`✅ A las **${threshold}** invitaciones se dará el rol <@&${roleId}>.`);
+      return;
+    }
+
+    if (sub === 'reset') {
+      if (!(await isStaff(message))) {
+        await message.reply(STAFF_ERROR);
+        return;
+      }
+      const target = message.mentions?.users?.first();
+      if (!target) {
+        await message.reply('❌ Uso: `cz!invites reset @usuario`.');
+        return;
+      }
+      await db
+        .delete(ciszubotSchema.invites)
+        .where(and(eq(ciszubotSchema.invites.guildId, guildId), eq(ciszubotSchema.invites.inviterId, target.id)));
+      await message.reply(`✅ Invitaciones de **${target.tag ?? target.username}** reseteadas.`);
+      return;
+    }
+
+    const mentioned = message.mentions?.users?.first();
+    const userId = mentioned?.id ?? message.author.id;
+    const tag = mentioned?.tag ?? mentioned?.username ?? message.author.tag;
+    const total = await countInvites(guildId, userId);
+    const top = await topInvites(guildId);
+
+    const embed = new EmbedBuilder()
+      .setColor('#00d4ff')
+      .setTitle(`📨 Invitaciones de ${tag}`)
+      .setDescription(`**${total}** punto(s) por invitaciones válidas.`)
+      .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
+      .setTimestamp();
+
+    if (top.length > 0) {
+      embed.addFields({
+        name: '🏆 Top invitadores',
+        value: top
+          .map((t, i) => `**${i + 1}.** <@${t.userId}> — ${t.total} punto(s)`)
+          .join('\n')
+          .slice(0, 1024),
+        inline: false,
+      });
+    }
+    if (cfg.invite_rewards.length > 0) {
+      embed.addFields({
+        name: '🎁 Recompensas',
+        value: cfg.invite_rewards
+          .sort((a, b) => a.invites - b.invites)
+          .map((r) => `${r.invites} invitaciones → <@&${r.role_id}>`)
+          .join('\n'),
+        inline: false,
+      });
+    }
+
+    await message.reply({ embeds: [embed] });
+  },
+};
+
+export default command;

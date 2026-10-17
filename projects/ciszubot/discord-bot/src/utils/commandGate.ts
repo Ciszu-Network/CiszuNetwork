@@ -3,16 +3,30 @@ import type { BotCommand } from '../types/command';
 import { LINKS, BOT_COLORS, BOT_FOOTER } from '../config/links';
 import { resolveFeatureForCommand, isPremiumCommand, featureLabel } from '../config/features';
 import { getFeatureState, getGuildFeatureOverride, isPremiumBeta, isPremiumGuild } from '../services/featureFlags';
+import { getGuildConfig } from '../services/configService';
 
 /**
  * Interceptor global previo a `command.execute` (prefijo y slash):
  *  · función desactivada por flag → bloquea con embed de motivo
+ *  · rate limit por comando (config del servidor) → "espera X segundos"
  *  · función premium en beta → avisa (embed premium + disclaimer beta aparte)
  *    y deja ejecutar (durante la beta todo es gratis)
  *  · función premium sin beta y sin suscripción del servidor → bloquea con CTA
  */
 
 export const PREMIUM_URL = `${LINKS.website}/premium`;
+
+/** Último uso por usuario/servidor/comando (rate limit en memoria). */
+const cooldownTracker = new Map<string, number>();
+
+function cooldownEmbed(remaining: number, tag: string, iconURL?: string | null): EmbedBuilder {
+  return new EmbedBuilder()
+    .setColor(BOT_COLORS.secondary)
+    .setTitle('⏳ Espera un momento')
+    .setDescription(`Debes esperar **${remaining} segundo${remaining === 1 ? '' : 's'}** antes de volver a usar este comando.`)
+    .setFooter(BOT_FOOTER(tag, iconURL))
+    .setTimestamp();
+}
 
 function disabledEmbed(reason: string | null, tag: string, iconURL?: string | null, feature?: string | null): EmbedBuilder {
   const what = feature ? `La función **${feature}**` : 'Esta función';
@@ -85,6 +99,23 @@ export async function gateCommand(ctx: GateContext): Promise<boolean> {
         await send({ embeds: [disabledEmbed('Desactivada en este servidor', tag, iconURL, featureLabel(slug))] });
         return false;
       }
+    }
+  }
+
+  // Rate limit por comando configurado por el servidor ("espera X segundos")
+  if (guildId) {
+    const cfg = await getGuildConfig(guildId);
+    const seconds = cfg.command_cooldowns[command.name];
+    if (seconds && seconds > 0) {
+      const key = `${guildId}:${tag}:${command.name}`;
+      const now = Date.now();
+      const last = cooldownTracker.get(key) ?? 0;
+      const wait = seconds * 1000 - (now - last);
+      if (wait > 0) {
+        await send({ embeds: [cooldownEmbed(Math.ceil(wait / 1000), tag, iconURL)] });
+        return false;
+      }
+      cooldownTracker.set(key, now);
     }
   }
 

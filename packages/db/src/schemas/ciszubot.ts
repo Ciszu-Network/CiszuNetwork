@@ -61,6 +61,22 @@ export const guildConfigs = ciszubot.table(
     muteRoleId: text('mute_role_id'),
     leaderboardEnabled: boolean('leaderboard_enabled').notNull().default(false),
     leaderboardSlug: text('leaderboard_slug'),
+    coinEmoji: text('coin_emoji').notNull().default('🪙'),
+    coinName: text('coin_name').notNull().default('monedas'),
+    staffRoleId: text('staff_role_id'),
+    levelMessage: text('level_message').notNull().default('🎉 ¡{user} subió al nivel {level} en {guild}!'),
+    levelRoles: jsonb('level_roles').notNull().default([]),
+    automodConfig: jsonb('automod_config').notNull().default({}),
+    commandCooldowns: jsonb('command_cooldowns').notNull().default({}),
+    drops: jsonb('drops').notNull().default({}),
+    starboardChannelId: text('starboard_channel_id'),
+    starboardEmoji: text('starboard_emoji').notNull().default('⭐'),
+    starboardMin: integer('starboard_min').notNull().default(3),
+    invitePointsPer: integer('invite_points_per').notNull().default(1),
+    inviteRewards: jsonb('invite_rewards').notNull().default([]),
+    privateVcHubId: text('private_vc_hub_id'),
+    secretUserIds: jsonb('secret_user_ids').notNull().default([]),
+    nitroRepostEnabled: boolean('nitro_repost_enabled').notNull().default(false),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   }
 );
@@ -321,4 +337,69 @@ export const auditLog = ciszubot.table(
     index('audit_log_created_at_idx').on(t.createdAt.desc()),
     index('audit_log_event_idx').on(t.event),
   ]
+);
+
+export const marriages = ciszubot.table(
+  'marriages',
+  {
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
+    guildId: text('guild_id').notNull(),
+    userId: text('user_id').notNull(),
+    partnerId: text('partner_id').notNull(),
+    active: boolean('active').notNull().default(true),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('idx_marriages_user').on(t.guildId, t.userId, t.active)]
+);
+
+export const invites = ciszubot.table(
+  'invites',
+  {
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
+    guildId: text('guild_id').notNull(),
+    inviterId: text('inviter_id').notNull(),
+    invitedId: text('invited_id').notNull(),
+    code: text('code'),
+    points: integer('points').notNull().default(1),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('idx_invites_guild_inviter').on(t.guildId, t.inviterId)]
+);
+
+export const starboardPosts = ciszubot.table(
+  'starboard_posts',
+  {
+    messageId: text('message_id').notNull(),
+    guildId: text('guild_id').notNull(),
+    channelId: text('channel_id').notNull(),
+    starboardMessageId: text('starboard_message_id').notNull(),
+    stars: integer('stars').notNull().default(0),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.messageId, t.guildId] })]
+);
+
+export const customEmbeds = ciszubot.table(
+  'custom_embeds',
+  {
+    id: text('id').primaryKey(),
+    guildId: text('guild_id').notNull(),
+    name: text('name').notNull(),
+    data: jsonb('data').notNull(),
+    webhookUrl: text('webhook_url'),
+    createdBy: text('created_by'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('idx_custom_embeds_guild').on(t.guildId, t.name)]
+);
+
+export const privateChannels = ciszubot.table(
+  'private_channels',
+  {
+    channelId: text('channel_id').primaryKey(),
+    guildId: text('guild_id').notNull(),
+    ownerId: text('owner_id').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('idx_private_channels_owner').on(t.guildId, t.ownerId)]
 );

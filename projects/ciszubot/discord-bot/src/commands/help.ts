@@ -11,6 +11,23 @@ const emojiMap: Record<string, string> = {
   bump: '🚀', promo: '🌐', invite: '🤖', vote: '🗳️', donate: '💜', links: '🔗', status: '📊',
 };
 
+/** Emoji propio por CATEGORÍA (el menú y los campos del help lo usan). */
+const categoryEmoji: Record<string, string> = {
+  'Música': '🎵',
+  'Diversión': '🎮',
+  'Economía': '💰',
+  'Información': '📖',
+  'Utilidad': '🧰',
+  'Moderación': '🛡️',
+  'Configuración': '⚙️',
+  'Niveles': '📈',
+  'Social': '👥',
+  'Búsqueda': '🔎',
+  'Secreto': '🕵️',
+  'General': '📁',
+};
+const catEmoji = (cat: string): string => categoryEmoji[cat] ?? '📁';
+
 const command: BotCommand = {
   name: 'help',
   description: 'Muestra información del bot y lista de comandos disponibles',
@@ -102,7 +119,7 @@ const command: BotCommand = {
       const catSlug = sample ? resolveFeatureForCommand(sample) : null;
       const catState = catSlug ? await getFeatureState(catSlug) : null;
       const mark = catState && !catState.enabled ? ' · ⛔ desactivada' : '';
-      embed.addFields({ name: `📁 ${cat}${mark}`, value: list.join('\n'), inline: false });
+      embed.addFields({ name: `${catEmoji(cat)} ${cat}${mark}`, value: list.join('\n'), inline: false });
     }
 
     embed.addFields(
@@ -133,7 +150,7 @@ const command: BotCommand = {
           label: cat,
           description: `Comandos de la categoría ${cat}`,
           value: `cat:${cat}`,
-          emoji: '📁',
+          emoji: catEmoji(cat),
         })),
       );
 

@@ -18,13 +18,17 @@ Discord (Gateway)
 src/index.ts  ── dispatch de comandos (prefijo + slash)
    │  gateCommand()  ← feature flags globales + override por servidor + Premium
    ▼
-src/commands/<categoría>/<comando>.ts   (73 comandos en 10 categorías)
+src/commands/<categoría>/<comando>.ts   (96 comandos en 11 categorías)
    │  embeds + botones + select menus
    ▼
 Servicios:
    · supabase.ts        Postgres (Supabase) vía Drizzle ORM — datos del ecosistema
    · featureFlags.ts    flags globales (ciszubot.feature_flags) y por servidor
                         (ciszubot.guild_feature_flags) con caché de 20s
+   · economy.ts         wallets/banco/transacciones (moneda configurable por servidor)
+   · drops.ts           drops de dinero con botón (free: 3/día · premium: ilimitados)
+   · configService.ts   config completa por servidor (welcome, niveles, automod,
+                        cooldowns, starboard, invites, drops, VCs privados, moneda…)
    · statsServer.ts     NestJS + Fastify en :5000 (stats/votos para listas)
    · logger.ts          pino (consola + archivos)
    · sentry.ts          errores (SENTRY_DSN)
@@ -36,7 +40,37 @@ cada ~30s. Eso es lo que la web usa para mostrar el estado en vivo y lo que el
 vigía de CI monitorea (ver §6).
 
 **Categorías de comandos**: Música, Diversión, Economía, Información, Utilidad,
-Moderación, Configuración, Niveles, Social (+ `search` y comandos premium).
+Moderación, Configuración, Niveles, Social, Secreto (lista blanca) (+ `search`
+y comandos premium).
+
+**Sistemas nuevos (v3.4.0)** — todos configurables desde Discord (`cz!<comando>`)
+y en la mayoría de casos desde el dashboard web:
+
+| Sistema | Comandos | Notas |
+| --- | --- | --- |
+| Economía admin | `addmoney`, `removemoney` | balance o banco; staff |
+| Moneda por servidor | `coin emoji/name/reset` | emoji y nombre configurables |
+| Drops | `drops on/off/channel/amount/interval/message/exclude` | botón de reclamo; free 3/día |
+| Niveles reales | `levelconfig on/off/channel/xp/message/role` | mensaje custom + roles por nivel |
+| Automod | `automod on/off/links/invites/caps/spam/word` | borra el mensaje y avisa |
+| Rate limits | `cooldown set/remove/list` | "espera X segundos" por comando |
+| Rol staff | `staff role/off` | habilita todos los comandos de staff |
+| Bienvenidas | `welcome channel/message/test` | variables {user} {guild} {members} |
+| Despedidas | `goodbye channel/message/test` | idem |
+| Invitaciones | `invites [@user] / points / reward / reset` | puntos y recompensas por rol |
+| Starboard | `starboard channel/emoji/min` | destaca mensajes con reacciones |
+| Logs | `logs #canal` | ediciones, borrados, entradas/salidas, bans |
+| Contadores | `counters add/remove/list` | canales con datos reales |
+| VCs privados | `privatevc setup/rename/limit/delete` | hub + panel de botones |
+| Emojis Nitro | `nitro on/off` | reenvío por webhook (sin Nitro) |
+| Embeds custom | `embed json/save/send/list/delete/webhook` | premium |
+| Matrimonios | `marry`, `divorce`, `partner` | propuesta con botones |
+| Páginas web | `web [página]` | una entrada por página (login incluido) |
+| Premium admin | `premium activate/deactivate/status` | activa el plan a todo el servidor |
+| Categoría secreta | `secret status/config/stats/feature/premium/whitelist` | solo lista blanca (owner + IDs) |
+
+La devcon (sección `ESTADO DEL BOT`) incluye hosting real (Bot-Hosting), estado
+web y **Premium por ID de servidor** (`node scripts/botstatus.mjs premium <id> <plan>`).
 
 ## 2. Feature flags y Premium (beta)
 
@@ -58,7 +92,7 @@ Moderación, Configuración, Niveles, Social (+ `search` y comandos premium).
 discord-bot/
 ├── src/
 │   ├── index.ts                 entrada: login + dispatch (prefijo/slash) + gate
-│   ├── commands/                73 comandos por categoría
+│   ├── commands/                96 comandos por categoría
 │   ├── config/features.ts       definición de flags y mapeo comando→función
 │   ├── services/                supabase, featureFlags, statsServer, logger, sentry…
 │   ├── utils/                   commandGate, commandRegistry, helpers
