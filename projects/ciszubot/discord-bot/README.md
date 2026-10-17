@@ -18,7 +18,7 @@ Discord (Gateway)
 src/index.ts  ── dispatch de comandos (prefijo + slash)
    │  gateCommand()  ← feature flags globales + override por servidor + Premium
    ▼
-src/commands/<categoría>/<comando>.ts   (96 comandos en 11 categorías)
+src/commands/<categoría>/<comando>.ts   (98 comandos en 11 categorías)
    │  embeds + botones + select menus
    ▼
 Servicios:
@@ -66,6 +66,8 @@ y en la mayoría de casos desde el dashboard web:
 | Embeds custom | `embed json/save/send/list/delete/webhook` | premium |
 | Matrimonios | `marry`, `divorce`, `partner` | propuesta con botones |
 | Páginas web | `web [página]` | una entrada por página (login incluido) |
+| Alianzas | `alliance` | canal dedicado, puntos + leaderboard, filtros (+18/palabras/servidores con sanción), cooldown, 1 por servidor, recompensas, embeds |
+| Tickets por categorías | `tickets` | panel con selector, formularios (modales), roles por categoría, rol al abrir, reclamar/cerrar con registro y logs |
 | Premium admin | `premium activate/deactivate/status` | activa el plan a todo el servidor |
 | Categoría secreta | `secret status/config/stats/feature/premium/whitelist` | solo lista blanca (owner + IDs) |
 
@@ -92,7 +94,7 @@ web y **Premium por ID de servidor** (`node scripts/botstatus.mjs premium <id> <
 discord-bot/
 ├── src/
 │   ├── index.ts                 entrada: login + dispatch (prefijo/slash) + gate
-│   ├── commands/                96 comandos por categoría
+│   ├── commands/                98 comandos por categoría
 │   ├── config/features.ts       definición de flags y mapeo comando→función
 │   ├── services/                supabase, featureFlags, statsServer, logger, sentry…
 │   ├── utils/                   commandGate, commandRegistry, helpers
