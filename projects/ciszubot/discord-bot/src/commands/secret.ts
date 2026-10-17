@@ -3,6 +3,7 @@ import type { BotCommand, SimulatedMessage } from '../types/command';
 import { db, ciszubotSchema, eq, sql } from '../services/supabase';
 import { getGuildConfig, updateGuildConfig } from '../services/configService';
 import { config } from '../config';
+import { BOT_ASSETS } from '../config/links';
 import { invalidateFlagsCache } from '../services/featureFlags';
 import { FEATURE_DEFS } from '../config/features';
 
@@ -107,6 +108,7 @@ const command: BotCommand = {
           { name: 'RAM (heap)', value: `${(mem.heapUsed / 1024 / 1024).toFixed(1)} MB`, inline: true },
           { name: 'Ping', value: `${message.client.ws.ping} ms`, inline: true },
         )
+        .setThumbnail(BOT_ASSETS.isotype)
         .setFooter({ text: 'CiszuBot • Categoría secreta' })
         .setTimestamp();
       await message.reply({ embeds: [embed] });

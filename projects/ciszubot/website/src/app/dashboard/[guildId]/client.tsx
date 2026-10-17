@@ -10,6 +10,8 @@ import InviteLink from '@/components/dashboard/InviteLink';
 import type { GuildInfo } from '@/lib/discordGuild';
 import { SaveDock, type SaveStatus } from '@/components/dashboard/SaveDock';
 import DiscordMarkdownField from '@/components/dashboard/DiscordMarkdownField';
+import { QuickHelp, HelpZone } from '@/components/dashboard/QuickHelp';
+import { SECTION_HELP } from '@/lib/dashboardCommands';
 import useLiveBotStatus from '@/components/home/useLiveBotStatus';
 import { resolveBotStatus } from '@/lib/botStatus';
 import { dashboardGuard } from '@/lib/dashboardGuard';
@@ -36,11 +38,33 @@ interface GuildConfig {
   automod_enabled?: boolean;
   leaderboard_enabled?: boolean;
   leaderboard_slug?: string | null;
+  coin_emoji?: string;
+  coin_name?: string;
+  staff_role_id?: string | null;
+  level_message?: string;
+  level_roles?: { level: number; role_id: string }[];
+  automod_config?: { links: boolean; invites: boolean; caps: boolean; spam: boolean; words: string[] };
+  drops?: {
+    enabled: boolean;
+    channels: string[];
+    min: number;
+    max: number;
+    interval_min: number;
+    interval_max: number;
+    message: string | null;
+    excluded_roles: string[];
+  };
+  starboard_channel_id?: string | null;
+  starboard_emoji?: string;
+  starboard_min?: number;
+  invite_points_per?: number;
+  nitro_repost_enabled?: boolean;
+  private_vc_hub_id?: string | null;
   /** Toggles por servidor de funciones del bot (slug → enabled). */
   features?: Record<string, boolean>;
 }
 
-type SectionKey = 'general' | 'levels' | 'welcome' | 'extras' | `feat:${string}`;
+type SectionKey = 'general' | 'levels' | 'welcome' | 'economy' | 'community' | 'automod' | 'extras' | `feat:${string}`;
 type PartialConfig = Partial<GuildConfig>;
 
 /** Payload de un export JSON (vista previa + descarga). */
@@ -49,9 +73,9 @@ interface JsonPreviewPayload {
   config: Record<string, unknown>;
 }
 
-const SECTION_KEYS: Record<'general' | 'levels' | 'welcome' | 'extras', (keyof GuildConfig)[]> = {
+const SECTION_KEYS: Record<'general' | 'levels' | 'welcome' | 'economy' | 'community' | 'automod' | 'extras', (keyof GuildConfig)[]> = {
   general: ['prefix', 'lang'],
-  levels: ['leveling_enabled', 'level_channel_id', 'xp_rate'],
+  levels: ['leveling_enabled', 'level_channel_id', 'xp_rate', 'level_message', 'level_roles'],
   welcome: [
     'welcome_channel_id',
     'welcome_message',
@@ -59,6 +83,9 @@ const SECTION_KEYS: Record<'general' | 'levels' | 'welcome' | 'extras', (keyof G
     'goodbye_message',
     'autorole_ids',
   ],
+  economy: ['coin_emoji', 'coin_name', 'drops', 'invite_points_per'],
+  community: ['starboard_channel_id', 'starboard_emoji', 'starboard_min', 'nitro_repost_enabled', 'staff_role_id', 'private_vc_hub_id'],
+  automod: ['automod_enabled', 'automod_config'],
   extras: [
     'tickets_enabled',
     'tickets_category_id',
@@ -368,13 +395,24 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   }, []);
 
   // Sub-sidebar por opción: resumen por defecto (spec del dashboard).
-  type GuildView = 'summary' | 'general' | 'levels' | 'welcome' | 'extras' | 'history' | `feat:${string}`;
+  type GuildView =
+    | 'summary'
+    | 'general'
+    | 'levels'
+    | 'welcome'
+    | 'economy'
+    | 'community'
+    | 'automod'
+    | 'extras'
+    | 'history'
+    | `feat:${string}`;
   const [view, setView] = useState<GuildView>('summary');
   useEffect(() => {
     const saved = localStorage.getItem('cz-dash-view') as GuildView | null;
     if (
       saved &&
-      (['summary', 'general', 'levels', 'welcome', 'extras', 'history'].includes(saved) || saved.startsWith('feat:'))
+      (['summary', 'general', 'levels', 'welcome', 'economy', 'community', 'automod', 'extras', 'history'].includes(saved) ||
+        saved.startsWith('feat:'))
     ) {
       setView(saved);
     }
@@ -431,6 +469,9 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
       tag: f.premium ? ('premium' as const) : ('free' as const),
     })),
     { key: 'levels', icon: 'star', label: 'subnavLevels', tag: 'mixed' },
+    { key: 'economy', icon: 'money', label: 'subnavEconomy', tag: 'free' },
+    { key: 'community', icon: 'people', label: 'subnavCommunity', tag: 'mixed' },
+    { key: 'automod', icon: 'shield', label: 'subnavAutomod', tag: 'free' },
     { key: 'welcome', icon: 'heart', label: 'subnavWelcome', tag: 'free' },
     { key: 'extras', icon: 'support', label: 'subnavExtras', tag: 'free' },
     { key: 'history', icon: 'verified', label: 'subnavHistory', tag: 'free' },
@@ -757,6 +798,20 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     .map((c) => ({ id: c.id, label: `📁 ${c.name}` }));
   const roleOptions = roles.map((r) => ({ id: r.id, label: `@${r.name}` }));
   const categories = channels.filter((c) => c.type === 4);
+
+  /** Defaults de bloques JSONB (coinciden con los del bot). */
+  const dropsCfg = config?.drops ?? {
+    enabled: false,
+    channels: [] as string[],
+    min: 50,
+    max: 200,
+    interval_min: 60,
+    interval_max: 180,
+    message: null as string | null,
+    excluded_roles: [] as string[],
+  };
+  const automodCfg = config?.automod_config ?? { links: false, invites: false, caps: false, spam: false, words: [] as string[] };
+  const levelRoles = config?.level_roles ?? [];
 
   const slug = useMemo(
     () =>
@@ -1256,6 +1311,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               <h2 className="flex items-center gap-2 font-bold text-white">
                 <Icon name="settings" size={18} className="text-neon-blue" /> {t.generalTitle}
               </h2>
+              <QuickHelp title={SECTION_HELP.general.title} commands={SECTION_HELP.general.commands} note={SECTION_HELP.general.note} />
               <Badge kind="free" dict={dict} />
               <SectionJson
                 disabled={dirty || busy}
@@ -1296,6 +1352,11 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               <h2 className="flex items-center gap-2 font-bold text-white">
                 <Icon name={activeFeature.icon} size={18} className="text-neon-blue" /> {t[activeFeature.labelKey]}
               </h2>
+              <QuickHelp
+                title={SECTION_HELP[activeFeature.slug]?.title ?? t[activeFeature.labelKey]}
+                commands={SECTION_HELP[activeFeature.slug]?.commands ?? []}
+                note={SECTION_HELP[activeFeature.slug]?.note}
+              />
               <Badge kind="free" dict={dict} />
               {activeFeature.premium && <PremiumTag label={t.featPremiumTag} betaNote={t.premiumFreeNote} betaLabel={t.betaBadge} />}
               <SectionJson
@@ -1393,6 +1454,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               <h2 className="flex items-center gap-2 font-bold text-white">
                 <Icon name="star" size={18} className="text-neon-pink" /> {t.levelsTitle}
               </h2>
+              <QuickHelp title={SECTION_HELP.levels.title} commands={SECTION_HELP.levels.commands} note={SECTION_HELP.levels.note} />
               <Badge kind="free" dict={dict} />
               <PermWarning
                 perms={guildData?.botPermissions}
@@ -1452,6 +1514,81 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                     />
                   </Field>
                 )}
+                <Field label={t.levelMessageLabel} hint={t.levelMessageHint}>
+                  <input
+                    className={inputCls}
+                    value={config.level_message ?? '🎉 ¡{user} subió al nivel {level} en {guild}!'}
+                    maxLength={500}
+                    onChange={(e) => update({ level_message: e.target.value })}
+                  />
+                </Field>
+                <div>
+                  <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-white/45">{t.levelRolesLabel}</p>
+                  <p className="mb-3 text-[10px] text-white/35">{t.levelRolesHint}</p>
+                  <div className="grid gap-2">
+                    {levelRoles
+                      .slice()
+                      .sort((a, b) => a.level - b.level)
+                      .map((row, idx) => (
+                        <div key={`${row.level}-${row.role_id}-${idx}`} className="flex flex-wrap items-center gap-2">
+                          <input
+                            type="number"
+                            min={1}
+                            className={`${inputCls} w-24`}
+                            value={row.level}
+                            onChange={(e) => {
+                              const next = levelRoles.map((r) => (r === row ? { ...r, level: Math.max(1, Number(e.target.value) || 1) } : r));
+                              update({ level_roles: next });
+                            }}
+                          />
+                          {hasGuildData ? (
+                            <select
+                              className={`${inputCls} w-52`}
+                              value={row.role_id}
+                              onChange={(e) => {
+                                const next = levelRoles.map((r) => (r === row ? { ...r, role_id: e.target.value } : r));
+                                update({ level_roles: next });
+                              }}
+                            >
+                              {roleOptions.map((opt) => (
+                                <option key={opt.id} value={opt.id}>
+                                  {opt.label}
+                                </option>
+                              ))}
+                            </select>
+                          ) : (
+                            <input
+                              className={`${inputCls} w-52`}
+                              value={row.role_id}
+                              onChange={(e) => {
+                                const next = levelRoles.map((r) => (r === row ? { ...r, role_id: e.target.value } : r));
+                                update({ level_roles: next });
+                              }}
+                            />
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => update({ level_roles: levelRoles.filter((r) => r !== row) })}
+                            className="rounded-lg border border-white/15 px-3 py-1.5 text-[10px] font-bold text-white/60 transition hover:border-red-400/50 hover:text-red-300"
+                          >
+                            {t.removeRow}
+                          </button>
+                        </div>
+                      ))}
+                    <button
+                      type="button"
+                      disabled={!hasGuildData || roleOptions.length === 0}
+                      onClick={() =>
+                        update({
+                          level_roles: [...levelRoles, { level: (levelRoles.at(-1)?.level ?? 0) + 5, role_id: roleOptions[0].id }],
+                        })
+                      }
+                      className="w-fit rounded-lg border border-white/15 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-white/60 transition hover:border-neon-blue/60 hover:text-white disabled:opacity-40"
+                    >
+                      + {t.addRow}
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -1557,6 +1694,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               <h2 className="flex items-center gap-2 font-bold text-white">
                 <Icon name="heart" size={18} className="text-neon-pink" /> {t.welcomeTitle}
               </h2>
+              <QuickHelp title={SECTION_HELP.welcome.title} commands={SECTION_HELP.welcome.commands} note={SECTION_HELP.welcome.note} />
               <Badge kind="free" dict={dict} />
               <PermWarning
                 perms={guildData?.botPermissions}
@@ -1719,12 +1857,330 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           </section>
           )}
 
+          {view === 'economy' && (
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <h2 className="flex items-center gap-2 font-bold text-white">
+                <Icon name="money" size={18} className="text-amber-300" /> {t.economyTitle}
+              </h2>
+              <QuickHelp title={SECTION_HELP.economy.title} commands={SECTION_HELP.economy.commands} note={SECTION_HELP.economy.note} />
+              <Badge kind="free" dict={dict} />
+              <SectionJson
+                disabled={dirty || busy}
+                disabledHint={t.jsonNeedSave}
+                exportLabel={t.jsonExport}
+                importLabel={t.jsonImport}
+                onExport={() => exportScope('economy')}
+                onImport={(file) => void importFile(file, 'economy')}
+              />
+            </div>
+            <p className="mb-5 text-xs text-white/45">{t.economyHint}</p>
+            <div className="grid gap-5">
+              <div className="grid gap-5 sm:grid-cols-2">
+                <Field label={t.coinEmojiLabel} hint={t.coinHint}>
+                  <input
+                    className={inputCls}
+                    value={config.coin_emoji ?? '🪙'}
+                    maxLength={64}
+                    onChange={(e) => update({ coin_emoji: e.target.value })}
+                  />
+                </Field>
+                <Field label={t.coinNameLabel} hint={t.coinHint}>
+                  <input
+                    className={inputCls}
+                    value={config.coin_name ?? 'monedas'}
+                    maxLength={32}
+                    onChange={(e) => update({ coin_name: e.target.value })}
+                  />
+                </Field>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-black/20 px-4 py-2 text-xs text-white/60">
+                Vista previa: <span className="font-bold text-white">1.500 {config.coin_emoji ?? '🪙'}</span> (
+                {config.coin_name ?? 'monedas'})
+              </div>
+
+              {/* Drops */}
+              <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-white/90">{t.dropsToggle}</p>
+                    <p className="text-xs text-white/50">{t.dropsToggleHint}</p>
+                  </div>
+                  <Toggle on={dropsCfg.enabled} onChange={(v) => update({ drops: { ...dropsCfg, enabled: v } })} />
+                </div>
+                {dropsCfg.enabled && (
+                  <div className="mt-4 grid gap-4">
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <Field label={t.dropsMinLabel}>
+                        <input
+                          type="number"
+                          min={1}
+                          className={inputCls}
+                          value={dropsCfg.min}
+                          onChange={(e) => update({ drops: { ...dropsCfg, min: Number(e.target.value) || 1 } })}
+                        />
+                      </Field>
+                      <Field label={t.dropsMaxLabel}>
+                        <input
+                          type="number"
+                          min={1}
+                          className={inputCls}
+                          value={dropsCfg.max}
+                          onChange={(e) => update({ drops: { ...dropsCfg, max: Number(e.target.value) || 1 } })}
+                        />
+                      </Field>
+                    </div>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <Field label={`${t.dropsIntervalLabel} — min`}>
+                        <input
+                          type="number"
+                          min={5}
+                          className={inputCls}
+                          value={dropsCfg.interval_min}
+                          onChange={(e) => update({ drops: { ...dropsCfg, interval_min: Number(e.target.value) || 5 } })}
+                        />
+                      </Field>
+                      <Field label={`${t.dropsIntervalLabel} — max`} hint={t.dropsIntervalHint}>
+                        <input
+                          type="number"
+                          min={5}
+                          className={inputCls}
+                          value={dropsCfg.interval_max}
+                          onChange={(e) => update({ drops: { ...dropsCfg, interval_max: Number(e.target.value) || 5 } })}
+                        />
+                      </Field>
+                    </div>
+                    <Field label={t.dropsMessageLabel} hint={t.dropsMessageHint}>
+                      <input
+                        className={inputCls}
+                        value={dropsCfg.message ?? ''}
+                        maxLength={300}
+                        onChange={(e) => update({ drops: { ...dropsCfg, message: e.target.value || null } })}
+                      />
+                    </Field>
+                    <Field label={t.dropsChannelsLabel} hint={t.dropsChannelsHint}>
+                      <input
+                        className={inputCls}
+                        value={dropsCfg.channels.join(', ')}
+                        placeholder="123456789012345678, 987654321098765432"
+                        onChange={(e) =>
+                          update({
+                            drops: {
+                              ...dropsCfg,
+                              channels: e.target.value
+                                .split(',')
+                                .map((s) => s.trim())
+                                .filter((s) => /^\d{17,20}$/.test(s)),
+                            },
+                          })
+                        }
+                      />
+                    </Field>
+                    <p className="text-[10px] text-white/40">{t.dropsFreeNote}</p>
+                  </div>
+                )}
+              </div>
+
+              <Field label={t.invitePointsLabel} hint={t.invitePointsHint}>
+                <input
+                  type="number"
+                  min={1}
+                  max={100}
+                  className={inputCls}
+                  value={config.invite_points_per ?? 1}
+                  onChange={(e) => update({ invite_points_per: Math.max(1, Number(e.target.value) || 1) })}
+                />
+              </Field>
+            </div>
+            <HelpZone title={SECTION_HELP.economy.title} commands={SECTION_HELP.economy.commands} note={SECTION_HELP.economy.note} />
+          </section>
+          )}
+
+          {view === 'community' && (
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <h2 className="flex items-center gap-2 font-bold text-white">
+                <Icon name="people" size={18} className="text-neon-blue" /> {t.communityTitle}
+              </h2>
+              <QuickHelp title={SECTION_HELP.community.title} commands={SECTION_HELP.community.commands} note={SECTION_HELP.community.note} />
+              <Badge kind="free" dict={dict} />
+              <SectionJson
+                disabled={dirty || busy}
+                disabledHint={t.jsonNeedSave}
+                exportLabel={t.jsonExport}
+                importLabel={t.jsonImport}
+                onExport={() => exportScope('community')}
+                onImport={(file) => void importFile(file, 'community')}
+              />
+            </div>
+            <p className="mb-5 text-xs text-white/45">{t.communityHint}</p>
+            <div className="grid gap-5">
+              {/* Starboard */}
+              <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                <p className="mb-3 flex items-center gap-2 text-sm font-bold text-white">
+                  <Icon name="star" size={15} className="text-amber-300" /> {t.starboardTitle}
+                </p>
+                <div className="grid gap-4 sm:grid-cols-3">
+                  {hasGuildData ? (
+                    <SelectField
+                      label={t.starboardChannelLabel}
+                      value={config.starboard_channel_id ?? null}
+                      placeholder={t.pickChannel}
+                      options={textChannelOptions}
+                      onChange={(v) => update({ starboard_channel_id: v })}
+                    />
+                  ) : (
+                    <Field label={t.starboardChannelLabel} hint={t.manualIdHint}>
+                      <input
+                        className={inputCls}
+                        placeholder="ID"
+                        value={config.starboard_channel_id ?? ''}
+                        onChange={(e) => update({ starboard_channel_id: e.target.value || null })}
+                      />
+                    </Field>
+                  )}
+                  <Field label={t.starboardEmojiLabel}>
+                    <input
+                      className={inputCls}
+                      value={config.starboard_emoji ?? '⭐'}
+                      maxLength={64}
+                      onChange={(e) => update({ starboard_emoji: e.target.value })}
+                    />
+                  </Field>
+                  <Field label={t.starboardMinLabel}>
+                    <input
+                      type="number"
+                      min={1}
+                      max={100}
+                      className={inputCls}
+                      value={config.starboard_min ?? 3}
+                      onChange={(e) => update({ starboard_min: Math.max(1, Number(e.target.value) || 1) })}
+                    />
+                  </Field>
+                </div>
+              </div>
+
+              {/* Nitro */}
+              <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
+                <div>
+                  <p className="text-sm font-semibold text-white/90">{t.nitroToggle}</p>
+                  <p className="text-xs text-white/50">{t.nitroToggleHint}</p>
+                </div>
+                <Toggle on={Boolean(config.nitro_repost_enabled)} onChange={(v) => update({ nitro_repost_enabled: v })} />
+              </div>
+
+              {/* Staff */}
+              <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                <p className="mb-3 flex items-center gap-2 text-sm font-bold text-white">
+                  <Icon name="shield" size={15} className="text-neon-blue" /> {t.staffRoleLabel}
+                </p>
+                {hasGuildData ? (
+                  <SelectField
+                    label={t.staffRoleLabel}
+                    hint={t.staffRoleHint}
+                    value={config.staff_role_id ?? null}
+                    placeholder={t.pickRole}
+                    options={roleOptions}
+                    onChange={(v) => update({ staff_role_id: v })}
+                  />
+                ) : (
+                  <Field label={t.staffRoleLabel} hint={t.manualIdHint}>
+                    <input
+                      className={inputCls}
+                      placeholder="ID"
+                      value={config.staff_role_id ?? ''}
+                      onChange={(e) => update({ staff_role_id: e.target.value || null })}
+                    />
+                  </Field>
+                )}
+              </div>
+            </div>
+            <HelpZone title={SECTION_HELP.community.title} commands={SECTION_HELP.community.commands} note={SECTION_HELP.community.note} />
+          </section>
+          )}
+
+          {view === 'automod' && (
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <h2 className="flex items-center gap-2 font-bold text-white">
+                <Icon name="shield" size={18} className="text-red-400" /> {t.automodTitle}
+              </h2>
+              <QuickHelp title={SECTION_HELP.automod.title} commands={SECTION_HELP.automod.commands} note={SECTION_HELP.automod.note} />
+              <Badge kind="free" dict={dict} />
+              <SectionJson
+                disabled={dirty || busy}
+                disabledHint={t.jsonNeedSave}
+                exportLabel={t.jsonExport}
+                importLabel={t.jsonImport}
+                onExport={() => exportScope('automod')}
+                onImport={(file) => void importFile(file, 'automod')}
+              />
+            </div>
+            <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
+              <div>
+                <p className="text-sm font-semibold text-white/90">{t.automodToggle}</p>
+                <p className="text-xs text-white/50">{t.automodToggleHint}</p>
+              </div>
+              <Toggle on={Boolean(config.automod_enabled)} onChange={(v) => update({ automod_enabled: v })} />
+            </div>
+            {config.automod_enabled && (
+              <div className="mt-4 grid gap-4">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {(
+                    [
+                      ['links', t.automodWordLinks],
+                      ['invites', t.automodWordInvites],
+                      ['caps', t.automodWordCaps],
+                      ['spam', t.automodWordSpam],
+                    ] as const
+                  ).map(([key, label]) => (
+                    <div key={key} className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-2.5">
+                      <p className="text-xs font-semibold text-white/80">{label}</p>
+                      <Toggle
+                        on={automodCfg[key]}
+                        onChange={(v) => update({ automod_config: { ...automodCfg, [key]: v } })}
+                      />
+                    </div>
+                  ))}
+                </div>
+                <Field label={t.automodWordsLabel} hint={t.automodWordsHint}>
+                  <input
+                    className={inputCls}
+                    value={automodCfg.words.join(', ')}
+                    placeholder="palabra1, palabra2"
+                    onChange={(e) =>
+                      update({
+                        automod_config: {
+                          ...automodCfg,
+                          words: e.target.value
+                            .split(',')
+                            .map((s) => s.trim().toLowerCase())
+                            .filter(Boolean)
+                            .slice(0, 100),
+                        },
+                      })
+                    }
+                  />
+                </Field>
+              </div>
+            )}
+            <div className="mt-4 rounded-xl border border-white/10 bg-black/20 px-4 py-3">
+              <p className="flex items-center gap-2 text-sm font-bold text-white">
+                <Icon name="clock" size={15} className="text-neon-blue" /> {t.cooldownTitle}
+              </p>
+              <p className="mt-1 text-[11px] text-white/45">{t.cooldownHint}</p>
+            </div>
+            <HelpZone title={SECTION_HELP.automod.title} commands={SECTION_HELP.automod.commands} note={SECTION_HELP.automod.note} />
+          </section>
+          )}
+
           {view === 'extras' && (
           <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
             <div className="mb-4 flex flex-wrap items-center gap-2">
               <h2 className="flex items-center gap-2 font-bold text-white">
                 <Icon name="support" size={18} className="text-neon-blue" /> {t.extrasTitle}
               </h2>
+              <QuickHelp title={SECTION_HELP.extras.title} commands={SECTION_HELP.extras.commands} note={SECTION_HELP.extras.note} />
               <Badge kind="premium" dict={dict} />
               <PermWarning
                 perms={guildData?.botPermissions}

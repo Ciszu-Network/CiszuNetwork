@@ -100,7 +100,7 @@ export default function CommandTabs({ dict, prefix }: CommandTabsProps) {
                   }`}
                 >
                   <Icon name={CATEGORY_ICONS[category]} size={14} className={active ? 'text-neon-purple' : 'text-faint'} />
-                  {dict.commandsSection.categories[category]}
+                  {(dict.commandsSection.categories as Record<string, string>)[category]}
                   <span className="tabular-nums opacity-60">{count}</span>
                 </button>
               );

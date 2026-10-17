@@ -1,6 +1,6 @@
 import { EmbedBuilder, SlashCommandBuilder, PermissionsBitField } from 'discord.js';
 import type { BotCommand } from '../types/command';
-import { LINKS, BOT_COLORS, BOT_FOOTER } from '../config/links';
+import { LINKS, BOT_COLORS, BOT_FOOTER, BOT_ASSETS } from '../config/links';
 import { isPremiumBeta, isPremiumGuild } from '../services/featureFlags';
 import { db, ciszubotSchema, eq, sql } from '../services/supabase';
 
@@ -96,6 +96,8 @@ const command: BotCommand = {
     const embed = new EmbedBuilder()
       .setColor('#fbbf24')
       .setTitle('⭐ CiszuBot Premium')
+      .setThumbnail(BOT_ASSETS.isotype)
+      .setImage(BOT_ASSETS.banner)
       .setDescription(
         'Premium desbloquea funciones exclusivas para tu servidor: música, búsqueda, embeds personalizados, ' +
           'drops ilimitados y más.\n\n' +

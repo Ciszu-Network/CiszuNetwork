@@ -43,7 +43,8 @@ export default function CommandExplorer({ dict, prefix }: CommandExplorerProps) 
       !q ||
       cmd.name.toLowerCase().includes(q) ||
       cmd.description.toLowerCase().includes(q) ||
-      cmd.aliases.some((a) => a.toLowerCase().includes(q));
+      cmd.aliases.some((a) => a.toLowerCase().includes(q)) ||
+      cmd.tags.some((tag) => tag.includes(q));
     return matchesCat && matchesQuery;
   });
 
@@ -55,7 +56,7 @@ export default function CommandExplorer({ dict, prefix }: CommandExplorerProps) 
   })).filter((g) => g.commands.length > 0);
 
   const catLabel = (cat: string) =>
-    dict.commandsSection.categories[cat as CommandCategory] ?? cat;
+    (dict.commandsSection.categories as Record<string, string>)[cat] ?? cat;
 
   const copy = async (text: string, key: string) => {
     try {

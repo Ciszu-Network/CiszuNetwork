@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
-import { BOT_COLORS, BOT_FOOTER, LINKS } from '../config/links';
+import { BOT_COLORS, BOT_FOOTER, LINKS, BOT_ASSETS } from '../config/links';
 
 const command: BotCommand = {
   name: 'links',
@@ -27,6 +27,8 @@ const command: BotCommand = {
         { name: '💜 Donaciones', value: `• Patreon: ${LINKS.patreon}\n• Ko-fi: ${LINKS.koFi}\n• Buy Me a Coffee: ${LINKS.buyMeACoffee}`, inline: false },
         { name: '🐙 GitHub & YouTube', value: `• GitHub: ${LINKS.github}\n• YouTube: ${LINKS.youtube}`, inline: false },
       )
+      .setThumbnail(BOT_ASSETS.isotype)
+      .setImage(BOT_ASSETS.wordmark)
       .setFooter(BOT_FOOTER(`Solicitado por ${message.author.tag}`, message.client.user?.displayAvatarURL()))
       .setTimestamp();
 

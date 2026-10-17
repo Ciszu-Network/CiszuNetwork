@@ -1,6 +1,6 @@
 import { ActionRowBuilder, EmbedBuilder, SlashCommandBuilder, StringSelectMenuBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
-import { LINKS } from '../config/links';
+import { LINKS, BOT_ASSETS } from '../config/links';
 import { resolveFeatureForCommand, isPremiumCommand } from '../config/features';
 import { getFeatureState, isPremiumBeta } from '../services/featureFlags';
 
@@ -88,6 +88,7 @@ const command: BotCommand = {
           inline: false,
         });
       }
+      embed.setThumbnail(BOT_ASSETS.isotype);
       embed.setFooter({
         text: `CiszuBot • Solicitado por ${message.author.tag}`,
         iconURL: message.client.user?.displayAvatarURL(),
@@ -102,7 +103,8 @@ const command: BotCommand = {
       .setColor('#4f46e5')
       .setTitle('🤖 CiszuBot - Ayuda y Comandos')
       .setDescription(`¡Hola! Soy CiszuBot, el bot todo en uno. Tengo **${allCommands.length} comandos** disponibles y estoy sirviendo en **${totalServers} servidor(es)**.`)
-      .setThumbnail(message.client.user?.displayAvatarURL() ?? null)
+      .setThumbnail(BOT_ASSETS.isotype)
+      .setImage(BOT_ASSETS.wordmark)
       .setFooter({
         text: `CiszuBot • Solicitado por ${message.author.tag}`,
         iconURL: message.client.user?.displayAvatarURL(),

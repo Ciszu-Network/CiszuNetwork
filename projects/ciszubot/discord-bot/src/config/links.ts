@@ -32,3 +32,14 @@ export const BOT_FOOTER = (tag: string, iconURL?: string | null) => ({
   text: `CiszuBot • ${tag} • ${LINKS.websiteLabel}`,
   iconURL: iconURL ?? undefined,
 });
+
+/**
+ * Assets de marca en el CDN (ciszu-cdn) para embeds del bot: isotipo (icono),
+ * logotipo (wordmark) y banner. Rutas espejo 1:1 del repo.
+ */
+const CDN_BASE = 'https://obwzzmbvkrcscqwptlqo.supabase.co/storage/v1/object/public/ciszu-cdn';
+export const BOT_ASSETS = {
+  isotype: `${CDN_BASE}/projects/ciszubot/content/logos/images/not-outline/isotype/color/ciszubot_logo_isotipo_color.png`,
+  wordmark: `${CDN_BASE}/projects/ciszubot/content/logos/images/not-outline/logotype/color/ciszubot_logotipo_outline_color.png`,
+  banner: `${CDN_BASE}/projects/ciszubot/content/banners/banner.png`,
+} as const;

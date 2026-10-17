@@ -1,6 +1,6 @@
 import { EmbedBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
-import { LINKS, BOT_COLORS, BOT_FOOTER } from '../config/links';
+import { LINKS, BOT_COLORS, BOT_FOOTER, BOT_ASSETS } from '../config/links';
 import { resolveFeatureForCommand, isPremiumCommand, featureLabel } from '../config/features';
 import { getFeatureState, getGuildFeatureOverride, isPremiumBeta, isPremiumGuild } from '../services/featureFlags';
 import { getGuildConfig } from '../services/configService';
@@ -38,6 +38,7 @@ function disabledEmbed(reason: string | null, tag: string, iconURL?: string | nu
         (reason ? `\n**Motivo:** ${reason}\n` : '') +
         `\nPide a la administración que la active desde el panel: ${LINKS.website}/dashboard`,
     )
+    .setThumbnail(BOT_ASSETS.isotype)
     .setFooter(BOT_FOOTER(tag, iconURL))
     .setTimestamp();
 }

@@ -39,6 +39,41 @@ const guildConfigPatchSchema = z.object({
     .regex(/^[a-z0-9-]+$/)
     .nullable()
     .optional(),
+  coin_emoji: z.string().min(1).max(64).optional(),
+  coin_name: z.string().min(1).max(32).optional(),
+  staff_role_id: z.string().min(1).nullable().optional(),
+  level_message: z.string().max(500).optional(),
+  level_roles: z
+    .array(z.object({ level: z.number().int().min(1).max(1000), role_id: z.string().min(1).max(32) }))
+    .max(50)
+    .optional(),
+  automod_config: z
+    .object({
+      links: z.boolean(),
+      invites: z.boolean(),
+      caps: z.boolean(),
+      spam: z.boolean(),
+      words: z.array(z.string().min(1).max(64)).max(100),
+    })
+    .optional(),
+  drops: z
+    .object({
+      enabled: z.boolean(),
+      channels: z.array(z.string().min(1).max(32)).max(20),
+      min: z.number().int().min(1).max(1_000_000),
+      max: z.number().int().min(1).max(1_000_000),
+      interval_min: z.number().int().min(5).max(1440),
+      interval_max: z.number().int().min(5).max(1440),
+      message: z.string().max(300).nullable(),
+      excluded_roles: z.array(z.string().min(1).max(32)).max(50),
+    })
+    .optional(),
+  starboard_channel_id: z.string().min(1).nullable().optional(),
+  starboard_emoji: z.string().min(1).max(64).optional(),
+  starboard_min: z.number().int().min(1).max(100).optional(),
+  invite_points_per: z.number().int().min(1).max(100).optional(),
+  nitro_repost_enabled: z.boolean().optional(),
+  private_vc_hub_id: z.string().min(1).nullable().optional(),
 });
 
 /** Funciones configurables por servidor (mismas que los flags globales del bot). */
@@ -70,6 +105,28 @@ interface GuildConfig {
   features?: Record<string, boolean>;
   leaderboard_enabled?: boolean;
   leaderboard_slug?: string | null;
+  coin_emoji?: string;
+  coin_name?: string;
+  staff_role_id?: string | null;
+  level_message?: string;
+  level_roles?: { level: number; role_id: string }[];
+  automod_config?: { links: boolean; invites: boolean; caps: boolean; spam: boolean; words: string[] };
+  drops?: {
+    enabled: boolean;
+    channels: string[];
+    min: number;
+    max: number;
+    interval_min: number;
+    interval_max: number;
+    message: string | null;
+    excluded_roles: string[];
+  };
+  starboard_channel_id?: string | null;
+  starboard_emoji?: string;
+  starboard_min?: number;
+  invite_points_per?: number;
+  nitro_repost_enabled?: boolean;
+  private_vc_hub_id?: string | null;
 }
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ guildId: string }> }) {
@@ -143,9 +200,9 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     );
   }
   const body = parsed.data as Partial<GuildConfig>;
-  const allowed: Record<string, string | boolean | number | string[]> = {};
-  const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id'];
-  const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled'];
+  const allowed: Record<string, unknown> = {};
+  const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id', 'coin_emoji', 'coin_name', 'staff_role_id', 'level_message', 'starboard_channel_id', 'starboard_emoji', 'private_vc_hub_id'];
+  const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled', 'nitro_repost_enabled'];
 
   for (const key of stringFields) {
     if (body[key] !== undefined) allowed[key] = String(body[key]);
@@ -156,6 +213,48 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
   if (body.xp_rate !== undefined) {
     const rate = Number(body.xp_rate);
     if (rate >= 0.1 && rate <= 10) allowed.xp_rate = rate;
+  }
+  if (body.starboard_min !== undefined) {
+    const value = Number(body.starboard_min);
+    if (value >= 1 && value <= 100) allowed.starboard_min = value;
+  }
+  if (body.invite_points_per !== undefined) {
+    const value = Number(body.invite_points_per);
+    if (value >= 1 && value <= 100) allowed.invite_points_per = value;
+  }
+  if (body.level_roles !== undefined) {
+    allowed.level_roles = Array.isArray(body.level_roles) ? body.level_roles.slice(0, 50) : [];
+  }
+  if (body.automod_config !== undefined) {
+    const am = body.automod_config;
+    if (am && typeof am === 'object') {
+      allowed.automod_config = {
+        links: Boolean(am.links),
+        invites: Boolean(am.invites),
+        caps: Boolean(am.caps),
+        spam: Boolean(am.spam),
+        words: Array.isArray(am.words) ? am.words.map((w) => String(w).slice(0, 64)).slice(0, 100) : [],
+      };
+    }
+  }
+  if (body.drops !== undefined) {
+    const d = body.drops;
+    if (d && typeof d === 'object') {
+      const clampInt = (n: unknown, min: number, max: number, fallback: number) => {
+        const value = Number(n);
+        return Number.isFinite(value) ? Math.min(max, Math.max(min, Math.round(value))) : fallback;
+      };
+      allowed.drops = {
+        enabled: Boolean(d.enabled),
+        channels: Array.isArray(d.channels) ? d.channels.map((c) => String(c)).slice(0, 20) : [],
+        min: clampInt(d.min, 1, 1_000_000, 50),
+        max: clampInt(d.max, 1, 1_000_000, 200),
+        interval_min: clampInt(d.interval_min, 5, 1440, 60),
+        interval_max: clampInt(d.interval_max, 5, 1440, 180),
+        message: d.message ? String(d.message).slice(0, 300) : null,
+        excluded_roles: Array.isArray(d.excluded_roles) ? d.excluded_roles.map((r) => String(r)).slice(0, 50) : [],
+      };
+    }
   }
   if (body.autorole_ids !== undefined) {
     allowed.autorole_ids = Array.isArray(body.autorole_ids)
@@ -212,6 +311,19 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     autorole_ids: 'autoroleIds',
     leaderboard_enabled: 'leaderboardEnabled',
     leaderboard_slug: 'leaderboardSlug',
+    coin_emoji: 'coinEmoji',
+    coin_name: 'coinName',
+    staff_role_id: 'staffRoleId',
+    level_message: 'levelMessage',
+    level_roles: 'levelRoles',
+    automod_config: 'automodConfig',
+    drops: 'drops',
+    starboard_channel_id: 'starboardChannelId',
+    starboard_emoji: 'starboardEmoji',
+    starboard_min: 'starboardMin',
+    invite_points_per: 'invitePointsPer',
+    nitro_repost_enabled: 'nitroRepostEnabled',
+    private_vc_hub_id: 'privateVcHubId',
   };
   const values: Record<string, unknown> = { guildId };
   for (const [key, value] of Object.entries(allowed)) {
