@@ -1,4 +1,4 @@
-﻿# Ciszu Network
+# Ciszu Network
 
 [![GitHub Stars](https://img.shields.io/github/stars/Ciszu-Network/CiszuNetwork?style=for-the-badge&logo=github&color=5865F2)](https://github.com/Ciszu-Network/CiszuNetwork/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/Ciszu-Network/CiszuNetwork?style=for-the-badge&logo=github&color=8B5CF6)](https://github.com/Ciszu-Network/CiszuNetwork/network/members)
@@ -21,7 +21,7 @@
 | **Ciszu Network**  | Web principal — portafolio, blog, documentación técnica  | Next.js 15, Tailwind 4, Supabase         | 🟢 Producción |
 | **Ciszuko Antony** | Portfolio personal — proyectos, música, galería          | Next.js 15, Tailwind 4, Supabase         | 🟢 Producción |
 | **MuzicMania**     | Juego musical web + app Tauri (desktop)                  | Next.js 15, Tauri v2, Supabase, WebAudio | 🟢 Producción |
-| **CiszuBot**       | Bot de Discord + dashboard web (landing, stats, tickets) | Discord.js, Next.js 15, Express, Docker  | 🟢 Producción |
+| **CiszuBot**       | Bot de Discord 24/7 + dashboard web (landing, stats, tickets) | Discord.js, NestJS/Fastify, Next.js 15  | 🟢 Producción |
 | **CiszuGamens**    | Comunidad gaming — servidor Discord                      | Discord                                  | 🟢 Activa     |
 | **CiszuPy**        | Paquete Python + CLI híbrida                             | Python 3.10+, Typer, Rich, Poetry        | 🟢 Publicado  |
 
@@ -44,7 +44,7 @@ ciszunetwork-monorepo/
 │   │   └── mobile/              # App móvil (futuro)
 │   ├── ciszubot/                # Bot + Dashboard (ciszubot.vercel.app)
 │   │   ├── website/             # Next.js 15 (ciszubot-website)
-│   │   └── discord-bot/         # Discord.js v14 + Express
+│   │   └── discord-bot/         # Discord.js v14 + NestJS/Fastify (24/7 en Bot-Hosting)
 │   ├── ciszugamens/             # Comunidad gaming (Discord)
 │   └── ciszupy/                 # Paquete Python + CLI (ciszupy)
 │       └── python-package/      # Poetry + Typer + Rich
@@ -106,9 +106,12 @@ ciszunetwork-monorepo/
 
 ### Discord Bot (CiszuBot)
 
-- Slash commands + prefix (`cz!`)
-- Sistema de economía, niveles, tickets, wallets crypto
-- Dashboard web con OAuth2 Discord
+- Slash commands + prefix (`cz!`), 73 comandos en 10 categorías, i18n de respuestas
+- Música (play-dl), economía, niveles, minijuegos, moderación, búsqueda, social
+- **Feature flags** (kill switches globales y por servidor) + **Premium (beta)**
+- Dashboard web con OAuth2 Discord + leaderboards públicos
+- **En línea 24/7** (Bot-Hosting; bundle pre-construido + deploy por API) con
+  heartbeat monitoreado por CI y control desde la devcon
 - Auto-post a Top.gg / DiscordBotList cada 30 min
 
 ### Juego Musical (MuzicMania)

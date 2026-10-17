@@ -71,8 +71,21 @@ Si Oracle pide tarjeta y no tienes o no quieres darla:
 
 ## Estado actual
 
-- [ ] No aplicado (el bot sigue en el PC del usuario).
-- El `TODO.md` del usuario ya lista "Configurar hosting (VPS o similar, 24/7)" como tarea pendiente.
+- ✅ **APLICADO (17 oct 2026)**: el bot corre **24/7 en Bot-Hosting.net** (plan
+  Free: 256MB RAM / 512MB storage, Node 24). Deployment `CiszuBot`
+  (`1dad15ed-cd07-4928-a7e2-236eda924f6e`), bundle pre-construido subido por la
+  API (`scripts/deploy-bothosting.mjs`), env vars secretas vía `env.set`, logs
+  verificados ("CiszuBot#5704 está en línea!", 2 servidores) y heartbeat fresco
+  en Supabase. Consumo en reposo: ~80MB RAM / CPU ~0%.
+- ⏳ **SillyDev (primario planificado)**: cuenta creada (ciszukoantony, API key
+  en el vault) pero sus nodos gratis están **sin capacidad** (503 al crear);
+  reintentar más adelante — ventaja clave: **sin renovaciones** (Bot-Hosting
+  Free exige pulsar Renovar cada 4 días; hay recordatorio ntfy por CI).
+- **Monitoreo separado**: webs por UptimeRobot (`uptime-watch.yml`); bot por
+  heartbeat (`bot-heartbeat-watch.yml`, avisa si `bot_status.last_seen` > 5 min).
+- **Control desde la devcon**: sección `ESTADO DEL BOT` → opciones HOSTING
+  (estado real, iniciar/reiniciar/detener, logs vía API de Bot-Hosting) +
+  opciones WEB (bot_status manual: auto/online/offline+razón).
 
 ## Notas
 

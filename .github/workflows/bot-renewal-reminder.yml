@@ -1,0 +1,32 @@
+# Recordatorio de renovación del bot en Bot-Hosting (plan Free: cada 4 días).
+#
+# El plan gratuito exige renovar el deployment desde el panel cada 4 días; si
+# no se renueva, Bot-Hosting borra el deployment (con 3 días de gracia).
+# Este workflow manda un push por ntfy (mismo canal que uptime-watch) para que
+# Ciszuko entre al panel y pulse Renovar: https://bot-hosting.net
+#
+# Cuando SillyDev libere capacidad y migremos el bot allí (sin renovaciones),
+# este workflow se elimina.
+
+name: Bot renewal reminder
+
+on:
+  schedule:
+    # Días 1, 5, 9, 13, 17, 21, 25 y 29 del mes a las 12:00 UTC (~08:00 VE):
+    # cubre el ciclo de 4 días con margen dentro de la gracia de 3 días.
+    - cron: '0 12 */4 * *'
+  workflow_dispatch:
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enviar recordatorio por ntfy
+        env:
+          NOTIFY_TOPIC: ${{ secrets.NOTIFY_TOPIC }}
+        run: |
+          curl -sS -m 20 -X POST "https://ntfy.sh/${NOTIFY_TOPIC}" \
+            -H "Title: CiszuBot: renovar hosting (4 dias)" \
+            -H "Priority: high" \
+            -H "Tags: alarm_clock" \
+            -d "Entra a https://bot-hosting.net y pulsa RENOVAR en el deployment CiszuBot. Si no se renueva en 4 dias, el deploy se borra."

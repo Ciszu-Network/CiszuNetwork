@@ -1,0 +1,76 @@
+# Vigía del HEARTBEAT del bot (separado del vigía de las webs).
+#
+# El estado del BOT y el estado de las WEBS son dos cosas distintas:
+#   · Webs  → UptimeRobot + uptime-watch.yml (HTTP de las 4 páginas).
+#   · Bot   → este workflow: lee `ciszubot.bot_status.last_seen` (heartbeat que
+#             el bot escribe cada ~30s mientras corre, en Bot-Hosting) y avisa
+#             por ntfy si lleva más de 5 minutos sin latir (proceso caído,
+#             deploy borrado por falta de renovación, host caído…).
+#
+# Solo notifica en CAMBIOS de estado (cae / se recupera), con caché de estado
+# entre ejecuciones para no repetir el aviso cada 15 minutos.
+
+name: Bot heartbeat watch
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  heartbeat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Restaurar estado previo
+        uses: actions/cache@v4
+        with:
+          path: .opencode/temp/bot-heartbeat-state.json
+          key: bot-heartbeat-state-v1
+
+      - name: Comprobar heartbeat
+        env:
+          NOTIFY_TOPIC: ${{ secrets.NOTIFY_TOPIC }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          set -e
+          mkdir -p .opencode/temp
+          STATE_FILE=".opencode/temp/bot-heartbeat-state.json"
+          PREV="ok"
+          if [ -f "$STATE_FILE" ]; then PREV=$(jq -r '.state // "ok"' "$STATE_FILE"); fi
+
+          ROW=$(curl -sS -m 20 \
+            "https://obwzzmbvkrcscqwptlqo.supabase.co/rest/v1/bot_status?id=eq.1&select=last_seen,version" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+            -H "Accept-Profile: ciszubot")
+          LAST=$(echo "$ROW" | jq -r '.[0].last_seen // empty')
+          VER=$(echo "$ROW" | jq -r '.[0].version // "?"')
+
+          NOW=$(date -u +%s)
+          if [ -z "$LAST" ]; then
+            AGE=999999
+          else
+            AGE=$(( NOW - $(date -u -d "$LAST" +%s) ))
+          fi
+          echo "last_seen=$LAST edad=${AGE}s (umbral 300s) version=$VER"
+
+          if [ "$AGE" -gt 300 ]; then
+            if [ "$PREV" != "down" ]; then
+              curl -sS -m 20 -X POST "https://ntfy.sh/${NOTIFY_TOPIC}" \
+                -H "Title: CiszuBot sin heartbeat" \
+                -H "Priority: urgent" \
+                -H "Tags: rotating_light" \
+                -d "El bot lleva $(( AGE / 60 )) min sin latir (last_seen: ${LAST:-nunca}). Revisa Bot-Hosting (deploy vivo? renovacion?) o la devcon: HOSTING estado real."
+            fi
+            echo '{"state":"down"}' > "$STATE_FILE"
+          else
+            if [ "$PREV" = "down" ]; then
+              curl -sS -m 20 -X POST "https://ntfy.sh/${NOTIFY_TOPIC}" \
+                -H "Title: CiszuBot recuperado" \
+                -H "Priority: default" \
+                -H "Tags: white_check_mark" \
+                -d "El heartbeat volvio (v$VER). El bot esta en linea otra vez."
+            fi
+            echo '{"state":"ok"}' > "$STATE_FILE"
+          fi

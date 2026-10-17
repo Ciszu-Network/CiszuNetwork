@@ -149,6 +149,30 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 > Este historial absorbe `PROJECT_HISTORY.md` (eliminado 13 ago 2026). Añadir aquí los
 > nuevos hitos al cierre de sesión.
 
+### 17 de Octubre, 2026 — CiszuBot 24/7 en Bot-Hosting, emails Gmail SMTP + advisor, TUI de consolas
+
+- **Bot 24/7 DESPLEGADO** en **Bot-Hosting.net** (plan Free; SillyDev sin capacidad):
+  bundle pre-construido (dist + node_modules Linux, sin instalar en el host) subido por
+  API, env vars secretas vía `env.set`, verificado en línea (2 servidores, slash
+  recargados, 0 errores, ~80MB RAM). Renovación cada 4 días con recordatorio ntfy
+  (`bot-renewal-reminder.yml`). **Monitoreo separado**: webs (UptimeRobot) vs bot
+  (heartbeat `bot_status.last_seen` → `bot-heartbeat-watch.yml`). Devcon: sección
+  ESTADO DEL BOT con HOSTING real (API) + WEB (bot_status). README del bot reescrito.
+- **Emails**: transporte por **Gmail SMTP** (App Password de ciszunetwork@gmail.com) +
+  custom SMTP en Supabase (rate limit del mailer integrado eliminado); plantillas con
+  fondos sólidos/iconos/CZ-; detección del **límite diario de Gmail** (550 5.4.5) con
+  mensaje interno para staff, **mensaje genérico "Email en mantenimiento" para usuarios**
+  (sin detalle técnico) y **aviso global automático** vía advisor kind=error (dedupe 24h).
+- **TUI de consolas**: motor compartido `tools/consoles/tui.ps1` (devcon + staffcon +
+  customerscon): teclas GRUB multi-dígito, búsqueda Ctrl+S/`\`, ratón (clic/doble
+  clic/rueda), paginación, `Show-TuiInput`/`Show-TuiConfirm`; ~200 líneas duplicadas
+  eliminadas y 20 checks automáticos.
+- **Devcon**: proyectos sincronizados con carpetas reales (demo fuera), roles resueltos
+  por perfiles (owner concedido en las 4 webs), fix de `ConvertFrom-Json` en PS 5.1
+  (System.Object[]), botstatus con heartbeat/forzado, tag beta alineado + iconos
+  free/premium/mixed, modal de idiomas, JSON export/import con vista previa.
+- **Portfolio**: CV 2026 nuevo al CDN (hash verificado) y hub completo con nombre real.
+
 ### 12 de Octubre, 2026 — Correos (PNG por https, Token y redes), hidratación ciszubot, BotID y entorno Vercel
 
 - **Correos con imágenes reales**: todos los assets de email pasaron de `data:` URI (bloqueados

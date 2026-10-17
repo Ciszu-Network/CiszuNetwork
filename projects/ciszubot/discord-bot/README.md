@@ -1,80 +1,131 @@
-# CiszuBot v3.0.0 - Bot de Discord en Español
+# CiszuBot — Bot oficial de Discord de Ciszu Network
 
-## Descripción General
+**Versión actual**: v3.2.0 · **73 comandos** · **En línea 24/7** (Bot-Hosting, plan Free)
 
-CiszuBot es un bot de Discord en español, desarrollado con Node.js 24, TypeScript y Discord.js v14 (pnpm workspace). Ofrece comandos por prefijo (`cz!`), por mención, slash commands globales (`/`), alias, respuestas enriquecidas con embeds, manejo avanzado de errores y un panel web con estadísticas en tiempo real.
+Bot de Discord en español (con i18n en 4 idiomas de respuesta) del ecosistema
+Ciszu Network. Prefijo `cz!`, mención directa y slash commands globales. Incluye
+música, economía, niveles, moderación, minijuegos y un sistema de **feature flags
++ Premium (beta)** controlable en tiempo real desde la web y la devcon.
 
-## Características Principales
+---
 
-- Prefijo: `cz!` y mención directa al bot
-- Slash commands (`/`) registrados globalmente (todos los servidores)
-- Comandos con alias y estructura modular en TypeScript
-- Respuestas en embeds con colores azul y morado (aleatorio en hi/bye)
-- Panel web Express (:5000) con estadísticas del bot (stats server integrado en `src/services/statsServer.ts`)
-- Manejo de errores con mensajes claros y visuales
-- Logging avanzado en archivos y consola (`src/services/logger.ts`)
-- Supabase listo para integrar (conexión con `@supabase/supabase-js`)
-- Botones y menús de selección respondidos correctamente (`deferUpdate`, sin timeouts)
+## 1. Cómo funciona
 
-## Stack (migración jul/ago 2026)
+```
+Discord (Gateway)
+   │  mensajes cz! / mención / slash
+   ▼
+src/index.ts  ── dispatch de comandos (prefijo + slash)
+   │  gateCommand()  ← feature flags globales + override por servidor + Premium
+   ▼
+src/commands/<categoría>/<comando>.ts   (73 comandos en 10 categorías)
+   │  embeds + botones + select menus
+   ▼
+Servicios:
+   · supabase.ts        Postgres (Supabase) vía Drizzle ORM — datos del ecosistema
+   · featureFlags.ts    flags globales (ciszubot.feature_flags) y por servidor
+                        (ciszubot.guild_feature_flags) con caché de 20s
+   · statsServer.ts     NestJS + Fastify en :5000 (stats/votos para listas)
+   · logger.ts          pino (consola + archivos)
+   · sentry.ts          errores (SENTRY_DSN)
+   · recoveryClient.ts  recuperación de música tras caídas
+```
 
-- Node.js 24 (imagen `node:24-alpine` en Docker)
-- TypeScript 6, compilación con `tsc` a `dist/`
-- pnpm 10 (monorepo, `projects/ciszubot/*` en el workspace)
-- Discord.js ^14.22
-- Express ^5 + dotenv ^16
-- Docker multi-stage (builder + runtime, usuario no-root, `--frozen-lockfile`)
+**Heartbeat**: mientras corre, el bot escribe `ciszubot.bot_status.last_seen`
+cada ~30s. Eso es lo que la web usa para mostrar el estado en vivo y lo que el
+vigía de CI monitorea (ver §6).
 
-## Estructura
+**Categorías de comandos**: Música, Diversión, Economía, Información, Utilidad,
+Moderación, Configuración, Niveles, Social (+ `search` y comandos premium).
 
-- **src/index.ts**: Punto de entrada, login, registro de slash commands (globales, preservando Entry Point commands type 4), manejo de interacciones (chat input, select menus, botones) y mensajes con prefijo
-- **src/commands/**: Comandos modulares (`8ball`, `bye`, `confess`, `directsay`, `help`, `hi`, `ping`, `pong`, `profile`, `say`, `serverinfo`, `test`)
-- **src/types/command.ts**: Tipos `BotCommand`, `SimulatedMessage` y declaration merging (`Client.commands`)
-- **src/config/index.ts**: Config centralizada (bot-config.json + env)
-- **src/utils/commandRegistry.ts**: Carga de comandos desde `dist/commands` (soporta `exports.default`)
-- **src/services/logger.ts**: Logging multinivel
-- **src/services/statsServer.ts**: Panel web Express y estadísticas
-- **bot-config.json**: Configuración centralizada del bot
+## 2. Feature flags y Premium (beta)
 
-## Flujo de Uso
+- **Flags globales** (`ciszubot.feature_flags`): apagan una categoría completa
+  en TODOS los servidores (kill switch) con motivo visible al usuario.
+  Control: devcon (sección `FEATURES DEL BOT`) o `node scripts/features.mjs`.
+- **Override por servidor** (`ciszubot.guild_feature_flags`): el dashboard web
+  permite apagar una función SOLO en ese servidor.
+- **Override por deploy** (`FEATURES_OFF=music,search`): gana sobre la DB
+  (útil si una función rompe el proceso al arrancar).
+- **Premium (beta)**: `premium_beta=on` ⇒ todas las funciones premium son
+  gratis; al salir de beta se bloquean por servidor (`ciszubot.premium_guilds`).
+- El gate vive en `src/utils/commandGate.ts`: un comando de una función
+  desactivada responde con embed "⛔ Comando no activado" y nunca se ejecuta.
 
-1. El usuario envía `cz!comando`, menciona al bot, o usa `/comando`
-2. El bot detecta el comando y busca en la colección
-3. Si el comando existe, ejecuta y responde con embed
-4. Si no existe, responde con embed de error
-5. Todas las acciones se registran en logs
-6. El panel web muestra estadísticas en tiempo real (`http://localhost:5000`)
+## 3. Estructura del proyecto
 
-## Dependencias
+```
+discord-bot/
+├── src/
+│   ├── index.ts                 entrada: login + dispatch (prefijo/slash) + gate
+│   ├── commands/                73 comandos por categoría
+│   ├── config/features.ts       definición de flags y mapeo comando→función
+│   ├── services/                supabase, featureFlags, statsServer, logger, sentry…
+│   ├── utils/                   commandGate, commandRegistry, helpers
+│   └── types/                   BotCommand, SimulatedMessage, declaration merging
+├── bot-config.json              configuración central (prefix, colores, enlaces)
+├── .env.example                 variables requeridas (ver §5)
+└── Dockerfile                   imagen node:24-alpine (no usada en Bot-Hosting)
+```
 
-- **discord.js**: ^14.22
-- **dotenv**: ^16
-- **express**: ^5
-- **@supabase/supabase-js**: ^2.60
-- **typescript**: ^5.9, **nodemon**: ^3 (dev)
+## 4. Despliegue 24/7 (Bot-Hosting — plan Free)
 
-## Despliegue y Configuración
+El bot corre en **Bot-Hosting.net** (deploy `CiszuBot`, runtime Node 24, 256MB
+RAM / 512MB storage). Es un **bundle pre-construido** (no se instala nada en el
+host): `dist/` + `node_modules` de producción **para Linux** + `public/` +
+`bot-config.json`.
 
-- Variables de entorno en `.env` (ver `.env.example`): `BOT_TOKEN`, `GUILD_ID` (opcional, para registro por servidor)
-- Registro de slash commands: **global** por defecto; si `GUILD_ID` está definido, registra solo en ese servidor (instantáneo)
-- El Entry Point command de la app (`launch`, type 4) se preserva automáticamente en el bulk update
-- Logs automáticos en carpeta `logs/`
-- Configuración editable en `bot-config.json`
-- Panel web en `http://localhost:5000`
-- Docker: `docker compose up -d --build ciszu-bot` (contexto: raíz del repo, ver `docker-compose.yml`)
-- Local: `pnpm install && pnpm build && pnpm start` (o `pnpm dev`)
+- **Actualizar el bot**:
+  1. `cd deploy/ciszubot-standalone && npm install --ignore-scripts && npm run build`
+  2. Copiar `dist/ public/ bot-config.json package.json` a `.opencode/temp/bot-bundle/`
+  3. `npm install --omit=dev --ignore-scripts --os=linux --cpu=x64` ahí dentro
+  4. Añadir el binding `@snazzah/davey-linux-x64-{gnu,musl}` desde el registry
+     (npm no lo instala desde Windows por el check de plataforma)
+  5. `tar -a -c -f ../ciszubot-bundle.zip dist public node_modules package.json bot-config.json`
+  6. `node scripts/deploy-bothosting.mjs` (sube, descomprime, reinicia y espera logs)
+- **Renovación**: el plan Free exige pulsar **Renovar** en el panel cada 4 días;
+  si no, Bot-Hosting borra el deployment (3 días de gracia). El workflow
+  `bot-renewal-reminder.yml` manda un push ntfy recordándolo.
+- **Migración futura**: SillyDev (sin renovaciones) está pedido pero sin
+  capacidad en sus nodos gratis; cuando libere, migrar es subir el mismo zip.
+- **Control desde la devcon**: sección `ESTADO DEL BOT` → HOSTING (estado real,
+  iniciar/reiniciar/detener, últimos logs vía API) y WEB (bot_status manual).
 
-## Cambios importantes (v3.0.0, 1 ago 2026)
+## 5. Variables de entorno
 
-- Migración de JavaScript vanilla a TypeScript (estructura estilo muzicmania)
-- Fix crítico: `Routes.applicationcommands` → `Routes.applicationCommands` (slash commands no se registraban)
-- Fix: botones/selects nunca respondían (timeouts) → `deferUpdate` + handler de `StringSelectMenu`
-- Fix: registry no cargaba comandos (`exports.default` del CJS)
-- Fix: registro global fallaba con 50240 (Entry Point command) → se preserva en bulk update
-- Dockerfile multi-stage con pnpm + Node 24, usuario no-root
-- Stats server (antes `server.js`) integrado en `src/services/statsServer.ts`
+| Variable | Uso |
+| --- | --- |
+| `BOT_TOKEN` | Token de Discord (vault: `DISCORD_BOT_TOKEN`) |
+| `DATABASE_URL` | Postgres de Supabase (pooler) — **obligatoria** |
+| `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` | REST/admin (heartbeat, flags) |
+| `SENTRY_DSN` | Errores (opcional) |
+| `TOP_GG_TOKEN` / `DISCORDBOTLIST_TOKEN` | Votos en listas (opcional) |
+| `NODE_ENV` / `PORT` | `production` / puerto del panel web interno (5000) |
+| `FEATURES_OFF` | Kill switch por deploy (`music,search,…`) |
 
-## Créditos y Autoría
+En Bot-Hosting las variables se cargan con `env.set` (secretas enmascaradas);
+localmente van en `.env` (gitignored).
 
-Desarrollado por Ciszuko
-Documentación y soporte en español
+## 6. Monitoreo (dos cosas distintas)
+
+- **Webs** (ciszunetwork/antony/muzicmania/ciszubot): UptimeRobot +
+  `.github/workflows/uptime-watch.yml` (cada 5 min).
+- **Bot** (donde corre): `.github/workflows/bot-heartbeat-watch.yml` lee
+  `bot_status.last_seen` cada 15 min y avisa por ntfy si lleva >5 min sin latir
+  (proceso caído, deploy borrado, host caído) y cuando se recupera.
+
+## 7. Desarrollo local
+
+```bash
+pnpm --filter ciszubot dev        # bot en modo dev (tsx watch)
+pnpm --filter ciszubot build      # tsc → dist/
+node scripts/features.mjs list    # flags globales
+node scripts/botstatus.mjs status # estado web (bot_status) + heartbeat real
+```
+
+La **devcon** (`devcon` en PowerShell) integra todo: encender webs, estado del
+bot (hosting + web), features, cuentas CISZU ID, proyectos, roles, etc.
+
+---
+_Última revisión: 17 oct 2026._ Relacionado: `FEATURE_FLAGS_SYSTEM.md`,
+`VPS_PLAN.md`, `DB_SYSTEM.md`, `MONITORING_SYSTEM.md`, `DEV_CONSOLE_SYSTEM.md`.

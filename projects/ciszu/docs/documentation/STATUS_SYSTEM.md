@@ -164,6 +164,20 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 - Frontend: fases 1–11 del to-do frontend completadas y verificadas (ver `TODO.md`).
 - CDN limpio (7.353 objetos) y tests en 171.
 
+### 17 oct 2026 — CiszuBot 24/7 (Bot-Hosting) + emails Gmail SMTP + TUI
+
+- **Bot**: desplegado y **en línea 24/7** en Bot-Hosting (Free). Bundle pre-construido
+  Linux, env por API (secretos), renovación cada 4 días (recordatorio ntfy por CI),
+  heartbeat monitoreado aparte de las webs (`bot-heartbeat-watch.yml`). Consumo ~80MB.
+- **Emails**: Gmail SMTP (App Password) como transporte + SMTP custom en Supabase;
+  límite diario de Gmail detectado → mensaje genérico al usuario + advisor global
+  automático; plantillas arregladas (fondos sólidos, iconos, CZ-).
+- **Consolas**: motor TUI compartido (GRUB multi-dígito, búsqueda Ctrl+S/`\`, ratón,
+  paginación) en devcon/staffcon/customerscon; devcon con controles de HOSTING del bot.
+- **SillyDev**: cuenta lista pero sin capacidad en nodos gratis (reintentar).
+- Verificación: bot online (2 servidores, 0 errores, slash recargados) ✅ · heartbeat
+  fresco ✅ · tests utils 32/32 ✅ · TUI 20/20 ✅ · tsc 4 webs + bot ✅.
+
 ### 12 oct 2026 — Correos, hidratación ciszubot, BotID y entorno Vercel
 
 - **Emails**: PNG por https (CDN) en plantillas Supabase + branded; `{{ .Token }}` y redes en
