@@ -27,6 +27,7 @@ import {
   readRequestTimestamps,
   recordRecoveryRequest,
   writeRequestedAt,
+  userErrorForEmailFailure,
 } from '@ciszunetwork/utils';
 
 const IconMail = () => (
@@ -238,7 +239,8 @@ export default function LoginPage() {
       setSent(true);
     } catch (err: any) {
       console.error('[FORGOT ERROR]:', err);
-      setLocalError(err.message || 'No se pudo enviar el enlace');
+      const raw = err.message || 'No se pudo enviar el enlace';
+      setLocalError(userErrorForEmailFailure(raw) ?? raw);
     } finally {
       setLoading(false);
     }

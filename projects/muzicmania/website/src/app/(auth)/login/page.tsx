@@ -11,6 +11,7 @@ import {
   readRequestTimestamps,
   recordRecoveryRequest,
   writeRequestedAt,
+  userErrorForEmailFailure,
 } from '@ciszunetwork/utils';
 import { supabase } from '@/config/supabase';
 import { useAppStore } from '@/store/useAppStore';
@@ -361,7 +362,7 @@ export default function LoginPage() {
         isVisible: true,
         type: 'error',
         title: 'Error de Recuperación',
-        message: err.message || 'Ocurrió un error inesperado'
+        message: userErrorForEmailFailure(err.message || '') ?? (err.message || 'Ocurrió un error inesperado')
       });
     } finally {
       setLoading(false);

@@ -17,10 +17,18 @@ Identificador: EMAILS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 > **LÍMITE DIARIO de Gmail (~500/día; 2.000 en Workspace)**: no existe API para consultar
 > el cupo restante → se **detecta al recibir el rechazo** del servidor (`550 5.4.5 Daily
 > user sending limit exceeded` y variantes de quota/rate) en `sendViaGmailSmtp`, que
-> devuelve un mensaje accionable (`GMAIL_DAILY_LIMIT_ERROR`) y marca `dailyLimit: true`
-> en el resultado (la cadena no insiste con OAuth: es la MISMA cuenta/cupo). La consola y
-> las webs muestran ese mensaje tal cual; el cupo se reinicia solo (~medianoche del Pacífico).
+> devuelve un mensaje accionable (`GMAIL_DAILY_LIMIT_ERROR`, SOLO staff/logs) y marca
+> `dailyLimit: true` en el resultado (la cadena no insiste con OAuth: es la MISMA cuenta/cupo).
 > Helper testeable: `isGmailDailyLimit(text)`.
+>
+> **De cara al usuario (16 oct 2026)**: cuando se detecta, las webs responden con un
+> mensaje GENÉRICO — `EMAIL_MAINTENANCE_USER_ERROR` ("Email en mantenimiento. Inténtalo de
+> nuevo más tarde.") — **sin detalle técnico** (el `detail` se omite; el detalle queda en
+> logs/staff). Además se publica **una sola vez** un aviso GLOBAL en el sistema de advisors
+> (`ciszunetwork.global_announcements`, kind=`error`, source=`email-transport`, expira 24h,
+> dedupe interno) vía `publishEmailMaintenanceAdvisor()`: las 4 webs lo muestran como toast
+> de error. La recuperación de contraseña mapea el error de Supabase con
+> `userErrorForEmailFailure()`; el devcon conserva el detalle técnico (es staff).
 
 **Estado (11 ago 2026)**: **Brevo DESCARTADO** — la cuenta quedó suspendida permanentemente ("la actividad de tu cuenta no cumplía nuestras Condiciones de uso") y crear una API key exige teléfono **no venezolano** → inviable desde VE. Plan revisado:
 - **HOY / sin dominio**: los emails de **AUTH de Supabase** (verificación, reset, OTP) usan el **SMTP nativo de Supabase** (gratis, sin configuración). El paquete `@ciszunetwork/email` **no tiene proveedor activo** hasta tener dominio.

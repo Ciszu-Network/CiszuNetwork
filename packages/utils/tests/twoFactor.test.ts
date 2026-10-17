@@ -12,6 +12,7 @@ import {
   type TwoFactorRecord,
   type TwoFactorStore,
 } from '../src/twoFactor';
+import { EMAIL_MAINTENANCE_USER_ERROR } from '../src/emailErrors';
 
 type Row = TwoFactorRecord & { userId: string; site: string };
 
@@ -261,5 +262,21 @@ describe('createTwoFactorService', () => {
     const res = await service.request({ userId: 'u1', email: 'a@b.com' });
     expect(res.status).toBe(502);
     expect(res.body.state).toBe('delivery-failed');
+  });
+
+  it('cupo diario de email: mensaje GENÉRICO de mantenimiento y SIN detalle técnico', async () => {
+    const { store } = memoryStore();
+    const mailer: TwoFactorMailer = {
+      async send() {
+        return { sent: false, error: '550 5.4.5 Daily user sending limit exceeded', dailyLimit: true };
+      },
+    };
+    const service = createTwoFactorService({ site: 'ciszubot', siteName: 'CiszuBot', store, mailer, now });
+
+    const res = await service.request({ userId: 'u1', email: 'a@b.com' });
+    expect(res.status).toBe(503);
+    expect(res.body.state).toBe('email-maintenance');
+    expect(res.body.error).toBe(EMAIL_MAINTENANCE_USER_ERROR);
+    expect(res.body.detail).toBeUndefined();
   });
 });

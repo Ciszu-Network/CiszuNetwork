@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import { createHmac } from 'crypto';
 import {
   createTwoFactorService,
+  publishEmailMaintenanceAdvisor,
   sendBrandedEmail,
   twoFactorEmail,
   type TwoFactorMailer,
@@ -168,7 +169,15 @@ function createMailer(): TwoFactorMailer {
         html: mail.html,
         text: mail.text,
       });
-      return { sent: result.sent, error: result.error, previewOnly: result.previewOnly };
+      if (result.dailyLimit) {
+        // Email caído (cupo diario de Gmail): publica el aviso GLOBAL genérico
+        // (advisor kind=error, dedupe interno) y devuelve dailyLimit para que el
+        // servicio responda "Email en mantenimiento" sin detalle técnico.
+        const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+        if (url && serviceKey) void publishEmailMaintenanceAdvisor({ url, serviceKey });
+      }
+      return { sent: result.sent, error: result.error, previewOnly: result.previewOnly, dailyLimit: result.dailyLimit };
     },
   };
 }

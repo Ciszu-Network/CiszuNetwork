@@ -29,6 +29,7 @@ import {
   readRequestTimestamps,
   recordRecoveryRequest,
   writeRequestedAt,
+  userErrorForEmailFailure,
 } from '@ciszunetwork/utils';
 
 const IconMail = () => (
@@ -258,7 +259,8 @@ export default function LoginPage() {
       writeRequestedAt();
       setSent(true);
     } catch (err: any) {
-      setLocalError(err.message || t.loginPage.errors.forgotSendFailed);
+      const raw = err.message || t.loginPage.errors.forgotSendFailed;
+      setLocalError(userErrorForEmailFailure(raw) ?? raw);
     } finally {
       setLoading(false);
     }

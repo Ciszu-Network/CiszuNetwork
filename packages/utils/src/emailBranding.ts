@@ -32,6 +32,7 @@ import {
   EMAIL_CROSSOVER,
   type EmailLogo,
 } from './emailSites.generated';
+import { isGmailDailyLimit } from './emailErrors';
 
 export const EMAIL_BRAND_NAME = 'Ciszu Network';
 export const EMAIL_BRAND_EMAIL = 'ciszunetwork@gmail.com';
@@ -673,16 +674,11 @@ export interface SendEmailResult {
 /**
  * Gmail rechaza con `550 5.4.5 Daily user sending limit exceeded` (o variantes
  * de quota/rate) al agotar el cupo diario de la cuenta (~500 correos/día en
- * Gmail normal, 2.000 en Workspace). No existe API para consultar el cupo
- * restante: la única detección posible es al recibir el rechazo del servidor.
+ * Gmail normal, 2.000 en Workspace). La detección vive en `emailErrors.ts`
+ * (compartida con la UI para el mensaje genérico "Email en mantenimiento").
  */
-export function isGmailDailyLimit(text: string): boolean {
-  return /5\.4\.5|daily user sending limit|sending limit exceeded|daily[^\n]{0,20}quota|quota exceeded|too many messages|rate limited/i.test(
-    text,
-  );
-}
 
-/** Mensaje accionable cuando se agota el cupo diario de Gmail. */
+/** Mensaje INTERNO (staff/logs) cuando se agota el cupo diario de Gmail. */
 export const GMAIL_DAILY_LIMIT_ERROR =
   'Se alcanzó el LÍMITE DIARIO de envío de Gmail de la cuenta (≈500 correos/día; 2.000 en Workspace). ' +
   'Los envíos se reanudan solos en ~24h (el cupo se reinicia a medianoche del Pacífico). ' +

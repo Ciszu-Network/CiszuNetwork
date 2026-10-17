@@ -16,6 +16,7 @@
  * de email concreto.
  */
 
+import { EMAIL_MAINTENANCE_USER_ERROR } from './emailErrors';
 import {
   AUTH_CODE_MAX_ATTEMPTS,
   AUTH_CODE_MAX_RESENDS,
@@ -74,7 +75,7 @@ export interface TwoFactorMailer {
     site: string;
     siteName: string;
     expiresAt: number;
-  }): Promise<{ sent: boolean; error?: string; previewOnly?: boolean }>;
+  }): Promise<{ sent: boolean; error?: string; previewOnly?: boolean; dailyLimit?: boolean }>;
 }
 
 export interface TwoFactorServiceOptions {
@@ -207,6 +208,19 @@ export function createTwoFactorService(opts: TwoFactorServiceOptions) {
     });
 
     if (!delivery.sent) {
+      // Cupo diario/email caído: mensaje GENÉRICO para el usuario, sin detalle
+      // técnico (el detalle queda en logs/staff). El aviso global (advisor)
+      // lo publica el mailer de cada web al detectar `dailyLimit`.
+      if (delivery.dailyLimit) {
+        return {
+          status: 503,
+          body: {
+            success: false,
+            state: 'email-maintenance',
+            error: EMAIL_MAINTENANCE_USER_ERROR,
+          },
+        };
+      }
       return {
         status: 502,
         body: {

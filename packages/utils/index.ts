@@ -12,6 +12,7 @@ export * from './src/recaptchaRoute';
 export * from './src/recoveryClient';
 export * from './src/twoFactor';
 export * from './src/emailBranding';
+export * from './src/emailErrors';
 export * from './src/i18nAudit';
 export * from './src/i18nCoverage';
 export * from './src/anticheat';
