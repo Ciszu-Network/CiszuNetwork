@@ -1,7 +1,7 @@
 /**
  * GENERADO AUTOMÁTICAMENTE — NO EDITAR A MANO.
  * Fuente: projects/ciszubot/discord-bot/src/commands/*.ts (código real del bot).
- * Regenerar: node scripts/sync-bot-commands.mjs
+ * Se regenera solo en cada build de la web (prebuild).
  */
 
 export interface CommandInfo {

@@ -7,9 +7,11 @@
   },
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/sync-commands.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
+    "sync:commands": "node scripts/sync-commands.mjs",
     "verify": "pnpm run lint && next build"
   },
   "dependencies": {
