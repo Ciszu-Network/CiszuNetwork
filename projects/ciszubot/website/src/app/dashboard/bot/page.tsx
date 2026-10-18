@@ -8,6 +8,7 @@ import { usePageTitle } from '@/lib/usePageTitle';
 import InviteLink from '@/components/dashboard/InviteLink';
 import { INVITE_URL } from '@/lib/i18n';
 import { updatePreferences, loadPreferences, savePreferences, syncPreferencesToProfile } from '@/lib/preferences';
+import { NiceSelect, MultiSelect } from '@/components/dashboard/fields';
 import { BOT_ID } from '@/lib/botStatus';
 
 interface SaveEntry {
@@ -48,6 +49,19 @@ export default function BotPreferencesPage() {
   const [autoSave, setAutoSave] = useState(false);
   const [prefsQuery, setPrefsQuery] = useState('');
   const [jsonHistory, setJsonHistory] = useState<{ ts: number; guildName: string; kind: string; name: string }[]>([]);
+  // Roles por servidor (owner/admin/mod/bots/mute) desde las preferencias del bot.
+  const [roleGuilds, setRoleGuilds] = useState<{ id: string; name: string; icon: string | null }[]>([]);
+  const [roleGuildId, setRoleGuildId] = useState<string | null>(null);
+  const [roleList, setRoleList] = useState<{ id: string; name: string }[]>([]);
+  const [roleCfg, setRoleCfg] = useState<{
+    owner_role_ids: string[];
+    admin_role_ids: string[];
+    mod_role_ids: string[];
+    bot_role_ids: string[];
+    mute_role_id: string | null;
+  }>({ owner_role_ids: [], admin_role_ids: [], mod_role_ids: [], bot_role_ids: [], mute_role_id: null });
+  const [roleLoading, setRoleLoading] = useState(false);
+  const [roleSaving, setRoleSaving] = useState(false);
 
   useEffect(() => {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -83,6 +97,64 @@ export default function BotPreferencesPage() {
       .then((j) => setHistory((j.entries ?? []) as HistoryEntry[]))
       .catch(() => setHistory([]));
   }, []);
+
+  // Roles por servidor: carga la lista de servidores del bot al montar.
+  useEffect(() => {
+    fetch('/api/dashboard/bot-guilds', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : { guilds: [] }))
+      .then((j) => setRoleGuilds((j.guilds ?? []) as { id: string; name: string; icon: string | null }[]))
+      .catch(() => setRoleGuilds([]));
+  }, []);
+
+  // Al elegir servidor: roles reales + config actual.
+  useEffect(() => {
+    if (!roleGuildId) return;
+    let active = true;
+    setRoleLoading(true);
+    Promise.all([
+      fetch(`/api/dashboard/${roleGuildId}/roles`, { cache: 'no-store' }).then((r) => (r.ok ? r.json() : { roles: [] })),
+      fetch(`/api/dashboard/${roleGuildId}`, { cache: 'no-store' }).then((r) => (r.ok ? r.json() : { config: null })),
+    ])
+      .then(([rolesJson, cfgJson]) => {
+        if (!active) return;
+        setRoleList((rolesJson.roles ?? []) as { id: string; name: string }[]);
+        const cfg = (cfgJson.config ?? {}) as Record<string, unknown>;
+        setRoleCfg({
+          owner_role_ids: Array.isArray(cfg.owner_role_ids) ? (cfg.owner_role_ids as string[]) : [],
+          admin_role_ids: Array.isArray(cfg.admin_role_ids) ? (cfg.admin_role_ids as string[]) : [],
+          mod_role_ids: Array.isArray(cfg.mod_role_ids) ? (cfg.mod_role_ids as string[]) : [],
+          bot_role_ids: Array.isArray(cfg.bot_role_ids) ? (cfg.bot_role_ids as string[]) : [],
+          mute_role_id: typeof cfg.mute_role_id === 'string' ? cfg.mute_role_id : null,
+        });
+      })
+      .catch(() => {
+        if (active) setRoleList([]);
+      })
+      .finally(() => {
+        if (active) setRoleLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [roleGuildId]);
+
+  const saveRoles = useCallback(async () => {
+    if (!roleGuildId || roleSaving) return;
+    setRoleSaving(true);
+    try {
+      const res = await fetch(`/api/dashboard/${roleGuildId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(roleCfg),
+      });
+      if (res.ok) toast(t.rolesSaved ?? 'Roles guardados', 'success');
+      else toast(t.rolesSaveError ?? 'No se pudieron guardar los roles', 'error');
+    } catch {
+      toast(t.rolesSaveError ?? 'No se pudieron guardar los roles', 'error');
+    } finally {
+      setRoleSaving(false);
+    }
+  }, [roleGuildId, roleCfg, roleSaving, toast, t]);
 
   // Buscador de secciones (filtra por el título de cada tarjeta).
   useEffect(() => {
@@ -248,7 +320,10 @@ export default function BotPreferencesPage() {
           <Icon name="palette" size={14} className="text-neon-blue" />
           {dark ? t.themeDark : t.themeLight}
         </button>
-        <p className="mb-3 mt-5 text-[10px] font-black uppercase tracking-widest text-white/40">{t.autoSaveLabel}</p>
+        <p className="mb-3 mt-5 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-white/40">
+          <Icon name="history" size={12} className="text-neon-blue" />
+          {t.autoSaveLabel}
+        </p>
         <button
           type="button"
           role="switch"
@@ -278,6 +353,64 @@ export default function BotPreferencesPage() {
           </span>
           {autoSave ? 'ON' : 'OFF'}
         </button>
+      </section>
+
+      {/* Roles por servidor (owner/admin/mod/bots/mute) */}
+      <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <h2 className="flex items-center gap-2 font-bold text-white">
+            <Icon name="shield" size={18} className="text-neon-blue" /> {t.rolesSectionTitle}
+          </h2>
+        </div>
+        <p className="mb-4 text-xs text-white/45">{t.rolesSectionHint}</p>
+        <NiceSelect
+          value={roleGuildId}
+          options={roleGuilds.map((g) => ({ id: g.id, label: g.name }))}
+          placeholder={t.rolesGuildPick}
+          onChange={(v) => setRoleGuildId(v)}
+        />
+        {roleLoading && <p className="mt-3 text-xs text-white/40">{t.rolesLoading}</p>}
+        {roleGuildId && !roleLoading && (
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {(
+              [
+                ['owner_role_ids', 'Owner'],
+                ['admin_role_ids', 'Admin'],
+                ['mod_role_ids', 'Mod'],
+                ['bot_role_ids', 'Bots'],
+              ] as const
+            ).map(([key, label]) => (
+              <div key={key}>
+                <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-white/45">{label}</p>
+                <MultiSelect
+                  values={roleCfg[key]}
+                  options={roleList.map((r) => ({ id: r.id, label: `@${r.name}` }))}
+                  placeholder="—"
+                  onChange={(v) => setRoleCfg({ ...roleCfg, [key]: v })}
+                />
+              </div>
+            ))}
+            <div>
+              <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-white/45">Mute</p>
+              <NiceSelect
+                value={roleCfg.mute_role_id}
+                options={roleList.map((r) => ({ id: r.id, label: `@${r.name}` }))}
+                placeholder="—"
+                onChange={(v) => setRoleCfg({ ...roleCfg, mute_role_id: v })}
+              />
+            </div>
+            <div className="flex items-end">
+              <button
+                type="button"
+                onClick={() => void saveRoles()}
+                disabled={roleSaving}
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-neon-blue to-neon-pink px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:scale-[1.02] active:scale-95 disabled:opacity-50"
+              >
+                <Icon name="shield" size={13} /> {t.rolesSave}
+              </button>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Cuenta */}

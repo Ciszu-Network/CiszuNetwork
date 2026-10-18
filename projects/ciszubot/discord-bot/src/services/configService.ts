@@ -130,6 +130,13 @@ export interface GuildConfig {
   nitro_repost_enabled: boolean;
   history_enabled: boolean;
   history_channel_id: string | null;
+  afk_role_id: string | null;
+  afk_prefix_enabled: boolean;
+  afk_auto_minutes: number;
+  marriage_enabled: boolean;
+  marriage_excluded_role_ids: string[];
+  nitro_repost_mode: 'auto' | 'manual';
+  nitro_excluded_role_ids: string[];
   owner_role_ids: string[];
   admin_role_ids: string[];
   mod_role_ids: string[];
@@ -202,6 +209,13 @@ const DEFAULTS: Omit<GuildConfig, 'guild_id'> = {
   nitro_repost_enabled: false,
   history_enabled: true,
   history_channel_id: null,
+  afk_role_id: null,
+  afk_prefix_enabled: false,
+  afk_auto_minutes: 0,
+  marriage_enabled: true,
+  marriage_excluded_role_ids: [],
+  nitro_repost_mode: 'auto',
+  nitro_excluded_role_ids: [],
   owner_role_ids: [],
   admin_role_ids: [],
   mod_role_ids: [],
@@ -292,6 +306,13 @@ export async function getGuildConfig(guildId: string): Promise<GuildConfig> {
         private_vc_hub_id: data.privateVcHubId ?? DEFAULTS.private_vc_hub_id,
         secret_user_ids: asArray(data.secretUserIds, DEFAULTS.secret_user_ids),
         nitro_repost_enabled: data.nitroRepostEnabled ?? DEFAULTS.nitro_repost_enabled,
+        afk_role_id: data.afkRoleId ?? DEFAULTS.afk_role_id,
+        afk_prefix_enabled: data.afkPrefixEnabled ?? DEFAULTS.afk_prefix_enabled,
+        afk_auto_minutes: data.afkAutoMinutes ?? DEFAULTS.afk_auto_minutes,
+        marriage_enabled: data.marriageEnabled ?? DEFAULTS.marriage_enabled,
+        marriage_excluded_role_ids: asArray(data.marriageExcludedRoleIds, DEFAULTS.marriage_excluded_role_ids),
+        nitro_repost_mode: (data.nitroRepostMode as 'auto' | 'manual') ?? DEFAULTS.nitro_repost_mode,
+        nitro_excluded_role_ids: asArray(data.nitroExcludedRoleIds, DEFAULTS.nitro_excluded_role_ids),
         owner_role_ids: asArray(data.ownerRoleIds, DEFAULTS.owner_role_ids),
         admin_role_ids: asArray(data.adminRoleIds, DEFAULTS.admin_role_ids),
         mod_role_ids: asArray(data.modRoleIds, DEFAULTS.mod_role_ids),
@@ -357,6 +378,13 @@ export async function updateGuildConfig(
     privateVcHubId: merged.private_vc_hub_id,
     secretUserIds: merged.secret_user_ids,
     nitroRepostEnabled: merged.nitro_repost_enabled,
+    afkRoleId: merged.afk_role_id,
+    afkPrefixEnabled: merged.afk_prefix_enabled,
+    afkAutoMinutes: merged.afk_auto_minutes,
+    marriageEnabled: merged.marriage_enabled,
+    marriageExcludedRoleIds: merged.marriage_excluded_role_ids,
+    nitroRepostMode: merged.nitro_repost_mode,
+    nitroExcludedRoleIds: merged.nitro_excluded_role_ids,
     ownerRoleIds: merged.owner_role_ids,
     adminRoleIds: merged.admin_role_ids,
     modRoleIds: merged.mod_role_ids,

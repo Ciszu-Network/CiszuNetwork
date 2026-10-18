@@ -27,15 +27,30 @@ export const FEATURE_DEFS: FeatureDef[] = [
   { slug: 'minigame_rate', label: 'Minijuego: rate', commands: ['rate'] },
   { slug: 'minigame_8ball', label: 'Minijuego: bola 8', commands: ['8ball'] },
   { slug: 'economy', label: 'Economía', categories: ['Economía'] },
-  { slug: 'giveaways', label: 'Sorteos', commands: ['giveaway', 'gend'] },
+  { slug: 'giveaways', label: 'Sorteos (giveaways)', commands: ['giveaway', 'gend'] },
   { slug: 'embeds', label: 'Embeds personalizados', commands: ['embed'] },
-  { slug: 'misc', label: 'Misceláneo', commands: ['say', 'directsay', 'confess', 'snipe', 'text', 'animal', 'avatar', 'hi', 'bye', 'test'] },
-  { slug: 'help', label: 'Información (ayuda)', categories: ['Información'] },
+  // Social: solo perfiles/AFK/casamiento (alianzas e invitaciones van aparte).
+  { slug: 'social_afk', label: 'AFK', commands: ['afk'] },
+  { slug: 'social_marriage', label: 'Casamiento', commands: ['marry', 'divorce', 'partner'] },
+  { slug: 'social', label: 'Social (perfiles)', commands: ['afk', 'marry', 'divorce', 'partner', 'profile'] },
+  // Utilidad: sub-opciones por herramienta.
+  { slug: 'util_profile', label: 'Perfiles', commands: ['profile'] },
+  { slug: 'util_avatar', label: 'Avatar', commands: ['avatar'] },
+  { slug: 'util_animal', label: 'Animales', commands: ['animal'] },
+  { slug: 'util_serverinfo', label: 'Info del servidor', commands: ['serverinfo'] },
+  { slug: 'util_snipe', label: 'Snipe', commands: ['snipe'] },
+  { slug: 'util_text', label: 'Texto', commands: ['text'] },
   { slug: 'utility', label: 'Utilidad', categories: ['Utilidad'] },
+  // Misceláneo: sub-opciones (say/directsay ya son la sección Decir).
+  { slug: 'misc_confess', label: 'Confesiones', commands: ['confess'] },
+  { slug: 'misc_hi', label: 'Saludos (hi)', commands: ['hi'] },
+  { slug: 'misc_bye', label: 'Despedidas (bye)', commands: ['bye'] },
+  { slug: 'misc_test', label: 'Test', commands: ['test'] },
+  { slug: 'misc', label: 'Misceláneo', commands: ['confess', 'hi', 'bye', 'test'] },
+  { slug: 'help', label: 'Información (ayuda)', categories: ['Información'] },
   { slug: 'moderation', label: 'Moderación', categories: ['Moderación'] },
   { slug: 'setup', label: 'Configuración', categories: ['Configuración'] },
   { slug: 'levels', label: 'Niveles', categories: ['Niveles'] },
-  { slug: 'social', label: 'Social (perfiles)', categories: ['Social'] },
 ];
 
 /** Fila especial de feature_flags que controla la beta premium. */

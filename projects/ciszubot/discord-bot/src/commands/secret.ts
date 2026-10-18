@@ -40,13 +40,9 @@ const command: BotCommand = {
       s
         .setName('feature')
         .setDescription('Activa/desactiva una función global')
-        .addStringOption((o) =>
-          o
-            .setName('funcion')
-            .setDescription('Función')
-            .setRequired(true)
-            .addChoices(...FEATURE_DEFS.map((f) => ({ name: `${f.label} (${f.slug})`, value: f.slug }))),
-        )
+        // Sin addChoices: Discord limita a 25 y FEATURE_DEFS ya pasa de 25.
+        // El slug se valida en código contra FEATURE_DEFS.
+        .addStringOption((o) => o.setName('funcion').setDescription('Slug (ej: music, economy, social_afk…)').setRequired(true))
         .addStringOption((o) =>
           o
             .setName('estado')

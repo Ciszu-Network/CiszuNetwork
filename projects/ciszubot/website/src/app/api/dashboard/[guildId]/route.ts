@@ -130,6 +130,13 @@ const guildConfigPatchSchema = z.object({
   private_vc_hub_id: z.string().min(1).nullable().optional(),
   history_enabled: z.boolean().optional(),
   history_channel_id: z.string().min(1).nullable().optional(),
+  afk_role_id: z.string().min(1).nullable().optional(),
+  afk_prefix_enabled: z.boolean().optional(),
+  afk_auto_minutes: z.number().int().min(0).max(1440).optional(),
+  marriage_enabled: z.boolean().optional(),
+  marriage_excluded_role_ids: z.array(z.string().min(1).max(32)).max(20).optional(),
+  nitro_repost_mode: z.enum(['auto', 'manual']).optional(),
+  nitro_excluded_role_ids: z.array(z.string().min(1).max(32)).max(20).optional(),
   owner_role_ids: z.array(z.string().min(1).max(32)).max(20).optional(),
   admin_role_ids: z.array(z.string().min(1).max(32)).max(20).optional(),
   mod_role_ids: z.array(z.string().min(1).max(32)).max(20).optional(),
@@ -148,13 +155,25 @@ const FEATURE_SLUGS = [
   'economy',
   'giveaways',
   'embeds',
+  'social_afk',
+  'social_marriage',
+  'social',
+  'util_profile',
+  'util_avatar',
+  'util_animal',
+  'util_serverinfo',
+  'util_snipe',
+  'util_text',
+  'utility',
+  'misc_confess',
+  'misc_hi',
+  'misc_bye',
+  'misc_test',
   'misc',
   'help',
-  'utility',
   'moderation',
   'setup',
   'levels',
-  'social',
 ] as const;
 
 const postLimiter = createRateLimiter({ windowMs: 60_000, max: 10 });
@@ -211,6 +230,13 @@ interface GuildConfig {
   private_vc_hub_id?: string | null;
   history_enabled?: boolean;
   history_channel_id?: string | null;
+  afk_role_id?: string | null;
+  afk_prefix_enabled?: boolean;
+  afk_auto_minutes?: number;
+  marriage_enabled?: boolean;
+  marriage_excluded_role_ids?: string[];
+  nitro_repost_mode?: string;
+  nitro_excluded_role_ids?: string[];
   owner_role_ids?: string[];
   admin_role_ids?: string[];
   mod_role_ids?: string[];
@@ -293,8 +319,8 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
   }
   const body = parsed.data as Partial<GuildConfig>;
   const allowed: Record<string, unknown> = {};
-  const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id', 'coin_emoji', 'coin_name', 'staff_role_id', 'level_message', 'starboard_channel_id', 'starboard_emoji', 'private_vc_hub_id', 'history_channel_id'];
-  const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled', 'nitro_repost_enabled', 'history_enabled'];
+  const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id', 'coin_emoji', 'coin_name', 'staff_role_id', 'level_message', 'starboard_channel_id', 'starboard_emoji', 'private_vc_hub_id', 'history_channel_id', 'afk_role_id'];
+  const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled', 'nitro_repost_enabled', 'history_enabled', 'afk_prefix_enabled', 'marriage_enabled'];
 
   for (const key of stringFields) {
     if (body[key] !== undefined) allowed[key] = String(body[key]);
@@ -314,7 +340,7 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     const value = Number(body.invite_points_per);
     if (value >= 1 && value <= 100) allowed.invite_points_per = value;
   }
-  for (const roleKey of ['owner_role_ids', 'admin_role_ids', 'mod_role_ids', 'bot_role_ids'] as const) {
+  for (const roleKey of ['owner_role_ids', 'admin_role_ids', 'mod_role_ids', 'bot_role_ids', 'marriage_excluded_role_ids', 'nitro_excluded_role_ids'] as const) {
     if (body[roleKey] !== undefined) {
       allowed[roleKey] = Array.isArray(body[roleKey]) ? (body[roleKey] as string[]).slice(0, 20) : [];
     }
@@ -435,6 +461,13 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     private_vc_hub_id: 'privateVcHubId',
     history_enabled: 'historyEnabled',
     history_channel_id: 'historyChannelId',
+    afk_role_id: 'afkRoleId',
+    afk_prefix_enabled: 'afkPrefixEnabled',
+    afk_auto_minutes: 'afkAutoMinutes',
+    marriage_enabled: 'marriageEnabled',
+    marriage_excluded_role_ids: 'marriageExcludedRoleIds',
+    nitro_repost_mode: 'nitroRepostMode',
+    nitro_excluded_role_ids: 'nitroExcludedRoleIds',
     owner_role_ids: 'ownerRoleIds',
     admin_role_ids: 'adminRoleIds',
     mod_role_ids: 'modRoleIds',

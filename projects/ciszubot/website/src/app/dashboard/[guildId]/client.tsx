@@ -67,6 +67,13 @@ interface GuildConfig {
   invite_rewards?: { invites: number; role_id: string }[];
   history_enabled?: boolean;
   history_channel_id?: string | null;
+  afk_role_id?: string | null;
+  afk_prefix_enabled?: boolean;
+  afk_auto_minutes?: number;
+  marriage_enabled?: boolean;
+  marriage_excluded_role_ids?: string[];
+  nitro_repost_mode?: 'auto' | 'manual';
+  nitro_excluded_role_ids?: string[];
   owner_role_ids?: string[];
   admin_role_ids?: string[];
   mod_role_ids?: string[];
@@ -125,6 +132,34 @@ interface JsonPreviewPayload {
   config: Record<string, unknown>;
 }
 
+/** Sub-opciones (toggles individuales) dentro de una opción de config. */
+const SUB_TOGGLES: Record<string, { slug: string; labelKey: keyof Dict['guildPage']; descKey: keyof Dict['guildPage'] }[]> = {
+  minigames: [
+    { slug: 'minigame_dice', labelKey: 'featDice', descKey: 'featDiceDesc' },
+    { slug: 'minigame_rps', labelKey: 'featRps', descKey: 'featRpsDesc' },
+    { slug: 'minigame_rate', labelKey: 'featRate', descKey: 'featRateDesc' },
+    { slug: 'minigame_8ball', labelKey: 'feat8ball', descKey: 'feat8ballDesc' },
+  ],
+  social: [
+    { slug: 'social_afk', labelKey: 'socialAfk', descKey: 'socialAfkDesc' },
+    { slug: 'social_marriage', labelKey: 'socialMarriage', descKey: 'socialMarriageDesc' },
+  ],
+  utility: [
+    { slug: 'util_profile', labelKey: 'utilProfile', descKey: 'utilProfileDesc' },
+    { slug: 'util_avatar', labelKey: 'utilAvatar', descKey: 'utilAvatarDesc' },
+    { slug: 'util_animal', labelKey: 'utilAnimal', descKey: 'utilAnimalDesc' },
+    { slug: 'util_serverinfo', labelKey: 'utilServerinfo', descKey: 'utilServerinfoDesc' },
+    { slug: 'util_snipe', labelKey: 'utilSnipe', descKey: 'utilSnipeDesc' },
+    { slug: 'util_text', labelKey: 'utilText', descKey: 'utilTextDesc' },
+  ],
+  misc: [
+    { slug: 'misc_confess', labelKey: 'miscConfess', descKey: 'miscConfessDesc' },
+    { slug: 'misc_hi', labelKey: 'miscHi', descKey: 'miscHiDesc' },
+    { slug: 'misc_bye', labelKey: 'miscBye', descKey: 'miscByeDesc' },
+    { slug: 'misc_test', labelKey: 'miscTest', descKey: 'miscTestDesc' },
+  ],
+};
+
 const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history', (keyof GuildConfig)[]> = {
   general: ['prefix', 'lang', 'staff_role_id', 'owner_role_ids', 'admin_role_ids', 'mod_role_ids', 'bot_role_ids', 'mute_role_id'],
   messages: [],
@@ -155,12 +190,12 @@ const featSlugOf = (s: SectionKey): string => s.slice('feat:'.length);
  *  Economía, Niveles y Configuración YA NO tienen toggle: sus opciones viven
  *  en las secciones de configuración (siempre activas salvo kill switch global
  *  desde la devcon). */
-const FEATURE_ROWS: { slug: string; icon: string; labelKey: keyof Dict['guildPage']; descKey: keyof Dict['guildPage']; premium?: boolean }[] = [
+const FEATURE_ROWS: { slug: string; icon: string; labelKey: keyof Dict['guildPage']; descKey: keyof Dict['guildPage']; premium?: boolean; colorClass?: string }[] = [
   { slug: 'music', icon: 'music', labelKey: 'featMusic', descKey: 'featMusicDesc', premium: true },
   { slug: 'search', icon: 'search', labelKey: 'featSearch', descKey: 'featSearchDesc', premium: true },
   { slug: 'minigames', icon: 'gamepad', labelKey: 'featMinigames', descKey: 'featMinigamesDesc' },
   { slug: 'giveaways', icon: 'trophy', labelKey: 'featGiveaways', descKey: 'featGiveawaysDesc' },
-  { slug: 'embeds', icon: 'ri-braces', labelKey: 'featEmbeds', descKey: 'featEmbedsDesc', premium: true },
+  { slug: 'embeds', icon: 'ri-braces', labelKey: 'featEmbeds', descKey: 'featEmbedsDesc', premium: true, colorClass: 'text-purple-400' },
   { slug: 'misc', icon: 'palette', labelKey: 'featMisc', descKey: 'featMiscDesc' },
   { slug: 'utility', icon: 'settings', labelKey: 'featUtility', descKey: 'featUtilityDesc' },
   { slug: 'moderation', icon: 'shield', labelKey: 'featModeration', descKey: 'featModerationDesc' },
@@ -560,7 +595,12 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     const matchQ = !q || t[item.label].toLowerCase().includes(q);
     const matchF = subnavFilter === 'all' ? true : subnavFilter === 'free' ? item.tag === 'free' : item.tag !== 'free';
     return matchQ && matchF;
-  }).sort((a, b) => (subnavSort === 'asc' ? t[a.label].localeCompare(t[b.label]) : t[b.label].localeCompare(t[a.label])));
+  }).sort((a, b) => {
+    // General SIEMPRE fija arriba, independiente de filtros u ordenamiento.
+    if (a.key === 'general') return -1;
+    if (b.key === 'general') return 1;
+    return subnavSort === 'asc' ? t[a.label].localeCompare(t[b.label]) : t[b.label].localeCompare(t[a.label]);
+  });
 
   // Historial del servidor (auditoría): se carga al entrar a la pestaña.
   useEffect(() => {
@@ -672,6 +712,13 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         invite_rewards: Array.isArray(cfg?.invite_rewards) ? cfg.invite_rewards : [],
         history_enabled: cfg?.history_enabled ?? true,
         history_channel_id: cfg?.history_channel_id ?? null,
+        afk_role_id: cfg?.afk_role_id ?? null,
+        afk_prefix_enabled: cfg?.afk_prefix_enabled ?? false,
+        afk_auto_minutes: cfg?.afk_auto_minutes ?? 0,
+        marriage_enabled: cfg?.marriage_enabled ?? true,
+        marriage_excluded_role_ids: Array.isArray(cfg?.marriage_excluded_role_ids) ? cfg.marriage_excluded_role_ids : [],
+        nitro_repost_mode: cfg?.nitro_repost_mode ?? 'auto',
+        nitro_excluded_role_ids: Array.isArray(cfg?.nitro_excluded_role_ids) ? cfg.nitro_excluded_role_ids : [],
         owner_role_ids: Array.isArray(cfg?.owner_role_ids) ? cfg.owner_role_ids : [],
         admin_role_ids: Array.isArray(cfg?.admin_role_ids) ? cfg.admin_role_ids : [],
         mod_role_ids: Array.isArray(cfg?.mod_role_ids) ? cfg.mod_role_ids : [],
@@ -1524,7 +1571,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
             <div className="mb-4 flex flex-wrap items-center gap-2">
               <h2 className="flex items-center gap-2 font-bold text-white">
-                <Icon name={activeFeature.icon} size={18} className="text-neon-blue" /> {t[activeFeature.labelKey]}
+                <Icon name={activeFeature.icon} size={18} className={activeFeature.colorClass ?? 'text-neon-blue'} /> {t[activeFeature.labelKey]}
               </h2>
               <QuickHelp
                 title={SECTION_HELP[activeFeature.slug]?.title ?? t[activeFeature.labelKey]}
@@ -1549,7 +1596,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                   config.features?.[activeFeature.slug] !== false ? 'text-emerald-400' : 'text-white/30'
                 }`}
               >
-                <Icon name={activeFeature.icon} size={17} />
+                <Icon name={activeFeature.icon} size={17} className={activeFeature.colorClass} />
               </span>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-bold text-white">{t[activeFeature.labelKey]}</p>
@@ -1582,20 +1629,13 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               </button>
             </div>
 
-            {/* Minijuegos: sub-opciones por juego dentro de la misma opción */}
-            {activeFeature.slug === 'minigames' && (
+            {/* Sub-opciones por opción (minijuegos, social, utilidad, misceláneo) */}
+            {SUB_TOGGLES[activeFeature.slug] && (
               <div className="mt-4 grid gap-2">
                 <p className="text-[10px] font-black uppercase tracking-widest text-white/45">
-                  Minijuegos individuales
+                  Sub-opciones
                 </p>
-                {(
-                  [
-                    ['minigame_dice', 'featDice', 'featDiceDesc'],
-                    ['minigame_rps', 'featRps', 'featRpsDesc'],
-                    ['minigame_rate', 'featRate', 'featRateDesc'],
-                    ['minigame_8ball', 'feat8ball', 'feat8ballDesc'],
-                  ] as const
-                ).map(([slug, labelKey, descKey]) => (
+                {SUB_TOGGLES[activeFeature.slug].map(({ slug, labelKey, descKey }) => (
                   <div
                     key={slug}
                     className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-black/20 px-4 py-2.5"
@@ -1610,6 +1650,83 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                     />
                   </div>
                 ))}
+              </div>
+            )}
+
+            {/* Social: configuración de AFK y casamiento */}
+            {activeFeature.slug === 'social' && (
+              <div className="mt-4 grid gap-4">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <Field label={t.afkRoleLabel}>
+                    {hasGuildData ? (
+                      <NiceSelect
+                        value={config.afk_role_id ?? null}
+                        options={roleOptions}
+                        placeholder={t.pickRole}
+                        onChange={(v) => update({ afk_role_id: v })}
+                      />
+                    ) : (
+                      <input
+                        className={inputCls}
+                        value={config.afk_role_id ?? ''}
+                        onChange={(e) => update({ afk_role_id: e.target.value || null })}
+                      />
+                    )}
+                  </Field>
+                  <Field label={t.afkAutoLabel} hint={t.afkAutoHint}>
+                    <input
+                      type="number"
+                      min={0}
+                      max={1440}
+                      className={inputCls}
+                      value={config.afk_auto_minutes ?? 0}
+                      onChange={(e) => update({ afk_auto_minutes: Math.max(0, Number(e.target.value) || 0) })}
+                    />
+                  </Field>
+                </div>
+                <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-2.5">
+                  <p className="text-xs font-semibold text-white/80">{t.afkPrefixLabel}</p>
+                  <Toggle on={Boolean(config.afk_prefix_enabled)} onChange={(v) => update({ afk_prefix_enabled: v })} />
+                </div>
+                <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-2.5">
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold text-white/80">{t.marriageToggleLabel}</p>
+                    <p className="text-[10px] text-white/40">{t.marriageToggleHint}</p>
+                  </div>
+                  <Toggle on={config.marriage_enabled !== false} onChange={(v) => update({ marriage_enabled: v })} />
+                </div>
+                <Field label={t.marriageExcludedLabel} hint={t.marriageExcludedHint}>
+                  <MultiSelect
+                    values={config.marriage_excluded_role_ids ?? []}
+                    options={roleOptions}
+                    placeholder={t.pickRole}
+                    onChange={(v) => update({ marriage_excluded_role_ids: v })}
+                  />
+                </Field>
+              </div>
+            )}
+
+            {/* Emojis nitro: modo (auto/manual) y roles excluidos */}
+            {activeFeature.slug === 'nitro' && (
+              <div className="mt-4 grid gap-4">
+                <Field label={t.nitroModeLabel}>
+                  <NiceSelect
+                    value={config.nitro_repost_mode ?? 'auto'}
+                    options={[
+                      { id: 'auto', label: t.nitroModeAuto },
+                      { id: 'manual', label: t.nitroModeManual },
+                    ]}
+                    onChange={(v) => update({ nitro_repost_mode: v as 'auto' | 'manual' })}
+                  />
+                </Field>
+                <Field label={t.nitroExcludedLabel}>
+                  <MultiSelect
+                    values={config.nitro_excluded_role_ids ?? []}
+                    options={roleOptions}
+                    placeholder={t.pickRole}
+                    onChange={(v) => update({ nitro_excluded_role_ids: v })}
+                  />
+                </Field>
               </div>
             )}
           </section>
