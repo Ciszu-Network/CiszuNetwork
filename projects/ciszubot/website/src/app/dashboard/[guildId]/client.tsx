@@ -11,6 +11,7 @@ import type { GuildInfo } from '@/lib/discordGuild';
 import { SaveDock, type SaveStatus } from '@/components/dashboard/SaveDock';
 import DiscordMarkdownField from '@/components/dashboard/DiscordMarkdownField';
 import { QuickHelp, HelpZone } from '@/components/dashboard/QuickHelp';
+import { NiceSelect, RichInput, MultiSelect } from '@/components/dashboard/fields';
 import { SECTION_HELP } from '@/lib/dashboardCommands';
 import useLiveBotStatus from '@/components/home/useLiveBotStatus';
 import { resolveBotStatus } from '@/lib/botStatus';
@@ -918,6 +919,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     };
   }, []);
 
+  const emojis = guildInfo?.emojis ?? [];
   const roles = guildData?.roles ?? [];
   const channels = guildData?.channels ?? [];
   const hasGuildData = roles.length > 0 || channels.length > 0;
@@ -1662,11 +1664,11 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                   </Field>
                 )}
                 <Field label={t.levelMessageLabel} hint={t.levelMessageHint}>
-                  <input
-                    className={inputCls}
+                  <RichInput
                     value={config.level_message ?? '🎉 ¡{user} subió al nivel {level} en {guild}!'}
                     maxLength={500}
-                    onChange={(e) => update({ level_message: e.target.value })}
+                    emojis={emojis}
+                    onChange={(v) => update({ level_message: v })}
                   />
                 </Field>
                 <div>
@@ -1689,20 +1691,15 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                             }}
                           />
                           {hasGuildData ? (
-                            <select
-                              className={`${inputCls} w-52`}
+                            <NiceSelect
+                              className="w-52"
                               value={row.role_id}
-                              onChange={(e) => {
-                                const next = levelRoles.map((r) => (r === row ? { ...r, role_id: e.target.value } : r));
+                              options={roleOptions}
+                              onChange={(v) => {
+                                const next = levelRoles.map((r) => (r === row ? { ...r, role_id: v } : r));
                                 update({ level_roles: next });
                               }}
-                            >
-                              {roleOptions.map((opt) => (
-                                <option key={opt.id} value={opt.id}>
-                                  {opt.label}
-                                </option>
-                              ))}
-                            </select>
+                            />
                           ) : (
                             <input
                               className={`${inputCls} w-52`}
@@ -1879,26 +1876,19 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 </Field>
               )}
               <Field label={t.welcomeMessageLabel} hint={t.varsHint}>
-                <input
-                  className={inputCls}
+                <RichInput
                   value={config.welcome_message ?? 'Bienvenido/a {user} a {guild}!'}
                   maxLength={500}
-                  onChange={(e) => update({ welcome_message: e.target.value })}
+                  emojis={emojis}
+                  onChange={(v) => update({ welcome_message: v })}
                 />
               </Field>
               <Field label={t.autoroleLabel} hint={t.autoroleHint}>
-                <input
-                  className={inputCls}
-                  placeholder="IDs separados por coma"
-                  value={(config.autorole_ids ?? []).join(', ')}
-                  onChange={(e) =>
-                    update({
-                      autorole_ids: e.target.value
-                        .split(',')
-                        .map((s) => s.trim())
-                        .filter((s) => /^\d{17,20}$/.test(s)),
-                    })
-                  }
+                <MultiSelect
+                  values={config.autorole_ids ?? []}
+                  options={roleOptions}
+                  placeholder={t.pickRole}
+                  onChange={(v) => update({ autorole_ids: v })}
                 />
               </Field>
             </div>
@@ -2021,26 +2011,19 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                             </div>
                           </Field>
                           <Field label={t.dropsMessageLabel} hint={t.dropsMessageHint}>
-                            <input
-                              className={inputCls}
+                            <RichInput
                               value={drop.message ?? ''}
                               maxLength={300}
-                              onChange={(e) => patchDrop({ message: e.target.value || null })}
+                              emojis={emojis}
+                              onChange={(v) => patchDrop({ message: v || null })}
                             />
                           </Field>
                           <Field label={t.dropsChannelsLabel} hint={t.dropsChannelsHint}>
-                            <input
-                              className={inputCls}
-                              value={drop.channels.join(', ')}
-                              placeholder="123456789012345678, 987654321098765432"
-                              onChange={(e) =>
-                                patchDrop({
-                                  channels: e.target.value
-                                    .split(',')
-                                    .map((s) => s.trim())
-                                    .filter((s) => /^\d{17,20}$/.test(s)),
-                                })
-                              }
+                            <MultiSelect
+                              values={drop.channels}
+                              options={textChannelOptions}
+                              placeholder={t.pickChannel}
+                              onChange={(channels) => patchDrop({ channels })}
                             />
                           </Field>
                         </div>
@@ -2215,11 +2198,11 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 </Field>
               )}
               <Field label={t.goodbyeMessageLabel} hint={t.varsHint}>
-                <input
-                  className={inputCls}
+                <RichInput
                   value={config.goodbye_message ?? 'Adiós {user}, que te vaya bien!'}
                   maxLength={500}
-                  onChange={(e) => update({ goodbye_message: e.target.value })}
+                  emojis={emojis}
+                  onChange={(v) => update({ goodbye_message: v })}
                 />
               </Field>
             </div>
@@ -2332,20 +2315,15 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                         }}
                       />
                       {hasGuildData ? (
-                        <select
-                          className={`${inputCls} w-52`}
+                        <NiceSelect
+                          className="w-52"
                           value={row.role_id}
-                          onChange={(e) => {
-                            const next = (config.invite_rewards ?? []).map((r, i) => (i === idx ? { ...r, role_id: e.target.value } : r));
+                          options={roleOptions}
+                          onChange={(v) => {
+                            const next = (config.invite_rewards ?? []).map((r, i) => (i === idx ? { ...r, role_id: v } : r));
                             update({ invite_rewards: next });
                           }}
-                        >
-                          {roleOptions.map((opt) => (
-                            <option key={opt.id} value={opt.id}>
-                              {opt.label}
-                            </option>
-                          ))}
-                        </select>
+                        />
                       ) : (
                         <input
                           className={`${inputCls} w-52`}
@@ -2533,35 +2511,26 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
             <div className="grid gap-2">
               {((config.counters ?? []) as { type: string; channel_id: string }[]).map((row, idx) => (
                 <div key={`${row.type}-${idx}`} className="flex flex-wrap items-center gap-2">
-                  <select
-                    className={`${inputCls} w-40`}
+                  <NiceSelect
+                    className="w-40"
                     value={row.type}
-                    onChange={(e) => {
-                      const next = (config.counters ?? []).map((r, i) => (i === idx ? { ...r, type: e.target.value } : r));
+                    options={['members', 'bots', 'humans', 'channels', 'roles', 'online'].map((opt) => ({ id: opt, label: opt }))}
+                    onChange={(v) => {
+                      const next = (config.counters ?? []).map((r, i) => (i === idx ? { ...r, type: v } : r));
                       update({ counters: next });
                     }}
-                  >
-                    {['members', 'bots', 'humans', 'channels', 'roles', 'online'].map((opt) => (
-                      <option key={opt} value={opt}>
-                        {opt}
-                      </option>
-                    ))}
-                  </select>
+                  />
                   {hasGuildData ? (
-                    <select
-                      className={`${inputCls} w-56`}
-                      value={row.channel_id}
-                      onChange={(e) => {
-                        const next = (config.counters ?? []).map((r, i) => (i === idx ? { ...r, channel_id: e.target.value } : r));
+                    <NiceSelect
+                      className="w-56"
+                      value={row.channel_id || null}
+                      options={voiceChannelOptions}
+                      placeholder={t.pickVoice}
+                      onChange={(v) => {
+                        const next = (config.counters ?? []).map((r, i) => (i === idx ? { ...r, channel_id: v } : r));
                         update({ counters: next });
                       }}
-                    >
-                      {voiceChannelOptions.map((opt) => (
-                        <option key={opt.id} value={opt.id}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </select>
+                    />
                   ) : (
                     <input
                       className={`${inputCls} w-56`}
@@ -3024,11 +2993,11 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                           </Field>
                         )}
                         <Field label={t.ticketsCatRolesLabel} hint="IDs separados por coma">
-                          <input
-                            className={inputCls}
-                            value={cat.role_ids.join(', ')}
-                            onChange={(e) => {
-                              const roleIds = e.target.value.split(',').map((s) => s.trim()).filter((s) => /^\d{17,20}$/.test(s)).slice(0, 10);
+                          <MultiSelect
+                            values={cat.role_ids}
+                            options={roleOptions}
+                            placeholder={t.pickRole}
+                            onChange={(roleIds) => {
                               const categories = ticketCfg.categories.map((c, i) => (i === idx ? { ...c, role_ids: roleIds } : c));
                               update({ ticket_config: { ...ticketCfg, categories } });
                             }}
@@ -3067,11 +3036,11 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                           />
                         </Field>
                         <Field label={t.ticketsCatWelcomeLabel} hint="Variable: {user}">
-                          <input
-                            className={inputCls}
+                          <RichInput
                             value={cat.welcome}
-                            onChange={(e) => {
-                              const categories = ticketCfg.categories.map((c, i) => (i === idx ? { ...c, welcome: e.target.value } : c));
+                            emojis={emojis}
+                            onChange={(v) => {
+                              const categories = ticketCfg.categories.map((c, i) => (i === idx ? { ...c, welcome: v } : c));
                               update({ ticket_config: { ...ticketCfg, categories } });
                             }}
                           />

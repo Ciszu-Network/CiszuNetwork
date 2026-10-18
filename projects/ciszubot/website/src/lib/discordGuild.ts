@@ -17,10 +17,18 @@ export interface GuildChannel {
   position: number;
 }
 
+export interface GuildEmoji {
+  id: string;
+  name: string;
+  animated: boolean;
+}
+
 export interface GuildInfo {
   memberCount: number | null;
   roles: GuildRole[];
   channels: GuildChannel[];
+  /** Emojis del servidor (para el panel de emojis del dashboard). */
+  emojis: GuildEmoji[];
   /** Permisos efectivos del bot en el guild (string decimal) o null si no se pudo calcular. */
   botPermissions?: string | null;
   /** Roles del bot en el guild (para depuración/UI). */
@@ -90,16 +98,20 @@ export async function fetchGuildInfo(guildId: string): Promise<GuildInfo | null>
     if (!guildRes.ok) return null;
     const guild = (await guildRes.json()) as { approximate_member_count?: number };
 
-    // 2) Roles y canales por separado: un fallo puntual no invalida el resto.
-    const [rolesRes, channelsRes] = await Promise.all([
+    // 2) Roles, canales y emojis por separado: un fallo puntual no invalida el resto.
+    const [rolesRes, channelsRes, emojisRes] = await Promise.all([
       fetch(`${API_BASE}/guilds/${guildId}/roles`, { headers, cache: 'no-store' }).catch(() => null),
       fetch(`${API_BASE}/guilds/${guildId}/channels`, { headers, cache: 'no-store' }).catch(() => null),
+      fetch(`${API_BASE}/guilds/${guildId}/emojis`, { headers, cache: 'no-store' }).catch(() => null),
     ]);
     const rolesRaw = rolesRes?.ok
       ? ((await rolesRes.json()) as { id: string; name: string; color: number; position: number; permissions?: string }[])
       : [];
     const channelsRaw = channelsRes?.ok
       ? ((await channelsRes.json()) as { id: string; name: string; type: number; parent_id?: string | null; position: number }[])
+      : [];
+    const emojisRaw = emojisRes?.ok
+      ? ((await emojisRes.json()) as { id: string; name: string | null; animated?: boolean }[])
       : [];
 
     // 3) Permisos efectivos del bot: miembro del bot + roles del guild.
@@ -126,6 +138,9 @@ export async function fetchGuildInfo(guildId: string): Promise<GuildInfo | null>
       memberCount: guild.approximate_member_count ?? null,
       botPermissions,
       botRoleIds,
+      emojis: emojisRaw
+        .filter((e) => e.name)
+        .map((e) => ({ id: e.id, name: e.name as string, animated: Boolean(e.animated) })),
       roles: rolesRaw
         .filter((role) => role.name !== '@everyone')
         .sort((a, b) => b.position - a.position)
