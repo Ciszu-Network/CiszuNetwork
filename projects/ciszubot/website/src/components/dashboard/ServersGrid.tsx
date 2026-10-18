@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { Icon } from '@ciszu/ui';
 import { useClientI18n } from '@/hooks/useClientI18n';
 import type { GuildSummary } from '@/lib/discordGuild';
@@ -13,6 +14,8 @@ export interface GridGuild {
   name: string;
   icon: string | null;
   invited: boolean | null;
+  /** true si el servidor ya tiene configuración guardada en la DB. */
+  configured?: boolean;
 }
 
 const INVITE_GRADIENT = 'bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white';
@@ -22,6 +25,11 @@ const INVITE_GRADIENT = 'bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-p
  * grandes con quick actions (Configurar / Invitar / aviso de no invitado),
  * animación de entrada escalonada, fondo por servidor (hue estable del id) y
  * el mismo comportamiento que el mosaico del sidebar.
+ *
+ * Estados reales (12 oct 2026):
+ *   · No invitado          → solo se puede invitar (configurar bloqueado).
+ *   · Invitado · sin configurar → se puede configurar y ver resumen.
+ *   · Configurado          → ya tiene al menos un cambio guardado.
  */
 export default function ServersGrid({
   guilds,
@@ -34,19 +42,48 @@ export default function ServersGrid({
 }) {
   const { dict } = useClientI18n();
   const t = dict.dashboardPage;
+  const router = useRouter();
+  const [refreshing, startRefresh] = useTransition();
   const [warnId, setWarnId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
-  const [filter, setFilter] = useState<'all' | 'invited' | 'unknown'>('all');
+  const [filter, setFilter] = useState<'all' | 'notInvited' | 'notConfigured' | 'configured'>('all');
   const [sort, setSort] = useState<'asc' | 'desc'>('asc');
+
+  const stateOf = (g: GridGuild): 'notInvited' | 'unknown' | 'notConfigured' | 'configured' => {
+    if (g.invited === false) return 'notInvited';
+    if (g.invited == null) return 'unknown';
+    return g.configured ? 'configured' : 'notConfigured';
+  };
+
+  const refresh = () => {
+    startRefresh(() => {
+      router.refresh();
+    });
+  };
 
   const visible = guilds
     .filter((g) => {
       const q = query.trim().toLowerCase();
       const matchQ = !q || g.name.toLowerCase().includes(q) || g.id.includes(q);
-      const matchF = filter === 'all' ? true : filter === 'invited' ? g.invited === true : g.invited == null;
+      const state = stateOf(g);
+      const matchF =
+        filter === 'all'
+          ? true
+          : filter === 'notInvited'
+            ? state === 'notInvited'
+            : filter === 'configured'
+              ? state === 'configured'
+              : state === 'notConfigured' || state === 'unknown';
       return matchQ && matchF;
     })
     .sort((a, b) => (sort === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)));
+
+  const FILTERS: { key: typeof filter; label: string }[] = [
+    { key: 'all', label: t.searchUi.all },
+    { key: 'notInvited', label: t.searchUi.unverified },
+    { key: 'notConfigured', label: t.searchUi.invited },
+    { key: 'configured', label: t.searchUi.configured },
+  ];
 
   return (
     <>
@@ -57,22 +94,32 @@ export default function ServersGrid({
           placeholder={t.searchUi.placeholder}
           className="w-full max-w-xs rounded-xl border border-border bg-card px-3 py-2 text-xs text-ink outline-none placeholder:text-muted/60 focus:border-neon-blue/60"
         />
-        {(['all', 'invited', 'unknown'] as const).map((f) => (
+        {FILTERS.map((f) => (
           <button
-            key={f}
+            key={f.key}
             type="button"
-            onClick={() => setFilter(f)}
+            onClick={() => setFilter(f.key)}
             className={`rounded-full border px-3 py-1.5 text-[10px] font-black uppercase tracking-widest transition ${
-              filter === f ? 'border-neon-blue/60 bg-neon-blue/10 text-neon-blue' : 'border-border text-muted hover:text-ink'
+              filter === f.key ? 'border-neon-blue/60 bg-neon-blue/10 text-neon-blue' : 'border-border text-muted hover:text-ink'
             }`}
           >
-            {f === 'all' ? t.searchUi.all : f === 'invited' ? t.searchUi.invited : t.searchUi.unverified}
+            {f.label}
           </button>
         ))}
         <button
           type="button"
+          onClick={refresh}
+          disabled={refreshing}
+          title={t.refreshServersHint}
+          className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-muted transition hover:border-neon-blue/60 hover:text-ink disabled:opacity-50"
+        >
+          <Icon name="history" size={11} className={refreshing ? 'animate-spin' : ''} />
+          {t.refreshServers}
+        </button>
+        <button
+          type="button"
           onClick={() => setSort(sort === 'asc' ? 'desc' : 'asc')}
-          className="ml-auto rounded-full border border-border px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-muted transition hover:text-ink"
+          className="rounded-full border border-border px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-muted transition hover:text-ink"
         >
           {sort === 'asc' ? t.searchUi.asc : t.searchUi.desc}
         </button>
@@ -83,30 +130,37 @@ export default function ServersGrid({
       ) : (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {visible.map((guild, index) => {
-        const invited = guild.invited !== false;
-        const unknown = guild.invited == null;
+        const state = stateOf(guild);
+        const canConfigure = state !== 'notInvited';
         const hue = Number.isFinite(parseInt(guild.id.slice(-6), 10)) ? parseInt(guild.id.slice(-6), 10) % 360 : 210;
 
         let presenceChip: React.ReactNode;
-        if (unknown) {
+        if (state === 'unknown') {
           presenceChip = (
             <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted">
               <span className="h-1.5 w-1.5 rounded-full bg-white/40" />
               {t.botUnverified}
             </span>
           );
-        } else if (invited) {
-          presenceChip = (
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-              {t.botActive}
-            </span>
-          );
-        } else {
+        } else if (state === 'notInvited') {
           presenceChip = (
             <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-400">
               <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
               {t.botMissing}
+            </span>
+          );
+        } else if (state === 'notConfigured') {
+          presenceChip = (
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-neon-blue">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-neon-blue" />
+              {t.botNotConfigured}
+            </span>
+          );
+        } else {
+          presenceChip = (
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              {t.botConfigured}
             </span>
           );
         }
@@ -115,7 +169,7 @@ export default function ServersGrid({
             key={guild.id}
             style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}
             className={`animate-fade-in-down group relative overflow-hidden rounded-3xl border p-5 transition-all duration-300 hover:-translate-y-1 ${
-              invited
+              canConfigure
                 ? 'border-border bg-card hover:border-neon-blue/60 hover:shadow-[0_18px_45px_-18px_rgba(0,212,255,0.45)]'
                 : 'border-border bg-card opacity-75 hover:opacity-95'
             }`}
@@ -181,7 +235,7 @@ export default function ServersGrid({
             })()}
 
             <div className="relative mt-4 flex flex-wrap gap-2">
-              {invited ? (
+              {canConfigure ? (
                 <>
                   <Link
                     href={`/dashboard/${guild.id}#config`}
@@ -219,7 +273,7 @@ export default function ServersGrid({
                 </>
               )}
             </div>
-            {!invited && warnId === guild.id && (
+            {!canConfigure && warnId === guild.id && (
               <p className="relative mt-2 rounded-xl border border-amber-400/40 bg-amber-400/10 px-3 py-2 text-[11px] font-bold leading-snug text-amber-400">
                 {t.notInvitedMsgShort}
               </p>

@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { Icon } from '@ciszu/ui';
 import { getSessionUserId, getGuildsForUser, getBotGuildIds, isGuildAdmin, DISCORD_CLIENT_ID, type DiscordGuild } from '@/lib/auth';
-import { db, ciszubotSchema, eq } from '@/lib/db';
+import { db, ciszubotSchema, eq, inArray } from '@/lib/db';
 import { fetchGuildSummary, type GuildSummary } from '@/lib/discordGuild';
 import { BOT_PREFIX, DISCORD_SERVER, INVITE_URL, getDict, parseLang } from '@/lib/i18n';
 import PageAmbience from '@/components/layout/PageAmbience';
@@ -13,6 +13,7 @@ import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 import { DualLoginCard } from '@/components/dashboard/DualLoginCard';
 import InviteLink from '@/components/dashboard/InviteLink';
 import ServersGrid from '@/components/dashboard/ServersGrid';
+import RefreshServersButton from '@/components/dashboard/RefreshServersButton';
 import { BOT_STATUS_SELECT, resolveBotStatus, type BotStatus } from '@/lib/botStatus';
 
 export const metadata: Metadata = {
@@ -73,7 +74,22 @@ export default async function DashboardPage() {
   const manageable = guilds.filter((g) => isGuildAdmin(g));
   // null = no se pudo verificar (nunca marcar como activo por un fallo de red).
   const botPresence = (id: string): boolean | null => (botGuilds === null ? null : botGuilds.has(id));
+
+  // Estado "configurado": el servidor tiene al menos un cambio guardado en la DB.
+  let configuredIds = new Set<string>();
+  if (manageable.length > 0) {
+    try {
+      const rows = await db
+        .select({ guildId: ciszubotSchema.guildConfigs.guildId })
+        .from(ciszubotSchema.guildConfigs)
+        .where(inArray(ciszubotSchema.guildConfigs.guildId, manageable.map((g) => g.id)));
+      configuredIds = new Set(rows.map((r) => r.guildId));
+    } catch {
+      configuredIds = new Set();
+    }
+  }
   const activeCount = manageable.filter((g) => botPresence(g.id) === true).length;
+  const configuredCount = manageable.filter((g) => configuredIds.has(g.id)).length;
 
   // Detalles ampliados por servidor (descripción, miembros, presencia) vía bot.
   const summaries = await Promise.all(manageable.map((g) => fetchGuildSummary(g.id).catch(() => null)));
@@ -169,7 +185,7 @@ export default async function DashboardPage() {
               <p className="text-sm text-muted">{t.dashboardPage.serversSubtitle}</p>
             </div>
             <span className="rounded-full border border-border bg-card px-3 py-1 text-[10px] font-black uppercase tracking-widest text-muted">
-              {activeCount} / {manageable.length}
+              {activeCount} / {manageable.length} · {configuredCount} {t.dashboardPage.botConfigured.toLowerCase()}
             </span>
           </div>
 
@@ -179,7 +195,9 @@ export default async function DashboardPage() {
               <p className="mx-auto mt-2 max-w-xl text-sm text-muted">
                 {t.dashboardPage.noServersHint}
               </p>
+              <p className="mx-auto mt-1 max-w-xl text-xs text-muted/70">{t.dashboardPage.refreshServersHint}</p>
               <div className="mt-6 flex flex-wrap justify-center gap-3">
+                <RefreshServersButton label={t.dashboardPage.refreshServers} />
                 <InviteLink
                   href={INVITE_URL}
                   target="_blank"
@@ -207,6 +225,7 @@ export default async function DashboardPage() {
                 name: g.name,
                 icon: g.icon ?? null,
                 invited: botPresence(g.id),
+                configured: configuredIds.has(g.id),
               }))}
               inviteUrl={INVITE_URL}
               details={details}

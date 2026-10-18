@@ -81,13 +81,13 @@ export const COMMANDS: CommandInfo[] = [
   },
   {
     name: 'drops',
-    description: 'Configura los drops de dinero del servidor (staff)',
+    description: 'Configura la lista de drops de dinero (staff)',
     aliases: ["dropsconfig","caidas"],
-    usage: 'cz!drops [on|off|channel #canal|amount min max|interval min max|message texto|exclude @rol]',
+    usage: 'cz!drops [status | add id [nombre] | remove id | id on|off|channel|amount|interval|message|exclude]',
     category: 'Economía',
     icon: 'money',
     premium: false,
-    tags: ["economía","drops","configura","dinero","servidor","staff"],
+    tags: ["economía","drops","configura","lista","dinero","staff"],
   },
   {
     name: 'gamble',
@@ -684,6 +684,16 @@ export const COMMANDS: CommandInfo[] = [
     icon: 'settings',
     premium: false,
     tags: ["utilidad","test","comando","prueba","verificar","funcionamiento","bot"],
+  },
+  {
+    name: 'testsignal',
+    description: 'Envía una señal de prueba al dashboard (solo admins)',
+    aliases: ["testadvisor","senal","signaltest"],
+    usage: 'cz!testsignal',
+    category: 'Utilidad',
+    icon: 'settings',
+    premium: false,
+    tags: ["utilidad","testsignal","envia","senal","prueba","dashboard","solo","admins"],
   },
   {
     name: 'vote',

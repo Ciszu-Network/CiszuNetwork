@@ -104,14 +104,22 @@ const guildConfigPatchSchema = z.object({
     .optional(),
   drops: z
     .object({
-      enabled: z.boolean(),
-      channels: z.array(z.string().min(1).max(32)).max(20),
-      min: z.number().int().min(1).max(1_000_000),
-      max: z.number().int().min(1).max(1_000_000),
-      interval_min: z.number().int().min(5).max(1440),
-      interval_max: z.number().int().min(5).max(1440),
-      message: z.string().max(300).nullable(),
-      excluded_roles: z.array(z.string().min(1).max(32)).max(50),
+      list: z
+        .array(
+          z.object({
+            id: z.string().min(1).max(32),
+            name: z.string().min(1).max(50),
+            enabled: z.boolean(),
+            channels: z.array(z.string().min(1).max(32)).max(20),
+            min: z.number().int().min(1).max(1_000_000),
+            max: z.number().int().min(1).max(1_000_000),
+            interval_min: z.number().int().min(5).max(1440),
+            interval_max: z.number().int().min(5).max(1440),
+            message: z.string().max(300).nullable(),
+            excluded_roles: z.array(z.string().min(1).max(32)).max(50),
+          }),
+        )
+        .max(20),
     })
     .optional(),
   starboard_channel_id: z.string().min(1).nullable().optional(),
@@ -158,14 +166,18 @@ interface GuildConfig {
   level_roles?: { level: number; role_id: string }[];
   automod_config?: { links: boolean; invites: boolean; caps: boolean; spam: boolean; words: string[] };
   drops?: {
-    enabled: boolean;
-    channels: string[];
-    min: number;
-    max: number;
-    interval_min: number;
-    interval_max: number;
-    message: string | null;
-    excluded_roles: string[];
+    list: {
+      id: string;
+      name: string;
+      enabled: boolean;
+      channels: string[];
+      min: number;
+      max: number;
+      interval_min: number;
+      interval_max: number;
+      message: string | null;
+      excluded_roles: string[];
+    }[];
   };
   starboard_channel_id?: string | null;
   starboard_emoji?: string;
@@ -211,6 +223,8 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ gui
   return NextResponse.json({
     guild: { id: guild.id, name: guild.name, icon: guild.icon },
     config: rows[0] ?? null,
+    /** Estado real del servidor: sin fila = invitado pero sin configurar. */
+    configured: Boolean(rows[0]),
     features,
     premium,
   });
@@ -293,14 +307,20 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
         return Number.isFinite(value) ? Math.min(max, Math.max(min, Math.round(value))) : fallback;
       };
       allowed.drops = {
-        enabled: Boolean(d.enabled),
-        channels: Array.isArray(d.channels) ? d.channels.map((c) => String(c)).slice(0, 20) : [],
-        min: clampInt(d.min, 1, 1_000_000, 50),
-        max: clampInt(d.max, 1, 1_000_000, 200),
-        interval_min: clampInt(d.interval_min, 5, 1440, 60),
-        interval_max: clampInt(d.interval_max, 5, 1440, 180),
-        message: d.message ? String(d.message).slice(0, 300) : null,
-        excluded_roles: Array.isArray(d.excluded_roles) ? d.excluded_roles.map((r) => String(r)).slice(0, 50) : [],
+        list: Array.isArray(d.list)
+          ? d.list.slice(0, 20).map((entry) => ({
+              id: String(entry.id).slice(0, 32),
+              name: String(entry.name).slice(0, 50),
+              enabled: Boolean(entry.enabled),
+              channels: Array.isArray(entry.channels) ? entry.channels.map((c) => String(c)).slice(0, 20) : [],
+              min: clampInt(entry.min, 1, 1_000_000, 50),
+              max: clampInt(entry.max, 1, 1_000_000, 200),
+              interval_min: clampInt(entry.interval_min, 5, 1440, 60),
+              interval_max: clampInt(entry.interval_max, 5, 1440, 180),
+              message: entry.message ? String(entry.message).slice(0, 300) : null,
+              excluded_roles: Array.isArray(entry.excluded_roles) ? entry.excluded_roles.map((r) => String(r)).slice(0, 50) : [],
+            }))
+          : [],
       };
     }
   }

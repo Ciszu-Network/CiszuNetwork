@@ -1,18 +1,20 @@
 import { Client, EmbedBuilder, TextChannel } from 'discord.js';
-import { getGuildConfig } from './configService';
+import { getGuildConfig, DropEntry } from './configService';
 import { randomBetween } from './economy';
 import { addMoney } from './economy';
 import { isPremiumGuild } from './featureFlags';
 import { logger } from './logger';
 
 /**
- * Sistema de drops: cada X minutos cae dinero en un canal con un botón para
- * reclamarlo (el primero que pulsa se lo lleva). Free: máx. 3/día por
- * servidor; Premium: ilimitados. El spawner revisa cada minuto.
+ * Sistema de drops como LISTA: cada servidor puede configurar varios drops
+ * (free: hasta 3 · premium: ilimitados), cada uno con su id, nombre, canales,
+ * cantidades, intervalos, mensaje y roles excluidos. El spawner revisa cada
+ * minuto y lanza el drop que toque (uno activo a la vez por servidor).
  */
 
 interface ActiveDrop {
   guildId: string;
+  dropId: string;
   messageId: string;
   channelId: string;
   amount: number;
@@ -21,18 +23,15 @@ interface ActiveDrop {
 }
 
 const activeDrops = new Map<string, ActiveDrop>();
-const dailyCount = new Map<string, { day: string; count: number }>();
 const nextSpawn = new Map<string, number>();
-const FREE_DAILY_LIMIT = 3;
 const DROP_LIFETIME_MS = 90_000;
+export const FREE_DROP_LIMIT = 3;
 
-function today(): string {
-  return new Date().toISOString().slice(0, 10);
-}
-
-export function getDropStats(guildId: string): { day: string; count: number } {
-  const stat = dailyCount.get(guildId);
-  return stat && stat.day === today() ? stat : { day: today(), count: 0 };
+/** Drops activos que corren según el plan (free: primeros 3). */
+export async function activeDropsFor(guildId: string, list: DropEntry[]): Promise<DropEntry[]> {
+  const enabled = list.filter((d) => d.enabled);
+  const premium = await isPremiumGuild(guildId);
+  return premium ? enabled : enabled.slice(0, FREE_DROP_LIMIT);
 }
 
 export interface ClaimResult {
@@ -48,12 +47,13 @@ export async function tryClaimDrop(guildId: string, messageId: string, userId: s
   if (drop.claimedBy) return { ok: false, reason: 'Alguien lo reclamó antes que tú. ¡Suerte la próxima!' };
 
   const cfg = await getGuildConfig(guildId);
-  if (cfg.drops.excluded_roles.some((roleId) => memberRoles.includes(roleId))) {
+  const entry = cfg.drops.list.find((d) => d.id === drop.dropId);
+  if (entry && entry.excluded_roles.some((roleId) => memberRoles.includes(roleId))) {
     return { ok: false, reason: 'Tu rol está excluido de reclamar drops en este servidor.' };
   }
 
   drop.claimedBy = userId;
-  await addMoney(userId, guildId, drop.amount, 'drop', 'Drop reclamado');
+  await addMoney(userId, guildId, drop.amount, 'drop', `Drop reclamado (${drop.dropId})`);
   return { ok: true, amount: drop.amount };
 }
 
@@ -66,9 +66,7 @@ function pickChannel(client: Client, guildId: string, configured: string[]): Tex
     return Boolean(c?.isTextBased?.() && me && c.permissionsFor(me)?.has('SendMessages'));
   };
   if (configured.length > 0) {
-    const candidates = configured
-      .map((id) => guild.channels.cache.get(id))
-      .filter((c) => c && usable(c));
+    const candidates = configured.map((id) => guild.channels.cache.get(id)).filter((c) => c && usable(c));
     if (candidates.length === 0) return null;
     return candidates[Math.floor(Math.random() * candidates.length)] as TextChannel;
   }
@@ -77,19 +75,18 @@ function pickChannel(client: Client, guildId: string, configured: string[]): Tex
   return all.random() as TextChannel;
 }
 
-async function spawnDrop(client: Client, guildId: string): Promise<void> {
-  const cfg = await getGuildConfig(guildId);
-  const channel = pickChannel(client, guildId, cfg.drops.channels);
+async function spawnDrop(client: Client, guildId: string, entry: DropEntry, coinEmoji: string): Promise<void> {
+  const channel = pickChannel(client, guildId, entry.channels);
   if (!channel) return;
 
-  const amount = randomBetween(Math.min(cfg.drops.min, cfg.drops.max), Math.max(cfg.drops.min, cfg.drops.max));
+  const amount = randomBetween(Math.min(entry.min, entry.max), Math.max(entry.min, entry.max));
   const text =
-    cfg.drops.message ??
-    `💎 ¡Ha caído un drop de **${amount.toLocaleString('es-ES')} ${cfg.coin_emoji}**! El primero que pulse el botón se lo lleva.`;
+    entry.message ??
+    `💎 ¡Ha caído un drop de **${amount.toLocaleString('es-ES')} ${coinEmoji}**! El primero que pulse el botón se lo lleva.`;
 
   const embed = new EmbedBuilder()
     .setColor('#fbbf24')
-    .setTitle('💎 ¡DROP!')
+    .setTitle(`💎 ¡DROP!${entry.name ? ` — ${entry.name}` : ''}`)
     .setDescription(text)
     .setFooter({ text: 'CiszuBot • Drops' })
     .setTimestamp();
@@ -130,6 +127,7 @@ async function spawnDrop(client: Client, guildId: string): Promise<void> {
 
   activeDrops.set(guildId, {
     guildId,
+    dropId: entry.id,
     messageId: sent.id,
     channelId: channel.id,
     amount,
@@ -150,22 +148,22 @@ async function tick(client: Client): Promise<void> {
   for (const guild of client.guilds.cache.values()) {
     try {
       const cfg = await getGuildConfig(guild.id);
-      if (!cfg.drops.enabled) continue;
+      const running = await activeDropsFor(guild.id, cfg.drops.list);
+      if (running.length === 0) continue;
       if (activeDrops.has(guild.id)) continue;
+
       const now = Date.now();
-      const due = nextSpawn.get(guild.id) ?? now;
-      if (now < due) continue;
+      for (const entry of running) {
+        const key = `${guild.id}:${entry.id}`;
+        const due = nextSpawn.get(key) ?? now;
+        if (now < due) continue;
 
-      const min = Math.max(5, cfg.drops.interval_min);
-      const max = Math.max(min + 5, cfg.drops.interval_max);
-      nextSpawn.set(guild.id, now + randomBetween(min, max) * 60_000);
-
-      const premium = await isPremiumGuild(guild.id);
-      const stat = getDropStats(guild.id);
-      if (!premium && stat.count >= FREE_DAILY_LIMIT) continue;
-
-      dailyCount.set(guild.id, { day: today(), count: stat.count + 1 });
-      await spawnDrop(client, guild.id);
+        const min = Math.max(5, entry.interval_min);
+        const max = Math.max(min + 5, entry.interval_max);
+        nextSpawn.set(key, now + randomBetween(min, max) * 60_000);
+        await spawnDrop(client, guild.id, entry, cfg.coin_emoji);
+        break; // un drop activo a la vez por servidor
+      }
     } catch (error) {
       logger.warn('tick de drops:', error);
     }

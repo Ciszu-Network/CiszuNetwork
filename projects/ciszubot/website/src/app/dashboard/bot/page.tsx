@@ -7,7 +7,7 @@ import { useClientI18n } from '@/hooks/useClientI18n';
 import { usePageTitle } from '@/lib/usePageTitle';
 import InviteLink from '@/components/dashboard/InviteLink';
 import { INVITE_URL } from '@/lib/i18n';
-import { updatePreferences } from '@/lib/preferences';
+import { updatePreferences, loadPreferences, savePreferences, syncPreferencesToProfile } from '@/lib/preferences';
 import { BOT_ID } from '@/lib/botStatus';
 
 interface SaveEntry {
@@ -97,10 +97,19 @@ export default function BotPreferencesPage() {
 
   const setLang = useCallback(    (code: string) => {
       document.cookie = `ciszubot_lang=${code}; path=/; max-age=31536000`;
+      // Persistir también en las preferencias (localStorage) y en la cuenta
+      // (ciszubot.profiles) para que no se pierda al cambiar de página/equipo.
+      try {
+        const prefs = { ...loadPreferences(), lang: code as Parameters<typeof savePreferences>[0]['lang'] };
+        savePreferences(prefs);
+        if (me?.id) void syncPreferencesToProfile(me.id, prefs);
+      } catch {
+        /* sin storage/sesión */
+      }
       toast(t.langSaved, 'success');
       window.setTimeout(() => window.location.reload(), 350);
     },
-    [toast, t.langSaved]
+    [toast, t.langSaved, me]
   );
 
   const toggleTheme = useCallback(() => {

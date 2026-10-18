@@ -1,93 +1,82 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
-import { getGuildConfig, updateGuildConfig, DropsConfig } from '../services/configService';
+import { getGuildConfig, updateGuildConfig, DropEntry } from '../services/configService';
 import { isStaff, STAFF_ERROR } from '../utils/permissions';
-import { getDropStats } from '../services/drops';
 import { isPremiumGuild } from '../services/featureFlags';
+import { FREE_DROP_LIMIT } from '../services/drops';
 
-/** Configuración de drops (dinero que cae en canales y se reclama con un botón). */
+const DEFAULT_ENTRY = (id: string, name: string): DropEntry => ({
+  id,
+  name,
+  enabled: false,
+  channels: [],
+  min: 50,
+  max: 200,
+  interval_min: 60,
+  interval_max: 180,
+  message: null,
+  excluded_roles: [],
+});
+
+/** Drops como lista: free hasta 3, premium ilimitados. */
 const command: BotCommand = {
   name: 'drops',
-  description: 'Configura los drops de dinero del servidor (staff)',
+  description: 'Configura la lista de drops de dinero (staff)',
   aliases: ['dropsconfig', 'caidas'],
-  usage: 'cz!drops [on|off|channel #canal|amount min max|interval min max|message texto|exclude @rol]',
+  usage: 'cz!drops [status | add id [nombre] | remove id | id on|off|channel|amount|interval|message|exclude]',
   category: 'Economía',
   slashCommand: new SlashCommandBuilder()
     .setName('drops')
-    .setDescription('Configura los drops de dinero del servidor')
+    .setDescription('Configura la lista de drops de dinero')
     .setDefaultMemberPermissions(0)
-    .addSubcommand((s) => s.setName('status').setDescription('Muestra la configuración actual'))
-    .addSubcommand((s) => s.setName('on').setDescription('Activa los drops'))
-    .addSubcommand((s) => s.setName('off').setDescription('Desactiva los drops'))
+    .addSubcommand((s) => s.setName('status').setDescription('Muestra la lista de drops'))
     .addSubcommand((s) =>
       s
-        .setName('channel')
-        .setDescription('Añade o quita un canal de drops')
-        .addChannelOption((o) => o.setName('canal').setDescription('Canal').setRequired(true))
-        .addStringOption((o) =>
-          o
-            .setName('accion')
-            .setDescription('add o remove')
-            .setRequired(false)
-            .addChoices({ name: 'Añadir', value: 'add' }, { name: 'Quitar', value: 'remove' }),
-        ),
+        .setName('add')
+        .setDescription('Añade un drop a la lista')
+        .addStringOption((o) => o.setName('id').setDescription('ID único (ej: drop1)').setRequired(true))
+        .addStringOption((o) => o.setName('nombre').setDescription('Nombre visible').setRequired(false)),
     )
     .addSubcommand((s) =>
       s
-        .setName('amount')
-        .setDescription('Rango de dinero por drop')
-        .addIntegerOption((o) => o.setName('min').setDescription('Mínimo').setRequired(true))
-        .addIntegerOption((o) => o.setName('max').setDescription('Máximo').setRequired(true)),
-    )
-    .addSubcommand((s) =>
-      s
-        .setName('interval')
-        .setDescription('Intervalo entre drops (minutos)')
-        .addIntegerOption((o) => o.setName('min').setDescription('Mínimo en minutos').setRequired(true))
-        .addIntegerOption((o) => o.setName('max').setDescription('Máximo en minutos').setRequired(true)),
-    )
-    .addSubcommand((s) =>
-      s
-        .setName('message')
-        .setDescription('Mensaje personalizado del drop')
-        .addStringOption((o) => o.setName('texto').setDescription('Texto o "reset"').setRequired(true)),
-    )
-    .addSubcommand((s) =>
-      s
-        .setName('exclude')
-        .setDescription('Excluye un rol de reclamar drops')
-        .addRoleOption((o) => o.setName('rol').setDescription('Rol').setRequired(true)),
+        .setName('remove')
+        .setDescription('Elimina un drop de la lista')
+        .addStringOption((o) => o.setName('id').setDescription('ID del drop').setRequired(true)),
     ),
 
   async execute(message, args) {
     if (!message.guild) return;
     const guildId = message.guild.id;
     const cfg = await getGuildConfig(guildId);
-    const drops: DropsConfig = cfg.drops;
+    const list = cfg.drops.list;
     const sub = (args[0] ?? '').toLowerCase();
 
-    const statusEmbed = async (): Promise<EmbedBuilder> => {
-      const premium = await isPremiumGuild(guildId);
-      const stats = getDropStats(guildId);
-      return new EmbedBuilder()
-        .setColor(drops.enabled ? '#22c55e' : '#6b7280')
+    const premium = await isPremiumGuild(guildId);
+    const limit = premium ? Infinity : FREE_DROP_LIMIT;
+
+    const statusEmbed = () =>
+      new EmbedBuilder()
+        .setColor(list.some((d) => d.enabled) ? '#22c55e' : '#6b7280')
         .setTitle('💎 Drops de dinero')
         .setDescription(
-          `**Estado:** ${drops.enabled ? '✅ Activados' : '⛔ Desactivados'}\n` +
-            `**Canales:** ${drops.channels.length > 0 ? drops.channels.map((c) => `<#${c}>`).join(', ') : 'todos (donde pueda escribir)'}\n` +
-            `**Cantidad:** ${drops.min} – ${drops.max} ${cfg.coin_emoji}\n` +
-            `**Intervalo:** ${drops.interval_min} – ${drops.interval_max} min\n` +
-            `**Roles excluidos:** ${drops.excluded_roles.length > 0 ? drops.excluded_roles.map((r) => `<@&${r}>`).join(', ') : 'ninguno'}\n` +
-            `**Mensaje:** ${drops.message ?? 'por defecto'}\n\n` +
-            `**Plan:** ${premium ? '⭐ Premium (drops ilimitados)' : '🆓 Free (máx. 3 drops/día)'}\n` +
-            `**Hoy:** ${stats.count} drops`,
+          `**Plan:** ${premium ? '⭐ Premium (drops ilimitados)' : `🆓 Free (hasta ${FREE_DROP_LIMIT} drops)`}\n` +
+            `**Drops configurados:** ${list.length}${premium ? '' : ` / ${FREE_DROP_LIMIT}`}\n\n` +
+            (list.length > 0
+              ? list
+                  .map(
+                    (d) =>
+                      `${d.enabled ? '✅' : '⬜'} **${d.id}** (${d.name}) — ${d.min}–${d.max} ${cfg.coin_emoji} · cada ${d.interval_min}-${d.interval_max} min` +
+                      `${d.channels.length > 0 ? ` · canales: ${d.channels.map((c) => `<#${c}>`).join(', ')}` : ' · cualquier canal'}` +
+                      `${d.excluded_roles.length > 0 ? ` · excluye ${d.excluded_roles.map((r) => `<@&${r}>`).join(', ')}` : ''}`,
+                  )
+                  .join('\n')
+              : 'Sin drops. Crea uno: `cz!drops add drop1 Drop principal`'),
         )
         .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
         .setTimestamp();
-    };
 
-    if (!sub || sub === 'status') {
-      await message.reply({ embeds: [await statusEmbed()] });
+    if (!sub || sub === 'status' || sub === 'list') {
+      await message.reply({ embeds: [statusEmbed()] });
       return;
     }
 
@@ -96,78 +85,111 @@ const command: BotCommand = {
       return;
     }
 
-    if (sub === 'on' || sub === 'off') {
-      await updateGuildConfig(guildId, { drops: { ...drops, enabled: sub === 'on' } });
-      await message.reply(`✅ Drops ${sub === 'on' ? 'activados' : 'desactivados'}.`);
+    const save = (next: DropEntry[]) => updateGuildConfig(guildId, { drops: { list: next } });
+
+    if (sub === 'add') {
+      const id = (args[1] ?? '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 20);
+      const name = args.slice(2).join(' ').trim() || id;
+      if (!id) {
+        await message.reply('❌ Uso: `cz!drops add <id> [nombre]` (ej: `cz!drops add drop1 Lluvia de monedas`).');
+        return;
+      }
+      if (list.some((d) => d.id === id)) {
+        await message.reply(`❌ Ya existe un drop con id \`${id}\`.`);
+        return;
+      }
+      if (list.length >= limit) {
+        await message.reply(
+          `❌ El plan Free permite hasta **${FREE_DROP_LIMIT}** drops. Con **Premium** son ilimitados: ${'https://ciszubot.vercel.app/premium'}`,
+        );
+        return;
+      }
+      await save([...list, DEFAULT_ENTRY(id, name.slice(0, 50))]);
+      await message.reply(
+        `✅ Drop \`${id}\` (${name}) añadido. Configúralo: \`cz!drops ${id} on\`, \`cz!drops ${id} amount 50 200\`, \`cz!drops ${id} interval 60 180\`.`,
+      );
       return;
     }
 
-    if (sub === 'channel') {
+    if (sub === 'remove') {
+      const id = (args[1] ?? '').toLowerCase();
+      await save(list.filter((d) => d.id !== id));
+      await message.reply(`✅ Drop \`${id}\` eliminado (si existía).`);
+      return;
+    }
+
+    // Subcomandos por drop: cz!drops <id> <campo> ...
+    const entry = list.find((d) => d.id === sub);
+    if (!entry) {
+      await message.reply('❌ Subcomandos: `status`, `add`, `remove` o `cz!drops <id> <campo>` (mira `cz!drops status`).');
+      return;
+    }
+    const field = (args[1] ?? '').toLowerCase();
+    const patch = (p: Partial<DropEntry>) => save(list.map((d) => (d.id === entry.id ? { ...d, ...p } : d)));
+
+    if (field === 'on' || field === 'off') {
+      await patch({ enabled: field === 'on' });
+      await message.reply(`✅ Drop \`${entry.id}\` ${field === 'on' ? 'activado' : 'desactivado'}.`);
+      return;
+    }
+    if (field === 'name') {
+      const name = args.slice(2).join(' ').trim();
+      if (!name) return void (await message.reply('❌ Uso: `cz!drops <id> name <nombre>`.'));
+      await patch({ name: name.slice(0, 50) });
+      await message.reply(`✅ Nombre del drop \`${entry.id}\`: **${name}**.`);
+      return;
+    }
+    if (field === 'channel') {
       const channelId = message.mentions?.channels?.first()?.id;
-      if (!channelId) {
-        await message.reply('❌ Uso: `cz!drops channel #canal [remove]`');
-        return;
-      }
-      const remove = (args[1] ?? '').toLowerCase() === 'remove';
+      if (!channelId) return void (await message.reply('❌ Uso: `cz!drops <id> channel #canal [remove]`.'));
+      const remove = (args[2] ?? '').toLowerCase() === 'remove';
       const channels = remove
-        ? drops.channels.filter((c) => c !== channelId)
-        : Array.from(new Set([...drops.channels, channelId]));
-      await updateGuildConfig(guildId, { drops: { ...drops, channels } });
-      await message.reply(`✅ Canal <#${channelId}> ${remove ? 'quitado de' : 'añadido a'} los drops.`);
+        ? entry.channels.filter((c) => c !== channelId)
+        : Array.from(new Set([...entry.channels, channelId]));
+      await patch({ channels });
+      await message.reply(`✅ Canal <#${channelId}> ${remove ? 'quitado de' : 'añadido a'} \`${entry.id}\`.`);
       return;
     }
-
-    if (sub === 'amount') {
-      const min = parseInt(args[1] ?? '', 10);
-      const max = parseInt(args[2] ?? '', 10);
+    if (field === 'amount') {
+      const min = parseInt(args[2] ?? '', 10);
+      const max = parseInt(args[3] ?? '', 10);
       if (isNaN(min) || isNaN(max) || min < 1 || max < min || max > 1_000_000) {
-        await message.reply('❌ Uso: `cz!drops amount <min> <max>` (ej: `cz!drops amount 50 200`)');
-        return;
+        return void (await message.reply('❌ Uso: `cz!drops <id> amount <min> <max>`.'));
       }
-      await updateGuildConfig(guildId, { drops: { ...drops, min, max } });
-      await message.reply(`✅ Cantidad de drops: **${min} – ${max}** ${cfg.coin_emoji}.`);
+      await patch({ min, max });
+      await message.reply(`✅ Cantidad de \`${entry.id}\`: **${min}–${max}** ${cfg.coin_emoji}.`);
       return;
     }
-
-    if (sub === 'interval') {
-      const min = parseInt(args[1] ?? '', 10);
-      const max = parseInt(args[2] ?? '', 10);
+    if (field === 'interval') {
+      const min = parseInt(args[2] ?? '', 10);
+      const max = parseInt(args[3] ?? '', 10);
       if (isNaN(min) || isNaN(max) || min < 5 || max < min || max > 1440) {
-        await message.reply('❌ Uso: `cz!drops interval <min> <max>` en minutos (mínimo 5, máximo 1440).');
-        return;
+        return void (await message.reply('❌ Uso: `cz!drops <id> interval <min> <max>` (mínimo 5 min).'));
       }
-      await updateGuildConfig(guildId, { drops: { ...drops, interval_min: min, interval_max: max } });
-      await message.reply(`✅ Intervalo de drops: **${min} – ${max} min**.`);
+      await patch({ interval_min: min, interval_max: max });
+      await message.reply(`✅ Intervalo de \`${entry.id}\`: **${min}–${max} min**.`);
       return;
     }
-
-    if (sub === 'message') {
-      const text = args.slice(1).join(' ').trim();
-      if (!text) {
-        await message.reply('❌ Uso: `cz!drops message <texto>` o `cz!drops message reset`.');
-        return;
-      }
+    if (field === 'message') {
+      const text = args.slice(2).join(' ').trim();
+      if (!text) return void (await message.reply('❌ Uso: `cz!drops <id> message <texto>` o `reset`.'));
       const value = text.toLowerCase() === 'reset' ? null : text.slice(0, 300);
-      await updateGuildConfig(guildId, { drops: { ...drops, message: value } });
-      await message.reply(value ? '✅ Mensaje de drop personalizado guardado.' : '✅ Mensaje de drop restaurado al por defecto.');
+      await patch({ message: value });
+      await message.reply(value ? '✅ Mensaje personalizado guardado.' : '✅ Mensaje restaurado al por defecto.');
       return;
     }
-
-    if (sub === 'exclude') {
+    if (field === 'exclude') {
       const roleId = message.mentions?.roles?.first()?.id;
-      if (!roleId) {
-        await message.reply('❌ Uso: `cz!drops exclude @rol` (repite para quitarlo si ya está).');
-        return;
-      }
-      const excluded = drops.excluded_roles.includes(roleId)
-        ? drops.excluded_roles.filter((r) => r !== roleId)
-        : [...drops.excluded_roles, roleId];
-      await updateGuildConfig(guildId, { drops: { ...drops, excluded_roles: excluded } });
-      await message.reply(`✅ Rol <@&${roleId}> ${drops.excluded_roles.includes(roleId) ? 'ya no está' : 'ahora está'} excluido de los drops.`);
+      if (!roleId) return void (await message.reply('❌ Uso: `cz!drops <id> exclude @rol` (repite para quitarlo).'));
+      const excluded = entry.excluded_roles.includes(roleId)
+        ? entry.excluded_roles.filter((r) => r !== roleId)
+        : [...entry.excluded_roles, roleId];
+      await patch({ excluded_roles: excluded });
+      await message.reply(`✅ Rol <@&${roleId}> ${entry.excluded_roles.includes(roleId) ? 'ya no está' : 'ahora está'} excluido de \`${entry.id}\`.`);
       return;
     }
 
-    await message.reply('❌ Subcomandos: `status`, `on`, `off`, `channel`, `amount`, `interval`, `message`, `exclude`.');
+    await message.reply('❌ Campos por drop: `on|off`, `name`, `channel`, `amount`, `interval`, `message`, `exclude`.');
   },
 };
 

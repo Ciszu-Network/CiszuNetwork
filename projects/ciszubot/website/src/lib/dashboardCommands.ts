@@ -68,6 +68,26 @@ export const SECTION_HELP: Record<string, SectionHelp> = {
     commands: byNames(['tickets', 'closechannels', 'logs']),
     note: 'Publica el panel con cz!tickets panel; edita categorías con cz!tickets cat <id> ...',
   },
+  starboard: {
+    title: 'Comandos de starboard',
+    commands: byNames(['starboard']),
+    note: 'Configura canal, emoji y mínimo de reacciones; el bot destaca solo los mensajes que lleguen al mínimo.',
+  },
+  nitro: {
+    title: 'Comandos de emojis Nitro',
+    commands: byNames(['nitro']),
+    note: 'Reenvía por webhook los emojis externos para que se vean sin Nitro.',
+  },
+  staff: {
+    title: 'Comandos de staff',
+    commands: byNames(['staff', 'automod', 'cooldown', 'addmoney', 'removemoney']),
+    note: 'El rol de staff puede usar todos los comandos de gestión; los admins siempre pueden.',
+  },
+  stats: {
+    title: 'Comandos de stats',
+    commands: byNames(['counters', 'serverinfo', 'stats']),
+    note: 'Los contadores se actualizan al entrar/salir gente; también puedes ver datos con cz!serverinfo.',
+  },
   music: { title: 'Comandos de música', commands: byCategory('Música'), note: 'Función Premium (gratis durante la beta).' },
   search: { title: 'Comandos de búsqueda', commands: byCategory('Búsqueda'), note: 'Función Premium (gratis durante la beta).' },
   minigames: { title: 'Comandos de diversión', commands: byCategory('Diversión') },

@@ -9,4 +9,4 @@ import { db, ciszubotSchema, createCacheDb } from '@ciszunetwork/db';
  * Reemplaza el acceso server de @supabase/supabase-js (`supabaseAdmin.ts`).
  */
 export { db, ciszubotSchema, createCacheDb };
-export { eq } from '@ciszunetwork/db';
+export { eq, inArray } from '@ciszunetwork/db';

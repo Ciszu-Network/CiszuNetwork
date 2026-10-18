@@ -10,7 +10,9 @@ export interface AutomodConfig {
   words: string[];
 }
 
-export interface DropsConfig {
+export interface DropEntry {
+  id: string;
+  name: string;
   enabled: boolean;
   channels: string[];
   min: number;
@@ -19,6 +21,11 @@ export interface DropsConfig {
   interval_max: number;
   message: string | null;
   excluded_roles: string[];
+}
+
+export interface DropsConfig {
+  /** Lista de drops configurados (free: hasta 3 · premium: ilimitados). */
+  list: DropEntry[];
 }
 
 export interface LevelRole {
@@ -148,16 +155,7 @@ const DEFAULT_ALLIANCE: AllianceConfig = {
   error_delete_after: 15,
 };
 const DEFAULT_TICKETS: TicketConfig = { enabled: false, panel_channel_id: null, log_channel_id: null, auto_delete_hours: 24, categories: [] };
-const DEFAULT_DROPS: DropsConfig = {
-  enabled: false,
-  channels: [],
-  min: 50,
-  max: 200,
-  interval_min: 60,
-  interval_max: 180,
-  message: null,
-  excluded_roles: [],
-};
+const DEFAULT_DROPS: DropsConfig = { list: [] };
 
 const DEFAULTS: Omit<GuildConfig, 'guild_id'> = {
   prefix: 'cz!',
@@ -202,6 +200,27 @@ const DEFAULTS: Omit<GuildConfig, 'guild_id'> = {
 
 const cache = new Map<string, GuildConfig>();
 
+/**
+ * TTL de la caché de config: el dashboard escribe en la DB desde fuera del
+ * proceso, así que sin caducidad el bot NO veía nunca los cambios (bug real:
+ * cambiar la moneda en la web no se reflejaba en Discord hasta reiniciar).
+ */
+const CACHE_TTL_MS = 30_000;
+const cacheAt = new Map<string, number>();
+
+function cacheFresh(guildId: string): GuildConfig | null {
+  const cfg = cache.get(guildId);
+  if (!cfg) return null;
+  const at = cacheAt.get(guildId) ?? 0;
+  if (Date.now() - at >= CACHE_TTL_MS) return null;
+  return cfg;
+}
+
+function cacheSet(guildId: string, cfg: GuildConfig): void {
+  cache.set(guildId, cfg);
+  cacheAt.set(guildId, Date.now());
+}
+
 function asObject<T>(value: unknown, fallback: T): T {
   if (value && typeof value === 'object' && !Array.isArray(value)) return { ...fallback, ...(value as object) } as T;
   return fallback;
@@ -212,7 +231,7 @@ function asArray<T>(value: unknown, fallback: T[]): T[] {
 }
 
 export async function getGuildConfig(guildId: string): Promise<GuildConfig> {
-  const cached = cache.get(guildId);
+  const cached = cacheFresh(guildId);
   if (cached) return cached;
 
   try {
@@ -249,7 +268,10 @@ export async function getGuildConfig(guildId: string): Promise<GuildConfig> {
         level_roles: asArray(data.levelRoles, DEFAULTS.level_roles),
         automod_config: asObject(data.automodConfig, DEFAULT_AUTOMOD),
         command_cooldowns: asObject(data.commandCooldowns, DEFAULTS.command_cooldowns),
-        drops: asObject(data.drops, DEFAULT_DROPS),
+        drops: (() => {
+          const raw = asObject(data.drops, DEFAULT_DROPS) as DropsConfig & { enabled?: boolean };
+          return { list: Array.isArray(raw.list) ? raw.list : [] };
+        })(),
         starboard_channel_id: data.starboardChannelId ?? DEFAULTS.starboard_channel_id,
         starboard_emoji: data.starboardEmoji ?? DEFAULTS.starboard_emoji,
         starboard_min: data.starboardMin ?? DEFAULTS.starboard_min,
@@ -261,14 +283,14 @@ export async function getGuildConfig(guildId: string): Promise<GuildConfig> {
         alliance_config: asObject(data.allianceConfig, DEFAULT_ALLIANCE),
         ticket_config: asObject(data.ticketConfig, DEFAULT_TICKETS),
       };
-      cache.set(guildId, cfg);
+      cacheSet(guildId, cfg);
       return cfg;
     }
   } catch (error) {
     logger.warn('No se pudo leer la config del guild:', error);
   }
   const cfg: GuildConfig = { ...DEFAULTS, guild_id: guildId };
-  cache.set(guildId, cfg);
+  cacheSet(guildId, cfg);
   return cfg;
 }
 
@@ -278,7 +300,7 @@ export async function updateGuildConfig(
 ): Promise<GuildConfig> {
   const cfg = await getGuildConfig(guildId);
   const merged: GuildConfig = { ...cfg, ...patch };
-  cache.set(guildId, merged);
+  cacheSet(guildId, merged);
   const values = {
     guildId,
     prefix: merged.prefix,
@@ -337,6 +359,7 @@ export async function updateGuildConfig(
 
 export function invalidateGuildConfig(guildId: string): void {
   cache.delete(guildId);
+  cacheAt.delete(guildId);
 }
 
 export async function getPrefix(guildId: string | null | undefined): Promise<string> {

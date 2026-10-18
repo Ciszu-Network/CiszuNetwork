@@ -894,8 +894,9 @@ const es = {
     searchUi: {
       placeholder: 'Buscar…',
       all: 'Todos',
-      invited: 'Invitados',
-      unverified: 'Sin verificar',
+      invited: 'Sin configurar',
+      unverified: 'No invitado',
+      configured: 'Configurados',
       free: 'Free',
       premium: 'Premium',
       asc: 'A-Z',
@@ -904,6 +905,8 @@ const es = {
     },
     presenceOnline: 'en línea',
     presenceOffline: 'desconectados',
+    refreshServers: 'Actualizar servidores',
+    refreshServersHint: 'Si tu lista aparece vacía o desactualizada, pulsa aquí.',
     createdLabel: 'Creado',
     boostLabel: 'Nivel de boost',
     descLabel: 'Descripción',
@@ -913,8 +916,10 @@ const es = {
     noServersHint:
       'Necesitas el permiso «Gestionar servidor» en Discord y haber iniciado sesión para configurar el bot.',
     botActive: 'Bot activo',
-    botMissing: 'Bot no presente',
+    botMissing: 'No invitado',
     botUnverified: 'Sin verificar',
+    botConfigured: 'Configurado',
+    botNotConfigured: 'Invitado · sin configurar',
     inviteCta: 'Invitar a CiszuBot',
     supportCta: 'Servidor de soporte',
     logout: 'Cerrar sesión',
@@ -1159,6 +1164,13 @@ const es = {
     removeRow: 'Quitar',
     subnavAlliance: 'Alianzas',
     subnavTickets: 'Tickets',
+    subnavStarboard: 'Starboard',
+    subnavNitro: 'Emojis Nitro',
+    subnavStaff: 'Rol de staff',
+    subnavStats: 'Stats del servidor',
+    statsTitle: 'Stats del servidor (contadores)',
+    statsHint: 'Canales de voz que muestran datos reales del servidor (miembros, bots, canales, roles…). Se actualizan al entrar/salir gente.',
+    privateVcHubLabel: 'Canal hub de VCs privados',
     allianceTitle: 'Sistema de alianzas',
     allianceHint: 'Canal dedicado donde publicar alianzas: el bot capta el link, da puntos y aplica filtros.',
     allianceChannelLabel: 'Canal de alianzas',
@@ -2306,8 +2318,9 @@ const en = {
     searchUi: {
       placeholder: 'Search…',
       all: 'All',
-      invited: 'Invited',
-      unverified: 'Unverified',
+      invited: 'Not configured',
+      unverified: 'Not invited',
+      configured: 'Configured',
       free: 'Free',
       premium: 'Premium',
       asc: 'A-Z',
@@ -2316,6 +2329,8 @@ const en = {
     },
     presenceOnline: 'online',
     presenceOffline: 'offline',
+    refreshServers: 'Refresh servers',
+    refreshServersHint: 'If your list is empty or outdated, press here.',
     createdLabel: 'Created',
     boostLabel: 'Boost level',
     descLabel: 'Description',
@@ -2325,8 +2340,10 @@ const en = {
     noServersHint:
       'You need the “Manage Server” permission on Discord and to be signed in to configure the bot.',
     botActive: 'Bot active',
-    botMissing: 'Bot not present',
+    botMissing: 'Not invited',
     botUnverified: 'Unverified',
+    botConfigured: 'Configured',
+    botNotConfigured: 'Invited · not configured',
     inviteCta: 'Invite CiszuBot',
     supportCta: 'Support server',
     logout: 'Sign out',
@@ -2570,6 +2587,13 @@ const en = {
     removeRow: 'Remove',
     subnavAlliance: 'Alliances',
     subnavTickets: 'Tickets',
+    subnavStarboard: 'Starboard',
+    subnavNitro: 'Nitro emojis',
+    subnavStaff: 'Staff role',
+    subnavStats: 'Server stats',
+    statsTitle: 'Server stats (counters)',
+    statsHint: 'Voice channels that show real server data (members, bots, channels, roles…). Updated on join/leave.',
+    privateVcHubLabel: 'Private VC hub channel',
     allianceTitle: 'Alliance system',
     allianceHint: 'Dedicated channel to post alliances: the bot captures the link, grants points and applies filters.',
     allianceChannelLabel: 'Alliance channel',
@@ -2998,7 +3022,9 @@ export function parseLang(raw: string | undefined | null): Lang {
   if (raw === 'es-es' || raw === 'en-us' || raw === 'en-uk') return raw;
   if (raw === 'es' || raw === 'es-latam') return 'es-latam';
   if (raw === 'en') return 'en-us';
-  return 'en-us';
+  // El ecosistema es hispanohablante: sin cookie/valor válido el idioma por
+  // defecto es español latino, NUNCA inglés (bug: volvía al default de USA).
+  return 'es-latam';
 }
 
 /** true si el idioma es una variante de español (latam o españa). */

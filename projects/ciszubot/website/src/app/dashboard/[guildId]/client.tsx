@@ -27,6 +27,7 @@ interface GuildConfig {
   goodbye_channel_id?: string | null;
   goodbye_message?: string;
   autorole_ids?: string[];
+  counters?: { type: string; channel_id: string }[];
   logs_channel_id?: string | null;
   tickets_enabled?: boolean;
   tickets_category_id?: string | null;
@@ -45,14 +46,18 @@ interface GuildConfig {
   level_roles?: { level: number; role_id: string }[];
   automod_config?: { links: boolean; invites: boolean; caps: boolean; spam: boolean; flood: boolean; words: string[] };
   drops?: {
-    enabled: boolean;
-    channels: string[];
-    min: number;
-    max: number;
-    interval_min: number;
-    interval_max: number;
-    message: string | null;
-    excluded_roles: string[];
+    list: {
+      id: string;
+      name: string;
+      enabled: boolean;
+      channels: string[];
+      min: number;
+      max: number;
+      interval_min: number;
+      interval_max: number;
+      message: string | null;
+      excluded_roles: string[];
+    }[];
   };
   starboard_channel_id?: string | null;
   starboard_emoji?: string;
@@ -97,9 +102,13 @@ interface GuildConfig {
   };
   /** Toggles por servidor de funciones del bot (slug → enabled). */
   features?: Record<string, boolean>;
+  /** true si el servidor ya tiene al menos un cambio guardado en la DB. */
+  configured?: boolean;
+  /** true si el servidor tiene Premium activo (límites ampliados). */
+  premium?: boolean;
 }
 
-type SectionKey = 'general' | 'levels' | 'welcome' | 'economy' | 'community' | 'automod' | 'alliance' | 'tickets' | 'extras' | `feat:${string}`;
+type SectionKey = 'general' | 'levels' | 'welcome' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'automod' | 'alliance' | 'tickets' | 'stats' | `feat:${string}`;
 type PartialConfig = Partial<GuildConfig>;
 
 /** Payload de un export JSON (vista previa + descarga). */
@@ -108,8 +117,8 @@ interface JsonPreviewPayload {
   config: Record<string, unknown>;
 }
 
-const SECTION_KEYS: Record<'general' | 'levels' | 'welcome' | 'economy' | 'community' | 'automod' | 'alliance' | 'tickets' | 'extras', (keyof GuildConfig)[]> = {
-  general: ['prefix', 'lang'],
+const SECTION_KEYS: Record<'general' | 'levels' | 'welcome' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'automod' | 'alliance' | 'tickets' | 'stats', (keyof GuildConfig)[]> = {
+  general: ['prefix', 'lang', 'staff_role_id'],
   levels: ['leveling_enabled', 'level_channel_id', 'xp_rate', 'level_message', 'level_roles'],
   welcome: [
     'welcome_channel_id',
@@ -119,21 +128,24 @@ const SECTION_KEYS: Record<'general' | 'levels' | 'welcome' | 'economy' | 'commu
     'autorole_ids',
   ],
   economy: ['coin_emoji', 'coin_name', 'drops', 'invite_points_per'],
-  community: ['starboard_channel_id', 'starboard_emoji', 'starboard_min', 'nitro_repost_enabled', 'staff_role_id', 'private_vc_hub_id'],
+  starboard: ['starboard_channel_id', 'starboard_emoji', 'starboard_min'],
+  nitro: ['nitro_repost_enabled'],
+  staff: ['staff_role_id'],
   automod: ['automod_enabled', 'automod_config'],
   alliance: ['alliance_config'],
-  tickets: ['ticket_config'],
-  extras: [
+  tickets: [
+    'ticket_config',
     'tickets_enabled',
     'tickets_category_id',
     'tickets_role_id',
     'private_channels',
     'private_category_id',
+    'private_vc_hub_id',
     'music_channel_id',
     'mute_role_id',
-    'automod_enabled',
     'logs_channel_id',
   ],
+  stats: ['counters'],
 };
 
 const ALL_KEYS: (keyof GuildConfig)[] = Object.values(SECTION_KEYS).flat();
@@ -143,17 +155,17 @@ const featScope = (slug: string): SectionKey => `feat:${slug}`;
 const isFeatScope = (s: SectionKey): s is `feat:${string}` => s.startsWith('feat:');
 const featSlugOf = (s: SectionKey): string => s.slice('feat:'.length);
 
-/** Funciones configurables por servidor (toggles del dashboard). */
+/** Funciones configurables por servidor (toggles del dashboard).
+ *  Economía, Niveles y Configuración YA NO tienen toggle: sus opciones viven
+ *  en las secciones de configuración (siempre activas salvo kill switch global
+ *  desde la devcon). */
 const FEATURE_ROWS: { slug: string; icon: string; labelKey: keyof Dict['guildPage']; descKey: keyof Dict['guildPage']; premium?: boolean }[] = [
   { slug: 'music', icon: 'music', labelKey: 'featMusic', descKey: 'featMusicDesc', premium: true },
   { slug: 'search', icon: 'search', labelKey: 'featSearch', descKey: 'featSearchDesc', premium: true },
   { slug: 'minigames', icon: 'gamepad', labelKey: 'featMinigames', descKey: 'featMinigamesDesc' },
-  { slug: 'economy', icon: 'trophy', labelKey: 'featEconomy', descKey: 'featEconomyDesc' },
   { slug: 'help', icon: 'help', labelKey: 'featHelp', descKey: 'featHelpDesc' },
   { slug: 'utility', icon: 'settings', labelKey: 'featUtility', descKey: 'featUtilityDesc' },
   { slug: 'moderation', icon: 'shield', labelKey: 'featModeration', descKey: 'featModerationDesc' },
-  { slug: 'setup', icon: 'palette', labelKey: 'featSetup', descKey: 'featSetupDesc' },
-  { slug: 'levels', icon: 'chart-bar', labelKey: 'featLevels', descKey: 'featLevelsDesc' },
   { slug: 'social', icon: 'users', labelKey: 'featSocial', descKey: 'featSocialDesc' },
 ];
 
@@ -438,11 +450,13 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     | 'levels'
     | 'welcome'
     | 'economy'
-    | 'community'
+    | 'starboard'
+    | 'nitro'
+    | 'staff'
     | 'automod'
     | 'alliance'
     | 'tickets'
-    | 'extras'
+    | 'stats'
     | 'history'
     | `feat:${string}`;
   const [view, setView] = useState<GuildView>('summary');
@@ -450,7 +464,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     const saved = localStorage.getItem('cz-dash-view') as GuildView | null;
     if (
       saved &&
-      (['summary', 'general', 'levels', 'welcome', 'economy', 'community', 'automod', 'alliance', 'tickets', 'extras', 'history'].includes(saved) ||
+      (['summary', 'general', 'levels', 'welcome', 'economy', 'starboard', 'nitro', 'staff', 'automod', 'alliance', 'tickets', 'stats', 'history'].includes(saved) ||
         saved.startsWith('feat:'))
     ) {
       setView(saved);
@@ -509,12 +523,14 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     })),
     { key: 'levels', icon: 'star', label: 'subnavLevels', tag: 'mixed' },
     { key: 'economy', icon: 'money', label: 'subnavEconomy', tag: 'free' },
-    { key: 'community', icon: 'people', label: 'subnavCommunity', tag: 'mixed' },
+    { key: 'starboard', icon: 'star', label: 'subnavStarboard', tag: 'free' },
+    { key: 'nitro', icon: 'palette', label: 'subnavNitro', tag: 'free' },
+    { key: 'staff', icon: 'shield', label: 'subnavStaff', tag: 'free' },
     { key: 'alliance', icon: 'users', label: 'subnavAlliance', tag: 'free' },
     { key: 'tickets', icon: 'support', label: 'subnavTickets', tag: 'free' },
     { key: 'automod', icon: 'shield', label: 'subnavAutomod', tag: 'free' },
+    { key: 'stats', icon: 'chart-bar', label: 'subnavStats', tag: 'free' },
     { key: 'welcome', icon: 'heart', label: 'subnavWelcome', tag: 'free' },
-    { key: 'extras', icon: 'support', label: 'subnavExtras', tag: 'free' },
     { key: 'history', icon: 'verified', label: 'subnavHistory', tag: 'free' },
   ];
 
@@ -560,7 +576,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         window.location.href = '/dashboard';
         return null;
       }
-      const json = (await res.json()) as { config?: GuildConfig | null; features?: Record<string, boolean> };
+      const json = (await res.json()) as { config?: GuildConfig | null; features?: Record<string, boolean>; configured?: boolean; premium?: boolean };
       const cfg = json.config;
       return {
         prefix: cfg?.prefix ?? 'cz!',
@@ -584,6 +600,23 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         mute_role_id: cfg?.mute_role_id ?? null,
         leaderboard_enabled: cfg?.leaderboard_enabled ?? false,
         leaderboard_slug: cfg?.leaderboard_slug ?? null,
+        coin_emoji: cfg?.coin_emoji ?? '🪙',
+        coin_name: cfg?.coin_name ?? 'monedas',
+        staff_role_id: cfg?.staff_role_id ?? null,
+        level_message: cfg?.level_message ?? '🎉 ¡{user} subió al nivel {level} en {guild}!',
+        level_roles: Array.isArray(cfg?.level_roles) ? cfg.level_roles : [],
+        automod_config: cfg?.automod_config ?? { links: false, invites: false, caps: false, spam: false, flood: false, words: [] },
+        drops: cfg?.drops ?? { enabled: false, channels: [], min: 50, max: 200, interval_min: 60, interval_max: 180, message: null, excluded_roles: [] },
+        starboard_channel_id: cfg?.starboard_channel_id ?? null,
+        starboard_emoji: cfg?.starboard_emoji ?? '⭐',
+        starboard_min: cfg?.starboard_min ?? 3,
+        invite_points_per: cfg?.invite_points_per ?? 1,
+        nitro_repost_enabled: cfg?.nitro_repost_enabled ?? false,
+        private_vc_hub_id: cfg?.private_vc_hub_id ?? null,
+        alliance_config: cfg?.alliance_config,
+        ticket_config: cfg?.ticket_config,
+        configured: json.configured === true,
+        premium: json.premium === true,
         features: json.features ?? {},
       } as GuildConfig;
     },
@@ -841,16 +874,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   const categories = channels.filter((c) => c.type === 4);
 
   /** Defaults de bloques JSONB (coinciden con los del bot). */
-  const dropsCfg = config?.drops ?? {
-    enabled: false,
-    channels: [] as string[],
-    min: 50,
-    max: 200,
-    interval_min: 60,
-    interval_max: 180,
-    message: null as string | null,
-    excluded_roles: [] as string[],
-  };
+  const dropsCfg = config?.drops ?? { list: [] as NonNullable<GuildConfig['drops']>['list'] };
   const automodCfg = config?.automod_config ?? { links: false, invites: false, caps: false, spam: false, flood: false, words: [] as string[] };
   const levelRoles = config?.level_roles ?? [];
   const allianceCfg = config?.alliance_config ?? {
@@ -1964,88 +1988,136 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 {config.coin_name ?? 'monedas'})
               </div>
 
-              {/* Drops */}
+              {/* Drops (lista: free hasta 3 · premium ilimitados) */}
               <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-white/90">{t.dropsToggle}</p>
-                    <p className="text-xs text-white/50">{t.dropsToggleHint}</p>
-                  </div>
-                  <Toggle on={dropsCfg.enabled} onChange={(v) => update({ drops: { ...dropsCfg, enabled: v } })} />
+                <div className="mb-2 flex flex-wrap items-center gap-2">
+                  <p className="flex items-center gap-2 text-sm font-bold text-white">
+                    <Icon name="star" size={15} className="text-amber-300" /> {t.dropsTitle}
+                  </p>
+                  <span className="ml-auto text-[10px] font-black text-white/40">
+                    {dropsCfg.list.length}
+                    {config.premium ? '' : ' / 3'}
+                  </span>
                 </div>
-                {dropsCfg.enabled && (
-                  <div className="mt-4 grid gap-4">
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <Field label={t.dropsMinLabel}>
-                        <input
-                          type="number"
-                          min={1}
-                          className={inputCls}
-                          value={dropsCfg.min}
-                          onChange={(e) => update({ drops: { ...dropsCfg, min: Number(e.target.value) || 1 } })}
-                        />
-                      </Field>
-                      <Field label={t.dropsMaxLabel}>
-                        <input
-                          type="number"
-                          min={1}
-                          className={inputCls}
-                          value={dropsCfg.max}
-                          onChange={(e) => update({ drops: { ...dropsCfg, max: Number(e.target.value) || 1 } })}
-                        />
-                      </Field>
-                    </div>
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <Field label={`${t.dropsIntervalLabel} — min`}>
-                        <input
-                          type="number"
-                          min={5}
-                          className={inputCls}
-                          value={dropsCfg.interval_min}
-                          onChange={(e) => update({ drops: { ...dropsCfg, interval_min: Number(e.target.value) || 5 } })}
-                        />
-                      </Field>
-                      <Field label={`${t.dropsIntervalLabel} — max`} hint={t.dropsIntervalHint}>
-                        <input
-                          type="number"
-                          min={5}
-                          className={inputCls}
-                          value={dropsCfg.interval_max}
-                          onChange={(e) => update({ drops: { ...dropsCfg, interval_max: Number(e.target.value) || 5 } })}
-                        />
-                      </Field>
-                    </div>
-                    <Field label={t.dropsMessageLabel} hint={t.dropsMessageHint}>
-                      <input
-                        className={inputCls}
-                        value={dropsCfg.message ?? ''}
-                        maxLength={300}
-                        onChange={(e) => update({ drops: { ...dropsCfg, message: e.target.value || null } })}
-                      />
-                    </Field>
-                    <Field label={t.dropsChannelsLabel} hint={t.dropsChannelsHint}>
-                      <input
-                        className={inputCls}
-                        value={dropsCfg.channels.join(', ')}
-                        placeholder="123456789012345678, 987654321098765432"
-                        onChange={(e) =>
-                          update({
-                            drops: {
-                              ...dropsCfg,
-                              channels: e.target.value
-                                .split(',')
-                                .map((s) => s.trim())
-                                .filter((s) => /^\d{17,20}$/.test(s)),
+                <p className="mb-3 text-[10px] text-white/40">{t.dropsFreeNote}</p>
+                <div className="grid gap-3">
+                  {dropsCfg.list.map((drop, idx) => {
+                    const patchDrop = (p: Partial<(typeof dropsCfg.list)[number]>) =>
+                      update({ drops: { list: dropsCfg.list.map((d, i) => (i === idx ? { ...d, ...p } : d)) } });
+                    return (
+                      <div key={drop.id} className="rounded-xl border border-white/10 bg-black/30 p-3">
+                        <div className="mb-3 flex flex-wrap items-center gap-2">
+                          <code className="rounded bg-black/40 px-2 py-1 text-[11px] font-bold text-neon-blue">{drop.id}</code>
+                          <input
+                            className={`${inputCls} w-44`}
+                            value={drop.name}
+                            maxLength={50}
+                            onChange={(e) => patchDrop({ name: e.target.value })}
+                          />
+                          <Toggle on={drop.enabled} onChange={(v) => patchDrop({ enabled: v })} />
+                          <button
+                            type="button"
+                            onClick={() => update({ drops: { list: dropsCfg.list.filter((_, i) => i !== idx) } })}
+                            className="ml-auto rounded-lg border border-white/15 px-3 py-1.5 text-[10px] font-bold text-white/60 transition hover:border-red-400/50 hover:text-red-300"
+                          >
+                            {t.removeRow}
+                          </button>
+                        </div>
+                        <div className="grid gap-3 sm:grid-cols-2">
+                          <Field label={`${t.dropsMinLabel} / ${t.dropsMaxLabel}`}>
+                            <div className="flex gap-2">
+                              <input
+                                type="number"
+                                min={1}
+                                className={inputCls}
+                                value={drop.min}
+                                onChange={(e) => patchDrop({ min: Math.max(1, Number(e.target.value) || 1) })}
+                              />
+                              <input
+                                type="number"
+                                min={1}
+                                className={inputCls}
+                                value={drop.max}
+                                onChange={(e) => patchDrop({ max: Math.max(1, Number(e.target.value) || 1) })}
+                              />
+                            </div>
+                          </Field>
+                          <Field label={t.dropsIntervalLabel} hint={t.dropsIntervalHint}>
+                            <div className="flex gap-2">
+                              <input
+                                type="number"
+                                min={5}
+                                className={inputCls}
+                                value={drop.interval_min}
+                                onChange={(e) => patchDrop({ interval_min: Math.max(5, Number(e.target.value) || 5) })}
+                              />
+                              <input
+                                type="number"
+                                min={5}
+                                className={inputCls}
+                                value={drop.interval_max}
+                                onChange={(e) => patchDrop({ interval_max: Math.max(5, Number(e.target.value) || 5) })}
+                              />
+                            </div>
+                          </Field>
+                          <Field label={t.dropsMessageLabel} hint={t.dropsMessageHint}>
+                            <input
+                              className={inputCls}
+                              value={drop.message ?? ''}
+                              maxLength={300}
+                              onChange={(e) => patchDrop({ message: e.target.value || null })}
+                            />
+                          </Field>
+                          <Field label={t.dropsChannelsLabel} hint={t.dropsChannelsHint}>
+                            <input
+                              className={inputCls}
+                              value={drop.channels.join(', ')}
+                              placeholder="123456789012345678, 987654321098765432"
+                              onChange={(e) =>
+                                patchDrop({
+                                  channels: e.target.value
+                                    .split(',')
+                                    .map((s) => s.trim())
+                                    .filter((s) => /^\d{17,20}$/.test(s)),
+                                })
+                              }
+                            />
+                          </Field>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  <button
+                    type="button"
+                    disabled={!config.premium && dropsCfg.list.length >= 3}
+                    onClick={() => {
+                      const id = `drop${dropsCfg.list.length + 1}`;
+                      update({
+                        drops: {
+                          list: [
+                            ...dropsCfg.list,
+                            {
+                              id,
+                              name: `Drop ${dropsCfg.list.length + 1}`,
+                              enabled: false,
+                              channels: [],
+                              min: 50,
+                              max: 200,
+                              interval_min: 60,
+                              interval_max: 180,
+                              message: null,
+                              excluded_roles: [],
                             },
-                          })
-                        }
-                      />
-                    </Field>
-                    <p className="text-[10px] text-white/40">{t.dropsFreeNote}</p>
-                  </div>
-                )}
+                          ],
+                        },
+                      });
+                    }}
+                    className="w-fit rounded-lg border border-white/15 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-white/60 transition hover:border-neon-blue/60 hover:text-white disabled:opacity-40"
+                  >
+                    + {t.addRow}
+                  </button>
+                </div>
               </div>
-
               <Field label={t.invitePointsLabel} hint={t.invitePointsHint}>
                 <input
                   type="number"
@@ -2061,106 +2133,221 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           </section>
           )}
 
-          {view === 'community' && (
+          {view === 'starboard' && (
           <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
             <div className="mb-4 flex flex-wrap items-center gap-2">
               <h2 className="flex items-center gap-2 font-bold text-white">
-                <Icon name="people" size={18} className="text-neon-blue" /> {t.communityTitle}
+                <Icon name="star" size={18} className="text-amber-300" /> {t.starboardTitle}
               </h2>
-              <QuickHelp title={SECTION_HELP.community.title} commands={SECTION_HELP.community.commands} note={SECTION_HELP.community.note} />
+              <QuickHelp title={SECTION_HELP.starboard.title} commands={SECTION_HELP.starboard.commands} note={SECTION_HELP.starboard.note} />
               <Badge kind="free" dict={dict} />
               <SectionJson
                 disabled={dirty || busy}
                 disabledHint={t.jsonNeedSave}
                 exportLabel={t.jsonExport}
                 importLabel={t.jsonImport}
-                onExport={() => exportScope('community')}
-                onImport={(file) => void importFile(file, 'community')}
+                onExport={() => exportScope('starboard')}
+                onImport={(file) => void importFile(file, 'starboard')}
               />
             </div>
-            <p className="mb-5 text-xs text-white/45">{t.communityHint}</p>
-            <div className="grid gap-5">
-              {/* Starboard */}
-              <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                <p className="mb-3 flex items-center gap-2 text-sm font-bold text-white">
-                  <Icon name="star" size={15} className="text-amber-300" /> {t.starboardTitle}
-                </p>
-                <div className="grid gap-4 sm:grid-cols-3">
-                  {hasGuildData ? (
-                    <SelectField
-                      label={t.starboardChannelLabel}
-                      value={config.starboard_channel_id ?? null}
-                      placeholder={t.pickChannel}
-                      options={textChannelOptions}
-                      onChange={(v) => update({ starboard_channel_id: v })}
-                    />
-                  ) : (
-                    <Field label={t.starboardChannelLabel} hint={t.manualIdHint}>
-                      <input
-                        className={inputCls}
-                        placeholder="ID"
-                        value={config.starboard_channel_id ?? ''}
-                        onChange={(e) => update({ starboard_channel_id: e.target.value || null })}
-                      />
-                    </Field>
-                  )}
-                  <Field label={t.starboardEmojiLabel}>
-                    <input
-                      className={inputCls}
-                      value={config.starboard_emoji ?? '⭐'}
-                      maxLength={64}
-                      onChange={(e) => update({ starboard_emoji: e.target.value })}
-                    />
-                  </Field>
-                  <Field label={t.starboardMinLabel}>
-                    <input
-                      type="number"
-                      min={1}
-                      max={100}
-                      className={inputCls}
-                      value={config.starboard_min ?? 3}
-                      onChange={(e) => update({ starboard_min: Math.max(1, Number(e.target.value) || 1) })}
-                    />
-                  </Field>
-                </div>
-              </div>
-
-              {/* Nitro */}
-              <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
-                <div>
-                  <p className="text-sm font-semibold text-white/90">{t.nitroToggle}</p>
-                  <p className="text-xs text-white/50">{t.nitroToggleHint}</p>
-                </div>
-                <Toggle on={Boolean(config.nitro_repost_enabled)} onChange={(v) => update({ nitro_repost_enabled: v })} />
-              </div>
-
-              {/* Staff */}
-              <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                <p className="mb-3 flex items-center gap-2 text-sm font-bold text-white">
-                  <Icon name="shield" size={15} className="text-neon-blue" /> {t.staffRoleLabel}
-                </p>
-                {hasGuildData ? (
-                  <SelectField
-                    label={t.staffRoleLabel}
-                    hint={t.staffRoleHint}
-                    value={config.staff_role_id ?? null}
-                    placeholder={t.pickRole}
-                    options={roleOptions}
-                    onChange={(v) => update({ staff_role_id: v })}
+            <div className="grid gap-4 sm:grid-cols-3">
+              {hasGuildData ? (
+                <SelectField
+                  label={t.starboardChannelLabel}
+                  value={config.starboard_channel_id ?? null}
+                  placeholder={t.pickChannel}
+                  options={textChannelOptions}
+                  onChange={(v) => update({ starboard_channel_id: v })}
+                />
+              ) : (
+                <Field label={t.starboardChannelLabel} hint={t.manualIdHint}>
+                  <input
+                    className={inputCls}
+                    placeholder="ID"
+                    value={config.starboard_channel_id ?? ''}
+                    onChange={(e) => update({ starboard_channel_id: e.target.value || null })}
                   />
-                ) : (
-                  <Field label={t.staffRoleLabel} hint={t.manualIdHint}>
-                    <input
-                      className={inputCls}
-                      placeholder="ID"
-                      value={config.staff_role_id ?? ''}
-                      onChange={(e) => update({ staff_role_id: e.target.value || null })}
-                    />
-                  </Field>
-                )}
-              </div>
+                </Field>
+              )}
+              <Field label={t.starboardEmojiLabel}>
+                <input
+                  className={inputCls}
+                  value={config.starboard_emoji ?? '⭐'}
+                  maxLength={64}
+                  onChange={(e) => update({ starboard_emoji: e.target.value })}
+                />
+              </Field>
+              <Field label={t.starboardMinLabel}>
+                <input
+                  type="number"
+                  min={1}
+                  max={100}
+                  className={inputCls}
+                  value={config.starboard_min ?? 3}
+                  onChange={(e) => update({ starboard_min: Math.max(1, Number(e.target.value) || 1) })}
+                />
+              </Field>
             </div>
-            <HelpZone title={SECTION_HELP.community.title} commands={SECTION_HELP.community.commands} note={SECTION_HELP.community.note} />
+            <HelpZone title={SECTION_HELP.starboard.title} commands={SECTION_HELP.starboard.commands} note={SECTION_HELP.starboard.note} />
+          </section>
+          )}
+
+          {view === 'nitro' && (
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <h2 className="flex items-center gap-2 font-bold text-white">
+                <Icon name="star" size={18} className="text-neon-pink" /> {t.nitroToggle}
+              </h2>
+              <QuickHelp title={SECTION_HELP.nitro.title} commands={SECTION_HELP.nitro.commands} note={SECTION_HELP.nitro.note} />
+              <Badge kind="free" dict={dict} />
+              <SectionJson
+                disabled={dirty || busy}
+                disabledHint={t.jsonNeedSave}
+                exportLabel={t.jsonExport}
+                importLabel={t.jsonImport}
+                onExport={() => exportScope('nitro')}
+                onImport={(file) => void importFile(file, 'nitro')}
+              />
+            </div>
+            <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
+              <div>
+                <p className="text-sm font-semibold text-white/90">{t.nitroToggle}</p>
+                <p className="text-xs text-white/50">{t.nitroToggleHint}</p>
+              </div>
+              <Toggle on={Boolean(config.nitro_repost_enabled)} onChange={(v) => update({ nitro_repost_enabled: v })} />
+            </div>
+            <HelpZone title={SECTION_HELP.nitro.title} commands={SECTION_HELP.nitro.commands} note={SECTION_HELP.nitro.note} />
+          </section>
+          )}
+
+          {view === 'staff' && (
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <h2 className="flex items-center gap-2 font-bold text-white">
+                <Icon name="shield" size={18} className="text-neon-blue" /> {t.staffRoleLabel}
+              </h2>
+              <QuickHelp title={SECTION_HELP.staff.title} commands={SECTION_HELP.staff.commands} note={SECTION_HELP.staff.note} />
+              <Badge kind="free" dict={dict} />
+              <SectionJson
+                disabled={dirty || busy}
+                disabledHint={t.jsonNeedSave}
+                exportLabel={t.jsonExport}
+                importLabel={t.jsonImport}
+                onExport={() => exportScope('staff')}
+                onImport={(file) => void importFile(file, 'staff')}
+              />
+            </div>
+            <p className="mb-4 text-xs text-white/45">{t.staffRoleHint}</p>
+            {hasGuildData ? (
+              <SelectField
+                label={t.staffRoleLabel}
+                hint={t.staffRoleHint}
+                value={config.staff_role_id ?? null}
+                placeholder={t.pickRole}
+                options={roleOptions}
+                onChange={(v) => update({ staff_role_id: v })}
+              />
+            ) : (
+              <Field label={t.staffRoleLabel} hint={t.manualIdHint}>
+                <input
+                  className={inputCls}
+                  placeholder="ID"
+                  value={config.staff_role_id ?? ''}
+                  onChange={(e) => update({ staff_role_id: e.target.value || null })}
+                />
+              </Field>
+            )}
+            <HelpZone title={SECTION_HELP.staff.title} commands={SECTION_HELP.staff.commands} note={SECTION_HELP.staff.note} />
+          </section>
+          )}
+
+          {view === 'stats' && (
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <h2 className="flex items-center gap-2 font-bold text-white">
+                <Icon name="chart-bar" size={18} className="text-neon-blue" /> {t.statsTitle}
+              </h2>
+              <QuickHelp title={SECTION_HELP.stats.title} commands={SECTION_HELP.stats.commands} note={SECTION_HELP.stats.note} />
+              <Badge kind="free" dict={dict} />
+              <SectionJson
+                disabled={dirty || busy}
+                disabledHint={t.jsonNeedSave}
+                exportLabel={t.jsonExport}
+                importLabel={t.jsonImport}
+                onExport={() => exportScope('stats')}
+                onImport={(file) => void importFile(file, 'stats')}
+              />
+            </div>
+            <p className="mb-5 text-xs text-white/45">{t.statsHint}</p>
+            <div className="grid gap-2">
+              {((config.counters ?? []) as { type: string; channel_id: string }[]).map((row, idx) => (
+                <div key={`${row.type}-${idx}`} className="flex flex-wrap items-center gap-2">
+                  <select
+                    className={`${inputCls} w-40`}
+                    value={row.type}
+                    onChange={(e) => {
+                      const next = (config.counters ?? []).map((r, i) => (i === idx ? { ...r, type: e.target.value } : r));
+                      update({ counters: next });
+                    }}
+                  >
+                    {['members', 'bots', 'humans', 'channels', 'roles', 'online'].map((opt) => (
+                      <option key={opt} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
+                  </select>
+                  {hasGuildData ? (
+                    <select
+                      className={`${inputCls} w-56`}
+                      value={row.channel_id}
+                      onChange={(e) => {
+                        const next = (config.counters ?? []).map((r, i) => (i === idx ? { ...r, channel_id: e.target.value } : r));
+                        update({ counters: next });
+                      }}
+                    >
+                      {voiceChannelOptions.map((opt) => (
+                        <option key={opt.id} value={opt.id}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      className={`${inputCls} w-56`}
+                      placeholder="ID del canal de voz"
+                      value={row.channel_id}
+                      onChange={(e) => {
+                        const next = (config.counters ?? []).map((r, i) => (i === idx ? { ...r, channel_id: e.target.value } : r));
+                        update({ counters: next });
+                      }}
+                    />
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => update({ counters: (config.counters ?? []).filter((_, i) => i !== idx) })}
+                    className="rounded-lg border border-white/15 px-3 py-1.5 text-[10px] font-bold text-white/60 transition hover:border-red-400/50 hover:text-red-300"
+                  >
+                    {t.removeRow}
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                disabled={!hasGuildData || voiceChannelOptions.length === 0}
+                onClick={() =>
+                  update({
+                    counters: [
+                      ...(config.counters ?? []),
+                      { type: 'members', channel_id: voiceChannelOptions[0]?.id ?? '' },
+                    ],
+                  })
+                }
+                className="w-fit rounded-lg border border-white/15 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-white/60 transition hover:border-neon-blue/60 hover:text-white disabled:opacity-40"
+              >
+                + {t.addRow}
+              </button>
+            </div>
+            <HelpZone title={SECTION_HELP.stats.title} commands={SECTION_HELP.stats.commands} note={SECTION_HELP.stats.note} />
           </section>
           )}
 
@@ -2673,179 +2860,128 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 </div>
               </div>
             </div>
+            {/* Sistema de tickets clásico + extras del servidor (fusionado) */}
+            <div className="mt-6 rounded-xl border border-white/10 bg-black/20 p-4">
+              <p className="mb-3 flex items-center gap-2 text-sm font-bold text-white">
+                <Icon name="support" size={15} className="text-neon-blue" /> {t.extrasTitle}
+              </p>
+              <div className="grid gap-4">
+                <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
+                  <div>
+                    <p className="text-sm font-semibold text-white/90">{t.ticketsToggle}</p>
+                    <p className="text-xs text-white/50">{t.ticketsToggleHint}</p>
+                  </div>
+                  <Toggle on={Boolean(config.tickets_enabled)} onChange={(v) => update({ tickets_enabled: v })} />
+                </div>
+                <div className="grid gap-4 sm:grid-cols-3">
+                  {hasGuildData ? (
+                    <SelectField
+                      label={t.ticketCategoryLabel}
+                      value={config.tickets_category_id ?? null}
+                      placeholder={t.pickCategory}
+                      options={categoryOptions}
+                      onChange={(v) => update({ tickets_category_id: v })}
+                    />
+                  ) : (
+                    <Field label={t.ticketCategoryLabel} hint={t.manualIdHint}>
+                      <input className={inputCls} value={config.tickets_category_id ?? ''} onChange={(e) => update({ tickets_category_id: e.target.value || null })} />
+                    </Field>
+                  )}
+                  {hasGuildData ? (
+                    <SelectField
+                      label={t.ticketRoleLabel}
+                      value={config.tickets_role_id ?? null}
+                      placeholder={t.pickRole}
+                      options={roleOptions}
+                      onChange={(v) => update({ tickets_role_id: v })}
+                    />
+                  ) : (
+                    <Field label={t.ticketRoleLabel} hint={t.manualIdHint}>
+                      <input className={inputCls} value={config.tickets_role_id ?? ''} onChange={(e) => update({ tickets_role_id: e.target.value || null })} />
+                    </Field>
+                  )}
+                  {hasGuildData ? (
+                    <SelectField
+                      label={t.logsChannelLabel}
+                      value={config.logs_channel_id ?? null}
+                      placeholder={t.pickChannel}
+                      options={textChannelOptions}
+                      onChange={(v) => update({ logs_channel_id: v })}
+                    />
+                  ) : (
+                    <Field label={t.logsChannelLabel} hint={t.manualIdHint}>
+                      <input className={inputCls} value={config.logs_channel_id ?? ''} onChange={(e) => update({ logs_channel_id: e.target.value || null })} />
+                    </Field>
+                  )}
+                </div>
+                <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
+                  <div>
+                    <p className="text-sm font-semibold text-white/90">{t.privateToggle}</p>
+                    <p className="text-xs text-white/50">{t.privateToggleHint}</p>
+                  </div>
+                  <Toggle on={Boolean(config.private_channels)} onChange={(v) => update({ private_channels: v })} />
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {hasGuildData ? (
+                    <SelectField
+                      label={t.privateCategoryLabel}
+                      value={config.private_category_id ?? null}
+                      placeholder={t.pickCategory}
+                      options={categoryOptions}
+                      onChange={(v) => update({ private_category_id: v })}
+                    />
+                  ) : (
+                    <Field label={t.privateCategoryLabel} hint={t.manualIdHint}>
+                      <input className={inputCls} value={config.private_category_id ?? ''} onChange={(e) => update({ private_category_id: e.target.value || null })} />
+                    </Field>
+                  )}
+                  {hasGuildData ? (
+                    <SelectField
+                      label={t.musicChannelLabel}
+                      hint={t.musicChannelHint}
+                      value={config.music_channel_id ?? null}
+                      placeholder={t.pickChannel}
+                      options={textChannelOptions}
+                      onChange={(v) => update({ music_channel_id: v })}
+                    />
+                  ) : (
+                    <Field label={t.musicChannelLabel} hint={t.manualIdHint}>
+                      <input className={inputCls} value={config.music_channel_id ?? ''} onChange={(e) => update({ music_channel_id: e.target.value || null })} />
+                    </Field>
+                  )}
+                  {hasGuildData ? (
+                    <SelectField
+                      label={t.muteRoleLabel}
+                      value={config.mute_role_id ?? null}
+                      placeholder={t.pickRole}
+                      options={roleOptions}
+                      onChange={(v) => update({ mute_role_id: v })}
+                    />
+                  ) : (
+                    <Field label={t.muteRoleLabel} hint={t.manualIdHint}>
+                      <input className={inputCls} value={config.mute_role_id ?? ''} onChange={(e) => update({ mute_role_id: e.target.value || null })} />
+                    </Field>
+                  )}
+                  {hasGuildData ? (
+                    <SelectField
+                      label={t.privateVcHubLabel}
+                      value={config.private_vc_hub_id ?? null}
+                      placeholder={t.pickVoice}
+                      options={voiceChannelOptions}
+                      onChange={(v) => update({ private_vc_hub_id: v })}
+                    />
+                  ) : (
+                    <Field label={t.privateVcHubLabel} hint={t.manualIdHint}>
+                      <input className={inputCls} value={config.private_vc_hub_id ?? ''} onChange={(e) => update({ private_vc_hub_id: e.target.value || null })} />
+                    </Field>
+                  )}
+                </div>
+              </div>
+            </div>
             <HelpZone title={SECTION_HELP.tickets.title} commands={SECTION_HELP.tickets.commands} note={SECTION_HELP.tickets.note} />
           </section>
           )}
 
-          {view === 'extras' && (
-          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <div className="mb-4 flex flex-wrap items-center gap-2">
-              <h2 className="flex items-center gap-2 font-bold text-white">
-                <Icon name="support" size={18} className="text-neon-blue" /> {t.extrasTitle}
-              </h2>
-              <QuickHelp title={SECTION_HELP.extras.title} commands={SECTION_HELP.extras.commands} note={SECTION_HELP.extras.note} />
-              <Badge kind="premium" dict={dict} />
-              <PermWarning
-                perms={guildData?.botPermissions}
-                bit={16}
-                label={t.permManageChannels}
-                missing={t.permMissing}
-                href={`${INVITE_URL}&guild_id=${guildId}`}
-              />
-              <SectionJson
-                disabled={dirty || busy}
-                disabledHint={t.jsonNeedSave}
-                exportLabel={t.jsonExport}
-                importLabel={t.jsonImport}
-                onExport={() => exportScope('extras')}
-                onImport={(file) => void importFile(file, 'extras')}
-              />
-            </div>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
-                <div>
-                  <p className="text-sm font-semibold text-white/90">{t.ticketsToggle}</p>
-                  <p className="text-xs text-white/50">{t.ticketsToggleHint}</p>
-                </div>
-                <Toggle
-                  on={Boolean(config.tickets_enabled)}
-                  onChange={(v) => update({ tickets_enabled: v })}
-                />
-              </div>
-              <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
-                <div>
-                  <p className="text-sm font-semibold text-white/90">{t.privateToggle}</p>
-                  <p className="text-xs text-white/50">{t.privateToggleHint}</p>
-                </div>
-                <Toggle
-                  on={Boolean(config.private_channels)}
-                  onChange={(v) => update({ private_channels: v })}
-                />
-              </div>
-              <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
-                <div>
-                  <p className="text-sm font-semibold text-white/90">{t.automodToggle}</p>
-                  <p className="text-xs text-white/50">{t.automodToggleHint}</p>
-                </div>
-                <Toggle
-                  on={Boolean(config.automod_enabled)}
-                  onChange={(v) => update({ automod_enabled: v })}
-                />
-              </div>
-              <div className="grid gap-5">
-                {hasGuildData ? (
-                  <SelectField
-                    label={t.ticketCategoryLabel}
-                    value={config.tickets_category_id}
-                    placeholder={t.pickCategory}
-                    options={categoryOptions}
-                    onChange={(v) => update({ tickets_category_id: v })}
-                  />
-                ) : (
-                  <Field label={t.ticketCategoryLabel} hint={t.manualIdHint}>
-                    <input
-                      className={inputCls}
-                      placeholder="ID"
-                      value={config.tickets_category_id ?? ''}
-                      onChange={(e) => update({ tickets_category_id: e.target.value || null })}
-                    />
-                  </Field>
-                )}
-                {hasGuildData ? (
-                  <SelectField
-                    label={t.ticketRoleLabel}
-                    value={config.tickets_role_id}
-                    placeholder={t.pickRole}
-                    options={roleOptions}
-                    onChange={(v) => update({ tickets_role_id: v })}
-                  />
-                ) : (
-                  <Field label={t.ticketRoleLabel} hint={t.manualIdHint}>
-                    <input
-                      className={inputCls}
-                      placeholder="ID"
-                      value={config.tickets_role_id ?? ''}
-                      onChange={(e) => update({ tickets_role_id: e.target.value || null })}
-                    />
-                  </Field>
-                )}
-                {hasGuildData ? (
-                  <SelectField
-                    label={t.privateCategoryLabel}
-                    value={config.private_category_id}
-                    placeholder={t.pickCategory}
-                    options={categoryOptions}
-                    onChange={(v) => update({ private_category_id: v })}
-                  />
-                ) : (
-                  <Field label={t.privateCategoryLabel} hint={t.manualIdHint}>
-                    <input
-                      className={inputCls}
-                      placeholder="ID"
-                      value={config.private_category_id ?? ''}
-                      onChange={(e) => update({ private_category_id: e.target.value || null })}
-                    />
-                  </Field>
-                )}
-                {hasGuildData ? (
-                  <SelectField
-                    label={t.musicChannelLabel}
-                    hint={t.musicChannelHint}
-                    value={config.music_channel_id}
-                    placeholder={t.pickVoice}
-                    options={[...voiceChannelOptions, ...textChannelOptions]}
-                    onChange={(v) => update({ music_channel_id: v })}
-                  />
-                ) : (
-                  <Field label={t.musicChannelLabel} hint={t.musicChannelHint}>
-                    <input
-                      className={inputCls}
-                      placeholder="ID"
-                      value={config.music_channel_id ?? ''}
-                      onChange={(e) => update({ music_channel_id: e.target.value || null })}
-                    />
-                  </Field>
-                )}
-                {hasGuildData ? (
-                  <SelectField
-                    label={t.muteRoleLabel}
-                    value={config.mute_role_id}
-                    placeholder={t.pickRole}
-                    options={roleOptions}
-                    onChange={(v) => update({ mute_role_id: v })}
-                  />
-                ) : (
-                  <Field label={t.muteRoleLabel} hint={t.manualIdHint}>
-                    <input
-                      className={inputCls}
-                      placeholder="ID"
-                      value={config.mute_role_id ?? ''}
-                      onChange={(e) => update({ mute_role_id: e.target.value || null })}
-                    />
-                  </Field>
-                )}
-              </div>
-              {hasGuildData ? (
-                <SelectField
-                  label={t.logsChannelLabel}
-                  value={config.logs_channel_id}
-                  placeholder={t.pickChannel}
-                  options={textChannelOptions}
-                  onChange={(v) => update({ logs_channel_id: v })}
-                />
-              ) : (
-                <Field label={t.logsChannelLabel} hint={t.manualIdHint}>
-                  <input
-                    className={inputCls}
-                    placeholder="ID"
-                    value={config.logs_channel_id ?? ''}
-                    onChange={(e) => update({ logs_channel_id: e.target.value || null })}
-                  />
-                </Field>
-              )}
-            </div>
-          </section>
-          )}
           </div>
         </div>
       </div>
