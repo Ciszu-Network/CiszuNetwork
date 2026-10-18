@@ -97,7 +97,7 @@ async function getGiveaway(id: string) {
 
 async function getParticipants(giveawayId: string) {
   const table = ciszubotSchema.giveawayParticipants;
-  return db.select().from(table).where(eq(table.giveawayId, giveawayId));
+  return db.select().from(table).where(eq(table.giveawayId, giveawayId)).limit(500);
 }
 
 async function isBanned(giveawayId: string, userId: string): Promise<boolean> {
@@ -219,7 +219,7 @@ async function pickWinners(guildId: string, giveawayId: string, count: number, e
     for (let i = 0; i < Math.max(1, p.entries); i++) pool.push(p.userId);
   }
   const bans = ciszubotSchema.giveawayBans;
-  const bannedRows = await db.select({ userId: bans.userId }).from(bans).where(eq(bans.giveawayId, giveawayId));
+  const bannedRows = await db.select({ userId: bans.userId }).from(bans).where(eq(bans.giveawayId, giveawayId)).limit(500);
   const banned = new Set(bannedRows.map((b) => b.userId));
 
   const winners: string[] = [];

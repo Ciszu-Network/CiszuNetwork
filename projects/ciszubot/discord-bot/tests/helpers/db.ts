@@ -49,23 +49,31 @@ export function createDbProxy<T>(): T {
   });
 }
 
-export function createDb(data: unknown = null, error: unknown = null) {
+export function createDb(data: unknown = null, error: unknown = null, selectSequence?: unknown[]) {
   const resolveValue = { data, error };
-  const rows = () => {
+  // Secuencia opcional de resultados de SELECT: cada `db.select()` consume el
+  // siguiente dataset (útil cuando el servicio hace varias consultas distintas
+  // en una misma operación: sorteo → participantes → vetados…). Si se acaba la
+  // secuencia, se usa `data` como hasta ahora.
+  let selectIndex = 0;
+  const rowsFor = (d: unknown) => {
     if (error) throw error;
-    if (Array.isArray(data)) return data;
-    return data === null ? [] : [data];
+    if (Array.isArray(d)) return d;
+    return d === null || d === undefined ? [] : [d];
   };
+  const rows = () => rowsFor(data);
 
   // Query de SELECT encadenable + thenable (terminal en .limit())
   const query = () => {
+    const d = selectSequence && selectIndex < selectSequence.length ? selectSequence[selectIndex++] : data;
+    const rr = () => rowsFor(d);
     const q: Record<string, ReturnType<typeof vi.fn>> & { limit: ReturnType<typeof vi.fn> } = {
-      limit: vi.fn((_n: number) => Promise.resolve(rows())),
+      limit: vi.fn((_n: number) => Promise.resolve(rr())),
     };
     for (const m of ['from', 'where', 'orderBy', 'offset']) {
       (q as Record<string, unknown>)[m] = vi.fn(() => q);
     }
-    return Object.assign(Promise.resolve(rows()), q);
+    return Object.assign(Promise.resolve(rr()), q);
   };
 
   // Insert: insert(tabla) → values() → onConflictDoUpdate() | await directo
