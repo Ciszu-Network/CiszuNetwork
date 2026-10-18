@@ -83,6 +83,12 @@ export const guildConfigs = ciszubot.table(
     marriageEnabled: boolean('marriage_enabled').notNull().default(true),
     marriageAllowAdminPairs: boolean('marriage_allow_admin_pairs').notNull().default(true),
     commandGlobalCooldown: integer('command_global_cooldown').notNull().default(3),
+    countingEnabled: boolean('counting_enabled').notNull().default(false),
+    countingChannelId: text('counting_channel_id'),
+    countingStart: integer('counting_start').notNull().default(0),
+    countingStyle: text('counting_style').notNull().default('traditional'),
+    countingAllowRepeat: boolean('counting_allow_repeat').notNull().default(false),
+    countingAuthenticity: text('counting_authenticity').notNull().default('dependent'),
     marriageExcludedRoleIds: jsonb('marriage_excluded_role_ids').notNull().default([]),
     nitroRepostMode: text('nitro_repost_mode').notNull().default('auto'),
     nitroExcludedRoleIds: jsonb('nitro_excluded_role_ids').notNull().default([]),
@@ -498,3 +504,16 @@ export const botActions = ciszubot.table(
   },
   (t) => [index('idx_bot_actions_pending').on(t.processed, t.createdAt)]
 );
+
+/** Estado del canal contador por servidor (conteo actual + reto de suma). */
+export const countingState = ciszubot.table('counting_state', {
+  guildId: text('guild_id').primaryKey(),
+  channelId: text('channel_id'),
+  currentCount: integer('current_count').notNull().default(0),
+  lastUserId: text('last_user_id'),
+  lastMessageId: text('last_message_id'),
+  challengeA: integer('challenge_a'),
+  challengeB: integer('challenge_b'),
+  startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});

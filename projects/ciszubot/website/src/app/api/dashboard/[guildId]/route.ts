@@ -133,6 +133,12 @@ const guildConfigPatchSchema = z.object({
   afk_role_id: z.string().min(1).nullable().optional(),
   afk_prefix_enabled: z.boolean().optional(),
   afk_auto_minutes: z.number().int().min(0).max(1440).optional(),
+  counting_enabled: z.boolean().optional(),
+  counting_channel_id: z.string().max(32).nullable().optional(),
+  counting_start: z.number().int().min(0).max(1000000).optional(),
+  counting_style: z.enum(['traditional', 'sum']).optional(),
+  counting_allow_repeat: z.boolean().optional(),
+  counting_authenticity: z.enum(['solo', 'dependent']).optional(),
   marriage_enabled: z.boolean().optional(),
   marriage_allow_admin_pairs: z.boolean().optional(),
   command_global_cooldown: z.number().int().min(0).max(60).optional(),
@@ -235,6 +241,12 @@ interface GuildConfig {
   afk_role_id?: string | null;
   afk_prefix_enabled?: boolean;
   afk_auto_minutes?: number;
+  counting_enabled?: boolean;
+  counting_channel_id?: string | null;
+  counting_start?: number;
+  counting_style?: 'traditional' | 'sum';
+  counting_allow_repeat?: boolean;
+  counting_authenticity?: 'solo' | 'dependent';
   marriage_enabled?: boolean;
   marriage_allow_admin_pairs?: boolean;
   command_global_cooldown?: number;
@@ -323,8 +335,8 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
   }
   const body = parsed.data as Partial<GuildConfig>;
   const allowed: Record<string, unknown> = {};
-  const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id', 'coin_emoji', 'coin_name', 'staff_role_id', 'level_message', 'starboard_channel_id', 'starboard_emoji', 'private_vc_hub_id', 'history_channel_id', 'afk_role_id'];
-  const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled', 'nitro_repost_enabled', 'history_enabled', 'afk_prefix_enabled', 'marriage_enabled', 'marriage_allow_admin_pairs'];
+  const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id', 'coin_emoji', 'coin_name', 'staff_role_id', 'level_message', 'starboard_channel_id', 'starboard_emoji', 'private_vc_hub_id', 'history_channel_id', 'afk_role_id', 'counting_channel_id', 'counting_style', 'counting_authenticity'];
+  const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled', 'nitro_repost_enabled', 'history_enabled', 'afk_prefix_enabled', 'marriage_enabled', 'marriage_allow_admin_pairs', 'counting_enabled', 'counting_allow_repeat'];
 
   for (const key of stringFields) {
     if (body[key] !== undefined) allowed[key] = String(body[key]);
@@ -335,6 +347,10 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
   if (body.xp_rate !== undefined) {
     const rate = Number(body.xp_rate);
     if (rate >= 0.1 && rate <= 10) allowed.xp_rate = rate;
+  }
+  if (body.counting_start !== undefined) {
+    const value = Number(body.counting_start);
+    if (Number.isFinite(value) && value >= 0 && value <= 1000000) allowed.counting_start = Math.round(value);
   }
   if (body.command_global_cooldown !== undefined) {
     const value = Number(body.command_global_cooldown);
@@ -475,6 +491,12 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     marriage_enabled: 'marriageEnabled',
     marriage_allow_admin_pairs: 'marriageAllowAdminPairs',
     command_global_cooldown: 'commandGlobalCooldown',
+    counting_enabled: 'countingEnabled',
+    counting_channel_id: 'countingChannelId',
+    counting_start: 'countingStart',
+    counting_style: 'countingStyle',
+    counting_allow_repeat: 'countingAllowRepeat',
+    counting_authenticity: 'countingAuthenticity',
     marriage_excluded_role_ids: 'marriageExcludedRoleIds',
     nitro_repost_mode: 'nitroRepostMode',
     nitro_excluded_role_ids: 'nitroExcludedRoleIds',

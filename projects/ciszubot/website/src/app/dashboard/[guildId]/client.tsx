@@ -73,6 +73,12 @@ interface GuildConfig {
   marriage_enabled?: boolean;
   marriage_allow_admin_pairs?: boolean;
   command_global_cooldown?: number;
+  counting_enabled?: boolean;
+  counting_channel_id?: string | null;
+  counting_start?: number;
+  counting_style?: 'traditional' | 'sum';
+  counting_allow_repeat?: boolean;
+  counting_authenticity?: 'solo' | 'dependent';
   marriage_excluded_role_ids?: string[];
   nitro_repost_mode?: 'auto' | 'manual';
   nitro_excluded_role_ids?: string[];
@@ -125,7 +131,7 @@ interface GuildConfig {
   premium?: boolean;
 }
 
-type SectionKey = 'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history' | `feat:${string}`;
+type SectionKey = 'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history' | `feat:${string}`;
 type PartialConfig = Partial<GuildConfig>;
 
 /** Payload de un export JSON (vista previa + descarga). */
@@ -162,7 +168,7 @@ const SUB_TOGGLES: Record<string, { slug: string; labelKey: keyof Dict['guildPag
   ],
 };
 
-const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history', (keyof GuildConfig)[]> = {
+const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history', (keyof GuildConfig)[]> = {
   general: ['prefix', 'lang', 'staff_role_id', 'owner_role_ids', 'admin_role_ids', 'mod_role_ids', 'bot_role_ids', 'mute_role_id'],
   messages: [],
   levels: ['leveling_enabled', 'level_channel_id', 'xp_rate', 'level_message', 'level_roles'],
@@ -170,6 +176,7 @@ const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'good
   goodbye: ['goodbye_channel_id', 'goodbye_message'],
   invites: ['invite_points_per', 'invite_rewards'],
   vcs: ['private_channels', 'private_category_id', 'private_vc_hub_id'],
+  counting: ['counting_enabled', 'counting_channel_id', 'counting_start', 'counting_style', 'counting_allow_repeat', 'counting_authenticity'],
   history: ['history_enabled', 'history_channel_id'],
   economy: ['coin_emoji', 'coin_name', 'drops', 'invite_points_per'],
   starboard: ['starboard_channel_id', 'starboard_emoji', 'starboard_min'],
@@ -526,6 +533,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     | 'goodbye'
     | 'invites'
     | 'vcs'
+    | 'counting'
     | 'economy'
     | 'starboard'
     | 'nitro'
@@ -541,7 +549,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     const saved = localStorage.getItem('cz-dash-view') as GuildView | null;
     if (
       saved &&
-      (['general', 'messages', 'levels', 'welcome', 'goodbye', 'economy', 'starboard', 'nitro', 'staff', 'invites', 'vcs', 'automod', 'alliance', 'tickets', 'stats', 'history'].includes(saved) ||
+      (['general', 'messages', 'levels', 'welcome', 'goodbye', 'economy', 'starboard', 'nitro', 'staff', 'invites', 'vcs', 'counting', 'automod', 'alliance', 'tickets', 'stats', 'history'].includes(saved) ||
         saved.startsWith('feat:'))
     ) {
       setView(saved);
@@ -617,6 +625,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     { key: 'goodbye', icon: 'logout', label: 'subnavGoodbye', tag: 'free' },
     { key: 'invites', icon: 'address-book', label: 'subnavInvites', tag: 'free' },
     { key: 'vcs', icon: 'cast', label: 'subnavVcs', tag: 'free' },
+    { key: 'counting', icon: 'calculator', label: 'subnavCounting', tag: 'free' },
     { key: 'history', icon: 'verified', label: 'subnavHistory', tag: 'free' },
   ];
 
@@ -853,6 +862,12 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         marriage_enabled: cfg?.marriage_enabled ?? true,
         marriage_allow_admin_pairs: cfg?.marriage_allow_admin_pairs ?? true,
         command_global_cooldown: cfg?.command_global_cooldown ?? 3,
+        counting_enabled: cfg?.counting_enabled ?? false,
+        counting_channel_id: cfg?.counting_channel_id ?? null,
+        counting_start: cfg?.counting_start ?? 0,
+        counting_style: cfg?.counting_style ?? 'traditional',
+        counting_allow_repeat: cfg?.counting_allow_repeat ?? false,
+        counting_authenticity: cfg?.counting_authenticity ?? 'dependent',
         marriage_excluded_role_ids: Array.isArray(cfg?.marriage_excluded_role_ids) ? cfg.marriage_excluded_role_ids : [],
         nitro_repost_mode: cfg?.nitro_repost_mode ?? 'auto',
         nitro_excluded_role_ids: Array.isArray(cfg?.nitro_excluded_role_ids) ? cfg.nitro_excluded_role_ids : [],
@@ -2881,6 +2896,97 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               </div>
             </div>
             <HelpZone title={SECTION_HELP.vcs.title} commands={SECTION_HELP.vcs.commands} note={SECTION_HELP.vcs.note} />
+          </section>
+          )}
+
+          {view === 'counting' && (
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <h2 className="flex items-center gap-2 font-bold text-white">
+                <Icon name="calculator" size={18} className="text-neon-blue" /> {t.countingTitle}
+              </h2>
+              <QuickHelp title={SECTION_HELP.counting.title} commands={SECTION_HELP.counting.commands} note={SECTION_HELP.counting.note} />
+              <Badge kind="free" dict={dict} />
+              <SectionJson
+                disabled={dirty || busy}
+                disabledHint={t.jsonNeedSave}
+                exportLabel={t.jsonExport}
+                importLabel={t.jsonImport}
+                onExport={() => exportScope('counting')}
+                onImport={(file) => void importFile(file, 'counting')}
+              />
+            </div>
+            <p className="mb-4 text-xs text-white/45">{t.countingHint}</p>
+            <div className="grid gap-5">
+              <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
+                <div>
+                  <p className="text-sm font-semibold text-white/90">{t.countingToggle}</p>
+                  <p className="text-xs text-white/50">{t.countingToggleHint}</p>
+                </div>
+                <Toggle on={Boolean(config.counting_enabled)} onChange={(v) => update({ counting_enabled: v })} />
+              </div>
+              {config.counting_enabled && (
+                <div className="grid gap-4">
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {hasGuildData ? (
+                      <SelectField
+                        label={t.countingChannelLabel}
+                        value={config.counting_channel_id ?? null}
+                        placeholder={t.pickChannel}
+                        options={textChannelOptions}
+                        onChange={(v) => update({ counting_channel_id: v })}
+                      />
+                    ) : (
+                      <Field label={t.countingChannelLabel} hint={t.manualIdHint}>
+                        <input
+                          className={inputCls}
+                          value={config.counting_channel_id ?? ''}
+                          onChange={(e) => update({ counting_channel_id: e.target.value || null })}
+                        />
+                      </Field>
+                    )}
+                    <Field label={t.countingStartLabel} hint={t.countingStartHint}>
+                      <input
+                        type="number"
+                        min={0}
+                        max={1000000}
+                        className={inputCls}
+                        value={config.counting_start ?? 0}
+                        onChange={(e) => update({ counting_start: Math.max(0, Number(e.target.value) || 0) })}
+                      />
+                    </Field>
+                  </div>
+                  <Field label={t.countingStyleLabel} hint={t.countingStyleHint}>
+                    <NiceSelect
+                      value={config.counting_style ?? 'traditional'}
+                      options={[
+                        { id: 'traditional', label: t.countingStyleTraditional },
+                        { id: 'sum', label: t.countingStyleSum },
+                      ]}
+                      onChange={(v) => update({ counting_style: v as 'traditional' | 'sum' })}
+                    />
+                  </Field>
+                  <Field label={t.countingAuthLabel} hint={t.countingAuthHint}>
+                    <NiceSelect
+                      value={config.counting_authenticity ?? 'dependent'}
+                      options={[
+                        { id: 'solo', label: t.countingAuthSolo },
+                        { id: 'dependent', label: t.countingAuthDependent },
+                      ]}
+                      onChange={(v) => update({ counting_authenticity: v as 'solo' | 'dependent' })}
+                    />
+                  </Field>
+                  <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
+                    <div>
+                      <p className="text-sm font-semibold text-white/90">{t.countingRepeatLabel}</p>
+                      <p className="text-xs text-white/50">{t.countingRepeatHint}</p>
+                    </div>
+                    <Toggle on={Boolean(config.counting_allow_repeat)} onChange={(v) => update({ counting_allow_repeat: v })} />
+                  </div>
+                </div>
+              )}
+            </div>
+            <HelpZone title={SECTION_HELP.counting.title} commands={SECTION_HELP.counting.commands} note={SECTION_HELP.counting.note} />
           </section>
           )}
 

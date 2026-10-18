@@ -98,6 +98,11 @@ export const SECTION_HELP: Record<string, SectionHelp> = {
     commands: byNames(['privatevc', 'closeprivate']),
     note: 'Hub de voz + panel: bloquear, ocultar, renombrar, límite y eliminar.',
   },
+  counting: {
+    title: 'Comandos del contador',
+    commands: byNames(['contador']),
+    note: 'cz!contador muestra el estado; cz!contador reset reinicia y cz!contador iniciar anuncia el arranque (staff).',
+  },
   invites: {
     title: 'Comandos de invitaciones',
     commands: byNames(['invites']),

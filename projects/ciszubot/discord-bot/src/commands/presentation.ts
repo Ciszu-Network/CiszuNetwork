@@ -131,7 +131,41 @@ const present = (): BotCommand => ({
     .setDescription('Presenta a un usuario')
     .addUserOption((o) => o.setName('usuario').setDescription('Usuario a presentar').setRequired(false)),
   async execute(message, args) {
-    const target = message.mentions?.users?.first() ?? message.author;
+    const target = message.mentions?.users?.first();
+    if (!target) {
+      // El bot se presenta a sí mismo, con un resumen de estado estilo humano.
+      const client = message.client;
+      const guilds = client.guilds.cache.size;
+      const members = client.guilds.cache.reduce((acc, g) => acc + (g.memberCount ?? 0), 0);
+      const uptimeMs = client.uptime ?? 0;
+      const days = Math.floor(uptimeMs / 86_400_000);
+      const hours = Math.floor((uptimeMs % 86_400_000) / 3_600_000);
+      const moods = [
+        'Hoy me siento genial acompañando a la comunidad 🎉',
+        'Ando con mucha energía, listo para lo que pidan ⚡',
+        'Tranquilo pero atento, como siempre 😌',
+      ];
+      const mood = moods[new Date().getDate() % moods.length];
+      const embed = new EmbedBuilder()
+        .setColor(BOT_COLORS.primary)
+        .setTitle('👋 ¡Hola! Soy CiszuBot')
+        .setThumbnail(BOT_ASSETS.isotype)
+        .setDescription(
+          `Un gusto, me presento: soy el bot oficial de **Ciszu Network**, creado por **Ciszuko Antony**.\n\n${mood}`,
+        )
+        .addFields(
+          { name: '🏠 Dónde vivo', value: `${guilds} servidor(es)`, inline: true },
+          { name: '👥 A quiénes cuido', value: `${members} miembro(s)`, inline: true },
+          { name: '⏱️ Despierto desde hace', value: `${days}d ${hours}h sin dormir`, inline: true },
+          { name: '🧩 Lo que hago', value: 'Economía, niveles, sorteos, moderación, tickets, alianzas y más.', inline: false },
+          { name: '🌐 Mi casa', value: LINKS.websiteLabel, inline: true },
+          { name: '💬 ¿Hablamos?', value: 'Usa `cz!help` o el dashboard', inline: true },
+        )
+        .setFooter(BOT_FOOTER(message.author.tag, client.user?.displayAvatarURL()))
+        .setTimestamp();
+      await message.reply({ embeds: [embed] });
+      return;
+    }
     const guild = message.guild!;
     const member = await guild.members.fetch(target.id).catch(() => null);
     if (!member) {

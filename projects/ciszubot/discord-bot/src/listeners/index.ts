@@ -13,6 +13,7 @@ import {
   PartialMessage,
 } from 'discord.js';
 import { getGuildConfig, getPrefix, GuildConfig } from '../services/configService';
+import { handleCounting } from '../services/counting';
 import { addXp } from '../services/levels';
 import { db, ciszubotSchema, eq, and, desc } from '../services/supabase';
 import { logger } from '../services/logger';
@@ -614,6 +615,7 @@ export function registerListeners(client: Client): void {
         }
       });
       void handleAfk(message);
+      void handleCounting(message, cfg);
     })();
   });
 

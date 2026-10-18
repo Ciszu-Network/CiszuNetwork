@@ -136,6 +136,12 @@ export interface GuildConfig {
   marriage_enabled: boolean;
   marriage_allow_admin_pairs: boolean;
   command_global_cooldown: number;
+  counting_enabled: boolean;
+  counting_channel_id: string | null;
+  counting_start: number;
+  counting_style: string;
+  counting_allow_repeat: boolean;
+  counting_authenticity: string;
   marriage_excluded_role_ids: string[];
   nitro_repost_mode: 'auto' | 'manual';
   nitro_excluded_role_ids: string[];
@@ -217,6 +223,12 @@ const DEFAULTS: Omit<GuildConfig, 'guild_id'> = {
   marriage_enabled: true,
   marriage_allow_admin_pairs: true,
   command_global_cooldown: 3,
+  counting_enabled: false,
+  counting_channel_id: null,
+  counting_start: 0,
+  counting_style: 'traditional',
+  counting_allow_repeat: false,
+  counting_authenticity: 'dependent',
   marriage_excluded_role_ids: [],
   nitro_repost_mode: 'auto',
   nitro_excluded_role_ids: [],
@@ -316,6 +328,12 @@ export async function getGuildConfig(guildId: string): Promise<GuildConfig> {
         marriage_enabled: data.marriageEnabled ?? DEFAULTS.marriage_enabled,
         marriage_allow_admin_pairs: data.marriageAllowAdminPairs ?? DEFAULTS.marriage_allow_admin_pairs,
         command_global_cooldown: data.commandGlobalCooldown ?? DEFAULTS.command_global_cooldown,
+        counting_enabled: data.countingEnabled ?? DEFAULTS.counting_enabled,
+        counting_channel_id: data.countingChannelId ?? DEFAULTS.counting_channel_id,
+        counting_start: data.countingStart ?? DEFAULTS.counting_start,
+        counting_style: data.countingStyle ?? DEFAULTS.counting_style,
+        counting_allow_repeat: data.countingAllowRepeat ?? DEFAULTS.counting_allow_repeat,
+        counting_authenticity: data.countingAuthenticity ?? DEFAULTS.counting_authenticity,
         marriage_excluded_role_ids: asArray(data.marriageExcludedRoleIds, DEFAULTS.marriage_excluded_role_ids),
         nitro_repost_mode: (data.nitroRepostMode as 'auto' | 'manual') ?? DEFAULTS.nitro_repost_mode,
         nitro_excluded_role_ids: asArray(data.nitroExcludedRoleIds, DEFAULTS.nitro_excluded_role_ids),
@@ -390,6 +408,12 @@ export async function updateGuildConfig(
     marriageEnabled: merged.marriage_enabled,
     marriageAllowAdminPairs: merged.marriage_allow_admin_pairs,
     commandGlobalCooldown: merged.command_global_cooldown,
+    countingEnabled: merged.counting_enabled,
+    countingChannelId: merged.counting_channel_id,
+    countingStart: merged.counting_start,
+    countingStyle: merged.counting_style,
+    countingAllowRepeat: merged.counting_allow_repeat,
+    countingAuthenticity: merged.counting_authenticity,
     marriageExcludedRoleIds: merged.marriage_excluded_role_ids,
     nitroRepostMode: merged.nitro_repost_mode,
     nitroExcludedRoleIds: merged.nitro_excluded_role_ids,
