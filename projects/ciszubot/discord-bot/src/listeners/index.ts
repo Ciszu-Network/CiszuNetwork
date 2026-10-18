@@ -34,6 +34,9 @@ const xpCooldowns = new Map<string, number>();
 const XP_AMOUNT = 25;
 const XP_COOLDOWN_MS = 60_000;
 
+/** Última actividad vista por miembro (para el auto-AFK por inactividad). */
+const lastActivity = new Map<string, number>();
+
 function xpKey(userId: string, guildId: string): string {
   return `${userId}:${guildId}`;
 }
@@ -195,6 +198,24 @@ async function handleAfk(message: Message): Promise<void> {
       await db.delete(afk).where(and(eq(afk.userId, message.author.id), eq(afk.guildId, message.guild.id)));
       await message
         .reply(`👋 ¡Bienvenido de vuelta, <@${message.author.id}>! Te quité tu AFK.`).catch(() => undefined);
+
+      // Quitar rol de AFK + prefijo [AFK] del apodo.
+      try {
+        const cfg = await getGuildConfig(message.guild.id);
+        const member = await message.guild.members.fetch(message.author.id).catch(() => null);
+        if (member && member.manageable) {
+          if (cfg.afk_role_id) {
+            const role = message.guild.roles.cache.get(cfg.afk_role_id);
+            if (role) await member.roles.remove(role).catch(() => undefined);
+          }
+          if (cfg.afk_prefix_enabled && member.nickname?.startsWith('[AFK]')) {
+            const cleaned = member.nickname.replace(/^\[AFK\]\s*/, '');
+            await member.setNickname(cleaned || null).catch(() => undefined);
+          }
+        }
+      } catch {
+        /* sin permisos */
+      }
     }
 
     const mentions = message.mentions.users;
@@ -514,6 +535,46 @@ export function registerListeners(client: Client): void {
   scheduleDrops(client);
   scheduleActions(client);
 
+  // Auto-AFK: cada minuto, marca AFK a quienes no hablan desde hace X minutos
+  // (config `afk_auto_minutes` por servidor). Solo vigila a miembros vistos
+  // hablando desde el arranque del bot.
+  setInterval(() => {
+    void (async () => {
+      for (const guild of client.guilds.cache.values()) {
+        try {
+          const cfg = await getGuildConfig(guild.id);
+          if (!cfg.afk_auto_minutes || cfg.afk_auto_minutes <= 0) continue;
+          const threshold = Date.now() - cfg.afk_auto_minutes * 60_000;
+          for (const [key, ts] of [...lastActivity.entries()]) {
+            const [guildId, userId] = key.split(':');
+            if (guildId !== guild.id || ts > threshold) continue;
+            lastActivity.delete(key);
+            const afk = ciszubotSchema.afk;
+            const rows = await db
+              .select({ userId: afk.userId })
+              .from(afk)
+              .where(and(eq(afk.userId, userId), eq(afk.guildId, guildId)))
+              .limit(1);
+            if (rows[0]) continue; // ya está AFK
+            await db.insert(afk).values({ userId, guildId, reason: 'AFK automático (inactividad)', since: new Date() });
+            const member = await guild.members.fetch(userId).catch(() => null);
+            if (member && member.manageable) {
+              if (cfg.afk_role_id) {
+                const role = guild.roles.cache.get(cfg.afk_role_id);
+                if (role) await member.roles.add(role).catch(() => undefined);
+              }
+              if (cfg.afk_prefix_enabled && !member.nickname?.startsWith('[AFK]')) {
+                await member.setNickname(`[AFK] ${member.displayName}`.slice(0, 32)).catch(() => undefined);
+              }
+            }
+          }
+        } catch {
+          /* sin permisos / guild inaccesible */
+        }
+      }
+    })();
+  }, 60_000);
+
   client.on(Events.MessageCreate, (message) => {
     if (message.author.bot || !message.guild) return;
     void (async () => {
@@ -544,6 +605,7 @@ export function registerListeners(client: Client): void {
       }
 
       bumpMemberMessages(message.guild!.id, message.author.id);
+      lastActivity.set(`${message.guild!.id}:${message.author.id}`, Date.now());
       if (await handleAutomod(message, cfg)) return;
       await handleNitroRepost(message, cfg);
       void getPrefix(message.guild!.id).then((prefix) => {

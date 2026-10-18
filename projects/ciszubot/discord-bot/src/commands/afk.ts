@@ -1,6 +1,7 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { db, ciszubotSchema, eq, and, sql } from '../services/supabase';
+import { getGuildConfig } from '../services/configService';
 
 const create = (): BotCommand => ({
   name: 'afk',
@@ -26,6 +27,23 @@ const create = (): BotCommand => ({
         target: [afk.userId, afk.guildId],
         set: { reason, since: new Date() },
       });
+
+    // Rol de AFK + prefijo [AFK] en el apodo (config del servidor).
+    try {
+      const cfg = await getGuildConfig(message.guild.id);
+      const member = await message.guild.members.fetch(message.author.id).catch(() => null);
+      if (member && member.manageable) {
+        if (cfg.afk_role_id) {
+          const role = message.guild.roles.cache.get(cfg.afk_role_id);
+          if (role) await member.roles.add(role).catch(() => undefined);
+        }
+        if (cfg.afk_prefix_enabled && !member.nickname?.startsWith('[AFK]')) {
+          await member.setNickname(`[AFK] ${member.displayName}`.slice(0, 32)).catch(() => undefined);
+        }
+      }
+    } catch {
+      /* sin permisos */
+    }
 
     const embed = new EmbedBuilder()
       .setColor('#00d4ff')

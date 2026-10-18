@@ -466,6 +466,39 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   const [msgContent, setMsgContent] = useState('');
   const [msgBusy, setMsgBusy] = useState(false);
   const [msgStatus, setMsgStatus] = useState<{ kind: 'ok' | 'error' | 'pending'; text: string } | null>(null);
+  // Manager de giveaways (panel del feat:giveaways).
+  type GwRow = {
+    id: string;
+    prize: string;
+    status: string;
+    ended: boolean;
+    winners: number;
+    winner_ids: string[];
+    channel_id: string;
+    hosted_by: string;
+    source: string;
+    ends_at: string;
+    participants: number;
+    max_participants: number;
+    required_messages: number;
+  };
+  const [gwList, setGwList] = useState<GwRow[]>([]);
+  const [gwFilter, setGwFilter] = useState<'all' | 'running' | 'paused' | 'ended' | 'cancelled'>('all');
+  const [gwBusy, setGwBusy] = useState<string | null>(null);
+  const [gwOpen, setGwOpen] = useState<string | null>(null);
+  const [gwParts, setGwParts] = useState<Record<string, { participants: Array<{ userId: string; entries: number }>; bans: string[] }>>({});
+  const [gwCreateOpen, setGwCreateOpen] = useState(false);
+  const [gwForm, setGwForm] = useState<{
+    prize: string;
+    winners: number;
+    minutes: number;
+    channel: string | null;
+    required: string[];
+    grant: string[];
+    maxPart: number;
+    reqMsg: number;
+    bonus: { role_id: string; multiplier: number }[];
+  }>({ prize: '', winners: 1, minutes: 60, channel: null, required: [], grant: [], maxPart: 0, reqMsg: 0, bonus: [] });
   const [exportPreview, setExportPreview] = useState<{
     name: string;
     payload: JsonPreviewPayload;
@@ -623,6 +656,106 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     setAutoSave(value);
     localStorage.setItem('cz-dash-autosave', value ? '1' : '0');
   }, []);
+
+  // Manager de giveaways: carga + refresco en tiempo real (10s) mientras se ve.
+  useEffect(() => {
+    if (view !== 'feat:giveaways') return;
+    let active = true;
+    const load = async () => {
+      try {
+        const res = await fetch(`/api/dashboard/${guildId}/giveaways`, { cache: 'no-store' });
+        if (!res.ok) return;
+        const json = (await res.json()) as { giveaways?: GwRow[] };
+        if (active) setGwList(json.giveaways ?? []);
+      } catch {
+        /* red */
+      }
+    };
+    void load();
+    const timer = setInterval(() => void load(), 10_000);
+    return () => {
+      active = false;
+      clearInterval(timer);
+    };
+  }, [view, guildId]);
+
+  const gwAction = useCallback(
+    async (action: string, giveawayId: string, userId?: string) => {
+      setGwBusy(`${giveawayId}:${action}`);
+      try {
+        const res = await fetch(`/api/dashboard/${guildId}/giveaways`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action, giveaway_id: giveawayId, ...(userId ? { user_id: userId } : {}) }),
+        });
+        toast(res.ok ? t.gwSent : t.gwError, res.ok ? 'success' : 'error');
+      } catch {
+        toast(t.gwError, 'error');
+      } finally {
+        setTimeout(() => setGwBusy(null), 3000);
+      }
+    },
+    [guildId, toast, t.gwSent, t.gwError],
+  );
+
+  const gwToggleParticipants = useCallback(
+    async (id: string) => {
+      if (gwOpen === id) {
+        setGwOpen(null);
+        return;
+      }
+      setGwOpen(id);
+      if (!gwParts[id]) {
+        try {
+          const res = await fetch(`/api/dashboard/${guildId}/giveaways?id=${id}`, { cache: 'no-store' });
+          if (res.ok) {
+            const json = (await res.json()) as { participants?: Array<{ userId: string; entries: number }>; bans?: string[] };
+            setGwParts((p) => ({ ...p, [id]: { participants: json.participants ?? [], bans: json.bans ?? [] } }));
+          }
+        } catch {
+          /* red */
+        }
+      }
+    },
+    [guildId, gwOpen, gwParts],
+  );
+
+  const gwCreate = useCallback(async () => {
+    if (!gwForm.channel || !gwForm.prize.trim()) {
+      toast(t.gwError, 'error');
+      return;
+    }
+    setGwBusy('create');
+    try {
+      const res = await fetch(`/api/dashboard/${guildId}/giveaways`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'create',
+          prize: gwForm.prize.trim(),
+          winners: gwForm.winners,
+          duration_minutes: gwForm.minutes,
+          channel_id: gwForm.channel,
+          required_role_ids: gwForm.required,
+          grant_role_ids: gwForm.grant,
+          max_participants: gwForm.maxPart,
+          required_messages: gwForm.reqMsg,
+          bonus_roles: gwForm.bonus,
+        }),
+      });
+      if (res.ok) {
+        toast(t.gwSent, 'success');
+        setGwForm({ prize: '', winners: 1, minutes: 60, channel: null, required: [], grant: [], maxPart: 0, reqMsg: 0, bonus: [] });
+        setGwCreateOpen(false);
+      } else {
+        toast(t.gwError, 'error');
+      }
+    } catch {
+      toast(t.gwError, 'error');
+    } finally {
+      setTimeout(() => setGwBusy(null), 3000);
+    }
+  }, [guildId, gwForm, toast, t.gwError, t.gwSent]);
 
   /** Say/DirectSay: inserta la acción y sondea el resultado hasta 20s. */
   const sendMessage = useCallback(async () => {
@@ -1650,6 +1783,234 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                     />
                   </div>
                 ))}
+              </div>
+            )}
+
+            {/* Manager de giveaways: lista en tiempo real + acciones + creación */}
+            {activeFeature.slug === 'giveaways' && (
+              <div className="mt-4 grid gap-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  {(
+                    [
+                      ['all', t.gwFilterAll],
+                      ['running', t.gwFilterRunning],
+                      ['paused', t.gwFilterPaused],
+                      ['ended', t.gwFilterEnded],
+                      ['cancelled', t.gwFilterCancelled],
+                    ] as const
+                  ).map(([f, label]) => (
+                    <button
+                      key={f}
+                      type="button"
+                      onClick={() => setGwFilter(f)}
+                      className={`rounded-full border px-3 py-1.5 text-[10px] font-black uppercase tracking-widest transition ${
+                        gwFilter === f ? 'border-neon-blue/60 bg-neon-blue/10 text-neon-blue' : 'border-white/15 text-white/50 hover:text-white'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setGwCreateOpen((v) => !v)}
+                    className="ml-auto inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-neon-blue to-neon-pink px-4 py-2 text-[10px] font-black uppercase tracking-widest text-white transition hover:scale-[1.02] active:scale-95"
+                  >
+                    + {t.gwCreate}
+                  </button>
+                </div>
+
+                {gwCreateOpen && (
+                  <div className="grid gap-3 rounded-xl border border-white/10 bg-black/20 p-4 sm:grid-cols-2">
+                    <Field label={t.gwPrize}>
+                      <input className={inputCls} value={gwForm.prize} onChange={(e) => setGwForm({ ...gwForm, prize: e.target.value })} />
+                    </Field>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Field label={t.gwWinnersCount}>
+                        <input type="number" min={1} className={inputCls} value={gwForm.winners} onChange={(e) => setGwForm({ ...gwForm, winners: Math.max(1, Number(e.target.value) || 1) })} />
+                      </Field>
+                      <Field label={t.gwDuration}>
+                        <input type="number" min={1} className={inputCls} value={gwForm.minutes} onChange={(e) => setGwForm({ ...gwForm, minutes: Math.max(1, Number(e.target.value) || 1) })} />
+                      </Field>
+                    </div>
+                    {hasGuildData ? (
+                      <SelectField
+                        label={t.gwChannel}
+                        value={gwForm.channel}
+                        placeholder={t.pickChannel}
+                        options={textChannelOptions}
+                        onChange={(v) => setGwForm({ ...gwForm, channel: v })}
+                      />
+                    ) : (
+                      <Field label={t.gwChannel} hint={t.manualIdHint}>
+                        <input className={inputCls} value={gwForm.channel ?? ''} onChange={(e) => setGwForm({ ...gwForm, channel: e.target.value || null })} />
+                      </Field>
+                    )}
+                    <Field label={t.gwRequiredRoles}>
+                      <MultiSelect values={gwForm.required} options={roleOptions} placeholder={t.pickRole} onChange={(v) => setGwForm({ ...gwForm, required: v })} />
+                    </Field>
+                    <Field label={t.gwGrantRoles}>
+                      <MultiSelect values={gwForm.grant} options={roleOptions} placeholder={t.pickRole} onChange={(v) => setGwForm({ ...gwForm, grant: v })} />
+                    </Field>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Field label={t.gwMaxParticipants}>
+                        <input type="number" min={0} className={inputCls} value={gwForm.maxPart} onChange={(e) => setGwForm({ ...gwForm, maxPart: Math.max(0, Number(e.target.value) || 0) })} />
+                      </Field>
+                      <Field label={t.gwRequiredMessages}>
+                        <input type="number" min={0} className={inputCls} value={gwForm.reqMsg} onChange={(e) => setGwForm({ ...gwForm, reqMsg: Math.max(0, Number(e.target.value) || 0) })} />
+                      </Field>
+                    </div>
+                    <div>
+                      <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-white/45">{t.gwBonusRoles}</p>
+                      <div className="grid gap-2">
+                        {gwForm.bonus.map((b, idx) => (
+                          <div key={`${b.role_id}-${idx}`} className="flex items-center gap-2">
+                            <NiceSelect
+                              className="w-44"
+                              value={b.role_id}
+                              options={roleOptions}
+                              onChange={(v) => setGwForm({ ...gwForm, bonus: gwForm.bonus.map((x, i) => (i === idx ? { ...x, role_id: v } : x)) })}
+                            />
+                            <span className="text-[10px] text-white/40">×</span>
+                            <input
+                              type="number"
+                              min={1}
+                              max={10}
+                              className={`${inputCls} w-20`}
+                              value={b.multiplier}
+                              onChange={(e) => setGwForm({ ...gwForm, bonus: gwForm.bonus.map((x, i) => (i === idx ? { ...x, multiplier: Math.max(1, Number(e.target.value) || 1) } : x)) })}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setGwForm({ ...gwForm, bonus: gwForm.bonus.filter((_, i) => i !== idx) })}
+                              className="rounded-lg border border-white/15 px-2 py-1 text-[10px] text-white/60 transition hover:border-red-400/50 hover:text-red-300"
+                            >
+                              {t.removeRow}
+                            </button>
+                          </div>
+                        ))}
+                        <button
+                          type="button"
+                          disabled={!hasGuildData || roleOptions.length === 0}
+                          onClick={() => setGwForm({ ...gwForm, bonus: [...gwForm.bonus, { role_id: roleOptions[0].id, multiplier: 2 }] })}
+                          className="w-fit rounded-lg border border-white/15 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-white/60 transition hover:border-neon-blue/60 hover:text-white disabled:opacity-40"
+                        >
+                          + {t.addRow}
+                        </button>
+                      </div>
+                    </div>
+                    <div className="flex justify-end sm:col-span-2">
+                      <button
+                        type="button"
+                        onClick={() => void gwCreate()}
+                        disabled={gwBusy === 'create'}
+                        className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-neon-blue to-neon-pink px-5 py-2.5 text-xs font-black uppercase tracking-widest text-white transition hover:scale-[1.02] active:scale-95 disabled:opacity-50"
+                      >
+                        {t.gwSubmit}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {gwList.filter((g) => gwFilter === 'all' || g.status === gwFilter).length === 0 && (
+                  <p className="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-xs text-white/45">{t.gwNoGiveaways}</p>
+                )}
+                {gwList
+                  .filter((g) => gwFilter === 'all' || g.status === gwFilter)
+                  .map((gw) => {
+                    const chip =
+                      gw.status === 'running' && !gw.ended
+                        ? { icon: '▶', cls: 'text-emerald-400 border-emerald-400/40 bg-emerald-400/10' }
+                        : gw.status === 'paused'
+                          ? { icon: '⏸', cls: 'text-amber-400 border-amber-400/40 bg-amber-400/10' }
+                          : gw.status === 'cancelled'
+                            ? { icon: '✖', cls: 'text-red-400 border-red-400/40 bg-red-400/10' }
+                            : { icon: '✔', cls: 'text-white/50 border-white/20 bg-white/5' };
+                    const remainingMs = Math.max(0, new Date(gw.ends_at).getTime() - Date.now());
+                    const remaining = remainingMs > 0 ? `${Math.floor(remainingMs / 3600000)}h ${Math.floor((remainingMs % 3600000) / 60000)}m` : t.gwEnded;
+                    const btn =
+                      'rounded-lg border border-white/15 px-2.5 py-1 text-[9px] font-black uppercase tracking-widest text-white/60 transition hover:border-neon-blue/60 hover:text-white disabled:opacity-40';
+                    return (
+                      <div key={gw.id} className="rounded-xl border border-white/10 bg-black/20 p-3">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[9px] font-black uppercase tracking-widest ${chip.cls}`}>
+                            {chip.icon} {gw.status}
+                          </span>
+                          <p className="min-w-0 flex-1 truncate text-xs font-bold text-white">{gw.prize}</p>
+                          <span className="text-[10px] text-white/50">
+                            {t.gwEndsIn}: {remaining}
+                          </span>
+                          <span className="text-[10px] text-white/50">
+                            👥 {gw.participants}
+                            {gw.max_participants > 0 ? `/${gw.max_participants}` : ''}
+                          </span>
+                          <span className="text-[10px] text-white/50">🏆 {gw.winner_ids.length > 0 ? gw.winner_ids.map((w) => <code key={w} className="mr-1">{w}</code>) : gw.winners}</span>
+                        </div>
+                        <div className="mt-1 flex flex-wrap items-center gap-2 text-[10px] text-white/35">
+                          <span>
+                            {t.gwBy}: <code>{gw.hosted_by}</code> · {gw.source}
+                          </span>
+                          <span>#{gw.channel_id}</span>
+                          {gw.required_messages > 0 && <span>✉ {gw.required_messages}</span>}
+                        </div>
+                        <div className="mt-2 flex flex-wrap gap-1.5">
+                          {gw.status === 'running' && !gw.ended && (
+                            <button type="button" disabled={gwBusy === `${gw.id}:pause`} onClick={() => void gwAction('pause', gw.id)} className={btn}>
+                              {t.gwPause}
+                            </button>
+                          )}
+                          {gw.status === 'paused' && (
+                            <button type="button" disabled={gwBusy === `${gw.id}:resume`} onClick={() => void gwAction('resume', gw.id)} className={btn}>
+                              {t.gwResume}
+                            </button>
+                          )}
+                          {(gw.status === 'running' || gw.status === 'paused') && (
+                            <button
+                              type="button"
+                              disabled={gwBusy === `${gw.id}:cancel`}
+                              onClick={() => void gwAction('cancel', gw.id)}
+                              className="rounded-lg border border-red-400/30 px-2.5 py-1 text-[9px] font-black uppercase tracking-widest text-red-300 transition hover:bg-red-400/10 disabled:opacity-40"
+                            >
+                              {t.gwCancel}
+                            </button>
+                          )}
+                          {(gw.status === 'ended' || gw.ended) && (
+                            <button type="button" disabled={gwBusy === `${gw.id}:reroll`} onClick={() => void gwAction('reroll', gw.id)} className={btn}>
+                              {t.gwReroll}
+                            </button>
+                          )}
+                          <button type="button" onClick={() => void gwToggleParticipants(gw.id)} className={btn}>
+                            {t.gwParticipants} ({gw.participants})
+                          </button>
+                        </div>
+                        {gwOpen === gw.id && (
+                          <div className="mt-2 grid gap-1.5 rounded-lg border border-white/10 bg-black/30 p-2">
+                            {(gwParts[gw.id]?.participants ?? []).length === 0 && <p className="text-[10px] text-white/35">—</p>}
+                            {(gwParts[gw.id]?.participants ?? []).map((p) => (
+                              <div key={p.userId} className="flex items-center gap-2 text-[10px] text-white/60">
+                                <code className="min-w-0 flex-1 truncate">{p.userId}</code>
+                                <span>{p.entries}×</span>
+                                <button type="button" onClick={() => void gwAction('remove', gw.id, p.userId)} className={btn}>
+                                  {t.gwRemove}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => void gwAction('ban', gw.id, p.userId)}
+                                  className="rounded-lg border border-red-400/30 px-2 py-1 text-[9px] font-black uppercase tracking-widest text-red-300 transition hover:bg-red-400/10"
+                                >
+                                  {t.gwBan}
+                                </button>
+                              </div>
+                            ))}
+                            {(gwParts[gw.id]?.bans ?? []).length > 0 && (
+                              <p className="text-[10px] text-red-300/70">
+                                {t.gwBan}: {(gwParts[gw.id]?.bans ?? []).join(', ')}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
               </div>
             )}
 
