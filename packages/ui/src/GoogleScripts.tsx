@@ -72,15 +72,16 @@ export function GoogleScripts() {
           ),
         }}
       />
-      {/* User-ID (GA4): si hay sesión activa, empuja user_id al dataLayer.
-          El tag "GA4 - Configuración" de GTM lo lee con la variable DLV - user_id
-          (arregla el aviso "datos proporcionados por el usuario" de GA4). */}
+      {/* User-ID + UPD (GA4): si hay sesión, empuja user_id y user_data
+          (email hasheado SHA-256) al dataLayer. La ruta /api/analytics/user-data
+          resuelve la sesión de cada web y además envía el UPD a GA4 por
+          Measurement Protocol (diagnósticos de datos proporcionados por el usuario). */}
       <script
         suppressHydrationWarning
         data-cookie-consent="optional"
         dangerouslySetInnerHTML={{
           __html: consentInline(
-            `(function(){try{fetch('/api/auth/session',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){var id=j&&j.session&&j.session.userId;if(id){window.dataLayer=window.dataLayer||[];window.dataLayer.push({user_id:String(id)});}}).catch(function(){});}catch(e){}})();`,
+            `(function(){try{var token='';try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i)||'';if(/^sb-.*-auth-token$/.test(k)){var raw=localStorage.getItem(k)||'';try{var j=JSON.parse(raw);token=(j&&j.access_token)||(j&&j.currentSession&&j.currentSession.access_token)||'';}catch(e){}}}}catch(e){}var h={};if(token){h.Authorization='Bearer '+token;}fetch('/api/analytics/user-data',{cache:'no-store',headers:h}).then(function(r){return r.ok?r.json():null}).then(function(d){if(!d)return;window.dataLayer=window.dataLayer||[];var p={};if(d.user_id){p.user_id=String(d.user_id);}if(d.email_sha256){p.user_data={sha256_email_address:d.email_sha256};}if(p.user_id||p.user_data){window.dataLayer.push(p);}}).catch(function(){});}catch(e){}})();`,
           ),
         }}
       />
