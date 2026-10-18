@@ -1,7 +1,7 @@
 /**
  * GENERADO AUTOMÁTICAMENTE — NO EDITAR A MANO.
  * Fuente: projects/ciszubot/discord-bot/src/commands/*.ts (código real del bot).
- * Se regenera solo en cada build de la web (prebuild).
+ * Regenerar: node scripts/sync-bot-commands.mjs
  */
 
 export interface CommandInfo {
@@ -15,7 +15,7 @@ export interface CommandInfo {
   tags: string[];
 }
 
-export const CATEGORIES: string[] = ["Economía","Niveles","Social","Diversión","Música","Información","Utilidad","Moderación","Configuración","Secreto"];
+export const CATEGORIES: string[] = ["Economía","Niveles","Social","Diversión","Música","Información","Utilidad","Moderación","Configuración","Secreto","General"];
 
 export const COMMANDS: CommandInfo[] = [
   // ─── Economía ───
@@ -311,6 +311,36 @@ export const COMMANDS: CommandInfo[] = [
     premium: false,
     tags: ["social","partner","muestra","pareja","actual"],
   },
+  {
+    name: 'present',
+    description: 'Presenta a un usuario (tarjeta pública)',
+    aliases: ["presentar","presentacion"],
+    usage: 'cz!present @usuario',
+    category: 'Social',
+    icon: 'people',
+    premium: false,
+    tags: ["social","present","presenta","usuario","tarjeta","publica"],
+  },
+  {
+    name: 'whoiam',
+    description: 'Tu tarjeta de perfil en este servidor',
+    aliases: ["quiensoy","quien-soy","perfil"],
+    usage: 'cz!whoiam',
+    category: 'Social',
+    icon: 'people',
+    premium: false,
+    tags: ["social","whoiam","tarjeta","perfil","este","servidor"],
+  },
+  {
+    name: 'whoismyrol',
+    description: 'Tus roles y rango en este servidor',
+    aliases: ["misroles","mirango"],
+    usage: 'cz!whoismyrol',
+    category: 'Social',
+    icon: 'people',
+    premium: false,
+    tags: ["social","whoismyrol","tus","roles","rango","este","servidor"],
+  },
   // ─── Diversión ───
   {
     name: '8ball',
@@ -515,6 +545,16 @@ export const COMMANDS: CommandInfo[] = [
     tags: ["información","links","muestra","todos","enlaces","oficiales","ecosistema"],
   },
   {
+    name: 'plang',
+    description: 'Lenguajes de programación que usa el proyecto',
+    aliases: ["lenguajes"],
+    usage: 'cz!plang',
+    category: 'Información',
+    icon: 'info',
+    premium: false,
+    tags: ["información","plang","lenguajes","programacion","usa","proyecto"],
+  },
+  {
     name: 'premium',
     description: 'Información y activación de CiszuBot Premium',
     aliases: ["vip"],
@@ -563,6 +603,16 @@ export const COMMANDS: CommandInfo[] = [
     icon: 'info',
     premium: false,
     tags: ["información","web","enlaces","paginas","uno","pagina"],
+  },
+  {
+    name: 'whoareyou',
+    description: '¿Quién es CiszuBot? Presentación del bot',
+    aliases: ["quieneres","quien-es","quienes"],
+    usage: 'cz!whoareyou',
+    category: 'Información',
+    icon: 'info',
+    premium: false,
+    tags: ["información","whoareyou","quien","ciszubot","presentacion","bot"],
   },
   // ─── Utilidad ───
   {
@@ -659,7 +709,7 @@ export const COMMANDS: CommandInfo[] = [
     name: 'promo',
     description: 'Promociona las webs del ecosistema Ciszu Network',
     aliases: ["promocionar","webs","sitio","web","promote"],
-    usage: 'cz!promo',
+    usage: 'cz!promo [largo]',
     category: 'Utilidad',
     icon: 'settings',
     premium: false,
@@ -1027,5 +1077,86 @@ export const COMMANDS: CommandInfo[] = [
     icon: 'lock',
     premium: false,
     tags: ["secreto","secret","comandos","tecnicos","gestion","solo","lista","blanca"],
+  },
+  // ─── General ───
+  {
+    name: 'disboard',
+    description: 'El servidor en DISBOARD',
+    aliases: [],
+    usage: 'cz!disboard',
+    category: 'General',
+    icon: 'help',
+    premium: false,
+    tags: ["general","disboard","servidor"],
+  },
+  {
+    name: 'faq',
+    description: 'Preguntas frecuentes de CiszuBot',
+    aliases: ["preguntas","preguntasfrecuentes"],
+    usage: 'cz!faq',
+    category: 'General',
+    icon: 'help',
+    premium: false,
+    tags: ["general","faq","preguntas","frecuentes","ciszubot"],
+  },
+  {
+    name: 'github',
+    description: 'Repositorio open source de Ciszu Network',
+    aliases: ["repo","repositorio","opensource"],
+    usage: 'cz!github',
+    category: 'General',
+    icon: 'help',
+    premium: false,
+    tags: ["general","github","repositorio","open","source","ciszu","network"],
+  },
+  {
+    name: 'reviews',
+    description: 'Reseñas de la comunidad sobre CiszuBot',
+    aliases: ["resenas","reseñas"],
+    usage: 'cz!reviews',
+    category: 'General',
+    icon: 'help',
+    premium: false,
+    tags: ["general","reviews","resenas","comunidad","sobre","ciszubot"],
+  },
+  {
+    name: 'techstack',
+    description: 'Stack tecnológico del ecosistema',
+    aliases: ["stack","tecnologias"],
+    usage: 'cz!techstack',
+    category: 'General',
+    icon: 'help',
+    premium: false,
+    tags: ["general","techstack","stack","tecnologico","ecosistema"],
+  },
+  {
+    name: 'topgg',
+    description: 'CiszuBot en top.gg (vota por el bot)',
+    aliases: ["votarbot"],
+    usage: 'cz!topgg',
+    category: 'General',
+    icon: 'help',
+    premium: false,
+    tags: ["general","topgg","ciszubot","top","vota","bot"],
+  },
+  {
+    name: 'vercel',
+    description: 'Webs desplegadas del ecosistema (deploys)',
+    aliases: ["deploys","despliegues"],
+    usage: 'cz!vercel',
+    category: 'General',
+    icon: 'help',
+    premium: false,
+    tags: ["general","vercel","webs","desplegadas","ecosistema","deploys"],
+  },
+  {
+    name: 'youtube',
+    description: 'Canal de YouTube de Ciszu Network',
+    aliases: ["canal","yt"],
+    usage: 'cz!youtube',
+    category: 'General',
+    icon: 'help',
+    premium: false,
+    tags: ["general","youtube","canal","ciszu","network"],
   },
 ];

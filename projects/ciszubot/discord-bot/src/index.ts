@@ -74,8 +74,14 @@ client.once(Events.ClientReady, async (readyClient) => {
   scheduleStatsPosting(readyClient);
 
   // Registrar comandos de barra — CORREGIDO: applicationCommands con C mayúscula
-  const slashCommands = Array.from(client.commands.commands.values())
-    .filter((cmd) => cmd.slashCommand)
+  // Discord limita a 100 comandos de aplicación globales: se recorta con aviso
+  // (el resto sigue disponible por prefijo cz!).
+  const allSlash = Array.from(client.commands.commands.values()).filter((cmd) => cmd.slashCommand);
+  if (allSlash.length > 100) {
+    logger.warn(`Hay ${allSlash.length} comandos con versión slash; Discord solo admite 100. Se registran los primeros 100.`);
+  }
+  const slashCommands = allSlash
+    .slice(0, 100)
     .map((cmd) => cmd.slashCommand!.toJSON());
 
   const rest = new REST({ version: '10' }).setToken(BOT_TOKEN);
