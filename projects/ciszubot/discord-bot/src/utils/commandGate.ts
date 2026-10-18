@@ -18,6 +18,8 @@ export const PREMIUM_URL = `${LINKS.website}/premium`;
 
 /** Último uso por usuario/servidor/comando (rate limit en memoria). */
 const cooldownTracker = new Map<string, number>();
+/** Último comando de cada usuario (rate limit global anti-spam, por ID). */
+const globalTracker = new Map<string, number>();
 
 function cooldownEmbed(remaining: number, tag: string, iconURL?: string | null): EmbedBuilder {
   return new EmbedBuilder()
@@ -106,6 +108,23 @@ export async function gateCommand(ctx: GateContext): Promise<boolean> {
   // Rate limit por comando configurado por el servidor ("espera X segundos")
   if (guildId) {
     const cfg = await getGuildConfig(guildId);
+
+    // Rate limit GLOBAL anti-spam: cooldown corto por usuario (por ID) entre
+    // CUALQUIER comando (default 3s; 0 = desactivado). Si alguien spamea, se le
+    // responde "espera X segundos" (integrado con el sistema de moderación).
+    const globalSeconds = cfg.command_global_cooldown ?? 0;
+    if (globalSeconds > 0) {
+      const gKey = `${guildId}:${tag}`;
+      const now = Date.now();
+      const lastAny = globalTracker.get(gKey) ?? 0;
+      const waitAny = globalSeconds * 1000 - (now - lastAny);
+      if (waitAny > 0) {
+        await send({ embeds: [cooldownEmbed(Math.ceil(waitAny / 1000), tag, iconURL)] });
+        return false;
+      }
+      globalTracker.set(gKey, now);
+    }
+
     const seconds = cfg.command_cooldowns[command.name];
     if (seconds && seconds > 0) {
       const key = `${guildId}:${tag}:${command.name}`;

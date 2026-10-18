@@ -214,7 +214,9 @@ describe('scheduleGiveaway', () => {
 describe('startGiveaway', () => {
   it('envía el mensaje con botón e inserta en la BD', async () => {
     vi.useFakeTimers();
-    const { db } = createDb(null, null, [[giveawayRow()], [], []]);
+    // selects: [0] isPremiumGuild (no premium) · [1] conteo de activos (0) ·
+    // [2] getGiveaway al terminar el timer · [3] resto
+    const { db } = createDb(null, null, [[], [], [giveawayRow()], [], []]);
     dbState.set(db);
     const rawChannel = makeChannel();
     const channel = rawChannel as unknown as TextChannel;

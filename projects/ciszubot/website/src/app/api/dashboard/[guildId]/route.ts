@@ -134,6 +134,8 @@ const guildConfigPatchSchema = z.object({
   afk_prefix_enabled: z.boolean().optional(),
   afk_auto_minutes: z.number().int().min(0).max(1440).optional(),
   marriage_enabled: z.boolean().optional(),
+  marriage_allow_admin_pairs: z.boolean().optional(),
+  command_global_cooldown: z.number().int().min(0).max(60).optional(),
   marriage_excluded_role_ids: z.array(z.string().min(1).max(32)).max(20).optional(),
   nitro_repost_mode: z.enum(['auto', 'manual']).optional(),
   nitro_excluded_role_ids: z.array(z.string().min(1).max(32)).max(20).optional(),
@@ -234,6 +236,8 @@ interface GuildConfig {
   afk_prefix_enabled?: boolean;
   afk_auto_minutes?: number;
   marriage_enabled?: boolean;
+  marriage_allow_admin_pairs?: boolean;
+  command_global_cooldown?: number;
   marriage_excluded_role_ids?: string[];
   nitro_repost_mode?: string;
   nitro_excluded_role_ids?: string[];
@@ -320,7 +324,7 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
   const body = parsed.data as Partial<GuildConfig>;
   const allowed: Record<string, unknown> = {};
   const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id', 'coin_emoji', 'coin_name', 'staff_role_id', 'level_message', 'starboard_channel_id', 'starboard_emoji', 'private_vc_hub_id', 'history_channel_id', 'afk_role_id'];
-  const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled', 'nitro_repost_enabled', 'history_enabled', 'afk_prefix_enabled', 'marriage_enabled'];
+  const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled', 'nitro_repost_enabled', 'history_enabled', 'afk_prefix_enabled', 'marriage_enabled', 'marriage_allow_admin_pairs'];
 
   for (const key of stringFields) {
     if (body[key] !== undefined) allowed[key] = String(body[key]);
@@ -331,6 +335,10 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
   if (body.xp_rate !== undefined) {
     const rate = Number(body.xp_rate);
     if (rate >= 0.1 && rate <= 10) allowed.xp_rate = rate;
+  }
+  if (body.command_global_cooldown !== undefined) {
+    const value = Number(body.command_global_cooldown);
+    if (value >= 0 && value <= 60) allowed.command_global_cooldown = value;
   }
   if (body.starboard_min !== undefined) {
     const value = Number(body.starboard_min);
@@ -465,6 +473,8 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     afk_prefix_enabled: 'afkPrefixEnabled',
     afk_auto_minutes: 'afkAutoMinutes',
     marriage_enabled: 'marriageEnabled',
+    marriage_allow_admin_pairs: 'marriageAllowAdminPairs',
+    command_global_cooldown: 'commandGlobalCooldown',
     marriage_excluded_role_ids: 'marriageExcludedRoleIds',
     nitro_repost_mode: 'nitroRepostMode',
     nitro_excluded_role_ids: 'nitroExcludedRoleIds',

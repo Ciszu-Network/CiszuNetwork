@@ -1,7 +1,8 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
-import { getWallet, setWallet, formatMoney, getTopWallets } from '../services/economy';
+import { getWallet, setWallet, getTopWallets } from '../services/economy';
 import { db, ciszubotSchema, eq, asc } from '../services/supabase';
+import { getGuildConfig, formatCoins } from '../services/configService';
 
 const create = (): BotCommand => ({
   name: 'shop',
@@ -36,7 +37,7 @@ const create = (): BotCommand => ({
       .setDescription(
         items.length > 0
           ? items
-              .map((it) => `${it.emoji || '🎁'} **${it.name}** — ${formatMoney(it.price)} ${it.description ? `\n> ${it.description}` : ''}`)
+              .map((it) => `${it.emoji || '🎁'} **${it.name}** — ${(it.price)} ${it.description ? `\n> ${it.description}` : ''}`)
               .join('\n')
           : 'La tienda está vacía. Un admin puede añadir ítems con `cz!shopadd`.'
       )

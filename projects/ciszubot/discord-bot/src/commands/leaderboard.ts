@@ -1,6 +1,6 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
-import { getTopWallets, formatMoney } from '../services/economy';
+import { getTopWallets } from '../services/economy';
 
 const create = (): BotCommand => ({
   name: 'leaderboard',
@@ -22,7 +22,7 @@ const create = (): BotCommand => ({
     for (const entry of top) {
       const member = await members.fetch(entry.user_id).catch(() => null);
       const name = member?.user.username ?? entry.user_id;
-      lines.push(`\`${i}.\` **${name}** — ${formatMoney(entry.balance)}`);
+      lines.push(`\`${i}.\` **${name}** — ${(entry.balance)}`);
       i++;
     }
 

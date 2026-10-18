@@ -1,7 +1,8 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
-import { getWallet, setWallet, formatMoney } from '../services/economy';
+import { getWallet, setWallet } from '../services/economy';
 import { db, ciszubotSchema, eq, and, ilike, sql } from '../services/supabase';
+import { getGuildConfig, formatCoins } from '../services/configService';
 
 interface ShopItem {
   id: string;
@@ -24,6 +25,7 @@ const create = (): BotCommand => ({
     .setDescription('Compra un ítem de la tienda')
     .addStringOption((o) => o.setName('item').setDescription('Nombre del ítem').setRequired(true)),
   async execute(message, args) {
+    const cfg = await getGuildConfig(message.guild?.id ?? 'DM');
     if (!message.guild) {
       await message.reply('❌ Este comando solo funciona en un servidor.');
       return;
@@ -58,7 +60,7 @@ const create = (): BotCommand => ({
 
     const w = await getWallet(message.author.id, message.guild.id);
     if (w.balance < item.price) {
-      await message.reply(`❌ No tienes suficientes monedas (necesitas ${formatMoney(item.price)}).`);
+      await message.reply(`❌ No tienes suficientes monedas (necesitas ${(item.price)}).`);
       return;
     }
 
@@ -90,7 +92,7 @@ const create = (): BotCommand => ({
     const embed = new EmbedBuilder()
       .setColor('#00d4ff')
       .setTitle(`✅ ¡Compraste ${item.emoji || '🎁'} ${item.name}!`)
-      .setDescription(`Pagaste **${formatMoney(item.price)}**.${roleNote}\n**Saldo restante:** ${formatMoney(w.balance - item.price)}`)
+      .setDescription(`Pagaste **${(item.price)}**.${roleNote}\n**Saldo restante:** ${(w.balance - item.price)}`)
       .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
       .setTimestamp();
     await message.reply({ embeds: [embed] });

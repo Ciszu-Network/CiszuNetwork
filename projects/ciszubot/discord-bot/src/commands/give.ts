@@ -1,6 +1,7 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
-import { getWallet, setWallet, formatMoney } from '../services/economy';
+import { getWallet, setWallet } from '../services/economy';
+import { getGuildConfig, formatCoins } from '../services/configService';
 
 const create = (): BotCommand => ({
   name: 'give',
@@ -14,6 +15,7 @@ const create = (): BotCommand => ({
     .addUserOption((o) => o.setName('usuario').setDescription('Receptor').setRequired(true))
     .addIntegerOption((o) => o.setName('cantidad').setDescription('Cantidad de monedas').setRequired(true)),
   async execute(message, args) {
+    const cfg = await getGuildConfig(message.guild?.id ?? 'DM');
     const guildId = message.guild?.id ?? 'DM';
     const target = message.mentions?.users?.first();
     const rawAmount = args[1] ?? args[0];
@@ -39,7 +41,7 @@ const create = (): BotCommand => ({
       const embed = new EmbedBuilder()
         .setColor('#ff0000')
         .setTitle('❌ Fondos insuficientes')
-        .setDescription(`Necesitas **${formatMoney(amount)}** y solo tienes **${formatMoney(mine.balance)}**.`)
+        .setDescription(`Necesitas **${(amount)}** y solo tienes **${(mine.balance)}**.`)
         .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() });
       await message.reply({ embeds: [embed] });
       return;
@@ -52,7 +54,7 @@ const create = (): BotCommand => ({
     const embed = new EmbedBuilder()
       .setColor('#00d4ff')
       .setTitle('💸 ¡Transferencia completada!')
-      .setDescription(`**${message.author.tag}** envió **${formatMoney(amount)}** a **${target.tag}**.`)
+      .setDescription(`**${message.author.tag}** envió **${(amount)}** a **${target.tag}**.`)
       .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
       .setTimestamp();
     await message.reply({ embeds: [embed] });

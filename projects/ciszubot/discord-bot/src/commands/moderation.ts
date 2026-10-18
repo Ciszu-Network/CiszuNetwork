@@ -4,9 +4,19 @@
   PermissionFlagsBits,
   PermissionsBitField,
   GuildMember,
+  DiscordAPIError,
 } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { db, ciszubotSchema, eq, and, desc } from '../services/supabase';
+import { getGuildConfig } from '../services/configService';
+
+/** Mensaje claro para errores de jerarquía/permisos (admins, bots, rol superior). */
+function hierarchyError(action: string, error: unknown): string {
+  if (error instanceof DiscordAPIError && error.code === 50013) {
+    return `❌ No puedo ${action}: el usuario es **administrador**, un **bot**, o tiene un rol **igual o superior** al mío. Sube el rol de CiszuBot en la jerarquía del servidor.`;
+  }
+  return `❌ No se pudo ${action} (revisa mis permisos y la jerarquía de roles).`;
+}
 
 const kick = (): BotCommand => ({
   name: 'kick',
@@ -38,7 +48,12 @@ const kick = (): BotCommand => ({
       return;
     }
     const reason = args.slice(1).join(' ') || 'Sin razón';
-    await member.kick(reason);
+    try {
+      await member.kick(reason);
+    } catch (error) {
+      await message.reply(hierarchyError('expulsar a ese miembro', error));
+      return;
+    }
     const embed = new EmbedBuilder()
       .setColor('#ff0000')
       .setTitle('👢 Miembro expulsado')
@@ -74,7 +89,12 @@ const ban = (): BotCommand => ({
       return;
     }
     const reason = args.slice(1).join(' ') || 'Sin razón';
-    await message.guild.bans.create(target.id, { reason });
+    try {
+      await message.guild.bans.create(target.id, { reason });
+    } catch (error) {
+      await message.reply(hierarchyError('banear a ese usuario', error));
+      return;
+    }
     const embed = new EmbedBuilder()
       .setColor('#ff0000')
       .setTitle('🔨 Miembro baneado')
@@ -115,17 +135,16 @@ const unban = (): BotCommand => ({
 
 const mute = (): BotCommand => ({
   name: 'mute',
-  description: 'Silencia a un miembro (por defecto 10 min)',
-  aliases: ['silenciar', 'timeout'],
-  usage: 'cz!mute @usuario [minutos] [razón]',
+  description: 'Silencia a un miembro de forma INDEFINIDA (rol de mute)',
+  aliases: ['silenciar'],
+  usage: 'cz!mute @usuario [razón]',
   category: 'Moderación',
   permissions: [PermissionFlagsBits.ModerateMembers],
   slashCommand: new SlashCommandBuilder()
     .setName('mute')
-    .setDescription('Silencia a un miembro')
+    .setDescription('Silencia a un miembro de forma indefinida (rol de mute)')
     .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
     .addUserOption((o) => o.setName('usuario').setDescription('Usuario').setRequired(true))
-    .addIntegerOption((o) => o.setName('minutos').setDescription('Duración en minutos').setRequired(false))
     .addStringOption((o) => o.setName('razon').setDescription('Razón').setRequired(false)),
   async execute(message, args) {
     if (!message.guild) return;
@@ -135,19 +154,97 @@ const mute = (): BotCommand => ({
     }
     const target = message.mentions?.users?.first();
     if (!target) {
-      await message.reply('❌ Uso: `cz!mute @usuario [minutos] [razón]`');
+      await message.reply('❌ Uso: `cz!mute @usuario [razón]` (indefinido; para tiempo usa `cz!tempmute`)');
       return;
     }
     const member = await message.guild.members.fetch(target.id).catch(() => null);
     if (!member) return;
-    const minutes = parseInt(args[1] ?? '10', 10) || 10;
-    const reason = args.slice(2).join(' ') || 'Sin razón';
-    await member.timeout(minutes * 60_000, reason);
+
+    // Mute INDEFINIDO: se asigna el rol de mute configurado (cz!mute).
+    // Para silencios con duración está `cz!tempmute`.
+    const cfg = await getGuildConfig(message.guild.id);
+    if (!cfg.mute_role_id) {
+      await message.reply('❌ No hay un **rol de mute** configurado. Configúralo en el dashboard (sección General → Roles del servidor) o usa `cz!tempmute @usuario 10m`.');
+      return;
+    }
+    const role = message.guild.roles.cache.get(cfg.mute_role_id);
+    if (!role) {
+      await message.reply('❌ El rol de mute configurado ya no existe. Vuelve a configurarlo.');
+      return;
+    }
+    const reason = args.slice(1).join(' ') || 'Sin razón';
+    try {
+      await member.roles.add(role, reason);
+    } catch (error) {
+      await message.reply(hierarchyError('silenciar a ese miembro', error));
+      return;
+    }
     const embed = new EmbedBuilder()
       .setColor('#ff9900')
-      .setTitle('🔇 Miembro silenciado')
-      .setDescription(`**${target.tag}** silenciado por **${minutes} min**.\n**Razón:** ${reason}`)
+      .setTitle('🔇 Miembro silenciado (indefinido)')
+      .setDescription(`**${target.tag}** recibió el rol de mute <@&${role.id}>.\n**Razón:** ${reason}`)
       .setFooter({ text: `Por ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
+      .setTimestamp();
+    await message.reply({ embeds: [embed] });
+  },
+});
+
+/** Duración estilo 10m / 2h / 1d (para tempmute). */
+function parseDuration(raw: string): number | null {
+  const match = raw.match(/^(\d+)([smhd])$/i);
+  if (!match) return null;
+  const n = parseInt(match[1], 10);
+  const unit = match[2].toLowerCase();
+  const ms = unit === 's' ? 1000 : unit === 'm' ? 60_000 : unit === 'h' ? 3_600_000 : 86_400_000;
+  const total = n * ms;
+  return total > 0 && total <= 28 * 86_400_000 ? total : null;
+}
+
+const tempmute = (): BotCommand => ({
+  name: 'tempmute',
+  description: 'Silencia temporalmente a un miembro (ej: 10m, 2h, 1d)',
+  aliases: ['mute-temp', 'temporal', 'timeout'],
+  usage: 'cz!tempmute @usuario <10m|2h|1d> [razón]',
+  category: 'Moderación',
+  permissions: [PermissionFlagsBits.ModerateMembers],
+  slashCommand: new SlashCommandBuilder()
+    .setName('tempmute')
+    .setDescription('Silencia temporalmente a un miembro')
+    .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
+    .addUserOption((o) => o.setName('usuario').setDescription('Usuario').setRequired(true))
+    .addStringOption((o) => o.setName('duracion').setDescription('Duración (ej: 10m, 2h, 1d; máx 28d)').setRequired(true))
+    .addStringOption((o) => o.setName('razon').setDescription('Razón').setRequired(false)),
+  async execute(message, args) {
+    if (!message.guild) return;
+    if (message.member && !message.member.permissions.has(PermissionFlagsBits.ModerateMembers)) {
+      await message.reply('❌ Necesitas permiso de **Gestionar Miembros**.');
+      return;
+    }
+    const target = message.mentions?.users?.first();
+    if (!target) {
+      await message.reply('❌ Uso: `cz!tempmute @usuario <10m|2h|1d> [razón]`');
+      return;
+    }
+    const durationMs = parseDuration(args[1] ?? '');
+    if (!durationMs) {
+      await message.reply('❌ Duración inválida. Formato: `10m`, `2h`, `1d` (máximo 28 días).');
+      return;
+    }
+    const member = await message.guild.members.fetch(target.id).catch(() => null);
+    if (!member) return;
+    const reason = args.slice(2).join(' ') || 'Sin razón';
+    try {
+      await member.timeout(durationMs, reason);
+    } catch (error) {
+      await message.reply(hierarchyError('silenciar a ese miembro', error));
+      return;
+    }
+    const minutes = Math.round(durationMs / 60_000);
+    const embed = new EmbedBuilder()
+      .setColor('#ff9900')
+      .setTitle('⏱️ Miembro silenciado temporalmente')
+      .setDescription(`**${target.tag}** silenciado por **${args[1]}**.\n**Razón:** ${reason}`)
+      .setFooter({ text: `Por ${message.author.tag} • ${minutes} min`, iconURL: message.author.displayAvatarURL() })
       .setTimestamp();
     await message.reply({ embeds: [embed] });
   },
@@ -303,4 +400,4 @@ const purge = (): BotCommand => ({
   },
 });
 
-export default [kick, ban, unban, mute, unmute, warn, warns, purge];
+export default [kick, ban, unban, mute, tempmute, unmute, warn, warns, purge];

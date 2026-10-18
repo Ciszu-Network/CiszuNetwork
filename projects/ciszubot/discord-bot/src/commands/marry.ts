@@ -42,8 +42,9 @@ const marry: BotCommand = {
       return;
     }
 
-    // Config del servidor: casamiento activado y roles excluidos (por defecto,
-    // si no hay lista configurada, se excluye a admins — y los bots siempre).
+    // Config del servidor: casamiento activado, roles excluidos y la regla de
+    // admin↔admin (configurable). Reglas fijas: bots nunca; admin↔usuario y
+    // usuario↔usuario siempre permitido.
     const cfg = await getGuildConfig(message.guild.id);
     if (cfg.marriage_enabled === false) {
       await message.reply('❌ El casamiento está desactivado en este servidor.');
@@ -53,10 +54,14 @@ const marry: BotCommand = {
     const proposerMember = (await message.guild.members.fetch(message.author.id).catch(() => null)) as MemberLike;
     const targetMember = (await message.guild.members.fetch(target.id).catch(() => null)) as MemberLike;
     const excluded = cfg.marriage_excluded_role_ids;
-    const isExcluded = (m: MemberLike): boolean =>
-      Boolean(m && (excluded.some((r) => m.roles.cache.has(r)) || (excluded.length === 0 && m.permissions.has('ManageGuild'))));
-    if (isExcluded(proposerMember) || isExcluded(targetMember)) {
-      await message.reply('❌ Una de las partes está excluida del casamiento en este servidor (admins o roles excluidos).');
+    const hasExcludedRole = (m: MemberLike): boolean => Boolean(m && excluded.some((r) => m.roles.cache.has(r)));
+    if (hasExcludedRole(proposerMember) || hasExcludedRole(targetMember)) {
+      await message.reply('❌ Una de las partes tiene un rol excluido del casamiento en este servidor.');
+      return;
+    }
+    const isAdmin = (m: MemberLike): boolean => Boolean(m && m.permissions.has('ManageGuild'));
+    if (cfg.marriage_allow_admin_pairs === false && isAdmin(proposerMember) && isAdmin(targetMember)) {
+      await message.reply('❌ En este servidor los administradores no pueden casarse entre ellos (regla configurable).');
       return;
     }
 

@@ -1,6 +1,7 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
-import { getWallet, setWallet, formatMoney, randomBetween } from '../services/economy';
+import { getWallet, setWallet, randomBetween } from '../services/economy';
+import { getGuildConfig, formatCoins } from '../services/configService';
 
 const create = (): BotCommand => ({
   name: 'slot',
@@ -13,6 +14,7 @@ const create = (): BotCommand => ({
     .setDescription('Juega a la máquina tragaperras')
     .addIntegerOption((o) => o.setName('cantidad').setDescription('Cantidad a apostar').setRequired(true)),
   async execute(message, args) {
+    const cfg = await getGuildConfig(message.guild?.id ?? 'DM');
     const guildId = message.guild?.id ?? 'DM';
     const amount = parseInt(args[0] ?? '', 10);
     if (isNaN(amount) || amount <= 0) {
@@ -21,7 +23,7 @@ const create = (): BotCommand => ({
     }
     const w = await getWallet(message.author.id, guildId);
     if (w.balance < amount) {
-      await message.reply(`❌ No tienes suficientes monedas (necesitas ${formatMoney(amount)}).`);
+      await message.reply(`❌ No tienes suficientes monedas (necesitas ${(amount)}).`);
       return;
     }
 
@@ -43,7 +45,7 @@ const create = (): BotCommand => ({
       .setColor(winAmount > 0 ? '#00ff88' : '#ff0000')
       .setTitle('🎰 Tragaperras')
       .setDescription(
-        `${line}\n\n${winAmount > 0 ? `¡Ganaste **${formatMoney(winAmount)}**!` : `Perdiste **${formatMoney(amount)}**...`}\n\n**Nuevo saldo:** ${formatMoney(newBalance)}`
+        `${line}\n\n${winAmount > 0 ? `¡Ganaste **${(winAmount)}**!` : `Perdiste **${(amount)}**...`}\n\n**Nuevo saldo:** ${(newBalance)}`
       )
       .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
       .setTimestamp();

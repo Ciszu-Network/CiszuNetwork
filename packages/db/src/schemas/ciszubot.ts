@@ -81,6 +81,8 @@ export const guildConfigs = ciszubot.table(
     afkPrefixEnabled: boolean('afk_prefix_enabled').notNull().default(false),
     afkAutoMinutes: integer('afk_auto_minutes').notNull().default(0),
     marriageEnabled: boolean('marriage_enabled').notNull().default(true),
+    marriageAllowAdminPairs: boolean('marriage_allow_admin_pairs').notNull().default(true),
+    commandGlobalCooldown: integer('command_global_cooldown').notNull().default(3),
     marriageExcludedRoleIds: jsonb('marriage_excluded_role_ids').notNull().default([]),
     nitroRepostMode: text('nitro_repost_mode').notNull().default('auto'),
     nitroExcludedRoleIds: jsonb('nitro_excluded_role_ids').notNull().default([]),

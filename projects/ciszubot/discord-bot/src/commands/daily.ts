@@ -1,7 +1,8 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
-import { addMoney, formatMoney, randomBetween } from '../services/economy';
+import { addMoney, randomBetween } from '../services/economy';
 import { db, ciszubotSchema, eq, and, desc } from '../services/supabase';
+import { getGuildConfig, formatCoins } from '../services/configService';
 
 const create = (): BotCommand => ({
   name: 'daily',
@@ -43,7 +44,7 @@ const create = (): BotCommand => ({
     const embed = new EmbedBuilder()
       .setColor('#00d4ff')
       .setTitle('☀️ ¡Recompensa diaria reclamada!')
-      .setDescription(`Recibiste **${formatMoney(amount)}**.\nTu nuevo saldo es **${formatMoney(bal ?? 0)}**.`)
+      .setDescription(`Recibiste **${(amount)}**.\nTu nuevo saldo es **${(bal ?? 0)}**.`)
       .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
       .setTimestamp();
     await message.reply({ embeds: [embed] });

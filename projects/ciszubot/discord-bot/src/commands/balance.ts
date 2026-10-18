@@ -1,6 +1,7 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
-import { addMoney, getWallet, setWallet, formatMoney, randomBetween } from '../services/economy';
+import { addMoney, getWallet, setWallet, randomBetween } from '../services/economy';
+import { getGuildConfig, formatCoins } from '../services/configService';
 
 const create = (): BotCommand => ({
   name: 'balance',
@@ -13,6 +14,7 @@ const create = (): BotCommand => ({
     .setDescription('Muestra tu saldo o el de otro usuario')
     .addUserOption((o) => o.setName('usuario').setDescription('Usuario a consultar').setRequired(false)),
   async execute(message, args) {
+    const cfg = await getGuildConfig(message.guild?.id ?? 'DM');
     const target = message.mentions?.users?.first() ?? message.author;
     const guildId = message.guild?.id ?? 'DM';
     const w = await getWallet(target.id, guildId);
@@ -20,7 +22,7 @@ const create = (): BotCommand => ({
       .setColor('#00d4ff')
       .setTitle(`💰 Saldo de ${target.username}`)
       .setDescription(
-        `**Monedas:** ${formatMoney(w.balance)}\n**Banco:** ${formatMoney(w.bank)}\n**Total:** ${formatMoney(w.balance + w.bank)}`
+        `**Monedas:** ${(w.balance)}\n**Banco:** ${(w.bank)}\n**Total:** ${(w.balance + w.bank)}`
       )
       .setFooter({ text: `CiszuBot • Solicitado por ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
       .setTimestamp();

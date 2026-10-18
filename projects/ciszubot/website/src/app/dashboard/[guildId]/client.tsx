@@ -71,6 +71,8 @@ interface GuildConfig {
   afk_prefix_enabled?: boolean;
   afk_auto_minutes?: number;
   marriage_enabled?: boolean;
+  marriage_allow_admin_pairs?: boolean;
+  command_global_cooldown?: number;
   marriage_excluded_role_ids?: string[];
   nitro_repost_mode?: 'auto' | 'manual';
   nitro_excluded_role_ids?: string[];
@@ -196,9 +198,9 @@ const FEATURE_ROWS: { slug: string; icon: string; labelKey: keyof Dict['guildPag
   { slug: 'minigames', icon: 'gamepad', labelKey: 'featMinigames', descKey: 'featMinigamesDesc' },
   { slug: 'giveaways', icon: 'trophy', labelKey: 'featGiveaways', descKey: 'featGiveawaysDesc' },
   { slug: 'embeds', icon: 'ri-braces', labelKey: 'featEmbeds', descKey: 'featEmbedsDesc', premium: true, colorClass: 'text-purple-400' },
-  { slug: 'misc', icon: 'palette', labelKey: 'featMisc', descKey: 'featMiscDesc' },
-  { slug: 'utility', icon: 'settings', labelKey: 'featUtility', descKey: 'featUtilityDesc' },
-  { slug: 'moderation', icon: 'shield', labelKey: 'featModeration', descKey: 'featModerationDesc' },
+  { slug: 'misc', icon: 'box-archive', labelKey: 'featMisc', descKey: 'featMiscDesc' },
+  { slug: 'utility', icon: 'ri-code-s-slash', labelKey: 'featUtility', descKey: 'featUtilityDesc' },
+  { slug: 'moderation', icon: 'gavel', labelKey: 'featModeration', descKey: 'featModerationDesc' },
   { slug: 'social', icon: 'users', labelKey: 'featSocial', descKey: 'featSocialDesc' },
 ];
 
@@ -602,19 +604,19 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
       label: f.labelKey,
       tag: f.premium ? ('premium' as const) : ('free' as const),
     })),
-    { key: 'levels', icon: 'star', label: 'subnavLevels', tag: 'mixed' },
-    { key: 'economy', icon: 'money', label: 'subnavEconomy', tag: 'free' },
+    { key: 'levels', icon: 'chart-bar', label: 'subnavLevels', tag: 'mixed' },
+    { key: 'economy', icon: 'money-bill-trend-up', label: 'subnavEconomy', tag: 'free' },
     { key: 'starboard', icon: 'star', label: 'subnavStarboard', tag: 'free' },
-    { key: 'nitro', icon: 'palette', label: 'subnavNitro', tag: 'free' },
-    { key: 'staff', icon: 'shield', label: 'subnavStaff', tag: 'free' },
-    { key: 'alliance', icon: 'users', label: 'subnavAlliance', tag: 'free' },
+    { key: 'nitro', icon: 'bolt', label: 'subnavNitro', tag: 'free' },
+    { key: 'staff', icon: 'admin-panel-settings', label: 'subnavStaff', tag: 'free' },
+    { key: 'alliance', icon: 'handshake', label: 'subnavAlliance', tag: 'free' },
     { key: 'tickets', icon: 'support', label: 'subnavTickets', tag: 'free' },
     { key: 'automod', icon: 'shield', label: 'subnavAutomod', tag: 'free' },
-    { key: 'stats', icon: 'chart-bar', label: 'subnavStats', tag: 'free' },
+    { key: 'stats', icon: 'chart-line', label: 'subnavStats', tag: 'free' },
     { key: 'welcome', icon: 'heart', label: 'subnavWelcome', tag: 'free' },
     { key: 'goodbye', icon: 'logout', label: 'subnavGoodbye', tag: 'free' },
-    { key: 'invites', icon: 'person', label: 'subnavInvites', tag: 'free' },
-    { key: 'vcs', icon: 'music', label: 'subnavVcs', tag: 'free' },
+    { key: 'invites', icon: 'address-book', label: 'subnavInvites', tag: 'free' },
+    { key: 'vcs', icon: 'cast', label: 'subnavVcs', tag: 'free' },
     { key: 'history', icon: 'verified', label: 'subnavHistory', tag: 'free' },
   ];
 
@@ -849,6 +851,8 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         afk_prefix_enabled: cfg?.afk_prefix_enabled ?? false,
         afk_auto_minutes: cfg?.afk_auto_minutes ?? 0,
         marriage_enabled: cfg?.marriage_enabled ?? true,
+        marriage_allow_admin_pairs: cfg?.marriage_allow_admin_pairs ?? true,
+        command_global_cooldown: cfg?.command_global_cooldown ?? 3,
         marriage_excluded_role_ids: Array.isArray(cfg?.marriage_excluded_role_ids) ? cfg.marriage_excluded_role_ids : [],
         nitro_repost_mode: cfg?.nitro_repost_mode ?? 'auto',
         nitro_excluded_role_ids: Array.isArray(cfg?.nitro_excluded_role_ids) ? cfg.nitro_excluded_role_ids : [],
@@ -1637,6 +1641,18 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                   onChange={(v) => update({ lang: v })}
                 />
               </Field>
+              <Field label={t.globalCooldownLabel} hint={t.globalCooldownHint}>
+                <input
+                  type="number"
+                  min={0}
+                  max={60}
+                  className={inputCls}
+                  value={config.command_global_cooldown ?? 3}
+                  onChange={(e) =>
+                    update({ command_global_cooldown: Math.min(60, Math.max(0, Number(e.target.value) || 0)) })
+                  }
+                />
+              </Field>
 
               {/* Roles del servidor (owner/admin/mod/bots) — alimentan los
                   permisos de los comandos de gestión y la moderación. */}
@@ -1763,7 +1779,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
             </div>
 
             {/* Sub-opciones por opción (minijuegos, social, utilidad, misceláneo) */}
-            {SUB_TOGGLES[activeFeature.slug] && (
+            {SUB_TOGGLES[activeFeature.slug] && config.features?.[activeFeature.slug] !== false && (
               <div className="mt-4 grid gap-2">
                 <p className="text-[10px] font-black uppercase tracking-widest text-white/45">
                   Sub-opciones
@@ -2014,56 +2030,83 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               </div>
             )}
 
-            {/* Social: configuración de AFK y casamiento */}
-            {activeFeature.slug === 'social' && (
-              <div className="mt-4 grid gap-4">
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <Field label={t.afkRoleLabel}>
-                    {hasGuildData ? (
-                      <NiceSelect
-                        value={config.afk_role_id ?? null}
-                        options={roleOptions}
-                        placeholder={t.pickRole}
-                        onChange={(v) => update({ afk_role_id: v })}
-                      />
-                    ) : (
-                      <input
-                        className={inputCls}
-                        value={config.afk_role_id ?? ''}
-                        onChange={(e) => update({ afk_role_id: e.target.value || null })}
-                      />
-                    )}
-                  </Field>
-                  <Field label={t.afkAutoLabel} hint={t.afkAutoHint}>
-                    <input
-                      type="number"
-                      min={0}
-                      max={1440}
-                      className={inputCls}
-                      value={config.afk_auto_minutes ?? 0}
-                      onChange={(e) => update({ afk_auto_minutes: Math.max(0, Number(e.target.value) || 0) })}
-                    />
-                  </Field>
-                </div>
-                <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-2.5">
-                  <p className="text-xs font-semibold text-white/80">{t.afkPrefixLabel}</p>
-                  <Toggle on={Boolean(config.afk_prefix_enabled)} onChange={(v) => update({ afk_prefix_enabled: v })} />
-                </div>
-                <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-2.5">
-                  <div className="min-w-0">
-                    <p className="text-xs font-semibold text-white/80">{t.marriageToggleLabel}</p>
-                    <p className="text-[10px] text-white/40">{t.marriageToggleHint}</p>
+            {/* Social: configuración ANIDADA bajo cada sub-opción (solo se
+                muestra lo que está activo: sin social → nada; sin AFK → sin
+                ajustes de AFK; sin casamiento → sin ajustes de casamiento). */}
+            {activeFeature.slug === 'social' && config.features?.['social'] !== false && (
+              <div className="mt-4 grid gap-3">
+                {config.features?.['social_afk'] !== false && (
+                  <div className="ml-2 grid gap-3 border-l-2 border-neon-blue/30 pl-4">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-white/40">{t.socialAfk}</p>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <Field label={t.afkRoleLabel}>
+                        {hasGuildData ? (
+                          <NiceSelect
+                            value={config.afk_role_id ?? null}
+                            options={roleOptions}
+                            placeholder={t.pickRole}
+                            onChange={(v) => update({ afk_role_id: v })}
+                          />
+                        ) : (
+                          <input
+                            className={inputCls}
+                            value={config.afk_role_id ?? ''}
+                            onChange={(e) => update({ afk_role_id: e.target.value || null })}
+                          />
+                        )}
+                      </Field>
+                      <Field label={t.afkAutoLabel} hint={t.afkAutoHint}>
+                        <input
+                          type="number"
+                          min={0}
+                          max={1440}
+                          className={inputCls}
+                          value={config.afk_auto_minutes ?? 0}
+                          onChange={(e) => update({ afk_auto_minutes: Math.max(0, Number(e.target.value) || 0) })}
+                        />
+                      </Field>
+                    </div>
+                    <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-2.5">
+                      <p className="text-xs font-semibold text-white/80">{t.afkPrefixLabel}</p>
+                      <Toggle on={Boolean(config.afk_prefix_enabled)} onChange={(v) => update({ afk_prefix_enabled: v })} />
+                    </div>
                   </div>
-                  <Toggle on={config.marriage_enabled !== false} onChange={(v) => update({ marriage_enabled: v })} />
-                </div>
-                <Field label={t.marriageExcludedLabel} hint={t.marriageExcludedHint}>
-                  <MultiSelect
-                    values={config.marriage_excluded_role_ids ?? []}
-                    options={roleOptions}
-                    placeholder={t.pickRole}
-                    onChange={(v) => update({ marriage_excluded_role_ids: v })}
-                  />
-                </Field>
+                )}
+
+                {config.features?.['social_marriage'] !== false && (
+                  <div className="ml-2 grid gap-3 border-l-2 border-neon-pink/30 pl-4">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-white/40">{t.socialMarriage}</p>
+                    <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-2.5">
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold text-white/80">{t.marriageToggleLabel}</p>
+                        <p className="text-[10px] text-white/40">{t.marriageToggleHint}</p>
+                      </div>
+                      <Toggle on={config.marriage_enabled !== false} onChange={(v) => update({ marriage_enabled: v })} />
+                    </div>
+                    {config.marriage_enabled !== false && (
+                      <>
+                        <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-2.5">
+                          <div className="min-w-0">
+                            <p className="text-xs font-semibold text-white/80">{t.marriageAdminPairsLabel}</p>
+                            <p className="text-[10px] text-white/40">{t.marriageAdminPairsHint}</p>
+                          </div>
+                          <Toggle
+                            on={config.marriage_allow_admin_pairs !== false}
+                            onChange={(v) => update({ marriage_allow_admin_pairs: v })}
+                          />
+                        </div>
+                        <Field label={t.marriageExcludedLabel} hint={t.marriageExcludedHint}>
+                          <MultiSelect
+                            values={config.marriage_excluded_role_ids ?? []}
+                            options={roleOptions}
+                            placeholder={t.pickRole}
+                            onChange={(v) => update({ marriage_excluded_role_ids: v })}
+                          />
+                        </Field>
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 

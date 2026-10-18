@@ -52,7 +52,11 @@ async function runAction(client: Client, action: ActionRow): Promise<string> {
             bonusRoles: Array.isArray(payload.bonus_roles) ? (payload.bonus_roles as Array<{ role_id: string; multiplier: number }>) : [],
             source: 'dashboard',
           });
-          return res.ok ? `ok:${res.id}` : 'error: no se pudo crear el sorteo';
+          return res.ok
+            ? `ok:${res.id}`
+            : res.limitReached
+              ? `error: límite de ${giveaways.GIVEAWAY_FREE_LIMIT} sorteos activos en plan free (premium = ilimitado)`
+              : 'error: no se pudo crear el sorteo';
         }
         case 'giveaway_pause':
           return (await giveaways.pauseGiveaway(guild, giveawayId)) ? 'ok' : 'error: no se pudo pausar';

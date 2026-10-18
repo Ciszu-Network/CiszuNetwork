@@ -1,6 +1,7 @@
 import { EmbedBuilder, Guild, GuildMember, TextChannel } from 'discord.js';
-import { db, ciszubotSchema, eq, and, sql } from '@ciszunetwork/db';
+import { db, ciszubotSchema, eq, and, inArray, sql } from '@ciszunetwork/db';
 import { logger } from './logger';
+import { isPremiumGuild } from './featureFlags';
 
 /**
  * Sistema de sorteos (giveaways) con manager:
@@ -302,8 +303,28 @@ export async function endGiveaway(guild: Guild, data: { id: string }): Promise<v
   }
 }
 
+/** Límite de sorteos ACTIVOS simultáneos (free: 10 · premium: ilimitados). */
+export const GIVEAWAY_FREE_LIMIT = 10;
+
 /** Crea el sorteo (botón) y programa su fin. */
-export async function createGiveaway(guild: Guild, channel: TextChannel, opts: CreateOptions): Promise<{ ok: boolean; id?: string }> {
+export async function createGiveaway(guild: Guild, channel: TextChannel, opts: CreateOptions): Promise<{ ok: boolean; id?: string; limitReached?: boolean }> {
+  // Límite free: 10 sorteos activos (pausados cuentan; terminados/cancelados no).
+  try {
+    const giveaways = ciszubotSchema.giveaways;
+    const premium = await isPremiumGuild(guild.id);
+    if (!premium) {
+      const active = await db
+        .select({ id: giveaways.id })
+        .from(giveaways)
+        .where(and(eq(giveaways.guildId, guild.id), inArray(giveaways.status, ['running', 'paused'])));
+      if (active.length >= GIVEAWAY_FREE_LIMIT) {
+        return { ok: false, limitReached: true };
+      }
+    }
+  } catch (error) {
+    logger.warn('createGiveaway limit check:', error);
+  }
+
   const endsAt = new Date(Date.now() + opts.durationMs);
   const id = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
   const msg = await channel.send({ embeds: [baseEmbed(opts.prize, opts, endsAt)], components: buttonRow(id) as never });
@@ -344,7 +365,12 @@ export async function startGiveaway(
   host: { id: string; tag: string; displayAvatarURL(opts?: { size?: number }): string },
 ): Promise<{ ok: boolean; message?: string }> {
   const res = await createGiveaway(guild, channel, { prize, winners, durationMs, host });
-  return { ok: res.ok };
+  return {
+    ok: res.ok,
+    message: res.limitReached
+      ? `Límite de ${GIVEAWAY_FREE_LIMIT} sorteos activos alcanzado (plan free). Los sorteos premium son ilimitados.`
+      : undefined,
+  };
 }
 
 /** Pausa: congela el sorteo (los botones rechazan ingresos). */

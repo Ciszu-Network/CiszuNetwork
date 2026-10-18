@@ -38,11 +38,22 @@ const rps = (): BotCommand => ({
         .setRequired(true)
     ),
   async execute(message, args) {
-    const options = ['piedra', 'papel', 'tijeras'];
+    const options = ['piedra', 'papel', 'tijeras'] as const;
     const emojis = { piedra: '🪨', papel: '📄', tijeras: '✂️' } as const;
-    const player = (args[0] ?? '').toLowerCase();
-    if (!options.includes(player)) {
-      await message.reply('❌ Uso: `cz!rps <piedra|papel|tijeras>`');
+    // Acepta español E inglés (multilingüe): el idioma del servidor no limita
+    // lo que el usuario puede escribir.
+    const aliases: Record<string, (typeof options)[number]> = {
+      piedra: 'piedra',
+      rock: 'piedra',
+      papel: 'papel',
+      paper: 'papel',
+      tijeras: 'tijeras',
+      tijera: 'tijeras',
+      scissors: 'tijeras',
+    };
+    const player = aliases[(args[0] ?? '').toLowerCase()] as 'piedra' | 'papel' | 'tijeras' | undefined;
+    if (!player) {
+      await message.reply('❌ Uso: `cz!rps <piedra|papel|tijeras>` · `cz!rps <rock|paper|scissors>`');
       return;
     }
     const botChoice = options[randomBetween(0, 2)];
@@ -57,7 +68,7 @@ const rps = (): BotCommand => ({
 
     const embed = new EmbedBuilder()
       .setColor('#00d4ff')
-      .setTitle(`${emojis[player as keyof typeof emojis]} vs ${emojis[botChoice as keyof typeof emojis]}`)
+      .setTitle(`${emojis[player]} vs ${emojis[botChoice]}`)
       .setDescription(`Elegiste **${player}**, el bot eligió **${botChoice}**.\n\n**${result}**`)
       .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() });
     await message.reply({ embeds: [embed] });

@@ -134,6 +134,8 @@ export interface GuildConfig {
   afk_prefix_enabled: boolean;
   afk_auto_minutes: number;
   marriage_enabled: boolean;
+  marriage_allow_admin_pairs: boolean;
+  command_global_cooldown: number;
   marriage_excluded_role_ids: string[];
   nitro_repost_mode: 'auto' | 'manual';
   nitro_excluded_role_ids: string[];
@@ -213,6 +215,8 @@ const DEFAULTS: Omit<GuildConfig, 'guild_id'> = {
   afk_prefix_enabled: false,
   afk_auto_minutes: 0,
   marriage_enabled: true,
+  marriage_allow_admin_pairs: true,
+  command_global_cooldown: 3,
   marriage_excluded_role_ids: [],
   nitro_repost_mode: 'auto',
   nitro_excluded_role_ids: [],
@@ -310,6 +314,8 @@ export async function getGuildConfig(guildId: string): Promise<GuildConfig> {
         afk_prefix_enabled: data.afkPrefixEnabled ?? DEFAULTS.afk_prefix_enabled,
         afk_auto_minutes: data.afkAutoMinutes ?? DEFAULTS.afk_auto_minutes,
         marriage_enabled: data.marriageEnabled ?? DEFAULTS.marriage_enabled,
+        marriage_allow_admin_pairs: data.marriageAllowAdminPairs ?? DEFAULTS.marriage_allow_admin_pairs,
+        command_global_cooldown: data.commandGlobalCooldown ?? DEFAULTS.command_global_cooldown,
         marriage_excluded_role_ids: asArray(data.marriageExcludedRoleIds, DEFAULTS.marriage_excluded_role_ids),
         nitro_repost_mode: (data.nitroRepostMode as 'auto' | 'manual') ?? DEFAULTS.nitro_repost_mode,
         nitro_excluded_role_ids: asArray(data.nitroExcludedRoleIds, DEFAULTS.nitro_excluded_role_ids),
@@ -382,6 +388,8 @@ export async function updateGuildConfig(
     afkPrefixEnabled: merged.afk_prefix_enabled,
     afkAutoMinutes: merged.afk_auto_minutes,
     marriageEnabled: merged.marriage_enabled,
+    marriageAllowAdminPairs: merged.marriage_allow_admin_pairs,
+    commandGlobalCooldown: merged.command_global_cooldown,
     marriageExcludedRoleIds: merged.marriage_excluded_role_ids,
     nitroRepostMode: merged.nitro_repost_mode,
     nitroExcludedRoleIds: merged.nitro_excluded_role_ids,

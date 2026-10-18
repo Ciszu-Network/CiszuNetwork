@@ -1,6 +1,7 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
-import { getWallet, setWallet, addBank, formatMoney } from '../services/economy';
+import { getWallet, setWallet, addBank } from '../services/economy';
+import { getGuildConfig, formatCoins } from '../services/configService';
 
 const create = (): BotCommand => ({
   name: 'deposit',
@@ -13,6 +14,7 @@ const create = (): BotCommand => ({
     .setDescription('Guarda monedas en el banco')
     .addStringOption((o) => o.setName('cantidad').setDescription('Cantidad o "all"').setRequired(true)),
   async execute(message, args) {
+    const cfg = await getGuildConfig(message.guild?.id ?? 'DM');
     const guildId = message.guild?.id ?? 'DM';
     const w = await getWallet(message.author.id, guildId);
     const amount = args[0]?.toLowerCase() === 'all' ? w.balance : parseInt(args[0] ?? '', 10);
@@ -22,7 +24,7 @@ const create = (): BotCommand => ({
       return;
     }
     if (w.balance < amount) {
-      await message.reply(`❌ No tienes suficientes monedas (tienes ${formatMoney(w.balance)}).`);
+      await message.reply(`❌ No tienes suficientes monedas (tienes ${(w.balance)}).`);
       return;
     }
 
@@ -30,7 +32,7 @@ const create = (): BotCommand => ({
     const embed = new EmbedBuilder()
       .setColor('#00d4ff')
       .setTitle('🏦 ¡Depósito exitoso!')
-      .setDescription(`Guardaste **${formatMoney(amount)}** en el banco.\n**Banco:** ${formatMoney(w.bank + amount)}`)
+      .setDescription(`Guardaste **${(amount)}** en el banco.\n**Banco:** ${(w.bank + amount)}`)
       .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
       .setTimestamp();
     await message.reply({ embeds: [embed] });
