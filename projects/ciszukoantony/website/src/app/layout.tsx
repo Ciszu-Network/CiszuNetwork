@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { Exo_2, Rajdhani } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { buildSeoMetadata, seoJsonLdString } from "@ciszunetwork/utils/seo";
-import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, AdStatusNotice, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -120,7 +120,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <AdPill placement="body" />
             <RedirectGuard debug={true} />
             <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={PROFILE_PIC} title={SITE_NAME} subtitle="Ciszuko Antony Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszukoantony">
-              <AdBlockerGuard site="ciszukoantony" logo={PROFILE_PIC} title={SITE_NAME} accent="#a78bfa" accentAlt="#ff33cc" donateHref="https://ciszukoantony.vercel.app/donate">
+              <AdStatusNotice donateHref="https://ciszukoantony.vercel.app/donate" />
+             <AdBlockerGuard site="ciszukoantony" logo={PROFILE_PIC} title={SITE_NAME} accent="#a78bfa" accentAlt="#ff33cc" donateHref="https://ciszukoantony.vercel.app/donate">
               {/* BetaDisclaimer removido: ahora usa el sistema de push global (GlobalDisclaimer) */}
               <HideOnEdit><Navbar /></HideOnEdit>
               <HideOnEdit><ZoomWarning /></HideOnEdit>

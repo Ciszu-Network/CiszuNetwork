@@ -37,6 +37,8 @@ export type { CloudflareGuardProps } from './CloudflareGuard';
 // AdBlockerGuard: detección de adblockers + concienciación (modal de bloqueo)
 export { default as AdBlockerGuard } from './AdBlockerGuard';
 export type { AdBlockerGuardProps } from './AdBlockerGuard';
+// AdStatusNotice: aviso dinámico del estado real de los anuncios (AdSense)
+export { default as AdStatusNotice } from './AdStatusNotice';
 // Sistema de Formatos: imagen Capa 4 -> Capa 3 con fallback en cadena
 export { default as SmartImage } from './SmartImage';
 export type { SmartImageProps } from './SmartImage';

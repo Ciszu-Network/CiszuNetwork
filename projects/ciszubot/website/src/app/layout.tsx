@@ -11,7 +11,7 @@ import { CookiesBanner } from "@/components/layout/CookiesBanner";
 import { LOGO_ISOTIPO_CIRCLE } from "@/lib/i18n";
 import { COMMANDS } from "@/data/commands";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, AdStatusNotice, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import QueryProvider from "@/components/layout/QueryProvider";
 import BotOfflineDisclaimer from "@/components/status/BotOfflineDisclaimer";
@@ -108,6 +108,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                Muzicmania ya opera así; el resto de la seguridad sigue activa
                (BotID en rutas sensibles + reCAPTCHA en formularios). */}
            <CloudflareGuard logo={GUARD_LOGO} title="CiszuBot" subtitle="CiszuBot Security • Cloudflare" accent="#a78bfa" storageKey="cf_verified_ciszubot">
+             <AdStatusNotice donateHref="https://ciszubot.vercel.app/donate" />
              <AdBlockerGuard site="ciszubot" logo={GUARD_LOGO} title="CiszuBot" accent="#38bdf8" accentAlt="#ff33cc" donateHref="https://ciszubot.vercel.app/donate">
             <AuthProvider>
               <ToastProvider>

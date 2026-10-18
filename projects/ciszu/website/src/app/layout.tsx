@@ -4,7 +4,7 @@ import Script from "next/script";
 import { IBM_Plex_Sans, IBM_Plex_Sans_Condensed } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { buildSeoMetadata, seoJsonLdString } from "@ciszunetwork/utils/seo";
-import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, AdStatusNotice, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -115,7 +115,8 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
             <RedirectGuard debug={true} />
             <DisclaimerProvider>
               <CloudflareGuard siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} logo={ICON_SVG} title={SITE_NAME} subtitle="Ciszu Network Security • Cloudflare" accent="#22d3ee" storageKey="cf_verified_ciszu">
-                <AdBlockerGuard site="ciszu" logo={ICON_SVG} title={SITE_NAME} accent="#22d3ee" accentAlt="#f472b6" donateHref="https://ciszunetwork.vercel.app/donate">
+                <AdStatusNotice donateHref="https://ciszunetwork.vercel.app/donate" />
+             <AdBlockerGuard site="ciszu" logo={ICON_SVG} title={SITE_NAME} accent="#22d3ee" accentAlt="#f472b6" donateHref="https://ciszunetwork.vercel.app/donate">
                 <HideOnEdit><ZoomWarning /></HideOnEdit>
                 <HideOnEdit><Navbar /></HideOnEdit>
                 <HideOnEdit><DisclaimerStack headerHeight={64} /></HideOnEdit>

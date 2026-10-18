@@ -9,7 +9,7 @@ import AuthProvider from "@/components/providers/AuthProvider";
 import AdsWithUser from "@/components/providers/AdsWithUser";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, AdBlockerGuard, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, AdBlockerGuard, AdStatusNotice, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import HideOnEdit from "@/components/layout/HideOnEdit";
 import SiteMain from "@/components/layout/SiteMain";
 
@@ -114,7 +114,8 @@ export default function RootLayout({
            <RedirectGuard debug={true} />
           <DisclaimerProvider>
             <CloudflareGuard>
-              <AdBlockerGuard site="muzicmania" logo={assetResolver.resolve('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} title="MuzicMania" accent="#c026d3" accentAlt="#ff33cc" donateHref="https://muzicmania.vercel.app/donate">
+              <AdStatusNotice donateHref="https://muzicmania.vercel.app/donate" />
+             <AdBlockerGuard site="muzicmania" logo={assetResolver.resolve('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')} title="MuzicMania" accent="#c026d3" accentAlt="#ff33cc" donateHref="https://muzicmania.vercel.app/donate">
               {/* BetaDisclaimer removido: ahora usa el sistema de push global (GlobalDisclaimer) */}
               <HideOnEdit><Navbar /></HideOnEdit>
               <HideOnEdit><ZoomWarning /></HideOnEdit>

@@ -77,6 +77,28 @@
   fuente por la tuya (elegir `analytics_551642504`; los templates GA4 usan el esquema
   estándar `events_*` y encajan directo).
 
+  REVISIÓN 19 oct 2026 — auditoría de anuncios + GTM + UPD:
+
+- **GTM: tags GA4 DUPLICADOS eliminados** en los 4 contenedores (el flujo "Mida las compras"
+  añadió un tag "Google Analytics" extra junto a "GA4 - Configuración" → doble medición).
+  Versiones publicadas en los 4 (muzicmania v9, antony v3, ciszubot v3, ciszunetwork v3) con:
+  DLV user_id, ajuste UPD automático, detección automática de eventos y tags Google Ads.
+- **GTM: aviso de CSP** → causa: faltaba `www.googletagmanager.com` en `img-src` del CSP
+  (píxel "td" del Google tag). Corregido en `packages/utils/src/csp.ts` (deploy 2712edbd);
+  el aviso desaparece tras el deploy + re-escaneo de Google.
+- **GA4 UPD: formato corregido** — `user_data` va en el NIVEL RAÍZ del payload de Measurement
+  Protocol y `sha256_email_address` es un ARRAY (validado: `validationMessages: []`). Rutas
+  `/api/analytics/user-data` de las 4 webs corregidas.
+- **GA4 conversiones: 7** (añadida `generate_lead`). La tarjeta "Crear una acción de conversión"
+  que sigue en la UI es la parte de Google Ads (importar en Ads); ignorable hasta tener campañas.
+- **Auditoría de anuncios (AdSense)**: tag "AdSense - Head" correcto en los 4 contenedores
+  (`ca-pub-3471969072198962` + adsbygoogle.js async), auto-ads activadas a nivel de cuenta,
+  ads.txt OK, CSP cubre todos los dominios. Único bloqueo: aprobación de Google (externo).
+- **Aviso DINÁMICO de anuncios creado** (`@ciszu/ui` → `AdStatusNotice`, montado en los 4
+  layouts): detecta consentimiento rechazado / adblocker (deja el modal al AdBlockerGuard) /
+  anuncios rellenos (se oculta) / sin anuncios (muestra el estado real + donación). Cerrable
+  con memoria de 24h.
+
 - [ ] Looker Studio: conectar fuentes GA4 y crear dashboard.
   PENDIENTE de las tablas de BigQuery; además la creación de dashboards de
   Looker Studio NO tiene API (se crea manual en la UI). Cuando existan las
