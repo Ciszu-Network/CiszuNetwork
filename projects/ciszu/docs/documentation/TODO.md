@@ -10,7 +10,7 @@
 - [X] Se debe crear un modal cuando una cuenta es baneada, el usuario automaticamente se redirecionara asu profile y aparecera un modal de su cuenta fue baneada e informacion del baneo. Razon fecha provocante etc. Lo mismo con los mutes.
 - [ ] Debuggear todos los sistemas de devcon nuevos.
 - [ ] Integrar formulario de contacto funcionales y verificar soporte y contacto.
-- [ ] Los errores de GTM siguen ocurriendo, [ad.doubleclick.net](https://ad.doubleclick.net) y [googleads.g.doubleclick.net](https://googleads.g.doubleclick.net) se bloquean en ciszunetwork y muzicmania.
+- [X] Los errores de GTM siguen ocurriendo, [ad.doubleclick.net](https://ad.doubleclick.net) y [googleads.g.doubleclick.net](https://googleads.g.doubleclick.net) se bloquean en ciszunetwork y muzicmania.
 
 **Ciszubot:**
 
