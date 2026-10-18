@@ -44,6 +44,12 @@ const SUPABASE_ORIGIN = 'https://obwzzmbvkrcscqwptlqo.supabase.co';
 // desde googletagmanager.com; adsbygoogle.js de AdSense desde pagead2.
 const GOOGLE_TAG_MANAGER_ORIGIN = 'https://www.googletagmanager.com';
 const GOOGLE_DOUBLECLICK_ORIGIN = 'https://googleads.g.doubleclick.net';
+// Google Ads conversion tracking (viewthroughconversion): el script de
+// conversión se sirve desde googleads.g.doubleclick.net (script-src) y el
+// beacon de recolección "ccm/s/collect" desde ad.doubleclick.net (connect-src).
+// Sin ellos, el CSP bloquea la medición de compras (avisos en Tag Assistant).
+const GOOGLE_AD_DOUBLECLICK_ORIGIN = 'https://ad.doubleclick.net';
+const GOOGLE_AD_SERVICES_ORIGIN = 'https://www.googleadservices.com';
 const GOOGLE_ADSENSE_ORIGIN = 'https://pagead2.googlesyndication.com';
 // Orígenes adicionales que sirven los anuncios de AdSense (auto ads):
 //   ep1/ep2.adtrafficquality.google  → verificación de tráfico de anuncios
@@ -116,7 +122,7 @@ function buildCspUncached(opts: CspOptions, dev: boolean): string {
     // 'unsafe-eval' SOLO en desarrollo: el cliente de Next.js dev lo exige.
     [
       'script-src',
-      ["'self'", "'unsafe-inline'", ...(dev ? ["'unsafe-eval'"] : []), 'https://challenges.cloudflare.com', 'https://static.cloudflareinsights.com', 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://va.vercel-scripts.com', 'https://www.google.com', GOOGLE_STATIC_ORIGIN, GOOGLE_TAG_MANAGER_ORIGIN, GOOGLE_ADSENSE_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN_2, GOOGLE_AD_CREATIVE_ORIGIN, GOOGLE_AD_PARTNER_ORIGIN, ...(opts.scriptSrc ?? [])],
+      ["'self'", "'unsafe-inline'", ...(dev ? ["'unsafe-eval'"] : []), 'https://challenges.cloudflare.com', 'https://static.cloudflareinsights.com', 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://va.vercel-scripts.com', 'https://www.google.com', GOOGLE_STATIC_ORIGIN, GOOGLE_TAG_MANAGER_ORIGIN, GOOGLE_DOUBLECLICK_ORIGIN, GOOGLE_AD_SERVICES_ORIGIN, GOOGLE_ADSENSE_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN_2, GOOGLE_AD_CREATIVE_ORIGIN, GOOGLE_AD_PARTNER_ORIGIN, ...(opts.scriptSrc ?? [])],
     ],
     // Estilos inline de la v3 PDWA y utilidades CSS en línea del ecosistema.
     // styleSrc extra: hoja de estilos remota del editor Puck (inter.css de rsms.me).
@@ -127,14 +133,14 @@ function buildCspUncached(opts: CspOptions, dev: boolean): string {
     // Además el Google tag envía el píxel "td" (vinculación con Ads/remarketing)
     // desde www.googletagmanager.com: sin él, la auditoría de seguridad de GTM
     // avisa "recursos de etiquetas bloqueados" (img-src).
-    ['img-src', ["'self'", 'data:', 'blob:', SUPABASE_ORIGIN, GOOGLE_ADSENSE_ORIGIN, GOOGLE_ADSENSE_WILDCARD, GOOGLE_DOUBLECLICK_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN_2, GOOGLE_AD_CREATIVE_ORIGIN, GOOGLE_STATIC_ORIGIN, GOOGLE_TAG_MANAGER_ORIGIN, 'https://www.google-analytics.com', 'https://analytics.google.com', GOOGLE_ANALYTICS_STATS_ORIGIN, ...local, ...(opts.imgSrc ?? [])]],
+    ['img-src', ["'self'", 'data:', 'blob:', SUPABASE_ORIGIN, GOOGLE_ADSENSE_ORIGIN, GOOGLE_ADSENSE_WILDCARD, GOOGLE_DOUBLECLICK_ORIGIN, GOOGLE_AD_DOUBLECLICK_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN_2, GOOGLE_AD_CREATIVE_ORIGIN, GOOGLE_STATIC_ORIGIN, GOOGLE_TAG_MANAGER_ORIGIN, 'https://www.google-analytics.com', 'https://analytics.google.com', GOOGLE_ANALYTICS_STATS_ORIGIN, ...local, ...(opts.imgSrc ?? [])]],
     ['media-src', ["'self'", SUPABASE_ORIGIN, ...local]],
     ['font-src', ["'self'", 'data:', ...local, ...(opts.fontSrc ?? [])]],
     // connect-src: API de impresiones ADS + GTM; GA4 (gtag) envía la colecta de
     // eventos por beacon a www.google-analytics.com, *.google-analytics.com
     // (region1/2) y analytics.google.com. El noscript de GTM abre un iframe de
     // ns.html en googletagmanager.com (frame-src más abajo).
-    ['connect-src', ["'self'", SUPABASE_ORIGIN, 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://static.cloudflareinsights.com', 'https://cloudflareinsights.com', 'https://challenges.cloudflare.com', 'https://va.vercel-scripts.com', 'https://www.google.com', 'https://*.ingest.us.sentry.io', GOOGLE_TAG_MANAGER_ORIGIN, GOOGLE_ADSENSE_ORIGIN, GOOGLE_ADSENSE_WILDCARD, ADS_API_ORIGIN, 'https://www.google-analytics.com', 'https://*.google-analytics.com', 'https://analytics.google.com', GOOGLE_DOUBLECLICK_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN_2, GOOGLE_ANALYTICS_STATS_ORIGIN, ...local, ...(opts.connectSrc ?? [])]],
+    ['connect-src', ["'self'", SUPABASE_ORIGIN, 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://static.cloudflareinsights.com', 'https://cloudflareinsights.com', 'https://challenges.cloudflare.com', 'https://va.vercel-scripts.com', 'https://www.google.com', 'https://*.ingest.us.sentry.io', GOOGLE_TAG_MANAGER_ORIGIN, GOOGLE_ADSENSE_ORIGIN, GOOGLE_ADSENSE_WILDCARD, ADS_API_ORIGIN, 'https://www.google-analytics.com', 'https://*.google-analytics.com', 'https://analytics.google.com', GOOGLE_DOUBLECLICK_ORIGIN, GOOGLE_AD_DOUBLECLICK_ORIGIN, GOOGLE_AD_SERVICES_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN_2, GOOGLE_ANALYTICS_STATS_ORIGIN, ...local, ...(opts.connectSrc ?? [])]],
     // frame-src: AdSense abre iframes de verificación de tráfico en
     // ep1/ep2.adtrafficquality.google (antes solo estaban en script/connect-src,
     // así que el marco se bloqueaba con "Framing ... violates frame-src").
