@@ -114,16 +114,41 @@ export function buildCsp(opts: CspOptions = {}): string {
 
 function buildCspUncached(opts: CspOptions, dev: boolean): string {
   const local = dev ? LOCAL_CDN_ORIGINS : [];
+  // Lista compartida de script-src. Se emite TAMBIÉN como `script-src-elem`
+  // porque la auditoría de seguridad de GTM / Google Ads exige la directiva
+  // literal (no le vale el fallback del navegador a script-src) para los
+  // recursos de etiqueta (googleads.g.doubleclick.net, googletagmanager...).
+  // Al definir script-src-elem, script-src deja de aplicar a <script> por
+  // elemento: por eso se espeja la lista completa.
+  const scriptSrc = [
+    "'self'",
+    "'unsafe-inline'",
+    ...(dev ? ["'unsafe-eval'"] : []),
+    'https://challenges.cloudflare.com',
+    'https://static.cloudflareinsights.com',
+    'https://us.i.posthog.com',
+    'https://us-assets.i.posthog.com',
+    'https://va.vercel-scripts.com',
+    'https://www.google.com',
+    GOOGLE_STATIC_ORIGIN,
+    GOOGLE_TAG_MANAGER_ORIGIN,
+    GOOGLE_DOUBLECLICK_ORIGIN,
+    GOOGLE_AD_SERVICES_ORIGIN,
+    GOOGLE_ADSENSE_ORIGIN,
+    GOOGLE_ADTRAFFIC_ORIGIN,
+    GOOGLE_ADTRAFFIC_ORIGIN_2,
+    GOOGLE_AD_CREATIVE_ORIGIN,
+    GOOGLE_AD_PARTNER_ORIGIN,
+    ...(opts.scriptSrc ?? []),
+  ];
   const directives: Array<[string, string[]]> = [
     // default-src 'self': todo lo no listado cae a self.
     ['default-src', ["'self'"]],
     // 'unsafe-inline' en script: Next.js App Router inyecta bootstrap inline
     // (self.__next_f.push) sin nonce; los dominios externos siguen acotados.
     // 'unsafe-eval' SOLO en desarrollo: el cliente de Next.js dev lo exige.
-    [
-      'script-src',
-      ["'self'", "'unsafe-inline'", ...(dev ? ["'unsafe-eval'"] : []), 'https://challenges.cloudflare.com', 'https://static.cloudflareinsights.com', 'https://us.i.posthog.com', 'https://us-assets.i.posthog.com', 'https://va.vercel-scripts.com', 'https://www.google.com', GOOGLE_STATIC_ORIGIN, GOOGLE_TAG_MANAGER_ORIGIN, GOOGLE_DOUBLECLICK_ORIGIN, GOOGLE_AD_SERVICES_ORIGIN, GOOGLE_ADSENSE_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN, GOOGLE_ADTRAFFIC_ORIGIN_2, GOOGLE_AD_CREATIVE_ORIGIN, GOOGLE_AD_PARTNER_ORIGIN, ...(opts.scriptSrc ?? [])],
-    ],
+    ['script-src', scriptSrc],
+    ['script-src-elem', scriptSrc],
     // Estilos inline de la v3 PDWA y utilidades CSS en línea del ecosistema.
     // styleSrc extra: hoja de estilos remota del editor Puck (inter.css de rsms.me).
     ['style-src', ["'self'", "'unsafe-inline'", ...(opts.styleSrc ?? [])]],
