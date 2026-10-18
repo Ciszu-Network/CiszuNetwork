@@ -130,6 +130,10 @@ const guildConfigPatchSchema = z.object({
   private_vc_hub_id: z.string().min(1).nullable().optional(),
   history_enabled: z.boolean().optional(),
   history_channel_id: z.string().min(1).nullable().optional(),
+  owner_role_ids: z.array(z.string().min(1).max(32)).max(20).optional(),
+  admin_role_ids: z.array(z.string().min(1).max(32)).max(20).optional(),
+  mod_role_ids: z.array(z.string().min(1).max(32)).max(20).optional(),
+  bot_role_ids: z.array(z.string().min(1).max(32)).max(20).optional(),
 });
 
 /** Funciones configurables por servidor (mismas que los flags globales del bot). */
@@ -207,6 +211,10 @@ interface GuildConfig {
   private_vc_hub_id?: string | null;
   history_enabled?: boolean;
   history_channel_id?: string | null;
+  owner_role_ids?: string[];
+  admin_role_ids?: string[];
+  mod_role_ids?: string[];
+  bot_role_ids?: string[];
   alliance_config?: Record<string, unknown>;
   ticket_config?: Record<string, unknown>;
 }
@@ -305,6 +313,11 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
   if (body.invite_points_per !== undefined) {
     const value = Number(body.invite_points_per);
     if (value >= 1 && value <= 100) allowed.invite_points_per = value;
+  }
+  for (const roleKey of ['owner_role_ids', 'admin_role_ids', 'mod_role_ids', 'bot_role_ids'] as const) {
+    if (body[roleKey] !== undefined) {
+      allowed[roleKey] = Array.isArray(body[roleKey]) ? (body[roleKey] as string[]).slice(0, 20) : [];
+    }
   }
   if (body.level_roles !== undefined) {
     allowed.level_roles = Array.isArray(body.level_roles) ? body.level_roles.slice(0, 50) : [];
@@ -422,6 +435,10 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     private_vc_hub_id: 'privateVcHubId',
     history_enabled: 'historyEnabled',
     history_channel_id: 'historyChannelId',
+    owner_role_ids: 'ownerRoleIds',
+    admin_role_ids: 'adminRoleIds',
+    mod_role_ids: 'modRoleIds',
+    bot_role_ids: 'botRoleIds',
     alliance_config: 'allianceConfig',
     ticket_config: 'ticketConfig',
   };

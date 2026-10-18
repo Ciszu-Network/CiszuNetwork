@@ -448,7 +448,7 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
               {visibleGuilds.length === 0 ? (
                 <p className="text-xs text-white/50">{t.noResults}</p>
               ) : (
-              <div className="grid max-h-72 grid-cols-3 gap-2 overflow-y-auto">
+              <div className="grid max-h-80 grid-cols-3 gap-2 overflow-y-auto pr-1">
                 {/* Global */}
                 <button
                   type="button"
@@ -502,12 +502,12 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
                         )}
                       </button>
                       {!invited && (
-                        <div className="mt-1 flex gap-1">
+                        <div className="mt-1 grid min-w-0 grid-cols-1 gap-1">
                           <InviteLink
                             href={`${inviteUrl}${inviteUrl.includes('?') ? '&' : '?'}guild_id=${g.id}`}
                             target="_blank"
                             rel="noreferrer"
-                            className={`flex flex-1 items-center justify-center gap-1 rounded-lg px-1.5 py-1 text-[8px] font-black uppercase tracking-widest transition hover:scale-[1.03] active:scale-95 ${INVITE_GRADIENT}`}
+                            className={`flex w-full items-center justify-center gap-1 truncate rounded-lg px-1.5 py-1 text-[8px] font-black uppercase tracking-widest transition hover:scale-[1.03] active:scale-95 ${INVITE_GRADIENT}`}
                           >
                             <Icon name="discord" size={10} className="[&>g]:fill-current" />
                             {t.inviteBtn}
@@ -515,7 +515,7 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
                           <button
                             type="button"
                             onClick={() => setWarnId(warnId === g.id ? null : g.id)}
-                            className="flex-1 rounded-lg border border-white/15 px-1.5 py-1 text-[8px] font-black uppercase tracking-widest text-white/60 transition hover:border-neon-pink/60 hover:text-white"
+                            className="w-full truncate rounded-lg border border-white/15 px-1.5 py-1 text-[8px] font-black uppercase tracking-widest text-white/60 transition hover:border-neon-pink/60 hover:text-white"
                           >
                             {t.configure}
                           </button>
@@ -661,7 +661,7 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
     <div className="min-h-screen bg-bg">
       <div className="mx-auto flex max-w-[1500px] gap-4 px-2 pt-28 sm:px-3">
         {!collapsed && (
-          <aside className="hidden w-80 shrink-0 lg:block">
+          <aside className="hidden w-[22rem] shrink-0 lg:block">
             <div className="sticky top-28">
               <div className="mb-2 flex items-center justify-end">
                 <button

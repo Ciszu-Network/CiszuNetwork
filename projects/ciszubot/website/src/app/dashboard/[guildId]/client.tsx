@@ -67,6 +67,10 @@ interface GuildConfig {
   invite_rewards?: { invites: number; role_id: string }[];
   history_enabled?: boolean;
   history_channel_id?: string | null;
+  owner_role_ids?: string[];
+  admin_role_ids?: string[];
+  mod_role_ids?: string[];
+  bot_role_ids?: string[];
   nitro_repost_enabled?: boolean;
   private_vc_hub_id?: string | null;
   alliance_config?: {
@@ -122,7 +126,7 @@ interface JsonPreviewPayload {
 }
 
 const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history', (keyof GuildConfig)[]> = {
-  general: ['prefix', 'lang', 'staff_role_id'],
+  general: ['prefix', 'lang', 'staff_role_id', 'owner_role_ids', 'admin_role_ids', 'mod_role_ids', 'bot_role_ids', 'mute_role_id'],
   messages: [],
   levels: ['leveling_enabled', 'level_channel_id', 'xp_rate', 'level_message', 'level_roles'],
   welcome: ['welcome_channel_id', 'welcome_message', 'autorole_ids'],
@@ -134,7 +138,7 @@ const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'good
   starboard: ['starboard_channel_id', 'starboard_emoji', 'starboard_min'],
   nitro: ['nitro_repost_enabled'],
   staff: ['staff_role_id'],
-  automod: ['automod_enabled', 'automod_config'],
+  automod: ['automod_enabled', 'automod_config', 'admin_role_ids', 'mod_role_ids', 'mute_role_id'],
   alliance: ['alliance_config'],
   tickets: ['ticket_config', 'tickets_enabled', 'tickets_category_id', 'tickets_role_id', 'music_channel_id', 'mute_role_id', 'logs_channel_id'],
   stats: ['counters'],
@@ -155,12 +159,8 @@ const FEATURE_ROWS: { slug: string; icon: string; labelKey: keyof Dict['guildPag
   { slug: 'music', icon: 'music', labelKey: 'featMusic', descKey: 'featMusicDesc', premium: true },
   { slug: 'search', icon: 'search', labelKey: 'featSearch', descKey: 'featSearchDesc', premium: true },
   { slug: 'minigames', icon: 'gamepad', labelKey: 'featMinigames', descKey: 'featMinigamesDesc' },
-  { slug: 'minigame_dice', icon: 'gamepad', labelKey: 'featDice', descKey: 'featDiceDesc' },
-  { slug: 'minigame_rps', icon: 'gamepad', labelKey: 'featRps', descKey: 'featRpsDesc' },
-  { slug: 'minigame_rate', icon: 'gamepad', labelKey: 'featRate', descKey: 'featRateDesc' },
-  { slug: 'minigame_8ball', icon: 'gamepad', labelKey: 'feat8ball', descKey: 'feat8ballDesc' },
   { slug: 'giveaways', icon: 'trophy', labelKey: 'featGiveaways', descKey: 'featGiveawaysDesc' },
-  { slug: 'embeds', icon: 'json', labelKey: 'featEmbeds', descKey: 'featEmbedsDesc', premium: true },
+  { slug: 'embeds', icon: 'ri-braces', labelKey: 'featEmbeds', descKey: 'featEmbedsDesc', premium: true },
   { slug: 'misc', icon: 'palette', labelKey: 'featMisc', descKey: 'featMiscDesc' },
   { slug: 'utility', icon: 'settings', labelKey: 'featUtility', descKey: 'featUtilityDesc' },
   { slug: 'moderation', icon: 'shield', labelKey: 'featModeration', descKey: 'featModerationDesc' },
@@ -672,6 +672,10 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         invite_rewards: Array.isArray(cfg?.invite_rewards) ? cfg.invite_rewards : [],
         history_enabled: cfg?.history_enabled ?? true,
         history_channel_id: cfg?.history_channel_id ?? null,
+        owner_role_ids: Array.isArray(cfg?.owner_role_ids) ? cfg.owner_role_ids : [],
+        admin_role_ids: Array.isArray(cfg?.admin_role_ids) ? cfg.admin_role_ids : [],
+        mod_role_ids: Array.isArray(cfg?.mod_role_ids) ? cfg.mod_role_ids : [],
+        bot_role_ids: Array.isArray(cfg?.bot_role_ids) ? cfg.bot_role_ids : [],
         nitro_repost_enabled: cfg?.nitro_repost_enabled ?? false,
         private_vc_hub_id: cfg?.private_vc_hub_id ?? null,
         alliance_config: cfg?.alliance_config,
@@ -1389,7 +1393,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           <div id="config" aria-busy={busy} className={`min-w-0 flex-1 space-y-6 ${muted}`}>
           {/* Resumen del servidor */}
           {/* Info del servidor (antes era la vista RESUMEN): siempre visible */}
-          <div className="mb-6 flex flex-wrap items-center gap-4 rounded-2xl border border-white/10 bg-white/5 px-5 py-4">
+          <div className="sticky top-2 z-30 mb-6 flex flex-wrap items-center gap-4 rounded-2xl border border-white/10 bg-[#0b0f1a]/85 px-5 py-4 backdrop-blur-md">
             <div className="min-w-0 flex-1">
               <p className="text-[10px] font-black uppercase tracking-widest text-neon-blue">{t.serverInfoTitle}</p>
               <p className="truncate text-sm font-bold text-white">{guildName}</p>
@@ -1444,15 +1448,74 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 />
               </Field>
               <Field label={t.langLabel}>
-                <select
-                  className={inputCls}
+                <NiceSelect
                   value={config.lang ?? 'es'}
-                  onChange={(e) => update({ lang: e.target.value })}
-                >
-                  <option value="es" className="bg-[#0a0a14]">{'Español'}</option>
-                  <option value="en" className="bg-[#0a0a14]">English</option>
-                </select>
+                  options={[
+                    { id: 'es', label: '🇻🇪 Español' },
+                    { id: 'en', label: '🇺🇸 English' },
+                  ]}
+                  onChange={(v) => update({ lang: v })}
+                />
               </Field>
+
+              {/* Roles del servidor (owner/admin/mod/bots) — alimentan los
+                  permisos de los comandos de gestión y la moderación. */}
+              <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                <p className="mb-1 flex items-center gap-2 text-sm font-bold text-white">
+                  <Icon name="shield" size={15} className="text-neon-blue" /> {t.rolesTitle}
+                </p>
+                <p className="mb-3 text-[10px] text-white/40">{t.rolesHint}</p>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <Field label={t.ownerRoleLabel}>
+                    <MultiSelect
+                      values={config.owner_role_ids ?? []}
+                      options={roleOptions}
+                      placeholder={t.pickRole}
+                      onChange={(v) => update({ owner_role_ids: v })}
+                    />
+                  </Field>
+                  <Field label={t.adminRoleLabel}>
+                    <MultiSelect
+                      values={config.admin_role_ids ?? []}
+                      options={roleOptions}
+                      placeholder={t.pickRole}
+                      onChange={(v) => update({ admin_role_ids: v })}
+                    />
+                  </Field>
+                  <Field label={t.modRoleLabel}>
+                    <MultiSelect
+                      values={config.mod_role_ids ?? []}
+                      options={roleOptions}
+                      placeholder={t.pickRole}
+                      onChange={(v) => update({ mod_role_ids: v })}
+                    />
+                  </Field>
+                  <Field label={t.botRoleLabel} hint={t.botRoleHint}>
+                    <MultiSelect
+                      values={config.bot_role_ids ?? []}
+                      options={roleOptions}
+                      placeholder={t.pickRole}
+                      onChange={(v) => update({ bot_role_ids: v })}
+                    />
+                  </Field>
+                  <Field label={t.muteRoleLabel}>
+                    {hasGuildData ? (
+                      <NiceSelect
+                        value={config.mute_role_id ?? null}
+                        options={roleOptions}
+                        placeholder={t.pickRole}
+                        onChange={(v) => update({ mute_role_id: v })}
+                      />
+                    ) : (
+                      <input
+                        className={inputCls}
+                        value={config.mute_role_id ?? ''}
+                        onChange={(e) => update({ mute_role_id: e.target.value || null })}
+                      />
+                    )}
+                  </Field>
+                </div>
+              </div>
             </div>
           </section>
           )}
@@ -1518,6 +1581,37 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 />
               </button>
             </div>
+
+            {/* Minijuegos: sub-opciones por juego dentro de la misma opción */}
+            {activeFeature.slug === 'minigames' && (
+              <div className="mt-4 grid gap-2">
+                <p className="text-[10px] font-black uppercase tracking-widest text-white/45">
+                  Minijuegos individuales
+                </p>
+                {(
+                  [
+                    ['minigame_dice', 'featDice', 'featDiceDesc'],
+                    ['minigame_rps', 'featRps', 'featRpsDesc'],
+                    ['minigame_rate', 'featRate', 'featRateDesc'],
+                    ['minigame_8ball', 'feat8ball', 'feat8ballDesc'],
+                  ] as const
+                ).map(([slug, labelKey, descKey]) => (
+                  <div
+                    key={slug}
+                    className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-black/20 px-4 py-2.5"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-xs font-semibold text-white/85">{t[labelKey]}</p>
+                      <p className="text-[10px] text-white/40">{t[descKey]}</p>
+                    </div>
+                    <Toggle
+                      on={config.features?.[slug] !== false}
+                      onChange={(v) => update({ features: { ...(config.features ?? {}), [slug]: v } })}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
           )}
 
@@ -2642,6 +2736,48 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 <Icon name="clock" size={15} className="text-neon-blue" /> {t.cooldownTitle}
               </p>
               <p className="mt-1 text-[11px] text-white/45">{t.cooldownHint}</p>
+            </div>
+
+            {/* Roles de moderación (repartidos aquí desde General): quién puede
+                moderar y qué rol reciben los silenciados. */}
+            <div className="mt-4 rounded-xl border border-white/10 bg-black/20 p-4">
+              <p className="mb-3 flex items-center gap-2 text-sm font-bold text-white">
+                <Icon name="shield" size={15} className="text-neon-blue" /> {t.rolesTitle}
+              </p>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <Field label={t.adminRoleLabel}>
+                  <MultiSelect
+                    values={config.admin_role_ids ?? []}
+                    options={roleOptions}
+                    placeholder={t.pickRole}
+                    onChange={(v) => update({ admin_role_ids: v })}
+                  />
+                </Field>
+                <Field label={t.modRoleLabel}>
+                  <MultiSelect
+                    values={config.mod_role_ids ?? []}
+                    options={roleOptions}
+                    placeholder={t.pickRole}
+                    onChange={(v) => update({ mod_role_ids: v })}
+                  />
+                </Field>
+                <Field label={t.muteRoleLabel}>
+                  {hasGuildData ? (
+                    <NiceSelect
+                      value={config.mute_role_id ?? null}
+                      options={roleOptions}
+                      placeholder={t.pickRole}
+                      onChange={(v) => update({ mute_role_id: v })}
+                    />
+                  ) : (
+                    <input
+                      className={inputCls}
+                      value={config.mute_role_id ?? ''}
+                      onChange={(e) => update({ mute_role_id: e.target.value || null })}
+                    />
+                  )}
+                </Field>
+              </div>
             </div>
             <HelpZone title={SECTION_HELP.automod.title} commands={SECTION_HELP.automod.commands} note={SECTION_HELP.automod.note} />
           </section>
