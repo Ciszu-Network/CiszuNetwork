@@ -2,6 +2,7 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, SlashComman
 import type { BotCommand } from '../types/command';
 import { db, ciszubotSchema, eq, and, or } from '../services/supabase';
 import { setProposal } from '../services/proposals';
+import { getGuildConfig } from '../services/configService';
 
 async function findMarriage(guildId: string, userId: string) {
   const m = ciszubotSchema.marriages;
@@ -38,6 +39,24 @@ const marry: BotCommand = {
     const targetUser = await message.client.users.fetch(target.id).catch(() => null);
     if (targetUser?.bot) {
       await message.reply('❌ No puedes casarte con un bot. 😅');
+      return;
+    }
+
+    // Config del servidor: casamiento activado y roles excluidos (por defecto,
+    // si no hay lista configurada, se excluye a admins — y los bots siempre).
+    const cfg = await getGuildConfig(message.guild.id);
+    if (cfg.marriage_enabled === false) {
+      await message.reply('❌ El casamiento está desactivado en este servidor.');
+      return;
+    }
+    type MemberLike = { roles: { cache: { has(id: string): boolean } }; permissions: { has(p: string): boolean } } | null;
+    const proposerMember = (await message.guild.members.fetch(message.author.id).catch(() => null)) as MemberLike;
+    const targetMember = (await message.guild.members.fetch(target.id).catch(() => null)) as MemberLike;
+    const excluded = cfg.marriage_excluded_role_ids;
+    const isExcluded = (m: MemberLike): boolean =>
+      Boolean(m && (excluded.some((r) => m.roles.cache.has(r)) || (excluded.length === 0 && m.permissions.has('ManageGuild'))));
+    if (isExcluded(proposerMember) || isExcluded(targetMember)) {
+      await message.reply('❌ Una de las partes está excluida del casamiento en este servidor (admins o roles excluidos).');
       return;
     }
 

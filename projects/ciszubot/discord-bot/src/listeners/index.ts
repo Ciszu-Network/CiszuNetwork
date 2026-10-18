@@ -16,7 +16,7 @@ import { getGuildConfig, getPrefix, GuildConfig } from '../services/configServic
 import { addXp } from '../services/levels';
 import { db, ciszubotSchema, eq, and, desc } from '../services/supabase';
 import { logger } from '../services/logger';
-import { resumeActiveGiveaways } from '../services/giveaways';
+import { resumeActiveGiveaways, joinGiveaway, bumpMemberMessages } from '../services/giveaways';
 import { tryClaimDrop, completeDrop, scheduleDrops } from '../services/drops';
 import { takeProposal } from '../services/proposals';
 import { processAllianceMessage, sendAllianceError } from '../services/alliances';
@@ -148,6 +148,10 @@ const EMOJI_RE = /<a?:(\w+):(\d+)>/g;
 
 async function handleNitroRepost(message: Message, cfg: GuildConfig): Promise<void> {
   if (!cfg.nitro_repost_enabled || !message.guild || !message.content) return;
+  // Modo manual: sin reenvío automático (solo por comando del staff).
+  if (cfg.nitro_repost_mode === 'manual') return;
+  // Roles excluidos del reenvío.
+  if (cfg.nitro_excluded_role_ids.length > 0 && message.member && cfg.nitro_excluded_role_ids.some((r) => message.member!.roles.cache.has(r))) return;
   const external: string[] = [];
   for (const match of message.content.matchAll(EMOJI_RE)) {
     const id = match[2];
@@ -539,6 +543,7 @@ export function registerListeners(client: Client): void {
         return;
       }
 
+      bumpMemberMessages(message.guild!.id, message.author.id);
       if (await handleAutomod(message, cfg)) return;
       await handleNitroRepost(message, cfg);
       void getPrefix(message.guild!.id).then((prefix) => {
@@ -775,6 +780,26 @@ export async function handleButton(interaction: ButtonInteraction, client: Clien
     } catch (error) {
       logger.error('private_channel_join:', error);
     }
+  }
+
+  // ─── Giveaways (botón de ingreso) ───
+  if (customId.startsWith('giveaway_join:')) {
+    const giveawayId = customId.slice('giveaway_join:'.length);
+    const member = await guild.members.fetch(interaction.user.id).catch(() => null);
+    if (!member) {
+      await interaction.followUp({ content: '❌ No pude verificar tu membresía.', ephemeral: true }).catch(() => undefined);
+      return;
+    }
+    const result = await joinGiveaway(guild, giveawayId, member);
+    await interaction
+      .followUp({
+        content: result.ok
+          ? `🎉 ¡Estás dentro! Tienes **${result.entries}** entrada(s). ¡Suerte!`
+          : `❌ ${result.reason ?? 'No se pudo participar.'}`,
+        ephemeral: true,
+      })
+      .catch(() => undefined);
+    return;
   }
 
   // ─── Drops ───

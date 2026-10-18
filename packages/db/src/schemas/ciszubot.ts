@@ -244,6 +244,7 @@ export const giveaways = ciszubot.table(
     createdSource: text('created_source').notNull().default('command'),
     pausedAt: timestamp('paused_at', { withTimezone: true }),
     cancelledAt: timestamp('cancelled_at', { withTimezone: true }),
+    winnerIds: jsonb('winner_ids').notNull().default([]),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   }
 );
@@ -444,6 +445,38 @@ export const privateChannels = ciszubot.table(
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index('idx_private_channels_owner').on(t.guildId, t.ownerId)]
+);
+
+export const giveawayParticipants = ciszubot.table(
+  'giveaway_participants',
+  {
+    giveawayId: text('giveaway_id').notNull(),
+    userId: text('user_id').notNull(),
+    entries: integer('entries').notNull().default(1),
+    joinedAt: timestamp('joined_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.giveawayId, t.userId] })]
+);
+
+export const giveawayBans = ciszubot.table(
+  'giveaway_bans',
+  {
+    giveawayId: text('giveaway_id').notNull(),
+    userId: text('user_id').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.giveawayId, t.userId] })]
+);
+
+export const memberMessages = ciszubot.table(
+  'member_messages',
+  {
+    guildId: text('guild_id').notNull(),
+    userId: text('user_id').notNull(),
+    count: integer('count').notNull().default(0),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.guildId, t.userId] })]
 );
 
 export const botActions = ciszubot.table(
