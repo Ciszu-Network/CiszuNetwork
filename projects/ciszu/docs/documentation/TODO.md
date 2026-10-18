@@ -59,6 +59,24 @@
   cuenta de Google Ads (7969562321) para obtener `AW-`/ID + etiqueta de conversión; después se
   crea la etiqueta en GTM por API. Sin acceso a la API de Google Ads desde el vault.
 
+  REVISIÓN 18 oct 2026 (tarde) — Looker Studio y Conversational Analytics:
+
+- **Vistas de BigQuery creadas** (7, por API) para que Looker sea mínimo trabajo manual:
+  `v_daily_activity`, `v_sites_summary`, `v_key_events`, `v_traffic_sources`, `v_devices`,
+  `v_geo`, `v_pages` en `analytics_551642504` (con hostname robusto vía page_location).
+- **Conversational Analytics (Data Analytics API with Gemini)**: la API
+  `geminidataanalytics.googleapis.com` fue **HABILITADA** por API en el proyecto 231298418565,
+  pero **requiere BILLING** para usarse (403 "This API method requires billing"). Crear el
+  agente de datos (`dataAgents`) queda pendiente de activar facturación. Con billing:
+  crear agente vía API (payload casi listo en `.opencode/temp/create-agent.mjs`, ajustar
+  esquema: `dataSources` no es campo raíz válido en v1alpha) + configurar AdSense→BigQuery
+  por Data Transfer (también exige billing).
+- Looker Studio no tiene API para crear informes ni plantillas (límite de Google). El
+  "Explorer" es un lienzo de análisis ad-hoc aparte del informe (normal que cree un documento
+  nuevo); las plantillas de la galería se usan con "Usar plantilla" y piden reemplazar la
+  fuente por la tuya (elegir `analytics_551642504`; los templates GA4 usan el esquema
+  estándar `events_*` y encajan directo).
+
 - [ ] Looker Studio: conectar fuentes GA4 y crear dashboard.
   PENDIENTE de las tablas de BigQuery; además la creación de dashboards de
   Looker Studio NO tiene API (se crea manual en la UI). Cuando existan las
