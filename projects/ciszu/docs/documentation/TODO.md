@@ -11,19 +11,53 @@
   tráfico + export diario). Ambas cosas son esperas externas, nada que ejecutar localmente.
 
   REVISIÓN 16 oct 2026 (token OAuth nuevo de ciszunetwork@gmail.com + permisos concedidos):
-  - AdSense: cuenta `pub-3471969072198962` en **READY** (aprobada). Sitios: ciszubot,
-    ciszukoantony y ciszunetwork en `REQUIRES_REVIEW`; muzicmania en `GETTING_READY` (espera
-    externa de Google).
-  - GA4 propiedad 551642504 y BigQuery: ciszunetwork@gmail.com ya tiene acceso (Editor GA4 +
-    Viewer del dataset). GTM: los 4 contenedores responden por API.
-  - BigQuery: el dataset `analytics` seguía con 0 tablas → se activaron **`dailyExportEnabled`
-    + `streamingExportEnabled`** en el enlace GA4→BigQuery (16 oct); el streaming creará
+
+- AdSense: cuenta `pub-3471969072198962` en **READY** (aprobada). Sitios: ciszubot,
+  ciszukoantony y ciszunetwork en `REQUIRES_REVIEW`; muzicmania en `GETTING_READY` (espera
+  externa de Google).
+- GA4 propiedad 551642504 y BigQuery: ciszunetwork@gmail.com ya tiene acceso (Editor GA4 +
+  Viewer del dataset). GTM: los 4 contenedores responden por API.
+- BigQuery: el dataset `analytics` seguía con 0 tablas → se activaron **`dailyExportEnabled`
+  + `streamingExportEnabled`** en el enlace GA4→BigQuery (16 oct); el streaming creará
     `events_intraday_*` con los primeros eventos reales y el diario `events_YYYYMMDD`.
-  - AdSense→BigQuery por Data Transfer: la API exige **billing** en el proyecto 231298418565
-    (no configurado) — pendiente decidir; mientras tanto Looker Studio puede usar el
-    **conector nativo de AdSense** (sin BigQuery).
-  - OAuth: el token de ciszunetwork@gmail.com caduca cada **7 días** (app en modo Prueba);
-    publicarla requiere dominio propio (vercel.app no vale como dominio autorizado).
+- AdSense→BigQuery por Data Transfer: la API exige **billing** en el proyecto 231298418565
+  (no configurado) — pendiente decidir; mientras tanto Looker Studio puede usar el
+  **conector nativo de AdSense** (sin BigQuery).
+- OAuth: el token de ciszunetwork@gmail.com caduca cada **7 días** (app en modo Prueba);
+  publicarla requiere dominio propio (vercel.app no vale como dominio autorizado).
+
+  REVISIÓN 18 oct 2026 (reverificación completa por API — estados finales):
+
+- **BigQuery: RESUELTO — el export SÍ funciona.** El error era mirar el dataset equivocado:
+  Google escribe en **`analytics_551642504`** (no en `analytics`, que sigue vacío por diseño).
+  Tablas reales verificadas: `events_20261016` (diario), `events_intraday_20261017` y
+  `events_intraday_20261018` (streaming). Enlace OK (daily + streaming activos, US).
+- **GA4 con tráfico real**: 16 usuarios activos y 271 eventos en los últimos 7 días
+  (ciszubot 168, ciszukoantony 59, ciszunetwork 25, muzicmania resto). 6 conversiones y
+  4 data streams activos.
+- **ads.txt: ✅ correcto en las 4 webs** (HTTP 200 + línea `pub-3471969072198962` verificada
+  en vivo el 18 oct). El "No encontrado" de la UI de AdSense es un escaneo viejo.
+- AdSense: cuenta READY; sitios ciszubot/ciszukoantony/ciszunetwork `REQUIRES_REVIEW` y
+  muzicmania `GETTING_READY` (espera externa de Google, sin acción local posible).
+- **GA4 aviso "datos proporcionados por el usuario"**: la propiedad tiene UPDS activado pero
+  no recibe `user_data` — el `user_id`/`user_data` NO está implementado en el código todavía
+  (verificado con búsqueda). Pendiente: enviar `user_id` por dataLayer + variable DLV en los
+  4 contenedores GTM, y opcionalmente `user_data` (hash) para enhanced conversions.
+- **Looker Studio: DESBLOQUEADO** — los datos de GA4→BigQuery ya existen; el dashboard se crea
+  manual en la UI (Looker no tiene API de creación). Fuentes: BigQuery `analytics_551642504`
+  + conector nativo de AdSense (sin BigQuery).
+
+- [ ] Looker Studio: conectar BigQuery (`analytics_551642504`) + AdSense nativo → crear dashboard.
+  (18 oct: datos LISTOS; solo queda crearlo a mano en la UI de Looker Studio.)
+- [x] **Tablas de BigQuery**: RESUELTO 18 oct — existen en `analytics_551642504`
+  (`events_20261016`, `events_intraday_20261017/18`). El dataset `analytics` (vacío) era el error de lectura.
+- [ ] **Aprobar sitios AdSense (ESPERA externa)**: cuenta READY; los 4 sitios en revisión de
+  Google (no se acelera). Revisar la UI de AdSense en unos días.
+- [ ] **Datos proporcionados por el usuario (GA4)**: implementar `user_id` vía dataLayer + DLV
+  en GTM (y opcional `user_data` hasheado) para limpiar el aviso de "Corregir problemas con los datos".
+- [ ] **Conversión de compra en GTM (Google Ads)**: requiere crear la acción de conversión en la
+  cuenta de Google Ads (7969562321) para obtener `AW-`/ID + etiqueta de conversión; después se
+  crea la etiqueta en GTM por API. Sin acceso a la API de Google Ads desde el vault.
 
 - [ ] Looker Studio: conectar fuentes GA4 y crear dashboard.
   PENDIENTE de las tablas de BigQuery; además la creación de dashboards de
@@ -116,48 +150,30 @@
 - [X] En la devcon se debe crar una nueva opcion para otorgar etiquetas o roles a un usuario en concreto, siempre sera global, nunca sera multicasillas esta vez, sera por cada website, y debe ser el username completo exacto, luego se escribe el rol a dar, los roles y tags apareceran en el perfil y activaran nueva funciones dependiendo del rol al hacer click en su perfil en el header, admin, mod, owner, bot, vip, betatesting, support, los ultimos 3 no son de staff, bot tampoco pero si tiene permisos de staff y sera otorgada a cuentas bots recreadas por cada website es decir, @ciszubot, @muzicmania y @ciszunetwork seran cuentas creadas por bots sin contraseña, son perfiles especiales. Finalmente owner, mod y admin si son staff y aparte de esa tag en el perfil debe aparecer la tag de staff. Cada uno tendra un panel diferente, opciones de debug entre mas grande el rango. El owner debe tener todos. Configuracion de debug, entre muchas otras cosas, como vista de staff en perfiles con activacion toggle, para eliminar ciertas cosas o cambiar ciertas cosas. Simepre con marca.
 - [X] Se debe crear un metodo de cierre de sesion remoto utilizado para cerrar sesion a cierta persona, este metodo solo lo podran ejecutar los moderadores, admins y owners. Con el fin de cerrar alguna sesion incluso de una cuenta por cada rango, es decir un mod no puede cerrar la sesion de un admin. Esto por seguridad de hackeos a cuentas. Esta opcion debe estar tanto para la GUI de cada website segun el debug y cuenta, y para la devconsole.
 - [X] Se debe crear un modal cuando una cuenta es baneada, el usuario automaticamente se redirecionara asu profile y aparecera un modal de su cuenta fue baneada e informacion del baneo. Razon fecha provocante etc. Lo mismo con los mutes.
+- [ ] Debuggear todos los sistemas de devcon nuevos.
+- [ ] Integrar formulario de contacto funcionales y verificar soporte y contacto.
 
-**Ciszubot Website:**
+**Ciszubot:**
 
-- [X] Iconos que no se veían en los emails de Supabase (supabase, check verde, flecha del
-  botón, advertencia de correo): AÑADIDOS a la plantilla de Supabase (assets del CDN) +
-  fondos sólidos de respaldo (Gmail ignora gradientes). Re-aplicadas las 5 plantillas (16 oct).
-- [X] Logo de ciszukoantony estirado en las plantillas: era el raster forzado a 170x40
-  (fuente 1000x537 → ahora 170x91 proporcional); generador corregido (16 oct).
-- [X] Email de clave de devcon con plantilla equivocada ("regístrate en Ciszu ID"): la
-  consola ahora SIEMPRE envía el correo branded "Clave de acceso a la Devcon" con código
-  CZ-XXXXXX (SMTP de ciszunetwork@gmail.com).
-- [X] El `CZ-` siempre visible y exacto: la plantilla de Supabase muestra `CZ-{{ .Token }}`;
-  los correos branded ya llevan `CZ-XXXXXX` sin espacios.
-- [X] App Password de ciszunetwork@gmail.com: guardada en el vault (`GMAIL_SMTP_USER` /
-  `GMAIL_APP_PASSWORD`), **SMTP propio configurado en Supabase** (rate limit eliminado) y
-  transporte SMTP implementado en el código (web 2FA + consola + fallback). También en los
-  4 proyectos de Vercel.
-- [ ] **SPAM (nuevo, 16 oct)**: el correo de devcon llegó a Spam. Mitigado en la cuenta
-  receptora (marcar "No es spam" + filtro "No enviar nunca a Spam" + añadir a contactos);
-  de raíz se resuelve con dominio propio + DKIM/SPF/DMARC (depende de la tarea de dominio).
-- [X] Resumen de proyectos en la devcon ("1 proyecto demo" + `System.Object[]`): la lista se
-  SINCRONIZA con las carpetas reales de `projects/` (7 proyectos) y el parseo de PS 5.1
-  quedó corregido (desenrollado del array de ConvertFrom-Json) — también en features,
-  testing, catálogo de sitios y sesiones activas.
-- [X] Error "Website invalido" en el resumen de sitios: era una sesión de devcon antigua;
-  el comando actual funciona (`status`/`blocked` sin sitio). Reabrir la devcon para
-  recargar las funciones.
-- [X] Otorgar rol OWNER: corregido (metadata de auth actualizada + `roles.js` ahora resuelve
-  el usuario por las tablas de perfiles además de auth). Concedido **owner a @ciszukoantony
-  en las 4 webs** (16 oct).
-- [X] Estado del bot (`botstatus.mjs`): detección por heartbeat antes de actuar + disclaimer
-  de FORZADO (la devcon pide SI → `--force`, queda registrado en el log), mensajes claros
-  de aplicado/forzado y `status` muestra el heartbeat real. Reabrir la devcon para recargar.
-- [X] Icono beta desalineado en el panel de información + reloj en TODAS las tags beta +
-  iconos free (regalo verde) / premium (corona) / mixed (corazón): aplicado en todo el
-  dashboard (16 oct).
-- [X] Selector de idioma: botón único que abre el modal con TODOS los idiomas (11; 4 activos
-  + "Próximamente").
-- [ ] **FAB de feedback (ciszubot)**: causa encontrada — el modal de Sentry se cargaba LAZY y
-  nunca renderizaba (el click "no hacía nada"), más el banner de cookies interceptando el
-  primer click. Arreglado con `feedbackSyncIntegration` (modal incluido) en las 4 webs +
-  fallback a `/feedback`. **Pendiente tu verificación tras el deploy** (`ba9cf1fe`).
-
-- [ ] Añadir VPS 24 7 AL BOT. (Tarea normal: desplegar el bot en un host 24/7 — panel gratuito
-  tipo bot-hosting.net con `deploy/ciszubot-standalone.zip`, o VPS genérico; requiere cuenta y/o pago.
+- [ ] Cada categoria de comandos en help debe tener un emoji diferente.
+- [ ] Cuando me uno a un VC y hago play el bot no entra y sigue diciendo que no estoy en un VC.
+- [X] Se necesita agregar comandos de economia basicos como work, tambien se debe agregar en la seccion de config comandos para cambiar el icono de la moneda del servidor,  para administracion agregar o quitar dinero de balance en banco o no de usuarios. Tambien en el dashboard se podra configurar todo esto. Se debe crear un sistema de drops configurable por default desactivado donde el bot automaticamente creara drops, cada servidor tendra un limite de 3 drops por servidor (free, con premium ilimitados) donde el usuario podra desed comandos de config o desde la dashboard agregar o qutiar drops, que se enviaran en canales especificos o globales, con periodios de tiempo de recoleccion y de aparecimiento diferentes configurables, con mensajes de drop tambien personalizable, algo asi como unbealiveboat. Por default mensajes default en ingles, emoji de moneda de discord, etc. Tambien existen opciones de exclusion de roles para reclamacion.
+- [X] Necesito que tambien el bot soporte configuraciones de rol staff o admin tanto dashboard en la seccion de preferencias o admin como configurable con comandos.
+- [X] Actualmente en la devcon las opciones del bot se ve todo feo, la info es escasa o se ven como comandos, adiferencias de otras opciones.. No existe fallback, no existe si ocurrio todo bien el proceso o accion o no. Los mensajes de forzeo no aparecen, e inclusos la aplicaciones en la website coom forzar el online o offline no funcionan. El resumen se ve horrible. Se necesita mejoras.
+- [X] Actualizar la informacion interrna del bot a la version mas reciente.
+- [X] Agregar comandos para links de donacion, partner, info, ayuda. Basicamente un comando por cada pagina en la website oficial. Incluso para auth.
+- [X] Agrega mas miscelaneo o utilidades que un bot pueda hacer.
+- [X] Sistema de nivel real con mensaje customizable, sistema de roles por nivel alcanzado, comando de leaderboard global o servidor, sistema de embeds y creacion de embeds para admins para crear acciones o embeds personalizados, el bot debe permitir enviarse por webhooks e incluso utilizar el sistema de embeds para asi el usuario crear mensajes custom embeds, sistema de perfiles, casamiento entre usuario, divorcio, sociales, xp, sistema de moderacion y automoderacion reales con comandos funcionales, permisos segun el comando, todo en el dashboard con exclusiones de roles, permisos por el rol de staff etc.
+- [X] Utiliza los imagotipos, logotipos, thumnails logos banners entre otros para por ejemplo mensajes de premium o descarga iconos svg o imagen para esto.
+- [X] Rate limits par ael bot, si un usuario spamea un comando utilizar el sistema de moo o automod configurable, mensaje de "espera x segundos"
+- [X] comandos para activar o desactivar el premium segun el perfil vinculado a la cuenta con el plan, debe ser admin y activara la funcion en todo el servidor.
+- [X] opcion en devcon para activar o desactivar premium segun el ID del servidor forzar por parte del bot.
+- [X] sistema de bienvenidas o despedidas (mensaje custom, embed, activable o no, canal), invitaciones con puntos de invitacion (recompensas por invitaciones, canal de invitaciones), canal de starboard, canal de logs, canal de canales vc privados con paneles globales o privados de configuracion, con creacion de un canal "para crear el vc privado" guardado en el servidor, sistema de stats del servidor config setup canales vc con datos reales del servidor. comando o autoreconocer que un usuario envia un emoji premium o nitro y el bot lo envia gratis.
+- [X] Finalmente categoria secreta, solamente acto para uso de staff de cisuzbot (por lista blanca de ID de usuario) en mi caso 627304822017622016 donde se probara comandos mas tecnicos, status real de todo, configuracion del servidor, manejo del bot total, stats secreatas o peligrosas.
+- [ ] Corregir slidebar server desbode.
+- [ ] Agregar icono a embeds creator.
+- [ ] La opcion de config general fijar hacia arriba.
+- [ ] En preferences del bot, tambien habra una zona para configurar los roles admins, mods, owner, bots, mute roles, etc. Tambien se repartira en el auto mod y en las config de admin o mod.
+- [ ] Minigames deberia ser una sola opcion de config y dentro de esa opcion config por separado las subopciones de minijuegos, fusiona los actuales.
+- [ ]
+- [ ] Al cambiar el idioma desde la dashboard ya sea en bot preferences o en otro lado se actualiza pero pierde el estado y vuelve al default de USA.
