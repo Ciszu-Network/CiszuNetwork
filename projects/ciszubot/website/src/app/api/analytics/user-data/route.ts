@@ -51,6 +51,8 @@ export async function GET(request: Request) {
   const emailSha = sha256(email.trim().toLowerCase());
 
   // UPD a GA4 por Measurement Protocol (fire-and-forget).
+  // Formato oficial: user_data va en el NIVEL RAÍZ del payload y
+  // sha256_email_address es un ARRAY de strings.
   if (MEASUREMENT_ID && MP_SECRET) {
     void fetch(
       `https://www.google-analytics.com/mp/collect?measurement_id=${MEASUREMENT_ID}&api_secret=${MP_SECRET}`,
@@ -59,10 +61,11 @@ export async function GET(request: Request) {
         body: JSON.stringify({
           client_id: userId ?? 'anon',
           user_id: userId ?? undefined,
+          user_data: { sha256_email_address: [emailSha] },
           events: [
             {
               name: 'user_data_sync',
-              params: { user_data: { sha256_email_address: emailSha }, engagement_time_msec: 1 },
+              params: { engagement_time_msec: 1 },
             },
           ],
         }),
