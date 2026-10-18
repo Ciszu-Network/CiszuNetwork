@@ -72,6 +72,18 @@ export function GoogleScripts() {
           ),
         }}
       />
+      {/* User-ID (GA4): si hay sesión activa, empuja user_id al dataLayer.
+          El tag "GA4 - Configuración" de GTM lo lee con la variable DLV - user_id
+          (arregla el aviso "datos proporcionados por el usuario" de GA4). */}
+      <script
+        suppressHydrationWarning
+        data-cookie-consent="optional"
+        dangerouslySetInnerHTML={{
+          __html: consentInline(
+            `(function(){try{fetch('/api/auth/session',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){var id=j&&j.session&&j.session.userId;if(id){window.dataLayer=window.dataLayer||[];window.dataLayer.push({user_id:String(id)});}}).catch(function(){});}catch(e){}})();`,
+          ),
+        }}
+      />
       <noscript
         suppressHydrationWarning
         dangerouslySetInnerHTML={{
