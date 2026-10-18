@@ -117,8 +117,9 @@ interface JsonPreviewPayload {
   config: Record<string, unknown>;
 }
 
-const SECTION_KEYS: Record<'general' | 'levels' | 'welcome' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'automod' | 'alliance' | 'tickets' | 'stats', (keyof GuildConfig)[]> = {
+const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'automod' | 'alliance' | 'tickets' | 'stats', (keyof GuildConfig)[]> = {
   general: ['prefix', 'lang', 'staff_role_id'],
+  messages: [],
   levels: ['leveling_enabled', 'level_channel_id', 'xp_rate', 'level_message', 'level_roles'],
   welcome: [
     'welcome_channel_id',
@@ -427,6 +428,12 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   const [subnavQuery, setSubnavQuery] = useState('');
   const [subnavFilter, setSubnavFilter] = useState<'all' | 'free' | 'premium'>('all');
   const [subnavSort, setSubnavSort] = useState<'asc' | 'desc'>('asc');
+  // Say/DirectSay desde el dashboard (cola de acciones del bot).
+  const [msgType, setMsgType] = useState<'say' | 'directsay'>('say');
+  const [msgChannel, setMsgChannel] = useState<string | null>(null);
+  const [msgContent, setMsgContent] = useState('');
+  const [msgBusy, setMsgBusy] = useState(false);
+  const [msgStatus, setMsgStatus] = useState<{ kind: 'ok' | 'error' | 'pending'; text: string } | null>(null);
   const [exportPreview, setExportPreview] = useState<{
     name: string;
     payload: JsonPreviewPayload;
@@ -447,6 +454,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   type GuildView =
     | 'summary'
     | 'general'
+    | 'messages'
     | 'levels'
     | 'welcome'
     | 'economy'
@@ -464,7 +472,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     const saved = localStorage.getItem('cz-dash-view') as GuildView | null;
     if (
       saved &&
-      (['summary', 'general', 'levels', 'welcome', 'economy', 'starboard', 'nitro', 'staff', 'automod', 'alliance', 'tickets', 'stats', 'history'].includes(saved) ||
+      (['summary', 'general', 'messages', 'levels', 'welcome', 'economy', 'starboard', 'nitro', 'staff', 'automod', 'alliance', 'tickets', 'stats', 'history'].includes(saved) ||
         saved.startsWith('feat:'))
     ) {
       setView(saved);
@@ -515,6 +523,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   const SUBNAV: ReadonlyArray<{ key: GuildView; icon: string; label: keyof Dict['guildPage']; tag: 'free' | 'premium' | 'mixed' }> = [
     { key: 'summary', icon: 'server', label: 'subnavSummary', tag: 'free' },
     { key: 'general', icon: 'settings', label: 'subnavGeneral', tag: 'free' },
+    { key: 'messages', icon: 'message', label: 'subnavMessages', tag: 'free' },
     ...FEATURE_ROWS.map((f) => ({
       key: `feat:${f.slug}` as GuildView,
       icon: f.icon,
@@ -567,6 +576,48 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     setAutoSave(value);
     localStorage.setItem('cz-dash-autosave', value ? '1' : '0');
   }, []);
+
+  /** Say/DirectSay: inserta la acción y sondea el resultado hasta 20s. */
+  const sendMessage = useCallback(async () => {
+    if (!msgChannel || !msgContent.trim() || msgBusy) return;
+    setMsgBusy(true);
+    setMsgStatus({ kind: 'pending', text: t.msgSending });
+    try {
+      const res = await fetch(`/api/dashboard/${guildId}/say`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: msgType, channel_id: msgChannel, content: msgContent.trim() }),
+      });
+      const json = (await res.json()) as { ok?: boolean; id?: number; error?: string };
+      if (!res.ok || !json.ok || !json.id) {
+        setMsgStatus({ kind: 'error', text: json.error ?? t.msgSentError });
+        return;
+      }
+      const actionId = json.id;
+      for (let i = 0; i < 10; i++) {
+        await new Promise((r) => setTimeout(r, 2000));
+        const poll = await fetch(`/api/dashboard/${guildId}/say?id=${actionId}`, { cache: 'no-store' });
+        if (!poll.ok) continue;
+        const data = (await poll.json()) as { action?: { processed: boolean; result: string | null } | null };
+        const action = data.action;
+        if (!action) continue;
+        if (action.processed) {
+          if (action.result === 'ok') {
+            setMsgStatus({ kind: 'ok', text: t.msgSentOk });
+            setMsgContent('');
+          } else {
+            setMsgStatus({ kind: 'error', text: action.result ?? t.msgSentError });
+          }
+          return;
+        }
+      }
+      setMsgStatus({ kind: 'pending', text: t.msgPending });
+    } catch {
+      setMsgStatus({ kind: 'error', text: t.msgSentError });
+    } finally {
+      setMsgBusy(false);
+    }
+  }, [guildId, msgBusy, msgChannel, msgContent, msgType, t.msgPending, t.msgSentError, t.msgSentOk, t.msgSending]);
 
   const { data: serverConfig, isPending } = useQuery({
     queryKey: ['guild-config', guildId],
@@ -2130,6 +2181,91 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               </Field>
             </div>
             <HelpZone title={SECTION_HELP.economy.title} commands={SECTION_HELP.economy.commands} note={SECTION_HELP.economy.note} />
+          </section>
+          )}
+
+          {view === 'messages' && (
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <h2 className="flex items-center gap-2 font-bold text-white">
+                <Icon name="message" size={18} className="text-neon-blue" /> {t.messagesTitle}
+              </h2>
+              <QuickHelp title={SECTION_HELP.messages.title} commands={SECTION_HELP.messages.commands} note={SECTION_HELP.messages.note} />
+              <Badge kind="free" dict={dict} />
+            </div>
+            <p className="mb-5 text-xs text-white/45">{t.messagesHint}</p>
+            <div className="grid gap-5">
+              <Field label={t.msgTypeLabel}>
+                <div className="flex gap-2">
+                  {(
+                    [
+                      ['say', t.msgSayLabel],
+                      ['directsay', t.msgDirectSayLabel],
+                    ] as const
+                  ).map(([value, label]) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setMsgType(value)}
+                      className={`rounded-xl border px-4 py-2 text-xs font-bold transition ${
+                        msgType === value
+                          ? 'border-neon-blue/60 bg-neon-blue/10 text-neon-blue'
+                          : 'border-white/15 text-white/60 hover:text-white'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </Field>
+              {hasGuildData ? (
+                <SelectField
+                  label={t.msgChannelLabel}
+                  value={msgChannel}
+                  placeholder={t.pickChannel}
+                  options={textChannelOptions}
+                  onChange={(v) => setMsgChannel(v)}
+                />
+              ) : (
+                <Field label={t.msgChannelLabel} hint={t.manualIdHint}>
+                  <input
+                    className={inputCls}
+                    placeholder="ID del canal"
+                    value={msgChannel ?? ''}
+                    onChange={(e) => setMsgChannel(e.target.value || null)}
+                  />
+                </Field>
+              )}
+              <Field label={t.msgContentLabel}>
+                <textarea
+                  className={`${inputCls} min-h-[90px]`}
+                  value={msgContent}
+                  maxLength={2000}
+                  placeholder={t.msgContentLabel}
+                  onChange={(e) => setMsgContent(e.target.value)}
+                />
+              </Field>
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => void sendMessage()}
+                  disabled={msgBusy || !msgChannel || !msgContent.trim()}
+                  className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-neon-blue to-neon-pink px-5 py-2.5 text-xs font-black uppercase tracking-widest text-white transition hover:scale-[1.02] active:scale-95 disabled:opacity-50"
+                >
+                  <Icon name="message" size={14} /> {t.msgSend}
+                </button>
+                {msgStatus && (
+                  <p
+                    className={`text-xs font-bold ${
+                      msgStatus.kind === 'ok' ? 'text-emerald-400' : msgStatus.kind === 'error' ? 'text-red-400' : 'text-amber-300'
+                    }`}
+                  >
+                    {msgStatus.text}
+                  </p>
+                )}
+              </div>
+            </div>
+            <HelpZone title={SECTION_HELP.messages.title} commands={SECTION_HELP.messages.commands} note={SECTION_HELP.messages.note} />
           </section>
           )}
 

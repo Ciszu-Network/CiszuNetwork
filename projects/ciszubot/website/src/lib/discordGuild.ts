@@ -66,37 +66,43 @@ function computeBotPermissions(
 
 /**
  * Lee roles, canales y número de miembros de un servidor con el token del bot.
- * Devuelve null si el bot no está en el servidor o Discord no responde.
+ * Devuelve null SOLO si el bot no está en el servidor (o falta el token);
+ * roles/canales que fallen por separado devuelven listas vacías en vez de
+ * tumbar toda la lectura (antes cualquier fallo dejaba la UI sin datos aunque
+ * el bot estuviera conectado).
+ *
+ * Caché en memoria de 60s por servidor para no golpear la API de Discord en
+ * cada carga del dashboard (límite de rate global del bot).
  */
+const guildInfoCache = new Map<string, { data: GuildInfo; at: number }>();
+const GUILD_INFO_TTL_MS = 60_000;
+
 export async function fetchGuildInfo(guildId: string): Promise<GuildInfo | null> {
+  const cached = guildInfoCache.get(guildId);
+  if (cached && Date.now() - cached.at < GUILD_INFO_TTL_MS) return cached.data;
+
   const botToken = process.env.DISCORD_BOT_TOKEN;
   if (!botToken) return null;
   const headers = { Authorization: `Bot ${botToken}` };
   try {
-    const [guildRes, rolesRes, channelsRes] = await Promise.all([
-      fetch(`${API_BASE}/guilds/${guildId}?with_counts=true`, { headers, cache: 'no-store' }),
-      fetch(`${API_BASE}/guilds/${guildId}/roles`, { headers, cache: 'no-store' }),
-      fetch(`${API_BASE}/guilds/${guildId}/channels`, { headers, cache: 'no-store' }),
-    ]);
-    if (!guildRes.ok || !rolesRes.ok || !channelsRes.ok) return null;
-
+    // 1) El guild es obligatorio: si falla, el bot no está en el servidor.
+    const guildRes = await fetch(`${API_BASE}/guilds/${guildId}?with_counts=true`, { headers, cache: 'no-store' });
+    if (!guildRes.ok) return null;
     const guild = (await guildRes.json()) as { approximate_member_count?: number };
-    const rolesRaw = (await rolesRes.json()) as {
-      id: string;
-      name: string;
-      color: number;
-      position: number;
-      permissions?: string;
-    }[];
-    const channelsRaw = (await channelsRes.json()) as {
-      id: string;
-      name: string;
-      type: number;
-      parent_id?: string | null;
-      position: number;
-    }[];
 
-    // Permisos efectivos del bot: miembro del bot + roles del guild.
+    // 2) Roles y canales por separado: un fallo puntual no invalida el resto.
+    const [rolesRes, channelsRes] = await Promise.all([
+      fetch(`${API_BASE}/guilds/${guildId}/roles`, { headers, cache: 'no-store' }).catch(() => null),
+      fetch(`${API_BASE}/guilds/${guildId}/channels`, { headers, cache: 'no-store' }).catch(() => null),
+    ]);
+    const rolesRaw = rolesRes?.ok
+      ? ((await rolesRes.json()) as { id: string; name: string; color: number; position: number; permissions?: string }[])
+      : [];
+    const channelsRaw = channelsRes?.ok
+      ? ((await channelsRes.json()) as { id: string; name: string; type: number; parent_id?: string | null; position: number }[])
+      : [];
+
+    // 3) Permisos efectivos del bot: miembro del bot + roles del guild.
     let botPermissions: string | null = null;
     let botRoleIds: string[] = [];
     const botId = await getBotUserId(headers);
@@ -116,7 +122,7 @@ export async function fetchGuildInfo(guildId: string): Promise<GuildInfo | null>
       }
     }
 
-    return {
+    const data: GuildInfo = {
       memberCount: guild.approximate_member_count ?? null,
       botPermissions,
       botRoleIds,
@@ -140,8 +146,10 @@ export async function fetchGuildInfo(guildId: string): Promise<GuildInfo | null>
           position: channel.position,
         })),
     };
+    guildInfoCache.set(guildId, { data, at: Date.now() });
+    return data;
   } catch {
-    return null;
+    return cached?.data ?? null;
   }
 }
 

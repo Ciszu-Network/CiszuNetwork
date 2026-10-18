@@ -21,6 +21,7 @@ import { tryClaimDrop, completeDrop, scheduleDrops } from '../services/drops';
 import { takeProposal } from '../services/proposals';
 import { processAllianceMessage, sendAllianceError } from '../services/alliances';
 import { handleTicketClaim, handleTicketClose } from '../services/tickets';
+import { scheduleActions } from '../services/actions';
 import { BOT_COLORS, BOT_FOOTER } from '../config/links';
 
 /**
@@ -507,6 +508,7 @@ async function handlePrivateVcLeave(channelId: string, client: Client): Promise<
 
 export function registerListeners(client: Client): void {
   scheduleDrops(client);
+  scheduleActions(client);
 
   client.on(Events.MessageCreate, (message) => {
     if (message.author.bot || !message.guild) return;

@@ -88,6 +88,11 @@ export const SECTION_HELP: Record<string, SectionHelp> = {
     commands: byNames(['counters', 'serverinfo', 'stats']),
     note: 'Los contadores se actualizan al entrar/salir gente; también puedes ver datos con cz!serverinfo.',
   },
+  messages: {
+    title: 'Say / DirectSay',
+    commands: byNames(['say', 'directsay', 'text']),
+    note: 'Desde aquí el mensaje se envía por el bot (cola de acciones, ~5s). say usa embed; directsay es plano.',
+  },
   music: { title: 'Comandos de música', commands: byCategory('Música'), note: 'Función Premium (gratis durante la beta).' },
   search: { title: 'Comandos de búsqueda', commands: byCategory('Búsqueda'), note: 'Función Premium (gratis durante la beta).' },
   minigames: { title: 'Comandos de diversión', commands: byCategory('Diversión') },

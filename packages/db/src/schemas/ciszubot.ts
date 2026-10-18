@@ -423,3 +423,21 @@ export const privateChannels = ciszubot.table(
   },
   (t) => [index('idx_private_channels_owner').on(t.guildId, t.ownerId)]
 );
+
+export const botActions = ciszubot.table(
+  'bot_actions',
+  {
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
+    guildId: text('guild_id').notNull(),
+    type: text('type').notNull(),
+    channelId: text('channel_id').notNull(),
+    content: text('content').notNull(),
+    createdBy: text('created_by'),
+    source: text('source').notNull().default('dashboard'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    processed: boolean('processed').notNull().default(false),
+    processedAt: timestamp('processed_at', { withTimezone: true }),
+    result: text('result'),
+  },
+  (t) => [index('idx_bot_actions_pending').on(t.processed, t.createdAt)]
+);
